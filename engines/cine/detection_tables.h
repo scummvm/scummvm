@@ -46,11 +46,8 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"Sony CD version",
-			{
-				{ "AUTO00.PRC", 0, "4fe1e7930b38e3c63f0f2474d471bf8f", -1},
-				{ "PART01", 0, "61d003202d301c29dd399acfb1354310", -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("AUTO00.PRC",	"4fe1e7930b38e3c63f0f2474d471bf8f", -1,
+					   "PART01", 		"61d003202d301c29dd399acfb1354310", -1),
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -205,11 +202,8 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"fw",
 			"Demo",
-			{
-				{ "demo",		0,	"0f50767cd964e302d3af0ba2528df8c4", -1},
-				{ "demo.prc",	0,	"d2ac3a743d288359c63644ea7071edae", -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("demo",		"0f50767cd964e302d3af0ba2528df8c4", -1,
+					   "demo.prc",	"d2ac3a743d288359c63644ea7071edae", -1),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
@@ -346,11 +340,8 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			{
-				{ "procs1",		0,	"74c2dabd9d212525fca8875a5f6d8994", -1},
-				{ "sds1",		0,	"75443ba39cdc95667e07d7118e5c151c", -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("procs1",	"74c2dabd9d212525fca8875a5f6d8994", -1,
+					   "sds1",		"75443ba39cdc95667e07d7118e5c151c", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,

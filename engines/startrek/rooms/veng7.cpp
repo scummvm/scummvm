@@ -71,10 +71,8 @@ extern const RoomAction veng7ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng7NumActions = ARRAYSIZE(veng7ActionList);
-
 
 void Room::veng7Tick1() {
 	playVoc("VEN7LOOP");
@@ -93,7 +91,7 @@ void Room::veng7WalkToDoor() {
 
 void Room::veng7ReachedDoor() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "s7r7d1", 0x59, 0x72, &Room::veng7DoorOpened);
 }
 
@@ -102,7 +100,7 @@ void Room::veng7DoorOpened() {
 }
 
 void Room::veng7TouchedTurboliftDoor() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(7, 1);
 }
 

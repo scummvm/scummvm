@@ -435,7 +435,7 @@ static sc_bool taf_read_raw(sc_tafref_t taf, sc_read_callbackref_t callback,
 
 		totalBytes = bytesLeft + bytesRead;
 		bytesWritten = taf_append_buffer(taf, buffer, totalBytes);
-		
+
 		bytesLeft = totalBytes - bytesWritten;
 		if (bytesLeft)
 			Common::copy(buffer + bytesWritten, buffer + totalBytes, buffer);
@@ -699,7 +699,7 @@ void taf_debug_dump(sc_tafref_t taf) {
 	sc_trace("taf->slabs = \n");
 	for (index_ = 0; index_ < taf->slab_count; index_++) {
 		sc_trace("%3ld : %p, %ld bytes\n", index_,
-		         taf->slabs[index_].data, taf->slabs[index_].size);
+		         (void *)taf->slabs[index_].data, taf->slabs[index_].size);
 	}
 
 	sc_trace("taf->slab_count = %ld\n", taf->slab_count);

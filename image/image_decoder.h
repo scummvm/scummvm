@@ -37,6 +37,14 @@ struct Surface;
 namespace Image {
 
 /**
+ * @defgroup image_decoder Image decoder
+ * @ingroup image
+ *
+ * @brief ImageDecoder class used for representing and managing various image decoders.
+ * @{
+ */
+
+/**
  * A representation of an image decoder that maintains ownership of the surface
  * and palette it decodes to.
  *
@@ -47,53 +55,55 @@ public:
 	virtual ~ImageDecoder() {}
 
 	/**
-	 * Load an image from the specified stream
+	 * Load an image from the specified stream.
 	 *
 	 * loadStream() should implicitly call destroy() to free the memory
 	 * of the last loadStream() call.
 	 *
-	 * @param stream the input stream
-	 * @return whether loading the file succeeded
+	 * @param stream  Input stream.
+	 *
+	 * @return Whether loading the file succeeded.
+	 *
 	 * @see getSurface
 	 * @see getPalette
 	 */
 	virtual bool loadStream(Common::SeekableReadStream &stream) = 0;
 
 	/**
-	 * Destroy this decoder's surface and palette
+	 * Destroy this decoder's surface and palette.
 	 *
 	 * This should be called by a loadStream() implementation as well
-	 * as the destructor.
+	 * as by the destructor.
 	 */
 	virtual void destroy() = 0;
 
 	/**
-	 * Get the decoded surface
+	 * Get the decoded surface.
 	 *
-	 * This surface is owned by this ImageDecoder and will remain valid
-	 * until destroy() or loadStream() is called, or until this ImageDecoder's
-	 * destructor is called.
+	 * This surface is owned by this ImageDecoder and remains valid
+	 * until destroy() or loadStream() is called, or until the destructor of
+	 * this ImageDecoder is called.
 	 *
-	 * @return the decoded surface, or 0 if no surface is present
+	 * @return The decoded surface, or 0 if no surface is present.
 	 */
 	virtual const Graphics::Surface *getSurface() const = 0;
 
 	/**
-	 * Get the decoded palette
+	 * Get the decoded palette.
 	 *
-	 * This palette is owned by this ImageDecoder and will remain valid
-	 * until destroy() or loadStream() is called, or until this ImageDecoder's
-	 * destructor is called.
+	 * This palette is owned by this ImageDecoder and remains valid
+	 * until destroy() or loadStream() is called, or until the destructor of
+	 * this ImageDecoder is called.
 	 *
-	 * The palette's format is the same as PaletteManager's palette
+	 * The format of the palette is the same as that of the PaletteManager's palette.
 	 * (interleaved RGB values).
 	 *
-	 * @return the decoded palette, or undefined if no palette is present
+	 * @return The decoded palette, or undefined if no palette is present.
 	 */
 	virtual const byte *getPalette() const { return 0; }
 
 	/**
-	 * Query if the decoded image has a palette.
+	 * Query whether the decoded image has a palette.
 	 */
 	virtual bool hasPalette() const { return getPaletteColorCount() != 0; }
 
@@ -102,7 +112,7 @@ public:
 	/** Return the number of colors in the palette. */
 	virtual uint16 getPaletteColorCount() const { return 0; }
 };
-
+/** @} */
 } // End of namespace Image
 
 #endif

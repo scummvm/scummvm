@@ -32,6 +32,10 @@ void AIScriptHysteriaPatron3::Initialize() {
 	_animationState = 0;
 	_animationStateNext = 0;
 	_animationNext = 0;
+	if (_vm->_cutContent) {
+		Actor_Put_In_Set(kActorHysteriaPatron3, kSetNR05_NR08);
+		Actor_Set_At_XYZ(kActorHysteriaPatron3, -600.0f, 0.0f, -245.0f, 880);
+	}
 }
 
 bool AIScriptHysteriaPatron3::Update() {
@@ -51,6 +55,10 @@ void AIScriptHysteriaPatron3::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptHysteriaPatron3::ClickedByPlayer() {
+	if (_vm->_cutContent) {
+		Actor_Face_Actor(kActorMcCoy, kActorHysteriaPatron3, true);
+		Actor_Says(kActorMcCoy, 8935, kAnimationModeTalk);
+	}
 	//return false;
 }
 
@@ -90,7 +98,44 @@ bool AIScriptHysteriaPatron3::GoalChanged(int currentGoalNumber, int newGoalNumb
 	return false;
 }
 
+const int kAnimationsCount = 3;
+const int animationList[kAnimationsCount] = {
+	kModelAnimationHysteriaPatron3DanceHandsDownLeanBackForth,
+	kModelAnimationHysteriaPatron3DanceHandsDownToHandsUp,
+	kModelAnimationHysteriaPatron3DanceHandsDownToHandsUp,
+};
+
 bool AIScriptHysteriaPatron3::UpdateAnimation(int *animation, int *frame) {
+	if (_vm->_cutContent) {
+		*animation = animationList[_animationState];
+
+		if (_animationState == 2) {
+			--_animationFrame;
+			if (_animationFrame == 0) {
+				_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
+				_animationFrame = 0;
+				*animation = animationList[_animationState];
+			}
+		} else {
+			++_animationFrame;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+				_animationFrame = 0;
+
+				if (_animationState == 0 && Random_Query(0, 2) == 0) {
+					_animationState = 0; // restart same 0 state, with a small random chance
+				} else {
+					++_animationState;
+					if (_animationState == 2) {
+						_animationFrame = Slice_Animation_Query_Number_Of_Frames(animationList[_animationState]) - 1;
+					} else if (_animationState >= kAnimationsCount) {
+						_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
+					}
+				}
+				*animation = animationList[_animationState];
+			}
+		}
+		*frame = _animationFrame;
+	}
 	return true;
 }
 

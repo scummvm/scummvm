@@ -45,7 +45,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -74,9 +74,8 @@ bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSubtitleOptions);
 }
 
-bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
-	bool res = true;
 
 	Kyra::GameFlags flags = gd->flags;
 
@@ -113,6 +112,9 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Kyra::GI_LOL:
 		*engine = new Kyra::LoLEngine(syst, flags);
 		break;
+#else
+	case Kyra::GI_LOL:
+		return Common::Error(Common::kUnsupportedGameidError, _s("Lands of Lore support is not compiled in"));
 #endif // ENABLE_LOL
 #ifdef ENABLE_EOB
 	case Kyra::GI_EOB1:
@@ -122,16 +124,19 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
 			 flags.useHiRes = true;
 		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
-			 error("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build (The 'USE_RGB_COLOR' define has not been set).");
+			 return Common::Error(Common::kUnsupportedColorMode, _s("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build"));
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
 		break;
+#else
+	case Kyra::GI_EOB1:
+	case Kyra::GI_EOB2:
+		return Common::Error(Common::kUnsupportedGameidError, _s("Eye of Beholder support is not compiled in"));
 #endif // ENABLE_EOB
 	default:
-		res = false;
-		warning("Kyra engine: unknown gameID");
+		return Common::kUnsupportedGameidError;
 	}
 
-	return res;
+	return Common::kNoError;
 }
 
 SaveStateList KyraMetaEngine::listSaves(const char *target) const {

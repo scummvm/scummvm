@@ -50,11 +50,13 @@ enum ActionTypes {
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
 
-	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
+	ACTION_OPTIONS = 13, // Not really an action, but selectable from action menu
+
+	ACTION_LIST_END = -1
 };
 
 struct Action {
-	byte type;
+	int8 type;
 	byte b1;
 	byte b2;
 	byte b3;
@@ -73,7 +75,7 @@ struct Action {
 
 	uint32 getBitmask() const {
 		uint32 ret = 0;
-		if (type != 0xff)
+		if (type != -1)
 			ret |= (0xff << 24);
 		if (b1 != 0xff)
 			ret |= (0xff << 16);

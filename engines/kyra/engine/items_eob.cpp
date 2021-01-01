@@ -480,6 +480,8 @@ void EoBCoreEngine::printFullItemName(Item item) {
 			if (!tstr2) {
 				tmpString = tstr3;
 			} else {
+				if (_flags.lang == Common::JA_JPN)
+					SWAP(tstr2, tstr3);
 				if (correctSuffixCase) {
 					if (tstr2 == _magicObjectString5[0])
 						tmpString = Common::String::format(_patternGrFix2[0], tstr2, tstr3);
@@ -494,7 +496,12 @@ void EoBCoreEngine::printFullItemName(Item item) {
 		tmpString = (itm->flags & 0x40) ? nameId : nameUnid;
 	}
 
+	int cs = (_flags.platform == Common::kPlatformSegaCD && _flags.lang == Common::JA_JPN && _screen->getNumberOfCharacters((tmpString).c_str()) >= 17) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow2) : -1;
+
 	_txt->printMessage(convertAsciiToSjis(tmpString).c_str());
+
+	if (cs != -1)
+		_screen->setFontStyles(_screen->_currentFont, cs);
 }
 
 void EoBCoreEngine::identifyQueuedItems(Item itemQueue) {

@@ -27,24 +27,21 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-#include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/gumps/widgets/edit_widget.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/meta_engine.h"
 #include "engines/dialogs.h"
+
+#include "engines/dialogs.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -76,7 +73,6 @@ RemorseMenuGump::RemorseMenuGump()
 RemorseMenuGump::~RemorseMenuGump() {
 	MetaEngine::setGameMenuActive(false);
 }
-
 
 void RemorseMenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
@@ -172,7 +168,6 @@ void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 }
 
-
 void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
@@ -199,20 +194,45 @@ void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-void RemorseMenuGump::selectEntry(int entry) {
-	SettingManager *settingman = SettingManager::get_instance();
-	bool endgame, quotes;
-	settingman->get("endgame", endgame);
-	settingman->get("quotes", quotes);
+static void _openScummVmSaveLoad(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
 
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		if (desc.size() > 28)
+			desc = Common::String(desc.c_str(), 28);
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (isSave)
+		Ultima8Engine::get_instance()->saveGame(slot, desc, true);
+	else
+		Ultima8Engine::get_instance()->loadGameState(slot);
+}
+
+void RemorseMenuGump::selectEntry(int entry) {
 	switch (entry) {
 	case 1: // New Game
 		Game::get_instance()->playIntroMovie(true);
 		break;
 	case 2:
 	case 3: // Load/Save Game
-		// FIXME: Need a different save/load gump for crusader
-		U8SaveGump::showLoadSaveGump(this, entry == 3);
+		_openScummVmSaveLoad(entry == 3);
 		break;
 	case 4: {
 		// Options - show the ScummVM options dialog
@@ -233,7 +253,6 @@ void RemorseMenuGump::selectEntry(int entry) {
 
 bool RemorseMenuGump::OnTextInput(int unicode) {
 	if (Gump::OnTextInput(unicode)) return true;
-
 	return true;
 }
 

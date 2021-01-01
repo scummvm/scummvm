@@ -27,10 +27,11 @@ namespace BladeRunner {
 AIScriptHasan::AIScriptHasan(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 6;
 	_var2 = 1;
-	_var3 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var4 = 0;
 	_var5 = 0;
-	_var6 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
 }
 
 void AIScriptHasan::Initialize() {
@@ -41,10 +42,10 @@ void AIScriptHasan::Initialize() {
 
 	_var1 = 6;
 	_var2 = 1;
-	_var3 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var4 = 0;
 	_var5 = 0;
-	_var6 = 0;
+	_varChooseIdleAnimation = 0;
 
 	Actor_Put_In_Set(kActorHasan, kSetAR01_AR02);
 	Actor_Set_At_XYZ(kActorHasan, -214.0f, 0.0f, -1379.0f, 371);
@@ -180,10 +181,12 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Put_In_Set(kActorHasan, kSetAR01_AR02);
 			Actor_Set_At_XYZ(kActorHasan, -214.0f, 0.0f, -1379.0f, 371);
 			break;
+
 		case kGoalHasanIsAway:
 			Actor_Put_In_Set(kActorHasan, kSetFreeSlotH);
 			Actor_Set_At_Waypoint(kActorHasan, 40, 0); // kSetFreeSlotH
 			break;
+
 		case kGoalHasanIsWalkingAroundIsAtAR02:
 			AI_Movement_Track_Flush(kActorHasan);
 			World_Waypoint_Set(554, kSetAR01_AR02, -214.0f, 0.0f, -1379.0f);
@@ -191,14 +194,17 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Face_Heading(kActorHasan, 371, false);
 			AI_Movement_Track_Repeat(kActorHasan);
 			break;
+
 		case kGoalHasanIsWalkingAroundIsAway:
 			AI_Movement_Track_Flush(kActorHasan);
 			AI_Movement_Track_Append(kActorHasan, 40, Random_Query(10, 40)); // kSetFreeSlotH
 			AI_Movement_Track_Repeat(kActorHasan);
 			break;
+
 		case kGoalHasanIsWalkingAroundStayAwayFromAR02:
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAway);
 			break;
+
 		case kGoalHasanIsWalkingAroundStaysAtAR02:
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 			break;
@@ -223,49 +229,49 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 	switch (_animationState) {
 	case 0:
-		if (_var6 == 1) {
-			*animation = kModelAnimationHasanTalkSuggest;
-			if (_var3) {
-				--_var3;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationHasanGestureSuggest;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTalkSuggest)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanGestureSuggest)) {
 					_animationFrame = 0;
-					_var6 = 0;
+					_varChooseIdleAnimation = 0;
 					*animation = kModelAnimationHasanIdleSlightMovement;
 					_var1 = Random_Query(6, 14);
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var4 = Random_Query(40, 60);
 				}
 				if (_animationFrame >= 10 && _animationFrame <= 14) {
-					_var3 = Random_Query(0, 1);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 1);
 				}
 			}
-		} else if (_var6 == 2) {
+		} else if (_varChooseIdleAnimation == 2) {
 			*animation = kModelAnimationHasanTakingABiteSnakeMove;
-			if (_var3) {
-				--_var3;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanTakingABiteSnakeMove)) {
 					_animationFrame = 0;
-					_var6 = 0;
+					_varChooseIdleAnimation = 0;
 					*animation = kModelAnimationHasanIdleSlightMovement;
 					_var1 = Random_Query(6, 14);
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var5 = Random_Query(40, 60);
 				}
 				if (_animationFrame == 14) {
-					_var3 = Random_Query(3, 10);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(3, 10);
 				}
 				if (_animationFrame == 23) {
-					_var3 = Random_Query(0, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 4);
 				}
 			}
-		} else if (_var6 == 0) {
+		} else if (_varChooseIdleAnimation == 0) {
 			*animation = kModelAnimationHasanIdleSlightMovement;
-			if (_var3) {
-				--_var3;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += _var2;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHasanIdleSlightMovement)) {
@@ -277,16 +283,16 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 				if (!--_var1) {
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var1 = Random_Query(6, 14);
-					_var3 = Random_Query(0, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 4);
 				}
-				if (!_animationFrame) {
-					_var6 = Random_Query(0, 2);
+				if (_animationFrame == 0) {
+					_varChooseIdleAnimation = Random_Query(0, 2);
 				}
-				if (_var6 == 1 && _var4) {
-					_var6 = 0;
+				if (_varChooseIdleAnimation == 1 && _var4) {
+					_varChooseIdleAnimation = 0;
 				}
-				if (_var6 == 2 && _var5) {
-					_var6 = 0;
+				if (_varChooseIdleAnimation == 2 && _var5) {
+					_varChooseIdleAnimation = 0;
 				}
 			}
 		}
@@ -362,23 +368,27 @@ bool AIScriptHasan::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		_animationState = 0;
-		_var6 = 0;
+		_varChooseIdleAnimation = 0;
 		_animationFrame = 0;
 		break;
 
 	case kAnimationModeTalk:
 		_animationState = 1;
-		_var6 = 0;
+		_varChooseIdleAnimation = 0;
 		_animationFrame = 0;
 		break;
 
 	case 12:
+		// fall through
 	case 13:
+		// fall through
 	case 14:
+		// fall through
 	case 15:
+		// fall through
 	case 16:
 		_animationState = 6;
-		_var6 = 0;
+		_varChooseIdleAnimation = 0;
 		_animationFrame = 0;
 		break;
 

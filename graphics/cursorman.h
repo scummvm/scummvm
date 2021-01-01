@@ -31,19 +31,28 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_cursorman Cursor manager
+ * @ingroup graphics
+ *
+ * @brief  The CursorManager class for managing the behavior of the mouse cursor.
+ *
+ * @{
+ */
+
 class CursorManager : public Common::Singleton<CursorManager> {
 public:
-	/** Query whether the mouse cursor is visible. */
+	/** Return whether the mouse cursor is visible. */
 	bool isVisible();
 
 	/**
 	 * Show or hide the mouse cursor.
 	 *
 	 * This function does not call OSystem::updateScreen, when visible is true.
-	 * This fact might result in a non visible mouse cursor if the caller does
-	 * not call OSystem::updateScreen itself after a showMouse(true) call.
+	 * You may need to call OSystem::updateScreen after a call to showMouse(true)
+	 * to ensure that the mouse cursor becomes visible.
 	 *
-	 * TODO: We might want to reconsider this behavior, it might be confusing
+	 * @todo We might want to reconsider this behavior, it might be confusing
 	 * for the user to call OSystem::updateScreen separately, on the other
 	 * hand OSystem::updateScreen might as well display unwanted changes on
 	 * the screen. Another alternative would be to let the backend worry
@@ -54,22 +63,24 @@ public:
 	bool showMouse(bool visible);
 
 	/**
-	 * Push a new cursor onto the stack, and set it in the backend. A local
-	 * copy will be made of the cursor data, so the original buffer can be
-	 * safely freed afterwards.
+	 * Push a new cursor onto the stack, and set it in the backend.
 	 *
-	 * @param buf		the new cursor data
-	 * @param w			the width
-	 * @param h			the height
-	 * @param hotspotX	the hotspot X coordinate
-	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 * A local copy of the cursor data will be made, so the original buffer
+	 * can be safely freed afterwards.
+	 *
+	 * @param buf		New cursor data.
+	 * @param w			Width.
+	 * @param h			Height.
+	 * @param hotspotX	Hotspot X coordinate.
+	 * @param hotspotY	Hotspot Y coordinate.
+	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high ppi displays, where the cursor
-	 *                  would be too small to notice otherwise, these are allowed to scale the cursor anyway.
-	 * @param format	a pointer to the pixel format which the cursor graphic uses,
-	 *					CLUT8 will be used if this is NULL or not specified.
-	 * @note It is ok for the buffer to be a NULL pointer. It is sometimes
+	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
+	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
+	 * @param format	Pointer to the pixel format that the cursor graphic uses.
+	 *					CLUT8 will be used if this is null or not specified.
+	 *
+	 * @note It is acceptable for the buffer to be a null pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
@@ -77,41 +88,46 @@ public:
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
-	 * backend. If there is no previous cursor, the cursor is hidden.
+	 * backend.
+	 *
+	 * If there is no previous cursor, the cursor is hidden.
 	 */
 	void popCursor();
 
 	/**
-	 * Replace the current cursor on the stack. If the stack is empty, the
-	 * cursor is pushed instead. It's a slightly more optimized way of
-	 * popping the old cursor before pushing the new one.
+	 * Replace the current cursor on the stack.
 	 *
-	 * @param buf		the new cursor data
-	 * @param w		the width
-	 * @param h		the height
-	 * @param hotspotX	the hotspot X coordinate
-	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 * If the stack is empty, the cursor is pushed instead. This is a slightly
+	 * more optimized way of popping the old cursor before pushing the new one.
+	 *
+	 * @param buf		New cursor data.
+	 * @param w			Width.
+	 * @param h			Height.
+	 * @param hotspotX	Hotspot X coordinate.
+	 * @param hotspotY	Hotspot Y coordinate.
+	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high ppi displays, where the cursor
-	 *                  would be too small to notice otherwise, these are allowed to scale the cursor anyway.
-	 * @param format	a pointer to the pixel format which the cursor graphic uses,
-	 *					CLUT8 will be used if this is NULL or not specified.
+	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
+	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
+	 * @param format	Pointer to the pixel format that the cursor graphic uses,
+	 *					CLUT8 will be used if this is null or not specified.
 	 */
 	void replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 
 	/**
-	 * Replace the current cursor on the stack. If the stack is empty, the
-	 * cursor is pushed instead. It's a slightly more optimized way of
-	 * popping the old cursor before pushing the new one.
+	 * Replace the current cursor on the stack.
 	 *
-	 * @param cursor	the new cursor
+	 * If the stack is empty, the cursor is pushed instead. This is a slightly
+	 * more optimized way of popping the old cursor before pushing the new one.
+	 *
+	 * @param cursor	New cursor.
 	 */
 	void replaceCursor(const Graphics::Cursor *cursor);
 
 	/**
-	 * Pop all of the cursors and cursor palettes from their respective stacks.
-	 * The purpose is to ensure that all unecessary cursors are removed from the
+	 * Pop all cursors and cursor palettes from their respective stacks.
+	 *
+	 * The purpose is to ensure that all unnecessary cursors are removed from the
 	 * stack when returning to the launcher from an engine.
 	 *
 	 */
@@ -120,8 +136,8 @@ public:
 	/**
 	 * Test whether cursor palettes are supported.
 	 *
-	 * This is just an convenience wrapper for checking for
-	 * OSystem::kFeatureCursorPalette to be supported by OSystem.
+	 * This is just an convenience wrapper for checking whether
+	 * OSystem::kFeatureCursorPalette is supported by OSystem.
 	 *
 	 * @see OSystem::kFeatureCursorPalette
 	 * @see OSystem::hasFeature
@@ -129,7 +145,7 @@ public:
 	bool supportsCursorPalettes();
 
 	/**
-	 * Enable/Disable the current cursor palette.
+	 * Enable or disable the current cursor palette.
 	 *
 	 * @param disable
 	 */
@@ -137,15 +153,16 @@ public:
 
 	/**
 	 * Push a new cursor palette onto the stack, and set it in the backend.
-	 * The palette entries from 'start' till (start+num-1) will be replaced
-	 * so a full palette updated is accomplished via start=0, num=256.
+	 *
+	 * The palette entries from @p start until @c (start+num-1) will be replaced
+	 * so a full palette update is accomplished via start=0, num=256.
 	 *
 	 * The palette data is specified in the same interleaved RGB format as
 	 * used by all backends.
 	 *
-	 * @param colors	the new palette data, in interleaved RGB format
-	 * @param start		the first palette entry to be updated
-	 * @param num		the number of palette entries to be updated
+	 * @param colors	New palette data, in interleaved RGB format.
+	 * @param start		First palette entry to be updated.
+	 * @param num		Number of palette entries to be updated.
 	 *
 	 * @note If num is zero, the cursor palette is disabled.
 	 */
@@ -153,26 +170,37 @@ public:
 
 	/**
 	 * Pop a cursor palette from the stack, and restore the previous one to
-	 * the backend. If there is no previous palette, the cursor palette is
-	 * disabled instead.
+	 * the backend.
+	 *
+	 * If there is no previous palette, the cursor palette is disabled instead.
 	 */
 	void popCursorPalette();
 
 	/**
-	 * Replace the current cursor palette on the stack. If the stack is
-	 * empty, the palette is pushed instead. It's a slightly more optimized
-	 * way of popping the old palette before pushing the new one.
+	 * Replace the current cursor palette on the stack.
 	 *
-	 * @param colors	the new palette data, in interleaved RGB format
-	 * @param start		the first palette entry to be updated
-	 * @param num		the number of palette entries to be updated
+	 * If the stack is empty, the palette is pushed instead. This is a slightly
+	 * more optimized way of popping the old palette before pushing the new one.
+	 *
+	 * @param colors	New palette data, in interleaved RGB format.
+	 * @param start		First palette entry to be updated.
+	 * @param num		Number of palette entries to be updated.
 	 *
 	 * @note If num is zero, the cursor palette is disabled.
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
+	/**
+	 * Lock or unlock the visibility state of the cursor.
+	 *
+	 * When the cursor is locked, calling showMouse(bool) does nothing
+	 * and returns false.
+	 */
 	void lock(bool locked);
 private:
+	/**
+	* Generic class for implementing the singleton design pattern.
+	*/
 	friend class Common::Singleton<SingletonBaseType>;
 	// Even though this is basically the default constructor we implement it
 	// ourselves, so it is private and thus there is no way to create this class
@@ -219,7 +247,7 @@ private:
 	Common::Stack<Palette *> _cursorPaletteStack;
 	bool _locked;
 };
-
+/** @} */
 } // End of namespace Graphics
 
 #define CursorMan	(::Graphics::CursorManager::instance())

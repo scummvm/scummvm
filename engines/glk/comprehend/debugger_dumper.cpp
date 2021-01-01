@@ -88,6 +88,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_REMOVE_OBJECT] = "remove_object";
 	_opcodes[OPCODE_SET_FLAG] = "set_flag";
 	_opcodes[OPCODE_CALL_FUNC] = "call_func";
+	_opcodes[OPCODE_CALL_FUNC2] = "call_func2";
 	_opcodes[OPCODE_TURN_TICK] = "turn_tick";
 	_opcodes[OPCODE_CLEAR_FLAG] = "clear_flag";
 	_opcodes[OPCODE_INVENTORY_ROOM] = "inventory_room";

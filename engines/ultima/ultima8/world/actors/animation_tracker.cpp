@@ -118,8 +118,7 @@ unsigned int AnimationTracker::getNextFrame(unsigned int frame) const {
 
 	// loop if necessary
 	if (frame >= _animAction->getSize()) {
-		if (_animAction->hasFlags(AnimAction::AAF_LOOPING |
-		                         AnimAction::AAF_LOOPING2)) {
+		if (_animAction->hasFlags(AnimAction::AAF_LOOPING)) {
 			// CHECKME: unknown flag
 			frame = 1;
 		} else {
@@ -169,9 +168,6 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, D
 bool AnimationTracker::step() {
 	if (_done) return false;
 
-	Actor *a = getActor(_actor);
-	assert(a);
-
 	if (_firstFrame)
 		_currentFrame = _startFrame;
 	else
@@ -189,6 +185,9 @@ bool AnimationTracker::step() {
 		return false;
 	}
 
+	const bool is_u8 = GAME_IS_U8;
+	const bool is_crusader = !is_u8;
+
 	_prevX = _x;
 	_prevY = _y;
 	_prevZ = _z;
@@ -203,14 +202,20 @@ bool AnimationTracker::step() {
 	const AnimFrame &f = _animAction->getFrame(_dir, _currentFrame);
 
 	_shapeFrame = f._frame;
-	_flipped = f.is_flipped();
+	_flipped = (is_u8 && f.is_flipped())
+			|| (is_crusader && f.is_cruflipped());
 
 	// determine movement for this frame
-	int32 dx = 4 * Direction_XFactor(_dir) * f._deltaDir;
-	int32 dy = 4 * Direction_YFactor(_dir) * f._deltaDir;
+	Direction movedir = _dir;
+	if (_animAction->hasFlags(AnimAction::AAF_ROTATED)) {
+		movedir = Direction_TurnByDelta(movedir, 4, dirmode_16dirs);
+	}
+
+	int32 dx = 4 * Direction_XFactor(movedir) * f._deltaDir;
+	int32 dy = 4 * Direction_YFactor(movedir) * f._deltaDir;
 	int32 dz = f._deltaZ;
 
-	if (_mode == TargetMode && !(f._flags & AnimFrame::AFF_ONGROUND)) {
+	if (_mode == TargetMode && !f.is_onground()) {
 		dx += _targetDx / _targetOffGroundLeft;
 		dy += _targetDy / _targetOffGroundLeft;
 		dz += _targetDz / _targetOffGroundLeft;
@@ -223,6 +228,9 @@ bool AnimationTracker::step() {
 	}
 
 	// determine footpad
+	Actor *a = getActor(_actor);
+	assert(a);
+
 	bool actorflipped = a->hasFlags(Item::FLG_FLIPPED);
 	int32 xd, yd, zd;
 	a->getFootpadWorld(xd, yd, zd);
@@ -231,6 +239,7 @@ bool AnimationTracker::step() {
 		xd = yd;
 		yd = t;
 	}
+
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
 	// TODO: check if this step is allowed
@@ -306,7 +315,7 @@ bool AnimationTracker::step() {
 	                                    a->getShapeInfo()->_flags,
 	                                    _actor, &support, 0);
 
-	if (GAME_IS_U8 && targetok && support) {
+	if (is_u8 && targetok && support) {
 		// Might need to check for bridge traversal adjustments
 		uint32 supportshape = support->getShape();
 		if (supportshape >= 675 && supportshape <= 681) {
@@ -337,14 +346,14 @@ bool AnimationTracker::step() {
 		}
 	}
 
-	if (!targetok || ((f._flags & AnimFrame::AFF_ONGROUND) && !support)) {
+	if (!targetok || (f.is_onground() && !support)) {
 
 		// If on ground, try to adjust properly
 		// TODO: Profile the effect of disabling this for pathfinding.
 		//       It shouldn't be necessary in that case, and may provide a
 		//       worthwhile speed-up.
-		if ((f._flags & AnimFrame::AFF_ONGROUND) && zd > 8) {
-			if (GAME_IS_CRUSADER && !targetok && support) {
+		if (f.is_onground() && zd > 8) {
+			if (is_crusader && !targetok && support) {
 				// Possibly trying to step onto an elevator platform which stops at a z slightly
 				// above the floor.  Re-scan with a small adjustment.
 				// This is a bit of a temporary hack to make navigation possible.. it "hurls"
@@ -393,7 +402,7 @@ bool AnimationTracker::step() {
 		checkWeaponHit();
 	}
 
-	if (f._flags & AnimFrame::AFF_ONGROUND) {
+	if (f.is_onground()) {
 		// needs support
 
 		/*bool targetok = */ cm->isValidPosition(tx, ty, tz,
@@ -423,7 +432,7 @@ bool AnimationTracker::step() {
 		}
 	}
 
-	if (f.is_callusecode() && GAME_IS_CRUSADER) {
+	if (f.is_callusecode()) {
 		a->callUsecodeEvent_calledFromAnim();
 	}
 
@@ -445,7 +454,7 @@ void AnimationTracker::setTargetedMode(int32 x, int32 y, int32 z) {
 		const AnimFrame &f = _animAction->getFrame(_dir, i);
 		totaldir += f._deltaDir;  // This line sometimes seg faults.. ????
 		totalz += f._deltaZ;
-		if (!(f._flags & AnimFrame::AFF_ONGROUND))
+		if (!f.is_onground())
 			++offGround;
 	}
 
@@ -550,7 +559,7 @@ void AnimationTracker::updateActorFlags() {
 	else
 		a->clearActorFlag(Actor::ACT_FIRSTSTEP);
 
-	if (_animAction) {
+	if (_animAction && GAME_IS_U8) {
 		bool hanging = _animAction->hasFlags(AnimAction::AAF_HANGING);
 		if (hanging)
 			a->setFlag(Item::FLG_HANGING);
@@ -672,7 +681,7 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 
 			for (; i != _endFrame; i = getNextFrame(i)) {
 				const AnimFrame &f = _animAction->getFrame(_dir, i);
-				if (!(f._flags & AnimFrame::AFF_ONGROUND))
+				if (f.is_onground())
 					++_targetOffGroundLeft;
 			}
 

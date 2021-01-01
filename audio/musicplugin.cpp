@@ -22,7 +22,6 @@
 
 #include "audio/musicplugin.h"
 #include "common/hash-str.h"
-#include "common/translation.h"
 
 MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
 	_musicDriverName(musicPlugin->getName()), _musicDriverId(musicPlugin->getId()),

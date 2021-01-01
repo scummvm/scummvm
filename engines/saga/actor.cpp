@@ -1136,7 +1136,11 @@ void Actor::drawSpeech() {
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
-		_vm->_font->textDrawRect(kKnownFontScript, &outputString.front(), _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+		Common::Rect drawRect(_activeSpeech.drawRect);
+		// The PC-98 version does a vertical center alignment which we have to imitate for pixel exact text output.
+		if (_vm->getPlatform() == Common::kPlatformPC98)
+			drawRect.top -= (_vm->_font->getHeight(kKnownFontScript, &outputString.front(), drawRect.width(), _activeSpeech.getFontFlags(0)) >> 1);
+		_vm->_font->textDrawRect(kKnownFontScript, &outputString.front(), drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
 }
@@ -1165,7 +1169,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayInfo().width - 10 - actor->_screenPosition.x);
 
 	if (_vm->getGameId() == GID_ITE)
-		dist = CLIP<int16>(dist, 60, 150);
+		dist = (_vm->getPlatform() == Common::kPlatformPC98) ? CLIP<int16>(dist, 110, 200) : CLIP<int16>(dist, 60, 150);
 	else
 		dist = CLIP<int16>(dist, 120, 300);
 
@@ -1173,14 +1177,13 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
 
 	if (_activeSpeech.speechBox.left < 10) {
-		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
+		_activeSpeech.speechBox.right += (10 - _activeSpeech.speechBox.left);
 		_activeSpeech.speechBox.left = 10;
 	}
 	if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().width - 10) {
-		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().width - 10;
+		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - (_vm->getDisplayInfo().width - 10);
 		_activeSpeech.speechBox.right = _vm->getDisplayInfo().width - 10;
 	}
-
 }
 
 void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {

@@ -26,10 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Scumm {
-	
-	int checkHangul(byte hi, byte lo);
-	byte checkJongsung(byte hi, byte lo);
-	
+
+byte checkJongsung(byte hi, byte lo);
+
 } // End of namespace Scumm
 
 #endif

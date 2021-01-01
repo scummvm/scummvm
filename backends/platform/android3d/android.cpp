@@ -490,9 +490,7 @@ void OSystem_Android::quit() {
 	dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->deinitSurface();
 }
 
-void OSystem_Android::setWindowCaption(const char *caption) {
-	ENTER("%s", caption);
-
+void OSystem_Android::setWindowCaption(const Common::U32String &caption) {
 	JNI::setWindowCaption(caption);
 }
 
@@ -579,10 +577,6 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	int len = __system_property_get(name, value);
 
 	return Common::String(value, len);
-}
-
-char *OSystem_Android::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
-	return JNI::convertEncoding(to, from, string, length);
 }
 
 #endif

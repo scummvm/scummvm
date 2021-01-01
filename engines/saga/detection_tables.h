@@ -22,6 +22,8 @@
 
 // Game detection information and MD5s
 
+#include "common/translation.h"
+
 // From sage/scene.h, these are some defines that also
 // help with detection.
 #include "saga/shared_detection_defines.h"
@@ -174,7 +176,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
 
-#if 0
 	// Note: This version is NOT supported yet
 	// Based on a very early version of the engine
 
@@ -183,7 +184,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ite",
-			"Demo", // Game title
+			_s("Missing game code"), // Reason for being unsupported
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", -1},
 				//{"ite.dmo",	GAME_DEMOFILE,						"0b9a70eb4e120b6f00579b46c8cae29e", -1},
@@ -193,7 +194,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GID_ITE,
@@ -204,7 +205,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDEMO_GameFonts,
 		NULL,
 	},
-#endif
 
 	// Inherit the earth - MAC Demo version
 	{
@@ -599,14 +599,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
-#if 0
 	// Inherit the earth - Windows Trial
 	// Not supported and will not be supported, as fixing it
 	// enables whole game. Currently, it crashes.
 	{
 		{
 			"ite",
-			"Trial/Not supported",
+			_s("Missing game code"),
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,	"a6433e34b97b15e64fe8214651012db9", 8927169},
 				{"scripts.rsc",	GAME_SCRIPTFILE,	"bbf929f1e6d6f2af30c41d078798f5c1", 335927},
@@ -614,7 +613,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO0()
 		},
 		GID_ITE,
@@ -625,7 +624,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		NULL,
 	},
-#endif
 
 	// Inherit the Earth - Japanese PC-98 CD version
  	{
@@ -643,7 +641,7 @@ static const SAGAGameDescription gameDescriptions[] = {
  			GUIO0()
  		},
  		GID_ITE,
- 		0,
+		GF_ITE_FLOPPY,	// Even it that game version comes on a CD it behaves like a DOS floppy version
  		ITE_DEFAULT_SCENE,
  		&ITE_Resources,
  		ARRAYSIZE(ITE_GameFonts),
@@ -753,7 +751,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// TODO: Add the Amiga versions here (not supported yet)
 
-#ifdef ENABLE_IHNM
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// I Have No Mouth And I Must Scream - Demo version
@@ -932,6 +929,35 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// I Have No Mouth And I Must Scream - Korean CD version
+	{
+		{
+			"ihnm",
+			_s("Missing game code"), // Reason for being unsupported
+			{
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"sbh1616.fnt",	0,									"ec047bbe048ed9465def705b5bd74d99", -1},
+				AD_LISTEND
+			},
+			Common::KO_KOR,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_IHNM,
+		GF_IHNM_COLOR_FIX,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		NULL,
+	},
+
 	// I Have No Mouth And I Must Scream - Fr CD version
 	// Censored CD version (without Nimdok)
 	{
@@ -1046,9 +1072,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		NULL,
 	},
-#endif
-
-#ifdef ENABLE_SAGA2
 
 	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
 	{
@@ -1107,8 +1130,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,	// font array
 		NULL,
 	},
-
-#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL }
 };

@@ -74,7 +74,7 @@ Handle::~Handle() {
  * permanent graphics etc.
  */
 void Handle::SetupHandleTable() {
-	bool t2Flag = TINSEL_V2;
+	bool t2Flag = TinselV2;
 	int RECORD_SIZE = t2Flag ? 24 : 20;
 
 	int len;

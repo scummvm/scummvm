@@ -81,7 +81,7 @@ void Armors::loadConf() {
 /*-------------------------------------------------------------------*/
 
 Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
-		_type(armorType), _canUse(0xff), _mask(0) {
+		_type(armorType), _canUse(0xff) /*, _mask(0) */ {
 	_name = conf.getString("name");
 	_defense = conf.getInt("defense");
 

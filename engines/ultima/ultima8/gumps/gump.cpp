@@ -123,12 +123,14 @@ void Gump::Close(bool no_del) {
 	}
 	_notifier = 0;
 
+	_flags |= FLAG_CLOSING;
 	if (!_parent) {
-		_flags |= FLAG_CLOSING;
-		if (!no_del) delete this;
+		if (!no_del)
+			delete this;
 	} else {
-		_flags |= FLAG_CLOSING;
-		if (!no_del) _flags |= FLAG_CLOSE_AND_DEL;
+		_parent->ChildNotify(this, Gump::GUMP_CLOSING);
+		if (!no_del)
+			_flags |= FLAG_CLOSE_AND_DEL;
 	}
 }
 

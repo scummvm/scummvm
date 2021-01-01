@@ -13,6 +13,8 @@
 #define ID_GDF_XML __GDF_XML
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
+
+// Common resources
 IDI_ICON               ICON    "icons/scummvm.ico"
 IDI_COUNT              ICON    "icons/count.ico"
 
@@ -22,14 +24,16 @@ scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 residualvm.zip         FILE    "gui/themes/residualvm.zip"
+encoding.dat           FILE    "dists/engine-data/encoding.dat"
 
+// Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
 grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
 monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
 #endif
 #if PLUGIN_ENABLED_STATIC(MYST3)
-myst3.dat                       FILE    "dists/engine-data/myst3.dat"
+myst3.dat              FILE    "dists/engine-data/myst3.dat"
 #endif
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
@@ -53,6 +57,9 @@ cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(HADESCH)
+hadesch_translations.dat          FILE    "dists/engine-data/hadesch_translations.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(HUGO)
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
@@ -113,12 +120,18 @@ shaders/grim_emerg.fragment          FILE    "engines/grim/shaders/grim_emerg.fr
 shaders/grim_emerg.vertex            FILE    "engines/grim/shaders/grim_emerg.vertex"
 shaders/emi_actor.fragment           FILE    "engines/grim/shaders/emi_actor.fragment"
 shaders/emi_actor.vertex             FILE    "engines/grim/shaders/emi_actor.vertex"
+shaders/emi_actorlights.fragment     FILE    "engines/grim/shaders/emi_actorlights.fragment"
+shaders/emi_actorlights.vertex       FILE    "engines/grim/shaders/emi_actorlights.vertex"
 shaders/emi_background.fragment      FILE    "engines/grim/shaders/emi_background.fragment"
 shaders/emi_background.vertex        FILE    "engines/grim/shaders/emi_background.vertex"
 shaders/emi_dimplane.fragment        FILE    "engines/grim/shaders/emi_dimplane.fragment"
 shaders/emi_dimplane.vertex          FILE    "engines/grim/shaders/emi_dimplane.vertex"
+shaders/emi_sprite.fragment          FILE    "engines/grim/shaders/emi_sprite.fragment"
+shaders/emi_sprite.vertex            FILE    "engines/grim/shaders/emi_sprite.vertex"
 shaders/grim_actor.fragment          FILE    "engines/grim/shaders/grim_actor.fragment"
 shaders/grim_actor.vertex            FILE    "engines/grim/shaders/grim_actor.vertex"
+shaders/grim_actorlights.fragment    FILE    "engines/grim/shaders/grim_actorlights.fragment"
+shaders/grim_actorlights.vertex      FILE    "engines/grim/shaders/grim_actorlights.vertex"
 shaders/grim_background.fragment     FILE    "engines/grim/shaders/grim_background.fragment"
 shaders/grim_background.vertex       FILE    "engines/grim/shaders/grim_background.vertex"
 shaders/grim_primitive.fragment      FILE    "engines/grim/shaders/grim_primitive.fragment"
@@ -151,24 +164,24 @@ shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow
 shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
-shaders/wme_fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
-shaders/wme_fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
+shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
 shaders/wme_flat_shadow_mask.fragment   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
 shaders/wme_flat_shadow_mask.vertex     FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
 shaders/wme_flat_shadow_modelx.fragment FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
 shaders/wme_flat_shadow_modelx.vertex   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
-shaders/wme_geometry.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
-shaders/wme_geometry.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
-shaders/wme_line.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
-shaders/wme_line.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
-shaders/wme_modelx.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
-shaders/wme_modelx.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
-shaders/wme_shadow_mask.fragment     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
-shaders/wme_shadow_mask.vertex       FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
-shaders/wme_shadow_volume.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
-shaders/wme_shadow_volume.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
-shaders/wme_sprite.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
-shaders/wme_sprite.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
+shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
+shaders/wme_geometry.vertex             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
+shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
+shaders/wme_line.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
+shaders/wme_modelx.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
+shaders/wme_modelx.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
+shaders/wme_shadow_mask.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
+shaders/wme_shadow_mask.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
+shaders/wme_shadow_volume.fragment      FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
+shaders/wme_shadow_volume.vertex        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
+shaders/wme_sprite.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
+shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
 #endif
 #endif
 #endif
@@ -195,7 +208,7 @@ BEGIN
             VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright \xA9 2001-2020 The ScummVM Team\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2001-2021 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"

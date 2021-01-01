@@ -142,33 +142,33 @@ static const Myst3GameDescription gameDescriptions[] = {
 	// Myst 3 Xbox (RUS)
 	MYST3ENTRY_XBOX(Common::RU_RUS, "ENGLISHX.m3t", "18cb50f5c5317586a128ca9eb3e03279")
 
-//	{
-//		// Myst 3 PS2 (NTSC-U/C)
-//		{
-//			"myst3",
-//			0,
-//			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
-//			Common::UNK_LANG,
-//			Common::kPlatformPS2,
-//			ADGF_UNSTABLE,
-//			GUIO_NONE
-//		},
-//		kFlagDVD
-//	},
-//
-//	{
-//		// Myst 3 PS2 (PAL)
-//		{
-//			"myst3",
-//			0,
-//			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
-//			Common::UNK_LANG,
-//			Common::kPlatformPS2,
-//			ADGF_UNSTABLE,
-//			GUIO_NONE
-//		},
-//		kFlagDVD
-//	},
+	{
+		// Myst 3 PS2 (NTSC-U/C)
+		{
+			"myst3",
+			_s("PS2 version is not yet supported"),
+			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
+			Common::UNK_LANG,
+			Common::kPlatformPS2,
+			ADGF_UNSUPPORTED,
+			GUIO_NONE
+		},
+		0
+	},
+
+	{
+		// Myst 3 PS2 (PAL)
+		{
+			"myst3",
+			_s("PS2 version is not yet supported"),
+			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
+			Common::UNK_LANG,
+			Common::kPlatformPS2,
+			ADGF_UNSUPPORTED,
+			GUIO_NONE
+		},
+		0
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };

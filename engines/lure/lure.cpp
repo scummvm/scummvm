@@ -158,6 +158,16 @@ Common::Error LureEngine::go() {
 
 	// Play the game
 	if (!shouldQuit()) {
+		_screen->empty();
+
+		if (Sound.isRoland() && Sound.hasNativeMT32()) {
+			// Initialize Roland MT-32 timbres
+			Sound.loadSection(ROLAND_MAIN_SYSEX_RESOURCE_ID);
+			Sound.initCustomTimbres();
+		}
+	}
+
+	if (!shouldQuit()) {
 		// Play the game
 		_saveLoadAllowed = true;
 		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);

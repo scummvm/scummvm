@@ -41,61 +41,43 @@ static const PlainGameDescriptor CGE2Games[] = {
 static const ADGameDescription gameDescriptions[] = {
 		{
 			"sfinx", "Freeware",
-			{
-				{ "vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024 },
-				{ "vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "21197b287d397c53261b6616bf0dd880", 129024,
+					   "vol.dat", "de14291869a8eb7c2732ab783c7542ef", 34180844),
 			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 
 		{
 			"sfinx", "Freeware v1.0",
-			{
-				{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024},
-				{"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180164},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "aa402aed24a72c53a4d1211c456b79dd", 129024,
+					   "vol.dat", "5966ac26d91d664714349669f9dd09b5", 34180164),
 			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 
 		{
 			"sfinx", "Freeware v1.1",
-			{
-				{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024},
-				{"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180367},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "aa402aed24a72c53a4d1211c456b79dd", 129024,
+					   "vol.dat", "5966ac26d91d664714349669f9dd09b5", 34180367),
 			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 
 		{
 			"sfinx", "Freeware v0.3",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183430},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
+					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34183430),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 
 		{
 			"sfinx", "Freeware v1.0",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183443},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
+					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34183443),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 
 		{
 			"sfinx", "Freeware v1.1",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34182773},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
+					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34182773),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 		},
 

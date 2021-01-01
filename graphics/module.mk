@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	fonts/newfont.o \
 	fonts/ttf.o \
 	fonts/winfont.o \
+	korfont.o \
 	larryScale.o \
 	maccursor.o \
 	macgui/datafiles.o \
@@ -70,6 +71,7 @@ MODULE_OBJS += \
 	tinygl/select.o \
 	tinygl/specbuf.o \
 	tinygl/texture.o \
+	tinygl/texelbuffer.o \
 	tinygl/vertex.o \
 	tinygl/zbuffer.o \
 	tinygl/zline.o \

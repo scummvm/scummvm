@@ -46,12 +46,9 @@ public:
 		return "sludge";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
-			if (gd) {
-				*engine = new Sludge::SludgeEngine(syst, gd);
-			}
-			return gd != 0;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new Sludge::SludgeEngine(syst, (const Sludge::SludgeGameDescription *)desc);
+		return Common::kNoError;
 	}
 };
 

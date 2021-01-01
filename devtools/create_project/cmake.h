@@ -48,7 +48,7 @@ protected:
 	                       const StringList &includeList, const StringList &excludeList);
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+	                            const std::string &objPrefix, const std::string &filePrefix);
 
 	const char *getProjectExtension();
 
@@ -64,6 +64,7 @@ private:
 	 */
 	struct Library {
 		const char *feature;
+		const char *pkgConfig;
 		SDLVersion sdlVersion;
 		const char *module;
 		const char *package;

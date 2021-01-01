@@ -61,9 +61,16 @@ private:
 	 */
 	bool cmdDraw(int argc, const char **argv);
 
+	/**
+	 * Flags whether to turn the inventory limit on or off
+	 */
+	bool cmdInventoryLimit(int argc, const char **argv);
+
 protected:
 	void print(const char *fmt, ...) override;
 
+public:
+	bool _invLimit;
 public:
 	Debugger();
 	virtual ~Debugger();

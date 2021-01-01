@@ -537,6 +537,8 @@ enum {
 	TGL_NEAREST                     = 0x2600,
 	TGL_REPEAT                      = 0x2901,
 	TGL_CLAMP                       = 0x2900,
+	TGL_CLAMP_TO_EDGE		= 0x812F,
+	TGL_MIRRORED_REPEAT		= 0x8370,
 	TGL_S                           = 0x2000,
 	TGL_T                           = 0x2001,
 	TGL_R                           = 0x2002,
@@ -589,6 +591,8 @@ enum {
 	TGL_UNSIGNED_SHORT_5_6_5_REV    = 0x8364,
 	TGL_UNSIGNED_INT_8_8_8_8        = 0x8035,
 	TGL_UNSIGNED_INT_8_8_8_8_REV    = 0x8367,
+	TGL_UNSIGNED_SHORT_5_5_5_1      = 0x8034,
+	TGL_UNSIGNED_SHORT_1_5_5_5_REV  = 0x8366,
 
 	// Utility
 	TGL_VENDOR                      = 0x1F00,

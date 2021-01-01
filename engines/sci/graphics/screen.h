@@ -28,6 +28,7 @@
 #include "sci/graphics/view.h"
 
 #include "graphics/sjis.h"
+#include "graphics/korfont.h"
 #include "graphics/pixelformat.h"
 
 namespace Sci {
@@ -119,6 +120,7 @@ public:
 	void enableUndithering(bool flag);
 
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
+	void putHangulChar(Graphics::FontKorean *commonFont, int16 x, int16 y, uint16 chr, byte color);
 
 	int bitsGetDataSize(Common::Rect rect, byte mask);
 	void bitsSave(Common::Rect rect, byte mask, byte *memoryPtr);

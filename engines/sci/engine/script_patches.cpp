@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"handle",       // King's Quest 6 / Laura Bow 2 / RAMA
 	"add",          // King's Quest 6
 	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
@@ -177,7 +178,6 @@ static const char *const selectorNameTable[] = {
 	"points",       // PQ4
 	"select",       // PQ4
 	"addObstacle",  // QFG4
-	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
 	"plane",        // RAMA
@@ -244,6 +244,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_handle,
 	SELECTOR_add,
 	SELECTOR_givePoints,
 	SELECTOR_has,
@@ -301,7 +302,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_points,
 	SELECTOR_select,
 	SELECTOR_addObstacle,
-	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
 	SELECTOR_plane,
@@ -5498,6 +5498,67 @@ static const uint16 kq6PatchRoom407LookMessage[] = {
 	PATCH_END
 };
 
+// After lighting the torch in the dark catacombs room and then re-entering,
+//  using items such as a book results in a message that the room is too dark.
+//  rm406:scriptCheck tests for darkness with a local variable that is set when
+//  lighting the torch instead of a persistent global. We could change the
+//  darkness test but it turns out that this method is never called in the dark.
+//  KQ6Room:setScript only calls scriptCheck when ego:view is 900 and that is
+//  only true once the torch is lit.
+//
+// We fix this by patching rm406:scriptCheck to always allow items since the
+//  condition it tries to prevent can never occur.
+//
+// Applies to: All versions
+// Responsible method: rm406:scriptCheck
+static const uint16 kq6SignatureDarkRoomInventory[] = {
+	0x3f, 0x01,                         // link 01
+	0x35, 0x00,                         // ldi 00
+	0xa5, 0x00,                         // sat temp0
+	0x8b, SIG_MAGICDWORD, 0x01,         // lsl 01
+	0x35, 0x64,                         // ldi 64
+	0x22,                               // lt? [ has lightItUp not run yet? ]
+	SIG_END
+};
+
+static const uint16 kq6PatchDarkRoomInventory[] = {
+	0x35, 0x01,                         // ldi 01
+	0x48,                               // ret [ return true, allow items ]
+	PATCH_END
+};
+
+// The Girl In The Tower theme plays from a CD audio track during the credits.
+//  In ScummVM this requires an actual CD, or a mounted CD image, or extracting
+//  the audio to a "track1" file ahead of time. If the track can't be played
+//  then there is silence for the entire credits, but the game includes a 5 MB
+//  Audio version to fall back on when CD audio is unavailable. The script plays
+//  this when the CD audio driver fails to load, though this never occurs in our
+//  our implementation and doesn't address a missing track.
+//
+// We ensure that the credits theme always plays by patching the script to also
+//  fall back on the Audio version when CD audio playback fails.
+//
+// Applies to: PC CD
+// Responsible method: sCredits:init
+static const uint16 kq6CDSignatureGirlInTheTowerPlayback[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x05,                         // pushi 05
+	0x39, 0x0a,                         // pushi 0a   [ kSciAudioCD ]
+	0x7a,                               // push2      [ play ]
+	0x7a,                               // push2      [ track ]
+	0x76,                               // push0      [ start ]
+	0x38, SIG_UINT16(0x00ec),           // pushi 00ec [ end ]
+	0x43, 0x75, 0x0a,                   // callk DoAudio 0a
+	0x33,                               // jmp [ skip Audio version ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchGirlInTheTowerPlayback[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x2f,                               // bt [ skip Audio version if CD audio succeeded ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5937,14 +5998,54 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 	PATCH_END
 };
 
+// When caught by guard dogs in the castle, sometimes their music doesn't stop.
+//  Sound 710 continues playing in the dungeon and afterwards, drowning out the
+//  real room music. This script bug also occurs in the original. It's a
+//  regression in the CD version and subsequent localized floppy versions.
+//
+// When changing rooms, CastleRoom:newRoom fades out sound 710 if it's already
+//  playing, which it detects by testing if globalSound2:prevSignal != -1.
+//  This worked in the original floppy versions but the CD version introduced a
+//  newer Sound class with different behavior. prevSignal is no longer reset to
+//  0 by every Sound:play. This prevents CastleRoom:newRoom from detecting and
+//  stopping the music when globalSound2:prevSignal is -1 from an earlier sound.
+//
+// We fix this by testing globalSound2:handle instead of prevSignal. handle is
+//  always set while a sound is being played and always cleared afterwards. This
+//  is the same bug as in LB2CD's Act 5 finale music, and the same fix.
+//
+// Applies to: PC CD, Italian PC Floppy, Spanish PC Floppy
+// Responsible method: CastleRoom:newRoom
+// Fixes bug: #11746
+static const uint16 kq6SignatureGuardDogMusic[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00ac),           // pushi prevSignal [ hard-coded for affected versions ]
+	0x76,                               // push0
+	0x81, 0x67,                         // lag 67  [ globalSound2 ]
+	0x4a, 0x04,                         // send 04 [ globalSound2 prevSignal? ]
+	0x36,                               // push
+	0x35, 0xff,                         // ldi ff
+	SIG_END
+};
+
+static const uint16 kq6PatchGuardDogMusic[] = {
+	0x38, PATCH_SELECTOR16(handle),     // pushi handle
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
+	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
+	{  true,    80, "fix guard dog music",                            1, kq6SignatureGuardDogMusic,                kq6PatchGuardDogMusic },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
+	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,            kq6PatchDarkRoomInventory },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
@@ -7099,6 +7200,34 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 // ===========================================================================
 // Leisure Suit Larry 3
 
+// Disable the LSL3 speed test by always setting the machine speed to 40 (PC AT)
+//  so that all graphics are enabled and the weight room behaves reasonably.
+//  40 is the minimum value that enables everything such as incrementing the
+//  score and the lighting effects in rooms 390, 430, and 431. The weight room
+//  (room 380) uses the machine speed to calculate how many exercises are
+//  required and the results would be much too high (in the thousands) if the
+//  speed test were to run unthrottled at modern speeds.
+//
+// Applies to: All versions
+// Responsible method: rm290:doit
+// Fixes bug: #11967
+static const uint16 larry3SignatureSpeedTest[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                      // lsl 00
+	0x76,                            // push0
+	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
+	0x22,                            // lt? [ is speed test complete? ]
+	0x30,                            // bnt
+	SIG_END
+};
+
+static const uint16 larry3PatchSpeedTest[] = {
+	0x35, 0x28,                      // ldi 28
+	0xa1, 0x7b,                      // sag 7b [ machine speed = 40 ]
+	0x33, 0x04,                      // jmp 04 [ complete speed test ]
+	PATCH_END
+};
+
 // The LSL3 volume dialog initialize its slider to the current volume by calling
 //  kDoSoundMasterVolume, but it passes an uninitialized variable as an extra
 //  parameter. This changes the volume instead of just querying it, leaving the
@@ -7132,6 +7261,7 @@ static const uint16 larry3PatchVolumeSlider[] = {
 
 //          script, description,                                      signature                     patch
 static const SciScriptPatcherEntry larry3Signatures[] = {
+	{  true,   290, "disable speed test",                          1, larry3SignatureSpeedTest,     larry3PatchSpeedTest },
 	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -7685,6 +7815,45 @@ static const uint16 laurabow1PatchLillianBedFix[] = {
 	PATCH_END
 };
 
+// Entering Laura's bedroom resets the cursor position to the upper right corner
+//  of the screen as if the game were starting. Room44:init calls kSetCursor to
+//  initialize the game because it's the first room where the user has control,
+//  but this part of the script is missing the startup test and so it happens
+//  every time. We fix this by adding the missing startup test.
+//
+// Applies to: All versions
+// Responsible method: Room44:init
+static const uint16 laurabow1SignatureRoom44CursorFix[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0xa1, 0xbe,                         // sag be [ global190 = 0 ]
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	SIG_ADDTOOFFSET(+10),
+	0x43, 0x28, 0x08,                   // callk SetCursor 08 [ SetCursor 997 1 300 0 ]
+	SIG_ADDTOOFFSET(+439),
+	0x89, 0xa5,                         // lsg a5
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x30,                               // bnt
+	SIG_END
+};
+
+static const uint16 laurabow1PatchRoom44CursorFix[] = {
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	0x81, 0xcb,                         // lag cb [ global203 == 0 when game is starting ]
+	0x2f, 0x0d,                         // bt 0d  [ skip SetCursor if game already started ]
+	PATCH_ADDTOOFFSET(+452),
+	0x76,                               // push0
+	0xa9, 0xbe,                         // ssg be [ global190 = 0 ]
+	0x81, 0xa5,                         // lag a5
+	0x2e,                               // bt
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the
 // left and off the screen. If Laura (ego) is in the way, the whole game will
 // basically block and you won't be able to do anything except saving or
@@ -7970,6 +8139,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
 	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
+	{  true,    44, "room 44 cursor fix",                       1, laurabow1SignatureRoom44CursorFix,                 laurabow1PatchRoom44CursorFix },
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
@@ -8686,7 +8856,7 @@ static const uint16 laurabow2CDSignatureFixAct5FinaleMusic[] = {
 };
 
 static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
-	0x38, PATCH_UINT16(0x005a),         // pushi 005a [ handle ]
+	0x38, PATCH_SELECTOR16(handle),     // pushi handle
 	PATCH_ADDTOOFFSET(+7),
 	0x35, 0x00,                         // ldi 00
 	PATCH_END

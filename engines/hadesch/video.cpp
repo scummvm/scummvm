@@ -32,6 +32,7 @@
 #include "audio/decoders/aiff.h"
 #include "hadesch/pod_file.h"
 #include "hadesch/baptr.h"
+#include "common/translation.h"
 
 static const int kVideoMaxW = 1280;
 static const int kVideoMaxH = 480;
@@ -519,6 +520,19 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 			   layersIterator->colorScale, layersIterator->scale);
 	}
 
+	if (stopVideo) {
+		_subtitles.clear();
+		_countQueuedSubtitles.clear();
+	}
+
+	while (!_subtitles.empty() && time > _subtitles.front().maxTime) {
+		_countQueuedSubtitles[_subtitles.front().ID]--;
+		_subtitles.pop();
+	}
+
+	if (_subtitles.empty())
+		_countQueuedSubtitles.clear();
+
 	if (_videoDecoder && (_videoDecoder->endOfVideo() || (stopVideo && !_mouseEnabled))) {
 		debug("videoEnd: %s", _videoDecoderEndEvent.getDebugString().c_str());
 		_videoDecoder.reset();
@@ -532,6 +546,7 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 		bool soundFinished = !g_system->getMixer()->isSoundHandleActive(_anims[i]._soundHandle);
 		const LayerId &animName = _anims[i]._animName;
 		bool animFinished = isAnimationFinished(animName, time);
+		bool subFinished = (_countQueuedSubtitles.empty() || _countQueuedSubtitles[_anims[i]._subtitleID] == 0);
 		bool stopped = stopVideo && _anims[i]._skippable;
 
 		if (stopped) {
@@ -542,7 +557,7 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 						it->renderable->selectFrame(-1);
 		}
 
-		if ((soundFinished && animFinished) || stopped) {
+		if ((soundFinished && animFinished && subFinished) || stopped) {
 			_anims[i]._finished = true;
 			if (!_anims[i]._keepLastFrame)
 				setLayerEnabled(animName, false);
@@ -559,6 +574,9 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 	}
 
 	context->fade(_finalFade);
+	if (!_subtitles.empty())
+		context->renderSubtitle(_subtitles.front().line, viewPoint);
+	
 	context->renderToScreen(viewPoint);
 }
 
@@ -789,7 +807,7 @@ Audio::RewindableAudioStream *VideoRoom::getAudioStream(const Common::String &so
 }
 
 void VideoRoom::playSoundInternal(const Common::String &soundName, EventHandlerWrapper callbackEvent, bool loop,
-				  bool skippable) {
+				  bool skippable, Audio::Mixer::SoundType soundType, int subtitleID) {
 	Audio::RewindableAudioStream *rewSoundStream;
 	Audio::AudioStream *soundStream;
 	Animation anim;
@@ -801,29 +819,42 @@ void VideoRoom::playSoundInternal(const Common::String &soundName, EventHandlerW
 	anim._finished = false;
 	anim._keepLastFrame = false;
 	anim._skippable = skippable;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &anim._soundHandle, soundStream,
+	anim._subtitleID = subtitleID;
+	g_system->getMixer()->playStream(soundType, &anim._soundHandle, soundStream,
 					 -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	_anims.push_back(anim);
 }
 
-void VideoRoom::playSound(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
-	playSoundInternal(soundName, callbackEvent, false, false);
+void VideoRoom::playSFX(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
+	playSoundInternal(soundName, callbackEvent, false, false, Audio::Mixer::kSFXSoundType);
 }
 
-void VideoRoom::playSkippableSound(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
-	playSoundInternal(soundName, callbackEvent, false, true);
+void VideoRoom::playMusic(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
+	playSoundInternal(soundName, callbackEvent, false, false, Audio::Mixer::kMusicSoundType);
 }
 
-void VideoRoom::playSoundLoop(const Common::String &soundName) {
-	playSoundInternal(soundName, EventHandlerWrapper(), true, false);
+void VideoRoom::playSpeech(const TranscribedSound &sound,
+				    EventHandlerWrapper callbackEvent) {
+	int subID = g_vm->genSubtitleID();
+	playSoundInternal(sound.soundName, callbackEvent, false, true, Audio::Mixer::kSpeechSoundType, subID);
+	playSubtitles(sound.transcript, subID);
 }
 
-void VideoRoom::playAnimWithSound(const LayerId &animName,
-				  const Common::String &soundName,
-				  int zValue,
-				  PlayAnimParams params,
-				  EventHandlerWrapper callbackEvent,
-				  Common::Point offset) {
+void VideoRoom::playSFXLoop(const Common::String &soundName) {
+	playSoundInternal(soundName, EventHandlerWrapper(), true, false, Audio::Mixer::kSFXSoundType);
+}
+
+void VideoRoom::playMusicLoop(const Common::String &soundName) {
+	playSoundInternal(soundName, EventHandlerWrapper(), true, false, Audio::Mixer::kMusicSoundType);
+}
+
+void VideoRoom::playAnimWithSoundInternal(const LayerId &animName,
+					  const Common::String &soundName,
+					  Audio::Mixer::SoundType soundType,
+					  int zValue,
+					  PlayAnimParams params,
+					  EventHandlerWrapper callbackEvent,
+					  Common::Point offset, int subtitleID) {
 	Audio::AudioStream *soundStream;
 
 	if (!doesLayerExist(animName)) {
@@ -844,9 +875,39 @@ void VideoRoom::playAnimWithSound(const LayerId &animName,
 	anim._finished = false;
 	anim._keepLastFrame = params.getKeepLastFrame();
 	anim._skippable = false;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &anim._soundHandle, soundStream,
+	anim._subtitleID = subtitleID;
+	g_system->getMixer()->playStream(soundType, &anim._soundHandle, soundStream,
 					 -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	_anims.push_back(anim);
+}
+
+void VideoRoom::playAnimWithSpeech(const LayerId &animName,
+				   const TranscribedSound &sound,
+				   int zValue,
+				   PlayAnimParams params,
+				   EventHandlerWrapper callbackEvent,
+				   Common::Point offset) {
+	int subID = g_vm->genSubtitleID();
+	playAnimWithSoundInternal(animName, sound.soundName, Audio::Mixer::kSpeechSoundType, zValue, params, callbackEvent, offset, subID);
+	playSubtitles(sound.transcript, subID);
+}
+
+void VideoRoom::playAnimWithSFX(const LayerId &animName,
+				const Common::String &soundName,
+				int zValue,
+				PlayAnimParams params,
+				EventHandlerWrapper callbackEvent,
+				Common::Point offset) {
+	playAnimWithSoundInternal(animName, soundName, Audio::Mixer::kSFXSoundType, zValue, params, callbackEvent, offset);
+}
+
+void VideoRoom::playAnimWithMusic(const LayerId &animName,
+				  const Common::String &soundName,
+				  int zValue,
+				  PlayAnimParams params,
+				  EventHandlerWrapper callbackEvent,
+				  Common::Point offset) {
+	playAnimWithSoundInternal(animName, soundName, Audio::Mixer::kMusicSoundType, zValue, params, callbackEvent, offset);
 }
 
 void VideoRoom::playAnim(const LayerId &animName, int zValue,
@@ -1030,5 +1091,24 @@ int VideoRoom::computeStringWidth(const Common::String &font, const Common::U32S
 void VideoRoom::renderStringCentered(const Common::String &font, const Common::U32String &str, Common::Point centerPos, int zVal, int fontDelta, const Common::String &extraId) {
 	int width = computeStringWidth(font, str, fontDelta);
 	renderString(font, str, centerPos - Common::Point(width / 2, 0), zVal, fontDelta, extraId);
+}
+
+void VideoRoom::playSubtitles(const char *text, int subID) {
+	int delay = g_vm->getSubtitleDelayPerChar();
+	if (delay <= 0)
+		return;
+	Common::U32String s = g_vm->translate(text);
+	Common::Array<Common::U32String> lines;
+	int32 countTime = g_vm->getCurrentTime();
+	g_vm->wrapSubtitles(s, lines);
+	for (uint i = 0; i < lines.size(); i++) {
+		SubtitleLine l;
+		l.line = lines[i];
+		l.ID = subID;
+		countTime += delay * MAX<uint>(l.line.size(), 20);
+		l.maxTime = countTime;
+		_subtitles.push(l);
+		_countQueuedSubtitles[subID]++;
+	} 
 }
 }

@@ -29,7 +29,7 @@ namespace Comprehend {
 
 Debugger *g_debugger;
 
-Debugger::Debugger() : Glk::Debugger() {
+Debugger::Debugger() : Glk::Debugger(), _invLimit(true) {
 	g_debugger = this;
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("floodfills", WRAP_METHOD(Debugger, cmdFloodfills));
@@ -37,6 +37,7 @@ Debugger::Debugger() : Glk::Debugger() {
 	registerCmd("itemroom", WRAP_METHOD(Debugger, cmdItemRoom));
 	registerCmd("findstring", WRAP_METHOD(Debugger, cmdFindString));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
+	registerCmd("invlimit", WRAP_METHOD(Debugger, cmdInventoryLimit));
 }
 
 Debugger::~Debugger() {
@@ -66,10 +67,10 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 
 bool Debugger::cmdFloodfills(int argc, const char **argv) {
 	if (argc == 2 && !strcmp(argv[1], "off")) {
-		g_comprehend->_drawFlags |= IMAGEF_NO_FLOODFILL;
+		g_comprehend->_drawFlags |= IMAGEF_NO_PAINTING;
 		debugPrintf("Floodfills are off\n");
 	} else {
-		g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
+		g_comprehend->_drawFlags &= ~IMAGEF_NO_PAINTING;
 		debugPrintf("Floodfills are on\n");
 	}
 
@@ -151,6 +152,16 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 	}
 }
 
+bool Debugger::cmdInventoryLimit(int argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("invlimit on|off\n");
+	} else {
+		_invLimit = !strcmp(argv[1], "on") || !strcmp(argv[1], "true");
+		debugPrintf("inventory limit is now %s\n", _invLimit ? "on" : "off");
+	}
+
+	return true;
+}
 
 } // namespace Comprehend
 } // namespace Glk

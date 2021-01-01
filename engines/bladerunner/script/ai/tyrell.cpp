@@ -25,8 +25,9 @@
 namespace BladeRunner {
 
 AIScriptTyrell::AIScriptTyrell(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = true;
-	_var = 0;
+	_resumeIdleAfterFramesetCompletesFlag = true;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
 }
 
 void AIScriptTyrell::Initialize() {
@@ -35,8 +36,8 @@ void AIScriptTyrell::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = true;
-	_var = 0;
+	_resumeIdleAfterFramesetCompletesFlag = true;
+	_varChooseIdleAnimation = 0;
 
 	Actor_Set_Goal_Number(kActorTyrell, 0);
 }
@@ -108,84 +109,84 @@ bool AIScriptTyrell::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var == 1) {
-			*animation = 767;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationTyrellHeadMoveIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(767)) {
-				*animation = 766;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellHeadMoveIdle)) {
+				*animation = kModelAnimationTyrellIdle;
 				_animationFrame = 0;
-				_var = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (_var == 0) {
-			*animation = 766;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationTyrellIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(766)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellIdle)) {
 				_animationFrame = 0;
 				if (!Random_Query(0, 3)) {
-					_var = 1;
+					_varChooseIdleAnimation = 1;
 				}
 			}
 		}
 		break;
 
 	case 1:
-		*animation = 765;
+		*animation = kModelAnimationTyrellWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(765)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		if (!_animationFrame && _flag) {
-			*animation = 766;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationTyrellIdle;
 			_animationState = 0;
 		} else {
-			*animation = 768;
+			*animation = kModelAnimationTyrellFastNodTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(768)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellFastNodTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 769;
+		*animation = kModelAnimationTyrellSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(769)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellSuggestTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 768;
+			*animation = kModelAnimationTyrellFastNodTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 770;
+		*animation = kModelAnimationTyrellConsideringTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(770)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellConsideringTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 768;
+			*animation = kModelAnimationTyrellFastNodTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 771;
+		*animation = kModelAnimationTyrellBowsAndSuggestsTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(771)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellBowsAndSuggestsTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 768;
+			*animation = kModelAnimationTyrellFastNodTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 772;
+		*animation = kModelAnimationTyrellDismissTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(772)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellDismissTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 768;
+			*animation = kModelAnimationTyrellFastNodTalk;
 		}
 		break;
 
@@ -199,43 +200,50 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptTyrell::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState >= 2 && _animationState <= 6) {
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		break;
-	case 1:
+
+	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
-	case 3:
+
+	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	default:
 		break;
 	}

@@ -24,17 +24,25 @@
 
 namespace BladeRunner {
 
+
+enum kCrazylegsStates {
+	kCrazylegsStateIdle       = 0,
+	kCrazylegsStateHandsUp    = 1,
+	kCrazylegsStateMobileCall = 2
+	// TODO fill in the rest of the animationStates
+};
+
 AIScriptCrazylegs::AIScriptCrazylegs(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptCrazylegs::Initialize() {
 	_animationFrame = 0;
-	_animationState = 0;
-	_animationStateNext = 0;
+	_animationState = kCrazylegsStateIdle;
+	_animationStateNext = kCrazylegsStateIdle;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	World_Waypoint_Set(360, kSetHF05, -103.0f, 40.63f, -53.0f);
 	Actor_Put_In_Set(kActorCrazylegs, kSetHF05);
@@ -140,195 +148,205 @@ bool AIScriptCrazylegs::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
-	case 0:
-		*animation = 454;
+	case kCrazylegsStateIdle:
+		*animation = kModelAnimationCrazylegsIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(454))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsIdle))
 			_animationFrame = 0;
 		break;
 
-	case 1:
-		*animation = 455;
+	case kCrazylegsStateHandsUp:
+		*animation = kModelAnimationCrazylegsHandsUpIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(455))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHandsUpIdle))
 			_animationFrame = 0;
 		break;
 
-	case 2:
-		*animation = 456;
+	case kCrazylegsStateMobileCall:
+		*animation = kModelAnimationCrazylegsMobileIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(456))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsMobileIdle))
 			_animationFrame = 0;
 		break;
 
 	case 3:
-		*animation = 457;
+		*animation = kModelAnimationCrazylegsGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(457)) {
-			*animation = 454;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsGestureGive)) {
+			*animation = kModelAnimationCrazylegsIdle;
 			_animationFrame = 0;
-			_animationState = 0;
+			_animationState = kCrazylegsStateIdle;
 		}
 		break;
 
 	case 4:
-		*animation = 452;
+		*animation = kModelAnimationCrazylegsRollSlow;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(452))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsRollSlow))
 			_animationFrame = 0;
 		break;
 
 	case 5:
-		*animation = 453;
+		*animation = kModelAnimationCrazylegsRollFast;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(453))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsRollFast))
 			_animationFrame = 0;
 		break;
 
 	case 6:
-		if (!_animationFrame && _flag) {
-			*animation = 454;
-			_animationState = 0;
-			_flag = 0;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationCrazylegsIdle;
+			_animationState = kCrazylegsStateIdle;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(458))
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsCalmTalk))
 				_animationFrame = 0;
 		}
 		break;
 
 	case 7:
-		*animation = 459;
+		*animation = kModelAnimationCrazylegsSmallHandMoveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(459)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsSmallHandMoveTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 460;
+		*animation = kModelAnimationCrazylegsPointingAtSelfTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(460)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsPointingAtSelfTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 9:
-		*animation = 461;
+		*animation = kModelAnimationCrazylegsDisagreeTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(461)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsDisagreeTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 10:
-		*animation = 462;
+		*animation = kModelAnimationCrazylegsFastTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(462)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsFastTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 11:
-		*animation = 463;
+		*animation = kModelAnimationCrazylegsProtestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(463)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsProtestTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 12:
-		*animation = 464;
+		*animation = kModelAnimationCrazylegsMobileCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(464)) {
+		// This is probably an untriggered animation
+		// TODO This animation has a faulty last frame which "breaks" its looping consistency
+		// TODO It should not lead to kModelAnimationCrazylegsCalmTalk but to one of Crazylegs mobile animations
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsMobileCalmTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 13:
-		*animation = 465;
+		*animation = kModelAnimationCrazylegsMobileIntenseTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(465)) {
+		// This is probably an untriggered animation
+		// TODO It should not lead to kModelAnimationCrazylegsCalmTalk but to one of Crazylegs mobile animations
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsMobileIntenseTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 14:
-		*animation = 466;
+		*animation = kModelAnimationCrazylegsHandsUpTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(466)) {
+		// This is probably an untriggered animation
+		// TODO It should not lead to kModelAnimationCrazylegsCalmTalk but to one of Crazylegs hands-up animations
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHandsUpTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 458;
+			*animation = kModelAnimationCrazylegsCalmTalk;
 		}
 		break;
 
 	case 15:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			Actor_Change_Animation_Mode(kActorCrazylegs, 43);
-			_animationState = 2;
-			_flag = 0;
-			*animation = 456;
+			_animationState = kCrazylegsStateMobileCall;
+			_resumeIdleAfterFramesetCompletesFlag = false;
+			*animation = kModelAnimationCrazylegsMobileIdle;
 		} else {
-			*animation = 456;
+			*animation = kModelAnimationCrazylegsMobileIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(456))
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsMobileIdle))
 				_animationFrame = 0;
 		}
 		break;
 
 	case 16:
-		*animation = 467;
+		*animation = kModelAnimationCrazylegsHandsUpRaisesHands;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(467)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHandsUpRaisesHands)) {
 			_animationFrame = 0;
-			_animationState = 1;
-			*animation = 455;
+			_animationState = kCrazylegsStateHandsUp;
+			*animation = kModelAnimationCrazylegsHandsUpIdle;
 		}
 		break;
 
 	case 17:
-		*animation = 468;
+		*animation = kModelAnimationCrazylegsHandsUpLowersHands;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(468)) {
-			*animation = 454;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHandsUpLowersHands)) {
+			*animation = kModelAnimationCrazylegsIdle;
 			_animationFrame = 0;
-			_animationState = 0;
+			_animationState = kCrazylegsStateIdle;
 		}
 		break;
 
 	case 18:
-		*animation = 469;
+		// This animation plays in reverse
+		// TODO Code seems wrong (especially the if clause condition).
+		//      Probably left like this because the animation is untriggered
+		*animation = kModelAnimationCrazylegsHangsUpMobile;
 		--_animationFrame;
-		if (_animationFrame <= Slice_Animation_Query_Number_Of_Frames(469)) { // matches original
+		if (_animationFrame <= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHangsUpMobile)) { // matches original
 			_animationFrame = 0;
-			_animationState = 2;
-			*animation = 454;
+			_animationState = kCrazylegsStateMobileCall;
+			*animation = kModelAnimationCrazylegsIdle;
 		}
 		break;
 
 	case 19:
-		*animation = 469;
+		*animation = kModelAnimationCrazylegsHangsUpMobile;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(469)) {
-			*animation = 454;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHangsUpMobile)) {
+			*animation = kModelAnimationCrazylegsIdle;
 			_animationFrame = 0;
-			_animationState = 0;
+			_animationState = kCrazylegsStateIdle;
 			if (Actor_Query_Goal_Number(kActorCrazylegs) == 10) {
 				Actor_Set_Goal_Number(kActorCrazylegs, 11);
 			}
@@ -345,103 +363,133 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
-		case 0:
+		case kCrazylegsStateIdle:
+			// fall through
 		case 3:
 			return true;
-		case 1:
+
+		case kCrazylegsStateHandsUp:
 			_animationState = 17;
 			_animationFrame = 0;
 			break;
-		case 2:
+
+		case kCrazylegsStateMobileCall:
 			_animationState = 19;
 			_animationFrame = 0;
 			break;
+
 		case 4:
+			// fall through
 		case 5:
-			_animationState = 0;
+			_animationState = kCrazylegsStateIdle;
 			_animationFrame = 0;
 			break;
+
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		default:
 			break;
 		}
 		break;
-	case 1:
+
+	case kAnimationModeWalk:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
-	case 3:
-		if (_animationState == 2) {
+
+	case kAnimationModeTalk:
+		if (_animationState == kCrazylegsStateMobileCall) {
 			_animationState = 15;
 		} else {
 			_animationState = 6;
 		}
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 8;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 9;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 10;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 16:
 		_animationState = 11;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 17:
 		_animationState = 12;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 18:
 		_animationState = 13;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 19:
 		_animationState = 14;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 23:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 43:
-		if (_animationState != 2) {
+		// picks up mobile phone call
+		if (_animationState != kCrazylegsStateMobileCall) {
 			_animationState = 18;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(469) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHangsUpMobile) - 1;
 		}
 		break;
+
 	default:
 		break;
 	}

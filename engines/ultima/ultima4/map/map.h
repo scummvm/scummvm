@@ -29,7 +29,6 @@
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {

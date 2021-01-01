@@ -36,6 +36,9 @@ class AudioSample;
 
 class AudioProcess : public Process {
 public:
+
+	static const uint32 PITCH_SHIFT_NONE;
+
 	struct SampleInfo {
 		int32       _sfxNum;
 		int32       _priority;
@@ -44,21 +47,22 @@ public:
 		int32       _channel;
 		Std::string _barked;
 		uint32      _curSpeechStart, _curSpeechEnd;
-		uint32      _pitchShift;    // 0x10000 is normal
-		uint16      _volume;         // 0-256
+		uint32      _pitchShift;    // PITCH_SHIFT_NONE is normal
+		uint16      _volume;         // 0-255
 		int16       _lVol;
 		int16       _rVol;
+		bool		_ambient;
 
 		SampleInfo() : _sfxNum(-1) { }
-		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv) :
+		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv, bool ambient) :
 			_sfxNum(s), _priority(p), _objId(o), _loops(l), _channel(c),
 			_pitchShift(ps), _volume(v), _lVol(lv), _rVol(rv),
-			_curSpeechStart(0), _curSpeechEnd(0) { }
+			_curSpeechStart(0), _curSpeechEnd(0), _ambient(ambient) { }
 		SampleInfo(const Std::string &b, int32 shpnum, ObjId o, int32 c,
-				   uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
+				   uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv, bool ambient) :
 			_sfxNum(-1), _priority(shpnum), _objId(o), _loops(0), _channel(c), _barked(b),
 			_curSpeechStart(s), _curSpeechEnd(e), _pitchShift(ps), _volume(v),
-			_lVol(lv), _rVol(rv) { }
+			_lVol(lv), _rVol(rv), _ambient(ambient) { }
 	};
 
 	Std::list<SampleInfo> _sampleInfo;
@@ -89,12 +93,13 @@ public:
 
 	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
 				 bool no_duplicates, uint32 pitchShift,
-				 uint16 volume, int16 lVol, int16 rVol);
+				 uint16 volume, int16 lVol, int16 rVol,
+				 bool ambient);
 
 	void playSFX(int sfxNum, int priority, ObjId objId, int loops,
-				 bool no_duplicates = false, uint32 pitchShift = 0x10000,
-				 uint16 volume = 0x80) {
-		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1);
+				 bool no_duplicates = false, uint32 pitchShift = PITCH_SHIFT_NONE,
+				 uint16 volume = 0x80, bool ambient = false) {
+		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1, ambient);
 	}
 
 	//! stop sfx on object.  set sfxNum = -1 to stop all for object.
@@ -104,7 +109,7 @@ public:
 	void setVolumeSFX(int sfxNum, uint8 volume);
 
 	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
-					uint32 pitchShift = 0x10000, uint16 volume = 255);
+					uint32 pitchShift = PITCH_SHIFT_NONE, uint16 volume = 255);
 	void stopSpeech(const Std::string &barked, int shapenum, ObjId objId);
 	bool isSpeechPlaying(const Std::string &barked, int shapenum);
 
@@ -114,7 +119,8 @@ public:
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
 	int playSample(AudioSample *sample, int priority, int loops,
-				   uint32 pitchShift = 0x10000, int16 lVol = 255, int16 rVol = 255);
+				   uint32 pitchShift = PITCH_SHIFT_NONE, int16 lVol = 255,
+				   int16 rVol = 255, bool ambient=false);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();

@@ -28,7 +28,6 @@
 
 #ifdef USE_SPARKLE
 #include "backends/platform/sdl/win32/win32-window.h"
-#include "common/translation.h"
 #include "common/config-manager.h"
 
 #include <time.h>

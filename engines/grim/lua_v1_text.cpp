@@ -257,7 +257,7 @@ void Lua_V1::LocalizeString() {
 		// If the string that we're passed isn't localized yet then
 		// construct the localized string, otherwise spit back what
 		// we've been given
-		if (str[0] == '/' && str[strlen(str) - 1] == '/') {
+		if (str[0] == '/') {
 			Common::String msg = parseMsgText(str, msgId);
 			sprintf(buf, "/%s/%s", msgId, msg.c_str());
 			str = buf;

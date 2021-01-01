@@ -49,10 +49,9 @@ public:
 		return "lab";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		// Instantiate Engine even if the game data is not found.
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		*engine = new Lab::LabEngine(syst, desc);
-		return true;
+		return Common::kNoError;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

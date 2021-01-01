@@ -2040,7 +2040,7 @@ bool U6UseCode::use_balloon(Obj *obj, UseCodeEvent ev) {
 // drop on 'spot' instead.
 				obj_manager->unlink_from_engine(obj);
 				obj->x = spot.x;
-				obj->y = spot.y;;
+				obj->y = spot.y;
 				obj->z = spot.z;
 				dropped = true;
 			}

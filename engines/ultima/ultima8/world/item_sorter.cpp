@@ -147,10 +147,10 @@ struct SortItem {
 			}
 		};
 
-		iterator begin() {
+		iterator begin() const {
 			return iterator(list);
 		}
-		iterator end() {
+		iterator end() const {
 			return iterator(nullptr);
 		}
 

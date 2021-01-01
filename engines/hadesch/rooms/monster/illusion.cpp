@@ -22,6 +22,7 @@
  *
  */
 
+#include "common/translation.h"
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/rooms/monster.h"
@@ -45,6 +46,14 @@ struct BirdInfo {
 	Common::Point getBirdShootSize() const {
 		return Common::Point(_birdShootWidth, _birdShootHeight);
 	}
+};
+
+static const TranscribedSound fakePhilReplics[] = {
+	{"v7220xb0", _s("unclear utterance")}, // unclear
+	{"v7220xc0", _s("Hey, this was close, buddy")},
+	{"v7220xd0", _s("Get hold of thunderbolts")}, // unclear
+	{"v7220xe0", _s("Keep going, kid. You're doing great job")},
+	{"v7220xf0", _s("unclear utterance")} // unclear
 };
 
 static const BirdInfo birdInfo[] = {
@@ -136,7 +145,7 @@ void Bird::launch(int level) {
 	_isActive = true;
 	_level = level;
 	makeFlightParams();
-	room->playSound("v7220eb0");
+	room->playSFX("v7220eb0");
 	_flightStart = g_vm->getCurrentTime();
 }
 
@@ -263,10 +272,10 @@ void Bird::handleAbsoluteClick(Common::Point p) {
 	room->stopAnim(LayerId(birdInfo[_birdType]._shootAnim, _id, "bird"));
 	_isActive = false;
 	LayerId l = LayerId(birdInfo[_birdType]._interceptAnim, _id, "bird");
-	room->playAnimWithSound(l, "v7220ec0", 500, PlayAnimParams::disappear(),
-				EventHandlerWrapper(),
-				fp.centerPos - birdInfo[_birdType].getBirdSize()
-				* (fp.scale / 100.0));
+	room->playAnimWithSFX(l, "v7220ec0", 500, PlayAnimParams::disappear(),
+			      EventHandlerWrapper(),
+			      fp.centerPos - birdInfo[_birdType].getBirdSize()
+			      * (fp.scale / 100.0));
 }
 
 Illusion::Illusion(Common::SharedPtr<Battleground> battleground) {
@@ -306,10 +315,11 @@ void Illusion::enterIllusion(int level) {
 	Typhoon::disableHotzones();
 	for (unsigned i = 0; i < 6; i++)
 		room->enableHotzone(Common::String::format("Phil%d", i));
-	room->playAnimWithSound(Common::String::format("v7220bg%d", g_vm->getRnd().getRandomNumberRng(0, 5)),
-				"v7220xc1", 600,
-				PlayAnimParams::disappear(),
-				15306);
+	room->playAnimWithSpeech(Common::String::format("v7220bg%d", g_vm->getRnd().getRandomNumberRng(0, 5)),
+				 TranscribedSound::make("v7220xc1",
+						  "It's me, Phil. These beasts are all that stands between me and freedom"), 600, // unclear
+				 PlayAnimParams::disappear(),
+				 15306);
 	_battleground->_level = level;
 	_battleground->_leavesRemaining = 9;
 	_battleground->_monsterNum = kIllusion;
@@ -326,7 +336,7 @@ void Illusion::handleClick(const Common::String &name) {
 		_battleground->stopFight();
 		room->disableMouse();
 		room->playAnimKeepLastFrame(Common::String::format("v7220bv%d", _philPosition), 600);
-		room->playSound("v7220eg0", 15307);
+		room->playSFX("v7220eg0", 15307);
 		return;
 	}
 }
@@ -350,10 +360,10 @@ void Illusion::handleEvent(int eventId) {
 		launchBird();
 		break;
 	case 15307:
-		room->playSound("v7220wg0", 15308);
+		room->playSpeech(TranscribedSound::make("v7220wg0", "Oh no, we're gonna fry"), 15308);
 		break;
 	case 15308:
-		room->playSound("v7220wh0", 15309);
+		room->playSpeech(TranscribedSound::make("v7220wh0", "Let's get outta here"), 15309);
 		break;
 	case 15309:
 		g_vm->getCurrentHandler()->handleEvent(15383);
@@ -361,7 +371,7 @@ void Illusion::handleEvent(int eventId) {
 	case 15312:
 		if (!_battleground->_isInFight || _illusionIsKilled || _battleground->_monsterNum != kIllusion)
 			return;
-		room->playSound(Common::String::format("v7220x%c0", g_vm->getRnd().getRandomNumberRng('b', 'f')));
+		room->playSpeech(fakePhilReplics[g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(fakePhilReplics) - 1)]);
 		g_vm->addTimer(15312, g_vm->getRnd().getRandomNumberRng(6000, 10000));
 		break;
 	case 15313:

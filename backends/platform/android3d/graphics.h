@@ -48,7 +48,6 @@ public:
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
-	virtual void resetGraphicsScale() override;
 	virtual int getGraphicsMode() const override;
 
 	virtual bool hasFeature(OSystem::Feature f) const override;

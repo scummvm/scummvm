@@ -211,6 +211,26 @@ struct TrekEvent {
 	uint32 tick;
 };
 
+struct ComputerTopic {
+	Common::String fileName;
+	Common::String topic;
+};
+
+struct EnterpriseState {
+	bool shields;
+	bool weapons;
+	bool underAttack;
+	bool inOrbit;
+	bool targetAnalysis;
+
+	EnterpriseState() {
+		shields = false;
+		weapons = false;
+		underAttack = false;
+		inOrbit = false;
+		targetAnalysis = false;
+	}
+};
 
 class Graphics;
 class IWFile;
@@ -232,9 +252,47 @@ public:
 	void runTransportSequence(const Common::String &name);
 
 	// Bridge
-	void initBridge(bool b) {}; // TODO
-	void cleanupBridge() {}; // TODO
+	void initBridge(bool b);
+	void loadBridge();
+	void loadBridgeActors();
+	void cleanupBridge();
+	void runBridge();
+	void setBridgeMouseCursor();
+	void playBridgeSequence(int sequenceId);
+	void handleBridgeEvents();
+	void handleBridgeComputer();
+	void showMissionPerformance(int score, int missionScoreTextId, int missionId);
 
+	int _bridgeSequenceToLoad;
+
+private:
+	Common::String getSpeechSampleForNumber(int number);
+	void showTextboxBridge(int talker, int textId);
+	void showTextboxBridge(int talker, Common::String text);
+	void showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId, bool removeTalker = true);
+	void showBridgeScreenTalkerWithMessages(Common::String texts[], Common::String talkerHeader, Common::String talkerId, bool removeTalker = true);
+	void showMissionStartEnterpriseFlyby(Common::String sequence, Common::String name);
+	void startBattle(Common::String enemyShip);
+	void wrongDestinationRandomEncounter();
+	void bridgeCrewAction(int crewId);
+	void contactTargetAction();
+	void orbitPlanetSequence(int sequenceId);
+	void negotiateWithElasiCereth();
+	void hailTheMasada();
+
+	int16 _targetPlanet;
+	int16 _currentPlanet;
+	int _currentScreenTalker;
+	bool _gameIsPaused;
+	bool _hailedTarget;
+	int _deadMasadaPrisoners;
+	bool _beamDownAllowed;
+	int _missionEndFlag;
+	int16 _randomEncounterType;	// 1: Klingon, 2: Romulan, 3: Elasi
+	int16 _lastMissionId;
+	int16 _missionPoints[7];
+
+public:
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
 
@@ -263,7 +321,7 @@ public:
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	Fixed8 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
-	void addAction(byte type, byte b1, byte b2, byte b3);
+	void addAction(int8 type, byte b1, byte b2, byte b3);
 	void handleAwayMissionAction();
 
 	void checkTouchedLoadingZone(int16 x, int16 y);
@@ -341,7 +399,7 @@ public:
 	void renderBan(byte *screenPixels, byte *bgPixels, int banFileIndex);
 	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
-	void actorFunc1();
+	void removeDrawnActorsFromScreen();
 	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed8 scale, bool addSprite);
 	void releaseAnim(Actor *actor);
 	void initStandAnim(int actorIndex);
@@ -444,26 +502,26 @@ public:
 	 */
 	void drawTextLineToBitmap(const char *text, int textLen, int x, int y, Bitmap *bitmap);
 
-	String centerTextboxHeader(String headerText);
-	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
+	Common::String centerTextboxHeader(Common::String headerText);
+	void getTextboxHeader(Common::String *headerTextOutput, Common::String speakerText, int choiceIndex);
 	/**
 	 * Text getter for showText which reads from an rdf file.
 	 * Not really used, since it would require hardcoding text locations in RDF files.
 	 * "readTextFromArrayWithChoices" replaces this.
 	 */
-	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromRdf(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 
 	/**
 	 * Shows text with the given header and main text.
 	 */
-	void showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
+	void showTextbox(Common::String headerText, const Common::String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
 
-	String skipTextAudioPrompt(const String &str);
+	Common::String skipTextAudioPrompt(const Common::String &str);
 	/**
 	 * Plays an audio prompt, if it exists, and returns the string starting at the end of the
 	 * prompt.
 	 */
-	String playTextAudio(const String &str);
+	Common::String playTextAudio(const Common::String &str);
 
 	/**
 	 * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
@@ -474,8 +532,8 @@ public:
 	/**
 	 * Returns the number of lines this string will take up in a textbox.
 	 */
-	int getNumTextboxLines(const String &str);
-	String putTextIntoLines(const String &text);
+	int getNumTextboxLines(const Common::String &str);
+	Common::String putTextIntoLines(const Common::String &text);
 
 	/**
 	 * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
@@ -484,22 +542,24 @@ public:
 	/**
 	 * Draws the "main" text (everything but the header at the top) to a TextBitmap.
 	 */
-	void drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
+	void drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const Common::String &text, bool withHeader);
 
-	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numLines);
+	Common::String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numLines);
 
 	/**
 	 * Text getter for showText which reads choices from an array of pointers.
 	 * Last element in the array must be an empty string.
 	 */
-	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromArray(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 	/**
 	 * Similar to above, but shows the choice index when multiple choices are present.
 	 * Effectively replaces the "readTextFromRdf" function.
 	 */
-	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, Common::String *headerTextOutput);
+	Common::String readTextFromFoundComputerTopics(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 
 	Common::String showCodeInputBox();
+	Common::String showComputerInputBox();
 	void redrawTextInput();
 	void addCharToTextInputBuffer(char c);
 	/**
@@ -536,6 +596,12 @@ public:
 	 */
 	void drawMenuButtonOutline(Bitmap *bitmap, byte color);
 	void showOptionsMenu(int x, int y);
+	void showBridgeMenu(Common::String menu, int x, int y);
+	void handleBridgeMenu(int menuEvent);
+	void showStarMap();
+	void orbitPlanet();
+	void captainsLog();
+
 	/**
 	 * Show the "action selection" menu, ie. look, talk, etc.
 	 */
@@ -727,11 +793,21 @@ public:
 	IWFile *_iwFile;
 	Resource *_resource;
 
+	EnterpriseState _enterpriseState;
+
 private:
+	int leftClickEvent();
+	int rightClickEvent();
+	int mouseMoveEvent();
+	int lookupNextAction(const int *lookupArray, int action);
+	void loadBridgeComputerTopics();
+	void bridgeLeftClick();
+
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
 	Common::CosineTable _cosineTable;
 	Room *_room;
+	Common::List<ComputerTopic> _computerTopics;
 };
 
 // Static function

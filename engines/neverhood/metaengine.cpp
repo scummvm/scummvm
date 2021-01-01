@@ -24,7 +24,6 @@
 
 #include "engines/advancedDetector.h"
 #include "common/file.h"
-#include "common/translation.h"
 
 #include "neverhood/neverhood.h"
 #include "neverhood/detection.h"
@@ -64,7 +63,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -91,11 +90,9 @@ bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Neverhood::NeverhoodEngine(syst, desc);
-	}
-	return desc != 0;
+Common::Error NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Neverhood::NeverhoodEngine(syst, desc);
+	return Common::kNoError;
 }
 
 SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {

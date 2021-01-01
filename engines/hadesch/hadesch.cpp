@@ -85,6 +85,8 @@ HadeschEngine::HadeschEngine(OSystem *system, const ADGameDescription *desc)
 	_isQuitting = false;
 	_isRestoring = false;
 
+	_subtitleID = 0;
+
 	debug("HadeschEngine::ctor");
 }
 
@@ -99,6 +101,10 @@ HadeschEngine::~HadeschEngine() {
 		delete _macCursors[i];
 		_macCursors[i] = nullptr;
 	}
+
+#ifdef USE_TRANSLATION
+	delete _transMan;
+#endif
 }
 
 void HadeschEngine::setVideoRoom(Common::SharedPtr<VideoRoom> room,
@@ -459,8 +465,21 @@ void HadeschEngine::exitOptions() {
 	_sceneVideoRoom->unpause();
 }
 
+Common::U32String HadeschEngine::translate(const Common::String &str) {
+#ifdef USE_TRANSLATION
+	return _transMan->getTranslation(str);
+#else
+	return str.decode();
+#endif
+}
+
 Common::Error HadeschEngine::run() {
 	debug("HadeschEngine::run");
+
+#ifdef USE_TRANSLATION
+	_transMan = new Common::TranslationManager("hadesch_translations.dat");
+	_transMan->setLanguage(TransMan.getCurrentLanguage());
+#endif
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN9x");
@@ -515,6 +534,22 @@ Common::Error HadeschEngine::run() {
 	_heroBelt = Common::SharedPtr<HeroBelt>(new HeroBelt());
 	_gfxContext = Common::SharedPtr<GfxContext8Bit>(new GfxContext8Bit(2 * kVideoWidth + 10, kVideoHeight + 50));
 	_isInOptions = false;
+
+	ConfMan.registerDefault("subtitles", "false");
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+	ConfMan.registerDefault("mute", "false");
+	ConfMan.registerDefault("speech_mute", "false");
+	ConfMan.registerDefault("talkspeed", 60);
+	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
+
+	if (!ConfMan.getBool("subtitles"))
+		_subtitleDelayPerChar = -1;
+	else
+		_subtitleDelayPerChar = 4500 / ConfMan.getInt("talkspeed");
 
 	debug("HadeschEngine: moving to main loop");
 	_nextRoom.clear();
@@ -855,6 +890,10 @@ void HadeschEngine::moveToRoomReal(RoomId id) {
 	_persistent._roomVisited[id] = true;
 }
 
+int HadeschEngine::genSubtitleID() {
+	return _subtitleID++;
+}
+
 int HadeschEngine::firstAvailableSlot() {
 	for (unsigned slot = 3; ; slot++) {
 		SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(_targetName.c_str(), slot);
@@ -924,6 +963,10 @@ void EventHandlerWrapper::operator()() const {
 
 bool EventHandlerWrapper::operator==(int b) const {
 	return _eventId == b;
+}
+
+uint32 HadeschEngine::getSubtitleDelayPerChar() const {
+	return _subtitleDelayPerChar;
 }
 
 } // End of namespace Hadesch

@@ -25,10 +25,11 @@
 namespace BladeRunner {
 
 AIScriptBulletBob::AIScriptBulletBob(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
 	_var2 = 6;
 	_var3 = 1;
-	_var4 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 }
 
 void AIScriptBulletBob::Initialize() {
@@ -37,10 +38,10 @@ void AIScriptBulletBob::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
+	_varChooseIdleAnimation = 0;
 	_var2 = 6;
 	_var3 = 1;
-	_var4 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 
 	Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
 	Actor_Set_Targetable(kActorBulletBob, true);
@@ -205,63 +206,74 @@ bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var1 == 1) {
-			*animation = 516;
-			if (_var4) {
-				--_var4;
+		if (_varChooseIdleAnimation == 1) {
+#if BLADERUNNER_ORIGINAL_BUGS
+			// TODO a bug? Why use kModelAnimationBulletBobSittingHeadMoveDownThink (516) here 
+			//             and leave kModelAnimationBulletBobSittingHeadMoveAround (515) unused?
+			//             Also below kModelAnimationBulletBobSittingHeadMoveAround (515) is used 
+			//             in Slice_Animation_Query_Number_Of_Frames(),
+			//             even though the count of frames is identical in both 515 and 516 framesets
+			*animation = kModelAnimationBulletBobSittingHeadMoveDownThink;
+#else
+			*animation = kModelAnimationBulletBobSittingHeadMoveAround;
+#endif
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				if (++_animationFrame == 6) {
-					_var4 = Random_Query(4, 8);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 8);
 				}
 				if (_animationFrame == 11) {
-					_var4 = Random_Query(2, 6);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(2, 6);
 				}
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(515)) {
+				// frames in frameset kModelAnimationBulletBobSittingHeadMoveAround    (515): 16
+				// frames in frameset kModelAnimationBulletBobSittingHeadMoveDownThink (kModelAnimationBulletBobSittingHeadMoveDownThink): 16
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingHeadMoveAround)) {
 					_animationFrame = 0;
-					_var1 = 0;
+					_varChooseIdleAnimation = 0;
 					_var3 = 2 * Random_Query(0, 1) - 1;
 					_var2 = Random_Query(3, 7);
-					_var4 = Random_Query(0, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 4);
 				}
 			}
-		} else if (_var1 == 0) {
-			*animation = 514;
-			if (_var4) {
-				--_var4;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationBulletBobSittingIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += _var3;
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(514) - 1;
-				} else if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(514)) {
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingIdle) - 1;
+				} else if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingIdle)) {
 					_animationFrame = 0;
 				}
 				if (!--_var2) {
 					_var3 = 2 * Random_Query(0, 1) - 1;
 					_var2 = Random_Query(3, 7);
-					_var4 = Random_Query(0, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 4);
 				}
-				if (!_animationFrame) {
-					_var1 = Random_Query(0, 1);
+				if (_animationFrame == 0) {
+					_varChooseIdleAnimation = Random_Query(0, 1);
 				}
 			}
 		}
 		break;
 
 	case 1:
-		*animation = 506;
+		*animation = kModelAnimationBulletBobSittingCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(506)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 513;
+		*animation = kModelAnimationBulletBobSittingCombatFiresGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(513)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatFiresGun)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 506;
+			*animation = kModelAnimationBulletBobSittingCombatIdle;
 		}
 		if (_animationFrame == 10) {
 			Sound_Play(kSfxSHOTCOK1, 75, 0, 0, 50);
@@ -273,10 +285,10 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		*animation = 510;
+		*animation = kModelAnimationBulletBobSittingCombatShotDead;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(510) - 1) {
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatShotDead) - 1) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatShotDead) - 1;
 			_animationState = 16;
 			Game_Flag_Set(kFlagRC04McCoyShotBob);
 		}
@@ -286,109 +298,109 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
-		*animation = 525;
+		*animation = kModelAnimationBulletBobSittingThumbsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(525)) {
-			*animation = 514;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingThumbsUp)) {
+			*animation = kModelAnimationBulletBobSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 6:
-		*animation = 517;
+		*animation = kModelAnimationBulletBobSittingCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(517)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCalmTalk)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 7:
-		*animation = 518;
+		*animation = kModelAnimationBulletBobSittingDismissiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(518)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingDismissiveTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 519;
+		*animation = kModelAnimationBulletBobSittingSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(519)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingSuggestTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 9:
-		*animation = 520;
+		*animation = kModelAnimationBulletBobSittingQuickSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(520)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingQuickSuggestTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 10:
-		*animation = 521;
+		*animation = kModelAnimationBulletBobSittingExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(521)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 11:
-		*animation = 522;
+		*animation = kModelAnimationBulletBobSittingGossipTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(522)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingGossipTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 12:
-		*animation = 523;
+		*animation = kModelAnimationBulletBobSittingHeadNodLeftTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(523)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingHeadNodLeftTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 13:
-		*animation = 524;
+		*animation = kModelAnimationBulletBobSittingPersistentTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(524)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingPersistentTalk)) {
 			_animationFrame = 0;
 			_animationState = 6;
-			*animation = 517;
+			*animation = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case 14:
-		*animation = 512;
+		*animation = kModelAnimationBulletBobSittingCombatRetrievesGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(512)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatRetrievesGun)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 506;
+			*animation = kModelAnimationBulletBobSittingCombatIdle;
 		}
 		break;
 
 	case 15:
-		if (_var1 == 1) {
-			*animation = 516;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(516)) {
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationBulletBobSittingHeadMoveDownThink;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingHeadMoveDownThink)) {
 				_animationFrame += 2;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(516)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingHeadMoveDownThink)) {
 					_animationFrame = 0;
 					*animation = _animationNext;
 					_animationState = _animationStateNext;
@@ -401,11 +413,11 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 					_animationState = _animationStateNext;
 				}
 			}
-		} else if (_var1 == 0) {
-			*animation = 514;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(514)) {
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationBulletBobSittingIdle;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingIdle)) {
 				_animationFrame += 2;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(514)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingIdle)) {
 					_animationFrame = 0;
 					*animation = _animationNext;
 					_animationState = _animationStateNext;
@@ -422,8 +434,8 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 16:
-		*animation = 510;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
+		*animation = kModelAnimationBulletBobSittingCombatShotDead;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatShotDead) - 1;
 		break;
 
 	default:
@@ -438,23 +450,26 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState > 4 || _animationState) {
+			// TODO "|| _animationState" part of the clause does not make sense (makes the first part redundant). A bug?
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		break;
 
 	case kAnimationModeTalk:
+		// fall through
 	case 9:
+		// fall through
 	case 30:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 6;
-			_animationNext = 517;
+			_animationNext = kModelAnimationBulletBobSittingCalmTalk;
 		}
 		break;
 
 	case kAnimationModeCombatIdle:
-		if (_animationState <= 4 && !_animationState) {
+		if (_animationState <= 4 && _animationState == 0) {
 			_animationState = 14;
 			_animationFrame = 0;
 		}
@@ -466,24 +481,27 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 31:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 7;
-			_animationNext = 518;
+			_animationNext = kModelAnimationBulletBobSittingDismissiveTalk;
 		}
 		break;
 
 	case 11:
+		// fall through
 	case 33:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 9;
-			_animationNext = 520;
+			_animationNext = kModelAnimationBulletBobSittingQuickSuggestTalk;
 		}
 		break;
 
 	case kAnimationModeHit:
+		// fall through
 	case kAnimationModeCombatHit:
 		_animationState = 3;
 		_animationFrame = 0;
@@ -498,7 +516,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 8;
-			_animationNext = 519;
+			_animationNext = kModelAnimationBulletBobSittingSuggestTalk;
 		}
 		break;
 
@@ -506,7 +524,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 10;
-			_animationNext = 521;
+			_animationNext = kModelAnimationBulletBobSittingExplainTalk;
 		}
 		break;
 
@@ -514,7 +532,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 11;
-			_animationNext = 522;
+			_animationNext = kModelAnimationBulletBobSittingGossipTalk;
 		}
 		break;
 
@@ -522,7 +540,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 12;
-			_animationNext = 523;
+			_animationNext = kModelAnimationBulletBobSittingHeadNodLeftTalk;
 		}
 		break;
 
@@ -530,7 +548,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
 			_animationStateNext = 13;
-			_animationNext = 524;
+			_animationNext = kModelAnimationBulletBobSittingPersistentTalk;
 		}
 		break;
 
@@ -541,7 +559,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 
 	case 88:
 		_animationState = 16;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobSittingCombatShotDead) - 1;
 		break;
 
 	default:

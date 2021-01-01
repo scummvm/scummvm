@@ -41,15 +41,16 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 
 // TODO: more accurate resampling
 
-void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
-					unsigned char *src, int xsize_src, int ysize_src) {
-	unsigned char *pix, *pix_src;
-	int point1_offset = 0, point2_offset = 0, point3_offset = 0;
+void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+		    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src) {
+	int point1_offset, point2_offset, point3_offset, dest_offset = 0;
+	int point_y_offset, point_offset;
 	float x1, y1, x1inc, y1inc;
-	int xi, yi, xf, yf;
-
-	pix = dest;
-	pix_src = src;
+	int xi, yi, xf, yf, curr_yf;
+	bool space_below, space_right;
+	uint8 r00, g00, b00, a00;
+	uint8 r01, g01, b01, a01;
+	uint8 r10, g10, b10, a10;
 
 	x1inc = (float)(xsize_src - 1) / (float)(xsize_dest - 1);
 	y1inc = (float)(ysize_src - 1) / (float)(ysize_dest - 1);
@@ -57,55 +58,49 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 	y1 = 0;
 	for (int y = 0; y < ysize_dest; y++) {
 		x1 = 0;
+		yi = (int)floorf(y1);
+		yf = (int)((y1 - yi) * INTERP_NORM);
+		point_y_offset = yi * xsize_src;
+		space_below = (yi + 1) < ysize_src;
 		for (int x = 0; x < xsize_dest; x++) {
-			xi = (int)x1;
-			yi = (int)y1;
-			xf = (int)((x1 - floor(x1)) * INTERP_NORM);
-			yf = (int)((y1 - floor(y1)) * INTERP_NORM);
-
+			xi = (int)floorf(x1);
+			xf = (int)((x1 - xi) * INTERP_NORM);
+			point1_offset = point_offset = point_y_offset + xi;
+			space_right = (xi + 1) < xsize_src;
 			if ((xf + yf) <= INTERP_NORM) {
-				for (int j = 0; j < 3; j++) {
-					point1_offset = (yi * xsize_src + xi) * 4 + j;
-					if ((xi + 1) < xsize_src)
-						point2_offset = (yi * xsize_src + xi + 1) * 4 + j;
-					else
-						point2_offset = point1_offset;
-					if ((yi + 1) < ysize_src)
-						point3_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
-					else
-						point3_offset = point1_offset;
-					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
-				}
-				pix[3] = pix_src[(yi * xsize_src + xi) * 4 + 3];
+				curr_yf = yf;
+				if (space_right)
+					point2_offset = point_offset + 1;
+				else
+					point2_offset = point_offset;
+				if (space_below)
+					point3_offset = point_offset + xsize_src;
+				else
+					point3_offset = point_offset;
 			} else {
 				xf = INTERP_NORM - xf;
-				yf = INTERP_NORM - yf;
-				for (int j = 0; j < 3; j++) {
-					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
-					if ((xi + 1) < xsize_src) {
-						if ((yi + 1) < ysize_src)
-							point1_offset = ((yi + 1) * xsize_src + xi + 1) * 4 + j;
-						else
-							point1_offset = (yi * xsize_src + xi + 1) * 4 + j;
-					} else {
-						if ((yi + 1) < ysize_src)
-							point1_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
-						else
-							point1_offset = (yi * xsize_src + xi) * 4 + j;
-					}
-					if ((yi + 1) < ysize_src)
-						point2_offset = ((yi + 1) * xsize_src + xi) * 4 + j;
-					else
-						point2_offset = (yi * xsize_src + xi) * 4 + j;
-					if ((xi + 1) < xsize_src)
-						point3_offset = (yi * xsize_src + xi + 1) * 4 + j;
-					else
-						point3_offset = (yi * xsize_src + xi) * 4 + j;
-					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
-				}
-				pix[3] = pix_src[(yi * xsize_src + xi) * 4 + 3];
+				curr_yf = INTERP_NORM - yf;
+				if (space_right) {
+					point1_offset += 1;
+					point3_offset = point_offset + 1;
+				} else
+					point3_offset = point_offset;
+				if (space_below) {
+					point1_offset += xsize_src;
+					point2_offset = point_offset + xsize_src;
+				} else
+					point2_offset = point_offset;
 			}
-			pix += 4;
+			src.getARGBAt(point1_offset, r00, g00, b00, a00);
+			src.getARGBAt(point2_offset, r01, g01, b01, a01);
+			src.getARGBAt(point3_offset, r10, g10, b10, a10);
+			dest.setPixelAt(
+				dest_offset++,
+				interpolate(r00, r01, r10, xf, curr_yf),
+				interpolate(g00, g01, g10, xf, curr_yf),
+				interpolate(b00, b01, b10, xf, curr_yf),
+				interpolate(a00, a01, a10, xf, curr_yf)
+			);
 			x1 += x1inc;
 		}
 		y1 += y1inc;
@@ -115,32 +110,23 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 #define FRAC_BITS 16
 
 // resizing with no interlating nor nearest pixel
-void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
-								 unsigned char *src, int xsize_src, int ysize_src) {
-	unsigned char *pix, *pix_src, *pix1;
+void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+				 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src) {
+	int dest_offset = 0;
 	int x1, y1, x1inc, y1inc;
-	int xi, yi;
-
-	pix = dest;
-	pix_src = src;
+	int yi;
+	uint8 r, g, b, a;
 
 	x1inc = (int)((float)((xsize_src) << FRAC_BITS) / (float)(xsize_dest));
 	y1inc = (int)((float)((ysize_src) << FRAC_BITS) / (float)(ysize_dest));
 
 	y1 = 0;
 	for (int y = 0; y < ysize_dest; y++) {
+		yi = (y1 >> FRAC_BITS) * xsize_src;
 		x1 = 0;
 		for (int x = 0; x < xsize_dest; x++) {
-			xi = x1 >> FRAC_BITS;
-			yi = y1 >> FRAC_BITS;
-			pix1 = pix_src + (yi * xsize_src + xi) * 4;
-
-			pix[0] = pix1[0];
-			pix[1] = pix1[1];
-			pix[2] = pix1[2];
-			pix[3] = pix1[3];
-
-			pix += 4;
+			src.getARGBAt(yi + (x1 >> FRAC_BITS), r, g, b, a);
+			dest.setPixelAt(dest_offset++, r, g, b, a);
 			x1 += x1inc;
 		}
 		y1 += y1inc;

@@ -20,8 +20,9 @@
  *
  */
 
-#include "startrek/console.h"
+#include "common/file.h"
 #include "gui/debugger.h"
+#include "startrek/console.h"
 #include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -32,6 +33,11 @@ Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("actions",		WRAP_METHOD(Console, Cmd_Actions));
 	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("bg",			WRAP_METHOD(Console, Cmd_Bg));
+	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("filesearch",	WRAP_METHOD(Console, Cmd_SearchFile));
+	registerCmd("score",		WRAP_METHOD(Console, Cmd_Score));
+	registerCmd("bridgeseq",    WRAP_METHOD(Console, Cmd_BridgeSequence));
 }
 
 Console::~Console() {
@@ -108,6 +114,102 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::Cmd_Bg(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <background image name>\n", argv[0]);
+		return true;
+	}
+
+	_vm->_gfx->setBackgroundImage(argv[1]);
+	_vm->_gfx->copyBackgroundScreen();
+	_vm->_system->updateScreen();
+
+	return false;
+}
+
+void Console::dumpFile(Common::String fileName) {
+	debugPrintf("Dumping %s...\n", fileName.c_str());
+
+	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(fileName, 0, false);
+	if (!stream) {
+		debugPrintf("File not found\n");
+		return;
+	}
+
+	uint32 size = stream->size();
+	byte *data = new byte[size];
+	stream->read(data, size);
+	delete stream;
+
+	Common::DumpFile out;
+	out.open(fileName);
+	out.write(data, size);
+	out.flush();
+	out.close();
+	delete[] data;
+}
+
+bool Console::Cmd_DumpFile(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	Common::String fileName = argv[1];
+
+	if (fileName != "*") {
+		dumpFile(fileName);
+	} else {
+		for (Common::List<ResourceIndex>::const_iterator i = _vm->_resource->_resources.begin(), end = _vm->_resource->_resources.end(); i != end; ++i) {
+			if (i->fileName == "S5ROOM3.BMP" || i->fileName == "Z_LIST.TXT")
+				continue;
+			dumpFile(i->fileName);
+		}
+	}
+
+	return true;
+}
+
+bool Console::Cmd_SearchFile(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	filename.toUppercase();
+
+	Common::List<ResourceIndex> records = _vm->_resource->searchIndex(filename);
+	debugPrintf("Found:\n");
+	for (Common::List<ResourceIndex>::const_iterator i = records.begin(), end = records.end(); i != end; ++i) {
+		debugPrintf("%s, offset: %d\n", i->fileName.c_str(), i->indexOffset);
+	}
+
+	return true;
+}
+
+bool Console::Cmd_Score(int argc, const char **argv) {
+	debugPrintf("Chapter 1: Demon world (demon): %d\n", _vm->_awayMission.demon.missionScore);
+	debugPrintf("Chapter 2: Hijacked (tug): %d\n", _vm->_awayMission.tug.missionScore);
+	debugPrintf("Chapter 3: Love's Labor Jeopardized (love): %d\n", _vm->_awayMission.love.missionScore);
+	debugPrintf("Chapter 4: Another Fine Mess (mudd): %d\n", _vm->_awayMission.mudd.missionScore);
+	debugPrintf("Chapter 5A: The Feathered Serpent (feather): %d\n", _vm->_awayMission.feather.missionScore);
+	debugPrintf("Chapter 5B: The Feathered Serpent (trial): %d\n", _vm->_awayMission.trial.missionScore);
+	debugPrintf("Chapter 6: The Old Devil Moon (sins): %d\n", _vm->_awayMission.sins.missionScore);
+	debugPrintf("Chapter 7: Vengeance (veng): %d\n", _vm->_awayMission.veng.missionScore);
+	return true;
+}
+
+bool Console::Cmd_BridgeSequence(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <sequence ID> to start a bridge sequence\n", argv[0]);
+		return true;
+	} else {
+		_vm->_bridgeSequenceToLoad = atoi(argv[1]);
+		return false;
+	}
 }
 
 Common::String Console::EventToString(uint32 action) {

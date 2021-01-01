@@ -32,10 +32,11 @@ enum kRunciterStates {
 };
 
 AIScriptRunciter::AIScriptRunciter(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45CD78 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
 	var_45CD7C = 0;
 	var_45CD80 = 0;
-	var_45CD84 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	var_45CD88 = 0;
 }
 
@@ -43,10 +44,10 @@ void AIScriptRunciter::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
 	_animationStateNext = 0;
-	var_45CD78 = 0;
+	_varChooseIdleAnimation = 0;
 	var_45CD7C = 6;
 	var_45CD80 = 1;
-	var_45CD84 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	var_45CD88 = 0;
 	Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDefault);
 }
@@ -74,13 +75,17 @@ void AIScriptRunciter::CompletedMovementTrack() {
 		if (Player_Query_Current_Scene() == kSceneRC02) {
 			switch (Random_Query(1, 5)) {
 			case 2:
+				// fall through
 			case 3:
 				ADQ_Add(kActorRunciter, 530, -1);
 				break;
+
 			case 1:
+				// fall through
 			case 5:
 				ADQ_Add(kActorRunciter, 80, -1);
 				break;
+
 			case 4:
 				ADQ_Add(kActorRunciter, 930, -1);
 				break;
@@ -112,12 +117,19 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 		Actor_Says(kActorRunciter, 420, 12);
 		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
+		// TODO revisit setting kActorMcCoy to Combat Aim via Actor_Change_Animation_Mode()
+		//      (see notes in Gordo AI script in his CompletedMovementTrack())
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
 		if (Actor_Clue_Query(kActorMcCoy, kClueZubensMotive)) {
 			Actor_Says(kActorMcCoy, 4770, -1);
 			Actor_Says(kActorRunciter, 590, 13);
 			Actor_Says(kActorMcCoy, 4775, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 600, 17);
+#else
+			// Runciter is interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 600, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4780, -1);
 			Actor_Says(kActorRunciter, 610, 18);
@@ -131,19 +143,34 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 				Actor_Says(kActorRunciter, 660, 19);
 				Actor_Clue_Acquire(kActorMcCoy, kClueRuncitersConfession1, true, kActorRunciter);
 			} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorRunciter, 670, 18);
+#else
+				// Runciter is interrupted here
+				Actor_Says_With_Pause(kActorRunciter, 670, 0.0f, 18);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorMcCoy, 4795, -1);
 				Actor_Says(kActorRunciter, 730, 17);
 			}
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 			Actor_Says(kActorMcCoy, 4730, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 480, 17);
+#else
+			// Runciter is kind of interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 480, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4735, -1);
 			Actor_Says(kActorRunciter, 490, 16);
 			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4740, -1);
 			Actor_Says(kActorRunciter, 500, 18);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 510, 19);
+#else
+			// Runciter is kind of interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 510, 0.0f, 19);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4745, -1);
 			Actor_Says(kActorMcCoy, 4750, -1);
 			Actor_Says(kActorRunciter, 520, 17);
@@ -224,56 +251,56 @@ bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case kRunciterStateIdle:
-		if (var_45CD78 == 0) {
-			*animation = 529;
-			if (var_45CD84) {
-				--var_45CD84;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationRunciterIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += var_45CD80;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(529)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterIdle)) {
 					_animationFrame = 0;
 				}
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(529) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterIdle) - 1;
 				}
 				--var_45CD7C;
 				if (var_45CD7C == 0) {
 					var_45CD80 = 2 * Random_Query(0, 1) - 1;
 					var_45CD7C = Random_Query(6, 14);
-					var_45CD84 = Random_Query(0, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 4);
 				}
 				if (_animationFrame == 0) {
 					if (Random_Query(0, 1) == 1) {
-						var_45CD78 = Random_Query(1, 2);
+						_varChooseIdleAnimation = Random_Query(1, 2);
 						var_45CD80 = 1;
-						var_45CD84 = 0;
+						_varNumOfTimesToHoldCurrentFrame = 0;
 					}
 				}
 			}
-		} else if (var_45CD78 == 1) {
-			*animation = 530;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationRunciterScratchesWoundIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(530)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterScratchesWoundIdle)) {
 				_animationFrame = 0;
-				var_45CD78 = 0;
-				*animation = 529;
+				_varChooseIdleAnimation = 0;
+				*animation = kModelAnimationRunciterIdle;
 				var_45CD7C = Random_Query(6, 14);
 				var_45CD80 = 2 * Random_Query(0, 1) - 1;
 			}
-		} else if (var_45CD78 == 2) {
-			*animation = 531;
-			if (var_45CD84) {
-				--var_45CD84;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationRunciterPicksNose;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += var_45CD80;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
-					var_45CD84 = Random_Query(5, 15);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 15);
 					var_45CD80 = -1;
 				}
 				if (_animationFrame <= 0) {
 					_animationFrame = 0;
-					var_45CD78 = 0;
-					*animation = 529;
+					_varChooseIdleAnimation = 0;
+					*animation = kModelAnimationRunciterIdle;
 					var_45CD7C = Random_Query(6, 14);
 					var_45CD80 = 2 * Random_Query(0, 1) - 1;
 				}
@@ -283,23 +310,23 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kRunciterStateWalking:
-		*animation = 526;
+		*animation = kModelAnimationRunciterWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(526)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterWalking)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		break;
 
 	case 2:
-		*animation = 533;
+		*animation = kModelAnimationRunciterCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(533)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterCalmTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
 				_animationState = 4;
 			}
@@ -308,16 +335,16 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 4:
-		*animation = 534;
+		*animation = kModelAnimationRunciterSuggestOnTipToesTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(534)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterSuggestOnTipToesTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -325,16 +352,16 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
-		*animation = 535;
+		*animation = kModelAnimationRunciterExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(535)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterExplainTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -342,16 +369,16 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 6:
-		*animation = 536;
+		*animation = kModelAnimationRunciterAngryTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(536)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterAngryTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -359,16 +386,16 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 7:
-		*animation = 537;
+		*animation = kModelAnimationRunciterQuestionTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(537)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterQuestionTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -376,16 +403,16 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 8:
-		*animation = 538;
+		*animation = kModelAnimationRunciterOffensiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(538)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterOffensiveTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -393,32 +420,33 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 9:
-		*animation = 539;
+		*animation = kModelAnimationRunciterComplainCryTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(539)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterComplainCryTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
 		*frame = _animationFrame;
 		break;
+
 	case 10:
-		*animation = 540;
+		*animation = kModelAnimationRunciterDespairTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(540)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterDespairTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -426,15 +454,15 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 11:
-		*animation = 541;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(541)) {
+		*animation = kModelAnimationRunciterCannotBelieveTalk;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterCannotBelieveTalk)) {
 			_animationFrame = 0;
-			if (var_45CD88) {
-				*animation = 529;
+			if (var_45CD88 > 0) {
+				*animation = kModelAnimationRunciterIdle;
 				_animationState = 0;
-				var_45CD78 = 0;
+				_varChooseIdleAnimation = 0;
 			} else {
-				*animation = 533;
+				*animation = kModelAnimationRunciterCalmTalk;
 				_animationState = 2;
 			}
 		}
@@ -442,33 +470,33 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 12:
-		*animation = 532;
+		*animation = kModelAnimationRunciterGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(532)) {
-			*animation = 529;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterGestureGive)) {
+			*animation = kModelAnimationRunciterIdle;
 			_animationState = 0;
 			_animationFrame = 0;
-			var_45CD78 = 0;
+			_varChooseIdleAnimation = 0;
 			Actor_Change_Animation_Mode(kActorRunciter, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		break;
 
 	case 13:
-		if (var_45CD78 == 0) {
+		if (_varChooseIdleAnimation == 0) {
 			_animationFrame = 0;
 			_animationState = _animationStateNext;
 			*animation = _animationNext;
-		} else if (var_45CD78 == 1) {
-			*animation = 530;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationRunciterScratchesWoundIdle;
 			_animationFrame += 3;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(530)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterScratchesWoundIdle)) {
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 				*animation = _animationNext;
 			}
-		} else if (var_45CD78 == 2) {
-			*animation = 531;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationRunciterPicksNose;
 			_animationFrame -= 3;
 			if (_animationFrame - 3 < 0) {
 				_animationFrame = 0;
@@ -480,23 +508,24 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kRunciterStateDying:
-		*animation = 528;
+		*animation = kModelAnimationRunciterShotDead;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(528) - 1) {
-			*animation = 528;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterShotDead) - 1) {
+			*animation = kModelAnimationRunciterShotDead;
 			_animationState = kRunciterStateDead;
 		}
 		*frame = _animationFrame;
 		break;
 
 	case kRunciterStateDead:
-		*animation = 528;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(528) - 1;
+		*animation = kModelAnimationRunciterShotDead;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRunciterShotDead) - 1;
 		*frame = _animationFrame;
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		_animationFrame = 0;
 		*frame = _animationFrame;
 		break;
@@ -507,14 +536,12 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (_animationState >= 2
-		 && _animationState <= 11
-		) {
+		if (_animationState >= 2 && _animationState <= 11) {
 			var_45CD88 = 1;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
-			var_45CD78 = 0;
+			_varChooseIdleAnimation = 0;
 		}
 		break;
 
@@ -525,7 +552,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else if (_animationState == 0) {
 			_animationState = 13;
 			_animationStateNext = 1;
-			_animationNext = 526;
+			_animationNext = kModelAnimationRunciterWalking;
 		}
 		break;
 
@@ -536,7 +563,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 2;
-			_animationNext = 526;
+			_animationNext = kModelAnimationRunciterWalking;
 		}
 		var_45CD88 = 0;
 		break;
@@ -548,7 +575,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 4;
-			_animationNext = 534;
+			_animationNext = kModelAnimationRunciterSuggestOnTipToesTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -560,7 +587,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 5;
-			_animationNext = 535;
+			_animationNext = kModelAnimationRunciterExplainTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -572,7 +599,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 6;
-			_animationNext = 536;
+			_animationNext = kModelAnimationRunciterAngryTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -584,7 +611,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 7;
-			_animationNext = 537;
+			_animationNext = kModelAnimationRunciterQuestionTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -596,7 +623,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 8;
-			_animationNext = 538;
+			_animationNext = kModelAnimationRunciterOffensiveTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -608,7 +635,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 9;
-			_animationNext = 539;
+			_animationNext = kModelAnimationRunciterComplainCryTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -620,7 +647,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 10;
-			_animationNext = 540;
+			_animationNext = kModelAnimationRunciterDespairTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -632,7 +659,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 13;
 			_animationStateNext = 11;
-			_animationNext = 541;
+			_animationNext = kModelAnimationRunciterCannotBelieveTalk;
 		}
 		var_45CD88 = 0;
 		break;
@@ -669,15 +696,19 @@ bool AIScriptRunciter::ReachedMovementTrackWaypoint(int waypointId) {
 	case 89:
 		Actor_Face_Heading(kActorRunciter, 567, true);
 		break;
+
 	case 90:
 		Actor_Face_Heading(kActorRunciter, 170, true);
 		break;
+
 	case 91:
 		Actor_Face_Heading(kActorRunciter, 120, true);
 		break;
+
 	case 92:
 		Actor_Face_Heading(kActorRunciter, 664, true);
 		break;
+
 	case 93:
 		Actor_Face_Heading(kActorRunciter, 1002, true);
 		break;

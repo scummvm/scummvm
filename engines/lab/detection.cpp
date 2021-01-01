@@ -40,11 +40,8 @@ static const ADGameDescription labDescriptions[] = {
 	{
 		"lab",
 		"",
-		{
-			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
-			{ NULL, 0, NULL, 0 }
-		},
+		AD_ENTRY2s("doors",		 "d77536010e7e5ae17ee066323ceb9585", 2537,		// game/doors
+				   "noteold.fon", "6c1d90ad55149556e79d3f7bfddb4bd7", 9252),	// game/spict/noteold.fon
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -53,11 +50,8 @@ static const ADGameDescription labDescriptions[] = {
 	{
 		"lab",
 		"Lowres",
-		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 }, // game/pict/h2/64b
-			{ NULL, 0, NULL, 0 }
-		},
+		AD_ENTRY2s("doors",		"d77536010e7e5ae17ee066323ceb9585", 2537,		// game/doors
+				   "64b",		"3a84d41bcc6a782f22e8e954bce09721", 39916),		// game/pict/h2/64b
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		Lab::GF_LOWRES | ADGF_NO_FLAGS,

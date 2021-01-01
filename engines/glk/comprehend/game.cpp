@@ -116,7 +116,8 @@ void Sentence::format() {
 
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
-		_nounState(NOUNSTATE_INITIAL), _inputLineIndex(0) {
+		_functionNum(0), _specialOpcode(0), _nounState(NOUNSTATE_INITIAL),
+		_inputLineIndex(0), _currentRoomCopy(-1), _redoLine(REDO_NONE) {
 	Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
 }
 
@@ -158,6 +159,8 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 
 	for (i = 0; i < _items.size(); ++i)
 		_items[i].synchronize(s);
+
+	_redoLine = REDO_NONE;
 }
 
 Common::String ComprehendGame::stringLookup(uint16 index) {
@@ -389,7 +392,7 @@ void ComprehendGame::update_graphics() {
 	if (!g_comprehend->isGraphicsEnabled())
 		return;
 
-	type = roomIsSpecial(_currentRoom, NULL);
+	type = roomIsSpecial(_currentRoomCopy, NULL);
 
 	switch (type) {
 	case ROOM_IS_DARK:
@@ -399,7 +402,7 @@ void ComprehendGame::update_graphics() {
 
 	case ROOM_IS_TOO_BRIGHT:
 		if (_updateFlags & UPDATE_GRAPHICS)
-			g_comprehend->clearScreen(false);
+			g_comprehend->clearScreen(true);
 		break;
 
 	default:
@@ -448,6 +451,15 @@ void ComprehendGame::describe_objects_in_current_room() {
 	}
 }
 
+void ComprehendGame::updateRoomDesc() {
+	Room *room = get_room(_currentRoom);
+	uint room_desc_string = room->_stringDesc;
+	roomIsSpecial(_currentRoom, &room_desc_string);
+
+	Common::String desc = stringLookup(room_desc_string);
+	g_comprehend->printRoomDesc(desc);
+}
+
 void ComprehendGame::update() {
 	Room *room = get_room(_currentRoom);
 	unsigned room_type, room_desc_string;
@@ -459,8 +471,11 @@ void ComprehendGame::update() {
 	room_type = roomIsSpecial(_currentRoom,
 	                                &room_desc_string);
 
-	if (_updateFlags & UPDATE_ROOM_DESC)
-		console_println(stringLookup(room_desc_string).c_str());
+	if (_updateFlags & UPDATE_ROOM_DESC) {
+		Common::String desc = stringLookup(room_desc_string);
+		console_println(desc.c_str());
+		g_comprehend->printRoomDesc(desc.c_str());
+	}
 
 	if ((_updateFlags & UPDATE_ITEM_LIST) && room_type == ROOM_IS_NORMAL)
 		describe_objects_in_current_room();
@@ -472,7 +487,7 @@ void ComprehendGame::move_to(uint8 room) {
 	if (room >= (int)_rooms.size())
 		error("Attempted to move to invalid room %.2x\n", room);
 
-	_currentRoom = room;
+	_currentRoom = _currentRoomCopy = room;
 	_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
 	                      UPDATE_ITEM_LIST);
 }
@@ -607,9 +622,6 @@ void ComprehendGame::skip_non_whitespace(const char **p) {
 }
 
 bool ComprehendGame::handle_sentence(Sentence *sentence) {
-	if (sentence->empty())
-		return false;
-
 	if (sentence->_nr_words == 1 && !strcmp(sentence->_words[0]._word, "quit")) {
 		g_comprehend->quitGame();
 		return true;
@@ -691,7 +703,6 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 			return true;
 	}
 
-	console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
 	return false;
 }
 
@@ -708,13 +719,27 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 
 		if (isMatch) {
 			// Match
-			eval_function(action._function, sentence);
+			_functionNum = action._function;
 			return true;
 		}
 	}
 
 	// No matching action
 	return false;
+}
+
+void ComprehendGame::handleAction(Sentence *sentence) {
+	_specialOpcode = 0;
+
+	if (_functionNum == 0) {
+		console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
+	} else {
+		eval_function(_functionNum, sentence);
+		_functionNum = 0;
+		eval_function(0, nullptr);
+	}
+
+	handleSpecialOpcode();
 }
 
 void ComprehendGame::read_sentence(Sentence *sentence) {
@@ -732,7 +757,9 @@ void ComprehendGame::read_sentence(Sentence *sentence) {
 		Common::String wordStr(word_string, p);
 
 		// Check for end of sentence
-		if (*p == ',' || *p == '\n') {
+		// FIXME: The below is a hacked simplified version of how the
+		// original handles cases like "get item1, item2"
+		if (*p == ',' || *p == '\n' || wordStr.equalsIgnoreCase("and")) {
 			// Sentence separator
 			++p;
 			sentence_end = true;
@@ -790,25 +817,25 @@ void ComprehendGame::parse_sentence_word_pairs(Sentence *sentence) {
 }
 
 void ComprehendGame::doBeforeTurn() {
-	// Run the game specific before turn bits
-	beforeTurn();
+	// Make  a copy of the current room
+	_currentRoomCopy = _currentRoom;
 
-	// Run the each turn functions
-	eval_function(0, nullptr);
+	beforeTurn();
 
 	if (!_ended)
 		update();
 }
 
-void ComprehendGame::doAfterTurn() {
-	afterTurn();
+void ComprehendGame::beforeTurn() {
+	// Run the each turn functions
+	eval_function(0, nullptr);
 }
 
 void ComprehendGame::read_input() {
 	Sentence tempSentence;
 	bool handled;
 
-	beforePrompt();
+turn:
 	doBeforeTurn();
 	if (_ended)
 		return;
@@ -818,23 +845,33 @@ void ComprehendGame::read_input() {
 	if (!g_comprehend->isGraphicsEnabled())
 		g_comprehend->print("\n");
 
+	beforePrompt();
+
 	for (;;) {
+		_redoLine = REDO_NONE; 
 		g_comprehend->print("> ");
 		g_comprehend->readLine(_inputLine, INPUT_LINE_SIZE);
 		if (g_comprehend->shouldQuit())
 			return;
 
 		_inputLineIndex = 0;
-		if (strlen(_inputLine) != 0)
+		if (strlen(_inputLine) == 0) {
+			// Empty line, so toggle picture window visibility
+			if (!g_comprehend->toggleGraphics())
+				updateRoomDesc();
+			g_comprehend->print(_("Picture window toggled\n"));
+
+			_updateFlags |= UPDATE_GRAPHICS;
+			update_graphics();
+			continue;
+		}
+
+		afterPrompt();
+
+		if (_redoLine == REDO_NONE)
 			break;
-
-		// Empty line, so toggle picture window visibility
-		g_comprehend->toggleGraphics();
-		g_comprehend->print(_("Picture window toggled\n"));
-
-		_updateFlags |= UPDATE_GRAPHICS;
-		update_graphics();
-		continue;
+		else if (_redoLine == REDO_TURN)
+			goto turn;
 	}
 
 	for (;;) {
@@ -842,19 +879,20 @@ void ComprehendGame::read_input() {
 		_nounState = NOUNSTATE_STANDARD;
 
 		read_sentence(&tempSentence);
-		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_QUERY);
+		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_STANDARD);
 
 		handled = handle_sentence(&_sentence);
-		if (handled)
-			doAfterTurn();
+		handleAction(&_sentence);
+
+		if (!handled)
+			return;
 
 		/* FIXME - handle the 'before you can continue' case */
 		if (_inputLine[_inputLineIndex] == '\0')
 			break;
-
-		if (handled)
-			doBeforeTurn();
 	}
+
+	afterTurn();
 }
 
 void ComprehendGame::playGame() {
@@ -887,6 +925,9 @@ void ComprehendGame::doMovementVerb(uint verbNum) {
 
 void ComprehendGame::weighInventory() {
 	_totalInventoryWeight = 0;
+	if (!g_debugger->_invLimit)
+		// Allow for an unlimited number of items in inventory
+		return;
 
 	for (int idx = _itemCount - 1; idx > 0; --idx) {
 		Item *item = get_item(idx);

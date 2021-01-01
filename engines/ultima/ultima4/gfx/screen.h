@@ -26,7 +26,6 @@
 #include "graphics/screen.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map_tile.h"
@@ -118,7 +117,7 @@ private:
 	int _cursorStatus;
 	int _cursorEnabled;
 	int _los[VIEWPORT_W][VIEWPORT_H];
-	bool _continueScreenRefresh;
+	//bool _continueScreenRefresh;
 	uint32 _priorFrameTime;
 
 public:

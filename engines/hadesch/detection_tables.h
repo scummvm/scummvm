@@ -43,7 +43,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
-
 	},
 	{
 		"hadesch",
@@ -90,6 +89,35 @@ static const ADGameDescription gameDescriptions[] = {
 
 	},
 
+	// Bad dumps from archive.org
+	{
+		"hadesch",
+		0,
+		{
+			{"hadesch.exe", 0, "178b3a69171cb5a4eeeddd0d5993b8c5", 1134592},
+			{"WD.POD", 0, "be7030fc4229e69e719ee2c756eb6ba1", 7479768},
+			{"ol.pod", 0, "d41d8cd98f00b204e9800998ecf8427e", 5621074},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM | ADGF_PIRATED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"hadesch",
+		0,
+		{
+			{"hadesch.exe", 0, "178b3a69171cb5a4eeeddd0d5993b8c5", 1134592},
+			{"WD.POD", 0, "be7030fc4229e69e719ee2c756eb6ba1", 7479768},
+			{"ol.pod", 0, "6bf95a48f366bdf8af3a198c7b723c77", 5621074},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM | ADGF_PIRATED,
+		GUIO1(GUIO_NOMIDI)
+	},
 	AD_TABLE_END_MARKER
 };
 

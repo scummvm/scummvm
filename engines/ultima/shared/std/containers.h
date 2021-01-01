@@ -356,7 +356,7 @@ public:
 	}
 
 	typename _Container::const_reference top() const {
-		return c.front();
+		return c.back();
 	}
 
 	void push(const typename _Container::value_type &_Val) {
@@ -365,7 +365,7 @@ public:
 	}
 
 	void pop() {
-		c.pop_front();
+		c.pop_back();
 	}
 
 	void swap(priority_queue &_Right) {

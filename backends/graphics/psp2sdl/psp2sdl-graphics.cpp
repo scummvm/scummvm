@@ -29,7 +29,6 @@
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 #include "common/util.h"
 #include "common/frac.h"
 #ifdef USE_RGB_COLOR
@@ -82,7 +81,7 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	// shader number 0 is the entry NONE (no shader)
 	const OSystem::GraphicsMode *p = s_supportedShadersPSP2;
 	_numShaders = 0;
-	while (p->name) { 
+	while (p->name) {
 		_numShaders++;
 		p++;
 	}
@@ -203,7 +202,7 @@ void PSP2SdlGraphicsManager::updateShader() {
 // scanline masks, overlays, but could also serve for
 // hardware-based up-scaling (sharp-bilinear-simple, etc.)
 	if (_vitatex_hwscreen) {
-		if (_shaders[0] == NULL) { 
+		if (_shaders[0] == NULL) {
 			// load shaders
 			_shaders[GFX_SHADER_NONE] = vita2d_create_shader((const SceGxmProgram *)texture_v, (const SceGxmProgram *)texture_f);
 			_shaders[GFX_SHADER_LCD3X] = vita2d_create_shader((const SceGxmProgram *)lcd3x_v, (const SceGxmProgram *)lcd3x_f);

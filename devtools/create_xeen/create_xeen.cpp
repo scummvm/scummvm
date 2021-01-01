@@ -39,16 +39,21 @@
 #include "constants.h"
 #include "map.h"
 
-#define VERSION_NUMBER 3
-
-Common::File outputFile;
+#define VERSION_NUMBER 4
 
 void NORETURN_PRE error(const char *s, ...) {
-	printf("%s\n", s);
+	va_list ap;
+
+	va_start(ap, s);
+	vfprintf(stderr, s, ap);
+	va_end(ap);
+
+	fputc('\n', stderr);
+
 	exit(1);
 }
 
-void writeVersion(CCArchive &cc) {
+static void writeVersion(CCArchive &cc) {
 	Common::MemFile f;
 	f.writeLong(VERSION_NUMBER);
 	cc.add("VERSION", f);	
@@ -56,10 +61,10 @@ void writeVersion(CCArchive &cc) {
 
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
-		printf("Format: %s dark.cc \"swords xeen.dat\"\n", argv[0]);
-		return 1;
+		error("Format: %s dark.cc \"swords xeen.dat\"", argv[0]);
 	}
 
+	Common::File outputFile;
 	if (!outputFile.open("xeen.ccs", Common::kFileWriteMode)) {
 		error("Could not open input file");
 	}

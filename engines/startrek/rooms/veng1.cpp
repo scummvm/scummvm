@@ -125,10 +125,8 @@ extern const RoomAction veng1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng1NumActions = ARRAYSIZE(veng1ActionList);
-
 
 void Room::veng1Tick1() {
 	playVoc("VEN1LOOP");
@@ -165,7 +163,7 @@ void Room::veng1TouchedHotspot0() {
 	if (_roomVar.veng.walkingToDoor) {
 		loadActorAnimC(OBJECT_DOOR, "s7r1d1", 0xa1, 0x7e, &Room::veng1ReachedDoor);
 		loadActorAnim2(OBJECT_PANEL, "s7r1g1", 0xd8, 0x79);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -175,7 +173,7 @@ void Room::veng1ReachedDoor() {
 }
 
 void Room::veng1TouchedTurbolift() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(1, 0);
 }
 

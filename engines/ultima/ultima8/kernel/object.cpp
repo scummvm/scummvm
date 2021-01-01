@@ -73,6 +73,13 @@ void Object::saveData(Common::WriteStream *ws) {
 }
 
 bool Object::loadData(Common::ReadStream *rs, uint32 version) {
+	// If we are loading into an object that already got an ID defined, then
+	// there is a problem - default constructors should not allocate object
+	// IDs, otherwise we can end up with the wrong IDs during load, because
+	// we blindly reload the old object IDs and then assign the kernel pointer
+	// table using those.
+	assert(_objId == 0xFFFF);
+
 	_objId = rs->readUint16LE();
 
 	return true;

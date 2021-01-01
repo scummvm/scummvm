@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_state = 0;
 	_frameDelta = 0;
-	_var2 = 0;
+	_var2 = 0; // is set on some occasions but is never checked. Unused.
 	_counter = 0;
 }
 
@@ -38,7 +38,7 @@ void AIScriptInsectDealer::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_state = 0;
 	_frameDelta = 1;
 	_var2 = 6;
@@ -132,8 +132,8 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		switch (_state) {
 		case 0:
-			*animation = 545;
-			if (_counter) {
+			*animation = kModelAnimationInsectDealerSittingIdle;
+			if (_counter > 0) {
 				--_counter;
 				if (Random_Query(0, 6) == 0) {
 					_frameDelta = -_frameDelta;
@@ -156,95 +156,105 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 			break;
+
 		case 1:
-			*animation = 546;
+			*animation = kModelAnimationInsectDealerSittingScratchEarIdle;
 			++_animationFrame;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(546)) {
-				*animation = 545;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingScratchEarIdle)) {
+				*animation = kModelAnimationInsectDealerSittingIdle;
 				_animationFrame = 0;
 				_state = 0;
 				_var2 = Random_Query(6, 14);
 				_frameDelta = 2 * Random_Query(0, 1) - 1;
 			}
 			break;
+
 		case 2:
 			// TODO: test... actor will be stuck
 			break;
 		}
 		break;
+
 	case 1:
-		if (_animationFrame == 0 && _flag1) {
-			*animation = 545;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationInsectDealerSittingIdle;
 			_animationState = 0;
 		} else {
-			*animation = 548;
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(548)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingCalmTalk)) {
 				_animationFrame = 0;
 				_animationState = 0;
 			}
 		}
 		break;
+
 	case 2:
-		*animation = 549;
+		*animation = kModelAnimationInsectDealerSittingExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(549)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingExplainTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 3:
-		*animation = 550;
+		*animation = kModelAnimationInsectDealerSittingPointingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(550)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingPointingTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 4:
-		*animation = 551;
+		*animation = kModelAnimationInsectDealerSittingHeadMoveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(551)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingHeadMoveTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 5:
-		*animation = 552;
+		*animation = kModelAnimationInsectDealerSittingSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(552)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingSuggestTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 6:
-		*animation = 553;
+		*animation = kModelAnimationInsectDealerSittingGossipTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(553)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingGossipTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 7:
-		*animation = 554;
+		*animation = kModelAnimationInsectDealerSittingDescriptiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(554)) {
-			*animation = 548;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingDescriptiveTalk)) {
+			*animation = kModelAnimationInsectDealerSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 1;
 		}
 		break;
+
 	case 8:
-		*animation = 547;
+		*animation = kModelAnimationInsectDealerSittingGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(547)) {
-			*animation = 545;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationInsectDealerSittingGestureGive)) {
+			*animation = kModelAnimationInsectDealerSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
@@ -259,53 +269,64 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case 0:
 		if (_animationState > 0 && _animationState <= 7) {
-			_flag1 = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
+		// fall through
 	case 18:
+		// fall through
 	case 19:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 16:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 17:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 23:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	default:
 		break;
 	}

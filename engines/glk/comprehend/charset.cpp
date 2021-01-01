@@ -22,28 +22,13 @@
 
 #include "glk/comprehend/charset.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "graphics/surface.h"
 
 namespace Glk {
 namespace Comprehend {
 
-CharSet::CharSet() : Graphics::Font() {
-	Common::File f;
-	if (!f.open("charset.gda"))
-		error("Could not open char set");
-
-	uint version = f.readUint16LE();
-	if (version != 0x1100)
-		error("Unknown char set version");
-
-	f.seek(4);
-	for (int idx = 0; idx < 128 - 32; ++idx)
-		f.read(&_data[idx][0], 8);
-
-	f.close();
-}
-
-void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void FixedFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	assert(dst->format.bytesPerPixel == 4);
 	assert(chr >= 32 && chr < 128);
 
@@ -59,6 +44,44 @@ void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 				*lineP = color;
 		}
 	}
+}
+
+/*-------------------------------------------------------*/
+
+CharSet::CharSet() : FixedFont() {
+	Common::File f;
+	if (!f.open("charset.gda"))
+		error("Could not open char set");
+
+	uint version = f.readUint16LE();
+	if (version != 0x1100)
+		error("Unknown char set version");
+
+	f.seek(4);
+	for (int idx = 0; idx < 128 - 32; ++idx)
+		f.read(&_data[idx][0], 8);
+
+	f.close();
+}
+
+/*-------------------------------------------------------*/
+
+TalismanFont::TalismanFont() : FixedFont() {
+	// Extra strings are (annoyingly) stored in the game binary
+	Common::File f;
+	if (!f.open("novel.exe"))
+		error("novel.exe is a required file");
+
+	Common::String md5 = Common::computeStreamMD5AsString(f, 1024);
+
+	if (md5 == "0e7f002971acdb055f439020363512ce" || md5 == "2e18c88ce352ebea3e14177703a0485f") {
+		for (int idx = 0; idx < 128 - 32; ++idx)
+			f.read(&_data[idx][0], 8);
+	} else {
+		error("Unrecognised novel.exe encountered");
+	}
+
+	f.close();
 }
 
 } // namespace Comprehend

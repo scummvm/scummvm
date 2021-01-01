@@ -30,7 +30,9 @@ public:
 	OSystem_AmigaOS() {}
 	virtual ~OSystem_AmigaOS() {}
 
-	virtual void init();
+	bool hasFeature(Feature f) override;
+
+	void init() override;
 };
 
 #endif

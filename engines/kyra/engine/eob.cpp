@@ -1051,7 +1051,7 @@ void EoBEngine::displayParchment(int id) {
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->sega_getAnimator()->update();
 	_screen->sega_selectPalette(54, 2);
-	int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth | Font::kStyleNarrow2 : Font::kStyleForceTwoByte | Font::kStyleFat | Font::kStyleNarrow2);
+	int cs = _screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleNone : Font::kStyleFullWidth) | Font::kStyleNarrow2);
 
 	snd_stopSound();
 	uint8 *data = _res->fileData("LT", 0);
@@ -1151,7 +1151,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 		r->fillRectWithTiles(1, 0, 3, 32, 16, 0x2281, true);
 		r->fillRectWithTiles(1, 32, 3, 8, 16, 0x2481, true);
 
-		int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+		int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleNone : Font::kStyleFullWidth);
 		_screen->sega_clearTextBuffer(0);
 		_txt->printShadedText(_menuStringsDefeat[0], 12, 0, 0xff, 0xcc, 304, 48, 0, false);
 		_txt->printShadedText(_menuStringsDefeat[1], 20, 16, 0xff, 0xcc, 304, 48, 0, false);

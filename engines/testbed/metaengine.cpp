@@ -35,10 +35,9 @@ public:
 		return "testbed";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
-		// Instantiate Engine even if the game data is not found.
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
 		*engine = new Testbed::TestbedEngine(syst);
-		return true;
+		return Common::kNoError;
 	}
 
 	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {

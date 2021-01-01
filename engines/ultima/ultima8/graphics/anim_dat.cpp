@@ -69,12 +69,13 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		bool isavatar = (actor && actor->getShape() == 1);
 		if (isavatar && actor->getActiveWeapon()) {
 			const Item *wpn = getItem(actor->getActiveWeapon());
-			const ShapeInfo *shapeinfo = wpn->getShapeInfo();
+			const ShapeInfo *shapeinfo = (wpn ? wpn->getShapeInfo() : nullptr);
 			const WeaponInfo *wpninfo = (shapeinfo ? shapeinfo->_weaponInfo : nullptr);
 			smallwpn = (wpninfo && wpninfo->_small);
 			altfire = (wpninfo && (wpninfo->_overlayShape == 0x36e || wpninfo->_overlayShape == 0x33b));
 		}
 
+		//
 		// For crusader the actions have different IDs.  Rather than
 		// rewrite everything, we just translate them here for all the ones
 		// we want to use programmatically.  There are more, but they are
@@ -82,7 +83,13 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		//
 		// We also translate based on weapon.  See the function at 1128:2104
 		//
-		// TODO: Also handle kneeling weapon animations
+		// First, if the animation includes the Animation::crusaderAbsoluteAnimFlag
+		// bitmask then it's from the usecode - use directly and don't translate.
+		//
+		const uint32 action_int = static_cast<uint32>(action);
+		if (action_int & Animation::crusaderAbsoluteAnimFlag)
+			return action_int - Animation::crusaderAbsoluteAnimFlag;
+
 		switch (action) {
 		case Animation::stand:
 			return 0;
@@ -112,7 +119,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::fallBackwards:
 			return 18;
 		case Animation::die:
-			return 20; // maybe? falls over forwards
+			return 18; // by default fall over backwards. TODO: randomly use 20 for some deaths - fall forwards.
 		case Animation::advance:
 			return (smallwpn ? 36 : 44);
 		case Animation::startKneeling:
@@ -130,12 +137,8 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return 0;
 		case Animation::lookRight:
 			return 0;
-		case Animation::teleportInReplacement:
-			return Animation::teleportIn;
-		case Animation::teleportOutReplacement:
-			return Animation::teleportOut;
 		default:
-			return static_cast<uint32>(action);;
+			return action_int;
 		}
 	}
 }
@@ -181,17 +184,38 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			a->_actions[action]->_action = action;
 
 			rs->seek(actionoffset);
+			// byte 0: action size
 			uint32 actionsize = rs->readByte();
 			a->_actions[action]->_size = actionsize;
-			a->_actions[action]->_flags = rs->readByte();
-			a->_actions[action]->_frameRepeat = rs->readByte();
-			a->_actions[action]->_flags |= rs->readByte() << 8;
+			// byte 1: flags low byte
+			uint32 rawflags = rs->readByte();
+			// byte 2: frame repeat and rotated flag
+			byte repeatAndRotateFlag = rs->readByte();
+			a->_actions[action]->_frameRepeat = repeatAndRotateFlag & 0xf;
+			if (GAME_IS_U8 && (repeatAndRotateFlag & 0xf0)) {
+				// This should never happen..
+				error("Anim data: frame repeat byte should never be > 0xf");
+			}
+			// byte 3: flags high byte
+			rawflags |= rs->readByte() << 8;
+
+			// Only one flag in this byte in crusader.. the "rotate" flag.
+			rawflags |= (repeatAndRotateFlag & 0xf0) << 12;
+
+			a->_actions[action]->_flags = AnimAction::loadAnimActionFlags(rawflags);
 
 			unsigned int dirCount = 8;
-			if (GAME_IS_CRUSADER &&
-			        (a->_actions[action]->_flags & AnimAction::AAF_CRUS_16DIRS)) {
+			if (a->_actions[action]->hasFlags(AnimAction::AAF_16DIRS)) {
 				dirCount = 16;
 			}
+
+			/*
+			if (a->_actions[action]->_flags & AnimAction::AAF_UNKFLAGS) {
+				warning("AnimFlags: shape %d action %d has unknown flags %04X", shape, action,
+					  a->_actions[action]->_flags & AnimAction::AAF_UNKFLAGS);
+			}
+			*/
+
 			a->_actions[action]->_dirCount = dirCount;
 
 			for (unsigned int dir = 0; dir < dirCount; dir++) {
@@ -207,13 +231,11 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._deltaDir = rs->readSByte();
 						f._flags = rs->readByte();
 						f._flags += (x & 0xF8) << 8;
-						f._unk1 = 0;
-						f._unk2 = 0;
 					} else if (GAME_IS_CRUSADER) {
 						// byte 0: low byte of frame
 						f._frame = rs->readByte();
-						// byte 1: low nibble part of frame
-						uint8 x = rs->readByte();
+						// byte 1: low nibble is high part of frame, high nibble is flags (used later)
+						const uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
 						// byte 2: delta z
 						f._deltaZ = rs->readByte();
@@ -221,11 +243,16 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels
 						f._deltaDir = rs->readSByte();
-						// byte 5: flags? TODO: Ensure "flipped" flag is mapped correctly
+						// byte 5: flags
 						f._flags = rs->readByte();
 						f._flags += (x & 0xF0) << 8;
-						// byte 6, 7: unknown
-						f._unk2 = rs->readSint16LE();
+						// bytes 6, 7: more flags
+						f._flags += rs->readUint16LE() << 16;
+
+						/*if (f._flags & AnimFrame::AFF_UNKNOWN) {
+							warning("AnimFlags: shape %d action %d dir %d frame %d has unknown flags %08X", shape, action, dir, j,
+									f._flags & AnimFrame::AFF_UNKNOWN);
+						}*/
 					}
 					a->_actions[action]->_frames[dir].push_back(f);
 				}

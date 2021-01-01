@@ -20,14 +20,6 @@
  *
  */
 
-/**
- * @file
- * Image decoder used in engines:
- *  - mohawk
- *  - pegasus
- *  - sci
- */
-
 #ifndef IMAGE_PICT_H
 #define IMAGE_PICT_H
 
@@ -46,6 +38,19 @@ struct Surface;
 }
 
 namespace Image {
+
+/**
+ * @defgroup image_pict PICT decoder
+ * @ingroup image
+ *
+ * @brief Decoder for PICT images.
+ *
+ * Used in engines:
+ * - Mohawk
+ * - Pegasus
+ * - SCI
+ * @{
+ */
 
 #define DECLARE_OPCODE(x) void x(Common::SeekableReadStream &stream)
 
@@ -136,7 +141,7 @@ private:
 };
 
 #undef DECLARE_OPCODE
-
+/** @} */
 } // End of namespace Image
 
 #endif

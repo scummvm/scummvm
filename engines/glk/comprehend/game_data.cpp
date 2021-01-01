@@ -123,6 +123,12 @@ void Action::clear() {
 
 /*-------------------------------------------------------*/
 
+Instruction::Instruction(byte opcode, byte op1, byte op2, byte op3) : _opcode(opcode) {
+	_operand[0] = op1;
+	_operand[1] = op2;
+	_operand[2] = op3;
+}
+
 void Instruction::clear() {
 	_opcode = 0;
 	_nr_operands = 0;
@@ -237,6 +243,10 @@ void GameData::parse_vm(FileBuffer *fb) {
 			break;
 
 		_functions.push_back(func);
+
+		// WORKAROUND: Parsing functions for Talisman
+		if (_functions.size() == 0x1d8 && g_vm->getGameID() == "talisman")
+			break;
 	}
 }
 
@@ -472,11 +482,13 @@ done:
 
 void GameData::parse_string_table(FileBuffer *fb, unsigned start_addr,
                                uint32 end_addr, StringTable *table) {
-	fb->seek(start_addr);
-	while (1) {
-		table->push_back(parseString(fb));
-		if (fb->pos() >= (int32)end_addr)
-			break;
+	if (start_addr < end_addr) {
+		fb->seek(start_addr);
+		while (1) {
+			table->push_back(parseString(fb));
+			if (fb->pos() >= (int32)end_addr)
+				break;
+		}
 	}
 }
 
@@ -539,6 +551,7 @@ void GameData::parse_header(FileBuffer *fb) {
 		_magicWord = (uint16)(-0x5a00 + 0x4);
 		break;
 
+	case 0x8bc3: /* Transylvania v2 */
 	case 0x93f0: /* OO-Topos */
 	case 0xa429: /* Talisman */
 		_comprehendVersion = 2;
@@ -686,9 +699,8 @@ void GameData::loadGameData() {
 	parse_items(&fb);
 	parse_dictionary(&fb);
 	parse_word_map(&fb);
-	parse_string_table(&fb, _header.addr_strings,
-	                   _header.addr_strings_end,
-	                   &_strings);
+	if (g_comprehend->getGameID() != "talisman")
+		parse_string_table(&fb, _header.addr_strings, _header.addr_strings_end, &_strings);
 	load_extra_string_files();
 	parse_vm(&fb);
 	parse_action_tables(&fb);

@@ -38,22 +38,8 @@
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
 static uint32 convUTF8ToUTF32(const char *src) {
-	uint32 utf32 = 0;
-
-	char *dst = SDL_iconv_string(
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	                             "UTF-32BE",
-#else
-	                             "UTF-32LE",
-#endif
-                                 "UTF-8", src, SDL_strlen(src) + 1);
-
-	if (dst) {
-		utf32 = *((uint32 *)dst);
-		SDL_free(dst);
-	}
-
-	return utf32;
+	Common::U32String u32(src);
+	return u32[0];
 }
 
 void SdlEventSource::loadGameControllerMappingFile() {
@@ -157,7 +143,7 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		// WORKAROUND:  Disable this change for AmigaOS4 as it is breaking numpad usage ("fighting") on that platform.
+		// WORKAROUND:  Disable this change for AmigaOS as it's breaking numpad usage ("fighting") on that platform.
 		// This fixes bug #10558.
 		// The actual issue here is that the SCUMM engine uses ASCII codes instead of keycodes for input.
 		// See also the relevant FIXME in SCUMM's input.cpp.

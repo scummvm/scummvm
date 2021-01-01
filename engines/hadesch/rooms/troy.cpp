@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 
@@ -39,6 +40,11 @@ static const char *kKeyAndDecreeImage = "g0150ob0";
 static const char *kKeyAndDecreePopup = "t2010of0";
 static const char *kMenelausImage = "t2070ba0";
 static const char *kHelenImage = "t1230ba0";
+
+// TODO: fill this
+static const TranscribedSound trClickTranscript[] = {
+	{ nullptr, nullptr }
+};
 
 enum {
 	kAnimationCompleted = 10011,
@@ -151,7 +157,7 @@ public:
 		if (name == "Odysseus' Scroll") {
 			room->disableHotzone("Odysseus' Scroll");
 			room->disableHotzone("Background2");
-			room->playSound("T2150eA1", 10049);
+			room->playSFX("T2150eA1", 10049);
 			hideOdysseus();
 			showIdleOdysseus();
 			_philUseSecondInsistance = false;
@@ -164,7 +170,7 @@ public:
 			room->cancelVideo();
 			room->disableHotzone("Scroll PopUp");
 			room->disableHotzone("Background2");
-			room->playSound("T2150eB0");
+			room->playSFX("T2150eB0");
 			room->stopAnim("t2010oe0");
 			room->disableMouse();
 			g_vm->getHeroBelt()->placeToInventory(kMessage, 10052);
@@ -348,8 +354,8 @@ public:
 			if (item == kKey) {
 				room->disableMouse();
 				g_vm->getHeroBelt()->removeFromInventory(kKey);
-				room->playAnimWithSound("t1290bb0", "t1290xa0", 105, PlayAnimParams::keepLastFrame(),
-							10060);
+				room->playAnimWithSFX("t1290bb0", "t1290xa0", 105, PlayAnimParams::keepLastFrame(),
+						      10060);
 				persistent->_troyCatacombsUnlocked = true;
 				room->disableHotzone("Catacomb PopUp Grate");
 				room->enableHotzone("Link To Catacombs");
@@ -404,10 +410,10 @@ public:
 			break;
 		case 10022:
 			// Attack on castle
-			room->playAnimWithSound("t1250bb0",
-						"t1250eb0", 131,
-						PlayAnimParams::disappear(),
-						10027);
+			room->playAnimWithSFX("t1250bb0",
+					      "t1250eb0", 131,
+					      PlayAnimParams::disappear(),
+					      10027);
 			break;
 		case 10027:
 			room->selectFrame(kDamagedWall, kDamagedWallZ, 0);
@@ -468,7 +474,8 @@ public:
 			}
 			break;
 		case 10057:
-			room->playSound("T2240wA0", 10058);
+			room->playSpeech(
+				TranscribedSound::make("T2240wA0", "Official orders from king Priam: messenger is granted permissions to leave the city walls"), 10058);
 			break;
 		case 10058:
 			room->enableMouse();
@@ -484,11 +491,11 @@ public:
 				break;
 			/* Fallthrough */
 		case 10063:
-			room->playSound("t1350ec0", 10064);
+			room->playSFX("t1350ec0", 10064);
 			break;
 		case 10064:
 			room->playAnimKeepLastFrame("t1350bb0", 501, 10065);
-			room->playSound("t1350ed0", 10066);
+			room->playSFX("t1350ed0", 10066);
 			break;
 		case 10065:
 			room->playAnim("t1350bb0", 501, PlayAnimParams::loop().partial(8, 11));
@@ -550,7 +557,7 @@ public:
 		room->enableHotzone("Catacomb");
 		room->playAnimLoop("T1110BA0", 501);
 
-		_trClick.readTable(room, "TrClick.txt");
+		_trClick.readTable(room, "TrClick.txt", trClickTranscript);
 
 		if (persistent->_troyWallDamaged && quest == kCreteQuest) {
 			room->selectFrame(kDamagedWall, kDamagedWallZ, 0);
@@ -670,12 +677,12 @@ public:
 			}
 		}
 
-		room->playSoundLoop(persistent->_troyMessageIsDelivered || quest > kTroyQuest ? "t1010eb0" : "t1010ea0");
+		room->playMusicLoop(persistent->_troyMessageIsDelivered || quest > kTroyQuest ? "t1010eb0" : "t1010ea0");
 
 		if (quest <= kTroyQuest && !persistent->_troyPlayFinish) {
 			TextTable trLftAmb = TextTable(
 				Common::SharedPtr<Common::SeekableReadStream>(room->openFile("TrLftAmb.txt")), 9);
-			_leftAmbients.readTableFile(trLftAmb, AmbientAnim::PAN_LEFT);
+			_leftAmbients.readTableFileSFX(trLftAmb, AmbientAnim::PAN_LEFT);
 			g_vm->addTimer(2803, 10000, -1);
 			_leftAmbients.firstFrame();
 		}
@@ -713,7 +720,7 @@ public:
 			persistent->_troyPlayFinish = false;
 			room->disableMouse();
 			_horseCounter = 2;
-			room->playSound("T1350mA0", kHorseCounter);
+			room->playMusic("T1350mA0", kHorseCounter);
 			room->playVideo("t1350ba0", 501, kHorseCounter, Common::Point(288, 211));
 
 			room->playAnimLoop("t1090ba0", 501);

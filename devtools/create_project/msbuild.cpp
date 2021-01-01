@@ -153,7 +153,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 			modulePath.erase(0, 1);
 	}
 
-	if (modulePath.size())
+	if (!modulePath.empty())
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
@@ -255,10 +255,7 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
-		if (i->first == setup.projectName)
-			continue;
-
+	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
 		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
 		       << "\t\t<Project>{" << i->second << "}</Project>\n"
 		       << "\t</ProjectReference>\n";
@@ -382,11 +379,16 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t\t<CompileAs>Default</CompileAs>\n"
 	           << "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	           << "\t\t\t<ConformanceMode>true</ConformanceMode>\n"
+	           << "\t\t\t<ObjectFileName>$(IntDir)dists\\msvc\\%(RelativeDir)</ObjectFileName>\n"
 	           << "\t\t\t<AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>\n"
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
-	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
-	           << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
+	if (!setup.featureEnabled("text-console")) {
+		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
+	} else {
+		properties << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	}
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";
@@ -481,16 +483,16 @@ bool hasEnding(std::string const &fullString, std::string const &ending) {
 	}
 }
 
-namespace {
-
-inline void outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix) {
+void MSBuildProvider::outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix) {
 	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << prefix << "%(Filename).obj\" \"%(FullPath)\"</Command>\n"
 	            << "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << prefix << "%(Filename).obj;%(Outputs)</Outputs>\n";
+	if (_version >= 15) {
+		projectFile << "\t\t\t<OutputItemType Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">Object</OutputItemType>\n"
+		            << "\t\t\t<BuildInParallel Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">true</BuildInParallel>\n";
+	}
 }
 
-} // End of anonymous namespace
-
-void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int, const StringList &duplicate,
+void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int,
                                              const std::string &objPrefix, const std::string &filePrefix) {
 	// Reset lists
 	_filters.clear();
@@ -502,31 +504,11 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 
 	// Compute the list of files
 	_filters.push_back(""); // init filters
-	computeFileList(dir, duplicate, objPrefix, filePrefix);
+	computeFileList(dir, objPrefix, filePrefix);
 	_filters.pop_back(); // remove last empty filter
 
-	// Output compile files
-	if (!_compileFiles.empty()) {
-		projectFile << "\t<ItemGroup>\n";
-		for (std::list<FileEntry>::const_iterator entry = _compileFiles.begin(); entry != _compileFiles.end(); ++entry) {
-			std::string fileName = (*entry).name + ".o";
-			std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
-			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), fileName) != duplicate.end());
-
-			// Deal with duplicated file names
-			if (isDuplicate) {
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n"
-				            << "\t\t\t<ObjectFileName>$(IntDir)" << (*entry).prefix << "%(Filename).obj</ObjectFileName>\n";
-
-				projectFile << "\t\t</ClCompile>\n";
-			} else {
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";
-			}
-		}
-		projectFile << "\t</ItemGroup>\n";
-	}
-
-	// Output include, other and resource files
+	// Output compile, include, other and resource files
+	outputFiles(projectFile, _compileFiles, "ClCompile");
 	outputFiles(projectFile, _includeFiles, "ClInclude");
 	outputFiles(projectFile, _otherFiles, "None");
 	outputFiles(projectFile, _resourceFiles, "ResourceCompile");
@@ -536,15 +518,13 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 		projectFile << "\t<ItemGroup>\n";
 		for (std::list<FileEntry>::const_iterator entry = _asmFiles.begin(); entry != _asmFiles.end(); ++entry) {
 
-			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
-
 			projectFile << "\t\t<CustomBuild Include=\"" << (*entry).path << "\">\n"
 			            << "\t\t\t<FileType>Document</FileType>\n";
 
-			outputNasmCommand(projectFile, "Debug", (isDuplicate ? (*entry).prefix : ""));
-			outputNasmCommand(projectFile, "Analysis", (isDuplicate ? (*entry).prefix : ""));
-			outputNasmCommand(projectFile, "Release", (isDuplicate ? (*entry).prefix : ""));
-			outputNasmCommand(projectFile, "LLVM", (isDuplicate ? (*entry).prefix : ""));
+			outputNasmCommand(projectFile, "Debug", (*entry).prefix);
+			outputNasmCommand(projectFile, "Analysis", (*entry).prefix);
+			outputNasmCommand(projectFile, "Release", (*entry).prefix);
+			outputNasmCommand(projectFile, "LLVM", (*entry).prefix);
 
 			projectFile << "\t\t</CustomBuild>\n";
 		}
@@ -562,7 +542,7 @@ void MSBuildProvider::outputFiles(std::ostream &projectFile, const FileEntries &
 	}
 }
 
-void MSBuildProvider::computeFileList(const FileNode &dir, const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+void MSBuildProvider::computeFileList(const FileNode &dir, const std::string &objPrefix, const std::string &filePrefix) {
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
 
@@ -571,7 +551,7 @@ void MSBuildProvider::computeFileList(const FileNode &dir, const StringList &dup
 			std::string _currentFilter = _filters.back();
 			_filters.back().append((_filters.back() == "" ? "" : "\\") + node->name);
 
-			computeFileList(*node, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			computeFileList(*node, objPrefix + node->name + '_', filePrefix + node->name + '/');
 
 			// Reset filter
 			_filters.push_back(_currentFilter);

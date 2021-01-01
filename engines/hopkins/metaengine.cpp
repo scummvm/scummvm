@@ -28,7 +28,6 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "graphics/surface.h"
 
 #include "hopkins/detection.h"
@@ -66,7 +65,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -91,12 +90,9 @@ bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Hopkins::HopkinsGameDescription *gd = (const Hopkins::HopkinsGameDescription *)desc;
-	if (gd) {
-		*engine = new Hopkins::HopkinsEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Hopkins::HopkinsEngine(syst, (const Hopkins::HopkinsGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {

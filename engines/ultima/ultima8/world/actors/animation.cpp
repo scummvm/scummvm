@@ -22,12 +22,20 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/kernel/core_app.h"
 
 namespace Ultima {
 namespace Ultima8 {
 namespace Animation {
 
 bool isCombatAnim(const Sequence anim) {
+	if (GAME_IS_U8)
+		return isCombatAnimU8(anim);
+	else
+		return isCombatAnimCru(anim);
+}
+
+bool isCombatAnimU8(const Sequence anim) {
 	switch (anim) {
 	case combatStand:
 	case readyWeapon:
@@ -43,11 +51,32 @@ bool isCombatAnim(const Sequence anim) {
 	}
 }
 
+bool isCombatAnimCru(const Sequence anim) {
+	switch (anim) {
+	case combatStand:
+	case readyWeapon:
+	case advance:
+	case retreat:
+	case attack:
+	case kick:
+	case kneel:
+	case kneelStart:
+	case fire2:
+	case combatRollLeft:
+	case combatRollRight:
+	case slideLeft:
+	case slideRight:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /** determines if we need to ready or unready our weapon */
 Sequence checkWeapon(const Sequence nextanim,
                      const Sequence lastanim) {
 	Sequence anim = nextanim;
-	if (isCombatAnim(nextanim) && ! isCombatAnim(lastanim)) {
+	if (isCombatAnim(nextanim) && !isCombatAnim(lastanim)) {
 		anim = readyWeapon;
 	} else if (!isCombatAnim(nextanim) && isCombatAnim(lastanim)) {
 		anim = unreadyWeapon;

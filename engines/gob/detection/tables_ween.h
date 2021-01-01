@@ -118,11 +118,8 @@
 	{
 		"ween",
 		"",
-		{
-			{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
-			{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570,
+				   "ween.ins",  "d2cb24292c9ddafcad07e23382027218", 87800),
 		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -178,11 +175,8 @@
 	{
 		"ween",
 		"",
-		{
-			{"intro.stk", 0, "dffd1ab98fe76150d6933329ca6f4cc4", 459458},
-			{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458,
+				   "ween.ins",  "d2cb24292c9ddafcad07e23382027218", 87800),
 		IT_ITA,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -199,11 +193,8 @@
 	{
 		"ween",
 		"",
-		{
-			{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
-			{"music__5.snd", 0, "7d1819b9981ecddd53d3aacbc75f1cc8", 13446},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",		"bfd9d02faf3d8d60a2cf744f95eb48dd", 456570,
+				   "music__5.snd",	"7d1819b9981ecddd53d3aacbc75f1cc8", 13446),
 		EN_GRB,
 		kPlatformAtariST,
 		ADGF_NO_FLAGS,

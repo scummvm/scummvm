@@ -76,7 +76,7 @@ DetectedGame::DetectedGame(const Common::String &engine, const PlainGameDescript
 	description = pgd.description;
 }
 
-DetectedGame::DetectedGame(const Common::String &engine, const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
+DetectedGame::DetectedGame(const Common::String &engine, const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex, bool unsupported) :
 		engineId(engine),
 		hasUnknownFiles(false),
 		canBeAdded(true),
@@ -90,7 +90,7 @@ DetectedGame::DetectedGame(const Common::String &engine, const Common::String &i
 	extra = ex;
 
 	// Append additional information, if set, to the description.
-	description += updateDesc();
+	description += updateDesc(unsupported);
 }
 
 void DetectedGame::setGUIOptions(const Common::String &guioptions) {
@@ -104,10 +104,10 @@ void DetectedGame::appendGUIOptions(const Common::String &str) {
 	_guiOptions += str;
 }
 
-Common::String DetectedGame::updateDesc() const {
+Common::String DetectedGame::updateDesc(bool skipExtraField) const {
 	const bool hasCustomLanguage = (language != Common::UNK_LANG);
 	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
-	const bool hasExtraDesc = !extra.empty();
+	const bool hasExtraDesc = (!extra.empty() && !skipExtraField);
 
 	// Adapt the description string if custom platform/language is set.
 	Common::String descr;

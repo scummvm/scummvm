@@ -114,11 +114,9 @@ public:
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc)
-			*engine = new StarkEngine(syst, desc);
-
-		return desc != nullptr;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new StarkEngine(syst, desc);
+		return Common::kNoError;
 	}    
 };
 

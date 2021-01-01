@@ -162,7 +162,7 @@ private:
 
 		MidiChannelEntry() : currentPatchBank(0),
 							currentInstrumentPtr(NULL),
-							currentPitchBender(MILES_PITCHBENDER_DEFAULT),
+							currentPitchBender(MIDI_PITCH_BEND_DEFAULT),
 							currentPitchRange(0),
 							currentVoiceProtection(0),
 							currentVolume(0), currentVolumeExpression(0),
@@ -224,7 +224,7 @@ private:
 	bool _isOpen;
 
 	// stores information about all MIDI channels (not the actual OPL FM voice channels!)
-	MidiChannelEntry _midiChannels[MILES_MIDI_CHANNEL_COUNT];
+	MidiChannelEntry _midiChannels[MIDI_CHANNEL_COUNT];
 
 	// stores information about all virtual OPL FM voices
 	VirtualFmVoiceEntry _virtualFmVoices[MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
@@ -348,7 +348,7 @@ void MidiDriver_Miles_AdLib::resetData() {
 	ARRAYCLEAR(_virtualFmVoices);
 	ARRAYCLEAR(_physicalFmVoices);
 
-	for (byte midiChannel = 0; midiChannel < MILES_MIDI_CHANNEL_COUNT; midiChannel++) {
+	for (byte midiChannel = 0; midiChannel < MIDI_CHANNEL_COUNT; midiChannel++) {
 		// defaults, were sent to driver during driver initialization
 		_midiChannels[midiChannel].currentVolume = 0x7F;
 		_midiChannels[midiChannel].currentPanning = 0x40; // center
@@ -356,7 +356,7 @@ void MidiDriver_Miles_AdLib::resetData() {
 
 		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
 		// Miles Audio 3: pitch range per MIDI channel
-		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
+		_midiChannels[midiChannel].currentPitchBender = MIDI_PITCH_BEND_DEFAULT;
 		_midiChannels[midiChannel].currentPitchRange = 12;
 	}
 
@@ -924,22 +924,22 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 		// It seems that this can get ignored, because we don't cache timbres at all
 		break;
 
-	case MILES_CONTROLLER_MODULATION:
+	case MIDI_CONTROLLER_MODULATION:
 		_midiChannels[midiChannel].currentModulation = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_20;
 		break;
 
-	case MILES_CONTROLLER_VOLUME:
+	case MIDI_CONTROLLER_VOLUME:
 		_midiChannels[midiChannel].currentVolume = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_40;
 		break;
 
-	case MILES_CONTROLLER_EXPRESSION:
+	case MIDI_CONTROLLER_EXPRESSION:
 		_midiChannels[midiChannel].currentVolumeExpression = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_40;
 		break;
 
-	case MILES_CONTROLLER_PANNING:
+	case MIDI_CONTROLLER_PANNING:
 		_midiChannels[midiChannel].currentPanning = controllerValue;
 		if (_modeStereo) {
 			// Update register only in case we are in stereo mode
@@ -947,7 +947,7 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 		}
 		break;
 
-	case MILES_CONTROLLER_SUSTAIN:
+	case MIDI_CONTROLLER_SUSTAIN:
 		_midiChannels[midiChannel].currentSustain = controllerValue;
 		if (controllerValue < 64) {
 			releaseSustain(midiChannel);
@@ -959,16 +959,16 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 		_midiChannels[midiChannel].currentPitchRange = controllerValue;
 		break;
 
-	case MILES_CONTROLLER_RESET_ALL:
+	case MIDI_CONTROLLER_RESET_ALL_CONTROLLERS:
 		_midiChannels[midiChannel].currentSustain = 0;
 		releaseSustain(midiChannel);
 		_midiChannels[midiChannel].currentModulation = 0;
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
-		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
+		_midiChannels[midiChannel].currentPitchBender = MIDI_PITCH_BEND_DEFAULT;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_20 | kMilesAdLibUpdateFlags_Reg_40 | kMilesAdLibUpdateFlags_Reg_A0;
 		break;
 
-	case MILES_CONTROLLER_ALL_NOTES_OFF:
+	case MIDI_CONTROLLER_ALL_NOTES_OFF:
 		for (byte virtualFmVoice = 0; virtualFmVoice < _modeVirtualFmVoicesCount; virtualFmVoice++) {
 			if (_virtualFmVoices[virtualFmVoice].inUse) {
 				// used

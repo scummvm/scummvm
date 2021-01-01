@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-09-26 12:37+0000\n"
-"Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
+"POT-Creation-Date: 2021-01-01 06:12+0000\n"
+"PO-Revision-Date: 2020-11-23 12:19+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -56,18 +56,18 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "תיקיה למעלה"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:356
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:370
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
-#: gui/options.cpp:1909 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:68
+#: gui/options.cpp:1945 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:767
-#: gui/saveload-dialog.cpp:1163 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:651
-#: backends/dialogs/gtk/gtk-dialogs.cpp:47
-#: backends/events/default/default-events.cpp:176
-#: backends/events/default/default-events.cpp:199
+#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
+#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
+#: backends/dialogs/gtk/gtk-dialogs.cpp:46
+#: backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:209
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
 #: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -75,16 +75,16 @@ msgstr "תיקיה למעלה"
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
-#: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:185
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:214
+#: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
 msgstr "ביטול"
 
 #: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
-#: backends/dialogs/gtk/gtk-dialogs.cpp:46
+#: backends/dialogs/gtk/gtk-dialogs.cpp:45
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
-#: backends/dialogs/win32/win32-dialogs.cpp:138
+#: backends/dialogs/win32/win32-dialogs.cpp:137
 msgid "Choose"
 msgstr "בחירה"
 
@@ -92,7 +92,7 @@ msgstr "בחירה"
 msgid "Select directory where to download game data"
 msgstr "בחירת תיקיה להורדת נתוני משחק"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:540 gui/launcher.cpp:207
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:554 gui/launcher.cpp:207
 msgid "Select directory with game data"
 msgstr "בחירת תיקיה עם נתוני משחק"
 
@@ -126,7 +126,8 @@ msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2659 gui/options.cpp:2697
+#: gui/options.cpp:2716 gui/options.cpp:2754
+#: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -137,7 +138,7 @@ msgstr "כן"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2659 gui/options.cpp:2697
+#: gui/options.cpp:2716 gui/options.cpp:2754
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -155,15 +156,15 @@ msgid ""
 "with the same name."
 msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו שם כבר קיים בתיקייה שנבחרה."
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:357
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:371
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:517
-#: gui/launcher.cpp:521 gui/massadd.cpp:89 gui/options.cpp:1911
-#: gui/saveload-dialog.cpp:1164 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/launcher.cpp:521 gui/massadd.cpp:89 gui/options.cpp:1947
+#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:187
-#: engines/scumm/scumm.cpp:1901 engines/scumm/players/player_v3m.cpp:130
+#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:186
+#: engines/scumm/scumm.cpp:1931 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
@@ -239,10 +240,10 @@ msgid ""
 "English"
 msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורקית למשחק בעברית"
 
-#: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1248
-#: gui/options.cpp:1268 gui/options.cpp:1281 gui/options.cpp:1295
-#: gui/options.cpp:1309 gui/options.cpp:1318 gui/options.cpp:2083
-#: gui/options.cpp:2257 audio/null.cpp:41
+#: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1268
+#: gui/options.cpp:1288 gui/options.cpp:1301 gui/options.cpp:1315
+#: gui/options.cpp:1329 gui/options.cpp:1338 gui/options.cpp:2134
+#: gui/options.cpp:2306 audio/null.cpp:41
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -264,13 +265,14 @@ msgstr "פלטפורמה:"
 msgid "Engine"
 msgstr "מנוע"
 
-#: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
+#: gui/editgamedialog.cpp:202 gui/options.cpp:1658 gui/options.cpp:1791
 #: backends/graphics/sdl/sdl-graphics.cpp:374
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "תצוגה"
 
-#: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
+#: gui/editgamedialog.cpp:202 gui/options.cpp:1658 gui/options.cpp:1791
 msgid "GFX"
 msgstr "תצוגה"
 
@@ -283,7 +285,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "ביטול הגדרות תצוגה מקיפות"
 
-#: gui/editgamedialog.cpp:220 gui/options.cpp:1780
+#: gui/editgamedialog.cpp:220 gui/options.cpp:1802
 msgid "Shader"
 msgstr "שיידר"
 
@@ -297,148 +299,152 @@ msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "בטל הגדרות שמע גלובליות"
 
-#: gui/editgamedialog.cpp:239 gui/options.cpp:1814 engines/dialogs.cpp:326
+#: gui/editgamedialog.cpp:239 gui/options.cpp:1836 engines/dialogs.cpp:326
 msgid "Keymaps"
 msgstr "מיפוי מקשים"
 
-#: gui/editgamedialog.cpp:246 gui/options.cpp:1821 engines/dialogs.cpp:301
+#: gui/editgamedialog.cpp:246 gui/options.cpp:1843 engines/dialogs.cpp:333
+msgid "Backend"
+msgstr ""
+
+#: gui/editgamedialog.cpp:260 gui/options.cpp:1857 engines/dialogs.cpp:301
 msgid "Audio"
 msgstr "שמע"
 
-#: gui/editgamedialog.cpp:249
+#: gui/editgamedialog.cpp:263
 msgid "Override global audio settings"
 msgstr "ביטול הגדרות שמע מקיפות"
-
-#: gui/editgamedialog.cpp:251
-msgctxt "lowres"
-msgid "Override global audio settings"
-msgstr "ביטול הגדרות שמע מקיפות"
-
-#: gui/editgamedialog.cpp:260 gui/options.cpp:1826
-msgid "Volume"
-msgstr "עוצמת שמע"
-
-#: gui/editgamedialog.cpp:262 gui/options.cpp:1828
-msgctxt "lowres"
-msgid "Volume"
-msgstr "עוצמת שמע"
 
 #: gui/editgamedialog.cpp:265
+msgctxt "lowres"
+msgid "Override global audio settings"
+msgstr "ביטול הגדרות שמע מקיפות"
+
+#: gui/editgamedialog.cpp:274 gui/options.cpp:1862
+msgid "Volume"
+msgstr "עוצמת שמע"
+
+#: gui/editgamedialog.cpp:276 gui/options.cpp:1864
+msgctxt "lowres"
+msgid "Volume"
+msgstr "עוצמת שמע"
+
+#: gui/editgamedialog.cpp:279
 msgid "Override global volume settings"
 msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
-#: gui/editgamedialog.cpp:267
+#: gui/editgamedialog.cpp:281
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
-#: gui/editgamedialog.cpp:278 gui/options.cpp:1836
+#: gui/editgamedialog.cpp:292 gui/options.cpp:1872
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:281
+#: gui/editgamedialog.cpp:295
 msgid "Override global MIDI settings"
 msgstr "ביטול הגדרות MIDI מקיפות"
 
-#: gui/editgamedialog.cpp:283
+#: gui/editgamedialog.cpp:297
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "ביטול הגדרות MIDI מקיפות"
 
-#: gui/editgamedialog.cpp:293 gui/options.cpp:1842
+#: gui/editgamedialog.cpp:307 gui/options.cpp:1878
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:296
+#: gui/editgamedialog.cpp:310
 msgid "Override global MT-32 settings"
 msgstr "בטל הגדרות MT-32 גלובליות"
 
-#: gui/editgamedialog.cpp:298
+#: gui/editgamedialog.cpp:312
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "בטל הגדרות MT-32 גלובליות"
 
-#: gui/editgamedialog.cpp:307 gui/options.cpp:1849
+#: gui/editgamedialog.cpp:321 gui/options.cpp:1885
 msgid "Paths"
 msgstr "נתיבים"
 
-#: gui/editgamedialog.cpp:309 gui/options.cpp:1851
+#: gui/editgamedialog.cpp:323 gui/options.cpp:1887
 msgctxt "lowres"
 msgid "Paths"
 msgstr "נתיבים"
 
-#: gui/editgamedialog.cpp:316
+#: gui/editgamedialog.cpp:330
 msgid "Game Path:"
 msgstr "נתיב משחק:"
 
-#: gui/editgamedialog.cpp:318
+#: gui/editgamedialog.cpp:332
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "נתיב משחק:"
 
-#: gui/editgamedialog.cpp:323 gui/options.cpp:2027
+#: gui/editgamedialog.cpp:337 gui/options.cpp:2063
 msgid "Extra Path:"
 msgstr "נתיב תוספות:"
 
-#: gui/editgamedialog.cpp:323 gui/editgamedialog.cpp:325
-#: gui/editgamedialog.cpp:326
+#: gui/editgamedialog.cpp:337 gui/editgamedialog.cpp:339
+#: gui/editgamedialog.cpp:340
 msgid "Specifies path to additional data used by the game"
 msgstr "נתיב שבו נמצאים קבצי מידע נוספים לשימוש על ידי המשחק"
 
-#: gui/editgamedialog.cpp:325 gui/options.cpp:2029
+#: gui/editgamedialog.cpp:339 gui/options.cpp:2065
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "נתיב תוספות:"
 
-#: gui/editgamedialog.cpp:332 gui/options.cpp:2011
+#: gui/editgamedialog.cpp:346 gui/options.cpp:2047
 msgid "Save Path:"
 msgstr "נתיב שמירה:"
 
-#: gui/editgamedialog.cpp:332 gui/editgamedialog.cpp:334
-#: gui/editgamedialog.cpp:335 gui/options.cpp:2011 gui/options.cpp:2013
-#: gui/options.cpp:2014
+#: gui/editgamedialog.cpp:346 gui/editgamedialog.cpp:348
+#: gui/editgamedialog.cpp:349 gui/options.cpp:2047 gui/options.cpp:2049
+#: gui/options.cpp:2050
 msgid "Specifies where your saved games are put"
 msgstr "נתיב שבו שמירות המשחק יהיו"
 
-#: gui/editgamedialog.cpp:334 gui/options.cpp:2013
+#: gui/editgamedialog.cpp:348 gui/options.cpp:2049
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "נתיב שמירה:"
 
-#: gui/editgamedialog.cpp:346 engines/dialogs.cpp:335
+#: gui/editgamedialog.cpp:360 engines/dialogs.cpp:348
 msgid "Achievements"
 msgstr "הישגים"
 
-#: gui/editgamedialog.cpp:370 gui/editgamedialog.cpp:465
-#: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
-#: gui/options.cpp:1942 gui/options.cpp:1950 gui/options.cpp:1974
-#: gui/options.cpp:2022 gui/options.cpp:2030 gui/options.cpp:2039
-#: gui/options.cpp:2281 gui/options.cpp:2287 gui/options.cpp:2294
-#: gui/options.cpp:2303 gui/options.cpp:2537 gui/options.cpp:2540
-#: gui/options.cpp:2547 gui/options.cpp:2553 gui/options.cpp:2564
+#: gui/editgamedialog.cpp:384 gui/editgamedialog.cpp:479
+#: gui/editgamedialog.cpp:541 gui/editgamedialog.cpp:602 gui/options.cpp:1972
+#: gui/options.cpp:1978 gui/options.cpp:1986 gui/options.cpp:2010
+#: gui/options.cpp:2058 gui/options.cpp:2066 gui/options.cpp:2075
+#: gui/options.cpp:2330 gui/options.cpp:2336 gui/options.cpp:2343
+#: gui/options.cpp:2352 gui/options.cpp:2594 gui/options.cpp:2597
+#: gui/options.cpp:2604 gui/options.cpp:2610 gui/options.cpp:2621
 msgctxt "path"
 msgid "None"
 msgstr "לא נבחר"
 
-#: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:471
-#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2275
-#: gui/options.cpp:2543 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:389 gui/editgamedialog.cpp:485
+#: gui/editgamedialog.cpp:606 gui/options.cpp:1966 gui/options.cpp:2324
+#: gui/options.cpp:2600 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "ברירת מחדל"
 
-#: gui/editgamedialog.cpp:520 gui/options.cpp:2558
+#: gui/editgamedialog.cpp:534 gui/options.cpp:2615
 msgid "Select SoundFont"
 msgstr "בחירת SoundFont"
 
-#: gui/editgamedialog.cpp:559
+#: gui/editgamedialog.cpp:573
 msgid "Select additional game directory"
 msgstr "בחר תיקיה על קבצי משחק נוספים"
 
-#: gui/editgamedialog.cpp:572 gui/options.cpp:2472
+#: gui/editgamedialog.cpp:586 gui/options.cpp:2529
 msgid "Select directory for saved games"
 msgstr "בחירת תיקיה לשמירת משחקים"
 
-#: gui/editgamedialog.cpp:578
+#: gui/editgamedialog.cpp:592
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -446,7 +452,7 @@ msgstr ""
 "סינכרון שמירות משחק לא עובד עם תיקיות אחרות מברירת המחדל. בשביל לסכרן משחקים "
 "יש להשתמש בתיקית ברירת המחדל."
 
-#: gui/editgamedialog.cpp:604
+#: gui/editgamedialog.cpp:618
 msgid "This game ID is already taken. Please choose another one."
 msgstr "מזהה המשחק כבר תפוס. נא לבחור מזהה אחר."
 
@@ -523,11 +529,11 @@ msgid "Sine"
 msgstr "סינוס"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/metaengine.cpp:193
 msgid "Triangle"
 msgstr "גל משולש"
 
-#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1858
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1894
 msgid "Misc"
 msgstr "אחר"
 
@@ -583,8 +589,10 @@ msgstr "סגירה"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:398
+#: engines/twine/metaengine.cpp:468 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -593,8 +601,10 @@ msgstr "למעלה"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:405
+#: engines/twine/metaengine.cpp:476 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -603,7 +613,9 @@ msgstr "למטה"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
+#: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
+#: engines/twine/metaengine.cpp:420 engines/twine/metaengine.cpp:491
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -613,7 +625,9 @@ msgstr "שמאלה"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
+#: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
+#: engines/twine/metaengine.cpp:412 engines/twine/metaengine.cpp:484
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -750,15 +764,15 @@ msgstr "חיפוש ברשימת המשחקים"
 msgid "Search:"
 msgstr "חיפוש:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "טען משחק:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
-#: engines/scumm/dialogs.cpp:183 engines/tsage/scenes.cpp:601
+#: engines/scumm/dialogs.cpp:182 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "טעינה"
@@ -824,7 +838,7 @@ msgstr "נסרקו %d תיקיות ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "התגלו %d משחקים חדשים, דולג על %d משחקים קיימים ..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2192
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2241
 msgid "Open URL"
 msgstr "פתח כתובת אתר"
 
@@ -864,455 +878,472 @@ msgstr "כל 15 דקות"
 msgid "Every 30 mins"
 msgstr "כל 30 דקות"
 
-#: gui/options.cpp:414 gui/options.cpp:788 gui/options.cpp:926
-#: gui/options.cpp:1037 gui/options.cpp:1423
+#: gui/options.cpp:420 gui/options.cpp:808 gui/options.cpp:946
+#: gui/options.cpp:1057 gui/options.cpp:1443
 msgctxt "soundfont"
 msgid "None"
 msgstr "לא נבחר"
 
-#: gui/options.cpp:653
+#: gui/options.cpp:667
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "הפעלת חלק מהגדרות התצוגה נכשלה:"
 
-#: gui/options.cpp:665
+#: gui/options.cpp:679
 msgid "the video mode could not be changed"
 msgstr "מצב התצוגה לא יכול להשתנות"
 
-#: gui/options.cpp:678
+#: gui/options.cpp:692
 msgid "the stretch mode could not be changed"
 msgstr "מצב מתיחה לא השתנה"
 
-#: gui/options.cpp:684
+#: gui/options.cpp:698
 msgid "the aspect ratio setting could not be changed"
 msgstr "הגדרת יחס ממדים לא השתנתה"
 
-#: gui/options.cpp:690
+#: gui/options.cpp:704
 msgid "the fullscreen setting could not be changed"
 msgstr "הגדרת מסך מלא לא השתנתה"
 
-#: gui/options.cpp:696
+#: gui/options.cpp:710
 msgid "the filtering setting could not be changed"
 msgstr "הגדרת סינון לא השתנתה"
 
-#: gui/options.cpp:1116
+#: gui/options.cpp:1136
 msgid "Show On-screen control"
 msgstr "הצג שליטה על המסך"
 
-#: gui/options.cpp:1120
+#: gui/options.cpp:1140
 msgid "Touchpad mouse mode"
 msgstr "מצב משטח מגע"
 
-#: gui/options.cpp:1124
+#: gui/options.cpp:1144
 msgid "Swap Menu and Back buttons"
 msgstr "הפוך את כפתורי התפריט ואחורה"
 
-#: gui/options.cpp:1129
+#: gui/options.cpp:1149
 msgid "Pointer Speed:"
 msgstr "מהירות מצביע:"
 
-#: gui/options.cpp:1129 gui/options.cpp:1131 gui/options.cpp:1132
+#: gui/options.cpp:1149 gui/options.cpp:1151 gui/options.cpp:1152
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "מהירות מצביע עם מקלדת/ג'ויסטיק"
 
-#: gui/options.cpp:1131
+#: gui/options.cpp:1151
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "מהירות מצביע:"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1162
 msgid "Joy Deadzone:"
 msgstr "שטח מת בג'ויסטיק:"
 
-#: gui/options.cpp:1142 gui/options.cpp:1144 gui/options.cpp:1145
+#: gui/options.cpp:1162 gui/options.cpp:1164 gui/options.cpp:1165
 msgid "Analog joystick Deadzone"
 msgstr "שטח מת בג'ויסטיק אנאלוגי"
 
-#: gui/options.cpp:1144
+#: gui/options.cpp:1164
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "שטח מת בג'ויסטיק:"
 
-#: gui/options.cpp:1218
+#: gui/options.cpp:1238
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "%d הישגים נסתרים שנותרו"
 
-#: gui/options.cpp:1223
+#: gui/options.cpp:1243
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "הישגים שנפתחו: %d/%d"
 
-#: gui/options.cpp:1242
+#: gui/options.cpp:1262
 msgid "HW Shader:"
 msgstr "Shader חומרה:"
 
-#: gui/options.cpp:1242 gui/options.cpp:1244
+#: gui/options.cpp:1262 gui/options.cpp:1264
 msgid "Different hardware shaders give different visual effects"
 msgstr "Shaders"
 
-#: gui/options.cpp:1244
+#: gui/options.cpp:1264
 msgctxt "lowres"
 msgid "HW Shader:"
 msgstr "Shader חומרה:"
 
-#: gui/options.cpp:1245
+#: gui/options.cpp:1265
 msgid "Different shaders give different visual effects"
 msgstr "Shaders שונים נותנים אפקטים אחרים"
 
-#: gui/options.cpp:1265
+#: gui/options.cpp:1285
 msgid "Graphics mode:"
 msgstr "מצב תצוגה:"
 
-#: gui/options.cpp:1279
+#: gui/options.cpp:1299
 msgid "Render mode:"
 msgstr "מצב עיבוד:"
 
-#: gui/options.cpp:1279 gui/options.cpp:1280
+#: gui/options.cpp:1299 gui/options.cpp:1300
 msgid "Special dithering modes supported by some games"
 msgstr "מצבי dithering מיוחדים הנתמכים על ידי כמה משחקים"
 
-#: gui/options.cpp:1292
+#: gui/options.cpp:1312
 msgid "Stretch mode:"
 msgstr "מצב מתיחה:"
 
-#: gui/options.cpp:1303 backends/graphics/sdl/sdl-graphics.cpp:365
+#: gui/options.cpp:1323 backends/graphics/sdl/sdl-graphics.cpp:365
 msgid "Fullscreen mode"
 msgstr "מצב מסך מלא"
 
-#: gui/options.cpp:1305
+#: gui/options.cpp:1325
 msgid "V-Sync in 3D Games"
 msgstr ""
 
-#: gui/options.cpp:1305
+#: gui/options.cpp:1325
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
 
-#: gui/options.cpp:1307
+#: gui/options.cpp:1327
 #, fuzzy
 msgid "Game 3D Renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:1316
+#: gui/options.cpp:1336
 #, fuzzy
 msgid "3D Anti-aliasing:"
 msgstr "אנטי-מיועד"
 
-#: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
+#: gui/options.cpp:1340 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
 msgstr "נכים"
 
-#: gui/options.cpp:1332
+#: gui/options.cpp:1352
 msgid "Filter graphics"
 msgstr "סנן גרפיקה"
 
-#: gui/options.cpp:1332
+#: gui/options.cpp:1352
 msgid "Use linear filtering when scaling graphics"
 msgstr "השתמש בסינון לינארי בעת קנה המידה של גרפיקה"
 
-#: gui/options.cpp:1335
+#: gui/options.cpp:1355
 msgid "Aspect ratio correction"
 msgstr "תיקון יחסי גודל"
 
-#: gui/options.cpp:1335
+#: gui/options.cpp:1355
 #, fuzzy
 msgid "Correct aspect ratio for games"
 msgstr "תיקון יחסי גודל למשחקים בגודל 320x200"
 
-#: gui/options.cpp:1343
+#: gui/options.cpp:1363
 msgid "Preferred device:"
 msgstr "התקן מועדף:"
 
-#: gui/options.cpp:1343
+#: gui/options.cpp:1363
 msgid "Music device:"
 msgstr "מכשיר מוזיקה:"
 
-#: gui/options.cpp:1343 gui/options.cpp:1345
+#: gui/options.cpp:1363 gui/options.cpp:1365
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "מציין התקן קול או אמולטור כרטיס קול מועדף"
 
-#: gui/options.cpp:1343 gui/options.cpp:1345 gui/options.cpp:1346
+#: gui/options.cpp:1363 gui/options.cpp:1365 gui/options.cpp:1366
 msgid "Specifies output sound device or sound card emulator"
 msgstr "מציין התקן שמע פלט או אמולטור כרטיס כול מועדף"
 
-#: gui/options.cpp:1345
+#: gui/options.cpp:1365
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "מס 'מועדף:"
 
-#: gui/options.cpp:1345
+#: gui/options.cpp:1365
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "התקן מוזיקה:"
 
-#: gui/options.cpp:1372
+#: gui/options.cpp:1392
 msgid "AdLib emulator:"
 msgstr "אמולטור AdLib:"
 
-#: gui/options.cpp:1372 gui/options.cpp:1373
+#: gui/options.cpp:1392 gui/options.cpp:1393
 msgid "AdLib is used for music in many games"
 msgstr "AdLib נמצא בשימוש על ידי הרבה משחקים"
 
-#: gui/options.cpp:1386
+#: gui/options.cpp:1406
 msgid "GM device:"
 msgstr "התקן מידי כללי:"
 
-#: gui/options.cpp:1386
+#: gui/options.cpp:1406
 msgid "Specifies default sound device for General MIDI output"
 msgstr "מציין מכשיר צליל ברירת מחדל לפלט MIDI כללי"
 
-#: gui/options.cpp:1397
+#: gui/options.cpp:1417
 msgid "Don't use General MIDI music"
 msgstr "אל תשתמש במוזיקת MIDI כללית"
 
-#: gui/options.cpp:1408 gui/options.cpp:1470
+#: gui/options.cpp:1428 gui/options.cpp:1490
 msgid "Use first available device"
 msgstr "השתמש בהתקן הפנוי הראשון"
 
-#: gui/options.cpp:1420
+#: gui/options.cpp:1440
 msgid "SoundFont:"
 msgstr "גופן קול (SoundFont):"
 
-#: gui/options.cpp:1420 gui/options.cpp:1422 gui/options.cpp:1423
+#: gui/options.cpp:1440 gui/options.cpp:1442 gui/options.cpp:1443
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr "גופן קול נתמך על ידי מספר כרטיסי קול, FluidSynth ו-Timidity"
 
-#: gui/options.cpp:1422
+#: gui/options.cpp:1442
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "גופן קול (SoundFont):"
 
-#: gui/options.cpp:1428
+#: gui/options.cpp:1448
 msgid "Mixed AdLib/MIDI mode"
 msgstr "מצב מידי/AdLib מעורב"
 
-#: gui/options.cpp:1428
+#: gui/options.cpp:1448
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "השתמש בייצור צלילי MIDI וגם ב- AdLib"
 
-#: gui/options.cpp:1431
+#: gui/options.cpp:1451
 msgid "MIDI gain:"
 msgstr "רווח MIDI:"
 
-#: gui/options.cpp:1441
+#: gui/options.cpp:1461
 msgid "MT-32 Device:"
 msgstr "התקן MT-32:"
 
-#: gui/options.cpp:1441
+#: gui/options.cpp:1461
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "מציין התקן קול ברירת מחדל לפלט Roland MT-32 / LAPC1 / CM32l / CM64"
 
-#: gui/options.cpp:1446
+#: gui/options.cpp:1466
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "רולנד MT-32 אמיתי (השבת אמולציה של GM)"
 
-#: gui/options.cpp:1446 gui/options.cpp:1448
+#: gui/options.cpp:1466 gui/options.cpp:1468
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 "בחר אם ברצונך להשתמש במכשיר הקול התואם שלך עם חומרה אמיתית המחובר למחשב שלך"
 
-#: gui/options.cpp:1448
+#: gui/options.cpp:1468
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "רולנד MT-32 אמיתי (ללא אמולציה של GM)"
 
-#: gui/options.cpp:1451
+#: gui/options.cpp:1471
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "מכשיר רולנד GS (אפשר מיפוי MT-32)"
 
-#: gui/options.cpp:1451
+#: gui/options.cpp:1471
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr "בדוק אם ברצונך לאפשר מיפוי טלאים לחיקוי MT-32 במכשיר Roland GS"
 
-#: gui/options.cpp:1460
+#: gui/options.cpp:1480
 msgid "Don't use Roland MT-32 music"
 msgstr "אל תשתמש במוזיקה של רולנד MT-32"
 
-#: gui/options.cpp:1487
+#: gui/options.cpp:1507
 msgid "Text and speech:"
 msgstr "טקסט ודיבור:"
 
-#: gui/options.cpp:1491 gui/options.cpp:1501
+#: gui/options.cpp:1511 gui/options.cpp:1521
 msgid "Speech"
 msgstr "נאום"
 
-#: gui/options.cpp:1492 gui/options.cpp:1502
+#: gui/options.cpp:1512 gui/options.cpp:1522
 msgid "Subtitles"
 msgstr "כתוביות"
 
-#: gui/options.cpp:1493
+#: gui/options.cpp:1513
 msgid "Both"
 msgstr "שניהם"
 
-#: gui/options.cpp:1495
+#: gui/options.cpp:1515
 msgid "Subtitle speed:"
 msgstr "מהירות הכתוביות:"
 
-#: gui/options.cpp:1497
+#: gui/options.cpp:1517
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "טקסט ודיבור:"
 
-#: gui/options.cpp:1501
+#: gui/options.cpp:1521
 msgid "Spch"
 msgstr "ספץ '"
 
-#: gui/options.cpp:1502
+#: gui/options.cpp:1522
 msgid "Subs"
 msgstr "תת"
 
-#: gui/options.cpp:1503
+#: gui/options.cpp:1523
 msgctxt "lowres"
 msgid "Both"
 msgstr "שניהם"
 
-#: gui/options.cpp:1503
+#: gui/options.cpp:1523
 msgid "Show subtitles and play speech"
 msgstr "הצגת כתוביות והפעל דיבור"
 
-#: gui/options.cpp:1505
+#: gui/options.cpp:1525
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "מהירות הכתוביות:"
 
-#: gui/options.cpp:1521
+#: gui/options.cpp:1541
 msgid "Music volume:"
 msgstr "עוצמת מוזיקה:"
 
-#: gui/options.cpp:1523
+#: gui/options.cpp:1543
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "עוצמת מוזיקה:"
 
-#: gui/options.cpp:1530
+#: gui/options.cpp:1550
 msgid "Mute all"
 msgstr "להשתיק את הכול"
 
-#: gui/options.cpp:1533
+#: gui/options.cpp:1553
 msgid "SFX volume:"
 msgstr "נפח SFX:"
 
-#: gui/options.cpp:1533 gui/options.cpp:1535 gui/options.cpp:1536
+#: gui/options.cpp:1553 gui/options.cpp:1555 gui/options.cpp:1556
 msgid "Special sound effects volume"
 msgstr "אפקטים קוליים מיוחדים נפח"
 
-#: gui/options.cpp:1535
+#: gui/options.cpp:1555
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "נפח SFX:"
 
-#: gui/options.cpp:1543
+#: gui/options.cpp:1563
 msgid "Speech volume:"
 msgstr "נפח דיבור:"
 
-#: gui/options.cpp:1545
+#: gui/options.cpp:1565
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "נפח דיבור:"
 
-#: gui/options.cpp:1792
+#: gui/options.cpp:1814
 msgid "Control"
 msgstr "שליטה"
 
-#: gui/options.cpp:1860
+#: gui/options.cpp:1896
 msgctxt "lowres"
 msgid "Misc"
 msgstr "שונות"
 
-#: gui/options.cpp:1872
+#: gui/options.cpp:1908
 msgid "Cloud"
 msgstr "ענן"
-
-#: gui/options.cpp:1874
-msgctxt "lowres"
-msgid "Cloud"
-msgstr "ענן"
-
-#: gui/options.cpp:1888
-msgid "LAN"
-msgstr "LAN"
-
-#: gui/options.cpp:1890
-msgctxt "lowres"
-msgid "LAN"
-msgstr "LAN"
-
-#: gui/options.cpp:1898
-msgid "Accessibility"
-msgstr "נגישות"
-
-#: gui/options.cpp:1900
-msgctxt "lowres"
-msgid "Accessibility"
-msgstr "נגישות"
 
 #: gui/options.cpp:1910
+msgctxt "lowres"
+msgid "Cloud"
+msgstr "ענן"
+
+#: gui/options.cpp:1924
+msgid "LAN"
+msgstr "LAN"
+
+#: gui/options.cpp:1926
+msgctxt "lowres"
+msgid "LAN"
+msgstr "LAN"
+
+#: gui/options.cpp:1934
+msgid "Accessibility"
+msgstr "נגישות"
+
+#: gui/options.cpp:1936
+msgctxt "lowres"
+msgid "Accessibility"
+msgstr "נגישות"
+
+#: gui/options.cpp:1946
 msgid "Apply"
 msgstr "החלת הגדרות"
 
-#: gui/options.cpp:2000
+#: gui/options.cpp:2036
 msgid "FluidSynth Settings"
 msgstr "הגדרות FluidSynth"
 
-#: gui/options.cpp:2019
+#: gui/options.cpp:2055
 msgid "Theme Path:"
 msgstr "נתיב נושא:"
 
-#: gui/options.cpp:2021
+#: gui/options.cpp:2057
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "נתיב נושא:"
 
-#: gui/options.cpp:2027 gui/options.cpp:2029 gui/options.cpp:2030
+#: gui/options.cpp:2063 gui/options.cpp:2065 gui/options.cpp:2066
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "מציין נתיב לנתונים נוספים המשמשים את כל המשחקים או ScummVM"
 
-#: gui/options.cpp:2036
+#: gui/options.cpp:2072
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2038
+#: gui/options.cpp:2074
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2047
+#: gui/options.cpp:2083
 msgid "Theme:"
 msgstr "נושא:"
 
-#: gui/options.cpp:2051
+#: gui/options.cpp:2087
 msgid "GUI renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:2063
+#: gui/options.cpp:2099
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2065
+#: gui/options.cpp:2101
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2073
+#: gui/options.cpp:2110
+msgid "Always return to the launcher when leaving a game"
+msgstr ""
+
+#: gui/options.cpp:2111
+msgid ""
+"Always return to the launcher when leaving a game instead of closing ScummVM."
+msgstr ""
+
+#: gui/options.cpp:2118
+msgid "Ask for confirmation on exit"
+msgstr ""
+
+#: gui/options.cpp:2119
+msgid "Ask for permission when closing ScummVM or leaving a game."
+msgstr ""
+
+#: gui/options.cpp:2125
 msgid "Keys"
 msgstr "מפתחות"
 
-#: gui/options.cpp:2080
+#: gui/options.cpp:2131
 msgid "GUI language:"
 msgstr "שפת GUI:"
 
-#: gui/options.cpp:2080
+#: gui/options.cpp:2131
 msgid "Language of ScummVM GUI"
 msgstr "שפת GUI של ScummVM"
 
-#: gui/options.cpp:2106
+#: gui/options.cpp:2157
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "העבר את שפת ה- GUI לשפת המשחק"
 
-#: gui/options.cpp:2107
+#: gui/options.cpp:2158
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1321,257 +1352,257 @@ msgstr ""
 "כשאתה מתחיל משחק, שנה את שפת ה- GUI לשפת המשחק. בדרך זו, אם משחק משתמש ב- "
 "ScummVM שמירה וטעינה של דו-שיח, הם נמצאים באותה שפה כמו המשחק."
 
-#: gui/options.cpp:2120
+#: gui/options.cpp:2170
 msgid "Use native system file browser"
 msgstr "השתמש בדפדפן קבצי המערכת המקורי"
 
-#: gui/options.cpp:2121
+#: gui/options.cpp:2171
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
 "השתמש בדפדפן קבצי המערכת המקורי במקום ב- ScummVM כדי לבחור קובץ או ספרייה."
 
-#: gui/options.cpp:2128 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2178 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "בדיקת עדכון:"
 
-#: gui/options.cpp:2128
+#: gui/options.cpp:2178
 msgid "How often to check ScummVM updates"
 msgstr "באיזו תדירות לבדוק עדכוני ScummVM"
 
-#: gui/options.cpp:2140
+#: gui/options.cpp:2189
 msgid "Check now"
 msgstr "בדוק עכשיו"
 
-#: gui/options.cpp:2147
+#: gui/options.cpp:2196
 msgid "Active storage:"
 msgstr "אחסון פעיל:"
 
-#: gui/options.cpp:2147
+#: gui/options.cpp:2196
 msgid "Active cloud storage"
 msgstr "אחסון ענן פעיל"
 
-#: gui/options.cpp:2156
+#: gui/options.cpp:2205
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2158
+#: gui/options.cpp:2207
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2159
+#: gui/options.cpp:2208
 msgid "Enable storage"
 msgstr "אפשר אחסון"
 
-#: gui/options.cpp:2159
+#: gui/options.cpp:2208
 msgid "Confirm you want to use this account for this storage"
 msgstr "אשר שברצונך להשתמש בחשבון זה לאחסון זה"
 
-#: gui/options.cpp:2161 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2210 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "שם משתמש:"
 
-#: gui/options.cpp:2161
+#: gui/options.cpp:2210
 msgid "Username used by this storage"
 msgstr "שם משתמש בשימוש באחסון זה"
 
-#: gui/options.cpp:2162
+#: gui/options.cpp:2211
 msgid "<none>"
 msgstr "<אין>"
 
-#: gui/options.cpp:2164
+#: gui/options.cpp:2213
 msgid "Used space:"
 msgstr "מקום משומש:"
 
-#: gui/options.cpp:2164
+#: gui/options.cpp:2213
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "שטח שמשמש את המשחקים השמורים של ScummVM באחסון זה"
 
-#: gui/options.cpp:2167
+#: gui/options.cpp:2216
 msgid "Last sync:"
 msgstr "סנכרון אחרון:"
 
-#: gui/options.cpp:2167
+#: gui/options.cpp:2216
 msgid "When was the last time saved games were synced with this storage"
 msgstr "מתי הייתה הפעם האחרונה שסונכרנו משחקים עם אחסון זה"
 
-#: gui/options.cpp:2168 gui/options.cpp:2897
+#: gui/options.cpp:2217 gui/options.cpp:2954
 msgid "<never>"
 msgstr "<never>"
 
-#: gui/options.cpp:2170
+#: gui/options.cpp:2219
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2172
+#: gui/options.cpp:2221
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2173
+#: gui/options.cpp:2222
 msgid "Sync now"
 msgstr "סנכרן כעת"
 
-#: gui/options.cpp:2173
+#: gui/options.cpp:2222
 msgid "Start saved games sync"
 msgstr "התחל סנכרון משחקים שנשמר"
 
-#: gui/options.cpp:2176
+#: gui/options.cpp:2225
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2178
+#: gui/options.cpp:2227
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2179
+#: gui/options.cpp:2228
 msgid "Download game files"
 msgstr "הורד קבצי משחק"
 
-#: gui/options.cpp:2179
+#: gui/options.cpp:2228
 msgid "Open downloads manager dialog"
 msgstr "פתח את תיבת הדו-שיח של מנהל ההורדות"
 
-#: gui/options.cpp:2182
+#: gui/options.cpp:2231
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2184
+#: gui/options.cpp:2233
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2185
+#: gui/options.cpp:2234
 msgid "Disconnect"
 msgstr "נתק"
 
-#: gui/options.cpp:2185
+#: gui/options.cpp:2234
 msgid "Stop using this storage on this device"
 msgstr "הפסק להשתמש באחסון זה במכשיר זה"
 
-#: gui/options.cpp:2188
+#: gui/options.cpp:2237
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2190
+#: gui/options.cpp:2239
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2191
+#: gui/options.cpp:2240
 msgid "1. Open this link:"
 msgstr "1. פתח את הקישור הזה:"
 
-#: gui/options.cpp:2194
+#: gui/options.cpp:2243
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2196
+#: gui/options.cpp:2245
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2247
 msgid "Paste"
 msgstr "הדבק"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2247
 msgid "Paste code from clipboard"
 msgstr "הדבק קוד מהלוח"
 
-#: gui/options.cpp:2199
+#: gui/options.cpp:2248
 msgid "3. Connect"
 msgstr "3. התחבר"
 
-#: gui/options.cpp:2199
+#: gui/options.cpp:2248
 msgid "Connect your cloud storage account"
 msgstr "חבר את חשבון האחסון בענן שלך"
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2257
 msgid "Run server"
 msgstr "הפעל את השרת"
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2257
 msgid "Run local webserver"
 msgstr "הפעל שרת אינטרנט מקומי"
 
-#: gui/options.cpp:2209 gui/options.cpp:3012
+#: gui/options.cpp:2258 gui/options.cpp:3069
 msgid "Not running"
 msgstr "לא רץ"
 
-#: gui/options.cpp:2213
+#: gui/options.cpp:2262
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2213 gui/options.cpp:2215 gui/options.cpp:2216
+#: gui/options.cpp:2262 gui/options.cpp:2264 gui/options.cpp:2265
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "בחר איזו ספרייה תוצג כ / root / במנהל הקבצים"
 
-#: gui/options.cpp:2215
+#: gui/options.cpp:2264
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2270
 msgid "Server's port:"
 msgstr "יציאת השרת:"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2270
 msgid "Port for server to use"
 msgstr "יציאה לשימוש בשרת"
 
-#: gui/options.cpp:2226
+#: gui/options.cpp:2275
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2276
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
-#: gui/options.cpp:2229
+#: gui/options.cpp:2278
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2230
+#: gui/options.cpp:2279
 msgid "Closing options dialog will stop the server."
 msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
-#: gui/options.cpp:2242
+#: gui/options.cpp:2291
 msgid "Use Text to speech"
 msgstr "השתמש בטקסט לדיבור"
 
-#: gui/options.cpp:2242
+#: gui/options.cpp:2291
 msgid "Will read text in gui on mouse over."
 msgstr "יקרא טקסט בגוי על העכבר מעל."
 
-#: gui/options.cpp:2255
+#: gui/options.cpp:2304
 msgid "None"
 msgstr "ללא"
 
-#: gui/options.cpp:2330
+#: gui/options.cpp:2379
 msgid "Failed to change cloud storage!"
 msgstr "שינוי האחסון בענן נכשל!"
 
-#: gui/options.cpp:2333
+#: gui/options.cpp:2382
 msgid "Another cloud storage is already active."
 msgstr "אחסון ענן נוסף כבר פעיל."
 
-#: gui/options.cpp:2408
+#: gui/options.cpp:2465
 msgid "Theme does not support selected language!"
 msgstr "הנושא אינו תומך בשפה שנבחרה!"
 
-#: gui/options.cpp:2411
+#: gui/options.cpp:2468
 msgid "Theme cannot be loaded!"
 msgstr "לא ניתן לטעון את הנושא!"
 
-#: gui/options.cpp:2414
+#: gui/options.cpp:2471
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1579,27 +1610,27 @@ msgstr ""
 "\n"
 "הגדרות שונות ישוחזרו."
 
-#: gui/options.cpp:2479
+#: gui/options.cpp:2536
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "לא ניתן לכתוב את הספרייה שנבחרה. בחר אחד אחר."
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2545
 msgid "Select directory for GUI themes"
 msgstr "בחר ספרייה לנושאי GUI"
 
-#: gui/options.cpp:2498
+#: gui/options.cpp:2555
 msgid "Select directory for extra files"
 msgstr "בחר ספרייה לקבצים נוספים"
 
-#: gui/options.cpp:2509
+#: gui/options.cpp:2566
 msgid "Select directory for plugins"
 msgstr "בחר ספרייה עבור תוספים"
 
-#: gui/options.cpp:2522
+#: gui/options.cpp:2579
 msgid "Select directory for Files Manager /root/"
 msgstr "בחר ספרייה עבור מנהל הקבצים / root /"
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2691
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1607,47 +1638,47 @@ msgstr ""
 "פתיחת כתובת האתר נכשלה!\n"
 "אנא נווט לדף זה באופן ידני."
 
-#: gui/options.cpp:2659
+#: gui/options.cpp:2716
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון אחר עובד עכשיו. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:2668 gui/options.cpp:2706
+#: gui/options.cpp:2725 gui/options.cpp:2763
 msgid "Wait until current Storage finishes up and try again."
 msgstr "המתן עד לסיום האחסון הנוכחי ונסה שוב."
 
-#: gui/options.cpp:2681
+#: gui/options.cpp:2738
 msgid "Connecting..."
 msgstr "מתחבר ..."
 
-#: gui/options.cpp:2697
+#: gui/options.cpp:2754
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון זה עובד כעת. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:2895 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2952 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<עכשיו>"
 
-#: gui/options.cpp:3004
+#: gui/options.cpp:3061
 msgid "Stop server"
 msgstr "עצור את השרת"
 
-#: gui/options.cpp:3005
+#: gui/options.cpp:3062
 msgid "Stop local webserver"
 msgstr "עצור את שרת האינטרנט המקומי"
 
-#: gui/options.cpp:3057
+#: gui/options.cpp:3114
 msgid "Storage connected."
 msgstr "אחסון מחובר."
 
-#: gui/options.cpp:3059
+#: gui/options.cpp:3116
 msgid "Failed to connect storage."
 msgstr "חיבור האחסון נכשל."
 
-#: gui/options.cpp:3061
+#: gui/options.cpp:3118
 msgid "Failed to connect storage: "
-msgstr "חיבור האחסון נכשל:"
+msgstr "חיבור האחסון נכשל: "
 
-#: gui/options.cpp:3081
+#: gui/options.cpp:3138
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1711,12 +1742,12 @@ msgstr "ערוך"
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:240
 #: gui/recorderdialog.cpp:250
 msgid "Author: "
-msgstr "מחבר:"
+msgstr "מחבר: "
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Notes: "
-msgstr "הערות:"
+msgstr "הערות: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1748,15 +1779,15 @@ msgstr "תצוגת רשימה"
 msgid "Grid view"
 msgstr "נוף רשת"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:567
+#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
 msgid "No date saved"
 msgstr "לא נשמר תאריך"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:568
+#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
 msgid "No time saved"
 msgstr "לא חסך זמן"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No playtime saved"
 msgstr "לא נשמר זמן משחק"
 
@@ -1764,43 +1795,43 @@ msgstr "לא נשמר זמן משחק"
 msgid "Do you really want to delete this saved game?"
 msgstr "האם אתה באמת רוצה למחוק את המשחק השמור הזה?"
 
-#: gui/saveload-dialog.cpp:594 gui/saveload-dialog.cpp:1114
+#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
 msgid "Date: "
-msgstr "תאריך:"
+msgstr "תאריך: "
 
-#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1120
+#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
 msgid "Time: "
-msgstr "זמן:"
+msgstr "זמן: "
 
-#: gui/saveload-dialog.cpp:604 gui/saveload-dialog.cpp:1128
+#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
 msgid "Playtime: "
-msgstr "זמן משחק:"
+msgstr "זמן משחק: "
 
-#: gui/saveload-dialog.cpp:617 gui/saveload-dialog.cpp:705
+#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
 msgid "Untitled saved game"
 msgstr "משחק שמור ללא שם"
 
-#: gui/saveload-dialog.cpp:768
+#: gui/saveload-dialog.cpp:770
 msgid "Next"
 msgstr "הבא"
 
-#: gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:773
 msgid "Prev"
 msgstr "קודם"
 
-#: gui/saveload-dialog.cpp:978
+#: gui/saveload-dialog.cpp:980
 msgid "New Save"
 msgstr "שמור חדש"
 
-#: gui/saveload-dialog.cpp:978
+#: gui/saveload-dialog.cpp:980
 msgid "Create a new saved game"
 msgstr "צור משחק שמור חדש"
 
-#: gui/saveload-dialog.cpp:1107
+#: gui/saveload-dialog.cpp:1109
 msgid "Name: "
-msgstr "שם:"
+msgstr "שם: "
 
-#: gui/saveload-dialog.cpp:1183
+#: gui/saveload-dialog.cpp:1185
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "הזן תיאור עבור משבצת %d:"
@@ -1809,28 +1840,28 @@ msgstr "הזן תיאור עבור משבצת %d:"
 msgid "Select a Theme"
 msgstr "בחר נושא"
 
-#: gui/ThemeEngine.cpp:276
+#: gui/ThemeEngine.cpp:278
 msgid "Disabled GFX"
 msgstr "GFX מושבת"
 
-#: gui/ThemeEngine.cpp:276
+#: gui/ThemeEngine.cpp:278
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX מושבת"
 
-#: gui/ThemeEngine.cpp:277
+#: gui/ThemeEngine.cpp:279
 msgid "Standard renderer"
 msgstr "מעבד רגיל"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:680
+#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:681
 msgid "Standard"
 msgstr "סטנדרט"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:281
 msgid "Antialiased renderer"
 msgstr "מעבד אנטי-מיועד"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:281
 msgid "Antialiased"
 msgstr "אנטי-מיועד"
 
@@ -1891,11 +1922,11 @@ msgstr "להמשיך"
 msgid "Clear value"
 msgstr "ערך ברור"
 
-#: base/main.cpp:614
+#: base/main.cpp:619
 msgid "Error running game:"
 msgstr "שגיאה בהפעלת המשחק:"
 
-#: base/main.cpp:662
+#: base/main.cpp:666
 msgid "Could not find any engine capable of running the selected game"
 msgstr "לא יכול היה למצוא שום מנוע שמסוגל להריץ את המשחק שנבחר"
 
@@ -2014,7 +2045,7 @@ msgstr "חודשי"
 msgid "<Bad value>"
 msgstr "<ערך לא תקין>"
 
-#: engines/advancedDetector.cpp:211
+#: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "נתגלה עותק לא חוקי של משחק. אנו לא מספקים תמיכה במקרים שכאלה"
 
@@ -2051,7 +2082,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~ח~זור אל משגר"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:823 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
@@ -2068,7 +2099,7 @@ msgstr "~ח~זור אל משגר"
 msgid "Save game:"
 msgstr "שמור משחק:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:823
+#: engines/dialogs.cpp:103 engines/engine.cpp:831
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
@@ -2080,11 +2111,12 @@ msgstr "שמור משחק:"
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1075
-#: engines/scumm/dialogs.cpp:182 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/zvision/metaengine.cpp:194
 msgid "Save"
 msgstr "לשמור"
 
@@ -2106,15 +2138,15 @@ msgstr ""
 "שמירת המשחק (%s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות כיצד "
 "לקבל סיוע נוסף."
 
-#: engines/dialogs.cpp:346
+#: engines/dialogs.cpp:359
 msgid "~O~K"
 msgstr "~ O ~ K"
 
-#: engines/dialogs.cpp:347
+#: engines/dialogs.cpp:360
 msgid "~C~ancel"
 msgstr "~ ג ~ אנסל"
 
-#: engines/dialogs.cpp:350
+#: engines/dialogs.cpp:363
 msgid "~K~eys"
 msgstr "~ K ~ eys"
 
@@ -2149,6 +2181,11 @@ msgstr "לא ניתן להחיל הגדרת מסך מלא."
 msgid "Could not apply filtering setting."
 msgstr "לא ניתן להחיל את הגדרת הסינון."
 
+#: engines/engine.cpp:420
+#, fuzzy
+msgid "Error"
+msgstr "אין שגיאה"
+
 #: engines/engine.cpp:507
 msgid ""
 "You appear to be playing this game directly\n"
@@ -2178,6 +2215,7 @@ msgstr ""
 "לפרטים, עיין בקובץ README."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
+#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "שמירה אוטומטית"
@@ -2195,7 +2233,7 @@ msgstr ""
 "טעינת המשחק השמורה (%s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות "
 "כיצד לקבל סיוע נוסף."
 
-#: engines/engine.cpp:648
+#: engines/engine.cpp:649
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2205,15 +2243,27 @@ msgstr ""
 "סביר להניח שהוא לא יציב, וכל משחק שנשמר שתבצע עשוי לא לעבוד בגירסאות עתידיות "
 "של ScummVM."
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:214
+#: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "התחל בכל מקרה"
 
-#: engines/engine.cpp:790
+#: engines/engine.cpp:659
+msgid "This game is not supported."
+msgstr "מזהה המשחק אינו נתמך."
+
+#: engines/engine.cpp:659
+msgid ""
+"This game is not supported for the following reason:\n"
+"\n"
+msgstr ""
+"המשחק הזה לא נתמך מהסיבות הבאות:\n"
+"\n"
+
+#: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
 msgstr "טעינת משחק לא אפשרית כרגע"
 
-#: engines/engine.cpp:819
+#: engines/engine.cpp:827
 msgid "Saving game is currently unavailable"
 msgstr "שמירת משחק לא אפשרית כרגע"
 
@@ -2237,31 +2287,33 @@ msgstr "מזהי משחק תואמים למנוע %s:"
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
-msgstr "מיפוי מקלדת "
+msgstr "מיפוי מקלדת"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
+#: engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "לחיצה שמאלית"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:179
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Middle Click"
 msgstr "לחיצה אמצעית"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
 #: backends/platform/symbian/src/SymbianActions.cpp:45
-#: engines/wintermute/keymapper_tables.h:49
+#: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "לחיצה ימנית"
 
 #: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:593 engines/mohawk/riven.cpp:863
-#: engines/wintermute/keymapper_tables.h:1255
+#: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
+#: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
+#: engines/twine/metaengine.cpp:178 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "הפסקה"
 
@@ -2281,7 +2333,7 @@ msgstr "תפריט משחק"
 msgid "Skip"
 msgstr "לדלג"
 
-#: engines/metaengine.cpp:93
+#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:108
 msgid "Skip line"
 msgstr "דלג על קו"
 
@@ -2289,10 +2341,19 @@ msgstr "דלג על קו"
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:508
-#: engines/grim/grim.cpp:600 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:90
+#: engines/grim/grim.cpp:508 engines/grim/grim.cpp:600
+#: engines/sky/metaengine.cpp:88 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "אשר"
+
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:165
+msgid "OpenGL"
+msgstr "OpenGL"
+
+#: graphics/renderer.cpp:34
+msgid "OpenGL with shaders"
+msgstr ""
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2322,40 +2383,40 @@ msgstr "OPL2LPT"
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/mididrv.cpp:259
+#: audio/mididrv.cpp:220
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr "מכשיר האודיו שנבחר '%s' לא נמצא (למשל יכול להיות כבוי או מנותק)."
 
-#: audio/mididrv.cpp:260 audio/mididrv.cpp:274 audio/mididrv.cpp:312
-#: audio/mididrv.cpp:329
+#: audio/mididrv.cpp:221 audio/mididrv.cpp:235 audio/mididrv.cpp:273
+#: audio/mididrv.cpp:290
 msgid "Attempting to fall back to the next available device..."
 msgstr "מנסה לחזור למכשיר הזמין הבא ..."
 
-#: audio/mididrv.cpp:273
+#: audio/mididrv.cpp:234
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr "לא ניתן להשתמש במכשיר השמע שנבחר '%s'. ראה קובץ יומן למידע נוסף."
 
-#: audio/mididrv.cpp:311
+#: audio/mididrv.cpp:272
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr "מכשיר השמע המועדף '%s' לא נמצא (למשל, ייתכן שהוא כבוי או מנותק)."
 
-#: audio/mididrv.cpp:328
+#: audio/mididrv.cpp:289
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr "לא ניתן להשתמש במכשיר השמע המועדף '%s'. ראה קובץ יומן למידע נוסף."
 
-#: audio/mididrv.cpp:725
+#: audio/mididrv.cpp:454
 msgid "Starting MIDI dump"
 msgstr "מתחיל בשמירת MIDI"
 
@@ -2451,45 +2512,51 @@ msgstr "ההורדה הושלמה."
 msgid "Download failed."
 msgstr "הורדה נכשלה."
 
-#: backends/events/default/default-events.cpp:176
-msgid "Do you really want to return to the Launcher?"
-msgstr "האם אתה באמת רוצה לחזור למשגר?"
+#: backends/events/default/default-events.cpp:185
+#, fuzzy
+#| msgid ""
+#| "Are you sure you want to start a new game? All unsaved progress will be "
+#| "lost."
+msgid ""
+"Do you really want to return to the Launcher?\n"
+"Any unsaved progress will be lost."
+msgstr "האם אתה בטוח שברצונך להתחיל משחק חדש? כל ההתקדמות שלא נשמרה תאבד."
 
-#: backends/events/default/default-events.cpp:176
-#: backends/presence/discord/discord.cpp:46
-msgid "Launcher"
-msgstr "משגר"
+#: backends/events/default/default-events.cpp:209
+#, fuzzy
+#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
+msgid ""
+"Do you really want to quit?\n"
+"Any unsaved progress will be lost."
+msgstr "אתה בטוח שברצונך לפרוש? כל ההתקדמות שלא נשמרה תאבד."
 
-#: backends/events/default/default-events.cpp:199
-msgid "Do you really want to quit?"
-msgstr "האם אתה באמת רוצה לעזוב?"
-
-#: backends/events/default/default-events.cpp:199
-#: backends/events/default/default-events.cpp:316
+#: backends/events/default/default-events.cpp:209
+#: backends/events/default/default-events.cpp:326
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
-#: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:186
+#: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
+#: engines/zvision/metaengine.cpp:204 engines/zvision/metaengine.cpp:222
 msgid "Quit"
 msgstr "צא"
 
-#: backends/events/default/default-events.cpp:293
+#: backends/events/default/default-events.cpp:303
 msgid "Global"
 msgstr "גלובלי"
 
-#: backends/events/default/default-events.cpp:296
+#: backends/events/default/default-events.cpp:306
 msgid "Global Main Menu"
 msgstr "תפריט ראשי כללי"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:313
 msgid "Display keyboard"
 msgstr "הצגת מקלדת"
 
-#: backends/events/default/default-events.cpp:310
+#: backends/events/default/default-events.cpp:320
 msgid "Toggle mute"
 msgstr "הפעל או בטל השתקה"
 
-#: backends/events/default/default-events.cpp:338
+#: backends/events/default/default-events.cpp:348
 msgid "Open Debugger"
 msgstr "פתח את מאתר הבאגים"
 
@@ -2543,12 +2610,9 @@ msgstr "מסך מגע 'מצב ברז' - רחף עם העכבר (קליקים ע�
 msgid "Do you want to quit ?"
 msgstr "האם אתה רוצה להיגמל?"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:165
-msgid "OpenGL"
-msgstr "OpenGL"
-
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: engines/twine/metaengine.cpp:297
 msgid "Center"
 msgstr "מרכז"
 
@@ -2578,27 +2642,27 @@ msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:612
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:614
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:635
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:637
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:666
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2557
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
 
@@ -2611,7 +2675,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "רגיל (ללא קנה מידה)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
 msgid "Active graphics filter:"
 msgstr "פילטר גרפי פעיל:"
 
@@ -2619,16 +2683,19 @@ msgstr "פילטר גרפי פעיל:"
 msgid "Windowed mode"
 msgstr "מצב חלון"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:378 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:378
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "מיתוג מסך מלא"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:385 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:385
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "החלף לכידת עכבר"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:390
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2641,6 +2708,7 @@ msgid "Save screenshot"
 msgstr "שמור צילום מסך"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:396
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "החלף בין מצבי יחס גובה-רוחב"
 
@@ -2651,7 +2719,7 @@ msgstr "השתמש בסינון לינארי בעת קנה המידה של גר�
 #: backends/graphics/sdl/sdl-graphics.cpp:410
 #, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "לא ניתן היה לעבור למצב מתיחה '% s'."
+msgstr "לא ניתן היה לעבור למצב מתיחה '%s'."
 
 #: backends/graphics/sdl/sdl-graphics.cpp:416
 #, fuzzy
@@ -2715,8 +2783,9 @@ msgid "Mouse Wheel Up"
 msgstr "גלגל עכבר למעלה"
 
 #: backends/keymapper/hardware-input.cpp:249
+#, fuzzy
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "גלגל עכבר למעלה"
 
 #: backends/keymapper/hardware-input.cpp:250
 #, fuzzy
@@ -2729,20 +2798,24 @@ msgid "X2 Mouse Button"
 msgstr "הדמו את לחצן העכבר השמאלי"
 
 #: backends/keymapper/hardware-input.cpp:256
+#, fuzzy
 msgid "Joy A"
-msgstr ""
+msgstr "לחזור"
 
 #: backends/keymapper/hardware-input.cpp:257
+#, fuzzy
 msgid "Joy B"
-msgstr ""
+msgstr "לחזור"
 
 #: backends/keymapper/hardware-input.cpp:258
+#, fuzzy
 msgid "Joy X"
-msgstr ""
+msgstr "לחזור"
 
 #: backends/keymapper/hardware-input.cpp:259
+#, fuzzy
 msgid "Joy Y"
-msgstr ""
+msgstr "לחזור"
 
 #: backends/keymapper/hardware-input.cpp:260
 #, fuzzy
@@ -2768,32 +2841,34 @@ msgstr "לחיצה שמאלית"
 msgid "Right Stick"
 msgstr "לחיצה ימנית"
 
-#: backends/keymapper/hardware-input.cpp:265
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:211
 msgid "Left Shoulder"
 msgstr ""
 
-#: backends/keymapper/hardware-input.cpp:266
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:217
 msgid "Right Shoulder"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
-#: backends/platform/sdl/switch/switch.cpp:47
+#: backends/platform/sdl/switch/switch.cpp:49
+#, fuzzy
 msgid "D-pad Up"
-msgstr ""
+msgstr "החלק שמאלה"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
-#: backends/platform/sdl/switch/switch.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:50
+#, fuzzy
 msgid "D-pad Down"
-msgstr ""
+msgstr "למטה"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
-#: backends/platform/sdl/switch/switch.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:51
 #, fuzzy
 msgid "D-pad Left"
 msgstr "החלק שמאלה"
@@ -2801,7 +2876,7 @@ msgstr "החלק שמאלה"
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
-#: backends/platform/sdl/switch/switch.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:52
 #, fuzzy
 msgid "D-pad Right"
 msgstr "החלק ימינה"
@@ -2816,28 +2891,28 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
-#: backends/platform/sdl/switch/switch.cpp:57
+#: backends/platform/sdl/switch/switch.cpp:59
 #, fuzzy
 msgid "Left Stick X"
 msgstr "לחיצה שמאלית"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
-#: backends/platform/sdl/switch/switch.cpp:58
+#: backends/platform/sdl/switch/switch.cpp:60
 #, fuzzy
 msgid "Left Stick Y"
 msgstr "לחיצה שמאלית"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
-#: backends/platform/sdl/switch/switch.cpp:59
+#: backends/platform/sdl/switch/switch.cpp:61
 #, fuzzy
 msgid "Right Stick X"
 msgstr "לחיצה ימנית"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
-#: backends/platform/sdl/switch/switch.cpp:60
+#: backends/platform/sdl/switch/switch.cpp:62
 #, fuzzy
 msgid "Right Stick Y"
 msgstr "לחיצה ימנית"
@@ -2852,8 +2927,9 @@ msgid "Clear mapping"
 msgstr ""
 
 #: backends/keymapper/virtual-mouse.cpp:157
+#, fuzzy
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "ביטול הורדה"
 
 #: backends/keymapper/virtual-mouse.cpp:162
 #, fuzzy
@@ -2861,8 +2937,9 @@ msgid "Virtual mouse down"
 msgstr "ביטול הורדה"
 
 #: backends/keymapper/virtual-mouse.cpp:167
+#, fuzzy
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "זוז ימינה"
 
 #: backends/keymapper/virtual-mouse.cpp:172
 #, fuzzy
@@ -2974,7 +3051,7 @@ msgstr "או בחר ספרייה (פועלת ב- Chrome בלבד):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr "אינדקס של"
+msgstr "אינדקס של "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -3019,7 +3096,7 @@ msgstr "ספריית האב אינה קיימת!"
 msgid "Can't upload into a file!"
 msgstr "לא ניתן להעלות לקובץ!"
 
-#: backends/networking/sdl_net/handlerutils.cpp:199
+#: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
 msgstr "חזרה למנהל הקבצים"
 
@@ -3050,7 +3127,7 @@ msgstr "הועלה בהצלחה!"
 
 #: backends/platform/3ds/options-dialog.cpp:45
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
-#: engines/scumm/dialogs.cpp:285
+#: engines/scumm/dialogs.cpp:284
 msgid "~C~lose"
 msgstr "~ ג ~ להפסיד"
 
@@ -3089,22 +3166,22 @@ msgid "Both"
 msgstr "שניהם"
 
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/sdl/switch/switch.cpp:37
+#: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/sdl/switch/switch.cpp:36
+#: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/sdl/switch/switch.cpp:39
+#: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:38
+#: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
 msgstr ""
 
@@ -3125,24 +3202,24 @@ msgid "Start"
 msgstr "~ה~תחל"
 
 #: backends/platform/3ds/osystem-events.cpp:54
-#: backends/platform/sdl/switch/switch.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZL"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/sdl/switch/switch.cpp:56
+#: backends/platform/sdl/switch/switch.cpp:58
 msgid "ZR"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/sdl/psp2/psp2.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:45
+#: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/sdl/psp2/psp2.cpp:52
-#: backends/platform/sdl/switch/switch.cpp:46
+#: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
 msgstr ""
 
@@ -3164,8 +3241,9 @@ msgid "Toggle Drag Mode"
 msgstr "מצב גור"
 
 #: backends/platform/3ds/osystem-events.cpp:317
+#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "מצב גור"
 
 #: backends/platform/3ds/osystem-events.cpp:322
 msgid "Open 3DS Settings"
@@ -3220,8 +3298,9 @@ msgid "Magnify Mode On"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:429
+#, fuzzy
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "מצב זכוכית מגדלת אינו זמין בתפריטים."
 
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
@@ -3350,8 +3429,9 @@ msgstr "למטה"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
+#, fuzzy
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "דלג על קו"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
@@ -3414,11 +3494,13 @@ msgid "Indiana Jones Fight controls:"
 msgstr "~ אני ~ נאבק שולט"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
+#: engines/hdb/metaengine.cpp:205
 #, fuzzy
 msgid "Move left"
 msgstr "זוז שמאלה"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
+#: engines/hdb/metaengine.cpp:211
 #, fuzzy
 msgid "Move right"
 msgstr "זוז ימינה"
@@ -3428,8 +3510,9 @@ msgid "High guard"
 msgstr ""
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
+#, fuzzy
 msgid "Guard down"
-msgstr ""
+msgstr "אגרוף אמצעי"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
 #, fuzzy
@@ -3472,7 +3555,7 @@ msgstr "מצב משטח מגע הופעל."
 msgid "Touchpad mode disabled."
 msgstr "מצב משטח מגע בוטל."
 
-#: backends/platform/maemo/maemo.cpp:171
+#: backends/platform/maemo/maemo.cpp:158
 msgid "Click Mode"
 msgstr "מצב לחיצה"
 
@@ -3497,6 +3580,7 @@ msgid "Minimize"
 msgstr "הקטן"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr "עזרה"
 
@@ -3537,14 +3621,17 @@ msgid "BSD License"
 msgstr "רישיון BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
+#: engines/dragons/metaengine.cpp:205
 msgid "Cross"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
+#: engines/dragons/metaengine.cpp:199
 msgid "Circle"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
+#: engines/dragons/metaengine.cpp:187
 msgid "Square"
 msgstr ""
 
@@ -3553,12 +3640,12 @@ msgid "PS"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
-#: backends/platform/sdl/switch/switch.cpp:43
+#: backends/platform/sdl/switch/switch.cpp:45
 msgid "L3"
 msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
-#: backends/platform/sdl/switch/switch.cpp:44
+#: backends/platform/sdl/switch/switch.cpp:46
 msgid "R3"
 msgstr ""
 
@@ -3578,12 +3665,12 @@ msgstr ""
 msgid "R2"
 msgstr ""
 
-#: backends/platform/sdl/switch/switch.cpp:40
+#: backends/platform/sdl/switch/switch.cpp:42
 msgid "Minus"
 msgstr ""
 
-#: backends/platform/sdl/switch/switch.cpp:41
-#: backends/platform/sdl/switch/switch.cpp:42
+#: backends/platform/sdl/switch/switch.cpp:43
+#: backends/platform/sdl/switch/switch.cpp:44
 msgid "Plus"
 msgstr ""
 
@@ -3748,6 +3835,10 @@ msgstr "פסק זמן בזמן אתחול הרשת"
 msgid "Network not initialized (%d)"
 msgstr "הרשת לא אותחלה (%d)"
 
+#: backends/presence/discord/discord.cpp:46
+msgid "Launcher"
+msgstr "משגר"
+
 #: backends/updates/macosx/macosx-updates.mm:74
 msgid "Check for Updates..."
 msgstr "בדוק עדכונים..."
@@ -3908,7 +3999,7 @@ msgstr "שחזר משחק:"
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "לשחזר"
 
@@ -3916,7 +4007,7 @@ msgstr "לשחזר"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2467
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2497
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3927,7 +4018,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2457
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2487
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3938,7 +4029,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2480
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2510
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -3953,6 +4044,11 @@ msgstr ""
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "קובץ חיתוך '%s' לא נמצא!"
+
+#: engines/agos/metaengine.cpp:104
+#, fuzzy
+msgid "AGOS 2 support is not compiled in"
+msgstr "תכונות שנבנו:"
 
 #: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4046,11 +4142,29 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
-#: engines/cge/detection.cpp:113
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
+#: engines/kyra/detection_tables.h:80
+msgid ""
+"The fan translator does not wish his translation to be incorporated into "
+"ScummVM."
+msgstr ""
+
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
+#: engines/sci/detection_tables.h:4832
+#, fuzzy
+msgid "Missing game code"
+msgstr "בקרות משחק עיקריות:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "מצב עיוור צבע"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "אפשר מצב עיוור צבע כברירת מחדל"
 
@@ -4064,6 +4178,21 @@ msgid ""
 "version did not support them"
 msgstr ""
 
+#: engines/cine/metaengine.cpp:136
+#, fuzzy
+msgid "Unnamed autosave"
+msgstr "משחק שמור ללא שם"
+
+#: engines/cine/metaengine.cpp:138 engines/cine/metaengine.cpp:213
+#, fuzzy
+msgid "Unnamed savegame"
+msgstr "משחק שמור ללא שם"
+
+#: engines/cine/metaengine.cpp:156 engines/cine/metaengine.cpp:226
+#, fuzzy
+msgid "Empty autosave"
+msgstr "שמירה אוטומטית:"
+
 #: engines/cine/saveload.cpp:861
 msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
@@ -4076,6 +4205,11 @@ msgstr ""
 msgid "Load anyway"
 msgstr "הוסף בכל מקרה"
 
+#: engines/cryomni3d/metaengine.cpp:142
+#, fuzzy
+msgid "Versailles 1685 support is not compiled in"
+msgstr "תכונות שנבנו:"
+
 #: engines/dragons/dragons.cpp:1803
 #, c-format
 msgid ""
@@ -4085,6 +4219,49 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+
+#: engines/dragons/metaengine.cpp:124
+msgid ""
+"Error: It appears that the game data files were extracted incorrectly.\n"
+"\n"
+"You should only extract STR and XA files using the special method. The rest "
+"should be copied normally from your game CD.\n"
+"\n"
+" See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:140
+#, fuzzy
+msgid "Action"
+msgstr "פעיל"
+
+#: engines/dragons/metaengine.cpp:146
+msgid "Change Command"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
+#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
+#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:355
+#: engines/zvision/metaengine.cpp:164
+msgid "Inventory"
+msgstr "מלאי"
+
+#: engines/dragons/metaengine.cpp:157 engines/scumm/help.cpp:86
+#: engines/scumm/help.cpp:89
+msgid "Enter"
+msgstr "להיכנס"
+
+#: engines/dragons/metaengine.cpp:223
+#, fuzzy
+msgid "Debug Graphics"
+msgstr "תצוגה"
+
+#: engines/dragons/metaengine.cpp:228
+#, fuzzy
+msgid "Quit Game"
+msgstr " (משחק)"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4121,12 +4298,14 @@ msgid "Use TTS to read the text"
 msgstr "קריאת הקובץ נכשלה!"
 
 #: engines/glk/detection.cpp:231
+#, fuzzy
 msgid "Also read input text"
-msgstr ""
+msgstr "קריאת הקובץ נכשלה!"
 
 #: engines/glk/detection.cpp:232
+#, fuzzy
 msgid "Use TTS to read the input text"
-msgstr ""
+msgstr "קריאת הקובץ נכשלה!"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
@@ -4137,9 +4316,8 @@ msgid "Untitled Savegame"
 msgstr "שמור משחק ללא שם"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "טוען משחק..."
+msgstr "טוען משחק...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
@@ -4174,12 +4352,12 @@ msgstr "זה קצר מכדי להיות קובץ Alan2 תקף."
 msgid "This is not a valid Alan2 file."
 msgstr "זהו אינו קובץ Alan2 תקף."
 
-#: engines/glk/comprehend/game.cpp:318
+#: engines/glk/comprehend/game.cpp:322
 #, fuzzy
 msgid "Savegame"
 msgstr "שמור משחק:"
 
-#: engines/glk/comprehend/game.cpp:833
+#: engines/glk/comprehend/game.cpp:862
 msgid "Picture window toggled\n"
 msgstr ""
 
@@ -4206,31 +4384,31 @@ msgstr "לא ניתן היה להתחיל את המשחק AdvSys"
 
 #: engines/glk/scott/scott.cpp:100
 msgid "I don't understand your command. "
-msgstr "אני לא מבין את הפקודה שלך."
+msgstr "אני לא מבין את הפקודה שלך. "
 
 #: engines/glk/scott/scott.cpp:103
 msgid "I can't do that yet. "
-msgstr "אני עדיין לא יכול לעשות את זה."
+msgstr "אני עדיין לא יכול לעשות את זה. "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Light has run out! "
-msgstr "האור אזל!"
+msgstr "האור אזל! "
 
 #: engines/glk/scott/scott.cpp:121
 msgid "Your light has run out. "
-msgstr "האור שלך אזל."
+msgstr "האור שלך אזל. "
 
 #: engines/glk/scott/scott.cpp:130
 msgid "Light runs out in "
-msgstr "האור אוזל פנימה"
+msgstr "האור אוזל פנימה "
 
 #: engines/glk/scott/scott.cpp:132
 msgid " turns. "
-msgstr " מסתובב."
+msgstr " מסתובב. "
 
 #: engines/glk/scott/scott.cpp:135
 msgid "Your light is growing dim. "
-msgstr "האור שלך הולך ומתעמעם."
+msgstr "האור שלך הולך ומתעמעם. "
 
 #: engines/glk/scott/scott.cpp:412
 msgid "North"
@@ -4272,7 +4450,7 @@ msgid ""
 "Obvious exits: "
 msgstr ""
 "\n"
-"יציאות ברורות:"
+"יציאות ברורות: "
 
 #: engines/glk/scott/scott.cpp:456
 msgid "none"
@@ -4284,7 +4462,7 @@ msgid ""
 "You can also see: "
 msgstr ""
 "\n"
-"אתה יכול גם לראות:"
+"אתה יכול גם לראות: "
 
 #: engines/glk/scott/scott.cpp:468
 msgid ""
@@ -4292,7 +4470,7 @@ msgid ""
 "I can also see: "
 msgstr ""
 "\n"
-"אני יכול לראות גם:"
+"אני יכול לראות גם: "
 
 #: engines/glk/scott/scott.cpp:551
 msgid "Saved.\n"
@@ -4300,16 +4478,16 @@ msgstr "נשמר.\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
-msgstr "אתה משתמש במילים שאני לא יודע!"
+msgstr "אתה משתמש במילים שאני לא יודע! "
 
 #: engines/glk/scott/scott.cpp:774 engines/glk/scott/scott.cpp:1097
 #: engines/glk/scott/scott.cpp:1119
 msgid "You are carrying too much. "
-msgstr "אתה סוחב יותר מדי."
+msgstr "אתה סוחב יותר מדי. "
 
 #: engines/glk/scott/scott.cpp:776
 msgid "I've too much to carry! "
-msgstr "יש לי יותר מדי מה לשאת!"
+msgstr "יש לי יותר מדי מה לשאת! "
 
 #: engines/glk/scott/scott.cpp:807
 msgid "You are dead.\n"
@@ -4325,15 +4503,15 @@ msgstr "המשחק נגמר.\n"
 
 #: engines/glk/scott/scott.cpp:836
 msgid "You have stored "
-msgstr "שמרת"
+msgstr "שמרת "
 
 #: engines/glk/scott/scott.cpp:838
 msgid "I've stored "
-msgstr "אחסתי"
+msgstr "אחסתי "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג"
+msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג "
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Well done.\n"
@@ -4357,23 +4535,23 @@ msgstr "תן לי גם כיוון."
 
 #: engines/glk/scott/scott.cpp:1008
 msgid "Dangerous to move in the dark! "
-msgstr "מסוכן לנוע בחושך!"
+msgstr "מסוכן לנוע בחושך! "
 
 #: engines/glk/scott/scott.cpp:1016
 msgid "You fell down and broke your neck. "
-msgstr "נפלת ושברת את צווארך."
+msgstr "נפלת ושברת את צווארך. "
 
 #: engines/glk/scott/scott.cpp:1018
 msgid "I fell down and broke my neck. "
-msgstr "נפלתי ושברתי את צווארי."
+msgstr "נפלתי ושברתי את צווארי. "
 
 #: engines/glk/scott/scott.cpp:1023
 msgid "You can't go in that direction. "
-msgstr "אתה לא יכול ללכת לכיוון הזה."
+msgstr "אתה לא יכול ללכת לכיוון הזה. "
 
 #: engines/glk/scott/scott.cpp:1025
 msgid "I can't go in that direction. "
-msgstr "אני לא יכול ללכת לכיוון הזה."
+msgstr "אני לא יכול ללכת לכיוון הזה. "
 
 #: engines/glk/scott/scott.cpp:1083
 msgid "It is dark.\n"
@@ -4381,7 +4559,7 @@ msgstr "חשוך.\n"
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
-msgstr "יש לי יותר מדי מה לשאת."
+msgstr "יש לי יותר מדי מה לשאת. "
 
 #: engines/glk/scott/scott.cpp:1104 engines/glk/scott/scott.cpp:1152
 msgid ": O.K.\n"
@@ -4393,19 +4571,19 @@ msgstr "שום דבר לא נלקח."
 
 #: engines/glk/scott/scott.cpp:1114 engines/glk/scott/scott.cpp:1162
 msgid "What ? "
-msgstr "מה ?"
+msgstr "מה ? "
 
 #: engines/glk/scott/scott.cpp:1127
 msgid "It is beyond your power to do that. "
-msgstr "זה מעבר לכוחך לעשות זאת."
+msgstr "זה מעבר לכוחך לעשות זאת. "
 
 #: engines/glk/scott/scott.cpp:1129
 msgid "It's beyond my power to do that. "
-msgstr "זה מעבר לכוח שלי לעשות זאת."
+msgstr "זה מעבר לכוח שלי לעשות זאת. "
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
-msgstr "בסדר."
+msgstr "בסדר. "
 
 #: engines/glk/scott/scott.cpp:1158
 msgid "Nothing dropped.\n"
@@ -4445,6 +4623,20 @@ msgstr "שמירת המשחק לקובץ נכשלה."
 msgid "Failed to delete file."
 msgstr "מחיקת הקובץ נכשלה."
 
+#: engines/griffon/metaengine.cpp:84
+msgid "Menu / Skip"
+msgstr ""
+
+#: engines/griffon/metaengine.cpp:120
+#, fuzzy
+msgid "Attack"
+msgstr "התקפה 1"
+
+#: engines/griffon/metaengine.cpp:134
+#, fuzzy
+msgid "Speed Up Cutscene"
+msgstr "דלג על חתכים"
+
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
 msgstr ""
@@ -4455,7 +4647,7 @@ msgid ""
 "support for using such patches."
 msgstr ""
 
-#: engines/grim/detection.cpp:54
+#: engines/grim/detection.cpp:54 engines/zvision/metaengine.cpp:153
 #, fuzzy
 msgid "Show FPS"
 msgstr "הצג דלפק FPS"
@@ -4491,18 +4683,13 @@ msgstr "מדברים"
 msgid "Pick up/Put away"
 msgstr "לאסוף"
 
-#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-msgid "Inventory"
-msgstr "מלאי"
-
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:588
 #, fuzzy
 msgid "Skip dialog lines"
 msgstr "דלג על קו"
 
 #: engines/grim/grim.cpp:514 engines/grim/grim.cpp:606
+#: engines/hdb/metaengine.cpp:244
 msgid "Menu"
 msgstr "תפריט"
 
@@ -4555,6 +4742,11 @@ msgid ""
 "Successive runs will not check them again."
 msgstr ""
 
+#: engines/grim/metaengine.cpp:63
+#, fuzzy
+msgid "Escape from Monkey Island support is not compiled in"
+msgstr "תכונות שנבנו:"
+
 #: engines/grim/resource.cpp:100
 msgid ""
 "The original patch of Grim Fandango\n"
@@ -4584,13 +4776,18 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:297
 msgid "Fast movie speed"
 msgstr "מהירות סרט מהירה"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:298
 msgid "Play movies at an increased speed"
 msgstr "שחק סרטים במהירות מוגברת"
+
+#: engines/groovie/metaengine.cpp:52
+#, fuzzy
+msgid "GroovieV2 support is not compiled in"
+msgstr "תכונות שנבנו:"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4603,6 +4800,34 @@ msgstr "אפשר מצב רמאות"
 #: engines/hdb/detection.cpp:125
 msgid "Debug info and level selection becomes available"
 msgstr "מידע על ניפוי באגים ובחירת הרמה הופך לזמין"
+
+#: engines/hdb/metaengine.cpp:193
+#, fuzzy
+msgid "Move up"
+msgstr "לחזור"
+
+#: engines/hdb/metaengine.cpp:199
+#, fuzzy
+msgid "Move down"
+msgstr "ביטול הורדה"
+
+#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
+#: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
+#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
+#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:138
+#: engines/wintermute/keymapper_tables.h:1202
+msgid "Use"
+msgstr "להשתמש"
+
+#: engines/hdb/metaengine.cpp:224
+msgid "Clear waypoints"
+msgstr ""
+
+#: engines/hdb/metaengine.cpp:250
+#, fuzzy
+msgid "Debug"
+msgstr "מאתר הבאגים"
 
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
@@ -4642,131 +4867,150 @@ msgstr "אפשר מצב הליום"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
-#: engines/kyra/detection.cpp:82
+#: engines/kyra/detection.cpp:81
 msgid "Smooth scrolling"
 msgstr "גלילה חלקה"
 
-#: engines/kyra/detection.cpp:83
+#: engines/kyra/detection.cpp:82
 msgid "Enable smooth scrolling when walking"
 msgstr "אפשר גלילה חלקה בזמן ההליכה"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
-#: engines/kyra/detection.cpp:95
+#: engines/kyra/detection.cpp:94
 msgid "Floating cursors"
 msgstr "סמנים צפים"
 
-#: engines/kyra/detection.cpp:96
+#: engines/kyra/detection.cpp:95
 msgid "Enable floating cursors"
 msgstr "אפשר סמן צף"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
-#: engines/kyra/detection.cpp:107
+#: engines/kyra/detection.cpp:106
 #, fuzzy
 msgid "Suggest save names"
 msgstr "משחקים שמורים"
 
-#: engines/kyra/detection.cpp:108
+#: engines/kyra/detection.cpp:107
 msgid "Autogenerated naming suggestions for savegames"
 msgstr ""
 
 #. I18N: HP stands for Hit Points
-#: engines/kyra/detection.cpp:122
+#: engines/kyra/detection.cpp:119
 msgid "HP bar graphs"
 msgstr "תרשימי עמודות של HP"
 
-#: engines/kyra/detection.cpp:123
+#: engines/kyra/detection.cpp:120
 msgid "Enable hit point bar graphs"
 msgstr "אפשר תרשימי סרגל נקודות נקודה"
 
 #. I18N: L/R stands for Left/Right
-#: engines/kyra/detection.cpp:133
+#: engines/kyra/detection.cpp:130
 msgid "Fight Button L/R Swap"
 msgstr "החלפת כפתור קרב L / R"
 
-#: engines/kyra/detection.cpp:134
+#: engines/kyra/detection.cpp:131
 msgid "Left button to attack, right button to pick up items"
 msgstr "כפתור שמאלי לתקוף, כפתור ימין לאיסוף פריטים"
 
-#: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
+#: engines/kyra/metaengine.cpp:117
+#, fuzzy
+msgid "Lands of Lore support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/kyra/metaengine.cpp:127
+msgid ""
+"EOB II FM-TOWNS requires support of 16bit color modes which has not been "
+"activated in your ScummVM build"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:133
+#, fuzzy
+msgid "Eye of Beholder support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:139
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "לחיצה שמאלית"
 
-#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:136
+#: engines/ultima/ultima8/meta_engine.cpp:145
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "לחיצה ימנית"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:475
+#: engines/twine/metaengine.cpp:317
 msgid "Move Forward"
 msgstr "להתקדם"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
 msgid "Move Back"
 msgstr "לחזור"
 
-#: engines/kyra/engine/eobcommon.cpp:370
+#: engines/kyra/engine/eobcommon.cpp:371
 msgid "Move Left"
 msgstr "זוז שמאלה"
 
-#: engines/kyra/engine/eobcommon.cpp:371
+#: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Right"
 msgstr "זוז ימינה"
 
-#: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497
+#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:338
+#: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "פונה שמאלה"
 
-#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:331
+#: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "פנה ימינה"
 
-#: engines/kyra/engine/eobcommon.cpp:374
+#: engines/kyra/engine/eobcommon.cpp:375
 msgid "Open/Close Inventory"
 msgstr "מלאי פתוח / סגור"
 
-#: engines/kyra/engine/eobcommon.cpp:375
+#: engines/kyra/engine/eobcommon.cpp:376
 msgid "Switch Inventory/Character screen"
 msgstr "החלף מסך מלאי / תו"
 
-#: engines/kyra/engine/eobcommon.cpp:376
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "מחנה"
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:378
 msgid "Cast Spell"
 msgstr "להטיל כישוף"
 
-#: engines/kyra/engine/eobcommon.cpp:380
+#: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
 msgstr "איות ברמה 1"
 
-#: engines/kyra/engine/eobcommon.cpp:381
+#: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 2"
 msgstr "איות ברמה 2"
 
-#: engines/kyra/engine/eobcommon.cpp:382
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 3"
 msgstr "איות ברמה 3"
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 4"
 msgstr "איות ברמה 4"
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 5"
 msgstr "איות ברמה 5"
 
-#: engines/kyra/engine/eobcommon.cpp:386
+#: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 6"
 msgstr "איות ברמה 6"
 
@@ -4942,6 +5186,11 @@ msgstr ""
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
+#: engines/made/detection_tables.h:387
+#, fuzzy
+msgid "The game is using unsupported engine"
+msgstr "מזהה המשחק אינו נתמך."
+
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
 msgstr "ממשק עכבר קל"
@@ -5016,13 +5265,34 @@ msgstr "רגיל"
 msgid "Best"
 msgstr "הטוב ביותר"
 
+#: engines/mohawk/metaengine.cpp:271
+#, fuzzy
+msgid "Myst ME support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/mohawk/metaengine.cpp:276
+#, fuzzy
+msgid "Myst support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/mohawk/metaengine.cpp:283
+#, fuzzy
+msgid "Riven support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/mohawk/metaengine.cpp:297
+#, fuzzy
+msgid "CSTime support not compiled in"
+msgstr "תכונות שנבנו:"
+
 #: engines/mohawk/mohawk.cpp:52
 msgid "The game is paused. Press any key to continue."
 msgstr "המשחק מושהה. הקש על מקש כלשהו כדי להמשיך."
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
+#, fuzzy
 msgid "Open main menu"
-msgstr ""
+msgstr "~ R ~ חזור אל משגר"
 
 #: engines/mohawk/myst.cpp:576 engines/mohawk/riven.cpp:846
 #, fuzzy
@@ -5035,8 +5305,9 @@ msgid "Save game state"
 msgstr "משחקים שמורים"
 
 #: engines/mohawk/myst.cpp:586 engines/mohawk/riven.cpp:856
+#, fuzzy
 msgid "Show options menu"
-msgstr ""
+msgstr "אפשרויות"
 
 #: engines/mohawk/myst.cpp:598
 #, fuzzy
@@ -5089,7 +5360,7 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"חסר לך הפעלה של Riven. ההפעלה של Windows היא 'riven.exe' או 'rivendmo.exe'."
+"חסר לך הפעלה של Riven. ההפעלה של Windows היא 'riven.exe' או 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
@@ -5185,6 +5456,11 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to locate the '%s' engine data file"
 msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
+
+#: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
+#, fuzzy
+msgid "PS2 version is not yet supported"
+msgstr "מזהה המשחק אינו נתמך."
 
 #: engines/myst3/detection.cpp:182
 #, fuzzy
@@ -5349,10 +5625,19 @@ msgstr "מבוא אלטרנטיבי"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "השתמש במבוא משחק אלטרנטיבי (גרסת CD בלבד)"
 
-#: engines/saga/saga.cpp:247
+#: engines/saga/metaengine.cpp:114
 #, fuzzy
+msgid "I Have No Mouth support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/saga/metaengine.cpp:120
+#, fuzzy
+msgid "SAGA2 support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
-msgstr "שגיאה בקריאת שמירת הקובץ"
+msgstr "שגיאה בקריאת שמירת הקובץ."
 
 #: engines/sci/detection.cpp:143
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5483,7 +5768,7 @@ msgstr ""
 msgid "Yamaha FB-01"
 msgstr ""
 
-#: engines/sci/engine/kfile.cpp:485
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
 msgid "(Autosave)"
 msgstr "(שמירה אוטומטית)"
 
@@ -5492,7 +5777,7 @@ msgstr "(שמירה אוטומטית)"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr "אנא השתמש במציג חיצוני כדי לפתוח את קובץ העזרה של המשחק: %s"
 
-#: engines/sci/engine/kmisc.cpp:874
+#: engines/sci/engine/kmisc.cpp:865
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -5520,7 +5805,12 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
 
-#: engines/sci/resource.cpp:836
+#: engines/sci/metaengine.cpp:325
+#, fuzzy
+msgid "SCI32 support not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/sci/resource/resource.cpp:845
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5576,9 +5866,8 @@ msgstr ""
 "שלך על מנת להימנע משגיאות ו / או בעיות לא צפויות בהמשך."
 
 #: engines/sci/sci.cpp:518
-#, fuzzy
 msgid "Download patch"
-msgstr "ההורדה הושלמה."
+msgstr "ההורדה הושלמה"
 
 #: engines/sci/sci.cpp:519
 msgid ""
@@ -5662,119 +5951,119 @@ msgstr "השתמש בפלטה חלופית"
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:170
+#: engines/scumm/dialogs.cpp:169
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
 msgstr "הכנס דיסק %c ולחץ על לחצן כדי להמשיך."
 
-#: engines/scumm/dialogs.cpp:171
+#: engines/scumm/dialogs.cpp:170
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
 msgstr "לא ניתן למצוא %s, (%c%d) לחץ על לחצן."
 
-#: engines/scumm/dialogs.cpp:172
+#: engines/scumm/dialogs.cpp:171
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr "שגיאה בקריאת דיסק %c, (%c%d) לחץ על לחצן."
 
-#: engines/scumm/dialogs.cpp:173
+#: engines/scumm/dialogs.cpp:172
 msgid "Game Paused.  Press SPACE to Continue."
 msgstr "הפסקת משחק. לחץ על רווח כדי להמשיך."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:177
+#: engines/scumm/dialogs.cpp:176
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "האם אתה בטוח שברצונך להפעיל מחדש? (Y / N) Y"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:179
+#: engines/scumm/dialogs.cpp:178
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "אתה בטוח שברצונך לפרוש? (Y / N) Y"
 
-#: engines/scumm/dialogs.cpp:184
+#: engines/scumm/dialogs.cpp:183
 msgid "Play"
 msgstr "שחק"
 
-#: engines/scumm/dialogs.cpp:188
+#: engines/scumm/dialogs.cpp:187
 msgid "Insert save/load game disk"
 msgstr "הכנס דיסק / שמור את דיסק המשחק"
 
-#: engines/scumm/dialogs.cpp:189
+#: engines/scumm/dialogs.cpp:188
 msgid "You must enter a name"
 msgstr "עליך להזין שם"
 
-#: engines/scumm/dialogs.cpp:190
+#: engines/scumm/dialogs.cpp:189
 msgid "The game was NOT saved (disk full?)"
 msgstr "המשחק לא נשמר (הדיסק מלא?)"
 
-#: engines/scumm/dialogs.cpp:191
+#: engines/scumm/dialogs.cpp:190
 msgid "The game was NOT loaded"
 msgstr "המשחק לא היה טעון"
 
-#: engines/scumm/dialogs.cpp:192
+#: engines/scumm/dialogs.cpp:191
 #, c-format
 msgid "Saving '%s'"
 msgstr "שומר '%s'"
 
-#: engines/scumm/dialogs.cpp:193
+#: engines/scumm/dialogs.cpp:192
 #, c-format
 msgid "Loading '%s'"
 msgstr "טוען '%s'"
 
-#: engines/scumm/dialogs.cpp:194
+#: engines/scumm/dialogs.cpp:193
 msgid "Name your SAVE game"
 msgstr "תן שם למשחק שלך SAVE"
 
-#: engines/scumm/dialogs.cpp:195
+#: engines/scumm/dialogs.cpp:194
 msgid "Select a game to LOAD"
 msgstr "בחר משחק לטעון"
 
-#: engines/scumm/dialogs.cpp:196
+#: engines/scumm/dialogs.cpp:195
 msgid "Game title)"
 msgstr "כותרת המשחק)"
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:282
+#: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
 msgstr "~ P ~ נלהב"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:284
+#: engines/scumm/dialogs.cpp:283
 msgid "~N~ext"
 msgstr "~ N ~ שלוחה"
 
-#: engines/scumm/dialogs.cpp:619
+#: engines/scumm/dialogs.cpp:620
 msgid "Speech Only"
 msgstr "דיבור בלבד"
 
-#: engines/scumm/dialogs.cpp:620
+#: engines/scumm/dialogs.cpp:621
 msgid "Speech and Subtitles"
 msgstr "דיבור וכתוביות"
 
-#: engines/scumm/dialogs.cpp:621
+#: engines/scumm/dialogs.cpp:622
 msgid "Subtitles Only"
 msgstr "כתוביות בלבד"
 
-#: engines/scumm/dialogs.cpp:629
+#: engines/scumm/dialogs.cpp:630
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "דיבור ומנויים"
 
-#: engines/scumm/dialogs.cpp:675
+#: engines/scumm/dialogs.cpp:676
 msgid "Select a Proficiency Level."
 msgstr "בחר רמת מיומנות."
 
-#: engines/scumm/dialogs.cpp:677
+#: engines/scumm/dialogs.cpp:678
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "עיין במדריך הנול שלך (TM) לקבלת עזרה."
 
-#: engines/scumm/dialogs.cpp:681
+#: engines/scumm/dialogs.cpp:682
 msgid "Practice"
 msgstr "תרגול"
 
-#: engines/scumm/dialogs.cpp:682
+#: engines/scumm/dialogs.cpp:683
 msgid "Expert"
 msgstr "מומחה"
 
@@ -5794,7 +6083,7 @@ msgstr "דלג על שורת הטקסט"
 msgid "Esc"
 msgstr "יציאה"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:77 engines/zvision/metaengine.cpp:216
 msgid "Skip cutscene"
 msgstr "דלג על חתכים"
 
@@ -5827,10 +6116,6 @@ msgstr "אלט"
 #: engines/scumm/help.cpp:80
 msgid "Save game 1-10"
 msgstr "שמור משחק 1-10"
-
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
-msgid "Enter"
-msgstr "להיכנס"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -5894,15 +6179,15 @@ msgstr "* שים לב כי באמצעות ctrl-f ו-"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g אינם מומלצים"
+msgstr "  ctrl-g אינם מומלצים"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
-msgstr "  מכיוון שהם עלולים לגרום לקריסות"
+msgstr "  מכיוון שהם עלולים לגרום לקריסות"
 
 #: engines/scumm/help.cpp:110
 msgid "  or incorrect game behavior."
-msgstr "  או התנהגות שגויה של המשחק."
+msgstr "  או התנהגות שגויה של המשחק."
 
 #: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
@@ -5941,14 +6226,6 @@ msgstr "לך ל"
 #: engines/scumm/help.cpp:127
 msgid "Get"
 msgstr "לקבל"
-
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:224
-#: engines/scumm/help.cpp:250 engines/wintermute/keymapper_tables.h:138
-#: engines/wintermute/keymapper_tables.h:1202
-msgid "Use"
-msgstr "להשתמש"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
 msgid "Read"
@@ -6291,23 +6568,43 @@ msgstr "טוס לימין"
 msgid "Fly to lower right"
 msgstr "טוס לימין תחתון"
 
-#: engines/scumm/input.cpp:563
+#: engines/scumm/input.cpp:575
 msgid "Snap scroll on"
 msgstr "גלול הצמד על"
 
-#: engines/scumm/input.cpp:565
+#: engines/scumm/input.cpp:577
 msgid "Snap scroll off"
 msgstr "גלול את הצמד"
 
-#: engines/scumm/input.cpp:578
+#: engines/scumm/input.cpp:590
 msgid "Music volume: "
 msgstr "עוצמת שמע: "
 
-#: engines/scumm/input.cpp:595
+#: engines/scumm/input.cpp:607
 msgid "Subtitle speed: "
 msgstr "מהירות כתוביות: "
 
-#: engines/scumm/scumm.cpp:1899
+#: engines/scumm/metaengine.cpp:331
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
+"גרסת ה- Lite של Putt-Putt חוסכת את גן החיות iOS אינה נתמכת כדי למנוע "
+"פיראטיות.\n"
+"הגרסה המלאה זמינה לרכישה מחנות iTunes."
+
+#: engines/scumm/metaengine.cpp:422
+#, fuzzy
+msgid "HE v71+ support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/scumm/metaengine.cpp:446
+#, fuzzy
+msgid "SCUMM v7-8 support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/scumm/scumm.cpp:1929
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6316,7 +6613,7 @@ msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
 "אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
-#: engines/scumm/scumm.cpp:2765
+#: engines/scumm/scumm.cpp:2795
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -6406,46 +6703,68 @@ msgstr "הצג חלונות עם רקע שקוף חלקית"
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr "קובץ נתוני המנוע \"sky.cpt\" כולל גודל שגוי."
 
-#: engines/sky/detection.cpp:39
+#: engines/sky/detection.cpp:37
 msgid "Floppy intro"
 msgstr "מבוא תקליטונים"
 
-#: engines/sky/detection.cpp:40
+#: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "השתמש במבוא גרסת התקליטונים (גרסת CD בלבד)"
 
-#: engines/stark/detection.cpp:368
+#: engines/sky/metaengine.cpp:76
+msgid "Walk / Look / Talk"
+msgstr ""
+
+#: engines/sky/metaengine.cpp:94
+#, fuzzy
+msgid "Skip / Close"
+msgstr "דלג על קו"
+
+#: engines/sky/metaengine.cpp:102
+msgid "Open control panel"
+msgstr ""
+
+#: engines/sky/metaengine.cpp:118
+#, fuzzy
+msgid "Toggle fast mode"
+msgstr "מצב מהיר"
+
+#: engines/sky/metaengine.cpp:123
+#, fuzzy
+msgid "Toggle really fast mode"
+msgstr "הפעל במצב מהיר ממש (*)"
+
+#: engines/stark/detection.cpp:322
 #, fuzzy
 msgid "Load modded assets"
 msgstr "טוען משחק"
 
-#: engines/stark/detection.cpp:369
+#: engines/stark/detection.cpp:323
 msgid "Enable loading of external replacement assets."
 msgstr ""
 
-#: engines/stark/detection.cpp:377
+#: engines/stark/detection.cpp:331
 msgid "Enable linear filtering of the backgrounds images"
 msgstr ""
 
-#: engines/stark/detection.cpp:378
+#: engines/stark/detection.cpp:332
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:340
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:341
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/stark.cpp:291
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "חסרים לך קבצי הנתונים Riven הבאים:\n"
+msgstr "חסרים לך קבצי הנתונים Riven הבאים:"
 
 #: engines/stark/stark.cpp:305
 msgid ""
@@ -6570,6 +6889,14 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "חיתוכי PSX נמצאו אך ScummVM נבנה ללא תמיכה בצבע RGB"
 
+#: engines/sword2/detection.cpp:33
+msgid "Show object labels"
+msgstr "הצג תוויות של אובייקטים"
+
+#: engines/sword2/detection.cpp:34
+msgid "Show labels for objects on mouse hover"
+msgstr "הצג תוויות לאובייקטים בריחוף העכבר"
+
 #: engines/sword25/detection.cpp:41
 msgid "Use English speech"
 msgstr "השתמש בדיבור באנגלית"
@@ -6584,6 +6911,11 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr "הקובץ teenagent.dat דחוס ו- zlib לא נכלל בהפעלה זו. אנא פרקו אותו"
+
+#: engines/tinsel/detection_tables.h:466
+#, fuzzy
+msgid "Saturn CD version is not yet supported"
+msgstr "מזהה המשחק אינו נתמך."
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -6615,6 +6947,236 @@ msgstr "לא ניתן היה לטעון במהירות את המשחק השמו�
 msgid "Unable to locate the '%s' data file."
 msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 
+#: engines/tsage/detection_tables.h:150
+#, fuzzy
+msgid "Spanish CD version is not yet supported"
+msgstr "מזהה המשחק אינו נתמך."
+
+#: engines/twine/metaengine.cpp:66
+msgid "Enable wall collisions"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:67
+msgid "Enable the original wall collision damage"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:73
+#, fuzzy
+msgid "Enable cross fade"
+msgstr "אפשר מצב רמאות"
+
+#: engines/twine/metaengine.cpp:74
+msgid "Enable cross fading of images and scenes"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:81
+#, fuzzy
+msgid "Disable save menu"
+msgstr "שמירת המשחק נכשלה"
+
+#: engines/twine/metaengine.cpp:82
+msgid ""
+"The original only had autosaves. This allows you to save whenever you want."
+msgstr ""
+
+#: engines/twine/metaengine.cpp:88
+#, fuzzy
+msgid "Enable debug mode"
+msgstr "אפשר מצב הליום"
+
+#: engines/twine/metaengine.cpp:89
+#, fuzzy
+msgid "Enable the debug mode"
+msgstr "אפשר מצב הליום"
+
+#: engines/twine/metaengine.cpp:95
+#, fuzzy
+msgid "Enable audio CD"
+msgstr "אפשר קהל אולפן"
+
+#: engines/twine/metaengine.cpp:96
+msgid "Enable the original audio cd track"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:102
+#, fuzzy
+msgid "Enable sound"
+msgstr "אפשר אחסון"
+
+#: engines/twine/metaengine.cpp:103
+#, fuzzy
+msgid "Enable the sound for the game"
+msgstr "כותרת מלאה של המשחק"
+
+#: engines/twine/metaengine.cpp:109
+#, fuzzy
+msgid "Enable voices"
+msgstr "הפעל את ונוס"
+
+#: engines/twine/metaengine.cpp:110
+#, fuzzy
+msgid "Enable the voices for the game"
+msgstr "הפעל את מערכת העזרה של ונוס"
+
+#: engines/twine/metaengine.cpp:116
+#, fuzzy
+msgid "Enable text"
+msgstr "אפשר אחסון"
+
+#: engines/twine/metaengine.cpp:117
+#, fuzzy
+msgid "Enable the text for the game"
+msgstr "כותרת מלאה של המשחק"
+
+#: engines/twine/metaengine.cpp:123
+#, fuzzy
+msgid "Enable movies"
+msgstr "הפעל את ונוס"
+
+#: engines/twine/metaengine.cpp:124
+#, fuzzy
+msgid "Enable the cutscenes for the game"
+msgstr "הפעל את מערכת העזרה של ונוס"
+
+#: engines/twine/metaengine.cpp:130
+#, fuzzy
+msgid "Enable mouse"
+msgstr "הפעל את ונוס"
+
+#: engines/twine/metaengine.cpp:131
+#, fuzzy
+msgid "Enable the mouse for the UI"
+msgstr "כותרת מלאה של המשחק"
+
+#: engines/twine/metaengine.cpp:137
+msgid "Use the USA version"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:138
+msgid "Enable the USA specific version flags"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:183
+msgid "Debug Next Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:188
+msgid "Debug Previous Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:193
+msgid "Debug Apply Celling Grid"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:198
+msgid "Debug Increase Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:203
+msgid "Debug Decrease Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:208
+msgid "Debug Grid Camera Up"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:213
+msgid "Debug Grid Camera Down"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:218
+msgid "Debug Grid Camera Left"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:224
+msgid "Debug Grid Camera Right"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:229
+#, fuzzy
+msgid "Debug Menu"
+msgstr "מאתר הבאגים"
+
+#: engines/twine/metaengine.cpp:234
+#, fuzzy
+msgid "Debug Menu Execute"
+msgstr "מאתר הבאגים"
+
+#: engines/twine/metaengine.cpp:239 engines/twine/metaengine.cpp:259
+msgid "Normal Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:244 engines/twine/metaengine.cpp:264
+msgid "Athletic Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
+msgid "Aggressive Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:254 engines/twine/metaengine.cpp:274
+msgid "Discreet Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:279
+#, fuzzy
+msgid "Behaviour Action"
+msgstr "~ P ~ נלהב"
+
+#: engines/twine/metaengine.cpp:285
+msgid "Change Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:292
+#, fuzzy
+msgid "Options Menu"
+msgstr "אפשרויות"
+
+#: engines/twine/metaengine.cpp:304
+msgid "Use Selected Object"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:310
+msgid "Throw Magic Ball"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:324
+#, fuzzy
+msgid "Move Backward"
+msgstr "לחזור"
+
+#: engines/twine/metaengine.cpp:345
+msgid "Use Protopack"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:350
+msgid "Open Holomap"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:363
+#, fuzzy
+msgid "Special Action"
+msgstr "פעיל"
+
+#: engines/twine/metaengine.cpp:369 engines/wintermute/keymapper_tables.h:61
+#, fuzzy
+msgid "Escape"
+msgstr "מפתח בריחה"
+
+#: engines/twine/metaengine.cpp:382
+msgid "Accept"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:390 engines/twine/metaengine.cpp:442
+#: engines/twine/metaengine.cpp:461
+msgid "Abort"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:428
+#, fuzzy
+msgid "Next Page"
+msgstr "הבא"
+
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
@@ -6622,12 +7184,12 @@ msgstr ""
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
+msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d."
+msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, fuzzy, c-format
@@ -6635,9 +7197,9 @@ msgid "loading quick save %d"
 msgstr "לא ניתן היה לשמור במהירות בחריץ #%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:387
-#, c-format
+#, fuzzy, c-format
 msgid "saving quick save %d"
-msgstr ""
+msgstr "לא ניתן היה לשמור במהירות בחריץ #%d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
@@ -6648,19 +7210,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "החלף דמות"
 
-#: engines/ultima/ultima8/meta_engine.cpp:123
+#: engines/ultima/ultima8/meta_engine.cpp:132
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:123
+#: engines/ultima/ultima8/meta_engine.cpp:132
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:169
+#: engines/ultima/ultima8/meta_engine.cpp:179
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:184
+#: engines/ultima/ultima8/meta_engine.cpp:196
 msgid "Ultima VIII Debug"
 msgstr ""
 
@@ -6693,30 +7255,40 @@ msgstr "סינון ספרייט דו-גלילי (SLOW)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "החל סינון בי-לינארי על דמויות בודדות"
 
-#: engines/wintermute/wintermute.cpp:180
+#: engines/wintermute/metaengine.cpp:65
+#, fuzzy
+msgid "FoxTail support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/wintermute/metaengine.cpp:71
+#, fuzzy
+msgid "Hero Craft support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/wintermute/metaengine.cpp:77
+#, fuzzy
+msgid "Wintermute3D support is not compiled in"
+msgstr "תכונות שנבנו:"
+
+#: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "משחק זה דורש תמיכה ב- PNG, JPEG ו- Vorbis."
 
-#: engines/wintermute/wintermute.cpp:191
+#: engines/wintermute/wintermute.cpp:187
 #, fuzzy
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "משחק זה דורש תמיכה בתווי תלת ממד, שהוא מחוץ לתחום של ScummVM."
 
-#: engines/wintermute/wintermute.cpp:202
+#: engines/wintermute/wintermute.cpp:198
 #, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "משחק זה דורש תמיכה בתווי תלת ממד, שהוא מחוץ לתחום של ScummVM."
 
-#: engines/wintermute/wintermute.cpp:213
+#: engines/wintermute/wintermute.cpp:209
 msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:61
-#, fuzzy
-msgid "Escape"
-msgstr "מפתח בריחה"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
@@ -6820,8 +7392,9 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:281
 #: engines/wintermute/keymapper_tables.h:357
 #: engines/wintermute/keymapper_tables.h:871
+#, fuzzy
 msgid "Phone up button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר השמאלי"
 
 #: engines/wintermute/keymapper_tables.h:287
 #: engines/wintermute/keymapper_tables.h:363
@@ -6831,63 +7404,75 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:369
 #: engines/wintermute/keymapper_tables.h:883
+#, fuzzy
 msgid "Phone 0 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:374
 #: engines/wintermute/keymapper_tables.h:888
+#, fuzzy
 msgid "Phone 1 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:379
 #: engines/wintermute/keymapper_tables.h:893
+#, fuzzy
 msgid "Phone 2 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:384
 #: engines/wintermute/keymapper_tables.h:898
+#, fuzzy
 msgid "Phone 3 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:389
 #: engines/wintermute/keymapper_tables.h:903
+#, fuzzy
 msgid "Phone 4 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:394
 #: engines/wintermute/keymapper_tables.h:908
+#, fuzzy
 msgid "Phone 5 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:399
 #: engines/wintermute/keymapper_tables.h:913
+#, fuzzy
 msgid "Phone 6 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:404
 #: engines/wintermute/keymapper_tables.h:918
+#, fuzzy
 msgid "Phone 7 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:409
 #: engines/wintermute/keymapper_tables.h:923
+#, fuzzy
 msgid "Phone 8 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:928
+#, fuzzy
 msgid "Phone 9 button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:933
+#, fuzzy
 msgid "Phone * button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:424
 #: engines/wintermute/keymapper_tables.h:938
+#, fuzzy
 msgid "Phone # button"
-msgstr ""
+msgstr "הדמו את לחצן העכבר הימני"
 
 #: engines/wintermute/keymapper_tables.h:448
 #: engines/wintermute/keymapper_tables.h:1073
@@ -7359,6 +7944,37 @@ msgstr ""
 "משחק שמור זה משתמש בגרסה %u, אך מנוע זה תומך רק עד לגרסה %d. תצטרך גרסה "
 "מעודכנת של המנוע כדי להשתמש במשחק שנשמר זה."
 
+#: engines/zvision/metaengine.cpp:129
+#, fuzzy
+msgid "Look Up"
+msgstr "תראה"
+
+#: engines/zvision/metaengine.cpp:135
+#, fuzzy
+msgid "Look Down"
+msgstr "התקרב למטה"
+
+#: engines/zvision/metaengine.cpp:170
+msgid "Spellbook"
+msgstr ""
+
+#: engines/zvision/metaengine.cpp:176
+msgid "Score"
+msgstr ""
+
+#: engines/zvision/metaengine.cpp:182
+msgid "Put away object"
+msgstr ""
+
+#: engines/zvision/metaengine.cpp:188
+msgid "Extract coin"
+msgstr ""
+
+#: engines/zvision/metaengine.cpp:209
+#, fuzzy
+msgid "Preferences"
+msgstr "התקן מועדף:"
+
 #: engines/zvision/zvision.cpp:313
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
@@ -7371,6 +7987,12 @@ msgid ""
 "respectively."
 msgstr ""
 
+#~ msgid "Do you really want to return to the Launcher?"
+#~ msgstr "האם אתה באמת רוצה לחזור למשגר?"
+
+#~ msgid "Do you really want to quit?"
+#~ msgstr "האם אתה באמת רוצה לעזוב?"
+
 #, fuzzy
 #~ msgid "Look At"
 #~ msgstr "להסתכל על"
@@ -7378,85 +8000,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invetory"
 #~ msgstr "מלאי"
-
-#, fuzzy
-#~ msgid "Unnamed savegame"
-#~ msgstr "משחק שמור ללא שם"
-
-#, fuzzy
-#~ msgid "Empty autosave"
-#~ msgstr "שמירה אוטומטית:"
-
-#, fuzzy
-#~ msgid "Action"
-#~ msgstr "פעיל"
-
-#, fuzzy
-#~ msgid "Debug Graphics"
-#~ msgstr "תצוגה"
-
-#, fuzzy
-#~ msgid "Quit Game"
-#~ msgstr " (משחק)"
-
-#, fuzzy
-#~ msgid "Attack"
-#~ msgstr "התקפה 1"
-
-#, fuzzy
-#~ msgid "Speed Up Cutscene"
-#~ msgstr "דלג על חתכים"
-
-#, fuzzy
-#~ msgid "Move up"
-#~ msgstr "לחזור"
-
-#, fuzzy
-#~ msgid "Move down"
-#~ msgstr "ביטול הורדה"
-
-#, fuzzy
-#~ msgid "Debug"
-#~ msgstr "מאתר הבאגים"
-
-#~ msgid ""
-#~ "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
-#~ "piracy.\n"
-#~ "The full version is available for purchase from the iTunes Store."
-#~ msgstr ""
-#~ "גרסת ה- Lite של Putt-Putt חוסכת את גן החיות iOS אינה נתמכת כדי למנוע "
-#~ "פיראטיות.\n"
-#~ "הגרסה המלאה זמינה לרכישה מחנות iTunes."
-
-#, fuzzy
-#~ msgid "Skip / Close"
-#~ msgstr "דלג על קו"
-
-#, fuzzy
-#~ msgid "Toggle fast mode"
-#~ msgstr "מצב מהיר"
-
-#, fuzzy
-#~ msgid "Toggle really fast mode"
-#~ msgstr "הפעל במצב מהיר ממש (*)"
-
-#~ msgid "Show object labels"
-#~ msgstr "הצג תוויות של אובייקטים"
-
-#~ msgid "Show labels for objects on mouse hover"
-#~ msgstr "הצג תוויות לאובייקטים בריחוף העכבר"
-
-#, fuzzy
-#~ msgid "Look Up"
-#~ msgstr "תראה"
-
-#, fuzzy
-#~ msgid "Look Down"
-#~ msgstr "התקרב למטה"
-
-#, fuzzy
-#~ msgid "Preferences"
-#~ msgstr "התקן מועדף:"
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "המנוע אינו תומך ברמת ניפוי באגים '%s'"
@@ -7549,10 +8092,6 @@ msgstr ""
 #~ msgid ""
 #~ "This game requires 3D characters support, which is out of ScummVM's scope."
 #~ msgstr "משחק זה דורש תמיכה בתווי תלת ממד, שהוא מחוץ לתחום של ScummVM."
-
-#, fuzzy
-#~ msgid "Return to main menu"
-#~ msgstr "~ R ~ חזור אל משגר"
 
 #, fuzzy
 #~ msgid "C-Pad Sensitivity:"

@@ -60,7 +60,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	if (getPlatform() != Common::kPlatformDOS)
 		error("Only DOS versions of Star Trek: 25th Anniversary are currently supported");
 	else if (getGameType() == GType_STJR)
-		error("Star Trek: Judgment Rites not yet supported");
+		error("Star Trek: Judgment Rites is not yet supported");
 
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
@@ -96,7 +96,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
 
-	_missionToLoad = "DEMON";
+	_missionToLoad = "";
 	_roomIndexToLoad = 0;
 	_mapFile = nullptr;
 	_iwFile = nullptr;
@@ -110,6 +110,29 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	for (int i = 0; i < MAX_BAN_FILES; i++)
 		_banFiles[i] = nullptr;
+
+	_targetPlanet = -1;
+	_currentPlanet = -1;
+	_gameIsPaused = false;
+	_hailedTarget = false;
+	_deadMasadaPrisoners = 0;
+	_beamDownAllowed = true;
+	_missionEndFlag = 0;
+	_randomEncounterType = 0;
+	_lastMissionId = -1;
+	Common::fill(_missionPoints, _missionPoints + 7, 0);
+
+	_awayMission.demon.missionScore = 0;
+	_awayMission.tug.missionScore = 0;
+	_awayMission.love.missionScore = 0;
+	_awayMission.mudd.missionScore = 0;
+	_awayMission.feather.missionScore = 0;
+	_awayMission.trial.missionScore = 0;
+	_awayMission.sins.missionScore = 0;
+	_awayMission.veng.missionScore = 0;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
 }
 
 StarTrekEngine::~StarTrekEngine() {
@@ -122,49 +145,52 @@ StarTrekEngine::~StarTrekEngine() {
 }
 
 Common::Error StarTrekEngine::run() {
-	_resource = new Resource(getPlatform(), getFeatures() & GF_DEMO);
+	bool isDemo = getFeatures() & GF_DEMO;
+	_resource = new Resource(getPlatform(), isDemo);
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
 	setDebugger(new Console(this));
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
+	loadBridgeComputerTopics();
 
-	_gfx->setMouseBitmap("pushbtn");
-	_gfx->toggleMouse(true);
+	_gfx->setMouseBitmap(!isDemo ? "pushbtn" : "cursor");
 
-	bool shouldPlayIntro = true;
 	bool loadedSave = false;
 
 	if (ConfMan.hasKey("save_slot")) {
 		if (!loadGame(ConfMan.getInt("save_slot")))
 			error("Failed to load savegame %d", ConfMan.getInt("save_slot"));
-		shouldPlayIntro = false;
 		loadedSave = true;
-		_roomIndexToLoad = -1;
 	}
 
 	if (!loadedSave) {
-		if (shouldPlayIntro) {
-			_frameIndex = 0;
+		if (!isDemo) {
 			playIntro();
+			_missionToLoad = "DEMON";
+			_bridgeSequenceToLoad = 0;
+			runGameMode(GAMEMODE_BRIDGE, false);
+		} else {
+			_missionToLoad = "DEMO";
+			_bridgeSequenceToLoad = -1;
+			runGameMode(GAMEMODE_AWAYMISSION, false);
 		}
-
-		_frameIndex = 0;
-
-		_gameMode = -1;
-		_lastGameMode = -1;
-	}
-
-	if (loadedSave)
+	} else {
+		_roomIndexToLoad = -1;
+		_bridgeSequenceToLoad = -1;
 		runGameMode(_gameMode, true);
-	else
-		runGameMode(GAMEMODE_AWAYMISSION, false);
+	}
+	
 	return Common::kNoError;
 }
 
 Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
+	_gfx->toggleMouse(true);
+
 	if (!resume) { // Only run this if not just resuming from a savefile
+		_frameIndex = 0;
+		_lastGameMode = -1;
 		_gameMode = mode;
 
 		_sound->stopAllVocSounds();
@@ -222,6 +248,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 			case GAMEMODE_BEAMUP:
 				runTransportSequence("teleb");
 				_gameMode = GAMEMODE_BRIDGE;
+				delete _room;
 				//sub_15c61();
 				_sound->stopAllVocSounds();
 				_sound->playVoc("bridloop");
@@ -236,7 +263,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 		switch (_gameMode) {
 		case GAMEMODE_BRIDGE:
 			popNextEvent(&event);
-			//runBridge();
+			runBridge();
 			break;
 
 		case GAMEMODE_AWAYMISSION:
@@ -266,7 +293,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_sound->stopAllVocSounds();
 	_gfx->fadeoutScreen();
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	initActors();
 
 	_gfx->setBackgroundImage("transprt");
@@ -289,12 +316,9 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	} else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
 			loadActorAnim(9, "qteled", 0x61, 0x79, 1.0);
-		}
-		/* TODO
-		else if (word_51156 >= 3) {
+		} else if (_missionEndFlag >= 3) {
 			loadActorAnim(9, "qteleb", 0x61, 0x79, 1.0);
 		}
-		*/
 	}
 
 	loadActorAnim(8, "transc", 0, 0, 1.0);
@@ -327,7 +351,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_gfx->drawAllSprites();
 	_gfx->fadeoutScreen();
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	initActors();
 }
 

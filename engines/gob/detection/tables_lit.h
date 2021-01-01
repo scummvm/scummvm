@@ -344,11 +344,8 @@
 	{
 		"lit1",
 		"Light install",
-		{
-			{"intro.stk", 0, "93c91bc9e783d00033042ae83144d7dd", 72318},
-			{"partie2.itk", 0, "78f00bd8eb9e680e6289bba0130b1b33", 664064},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "93c91bc9e783d00033042ae83144d7dd", 72318,
+				   "partie2.itk", "78f00bd8eb9e680e6289bba0130b1b33", 664064),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -362,11 +359,8 @@
 	{
 		"lit1",
 		"Full install",
-		{
-			{"intro.stk", 0, "93c91bc9e783d00033042ae83144d7dd", 72318},
-			{"partie2.itk", 0, "78f00bd8eb9e680e6289bba0130b1b33", 4396644},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "93c91bc9e783d00033042ae83144d7dd", 72318,
+				   "partie2.itk", "78f00bd8eb9e680e6289bba0130b1b33", 4396644),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -397,11 +391,8 @@
 	{
 		"lit2",
 		"Full install",
-		{
-			{"intro.stk", 0, "17acbb212e62addbe48dc8f2282c98cb", 72318},
-			{"partie4.itk", 0, "6ce4967e0c79d7daeabc6c1d26783d4c", 2612087},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "17acbb212e62addbe48dc8f2282c98cb", 72318,
+				   "partie4.itk", "6ce4967e0c79d7daeabc6c1d26783d4c", 2612087),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -418,11 +409,8 @@
 	{
 		"lit",
 		"",
-		{
-			{"intro.stk", 0, "af98bcdc70e1f1c1635577fd726fe7f1", 3937310},
-			{"musmac1.mid", 0, "ae7229bb09c6abe4e60a2768b24bc890", 9398},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "af98bcdc70e1f1c1635577fd726fe7f1", 3937310,
+				   "musmac1.mid", "ae7229bb09c6abe4e60a2768b24bc890", 9398),
 		FR_FRA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,

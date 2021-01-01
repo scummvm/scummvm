@@ -27,6 +27,7 @@
 #include "common/keyboard.h"
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -35,6 +36,7 @@ class TwinEEngine;
 extern const char *mainKeyMapId;
 extern const char *uiKeyMapId;
 extern const char *cutsceneKeyMapId;
+extern const char *holomapKeyMapId;
 
 enum TwinEActionType {
 	Pause,
@@ -47,10 +49,16 @@ enum TwinEActionType {
 	DebugGridCameraPressDown,
 	DebugGridCameraPressLeft,
 	DebugGridCameraPressRight,
+	DebugMenu,
+	DebugMenuActivate,
 	QuickBehaviourNormal,
 	QuickBehaviourAthletic,
 	QuickBehaviourAggressive,
 	QuickBehaviourDiscreet,
+	ChangeBehaviourNormal,
+	ChangeBehaviourAthletic,
+	ChangeBehaviourAggressive,
+	ChangeBehaviourDiscreet,
 	ExecuteBehaviourAction,
 	BehaviourMenu,
 	OptionsMenu,
@@ -77,14 +85,13 @@ enum TwinEActionType {
 
 	CutsceneAbort,
 
-	Max
-};
+	HolomapAbort,
+	HolomapLeft,
+	HolomapRight,
+	HolomapUp,
+	HolomapDown,
 
-struct MouseStatusStruct {
-	int32 left = 0;
-	int32 right = 0;
-	int32 x = 0;
-	int32 y = 0;
+	Max
 };
 
 /**
@@ -93,7 +100,8 @@ struct MouseStatusStruct {
 class ScopedKeyMap {
 private:
 	TwinEEngine* _engine;
-	Common::String _prevKeyMap;
+	bool _changed;
+	Common::String _keymap;
 public:
 	ScopedKeyMap(TwinEEngine* engine, const char *id);
 	~ScopedKeyMap();
@@ -105,20 +113,16 @@ private:
 	Common::String _currentKeyMap;
 
 	uint8 actionStates[TwinEActionType::Max]{false};
-	int16 currentKey = 0;
+	//int16 currentKey = 0;
 public:
 	Input(TwinEEngine *engine);
-
-	int16 cursorKeys = 0;
-	int16 pressedKey = 0;
-	int16 leftMouse = 0;
-	int16 rightMouse = 0;
 
 	/**
 	 * @brief Dependent on the context we are currently in the game, we might want to disable certain keymaps.
 	 * Like disabling ui keymaps when we are in-game - or vice versa.
 	 */
 	void enableKeyMap(const char *id);
+	bool enableAdditionalKeyMap(const char *id, bool enable);
 
 	const Common::String currentKeyMap() const;
 
@@ -130,6 +134,13 @@ public:
 	 * @sa isPressed()
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
+
+	/**
+	 * @brief Reset and active move state. This is used in situtation where the hero is switching animations but any active
+	 * move state would switch back to the related move animation.
+	 */
+	void toggleMovementActions();
+	bool isMouseHovering(const Common::Rect &rect) const;
 
 	/**
 	 * @brief If the action is active, the internal state is reset and a following call of this method won't return
@@ -147,11 +158,14 @@ public:
 	 * Gets mouse positions
 	 * @param mouseData structure that contains mouse position info
 	 */
-	void getMousePositions(MouseStatusStruct *mouseData);
+	Common::Point getMousePositions() const;
 
+	/**
+	 * @brief Updates the internal action states
+	 */
 	void readKeys();
-	uint8 processCustomEngineEventStart(const Common::Event& event);
-	uint8 processCustomEngineEventEnd(const Common::Event& event);
+	void processCustomEngineEventStart(const Common::Event& event);
+	void processCustomEngineEventEnd(const Common::Event& event);
 };
 
 inline const Common::String Input::currentKeyMap() const {

@@ -26,6 +26,10 @@
 #include "ultima/ultima4/map/map.h"
 #include "ultima/shared/std/containers.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -68,7 +72,7 @@ protected:
 	/**
 	 * Loads raw data from the given file.
 	 */
-	static bool loadData(Map *map, Common::File *f);
+	static bool loadData(Map *map, Common::SeekableReadStream &f);
 	static bool isChunkCompressed(Map *map, int chunk);
 
 private:

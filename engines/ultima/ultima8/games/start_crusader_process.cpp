@@ -25,8 +25,6 @@
 #include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/games/remorse_game.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/camera_process.h"
@@ -76,10 +74,10 @@ void StartCrusaderProcess::run() {
 		}
 	}
 
-	Gump *statusGump = new CruStatusGump();
+	Gump *statusGump = new CruStatusGump(true);
 	statusGump->InitGump(nullptr, false);
 
-	Gump *cruPickupAreaGump = new CruPickupAreaGump();
+	Gump *cruPickupAreaGump = new CruPickupAreaGump(true);
 	cruPickupAreaGump->InitGump(nullptr, false);
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
@@ -91,41 +89,28 @@ void StartCrusaderProcess::run() {
 	Ultima8Engine::get_instance()->setCheatMode(true);
 
 	if (!_skipStart) {
+		MainActor *avatar = getMainActor();
+		int mapnum = avatar->getMapNum();
+
+		// These items are the same in Regret and Remorse
+		Item *datalink = ItemFactory::createItem(0x4d4, 0, 0, 0, 0, mapnum, 0, true);
+		avatar->addItemCru(datalink, false);
+		Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
+		smiley->moveToContainer(avatar);
+
 		if (GAME_IS_REMORSE) {
-			MainActor *avatar = getMainActor();
-			int mapnum = avatar->getMapNum();
-			// The game doesn't do the weapon this way, but it's the same for our purposes..
-			Item *weapon = ItemFactory::createItem(0x32E, 0, 0, 0, 0, mapnum, 0, true);
-			avatar->addItemCru(weapon, false);
-			Item *datalink = ItemFactory::createItem(0x4d4, 0, 0, 0, 0, mapnum, 0, true);
-			avatar->addItemCru(datalink, false);
-			Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
-			smiley->moveToContainer(avatar);
-
-			// TODO: How is this created in the game??
-			Egg *miss1egg = new Egg();
-			miss1egg->setShape(2317);
-			miss1egg->setMapNum(mapnum);
-			miss1egg->assignObjId();
-			miss1egg->callUsecodeEvent_hatch();
-
-			avatar->setDir(dir_east);
+			// TODO: The game actually teleports to egg 0x1e (30) which has another
+			// egg to teleport to egg 99.  Is there any purpose to that?
+			Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 99));
 		} else if (GAME_IS_REGRET) {
-			// TODO: Give the appropriate startup objects to the avatar
+			Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 0x1e));
 		}
-
-		// TODO: The game actually teleports to egg 0x1f (31) which has another
-		// egg to teleport to egg 99.  Is there any purpose to that?
-		Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 99));
 
 		Process *fader = new PaletteFaderProcess(0x003F3F3F, true, 0x7FFF, 60, false);
 		Kernel::get_instance()->addProcess(fader);
 	}
 
-	MusicProcess::get_instance()->playMusic(1);
-
 	Ultima8Engine::get_instance()->setAvatarInStasis(false);
-
 
 	terminate();
 }

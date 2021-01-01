@@ -56,13 +56,16 @@ class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
 	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
-	virtual String getName() const = 0; /*!< Get the name of a read stream. */
-	virtual String getDisplayName() const { return getName(); } /*!< Get display name of a read stream. */
+	virtual String getName() const = 0; /*!< Get the name of the archive member. */
+	virtual String getDisplayName() const { return getName(); } /*!< Get the display name of the archive member. */
 };
 
-typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;
-typedef List<ArchiveMemberPtr> ArchiveMemberList;
+typedef SharedPtr<ArchiveMember> ArchiveMemberPtr; /*!< Shared pointer to an archive member. */
+typedef List<ArchiveMemberPtr> ArchiveMemberList; /*!< List of archive members. */
 
+/**
+ * Compare two archive member operators @p a and @p b and return which of them is higher.
+ */
 struct ArchiveMemberListComparator {
 	bool operator()(const ArchiveMemberPtr &a, const ArchiveMemberPtr &b) {
 		return a->getName() < b->getName();
@@ -84,9 +87,9 @@ class GenericArchiveMember : public ArchiveMember {
 	const Archive *_parent;
 	const String _name;
 public:
-	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member. */
+	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
 	String getName() const; /*!< Get the name of a generic archive member. */
-	SeekableReadStream *createReadStream() const;
+	SeekableReadStream *createReadStream() const; /*!< Create a read stream. */
 };
 
 
@@ -100,7 +103,7 @@ public:
 	virtual ~Archive() { }
 
 	/**
-	 * Check if a member with the given name is present in the Archive.
+	 * Check if a member with the given @p name is present in the Archive.
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
@@ -161,7 +164,7 @@ class SearchSet : public Archive {
 	ArchiveNodeList::iterator find(const String &name);
 	ArchiveNodeList::const_iterator find(const String &name) const;
 
-	void insert(const Node& node); //!< Add an archive keeping the list sorted by descending priority.
+	void insert(const Node& node); //!< Add an archive while keeping the list sorted by descending priority.
 
 	bool _ignoreClashes;
 
@@ -175,12 +178,12 @@ public:
 	void add(const String& name, Archive *arch, int priority = 0, bool autoFree = true);
 
 	/**
-	 * Create and add a FSDirectory by name.
+	 * Create and add an FSDirectory by name.
 	 */
 	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
-	 * Create and add a FSDirectory by FSNode.
+	 * Create and add an FSDirectory by FSNode.
 	 */
 	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
 
@@ -262,7 +265,7 @@ public:
 
 	/**
 	 * Ignore clashes when adding directories. For more details, see the corresponding parameter
-	 * in FSDirectory documentation.
+	 * in @ref FSDirectory documentation.
 	 */
 	void setIgnoreClashes(bool ignoreClashes) { _ignoreClashes = ignoreClashes; }
 };

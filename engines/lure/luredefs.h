@@ -31,7 +31,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 29
+#define LURE_DAT_MINOR 30
 #define LURE_MIN_SAVEGAME_MINOR 25
 #define LURE_SAVEGAME_MINOR 33
 
@@ -224,17 +224,20 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define STRING_LIST_RESOURCE_ID 0x3f17
 #define SOUND_DESC_RESOURCE_ID 0x3f18
 #define STRING_DECODER_RESOURCE_ID 0x3f19
+#define AUDIO_INIT_ICON_RESOURCE_ID 0x3F1A
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
 
 // Miscellaneous resources
 #define NAMES_RESOURCE_ID 9
+#define ROLAND_MAIN_SYSEX_RESOURCE_ID 0xB
 #define ROLAND_MAIN_SOUND_RESOURCE_ID 0xC
 #define ADLIB_MAIN_SOUND_RESOURCE_ID 0xD
 #define ROLAND_INTRO_SOUND_RESOURCE_ID 0x30
 #define ADLIB_INTRO_SOUND_RESOURCE_ID 0x31
 #define ROLAND_ENDGAME_SOUND_RESOURCE_ID 0xff10
+#define ADLIB_ENDGAME_SOUND_RESOURCE_ID 0xff11
 
 #define NOONE_ID 0x3E7
 #define PLAYER_ID 0x3E8
@@ -268,7 +271,9 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 
 // Milliseconds delay between game frames
 #define GAME_FRAME_DELAY 80
-#define GAME_TICK_DELAY 20
+
+// Milliseconds delay between clock ticks in shop
+#define GAME_TICK_DELAY 1000
 
 // Tick proc constants
 #define NULL_TICK_PROC_ID 1

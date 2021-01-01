@@ -28,11 +28,11 @@
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/game_tm.h"
-#include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/game_tr1.h"
+#include "glk/comprehend/game_tr2.h"
 #include "glk/comprehend/pics.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/ustr.h"
 #include "engines/util.h"
 
@@ -45,7 +45,8 @@ namespace Comprehend {
 
 Comprehend *g_comprehend;
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+	_topWindow(nullptr), _bottomWindow(nullptr), _roomDescWindow(nullptr),
 	_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
 	_graphicsEnabled(true), _drawFlags(0), _disableSaves(false) {
 	g_comprehend = this;
@@ -101,6 +102,7 @@ void Comprehend::initialize() {
 void Comprehend::deinitialize() {
 	glk_window_close(_topWindow);
 	glk_window_close(_bottomWindow);
+	glk_window_close(_roomDescWindow);
 }
 
 void Comprehend::createDebugger() {
@@ -113,9 +115,11 @@ void Comprehend::createGame() {
 	else if (_gameDescription._gameId == "ootopos")
 		_game = new OOToposGame();
 	else if (_gameDescription._gameId == "talisman")
-		_game = new OOToposGame();
+		_game = new TalismanGame();
 	else if (_gameDescription._gameId == "transylvania")
-		_game = new TransylvaniaGame();
+		_game = new TransylvaniaGame1();
+	else if (_gameDescription._gameId == "transylvaniav2")
+		_game = new TransylvaniaGame2();
 	else
 		error("Unknown game");
 }
@@ -126,8 +130,7 @@ void Comprehend::print(const char *fmt, ...) {
 	Common::String msg = Common::String::vformat(fmt, argp);
 	va_end(argp);
 
-	glk_put_string_stream(glk_window_get_stream(_bottomWindow),
-	                      msg.c_str());
+	glk_put_string_stream(glk_window_get_stream(_bottomWindow), msg.c_str());
 }
 
 void Comprehend::print(const Common::U32String fmt, ...) {
@@ -138,8 +141,29 @@ void Comprehend::print(const Common::U32String fmt, ...) {
 	Common::U32String::vformat(fmt.begin(), fmt.end(), outputMsg, argp);
 	va_end(argp);
 
-	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow),
-	                          outputMsg.u32_str());
+	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow), outputMsg.u32_str());
+}
+
+void Comprehend::printRoomDesc(const Common::String &desc) {
+	if (_roomDescWindow) {
+		glk_window_clear(_roomDescWindow);
+
+		// Get the grid width and do a word wrap
+		uint width;
+		glk_window_get_size(_roomDescWindow, &width, nullptr);
+		Common::String str = desc;
+		str.wordWrap(width - 2);
+		str += '\n';
+
+		// Display the room description
+		while (!str.empty()) {
+			size_t idx = str.findFirstOf('\n');
+			Common::String line = Common::String::format(" %s", Common::String(str.c_str(), str.c_str() + idx + 1).c_str());
+			glk_put_string_stream(glk_window_get_stream(_roomDescWindow), line.c_str());
+
+			str = Common::String(str.c_str() + idx + 1);
+		}
+	}
 }
 
 void Comprehend::readLine(char *buffer, size_t maxLen) {
@@ -183,6 +207,15 @@ Common::Error Comprehend::readSaveData(Common::SeekableReadStream *rs) {
 	_game->synchronizeSave(s);
 
 	_game->_updateFlags = UPDATE_ALL;
+
+	if (isInputLineActive()) {
+		// Restored game using GMM, so update grpahics and print room description
+		g_comprehend->print("\n");
+		_game->update();
+
+		g_comprehend->print("> ");
+	}
+
 	return Common::kNoError;
 }
 
@@ -201,11 +234,16 @@ bool Comprehend::loadLauncherSavegameIfNeeded() {
 	return false;
 }
 
-
 void Comprehend::drawPicture(uint pictureNum) {
-	if (_topWindow)
+	if (_topWindow) {
+		// Clear the picture cache before each drawing in OO-Topos. Wearing the goggles
+		// can producing different versions of the same scene, so we can't cache it
+		if (_gameDescription._gameId == "ootopos")
+			_pictures->clear();
+
 		glk_image_draw_scaled(_topWindow, pictureNum,
 			20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	}
 }
 
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
@@ -220,15 +258,25 @@ void Comprehend::clearScreen(bool isBright) {
 	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
 
-void Comprehend::toggleGraphics() {
+bool Comprehend::toggleGraphics() {
 	if (_topWindow) {
 		// Remove the picture window
 		glk_window_close(_topWindow);
 		_topWindow = nullptr;
 		_graphicsEnabled = false;
+
+		// Add the room description window
+		_roomDescWindow = (TextGridWindow *)glk_window_open(_bottomWindow,
+			winmethod_Above | winmethod_Fixed, 5, wintype_TextGrid, 1);
+		return false;
+
 	} else {
+		glk_window_close(_roomDescWindow);
+		_roomDescWindow = nullptr;
+
 		// Create the window again
 		showGraphics();
+		return true;
 	}
 }
 
@@ -239,6 +287,10 @@ void Comprehend::showGraphics() {
 			160 * SCALE_FACTOR, wintype_Graphics, 2);
 		_graphicsEnabled = true;
 	}
+}
+
+bool Comprehend::isInputLineActive() const {
+	return _bottomWindow->_lineRequest || _bottomWindow->_lineRequestUni;
 }
 
 } // namespace Comprehend

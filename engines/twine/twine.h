@@ -25,13 +25,14 @@
 
 #include "backends/keymapper/keymap.h"
 #include "common/random.h"
+#include "common/rect.h"
 #include "engines/engine.h"
 
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "metaengine.h"
-#include "twine/actor.h"
+#include "twine/scene/actor.h"
 #include "twine/input.h"
 #include "twine/detection.h"
 
@@ -45,17 +46,11 @@ namespace TwinE {
 #define MODIFICATION_VERSION 2
 
 /** Original screen width */
-#define DEFAULT_SCREEN_WIDTH 640
+#define SCREEN_WIDTH 640
 /** Original screen height */
-#define DEFAULT_SCREEN_HEIGHT 480
-/** Scale screen to double size */
-#define SCALE 1 // TODO: remove me or support me
-/** Original screen width */
-#define SCREEN_WIDTH DEFAULT_SCREEN_WIDTH *SCALE
-/** Original screen height */
-#define SCREEN_HEIGHT DEFAULT_SCREEN_HEIGHT *SCALE
+#define SCREEN_HEIGHT 480
 /** Default frames per second */
-#define DEFAULT_FRAMES_PER_SECOND 19
+#define DEFAULT_FRAMES_PER_SECOND 20
 
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
@@ -98,7 +93,7 @@ struct ConfigFile {
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */
-	int32 Version = 0;
+	int32 Version = EUROPE_VERSION;
 	/** If you want to use the LBA CD or not */
 	int32 UseCD = 0;
 	/** Allow various sound types */
@@ -112,11 +107,12 @@ struct ConfigFile {
 
 	// these settings are not available in the original version
 	/** Use cross fade effect while changing images, or be as the original */
-	int32 CrossFade = 0;
+	bool CrossFade = false;
 	/** Flag to toggle Wall Collision */
-	int32 WallCollision = 0;
+	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
-	int32 UseAutoSaving = 0;
+	bool UseAutoSaving = false;
+	bool Mouse = false;
 
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
@@ -167,14 +163,37 @@ struct ScopedEngineFreeze {
 	~ScopedEngineFreeze();
 };
 
+struct ScopedCursor {
+	TwinEEngine* _engine;
+	ScopedCursor(TwinEEngine* engine);
+	~ScopedCursor();
+};
+
+class ScopedFPS {
+private:
+	uint32 _fps;
+	uint32 _start;
+public:
+	ScopedFPS(uint32 fps = DEFAULT_FRAMES_PER_SECOND);
+	~ScopedFPS();
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
+	int32 _mouseCursorState = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
+
+	void processBookOfBu();
+	void processBonusList();
+	void processInventoryAction();
+	void processOptionsMenu();
+	/** recenter screen on followed actor automatically */
+	void centerScreenOnActor();
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
@@ -193,8 +212,11 @@ public:
 	SaveStateList getSaveSlots() const;
 	void autoSave();
 
-	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
-	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };
+	void pushMouseCursorVisible();
+	void popMouseCursorVisible();
+
+	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
+	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
 
 	Actor *_actor;
 	Animations *_animations;
@@ -250,13 +272,11 @@ public:
 	int32 quitGame = 0;
 	int32 lbaTime = 0;
 
+	Graphics::ManagedSurface imageBuffer;
 	/** Work video buffer */
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */
 	Graphics::ManagedSurface frontVideoBuffer;
-
-	/** temporary screen table */
-	int32 screenLookupTable[2000]{0};
 
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;
@@ -302,6 +322,7 @@ public:
 	 * @param bottom bottom position to start copy
 	 */
 	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
+	void copyBlockPhys(const Common::Rect &rect);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer

@@ -84,10 +84,8 @@ extern const RoomAction sins1ActionList[] = {
 
 	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::sins1WalkToDoor },
 	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::sins1WalkToDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins1NumActions = ARRAYSIZE(sins1ActionList);
-
 
 void Room::sins1Tick1() {
 	playVoc("SIN1LOOP");
@@ -242,7 +240,7 @@ void Room::sins1EnteredSacredSofNumber() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
 	loadActorAnimC(OBJECT_9, "s1ph1", 0, 0, &Room::sins1DoorUsedLaser);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::sins1UsePhaserOnDoor() {

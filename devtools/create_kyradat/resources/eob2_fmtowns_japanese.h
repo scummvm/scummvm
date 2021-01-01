@@ -909,21 +909,21 @@ static const char *const kEoB2HornStringsFMTownsJapanese[4] = {
 
 static const StringListProvider kEoB2HornStringsFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2HornStringsFMTownsJapanese), kEoB2HornStringsFMTownsJapanese };
 
-static const char *const kEoB2UtilMenuStringsFMTowns[2] = {
+static const char *const kEoB2UtilMenuStringsFMTownsJapanese[2] = {
 	"\x89\xE6\x96\xCA\x83\x82\x81\x5B\x83\x68\x82\xCC\x95\xCF\x8D\x58\r",
 	"\x83\x81\x83\x43\x83\x93\x83\x81\x83\x6A\x83\x85\x81\x5B\x82\xC9\x96\xDF\x82\xE9\r"
 };
 
-static const StringListProvider kEoB2UtilMenuStringsFMTownsProvider = { ARRAYSIZE(kEoB2UtilMenuStringsFMTowns), kEoB2UtilMenuStringsFMTowns };
+static const StringListProvider kEoB2UtilMenuStringsFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2UtilMenuStringsFMTownsJapanese), kEoB2UtilMenuStringsFMTownsJapanese };
 
-static const char *const kEoB2Config2431StringsFMTowns[2] = {
+static const char *const kEoB2Config2431StringsFMTownsJapanese[2] = {
 	"\x82\x51\x82\x53\x82\x6A\x82\x67\x82\x9A",
 	"\x82\x52\x82\x50\x82\x6A\x82\x67\x82\x9A"
 };
 
-static const StringListProvider kEoB2Config2431StringsFMTownsProvider = { ARRAYSIZE(kEoB2Config2431StringsFMTowns), kEoB2Config2431StringsFMTowns };
+static const StringListProvider kEoB2Config2431StringsFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2Config2431StringsFMTownsJapanese), kEoB2Config2431StringsFMTownsJapanese };
 
-static const char *const kEoB2TextInputCharacterLinesFMTowns[12] = {
+static const char *const kEoB2TextInputCharacterLinesFMTownsJapanese[12] = {
 	"\x83""A""\x83""C""\x83""E""\x83""G""\x83""I""\x81""@""\x83""J""\x83""L""\x83""N""\x83""P""\x83""R""\x81""@""\x83""T""\x83""V""\x83""X""\x83""Z""\x83""\\",
 	"\x83""^""\x83""`""\x83""c""\x83""e""\x83""g""\x81""@""\x83""i""\x83""j""\x83""k""\x83""l""\x83""m""\x81""@""\x83""n""\x83""q""\x83""t""\x83""w""\x83""z",
 	"\x83""}""\x83""~""\x83\x80\x83\x81\x83\x82\x81""@""\x83\x84\x81""@""\x83\x86\x81""@""\x83\x88\x81""@""\x83\x89\x83\x8a\x83\x8b\x83\x8c\x83\x8d",
@@ -938,12 +938,62 @@ static const char *const kEoB2TextInputCharacterLinesFMTowns[12] = {
 	"\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@""\x81""@"
 };
 
-static const StringListProvider kEoB2TextInputCharacterLinesFMTownsProvider = { ARRAYSIZE(kEoB2TextInputCharacterLinesFMTowns), kEoB2TextInputCharacterLinesFMTowns };
+static const StringListProvider kEoB2TextInputCharacterLinesFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2TextInputCharacterLinesFMTownsJapanese), kEoB2TextInputCharacterLinesFMTownsJapanese };
 
-static const char *const kEoB2TextInputSelectStringsFMTowns[3] = {
+static const char *const kEoB2TextInputSelectStringsFMTownsJapanese[3] = {
 	"NEXT",
 	"END",
 	"DEL"
 };
 
-static const StringListProvider kEoB2TextInputSelectStringsFMTownsProvider = { ARRAYSIZE(kEoB2TextInputSelectStringsFMTowns), kEoB2TextInputSelectStringsFMTowns };
+static const StringListProvider kEoB2TextInputSelectStringsFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2TextInputSelectStringsFMTownsJapanese), kEoB2TextInputSelectStringsFMTownsJapanese };
+
+static const char *const kEoB2NpcPresetsNamesFMTownsJapanese[6] = {
+	 "\x83""C""\x83\x93\x83""T""\x83\x8B",
+	 "\x83""J""\x83\x89\x83\x93\x83""h""\x83\x89",
+	"\x83""V""\x83\x87\x81""[""\x83\x93",
+	"\x83""T""\x83\x93\x83\x89\x81""[""\x83\x8B",
+	"\x83""^""\x83\x93\x83""O""\x83\x8D\x81""[",
+	"\x83""A""\x83\x93\x83""o""\x81""["
+};
+
+static const StringListProvider kEoB2NpcPresetsNamesFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2NpcPresetsNamesFMTownsJapanese), kEoB2NpcPresetsNamesFMTownsJapanese };
+
+static const char *const kEoB2SaveNamePatternsFMTownsJapanese[34] = {
+	"NULL",
+	"NULL",
+	"CATACOMB LV1 %2d/%2d %2d:%02d ",
+	"CATACOMB LV1 %2d/%2d %2d:%02d ",
+	"CATACOMB LV2 %2d/%2d %2d:%02d ",
+	"CATACOMB LV2 %2d/%2d %2d:%02d ",
+	"CATACOMB LV3 %2d/%2d %2d:%02d ",
+	"CATACOMB LV4 %2d/%2d %2d:%02d ",
+	"FOREST       %2d/%2d %2d:%02d ",
+	"FOREST       %2d/%2d %2d:%02d ",
+	"TEMPLE   LV1 %2d/%2d %2d:%02d ",
+	"TEMPLE   LV1 %2d/%2d %2d:%02d ",
+	"TEMPLE   LV2 %2d/%2d %2d:%02d ",
+	"TEMPLE   LV2 %2d/%2d %2d:%02d ",
+	"SILVER   LV1 %2d/%2d %2d:%02d ",
+	"SILVER   LV1 %2d/%2d %2d:%02d ",
+	"SILVER   LV2 %2d/%2d %2d:%02d ",
+	"SILVER   LV2 %2d/%2d %2d:%02d ",
+	"SILVER   LV3 %2d/%2d %2d:%02d ",
+	"SILVER   LV3 %2d/%2d %2d:%02d ",
+	"AZURE    LV1 %2d/%2d %2d:%02d ",
+	"AZURE    LV1 %2d/%2d %2d:%02d ",
+	"AZURE    LV2 %2d/%2d %2d:%02d ",
+	"AZURE    LV2 %2d/%2d %2d:%02d ",
+	"AZURE    LV3 %2d/%2d %2d:%02d ",
+	"AZURE    LV3 %2d/%2d %2d:%02d ",
+	"AZURE    LV4 %2d/%2d %2d:%02d ",
+	"AZURE    LV4 %2d/%2d %2d:%02d ",
+	"FROST GIANT  %2d/%2d %2d:%02d ",
+	"FROST GIANT  %2d/%2d %2d:%02d ",
+	"CRIMSON  LV1 %2d/%2d %2d:%02d ",
+	"CRIMSON  LV1 %2d/%2d %2d:%02d ",
+	"CRIMSON  LV2 %2d/%2d %2d:%02d ",
+	"CRIMSON  LV2 %2d/%2d %2d:%02d "
+};
+
+static const StringListProvider kEoB2SaveNamePatternsFMTownsJapaneseProvider = { ARRAYSIZE(kEoB2SaveNamePatternsFMTownsJapanese), kEoB2SaveNamePatternsFMTownsJapanese };

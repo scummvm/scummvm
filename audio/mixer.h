@@ -33,10 +33,18 @@ class Channel;
 class Timestamp;
 
 /**
- * A SoundHandle instances corresponds to a specific sound
- * being played via the mixer. It can be used to control that
+ * @defgroup audio_mixer Mixer
+ * @ingroup audio
+ *
+ * @brief Mixer class used for playing audio streams.
+ * @{
+ */
+
+/**
+ * A SoundHandle instance corresponds to a specific sound
+ * being played using the mixer. It can be used to control that
  * sound (pause it, stop it, etc.).
- * @see The Mixer class
+ * @see Mixer
  */
 class SoundHandle {
 	friend class Channel;
@@ -47,22 +55,23 @@ public:
 };
 
 /**
- * The main audio mixer handles mixing of an arbitrary number of
+ * The main audio mixer that handles mixing of an arbitrary number of
  * audio streams (in the form of AudioStream instances).
  */
 class Mixer : Common::NonCopyable {
 public:
+	/** Sound types. */
 	enum SoundType {
-		kPlainSoundType = 0,
+		kPlainSoundType = 0, /*!< Plain sound. */
 
-		kMusicSoundType = 1,
-		kSFXSoundType = 2,
-		kSpeechSoundType = 3
+		kMusicSoundType = 1, /*!< Music. */
+		kSFXSoundType = 2,   /*!< Sound effects. */
+		kSpeechSoundType = 3 /*!< Speech. */
 	};
-
+	/** Max volumes. */
 	enum {
-		kMaxChannelVolume = 255,
-		kMaxMixerVolume = 256
+		kMaxChannelVolume = 255, /*!< Max channel volume. */
+		kMaxMixerVolume = 256    /*!< Max global volume. */
 	};
 
 public:
@@ -72,12 +81,14 @@ public:
 
 
 	/**
-	 * Is the mixer ready and setup? This may not be the case on systems which
-	 * don't support digital sound output. In that case, the mixer proc may
-	 * never be called. That in turn can cause breakage in games which try to
-	 * sync with an audio stream. In particular, the AdLib MIDI emulation...
+	 * Check whether the mixer is ready and set up.
 	 *
-	 * @return whether the mixer is ready and setup
+	 * The mixer might not be set up on systems that do not support
+	 * digital sound output. In such case, the mixer processing might
+	 * never be called. That, in turn, can cause breakage in games that try to
+	 * sync with an audio stream. In particular, the AdLib MIDI emulation.
+	 *
+	 * @return Whether the mixer is ready and set up.
 	 *
 	 * @todo get rid of this?
 	 */
@@ -87,22 +98,21 @@ public:
 	/**
 	 * Start playing the given audio stream.
 	 *
-	 * Note that the sound id assigned below is unique. At most one stream
-	 * with a given id can play at any given time. Trying to play a sound
-	 * with an id that is already in use causes the new sound to be not played.
+	 * Note that the sound ID assigned here is unique. At most, one stream
+	 * with the given ID can play at any given time. Trying to play a sound
+	 * with an ID that is already in use causes the new sound to not be played.
 	 *
-	 * @param type	the type (voice/sfx/music) of the stream
-	 * @param handle	a SoundHandle which can be used to reference and control
-	 *                  the stream via suitable mixer methods
-	 * @param stream	the actual AudioStream to be played
-	 * @param id	a unique id assigned to this stream
-	 * @param volume	the volume with which to play the sound, ranging from 0 to 255
-	 * @param balance	the balance with which to play the sound, ranging from -127 to 127 (full left to full right), 0 is balanced, -128 is invalid
-	 * @param autofreeStream	a flag indicating whether the stream should be
-	 *                          freed after playback finished
-	 * @param permanent	a flag indicating whether a plain stopAll call should
-	 *                  not stop this particular stream
-	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
+	 * @param type      Type of the stream - voice/SFX/music.
+	 * @param handle    A SoundHandle instance that can be used to reference and control
+	 *                  the stream using suitable mixer methods.
+	 * @param stream    The actual AudioStream to be played.
+	 * @param id        Unique ID assigned to this stream.
+	 * @param volume    Volume with which to play the sound, ranging from 0 to 255.
+	 * @param balance	Balance with which to play the sound, ranging from -127 to 127 (full left to full right).
+	 *                  0 is balanced, -128 is invalid.
+	 * @param autofreeStream  If set, the stream will be freed after the playback is finished.                  
+	 * @param permanent       If set, a plain stopAll call will not stop this particular stream.          
+	 * @param reverseStereo   If set, left and right channels will be swapped.
 	 */
 	virtual void playStream(
 		SoundType type,
@@ -121,68 +131,71 @@ public:
 	virtual void stopAll() = 0;
 
 	/**
-	 * Stop playing the sound with given ID.
+	 * Stop playing the sound with the given ID.
 	 *
-	 * @param id the ID of the sound to affect
+	 * @param id  ID of the sound.
 	 */
 	virtual void stopID(int id) = 0;
 
 	/**
 	 * Stop playing the sound corresponding to the given handle.
 	 *
-	 * @param handle the sound to affect
+	 * @param handle  The sound to stop playing.
 	 */
 	virtual void stopHandle(SoundHandle handle) = 0;
 
 
 
 	/**
-	 * Pause/unpause all sounds, including all regular and permanent
-	 * channels
+	 * Pause or unpause all sounds, including all regular and permanent
+	 * channels.
 	 *
-	 * @param paused true to pause everything, false to unpause
+	 * @param paused  True to pause everything, false to unpause.
 	 */
 	virtual void pauseAll(bool paused) = 0;
 
 	/**
-	 * Pause/unpause the sound with the given ID.
+	 * Pause or unpause the sound with the given ID.
 	 *
-	 * @param id the ID of the sound to affect
-	 * @param paused true to pause the sound, false to unpause it
+	 * @param id      ID of the sound.
+	 * @param paused  True to pause the sound, false to unpause it.
 	 */
 	virtual void pauseID(int id, bool paused) = 0;
 
 	/**
-	 * Pause/unpause the sound corresponding to the given handle.
+	 * Pause or unpause the sound corresponding to the given handle.
 	 *
-	 * @param handle the sound to affect
-	 * @param paused true to pause the sound, false to unpause it
+	 * @param handle  The sound to pause or unpause.
+	 * @param paused  True to pause the sound, false to unpause it.
 	 */
 	virtual void pauseHandle(SoundHandle handle, bool paused) = 0;
 
 
 
 	/**
-	 * Check if a sound with the given ID is active.
+	 * Check whether a sound with the given ID is active.
 	 *
-	 * @param id the ID of the sound to query
-	 * @return true if the sound is active
+	 * @param id  ID of the sound to query.
+	 *
+	 * @return True if the sound is active.
 	 */
 	virtual bool isSoundIDActive(int id) = 0;
 
 	/**
-	 * Get the sound ID of handle sound
+	 * Get the sound ID for the given handle.
 	 *
-	 * @param handle sound to query
-	 * @return sound ID if active
+	 * @param handle The sound to query.
+	 *
+	 * @return Sound ID if the sound is active.
 	 */
 	virtual int getSoundID(SoundHandle handle) = 0;
 
 	/**
-	 * Check if a sound with the given handle is active.
+	 * Check whether a sound with the given handle is active.
 	 *
-	 * @param handle sound to query
-	 * @return true if the sound is active
+	 * @param handle The sound to query.
+	 *
+	 * @return True if the sound is active.
 	 */
 	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
 
@@ -190,7 +203,7 @@ public:
 	/**
 	 * Set the mute state for a given sound type.
 	 *
-	 * @param type the sound type
+	 * @param type Sound type. See @ref SoundType.
 	 * @param mute Whether to mute (= true) or not (= false).
 	 */
 	virtual void muteSoundType(SoundType type, bool mute) = 0;
@@ -198,88 +211,93 @@ public:
 	/**
 	 * Query the mute state for a given sound type.
 	 *
-	 * @param type the sound type
+	 * @param type Sound type. See @ref SoundType.
 	 */
 	virtual bool isSoundTypeMuted(SoundType type) const = 0;
 
 	/**
 	 * Set the channel volume for the given handle.
 	 *
-	 * @param handle the sound to affect
-	 * @param volume the new channel volume (0 - kMaxChannelVolume)
+	 * @param handle  The sound to affect.
+	 * @param volume  The new channel volume, in the range 0 - kMaxChannelVolume.
 	 */
 	virtual void setChannelVolume(SoundHandle handle, byte volume) = 0;
 
 	/**
 	 * Get the channel volume for the given handle.
 	 *
-	 * @param handle the sound to affect
-	 * @return channel volume
+	 * @param handle  The sound to affect.
+	 *
+	 * @return The channel volume.
 	 */
 	virtual byte getChannelVolume(SoundHandle handle) = 0;
 
 	/**
 	 * Set the channel balance for the given handle.
 	 *
-	 * @param handle the sound to affect
-	 * @param balance the new channel balance:
-	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
+	 * @param handle   The sound to affect.
+	 * @param balance  The new channel balance:
+	 *                 (-127 ... 0 ... 127) corresponds to (left ... center ... right)
 	 */
 	virtual void setChannelBalance(SoundHandle handle, int8 balance) = 0;
 
 	/**
 	 * Get the channel balance for the given handle.
 	 *
-	 * @param handle the sound to affect
-	 * @return channel balance
+	 * @param handle  The sound to affect.
+	 *
+	 * @return The channel balance.
 	 */
 	virtual int8 getChannelBalance(SoundHandle handle) = 0;
 
 	/**
-	 * Get approximation of for how long the channel has been playing.
+	 * Get an approximation of for how long the channel has been playing.
 	 */
 	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
 
 	/**
-	 * Get approximation of for how long the channel has been playing.
+	 * Get an approximation of for how long the channel has been playing.
 	 */
 	virtual Timestamp getElapsedTime(SoundHandle handle) = 0;
 
 	/**
 	 * Check whether any channel of the given sound type is active.
-	 * For example, this can be used to check whether any SFX sound
-	 * is currently playing, by checking for type kSFXSoundType.
 	 *
-	 * @param  type the sound type to look for
-	 * @return true if any channels of the specified type are active.
+	 * For example, this can be used to check whether any SFX sound
+	 * is currently playing by checking for type kSFXSoundType.
+	 *
+	 * @param  type  The sound type to query.
+	 *
+	 * @return True if any channels of the specified type are active.
 	 */
 	virtual bool hasActiveChannelOfType(SoundType type) = 0;
 
 	/**
 	 * Set the volume for the given sound type.
 	 *
-	 * @param type the sound type
-	 * @param volume the new global volume, 0 - kMaxMixerVolume
+	 * @param type    Sound type.
+	 * @param volume  The new global volume, in the range 0 - kMaxMixerVolume.
 	 */
 	virtual void setVolumeForSoundType(SoundType type, int volume) = 0;
 
 	/**
-	 * Query the global volume.
+	 * Check what the global volume is for a sound type.
 	 *
-	 * @param type the sound type
-	 * @return the global music volume, 0 - kMaxMixerVolume
+	 * @param type  Sound type.
+	 *
+	 * @return The global volume, in the range 0 - kMaxMixerVolume.
 	 */
 	virtual int getVolumeForSoundType(SoundType type) const = 0;
 
 	/**
-	 * Query the system's audio output sample rate.
+	 * Return the output sample rate of the system.
 	 *
-	 * @return the output sample rate in Hz
+	 * @return The output sample rate in Hz.
 	 */
 	virtual uint getOutputRate() const = 0;
 };
 
-
+/** @} */
 } // End of namespace Audio
 
 #endif

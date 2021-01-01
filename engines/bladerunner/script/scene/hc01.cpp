@@ -75,18 +75,18 @@ void SceneScriptHC01::SceneLoaded() {
 	Obstacle_Object("PILLAR", true);
 	if (Game_Flag_Query(kFlagAR01toHC01)) {
 		Preload(kModelAnimationMcCoyIdle);
-		Preload(426);
-		Preload(430);
-		Preload(437);
-		Preload(427);
-		Preload(431);
-		Preload(433);
-		Preload(424);
-		Preload(428);
-		Preload(436);
-		Preload(429);
-		Preload(425);
-		Preload(432);
+		Preload(kModelGenWalkerHattedPersonWithUmbrellaStandsStill);
+		Preload(kModelGenWalkerHoodedPersonWithUmbrellaStandsStill);
+		Preload(kModelGenWalkerHattedLadyWithWoodenUmbrellaStandsStill);
+		Preload(kModelGenWalkerHattedPersonNoUmbrellaStandsStill);
+		Preload(kModelGenWalkerPunkPersonWithGlassesAndBeardStandsStill);
+		Preload(kModelGenWalkerPunkPersonWithGlassesStandsStill);
+		Preload(kModelGenWalkerHattedPersonWithUmbrella);
+		Preload(kModelGenWalkerHoodedPersonWithUmbrella);
+		Preload(kModelGenWalkerHattedPersonWithWoodenUmbrella);
+		Preload(kModelGenWalkerPunkPersonWithGlassesAndBeard);
+		Preload(kModelGenWalkerHattedPersonNoUmbrellaSmallSteps);
+		Preload(kModelGenWalkerPunkPersonWithGlasses);
 	}
 }
 

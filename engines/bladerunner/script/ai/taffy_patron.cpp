@@ -115,21 +115,22 @@ bool AIScriptTaffyPatron::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 406;
+		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
+		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
 		break;
 
 	case 1:
-		*animation = 918;
+		*animation = kModelAnimationTaffyPatronRunning;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(918) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationTaffyPatronRunning) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 919;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(919) - 1) {
+		*animation = kModelAnimationTaffyPatronShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationTaffyPatronShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;

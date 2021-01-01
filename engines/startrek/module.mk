@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	actors.o \
 	awaymission.o \
 	bitmap.o \
+	bridge.o \
 	common.o \
 	console.o \
 	events.o \

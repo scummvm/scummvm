@@ -102,19 +102,19 @@ public:
 	 * Check if a particular action is defined for this room.
 	 */
 	bool actionHasCode(const Action &action);
-	bool actionHasCode(byte type, byte b1, byte b2, byte b3);
+	bool actionHasCode(int8 type, byte b1, byte b2, byte b3);
 
 	/**
 	 * Execute a particular action for this room, if defined.
 	 */
 	bool handleAction(const Action &action);
-	bool handleAction(byte type, byte b1, byte b2, byte b3);
+	bool handleAction(int8 type, byte b1, byte b2, byte b3);
 
 	/**
 	 * Same as above, but if any byte in the action is -1 (0xff), it matches any value.
 	 */
 	bool handleActionWithBitmask(const Action &action);
-	bool handleActionWithBitmask(byte type, byte b1, byte b2, byte b3);
+	bool handleActionWithBitmask(int8 type, byte b1, byte b2, byte b3);
 
 	uint16 getFirstHotspot() {
 		return readRdfWord(0x12);
@@ -169,7 +169,6 @@ private:
 	AwayMission *_awayMission;
 
 	const RoomAction *_roomActionList;
-	int _numRoomActions;
 
 	Common::HashMap<int, Common::String> _lookMessages;
 	Common::HashMap<int, Common::String> _lookWithTalkerMessages;
@@ -2608,6 +2607,7 @@ public:
 	void veng2UseImpulseConsole();
 	void veng2SpockReachedImpulseConsole();
 	void veng2SpockUsedImpulseConsole();
+	void veng2PowerWeapons();
 	void veng2UseMainComputer();
 	void veng2UseSTricorderOnMainComputer();
 	void veng2SpockReachedMainComputerToPutTricorder();

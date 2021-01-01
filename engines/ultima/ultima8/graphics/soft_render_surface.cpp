@@ -364,7 +364,7 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::Blit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
 	// Clamp or wrap or return?
 	if (sx + w > static_cast<int32>(_tex->w))
 		return;
@@ -425,7 +425,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
 		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
@@ -453,7 +453,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
 	if (w > static_cast<int32>(_tex->w))
 		return;
@@ -542,7 +542,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
 		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
@@ -570,7 +570,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(Texture *_tex, in
 // Desc Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
 //
 //
-template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
 	if (w > static_cast<int32>(_tex->w))
 		return;
@@ -669,7 +669,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 			texel += tex_diff;
 		}
 	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		uintX *texel = reinterpret_cast<uintX *>(_tex->getBasePtr(sx, sy));
+		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
 		int tex_diff = _tex->w - w;
 
 		while (pixel != end) {
@@ -700,7 +700,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 // Desc: Blit a region from a Texture, and arbitrarily stretch it to fit the dest region
 //
 //
-template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *texture,
+template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(const Texture *texture,
         int32 sx, int32 sy, int32 sw, int32 sh,
         int32 dx, int32 dy, int32 dw, int32 dh,
         bool clampedges) {
@@ -723,7 +723,7 @@ template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *textur
 // Desc: Blit a region from a Texture using a scaler
 //
 //
-template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges) {
+template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(const Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges) {
 	// Nothing we can do
 	if ((sh <= 0) || (dh <= 0) || (sw <= 0) || (dw <= 0)) return false;
 
@@ -743,7 +743,7 @@ template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture
 //
 // Desc: Draw a fixed width character from a Texture buffer
 //
-template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(FixedWidthFont *font, int character, int x, int y) {
+template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(const FixedWidthFont *font, int character, int x, int y) {
 	if (character == ' ') return;   // Don't paint spaces
 
 	int align_x = font->_alignX;
@@ -767,7 +767,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(FixedWidthFo
 //
 // Desc: Draw fixed width from a Texture buffer (16x16 characters fixed width and height)
 //
-template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(FixedWidthFont *font, const char *text, int x, int y) {
+template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(const FixedWidthFont *font, const char *text, int x, int y) {
 	int align_x = font->_alignX;
 	int align_y = font->_alignY;
 	int char_width = font->_width;
@@ -798,7 +798,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(FixedWidthFo
 //
 // Desc: Standard shape drawing functions. Clips but doesn't do anything else
 //
-template<class uintX> void SoftRenderSurface<uintX>::Paint(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #include "ultima/ultima8/graphics/soft_render_surface.inl"
 }
 
@@ -808,7 +808,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Paint(Shape *s, uint32 fram
 //
 // Desc: Standard shape drawing functions. Doesn't clip
 //
-template<class uintX> void SoftRenderSurface<uintX>::PaintNoClip(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintNoClip(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define NO_CLIPPING
 #include "ultima/ultima8/graphics/soft_render_surface.inl"
 #undef NO_CLIPPING
@@ -820,7 +820,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintNoClip(Shape *s, uint3
 //
 // Desc: Standard shape drawing functions. Clips and XForms
 //
-template<class uintX> void SoftRenderSurface<uintX>::PaintTranslucent(Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, int32 y, bool untformed_pal) {
 #define XFORM_SHAPES
 #include "ultima/ultima8/graphics/soft_render_surface.inl"
 #undef XFORM_SHAPES
@@ -832,7 +832,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintTranslucent(Shape *s, 
 //
 // Desc: Standard shape drawing functions. Clips, Flips and conditionally XForms
 //
-template<class uintX> void SoftRenderSurface<uintX>::PaintMirrored(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintMirrored(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool untformed_pal) {
 #define FLIP_SHAPES
 #define XFORM_SHAPES
 #define XFORM_CONDITIONAL trans
@@ -851,7 +851,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintMirrored(Shape *s, uin
 // Desc: Standard shape drawing functions. Invisible, Clips, and conditionally Flips and Xforms
 //
 
-template<class uintX> void SoftRenderSurface<uintX>::PaintInvisible(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
@@ -874,7 +874,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintInvisible(Shape *s, ui
 // Desc: Standard shape drawing functions. Highlights, Clips, and conditionally Flips and Xforms
 //
 
-template<class uintX> void SoftRenderSurface<uintX>::PaintHighlight(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES
@@ -901,7 +901,7 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintHighlight(Shape *s, ui
 // Desc: Standard shape drawing functions. Highlights, Clips, and conditionally Flips and Xforms. 50% translucent
 //
 
-template<class uintX> void SoftRenderSurface<uintX>::PaintHighlightInvis(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
+template<class uintX> void SoftRenderSurface<uintX>::PaintHighlightInvis(const Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
 #define FLIP_SHAPES
 #define FLIP_CONDITIONAL mirrored
 #define XFORM_SHAPES

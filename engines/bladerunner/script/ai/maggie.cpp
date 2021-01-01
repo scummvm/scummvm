@@ -60,9 +60,9 @@ void AIScriptMaggie::Initialize() {
 	_animationNext = 0;
 	var_45F3F8 = 0;
 	var_45F3FC = 0;
-	var_45F400 = 0;
-	var_45F404 = 0;
-	var_45F408 = 0;
+	var_45F400 = 0; // only assigned to 0. Never checked. Unused.
+	var_45F404 = 0; // only assigned to 0. Never checked. Unused.
+	var_45F408 = 0; // only assigned to 0. Never checked. Unused.
 	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
 }
 
@@ -319,6 +319,9 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalMaggieMA02SitDown:
 		Actor_Change_Animation_Mode(kActorMaggie, 54);
+		// TODO Why set _animationState and frame explicitly here,
+		//      when the Actor_Change_Animation_Mode() should take care of it?
+		//      does this not negate the "transition" animation?
 		_animationState = kMaggieStateLayingIdle;
 		_animationFrame = 0;
 		AI_Countdown_Timer_Reset(kActorMaggie, kActorTimerAIScriptCustomTask0);
@@ -327,6 +330,9 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalMaggieMA02Sleep:
 		Actor_Change_Animation_Mode(kActorMaggie, 55);
+		// TODO Why set _animationState and frame explicitly here,
+		//      when the Actor_Change_Animation_Mode() should take care of it?
+		//      does this not negate the "transition" animation?
 		_animationState = kMaggieStateSleeping;
 		_animationFrame = 0;
 		return true;
@@ -398,19 +404,19 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 	int goal;
 	switch (_animationState) {
 	case kMaggieStateDead:
-		*animation = 871;
+		*animation = kModelAnimationMaggieLayingDead;
 		_animationFrame = 0;
 		break;
 
 	case kMaggieStateDeadExploded:
-		*animation = 874;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(874) - 1;
+		*animation = kModelAnimationMaggieExploding;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding) - 1;
 		break;
 
 	case kMaggieStateExploding:
-		*animation = 874;
+		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding) - 1) {
 			_animationState = kMaggieStateDeadExploded;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 			Actor_Put_In_Set(kActorMaggie, kSetFreeSlotI);
@@ -419,46 +425,46 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateBombJumping:
-		*animation = 873;
+		*animation = kModelAnimationMaggieStandingOnTwoFeetTrapped;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(873)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieStandingOnTwoFeetTrapped)) {
 			_animationState = kMaggieStateBombIdle;
 			_animationFrame = 0;
-			*animation = 875;
+			*animation = kModelAnimationMaggieStandingIdleTrapped;
 			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05WillExplode);
 		}
 		break;
 
 	case kMaggieStateBombWalk:
-		*animation = 872;
+		*animation = kModelAnimationMaggieWalkingTrapped;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(872)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieWalkingTrapped)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case kMaggieStateBombIdle:
-		*animation = 875;
+		*animation = kModelAnimationMaggieStandingIdleTrapped;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(875)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieStandingIdleTrapped)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case kMaggieStateWakingUp:
-		*animation = 876;
+		*animation = kModelAnimationMaggieToggleLaySleepingWakeUp;
 		--_animationFrame;
 		if (_animationFrame > 0) {
 			break;
 		}
 		_animationState = kMaggieStateLayingIdle;
 		_animationFrame = 0;
-		*animation = 867;
+		*animation = kModelAnimationMaggieLayingIdleTailWagging;
 		goal = Actor_Query_Goal_Number(kActorMaggie);
 		if (goal == kGoalMaggieMA02GetFed) {
 			_animationState = kMaggieStateStandingUp;
 			_animationFrame = 0;
-			*animation = 868;
+			*animation = kModelAnimationMaggieLayingStandingUp;
 		} else if (goal == kGoalMaggieMA02WalkToMcCoy) {
 			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02SitDown);
 			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToMcCoy);
@@ -468,24 +474,24 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateSleeping:
-		*animation = 876;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(876) - 1;
+		*animation = kModelAnimationMaggieToggleLaySleepingWakeUp;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieToggleLaySleepingWakeUp) - 1;
 		break;
 
 	case kMaggieStateGoingToSleep:
-		*animation = 876;
+		*animation = kModelAnimationMaggieToggleLaySleepingWakeUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(876) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieToggleLaySleepingWakeUp) - 1) {
 			_animationState = kMaggieStateSleeping;
 			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Sleep);
 		}
 		break;
 
 	case kMaggieStateStandingUp:
-		*animation = 868;
+		*animation = kModelAnimationMaggieLayingStandingUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(868)) {
-			*animation = 864;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieLayingStandingUp)) {
+			*animation = kModelAnimationMaggieStandingIdle;
 			_animationState = kMaggieStateIdle;
 			_animationFrame = 0;
 			if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieMA02SitDown) {
@@ -498,20 +504,20 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateLayingIdle:
-		*animation = 867;
+		*animation = kModelAnimationMaggieLayingIdleTailWagging;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(867)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieLayingIdleTailWagging)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case kMaggieStateLayingDown:
-		*animation = 866;
+		*animation = kModelAnimationMaggieLayingDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(866)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieLayingDown)) {
 			_animationState = kMaggieStateLayingIdle;
 			_animationFrame = 0;
-			*animation = 867;
+			*animation = kModelAnimationMaggieLayingIdleTailWagging;
 			if (Actor_Query_Goal_Number(kActorMaggie) == 9) {
 				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02SitDown);
 			}
@@ -519,20 +525,20 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateHappyB:
-		*animation = 865;
+		*animation = kModelAnimationMaggieBarking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(865)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieBarking)) {
 			_animationFrame = 0;
 			--var_45F3F8;
 			if (var_45F3F8 <= 0) {
 				Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
-				*animation = 864;
+				*animation = kModelAnimationMaggieStandingIdle;
 			}
 		}
 		break;
 
 	case kMaggieStateHappyA:
-		*animation = 870;
+		*animation = kModelAnimationMaggieBarkingOrHeadUp;
 		if (_animationFrame == 1) {
 			// one of kSfxDOGBARK1, kSfxDOGBARK3
 			Sound_Play(Random_Query(kSfxDOGBARK1, kSfxDOGBARK3), 50, 0, 0, 50);
@@ -542,7 +548,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			--var_45F3FC;
 			if (var_45F3FC <= 0) {
 				Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
-				*animation = 864;
+				*animation = kModelAnimationMaggieStandingIdle;
 				_animationState = kMaggieStateIdle;
 			}
 			_animationFrame = 0;
@@ -550,28 +556,28 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateJumping:
-		*animation = 869;
+		*animation = kModelAnimationMaggieStandingOnTwoFeet;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(869)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieStandingOnTwoFeet)) {
 			Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
-			*animation = 864;
+			*animation = kModelAnimationMaggieStandingIdle;
 			_animationState = kMaggieStateIdle;
 			_animationFrame = 0;
 		}
 		break;
 
 	case kMaggieStateWalking:
-		*animation = 863;
+		*animation = kModelAnimationMaggieWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(863)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case kMaggieStateIdle:
-		*animation = 864;
+		*animation = kModelAnimationMaggieStandingIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(864)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieStandingIdle)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -598,21 +604,28 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		} else {
 			switch (_animationState) {
 			case kMaggieStateGoingToSleep:
+				// fall through
 			case kMaggieStateSleeping:
 				_animationState = kMaggieStateWakingUp;
 				break;
+
 			case kMaggieStateIdle:
 				_animationState = kMaggieStateStandingUp;
 				_animationFrame = 0;
 				break;
+
 			case kMaggieStateLayingDown:
 				_animationState = kMaggieStateStandingUp;
 				_animationFrame = 0;
 				break;
+
 			case kMaggieStateJumping:
+				// fall through
 			case kMaggieStateStandingUp:
+				// fall through
 			case kMaggieStateWakingUp:
 				break;
+
 			default:
 				_animationState = kMaggieStateIdle;
 				_animationFrame = 0;
@@ -641,7 +654,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 
 	case 54:
 		if (_animationState <= kMaggieStateSleeping) {
-			if (_animationState > 0) {
+			if (_animationState > kMaggieStateIdle) {
 				if (_animationState == kMaggieStateSleeping) {
 					_animationState = kMaggieStateWakingUp;
 					_animationFrame = 0;
@@ -661,7 +674,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		break;
 
 	case 56:
-		if (_animationState != 3) {
+		if (_animationState != kMaggieStateHappyA) {
 			_animationFrame = 0;
 			_animationState = kMaggieStateHappyA;
 		}

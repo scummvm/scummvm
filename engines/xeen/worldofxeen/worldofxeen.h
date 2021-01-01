@@ -31,7 +31,7 @@ namespace WorldOfXeen {
 
 /**
  * Implements a descendant of the base Xeen engine to handle
- * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
+ * Clouds of Xeen, Darkside of Xeen, and Worlds of Xeen specific
  * game code
  */
 class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {

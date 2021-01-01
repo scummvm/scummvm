@@ -277,6 +277,28 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 	_curMusicSeq = num;
 }
 
+void IMuseDigital::setComiDemoMusicState(int stateNum) {
+	if (stateNum == -1)
+		return;
+
+	if (_curMusicState == stateNum)
+		return;
+
+	if (stateNum != 0 && stateNum != 2 && stateNum != 4 && stateNum != 8 && stateNum != 9 && stateNum != 16) {
+		debug(5, "Tried to set music state to num: %d, defaulting to 0", stateNum);
+		stateNum = 0;
+	}
+
+	if (_curMusicSeq == 0) {
+		if (stateNum == 0)
+			playComiDemoMusic(NULL, &_comiDemoStateMusicTable[0], stateNum);
+		else
+			playComiDemoMusic(_comiDemoStateMusicTable[stateNum].name, &_comiDemoStateMusicTable[stateNum], stateNum);
+	}
+
+	_curMusicState = stateNum;
+}
+
 void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence) {
 	int hookId = 0;
 
@@ -300,6 +322,8 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		return;
 	}
 
+	TriggerParams trigger;
+
 	switch (table->transitionType) {
 	case 0:
 	default:
@@ -308,12 +332,33 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		setHookIdForMusic(table->hookId);
 		break;
 	case 9:
-		_stopingSequence = 1;
+		// Setup the trigger
+		strcpy(trigger.marker, "_end"); trigger.fadeOutDelay = table->fadeOutDelay;
+		strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
+		trigger.hookId = table->hookId; trigger.volume = 127;
+		setTrigger(&trigger);
+
 		setHookIdForMusic(table->hookId);
+		break;
+	case 4:
+		if (table->filename[0] == 0) {
+			fadeOutMusic(60);
+			return;
+		}
+		if (getCurMusicSoundId() == table->soundId)
+			return;
+
+		// Setup the trigger
+		strcpy(trigger.marker, "_end"); trigger.fadeOutDelay = table->fadeOutDelay;
+		strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
+		trigger.hookId = table->hookId; trigger.volume = 127;
+		setTrigger(&trigger);
+
+		fadeOutMusic(table->fadeOutDelay);
+		startMusic(table->filename, table->soundId, hookId, 127);
 		break;
 	case 2:
 	case 3:
-	case 4:
 	case 12:
 		if (table->filename[0] == 0) {
 			fadeOutMusic(60);
@@ -321,8 +366,6 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 		if (getCurMusicSoundId() == table->soundId)
 			return;
-		if (table->transitionType == 4)
-			_stopingSequence = 1;
 		if (table->transitionType == 2) {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
@@ -332,11 +375,57 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		} else if (table->transitionType == 12) {
-			TriggerParams trigger;
+			// Setup the trigger
 			strcpy(trigger.marker, "exit"); trigger.fadeOutDelay = table->fadeOutDelay;
 			strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
 			trigger.hookId = table->hookId; trigger.volume = 127;
 			setTrigger(&trigger);
+		} else {
+			fadeOutMusic(table->fadeOutDelay);
+			startMusic(table->filename, table->soundId, hookId, 127);
+		}
+		break;
+	}
+}
+
+void IMuseDigital::playComiDemoMusic(const char *songName, const imuseComiTable *table, int attribPos) {
+	int hookId = 0;
+
+	if ((songName != NULL) && (attribPos != 0)) {
+		if (table->attribPos != 0)
+			attribPos = table->attribPos;
+		hookId = _attributes[COMI_STATE_OFFSET + attribPos];
+		if (table->hookId != 0) {
+			if ((hookId != 0) && (table->hookId > 1)) {
+				_attributes[COMI_STATE_OFFSET + attribPos] = 2;
+			}
+			else {
+				_attributes[COMI_STATE_OFFSET + attribPos] = hookId + 1;
+				if (table->hookId < hookId + 1)
+					_attributes[COMI_STATE_OFFSET + attribPos] = 1;
+			}
+		}
+	}
+
+	if (!songName) {
+		fadeOutMusic(120);
+		return;
+	}
+
+	switch (table->transitionType) {
+	case 0:
+	default:
+		break;
+	case 3:
+		if (table->filename[0] == 0) {
+			fadeOutMusic(60);
+			return;
+		}
+		if (getCurMusicSoundId() == table->soundId)
+			return;
+		if ((table->attribPos != 0) &&
+				(table->attribPos == _comiDemoStateMusicTable[_curMusicState].attribPos)) {
+			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		} else {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, hookId, 127);

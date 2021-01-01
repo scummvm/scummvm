@@ -274,12 +274,19 @@ void Game::execute() {
 
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
+			if (!engine.isEGA())
+				screen.paletteFadeOut();
+
 			Palette palette(SKORL_CATCH_PALETTE_ID);
-			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, false);
 			mouse.cursorOff();
-			Sound.addSound(0x33);
+
+			static const AnimSoundSequence catchSound[] = { { 12, 0xFF, 0xFF, 1, false }, { 1, 41, 41, 1, false } };
+			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, true, 5, catchSound);
 			anim->show();
 			delete anim;
+
+			if (!engine.isEGA())
+				screen.paletteFadeOut();
 		}
 
 		// If the Restart/Restore dialog is needed, show it
@@ -384,44 +391,73 @@ void Game::displayChuteAnimation() {
 	ValueTableData &fields = res.fieldList();
 	Palette palette(CHUTE_PALETTE_ID);
 
+	mouse.setCursorNum(CURSOR_DISK);
+	if (!LureEngine::getReference().isEGA())
+		Screen::getReference().paletteFadeOut();
+
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting chute animation");
 	mouse.cursorOff();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(0x40, 0);
 
-	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, false);
-	anim->show();
+	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, true);
+	Sound.musicInterface_Play(0x40, 0, true);
+	AnimAbortType result = anim->show();
 	delete anim;
 
-	anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, false);
-	anim->show();
-	delete anim;
+	if (result != ABORT_END_INTRO) {
+		anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, true, 5, NULL, 4);
+		result = anim->show();
+		delete anim;
+	}
 
-	anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);
-	anim->show();
-	delete anim;
+	if (result != ABORT_END_INTRO) {
+		anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);
+		anim->show();
+		delete anim;
+	}
 
 	Sound.killSounds();
 	mouse.cursorOn();
 	fields.setField(AREA_FLAG, 1);
+
+	// WORKAROUND When outside in the town, the game plays an ambient sound
+	// of twittering birds. When first entering town after falling through
+	// the chute, this sound does not play; it starts playing after you
+	// enter and exit a building. Calling removeSounds here triggers the
+	// function which manages the ambient sounds in town, so the bird
+	// sounds start playing. Because all other sounds have already been
+	// removed, this has no side effects.
+	Sound.removeSounds();
 }
 
 void Game::displayBarrelAnimation() {
 	Mouse &mouse = Mouse::getReference();
 	Resources &res = Resources::getReference();
+	LureEngine &engine = LureEngine::getReference();
+	Screen &screen = Screen::getReference();
+
+	mouse.setCursorNum(CURSOR_DISK);
+	if (!engine.isEGA())
+		screen.paletteFadeOut();
 
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting barrel animation");
 	Palette palette(BARREL_PALETTE_ID);
-	AnimationSequence *anim = new AnimationSequence(BARREL_ANIM_ID, palette, false);
 	mouse.cursorOff();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(0x3B, 0);
+	Sound.musicInterface_Play(0x3B, 0, true);
 
+	AnimationSequence *anim = new AnimationSequence(BARREL_ANIM_ID, palette, true);
 	anim->show();
 
 	delete anim;
+
+	if (!engine.shouldQuit() && !engine.isEGA())
+		screen.paletteFadeOut();
+
+	Sound.killSounds();
+	mouse.cursorOn();
 
 	// Disable town NPCs that are no longer needed
 	res.deactivateHotspot(SKORL_ID);
@@ -432,9 +468,6 @@ void Game::displayBarrelAnimation() {
 	res.deactivateHotspot(GOEWIN_ID);
 	res.deactivateHotspot(MONK2_ID);
 	res.deactivateHotspot(WAYNE_ID);
-
-	Sound.killSounds();
-	mouse.cursorOn();
 }
 
 void Game::handleClick() {

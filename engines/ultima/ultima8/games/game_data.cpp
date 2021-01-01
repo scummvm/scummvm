@@ -41,6 +41,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/gumps/weasel_dat.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima/ultima8/audio/music_flex.h"
@@ -236,13 +237,13 @@ void GameData::loadU8Data() {
 
 	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
-		error("Unable to load static/fixed.dat");;
+		error("Unable to load static/fixed.dat");
 
 	_fixed = new RawArchive(fd);
 
 	char langletter = _gameInfo->getLanguageUsecodeLetter();
 	if (!langletter)
-		error("Unknown language. Unable to open usecode");;
+		error("Unknown language. Unable to open usecode");
 
 	Std::string filename = "@game/usecode/";
 	filename += langletter;
@@ -261,7 +262,7 @@ void GameData::loadU8Data() {
 	if (!sf) sf = filesystem->ReadFile("@game/static/u8shapes.cmp");
 
 	if (!sf)
-		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");;
+		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");
 
 	_mainShapes = new MainShapeArchive(sf, MAINSHAPES,
 	                                  PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
@@ -504,6 +505,13 @@ const CombatDat *GameData::getCombatDat(uint16 entry) const {
 	return nullptr;
 }
 
+const WeaselDat *GameData::getWeaselDat(uint16 entry) const {
+	if (entry < _weaselData.size()) {
+		return _weaselData[entry];
+	}
+	return nullptr;
+}
+
 const FireType *GameData::getFireType(uint16 type) const {
 	return FireTypeTable::get(type);
 }
@@ -671,6 +679,10 @@ void GameData::loadRemorseData() {
 	// 14 blocks of 323 bytes, references like W01 and I07
 	// (presumably weapon and inventory)
 	// shop data?
+	while (!stuffds->eos()) {
+		WeaselDat *data = new WeaselDat(stuffds);
+		_weaselData.push_back(data);
+	}
 
 	delete stuffds;
 

@@ -122,6 +122,9 @@ protected:
 	void Actor_Set_Invisible(int actorId, bool isInvisible);
 	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
 	void Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	void Item_Remove_From_Current_Scene(int itemId);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	void Item_Remove_From_World(int itemId);
 	void Item_Spin_In_World(int itemId);
 	void Item_Flag_As_Target(int itemId);
@@ -291,7 +294,7 @@ protected:
 	void KIA_Play_Slice_Model(int sliceModelId);
 	void KIA_Play_Photograph(int photographId);
 
-	void VK_Play_Speech_Line(int actorId, int sentenceId, float duration);
+	void VK_Play_Speech_Line(int actorId, int sentenceId, float pauseDuration);
 	void VK_Add_Question(int intensity, int sentenceId, int relatedSentenceId);
 	void VK_Subject_Reacts(int intensity, int humanResponse, int replicantResponse, int anxiety);
 	void VK_Eye_Animates(int loopId);

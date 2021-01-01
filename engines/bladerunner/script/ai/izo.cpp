@@ -25,11 +25,12 @@
 namespace BladeRunner {
 
 AIScriptIzo::AIScriptIzo(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 6;
 	_var2 = 1;
-	_var3 = 0;
-	_var4 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
 }
 
 void AIScriptIzo::Initialize() {
@@ -38,11 +39,11 @@ void AIScriptIzo::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 6;
 	_var2 = 1;
-	_var3 = 0;
-	_var4 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	_varChooseIdleAnimation = 0;
 
 	Actor_Set_Goal_Number(kActorIzo, 0);
 	Actor_Put_In_Set(kActorIzo, kSetHC01_HC02_HC03_HC04);
@@ -523,33 +524,33 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var4 == 1) {
-			*animation = 298;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationIzoAwkwardPlayWithHands;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(298)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoAwkwardPlayWithHands)) {
 				_animationFrame = 0;
-				_var4 = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (_var4 == 0) {
-			*animation = 297;
-			if (_var3) {
-				--_var3;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationIzoIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += _var2;
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(297) - 1;
-				} else if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(297)) {
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle) - 1;
+				} else if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle)) {
 					_animationFrame = 0;
 				}
 				--_var1;
 				if (_var1 == 0) {
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var1 = Random_Query(6, 14);
-					_var3 = Random_Query(0, 2);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(0, 2);
 				}
 				if (_animationFrame == 0) {
 					if (!Random_Query(0, 5)) {
-						_var4 = 1;
+						_varChooseIdleAnimation = 1;
 					}
 				}
 			}
@@ -557,66 +558,75 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		if (_animationFrame <= 2 && _flag) {
-			*animation = 297;
+		if (_animationFrame <= 2 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationIzoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
-			*animation = 299;
+			*animation = kModelAnimationIzoCalmTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(299)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 2:
+		// fall through
 	case 3:
+		// fall through
 	case 4:
+		// fall through
 	case 5:
+		// fall through
 	case 6:
+		// fall through
 	case 7:
-		*animation = _animationState + 298;
+		// TODO why calculate current animation by adding animationState to kModelAnimationIzoAwkwardPlayWithHands (298)?
+		//      seems prone to error.
+		//      This (based on the switch cases), results in "talking" animation framesets 300 - 305, 
+		//      excepting the kModelAnimationIzoCalmTalk (299) which is used as the default or "ending" talking animation.
+		*animation = _animationState + kModelAnimationIzoAwkwardPlayWithHands;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 299;
+			*animation = kModelAnimationIzoCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 277;
+		*animation = kModelAnimationIzoCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(277)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoCombatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 9:
-		*animation = 287;
+		*animation = kModelAnimationIzoCombatUnseatheSword;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(287)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoCombatUnseatheSword)) {
 			_animationFrame = 0;
 			_animationState = 8;
-			*animation = 277;
+			*animation = kModelAnimationIzoCombatIdle;
 		}
 		break;
 
 	case 10:
-		*animation = 288;
+		*animation = kModelAnimationIzoCombatSeatheSword;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(288)) {
-			*animation = 297;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoCombatSeatheSword)) {
+			*animation = kModelAnimationIzoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_var4 = 0;
+			_varChooseIdleAnimation = 0;
 		}
 		break;
 
 	case 11:
-		*animation = 289;
+		*animation = kModelAnimationIzoCombatSwordAttack;
 		++_animationFrame;
 		if (_animationFrame == 6) {
 			int snd;
@@ -639,69 +649,75 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 8;
-			*animation = 277;
+			*animation = kModelAnimationIzoCombatIdle;
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 12:
+		// fall through
 	case 13:
+		// fall through
 	case 16:
+		// fall through
 	case 17:
 		if (_animationState == 12) {
-			*animation = 278;
+			*animation = kModelAnimationIzoCombatTurnRight;
 		}
 		if (_animationState == 13) {
-			*animation = 279;
+			*animation = kModelAnimationIzoCombatTurnLeft;
 		}
 		if (_animationState == 16) {
-			*animation = 280;
+			*animation = kModelAnimationIzoCombatGotHitRight;
 		}
 		if (_animationState == 17) {
-			*animation = 281;
+			*animation = kModelAnimationIzoCombatGotHitLeft;
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 8;
-			*animation = 277;
+			*animation = kModelAnimationIzoCombatIdle;
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 14:
+		// fall through
 	case 15:
-		*animation = _animationFrame + 280;
+		// TODO A bug? Shouldn't this be _animationState + kModelAnimationIzoCombatGotHitRight?
+		*animation = _animationFrame + kModelAnimationIzoCombatGotHitRight;
 		++_animationFrame;
 		if (_animationFrame >= 2
 		 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
 		  || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
 		 )
 		) {
-			*animation = 297;
+			*animation = kModelAnimationIzoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_var4 = 0;
+			_varChooseIdleAnimation = 0;
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeIdle);
 			Actor_Set_Goal_Number(kActorIzo, kGoalIzoRC03Run);
 		} else {
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-				*animation = 297;
+				*animation = kModelAnimationIzoIdle;
 				_animationFrame = 0;
 				_animationState = 0;
-				_var4 = 0;
+				_varChooseIdleAnimation = 0;
 				Actor_Change_Animation_Mode(kActorIzo, kAnimationModeIdle);
 			}
 		}
 		break;
 
 	case 18:
+		// fall through
 	case 19:
 		if (_animationState == 18) {
-			*animation = 284;
+			*animation = kModelAnimationIzoCombatShotDead;
 		}
 		if (_animationState == 19) {
-			*animation = 296;
+			*animation = kModelAnimationIzoShotDead;
 		}
 		++_animationFrame;
 		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
@@ -711,44 +727,53 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 20:
+		// fall through
 	case 21:
+		// fall through
 	case 22:
+		// fall through
 	case 23:
+		// fall through
 	case 24:
+		// fall through
 	case 25:
+		// fall through
 	case 26:
+		// fall through
 	case 27:
+		// fall through
 	case 28:
+		// fall through
 	case 29:
 		if (_animationState == 20) {
-			*animation = 290;
+			*animation = kModelAnimationIzoWalking;
 		}
 		if (_animationState == 21) {
-			*animation = 291;
+			*animation = kModelAnimationIzoRunning;
 		}
 		if (_animationState == 22) {
-			*animation = 282;
+			*animation = kModelAnimationIzoCombatWalking;
 		}
 		if (_animationState == 23) {
-			*animation = 283;
+			*animation = kModelAnimationIzoCombatRunning;
 		}
 		if (_animationState == 24) {
-			*animation = 285;
+			*animation = kModelAnimationIzoCombatClimbStairsUp;
 		}
 		if (_animationState == 25) {
-			*animation = 286;
+			*animation = kModelAnimationIzoCombatClimbStairsDown;
 		}
 		if (_animationState == 26) {
-			*animation = 292;
+			*animation = kModelAnimationIzoClimbStairsUp;
 		}
 		if (_animationState == 27) {
-			*animation = 293;
+			*animation = kModelAnimationIzoClimbStairsDown;
 		}
 		if (_animationState == 29) {
-			*animation = 307;
+			*animation = kModelAnimationIzoClimbLadderUp;
 		}
 		if (_animationState == 28) {
-			*animation = 306;
+			*animation = kModelAnimationIzoClimbLadderDown;
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -757,52 +782,52 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 30:
-		*animation = 296;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(296) - 1;
+		*animation = kModelAnimationIzoShotDead;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoShotDead) - 1;
 		break;
 
 	case 31:
-		*animation = 308;
+		*animation = kModelAnimationIzoHoldingCameraIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(308)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoHoldingCameraIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 32:
-		*animation = 309;
+		*animation = kModelAnimationIzoPicksCameraFromShop;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(309)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoPicksCameraFromShop)) {
 			_animationFrame = 0;
 			_animationState = 31;
-			*animation = 308;
+			*animation = kModelAnimationIzoHoldingCameraIdle;
 		}
 		break;
 
 	case 33:
-		*animation = 310;
-		if (_animationFrame || !_flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			_resumeIdleAfterFramesetCompletesFlag = false;
+			_animationState = 31;
+			*animation = kModelAnimationIzoHoldingCameraIdle;
+		} else {
+			*animation = kModelAnimationIzoHoldingCameraTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(310)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoHoldingCameraTalk)) {
 				_animationFrame = 0;
 			}
-		} else {
-			_flag = 0;
-			_animationState = 31;
-			*animation = 308;
 		}
 		break;
 
 	case 34:
-		*animation = 311;
+		*animation = kModelAnimationIzoHoldingCameraUsesFlash;
 		++_animationFrame;
 		if (_animationFrame == 6) {
 			Scene_Loop_Set_Default(0); // // HC01 - MainLoop
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // HC01 - IzoFlashLoop
-			Player_Set_Combat_Mode(kActorSteele);
+			Player_Set_Combat_Mode(true);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(311)) {
-			*animation = 297;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoHoldingCameraUsesFlash)) {
+			*animation = kModelAnimationIzoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Game_Flag_Set(kFlagUnused407);
@@ -812,15 +837,18 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 35:
-		if (!_var4) {
-			*animation = 297;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationIzoIdle;
 		}
-		if (_var4 == 1) {
-			*animation = 298;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationIzoAwkwardPlayWithHands;
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(297)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle)) {
+			// TODO a bug? Adding 3 to animationFrame when it is >= the num of frames of the frameset
+			//             will still keep it >= the num of frame of the frameset. 
+			//             so why check again in the if clause below?
 			_animationFrame += 3;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(297)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle)) {
 				_animationFrame = 0;
 				*animation = _animationNext;
 				_animationState = _animationStateNext;
@@ -836,7 +864,8 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 406;
+		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
+		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
 		break;
 	}
@@ -851,25 +880,36 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 	case 0:
 		switch (_animationState) {
 		case 1:
+			// fall through
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 33:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 8:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
 			_animationState = 10;
 			_animationFrame = 0;
 			break;
 
 		case 31:
+			// fall through
 		case 32:
+			// fall through
 		case 34:
 			return true;
 
@@ -895,6 +935,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		return true;
 
 	case 3:
+		// fall through
 	case 9:
 		if (_animationState != 32) {
 			if (Actor_Query_Goal_Number(kActorIzo) == 1) {
@@ -903,14 +944,14 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			} else if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 299;
+				_animationNext = kModelAnimationIzoCalmTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		return true;
 
 	case 4:
-		if (_animationState) {
+		if (_animationState > 0) {
 			if (_animationState != 8 || _animationState > 8) {
 				_animationState = 8;
 				_animationFrame = 0;
@@ -922,8 +963,11 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 5:
+		// fall through
 	case 18:
+		// fall through
 	case 19:
+		// fall through
 	case 20:
 		return true;
 
@@ -943,26 +987,28 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 12:
 		if (_animationState != 32) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 300;
+				_animationNext = kModelAnimationIzoMoreCalmTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState != 32) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 302;
+				_animationNext = kModelAnimationIzoHeadNodsAgreeingTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -971,9 +1017,9 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 301;
+				_animationNext = kModelAnimationIzoExplainingTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -982,9 +1028,9 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 303;
+				_animationNext = kModelAnimationIzoOffensiveTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -993,9 +1039,9 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 304;
+				_animationNext = kModelAnimationIzoHeadNodsDisagreeingTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1004,19 +1050,24 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			if (_animationState <= 0 || _animationState > 7) {
 				_animationState = 35;
 				_animationStateNext = 1;
-				_animationNext = 305;
+				_animationNext = kModelAnimationIzoUnderstandingTalk;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
 	case 21:
 		switch (_animationState) {
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
 			if (Random_Query(0, 1)) {
 				_animationState = 17;
@@ -1027,8 +1078,11 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			break;
 
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
 			return true;
 

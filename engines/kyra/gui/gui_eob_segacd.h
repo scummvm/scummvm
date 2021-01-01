@@ -38,7 +38,7 @@ public:
 
 private:
 	void drawCampMenu() override;
-	void initMemorizePrayMenu() override;
+	void initMemorizePrayMenu(int spellType) override;
 	void initScribeScrollMenu() override;
 	void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight) override;
 	void drawSaveSlotDialog(int x, int y, int id) override;
@@ -51,11 +51,12 @@ private:
 	void updateOptionsStrings() override;
 	void restParty_updateRestTime(int hours, bool init) override;
 
-	int checkClickableCharactersSelection() override;
+	uint16 checkClickableCharactersSelection() override;
 	void printClickableCharacters(int page) override;
 	void printClickableCharacter(int id, int col);
 	char fetchClickableCharacter(int id) const;
 
+	const int _clickableCharactersNumPages;
 	const uint8 *_campMenu;
 	Button* _saveLoadCancelButton;
 	EoBEngine *_vm;

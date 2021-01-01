@@ -104,10 +104,8 @@ extern const RoomAction veng0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
 	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
 	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng0NumActions = ARRAYSIZE(veng0ActionList);
-
 
 void Room::veng0Tick1() {
 	playVoc("VEN0LOOP");
@@ -150,7 +148,7 @@ void Room::veng0Tick50() {
 }
 
 void Room::veng0TouchedDoor() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(0, 0);
 }
 
@@ -233,7 +231,7 @@ void Room::veng0Timer0Expired() {
 	playVoc("MUR3E2");
 	loadActorAnim2(OBJECT_9, "s7r0s1", 0, 0xc7);
 	loadActorAnim2(OBJECT_10, "s7r0b1", 0, 0xc7);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::veng0DoneCuttingBeam() {

@@ -1277,6 +1277,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("conankill", "050428", "eff6760b564715f763d6fc25fce8a7eb", 91136),
 	ENTRY0("dreamcorruptor", "171029", "1f4f956de3054621f928204c0e6b0d6d", 429160),
 	ENTRY0("cottage", "090715", "b2c6f964c0bd4d8a0c12009697ff7307", 616308),
+	ENTRY0("cottage", "090715", "994f78a6f2e9f062b0a34cfdf5e44c34", 134656),
 	ENTRY0("countdown1", "061219", "a4a901a3cb0dcc2c7440e344a8e12822", 128512),
 	ENTRY0("countdown2", "070110", "45adfc3347ba01e5bad33a848fd9bba4", 133120),
 	ENTRY0("countdown3", "070110", "08be83ed93d1504f3dab14b8ec80beb2", 144384),
@@ -2094,6 +2095,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("pangnyheten", "040916", "2049135115dff02b2baf1b7bfb59606c", 185856, Common::SE_SWE),
 	ENTRY1("storforsen", "041212", "5e3c06b6b0650f938d2831b2aac98153", 103936, Common::SE_SWE),
 	ENTRY1("stuga", "090712", "58eef72aada351e7e059202ab00342c4", 588800, Common::SE_SWE),
+	ENTRY1("stuga", "090712", "c9be7126299f47dfd395af5b951233ff", 122368, Common::SE_SWE),
 	ENTRY1("vanyar", "030613", "abbc2b2fa0f5e922b45a3f8698ba9ad1", 110080, Common::SE_SWE),
 
 	FROTZ_TABLE_END_MARKER

@@ -145,6 +145,20 @@ public:
 	bool show();
 };
 
+class AudioInitIcon {
+private:
+	Surface *_iconSurface;
+	bool _visible;
+
+public:
+	AudioInitIcon();
+	~AudioInitIcon();
+
+	void toggleVisibility();
+	void show();
+	void hide();
+};
+
 } // End of namespace Lure
 
 #endif

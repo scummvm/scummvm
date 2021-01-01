@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptHolloway::AIScriptHolloway(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptHolloway::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptHolloway::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayDefault);
 }
@@ -206,15 +206,15 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 717;
+		*animation = kModelAnimationHollowayIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(717)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHollowayIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 719;
+		*animation = kModelAnimationHollowayGlobAttack;
 		++_animationFrame;
 
 		if (_animationFrame == 9) {
@@ -225,74 +225,48 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(719)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHollowayGlobAttack)) {
 			Actor_Change_Animation_Mode(kActorHolloway, kAnimationModeIdle);
 			_animationFrame = 0;
 			_animationState = 0;
-			*animation = 717;
+			*animation = kModelAnimationHollowayIdle;
 			Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayPrepareCaptureMcCoy);
 		}
 		break;
 
 	case 2:
-		if (_animationFrame == 0
-		 && _flag
-		) {
-			*animation = 717;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationHollowayIdle;
 			_animationState = 0;
 		} else {
-			*animation = 720;
+			*animation = kModelAnimationHollowayCalmTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(720)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHollowayCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 721;
-		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
-			_animationFrame = 0;
-			_animationState = 2;
-			*animation = 720;
-		}
-		break;
-
+		// fall through
 	case 4:
-		*animation = 721;
-		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
-			_animationFrame = 0;
-			_animationState = 2;
-			*animation = 720;
-		}
-		break;
-
+		// fall through
 	case 5:
-		*animation = 721;
-		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
-			_animationFrame = 0;
-			_animationState = 2;
-			*animation = 720;
-		}
-		break;
-
+		// fall through
 	case 6:
-		*animation = 721;
+		*animation = kModelAnimationHollowayExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHollowayExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 720;
+			*animation = kModelAnimationHollowayCalmTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 716;
+		*animation = kModelAnimationHollowayWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(716)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHollowayWalking)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -312,7 +286,7 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 			_animationState = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		}
 		break;
 
@@ -324,7 +298,7 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeCombatAttack:
@@ -335,25 +309,25 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	default:

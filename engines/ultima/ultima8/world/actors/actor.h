@@ -201,9 +201,6 @@ public:
 	//! check if NPCs are near which are in combat mode and hostile
 	bool areEnemiesNear();
 
-	//! check if NPCs are near which are in combat mode and hostile
-	void notifyNearbyItems();
-
 	//! starts an activity
 	//! \return processID of process handling the activity or zero
 	uint16 setActivity(int activity);
@@ -280,6 +277,9 @@ public:
 
 	bool activeWeaponIsSmall() const;
 
+	// A cru-specific behavior - mostly make "ugh" noises, or explode for some robots.
+	void tookHitCru();
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
@@ -345,6 +345,7 @@ public:
 	INTRINSIC(I_getLastActivityNo);
 	INTRINSIC(I_getCurrentActivityNo);
 	INTRINSIC(I_turnToward);
+	INTRINSIC(I_isKneeling);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B

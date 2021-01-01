@@ -92,12 +92,12 @@ void MessageDialog::init(const Common::U32String &message, const Common::U32Stri
 
 	if (!defaultButton.empty()) {
 		// Confirm dialog
-		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(""), kOkCmd, Common::ASCII_RETURN);
+		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(), kOkCmd, Common::ASCII_RETURN);
 	}
 
 	if (!altButton.empty()) {
 		// Cancel dialog
-		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);
+		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
 	}
 }
 
@@ -134,7 +134,7 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 }
 
 TimedMessageDialog::TimedMessageDialog(const Common::U32String &message, uint32 duration)
-	: MessageDialog(message, Common::U32String(""), Common::U32String("")) {
+	: MessageDialog(message, Common::U32String(), Common::U32String()) {
 	_timer = g_system->getMillis() + duration;
 }
 

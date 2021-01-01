@@ -57,12 +57,29 @@ public:
 		return "wintermute";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		assert(syst);
-		assert(engine);
+    Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
+
+#ifndef ENABLE_FOXTAIL
+		if (gd->targetExecutable >= FOXTAIL_OLDEST_VERSION && gd->targetExecutable <= FOXTAIL_LATEST_VERSION) {
+			return Common::Error(Common::kUnsupportedGameidError, _s("FoxTail support is not compiled in"));
+		}
+#endif
+
+#ifndef ENABLE_HEROCRAFT
+		if (gd->targetExecutable == WME_HEROCRAFT) {
+			return Common::Error(Common::kUnsupportedGameidError, _s("Hero Craft support is not compiled in"));
+		}
+#endif
+
+#ifndef ENABLE_WME3D
+		if (gd->adDesc.flags & GF_3D) {
+			return Common::Error(Common::kUnsupportedGameidError, _s("Wintermute3D support is not compiled in"));
+		}
+#endif
+
 		*engine = new Wintermute::WintermuteEngine(syst, gd);
-		return true;
+		return Common::kNoError;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {

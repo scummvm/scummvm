@@ -108,6 +108,7 @@ bool AIScriptShoeshineMan::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		Actor_Put_In_Set(kActorShoeshineMan, kSetDR01_DR02_DR04);
 		Actor_Set_At_XYZ(kActorShoeshineMan, -1160.0f, -0.04f, -235.0f, 524);
 		break;
+
 	case 101:
 		AI_Movement_Track_Flush(kActorShoeshineMan);
 		AI_Movement_Track_Append(kActorShoeshineMan, 281, 0);
@@ -132,33 +133,40 @@ bool AIScriptShoeshineMan::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 1:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
+
 	case 3:
 		_animationState = 2;
 		_animationFrame = 0;
 		_state = false;
 		break;
+
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
 		_state = false;
 		break;
+
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
 		_state = false;
 		break;
+
 	case 23:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
+
 	case 29:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
+
 	default:
 		break;
 	}

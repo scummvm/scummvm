@@ -30,6 +30,12 @@ enum TwineGameType {
 	GType_LBA2 = 2
 };
 
+enum TwineFeatureFlags {
+	TF_VERSION_EUROPE = (1 << 0),
+	TF_VERSION_USA = (1 << 1),
+	TF_VERSION_CUSTOM = (1 << 2)
+};
+
 } // End of namespace TwinE
 
 #endif // TWINE_DETECTION_H

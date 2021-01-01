@@ -94,7 +94,7 @@ Common::Error PetkaEngine::run() {
 	_vsys.reset(new VideoSystem(*this));
 	_resMgr.reset(new QManager(*this));
 
-	loadPart(0);
+	loadPart(isDemo() ? 1 : 0);
 
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -219,7 +219,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 }
 
 bool PetkaEngine::isDemo() const {
-	return strcmp(_desc->gameId, "petka_demo") == 0;
+	return _desc->flags & ADGF_DEMO;
 }
 
 bool PetkaEngine::isPetka2() const {

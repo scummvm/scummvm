@@ -118,7 +118,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 			modulePath.erase(0, 1);
 	}
 
-	if (modulePath.size())
+	if (!modulePath.empty())
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
@@ -175,10 +175,7 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\tProjectSection(ProjectDependencies) = postProject\n";
 
-	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
-		if (i->first == setup.projectName)
-			continue;
-
+	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
 		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
 	}
 
@@ -226,6 +223,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	properties << "\t\tWarningLevel=\"4\"\n"
 	           << "\t\tWarnAsError=\"false\"\n"
 	           << "\t\tCompileAs=\"0\"\n"
+	           << "\t\tObjectFile=\"$(IntDir)dists\\msvc\\%(RelativeDir)\"\n"
 	           << "\t\t/>\n"
 	           << "\t<Tool\n"
 	           << "\t\tName=\"VCLibrarianTool\"\n"
@@ -233,8 +231,12 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	           << "\t/>\n"
 	           << "\t<Tool\n"
 	           << "\t\tName=\"VCLinkerTool\"\n"
-	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	           << "\t\tSubSystem=\"1\"\n";
+	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n";
+	if (setup.featureEnabled("text-console")) {
+		properties << "\t\tSubSystem=\"1\"\n";
+	} else {
+		properties << "\t\tSubSystem=\"2\"\n";
+	}
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
@@ -312,7 +314,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 }
 
 void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                  const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+                                                  const std::string &objPrefix, const std::string &filePrefix) {
 	const std::string indentString = getIndent(indentation + 2);
 
 	if (indentation)
@@ -322,20 +324,16 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 		const FileNode *node = *i;
 
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
 		} else {
+			std::string filePath = convertPathToWin(filePrefix + node->name);
 			if (producesObjectFile(node->name)) {
 				std::string name, ext;
 				splitFilename(node->name, name, ext);
-				name += ".o";
-				std::transform(name.begin(), name.end(), name.begin(), tolower);
-				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name) != duplicate.end());
-				std::string filePath = convertPathToWin(filePrefix + node->name);
 
 				if (ext == "asm") {
 					std::string objFileName = "$(IntDir)\\";
-					if (isDuplicate)
-						objFileName += objPrefix;
+					objFileName += objPrefix;
 					objFileName += "$(InputName).obj";
 
 					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
@@ -343,18 +341,10 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 					// NASM is not supported for x64, thus we do not need to add additional entries here :-).
 					writeFileToProject(projectFile, filePath, ARCH_X86, indentString, toolLine);
 				} else {
-					if (isDuplicate) {
-						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
-
-						for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-							writeFileToProject(projectFile, filePath, *arch, indentString, toolLine);
-						}
-					} else {
-						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
-					}
+					projectFile << indentString << "<File RelativePath=\"" << filePath << "\" />\n";
 				}
 			} else {
-				projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
+				projectFile << indentString << "<File RelativePath=\"" << filePath << "\" />\n";
 			}
 		}
 	}

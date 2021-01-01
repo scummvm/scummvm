@@ -25,7 +25,7 @@
 
 #include "common/rational.h"
 #include "common/rect.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/vm_types.h"
 #include "sci/util.h"
 

@@ -24,6 +24,82 @@
 
 namespace StarTrek {
 
+extern const RoomAction tug0ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::tug0Tick1 },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::tug0LookAtEngineer },
+	{ {ACTION_GET, 8, 0, 0}, &Room::tug0GetEngineer },
+
+	{ {ACTION_LOOK, 11, 0, 0}, &Room::tug0LookAtControls },
+	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::tug0LookAtControls },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x21, 0}, &Room::tug0UseSpockOnControls },
+	{ {ACTION_FINISHED_WALKING, 16, 0, 0}, &Room::tug0SpockReachedControlsToExamine },
+	{ {ACTION_FINISHED_ANIMATION, 17, 0, 0}, &Room::tug0SpockExaminedControls },
+	{ {ACTION_USE, OBJECT_IRT, 0x21, 0}, &Room::tug0UseTransmogrifierWithoutBitOnControls },
+	{ {ACTION_USE, OBJECT_IRTWB, 0x21, 0}, &Room::tug0UseTransmogrifierWithBitOnControls },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::tug0SpockReachedControlsWithTransmogrifier },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug0SpockFinishedUsingTransmogrifier },
+	{ {ACTION_FINISHED_ANIMATION, 22, 0, 0}, &Room::tug0TransporterScreenFullyLit },
+	{ {ACTION_USE, OBJECT_IWIRSCRP, 0x21, 0}, &Room::tug0UseWireScrapsOnControls },
+	{ {ACTION_USE, OBJECT_IWIRING, 0x21, 0}, &Room::tug0UseWireOnControls },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::tug0SpockReachedControlsWithWire },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::tug0SpockFinishedUsingWire },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 8, 0}, &Room::tug0UseMedkitOnEngineer },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::tug0MccoyReachedEngineer },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::tug0MccoyHealedEngineer },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::tug0EngineerGotUp },
+	{ {ACTION_GET, 9, 0, 0}, &Room::tug0GetTransmogrifier },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::tug0KirkReachedToolbox },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::tug0KirkGotTransmogrifier },
+	{ {ACTION_LOOK, 9, 0, 0}, &Room::tug0LookAtToolbox },
+
+	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_IPWE, 0}, &Room::tug0UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_IPWE, 0}, &Room::tug0UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IWIRSCRP, 0}, &Room::tug0UseWelderOnWireScraps },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IJNKMETL, 0}, &Room::tug0UseWelderOnMetalScraps },
+	{ {ACTION_USE, OBJECT_ICOMBBIT, OBJECT_IRT, 0}, &Room::tug0UseCombBitOnTransmogrifier },
+
+	{ {ACTION_USE, OBJECT_SPOCK, 11, 0}, &Room::tug0UseTransporter },
+	{ {ACTION_USE, OBJECT_KIRK, 0x22, 0}, &Room::tug0UseTransporter },
+	{ {ACTION_FINISHED_WALKING, 14, 0, 0}, &Room::tug0SpockReachedControlsToTransport },
+	{ {ACTION_FINISHED_ANIMATION, 18, 0, 0}, &Room::tug0SpockPreparedTransporter },
+	{ {ACTION_FINISHED_WALKING, 20, 0, 0}, &Room::tug0SpockReachedTransporter },
+	{ {ACTION_FINISHED_ANIMATION, 21, 0, 0}, &Room::tug0FinishedTransporting },
+
+	{ {ACTION_USE, OBJECT_IBOMB, 0x22, 0}, &Room::tug0UseBombOnTransporter },
+	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::tug0KirkReachedTransporter },
+	{ {ACTION_FINISHED_ANIMATION, 10, 0, 0}, &Room::tug0KirkPlacedBomb },
+	{ {ACTION_FINISHED_WALKING, 15, 0, 0}, &Room::tug0SpockReachedControlsForBomb },
+	{ {ACTION_FINISHED_ANIMATION, 19, 0, 0}, &Room::tug0SpockBeginsBeamingBomb },
+	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::tug0SpockFinishesBeamingBomb },
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::tug0BombExploded },
+
+	{ {ACTION_USE, OBJECT_MCCOY, 0x21, 0}, &Room::tug0UseMTricorderOnControls },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::tug0UseMTricorderOnControls },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::tug0UseSTricorderOnControls },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::tug0UseMTricorderOnEngineer },
+	{ {ACTION_FINISHED_WALKING, 24, 0, 0}, &Room::tug0MccoyReachedEngineerToScan },
+	{ {ACTION_FINISHED_ANIMATION, 25, 0, 0}, &Room::tug0MccoyFinishedScanningEngineer },
+	{ {ACTION_USE, OBJECT_SPOCK, 8, 0}, &Room::tug0UseSTricorderOnEngineer },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 8, 0}, &Room::tug0UseSTricorderOnEngineer },
+	{ {ACTION_WALK, 0x23, 0, 0}, &Room::tug0WalkToDoor },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::tug0LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug0LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug0LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug0LookAtRedshirt },
+	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::tug0LookAtTransporter },
+	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::tug0LookAtDoor },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::tug0TalkToKirk },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug0TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug0TalkToSpock },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug0TalkToRedshirt },
+	{ {ACTION_TALK, 8, 0, 0}, &Room::tug0TalkToEngineer },
+	{ {ACTION_USE, OBJECT_ICOMM, 0, 0}, &Room::tug0UseCommunicator },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug0LookAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::tug0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::tug0UseMTricorderAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::tug0Tick1() {
 	playVoc("TUG0LOOP");
 	playMidiMusicTracks(0, -1);
@@ -72,7 +148,7 @@ void Room::tug0UseSpockOnControls() {
 
 void Room::tug0SpockReachedControlsToExamine() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 17);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 }
 
 void Room::tug0SpockExaminedControls() {
@@ -99,7 +175,6 @@ void Room::tug0UseTransmogrifierWithBitOnControls() {
 void Room::tug0SpockReachedControlsWithTransmogrifier() {
 	showText(TX_SPEAKER_SPOCK, 29, true);
 	loadActorAnim2(OBJECT_SPOCK, "susehn", -1, -1, 7);
-	playSoundEffectIndex(SND_BLANK_0b); // FIXME: blank sound?
 }
 
 void Room::tug0SpockFinishedUsingTransmogrifier() {
@@ -258,8 +333,8 @@ void Room::tug0UseTransporter() {
 
 void Room::tug0SpockReachedControlsToTransport() {
 	loadActorAnim2(OBJECT_SPOCK, "susehw", -1, -1, 18);
-	playSoundEffectIndex(SND_07);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxButton);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::tug0SpockPreparedTransporter() {
@@ -269,7 +344,7 @@ void Room::tug0SpockPreparedTransporter() {
 }
 
 void Room::tug0SpockReachedTransporter() {
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 	loadActorAnim2(OBJECT_KIRK,     "kteled", -1, -1, 21);
 	loadActorAnim2(OBJECT_SPOCK,    "steled", -1, -1, 0);
 	loadActorAnim2(OBJECT_MCCOY,    "mteled", -1, -1, 0);
@@ -308,17 +383,16 @@ void Room::tug0KirkPlacedBomb() {
 
 void Room::tug0SpockReachedControlsForBomb() {
 	loadActorAnim2(OBJECT_SPOCK, "susehw", -1, -1, 19);
-	playSoundEffectIndex(SND_07);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxButton);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::tug0SpockBeginsBeamingBomb() {
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 	loadActorAnim2(10, "bomb2", 0x5a, 0x7f, 12);
 }
 
 void Room::tug0SpockFinishesBeamingBomb() {
-	playSoundEffectIndex(SND_BLANK_14);
 	_awayMission->tug.missionScore = 0;
 	_awayMission->timers[0] = 64;
 }
@@ -343,13 +417,13 @@ void Room::tug0BombExploded() {
 void Room::tug0UseMTricorderOnControls() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::tug0UseSTricorderOnControls() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 23);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 15, true);
 }
 
@@ -360,7 +434,7 @@ void Room::tug0UseMTricorderOnEngineer() {
 }
 
 void Room::tug0MccoyReachedEngineerToScan() {
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 25);
 }
 
@@ -378,7 +452,7 @@ void Room::tug0MccoyFinishedScanningEngineer() {
 void Room::tug0UseSTricorderOnEngineer() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 30, true);
 }
 
@@ -450,14 +524,14 @@ void Room::tug0LookAnywhere() {
 void Room::tug0UseSTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::tug0UseMTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 20, true); // BUG: typo
 }
 

@@ -175,7 +175,7 @@ public:
 
 	virtual void quit();
 
-	virtual void setWindowCaption(const char *caption);
+	virtual void setWindowCaption(const Common::U32String &caption);
 	virtual void showVirtualKeyboard(bool enable);
 
 	virtual Audio::Mixer *getMixer();
@@ -189,7 +189,6 @@ public:
 	virtual bool setTextInClipboard(const Common::U32String &text);
 	virtual bool isConnectionLimited();
 	virtual Common::String getSystemLanguage() const;
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 
 	void updateEventScale(const GLESBaseTexture *tex);
 	TouchControls* getTouchControls() { return &_touchControls; }

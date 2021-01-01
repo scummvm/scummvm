@@ -25,9 +25,10 @@
 namespace BladeRunner {
 
 AIScriptOfficerGrayford::AIScriptOfficerGrayford(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
-	_var2 = 0;
-	_var3 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 }
 
 void AIScriptOfficerGrayford::Initialize() {
@@ -36,9 +37,9 @@ void AIScriptOfficerGrayford::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
-	_var2 = 0;
-	_var3 = 0;
+	_varChooseIdleAnimation = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 
 	Actor_Put_In_Set(kActorOfficerGrayford, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorOfficerGrayford, 39, 0); // kSetFreeSlotG
@@ -135,13 +136,16 @@ bool AIScriptOfficerGrayford::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO missing UG07 case - would be a type 10 combat, 12 flee?
+
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO missing UG09 case - would be a type ?? //
 
 		case kSetUG10:
@@ -358,7 +362,9 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		Actor_Says(kActorOfficerGrayford, 330, 13);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
+
 // TODO goals 6 and 9?
+
 	case kGoalOfficerGrayfordWalksInPS09c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
@@ -909,7 +915,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 
 	case kGoalOfficerGrayfordDead:
 		_animationState = 32;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(624) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordShotDead) - 1;
 		return true;
 
 	}
@@ -919,67 +925,67 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (!_var1) {
-			*animation = 625;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 		}
-		if (_var1 == 1) {
-			*animation = 626;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationOfficerGrayfordLookAroundDownwardsIdle;
 		}
-		if (_var1 == 2) {
-			*animation = 627;
+		if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationOfficerGrayfordLookAroundSidewaysIdle;
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 			if (!Random_Query(0, 1)) {
-				_var1 = Random_Query(1, 2);
+				_varChooseIdleAnimation = Random_Query(1, 2);
 			}
 		}
 		break;
 
 	case 1:
-		*animation = 618;
+		*animation = kModelAnimationOfficerGrayfordWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(618)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 619;
+		*animation = kModelAnimationOfficerGrayfordRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(619)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 5:
-		*animation = 611;
+		*animation = kModelAnimationOfficerGrayfordCombatRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(611)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 6:
-		*animation = 610;
+		*animation = kModelAnimationOfficerGrayfordCombatWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(610)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 9:
-		if (!_animationFrame && _var2) {
-			*animation = 625;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 			_animationState = 0;
-			_var1 = 0;
-			_var2 = 0;
+			_varChooseIdleAnimation = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(629)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCalmExplainTalk)) {
 				_animationFrame = 0;
 				_animationState = Random_Query(9, 11);
 			}
@@ -987,114 +993,115 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 10:
-		*animation = 630;
+		*animation = kModelAnimationOfficerGrayfordCalmRightHandMoveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(630)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCalmRightHandMoveTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 11:
-		*animation = 631;
+		*animation = kModelAnimationOfficerGrayfordScratchHeadTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(631)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordScratchHeadTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 12:
-		*animation = 632;
+		*animation = kModelAnimationOfficerGrayfordQuickHandMoveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(632)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordQuickHandMoveTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 13:
-		*animation = 633;
+		*animation = kModelAnimationOfficerGrayfordSevereTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(633)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordSevereTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 14:
-		*animation = 634;
+		*animation = kModelAnimationOfficerGrayfordMockTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(634)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordMockTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 15:
-		*animation = 635;
+		*animation = kModelAnimationOfficerGrayfordPointingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(635)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordPointingTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 16:
-		*animation = 636;
+		*animation = kModelAnimationOfficerGrayfordQuestionTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(636)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordQuestionTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 17:
-		*animation = 637;
+		*animation = kModelAnimationOfficerGrayfordDismissTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(637)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordDismissTalk)) {
 			_animationFrame = 0;
 			_animationState = 9;
-			*animation = 629;
+			*animation = kModelAnimationOfficerGrayfordCalmExplainTalk;
 		}
 		break;
 
 	case 18:
+		// fall through
 	case 19:
-		*animation = 605;
+		*animation = kModelAnimationOfficerGrayfordCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(605)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 20:
-		*animation = 615;
+		*animation = kModelAnimationOfficerGrayfordCombatUnholsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(615)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatUnholsterGun)) {
 			_animationFrame = 0;
 			_animationState = 19;
 		}
 		break;
 
 	case 21:
-		*animation = 616;
+		*animation = kModelAnimationOfficerGrayfordCombatHolsterGun;
 		++_animationFrame;
 		if (_animationFrame == 11) {
 			Ambient_Sounds_Play_Sound(kSfxHOLSTER1, 25, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 625;
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 			if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordArrivesToDR04) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrivedAtDR04);
 			}
@@ -1102,7 +1109,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 22:
-		*animation = 617;
+		*animation = kModelAnimationOfficerGrayfordCombatFireGun;
 		++_animationFrame;
 		if (_animationFrame == 3) {
 			int snd;
@@ -1116,7 +1123,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 5) {
 			Actor_Combat_AI_Hit_Attempt(kActorOfficerGrayford);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(617)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatFireGun)) {
 			_animationState = 19;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
@@ -1124,49 +1131,49 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 23:
-		*animation = 617;
+		*animation = kModelAnimationOfficerGrayfordCombatFireGun;
 		if (_animationFrame < 2) {
 			++_animationFrame;
 		}
 		break;
 
 	case 24:
-		*animation = 617;
+		*animation = kModelAnimationOfficerGrayfordCombatFireGun;
 		--_animationFrame;
 		if (_animationFrame < 0) {
 			_animationFrame = 0;
 			_animationState = 21;
-			*animation = 616;
+			*animation = kModelAnimationOfficerGrayfordCombatHolsterGun;
 		}
 		break;
 
 	case 27:
-		*animation = 608;
+		*animation = kModelAnimationOfficerGrayfordCombatGotHitRight;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(608) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatGotHitRight) - 1) {
 			_animationFrame = 0;
 			_animationState = 19;
-			*animation = 625;
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 28:
-		*animation = 609;
+		*animation = kModelAnimationOfficerGrayfordCombatGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(609) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatGotHitLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 19;
-			*animation = 625;
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 29:
-		*animation = 622;
+		*animation = kModelAnimationOfficerGrayfordGotHitFront;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(622) - 1) {
-			*animation = 605;
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordGotHitFront) - 1) {
+			*animation = kModelAnimationOfficerGrayfordCombatIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, 0);
@@ -1174,10 +1181,10 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 30:
-		*animation = 623;
+		*animation = kModelAnimationOfficerGrayfordGotHitBack;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(623) - 1) {
-			*animation = 605;
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordGotHitBack) - 1) {
+			*animation = kModelAnimationOfficerGrayfordCombatIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorOfficerGrayford, 0);
@@ -1185,80 +1192,80 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 31:
-		*animation = 612;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(612) - 1) {
+		*animation = kModelAnimationOfficerGrayfordCombatShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordCombatShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 32:
-		*animation = 624;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(624) - 1) {
+		*animation = kModelAnimationOfficerGrayfordShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 34:
-		*animation = 639;
-		if (_var3) {
-			--_var3;
+		*animation = kModelAnimationOfficerGrayfordTalkToAndLowerRadio;
+		if (_varNumOfTimesToHoldCurrentFrame > 0) {
+			--_varNumOfTimesToHoldCurrentFrame;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(639)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordTalkToAndLowerRadio)) {
 				if (Random_Query(0, 1)) {
-					*animation = 641;
+					*animation = kModelAnimationOfficerGrayfordPutAwayRadioInPocket;
 					_animationState = 37;
 				} else {
-					*animation = 638;
+					*animation = kModelAnimationOfficerGrayfordPlaceRadioToEar;
 					_animationState = 35;
 				}
 				_animationFrame = 0;
 			} else {
 				if (_animationFrame == 12) {
-					_var3 = Random_Query(5, 18);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 18);
 				}
 			}
 		}
 		break;
 
 	case 35:
-		*animation = 638;
-		if (_var3) {
-			--_var3;
+		*animation = kModelAnimationOfficerGrayfordPlaceRadioToEar;
+		if (_varNumOfTimesToHoldCurrentFrame > 0) {
+			--_varNumOfTimesToHoldCurrentFrame;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(638)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordPlaceRadioToEar)) {
 				if (Random_Query(0, 1)) {
-					*animation = 641;
+					*animation = kModelAnimationOfficerGrayfordPutAwayRadioInPocket;
 					_animationState = 37;
 				} else {
-					*animation = 639;
+					*animation = kModelAnimationOfficerGrayfordTalkToAndLowerRadio;
 					_animationState = 34;
 				}
 				_animationFrame = 0;
 			} else {
 				if (_animationFrame == 10) {
-					_var3 = Random_Query(5, 18);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 18);
 				}
 			}
 		}
 		break;
 
 	case 36:
-		*animation = 640;
+		*animation = kModelAnimationOfficerGrayfordTakeOutRadioFromPocket;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(640)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordTakeOutRadioFromPocket)) {
 			_animationFrame = 0;
 			_animationState = 34;
-			*animation = 639;
+			*animation = kModelAnimationOfficerGrayfordTalkToAndLowerRadio;
 		}
 		break;
 
 	case 37:
-		*animation = 641;
+		*animation = kModelAnimationOfficerGrayfordPutAwayRadioInPocket;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(641)) {
-			*animation = 625;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordPutAwayRadioInPocket)) {
+			*animation = kModelAnimationOfficerGrayfordOscillateIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 
@@ -1277,7 +1284,8 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;
@@ -1290,15 +1298,23 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
-			_var2 = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 18:
@@ -1316,10 +1332,15 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 			break;
 
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 34:
+			// fall through
 		case 35:
+			// fall through
 		case 36:
+			// fall through
 		case 37:
 			return true;
 
@@ -1354,23 +1375,29 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		if (_animationState != 36 && _animationState != 34) {
 			_animationState = 9;
 			_animationFrame = 0;
-			_var2 = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
 			_animationState = 19;
 			_animationFrame = 0;
 			break;
 
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 22:
+			// fall through
 		case 24:
 			return true;
 
@@ -1408,59 +1435,65 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 10;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 11;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 12;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 13;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
 		_animationState = 14;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 17:
 		_animationState = 15;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 18:
 		_animationState = 16;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 19:
 		_animationState = 17;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
 			if (Random_Query(0, 1)) {
 				_animationState = 27;
@@ -1518,16 +1551,22 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		switch (_animationState) {
 		case 0:
+			// fall through
 		case 1:
+			// fall through
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 7:
 			_animationState = 20;
 			_animationFrame = 0;
 			break;
 
 		case 5:
+			// fall through
 		case 6:
 			return true;
 

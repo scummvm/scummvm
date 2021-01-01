@@ -91,7 +91,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_receiveHit, // void Intrinsic032(12 bytes)
 	Actor::I_isBusy, // int Intrinsic033(4 bytes)
 	Item::I_getDirFromTo16,
-	0, // TODO: Actor::I_getSomeFlagProbablyCrouch(Actor *)
+	Actor::I_isKneeling,
 	Actor::I_doAnim, // void Intrinsic036(12 bytes)
 	MainActor::I_addItemCru, // int Intrinsic037(4 bytes)
 	AudioProcess::I_stopSFXCru, // takes Item *, sndno (from disasm)
@@ -258,7 +258,7 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x0D0
 	Item::I_use, // void Intrinsic0D0(4 bytes)
 	AudioProcess::I_stopAllSFX,
-	0, // void I_playFlic(int *item,char *flicname,word sizex,word sizey) // play flic
+	MovieGump::I_playMovieCutscene, // void I_playFlic(int *item,char *flicname,word sizex,word sizey) // play flic
 	0, // void Intrinsic0D3(void)
 	AudioProcess::I_playSFX, // void Intrinsic0D4(2 bytes)
 	Item::I_use, // void Intrinsic0D5(4 bytes)
@@ -362,7 +362,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setActivity, // void Intrinsic131(6 bytes)
 	Item::I_andStatus, // void Intrinsic132(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-    0, // void Intrinsic134(2 bytes)
+    WeaselGump::I_showWeaselGump, // void Intrinsic134(2 bytes)
     Actor::I_setDead,
     0, // void UNUSEDInt136()
     0  // void UNUSEDInt137()

@@ -40,28 +40,34 @@ namespace Common {
 
 class TimerManager : NonCopyable {
 public:
-	typedef void (*TimerProc)(void *refCon);
+	typedef void (*TimerProc)(void *refCon); /*!< Type definition of a timer instance. */
 
 	virtual ~TimerManager() {}
 
 	/**
-	 * Install a new timer callback. It will from now be called every interval microseconds.
-	 * The timer may be invoked from a separate thread. Hence any timer code should be
+	 * Install a new timer callback.
+	 *
+	 * After it has been created, the timer is called every @p interval microseconds.
+	 * The timer can be invoked from a separate thread. Hence any timer code should be
 	 * written following the same safety guidelines as any other threaded code.
 	 *
 	 * @note Although the interval is specified in microseconds, the actual timer resolution
-	 *       may be lower. In particular, with the SDL backend the timer resolution is 10ms.
-	 * @param proc		the callback
-	 * @param interval	the interval in which the timer shall be invoked (in microseconds)
-	 * @param refCon	an arbitrary void pointer; will be passed to the timer callback
-	 * @param id            unique string id of the installed timer. Used by the event recorder
-	 * @return	true if the timer was installed successfully, false otherwise
+	 *       may be lower. In particular, with the SDL backend the timer resolution is 10 ms.
+	 *
+	 * @param proc		Callback.
+	 * @param interval	Interval in which the timer shall be invoked (in microseconds).
+	 * @param refCon	Arbitrary void pointer passed to the timer callback.
+	 * @param id        Unique string ID of the installed timer. Used by the event recorder.
+	 *
+	 * @return	True if the timer was installed successfully, false otherwise.
 	 */
 	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id) = 0;
 
 	/**
-	 * Remove the given timer callback. It will not be invoked anymore,
-	 * and no instance of this callback will be running anymore.
+	 * Remove the given timer callback.
+	 *
+	 * It will not be invoked anymore, and no instance
+	 * of this callback will be running anymore.
 	 */
 	virtual void removeTimerProc(TimerProc proc) = 0;
 };

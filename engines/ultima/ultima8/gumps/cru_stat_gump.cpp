@@ -40,7 +40,7 @@ CruStatGump::CruStatGump() : TranslucentGump() {
 }
 
 CruStatGump::CruStatGump(Shape *shape, int x)
-	: TranslucentGump(x, 0, 5, 5, 0) {
+	: TranslucentGump(x, 0, 5, 5, 0, FLAG_DONT_SAVE) {
 	_shape = shape;
 }
 

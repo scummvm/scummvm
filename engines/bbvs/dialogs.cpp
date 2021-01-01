@@ -59,23 +59,23 @@ static const MenuButton kMenuButtons[] = {
 
 static const MenuButton kMenuButtonsRu[] = {
 	// Main menu
-	{"\xBD\xDE\xD2\xD0\xEF \xD8\xD3\xE0\xD0", kCmdNewGame},
-	{"\xBF\xE0\xDE\xD4\xDE\xDB\xD6\xD8\xE2\xEC", kCmdContinue},
-	{"\xB5\xE9\xD5 ..", kCmdOptions},
-	{"\xBC\xD8\xDD\xD8 \xB8\xD3\xE0\xEB", kCmdMiniGames},
-	{"\xB2\xEB\xE5\xDE\xD4", kCmdQuit},
+	{"\xD0\x9D\xD0\xBE\xD0\xB2\xD0\xB0\xD1\x8F \xD0\xB8\xD0\xB3\xD1\x80\xD0\xB0", kCmdNewGame},
+	{"\xD0\x9F\xD1\x80\xD0\xBE\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xB6\xD0\xB8\xD1\x82\xD1\x8C", kCmdContinue},
+	{"\xD0\x95\xD1\x89\xD0\xB5 ..", kCmdOptions},
+	{"\xD0\x9C\xD0\xB8\xD0\xBD\xD0\xB8 \xD0\x98\xD0\xB3\xD1\x80\xD1\x8B", kCmdMiniGames},
+	{"\xD0\x92\xD1\x8B\xD1\x85\xD0\xBE\xD0\xB4", kCmdQuit},
 	// Options
-	{"\xB4\xD5\xD8\xDD\xE1\xE2\xD0\xDB\xDB\xEF\xE6\xD8\xEF", kCmdUninstall},
-	{"\xB0\xD2\xE2\xDE\xE0\xEB", kCmdCredits},
-	{"\xBF\xE0\xDE\xDB\xDE\xD3", kCmdOpening},
-	{"\xC0\xD5\xDA\xDB\xD0\xDC\xD0", kCmdChicksNStuff},
-	{"\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack},
+	{"\xD0\x94\xD0\xB5\xD0\xB8\xD0\xBD\xD1\x81\xD1\x82\xD0\xB0\xD0\xBB\xD0\xBB\xD1\x8F\xD1\x86\xD0\xB8\xD1\x8F", kCmdUninstall},
+	{"\xD0\x90\xD0\xB2\xD1\x82\xD0\xBE\xD1\x80\xD1\x8B", kCmdCredits},
+	{"\xD0\x9F\xD1\x80\xD0\xBE\xD0\xBB\xD0\xBE\xD0\xB3", kCmdOpening},
+	{"\xD0\xA0\xD0\xB5\xD0\xBA\xD0\xBB\xD0\xB0\xD0\xBC\xD0\xB0", kCmdChicksNStuff},
+	{"\xD0\x9D\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4 ..", kCmdBack},
 	// Minigames
-	{"\xC1\xDD\xD0\xD9\xDF\xD5\xE0", kCmdHockALoogie},
-	{"\xB6\xE3\xDA\xDE\xD6\xD0\xE0\xDA\xD0", kCmdBugJustice},
-	{"\xBF\xE2\xD5\xDD\xD8\xE1", kCmdCourtChaos},
-	{"\xB6\xD8\xD0\xDE\xD9 \xB7\xD2\xE3\xDA", kCmdAirGuitar},
-	{"\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack}
+	{"\xD0\xA1\xD0\xBD\xD0\xB0\xD0\xB9\xD0\xBF\xD0\xB5\xD1\x80", kCmdHockALoogie},
+	{"\xD0\x96\xD1\x83\xD0\xBA\xD0\xBE\xD0\xB6\xD0\xB0\xD1\x80\xD0\xBA\xD0\xB0", kCmdBugJustice},
+	{"\xD0\x9F\xD1\x82\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x81", kCmdCourtChaos},
+	{"\xD0\x96\xD0\xB8\xD0\xB2\xD0\xBE\xD0\xB9 \xD0\x97\xD0\xB2\xD1\x83\xD0\xBA", kCmdAirGuitar},
+	{"\xD0\x9D\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4 ..", kCmdBack}
 };
 
 MainMenu::MainMenu(BbvsEngine *vm) : Dialog(0, 0, 1, 1), _vm(vm) {
@@ -86,11 +86,11 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::init() {
-	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
-	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
-	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
-	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
-	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""));
+	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String());
+	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String());
+	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String());
+	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String());
+	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String());
 	gotoMenuScreen(kMainMenuScr);
 }
 
@@ -192,7 +192,7 @@ void MainMenu::gotoMenuScreen(int screen) {
 		} else {
 			btn = &kMenuButtons[screen * 5 + i];
 		}
-		_buttons[i]->setLabel(btn->label);
+		_buttons[i]->setLabel(Common::U32String(btn->label, Common::kUtf8));
 		_buttons[i]->setCmd(btn->cmd);
 		_buttons[i]->setEnabled(btn->cmd != 0);
 	}

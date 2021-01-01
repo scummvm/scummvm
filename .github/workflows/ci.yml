@@ -39,10 +39,10 @@ jobs:
       - uses: ilammy/setup-nasm@v1
         if: ${{ matrix.useNasm }} == 'true'
       - name: Install vcpkg and packages
-        uses: lukka/run-vcpkg@v2
+        uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgGitCommitId: 2f7a104d4d6f1f3790db929f85a4086aa6973d7f
+          vcpkgGitCommitId: 0bf3923f9fab4001c00f0f429682a0853b5749e0
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
 #      - name: Upload libs
@@ -65,9 +65,9 @@ jobs:
           ls
       - name: set SCUMMVM_LIBS env variable
         run: |
-          echo "::set-env name=SCUMMVM_LIBS::${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}"
+          echo "SCUMMVM_LIBS=${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.0
+        uses: microsoft/setup-msbuild@v1.0.2
       - name: Build scummvm
         run: |
           cd build-scummvm
@@ -107,7 +107,7 @@ jobs:
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theora --disable-taskbar --disable-tts --disable-fribidi
-            packagesUrl: https://www.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip
+            packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip
     steps:
       - name: Checkout
         uses: actions/checkout@v2

@@ -251,7 +251,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 	__mega_set_names anim;
 	PXreal destx, destz;
 	PXfloat diff;
-	int retval;
+	int32 retval;
 	PXreal sub1, sub2, len, len2;
 	uint32 j;
 

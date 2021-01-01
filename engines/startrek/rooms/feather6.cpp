@@ -96,10 +96,8 @@ extern const RoomAction feather6ActionList[] = {
 	// ENHANCEMENTs: Also add entries for OBJECT_STALACTITES, not just HOTSPOT_STALACTITES
 	{ {ACTION_LOOK, OBJECT_STALACTITES, 0, 0},              &Room::feather6LookAtStalactites },
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_STALACTITES, 0}, &Room::feather6UseSTricorderOnStalactites },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int feather6NumActions = ARRAYSIZE(feather6ActionList);
-
 
 void Room::feather6Tick1() {
 	playVoc("FEA6LOOP");
@@ -136,7 +134,6 @@ void Room::feather6ReachedPositionToThrowRock() {
 }
 
 void Room::feather6DoneThrowingRock() {
-	playSoundEffectIndex(SND_BLANK_0b);
 	loadActorAnim2(OBJECT_STALACTITES, "s5r6tf");
 	loadActorAnimC(OBJECT_KIRK, "s5r6kd", -1, -1, &Room::feather6KirkDiedFromStalactites);
 	playMidiMusicTracks(1);
@@ -167,8 +164,6 @@ void Room::feather6ReachedCrystalsWithRock() {
 }
 
 void Room::feather6Tick() {
-	if (_awayMission->timers[2] == 55 || _awayMission->timers[2] == 89 || _awayMission->timers[2] == 119)
-		playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::feather6HitCrystalsWithRockFirstTime() {

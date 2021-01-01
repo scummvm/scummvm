@@ -34,6 +34,7 @@ struct AnimSoundSequence {
 	uint8 adlibSoundId;
 	uint8 rolandSoundId;
 	uint8 channelNum;
+	bool music;
 };
 
 class AnimationSequence {
@@ -44,20 +45,23 @@ private:
 	MemoryBlock *_decodedData;
 	MemoryBlock *_lineRefs;
 	byte *_pPixels, *_pLines;
+	byte *_pPixelsStart, *_pLinesStart;
 	byte *_pPixelsEnd, *_pLinesEnd;
 	const AnimSoundSequence *_soundList;
 	int _frameDelay;
+	uint8 _loops;
 
 	AnimAbortType delay(uint32 milliseconds);
 	void egaDecodeFrame(byte *&pPixels);
 	void vgaDecodeFrame(byte *&pPixels, byte *&pLines);
 public:
 	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7,
-		const AnimSoundSequence *soundList = NULL);
+		const AnimSoundSequence *soundList = NULL, uint8 loops = 1);
 	~AnimationSequence();
 
 	AnimAbortType show();
 	bool step();
+	byte *showInitialScreen(byte *pSrc = 0);
 };
 
 } // End of namespace Lure

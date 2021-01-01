@@ -211,7 +211,7 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
  * @param features List of features to operate on.
  * @return "true", when the feature is enabled, "false" otherwise.
  */
-bool getFeatureBuildState(const std::string &name, FeatureList &features);
+bool getFeatureBuildState(const std::string &name, const FeatureList &features);
 
 /**
  * Structure to describe a build setup.
@@ -251,6 +251,9 @@ struct BuildSetup {
 		useCanonicalLibNames = false;
 		useStaticDetection = true;
 	}
+
+	bool featureEnabled(std::string feature) const;
+	Feature getFeature(std::string feature) const;
 };
 
 /**
@@ -383,6 +386,17 @@ std::string convertPathToWin(const std::string &path);
  * @param ext Reference to a string, where to store the extension.
  */
 void splitFilename(const std::string &fileName, std::string &name, std::string &ext);
+
+/**
+ * Splits a full path into directory and filename.
+ * This assumes the last part is the filename, even if it
+ * has no extension.
+ *
+ * @param path Path to split
+ * @param name Reference to a string, where to store the directory part.
+ * @param ext Reference to a string, where to store the filename part.
+ */
+void splitPath(const std::string &path, std::string &dir, std::string &file);
 
 /**
  * Returns the basename of a path.
@@ -521,18 +535,16 @@ protected:
 
 	/**
 	 * Writes file entries for the specified directory node into
-	 * the given project file. It will also take care of duplicate
-	 * object files.
+	 * the given project file.
 	 *
 	 * @param dir Directory node.
 	 * @param projectFile File stream to write to.
 	 * @param indentation Indentation level to use.
-	 * @param duplicate List of duplicate object file names.
 	 * @param objPrefix Prefix to use for object files, which would name clash.
 	 * @param filePrefix Generic prefix to all files of the node.
 	 */
 	virtual void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                                    const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) = 0;
+	                                    const std::string &objPrefix, const std::string &filePrefix) = 0;
 
 	/**
 	 * Output a list of project references to the file stream

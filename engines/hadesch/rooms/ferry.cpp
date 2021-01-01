@@ -23,6 +23,7 @@
  */
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 
@@ -188,122 +189,136 @@ static const ShadowInfo shadows[] = {
 
 static const struct {
 	const char *image;
-	const char *sound;
+	TranscribedSound sound;
 } thoughts[] = {
-	{ "V9140tA0", "V9140nA0" }, // 0
-	{ "V9140tB0", "V9140nB0" },
-	{ "V9140tC0", "V9140nC0" },
-	{ "V9140tD0", "V9140nD0" },
-	{ "V9140tE0", "V9140nE0" },
-	{ "V9140tF0", "V9140nF0" }, // 5
-	{ "V9140tG0", "V9140nG0" },
-	{ "V9140tH0", "V9140nH0" },
-	{ "V9140tI0", "V9140nI0" },
-	{ "V9140tJ0", "V9140nJ0" },
-	{ "V9140tK0", "V9140nK0" }, // 10
-	{ "V9140tL0", "V9140nL0" },
-	{ "V9140tM0", "V9140nM0" },
-	{ "V9140tN0", "V9140nN0" },
-	{ "V9140tO0", "V9140nO0" },
-	{ "V9140tP0", "V9140nP0" }, // 15
-	{ "V9140tQ0", "V9140nQ0" },
-	{ "V9140tR0", "V9140nR0" },
-	{ "V9140tS0", "V9140nS0" },
-	{ "V9140tT0", "V9140nT0" },
-	{ "V9140tU0", "V9140nU0" }, // 20
-	{ "V9140tV0", "V9140nV0" },
-	{ "V9140tW0", "V9140nW0" },
-	{ "V9160tA0", "V9160nA0" },
-	{ "V9160tB0", "V9160nB0" },
-	{ "V9160tC0", "V9160nC0" }, // 25
-	{ "V9160tD0", "V9160nD0" },
-	{ "V9160tE0", "V9160nE0" },
-	{ "V9160tF0", "V9160nF0" },
-	{ "V9160tG0", "V9160nG0" },
-	{ "V9160tH0", "V9160nH0" }, // 30
-	{ "V9160tI0", "V9160nI0" },
-	{ "V9160tJ0", "V9160nJ0" },
-	{ "V9160tK0", "V9160nK0" },
-	{ "V9160tL0", "V9160nL0" },
-	{ "V9170tA0", "V9170nA0" }, // 35
-	{ "V9170tB0", "V9170nB0" },
-	{ "V9170tC0", "V9170nC0" },
-	{ "V9170tD0", "V9170nD0" },
-	{ "V9170tE0", "V9170nE0" },
-	{ "V9170tF0", "V9170nF0" }, // 40
-	{ "V9170tG0", "V9170nG0" },
-	{ "V9170tH0", "V9170nH0" },
-	{ "V9170tI0", "V9170nI0" },
-	{ "V9170tJ0", "V9170nJ0" },
-	{ "V9170tK0", "V9170nK0" }, // 45
-	{ "V9170tL0", "V9170nL0" }, 
-	{ "V9170tM0", "V9170nM0" },
-	{ "V9170tN0", "V9170nN0" },
-	{ "V9170tO0", "V9170nO0" },
-	{ "V9170tP0", "V9170nP0" }, // 50
-	{ "V9170tQ0", "V9170nQ0" },
-	{ "V9170tR0", "V9170nR0" },
-	{ "V9170tS0", "V9170nS0" },
-	{ "V9170tT0", "V9170nT0" },
-	{ "V9170tU0", "V9170nU0" }, // 55
-	{ "V9170tV0", "V9170nV0" },
-	{ "V9170tY0", "V9170nY0" },
-	{ "V9200tA0", "V9200nA0" },
-	{ "V9200tB0", "V9200nB0" },
-	{ "V9200tC0", "V9200nC0" }, // 60
-	{ "V9200tD0", "V9200nD0" },
-	{ "V9200tE0", "V9200nE0" },
-	{ "V9200tF0", "V9200nF0" },
-	{ "V9200tG0", "V9200nG0" },
-	{ "V9200tH0", "V9200nH0" }, // 65
-	{ "V9200tI0", "V9200nI0" },
-	{ "V9200tJ0", "V9200nJ0" },
-	{ "V9200tK0", "V9200nK0" },
-	{ "V9200tL0", "V9200nL0" },
-	{ "V9200tM0", "V9200nM0" }, // 70
-	{ "V9200tN0", "V9200nN0" },
-	{ "V9200tO0", "V9200nO0" },
-	{ "V9240tA0", "V9240nA0" },
-	{ "V9210tA0", "V9210nA0" },
-	{ "V9210tB0", "V9210nB0" }, // 75
-	{ "V9210tC0", "V9210nC0" },
-	{ "V9210tD0", "V9210nD0" },
-	{ "V9220tA0", "V9220nA0" },
-	{ "V9220tB0", "V9220nB0" },
-	{ "V9220tC0", "V9220nC0" }, // 80
-	{ "V9220tD0", "V9220nD0" },
-        { "V9245tA0", "V9300nE0" }
+	{ "V9140tA0", {"V9140nA0", _s("He won't sit next to humans") } }, // 0
+	{ "V9140tB0", {"V9140nB0", _s("He won't sit next to animals") } },
+	{ "V9140tC0", {"V9140nC0", _s("He won't sit next to smoking beings") } },
+	{ "V9140tD0", {"V9140nD0", _s("He won't sit next to flat beings") } },
+	{ "V9140tE0", {"V9140nE0", _s("He won't sit next to weapon injuries") } },
+	{ "V9140tF0", {"V9140nF0", _s("He won't sit next to cats") } }, // 5
+	{ "V9140tG0", {"V9140nG0", _s("He won't sit next to two-headed beings") } },
+	{ "V9140tH0", {"V9140nH0", _s("He won't sit next to monsters") } },
+	{ "V9140tI0", {"V9140nI0", _s("He won't sit next to hot beings") } },
+	{ "V9140tJ0", {"V9140nJ0", _s("He won't sit next to headless beings") } },
+	{ "V9140tK0", {"V9140nK0", _s("He won't sit next to horned beings") } }, // 10
+	{ "V9140tL0", {"V9140nL0", _s("He won't sit next to flat monsters") } },
+	{ "V9140tM0", {"V9140nM0", _s("He won't sit next to beings with holes") } },
+	{ "V9140tN0", {"V9140nN0", _s("He won't sit next to pierced beings") } },
+	{ "V9140tO0", {"V9140nO0", _s("He won't sit next to fffreozen beings") } },
+	{ "V9140tP0", {"V9140nP0", _s("He won't sit next to wet beings") } }, // 15
+	{ "V9140tQ0", {"V9140nQ0", _s("He won't sit next to crushed dogs") } },
+	{ "V9140tR0", {"V9140nR0", _s("He won't sit next to dogs") } },
+	{ "V9140tS0", {"V9140nS0", _s("He won't sit next to headless dogs") } },
+	{ "V9140tT0", {"V9140nT0", _s("He won't sit next to dismembered beings") } },
+	{ "V9140tU0", {"V9140nU0", _s("He won't sit next to crushed humans") } }, // 20
+	{ "V9140tV0", {"V9140nV0", _s("He won't sit next to trident-injured beings. And I couldn't blame him") } },
+	{ "V9140tW0", {"V9140nW0", _s("He won't sit next to snake-killed beings") } },
+	{ "V9160tA0", {"V9160nA0", _s("He won't sit across from humans") } },
+	{ "V9160tB0", {"V9160nB0", _s("He won't sit across from animals") } },
+	{ "V9160tC0", {"V9160nC0", _s("He won't sit across from weapon injuries") } }, // 25
+	{ "V9160tD0", {"V9160nD0", _s("He won't sit across from cats") } },
+	{ "V9160tE0", {"V9160nE0", _s("He won't sit across from monsters") } },
+	{ "V9160tF0", {"V9160nF0", _s("He won't sit across from hot beings") } },
+	{ "V9160tG0", {"V9160nG0", _s("He won't sit across from headless beings") } },
+	{ "V9160tH0", {"V9160nH0", _s("He won't sit across from flat beings") } }, // 30
+	{ "V9160tI0", {"V9160nI0", _s("He won't sit across from head injuries") } },
+	{ "V9160tJ0", {"V9160nJ0", _s("He won't sit across from beings with holes") } },
+	{ "V9160tK0", {"V9160nK0", _s("He won't sit across from pierced beings") } },
+	{ "V9160tL0", {"V9160nL0", _s("He won't sit across from wet beings") } },
+	{ "V9170tA0", {"V9170nA0", _s("He simply must sit next to a dog") } }, // 35
+	{ "V9170tB0", {"V9170nB0", _s("He must sit next to a being with holes") } },
+	{ "V9170tC0", {"V9170nC0", _s("He must sit next to a pierced being") } },
+	{ "V9170tD0", {"V9170nD0", _s("He must sit next to a human") } },
+	{ "V9170tE0", {"V9170nE0", _s("He must sit next to a monster") } },
+	{ "V9170tF0", {"V9170nF0", _s("He must sit next to a monster with a head injury") } }, // 40
+	{ "V9170tG0", {"V9170nG0", _s("He must sit next to a dismembered being") } },
+	{ "V9170tH0", {"V9170nH0", _s("He must sit next to a flat human") } },
+	{ "V9170tI0", {"V9170nI0", _s("He must sit next to a smoking being") } },
+	{ "V9170tJ0", {"V9170nJ0", _s("He must sit next to a hot being") } },
+	{ "V9170tK0", {"V9170nK0", _s("He simply must sit next to a horned being") } }, // 45
+	{ "V9170tL0", {"V9170nL0", _s("He must sit next to a flat animal") } }, 
+	{ "V9170tM0", {"V9170nM0", _s("He must sit next to a flat being") } },
+	{ "V9170tN0", {"V9170nN0", _s("He must sit next to an animal") } },
+	{ "V9170tO0", {"V9170nO0", _s("He must sit next to a headless being") } },
+	{ "V9170tP0", {"V9170nP0", _s("He must sit next to a head being") } }, // 50
+	{ "V9170tQ0", {"V9170nQ0", _s("He must sit next to a weapon injury") } },
+	{ "V9170tR0", {"V9170nR0", _s("He must sit next to a cat") } },
+	{ "V9170tS0", {"V9170nS0", _s("He must sit next to a snake-killed being") } },
+	{ "V9170tT0", {"V9170nT0", _s("He must sit next to a smoking animal") } },
+	{ "V9170tU0", {"V9170nU0", _s("He must sit next to a wet being") } }, // 55
+	{ "V9170tV0", {"V9170nV0", _s("He must sit next to a c-c-cold being") } },
+	{ "V9170tY0", {"V9170nY0", _s("He must sit next to two humans") } },
+	{ "V9200tA0", {"V9200nA0", _s("He must sit across from a being with holes") } },
+	{ "V9200tB0", {"V9200nB0", _s("He must sit across from a pierced being") } },
+	{ "V9200tC0", {"V9200nC0", _s("He must sit across from a human") } }, // 60
+	{ "V9200tD0", {"V9200nD0", _s("He must sit across from a monster") } },
+	{ "V9200tE0", {"V9200nE0", _s("He must sit across from a monster with a head injury") } },
+	{ "V9200tF0", {"V9200nF0", _s("He must sit across from a dismembered injury") } },
+	{ "V9200tG0", {"V9200nG0", _s("He must sit across from a smoking being") } },
+	{ "V9200tH0", {"V9200nH0", _s("He must sit across from a hot being") } }, // 65
+	{ "V9200tI0", {"V9200nI0", _s("He must sit across from a horned being") } },
+	{ "V9200tJ0", {"V9200nJ0", _s("He must sit across from a flat being") } },
+	{ "V9200tK0", {"V9200nK0", _s("He must sit across from an animal") } },
+	{ "V9200tL0", {"V9200nL0", _s("He must sit across from a headless being") } },
+	{ "V9200tM0", {"V9200nM0", _s("He must sit across from the chariot wheel guy") } }, // 70
+	{ "V9200tN0", {"V9200nN0", _s("He must sit across from a head injury") } },
+	{ "V9200tO0", {"V9200nO0", _s("He must sit across from a weapon injury") } },
+	{ "V9240tA0", {"V9240nA0", _s("He must sit in the front or back") } },
+	{ "V9210tA0", {"V9210nA0", _s("He must sit next to and across from only monsters") } },
+	{ "V9210tB0", {"V9210nB0", _s("He must sit next to and across from only animals") } }, // 75
+	{ "V9210tC0", {"V9210nC0", _s("He must sit next to and across from only humans") } },
+	{ "V9210tD0", {"V9210nD0", _s("He must sit next to and across from only weapon injuries") } },
+	{ "V9220tA0", {"V9220nA0", _s("He must not sit next to or across from humans") } },
+	{ "V9220tB0", {"V9220nB0", _s("He must not sit next to or across from pierced beings") } },
+	{ "V9220tC0", {"V9220nC0", _s("He must not sit next to or across from monsters") } }, // 80
+	{ "V9220tD0", {"V9220nD0", _s("He must not sit next to or across from animals") } },
+        { "V9245tA0", {"V9300nE0", _s("Ha-ha-ha") } }
 };
 
 static const struct {
 	const char *image;
-	const char *sound;
+	const TranscribedSound sound;
 } charonRules[] = {
-	{ "V9250tA0", "V9250aA0" }, // 0
-	{ "V9250tB0", "V9250aB0" },
-	{ "V9250tC0", "V9250aC0" },
-	{ "V9250tD0", "V9250aD0" },
-	{ "V9260tA0", "V9260nA0" },
-	{ "V9260tB0", "V9260nB0" }, // 5
-	{ "V9260tC0", "V9260nC0" },
-	{ "V9260tD0", "V9260nD0" },
-	{ "V9260tE0", "V9260nE0" },
-	{ "V9260tF0", "V9260nF0" },
-	{ "V9260tG0", "V9260nG0" }, // 10
-	{ "V9260tJ0", "V9260nJ0" },
-	{ "V9270tA0", "XXXXXXXX" }
+	{ "V9250tA0", { "V9250aA0", _s("Charon must sit next to horned beings") } }, // 0
+	{ "V9250tB0", { "V9250aB0", _s("Charon must sit next to cats") } },
+	{ "V9250tC0", { "V9250aC0", _s("Charon must sit next to animals") } },
+	{ "V9250tD0", { "V9250aD0", _s("Charon must sit next to smoking beings") } },
+	{ "V9260tA0", { "V9260nA0", _s("Charon can't have any monsters at the head of the boat") } },
+	{ "V9260tB0", { "V9260nB0", _s("No animals at the head of the boat") } }, // 5
+	{ "V9260tC0", { "V9260nC0", _s("Charon wont sit next to two-headed beings") } },
+	{ "V9260tD0", { "V9260nD0", _s("Charon won't sit next to flat beings") } },
+	{ "V9260tE0", { "V9260nE0", _s("Charon won't sit next to horned beings") } },
+	{ "V9260tF0", { "V9260nF0", _s("Charon won't sit next to cats") } },
+	{ "V9260tG0", { "V9260nG0", _s("Charon won't sit next to smoking beings")  } }, // 10
+	{ "V9260tJ0", { "V9260nJ0", _s("Charon won't sit next to trident-injured beings") } },
+	{ "V9270tA0", { "XXXXXXXX", "" } }
 };
 
-static const char *charonFinishSounds[] = {
-	"V9300nA0",
-	"V9300nH0",
-	"V9300nI0"
-};		
+static const TranscribedSound charonFinishSounds[] = {
+	{"V9300nA0", _s("Well done")},
+	{"V9300nH0", _s("Deadly")},
+	{"V9300nI0", _s("Nice job")}
+};
+
+static const TranscribedSound charonNextLevel[] = {
+	{"V9280wA0", _s("Onto level two")},
+	{"V9280wB0", _s("Onto level three")},
+	{"V9280wC0", _s("You have mastered ferryman's folly")}
+};
 
 static const char *charonAnims[] = {
 	"V9140BA0",
 	"V9140BB0",
 	"V9140BC0"
+};
+
+static TranscribedSound yuckSounds[] = {
+	{ "V9290nA0", _s("Eww!") },
+	{ "V9290nB0", _s("Yuck!") },
+	{ "V9290nC0", _s("Gross!") },
+	{ "V9290nD0", _s("As if!") },
+	{ "V9290nE0", _s("No way!") },
 };
 
 struct CharonIdleVideoInfo {
@@ -555,7 +570,7 @@ public:
 					break;
 				}
 
-				playCharonSound(Common::String::format("V9280w%c0", 'A' + _levelL), 24020);
+				playCharonSound(charonNextLevel[_levelL], 24020);
 				_levelL++;
 				_levelS = 0;
 			}
@@ -592,21 +607,21 @@ public:
 			break;
 		}
 		case k24801_arg1:
-			playCharonSoundSMK("V9090NH0", k24801_arg2);
+			playCharonSoundSMK(TranscribedSound::make("V9090NH0", "When you click on a shade you can see and I'll tell you what they think of one another"), k24801_arg2);
 			_count24006 = 0;
 			g_vm->addTimer(24006, 1200);
 			break;
 		case k24801_arg2:
-			playCharonSoundSMK("V9090ND0", k24801_arg3);
+			playCharonSoundSMK(TranscribedSound::make("V9090ND0", "If you click on a shade you can drag it into a seat"), k24801_arg3);
 			break;
 		case k24801_arg3:
-			playCharonSoundSMK("V9090NE0", k24801_arg4);
+			playCharonSoundSMK(TranscribedSound::make("V9090NE0", "If they find a neighbour offensive, they'll return to the dark"), k24801_arg4);
 			break;
 		case k24801_arg4:
-			playCharonSoundSMK("V9090NI0", k24801_arg5);
+			playCharonSoundSMK(TranscribedSound::make("V9090NI0", "To remove the shade from the boat click and drag it to the dark"), k24801_arg5);
 			break;
 		case k24801_arg5:
-			playCharonSoundSMK("V9130NA0", k24801_arg6);
+			playCharonSoundSMK(TranscribedSound::make("V9130NA0", "Do try and discover what is bothering each of them"), k24801_arg6);
 			break;
 		case k24801_arg6:
 			room->enableMouse();
@@ -628,8 +643,8 @@ public:
 		room->playVideo("V9010xA0", 0, 24002);
 		room->loadHotZones("ff.hot", false);
 
-		room->playSoundLoop("V9010eA0");
-		room->playSoundLoop("V9300eA0");
+		room->playMusicLoop("V9010eA0");
+		room->playMusicLoop("V9300eA0");
 
 		_levelL = 1;
 		if (persistent->_quest == kRescuePhilQuest) {
@@ -653,7 +668,7 @@ public:
 		if (persistent->_quest == kRescuePhilQuest) {
 			room->disableMouse();
 			// originally 24800
-			playCharonSoundSMK("V9090NA0", k24801_arg1);
+			playCharonSoundSMK(TranscribedSound::make("V9090NA0", "Oh, the dead are a tiresome lot. Charon can't bear to weed through their assorted woes. If you assist Charon by loading the shades onto the boat, Charon will squeeze you in for the ride across"), k24801_arg1);
 		}
 	}
 
@@ -683,7 +698,7 @@ private:
 		PlayAnimParams params(PlayAnimParams::keepLastFrame().partial(startFrame, endFrame));
 		const char *snd = shadows[_shades[shade].shadowId].animSound;
 		if (snd && snd[0] != 0)
-			room->playAnimWithSound(sl, snd, z, params, k24018_arg0 + shade, getShadowPos(shade));
+			room->playAnimWithSFX(sl, snd, z, params, k24018_arg0 + shade, getShadowPos(shade));
 		else
 			room->playAnim(sl, z, params, k24018_arg0 + shade, getShadowPos(shade));
 	}
@@ -704,7 +719,7 @@ private:
 		_charonIsBusy = false;
 	}
 
-	void playCharonSound(const Common::String &sound,
+	void playCharonSound(const TranscribedSound &sound,
 			     EventHandlerWrapper ev = kCharonEndTalk, bool isSMK = false) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		int selected = -2;
@@ -715,12 +730,12 @@ private:
 		_lastCharonAnim = selected;
 		room->playAnim(charonAnims[selected], kCharonZ, PlayAnimParams::loop());
 		if (isSMK)
-			room->playVideo(sound, 0, ev);
+			room->playVideo(sound.soundName, 0, ev);
 		else
-			room->playSound(sound, ev);
+			room->playSpeech(sound, ev);
 	}
 
-	void playCharonSoundSMK(const Common::String &sound,
+	void playCharonSoundSMK(const TranscribedSound &sound,
 				EventHandlerWrapper ev = kCharonEndTalk) {
 		playCharonSound(sound, ev, true);
 	}
@@ -755,7 +770,7 @@ private:
 			if (thoughtId >= 0)
 				playCharonSound(thoughts[thoughtId].sound);
 			else if (thoughtId == -1)
-				playCharonSound("V9150nA0");
+				playCharonSound(TranscribedSound::make("V9150nA0", "He won't move from that seat"));
 		}
 		room->selectFrame("V9090oA0", 112, 0, bubblePos);
 		room->selectFrame(shadows[_shades[id].shadowId].nameImage, 111, 0, bubblePos);
@@ -829,8 +844,8 @@ private:
 		if (_isPlayingYuck)
 			return;
 		_isPlayingYuck = true;
-		room->playSound(Common::String::format("V9290n%c0", g_vm->getRnd().getRandomNumberRng('A', 'E')),
-				24010);
+		room->playSpeech(yuckSounds[g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(yuckSounds))],
+					  24010);
 	}
 
 	bool checkCombinationIsAllowed(int shadeId) {

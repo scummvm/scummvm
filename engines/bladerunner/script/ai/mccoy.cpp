@@ -379,7 +379,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMcCoyBB11GetUp:
 		Actor_Set_At_Waypoint(kActorMcCoy, 315, 263);
 		_animationState = 53;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		Actor_Set_Invisible(kActorMcCoy, false);
 		return true;
 
@@ -404,7 +404,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR01LayDrugged);
 		} else {
 			_animationState = 53;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 			// redundant?
 			Actor_Set_Invisible(kActorMcCoy, false);
 		}
@@ -430,7 +430,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Player_Gains_Control();
 		Scene_Exits_Disable();
 		_animationState = 68;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		return true;
 
 	case kGoalMcCoyNR04Drink:
@@ -510,7 +510,12 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 6685, 13);
 		Delay(500);
 		Actor_Says(kActorMcCoy, 6695, 16);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6700, 17);
+#else
+		// McCoy is interrupted here
+		Actor_Says_With_Pause(kActorMcCoy, 6700, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGuzza, 1480, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6705, 11);
 		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
@@ -526,7 +531,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		 && _animationState != 50
 		) {
 			_animationState = 50;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		}
 		return true;
 
@@ -645,6 +650,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
+		// fall through
 	case 4:
 		if (_animationFrame == 0 && !Game_Flag_Query(kFlagMcCoyAnimation1)) {
 			_animationFrame = 1;
@@ -1075,9 +1081,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		case 9:
 			Sound_Left_Footstep_Walk(kActorMcCoy);
 			break;
+
 		case 4:
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 			break;
+
 		case 1:
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 			break;
@@ -1094,9 +1102,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		case 1:
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 			break;
+
 		case 4:
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 			break;
+
 		case 9:
 			Sound_Left_Footstep_Walk(kActorMcCoy);
 			break;
@@ -1432,14 +1442,23 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		}
 		switch (_animationState) {
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
 			Game_Flag_Set(kFlagMcCoyAnimation1);
 			_animationLoopCounter = 0;
@@ -1448,26 +1467,38 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationLoopDirection = 1;
 			_animationLoopFrameMax = 3;
 			return true;
+
 		case 14:
+			// fall through
 		case 17:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 36:
 			_animationState = 16;
 			_animationFrame = 0;
 			return true;
+
 		case 15:
 			_animationState = 16;
 			_animationFrame = 16 - ((16 * _animationFrame) / 12);
 			return true;
+
 		case 16:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
+			// fall through
 		case 55:
 			return true;
+
 		case 60:
 			_animationState = 61;
 			return true;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
@@ -1519,35 +1550,49 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 19:
+			// fall through
 		case 21:
 			break;
+
 		case 16:
 			_animationState = 15;
 			_animationFrame = 12 - ((12 * _animationFrame) / 16);
 			break;
+
 		case 17:
+			// fall through
 		case 20:
 			_animationState = 19;
 			_animationFrame = 0;
 			break;
+
 		case 18:
 			_animationState = 19;
 			_animationFrame = 13 * ((8 - _animationFrame) / 8);
 			break;
+
 		case 22:
 			_animationState = 19;
 			_animationFrame = 41;
 			break;
+
 		case 36:
+			// fall through
 		case 37:
+			// fall through
 		case 40:
+			// fall through
 		case 41:
+			// fall through
 		case 51:
 			_animationState = 14;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 15;
 			_animationFrame = 0;
@@ -1558,17 +1603,22 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatAim:
 		switch (_animationState) {
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 21:
 			break;
+
 		case 19:
 			_animationState = 18;
 			_animationFrame = 8 * (13 - _animationFrame) / 13;
 			break;
+
 		case 22:
 			_animationState = 22;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 18;
 			_animationFrame = 0;
@@ -1704,12 +1754,19 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
 			if (Random_Query(0, 1) == 1) {
 				_animationState = 24;
@@ -1718,6 +1775,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			}
 			_animationFrame = 0;
 			break;
+
 		default:
 			if (Random_Query(0, 1) == 1) {
 				_animationState = 26;
@@ -1801,38 +1859,53 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
 			_animationState = 28;
 			_animationFrame = 0;
 			break;
+
 		case 27:
+			// fall through
 		case 28:
+			// fall through
 		case 50:
 			break;
+
 		default:
 			_animationState = 27;
 			_animationFrame = 0;
 			break;
 		}
 		break;
+
 	case kAnimationModeCombatDie:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
+
 	case 51:
 		_animationState = 27;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeFeeding:
 		_animationState = 55;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeSit:
 		if (_animationState != 60 && (Player_Query_Current_Set() == kSetNR03 || Player_Query_Current_Set() == kSetNR05_NR08)) {
 			_animationState = 60;
@@ -1842,27 +1915,32 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationState = 70;
 		}
 		break;
+
 	case kAnimationModeClimbUp:
 		// fall through
 	case kAnimationModeCombatClimbUp:
 		_animationState = 42;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeClimbDown:
 		// fall through
 	case kAnimationModeCombatClimbDown:
 		_animationState = 43;
 		_animationFrame = 0;
 		break;
+
 	case 68:
 		_animationState = 29;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		_animationLoopDirection = -1;
 		break;
+
 	case 75:
 		_animationState = 67;
 		_animationFrame = 0;
 		break;
+
 	case 85:
 		_animationFrame = 0;
 		_animationState = 69;

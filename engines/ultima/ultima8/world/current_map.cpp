@@ -126,7 +126,7 @@ void CurrentMap::writeback() {
 				// item is being removed from the CurrentMap item lists
 				item->clearExtFlag(Item::EXT_INCURMAP);
 
-				// delete all _fast only and disposable _items
+				// delete all fast only and disposable _items
 				if (item->hasFlags(Item::FLG_FAST_ONLY | Item::FLG_DISPOSABLE)) {
 					delete item;
 					continue;
@@ -161,14 +161,14 @@ void CurrentMap::writeback() {
 	_eggHatcher = 0;
 }
 
-void CurrentMap::loadItems(Std::list<Item *> itemlist, bool callCacheIn) {
-	item_list::iterator iter;
+void CurrentMap::loadItems(const Std::list<Item *> &itemlist, bool callCacheIn) {
+	item_list::const_iterator iter;
 	for (iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		Item *item = *iter;
 
 		item->assignObjId();
 
-		// No _fast area for you!
+		// No fast area for you!
 		item->clearFlag(Item::FLG_FASTAREA);
 
 		// add item to internal object list
@@ -180,14 +180,16 @@ void CurrentMap::loadItems(Std::list<Item *> itemlist, bool callCacheIn) {
 }
 
 void CurrentMap::loadMap(Map *map) {
-	// don't call the cachein events at startup or when loading a savegame
-	bool callCacheIn = (_currentMap != nullptr);
+	// Don't call the cachein events at startup or when loading a savegame
+	// in u8.  Always call them in Crusader.
+	// TODO: This may not work for loading games in Crusader - need to check.
+	bool callCacheIn = (_currentMap != nullptr || GAME_IS_CRUSADER);
 
 	_currentMap = map;
 
 	createEggHatcher();
 
-	// Clear _fast area
+	// Clear fast area
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
@@ -199,7 +201,7 @@ void CurrentMap::loadMap(Map *map) {
 	loadItems(map->_fixedItems, callCacheIn);
 	loadItems(map->_dynamicItems, callCacheIn);
 
-	// we take control of the _items in map, so clear the pointers
+	// we take control of the items in map, so clear the pointers
 	map->_fixedItems.clear();
 	map->_dynamicItems.clear();
 
@@ -217,11 +219,9 @@ void CurrentMap::loadMap(Map *map) {
 		if (actor->getMapNum() == getNum()) {
 			addItemToEnd(actor);
 
-#if 0
-			// the avatar's cachein function is very strange; disabled for now
-			if (callCacheIn)
+			// the avatar's cachein function is very strange in U8; disabled for now
+			if (callCacheIn && GAME_IS_CRUSADER)
 				actor->callUsecodeEvent_cachein();
-#endif
 		}
 	}
 }
@@ -474,9 +474,9 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 			if (want_fast == currently_fast)
 				continue;
 
-			// leave _fast area
+			// leave fast area
 			if (!want_fast) unsetChunkFast(cx, cy);
-			// Enter _fast area
+			// Enter fast area
 			else setChunkFast(cx, cy);
 		}
 	}
@@ -1324,13 +1324,17 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	if (shape > 0x800)
 		return 0;
 
+	int32 x = pt.getX();
+	int32 y = pt.getY();
+	int32 z = pt.getZ();
+
 	if (GAME_IS_CRUSADER) {
-		pt.setX(pt.getX() * 2);
-		pt.setY(pt.getY() * 2);
+		x *= 2;
+		y *= 2;
 	}
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(pt.getX(), pt.getY(), pt.getZ(), shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 
 	if (valid)
 		return 1;

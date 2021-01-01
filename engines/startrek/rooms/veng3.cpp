@@ -100,10 +100,8 @@ extern const RoomAction veng3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng3NumActions = ARRAYSIZE(veng3ActionList);
-
 
 void Room::veng3Tick1() {
 	playVoc("VEN3LOOP");
@@ -134,12 +132,12 @@ void Room::veng3Tick15() {
 }
 
 void Room::veng3TouchedTurbolift2() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(3, 1);
 }
 
 void Room::veng3TouchedTurbolift1() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(3, 0);
 }
 
@@ -153,7 +151,7 @@ void Room::veng3WalkToDoor() {
 void Room::veng3ReachedTurbolift2() {
 	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_DOOR, "s7r3db", 0xa6, 0x60, &Room::veng3Turbolift2Opened);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::veng3Turbolift2Opened() {
@@ -167,7 +165,7 @@ void Room::veng3WalkToSickbayDoor() {
 void Room::veng3ReachedSickbayDoor() {
 	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_SICKBAY_DOOR, "s7r3da", 0x5b, 0x80, &Room::veng3SickbayDoorOpened);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::veng3SickbayDoorOpened() {
@@ -247,7 +245,7 @@ void Room::veng3ReachedPositionToShootDebris() {
 
 void Room::veng3DrewPhaserToShootDebris() {
 	loadActorAnimC(OBJECT_DEBRIS, "s7r3ph", 0x9c, 0x83, &Room::veng3DebrisVaporized);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::veng3DebrisVaporized() {

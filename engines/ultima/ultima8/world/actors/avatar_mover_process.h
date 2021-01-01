@@ -30,25 +30,23 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for mover processes that decide which animation to
+ * do next based on last anim and keyboard / mouse / etc.
+ */
 class AvatarMoverProcess : public Process {
 public:
 	AvatarMoverProcess();
 	~AvatarMoverProcess() override;
 
-	// p_dynamic_cast stuff
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	void run() override;
-
-	void onMouseDown(int button, int32 mx, int32 my);
-	void onMouseUp(int button);
 
 	void resetIdleTime() {
 		_idleTime = 0;
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-	void saveData(Common::WriteStream *ws) override;
+	virtual void saveData(Common::WriteStream *ws) override;
 
 	bool hasMovementFlags(uint32 flags) const {
 		return (_movementFlags & flags) != 0;
@@ -60,13 +58,16 @@ public:
 		_movementFlags &= ~mask;
 	}
 
-	void tryAttack();
+	void onMouseDown(int button, int32 mx, int32 my);
+	void onMouseUp(int button);
+
+	virtual void tryAttack() = 0;
 
 	enum MovementFlags {
 		MOVE_MOUSE_DIRECTION = 0x001,
 		MOVE_RUN = 0x002,
-		MOVE_STEP = 0x0004,
-		MOVE_JUMP = 0x0008,
+		MOVE_STEP = 0x0004, // also side-steps in crusader
+		MOVE_JUMP = 0x0008, // used for roll in crusader (when combined with left/right), and crouch (when combined with back)
 
 		// Tank controls 
 		MOVE_TURN_LEFT = 0x0010,
@@ -83,26 +84,38 @@ public:
 		MOVE_ANY_DIRECTION = MOVE_MOUSE_DIRECTION | MOVE_FORWARD | MOVE_BACK | MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN
 	};
 
-private:
-	void handleHangingMode();
-	void handleCombatMode();
-	void handleNormalMode();
+protected:
+	virtual void handleHangingMode() = 0;
+	virtual void handleCombatMode() = 0;
+	virtual void handleNormalMode() = 0;
 
-	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
-	void jump(Animation::Sequence action, Direction direction);
+	virtual bool canAttack() = 0;
+
 	void turnToDirection(Direction direction);
 	bool checkTurn(Direction direction, bool moving);
-	bool canAttack();
 
-	uint32 _lastFrame;
+	// Walk and then stop in the given direction
+	void slowFromRun(Direction direction);
+
+	// Stow weapon and stand
+	void putAwayWeapon(Direction direction);
+
+	// If the last animation was falling or die but we're not dead, stand up!
+	// return true if we are waiting to get up
+	bool standUpIfNeeded(Direction direction);
+
+	// Get directions based on what movement flags are set, eg y=+1 for up, x=-1 for left.
+	void getMovementFlagAxes(int &x, int &y);
+
+	// Adjust the direction based on the current turn flags
+	Direction getTurnDirForTurnFlags(Direction direction, DirectionMode dirmode);
 
 	// attack speed limiting
 	uint32 _lastAttack;
 
 	// shake head when idle
 	uint32 _idleTime;
-	Animation::Sequence _lastHeadShakeAnim;
-	
+
 	MButton _mouseButton[2];
 
 	uint32 _movementFlags;

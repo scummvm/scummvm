@@ -49,21 +49,32 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
 	if (actorIndex == -1) {
-		// TODO
-		warning("loadActorAnim: actor == -1");
-	} else {
-		Actor *actor = &_actorList[actorIndex];
+		bool foundSlot = false;
 
-		if (actor->spriteDrawn) {
-			releaseAnim(actor);
-			drawActorToScreen(actor, animName, x, y, scale, false);
-		} else {
-			drawActorToScreen(actor, animName, x, y, scale, true);
+		for (int i = 8; i < NUM_ACTORS; i++) {
+			if (_actorList[i].spriteDrawn == 0) {
+				actorIndex = i;
+				foundSlot = true;
+				break;
+			}
 		}
 
-		actor->triggerActionWhenAnimFinished = false;
-		actor->finishedAnimActionParam = 0;
+		if (!foundSlot) {
+			error("All animations are in use");
+		}
 	}
+
+	Actor *actor = &_actorList[actorIndex];
+
+	if (actor->spriteDrawn) {
+		releaseAnim(actor);
+		drawActorToScreen(actor, animName, x, y, scale, false);
+	} else {
+		drawActorToScreen(actor, animName, x, y, scale, true);
+	}
+
+	actor->triggerActionWhenAnimFinished = false;
+	actor->finishedAnimActionParam = 0;
 
 	return actorIndex;
 }
@@ -169,9 +180,12 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->seek(actor->animFrame * 22, SEEK_SET);
 					char animFrameFilename[16];
 					actor->animFile->read(animFrameFilename, 16);
-					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
-
 					actor->bitmapFilename = animFrameFilename;
+					actor->bitmapFilename.trim();
+					if (actor->bitmapFilename.contains(' '))
+						actor->bitmapFilename = actor->bitmapFilename.substr(0, actor->bitmapFilename.find(' '));
+
+					sprite->setBitmap(loadAnimationFrame(actor->bitmapFilename, actor->scale));
 
 					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
 					uint16 xOffset = actor->animFile->readUint16();
@@ -429,7 +443,7 @@ void StarTrekEngine::removeActorFromScreen(int actorIndex) {
 	releaseAnim(actor);
 }
 
-void StarTrekEngine::actorFunc1() {
+void StarTrekEngine::removeDrawnActorsFromScreen() {
 	for (int i = 0; i < NUM_ACTORS; i++) {
 		if (_actorList[i].spriteDrawn == 1) {
 			removeActorFromScreen(i);
@@ -469,8 +483,9 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	if (addSprite)
 		_gfx->addSprite(sprite);
 
-	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
 	actor->bitmapFilename = firstFrameFilename;
+	actor->bitmapFilename.trim();
+	sprite->setBitmap(loadAnimationFrame(actor->bitmapFilename, scale));
 	actor->scale = scale;
 	actor->animFile->seek(10, SEEK_SET);
 
@@ -710,15 +725,18 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 
 Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
 	Bitmap *bitmapToReturn = nullptr;
+	bool isDemo = getFeatures() & GF_DEMO;
 
 	char basename[5];
 	strncpy(basename, filename.c_str() + 1, 4);
 	basename[4] = '\0';
 
+	char mcCoyChar = !isDemo ? 'm' : 'b';
+
 	char c = filename[0];
 	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
-	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
-		if (c == 'm') {
+	        && (c == mcCoyChar || c == 's' || c == 'k' || c == 'r')) {
+		if (c == mcCoyChar) {
 			// Mccoy has the "base" animations for all crewmen
 			bitmapToReturn = new Bitmap(_resource->loadBitmapFile(filename));
 		} else {
@@ -731,7 +749,9 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
-				mccoyFilename.setChar('m', 0);
+				mccoyFilename.setChar(mcCoyChar, 0);
+				if (isDemo && mccoyFilename.hasPrefix("bstnds"))
+					mccoyFilename.setChar('m', 0);
 				Bitmap *bitmap = new Bitmap(_resource->loadBitmapFile(mccoyFilename));
 
 				uint16 width = bitmap->width;
@@ -754,6 +774,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 					colorShift = 0;
 					break;
 				case 'm': // McCoy
+				case 'b': // McCoy (demo)
 					colorShift = 0;
 					break;
 				default:
@@ -777,23 +798,26 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 					}
 				}
 
-				// Redraw face with xor file
-				Common::MemoryReadStreamEndian *xorFile = _resource->loadFile(filename + ".xor");
-				xorFile->seek(0, SEEK_SET);
-				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
-				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
-				uint16 xorWidth = xorFile->readUint16();
-				uint16 xorHeight = xorFile->readUint16();
+				// Redraw face with XOR file
+				if (!isDemo) {
+					Common::MemoryReadStreamEndian *xorFile = _resource->loadFile(filename + ".xor");
+					xorFile->seek(0, SEEK_SET);
+					uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
+					uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
+					uint16 xorWidth = xorFile->readUint16();
+					uint16 xorHeight = xorFile->readUint16();
 
-				byte *dest = bitmapToReturn->pixels + yoffset * bitmap->width + xoffset;
+					byte *dest = bitmapToReturn->pixels + yoffset * bitmap->width + xoffset;
 
-				for (int i = 0; i < xorHeight; i++) {
-					for (int j = 0; j < xorWidth; j++)
-						*dest++ ^= xorFile->readByte();
-					dest += (bitmap->width - xorWidth);
+					for (int i = 0; i < xorHeight; i++) {
+						for (int j = 0; j < xorWidth; j++)
+							*dest++ ^= xorFile->readByte();
+						dest += (bitmap->width - xorWidth);
+					}
+
+					delete xorFile;
 				}
 
-				delete xorFile;
 				delete bitmap;
 			}
 		}
@@ -902,7 +926,8 @@ int StarTrekEngine::selectObjectForUseAction() {
 }
 
 Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Common::String &basename) {
-	const char *crewmanChars = "ksmr";
+	bool isDemo = getFeatures() & GF_DEMO;
+	const char *crewmanChars = !isDemo ? "ksmr" : "ksbr";	// Kirk, Spock, McCoy (Bones), RedShirt
 	assert(actorIndex >= 0 && actorIndex < 4);
 	return crewmanChars[actorIndex] + basename;
 }
@@ -976,7 +1001,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	else {
 		// If this action has code defined for it in this room, buffer the action to be
 		// done after the object finished walking there.
-		Action action = {_awayMission.activeAction, _awayMission.activeObject, 0, 0};
+		Action action = {static_cast<int8>(_awayMission.activeAction), _awayMission.activeObject, 0, 0};
 		if (_awayMission.activeAction == ACTION_USE)
 			action.b2 = _awayMission.passiveObject;
 
@@ -1203,12 +1228,10 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		}
 
 		case TREKEVENT_LBUTTONDOWN:
-exitWithSelection:
 			displayMenu = false;
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-exitWithoutSelection:
 			displayMenu = false;
 			lastItemIndex = -1;
 			break;
@@ -1217,12 +1240,15 @@ exitWithoutSelection:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_F2:
-				goto exitWithoutSelection;
+				displayMenu = false;
+				lastItemIndex = -1;
+				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 			case Common::KEYCODE_F1:
-				goto exitWithSelection;
+				displayMenu = false;
+				break;
 
 			case Common::KEYCODE_HOME:
 			case Common::KEYCODE_KP7:

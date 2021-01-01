@@ -1,1 +1,2 @@
 sphinx-tabs
+sphinx-panels

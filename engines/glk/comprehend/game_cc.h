@@ -53,7 +53,7 @@ public:
 	void beforeGame() override;
 	void beforePrompt() override;
 	void beforeTurn() override;
-	void handleSpecialOpcode(uint8 operand) override;
+	void handleSpecialOpcode() override;
 	void synchronizeSave(Common::Serializer &s) override;
 
 	void setupDisk(uint diskNum);

@@ -28,18 +28,25 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/usecode/uc_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(KeypadGump)
 
-KeypadGump::KeypadGump(int targetValue): ModalGump(0, 0, 5, 5),
-		_value(0), _targetValue(targetValue) {
+static const int TXT_CONTAINER_IDX = 0x100;
+// Actually the max val where we will allow another digit to be entered
+static const int MAX_CODE_VAL = 9999999;
+static const int CHEAT_CODE_VAL = 74697689;
+
+KeypadGump::KeypadGump(int targetValue, uint16 ucnotifypid): ModalGump(0, 0, 5, 5),
+		_value(0), _targetValue(targetValue), _ucNotifyPid(ucnotifypid) {
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
 	mouse->setMouseCursor(Mouse::MOUSE_HAND);
@@ -73,6 +80,8 @@ void KeypadGump::InitGump(Gump *newparent, bool take_focus) {
 			_buttons[bnum] = widget->getObjId();
 		}
 	}
+	// Default result is 0xff
+	SetResult(0xff);
 }
 
 void KeypadGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -83,7 +92,26 @@ void KeypadGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 bool KeypadGump::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_ESCAPE: {
+		_value = 0xff;
 		Close();
+		break;
+	}
+	case Common::KEYCODE_0:
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6:
+	case Common::KEYCODE_7:
+	case Common::KEYCODE_8:
+	case Common::KEYCODE_9: {
+		onDigit(key - (int)Common::KEYCODE_0);
+		updateDigitDisplay();
+		AudioProcess *audio = AudioProcess::get_instance();
+		if (audio)
+			audio->playSFX(0x3b, 0x10, _objId, 1);
+		break;
 	}
 	break;
 	default:
@@ -93,39 +121,93 @@ bool KeypadGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
+void KeypadGump::onDigit(int digit) {
+	assert(digit >= 0 && digit <= 9);
+	if (_value < MAX_CODE_VAL) {
+		_value *= 10;
+		_value += digit;
+	}
+}
+
 void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 	//ObjId cid = child->getObjId();
+	bool update = true;
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		uint16 sfxno = 0;
+		uint16 sfxno = 0x3b;
 		int buttonNo = child->GetIndex();
 		if (buttonNo < 9) {
-			_value *= 10;
-			_value += buttonNo + 1;
-			sfxno = 0x3b;
+			onDigit(buttonNo + 1);
 		} else if (buttonNo == 10) {
-			_value *= 10;
-			sfxno = 0x3b;
+			onDigit(0);
 		} else if (buttonNo == 9) {
 			_value /= 10;
 			sfxno = 0x3a;
 		} else if (buttonNo == 11) {
-			SetResult(_value);
-			// TODO: Do something as a result of this other than just play a sound.
-			if (_value == _targetValue) {
+			update = false;
+			if (_value == _targetValue || _value == CHEAT_CODE_VAL) {
 				sfxno = 0x32;
-				Close();
-				// Note: careful, this is now deleted.
+				SetResult(_value);
 			} else {
 				// wrong.
 				sfxno = 0x31;
-				_value = 0;
+				SetResult(0);
 			}
+			Close();
+			// Note: careful, this is now deleted.
 		}
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio && sfxno)
 			audio->playSFX(sfxno, 0x10, _objId, 1);
 	}
+	if (update) {
+		updateDigitDisplay();
+	}
 }
+
+void KeypadGump::updateDigitDisplay() {
+	Gump *txt = Gump::FindGump(&FindByIndex<TXT_CONTAINER_IDX>);
+	if (txt)
+		txt->Close();
+	txt = new Gump(25, 12, 200, 12);
+	txt->InitGump(this);
+	txt->SetIndex(TXT_CONTAINER_IDX);
+
+	Std::vector<Gump *> digits;
+	Shape *digitshape = GameData::get_instance()->getGumps()->getShape(12);
+	int val = _value;
+	while (val) {
+		int digitval = val % 10;
+		if (digitval == 0)
+			digitval = 10;
+		Gump *digit = new Gump(0, 0, 6, 12);
+		digit->SetShape(digitshape, digitval - 1);
+		digit->InitGump(txt);
+		digits.push_back(digit);
+		val /= 10;
+	}
+
+	int xoff = 0;
+	while (digits.size()) {
+		Gump *digit = digits.back();
+		digits.pop_back();
+		digit->setRelativePosition(TOP_LEFT, xoff);
+		xoff += 6;
+	}
+}
+
+void KeypadGump::Close(bool no_del) {
+	_processResult = _value;
+
+	if (_ucNotifyPid) {
+		UCProcess *ucp = dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_ucNotifyPid));
+		assert(ucp);
+		ucp->setReturnValue(_value);
+		ucp->wakeUp(_value);
+	}
+
+	ModalGump::Close(no_del);
+}
+
 
 bool KeypadGump::OnTextInput(int unicode) {
 	if (!(unicode & 0xFF80)) {
@@ -137,12 +219,17 @@ bool KeypadGump::OnTextInput(int unicode) {
 
 uint32 KeypadGump::I_showKeypad(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(target)
-	ModalGump *gump = new KeypadGump(target);
+
+	UCProcess *current = dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
+	assert(current);
+
+	ModalGump *gump = new KeypadGump(target, current->getPid());
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
-	gump->CreateNotifier();
 
-	return gump->GetNotifyProcess()->getPid();
+	current->suspend();
+
+	return 0;
 }
 
 bool KeypadGump::loadData(Common::ReadStream *rs) {

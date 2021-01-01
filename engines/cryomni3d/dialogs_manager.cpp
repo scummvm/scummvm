@@ -289,7 +289,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 		}
 		gotoList = executeAfterPlayAndBuildGotoList(actions);
 		Common::StringArray questions;
-		bool endOfConversationFound = false;;
+		bool endOfConversationFound = false;
 		if (_ignoreNoEndOfConversation) {
 			// Don't check if there is an end, so, there is one
 			endOfConversationFound = true;

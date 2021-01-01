@@ -254,6 +254,25 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	}
 }
 
+void StarTrekEngine::showBridgeMenu(Common::String menu, int x, int y) {
+	bool tmpMouseControllingShip = _mouseControllingShip;
+	_mouseControllingShip = false;
+
+	Common::Point oldMousePos = _gfx->getMousePos();
+	loadMenuButtons(menu, x, y);
+
+	chooseMousePositionFromSprites(_activeMenu->sprites, _activeMenu->numButtons, -1, 4);
+	int event = handleMenuEvents(0, false);
+
+	unloadMenuButtons();
+	_mouseControllingShip = tmpMouseControllingShip;
+
+	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
+
+	handleBridgeMenu(event);
+}
+
 int StarTrekEngine::showActionMenu() {
 	const int actionMappingUp[] = { // Actions to jump to when up is pressed
 		ACTION_TALK,    // <- ACTION_WALK
@@ -344,63 +363,24 @@ int StarTrekEngine::showActionMenu() {
 			break;
 
 		case TREKEVENT_MOUSEMOVE:
-mousePosChanged: {
-				Common::Point mouse = _gfx->getMousePos();
-				Common::Point relMouse(mouse.x - pos.x, mouse.y - pos.y);
-
-				Common::String bitmapName;
-				Common::Point lockMousePoint(-1, -1);
-
-				// Check if the mouse is hovering over one of the selectable actions
-				if (relMouse.x >= 39 && relMouse.x <= 50 && relMouse.y >= 2 && relMouse.y <= 17) {
-					action = ACTION_OPTIONS;
-					bitmapName = "options";
-					lockMousePoint = Common::Point(pos.x + 44, pos.y + 2);
-				} else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 2 && relMouse.y <= 9) {
-					action = ACTION_LOOK;
-					bitmapName = "look";
-					lockMousePoint = Common::Point(pos.x + 28, pos.y + 6);
-				} else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 11 && relMouse.y <= 17) {
-					action = ACTION_TALK;
-					bitmapName = "talk";
-					lockMousePoint = Common::Point(pos.x + 27, pos.y + 14);
-				} else if (relMouse.x >= 2 && relMouse.x <= 13 && relMouse.y >= 16 && relMouse.y <= 26) {
-					action = ACTION_USE;
-					bitmapName = "use";
-					lockMousePoint = Common::Point(pos.x + 7, pos.y + 19);
-				} else if (relMouse.x >= 40 && relMouse.x <= 53 && relMouse.y >= 34 && relMouse.y <= 43) {
-					action = ACTION_GET;
-					bitmapName = "get";
-					lockMousePoint = Common::Point(pos.x + 44, pos.y + 38);
-				} else {
-					action = ACTION_WALK;
-					bitmapName = "walk";
-				}
-
-				_gfx->setMouseBitmap(bitmapName);
-
-				if (lockMousePoint.x != -1)
-					_gfx->lockMousePosition(lockMousePoint.x, lockMousePoint.y);
-				else
-					_gfx->unlockMousePosition();
-			}
+			action = mouseMoveEvent();
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-exitMenu:
 			displayMenu = false;
 			action = ACTION_WALK;
 			break;
 
 		case TREKEVENT_KEYDOWN: {
 			int nextAction = action;
-			const int *lookupArray;
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_SPACE:
 			case Common::KEYCODE_F2: // Exit menu without selecting anything
-				goto exitMenu;
+				displayMenu = false;
+				action = ACTION_WALK;
+				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
@@ -422,29 +402,22 @@ exitMenu:
 			// Direction buttons
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_KP8:
-				lookupArray = actionMappingUp;
-				goto lookupNextAction;
+				nextAction = lookupNextAction(actionMappingUp, action);
+				break;
 
 			case Common::KEYCODE_RIGHT:
 			case Common::KEYCODE_KP6:
-				lookupArray = actionMappingRight;
-				goto lookupNextAction;
+				nextAction = lookupNextAction(actionMappingRight, action);
+				break;
 
 			case Common::KEYCODE_DOWN:
 			case Common::KEYCODE_KP2:
-				lookupArray = actionMappingDown;
-				goto lookupNextAction;
+				nextAction = lookupNextAction(actionMappingDown, action);
+				break;
 
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_KP4:
-				lookupArray = actionMappingLeft;
-				goto lookupNextAction;
-
-lookupNextAction:
-				// Use a lookup table to decide which action is next after a direction
-				// button is pressed.
-				assert((action >= ACTION_WALK && action <= ACTION_TALK) || action == ACTION_OPTIONS);
-				nextAction = lookupArray[action == ACTION_OPTIONS ? 5 : action - 1];
+				nextAction = lookupNextAction(actionMappingLeft, action);
 				break;
 
 			default:
@@ -465,7 +438,7 @@ lookupNextAction:
 				_gfx->warpMouse(pos.x + p.x, pos.y + p.y);
 			}
 
-			goto mousePosChanged;
+			action = mouseMoveEvent();
 		}
 
 		default:
@@ -473,7 +446,7 @@ lookupNextAction:
 		}
 	}
 
-	_sound->playSoundEffectIndex(SND_SELECTION);
+	_sound->playSoundEffectIndex(kSfxSelection);
 
 	menuSprite.dontDrawNextFrame();
 	_gfx->drawAllSprites();
@@ -498,6 +471,13 @@ lookupNextAction:
 	return action;
 }
 
+int StarTrekEngine::lookupNextAction(const int *lookupArray, int action) {
+	// Use a lookup table to decide which action is next after a direction
+	// button is pressed.
+	assert((action >= ACTION_WALK && action <= ACTION_TALK) || action == ACTION_OPTIONS);
+	return lookupArray[action == ACTION_OPTIONS ? 5 : action - 1];
+}
+
 void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	if (_activeMenu == nullptr)
 		_keyboardControlsMouseOutsideMenu = _keyboardControlsMouse;
@@ -518,13 +498,11 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		char bitmapBasename[11];
 		stream->seek(i * 16, SEEK_SET);
 		stream->read(bitmapBasename, 10);
-		for (int j = 0; j < 10; j++) {
-			if (bitmapBasename[j] == ' ')
-				bitmapBasename[j] = '\0';
-		}
 		bitmapBasename[10] = '\0';
+		Common::String bitmapName = bitmapBasename;
+		bitmapName.trim();
 
-		_activeMenu->sprites[i].setBitmap(_resource->loadBitmapFile(bitmapBasename));
+		_activeMenu->sprites[i].setBitmap(_resource->loadBitmapFile(bitmapName));
 		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
@@ -604,6 +582,75 @@ void StarTrekEngine::enableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons &= ~bits;
 }
 
+int StarTrekEngine::leftClickEvent() {
+	if (_activeMenu->selectedButton != -1) {
+		_sound->playSoundEffectIndex(kSfxSelection);
+		return _activeMenu->retvals[_activeMenu->selectedButton];
+	} else {
+		Common::Point mouse = _gfx->getMousePos();
+		if (getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mouse.x, mouse.y) == -1) {
+			_sound->playSoundEffectIndex(kSfxSelection);
+			return MENUEVENT_LCLICK_OFFBUTTON;
+		}
+	}
+
+	return MENUEVENT_LCLICK_OFFBUTTON;
+}
+
+int StarTrekEngine::rightClickEvent() {
+	_sound->playSoundEffectIndex(kSfxSelection);
+	if (_activeMenu->selectedButton == -1)
+		return MENUEVENT_RCLICK_OFFBUTTON;
+	else
+		return MENUEVENT_RCLICK_ONBUTTON;
+}
+
+int StarTrekEngine::mouseMoveEvent() {
+	const Common::Point pos(50, 50); // Top-left position to put action menu at
+	int action = ACTION_WALK;
+
+	Common::Point mouse = _gfx->getMousePos();
+	Common::Point relMouse(mouse.x - pos.x, mouse.y - pos.y);
+
+	Common::String bitmapName;
+	Common::Point lockMousePoint(-1, -1);
+
+	// Check if the mouse is hovering over one of the selectable actions
+	if (relMouse.x >= 39 && relMouse.x <= 50 && relMouse.y >= 2 && relMouse.y <= 17) {
+		action = ACTION_OPTIONS;
+		bitmapName = "options";
+		lockMousePoint = Common::Point(pos.x + 44, pos.y + 2);
+	} else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 2 && relMouse.y <= 9) {
+		action = ACTION_LOOK;
+		bitmapName = "look";
+		lockMousePoint = Common::Point(pos.x + 28, pos.y + 6);
+	} else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 11 && relMouse.y <= 17) {
+		action = ACTION_TALK;
+		bitmapName = "talk";
+		lockMousePoint = Common::Point(pos.x + 27, pos.y + 14);
+	} else if (relMouse.x >= 2 && relMouse.x <= 13 && relMouse.y >= 16 && relMouse.y <= 26) {
+		action = ACTION_USE;
+		bitmapName = "use";
+		lockMousePoint = Common::Point(pos.x + 7, pos.y + 19);
+	} else if (relMouse.x >= 40 && relMouse.x <= 53 && relMouse.y >= 34 && relMouse.y <= 43) {
+		action = ACTION_GET;
+		bitmapName = "get";
+		lockMousePoint = Common::Point(pos.x + 44, pos.y + 38);
+	} else {
+		action = ACTION_WALK;
+		bitmapName = "walk";
+	}
+
+	_gfx->setMouseBitmap(bitmapName);
+
+	if (lockMousePoint.x != -1)
+		_gfx->lockMousePosition(lockMousePoint.x, lockMousePoint.y);
+	else
+		_gfx->unlockMousePosition();
+
+	return action;
+}
+
 int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTextbox) {
 	uint32 tickWhenClickingEnabled = _clockTicks + ticksUntilClickingEnabled;
 
@@ -658,45 +705,28 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTe
 			}
 
 			case TREKEVENT_LBUTTONDOWN:
-lclick:
-				if (_activeMenu->selectedButton != -1) {
-					_sound->playSoundEffectIndex(SND_SELECTION);
-					return _activeMenu->retvals[_activeMenu->selectedButton];
-				} else {
-					Common::Point mouse = _gfx->getMousePos();
-					if (getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mouse.x, mouse.y) == -1) {
-						_sound->playSoundEffectIndex(SND_SELECTION);
-						return MENUEVENT_LCLICK_OFFBUTTON;
-					}
-				}
-				break;
+				return leftClickEvent();
 
 			case TREKEVENT_RBUTTONDOWN:
-rclick:
-				_sound->playSoundEffectIndex(SND_SELECTION);
-				if (_activeMenu->selectedButton == -1)
-					return MENUEVENT_RCLICK_OFFBUTTON;
-				else
-					return MENUEVENT_RCLICK_ONBUTTON;
-				break;
+				return rightClickEvent();
 
 			case TREKEVENT_KEYDOWN:
 				if (inTextbox) {
 					switch (event.kbd.keycode) {
 					case Common::KEYCODE_ESCAPE:
 					case Common::KEYCODE_F2:
-						goto rclick;
+						return rightClickEvent();
 
 					case Common::KEYCODE_RETURN:
 					case Common::KEYCODE_KP_ENTER:
 					case Common::KEYCODE_F1:
-						_sound->playSoundEffectIndex(SND_SELECTION);
+						_sound->playSoundEffectIndex(kSfxSelection);
 						return TEXTBUTTON_CONFIRM;
 
 					case Common::KEYCODE_SPACE:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
 						break;
@@ -705,7 +735,7 @@ rclick:
 					case Common::KEYCODE_KP7:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_GOTO_TOP;
 						}
 						break;
@@ -714,7 +744,7 @@ rclick:
 					case Common::KEYCODE_KP8:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_SCROLLUP_ONELINE;
 						}
 						break;
@@ -723,7 +753,7 @@ rclick:
 					case Common::KEYCODE_KP9:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_SCROLLUP;
 						}
 						break;
@@ -732,7 +762,7 @@ rclick:
 					case Common::KEYCODE_KP4:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_PREVCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_PREVCHOICE].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_PREVCHOICE;
 						}
 						break;
@@ -741,7 +771,7 @@ rclick:
 					case Common::KEYCODE_KP6:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
 						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
 						break;
@@ -750,7 +780,7 @@ rclick:
 					case Common::KEYCODE_KP1:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_GOTO_BOTTOM;
 						}
 						break;
@@ -759,7 +789,7 @@ rclick:
 					case Common::KEYCODE_KP2:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_SCROLLDOWN_ONELINE;
 						}
 						break;
@@ -768,7 +798,7 @@ rclick:
 					case Common::KEYCODE_KP3:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
 						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
-							_sound->playSoundEffectIndex(SND_SELECTION);
+							_sound->playSoundEffectIndex(kSfxSelection);
 							return TEXTBUTTON_SCROLLDOWN;
 						}
 						break;
@@ -780,12 +810,12 @@ rclick:
 					switch (event.kbd.keycode) {
 					case Common::KEYCODE_ESCAPE:
 					case Common::KEYCODE_F2:
-						goto rclick;
+						return rightClickEvent();
 
 					case Common::KEYCODE_RETURN:
 					case Common::KEYCODE_KP_ENTER:
 					case Common::KEYCODE_F1:
-						goto lclick;
+						return leftClickEvent();
 
 					case Common::KEYCODE_HOME:
 					case Common::KEYCODE_KP7:
@@ -875,6 +905,9 @@ void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline)
 		"lookh2",
 		"lookh3"
 	};
+
+	if (getFeatures() & GF_DEMO)
+		return;
 
 	Common::String bitmapName;
 
@@ -1026,7 +1059,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 	bool spriteLoaded = false;
 	int16 clickedArea = 0;
 
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	_gfx->pushSprites();
 
 	if (!_awayMission.veng.showedRepublicMapFirstTime) {
@@ -1112,8 +1145,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 			_gfx->drawAllSprites();
 			break;
 
-		case TREKEVENT_LBUTTONDOWN: {
-lclick:
+		case TREKEVENT_LBUTTONDOWN:
 			clickedArea = getRepublicMapAreaOrFailure(turbolift);
 			if (clickedArea == 0) {
 			} else if (clickedArea == 6) {
@@ -1125,7 +1157,6 @@ lclick:
 			} else
 				exitLoop = true;
 			break;
-		}
 
 		case TREKEVENT_MOUSEMOVE: {
 			if (_gfx->getMousePos().y < 96) // TODO: more elegant solution
@@ -1157,7 +1188,18 @@ lclick:
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 			case Common::KEYCODE_F1:
-				goto lclick;
+				// Same as TREKEVENT_LBUTTONDOWN
+				clickedArea = getRepublicMapAreaOrFailure(turbolift);
+				if (clickedArea == 0) {
+				} else if (clickedArea == 6) {
+					Common::String text = "#GENE\\GENE_F14#Turbolift access is blocked by an extremely high radiation level.";
+					showTextbox("Mr. Spock", text, 50, 50, TEXTCOLOR_YELLOW, 0); // ENHANCEMENT: Speaker is Spock
+				} else if (clickedArea == 7) {
+					Common::String text = "#GENE\\GENE_F15#This turbolift cannot reach that area of the ship.";
+					showTextbox("Mr. Spock", text, 50, 50, TEXTCOLOR_YELLOW, 0); // ENHANCEMENT: Speaker is Spock
+				} else
+					exitLoop = true;
+				break;
 
 			default:
 				break;

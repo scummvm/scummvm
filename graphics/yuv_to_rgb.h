@@ -21,8 +21,10 @@
  */
 
 /**
- * @file
- * YUV to RGB conversion.
+ * @defgroup graphics_yuvtorgb YUV to RGB conversion
+ * @ingroup graphics
+ *
+ * @brief Methods for converting YUV images into RGB surfaces.
  *
  * Used in video:
  * - BinkDecoder
@@ -30,6 +32,7 @@
  * - PSXStreamDecoder
  * - TheoraDecoder
  * - SVQ1Decoder
+ * @{
  */
 
 #ifndef GRAPHICS_YUV_TO_RGB_H
@@ -129,7 +132,7 @@ private:
 	int16 _colorTab[4 * 256]; // 2048 bytes
 	bool _alphaMode;
 };
-
+ /** @} */
 } // End of namespace Graphics
 
 #define YUVToRGBMan (::Graphics::YUVToRGBManager::instance())

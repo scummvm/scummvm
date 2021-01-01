@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	miles_midi.o \
 	mixer.o \
 	mpu401.o \
+	mt32gm.o \
 	musicplugin.o \
 	null.o \
 	timestamp.o \

@@ -28,12 +28,13 @@ namespace Glk {
 namespace Comprehend {
 
 const PlainGameDescriptor COMPREHEND_GAME_LIST[] = {
+	{"transylvania", "Transylvania"},
 	{"crimsoncrown", "Crimson Crown"},
 	{"ootopos", "OO-Topos"},
-#ifndef RELEASE_BUILD
+
+	{"transylvaniav2", "Transylvania (V2)"},
 	{"talisman", "Talisman: Challenging the Sands of Time"},
-#endif
-	{"transylvania", "Transylvania"},
+
 	{nullptr, nullptr}
 };
 
@@ -44,12 +45,12 @@ struct ComprehendDetectionEntry {
 };
 
 const ComprehendDetectionEntry COMPREHEND_GAMES[] = {
-	{"crimsoncrown", "cc1.gda", "f2abf019675ac5c9bcfd81032bc7787b"},
-	{"ootopos", "g0", "56460c1ee669c253607534155d7e9db4"},
-#ifndef RELEASE_BUILD
-	{"talisman", "g0", "35770d4815e610b5252e3fcd9f11def3"},
-#endif
-	{"transylvania", "tr.gda", "22e08633eea02ceee49b909dfd982d22"},
+	{ "transylvania", "tr.gda", "22e08633eea02ceee49b909dfd982d22" },
+	{ "crimsoncrown", "cc1.gda", "f2abf019675ac5c9bcfd81032bc7787b" },
+	{ "ootopos", "g0", "56460c1ee669c253607534155d7e9db4" },
+
+	{ "transylvaniav2", "g0", "384cbf0cd50888310fd33574e6baf880" },
+	{ "talisman", "g0", "35770d4815e610b5252e3fcd9f11def3" },
 
 	{nullptr, nullptr, nullptr}
 };

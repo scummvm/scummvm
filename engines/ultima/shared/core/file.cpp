@@ -27,18 +27,6 @@
 namespace Ultima {
 namespace Shared {
 
-Common::String readStringFromStream(Common::SeekableReadStream *s) {
-	Common::String result;
-	char c;
-	while ((c = s->readByte()) != '\0')
-		result += c;
-
-	return result;
-}
-
-/*------------------------------------------------------------------------*/
-
-
 #define ERROR error("Could not open file - %s", name.c_str())
 
 File::File(const Common::String &name) : Common::File(), _filesize(-1) {
@@ -91,16 +79,6 @@ bool File::eof() {
 		_filesize = size();
 
 	return pos() >= _filesize;
-}
-
-Common::String File::readString() {
-	Common::String result;
-	char c;
-
-	while (!eof() && (c = (char)readByte()) != '\0')
-		result += c;
-
-	return result;
 }
 
 } // End of namespace Shared

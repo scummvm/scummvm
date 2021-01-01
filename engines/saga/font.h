@@ -28,6 +28,10 @@
 #include "common/list.h"
 #include "saga/gfx.h"
 
+namespace Graphics {
+	class FontSJIS;
+}
+
 namespace Saga {
 
 #define FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
@@ -139,58 +143,78 @@ struct FontData {
 };
 
 class Font {
- public:
-	Font(SagaEngine *vm);
-	~Font();
+public:
+	Font(SagaEngine *vm) : _vm(vm) {}
+	virtual ~Font() {}
+
 	int getStringWidth(KnownFont font, const char *text, size_t count, FontEffectFlags flags) {
 		return getStringWidth(knownFont2FontIdx(font), text, count, flags);
 	}
+
 	int getHeight(KnownFont font) {
 		return getHeight(knownFont2FontIdx(font));
 	}
+
 	int getHeight(KnownFont font, const char *text, int width, FontEffectFlags flags) {
 		return getHeight(knownFont2FontIdx(font), text, width, flags);
 	}
+
 	void textDraw(KnownFont font, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
 		textDraw(knownFont2FontIdx(font), string, point, color, effectColor, flags);
 	}
+
 	void textDrawRect(KnownFont font, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 		textDrawRect(knownFont2FontIdx(font), text, rect, color, effectColor, flags);
 	}
-	void setFontMapping(int mapping) {
+
+	virtual void setFontMapping(int) {}
+
+protected:
+	enum FontId {
+		kSmallFont,
+		kMediumFont,
+		kBigFont,
+		kIHNMUnknown,
+		kIHNMFont8,
+		kIHNMUnknown2,
+		kIHNMMainFont
+	};
+
+	SagaEngine *_vm;
+
+private:
+	FontId knownFont2FontIdx(KnownFont font);
+	void textDraw(FontId fontId, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+
+	virtual void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) = 0;
+	virtual int translateChar(int charId) = 0;
+	virtual int getStringLength(const char *text) = 0;
+	virtual int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) = 0;
+	virtual int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) = 0;
+	virtual int getHeight(FontId fontId) = 0;
+	virtual bool valid(FontId) = 0;
+	virtual void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) = 0;
+};
+
+class DefaultFont : public Font {
+ public:
+	DefaultFont(SagaEngine *vm);
+	~DefaultFont() override;
+
+	void setFontMapping(int mapping) override {
 		_fontMapping = mapping;
 	}
 
  private:
-	 enum FontId {
-		 kSmallFont,
-		 kMediumFont,
-		 kBigFont,
-		 kIHNMUnknown,
-		 kIHNMFont8,
-		 kIHNMUnknown2,
-		 kIHNMMainFont
-	 };
-
-	 Font::FontId knownFont2FontIdx(KnownFont font);
-	 int translateChar(int charId);
-
-	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
-	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
-	 void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
-	 void textDraw(FontId fontId, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
-
-	 void loadFont(FontData *font, uint32 fontResourceId);
-	 void createOutline(FontData *font);
-	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
-	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
-
-	 FontData *getFont(FontId fontId) {
-		 validate(fontId);
-		 return &_fonts[fontId];
+	 void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) override;
+	 int translateChar(int charId) override;
+	 int getStringLength(const char *text) override {
+		 return strlen(text);
 	 }
 
-	int getHeight(FontId fontId) {
+	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) override;
+	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) override;
+	 int getHeight(FontId fontId) override {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }
 
@@ -199,9 +223,21 @@ class Font {
 			 error("Font::validate: Invalid font id");
 		 }
 	 }
-	 bool valid(FontId fontId) {
+
+	 bool valid(FontId fontId) override {
 		 return (uint(fontId) < _fonts.size());
 	 }
+
+	 FontData *getFont(FontId fontId) {
+		 validate(fontId);
+		 return &_fonts[fontId];
+	 }
+
+	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
+	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
+	 void loadFont(FontData *font, uint32 fontResourceId);
+	 void createOutline(FontData *font);
+
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;
 
@@ -213,11 +249,31 @@ class Font {
 	 }
 
 	static const int _charMap[128];
-	SagaEngine *_vm;
-
-	int _fontMapping;
 
 	Common::Array<FontData> _fonts;
+	int _fontMapping;
+};
+
+class SJISFont : public Font {
+public:
+	SJISFont(SagaEngine *vm);
+	~SJISFont() override;
+
+private:
+	void textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) override;
+	int translateChar(int charId) override { return charId; }
+	int getStringLength(const char *text) override;
+	int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) override;
+	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags) override;
+	int getHeight(FontId fontId) override;
+	bool valid(FontId fontId) override { return fontId != kBigFont; }
+
+	void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
+
+	uint16 fetchChar(const char *&s) const;
+	bool preventLineBreakForCharacter(uint16 ch) const;
+
+	Graphics::FontSJIS *_font;
 };
 
 } // End of namespace Saga

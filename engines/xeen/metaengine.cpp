@@ -28,7 +28,6 @@
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "xeen/detection.h"
 
 #define MAX_SAVES 99
@@ -76,7 +75,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
@@ -102,7 +101,7 @@ bool Xeen::XeenEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Xeen::XeenGameDescription *gd = (const Xeen::XeenGameDescription *)desc;
 
 	switch (gd->gameID) {
@@ -115,10 +114,10 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Xeen::SwordsOfXeen::SwordsOfXeenEngine(syst, gd);
 		break;
 	default:
-		error("Invalid game");
+		return Common::kUnsupportedGameidError;
 	}
 
-	return true;
+	return Common::kNoError;
 }
 
 SaveStateList XeenMetaEngine::listSaves(const char *target) const {

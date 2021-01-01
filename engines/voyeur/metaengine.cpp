@@ -60,7 +60,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
@@ -84,12 +84,9 @@ bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Voyeur::VoyeurGameDescription *gd = (const Voyeur::VoyeurGameDescription *)desc;
-	if (gd) {
-		*engine = new Voyeur::VoyeurEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Voyeur::VoyeurEngine(syst, (const Voyeur::VoyeurGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {

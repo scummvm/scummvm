@@ -33,13 +33,10 @@ namespace Groovie {
 static const PlainGameDescriptor groovieGames[] = {
 	// Games
 	{"t7g", "The 7th Guest"},
-
-#ifdef ENABLE_GROOVIE2
 	{"11h", "The 11th Hour: The Sequel to The 7th Guest"},
 	{"clandestiny", "Clandestiny"},
 	{"unclehenry", "Uncle Henry's Playhouse"},
 	{"tlc", "Tender Loving Care"},
-#endif
 
 	{0, 0}
 };
@@ -125,7 +122,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
-#ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS English
 	{
 		{
@@ -152,11 +148,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"11h", "",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",					"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "The 11th Hour Installer",	"bcdb4040b27f15b18f39fb9e496d384a", 1002987),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -167,11 +160,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"11h", "Installed",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -204,11 +194,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"11h", "Making Of",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",				  "5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -219,11 +206,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"11h", "Making Of (Installed)",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -245,11 +229,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"clandestiny", "Trailer",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",				  "5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "The 11th Hour Installer", "bcdb4040b27f15b18f39fb9e496d384a", 1002987),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -260,11 +241,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"clandestiny", "Trailer (Installed)",
-			{
-				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
-				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("disk.1",	"5c0428cd3659fc7bbcd0aa16485ed5da", 227,
+					   "el01.mov",	"70f42dfc25b1488a08011dc45bb5145d", 6039),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
@@ -303,7 +281,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieV2, 1
 	},
-#endif
 
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };

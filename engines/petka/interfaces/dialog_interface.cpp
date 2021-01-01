@@ -251,7 +251,7 @@ void DialogInterface::onMenuOpcode() {
 }
 
 void DialogInterface::onUserMsgOpcode() {
-	_qsys->_currInterface->setTextPhrase(Common::U32String(""), 0, 0);
+	_qsys->_currInterface->setTextPhrase(Common::U32String(), 0, 0);
 	removeSound();
 	_talker = nullptr;
 	_state = kPlaying;

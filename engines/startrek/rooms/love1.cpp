@@ -43,6 +43,145 @@
 
 namespace StarTrek {
 
+extern const RoomAction love1ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::love1Tick1 },
+
+	{ {ACTION_WALK, 10, 0, 0}, &Room::love1WalkToDoor3 },
+	{ {ACTION_WALK, 0x26, 0, 0}, &Room::love1WalkToDoor3 },
+	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::love1OpenDoor3 },
+	{ {ACTION_FINISHED_WALKING, 15, 0, 0}, &Room::love1ReachedDoor3 },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::love1ReachedDoor3 },
+
+	{ {ACTION_WALK, 8, 0, 0}, &Room::love1WalkToDoor1 },
+	{ {ACTION_WALK, 0x27, 0, 0}, &Room::love1WalkToDoor1 },
+	{ {ACTION_TOUCHED_HOTSPOT, 2, 0, 0}, &Room::love1OpenDoor1 },
+	{ {ACTION_FINISHED_WALKING, 16, 0, 0}, &Room::love1ReachedDoor1 },
+	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::love1ReachedDoor1 },
+
+	{ {ACTION_WALK, 9, 0, 0}, &Room::love1WalkToDoor2 },
+	{ {ACTION_WALK, 0x28, 0, 0}, &Room::love1WalkToDoor2 },
+	{ {ACTION_TOUCHED_HOTSPOT, 3, 0, 0}, &Room::love1OpenDoor2 },
+	{ {ACTION_FINISHED_WALKING, 17, 0, 0}, &Room::love1ReachedDoor2 },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::love1ReachedDoor2 },
+
+	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::love1LookAtLaser },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::love1LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love1LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love1LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::love1LookAtRedshirt },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love1LookAnywhere },
+	{ {ACTION_LOOK, 15, 0, 0}, &Room::love1LookAtNozzle },
+	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::love1LookAtNozzle },
+	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love1LookAtLadder },
+	{ {ACTION_LOOK, 9, 0, 0}, &Room::love1LookAtDoor1Or2 },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::love1LookAtDoor1Or2 },
+	{ {ACTION_LOOK, 10, 0, 0}, &Room::love1LookAtDoor3 },
+	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::love1LookAtDistillator },
+	{ {ACTION_LOOK, 14, 0, 0}, &Room::love1LookAtChamber },
+	{ {ACTION_LOOK, 12, 0, 0}, &Room::love1LookAtChamber },
+	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::love1LookAtReplicator },
+	{ {ACTION_LOOK, 11, 0, 0}, &Room::love1LookAtFreezer },
+	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::love1LookAtFreezer },
+	{ {ACTION_LOOK, OBJECT_IDISHES, 0, 0}, &Room::love1LookAtDishes },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::love1TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love1TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love1TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love1TalkToRedshirt },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_IDISHES, 0}, &Room::love1UseMTricorderOnDishes },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love1UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::love1UseSTricorderOnReplicator },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 12, 0}, &Room::love1UseSTricorderOnReplicator },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x25, 0}, &Room::love1UseSTricorderOnLaser },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0}, &Room::love1UseSTricorderOnLaser },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::love1UseSTricorderOnFreezer },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love1UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_IDISHES, 0}, &Room::love1UseSTricorderOnDishes },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::love1UseSTricorderOnDistillator },
+	{ {ACTION_GET, 11, 0, 0}, &Room::love1GetFreezer },
+	{ {ACTION_GET, 0x22, 0, 0}, &Room::love1GetFreezer },
+	{ {ACTION_FINISHED_WALKING, 14, 0, 0}, &Room::love1KirkReachedFreezer },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::love1KirkGotVirusCulture },
+	{ {ACTION_GET, 14, 0, 0}, &Room::love1GetFromChamber },
+	{ {ACTION_GET, 12, 0, 0}, &Room::love1GetFromChamber },
+	{ {ACTION_GET, 0x23, 0, 0}, &Room::love1GetFromChamber },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::love1KirkReachedChamber },
+	{ {ACTION_FINISHED_ANIMATION, 10, 0, 0}, &Room::love1KirkGotCureSample },
+	{ {ACTION_GET, 15, 0, 0}, &Room::love1GetFromNozzle },
+	{ {ACTION_GET, 0x24, 0, 0}, &Room::love1GetFromNozzle },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::love1KirkReachedNozzleToGet },
+	{ {ACTION_FINISHED_ANIMATION, 11, 0, 0}, &Room::love1KirkGotBottleFromNozzle },
+	{ {ACTION_USE, OBJECT_IN2O, 0x24, 0}, &Room::love1UseN2OOnNozzle },
+	{ {ACTION_USE, OBJECT_IH2O, 0x24, 0}, &Room::love1UseH2OOnNozzle },
+	{ {ACTION_USE, OBJECT_INH3, 0x24, 0}, &Room::love1UseNH3OnNozzle },
+	{ {ACTION_USE, OBJECT_IRLG, 0x24, 0}, &Room::love1UseRLGOnNozzle },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::love1KirkReachedNozzleToPut },
+	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::love1KirkPutBottleInNozzle },
+	{ {ACTION_USE, 0xff, 0x24, 0}, &Room::love1UseAnthingOnNozzle },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x23, 0}, &Room::love1UseSpockOnReplicator },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x23, 0}, &Room::love1UseRedshirtOnReplicator },
+	{ {ACTION_USE, OBJECT_MCCOY, 14, 0}, &Room::love1UseMccoyOnReplicator },
+	{ {ACTION_USE, OBJECT_MCCOY, 15, 0}, &Room::love1UseMccoyOnReplicator },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x23, 0}, &Room::love1UseMccoyOnReplicator },
+	{ {ACTION_FINISHED_WALKING, 4, 0, 0}, &Room::love1MccoyReachedReplicator },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::love1MccoyUsedReplicator },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::love1ChamberClosed },
+	{ {ACTION_FINISHED_ANIMATION, 8, 0, 0}, &Room::love1ChamberOpened },
+	{ {ACTION_USE, 0xff, 12, 0}, &Room::love1UseAnythingOnChamber },
+	{ {ACTION_USE, OBJECT_IDISHES, 12, 0}, &Room::love1UseDishesOnChamber },
+	{ {ACTION_USE, OBJECT_IDISHES, 0x23, 0}, &Room::love1UseDishesOnChamber },
+	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::love1KirkReachedChamberToPut },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::love1ChamberOpenedForDish },
+	{ {ACTION_FINISHED_ANIMATION, 14, 0, 0}, &Room::love1KirkPutDishInChamber },
+	{ {ACTION_USE, OBJECT_IINSULAT, 0x21, 0}, &Room::love1UseInsulationOnDistillator },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::love1KirkReachedDistillator },
+	{ {ACTION_FINISHED_ANIMATION, 15, 0, 0}, &Room::love1KirkGotPolyberylcarbonate },
+	{ {ACTION_USE, OBJECT_KIRK, 0x22, 0}, &Room::love1UseKirkOnFreezer },
+	{ {ACTION_USE, OBJECT_KIRK, 11, 0}, &Room::love1UseKirkOnFreezer },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x22, 0}, &Room::love1UseRedshirtOnFreezer },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 11, 0}, &Room::love1UseRedshirtOnFreezer },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x22, 0}, &Room::love1UseSpockOnFreezer },
+	{ {ACTION_USE, OBJECT_SPOCK, 11, 0}, &Room::love1UseSpockOnFreezer },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x22, 0}, &Room::love1UseMccoyOnFreezer },
+	{ {ACTION_USE, OBJECT_MCCOY, 11, 0}, &Room::love1UseMccoyOnFreezer },
+	{ {ACTION_FINISHED_WALKING, 7, 0, 0}, &Room::love1CrewmanReachedFreezer },
+	{ {ACTION_FINISHED_ANIMATION, 16, 0, 0}, &Room::love1CrewmanOpenedOrClosedFreezer },
+	{ {ACTION_USE, 0xff, 0x22, 0}, &Room::love1UseAnythingOnFreezer },
+	{ {ACTION_FINISHED_WALKING, 11, 0, 0}, &Room::love1ReachedFreezerWithArbitraryItem },
+	{ {ACTION_FINISHED_ANIMATION, 17, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnFreezer },
+	{ {ACTION_USE, 0xff, 0x23, 0}, &Room::love1UseAnythingOnReplicator },
+	{ {ACTION_FINISHED_WALKING, 12, 0, 0}, &Room::love1ReachedReplicatorWithArbitraryItem },
+	{ {ACTION_FINISHED_ANIMATION, 18, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnReplicator },
+	{ {ACTION_USE, 0xff, 0x21, 0}, &Room::love1UseAnythingOnDistillator },
+	{ {ACTION_FINISHED_WALKING, 13, 0, 0}, &Room::love1ReachedDistillatorWithArbitraryItem },
+	{ {ACTION_FINISHED_ANIMATION, 19, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnDistillator },
+	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::love1UseKirkOnLadder },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::love1UseSpockOnLadder },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0}, &Room::love1UseMccoyOnLadder },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::love1UseRedshirtOnLadder },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::love1CrewmanReachedLadder },
+	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0}, &Room::love1CrewmanDiedFromPhaser },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::love1TouchedHotspot0 },
+
+	// Common code
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::loveaTimer0Expired },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::loveaTimer1Expired },
+	{ {ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0}, &Room::loveaUseMedkitOnSpock },
+	{ {ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0}, &Room::loveaUseCureSampleOnSpock },
+	{ {ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0}, &Room::loveaUseCureOnSpock },
+	{ {ACTION_FINISHED_WALKING,   99, 0, 0}, &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ {ACTION_FINISHED_ANIMATION, 99, 0, 0}, &Room::loveaFinishedCuringSpock },
+	{ {ACTION_TIMER_EXPIRED, 2, 0, 0}, &Room::loveaTimer2Expired },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0}, &Room::loveaUseMTricorderOnSpock },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::love1Tick1() {
 	playVoc("LOV1LOOP");
 
@@ -61,23 +200,23 @@ void Room::love1Tick1() {
 	case BOTTLETYPE_N2O:
 		strcpy(_roomVar.love.bottleAnimation, "btle1");
 		_roomVar.love.itemInNozzle = OBJECT_IN2O;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_NH3:
 		strcpy(_roomVar.love.bottleAnimation, "btle2");
 		_roomVar.love.itemInNozzle = OBJECT_INH3;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_H2O:
 		strcpy(_roomVar.love.bottleAnimation, "btle3");
 		_roomVar.love.itemInNozzle = OBJECT_IH2O;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_RLG:
 		strcpy(_roomVar.love.bottleAnimation, "btle4");
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
-		goto common;
-
-common:
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
-	// fall through
+		break;
 
 	case BOTTLETYPE_NONE:
 	default:
@@ -107,7 +246,7 @@ void Room::love1WalkToDoor3() {
 void Room::love1OpenDoor3() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR3, "s3r2d3", 0xdb, 0x7e, 2);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -127,7 +266,7 @@ void Room::love1WalkToDoor1() {
 void Room::love1OpenDoor1() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR1, "s3r2d1", 0, 0, 3);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -147,7 +286,7 @@ void Room::love1WalkToDoor2() {
 void Room::love1OpenDoor2() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR2, "s3r2d2", 0, 0, 4);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -319,7 +458,7 @@ void Room::love1KirkGotCureSample() {
 
 	loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
 	loadActorAnim2(OBJECT_CHAMBER, "s3r2d6", 0xb4, 0x75, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.chamberHasDish = false;
 }
 
@@ -435,7 +574,7 @@ void Room::love1MccoyUsedReplicator() {
 	if (_roomVar.love.itemInNozzle == OBJECT_INH3) {
 		loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
 		loadActorAnim2(OBJECT_CHAMBER, "s3r2d6", 0xb4, 0x75, 7);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else {
 		showText(TX_SPEAKER_MCCOY, 19, true);
@@ -445,7 +584,7 @@ void Room::love1MccoyUsedReplicator() {
 
 void Room::love1ChamberClosed() {
 	loadActorAnim2(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 8);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::love1ChamberOpened() {
@@ -467,7 +606,7 @@ void Room::love1KirkReachedChamberToPut() {
 		showText(TX_SPEAKER_MCCOY, 14, true); // TODO: test
 	else {
 		loadActorAnim(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 1);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -546,7 +685,7 @@ void Room::love1CrewmanOpenedOrClosedFreezer() {
 	else
 		loadActorAnim(OBJECT_FREEZER, "s3r2d4", 0x67, 0x8d, 0);
 
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.freezerOpen = !_awayMission->love.freezerOpen;
 
 	walkCrewman(_roomVar.love.crewmanUsingDevice, _roomVar.love.crewmanUsingFreezerRetX, _roomVar.love.crewmanUsingFreezerRetY, 0);
@@ -629,7 +768,7 @@ void Room::love1CrewmanReachedLadder() {
 		loadRoomIndex(4, 3);
 	else { // Romulans still conscious, they shoot you
 		loadActorAnim(OBJECT_PHASERSHOT, "s3r2s2", 0xf3, 0x89, 0);
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 
 		Common::String anim = getCrewmanAnimFilename(_roomVar.love.crewmanUsingDevice, "killw");
 		loadActorAnim(_roomVar.love.crewmanUsingDevice, anim, 0x102, 0x89, 6);
@@ -653,7 +792,7 @@ void Room::love1TouchedHotspot0() {
 	if (_awayMission->love.romulansUnconsciousFromLaughingGas || _awayMission->love.romulansUnconsciousFromVirus)
 		return;
 	loadActorAnim(OBJECT_PHASERSHOT, "s3r2s1", 0xf3, 0x89, 0);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_FERRIS, 28, true);
 }

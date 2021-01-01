@@ -392,7 +392,7 @@ static bool InHotSpot(int ano, int aniX, int aniY, int *pxtext, int *pytext) {
  * the tag or, if tag already displayed, maintain the tag's position on
  * the screen.
  */
-static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
+static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 	int	newX, newY;		// new values, to keep tag in place
 	int	ano;
 	int	xtext, ytext;
@@ -449,7 +449,7 @@ static bool ActorTag(int curX, int curY, HotSpotTag *pTag, OBJECT **ppText) {
 	// For each actor with a tag....
 	_vm->_actor->FirstTaggedActor();
 	while ((ano = _vm->_actor->NextTaggedActor()) != 0) {
-		if (InHotSpot(ano, curX, curY, &xtext, &ytext)) {
+		if (InHotSpot(ano, curX_, curY_, &xtext, &ytext)) {
 			// Put up or maintain actor tag
 			if (*pTag != ACTOR_HOTSPOT_TAG)
 				newActor = true;
@@ -667,11 +667,11 @@ void TagProcess(CORO_PARAM, const void *) {
 
 	while (1) {
 		if (g_bTagsActive) {
-			int	curX, curY;	// cursor position
-			while (!_vm->_cursor->GetCursorXYNoWait(&curX, &curY, true))
+			int	curX_, curY_;	// cursor position
+			while (!_vm->_cursor->GetCursorXYNoWait(&curX_, &curY_, true))
 				CORO_SLEEP(1);
 
-			if (!ActorTag(curX, curY, &_ctx->Tag, &_ctx->pText)
+			if (!ActorTag(curX_, curY_, &_ctx->Tag, &_ctx->pText)
 					&& !PolyTag(&_ctx->Tag, &_ctx->pText)) {
 				// Nothing tagged. Remove tag, if there is one
 				if (_ctx->pText) {

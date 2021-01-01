@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -58,6 +59,7 @@ enum _TextId {
 	kBehaviourHiding = 3,
 	kBehaviourAgressiveAuto = 4,
 	kUseProtopack = 5,
+	kSendell = 6,
 	kMusicVolume = 10,
 	kSoundVolume = 11,
 	kCDVolume = 12,
@@ -92,13 +94,27 @@ enum _TextId {
 	kDetailsPolygonsMiddle = 131,
 	kShadowsFigures = 132,
 	kScenaryZoomOn = 133,
+	kIntroText1 = 150,
+	kIntroText2 = 151,
+	kIntroText3 = 152,
+	kBookOfBu = 161,
+	kBonusList = 162,
 	kDetailsPolygonsLow = 231,
 	kShadowsDisabled = 232,
 	kNoScenaryZoom = 233
 };
 }
 
+#define TEXT_MAX_FADE_IN_CHR 32
+
+enum class ProgressiveTextState {
+	End = 0,				/**< Text has reached its end and we are waiting for user input */
+	ContinueRunning = 1,	/**< Text is fading in */
+	NextPage = 2			/**< Waiting for user input to abort or start the next page to fade in */
+};
+
 class TwinEEngine;
+
 class Text {
 private:
 	TwinEEngine *_engine;
@@ -117,20 +133,27 @@ private:
 	 * @param character ascii character to display
 	 * @param color character color
 	 */
-	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color);
+	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect& dirtyRect);
 	void initProgressiveTextBuffer();
-	void printText8Sub4(int16 a, int16 b, int16 c);
 	struct WordSize {
 		int32 inChar = 0;
 		int32 inPixel = 0;
 	};
-	WordSize getWordSize(const char *arg1, char *arg2);
+	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
 	void processTextLine();
 	// draw next page arrow polygon
-	void printText10Sub();
-	void printText10Sub2();
-	int32 getCharWidth(uint8 chr) const;
-	int32 getCharHeight(uint8 chr) const;
+	void renderContinueReadingTriangle();
+	/**
+	 * @see fadeInCharacters
+	 */
+	void fillFadeInBuffer(int16 x, int16 y, int16 chr);
+	/**
+	 * Blend in characters for a text scrolling in
+	 *
+	 * @see fillFadeInBuffer
+	 * @param counter The amount of characters to handle - max 32
+	 */
+	void fadeInCharacters(int32 counter, int32 fontColor);
 	/**
 	 * Copy dialogue text
 	 * @param src source text buffer
@@ -141,7 +164,6 @@ private:
 
 	// RECHECK THIS LATER
 	int32 currentBankIdx = TextBankId::None; // textVar1
-	char textVar2[256] {'\0'};
 
 	/** Dialogue text pointer */
 	char *dialTextPtr = nullptr; // bufText
@@ -151,64 +173,69 @@ private:
 	/** Number of dialogues text entries */
 	int16 numDialTextEntries = 0;
 
-	const int16 spaceChar = 0x20;
-
 	// TODO: refactor all this variables and related functions
-	char buf1[256] {'\0'};
-	char buf2[256] {'\0'};
-	char *printText8Ptr1 = nullptr;
-	char *printText8Ptr2 = nullptr;
-	int32 printText8Var1 = 0;
-	int32 printText8Var2 = 0;
-	int32 printText8Var3 = 0;
-	int32 TEXT_CurrentLetterX = 0;
-	int32 printText8Var5 = 0;
-	int32 printText8Var6 = 0;
-	int32 TEXT_CurrentLetterY = 0;
-	char *printText8Var8 = nullptr;
-	int32 printText10Var1 = 0;
-	int32 addLineBreakX = 0;
-	int16 pt8s4[96] {0};
-	int32 printText8PrepareBufferVar2 = 0;
-	// ---
+	char _progressiveTextBuffer[256] {'\0'};
+	const char *_currentTextPosition = nullptr;
+
+	int32 _dialTextXPos = 0;
+	int32 _dialTextYPos = 0;
+
+	/** Current position of in the buffer of characters that are currently faded in */
+	char *_progressiveTextBufferPtr = nullptr;
+
+	int32 _dialTextBoxCurrentLine = 0;
+	struct BlendInCharacter {
+		int16 chr = 0;
+		int16 x = 0;
+		int16 y = 0;
+	};
+	BlendInCharacter _fadeInCharacters[TEXT_MAX_FADE_IN_CHR];
+	int32 _fadeInCharactersPos = 0;
 
 	/** Current dialogue text pointer */
-	char *currDialTextPtr = nullptr;
+	char *_currDialTextPtr = nullptr;
 	/** Current dialogue text size */
-	int32 currDialTextSize = 0;
+	int32 _currDialTextSize = 0;
 
-	/** Dialogue text size */
-	int32 dialTextSize = 0;
+	char currMenuTextBuffer[256];
+	int32 currMenuTextBank = TextBankId::None;
+	int32 currMenuTextIndex = -1;
+
 	/** Pixel size between dialogue text */
-	int32 dialSpaceBetween = 0;
-	/** Pixel size of the space character */
-	int32 dialCharSpace = 0;
+	int32 _dialSpaceBetween = 0;
+	/** Pixel size of the space character - recalculated per per line */
+	int32 _dialCharSpace = 0;
 	/** Dialogue text color */
-	int32 dialTextColor = 0;
+	int32 _dialTextColor = 0;
 
 	/** Dialogue text start color for cross coloring dialogues */
-	int32 dialTextStartColor = 0;
+	int32 _dialTextStartColor = 0;
 	/** Dialogue text stop color for cross coloring dialogues */
-	int32 dialTextStopColor = 0;
-	/** Dialogue text step size for cross coloring dialogues */
-	int32 dialTextStepSize = 0;
+	int32 _dialTextStopColor = 0;
+	/**
+	 * Dialogue text step size for cross coloring dialogues
+	 *
+	 * The speed in which the color reaches it's destination color while fading in.
+	 */
+	int32 _dialTextStepSize = 0;
 	/** Dialogue text buffer size for cross coloring dialogues */
-	int32 dialTextBufferSize = 0;
+	int32 _dialTextBufferSize = 0;
 
-	int32 dialTextBoxLeft = 0;   // dialogueBoxLeft
-	int32 dialTextBoxTop = 0;    // dialogueBoxTop
-	int32 dialTextBoxRight = 0;  // dialogueBoxRight
-	int32 dialTextBoxBottom = 0; // dialogueBoxBottom
+	Common::Rect _dialTextBox { 0, 0, 0, 0};
 
-	int32 dialTextBoxParam1 = 0; // dialogueBoxParam1
-	int32 dialTextBoxParam2 = 0; // dialogueBoxParam2
+	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
+	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
+
+	bool displayText(int32 index, bool showText, bool playVox);
 public:
-	Text(TwinEEngine *engine) : _engine(engine) {}
+	Text(TwinEEngine *engine);
+	~Text();
 
 	// TODO: refactor all this variables and related functions
-	int32 printTextVar13 = 0;
-	int32 newGameVar4 = 0;
-	int32 newGameVar5 = 0;
+	bool _hasValidTextHandle = false;
+	// renders a triangle if the next side of the text can get activated
+	bool renderTextTriangle = false;
+	bool drawTextBoxBackground = false;
 	bool hasHiddenVox = false; // printTextVar5
 	int32 voxHiddenIndex = 0;
 	// ---
@@ -224,6 +251,7 @@ public:
 	 * @param bankIdx Text bank index
 	 */
 	void initTextBank(int32 bankIdx);
+	void initSceneTextBank();
 
 	/**
 	 * Display a certain dialogue text in the screen
@@ -240,12 +268,17 @@ public:
 	 * @param dialogue ascii text to display
 	 */
 	int32 getTextSize(const char *dialogue);
+	int32 getCharWidth(uint8 chr) const;
+	int32 getCharHeight(uint8 chr) const;
 
 	void initDialogueBox();
 	void initInventoryDialogueBox();
 
 	void initText(int32 index);
-	int printText10();
+	void initInventoryText(int index);
+	void initItemFoundText(int index);
+	void fadeInRemainingChars();
+	ProgressiveTextState updateProgressiveText();
 
 	/**
 	 * Set font type parameters

@@ -132,6 +132,7 @@ private:
 		bool alphaTest;
 		int alphaFunc, alphaRefValue;
 		TinyGL::GLTexture *texture;
+		unsigned int wrapS, wrapT;
 		unsigned char *shadowMaskBuf;
 
 		bool operator==(const RasterizationState &other) const;

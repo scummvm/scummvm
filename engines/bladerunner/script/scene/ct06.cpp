@@ -70,11 +70,11 @@ void SceneScriptCT06::SceneLoaded() {
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
 		Preload(kModelAnimationMcCoyWithGunWalking);
 		Preload(kModelAnimationMcCoyWithGunRunning);
-		Preload(389);
-		Preload(390);
-		Preload(398);
-		Preload(421);
-		Preload(421);
+		Preload(kModelAnimationZubenCombatHitFront);
+		Preload(kModelAnimationZubenCombatHitBack);
+		Preload(kModelAnimationZubenCleaverAttack);
+		Preload(kModelAnimationZubenJumpDownFromCeiling);
+		Preload(kModelAnimationZubenJumpDownFromCeiling); // A bug? Why is this preloaded twice?
 	}
 }
 

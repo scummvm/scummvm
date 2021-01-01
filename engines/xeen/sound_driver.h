@@ -71,16 +71,29 @@ protected:
 		Channel() : _changeFrequency(false), _freqCtr(0), _freqCtrChange(0),
 			_freqChange(0), _volume(0), _totalLevel(0), _frequency(0), _isFx(false) {}
 	};
+	enum StreamType {
+		stMUSIC,
+		stFX,
+
+		stLAST
+	};
+	class Stream {
+	public:
+		Stream() {}
+		Stream(const CommandFn *commands) : _playing(false), _countdownTimer(0), _dataPtr(nullptr), _startPtr(nullptr), _commands(commands) {}
+
+		bool _playing;
+		int _countdownTimer;
+		const byte *_dataPtr;
+		const byte *_startPtr;
+		const CommandFn *_commands;
+	};
+
 private:
 	static const CommandFn FX_COMMANDS[16];
 	static const CommandFn MUSIC_COMMANDS[16];
 private:
 	Common::Stack<Subroutine> _musSubroutines, _fxSubroutines;
-	int _musCountdownTimer;
-	int _fxCountdownTimer;
-	const byte *_fxDataPtr, *_musDataPtr;
-	const byte *_fxStartPtr;
-	const byte *_musStartPtr;
 	uint _frameCtr;
 private:
 	/**
@@ -89,11 +102,12 @@ private:
 	 * @returns		If true, execution of commands for the current timer call stops
 	 */
 	bool command(const byte *&srcP);
+
+	Stream *tickStream();
 protected:
 	Common::Array<Channel> _channels;
-	bool _exclude7;
-	bool _musicPlaying;
-	bool _fxPlaying;
+	Stream _streams[stLAST];
+
 protected:
 	/**
 	 * Executes a series of commands until instructed to stop
@@ -175,7 +189,7 @@ public:
 	/**
 	 * Returns whether music is currently playing
 	 */
-	bool isPlaying() const { return _musicPlaying; }
+	bool isPlaying() const { return _streams[stMUSIC]._playing; }
 };
 
 } // End of namespace Xeen

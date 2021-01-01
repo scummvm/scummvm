@@ -32,6 +32,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
+#include "scumm/he/localizer.h"
 #endif
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -336,7 +337,11 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
+#ifdef ENABLE_HE
+				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+#else
 				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+#endif
 			} else {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 			}
@@ -406,7 +411,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -429,7 +434,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 119:
 			_haveMsg = 0xFF;
@@ -451,7 +456,12 @@ bool ScummEngine::newLine() {
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
-			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+			// The commented out part of the next line was meant as a fix for Kanji text glitches in DIG.
+			// But these glitches couldn't be reproduced in recent tests. So the underlying issue might
+			// have been taken care of in a different manner. And the fix actually caused other text glitches
+			// (FT/German, if you look at the sign on the container at game start). After counterchecking
+			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
+			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
 		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
@@ -1212,7 +1222,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	byte lastChr = 0;
 	const byte *src;
 	byte *end;
-	byte transBuf[384];
+	byte transBuf[2048];
 
 	assert(dst);
 	end = dst + dstSize;
@@ -1222,7 +1232,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		return 0;
 	}
 
-	if (_game.version >= 7) {
+	if (_game.version >= 7 || isScummvmKorTarget()) {
 		translateText(msg, transBuf);
 		src = transBuf;
 	} else {
@@ -1402,7 +1412,7 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 
 	bool isKorVerbGlue = false;
 
-	if (_language == Common::KO_KOR && _useCJKMode && var & (1 << 15)) {
+	if (isScummvmKorTarget() && _useCJKMode && var & (1 << 15)) {
 		isKorVerbGlue = true;
 		var &= ~(1 << 15);
 	}
@@ -1412,6 +1422,8 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 		for (k = 1; k < _numVerbs; k++) {
 			// Fix ZAK FM-TOWNS bug #1013617 by emulating exact (inconsistant?) behavior of the original code
 			if (num == _verbs[k].verbid && !_verbs[k].type && (!_verbs[k].saveid || (_game.version == 3 && _game.platform == Common::kPlatformFMTowns))) {
+				// Process variation of Korean postpositions
+				// Used by Korean fan translated games (monkey1, monkey2)
 				if (isKorVerbGlue) {
 					static const byte code0380[4] = {0xFF, 0x07, 0x03, 0x80};                                 // "eul/reul"
 					static const byte code0480[4] = {0xFF, 0x07, 0x04, 0x80};                                 // "wa/gwa"
@@ -1484,14 +1496,16 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
 			int increment = convertMessageToString(ptr, dst, dstSize);
-			if (_language == Common::KO_KOR && _useCJKMode) {
+			// Save the final consonant (jongsung) of the last Korean character
+			// Used by Korean fan translated games (monkey1, monkey2)
+			if (isScummvmKorTarget() && _useCJKMode) {
 				_krStrPost = 0;
 				int len = resStrLen(ptr);
 				if (len >= 2) {
 					for (int i = len; i > 1; i--) {
 						byte k1 = ptr[i - 2];
 						byte k2 = ptr[i - 1];
-						if (checkHangul(k1, k2)) {
+						if (checkKSCode(k1, k2)) {
 							int jongsung = checkJongsung(k1, k2);
 							if (jongsung)
 								_krStrPost |= 1;
@@ -1527,7 +1541,9 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	if (_game.version == 3 || (_game.version >= 6 && _game.heversion < 72))
 		var = readVar(var);
 
-	if (_language == Common::KO_KOR && _useCJKMode && (var & (1 << 15))) {
+	// Process variation of Korean postpositions
+	// Used by Korean fan translated games (monkey1, monkey2)
+	if (isScummvmKorTarget() && _useCJKMode && (var & (1 << 15))) {
 		int idx;
 		static const byte codeIdx[] = {0x00, 0x00, 0xC0, 0xB8, 0x00, 0x00, 0xC0, 0xCC, 0xB0, 0xA1, 0xC0, 0xCC, 0xB8, 0xA6, 0xC0, 0xBB, 0xBF, 0xCD, 0xB0, 0xFA, 0xB4, 0xC2, 0xC0, 0xBA};
 
@@ -1547,12 +1563,14 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
 			int increment = convertMessageToString(ptr, dst, dstSize);
-			if (_language == Common::KO_KOR && _useCJKMode) {
+			// Save the final consonant (jongsung) of the last Korean character
+			// Used by Korean fan translated games (monkey1, monkey2)
+			if (isScummvmKorTarget() && _useCJKMode) {
 				_krStrPost = 0;
 				for (int i = resStrLen(ptr); i > 1; i--) {
 					byte k1 = ptr[i - 2];
 					byte k2 = ptr[i - 1];
-					if (checkHangul(k1, k2)) {
+					if (checkKSCode(k1, k2)) {
 						int jongsung = checkJongsung(k1, k2);
 						if (jongsung)
 							_krStrPost |= 1;
@@ -1612,16 +1630,13 @@ static int indexCompare(const void *p1, const void *p2) {
 
 // Create an index of the language file.
 void ScummEngine_v7::loadLanguageBundle() {
-	ScummFile file;
-	int32 size;
-
-	// if game is manually set to English, don't try to load localized text
-	if ((_language == Common::EN_ANY) || (_language == Common::EN_USA) || (_language == Common::EN_GRB)) {
-		warning("Language file is forced to be ignored");
-
-		_existLanguageFile = false;
+	if (isScummvmKorTarget()) {
+		// Support language bundle for FT
+		ScummEngine::loadLanguageBundle();
 		return;
 	}
+	ScummFile file;
+	int32 size;
 
 	if (_game.id == GID_DIG) {
 		openFile(file, "language.bnd");
@@ -1788,6 +1803,11 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 }
 
 void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
+	if (isScummvmKorTarget()) {
+		// Support language bundle for FT
+		ScummEngine::translateText(text, trans_buff);
+		return;
+	}
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;
@@ -1893,7 +1913,183 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 
 #endif
 
+void ScummEngine::loadLanguageBundle() {
+	if (!isScummvmKorTarget()) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	ScummFile file;
+	openFile(file, "korean.trs");
+
+	if (!file.isOpen()) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_existLanguageFile = true;
+
+	int size = file.size();
+
+	uint32 magic1 = file.readUint32BE();
+	uint32 magic2 = file.readUint32BE();
+
+	if (magic1 != MKTAG('S', 'C', 'V', 'M') || magic2 != MKTAG('T', 'R', 'S', ' ')) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_numTranslatedLines = file.readUint16LE();
+	_translatedLines = new TranslatedLine[_numTranslatedLines];
+	_languageLineIndex = new uint16[_numTranslatedLines];
+
+	// sanity check
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		_languageLineIndex[i] = 0xffff;
+	}
+
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		int idx = file.readUint16LE();
+		assert(idx < _numTranslatedLines);
+		_languageLineIndex[idx] = i;
+		_translatedLines[i].originalTextOffset = file.readUint32LE();
+		_translatedLines[i].translatedTextOffset = file.readUint32LE();
+	}
+
+	// sanity check
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		if (_languageLineIndex[i] == 0xffff) {
+			error("Invalid language bundle file");
+		}
+	}
+
+	// Room
+	byte numTranslatedRoom = file.readByte();
+	for (uint32 i = 0; i < numTranslatedRoom; i++) {
+		byte roomId = file.readByte();
+
+		TranslationRoom &room = _roomIndex.getVal(roomId);
+
+		uint16 numScript = file.readUint16LE();
+		for (int sc = 0; sc < numScript; sc++) {
+			uint32 scrpKey = file.readUint32LE();
+			uint16 scrpLeft = file.readUint16LE();
+			uint16 scrpRight = file.readUint16LE();
+
+			room.scriptRanges.setVal(scrpKey, TranslationRange(scrpLeft, scrpRight));
+		}
+	}
+
+	int bodyPos = file.pos();
+
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		_translatedLines[i].originalTextOffset -= bodyPos;
+		_translatedLines[i].translatedTextOffset -= bodyPos;
+	}
+	_languageBuffer = new byte[size - bodyPos];
+	file.read(_languageBuffer, size - bodyPos);
+	file.close();
+
+	debug(2, "loadLanguageBundle: Loaded %d entries", _numTranslatedLines);
+}
+
+const byte *ScummEngine::searchTranslatedLine(const byte *text, const TranslationRange &range, bool useIndex) {
+	int textLen = resStrLen(text);
+
+	int left = range.left;
+	int right = range.right;
+
+	int dbgIterationCount = 0;
+
+	while (left <= right) {
+		dbgIterationCount++;
+		debug(8, "searchTranslatedLine: Range: %d - %d", left, right);
+		int mid = (left + right) / 2;
+		int idx = useIndex ? _languageLineIndex[mid] : mid;
+		const byte *originalText = &_languageBuffer[_translatedLines[idx].originalTextOffset];
+		int originalLen = resStrLen(originalText);
+		int compare = memcmp(text, originalText, MIN(textLen + 1, originalLen + 1));
+		if (compare == 0) {
+			debug(8, "searchTranslatedLine: Found in %d iteration", dbgIterationCount);
+			const byte *translatedText = &_languageBuffer[_translatedLines[idx].translatedTextOffset];
+			return translatedText;
+		} else if (compare < 0) {
+			right = mid - 1;
+		} else if (compare > 0) {
+			left = mid + 1;
+		}
+	}
+
+	debug(8, "searchTranslatedLine: Not found in %d iteration", dbgIterationCount);
+
+	return nullptr;
+}
+
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
+	if (_existLanguageFile) {
+		if (_currentScript == 0xff) {
+			// used in drawVerb(), etc
+			debug(7, "translateText: Room=%d, CurrentScript == 0xff", _currentRoom);
+		} else {
+			// Use series of heuristics to preserve "the context of the conversation",
+			// since one English text can be translated differently depending on the context.
+			ScriptSlot *slot = &vm.slot[_currentScript];
+			debug(7, "translateText: Room=%d, Script=%d, WIO=%d", _currentRoom, slot->number, slot->where);
+
+			byte roomKey = 0;
+			if (slot->where != WIO_GLOBAL) {
+				roomKey = _currentRoom;
+			}
+
+			uint32 scriptKey = slot->where << 16 | slot->number;
+			if (slot->where == WIO_ROOM) {
+				scriptKey = slot->where << 16;
+			}
+
+			// First search by _currentRoom and _currentScript
+			Common::HashMap<byte, TranslationRoom>::const_iterator iterator = _roomIndex.find(roomKey);
+			if (iterator != _roomIndex.end()) {
+				const TranslationRoom &room = iterator->_value;
+				TranslationRange scrpRange;
+				if (room.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
+					const byte *translatedText = searchTranslatedLine(text, scrpRange, true);
+					if (translatedText) {
+						debug(7, "translateText: Found by heuristic #1");
+						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+						return;
+					}
+				}
+			}
+
+			// If not found, search for current room
+			roomKey = _currentRoom;
+			scriptKey = WIO_ROOM << 16;
+			iterator = _roomIndex.find(roomKey);
+			if (iterator != _roomIndex.end()) {
+				const TranslationRoom &room = iterator->_value;
+				TranslationRange scrpRange;
+				if (room.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
+					const byte *translatedText = searchTranslatedLine(text, scrpRange, true);
+					if (translatedText) {
+						debug(7, "translateText: Found by heuristic #2");
+						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+						return;
+					}
+				}
+			}
+		}
+
+		// Try full search
+		const byte *translatedText = searchTranslatedLine(text, TranslationRange(0, _numTranslatedLines - 1), false);
+		if (translatedText) {
+			debug(7, "translateText: Found by full search");
+			memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+			return;
+		}
+
+		debug(7, "translateText: Not found");
+	}
+
 	// Default: just copy the string
 	memcpy(trans_buff, text, resStrLen(text) + 1);
 }

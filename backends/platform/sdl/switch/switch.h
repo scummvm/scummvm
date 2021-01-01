@@ -34,6 +34,7 @@ public:
 	virtual bool getFeatureState(Feature f) override;
 	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 	virtual Common::HardwareInputSet *getHardwareInputSet() override;
+	virtual Common::String getSystemLanguage() const;
 
 protected:
 	virtual Common::String getDefaultLogFileName() override;

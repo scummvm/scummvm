@@ -26,6 +26,7 @@
 
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
 
 namespace Hadesch {
 class GfxContext {
@@ -36,12 +37,13 @@ public:
 	virtual void blitPodImage(byte *sourcePixels, int sourcePitch, int sourceW, int sourceH,
 				  byte *palette, size_t ncolours, Common::Point offset) = 0;
 	virtual void clear() = 0;
+	virtual void renderSubtitle(const Common::U32String &, Common::Point viewPoint) = 0;
 	virtual void fade(int val) = 0;
 	virtual void renderToScreen(Common::Point viewPoint) = 0;
 	virtual ~GfxContext() {}
 };
 
-class GfxContext8Bit : public GfxContext {
+class GfxContext8Bit : public GfxContext, Common::NonCopyable {
 public:
   	void blitVideo(byte *sourcePixels, int sourcePitch, int sourceW, int sourceH,
 		       byte *palette, Common::Point offset) override;
@@ -50,17 +52,16 @@ public:
 	void clear() override;
 	void fade(int val) override;
 	void renderToScreen(Common::Point viewPoint) override;
+	void renderSubtitle(const Common::U32String &, Common::Point viewPoint) override;
+	byte findColor(byte r, byte g, byte b);
 
 	GfxContext8Bit(int canvasW, int canvasH);
 	~GfxContext8Bit() {}
 
 private:
-	Common::SharedPtr<byte> _pixels;
+	Graphics::ManagedSurface surf;
 	byte _palette[256 * 4];
 	bool _paletteUsed[256];
-	int _pitch;
-	int _w;
-	int _h;
 };
 
 void blendVideo8To8(byte *targetPixels, int targetPitch, int targetW, int targetH,

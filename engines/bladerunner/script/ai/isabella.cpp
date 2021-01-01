@@ -26,8 +26,9 @@ namespace BladeRunner {
 
 AIScriptIsabella::AIScriptIsabella(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 0;
-	_var2 = 0;
-	_var3 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 
+	_varChooseIdleAnimation = 0;
 	_var4 = 1;
 }
 
@@ -38,8 +39,8 @@ void AIScriptIsabella::Initialize() {
 	_animationNext = 0;
 
 	_var1 = 0;
-	_var2 = 0;
-	_var3 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	_varChooseIdleAnimation = 0;
 	_var4 = 1;
 }
 
@@ -104,52 +105,52 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 
 	switch (_animationState) {
 	case 0:
-		if (_var3 == 1) {
-			*animation = 839;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelIsabellaPutsSpicesInSoup;
 			++_animationFrame;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(839) - 1) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaPutsSpicesInSoup) - 1) {
 				_animationFrame = 0;
 			}
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(839) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaPutsSpicesInSoup) - 1;
 			}
-			if (!_animationFrame) {
-				_var3 = 0;
+			if (_animationFrame == 0) {
+				_varChooseIdleAnimation = 0;
 				_var4 = 2 * Random_Query(0, 1) - 1;
 			}
-		} else if (_var3 == 0) {
-			*animation = 838;
-			if (_var2) {
-				--_var2;
-				if (_var2 == 0) {
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelIsabellaIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
+				if (_varNumOfTimesToHoldCurrentFrame == 0) {
 					_var4 = 2 * Random_Query(0, 1) - 1;
 				}
 			} else {
 				_animationFrame += _var4;
-				if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(838) - 1) {
+				if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaIdle) - 1) {
 					_animationFrame = 0;
 				}
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(838) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaIdle) - 1;
 				}
 				if (_animationFrame == 1) {
 					if (!Random_Query(0, 1)) {
-						_var2 = Random_Query(4, 8);
+						_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 8);
 					}
 				}
 				if (_animationFrame == 11) {
 					if (!Random_Query(0, 1)) {
-						_var2 = Random_Query(4, 8);
+						_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 8);
 					}
 				}
 				if (_animationFrame == 16) {
 					if (!Random_Query(0, 1)) {
-						_var2 = Random_Query(4, 8);
+						_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 8);
 					}
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					if (!Random_Query(0, 2)) {
-						_var3 = 1;
+						_varChooseIdleAnimation = 1;
 					}
 				}
 			}
@@ -157,172 +158,172 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		*animation = 840;
+		*animation = kModelIsabellaGestureGiveOrTake;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(840) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaGestureGiveOrTake) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(840) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaGestureGiveOrTake) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 838;
+			*animation = kModelIsabellaIdle;
 			_animationState = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 841;
+		*animation = kModelIsabellaCalmTalk;
 		if (_animationFrame < 2 && _var1) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(841) - 1) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaCalmTalk) - 1) {
 				_animationFrame = 0;
 			} else {
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(841) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaCalmTalk) - 1;
 				}
 			}
-			if (!_animationFrame) {
+			if (_animationFrame == 0) {
 				_animationState = Random_Query(2, 3);
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 842;
+		*animation = kModelIsabellaSuggestTalk;
 		if (_animationFrame < 2 && _var1) {
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(842) - 1) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaSuggestTalk) - 1) {
 				_animationFrame = 0;
 			} else {
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(842) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaSuggestTalk) - 1;
 				}
 			}
-			if (!_animationFrame) {
-				*animation = 841;
+			if (_animationFrame == 0) {
+				*animation = kModelIsabellaCalmTalk;
 				_animationState = 2;
 			}
 		}
 		break;
 
 	case 4:
-		*animation = 843;
+		*animation = kModelIsabellaProtestTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(843) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaProtestTalk) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(843) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaProtestTalk) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 841;
+			*animation = kModelIsabellaCalmTalk;
 			_animationState = 2;
 		}
 		break;
 
 	case 5:
-		*animation = 844;
+		*animation = kModelIsabellaMoreCalmTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(844) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaMoreCalmTalk) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(844) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaMoreCalmTalk) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 841;
+			*animation = kModelIsabellaCalmTalk;
 			_animationState = 2;
 		}
 		break;
 
 	case 6:
-		*animation = 845;
+		*animation = kModelIsabellaLaughTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(845) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaLaughTalk) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(845) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaLaughTalk) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 841;
+			*animation = kModelIsabellaCalmTalk;
 			_animationState = 2;
 		}
 		break;
 
 	case 7:
-		*animation = 845;
+		*animation = kModelIsabellaLaughTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(845) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaLaughTalk) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(845) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaLaughTalk) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 841;
+			*animation = kModelIsabellaCalmTalk;
 			_animationState = 2;
 		}
 		break;
 
 	case 8:
-		*animation = 844;
+		*animation = kModelIsabellaMoreCalmTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(844) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelIsabellaMoreCalmTalk) - 1) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(844) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelIsabellaMoreCalmTalk) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = 841;
+			*animation = kModelIsabellaCalmTalk;
 			_animationState = 2;
 		}
 		break;
 
 	case 9:
-		if (!_var3) {
-			*animation = 838;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelIsabellaIdle;
 		}
-		if (_var3 == 1) {
-			*animation = 839;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelIsabellaPutsSpicesInSoup;
 		}
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame += 2;
@@ -369,31 +370,34 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		break;
 
 	case 3:
+		// fall through
 	case 9:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 2;
-			_animationNext = 841;
+			_animationNext = kModelIsabellaCalmTalk;
 			_var1 = 0;
 		}
 		break;
 
 	case 10:
+		// fall through
 	case 12:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 3;
-			_animationNext = 842;
+			_animationNext = kModelIsabellaSuggestTalk;
 			_var1 = 0;
 		}
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 5;
-			_animationNext = 844;
+			_animationNext = kModelIsabellaMoreCalmTalk;
 			_var1 = 0;
 		}
 		break;
@@ -402,7 +406,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 4;
-			_animationNext = 843;
+			_animationNext = kModelIsabellaProtestTalk;
 			_var1 = 0;
 		}
 		break;
@@ -411,7 +415,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 6;
-			_animationNext = 845;
+			_animationNext = kModelIsabellaLaughTalk;
 			_var1 = 0;
 		}
 		break;
@@ -420,7 +424,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 7;
-			_animationNext = 845;
+			_animationNext = kModelIsabellaLaughTalk;
 			_var1 = 0;
 		}
 		break;
@@ -429,7 +433,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
 			_animationStateNext = 8;
-			_animationNext = 844;
+			_animationNext = kModelIsabellaMoreCalmTalk;
 			_var1 = 0;
 		}
 		break;

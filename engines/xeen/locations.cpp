@@ -56,6 +56,7 @@ BaseLocation::~BaseLocation() {
 	for (uint idx = 0; idx < _townSprites.size(); ++idx)
 		_townSprites[idx].clear();
 	intf.mainIconsPrint();
+	intf.unhighlightChar();
 }
 
 int BaseLocation::show() {
@@ -1008,7 +1009,6 @@ Character *TempleLocation::doOptions(Character *c) {
 
 TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	Common::fill(&_charsTrained[0], &_charsTrained[6], 0);
-	_maxLevel = 0;
 	_experienceToNextLevel = 0;
 	_charIndex = 0;
 
@@ -1019,53 +1019,50 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	_vocName = _ccNum ? "youtrn1.voc" : "training.voc";
 }
 
-Common::String TrainingLocation::createLocationText(Character &ch) {
+int TrainingLocation::maxLevel() const {
 	Party &party = *g_vm->_party;
 	if (_ccNum) {
 		switch (party._mazeId) {
 		case 29:
 			// Castleview
-			_maxLevel = 30;
-			break;
+			return 30;
 		case 31:
 			// Sandcaster
-			_maxLevel = 50;
-			break;
+			return 50;
 		case 37:
 			// Olympus
-			_maxLevel = 200;
-			break;
+			return 200;
 		default:
 			// Kalindra's Castle
-			_maxLevel = 100;
-			break;
+			return 100;
 		}
 	} else {
 		switch (party._mazeId) {
 		case 28:
 			// Vertigo
-			_maxLevel = 10;
-			break;
+			return 10;
 		case 30:
 			// Rivercity
-			_maxLevel = 15;
-			break;
+			return 15;
 		default:
 			// Newcastle
-			_maxLevel = 20;
-			break;
+			return 20;
 		}
 	}
+}
 
+Common::String TrainingLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	int maxLevelAtLocation = maxLevel();
 	_experienceToNextLevel = ch.experienceToNextLevel();
 
 	Common::String msg;
-	if (_experienceToNextLevel && ch._level._permanent < _maxLevel) {
+	if (_experienceToNextLevel && ch._level._permanent < maxLevelAtLocation) {
 		// Need more experience
 		int nextLevel = ch._level._permanent + 1;
 		msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
 			ch._name.c_str(), _experienceToNextLevel, nextLevel);
-	} else if (ch._level._permanent >= _maxLevel) {
+	} else if (ch._level._permanent >= maxLevelAtLocation) {
 		// At maximum level
 		_experienceToNextLevel = 1;
 		msg = Common::String::format(Res.TRAINING_LEARNED_ALL, ch._name.c_str());
@@ -1107,7 +1104,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			_drawFrameIndex = 0;
 
 			Common::String name;
-			if (c->_level._permanent >= _maxLevel) {
+			if (c->_level._permanent >= maxLevel()) {
 				name = _ccNum ? "gtlost.voc" : "trainin1.voc";
 			} else {
 				name = _ccNum ? "gtlost.voc" : "trainin0.voc";
@@ -1281,18 +1278,18 @@ void CutsceneLocation::setNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
-const int16 REAPER_X1[2][14] = {
+static const int16 REAPER_X1[2][14] = {
 	{ 0, -10, -20, -30, -40, -49, -49, -49, -49, -49, -49, -49, -49, -49 },
 	{ 0, 2, 6, 8, 11, 14, 17, 21, 27, 35, 43, 51, 60, 67 }
 };
-const int16 REAPER_Y1[2][14] = {
+static const int16 REAPER_Y1[2][14] = {
 	{ 0, 12, 25, 37, 45, 50, 56, 61, 67, 72, 78, 83, 89, 94 },
 	{ 0, 6, 12, 17, 23, 29, 36, 42, 49, 54, 61, 68, 73, 77 }
 };
-const int16 REAPER_X2[14] = {
+static const int16 REAPER_X2[14] = {
 	160, 152, 146, 138, 131, 124, 117, 111, 107, 105, 103, 101, 100, 97
 };
-const int16 REAPER_X3[14] = {
+static const int16 REAPER_X3[14] = {
 	0, -3, -4, -7, -9, -11, -13, -14, -13, -10, -7, -4, 0, -1
 };
 
@@ -1567,15 +1564,15 @@ void ReaperCutscene::getNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
-const int16 GOLEM_X1[2][12] = {
+static const int16 GOLEM_X1[2][12] = {
 	{ 0, -5, 0, 6, 10, 13, 17, 20, 23, 26, 29, 31 },
 	{ 0, 0, 1, 1, 1, 0, -9, -20, -21, 0, 0, 0 }
 };
-const int GOLEM_Y1[2][12] = {
+static const int GOLEM_Y1[2][12] = {
 	{ 0, 0, 0, 0, 0, 5, 10, 15, 20, 25, 30, 35 },
 	{ 0, 6, 12, 18, 24, 30, 29, 23, 25, 0, 0, 0 }
 };
-const int GOLEM_X2[2][12] = {
+static const int GOLEM_X2[2][12] = {
 	{ 160, 145, 140, 136, 130, 123, 117, 110, 103, 96, 89, 81 },
 	{ 160, 150, 141, 131, 121, 110, 91, 70, 57, 0, 0, 0 }
 };
@@ -1851,26 +1848,26 @@ void GolemCutscene::getNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
-const int16 DWARF_X0[2][13] = {
+static const int16 DWARF_X0[2][13] = {
 	{  0, -5, -7, -8, -11, -9, -3, 1, 6, 10, 15, 18, 23 },
 	{ 0, 4, 6, 8, 11, 12, 15, 17, 19, 22, 25, 0, 0 }
 };
-const int DWARF_X1[2][13] = {
+static const int DWARF_X1[2][13] = {
 	{ 160, 145, 133, 122, 109, 101, 97, 91, 86, 80, 75, 68, 63 },
 	{ 160, 154, 146, 138, 131, 122, 115, 107, 99, 92, 85, 0, 0 }
 };
-const int DWARF_X2[13] = {
+static const int DWARF_X2[13] = {
 	0, -1, -4, -7, -9, -13, -15, -18, -21, -23, -25, 0, 0
 };
-const int16 DWARF_Y[2][13] = {
+static const int16 DWARF_Y[2][13] = {
 	{ 0, 0, 4, 9, 13, 15, 20, 24, 30, 37, 45, 51, 58 },
 	{ 0, 12, 25, 36, 38, 40, 41, 42, 44, 45, 50, 0, 0 }
 };
-const int16 DWARF2_X[2][16] = {
+static const int16 DWARF2_X[2][16] = {
 	{ 0, -2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -20, -20, -20, -20, -20 },
 	{ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150 }
 };
-const int16 DWARF2_Y[2][16] = {
+static const int16 DWARF2_Y[2][16] = {
 	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 187 },
 	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 186 }
 };

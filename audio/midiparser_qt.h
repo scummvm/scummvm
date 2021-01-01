@@ -30,6 +30,14 @@
 #include "common/quicktime.h"
 
 /**
+ * @defgroup audio_midiparser_qt QT MIDI parser
+ * @ingroup audio
+ *
+ * @brief The QuickTime Music version of MidiParser class.
+ * @{
+ */
+
+/**
  * The QuickTime Music version of MidiParser.
  *
  * QuickTime Music is actually a superset of MIDI. It has its own custom
@@ -130,5 +138,5 @@ private:
 	void initCommon();
 	uint32 readUint32();
 };
-
+/** @} */
 #endif

@@ -113,6 +113,7 @@ zak	Zak McKracken and the Alien Mindbenders
 
 	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-
 	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
+	ce3edc99cd4f478c5b37104d70c68ca5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	raziel-
 
 	8299d9b8a1b0e7b881bae7a9971dc5e2	1916	en	Atari	V2	Demo	non-interactive	Fingolfin
 
@@ -145,11 +146,14 @@ indy3	Indiana Jones and the Last Crusade
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA
+	60f4faa74d802b700f6748bf136e5361	6295	ru	DOS	VGA	VGA	VGA
 
 	04687cdf7f975a89d2474929f7b80946	7552	en	FM-TOWNS	FM-TOWNS	-	v1.00 1/23/91	Fingolfin
 	3a0c35f3c147b98a2bdf8d400cfc4ab5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
 	b597e0403cc0002f69170e6caba7edd9	5361	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
+
+	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	-1	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -239,6 +243,8 @@ monkey	The Secret of Monkey Island
 	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	Demo	-	khalek
 	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	lotharsm
 	4252854e7d052cb488b520ba89c3eb6d	9135	de	DOS	SE Talkie	Unofficial SE Talkie v1.01
+	2b3744585bc6815ec55dd09f655b7a5b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
+	60c7b33000059b44465b2ce104a52285	-1	ko	DOS	CD	CD	Fan translation	ScummVM-Kor
 
 pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	v1.0 9/14/90	Fingolfin
@@ -272,6 +278,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 
 	387a544b8b10b26912d8413bab63a853	-1	en	DOS	-	Demo	non-interactive	khalek
 	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	lotharsm
+	a95baf7746f1be4985ad42126993a744	-1	ko	DOS	-	-	Fan translation	ScummVM-Kor
 
 atlantis	Indiana Jones and the Fate of Atlantis
 	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Amiga	Floppy	-	dhewg
@@ -304,6 +311,9 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	12cdc256eae5a461bcc9a49975999841	-1	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
+	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	-	RUSCUMM
+	32765851cd5ed099f8da36a4a6144c7e	-1	ko	DOS	-	CD	Fan translation	ScummVM-Kor
+	b7479cd302cd82f1cd2b5a12186d1401	12030	ru	DOS	-	Floppy	-	-
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?
@@ -329,6 +339,8 @@ tentacle	Day of the Tentacle
 	17fa250eb72dae2dad511ba79c0b6b0a	-1	fr	DOS	-	Demo	-	cyx
 	ac1642b6edfb8521ca03760126f1c250	-1	de	DOS	-	Demo	-	Simon Krumrein, sev
 	2a41b53cf1a90b6e6f26c10cc6041084	2439158	en	Mac	-	Demo	Mac bundle	Fingolfin
+	e47bcf709d7ab8470bdbfaf02d434e60	-1	ko	DOS	Floppy	Floppy	Fan translation	ScummVM-Kor
+	a4b30b29a419d49a2ab33bd4414939d1	-1	ko	All?	-	CD	Fan translation	ScummVM-Kor
 
 samnmax	Sam &amp; Max Hit the Road
 	3b301b7892f883ce42ab4be6a274fea6	-1	en	DOS	Floppy	Floppy	-	Andrea Petrucci
@@ -497,7 +509,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
-	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
+	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbj?n Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz

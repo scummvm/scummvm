@@ -26,16 +26,17 @@
 namespace BladeRunner {
 
 AIScriptOfficerLeary::AIScriptOfficerLeary(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45D5B8 = 0;
-	var_45D5BC = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
+	_idleModeRequestedWhileInTalkingState = false;
 }
 
 void AIScriptOfficerLeary::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
 	_animationStateNext = 0;
-	var_45D5B8 = 0;
-	var_45D5BC = 0;
+	_varChooseIdleAnimation = 0;
+	_idleModeRequestedWhileInTalkingState = false;
 	_animationNext = 0;
 
 	Actor_Put_In_Set(kActorOfficerLeary, kSetRC01);
@@ -126,42 +127,49 @@ bool AIScriptOfficerLeary::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 0, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetBB01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetCT11:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 5, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetMA07:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 7, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetNR01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 3, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 18, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetUG01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 11, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetUG04:
 			// fall through
 		case kSetUG05:
@@ -172,26 +180,32 @@ bool AIScriptOfficerLeary::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO Missing UG07 case -  would be a type 10 combat, 12 flee?
+
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO Missing UG09 case -  would be a type ?? //
+
 		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetUG12:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 16, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 		case kSetUG14:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
@@ -295,24 +309,34 @@ int AIScriptOfficerLeary::GetFriendlinessModifierIfGetsClue(int otherActorId, in
 	switch (clueId) {
 	case kClueMcCoyIsInsane:
 		return -6;
+
 	case kClueMcCoyIsAnnoying:
 		return -2;
+
 	case kClueMcCoyIsStupid:
 		return -5;
+
 	case kClueMcCoyRetiredLutherLance:
 		return 2;
+
 	case kClueMcCoyShotZubenInTheBack:
 		return 4;
+
 	case kClueMcCoyRetiredSadik:
 		return 4;
+
 	case kClueMcCoyRetiredGordo:
 		return 3;
+
 	case kClueMcCoyRetiredDektora:
 		return 3;
+
 	case kClueMcCoyRetiredLucy:
 		return 2;
+
 	case kClueMcCoyRetiredZuben:
 		return 3;
+
 	case kClueMcCoyLetZubenEscape:
 		return -5;
 	}
@@ -333,6 +357,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		}
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
+
 	case kGoalOfficerLearyRC01CrowdInterrogation:
 		if (Random_Query(1, 3) == 1) {
 			if ( Random_Query(1, 2) == 1
@@ -355,6 +380,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 		}
 		return true;
+
 	case kGoalOfficerLearyPoliceDoneFromRC01:
 		// kSetFreeSlotG -> kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerLeary);
@@ -362,6 +388,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Movement_Track_Append(kActorOfficerLeary, 35, 0); // kSetFreeSlotC
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
+
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	case kGoalOfficerLearyRC01ResumeWalkToCrowd:
@@ -369,9 +396,11 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask0, 4); // wait a few seconds before starting taking notes again
 		return true;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+
 	case kGoalOfficerLearyEndOfAct1:
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		return false;
+
 	case kGoalOfficerLearyVisitsBulletBob:
 		// kSetRC04
 		// Leary visits Bullet Bob shop - un-triggered
@@ -380,9 +409,11 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Movement_Track_Append(kActorOfficerLeary, 108, 0);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
+
 	case kGoalOfficerLearyStartOfAct4:
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
+
 	case kGoalOfficerLearyHuntingAroundAct4:
 //		debug("Flushing Leary movement track");
 		AI_Movement_Track_Flush(kActorOfficerLeary);
@@ -399,6 +430,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 404, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 		case 2:
 			// kSetCT11
 //			debug("leary 2 kSetCT11");
@@ -408,6 +440,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 		case 3:
 			// kSetDR01_DR02_DR04
 //			debug("leary 3 kSetDR01_DR02_DR04");
@@ -418,6 +451,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 393, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 		case 4:
 			// kSetRC03 -> kSetFreeSlotC
 //			debug("leary 4 kSetRC03 -> kSetFreeSlotC");
@@ -429,6 +463,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 		case 5:
 			// kSetBB01 -> kSetFreeSlotC
 //			debug("leary 5 kSetBB01 -> kSetFreeSlotC");
@@ -437,6 +472,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 		case 6:
 			// kSetCT11 - identical to case 2
 //			debug("leary 6 kSetCT11 - identical to case 2");
@@ -446,6 +482,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+
 #if BLADERUNNER_ORIGINAL_BUGS
 		// Gaff is waiting at MA07 and he will trigger a non-interactive dialogue with McCoy.
 		// When the police officer is there as well he will kill McCoy because player cannot control him.
@@ -471,6 +508,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+
 		case 8:
 			switch (Random_Query(1, 7)) {
 			case 1:
@@ -482,6 +520,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+
 			case 2:
 				// kSetUG14
 //				debug("leary 8-2 kSetUG14");
@@ -492,6 +531,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 536, 0);
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+
 			case 3:
 				// kSetUG04 -> kSetFreeSlotC
 //				debug("leary 8-3 kSetUG04 -> kSetFreeSlotC");
@@ -501,6 +541,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+
 			case 4:
 				// kSetUG05 -> kSetFreeSlotC
 //				debug("leary 8-4 kSetUG05 -> kSetFreeSlotC");
@@ -510,6 +551,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				break;
+
 			case 5:
 #if BLADERUNNER_ORIGINAL_BUGS
 				// kSetUG06 -> kSetFreeSlotC
@@ -537,7 +579,6 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 				// fall through
-
 			case 6:
 				// kSetUG07 -> kSetFreeSlotC
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -573,6 +614,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 				AI_Movement_Track_Repeat(kActorOfficerLeary);
 				return false;
+
 			default:
 				return false;
 			}
@@ -630,6 +672,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 //		debug("Setting Leary goal to kGoalOfficerLearyHuntingAroundAct4");
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
+
 	case kGoalOfficerLearyBlockingUG07:
 		// kSetUG07
 		AI_Movement_Track_Flush(kActorOfficerLeary);
@@ -637,6 +680,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
+
 	case 308:
 		// kSetCT01_CT12
 		// never triggered - TODO a bug? Could be related to cut McCoy's arrest from Grayford
@@ -645,6 +689,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Movement_Track_Append_Run_With_Facing(kActorOfficerLeary, 441, 0, 825);
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		return true;
+
 	case kGoalOfficerLearyStartOfAct5:
 		// kSetFreeSlotC
 		AI_Movement_Track_Flush(kActorOfficerLeary);
@@ -652,20 +697,24 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Movement_Track_Repeat(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
+
 	case kGoalOfficerLearyPoliceWait120SecondsToAttackHF05:
 		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask1);
 		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask1, 120);
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
+
 	case kGoalOfficerLearyPoliceWait60SecondsToAttackHF05:
 		AI_Countdown_Timer_Reset(kActorOfficerLeary, kActorTimerAIScriptCustomTask1);
 		AI_Countdown_Timer_Start(kActorOfficerLeary, kActorTimerAIScriptCustomTask1, 60);
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		return true;
+
 	case kGoalOfficerLearyPoliceAboutToAttackHF05:
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDummyGoalAct5);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDummyGoalAct5);
 		return false;
+
 	default:
 		return false;
 	}
@@ -674,86 +723,94 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 32:
-		*animation = 603;
+		*animation = kModelAnimationOfficerLearyPutNotepadAway;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
-			*animation = 589;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyPutNotepadAway)) {
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
 			_animationState = 0;
-			var_45D5B8 = 0;
+			_varChooseIdleAnimation = 0;
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 31:
-		*animation = 604;
+		*animation = kModelAnimationOfficerLearyTakeOutNotepad;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(604)) {
-			*animation = 601;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyTakeOutNotepad)) {
+			*animation = kModelAnimationOfficerLearyTakingNotes;
 			_animationState = 1;
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 30:
-		*animation = 587;
+		*animation = kModelAnimationOfficerLearyGotHitBack;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(587)) {
-			*animation = 589;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyGotHitBack)) {
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeIdle);
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 29:
-		*animation = 586;
+		*animation = kModelAnimationOfficerLearyGotHitFront;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(586)) {
-			*animation = 589;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyGotHitFront)) {
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeIdle);
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 28:
-		*animation = 576;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(576) - 1) {
+		*animation = kModelAnimationOfficerLearyCombatShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatShotDead) - 1) {
 			++_animationFrame;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 27:
-		*animation = 588;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(588) - 1) {
+		*animation = kModelAnimationOfficerLearyShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyShotDead) - 1) {
 			++_animationFrame;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 26:
-		*animation = 573;
+		*animation = kModelAnimationOfficerLearyCombatGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(573)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatGotHitLeft)) {
 			_animationState = 21;
 			_animationFrame = 0;
-			*animation = 571;
+			*animation = kModelAnimationOfficerLearyCombatIdle;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 25:
-		*animation = 572;
+		*animation = kModelAnimationOfficerLearyCombatGotHitRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(572)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatGotHitRight)) {
 			_animationState = 21;
 			_animationFrame = 0;
-			*animation = 571;
+			*animation = kModelAnimationOfficerLearyCombatIdle;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 24:
-		*animation = 581;
+		*animation = kModelAnimationOfficerLearyCombatFireGun;
 		++_animationFrame;
 		if (_animationFrame == 4) {
 			if (Random_Query(1, 2) == 1) {
@@ -765,151 +822,164 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 5) {
 			Actor_Combat_AI_Hit_Attempt(kActorOfficerLeary);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(581)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatFireGun)) {
 			_animationState = 21;
 			_animationFrame = 0;
-			*animation = 571;
+			*animation = kModelAnimationOfficerLearyCombatIdle;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 23:
-		*animation = 580;
+		*animation = kModelAnimationOfficerLearyCombatHolsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(580)) {
-			*animation = 589;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatHolsterGun)) {
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 22:
-		*animation = 579;
+		*animation = kModelAnimationOfficerLearyCombatUnholsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(579)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatUnholsterGun)) {
 			_animationState = 21;
 			_animationFrame = 0;
-			*animation = 571;
+			*animation = kModelAnimationOfficerLearyCombatIdle;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 21:
-		*animation = 571;
+		*animation = kModelAnimationOfficerLearyCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(571)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatIdle)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 20:
-		*animation = 571;
+		*animation = kModelAnimationOfficerLearyCombatIdle;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatIdle) - 1) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 19:
-		*animation = 600;
+		*animation = kModelAnimationOfficerLearyScratchHeadApologyTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(600)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyScratchHeadApologyTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 18:
-		*animation = 599;
+		*animation = kModelAnimationOfficerLearyHandsOnWaistTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(599)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyHandsOnWaistTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 17:
-		*animation = 598;
+		*animation = kModelAnimationOfficerLearyUrgeOrQuestionTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(598)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyUrgeOrQuestionTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 16:
-		*animation = 597;
+		*animation = kModelAnimationOfficerLearyMoreUpsetTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(597)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyMoreUpsetTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 15:
-		*animation = 596;
+		*animation = kModelAnimationOfficerLearyUpsetOrCommandTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(596)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyUpsetOrCommandTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 14:
-		*animation = 595;
+		*animation = kModelAnimationOfficerLearyWarnOrThreatenTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(595)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyWarnOrThreatenTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 13:
-		*animation = 594;
+		*animation = kModelAnimationOfficerLearyLongerExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(594)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyLongerExplainTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 12:
-		*animation = 593;
+		*animation = kModelAnimationOfficerLearyIndicateTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(593)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyIndicateTalk)) {
 			_animationState = 11;
 			_animationFrame = 0;
-			*animation = 592;
+			*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 11:
 		if (_animationFrame <= 2) {
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 			_animationState = 0;
 			_animationFrame = 0;
-			*animation = 589;
-			var_45D5B8 = Random_Query(0, 1);
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
+			_varChooseIdleAnimation = Random_Query(0, 1);
 			*frame = _animationFrame;
 			return true;
 		}
 
-		*animation = 592;
+		*animation = kModelAnimationOfficerLearyCalmExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(592)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCalmExplainTalk)) {
 			_animationFrame = 0;
-			if (var_45D5BC) {
-				var_45D5BC = 0;
+			if (_idleModeRequestedWhileInTalkingState) {
+				_idleModeRequestedWhileInTalkingState = false;
 				_animationState = 0;
 				_animationFrame = 0;
-				*animation = 589;
-				var_45D5B8 = Random_Query(0, 1);
+				*animation = kModelAnimationOfficerLearyOscillateIdle;
+				_varChooseIdleAnimation = Random_Query(0, 1);
 			} else {
 				_animationState = Random_Query(0, 8) + 11;
 			}
@@ -917,89 +987,98 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 10:
-		*animation = 578;
+		*animation = kModelAnimationOfficerLearyCombatClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(578)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatClimbStairsDown)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 9:
-		*animation = 577;
+		*animation = kModelAnimationOfficerLearyCombatClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(577)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatClimbStairsUp)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 8:
-		*animation = 575;
+		*animation = kModelAnimationOfficerLearyCombatRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(575)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatRunning)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 7:
-		*animation = 574;
+		*animation = kModelAnimationOfficerLearyCombatWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(574)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyCombatWalking)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 6:
-		*animation = 585;
+		*animation = kModelAnimationOfficerLearyClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(585)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyClimbStairsDown)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 5:
-		*animation = 584;
+		*animation = kModelAnimationOfficerLearyClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(584)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyClimbStairsUp)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 4:
-		*animation = 583;
+		*animation = kModelAnimationOfficerLearyRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(583)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyRunning)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 3:
-		*animation = 582;
+		*animation = kModelAnimationOfficerLearyWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(582)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyWalking)) {
 			_animationFrame = 0;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 2:
 		if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
-			*animation = 603;
+			*animation = kModelAnimationOfficerLearyPutNotepadAway;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyPutNotepadAway)) {
 				Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 				*animation = _animationNext;
 			}
 		} else {
-			if (var_45D5B8 == 0) {
-				*animation = 589;
+			if (_varChooseIdleAnimation == 0) {
+				*animation = kModelAnimationOfficerLearyOscillateIdle;
 			}
-			if (var_45D5B8 == 1) {
-				*animation = 590;
+			if (_varChooseIdleAnimation == 1) {
+				*animation = kModelAnimationOfficerLearyLookAroundIdle;
 			}
-			if (var_45D5B8 == 2) {
-				*animation = 591;
+			if (_varChooseIdleAnimation == 2) {
+				*animation = kModelAnimationOfficerLearyRockBackForthIdle;
 			}
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
 				_animationFrame += 3;
@@ -1019,51 +1098,54 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 1:
-		*animation = 601;
+		*animation = kModelAnimationOfficerLearyTakingNotes;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(601)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyTakingNotes)) {
 			_animationFrame = 0;
 		}
 		if (!Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 			_animationState = 32;
 			_animationFrame = 0;
-			*animation = 603;
+			*animation = kModelAnimationOfficerLearyPutNotepadAway;
 		}
 		*frame = _animationFrame;
 		return true;
+
 	case 0:
 		if ( Game_Flag_Query(kFlagOfficerLearyTakingNotes)
 		 && !Game_Flag_Query(kFlagRC01McCoyAndOfficerLearyTalking)) {
 			_animationState = 31;
 			_animationFrame = 0;
-			*animation = 604;
-		} else if (var_45D5B8 == 1) {
-			*animation = 590;
+			*animation = kModelAnimationOfficerLearyTakeOutNotepad;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationOfficerLearyLookAroundIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(590)) {
-				var_45D5B8 = Random_Query(0, 2);
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyLookAroundIdle)) {
+				_varChooseIdleAnimation = Random_Query(0, 2);
 				_animationFrame = 0;
 			}
-		} else if (var_45D5B8 == 2) {
-			*animation = 591;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationOfficerLearyRockBackForthIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(591)) {
-				var_45D5B8 = Random_Query(0, 2);
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyRockBackForthIdle)) {
+				_varChooseIdleAnimation = Random_Query(0, 2);
 				_animationFrame = 0;
 			}
-		} else if (var_45D5B8 == 0) {
-			*animation = 589;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationOfficerLearyOscillateIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(589)) {
-				var_45D5B8 = Random_Query(0, 2);
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerLearyOscillateIdle)) {
+				_varChooseIdleAnimation = Random_Query(0, 2);
 				_animationFrame = 0;
 			}
 		}
 		*frame = _animationFrame;
 		return true;
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		*frame = _animationFrame;
 		return true;
 	}
@@ -1076,50 +1158,67 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 21:
+			// fall through
 		case 24:
 			_animationState = 23;
 			_animationFrame = 0;
 			break;
+
 		case 20:
 			v1 = _animationFrame;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, kAnimationModeCombatIdle);
 			_animationFrame = v1;
 			_animationState = 21;
 			break;
+
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
-			var_45D5BC = 1;
+			_idleModeRequestedWhileInTalkingState = true;
 			break;
+
 		case 0:
+			// fall through
 		case 23:
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
-			var_45D5B8 = Random_Query(0, 1);
+			_varChooseIdleAnimation = Random_Query(0, 1);
 			break;
 		}
 		break;
+
 	case kAnimationModeWalk:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeRun:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 11;
-			_animationNext = 592;
+			_animationNext = kModelAnimationOfficerLearyCalmExplainTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
@@ -1127,156 +1226,177 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		else if (_animationState > 19) {
 			_animationState = 11;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 24:
 			break;
+
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
 			_animationState = 21;
 			_animationFrame = 0;
 			break;
+
 		case 0:
 			_animationState = 22;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 21;
 			_animationFrame = 0;
 			break;
 		}
 		break;
+
 	case kAnimationModeCombatAttack:
 		_animationState = 24;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatWalk:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatRun:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 12;
-			_animationNext = 593;
+			_animationNext = kModelAnimationOfficerLearyIndicateTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 12;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 13:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 13;
-			_animationNext = 594;
+			_animationNext = kModelAnimationOfficerLearyLongerExplainTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 13;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 14:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 14;
-			_animationNext = 595;
+			_animationNext = kModelAnimationOfficerLearyWarnOrThreatenTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 14;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 15:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 15;
-			_animationNext = 596;
+			_animationNext = kModelAnimationOfficerLearyUpsetOrCommandTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 15;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 16:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 16;
-			_animationNext = 597;
+			_animationNext = kModelAnimationOfficerLearyMoreUpsetTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 16;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 17:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 17;
-			_animationNext = 598;
+			_animationNext = kModelAnimationOfficerLearyUrgeOrQuestionTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 17;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 18:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 18;
-			_animationNext = 599;
+			_animationNext = kModelAnimationOfficerLearyHandsOnWaistTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 18;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 19:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 19;
-			_animationNext = 600;
+			_animationNext = kModelAnimationOfficerLearyScratchHeadApologyTalk;
 			if (Game_Flag_Query(kFlagOfficerLearyTakingNotes)) {
 				_animationFrame = 0;
 			}
 		} else if (_animationState > 19) {
 			_animationState = 19;
 			_animationFrame = 0;
-			var_45D5BC = 0;
+			_idleModeRequestedWhileInTalkingState = false;
 		}
 		break;
+
 	case 21:
 		if (_animationState == 24) {
 			if (Random_Query(0, 1)) {
@@ -1294,6 +1414,7 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 22:
 		if (Random_Query(0, 1)) {
 			_animationState = 25;
@@ -1302,28 +1423,35 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		}
 		_animationFrame = 0;
 		break;
+
 	case 27:
 		Game_Flag_Reset(kFlagOfficerLearyTakingNotes);
 		break;
+
 	case 28:
 		Game_Flag_Set(kFlagOfficerLearyTakingNotes);
 		break;
+
 	case kAnimationModeWalkUp:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeWalkDown:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatWalkUp:
 		_animationState = 9;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatWalkDown:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeDie:
 		if (_animationState == 24) {
 			_animationState = 28;
@@ -1333,6 +1461,7 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 58:
 		_animationState = 20;
 		_animationFrame = 0;

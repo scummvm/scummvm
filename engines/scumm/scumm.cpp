@@ -72,6 +72,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/imuse/sysex.h"
+#include "scumm/he/localizer.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
@@ -123,6 +124,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
 	  _rnd("scumm")
 	  {
+
+	_localizer = nullptr;
 
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -323,7 +326,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_msgCount = 0;
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
+	_existLanguageFile = false;
+	_languageBuffer = 0;
+	_numTranslatedLines = 0;
+	_translatedLines = 0;
+	_languageLineIndex = 0;
 	_2byteFontPtr = 0;
+	_2byteWidth = 0;
+	_2byteHeight = 0;
+	_2byteShadow = 0;
 	_krStrPost = 0;
 	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
@@ -617,8 +628,12 @@ ScummEngine::~ScummEngine() {
 
 	delete[] _sortedActors;
 
+	delete[] _languageBuffer;
+	delete[] _translatedLines;
+	delete[] _languageLineIndex;
+
 	if (_2byteFontPtr && !_useMultiFont)
-		delete _2byteFontPtr;
+		delete[] _2byteFontPtr;
 	for (int i = 0; i < 20; i++)
 		if (_2byteMultiFontPtr[i])
 			delete _2byteMultiFontPtr[i];
@@ -1324,6 +1339,14 @@ Common::Error ScummEngine::init() {
 				_system->fillScreen(0x1d);
 			}
 	}
+
+#ifdef ENABLE_HE
+	Localizer *loc = new Localizer();
+	if (!loc->isValid())
+		delete loc;
+	else
+		_localizer = loc;
+#endif
 
 	_outputPixelFormat = _system->getScreenFormat();
 

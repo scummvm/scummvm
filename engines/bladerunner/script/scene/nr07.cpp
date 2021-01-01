@@ -90,7 +90,12 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 
 		case 1090: // EARLY-Q
 			Actor_Says(kActorMcCoy, 3650, 13);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorDektora, 630, 30);
+#else
+			// Dektora is interrupted here
+			Actor_Says_With_Pause(kActorDektora, 630, 0.0f, 30);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 3655, 16);
 			Actor_Says(kActorDektora, 640, 31);
 			break;
@@ -224,7 +229,12 @@ void SceneScriptNR07::callHolloway() {
 	Actor_Says(kActorMcCoy, 3760, 19);
 	Actor_Says(kActorDektora, 960, kAnimationModeSit);
 	Actor_Says(kActorDektora, 920, kAnimationModeSit);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3780, kAnimationModeIdle);
+#else
+	// McCoy is interrupted here
+	Actor_Says_With_Pause(kActorMcCoy, 3780, 0.0f, kAnimationModeIdle);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorDektora, 970, kAnimationModeSit);
 	Actor_Voice_Over(1710, kActorVoiceOver);
 	Actor_Voice_Over(1720, kActorVoiceOver);
@@ -314,7 +324,12 @@ void SceneScriptNR07::talkAboutBelt2() {
 		Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -1);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorDektora, 610, 31);
+#else
+	// Dektora is interrupted here
+	Actor_Says_With_Pause(kActorDektora, 610, 0.0f, 31);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3645, 12);
 	Actor_Says(kActorDektora, 620, 30);
 

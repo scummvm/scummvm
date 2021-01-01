@@ -122,8 +122,15 @@ public:
 	}
 
 	uint32 getFrameNum() const {
-		return _frameNum;
+		return _tickNum / TICKS_PER_FRAME;
 	};
+	uint32 getTickNum() const {
+		return _tickNum;
+	};
+
+	static const uint32 TICKS_PER_FRAME;
+	static const uint32 TICKS_PER_SECOND;
+	static const uint32 FRAMES_PER_SECOND;
 
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
@@ -139,7 +146,7 @@ private:
 
 	bool _loading;
 
-	uint32 _frameNum;
+	uint32 _tickNum;
 	unsigned int _paused;
 	bool _frameByFrame;
 

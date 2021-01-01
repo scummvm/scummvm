@@ -23,6 +23,7 @@
 #include "glk/comprehend/game_opcodes.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/debugger.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -44,6 +45,9 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 	byte opcode = getOpcode(instr);
 	switch (_opcodeMap[opcode]) {
 	case OPCODE_CALL_FUNC:
+	case OPCODE_CALL_FUNC2:
+		// Note: CALL_FUNC2 in the original did some extra backing of data which is
+		// redundant in the ScummVM version, so it can be handled the same as CALL_FUNC.
 		index = instr->_operand[0];
 		if (instr->_operand[1] == 0x81)
 			index += 256;
@@ -263,7 +267,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 
 	case OPCODE_SPECIAL:
 		// Game specific opcode
-		handleSpecialOpcode(instr->_operand[0]);
+		_specialOpcode = instr->_operand[0];
 		break;
 
 	case OPCODE_TAKE_CURRENT_OBJECT:
@@ -471,8 +475,12 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 	case OPCODE_INVENTORY_FULL:
 		item = get_item_by_noun(noun);
 
-		func_set_test_result(func_state, _variables[VAR_INVENTORY_WEIGHT] +
+		if (g_debugger->_invLimit)
+			func_set_test_result(func_state, _variables[VAR_INVENTORY_WEIGHT] +
 			(item->_flags & ITEMF_WEIGHT_MASK) > _variables[VAR_INVENTORY_LIMIT]);
+		else
+			// Allow for an unlimited number of items in inventory
+			func_set_test_result(func_state, false);
 		break;
 
 	case OPCODE_OBJECT_NOT_PRESENT:
@@ -702,6 +710,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x95] = OPCODE_CLEAR_WORD;
+	_opcodeMap[0x96] = OPCODE_CALL_FUNC2;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x9a] = OPCODE_SET_WORD;
@@ -741,6 +750,11 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 	Room *room = get_room(_currentRoom);
 	Item *item;
 
+	// In case a single opcode is being executed outside of a function, use a dummy function state
+	FunctionState dummyState;
+	if (!func_state)
+		func_state = &dummyState;
+
 	if ((instr->_opcode & 0x30) == 0x30) {
 		// First operand comes from entered sentence noun, shifting out existing operands
 		instrCopy = *instr;
@@ -764,6 +778,7 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 
 	case OPCODE_DRAW_ROOM:
 		g_comprehend->drawLocationPicture(instr->_operand[0] - 1);
+		g_comprehend->readChar();
 		break;
 
 	case OPCODE_INVENTORY_FULL:

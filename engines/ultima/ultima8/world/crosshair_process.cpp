@@ -24,11 +24,15 @@
 
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
 #include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
+
+#include "common/math.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,20 +55,22 @@ void CrosshairProcess::run() {
 	if (mainactor->isInCombat()) {
 		Kernel *kernel = Kernel::get_instance();
 		assert(kernel);
-		int32 cx, cy, cz, ax, ay, az;
-		mainactor->getCentre(cx, cy, cz);
-		mainactor->getFootpadWorld(ax, ay, az);
-		// TODO: Make a fine adjustment for avatar height (eg, when crouching)
-		// for now just put it at 3/4 avatar height which is about right.
-		cz += az / 4;
-		// TODO: Get the fine angle of the avatar once that is implemented.
-		uint16 dir = (mainactor->getDir() + 4) % 16;
-		// Dir is 0~7, convert to 0~15/8*pi
-		float angle = (3.14 * dir / 8.0);
-		float xoff = CROSSHAIR_DIST * cos(angle);
-		float yoff = CROSSHAIR_DIST * sin(angle);
-		cx -= static_cast<int32>(xoff);
-		cy -= static_cast<int32>(yoff);
+		int32 ax, ay, az;
+		mainactor->getLocation(ax, ay, az);
+		mainactor->addFireAnimOffsets(ax, ay, az);
+
+		const CruAvatarMoverProcess *mover = dynamic_cast<CruAvatarMoverProcess *>(Ultima8Engine::get_instance()->getAvatarMoverProcess());
+		if (!mover) {
+			warning("lost CruAvatarMoverProcess!");
+			return;
+		}
+		double angle = mover->getAvatarAngleDegrees() + 90.0;
+		// Convert angle to 0~2pi
+		double rads = Common::deg2rad(angle);
+		float xoff = CROSSHAIR_DIST * cos(rads);
+		float yoff = CROSSHAIR_DIST * sin(rads);
+		ax -= static_cast<int32>(xoff);
+		ay -= static_cast<int32>(yoff);
 
 		Item *item;
 		if (_itemNum) {
@@ -76,7 +82,7 @@ void CrosshairProcess::run() {
 			setItemNum(item->getObjId());
 		}
 		assert(item);
-		item->move(cx, cy, cz);
+		item->move(ax, ay, az);
 	} else {
 		if (_itemNum) {
 			Item *item = getItem(_itemNum);

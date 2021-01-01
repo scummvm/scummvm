@@ -94,8 +94,7 @@ void SoundFlex::cache(uint32 index) {
 	if (!buf || !size) return;
 
 	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
-		// After the 32 byte header, ASFX (crusader audio) is just raw data
-		// TODO: Check if No Regret is Stereo and/or 16 bit?
+		// After the 32 byte header, ASFX (crusader audio) is just raw 11025 data
 		const SoundFlexEntry &entry = _index[index];
 		debug(6, "SoundFlex: Playing sfx %d (%s) with data 0x%04X", index, entry._name.c_str(), entry._data);
 		_samples[index] = new RawAudioSample(buf + 32, size - 32, 11025, true, false);

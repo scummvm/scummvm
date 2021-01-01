@@ -29,7 +29,6 @@
 #include <shlobj.h>
 
 #include "common/scummsys.h"
-#include "common/translation.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,

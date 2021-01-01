@@ -206,7 +206,7 @@ int DarkMoonEngine::mainMenuLoop() {
 	int sel = -1;
 	do {
 		_screen->setScreenDim(6);
-		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0);
+		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 
 		while (sel == -1 && !shouldQuit()) {
@@ -227,7 +227,7 @@ void DarkMoonEngine::townsUtilitiesMenu() {
 	_screen->copyRegion(78, 99, 78, 99, 172, 43, 2, 0, Screen::CR_NO_P_CHECK);
 	int sel = -1;
 	do {
-		_gui->simpleMenu_setup(8, 0, _utilMenuStrings, -1, 0, 0);
+		_gui->simpleMenu_setup(8, 0, _utilMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 		while (sel == -1 && !shouldQuit()) {
 			sel = _gui->simpleMenu_process(8, _utilMenuStrings, 0, -1, 0);

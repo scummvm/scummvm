@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 AIScriptPhotographer::AIScriptPhotographer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
-	_var2 = 0;
-	_flag = false;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	_var2 = 0; // is always set to 0, never checked, unused
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptPhotographer::Initialize() {
@@ -36,9 +36,9 @@ void AIScriptPhotographer::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var2 = 0;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 bool AIScriptPhotographer::Update() {
@@ -199,82 +199,91 @@ bool AIScriptPhotographer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 745;
+		*animation = kModelAnimationPhotographerIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(745)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 744;
+		*animation = kModelAnimationPhotographerWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(744)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 747;
-		if (_animationFrame == 0
-		 && _flag
-		) {
-			*animation = 745;
+		*animation = kModelAnimationPhotographerCalmTalk;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationPhotographerIdle;
 			_animationState = 0;
 			_var2 = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(747)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 749;
+#if BLADERUNNER_ORIGINAL_BUGS
+		// TODO A bug? This is identical to case 4 for animation 749, but 748 talk animation is left unused
+		*animation = kModelAnimationPhotographerExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(749)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 747;
+			*animation = kModelAnimationPhotographerCalmTalk;
 		}
+#else
+		*animation = kModelAnimationPhotographerMoreHeadMoveTalk;
+		++_animationFrame;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerMoreHeadMoveTalk)) {
+			_animationFrame = 0;
+			_animationState = 2;
+			*animation = kModelAnimationPhotographerCalmTalk;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 4:
-		*animation = 749;
+		*animation = kModelAnimationPhotographerExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(749)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 747;
+			*animation = kModelAnimationPhotographerCalmTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 750;
+		*animation = kModelAnimationPhotographerSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(750)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerSuggestTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 747;
+			*animation = kModelAnimationPhotographerCalmTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 746;
+		*animation = kModelAnimationPhotographerTakingAPhoto;
 		if (_animationFrame == 11) {
 			Ambient_Sounds_Play_Sound(kSfxCAMCOP1, 80, -20, -20, 20);
 		}
-		if (_var1) {
-			--_var1;
+		if (_varNumOfTimesToHoldCurrentFrame) {
+			--_varNumOfTimesToHoldCurrentFrame;
 		} else {
 			++_animationFrame;
 			if (_animationFrame == 10) {
-				_var1 = 5;
+				_varNumOfTimesToHoldCurrentFrame = 5;
 			}
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(746)) {
-				*animation = 745;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationPhotographerTakingAPhoto)) {
+				*animation = kModelAnimationPhotographerIdle;
 				_animationState = 0;
 				_animationFrame = 0;
 				Actor_Change_Animation_Mode(kActorPhotographer, kAnimationModeIdle);
@@ -298,7 +307,7 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 			_var2 = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		}
 		break;
 
@@ -312,28 +321,28 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 		_animationState = 2;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 3;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 43:

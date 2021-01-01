@@ -922,7 +922,7 @@ reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Commo
 
 	switch (style & 0xF) {
 	case kMessageBoxOK:
-		result = showMessageBox(message, _("OK"), Common::U32String(""), 1, 1);
+		result = showMessageBox(message, _("OK"), Common::U32String(), 1, 1);
 	break;
 	case kMessageBoxYesNo:
 		result = showMessageBox(message, _("Yes"), _("No"), 6, 7);

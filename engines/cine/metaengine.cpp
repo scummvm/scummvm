@@ -54,10 +54,7 @@ public:
 		return "cine";
 	}
 
-    Common::Error createInstance(OSystem *syst, Engine **engine) const override {
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -86,12 +83,9 @@ bool Cine::CineEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)desc;
-	if (gd) {
-		*engine = new Cine::CineEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Cine::CineEngine(syst, (const Cine::CINEGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList CineMetaEngine::listSaves(const char *target) const {

@@ -241,8 +241,9 @@ endif
 
 ifdef AMIGAOS
 MODULE_OBJS += \
-	fs/amigaos4/amigaos4-fs.o \
-	fs/amigaos4/amigaos4-fs-factory.o \
+	dialogs/amigaos/amigaos-dialogs.o \
+	fs/amigaos/amigaos-fs.o \
+	fs/amigaos/amigaos-fs-factory.o \
 	midi/camd.o
 endif
 
@@ -298,6 +299,11 @@ MODULE_OBJS += \
 	events/gph/gph-events.o \
 	graphics/gph/gph-graphics.o \
 	graphics/downscalesdl/downscalesdl-graphics.o
+endif
+
+ifdef IPHONE
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
 endif
 
 ifeq ($(BACKEND),maemo)

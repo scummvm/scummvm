@@ -45,7 +45,7 @@ class UIDropDown : public UIComponent {
 	static const int   kDropDownButtonShapeHeight  =  10;
 	static const uint8 kFrameRectPaddingPx         =   2;
 	static const int   kFurthestLeftForScrollBar   = 495;
-	
+
 	static const Color256 kColors[];
 
 	int            _controlLeftX;
@@ -57,8 +57,8 @@ class UIDropDown : public UIComponent {
 	Common::String _lineSelectedStr;
 	UIScrollBox   *_lineSelectorScrollBox;
 	UIImagePicker *_lineDropdownBtn;
-	int            _lineDropdownBtnTopY;
-	int            _lineDropdownBtnHeight;
+	//int            _lineDropdownBtnTopY;
+	//int            _lineDropdownBtnHeight;
 
 	Common::Rect   _lineSelectorFrameRect;
 	int            _lineSelectorFrameRectColor;

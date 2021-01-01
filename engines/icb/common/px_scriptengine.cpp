@@ -42,7 +42,7 @@ CpxGlobalScriptVariables g_globalScriptVariables;
 
 // Information for the script program stack
 #define STACK_SIZE 10  // The size of the stack
-int stack[STACK_SIZE]; // The current stack
+int32 stack[STACK_SIZE]; // The current stack
 int stackPointer = 0;  // Position within stack
 
 #define _SCRIPT_ENGINE_ERROR(mess) Fatal_error("Script engine error\nObject %s\nScript %s\nMessage %s", object->GetName(), scriptSourceName, mess)

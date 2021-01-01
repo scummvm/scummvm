@@ -29,9 +29,24 @@ namespace Glk {
 namespace Comprehend {
 
 class TalismanGame : public ComprehendGameV2 {
+private:
+	Common::String _savedAction;
+private:
+	/**
+	 * Load strings from the executable
+	 */
+	void loadStrings();
 public:
 	TalismanGame();
 	~TalismanGame() override {}
+
+	void playGame() override;
+	void beforeGame() override;
+	void beforeTurn() override;
+	void beforePrompt() override;
+	void afterPrompt() override;
+	void handleAction(Sentence *sentence) override;
+	void handleSpecialOpcode() override;
 };
 
 } // namespace Comprehend

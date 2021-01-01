@@ -119,7 +119,7 @@ private:
 
 	void drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling);
 
-	void drawChar(const char charIndex);
+	void drawChar(const uint16 charIndex);
 	void drawText(const uint index, uint length);
 
 	/**
@@ -246,7 +246,7 @@ public:
 	/**
 	 * Gets the width of a character.
 	 */
-	uint16 getCharWidth(const char charIndex, const bool doScaling) const;
+	uint16 getCharWidth(const uint16 charIndex, const bool doScaling) const;
 
 	/**
 	 * Retrieves the width and height of a block of text.
@@ -282,6 +282,9 @@ public:
 	 * line. Originally FontMgr::DrawOneLine and FontMgr::UpOneLine.
 	 */
 	void scrollLine(const Common::String &textLine, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir);
+
+	bool SwitchToFont1001OnKorean(const char *text);
+
 };
 
 } // End of namespace Sci

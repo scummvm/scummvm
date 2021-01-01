@@ -25,8 +25,9 @@
 namespace BladeRunner {
 
 AIScriptEarlyQBartender::AIScriptEarlyQBartender(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
-	_var1 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
 	_var2 = 1;
 }
 
@@ -36,8 +37,8 @@ void AIScriptEarlyQBartender::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
-	_var1 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	_varChooseIdleAnimation = 0;
 	_var2 = 1;
 
 	Actor_Put_In_Set(kActorEarlyQBartender, kSetNR05_NR08);
@@ -103,8 +104,8 @@ bool AIScriptEarlyQBartender::GoalChanged(int currentGoalNumber, int newGoalNumb
 bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var1 == 1) {
-			*animation = 753;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationEarlyQBartenderWipingTable;
 			if (_animationFrame <= 5) {
 				_var2 = 1;
 			}
@@ -113,63 +114,74 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 				_var2 = -1;
 			}
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(753)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderWipingTable)) {
 				_animationFrame = 0;
-				_var1 = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (_var1 == 0) {
-			*animation = 752;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationEarlyQBartenderWipingGlassIdle;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(752)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderWipingGlassIdle)) {
 				_animationFrame = 0;
 
 				if (!Random_Query(0, 6)) {
-					_var1 = 1;
+					_varChooseIdleAnimation = 1;
 				}
 			}
 		}
 		break;
 
 	case 1:
-		*animation = 755;
+		*animation = kModelAnimationEarlyQBartenderCalmTalk;
 
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(755)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 2:
-		*animation = 757;
+#if BLADERUNNER_ORIGINAL_BUGS
+		// TODO A bug? This is identical to case 3 for animation 757, but 756 talk animation is left unused
+		*animation = kModelAnimationEarlyQBartenderDescribeTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(757)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderDescribeTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 755;
+			*animation = kModelAnimationEarlyQBartenderCalmTalk;
 		}
+#else
+		*animation = kModelAnimationEarlyQBartenderExplainTalk;
+		++_animationFrame;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderExplainTalk)) {
+			_animationFrame = 0;
+			_animationState = 1;
+			*animation = kModelAnimationEarlyQBartenderCalmTalk;
+		}
+#endif
 		break;
 
 	case 3:
-		*animation = 757;
+		*animation = kModelAnimationEarlyQBartenderDescribeTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(757)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderDescribeTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 755;
+			*animation = kModelAnimationEarlyQBartenderCalmTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 754;
+		*animation = kModelAnimationEarlyQBartenderPuttingAGlassOnTable;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(754)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationEarlyQBartenderPuttingAGlassOnTable)) {
 			Actor_Change_Animation_Mode(kActorEarlyQBartender, kAnimationModeIdle);
-			*animation = 752;
+			*animation = kModelAnimationEarlyQBartenderWipingGlassIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
@@ -188,26 +200,26 @@ bool AIScriptEarlyQBartender::ChangeAnimationMode(int mode) {
 	case 0:
 		_animationState = 0;
 		_animationFrame = 0;
-		_var1 = 0;
+		_varChooseIdleAnimation = 0;
 		_var2 = 1;
 		break;
 
 	case 3:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 23:

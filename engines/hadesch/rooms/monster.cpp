@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/rooms/monster.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 enum {
@@ -35,6 +36,12 @@ enum {
 
 static const char *kZeusLight = "V7100BJ0";
 static const int kLightningCutoff = kVideoWidth / 2;
+
+TranscribedSound revitalisedSound() {
+	return g_vm->getRnd().getRandomBit()
+		? TranscribedSound::make("v7150wd0", "Your branch of life is revitalized")
+		: TranscribedSound::make("v7150we0", "You're back to full strength");
+}
 
 class MonsterHandler : public Handler {
 public:
@@ -76,7 +83,7 @@ public:
 			break;
 			
 		case 15351:
-			room->playAnimWithSound(kZeusLight, "G0260MA0", kZeusLightZ,
+			room->playAnimWithMusic(kZeusLight, "G0260MA0", kZeusLightZ,
 						PlayAnimParams::keepLastFrame().partial(0, 4),
 						15379); // 15379(anim), 15381(-1), 15359(sound)
 			break;
@@ -89,7 +96,10 @@ public:
 				       15358);
 			break;
 		case 15355:
-			room->playSkippableSound("V7100WC0", 15364);
+			room->playSpeech(TranscribedSound::make("V7100WC0",
+							  "I'm giving you these thunderbolts to "
+							  "use against Hades' monsters."),
+					 15364);
 			g_vm->getHeroBelt()->setThunderboltFrame(kLightning2);
 			g_vm->addTimer(526, 5000);
 			break;
@@ -97,9 +107,10 @@ public:
 			room->playVideo("V7180BB0", 0, 15361, Common::Point(0, 216));
 			break;
 		case 15357:
-			room->playSkippableSound(g_vm->getRnd().getRandomBit()
-						 ? "V7150WC0" : "V7150WB0",
-						 15353);
+			room->playSpeech(g_vm->getRnd().getRandomBit()
+					 ? TranscribedSound::make("V7150WC0", "Get back in there. Here is another branch")
+					 : TranscribedSound::make("V7150WB0", "Here's another branch. Keep going"),
+					 15353);
 			break;
 		case 15358:
 			switch (_battleground->_monsterNum) {
@@ -118,24 +129,44 @@ public:
 			g_vm->addTimer(15391, 100);
 			break;
 		case 15364:
-			room->playSkippableSound("V7100WD0", 15365);
+			room->playSpeech(TranscribedSound::make(
+					     "V7100WD0",
+					     "Ah, and this branch of life will let "
+					     "you to remain in the underworld until "
+					     "all of its leaves have fallen"),
+				15365);
 			_battleground->_leavesRemaining = 9;
 			g_vm->getHeroBelt()->setBranchOfLifeFrame(1);
 			g_vm->addTimer(524, 5000);
 			break;
 		case 15365:
-			room->playSkippableSound("V7100WE0", 15366);
+			room->playSpeech(TranscribedSound::make(
+						 "V7100WE0",
+						 "Use your thunderbolts and your hero powers "
+						 "to battle the monsters of the underworld"), 15366);
 			_countOfIntroLightning = 0;
 			introLightning();
 			break;
 		case 15366:
-			room->playSkippableSound("V7100WF0", 15367);
+			room->playSpeech(TranscribedSound::make(
+						 "V7100WF0",
+						 "Move your mouse to aim and click to fire your thunderbolts. "
+						 "And don't forget: you can now use your hero powers"),
+					 15367);
 			break;
 		case 15367:
-			room->playSkippableSound("V7100WH0", 15368);
+			room->playSpeech(TranscribedSound::make(
+						 "V7100WH0",
+						 "And remember to keep an eye on your branch. "
+						 "When the last leaf drops, you'll be "
+						 "banished from the underworld"),
+					 15368);
 			break;
 		case 15368:
-			room->playSkippableSound("V7100WI0", 15369);
+			room->playSpeech(TranscribedSound::make(
+						 "V7100WI0",
+						 "This is the ultimate test but I know you can do it"),
+					 15369);
 			break;
 		case 15369:
 			room->playAnim(kZeusLight, kZeusLightZ,
@@ -147,13 +178,12 @@ public:
 				introLightning();
 			break;
 		case 15374:
-			room->playAnimWithSound(kZeusLight, "G0260MA0", kZeusLightZ,
+			room->playAnimWithMusic(kZeusLight, "G0260MA0", kZeusLightZ,
 						PlayAnimParams::keepLastFrame().partial(0, 4),
 						15375);
 			break;
 		case 15375:
-			room->playSound(g_vm->getRnd().getRandomBit() ? "v7150wd0" : "v7150we0",
-				15376);
+			room->playSpeech(revitalisedSound(), 15376);
 			replenishPowers();
 			break;
 		case 15376:
@@ -168,8 +198,7 @@ public:
 			handleEvent(15390);
 			break;
 		case 15379:
-			room->playSound(g_vm->getRnd().getRandomBit() ? "v7150wd0" : "v7150we0",
-				15380);
+			room->playSpeech(revitalisedSound(), 15380);
 			replenishPowers();
 			break;
 		case 15380:
@@ -192,16 +221,57 @@ public:
 			}
 			break;
 		case 15386:
-			room->playSound(persistent->_gender == kMale ? "V7190WB0" : "V7190WC0", 15374);
+			// unclear
+			room->playSpeech(
+				persistent->_gender == kMale
+				? TranscribedSound::make(
+					"V7190WB0",
+					"One more word out of your goat-brain "
+					"and I'm gonna have your face for lambchops, alright? "
+					"This kid's gonna have to make it on his own, ok?")
+				: TranscribedSound::make(
+					"V7190WC0",
+					"One more word out of your goat-brain "
+					"and I'm gonna have your face for lambchops, ok? "
+					"This kid's gonna have to make it on her own."),
+				15374);
 			break;
 		case 15387:
-			room->playSound(persistent->_gender == kMale ? "V7210WB0" : "V7210WC0", 15378);
+			room->playSpeech(
+				persistent->_gender == kMale
+				? TranscribedSound::make(
+					"V7210WB0",
+					"Oh, you want to be a hero? "
+					"Well you're gonna die a hero's death. "
+					"Typhoon's gonna chew you up in little "
+					"pieces and spit you out like a meatgrinder, kid")
+				: TranscribedSound::make(
+					"V7210WC0",
+					"Oh, you want to be a heroine? "
+					"Well you're gonna die a gruesome death. "
+					"Typhoon's gonna chew you up in little "
+					"pieces and spit you out like a meatgrinder, little princess."),
+				15378);
 			break;
 		case 15388:
-			room->playSound("V7220WB1", 15382);
+			room->playSpeech(TranscribedSound::make(
+						 "V7220WB1",
+						 "You dare to think you can outwit me? "
+						 "You, my little friend, will be ripped to shreads and slowly digested for eternity "
+						 "inside a belly of a thousand hideous creatures. You will die a thousand agonizing "
+						 "deaths as I now bring down upon you all the forces of Hades."),
+				15382);
 			break;
 		case 15389:
-			room->playSound("V7180WB0", 15361);
+			// unclear
+			room->playSpeech(TranscribedSound::make(
+						 "V7180WB0",
+						 "Hey, there. Hi, there. Hoi, there. "
+						 "And welcome to my world. "
+						 "You know what they say: \"My world - my rules\". "
+						 "So here is the rule number one: No trespassing. "
+						 "My bouncer will show you the way out. Have a nice day"),
+					 15361);
 			break;
 		case 15390:
 			_typhoon->enterTyphoon(1);
@@ -222,7 +292,7 @@ public:
 			if (_battleground->_leavesRemaining <= 0) {
 				_battleground->stopFight();
 				room->disableMouse();
-				room->playAnimWithSound(kZeusLight, "G0260MA0", kZeusLightZ,
+				room->playAnimWithMusic(kZeusLight, "G0260MA0", kZeusLightZ,
 							PlayAnimParams::keepLastFrame().partial(0, 4),
 							15357);
 			}
@@ -239,7 +309,7 @@ public:
 
 		room->disableMouse();
 		_battleground->_monsterNum = kCyclops;
-		room->playAnimWithSound(kZeusLight, "G0260MA0", kZeusLightZ,
+		room->playAnimWithMusic(kZeusLight, "G0260MA0", kZeusLightZ,
 					PlayAnimParams::keepLastFrame().partial(0, 4),
 					15355);
 	}
@@ -268,16 +338,16 @@ public:
 		if (!_playingShootingSound) {
 			switch (hp) {
 			case kPowerStealth:
-				room->playSound("v7130ea0");
+				room->playSFX("v7130ea0");
 				break;
 			case kPowerStrength:
-				room->playSound("v7130eb0");
+				room->playSFX("v7130eb0");
 				break;
 			case kPowerWisdom:
-				room->playSound("v7130ec0");
+				room->playSFX("v7130ec0");
 				break;
 			case kPowerNone:
-				room->playSound("v7130ee0");
+				room->playSFX("v7130ee0");
 				break;
 			}
 			_playingShootingSound = true;
@@ -316,7 +386,7 @@ private:
 			room->playAnim("v7130ba1", 300, PlayAnimParams::disappear(), 15370,
 				       target - Common::Point(kLightningCutoff, 0));
 		}
-		room->playSound("v7130eb0");
+		room->playSFX("v7130eb0");
 	}
 
 	bool _playingShootingSound;

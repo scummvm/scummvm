@@ -37,53 +37,66 @@ print("""
 namespace Sci {
 """)
 
+def Chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
 def ModToIndex(m):
   try:
-    return M.index(m)
+    return Mods.index(m)
   except ValueError:
-    M.append(m)
-    return len(M)-1
+    Mods.append(m)
+    return len(Mods)-1
 
 def PrintMods():
-  L = [ "\t{ " + ", ".join( [ "%4d" % (round(128 * (val - 1)),) for val in m ] )  + " }" for m in M ]
+  L = [ "\t{ " + ", ".join( [ "%4d" % (round(128 * (val - 1)),) for val in m ] )  + " }" for m in Mods ]
   print("static const PaletteMod paletteMods" + GID + "[] = {")
   print( ",\n".join(L) )
   print("};")
 
-def PrintPic(pic):
-  print("static void doCustomPic" + GID + "(GfxScreen *screen, int x) {")
-  print("\tbyte val = 0;")
-  print(pic)
-  print("\tif (val)")
-  print("\t\tscreen->setCurPaletteMapValue(val);")
-  print("}")
+def PrintPic(pics, comments):
+  print("static const PicMod picMods" + GID + "[] = {")
 
-def PrintView(view):
-  print("static void doCustomView" + GID + "(GfxScreen *screen, int x, int y, int z) {")
-  print("\tbyte val = 0;")
-  print(view)
-  print("\tif (val)")
-  print("\t\tscreen->setCurPaletteMapValue(val);")
-  print("}")
+  for comment in comments:
+    print("\t// " + comment)
 
-def ParseList(l, v):
+  for chunk in Chunker(pics, 5):
+    t = ""
+    for pic in chunk:
+      t = t + "{ " + str(pic[0]).rjust(3, ' ') + ", " + str(pic[1]).rjust(2, ' ') + " }, "
+    print("\t" + t)
+
+  print("};")
+
+def PrintView(views, comments):
+  print("static const ViewMod viewMods" + GID + "[] = {")
+
+  for comment in comments:
+    print("\t// " + comment)
+
+  for chunk in Chunker(views, 5):
+    t = ""
+    for view in chunk:
+      t = t + "{ " + str(view[0]).rjust(3, ' ') + ", " + str(view[1]).rjust(2, ' ') + ", " + str(view[2]).rjust(2, ' ') + ", " + str(view[3]).rjust(2, ' ') + " }, "
+    print("\t" + t)
+
+  print("};")
+
+def ParseList(l):
   assert(l[0] == '(')
   e = l.find(")")
   L = l[1:e].split(",")
-  tests = ""
+  tests = []
   for t in L:
     t = t.strip()
     ell = t.find('..')
     if ell >= 0:
+      start = int(t[0:ell])
+      end = int(t[ell+2:])
       # interval
-      test = "(" + v + " >= " + t[0:ell] + " && " + v + " <= " + t[ell+2:] + ")"
+      for x in range(start, end + 1):
+        tests.append(x)
     else:
-      test = v + " == " + t
-    if tests:
-      tests = tests + " || " + test
-    else:
-      tests = test
-  tests = "(" + tests + ")"
+      tests.append(t)
   return l[e+1:], tests
 
 def ParseTriple(l):
@@ -96,10 +109,11 @@ def ParseTriple(l):
 GIDs = []
 
 for F in sys.argv[1:]:
-  pic = ""
-  view = ""
-  M = [(1.,1.,1.)]
-  GID=""
+  comments = []
+  pics = []
+  views = []
+  Mods = [(1.,1.,1.)]
+  GID = ""
 
   for l in open(F, "r").readlines():
     l = l.strip()
@@ -107,8 +121,9 @@ for F in sys.argv[1:]:
       continue
     if l[0] == '#':
       comment = l[1:].strip()
-      pic += "	// " + comment + "\n"
-      view += "	// " + comment + "\n"
+      # Only add the top comments (before the game ID is set)
+      if (GID == ""):
+        comments.append(comment)
       continue
     if l[0:6] == "gameid":
       assert(GID == "")
@@ -128,15 +143,14 @@ for F in sys.argv[1:]:
     else:
       assert(False)
   
-    S = ""
-    l,t = ParseList(l, "x")
-    S = S + "\tif " + t + "\n	"
+    ids = []
+    loops = [-1]
+    cels = [-1]
+    l,ids = ParseList(l)
     if l[0] == "(":
-      l,t = ParseList(l, "y")
-      S = S + "\tif " + t + "\n		"
+      l,loops = ParseList(l)
     if l[0] == "(":
-      l,t = ParseList(l, "z")
-      S = S + "\tif " + t + "\n			"
+      l,cels = ParseList(l)
     l = l.strip()
     assert(l[0:2] == "*=")
     assert(l[-1] == ";")
@@ -146,11 +160,14 @@ for F in sys.argv[1:]:
       val = (float(v) for v in val)
     else:
       val = (float(l), float(l), float(l))
-    S = S + "\tval = " + str(ModToIndex(val)) + ";     // color * " + l + "\n"
     if ruletype == "pic":
-      pic = pic + S
+      for pic in ids:
+        pics.append([pic, ModToIndex(val)])
     elif ruletype == "view":
-      view = view + S
+      for view in ids:
+        for loop in loops:
+          for cel in cels:
+            views.append([view, loop, cel, ModToIndex(val)])
 
   if GID == "":
     raise ValueError("No gameid specified")
@@ -159,45 +176,56 @@ for F in sys.argv[1:]:
 
   PrintMods()
   print()
-  PrintPic(pic)
+  PrintPic(pics, comments)
   print()
-  PrintView(view)
+  PrintView(views, comments)
   print()
 
-print("void setupCustomPaletteMods(GfxScreen *screen) {")
-print("\tswitch (g_sci->getGameId()) {")
+print("static const SciFxMod mods[] = {")
 for GID in GIDs:
-  print("\tcase GID_" + GID + ":")
-  print("\t\tscreen->setPaletteMods(paletteMods" + GID + ", ARRAYSIZE(paletteMods" + GID + "));")
-  print("\t\tbreak;")
-print("\tdefault:")
-print("\t\tbreak;")
-print("\t}")
-print("}")
-print()
+  print("\t{{ GID_{0}, paletteMods{0}, ARRAYSIZE(paletteMods{0}), picMods{0}, ARRAYSIZE(picMods{0}), viewMods{0}, ARRAYSIZE(viewMods{0}) }},".format(GID));
+print("};")
 
-print("void doCustomViewPalette(GfxScreen *screen, int x, int y, int z) {")
-print("\tswitch (g_sci->getGameId()) {")
-for GID in GIDs:
-  print("\tcase GID_" + GID + ":")
-  print("\t\tdoCustomView" + GID + "(screen, x, y, z);")
-  print("\t\tbreak;")
-print("\tdefault:")
-print("\t\tbreak;")
-print("\t}")
-print("}")
-print()
+print("""
+void setupCustomPaletteMods(GfxScreen *screen) {
+	for (int i = 0; i < ARRAYSIZE(mods); i++) {
+		if (mods[i].gameId == g_sci->getGameId()) {
+			screen->setPaletteMods(mods[i].paletteMods, mods[i].paletteModsSize);
+			break;
+		}
+	}
+}
 
-print("void doCustomPicPalette(GfxScreen *screen, int x) {")
-print("\tswitch (g_sci->getGameId()) {")
-for GID in GIDs:
-  print("\tcase GID_" + GID + ":")
-  print("\t\tdoCustomPic" + GID + "(screen, x);")
-  print("\t\tbreak;")
-print("\tdefault:")
-print("\t\tbreak;")
-print("\t}")
-print("}")
-print()
+void doCustomViewPalette(GfxScreen *screen, GuiResourceId view, int16 loop, int16 cel) {
+	for (int i = 0; i < ARRAYSIZE(mods); i++) {
+		SciFxMod mod = mods[i];
+		if (mod.gameId == g_sci->getGameId()) {
+			for (int j = 0; j < mod.viewModsSize; j++) {
+				ViewMod m = mod.viewMods[j];
+				if (m.id == view && (m.loop == -1 || m.loop == loop) && (m.cel == -1 || m.cel == cel)) {
+					screen->setCurPaletteMapValue(m.multiplier);
+					break;
+				}
+			}
+			break;
+		}
+	}
+}
 
-print("}")
+void doCustomPicPalette(GfxScreen *screen, GuiResourceId pic) {
+	for (int i = 0; i < ARRAYSIZE(mods); i++) {
+		SciFxMod mod = mods[i];
+		if (mod.gameId == g_sci->getGameId()) {
+			for (int j = 0; j < mod.picModsSize; j++) {
+				PicMod m = mod.picMods[j];
+				if (m.id == pic) {
+					screen->setCurPaletteMapValue(m.multiplier);
+					break;
+				}
+			}
+			break;
+		}
+	}
+}
+
+}""")

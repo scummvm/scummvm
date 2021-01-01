@@ -627,7 +627,7 @@ static void writeEoBNpcData(PAKFile &out, const char *filename, const EoBCharact
 
 		*dst = entry.id; dst += 1;
 		*dst = entry.flags; dst += 1;
-		memcpy(dst, entry.name, 11); dst += 11;
+		//memcpy(dst, entry.name, 11); dst += 11;
 		*dst = entry.strengthCur; dst += 1;
 		*dst = entry.strengthMax; dst += 1;
 		*dst = entry.strengthExtCur; dst += 1;

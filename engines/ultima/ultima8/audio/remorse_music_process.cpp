@@ -108,7 +108,7 @@ void RemorseMusicProcess::playMusic(int track) {
 }
 
 void RemorseMusicProcess::playCombatMusic(int track) {
-	playMusic_internal(track);
+	// Only U8 has combat music.. ignore it.
 }
 
 void RemorseMusicProcess::queueMusic(int track) {
@@ -149,12 +149,13 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
 
-	if (track == _currentTrack && mixer->isSoundHandleActive(_soundHandle))
+	if (track == _currentTrack && (track == 0 || mixer->isSoundHandleActive(_soundHandle)))
 		// Already playing what we want.
 		return;
 
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
+	_currentTrack = track;
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
@@ -201,6 +202,27 @@ bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 
 	return true;
 }
+
+bool RemorseMusicProcess::isPlaying() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	return _currentTrack != 0 && mixer && mixer->isSoundHandleActive(_soundHandle);
+}
+
+void RemorseMusicProcess::pauseMusic() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+	if (mixer->isSoundHandleActive(_soundHandle))
+		mixer->pauseHandle(_soundHandle, true);
+}
+
+void RemorseMusicProcess::unpauseMusic() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+	if (mixer->isSoundHandleActive(_soundHandle))
+		mixer->pauseHandle(_soundHandle, false);
+}
+
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

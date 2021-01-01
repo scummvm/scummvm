@@ -23,11 +23,11 @@
 #include "twine/flamovies.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "twine/grid.h"
+#include "twine/audio/music.h"
+#include "twine/audio/sound.h"
+#include "twine/scene/grid.h"
 #include "twine/input.h"
-#include "twine/music.h"
-#include "twine/screens.h"
-#include "twine/sound.h"
+#include "twine/renderer/screens.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -132,38 +132,37 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 }
 
 void FlaMovies::scaleFla2x() {
-	int32 i, j;
 	uint8 *source = (uint8 *)flaBuffer;
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
+		for (uint32 i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
 
-	for (i = 0; i < FLASCREEN_HEIGHT; i++) {
-		for (j = 0; j < FLASCREEN_WIDTH; j++) {
+	for (int32 i = 0; i < FLASCREEN_HEIGHT; i++) {
+		for (int32 j = 0; j < FLASCREEN_WIDTH; j++) {
 			*(dest++) = *(source);
 			*(dest++) = *(source++);
 		}
 		if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
-			memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+			memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 			dest += FLASCREEN_WIDTH * 2;
 		} else { // stretch the movie like original game.
-			if (i % (2)) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+			if (i % 2) {
+				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 			if (i % 10) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 		}
 	}
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
+		for (int32 i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
@@ -172,7 +171,6 @@ void FlaMovies::scaleFla2x() {
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 	uint32 opcodeBlockSize;
-	uint8 opcode;
 	int32 aux = 0;
 
 	file.read(&frameData.videoSize, 1);
@@ -183,7 +181,7 @@ void FlaMovies::processFrame() {
 		return;
 	}
 
-	uint8 *outBuf = (uint8*)_engine->workVideoBuffer.getPixels();
+	uint8 *outBuf = (uint8 *)_engine->workVideoBuffer.getPixels();
 	file.read(outBuf, frameData.frameVar0);
 
 	if ((int32)frameData.videoSize <= 0) {
@@ -192,7 +190,7 @@ void FlaMovies::processFrame() {
 
 	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
 	do {
-		opcode = stream.readByte();
+		uint8 opcode = stream.readByte();
 		stream.skip(1);
 		opcodeBlockSize = stream.readUint16LE();
 		const int32 pos = stream.pos();
@@ -222,7 +220,7 @@ void FlaMovies::processFrame() {
 			sample.dummy = stream.readSByte();
 			sample.x = stream.readByte();
 			sample.y = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.x, sample.y);
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.x, sample.y);
 			break;
 		}
 		case kStopSample: {
@@ -306,6 +304,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 		do {
+			ScopedFPS scopedFps(flaHeaderData.speed);
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
@@ -336,8 +335,6 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			}
 
 			currentFrame++;
-
-			_engine->_system->delayMillis(1000 / flaHeaderData.speed + 1);
 		} while (!_engine->_input->toggleAbortAction());
 	}
 

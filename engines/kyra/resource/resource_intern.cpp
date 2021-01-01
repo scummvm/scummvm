@@ -241,7 +241,7 @@ Common::String readString(Common::SeekableReadStream &stream) {
 
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
-	if (filesize < 0)
+	if (filesize < 4)
 		return false;
 
 	int32 offset = 0;
@@ -287,7 +287,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 
 Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common::SeekableReadStream &stream) const {
 	int32 filesize = stream.size();
-	if (filesize < 0)
+	if (filesize < 4)
 		return 0;
 
 	Common::ScopedPtr<PlainArchive> result(new PlainArchive(memberFile));
@@ -450,6 +450,8 @@ bool ResLoaderTlk::checkFilename(Common::String filename) const {
 }
 
 bool ResLoaderTlk::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
+	if (stream.size() < 2)
+		return false;
 	uint16 entries = stream.readUint16LE();
 	int32 entryTableSize = (entries * 8);
 

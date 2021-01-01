@@ -55,10 +55,8 @@ extern const RoomAction feather2ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_SPOCK,      0, 0}, &Room::feather2LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY,      0, 0}, &Room::feather2LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT,   0, 0}, &Room::feather2LookAtRedshirt },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int feather2NumActions = ARRAYSIZE(feather2ActionList);
-
 
 void Room::feather2Tick1() {
 	playVoc("FEA2LOOP");

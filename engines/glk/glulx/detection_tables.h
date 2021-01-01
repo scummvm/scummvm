@@ -392,6 +392,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("counterfeitmonkey", "160520", "24b94c1d870740880629983fc181d7b8", 14806568),
 	DT_ENTRY1("counterfeitmonkey", "171224", "340232662aa8e9f4d45726e8ca7f9f5a", 12580166),
 	DT_ENTRY1("counterfeitmonkey", "181204", "c3e41db7aa8642f40b157c51fa91a26b", 12348938),
+	DT_ENTRY1("counterfeitmonkey", "200810", "493169aff19d6c1b42649197b7fbb6e0", 12400746),
 	DT_ENTRY1("countingcrabs", "090728", "ffc19674d99b4d6f530bb00287c83c7e", 1508676),
 	DT_ENTRY1("crackcoldone", "170706", "c2d5bf64a0aadaead7640b5750826d55", 627136),
 	DT_ENTRY1("crackcoldone", "170711", "d64bd51d8fe05dc190ac3589e11b6ea6", 627136),

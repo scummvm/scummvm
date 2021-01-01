@@ -295,24 +295,29 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorKlein, 73, Random_Query(3, 20));  // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinMovingInLab02:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 74, Random_Query(10, 20)); // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinGotoLabSpeaker:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 31, 3);  // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinIsAnnoyedByMcCoyPreInit:
 		// aux goal (added)
 		break;
+
 	case kGoalKleinIsAnnoyedByMcCoyInit:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinIsAnnoyedByMcCoy01:
 		AI_Movement_Track_Flush(kActorKlein);
 		if (_vm->_cutContent) {
@@ -323,11 +328,13 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinIsAnnoyedByMcCoy02:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
+
 	case kGoalKleinIsAnnoyedByMcCoyFinal:
 		// Note: Original was missing the kGoalKleinIsAnnoyedByMcCoyFinal case
 		//       so we just "break" for the original behavior
@@ -337,6 +344,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Repeat(kActorKlein);
 		}
 		break;
+
 	case kGoalKleinAwayAtEndOfActThree:
 		// fall-through
 	case kGoalKleinAwayAtEndOfActOne:
@@ -405,6 +413,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 1:
 		*animation = kModelAnimationKleinWalking;
 		++_animationFrame;
@@ -412,6 +421,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 2:
 		*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		++_animationFrame;
@@ -419,6 +429,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		*animation = kModelAnimationKleinTalkRightHandTouchFace;
 		++_animationFrame;
@@ -428,6 +439,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 4:
 		*animation = kModelAnimationKleinTalkWideHandMotion;
 		++_animationFrame;
@@ -437,6 +449,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 5:
 		*animation = kModelAnimationKleinTalkSuggestOrAsk;
 		++_animationFrame;
@@ -446,6 +459,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 6:
 		*animation = kModelAnimationKleinTalkDismissive;
 		++_animationFrame;
@@ -455,6 +469,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 7:
 		*animation = kModelAnimationKleinTalkRaisingBothHands;
 		++_animationFrame;
@@ -464,13 +479,16 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 8:
 		_animationFrame = 0;
 		*animation      = _animationNext;
 		_animationState = _animationStateNext;
 		break;
+
 	default:
-		*animation = 399; // TODO: A bug? This belongs to Zuben
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;
@@ -483,6 +501,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 		_animationState = 0;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeWalk:
 		if (_animationState > 1) {
 			_animationState = 1;
@@ -493,6 +512,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinWalking;
 		}
 		break;
+
 	case kAnimationModeTalk:
 		if (_animationState > 0) {
 			_animationState = 2;
@@ -503,6 +523,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinTalkSmallLeftHandMove;
 		}
 		break;
+
 	case 12:
 		if (_animationState > 0) {
 			_animationState = 2;
@@ -513,6 +534,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinTalkRightHandTouchFace;
 		}
 		break;
+
 	case 13:
 		if (_animationState > 0) {
 			_animationState = 2;
@@ -523,6 +545,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinTalkWideHandMotion;
 		}
 		break;
+
 	case 14:
 		if (_animationState > 0) {
 			_animationState = 2;
@@ -533,6 +556,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinTalkSuggestOrAsk;
 		}
 		break;
+
 	case 15:
 		if (_animationState > 0) {
 			_animationState = 2;
@@ -543,6 +567,7 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationNext = kModelAnimationKleinTalkDismissive;
 		}
 		break;
+
 	case 16:
 		if (_animationState > 0) {
 			_animationState = 2;

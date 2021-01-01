@@ -23,7 +23,7 @@
 #ifndef SCI_ENGINE_MESSAGE_H
 #define SCI_ENGINE_MESSAGE_H
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/vm_types.h"
 #include "common/stack.h"
 

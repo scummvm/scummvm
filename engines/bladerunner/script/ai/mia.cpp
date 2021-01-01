@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptMia::AIScriptMia(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptMia::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptMia::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	Actor_Put_In_Set(kActorMia, kSetHF01);
 	Actor_Set_At_XYZ(kActorMia, 606.77f, -0.01f, -214.3f, 511);
 	Actor_Set_Goal_Number(kActorMia, 0);
@@ -110,30 +110,30 @@ bool AIScriptMia::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 566;
+		*animation = kModelAnimationMiaIdle;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(566))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaIdle))
 			_animationFrame = 0;
 
 		break;
 
 	case 1:
-		*animation = 567;
+		*animation = kModelAnimationMiaGestureGive;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(567)) {
-			*animation = 566;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaGestureGive)) {
+			*animation = kModelAnimationMiaIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 568;
+		*animation = kModelAnimationMiaHeadNodTalk;
 
-		if (!_animationFrame && _flag1) {
-			*animation = 566;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationMiaIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
@@ -146,22 +146,22 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		*animation = 569;
+		*animation = kModelAnimationMiaMoreCalmTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(569)) {
-			*animation = 568;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaMoreCalmTalk)) {
+			*animation = kModelAnimationMiaHeadNodTalk;
 			_animationFrame = 0;
 			_animationState = 2;
 		}
 		break;
 
 	case 4:
-		*animation = 570;
+		*animation = kModelAnimationMiaHandsOnWaistTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(570)) {
-			*animation = 568;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaHandsOnWaistTalk)) {
+			*animation = kModelAnimationMiaHeadNodTalk;
 			_animationFrame = 0;
 			_animationState = 2;
 		}
@@ -179,7 +179,7 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 		if (_animationState >= 2
 		 && _animationState <= 4
 		) {
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationFrame = 0;
 			_animationState = 0;
@@ -188,19 +188,19 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeTalk:
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		_animationState = 2;
 		break;
 
 	case 12:
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		_animationState = 3;
 		break;
 
 	case 13:
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		_animationState = 4;
 		break;
 

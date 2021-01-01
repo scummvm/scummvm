@@ -201,8 +201,8 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 	return false;
 }
 
-// The following function tries to detect the language for COMI and DIG.
-static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
+// The following function tries to detect the language.
+static Common::Language detectLanguage(const Common::FSList &fslist, byte id, Common::Language originalLanguage = Common::UNK_LANG) {
 	// First try to detect Chinese translation.
 	Common::FSNode fontFile;
 
@@ -211,10 +211,18 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 		return Common::ZH_CNA;
 	}
 
-	// Now try to detect COMI and Dig by language files.
-	if (id != GID_CMI && id != GID_DIG)
-		return Common::UNK_LANG;
+	if (id != GID_CMI && id != GID_DIG) {
+		// Detect Korean fan translated games
+		Common::FSNode langFile;
+		if (searchFSNode(fslist, "korean.trs", langFile)) {
+			debug(0, "Korean fan translation detected");
+			return Common::KO_KOR;
+		}
 
+		return originalLanguage;
+	}
+
+	// Now try to detect COMI and Dig by language files.
 	// Check for LANGUAGE.BND (Dig) resp. LANGUAGE.TAB (CMI).
 	// These are usually inside the "RESOURCE" subdirectory.
 	// If found, we match based on the file size (should we
@@ -302,7 +310,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 		}
 	}
 
-	return Common::UNK_LANG;
+	return originalLanguage;
 }
 
 
@@ -337,8 +345,8 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				}
 
 				// HACK: Try to detect languages for translated games.
-				if (dr.language == UNK_LANG) {
-					dr.language = detectLanguage(fslist, dr.game.id);
+				if (dr.language == UNK_LANG || dr.language == Common::EN_ANY) {
+					dr.language = detectLanguage(fslist, dr.game.id, dr.language);
 				}
 
 				// HACK: Detect between 68k and PPC versions.

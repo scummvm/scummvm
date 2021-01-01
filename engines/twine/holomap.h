@@ -32,6 +32,11 @@ namespace TwinE {
 
 class TwinEEngine;
 
+/**
+ * The Holomap shows the hero position. The arrows (@c RESSHQR_HOLOARROWMDL) represent important places in your quest - they automatically disappear once that part of
+ * the quest is done (@c clearHolomapPosition()). You can rotate the holoamp by pressing ctrl+cursor keys - but only using the cursor keys, you can scroll through the
+ * text for the visible arrows.
+ */
 class Holomap {
 private:
 	TwinEEngine *_engine;
@@ -48,6 +53,9 @@ private:
 
 	int32 needToLoadHolomapGFX = 0;
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
+
+	void drawHolomapText(int32 centerx, int32 top, const char *title);
+	void drawHolomapLocation();
 
 public:
 	Holomap(TwinEEngine *engine);
@@ -66,13 +74,8 @@ public:
 	 */
 	void clearHolomapPosition(int32 locationIdx);
 
-	/** Draw Holomap Title */
-	void drawHolomapTitle(int32 width, int32 height);
-
-	/** Draw Holomap Trajectory */
 	void drawHolomapTrajectory(int32 trajectoryIndex);
 
-	void loadGfxSub(uint8 *modelPtr);
 	void loadGfxSub1();
 	void loadGfxSub2();
 

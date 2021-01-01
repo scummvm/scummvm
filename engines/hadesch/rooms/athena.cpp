@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 static const char *kAthenaAnim = "c8060ba0";
@@ -142,7 +143,11 @@ public:
 			room->stopAnim("c8130bf0");
 			room->disableHotzone("Sword");
 			room->disableMouse();
-			room->playSound("c8140wa0", 23026);
+			room->playSpeech(TranscribedSound::make(
+					     "c8140wa0",
+					     "The magic sword will never leave Perseus' hand, "
+					     "so he can successfully cut off Medusa's head"),
+					 23026);
 			return;
 		}
 
@@ -152,7 +157,11 @@ public:
 			room->stopAnim("c8130be0");
 			room->disableHotzone("Shield");
 			room->disableMouse();
-			room->playSound("c8150wa0", 23027);
+			room->playSpeech(TranscribedSound::make(
+					     "c8150wa0",
+					     "Medusa can only turn Perseus to stone if he looks directly at her. "
+					     "He'll use this shield to block her gaze"),
+					 23027);
 			return;
 		}
 
@@ -160,7 +169,7 @@ public:
 			room->disableMouse();
 			room->playAnimLoop("c8010oc0", 2101);
 			room->playVideo("c8080wa0", 0, 23043);
-			room->playSound("C8080eA1");
+			room->playSFX("C8080eA1");
 			return;
 		}
 
@@ -168,7 +177,7 @@ public:
 			room->disableMouse();
 			room->playAnimLoop("c8010ob0", 2101);
 			room->playVideo("c8070wa0", 0, 23044);
-			room->playSound("C8080eA1");
+			room->playSFX("C8080eA1");
 			return;
 		}
 	}
@@ -198,9 +207,9 @@ public:
 		case 23008:
 			room->playAnim("c8140ba0", 1101, PlayAnimParams::disappear(), 23015);
 			room->playAnim("c8150ba0", 1101, PlayAnimParams::disappear(), 23016);
-			room->playSound("c8130ma0", 23020);
-			room->playSound("c8130eb0");
-			room->playSound("c8130ec0");
+			room->playMusic("c8130ma0", 23020);
+			room->playSFX("c8130eb0");
+			room->playSFX("c8130ec0");
 			break;
 		case 23010:
 			if (persistent->_hintsAreEnabled && room->isMouseEnabled()) {
@@ -213,11 +222,11 @@ public:
 			break;
 		case 23015:
 			room->playAnimKeepLastFrame("c8130bf0", 1101, 23017);
-			room->playSound("c8130ef0");
+			room->playSFX("c8130ef0");
 			break;
 		case 23016:
 			room->playAnimKeepLastFrame("c8130be0", 1101, 23018);
-			room->playSound("c8130ee0");
+			room->playSFX("c8130ee0");
 			break;
 		case 23017:
 			room->enableHotzone("Sword");
@@ -232,11 +241,20 @@ public:
 			room->disableHeroBelt();
 			room->resetLayers();
 			room->addStaticLayer("c8180pa0", 9000);
-			room->playSound("g0261ma0", 23031);
-			room->playSound(persistent->_gender == kMale ? "c8180wa0" : "c8180wb0", 23029);
+			room->playSFX("g0261ma0", 23031);
+			room->playSpeech(persistent->_gender == kMale
+					? TranscribedSound::make(
+					    "c8180wa0",
+					    "Oh no. Why did I shine that light in Athena's temple. "
+					    "I was just trying to see what the hero was doing")
+					 : TranscribedSound::make(
+					     "c8180wb0",
+					     "Oh no. Why did I shine that light in Athena's temple. "
+					     "I was just trying to see what the heroine was doing"),
+					 23029);
 			break;
 		case 23029:
-			room->playSound("c8180wc0", 23030);
+			room->playSpeech(TranscribedSound::make("c8180wc0", "Well now you can see what I'm doing: tomato heads"), 23030);
 			break;
 		case 23030:
 			room->playVideo("c8180ba0", 0, 23032);
@@ -302,7 +320,7 @@ public:
 			room->playVideo(persistent->_gender == kMale ? "c8040wa0" : "c8040wb0",
 					1101, kIntroFinished);
 			room->playAnim(kAthenaAnim, 1101, PlayAnimParams::loop());
-			room->playSound("c8040ma0", 23013);
+			room->playMusic("c8040ma0", 23013);
 		}
 
 		if (!persistent->_athenaShieldTaken) {
@@ -385,11 +403,11 @@ private:
 			room->stopAnim("c8120bg1");
 
 		if (_isPuzzleLit[num] && _puzzleState[num])
-			room->playSound("c8120ea0");
+			room->playSFX("c8120ea0");
 
 		if (_isPuzzleWon) {
 			room->selectFrame(LayerId(kLights, 11, "internal"), kLightsZ, 11);
-			room->playSound("C8130eA0");
+			room->playSFX("C8130eA0");
 			g_vm->addTimer(23008, 1000);
 			room->disableHotzone("Athena's Sword");
 			room->disableHotzone("Athena's Shield");
@@ -399,7 +417,7 @@ private:
 			persistent->_athenaPuzzleSolved = true;
 		}
 
-		room->playSoundLoop(
+		room->playMusicLoop(
 			persistent->_quest != kMedusaQuest || persistent->_athenaPuzzleSolved
 			? "c8010ea0" : "c8110ea0");
 	}

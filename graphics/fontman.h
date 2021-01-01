@@ -32,6 +32,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_fontman Font manager
+ * @ingroup graphics
+ *
+ * @brief FontManager class used for managing fonts.
+ *
+ * @{
+ */
+
 class Font;
 class BdfFont;
 
@@ -117,10 +126,14 @@ private:
 	Common::String _localizedFontName;
 };
 
-
+/** @} */
 } // End of namespace Graphics
 
+/** @addtogroup graphics_fontman
+ *  @{
+ */
+ 
 /** Shortcut for accessing the font manager. */
 #define FontMan		(Graphics::FontManager::instance())
-
+ /** @} */
 #endif

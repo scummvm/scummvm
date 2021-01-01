@@ -45,6 +45,12 @@ create_drascula (sev)
     and Italian. This tool is used to create the drascula.dat file.
 
 
+create_encodings (phcoder)
+--------------
+   Transforms CJK tables from unicode consortium format to the format
+   used by ScummVM
+
+
 create_hugo (Strangerke)
 -----------
     Creates hugo.dat file which contains all kinds of static data contained

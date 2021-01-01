@@ -40,6 +40,98 @@ namespace StarTrek {
 #define GUARDSTAT_DEAD 2
 #define GUARDSTAT_TIED 8
 
+extern const RoomAction tug2ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::tug2Tick1 },
+	{ {ACTION_TICK, 60, 0, 0}, &Room::tug2Tick60 },
+	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::tug2LookAtButton },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug2LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug2LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug2LookAtRedshirt },
+	{ {ACTION_GET, 11, 0, 0}, &Room::tug2GetBomb },
+	{ {ACTION_FINISHED_WALKING, 12, 0, 0}, &Room::tug2KirkReachedBomb },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::tug2KirkGotBomb },
+	{ {ACTION_LOOK, 11, 0, 0}, &Room::tug2LookAtBomb },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::tug2LookAtGuard1 },
+	{ {ACTION_LOOK, 9, 0, 0}, &Room::tug2LookAtGuard2 },
+	{ {ACTION_LOOK, 12, 0, 0}, &Room::tug2LookAtWires },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 12, 0}, &Room::tug2UseSTricorderOnButton },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::tug2UseSTricorderOnButton },
+	{ {ACTION_USE, OBJECT_MCCOY, 12, 0}, &Room::tug2UseMccoyOnWires },
+	{ {ACTION_USE, OBJECT_MCCOY, 11, 0}, &Room::tug2UseMccoyOnBomb },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 12, 0}, &Room::tug2UseRedshirtOnWires },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::tug2RedshirtReachedWires },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug2RedshirtDefusedBomb },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::tug2RedshirtReturnedToPosition },
+	{ {ACTION_USE, OBJECT_KIRK, 12, 0}, &Room::tug2UseKirkOnWires },
+	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::tug2KirkReachedWires },
+	{ {ACTION_USE, OBJECT_SPOCK, 12, 0}, &Room::tug2UseSpockOnWires },
+	{ {ACTION_FINISHED_WALKING, 9, 0, 0}, &Room::tug2SpockReachedWires },
+	{ {ACTION_FINISHED_WALKING, 11, 0, 0}, &Room::tug2SpockReturnedToPosition },
+	{ {ACTION_GET, 12, 0, 0}, &Room::tug2GetWires },
+	{ {ACTION_FINISHED_WALKING, 28, 0, 0}, &Room::tug2KirkReachedWiresToGet },
+	{ {ACTION_FINISHED_ANIMATION, 29, 0, 0}, &Room::tug2KirkGotWires },
+	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::tug2UseKirkOnButton },
+	{ {ACTION_FINISHED_WALKING, 14, 0, 0}, &Room::tug2KirkReachedButton },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::tug2UseSpockOnButton },
+	{ {ACTION_FINISHED_WALKING, 16, 0, 0}, &Room::tug2SpockReachedButton },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0}, &Room::tug2UseMccoyOnButton },
+	{ {ACTION_FINISHED_WALKING, 18, 0, 0}, &Room::tug2MccoyReachedButton },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::tug2UseRedshirtOnButton },
+	{ {ACTION_FINISHED_WALKING, 20, 0, 0}, &Room::tug2RedshirtReachedButton },
+	{ {ACTION_FINISHED_ANIMATION, 15, 0, 0}, &Room::tug2TurnedOffForceField },
+	{ {ACTION_FINISHED_ANIMATION, 17, 0, 0}, &Room::tug2TurnedOffForceField },
+	{ {ACTION_FINISHED_ANIMATION, 19, 0, 0}, &Room::tug2TurnedOffForceField },
+	{ {ACTION_FINISHED_ANIMATION, 21, 0, 0}, &Room::tug2TurnedOffForceField },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::tug2PrisonersDead },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::tug2PrisonersReleased },
+	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0}, &Room::tug2UsePhaserOnBrig },
+	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0}, &Room::tug2UsePhaserOnBrig },
+	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::tug2UseStunPhaserOnGuard1 },
+	{ {ACTION_FINISHED_ANIMATION, 22, 0, 0}, &Room::tug2KirkShootGuard1 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 9, 0}, &Room::tug2UseStunPhaserOnGuard2 },
+	{ {ACTION_FINISHED_ANIMATION, 23, 0, 0}, &Room::tug2KirkShootGuard2 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::tug2UseKillPhaserOnGuard1 },
+	{ {ACTION_FINISHED_ANIMATION, 24, 0, 0}, &Room::tug2KirkKillGuard1 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 9, 0}, &Room::tug2UseKillPhaserOnGuard2 },
+	{ {ACTION_FINISHED_ANIMATION, 25, 0, 0}, &Room::tug2KirkKillGuard2 },
+
+	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_IPWE, 0}, &Room::tug2UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_IPWE, 0}, &Room::tug2UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IWIRSCRP, 0}, &Room::tug2UseWelderOnWireScraps },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IJNKMETL, 0}, &Room::tug2UseWelderOnMetalScraps },
+	{ {ACTION_USE, OBJECT_ICOMBBIT, OBJECT_IRT, 0}, &Room::tug2UseCombBitOnTransmogrifier },
+
+	{ {ACTION_FINISHED_ANIMATION, 26, 0, 0}, &Room::tug2ShotByElasi },
+	{ {ACTION_FINISHED_ANIMATION, 27, 0, 0}, &Room::tug2ShotByElasi },
+	{ {ACTION_WALK, 0x21, 0, 0}, &Room::tug2WalkToDoor },
+	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::tug2LookAtDoor },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::tug2LookAtKirk },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::tug2TalkToKirk },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug2TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug2TalkToRedshirt },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug2TalkToSpock },
+	{ {ACTION_USE, OBJECT_ICOMM, 0, 0}, &Room::tug2UseCommunicator },
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::tug2Timer0Expired },
+	{ {ACTION_TIMER_EXPIRED, 2, 0, 0}, &Room::tug2Timer2Expired },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 11, 0}, &Room::tug2UseSTricorderOnBomb },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::tug2UseMTricorderOnGuard1 },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 9, 0}, &Room::tug2UseMTricorderOnGuard2 },
+	{ {ACTION_TALK, 8, 0, 0}, &Room::tug2TalkToGuard1 },
+	{ {ACTION_TALK, 9, 0, 0}, &Room::tug2TalkToGuard2 },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 11, 0}, &Room::tug2UseMedkitOnBomb },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 8, 0}, &Room::tug2UseMedkitOnGuard1 },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 9, 0}, &Room::tug2UseMedkitOnGuard2 },
+	{ {ACTION_LOOK, 10, 0, 0}, &Room::tug2LookAnywhere },
+	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::tug2LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug2LookAnywhere },
+	{ {ACTION_TALK, 10, 0, 0}, &Room::tug2TalkToBrig },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::tug2UseMTricorderOnBrig },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::tug2UseMTricorderOnOpenBrig },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::tug2UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::tug2UsePhaserAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::tug2Tick1() {
 	playVoc("TUG2LOOP");
 
@@ -288,8 +380,7 @@ void Room::tug2KirkGotWires() {
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
-		playSoundEffectIndex(SND_PHASSHOT);
-		playSoundEffectIndex(SND_BLANK_16);
+		playSoundEffectIndex(kSfxPhaser);
 		_awayMission->tug.field35 = 6;
 		loadActorStandAnim(OBJECT_WIRE);
 		giveItem(OBJECT_IWIRING);
@@ -315,7 +406,7 @@ void Room::tug2UseKirkOnButton() {
 
 void Room::tug2KirkReachedButton() {
 	loadActorAnim2(OBJECT_KIRK, "kusehe", -1, -1, 15);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseSpockOnButton() {
@@ -328,7 +419,7 @@ void Room::tug2UseSpockOnButton() {
 
 void Room::tug2SpockReachedButton() {
 	loadActorAnim2(OBJECT_SPOCK, "susehe", -1, -1, 17);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseMccoyOnButton() {
@@ -341,7 +432,7 @@ void Room::tug2UseMccoyOnButton() {
 
 void Room::tug2MccoyReachedButton() {
 	loadActorAnim2(OBJECT_MCCOY, "musehe", -1, -1, 19);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseRedshirtOnButton() {
@@ -354,7 +445,7 @@ void Room::tug2UseRedshirtOnButton() {
 
 void Room::tug2RedshirtReachedButton() {
 	loadActorAnim2(OBJECT_REDSHIRT, "rusehe", -1, -1, 21);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2TurnedOffForceField() {
@@ -432,7 +523,7 @@ void Room::tug2KirkShootGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5stun", -1, -1, 0);
 		_awayMission->tug.guard1Status = GUARDSTAT_STUNNED;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem03", 5);
 		tug2CheckEndFirefight();
 	}
@@ -459,7 +550,7 @@ void Room::tug2KirkShootGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6stun", -1, -1, 0);
 		_awayMission->tug.guard2Status = GUARDSTAT_STUNNED;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem02", 5);
 		tug2CheckEndFirefight();
 	}
@@ -487,7 +578,7 @@ void Room::tug2KirkKillGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5kill", -1, -1, 0);
 		_awayMission->tug.guard1Status = GUARDSTAT_DEAD;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem05", 5);
 		tug2CheckEndFirefight();
 	}
@@ -515,7 +606,7 @@ void Room::tug2KirkKillGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6kill", -1, -1, 0);
 		_awayMission->tug.guard2Status = GUARDSTAT_DEAD;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem04", 5);
 		tug2CheckEndFirefight();
 	}
@@ -636,7 +727,7 @@ void Room::tug2Timer0Expired() {
 		// Guard misses and shoots wall
 		loadActorAnim2(OBJECT_13, "wallht", 0, 0, 0);
 		showBitmapFor5Ticks("t2beem00", 5);
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
 		_awayMission->tug.field4e = _roomVar.tug.elasiPhaserOnKill;
 		_awayMission->timers[0] = 60;
@@ -756,7 +847,7 @@ void Room::tug2GuardShootsCrewman() {
 		loadActorAnim2(_roomVar.tug.shootingTarget, anim, -1, -1, 26);
 
 	showBitmapFor5Ticks(bitmapArray[_roomVar.tug.shootingTarget], 5);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 
 	if (_roomVar.tug.shootingObject == OBJECT_GUARD_1)
 		loadActorAnim2(OBJECT_GUARD_1, "p5fire", -1, -1, 0);

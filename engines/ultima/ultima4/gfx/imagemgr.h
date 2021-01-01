@@ -25,6 +25,11 @@
 
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/core/observer.h"
+#include "ultima/shared/std/containers.h"
+
+namespace Common {
+class File;
+}
 
 namespace Ultima {
 namespace Ultima4 {

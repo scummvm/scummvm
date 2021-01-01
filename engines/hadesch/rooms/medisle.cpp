@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 
@@ -67,12 +68,12 @@ static const char *itemSounds[] = {
 	"m1230ea0"
 };
 
-static const char *itemClickSounds[] = {
-	"m1150ne0",
-	"m1150nd0",
-	"m1150na0",
-	"m1150nb0",
-	"m1150nc0"
+static const TranscribedSound itemClickSounds[] = {
+	{"m1150ne0", _s("If Perseus looks directly at Medusa he will be turned to stone. Using the shield from my temple, he can look at her reflection instead") },
+	{"m1150nd0", _s("The sword from my temple will cut off Medusa's head") },
+	{"m1150na0", _s("Medusa's head must be brough back inside this magic bag") },
+	{"m1150nb0", _s("When Perseus wears the dark helmet, he will be invisible") },
+	{"m1150nc0", _s("Putting on the winged sandals will allow you to fly above and move quickly") }
 };
 
 static const char *perseusItemAnims[] = {
@@ -83,12 +84,18 @@ static const char *perseusItemAnims[] = {
 	"m1230ba0"
 };
 
-static const char *perseusItemSounds[] = {
-	"m1190na0",
-	"m1180na0",
-	"m1220na0",
-	"m1210na0",
-	"m1230na0"
+static const TranscribedSound perseusItemSounds[] = {
+	{ "m1190na0", _s("Thanks. The shield is just what I needed") },
+	{ "m1180na0", _s("Yeah. The sword oughta do the trick") },
+	{ "m1220na0", _s("Alright. You've got the bag. Excellent") },
+	{ "m1210na0", _s("Yes, the helmet. You're doing great") },
+	{ "m1230na0", _s("Ok, you've found the sandals. I owe you big time") }
+};
+
+static const TranscribedSound eyeInsistSpeech[] = {
+	{"m2120wd0", _s("No, no. Where did he go?")},
+	{"m2120we0", _s("Feel around here. It's got to be near")},
+	{"m2120wf0", _s("If it's lost I'd cry but I don't have an eye")}
 };
 
 struct StatuePiece {
@@ -179,6 +186,31 @@ static const struct {
 	{ "m1280ba0", "m1280ea0", 5000, 50000, 1500, -200, false }
 };
 
+static const TranscribedSound kICanForetellTheFuture = {
+	"m2190wa0",
+	_s("I can foretell the future. You know, I always knew I was going to say that")
+};
+
+static const TranscribedSound kGiveMeEyeOrIllPunchYouInTheEye = {
+	"m2190wb0",
+	_s("Give me the eye or I'll punch you in the eye")
+};
+
+static const TranscribedSound kPunchingOwnEye = {
+	"m2190wc0",
+	_s("Oh yeah? Then you'll be punching your own eye")
+};
+
+static const TranscribedSound kIllTakeTheEyeYouCanHaveOneOfMyEars = {
+	"m2190wd0",
+	_s("I'll take the eye you can have one of my ears")
+};
+
+static const TranscribedSound kMedusaOnceBeauty = {
+	"m2210wa0",
+	_s("Medusa once was quite the beauty. Also vain and very snoody. Treated Athena awful bad and mad the goddess awfully mad. To snab the god is all it takes and now her hair is made of snakes")
+}; // unclear
+
 static const struct {
 	const char *image;
 	int minint, maxint;
@@ -243,7 +275,7 @@ public:
 			room->stopAnim(kStoneAnim);
 			g_vm->getHeroBelt()->placeToInventory(kStone, kStoneTaken);
 			room->disableHotzone(kStoneHotzone);
-			room->playSound("m1360ma0");
+			room->playMusic("m1360ma0");
 			persistent->_medisleStoneTaken = true;
 			room->disableMouse();
 			return;
@@ -258,7 +290,7 @@ public:
 			room->drag("m2010oa0", 0, Common::Point(21, 20));
 			room->stopAnim("m2010oa0");
 			room->disableMouse();
-			room->playSound("m2130ea0", 11027);
+			room->playSFX("m2130ea0", 11027);
 			_eyeIsPickedUp = true;
 			persistent->_medisleEyePosition = kNumFates;
 			return;
@@ -281,7 +313,7 @@ public:
 				if (name == fatesHotzoneNames[i]) {
 					persistent->_medisleEyePosition = i;
 					room->disableMouse();
-					room->playSound("m2130ee0", 11029);
+					room->playSFX("m2130ee0", 11029);
 					room->disableHotzone("Eyeball");
 					room->clearDrag();
 					_eyeIsGivenBack = true;
@@ -323,29 +355,29 @@ public:
 					return;
 				}
 
-				Common::Array <Common::String> hints;
+				Common::Array <TranscribedSound> hints;
 
 				switch (quest) {
 				case kCreteQuest:
-					hints.push_back("m2220wa0");
-					hints.push_back("m2220wb0");
-					hints.push_back("m2220wc0");
+					hints.push_back(TranscribedSound::make("m2220wa0", "The Minotaur's is where you need to be. Trapping him sets Daedalus free."));
+					hints.push_back(TranscribedSound::make("m2220wb0", "King Minos is the king of Crete. He's not the nicest man you meet."));
+					hints.push_back(TranscribedSound::make("m2220wc0", "The Minotaur is hard to beat. The one who's trying lives in Crete"));
 					break;
 				case kTroyQuest:
-					hints.push_back("m2230wa0");
-					hints.push_back("m2230wb0");
-					hints.push_back("m2230wc0");
+					hints.push_back(TranscribedSound::make("m2230wa0", "If Helen gets this note, our friend, the trojan war will quickly end."));
+					hints.push_back(TranscribedSound::make("m2230wb0", "Helen was a husband's joy but she's a prisonner inside Troy."));
+					hints.push_back(TranscribedSound::make("m2230wc0", "The trojan horse you cannot ride bust beware what's found inside"));
 					break;
 				case kMedusaQuest:
 					if (persistent->_medisleShowFates) {
-						hints.push_back("m2210wa0");
-						hints.push_back("m2250wa0");
-						hints.push_back("m2250wb0");
+						hints.push_back(kMedusaOnceBeauty);
+						hints.push_back(TranscribedSound::make("m2250wa0", "Medusa's curse is quite well known: she looks at you and you turn to stone"));
+						hints.push_back(TranscribedSound::make("m2250wb0", "So be forewarned, it isn't wise to gaze into Medusa's eyes."));
 					}
 					break;
 				case kRescuePhilQuest:
-					hints.push_back("m2240wa0");
-					hints.push_back("m2240wb0");
+					hints.push_back(TranscribedSound::make("m2240wa0", "To rescue Phil's an easy fix: just go across the river Styx"));
+					hints.push_back(TranscribedSound::make("m2240wb0", "You know Phil, he loves the ladies. He'd be best beware of the evil ladies"));
 					break;
 				// To silence warning
 				case kNoQuest:
@@ -357,41 +389,46 @@ public:
 				if (hints.empty()) {
 					playFatesLairBackupSound();
 				} else {
-					fatesShadowSound(hints[(_hintsCounter - 2) % hints.size()], 11632);
+					fatesShadowSpeech(hints[(_hintsCounter - 2) % hints.size()], 11632);
 				}
 				return;
 			}
 
+			// TODO: check this
+
 			if (showFate(kLachesis) && showFate(kAtropos) && !showFate(kClotho)) {
-				fatesShadowSound("m2210wd0", 11632);
+				fatesShadowSpeech(kIllTakeTheEyeYouCanHaveOneOfMyEars, 11632);
 			}
 
 			if (showFate(kLachesis) && !showFate(kAtropos) && showFate(kClotho)) {
-				fatesShadowSound("m2210wa0", 11632);
+				fatesShadowSpeech(kMedusaOnceBeauty, 11632);
 			}
 
 			if (showFate(kLachesis) && !showFate(kAtropos) && !showFate(kClotho)) {
-				fatesShadowSound("m2190wd0", 11632);
+				fatesShadowSpeech(_hintsCounter & 1 ? kIllTakeTheEyeYouCanHaveOneOfMyEars : kMedusaOnceBeauty, 11632);
 			}
 
 			if (!showFate(kLachesis) && showFate(kAtropos) && showFate(kClotho)) {
-				fatesShadowSound("m2190wa0", 11632);
+				fatesShadowSpeech(kICanForetellTheFuture, 11632);
 			}
 
 			if (!showFate(kLachesis) && showFate(kAtropos) && !showFate(kClotho)) {
-				fatesShadowSound(_hintsCounter & 1 ? "m2190wa0" : "m2190wd0", 11632);
+				fatesShadowSpeech(_hintsCounter & 1 ? kICanForetellTheFuture : kIllTakeTheEyeYouCanHaveOneOfMyEars, 11632);
 			}
 
 			if (!showFate(kLachesis) && !showFate(kAtropos) && showFate(kClotho)) {
-				switch (_hintsCounter % 3) {
+				switch (_hintsCounter % 4) {
 				case 0:
-					fatesShadowSound("m2190wb0", 11629);
+					fatesShadowSpeech(kGiveMeEyeOrIllPunchYouInTheEye, 11629);
 					return;
 				case 1:
-					fatesShadowSound("m2190wa0", 11632);
+					fatesShadowSpeech(kPunchingOwnEye, 11632);
 					return;
 				case 2:
-					fatesShadowSound("m2210wa0", 11632);
+					fatesShadowSpeech(kICanForetellTheFuture, 11632);
+					return;
+				case 3:
+					fatesShadowSpeech(kMedusaOnceBeauty, 11632);
 					return;
 				}
 			}
@@ -419,7 +456,7 @@ TODO (medusa quest):
 		if (name == "Perseus" && (
 			    item >= kShield && item <= kSandals)) {
 			room->disableMouse();
-			playPerseusAnim("m1240ba0", "m1240na0", 11053);
+			playPerseusAnimSpeech("m1240ba0", TranscribedSound::make("m1240na0", "No, you've got to put it in the frieze above me, hurry!"), 11053);
 		}
 
 		return false;
@@ -437,7 +474,10 @@ TODO (medusa quest):
 					Common::Point(640, 216));
 			break;
 		case 11003:
-			room->playSound("m2100wa0", 11004);
+			room->playSpeech(TranscribedSound::make(
+							  "m2100wa0",
+							  "Someone help! I'm over here"),
+						  11004);
 			room->enableMouse();
 			break;
 		case kStoneTaken:
@@ -449,24 +489,24 @@ TODO (medusa quest):
 				persistent->_medisleShowFates = true;
 				room->setPannable(false);
 				room->disableHotzone("Argo");
-				room->playSound("m2120ma0", 11642);
+				room->playMusic("m2120ma0", 11642);
 				g_vm->addTimer(11601, 6500);
 				room->disableMouse();
 				persistent->_medisleEyeballIsActive = true;
 			}
 			break;
 		case 11601:
-			fatesShadowSound("m2120wa0", 11602);
+			fatesShadowSpeech(TranscribedSound::make("m2120wa0", "Now it's time, the eyeball's mine"), 11602);
 			break;
 		case 11602:
-			fatesShadowSound("m2120wb0", 11603);
+			fatesShadowSpeech(TranscribedSound::make("m2120wb0", "I can't see, so give it to me"), 11603);
 			break;
 		case 11603:
-			fatesShadowSound("m2120wc0", 11604);
+			fatesShadowSpeech(TranscribedSound::make("m2120wc0", "You stupid lout. Let's go, look out"), 11604);
 			break;
 		case 11604:
-			fatesShadowSoundEnd();
-			room->playAnimWithSound("m2120ba0", "m2120ea0", 280, PlayAnimParams::disappear(), 11605, kOffsetRightRoom);
+			fatesShadowSpeechEnd();
+			room->playAnimWithSFX("m2120ba0", "m2120ea0", 280, PlayAnimParams::disappear(), 11605, kOffsetRightRoom);
 			break;
 		case 11605:
 			room->enableMouse();
@@ -478,11 +518,11 @@ TODO (medusa quest):
 		case 11606:
 			if (_eyeIsGivenBack || _eyeIsPickedUp)
 				break;
-			fatesShadowSound(Common::String::format("m2120w%c0", 'd' + (_eyeInsistCounter % 3)), 11608);
+			fatesShadowSpeech(eyeInsistSpeech[_eyeInsistCounter % 3], 11608);
 			_eyeInsistCounter++;
 			break;
 		case 11608:
-			fatesShadowSoundEnd();
+			fatesShadowSpeechEnd();
 			break;
 		case 11065: // Left pan
 			if (persistent->_seriphosPlayedMedusa && !persistent->_medislePlayedPerseusIntro) {
@@ -491,7 +531,12 @@ TODO (medusa quest):
 			}
 			break;
 		case 11005:
-			playPerseusAnim("m1140bb0", "m1140nb0", 11007);
+			playPerseusAnimSpeech("m1140bb0",
+					      TranscribedSound::make(
+						      "m1140nb0",
+						      "This is what happens when you don't follow instructions. "
+						      "I should have listened to Athena's warning"),
+					      11007);
 			persistent->_medislePlayedPerseusIntro = true;
 			break;
 		case 11006:
@@ -499,24 +544,27 @@ TODO (medusa quest):
 			room->enableMouse();
 			break;
 		case 11007:
-			playPerseusAnim("m1140bc0", "m1140nc0", 11008);
+			playPerseusAnimSpeech("m1140bc0", TranscribedSound::make(
+						      "m1140nc0",
+						      "Without that stuff, I'm gonna wind up as part of Medusa's latest rock collection"),
+					      11008);
 			break;
 		case 11008:
-			playPerseusAnim("m1140bd0", "m1140nd0", 11006);
+			playPerseusAnimSpeech("m1140bd0", TranscribedSound::make("m1140nd0", "You gotta help me"), 11006);
 			break;
 		case 11009:
-			room->playSound(itemClickSounds[_lastClickedItem], 11010);
+			room->playSpeech(itemClickSounds[_lastClickedItem], 11010);
 			break;
 		case 11010:
 			for (int i = 0; i < 5; i++)
 				room->stopAnim(itemImagesGlow[i]);
 			break;
 		case 11012:
-			room->playSound("m1210ma0", 11013);
+			room->playMusic("m1210ma0", 11013);
 			break;
 		case 11013:
-			playPerseusAnim(perseusItemAnims[_lastPlacedItem - kShield],
-					 perseusItemSounds[_lastPlacedItem - kShield], 11014);
+			playPerseusAnimSpeech(perseusItemAnims[_lastPlacedItem - kShield],
+					      perseusItemSounds[_lastPlacedItem - kShield], 11014);
 			break;
 		case 11014: {
 			finishPerseusAnim();
@@ -536,26 +584,26 @@ TODO (medusa quest):
 				event = 11024;
 				break;
 			case 5:
-				room->playAnimWithSound("m1170ba0",
-							"m1190ec1",
-							806,
-							PlayAnimParams::disappear(),
-							11021);
+				room->playAnimWithSFX("m1170ba0",
+						      "m1190ec1",
+						      806,
+						      PlayAnimParams::disappear(),
+						      11021);
 				return;
 			}
 			int snakeIdx = 4 - getNumberOfBroughtItems();
-			room->playAnimWithSound(snakes[snakeIdx],
-						"m1190ec1", 807 + snakeIdx,
-						PlayAnimParams::disappear(),
-						event);
+			room->playAnimWithSFX(snakes[snakeIdx],
+					      "m1190ec1", 807 + snakeIdx,
+					      PlayAnimParams::disappear(),
+					      event);
 		}
 			break;
 		case 11015:
 			renderPerseus();
 			if (_lastPlacedItem == kSword)
-				playPerseusAnim("m1180bc0", "m1180nb0", 11016);
+				playPerseusAnimSpeech("m1180bc0", TranscribedSound::make("m1180nb0", "Thanks for the sword. Did you bring anything else?"), 11016);
 			else
-				playPerseusAnim("m1190bc0", "m1190nb0", 11016);
+				playPerseusAnimSpeech("m1190bc0", TranscribedSound::make("m1190nb0", "Thanks for the shield. Did you bring anything else?"), 11016);
 			break;
 		case 11016:
 		case 11025:
@@ -565,7 +613,7 @@ TODO (medusa quest):
 			break;
 		case 11017:
 			renderPerseus();
-			playPerseusAnim("m1200ba0", "m1200na0", 11018);
+			playPerseusAnimSpeech("m1200ba0", TranscribedSound::make("m1200na0", "You're doing great but I still need three other weapons. The fates will know where they are. Go ask them. They're somewhere on the isle"), 11018);
 			break;
 		case 11018:
 			finishPerseusAnim();
@@ -599,11 +647,12 @@ TODO (medusa quest):
 			break;
 		case 11024:
 			renderPerseus();
-			playPerseusAnim("m1250bb0", "m1250nb0", 11025);
+			playPerseusAnimSpeech("m1250bb0", TranscribedSound::make("m1250nb0", "What about the last item?"), 11025);
 			break;
 		case 11020:
 			renderPerseus();
-			playPerseusAnim("m1250ba0", "m1250na0", 11025);
+			playPerseusAnimSpeech("m1250ba0",
+					      TranscribedSound::make("m1250na0", "What about the other items?"), 11025);
 			break;
 		case 11027:
 			room->playVideo("m2130ba0", kFatesZ, 11609, Common::Point(756, 0));
@@ -625,7 +674,7 @@ TODO (medusa quest):
 		case 11624:
 			if (persistent->_medisleBagPuzzleState < Persistent::BAG_STARTED)
 				persistent->_medisleBagPuzzleState = Persistent::BAG_STARTED;
-			room->playSound("m2200ea0");
+			room->playSFX("m2200ea0");
 			startBagPuzzle();
 			// Fallthrough
 		case 11625:
@@ -669,7 +718,7 @@ TODO (medusa quest):
 			FateId fate = (FateId) g_vm->getRnd().getRandomNumberRng(0, 2);
 
 			if (!showFate(fate) && fate == kLachesis) {
-				room->playSound(
+				room->playSFX(
 					g_vm->getRnd().getRandomBit() ? "m2160wb0" : "m2160wa0", 11616);
 				break;
 			}
@@ -712,22 +761,22 @@ TODO (medusa quest):
 			case kLachesis:
 				room->stopAnim("m2140od0");
 				if (g_vm->getRnd().getRandomBit()) {
-					room->playAnimWithSound("m2140ba0", "m2140ea0", 1500,
-								PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
+					room->playAnimWithSFX("m2140ba0", "m2140ea0", 1500,
+							      PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
 				} else {
-					room->playAnimWithSound("m2140be0", "m2140ee0", 1500,
-								PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
+					room->playAnimWithSFX("m2140be0", "m2140ee0", 1500,
+							      PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
 				}
 				break;
 			case kAtropos:
 				room->stopAnim("m2140oe0");
-				room->playAnimWithSound("m2140bg0", "m2140eg0", 1500,
-							PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
+				room->playAnimWithSFX("m2140bg0", "m2140eg0", 1500,
+						      PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
 				break;
 			case kClotho:
 				room->stopAnim("m2140of0");
-				room->playAnimWithSound("m2140bh0", "m2140eh0", 1500,
-							PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
+				room->playAnimWithSFX("m2140bh0", "m2140eh0", 1500,
+						      PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
 				break;
 			// To silence warning
 			case kNumFates:
@@ -740,25 +789,25 @@ TODO (medusa quest):
 			renderFatesAll();
 			break;
 		case 11629:
-			room->playSound("m2190wc0", 11630);
+			room->playSpeech(kPunchingOwnEye, 11630);
 			break;
 		case 11630:
 		case 11632:
 			room->enableMouse();
-			fatesShadowSoundEnd();
+			fatesShadowSpeechEnd();
 			break;
 		case kLoopFatesShadow:
 			room->playAnim("m2280bc0", 4000,
 				       PlayAnimParams::loop().partial(10, 49), -1, kOffsetRightRoom);
 			break;
 		case 11035:
-			room->playSound("m1270ea0", 11203);
+			room->playSFX("m1270ea0", 11203);
 			_statueDrag = -1;
 			renderStatue();
 			break;
 		case 11203:
 			if (isAllPlaced()) {
-				room->playAnimWithSound("m1270bc0", "m1270eb0", 500, PlayAnimParams::disappear(), 11038);
+				room->playAnimWithSFX("m1270bc0", "m1270eb0", 500, PlayAnimParams::disappear(), 11038);
 				room->disableMouse();
 			}
 			break;
@@ -769,7 +818,7 @@ TODO (medusa quest):
 			break;
 		case 11039:
 		case 11040:
-			playPerseusAnim("m1290ba0", "m1290na0", 11041);
+			playPerseusAnimSpeech("m1290ba0", TranscribedSound::make("m1290na0", "Hey, that's the magic bag. Put it in the frieze above me"), 11041);
 			break;
 		case 11041:
 			finishPerseusAnim();
@@ -809,7 +858,7 @@ TODO (medusa quest):
 
 		if (quest == kMedusaQuest && persistent->_seriphosPlayedMedusa) {
 			if (!persistent->_medislePlayedPerseusIntro) {
-				room->playSound("m1140ma0", 11056);
+				room->playMusic("m1140ma0", 11056);
 				g_vm->addTimer(11002, 5000);
 			}
 			renderPerseus();
@@ -839,7 +888,7 @@ TODO (medusa quest):
 				room->selectFrame(itemImages[i], 2000, 0);
 		}
 
-		room->playSoundLoop("m1010ea0");
+		room->playMusicLoop("m1010ea0");
 
 		if (persistent->_medisleShowFates) {
 			enforceEyeConsistency();
@@ -890,17 +939,17 @@ TODO (medusa quest):
 		room->playAnimLoop("m1040ba0", 450);
 	}
 private:
-	void fatesShadowSound(const Common::String &sound, int event) {
+	void fatesShadowSpeech(const TranscribedSound &sound, int event) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		if (!_fatesShadowIsActive) {
 			room->playAnim("m2280bc0", 4000,
 				       PlayAnimParams::disappear().partial(0, 49), kLoopFatesShadow, kOffsetRightRoom);
 			_fatesShadowIsActive = true;
 		}
-		room->playSound(sound, event);
+		room->playSpeech(sound, event);
 	}
 
-	void fatesShadowSoundEnd() {
+	void fatesShadowSpeechEnd() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		_fatesShadowIsActive = false;
 		room->playAnim("m2280bc0", 4000,
@@ -929,16 +978,10 @@ private:
 		}
 	}
 
-	void playPerseusAnim(const Common::String &anim, const Common::String &sound, int callback) {
+	void playPerseusAnimSpeech(const Common::String &anim, const TranscribedSound &sound, int callback) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		_perseusAnim.hide();
-		room->playAnimWithSound(anim, sound, 1200, PlayAnimParams::disappear(), callback);
-	}
-
-	void playPerseusAnimVideo(const Common::String &anim, const Common::String &sound, int callback) {
-		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		_perseusAnim.hide();
-		room->playAnimWithSound(anim, sound, 1200, PlayAnimParams::disappear(), callback);
+		room->playAnimWithSpeech(anim, sound, 1200, PlayAnimParams::disappear(), callback);
 	}
 
 	void finishPerseusAnim() {
@@ -958,7 +1001,7 @@ private:
 		g_vm->getHeroBelt()->removeFromInventory(item);
 		_lastPlacedItem = item;
 		room->selectFrame(itemImages[itemIdx], 2000, 0);
-		room->playSound(itemSounds[itemIdx], 11012);
+		room->playSFX(itemSounds[itemIdx], 11012);
 		room->disableMouse();
 	}
 
@@ -972,7 +1015,7 @@ private:
 		if (!persistent->_medislePlacedItems[itemIdx])
 			room->playAnimLoop(itemImagesGlow[itemIdx], 2000);
 		_lastClickedItem = itemIdx;
-		room->playSound("m1150ea0", 11009);
+		room->playSFX("m1150ea0", 11009);
 	}
 
 	void renderFatesExcept(FateId except1, FateId except2 = kNumFates) {
@@ -1082,7 +1125,7 @@ private:
 			transSound = "m2150ed0";
 		}
 
-		room->playAnimWithSound(transAnim, transSound, kFatesZ, PlayAnimParams::disappear(), event, kOffsetRightRoom);
+		room->playAnimWithSFX(transAnim, transSound, kFatesZ, PlayAnimParams::disappear(), event, kOffsetRightRoom);
 		persistent->_medisleEyePosition = newPos;
 		_fatesAreBusy = true;
 	}
@@ -1194,9 +1237,9 @@ private:
 
 	void playFatesLairBackupSound() {
 		if (g_vm->getRnd().getRandomBit())
-			fatesShadowSound("m2190wb0", 11629);
+			fatesShadowSpeech(kGiveMeEyeOrIllPunchYouInTheEye, 11629);
 		else
-			fatesShadowSound("m2190wd0", 11630);
+			fatesShadowSpeech(kIllTakeTheEyeYouCanHaveOneOfMyEars, 11630);
 	}
 
 	AmbientAnim _perseusAnim;

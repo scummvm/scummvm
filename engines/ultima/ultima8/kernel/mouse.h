@@ -150,13 +150,28 @@ public:
 	bool buttonUp(Shared::MouseButton button);
 
 	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
-	int getMouseLength(int mx, int my);
+	int getMouseLength(int mx, int my) const;
+
+	//! get mouse cursor length for the current coordinates
+	int getMouseLength() const {
+		return getMouseLength(_mousePos.x, _mousePos.y);
+	}
 
 	//! get mouse cursor direction on the screen. 0 = up, 1 = up-right, 2 = right, etc...
-	Direction getMouseDirectionScreen(int mx, int my);
+	Direction getMouseDirectionScreen(int mx, int my) const;
+
+	//! get mouse cursor direction on the screen using the current coordinates.
+	Direction getMouseDirectionScreen() const {
+		return getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+	}
 
 	//! get mouse cursor direction in the world. 0 = up, 1 = up-right, 2 = right, etc...
-	Direction getMouseDirectionWorld(int mx, int my);
+	Direction getMouseDirectionWorld(int mx, int my) const;
+
+	//! get mouse cursor direction in the world using the current coordinates.
+	Direction getMouseDirectionWorld() const {
+		return getMouseDirectionWorld(_mousePos.x, _mousePos.y);
+	}
 
 	//! get current mouse cursor location
 	void getMouseCoords(int32 &mx, int32 &my) const {

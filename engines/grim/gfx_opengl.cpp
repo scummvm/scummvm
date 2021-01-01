@@ -441,10 +441,10 @@ void GfxOpenGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
 	for (uint i = 0; i < model->_numFaces; i++) {
-		int *indices = (int *)model->_faces[i]._indexes;
+		uint16 *indices = (uint16 *)model->_faces[i]._indexes;
 
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
-			int index = indices[j];
+			uint16 index = indices[j];
 			Math::Vector3d obj = model->_drawVertices[index];
 			Math::Vector3d win;
 			Math::gluMathProject<GLdouble, GLint>(obj, modelView, projection, viewPort, win);
@@ -736,7 +736,7 @@ void GfxOpenGL::set3DMode() {
 }
 
 void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
-	int *indices = (int *)face->_indexes;
+	uint16 *indices = (uint16 *)face->_indexes;
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
@@ -755,7 +755,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	}
 	Math::Vector3d noLighting(1.f, 1.f, 1.f);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
-		int index = indices[j];
+		uint16 index = indices[j];
 
 		if (!_currentShadowArray) {
 			if (face->_hasTexture) {
@@ -1742,7 +1742,17 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_INT_8_8_8_8;
 #else
-		// AmigaOS' MiniGL does not understand GL_UNSIGNED_INT_8_8_8_8 yet.
+		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
+		format = GL_BGRA;
+		dataType = GL_UNSIGNED_BYTE;
+#endif
+	// Used by Grim Fandango Remastered
+	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) {
+#if !defined(__amigaos4__)
+		format = GL_BGRA;
+		dataType = GL_UNSIGNED_INT_8_8_8_8;
+#else
+		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_BYTE;
 #endif

@@ -37,11 +37,13 @@ namespace Comprehend {
 
 enum NounState { NOUNSTATE_STANDARD = 0, NOUNSTATE_QUERY = 1, NOUNSTATE_INITIAL = 2 };
 
+enum RedoLine { REDO_NONE, REDO_PROMPT, REDO_TURN };
+
 struct GameStrings;
 struct Sentence;
 
 struct Sentence {
-	Word _words[4];
+	Word _words[20];
 	size_t _nr_words;
 	byte _formattedWords[6];
 	byte _specialOpcodeVal2;
@@ -79,6 +81,10 @@ protected:
 	Sentence _sentence;
 	char _inputLine[INPUT_LINE_SIZE];
 	int _inputLineIndex;
+	int _currentRoomCopy;
+	int _functionNum;
+	int _specialOpcode;
+	RedoLine _redoLine;
 public:
 	const GameStrings *_gameStrings;
 
@@ -93,9 +99,8 @@ private:
 	bool handle_sentence(uint tableNum, Sentence *sentence, Common::Array<byte> &words);
 	void read_sentence(Sentence *sentence);
 	void parse_sentence_word_pairs(Sentence *sentence);
-	void doBeforeTurn();
-	void doAfterTurn();
 	void read_input();
+	void doBeforeTurn();
 
 protected:
 	void game_save();
@@ -137,16 +142,40 @@ public:
 	ComprehendGame();
 	virtual ~ComprehendGame();
 
+	/**
+	 * Called before the game starts
+	 */
 	virtual void beforeGame() {}
+
+	/**
+	 * Called just before the prompt for user input
+	 */
 	virtual void beforePrompt() {}
-	virtual void beforeTurn() {}
-	virtual bool afterTurn() {
-		return false;
-	}
+
+	/**
+	 * Called after input has been entered.
+	 */
+	virtual void afterPrompt() {}
+
+	/**
+	 * Called before the start of a game turn
+	 */
+	virtual void beforeTurn();
+
+	/**
+	 * Called at the end of a game turn
+	 */
+	virtual void afterTurn() {}
+
+	/**
+	 * Called when an action function has been selected
+	 */
+	virtual void handleAction(Sentence *sentence);
+
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}
-	virtual void handleSpecialOpcode(uint8 operand) {}
+	virtual void handleSpecialOpcode() {}
 
 	virtual void synchronizeSave(Common::Serializer &s);
 
@@ -155,11 +184,12 @@ public:
 	Common::String stringLookup(uint16 index);
 	Common::String instrStringLookup(uint8 index, uint8 table);
 
-	void playGame();
+	virtual void playGame();
 
 	void move_to(uint8 room);
 	Room *get_room(uint16 index);
 	Item *get_item(uint16 index);
+	void updateRoomDesc();
 	void update();
 	void update_graphics();
 

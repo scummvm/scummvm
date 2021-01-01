@@ -74,8 +74,8 @@ public:
 		_flags |= PROC_RUNPAUSED;
 	};
 
-	//! suspend until process '_pid' returns. If _pid is 0, suspend indefinitely
-	void waitFor(ProcId _pid);
+	//! suspend until process 'pid' returns. If pid is 0, suspend indefinitely
+	void waitFor(ProcId pid);
 
 	//! suspend until process returns. If proc is 0, suspend indefinitely
 	void waitFor(Process *proc);
@@ -95,6 +95,9 @@ public:
 	void setType(uint16 ty) {
 		_type = ty;
 	}
+	void setTicksPerRun(uint32 val) {
+		_ticksPerRun = val;
+	}
 
 	ProcId getPid() const {
 		return _pid;
@@ -104,6 +107,9 @@ public:
 	}
 	uint16 getType() const {
 		return _type;
+	}
+	uint32 getTicksPerRun() const {
+		return _ticksPerRun;
 	}
 
 	//! dump some info about this process to pout
@@ -120,6 +126,10 @@ protected:
 	ProcId _pid;
 
 	uint32 _flags;
+
+	//! how many kernel ticks between when this process should be run.
+	//! not saved because it's fixed by process type and game.
+	uint32 _ticksPerRun;
 
 	//! item we are assigned to
 	ObjId _itemNum;

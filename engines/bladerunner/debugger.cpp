@@ -23,6 +23,7 @@
 #include "bladerunner/debugger.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/ambient_sounds.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/combat.h"
@@ -33,6 +34,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/light.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/music.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
@@ -117,6 +119,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
 	registerCmd("loop", WRAP_METHOD(Debugger, cmdLoop));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPosition));
+	registerCmd("music", WRAP_METHOD(Debugger, cmdMusic));
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
@@ -573,6 +576,90 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 		actor->setAtXYZ(position, facing);
 	}
 	return true;
+}
+
+/**
+ * @brief Auxiliary function to determine if a String is comprised exclusively of "0"
+ *
+ * This is basically a very simplified (and smaller scope) version of
+ * checking the String with isdigit() (which is banned).
+ *
+ * @param valStr The String to examine
+ * @return true if String is all zeroes, false otherwise
+*/
+bool isAllZeroes(Common::String valStr) {
+	for (uint i = 0; i < valStr.size();  ++i) {
+		if (valStr.c_str()[i] != '0') {
+			return false;
+		}
+	}
+	return true;
+}
+
+// Tracks marked as (G) are only available in-game ie. not in the official OST by Frank Klepacki on his site.
+//
+// Note, that there are a few tracks that are not proper music tracks but rather SFX tracks.
+// For example, the re-used track "Iron Fist" from Command & Conquer - The Covert Operations (OST),
+// which is played at the NightClub Row (NR01), is "kSfxMUSBLEED" (looping).
+// TODO maybe support those too?
+const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicArabLoop
+                                 "Battle Theme",                    // kMusicBatl226M
+                                 "Blade Runner Blues",              // kMusicBRBlues
+                                 "Etsuko Theme",                    // kMusicKyoto
+                                 "One More Time, Love (G)",         // kMusicOneTime
+                                 "Gothic Club 2",                   // kMusicGothic3
+                                 "Arcane Dragon Fly (G)",           // kMusicArkdFly1
+                                 "Arcane Dance (G)",                // kMusicArkDnce1
+                                 "Taffy's Club 2",                  // kMusicTaffy2
+                                 "Enigma Drift",                    // kMusicTaffy3
+                                 "Late Call",                       // kMusicTaffy4
+                                 "Nexus (aka Beating 1)",           // kMusicBeating1
+                                 "Awakenings (aka Crystal Dies 1)", // kMusicCrysDie1
+                                 "Gothic Club",                     // kMusicGothic1
+                                 "Transition",                      // kMusicGothic2
+                                 "The Eyes Follow",                 // kMusicStrip1
+                                 "Dektora's Dance (G)",             // kMusicDkoDnce1
+                                 "End Credits",                     // kMusicCredits
+                                 "Ending (aka Moraji)",             // kMusicMoraji
+                                 "Remorse (aka Clovis Dies 1)",     // kMusicClovDie1
+                                 "Solitude (aka Clovis Dies)",      // kMusicClovDies
+                                 "Love Theme"};                     // kMusicLoveSong
+
+bool Debugger::cmdMusic(int argc, const char** argv) {
+	if (argc != 2) {
+		debugPrintf("Play the specified music track, list the available tracks\nor stop the current playing track.\n");
+		debugPrintf("Usage: %s (list|stop|<musicId>)\n", argv[0]);
+		debugPrintf("musicId can be in [0, %d]\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+		return true;
+	}
+
+	Common::String trackArgStr = argv[1];
+	if (trackArgStr == "list") {
+		for (int i = 0; i < (int)_vm->_gameInfo->getMusicTrackCount(); ++i) {
+			debugPrintf("%2d %s\n", i, kMusicTracksArr[i]);
+		}
+		return true;
+	} else if (trackArgStr == "stop") {
+		_vm->_music->stop(0);
+		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
+	} else {
+		int musicId = atoi(argv[1]);
+
+		if ((musicId == 0 && !isAllZeroes(trackArgStr))
+		    || musicId < 0
+		    || musicId >= (int)_vm->_gameInfo->getMusicTrackCount()) {
+			debugPrintf("Invalid music track id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+			return true;
+		} else {
+			_vm->_music->stop(0);
+			_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, 0, 0);
+			//debugPrintf("Now playing track %2d - \"%s\" (%s)\n", musicId, kMusicTracksArr[musicId], _vm->_gameInfo->getMusicTrack(musicId).c_str());
+			debugPrintf("Now playing track %2d - \"%s\"\n", musicId, kMusicTracksArr[musicId]);
+		}
+		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
+		//_vm->_ambientSounds->addLoopingSound(kSfxMUSBLEED, 100, 0, 0);
+	}
+	return false;
 }
 
 bool Debugger::cmdSay(int argc, const char **argv) {

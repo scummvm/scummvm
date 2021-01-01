@@ -102,7 +102,7 @@ else:
 	structLibFound = True
 	
 try:
-	from PIL import Image 
+	from PIL import Image
 except ImportError:
 	print "[Error] Image python library (PIL) is required to be installed!" 
 else:
@@ -129,7 +129,7 @@ from struct import *
 from fonFileLib import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.00"
+APP_VERSION = "1.10"
 APP_NAME = "grabberFromPNGHHBR"
 APP_WRAPPER_NAME = "fontCreator.py"
 APP_NAME_SPACED = "Blade Runner Font Creator/Exporter"
@@ -484,6 +484,11 @@ class grabberFromPNG:
 			if startCol != 0:
 				break
 			for y in range(0, imheight):	 # we search all rows (for each column)
+				if type(loadedImag[x, y]) is not tuple or len(loadedImag[x, y]) < 4:
+					#print type(loadedImag[x, y]), len(loadedImag[x, y])
+					print "[Error] Bad format for pixel type -- probable cause: unsupported PNG optimization"
+					return -2
+
 				r1,g1,b1,a1 = loadedImag[x, y]
 				if a1 != 0:	 # if pixel not completely transparent -- this is not necessarily the *top* left pixel of a font letter though! -- the startRow is still to be determined.
 					#if gTraceModeEnabled:
@@ -646,8 +651,8 @@ class grabberFromPNG:
 			errorFound = True
 		if not errorFound:
 			#debug
-			#if gTraceModeEnabled:
-			#	print "[Debug] ", self.imageRowFilePNG, im.format, "%dx%d" % im.size, im.mode
+			if gTraceModeEnabled:
+				print "[Debug] ", self.imageRowFilePNG, im.format, "%dx%d" % im.size, im.mode
 			w1, h1 = im.size
 			trimTopPixels = 0
 			trimBottomPixels = 0

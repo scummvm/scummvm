@@ -171,7 +171,6 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 _dialogs=auto
-_iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
@@ -249,6 +248,7 @@ _pandocformat="default"
 _pandocext="default"
 # Detection features to be linked into executable or not
 _detection_features_static=yes
+_detection_features_full=yes
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -1181,9 +1181,6 @@ Optional Libraries:
   --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
-  --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
-  --disable-iconv        disable libiconv encoding conversion library [autodetect]
-
   --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
   --disable-discord       disable Discord rich presence integration [autodetect]
 
@@ -1245,6 +1242,8 @@ for ac_option in $@; do
 	--enable-static)              _static_build=yes      ;;
 	--enable-detection-static)    _detection_features_static=yes;;
 	--enable-detection-dynamic)   _detection_features_static=no;;
+	--enable-detection-full)      _detection_features_full=yes;;
+	--disable-detection-full)     _detection_features_full=no;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
 	--disable-highres)            _highres=no            ;;
@@ -1349,8 +1348,6 @@ for ac_option in $@; do
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
-	--enable-iconv)              _iconv=yes              ;;
-	--disable-iconv)             _iconv=no               ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1469,11 +1466,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		GLEW_CFLAGS="-I$arg/include"
 		GLEW_LIBS="-L$arg/lib"
-		;;
-	--with-iconv-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		ICONV_CFLAGS="-I$arg/include"
-		ICONV_LIBS="-L$arg/lib"
 		;;
 	--with-discord-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2713,19 +2705,27 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
+		# On building dynamic, everything (possible) should be built as plugin.
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
+		# We have to use 'long' for our 4 byte typedef, because AmigaOS
+		# already typedefs (u)int32 as (unsigned) long  and consequently we'd
+		# get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		# Enable optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O2
 		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
-		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
-		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		_nuked_opl=no
+		# Leave out resources by default, save binary size.
+		_builtin_resources=no
 		;;
 	android)
 		case $_host in
@@ -2905,25 +2905,28 @@ case $_host_os in
 		# Building with SDK 10.14+ causes blurry display on Retina screens.
 		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
 		# to n/a (i.e. 0.0). See bug #11430 for details.
-		echocheck "macOS deployement target"
-		_macos_min_version=undefined
-		for _macos_min_version_check in 1030 1040 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
-			cat > $TMPC << EOF
+		echocheck "macOS deployment target"
+		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
-#if MAC_OS_X_VERSION_MIN_REQUIRED > ${_macos_min_version_check}
-error
-#endif
-int main(int argc, char *argv[]) { return 0; }
+
+#define _DIGIT(x) #x
+#define DIGIT(x) _DIGIT(x)
+
+const char version[] = "Version:" DIGIT(MAC_OS_X_VERSION_MIN_REQUIRED);
+const char *_version() { char *s = (char *)version; return s; }
+
+int main(int argc, char *argv[]) { _version(); return 0; }
 EOF
-			cc_check
-			if test "$TMPR" -eq 0; then
-				_macos_min_version=$_macos_min_version_check
-				break
-			fi
-		done
+		cc_check_no_clean
+		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
+			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
+			_macos_min_version="${_macos_min_version#Version:}"
+		fi
+		cc_check_clean
+
 		# Also get a dot version of the min version
 		_macos_min_version_dot=undefined
-		if test "$_macos_min_version" != undefined ; then
+		if test -n "$_macos_min_version" ; then
 			if test "$_macos_min_version" -lt 101000; then
 				_macos_min_ver_major=$((${_macos_min_version}/100))
 				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
@@ -2953,15 +2956,18 @@ EOF
 			append_var LDFLAGS "$_macos_ldflags_platform_version"
 		fi
 
-		# When building for MacOS X 10.5 or below we need to use the legacy icon
-		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -lt 1060 ; then
-			add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
-		fi
+		# Version-specific quirks
+		if test -n "$_macos_min_version" ; then
+			# When building for MacOS X 10.5 or below we need to use the legacy icon
+			if test "$_macos_min_version" -lt 1060 ; then
+				add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
+			fi
 
-		# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
-		# Assume the SDK version is the same as the min version.
-		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -gt 101399 ; then
-			add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
+			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
+			# Assume the SDK version is the same as the min version.
+			if test "$_macos_min_version" -gt 101399 ; then
+				add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
+			fi
 		fi
 
 		# Use pandoc to generate README and NEWS file for the bundle
@@ -3085,9 +3091,8 @@ EOF
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
-		# for use SDL2
+		# use SDL2
 		_sdlconfig=sdl2-config
-		_nuked_opl=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -3105,6 +3110,7 @@ EOF
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'N64 = 1'
+		_detection_features_full=no
 		_nuked_opl=no
 		;;
 	ps3)
@@ -3473,6 +3479,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
+			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE"
 			append_var ASFLAGS "-arch armv6"
 			_backend="iphone"
@@ -3482,6 +3489,7 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		ios7)
+			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
 			_backend="ios7"
 			_seq_midi=no
@@ -4274,6 +4282,13 @@ echo_n "Checking if detection features building statically... "
 echo "$_detection_features_static"
 
 #
+# Set up a define for detection to be used as static or not
+#
+define_in_config_if_yes "$_detection_features_full" "DETECTION_FULL"
+echo_n "Checking if building detection features for all engines... "
+echo "$_detection_features_full"
+
+#
 # Check whether integrated MT-32 emulator support is requested
 #
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
@@ -4345,7 +4360,7 @@ if test "$_tts" = auto ; then
 		mingw*)
 			cat > $TMPC << EOF
 #include <windows.h>
-#include <Servprov.h>
+#include <servprov.h>
 #include <sapi.h>
 int main(void) { return 0; }
 EOF
@@ -5437,7 +5452,7 @@ EOF
 	# Try different library names
 	if test "$_opengl_game_es2" = yes ; then
 		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-		# 2) ogles2    This is used by AmigaOS4 (and probably others)
+		# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
 		_opengl_game_es2=no
 		for lib in "-lGLESv2" "-logles2"; do
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
@@ -5507,86 +5522,6 @@ if test -n "$LIBS_3D" ; then
 	_mak_plugins=$_mak_plugins"PLUGIN_LDFLAGS  += $LIBS_3D"
 fi
 
-
-#
-# Check for iconv
-#
-echo_n "Checking whether iconv.h is present... "
-if test "$_iconv" = auto ; then
-	_iconv=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	return 0;
-}
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
-fi
-
-create_iconv_test() {
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	iconv_t iconv = iconv_open("UTF-32", "SJIS");
-	iconv_close(iconv);
-	return 0;
-}
-EOF
-}
-echo "$_iconv"
-
-if test "$_iconv" = yes ; then
-	echo_n "Checking whether iconv needs linking against libiconv... "
-
-	needs_iconvlib='auto'
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
-	# We do check linking without -liconv here too, just in case
-	# it would fail otherwise too
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
-
-	if test "$needs_iconvlib" = auto ; then
-		_iconv=no
-		echo "does not link at all"
-	else
-		if test "$needs_iconvlib" = yes ; then
-			append_var ICONV_LIBS "-liconv"
-		fi
-		echo "$needs_iconvlib"
-
-		echo_n "Checking signature of iconv... "
-		uses_const=no
-
-		cat > $TMPC << EOF
-#include <iconv.h>
-int main(int argc, char **argv) {
-	iconv_t iconvP;
-	const char **inbuf = 0;
-	iconv(iconvP, inbuf, 0, 0, 0);
-	return 0;
-}
-EOF
-		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
-
-		if test "$uses_const" = yes ; then
-			echo "iconv_t, const char **, size_t *, char **, size_t *"
-		else
-			echo "iconv_t, char **, size_t *, char **, size_t *"
-		fi
-
-		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
-	fi
-fi
-
-if test "$_iconv" = yes ; then
-	append_var LIBS "$ICONV_LIBS"
-	append_var INCLUDES "$ICONV_CFLAGS"
-fi
-
-echocheck "iconv"
-define_in_config_if_yes "$_iconv" 'USE_ICONV'
-echo "$_iconv"
 
 #
 # Check for Linux CD-ROM support
@@ -5830,8 +5765,12 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	morphos*)
-		echo "morphos"
+	amigaos*)
+		echo "amigaos (asl)"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
 		_dialogs=yes
 		;;
 	mingw*)
@@ -5839,8 +5778,8 @@ else
 		echo "win32"
 		_dialogs=yes
 		;;
-	darwin*)
-		echo "osx"
+	morphos*)
+		echo "morphos"
 		_dialogs=yes
 		;;
 	*)
@@ -6445,7 +6384,9 @@ for engine in $_sorted_engines; do
 		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
 		detectEngine="${j}${detectId}"
 		cat >> engines/detection_table.h << EOF
+#if defined(ENABLE_$j) || defined(DETECTION_FULL)
 LINK_PLUGIN($detectEngine)
+#endif
 EOF
 	fi
 done

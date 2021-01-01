@@ -10,7 +10,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
@@ -56,6 +55,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);
 
+	final public native String getNativeVersionInfo();
+
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);
 	abstract protected void displayMessageOnOSD(String msg);
@@ -68,7 +69,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
-	abstract protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException;
 	abstract protected String[] getAllStorageLocations();
 	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
 	abstract protected boolean createDirectoryWithSAF(String dirPath);
@@ -80,6 +80,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		_sem_surface = new Object();
 		_svm_destroyed_callback = scummVMDestroyedCallback;
 		holder.addCallback(this);
+	}
+
+	final public String getInstallingScummVMVersionInfo() {
+		return getNativeVersionInfo();
 	}
 
 	// SurfaceHolder callback
@@ -336,16 +340,24 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		EGL10.EGL_TRANSPARENT_BLUE_VALUE
 	};
 
-	final private class EglAttribs extends LinkedHashMap<Integer, Integer> {
+	final private class EglAttribs  {
+
+		LinkedHashMap<Integer, Integer> _lhm;
+
 		public EglAttribs(EGLConfig config) {
-			super(s_eglAttribs.length);
+			_lhm = new LinkedHashMap<>(s_eglAttribs.length);
 
 			int[] value = new int[1];
+
+			// prevent throwing IllegalArgumentException
+			if (_egl_display == null || config == null) {
+				return;
+			}
 
 			for (int i : s_eglAttribs) {
 				_egl.eglGetConfigAttrib(_egl_display, config, i, value);
 
-				put(i, value[0]);
+				_lhm.put(i, value[0]);
 			}
 		}
 
@@ -435,6 +447,14 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 			return s;
 		}
+
+		public Integer get(Integer key) {
+			if (_lhm.containsKey(key) && _lhm.get(key) != null) {
+				return _lhm.get(key);
+			} else {
+				return 0;
+			}
+		}
 	}
 
 	private EGLConfig chooseEglConfig(EGLConfig[] configs) {
@@ -444,19 +464,21 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		Log.d(LOG_TAG, "EGL configs:");
 
 		for (EGLConfig config : configs) {
-			EglAttribs attr = new EglAttribs(config);
+			if (config != null) {
+				EglAttribs attr = new EglAttribs(config);
 
-			// must have
-			if ((attr.get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) == 0)
-				continue;
+				// must have
+				if ((attr.get(EGL10.EGL_SURFACE_TYPE) & EGL10.EGL_WINDOW_BIT) == 0)
+					continue;
 
-			int score = attr.weight();
+				int score = attr.weight();
 
-			Log.d(LOG_TAG, String.format(Locale.ROOT, "%s (%d)", attr.toString(), score));
+				Log.d(LOG_TAG, String.format(Locale.ROOT, "%s (%d)", attr.toString(), score));
 
-			if (score > bestScore) {
-				res = config;
-				bestScore = score;
+				if (score > bestScore) {
+					res = config;
+					bestScore = score;
+				}
 			}
 		}
 

@@ -49,7 +49,6 @@ namespace ICB {
 #define NONZERO_DELTAS_16_BYTE_SIZE (3)
 #define NONZERO_DELTAS_8_BYTE_SIZE (2)
 
-#define FRAME_SIZE_ERROR (INT_MAX)
 #define ZERO_ANGLE (0)
 
 #define DELTA_24_NBITS (8)

@@ -254,7 +254,10 @@ Common::Error SagaEngine::run() {
 	_events = new Events(this);
 
 	if (!isSaga2()) {
-		_font = new Font(this);
+		if (getLanguage() == Common::JA_JPN)
+			_font = new SJISFont(this);
+		else
+			_font = new DefaultFont(this);
 		_sprite = new Sprite(this);
 		_script = new SAGA1Script(this);
 	} else {
@@ -572,6 +575,9 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			break;
 		case (kKnownColorSubtitleTextColor):
 			colorId = (ColorId)255;
+			break;
+		case (kKnownColorSubtitleEffectColorPC98):
+			colorId = (ColorId)210;
 			break;
 		case (kKnownColorVerbText):
 			colorId = kITEColorBlue;

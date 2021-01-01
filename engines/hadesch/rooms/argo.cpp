@@ -23,6 +23,7 @@
  */
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 
@@ -43,37 +44,37 @@ enum {
 
 static const struct island {
 	const char *hotname;
-	const char *mouseoverAnim; // not mapped
-	const char *nameSound; // not mapped
-	const char *sfxSound; // not mapped
+	const char *mouseoverAnim;
+	TranscribedSound nameSound;
+	const char *sfxSound;
 	RoomId roomId;
 	int zValue;
 } islands[] = {
-	{"Phils", "a1030bh0", "a1030nf0", "a1030ef0", kWallOfFameRoom, 901},
-	{"Medusa", "a1030bf0", "a1030nc0", "a1030ed0", kMedIsleRoom, 901},
-	{"Troy", "a1030bd0", "a1030na0", "a1030eb0", kTroyRoom, 901},
-	{"Seriphos", "a1030be0", "a1030nd0", "a1030ec0", kSeriphosRoom, 801},
-	{"Crete", "a1030bc0", "a1030nb0", "a1030ea0", kCreteRoom, 801},
-	{"Volcano", "a1030bg0", "a1030ne0", "a1030ee0", kVolcanoRoom, 801},
+	{"Phils", "a1030bh0", {"a1030nf0", _s("Phil's") }, "a1030ef0", kWallOfFameRoom, 901},
+	{"Medusa", "a1030bf0", {"a1030nc0", _s("Medusa Isle")}, "a1030ed0", kMedIsleRoom, 901},
+	{"Troy", "a1030bd0", {"a1030na0", _s("Troy")}, "a1030eb0", kTroyRoom, 901},
+	{"Seriphos", "a1030be0", {"a1030nd0", _s("Seriphos")}, "a1030ec0", kSeriphosRoom, 801},
+	{"Crete", "a1030bc0", {"a1030nb0", _s("Crete")}, "a1030ea0", kCreteRoom, 801},
+	{"Volcano", "a1030bg0", {"a1030ne0", _s("Volcano island")}, "a1030ee0", kVolcanoRoom, 801},
 };
 
-static const int nislands = sizeof(islands) / sizeof(islands[0]);
+static const int nislands = ARRAYSIZE(islands);
 
-static const char *intros[] = {
-	"a1150na0",
-	"a1150nb0",
-	"a1150nc0",
-	"a1150nd0",
-	"a1150ne0",
-	"a1150nf0"
+static const TranscribedSound intros[] = {
+	{ "a1150na0", _s("Aye, welcome onboard ladie") },
+	{ "a1150nb0", _s("So, are you hero yet?") },
+	{ "a1150nc0", _s("So, are you heroine yet?") },
+	{ "a1150nd0", _s("So, made it back, you did? Frankly, I'm surprised") },
+	{ "a1150ne0", _s("Glad I'm, you're still alive. I hate sailing alone") },
+	{ "a1150nf0", _s("So where will we be headed now?") }
 };
 
-static const char *defaultOutros[] = {
-	"a1170na0",
-	"a1170nb0",
-	"a1170nc0",
-	"a1170nd0",
-	"a1170ne0"
+static const TranscribedSound defaultOutros[] = {
+	{ "a1170na0", _s("Heave anchor") },
+	{ "a1170nb0", _s("Hurry, hoist the main") },
+	{ "a1170nc0", _s("All hands on deck. Man the sails") },
+	{ "a1170nd0", _s("Pull her to starboard and bring her around") },
+	{ "a1170ne0", _s("Pull back on that rudder. Hold her steady") }
 };
 
 enum {
@@ -86,7 +87,7 @@ enum {
 	kMastSoundFinished = 1027002
 };
 
-static Common::String
+static const TranscribedSound
 getOutroName(RoomId dest) {
 	Persistent *persistent = g_vm->getPersistent();
 	Quest quest = persistent->_quest;
@@ -94,49 +95,47 @@ getOutroName(RoomId dest) {
 	switch (dest) {
 	case kWallOfFameRoom:
 		if (!persistent->_argoSailedInQuest[dest][quest])
-			return "philsfirst";
+			return TranscribedSound::make("philsfirst", "That'd be where the grand heroes and heroines of the world go to train");
 		break;
 	case kSeriphosRoom:
-		if (quest == kCreteQuest && !persistent->_argoSailedInQuest[dest][quest])
-			return "seriphoscretetroy";
-		if (quest == kTroyQuest && !persistent->_argoSailedInQuest[dest][quest])
-			return "seriphoscretetroy";
+		if ((quest == kTroyQuest || quest == kCreteQuest) && !persistent->_argoSailedInQuest[dest][quest])
+			return TranscribedSound::make("seriphoscretetroy", "This place be ruled by the evil tyrant king Polydectes");
 		if (quest == kMedusaQuest && !persistent->_argoSailedInQuest[dest][quest])
-			return "seriphosperseus";
+			return TranscribedSound::make("seriphosperseus", "Arr, Perseus be in trouble deep. Could use a hand");
 		break;
 	case kMedIsleRoom:
 		if (quest == kMedusaQuest && !persistent->_argoSailedInQuest[dest][quest])
-			return "medusabeware";
+			return TranscribedSound::make("medusabeware", "Beware of Medusa. She be one scary looking lady. All her mirrors be made of shatter-proof glass");
 		break;
 	case kTroyRoom:
 		if (!persistent->isRoomVisited(kTroyRoom))
-			return "troytenyears";
+			return TranscribedSound::make("troytenyears", "For ten years now trojan and greek soldiers have been fighting that trojan war. Talk about job security");
 		if (quest == kTroyQuest && !persistent->_argoSailedInQuest[dest][quest])
-			return "troyregards";
+			return TranscribedSound::make("troyregards", "Send me regards to Odysseus");
 		if (quest > kTroyQuest && !persistent->_argoSaidTroyFinally) {
 			persistent->_argoSaidTroyFinally = true;
-			return "troyfinally";
+			return TranscribedSound::make("troyfinally", "Finally, the trojan war be over and Helen be back with Menelaus. Now those two can fight without an interruption");
 		}
 		break;
 	case kCreteRoom:
 		if (!persistent->isRoomVisited(kCreteRoom))
-			return "cretedaedalus";
+			return TranscribedSound::make("cretedaedalus", "This be where Daedalus, the inventor, lives");
 
 		if (quest != kCreteQuest && !persistent->_argoSaidCretePort)
-			return "creteport";
+			return TranscribedSound::make("creteport", "Crete, the famous international port of trade");
 		break;
 	case kVolcanoRoom:
 		if (!persistent->isRoomVisited(kVolcanoRoom))
-			return "volcanotopfirst";
+			return TranscribedSound::make("volcanotopfirst", "Know this: should you go down there, you may not come back");
 
 		if (quest == kRescuePhilQuest && !!persistent->_argoSailedInQuest[dest][quest])
-			return "volcanotopyoufirst";
+			return TranscribedSound::make("volcanotopyoufirst", "Hah, many are monsters down there. Very dangerous. You go first");
 		break;
 
 	default:
 		assert(0);
 	}
-	int rnd = g_vm->getRnd().getRandomNumberRng(0, sizeof(defaultOutros) / sizeof(defaultOutros[0]) - 1);
+	int rnd = g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(defaultOutros) - 1);
 	debug("rnd = %d", rnd);
 	return defaultOutros[rnd];
 }
@@ -162,7 +161,10 @@ public:
 			room->disableMouse();
 			room->stopAnim("idlesound");
 			if (_destination == _prevId) {
-				playMastSound("currentlocation", kOutroFinished);
+				playMastSound(TranscribedSound::make(
+						  "currentlocation",
+						  "Here be your current location, matie."),
+					      kOutroFinished);
 				return;
 			}
 
@@ -170,13 +172,13 @@ public:
 			_cloudsMoving = true;
 			_cloudsMoveStart = g_vm->getCurrentTime();
 			playMastSound(getOutroName(_destination), kOutroFinishedCounter);
-			room->playAnimWithSound("wavesleft", "wavesleftSFX", kWavesLeftZ,
-						PlayAnimParams::disappear(),
-						kOutroFinishedCounter);
-			room->playAnimWithSound("wavesright", "wavesrightSFX", kWavesRightZ,
-						PlayAnimParams::disappear(),
-						kOutroFinishedCounter);
-			room->playSound("A1030eG0", kOutroFinishedCounter);
+			room->playAnimWithSFX("wavesleft", "wavesleftSFX", kWavesLeftZ,
+					      PlayAnimParams::disappear(),
+					      kOutroFinishedCounter);
+			room->playAnimWithSFX("wavesright", "wavesrightSFX", kWavesRightZ,
+					      PlayAnimParams::disappear(),
+					      kOutroFinishedCounter);
+			room->playSFX("A1030eG0", kOutroFinishedCounter);
 			persistent->_argoSailedInQuest[_destination][persistent->_quest] = true;
 		}
 	}
@@ -184,10 +186,13 @@ public:
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		switch (eventId) {
 		case kPlayIntro2:
-			playMastSound("intro2", kPlayIntro3);
+			playMastSound(TranscribedSound::make("intro2", "Navigate by clicking on the island you want to go to"), kPlayIntro3);
 			break;
 		case kPlayIntro3:
-			playMastSound("intro3", kReturnToIdleEvent);
+			playMastSound(TranscribedSound::make(
+					      "intro3",
+					      "The map shall always show the location of the Argo in relation to the other islands in the region"),
+				      kReturnToIdleEvent);
 			break;
 		case kReturnToIdleEvent:
 			_mastHeadIsBusy = false;
@@ -205,12 +210,12 @@ public:
 			g_vm->addTimer(kIdleEvent, 30000);
 			if (_mastHeadIsBusy)
 				break;
-			playMastSound("idlesound", kMastSoundFinished);
+			playMastSound(TranscribedSound::make("idlesound", "And what course lies ahead for you, matie?"), kMastSoundFinished);
 			room->selectFrame(kMastHeadAnim, kMastHeadZ, 1);
 			break;
 		case 27301:
-			room->playAnimWithSound(kMastHeadAnim, _mastSoundName, kMastHeadZ,
-						PlayAnimParams::keepLastFrame().partial(8, 21), 27303);
+			room->playAnimWithSpeech(kMastHeadAnim, _mastSound, kMastHeadZ,
+						 PlayAnimParams::keepLastFrame().partial(8, 21), 27303);
 			break;
 		// 27302 was for event chaining and frame keeping
 		case 27303:
@@ -229,7 +234,7 @@ public:
 				room->selectFrame(kIslandNames, kIslandNamesZ, i);
 				room->playAnimKeepLastFrame(islands[i].mouseoverAnim, islands[i].zValue);
 				playMastSound(islands[i].nameSound);
-				room->playSoundLoop(islands[i].sfxSound);
+				room->playSFXLoop(islands[i].sfxSound);
 				return;
 			}
 		}
@@ -243,7 +248,7 @@ public:
 					room->stopAnim(kIslandNames);
 					room->stopAnim(islands[i].mouseoverAnim);
 				}
-				room->stopAnim(islands[i].nameSound);
+				room->stopAnim(islands[i].nameSound.soundName);
 				room->stopAnim(islands[i].sfxSound);
 				return;
 			}
@@ -292,26 +297,29 @@ public:
 			break;
 		}
 		room->addStaticLayer(sky, kSkyZ);
-		room->playSoundLoop(bgsound);
+		room->playMusicLoop(bgsound);
 
 		room->selectFrame("chesspiece", kChessPieceZ, chesspiece);
 
 		room->disableMouse();
 		// Originally event 4015
 		if (!persistent->isRoomVisited(kArgoRoom))
-			playMastSound("intro1", kPlayIntro2);
+			playMastSound(TranscribedSound::make(
+					      "intro1",
+					      "Sharpen up now, matie. You'll be on the Argo now. It's a hero of ships. It used to belong to Jason and his crew, the argonauts. And now it'll be here for you"),
+				      kPlayIntro2);
 		else {
-			int rnd = g_vm->getRnd().getRandomNumberRng(0, sizeof(intros) / sizeof(intros[0]) - 1);
+			int rnd = g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(intros) - 1);
 			debug("rnd = %d", rnd);
 			if (rnd == 1 || rnd == 2)
 				rnd = persistent->_gender == kFemale ? 2 : 1;
 			playMastSound(intros[rnd], kReturnToIdleEvent);
 		}
 
-		room->playAnimWithSound("flags", "flagsSFX", kFlagsZ, PlayAnimParams::loop());
+		room->playAnimWithSFX("flags", "flagsSFX", kFlagsZ, PlayAnimParams::loop());
 		g_vm->addTimer(kIdleEvent, 30000);
 		g_vm->getHeroBelt()->setColour(HeroBelt::kCool);
-		room->playSound("intromusic");
+		room->playMusic("intromusic");
 		_cloudsMoving = false;
 		cloudMove(0);
 	}
@@ -331,9 +339,9 @@ public:
 	}
 	
 private:
-	void playMastSound(const Common::String &name, int event = kMastSoundFinished) {
+	void playMastSound(const TranscribedSound &sound, int event = kMastSoundFinished) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		_mastSoundName = name;
+		_mastSound = sound;
 		_mastHeadEndEvent = event;
 		_mastHeadIsBusy = true;
 		room->playAnim(kMastHeadAnim, kMastHeadZ, PlayAnimParams::keepLastFrame().partial(1, 8), 27301);
@@ -346,7 +354,7 @@ private:
 	bool _cloudsMoving;
 	int _mastHeadEndEvent;
 	bool _mastHeadIsBusy;
-	Common::String _mastSoundName;
+	TranscribedSound _mastSound;
 };
 
 Common::SharedPtr<Hadesch::Handler> makeArgoHandler() {

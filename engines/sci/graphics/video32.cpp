@@ -42,7 +42,7 @@
 #include "sci/graphics/palette32.h"      // for GfxPalette32
 #include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
-#include "sci/resource.h"                // for ResourceManager, ResourceId,...
+#include "sci/resource/resource.h"       // for ResourceManager, ResourceId,...
 #include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
 #include "sci/sound/audio32.h"           // for Audio32
 #include "sci/video/seq_decoder.h"       // for SEQDecoder
@@ -65,7 +65,7 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
 	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		void showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
+		void showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 		showScummVMDialog(Common::U32String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
 		_decoder->close();
 		return false;

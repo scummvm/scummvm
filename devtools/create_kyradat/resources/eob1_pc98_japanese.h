@@ -1029,3 +1029,17 @@ static const byte kEoB1CreditsStringsPC98Japanese[459] = {
 };
 
 static const ByteProvider kEoB1CreditsStringsPC98JapaneseProvider = { ARRAYSIZE(kEoB1CreditsStringsPC98Japanese), kEoB1CreditsStringsPC98Japanese };
+
+static const char *const kEoB1NpcPresetsNamesPC98Japanese[9] = {
+	"\xb1\xc6\xac",
+	"\xcb\xde\xb5\xd7\xd1",
+	"\xb7\xd7\xbd",
+	"\xb2\xda\xd8\xb1",
+	"\xc3\xa8\xd7",
+	"\xc4\xaf\xc4\xde\xb1\xaf\xcc\xdf\xcb\xd9",
+	"\xc0\xba\xde\xb0\xd9",
+	"\xc4\xde\xb0\xd7\xd1",
+	"\xb7\xb1\xb6\xde\xb0"
+};
+
+static const StringListProvider kEoB1NpcPresetsNamesPC98JapaneseProvider = { ARRAYSIZE(kEoB1NpcPresetsNamesPC98Japanese), kEoB1NpcPresetsNamesPC98Japanese };

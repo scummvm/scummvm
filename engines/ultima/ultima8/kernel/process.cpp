@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -31,8 +32,12 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(Process)
 
 Process::Process(ObjId it, uint16 ty)
-	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
+	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0), _ticksPerRun(2) {
 	Kernel::get_instance()->assignPID(this);
+	if (GAME_IS_CRUSADER) {
+		// Default kernel ticks per run of processes in Crusader
+		_ticksPerRun = 1;
+	}
 }
 
 void Process::fail() {
@@ -74,10 +79,14 @@ void Process::waitFor(ProcId pid) {
 	if (pid) {
 		Kernel *kernel = Kernel::get_instance();
 
-		// add this process to waiting list of process pid_
+		// add this process to waiting list of other process
 		Process *p = kernel->getProcess(pid);
 		assert(p);
 		p->_waiting.push_back(_pid);
+
+		// Note: The original games sync itemnum between processes
+		// here if either one is zero, but that seems to break things
+		// for us so we don't do it.
 	}
 
 	_flags |= PROC_SUSPENDED;

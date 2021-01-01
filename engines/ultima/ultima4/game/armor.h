@@ -58,7 +58,7 @@ private:
 	Common::String _name;
 	byte _canUse;
 	int _defense;
-	unsigned short _mask;
+	//unsigned short _mask;
 };
 
 class Armors : public Std::vector<Armor *> {

@@ -30,6 +30,7 @@
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -462,8 +463,6 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		_y = newy;
 		_z = newz;
 	}
-	if (GAME_IS_CRUSADER)
-		notifyNearbyItems();
 }
 
 uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps) {
@@ -471,6 +470,9 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
 		return 0;
 	}
+
+	if (dir == dir_current)
+		dir = getDir();
 
 #if 0
 	if (tryAnim(anim, dir)) {
@@ -482,9 +484,8 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 	if (GAME_IS_CRUSADER) {
 		// Crusader sets some flags on animation start
-		// HACK: When switching from 16-dir combat to 8-dir walking,
-		// fix the direction to only 8 dirs
-		if (anim == Animation::stand)
+		// Small hack: When switching from 16-dir to 8-dir, fix the direction
+		if (animDirMode(anim) == dirmode_8dirs)
 			dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
 		else if (anim == Animation::readyWeapon)
 			setActorFlag(ACT_WEAPONREADY);
@@ -497,6 +498,16 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		else if (anim == Animation::stopKneeling)
 			clearActorFlag(ACT_KNEELING);
 	}
+
+#if 0
+	if (_objId == 1) {
+		int32 x, y, z;
+		getLocation(x, y, z);
+		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
+		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+		debug(6, "Actir::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
+	}
+#endif
 
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);
 
@@ -568,8 +579,9 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 }
 
 DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
-	const AnimAction *action = GameData::get_instance()->getMainShapes()->
-	getAnim(getShape(), anim);
+	int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
+	const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+
 	if (!action)
 		return dirmode_8dirs;
 	return action->getDirCount() == 8 ? dirmode_8dirs : dirmode_16dirs;
@@ -583,11 +595,13 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	bool surrendered = hasActorFlags(Actor::ACT_SURRENDERED);
 
 	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
-	Animation::Sequence turnanim;
-	if (stepDelta == -1) {
-		turnanim = Animation::lookLeft;
-	} else {
-		turnanim = Animation::lookRight;
+	Animation::Sequence turnanim = Animation::stand;
+	if (GAME_IS_U8) {
+		if (stepDelta == -1) {
+			turnanim = Animation::lookLeft;
+		} else {
+			turnanim = Animation::lookRight;
+		}
 	}
 
 	if (combat) {
@@ -817,7 +831,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	if (isDead())
 		return;
 
-	_lastTimeWasHit = Kernel::get_instance()->getFrameNum() * 2;
+	_lastTimeWasHit = Kernel::get_instance()->getTickNum();
 
 	if (shape != 1 && this != getControlledActor()) {
 		Actor *controlled = getControlledActor();
@@ -905,6 +919,59 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 				}
 			}
 		}
+	}
+}
+
+void Actor::tookHitCru() {
+	Animation::Sequence lastanim = getLastAnim();
+	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunWithLargeWeapon) {
+		//uint16 controllednpc = World::get_instance()->getControlledNPCNum();
+		bool canseecontrolled = true; //this->canSee(controllednpc);
+		if (canseecontrolled) {
+			if (getRandom() % 4)
+				setActivity(5);
+			else
+				setActivity(10);
+		}
+	} else {
+		uint32 shape = getShape();
+		if (shape != 0x576) { // 0x576 = flaming guy
+			if (shape < 0x577) {
+				if (shape == 0x385 || shape == 0x4e6) {
+				   explode(2, 0);
+				   clearFlag(FLG_IN_NPC_LIST);
+				   clearFlag(FLG_GUMP_OPEN);
+			   }
+			   return;
+		   }
+		   if (shape != 0x596) {
+			   return;
+		   }
+		}
+
+		bool violence = true; // Game::I_isViolenceEnabled
+		if (!violence)
+			return;
+
+		static const uint16 FEMALE_SCREAMS[] = {0xb, 0xa};
+		static const uint16 MALE_SCREAMS[] = {0x65, 0x66, 0x67};
+		int nsounds;
+		const uint16 *sounds;
+		if (hasExtFlags(EXT_FEMALE)) {
+			nsounds = ARRAYSIZE(FEMALE_SCREAMS);
+			sounds = FEMALE_SCREAMS;
+		} else {
+			nsounds = ARRAYSIZE(MALE_SCREAMS);
+			sounds = MALE_SCREAMS;
+		}
+		AudioProcess *audio = AudioProcess::get_instance();
+		if (!audio)
+			return;
+		for (int i = 0; i < nsounds; i++) {
+			if (audio->isSFXPlayingForObject(sounds[i], _objId))
+				return;
+		}
+		audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
 	}
 }
 
@@ -1075,20 +1142,22 @@ ProcId Actor::die(uint16 damageType) {
 			MusicProcess::get_instance()->queueMusic(98);
 		}
 	} else if (GAME_IS_CRUSADER) {
-		uint16 sfxno;
-		static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
-		static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
-		static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
-		if (damageType == 0xf) {
-			sfxno = FADING_SCREAM_SFX[getRandom() % 2];
-		} else {
-			if (hasExtFlags(EXT_FEMALE)) {
-				sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+		if (!isRobotCru()) {
+			uint16 sfxno;
+			static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
+			static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
+			static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
+			if (damageType == 0xf) {
+				sfxno = FADING_SCREAM_SFX[getRandom() % 2];
 			} else {
-				sfxno = MALE_DEATH_SFX[getRandom() % 3];
+				if (hasExtFlags(EXT_FEMALE)) {
+					sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+				} else {
+					sfxno = MALE_DEATH_SFX[getRandom() % 3];
+				}
 			}
+			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 		}
-		AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 	}
 
 	destroyContents();
@@ -1409,40 +1478,14 @@ void Actor::clearInCombat() {
 	clearActorFlag(ACT_INCOMBAT);
 }
 
-int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleports, bool force,
 						 ObjId *hititem, uint8 *dirs) {
-	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
-	if (_objId == 1 && GAME_IS_CRUSADER) {
-		notifyNearbyItems();
+	int32 result = Item::collideMove(x, y, z, teleports, force, hititem, dirs);
+	if (this == getControlledActor() && GAME_IS_CRUSADER) {
 		TargetReticleProcess::get_instance()->avatarMoved();
 		ItemSelectionProcess::get_instance()->avatarMoved();
 	}
 	return result;
-}
-
-static Std::set<uint16> _notifiedItems;
-
-void Actor::notifyNearbyItems() {
-	/*
-	TODO: This is not right - maybe we want to trigger each item only when it gets close,
-	then reset the status after it moves away?  Need to dig into the assembly more.
-
-	For now this is a temporary hack to trigger some usecode events so we can
-	debug more of the game.
-	 */
-	/*
-	UCList uclist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
-	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x80, false);
-
-	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
-		Item *item = getItem(uclist.getuint16(i));
-		if (_notifiedItems.find(item->getObjId()) != _notifiedItems.end())
-			continue;
-		item->callUsecodeEvent_equipWithParam(_objId);
-		_notifiedItems.insert(item->getObjId());
-	}*/
 }
 
 bool Actor::activeWeaponIsSmall() const {
@@ -1612,6 +1655,11 @@ uint32 Actor::I_teleport(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(newmap);
 	if (!actor) return 0;
 
+	if (GAME_IS_CRUSADER) {
+		newx *= 2;
+		newy *= 2;
+	}
+
 	actor->teleport(newmap, newx, newy, newz);
 	return 0;
 }
@@ -1626,17 +1674,12 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	//
-	// HACK: In Crusader, anims 32 and 33 are teleport in/out.  In U8 they are
-	// turn left/right.  We want to remap those numbers in most cases, but when
-	// they come out of usecode we don't want to remap them.  Here we give them
-	// temporary values so we can set them back later.
+	// HACK: In Crusader, we do translation on the animations so we want to remap
+	// most of them, but for direct commands from the usecode we add a bitflag for
+	// no remapping
 	//
 	if (GAME_IS_CRUSADER) {
-		Animation::Sequence seq = static_cast<Animation::Sequence>(anim);
-		if (seq == Animation::teleportIn)
-			anim = static_cast<uint16>(Animation::teleportInReplacement);
-		else if (seq == Animation::teleportOut)
-			anim = static_cast<uint16>(Animation::teleportOutReplacement);
+		anim |= Animation::crusaderAbsoluteAnimFlag;
 	}
 
 	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));
@@ -2326,10 +2369,25 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	ARG_UINT16(dir);
-	ARG_UINT16(unk);
-	warning("Actor::I_turnToward: Ignoring unknown param %d", unk);
+	ARG_UINT16(dir16);
 
-	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
+	Direction newdir = Direction_FromUsecodeDir(dir);
+	Direction curdir = actor->getDir();
+	Direction oneleft = Direction_OneLeft(curdir, dirmode_16dirs);
+	Direction oneright = Direction_OneRight(curdir, dirmode_16dirs);
+
+	if (curdir == newdir ||
+		(!dir16 && (newdir == oneleft || newdir == oneright)))
+		return 0;
+
+	return actor->turnTowardDir(newdir);
+}
+
+uint32 Actor::I_isKneeling(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->hasFlags(ACT_KNEELING) ? 1 : 0;
 }
 
 } // End of namespace Ultima8

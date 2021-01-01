@@ -178,7 +178,7 @@ __mode_return _player::Player_press_fire_button() {
 	//				__MORE_THIS_CYCLE
 
 	bool8 res;
-	int retval;
+	int32 retval;
 
 	// check for interact button
 	if ((being_shot == 0) && (cur_state.IsButtonSet(__ATTACK)) && (!fire_lock) && (GetNoBullets())) {

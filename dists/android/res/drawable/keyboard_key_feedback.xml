@@ -14,8 +14,8 @@
      limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_long_pressable="true"
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:scummvm="http://schemas.android.com/apk/res-auto" >
+    <item scummvm:state_long_pressable="true"
             android:drawable="@drawable/keyboard_key_feedback_more_background" />
 
     <item android:drawable="@drawable/keyboard_key_feedback_background" />

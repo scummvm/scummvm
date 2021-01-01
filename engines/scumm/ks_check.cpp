@@ -175,18 +175,6 @@ static byte jongsungTable[2350] = {
 	 0,  4,  8, 16, 17, 21,  0,  1,  4,  8, 16, 17, 19, 21
 };
 
-int checkHangul(byte hi, byte lo) {
-	// hi: xx
-	// lo: yy
-	if ((0xA1 > lo) || (0xFE < lo)) {
-		return 0;
-	}
-	if ((hi >= 0xB0) && (hi <= 0xC8)) {
-		return 1;
-	}
-	return 0;
-}
-
 // check for jongsung (final consonant)
 byte checkJongsung(byte hi, byte lo) {
 	uint16 index = ((hi - 0xb0) * 94 + lo - 0xa1);

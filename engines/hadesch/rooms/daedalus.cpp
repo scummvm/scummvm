@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 
@@ -139,7 +140,7 @@ public:
 
 			renderCheckMarks();
 
-			room->playAnimWithSound("dust cloud", "dust cloud sound", 850, PlayAnimParams::disappear());
+			room->playAnimWithSFX("dust cloud", "dust cloud sound", 850, PlayAnimParams::disappear());
 
 			if (hasAll) 
 				playDaedalusVideo("daedalus exclaims", 13008, Common::Point(0, 2));
@@ -213,7 +214,7 @@ public:
 		case 13011: {
 			// TODO: use right algorithm
 			int roarNum = g_vm->getRnd().getRandomNumberRng(1, 5);
-			room->playSound(Common::String::format("ambient minotaur roar %d", roarNum), 13012);
+			room->playSFX(Common::String::format("ambient minotaur roar %d", roarNum), 13012);
 			break;
 		}
 		case 13012:
@@ -240,8 +241,8 @@ public:
 			break;
 		case 13902:
 			room->playAnim(kDaedalusAmbient, kDaedalusZ, PlayAnimParams::keepLastFrame().partial(35, -1), 13904);
-			room->playAnimWithSound(kLabyrinthWorkers, "labyrinth workers sound", kLabyrinthWorkersZ,
-						PlayAnimParams::keepLastFrame());
+			room->playAnimWithSFX(kLabyrinthWorkers, "labyrinth workers sound", kLabyrinthWorkersZ,
+					      PlayAnimParams::keepLastFrame());
 			break;
 		case 13903:
 			room->playAnim(kDaedalusAmbient, kDaedalusZ, PlayAnimParams::keepLastFrame().partial(57, -1), 13904);
@@ -280,8 +281,10 @@ public:
 				room->selectFrame("daedalus note", 800, 0);
 				room->selectFrame(persistent->_gender == kMale ? "daedalus note text male"
 						  : "daedalus note text female", 799, 0);
-				room->playSound(persistent->_gender == kMale ? "daedalus note vo male"
-						: "daedalus note vo female", 13004);
+				room->playSpeech(persistent->_gender == kMale ?
+						 TranscribedSound::make("daedalus note vo male", "Dear hero, now that we've brought peace to the people of Crete, I've used the wings that I've built for myself and my son Icarus to escape. I'm forever grateful for your help. Your friend, Daedalus") :
+						 TranscribedSound::make("daedalus note vo female", "Dear heroine, now that we've brought peace to the people of Crete, I've used the wings that I've built for myself and my son Icarus to escape. I'm forever grateful for your help. Your friend, Daedalus. Au revoir. Salaam. Good bye."),
+						 13004);
 			}
 		}
 
@@ -297,15 +300,15 @@ public:
 			persistent->_troyPlayAttack = true;
 			playDaedalusVideo("daedalus intro 1", kIntroStep1,
 					  Common::Point(50, 35));
-			room->playSoundLoop("theme music 1");
+			room->playMusicLoop("theme music 1");
 		} else if (quest == kCreteQuest &&
 			   (persistent->_daedalusLabItem[0] || persistent->isInInventory(kStone)) &&
 			   (persistent->_daedalusLabItem[1] || persistent->isInInventory(kBricks)) &&
 			   (persistent->_daedalusLabItem[2] || persistent->isInInventory(kWood)) &&
 			   (persistent->_daedalusLabItem[3] || persistent->isInInventory(kStraw))) {
-			room->playSoundLoop("theme music 2");
+			room->playMusicLoop("theme music 2");
 		} else {
-			room->playSoundLoop("R4010eA0");
+			room->playMusicLoop("R4010eA0");
 		}
 		AmbientAnim("mouse", "mouse sound", 900, 5000, 10000, AmbientAnim::KEEP_LOOP, Common::Point(0, 0),
 			    AmbientAnim::PAN_ANY).start();
@@ -347,7 +350,7 @@ private:
 	void daedalusWallMotion() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		room->playAnim(kDaedalusAmbient, kDaedalusZ, PlayAnimParams::keepLastFrame().partial(0, 34), 13902);
-		room->playSound("daedalus ambient sound");
+		room->playSFX("daedalus ambient sound");
 		_daedalusIsBusy = true;
 	}
 

@@ -31,6 +31,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #endif
+#include "sci/detection.h"
 #include "sci/engine/vm_types.h"
 #include "sci/graphics/helpers_detection_enums.h" // for enum ViewType
 
@@ -267,6 +268,28 @@ struct Palette {
 
 struct PaletteMod {
 	int8 r, g, b;
+};
+
+struct PicMod {
+	uint16 id;
+	byte multiplier;
+};
+
+struct ViewMod {
+	uint16 id;
+	int16 loop;
+	int16 cel;
+	byte multiplier;
+};
+
+struct SciFxMod {
+	SciGameId gameId;
+	const PaletteMod *paletteMods;
+	const int paletteModsSize;
+	const PicMod *picMods;
+	const int picModsSize;
+	const ViewMod *viewMods;
+	const int viewModsSize;
 };
 
 struct PalSchedule {

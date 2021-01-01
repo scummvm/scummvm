@@ -62,12 +62,14 @@ KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
 # Skip rules for these files, by resetting the LOAD_RULES_MK
 LOAD_RULES_MK :=
 
+ifdef DETECTION_FULL
 # Reset detection objects, which uptill now are filled with only
 # enabled engines.
 DETECT_OBJS :=
 
 # Include all engine's module files, which populate DETECT_OBJS
 -include $(srcdir)/engines/*/module.mk
+endif
 
 # Reset stuff
 MODULES := $(MODULES_ORIG)
@@ -81,7 +83,7 @@ KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
 LOAD_RULES_MK := 1
 
 ifneq ($(DETECTION_STATIC), 1)
--include $(srcdir)/engines/detect_modules.mk
+-include $(srcdir)/base/detection/module.mk
 else
 MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
 endif
@@ -131,11 +133,12 @@ endif
 distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
-clean:
+clean: clean-toplevel
+clean-toplevel:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
-	$(RM) $(OBJS:.o=.dwo)
+	$(RM) $(OBJS:.o=.dwo) $(DETECT_OBJS:.o=.dwo)
 	$(RM) $(EXECUTABLE).dwp
 endif
 
@@ -223,7 +226,7 @@ endif
 # Get the current version information
 ######################################################################
 
-# AmigaOS4's grep has a problem with "./" in pathnames, so use cat piped into grep.
+# AmigaOS grep command has a problem with "./" in pathnames, so use cat piped into grep instead.
 VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
@@ -231,12 +234,12 @@ VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 ifdef AMIGAOS
-# Amiga needs date in specific format for the version cookie
+# AmigaOS needs the date in a specific format for the version cookie.
 AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
 VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
 endif
 ifdef MORPHOS
-# MorphOS needs date in specific format for the version cookie
+# MorphOS needs the date in a specific format for the version cookie.
 AMIGA_DATE = $(shell date +"%-d.%-m.%Y")
 VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
 endif
@@ -372,6 +375,9 @@ endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_ENGINEDATA+=drascula.dat
 endif
+ifdef ENABLE_HADESCH
+DIST_FILES_ENGINEDATA+=hadesch_translations.dat
+endif
 ifdef ENABLE_HUGO
 DIST_FILES_ENGINEDATA+=hugo.dat
 endif
@@ -433,6 +439,7 @@ endif
 ifdef ENABLE_MYST3
 DIST_FILES_ENGINEDATA+=myst3.dat
 endif
+DIST_FILES_ENGINEDATA+=encoding.dat
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # pred.dic is currently only used for the AGI engine
@@ -457,4 +464,4 @@ DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/wintermute/base/gfx/opengl/shad
 endif
 endif
 
-.PHONY: all clean distclean plugins dist-src
+.PHONY: all clean distclean plugins dist-src clean-toplevel

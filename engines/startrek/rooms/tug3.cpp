@@ -39,6 +39,44 @@ namespace StarTrek {
 #define GUARDSTAT_SURRENDERED 4
 #define GUARDSTAT_TIED 8
 
+extern const RoomAction tug3ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::tug3Tick1 },
+	{ {ACTION_TICK, 40, 0, 0}, &Room::tug3Tick40 },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug3LookAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::tug3UseStunPhaserOnElasi1 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 9, 0}, &Room::tug3UseStunPhaserOnElasi2 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0}, &Room::tug3UseStunPhaserOnElasi3 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0}, &Room::tug3UseStunPhaserOnElasi4 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::tug3UseKillPhaserOnElasi1 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 9, 0}, &Room::tug3UseKillPhaserOnElasi2 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0}, &Room::tug3UseKillPhaserOnElasi3 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 11, 0}, &Room::tug3UseKillPhaserOnElasi4 },
+	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::tug3ElasiStunnedOrKilled },
+	{ {ACTION_TALK, 8, 0, 0}, &Room::tug3TalkToElasi1 },
+	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::tug3Elasi1DrewPhaser },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::tug3Elasi1ShotConsole },
+	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::tug3Elasi1DrewPhaser2 },
+	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0}, &Room::tug3Elasi1ShotConsoleAndSurrenders },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug3LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug3LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug3LookAtRedshirt },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::tug3LookAtElasi1 },
+	{ {ACTION_LOOK, 9, 0, 0}, &Room::tug3LookAtElasi2 },
+	{ {ACTION_LOOK, 10, 0, 0}, &Room::tug3LookAtElasi3 },
+	{ {ACTION_LOOK, 11, 0, 0}, &Room::tug3LookAtElasi4 },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug3TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug3TalkToSpock },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug3TalkToRedshirt },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::tug3UseCommunicator },
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::tug3Timer0Expired },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::tug3AllCrewmenDead },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::tug3Timer1Expired },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug3SecurityTeamBeamedIn },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::tug3Tick1() {
 	playVoc("TUG3LOOP");
 
@@ -124,7 +162,7 @@ void Room::tug3UseStunPhaserOnElasi1() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi1Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_1, "p1stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem05", 5);
 	_awayMission->tug.bridgeElasi1Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -134,7 +172,7 @@ void Room::tug3UseStunPhaserOnElasi2() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi2Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_2, "p2stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem06", 5);
 	_awayMission->tug.bridgeElasi2Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -144,7 +182,7 @@ void Room::tug3UseStunPhaserOnElasi3() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi3Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_3, "p3stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem07", 5);
 	_awayMission->tug.bridgeElasi3Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -154,7 +192,7 @@ void Room::tug3UseStunPhaserOnElasi4() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi4Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_4, "p4stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem04", 5);
 	_awayMission->tug.bridgeElasi4Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -164,7 +202,7 @@ void Room::tug3UseKillPhaserOnElasi1() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi1Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_1, "p1Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem25", 5);
 	_awayMission->tug.bridgeElasi1Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -175,7 +213,7 @@ void Room::tug3UseKillPhaserOnElasi2() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi2Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_2, "p2Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem27", 5);
 	_awayMission->tug.bridgeElasi2Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -186,7 +224,7 @@ void Room::tug3UseKillPhaserOnElasi3() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi3Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_3, "p3Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem26", 5);
 	_awayMission->tug.bridgeElasi3Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -197,7 +235,7 @@ void Room::tug3UseKillPhaserOnElasi4() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi4Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_4, "p4Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem24", 5);
 	_awayMission->tug.bridgeElasi4Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -265,9 +303,8 @@ void Room::tug3TalkToElasi1() {
 }
 
 void Room::tug3Elasi1DrewPhaser() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem41", 13);
-	playSoundEffectIndex(SND_BLANK_16);
 	loadActorAnim2(OBJECT_12, "sparks", 0xa0, 0xad, 4);
 }
 
@@ -279,7 +316,7 @@ void Room::tug3Elasi1ShotConsole() {
 }
 
 void Room::tug3Elasi1DrewPhaser2() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem41", 13);
 	loadActorAnim2(OBJECT_12, "sparks", 0xa0, 0xad, 6);
 }
@@ -444,7 +481,7 @@ void Room::tug3Timer0Expired() {
 	} else
 		return;
 
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks(beamAnims[elasiShooter][elasiTarget], 5);
 	_awayMission->timers[0] = 50;
 }
@@ -473,7 +510,7 @@ void Room::tug3Timer1Expired() {
 void Room::tug3EndMission() {
 	playMidiMusicTracks(28, -1);
 	showText(TX_SPEAKER_KIRK, 1, true);
-	playSoundEffectIndex(SND_TRANSMAT);
+	playSoundEffectIndex(kSfxTransporterMaterialize);
 	loadActorAnim2(OBJECT_13, "rteleb", 0x14, 0xa0, 7);
 	loadActorAnim2(OBJECT_14, "rteleb", 0x118, 0xa0, 0);
 	loadActorAnim2(OBJECT_15, "rteleb", 0x96, 0xbe, 0);

@@ -153,7 +153,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 			bool success = decompress_codec3(compressed, (char *)_data[i].getRawBuffer(), _bpp / 8 * _width * _height);
 			delete[] compressed;
 			if (!success)
-				warning(".. when loading image %s.\n", _fname.c_str());
+				warning(".. when loading image %s.", _fname.c_str());
 		} else
 			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
 

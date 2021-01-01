@@ -45,17 +45,17 @@ void SceneScriptBB11::InitializeScene() {
 
 	if (Game_Flag_Query(kFlagBB11SadikFight)) {
 		Preload(kModelAnimationMcCoyIdle);
-		Preload(220);
-		Preload(227);
-		Preload(328);
-		Preload(343);
-		Preload(344);
+		Preload(kModelAnimationClovisWalking);
+		Preload(kModelAnimationClovisIdle);
+		Preload(kModelAnimationSadikIdle);
+		Preload(kModelAnimationSadikKicksSomeoneWhoIsDown);
+		Preload(kModelAnimationSadikHoldsSomeoneAndPunches);
 		Preload(kModelAnimationMcCoyGotHitRight);
 		Preload(kModelAnimationMcCoyRunning);
-		Preload(324);
-		Preload(323);
+		Preload(kModelAnimationSadikRunning);
+		Preload(kModelAnimationSadikWalking);
 		Preload(kModelAnimationMcCoyFallsOnHisBack);
-		Preload(345);
+		Preload(kModelAnimationSadikPicksUpAndThrowsMcCoy);
 	}
 }
 
@@ -104,6 +104,7 @@ bool SceneScriptBB11::ClickedOn2DRegion(int region) {
 	if (_vm->_cutContent) {
 		if (!Game_Flag_Query(kFlagMcCoyCommentsOnFans) && (region == 0 || region == 1) ) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnFans);
+			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Face_Heading(kActorMcCoy, 550, false);
 			Actor_Voice_Over(3740, kActorVoiceOver);
 			Actor_Voice_Over(3750, kActorVoiceOver);

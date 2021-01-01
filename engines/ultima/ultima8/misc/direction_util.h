@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/ultima8.h"
+#include "common/math.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,7 +37,11 @@ namespace Ultima8 {
 
 inline int Direction_XFactor(Direction dir) {
 	static const int _x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
-	static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+	//static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+	// TODO: AnimPrimitiveProcess uses the below table.. what's the other table for?
+	// (same for y)
+	static const int _x_fact16[] = {  0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2, -1, -2, -1, -1 };
+
 	if (GAME_IS_U8)
 		return _x_fact[(int)dir / 2];
 	else
@@ -45,12 +50,25 @@ inline int Direction_XFactor(Direction dir) {
 
 inline int Direction_YFactor(Direction dir) {
 	static const int _y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
-	static const int _y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+	//static const int _y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+	static const int _y_fact16[] = { -1, -2, -1, -1, 0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2 };
+
 	if (GAME_IS_U8)
 		return _y_fact[(int)dir / 2];
 	else
 		return _y_fact16[(int)dir];
 }
+
+//! Convert a direction to hundreths of degrees (rotated by 90 degrees)
+inline int32 Direction_ToCentidegrees(Direction dir) {
+	return static_cast<int>(dir) * 2250;
+}
+
+//! Convert from centidegrees to a direction.
+inline Direction Direction_FromCentidegrees(int32 cds) {
+	return static_cast<Direction>(((cds + 1125) / 2250) % 16);
+}
+
 
 /**
  *  Return the direction for a given slope (0-7).
@@ -63,44 +81,89 @@ inline int Direction_YFactor(Direction dir) {
 inline Direction Direction_Get(int deltay, int deltax, DirectionMode dirmode) {
 	if (deltax == 0)
 		return deltay > 0 ? dir_northwest : dir_southeast;
-	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
-	if (dydx >= 0)
-		if (deltax > 0) // Top-right
-			return dydx <= 424 ? dir_northeast : dydx <= 2472 ? dir_north
-				   : dir_northwest;
-		else			// Bottom-left.
-			return dydx <= 424 ? dir_southwest : dydx <= 2472 ? dir_south
+
+	if (dirmode == dirmode_8dirs) {
+		int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
+		if (dydx >= 0)
+			if (deltax > 0) // Top-right
+				return dydx <= 424 ? dir_northeast : dydx <= 2472 ? dir_north
+					   : dir_northwest;
+			else			// Bottom-left.
+				return dydx <= 424 ? dir_southwest : dydx <= 2472 ? dir_south
+					   : dir_southeast;
+		else if (deltax > 0) // Bottom-right.
+			return dydx >= -424 ? dir_northeast : dydx >= -2472 ? dir_east
 				   : dir_southeast;
-	else if (deltax > 0) // Bottom-right.
-		return dydx >= -424 ? dir_northeast : dydx >= -2472 ? dir_east
-			   : dir_southeast;
-	else			// Top-left
-		return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
-			   : dir_northwest;
+		else			// Top-left
+			return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
+				   : dir_northwest;
+	} else {
+		double angle = Common::rad2deg(atan2(deltay, deltax));
+		if (angle < -168.75)      return dir_southwest;
+		else if (angle < -146.25) return dir_ssw;
+		else if (angle < -123.75) return dir_south;
+		else if (angle < -101.25) return dir_sse;
+		else if (angle < -78.75)  return dir_southeast;
+		else if (angle < -56.25)  return dir_ese;
+		else if (angle < -33.75)  return dir_east;
+		else if (angle < -11.25)  return dir_ene;
+		else if (angle < 11.25)   return dir_northeast;
+		else if (angle < 33.75)   return dir_nne;
+		else if (angle < 56.25)   return dir_north;
+		else if (angle < 78.75)   return dir_nnw;
+		else if (angle < 101.25)  return dir_northwest;
+		else if (angle < 123.75)  return dir_wnw;
+		else if (angle < 146.25)  return dir_west;
+		else if (angle < 168.75)  return dir_wsw;
+		return dir_southwest;
+	}
 }
 
+// Note that for WorldDir, Y goes down, so a positive Y points south.
 inline Direction Direction_GetWorldDir(int deltay, int deltax, DirectionMode dirmode) {
 	if (deltax == 0) {
 		if (deltay == 0) return dir_northeast; // for better compatibility with U8
 		return deltay > 0 ? dir_south : dir_north;
 	}
-	int dydx = (1024 * deltay) / deltax;
 
-	if (dydx >= 0)
-		if (deltax > 0) // south-east
-			return dydx <= 424 ? dir_east : dydx <= 2472 ? dir_southeast : dir_south;
-		else			// north-west
-			return dydx <= 424 ? dir_west : dydx <= 2472 ? dir_northwest : dir_north;
-	else if (deltax > 0) // north-east
-		return dydx >= -424 ? dir_east : dydx >= -2472 ? dir_northeast : dir_north;
-	else			// south-west
-		return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
+	if (dirmode == dirmode_8dirs) {
+		int dydx = (1024 * deltay) / deltax;
+
+		if (dydx >= 0)
+			if (deltax > 0) // south-east
+				return dydx <= 424 ? dir_east : dydx <= 2472 ? dir_southeast : dir_south;
+			else			// north-west
+				return dydx <= 424 ? dir_west : dydx <= 2472 ? dir_northwest : dir_north;
+		else if (deltax > 0) // north-east
+			return dydx >= -424 ? dir_east : dydx >= -2472 ? dir_northeast : dir_north;
+		else			// south-west
+			return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
+	} else {
+		double angle = Common::rad2deg(atan2(deltay, deltax));
+		if (angle < -168.75)      return dir_west;
+		else if (angle < -146.25) return dir_wnw;
+		else if (angle < -123.75) return dir_northwest;
+		else if (angle < -101.25) return dir_nnw;
+		else if (angle < -78.75)  return dir_north;
+		else if (angle < -56.25)  return dir_nne;
+		else if (angle < -33.75)  return dir_northeast;
+		else if (angle < -11.25)  return dir_ene;
+		else if (angle < 11.25)   return dir_east;
+		else if (angle < 33.75)   return dir_ese;
+		else if (angle < 56.25)   return dir_southeast;
+		else if (angle < 78.75)   return dir_sse;
+		else if (angle < 101.25)  return dir_south;
+		else if (angle < 123.75)  return dir_ssw;
+		else if (angle < 146.25)  return dir_southwest;
+		else if (angle < 168.75)  return dir_wsw;
+		return dir_west;
+	}
 }
 
+
+
 inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, DirectionMode dirmode, Direction mindir, Direction maxdir) {
-	// TODO: Implement 16 directions here.
-	int ndirs = 8;
-	dirmode = dirmode_8dirs;
+	int ndirs = (dirmode == dirmode_8dirs ? 8 : 16);
 	Direction dir = Direction_GetWorldDir(deltay, deltax, dirmode);
 
 	if ((dir < mindir) || (dir > maxdir)) {
@@ -174,8 +237,14 @@ inline Direction Direction_OneRight(Direction dir, DirectionMode mode) {
 }
 
 inline Direction Direction_TurnByDelta(Direction dir, int delta, DirectionMode mode) {
-	assert(delta == 1 || delta == -1);
-	return delta == 1 ? Direction_OneRight(dir, mode) : Direction_OneLeft(dir, mode);
+	if (delta > 0) {
+		for (int i = 0; i < delta; i++)
+			dir = Direction_OneRight(dir, mode);
+	} else if (delta < 0) {
+		for (int i = 0; i < -delta; i++)
+			dir = Direction_OneLeft(dir, mode);
+	}
+	return dir;
 }
 
 //! Get a turn delta (-1 for left, +1 for right) to turn the fastest

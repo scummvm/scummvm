@@ -826,6 +826,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3390);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3400);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3410);
+		// TODO this line of Grigorian is supposedly interrupted by Steele's following line
+		//      maybe implement a way to not wait before the next line is played, similar to Actor_Says_With_Pause()
+		//       (look into tick() for kia.cpp)
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1260);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3420);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3430);
@@ -1011,7 +1014,17 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueMcCoyAtMoonbus:
 		KIA_Play_Photograph(36);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4240);
+		if (_vm->_cutContent) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueMoonbusReflection)) {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 4250);
+			} else {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 4010);
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 4020);
+			}
+		} else {
+			// original re-uses the "That can't be me" from the ESPER
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4240);
+		}
 		break;
 	case kClueClovisAtMoonbus:
 		KIA_Play_Photograph(37);

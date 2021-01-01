@@ -35,11 +35,9 @@ public:
 		return "mutationofjb";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc) {
-			*engine = new MutationOfJB::MutationOfJBEngine(syst, desc);
-		}
-		return desc != nullptr;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new MutationOfJB::MutationOfJBEngine(syst, desc);
+		return Common::kNoError;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {

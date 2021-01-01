@@ -333,13 +333,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		return Common::kUnsupportedGameidError;
 	}
 
-	// We don't support yet the
-	// the full game.
-	if (!strcmp(res.game.gameid, "pajama2") && !strcmp(res.extra, "Russobit")) {
-		GUIErrorMessage(_("The Russian version of Pajama Sam 2 is not supported yet due to incomplete code."));
-		return Common::kUnsupportedGameidError;
-	}
-
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
 	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
@@ -412,6 +405,21 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		case 71:
 			*engine = new ScummEngine_v71he(syst, res);
 			break;
+#else
+		case 200:
+		case 101:
+		case 100:
+		case 99:
+		case 98:
+		case 95:
+		case 90:
+		case 85:
+		case 80:
+		case 74:
+		case 73:
+		case 72:
+		case 71:
+			return Common::Error(Common::kUnsupportedGameidError, _s("HE v71+ support is not compiled in"));
 #endif
 		case 70:
 			*engine = new ScummEngine_v70he(syst, res);
@@ -432,9 +440,13 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	case 8:
 		*engine = new ScummEngine_v8(syst, res);
 		break;
+#else
+	case 7:
+	case 8:
+		return Common::Error(Common::kUnsupportedGameidError, _s("SCUMM v7-8 support is not compiled in"));
 #endif
 	default:
-		error("Engine_SCUMM_create(): Unknown version of game engine");
+		return Common::kUnsupportedGameidError;
 	}
 
 	return Common::kNoError;

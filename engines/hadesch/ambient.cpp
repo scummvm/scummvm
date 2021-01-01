@@ -189,7 +189,7 @@ void AmbientAnim::play(bool reschedule) {
 		       _internal->_offset);		
 	
 	if (_internal->_descs[variant]._soundName != "")
-		room->playSound(_internal->_descs[variant]._soundName, -1);
+		room->playSFX(_internal->_descs[variant]._soundName, -1);
 }
 	
 void AmbientAnim::schedule() {
@@ -213,7 +213,7 @@ void AmbientAnim::start() {
 	schedule();
 }
 
-void AmbientAnimWeightedSet::readTableFilePriam(const TextTable &table) {
+void AmbientAnimWeightedSet::readTableFilePriamSFX(const TextTable &table) {
 	for (int row = 0; row < table.size(); row++) {
 		AmbientAnimWeightedSetElement el;
 		el.name = table.get(row, "name");
@@ -230,7 +230,7 @@ void AmbientAnimWeightedSet::readTableFilePriam(const TextTable &table) {
 	}
 }
 
-void AmbientAnimWeightedSet::readTableFile(const TextTable &table, AmbientAnim::PanType pan) {
+void AmbientAnimWeightedSet::readTableFileSFX(const TextTable &table, AmbientAnim::PanType pan) {
 	for (int row = 0; row < table.size(); row++) {
 		AmbientAnimWeightedSetElement el;
 		el.name = table.get(row, "anim");
@@ -334,12 +334,12 @@ void AnimClickables::playChosen(const Common::String &name, int counter, const E
 				Common::Point(_table.get(name, "smackerX", counter).asUint64(),
 					      _table.get(name, "smackerY", counter).asUint64()));
 	else if (anim != "")
-		room->playAnimWithSound(
-			anim, sound, zValue, PlayAnimParams::disappear(), event,
+		room->playAnimWithSpeech(
+			anim, TranscribedSound::make(sound.c_str(), _transcriptions[sound].c_str()), zValue, PlayAnimParams::disappear(), event,
 			Common::Point(_table.get(name, "X", counter).asUint64(),
 				      _table.get(name, "Y", counter).asUint64()));
 	else if (sound != "")
-		room->playSound(sound, event);
+		room->playSpeech(TranscribedSound::make(sound.c_str(), _transcriptions[sound].c_str()), event);
 	else
 		event();
 }
@@ -350,8 +350,12 @@ void AnimClickables::playNext(const Common::String &name, const EventHandlerWrap
 	_counters[name]++;
 }
 
-void AnimClickables::readTable(Common::SharedPtr<Hadesch::VideoRoom> room, const Common::String &name) {
+void AnimClickables::readTable(Common::SharedPtr<Hadesch::VideoRoom> room, const Common::String &name, const TranscribedSound *transcriptions) {
 	_table = TextTable(Common::SharedPtr<Common::SeekableReadStream>(room->openFile(name)), 14);
+
+	for (const TranscribedSound *t = transcriptions; t->soundName; t++) {
+		_transcriptions[t->soundName] = t->transcript;
+	}
 }
 
 }

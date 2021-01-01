@@ -52,7 +52,7 @@
 		<CustomKey scummvm:codes="57"  scummvm:keyLabel="Alt"   scummvm:isSticky="true"/>
 		<CustomKey scummvm:codes="58"  scummvm:keyLabel="Alt"   scummvm:isSticky="true"/>
 		<CustomKey scummvm:codes="118" scummvm:keyLabel="Meta"  scummvm:isSticky="true"/>
-		<CustomKey scummvm:codes="226" scummvm:keyLabel="Menu"  scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="82"  scummvm:keyLabel="Menu"  scummvm:isRepeatable="true"/>
 		<CustomKey scummvm:codes="114" scummvm:keyLabel="Ctrl"  scummvm:isSticky="true"/>
 		<CustomKey scummvm:codes="60"  scummvm:keyLabel="Shift" scummvm:isSticky="true"/>
 	</CustomRow>

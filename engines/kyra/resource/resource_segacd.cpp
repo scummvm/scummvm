@@ -52,6 +52,12 @@ bool SegaCDResource::loadContainer(const Common::String &filename, uint32 offset
 	uint32 first = _str->readUint32();
 	_numResources = first >> 2;
 
+	if (_numResources & 0xFFFF0000) {
+		_curFile.clear();
+		_numResources = 0;
+		return false;
+	}
+
 	for (int i = 1; i < _numResources; ++i) {
 		uint32 next = _str->readUint32();
 		if (next == 0) {

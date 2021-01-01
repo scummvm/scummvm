@@ -204,11 +204,18 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 }
 
 void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	Common::String revBuffer;
+	const char *tmp = str.c_str();
+	if (_vm->gameFlags().lang == Common::HE_ISR) {
+		for (int i = str.size() - 1; i >= 0; --i)
+			revBuffer += str[i];
+		tmp = revBuffer.c_str();
+	}
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
-	_screen->printText(str.c_str(), x, y, c0, c2);
+	_screen->printText(tmp, x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
 

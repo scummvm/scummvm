@@ -31,7 +31,7 @@
 
 #include "sci/sci.h"
 #include "sci/event.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/savegame.h"
@@ -70,7 +70,7 @@ static int16 adjustGraphColor(int16 color) {
 		return color;
 }
 
-int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true) {
+int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true) {
 	Graphics::TextAlign alignment = alignCenter ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
 	GUI::MessageDialog dialog(message, _("OK"), altButton, alignment);
 	return dialog.runModal();

@@ -30,9 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define SAMPLE_RATE 22050
-#define CHANNEL_COUNT 32
-
 class MidiPlayer;
 class AudioChannel;
 class AudioSample;
@@ -61,7 +58,7 @@ public:
 	void            reset();
 	void            createProcesses();
 
-	int             playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol);
+	int             playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol, bool ambient);
 	bool            isPlaying(int chan);
 	void            stopSample(int chan);
 

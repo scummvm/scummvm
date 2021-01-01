@@ -54,7 +54,6 @@ private:
 	Common::Array<IndexEntry> _index;
 	size_t _filesize;
 	byte *_data;
-	int _scaledWidth, _scaledHeight;
 	Common::String _filename;
 	static int _clippedBottom;
 
@@ -74,10 +73,16 @@ private:
 	 */
 	void draw(int windowNum, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, uint flags = 0, int scale = 0);
+
+	/**
+	 * Deep copy assuming that the current instance is clean
+	 */
+	void copy(const SpriteResource &src);
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
 	SpriteResource(const Common::String &filename, int ccMode);
+	SpriteResource(const SpriteResource &src);
 
 	virtual ~SpriteResource();
 

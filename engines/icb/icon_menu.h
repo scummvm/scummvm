@@ -146,7 +146,7 @@ public:
 	void PreloadIcon(const char *pcIconPath, const char *pcIconName);
 
       private:
-	int GetScrollingPosition(const int nInputX, uint &nIconIndex);
+	int GetScrollingPosition(const int nInputX, uint32 &nIconIndex);
 
 	enum IconMenuGameState { INACTIVE = 0, ACTIVE };
 

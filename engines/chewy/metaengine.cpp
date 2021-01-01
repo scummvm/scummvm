@@ -48,7 +48,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -74,12 +74,9 @@ bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Chewy::ChewyGameDescription *gd = (const Chewy::ChewyGameDescription *)desc;
-	if (gd) {
-		*engine = new Chewy::ChewyEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Chewy::ChewyEngine(syst, (const Chewy::ChewyGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList ChewyMetaEngine::listSaves(const char *target) const {

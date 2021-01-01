@@ -63,7 +63,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.OnScreenDialog.ShowPics") == 1 && g_gui.theme()->supportsImages()) {
 		GUI::PicButtonWidget *button;
-		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String(""), kStopCmd, 0);
+		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String(), kStopCmd, 0);
 		button->useThemeTransparency(true);
 
 		if (g_system->getOverlayWidth() > 320)
@@ -72,7 +72,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopSmallButton));
 
 		if (isRecord) {
-			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", Common::U32String(""), kEditCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", Common::U32String(), kEditCmd, 0);
 			button->useThemeTransparency(true);
 
 			if (g_system->getOverlayWidth() > 320)
@@ -80,14 +80,14 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			else
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditSmallButton));
 		} else {
-			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", Common::U32String(""), kSwitchModeCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", Common::U32String(), kSwitchModeCmd, 0);
 			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeButton));
 			else
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeSmallButton));
 
-			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", Common::U32String(""), kFastModeCmd, 0);
+			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", Common::U32String(), kFastModeCmd, 0);
 			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
 				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplayButton));

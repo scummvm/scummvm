@@ -69,6 +69,18 @@ private:
 	TriggerParams _triggerParams;
 	bool _triggerUsed;
 
+	struct ScheduledCrossfade {
+		bool scheduled;
+		int destRegion;
+		int destDataOffset;
+		int fadeDelay;
+		int destHookId;
+		int volumeBefJump;
+		bool isJumpToLoop;
+	};
+
+	ScheduledCrossfade _scheduledCrossfades[MAX_DIGITAL_TRACKS];
+
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	Common::Mutex _mutex;
@@ -88,12 +100,13 @@ private:
 	int32 _curMusicCue;		// current cue for current music. used in FT
 	int _stopingSequence;
 	bool _radioChatterSFX;
+	bool _speechIsPlaying;
 
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack);
+	int startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack);
 	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
@@ -105,7 +118,10 @@ private:
 	void setTrigger(TriggerParams *trigger);
 	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
-
+	Track *handleComiFadeOut(Track *track, int fadeDelay);
+	int transformVolumeLinearToEqualPow(int volume, int mode);
+	int transformVolumeEqualPowToLinear(int volume, int mode);
+	
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
@@ -113,7 +129,9 @@ private:
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
+	void setComiDemoMusicState(int stateId);
 	void playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence);
+	void playComiDemoMusic(const char *songName, const imuseComiTable *table, int attribPos);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
@@ -127,16 +145,17 @@ public:
 
 	void setAudioNames(int32 num, char *names);
 
-	void startVoice(int soundId, Audio::AudioStream *input);
-	void startVoice(int soundId, const char *soundName);
-	void startMusic(int soundId, int volume);
-	void startMusic(const char *soundName, int soundId, int hookId, int volume);
-	void startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack);
-	void startSfx(int soundId, int priority);
+	int startVoice(int soundId, Audio::AudioStream *input);
+	int startVoice(int soundId, const char *soundName);
+	int startMusic(int soundId, int volume);
+	int startMusic(const char *soundName, int soundId, int hookId, int volume);
+	int startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack);
+	int startSfx(int soundId, int priority);
 	void startSound(int sound) override
 		{ error("IMuseDigital::startSound(int) should be never called"); }
 
 	void saveLoadEarly(Common::Serializer &ser);
+	void runScheduledCrossfades();
 	void resetState();
 	void setRadioChatterSFX(bool state) {
 		_radioChatterSFX = state;

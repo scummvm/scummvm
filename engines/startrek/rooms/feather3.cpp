@@ -88,10 +88,8 @@ extern const RoomAction feather3ActionList[] = {
 	{ {ACTION_LOOK, HOTSPOT_LIGHT_2, 0, 0},              &Room::feather3LookAtLight },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0},                 &Room::feather3LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_KNIFE, 0, 0},                 &Room::feather3LookAtKnife },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int feather3NumActions = ARRAYSIZE(feather3ActionList);
-
 
 void Room::feather3Tick1() {
 	playVoc("FEA3LOOP");
@@ -243,7 +241,6 @@ void Room::feather3KirkReachedPositionToThrowRock() {
 }
 
 void Room::feather3Timer4Expired() {
-	playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::feather3Timer2Expired() {

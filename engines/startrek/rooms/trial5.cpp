@@ -158,10 +158,8 @@ extern const RoomAction trial5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE3, 0}, &Room::trial5UseBlueGem3OnHole3 },
 
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial5UseMedkitAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial5NumActions = ARRAYSIZE(trial5ActionList);
-
 
 void Room::trial5Tick1() {
 	playVoc("TRI5LOOP");
@@ -577,7 +575,7 @@ void Room::trial5ReachedHoleToPutGem() {
 			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 46, true);
 
 			_awayMission->disableInput = true;
-			playSoundEffectIndex(SND_TRANSDEM);
+			playSoundEffectIndex(kSfxTransporterDematerialize);
 
 			loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial5CrewmanBeamedOut);
 			loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial5CrewmanBeamedOut);
@@ -592,17 +590,17 @@ void Room::trial5ReachedHoleToPutGem() {
 }
 
 void Room::trial5ActivateLightOfWar() {
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 	loadActorAnim2(OBJECT_BEAM, "redlit", 0, 0);
 }
 
 void Room::trial5ActivateLightOfKnowledge() {
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 	loadActorAnim2(OBJECT_BEAM, "grnlit", 0, 0);
 }
 
 void Room::trial5ActivateLightOfTravel() {
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 	loadActorAnim2(OBJECT_BEAM, "blulit", 0, 0);
 }
 
@@ -611,7 +609,7 @@ void Room::trial5RestrictedCombination1() {
 	// "trial5RestrictedCombination2" is that this one doesn't show the light of
 	// knowledge.
 	// It's inconsistent, but I guess we can chalk it up to the aliens being mysterious...
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39, true);
 }
 

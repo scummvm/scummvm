@@ -27,6 +27,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_conversion Conversions
+ * @ingroup graphics
+ *
+ * @brief Graphics conversion operations.
+ *
+ * @{
+ */
+
 struct PixelFormat;
 
 /** Converting a color from YUV to RGB colorspace. */
@@ -99,7 +108,7 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
                        const uint dstW, const uint dstH,
                        const uint srcW, const uint srcH,
                        const Graphics::PixelFormat &fmt);
-
+/** @} */
 } // End of namespace Graphics
 
 #endif // GRAPHICS_CONVERSION_H

@@ -52,6 +52,16 @@ SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
 	return new MemoryReadStream((byte *)buf, dataSize, DisposeAfterUse::YES);
 }
 
+Common::String ReadStream::readString(char terminator) {
+	Common::String result;
+	char c;
+
+	while ((c = (char)readByte()) != terminator && !eos())
+		result += c;
+
+	return result;
+}
+
 Common::String ReadStream::readPascalString(bool transformCR) {
 	Common::String s;
 	char *buf;

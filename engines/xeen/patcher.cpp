@@ -43,11 +43,11 @@ struct ObjectEntry {
 	int _refObjNumber;		///< Reference object's number
 };
 
-const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
-const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
-const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
-const byte DS_MAP62_PIT1[] = { 9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0 };
-const byte DS_MAP62_PIT2[] = { 9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0 };
+static const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
+static const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
+static const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
+static const byte DS_MAP62_PIT1[] = { 9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0 };
+static const byte DS_MAP62_PIT2[] = { 9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0 };
 
 #define SCRIPT_PATCHES_COUNT 5
 static const ScriptEntry SCRIPT_PATCHES[] = {

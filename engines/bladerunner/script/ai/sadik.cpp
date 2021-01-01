@@ -25,10 +25,11 @@
 namespace BladeRunner {
 
 AIScriptSadik::AIScriptSadik(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
-	_var2 = 0;
-	_var3 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var4 = 1;
 }
 
@@ -38,10 +39,10 @@ void AIScriptSadik::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
-	_var2 = 0;
-	_var3 = 0;
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var4 = 1;
 
 	Actor_Put_In_Set(kActorSadik, kSetFreeSlotA);
@@ -353,7 +354,9 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 305:
+		// fall through
 	case kGoalSadikUG18WillShootMcCoy:
+		// fall through
 	case kGoalSadikUG18Leave:
 		return true;
 
@@ -484,6 +487,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 420:
+		// fall through
 	case 450:
 		return true;
 	}
@@ -493,40 +497,40 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var2 == 1) {
-			*animation = 329;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationSadikShiftsShoulders;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(329)) {
-				*animation = 328;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikShiftsShoulders)) {
+				*animation = kModelAnimationSadikIdle;
 				_animationFrame = 0;
-				_var2 = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (_var2 == 0) {
-			*animation = 328;
-			if (_var3) {
-				--_var3;
+		} else if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationSadikIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 				if (!Random_Query(0, 6)) {
 					_var4 = -_var4;
 				}
 			} else {
 				_animationFrame += _var4;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(328)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikIdle)) {
 					_animationFrame = 0;
 				}
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(328) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikIdle) - 1;
 				}
 				if (!Random_Query(0, 4)) {
-					_var3 = 1;
+					_varNumOfTimesToHoldCurrentFrame = 1;
 				}
-				if (!_animationFrame || _animationFrame == 8) {
-					_var3 = Random_Query(2, 8);
+				if (_animationFrame == 0 || _animationFrame == 8) {
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(2, 8);
 				}
 				if (!Random_Query(0, 2)) {
-					if (!_animationFrame) {
-						_var2 = 1;
-						_var3 = 0;
-						*animation = 329;
+					if (_animationFrame == 0) {
+						_varChooseIdleAnimation = 1;
+						_varNumOfTimesToHoldCurrentFrame = 0;
+						*animation = kModelAnimationSadikShiftsShoulders;
 					}
 				}
 			}
@@ -534,29 +538,39 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
+		// fall through
 	case 2:
+		// fall through
 	case 3:
+		// fall through
 	case 4:
+		// fall through
 	case 5:
+		// fall through
 	case 6:
 		switch (_animationState) {
 		case 1:
-			*animation = 323;
+			*animation = kModelAnimationSadikWalking;
 			break;
+
 		case 2:
-			*animation = 324;
+			*animation = kModelAnimationSadikRunning;
 			break;
+
 		case 3:
-			*animation = 317;
+			*animation = kModelAnimationSadikCombatWalking;
 			break;
+
 		case 4:
-			*animation = 318;
+			*animation = kModelAnimationSadikCombatRunning;
 			break;
+
 		case 6:
-			*animation = 340;
+			*animation = kModelAnimationSadikClimbLadderUp;
 			break;
+
 		case 5:
-			*animation = 339;
+			*animation = kModelAnimationSadikClimbLadderDown;
 			break;
 		}
 		++_animationFrame;
@@ -566,40 +580,40 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 7:
-		*animation = 312;
+		*animation = kModelAnimationSadikCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(312)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 8:
-		*animation = 313;
+		*animation = kModelAnimationSadikCombatTurnRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(313)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatTurnRight)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 9:
-		*animation = 314;
+		*animation = kModelAnimationSadikCombatTurnLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(314)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatTurnLeft)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 10:
-		*animation = 325;
+		*animation = kModelAnimationSadikGotHitFront;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(325)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikGotHitFront)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -607,10 +621,10 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 11:
-		*animation = 326;
+		*animation = kModelAnimationSadikGotHitMore;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(326)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikGotHitMore)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -618,63 +632,64 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 12:
-		*animation = 315;
+		*animation = kModelAnimationSadikCombatGotHitFront;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(315)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatGotHitFront)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 13:
-		*animation = 316;
+		*animation = kModelAnimationSadikCombatGotHitMore;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(316)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatGotHitMore)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 14:
-		*animation = 327;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(327) - 1) {
+		*animation = kModelAnimationSadikShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 15:
-		*animation = 327;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(327) - 1) {
+		// A bug? This is identical to case 14. Maybe make case 14 fall through?
+		*animation = kModelAnimationSadikShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 16:
-		*animation = 320;
+		*animation = kModelAnimationSadikCombatUnholsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(320)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatUnholsterGun)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 		}
 		break;
 
 	case 17:
-		*animation = 321;
+		*animation = kModelAnimationSadikCombatHolsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(321)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatHolsterGun)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 18:
-		*animation = 322;
+		*animation = kModelAnimationSadikCombatFireGunAndReturnToPoseIdle;
 		++_animationFrame;
 		if (_animationFrame == 5) {
 			int snd;
@@ -688,71 +703,83 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 7) {
 			Actor_Combat_AI_Hit_Attempt(kActorSadik);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(322)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCombatFireGunAndReturnToPoseIdle)) {
 			_animationFrame = 0;
 			_animationState = 7;
-			*animation = 312;
+			*animation = kModelAnimationSadikCombatIdle;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 19:
-		*animation = 331;
-		if (!_animationFrame && _flag) {
-			*animation = 328;
+		*animation = kModelAnimationSadikCalmTalk;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationSadikIdle;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(331)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 20:
+		// fall through
 	case 21:
+		// fall through
 	case 22:
+		// fall through
 	case 23:
+		// fall through
 	case 24:
+		// fall through
 	case 25:
+		// fall through
 	case 26:
 		switch (_animationState) {
 		case 20:
-			*animation = 332;
+			*animation = kModelAnimationSadikMoreCalmTalk;
 			break;
+
 		case 21:
-			*animation = 333;
+			*animation = kModelAnimationSadikSuggestTalk;
 			break;
+
 		case 22:
-			*animation = 334;
+			*animation = kModelAnimationSadikUrgeTalk;
 			break;
+
 		case 23:
-			*animation = 335;
+			*animation = kModelAnimationSadikAccuseTalk;
 			break;
+
 		case 24:
-			*animation = 336;
+			*animation = kModelAnimationSadikProtestTalk;
 			break;
+
 		case 25:
-			*animation = 337;
+			*animation = kModelAnimationSadikMockTalk;
 			break;
+
 		default:
-			*animation = 338;
+			*animation = kModelAnimationSadikThisAndThatTalk;
 			break;
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 19;
-			*animation = 331;
+			*animation = kModelAnimationSadikCalmTalk;
 		}
 		break;
 
 	case 27:
-		*animation = 330;
+		*animation = kModelAnimationSadikGesturePointOrGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(330)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikGesturePointOrGive)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -760,30 +787,30 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 28:
-		*animation = 341;
+		*animation = kModelAnimationSadikJumpAcross;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(341)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikJumpAcross)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 29:
-		*animation = 342;
+		*animation = kModelAnimationSadikHangingDropsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(342)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikHangingDropsDown)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 30:
-		*animation = 343;
+		*animation = kModelAnimationSadikKicksSomeoneWhoIsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(343)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikKicksSomeoneWhoIsDown)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -791,10 +818,10 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 31:
-		*animation = 344;
+		*animation = kModelAnimationSadikHoldsSomeoneAndPunches;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(344)) {
-			*animation = 328;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSadikHoldsSomeoneAndPunches)) {
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -802,21 +829,23 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 32:
-		*animation = 345;
+		*animation = kModelAnimationSadikPicksUpAndThrowsMcCoy;
 		++_animationFrame;
 		if (_animationFrame == 23) {
 			_nextSoundId = kSfxMTLDOOR2;
 		}
 		if (_animationFrame >= 25) {
+			// TODO last frames 27-30 are empty
+			//      but maybe we could still accept frames 25 and 26!
 			_animationFrame = 0;
 			_animationState = 0;
-			*animation = 328;
+			*animation = kModelAnimationSadikIdle;
 			Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11CatchMcCoy);
 		}
 		break;
 
 	case 33:
-		*animation = 344;
+		*animation = kModelAnimationSadikHoldsSomeoneAndPunches;
 		++_animationFrame;
 		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 			if (_animationFrame == 4) {
@@ -827,7 +856,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 328;
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 
@@ -839,7 +868,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 34:
-		*animation = 343;
+		*animation = kModelAnimationSadikKicksSomeoneWhoIsDown;
 		++_animationFrame;
 		if (_animationFrame == 4) {
 			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
@@ -852,7 +881,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame >= 15) {
-			*animation = 328;
+			*animation = kModelAnimationSadikIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
@@ -869,7 +898,8 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 406;
+		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
+		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
 		break;
 	}
@@ -886,22 +916,32 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 30:
+			// fall through
 		case 31:
 			return 1;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
-			_var3 = 0;
+			_varNumOfTimesToHoldCurrentFrame = 0;
 			break;
 		}
 		break;
@@ -927,15 +967,21 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			_animationState = 16;
 			break;
+
 		case 3:
+			// fall through
 		case 4:
 			_animationState = 7;
 			_animationFrame = 0;
 			break;
+
 		case 7:
+			// fall through
 		case 16:
+			// fall through
 		case 18:
 			return true;
+
 		case 17:
 			_animationFrame = 0;
 			_animationState = 7;
@@ -948,10 +994,15 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		break;
 
 	case 5:
+		// fall through
 	case 9:
+		// fall through
 	case 10:
+		// fall through
 	case 11:
+		// fall through
 	case 19:
+		// fall through
 	case 20:
 		return true;
 
@@ -1008,10 +1059,15 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
 			if (Random_Query(0, 1)) {
 				_animationState = 13;
@@ -1019,11 +1075,17 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 				_animationState = 12;
 			}
 			break;
+
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
 			if (Random_Query(0, 1)) {
 				_animationState = 11;

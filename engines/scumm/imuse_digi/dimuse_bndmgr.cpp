@@ -193,6 +193,7 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 	_indexTable = _cache->getIndexTable(slot);
 	assert(_bundleTable);
 	_compTableLoaded = false;
+	_isUncompressed = false;
 	_outputSize = 0;
 	_lastBlock = -1;
 
@@ -206,6 +207,7 @@ void BundleMgr::close() {
 		_numFiles = 0;
 		_numCompItems = 0;
 		_compTableLoaded = false;
+		_isUncompressed = false;
 		_lastBlock = -1;
 		_outputSize = 0;
 		_curSampleId = -1;
@@ -219,12 +221,18 @@ void BundleMgr::close() {
 bool BundleMgr::loadCompTable(int32 index) {
 	_file->seek(_bundleTable[index].offset, SEEK_SET);
 	uint32 tag = _file->readUint32BE();
+
+	if (tag == MKTAG('i','M','U','S')) {
+		_isUncompressed = true;
+		return true;
+	}
+
 	_numCompItems = _file->readUint32BE();
 	assert(_numCompItems > 0);
 	_file->seek(8, SEEK_CUR);
 
 	if (tag != MKTAG('C','O','M','P')) {
-		error("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
+		debug("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
 		return false;
 	}
 
@@ -247,10 +255,12 @@ bool BundleMgr::loadCompTable(int32 index) {
 }
 
 int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside) {
-	return decompressSampleByIndex(_curSampleId, offset, size, compFinal, headerSize, headerOutside);
+	bool ignored = false;
+	return decompressSampleByIndex(_curSampleId, offset, size, compFinal, headerSize, headerOutside, ignored);
 }
 
-int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside) {
+int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside,
+					 bool &uncompressedBundle) {
 	int32 i, finalSize, outputSize;
 	int skip, firstBlock, lastBlock;
 
@@ -270,6 +280,16 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		_compTableLoaded = loadCompTable(index);
 		if (!_compTableLoaded)
 			return 0;
+	}
+
+	uncompressedBundle = _isUncompressed;
+
+	if (_isUncompressed) {
+		_file->seek(_bundleTable[index].offset + offset + headerSize, SEEK_SET);
+		*compFinal = (byte *)malloc(size);
+		assert(*compFinal);
+		_file->read(*compFinal, size);
+		return size;
 	}
 
 	firstBlock = (offset + headerSize) / 0x2000;
@@ -330,7 +350,8 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	return finalSize;
 }
 
-int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside) {
+int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside,
+					bool &uncompressedBundle) {
 	int32 final_size = 0;
 
 	if (!_file->isOpen()) {
@@ -343,7 +364,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
 			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
 	if (found) {
-		final_size = decompressSampleByIndex(found->index, offset, size, comp_final, 0, header_outside);
+		final_size = decompressSampleByIndex(found->index, offset, size, comp_final, 0, header_outside, uncompressedBundle);
 		return final_size;
 	}
 

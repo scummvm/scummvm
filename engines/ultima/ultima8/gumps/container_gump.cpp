@@ -117,7 +117,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 
 	Std::list<Item *> &contents = c->_contents;
-	int32 gametick = Kernel::get_instance()->getFrameNum();
+	int32 gameframeno = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
@@ -125,7 +125,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		Item *item = *iter;
-		item->setupLerp(gametick);
+		item->setupLerp(gameframeno);
 
 		if (!paintEditorItems && item->getShapeInfo()->is_editor())
 			continue;

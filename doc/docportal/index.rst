@@ -1,32 +1,29 @@
+
 .. toctree::
       :glob:
-      :caption: Quickstart Guide
-      :maxdepth: 2
+      :caption: The basics
       :hidden:
 
-      getting_started/mac_linux_windows
+      use_scummvm/install_computer
+      use_scummvm/the_launcher
+      use_scummvm/game_files
+      use_scummvm/add_play_games
+      use_scummvm/save_load_games
+      use_scummvm/keyboard_shortcuts
+      use_scummvm/how_to_settings
+      use_scummvm/connect_cloud
+      use_scummvm/LAN
       
 .. toctree::
+      :caption: Platform guides
       :glob:
-      :caption: Other Platforms
-      :maxdepth: 2
       :hidden:
 
       other_platforms/*
 
-.. toctree::
-      :caption: Using ScummVM
-      :glob:
-      :hidden:
-
-      using_scummvm/the_launcher
-      using_scummvm/add_play_games
-      using_scummvm/save_load_games
-      using_scummvm/keyboard_shortcuts
-      using_scummvm/how_to_settings
 
 .. toctree::
-      :caption: Settings
+      :caption: The settings
       :glob:
       :hidden:
 
@@ -42,29 +39,16 @@
       settings/lan
       settings/accessibility
 
+
 .. toctree::
-      :caption: Guides
+      :caption: Advanced topics
       :glob:
       :hidden:
 
-      guides/*
-
-.. toctree::
-      :caption: Games
-      :glob:
-      :hidden:
-
-      games/copy_protection
-
-
-.. toctree::
-      :caption: Advanced Options
-      :glob:
-      :hidden:
-
-      advanced_options/command_line
-      advanced_options/configuration_file
-
+      advanced_topics/command_line
+      advanced_topics/configuration_file
+      advanced_topics/understand_audio
+      advanced_topics/understand_graphics
 
 .. toctree::
       :caption: Help
@@ -75,6 +59,8 @@
       help/contact
       help/faq
 
+
+
 .. toctree::
       :caption: Release Notes
       :glob:
@@ -82,60 +68,143 @@
 
       release_notes/*  
 
+
+
+
+
 ====================
 Welcome to ScummVM!
 ====================
 
-ScummVM is a program that allows you to run classic graphical point-and-click adventure games, provided you already have the game data files. ScummVM replaces the executable files shipped with the games, which means they can be played on systems they were never designed for!
+ScummVM allows you to play classic graphic point-and-click adventure games, text adventure games, and RPGs, as long as you already have the game data files. ScummVM replaces the executable files shipped with the games, which means you can now play your favorite games on all your favorite devices.
 
-SCUMM (Script Creation Utility for Maniac Mansion) is a utility that was used to create many of the famous LucasArts adventure games, such as Maniac Mansion and Monkey Island. It is the namesake of ScummVM, with VM meaning Virtual Machine.
+So how did ScummVM get its name? Many of the famous LucasArts adventure games, such as Maniac Mansion and the Monkey Island series, were created using a utility called SCUMM (Script Creation Utility for Maniac Mansion). The 'VM' in ScummVM stands for Virtual Machine. 
 
-While ScummVM was originally designed to run LucasArts' SCUMM games, over time support has been added for many other games.
+While ScummVM was originally designed to run LucasArts' SCUMM games, over time support has been added for many other games: see the full list `here <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. Noteworthy titles include Broken Sword, Myst and Blade Runner, although there are countless other hidden gems to explore. 
+
+
 
 .. _firststeps:
 
-First steps
+Start here!
 ================
 
-We have guides available to show you how to get ScummVM up and running: 
+We have a user manual section covering **THE BASICS**:
 
-- **Quickstart**: :doc:`getting_started/mac_linux_windows`
-- **Phones and Tablets**: :doc:`other_platforms/ios` | :doc:`other_platforms/android`
-- **Consoles**: :doc:`other_platforms/ps_vita` | :doc:`other_platforms/psp` | :doc:`other_platforms/nintendo_switch`
+.. panels::
+      :container: text-center mb-4
+
+      Installation
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`Installing ScummVM on a computer <use_scummvm/install_computer>`
+
+      :doc:`use_scummvm/the_launcher`
+
+      ---
+      
+      Playing games
+      ^^^^^^^^^^^^^^^
+      :doc:`use_scummvm/game_files`
+
+      :doc:`use_scummvm/add_play_games`
+
+      :doc:`use_scummvm/save_load_games`
+
+      ---
+   
+
+      Controls and settings
+      ^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`use_scummvm/keyboard_shortcuts`
+
+      :doc:`use_scummvm/how_to_settings`
+
+      ---
+     
+      Useful features
+      ^^^^^^^^^^^^^^^^
+
+      :doc:`use_scummvm/connect_cloud`
+
+      :doc:`use_scummvm/LAN`
+
+.. _platformspecific:
+
+We also have guides on how to get ScummVM running on a wide range of other platforms:
 
 
-How do I...?
-=============
+.. panels::
+      :container: text-center mb-4
 
-So you have ScummVM installed, but now you need to know how to add and play some games! We have lots of useful information to help you out:
+      Handheld consoles
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/nintendo_3ds`
 
-- **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
-- **Playing games**: :doc:`using_scummvm/add_play_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
-- **Settings**: :doc:`using_scummvm/how_to_settings` 
+      :doc:`other_platforms/nintendo_switch`
 
-Definitive guides
-=====================
+      :doc:`other_platforms/playstation_portable`
 
-We do some deep dives into ScummVM features - from audio settings to our brand new Cloud functionality. Check out our Guides section!
+      :doc:`other_platforms/playstation_vita`
 
-:doc:`guides/understand_audio` | :doc:`guides/understand_graphics` 
+      ---
+      
+      Other consoles
+      ^^^^^^^^^^^^^^^^
 
-The games!
-============
+      :doc:`other_platforms/playstation_3`
 
-One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. For a list of which files you need for each game, check out the `Datafiles page <https://wiki.scummvm.org/index.php?title=Datafiles>`__ on our wiki. 
+      :doc:`other_platforms/sega_dreamcast`
 
-If you haven't had a floppy disc or even a CD in your possession for a while, we have a `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on our website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. 
+      ---
 
-Make sure you check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
+      Phones and tablets
+      ^^^^^^^^^^^^^^^
+      :doc:`other_platforms/ios`
+
+      :doc:`other_platforms/android`
+
+      ---
+
+      Other operating systems
+      ^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/amigaos_4`
+
+      :doc:`other_platforms/atari`
+
+      :doc:`other_platforms/risc_os`
+
+      
+      
 
 
-Advanced options
+
+
+Advanced topics
 ============================
 
-For our more experienced users, ScummVM has a command line interface, as well as the ability to edit settings directly in a configuration file. 
+For our more experienced users, ScummVM features a command line interface, as well as the ability to edit settings directly in a configuration file. 
 
-:doc:`advanced_options/configuration_file` | :doc:`advanced_options/command_line`
+In this section, we also take a deep dive into understanding the graphics and audio settings. 
+
+
+.. panels::
+      :container: text-center mb-4
+
+      Advanced features
+      ^^^^^^^^^^^^^^^^^^^^
+      :doc:`advanced_topics/configuration_file` 
+      
+      :doc:`advanced_topics/command_line`
+
+      ---
+      
+      Understanding the settings
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+      :doc:`The audio settings <advanced_topics/understand_audio>`
+
+      :doc:`The graphics settings <advanced_topics/understand_graphics>`
+
 
 
 Getting help
@@ -145,20 +214,47 @@ ScummVM is still under development. While we do our best to make sure that as ma
 
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
-:doc:`help/faq` | :doc:`How to report a bug <help/report_bugs>` | :doc:`help/contact`
+.. panels::
+      :container: text-center mb-4
+      :column: col-lg-12
+
+      :doc:`help/faq` 
+     
+      :doc:`How to report a bug <help/report_bugs>` 
+      
+      :doc:`help/contact`
 
 What's changed since I was last here?
 ======================================
 
-For a quick recap on what's been happening with the latest release, check out our Release Notes section. 
+We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases. 
 
 
 The ScummVM Project
 ===================
-ScummVM is an open-source project.
 
-If you enjoy ScummVM, feel free to donate using the PayPal button on the `ScummVM homepage <https://www.scummvm.org>`__. This will help us buy the utilities to develop ScummVM faster and more efficiently.
+ScummVM is an open-source project created, maintained and constantly improved by a team of passionate volunteers from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below. 
 
-If you cannot donate but you have the skills, you can help us by contributing a patch!
+.. raw:: html
 
-- **Contributing Guidelines**: `Code <#>`__ | `Documentation <#>`__
+      <form id="donate-header" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="U6E6SLL7E8MAS">
+            <input type="image" src="ppdonate.png" style="width: 126px; height: 50px; border: 0 none;"  name="submit" alt="Support This Project">
+      </form>
+      <br>
+
+Another way to support us is to buy your games from GOG.com using the ScummVM Affiliate link.
+
+.. raw:: html 
+
+      <a href="https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d">
+            <img src="GOG_button_small.png" width="126" height="46" alt="GOG.com games">
+      </a>
+
+
+
+If you have software development or technical writing skills, we would love for you to join the ScummVM team! Check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki for more information on contributing to ScummVM. 
+
+
+

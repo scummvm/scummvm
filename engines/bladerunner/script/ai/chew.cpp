@@ -25,9 +25,10 @@
 namespace BladeRunner {
 
 AIScriptChew::AIScriptChew(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
-	_var1 = 0;
-	_var2 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
 	_var3 = 1;
 }
 
@@ -37,9 +38,9 @@ void AIScriptChew::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
-	_var1 = 0;
-	_var2 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
+	_varNumOfTimesToHoldCurrentFrame = 0;
+	_varChooseIdleAnimation = 0;
 	_var3 = 1;
 }
 
@@ -102,25 +103,25 @@ bool AIScriptChew::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var2 == 0) {
-			*animation = 777;
-			if (_var1) {
-				--_var1;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationChewIdle;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(777)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewIdle)) {
 					_animationFrame = 0;
 					_var3 = 1;
-					_var2 = Random_Query(0, 2);
+					_varChooseIdleAnimation = Random_Query(0, 2);
 				} else if (!Random_Query(0, 1)) {
-					_var1 = 1;
+					_varNumOfTimesToHoldCurrentFrame = 1;
 					if (!Random_Query(0, 3)) {
 						_var3 = -_var3;
 					}
 				}
 			}
-		} else if (_var2 == 1) {
-			*animation = 778;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationChewFiddlingWithInstruments;
 			_animationFrame += _var3;
 			if (_animationFrame <= 6) {
 				_var3 = 1;
@@ -130,13 +131,13 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 					_var3 = -1;
 				}
 			}
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(778)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewFiddlingWithInstruments)) {
 				_animationFrame = 0;
-				_var2 = Random_Query(0, 2);
+				_varChooseIdleAnimation = Random_Query(0, 2);
 				_var3 = 1;
 			}
-		} else if (_var2 == 2) {
-			*animation = 779;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationChewAdjustingInstrument;
 			_animationFrame += _var3;
 			if (_animationFrame <= 8) {
 				_var3 = 1;
@@ -146,23 +147,23 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 					_var3 = -1;
 				}
 			}
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(779)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewAdjustingInstrument)) {
 				_animationFrame = 0;
-				_var2 = Random_Query(0, 2);
+				_varChooseIdleAnimation = Random_Query(0, 2);
 				_var3 = 1;
 			}
 		}
 		break;
 
 	case 1:
-		if (!_var2) {
-			*animation = 777;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationChewIdle;
 		}
-		if (_var2 == 1) {
-			*animation = 778;
+		if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationChewFiddlingWithInstruments;
 		}
-		if (_var2 == 2) {
-			*animation = 779;
+		if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationChewAdjustingInstrument;
 		}
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame += 2;
@@ -182,122 +183,122 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 780;
-		if (!_animationFrame && _flag) {
-			*animation = 777;
+		*animation = kModelAnimationChewProtestTalk;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			*animation = kModelAnimationChewIdle;
 			_animationState = 0;
-			_var2 = 0;
+			_varChooseIdleAnimation = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(780)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewProtestTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 781;
+		*animation = kModelAnimationChewAngryTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(781)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewAngryTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 782;
+		*animation = kModelAnimationChewExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(782)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 783;
+		*animation = kModelAnimationChewGoAwayTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(783)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewGoAwayTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 784;
+		*animation = kModelAnimationChewDismissiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(784)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewDismissiveTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 785;
+		*animation = kModelAnimationChewPointingSomewhereTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(785)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewPointingSomewhereTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 786;
+		*animation = kModelAnimationChewDescribePulledTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(786)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewDescribePulledTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 9:
-		*animation = 787;
+		*animation = kModelAnimationChewDescribePushedTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(787)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewDescribePushedTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
 	case 10:
-		*animation = 775;
+		*animation = kModelAnimationChewGotHit;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(775)) {
-			*animation = 777;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewGotHit)) {
+			*animation = kModelAnimationChewIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_var2 = 0;
+			_varChooseIdleAnimation = 0;
 		}
 		break;
 
 	case 11:
-		*animation = 776;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(776) - 1) {
+		*animation = kModelAnimationChewShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 12:
-		*animation = 773;
+		*animation = kModelAnimationChewWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(773)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 13:
-		*animation = 774;
+		*animation = kModelAnimationChewTakesAStepBackwards;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(774)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationChewTakesAStepBackwards)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 780;
+			*animation = kModelAnimationChewProtestTalk;
 		}
 		break;
 
@@ -311,42 +312,51 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptChew::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 0:
 			return true;
+
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		default:
 			_animationState = 0;
-			_var2 = 0;
+			_varChooseIdleAnimation = 0;
 			_animationFrame = 0;
 			break;
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationFrame = 0;
 		_animationState = 12;
 		break;
 
 	case 3:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 2;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 2;
-				_animationNext = 780;
+				_animationNext = kModelAnimationChewProtestTalk;
 				_animationState = 1;
 			}
 		}
@@ -354,13 +364,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 12:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 3;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 3;
-				_animationNext = 781;
+				_animationNext = kModelAnimationChewAngryTalk;
 				_animationState = 1;
 			}
 		}
@@ -368,13 +378,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 13:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 4;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 4;
-				_animationNext = 782;
+				_animationNext = kModelAnimationChewExplainTalk;
 				_animationState = 1;
 			}
 		}
@@ -382,13 +392,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 14:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 5;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 5;
-				_animationNext = 783;
+				_animationNext = kModelAnimationChewGoAwayTalk;
 				_animationState = 1;
 			}
 		}
@@ -396,13 +406,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 15:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 6;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 6;
-				_animationNext = 784;
+				_animationNext = kModelAnimationChewDismissiveTalk;
 				_animationState = 1;
 			}
 		}
@@ -410,13 +420,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 16:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 7;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 7;
-				_animationNext = 785;
+				_animationNext = kModelAnimationChewPointingSomewhereTalk;
 				_animationState = 1;
 			}
 		}
@@ -424,13 +434,13 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 17:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 8;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 8;
-				_animationNext = 786;
+				_animationNext = kModelAnimationChewDescribePulledTalk;
 				_animationState = 1;
 			}
 		}
@@ -438,22 +448,22 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 18:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 9;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 9;
-				_animationNext = 787;
+				_animationNext = kModelAnimationChewDescribePushedTalk;
 				_animationState = 1;
 			}
 		}
 		break;
 
 	case 43:
-		if (_animationState || (!_animationState && _var2 != 1 && _var2 != 2)) {
+		if (_animationState > 0 || (_animationState == 0 && _varChooseIdleAnimation != 1 && _varChooseIdleAnimation != 2)) {
 			Actor_Change_Animation_Mode(kActorChew, kAnimationModeIdle);
-			_var2 = Random_Query(1, 2);
+			_varChooseIdleAnimation = Random_Query(1, 2);
 		}
 		break;
 

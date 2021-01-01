@@ -1103,11 +1103,29 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 	byte *alloced;
 	int len;
 
+	bool sourceWasNull = !source;
+	int originalLen;
+
 	_res->nukeResource(type, idx);
 
 	len = resStrLen(source) + 1;
 	if (len <= 0)
 		return;
+
+	originalLen = len;
+
+	// Translate resource text
+	byte translateBuffer[512];
+	if (isScummvmKorTarget()) {
+		if (!source) {
+			refreshScriptPointer();
+			source = _scriptPointer;
+		}
+		translateText(source, translateBuffer);
+
+		source = translateBuffer;
+		len = resStrLen(source) + 1;
+	}
 
 	alloced = _res->createResource(type, idx, len);
 
@@ -1115,8 +1133,12 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 		// Need to refresh the script pointer, since createResource may
 		// have caused the script resource to expire.
 		refreshScriptPointer();
-		memcpy(alloced, _scriptPointer, len);
-		_scriptPointer += len;
+		memcpy(alloced, _scriptPointer, originalLen);
+		_scriptPointer += originalLen;
+	} else if (sourceWasNull) {
+		refreshScriptPointer();
+		memcpy(alloced, source, len);
+		_scriptPointer += originalLen;
 	} else {
 		memcpy(alloced, source, len);
 	}

@@ -64,7 +64,7 @@ bool VideoDialog::init() {
 	int buttonY = 9;
 	uint8 textY = 11;
 	uint8 row_h = 13;
-	last_index = 0;;
+	last_index = 0;
 	b_index_num = -1;
 	bool no_fullscreen = false; // no compatible fullscreen setting found
 	GUI_Widget *widget;

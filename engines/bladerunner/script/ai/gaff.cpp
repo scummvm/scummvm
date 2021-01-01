@@ -333,7 +333,7 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 794;
+		*animation = kModelAnimationGaffIdle;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -341,7 +341,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		*animation = 788;
+		*animation = kModelAnimationGaffWalking;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -349,7 +349,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 798;
+		*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
@@ -357,69 +357,76 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		*animation = 799;
+		*animation = kModelAnimationGaffExplainTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 798;
+			*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 800;
+		// TODO A bug? This is identical to case 6
+		*animation = kModelAnimationGaffDescribeTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 798;
+			*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 801;
+		// TODO A bug? This is identical to case 7
+		*animation = kModelAnimationGaffLaughHeadBackTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 798;
+			*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 800;
+		*animation = kModelAnimationGaffDescribeTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 798;
+			*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 801;
+		*animation = kModelAnimationGaffLaughHeadBackTalk;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = 798;
+			*animation = kModelAnimationGaffCalmPointingWithStickTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 802;
+		*animation = kModelAnimationGaffEntersSpinner;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(35) - 1) { // Bug in the game?
+		// TODO Bug in the game? Why check against McCoy's animation's frameset number of frames?
+		// kModelAnimationMcCoyEntersSpinner: 25 frames
+		// kModelAnimationGaffEntersSpinner:  31 frames
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyEntersSpinner) - 1) {
 			Actor_Set_Invisible(kActorGaff, true);
-			*animation = 794;
+			*animation = kModelAnimationGaffIdle;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle); // TODO: check this, it was set directly by calling actor script
+			// TODO: check this, it was set directly by calling actor script
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12Leave);
 		}
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;

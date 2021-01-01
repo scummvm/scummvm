@@ -27,10 +27,10 @@
 
 namespace Xeen {
 
-const int COMBAT_POS_X[3][2] = { { 102, 134 },{ 36, 67 },{ 161, 161 } };
-const int INDOOR_POW_INDEXES[3] = { 157, 151, 154 };
-const int OUTDOOR_POW_INDEXES[3] = { 119, 113, 116 };
-const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
+static const int COMBAT_POS_X[3][2] = { { 102, 134 },{ 36, 67 },{ 161, 161 } };
+static const int INDOOR_POW_INDEXES[3] = { 157, 151, 154 };
+static const int OUTDOOR_POW_INDEXES[3] = { 119, 113, 116 };
+static const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
 
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_groundSprite(_data[2]), _attackImgs1(&_data[124]), _attackImgs2(&_data[95]),

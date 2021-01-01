@@ -70,7 +70,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		case MKTAG('T','E','X','T'):
-			if (!scumm_stricmp((const char *)(ptr + 8), "exit"))
+			if (!scumm_stricmp((const char *)(ptr + 8), "exit") || _vm->_game.id == GID_CMI)
 				numMarkers++;
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
@@ -151,7 +151,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, Sou
 	}
 }
 
-void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
+void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound, bool rawBundle) {
 	if (READ_BE_UINT32(ptr) == MKTAG('C','r','e','a')) {
 		bool quit = false;
 		int len;
@@ -251,12 +251,14 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			switch (tag) {
 			case MKTAG('F','R','M','T'):
 				ptr += 12;
+				sound->littleEndian = READ_BE_UINT32(ptr) == 16 && rawBundle;
+
 				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
 				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
 				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			case MKTAG('T','E','X','T'):
-				if (!scumm_stricmp((const char *)(ptr + 8), "exit")) {
+				if (!scumm_stricmp((const char *)(ptr + 8), "exit") || _vm->_game.id == GID_CMI) {
 					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
 					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
 					sound->marker[curIndexMarker].ptr = new char[sound->marker[curIndexMarker].length];
@@ -389,6 +391,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk) {
 	assert(soundId >= 0);
 	assert(soundType);
+	bool rawBundle = false;
 
 	SoundDesc *sound = allocSlot();
 	if (!sound) {
@@ -440,13 +443,13 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			sound->disk = disk;
 			return sound;
 		} else if (soundName[0] == 0) {
-			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside, rawBundle) == 0 || ptr == NULL) {
 				closeSound(sound);
 				free(ptr);
 				return NULL;
 			}
 		} else {
-			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside, rawBundle) == 0 || ptr == NULL) {
 				closeSound(sound);
 				free(ptr);
 				return NULL;
@@ -463,7 +466,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 	sound->type = soundType;
 	sound->volGroupId = volGroupId;
 	sound->disk = _disk;
-	prepareSound(ptr, sound);
+	prepareSound(ptr, sound, rawBundle);
 	if ((soundType == IMUSE_BUNDLE) && !sound->compressed) {
 		free(ptr);
 	}
@@ -567,12 +570,26 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(SoundDesc *soundDesc, int region
 	assert(checkForProperHandle(soundDesc));
 	assert(region >= 0 && region < soundDesc->numRegions);
 	int32 offset = soundDesc->region[region].offset;
+	int jumpIdCandidate = -1;
 	for (int l = 0; l < soundDesc->numJumps; l++) {
 		if (offset == soundDesc->jump[l].offset) {
+			jumpIdCandidate = l;
 			if (soundDesc->jump[l].hookId == hookId)
 				return l;
 		}
 	}
+	// We missed the jump because we didn't have the right hookId...
+	// ...but if that jump led to a region with a "start" marker we have to enforce it anyway!
+	// This fixes edge-cases (like bug #11956) where a different hookId than the one expected prevents us
+	// from playing the music track from the "start" marker, effectively playing also the
+	// silence (or ambient noise) which precedes it.
+	if (_vm->_game.id == GID_CMI)
+		if (jumpIdCandidate != -1) {
+			offset = soundDesc->jump[jumpIdCandidate].dest;
+			// Element 2 in marker[] should always be "start"
+			if (offset == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start"))
+				return jumpIdCandidate;
+		}
 
 	return -1;
 }
@@ -636,7 +653,13 @@ int ImuseDigiSndMgr::getJumpFade(SoundDesc *soundDesc, int number) {
 int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size) {
 	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
-	assert(buf && offset >= 0 && size >= 0);
+
+	// In COMI we allow at least -size*2 as offset, since music
+	// tracks need that in order to be realigned after crossfades
+	if (_vm->_game.id == GID_CMI)
+		assert(buf && offset >= -(size * 2) && size >= 0);
+	else
+		assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundDesc->numRegions);
 
 	int32 region_offset = soundDesc->region[region].offset;

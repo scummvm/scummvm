@@ -21,11 +21,17 @@
  */
 
 /**
- * @file
- * Macintosh cursor decoding used in engines:
+ * @defgroup graphics_maccursor Mac cursor
+ * @ingroup graphics
+ *
+ * @brief Macintosh cursor decoding.
+ *
+ * Used in engines:
  * - mohawk
  * - sci
  * - scumm
+ *
+ * @{
  */
 
 #ifndef GRAPHICS_MACCURSOR_H
@@ -78,7 +84,7 @@ protected:
 	/** Clear the cursor. */
 	void clear();
 };
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif

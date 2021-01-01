@@ -164,10 +164,8 @@ extern const RoomAction trial1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor },
 	{ {ACTION_WALK, OBJECT_DOOR, 0, 0},              &Room::trial1WalkToDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial1NumActions = ARRAYSIZE(trial1ActionList);
-
 
 void Room::trial1Tick1() {
 	if (!_awayMission->trial.doorOpen) {
@@ -322,7 +320,7 @@ void Room::trial1UseStunPhaserOnFloor() {
 }
 
 void Room::trial1ReachedFloorToUseStunPhaser() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorAnimC(OBJECT_KIRK, "t1mlts", 0xca, 0xbc, &Room::trial1DoneShootingFloorWithStunPhaser);
 }
 
@@ -340,7 +338,7 @@ void Room::trial1UseKillPhaserOnFloor() {
 }
 
 void Room::trial1ReachedFloorToUseKillPhaser() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorAnimC(OBJECT_KIRK, "t1mltk", 0xca, 0xbc, &Room::trial1DoneShootingFloorWithKillPhaser);
 }
 
@@ -531,20 +529,20 @@ void Room::trial1UseSpockOnLock() {
 }
 
 void Room::trial1SpockReachedKeypad() { // Spock opens the door
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 	loadActorAnimC(OBJECT_SPOCK, "susemw", -1, -1, &Room::trial1SpockUsedKeypad);
 }
 
 void Room::trial1SpockUsedKeypad() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorStandAnim(OBJECT_SPOCK);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "t1drco", -1, -1, &Room::trial1DoorOpened);
 	_awayMission->trial.doorOpen = true;
 }
 
 void Room::trial1SpockReachedKeypadWithExtraProgram() { // Spock activates the unknown program
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 	loadActorAnimC(OBJECT_SPOCK, "susemw", -1, -1, &Room::trial1SpockUsedKeypadWithExtraProgram);
 }
 
@@ -580,20 +578,20 @@ void Room::trial1UseRedshirtOnLock() {
 }
 
 void Room::trial1RedshirtReachedKeypad() { // Redshirt opens the lock
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 	loadActorAnimC(OBJECT_REDSHIRT, "rusemw", -1, -1, &Room::trial1RedshirtUsedKeypad);
 }
 
 void Room::trial1RedshirtUsedKeypad() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
 	loadActorStandAnim(OBJECT_REDSHIRT);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "t1drco", -1, -1, &Room::trial1DoorOpened);
 	_awayMission->trial.doorOpen = true;
 }
 
 void Room::trial1RedshirtReachedKeypadWithExtraProgram() {
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 	loadActorAnimC(OBJECT_REDSHIRT, "rusemw", -1, -1, &Room::trial1RedshirtUsedKeypadWithExtraProgram);
 }
 

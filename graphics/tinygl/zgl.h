@@ -40,6 +40,7 @@
 #include "graphics/tinygl/zmath.h"
 #include "graphics/tinygl/zblit.h"
 #include "graphics/tinygl/zdirtyrect.h"
+#include "graphics/tinygl/texelbuffer.h"
 
 namespace TinyGL {
 
@@ -174,7 +175,7 @@ struct GLVertex {
 };
 
 struct GLImage {
-	Graphics::PixelBuffer pixmap;
+	Graphics::TexelBuffer *pixmap;
 	int xsize, ysize;
 };
 
@@ -279,6 +280,10 @@ struct GLContext {
 	// textures
 	GLTexture *current_texture;
 	int texture_2d_enabled;
+	int texture_mag_filter;
+	int texture_min_filter;
+	unsigned int texture_wrap_s;
+	unsigned int texture_wrap_t;
 
 	// shared state
 	GLSharedState shared_state;
@@ -423,10 +428,10 @@ void free_texture(GLContext *c, int h);
 void free_texture(GLContext *c, GLTexture *t);
 
 // image_util.c
-void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
-					unsigned char *src, int xsize_src, int ysize_src);
-void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
-								 unsigned char *src, int xsize_src, int ysize_src);
+void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+		    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+				 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
 
 void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 

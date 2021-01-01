@@ -120,10 +120,8 @@ extern const RoomAction sins3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins3UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins3UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins3UseMTricorderOnCrewman },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins3NumActions = ARRAYSIZE(sins3ActionList);
-
 
 void Room::sins3Tick1() {
 	playVoc("SIN3LOOP");
@@ -218,7 +216,6 @@ void Room::sins3KirkReachedBox() {
 
 // Plays a sound effect at a specific time while opening the box
 void Room::sins3Timer0Expired() {
-	playSoundEffectIndex(SND_0c);
 }
 
 void Room::sins3UseSpockOnBox() {
@@ -342,17 +339,17 @@ void Room::sins3SpockReachedPanel() {
 				if (_awayMission->sins.laserPattern == 0 && _awayMission->sins.laserSetting == 3) {
 					// This code is unreachable, as the same condition was checked above
 					loadActorAnimC(OBJECT_ITEM, "s3las2", 0, 0, &Room::sins3MadeHoleInRock);
-					playSoundEffectIndex(SND_PHASSHOT);
+					playSoundEffectIndex(kSfxPhaser);
 					_awayMission->sins.moldState = -1;
 				} else if (_awayMission->sins.laserPattern == 1 && _awayMission->sins.laserSetting == 3) {
 					// Strong laser creates the needed mold
 					loadActorAnimC(OBJECT_ITEM, "s3las3", 0, 0, &Room::sins3CreatedTemplateInRock);
-					playSoundEffectIndex(SND_PHASSHOT);
+					playSoundEffectIndex(kSfxPhaser);
 					_awayMission->sins.moldState = 2;
 				} else {
 					// Weak laser does nothing to the rock
 					loadActorAnimC(OBJECT_ITEM, "s3las1", 0, 0, &Room::sins3UsedLowPowerLaserOnRock);
-					playSoundEffectIndex(SND_PHASSHOT);
+					playSoundEffectIndex(kSfxPhaser);
 				}
 			} else if (_awayMission->sins.moldState == 3) { // There's a rock sitting on the mold
 				loadActorAnim2(OBJECT_SPOCK, "susemn");
@@ -361,12 +358,12 @@ void Room::sins3SpockReachedPanel() {
 				if (_awayMission->sins.laserSetting == 1 || _awayMission->sins.laserSetting == 2) {
 					// Weak-setting lasers create the keycard properly
 					loadActorAnimC(OBJECT_ITEM, "s3las4", 0, 0, &Room::sins3RockTurnedIntoIDCard);
-					playSoundEffectIndex(SND_PHASSHOT);
+					playSoundEffectIndex(kSfxPhaser);
 					_awayMission->sins.moldState = 4;
 				} else if (_awayMission->sins.laserSetting == 3) {
 					// High-setting laser vaporizes the rocks
 					loadActorAnimC(OBJECT_ITEM, "s3las5", 0, 0, &Room::sins3RockVaporized);
-					playSoundEffectIndex(SND_PHASSHOT);
+					playSoundEffectIndex(kSfxPhaser);
 					_awayMission->sins.moldState = 2;
 					_awayMission->sins.laserPattern = 1;
 				}

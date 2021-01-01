@@ -1412,3 +1412,13 @@ static const char *const kEoB2HornStringsDOSGerman[4] = {
 
 static const StringListProvider kEoB2HornStringsDOSGermanProvider = { ARRAYSIZE(kEoB2HornStringsDOSGerman), kEoB2HornStringsDOSGerman };
 
+static const char *const kEoB2NpcPresetsNamesDOSGerman[6] = {
+	"Insal",
+	"Calandra",
+	"Shorn",
+	"San-raal",
+	"Tanglor",
+	"Amber"
+};
+
+static const StringListProvider kEoB2NpcPresetsNamesDOSGermanProvider = { ARRAYSIZE(kEoB2NpcPresetsNamesDOSGerman), kEoB2NpcPresetsNamesDOSGerman };

@@ -27,6 +27,7 @@
  */
 
 #include "common/endian.h"
+#include "graphics/tinygl/texelbuffer.h"
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zgl.h"
 
@@ -77,20 +78,12 @@ FORCEINLINE static void putPixelShadow(FrameBuffer *buffer, int buf, unsigned in
 
 template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending>
 FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, int buf,
-                        Graphics::PixelFormat &textureFormat, Graphics::PixelBuffer &texture, unsigned int *pz, int _a,
-                        int x, int y, unsigned int &z, unsigned int &t, unsigned int &s, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
+                        const Graphics::TexelBuffer *texture, unsigned int wrap_s, unsigned int wrap_t, unsigned int *pz, int _a,
+                        int x, int y, unsigned int &z, int &t, int &s, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
                         int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
-		unsigned sss = (s & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
-		unsigned ttt = (t & buffer->_textureSizeMask) >> ZB_POINT_ST_FRAC_BITS;
-		int pixel = ttt * buffer->_textureSize + sss;
 		uint8 c_a, c_r, c_g, c_b;
-		uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
-		uint32 col = *textureBuffer;
-		c_a = (col >> textureFormat.aShift) & 0xFF;
-		c_r = (col >> textureFormat.rShift) & 0xFF;
-		c_g = (col >> textureFormat.gShift) & 0xFF;
-		c_b = (col >> textureFormat.bShift) & 0xFF;
+		texture->getARGBAt(wrap_s, wrap_t, s, t, c_a, c_r, c_g, c_b);
 		if (kLightsMode) {
 			unsigned int l_a = (a >> (ZB_POINT_ALPHA_BITS - 8));
 			unsigned int l_r = (r >> (ZB_POINT_RED_BITS - 8));
@@ -116,8 +109,7 @@ FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, i
 
 template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
 void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
-	Graphics::PixelBuffer texture;
-	Graphics::PixelFormat textureFormat;
+	const Graphics::TexelBuffer *texture;
 	float fdzdx = 0, fndzdx = 0, ndszdx = 0, ndtzdx = 0;
 
 	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
@@ -270,8 +262,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 	if ((kInterpST || kInterpSTZ) && (kDrawLogic == DRAW_FLAT || kDrawLogic == DRAW_SMOOTH)) {
 		texture = current_texture;
-		textureFormat = texture.getFormat();
-		assert(textureFormat.bytesPerPixel == 4);
 		fdzdx = (float)dzdx;
 		fndzdx = NB_INTERP * fdzdx;
 		ndszdx = NB_INTERP * dszdx;
@@ -514,7 +504,8 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 				} else if (kInterpST || kInterpSTZ) {
 					unsigned int *pz;
-					unsigned int s, t, z, r, g, b, a;
+					int s, t;
+					unsigned int z, r, g, b, a;
 					int n;
 					float sz, tz, fz, zinv;
 					int dsdx, dtdx;
@@ -546,7 +537,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							zinv = (float)(1.0 / fz);
 						}
 						for (int _a = 0; _a < NB_INTERP; _a++) {
-							putPixelTextureMappingPerspective<kDepthWrite, kInterpRGB, kDrawLogic == DRAW_SMOOTH, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, textureFormat, texture,
+							putPixelTextureMappingPerspective<kDepthWrite, kInterpRGB, kDrawLogic == DRAW_SMOOTH, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, texture, wrapS, wrapT,
 							                           pz, _a, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
 						}
 						pz += NB_INTERP;
@@ -568,7 +559,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 					}
 
 					while (n >= 0) {
-						putPixelTextureMappingPerspective<kDepthWrite, kInterpRGB, kDrawLogic == DRAW_SMOOTH, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, textureFormat, texture,
+						putPixelTextureMappingPerspective<kDepthWrite, kInterpRGB, kDrawLogic == DRAW_SMOOTH, kAlphaTestEnabled, kEnableScissor, kBlendingEnabled>(this, buf, texture, wrapS, wrapT,
 						                           pz, 0, x, y, z, t, s, r, g, b, a, dzdx, dsdx, dtdx, drdx, dgdx, dbdx, dadx);
 						pz += 1;
 						buf += 1;

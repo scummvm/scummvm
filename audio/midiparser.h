@@ -30,6 +30,13 @@
 
 class MidiDriver_BASE;
 
+/**
+ * @defgroup audio_midiparser MIDI parser
+ * @ingroup audio
+ *
+ * @brief A framework and common functionality for parsing event-based music streams.
+ * @{
+ */
 
 
 //////////////////////////////////////////////////
@@ -483,10 +490,10 @@ public:
 
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
-	static MidiParser *createParser_SMF();
+	static MidiParser *createParser_SMF(int8 source = -1);
 	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, int source = -1);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
-
+/** @} */
 #endif

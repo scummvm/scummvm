@@ -329,10 +329,10 @@ void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
 	for (uint i = 0; i < model->_numFaces; i++) {
-		int *indices = (int *)model->_faces[i]._indexes;
+		uint16 *indices = (uint16 *)model->_faces[i]._indexes;
 		
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
-			int index = indices[j];
+			uint16 index = indices[j];
 
 			Math::Vector3d obj = model->_drawVertices[index];
 			Math::Vector3d win;
@@ -614,7 +614,7 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 }
 
 void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
-	int *indices = (int *)face->_indexes;
+	uint16 *indices = (uint16 *)face->_indexes;
 
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
@@ -633,7 +633,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	}
 	Math::Vector3d noLighting(1.f, 1.f, 1.f);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
-		int index = indices[j];
+		uint16 index = indices[j];
 
 		if (!_currentShadowArray) {
 			if (face->_hasTexture) {

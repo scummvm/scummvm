@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 104
+	kKyraDatVersion = 108
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -542,7 +542,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1CharWidthTable1, kRawData, false },
 	{ kEoB1CharWidthTable2, kRawData, false },
 	{ kEoB1CharWidthTable3, kRawData, false },
-	{ kEoB1CharTilesTable, kRawData, false },
+	{ kEoB1CharTilesTable, kRawData, true },
 
 	// EYE OF THE BEHOLDER II
 	{ kEoB2MainMenuStrings, kStringList, true },
@@ -821,6 +821,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1MonsterAnimFrames109, kRawData, false },
 
 	{ kEoBBaseNpcPresets, kEoBNpcData, false },
+	{ kEoBBaseNpcPresetsNames, kStringList, true },
 	{ kEoB2Npc1Strings, kStringList, true },
 	{ kEoB2Npc2Strings, kStringList, true },
 	{ kEoB2MonsterDustStrings, kStringList, true },
@@ -1052,7 +1053,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2FontDmpSearchTbl, kRawDataBe16, false },
 	{ kEoB2Ascii2SjisTables, kStringList, false },
 	{ kEoB2Ascii2SjisTables2, kStringList, false },
-	{ kEoB2SaveNamePatterns, kStringList, false },
+	{ kEoBBaseSaveNamePatterns, kStringList, true },
 
 	{ kEoB2PcmSoundEffectsIngame, kRawData, false },
 	{ kEoB2PcmSoundEffectsIntro, kRawData, false },
@@ -1200,6 +1201,7 @@ const TypeTable languageTable[] = {
 	{ IT_ITA, 5 },
 	{ JA_JPN, 6 },
 	{ RU_RUS, 7 },
+	{ HE_ISR, 8 },
 	{ -1, -1 }
 };
 

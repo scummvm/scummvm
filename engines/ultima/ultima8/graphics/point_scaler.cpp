@@ -30,13 +30,13 @@ namespace Ultima8 {
 // Very very simple point scaler
 template<class uintX, class Manip, class uintS = uintX> class PointScalerInternal {
 public:
-	static bool Scale(Texture *tex  , int32 sx, int32 sy, int32 sw, int32 sh,
+	static bool Scale(const Texture *tex  , int32 sx, int32 sy, int32 sw, int32 sh,
 	                  uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src) {
 		// Source buffer pointers
-		uintS *texel = reinterpret_cast<uintS *>(tex->getPixels()) + (sy * tex->w + sx);
+		const uintS *texel = reinterpret_cast<const uintS *>(tex->getPixels()) + (sy * tex->w + sx);
 		int tpitch = tex->w;
-		uintS *tline_end = texel + sw;
-		uintS *tex_end = texel + sh * tex->w;
+		const uintS *tline_end = texel + sw;
+		const uintS *tex_end = texel + sh * tex->w;
 		int tex_diff = tex->w - sw;
 
 

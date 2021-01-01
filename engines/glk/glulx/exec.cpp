@@ -695,7 +695,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				if (value == 0) {
 					/* We've succeeded, and the stack now contains the callstub
 					   saved during saveundo. Ignore this opcode's operand. */
-					value = (uint) - 1;
+					value = (uint)-1;
 					pop_callstub(value);
 				} else {
 					/* We've failed, so we must store the failure in this opcode's

@@ -125,12 +125,14 @@ void Subtitles::init(void) {
 	// Loading subtitles versioning info if available
 	TextResource versionTxtResource(_vm);
 	if ( versionTxtResource.open(SUBTITLES_VERSION_TRENAME, false)) {
-		_subtitlesInfo.credits = versionTxtResource.getText((uint32)0);
-		_subtitlesInfo.versionStr = versionTxtResource.getText((uint32)1);
+		_subtitlesInfo.credits       = versionTxtResource.getText((uint32)0);
+		_subtitlesInfo.versionStr    = versionTxtResource.getText((uint32)1);
 		_subtitlesInfo.dateOfCompile = versionTxtResource.getText((uint32)2);
-		_subtitlesInfo.languageMode = versionTxtResource.getText((uint32)3);
-		Common::String fontType = versionTxtResource.getText((uint32)4);
-		_subtitlesInfo.fontName = versionTxtResource.getText((uint32)5);
+		_subtitlesInfo.languageMode  = versionTxtResource.getText((uint32)3);
+		Common::String fontType      = versionTxtResource.getText((uint32)4);
+		_subtitlesInfo.fontName      = versionTxtResource.getText((uint32)5);
+		Common::String license       = versionTxtResource.getText((uint32)6);
+		Common::String licenseLink   = versionTxtResource.getText((uint32)7);
 
 		if (fontType.equalsIgnoreCase("ttf")) {
 			_subtitlesInfo.fontType = Subtitles::kSubtitlesFontTypeTTF;
@@ -242,7 +244,11 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 
 	// Search in the first TextResource of the _vqaSubsTextResourceEntries table, which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
 	const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text);
+	// Use of Common::kWindows1252 codepage to fix bug whereby accented characters
+	// would not show for subtitles.
+	// TODO maybe the codepage here should be determined based on some subtitles property per language
+	//      especially for non-latin languages that still use a FON font rather than a TTF font (eg. Greek would need Common::kWindows1253)
+	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text, Common::kWindows1252);
 }
 
 /**
@@ -262,7 +268,11 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 	// Search in the requested TextResource at the fileIdx index of the _vqaSubsTextResourceEntries table for a quote that corresponds to the specified video frame
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const char *text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text);
+	// Use of Common::kWindows1252 codepage to fix bug whereby accented characters
+	// would not show for subtitles.
+	// TODO maybe the codepage here should be determined based on some subtitles property per language
+	//      especially for non-latin languages that still use a FON font rather than a TTF font (eg. Greek would need Common::kWindows1253)
+	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text, Common::kWindows1252);
 }
 
 /**
@@ -270,7 +280,8 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
  * Used for debug purposes mainly.
  */
 void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpeech) {
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : Common::U32String(dbgQuote);
+	// TODO is Common::kWindows1252 correct here?
+	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : Common::U32String(dbgQuote, Common::kWindows1252);
 	_forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 

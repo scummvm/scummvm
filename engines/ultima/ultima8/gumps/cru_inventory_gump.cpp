@@ -154,11 +154,11 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 }
 
 void CruInventoryGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
+	CruStatGump::saveData(ws);
 }
 
 bool CruInventoryGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	return CruStatGump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

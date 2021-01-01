@@ -87,7 +87,17 @@ void PixelBuffer::clear(int length) {
 }
 
 void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const PixelBuffer &buf) {
-	if (buf._format == _format) {
+	if (buf._format.bytesPerPixel == _format.bytesPerPixel &&
+	    buf._format.rShift == _format.rShift &&
+	    buf._format.gShift == _format.gShift &&
+	    buf._format.bShift == _format.bShift &&
+	    buf._format.rLoss == _format.rLoss &&
+	    buf._format.gLoss == _format.gLoss &&
+	    buf._format.bLoss == _format.bLoss && (
+		_format.aLoss == 8 ||
+		buf._format.aLoss == _format.aLoss
+	    )
+	) {
 		memcpy(_buffer + thisFrom * _format.bytesPerPixel, buf._buffer + otherFrom * _format.bytesPerPixel, length * _format.bytesPerPixel);
 	} else {
 		uint8 r, g, b, a;

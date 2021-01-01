@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 #include "common/util.h"
@@ -35,9 +36,12 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(BatteryChargerProcess)
 
+// These SFX IDs are the same in both No Regret and No Remorse.
+static const uint16 CHARGE_START_SFX = 0xa4;
+static const uint16 CHARGE_GOING_SFX = 0x10b;
+
 BatteryChargerProcess::BatteryChargerProcess() : Process() {
-	// TODO: This should be the "current" avatar (if controlling a robot etc)
-	MainActor *avatar = getMainActor();
+	MainActor *avatar = dynamic_cast<MainActor *>(getActor(World::get_instance()->getControlledNPCNum()));
 	if (!avatar) {
 		_itemNum = 0;
 		_targetMaxEnergy = 0;
@@ -46,27 +50,26 @@ BatteryChargerProcess::BatteryChargerProcess() : Process() {
 		_targetMaxEnergy = avatar->getMaxEnergy();
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio) {
-			audio->playSFX(0xa4, 0x80, _itemNum, 1, false);
+			audio->playSFX(CHARGE_START_SFX, 0x80, _itemNum, 1, false);
 		}
 	}
 	_type = 0x254; // CONSTANT!
 }
 
 void BatteryChargerProcess::run() {
-	// TODO: This should be the "current" avatar (if controlling a robot etc)
-	MainActor *avatar = getMainActor();
+	MainActor *avatar = dynamic_cast<MainActor *>(getActor(World::get_instance()->getControlledNPCNum()));
 	AudioProcess *audio = AudioProcess::get_instance();
 
 	if (!avatar || avatar->isDead() || avatar->getMana() >= _targetMaxEnergy) {
-		// dead or finished healing
+		// dead or finished healing or switched to robot
 		terminate();
 		if (audio)
-			audio->stopSFX(0xa4, _itemNum);
+			audio->stopSFX(CHARGE_START_SFX, _itemNum);
 		return;
 	}
 
-    if (!audio->isSFXPlayingForObject(0x10b, _itemNum))
-		audio->playSFX(0x10b, 0x80, _itemNum, 1);
+    if (!audio->isSFXPlayingForObject(CHARGE_GOING_SFX, _itemNum))
+		audio->playSFX(CHARGE_GOING_SFX, 0x80, _itemNum, 1);
 
 	uint16 newEnergy = avatar->getMana() + 25;
 	if (newEnergy > _targetMaxEnergy)

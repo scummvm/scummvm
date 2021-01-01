@@ -510,9 +510,7 @@ public:
 	 * Used when we have returned to the launcher.
 	 */
 	virtual void resetReturnToLauncher() = 0;
-#ifdef FORCE_RETURN_TO_LAUNCHER
 	virtual void resetQuit() = 0;
-#endif
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 

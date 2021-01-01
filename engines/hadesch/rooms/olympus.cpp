@@ -88,7 +88,7 @@ public:
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		switch (eventId) {
 		case 21001:
-			room->playSound("o1010ea0");
+			room->playSFX("o1010ea0");
 			break;
 		case 21002:
 			room->enableMouse();
@@ -115,7 +115,7 @@ public:
 		room->addStaticLayer("background", kBackgroundZ);
 		room->disableMouse();
 		if (g_vm->getPreviousRoomId() == kOptionsRoom) {
-			room->playSound("o1010ea0", 21002);
+			room->playSFX("o1010ea0", 21002);
 		} else {
 			room->playVideo("movie", 201, 21002);
 			g_vm->addTimer(21001, 40000);

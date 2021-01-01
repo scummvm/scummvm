@@ -72,6 +72,8 @@ public:
 	void playSoundEffectIndex(int index);
 	void setMusicEnabled(bool enable);
 	void setSfxEnabled(bool enable);
+	void toggleMusic();
+	void toggleSfx();
 	void checkLoopMusic();
 
 private:

@@ -9,14 +9,24 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
    - Added support for Hades' Challenge.
+   - Added support for Little Big Adventure.
+   - Added support for Red Comrades 1: Save the Galaxy.
+   - Added support for Red Comrades 2: For the Great Justice.
+   - Added support for Transylvania
+   - Added support for Crimson Crown
+   - Added support for OO-Topos
+   - Added support for Glulx interactive fiction games
 
  General:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to Munt 2.4.1.
 
+ Dreamweb:
+   - Rendering fixes for Russian fan translation.
+
  Glk:
-   - Fix savegame issues with several subengines.
-   - Fix memory overrun in Level9 game detector.
+   - Fixed savegame issues with several subengines.
+   - Fixed memory overrun in Level9 game detector.
    - Added detections for 2020 IF Comp games.
    - Enabled Glulx sub-engine.
 
@@ -29,28 +39,41 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian EMI.
 
  Kyra:
-   - Added support for Russian fan translation of The Legend of Kyrandia (translation by Siberian GRemlin).
-   - Fixed Russian fan translation of The Legend of Kyrandia 2 - Hand of Fate (added Russian subtitles for intro and credits).
+   - Added support for the Japanese Sega-CD version of Eye of the Beholder.
+   - Added support for the Hebrew fan translation of Legend of Kyrandia.
 
  Lure:
-   - Fix fire animation in first room when loading saves.
+   - Fixed fire animation in first room when loading saves.
+   - Fixed MT-32 support.
 
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
+   - Added support for ITE PC-98 Japanese.
 
  SCI:
    - Added RGB rendering mode (16/32bpp) for SCI0 - SCI1.1 games, which addresses palette
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
    - Added custom palette mods for SQ3 and LSL2 from the FreeSCI project. When enabled, the mods improve the visuals
      in these two games.
+   - Added support for the Korean fan translations of Castle of Dr. Brain, Eco Quest, Gabriel Knight,
+     King's Quest 1, 5 and 6, Laura Bow 2: Dagger of Amon Ra and Space Quest 4.
+   - Added support for numerous Korean translations from scummkor project.
+   - Added detection for LSL6 Russian.
+   - Added detection for alternate LSL7 Russian.
 
-SCUMM:
+ SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
      also include some improvements to the common text display (mainly the formatting of wrapped texts).
    - Fixed display of Chinese, Japanese and Korean pause and restart dialogs.
+   - Added support for numerous Korean translations from scummkor project.
+   - Added support for Russobit-M versions of Pajama2 and SpyOzone.
+   - Fixed speech playback in Akella version of COMI.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
+
+ TsAGE:
+   - Added support for uninstalled floppy version.
 
  Stark:
    - Added support for Hungarian translation.
@@ -69,6 +92,16 @@ SCUMM:
  Xeen:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
+   - Fixes for character selection, deselection, and dismissing to better match original.
+
+ AmigaOS port:
+   - Add native system file browser feature
+   - Re-activate nuked OPL Adlib driver
+
+ MorphOS port:
+   - Added native system file browser feature
+   - Added Cloud feature
+   - Re-activate nuked OPL Adlib driver
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 

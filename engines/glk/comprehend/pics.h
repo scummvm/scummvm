@@ -31,7 +31,11 @@
 namespace Glk {
 namespace Comprehend {
 
-#define IMAGEF_NO_FLOODFILL (1 << 1)
+enum ImageFlag {
+	IMAGEF_REVERSE = 1 << 0,
+	IMAGEF_NO_PAINTING = 1 << 1,
+	IMAGEF_NO_FILL = IMAGEF_REVERSE | IMAGEF_NO_PAINTING
+};
 
 enum {
 	LOCATIONS_OFFSET = 0,
@@ -45,6 +49,7 @@ enum {
 class Pics : public Common::Archive {
 	struct ImageContext {
 		Common::File _file;
+		uint _picIndex;
 		DrawSurface *_drawSurface;
 		Graphics::Font *_font;
 		uint _drawFlags;
@@ -58,11 +63,14 @@ class Pics : public Common::Archive {
 		uint16 _textX;
 		uint16 _textY;
 
-		ImageContext(DrawSurface *drawSurface, Graphics::Font *font, uint flags) :
-			_drawSurface(drawSurface), _font(font), _drawFlags(0),
+		ImageContext(DrawSurface *drawSurface, Graphics::Font *font, uint flags, uint picIndex) :
+			_drawSurface(drawSurface), _font(font), _drawFlags(flags), _picIndex(picIndex),
 			_x(0), _y(0), _penColor(G_COLOR_BLACK), _fillColor(G_COLOR_BLACK),
 			_shape(SHAPE_CIRCLE_LARGE), _textX(0), _textY(0) {
 		}
+
+		uint32 getFillColor() const;
+		void lineFixes();
 	};
 
 	struct ImageFile {
@@ -76,7 +84,7 @@ class Pics : public Common::Archive {
 		void doResetOp(ImageContext *ctx, byte param) const;
 	public:
 		ImageFile() {}
-		ImageFile(const Common::String &filename);
+		ImageFile(const Common::String &filename, bool isSingleImage = false);
 
 		void draw(uint index, ImageContext *ctx) const;
 	};

@@ -35,7 +35,7 @@ namespace Common {
  * @defgroup common_config Configuration manager
  * @ingroup common
  *
- * @brief  The (singleton) configuration manager, used to query & set configuration
+ * @brief  The (singleton) configuration manager, used to query and set configuration
  *         values using string keys.
  *
  * @{
@@ -60,38 +60,50 @@ public:
 	private:
 		StringMap _entries;
 		StringMap _keyValueComments;
-		String _domainComment;
+		String    _domainComment;
 
 	public:
 		typedef StringMap::const_iterator const_iterator;
-		const_iterator begin() const { return _entries.begin(); }
-		const_iterator end()   const { return _entries.end(); }
+		const_iterator begin() const { return _entries.begin(); } /*!< Return the beginning position of configuration entries. */
+		const_iterator end()   const { return _entries.end(); }   /*!< Return the ending position of configuration entries. */
 
-		bool empty() const { return _entries.empty(); }
+		bool           empty() const { return _entries.empty(); } /*!< Return true if the configuration is empty, i.e. has no [key, value] pairs, and false otherwise. */
 
-		bool contains(const String &key) const { return _entries.contains(key); }
+		bool           contains(const String &key) const { return _entries.contains(key); } /*!< Check whether the domain contains a @p key. */
+        /** Return the configuration value for the given key.
+		 *  If no entry exists for the given key in the configuration, it is created.
+		 */
+		String        &operator[](const String &key) { return _entries[key]; }
+		/** Return the configuration value for the given key.
+		 *  @note This function does *not* create a configuration entry
+		 *  for the given key if it does not exist.
+		 */
+		const String  &operator[](const String &key) const { return _entries[key]; }
 
-		String &operator[](const String &key) { return _entries[key]; }
-		const String &operator[](const String &key) const { return _entries[key]; }
+		void           setVal(const String &key, const String &value) { _entries.setVal(key, value); } /*!< Assign a @p value to a @p key. */
 
-		void setVal(const String &key, const String &value) { _entries.setVal(key, value); }
+		String        &getVal(const String &key) { return _entries.getVal(key); } /*!< Retrieve the value of a @p key. */
+		const String  &getVal(const String &key) const { return _entries.getVal(key); } /*!< @overload */
+         /**
+          * Retrieve the value of @p key if it exists and leave the referenced variable unchanged if the key does not exist.
+          * @return True if the key exists, false otherwise.
+          * You can use this method if you frequently attempt to access keys that do not exist.
+          */
+		bool          tryGetVal(const String &key, String &out) const { return _entries.tryGetVal(key, out); }
 
-		String &getVal(const String &key) { return _entries.getVal(key); }
-		const String &getVal(const String &key) const { return _entries.getVal(key); }
-		bool tryGetVal(const String &key, String &out) const { return _entries.tryGetVal(key, out); }
+		void           clear() { _entries.clear(); } /*!< Clear all configuration entries in the domain. */
 
-		void clear() { _entries.clear(); }
+		void           erase(const String &key) { _entries.erase(key); } /*!< Remove a key from the domain. */
 
-		void erase(const String &key) { _entries.erase(key); }
+		void           setDomainComment(const String &comment); /*!< Add a @p comment for this configuration domain. */
+		const String  &getDomainComment() const; /*!< Retrieve the comment of this configuration domain. */
 
-		void setDomainComment(const String &comment);
-		const String &getDomainComment() const;
-
-		void setKVComment(const String &key, const String &comment);
-		const String &getKVComment(const String &key) const;
-		bool hasKVComment(const String &key) const;
+		void           setKVComment(const String &key, const String &comment); /*!< Add a key-value @p comment to a @p key. */
+		const String  &getKVComment(const String &key) const; /*!< Retrieve the key-value comment of a @p key. */
+		bool           hasKVComment(const String &key) const; /*!< Check whether a @p key has a key-value comment. */
 	};
-
+    
+	/** A hash map of existing configuration domains. */
 	typedef HashMap<String, Domain, IgnoreCase_Hash, IgnoreCase_EqualTo> DomainMap;
 
 	/** The name of the application domain (normally 'scummvm'). */
@@ -100,11 +112,11 @@ public:
 	/** The transient (pseudo) domain. */
 	static char const *const kTransientDomain;
 
-	/** The name of keymapper domain used to store the key maps */
+	/** The name of keymapper domain used to store the key maps. */
 	static char const *const kKeymapperDomain;
 
 #ifdef USE_CLOUD
-	/** The name of cloud domain used to store user's tokens */
+	/** The name of cloud domain used to store the user's tokens. */
 	static char const *const kCloudDomain;
 #endif
 
@@ -127,9 +139,9 @@ public:
 	 * @{
 	 */
 
-	bool				hasKey(const String &key) const;
-	const String &		get(const String &key) const;
-	void				set(const String &key, const String &value);
+	bool                     hasKey(const String &key) const; /*!< Check if a given @p key exists. */
+	const String            &get(const String &key) const;    /*!< Get the value of a @p key. */
+	void                     set(const String &key, const String &value); /*!< Assign a @p value to a @p key. */
     /** @} */
 
 	/**
@@ -149,11 +161,11 @@ public:
 	 * @{
 	 */
 
-	bool				hasKey(const String &key, const String &domName) const;
-	const String &		get(const String &key, const String &domName) const;
-	void				set(const String &key, const String &value, const String &domName);
+	bool                     hasKey(const String &key, const String &domName) const; /*!< Check if a given @p key exists in the @p domName domain. */
+	const String            &get(const String &key, const String &domName) const; /*!< Get the value of a @p key from the @p domName domain. */
+	void                     set(const String &key, const String &value, const String &domName); /*!< Assign a @p value to a @p key in the @p domName domain. */
 
-	void				removeKey(const String &key, const String &domName);
+	void                     removeKey(const String &key, const String &domName); /*!< Remove a @p key to a @p key from the @p domName domain. */
 	/** @} */
 #endif
 
@@ -165,13 +177,12 @@ public:
 	int                      getInt(const String &key, const String &domName = String()) const; /*!< Get integer value. */
 	bool                     getBool(const String &key, const String &domName = String()) const; /*!< Get Boolean value. */
 	void                     setInt(const String &key, int value, const String &domName = String()); /*!< Set integer value. */
-	void                     setBool(const String &key, bool value, const String &domName = String()); /*!< Set integer value. */
+	void                     setBool(const String &key, bool value, const String &domName = String()); /*!< Set Boolean value. */
 
-
-	void				registerDefault(const String &key, const String &value);
-	void				registerDefault(const String &key, const char *value);
-	void				registerDefault(const String &key, int value);
-	void				registerDefault(const String &key, bool value);
+	void                     registerDefault(const String &key, const String &value); /*!< Register a value as the default. */
+	void                     registerDefault(const String &key, const char *value); /*!< @overload */
+	void                     registerDefault(const String &key, int value); /*!< @overload */
+	void                     registerDefault(const String &key, bool value); /*!< @overload */
 
 	void                     flushToDisk(); /*!< Flush configuration to disk. */
 
@@ -188,15 +199,15 @@ public:
 	void                     removeMiscDomain(const String &domName); /*!< Remove a miscellaneous domain. */
 	void                     renameMiscDomain(const String &oldName, const String &newName); /*!< Rename a miscellaneous domain. */
 
-	bool				hasGameDomain(const String &domName) const;
-	bool				hasMiscDomain(const String &domName) const;
+	bool                     hasGameDomain(const String &domName) const; /*!< Check if a specific game domain exists in the DomainMap. */
+	bool                     hasMiscDomain(const String &domName) const; /*!< Check if a specific miscellaneous domain exists in the DomainMap. */
 
-	const DomainMap &	getGameDomains() const { return _gameDomains; }
-	DomainMap::iterator beginGameDomains() { return _gameDomains.begin(); }
-	DomainMap::iterator endGameDomains() { return _gameDomains.end(); }
+	const DomainMap         &getGameDomains() const { return _gameDomains; } /*!< Return all game domains in the DomainMap. */
+	DomainMap::iterator      beginGameDomains() { return _gameDomains.begin(); } /*!< Return the beginning position of game domains. */
+	DomainMap::iterator      endGameDomains() { return _gameDomains.end(); } /*!< Return the ending position of game domains. */
 
-	static void			defragment(); // move in memory to reduce fragmentation
-	void 				copyFrom(ConfigManager &source);
+	static void              defragment(); /*!< Move the configuration in memory to reduce fragmentation. */
+	void                     copyFrom(ConfigManager &source); /*!< Copy from a ConfigManager instance. */
 	/** @} */
 private:
 	friend class Singleton<SingletonBaseType>;

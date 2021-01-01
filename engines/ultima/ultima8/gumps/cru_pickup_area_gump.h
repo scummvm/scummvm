@@ -39,11 +39,19 @@ class CruPickupAreaGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
+	// default constructor only for use when loading savegame
 	CruPickupAreaGump();
-	CruPickupAreaGump(Item *item, int y);
-	~CruPickupAreaGump() override;
 
-	void addPickup(Item *item);
+	// Normal constructor
+	CruPickupAreaGump(bool unused);
+	~CruPickupAreaGump();
+
+	void InitGump(Gump *newparent, bool take_focus = false) override;
+
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
+
+	void addPickup(const Item *item);
 
 	static CruPickupAreaGump *get_instance();
 private:

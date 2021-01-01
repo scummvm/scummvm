@@ -290,11 +290,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"goldrush",
 			"2.01 1988-12-22",
-			{
-				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
-				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("grdir", "db733d199238d4009a9e95f11ece34e9", 2399,
+					   "vol.0", "4b6423d143674d3757ab1b875d25951d", 25070),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -613,11 +610,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"sq2",
 			"2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
-			{
-				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
-				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("logdir", "28add5125484302d213911df60d2aded", 426,
+					   "object", "5dc52be721257719f4b311a84ce22b16", 372),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -901,6 +895,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("The New Adventure of Roger Wilco (v1.00)", "e5f0a7cb8d49f66b89114951888ca688"),
 	FANMADE("The Ruby Cast (v0.02)", "ed138e461bb1516e097007e017ab62df"),
 	FANMADE("The Shadow Plan", "c02cd10267e721f4e836b1431f504a0a"),
+	FANMADE("The Sorceror's Appraisal", "b121ba95d2beb6c16e2f762a13b8baa2"),
 	FANMADE("Time Quest (Demo v0.1)", "12e1a6f03ea4b8c5531acd0400b4ed8d"),
 	FANMADE("Time Quest (Demo v0.2)", "7b710608abc99e0861ac59b967bf3f6d"),
 	FANMADE_SVP("Time Quest", "90314f473d8317be5cd1f0306f139aea", 300, 0x2440, Common::kPlatformCoCo3),

@@ -1,0 +1,60 @@
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
+in vec3 normal;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+uniform highp mat4 extraMatrix;
+uniform highp mat4 normalMatrix;
+uniform highp vec3 cameraPos;
+uniform bool textured;
+uniform bool useVertexAlpha;
+uniform vec4 uniformColor;
+
+struct shadow_info {
+	bool _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main()
+{
+	vec4 pos = vec4(position, 1.0);
+	vec4 offset = modelMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+	offset -= vec4(cameraPos * offset.w, 0.0);
+	offset = viewMatrix * offset;
+
+	pos = extraMatrix * pos;
+	pos += vec4(offset.xyz * pos.w, 0.0);
+	pos /= pos.w;
+	pos.z *= -1.0;
+
+	vec4 projectedPos = projMatrix * pos;
+	projectedPos.z = ROUND(projectedPos.z);
+
+	gl_Position = projectedPos;
+
+	if (shadow._active) {
+		Color = vec4(shadow._color, 1.0);
+	} else {
+		Color = color;
+	}
+	if (!useVertexAlpha)
+		Color.a = 1.0;
+	Color *= uniformColor;
+	if (textured) {
+		Texcoord = texcoord;
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+
+}

@@ -118,10 +118,8 @@ extern const RoomAction trial2ActionList[] = {
 	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_GLOB, 0}, &Room::trial2UseMccoyOnGlob },
 	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_GLOB, 0}, &Room::trial2UseSpockOnGlob },
 	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_GLOB, 0}, &Room::trial2UseRedshirtOnGlob },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial2NumActions = ARRAYSIZE(trial2ActionList);
-
 
 void Room::trial2Tick1() {
 	playVoc("NOOOLOOP");
@@ -247,7 +245,7 @@ void Room::trial2DrewPhaserToShootGlob() {
 	int index = _roomVar.trial.globBeingShot - OBJECT_GLOB;
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	if (_roomVar.trial.phaserOnKill)
 		showBitmapFor5Ticks(killPhaserAnims[index], 5);
 	else
@@ -279,7 +277,6 @@ void Room::trial2DrewPhaserToShootGlob() {
 		playVoc("GLOBEDIV");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globsp", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneSplitting);
 	} else if (_awayMission->trial.globEnergyLevels[index] >= 4) {
-		playSoundEffectIndex(SND_BLANK_14);
 		playVoc("REDBALL");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globex", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneExploding);
 	}

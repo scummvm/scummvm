@@ -48,7 +48,7 @@ private:
 	// Info for sampling
 	uint32          _frameEvenOdd;  // which buffer is 'frame0'
 	int             _lVol, _rVol;   // 0-256
-	uint32          _pitchShift;    // 0x10000 = no shift
+	uint32          _pitchShift;    // AudioProcess::PITCH_SHIFT_NONE = no shift
 	int             _priority;      // anything.
 	bool            _paused;        // true/false
 private:

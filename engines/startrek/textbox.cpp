@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 
 
@@ -136,7 +137,7 @@ void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, 
 	}
 }
 
-String StarTrekEngine::centerTextboxHeader(String headerText) {
+Common::String StarTrekEngine::centerTextboxHeader(Common::String headerText) {
 	char text[TEXT_CHARS_PER_LINE + 1];
 	memset(text, ' ', sizeof(text));
 	text[TEXT_CHARS_PER_LINE] = '\0';
@@ -149,16 +150,16 @@ String StarTrekEngine::centerTextboxHeader(String headerText) {
 	return Common::String(text);
 }
 
-void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex) {
-	String header = speakerText;
+void StarTrekEngine::getTextboxHeader(Common::String *headerTextOutput, Common::String speakerText, int choiceIndex) {
+	Common::String header = speakerText;
 
 	if (choiceIndex != 0)
-		header += String::format(" choice %d", choiceIndex);
+		header += Common::String::format(" choice %d", choiceIndex);
 
 	*headerTextOutput = centerTextboxHeader(header);
 }
 
-String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
+Common::String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, Common::String *headerTextOutput) {
 	Room *room = getRoom();
 
 	int rdfVar = (size_t)data;
@@ -184,7 +185,7 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 	return (char *)&room->_rdfData[textOffset];
 }
 
-void StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
+void StarTrekEngine::showTextbox(Common::String headerText, const Common::String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
 	if (!headerText.empty())
 		headerText = centerTextboxHeader(headerText);
 
@@ -208,7 +209,7 @@ void StarTrekEngine::showTextbox(String headerText, const String &mainText, int 
 		addAction(ACTION_TALK, actionParam, 0, 0);
 }
 
-String StarTrekEngine::skipTextAudioPrompt(const String &str) {
+Common::String StarTrekEngine::skipTextAudioPrompt(const Common::String &str) {
 	const char *text = str.c_str();
 
 	if (*text != '#')
@@ -221,12 +222,12 @@ String StarTrekEngine::skipTextAudioPrompt(const String &str) {
 		text++;
 	}
 
-	return String(text + 1);
+	return Common::String(text + 1);
 }
 
-String StarTrekEngine::playTextAudio(const String &str) {
+Common::String StarTrekEngine::playTextAudio(const Common::String &str) {
 	const char *text = str.c_str();
-	char soundFile[0x100];
+	Common::String soundFile;
 
 	if (*text != '#')
 		return str;
@@ -236,13 +237,12 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	while (*text != '#') {
 		if (*text == '\0' || len > 0xfa)
 			return str;
-		soundFile[len++] = *text++;
+		soundFile += *text++;
 	}
 
-	soundFile[len] = '\0';
 	_sound->playSpeech(soundFile);
 
-	return String(text + 1);
+	return Common::String(text + 1);
 }
 
 int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice) {
@@ -256,10 +256,10 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 	int numChoicesWithNames = 0;
 	int numTextboxLines = 0;
 	int numChoices = 0;
-	String speakerText;
+	Common::String speakerText;
 
 	while (true) {
-		String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
+		Common::String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
 		if (choiceText.empty())
 			break;
 
@@ -299,7 +299,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		_textboxVar6 = false;
 
 	int numTextLines;
-	String lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
+	Common::String lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 
 	if (lineFormattedText.empty()) { // Technically should check for nullptr
 		_gfx->delSprite(&textboxSprite);
@@ -363,13 +363,27 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				if (scrollOffset == 0)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_TOP:
 				scrollOffset = 0;
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_SCROLLDOWN:
 			case TEXTBUTTON_SCROLLDOWN_ONELINE:
@@ -381,15 +395,19 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 					scrollOffset = numTextLines - 1;
 				if (scrollOffset + numTextboxLines >= numTextLines)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_BOTTOM:
 				scrollOffset = numTextLines - numTextboxLines;
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
-
-readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
 				    textBitmap,
@@ -468,7 +486,7 @@ readjustScroll:
 	return choiceIndex;
 }
 
-int StarTrekEngine::getNumTextboxLines(const String &str) {
+int StarTrekEngine::getNumTextboxLines(const Common::String &str) {
 	const char *text = str.c_str();
 	char line[TEXTBOX_WIDTH];
 
@@ -481,7 +499,7 @@ int StarTrekEngine::getNumTextboxLines(const String &str) {
 	return lines - 1;
 }
 
-String StarTrekEngine::putTextIntoLines(const String &_text) {
+Common::String StarTrekEngine::putTextIntoLines(const Common::String &_text) {
 	char line[TEXTBOX_WIDTH];
 
 	const char *text = _text.c_str();
@@ -577,7 +595,7 @@ TextBitmap *StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byt
 	return bitmap;
 }
 
-void StarTrekEngine::drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
+void StarTrekEngine::drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const Common::String &_text, bool withHeader) {
 	byte *dest = bitmap->pixels + TEXTBOX_WIDTH + 1; // Start of 2nd row
 	const char *text = _text.c_str();
 
@@ -603,9 +621,9 @@ void StarTrekEngine::drawMainText(TextBitmap *bitmap, int numTextLines, int numT
 	}
 }
 
-String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numTextLines) {
-	String headerText;
-	String text = (this->*textGetter)(choiceIndex, var, &headerText);
+Common::String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numTextLines) {
+	Common::String headerText;
+	Common::String text = (this->*textGetter)(choiceIndex, var, &headerText);
 
 	if (_textDisplayMode == TEXTDISPLAY_NONE && _sfxEnabled && _sfxWorking) {
 		uint32 oldSize = text.size();
@@ -634,7 +652,7 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		return NULL;
 }
 
-String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
+Common::String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, Common::String *headerTextOutput) {
 	const char **textArray = (const char **)data;
 
 	const char *headerText = textArray[0];
@@ -647,10 +665,10 @@ String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *
 		*headerTextOutput = "";
 	else
 		*headerTextOutput = centerTextboxHeader(headerText);
-	return String(mainText);
+	return Common::String(mainText);
 }
 
-String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput) {
+Common::String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr data, Common::String *headerTextOutput) {
 	const char **textArray = (const char **)data;
 
 	const char *headerText = textArray[0];
@@ -669,12 +687,43 @@ String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr dat
 				getTextboxHeader(headerTextOutput, headerText, 0);
 		}
 	}
-	return String(mainText);
+	return Common::String(mainText);
+}
+
+Common::String StarTrekEngine::readTextFromFoundComputerTopics(int choiceIndex, uintptr data, Common::String *headerTextOutput) {
+	if (choiceIndex >= 10)
+		return Common::String();
+
+	Common::String topicFile = (char *)data + 8 * choiceIndex;
+	topicFile.trim();
+
+	if (topicFile.empty())
+		return Common::String();
+
+	Common::MemoryReadStreamEndian *content = _resource->loadFile(Common::String(topicFile) + ".db");
+	Common::String headerText = content->readLine();
+	Common::String mainText;
+	Common::String line;
+	while (!content->eos() && !content->err()) {
+		line = content->readLine();
+		if (line == "$")
+			break;
+		mainText += line;
+	}
+	delete content;
+
+	*headerTextOutput = "R: " + headerText;
+	return mainText;
 }
 
 Common::String StarTrekEngine::showCodeInputBox() {
 	memset(_textInputBuffer, 0, TEXT_INPUT_BUFFER_SIZE - 1);
-	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Code:\n                    ");
+	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Code:\n                   ");
+}
+
+Common::String StarTrekEngine::showComputerInputBox() {
+	memset(_textInputBuffer, 0, TEXT_INPUT_BUFFER_SIZE - 1);
+	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Computer:\n               ");
 }
 
 void StarTrekEngine::redrawTextInput() {
@@ -884,6 +933,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	_textInputSprite.field8 = "System";
 	_textInputSprite.setXYAndPriority(textboxX, textboxY, 15);
 	_textInputSprite.drawPriority2 = 8;
+	_gfx->addSprite(&_textInputSprite);
 
 	_gfx->drawAllSprites();
 }

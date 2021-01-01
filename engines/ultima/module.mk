@@ -166,7 +166,6 @@ MODULE_OBJS := \
 	ultima4/core/utils.o \
 	ultima4/events/event_handler.o \
 	ultima4/events/timed_event_mgr.o \
-	ultima4/filesys/filesystem.o \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \
 	ultima4/filesys/u4file.o \
@@ -498,6 +497,8 @@ MODULE_OBJS := \
 	ultima8/gumps/target_gump.o \
 	ultima8/gumps/translucent_gump.o \
 	ultima8/gumps/u8_save_gump.o \
+	ultima8/gumps/weasel_dat.o \
+	ultima8/gumps/weasel_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \
@@ -566,6 +567,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/avatar_mover_process.o \
 	ultima8/world/actors/battery_charger_process.o \
 	ultima8/world/actors/clear_feign_death_process.o \
+	ultima8/world/actors/cru_avatar_mover_process.o \
 	ultima8/world/actors/cru_healer_process.o \
 	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
@@ -583,7 +585,8 @@ MODULE_OBJS := \
 	ultima8/world/actors/scheduler_process.o \
 	ultima8/world/actors/surrender_process.o \
 	ultima8/world/actors/targeted_anim_process.o \
-	ultima8/world/actors/teleport_to_egg_process.o
+	ultima8/world/actors/teleport_to_egg_process.o \
+	ultima8/world/actors/u8_avatar_mover_process.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ULTIMA), DYNAMIC_PLUGIN)

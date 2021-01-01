@@ -39,6 +39,7 @@ lib*.a
 /scummvm-conf.cpp
 /tmp_*.cpp
 /*.apk
+/CMakeLists.txt
 
 /README
 /README.html*
@@ -48,6 +49,7 @@ lib*.a
 /CONTRIBUTING.html
 /doc/de/NEUES
 /doc/de/NEUES.html
+/doc/docportal/_build
 
 /build*
 /staging

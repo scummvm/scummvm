@@ -32,6 +32,15 @@
 #include "common/platform.h"
 
 /**
+ * @defgroup engines_game Games
+ * @ingroup engines
+ *
+ * @brief API for managing games by engines.
+ *
+ * @{
+ */
+
+/**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
  * nice human readable and descriptive game titles (like "The Secret of Monkey Island").
  * This is a plain struct to make it possible to declare NULL-terminated C arrays
@@ -83,8 +92,9 @@ typedef Common::Array<QualifiedGameDescriptor> QualifiedGameList;
  */
 enum GameSupportLevel {
 	kStableGame = 0, // the game is fully supported
-	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
-	kUnstableGame // the game is not even ready for public testing yet
+	kTestingGame,    // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame,   // the game is not even ready for public testing yet
+	kUnupportedGame  // we don't want to support the game
 };
 
 
@@ -118,7 +128,8 @@ struct DetectedGame {
 	               const Common::String &description,
 	               Common::Language language = Common::UNK_LANG,
 	               Common::Platform platform = Common::kPlatformUnknown,
-	               const Common::String &extra = Common::String());
+	               const Common::String &extra = Common::String(),
+	               bool unsupported = false);
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -183,7 +194,7 @@ private:
 	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
 	 * added if no platform has been specified but a language and an extra string.
 	 */
-	Common::String updateDesc() const;
+	Common::String updateDesc(bool skipExtraField) const;
 
 	Common::String _guiOptions;
 };
@@ -251,5 +262,5 @@ private:
  */
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
 Common::U32String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
-
+/** @} */
 #endif

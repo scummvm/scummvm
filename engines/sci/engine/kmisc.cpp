@@ -115,15 +115,6 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case GID_LSL3:
-		// LSL3 calculates a machinespeed variable during game startup
-		// (right after the filthy questions). This one would go through w/o
-		// throttling resulting in having to do 1000 pushups or something. Another
-		// way of handling this would be delaying incrementing of "machineSpeed"
-		// selector.
-		if (s->currentRoomNumber() == 290)
-			s->_throttleTrigger = true;
-		break;
 	case GID_SQ4:
 		// In SQ4 (floppy and CD) the sequel police appear way too quickly in
 		// the Skate-o-rama rooms, resulting in all sorts of timer issues, like
@@ -796,7 +787,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {

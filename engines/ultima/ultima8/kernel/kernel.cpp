@@ -32,13 +32,18 @@ namespace Ultima8 {
 
 Kernel *Kernel::_kernel = nullptr;
 
+const uint32 Kernel::TICKS_PER_FRAME = 2;
+const uint32 Kernel::TICKS_PER_SECOND = 60;
+const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
+
+
 Kernel::Kernel() : _loading(false) {
 	debugN(MM_INFO, "Creating Kernel...\n");
 
 	_kernel = this;
 	_pIDs = new idMan(1, 32766, 128);
 	current_process = _processes.end();
-	_frameNum = 0;
+	_tickNum = 0;
 	_paused = 0;
 	_runningProcess = nullptr;
 	_frameByFrame = false;
@@ -155,7 +160,7 @@ void Kernel::removeProcess(Process *proc) {
 
 void Kernel::runProcesses() {
 	if (!_paused)
-		_frameNum++;
+		_tickNum++;
 
 	if (_processes.size() == 0) {
 		return;
@@ -176,7 +181,8 @@ void Kernel::runProcesses() {
 			p->terminate();
 		}
 		if (!(p->is_terminated() || p->is_suspended()) &&
-		        (!_paused || (p->_flags & Process::PROC_RUNPAUSED))) {
+		        (!_paused || (p->_flags & Process::PROC_RUNPAUSED)) &&
+				(_tickNum % p->getTicksPerRun() == 0)) {
 			_runningProcess = p;
 			p->run();
 
@@ -320,11 +326,12 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 }
 
 void Kernel::save(Common::WriteStream *ws) {
-	ws->writeUint32LE(_frameNum);
+	ws->writeUint32LE(_tickNum);
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		const Std::string & classname = (*it)->GetClassType()._className; // virtual
+		assert(classname.size());
 
 		Std::map<Common::String, ProcessLoadFunc>::iterator iter;
 		iter = _processLoaders.find(classname);
@@ -340,7 +347,7 @@ void Kernel::save(Common::WriteStream *ws) {
 }
 
 bool Kernel::load(Common::ReadStream *rs, uint32 version) {
-	_frameNum = rs->readUint32LE();
+	_tickNum = rs->readUint32LE();
 
 	if (!_pIDs->load(rs, version)) return false;
 
@@ -357,6 +364,7 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 
 Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	const uint16 classlen = rs->readUint16LE();
+	assert(classlen > 0);
 	char *buf = new char[classlen + 1];
 	rs->read(buf, classlen);
 	buf[classlen] = 0;
@@ -371,7 +379,6 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 		perr << "Unknown Process class: " << classname << Std::endl;
 		return nullptr;
 	}
-
 
 	_loading = true;
 

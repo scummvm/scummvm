@@ -221,10 +221,9 @@ void ActorAnimProcess::run() {
 				return;
 			}
 
-
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE))) {
-				// FIXME: For blocked large _steps we may still want to do
+				!_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE)) {
+				// FIXME: For blocked large steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
 
@@ -255,16 +254,22 @@ void ActorAnimProcess::run() {
 		}
 
 		const AnimFrame *curframe = _tracker->getAnimFrame();
-		if (curframe && curframe->_sfx) {
-			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
-		}
+		if (curframe) {
+			if (curframe->_sfx) {
+				AudioProcess *audioproc = AudioProcess::get_instance();
+				if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
+			}
 
-		if (curframe && (curframe->_flags & AnimFrame::AFF_SPECIAL)) {
-			// Flag to trigger a special _action
-			// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
-			// throw skull-fireball when ghost attacks, ...
-			doSpecial();
+			if (curframe->_flags & AnimFrame::AFF_SPECIAL) {
+				// Flag to trigger a special action
+				// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
+				// throw skull-fireball when ghost attacks, ...
+				doSpecial();
+			} else if (curframe->_flags & AnimFrame::AFF_HURTY && GAME_IS_CRUSADER) {
+				a->tookHitCru();
+			} else if (curframe->is_cruattack() && GAME_IS_CRUSADER) {
+				doFireWeaponCru(a, curframe);
+			}
 		}
 
 
@@ -493,6 +498,30 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 }
+
+void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
+	assert(a);
+	assert(f);
+	if (!f->is_cruattack())
+		return;
+
+	// TODO: there is some special casing in the game for larger weapons here..
+	const Item *wpn = getItem(a->getActiveWeapon());
+	if (!wpn)
+		return;
+	const ShapeInfo *wpninfo = wpn->getShapeInfo();
+	if (!wpninfo || !wpninfo->_weaponInfo)
+		return;
+
+	a->fireWeapon(f->cru_attackx(), f->cru_attacky(), f->cru_attackz(),
+				  a->getDir(), wpninfo->_weaponInfo->_damageType, 1);
+
+	AudioProcess *audioproc = AudioProcess::get_instance();
+	if (audioproc)
+		audioproc->playSFX(wpninfo->_weaponInfo->_sound, 0x80, a->getObjId(), 0, false);
+
+}
+
 
 
 void ActorAnimProcess::doHitSpecial(Item *hit) {

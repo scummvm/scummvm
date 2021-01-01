@@ -32,6 +32,7 @@ namespace Ultima8 {
 
 class Actor;
 class AnimAction;
+struct AnimFrame;
 class AnimationTracker;
 class Item;
 
@@ -68,6 +69,9 @@ protected:
 
 	//! perform special action when hitting an opponent
 	void doHitSpecial(Item *hit);
+
+	//! Fire weapon
+	void doFireWeaponCru(Actor *actor, const AnimFrame *frame);
 
 	Animation::Sequence _action;
 	Direction _dir;

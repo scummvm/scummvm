@@ -92,16 +92,12 @@ public:
 		return "director";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Director::DirectorGameDescription *gd = (const Director::DirectorGameDescription *)desc;
-
-	if (gd)
-		*engine = new Director::DirectorEngine(syst, gd);
-
-	return (gd != 0);
+Common::Error DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Director::DirectorEngine(syst, (const Director::DirectorGameDescription *)desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)

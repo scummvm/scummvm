@@ -85,9 +85,10 @@ void SoundTrack::updatePosition() {
 	Math::Vector3d cameraPos = setup->_pos;
 	Math::Vector3d vector = _pos - cameraPos;
 	float distance = vector.getMagnitude();
-	_attenuation = MAX(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
-	if (!isfinite(_attenuation)) {
+	if (_volume == 0) {
 		_attenuation = 0.0f;
+	} else {
+		_attenuation = fmaxf(0.0f, 1.0f - distance / (_volume * 100.0f / Audio::Mixer::kMaxChannelVolume));
 	}
 
 	Math::Matrix4 worldRot = setup->_rot;

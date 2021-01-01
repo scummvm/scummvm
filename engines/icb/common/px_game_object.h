@@ -179,7 +179,7 @@ inline void c_un_game_object::SetIntegerVariable(uint32 lvar, int32 val) {
 inline int32 &c_un_game_object::GetIntegerVariable(uint32 lvar) {
 	// Get an lvar value
 	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
-	return (((int *)(((char *)this) + m_lvars_offset))[lvar]);
+	return (((int32 *)(((char *)this) + m_lvars_offset))[lvar]);
 }
 
 inline cstr c_un_game_object::GetStringVariable(uint32 lvar) const {
@@ -336,7 +336,7 @@ inline void c_compressed_game_object::SetIntegerVariable(uint32 lvar, int32 val)
 inline int32 &c_compressed_game_object::GetIntegerVariable(uint32 lvar) {
 	// Get an lvar value
 	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
-	return (((int *)(((char *)this) + m_lvars_offset))[lvar]);
+	return (((int32 *)(((char *)this) + m_lvars_offset))[lvar]);
 }
 
 inline cstr c_compressed_game_object::GetStringVariable(uint32 lvar) const {

@@ -419,6 +419,9 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		Graphics::Surface s;
 		byte buf[16*17];
 		memset(buf, 123, 16*17);
+		// For correct rendering, we need to use original (non-CJK) fonts
+		bool oldCJKMode = _useCJKMode;
+		_useCJKMode = false;
 		s.init(_charset->getCharWidth(chr), _charset->getFontHeight(),
 		       _charset->getCharWidth(chr), buf,
 		       Graphics::PixelFormat::createFormatCLUT8());
@@ -426,6 +429,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		assert(s.w <= 16 && s.h <= 17);
 
 		_charset->drawChar(chr, s, 0, 0);
+		_useCJKMode = oldCJKMode;
 
 		memset(ptr, 0, 17 * sizeof(uint16));
 		for (h = 0; h < s.h; h++) {

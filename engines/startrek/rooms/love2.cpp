@@ -44,6 +44,139 @@
 
 namespace StarTrek {
 
+extern const RoomAction love2ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::love2Tick1 },
+	{ {ACTION_TOUCHED_WARP, 1, 0, 0}, &Room::love2TouchedWarp1 },
+	{ {ACTION_TIMER_EXPIRED, 3, 0, 0}, &Room::love2Timer3Expired },
+	{ {ACTION_WALK, 10, 0, 0}, &Room::love2WalkToDoor },
+	{ {ACTION_WALK, 0x22, 0, 0}, &Room::love2WalkToDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::love2TouchedHotspot0 },
+	{ {ACTION_FINISHED_WALKING, 14, 0, 0}, &Room::love2DoorReachedOrOpened },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::love2DoorReachedOrOpened },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::love2LookAtCabinet },
+	{ {ACTION_LOOK, 10, 0, 0}, &Room::love2LookAtDoor },
+	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love2LookAtSynthesizer },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love2LookAtAnywhere },
+	{ {ACTION_LOOK, 14, 0, 0}, &Room::love2LookAtAntigrav },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love2LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love2LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::love2LookAtRedshirt },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::love2LookAtKirk },
+	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::love2LookAtArdak },
+	{ {ACTION_LOOK, 15, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 16, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 18, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 19, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 17, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 9, 0, 0}, &Room::love2LookAtChamber },
+	{ {ACTION_LOOK, 12, 0, 0}, &Room::love2LookAtCan1 },
+	{ {ACTION_LOOK, 13, 0, 0}, &Room::love2LookAtCan2 },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::love2TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love2TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love2TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love2TalkToRedshirt },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love2UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love2UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_KIRK, 8, 0}, &Room::love2UseKirkOnCabinet },
+	{ {ACTION_USE, OBJECT_SPOCK, 8, 0}, &Room::love2UseSpockOnCabinet },
+	{ {ACTION_USE, OBJECT_MCCOY, 8, 0}, &Room::love2UseMccoyOnCabinet },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 8, 0}, &Room::love2UseRedshirtOnCabinet },
+	{ {ACTION_FINISHED_WALKING, 12, 0, 0}, &Room::love2CrewmanReachedCabinet },
+	{ {ACTION_FINISHED_ANIMATION, 11, 0, 0}, &Room::love2CrewmanAccessedCabinet },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::love2CrewmanOpenedOrClosedCabinet },
+	{ {ACTION_USE, OBJECT_IWRENCH, 11, 0}, &Room::love2UseWrenchOnGasFeed },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::love2ReachedGasFeed },
+	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::love2ChangedGasFeed },
+	{ {ACTION_USE, OBJECT_IO2GAS, 0x23, 0}, &Room::love2UseO2GasOnCanisterSlot },
+	{ {ACTION_USE, OBJECT_IH2GAS, 0x23, 0}, &Room::love2UseH2GasOnCanisterSlot },
+	{ {ACTION_USE, OBJECT_IN2GAS, 0x23, 0}, &Room::love2UseN2GasOnCanisterSlot },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::love2ReachedCanisterSlot },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::love2PutCanisterInSlot1 },
+	{ {ACTION_FINISHED_ANIMATION, 14, 0, 0}, &Room::love2PutCanisterInSlot2 },
+	{ {ACTION_USE, OBJECT_IANTIGRA, 12, 0}, &Room::love2UseAntigravOnCanister1 },
+	{ {ACTION_FINISHED_WALKING, 4, 0, 0}, &Room::love2ReachedCanisterSlot1ToGet },
+	{ {ACTION_FINISHED_ANIMATION, 15, 0, 0}, &Room::love2TookCanister1 },
+	{ {ACTION_USE, OBJECT_IANTIGRA, 13, 0}, &Room::love2UseAntigravOnCanister2 },
+	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::love2ReachedCanisterSlot2ToGet },
+	{ {ACTION_FINISHED_ANIMATION, 16, 0, 0}, &Room::love2TookCanister2 },
+	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::love2UseKirkOnSynthesizer },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::love2UseSpockOnSynthesizer },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0}, &Room::love2UseMccoyOnSynthesizer },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::love2UseRedshirtOnSynthesizer },
+	{ {ACTION_FINISHED_WALKING, 13, 0, 0}, &Room::love2CrewmanReachedSynthesizer },
+	{ {ACTION_FINISHED_ANIMATION, 17, 0, 0}, &Room::love2CrewmanUsedSynthesizer },
+	{ {ACTION_FINISHED_WALKING, 16, 0, 0}, &Room::love2SpockReachedGasFeeds },
+	{ {ACTION_FINISHED_ANIMATION, 18, 0, 0}, &Room::love2SpockEnabledGasFeeds },
+	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::love2SynthesizerDoorClosed },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::love2SynthesizerFinished },
+	{ {ACTION_FINISHED_ANIMATION, 27, 0, 0}, &Room::love2ClosedSynthesizerDoorMakingRLG },
+	{ {ACTION_FINISHED_ANIMATION, 8, 0, 0}, &Room::love2ClosedSynthesizerDoorMakingCure },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::love2CureStartedSynthesizing },
+	{ {ACTION_FINISHED_ANIMATION, 10, 0, 0}, &Room::love2CureSynthesized },
+	{ {ACTION_USE, OBJECT_IPBC, 9, 0}, &Room::love2UsePolyberylcarbonateOnSynthesizerDoor },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::love2KirkReachedSynthesizerWithPolyberylcarbonate },
+	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::love2SynthesizerDoorOpenedWithPolyberylcarbonate },
+	{ {ACTION_FINISHED_ANIMATION, 19, 0, 0}, &Room::love2PutPolyberylcarbonateInSynthesizer },
+
+	{ {ACTION_USE, OBJECT_IDISHES, 9, 0}, &Room::love2UseVirusSampleOnSynthesizerDoor },
+	{ {ACTION_FINISHED_WALKING, 7, 0, 0}, &Room::love2KirkReachedSynthesizerWithVirusSample },
+	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0}, &Room::love2SynthesizerDoorOpenedWithVirusSample },
+	{ {ACTION_FINISHED_ANIMATION, 20, 0, 0}, &Room::love2PutVirusSampleInSynthesizer },
+
+	{ {ACTION_USE, OBJECT_ISAMPLE, 9, 0}, &Room::love2UseCureSampleOnSynthesizerDoor },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::love2KirkReachedSynthesizerWithCureSample },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::love2SynthesizerDoorOpenedWithCureSample },
+	{ {ACTION_FINISHED_ANIMATION, 21, 0, 0}, &Room::love2PutCureSampleInSynthesizer },
+
+	{ {ACTION_USE, 0xff, 9, 0}, &Room::love2UseAnythingOnSynthesizerDoor },
+	{ {ACTION_USE, 0xff, 0x20, 0}, &Room::love2UseAnythingOnSynthesizer },
+	{ {ACTION_GET, 13, 0, 0}, &Room::love2GetCanister },
+	{ {ACTION_GET, 12, 0, 0}, &Room::love2GetCanister },
+
+	{ {ACTION_GET, 14, 0, 0}, &Room::love2GetAntigrav },
+	{ {ACTION_FINISHED_WALKING, 9, 0, 0}, &Room::love2ReachedAntigrav },
+	{ {ACTION_FINISHED_ANIMATION, 22, 0, 0}, &Room::love2GotAntigrav },
+
+	{ {ACTION_GET, 16, 0, 0}, &Room::love2GetPolyberylcarbonate },
+	{ {ACTION_FINISHED_WALKING, 18, 0, 0}, &Room::love2ReachedPolyberylcarbonate },
+	{ {ACTION_FINISHED_ANIMATION, 26, 0, 0}, &Room::love2GotPolyberylcarbonate },
+
+	{ {ACTION_GET, 17, 0, 0}, &Room::love2GetDishes },
+	{ {ACTION_FINISHED_WALKING, 17, 0, 0}, &Room::love2ReachedDishes },
+	{ {ACTION_FINISHED_ANIMATION, 25, 0, 0}, &Room::love2GotDishes },
+
+	{ {ACTION_GET, 18, 0, 0}, &Room::love2GetSample },
+	{ {ACTION_FINISHED_WALKING, 19, 0, 0}, &Room::love2ReachedSample },
+	{ {ACTION_FINISHED_ANIMATION, 28, 0, 0}, &Room::love2GotSample },
+
+	{ {ACTION_GET, 15, 0, 0}, &Room::love2GetSynthesizerOutput },
+	{ {ACTION_FINISHED_WALKING, 10, 0, 0}, &Room::love2ReachedSynthesizerOutput },
+	{ {ACTION_FINISHED_ANIMATION, 23, 0, 0}, &Room::love2GotSynthesizerOutput },
+
+	{ {ACTION_GET, 19, 0, 0}, &Room::love2GetCure },
+	{ {ACTION_FINISHED_WALKING, 11, 0, 0}, &Room::love2ReachedCure },
+	{ {ACTION_FINISHED_ANIMATION, 24, 0, 0}, &Room::love2GotCure },
+
+	// Common code
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::loveaTimer0Expired },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::loveaTimer1Expired },
+	{ {ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0}, &Room::loveaUseMedkitOnSpock },
+	{ {ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0}, &Room::loveaUseCureSampleOnSpock },
+	{ {ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0}, &Room::loveaUseCureOnSpock },
+	{ {ACTION_FINISHED_WALKING,   99, 0, 0}, &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ {ACTION_FINISHED_ANIMATION, 99, 0, 0}, &Room::loveaFinishedCuringSpock },
+	{ {ACTION_TIMER_EXPIRED, 2, 0, 0}, &Room::loveaTimer2Expired },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0}, &Room::loveaUseMTricorderOnSpock },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::love2Tick1() {
 	playVoc("LOV2LOOP");
 
@@ -166,7 +299,7 @@ void Room::love2Tick1() {
 
 void Room::love2TouchedWarp1() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->timers[3] = 10;
 }
 
@@ -184,7 +317,7 @@ void Room::love2WalkToDoor() {
 void Room::love2TouchedHotspot0() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR, "s3r3d3", 0x12a, 0xb5, 1);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -331,7 +464,7 @@ void Room::love2CrewmanAccessedCabinet() {
 	else
 		loadActorAnim2(OBJECT_CABINET, "s3r3d1", 0x1e, 0xaf, 2);
 
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 
 	if (_awayMission->love.cabinetOpen)
 		loadActorStandAnim(OBJECT_ANTIGRAV);
@@ -555,7 +688,7 @@ void Room::love2UseSynthesizer() {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Romulan Laughing Gas
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", -1, -1, 27); // -> love2ClosedSynthesizerDoorMakingRLG
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					break;
 
@@ -563,17 +696,23 @@ void Room::love2UseSynthesizer() {
 					showDescription(51, true);
 					showText(TX_SPEAKER_KIRK, 2, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-wetGooFailure:
 					showDescription(50, true);
 					showText(TX_SPEAKER_MCCOY, 21, true);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-bottleFailure:
 					showText(TX_SPEAKER_SPOCK, 28, true);
 					break;
 
@@ -581,70 +720,97 @@ bottleFailure:
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_H2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
-produceBottle:
+					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-					playSoundEffectIndex(SND_DOOR1);
-					break;
-
-closeSynthesizerDoor:
-					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
-					_awayMission->love.synthesizerContents = 0;
+					playSoundEffectIndex(kSfxDoor);
 					break;
 				}
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-inertMatterFailure:
 					showDescription(49, true);
 					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Colorless goo (with useful information about virus in ammonia)
 					showDescription(48, true);
 					showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: original didn't play audio
 					showText(TX_SPEAKER_MCCOY, 23, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Cure
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					loadActorAnim2(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 8); // -> love2ClosedSynthesizerDoorMakingCure
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					goto bottleFailure;
+					showText(TX_SPEAKER_SPOCK, 28, true);
+					break;
 
 				case SYNTHITEM_NONE: // Ammonia
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_NH3;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
-					goto produceBottle;
+					// Produce bottle
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
+					playSoundEffectIndex(kSfxDoor);
+					break;
 				}
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-					goto inertMatterFailure;
+					showDescription(49, true);
+					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
+					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
 					showDescription(47, true);
 					showText(TX_SPEAKER_MCCOY, 17, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-					goto wetGooFailure;
+					showDescription(50, true);
+					showText(TX_SPEAKER_MCCOY, 21, true);
+					loadActorStandAnim(OBJECT_CURESAMPLE);
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(kSfxDoor);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					goto bottleFailure;
+					showText(TX_SPEAKER_SPOCK, 28, true);
+					break;
 
 				case SYNTHITEM_NONE: // Laughing gas
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_N2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
-					goto produceBottle;
+					// Produce bottle
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
+					playSoundEffectIndex(kSfxDoor);
+					break;
 				}
 			}
 		} else {
@@ -704,7 +870,7 @@ void Room::love2ClosedSynthesizerDoorMakingRLG() {
 	_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_RLG;
 	strcpy(_roomVar.love.chamberOutputAnim, "btle4");
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 // Synthesizer door closed, using N2 + O2 on cure sample
@@ -733,7 +899,7 @@ void Room::love2KirkReachedSynthesizerWithPolyberylcarbonate() {
 		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 5);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -759,7 +925,7 @@ void Room::love2KirkReachedSynthesizerWithVirusSample() {
 		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 6);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -785,7 +951,7 @@ void Room::love2KirkReachedSynthesizerWithCureSample() {
 		showDescription(25, true); // BUGFIX: original didn't play audio
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 7);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -849,7 +1015,7 @@ void Room::love2GotPolyberylcarbonate() {
 	giveItem(OBJECT_IPBC);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -869,7 +1035,7 @@ void Room::love2GotDishes() {
 	giveItem(OBJECT_IDISHES);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -889,7 +1055,7 @@ void Room::love2GotSample() {
 	giveItem(OBJECT_ISAMPLE);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -933,7 +1099,7 @@ void Room::love2GotSynthesizerOutput() {
 
 	loadActorStandAnim(OBJECT_SYNTHESIZER_OUTPUT);
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 
 	_awayMission->love.synthesizerContents = 0;
 	_awayMission->love.synthesizerBottleIndex = 0;
@@ -960,7 +1126,7 @@ void Room::love2GotCure() {
 	showDescription(43, true);
 
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.synthesizerContents = 0;
 }
 

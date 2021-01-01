@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/translation.h"
+
 namespace TsAGE {
 
 static const tSageGameDescription gameDescriptions[] = {
@@ -95,23 +97,22 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
-#if 0
-	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
-	// Blue Force floppy
+
+	// Blue Force floppy, uninstalled
 	{
 		{
 			"blueforce",
-			"Floppy",
-			AD_ENTRY1s("blue.rlb", "17c3993415e8a2cf93040eef7e88ec93", 1156508),
+			"Floppy, Uninstalled",
+			AD_ENTRY1s("blue.rlb", "0625e9f985e52bf221107f50672bd4c3", 1156508),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
-		GF_FLOPPY
+		GF_FLOPPY | GF_UNINSTALLED
 	},
-#endif
+
 	// Blue Force
 	{
 		{
@@ -140,23 +141,23 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
-#if 0
+
 	// Blue Force Spanish doesn't yet work
 	// Blue Force Spanish CD
 	{
 		{
 			"blueforce",
-			"CD",
+			_s("Spanish CD version is not yet supported"),
 			AD_ENTRY1s("blue.rlb", "5b2b35c51b62e82d82b0791540bfae2d", 10082565),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
-#endif
+
 	// Return to Ringworld
 	{
 		{

@@ -262,10 +262,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"Demo",
-			{
-				{"gfdemo01.lab", 0, "7df813f3809f2c0234213cfa4f6da062", 29533695},
-				{"voice001.lab", 0, "7df474e03c23692ed02e4ce45f1a6b30", 13764168},
-			},
+			AD_ENTRY2s("gfdemo01.lab", "7df813f3809f2c0234213cfa4f6da062", 29533695,
+					   "voice001.lab", "7df474e03c23692ed02e4ce45f1a6b30", 13764168),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -279,10 +277,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"Demo",
-			{
-				{"gfdemo01.lab", 0, "7df813f3809f2c0234213cfa4f6da062", 29533695},
-				{"voice001.lab", 0, "2788dc7fd226787f3a68ac9c853d2580", 16561196},
-			},
+			AD_ENTRY2s("gfdemo01.lab", "7df813f3809f2c0234213cfa4f6da062", 29533695,
+					   "voice001.lab", "2788dc7fd226787f3a68ac9c853d2580", 16561196),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -296,10 +292,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"Demo",
-			{
-				{"gfdemo01.lab", 0, "7df813f3809f2c0234213cfa4f6da062", 29533695},
-				{"voice001.lab", 0, "3b8ace62584380c66b73981e014ea40e", 14907410},
-			},
+			AD_ENTRY2s("gfdemo01.lab", "7df813f3809f2c0234213cfa4f6da062", 29533695,
+					   "voice001.lab", "3b8ace62584380c66b73981e014ea40e", 14907410),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -313,10 +307,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"Demo",
-			{
-				{"gfdemo01.lab", 0, "7df813f3809f2c0234213cfa4f6da062", 29533695},
-				{"voice001.lab", 0, "a810ec11acaf9d76cd04d2f68fcdc912", 13367206},
-			},
+			AD_ENTRY2s("gfdemo01.lab", "7df813f3809f2c0234213cfa4f6da062", 29533695,
+					   "voice001.lab", "a810ec11acaf9d76cd04d2f68fcdc912", 13367206),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -434,11 +426,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"monkey4",
 			"",
-			{
-				{"artAll.m4b", 0, "007a33881478be6b6e0228d8888536ae", 18512568},
-				{"EFMI Installer", 0, "54298c7440dafedf33d2b27c7bb24052", 9241784},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("artAll.m4b",	 "007a33881478be6b6e0228d8888536ae", 18512568,
+					   "EFMI Installer", "54298c7440dafedf33d2b27c7bb24052", 9241784),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
@@ -516,11 +505,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"monkey4",
 			"Demo",
-			{
-				{"magdemo.lab", 0, "9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116},
-				{"i9n.lab", 0, "274f8579b01e0872fe6f1ba267266149", 26951},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
+					   "i9n.lab",		 "274f8579b01e0872fe6f1ba267266149", 26951),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
@@ -533,11 +519,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"monkey4",
 			"Demo",
-			{
-				{"magdemo.lab", 0, "9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116},
-				{"i9n.lab", 0, "7f1744990472261bdcbc02036ba9f7ec", 1718385},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
+					   "i9n.lab",		"7f1744990472261bdcbc02036ba9f7ec", 1718385),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
@@ -551,11 +534,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"monkey4",
 			"Demo",
-			{
-				{"magdemo.lab", 0, "9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116},
-				{"i9n.lab", 0, "28f6bc270b5c31970cc110c7656ff598", 1749051},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
+					   "i9n.lab",		"28f6bc270b5c31970cc110c7656ff598", 1749051),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
@@ -569,11 +549,8 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"monkey4",
 			"Demo",
-			{
-				{"magdemo.lab", 0, "9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116},
-				{"i9n.lab", 0, "53b20d930f6e8c2e0880ed7e336eeebc", 1740761},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("magdemo.lab",	"9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116,
+					   "i9n.lab",		"53b20d930f6e8c2e0880ed7e336eeebc", 1740761),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,

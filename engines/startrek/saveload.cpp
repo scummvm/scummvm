@@ -76,7 +76,7 @@ bool StarTrekEngine::showLoadMenu() {
 	return loadGame(slot);
 }
 
-const uint32 CURRENT_SAVEGAME_VERSION = 0;
+const uint32 CURRENT_SAVEGAME_VERSION = 1;
 
 bool StarTrekEngine::saveGame(int slot, Common::String desc) {
 	Common::String filename = getSavegameFilename(slot);
@@ -195,20 +195,37 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 
 	ser.syncAsUint16LE(_frameIndex);
 	ser.syncAsUint16LE(_mouseControllingShip);
-	// TODO: word_45aa8
-	// TODO: word_45aaa
-	// TODO: word_45aac
-	// TODO: word_5082e
-	// TODO: dword_519b0
-	// TODO: word_45ab2
-	// TODO: word_45ab4
-	// TODO: word_45ab8
+	if (meta->version >= 1) {
+		ser.syncAsSint16LE(_enterpriseState.inOrbit);
+		ser.syncAsSint16LE(_enterpriseState.underAttack);
+		ser.syncAsSint16LE(_randomEncounterType);
+
+		int16 unkFlag1 = 0; // TODO: word_5082e (either 0 or 1)
+		ser.syncAsSint16LE(unkFlag1);
+
+		int unkVar1 = 0;	// TODO: dword_519b0
+		ser.syncAsSint32LE(unkVar1);
+
+		ser.syncAsSint16LE(_currentPlanet);
+		ser.syncAsSint16LE(_targetPlanet);
+
+		int16 unkFlag2 = 0; // TODO: word_45ab8 (either 0 or -1)
+		ser.syncAsSint16LE(unkFlag2);
+	}
 
 	ser.syncString(_missionToLoad);
-	// TODO: word_4b032
-	// TODO: word_519bc
-	// TODO: word_45c5c
-	// TODO: unk_52afe
+
+	if (meta->version >= 1) {
+		int16 unkFlag3 = 0; // TODO: word_4b032 (either 0 or 1)
+		ser.syncAsSint16LE(unkFlag3);
+
+		ser.syncAsUint16LE(_hailedTarget);
+		ser.syncAsSint16LE(_lastMissionId);
+		for (int i = 0; i < 7; i++) {
+			ser.syncAsUint16LE(_missionPoints[i]);
+		}
+	}
+
 	ser.syncString(_sound->_loopingAudioName);
 
 	if (ser.isLoading()) {
@@ -216,7 +233,9 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			_sound->playVoc(_sound->_loopingAudioName);
 	}
 
-	// TODO: word_45a50
+	if (meta->version >= 1) {
+		ser.syncAsSint16LE(_bridgeSequenceToLoad);
+	}
 
 	for (int i = 0; i < NUM_OBJECTS; i++) {
 		ser.syncAsByte(_itemList[i].have);
@@ -250,6 +269,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 				for (uint j = 0; j < 16 - a->animFilename.size() - 1; ++j)
 					ser.syncAsByte(filler);	// make sure that exactly 16 bytes are synced
 			}
+			a->animFilename.trim();
 
 			ser.syncAsUint16LE(a->animType);
 
@@ -261,6 +281,8 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 				for (uint j = 0; j < 10 - a->bitmapFilename.size() - 1; ++j)
 					ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
 			}
+			a->bitmapFilename.trim();
+
 			a->scale.saveLoadWithSerializer(ser);
 			// Can't save "animFile" (will be reloaded)
 			ser.syncAsUint16LE(a->numAnimFrames);

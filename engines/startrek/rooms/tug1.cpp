@@ -33,6 +33,69 @@ namespace StarTrek {
 #define HOTSPOT_DEBRIS     0x24
 #define HOTSPOT_BRIGDOOR   0x25
 
+extern const RoomAction tug1ActionList[] = {
+	{ {ACTION_TICK, 1, 0, 0}, &Room::tug1Tick1 },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::tug1UseSTricorderOnAnything },
+	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::tug1LookAtBridgeDoor },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::tug1UseSTricorderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x21, 0}, &Room::tug1UsePhaserOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x21, 0}, &Room::tug1UsePhaserOnBridgeDoor },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::tug1KirkReachedFiringPosition },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::tug1KirkPulledOutPhaser },
+	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::tug1KirkFinishedFiringPhaser },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug1TalkToSpock },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 8, 0}, &Room::tug1UseSTricorderOnJunkPile },
+	{ {ACTION_LOOK, 8, 0, 0}, &Room::tug1LookAtJunkPile },
+	{ {ACTION_GET, 8, 0, 0}, &Room::tug1GetJunkPile },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::tug1KirkReachedJunkPile },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::tug1KirkFinishedTakingJunkPile },
+
+	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_IPWE, 0}, &Room::tug1UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_IPWE, 0}, &Room::tug1UsePhaserOnWelder },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IWIRSCRP, 0}, &Room::tug1UseWelderOnWireScraps },
+	{ {ACTION_USE, OBJECT_IPWF, OBJECT_IJNKMETL, 0}, &Room::tug1UseWelderOnMetalScraps },
+	{ {ACTION_USE, OBJECT_ICOMBBIT, OBJECT_IRT, 0}, &Room::tug1UseCombBitOnTransmogrifier },
+
+	{ {ACTION_USE, OBJECT_IPWF, 0x22, 0}, &Room::tug1UsePhaserWelderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IPWF, 0x21, 0}, &Room::tug1UsePhaserWelderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IPWF, 0x20, 0}, &Room::tug1UsePhaserWelderOnBridgeDoorInLeftSpot },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::tug1KirkReachedBridgeDoorWithWelder },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug1KirkFinishedUsingWelder },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::tug1KirkReachedBridgeDoorWithWelderInLeftSpot },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::tug1KirkFinishedUsingWelderInLeftSpot },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug1LookAnywhere },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug1LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug1LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug1LookAtRedshirt },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug1TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug1TalkToRedshirt },
+	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::tug1LookAtTerminal },
+	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::tug1LookAtDebris },
+	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::tug1LookAtBrigDoor },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0}, &Room::tug1UseSTricorderOnBrigDoor },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::tug1TalkToKirk },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::tug1UseCommunicator },
+	{ {ACTION_WALK, 0x21, 0, 0}, &Room::tug1WalkToBridgeDoor },
+	{ {ACTION_FINISHED_WALKING, 10, 0, 0}, &Room::tug1KirkReachedBridgeDoor },
+	{ {ACTION_FINISHED_ANIMATION, 11, 0, 0}, &Room::tug1BridgeDoorOpened },
+	{ {ACTION_WALK, 0x25, 0, 0}, &Room::tug1WalkToBrigDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::tug1UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x20, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x25, 0}, &Room::tug1UseMTricorderOnBrigDoor },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::tug1UseSpockOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x21, 0}, &Room::tug1UseSpockOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x22, 0}, &Room::tug1UseSpockOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::tug1UseRedshirtOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x21, 0}, &Room::tug1UseRedshirtOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x22, 0}, &Room::tug1UseRedshirtOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0x20, 0}, &Room::tug1UseMedkitOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0x21, 0}, &Room::tug1UseMedkitOnBridgeDoor },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0x22, 0}, &Room::tug1UseMedkitOnBridgeDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
+
 void Room::tug1Tick1() {
 	playVoc("TUG1LOOP");
 
@@ -43,7 +106,7 @@ void Room::tug1Tick1() {
 void Room::tug1UseSTricorderOnAnything() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 14, true);
 
 	// NOTE: this action has a second implementation (which is never called). It displayed
@@ -62,7 +125,7 @@ void Room::tug1UseSTricorderOnBridgeDoor() {
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 2, true);
 }
 
@@ -82,7 +145,7 @@ void Room::tug1KirkReachedFiringPosition() {
 
 void Room::tug1KirkPulledOutPhaser() {
 	loadActorAnim2(OBJECT_PHASERSHOT, "t1phas", 0, 0, 5);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::tug1KirkFinishedFiringPhaser() {
@@ -99,7 +162,7 @@ void Room::tug1TalkToSpock() {
 void Room::tug1UseSTricorderOnJunkPile() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 9, true);
 }
 
@@ -238,7 +301,7 @@ void Room::tug1LookAtBrigDoor() {
 void Room::tug1UseSTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 18, true);
 }
 
@@ -275,21 +338,21 @@ void Room::tug1WalkToBrigDoor() {
 void Room::tug1UseMTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 3, true);
 }
 
 void Room::tug1UseMTricorderOnBridgeDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::tug1UseMTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 5, true);
 }
 

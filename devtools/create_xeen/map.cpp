@@ -37,11 +37,11 @@
 #define FLAG_IS_OUTDOORS 32768
 
 #define MIRROR_COUNT 1
-const MirrorEntry MIRROR_TEXT[MIRROR_COUNT] = {
+static const MirrorEntry MIRROR_TEXT[MIRROR_COUNT] = {
 	{ "scummvm", 255, 7, 1, 0 }
 };
 
-const byte MAZE_255[MAP_HEIGHT][MAP_WIDTH] = {
+static const byte MAZE_255[MAP_HEIGHT][MAP_WIDTH] = {
 	{ 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 },
 	{ 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9 },
 	{ 9, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 9 },
@@ -60,13 +60,13 @@ const byte MAZE_255[MAP_HEIGHT][MAP_WIDTH] = {
 	{ 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 }
 };
 
-const byte WALL_TYPES_255[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-const byte SURFACE_TYPES_255[16] = { 1, 1, 2, 3, 4, 0, 6, 7, 0, 9, 0, 0, 0, 0, 14, 15 };
+static const byte WALL_TYPES_255[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static const byte SURFACE_TYPES_255[16] = { 1, 1, 2, 3, 4, 0, 6, 7, 0, 9, 0, 0, 0, 0, 14, 15 };
 
 /**
  * Write out new mirror entries
  */
-void writeMirrorText(CCArchive &cc) {
+static void writeMirrorText(CCArchive &cc) {
 	Common::MemFile f;
 
 	for (int idx = 0; idx < MIRROR_COUNT; ++idx) {
@@ -84,7 +84,7 @@ void writeMirrorText(CCArchive &cc) {
 /**
  * Write out the maze
  */
-void writeMaze(CCArchive &cc) {
+static void writeMaze(CCArchive &cc) {
 	Common::MemFile f;
 
 	// Wall data
@@ -119,7 +119,7 @@ void writeMaze(CCArchive &cc) {
 /**
  * Write out the maze name
  */
-void writeMazeName(CCArchive &cc) {
+static void writeMazeName(CCArchive &cc) {
 	Common::MemFile f;
 	char mazeName[33];
 	memset(mazeName, 0, 33);
@@ -132,11 +132,11 @@ void writeMazeName(CCArchive &cc) {
 /**
  * Write out maze events
  */
-void writeMazeEvents(CCArchive &cc) {
+static void writeMazeEvents(CCArchive &cc) {
 	Common::MemFile f;
 
 	// Mirror events
-	const byte MIRROR_EVENTS[32] = {
+	static const byte MIRROR_EVENTS[32] = {
 		6,	7, 0, 2, 0,	40,		1,				// Play VOC: "Where to?"
 		9,	7, 0, 2, 1, 21,		0, 3, 0, 0,		// Get destination
 		5,	7, 0, 2, 2, 18,						// Exit
@@ -145,12 +145,12 @@ void writeMazeEvents(CCArchive &cc) {
 	f.write(MIRROR_EVENTS, 32);
 
 	// Bench 1 events
-	const byte BENCH1_EVENTS[32] = {
+	static const byte BENCH1_EVENTS[32] = {
 		10,  7, 8, 0, 0,  5,	1, 2, 3, 1, 2,	// NPC
 		14,	7, 8, 0, 1, 20,		34, 10000 % 256, 10000 / 256, 0, 0, 0, 0, 0, 0, // Give gold
 		5,	7, 8, 0, 2, 18						// Exit
 	};
-	const byte BENCH2_EVENTS[30] = {
+	static const byte BENCH2_EVENTS[30] = {
 		10,  8, 8, 0, 0,  5,	1, 3, 3, 1, 2,	// NPC
 		14,	8, 8, 0, 1, 20,		35, 1000 % 256, 1000 / 256, 0, 0, 0, 0,	// Give gems
 		5,	8, 8, 0, 2, 18						// Exit
@@ -164,7 +164,7 @@ void writeMazeEvents(CCArchive &cc) {
 /**
  * Write out maze event text
  */
-void writeMazeText(CCArchive &cc) {
+static void writeMazeText(CCArchive &cc) {
 	Common::MemFile f;
 
 	f.writeString("Where to?");
@@ -178,7 +178,7 @@ void writeMazeText(CCArchive &cc) {
 /**
  * Write out the monster/object data
  */
-void writeMonstersObjects(CCArchive &cc) {
+static void writeMonstersObjects(CCArchive &cc) {
 	Common::MemFile f;
 	f.writeByte(8);			// Object sprites
 	f.writeByte(2);
@@ -233,7 +233,7 @@ void writeMonstersObjects(CCArchive &cc) {
 /**
  * Write out the data for the head danger senses
  */
-void writeHeadData(CCArchive &cc) {
+static void writeHeadData(CCArchive &cc) {
 	Common::MemFile f;
 	f.writeByte(0, MAP_HEIGHT * MAP_HEIGHT * 2);
 	cc.add("aazex255.hed", f);

@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -36,7 +35,7 @@ class BladeRunnerMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override;
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -49,10 +48,9 @@ const char *BladeRunnerMetaEngine::getName() const {
 	return "bladerunner";
 }
 
-bool BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new BladeRunner::BladeRunnerEngine(syst, desc);
-
-	return true;
+	return Common::kNoError;
 }
 
 bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
