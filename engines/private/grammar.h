@@ -1,14 +1,16 @@
 #include "common/str.h"
 #include "common/hash-str.h"
-
-#define	NSTACK	256
-#define	NPROG	2000
+#include "common/queue.h"
+#include "common/list.h"
 
 #ifndef PRIVATE_GRAMMAR_H
 #define PRIVATE_GRAMMAR_H
 
+#define	NSTACK	256
+#define	NPROG	2000
+
 typedef struct Symbol {	/* symbol table entry */
-	char	*name;
+	Common::String *name;
 	short	type;	/* NAME, NUM or STRING  */
 	union {
 		int	val;	/* if NAME or NUM */
@@ -42,11 +44,26 @@ typedef struct Setting {
 extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting*> SettingMap;
+typedef Common::Queue<Common::String> StringQueue;
 
-extern SettingMap settings;
+extern StringQueue todefine;
+extern SettingMap settingcode;
 
-Symbol	*install(char *, int, int, char *), *lookup(char *);
-extern Symbol  *symlist;
+// Symbols
+
+typedef Common::HashMap<Common::String, Symbol*> SymbolMap;
+typedef Common::List<Symbol*> ConstantList;
+
+extern SymbolMap settings, variables, cursors, locations, rects;
+extern ConstantList constants;
+
+extern void define(char *n); 
+extern Symbol  *install(Common::String *, int, int, char *, SymbolMap*);
+extern Symbol *addconstant(int, int, char *);
+extern void     installall(char *);
+extern Symbol  *lookup(Common::String, SymbolMap);
+
+// Code
 
 extern	Datum pop();
 
