@@ -36,9 +36,6 @@
 #ifdef USE_DISCORD
 class DiscordPresence;
 #endif
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-#include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
-#endif
 
 /**
  * Base OSystem class for all SDL ports.
@@ -132,7 +129,9 @@ protected:
 	// Graphics capabilities
 	void detectFramebufferSupport();
 	void detectAntiAliasingSupport();
-	OpenGLSdlGraphics3dManager::Capabilities _capabilities;
+
+	bool _supportsFrameBuffer;
+	Common::Array<uint> _antiAliasLevels;
 #endif
 
 	/**

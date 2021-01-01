@@ -306,10 +306,10 @@ void OSystem_SDL::initBackend() {
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 void OSystem_SDL::detectFramebufferSupport() {
-	_capabilities.openGLFrameBuffer = false;
+	_supportsFrameBuffer = false;
 #if defined(USE_GLES2)
 	// Framebuffers are always available with GLES2
-	_capabilities.openGLFrameBuffer = true;
+	_supportsFrameBuffer = true;
 #elif !defined(AMIGAOS)
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -318,7 +318,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 		SDL_GLContext glContext = SDL_GL_CreateContext(window);
 		if (glContext) {
 			OpenGLContext.initialize(OpenGL::kOGLContextGL);
-			_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+			_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 			OpenGLContext.reset();
 			SDL_GL_DeleteContext(glContext);
 		}
@@ -329,7 +329,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
 	OpenGLContext.initialize(OpenGL::kOGLContextGL);
-	_capabilities.openGLFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	OpenGLContext.reset();
 #endif
 #endif
@@ -337,7 +337,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 
 void OSystem_SDL::detectAntiAliasingSupport() {
 #ifndef NINTENDO_SWITCH
-	_capabilities.openGLAntiAliasLevels.clear();
+	_antiAliasLevels.clear();
 
 	int requestedSamples = 2;
 	while (requestedSamples <= 32) {
@@ -353,7 +353,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 				SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &actualSamples);
 
 				if (actualSamples == requestedSamples) {
-					_capabilities.openGLAntiAliasLevels.push_back(requestedSamples);
+					_antiAliasLevels.push_back(requestedSamples);
 				}
 
 				SDL_GL_DeleteContext(glContext);
@@ -370,7 +370,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 		SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &actualSamples);
 
 		if (actualSamples == requestedSamples) {
-			_capabilities.openGLAntiAliasLevels.push_back(requestedSamples);
+			_antiAliasLevels.push_back(requestedSamples);
 		}
 #endif
 
@@ -477,7 +477,7 @@ void OSystem_SDL::setWindowCaption(const Common::U32String &caption) {
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
-	return _capabilities.openGLAntiAliasLevels;
+	return _antiAliasLevels;
 }
 #endif
 
@@ -777,7 +777,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 				sdlGraphics3dManager->deactivateManager();
 				delete sdlGraphics3dManager;
 			}
-			_graphicsManager = sdlGraphics3dManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _capabilities);
+			_graphicsManager = sdlGraphics3dManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _supportsFrameBuffer);
 			switchedManager = true;
 		}
 #endif
