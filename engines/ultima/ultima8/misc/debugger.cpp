@@ -370,13 +370,13 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[1], "_frameLimit")) {
 		b = &g->_frameLimit;
-		ini = "_frameLimit";
+		ini = "frameLimit";
 	} else if (!scumm_stricmp(argv[1], "_frameSkip")) {
 		b = &g->_frameSkip;
-		ini = "_frameSkip";
+		ini = "frameSkip";
 	} else if (!scumm_stricmp(argv[1], "_interpolate")) {
 		b = &g->_interpolate;
-		ini = "_interpolate";
+		ini = "interpolate";
 	} else {
 		debugPrintf("Unknown member: %s\n", argv[1]);
 		return true;
