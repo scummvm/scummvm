@@ -22,6 +22,8 @@
 
 #include "ags/lib/audio/sound.h"
 #include "common/textconsole.h"
+#include "ags/ags.h"
+#include "audio/mixer.h"
 
 namespace AGS3 {
 
@@ -40,66 +42,71 @@ void remove_sound() {
 }
 
 void reserve_voices(int digi_voices, int midi_voices) {
-	error("reserve_voices");
+	// TODO: reserve_voices
 }
 
 void set_volume_per_voice(int scale) {
-	error("set_volume_per_voice");
-
+	// TODO: set_volume_per_voice
 }
 
 int install_sound_input(int digi, int midi) {
-	error("install_sound_input");
+	// TODO: install_sound_input
+	return 0;
 }
 
 void remove_sound_input() {
-	error("remove_sound_input");
+	// TODO: remove_sound_input
 }
 
 void set_volume(int digi_volume, int midi_volume) {
-	error("set_volume");
+	// TODO: set_volume
 }
 
 void set_hardware_volume(int digi_volume, int midi_volume) {
-	error("set_hardware_volume");
+	// TODO: set_hardware_volume
 }
 
 void get_volume(int *digi_volume, int *midi_volume) {
-	error("get_volume");
+	// TODO: get_volume
+	*digi_volume = 255;
+	*midi_volume = 255;
 }
 
 void get_hardware_volume(int *digi_volume, int *midi_volume) {
-	error("get_hardware_volume"); 
+	// TODO: get_hardware_volume
 }
 
 void set_mixer_quality(int quality) {
-	error("set_mixer_quality");
+	// TODO: set_mixer_quality
 }
 
 int get_mixer_quality() {
-	error("get_mixer_quality");
+	warning("TODO: get_mixer_quality");
+	return 0;
 }
 
 int get_mixer_frequency() {
-	error("get_mixer_frequency");
+	return ::AGS::g_vm->_mixer->getOutputRate();
 }
 
 int get_mixer_bits() {
-	error("get_mixer_bits");
+	return 16;
 }
 
 int get_mixer_channels() {
-	error("get_mixer_channels");
+	warning("TODO: get_mixer_channels");
+	return 10;
 }
 
 int get_mixer_voices() {
-	error("get_mixer_voices");
+	warning("TODO: get_mixer_voices");
+	return 1;
 }
 
 int get_mixer_buffer_length() {
-	error("get_mixer_buffer_length");
+	warning("TODO: get_mixer_buffer_length");
+	return 22040;
 }
-
 
 void stop_audio_stream(AUDIOSTREAM *stream) {
 	warning("TODO: stop_audio_stream");
