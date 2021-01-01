@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/endian.h"
 
 namespace AGS3 {
 
@@ -54,6 +55,8 @@ struct _DRIVER_INFO {
 };
 
 #define AL_FUNC(type, name, args)               type name args
+
+#define SCUMMVM_ID MKTAG('S', 'C', 'V', 'M')
 
 } // namespace AGS3
 

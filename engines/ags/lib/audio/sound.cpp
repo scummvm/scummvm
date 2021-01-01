@@ -27,11 +27,6 @@
 
 namespace AGS3 {
 
-_DRIVER_INFO _digi_driver_list[] = {
-	{ 0, nullptr, 0     }
-};
-
-
 int install_sound(int digi, int midi, const char *cfg_path) {
 	// TODO: install_sound
 	return 0;
