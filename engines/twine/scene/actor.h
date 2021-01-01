@@ -139,6 +139,8 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
+#define kAnimationTypeLoop 0
+
 /**
  * Actors structure
  *
