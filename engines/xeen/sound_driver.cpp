@@ -30,15 +30,15 @@ namespace Xeen {
 
 SoundDriver::SoundDriver() : _frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
-	_streams[MUSIC] = Stream(MUSIC_COMMANDS);
-	_streams[FX] = Stream(FX_COMMANDS);
+	_streams[stMUSIC] = Stream(MUSIC_COMMANDS);
+	_streams[stFX] = Stream(FX_COMMANDS);
 }
 
 SoundDriver::~SoundDriver() {
 }
 
 SoundDriver::Stream *SoundDriver::tickStream() {
-	for (size_t i = 0; i < StreamType::LAST; ++i) {
+	for (size_t i = 0; i < stLAST; ++i) {
 		Stream& stream = _streams[i];
 		if (stream._playing && (stream._countdownTimer == 0 || --stream._countdownTimer == 0))
 			return &stream;
@@ -75,7 +75,7 @@ bool SoundDriver::musCallSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musCallSubroutine");
 	if (_musSubroutines.size() < 16) {
 		const byte *returnP = srcP + 2;
-		srcP = _streams[MUSIC]._startPtr + READ_LE_UINT16(srcP);
+		srcP = _streams[stMUSIC]._startPtr + READ_LE_UINT16(srcP);
 
 		_musSubroutines.push(Subroutine(returnP, srcP));
 	}
@@ -87,8 +87,8 @@ bool SoundDriver::musSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
 		param = *srcP++;
-	_streams[MUSIC]._countdownTimer = param;
-	_streams[MUSIC]._dataPtr = srcP;
+	_streams[stMUSIC]._countdownTimer = param;
+	_streams[stMUSIC]._dataPtr = srcP;
 	debugC(3, kDebugSound, "musSetCountdown %d", param);
 
 	// Do paused handling and break out of processing loop
@@ -130,12 +130,12 @@ bool SoundDriver::musEndSubroutine(const byte *&srcP, byte param) {
 
 	if (param != 15) {
 		// Music has ended, so flag it stopped
-		_streams[MUSIC]._playing = false;
+		_streams[stMUSIC]._playing = false;
 		return true;
 	}
 
 	// Returning from subroutine, or looping back to start of music
-	srcP = _musSubroutines.empty() ? _streams[MUSIC]._startPtr : _musSubroutines.pop()._returnP;
+	srcP = _musSubroutines.empty() ? _streams[stMUSIC]._startPtr : _musSubroutines.pop()._returnP;
 	return false;
 }
 
@@ -144,7 +144,7 @@ bool SoundDriver::fxCallSubroutine(const byte *&srcP, byte param) {
 
 	if (_fxSubroutines.size() < 16) {
 		const byte *startP = srcP + 2;
-		srcP = _streams[MUSIC]._startPtr + READ_LE_UINT16(srcP);
+		srcP = _streams[stMUSIC]._startPtr + READ_LE_UINT16(srcP);
 
 		_fxSubroutines.push(Subroutine(startP, srcP));
 	}
@@ -156,8 +156,8 @@ bool SoundDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
 		param = *srcP++;
-	_streams[FX]._countdownTimer = param;
-	_streams[FX]._dataPtr = srcP;
+	_streams[stFX]._countdownTimer = param;
+	_streams[stFX]._dataPtr = srcP;
 	debugC(3, kDebugSound, "fxSetCountdown %d", param);
 
 	// Do paused handling and break out of processing loop
@@ -170,21 +170,21 @@ bool SoundDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 
 	if (param != 15) {
 		// FX has ended, so flag it stopped
-		_streams[FX]._playing = false;
+		_streams[stFX]._playing = false;
 		return true;
 	}
 
-	srcP = _fxSubroutines.empty() ? _streams[FX]._startPtr : _fxSubroutines.pop()._returnP;
+	srcP = _fxSubroutines.empty() ? _streams[stFX]._startPtr : _fxSubroutines.pop()._returnP;
 	return false;
 }
 
 void SoundDriver::playFX(uint effectId, const byte *data) {
-	if (!_streams[FX]._playing || effectId < 7 || effectId >= 11) {
-		_streams[FX]._dataPtr = _streams[FX]._startPtr = data;
-		_streams[FX]._countdownTimer = 0;
+	if (!_streams[stFX]._playing || effectId < 7 || effectId >= 11) {
+		_streams[stFX]._dataPtr = _streams[stFX]._startPtr = data;
+		_streams[stFX]._countdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
 		resetFX();
-		_streams[FX]._playing = true;
+		_streams[stFX]._playing = true;
 	}
 
 	debugC(1, kDebugSound, "Starting FX %d", effectId);
@@ -192,24 +192,24 @@ void SoundDriver::playFX(uint effectId, const byte *data) {
 
 void SoundDriver::stopFX() {
 	resetFX();
-	_streams[FX]._playing = false;
-	_streams[FX]._startPtr = _streams[FX]._dataPtr = nullptr;
+	_streams[stFX]._playing = false;
+	_streams[stFX]._startPtr = _streams[stFX]._dataPtr = nullptr;
 }
 
 void SoundDriver::playSong(const byte *data) {
-	_streams[MUSIC]._dataPtr = _streams[MUSIC]._startPtr = data;
+	_streams[stMUSIC]._dataPtr = _streams[stMUSIC]._startPtr = data;
 	_musSubroutines.clear();
-	_streams[MUSIC]._countdownTimer = 0;
-	_streams[MUSIC]._playing = true;
+	_streams[stMUSIC]._countdownTimer = 0;
+	_streams[stMUSIC]._playing = true;
 	debugC(1, kDebugSound, "Starting song");
 }
 
 int SoundDriver::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
 	if (commandId == STOP_SONG) {
-		_streams[MUSIC]._playing = false;
+		_streams[stMUSIC]._playing = false;
 	} else if (commandId == RESTART_SONG) {
-		_streams[MUSIC]._playing = true;
-		_streams[MUSIC]._dataPtr = nullptr;
+		_streams[stMUSIC]._playing = true;
+		_streams[stMUSIC]._dataPtr = nullptr;
 		_musSubroutines.clear();
 	}
 

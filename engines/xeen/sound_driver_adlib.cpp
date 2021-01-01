@@ -26,7 +26,7 @@
 namespace Xeen {
 
 #define CALLBACKS_PER_SECOND 73
-	
+
 const byte SoundDriverAdlib::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
 	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
 };
@@ -95,9 +95,9 @@ int SoundDriverAdlib::songCommand(uint commandId, byte musicVolume, byte sfxVolu
 		resetFrequencies();
 	} else if (commandId == RESTART_SONG) {
 		_field180 = 0;
-		_streams[MUSIC]._playing = true;
+		_streams[stMUSIC]._playing = true;
 	} else if (commandId < 0x100) {
-		if (_streams[MUSIC]._playing) {
+		if (_streams[stMUSIC]._playing) {
 			_field180 = commandId;
 			_field182 = 63;
 		}
@@ -128,7 +128,7 @@ void SoundDriverAdlib::flush() {
 void SoundDriverAdlib::pausePostProcess() {
 	if (_field180 && ((_field181 += _field180) < 0)) {
 		if (--_field182 < 0) {
-			_streams[MUSIC]._playing = false;
+			_streams[stMUSIC]._playing = false;
 			_field180 = 0;
 			resetFrequencies();
 		} else {

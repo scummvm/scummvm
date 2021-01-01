@@ -72,10 +72,10 @@ protected:
 			_freqChange(0), _volume(0), _totalLevel(0), _frequency(0), _isFx(false) {}
 	};
 	enum StreamType {
-		MUSIC,
-		FX,
+		stMUSIC,
+		stFX,
 
-		LAST
+		stLAST
 	};
 	class Stream {
 	public:
@@ -106,7 +106,7 @@ private:
 	Stream *tickStream();
 protected:
 	Common::Array<Channel> _channels;
-	Stream _streams[StreamType::LAST];
+	Stream _streams[stLAST];
 
 protected:
 	/**
@@ -189,7 +189,7 @@ public:
 	/**
 	 * Returns whether music is currently playing
 	 */
-	bool isPlaying() const { return _streams[MUSIC]._playing; }
+	bool isPlaying() const { return _streams[stMUSIC]._playing; }
 };
 
 } // End of namespace Xeen
