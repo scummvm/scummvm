@@ -160,12 +160,9 @@ MODULE_OBJS += \
 	ad/ad_waypoint_group3d.o \
 	base/gfx/base_renderer3d.o \
 	base/gfx/shadow_volume.o \
-	base/gfx/opengl/base_surface_opengl_texture.o \
-	base/gfx/opengl/base_render_opengl_texture.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \
-	base/gfx/opengl/render_ticket.o \
 	base/gfx/opengl/meshx_opengl.o \
 	base/gfx/opengl/meshx_opengl_shader.o \
 	base/gfx/opengl/mesh3ds_opengl.o \
