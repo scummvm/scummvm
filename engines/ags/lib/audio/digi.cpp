@@ -33,9 +33,15 @@ int digi_card;
 
 int digi_input_card;
 
+static byte dummy_driver_data[1] = { 0 };
+
+BEGIN_DIGI_DRIVER_LIST
+	{ SCUMMVM_ID, &dummy_driver_data, true },
+END_DIGI_DRIVER_LIST
+
 
 int detect_digi_driver(int driver_id) {
-	return 0;
+	return 1;
 }
 
 SAMPLE *load_wav_pf(PACKFILE *f) {
