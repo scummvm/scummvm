@@ -871,13 +871,12 @@ void KyraEngine_HoF::showChapterMessage(int id, int16 palIndex) {
 
 void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	Common::String str = getTableString(str1, _cCodeBuffer, true);
- 
+
  	if (_flags.lang != Common::JA_JPN) {
-		uint i = 0;
-		while (str[i] != ' ')
-			++i;
-		++i;
-		str.setChar(toupper(str[i]), i);
+		if (uint32 i = (uint32)str.findFirstOf(' ') + 1) {
+			str.erase(0, i);
+			str.setChar(toupper(str[0]), 0);
+		}
  	}
  
  	if (str2 > 0) {
