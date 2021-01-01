@@ -75,7 +75,7 @@ protected:
 		MUSIC,
 		FX,
 
-		LAST,
+		LAST
 	};
 	class Stream {
 	public:
