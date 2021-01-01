@@ -293,6 +293,9 @@ bool Movements::processAttackExecution(int actorIdx) {
 
 void Movements::processMovementExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (_engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
+		return;
+	}
 	if (!changedCursorKeys || heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
@@ -337,6 +340,9 @@ void Movements::processMovementExecution(int actorIdx) {
 
 void Movements::processRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (_engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
+		return;
+	}
 	int16 tempAngle;
 	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 		tempAngle = ANGLE_90;

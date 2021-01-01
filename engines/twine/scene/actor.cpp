@@ -25,10 +25,10 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/audio/sound.h"
-#include "twine/resources/hqr.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/extra.h"
@@ -529,6 +529,10 @@ int32 ActorMoveStruct::getRealValue(int32 time) {
 	tempStep /= numOfStep;
 
 	return tempStep + from;
+}
+
+bool ActorStruct::isAttackAnimationActive() const {
+	return anim == AnimationTypes::kRightPunch || anim == AnimationTypes::kLeftPunch || anim == AnimationTypes::kKick;
 }
 
 } // namespace TwinE

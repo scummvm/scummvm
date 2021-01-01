@@ -184,6 +184,8 @@ public:
 	uint8 *entityDataPtr = nullptr;
 	int32 entityDataSize = 0;
 
+	bool isAttackAnimationActive() const;
+
 	int32 x = 0;
 	int32 y = 0;
 	int32 z = 0;
