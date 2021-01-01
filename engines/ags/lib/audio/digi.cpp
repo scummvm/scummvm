@@ -25,6 +25,63 @@
 
 namespace AGS3 {
 
+/*------------------------------------------------------------------*/
+
+DIGI_DRIVER::DIGI_DRIVER() :
+	id(0), name(nullptr),
+	desc(nullptr),
+	ascii_name(nullptr),
+	voices(0),
+	basevoice(0),
+	max_voices(0),
+	def_voices(0),
+	detect(nullptr),
+	init(nullptr),
+	exit_(nullptr),
+	set_mixer_volume(nullptr),
+	get_mixer_volume(nullptr),
+	lock_voice(nullptr),
+	unlock_voice(nullptr),
+	buffer_size(nullptr),
+	init_voice(nullptr),
+	release_voice(nullptr),
+	start_voice(nullptr),
+	stop_voice(nullptr),
+	loop_voice(nullptr),
+	get_position(nullptr),
+	set_position(nullptr),
+	get_volume(nullptr),
+	set_volume(nullptr),
+	ramp_volume(nullptr),
+	stop_volume_ramp(nullptr),
+	get_frequency(nullptr),
+	set_frequency(nullptr),
+	sweep_frequency(nullptr),
+	stop_frequency_sweep(nullptr),
+	get_pan(nullptr),
+	set_pan(nullptr),
+	sweep_pan(nullptr),
+	stop_pan_sweep(nullptr),
+	set_echo(nullptr),
+	set_tremolo(nullptr),
+	set_vibrato(nullptr),
+	rec_cap_bits(0),
+	rec_cap_stereo(0),
+	rec_cap_rate(nullptr),
+	rec_cap_parm(nullptr),
+	rec_source(nullptr),
+	rec_start(nullptr),
+	rec_stop(nullptr),
+	rec_read(nullptr) {
+}
+
+/*------------------------------------------------------------------*/
+
+class ScummVMDigiDriver : public DIGI_DRIVER {
+};
+
+/*------------------------------------------------------------------*/
+
 DIGI_DRIVER *digi_driver;
 
 DIGI_DRIVER *digi_input_driver;
@@ -41,7 +98,9 @@ END_DIGI_DRIVER_LIST
 
 
 int detect_digi_driver(int driver_id) {
-	return 1;
+	assert(driver_id == SCUMMVM_ID);
+	digi_driver = new ScummVMDigiDriver();
+	return 16;
 }
 
 SAMPLE *load_wav_pf(PACKFILE *f) {
