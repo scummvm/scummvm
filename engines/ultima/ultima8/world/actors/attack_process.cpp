@@ -535,7 +535,7 @@ void AttackProcess::genericAttack() {
 
 	AudioProcess *audio = AudioProcess::get_instance();
 	const Direction curdir = a->getDir();
-	const int32 now = Kernel::get_instance()->getFrameNum() * 2;
+	const int32 now = Kernel::get_instance()->getTickNum();
 	int wpnField8 = wpn ? wpn->getShapeInfo()->_weaponInfo->_field8 : 1;
 	const uint16 controlledNPC = World::get_instance()->getControlledNPCNum();
 	Direction targetdir = dir_invalid;
@@ -880,7 +880,7 @@ void AttackProcess::timeNowToTimerVal2(int now) {
 }
 
 void AttackProcess::setTimer3() {
-	const int32 now = Kernel::get_instance()->getFrameNum() * 2;
+	const int32 now = Kernel::get_instance()->getTickNum();
 	_timer3set = true;
 	_timer3 = randomOf(10) * 60 + now;
 	return;

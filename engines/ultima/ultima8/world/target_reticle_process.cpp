@@ -64,7 +64,7 @@ void TargetReticleProcess::run() {
 		return;
 	}
 
-	if (frameno - _lastUpdate < 60) {
+	if (frameno - _lastUpdate < 2 * Kernel::FRAMES_PER_SECOND) {
 		return;
 	}
 

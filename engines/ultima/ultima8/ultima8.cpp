@@ -505,33 +505,40 @@ void Ultima8Engine::menuInitMinimal(istring gamename) {
 	pout << "-- Finished loading minimal--" << Std::endl << Std::endl;
 }
 
+//
+// To time the frames, we use "fast" ticks which come 3000 times a second.
+//
+static uint32 _fastTicksNow() {
+	return g_system->getMillis() * 3;
+}
+
 bool Ultima8Engine::runGame() {
 	_isRunning = true;
 
-	int32 next_ticks = g_system->getMillis() * 3;  // Next time is right now!
+	int32 next_ticks = _fastTicksNow();  // Next time is right now!
 
 	Common::Event event;
 	while (_isRunning) {
 		_inBetweenFrame = true;  // Will get set false if it's not an _inBetweenFrame
 
 		if (!_frameLimit) {
-			_kernel->runProcesses();
-			if (GAME_IS_CRUSADER)
+			for (unsigned int tick = 0; tick < Kernel::TICKS_PER_FRAME; tick++) {
 				_kernel->runProcesses();
-			_desktopGump->run();
+				_desktopGump->run();
+			}
 			_inBetweenFrame = false;
-			next_ticks = _animationRate + g_system->getMillis() * 3;
+			next_ticks = _animationRate + _fastTicksNow();
 			_lerpFactor = 256;
 		} else {
-			int32 ticks = g_system->getMillis() * 3;
+			int32 ticks = _fastTicksNow();
 			int32 diff = next_ticks - ticks;
 
 			while (diff < 0) {
 				next_ticks += _animationRate;
-				_kernel->runProcesses();
-				if (GAME_IS_CRUSADER)
+				for (unsigned int tick = 0; tick < Kernel::TICKS_PER_FRAME; tick++) {
 					_kernel->runProcesses();
-				_desktopGump->run();
+					_desktopGump->run();
+				}
 #if 0
 				perr << "--------------------------------------" << Std::endl;
 				perr << "NEW FRAME" << Std::endl;
@@ -539,7 +546,7 @@ bool Ultima8Engine::runGame() {
 #endif
 				_inBetweenFrame = false;
 
-				ticks = g_system->getMillis() * 3;
+				ticks = _fastTicksNow();
 
 				// If frame skipping is off, we will only recalc next
 				// ticks IF the frames are taking up 'way' too much time.
@@ -1390,7 +1397,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 
 uint32 Ultima8Engine::getGameTimeInSeconds() {
 	// 1 second per every 30 frames
-	return (Kernel::get_instance()->getFrameNum() + _timeOffset) / 30; // constant!
+	return (Kernel::get_instance()->getFrameNum() + _timeOffset) / Kernel::FRAMES_PER_SECOND; // constant!
 }
 
 void Ultima8Engine::moveKeyEvent() {
@@ -1399,7 +1406,7 @@ void Ultima8Engine::moveKeyEvent() {
 
 bool Ultima8Engine::moveKeyDownRecently() {
 	uint32 nowframe = Kernel::get_instance()->getFrameNum();
-	return (nowframe - _moveKeyFrame) < 60;
+	return (nowframe - _moveKeyFrame) < 2 * Kernel::FRAMES_PER_SECOND;
 }
 
 void Ultima8Engine::save(Common::WriteStream *ws) {
@@ -1470,7 +1477,7 @@ uint32 Ultima8Engine::I_makeAvatarACheater(const uint8 * /*args*/,
 uint32 Ultima8Engine::I_getCurrentTimerTick(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	// number of ticks of a 60Hz timer, with the default animrate of 30Hz
-	return Kernel::get_instance()->getFrameNum() * 2;
+	return Kernel::get_instance()->getTickNum();
 }
 
 uint32 Ultima8Engine::I_setAvatarInStasis(const uint8 *args, unsigned int argsize) {
@@ -1536,7 +1543,7 @@ uint32 Ultima8Engine::I_setTimeInGameHours(const uint8 *args,
 	ARG_UINT16(newhour);
 
 	// 1 _game hour per every 27000 frames
-	int32   absolute = newhour * 27000;
+	int32 absolute = newhour * 27000;
 	get_instance()->_timeOffset = absolute - Kernel::get_instance()->getFrameNum();
 
 	return 0;

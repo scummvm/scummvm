@@ -125,8 +125,6 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	_displayList->BeginDisplayList(surf, lx, ly, lz);
 
 	uint32 gametick = Kernel::get_instance()->getFrameNum();
-	if (GAME_IS_CRUSADER)
-		gametick /= 2;
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 

@@ -108,7 +108,7 @@ private:
 	bool _frameSkip;         //!< Set to true to enable frame skipping (default false)
 	bool _frameLimit;        //!< Set to true to enable frame limiting (default true)
 	bool _interpolate;       //!< Set to true to enable interpolation (default true)
-	int32 _animationRate;    //!< The animation rate. Affects all processes! (default 100)
+	int32 _animationRate;    //!< The animation rate, frames per second in "fast" ticks (3000 per second). Affects all processes! (default 100 = 30 fps)
 
 	// Sort of Camera Related Stuff, move somewhere else
 

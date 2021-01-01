@@ -831,7 +831,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	if (isDead())
 		return;
 
-	_lastTimeWasHit = Kernel::get_instance()->getFrameNum() * 2;
+	_lastTimeWasHit = Kernel::get_instance()->getTickNum();
 
 	if (shape != 1 && this != getControlledActor()) {
 		Actor *controlled = getControlledActor();
