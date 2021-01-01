@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-01 06:12+0000\n"
-"PO-Revision-Date: 2020-12-31 23:23+0000\n"
+"PO-Revision-Date: 2021-01-02 01:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4676,6 +4676,9 @@ msgid ""
 "Go to https://wiki.scummvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
+"ファイル%sをチェックしようとしましたが、開けませんでした。\n"
+"見つからないか、必要な権限が無い可能性があります。\n"
+"https://wiki.scummvm.org/index.php/Datafilesを参照して、必要なファイルを確認してください。"
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4684,6 +4687,9 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"ScummVMは、ゲームのデータファイルを検証して最適な状態を提供します。\n"
+"この処理には時間がかかる事があります、お待ちください。\n"
+"連続で実行しても、再チェックはされません。"
 
 #: engines/grim/metaengine.cpp:63
 #, fuzzy
@@ -4697,6 +4703,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
+"Grim Fandangoのオリジナルパッチが存在しません。\n"
+"以下のページからダウンロードし\n"
+"ゲームが存在するディレクトリーに配置してください。\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4706,6 +4716,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
+"Escape from Monkey Islandのオリジナルパッチが存在しません。\n"
+"以下のページからダウンロードし、ゲームが存在するディレクトリーに配置してください\n"
+"(ゲームの言語に応じて、正しいバージョンをダウンロードしてください)。\n"
+"https://scummvm.org/frs/extras/patches/"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4718,6 +4732,14 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"エラー：必要な音声ファイルが見つかりません!\n"
+"Escape from Monkey IslandのFullMonkeyMap.imtは2種類存在するので\n"
+"それぞれリネームし、Texturesフォルダーにコピーしてください。\n"
+"リネーム後のファイル名は、以下の通りです。\n"
+"ディスク1:\"FullMonkeyMap1.imt\"\n"
+"ディスク2:\"FullMonkeyMap2.imt\"\n"
+"\n"
+"もしくは、SteamかGOG版から結合されたFullMonkeyMap.imtを取得してください"
 
 #: engines/groovie/detection.cpp:297
 msgid "Fast movie speed"
@@ -4744,7 +4766,7 @@ msgstr "マウス操作を有効にする"
 
 #: engines/hdb/detection.cpp:125
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "デバッグ情報とレベル選択を利用可能にする"
 
 #: engines/hdb/metaengine.cpp:193
 msgid "Move up"
@@ -4761,7 +4783,7 @@ msgstr "下"
 #: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:138
 #: engines/wintermute/keymapper_tables.h:1202
 msgid "Use"
-msgstr ""
+msgstr "使用"
 
 #: engines/hdb/metaengine.cpp:224
 msgid "Clear waypoints"
@@ -4769,7 +4791,7 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
-msgstr ""
+msgstr "デバッグ"
 
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
@@ -4845,11 +4867,11 @@ msgstr ""
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:119
 msgid "HP bar graphs"
-msgstr ""
+msgstr "HPバーを表示"
 
 #: engines/kyra/detection.cpp:120
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "HPバーの表示を有効にする"
 
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:130
