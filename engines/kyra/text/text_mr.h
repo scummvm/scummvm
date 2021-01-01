@@ -37,7 +37,7 @@ public:
 	char *preprocessString(const char *str) override;
 	int dropCRIntoString(char *str, int minOffs, int maxOffs);
 
-	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) override;
+	void printText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) override;
 
 	void restoreScreen();
 

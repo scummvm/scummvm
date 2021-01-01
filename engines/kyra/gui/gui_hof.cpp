@@ -79,16 +79,19 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 GUI_HoF::GUI_HoF(KyraEngine_HoF *vm) : GUI_v2(vm), _vm(vm), _screen(_vm->_screen) {
 }
 
-const char *GUI_HoF::getMenuTitle(const Menu &menu) {
+Common::String GUI_HoF::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
-		return 0;
+		return Common::String();
 
 	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, true);
 }
 
-const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
+Common::String GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
+	if (menuItem.useItemString)
+		return menuItem.itemString;
+
 	if (!menuItem.itemId)
-		return 0;
+		return Common::String();
 
 	// Strings 41-45 are menu labels, those must be handled uncompressed!
 	if (menuItem.itemId >= 41 && menuItem.itemId <= 45)
@@ -97,14 +100,14 @@ const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
 		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, true);
 }
 
-const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
+Common::String GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 	if (!menuItem.labelId)
-		return 0;
+		return Common::String();
 
 	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
 }
 
-char *GUI_HoF::getTableString(int id, bool decode) {
+Common::String GUI_HoF::getTableString(int id, bool decode) {
 	return _vm->getTableString(id, _vm->_optionsBuffer, decode);
 }
 

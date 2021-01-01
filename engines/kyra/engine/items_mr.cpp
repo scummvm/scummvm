@@ -117,7 +117,7 @@ bool KyraEngine_MR::dropItem(int unk1, Item item, int x, int y, int unk2) {
 			showMessageFromCCode(14, 0xB3, 0);
 	}
 
-	if (!_chatText)
+	if (_chatText.empty())
 		snd_playSoundEffect(13, 200);
 	return false;
 }

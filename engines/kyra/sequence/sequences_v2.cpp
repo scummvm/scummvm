@@ -92,7 +92,7 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 
 		_mainCharacter.animFrame = _animNewFrame + _desc.animScriptFrameAdd;
 		updateCharacterAnim(0);
-		if (_chatText)
+		if (!_chatText.empty())
 			updateWithText();
 		else
 			update();
@@ -114,7 +114,7 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 		if (_animResetFrame >= 0) {
 			_mainCharacter.animFrame = _animResetFrame + _desc.animScriptFrameAdd;
 			updateCharacterAnim(0);
-			if (_chatText)
+			if (!_chatText.empty())
 				updateWithText();
 			else
 				update();

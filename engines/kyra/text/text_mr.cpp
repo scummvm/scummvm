@@ -127,7 +127,7 @@ int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 	return 0;
 }
 
-void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+void TextDisplayer_MR::printText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	if (_vm->_albumChatActive) {
 		c0 = 0xEE;
 		c1 = 0xE3;
@@ -138,7 +138,7 @@ void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
-	_screen->printText(str, x, y, c0, c2);
+	_screen->printText(str.c_str(), x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
 
@@ -228,7 +228,7 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 	// _mainCharacter.facing can not be 0xFF here, so this is safe.
 	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 	updateCharacterAnim(0);
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 	setNextIdleAnimTimer();
 }
@@ -276,17 +276,17 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 	}
 }
 
-void KyraEngine_MR::objectChatPrintText(const char *str, int object) {
+void KyraEngine_MR::objectChatPrintText(const Common::String &str0, int object) {
 	int c1 = _talkObjectList[object].color;
-	str = _text->preprocessString(str);
-	int lineNum = _text->buildMessageSubstrings(str);
+	Common::String str = _text->preprocessString(str0.c_str());
+	int lineNum = _text->buildMessageSubstrings(str.c_str());
 	int maxWidth = _text->getWidestLineWidth(lineNum);
 	int x = (object == 0) ? _mainCharacter.x1 : _talkObjectList[object].x;
 	int cX1 = 0, cX2 = 0;
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = &_text->_talkSubstrings[i*_text->maxSubstringLen()];
+		str = Common::String(&_text->_talkSubstrings[i*_text->maxSubstringLen()]);
 
 		int y = _text->_talkMessageY + i * 10;
 		x = _text->getCenterStringX(str, cX1, cX2);
@@ -377,7 +377,7 @@ void KyraEngine_MR::badConscienceChat(const char *str, int vocHigh, int vocLow) 
 	updateSceneAnim(0x0E, _badConscienceFrameTable[_badConscienceAnim+16]);
 	_text->restoreScreen();
 	update();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 }
 
@@ -433,7 +433,7 @@ void KyraEngine_MR::goodConscienceChat(const char *str, int vocHigh, int vocLow)
 	updateSceneAnim(0x0F, _goodConscienceFrameTable[_goodConscienceAnim+10]);
 	_text->restoreScreen();
 	update();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 }
 
@@ -491,7 +491,7 @@ void KyraEngine_MR::albumChat(const char *str, int vocHigh, int vocLow) {
 	albumChatWaitToFinish();
 	_screen->showMouse();
 
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 }
 
@@ -824,7 +824,7 @@ void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, in
 		}
 	}
 	_text->restoreScreen();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject= - 1;
 }
 

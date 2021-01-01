@@ -72,7 +72,7 @@ namespace Kyra {
 #define GUI_V1_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) \
 	do { \
 		item.enabled = a; \
-		item.itemString = d; \
+		item.itemString = ""; \
 		item.x = e; \
 		item.y = g; \
 		item.width = h; \
@@ -153,9 +153,9 @@ private:
 	uint8 defaultColor1() const override { return 12; }
 	uint8 defaultColor2() const override { return 248; }
 
-	const char *getMenuTitle(const Menu &menu) override { return menu.menuNameString; }
-	const char *getMenuItemTitle(const MenuItem &menuItem) override { return menuItem.itemString; }
-	const char *getMenuItemLabel(const MenuItem &menuItem) override { return menuItem.labelString; }
+	Common::String getMenuTitle(const Menu &menu) override { return menu.menuNameString; }
+	Common::String getMenuItemTitle(const MenuItem &menuItem) override { return menuItem.itemString; }
+	Common::String getMenuItemLabel(const MenuItem &menuItem) override { return menuItem.labelString; }
 
 	KyraEngine_LoK *_vm;
 	Screen_LoK *_screen;

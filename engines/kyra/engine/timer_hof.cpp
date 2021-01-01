@@ -37,7 +37,7 @@ void KyraEngine_HoF::setupTimers() {
 }
 
 void KyraEngine_HoF::timerFadeOutMessage(int arg) {
-	if (_shownMessage)
+	if (!_shownMessage.empty())
 		_fadeMessagePalette = 1;
 }
 
