@@ -384,6 +384,8 @@ void GameState::processFoundItem(int32 item) {
 			}
 		}
 
+		_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry);
+
 		_engine->lbaTime++;
 	}
 

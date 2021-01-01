@@ -620,9 +620,11 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 				aborted = true;
 				break;
 			}
+
+			_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry);
 		}
 	}
-	while (_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
 		ScopedFPS scopedFps;
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
