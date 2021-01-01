@@ -63,21 +63,11 @@ Common::Error PrivateEngine::run() {
 	void *buf = malloc(191000); 
 	file->read(buf, 191000);
 	parse((char *) buf);
+	assert(constants.size() > 0);
 
-	for (Symbol *s = symlist; s != NULL; s = s->next) {
-                if (s->type == 260) { 
-		    //debug("int");
-	            //debug("%d", s->u.val);
-		}
-
-		if (s->type == 259) { 
-		    //debug("str");
-	            //debug("%s", s->u.str);
-		}
-                if (s->type == 258) { 
-		    //debug(s->name);
-	            //debug("%d", s->u.val);
-		}
+	for (SymbolMap::const_iterator it = settings.begin(); it != settings.end(); ++it) {
+		Symbol *s = it->_value;
+		debug(s->name->c_str());
         }
 	       
 	// Initialize graphics using following:

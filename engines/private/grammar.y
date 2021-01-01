@@ -54,7 +54,7 @@ lines:   line lines
        ;
 
 line:     DEBUGTOK '{' debug '}'             { /*printf("debug\n");*/ }
-        | DEFINETOK NAME '{' define '}'      { /*printf("define %s\n", $NAME);*/ }
+        | DEFINETOK NAME '{' define '}'      { installall($NAME); }
         | SETTINGTOK NAME '{' statements '}' { savesetting($NAME); initsetting(); }
         ;
 
@@ -77,10 +77,10 @@ statement: GOTOTOK expr ';' statements
         ;
 
 define:  /* nothing */
-        | NAME ',' fcall ',' define  { Private::install($NAME, NAME, 0, NULL);  }
-        | NAME ',' fcall             { Private::install($NAME, NAME, 0, NULL);   }
-        | NAME ',' define            { Private::install($NAME, NAME, 0, NULL); }
-        | NAME                       { Private::install($NAME, NAME, 0, NULL); }  
+        | NAME ',' fcall ',' define  { define($NAME); }
+        | NAME ',' fcall             { define($NAME); }
+        | NAME ',' define            { define($NAME); }
+        | NAME                       { define($NAME); }  
         ;
 
 fcall:    GOTOTOK '(' params ')'
@@ -96,7 +96,7 @@ params:  /* nothing */      { $$ = 0; }
 
 value:    NUM    { code2(Private::constpush, (Private::Inst)$NUM); }
         | STRING { code2(Private::strpush, (Private::Inst)$STRING); }
-        | NAME   { code3(Private::varpush, (Private::Inst)Private::lookup($1), Private::eval); }
+        | NAME   { code3(Private::varpush, (Private::Inst)Private::lookup($1, Private::variables), Private::eval); }
         ;
 
 expr:     value          

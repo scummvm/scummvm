@@ -6,7 +6,7 @@
 namespace Private {
 
 Setting *psetting;
-SettingMap settings;
+SettingMap settingcode;
 
 Datum	*stack       = NULL;	/* the stack */
 Datum	*stackp      = NULL;	/* next free spot on stack */
@@ -29,9 +29,8 @@ void initsetting()	/* initialize for code generation */
 
 void savesetting(char *name)
 {
-        //printf("saving setting %s\n", name);
 	Common::String s(name);
-	settings.setVal(s, psetting);
+	settingcode.setVal(s, psetting);
 }
 
 int push(Datum d)		/* push d onto stack */
