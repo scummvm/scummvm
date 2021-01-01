@@ -126,7 +126,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
 	UpdateDimsFromShape();
 
-	Shape *childshape = GameData::get_instance()->
+	const Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);
 
 	// Create the SlidingWidget

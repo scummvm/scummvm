@@ -40,7 +40,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ContainerGump();
-	ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
+	ContainerGump(const Shape *shape, uint32 frameNum, uint16 owner,
 	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	~ContainerGump() override;
 

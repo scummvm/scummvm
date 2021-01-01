@@ -87,7 +87,7 @@ PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
-PaperdollGump::PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
+PaperdollGump::PaperdollGump(const Shape *shape, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
 		: ContainerGump(shape, frameNum, owner, Flags, layer),
 		_statButtonId(0), _backpackRect(49, 25, 59, 50) {
@@ -203,7 +203,7 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		itemy = equipcoords[i].y;
 		itemx += _itemArea.left;
 		itemy += _itemArea.top;
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, frame, itemx, itemy);
 	}

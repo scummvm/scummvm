@@ -58,7 +58,7 @@ protected:
 
 	int32 _index;         // 'Index'
 
-	Shape *_shape;        // The gumps shape (always painted at 0,0)
+	const Shape *_shape;  // The gumps shape (always painted at 0,0)
 	uint32 _frameNum;
 
 	//! The Gump list for this gump. This will contain all child gumps,
@@ -89,7 +89,7 @@ public:
 	}
 
 	//! Set the Gump's shape/frame
-	inline void SetShape(Shape *shape, uint32 frameNum) {
+	inline void SetShape(const Shape *shape, uint32 frameNum) {
 		_shape = shape;
 		_frameNum = frameNum;
 	}

@@ -130,10 +130,10 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 
 	GumpShapeArchive *shapeArchive = GameData::get_instance()->getGumps();
 
-	Shape *top = shapeArchive->getShape(WEASEL_SHAPE_TOP);
-	Shape *midhi = shapeArchive->getShape(WEASEL_SHAPE_TOP + 1);
-	Shape *midlo = shapeArchive->getShape(WEASEL_SHAPE_TOP + 2);
-	Shape *bot = shapeArchive->getShape(WEASEL_SHAPE_TOP + 3);
+	const Shape *top = shapeArchive->getShape(WEASEL_SHAPE_TOP);
+	const Shape *midhi = shapeArchive->getShape(WEASEL_SHAPE_TOP + 1);
+	const Shape *midlo = shapeArchive->getShape(WEASEL_SHAPE_TOP + 2);
+	const Shape *bot = shapeArchive->getShape(WEASEL_SHAPE_TOP + 3);
 
 	if (!top || !midhi || !midlo || !bot) {
 		error("Couldn't load shapes for weasel");
@@ -170,7 +170,7 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 
 	for (int i = 0; i < ARRAYSIZE(WEASEL_BTN_X); i++) {
 		uint32 buttonShapeNum = WEASEL_BTN_SHAPES[i];
-		Shape *buttonShape = shapeArchive->getShape(buttonShapeNum);
+		const Shape *buttonShape = shapeArchive->getShape(buttonShapeNum);
 		if (!buttonShape) {
 			error("Couldn't load shape for weasel button %d", i);
 			return;
@@ -507,7 +507,7 @@ void WeaselGump::updateItemDisplay() {
 	if (!shapeinfo || !shapeinfo->_weaponInfo) {
 		warning("Weasel: no info for shape %d", _curItemShape);
 	}
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(shapeinfo->_weaponInfo->_displayGumpShape);
+	const Shape *shape = GameData::get_instance()->getGumps()->getShape(shapeinfo->_weaponInfo->_displayGumpShape);
 
 	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtCredits>));
 	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemName>));

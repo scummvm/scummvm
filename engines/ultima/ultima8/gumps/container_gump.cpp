@@ -52,7 +52,7 @@ ContainerGump::ContainerGump()
 
 }
 
-ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
+ContainerGump::ContainerGump(const Shape *shape, uint32 frameNum, uint16 owner,
                              uint32 flags, int32 layer)
 	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
 	  _displayDragging(false), _draggingShape(0), _draggingFrame(0),
@@ -132,7 +132,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 		int32 itemx, itemy;
 		getItemCoords(item, itemx, itemy);
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, item->getFrame(), itemx, itemy);
 	}

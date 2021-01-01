@@ -95,7 +95,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
 	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;
 
-	Shape *shape = _flex->getShape(_curShape);
+	const Shape *shape = _flex->getShape(_curShape);
 	if (shape && _curFrame < shape->frameCount())
 		surf->Paint(shape, _curFrame, posx, posy);
 	

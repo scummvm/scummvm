@@ -34,7 +34,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	SlidingWidget();
-	SlidingWidget(int x, int y, Shape *shape, uint32 frameNum);
+	SlidingWidget(int x, int y, const Shape *shape, uint32 frameNum);
 	~SlidingWidget() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;

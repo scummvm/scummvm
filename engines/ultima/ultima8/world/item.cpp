@@ -719,7 +719,7 @@ const ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape);
 }
 
-Shape *Item::getShapeObject() const {
+const Shape *Item::getShapeObject() const {
 	if (!_cachedShape) _cachedShape = GameData::get_instance()->getMainShapes()->getShape(_shape);
 	return _cachedShape;
 }
@@ -1845,7 +1845,7 @@ void Item::leaveFastArea() {
 uint16 Item::openGump(uint32 gumpshape) {
 	if (_flags & FLG_GUMP_OPEN) return 0;
 	assert(_gump == 0);
-	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	const Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
 
 	ContainerGump *cgump;
 

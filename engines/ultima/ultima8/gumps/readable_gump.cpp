@@ -57,7 +57,7 @@ ReadableGump::~ReadableGump(void) {
 void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(_shapeNum);
+	const Shape *shape = GameData::get_instance()->getGumps()->getShape(_shapeNum);
 
 	SetShape(shape, 0);
 

@@ -247,7 +247,7 @@ public:
 	const ShapeInfo *getShapeInfoFromGameInstance() const;
 
 	//! Get the Shape object for this Item. (The pointer will be cached.)
-	Shape *getShapeObject() const;
+	const Shape *getShapeObject() const;
 
 	//! Get the family of the shape number of this Item. (This is a
 	//! member of the ShapeInfo object.)
@@ -614,7 +614,7 @@ protected:
 
 	ObjId _parent; // objid container this item is in (or 0 for top-level items)
 
-	mutable Shape *_cachedShape;
+	mutable const Shape *_cachedShape;
 	mutable const ShapeInfo *_cachedShapeInfo;
 
 	// This is stuff that is used for displaying and interpolation

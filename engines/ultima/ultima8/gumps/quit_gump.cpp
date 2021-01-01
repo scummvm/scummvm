@@ -110,7 +110,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 			widget->InitGump(this, false);
 			widget->setRelativePosition(TOP_CENTER, 0, 13);
 		} else {
-			Shape *askShape = GameData::get_instance()->getShape(askshape);
+			const Shape *askShape = GameData::get_instance()->getShape(askshape);
 			const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
 			assert(sf);
 

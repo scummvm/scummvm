@@ -61,7 +61,7 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 
 	_text.clear(); // no longer need this
 
-	Shape *shape = GameData::get_instance()->getGumps()->getShape(19);
+	const Shape *shape = GameData::get_instance()->getGumps()->getShape(19);
 
 	SetShape(shape, 0);
 	UpdateDimsFromShape();
