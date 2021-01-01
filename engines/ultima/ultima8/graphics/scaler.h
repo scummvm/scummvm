@@ -34,7 +34,7 @@ class Scaler {
 	friend class hqScaler;
 protected:
 	// Basic scaler function template
-	typedef bool (*ScalerFunc)(Texture *tex, int32 sx, int32 sy, int32 sw, int32 sh,
+	typedef bool (*ScalerFunc)(const Texture *tex, int32 sx, int32 sy, int32 sw, int32 sh,
 	                           uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src);
 
 	//
@@ -63,7 +63,7 @@ public:
 	// virtual bool SetDisplayFormat(const RenderSurface::Format &format);
 
 	// Call this to scale a section of the screen
-	inline bool Scale(Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh,
+	inline bool Scale(const Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh,
 	                  uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src) const {
 		// Check to see if we are doing valid integer scalings
 		if (!ScaleArbitrary()) {
