@@ -60,6 +60,8 @@ protected:
 #endif
 
 	RFs* _RFs;
+public:
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 };
 
 #endif

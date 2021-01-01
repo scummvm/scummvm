@@ -48,6 +48,9 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/mixer/symbiansdl/symbiansdl-mixer.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
+
 #ifdef GUI_ENABLE_KEYSDIALOG
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "backends/events/symbiansdl/symbiansdl-events.h"
@@ -209,6 +212,14 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }
+
+
+Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindings(){
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "ASTERISK");
+	return keymapperDefaultBindings;
+}
+
 
 // Symbian bsearch implementation is flawed
 void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
