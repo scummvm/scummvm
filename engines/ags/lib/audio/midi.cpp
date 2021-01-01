@@ -26,7 +26,10 @@
 
 namespace AGS3 {
 
+static byte dummy_driver_data[1] = { 0 };
+
 BEGIN_MIDI_DRIVER_LIST
+{ SCUMMVM_ID, &dummy_driver_data, true },
 END_MIDI_DRIVER_LIST
 
 MIDI_DRIVER *midi_driver;
@@ -45,7 +48,7 @@ long midi_loop_end;           /* loop when we hit this position */
 
 
 int detect_midi_driver(int driver_id) {
-	return 0;
+	return 16;
 }
 
 

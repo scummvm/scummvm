@@ -66,7 +66,7 @@ struct DIGI_DRIVER {
 	/* setup routines */
 	AL_METHOD(int, detect, (int input));
 	AL_METHOD(int, init, (int input, int voices));
-	AL_METHOD(void, exit, (int input));
+	AL_METHOD(void, exit_, (int input));
 	AL_METHOD(int, set_mixer_volume, (int volume));
 	AL_METHOD(int, get_mixer_volume, (void));
 
@@ -118,6 +118,8 @@ struct DIGI_DRIVER {
 	AL_METHOD(int, rec_start, (int rate, int bits, int stereo));
 	AL_METHOD(void, rec_stop, (void));
 	AL_METHOD(int, rec_read, (void *buf));
+
+	DIGI_DRIVER();
 };
 
 AL_ARRAY(_DRIVER_INFO, _digi_driver_list);

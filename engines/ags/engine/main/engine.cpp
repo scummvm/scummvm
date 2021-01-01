@@ -451,18 +451,24 @@ std::pair<int, int> autodetect_driver(_DRIVER_INFO *driver_list, int (*detect_au
 // Returns a pair of audio card ID and max available voices.
 std::pair<int, int> decide_audiodriver(int try_id, _DRIVER_INFO *driver_list,
                                        int(*detect_audio_driver)(int), int &al_drv_id, const char *type) {
-	if (try_id == 0) // no driver
+	if (try_id == 0)
+		// No driver
 		return std::make_pair(0, 0);
-	al_drv_id = 0; // the driver id will be set by library if one was found
+	al_drv_id = 0;
+
 	if (try_id > 0) {
 		int voices = detect_audio_driver(try_id);
-		if (al_drv_id == try_id && voices != 0) // found and detected
+		if (al_drv_id == try_id && voices != 0) {
+			// found and detected
 			return std::make_pair(try_id, voices);
+		}
 		if (voices == 0) // found in list but detect failed
 			Debug::Printf(kDbgMsg_Error, "Failed to detect %s driver %s; Error: '%s'.", type, AlIDToChars(try_id).s, get_allegro_error());
 		else // not found at all
 			Debug::Printf(kDbgMsg_Error, "Unknown %s driver: %s, will try to find suitable one.", type, AlIDToChars(try_id).s);
 	}
+
+	al_drv_id = 1;
 	return autodetect_driver(driver_list, detect_audio_driver, type);
 }
 
