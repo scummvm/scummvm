@@ -135,6 +135,11 @@ public:
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
 
+	/**
+	 * @brief Reset and active move state. This is used in situtation where the hero is switching animations but any active
+	 * move state would switch back to the related move animation.
+	 */
+	void toggleMovementActions();
 	bool isMouseHovering(const Common::Rect &rect) const;
 
 	/**

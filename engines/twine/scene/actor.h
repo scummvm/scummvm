@@ -230,8 +230,7 @@ public:
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
-	// 0 == loop
-	int32 animType = 0;   // field_78
+	int32 animType = kAnimationTypeLoop;   // field_78
 	int32 brickSound = 0; // field_7A
 
 	ZVBox boudingBox;

@@ -29,6 +29,8 @@
 
 namespace TwinE {
 
+#define kAnimationTypeLoop 0
+
 class TwinEEngine;
 
 class Animations {

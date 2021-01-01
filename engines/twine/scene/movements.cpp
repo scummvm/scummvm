@@ -225,6 +225,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		break;
 	case HeroBehaviourType::kAthletic:
 		_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
+		_engine->_input->toggleMovementActions();
 		break;
 	case HeroBehaviourType::kAggressive:
 		if (_engine->_actor->autoAgressive) {

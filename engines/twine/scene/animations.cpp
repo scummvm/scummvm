@@ -652,7 +652,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				if (numKeyframe == getNumKeyframes(animPtr)) {
 					actor->dynamicFlags.bIsHitting = 0;
 
-					if (actor->animType == 0) {
+					if (actor->animType == kAnimationTypeLoop) {
 						actor->animPosition = getStartKeyframe(animPtr);
 					} else {
 						actor->anim = (AnimationTypes)actor->animExtra;
@@ -665,7 +665,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 						actor->animExtraPtr = currentActorAnimExtraPtr;
 
-						actor->animType = 0;
+						actor->animType = kAnimationTypeLoop;
 						actor->animPosition = 0;
 						actor->strengthOfHit = 0;
 					}
