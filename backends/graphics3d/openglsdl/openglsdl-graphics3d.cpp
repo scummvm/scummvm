@@ -44,12 +44,12 @@
 #include "image/bmp.h"
 #endif
 
-OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities)
+OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
 	: SdlGraphics3dManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_glContext(nullptr),
 #endif
-	_capabilities(capabilities),
+	_supportsFrameBuffer(supportsFrameBuffer),
 	_overlayVisible(false),
 	_overlayScreen(nullptr),
 	_overlayBackground(nullptr),
@@ -504,7 +504,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 
 bool OpenGLSdlGraphics3dManager::shouldRenderToFramebuffer() const {
 	bool engineSupportsArbitraryResolutions = !g_engine || g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
-	return !engineSupportsArbitraryResolutions && _capabilities.openGLFrameBuffer;
+	return !engineSupportsArbitraryResolutions && _supportsFrameBuffer;
 }
 
 bool OpenGLSdlGraphics3dManager::isVSyncEnabled() const {
