@@ -24,6 +24,10 @@ enum {
 	// the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
+// global state
+extern Common::String *_nextSetting;
+extern int _mode;
+
 class PrivateEngine : public Engine {
 private:
 	// We need random numbers

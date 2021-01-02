@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	metaengine.o \
         code.o \
 	symbol.o \
+	funcs.o \
         grammar.tab.o \
 	lex.yy.o \
 	private.o

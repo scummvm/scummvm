@@ -25,14 +25,39 @@ char *emalloc(unsigned n)	/* check return from malloc */
 
 Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
 {
-	Symbol *sp = NULL;
+        debug("looking up %s", s.c_str());	
+	return symlist.getVal(s);
+}
+
+Symbol *lookupName(char *n)  /* install s in some symbol table */
+{
+	//debug("looking up %s", n);
+        Common::String *s = new Common::String(n);
  
-	if (symlist.tryGetVal(s,sp))
-	    return sp;
-	else
-	    return 0;
+        if (settings.contains(*s))
+	    return lookup(*s, settings);
+
+	else if (variables.contains(*s))
+	    return lookup(*s, variables);
+
+	else if (cursors.contains(*s))
+	    return lookup(*s, cursors);
+
+	else if (locations.contains(*s))
+	    return lookup(*s, locations);
+
+	else if (rects.contains(*s))
+	    return lookup(*s, rects);
+
+	else {
+	    debug("WARNING: %s not defined", n);
+	    return addconstant(NAME, 0, n);
+	}
 
 }
+
+
+
 
 void installall(char *n) {
         Common::String *s;
@@ -42,7 +67,7 @@ void installall(char *n) {
 
  	       //debug("name %s", s->c_str());
 	       if (strcmp(n, "settings") == 0) {
-	           install(s, NAME, 0, NULL, &settings);
+	           install(s, STRING, 0, (char*) s->c_str(), &settings);
                }
 
 	       else if (strcmp(n, "variables") == 0) {
@@ -54,12 +79,14 @@ void installall(char *n) {
                }
 
 	       else if (strcmp(n, "locations") == 0) {
-	           install(s, NAME, 0, NULL, &variables);
+	           install(s, NAME, 0, NULL, &locations);
                }
 
 	       else if (strcmp(n, "rects") == 0) {
 	           install(s, NAME, 0, NULL, &rects);
                }
+	       else
+		   assert(0);
 
 	}	   
 
@@ -68,7 +95,7 @@ void installall(char *n) {
 Symbol *addconstant(int t, int d, char *s) 
 {
 	Symbol *sp;
-        Common::String *n = new Common::String("");
+        Common::String *n = new Common::String("<constant>");
 
 	sp = (Symbol *) emalloc(sizeof(Symbol));
 	sp->name = n; 
@@ -87,12 +114,12 @@ Symbol *addconstant(int t, int d, char *s)
 
 Symbol *install(Common::String *n, int t, int d, char *s, SymbolMap *symlist)  /* install s in symbol table */
 {
-        //Common::String *str = new Common::String(n);
+        Common::String *name = new Common::String(*n);
  
 	Symbol *sp;
 
 	sp = (Symbol *) emalloc(sizeof(Symbol));
-        sp->name = n; //str;
+        sp->name = name;
 	sp->type = t;
 	if (t == NUM || t == NAME)
 	   sp->u.val = d;
