@@ -167,7 +167,6 @@ void FlaMovies::scaleFla2x() {
 
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
-	uint32 opcodeBlockSize;
 	int32 aux = 0;
 
 	file.read(&frameData.videoSize, 1);
@@ -187,9 +186,9 @@ void FlaMovies::processFrame() {
 
 	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
 	do {
-		uint8 opcode = stream.readByte();
+		const uint8 opcode = stream.readByte();
 		stream.skip(1);
-		opcodeBlockSize = stream.readUint16LE();
+		const uint32 opcodeBlockSize = stream.readUint16LE();
 		const int32 pos = stream.pos();
 
 		switch (opcode - 1) {
@@ -241,9 +240,7 @@ void FlaMovies::processFrame() {
 
 		aux++;
 		stream.seek(pos + opcodeBlockSize);
-
 	} while (aux < (int32)frameData.videoSize);
-	//free(workVideoBufferCopy);
 }
 
 /** Play FLA PCX Screens
