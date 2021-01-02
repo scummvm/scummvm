@@ -118,11 +118,11 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 
 void FlaMovies::scaleFla2x() {
 	uint8 *source = (uint8 *)flaBuffer;
-	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
+	uint8 *dest = (uint8 *)_engine->imageBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		Common::fill(&dest[0], &dest[SCREEN_WIDTH * 40], 0x00);
-		dest += SCREEN_WIDTH * 40;
+		Common::fill(&dest[0], &dest[_engine->imageBuffer.w * 40], 0x00);
+		dest += _engine->imageBuffer.w * 40;
 	}
 
 	for (int32 i = 0; i < FLASCREEN_HEIGHT; i++) {
@@ -131,22 +131,22 @@ void FlaMovies::scaleFla2x() {
 			*dest++ = *source++;
 		}
 		if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
-			memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
+			memcpy(dest, dest - _engine->imageBuffer.w, FLASCREEN_WIDTH * 2);
 			dest += FLASCREEN_WIDTH * 2;
 		} else { // stretch the movie like original game.
 			if (i % 2) {
-				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
+				memcpy(dest, dest - _engine->imageBuffer.w, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 			if (i % 10) {
-				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
+				memcpy(dest, dest - _engine->imageBuffer.w, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 		}
 	}
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		Common::fill(&dest[0], &dest[SCREEN_WIDTH * 40], 0x00);
+		Common::fill(&dest[0], &dest[_engine->imageBuffer.w * 40], 0x00);
 	}
 }
 
@@ -156,12 +156,12 @@ void FlaMovies::processFrame() {
 	file.read(&frameData.videoSize, 1);
 	file.read(&frameData.dummy, 1);
 	file.read(&frameData.frameVar0, 4);
-	if (frameData.frameVar0 > _engine->workVideoBuffer.w * _engine->workVideoBuffer.h) {
+	if (frameData.frameVar0 > _engine->imageBuffer.w * _engine->imageBuffer.h) {
 		warning("Skipping video frame - it would exceed the screen buffer: %i", frameData.frameVar0);
 		return;
 	}
 
-	uint8 *outBuf = (uint8 *)_engine->workVideoBuffer.getPixels();
+	uint8 *outBuf = (uint8 *)_engine->imageBuffer.getPixels();
 	file.read(outBuf, frameData.frameVar0);
 
 	if ((int32)frameData.videoSize <= 0) {
@@ -292,15 +292,17 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			}
 			processFrame();
 			scaleFla2x();
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+			_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, _engine->imageBuffer.getBounds(), _engine->frontVideoBuffer.getBounds());
 
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
 				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
-				if (!currentFrame) // fade in the first frame
+				if (!currentFrame) {
+					// fade in the first frame
 					_engine->_screens->fadeIn(_engine->_screens->paletteRGBACustom);
-				else
+				} else {
 					_engine->setPalette(_engine->_screens->paletteRGBACustom);
+				}
 			}
 
 			// TRICKY: fade in tricky
