@@ -70,7 +70,7 @@ int constpush()	/* push constant onto stack */
 	Symbol *s = (Symbol *)*pc++; 
 	d.val = s->u.val;
 	
-	debug("pushing const %d with name %s\n", d.val, s->name->c_str());
+	debug("pushing const %d with name %s", d.val, s->name->c_str());
 	push(d);
 	return 0;
 }
@@ -111,7 +111,7 @@ int funcpush() //(char *name, int nargs)
         }
 
         execFunction(s.str, args);
-	pc++;
+	//pc++;
         //d.sym = (Symbol *)(*pc++);
 	//printf("var pushing %s", d.sym->name);
 	//push(d);
