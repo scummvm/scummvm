@@ -86,9 +86,6 @@ namespace std
 #undef remove
 #endif
 
-// TODO: Replace this with the keymapper
-#define GUI_ENABLE_KEYSDIALOG
-
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
 
@@ -168,10 +165,6 @@ namespace std
 	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
 
-extern "C" float roundf (float x); // ultima engine
-extern "C" double nearbyint(double x); // ultima engine
-extern "C" double round(double x); // ultima engine
-
 
 #ifndef signbit
 #define signbit(x)     \
@@ -180,10 +173,17 @@ extern "C" double round(double x); // ultima engine
     : __signbitl(x))
 #endif 
 
+extern "C" float roundf (float x); // ultima engine
+extern "C" double nearbyint(double x); // ultima engine
+extern "C" double round(double x); // ultima engine
 extern "C" int __signbit(double);
 extern "C" int __signbitf(float);
 extern "C" int __signbitl(long double);
 extern "C" float truncf(float);
+extern "C" float fminf(float x, float y);
+extern "C" float fmaxf(float x, float y);
+extern "C" double fmax (double x, double y);
+
 
 #ifndef __WINS__
 #define USE_ARM_GFX_ASM

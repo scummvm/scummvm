@@ -34,11 +34,6 @@ public:
 	// Override from OSystem_SDL
 	virtual void init();
 	virtual void initBackend();
-#ifdef GUI_ENABLE_KEYSDIALOG
-	virtual void quit();
-	virtual void engineInit();
-	virtual void engineDone();
-#endif
 	virtual Common::String getDefaultConfigFileName();
 	virtual bool hasFeature(Feature f);
 
@@ -52,13 +47,6 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
 protected:
-#ifdef GUI_ENABLE_KEYSDIALOG
-	/**
-	 * Used to intialized special game mappings
-	 */
-	void checkMappings();
-#endif
-
 	RFs* _RFs;
 };
 

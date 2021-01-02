@@ -58,7 +58,7 @@ public:
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 protected:
 	U32StringArray	_list;
-	U32StringArray		_dataList;
+	U32StringArray	_dataList;
 	ColorList		_listColors;
 	Common::Array<int>		_listIndex;
 	bool			_editable;
