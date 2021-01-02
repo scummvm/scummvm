@@ -97,9 +97,13 @@ Common::Error PrivateEngine::run() {
 	// Initialize graphics using following:
 	_screenW = 640;
 	_screenH = 480;
-	initGraphics(_screenW, _screenH);
+	//_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(_screenW, _screenH, &_pixelFormat);
         _image = new Image::BitmapDecoder();
-	_compositeSurface = nullptr;
+	_compositeSurface = new Graphics::ManagedSurface();
+  	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+	_compositeSurface->setTransparentColor(0);
 
 	// You could use backend transactions directly as an alternative,
 	// but it isn't recommended, until you want to handle the error values
@@ -153,8 +157,8 @@ Common::Error PrivateEngine::run() {
 			}
 		}
 
-		if (_compositeSurface)
-			drawScreen();
+		//if (_compositeSurface)
+		//	drawScreen();
 
 		if (_nextSetting != NULL) {
 			debug("Executing %s", _nextSetting->c_str());
@@ -235,19 +239,11 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 		error("unable to load image %s", path.c_str());
 
 	_image->loadStream(file);
-        Graphics::Surface *surf; 
-	if (!_compositeSurface)
-	    _compositeSurface = new Graphics::Surface();
-  	    _compositeSurface->create(_screenW, _screenH, _image->getSurface()->format );
+	//debug("palette %d %d", _image->getPaletteStartIndex(), _image->getPaletteColorCount());
+        //for (int i = 0; i < 30; i=i+3) 
+	//    debug("%x %x %x", *(_image->getPalette()+i), *(_image->getPalette()+i+1), *(_image->getPalette()+i+2));
 
-        _compositeSurface->copyRectToSurface(*_image->getSurface(), x, y,
-					Common::Rect(0, 0, _image->getSurface()->w, _image->getSurface()->h));
-
-	//delete _compositeSurface;
-	/*if (_compositeSurface) {
-		delete _compositeSurface;
-		_compositeSurface = nullptr;
-	}*/
+	_compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y)); 
 	drawScreen();
 }
 
@@ -257,7 +253,7 @@ void PrivateEngine::drawScreen() {
 		Graphics::Surface *screen = g_system->lockScreen();
 		//screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
 
-		const Graphics::Surface *surface;
+		const Graphics::ManagedSurface *surface;
                 /*if (_videoDecoder)
 			surface = _videoDecoder->decodeNextFrame();
 		else*/ if (_compositeSurface)
@@ -268,16 +264,15 @@ void PrivateEngine::drawScreen() {
 
 		int w = surface->w; //CLIP<int>(surface->w, 0, _screenW);
 		int h = surface->h; //CLIP<int>(surface->h, 0, _screenH);
+                assert(w == _screenW && h == _screenH);
 
-		//int x = (_screenW - w) / 2;
-		//int y = (_screenH - h) / 2;
-     	        //debug("%d %d", w, h);
-
-		screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, w, h));
+		screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 
 		g_system->unlockScreen();
-		if (_image->getPalette() != nullptr)
-			g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
+                //if (_image->getPalette() != nullptr)
+	        //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
+		//if (_image->getPalette() != nullptr)
+		//	g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 	        //g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);	
 		g_system->updateScreen();
 	}

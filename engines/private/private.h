@@ -11,13 +11,14 @@
 #include "audio/mixer.h"
 #include "video/smk_decoder.h"
 #include "graphics/palette.h"
+#include "graphics/managed_surface.h"
 
 namespace Image {
 class ImageDecoder;
 }
 
 namespace Graphics {
-struct Surface;
+struct ManagedSurface;
 }
 
 namespace Private {
@@ -40,8 +41,10 @@ class PrivateEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
+        Graphics::PixelFormat _pixelFormat;
 	Image::ImageDecoder *_image;
-	Graphics::Surface *_compositeSurface;
+	Graphics::ManagedSurface *_compositeSurface;
 
 	int _screenW, _screenH;
 
