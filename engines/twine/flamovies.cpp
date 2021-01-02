@@ -23,7 +23,6 @@
 #include "twine/flamovies.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "image/pcx.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/input.h"
@@ -232,87 +231,79 @@ void FlaMovies::processFrame() {
 
 FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
 
-void FlaMovies::preparePCX(int index) {
-	Image::PCXDecoder pcxDecoder;
-	Common::SeekableReadStream *stream = HQR::makeReadStream("FLA_PCX.HQR", index);
-	if (stream != nullptr) {
-		if (!pcxDecoder.loadStream(*stream)) {
-			delete stream;
-			return;
-		}
+void FlaMovies::prepareGIF(int index) {
+#if 0
+	Image::GIFDecoder decoder;
+	Common::SeekableReadStream *stream = HQR::makeReadStream("FLA_GIF.HQR", index);
+	if (stream == nullptr) {
+		warning("Failed to load gif hqr entry with id %i from FLA_GIF.HQR", index);
+		return;
 	}
-	const Graphics::Surface *surface = pcxDecoder.getSurface();
-	if (surface != nullptr) {
-		const Common::Rect srect(0, 0, surface->w, surface->h);
-		_engine->frontVideoBuffer.transBlitFrom(*surface, srect, _engine->frontVideoBuffer.getBounds());
+	if (!decoder.loadStream(*stream)) {
+		delete stream;
+		warning("Failed to load gif with id %i from FLA_GIF.HQR", index);
+		return;
 	}
+	const Graphics::Surface *surface = decoder.getSurface();
+	const bool state = Graphics::crossBlit((uint8*)_engine->imageBuffer.getPixels(), (const uint8*)surface->getPixels(), _engine->imageBuffer.pitch, surface->pitch, surface->w, surface->h, _engine->imageBuffer.format, surface->format);
+	if (!state) {
+		error("Failed to blit");
+	}
+	_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, _engine->imageBuffer.getBounds(), _engine->frontVideoBuffer.getBounds());
+	debug(2, "Show gif with id %i from FLA_GIF.HQR", index);
+	_engine->flip();
 	delete stream;
-	// TODO FLA_GIF.HQR
+	g_system->delayMillis(5000);
+#endif
 }
 
-void FlaMovies::playPCXMovie(const char *flaName) {
-	if (!Common::File::exists("FLA_PCX.HQR") || !Common::File::exists("FLA_GIF.HQR")) {
-		warning("FLA_PCX file doesn't exist!");
+void FlaMovies::playGIFMovie(const char *flaName) {
+	if (!Common::File::exists("FLA_GIF.HQR")) {
+		warning("FLA_GIF file doesn't exist!");
 		return;
 	}
 
+	debug("Play gif %s", flaName);
 	// TODO: use the HQR 23th entry (movies informations)
 	if (!strcmp(flaName, FLA_INTROD)) {
-		preparePCX(1);
-		g_system->delayMillis(5000);
-		preparePCX(2);
-		g_system->delayMillis(5000);
-		preparePCX(3);
-		g_system->delayMillis(5000);
-		preparePCX(4);
-		g_system->delayMillis(5000);
-		preparePCX(5);
-		g_system->delayMillis(5000);
+		prepareGIF(3);
+		prepareGIF(4);
+		prepareGIF(5);
 	} else if (!strcmp(flaName, "BAFFE") || !strcmp(flaName, "BAFFE2") || !strcmp(flaName, "BAFFE3") || !strcmp(flaName, "BAFFE4")) {
-		preparePCX(6);
-		g_system->delayMillis(5000);
+		prepareGIF(6);
 	} else if (!strcmp(flaName, "bateau") || !strcmp(flaName, "bateau2")) {
-		preparePCX(7);
-		g_system->delayMillis(5000);
-	} else if (!strcmp(flaName, "flute2")) {
-		preparePCX(8);
-		g_system->delayMillis(5000);
+		prepareGIF(7);
 	} else if (!strcmp(flaName, "navette")) {
-		preparePCX(15);
-		g_system->delayMillis(5000);
+		prepareGIF(15);
 	} else if (!strcmp(flaName, "templebu")) {
-		preparePCX(12);
-		g_system->delayMillis(5000);
+		prepareGIF(12);
+	} else if (!strcmp(flaName, "flute2")) {
+		prepareGIF(8); // TODO: same as glass2?
 	} else if (!strcmp(flaName, "glass2")) {
-		preparePCX(8);
-		g_system->delayMillis(5000);
+		prepareGIF(8); // TODO: same as flute2?
 	} else if (!strcmp(flaName, "surf")) {
-		preparePCX(9);
-		g_system->delayMillis(5000);
+		prepareGIF(9);
 	} else if (!strcmp(flaName, "verser") || !strcmp(flaName, "verser2")) {
-		preparePCX(10);
-		g_system->delayMillis(5000);
-	} else if (!strcmp(flaName, "capture")) {
-		preparePCX(14); // TODO: same as sendel?
-		g_system->delayMillis(5000);
+		prepareGIF(10);
 	} else if (!strcmp(flaName, "neige2")) {
-		preparePCX(11);
-		g_system->delayMillis(5000);
+		prepareGIF(11);
+	} else if (!strcmp(flaName, "capture")) {
+		prepareGIF(14); // TODO: same as sendel?
 	} else if (!strcmp(flaName, "sendel")) {
-		preparePCX(14); // TODO: same as capture?
-		g_system->delayMillis(5000);
+		prepareGIF(14); // TODO: same as capture?
 	} else if (!strcmp(flaName, "sendel2")) {
-		preparePCX(17);
-		g_system->delayMillis(5000);
+		prepareGIF(17);
+	} else if (!strcmp(flaName, FLA_DRAGON3)) {
+		prepareGIF(1);
+		prepareGIF(2);
 	}
 }
 
 void FlaMovies::playFlaMovie(const char *flaName) {
 	_engine->_sound->stopSamples();
 
-	// Play FLA PCX instead of movies
-	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAPCX) {
-		playPCXMovie(flaName);
+	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAGIF) {
+		playGIFMovie(flaName);
 		return;
 	}
 

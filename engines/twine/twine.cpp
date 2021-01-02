@@ -370,8 +370,8 @@ void TwinEEngine::initConfigurations() {
 		cfgfile.Version = MODIFICATION_VERSION;
 	}
 
-	if (_gameFlags & TwineFeatureFlags::TF_USE_PCX) {
-		cfgfile.Movie = CONF_MOVIE_FLAPCX;
+	if (_gameFlags & TwineFeatureFlags::TF_USE_GIF) {
+		cfgfile.Movie = CONF_MOVIE_FLAGIF;
 	}
 
 	cfgfile.UseCD = ConfGetBoolOrDefault("usecd", false);

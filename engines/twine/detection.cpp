@@ -211,7 +211,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("FLA_GIF.HQR", "3f7383f65afa212e3eec430627828b64", 1784466),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_USE_GIF,
 		GUIO1(GUIO_NONE)
 	},
 

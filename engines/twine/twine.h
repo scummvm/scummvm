@@ -77,7 +77,7 @@ enum MovieType {
 	CONF_MOVIE_NONE = 0,
 	CONF_MOVIE_FLA = 1,
 	CONF_MOVIE_FLAWIDE = 2,
-	CONF_MOVIE_FLAPCX = 3
+	CONF_MOVIE_FLAGIF = 3
 };
 
 /** Configuration file structure
