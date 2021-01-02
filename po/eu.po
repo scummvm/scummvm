@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-01 06:12+0000\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
+"PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/eu/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Euskara\n"
 
 #: gui/about.cpp:102
@@ -97,11 +97,11 @@ msgstr "Jokoaren direktorioa aukeratu"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr ""
+msgstr "Nork: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr ""
+msgstr "Nori: "
 
 #: gui/downloaddialog.cpp:64
 #, fuzzy
@@ -116,13 +116,15 @@ msgstr "Utzi"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr ""
+msgstr "Gorde"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Antza denez, zure konexioa mugatua da. Ziur al zaude fitxategiak deskargatu "
+"nahi dituzula?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -156,6 +158,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Deskarga direktorioa ezin da sortu - zehaztutako direktorioak izen bereko "
+"fitxategia dauka."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:371
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:517
@@ -182,16 +186,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" badago lehendik zehaztutako direktorioan.\n"
+"Ziur al zaude fitxategiak direktorio horretan jaitsi nahi dituzula?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "Jaitsita %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
-msgstr "Bilaketa amaitua!"
+msgstr "Jaitsiera abiadura: %s %S"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:285
 msgid "Game"
@@ -288,27 +294,24 @@ msgstr "Ezarpen grafiko globalak baliogabetu"
 
 #: gui/editgamedialog.cpp:220 gui/options.cpp:1802
 msgid "Shader"
-msgstr ""
+msgstr "Itzaldura"
 
 #: gui/editgamedialog.cpp:223
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Soinu ezarpen globalak baliogabetu"
+msgstr "Itzaldura ezarpen globalak baliogabetu"
 
 #: gui/editgamedialog.cpp:225
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Soinu ezarpen globalak baliogabetu"
+msgstr "Itzaldura ezarpen globalak baliogabetu"
 
 #: gui/editgamedialog.cpp:239 gui/options.cpp:1836 engines/dialogs.cpp:326
-#, fuzzy
 msgid "Keymaps"
-msgstr "Teklen esleipena:"
+msgstr "Tekla-mapak"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1843 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "Motorra"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1857 engines/dialogs.cpp:301
 msgid "Audio"
@@ -416,7 +419,7 @@ msgstr "Partida gordeak:"
 
 #: gui/editgamedialog.cpp:360 engines/dialogs.cpp:348
 msgid "Achievements"
-msgstr ""
+msgstr "Lorpenak"
 
 #: gui/editgamedialog.cpp:384 gui/editgamedialog.cpp:479
 #: gui/editgamedialog.cpp:541 gui/editgamedialog.cpp:602 gui/options.cpp:1972
@@ -452,6 +455,9 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Gordetako jokoen sinkronizazioa ezin da erabili lehenetsiak ez diren "
+"direktorioekin. Gordetako jokoak sinkronizatzeko, erabili lehenetsitako "
+"direktorioa."
 
 #: gui/editgamedialog.cpp:618
 msgid "This game ID is already taken. Please choose another one."
@@ -574,13 +580,12 @@ msgstr "FluidSynth-en ezarpen guztiak berrezarri balio lehenetsietara?"
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolazioa:"
+msgstr "Elkarreragin"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
@@ -716,7 +721,7 @@ msgstr "~G~ehitu..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "Jokoak zerrendara gehitu"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -782,6 +787,8 @@ msgstr "Kargatu"
 #: gui/launcher.cpp:386
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"Direktorio hau ezin da oraindik erabili, fitxategiak jaisten ari dira "
+"oraindik!"
 
 #: gui/launcher.cpp:397
 msgid ""
@@ -814,9 +821,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 
 #: gui/launcher.cpp:601
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Errore ezezaguna"
+msgstr "Aldaera ezezaguna"
 
 #: gui/launcher.cpp:607
 msgid "Pick the game:"
@@ -848,9 +854,8 @@ msgstr ""
 "%d joko berri aurkitu dira, aurretik gehituriko %d ez dira kontuan hartu ..."
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2241
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Ireki URLa"
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
@@ -873,22 +878,18 @@ msgid "Never"
 msgstr "Inoiz ez"
 
 #: gui/options.cpp:135
-#, fuzzy
 msgid "Every 5 mins"
 msgstr "5 minuturo"
 
 #: gui/options.cpp:135
-#, fuzzy
 msgid "Every 10 mins"
 msgstr "10 minuturo"
 
 #: gui/options.cpp:135
-#, fuzzy
 msgid "Every 15 mins"
 msgstr "15 minuturo"
 
 #: gui/options.cpp:135
-#, fuzzy
 msgid "Every 30 mins"
 msgstr "30 minuturo"
 
@@ -903,14 +904,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Ezin izan da grafikoen aukeretako batzuk aplikatu:"
 
 #: gui/options.cpp:679
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "ezin izan da bideo-modua aldatu."
+msgstr "ezin izan da bideo-modua aldatu"
 
 #: gui/options.cpp:692
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "ezin izan da bideo-modua aldatu."
+msgstr "ezin izan da tiratze-modua aldatu."
 
 #: gui/options.cpp:698
 msgid "the aspect ratio setting could not be changed"
@@ -921,28 +920,24 @@ msgid "the fullscreen setting could not be changed"
 msgstr "ezin izan da pantaila-osoaren ezarpena aldatu"
 
 #: gui/options.cpp:710
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "ezin izan da pantaila-osoaren ezarpena aldatu"
+msgstr "ezin izan da iragazketa ezarpena aldatu"
 
 #: gui/options.cpp:1136
-#, fuzzy
 msgid "Show On-screen control"
-msgstr "Inbentarioa"
+msgstr "Erakutsi pantaila-gaineko kontrola"
 
 #: gui/options.cpp:1140
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpad modua desgaituta."
+msgstr "Touchpad sagu-modua"
 
 #: gui/options.cpp:1144
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Trukatu Menu eta Atzera botoiak"
 
 #: gui/options.cpp:1149
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Abiadura:"
+msgstr "Erakusle Abiadura:"
 
 #: gui/options.cpp:1149 gui/options.cpp:1151 gui/options.cpp:1152
 msgid "Speed for keyboard/joystick mouse pointer control"
@@ -1007,9 +1002,8 @@ msgid "Special dithering modes supported by some games"
 msgstr "Joko batzuk onarturiko lausotze-modu bereziak"
 
 #: gui/options.cpp:1312
-#, fuzzy
 msgid "Stretch mode:"
-msgstr "Helio modua"
+msgstr "Tiratze modua:"
 
 #: gui/options.cpp:1323 backends/graphics/sdl/sdl-graphics.cpp:365
 msgid "Fullscreen mode"
@@ -2530,9 +2524,8 @@ msgid "PC-98 Audio"
 msgstr "PC-98 Soinua"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:82
-#, fuzzy
 msgid "SegaCD Audio"
-msgstr "Erabili audio CDa"
+msgstr "SegaCD Audioa"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -2560,7 +2553,7 @@ msgstr "C64 Audio emuladorea"
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
-msgstr ""
+msgstr "<sinkronizatzen...>"
 
 #: backends/cloud/storage.cpp:242
 #, fuzzy
@@ -2581,9 +2574,8 @@ msgid ""
 msgstr ""
 
 #: backends/cloud/storage.cpp:350
-#, fuzzy
 msgid "Download complete."
-msgstr "Bilaketa amaitua!"
+msgstr "Jaitsiera amaitua!"
 
 #: backends/cloud/storage.cpp:360
 #, fuzzy
@@ -2629,14 +2621,12 @@ msgid "Display keyboard"
 msgstr "Erakutsi teklatua"
 
 #: backends/events/default/default-events.cpp:320
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Saguaren kaptura"
+msgstr "Mututu/Ez-mututu"
 
 #: backends/events/default/default-events.cpp:348
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Araztailea"
+msgstr "Araztailea ireki"
 
 #: backends/events/gph/gph-events.cpp:417
 #: backends/events/gph/gph-events.cpp:460
@@ -2703,22 +2693,22 @@ msgstr ""
 #: backends/graphics/opengl/opengl-graphics.cpp:246
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
 msgid "Fit to window"
-msgstr ""
+msgstr "Doitu leihora"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
 msgid "Stretch to window"
-msgstr ""
+msgstr "Tiratu leihora"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Doitu leihora (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Bereizmena: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:612
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
@@ -8054,15 +8044,15 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:176
 msgid "Score"
-msgstr ""
+msgstr "Puntuazioa"
 
 #: engines/zvision/metaengine.cpp:182
 msgid "Put away object"
-msgstr ""
+msgstr "Objektua aldendu"
 
 #: engines/zvision/metaengine.cpp:188
 msgid "Extract coin"
-msgstr ""
+msgstr "Txanpona atera"
 
 #: engines/zvision/metaengine.cpp:209
 #, fuzzy
@@ -8080,6 +8070,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Joko hau jolastu aurretik, beharrezkoak diren letra-tipoak ScummVM-ko "
+"gehigarrien direktoriora edo jokoaren direktoriora kopiatu beharko dituzu. "
+"Windows-en ondorengo fitxategiak beharko dituzu Windows-ko letra-tipo "
+"direktorioan: Times New Roman, Century Schoolbook, Garamond, Courier New and "
+"Arial. Bestela, Liberation Fonts edo GNU FreeFont paketeak jaitsi "
+"ditzazkezu. Aukeratutako paketeko letra-tipo guztiak beharko dituzu, hau da, "
+"LiberationMono, LiberationSans eta LiberationSerif, edo FreeMono, FreeSans "
+"eta FreeSerif hurrenez hurren."
 
 #~ msgid "Do you really want to return to the Launcher?"
 #~ msgstr "Ziur zaude abiarazlera itzuli nahi duzula?"
