@@ -12,6 +12,14 @@
 #include "video/smk_decoder.h"
 #include "graphics/palette.h"
 
+namespace Image {
+class ImageDecoder;
+}
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace Private {
 
 class Console;
@@ -32,6 +40,9 @@ class PrivateEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	Image::ImageDecoder *_image;
+	Graphics::Surface *_compositeSurface;
+
 	int _screenW, _screenH;
 
 public:
@@ -51,9 +62,10 @@ public:
 	void syncGameStream(Common::Serializer &s);
 
 	void playSound(const Common::String &name);
-	void playVideo(const Common::String &name);
-	
+	void playVideo(const Common::String &name);	
 	void stopSound();
+
+	void loadImage(const Common::String &name, int x, int y);	
 	void drawScreen();
 
 };
