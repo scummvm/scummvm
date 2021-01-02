@@ -26,6 +26,9 @@ setting                 return SETTINGTOK;
 if                      return IFTOK;
 else                    return ELSETOK;
 goto                    return GOTOTOK;
+RECT                    return RECTTOK;
+FALSE                   return FALSETOK;
+TRUE                    return TRUETOK;
 Random                  return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  yylval.s = strdup(yytext); return NAME;
 [\-]?[0-9]+             yylval.sym = Private::addconstant(NUM, atoi(yytext), NULL); return NUM;
@@ -41,7 +44,7 @@ namespace Private {
 
 int parse(char *code) {
 	
-	initsetting();
+	initSetting();
 	//_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;
@@ -56,7 +59,7 @@ int parse(char *code) {
 	bp = yy_scan_string(code);
 	yy_switch_to_buffer(bp);
 	yyparse();
-        execute(prog);
+        //execute(prog);
 	yy_delete_buffer(bp);
 
 	return 0;

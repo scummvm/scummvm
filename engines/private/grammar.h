@@ -2,6 +2,7 @@
 #include "common/hash-str.h"
 #include "common/queue.h"
 #include "common/list.h"
+#include "common/array.h"
 
 #ifndef PRIVATE_GRAMMAR_H
 #define PRIVATE_GRAMMAR_H
@@ -16,7 +17,6 @@ typedef struct Symbol {	/* symbol table entry */
 		int	val;	/* if NAME or NUM */
 		char	*str;	/* if STRING */
 	} u;
-	struct Symbol	*next;	/* to link to another */
 } Symbol;
 
 typedef union Datum {	/* interpreter stack type */
@@ -41,6 +41,8 @@ typedef struct Setting {
 
 } Setting;
 
+// Settings
+
 extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting*> SettingMap;
@@ -59,13 +61,21 @@ extern ConstantList constants;
 
 extern void define(char *n); 
 extern Symbol  *install(Common::String *, int, int, char *, SymbolMap*);
+extern Symbol  *lookupName(char *);
 extern Symbol *addconstant(int, int, char *);
 extern void     installall(char *);
 extern Symbol  *lookup(Common::String, SymbolMap);
 
-// Code
+// Funtions
+
+typedef Common::Array<Datum> ArgArray;
+extern void execFunction(char *, ArgArray);
+
+// Code Generation
 
 extern	Datum pop();
+extern  int pushString(char *);
+extern  int pushInt(int);
 
 extern  Inst *code(Inst);
 extern	Inst *prog;
@@ -78,14 +88,17 @@ extern  int bltin();
 extern  int varpush(); 
 extern  int constpush();
 extern  int strpush();
+extern  int funcpush();
 extern  int print();
 
 extern  int lt();
 extern  int gt();
 
+// Code Execution
 
-extern void initsetting();
-extern void savesetting(char *);
+extern void initSetting();
+extern void saveSetting(char *);
+extern void loadSetting(Common::String *);
 
 extern void execute(Inst *);
 

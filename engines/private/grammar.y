@@ -37,6 +37,7 @@ int yywrap()
 
 %union {
 	struct Symbol	*sym;	/* symbol table pointer */
+        int (*inst)();	/* machine instruction */
         char *s;
         int *i;
         int narg;
@@ -44,7 +45,7 @@ int yywrap()
 
 %token<s> NAME
 %token<sym> STRING NUM
-%token LTE GTE NEQ EQ IFTOK ELSETOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
+%token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECTTOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
 %%
@@ -53,9 +54,9 @@ lines:   line lines
        | line
        ;
 
-line:     DEBUGTOK '{' debug '}'             { /*printf("debug\n");*/ }
+line:     DEBUGTOK '{' debug '}'             { /* Not used in the game */ }
         | DEFINETOK NAME '{' define '}'      { installall($NAME); }
-        | SETTINGTOK NAME '{' statements '}' { savesetting($NAME); initsetting(); }
+        | SETTINGTOK NAME '{' statements '}' { saveSetting($NAME); initSetting(); }
         ;
 
 debug: /* nothing */
@@ -83,8 +84,19 @@ define:  /* nothing */
         | NAME                       { define($NAME); }  
         ;
 
-fcall:    GOTOTOK '(' params ')'
-        | NAME '(' params ')'  { /*printf("%s( .. %d)\n", $NAME, $params);*/ }
+fcall:    GOTOTOK '(' NAME ')' {
+                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
+                               code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
+                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
+                               code1(Private::funcpush); 
+                               }
+
+        | RECTTOK '(' NUM ',' NUM ',' NUM ',' NUM ')'
+        | NAME '(' params ')'  {
+                               code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, $params, NULL));
+                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME)); 
+                               code1(Private::funcpush); 
+                               }
         ;
 
 params:  /* nothing */      { $$ = 0; }
@@ -94,9 +106,11 @@ params:  /* nothing */      { $$ = 0; }
         | fcall             { $$ = 1; }
         ;
 
-value:    NUM    { code2(Private::constpush, (Private::Inst)$NUM); }
-        | STRING { code2(Private::strpush, (Private::Inst)$STRING); }
-        | NAME   { code3(Private::varpush, (Private::Inst)Private::lookup($1, Private::variables), Private::eval); }
+value:    FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
+        | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL)); }
+        |  NUM     { code2(Private::constpush, (Private::Inst)$NUM); }
+        | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
+        | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }
         ;
 
 expr:     value          

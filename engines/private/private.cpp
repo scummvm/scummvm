@@ -22,6 +22,9 @@ extern int yyparse();
 
 namespace Private {
 
+Common::String *_nextSetting = NULL;
+int _mode = -1;
+
 extern int parse(char*);
 
 PrivateEngine::PrivateEngine(OSystem *syst)
@@ -67,7 +70,7 @@ Common::Error PrivateEngine::run() {
 
 	for (SymbolMap::const_iterator it = settings.begin(); it != settings.end(); ++it) {
 		Symbol *s = it->_value;
-		debug(s->name->c_str());
+		//debug(s->name->c_str());
         }
 	       
 	// Initialize graphics using following:
@@ -109,6 +112,9 @@ Common::Error PrivateEngine::run() {
 	// Simple main event loop
 	Common::Event evt;
         _videoDecoder = new Video::SmackerDecoder();
+
+	_nextSetting = new Common::String("kGoIntro");
+
   	//playVideo("intro/intro.smk");
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);
@@ -123,6 +129,14 @@ Common::Error PrivateEngine::run() {
 				drawScreen();
 			}
 		}
+
+		if (_nextSetting != NULL) {
+			debug("Executing %s", _nextSetting->c_str());
+                        loadSetting(_nextSetting);
+			_nextSetting = NULL;
+			execute(prog);
+		}
+
 
 	}
 

@@ -1,4 +1,5 @@
 #include "common/str.h"
+#include "common/debug.h"
 
 #include "grammar.h"
 #include "grammar.tab.h"
@@ -15,7 +16,7 @@ Inst	*prog        = NULL;	/* the machine */
 Inst	*progp       = NULL;	/* next free spot for code generation */
 Inst	*pc          = NULL;	/* program counter during execution */
 
-void initsetting()	/* initialize for code generation */
+void initSetting()	/* initialize for code generation */
 {
 	psetting = (Setting*) malloc(sizeof(Setting));
         memset((void *) psetting, 0, sizeof(Setting));
@@ -27,11 +28,28 @@ void initsetting()	/* initialize for code generation */
 	progp = prog;
 }
 
-void savesetting(char *name)
+void saveSetting(char *name)
 {
 	Common::String s(name);
 	settingcode.setVal(s, psetting);
+        debug("setting %s %x, %x, %x", name, psetting, psetting->prog, psetting->stack);
+
 }
+
+void loadSetting(Common::String *name) 
+{
+        assert(settingcode.contains(*name));
+	psetting = settingcode.getVal(*name);
+
+	debug("loading setting %s %x, %x, %x", name->c_str(), psetting, psetting->prog, psetting->stack);
+
+        prog = (Inst *) &psetting->prog;
+        stack = (Datum *) &psetting->stack;
+
+	stackp = stack;
+	progp = prog;
+}
+
 
 int push(Datum d)		/* push d onto stack */
 {
@@ -49,8 +67,10 @@ Datum pop()	/* pop and return top elem from stack */
 int constpush()	/* push constant onto stack */
 {
 	Datum d;
-	d.val = ((Symbol *)*pc++)->u.val;
-	//printf("pushing %d\n", d.val);
+	Symbol *s = (Symbol *)*pc++; 
+	d.val = s->u.val;
+	
+	debug("pushing const %d with name %s\n", d.val, s->name->c_str());
 	push(d);
 	return 0;
 }
@@ -69,19 +89,56 @@ int varpush()	/* push variable onto stack */
 {
 	Datum d;
 	d.sym = (Symbol *)(*pc++);
-	//printf("var pushing %s", d.sym->name);
+	debug("var pushing %s", d.sym->name->c_str());
 	push(d);
 	return 0;
 }
+
+int funcpush() //(char *name, int nargs)	
+{
+	Datum s, n, arg;
+	s = pop();
+	n = pop();
+        ArgArray args;
+
+	debug("executing %s with %d params", s.str, n.val);
+	for (int i = 0; i < n.val; i++) {
+		arg = pop();
+		//if (arg.sym != NULL)
+		//	debug("arg name", arg->sym->name.c_str());
+	        debug("%d", arg.val);
+		args.insert(args.begin(), arg) ;
+        }
+
+        execFunction(s.str, args);
+	pc++;
+        //d.sym = (Symbol *)(*pc++);
+	//printf("var pushing %s", d.sym->name);
+	//push(d);
+	return 0;
+}
+
 
 
 int eval()		/* evaluate variable on stack */
 {
 	Datum d;
 	d = pop();
+	debug("eval %s", d.sym->name->c_str());
 	//if (d.sym->type == UNDEF)
 	//	execerror("undefined variable", d.sym->name);
-	d.val = d.sym->u.val;
+	if (d.sym->type == NUM)
+	    d.val = d.sym->u.val;
+	else if (d.sym->type == STRING)
+	    d.str = d.sym->u.str;
+	else if (d.sym->type == NAME) {
+            debug("NAME");
+	    d.sym = d.sym;
+	}
+	else
+	    assert(0);
+	
+ 
 	push(d);
 	return 0;
 }
@@ -198,8 +255,9 @@ Inst *code(Inst f)	/* install one instruction or operand */
 
 void execute(Inst *p)	/* run the machine */
 {
-	for (pc = p; *pc != STOP; )
+	for (pc = p; *pc != STOP; ) {
 		(*(*pc++))();
+	}
 }
 
 }
