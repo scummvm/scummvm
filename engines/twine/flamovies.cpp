@@ -154,7 +154,6 @@ void FlaMovies::scaleFla2x() {
 
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
-	int32 aux = 0;
 
 	file.read(&frameData.videoSize, 1);
 	file.read(&frameData.dummy, 1);
@@ -172,7 +171,7 @@ void FlaMovies::processFrame() {
 	}
 
 	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
-	do {
+	for (int32 frame = 0; frame < frameData.videoSize; ++frame) {
 		const uint8 opcode = stream.readByte();
 		stream.skip(1);
 		const uint32 opcodeBlockSize = stream.readUint16LE();
@@ -212,8 +211,9 @@ void FlaMovies::processFrame() {
 		}
 		case kDeltaFrame: {
 			drawDeltaFrame(stream, FLASCREEN_WIDTH);
-			if (_fadeOut == 1)
-				fadeOutFrames++;
+			if (_fadeOut == 1) {
+				++fadeOutFrames;
+			}
 			break;
 		}
 		case kKeyFrame: {
@@ -225,9 +225,8 @@ void FlaMovies::processFrame() {
 		}
 		}
 
-		aux++;
 		stream.seek(pos + opcodeBlockSize);
-	} while (aux < (int32)frameData.videoSize);
+	}
 }
 
 /** Play FLA PCX Screens
