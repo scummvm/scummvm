@@ -140,7 +140,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 						_km.y = _mouseYZone[_currentZone] * MULTIPLIER;
 
 						if (_graphicsManager) {
-							_graphicsManager->getWindow()->warpMouseInWindow(event.mouse.x, event.mouse.y);
+							dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindow()->warpMouseInWindow(event.mouse.x, event.mouse.y);
 						}
 				}
 
