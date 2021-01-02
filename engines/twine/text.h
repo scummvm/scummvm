@@ -196,6 +196,7 @@ private:
 	char *_currDialTextPtr = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
+	static const int32 _lineHeight = 38;
 
 	char currMenuTextBuffer[256];
 	int32 currMenuTextBank = TextBankId::None;

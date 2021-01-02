@@ -569,8 +569,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	// reached a new line that is about get faded in
 	_dialTextBoxCurrentLine++;
 
-	const int32 lineHeight = 38;
-	_dialTextYPos += lineHeight;
+	_dialTextYPos += _lineHeight;
 	_dialTextXPos = _dialTextBox.left + 8;
 
 	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
