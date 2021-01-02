@@ -11,8 +11,11 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/str.h"
 
 #include "engines/util.h"
+
+#include "image/bmp.h"
 
 #include "private/private.h"
 #include "private/grammar.tab.h"
@@ -28,13 +31,21 @@ PrivateEngine *_private = NULL;
 
 extern int parse(char*);
 
-Common::String &lowercase(Common::String &val) {
-	Common::String::iterator i;
-	for (i = val.begin(); i != val.end(); i++)
-		*i = tolower(*i);
-	return val;
-}
+Common::String convertPath(Common::String name) {
+	Common::String path(name);
+        Common::String s1("\\");
+        Common::String s2("/");
 
+        Common::replace(path, s1, s2);
+        s1 = Common::String("\"");
+        s2 = Common::String("");
+
+        Common::replace(path, s1, s2);
+        Common::replace(path, s1, s2);
+	
+	path.toLowercase();
+	return path;
+}
 
 PrivateEngine::PrivateEngine(OSystem *syst)
 	: Engine(syst) {
@@ -87,6 +98,8 @@ Common::Error PrivateEngine::run() {
 	_screenW = 640;
 	_screenH = 480;
 	initGraphics(_screenW, _screenH);
+        _image = new Image::BitmapDecoder();
+	_compositeSurface = nullptr;
 
 	// You could use backend transactions directly as an alternative,
 	// but it isn't recommended, until you want to handle the error values
@@ -121,7 +134,7 @@ Common::Error PrivateEngine::run() {
 
 	// Simple main event loop
 	Common::Event evt;
-        _videoDecoder = new Video::SmackerDecoder();
+        _videoDecoder = nullptr; //new Video::SmackerDecoder();
 
 	_nextSetting = new Common::String("kGoIntro");
 
@@ -139,6 +152,9 @@ Common::Error PrivateEngine::run() {
 				drawScreen();
 			}
 		}
+
+		if (_compositeSurface)
+			drawScreen();
 
 		if (_nextSetting != NULL) {
 			debug("Executing %s", _nextSetting->c_str());
@@ -181,20 +197,9 @@ void PrivateEngine::syncGameStream(Common::Serializer &s) {
 void PrivateEngine::playSound(const Common::String &name) {
 	debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
 
-	Common::String path(name);
-        Common::String s1("\\");
-        Common::String s2("/");
-
-        Common::replace(path, s1, s2);
-        s1 = Common::String("\"");
-        s2 = Common::String("");
-
-        Common::replace(path, s1, s2);
-        Common::replace(path, s1, s2);
-	
-	lowercase(path);
-
 	Common::File *file = new Common::File();
+        Common::String path = convertPath(name);
+
 	if (!file->open(path))
 		error("unable to find sound file %s", path.c_str());
 
@@ -222,25 +227,58 @@ void PrivateEngine::stopSound() {
 		_mixer->stopHandle(_soundHandle);
 }
 
+void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
+	debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+	Common::File file;
+	Common::String path = convertPath(name);
+	if (!file.open(path))
+		error("unable to load image %s", path.c_str());
+
+	_image->loadStream(file);
+        Graphics::Surface *surf; 
+	if (!_compositeSurface)
+	    _compositeSurface = new Graphics::Surface();
+  	    _compositeSurface->create(_screenW, _screenH, _image->getSurface()->format );
+
+        _compositeSurface->copyRectToSurface(*_image->getSurface(), x, y,
+					Common::Rect(0, 0, _image->getSurface()->w, _image->getSurface()->h));
+
+	//delete _compositeSurface;
+	/*if (_compositeSurface) {
+		delete _compositeSurface;
+		_compositeSurface = nullptr;
+	}*/
+	drawScreen();
+}
+
+
 void PrivateEngine::drawScreen() {
-	if (_videoDecoder && _videoDecoder->needsUpdate()) {
+	if (_videoDecoder ? _videoDecoder->needsUpdate() : false || _compositeSurface) {
 		Graphics::Surface *screen = g_system->lockScreen();
-		screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
+		//screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
 
 		const Graphics::Surface *surface;
-		surface = _videoDecoder->decodeNextFrame();
+                /*if (_videoDecoder)
+			surface = _videoDecoder->decodeNextFrame();
+		else*/ if (_compositeSurface)
+			surface = _compositeSurface;
+		else
+			assert(0);
+		//	surface = _image->getSurface();
 
 		int w = surface->w; //CLIP<int>(surface->w, 0, _screenW);
 		int h = surface->h; //CLIP<int>(surface->h, 0, _screenH);
 
 		//int x = (_screenW - w) / 2;
 		//int y = (_screenH - h) / 2;
-     	        //debug("%d %d %d %d", w, h, x, y);
+     	        //debug("%d %d", w, h);
 
 		screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, w, h));
 
 		g_system->unlockScreen();
- 	        g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);	
+		if (_image->getPalette() != nullptr)
+			g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
+	        //g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);	
 		g_system->updateScreen();
 	}
 }

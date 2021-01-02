@@ -33,7 +33,6 @@ void saveSetting(char *name)
 	Common::String s(name);
 	settingcode.setVal(s, psetting);
         debug("setting %s %x, %x, %x", name, psetting, psetting->prog, psetting->stack);
-
 }
 
 void loadSetting(Common::String *name) 
@@ -104,17 +103,11 @@ int funcpush() //(char *name, int nargs)
 	debug("executing %s with %d params", s.str, n.val);
 	for (int i = 0; i < n.val; i++) {
 		arg = pop();
-		//if (arg.sym != NULL)
-		//	debug("arg name", arg->sym->name.c_str());
-	        debug("%d", arg.val);
+	        //debug("%d", arg.val);
 		args.insert(args.begin(), arg) ;
         }
 
         execFunction(s.str, args);
-	//pc++;
-        //d.sym = (Symbol *)(*pc++);
-	//printf("var pushing %s", d.sym->name);
-	//push(d);
 	return 0;
 }
 
@@ -234,14 +227,6 @@ int ne()
 	d1 = pop();
 	d1.val = (int)(d1.val  !=  d2.val);
 	push(d1);
-	return 0;
-}
-
-int print()		/* pop top value from stack, print it */
-{
-	Datum d;
-	d = pop();
-	//printf("\t%d\n", d.val);
 	return 0;
 }
 
