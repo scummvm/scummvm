@@ -185,6 +185,7 @@ public:
 	int32 entityDataSize = 0;
 
 	bool isAttackAnimationActive() const;
+	bool isJumpAnimationActive() const;
 
 	int32 x = 0;
 	int32 y = 0;

@@ -48,13 +48,6 @@ ScopedKeyMap::~ScopedKeyMap() {
 
 Input::Input(TwinEEngine *engine) : _engine(engine) {}
 
-void Input::toggleMovementActions() {
-	actionStates[TwinEActionType::MoveForward] = 0;
-	actionStates[TwinEActionType::MoveBackward] = 0;
-	actionStates[TwinEActionType::TurnRight] = 0;
-	actionStates[TwinEActionType::TurnLeft] = 0;
-}
-
 bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
 	if (onlyFirstTime) {
 		return actionStates[actionType] == 1;
