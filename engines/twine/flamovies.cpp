@@ -23,11 +23,14 @@
 #include "twine/flamovies.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "image/pcx.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/scene/grid.h"
 #include "twine/input.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
+#include "twine/resources/resources.h"
+#include "twine/scene/grid.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -227,20 +230,89 @@ void FlaMovies::processFrame() {
 	}
 }
 
-/** Play FLA PCX Screens
-	@param flaName FLA movie name */
-static void fla_pcxList(const char *flaName) {
-	// TODO if is using FLA PCX than show the images instead
+FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
+
+void FlaMovies::preparePCX(int index) {
+	Image::PCXDecoder pcxDecoder;
+	Common::SeekableReadStream *stream = HQR::makeReadStream("FLA_PCX.HQR", index);
+	if (stream != nullptr) {
+		if (!pcxDecoder.loadStream(*stream)) {
+			delete stream;
+			return;
+		}
+	}
+	const Graphics::Surface *surface = pcxDecoder.getSurface();
+	if (surface != nullptr) {
+		const Common::Rect srect(0, 0, surface->w, surface->h);
+		_engine->frontVideoBuffer.transBlitFrom(*surface, srect, _engine->frontVideoBuffer.getBounds());
+	}
+	delete stream;
+	// TODO FLA_GIF.HQR
 }
 
-FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
+void FlaMovies::playPCXMovie(const char *flaName) {
+	if (!Common::File::exists("FLA_PCX.HQR") || !Common::File::exists("FLA_GIF.HQR")) {
+		warning("FLA_PCX file doesn't exist!");
+		return;
+	}
+
+	// TODO: use the HQR 23th entry (movies informations)
+	if (!strcmp(flaName, FLA_INTROD)) {
+		preparePCX(1);
+		g_system->delayMillis(5000);
+		preparePCX(2);
+		g_system->delayMillis(5000);
+		preparePCX(3);
+		g_system->delayMillis(5000);
+		preparePCX(4);
+		g_system->delayMillis(5000);
+		preparePCX(5);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "BAFFE") || !strcmp(flaName, "BAFFE2") || !strcmp(flaName, "BAFFE3") || !strcmp(flaName, "BAFFE4")) {
+		preparePCX(6);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "bateau") || !strcmp(flaName, "bateau2")) {
+		preparePCX(7);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "flute2")) {
+		preparePCX(8);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "navette")) {
+		preparePCX(15);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "templebu")) {
+		preparePCX(12);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "glass2")) {
+		preparePCX(8);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "surf")) {
+		preparePCX(9);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "verser") || !strcmp(flaName, "verser2")) {
+		preparePCX(10);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "capture")) {
+		preparePCX(14);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "neige2")) {
+		preparePCX(11);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "sendel")) {
+		preparePCX(14);
+		g_system->delayMillis(5000);
+	} else if (!strcmp(flaName, "sendel2")) {
+		preparePCX(17);
+		g_system->delayMillis(5000);
+	}
+}
 
 void FlaMovies::playFlaMovie(const char *flaName) {
 	_engine->_sound->stopSamples();
 
 	// Play FLA PCX instead of movies
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAPCX) {
-		fla_pcxList(flaName);
+		playPCXMovie(flaName);
 		return;
 	}
 
@@ -297,7 +369,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
 				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
-				if (!currentFrame) {
+				if (currentFrame == 0) {
 					// fade in the first frame
 					_engine->_screens->fadeIn(_engine->_screens->paletteRGBACustom);
 				} else {
@@ -326,109 +398,5 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 	_engine->_sound->stopSamples();
 }
-
-/*
-void fla_pcxList(char *flaName)
-{
-	// check if FLAPCX file exist
-//	if(!checkIfFileExist("FLA_PCX.HQR") || !checkIfFileExist("FLA_GIF.HQR")){
-//		printf("FLA_PCX file doesn't exist!");
-		//return;
-	//}
-
-	// TODO: done this with the HQR 23th entry (movies informations)
-	if(!strcmp(flaName,"INTROD"))
-	{
-		prepareFlaPCX(1);
-		WaitTime(5000);
-		prepareFlaPCX(2);
-		WaitTime(5000);
-		prepareFlaPCX(3);
-		WaitTime(5000);
-		prepareFlaPCX(4);
-		WaitTime(5000);
-		prepareFlaPCX(5);
-		WaitTime(5000);
-
-	}
-	else if(!strcmp(flaName,"BAFFE") || !strcmp(flaName,"BAFFE2") || !strcmp(flaName,"BAFFE3") || !strcmp(flaName,"BAFFE4"))
-	{
-		prepareFlaPCX(6);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"bateau") || !strcmp(flaName,"bateau2"))
-	{
-		prepareFlaPCX(7);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"flute2"))
-	{
-		prepareFlaPCX(8);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"navette"))
-	{
-		prepareFlaPCX(15);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"templebu"))
-	{
-		prepareFlaPCX(12);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"glass2"))
-	{
-		prepareFlaPCX(8);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"surf"))
-	{
-		prepareFlaPCX(9);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"verser") || !strcmp(flaName,"verser2"))
-	{
-		prepareFlaPCX(10);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"capture"))
-	{
-		prepareFlaPCX(14);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"neige2"))
-	{
-		prepareFlaPCX(11);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"sendel"))
-	{
-		prepareFlaPCX(14);
-		WaitTime(5000);
-	}
-	else if(!strcmp(flaName,"sendel2"))
-	{
-		prepareFlaPCX(17);
-		WaitTime(5000);
-	}
-}
-
-void prepareFlaPCX(int index)
-{
-	int i;
-	SDL_Surface *image;
-
-	// TODO: Done this without SDL_Image Library
-	if(checkIfFileExist("FLA_PCX.HQR"))
-		image = IMG_LoadPCX_RW(SDL_RWFromMem(HQR_Get(HQR_FlaPCX,index), Size_HQR("FLA_PCX.HQR", index))); // rwop
-	else if(checkIfFileExist("FLA_GIF.HQR"))
-		image = IMG_LoadGIF_RW(SDL_RWFromMem(HQR_Get(HQR_FlaGIF,index), Size_HQR("fla_gif.hqr", index))); // rwop
-
-	if(!image) {
-		printf("Can't load FLA PCX: %s\n", IMG_GetError());
-	}
-
-	osystem_FlaPCXCrossFade(image);
-}*/
 
 } // namespace TwinE

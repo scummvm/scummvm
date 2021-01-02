@@ -93,6 +93,9 @@ private:
 	void scaleFla2x();
 	void processFrame();
 
+	void preparePCX(int index);
+	void playPCXMovie(const char *flaName);
+
 public:
 	FlaMovies(TwinEEngine *engine);
 
