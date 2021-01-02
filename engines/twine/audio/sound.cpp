@@ -76,6 +76,13 @@ void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
 		return;
 	}
 
+	// Fix incorrect sample files first byte
+	if (*sampPtr != 'C') {
+		_engine->_text->hasHiddenVox = *sampPtr != '\0';
+		_engine->_text->voxHiddenIndex++;
+		*sampPtr = 'C';
+	}
+
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
