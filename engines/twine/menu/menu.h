@@ -30,7 +30,7 @@
 namespace TwinE {
 
 #define MAX_BUTTONS 10
-#define PLASMA_WIDTH (SCREEN_WIDTH / 2)
+#define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
@@ -203,10 +203,9 @@ public:
 
 	/**
 	 * Process the plasma effect
-	 * @param top top height where the effect will be draw in the front buffer
 	 * @param color plasma effect start color
 	 */
-	void processPlasmaEffect(int32 left, int32 top, int32 color);
+	void processPlasmaEffect(const Common::Rect &rect, int32 color);
 
 	/**
 	 * Draw the entire button box

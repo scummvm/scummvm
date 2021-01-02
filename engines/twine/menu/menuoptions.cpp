@@ -212,13 +212,13 @@ void MenuOptions::drawSelectableCharacters() {
 
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	const int32 left = 10;
-	if (type == 1) {
-		_engine->_menu->processPlasmaEffect(left, top, 32);
-	}
-
 	const int right = SCREEN_WIDTH - left;
 	const int bottom = top + PLASMA_HEIGHT;
 	const Common::Rect rect(left, top, right, bottom);
+	if (type == 1) {
+		_engine->_menu->processPlasmaEffect(rect, 32);
+	}
+
 	Common::Rect rectBox(rect);
 	rectBox.grow(-1);
 	_engine->_menu->drawBox(rect);

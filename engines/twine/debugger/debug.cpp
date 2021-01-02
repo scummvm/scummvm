@@ -401,7 +401,7 @@ int32 Debug::debugProcessButton(int32 x, int32 y) {
 }
 
 void Debug::debugPlasmaWindow(const char *text, int32 color) {
-	_engine->_menu->processPlasmaEffect(0, 5, color);
+	_engine->_menu->processPlasmaEffect(Common::Rect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT), color);
 	if (!(_engine->getRandomNumber() % 5)) {
 		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 	}

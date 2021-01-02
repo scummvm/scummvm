@@ -209,16 +209,16 @@ void Menu::plasmaEffectRenderFrame() {
 	memcpy(plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
 }
 
-void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
+void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 	const int32 max_value = color + 15;
 
 	plasmaEffectRenderFrame();
 
 	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, top);
+	uint8 *out = (uint8 *)_engine->imageBuffer.getBasePtr(0, 0);
 
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
-		int32 yOffset = y * SCREEN_WIDTH;
+		int32 yOffset = y * _engine->imageBuffer.w;
 		const uint8 *colPtr = &in[y * PLASMA_WIDTH];
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
 			const uint8 c = MIN(*colPtr / 2 + color, max_value);
@@ -226,12 +226,14 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 			const int32 target = 2 * yOffset;
 			out[target + 0] = c;
 			out[target + 1] = c;
-			out[target + SCREEN_WIDTH + 0] = c;
-			out[target + SCREEN_WIDTH + 1] = c;
+			out[target + _engine->imageBuffer.w + 0] = c;
+			out[target + _engine->imageBuffer.w + 1] = c;
 			++colPtr;
 			++yOffset;
 		}
 	}
+	const Common::Rect prect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT);
+	_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, prect, rect);
 }
 
 void Menu::drawBox(const Common::Rect &rect) {
@@ -277,13 +279,13 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			}
 			}
 
-			processPlasmaEffect(rect.left, rect.top, 80);
+			processPlasmaEffect(rect, 80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
 			_engine->_interface->drawSplittedBox(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), 68);
 		} else {
-			processPlasmaEffect(rect.left, rect.top, 64);
+			processPlasmaEffect(rect, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
 			}
