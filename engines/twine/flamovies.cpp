@@ -65,28 +65,26 @@ void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int3
 	uint8 *destPtr = (uint8 *)flaBuffer;
 	uint8 *startOfLine = destPtr;
 
-	do {
-		int8 flag1 = stream.readByte();
+	for (int32 y = 0; y < height; ++y) {
+		const int8 lineEntryCount = stream.readByte();
 
-		for (int8 a = 0; a < flag1; a++) {
-			int8 flag2 = stream.readByte();
+		for (int8 a = 0; a < lineEntryCount; a++) {
+			const int8 rleFlag = stream.readByte();
 
-			if (flag2 < 0) {
-				flag2 = -flag2;
-				for (int8 b = 0; b < flag2; b++) {
-					*(destPtr++) = stream.readByte();
+			if (rleFlag < 0) {
+				const int8 rleCnt = ABS(rleFlag);
+				for (int8 b = 0; b < rleCnt; ++b) {
+					*destPtr++ = stream.readByte();
 				}
 			} else {
-				char colorFill = stream.readByte();
-
-				for (int8 b = 0; b < flag2; b++) {
-					*(destPtr++) = colorFill;
-				}
+				const char colorFill = stream.readByte();
+				Common::fill(&destPtr[0], &destPtr[rleFlag], colorFill);
+				destPtr += rleFlag;
 			}
 		}
 
 		startOfLine = destPtr = startOfLine + width;
-	} while (--height);
+	}
 }
 
 void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
