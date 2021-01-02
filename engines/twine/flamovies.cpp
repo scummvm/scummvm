@@ -136,15 +136,14 @@ void FlaMovies::scaleFla2x() {
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (uint32 i = 0; i < SCREEN_WIDTH * 40; i++) {
-			*(dest++) = 0x00;
-		}
+		Common::fill(&dest[0], &dest[SCREEN_WIDTH * 40], 0x00);
+		dest += SCREEN_WIDTH * 40;
 	}
 
 	for (int32 i = 0; i < FLASCREEN_HEIGHT; i++) {
 		for (int32 j = 0; j < FLASCREEN_WIDTH; j++) {
-			*(dest++) = *(source);
-			*(dest++) = *(source++);
+			*dest++ = *source;
+			*dest++ = *source++;
 		}
 		if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
 			memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
@@ -162,9 +161,7 @@ void FlaMovies::scaleFla2x() {
 	}
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (int32 i = 0; i < SCREEN_WIDTH * 40; i++) {
-			*(dest++) = 0x00;
-		}
+		Common::fill(&dest[0], &dest[SCREEN_WIDTH * 40], 0x00);
 	}
 }
 
