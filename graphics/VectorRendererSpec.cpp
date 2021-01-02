@@ -2702,7 +2702,7 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int sw = 0, sp = 0, hp = h * pitch;
+	int sw = 0;
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
@@ -2717,9 +2717,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType color2 = color;
 
 	while (sw++ < Base::_strokeWidth) {
-		blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t); // top
-		blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b); // bottom
-		sp += pitch;
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw);
+		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color1, alpha_t); // top
+
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw);
+		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color2, alpha_b); // bottom
 
 		BE_RESET();
 		r--;
@@ -2752,8 +2754,8 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 
 	ptr_fill += pitch * real_radius;
 	while (short_h--) {
-		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color1, alpha_l); // left
-		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2, alpha_r); // right
+		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color, alpha_l); // left
+		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color, alpha_r); // right
 		ptr_fill += pitch;
 	}
 }
@@ -3612,17 +3614,17 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
 	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	int sw = 0, sp = 0;
+	int sw = 0;
 	int short_h = h - 2 * r;
-	int hp = h * pitch;
 
 	int strokeWidth = Base::_strokeWidth;
 
 	while (sw++ < strokeWidth) {
-		this->blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color, alpha_b); // bottom
-		this->blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color, alpha_t); // top
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw);
+		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color, alpha_t); // top
 
-		sp += pitch;
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw);
+		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color, alpha_b); // bottom
 
 		x = r - (sw - 1);
 		y = 0;
