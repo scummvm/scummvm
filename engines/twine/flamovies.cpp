@@ -293,13 +293,13 @@ void FlaMovies::playPCXMovie(const char *flaName) {
 		preparePCX(10);
 		g_system->delayMillis(5000);
 	} else if (!strcmp(flaName, "capture")) {
-		preparePCX(14);
+		preparePCX(14); // TODO: same as sendel?
 		g_system->delayMillis(5000);
 	} else if (!strcmp(flaName, "neige2")) {
 		preparePCX(11);
 		g_system->delayMillis(5000);
 	} else if (!strcmp(flaName, "sendel")) {
-		preparePCX(14);
+		preparePCX(14); // TODO: same as capture?
 		g_system->delayMillis(5000);
 	} else if (!strcmp(flaName, "sendel2")) {
 		preparePCX(17);
