@@ -28,6 +28,7 @@
 
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/events/switchsdl/switchsdl-events.h"
+#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/platform/sdl/sdl.h"
 #include "engines/engine.h"
