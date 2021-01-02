@@ -800,8 +800,10 @@ void AdLibDriver::writeOPL(byte reg, byte val) {
 
 void AdLibDriver::initChannel(Channel &channel) {
 	debugC(9, kDebugLevelSound, "initChannel(%lu)", (long)(&channel - _channels));
-	memset(&channel.dataptr, 0, sizeof(Channel) - ((char *)&channel.dataptr - (char *)&channel));
+	uint8 backupEL2 = channel.opExtraLevel2;
+	memset(&channel, 0, sizeof(Channel));
 
+	channel.opExtraLevel2 = backupEL2;
 	channel.tempo = 0xFF;
 	channel.priority = 0;
 	// normally here are nullfuncs but we set nullptr for now
