@@ -161,6 +161,15 @@ private:
 		return timer < old;
 	}
 
+	const uint8 *checkDataOffset(const uint8 *ptr, long n) {
+		if (ptr) {
+			long offset = ptr - _soundData;
+			if (n >= -offset && n <= (long)_soundDataSize - offset)
+				return ptr + n;
+		}
+		return nullptr;
+	}
+
 	// The sound data has two lookup tables:
 	// * One for programs, starting at offset 0.
 	// * One for instruments, starting at offset 300, 500, or 1000.
@@ -540,11 +549,11 @@ void AdLibDriver::setupPrograms() {
 	// program, plus 2 more bytes (opcode, _sfxVelocity) for sound effects.
 	// More data is needed, but executePrograms() checks for that.
 	// Also ignore request for invalid channel number.
-	if (!ptr || ptr - _soundData + 2 > _soundDataSize)
+	if (!checkDataOffset(ptr, 2))
 		return;
 
 	const int chan = *ptr;
-	if (chan > 9 || (chan < 9 && ptr - _soundData + 4 > _soundDataSize))
+	if (chan > 9 || (chan < 9 && !checkDataOffset(ptr, 4)))
 		return;
 
 	Channel &channel = _channels[chan];
@@ -717,15 +726,15 @@ void AdLibDriver::executePrograms() {
 			uint8 opcode = 0xFF;
 			// Safety check to avoid illegal access.
 			// Stop channel if not enough data.
-			if (dataptr - _soundData < _soundDataSize)
+			if (checkDataOffset(dataptr, 1))
 				opcode = *dataptr++;
-			if (opcode < 0x80 && dataptr - _soundData == _soundDataSize)
+			if (opcode < 0x80 && !checkDataOffset(dataptr, 1))
 				opcode = 0xFF;
 
 			if (opcode & 0x80) {
 				opcode = CLIP(opcode & 0x7F, 0, _parserOpcodeTableSize - 1);
 				// Safety check for end of data.
-				if (dataptr - _soundData + _parserOpcodeTable[opcode].values > _soundDataSize)
+				if (!checkDataOffset(dataptr, _parserOpcodeTable[opcode].values))
 					opcode = _parserOpcodeTableSize - 1;
 
 				const ParserOpcode &op = _parserOpcodeTable[opcode];
@@ -960,7 +969,7 @@ void AdLibDriver::setupInstrument(uint8 regOffset, const uint8 *dataptr, Channel
 		return;
 
 	// Safety check: need 11 bytes of data.
-	if (dataptr - _soundData + 11 > _soundDataSize)
+	if (!checkDataOffset(dataptr, 11))
 		return;
 
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
@@ -1288,7 +1297,7 @@ int AdLibDriver::update_checkRepeat(const uint8 *&dataptr, Channel &channel, uin
 		int16 add = READ_LE_UINT16(dataptr - 2);
 
 		// Safety check: ignore jump to invalid address
-		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
+		if (!checkDataOffset(dataptr, add))
 			warning("AdlibDriver::update_checkRepeat: Ignoring invalid offset %i", add);
 		else
 			dataptr += add;
@@ -1308,7 +1317,7 @@ int AdLibDriver::update_setupProgram(const uint8 *&dataptr, Channel &channel, ui
 	// them.
 	// This, for example, happens in the Lands of Lore intro when Scotia gets
 	// the ring in the intro.
-	if (!ptr || ptr - _soundData + 2 > _soundDataSize) {
+	if (!checkDataOffset(ptr, 2)) {
 		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupProgram: Invalid program %d specified", value);
 		return 0;
 	}
@@ -1355,18 +1364,12 @@ int AdLibDriver::update_setNoteSpacing(const uint8 *&dataptr, Channel &channel, 
 int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
-	if (_version == 1) {
-		// Safety check: ignore jump to invalid address
-		if (add < 191 || add - 191 >= (int32)_soundDataSize)
-			dataptr = nullptr;
-		else
-			dataptr = _soundData + add - 191;
-	} else {
-		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
-			dataptr = nullptr;
-		else
-			dataptr += add;
-	}
+	// Safety check: ignore jump to invalid address
+	if (_version == 1)
+		dataptr = checkDataOffset(_soundData, add - 191);
+	else
+		dataptr = checkDataOffset(dataptr, add);
+
 	if (!dataptr) {
 		warning("AdlibDriver::update_jump: Invalid offset %i, stopping channel", add);
 		return update_stopChannel(dataptr, channel, 0);
@@ -1386,17 +1389,11 @@ int AdLibDriver::update_jumpToSubroutine(const uint8 *&dataptr, Channel &channel
 		return 0;
 	}
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
-	if (_version < 3) {
-		if (add < 191 || add - 191 >= (int32)_soundDataSize)
-			dataptr = nullptr;
-		else
-			dataptr = _soundData + add - 191;
-	} else {
-		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
-			dataptr = nullptr;
-		else
-			dataptr += add;
-	}
+	if (_version < 3)
+		dataptr = checkDataOffset(_soundData, add - 191);
+	else
+		dataptr = checkDataOffset(dataptr, add);
+
 	if (!dataptr)
 		dataptr = channel.dataptrStack[--channel.dataptrStackPos];
 	return 0;
