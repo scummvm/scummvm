@@ -24,8 +24,17 @@ namespace Private {
 
 Common::String *_nextSetting = NULL;
 int _mode = -1;
+PrivateEngine *_private = NULL;
 
 extern int parse(char*);
+
+Common::String &lowercase(Common::String &val) {
+	Common::String::iterator i;
+	for (i = val.begin(); i != val.end(); i++)
+		*i = tolower(*i);
+	return val;
+}
+
 
 PrivateEngine::PrivateEngine(OSystem *syst)
 	: Engine(syst) {
@@ -48,6 +57,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
 	_rnd = new Common::RandomSource("private");
 
 	debug("PrivateEngine::PrivateEngine");
+	_private = this;
 }
 
 PrivateEngine::~PrivateEngine() {
@@ -170,9 +180,23 @@ void PrivateEngine::syncGameStream(Common::Serializer &s) {
 
 void PrivateEngine::playSound(const Common::String &name) {
 	debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+
+	Common::String path(name);
+        Common::String s1("\\");
+        Common::String s2("/");
+
+        Common::replace(path, s1, s2);
+        s1 = Common::String("\"");
+        s2 = Common::String("");
+
+        Common::replace(path, s1, s2);
+        Common::replace(path, s1, s2);
+	
+	lowercase(path);
+
 	Common::File *file = new Common::File();
-	if (!file->open(name))
-		error("unable to find sound file %s", name.c_str());
+	if (!file->open(path))
+		error("unable to find sound file %s", path.c_str());
 
 	Audio::AudioStream *stream;
 	stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);

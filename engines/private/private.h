@@ -58,6 +58,8 @@ public:
 
 };
 
+extern PrivateEngine *_private;
+
 // Example console class
 class Console : public GUI::Debugger {
 public:
@@ -67,6 +69,6 @@ public:
 	}
 };
 
-} // End of namespace Quux
+} // End of namespace Private
 
 #endif
