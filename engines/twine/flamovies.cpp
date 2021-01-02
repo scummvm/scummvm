@@ -90,29 +90,20 @@ void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int3
 }
 
 void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
-	int32 a, b;
-	uint16 skip;
-	uint8 *destPtr;
-	uint8 *startOfLine;
-	int32 height;
+	uint16 skip = stream.readUint16LE() * width;
+	uint8 *destPtr = (uint8 *)flaBuffer + skip;
+	uint8 *startOfLine = destPtr;
+	int32 height = stream.readSint16LE();
 
-	int8 flag1;
-	int8 flag2;
+	for (int32 y = 0; y < height; ++y) {
+		const int8 flag1 = stream.readByte();
 
-	skip = stream.readUint16LE();
-	skip *= width;
-	startOfLine = destPtr = (uint8 *)flaBuffer + skip;
-	height = stream.readSint16LE();
-
-	do {
-		flag1 = stream.readByte();
-
-		for (a = 0; a < flag1; a++) {
+		for (int32 a = 0; a < flag1; a++) {
 			destPtr += stream.readByte();
-			flag2 = stream.readByte();
+			int8 flag2 = stream.readByte();
 
 			if (flag2 > 0) {
-				for (b = 0; b < flag2; b++) {
+				for (int32 b = 0; b < flag2; b++) {
 					*(destPtr++) = stream.readByte();
 				}
 			} else {
@@ -121,14 +112,14 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 
 				colorFill = stream.readByte();
 
-				for (b = 0; b < flag2; b++) {
+				for (int32 b = 0; b < flag2; b++) {
 					*(destPtr++) = colorFill;
 				}
 			}
 		}
 
 		startOfLine = destPtr = startOfLine + width;
-	} while (--height);
+	}
 }
 
 void FlaMovies::scaleFla2x() {
