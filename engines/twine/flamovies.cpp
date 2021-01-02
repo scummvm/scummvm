@@ -90,31 +90,27 @@ void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int3
 }
 
 void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
-	uint16 skip = stream.readUint16LE() * width;
+	const uint16 skip = stream.readUint16LE() * width;
+	const int32 height = stream.readSint16LE();
+
 	uint8 *destPtr = (uint8 *)flaBuffer + skip;
 	uint8 *startOfLine = destPtr;
-	int32 height = stream.readSint16LE();
-
 	for (int32 y = 0; y < height; ++y) {
-		const int8 flag1 = stream.readByte();
+		const int8 lineEntryCount = stream.readByte();
 
-		for (int32 a = 0; a < flag1; a++) {
+		for (int8 a = 0; a < lineEntryCount; ++a) {
 			destPtr += stream.readByte();
-			int8 flag2 = stream.readByte();
+			const int8 rleFlag = stream.readByte();
 
-			if (flag2 > 0) {
-				for (int32 b = 0; b < flag2; b++) {
-					*(destPtr++) = stream.readByte();
+			if (rleFlag > 0) {
+				for (int8 b = 0; b < rleFlag; ++b) {
+					*destPtr++ = stream.readByte();
 				}
 			} else {
-				char colorFill;
-				flag2 = -flag2;
-
-				colorFill = stream.readByte();
-
-				for (int32 b = 0; b < flag2; b++) {
-					*(destPtr++) = colorFill;
-				}
+				const char colorFill = stream.readByte();
+				const int8 rleCnt = ABS(rleFlag);
+				Common::fill(&destPtr[0], &destPtr[rleCnt], colorFill);
+				destPtr += rleCnt;
 			}
 		}
 
