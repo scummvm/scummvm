@@ -32,7 +32,7 @@ void saveSetting(char *name)
 {
 	Common::String s(name);
 	settingcode.setVal(s, psetting);
-        debug("setting %s %x, %x, %x", name, psetting, psetting->prog, psetting->stack);
+        debug("setting %s", name);
 }
 
 void loadSetting(Common::String *name) 
@@ -40,7 +40,7 @@ void loadSetting(Common::String *name)
         assert(settingcode.contains(*name));
 	psetting = settingcode.getVal(*name);
 
-	debug("loading setting %s %x, %x, %x", name->c_str(), psetting, psetting->prog, psetting->stack);
+	debug("loading setting %s", name->c_str());
 
         prog = (Inst *) &psetting->prog;
         stack = (Datum *) &psetting->stack;
@@ -236,6 +236,31 @@ Inst *code(Inst f)	/* install one instruction or operand */
 	assert (!(progp >= &prog[NPROG]));
 	*progp++ = f;
 	return oprogp;
+}
+
+int ifcode()
+{
+	Datum d;
+	Inst *savepc = pc;	/* then part */
+
+	execute(savepc+3);	/* condition */
+	d = pop();
+	debug("ifcode %s %d", d.sym->name->c_str(), d.sym->u.val);
+	d.val = d.sym->u.val;
+	debug("then: %x", *((Inst **)(savepc)));
+	//assert(0);
+	if (d.val)
+		execute(*((Inst **)(savepc)));
+	else if (*((Inst **)(savepc+1))) /* else part? */
+		execute(*((Inst **)(savepc+1)));
+	pc = *((Inst **)(savepc+2));	 /* next stmt */
+	return 0;
+}
+
+int fail() 
+{
+	assert(0);
+	return 0;
 }
 
 void execute(Inst *p)	/* run the machine */

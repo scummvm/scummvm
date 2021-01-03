@@ -55,7 +55,7 @@ void Bitmap(ArgArray args) {
 
 void Timer(ArgArray args) {
     debug("Timer(%d, %s, %s)", args[0].val, args[1].str, args[2].str);
-    g_system->delayMillis(1000 * args[0].val);
+    g_system->delayMillis(100 * args[0].val);
     Common::String *s = new Common::String(args[1].str);
     _nextSetting = s; 
 }
