@@ -247,10 +247,10 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
-	ConfMan.setInt("CombatAuto", _actor->autoAgressive ? 1 : 0);
-	ConfMan.setInt("Shadow", cfgfile.ShadowMode);
-	ConfMan.setInt("SceZoom", cfgfile.SceZoom ? 1 : 0);
-	ConfMan.setInt("PolygonDetails", cfgfile.PolygonDetails);
+	ConfMan.setInt("combatauto", _actor->autoAgressive ? 1 : 0);
+	ConfMan.setInt("shadow", cfgfile.ShadowMode);
+	ConfMan.setInt("scezoom", cfgfile.SceZoom ? 1 : 0);
+	ConfMan.setInt("polygondetails", cfgfile.PolygonDetails);
 
 	_sound->stopSamples();
 	_music->stopTrackMusic();
