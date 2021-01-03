@@ -137,7 +137,7 @@ private:
 	 * @param buffer brick pointer buffer
 	 * @param ptr brick mask pointer buffer
 	 */
-	int processGridMask(const uint8 *buffer, uint8 *ptr);
+	void processGridMask(const uint8 *buffer, uint8 *ptr);
 	/**
 	 * Copy grid mask to allow actors to display over the bricks
 	 * @param index current brick index

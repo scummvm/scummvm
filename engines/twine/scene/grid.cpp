@@ -184,14 +184,15 @@ void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
 	}
 }
 
-int Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
-	const uint8 *ptrSave = ptr;
-	int32 ebx = READ_UINT32(buffer); // brick flag
-	buffer += 4;
-	WRITE_LE_UINT32(ptr, (uint32)ebx);
-	ptr += 4;
-
-	uint8 bh = (ebx & 0x0000FF00) >> 8;
+void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
+	const uint8 width = *buffer++;
+	uint8 height = *buffer++;
+	const uint8 offsetX = *buffer++;
+	const uint8 offsetY = *buffer++;
+	*ptr++ = width;
+	*ptr++ = height;
+	*ptr++ = offsetX;
+	*ptr++ = offsetY;
 
 	const uint8 *esi = (const uint8 *)buffer;
 	uint8 *edi = (uint8 *)ptr;
@@ -243,9 +244,7 @@ int Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 		}
 
 		*ptr2 = numOfBlock;
-	} while (--bh > 0);
-
-	return (int)(edi - ptrSave);
+	} while (--height > 0);
 }
 
 void Grid::createGridMask() {
