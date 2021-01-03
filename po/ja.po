@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-01 06:12+0000\n"
-"PO-Revision-Date: 2021-01-02 01:23+0000\n"
+"PO-Revision-Date: 2021-01-03 21:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1570,7 +1570,7 @@ msgstr "使用するサーバーのポート番号"
 #: gui/options.cpp:2275
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
 #: gui/options.cpp:2276
 msgctxt "lowres"
@@ -1579,7 +1579,7 @@ msgstr "設定ウィンドウを閉じると、サーバーは停止されます
 
 #: gui/options.cpp:2278
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
 #: gui/options.cpp:2279
 msgid "Closing options dialog will stop the server."
@@ -1648,6 +1648,8 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"URLを開けませんでした!\n"
+"このページに手動で遷移してください。"
 
 #: gui/options.cpp:2716
 msgid "Another Storage is working now. Do you want to interrupt it?"
@@ -1890,16 +1892,16 @@ msgstr "ゲームを報告する"
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "ボタンを押して、必要なゲーム情報をクリップボードにコピーしてください。"
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "バグを開発チームに直接報告する事もできます。"
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "必要な情報がクリップボードにコピーされました"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
@@ -1920,6 +1922,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"設定は、後から「オプション」→「その他」で\n"
+"変更可能です。"
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -2050,7 +2054,7 @@ msgstr "毎月"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
-msgstr ""
+msgstr "<不正な値>"
 
 #: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2078,7 +2082,7 @@ msgstr "ヘルプ(~H~)"
 
 #: engines/dialogs.cpp:90
 msgid "~A~bout"
-msgstr ""
+msgstr "情報(~A~)"
 
 #: engines/dialogs.cpp:93 engines/dialogs.cpp:169
 msgid "~R~eturn to Launcher"
@@ -2132,14 +2136,14 @@ msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
-msgstr ""
+msgstr "申し訳ありませんが、現在このエンジンではゲーム内ヘルプを提供していません。詳細はREADMEを参照してください。"
 
 #: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
-msgstr ""
+msgstr "ゲーム%sのセーブに失敗しました! 詳細はREADMEを参照してください。"
 
 #: engines/dialogs.cpp:359
 msgid "~O~K"
@@ -2170,7 +2174,7 @@ msgstr "映像モード'%s'に切り替えられませんでした。"
 #: engines/engine.cpp:345
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr ""
+msgstr "ストレッチモード'%s'に切り替えられませんでした。"
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
@@ -2196,6 +2200,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"ゲームをCDから直接プレイしていますが\n"
+"これは問題を起こす事が知られています。\n"
+"代わりに、HDDへデータをコピーして\n"
+"実行する事をおすすめします。\n"
+"詳細はREADMEを参照してください。"
 
 #: engines/engine.cpp:518
 msgid ""
@@ -2205,6 +2214,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"このゲームは、ディスクにオーディオトラックが\n"
+"存在します。これらのトラックは、ゲームで使用\n"
+"するために適切なツールでディスクから抽出する\n"
+"必要があります。\n"
+"詳細はREADMEを参照してください。"
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
@@ -2221,14 +2235,14 @@ msgstr "オートセーブ中にエラーが発生しました"
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
-msgstr ""
+msgstr "セーブ%sのロードに失敗しました! 詳細はREADMEを参照してください。"
 
 #: engines/engine.cpp:649
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
-msgstr ""
+msgstr "警告：このゲームはまだ完全なサポートがなされていません。動作が安定せず、また将来的にセーブデータの互換性が失われる可能性があります。"
 
 #: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
@@ -2269,7 +2283,7 @@ msgstr ""
 #: engines/game.cpp:175
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "エンジン%sにマッチしたゲームID："
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
@@ -2722,7 +2736,7 @@ msgstr "線形フィルターによる画像を拡大する"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Cycle through stretch modes"
-msgstr ""
+msgstr "ストレッチモードを繰り返し切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Increase the scale factor"
@@ -2959,7 +2973,7 @@ msgstr "指定されたパスはディレクトリーではありません!"
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "ひとつ上のディレクトリーに、指定された名前のファイルが存在します!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
 msgid "Failed to create the directory!"
