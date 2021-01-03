@@ -2902,9 +2902,6 @@ case $_host_os in
 			fi
 		fi
 
-		# Building with SDK 10.14+ causes blurry display on Retina screens.
-		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
-		# to n/a (i.e. 0.0). See bug #11430 for details.
 		echocheck "macOS deployment target"
 		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
@@ -2938,23 +2935,6 @@ EOF
 			fi
 		fi
 		echo $_macos_min_version_dot
-
-		# Building with SDK 10.14+ causes blurry display on Retina screens.
-		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
-		# to n/a (i.e. 0.0). See bug #11430 for details.
-		# We do it in any case when the linker supports the -platform_version flag,
-		# even when using an older SDK.
-		echo_n "Checking if linker supports -platform_version... "
-		_macos_has_ld_platform_version=no
-		cat > $TMPC << EOF
-int main(int argc, char *argv[]) { return 0; }
-EOF
-		_macos_ldflags_platform_version="-Xlinker -platform_version -Xlinker macos -Xlinker $_macos_min_version_dot -Xlinker 0.0.0"
-		cc_check $_macos_ldflags_platform_version && _macos_has_ld_platform_version=yes
-		echo $_macos_has_ld_platform_version
-		if test "$_macos_has_ld_platform_version" = yes ; then
-			append_var LDFLAGS "$_macos_ldflags_platform_version"
-		fi
 
 		# Version-specific quirks
 		if test -n "$_macos_min_version" ; then
