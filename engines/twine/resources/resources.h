@@ -229,8 +229,6 @@ public:
 	static constexpr const char *HQR_FLASAMP_FILE = "flasamp.hqr";
 	static constexpr const char *HQR_MIDI_MI_DOS_FILE = "midi_mi.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_FILE = "midi_mi_win.hqr";
-	static constexpr const char *HQR_MIDI_MI_WIN_MP3_FILE = "midi_mi_win_mp3.hqr";
-	static constexpr const char *HQR_MIDI_MI_WIN_OGG_FILE = "midi_mi_win_ogg.hqr";
 };
 
 } // namespace TwinE
