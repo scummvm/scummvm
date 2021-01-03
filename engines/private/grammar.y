@@ -45,6 +45,7 @@ int yywrap()
 
 %token<s> NAME
 %token<sym> STRING NUM
+//%type <inst> value cond expr if
 %token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECTTOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
@@ -67,14 +68,26 @@ statements:  /* nothing */
         | statements statement
 
 
-statement: GOTOTOK expr ';' statements 
-        | fcall ';' statements
-        | IFTOK '(' expr ')' statement statements
-        | IFTOK '(' expr ')' '{' statements '}' ELSETOK '{' statements '}' statements  
-        | IFTOK '(' expr ')' '{' statements '}' statements
-        | IFTOK '(' expr ')' '{' statements '}' ELSETOK statement statements
-        | IFTOK '(' expr ')' statement ELSETOK statement statements
-        | IFTOK '(' expr ')' statement ELSETOK '{' statements '}'
+statement: GOTOTOK expr ';'
+        | fcall ';'        
+        | if cond statement end
+        | if cond body end ELSETOK body end
+        | if cond body end
+        | if cond body end ELSETOK statement end
+	| if cond statement end ELSETOK statement end
+        | if cond statement end ELSETOK body end
+        ;
+
+body: '{' statements '}'
+        ;
+
+end:	  /* nothing */		{ code(STOP);}
+	;
+
+if: IFTOK { code(ifcode); code3(STOP, STOP, STOP); /*code(fail);*/ }
+        ;
+
+cond: '(' expr ')'	{ code(STOP); }
         ;
 
 define:  /* nothing */
@@ -113,7 +126,7 @@ value:    FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconst
         | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }
         ;
 
-expr:     value          
+expr:     value           
         | '!' value       { code1(Private::negate); }
         | value EQ value
         | value NEQ value

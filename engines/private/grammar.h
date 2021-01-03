@@ -8,7 +8,7 @@
 #define PRIVATE_GRAMMAR_H
 
 #define	NSTACK	256
-#define	NPROG	2000
+#define	NPROG	10000
 
 typedef struct Symbol {	/* symbol table entry */
 	Common::String *name;
@@ -90,7 +90,8 @@ extern  int constpush();
 extern  int strpush();
 extern  int funcpush();
 extern  int print();
-
+extern  int ifcode();
+extern  int fail();
 extern  int lt();
 extern  int gt();
 
