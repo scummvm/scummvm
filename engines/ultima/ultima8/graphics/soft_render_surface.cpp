@@ -26,10 +26,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
-#include "ultima/ultima8/misc/memset_n.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
-#include "ultima/ultima8/graphics/point_scaler.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
@@ -49,36 +46,6 @@ namespace Ultima8 {
 //
 template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(Graphics::ManagedSurface *s)
 	: BaseSoftRenderSurface(s) {
-}
-
-
-//
-// SoftRenderSurface::SoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft)
-//
-// Desc: Create a Generic SoftRenderSurface
-//
-template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft, int asft)
-	: BaseSoftRenderSurface(w, h, bpp, rsft, gsft, bsft, asft) {
-}
-
-
-//
-// SoftRenderSurface::SoftRenderSurface(int w, int h)
-//
-// Desc: Create a Generic surface that matches current screen parameters
-//
-template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(int w, int h, uint8 *buf)
-	: BaseSoftRenderSurface(w, h, buf) {
-}
-
-
-//
-// SoftRenderSurface::SoftRenderSurface(int w, int h)
-//
-// Desc: Create a Render to texture surface
-//
-template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(int w, int h)
-	: BaseSoftRenderSurface(w, h) {
 }
 
 
@@ -265,106 +232,30 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 
 
 //
-// SoftRenderSurface::Blit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend)
+// SoftRenderSurface::Blit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend)
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::Blit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
-	// Clamp or wrap or return?
-	if (sx + w > static_cast<int32>(_tex->w))
-		return;
-
-	// Clamp or wrap or return?
-	if (sy + h > static_cast<int32>(_tex->h))
-		return;
-
-	if (sx < 0 || sy < 0)
-		return;
-
-	// Clip to window
-	int px = dx, py = dy;
-	Rect rect(dx, dy, dx + w, dy + h);
-	rect.clip(_clipWindow);
-	dx = rect.left;
-	dy = rect.top;
-	w = rect.width();
-	h = rect.height();
-
-	if (!w || !h) return;
-
-	// Adjust source x and y
-	if (px != dx) sx += dx - px;
-	if (py != dy) sy += dy - py;
-
-	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
-	uint8 *line_end = pixel + w * sizeof(uintX);
-	uint8 *end = pixel + h * _pitch;
-	int diff = _pitch - w * sizeof(uintX);
-
-	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
-		int tex_diff = _tex->w - w;
-
-		while (pixel != end) {
-			if (!alpha_blend) while (pixel != line_end) {
-					if (*texel & TEX32_A_MASK) {
-						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(PACK_RGB8(TEX32_R(*texel), TEX32_G(*texel), TEX32_B(*texel)));
-					}
-					pixel += sizeof(uintX);
-					texel++;
-				}
-			else while (pixel != line_end) {
-					uint32 alpha = *texel & TEX32_A_MASK;
-					if (alpha == 0xFF) {
-						*(reinterpret_cast<uintX *>(pixel)) = static_cast<uintX>(PACK_RGB8(TEX32_R(*texel), TEX32_G(*texel), TEX32_B(*texel)));
-					} else if (alpha) {
-						uintX *dest = reinterpret_cast<uintX *>(pixel);
-						*dest = static_cast<uintX>(BlendPreModFast(*texel, *dest));
-					}
-					pixel += sizeof(uintX);
-					texel++;
-				}
-
-			line_end += _pitch;
-			pixel += diff;
-			texel += tex_diff;
-		}
-	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
-		int tex_diff = _tex->w - w;
-
-		while (pixel != end) {
-			while (pixel != line_end) {
-				// Uh, not supported right now
-				//if (*texel & RenderSurface::a_mask)
-				{
-					*(reinterpret_cast<uintX *>(pixel)) = *texel;
-				}
-				pixel += sizeof(uintX);
-				texel++;
-			}
-
-			line_end += _pitch;
-			pixel += diff;
-			texel += tex_diff;
-		}
-	}
-
+template<class uintX> void SoftRenderSurface<uintX>::Blit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
+	Common::Rect srect = Common::Rect(sx, sy, sx + w, sy + h);
+	Common::Point dpoint = Common::Point(_ox + dx, _oy + dy);
+	_surface->blitFrom(*tex, srect, dpoint);
 }
 
 
 //
-// void SoftRenderSurface::FadedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32)
+// void SoftRenderSurface::FadedBlit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32)
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(_tex->w))
+	if (w > static_cast<int32>(tex->w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(_tex->h))
+	if (h > static_cast<int32>(tex->h))
 		return;
 
 	// Clip to window
@@ -394,9 +285,11 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_t
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
-		int tex_diff = _tex->w - w;
+	const Graphics::PixelFormat &texformat = tex->rawSurface().format;
+
+	if (texformat.bpp() == 32) {
+		const uint32 *texel = static_cast<const uint32 *>(tex->getBasePtr(sx, sy));
+		int tex_diff = tex->w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -411,7 +304,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_t
 					}
 					pixel += sizeof(uintX);
 					texel++;
-				}
+			}
 			else while (pixel != line_end) {
 					uint32 alpha = *texel & TEX32_A_MASK;
 					if (alpha == 0xFF) {
@@ -446,9 +339,9 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_t
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
-		int tex_diff = _tex->w - w;
+	} else if (texformat == _format) {
+		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
+		int tex_diff = tex->w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -465,23 +358,25 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Texture *_t
 			pixel += diff;
 			texel += tex_diff;
 		}
+	} else {
+		error("FadedBlit not supported from %d bpp to %d bpp", texformat.bpp(), _format.bpp());
 	}
 }
 
 
 //
-// void SoftRenderSurface::MaskedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend=false)
+// void SoftRenderSurface::MaskedBlit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend=false)
 //
 // Desc Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
 //
 //
-template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Texture *_tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(_tex->w))
+	if (w > static_cast<int32>(tex->w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(_tex->h))
+	if (h > static_cast<int32>(tex->h))
 		return;
 
 	// Clip to window
@@ -512,9 +407,11 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Texture *_
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	if (_tex->_format == TEX_FMT_STANDARD) {
-		uint32 *texel = (uint32 *)_tex->getBasePtr(sx, sy);
-		int tex_diff = _tex->w - w;
+	int texbpp = tex->rawSurface().format.bpp();
+
+	if (texbpp == 32) {
+		const uint32 *texel = static_cast<const uint32 *>(tex->getBasePtr(sx, sy));
+		int tex_diff = tex->w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) {
@@ -573,9 +470,9 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Texture *_
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (_tex->_format == TEX_FMT_NATIVE) {
-		const uintX *texel = reinterpret_cast<const uintX *>(_tex->getBasePtr(sx, sy));
-		int tex_diff = _tex->w - w;
+	} else if (texbpp == _format.bpp()) {
+		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
+		int tex_diff = tex->w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -594,54 +491,11 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Texture *_
 			pixel += diff;
 			texel += tex_diff;
 		}
+	} else {
+		error("unsupported texture format %d bpp", texbpp);
 	}
 }
 
-
-
-//
-// void SoftRenderSurface::StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges)
-//
-// Desc: Blit a region from a Texture, and arbitrarily stretch it to fit the dest region
-//
-//
-template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(const Texture *texture,
-        int32 sx, int32 sy, int32 sw, int32 sh,
-        int32 dx, int32 dy, int32 dw, int32 dh,
-        bool clampedges) {
-	// Nothing we can do
-	if ((sh <= 0) || (dh <= 0) || (sw <= 0) || (dw <= 0)) return;
-
-	// 1x No scaling needed
-	if (dw == sw && sh == dh) {
-		Blit(texture, sw, sy, sw, sh, dx, dy);
-		return;
-	}
-
-	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
-	Ultima8Engine::get_instance()->point_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, _pitch, clampedges);
-}
-
-//
-// bool SoftRenderSurface::ScalerBlit(Texture *texure, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges)
-//
-// Desc: Blit a region from a Texture using a scaler
-//
-//
-template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(const Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges) {
-	// Nothing we can do
-	if ((sh <= 0) || (dh <= 0) || (sw <= 0) || (dw <= 0)) return false;
-
-	// 1x No scaling needed (but still do it anyway, could be a filter????)
-	if (dw == sw && sh == dh) {
-		Blit(texture, sw, sy, sw, sh, dx, dy);
-		return true;
-	}
-
-	uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
-
-	return scaler->Scale(texture, sx, sy, sw, sh, pixel, dw, dh, _pitch, clampedges);
-}
 
 //
 // void SoftRenderSurface::Paint(Shape*s, uint32 framenum, int32 x, int32 y)

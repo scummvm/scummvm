@@ -35,20 +35,10 @@ namespace Ultima8 {
 // Desc: The class for software rendering in Pentagram
 //
 template<class uintX> class SoftRenderSurface : public BaseSoftRenderSurface {
-protected:
-	// Create Generic surface
-	SoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft, int asft);
-
 public:
 
 	// Create from a managed surface
-	SoftRenderSurface(Graphics::ManagedSurface *);
-
-	// Create a Generic surface that matches current screen parameters
-	SoftRenderSurface(int w, int h, uint8 *buf);
-
-	// Create a Render to texture surface
-	SoftRenderSurface(int w, int h);
+	SoftRenderSurface(Graphics::ManagedSurface *managed);
 
 	//
 	// Surface Filling
@@ -109,19 +99,13 @@ public:
 	//
 
 	// Blit a region from a Texture (Alpha == 0 -> skipped)
-	void Blit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) override;
+	void Blit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) override;
 
 	// Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	void FadedBlit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
+	void FadedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 
 	// Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	void MaskedBlit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
-
-	// Blit a stretched region from a Texture (Alpha == 0 -> skipped)
-	void StretchBlit(const Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) override;
-
-	// Blit a region from a Texture using a scaler
-	bool ScalerBlit(const Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false) override;
+	void MaskedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 };
 
 } // End of namespace Ultima8

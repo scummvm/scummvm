@@ -48,6 +48,8 @@ AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, cons
 	}
 	_xoff = _width / 2 - (vidWidth / 2);
 	_yoff = _height / 2 - (vidHeight / 2);
+	_currentFrame.create(vidWidth, vidHeight, _decoder->getPixelFormat());
+	_currentFrame.fillRect(Common::Rect(0, 0, vidWidth, vidHeight), 0);
 }
 
 AVIPlayer::~AVIPlayer() {
@@ -96,24 +98,26 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 			else
 				pal = _decoder->getPalette();
 
-			_currentFrame.loadSurface8Bit(frame, pal);
+			_currentFrame.setPalette(pal, 0, 256);
+		}
+		if (_doubleSize) {
+			assert(_currentFrame.w == frame->w * 2 && _currentFrame.h == frame->h * 2);
+			for (int y = 0; y < frame->h; y++) {
+				const uint8 *srcPixel = static_cast<const uint8 *>(frame->getPixels()) + frame->pitch * y;
+				uint8 *dstPixels = static_cast<uint8 *>(_currentFrame.getPixels()) + _currentFrame.pitch * y * 2;
+				for (int x = 0; x < frame->w; x++) {
+					dstPixels[x * 2] = *srcPixel;
+					dstPixels[x * 2 + 1] = *srcPixel;
+					srcPixel++;
+				}
+			}
 		} else {
-			_currentFrame.loadSurface(frame);
+			_currentFrame.blitFrom(*frame);
 		}
 	}
 
-	// TODO: Crusader has a CRT-like scaling which it uses in some
-	// movies too (eg, T02 for the intro).  For now just point-scale.
-	if (_doubleSize) {
-		const Scaler *pointScaler = &Ultima8Engine::get_instance()->point_scaler;
-		bool ok = surf->ScalerBlit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-								   _xoff, _yoff, _currentFrame.w * 2, _currentFrame.h * 2,
-								   pointScaler, false);
-		assert(ok);
-	} else {
-		surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-				   _xoff, _yoff);
-	}
+	surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
+			_xoff, _yoff);
 }
 
 void AVIPlayer::run() {

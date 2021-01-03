@@ -81,8 +81,9 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	RenderSurface *surf;
 
 	// TODO: Change this
-	if (_format.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(width, height);
-	else surf = new SoftRenderSurface<uint16>(width, height);
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(width, height, _format);
+	if (_format.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(managedSurface);
+	else surf = new SoftRenderSurface<uint16>(managedSurface);
 	return surf;
 }
 

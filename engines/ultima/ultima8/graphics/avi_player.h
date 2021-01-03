@@ -52,7 +52,7 @@ private:
 
 	bool _playing;
 	Video::AVIDecoder *_decoder;
-	Texture _currentFrame;
+	Graphics::ManagedSurface _currentFrame;
 	// Width and height of the area we've been given to play back in
 	uint32 _width;
 	uint32 _height;

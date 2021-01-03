@@ -38,12 +38,14 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
+
+static const int MINMAPGUMP_SCALE = 8;
+
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
 	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
-	_minimap._format = TEX_FMT_NATIVE;
-	_minimap.create((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
-		TEX_FMT_NATIVE);
+	_minimap = Graphics::ManagedSurface((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
+										RenderSurface::getPixelFormat());
 }
 
 MiniMapGump::MiniMapGump() : Gump() , _lastMapNum(0){
@@ -62,12 +64,12 @@ void MiniMapGump::setPixelAt(int x, int y, uint32 pixel) {
 	}
 }
 
-uint32 MiniMapGump::getPixelAt(int x, int y) {
+uint32 MiniMapGump::getPixelAt(int x, int y) const {
 	if (_minimap.format.bytesPerPixel == 2) {
-		uint16 *buf = (uint16 *)_minimap.getBasePtr(x, y);
+		const uint16 *buf = (const uint16 *)_minimap.getBasePtr(x, y);
 		return *buf;
 	} else {
-		uint32 *buf = (uint32 *)_minimap.getBasePtr(x, y);
+		const uint32 *buf = (const uint32 *)_minimap.getBasePtr(x, y);
 		return *buf;
 	}
 }
@@ -82,11 +84,13 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		_lastMapNum = currentmap->getNum();
 	}
 
+	// Draw the yellow border
 	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 3, 1);
 	surf->Fill32(0xFFFFAF00, 0, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
 	surf->Fill32(0xFFFFAF00, 1, MAP_NUM_CHUNKS * 2 + 1, MAP_NUM_CHUNKS * 2 + 1, 1);
 	surf->Fill32(0xFFFFAF00, MAP_NUM_CHUNKS * 2 + 1, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
 
+	// Draw into the map surface
 	for (int yv = 0; yv < MAP_NUM_CHUNKS; yv++) {
 		for (int xv = 0; xv < MAP_NUM_CHUNKS; xv++) {
 			if (currentmap->isChunkFast(xv, yv)) {
@@ -204,7 +208,7 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 		return false;
 
 	_lastMapNum = 0;
-	_minimap.create(MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, TEX_FMT_NATIVE);
+	_minimap.create(MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, MAP_NUM_CHUNKS * MINMAPGUMP_SCALE, RenderSurface::getPixelFormat());
 
 	return true;
 }

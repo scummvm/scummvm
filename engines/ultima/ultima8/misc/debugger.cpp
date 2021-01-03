@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -828,9 +829,6 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(bwidth,
 		bheight);
 
-	Texture *t = s->GetSurfaceAsTexture();
-	//t->clear();
-
 	debugPrintf("Rendering map...\n");
 
 	// Now render the map
@@ -878,9 +876,9 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	bool result = dumpFile.open(filename);
 	if (result) {
 #ifdef USE_PNG
-		result = Image::writePNG(dumpFile, *t);
+		result = Image::writePNG(dumpFile, *(s->getRawSurface()));
 #else
-		result = Image::writeBMP(dumpFile, *t);
+		result = Image::writeBMP(dumpFile, *(s->getRawSurface()));
 #endif
 	}
 

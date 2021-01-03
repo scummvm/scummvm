@@ -25,13 +25,13 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/graphics/movie_player.h"
+#include "ultima/ultima8/graphics/base_soft_render_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 struct SKFEvent;
 class RawArchive;
-class RenderSurface;
 class RenderedText;
 struct Palette;
 
@@ -64,7 +64,7 @@ private:
 	unsigned int _timer;
 	unsigned int _frameRate;
 	uint8 _fadeColour, _fadeLevel;
-	RenderSurface *_buffer;
+	BaseSoftRenderSurface *_buffer;
 	RenderedText *_subs;
 	int _subtitleY;
 	bool _introMusicHack;

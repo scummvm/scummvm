@@ -172,7 +172,6 @@ void CreditsGump::run() {
 
 	if (_state == CS_PLAYING && available <= 160) {
 		// time to render next block
-
 		_scroll[nextblock]->Fill32(0xFF000000, 0, 0, 256, 200);
 		// _scroll[nextblock]->Fill32(0xFFFFFFFF,0,0,256,5); // block marker
 		_scrollHeight[nextblock] = 0;
@@ -352,22 +351,20 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	if (_title)
 		_title->draw(surf, 64, 34);
 
-	Texture *tex = _scroll[_currentSurface]->GetSurfaceAsTexture();
 	int h = _scrollHeight[_currentSurface] - _currentY;
 	if (h > 156) h = 156;
 	if (h > 0)
-		surf->Blit(tex, 0, _currentY, 256, h, 32, 44);
+		surf->Blit(_scroll[_currentSurface]->getRawSurface(), 0, _currentY, 256, h, 32, 44);
 
 	int y = h;
 	for (int i = 1; i < 4; i++) {
 		if (h == 156) break;
 
 		int s = (_currentSurface + i) % 4;
-		tex = _scroll[s]->GetSurfaceAsTexture();
 		h = _scrollHeight[s];
 		if (h > 156 - y) h = 156 - y;
 		if (h > 0)
-			surf->Blit(tex, 0, 0, 256, h, 32, 44 + y);
+			surf->Blit(_scroll[s]->getRawSurface(), 0, 0, 256, h, 32, 44 + y);
 		y += h;
 	}
 }

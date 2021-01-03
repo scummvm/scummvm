@@ -32,8 +32,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class TTFont : public Font {
-private:
-	Graphics::PixelFormat _pixelFormat;
 public:
 	TTFont(Graphics::Font *font, uint32 rgb, int bordersize,
 	       bool antiAliased, bool SJIS);

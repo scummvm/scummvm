@@ -427,7 +427,6 @@ MODULE_OBJS := \
 	ultima8/graphics/palette.o \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
-	ultima8/graphics/point_scaler.o \
 	ultima8/graphics/raw_shape_frame.o \
 	ultima8/graphics/render_surface.o \
 	ultima8/graphics/shape.o \
@@ -436,14 +435,9 @@ MODULE_OBJS := \
 	ultima8/graphics/shape_info.o \
 	ultima8/graphics/skf_player.o \
 	ultima8/graphics/soft_render_surface.o \
-	ultima8/graphics/texture.o \
-	ultima8/graphics/texture_bitmap.o \
-	ultima8/graphics/texture_png.o \
 	ultima8/graphics/type_flags.o \
 	ultima8/graphics/wpn_ovlay_dat.o \
 	ultima8/graphics/xform_blend.o \
-	ultima8/graphics/texture_targa.o \
-	ultima8/graphics/fonts/fixed_width_font.o \
 	ultima8/graphics/fonts/font.o \
 	ultima8/graphics/fonts/font_manager.o \
 	ultima8/graphics/fonts/font_shape_archive.o \
@@ -490,7 +484,6 @@ MODULE_OBJS := \
 	ultima8/gumps/readable_gump.o \
 	ultima8/gumps/remorse_menu_gump.o \
 	ultima8/gumps/resizable_gump.o \
-	ultima8/gumps/scaler_gump.o \
 	ultima8/gumps/scroll_gump.o \
 	ultima8/gumps/shape_viewer_gump.o \
 	ultima8/gumps/slider_gump.o \

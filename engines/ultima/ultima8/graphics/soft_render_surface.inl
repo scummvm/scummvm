@@ -191,6 +191,8 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
 
+	assert(_pixels && srcpixels && srcmask);
+
 	for (int i = 0; i < height_; i++)  {
 		int line = y + i;
 

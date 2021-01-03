@@ -95,12 +95,6 @@ public:
 	// \return true on success, false on failure
 	virtual bool EndPainting() = 0;
 
-	//! Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
-	// \note Do not delete the texture.
-	// \note Do not assume anything about the contents of the Texture object.
-	// \note It should only be used with Painting and Blitting methods.
-	virtual Texture *GetSurfaceAsTexture() = 0;
-
 	//
 	// Surface Properties
 	//
@@ -209,19 +203,13 @@ public:
 	//
 
 	//! Blit a region from a Texture (Alpha == 0 -> skipped)
-	virtual void Blit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) = 0;
+	virtual void Blit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) = 0;
 
 	//! Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void FadedBlit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
+	virtual void FadedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
 
 	//! Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void MaskedBlit(const Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
-
-	//! Blit a stretched region from a Texture (Alpha == 0 -> skipped???)
-	virtual void StretchBlit(const Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) = 0;
-
-	//! Blit a region from a Texture using a scaler
-	virtual bool ScalerBlit(const Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false) = 0;
+	virtual void MaskedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
 
 };
 

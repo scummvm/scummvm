@@ -40,7 +40,7 @@ namespace Ultima8 {
 
 Mouse *Mouse::_instance = nullptr;
 
-Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullptr),
+Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0),
 		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
 		_draggingItem_lastGump(0) {
 	_instance = this;
@@ -51,14 +51,6 @@ Mouse::~Mouse() {
 }
 
 void Mouse::setup() {
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *dm = filesys->ReadFile("@data/mouse.tga");
-	_defaultMouse = dm ? Texture::Create(dm, "@data/mouse.tga") : 0;
-
-	if (!_defaultMouse)
-		error("Unable to load '@data/mouse.tga'");
-
-	delete dm;
 	pushMouseCursor();
 }
 
@@ -547,18 +539,15 @@ void Mouse::paint() {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	GameData *gamedata = GameData::get_instance();
 
-	if (gamedata) {
-		Shape *mouse = gamedata->getMouse();
-		if (mouse) {
-			int frame = getMouseFrame();
-			if (frame >= 0) {
-				screen->Paint(mouse, frame, _mousePos.x, _mousePos.y, true);
-			} else if (frame == -2)
-				screen->Blit(_defaultMouse, 0, 0, _defaultMouse->w, _defaultMouse->h, _mousePos.x, _mousePos.y);
+	if (!gamedata)
+		return;
+
+	const Shape *mouse = gamedata->getMouse();
+	if (mouse) {
+		int frame = getMouseFrame();
+		if (frame >= 0) {
+			screen->Paint(mouse, frame, _mousePos.x, _mousePos.y, true);
 		}
-	} else {
-		if (getMouseFrame() != -1)
-			screen->Blit(_defaultMouse, 0, 0, _defaultMouse->w, _defaultMouse->h, _mousePos.x, _mousePos.y);
 	}
 }
 

@@ -43,7 +43,6 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
-#include "ultima/ultima8/graphics/point_scaler.h"
 #include "common/events.h"
 
 namespace Ultima {
@@ -56,7 +55,6 @@ class Game;
 class Gump;
 class GameMapGump;
 class MenuGump;
-class ScalerGump;
 class InverterGump;
 class RenderSurface;
 class PaletteManager;
@@ -96,7 +94,6 @@ private:
 
 	Gump *_desktopGump;
 	GameMapGump *_gameMapGump;
-	ScalerGump *_scalerGump;
 	InverterGump *_inverterGump;
 	AvatarMoverProcess *_avatarMoverProcess;
 
@@ -155,7 +152,6 @@ private:
 
 	// called depending upon command line arguments
 	void GraphicSysInit(); // starts/restarts the graphics subsystem
-	bool LoadConsoleFont(Std::string confontini); // loads the console font
 
 	void handleDelayedEvents();
 protected:
@@ -168,8 +164,7 @@ protected:
 	 * Returns the data archive folder and version that's required
 	 */
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
-public:
-	PointScaler point_scaler;
+
 public:
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima8Engine() override;

@@ -62,7 +62,7 @@ void ItemRelativeGump::MoveOnScreen() {
 	_x = 0;
 	_y = 0;
 
-	// get rectangle that gump occupies in scalerGump's coordinate space
+	// get rectangle that gump occupies in desktops's coordinate space
 	int32 left, right, top, bottom;
 	left = -_dims.left;
 	right = left + _dims.width();

@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,7 +36,7 @@ class Texture;
 
 class TTFRenderedText : public RenderedText {
 public:
-	TTFRenderedText(Texture *texture, int width, int height, int vlead,
+	TTFRenderedText(Graphics::ManagedSurface *texture, int width, int height, int vlead,
 	                TTFont *font);
 	~TTFRenderedText() override;
 
@@ -45,7 +46,7 @@ public:
 	                         bool destmasked = false) override;
 
 protected:
-	Texture *_texture;
+	Graphics::ManagedSurface *_texture;
 	TTFont *_font;
 };
 

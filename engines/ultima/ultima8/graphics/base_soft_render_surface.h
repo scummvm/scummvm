@@ -41,10 +41,6 @@ protected:
 	uint8           *_pixels;                // Pointer to logical pixel 0,0
 	uint8           *_pixels00;              // Pointer to physical pixel 0,0
 
-	// Depth Buffer
-	uint16          *_zBuffer;               // Pointer to logical pixel 0,0
-	uint8           *_zBuffer00;             // Pointer to physical pixel 0,0
-
 	// Pixel Format (also see 'Colour shifting values' later)
 	int             _bytesPerPixel;          // 2 or 4
 	int             _bitsPerPixel;           // 16 or 32
@@ -54,7 +50,6 @@ protected:
 	int32           _ox, _oy;                // Physical Pixel for Logical Origin
 	int32           _width, _height;         // Width and height
 	int32           _pitch;                  // Frame buffer pitch (bytes) (could be negated)
-	int32           _zPitch;                 // Z Buffer pitch (bytes) (could be negated)
 	bool            _flipped;
 
 	// Clipping Rectangle
@@ -65,37 +60,18 @@ protected:
 
 	Graphics::ManagedSurface *_surface;
 
-	// Renderint to a texture
-	Texture         *_rttTex;
-
 	// Create from a managed surface
 	BaseSoftRenderSurface(Graphics::ManagedSurface *);
-
-	// Create with Texture
-	BaseSoftRenderSurface(int w, int h);
-
-	// Create Generic
-	BaseSoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft, int asft);
-	BaseSoftRenderSurface(int w, int h, uint8 *buf);
-	virtual bool GenericLock()  {
-		return true;
-	}
-	virtual bool GenericUnlock()  {
-		return true;
-	}
 
 	// Update the Pixels Pointer
 	void    SetPixelsPointer() {
 		uint8 *pix00 = _pixels00;
-		uint8 *zbuf00 = _zBuffer00;
 
 		if (_flipped) {
 			pix00 += -_pitch * (_height - 1);
-			zbuf00 += -_zPitch * (_height - 1);
 		}
 
 		_pixels = pix00 + _ox * _bytesPerPixel + _oy * _pitch;
-		_zBuffer = reinterpret_cast<uint16 *>(zbuf00 + _ox + _oy * _zPitch);
 	}
 
 public:
@@ -115,10 +91,6 @@ public:
 	// Finish paining to the buffer. MUST BE CALLED FOR EACH CALL TO BeginPainting()
 	// Returns Error Code on error. Check return code.....
 	bool EndPainting() override;
-
-	// Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
-	Texture *GetSurfaceAsTexture() override;
-
 
 	//
 	// Surface Properties

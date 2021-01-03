@@ -40,12 +40,12 @@ namespace Ultima8 {
 // various unicode characters which look like small black circles
 static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
 
+static const Graphics::PixelFormat PF_RGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
 		bool antiAliased, bool SJIS) :
-		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
-		_pixelFormat(Texture::getPixelFormat()) {
-	_color = _pixelFormat.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
+		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS) {
+	_color = PF_RGBA.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
 
 	_bullet = 0;
 	// scan for a character to use as a conversation option _bullet
@@ -139,8 +139,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 
-	Texture *texture = new Texture();
-	texture->create(resultWidth, resultHeight, TEX_FMT_STANDARD);
+	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, PF_RGBA);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
 	Std::list<PositionedText>::const_iterator iter;
@@ -162,13 +161,13 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, 1);
 		} else {
 			// Use a high color surface with the specified _color color for text
-			textSurf.create(resultWidth, lineHeight, _pixelFormat);
+			textSurf.create(resultWidth, lineHeight, PF_RGBA);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, _color);
 		};
 
 		// render the text surface into our texture buffer
 		for (int y = 0; y < textSurf.h; y++) {
-			byte *surfrow = (byte *)textSurf.getBasePtr(0, y);
+			const byte *surfrow = (const byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: _borderSize!
 			uint32 *bufrow = texBuf + (iter->_dims.top + y + _borderSize) * resultWidth;

@@ -31,14 +31,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define MINMAPGUMP_SCALE 8
-
 class MiniMapGump : public Gump {
 private:
-	Texture             _minimap;
+	Graphics::ManagedSurface _minimap;
 	unsigned int        _lastMapNum;
 
-	uint32 getPixelAt(int x, int y);
+	uint32 getPixelAt(int x, int y) const;
 	void setPixelAt(int x, int y, uint32 pixel);
 	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
 public:

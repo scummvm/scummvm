@@ -80,7 +80,11 @@ SKFPlayer::SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool
 	parseEventList(eventlist);
 	delete eventlist;
 
-	_buffer = RenderSurface::CreateSecondaryRenderSurface(_width, _height);
+	// TODO: Slight hack.. clean me up.
+	if (RenderSurface::getPixelFormat().bpp() == 16)
+		_buffer = new SoftRenderSurface<uint16>(new Graphics::ManagedSurface(_width, _height, RenderSurface::getPixelFormat()));
+	else
+		_buffer = new SoftRenderSurface<uint32>(new Graphics::ManagedSurface(_width, _height, RenderSurface::getPixelFormat()));
 }
 
 SKFPlayer::~SKFPlayer() {
@@ -106,9 +110,7 @@ void SKFPlayer::parseEventList(Common::ReadStream *eventlist) {
 }
 
 void SKFPlayer::start() {
-	_buffer->BeginPainting();
 	_buffer->Fill32(0, 0, 0, _width, _height);
-	_buffer->EndPainting();
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(0);
 	_playing = true;
@@ -124,16 +126,14 @@ void SKFPlayer::stop() {
 void SKFPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	if (!_buffer) return;
 
-	Texture *tex = _buffer->GetSurfaceAsTexture();
-
 	if (!_fadeLevel) {
-		surf->Blit(tex, 0, 0, _width, _height, 0, 0);
+		surf->Blit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0);
 		if (_subs)
 			_subs->draw(surf, 60, _subtitleY);
 	} else {
 		uint32 fade = TEX32_PACK_RGBA(_fadeColour, _fadeColour, _fadeColour,
 		                              (_fadeLevel * 255) / FADESTEPS);
-		surf->FadedBlit(tex, 0, 0, _width, _height, 0, 0, fade);
+		surf->FadedBlit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0, fade);
 		if (_subs)
 			_subs->drawBlended(surf, 60, _subtitleY, fade);
 	}

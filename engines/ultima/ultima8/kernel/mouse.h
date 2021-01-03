@@ -104,7 +104,6 @@ public:
 private:
 	static Mouse *_instance;
 	Common::Stack<MouseCursor> _cursors;
-	Texture *_defaultMouse;      //!< Default Pentagram mouse for when there is no GameData
 
 	/**
 	 * Time mouse started flashing, or 0

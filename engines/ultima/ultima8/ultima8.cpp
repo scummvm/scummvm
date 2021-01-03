@@ -42,7 +42,6 @@
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -56,7 +55,6 @@
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
-#include "ultima/ultima8/gumps/scaler_gump.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
@@ -157,9 +155,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
-		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false),
-		_unkCrusaderFlag(false), _moveKeyFrame(0) {
+		_ttfOverrides(false), _audioMixer(0), _inverterGump(nullptr), _lerpFactor(256),
+		_inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
 	_application = this;
 }
 
@@ -439,7 +436,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	_desktopGump = nullptr;
 	_gameMapGump = nullptr;
-	_scalerGump = nullptr;
 	_inverterGump = nullptr;
 
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
@@ -461,15 +457,8 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		_desktopGump->MakeFocus();
 
 		if (GAME_IS_U8) {
-			debugN(MM_INFO, "Creating _scalerGump...\n");
-			_scalerGump = new ScalerGump(0, 0, dims.width(), dims.height());
-			_scalerGump->InitGump(0);
-
-			Rect scaled_dims;
-			_scalerGump->GetDims(scaled_dims);
-
 			debugN(MM_INFO, "Creating Inverter...\n");
-			_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+			_inverterGump = new InverterGump(0, 0, dims.width(), dims.height());
 			_inverterGump->InitGump(0);
 		}
 	}
@@ -690,33 +679,12 @@ void Ultima8Engine::GraphicSysInit() {
 	debugN(MM_INFO, "Loading Default Mouse Cursor...\n");
 	_mouse->setup();
 
-	Std::string alt_confont;
-	bool confont_loaded = false;
-
-	if (_settingMan->get("console_font", alt_confont)) {
-		debugN(MM_INFO, "Alternate console font found...\n");
-		confont_loaded = LoadConsoleFont(alt_confont);
-	}
-
-	if (!confont_loaded) {
-		debugN(MM_INFO, "Loading default console font...\n");
-		if (!LoadConsoleFont("@data/fixedfont.ini")) {
-			error("Failed to load console font. Exiting");
-		}
-	}
-
 	_desktopGump = new DesktopGump(0, 0, width, height);
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
 
 	if (GAME_IS_U8) {
-		_scalerGump = new ScalerGump(0, 0, width, height);
-		_scalerGump->InitGump(0);
-
-		Rect scaled_dims;
-		_scalerGump->GetDims(scaled_dims);
-
-		_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+		_inverterGump = new InverterGump(0, 0, width, height);
 		_inverterGump->InitGump(0);
 	}
 
@@ -755,19 +723,6 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 	if (height > 0) _settingMan->set("height", height);
 
 	GraphicSysInit();
-}
-
-bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
-	// try to load the file
-	debugN(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
-	if (_configFileMan->readConfigFile(confontini, "confont", true))
-		pout << "Ok" << Std::endl;
-	else {
-		pout << "Failed" << Std::endl;
-		return false;
-	}
-
-	return true;
 }
 
 void Ultima8Engine::enterTextMode(Gump *gump) {
@@ -1075,7 +1030,6 @@ void Ultima8Engine::resetEngine() {
 	// Reset thet gumps
 	_desktopGump = nullptr;
 	_gameMapGump = nullptr;
-	_scalerGump = nullptr;
 	_inverterGump = nullptr;
 
 	_textModes.clear();
@@ -1104,34 +1058,22 @@ void Ultima8Engine::setupCoreGumps() {
 	_desktopGump->MakeFocus();
 
 	if (GAME_IS_U8) {
-		debugN(MM_INFO, "Creating ScalerGump...\n");
-		_scalerGump = new ScalerGump(0, 0, dims.width(), dims.height());
-		_scalerGump->InitGump(0);
-
-		Rect scaled_dims;
-		_scalerGump->GetDims(scaled_dims);
-
 		debugN(MM_INFO, "Creating Inverter...\n");
-		_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+		_inverterGump = new InverterGump(0, 0, dims.width(), dims.height());
 		_inverterGump->InitGump(0);
-
-		debugN(MM_INFO, "Creating GameMapGump...\n");
-		_gameMapGump = new GameMapGump(0, 0, scaled_dims.width(), scaled_dims.height());
-		_gameMapGump->InitGump(0);
-	} else {
-		_gameMapGump = new GameMapGump(0, 0, dims.width(), dims.height());
-		_gameMapGump->InitGump(0);
 	}
+	debugN(MM_INFO, "Creating GameMapGump...\n");
+	_gameMapGump = new GameMapGump(0, 0, dims.width(), dims.height());
+	_gameMapGump->InitGump(0);
 
 	// TODO: clean this up
 	if (GAME_IS_U8) {
 		assert(_desktopGump->getObjId() == 256);
-		assert(_scalerGump->getObjId() == 257);
-		assert(_inverterGump->getObjId() == 258);
-		assert(_gameMapGump->getObjId() == 259);
+		assert(_inverterGump->getObjId() == 257);
+		assert(_gameMapGump->getObjId() == 258);
 	}
 
-	for (uint16 i = 261; i < 384; ++i)
+	for (uint16 i = 259; i < 384; ++i)
 		_objectManager->reserveObjId(i);
 }
 
@@ -1374,7 +1316,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 	assert(_desktopGump);
 
 	if (dynamic_cast<ShapeViewerGump *>(gump) || dynamic_cast<MiniMapGump *>(gump) ||
-		dynamic_cast<ScalerGump *>(gump) || dynamic_cast<MessageBoxGump *>(gump)// ||
+		dynamic_cast<MessageBoxGump *>(gump)// ||
 		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
 		//                dynamic_cast<AskGump *>(gump)))
 		) {
@@ -1385,13 +1327,10 @@ void Ultima8Engine::addGump(Gump *gump) {
 		else
 			_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<InverterGump *>(gump)) {
-		_scalerGump->AddChild(gump);
+		_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<DesktopGump *>(gump)) {
 	} else {
-		if (GAME_IS_U8)
-			_scalerGump->AddChild(gump);
-		else
-			_desktopGump->AddChild(gump);
+		_desktopGump->AddChild(gump);
 	}
 }
 
