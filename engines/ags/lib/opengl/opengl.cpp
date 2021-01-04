@@ -89,8 +89,14 @@ void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format
 }
 
 void glGetIntegerv(GLenum pname, GLint *data) {
-	// TODO: glGetIntegerv
-	*data = 0;
+	switch (pname) {
+	case GL_MAX_TEXTURE_SIZE:
+		*data = 512;
+		break;
+	default:
+		*data = 0;
+		break;
+	}
 }
 
 void glGetFloatv(GLenum pname, GLfloat *params) {
