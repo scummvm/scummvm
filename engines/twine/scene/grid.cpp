@@ -200,7 +200,7 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 
 	for (int32 y = offsetY; y < maxY; ++y) {
 		uint8 numOfBlock = 0;
-		uint8 ah = 0;
+		uint8 opaquePixels = 0;
 		uint8 *numOfBlockTargetPtr = targetPtrPos;
 
 		targetPtrPos++;
@@ -215,27 +215,27 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 			const uint8 runLength = bits(runSpec, 0, 6) + 1;
 			const uint8 type = bits(runSpec, 6, 2);
 			if (type == 2) {
-				ah += runLength;
+				opaquePixels += runLength;
 				buffer++;
 			} else if (type == 1) {
-				ah += runLength;
+				opaquePixels += runLength;
 				buffer += runLength;
 			} else { // skip (type 3)
-				if (ah) {
-					*targetPtrPos++ = ah; // write down the number of pixel passed so far
+				if (opaquePixels) {
+					*targetPtrPos++ = opaquePixels; // write down the number of pixel passed so far
 					numOfBlock++;
-					ah = 0;
+					opaquePixels = 0;
 				}
 				*targetPtrPos++ = runLength; //write skip
 				numOfBlock++;
 			}
 		}
 
-		if (ah) {
-			*targetPtrPos++ = ah;
+		if (opaquePixels) {
+			*targetPtrPos++ = opaquePixels;
 			numOfBlock++;
 
-			ah = 0;
+			opaquePixels = 0;
 		}
 
 		*numOfBlockTargetPtr = numOfBlock;
