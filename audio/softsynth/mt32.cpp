@@ -160,18 +160,6 @@ int MidiDriver_MT32::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
-
-	if (screenFormat.bytesPerPixel == 1) {
-		const byte dummy_palette[] = {
-			0, 0, 0,		// background
-			0, 171, 0,	// border, font
-			171, 0, 0	// fill
-		};
-
-		g_system->getPaletteManager()->setPalette(dummy_palette, 0, 3);
-	}
-
 	debug(4, _s("Initializing MT-32 Emulator"));
 
 	Common::File controlFile;
