@@ -56,7 +56,6 @@ GLint glGetUniformLocation(GLuint program, const GLchar *name) {
 }
 
 void glShadeModel(GLenum mode) {
-	error("TODO: glShadeMode");
 }
 
 void glGetProgramiv(GLuint program, GLenum pname, GLint *params) {
@@ -75,7 +74,6 @@ void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) {
 }
 
 void glClear(GLbitfield mask) {
-	warning("TODO: glClear");
 }
 
 void glDrawArrays(GLenum mode, GLint first, GLsizei count) {

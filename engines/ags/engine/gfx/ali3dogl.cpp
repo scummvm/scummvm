@@ -192,7 +192,12 @@ OGLGraphicsDriver::ShaderProgram::ShaderProgram() : Program(0), SamplerVar(0), C
 
 
 OGLGraphicsDriver::OGLGraphicsDriver() {
-#if AGS_PLATFORM_OS_WINDOWS
+#if AGS_PLATFORM_SCUMMVM
+	device_screen_physical_width = 640;
+	device_screen_physical_height = 480;
+	_glxContext = nullptr;
+	_have_window = false;
+#elif AGS_PLATFORM_OS_WINDOWS
 	_hDC = NULL;
 	_hRC = NULL;
 	_hWnd = NULL;
