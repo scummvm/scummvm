@@ -196,56 +196,49 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 	*ptr++ = offsetX;
 	*ptr++ = offsetY;
 
-	const uint8 *esi = (const uint8 *)buffer;
-	uint8 *edi = (uint8 *)ptr;
-
-	uint8 iteration = 0;
+	uint8 *targetPtrPos = ptr;
 
 	for (int32 y = offsetY; y < maxY; ++y) {
 		uint8 numOfBlock = 0;
 		uint8 ah = 0;
-		uint8 *ptr2 = edi;
+		uint8 *numOfBlockTargetPtr = targetPtrPos;
 
-		edi++;
+		targetPtrPos++;
 
-		uint8 bl = *(esi++);
-
-		if (*esi & 0xC0) { // the first time isn't skip. the skip size is 0 in that case
-			*edi++ = 0;
+		const uint8 numRuns = *buffer++;
+		if (*buffer & 0xC0) { // the first time isn't skip. the skip size is 0 in that case
+			*targetPtrPos++ = 0;
 			numOfBlock++;
 		}
-
-		do {
-			uint8 al = *esi++;
-			iteration = al;
-			iteration &= 0x3F;
-			iteration++;
-
-			if (al & 0x80) { // 2
-				ah += iteration;
-				esi++;
-			} else if (al & 0x40) { // 1
-				ah += iteration;
-				esi += iteration;
-			} else { // skip 3
+		for (uint8 run = 0; run < numRuns; ++run) {
+			const uint8 runSpec = *buffer++;
+			const uint8 runLength = bits(runSpec, 0, 6) + 1;
+			const uint8 type = bits(runSpec, 6, 2);
+			if (type == 2) {
+				ah += runLength;
+				buffer++;
+			} else if (type == 1) {
+				ah += runLength;
+				buffer += runLength;
+			} else { // skip (type 3)
 				if (ah) {
-					*edi++ = ah; // write down the number of pixel passed so far
+					*targetPtrPos++ = ah; // write down the number of pixel passed so far
 					numOfBlock++;
 					ah = 0;
 				}
-				*(edi++) = iteration; //write skip
+				*targetPtrPos++ = runLength; //write skip
 				numOfBlock++;
 			}
-		} while (--bl > 0);
+		}
 
 		if (ah) {
-			*edi++ = ah;
+			*targetPtrPos++ = ah;
 			numOfBlock++;
 
 			ah = 0;
 		}
 
-		*ptr2 = numOfBlock;
+		*numOfBlockTargetPtr = numOfBlock;
 	}
 }
 
