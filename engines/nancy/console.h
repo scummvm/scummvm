@@ -61,4 +61,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_CONSOLE_H

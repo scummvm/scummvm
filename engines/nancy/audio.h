@@ -31,10 +31,14 @@ namespace Audio {
 class SeekableAudioStream;
 }
 
+namespace DisposeAfterUse {
+enum Flag;
+}
+
 namespace Nancy {
 
 Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_AUDIO_H

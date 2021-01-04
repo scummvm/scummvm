@@ -8,55 +8,37 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef NANCY_DECOMPRESS_H
-#define NANCY_DECOMPRESS_H
+#ifndef NANCY_DETECTION_H
+#define NANCY_DETECTION_H
 
-#include "common/scummsys.h"
-
-namespace Common {
-	class ReadStream;
-	class WriteStream;
-	class MemoryWriteStream;
-}
+#include "engines/advancedDetector.h"
 
 namespace Nancy {
 
-class Decompressor {
-public:
-	// Decompresses data from input until the end of the stream
-	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
+enum GameType {
+	kGameTypeNone = 0,
+	kGameTypeNancy1,
+	kGameTypeNancy2,
+	kGameTypeNancy3
+};
 
-private:
-	enum {
-		kBufSize = 4096,
-		kBufStart = 4078
-	};
-
-	void init(Common::ReadStream &input, Common::WriteStream &output);
-	bool readByte(byte &b);
-	bool writeByte(byte b);
-
-	byte _buf[kBufSize];
-	uint _bufpos;
-	bool _err;
-	byte _val;
-	Common::ReadStream *_input;
-	Common::WriteStream *_output;
+struct NancyGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_DECOMPRESS_H
+#endif // NANCY_DETECTION_H

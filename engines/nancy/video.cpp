@@ -20,6 +20,9 @@
  *
  */
 
+#include "engines/nancy/video.h"
+#include "engines/nancy/decompress.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -30,8 +33,6 @@
 
 #include "graphics/surface.h"
 
-#include "nancy/video.h"
-#include "nancy/decompress.h"
 
 namespace Nancy {
 
@@ -65,6 +66,10 @@ bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 	addTrack(new AVFVideoTrack(stream));
 
 	return true;
+}
+
+const Graphics::Surface *AVFDecoder::decodeFrame(uint frameNr) {
+	return ((AVFDecoder::AVFVideoTrack *)getTrack(0))->decodeFrame(frameNr);
 }
 
 AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
@@ -181,7 +186,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 		return _surface;
 	}
 
-	byte *decompBuf = 0;
+	byte *decompBuf = nullptr;
 	if (info.type == 0) {
 		// For type 0 we decompress straight to the surface, make sure we don't go out of bounds
 		if (info.size > _frameSize) {

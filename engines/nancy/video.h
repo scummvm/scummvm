@@ -28,6 +28,7 @@
 #include "common/rational.h"
 
 namespace Common {
+class ReadStream;
 class SeekableReadStream;
 }
 
@@ -44,6 +45,7 @@ public:
 	virtual ~AVFDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(uint frameNr);
 
 private:
 	class AVFVideoTrack : public FixedRateVideoTrack {
@@ -56,6 +58,7 @@ private:
 		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
+		const Graphics::Surface *decodeFrame(uint frameNr);
 		const Graphics::Surface *decodeNextFrame();
 
 	protected:
@@ -70,7 +73,6 @@ private:
 			byte type;
 		};
 
-		const Graphics::Surface *decodeFrame(uint frameNr);
 		bool decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const;
 
 		Common::SeekableReadStream *_fileStream;
@@ -88,4 +90,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_VIDEO_H
