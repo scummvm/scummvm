@@ -1570,7 +1570,8 @@ msgstr "使用するサーバーのポート番号"
 #: gui/options.cpp:2275
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
+msgstr ""
+"サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
 #: gui/options.cpp:2276
 msgctxt "lowres"
@@ -1579,7 +1580,8 @@ msgstr "設定ウィンドウを閉じると、サーバーは停止されます
 
 #: gui/options.cpp:2278
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
+msgstr ""
+"サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
 #: gui/options.cpp:2279
 msgid "Closing options dialog will stop the server."
@@ -2136,7 +2138,9 @@ msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
-msgstr "申し訳ありませんが、現在このエンジンではゲーム内ヘルプを提供していません。詳細はREADMEを参照してください。"
+msgstr ""
+"申し訳ありませんが、現在このエンジンではゲーム内ヘルプを提供していません。詳"
+"細はREADMEを参照してください。"
 
 #: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
 #, c-format
@@ -2242,7 +2246,9 @@ msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
-msgstr "警告：このゲームはまだ完全なサポートがなされていません。動作が安定せず、また将来的にセーブデータの互換性が失われる可能性があります。"
+msgstr ""
+"警告：このゲームはまだ完全なサポートがなされていません。動作が安定せず、また"
+"将来的にセーブデータの互換性が失われる可能性があります。"
 
 #: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
