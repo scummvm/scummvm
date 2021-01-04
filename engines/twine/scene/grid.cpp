@@ -285,16 +285,17 @@ void Grid::loadGridBricks() {
 			uint32 currentBllOffset = READ_LE_UINT32(currentBll + currentBllEntryIdx);
 			const uint8 *currentBllPtr = currentBll + currentBllOffset;
 
-			uint32 bllSizeX = currentBllPtr[0];
-			uint32 bllSizeY = currentBllPtr[1];
-			uint32 bllSizeZ = currentBllPtr[2];
+			uint32 bllSizeX = *currentBllPtr++;
+			uint32 bllSizeY = *currentBllPtr++;
+			uint32 bllSizeZ = *currentBllPtr++;
 
 			uint32 bllSize = bllSizeX * bllSizeY * bllSizeZ;
 
-			const uint8 *bllDataPtr = currentBllPtr + 5;
-
 			for (uint32 j = 0; j < bllSize; j++) {
-				uint32 brickIdx = READ_LE_INT16(bllDataPtr);
+				/* const uint8 type = * */currentBllPtr++;
+				/* const uint8 shape = * */currentBllPtr++;
+				uint32 brickIdx = READ_LE_INT16(currentBllPtr);
+				currentBllPtr += 2;
 
 				if (brickIdx) {
 					brickIdx--;
@@ -309,7 +310,6 @@ void Grid::loadGridBricks() {
 
 					brickUsageTable[brickIdx] = 1;
 				}
-				bllDataPtr += 4;
 			}
 		}
 		currentBllEntryIdx += 4;
