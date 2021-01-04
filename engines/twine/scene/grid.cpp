@@ -270,7 +270,7 @@ void Grid::loadGridBricks(int32 gridSize) {
 	memset(brickSizeTable, 0, sizeof(brickSizeTable));
 	memset(brickUsageTable, 0, sizeof(brickUsageTable));
 
-	// get block librarie usage bits
+	// get block libraries usage bits
 	const uint8 *ptrToBllBits = currentGrid + (gridSize - 32);
 
 	// for all bits under the 32bytes (256bits)
@@ -392,9 +392,9 @@ void Grid::createGridMap() {
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
 			const int32 gridOffset = READ_LE_UINT16(currentGrid + 2 * (x + gridIdx));
 			createGridColumn(currentGrid + gridOffset, currentGridSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
-			blockOffset += 50;
+			blockOffset += 2 * GRID_SIZE_Y;
 		}
-		currOffset += GRID_SIZE_X * 50;
+		currOffset += GRID_SIZE_X * (2 * GRID_SIZE_Y);
 	}
 }
 
@@ -410,10 +410,10 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 			const int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
 			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
-			blockOffset += 50;
+			blockOffset += 2 * GRID_SIZE_Y;
 		}
-		currGridOffset += 128;
-		currOffset += GRID_SIZE_X * 50;
+		currGridOffset += GRID_SIZE_X+ GRID_SIZE_Z;
+		currOffset += GRID_SIZE_X * (2 * GRID_SIZE_Y);
 	}
 }
 
