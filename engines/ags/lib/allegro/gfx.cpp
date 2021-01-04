@@ -88,6 +88,9 @@ BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
 	Graphics::PixelFormat format;
 
 	switch (color_depth) {
+	case 8:
+		format = Graphics::PixelFormat::createFormatCLUT8();
+		break;
 	case 16:
 		format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;
