@@ -206,10 +206,13 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 		targetPtrPos++;
 
 		const uint8 numRuns = *buffer++;
-		if (*buffer & 0xC0) { // the first time isn't skip. the skip size is 0 in that case
+
+		// the first time isn't skip. the skip size is 0 in that case
+		if (bits(*buffer, 6, 2) != 0) {
 			*targetPtrPos++ = 0;
 			numOfBlock++;
 		}
+
 		for (uint8 run = 0; run < numRuns; ++run) {
 			const uint8 runSpec = *buffer++;
 			const uint8 runLength = bits(runSpec, 0, 6) + 1;
