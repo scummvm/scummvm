@@ -20,11 +20,11 @@
  *
  */
 
+#ifndef NANCY_IFF_H
+#define NANCY_IFF_H
+
 #include "common/array.h"
 #include "common/str.h"
-
-#ifndef NANCY_SCRIPT_H
-#define NANCY_SCRIPT_H
 
 namespace Common {
 struct IFFChunk;
@@ -69,4 +69,4 @@ private:
 
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_IFF_H

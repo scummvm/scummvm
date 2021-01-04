@@ -20,30 +20,16 @@
  *
  */
 
-#include "engines/advancedDetector.h"
+#include "engines/nancy/detection.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#include "nancy/nancy.h"
-
-namespace Nancy {
-
-struct NancyGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
-};
-
-uint32 NancyEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-const char *NancyEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
-}
-
+#include "engines/advancedDetector.h"
 
 const char *const directoryGlobs[] = {
 	"game",
@@ -53,16 +39,16 @@ const char *const directoryGlobs[] = {
 
 static const PlainGameDescriptor nancyGames[] = {
 	// Games
-	{"nancy1", "Nancy Drew 1: Secrets Can Kill"},
-	{"nancy2", "Nancy Drew 2: Stay Tuned for Danger"},
-	{"nancy3", "Nancy Drew 3: Message in a Haunted Mansion"},
-	{"nancy4", "Nancy Drew 4: Treasure in the Royal Tower"},
-	{"nancy5", "Nancy Drew 5: The Final Scene"},
-	{"nancy6", "Nancy Drew 6: Secret of the Scarlet Hand"},
+	{"nancy1", "Nancy Drew: Secrets Can Kill"},
+	{"nancy2", "Nancy Drew: Stay Tuned for Danger"},
+	{"nancy3", "Nancy Drew: Message in a Haunted Mansion"},
+	{"nancy4", "Nancy Drew: Treasure in the Royal Tower"},
+	{"nancy5", "Nancy Drew: The Final Scene"},
+	{"nancy6", "Nancy Drew: Secret of the Scarlet Hand"},
 	{0, 0}
 };
 
-static const NancyGameDescription gameDescriptions[] = {
+static const Nancy::NancyGameDescription gameDescriptions[] = {
 
 	{ // MD5 by waltervn
 		{
@@ -76,7 +62,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		Nancy::GameType::kGameTypeNancy1
 	},
 	{ // MD5 by waltervn
 		{
@@ -90,7 +76,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy2
+		Nancy::GameType::kGameTypeNancy2
 	},
 	{ // MD5 by waltervn
 		{
@@ -104,7 +90,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -120,7 +106,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -134,7 +120,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -150,7 +136,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -164,7 +150,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -180,7 +166,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by clone2727
 		{
@@ -196,7 +182,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
 	{ // MD5 by Strangerke
 		{
@@ -210,173 +196,30 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy3
+		Nancy::GameType::kGameTypeNancy3
 	},
-	{AD_TABLE_END_MARKER, kGameTypeNone}
+	{AD_TABLE_END_MARKER, Nancy::GameType::kGameTypeNone}
 };
 
-class NancyMetaEngine : public AdvancedMetaEngine {
+class NancyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	NancyMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(NancyGameDescription), nancyGames) {
+	NancyMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(Nancy::NancyGameDescription), nancyGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getName() const {
-		return "Nancy Drew";
+	const char *getEngineId() const override {
+		return "nancy";
 	}
 
+	const char *getName() const override {
+		return "Nancy Drew";
+	}
+    
 	const char *getOriginalCopyright() const {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
 	}
-
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	bool hasFeature(MetaEngineFeature f) const;
-
-	int getMaximumSaveSlot() const;
-	SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	void removeSaveState(const char *target, int slot) const;
+	
 };
 
-bool NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = NancyEngine::create(((const NancyGameDescription *)gd)->gameType, syst, (const NancyGameDescription *)gd);
-		((NancyEngine *)*engine)->initGame((const NancyGameDescription *)gd);
-	}
-	return gd != 0;
-}
-
-bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
-}
-
-int NancyMetaEngine::getMaximumSaveSlot() const { return 99; }
-
-SaveStateList NancyMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += "-??.SAV";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
-
-	SaveStateList saveList;
-	char slot[3];
-	int slotNum = 0;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		slot[0] = filename->c_str()[filename->size() - 6];
-		slot[1] = filename->c_str()[filename->size() - 5];
-		slot[2] = '\0';
-		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
-		slotNum = atoi(slot);
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				int saveVersion = file->readByte();
-
-				if (saveVersion != kSavegameVersion) {
-					warning("Savegame of incompatible version");
-					delete file;
-					continue;
-				}
-
-				// read name
-				uint16 nameSize = file->readUint16BE();
-				if (nameSize >= 255) {
-					delete file;
-					continue;
-				}
-				char name[256];
-				file->read(name, nameSize);
-				name[nameSize] = 0;
-
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
-				delete file;
-			}
-		}
-	}
-
-	return saveList;
-}
-
-SaveStateDescriptor NancyMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (file) {
-		int saveVersion = file->readByte();
-
-		if (saveVersion != kSavegameVersion) {
-			warning("Savegame of incompatible version");
-			delete file;
-			return SaveStateDescriptor();
-		}
-
-		uint32 saveNameLength = file->readUint16BE();
-		char saveName[256];
-		file->read(saveName, saveNameLength);
-		saveName[saveNameLength] = 0;
-
-		SaveStateDescriptor desc(slot, saveName);
-
-		Graphics::Surface *thumbnail = nullptr;
-
-		if (Graphics::loadThumbnail(*file, thumbnail))
-			desc.setThumbnail(thumbnail);
-
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
-		uint32 saveDate = file->readUint32BE();
-		uint16 saveTime = file->readUint16BE();
-
-		int day = (saveDate >> 24) & 0xFF;
-		int month = (saveDate >> 16) & 0xFF;
-		int year = saveDate & 0xFFFF;
-
-		desc.setSaveDate(year, month, day);
-
-		int hour = (saveTime >> 8) & 0xFF;
-		int minutes = saveTime & 0xFF;
-
-		desc.setSaveTime(hour, minutes);
-
-		// Slot 0 is used for the 'restart game' save in all Nancy games, thus
-		// we prevent it from being deleted.
-		desc.setDeletableFlag(slot != 0);
-		desc.setWriteProtectedFlag(slot == 0);
-
-		delete file;
-		return desc;
-	}
-	return SaveStateDescriptor();
-}
-
-void NancyMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-} // End of namespace Nancy
-
-#if PLUGIN_ENABLED_DYNAMIC(NANCY)
-REGISTER_PLUGIN_DYNAMIC(NANCY, PLUGIN_TYPE_ENGINE, Nancy::NancyMetaEngine);
-#else
-REGISTER_PLUGIN_STATIC(NANCY, PLUGIN_TYPE_ENGINE, Nancy::NancyMetaEngine);
-#endif
-
-namespace Nancy {
-
-void NancyEngine::initGame(const NancyGameDescription *gd) {
-	_gameType = gd->gameType;
-	_platform = gd->desc.platform;
-}
-
-} // End of namespace Nancy
+REGISTER_PLUGIN_STATIC(NANCY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NancyMetaEngineDetection);

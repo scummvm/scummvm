@@ -20,6 +20,11 @@
  *
  */
 
+#include "engines/nancy/logo.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/audio.h"
+
 #include "common/error.h"
 #include "common/system.h"
 #include "common/events.h"
@@ -29,22 +34,17 @@
 
 #include "graphics/surface.h"
 
-#include "nancy/logo.h"
-#include "nancy/nancy.h"
-#include "nancy/resource.h"
-#include "nancy/audio.h"
-
 namespace Nancy {
 
-void LogoSequence::doIt() {
-	switch(_state) {
+void LogoSequence::process() {
+	switch (_state) {
 	case kInit:
 		init();
 		break;
 	case kStartSound:
 		startSound();
 		break;
-	case kRunning:
+	case kRun:
 		run();
 		break;
 	case kStop:
@@ -73,11 +73,11 @@ void LogoSequence::startSound() {
 	}
 
 	_startTicks = _engine->_system->getMillis();
-	_state = kRunning;
+	_state = kRun;
 }
 
 void LogoSequence::run() {
-	switch(_runState) {
+	switch (_runState) {
 	case kBlit:
 		_engine->_system->copyRectToScreen(_surf->getPixels(), _surf->pitch, 0, 0, _surf->w, _surf->h);
 		_runState = kWait;
@@ -98,7 +98,7 @@ void LogoSequence::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	_engine->_gameFlow.minGameState = NancyEngine::kIdle;
+	_engine->_gameFlow.minGameState = NancyEngine::kScene;
 	_engine->_system->fillScreen(0);
 }
 

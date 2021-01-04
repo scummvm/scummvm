@@ -20,43 +20,32 @@
  *
  */
 
-#ifndef NANCY_DECOMPRESS_H
-#define NANCY_DECOMPRESS_H
+#include "engines/nancy/menu.h"
+#include "engines/nancy/nancy.h"
 
-#include "common/scummsys.h"
-
-namespace Common {
-	class ReadStream;
-	class WriteStream;
-	class MemoryWriteStream;
-}
+#include "graphics/surface.h"
 
 namespace Nancy {
 
-class Decompressor {
-public:
-	// Decompresses data from input until the end of the stream
-	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
+void MainMenu::process() {
+    switch(_state) {
+    case kInit:
+        init();
+        break;
+    case kStartSound:
+        startSound();
+        break;
+    case kRun:
+        run();
+        break;
+    }
+}
 
-private:
-	enum {
-		kBufSize = 4096,
-		kBufStart = 4078
-	};
-
-	void init(Common::ReadStream &input, Common::WriteStream &output);
-	bool readByte(byte &b);
-	bool writeByte(byte b);
-
-	byte _buf[kBufSize];
-	uint _bufpos;
-	bool _err;
-	byte _val;
-	Common::ReadStream *_input;
-	Common::WriteStream *_output;
-};
+void MainMenu::init() {
+    _surf = new Graphics::Surface;
+    _menuImage = new Graphics::Surface;
+    _cursor = new Graphics::Surface;
+    
+}
 
 } // End of namespace Nancy
-
-#endif // NANCY_DECOMPRESS_H

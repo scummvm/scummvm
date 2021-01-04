@@ -20,6 +20,15 @@
  *
  */
 
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/iff.h"
+#include "engines/nancy/audio.h"
+#include "engines/nancy/logic.h"
+#include "engines/nancy/logo.h"
+#include "engines/nancy/scene.h"
+#include "engines/nancy/graphics.h"
+
 #include "common/system.h"
 #include "common/random.h"
 #include "common/error.h"
@@ -29,28 +38,22 @@
 #include "common/textconsole.h"
 #include "common/memstream.h"
 #include "common/installshield_cab.h"
+#include "common/str.h"
 
 #include "graphics/surface.h"
 
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
-#include "nancy/nancy.h"
-#include "nancy/resource.h"
-#include "nancy/iff.h"
-#include "nancy/audio.h"
-#include "nancy/logo.h"
-
 #include "engines/util.h"
 
 namespace Nancy {
 
-NancyEngine *NancyEngine::s_Engine = 0;
+NancyEngine *NancyEngine::s_Engine = nullptr;
 
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	Engine(syst),
-	_gameDescription(gd),
-	_bsum(nullptr)
+	_gameDescription(gd)
 {
 	_system = syst;
 
@@ -67,14 +70,21 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 
 	_console = new NancyConsole(this);
 	_logoSequence = new LogoSequence(this);
-	_rnd = 0;
+	_rnd = nullptr;
+
+	logic = new Logic(this);
+	sceneManager = new SceneManager(this);
+	graphics = new GraphicsManager(this);
 }
 
 NancyEngine::~NancyEngine() {
-
+	clearBootChunks();
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 	delete _rnd;
+	
+	delete logic;
+	delete sceneManager;
 }
 
 GUI::Debugger *NancyEngine::getDebugger() {
@@ -82,7 +92,7 @@ GUI::Debugger *NancyEngine::getDebugger() {
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 const char *NancyEngine::getCopyrightString() const {
@@ -100,8 +110,7 @@ Common::Platform NancyEngine::getPlatform() const {
 Common::Error NancyEngine::run() {
 	s_Engine = this;
 
-	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	initGraphics(640, 480, &format);
+	initGraphics(640, 480, &GraphicsManager::pixelFormat);
 	_console = new NancyConsole(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -112,9 +121,13 @@ Common::Error NancyEngine::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
 
-	Common::SeekableReadStream *cabStream = SearchMan.createReadStreamForMember("data1.hdr");
-	if (cabStream)
-		SearchMan.add("data1.hdr", Common::makeInstallShieldArchive(cabStream));
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
+		if (!stream)
+			error("Failed to open data1.cab");
+
+		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
+	if (cab)
+		SearchMan.add("data1.hdr", cab);
 
 //	_mouse = new MouseHandler(this);
 	_res = new ResourceManager(this);
@@ -123,28 +136,26 @@ Common::Error NancyEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 
-	// Some bits and pieces of the engine in order to make something happen
-	IFF *boot = new IFF(this, "boot");
-	if (!boot->load())
-		error("Failed to load boot script");
-	preloadCals(*boot);
-	readSound(*boot, "MSND", _menuSound);
-	_bsum = boot->getChunkStream("BSUM");
-	if (!_bsum)
-		error("Failed to load BOOT BSUM");
-	readBootSummary(*boot);
-	delete boot;
-
 	Common::EventManager *ev = g_system->getEventManager();
 	bool quit = false;
 
-	_gameFlow.minGameState = kLogo;
+	_gameFlow.minGameState = kBoot;
 
 	while (!shouldQuit() && !quit) {
-		switch(_gameFlow.minGameState) {
-		case kLogo:
-			_logoSequence->doIt();
+		switch (_gameFlow.minGameState) {
+		case kBoot:
+			bootGameEngine();
+			graphics->init();
+			_gameFlow.minGameState = kLogo;
 			break;
+		case kLogo:
+			_logoSequence->process();
+			break;
+		case kMainMenu:
+			// TODO
+			break;
+		case kScene:
+			sceneManager->process();
 		case kIdle:
 		default:
 			break;
@@ -153,7 +164,7 @@ Common::Error NancyEngine::run() {
 		Common::Event event;
 		if (ev->pollEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
-				switch(event.kbd.keycode) {
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_q:
 					quit = true;
 					break;
@@ -164,6 +175,8 @@ Common::Error NancyEngine::run() {
 				}
 			}
 		}
+
+		_console->onFrame();
 
 		_system->updateScreen();
 		_system->delayMillis(16);
@@ -189,6 +202,70 @@ Common::Error NancyEngine::run() {
 #endif
 
 	return Common::kNoError;
+}
+
+void NancyEngine::bootGameEngine() {
+	clearBootChunks();
+	IFF *boot = new IFF(this, "boot");
+	if (!boot->load())
+		error("Failed to load boot script");
+	preloadCals(*boot);
+	readSound(*boot, "MSND", _menuSound);
+
+	addBootChunk("BSUM", boot->getChunkStream("BSUM"));
+	readBootSummary(*boot);
+
+	Common::String names[] = {
+		"INTR", "HINT", "LOGO", "SPUZ", "INV",
+		"FONT", "MENU", "HELP", "CRED", "LOAD",
+		"MAP", "CD", "TBOX", "CURS", "VIEW", "MSND",
+		"BUOK", "BUDE", "BULS", "GLOB", "SLID",
+		"SET", "CURT", "CANT", "TH1", "TH2",
+		"QUOT", "TMOD"
+		};
+
+	for (auto const &n : names) {
+		addBootChunk(n, boot->getChunkStream(n));
+	}
+
+	// The FR, LG and OB chunks get added here	
+
+	Common::SeekableReadStream *font = getBootChunkStream("FONT");
+	if (_fontSize != font->size()) {
+		error("Mismatch NumFonts and FONT memory... %i, %i", _fontSize, font->size());
+	}
+	// TODO a loop that uses FONT
+	// TODO another loop that does the same thing but with CURS
+	// TODO reset some vars
+
+	for (uint i = 0; i <= 60; ++i) {
+		graphics->clearGenericZRenderStruct(i);
+	}
+
+	// TODO reset some more vars
+
+	delete boot;
+}
+
+bool NancyEngine::addBootChunk(const Common::String &name, Common::SeekableReadStream *stream) {
+	if (!stream)
+		return false;
+	_bootChunks[name] = stream;
+	return true;
+}
+
+Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String &name) {
+	if (_bootChunks.contains(name)) {
+		return _bootChunks[name];
+	}
+	else return nullptr;
+}
+
+void NancyEngine::clearBootChunks() {
+	for (auto const& i : _bootChunks) {
+		delete i._value;
+	}
+	_bootChunks.clear();
 }
 
 void NancyEngine::initialize() {
@@ -245,7 +322,8 @@ Common::String NancyEngine::readFilename(Common::ReadStream *stream) const {
 }
 
 void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, ImageList &list) {
-	byte count = _bsum->readByte();
+	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
+	byte count = bsum->readByte();
 	debugC(1, kDebugEngine, "Found %i %s images", count, prefix.c_str());
 
 	for (int i = 0; i < count; ++i) {
@@ -290,9 +368,15 @@ private:
 };
 
 void NancyEngine_v0::readBootSummary(const IFF &boot) {
-	_bsum->seek(0x151);
+	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
+	bsum->seek(0xa3);
+	_firstSceneID = bsum->readUint16LE();
+	bsum->seek(0x151);
 	readImageList(boot, "FR", _frames);
 	readImageList(boot, "LG", _logos);
+	readImageList(boot, "OB", _objects);
+	bsum->seek(0x1D1);
+	_fontSize = bsum->readSint32LE() * 1346;
 }
 
 class NancyEngine_v1 : public NancyEngine_v0 {
@@ -304,7 +388,10 @@ private:
 };
 
 void NancyEngine_v1::readBootSummary(const IFF &boot) {
-	_bsum->seek(0x14b);
+	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
+	bsum->seek(0xa3);
+	_firstSceneID = bsum->readUint16LE();
+	bsum->seek(0x14b);
 	readImageList(boot, "FR", _frames);
 	readImageList(boot, "LG", _logos);
 }
@@ -319,13 +406,14 @@ private:
 };
 
 void NancyEngine_v2::readBootSummary(const IFF &boot) {
-	_bsum->seek(0xa7);
+	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
+	bsum->seek(0xa7);
 	readImageList(boot, "FR", _frames);
 	readImageList(boot, "LG", _logos);
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
-	switch(type) {
+	switch (type) {
 	case kGameTypeNancy1:
 		return new NancyEngine_v0(syst, gd);
 	case kGameTypeNancy2:

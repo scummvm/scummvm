@@ -20,18 +20,21 @@
  *
  */
 
+#include "engines/nancy/resource.h"
+#include "engines/nancy/decompress.h"
+#include "engines/nancy/graphics.h"
+
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/memstream.h"
+
 #include "graphics/surface.h"
-#include "nancy/resource.h"
-#include "nancy/decompress.h"
 
 namespace Nancy {
 
-static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, uint32 *dataOffset = 0) {
+static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, uint32 *dataOffset = nullptr) {
 	info.width = f.readUint16LE();
 	info.pitch = f.readUint16LE();
 	info.height = f.readUint16LE();
@@ -53,7 +56,7 @@ public:
 	virtual ~CifFile();
 
 	bool initialize();
-	byte *getCifData(ResourceManager::CifInfo &info, uint *size = 0) const;
+	byte *getCifData(ResourceManager::CifInfo &info, uint *size = nullptr) const;
 	void getCifInfo(ResourceManager::CifInfo &info) const;
 
 	static const CifFile *load(const Common::String &name);
@@ -129,7 +132,7 @@ void CifFile21::readCifInfo(Common::File &f) {
 
 const CifFile *CifFile::load(const Common::String &name) {
 	Common::File *f = new Common::File;
-	CifFile *cifFile = 0;
+	CifFile *cifFile = nullptr;
 
 	if (!f->open(name + ".cif")) {
 		delete f;
@@ -154,7 +157,7 @@ const CifFile *CifFile::load(const Common::String &name) {
 	ver = f->readUint16LE() << 16;
 	ver |= f->readUint16LE();
 
-	switch(ver) {
+	switch (ver) {
 	case 0x00020000:
 		cifFile = new CifFile20(name, f);
 		break;
@@ -183,8 +186,8 @@ public:
 
 	bool initialize();
 	void list(Common::Array<Common::String> &nameList, uint type) const;
-	byte *getCifData(const Common::String &name, ResourceManager::CifInfo &info, uint *size = 0) const;
-	bool getCifInfo(const Common::String &name, ResourceManager::CifInfo &info, uint32 *dataOffset = 0) const;
+	byte *getCifData(const Common::String &name, ResourceManager::CifInfo &info, uint *size = nullptr) const;
+	bool getCifInfo(const Common::String &name, ResourceManager::CifInfo &info, uint32 *dataOffset = nullptr) const;
 	const Common::String &getName() const { return _name; }
 
 	static const CifTree *load(const Common::String &name, const Common::String &ext);
@@ -420,7 +423,7 @@ void CifTree21::determineSubtype(Common::File &f) {
 
 const CifTree *CifTree::load(const Common::String &name, const Common::String &ext) {
 	Common::File f;
-	CifTree *cifTree = 0;
+	CifTree *cifTree = nullptr;
 
 	if (!f.open(name + '.' + ext)) {
 		warning("Failed to open CifTree '%s'", name.c_str());
@@ -447,7 +450,7 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 
 	f.close();
 
-	switch(ver) {
+	switch (ver) {
 	case 0x00020000:
 		cifTree = new CifTree20(name, ext);
 		break;
@@ -461,7 +464,7 @@ const CifTree *CifTree::load(const Common::String &name, const Common::String &e
 	if (cifTree && !cifTree->initialize()) {
 		warning("Failed to read CifTree '%s'", name.c_str());
 		delete cifTree;
-		cifTree = 0;
+		cifTree = nullptr;
 	}
 
 	return cifTree;
@@ -546,7 +549,7 @@ void CifExporter21::writeCifInfo(Common::DumpFile &f, const ResourceManager::Cif
 const CifExporter *CifExporter::create(uint32 version) {
 	const CifExporter *exp;
 
-	switch(version) {
+	switch (version) {
 	case 0x00020000:
 		exp = new CifExporter20;
 		break;
@@ -713,12 +716,14 @@ bool ResourceManager::loadImage(const Common::String &treeName, const Common::St
 		return false;
 	}
 
-	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	surf.w = info.width;
 	surf.h = info.height;
 	surf.pitch = info.pitch;
+	// Surface's conversion functions do not work the exact way as this
+	//use after fixing pixel format
+	//colorCorrect(buf, info.size);
 	surf.setPixels(buf);
-	surf.format = format;
+	surf.format = GraphicsManager::pixelFormat;
 	return true;
 }
 
@@ -751,6 +756,16 @@ Common::String ResourceManager::getCifDescription(const Common::String &treeName
 	desc += Common::String::format("Height: %i\n", info.height);
 	desc += Common::String::format("Bit depth: %i\n", info.depth);
 	return desc;
+}
+
+void ResourceManager::colorCorrect(byte *buf, uint size) {
+	byte *last = buf + size;
+	for (byte *cur = buf; cur < last; cur += 2) {
+		uint16 pre = *cur | (*(cur+1) << 8);
+		uint16 post = ((pre & 0xFFE0) << 1) | (pre & 0x1F);
+		*cur = post & 0xFF;
+		*(cur+1) = post >> 8;
+	}
 }
 
 } // End of namespace Nancy

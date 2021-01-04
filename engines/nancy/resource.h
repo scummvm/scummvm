@@ -23,9 +23,8 @@
 #ifndef NANCY_RESOURCE_H
 #define NANCY_RESOURCE_H
 
-namespace Common {
-class String;
-}
+#include "common/str.h"
+#include "common/array.h"
 
 namespace Graphics {
 struct Surface;
@@ -78,13 +77,15 @@ private:
 	NancyEngine *_vm;
 	Decompressor *_dec;
 
-	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = 0);
+	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr);
 	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
 	const CifTree *findCifTree(const Common::String &name) const;
+
+	void colorCorrect(byte *buf, uint size);
 
 	Common::Array<const CifTree *> _cifTrees;
 };
 
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_RESOURCE_H

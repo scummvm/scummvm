@@ -20,43 +20,36 @@
  *
  */
 
-#ifndef NANCY_DECOMPRESS_H
-#define NANCY_DECOMPRESS_H
+#ifndef NANCY_LOGIC_H
+#define NANCY_LOGIC_H
 
-#include "common/scummsys.h"
+#include "engines/nancy/action/actionrecord.h"
 
-namespace Common {
-	class ReadStream;
-	class WriteStream;
-	class MemoryWriteStream;
-}
+#include "common/str.h"
+#include "common/stream.h"
+#include "common/array.h"
+#include "common/func.h"
 
 namespace Nancy {
 
-class Decompressor {
+class NancyEngine;
+class SceneManager;
+
+class Logic {
+    friend class SceneManager;
+
 public:
-	// Decompresses data from input until the end of the stream
-	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
+    Logic(NancyEngine* engine): _engine(engine) {}
+    virtual ~Logic() {}
 
-private:
-	enum {
-		kBufSize = 4096,
-		kBufStart = 4078
-	};
+    bool addNewActionRecord(Common::SeekableReadStream &inputData);
 
-	void init(Common::ReadStream &input, Common::WriteStream &output);
-	bool readByte(byte &b);
-	bool writeByte(byte b);
-
-	byte _buf[kBufSize];
-	uint _bufpos;
-	bool _err;
-	byte _val;
-	Common::ReadStream *_input;
-	Common::WriteStream *_output;
+protected:
+    virtual ActionRecord *createActionRecord(uint16 type);
+    NancyEngine *_engine;
+    Common::Array<ActionRecord *> _records;
 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_DECOMPRESS_H
+#endif // NANCY_LOGIC_H

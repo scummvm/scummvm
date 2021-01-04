@@ -20,9 +20,9 @@
  *
  */
 
-#include "nancy/nancy.h"
-#include "nancy/iff.h"
-#include "nancy/resource.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/iff.h"
+#include "engines/nancy/resource.h"
 
 #include "common/memstream.h"
 #include "common/iff_container.h"
@@ -108,7 +108,7 @@ const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Common::SeekableReadStream *IFF::getChunkStream(Common::String id, uint index) const {

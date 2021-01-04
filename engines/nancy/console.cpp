@@ -20,16 +20,19 @@
  *
  */
 
+#include "engines/nancy/console.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/video.h"
+#include "engines/nancy/audio.h"
+#include "engines/nancy/iff.h"
+
 #include "common/system.h"
 #include "common/events.h"
+
 #include "graphics/surface.h"
+
 #include "audio/audiostream.h"
-#include "nancy/console.h"
-#include "nancy/nancy.h"
-#include "nancy/resource.h"
-#include "nancy/video.h"
-#include "nancy/audio.h"
-#include "nancy/iff.h"
 
 namespace Nancy {
 
@@ -50,6 +53,7 @@ NancyConsole::~NancyConsole() {
 }
 
 void NancyConsole::postEnter() {
+	GUI::Debugger::postEnter();
 	if (!_videoFile.empty()) {
 		Video::VideoDecoder *dec = new AVFDecoder;
 
@@ -218,6 +222,7 @@ bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
 		_vm->_system->fillScreen(0);
 		_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
 		surf.free();
+		_vm->_gameFlow.minGameState = NancyEngine::kIdle;
 		return cmdExit(0, 0);
 	} else {
 		debugPrintf("Failed to load image\n");

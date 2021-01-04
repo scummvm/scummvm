@@ -20,43 +20,34 @@
  *
  */
 
-#ifndef NANCY_DECOMPRESS_H
-#define NANCY_DECOMPRESS_H
+#ifndef NANCY_PLAYSTATE_H
+#define NANCY_PLAYSTATE_H
 
-#include "common/scummsys.h"
-
-namespace Common {
-	class ReadStream;
-	class WriteStream;
-	class MemoryWriteStream;
-}
+#include "engines/nancy/time.h"
 
 namespace Nancy {
 
-class Decompressor {
-public:
-	// Decompresses data from input until the end of the stream
-	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
+// A catch-all struct for storing all player progress and related variables
+// TODO split to PlayerState/SceneState
+struct PlayState {
+    enum Flag { kFalse = 1, kTrue = 2 };
 
-private:
-	enum {
-		kBufSize = 4096,
-		kBufStart = 4078
-	};
-
-	void init(Common::ReadStream &input, Common::WriteStream &output);
-	bool readByte(byte &b);
-	bool writeByte(byte b);
-
-	byte _buf[kBufSize];
-	uint _bufpos;
-	bool _err;
-	byte _val;
-	Common::ReadStream *_input;
-	Common::WriteStream *_output;
+    Flag inventory[11];
+    Flag eventFlags[672];
+    // Second array with the same size as EventFlags that never gets used?
+    bool sceneHitCount[1000];
+    uint16 difficulty; // 0, 1, 2
+    Time totalTime;
+    Time sceneTime;
+    Time timerTime;
+    bool timerIsActive = false;
+    uint16 currentViewFrame = 0;
+    uint16 queuedViewFrame = 0;
+    uint16 currentMaxVerticalScroll = 0;
+    uint16 queuedMaxVerticalScroll = 0;
+    uint16 verticalScroll = 0; // This replaces rDisplayed
 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_DECOMPRESS_H
+#endif // NANCY_PLAYSTATE_H

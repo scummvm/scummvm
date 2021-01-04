@@ -23,6 +23,8 @@
 #ifndef NANCY_LOGO_H
 #define NANCY_LOGO_H
 
+#include "common/scummsys.h"
+
 namespace Graphics {
 	class Surface;
 }
@@ -39,7 +41,8 @@ public:
 		_runState(kBlit),
 		_startTicks(0),
 		_surf(nullptr) { }
-	void doIt();
+		
+	void process();
 
 private:
 	void init();
@@ -50,7 +53,7 @@ private:
 	enum State {
 		kInit,
 		kStartSound,
-		kRunning,
+		kRun,
 		kStop
 	};
 

@@ -23,11 +23,11 @@
 #ifndef NANCY_H
 #define NANCY_H
 
+#include "nancy/console.h"
+#include "nancy/detection.h"
+
 #include "engines/engine.h"
 #include "common/file.h"
-
-#include "nancy/console.h"
-#include "nancy/logo.h"
 
 namespace Common {
 class RandomSource;
@@ -45,13 +45,6 @@ class RandomSource;
 namespace Nancy {
 
 static const int kSavegameVersion = 1;
-
-enum GameType {
-	kGameTypeNone = 0,
-	kGameTypeNancy1,
-	kGameTypeNancy2,
-	kGameTypeNancy3
-};
 
 enum NancyDebugChannels {
 	kDebugSchedule  = 1 <<  0,
@@ -71,10 +64,16 @@ struct NancyGameDescription;
 class ResourceManager;
 class IFF;
 class LogoSequence;
+class SceneManager;
+class Logic;
+class GraphicsManager;
 
 class NancyEngine : public Engine {
 public:
+	friend class Logic;
 	friend class LogoSequence;
+	friend class SceneManager;
+	friend class NancyConsole;
 
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
@@ -85,7 +84,6 @@ public:
 
 	Common::RandomSource *_rnd;
 
-	ResourceManager *_res;
 
 	const NancyGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -103,10 +101,24 @@ public:
 	void syncSoundSettings();
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
+	
+	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
+	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
+
+	// Managers
+	ResourceManager *_res;
+	Logic *logic;
+	SceneManager *sceneManager;
+	GraphicsManager *graphics;
 
 protected:
 	// Engine APIs
 	Common::Error run();
+
+	void bootGameEngine();
+
+	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
+	void clearBootChunks();
 
 	enum {
 		kMaxFilenameLen = 32
@@ -124,18 +136,35 @@ protected:
 
 	enum GameState {
 		kBoot,
+		kPartnerLogo, // v2 only
 		kLogo,
+		kCredits,
+		kMap, // v0, v1 only
+		kMainMenu,
+		kLoadSave,
+		kSetup,
+		// unknown/invalid
+		kHelp,
+		kScene,
+		// CD change
+		kCheat,
+		kQuit,
+		// regain focus
 		kIdle
 	};
 
 	struct GameFlow {
 		GameState minGameState;
+		GameState previousGameState;
 	};
 
 	typedef Common::Array<Image> ImageList;
 
-	Common::SeekableReadStream *_bsum;
-	ImageList _logos, _frames;
+	ImageList _logos;
+	ImageList _frames;
+	ImageList _objects;
+	uint16 _firstSceneID;
+	int32 _fontSize;
 	Sound _menuSound;
 	GameFlow _gameFlow;
 
@@ -155,10 +184,11 @@ private:
 	Common::Platform _platform;
 
 	LogoSequence *_logoSequence;
+	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 
 	void initialize();
 };
 
 } // End of namespace Nancy
 
-#endif // Nancy_H
+#endif // NANCY_H
