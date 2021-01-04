@@ -31,7 +31,7 @@
 #include "common/str.h"
 
 namespace Graphics {
-	class Surface;
+	struct Surface;
 }
 
 namespace Common {

@@ -24,7 +24,7 @@
 #define NANCY_MENU_H
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Nancy {

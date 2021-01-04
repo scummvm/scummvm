@@ -33,7 +33,7 @@
 
 namespace Nancy {
 
-typedef Common::Functor0<void> RenderFunction;
+typedef Common::Functor0Mem<void, GraphicsManager> RenderFunction;
 
 struct ZRenderStruct {
 public:
