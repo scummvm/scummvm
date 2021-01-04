@@ -22,10 +22,43 @@
 
 #include "ags/shared/gfx/image.h"
 #include "ags/lib/allegro.h"
+#include "common/file.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "image/pcx.h"
 
 namespace AGS3 {
+
+template<class DECODER>
+BITMAP *decodeImage(const char *filename, color *pal) {
+	DECODER decoder;
+	Common::File f;
+
+	if (f.open(filename) && decoder.loadStream(f)) {
+		// Create the output surface
+		const Graphics::Surface *src = decoder.getSurface();
+
+		// Copy the decoded surface
+		Surface *dest = new Surface();
+		dest->create(src->w, src->h, src->format);
+		dest->blitFrom(*src);
+
+		// Copy the palette
+		const byte *palP = decoder.getPalette();
+		if (palP) {
+			for (int idx = 0; idx < 256; ++idx, palP += 3) {
+				pal[idx].r = palP[0];
+				pal[idx].g = palP[1];
+				pal[idx].b = palP[2];
+				pal[idx].filler = 0xff;
+			}
+		}
+
+		return dest;
+	} else {
+		return nullptr;
+	}
+}
 
 BITMAP *load_bmp_pf(PACKFILE *f, color *pal) {
 	error("TODO: load_bmp_pf");
@@ -48,7 +81,7 @@ BITMAP *load_lbm(const char *filename, color *pal) {
 }
 
 BITMAP *load_pcx(const char *filename, color *pal) {
-	error("TODO: load_pcx");
+	return decodeImage<Image::PCXDecoder>(filename, pal);
 }
 
 BITMAP *load_tga(const char *filename, color *pal) {
