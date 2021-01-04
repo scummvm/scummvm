@@ -126,10 +126,8 @@ private:
 	void createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Load grid bricks according with block librarie usage
-	 * @param gridSize size of the current grid
-	 * @return true if everything went ok
 	 */
-	void loadGridBricks(int32 gridSize);
+	void loadGridBricks();
 	/** Create grid masks to allow display actors over the bricks */
 	void createGridMask();
 	/**

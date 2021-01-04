@@ -265,7 +265,7 @@ void Grid::getSpriteSize(int32 offset, int32 *width, int32 *height, const uint8 
 	*height = *(spritePtr + 1);
 }
 
-void Grid::loadGridBricks(int32 gridSize) {
+void Grid::loadGridBricks() {
 	uint32 firstBrick = 60000;
 	uint32 lastBrick = 0;
 	uint32 currentBllEntryIdx = 0;
@@ -274,7 +274,7 @@ void Grid::loadGridBricks(int32 gridSize) {
 	memset(brickUsageTable, 0, sizeof(brickUsageTable));
 
 	// get block libraries usage bits
-	const uint8 *ptrToBllBits = currentGrid + (gridSize - 32);
+	const uint8 *ptrToBllBits = currentGrid + (currentGridSize - 32);
 
 	// for all bits under the 32bytes (256bits)
 	for (uint32 i = 1; i < 256; i++) {
@@ -434,7 +434,7 @@ bool Grid::initGrid(int32 index) {
 		return false;
 	}
 
-	loadGridBricks(currentGridSize);
+	loadGridBricks();
 
 	createGridMask();
 
