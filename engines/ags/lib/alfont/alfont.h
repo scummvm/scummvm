@@ -24,18 +24,19 @@
 #define AGS_LIB_ALFONT_H
 
 #include "common/hashmap.h"
+#include "common/memstream.h"
 #include "graphics/font.h"
 #include "ags/lib/allegro/gfx.h"
 
 namespace AGS3 {
 
 struct ALFONT_FONT {
-	Common::String _filename;
+	Common::MemoryReadStream _ttfData;
 	int _size;
 	Common::HashMap<int, Graphics::Font *> _fonts;
 
-	ALFONT_FONT() : _size(-1) {}
-	ALFONT_FONT(const Common::String &filename) : _filename(filename), _size(-1) {}
+	ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
+	ALFONT_FONT(const byte *data, size_t size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
 
 	~ALFONT_FONT() {
 		for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
@@ -49,7 +50,7 @@ struct ALFONT_FONT {
 inline void alfont_init() {}
 inline void alfont_exit() {}
 inline void alfont_text_mode(int val) {}
-extern ALFONT_FONT *alfont_loadFont(const Common::String &filename);
+extern ALFONT_FONT *alfont_load_font_from_mem(const byte *data, int data_len);
 extern void alfont_destroy_font(ALFONT_FONT *font);
 
 extern size_t alfont_text_length(ALFONT_FONT *font, const char *text);

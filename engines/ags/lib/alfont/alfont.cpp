@@ -28,12 +28,8 @@ namespace AGS3 {
 
 Graphics::Font *ALFONT_FONT::getFont() {
 	if (!_fonts.contains(_size)) {
-		Common::File f;
-		if (!f.open(_filename))
-			error("Could not read font - %s", _filename.c_str());
-		_fonts[_size] = Graphics::loadTTFFont(f, f.size());
-		f.close();
-
+		// Instantiate the raw TTF data into a font of the given size
+		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size);
 		assert(_fonts[_size]);
 	}
 
@@ -42,11 +38,8 @@ Graphics::Font *ALFONT_FONT::getFont() {
 
 /*------------------------------------------------------------------*/
 
-ALFONT_FONT *alfont_loadFont(const Common::String &filename) {
-	ALFONT_FONT *result = new ALFONT_FONT();
-	result->_filename = filename;
-
-	return result;
+ALFONT_FONT *alfont_load_font_from_mem(const byte *data, int data_len) {
+	return new ALFONT_FONT(data, data_len);
 }
 
 void alfont_destroy_font(ALFONT_FONT *font) {
