@@ -54,21 +54,6 @@ int BITMAP::getpixel(int x, int y) const {
 /*-------------------------------------------------------------------*/
 
 /**
- * Derived surface class
- */
-class Surface : public Graphics::ManagedSurface, public BITMAP {
-public:
-	Surface() : Graphics::ManagedSurface(), BITMAP(this) {}
-	Surface(const Graphics::ManagedSurface &surf) : Graphics::ManagedSurface(surf), BITMAP(this) {}
-	Surface(int width, int height) : Graphics::ManagedSurface(width, height), BITMAP(this) {}
-	Surface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
-		Graphics::ManagedSurface(width, height, pixelFormat), BITMAP(this) {}
-	Surface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
-		Graphics::ManagedSurface(surf, bounds), BITMAP(this) {}
-	~Surface() override {}
-};
-
-/**
  * Dervied screen surface
  */
 class Screen : public Graphics::Screen, public BITMAP {
