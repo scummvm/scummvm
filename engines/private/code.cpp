@@ -125,8 +125,8 @@ int eval()		/* evaluate variable on stack */
 	else if (d.sym->type == STRING)
 	    d.str = d.sym->u.str;
 	else if (d.sym->type == NAME) {
-            debug("NAME");
-	    d.sym = d.sym;
+            //debug("NAME %s", d.sym->name->c_str());
+	    //d.sym = d.sym;
 	}
 	else
 	    assert(0);
@@ -151,7 +151,9 @@ int negate()
 {
 	Datum d;
 	d = pop();
-	d.val = !d.val;
+        debug("negating %s", d.sym->name->c_str());
+	int v = d.sym->u.val;
+	d.val = !v;
 	push(d);
 	return 0;
 }
@@ -232,6 +234,7 @@ int ne()
 
 Inst *code(Inst f)	/* install one instruction or operand */
 {
+	//debug("pushing code at %d", progp);
  	Inst *oprogp = progp;
 	assert (!(progp >= &prog[NPROG]));
 	*progp++ = f;
@@ -245,14 +248,18 @@ int ifcode()
 
 	execute(savepc+3);	/* condition */
 	d = pop();
-	debug("ifcode %s %d", d.sym->name->c_str(), d.sym->u.val);
+	debug("ifcode %s", d.sym->name->c_str()); //, d.sym->u.val);
 	d.val = d.sym->u.val;
-	debug("then: %x", *((Inst **)(savepc)));
+	//debug("ptr: %x", *((Inst **)(savepc+1)));
+	//debug("ptr: %x", *((Inst **)(savepc+2)));
+	//debug("ptr: %x", *((Inst **)(savepc+3)));
+	
 	//assert(0);
 	if (d.val)
 		execute(*((Inst **)(savepc)));
 	else if (*((Inst **)(savepc+1))) /* else part? */
 		execute(*((Inst **)(savepc+1)));
+	debug("finish if");
 	pc = *((Inst **)(savepc+2));	 /* next stmt */
 	return 0;
 }

@@ -25,6 +25,13 @@ void SetFlag(ArgArray args) {
     args[0].sym->u.val = args[1].val;
 }
 
+void SetModifiedFlag(ArgArray args) {
+    debug("SetModifiedFlag(%d)", args[0].val);
+    _modified = (bool) args[0].val;
+}
+
+
+
 void Sound(ArgArray args) {
     debug("Sound(%s)", args[0].str);
     if (strcmp("\"\"", args[0].str) != 0) {
@@ -34,6 +41,12 @@ void Sound(ArgArray args) {
     } else {
 	    _private->stopSound();
     }
+}
+
+void Transition(ArgArray args) {
+    debug("Transition(%s, %s)", args[0].str, args[1].str);
+    _nextMovie = new Common::String(args[0].str);
+    _nextSetting = new Common::String(args[1].str);
 }
 
 void Bitmap(ArgArray args) {
@@ -81,11 +94,19 @@ void execFunction(char *name, ArgArray args) {
     else if (strcmp(name, "Timer") == 0) {
         Timer(args);	    
     }
+    else if (strcmp(name, "Transition") == 0) {
+        Transition(args);	    
+    }
+    else if (strcmp(name, "SetModifiedFlag") == 0) {
+        SetModifiedFlag(args);	    
+    }
     else if (strcmp(name, "Exit") == 0) {
        ;	    
     }
-    else 
+    else {
+        debug("I don't know how to exec %s", name);	    
         assert(0);
+    }
 
 }
 

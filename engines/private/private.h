@@ -36,6 +36,8 @@ enum {
 // global state
 extern Common::String *_nextSetting;
 extern int _mode;
+extern bool _modified;
+extern Common::String *_nextMovie;
 
 class PrivateEngine : public Engine {
 private:

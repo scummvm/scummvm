@@ -74,8 +74,7 @@ extern void execFunction(char *, ArgArray);
 // Code Generation
 
 extern	Datum pop();
-extern  int pushString(char *);
-extern  int pushInt(int);
+extern  Inst	*progp;
 
 extern  Inst *code(Inst);
 extern	Inst *prog;
@@ -94,6 +93,8 @@ extern  int ifcode();
 extern  int fail();
 extern  int lt();
 extern  int gt();
+extern  int le();
+extern  int ge();
 
 // Code Execution
 
