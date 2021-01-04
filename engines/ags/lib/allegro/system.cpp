@@ -80,8 +80,6 @@ SYSTEM_DRIVER *system_driver = &system_scummvm;
 
 
 GFX_MODE_LIST *get_gfx_mode_list(int card) {
-	assert(card == 0);
-
 	GFX_MODE_LIST *list = new GFX_MODE_LIST();
 	list->num_modes = 1;
 	list->mode = new GFX_MODE[1];
@@ -89,7 +87,7 @@ GFX_MODE_LIST *get_gfx_mode_list(int card) {
 	GFX_MODE &gm = list->mode[0];
 	gm.width = 320;
 	gm.height = 200;
-	gm.bpp = 16;
+	gm.bpp = 32;
 
 	return list;
 }
@@ -108,10 +106,12 @@ int get_color_depth() {
 }
 
 int get_desktop_resolution(int *width, int *height) {
-	if (*width)
-		*width = g_system->getWidth();
-	if (*height)
-		*height = g_system->getHeight();
+	// TODO: ScummVM has a hardcoded dummy desktop resolution. See if there's any
+	// need to change the values, given we're hardcoded for pretend full-screen
+	if (width)
+		*width = 640;
+	if (height)
+		*height = 480;
 
 	return 0;
 }
