@@ -105,8 +105,10 @@ BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
 	switch (color_depth) {
 	case 16:
 		format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		break;
 	case 32:
 		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		break;
 	default:
 		error("Invalid color depth");
 	}
@@ -404,7 +406,7 @@ void circlefill(BITMAP *bmp, int x, int y, int radius, int color) {
 }
 
 void clear_bitmap(BITMAP *bmp) {
-	error("TODO: clear_bitmap");
+	bmp->clear();
 }
 
 

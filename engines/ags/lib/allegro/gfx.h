@@ -203,6 +203,10 @@ public:
 	}
 
 	int getpixel(int x, int y) const;
+
+	void clear() {
+		_owner->clear();
+	}
 };
 
 AL_FUNC(void, set_color_conversion, (int mode));
