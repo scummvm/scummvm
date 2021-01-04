@@ -20,11 +20,10 @@
  *
  */
 
-#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXINFOREQUEST_H
-#define BACKENDS_CLOUD_DROPBOX_DROPBOXINFOREQUEST_H
+#ifndef BACKENDS_CLOUD_DROPBOX_DROPBOXTOKENREFRESHER_H
+#define BACKENDS_CLOUD_DROPBOX_DROPBOXTOKENREFRESHER_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
@@ -32,24 +31,20 @@ namespace Dropbox {
 
 class DropboxStorage;
 
-class DropboxInfoRequest: public Networking::Request {
-	DropboxStorage *_storage;
-	Common::String _uid, _name, _email;
-	Storage::StorageInfoCallback _infoCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
+class DropboxTokenRefresher: public Networking::CurlJsonRequest {
+	DropboxStorage *_parentStorage;
+	Common::Array<Common::String> _headers;
 
-	void start();
-	void userResponseCallback(Networking::JsonResponse response);
-	void quotaResponseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishInfo(StorageInfo info);
+	void tokenRefreshed(Storage::BoolResponse response);
+
+	virtual void finishJson(Common::JSONValue *json);
+	virtual void finishError(Networking::ErrorResponse error);
 public:
-	DropboxInfoRequest(DropboxStorage *storage, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb);
-	virtual ~DropboxInfoRequest();
+	DropboxTokenRefresher(DropboxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
+	virtual ~DropboxTokenRefresher();
 
-	virtual void handle();
-	virtual void restart();
+	virtual void setHeaders(Common::Array<Common::String> &headers);
+	virtual void addHeader(Common::String header);
 };
 
 } // End of namespace Dropbox

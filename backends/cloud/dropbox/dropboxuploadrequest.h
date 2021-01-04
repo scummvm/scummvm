@@ -31,8 +31,10 @@
 namespace Cloud {
 namespace Dropbox {
 
+class DropboxStorage;
+
 class DropboxUploadRequest: public Networking::Request {
-	Common::String _token;
+	DropboxStorage *_storage;
 	Common::String _savePath;
 	Common::SeekableReadStream *_contentsStream;
 	Storage::UploadCallback _uploadCallback;
@@ -47,7 +49,7 @@ class DropboxUploadRequest: public Networking::Request {
 	void finishUpload(StorageFile status);
 
 public:
-	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+	DropboxUploadRequest(DropboxStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
 	virtual ~DropboxUploadRequest();
 
 	virtual void handle();

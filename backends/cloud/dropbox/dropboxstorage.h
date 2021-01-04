@@ -32,7 +32,7 @@ namespace Dropbox {
 
 class DropboxStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	DropboxStorage(Common::String token, bool enabled);
+	DropboxStorage(Common::String token, Common::String refreshToken, bool enabled);
 
 protected:
 	/**
@@ -103,6 +103,8 @@ public:
 	 * Remove all DropboxStorage-related data from config.
 	 */
 	static void removeFromConfig(Common::String keyPrefix);
+
+	Common::String accessToken() const { return _token; }
 };
 
 } // End of namespace Dropbox
