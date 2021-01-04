@@ -37,7 +37,7 @@ int yywrap()
 
 %union {
 	struct Symbol	*sym;	/* symbol table pointer */
-        int (*inst)();	/* machine instruction */
+        int (**inst)();	/* machine instruction */
         char *s;
         int *i;
         int narg;
@@ -45,7 +45,7 @@ int yywrap()
 
 %token<s> NAME
 %token<sym> STRING NUM
-//%type <inst> value cond expr if
+%type <inst> body if cond end expr statements statement fcall value
 %token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECTTOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
@@ -64,30 +64,40 @@ debug: /* nothing */
         | NAME ',' debug
         ;
 
-statements:  /* nothing */
-        | statements statement
+statements:  /* nothing */     { $$ = progp; }
+        | statement statements
 
 
-statement: GOTOTOK expr ';'
-        | fcall ';'        
-        | if cond statement end
-        | if cond body end ELSETOK body end
-        | if cond body end
-        | if cond body end ELSETOK statement end
-	| if cond statement end ELSETOK statement end
-        | if cond statement end ELSETOK body end
+statement: GOTOTOK expr ';'  { code(fail); }
+        | fcall ';'          { $$ = $1; } 
+        | if cond statement end {	/* else-less if */
+		($1)[1] = (Inst)$3;	/* thenpart */
+		($1)[3] = (Inst)$4; }	/* end, if cond fails */
+        | if cond body end ELSETOK body end { /* if with else */
+		($1)[1] = (Inst)$3;	/* thenpart */
+		($1)[2] = (Inst)$6;	/* elsepart */
+		($1)[3] = (Inst)$7; }	/* end, if cond fails */
+        | if cond body end {	/* else-less if */
+		($1)[1] = (Inst)$3;	/* thenpart */
+		($1)[3] = (Inst)$4; }	/* end, if cond fails */
+        | if cond body end ELSETOK statement end {  /* if with else */
+		($1)[1] = (Inst)$3;	/* thenpart */
+		($1)[2] = (Inst)$6;	/* elsepart */
+		($1)[3] = (Inst)$7; }	/* end, if cond fails */
+	| if cond statement end ELSETOK statement end { code(fail); }
+        | if cond statement end ELSETOK body end { code(fail); }
         ;
 
-body: '{' statements '}'
+body: '{' statements '}' { $$ = $2; }
         ;
 
-end:	  /* nothing */		{ code(STOP);}
+end:	  /* nothing */		{ code(STOP); $$ = progp; }
 	;
 
-if: IFTOK { code(ifcode); code3(STOP, STOP, STOP); /*code(fail);*/ }
+if: IFTOK { $$ = code(ifcode); code3(STOP, STOP, STOP); }
         ;
 
-cond: '(' expr ')'	{ code(STOP); }
+cond: '(' expr ')'	{ code(STOP); $$ = $2; }
         ;
 
 define:  /* nothing */
@@ -98,14 +108,16 @@ define:  /* nothing */
         ;
 
 fcall:    GOTOTOK '(' NAME ')' {
+                               $$ = progp;
                                code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
                                code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
                                code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
-                               code1(Private::funcpush); 
+                               code1(Private::funcpush);
                                }
 
         | RECTTOK '(' NUM ',' NUM ',' NUM ',' NUM ')'
         | NAME '(' params ')'  {
+                               $$ = progp;
                                code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, $params, NULL));
                                code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME)); 
                                code1(Private::funcpush); 
@@ -126,15 +138,15 @@ value:    FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconst
         | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }
         ;
 
-expr:     value           
-        | '!' value       { code1(Private::negate); }
+expr:     value           { $$ = $1; } 
+        | '!' value       { code1(Private::negate); $$ = $2; }
         | value EQ value
         | value NEQ value
         | value '+' value { code1(Private::add); }
         | value '<' value { code1(Private::lt); }
         | value '>' value { code1(Private::gt); }
-        | value LTE value
-        | value GTE value 
-        | value '+'
+        | value LTE value { code1(Private::le); }
+        | value GTE value { code1(Private::ge); }
+        | value '+' 
         | RANDOMTOK '(' NUM '%' ')'
         ;

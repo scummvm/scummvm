@@ -26,6 +26,8 @@ extern int yyparse();
 namespace Private {
 
 Common::String *_nextSetting = NULL;
+Common::String *_nextMovie = NULL;
+bool _modified = false;
 int _mode = -1;
 PrivateEngine *_private = NULL;
 
@@ -36,7 +38,9 @@ Common::String convertPath(Common::String name) {
         Common::String s1("\\");
         Common::String s2("/");
 
-        Common::replace(path, s1, s2);
+	while (path.contains(s1))
+            Common::replace(path, s1, s2);
+
         s1 = Common::String("\"");
         s2 = Common::String("");
 
@@ -103,7 +107,7 @@ Common::Error PrivateEngine::run() {
         _image = new Image::BitmapDecoder();
 	_compositeSurface = new Graphics::ManagedSurface();
   	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-	_compositeSurface->setTransparentColor(0);
+	_compositeSurface->setTransparentColor(0x00ff00);
 
 	// You could use backend transactions directly as an alternative,
 	// but it isn't recommended, until you want to handle the error values
@@ -147,7 +151,17 @@ Common::Error PrivateEngine::run() {
 		g_system->getEventManager()->pollEvent(evt);
 		g_system->delayMillis(10);
 
+
+		if (_nextMovie != NULL) {
+                    //_videoDecoder = new Video::SmackerDecoder();
+                    //playVideo(*_nextMovie);
+		    _nextMovie = NULL;
+		    continue;
+
+		}
+
 		if (_videoDecoder) {
+			stopSound();
 			if (_videoDecoder->endOfVideo()) {
 				_videoDecoder->close();
 				delete _videoDecoder;
@@ -155,6 +169,7 @@ Common::Error PrivateEngine::run() {
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
+			continue;
 		}
 
 		//if (_compositeSurface)
@@ -216,11 +231,13 @@ void PrivateEngine::playSound(const Common::String &name) {
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
-	if (!file->open(name))
-		error("unable to find video file %s", name.c_str());
+        Common::String path = convertPath(name);
+
+	if (!file->open(path))
+		error("unable to find video file %s", path.c_str());
 
 	if (!_videoDecoder->loadStream(file))
-	        error("unable to load video %s", name.c_str());
+	        error("unable to load video %s", path.c_str());
 	_videoDecoder->start();
 
 }
@@ -243,7 +260,7 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
         //for (int i = 0; i < 30; i=i+3) 
 	//    debug("%x %x %x", *(_image->getPalette()+i), *(_image->getPalette()+i+1), *(_image->getPalette()+i+2));
 
-	_compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y)); 
+	_compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y), _pixelFormat.RGBToColor(0,255,0)); 
 	drawScreen();
 }
 
@@ -253,14 +270,14 @@ void PrivateEngine::drawScreen() {
 		Graphics::Surface *screen = g_system->lockScreen();
 		//screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
 
-		const Graphics::ManagedSurface *surface;
-                /*if (_videoDecoder)
-			surface = _videoDecoder->decodeNextFrame();
-		else*/ if (_compositeSurface)
-			surface = _compositeSurface;
-		else
-			assert(0);
-		//	surface = _image->getSurface();
+		Graphics::ManagedSurface *surface = _compositeSurface;
+
+                if (_videoDecoder) {
+			Graphics::Surface *frame = new Graphics::Surface;
+			frame->create(_screenW, _screenH, _pixelFormat);
+			frame->copyFrom(*_videoDecoder->decodeNextFrame());
+                        surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette())); 
+		}	
 
 		int w = surface->w; //CLIP<int>(surface->w, 0, _screenW);
 		int h = surface->h; //CLIP<int>(surface->h, 0, _screenH);
