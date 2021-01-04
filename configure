@@ -4917,7 +4917,14 @@ if test "$_libcurl" != "no"; then
 			}
 EOF
 
-			cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS
+			case $_host_os in
+				switch)
+					cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS -specs=$DEVKITPRO/libnx/switch.specs
+					;;
+				*)
+					cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS
+					;;
+			esac
 			if test "$?" -eq 0; then
 				if test -n "$_host"; then
 					# In cross-compiling mode, we cannot run the result, assume SSL is available
