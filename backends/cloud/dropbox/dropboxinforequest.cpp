@@ -21,6 +21,8 @@
  */
 
 #include "backends/cloud/dropbox/dropboxinforequest.h"
+#include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -34,8 +36,8 @@ namespace Dropbox {
 #define DROPBOX_API_GET_CURRENT_ACCOUNT "https://api.dropboxapi.com/2/users/get_current_account"
 #define DROPBOX_API_GET_SPACE_USAGE "https://api.dropboxapi.com/2/users/get_space_usage"
 
-DropboxInfoRequest::DropboxInfoRequest(Common::String token, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _infoCallback(cb),
+DropboxInfoRequest::DropboxInfoRequest(DropboxStorage *storage, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb):
+	Networking::Request(nullptr, ecb), _storage(storage), _infoCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -55,8 +57,8 @@ void DropboxInfoRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::userResponseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<DropboxInfoRequest, Networking::ErrorResponse>(this, &DropboxInfoRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, DROPBOX_API_GET_CURRENT_ACCOUNT);
-	request->addHeader("Authorization: Bearer " + _token);
+	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, innerCallback, errorResponseCallback, DROPBOX_API_GET_CURRENT_ACCOUNT);
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 	request->addPostField("null"); //use POST
 
@@ -109,8 +111,8 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxInfoRequest, Networking::JsonResponse>(this, &DropboxInfoRequest::quotaResponseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<DropboxInfoRequest, Networking::ErrorResponse>(this, &DropboxInfoRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, DROPBOX_API_GET_SPACE_USAGE);
-	request->addHeader("Authorization: Bearer " + _token);
+	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, innerCallback, errorResponseCallback, DROPBOX_API_GET_SPACE_USAGE);
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 	request->addPostField("null"); //use POST
 

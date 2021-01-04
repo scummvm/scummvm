@@ -21,6 +21,8 @@
  */
 
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
+#include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
@@ -34,8 +36,8 @@ namespace Dropbox {
 #define DROPBOX_API_FILES_UPLOAD "https://content.dropboxapi.com/2/files/upload"
 #define DROPBOX_API_FILES_UPLOAD_SESSION "https://content.dropboxapi.com/2/files/upload_session/"
 
-DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
+DropboxUploadRequest::DropboxUploadRequest(DropboxStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -109,8 +111,8 @@ void DropboxUploadRequest::uploadNextPart() {
 	Common::JSONValue value(jsonRequestParameters);
 	Networking::JsonCallback callback = new Common::Callback<DropboxUploadRequest, Networking::JsonResponse>(this, &DropboxUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxUploadRequest, Networking::ErrorResponse>(this, &DropboxUploadRequest::partUploadedErrorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(callback, failureCallback, url);
-	request->addHeader("Authorization: Bearer " + _token);
+	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, url.c_str());
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/octet-stream");
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 

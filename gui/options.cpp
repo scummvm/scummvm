@@ -2673,7 +2673,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		Common::String url = "https://cloud.scummvm.org/";
 		switch (_selectedStorageIndex) {
 		case Cloud::kStorageDropboxId:
-			url += "dropbox";
+			url += "dropbox?refresh_token=true";
 			break;
 		case Cloud::kStorageOneDriveId:
 			url += "onedrive";

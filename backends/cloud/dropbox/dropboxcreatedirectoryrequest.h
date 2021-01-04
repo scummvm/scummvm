@@ -30,8 +30,10 @@
 namespace Cloud {
 namespace Dropbox {
 
+class DropboxStorage;
+
 class DropboxCreateDirectoryRequest: public Networking::Request {
-	Common::String _token;
+	DropboxStorage *_storage;
 	Common::String _path;
 	Storage::BoolCallback _boolCallback;
 	Request *_workingRequest;
@@ -43,7 +45,7 @@ class DropboxCreateDirectoryRequest: public Networking::Request {
 	void errorCallback(Networking::ErrorResponse error);
 	void finishCreation(bool success);
 public:
-	DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+	DropboxCreateDirectoryRequest(DropboxStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~DropboxCreateDirectoryRequest();
 
 	virtual void handle();

@@ -48,6 +48,7 @@ MODULE_OBJS += \
 	cloud/dropbox/dropboxcreatedirectoryrequest.o \
 	cloud/dropbox/dropboxinforequest.o \
 	cloud/dropbox/dropboxlistdirectoryrequest.o \
+	cloud/dropbox/dropboxtokenrefresher.o \
 	cloud/dropbox/dropboxuploadrequest.o \
 	cloud/googledrive/googledrivelistdirectorybyidrequest.o \
 	cloud/googledrive/googledrivestorage.o \

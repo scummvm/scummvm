@@ -21,6 +21,8 @@
  */
 
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
+#include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -32,8 +34,8 @@ namespace Dropbox {
 
 #define DROPBOX_API_CREATE_FOLDER "https://api.dropboxapi.com/2/files/create_folder"
 
-DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _path(path), _boolCallback(cb),
+DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(DropboxStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
+	Networking::Request(nullptr, ecb), _storage(storage), _path(path), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -53,8 +55,8 @@ void DropboxCreateDirectoryRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::JsonResponse>(this, &DropboxCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::ErrorResponse>(this, &DropboxCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, DROPBOX_API_CREATE_FOLDER);
-	request->addHeader("Authorization: Bearer " + _token);
+	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, innerCallback, errorResponseCallback, DROPBOX_API_CREATE_FOLDER);
+	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 
 	Common::JSONObject jsonRequestParameters;

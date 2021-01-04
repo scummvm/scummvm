@@ -31,12 +31,14 @@
 namespace Cloud {
 namespace Dropbox {
 
+class DropboxStorage;
+
 class DropboxListDirectoryRequest: public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 
 	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::String _token;
+	DropboxStorage *_storage;
 	Common::Array<StorageFile> _files;
 	Request *_workingRequest;
 	bool _ignoreCallback;
@@ -47,7 +49,7 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	void errorCallback(Networking::ErrorResponse error);
 	void finishListing(Common::Array<StorageFile> &files);
 public:
-	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
+	DropboxListDirectoryRequest(DropboxStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~DropboxListDirectoryRequest();
 
 	virtual void handle();
