@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 namespace Graphics {
-	class Surface;
+	struct Surface;
 }
 
 namespace Nancy {
