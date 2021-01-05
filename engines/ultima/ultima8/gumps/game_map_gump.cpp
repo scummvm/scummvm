@@ -264,7 +264,7 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	int32 cx, cy, cz;
 	CameraProcess *cam = CameraProcess::GetCameraProcess();
 	if (!cam) CameraProcess::GetCameraLocation(cx, cy, cz);
-	else cam->GetLerped(cx, cy, cz, lerp_factor);
+	else cam->GetLerped(cx, cy, cz, lerp_factor, true);
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
 	gx = (ix - iy) / 4;
