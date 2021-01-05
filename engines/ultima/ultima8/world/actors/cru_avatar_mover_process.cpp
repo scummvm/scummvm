@@ -57,25 +57,33 @@ void CruAvatarMoverProcess::run() {
 	const MainActor *avatar = getMainActor();
 	assert(avatar);
 
-	if (avatar->isInCombat() && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK | MOVE_JUMP | MOVE_STEP)) {
-		// See comment on _avatarAngle in header about these constants
-		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			if (hasMovementFlags(MOVE_RUN))
-				_avatarAngle -= 375;
-			else
-				_avatarAngle -= 150;
-
-			if (_avatarAngle < 0)
-				_avatarAngle += 36000;
+	// When not in combat the angle is kept as -1
+	if (avatar->isInCombat()) {
+		if (_avatarAngle < 0) {
+			_avatarAngle = Direction_ToCentidegrees(avatar->getDir());
 		}
-		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			if (hasMovementFlags(MOVE_RUN))
-				_avatarAngle += 375;
-			else
-				_avatarAngle += 150;
+		if (!hasMovementFlags(MOVE_FORWARD | MOVE_BACK | MOVE_JUMP | MOVE_STEP)) {
+			// See comment on _avatarAngle in header about these constants
+			if (hasMovementFlags(MOVE_TURN_LEFT)) {
+				if (hasMovementFlags(MOVE_RUN))
+					_avatarAngle -= 375;
+				else
+					_avatarAngle -= 150;
 
-			_avatarAngle = _avatarAngle % 36000;
+				if (_avatarAngle < 0)
+					_avatarAngle += 36000;
+			}
+			if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+				if (hasMovementFlags(MOVE_RUN))
+					_avatarAngle += 375;
+				else
+					_avatarAngle += 150;
+
+				_avatarAngle = _avatarAngle % 36000;
+			}
 		}
+	} else {
+		_avatarAngle = -1;
 	}
 
 	// Now do the regular process
@@ -91,7 +99,7 @@ void CruAvatarMoverProcess::handleHangingMode() {
 void CruAvatarMoverProcess::handleCombatMode() {
 	MainActor *avatar = getMainActor();
 	const Animation::Sequence lastanim = avatar->getLastAnim();
-	Direction direction = Direction_FromCentidegrees(_avatarAngle);
+	Direction direction = (_avatarAngle >= 0 ? Direction_FromCentidegrees(_avatarAngle) : avatar->getDir());
 	const Direction curdir = avatar->getDir();
 	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
@@ -180,7 +188,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	int x, y;
 	getMovementFlagAxes(x, y);
 	if (x != 0 || y != 0) {
-		Direction nextdir = Direction_FromCentidegrees(_avatarAngle);
+		Direction nextdir = (_avatarAngle >= 0 ? Direction_FromCentidegrees(_avatarAngle) : avatar->getDir());
 
 		if (checkTurn(nextdir, true))
 			return;
@@ -246,9 +254,6 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 		avatar->toggleInCombat();
 	}
-
-	// In normal mode the internal angle is set based on the avatar direction
-	_avatarAngle = Direction_ToCentidegrees(direction);
 
 	// If Avatar has fallen down and not dead, get up!
 	if (standUpIfNeeded(direction))
@@ -392,26 +397,16 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 	waitFor(avatar->doAnim(action, direction));
 }
 
-bool CruAvatarMoverProcess::canAttack() {
-	MainActor *avatar = getMainActor();
-	return avatar->isInCombat();
-}
-
 void CruAvatarMoverProcess::tryAttack() {
 	MainActor *avatar = getMainActor();
 	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
-		if (!avatar->hasActorFlags(Actor::ACT_WEAPONREADY))
-			waitFor(avatar->doAnim(Animation::readyWeapon, dir));
-	} else {
-		if (canAttack()) {
-			// Fire event happens from animation
-			Animation::Sequence fireanim = (avatar->isKneeling() ?
-											Animation::kneelAndFire : Animation::attack);
-			waitFor(avatar->doAnim(fireanim, dir));
-		}
 	}
+	// Fire event happens from animation
+	Animation::Sequence fireanim = (avatar->isKneeling() ?
+									Animation::kneelAndFire : Animation::attack);
+	waitFor(avatar->doAnim(fireanim, dir));
 }
 
 void CruAvatarMoverProcess::saveData(Common::WriteStream *ws) {

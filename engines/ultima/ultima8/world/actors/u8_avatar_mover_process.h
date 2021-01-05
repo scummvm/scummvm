@@ -52,7 +52,7 @@ protected:
 	void handleHangingMode() override;
 	void handleCombatMode() override;
 	void handleNormalMode() override;
-	bool canAttack() override;
+	bool canAttack();
 
 	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
 	void jump(Animation::Sequence action, Direction direction);

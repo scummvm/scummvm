@@ -65,6 +65,10 @@ void CrosshairProcess::run() {
 			return;
 		}
 		double angle = mover->getAvatarAngleDegrees() + 90.0;
+		if (angle < 90.0) {
+			// -1 is used to record the avatar is not in combat, so shouldn't happen?
+			return;
+		}
 		// Convert angle to 0~2pi
 		double rads = Common::deg2rad(angle);
 		float xoff = CROSSHAIR_DIST * cos(rads);

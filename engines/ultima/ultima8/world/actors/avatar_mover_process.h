@@ -89,8 +89,6 @@ protected:
 	virtual void handleCombatMode() = 0;
 	virtual void handleNormalMode() = 0;
 
-	virtual bool canAttack() = 0;
-
 	void turnToDirection(Direction direction);
 	bool checkTurn(Direction direction, bool moving);
 

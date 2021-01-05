@@ -754,16 +754,7 @@ bool U8AvatarMoverProcess::canAttack() {
 }
 
 void U8AvatarMoverProcess::tryAttack() {
-	MainActor *avatar = getMainActor();
-	Direction dir = avatar->getDir();
-	if (!avatar->isInCombat()) {
-		avatar->setInCombat(0);
-		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
-	} else {
-		if (canAttack()) {
-			waitFor(avatar->doAnim(Animation::attack, dir));
-		}
-	}
+	error("tryAttack should only be called in Crusader");
 }
 
 void U8AvatarMoverProcess::saveData(Common::WriteStream *ws) {
