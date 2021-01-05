@@ -487,6 +487,11 @@ public:
 		kFeatureJoystickDeadzone,
 
 		/**
+		* Scalers.
+		*/
+		kFeatureScalers,
+
+		/**
 		* Shaders.
 		*/
 		kFeatureShader,
@@ -860,6 +865,38 @@ public:
 	 * @return ID of the active stretch mode.
 	 */
 	virtual int getStretchMode() const { return 0; }
+
+	/**
+	 * Switch to the specified scaler.
+	 *
+	 * If switching to the new mode fails, this method returns false.
+	 *
+	 * @param mode ID of the new scaler.
+	 * @param factor The scale factor to use
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	virtual bool setScaler(uint mode, int factor) { return false; }
+
+	/**
+	 * Switch to the scaler with the given name.
+	 *
+	 * If @p name is unknown, or if switching to the new mode fails,
+	 * this method returns false.
+	 *
+	 * @param name Name of the new scaler.
+	 * @param factor The scale factor to use
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	virtual bool setScaler(const char *name, int factor) { return false; }
+
+	/**
+	 * Determine which stretch mode is currently active.
+	 *
+	 * @return ID of the active stretch mode.
+	 */
+	virtual uint getScaler() const { return 0; }
 
 
 	/**

@@ -40,6 +40,10 @@
 #define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
+enum {
+	GFX_SURFACESDL = 0
+};
+
 
 class AspectRatio {
 	int _kw, _kh;
@@ -69,6 +73,8 @@ public:
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	virtual int getGraphicsMode() const override;
+	virtual bool setScaler(uint mode, int factor) override;
+	virtual uint getScaler() const override;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
@@ -256,7 +262,7 @@ protected:
 		int stretchMode;
 #endif
 
-		int mode;
+		uint scalerIndex;
 		int scaleFactor;
 
 		int screenWidth, screenHeight;
@@ -277,7 +283,7 @@ protected:
 			stretchMode = 0;
 #endif
 
-			mode = 0;
+			scalerIndex = 0;
 			scaleFactor = 0;
 
 			screenWidth = 0;
@@ -317,7 +323,6 @@ protected:
 
 	const PluginList &_scalerPlugins;
 	ScalerPluginObject *_scalerPlugin;
-	uint _scalerIndex;
 	uint _maxExtraPixels;
 	uint _extraPixels;
 
@@ -416,7 +421,7 @@ protected:
 
 private:
 	void setFullscreenMode(bool enable);
-	void handleScalerHotkeys(int factor);
+	void handleScalerHotkeys(uint mode, int factor);
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

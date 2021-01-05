@@ -7,6 +7,10 @@ void Common::install_null_g_system() {
 	g_system = OSystem_NULL_create();
 }
 
+bool BaseBackend::setScaler(const char *name, int factor) {
+	return false;
+}
+
 void BaseBackend::displayMessageOnOSD(const Common::U32String &msg) {
 }
 
