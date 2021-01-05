@@ -23,6 +23,7 @@
 #include "backends/base-backend.h"
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/scalerplugin.h"
 
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
 #include "backends/events/default/default-events.h"
@@ -34,6 +35,21 @@
 
 
 #include "gui/message.h"
+
+bool BaseBackend::setScaler(const char *name, int factor) {
+	if (!name)
+		return false;
+
+	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+
+	for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
+		if (!scumm_stricmp(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getName(), name)) {
+			return setScaler(scalerIndex, factor);
+		}
+	}
+
+	return false;
+}
 
 void BaseBackend::displayMessageOnOSD(const Common::U32String &msg) {
 	// Display the message for 1.5 seconds

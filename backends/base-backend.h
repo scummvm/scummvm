@@ -34,6 +34,8 @@ class BaseBackend : public OSystem {
 public:
 	virtual void initBackend() override;
 
+	using OSystem::setScaler;
+	virtual bool setScaler(const char *name, int factor) override final;
 	virtual void displayMessageOnOSD(const Common::U32String &msg) override;
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
 	virtual void fillScreen(uint32 col) override;

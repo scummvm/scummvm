@@ -108,6 +108,14 @@ int ModularGraphicsBackend::getStretchMode() const {
 	return _graphicsManager->getStretchMode();
 }
 
+bool ModularGraphicsBackend::setScaler(uint mode, int factor) {
+	return _graphicsManager->setScaler(mode, factor);
+}
+
+uint ModularGraphicsBackend::getScaler() const {
+	return _graphicsManager->getScaler();
+}
+
 #ifdef USE_RGB_COLOR
 
 Graphics::PixelFormat ModularGraphicsBackend::getScreenFormat() const {
