@@ -1142,8 +1142,11 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			uint16 proc_gothit = 0, proc_rel = 0;
 
 			// If hitting at start, we should have already
-			// called gotHit and hit.
-			if ((!it->_touching || it->_touchingFloor) && it->_hitTime >= 0) {
+			// called gotHit and hit.  In Crusader we call
+			// hit for every hitting frame to make sickbays
+			// and teleporters work.
+			bool call_hit = it->_hitTime >= 0 || GAME_IS_CRUSADER;
+			if ((!it->_touching || it->_touchingFloor) && call_hit) {
 				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1790,6 +1793,7 @@ void Item::enterFastArea() {
 			if (actor && GAME_IS_CRUSADER) {
 				actor->clearLastActivityNo();
 				actor->clearInCombat();
+				actor->clearActorFlag(Actor::ACT_WEAPONREADY);
 			}
 			callUsecodeEvent_enterFastArea();
 		}
