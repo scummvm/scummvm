@@ -68,7 +68,7 @@ public:
 
 private:
 	bool findTargetItem();
-	void putTargetReticleOnItem(Item *);
+	void putTargetReticleOnItem(Item *, bool last_frame);
 	void clearSprite();
 
     bool _reticleEnabled;
