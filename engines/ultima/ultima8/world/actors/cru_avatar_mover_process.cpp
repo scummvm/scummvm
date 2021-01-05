@@ -335,6 +335,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 	MainActor *avatar = getMainActor();
 
 	Animation::Result res = avatar->tryAnim(action, direction);
+	Animation::Result initialres = res;
 
 	if (res != Animation::SUCCESS) {
 		World *world = World::get_instance();
@@ -367,13 +368,16 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		}
 
 		if (res != Animation::SUCCESS) {
-			// reset location, couldn't move.
+			// reset location and result (in case it's END_OFF_LAND now)
+			// couldn't find a better move.
 			avatar->setLocation(origpt.x, origpt.y, origpt.z);
+			res = initialres;
 		}
 	}
 
 	if ((action == Animation::step || action == Animation::advance ||
 		 action == Animation::retreat || action == Animation::run ||
+		 action == Animation::startRunWithLargeWeapon ||
 		 action == Animation::startRun || action == Animation::walk)
 		&& res == Animation::FAILURE) {
 		action = Animation::stand;
