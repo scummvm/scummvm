@@ -689,7 +689,7 @@ void MainActor::nextInvItem() {
 
 void MainActor::addFireAnimOffsets(int32 &x, int32 &y, int32 &z) {
 	assert(GAME_IS_CRUSADER);
-	Animation::Sequence fireanim = (hasActorFlags(ACT_KNEELING) ? Animation::kneelAndFire : Animation::attack);
+	Animation::Sequence fireanim = (isKneeling() ? Animation::kneelAndFire : Animation::attack);
 	uint32 actionno = AnimDat::getActionNumberForSequence(fireanim, this);
 	Direction dir = getDir();
 

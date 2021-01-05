@@ -285,8 +285,11 @@ public:
 	//! Check if the centre of this item is on top of another item
 	bool isCentreOn(const Item &item2) const;
 
-	//! Check if the item is currently visible on screen
+	//! Check if the item is currently entirely visible on screen
 	bool isOnScreen() const;
+
+	//! Check if the item is currently partly visible on screen
+	bool isPartlyOnScreen() const;
 
 	//! Check if this item can exist at the given coordinates
 	bool canExistAt(int32 x, int32 y, int32 z, bool needsupport = false) const;

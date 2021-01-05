@@ -616,6 +616,28 @@ bool Item::isOnScreen() const {
 	return false;
 }
 
+bool Item::isPartlyOnScreen() const {
+	GameMapGump *game_map = Ultima8Engine::get_instance()->getGameMapGump();
+
+	if (!game_map)
+		return false;
+
+	Rect game_map_dims;
+	int32 screenx = -1;
+	int32 screeny = -1;
+	game_map->GetLocationOfItem(_objId, screenx, screeny);
+	game_map->GetDims(game_map_dims);
+	int32 xd, yd, zd;
+	getFootpadWorld(xd, yd, zd);
+
+	if (game_map_dims.contains(screenx, screeny) ||
+		game_map_dims.contains(screenx + xd, screeny + yd)) {
+		return true;
+	}
+
+	return false;
+}
+
 bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	const Item *support;
@@ -1302,7 +1324,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 	Actor *a = dynamic_cast<Actor *>(this);
 	if (a) {
 		Animation::Sequence anim;
-		bool kneeling = a->hasActorFlags(Actor::ACT_KNEELING);
+		bool kneeling = a->isKneeling();
 		bool smallwpn = true;
 		MainActor *ma = dynamic_cast<MainActor *>(this);
 		Item *wpn = getItem(a->getActiveWeapon());

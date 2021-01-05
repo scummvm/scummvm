@@ -84,6 +84,10 @@ public:
 		return (_actorFlags & ACT_INCOMBAT) != 0;
 	}
 
+	bool isKneeling() const {
+		return (_actorFlags & ACT_KNEELING) != 0;
+	}
+
 	CombatProcess *getCombatProcess(); 	// in U8
 	AttackProcess *getAttackProcess();	// in Crusader
 	virtual void setInCombat(int activity);

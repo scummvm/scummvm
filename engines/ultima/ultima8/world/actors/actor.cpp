@@ -487,15 +487,20 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		// Small hack: When switching from 16-dir to 8-dir, fix the direction
 		if (animDirMode(anim) == dirmode_8dirs)
 			dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
-		else if (anim == Animation::readyWeapon)
+
+		if (anim == Animation::readyWeapon || anim == Animation::stopRunningAndDrawWeapon ||
+				anim == Animation::combatStand || anim == Animation::attack || anim == Animation::kneel ||
+				anim == Animation::kneelAndFire)
 			setActorFlag(ACT_WEAPONREADY);
-		else if (anim == Animation::unreadyWeapon)
+		else
 			clearActorFlag(ACT_WEAPONREADY);
-		else if (anim == Animation::startKneeling || anim == Animation::kneelAndFire ||
-				 anim == Animation::kneelAndFireSmallWeapon ||
-				 anim == Animation::kneelAndFireLargeWeapon)
+
+		if (anim == Animation::startKneeling || anim == Animation::kneelAndFire ||
+				anim == Animation::kneelAndFireSmallWeapon ||
+				anim == Animation::kneelAndFireLargeWeapon ||
+				anim == Animation::kneel)
 			setActorFlag(ACT_KNEELING);
-		else if (anim == Animation::stopKneeling)
+		else
 			clearActorFlag(ACT_KNEELING);
 	}
 
@@ -2387,7 +2392,7 @@ uint32 Actor::I_isKneeling(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	return actor->hasFlags(ACT_KNEELING) ? 1 : 0;
+	return actor->isKneeling() ? 1 : 0;
 }
 
 } // End of namespace Ultima8

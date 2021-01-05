@@ -343,7 +343,7 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionM
 			continue;
 
 		const Actor *actor = dynamic_cast<const Actor *>(item);
-		if ((bestisoccl && !isoccl) || (bestisnpc && !actor) || !item->isOnScreen())
+		if ((bestisoccl && !isoccl) || (bestisnpc && !actor) || !item->isPartlyOnScreen())
 			continue;
 
 		int xdiff = abs(x - ix);
