@@ -758,7 +758,7 @@ void Text::textClipSmall() {
 	_dialTextBox.right = SCREEN_WIDTH - margin;
 	_dialTextBox.bottom = SCREEN_HEIGHT - margin;
 
-	_dialTextBoxMaxX = SCREEN_WIDTH - 2 * margin + 2 * padding;
+	_dialTextBoxMaxX = SCREEN_WIDTH - 2 * margin - 2 * padding;
 }
 
 void Text::drawAskQuestion(int32 index) {
