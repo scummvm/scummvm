@@ -887,6 +887,8 @@ void AttackProcess::setTimer3() {
 }
 
 void AttackProcess::sleep(int ticks) {
+	// waiting less than 2 ticks can cause a tight loop
+	ticks = MAX(ticks, 2);
 	Process *delayProc = new DelayProcess(ticks);
 	ProcId pid = Kernel::get_instance()->addProcess(delayProc);
 	waitFor(pid);
