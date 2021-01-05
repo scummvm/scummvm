@@ -344,6 +344,8 @@ static void setupGraphics(OSystem &system) {
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+		system.setStretchMode(ConfMan.get("stretch_mode").c_str());
+		system.setShader(ConfMan.get("shader").c_str());
 
 		system.initSize(320, 200);
 
@@ -353,10 +355,6 @@ static void setupGraphics(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 		if (ConfMan.hasKey("filtering"))
 			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
-		if (ConfMan.hasKey("stretch_mode"))
-			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
-		if (ConfMan.hasKey("shader"))
-			system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
 	system.applyBackendSettings();
