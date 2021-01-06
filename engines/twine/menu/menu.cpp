@@ -61,7 +61,7 @@ enum _MenuButtonTypes {
 	kCDVolume = 3,
 	kLineVolume = 4,
 	kMasterVolume = 5,
-	kAgressiveMode = 6,
+	kAggressiveMode = 6,
 	kPolygonDetails = 7,
 	kShadowSettings = 8,
 	kSceneryZoom = 9
@@ -115,7 +115,7 @@ static MenuSettings createOptionsMenu() {
 static MenuSettings createAdvancedOptionsMenu() {
 	MenuSettings settings;
 	settings.addButton(TextId::kReturnMenu);
-	settings.addButton(TextId::kBehaviourAgressiveManual, MenuButtonTypes::kAgressiveMode);
+	settings.addButton(TextId::kBehaviourAggressiveManual, MenuButtonTypes::kAggressiveMode);
 	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
 	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
 	settings.addButton(TextId::kScenaryZoomOn, MenuButtonTypes::kSceneryZoom);
@@ -326,11 +326,11 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		if (menuSettings == &advOptionsMenuState) {
 			int16 id = menuSettings->getButtonState(i);
 			switch (id) {
-			case MenuButtonTypes::kAgressiveMode:
-				if (_engine->_actor->autoAgressive) {
-					menuSettings->setButtonTextId(i, TextId::kBehaviourAgressiveAuto);
+			case MenuButtonTypes::kAggressiveMode:
+				if (_engine->_actor->autoAggressive) {
+					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveAuto);
 				} else {
-					menuSettings->setButtonTextId(i, TextId::kBehaviourAgressiveManual);
+					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveManual);
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
@@ -437,9 +437,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		const int16 id = menuSettings->getActiveButtonState();
 		if (menuSettings == &advOptionsMenuState) {
 			switch (id) {
-			case MenuButtonTypes::kAgressiveMode:
+			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
+					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
@@ -579,7 +579,7 @@ int32 Menu::advoptionsMenu() {
 		}
 		case kQuitEngine:
 			return kQuitEngine;
-		case TextId::kBehaviourAgressiveManual:
+		case TextId::kBehaviourAggressiveManual:
 		case TextId::kDetailsPolygonsHigh:
 		case TextId::kDetailsShadowHigh:
 		case TextId::kScenaryZoomOn:

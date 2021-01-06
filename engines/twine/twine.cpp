@@ -247,7 +247,7 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
-	ConfMan.setInt("combatauto", _actor->autoAgressive ? 1 : 0);
+	ConfMan.setInt("combatauto", _actor->autoAggressive ? 1 : 0);
 	ConfMan.setInt("shadow", cfgfile.ShadowMode);
 	ConfMan.setInt("scezoom", cfgfile.SceZoom ? 1 : 0);
 	ConfMan.setInt("polygondetails", cfgfile.PolygonDetails);
@@ -384,7 +384,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.CrossFade = ConfGetBoolOrDefault("crossfade", false);
 	cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);
 
-	_actor->autoAgressive = ConfGetBoolOrDefault("combatauto", true);
+	_actor->autoAggressive = ConfGetBoolOrDefault("combatauto", true);
 	cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
 	cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
@@ -397,7 +397,7 @@ void TwinEEngine::initConfigurations() {
 	debug("UseAutoSaving:  %s", (cfgfile.UseAutoSaving ? "true" : "false"));
 	debug("CrossFade:      %s", (cfgfile.CrossFade ? "true" : "false"));
 	debug("WallCollision:  %s", (cfgfile.WallCollision ? "true" : "false"));
-	debug("AutoAgressive:  %s", (_actor->autoAgressive ? "true" : "false"));
+	debug("AutoAggressive: %s", (_actor->autoAggressive ? "true" : "false"));
 	debug("ShadowMode:     %i", cfgfile.ShadowMode);
 	debug("PolygonDetails: %i", cfgfile.PolygonDetails);
 	debug("SceZoom:        %s", (cfgfile.SceZoom ? "true" : "false"));

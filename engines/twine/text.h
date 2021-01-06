@@ -55,9 +55,9 @@ namespace TextId {
 enum _TextId {
 	kBehaviourNormal = 0,
 	kBehaviourSporty = 1,
-	kBehaviourAgressiveManual = 2,
+	kBehaviourAggressiveManual = 2,
 	kBehaviourHiding = 3,
-	kBehaviourAgressiveAuto = 4,
+	kBehaviourAggressiveAuto = 4,
 	kUseProtopack = 5,
 	kSendell = 6,
 	kMusicVolume = 10,

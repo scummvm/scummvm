@@ -227,7 +227,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
 		break;
 	case HeroBehaviourType::kAggressive:
-		if (_engine->_actor->autoAgressive) {
+		if (_engine->_actor->autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 			heroMoved = true;
 			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
@@ -292,7 +292,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 
 void Movements::processMovementExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (_engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
+	if (_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
 		return;
 	}
 	if (actor->isJumpAnimationActive()) {
@@ -342,8 +342,8 @@ void Movements::processMovementExecution(int actorIdx) {
 
 void Movements::processRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_actor->autoAgressive && _engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
-		// it is allowed to rotate in auto agressive mode - but not in manual mode.
+	if (!_engine->_actor->autoAggressive && _engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
 		return;
 	}
 	if (actor->isJumpAnimationActive()) {

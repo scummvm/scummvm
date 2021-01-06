@@ -166,8 +166,8 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 int32 Actor::getTextIdForBehaviour() const {
-	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAgressive) {
-		return TextId::kBehaviourAgressiveAuto;
+	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAggressive) {
+		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
 	return (int32)_engine->_actor->heroBehaviour;

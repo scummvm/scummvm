@@ -292,8 +292,8 @@ public:
 	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
 
 	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
-	/** Hero auto agressive mode */
-	bool autoAgressive = true;
+	/** Hero auto aggressive mode */
+	bool autoAggressive = true;
 	/** Previous Hero behaviour */
 	HeroBehaviourType previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */
