@@ -3,39 +3,44 @@
 #include "common/system.h"
 
 #include "grammar.h"
+#include "grammar.tab.h"
 #include "private.h"
 
 namespace Private {
 
 void ChgMode(ArgArray args) {
-    debug("ChgMode(%d, %s)", args[0].val, args[1].str);  
-    _mode = args[0].val;
-    Common::String *s = new Common::String(args[1].str);
+    // assert types 
+    debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);  
+    _mode = args[0].u.val;
+    Common::String *s = new Common::String(args[1].u.str);
     _nextSetting = s;
 }
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
-    debug("goto(%s)", args[0].str);  
-    Common::String *s = new Common::String(args[0].str);
+    // assert types
+    debug("goto(%s)", args[0].u.str);  
+    Common::String *s = new Common::String(args[0].u.str);
     _nextSetting = s;
 }
 
 void SetFlag(ArgArray args) {
-    debug("SetFlag(%s, %d)", args[0].sym->name->c_str(), args[1].val);
-    args[0].sym->u.val = args[1].val;
+    // assert types
+    debug("SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
+    args[0].u.sym->u.val = args[1].u.val;
 }
 
 void SetModifiedFlag(ArgArray args) {
-    debug("SetModifiedFlag(%d)", args[0].val);
-    _modified = (bool) args[0].val;
+    // assert types
+    debug("SetModifiedFlag(%d)", args[0].u.val);
+    _modified = (bool) args[0].u.val;
 }
 
 
-
 void Sound(ArgArray args) {
-    debug("Sound(%s)", args[0].str);
-    if (strcmp("\"\"", args[0].str) != 0) {
-            Common::String *s = new Common::String(args[0].str);
+    // assert types
+    debug("Sound(%s)", args[0].u.str);
+    if (strcmp("\"\"", args[0].u.str) != 0) {
+            Common::String *s = new Common::String(args[0].u.str);
 	    _private->playSound(*s);
 	    //assert(0);
     } else {
@@ -44,9 +49,33 @@ void Sound(ArgArray args) {
 }
 
 void Transition(ArgArray args) {
-    debug("Transition(%s, %s)", args[0].str, args[1].str);
-    _nextMovie = new Common::String(args[0].str);
-    _nextSetting = new Common::String(args[1].str);
+    // assert types
+    debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
+    _nextMovie = new Common::String(args[0].u.str);
+    _nextSetting = new Common::String(args[1].u.str);
+}
+
+
+void CRect(ArgArray args) {
+    // assert types
+    int x1, y1, x2, y2;
+
+    debug("CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[0].u.val, args[1].u.val);
+    //assert(0);
+    x1 = args[0].u.val;
+    y1 = args[1].u.val;
+
+    x2 = args[2].u.val;
+    y2 = args[3].u.val;
+
+    Datum *d = new Datum();
+    Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
+
+    d->type = RECTTOK;
+    d->u.rect = rect;
+    push(*d);
+    //_nextMovie = new Common::String(args[0].u.str);
+    //_nextSetting = new Common::String(args[1].u.str);
 }
 
 void Bitmap(ArgArray args) {
@@ -55,21 +84,21 @@ void Bitmap(ArgArray args) {
     int x = 0;
     int y = 0;
 
-    char *f = args[0].str;
+    char *f = args[0].u.str;
     if (args.size() == 3) {
-	x = args[1].val;
-	y = args[2].val;
+	x = args[1].u.val;
+	y = args[2].u.val;
     }
 
     debug("Bitmap(%s, %d, %d)", f, x, y);
-    Common::String *s = new Common::String(args[0].str);
+    Common::String *s = new Common::String(args[0].u.str);
     _private->loadImage(*s, x, y);
 }
 
 void Timer(ArgArray args) {
-    debug("Timer(%d, %s, %s)", args[0].val, args[1].str, args[2].str);
-    g_system->delayMillis(100 * args[0].val);
-    Common::String *s = new Common::String(args[1].str);
+    debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
+    g_system->delayMillis(100 * args[0].u.val);
+    Common::String *s = new Common::String(args[1].u.str);
     _nextSetting = s; 
 }
 
@@ -103,6 +132,9 @@ void execFunction(char *name, ArgArray args) {
     else if (strcmp(name, "Exit") == 0) {
        ;	    
     }
+    else if (strcmp(name, "CRect") == 0) {
+        CRect(args);	    
+    } 
     else {
         debug("I don't know how to exec %s", name);	    
         assert(0);
