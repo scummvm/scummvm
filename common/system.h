@@ -867,6 +867,28 @@ public:
 	virtual int getStretchMode() const { return 0; }
 
 	/**
+	 * Return the ID of the 'default' scaler.
+	 *
+	 * This mode is set by the client code when no user overrides
+	 * are present (i.e. if no custom scaler is selected using the
+	 * command line or a config file).
+	 *
+	 * @return ID of the 'default' scaler.
+	 */
+	virtual uint getDefaultScaler() const { return 0; }
+
+	/**
+	 * Return the 'default' scale factor.
+	 *
+	 * This mode is set by the client code when no user overrides
+	 * are present (i.e. if no custom shader mode is selected using
+	 * the command line or a config file).
+	 *
+	 * @return The 'default' scale factor.
+	 */
+	virtual int getDefaultScaleFactor() const { return 1; }
+
+	/**
 	 * Switch to the specified scaler.
 	 *
 	 * If switching to the new mode fails, this method returns false.

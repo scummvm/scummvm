@@ -160,12 +160,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.stretchMode = STRETCH_FIT;
 #endif
 
-	_videoMode.scalerIndex = 0;
-#ifdef USE_SCALERS
-	_videoMode.scaleFactor = 2;
-#else
-	_videoMode.scaleFactor = 1;
-#endif
+	_videoMode.scalerIndex = getDefaultScaler();
+	_videoMode.scaleFactor = getDefaultScaleFactor();
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -557,6 +553,18 @@ int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return _videoMode.scaleFactor;
 }
 
+uint SurfaceSdlGraphicsManager::getDefaultScaler() const {
+	return ScalerMan.findScalerPluginIndex("normal");
+}
+
+int SurfaceSdlGraphicsManager::getDefaultScaleFactor() const {
+#ifdef USE_SCALERS
+	return 2;
+#else
+	return 1;
+#endif
+}
+
 bool SurfaceSdlGraphicsManager::setScaler(uint mode, int factor) {
 	Common::StackLock lock(_graphicsMutex);
 
@@ -566,7 +574,9 @@ bool SurfaceSdlGraphicsManager::setScaler(uint mode, int factor) {
 		return true;
 
 	int newFactor;
-	if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(factor))
+	if (factor == -1)
+		newFactor = getDefaultScaleFactor();
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(factor))
 		newFactor = factor;
 	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldVideoMode.scaleFactor))
 		newFactor = _oldVideoMode.scaleFactor;
