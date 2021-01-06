@@ -565,13 +565,21 @@ bool SurfaceSdlGraphicsManager::setScaler(uint mode, int factor) {
 	if (_oldVideoMode.setup && _oldVideoMode.scalerIndex == mode && _oldVideoMode.scaleFactor == factor)
 		return true;
 
-	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != factor)
+	int newFactor;
+	if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(factor))
+		newFactor = factor;
+	else if (_scalerPlugins[mode]->get<ScalerPluginObject>().hasFactor(_oldVideoMode.scaleFactor))
+		newFactor = _oldVideoMode.scaleFactor;
+	else
+		newFactor = _scalerPlugins[mode]->get<ScalerPluginObject>().getFactor();
+
+	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newFactor)
 		_transactionDetails.needHotswap = true;
 
 	_transactionDetails.needUpdatescreen = true;
 
 	_videoMode.scalerIndex = mode;
-	_videoMode.scaleFactor = factor;
+	_videoMode.scaleFactor = newFactor;
 
 	return true;
 }
