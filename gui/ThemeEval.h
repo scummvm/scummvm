@@ -76,7 +76,7 @@ public:
 
 	ThemeEval &addDialog(const Common::String &name, const Common::String &overlays, int16 maxWidth = -1, int16 maxHeight = -1, int inset = 0);
 	ThemeEval &addLayout(ThemeLayout::LayoutType type, int spacing = -1, ThemeLayout::ItemAlign itemAlign = ThemeLayout::kItemAlignStart);
-	ThemeEval &addWidget(const Common::String &name, const Common::String &type, int w = -1, int h = -1, Graphics::TextAlign align = Graphics::kTextAlignStart, bool useRTL = false);
+	ThemeEval &addWidget(const Common::String &name, const Common::String &type, int w = -1, int h = -1, Graphics::TextAlign align = Graphics::kTextAlignStart, bool useRTL = true);
 	ThemeEval &addImportedLayout(const Common::String &name);
 	ThemeEval &addSpace(int size = -1);
 
