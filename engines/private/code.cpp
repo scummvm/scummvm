@@ -32,7 +32,7 @@ void saveSetting(char *name)
 {
 	Common::String s(name);
 	settingcode.setVal(s, psetting);
-        debug("setting %s", name);
+        //debug("setting %s", name);
 }
 
 void loadSetting(Common::String *name) 
@@ -66,10 +66,11 @@ Datum pop()	/* pop and return top elem from stack */
 int constpush()	/* push constant onto stack */
 {
 	Datum d;
-	Symbol *s = (Symbol *)*pc++; 
-	d.val = s->u.val;
+	Symbol *s = (Symbol *)*pc++;
+        d.type = NUM;	
+	d.u.val = s->u.val;
 	
-	debug("pushing const %d with name %s", d.val, s->name->c_str());
+	debug("pushing const %d with name %s", d.u.val, s->name->c_str());
 	push(d);
 	return 0;
 }
@@ -77,8 +78,10 @@ int constpush()	/* push constant onto stack */
 int strpush()	/* push constant onto stack */
 {
 	Datum d;
-	d.str = ((Symbol *)*pc++)->u.str;
-	//printf("pushing %s\n", d.str);
+	d.type = STRING;
+	Symbol *s = (Symbol *)*pc++;        
+	d.u.str = s->u.str;
+	debug("pushing const %s with name %s", d.u.str, s->name->c_str());
 	push(d);
 	return 0;
 }
@@ -87,8 +90,9 @@ int strpush()	/* push constant onto stack */
 int varpush()	/* push variable onto stack */
 {
 	Datum d;
-	d.sym = (Symbol *)(*pc++);
-	debug("var pushing %s", d.sym->name->c_str());
+	d.type = NAME; 
+	d.u.sym = (Symbol *)(*pc++);
+	debug("var pushing %s", d.u.sym->name->c_str());
 	push(d);
 	return 0;
 }
@@ -100,14 +104,14 @@ int funcpush() //(char *name, int nargs)
 	n = pop();
         ArgArray args;
 
-	debug("executing %s with %d params", s.str, n.val);
-	for (int i = 0; i < n.val; i++) {
+	debug("executing %s with %d params", s.u.str, n.u.val);
+	for (int i = 0; i < n.u.val; i++) {
 		arg = pop();
 	        //debug("%d", arg.val);
 		args.insert(args.begin(), arg) ;
         }
 
-        execFunction(s.str, args);
+        execFunction(s.u.str, args);
 	return 0;
 }
 
@@ -117,14 +121,16 @@ int eval()		/* evaluate variable on stack */
 {
 	Datum d;
 	d = pop();
-	debug("eval %s", d.sym->name->c_str());
+	debug("eval %s", d.u.sym->name->c_str());
 	//if (d.sym->type == UNDEF)
 	//	execerror("undefined variable", d.sym->name);
-	if (d.sym->type == NUM)
-	    d.val = d.sym->u.val;
-	else if (d.sym->type == STRING)
-	    d.str = d.sym->u.str;
-	else if (d.sym->type == NAME) {
+	if (d.u.sym->type == NUM) {
+	    d.type = NUM;
+	    d.u.val = d.u.sym->u.val;
+	} else if (d.u.sym->type == STRING) {
+            d.type = STRING;
+    	    d.u.str = d.u.sym->u.str;
+	} else if (d.u.sym->type == NAME) {
             //debug("NAME %s", d.sym->name->c_str());
 	    //d.sym = d.sym;
 	}
@@ -142,7 +148,7 @@ int add()		/* add top two elems on stack */
 	d2 = pop();
 	d1 = pop();
 	//printf("adding %d %d\n",d1.val, d2.val);
-	d1.val += d2.val;
+	d1.u.val += d2.u.val;
 	push(d1);
 	return 0;
 }
@@ -151,9 +157,19 @@ int negate()
 {
 	Datum d;
 	d = pop();
-        debug("negating %s", d.sym->name->c_str());
-	int v = d.sym->u.val;
-	d.val = !v;
+	int v;
+        if (d.type == NAME) {
+            debug("negating %s", d.u.sym->name->c_str());
+	    v = d.u.sym->u.val;
+	    d.type = NUM;
+	}
+	else if (d.type == NUM) {
+            v = d.u.val;
+	} 
+	else
+            assert(0);
+
+	d.u.val = !v;
 	push(d);
 	return 0;
 }
@@ -166,8 +182,8 @@ int assign()	/* assign top value to next value */
 	/*if (d1.sym->type != VAR && d1.sym->type != UNDEF)
 		execerror("assignment to non-variable",
 			d1.sym->name);*/
-	d1.sym->u.val = d2.val;
-	d1.sym->type = NAME;
+	d1.u.sym->u.val = d2.u.val;
+	d1.u.sym->type = NAME;
 	push(d2);
 	return 0;
 }
@@ -177,7 +193,7 @@ int gt()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val > d2.val);
+	d1.u.val = (int)(d1.u.val > d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -187,7 +203,7 @@ int lt()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val < d2.val);
+	d1.u.val = (int)(d1.u.val < d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -197,7 +213,7 @@ int ge()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val >= d2.val);
+	d1.u.val = (int)(d1.u.val >= d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -207,7 +223,7 @@ int le()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val <= d2.val);
+	d1.u.val = (int)(d1.u.val <= d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -217,7 +233,7 @@ int eq()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val == d2.val);
+	d1.u.val = (int)(d1.u.val == d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -227,7 +243,7 @@ int ne()
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	d1.val = (int)(d1.val  !=  d2.val);
+	d1.u.val = (int)(d1.u.val  !=  d2.u.val);
 	push(d1);
 	return 0;
 }
@@ -245,21 +261,31 @@ int ifcode()
 {
 	Datum d;
 	Inst *savepc = pc;	/* then part */
+	debug("ifcode: evaluating condition");
 
 	execute(savepc+3);	/* condition */
 	d = pop();
-	debug("ifcode %s", d.sym->name->c_str()); //, d.sym->u.val);
-	d.val = d.sym->u.val;
+
+	debug("ifcode: selecting branch");
+
+	if (d.type == NAME) {
+	    debug("name %s", d.u.sym->name->c_str()); //, d.sym->u.val);
+	    d.u.val = d.u.sym->u.val;
+	}
 	//debug("ptr: %x", *((Inst **)(savepc+1)));
 	//debug("ptr: %x", *((Inst **)(savepc+2)));
 	//debug("ptr: %x", *((Inst **)(savepc+3)));
 	
 	//assert(0);
-	if (d.val)
+	if (d.u.val) {
+                debug("ifcode: true branch");
 		execute(*((Inst **)(savepc)));
-	else if (*((Inst **)(savepc+1))) /* else part? */
+	}
+	else if (*((Inst **)(savepc+1))) /* else part? */ {
+		debug("ifcode: false branch");
 		execute(*((Inst **)(savepc+1)));
-	debug("finish if");
+	}
+	debug("ifcode finished");
 	pc = *((Inst **)(savepc+2));	 /* next stmt */
 	return 0;
 }

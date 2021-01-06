@@ -25,7 +25,7 @@ char *emalloc(unsigned n)	/* check return from malloc */
 
 Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
 {
-        debug("looking up %s", s.c_str());	
+        //debug("looking up %s", s.c_str());	
 	return symlist.getVal(s);
 }
 

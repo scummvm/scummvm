@@ -3,6 +3,7 @@
 #include "common/queue.h"
 #include "common/list.h"
 #include "common/array.h"
+#include "common/rect.h"
 
 #ifndef PRIVATE_GRAMMAR_H
 #define PRIVATE_GRAMMAR_H
@@ -19,10 +20,14 @@ typedef struct Symbol {	/* symbol table entry */
 	} u;
 } Symbol;
 
-typedef union Datum {	/* interpreter stack type */
-	int	 val;
-	char    *str;
-	Symbol	*sym;
+typedef struct Datum {	/* interpreter stack type */
+        short type;
+	union {	
+	        int	 val;
+	        char    *str;
+	        Symbol	*sym;
+		Common::Rect *rect;
+	} u;
 } Datum;
 
 namespace Private {
@@ -74,6 +79,7 @@ extern void execFunction(char *, ArgArray);
 // Code Generation
 
 extern	Datum pop();
+extern  int push(Datum);
 extern  Inst	*progp;
 
 extern  Inst *code(Inst);
