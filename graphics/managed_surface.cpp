@@ -205,7 +205,13 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Point &destPos) 
 
 void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos) {
-	blitFromInner(src, srcRect, destPos, nullptr);
+	blitFromInner(src, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
+		destPos.y + srcRect.height()), nullptr);
+}
+
+void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect) {
+	blitFromInner(src, srcRect, destRect, nullptr);
 }
 
 void ManagedSurface::blitFrom(const ManagedSurface &src) {
@@ -221,20 +227,29 @@ void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &src
 	if (src._transparentColorSet)
 		transBlitFrom(src, srcRect, destPos);
 	else
-		blitFromInner(src._innerSurface, srcRect, destPos, src._paletteSet ? &src._palette[0] : nullptr);
+		blitFromInner(src._innerSurface, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
+			destPos.y + srcRect.height()), src._paletteSet ? src._palette : nullptr);
+}
+
+void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect) {
+	if (src._transparentColorSet)
+		transBlitFrom(src, srcRect, destRect);
+	else
+		blitFromInner(src._innerSurface, srcRect, destRect, src._paletteSet ? src._palette : nullptr);
 }
 
 void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, const uint32 *palette) {
-	Common::Rect srcBounds = srcRect;
-	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(),
-		destPos.y + srcRect.height());
+		const Common::Rect &destRect, const uint32 *srcPalette) {
+	const int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
+	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+
 	uint destPixel;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0;
 	double alpha;
 
-	if (!srcRect.isValidRect() || !clip(srcBounds, destBounds))
+	if (!srcRect.isValidRect())
 		return;
 
 	if (format != src.format) {
@@ -242,24 +257,41 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		// and the source be 2/4 bytes as well or be paletted
 		assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4);
 		assert(src.format.bytesPerPixel == 2 || src.format.bytesPerPixel == 4
-			|| (src.format.bytesPerPixel == 1 && palette));
+			|| (src.format.bytesPerPixel == 1 && srcPalette));
 	}
 
-	for (int y = 0; y < srcBounds.height(); ++y) {
-		const byte *srcP = (const byte *)src.getBasePtr(srcBounds.left, srcBounds.top + y);
-		byte *destP = (byte *)getBasePtr(destBounds.left, destBounds.top + y);
+	const bool noScale = scaleX == SCALE_THRESHOLD && scaleY == SCALE_THRESHOLD;
+	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
+		if (destY < 0 || destY >= h)
+			continue;
+		const byte *srcP = (const byte *)src.getBasePtr(srcRect.left, scaleYCtr / SCALE_THRESHOLD + srcRect.top);
+		byte *destP = (byte *)getBasePtr(destRect.left, destY);
 
-		if (src.format == format) {
+		if (src.format == format && noScale) {
 			// Matching surface formats, so we can do a straight copy
-			Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
+			Common::copy(srcP, srcP + srcRect.width() * format.bytesPerPixel, destP);
 		} else {
-			for (int x = 0; x < srcBounds.width(); ++x,
-					srcP += src.format.bytesPerPixel,
-					destP += format.bytesPerPixel) {
+			// Loop through drawing the pixels of the row
+			for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; destX < destRect.right; ++destX, ++xCtr, scaleXCtr += scaleX) {
+				if (destX < 0 || destX >= w)
+					continue;
+
+				const byte *srcVal = &srcP[scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel];
+				byte *destVal = &destP[xCtr * format.bytesPerPixel];
+				if (src.format == format) {
+					if (format.bytesPerPixel == 1)
+						*destVal = *srcVal;
+					else if (format.bytesPerPixel == 2)
+						*(uint16 *)destVal = *(const uint16*)srcVal;
+					else
+						*(uint32 *)destVal = *(const uint32*)srcVal;
+					continue;
+				}
 
 				if (src.format.bytesPerPixel == 1) {
+					assert(srcPalette != nullptr);	// Catch the cases when palette is missing
 					// Get the palette color
-					const uint32 col = palette[*srcP];
+					const uint32 col = srcPalette[*srcVal];
 					rSrc = col & 0xff;
 					gSrc = (col >> 8) & 0xff;
 					bSrc = (col >> 16) & 0xff;
@@ -267,7 +299,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				} else {
 					// Use the src's pixel format to split up the source pixel
 					src.format.colorToARGB(src.format.bytesPerPixel == 2
-						? *(const uint16 *)srcP : *(const uint32 *)srcP,
+						? *(const uint16 *)srcVal : *(const uint32 *)srcVal,
 						aSrc, rSrc, gSrc, bSrc);
 				}
 
@@ -289,9 +321,9 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
 				if (format.bytesPerPixel == 2)
-					*(uint16 *)destP = destPixel;
+					*(uint16 *)destVal = destPixel;
 				else
-					*(uint32 *)destP = destPixel;
+					*(uint32 *)destVal = destPixel;
 			}
 		}
 	}
