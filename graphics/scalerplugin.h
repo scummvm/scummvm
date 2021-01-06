@@ -75,6 +75,16 @@ public:
 
 	virtual const Common::Array<uint> &getFactors() const { return _factors; }
 
+	virtual bool hasFactor(uint factor) {
+		const Common::Array<uint> &factors = getFactors();
+		for (Common::Array<uint>::const_iterator it = factors.begin(); it != factors.end(); it++) {
+			if ((*it) == factor)
+				return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Set the scaling factor.
 	 * Intended to be used with GUI to set a known valid factor.
