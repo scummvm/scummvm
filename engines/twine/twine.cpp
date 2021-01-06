@@ -389,18 +389,18 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
 
-	debug("UseCD:          %s", (cfgfile.UseCD ? "true" : "false"));
-	debug("Sound:          %s", (cfgfile.Sound ? "true" : "false"));
-	debug("Movie:          %i", cfgfile.Movie);
-	debug("Fps:            %i", cfgfile.Fps);
-	debug("Debug:          %s", (cfgfile.Debug ? "true" : "false"));
-	debug("UseAutoSaving:  %s", (cfgfile.UseAutoSaving ? "true" : "false"));
-	debug("CrossFade:      %s", (cfgfile.CrossFade ? "true" : "false"));
-	debug("WallCollision:  %s", (cfgfile.WallCollision ? "true" : "false"));
-	debug("AutoAggressive: %s", (_actor->autoAggressive ? "true" : "false"));
-	debug("ShadowMode:     %i", cfgfile.ShadowMode);
-	debug("PolygonDetails: %i", cfgfile.PolygonDetails);
-	debug("SceZoom:        %s", (cfgfile.SceZoom ? "true" : "false"));
+	debug(1, "UseCD:          %s", (cfgfile.UseCD ? "true" : "false"));
+	debug(1, "Sound:          %s", (cfgfile.Sound ? "true" : "false"));
+	debug(1, "Movie:          %i", cfgfile.Movie);
+	debug(1, "Fps:            %i", cfgfile.Fps);
+	debug(1, "Debug:          %s", (cfgfile.Debug ? "true" : "false"));
+	debug(1, "UseAutoSaving:  %s", (cfgfile.UseAutoSaving ? "true" : "false"));
+	debug(1, "CrossFade:      %s", (cfgfile.CrossFade ? "true" : "false"));
+	debug(1, "WallCollision:  %s", (cfgfile.WallCollision ? "true" : "false"));
+	debug(1, "AutoAggressive: %s", (_actor->autoAggressive ? "true" : "false"));
+	debug(1, "ShadowMode:     %i", cfgfile.ShadowMode);
+	debug(1, "PolygonDetails: %i", cfgfile.PolygonDetails);
+	debug(1, "SceZoom:        %s", (cfgfile.SceZoom ? "true" : "false"));
 }
 
 void TwinEEngine::initEngine() {
