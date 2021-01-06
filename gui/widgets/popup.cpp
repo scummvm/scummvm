@@ -428,19 +428,21 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip)
+PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
+	_cmd = cmd;
 
 	_selectedItem = -1;
 	_leftPadding = _rightPadding = 0;
 }
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip)
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
+	_cmd = cmd;
 
 	_selectedItem = -1;
 
@@ -463,7 +465,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		int newSel = popupDialog.runModal();
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
-			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+			sendCommand(_cmd, _entries[_selectedItem].tag);
 			markAsDirty();
 		}
 	}
@@ -483,7 +485,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
 			(newSelection != _selectedItem)) {
 			_selectedItem = newSelection;
-			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
+			sendCommand(_cmd, _entries[_selectedItem].tag);
 			markAsDirty();
 		}
 	}

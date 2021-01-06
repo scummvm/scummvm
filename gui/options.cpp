@@ -113,6 +113,7 @@ enum {
 
 #ifdef USE_CLOUD
 enum {
+	kStoragePopUpCmd = 'sPup',
 	kSyncSavesStorageCmd = 'ssst',
 	kDownloadStorageCmd = 'dlst',
 	kRunServerCmd = 'rnsv',
@@ -2194,7 +2195,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", _("Active storage:"), _("Active cloud storage"));
-	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup");
+	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup", Common::U32String(), kStoragePopUpCmd);
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i) {
 		_storagePopUp->appendEntry(_(list[i]), i);
@@ -2643,7 +2644,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		setupCloudTab();
 		break;
 	}
-	case kPopUpItemSelectedCmd: {
+	case kStoragePopUpCmd: {
 		if (_storageWizardCodeBox)
 			_storageWizardCodeBox->setEditString(Common::U32String());
 		// update container's scrollbar

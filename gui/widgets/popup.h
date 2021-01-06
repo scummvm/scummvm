@@ -30,15 +30,11 @@
 
 namespace GUI {
 
-enum {
-	kPopUpItemSelectedCmd	= 'POPs'
-};
-
 /**
  * Popup or dropdown widget which, when clicked, "pop up" a list of items and
  * lets the user pick on of them.
  *
- * Implementation wise, when the user selects an item, then a kPopUpItemSelectedCmd
+ * Implementation wise, when the user selects an item, then the specified command
  * is broadcast, with data being equal to the tag value of the selected entry.
  */
 class PopUpWidget : public Widget, public CommandSender {
@@ -56,10 +52,11 @@ protected:
 
 	int				_leftPadding;
 	int				_rightPadding;
+	uint32			_cmd;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip = U32String());
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip = U32String());
+	PopUpWidget(GuiObject *boss, const String &name, const U32String &tooltip = U32String(), uint32 cmd = 0);
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &tooltip = U32String(), uint32 cmd = 0);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
