@@ -35,6 +35,7 @@
 #include "ags/shared/util/math.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/ags.h"
+#include "engines/util.h"
 
 namespace AGS3 {
 
@@ -540,7 +541,11 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 	}
 #endif
 
-#if !AGS_PLATFORM_SCUMMVM
+#if AGS_PLATFORM_SCUMMVM
+	assert(mode.ColorDepth == 32);
+	const Graphics::PixelFormat PIXEL_FORMAT(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(mode.Width, mode.Height, &PIXEL_FORMAT);
+#else
 #if AGS_PLATFORM_OS_LINUX
 	if (GLAD_GLX_EXT_swap_control) {
 		glXSwapIntervalEXT(_xwin.display, _xwin.window, interval);
@@ -577,7 +582,7 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 
 bool OGLGraphicsDriver::CreateGlContext(const DisplayMode &mode) {
 #if AGS_PLATFORM_SCUMMVM
-	warning("TODO: CreateGlContext");
+	// TODO: Do we need to do anything here
 #elif AGS_PLATFORM_OS_WINDOWS
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
