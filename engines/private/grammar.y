@@ -68,27 +68,38 @@ statements:  /* nothing */     { $$ = progp; }
         | statement statements
 
 
-statement: GOTOTOK expr ';' { }
-        | fcall ';'         { }   
-        | if cond body1 end {	/* else-less if */
+statement: GOTOTOK expr ';' { /*TODO*/ }
+        | fcall ';'         { $$ = $1; }   
+        | if cond body1 end {
+                $$ = $1;
+         	/* else-less if */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[3] = (Inst)$4; }	/* end, if cond fails */
-        | if cond body end ELSETOK body end { /* if with else */
+        | if cond body end ELSETOK body end { 
+                $$ = $1;
+                /* if with else */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
 		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-        | if cond body end {	/* else-less if */
+        | if cond body end {	
+                $$ = $1;
+                /* else-less if */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[3] = (Inst)$4; }	/* end, if cond fails */
         | if cond body end ELSETOK statement end {  /* if with else */
+                $$ = $1;
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
 		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-	| if cond body1 end ELSETOK statement end { /* if with else */
+	| if cond body1 end ELSETOK statement end { 
+                $$ = $1;
+                /* if with else */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
 		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-        | if cond body1 end ELSETOK body end { /* if with else */
+        | if cond body1 end ELSETOK body end { 
+                $$ = $1;
+                /* if with else */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
 		($1)[3] = (Inst)$7; }	/* end, if cond fails */
@@ -97,7 +108,7 @@ statement: GOTOTOK expr ';' { }
 body: '{' statements '}' { $$ = progp; }
         ;
 
-body1: statement { $$ = progp-8; } 
+body1: statement { $$ = $1; } 
         ;
 
 end:	  /* nothing */		{ code(STOP); $$ = progp; }
