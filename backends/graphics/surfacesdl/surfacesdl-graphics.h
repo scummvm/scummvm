@@ -73,6 +73,8 @@ public:
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	virtual int getGraphicsMode() const override;
+	virtual uint getDefaultScaler() const override;
+	virtual int getDefaultScaleFactor() const override;
 	virtual bool setScaler(uint mode, int factor) override;
 	virtual uint getScaler() const override;
 #ifdef USE_RGB_COLOR

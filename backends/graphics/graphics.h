@@ -63,6 +63,8 @@ public:
 	virtual int getDefaultStretchMode() const { return 0; }
 	virtual bool setStretchMode(int mode) { return false; }
 	virtual int getStretchMode() const { return 0; }
+	virtual uint getDefaultScaler() const { return 0; }
+	virtual int getDefaultScaleFactor() const { return 1; }
 	virtual bool setScaler(uint mode, int factor) { return false; }
 	virtual uint getScaler() const { return 0; }
 

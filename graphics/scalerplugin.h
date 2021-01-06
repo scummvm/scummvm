@@ -225,6 +225,11 @@ public:
 	 * Search the scaler plugins for a special plugin based on its name.
 	 */
 	Plugin *findScalerPlugin(const char *name) const;
+
+	/**
+	 * Search the scaler plugins for a special plugin based on its name.
+	 */
+	uint findScalerPluginIndex(const char *name) const;
 };
 
 /** Convenience shortcut for accessing singleton */

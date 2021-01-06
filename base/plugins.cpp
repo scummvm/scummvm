@@ -1023,3 +1023,17 @@ Plugin *ScalerManager::findScalerPlugin(const char *name) const {
 
 	return 0;
 }
+
+uint ScalerManager::findScalerPluginIndex(const char *name) const {
+	const PluginList &plugins = getPlugins();
+	uint index = 0;
+
+	for (PluginList::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+		if (!strcmp((*i)->get<ScalerPluginObject>().getName(), name)) {
+			return index;
+		}
+		index++;
+	}
+
+	return 0;
+}
