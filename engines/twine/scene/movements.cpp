@@ -342,7 +342,8 @@ void Movements::processMovementExecution(int actorIdx) {
 
 void Movements::processRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (_engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
+	if (!_engine->_actor->autoAgressive && _engine->_actor->autoAgressive && actor->isAttackAnimationActive()) {
+		// it is allowed to rotate in auto agressive mode - but not in manual mode.
 		return;
 	}
 	if (actor->isJumpAnimationActive()) {
