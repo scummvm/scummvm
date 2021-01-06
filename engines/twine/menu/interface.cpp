@@ -140,7 +140,10 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 }
 
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	dest.blitFrom(source, rect, Common::Point(rect.left, rect.top));
+	Common::Rect r(rect);
+	r.right += 1;
+	r.bottom += 1;
+	dest.blitFrom(source, r, Common::Point(rect.left, rect.top));
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
