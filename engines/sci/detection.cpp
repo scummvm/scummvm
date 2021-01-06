@@ -362,7 +362,7 @@ private:
 };
 
 OptionsWidget::OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "SciOptionsDialog", false, domain) {
+		OptionsContainerWidget(boss, name, "SciGameOptionsDialog", false, domain) {
 	_guiOptions = ConfMan.get("guioptions", domain);
 
 	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
