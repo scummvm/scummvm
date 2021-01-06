@@ -95,7 +95,7 @@ protected:
 	 * Inner method for blitting.
 	 */
 	void blitFromInner(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, const uint32 *palette);
+		const Common::Rect &destRect, const uint32 *srcPalette);
 
 	/**
 	 * Inner method for copying another surface into this one at a given destination position.
@@ -279,6 +279,18 @@ public:
 	 */
 	void blitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos);
+
+	/**
+	 * Copy another surface into this one at a given destination area and perform the potential scaling.
+	 */
+	void blitFrom(const Surface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect);
+
+	/**
+	 * Copy another surface into this one at a given destination area and perform the potential scaling.
+	 */
+	void blitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+		const Common::Rect &destRect);
 
 	/**
 	 * Copy another surface into this one.
