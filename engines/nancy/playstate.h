@@ -31,6 +31,7 @@ namespace Nancy {
 // TODO split to PlayerState/SceneState
 struct PlayState {
     enum Flag { kFalse = 1, kTrue = 2 };
+    enum TimeOfDay { kDay, kNight, kDuskDawn };
 
     Flag inventory[11];
     Flag eventFlags[672];
@@ -41,6 +42,9 @@ struct PlayState {
     Time sceneTime;
     Time timerTime;
     bool timerIsActive = false;
+    Time playerTime; // Nancy's in-game time of day, adds a minute every 5 seconds
+    Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
+    TimeOfDay timeOfDay = kDay;
     uint16 currentViewFrame = 0;
     uint16 queuedViewFrame = 0;
     uint16 currentMaxVerticalScroll = 0;

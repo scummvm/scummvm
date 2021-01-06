@@ -415,6 +415,21 @@ void SceneManager::run() {
     if (playState.timerIsActive)
         playState.timerTime += diff;
     playState.sceneTime =+ diff;
+
+    // Calculate the in-game time (playerTime)
+    if (t > playState.playerTimeNextMinute) {
+        playState.playerTime += 60000; // Add a minute
+        playState.playerTimeNextMinute = t + playerTimeMinuteLength; // Set when we're going to add the next minute
+    }
+
+    // Set the time of day according to playerTime
+    if (playState.playerTime.getHours_alt() >= 7 && playState.playerTime.getHours_alt() < 18) {
+        playState.timeOfDay = playState.kDay;
+    } else if ((playState.playerTime.getHours_alt() >= 19 || playState.playerTime.getHours_alt() < 6)) {
+        playState.timeOfDay = playState.kNight;
+    } else {
+        playState.timeOfDay = playState.kDuskDawn;
+    }
     
     // TODO we're skipping a lot of things like mouse handling and scene movement
     // so we can get _something_ on screen

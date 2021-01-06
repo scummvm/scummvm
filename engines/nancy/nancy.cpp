@@ -377,6 +377,8 @@ void NancyEngine_v0::readBootSummary(const IFF &boot) {
 	readImageList(boot, "OB", _objects);
 	bsum->seek(0x1D1);
 	_fontSize = bsum->readSint32LE() * 1346;
+	bsum->seek(0x1ED);
+	sceneManager->playerTimeMinuteLength = bsum->readSint16LE();
 }
 
 class NancyEngine_v1 : public NancyEngine_v0 {
