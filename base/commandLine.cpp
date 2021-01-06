@@ -103,10 +103,11 @@ static const char HELP_STRING[] =
 	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
 	"  -F, --no-fullscreen      Force windowed mode\n"
-	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
-	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
-	"                           dotmatrix)\n"
+	"  -g, --gfx-mode=MODE      Select graphics mode\n"
 	"  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)\n"
+	"  --scaler=MODE            Select graphics scaler (normal,hq,edge,advmame,sai,\n"
+	"                           supersai,supereagle,pm,dotmatrix,tv2x)\n"
+	"  --scale-factor=FACTOR    Factor to scale the graphics by\n"
 	"  --filtering              Force filtered graphics mode\n"
 	"  --no-filtering           Force unfiltered graphics mode\n"
 #ifdef USE_OPENGL
@@ -248,6 +249,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
 	ConfMan.registerDefault("stretch_mode", "default");
+	ConfMan.registerDefault("scaler", "default");
+	ConfMan.registerDefault("scale_factor", -1);
 	ConfMan.registerDefault("shader", "default");
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("dirtyrects", true);
@@ -661,6 +664,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("stretch-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("scaler")
+			END_OPTION
+
+			DO_LONG_OPTION_INT("scale-factor")
 			END_OPTION
 
 			DO_LONG_OPTION("shader")

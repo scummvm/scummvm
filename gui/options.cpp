@@ -64,6 +64,7 @@
 #endif
 
 #include "graphics/renderer.h"
+#include "graphics/scalerplugin.h"
 
 namespace GUI {
 
@@ -90,6 +91,7 @@ enum {
 	kKbdMouseSpeedChanged	= 'kmsc',
 	kJoystickDeadzoneChanged= 'jodc',
 	kGraphicsTabContainerReflowCmd = 'gtcr',
+	kScalerPopUpCmd			= 'scPU',
 	kFullscreenToggled		= 'oful'
 };
 
@@ -185,6 +187,9 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = nullptr;
 	_stretchPopUp = nullptr;
 	_stretchPopUpDesc = nullptr;
+	_scalerPopUp = nullptr;
+	_scalerPopUpDesc = nullptr;
+	_scaleFactorPopUp = nullptr;
 	_fullscreenCheckbox = nullptr;
 	_filteringCheckbox = nullptr;
 	_aspectCheckbox = nullptr;
@@ -348,6 +353,37 @@ void OptionsDialog::build() {
 		} else {
 			_stretchPopUpDesc->setVisible(false);
 			_stretchPopUp->setVisible(false);
+		}
+
+		_scalerPopUp->setSelected(0);
+		_scaleFactorPopUp->setSelected(0);
+
+		if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+			if (ConfMan.hasKey("scaler", _domain)) {
+				const PluginList &scalerPlugins = ScalerMan.getPlugins();
+				Common::String scaler(ConfMan.get("scaler", _domain));
+
+				for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
+					if (scumm_stricmp(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getName(), scaler.c_str()) != 0)
+						continue;
+
+					_scalerPopUp->setSelectedTag(scalerIndex);
+					updateScaleFactors(scalerIndex);
+
+					if (ConfMan.hasKey("scale_factor", _domain)) {
+						int scaleFactor = ConfMan.getInt("scale_factor", _domain);
+						if (scalerPlugins[scalerIndex]->get<ScalerPluginObject>().hasFactor(scaleFactor))
+							_scaleFactorPopUp->setSelectedTag(scaleFactor);
+					}
+
+					break;
+				}
+
+			}
+		} else {
+			_scalerPopUpDesc->setVisible(false);
+			_scalerPopUp->setVisible(false);
+			_scaleFactorPopUp->setVisible(false);
 		}
 
 		// Fullscreen setting
@@ -587,6 +623,31 @@ void OptionsDialog::apply() {
 					graphicsModeChanged = true;
 			}
 
+			isSet = false;
+			const PluginList &scalerPlugins = ScalerMan.getPlugins();
+			if ((int32)_scalerPopUp->getSelectedTag() >= 0) {
+				const char *name = scalerPlugins[_scalerPopUp->getSelectedTag()]->get<ScalerPluginObject>().getName();
+				if (ConfMan.get("scaler", _domain) != name)
+					graphicsModeChanged = true;
+				ConfMan.set("scaler", name, _domain);
+
+				int factor = _scaleFactorPopUp->getSelectedTag();
+				if (ConfMan.getInt("scale_factor", _domain) != factor)
+					graphicsModeChanged = true;
+				ConfMan.setInt("scale_factor", factor, _domain);
+				isSet = true;
+			}
+			if (!isSet) {
+				ConfMan.removeKey("scaler", _domain);
+				ConfMan.removeKey("scale_factor", _domain);
+
+				uint defaultScaler = g_system->getDefaultScaler();
+				if (g_system->getScaler() != defaultScaler)
+					graphicsModeChanged = true;
+				else if (scalerPlugins[defaultScaler]->get<ScalerPluginObject>().getFactor() != g_system->getDefaultScaleFactor())
+					graphicsModeChanged = true;
+			}
+
 			if (_rendererTypePopUp->getSelectedTag() > 0) {
 				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
 				ConfMan.set("renderer", Graphics::getRendererTypeCode(selected), _domain);
@@ -607,6 +668,8 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("aspect_ratio", _domain);
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("stretch_mode", _domain);
+			ConfMan.removeKey("scaler", _domain);
+			ConfMan.removeKey("scale_factor", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 			ConfMan.removeKey("renderer", _domain);
 			ConfMan.removeKey("antialiasing", _domain);
@@ -647,6 +710,7 @@ void OptionsDialog::apply() {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
+		g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
@@ -967,6 +1031,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kGraphicsTabContainerReflowCmd:
 		setupGraphicsTab();
 		break;
+	case kScalerPopUpCmd:
+		updateScaleFactors(data);
+		g_gui.scheduleTopDialogRedraw();
+		break;
 	case kApplyCmd:
 		apply();
 		break;
@@ -1007,6 +1075,9 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 	_stretchPopUpDesc->setEnabled(enabled);
 	_stretchPopUp->setEnabled(enabled);
+	_scalerPopUpDesc->setEnabled(enabled);
+	_scalerPopUp->setEnabled(enabled);
+	_scaleFactorPopUp->setEnabled(enabled);
 	_vsyncCheckbox->setEnabled(enabled);
 	_filteringCheckbox->setEnabled(enabled);
 	_rendererTypePopUpDesc->setEnabled(enabled);
@@ -1352,6 +1423,20 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
 		sm++;
 	}
+
+	// The Scaler popup
+	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Scaler:"));
+	_scalerPopUp = new PopUpWidget(boss, prefix + "grScalerPopup", Common::U32String(), kScalerPopUpCmd);
+
+	_scalerPopUp->appendEntry(_("<default>"));
+	_scalerPopUp->appendEntry(Common::U32String());
+	for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
+		_scalerPopUp->appendEntry(_c(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getPrettyName(), context), scalerIndex);
+	}
+
+	_scaleFactorPopUp = new PopUpWidget(boss, prefix + "grScaleFactorPopup");
+	updateScaleFactors(_scalerPopUp->getSelectedTag());
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(), kFullscreenToggled);
@@ -1722,6 +1807,33 @@ void OptionsDialog::setupGraphicsTab() {
 	_aspectCheckbox->setVisible(true);
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
+
+	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+		_scalerPopUpDesc->setVisible(true);
+		_scalerPopUp->setVisible(true);
+		_scaleFactorPopUp->setVisible(true);
+	} else {
+		_scalerPopUpDesc->setVisible(false);
+		_scalerPopUp->setVisible(false);
+		_scaleFactorPopUp->setVisible(false);
+	}
+}
+
+void OptionsDialog::updateScaleFactors(uint32 tag) {
+	if ((int32)tag >= 0) {
+		const PluginList &scalerPlugins = ScalerMan.getPlugins();
+		const Common::Array<uint> &factors = scalerPlugins[tag]->get<ScalerPluginObject>().getFactors();
+
+		_scaleFactorPopUp->clearEntries();
+		for (Common::Array<uint>::const_iterator it = factors.begin(); it != factors.end(); it++) {
+			_scaleFactorPopUp->appendEntry(Common::U32String::format("%dx", (*it)), (*it));
+		}
+		_scaleFactorPopUp->setSelectedTag(scalerPlugins[tag]->get<ScalerPluginObject>().getFactor());
+	} else {
+		_scaleFactorPopUp->clearEntries();
+		_scaleFactorPopUp->appendEntry(_("<default>"));
+		_scaleFactorPopUp->setSelected(0);
+	}
 }
 
 #pragma mark -
