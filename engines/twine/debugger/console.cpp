@@ -35,6 +35,7 @@ namespace TwinE {
 TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger() {
 	registerCmd("give_allitems", WRAP_METHOD(TwinEConsole, doGiveAllItems));
 	registerCmd("give_key", WRAP_METHOD(TwinEConsole, doGiveKey));
+	registerCmd("play_video", WRAP_METHOD(TwinEConsole, doPlayVideo));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
@@ -193,6 +194,15 @@ bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
 	_engine->_scene->sceneHero->x = x;
 	_engine->_scene->sceneHero->y = y;
 	_engine->_scene->sceneHero->z = z;
+	return true;
+}
+
+bool TwinEConsole::doPlayVideo(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a video filename as first parameter\n");
+		return false;
+	}
+	_engine->queueMovie(argv[1]);
 	return true;
 }
 

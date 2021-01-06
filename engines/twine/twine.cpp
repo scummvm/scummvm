@@ -403,6 +403,10 @@ void TwinEEngine::initConfigurations() {
 	debug(1, "SceZoom:        %s", (cfgfile.SceZoom ? "true" : "false"));
 }
 
+void TwinEEngine::queueMovie(const char *filename) {
+	_queuedFlaMovie = filename;
+}
+
 void TwinEEngine::initEngine() {
 	// getting configuration file
 	initConfigurations();
@@ -658,6 +662,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_input->enableKeyMap(mainKeyMapId);
 
 	readKeys();
+
+	if (!_queuedFlaMovie.empty()) {
+		_flaMovies->playFlaMovie(_queuedFlaMovie.c_str());
+		_queuedFlaMovie.clear();
+	}
 
 	if (_scene->needChangeScene > -1) {
 		_scene->changeScene();

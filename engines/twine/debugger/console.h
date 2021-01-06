@@ -34,6 +34,7 @@ class TwinEConsole : public GUI::Debugger {
 private:
 	TwinEEngine *_engine;
 
+	bool doPlayVideo(int argc, const char **argv);
 	bool doPrintGameFlag(int argc, const char **argv);
 	bool doSetHeroPosition(int argc, const char **argv);
 	bool doGiveAllItems(int argc, const char **argv);

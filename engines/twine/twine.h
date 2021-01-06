@@ -195,6 +195,8 @@ private:
 	/** recenter screen on followed actor automatically */
 	void centerScreenOnActor();
 
+	Common::String _queuedFlaMovie;
+
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;
@@ -253,6 +255,8 @@ public:
 	void initEngine();
 	void initMCGA();
 	void initSVGA();
+
+	void queueMovie(const char *filename);
 
 	void initConfigurations();
 	/** Initialize all needed stuffs at first time running engine */
