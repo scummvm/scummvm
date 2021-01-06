@@ -69,6 +69,7 @@ private:
 
 public:
     PlayState playState;
+    int32 playerTimeMinuteLength;
 
 private:
     NancyEngine *_engine;
