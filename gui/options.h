@@ -112,6 +112,7 @@ protected:
 	void setSubtitleSettingsState(bool enabled);
 
 	virtual void setupGraphicsTab();
+	void updateScaleFactors(uint32 tag);
 
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
@@ -152,6 +153,8 @@ private:
 	PopUpWidget *_gfxPopUp;
 	StaticTextWidget *_stretchPopUpDesc;
 	PopUpWidget *_stretchPopUp;
+	StaticTextWidget *_scalerPopUpDesc;
+	PopUpWidget *_scalerPopUp, *_scaleFactorPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
