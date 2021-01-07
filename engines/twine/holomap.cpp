@@ -159,9 +159,9 @@ void Holomap::drawHolomapLocation() {
 	const int padding = 17;
 	Common::Rect rect;
 	rect.left = padding - 1;
-	rect.top = SCREEN_HEIGHT - 146;
-	rect.right = SCREEN_WIDTH - padding;
-	rect.bottom = SCREEN_HEIGHT - padding;
+	rect.top = _engine->height() - 146;
+	rect.right = _engine->width() - padding;
+	rect.bottom = _engine->height() - padding;
 	_engine->_menu->drawBox(rect);
 	rect.grow(-1);
 	_engine->_interface->drawTransparentBox(rect, 3);
@@ -183,12 +183,12 @@ void Holomap::processHolomap() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	loadHolomapGFX();
-	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, 190, 128, 1024, 1024);
+	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
-	drawHolomapText(SCREEN_WIDTH / 2, 25, "Holomap"); // TODO: fix the index
+	drawHolomapText(_engine->width() / 2, 25, "Holomap"); // TODO: fix the index
 	drawHolomapLocation();
 	_engine->flip();
 

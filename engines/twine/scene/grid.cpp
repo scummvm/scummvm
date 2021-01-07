@@ -76,7 +76,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 		return;
 	}
 
-	int32 offset = -((right - left) - SCREEN_WIDTH) - 1;
+	int32 offset = -((right - left) - _engine->width()) - 1;
 
 	right++;
 	bottom++;
@@ -619,13 +619,13 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 	if (brickPixelPosX < -24) {
 		return;
 	}
-	if (brickPixelPosX >= SCREEN_WIDTH) {
+	if (brickPixelPosX >= _engine->width()) {
 		return;
 	}
 	if (brickPixelPosY < -38) {
 		return;
 	}
-	if (brickPixelPosY >= SCREEN_HEIGHT) {
+	if (brickPixelPosY >= _engine->height()) {
 		return;
 	}
 

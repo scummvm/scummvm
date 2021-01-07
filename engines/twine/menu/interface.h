@@ -32,15 +32,6 @@ class ManagedSurface;
 
 namespace TwinE {
 
-/** Screen top limit to display the texts */
-#define SCREEN_TEXTLIMIT_TOP 0
-/** Screen left limit to display the texts */
-#define SCREEN_TEXTLIMIT_LEFT 0
-/** Screen right limit to display the texts */
-#define SCREEN_TEXTLIMIT_RIGHT (SCREEN_WIDTH - 1)
-/** Screen bottom limit to display the texts */
-#define SCREEN_TEXTLIMIT_BOTTOM (SCREEN_HEIGHT - 1)
-
 class TwinEEngine;
 
 class Interface {

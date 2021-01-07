@@ -212,7 +212,7 @@ void MenuOptions::drawSelectableCharacters() {
 
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	const int32 left = 10;
-	const int right = SCREEN_WIDTH - left;
+	const int right = _engine->width() - left;
 	const int bottom = top + PLASMA_HEIGHT;
 	const Common::Rect rect(left, top, right, bottom);
 	if (type == 1) {
@@ -254,9 +254,9 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 	_engine->_text->setFontColor(15);
-	const int halfScreenWidth = (SCREEN_WIDTH / 2);
+	const int halfScreenWidth = (_engine->width() / 2);
 	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
+	_engine->copyBlockPhys(0, 0, _engine->width() - 1, 99);
 	_engine->flip();
 
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);

@@ -82,6 +82,7 @@ struct BrickEntry {
 #define BRICK_SIZE 512
 #define BRICK_HEIGHT 256
 
+// TODO: this depends on the actual used resolution
 #define NUMBRICKENTRIES (1 + (SCREEN_WIDTH + 24) / 24)
 #define MAXBRICKS 150
 

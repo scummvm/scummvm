@@ -197,8 +197,10 @@ Common::Error TwinEEngine::run() {
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	syncSoundSettings();
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-	allocVideoMemory();
+	const int32 w = 640;
+	const int32 h = 480;
+	initGraphics(w, h);
+	allocVideoMemory(w, h);
 	initAll();
 	initEngine();
 	_sound->stopSamples();
@@ -304,13 +306,13 @@ void TwinEEngine::autoSave() {
 	saveGameState(getAutosaveSlot(), _gameState->playerName, true);
 }
 
-void TwinEEngine::allocVideoMemory() {
+void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-	imageBuffer.create(640, 480, format); // original lba1 resolution for a lot of images.
+	imageBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format); // original lba1 resolution for a lot of images.
 
-	workVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
-	frontVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
+	workVideoBuffer.create(w, h, format);
+	frontVideoBuffer.create(w, h, format);
 }
 
 static int getLanguageTypeIndex(const char *languageName) {
@@ -464,8 +466,8 @@ void TwinEEngine::initAll() {
 
 	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
-	_redraw->renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
-	_redraw->renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	_redraw->renderRect.right = (width() - 1);
+	_redraw->renderRect.bottom = (height() - 1);
 	// Set clip to fullscreen by default, allows main menu to render properly after load
 	_interface->resetClip();
 
@@ -641,7 +643,7 @@ void TwinEEngine::centerScreenOnActor() {
 	_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX * BRICK_SIZE),
 	                                   actor->y - (_grid->newCameraY * BRICK_HEIGHT),
 	                                   actor->z - (_grid->newCameraZ * BRICK_SIZE));
-	if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
+	if (_renderer->projPosX < 80 || _renderer->projPosX >= width() - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= height() - 50) {
 		_grid->newCameraX = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraX) / 2;
 		_grid->newCameraY = actor->y / BRICK_HEIGHT;
 		_grid->newCameraZ = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraZ) / 2;
@@ -1037,11 +1039,11 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 	assert(top <= bottom);
 	int32 width = right - left + 1;
 	int32 height = bottom - top + 1;
-	if (left + width > SCREEN_WIDTH) {
-		width = SCREEN_WIDTH - left;
+	if (left + width > this->width()) {
+		width = this->width() - left;
 	}
-	if (top + height > SCREEN_HEIGHT) {
-		height = SCREEN_HEIGHT - top;
+	if (top + height > this->height()) {
+		height = this->height() - top;
 	}
 	if (width <= 0 || height <= 0) {
 		return;

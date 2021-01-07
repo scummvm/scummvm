@@ -191,7 +191,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 			tempX += jump;
 			uint8* basePtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY);
 			for (uint8 i = 0; i < number; i++) {
-				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
+				if (tempX >= 0 && tempX < (_engine->width() - 1) && tempY >= 0 && tempY < (_engine->height() - 1)) {
 					*basePtr = usedColor;
 				}
 
@@ -740,11 +740,11 @@ void Text::textClipFull() {
 	const int32 padding = 8;
 	_dialTextBox.left = margin;
 	_dialTextBox.top = margin;
-	_dialTextBox.right = SCREEN_WIDTH - margin;
-	_dialTextBox.bottom = SCREEN_HEIGHT - margin;
+	_dialTextBox.right = _engine->width() - margin;
+	_dialTextBox.bottom = _engine->height() - margin;
 
 	_dialTextBoxLines = (int32)(_dialTextBox.height() / _lineHeight) - 1;
-	_dialTextBoxMaxX = SCREEN_WIDTH - 2 * margin - 2 * padding;
+	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * padding;
 }
 
 void Text::textClipSmall() {
@@ -754,11 +754,11 @@ void Text::textClipSmall() {
 	const int32 textHeight = _dialTextBoxLines * _lineHeight;
 
 	_dialTextBox.left = margin;
-	_dialTextBox.top = SCREEN_HEIGHT - textHeight - margin - padding;
-	_dialTextBox.right = SCREEN_WIDTH - margin;
-	_dialTextBox.bottom = SCREEN_HEIGHT - margin;
+	_dialTextBox.top = _engine->height() - textHeight - margin - padding;
+	_dialTextBox.right = _engine->width() - margin;
+	_dialTextBox.bottom = _engine->height() - margin;
 
-	_dialTextBoxMaxX = SCREEN_WIDTH - 2 * margin - 2 * padding;
+	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * padding;
 }
 
 void Text::drawAskQuestion(int32 index) {

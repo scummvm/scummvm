@@ -272,7 +272,7 @@ public:
 	 */
 	int32 runGameEngine();
 	/** Allocate video memory, both front and back buffers */
-	void allocVideoMemory();
+	void allocVideoMemory(int32 w, int32 h);
 	/**
 	 * @return A random value between [0-max)
 	 */

@@ -300,7 +300,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
 	const int32 textSize = _engine->_text->getTextSize(dialText);
-	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), rect.top + 7, dialText);
+	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), rect.top + 7, dialText);
 
 	_engine->copyBlockPhys(rect);
 }
@@ -366,7 +366,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		const int32 border = 45;
 		const int32 mainMenuButtonHeightHalf = 25;
-		const Common::Rect rect(border, topHeight - mainMenuButtonHeightHalf, SCREEN_WIDTH - border, topHeight + mainMenuButtonHeightHalf);
+		const Common::Rect rect(border, topHeight - mainMenuButtonHeightHalf, _engine->width() - border, topHeight + mainMenuButtonHeightHalf);
 		if (hover) {
 			if (i == buttonNumber) {
 				drawButtonGfx(menuSettings, rect, menuItemId, text, hover);
@@ -921,7 +921,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		char dialText[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
-		_engine->_text->drawText(SCREEN_WIDTH / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
+		_engine->_text->drawText(_engine->width() / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
 		_engine->copyBlockPhys(titleRect);
 	} else {
 		_engine->_interface->drawSplittedBox(boxRect, 0);

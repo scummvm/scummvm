@@ -39,7 +39,8 @@
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
-#define POLYTABSIZE (SCREEN_HEIGHT * 2)
+// TODO: this depends on the actual used resolution
+#define POLYTABSIZE (SCREEN_WIDTH * 2)
 
 namespace Common {
 class MemoryReadStream;

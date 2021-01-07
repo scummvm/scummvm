@@ -97,7 +97,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 	}
 
-	int32 pitch = SCREEN_WIDTH;
+	int32 pitch = _engine->width();
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
@@ -147,21 +147,21 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	const int32 left = MAX((int32)0, (int32)rect.left);
+	const int32 top = MAX((int32)0, (int32)rect.top);
+	const int32 right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
+	const int32 bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
 
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
+	if (left > (_engine->width() - 1)) {
 		return;
 	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
+	if (right < 0) {
 		return;
 	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
+	if (top > (_engine->height() - 1)) {
 		return;
 	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
+	if (bottom < 0) {
 		return;
 	}
 
@@ -186,10 +186,10 @@ void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	textWindow.left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	textWindow.top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	textWindow.right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	textWindow.bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	textWindow.left = MAX((int32)0, (int32)rect.left);
+	textWindow.top = MAX((int32)0, (int32)rect.top);
+	textWindow.right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
+	textWindow.bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
 }
 
 void Interface::saveClip() {
@@ -201,10 +201,10 @@ void Interface::loadClip() {
 }
 
 void Interface::resetClip() {
-	textWindow.top = SCREEN_TEXTLIMIT_TOP;
-	textWindow.left = SCREEN_TEXTLIMIT_LEFT;
-	textWindow.right = SCREEN_TEXTLIMIT_RIGHT;
-	textWindow.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	textWindow.top = 0;
+	textWindow.left = 0;
+	textWindow.right = (_engine->width() - 1);
+	textWindow.bottom = (_engine->height() - 1);
 }
 
 } // namespace TwinE
