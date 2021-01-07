@@ -3012,7 +3012,8 @@ msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
-"このページはリソースが必要です。ScummVMのディストリビューションwwwroot.zipが'themepath'で使用できる事を確認してください。"
+"このページはリソースが必要です。ScummVMのディストリビューションwwwroot.zip"
+"が'themepath'で使用できる事を確認してください。"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
