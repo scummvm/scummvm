@@ -50,7 +50,7 @@
 namespace TwinE {
 
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
-	Common::fill(&gameFlags[0], &gameFlags[256], 0);
+	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 	playerName[0] = '\0';
@@ -75,19 +75,12 @@ void GameState::initGameStateVars() {
 		_engine->_scene->sceneFlags[i] = 0;
 	}
 
-	for (int32 i = 0; i < ARRAYSIZE(gameFlags); i++) {
-		gameFlags[i] = 0;
-	}
-
-	for (int32 i = 0; i < ARRAYSIZE(inventoryFlags); i++) {
-		inventoryFlags[i] = 0;
-	}
+	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 
 	_engine->_scene->initSceneVars();
 
-	for (int32 i = 0; i < ARRAYSIZE(holomapFlags); i++) {
-		holomapFlags[i] = 0;
-	}
+	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 
 	_engine->_actor->clearBodyTable();
 }
@@ -180,7 +173,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
-	file->read(gameFlags, NUM_GAME_FLAGS);
+	file->read(_gameStateFlags, NUM_GAME_FLAGS);
 	_engine->_scene->needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
 
@@ -231,7 +224,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeString(playerName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
-	file->write(gameFlags, NUM_GAME_FLAGS);
+	file->write(_gameStateFlags, NUM_GAME_FLAGS);
 	file->writeByte(_engine->_scene->currentSceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);

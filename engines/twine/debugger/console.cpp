@@ -133,7 +133,7 @@ bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 
 	const uint8 idx = atoi(argv[1]);
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
-	_engine->_gameState->setFlag(idx, val);
+	_engine->_gameState->setGameFlag(idx, val);
 
 	return true;
 }
@@ -224,10 +224,10 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	GameState* state = _engine->_gameState;
 	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-		state->setFlag(i, 1);
+		state->setGameFlag(i, 1);
 		state->inventoryFlags[i] = 1;
 	}
-	_engine->_gameState->setFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
+	_engine->_gameState->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 	int amount = 1;
 	if (argc >= 2) {
 		amount = atoi(argv[1]);

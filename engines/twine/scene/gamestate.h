@@ -110,38 +110,38 @@ private:
 	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
 	 */
 	// TODO: why not NUM_GAME_FLAGS?
-	uint8 gameFlags[256];
+	uint8 _gameStateFlags[256];
 
 public:
 	GameState(TwinEEngine *engine);
 
 	inline bool inventoryDisabled() const {
-		return gameFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
+		return _gameStateFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
 	}
 
 	inline bool hasOpenedFunfrocksSafe() const {
-		return gameFlags[30] != 0;
+		return _gameStateFlags[30] != 0;
 	}
 
 	inline bool hasItem(InventoryItems item) const {
-		return gameFlags[item] != 0;
+		return _gameStateFlags[item] != 0;
 	}
 
 	inline void giveItem(InventoryItems item) {
-		gameFlags[item] = 1;
+		_gameStateFlags[item] = 1;
 	}
 
 	inline void removeItem(InventoryItems item) {
-		gameFlags[item] = 0;
+		_gameStateFlags[item] = 0;
 	}
 
 	inline uint8 hasGameFlag(uint8 index) const {
-		return gameFlags[index];
+		return _gameStateFlags[index];
 	}
 
-	inline void setFlag(uint8 index, uint8 value) {
-		gameFlags[index] = value;
-		debug(2, "Set gameflag[%u]=%u", index, value);
+	inline void setGameFlag(uint8 index, uint8 value) {
+		_gameStateFlags[index] = value;
+		debug(2, "Set gameStateFlags[%u]=%u", index, value);
 	}
 
 	/**

@@ -789,7 +789,7 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 flagIdx = ctx.stream.readByte();
 	const uint8 flagValue = ctx.stream.readByte();
-	engine->_gameState->setFlag(flagIdx, flagValue);
+	engine->_gameState->setGameFlag(flagIdx, flagValue);
 	return 0;
 }
 
