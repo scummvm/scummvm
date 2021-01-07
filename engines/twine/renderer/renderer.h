@@ -39,9 +39,6 @@
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
-// TODO: this depends on the actual used resolution
-#define POLYTABSIZE (SCREEN_WIDTH * 2)
-
 namespace Common {
 class MemoryReadStream;
 }
@@ -366,9 +363,9 @@ private:
 	RenderCommand _renderCmds[1000];
 	uint8 renderCoordinatesBuffer[10000]{0};
 
-	int16 polyTab[POLYTABSIZE]{0};
-	int16 polyTab2[POLYTABSIZE]{0};
-	// end render polygon vars
+	int32 _polyTabSize = 0;
+	int16 *_polyTab = nullptr;
+	int16 *_polyTab2 = nullptr;
 
 	bool isUsingOrhoProjection = false;
 
@@ -392,6 +389,9 @@ private:
 
 public:
 	Renderer(TwinEEngine *engine);
+	~Renderer();
+
+	void init(int32 w, int32 h);
 
 	int16 projPosXScreen = 0; // fullRedrawVar1
 	int16 projPosYScreen = 0; // fullRedrawVar2

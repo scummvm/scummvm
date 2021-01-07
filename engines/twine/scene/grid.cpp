@@ -51,6 +51,16 @@ Grid::~Grid() {
 	}
 	free(currentGrid);
 	free(currentBll);
+	free(brickInfoBuffer);
+	free(bricksDataBuffer);
+}
+
+void Grid::init(int32 w, int32 h) {
+	const int32 numbrickentries = (1 + (w + 24) / 24);
+	const size_t brickDataBufferSize = numbrickentries * MAXBRICKS * sizeof(BrickEntry);
+	bricksDataBuffer = (BrickEntry *)malloc(brickDataBufferSize);
+	_brickInfoBufferSize = numbrickentries * sizeof(int16);
+	brickInfoBuffer = (int16 *)malloc(_brickInfoBufferSize);
 }
 
 void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) {
@@ -146,13 +156,17 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	} while (--vSize);
 }
 
+const BrickEntry* Grid::getBrickEntry(int32 j, int32 i) const {
+	return &bricksDataBuffer[j * MAXBRICKS + i];
+}
+
 void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindow.left + 24) / 24) - 1;
 	const int32 copyBlockPhysRight = ((_engine->_interface->textWindow.right + 24) / 24);
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
-			const BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
+			const BrickEntry *currBrickEntry = getBrickEntry(j, i);
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x + currBrickEntry->z > z + x) {
@@ -169,7 +183,7 @@ void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
-			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
+			const BrickEntry *currBrickEntry = getBrickEntry(j, i);
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x == x && currBrickEntry->z == z) {
@@ -639,7 +653,7 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 		return;
 	}
 
-	BrickEntry *currBrickEntry = &bricksDataBuffer[brickBuffIdx][brickInfoBuffer[brickBuffIdx]];
+	BrickEntry *currBrickEntry = &bricksDataBuffer[brickBuffIdx * MAXBRICKS + brickInfoBuffer[brickBuffIdx]];
 
 	currBrickEntry->x = x;
 	currBrickEntry->y = y;
@@ -665,7 +679,7 @@ void Grid::redrawGrid() {
 	_engine->_renderer->projPosXScreen = _engine->_renderer->projPosX;
 	_engine->_renderer->projPosYScreen = _engine->_renderer->projPosY;
 
-	memset(brickInfoBuffer, 0, sizeof(brickInfoBuffer));
+	memset(brickInfoBuffer, 0, _brickInfoBufferSize);
 
 	if (!_engine->_scene->changeRoomVar10) {
 		return;

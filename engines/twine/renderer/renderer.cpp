@@ -44,6 +44,17 @@ namespace TwinE {
 Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shadeAngleTable[384]) {
 }
 
+Renderer::~Renderer() {
+	free(_polyTab);
+	free(_polyTab2);
+}
+
+void Renderer::init(int32 w, int32 h) {
+	_polyTabSize = _engine->height() * 2;
+	_polyTab = (int16*)malloc(_polyTabSize * sizeof(int16));
+	_polyTab2 = (int16*)malloc(_polyTabSize * sizeof(int16));
+}
+
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (isUsingOrhoProjection) {
 		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjX;
@@ -434,14 +445,15 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 			cvalue = (oldVertexParam << 8) + ((vertexParam2 - oldVertexParam) << 8) % vsize;
 			cdelta = ((vertexParam2 - oldVertexParam) << 8) / vsize;
 		}
-		int16 *outPtr = &polyTab[ypos + (up ? _engine->height() : 0)]; // outPtr is the output ptr in the renderTab
+		const int32 polyTabIndex = ypos + (up ? _engine->height() : 0);
+		int16 *outPtr = &_polyTab[polyTabIndex]; // outPtr is the output ptr in the renderTab
 
 		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
 		for (int32 i = 0; i < vsize + 2; i++) {
-			if (outPtr - polyTab < ARRAYSIZE(polyTab)) {
-				if (outPtr - polyTab > 0) {
+			if (outPtr - _polyTab < _polyTabSize) {
+				if (outPtr - _polyTab > 0) {
 					*outPtr = xpos;
 				}
 			}
@@ -450,11 +462,11 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		}
 
 		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
-			int16 *outPtr2 = &polyTab2[ypos + (up ? _engine->height() : 0)];
+			int16 *outPtr2 = &_polyTab2[polyTabIndex];
 
 			for (int32 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 - polyTab2 < ARRAYSIZE(polyTab2)) {
-					if (outPtr2 - polyTab2 > 0) {
+				if (outPtr2 - _polyTab2 < _polyTabSize) {
+					if (outPtr2 - _polyTab2 > 0) {
 						*outPtr2 = cvalue;
 					}
 				}
@@ -466,7 +478,7 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 }
 
 void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
 		if (currentLine >= 0 && currentLine < _engine->height()) {
@@ -503,7 +515,7 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 }
 
 void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
 		if (currentLine >= 0 && currentLine < _engine->height()) {
@@ -529,7 +541,7 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 col
 }
 
 void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
 		if (currentLine >= 0 && currentLine < _engine->height()) {
@@ -553,7 +565,7 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color
 }
 
 void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
 	int32 renderLoop = vsize;
 	do {
@@ -634,7 +646,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 // FIXME: buggy
 void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	do {
 		unsigned short int bx;
 
@@ -666,7 +678,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 
 // FIXME: buggy
 void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 
 	int32 currentLine = vtop;
@@ -704,8 +716,8 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 }
 
 void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
-	const int16 *ptr2 = &polyTab2[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop];
 	int32 renderLoop = vsize;
 	int32 currentLine = vtop;
 	do {
@@ -796,8 +808,8 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 }
 
 void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
-	const int16 *ptr2 = &polyTab2[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop];
 	int32 renderLoop = vsize;
 
 	int32 currentLine = vtop;

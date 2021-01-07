@@ -45,10 +45,6 @@ namespace TwinE {
 /** Definition for Modification version */
 #define MODIFICATION_VERSION 2
 
-/** Original screen width */
-#define SCREEN_WIDTH 640
-/** Original screen height */
-#define SCREEN_HEIGHT 480
 /** Default frames per second */
 #define DEFAULT_FRAMES_PER_SECOND 20
 
