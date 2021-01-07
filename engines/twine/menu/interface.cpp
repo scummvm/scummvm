@@ -201,10 +201,7 @@ void Interface::loadClip() {
 }
 
 void Interface::resetClip() {
-	textWindow.top = 0;
-	textWindow.left = 0;
-	textWindow.right = (_engine->width() - 1);
-	textWindow.bottom = (_engine->height() - 1);
+	textWindow = _engine->rect();
 }
 
 } // namespace TwinE
