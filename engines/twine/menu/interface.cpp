@@ -147,28 +147,16 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	const int32 left = MAX((int32)0, (int32)rect.left);
-	const int32 top = MAX((int32)0, (int32)rect.top);
-	const int32 right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
-	const int32 bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
-
-	if (left > (_engine->width() - 1)) {
-		return;
-	}
-	if (right < 0) {
-		return;
-	}
-	if (top > (_engine->height() - 1)) {
-		return;
-	}
-	if (bottom < 0) {
+	Common::Rect r = rect;
+	r.clip(_engine->rect());
+	if (r.isEmpty()) {
 		return;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, rect.top);
 
-	for (int32 y = top; y < bottom; ++y) {
-		for (int32 x = left; x < right; ++x) {
+	for (int32 y = rect.top; y < rect.bottom; ++y) {
+		for (int32 x = rect.left; x < rect.right; ++x) {
 			const int8 color = (pos[x] & 0x0F) - colorAdj;
 			const int8 color2 = pos[x] & 0xF0;
 			if (color < 0) {
