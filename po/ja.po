@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-05 00:08+0000\n"
-"PO-Revision-Date: 2021-01-03 21:23+0000\n"
+"PO-Revision-Date: 2021-01-07 20:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3012,6 +3012,7 @@ msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"このページはリソースが必要です。ScummVMのディストリビューションwwwroot.zipが'themepath'で使用できる事を確認してください。"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
@@ -3044,7 +3045,7 @@ msgstr "またはフォルダーを選択してください(Chromeのみ対応):
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "索引 "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -3072,7 +3073,7 @@ msgstr "選択されたフォルダーをリストアップできませんでし
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr ""
+msgstr "索引"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -3135,7 +3136,7 @@ msgstr "マウスカーソルを表示する"
 #: backends/platform/3ds/options-dialog.cpp:51
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr ""
+msgstr "縁を切り落とす"
 
 #: backends/platform/3ds/options-dialog.cpp:54
 #, fuzzy
@@ -3230,76 +3231,76 @@ msgid "Touch"
 msgstr "タッチ"
 
 #: backends/platform/3ds/osystem-events.cpp:312
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "高速モードの切り替え"
+msgstr "ドラッグモードへ切り替え"
 
 #: backends/platform/3ds/osystem-events.cpp:317
-#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr "高速モードの切り替え"
+msgstr "拡大モードへ切り替え"
 
 #: backends/platform/3ds/osystem-events.cpp:322
-#, fuzzy
 msgid "Open 3DS Settings"
-msgstr "設定"
+msgstr "3DSの設定を開く"
 
 #: backends/platform/3ds/osystem-events.cpp:360
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"拡大モードOFF。ドラックモードを有効にします。\n"
+"メインメニューに戻ります..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "拡大モードOFF。メインメニューに戻ります..."
 
 #: backends/platform/3ds/osystem-events.cpp:396
 msgid "Hover Mode"
-msgstr ""
+msgstr "ホバーモード"
 
 #: backends/platform/3ds/osystem-events.cpp:400
 msgid "Drag Mode"
-msgstr ""
+msgstr "ドラッグモード"
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "拡大モード中はドラッグモードをONにできません"
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "メニューでは拡大モードをアクティブにできません。"
 
 #: backends/platform/3ds/osystem-events.cpp:412
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"拡大モードは両方のスクリーンが\n"
+"有効の場合のみアクティブにできます。"
 
 #: backends/platform/3ds/osystem-events.cpp:414
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "ゲーム内の解像度が小さすぎて拡大できません。"
 
 #: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "拡大モードON。ホバーモードに切り替えます..."
 
 #: backends/platform/3ds/osystem-events.cpp:422
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "拡大モードON"
 
 #: backends/platform/3ds/osystem-events.cpp:429
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "拡大モードOFF。ドラッグモードを有効にしています..."
 
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "拡大モードOFF"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
-#, fuzzy
 msgid "ScummVM Main Menu"
-msgstr "メインメニュー"
+msgstr "ScummVMメインメニュー"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:61
 #, fuzzy
