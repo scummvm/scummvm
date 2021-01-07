@@ -21,6 +21,7 @@
  */
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/input.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -62,7 +63,15 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
+	Common::KeymapArray keymaps;
+	Nancy::InputManager::initKeymaps(keymaps);
+	return keymaps;
+}
 
 bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
