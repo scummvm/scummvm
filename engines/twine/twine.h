@@ -251,6 +251,10 @@ public:
 	 * Contains all the data used in the engine to configurated the game in particulary ways. */
 	ConfigFile cfgfile;
 
+	int width() const;
+	int height() const;
+	Common::Rect rect() const;
+
 	/** Initialize LBA engine */
 	void initEngine();
 	void initMCGA();
@@ -346,6 +350,18 @@ public:
 	 */
 	void drawText(int32 x, int32 y, const char *string, int32 center);
 };
+
+inline int TwinEEngine::width() const {
+	return frontVideoBuffer.w;
+}
+
+inline int TwinEEngine::height() const {
+	return frontVideoBuffer.h;
+}
+
+inline Common::Rect TwinEEngine::rect() const {
+	return Common::Rect(0, 0, frontVideoBuffer.w - 1, frontVideoBuffer.h - 1);
+}
 
 } // namespace TwinE
 
