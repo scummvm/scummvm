@@ -9,6 +9,7 @@ MODULE_OBJS = \
   decompress.o \
   graphics.o \
   iff.o \
+  input.o \
   logic.o \
   logo.o \
   metaengine.o \

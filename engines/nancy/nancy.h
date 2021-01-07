@@ -67,6 +67,7 @@ class LogoSequence;
 class SceneManager;
 class Logic;
 class GraphicsManager;
+class InputManager;
 
 class NancyEngine : public Engine {
 public:
@@ -101,6 +102,8 @@ public:
 	void syncSoundSettings();
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
+
+	bool launchConsole;
 	
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
@@ -110,6 +113,7 @@ public:
 	Logic *logic;
 	SceneManager *sceneManager;
 	GraphicsManager *graphics;
+	InputManager *input;
 
 protected:
 	// Engine APIs

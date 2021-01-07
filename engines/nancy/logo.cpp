@@ -24,6 +24,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/audio.h"
+#include "engines/nancy/input.h"
 
 #include "common/error.h"
 #include "common/system.h"
@@ -83,9 +84,7 @@ void LogoSequence::run() {
 		_runState = kWait;
 		break;
 	case kWait:
-		int buttons = g_system->getEventManager()->getButtonState();
-
-		if (_engine->_system->getMillis() - _startTicks >= 7000 || (buttons & Common::EventManager::LBUTTON))
+		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput(InputManager::kLeftMouseButton)))
 			_state = kStop;
 	}
 }

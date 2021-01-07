@@ -28,6 +28,7 @@
 #include "engines/nancy/logo.h"
 #include "engines/nancy/scene.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/input.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -75,6 +76,9 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	logic = new Logic(this);
 	sceneManager = new SceneManager(this);
 	graphics = new GraphicsManager(this);
+	input = new InputManager(this);
+
+	launchConsole = false;
 }
 
 NancyEngine::~NancyEngine() {
@@ -85,6 +89,7 @@ NancyEngine::~NancyEngine() {
 	
 	delete logic;
 	delete sceneManager;
+	delete input;
 }
 
 GUI::Debugger *NancyEngine::getDebugger() {
@@ -136,12 +141,9 @@ Common::Error NancyEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 
-	Common::EventManager *ev = g_system->getEventManager();
-	bool quit = false;
-
 	_gameFlow.minGameState = kBoot;
 
-	while (!shouldQuit() && !quit) {
+	while (!shouldQuit()) {
 		switch (_gameFlow.minGameState) {
 		case kBoot:
 			bootGameEngine();
@@ -161,45 +163,17 @@ Common::Error NancyEngine::run() {
 			break;
 		}
 
-		Common::Event event;
-		if (ev->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					quit = true;
-					break;
-				case Common::KEYCODE_d:
-					_console->attach();
-				default:
-					break;
-				}
-			}
-		}
+		input->processEvents();
 
+		if (launchConsole) {
+			_console->attach();
+			launchConsole = false;
+		}
 		_console->onFrame();
 
 		_system->updateScreen();
 		_system->delayMillis(16);
 	}
-#if 0
-	// Play music
-	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(_menuSound.name + ".his");
-	if (mSnd) {
-		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
-		if (aStr) {
-			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, 0);
-			Audio::SoundHandle handle;
-			_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, aStrLoop);
-		}
-	}
-
-	// Show logo
-	Graphics::Surface surf;
-	if (_res->loadImage("ciftree", _logos[0].name, surf)) {
-		_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w, surf.h);
-		surf.free();
-	}
-#endif
 
 	return Common::kNoError;
 }
