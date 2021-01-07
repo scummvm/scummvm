@@ -197,8 +197,16 @@ Common::Error TwinEEngine::run() {
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	syncSoundSettings();
-	const int32 w = 640;
-	const int32 h = 480;
+	int32 w = 640;
+	int32 h = 480;
+	if (ConfMan.hasKey("usehighres")) {
+		const bool highRes = ConfMan.getBool("usehighres");
+		if (highRes) {
+			w = 1024;
+			h = 768;
+		}
+	}
+
 	initGraphics(w, h);
 	allocVideoMemory(w, h);
 	initAll();

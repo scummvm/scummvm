@@ -140,19 +140,28 @@ static const ExtraGuiOption OptUSAVersion = {
 	false
 };
 
+static const ExtraGuiOption OptHighRes = {
+	_s("Enable high resolution"),
+	_s("Enable a higher resolution for the game"),
+	"usehighres",
+	false
+};
+
 const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(OptWallCollision);
 	options.push_back(OptCrossFade);
 	options.push_back(OptDisableSaveMenu);
-	options.push_back(OptDebug);
-	options.push_back(OptUseCD);
+	options.push_back(OptMouse);
+	options.push_back(OptHighRes);
 	options.push_back(OptSound);
+	options.push_back(OptUseCD);
+	// TODO: only 7 are shown right onw - see GUI::ExtraGuiOptionsWidget
 	options.push_back(OptMovies);
 	options.push_back(OptUSAVersion);
 	options.push_back(OptVoices);
 	options.push_back(OptText);
-	options.push_back(OptMouse);
+	options.push_back(OptDebug);
 	return options;
 }
 
