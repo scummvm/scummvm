@@ -133,7 +133,7 @@ bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 
 	const uint8 idx = atoi(argv[1]);
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
-	_engine->_gameState->gameFlags[idx] = val;
+	_engine->_gameState->setFlag(idx, val);
 
 	return true;
 }
@@ -141,13 +141,13 @@ bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 bool TwinEConsole::doPrintGameFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		for (int i = 0; i < NUM_GAME_FLAGS; ++i) {
-			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->gameFlags[i]);
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->hasGameFlag(i));
 		}
 		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
-	debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->gameFlags[idx]);
+	debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->hasGameFlag(idx));
 
 	return true;
 }
@@ -224,10 +224,10 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	GameState* state = _engine->_gameState;
 	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-		state->gameFlags[i] = 1;
+		state->setFlag(i, 1);
 		state->inventoryFlags[i] = 1;
 	}
-	_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] = 0;
+	_engine->_gameState->setFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 	int amount = 1;
 	if (argc >= 2) {
 		amount = atoi(argv[1]);

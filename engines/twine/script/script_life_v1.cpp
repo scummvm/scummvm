@@ -263,7 +263,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		int32 flagIdx = ctx.stream.readByte();
 		if (!engine->_gameState->inventoryDisabled() ||
 		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
-			engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
+			engine->_scene->currentScriptValue = engine->_gameState->hasGameFlag(flagIdx);
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {
 				// TODO: this case should already get handled in the above if branch as the flagIdx is bigger than MaxInventoryItems

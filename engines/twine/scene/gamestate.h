@@ -91,6 +91,27 @@ private:
 
 	MenuSettings gameChoicesSettings;
 
+	/**
+	 * LBA engine game flags to save quest states
+	 *
+	 * 0-27: inventory related
+	 * 28-199: story related
+	 * 200-255: video related
+	 *
+	 * 35: If 0, a zommed sequence of opening the ventilation shaft will be played when Twinsen escapes
+	 * his house after arresting Zoe. Set to 1 after the sequence (also if Twinsen is killed during the arrest).
+	 * 47: Value of 1 indicates that Twinsen has opened the door to the Citadel Island Tavern's basement.
+	 * The door will be always open from now on.
+	 * 70: Set to 1 if inventory items are taken from Twinsen when he goes to jail (inventory is empty),
+	 * set to 0 after he gets back his stuff.
+	 * 92: Set to 1 if the green grobo in the Citadel Island Tavern has told Twinsen about taking Zoe to the
+	 * port and leaving for another island.
+	 * 107: Set to 1 after Twinsen kills yellow groboclone in the Citadel Island Tavern (after the Tavern has
+	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
+	 */
+	// TODO: why not NUM_GAME_FLAGS?
+	uint8 gameFlags[256];
+
 public:
 	GameState(TwinEEngine *engine);
 
@@ -114,31 +135,14 @@ public:
 		gameFlags[item] = 0;
 	}
 
+	inline uint8 hasGameFlag(uint8 index) const {
+		return gameFlags[index];
+	}
+
 	inline void setFlag(uint8 index, uint8 value) {
 		gameFlags[index] = value;
 		debug(2, "Set gameflag[%u]=%u", index, value);
 	}
-
-	/**
-	 * LBA engine game flags to save quest states
-	 *
-	 * 0-27: inventory related
-	 * 28-199: story related
-	 * 200-255: video related
-	 *
-	 * 35: If 0, a zommed sequence of opening the ventilation shaft will be played when Twinsen escapes
-	 * his house after arresting Zoe. Set to 1 after the sequence (also if Twinsen is killed during the arrest).
-	 * 47: Value of 1 indicates that Twinsen has opened the door to the Citadel Island Tavern's basement.
-	 * The door will be always open from now on.
-	 * 70: Set to 1 if inventory items are taken from Twinsen when he goes to jail (inventory is empty),
-	 * set to 0 after he gets back his stuff.
-	 * 92: Set to 1 if the green grobo in the Citadel Island Tavern has told Twinsen about taking Zoe to the
-	 * port and leaving for another island.
-	 * 107: Set to 1 after Twinsen kills yellow groboclone in the Citadel Island Tavern (after the Tavern has
-	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
-	 */
-	// TODO: why not NUM_GAME_FLAGS?
-	uint8 gameFlags[256];
 
 	/**
 	 * LBA engine chapter
