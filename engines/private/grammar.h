@@ -1,5 +1,6 @@
 #include "common/str.h"
 #include "common/hash-str.h"
+#include "common/hash-ptr.h"
 #include "common/queue.h"
 #include "common/list.h"
 #include "common/array.h"
@@ -10,6 +11,11 @@
 
 #define	NSTACK	256
 #define	NPROG	10000
+
+typedef struct Arg {
+  int n;
+  int (**inst)();
+} Arg;
 
 typedef struct Symbol {	/* symbol table entry */
 	Common::String *name;
@@ -35,6 +41,10 @@ namespace Private {
 typedef int (*Inst)();	/* machine instruction */
 #define	STOP	(Inst) 0
 
+typedef Common::HashMap<void *, Common::String *> FuncHash;
+
+extern void initFuncs();
+
 typedef struct Setting {
 
     Datum	stack[NSTACK];	/* the stack */
@@ -57,6 +67,8 @@ extern StringQueue todefine;
 extern SettingMap settingcode;
 
 // Symbols
+
+extern void showSymbol(Symbol *);
 
 typedef Common::HashMap<Common::String, Symbol*> SymbolMap;
 typedef Common::List<Symbol*> ConstantList;

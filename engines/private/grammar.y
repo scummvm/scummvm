@@ -45,7 +45,7 @@ int yywrap()
 
 %token<s> NAME
 %token<sym> STRING NUM
-%type <inst> body body1 if cond end expr statements statement fcall value
+%type <inst> body if startp cond end expr statements statement fcall value
 %token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECTTOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
@@ -69,52 +69,30 @@ statements:  /* nothing */     { $$ = progp; }
 
 
 statement: GOTOTOK expr ';' { /*TODO*/ }
-        | fcall ';'         { $$ = $1; }   
-        | if cond body1 end {
-                $$ = $1;
+        | fcall ';'         { }   
+        | if cond body end {
+                //$$ = $1;
          	/* else-less if */
 		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[3] = (Inst)$4; }	/* end, if cond fails */
+		($1)[3] = (Inst)$4; 
+                }	/* end, if cond fails */
         | if cond body end ELSETOK body end { 
-                $$ = $1;
+                //$$ = $1;
                 /* if with else */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
-		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-        | if cond body end {	
-                $$ = $1;
-                /* else-less if */
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[3] = (Inst)$4; }	/* end, if cond fails */
-        | if cond body end ELSETOK statement end {  /* if with else */
-                $$ = $1;
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[2] = (Inst)$6;	/* elsepart */
-		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-	| if cond body1 end ELSETOK statement end { 
-                $$ = $1;
-                /* if with else */
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[2] = (Inst)$6;	/* elsepart */
-		($1)[3] = (Inst)$7; }	/* end, if cond fails */
-        | if cond body1 end ELSETOK body end { 
-                $$ = $1;
-                /* if with else */
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[2] = (Inst)$6;	/* elsepart */
-		($1)[3] = (Inst)$7; }	/* end, if cond fails */
+		($1)[3] = (Inst)$7; 
+                }	/* end, if cond fails */
         ;
 
-body: '{' statements '}' { $$ = progp; }
-        ;
-
-body1: statement { $$ = $1; } 
+body:         statement      { $$ = $1; }
+        | '{' statements '}' { $$ = $2; }
         ;
 
 end:	  /* nothing */		{ code(STOP); $$ = progp; }
 	;
 
-if: IFTOK { $$ = code(ifcode); code3(STOP, STOP, STOP); }
+if: IFTOK { $$ = code(ifcode); code1(STOP); code1(STOP); code1(STOP); } //code3(STOP, STOP, STOP); }
         ;
 
 cond: '(' expr ')'	{ code(STOP); $$ = $2; }
@@ -129,26 +107,29 @@ define:  /* nothing */
 
 fcall:    GOTOTOK '(' NAME ')' {
                                $$ = progp;
-                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
-                               code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
-                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
-                               code1(Private::funcpush);
+                               code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
+                               code2(constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
+                               code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
+                               code1(funcpush);
                                }
 
         | RECTTOK '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
-        | NAME '(' params ')'  {
-                               $$ = progp;
-                               code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, $params, NULL));
-                               code2(Private::strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME)); 
-                               code1(Private::funcpush);
+        | NAME '(' startp params ')'  {
+                               $$ = $startp;
+                               code2(constpush, (Private::Inst) addconstant(NUM, $params, NULL));
+                               code2(strpush, (Private::Inst) addconstant(STRING, 0, $NAME)); 
+                               code1(funcpush);
                                }
         ;
 
-params:  /* nothing */      { $$ = 0; }
+startp: /*nothing*/ { $$ = progp; }
+        ;
+
+params:   /* nothing */     { $$ = 0; }
         | fcall ',' params  { $$ = $3 + 1; }
         | expr ',' params   { $$ = $3 + 1; }
-        | expr              { $$ = 1; }
-        | fcall             { $$ = 1; }
+        | expr        { $$ = 1; }
+        | fcall       { $$ = 1; }
         ;
 
 value:    FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }

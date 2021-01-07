@@ -74,8 +74,6 @@ void CRect(ArgArray args) {
     d->type = RECTTOK;
     d->u.rect = rect;
     push(*d);
-    //_nextMovie = new Common::String(args[0].u.str);
-    //_nextSetting = new Common::String(args[1].u.str);
 }
 
 void Bitmap(ArgArray args) {
@@ -130,6 +128,9 @@ void execFunction(char *name, ArgArray args) {
         SetModifiedFlag(args);	    
     }
     else if (strcmp(name, "Exit") == 0) {
+       ;	    
+    }
+    else if (strcmp(name, "LoadGame") == 0) {
        ;	    
     }
     else if (strcmp(name, "CRect") == 0) {

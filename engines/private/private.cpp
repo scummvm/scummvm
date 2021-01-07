@@ -90,6 +90,7 @@ Common::Error PrivateEngine::run() {
 	assert(file->open("GAME.DAT"));
 	void *buf = malloc(191000); 
 	file->read(buf, 191000);
+	initFuncs();
 	parse((char *) buf);
 	assert(constants.size() > 0);
 

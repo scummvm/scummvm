@@ -23,6 +23,19 @@ char *emalloc(unsigned n)	/* check return from malloc */
 	return p;
 }
 
+void showSymbol(Symbol *s)
+{
+        if (s->type == NUM)
+		debug("%s %d",s->name->c_str(), s->u.val);
+	else if (s->type == STRING) 
+		debug("%s %s", s->name->c_str(), s->u.str);
+	else if (s->type == NAME)
+		debug("%s",s->name->c_str());
+	else
+	        debug("%s %d", s->name->c_str(), s->type);
+}
+
+
 Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
 {
         //debug("looking up %s", s.c_str());	

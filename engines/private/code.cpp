@@ -1,5 +1,6 @@
 #include "common/str.h"
 #include "common/debug.h"
+#include "common/hash-ptr.h"
 
 #include "grammar.h"
 #include "grammar.tab.h"
@@ -15,6 +16,34 @@ Datum	*stackp      = NULL;	/* next free spot on stack */
 Inst	*prog        = NULL;	/* the machine */
 Inst	*progp       = NULL;	/* next free spot for code generation */
 Inst	*pc          = NULL;	/* program counter during execution */
+
+
+static struct FuncDescr {
+	const Inst func;
+	const char *name;
+	const char *args;
+} funcDescr[] = {
+	{ 0,					"STOP",				""  },
+	{ constpush,	"constpush",	"" },
+        { strpush,	"strpush",	"" },
+	{ varpush,	"varpush",	"" },
+        { funcpush,	"funcpush",	"" },
+	{ eval,	"eval",	"" },
+        { ifcode,	"ifcode",	"" },
+        { add,	"add",	"" },
+        { negate,	"negate",	"" },
+        
+	{ 0, 0, 0 }
+};
+
+FuncHash _functions;
+
+void initFuncs() {
+	for (FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
+		_functions[(void *)fnc->func] = new Common::String(fnc->name);
+	}
+}
+
 
 void initSetting()	/* initialize for code generation */
 {
@@ -47,6 +76,19 @@ void loadSetting(Common::String *name)
 
 	stackp = stack;
 	progp = prog;
+
+
+	for (Inst *pc_ = progp; pc_-progp < 100; pc_++) {
+	   if (_functions.contains((void *) *pc_))
+	       debug("%x: %s", pc_, _functions.getVal((void*) *pc_)->c_str());
+	   else if ( (Inst *) *pc_ >= progp && (Inst *) *pc_ <= (progp + NPROG))
+	       debug("%x: %x", pc_, (void*) *pc_);
+	   else {
+	       debugN("%x:", pc_);
+               showSymbol((Symbol *) *pc_);
+	   }  
+
+	}	   
 }
 
 
