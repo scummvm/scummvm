@@ -46,7 +46,7 @@ int yywrap()
 %token<s> NAME
 %token<sym> STRING NUM
 %type <inst> body if startp cond end expr statements statement fcall value
-%token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECTTOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
+%token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
 %%
@@ -71,13 +71,11 @@ statements:  /* nothing */     { $$ = progp; }
 statement: GOTOTOK expr ';' { /*TODO*/ }
         | fcall ';'         { }   
         | if cond body end {
-                //$$ = $1;
          	/* else-less if */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[3] = (Inst)$4; 
                 }	/* end, if cond fails */
         | if cond body end ELSETOK body end { 
-                //$$ = $1;
                 /* if with else */
 		($1)[1] = (Inst)$3;	/* thenpart */
 		($1)[2] = (Inst)$6;	/* elsepart */
@@ -92,17 +90,23 @@ body:         statement      { $$ = $1; }
 end:	  /* nothing */		{ code(STOP); $$ = progp; }
 	;
 
-if: IFTOK { $$ = code(ifcode); code1(STOP); code1(STOP); code1(STOP); } //code3(STOP, STOP, STOP); }
+if: IFTOK { $$ = code(ifcode); code3(STOP, STOP, STOP); }
         ;
 
 cond: '(' expr ')'	{ code(STOP); $$ = $2; }
         ;
 
 define:  /* nothing */
-        | NAME ',' fcall ',' define  { define($NAME); }
-        | NAME ',' fcall             { define($NAME); }
-        | NAME ',' define            { define($NAME); }
-        | NAME                       { define($NAME); }  
+        | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  { 
+          Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val); 
+          define($NAME, r); 
+          }
+        | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' {
+          Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);  
+          define($NAME, r); 
+          }
+        | NAME ',' define { define($NAME, NULL); }
+        | NAME            { define($NAME, NULL); }  
         ;
 
 fcall:    GOTOTOK '(' NAME ')' {
@@ -113,7 +117,7 @@ fcall:    GOTOTOK '(' NAME ')' {
                                code1(funcpush);
                                }
 
-        | RECTTOK '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
+        | RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
         | NAME '(' startp params ')'  {
                                $$ = $startp;
                                code2(constpush, (Private::Inst) addconstant(NUM, $params, NULL));

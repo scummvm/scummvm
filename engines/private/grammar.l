@@ -26,7 +26,7 @@ setting                 return SETTINGTOK;
 if                      return IFTOK;
 else                    return ELSETOK;
 goto                    return GOTOTOK;
-RECT                    return RECTTOK;
+RECT                    return RECT;
 FALSE                   return FALSETOK;
 TRUE                    return TRUETOK;
 Random                  return RANDOMTOK;

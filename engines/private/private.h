@@ -39,6 +39,18 @@ extern int _mode;
 extern bool _modified;
 extern Common::String *_nextMovie;
 
+// exits
+
+typedef struct ExitInfo {
+    Common::String *nextSetting;
+    Common::Rect   *rect;
+    Common::String *cursor;    
+} ExitInfo;
+
+typedef Common::List<ExitInfo> ExitList;  
+
+extern ExitList _exits;
+
 class PrivateEngine : public Engine {
 private:
 	// We need random numbers
@@ -59,6 +71,7 @@ public:
 	//Mohawk::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
+        void selectExit(Common::Point); 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return true; }
