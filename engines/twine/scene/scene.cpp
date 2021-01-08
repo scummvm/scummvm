@@ -368,7 +368,7 @@ void Scene::changeScene() {
 	_engine->_screens->lockPalette = false;
 
 	needChangeScene = -1;
-	changeRoomVar10 = true;
+	enableGridTileRendering = true;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 

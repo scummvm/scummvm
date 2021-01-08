@@ -681,7 +681,7 @@ void Grid::redrawGrid() {
 
 	memset(brickInfoBuffer, 0, _brickInfoBufferSize);
 
-	if (!_engine->_scene->changeRoomVar10) {
+	if (!_engine->_scene->enableGridTileRendering) {
 		return;
 	}
 
