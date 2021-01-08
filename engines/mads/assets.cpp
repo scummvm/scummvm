@@ -20,11 +20,9 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/assets.h"
 #include "mads/compression.h"
-#include "mads/events.h"
 #include "mads/palette.h"
 
 namespace MADS {

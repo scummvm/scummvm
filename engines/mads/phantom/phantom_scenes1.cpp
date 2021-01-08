@@ -20,7 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifdef ENABLE_MADSV2
+
 #include "mads/mads.h"
 #include "mads/conversations.h"
 #include "mads/scene.h"
@@ -9575,3 +9576,5 @@ void Scene150::preActions() {
 
 } // End of namespace Phantom
 } // End of namespace MADS
+
+#endif

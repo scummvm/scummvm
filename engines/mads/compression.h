@@ -23,8 +23,6 @@
 #ifndef MADS_COMPRESSION_H
 #define MADS_COMPRESSION_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 

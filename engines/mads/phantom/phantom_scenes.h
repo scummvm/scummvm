@@ -20,11 +20,11 @@
  *
  */
 
+#ifdef ENABLE_MADSV2
+
 #ifndef MADS_PHANTOM_SCENES_H
 #define MADS_PHANTOM_SCENES_H
 
-#include "common/scummsys.h"
-#include "mads/game.h"
 #include "mads/scene.h"
 #include "mads/phantom/game_phantom.h"
 //#include "mads/phantom/globals_phantom.h"
@@ -488,3 +488,5 @@ protected:
 } // End of namespace MADS
 
 #endif /* MADS_PHANTOM_SCENES_H */
+
+#endif

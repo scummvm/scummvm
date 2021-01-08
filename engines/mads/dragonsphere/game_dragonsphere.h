@@ -20,10 +20,11 @@
  *
  */
 
+#ifdef ENABLE_MADSV2
+
 #ifndef MADS_GAME_DRAGONSPHERE_H
 #define MADS_GAME_DRAGONSPHERE_H
 
-#include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/globals.h"
 #include "mads/dragonsphere/globals_dragonsphere.h"
@@ -140,3 +141,5 @@ typedef Section1Handler Section8Handler;
 } // End of namespace MADS
 
 #endif /* MADS_GAME_DRAGONSPHERE_H */
+
+#endif

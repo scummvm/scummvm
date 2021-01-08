@@ -20,7 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifdef ENABLE_MADSV2
+
 #include "mads/mads.h"
 #include "mads/conversations.h"
 #include "mads/scene.h"
@@ -3691,3 +3692,5 @@ void Scene105::handleConversation() {
 
 } // End of namespace Dragonsphere
 } // End of namespace MADS
+
+#endif

@@ -20,10 +20,11 @@
  *
  */
 
+#ifdef ENABLE_MADSV2
+
 #ifndef MADS_GAME_PHANTOM_H
 #define MADS_GAME_PHANTOM_H
 
-#include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/globals.h"
 #include "mads/phantom/globals_phantom.h"
@@ -152,3 +153,5 @@ typedef Section1Handler Section5Handler;
 } // End of namespace MADS
 
 #endif /* MADS_GAME_PHANTOM_H */
+
+#endif

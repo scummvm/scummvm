@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
+#ifdef ENABLE_MADSV2
+
 #include "mads/mads.h"
 #include "mads/game.h"
 #include "mads/screen.h"
@@ -946,3 +946,5 @@ void GamePhantom::newCatacombRoom(int toRoom, int fromExit) {
 } // End of namespace Phantom
 
 } // End of namespace MADS
+
+#endif

@@ -75,6 +75,8 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
+#ifdef ENABLE_MADSV2
+
 	{
 		// Return of the Phantom DOS English
 		{
@@ -119,6 +121,8 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_Dragonsphere,
 		0
 	},
+
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };

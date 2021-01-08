@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
+#ifdef ENABLE_MADSV2
+
 #include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
@@ -49,3 +49,5 @@ void DragonsphereGlobals::synchronize(Common::Serializer &s) {
 } // End of namespace Dragonsphere
 
 } // End of namespace MADS
+
+#endif
