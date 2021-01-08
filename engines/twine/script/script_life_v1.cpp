@@ -1607,17 +1607,17 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
 	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELLIMG, RESSHQR_TWINSEN_ZOE_SENDELLPAL);
 	engine->_text->textClipFull();
-	engine->_text->setFontCrossColor(15);
+	engine->_text->setFontCrossColor(COLOR_WHITE);
 	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextFullscreen(TextId::kSendell);
+	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->paletteRGBA);
-	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	return 0;
 }
 
