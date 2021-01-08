@@ -112,7 +112,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		return 0;
 	}
 
-	const int32 destAngle = (difZ * 16384) / targetActorDistance;
+	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
 
 	int32 startAngle = ANGLE_0;
 	//	stopAngle  = 0x100;

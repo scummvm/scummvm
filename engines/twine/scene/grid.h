@@ -78,6 +78,8 @@ struct BrickEntry {
 #define SCENE_SIZE_MAX (BRICK_SIZE * GRID_SIZE_X - 1)
 // short min
 #define SCENE_SIZE_MIN (-BRICK_SIZE * GRID_SIZE_X)
+#define SCENE_SIZE_HALF (BRICK_SIZE * GRID_SIZE_X / 2)
+#define SCENE_SIZE_HALFF (BRICK_SIZE * GRID_SIZE_X / 2.0f)
 
 #define BRICK_SIZE 512
 #define BRICK_HEIGHT 256
