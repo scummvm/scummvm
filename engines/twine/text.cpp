@@ -657,7 +657,7 @@ void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 void Text::setFontCrossColor(int32 color) {
 	_dialTextStepSize = -1;
 	_dialTextBufferSize = 14;
-	_dialTextStartColor = color << 4;
+	_dialTextStartColor = color * 16;
 	_dialTextStopColor = _dialTextStartColor + 12;
 }
 

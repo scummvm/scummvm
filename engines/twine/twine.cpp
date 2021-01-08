@@ -520,7 +520,7 @@ void TwinEEngine::processBookOfBu() {
 	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_text->drawTextBoxBackground = false;
 	_text->textClipFull();
-	_text->setFontCrossColor(15);
+	_text->setFontCrossColor(COLOR_WHITE);
 	const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
 	cfgfile.FlagDisplayText = true;
 	_text->drawTextFullscreen(TextId::kBookOfBu);
@@ -538,8 +538,11 @@ void TwinEEngine::processBookOfBu() {
 void TwinEEngine::processBonusList() {
 	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_text->textClipFull();
-	_text->setFontCrossColor(15);
+	_text->setFontCrossColor(COLOR_WHITE);
+	const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
+	cfgfile.FlagDisplayText = true;
 	_text->drawTextFullscreen(TextId::kBonusList);
+	cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	_text->textClipSmall();
 	_text->initSceneTextBank();
 }
