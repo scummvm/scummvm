@@ -173,9 +173,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
-	if (file->read(_gameStateFlags, NUM_GAME_FLAGS) != NUM_GAME_FLAGS) {
-		warning("Failed to parse game state flags");
-		return false;
+	for (uint8 i = 0; i < numGameFlags; ++i) {
+		setGameFlag(i, file->readByte());
 	}
 	_engine->_scene->needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
