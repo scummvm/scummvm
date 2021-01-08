@@ -47,6 +47,8 @@ namespace TwinE {
 #define INDEXOFFSET 0
 #define DIALOGSOFFSET 1
 
+static const int32 PADDING = 8;
+
 Text::Text(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&currMenuTextBuffer[0], &currMenuTextBuffer[256], 0);
 }
@@ -213,7 +215,7 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, C
 		return;
 	}
 	// shadow color
-	setFontColor(0);
+	setFontColor(COLOR_BLACK);
 	drawCharacter(x + 2, y + 4, character);
 
 	// text color
@@ -319,8 +321,8 @@ void Text::initText(int32 index) {
 	_dialTextBoxCurrentLine = 0;
 	_progressiveTextBuffer[0] = '\0';
 	_fadeInCharactersPos = 0;
-	_dialTextXPos = _dialTextBox.left + 8;
-	_dialTextYPos = _dialTextBox.top + 8;
+	_dialTextXPos = _dialTextBox.left + PADDING;
+	_dialTextYPos = _dialTextBox.top + PADDING;
 	_currentTextPosition = _currDialTextPtr;
 
 	// lba font is get while engine start
@@ -538,8 +540,8 @@ ProgressiveTextState Text::updateProgressiveText() {
 		initProgressiveTextBuffer();
 		processTextLine();
 		initDialogueBox();
-		_dialTextXPos = _dialTextBox.left + 8;
-		_dialTextYPos = _dialTextBox.top + 8;
+		_dialTextXPos = _dialTextBox.left + PADDING;
+		_dialTextYPos = _dialTextBox.top + PADDING;
 	}
 	const char currentChar = *_progressiveTextBufferPtr;
 	assert(currentChar != '\0');
@@ -571,7 +573,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	_dialTextBoxCurrentLine++;
 
 	_dialTextYPos += _lineHeight;
-	_dialTextXPos = _dialTextBox.left + 8;
+	_dialTextXPos = _dialTextBox.left + PADDING;
 
 	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
 		renderContinueReadingTriangle();
@@ -738,28 +740,26 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 
 void Text::textClipFull() {
 	const int32 margin = 8;
-	const int32 padding = 8;
 	_dialTextBox.left = margin;
 	_dialTextBox.top = margin;
 	_dialTextBox.right = _engine->width() - margin;
 	_dialTextBox.bottom = _engine->height() - margin;
 
 	_dialTextBoxLines = (int32)(_dialTextBox.height() / _lineHeight) - 1;
-	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * padding;
+	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
 void Text::textClipSmall() {
 	const int32 margin = 16;
-	const int32 padding = 8;
 	_dialTextBoxLines = 3;
 	const int32 textHeight = _dialTextBoxLines * _lineHeight;
 
 	_dialTextBox.left = margin;
-	_dialTextBox.top = _engine->height() - textHeight - margin - padding;
+	_dialTextBox.top = _engine->height() - textHeight - margin - PADDING;
 	_dialTextBox.right = _engine->width() - margin;
 	_dialTextBox.bottom = _engine->height() - margin;
 
-	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * padding;
+	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
 void Text::drawAskQuestion(int32 index) {
