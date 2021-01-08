@@ -22,17 +22,9 @@
 #include "private/grammar.tab.h"
 #include "private/grammar.h"
 
-extern int yyparse();
-
 namespace Private {
 
-Common::String *_nextSetting = NULL;
-Common::String *_nextMovie = NULL;
-bool _modified = false;
-int _mode = -1;
-PrivateEngine *_private = NULL;
-
-Common::List<ExitInfo> _exits;
+PrivateEngine *g_private = NULL;
 
 extern int parse(char*);
 
@@ -61,24 +53,6 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff   // White
 };
 
-Common::String convertPath(Common::String name) {
-	Common::String path(name);
-        Common::String s1("\\");
-        Common::String s2("/");
-
-	while (path.contains(s1))
-            Common::replace(path, s1, s2);
-
-        s1 = Common::String("\"");
-        s2 = Common::String("");
-
-        Common::replace(path, s1, s2);
-        Common::replace(path, s1, s2);
-	
-	path.toLowercase();
-	return path;
-}
-
 PrivateEngine::PrivateEngine(OSystem *syst)
 	: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -93,14 +67,19 @@ PrivateEngine::PrivateEngine(OSystem *syst)
         //SearchMan.addSubDirectoryMatching(gameDataDir, "..");
 
 	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kPrivateDebugExample, "example", "this is just an example for a engine specific debug channel");
-	DebugMan.addDebugChannel(kPrivateDebugExample2, "example2", "also an example");
+	//DebugMan.addDebugChannel(kPrivateDebugExample, "example", "this is just an example for a engine specific debug channel");
+	//DebugMan.addDebugChannel(kPrivateDebugExample2, "example2", "also an example");
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("private");
 
-	debug("PrivateEngine::PrivateEngine");
-	_private = this;
+	g_private = this;
+
+        _nextSetting = NULL;
+        _nextMovie = NULL;
+        _modified = false;
+        _mode = -1;
+
 }
 
 PrivateEngine::~PrivateEngine() {
@@ -121,11 +100,6 @@ Common::Error PrivateEngine::run() {
 	initFuncs();
 	parse((char *) buf);
 	assert(constants.size() > 0);
-
-	for (SymbolMap::const_iterator it = settings.begin(); it != settings.end(); ++it) {
-		Symbol *s = it->_value;
-		//debug(s->name->c_str());
-        }
 	       
 	// Initialize graphics using following:
 	_screenW = 640;
@@ -165,13 +139,13 @@ Common::Error PrivateEngine::run() {
 	debug("PrivateEngine::init");
 
 	// Your main even loop should be (invoked from) here.
-	debug("PrivateEngine::go: Hello, World!");
+	//debug("PrivateEngine::go: Hello, World!");
 
 	// This test will show up if -d1 and --debugflags=example are specified on the commandline
-	debugC(1, kPrivateDebugExample, "Example debug call");
+	//debugC(1, kPrivateDebugExample, "Example debug call");
 
 	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-	debugC(3, kPrivateDebugExample | kPrivateDebugExample2, "Example debug call two");
+	//debugC(3, kPrivateDebugExample | kPrivateDebugExample2, "Example debug call two");
 
 	// Simple main event loop
 	Common::Event event;
@@ -185,8 +159,6 @@ Common::Error PrivateEngine::run() {
 	        mousePos = g_system->getEventManager()->getMousePos();
 	
 		g_system->delayMillis(10);
-		//debug("here");
-
 
 		// Events
 		switch (event.type) {
@@ -199,11 +171,10 @@ Common::Error PrivateEngine::run() {
 
 		}
 
-
 		// Movies
 		if (_nextMovie != NULL) {
-                    //_videoDecoder = new Video::SmackerDecoder();
-                    //playVideo(*_nextMovie);
+                    _videoDecoder = new Video::SmackerDecoder();
+                    playVideo(*_nextMovie);
 		    _nextMovie = NULL;
 		    continue;
 
@@ -290,6 +261,24 @@ void PrivateEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsUint16LE(dummy);
 }
 
+Common::String PrivateEngine::convertPath(Common::String name) {
+	Common::String path(name);
+        Common::String s1("\\");
+        Common::String s2("/");
+
+	while (path.contains(s1))
+            Common::replace(path, s1, s2);
+
+        s1 = Common::String("\"");
+        s2 = Common::String("");
+
+        Common::replace(path, s1, s2);
+        Common::replace(path, s1, s2);
+	
+	path.toLowercase();
+	return path;
+}
+
 void PrivateEngine::playSound(const Common::String &name) {
 	debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
 
@@ -302,7 +291,7 @@ void PrivateEngine::playSound(const Common::String &name) {
 	Audio::AudioStream *stream;
 	stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	stopSound();
-	//_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
