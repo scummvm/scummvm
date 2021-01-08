@@ -45,11 +45,13 @@ struct PlayState {
     Time playerTime; // Nancy's in-game time of day, adds a minute every 5 seconds
     Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
     TimeOfDay timeOfDay = kDay;
-    uint16 currentViewFrame = 0;
-    uint16 queuedViewFrame = 0;
+    int16 currentViewFrame = 0;
+    int16 lastDrawnViewFrame = -1; 
+    int16 queuedViewFrame = 0; // Used when changing scenes
     uint16 currentMaxVerticalScroll = 0;
     uint16 queuedMaxVerticalScroll = 0;
     uint16 verticalScroll = 0; // This replaces rDisplayed
+    uint16 verticalScrollDelta = 0;
 };
 
 } // End of namespace Nancy

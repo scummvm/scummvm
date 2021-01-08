@@ -44,10 +44,12 @@ class NancyEngine;
 
 class SceneManager {
 public:
+    enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8 };
     SceneManager(NancyEngine *engine) :
         _engine {engine},
         _state {kInit},
-        _sceneID {0} { }
+        _sceneID {0},
+        movementDirection{0} { }
     ~SceneManager();
 
     void process();
@@ -70,6 +72,7 @@ private:
 public:
     PlayState playState;
     int32 playerTimeMinuteLength;
+    byte movementDirection;
 
 private:
     NancyEngine *_engine;
@@ -79,7 +82,7 @@ private:
     // TODO these two can be Time
     uint32 _tickCount;
     uint32 _stashedTickCount;
-    int16 hovered = -1;
+    Time _nextBackgroundMovement;
 
     bool isComingFromMenu = true;
     bool hasLoadedFromSavefile = false;
@@ -95,7 +98,7 @@ private:
     bool helpMenuRequested = false;
     bool mainMenuRequested = false;
     bool saveLoadRequested = false;
-    // not sure
+    bool saveReloadRequested = false;
     bool setupMenuRequested = false;
     bool creditsSequenceRequested = false;
     bool mapScreenRequested = false;
