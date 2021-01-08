@@ -450,7 +450,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
-		_engine->_extra->extraList[index].type |= 0x400;
+		_engine->_extra->extraList[index].type |= ExtraType::TIME_IN;
 		zone->infoData.Bonus.used = 1; // set as used
 	}
 }
