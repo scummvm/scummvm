@@ -35,13 +35,14 @@
 #include "twine/scene/grid.h"
 #include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
 
 /** Hit Stars shape info */
 static const int16 hitStarsShapeTable[] = {
-    10,
+    10, // num entries of x and z rotation values
     0,
     -20,
     4,
@@ -65,7 +66,7 @@ static const int16 hitStarsShapeTable[] = {
 
 /** Explode Cloud shape info */
 static const int16 explodeCloudShapeTable[] = {
-    18,
+    18, // num entries of x and z rotation values
     0,
     -20,
     6,
@@ -432,10 +433,10 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 }
 
 void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
-	int16 currentShapeTable = *(shapeTable++);
+	int16 currentShapeTable = *shapeTable++;
 
-	int16 var_x = ((*(shapeTable++)) * size) >> 4;
-	int16 var_z = ((*(shapeTable++)) * size) >> 4;
+	int16 var_x = (*shapeTable++) * size / 16;
+	int16 var_z = (*shapeTable++) * size / 16;
 
 	_engine->_redraw->renderRect.left = 0x7D00;
 	_engine->_redraw->renderRect.right = -0x7D00;
@@ -444,8 +445,8 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 
 	_engine->_movements->rotateActor(var_x, var_z, angle);
 
-	int32 computedX = _engine->_renderer->destX + x;
-	int32 computedY = _engine->_renderer->destZ + y;
+	const int32 computedX = _engine->_renderer->destX + x;
+	const int32 computedY = _engine->_renderer->destZ + y;
 
 	if (computedX < _engine->_redraw->renderRect.left) {
 		_engine->_redraw->renderRect.left = computedX;
@@ -463,17 +464,15 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 		_engine->_redraw->renderRect.bottom = computedY;
 	}
 
-	int32 numEntries = 1;
-
 	int32 currentX = computedX;
 	int32 currentY = computedY;
 
-	while (numEntries < currentShapeTable) {
-		var_x = ((*(shapeTable++)) * size) >> 4;
-		var_z = ((*(shapeTable++)) * size) >> 4;
+	for (int32 numEntries = 1; numEntries < currentShapeTable; ++numEntries) {
+		var_x = (*shapeTable++) * size / 16;
+		var_z = (*shapeTable++) * size / 16;
 
-		int32 oldComputedX = currentX;
-		int32 oldComputedY = currentY;
+		const int32 oldComputedX = currentX;
+		const int32 oldComputedY = currentY;
 
 		_engine->_renderer->projPosX = currentX;
 		_engine->_renderer->projPosY = currentY;
@@ -504,8 +503,6 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 
 		_engine->_interface->drawLine(oldComputedX, oldComputedY, currentX, currentY, color);
 
-		numEntries++;
-
 		currentX = _engine->_renderer->projPosX;
 		currentY = _engine->_renderer->projPosY;
 	}
@@ -521,7 +518,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime << 5) & ANGLE_270, 4);
+		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime * 32) & ANGLE_270, 4);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
@@ -579,9 +576,10 @@ void Extra::processExtras() {
 			extra->info0 = -1;
 			continue;
 		}
+		const int32 deltaT = _engine->lbaTime - extra->spawnTime;
 		//
 		if (extra->type & ExtraType::UNK12) {
-			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, _engine->lbaTime - extra->spawnTime);
+			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, deltaT);
 			continue;
 		}
 		// process extra moving
@@ -590,14 +588,13 @@ void Extra::processExtras() {
 			currentExtraY = extra->y;
 			currentExtraZ = extra->z;
 
-			int32 currentExtraSpeedX = extra->destX * (_engine->lbaTime - extra->spawnTime);
+			const int32 currentExtraSpeedX = extra->destX * deltaT;
 			extra->x = currentExtraSpeedX + extra->lastX;
 
-			int32 currentExtraSpeedY = extra->destY * (_engine->lbaTime - extra->spawnTime);
-			currentExtraSpeedY += extra->lastY;
-			extra->y = currentExtraSpeedY - ABS(((extra->angle * (_engine->lbaTime - extra->spawnTime)) * (_engine->lbaTime - extra->spawnTime)) >> 4);
+			const int32 currentExtraSpeedY = extra->destY * deltaT;
+			extra->y = currentExtraSpeedY + extra->lastY - ABS(extra->angle * deltaT * deltaT / 16);
 
-			extra->z = extra->destZ * (_engine->lbaTime - extra->spawnTime) + extra->lastZ;
+			extra->z = extra->destZ * deltaT + extra->lastZ;
 
 			// check if extra is out of scene
 			if (extra->y < 0 || extra->x < 0 || extra->x > 0x7E00 || extra->z < 0 || extra->z > 0x7E00) {
@@ -642,8 +639,8 @@ void Extra::processExtras() {
 			currentExtraY = actor->y + 1000;
 			currentExtraZ = actor->z;
 
-			int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, currentExtraX, currentExtraZ);
-			int32 angle = ClampAngle(tmpAngle - extra->angle);
+			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, currentExtraX, currentExtraZ);
+			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
 				if (extra->strengthOfHit) {
@@ -686,13 +683,13 @@ void Extra::processExtras() {
 		if (extra->type & ExtraType::UNK9) {
 			//				int32 actorIdxAttacked = extra->lifeTime;
 			ExtraListStruct *extraKey = &extraList[extra->payload.extraIdx];
-			int32 extraIdx = extra->payload.extraIdx;
+			const int32 extraIdx = extra->payload.extraIdx;
 
-			int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, extraKey->x, extraKey->z);
-			int32 angle = ClampAngle(tmpAngle - extra->angle);
+			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, extraKey->x, extraKey->z);
+			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
-			if (angle > ToAngle(400) && angle < ToAngle(600)) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
+			if (angle > ANGLE_140 && angle < ANGLE_210) {
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
@@ -708,7 +705,7 @@ void Extra::processExtras() {
 				_engine->_gameState->magicBallIdx = addExtra(-1, extra->x, extra->y, extra->z, SPRITEHQR_KEY, 0, 8000, 0);
 				continue;
 			}
-			int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, extraKey->y, _engine->_movements->targetActorDistance);
+			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, extraKey->y, _engine->_movements->targetActorDistance);
 			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
 
 			if (!pos) {
@@ -725,7 +722,7 @@ void Extra::processExtras() {
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destZ, ANGLE_17, &extra->trackActorMove);
 
 			if (extraIdx == _engine->_collision->checkExtraCollisionWithExtra(extra, _engine->_gameState->magicBallIdx)) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
@@ -875,7 +872,8 @@ void Extra::processExtras() {
 
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, 158, OverlayPosType::koNormal, 2);
+					const int16 fontColor = 158;
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, fontColor, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, extra->info0, 10, 30, 0, OverlayPosType::koNormal, 2);
