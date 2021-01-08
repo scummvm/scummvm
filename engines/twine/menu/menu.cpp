@@ -1070,7 +1070,7 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	const int32 top = itemY - 32;
 	const int32 bottom = itemY + 32;
 	const Common::Rect rect(left, top, right, bottom);
-	_engine->_interface->drawSplittedBox(rect, inventorySelectedItem == item ? inventorySelectedColor : 0);
+	_engine->_interface->drawSplittedBox(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
 		Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
@@ -1114,7 +1114,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	_engine->_renderer->setLightVector(896, 950, 0);
+	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
 	inventorySelectedColor = 68;
 
@@ -1128,7 +1128,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
-	_engine->_text->setFontCrossColor(4);
+	_engine->_text->setFontCrossColor(COLOR_BRIGHT_BLUE);
 	_engine->_text->initDialogueBox();
 
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;

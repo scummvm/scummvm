@@ -108,6 +108,7 @@ enum _TextId {
 #define TEXT_MAX_FADE_IN_CHR 32
 
 #define COLOR_BLACK 0
+#define COLOR_BRIGHT_BLUE 4
 #define COLOR_WHITE 15
 #define COLOR_GOLD 155
 

@@ -60,8 +60,8 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 void GameState::initEngineProjections() {
 	_engine->_renderer->setOrthoProjection(311, 240, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
-	_engine->_renderer->setBaseRotation(0, 0, 0);
-	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, 0);
+	_engine->_renderer->setBaseRotation(ANGLE_0, ANGLE_0, ANGLE_0);
+	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, ANGLE_0);
 }
 
 void GameState::initGameStateVars() {

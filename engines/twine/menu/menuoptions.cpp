@@ -59,7 +59,7 @@ void MenuOptions::newGame() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
-	_engine->_text->setFontCrossColor(15);
+	_engine->_text->setFontCrossColor(COLOR_WHITE);
 
 	bool aborted = _engine->_text->drawTextFullscreen(TextId::kIntroText1);
 

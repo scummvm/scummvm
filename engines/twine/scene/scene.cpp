@@ -141,8 +141,8 @@ bool Scene::loadSceneLBA1() {
 	betaLight = stream.readUint16LE();
 
 	// FIXME: Workaround to fix lighting issue - not using proper dark light
-	alphaLight = 896;
-	betaLight = 950;
+	alphaLight = ANGLE_315;
+	betaLight = ANGLE_334;
 
 	_sampleAmbiance[0] = stream.readUint16LE();
 	_sampleRepeat[0] = stream.readUint16LE();
@@ -336,7 +336,7 @@ void Scene::changeScene() {
 	sceneHero->y = heroYBeforeFall = newHeroY;
 	sceneHero->z = newHeroZ;
 
-	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
+	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
 	if (previousSceneIdx != needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
@@ -370,7 +370,7 @@ void Scene::changeScene() {
 	needChangeScene = -1;
 	enableGridTileRendering = true;
 
-	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
+	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
 	if (_sceneMusic != -1) {
 		_engine->_music->playTrackMusic(_sceneMusic);

@@ -1712,7 +1712,7 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_renderer->setCameraPosition(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
-	engine->_renderer->setLightVector(896, 950, ANGLE_0);
+	engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
 	engine->_text->initTextBank(TextBankId::Credits);
 
