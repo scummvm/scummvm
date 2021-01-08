@@ -1463,16 +1463,11 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 }
 
 void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr) {
-	int32 tmpBoxRight = boxRight;
-
-	int32 ypos = boxBottom + boxTop;
-	ypos >>= 1;
-
-	int32 xpos = boxRight + boxLeft;
-	xpos >>= 1;
+	const int32 ypos = (boxBottom + boxTop) / 2;
+	const int32 xpos = (boxRight + boxLeft) / 2;
 
 	setOrthoProjection(xpos, ypos, 0);
-	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, tmpBoxRight, boxBottom));
+	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, boxRight, boxBottom));
 
 	if (angle == -1) {
 		ActorMoveStruct &move = _engine->_menu->moveMenu;
@@ -1480,9 +1475,9 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, 0, newAngle, 0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyPtr);
 	} else {
-		renderIsoModel(0, y, 0, 0, angle, 0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 	}
 }
 
@@ -1490,7 +1485,7 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 	setCameraPosition(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
-	renderIsoModel(0, 0, 0, 0, angle, 0, bodyPtr);
+	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 }
 
 } // namespace TwinE
