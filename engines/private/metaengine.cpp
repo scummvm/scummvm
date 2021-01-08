@@ -3,16 +3,16 @@
 
 class PrivateMetaEngine : public AdvancedMetaEngine {
 public:
-	const char *getName() const override {
-		return "private";
-	}
+    const char *getName() const override {
+        return "private";
+    }
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+    Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Private::PrivateEngine(syst);
-	return Common::kNoError;
+    *engine = new Private::PrivateEngine(syst);
+    return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRIVATE)
