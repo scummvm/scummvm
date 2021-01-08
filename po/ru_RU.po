@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-07 21:55+0000\n"
-"PO-Revision-Date: 2020-12-05 11:42+0000\n"
+"PO-Revision-Date: 2021-01-08 14:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Русский\n"
 
 #: gui/about.cpp:102
@@ -7120,16 +7120,12 @@ msgid "Enable the USA specific version flags"
 msgstr "Использовать флаги, специфичные для версии для США"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
-msgstr "Включить отображение графики высокого разрешения"
+msgstr "Включить отображение высокого разрешения"
 
 #: engines/twine/metaengine.cpp:145
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable a higher resolution for the game"
-msgstr "Включить звук в игре"
+msgstr "Включить отображение высокого разрешения в игре"
 
 #: engines/twine/metaengine.cpp:192
 msgid "Debug Next Room"
