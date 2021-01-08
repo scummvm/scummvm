@@ -1696,10 +1696,7 @@ static int32 lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x65
  */
 static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_renderer->setOrthoProjection(311, 240, 512);
-	engine->_renderer->setBaseTranslation(0, 0, 0);
-	engine->_renderer->setBaseRotation(0, 0, 0);
-	engine->_renderer->setLightVector(engine->_scene->alphaLight, engine->_scene->betaLight, 0);
+	engine->_gameState->initEngineProjections();
 	return 0;
 }
 
