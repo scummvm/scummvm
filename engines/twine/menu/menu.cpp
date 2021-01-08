@@ -905,7 +905,9 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		const int titleOffset = 10;
 		const int titleHeight = 40;
 		const int32 titleBoxLeft = 110;
-		const int32 titleBoxRight = 540;
+		const int32 titleBoxWidth = 430;
+		const int32 titleBoxCenter = titleBoxLeft + titleBoxWidth / 2;
+		const int32 titleBoxRight = titleBoxLeft + titleBoxWidth;
 		const int32 titleBoxTop = boxRect.bottom + titleOffset;
 		const int32 titleBoxBottom = titleBoxTop + titleHeight;
 
@@ -921,7 +923,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		char dialText[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
-		_engine->_text->drawText(640 / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
+		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
 		_engine->copyBlockPhys(titleRect);
 	} else {
 		_engine->_interface->drawSplittedBox(boxRect, 0);
