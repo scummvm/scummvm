@@ -138,7 +138,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 			continue;
 		}
 		extra->info0 = SPRITEHQR_EXPLOSION_FIRST_FRAME;
-		extra->type = ExtraType::TIME_OUT | ExtraType::UNK12;
+		extra->type = ExtraType::TIME_OUT | ExtraType::EXPLOSION;
 		extra->info1 = 0;
 		extra->x = x;
 		extra->y = y;
@@ -578,8 +578,8 @@ void Extra::processExtras() {
 		}
 		const int32 deltaT = _engine->lbaTime - extra->spawnTime;
 		//
-		if (extra->type & ExtraType::UNK12) {
-			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, deltaT);
+		if (extra->type & ExtraType::EXPLOSION) {
+			extra->info0 = _engine->_collision->getAverageValue(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
 			continue;
 		}
 		// process extra moving

@@ -43,14 +43,14 @@ enum ExtraType {
 	UNK9 = 1 << 9,         // 0x0200
 	TIME_IN = 1 << 10,     // 0x0400
 	UNK11 = 1 << 11,       // 0x0800
-	UNK12 = 1 << 12,       // 0x1000
+	EXPLOSION = 1 << 12,   // 0x1000
 	WAIT_NO_COL = 1 << 13, // 0x2000
 	BONUS = 1 << 14,       // 0x4000
 	UNK15 = 1 << 15        // 0x8000
 };
 
 struct ExtraListStruct {
-	int16 info0 = 0; // field_0
+	int16 info0 = 0; /**< a value of -1 indicates that this instance is free to use */
 	int16 x = 0;
 	int16 y = 0;
 	int16 z = 0;
