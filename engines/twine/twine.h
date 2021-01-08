@@ -305,7 +305,7 @@ public:
 
 	/**
 	 * Deplay certain seconds till proceed - Can also Skip this delay
-	 * @param time time in seconds to delay
+	 * @param time time in milliseconds to delay
 	 */
 	bool delaySkip(uint32 time);
 
