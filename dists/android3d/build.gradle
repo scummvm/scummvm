@@ -32,7 +32,7 @@ android {
 
         setProperty("archivesBaseName", "ResidualVM")
 
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
 
         versionName "0.4"
