@@ -116,23 +116,23 @@ public:
 	GameState(TwinEEngine *engine);
 
 	inline bool inventoryDisabled() const {
-		return _gameStateFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
+		return hasGameFlag(GAMEFLAG_INVENTORY_DISABLED) != 0;
 	}
 
 	inline bool hasOpenedFunfrocksSafe() const {
-		return _gameStateFlags[30] != 0;
+		return hasGameFlag(30) != 0;
 	}
 
 	inline bool hasItem(InventoryItems item) const {
-		return _gameStateFlags[item] != 0;
+		return hasGameFlag(item) != 0;
 	}
 
 	inline void giveItem(InventoryItems item) {
-		_gameStateFlags[item] = 1;
+		setGameFlag(item, 1);
 	}
 
 	inline void removeItem(InventoryItems item) {
-		_gameStateFlags[item] = 0;
+		setGameFlag(item, 0);
 	}
 
 	inline uint8 hasGameFlag(uint8 index) const {
