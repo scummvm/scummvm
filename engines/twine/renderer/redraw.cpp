@@ -618,13 +618,10 @@ void Redraw::renderOverlays() {
 				_engine->_interface->drawSplittedBox(rect, 0);
 				_engine->_interface->setClip(rect);
 
-				Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
-				_engine->_renderer->setCameraPosition(40, 40, 128, 200, 200);
-				_engine->_renderer->setCameraAngle(0, 0, 0, 60, 0, 0, 16000);
-
+				uint8* bodyPtr = _engine->_resources->inventoryTable[item];
+				Renderer::prepareIsoModel(bodyPtr);
 				overlayRotation += 1; // overlayRotation += 8;
-
-				_engine->_renderer->renderIsoModel(0, 0, 0, 0, overlayRotation, 0, _engine->_resources->inventoryTable[item]);
+				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
