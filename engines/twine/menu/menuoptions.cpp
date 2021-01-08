@@ -158,7 +158,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyR
 
 	_engine->_menu->drawBox(rect);
 
-	_engine->_text->setFontColor(15);
+	_engine->_text->setFontColor(COLOR_WHITE);
 	const uint8 character = (uint8)allowedCharIndex[idx];
 	const int32 textX = centerX - _engine->_text->getCharWidth(character) / 2;
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
@@ -253,7 +253,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
-	_engine->_text->setFontColor(15);
+	_engine->_text->setFontColor(COLOR_WHITE);
 	const int halfScreenWidth = (_engine->width() / 2);
 	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
 	_engine->copyBlockPhys(0, 0, _engine->width() - 1, 99);

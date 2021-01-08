@@ -107,6 +107,9 @@ enum _TextId {
 
 #define TEXT_MAX_FADE_IN_CHR 32
 
+#define COLOR_WHITE 15
+#define COLOR_GOLD 155
+
 enum class ProgressiveTextState {
 	End = 0,				/**< Text has reached its end and we are waiting for user input */
 	ContinueRunning = 1,	/**< Text is fading in */

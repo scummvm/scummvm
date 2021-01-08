@@ -1737,7 +1737,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
 		int32 textSize = engine->_text->getTextSize(textStr);
 		int32 textBoxRight = textSize;
-		engine->_text->setFontColor(15);
+		engine->_text->setFontColor(COLOR_WHITE);
 		engine->_text->drawText(0, drawVar1, textStr);
 		if (textSize > engine->width() - 1) {
 			textBoxRight = engine->width() - 1;

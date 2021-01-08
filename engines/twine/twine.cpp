@@ -791,7 +791,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
 			freezeTime();
-			_text->setFontColor(15);
+			_text->setFontColor(COLOR_WHITE);
 			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
 			copyBlockPhys(5, 446, 100, 479);
 			do {

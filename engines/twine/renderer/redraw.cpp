@@ -604,7 +604,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_interface->setClip(renderRect);
 
-				_engine->_text->setFontColor(155);
+				_engine->_text->setFontColor(COLOR_GOLD);
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
