@@ -396,16 +396,17 @@ void Text::processTextLine() {
 		if (*buffer == '\0') {
 			break;
 		}
-		if (*buffer == '\1') {
-			moreWordsFollowing = false;
-			buffer++;
-			break;
-		}
 
 		_currentTextPosition = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
 		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
+			break;
+		}
+
+		if (*wordBuf == '\1') {
+			moreWordsFollowing = false;
+			buffer++;
 			break;
 		}
 
