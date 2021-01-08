@@ -60,7 +60,7 @@ public:
 	 */
 	bool standingOnActor(int32 actorIdx1, int32 actorIdx2);
 
-	int32 getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3);
+	int32 getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay);
 
 	/**
 	 * Reajust actor position in scene according with brick shape bellow actor

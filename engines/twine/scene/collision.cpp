@@ -95,16 +95,16 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) {
 	return true; // standing
 }
 
-int32 Collision::getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3) {
-	if (var3 <= 0) {
-		return var0;
+int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) {
+	if (delay <= 0) {
+		return start;
 	}
 
-	if (var3 >= var2) {
-		return var1;
+	if (delay >= maxDelay) {
+		return end;
 	}
 
-	return (((var1 - var0) * var3) / var2) + var0;
+	return (((end - start) * delay) / maxDelay) + start;
 }
 
 void Collision::reajustActorPosition(ShapeType brickShape) {
