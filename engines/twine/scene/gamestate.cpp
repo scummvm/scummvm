@@ -274,7 +274,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraY = _engine->_grid->newCameraY * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->newCameraZ * BRICK_SIZE;
 
-	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
+	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, ANGLE_0, ANGLE_45, ANGLE_0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
 	const int32 itemX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -430,7 +430,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 }
 
 void GameState::processGameoverAnimation() {
-	int32 tmpLbaTime = _engine->lbaTime;
+	const int32 tmpLbaTime = _engine->lbaTime;
 
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
@@ -470,7 +470,7 @@ void GameState::processGameoverAnimation() {
 
 		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
-		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
+		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
 		_engine->copyBlockPhys(rect);
 
 		_engine->lbaTime++;
@@ -479,7 +479,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->playSample(Samples::Explode);
 	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
-	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
+	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
 	_engine->copyBlockPhys(rect);
 
 	_engine->delaySkip(2000);

@@ -344,7 +344,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	const int32 x = actor->x - _engine->_grid->cameraX;
 	const int32 y = actor->y - _engine->_grid->cameraY;
 	const int32 z = actor->z - _engine->_grid->cameraZ;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, 0, actor->angle, 0, _engine->_actor->bodyTable[actor->entity])) {
+	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_actor->bodyTable[actor->entity])) {
 		return;
 	}
 
