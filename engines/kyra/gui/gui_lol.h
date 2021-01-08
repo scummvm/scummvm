@@ -61,6 +61,7 @@ namespace Kyra {
 		item.enabled = 1; \
 		item.itemId = a; \
 		item.itemString = ""; \
+		item.useItemString = false; \
 		item.x = b; \
 		item.y = c; \
 		item.width = d; \

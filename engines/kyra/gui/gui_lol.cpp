@@ -2911,8 +2911,6 @@ Common::String GUI_LoL::getMenuTitle(const Menu &menu) {
 }
 
 Common::String GUI_LoL::getMenuItemTitle(const MenuItem &menuItem) {
-    	if (menuItem.useItemString)
-		return menuItem.itemString;
 	if (menuItem.itemId & 0x8000 && !menuItem.itemString.empty())
 		return menuItem.itemString;
 	else if (menuItem.itemId & 0x8000 || !menuItem.itemId)
