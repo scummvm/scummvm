@@ -1,5 +1,4 @@
 #include "common/debug.h"
-
 #include "grammar.h"
 #include "grammar.tab.h"
 
@@ -7,11 +6,13 @@ namespace Private {
 
 SymbolMap settings, variables, cursors, locations, rects;
 ConstantList constants;
-StringQueue todefine;
+StringQueue stringToDefine;
+RectQueue rectToDefine;
 
-void define(char *n) {
+void define(char *n, Common::Rect *r) {
         Common::String *s = new Common::String(n);
-        todefine.push(*s);
+        stringToDefine.push(*s);
+        rectToDefine.push(r);
 }
 
 char *emalloc(unsigned n)	/* check return from malloc */
@@ -74,29 +75,38 @@ Symbol *lookupName(char *n)  /* install s in some symbol table */
 
 void installall(char *n) {
         Common::String *s;
-	assert(todefine.size() > 0);
-	while (!todefine.empty()) {
-	       s = new Common::String(todefine.pop());
+	Common::Rect *r;
+
+	assert(stringToDefine.size() > 0);
+
+	while (!stringToDefine.empty()) {
+	       s = new Common::String(stringToDefine.pop());
+	       r = rectToDefine.pop();
 
  	       //debug("name %s", s->c_str());
 	       if (strcmp(n, "settings") == 0) {
-	           install(s, STRING, 0, (char*) s->c_str(), &settings);
+		   assert(r == NULL);
+	           install(s, STRING, 0, (char*) s->c_str(), r, &settings);
                }
 
 	       else if (strcmp(n, "variables") == 0) {
-	           install(s, NAME, 0, NULL, &variables);
+                   assert(r == NULL);
+	           install(s, NAME, 0, NULL, r, &variables);
                }
 
 	       else if (strcmp(n, "cursors") == 0) {
-	           install(s, NAME, 0, NULL, &cursors);
+                   assert(r == NULL);
+	           install(s, NAME, 0, NULL, r, &cursors);
                }
 
 	       else if (strcmp(n, "locations") == 0) {
-	           install(s, NAME, 0, NULL, &locations);
+                   assert(r == NULL);
+	           install(s, NAME, 0, NULL, r, &locations);
                }
 
 	       else if (strcmp(n, "rects") == 0) {
-	           install(s, NAME, 0, NULL, &rects);
+                   assert(r != NULL);
+	           install(s, NAME, 0, NULL, r, &rects);
                }
 	       else
 		   assert(0);
@@ -125,7 +135,7 @@ Symbol *addconstant(int t, int d, char *s)
 }
 
 
-Symbol *install(Common::String *n, int t, int d, char *s, SymbolMap *symlist)  /* install s in symbol table */
+Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist)  /* install s in symbol table */
 {
         Common::String *name = new Common::String(*n);
  
@@ -138,6 +148,8 @@ Symbol *install(Common::String *n, int t, int d, char *s, SymbolMap *symlist)  /
 	   sp->u.val = d;
 	else if (t == STRING)
 	   sp->u.str = s;
+	else if (t == RECT)
+	   sp->u.rect = r;
         else
 	   assert(0);
 

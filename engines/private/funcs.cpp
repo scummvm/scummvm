@@ -23,11 +23,31 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
     _nextSetting = s;
 }
 
+void Quit(ArgArray args) { 
+    debug("quit()");
+    _private->quitGame(); 
+}
+
+
+
 void SetFlag(ArgArray args) {
     // assert types
     debug("SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
     args[0].u.sym->u.val = args[1].u.val;
 }
+
+void Exit(ArgArray args) {
+    // assert types
+    assert(args[2].type == RECT || args[2].type == NAME);
+    debug("Exit(%s, %s, %s)", args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
+    ExitInfo *e = (ExitInfo*) malloc(sizeof(ExitInfo));
+    e->nextSetting = new Common::String(args[0].u.str);
+    e->cursor = args[1].u.sym->name;
+    e->rect = args[2].u.rect;
+    _exits.push_front(*e);
+}
+
+
 
 void SetModifiedFlag(ArgArray args) {
     // assert types
@@ -71,7 +91,7 @@ void CRect(ArgArray args) {
     Datum *d = new Datum();
     Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
 
-    d->type = RECTTOK;
+    d->type = RECT;
     d->u.rect = rect;
     push(*d);
 }
@@ -128,7 +148,10 @@ void execFunction(char *name, ArgArray args) {
         SetModifiedFlag(args);	    
     }
     else if (strcmp(name, "Exit") == 0) {
-       ;	    
+        Exit(args);	    
+    }
+    else if (strcmp(name, "Quit") == 0) {
+        Quit(args);	    
     }
     else if (strcmp(name, "LoadGame") == 0) {
        ;	    

@@ -16,6 +16,7 @@
 #include "engines/util.h"
 
 #include "image/bmp.h"
+#include "graphics/cursorman.h"
 
 #include "private/private.h"
 #include "private/grammar.tab.h"
@@ -31,7 +32,34 @@ bool _modified = false;
 int _mode = -1;
 PrivateEngine *_private = NULL;
 
+Common::List<ExitInfo> _exits;
+
 extern int parse(char*);
+
+static const byte MOUSECURSOR_SCI[] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
+};
+
+static const byte cursorPalette[] = {
+	0, 0, 0,           // Black / Transparent
+	0x80, 0x80, 0x80,  // Gray
+	0xff, 0xff, 0xff   // White
+};
 
 Common::String convertPath(Common::String name) {
 	Common::String path(name);
@@ -105,7 +133,11 @@ Common::Error PrivateEngine::run() {
 	//_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	initGraphics(_screenW, _screenH, &_pixelFormat);
-        _image = new Image::BitmapDecoder();
+
+        CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+
+	_image = new Image::BitmapDecoder();
 	_compositeSurface = new Graphics::ManagedSurface();
   	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 	_compositeSurface->setTransparentColor(0x00ff00);
@@ -142,17 +174,33 @@ Common::Error PrivateEngine::run() {
 	debugC(3, kPrivateDebugExample | kPrivateDebugExample2, "Example debug call two");
 
 	// Simple main event loop
-	Common::Event evt;
+	Common::Event event;
+        Common::Point mousePos;
         _videoDecoder = nullptr; //new Video::SmackerDecoder();
 
 	_nextSetting = new Common::String("kGoIntro");
 
-  	//playVideo("intro/intro.smk");
 	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(evt);
+		g_system->getEventManager()->pollEvent(event);
+	        mousePos = g_system->getEventManager()->getMousePos();
+	
 		g_system->delayMillis(10);
+		//debug("here");
 
 
+		// Events
+		switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				selectExit(mousePos);
+
+		}
+
+
+		// Movies
 		if (_nextMovie != NULL) {
                     //_videoDecoder = new Video::SmackerDecoder();
                     //playVideo(*_nextMovie);
@@ -178,16 +226,44 @@ Common::Error PrivateEngine::run() {
 
 		if (_nextSetting != NULL) {
 			debug("Executing %s", _nextSetting->c_str());
+			_exits.clear();
                         loadSetting(_nextSetting);
 			_nextSetting = NULL;
+                 	CursorMan.showMouse(false);
 			execute(prog);
+	                CursorMan.showMouse(true);
+
+
 		}
 
-
+		g_system->updateScreen();
+	
 	}
 
 	return Common::kNoError;
 }
+
+void PrivateEngine::selectExit(Common::Point mousePos) {
+	Common::String *ns = NULL;
+	int rs = 1 << 31;
+	int cs = 0;
+
+	for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
+		const ExitInfo e = *it;
+		cs = e.rect->width()*e.rect->height(); 
+		if (e.rect->contains(mousePos)) {
+			debug("Exit %s %d", e.nextSetting->c_str(), cs);
+			if (cs < rs) {
+				rs = cs;
+				ns = e.nextSetting;
+			}
+
+		}
+        }
+	if (cs > 0)
+		_nextSetting = ns;
+}
+
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
 	return
@@ -226,7 +302,7 @@ void PrivateEngine::playSound(const Common::String &name) {
 	Audio::AudioStream *stream;
 	stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	stopSound();
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+	//_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {

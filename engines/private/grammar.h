@@ -19,10 +19,11 @@ typedef struct Arg {
 
 typedef struct Symbol {	/* symbol table entry */
 	Common::String *name;
-	short	type;	/* NAME, NUM or STRING  */
+	short	type;	/* NAME, NUM, STRING or RECT  */
 	union {
-		int	val;	/* if NAME or NUM */
-		char	*str;	/* if STRING */
+		int	val;	    /* NAME or NUM */
+		char	*str;	    /* STRING */
+		Common::Rect *rect; /* RECT */
 	} u;
 } Symbol;
 
@@ -62,6 +63,8 @@ extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting*> SettingMap;
 typedef Common::Queue<Common::String> StringQueue;
+typedef Common::Queue<Common::Rect*> RectQueue;
+
 
 extern StringQueue todefine;
 extern SettingMap settingcode;
@@ -76,8 +79,8 @@ typedef Common::List<Symbol*> ConstantList;
 extern SymbolMap settings, variables, cursors, locations, rects;
 extern ConstantList constants;
 
-extern void define(char *n); 
-extern Symbol  *install(Common::String *, int, int, char *, SymbolMap*);
+extern void define(char *, Common::Rect *); 
+extern Symbol  *install(Common::String *, int, int, char *, Common::Rect *, SymbolMap*);
 extern Symbol  *lookupName(char *);
 extern Symbol *addconstant(int, int, char *);
 extern void     installall(char *);

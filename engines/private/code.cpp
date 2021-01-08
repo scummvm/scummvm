@@ -175,7 +175,7 @@ int eval()		/* evaluate variable on stack */
 	} else if (d.u.sym->type == NAME) {
             //debug("NAME %s", d.sym->name->c_str());
 	    //d.sym = d.sym;
-	}
+	} 
 	else
 	    assert(0);
 	
