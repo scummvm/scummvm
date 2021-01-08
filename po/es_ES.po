@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-07 21:55+0000\n"
-"PO-Revision-Date: 2020-12-07 16:34+0000\n"
+"PO-Revision-Date: 2021-01-08 13:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Español\n"
 
 #: gui/about.cpp:102
@@ -7169,16 +7169,12 @@ msgid "Enable the USA specific version flags"
 msgstr "Activa los parámetros específicos de la versión estadounidense"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
-msgstr "Activar gráficos en alta resolución"
+msgstr "Activar alta resolución"
 
 #: engines/twine/metaengine.cpp:145
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable a higher resolution for the game"
-msgstr "Activa el sonido del juego"
+msgstr "Permite mostrar el juego a una resolución superior"
 
 #: engines/twine/metaengine.cpp:192
 msgid "Debug Next Room"
