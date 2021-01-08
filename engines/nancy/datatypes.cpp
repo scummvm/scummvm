@@ -46,11 +46,12 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
     buf[9] = 0;
     audioFile = Common::String(buf);
 
-    stream->seek(0x74);
+    stream->seek(0x72);
+    verticalScrollDelta = stream->readUint16LE();
     sceneHasRotation = stream->readUint16LE();
     sceneHasMovement = stream->readUint16LE();
-    unknown78 = stream->readUint16LE();
-    unknown7A = stream->readUint16LE();
+    slowMoveTimeDelta = stream->readUint16LE();
+    fastMoveTimeDelta = stream->readUint16LE();
     unknown7C = stream->readByte();
 
     // put the entire chunk into a temp buffer until we figure out the rest of the structure

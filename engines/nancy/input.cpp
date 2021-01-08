@@ -22,6 +22,7 @@
 
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/scene.h"
 
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -31,9 +32,33 @@
 #include "backends/keymapper/standard-actions.h"
 
 namespace Nancy {
-    
+
+const int16 InputManager::mapButtonID               = 10000;
+const int16 InputManager::textBoxID                 = 10002;
+const int16 InputManager::textBoxScrollbarID        = 10003;
+const int16 InputManager::helpButtonID              = 10004;
+const int16 InputManager::menuButtonID              = 10005;
+const int16 InputManager::inventoryScrollbarID      = 10006;
+const int16 InputManager::inventoryItemTakeID       = 10007;
+const int16 InputManager::inventoryItemReturnID     = 10008;
+const int16 InputManager::orderingPuzzleID          = 10009;
+const int16 InputManager::orderingPuzzleEndID       = 10010;
+const int16 InputManager::rotatingLockPuzzleUpID    = 10011;
+const int16 InputManager::rotatingLockPuzzleDownID  = 10012;
+const int16 InputManager::rotatingLockPuzzleEndID   = 10013;
+const int16 InputManager::leverPuzzleID             = 10014; // not sure abt the lever ones
+const int16 InputManager::leverPuzzleEndID          = 10015;
+const int16 InputManager::telephoneID               = 10016;
+const int16 InputManager::telephoneEndID            = 10017;
+const int16 InputManager::sliderPuzzleID            = 10018;
+const int16 InputManager::sliderPuzzleEndID         = 10019;
+const int16 InputManager::passwordPuzzleEndID       = 10020;
+
 void InputManager::processEvents() {
     using namespace Common;
+
+    isClickValidLMB = false;
+    isClickValidRMB = false;
 
     Common::Event event;
 
@@ -45,25 +70,29 @@ void InputManager::processEvents() {
                 // TODO add debug shortcuts
                 switch (event.customType) {
                     case kNancyActionMoveUp:
-                        _inputs |= (byte)kMoveUp;
+                        _inputs |= kMoveUp;
+                        _engine->sceneManager->movementDirection |= SceneManager::kUp;
                         break;
                     case kNancyActionMoveDown:
-                        _inputs |= (byte)kMoveDown;
+                        _inputs |= kMoveDown;
+                        _engine->sceneManager->movementDirection |= SceneManager::kDown;
                         break;
                     case kNancyActionMoveLeft:
-                        _inputs |= (byte)kMoveLeft;
+                        _inputs |= kMoveLeft;
+                        _engine->sceneManager->movementDirection |= SceneManager::kLeft;
                         break;
                     case kNancyActionMoveRight:
-                        _inputs |= (byte)kMoveRight;
+                        _inputs |= kMoveRight;
+                        _engine->sceneManager->movementDirection |= SceneManager::kRight;
                         break;
                     case kNancyActionMoveFast:
-                        _inputs |= (byte)kMoveFastModifier;
+                        _inputs |= kMoveFastModifier;
                         break;
                     case kNancyActionLeftClick:
-                        _inputs |= (byte)kLeftMouseButton;
+                        _inputs |= kLeftMouseButton;
                         break;
                     case kNancyActionRightClick:
-                        _inputs |= (byte)kRightMouseButton;
+                        _inputs |= kRightMouseButton;
                         break;
                     default:
                         break;
@@ -72,25 +101,31 @@ void InputManager::processEvents() {
             case EVENT_CUSTOM_ENGINE_ACTION_END:
                 switch (event.customType) {
                     case kNancyActionMoveUp:
-                        _inputs &= ~(byte)kMoveUp;
+                        _inputs &= ~kMoveUp;
                         break;
                     case kNancyActionMoveDown:
-                        _inputs &= ~(byte)kMoveDown;
+                        _inputs &= ~kMoveDown;
                         break;
                     case kNancyActionMoveLeft:
-                        _inputs &= ~(byte)kMoveLeft;
+                        _inputs &= ~kMoveLeft;
                         break;
                     case kNancyActionMoveRight:
-                        _inputs &= ~(byte)kMoveRight;
+                        _inputs &= ~kMoveRight;
                         break;
                     case kNancyActionMoveFast:
-                        _inputs &= ~(byte)kMoveFastModifier;
+                        _inputs &= ~kMoveFastModifier;
                         break;
                     case kNancyActionLeftClick:
-                        _inputs &= ~(byte)kLeftMouseButton;
+                        _inputs &= ~kLeftMouseButton;
+                        if (hoveredElementID != -1) {
+                            isClickValidLMB = true;
+                        }
                         break;
                     case kNancyActionRightClick:
-                        _inputs &= ~(byte)kRightMouseButton;
+                        _inputs &= ~kRightMouseButton;
+                        if (hoveredElementID != -1) {
+                            isClickValidRMB = true;
+                        }
                         break;
                     default:
                         break;
@@ -121,10 +156,19 @@ void InputManager::processEvents() {
                 break;
         }
     }
+
+    // Discard conflicting directions
+    byte dir = _engine->sceneManager->movementDirection;
+    if ((dir & SceneManager::kUp) && (dir & SceneManager::kDown)) {
+        _engine->sceneManager->movementDirection &= !(SceneManager::kUp | SceneManager::kDown);
+    }
+    if ((dir & SceneManager::kLeft) && (dir & SceneManager::kRight)) {
+        _engine->sceneManager->movementDirection &= !(SceneManager::kLeft | SceneManager::kRight);
+    }
 }
 
 bool InputManager::getInput(InputManager::InputType type) {
-    return _inputs & (byte)type;
+    return _inputs & type;
 }
 
 void InputManager::initKeymaps(Common::KeymapArray &keymaps) {

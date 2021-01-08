@@ -45,10 +45,11 @@ struct SceneSummary {
     uint16 videoFormat;         // 0x3E, value is 1 or 2
     Common::String audioFile;   // 0x40
     //
+    uint16 verticalScrollDelta; // 0x72
     uint16 sceneHasRotation;    // 0x74, could be an enum?
     uint16 sceneHasMovement;    // 0x76, also an enum??
-    uint16 unknown78;           // 0x78
-    uint16 unknown7A;           // 0x7A
+    uint16 slowMoveTimeDelta;   // 0x78
+    uint16 fastMoveTimeDelta;   // 0x7A
     byte unknown7C;             // 0x7C, enum with 4 values
     //
     byte *chunkData;

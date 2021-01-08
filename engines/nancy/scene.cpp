@@ -26,6 +26,7 @@
 #include "engines/nancy/iff.h"
 #include "engines/nancy/logic.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/input.h"
 
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -223,7 +224,6 @@ void SceneManager::init() {
 }
 
 void SceneManager::load() {
-
     // Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100                                                                                    
     Common::String sceneName = Common::String::format("S%u", _sceneID);
     IFF sceneIFF(_engine, sceneName);
@@ -243,10 +243,10 @@ void SceneManager::load() {
     // Not sure what these do yet
     Common::SeekableReadStream *bsum = _engine->getBootChunkStream("BSUM");
     bsum->seek(0x1F1);
-    byte unknown = bsum->readByte();
-    if (unknown) {
-        currentScene.unknown78 = bsum->readUint16LE();
-        currentScene.unknown7A = bsum->readUint16LE();
+    byte overrideMovementDeltas = bsum->readByte();
+    if (overrideMovementDeltas) {
+        currentScene.slowMoveTimeDelta = bsum->readUint16LE();
+        currentScene.fastMoveTimeDelta = bsum->readUint16LE();
     }
 
     // Search for Action Records, maximum for a scene is 30
@@ -276,6 +276,7 @@ void SceneManager::load() {
         } else if (currentScene.videoFormat == 2) {
             // always start from the bottom
             playState.verticalScroll = playState.currentMaxVerticalScroll;
+            playState.verticalScrollDelta = currentScene.verticalScrollDelta;
         } else {
             error("Unrecognized Scene summary chunk video file format");
         }
@@ -350,7 +351,9 @@ void SceneManager::run() {
         return;
     }
 
-    // Unknown if, have never triggered it
+    if (saveReloadRequested) {
+        // TODO
+    }
 
     if (setupMenuRequested) {
         _stashedTickCount = _engine->getTotalPlayTime();
@@ -384,32 +387,32 @@ void SceneManager::run() {
 
     // Cheat menu, will not implement
 
+    uint32 playTimeThisFrame = _engine->getTotalPlayTime();
+
     // Do some work if we're coming from a different game state
     if (_engine->_gameFlow.previousGameState != NancyEngine::GameState::kScene) {
-        uint32 t = _engine->getTotalPlayTime();
         if (hasLoadedFromSavefile) {
-            if (t > _stashedTickCount) {
-                t -= _stashedTickCount;
-                playState.totalTime -= t;
-                playState.sceneTime -= t;
+            if (playTimeThisFrame > _stashedTickCount) {
+                playTimeThisFrame -= _stashedTickCount;
+                playState.totalTime -= playTimeThisFrame;
+                playState.sceneTime -= playTimeThisFrame;
                 if (playState.timerIsActive)
-                    playState.timerTime -= t;
+                    playState.timerTime -= playTimeThisFrame;
             }
         }
             
         _engine->graphics->getGenericZRenderStruct(12)->isActive = false; // MENU BTN DN
         _engine->graphics->getGenericZRenderStruct(13)->isActive = false; // HELP BTN DN
-        hovered = -1;
+        _engine->input->hoveredElementID = -1;
         // TODO a bunch of function calls
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         return;
     }
 
-    uint32 t = _engine->getTotalPlayTime();
     uint32 diff = 0;
-    if (_tickCount < t) {
-        diff = t - _tickCount;
-        _tickCount = t;
+    if (_tickCount < playTimeThisFrame) {
+        diff = playTimeThisFrame - _tickCount;
+        _tickCount = playTimeThisFrame;
     }
     playState.totalTime += diff;
     if (playState.timerIsActive)
@@ -417,9 +420,9 @@ void SceneManager::run() {
     playState.sceneTime =+ diff;
 
     // Calculate the in-game time (playerTime)
-    if (t > playState.playerTimeNextMinute) {
+    if (playTimeThisFrame > playState.playerTimeNextMinute) {
         playState.playerTime += 60000; // Add a minute
-        playState.playerTimeNextMinute = t + playerTimeMinuteLength; // Set when we're going to add the next minute
+        playState.playerTimeNextMinute = playTimeThisFrame + playerTimeMinuteLength; // Set when we're going to add the next minute
     }
 
     // Set the time of day according to playerTime
@@ -430,16 +433,200 @@ void SceneManager::run() {
     } else {
         playState.timeOfDay = playState.kDuskDawn;
     }
-    
-    // TODO we're skipping a lot of things like mouse handling and scene movement
-    // so we can get _something_ on screen
 
-    // TODO dont call every frame
-    _engine->graphics->_background.copyRectToSurface(
-        *_engine->graphics->getBackgroundFrame(playState.currentViewFrame),
-        0, 0,
-        Common::Rect(0, playState.verticalScroll, _engine->graphics->getBackgroundWidth() - 1,
-            playState.verticalScroll + _engine->graphics->viewportDesc.srcBottom)); // TODO fix magic number
+    if (_engine->input->isClickValidLMB) {
+        if (orderingPuzzleIsActive) {
+            // TODO
+        }
+
+        if (sliderPuzzleIsActive) {
+            // TODO
+        }
+
+        if (orderingPuzzleIsActive) {
+            // TODO
+        }
+
+        if (telephoneIsActive) {
+            // TODO
+        }
+
+        if (leverPuzzleIsActive) {
+            // TODO   
+        }
+
+        if (passwordPuzzleIsActive) {
+
+        }
+
+        int16 &hovered = _engine->input->hoveredElementID;
+
+        if (hovered == InputManager::mapButtonID) {
+            // TODO another if
+            mapScreenRequested = true;
+            return;
+        }
+
+        if (hovered == InputManager::textBoxID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::inventoryItemTakeID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::inventoryItemReturnID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::textBoxScrollbarID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::inventoryScrollbarID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::menuButtonID) {
+            // TODO
+        }
+
+        if (hovered == InputManager::helpButtonID) {
+            // TODO
+        }
+
+        if (    hovered == InputManager::orderingPuzzleID ||
+                hovered == InputManager::orderingPuzzleEndID ||
+                hovered == InputManager::rotatingLockPuzzleUpID ||
+                hovered == InputManager::rotatingLockPuzzleDownID ||
+                hovered == InputManager::rotatingLockPuzzleEndID ||
+                hovered == InputManager::leverPuzzleID ||
+                hovered == InputManager::leverPuzzleEndID ||
+                hovered == InputManager::telephoneID ||
+                hovered == InputManager::telephoneEndID ||
+                hovered == InputManager::sliderPuzzleID ||
+                hovered == InputManager::sliderPuzzleEndID ||
+                hovered == InputManager::passwordPuzzleEndID) {
+            // TODO
+        }
+
+    } else if (_engine->input->isClickValidRMB) {
+        if (_engine->input->hoveredElementID == InputManager::textBoxScrollbarID) {
+            // TODO, moves scrollbar one line up
+        } else if (_engine->input->hoveredElementID == InputManager::inventoryScrollbarID) {
+            // TODO, moves scrollbar one line up
+        } else if (_engine->input->hoveredElementID == InputManager::textBoxID) {
+            // TODO
+        }
+    } else {
+        // Perform movement
+        byte inputs = _engine->input->getInput();
+        if  ( ( (
+                    (inputs & InputManager::kLeftMouseButton) != (inputs & InputManager::kRightMouseButton) 
+                ) ||
+                (inputs & (InputManager::kMoveUp | InputManager::kMoveDown | InputManager::kMoveLeft | InputManager::kMoveRight) )
+              ) &&
+                movementDirection != 0 &&
+                playTimeThisFrame > _nextBackgroundMovement
+            ) {
+            switch(movementDirection) {
+                case kLeft:
+                    playState.currentViewFrame += 1;
+                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        playState.currentViewFrame = 0;
+                    }
+                    break;
+                case kRight:
+                    playState.currentViewFrame -= 1;
+                    if (playState.currentViewFrame < 0) {
+                        playState.currentViewFrame = (int16)_engine->graphics->getBackgroundFrameCount() -1;
+                    }
+                    break;
+                case kUp:
+                    if (playState.verticalScroll != 0) {
+                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
+                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    }
+                    break;
+                case kDown:
+                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
+                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    }
+                    break;
+                case kUp | kLeft:
+                    if (playState.verticalScroll != 0) {
+                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
+                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    }
+                    playState.currentViewFrame += 1;
+                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        playState.currentViewFrame = 0;
+                    }
+                    break;
+                case kUp | kRight:
+                    if (playState.verticalScroll != 0) {
+                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
+                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    }
+                    playState.currentViewFrame -= 1;
+                    if (playState.currentViewFrame < 0) {
+                        playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() - 1;
+                    }
+                    break;
+                case kDown | kLeft:
+                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
+                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    }
+                    playState.currentViewFrame += 1;
+                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        playState.currentViewFrame = 0;
+                    }
+                    break;
+                case kDown | kRight:
+                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
+                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    }
+                    playState.currentViewFrame -= 1;
+                    if (playState.currentViewFrame < 0) {
+                        playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() -1;
+                    }
+                    break;
+            }
+            if (_engine->input->getInput(InputManager::kMoveFastModifier) ||
+                _engine->input->getInput(InputManager::kRightMouseButton)) {
+                _nextBackgroundMovement = playTimeThisFrame + currentScene.fastMoveTimeDelta;
+
+            } else {
+                _nextBackgroundMovement = playTimeThisFrame + currentScene.slowMoveTimeDelta;
+            }
+        }
+    }
+
+    // Redraw the Background surface if we've moved
+    if (playState.currentViewFrame != playState.lastDrawnViewFrame) {
+        if (currentScene.videoFormat == 1) {
+            // TODO if it ever gets hit
+        } else if (currentScene.videoFormat == 2) {
+            _engine->graphics->_background.copyRectToSurface(
+            *_engine->graphics->getBackgroundFrame(playState.currentViewFrame),
+            0, 0,
+            Common::Rect(0, playState.verticalScroll, _engine->graphics->getBackgroundWidth() - 1,
+                playState.verticalScroll + _engine->graphics->viewportDesc.srcBottom));
+        }
+        // TODO some if related to PlaySoundPanFrameAnchorAndDie
+        playState.lastDrawnViewFrame = playState.currentViewFrame;
+        // TODO function call that sets a val to 1 and 3 others to 0
+    }
+
+    //_engine->logic->processActionRecords();
+
+    // code that skips rendering for the first 12 frames??? why
+
+    // TODO
+    
     _engine->graphics->renderDisplay(25);
 }
 

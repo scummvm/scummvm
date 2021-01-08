@@ -55,7 +55,6 @@ enum NancyAction {
     kNancyActionRequestMap
 };
 
-
 public:
 enum InputType : byte {
     kLeftMouseButton    = 1 << 0,
@@ -67,12 +66,40 @@ enum InputType : byte {
     kMoveFastModifier   = 1 << 6
 };
 
-    InputManager(NancyEngine *engine) : _engine(engine), _inputs(0) {}
+    InputManager(NancyEngine *engine) : _engine(engine), _inputs(0), isClickValidLMB(false), isClickValidRMB(false), hoveredElementID(-1) {}
     void processEvents();
 
     bool getInput(InputType type);
+    byte getInput() { return _inputs; }
 
     static void initKeymaps(Common::KeymapArray &keymaps);
+
+    bool isClickValidLMB;
+    bool isClickValidRMB;
+    int16 hoveredElementID;
+    
+    // TODO consider using a namespace for these
+    static const int16 mapButtonID;
+    static const int16 textBoxID;
+    static const int16 textBoxScrollbarID;
+    static const int16 helpButtonID;
+    static const int16 menuButtonID;
+    static const int16 inventoryScrollbarID;
+    static const int16 inventoryItemTakeID;
+    static const int16 inventoryItemReturnID;
+
+    static const int16 orderingPuzzleID;
+    static const int16 orderingPuzzleEndID;
+    static const int16 rotatingLockPuzzleUpID;
+    static const int16 rotatingLockPuzzleDownID;
+    static const int16 rotatingLockPuzzleEndID;
+    static const int16 leverPuzzleID;
+    static const int16 leverPuzzleEndID;
+    static const int16 telephoneID;
+    static const int16 telephoneEndID;
+    static const int16 sliderPuzzleID;
+    static const int16 sliderPuzzleEndID;
+    static const int16 passwordPuzzleEndID;
 
 private:
     NancyEngine *_engine;
