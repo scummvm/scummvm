@@ -1726,7 +1726,8 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 textIdx = ctx.stream.readSint16LE();
 
-	if (drawVar1 < 440) {
+	const int32 textHeight = 40;
+	if (drawVar1 < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
 			if (!textIdx) {
 				textIdx = TextId::kSaveSettings;
@@ -1737,15 +1738,15 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
 		int32 textSize = engine->_text->getTextSize(textStr);
 		int32 textBoxRight = textSize;
+		int32 textBoxBottom = drawVar1 + textHeight;
 		engine->_text->setFontColor(COLOR_WHITE);
 		engine->_text->drawText(0, drawVar1, textStr);
 		if (textSize > engine->width() - 1) {
 			textBoxRight = engine->width() - 1;
 		}
 
-		drawVar1 += 40;
-		// TODO: this looks wrong, top and bottom var are the same coordinates - the text height might be missing here
-		engine->copyBlockPhys(0, drawVar1, textBoxRight, drawVar1);
+		engine->copyBlockPhys(0, drawVar1, textBoxRight, textBoxBottom);
+		drawVar1 += textHeight;
 	}
 
 	return 0;
