@@ -46,9 +46,9 @@
 
 namespace TwinE {
 
-// TODO: validate that lTEXTCLEAR is called before lTEXT - if that is the case
-// move this into the LifeScriptContext
-static int32 drawVar1;
+// the y position for lTEXT opcode - see lCLEAR (used in credits scene)
+// TODO: move into scene class?
+static int32 lTextYPos;
 
 struct LifeScriptContext {
 	int32 actorIdx;
@@ -1727,7 +1727,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 textIdx = ctx.stream.readSint16LE();
 
 	const int32 textHeight = 40;
-	if (drawVar1 < engine->height() - textHeight) {
+	if (lTextYPos < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
 			if (!textIdx) {
 				textIdx = TextId::kSaveSettings;
@@ -1738,15 +1738,15 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
 		int32 textSize = engine->_text->getTextSize(textStr);
 		int32 textBoxRight = textSize;
-		int32 textBoxBottom = drawVar1 + textHeight;
+		int32 textBoxBottom = lTextYPos + textHeight;
 		engine->_text->setFontColor(COLOR_WHITE);
-		engine->_text->drawText(0, drawVar1, textStr);
+		engine->_text->drawText(0, lTextYPos, textStr);
 		if (textSize > engine->width() - 1) {
 			textBoxRight = engine->width() - 1;
 		}
 
-		engine->copyBlockPhys(0, drawVar1, textBoxRight, textBoxBottom);
-		drawVar1 += textHeight;
+		engine->copyBlockPhys(0, lTextYPos, textBoxRight, textBoxBottom);
+		lTextYPos += textHeight;
 	}
 
 	return 0;
@@ -1757,7 +1757,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x68
  */
 static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	drawVar1 = 0;
+	lTextYPos = 0;
 	const Common::Rect rect(0, 0, engine->width() - 1, engine->height() / 2);
 	engine->_interface->drawSplittedBox(rect, 0);
 	engine->copyBlockPhys(rect);
@@ -1882,7 +1882,7 @@ static const ScriptLifeFunction function_map[] = {
     /*0x69*/ MAPFUNC("BRUTAL_EXIT", lBRUTAL_EXIT)};
 
 ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
-	drawVar1 = 0;
+	lTextYPos = 0;
 }
 
 void ScriptLife::processLifeScript(int32 actorIdx) {
