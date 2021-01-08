@@ -1183,11 +1183,11 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
-			if (isUsingOrhoProjection) {
+			//if (isUsingOrhoProjection) {
 				radius = (radius * 34) >> 9;
-			} else {
-				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
-			}
+			//} else {
+			//	radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
+			//}
 
 			radius += 3;
 
