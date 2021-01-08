@@ -436,14 +436,14 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
 			xpos = currentVertexX;
 			ypos = currentVertexY;
-			cvalue = (vertexParam2 << 8) + ((oldVertexParam - vertexParam2) << 8) % vsize;
-			cdelta = ((oldVertexParam - vertexParam2) << 8) / vsize;
+			cvalue = (vertexParam2 * 256) + ((oldVertexParam - vertexParam2) * 256) % vsize;
+			cdelta = ((oldVertexParam - vertexParam2) * 256) / vsize;
 			direction = -direction; // we will draw by going down the tab
 		} else {
 			xpos = oldVertexX;
 			ypos = oldVertexY;
-			cvalue = (oldVertexParam << 8) + ((vertexParam2 - oldVertexParam) << 8) % vsize;
-			cdelta = ((vertexParam2 - oldVertexParam) << 8) / vsize;
+			cvalue = (oldVertexParam * 256) + ((vertexParam2 - oldVertexParam) * 256) % vsize;
+			cdelta = ((vertexParam2 - oldVertexParam) * 256) / vsize;
 		}
 		const int32 polyTabIndex = ypos + (up ? _engine->height() : 0);
 		int16 *outPtr = &_polyTab[polyTabIndex]; // outPtr is the output ptr in the renderTab
@@ -499,12 +499,12 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 
 				for (int32 j = startCopy; j < hsize + startCopy; j++) {
 					start += mask;
-					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
+					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
 					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
 					if (j >= 0 && j < _engine->width()) {
 						out[j] = start & 0xFF;
 					}
-					mask = (mask << 2) | (mask >> 14);
+					mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
 					mask++;
 				}
 			}
@@ -583,7 +583,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			}
 
 			uint8 *out2 = start + out;
-			*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
+			*out2 = ((unsigned short)(bx / 24)) & 0x0F;
 
 			color = *(out2 + 1);
 
@@ -597,11 +597,11 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 		if (stop >= start) {
 			hsize++;
-			bx = (unsigned short)(color >> 0x10);
+			bx = (unsigned short)(color / 16);
 			uint8 *out2 = start + out;
 
-			int ax = (bx & 0xF0) << 8;
-			bx = bx << 8;
+			int ax = (bx & 0xF0) * 256;
+			bx = bx * 256;
 			ax += (bx & 0x0F);
 			ax -= bx;
 			ax++;
@@ -609,7 +609,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 			ax = ax / hsize;
 			uint16 temp = (ax & 0xF0);
-			temp = temp >> 8;
+			temp = temp / 256;
 			temp += (ax & 0x0F);
 			ax = temp;
 
@@ -660,9 +660,9 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 			hsize++;
 			uint8 *out2 = start + out;
 
-			if ((hsize >> 1) < 0) {
+			if (hsize / 2 < 0) {
 				bx = color & 0xFF;
-				bx = bx << 8;
+				bx = bx * 256;
 				bx += color & 0xFF;
 				for (int32 j = 0; j < hsize; j++) {
 					*(out2) = (*(out2)&0x0F0F) | bx;
@@ -743,28 +743,28 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 
 			if (hsize == 0) {
 				if (start >= 0 && start < _engine->width()) {
-					*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+					*out2 = ((startColor + stopColor) / 2) / 256; // moyenne des 2 couleurs
 				}
 			} else if (hsize > 0) {
 				if (hsize == 1) {
 					if (start >= -1 && start < _engine->width() - 1) {
-						*(out2 + 1) = stopColor >> 8;
+						*(out2 + 1) = stopColor / 256;
 					}
 
 					if (start >= 0 && start < _engine->width()) {
-						*(out2) = startColor >> 8;
+						*(out2) = startColor / 256;
 					}
 				} else if (hsize == 2) {
 					if (start >= -2 && start < _engine->width() - 2) {
-						*(out2 + 2) = stopColor >> 8;
+						*(out2 + 2) = stopColor / 256;
 					}
 
 					if (start >= -1 && start < _engine->width() - 1) {
-						*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+						*(out2 + 1) = ((startColor + stopColor) / 2) / 256;
 					}
 
 					if (start >= 0 && start < _engine->width()) {
-						*(out2) = startColor >> 8;
+						*(out2) = startColor / 256;
 					}
 				} else {
 					int32 currentXPos = start;
@@ -774,7 +774,7 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 					if (hsize % 2) {
 						hsize /= 2;
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2) = startColor >> 8;
+							*(out2) = startColor / 256;
 						}
 						out2++;
 						currentXPos++;
@@ -785,14 +785,14 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 
 					do {
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2) = startColor >> 8;
+							*(out2) = startColor / 256;
 						}
 
 						currentXPos++;
 						startColor += colorSize;
 
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2 + 1) = startColor >> 8;
+							*(out2 + 1) = startColor / 256;
 						}
 
 						currentXPos++;
@@ -830,7 +830,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 
 				if (hsize == 0) {
 					if (currentXPos >= 0 && currentXPos < _engine->width()) {
-						*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
+						*(out2) = (uint8)(((startColor + stopColor) / 2) / 256);
 					}
 				} else {
 					int16 colorSize = stopColor - startColor;
@@ -842,7 +842,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor &= 0xFF;
 						currentColor += startColor;
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2) = currentColor >> 8;
+							*(out2) = currentColor / 256;
 						}
 
 						currentColor &= 0xFF;
@@ -852,7 +852,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 
 						currentXPos++;
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2 + 1) = currentColor >> 8;
+							*(out2 + 1) = currentColor / 256;
 						}
 					} else if (hsize == 2) {
 						uint16 currentColor = startColor;
@@ -864,7 +864,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 						currentColor += startColor;
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2) = currentColor >> 8;
+							*(out2) = currentColor / 256;
 						}
 
 						out2++;
@@ -875,7 +875,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor += startColor;
 
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2) = currentColor >> 8;
+							*(out2) = currentColor / 256;
 						}
 
 						currentColor &= 0xFF;
@@ -885,7 +885,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 
 						currentXPos++;
 						if (currentXPos >= 0 && currentXPos < _engine->width()) {
-							*(out2 + 1) = currentColor >> 8;
+							*(out2 + 1) = currentColor / 256;
 						}
 					} else {
 						uint16 currentColor = startColor;
@@ -898,7 +898,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < _engine->width()) {
-								*(out2) = currentColor >> 8;
+								*(out2) = currentColor / 256;
 							}
 							out2++;
 							currentXPos++;
@@ -910,7 +910,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 							currentColor &= 0xFF;
 							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < _engine->width()) {
-								*(out2) = currentColor >> 8;
+								*(out2) = currentColor / 256;
 							}
 							currentXPos++;
 							currentColor &= 0xFF;
@@ -918,7 +918,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < _engine->width()) {
-								*(out2 + 1) = currentColor >> 8;
+								*(out2 + 1) = currentColor / 256;
 							}
 							currentXPos++;
 							out2 += 2;
@@ -1184,7 +1184,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			int32 radius = sphere->radius;
 
 			//if (isUsingOrthoProjection) {
-				radius = (radius * 34) >> 9;
+				radius = (radius * 34) / 512;
 			//} else {
 			//	radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
 			//}

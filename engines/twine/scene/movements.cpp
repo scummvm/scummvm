@@ -161,12 +161,12 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	movePtr->from = from;
 	movePtr->to = to;
 
-	const int16 numOfStep = (from - to) << 6;
+	const int16 numOfStep = (from - to) * 64;
 	int32 numOfStepInt = ABS(numOfStep);
-	numOfStepInt >>= 6;
+	numOfStepInt /= 64;
 
 	numOfStepInt *= speed;
-	numOfStepInt >>= 8;
+	numOfStepInt /= 256;
 
 	movePtr->numOfStep = (int16)numOfStepInt;
 	movePtr->timeOfChange = _engine->lbaTime;
