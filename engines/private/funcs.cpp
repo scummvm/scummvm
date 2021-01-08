@@ -9,8 +9,8 @@
 namespace Private {
 
 void ChgMode(ArgArray args) {
-    // assert types 
-    debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);  
+    // assert types
+    debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
     g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
@@ -18,14 +18,14 @@ void ChgMode(ArgArray args) {
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
     // assert types
-    debug("goto(%s)", args[0].u.str);  
+    debug("goto(%s)", args[0].u.str);
     Common::String *s = new Common::String(args[0].u.str);
     g_private->_nextSetting = s;
 }
 
-void Quit(ArgArray args) { 
+void Quit(ArgArray args) {
     debug("quit()");
-    g_private->quitGame(); 
+    g_private->quitGame();
 }
 
 
@@ -60,11 +60,11 @@ void Sound(ArgArray args) {
     // assert types
     debug("Sound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
-            Common::String *s = new Common::String(args[0].u.str);
-	    g_private->playSound(*s);
-	    //assert(0);
+        Common::String *s = new Common::String(args[0].u.str);
+        g_private->playSound(*s);
+        //assert(0);
     } else {
-	    g_private->stopSound();
+        g_private->stopSound();
     }
 }
 
@@ -104,8 +104,8 @@ void Bitmap(ArgArray args) {
 
     char *f = args[0].u.str;
     if (args.size() == 3) {
-	x = args[1].u.val;
-	y = args[2].u.val;
+        x = args[1].u.val;
+        y = args[2].u.val;
     }
 
     debug("Bitmap(%s, %d, %d)", f, x, y);
@@ -117,50 +117,50 @@ void Timer(ArgArray args) {
     debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
     g_system->delayMillis(100 * args[0].u.val);
     Common::String *s = new Common::String(args[1].u.str);
-    g_private->_nextSetting = s; 
+    g_private->_nextSetting = s;
 }
 
 
 void execFunction(char *name, ArgArray args) {
     if (strcmp(name, "ChgMode") == 0) {
-	ChgMode(args);
+        ChgMode(args);
     }
     else if (strcmp(name, "goto") == 0) {
-	Goto(args);
+        Goto(args);
     }
 
     else if (strcmp(name, "SetFlag") == 0) {
-	SetFlag(args);
+        SetFlag(args);
     }
     else if (strcmp(name, "Sound") == 0) {
-	Sound(args);
+        Sound(args);
     }
     else if (strcmp(name, "Bitmap") == 0) {
-	Bitmap(args);
+        Bitmap(args);
     }
     else if (strcmp(name, "Timer") == 0) {
-        Timer(args);	    
+        Timer(args);
     }
     else if (strcmp(name, "Transition") == 0) {
-        Transition(args);	    
+        Transition(args);
     }
     else if (strcmp(name, "SetModifiedFlag") == 0) {
-        SetModifiedFlag(args);	    
+        SetModifiedFlag(args);
     }
     else if (strcmp(name, "Exit") == 0) {
-        Exit(args);	    
+        Exit(args);
     }
     else if (strcmp(name, "Quit") == 0) {
-        Quit(args);	    
+        Quit(args);
     }
     else if (strcmp(name, "LoadGame") == 0) {
-       ;	    
+        ;
     }
     else if (strcmp(name, "CRect") == 0) {
-        CRect(args);	    
-    } 
+        CRect(args);
+    }
     else {
-        debug("I don't know how to exec %s", name);	    
+        debug("I don't know how to exec %s", name);
         assert(0);
     }
 
