@@ -33,12 +33,6 @@ enum {
 	// the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
-// global state
-extern Common::String *_nextSetting;
-extern int _mode;
-extern bool _modified;
-extern Common::String *_nextMovie;
-
 // exits
 
 typedef struct ExitInfo {
@@ -49,7 +43,6 @@ typedef struct ExitInfo {
 
 typedef Common::List<ExitInfo> ExitList;  
 
-extern ExitList _exits;
 
 class PrivateEngine : public Engine {
 private:
@@ -79,6 +72,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
 
+        Common::String convertPath(Common::String); 
 	void playSound(const Common::String &name);
 	void playVideo(const Common::String &name);	
 	void stopSound();
@@ -86,9 +80,15 @@ public:
 	void loadImage(const Common::String &name, int x, int y);	
 	void drawScreen();
 
+        // global state
+        Common::String *_nextSetting;
+        int _mode;
+        bool _modified;
+        Common::String *_nextMovie;
+        ExitList _exits;
 };
 
-extern PrivateEngine *_private;
+extern PrivateEngine *g_private;
 
 // Example console class
 class Console : public GUI::Debugger {

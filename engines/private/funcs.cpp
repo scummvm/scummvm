@@ -11,21 +11,21 @@ namespace Private {
 void ChgMode(ArgArray args) {
     // assert types 
     debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);  
-    _mode = args[0].u.val;
+    g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
-    _nextSetting = s;
+    g_private->_nextSetting = s;
 }
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
     // assert types
     debug("goto(%s)", args[0].u.str);  
     Common::String *s = new Common::String(args[0].u.str);
-    _nextSetting = s;
+    g_private->_nextSetting = s;
 }
 
 void Quit(ArgArray args) { 
     debug("quit()");
-    _private->quitGame(); 
+    g_private->quitGame(); 
 }
 
 
@@ -44,7 +44,7 @@ void Exit(ArgArray args) {
     e->nextSetting = new Common::String(args[0].u.str);
     e->cursor = args[1].u.sym->name;
     e->rect = args[2].u.rect;
-    _exits.push_front(*e);
+    g_private->_exits.push_front(*e);
 }
 
 
@@ -52,7 +52,7 @@ void Exit(ArgArray args) {
 void SetModifiedFlag(ArgArray args) {
     // assert types
     debug("SetModifiedFlag(%d)", args[0].u.val);
-    _modified = (bool) args[0].u.val;
+    g_private->_modified = (bool) args[0].u.val;
 }
 
 
@@ -61,18 +61,18 @@ void Sound(ArgArray args) {
     debug("Sound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
             Common::String *s = new Common::String(args[0].u.str);
-	    _private->playSound(*s);
+	    g_private->playSound(*s);
 	    //assert(0);
     } else {
-	    _private->stopSound();
+	    g_private->stopSound();
     }
 }
 
 void Transition(ArgArray args) {
     // assert types
     debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
-    _nextMovie = new Common::String(args[0].u.str);
-    _nextSetting = new Common::String(args[1].u.str);
+    g_private->_nextMovie = new Common::String(args[0].u.str);
+    g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
 
@@ -110,14 +110,14 @@ void Bitmap(ArgArray args) {
 
     debug("Bitmap(%s, %d, %d)", f, x, y);
     Common::String *s = new Common::String(args[0].u.str);
-    _private->loadImage(*s, x, y);
+    g_private->loadImage(*s, x, y);
 }
 
 void Timer(ArgArray args) {
     debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
     g_system->delayMillis(100 * args[0].u.val);
     Common::String *s = new Common::String(args[1].u.str);
-    _nextSetting = s; 
+    g_private->_nextSetting = s; 
 }
 
 
