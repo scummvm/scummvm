@@ -367,7 +367,7 @@ private:
 	int16 *_polyTab = nullptr;
 	int16 *_polyTab2 = nullptr;
 
-	bool isUsingOrhoProjection = false;
+	bool isUsingOrthoProjection = false;
 
 	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
 	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const;

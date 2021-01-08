@@ -56,7 +56,7 @@ void Renderer::init(int32 w, int32 h) {
 }
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
-	if (isUsingOrhoProjection) {
+	if (isUsingOrthoProjection) {
 		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjX;
 		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjY;
 		projPosZ = cZ - cY - cX;
@@ -93,7 +93,7 @@ void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ)
 	cameraPosY = cY;
 	cameraPosZ = cZ;
 
-	isUsingOrhoProjection = false;
+	isUsingOrthoProjection = false;
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
@@ -107,7 +107,7 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 	orthoProjY = y;
 	orthoProjZ = z;
 
-	isUsingOrhoProjection = true;
+	isUsingOrthoProjection = true;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
@@ -1183,7 +1183,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
-			//if (isUsingOrhoProjection) {
+			//if (isUsingOrthoProjection) {
 				radius = (radius * 34) >> 9;
 			//} else {
 			//	radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
@@ -1259,7 +1259,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	const pointTab *pointPtr = &modelData->computedPoints[0];
 	pointTab *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (isUsingOrhoProjection) { // use standard projection
+	if (isUsingOrthoProjection) { // use standard projection
 		do {
 			const int32 coX = pointPtr->x + renderX;
 			const int32 coY = pointPtr->y + renderY;
@@ -1439,7 +1439,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	_engine->_redraw->renderRect.right = SCENE_SIZE_MIN;
 	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
-	if (isUsingOrhoProjection) {
+	if (isUsingOrthoProjection) {
 		renderX = x;
 		renderY = y;
 		renderZ = z;
