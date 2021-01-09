@@ -620,25 +620,29 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("corrosion", "Enhanced Edition",
 		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.0)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.0)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.0",
 		WME_ENTRY2s("data.dcp", "d14d3c858026b1422a2a420e9a49fd16", 643372377,
 					"steam_001.dcp", "e5ee8fcadec5dcc24484300c77017bd0", 41986), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.1)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.1)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.1",
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "c69ca653d0b630302afece19c5e9b52a", 42039), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.2)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.2)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.2",
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "e10b58c16e9487cfaf395c3b88ca1fd1", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.3)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.3)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.3",
 		WME_ENTRY2s("data.dcp", "1feab5a4bbf6bbc2ddee61f885abc096", 643363368,
 					"steam_001.dcp", "bad99743e3d64368004fb2c172b96346", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (IndieGala, v1.2.3)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.3",
+		WME_ENTRY1s("data.dcp", "07de81442b011d4b820fb1ec5e735ec8", 642860751), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Dark Fall: Lost Souls
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
