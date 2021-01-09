@@ -91,6 +91,10 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
 
+	if (!_engine->cfgfile.Voice) {
+		return false;
+	}
+
 	Common::MemoryReadStream stream((const byte *)dialOrderPtr, dialOrderSize);
 	// choose right text from order index
 	for (int32 i = 0; i < numDialTextEntries; i++) {
