@@ -247,7 +247,6 @@ public:
 	// ---
 
 	int32 currDialTextEntry = 0; // ordered entry
-	int32 nextDialTextEntry = 0; // ordered entry
 	Common::String currentVoxBankFile;
 
 	bool showDialogueBubble = true;
