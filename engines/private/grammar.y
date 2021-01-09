@@ -68,7 +68,12 @@ statements:  /* nothing */     { $$ = progp; }
         | statement statements
 
 
-statement: GOTOTOK expr ';' { /*TODO*/ }
+statement: GOTOTOK NAME ';' {
+	code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
+        code2(constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
+        code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
+        code1(funcpush);
+        }
         | fcall ';'         { }   
         | if cond body end {
          	/* else-less if */
@@ -98,7 +103,8 @@ cond: '(' expr ')'	{ code(STOP); $$ = $2; }
 
 define:  /* nothing */
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  { 
-          Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val); 
+          Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);
+          assert(r->isValidRect()); 
           define($NAME, r); 
           }
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' {
@@ -146,13 +152,13 @@ value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::addconst
 
 expr:     value           { $$ = $1; } 
         | '!' value       { code1(Private::negate); $$ = $2; }
-        | value EQ value
-        | value NEQ value
+        | value EQ value  { code1(Private::eq); }
+        | value NEQ value { code1(Private::ne); }
         | value '+' value { code1(Private::add); }
         | value '<' value { code1(Private::lt); }
         | value '>' value { code1(Private::gt); }
         | value LTE value { code1(Private::le); }
         | value GTE value { code1(Private::ge); }
-        | value '+' 
-        | RANDOMTOK '(' NUM '%' ')'
+        | value '+'       { code1(fail); } 
+        | RANDOMTOK '(' NUM '%' ')' { code1(fail); }
         ;

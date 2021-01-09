@@ -82,11 +82,14 @@ public:
 
         Common::String convertPath(Common::String); 
 	void playSound(const Common::String &name);
-	void playVideo(const Common::String &name);	
+	void playVideo(const Common::String &name);
+        void skipVideo();
 	void stopSound();
 
-	void loadImage(const Common::String &, int, int);
-        Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
+	void loadImage(const Common::String &file, int x, int y, bool drawn = true);
+        void drawScreenFrame();
+        
+	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
  
         uint32 _transparentColor;	
 	void drawScreen();
@@ -95,6 +98,7 @@ public:
 	Common::Point *_origin;
         Common::String *_nextSetting;
         Common::String *_nextVS;
+        Common::String *_frame;
 
 	int _mode;
         bool _modified;

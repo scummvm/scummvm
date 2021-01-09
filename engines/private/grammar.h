@@ -116,6 +116,8 @@ extern  int lt();
 extern  int gt();
 extern  int le();
 extern  int ge();
+extern  int eq();
+extern  int ne();
 
 // Code Execution
 

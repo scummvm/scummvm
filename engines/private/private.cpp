@@ -79,6 +79,8 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _nextMovie = NULL;
     _modified = false;
     _mode = -1;
+    _frame = new Common::String("inface/general/inface2.bmp");
+
 
 }
 
@@ -94,7 +96,9 @@ PrivateEngine::~PrivateEngine() {
 
 Common::Error PrivateEngine::run() {
     Common::File *file = new Common::File();
-    assert(file->open("GAME.DAT"));
+    if (!file->open("GAME.DAT")) // if the full game is not used
+        assert(file->open("assets/GAME.TXT")); // open the demo file
+			
     void *buf = malloc(191000);
     file->read(buf, 191000);
     initFuncs();
@@ -117,21 +121,6 @@ Common::Error PrivateEngine::run() {
     _compositeSurface = new Graphics::ManagedSurface();
     _compositeSurface->create(_screenW, _screenH, _pixelFormat);
     _compositeSurface->setTransparentColor(_transparentColor);
-
-    // You could use backend transactions directly as an alternative,
-    // but it isn't recommended, until you want to handle the error values
-    // from OSystem::endGFXTransaction yourself.
-    // This is just an example template:
-    //_system->beginGFXTransaction();
-    //	// This setup the graphics mode according to users seetings
-    //	initCommonGFX(false);
-    //
-    //	// Specify dimensions of game graphics window.
-    //	// In this example: 320x200
-    //	_system->initSize(320, 200);
-    //FIXME: You really want to handle
-    //OSystem::kTransactionSizeChangeFailed here
-    //_system->endGFXTransaction();
 
     // Create debugger console. It requires GFX to be initialized
     Console *console = new Console(this);
@@ -164,13 +153,20 @@ Common::Error PrivateEngine::run() {
 
         // Events
         switch (event.type) {
+           case Common::EVENT_KEYDOWN:
+	    if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+		skipVideo();
+	        break;
+
             case Common::EVENT_QUIT:
             case Common::EVENT_RETURN_TO_LAUNCHER:
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
                 selectMask(mousePos);
-		selectExit(mousePos);
+		if (!_nextSetting)
+		    selectExit(mousePos);
+                g_system->delayMillis(30);
 	        break;
 
 	    default:
@@ -199,10 +195,7 @@ Common::Error PrivateEngine::run() {
             continue;
         }
 
-        //if (_compositeSurface)
-        //	drawScreen();
-
-        if (_nextSetting != NULL) {
+	if (_nextSetting != NULL) {
             debug("Executing %s", _nextSetting->c_str());
             _exits.clear();
             _masks.clear();
@@ -211,8 +204,6 @@ Common::Error PrivateEngine::run() {
             CursorMan.showMouse(false);
             execute(prog);
             CursorMan.showMouse(true);
-
-
         }
 
         g_system->updateScreen();
@@ -223,7 +214,8 @@ Common::Error PrivateEngine::run() {
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y); 
+    debug("Mousepos %d %d", mousePos.x, mousePos.y); 
+    mousePos = mousePos - *_origin; 
     Common::String *ns = NULL;
     int rs = 100000000;
     int cs = 0;
@@ -231,9 +223,9 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
     	cs = e.rect->width()*e.rect->height();
-        //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
+        debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect->contains(mousePos)) {
-	    //debug("Inside! %d %d", cs, rs);
+	    debug("Inside! %d %d", cs, rs);
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
                 debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
                 rs = cs;
@@ -249,7 +241,8 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectMask(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y); 
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
     Common::String *ns = NULL;
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
@@ -324,8 +317,8 @@ void PrivateEngine::playSound(const Common::String &name) {
     if (!file->open(path))
         error("unable to find sound file %s", path.c_str());
 
-    Audio::AudioStream *stream;
-    stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+    Audio::LoopingAudioStream *stream;
+    stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), 1);
     stopSound();
     _mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
@@ -344,13 +337,20 @@ void PrivateEngine::playVideo(const Common::String &name) {
 
 }
 
+void PrivateEngine::skipVideo() {
+    _videoDecoder->close();
+    delete _videoDecoder;
+    _videoDecoder = nullptr;
+}
+
+
 void PrivateEngine::stopSound() {
     debugC(3, kPrivateDebugExample, "%s", __FUNCTION__);
     if (_mixer->isSoundHandleActive(_soundHandle))
         _mixer->stopHandle(_soundHandle);
 }
 
-void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
+void PrivateEngine::loadImage(const Common::String &name, int x, int y, bool drawn) {
     debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
     Common::File file;
     Common::String path = convertPath(name);
@@ -362,9 +362,21 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
     //for (int i = 0; i < 30; i=i+3)
     //    debug("%x %x %x", *(_image->getPalette()+i), *(_image->getPalette()+i+1), *(_image->getPalette()+i+2));
 
-    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y), _transparentColor);
+    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), *_origin + Common::Point(x,y), _transparentColor);
     drawScreen();
 }
+
+void PrivateEngine::drawScreenFrame() {
+    Common::File file;
+    Common::String path = convertPath(*_frame);
+    if (!file.open(path))
+        error("unable to load image %s", path.c_str());
+
+    _image->loadStream(file);
+    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(0,0));
+    //drawScreen();
+}
+
 
 Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
     debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
@@ -393,6 +405,9 @@ void PrivateEngine::drawScreen() {
     if (_videoDecoder ? _videoDecoder->needsUpdate() : false || _compositeSurface) {
         Graphics::Surface *screen = g_system->lockScreen();
         //screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
+	//
+	//if (_mode == 1)
+	//    drawScreenFrame();
 
         Graphics::ManagedSurface *surface = _compositeSurface;
 
