@@ -21,6 +21,7 @@
  */
 
 #include "twine/resources/resources.h"
+#include "common/tokenizer.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/renderer/screens.h"
@@ -172,6 +173,39 @@ void Resources::initResources() {
 	preloadAnimations();
 	preloadSamples();
 	preloadInventoryItems();
+
+	loadFlaInfo();
+}
+
+void Resources::loadFlaInfo() {
+	uint8 *content = nullptr;
+	const int32 size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	if (size == 0) {
+		return;
+	}
+	const Common::String str((const char*)content, size);
+	free(content);
+
+	Common::StringTokenizer tok(str, "\r\n");
+	while (!tok.empty()) {
+		const Common::String &line = tok.nextToken();
+		Common::StringTokenizer lineTok(line);
+		if (lineTok.empty()) {
+			continue;
+		}
+		const Common::String &name = lineTok.nextToken();
+		Common::Array<int32> frames;
+		while (!lineTok.empty()) {
+			const Common::String &frame = lineTok.nextToken();
+			const int32 frameIdx = atoi(frame.c_str());
+			frames.push_back(frameIdx);
+		}
+		_flaMovieFrames.setVal(name, frames);
+	}
+}
+
+const Common::Array<int32>& Resources::getFlaMovieInfo(const Common::String &name) const {
+	return _flaMovieFrames.getVal(name);
 }
 
 } // namespace TwinE
