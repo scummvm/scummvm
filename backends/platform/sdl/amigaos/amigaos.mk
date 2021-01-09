@@ -40,7 +40,7 @@ ifdef DIST_FILES_THEMES
 	makedir ALL FORCE $(AMIGAOSPATH)/themes
 	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes/
 endif
-	# Strip and cp engine plugins.
+	# Strip and copy engine plugins.
 ifdef DYNAMIC_MODULES
 	makedir ALL FORCE $(AMIGAOSPATH)/plugins
 	$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
