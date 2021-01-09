@@ -339,7 +339,7 @@ void Scene::changeScene() {
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
-	if (previousSceneIdx != needChangeScene) {
+	if (previousSceneIdx != -1 && previousSceneIdx != needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
 		_engine->_actor->previousHeroAngle = sceneHero->angle;
 		_engine->autoSave();
