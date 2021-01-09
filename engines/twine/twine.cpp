@@ -1042,11 +1042,11 @@ void TwinEEngine::flip() {
 	g_system->updateScreen();
 }
 
-void TwinEEngine::copyBlockPhys(const Common::Rect &rect) {
-	copyBlockPhys(rect.left, rect.top, rect.right, rect.bottom);
+void TwinEEngine::copyBlockPhys(const Common::Rect &rect, bool updateScreen) {
+	copyBlockPhys(rect.left, rect.top, rect.right, rect.bottom, updateScreen);
 }
 
-void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
+void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen) {
 	assert(left <= right);
 	assert(top <= bottom);
 	int32 width = right - left + 1;
@@ -1061,7 +1061,9 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 		return;
 	}
 	g_system->copyRectToScreen(frontVideoBuffer.getBasePtr(left, top), frontVideoBuffer.pitch, left, top, width, height);
-	g_system->updateScreen();
+	if (updateScreen) {
+		g_system->updateScreen();
+	}
 }
 
 void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette) {

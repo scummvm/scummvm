@@ -324,9 +324,10 @@ public:
 	 * @param top top position to start copy
 	 * @param right right position to start copy
 	 * @param bottom bottom position to start copy
+	 * @param updateScreen Perform blitting to screen if @c true, otherwise just prepare the blit
 	 */
-	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
-	void copyBlockPhys(const Common::Rect &rect);
+	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen = true);
+	void copyBlockPhys(const Common::Rect &rect, bool updateScreen = true);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer
