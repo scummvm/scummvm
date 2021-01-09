@@ -135,13 +135,19 @@ public:
 		setGameFlag(item, 0);
 	}
 
+	void clearGameFlags() {
+		debug(2, "Clear all gameStateFlags");
+		Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	}
+
 	inline uint8 hasGameFlag(uint8 index) const {
+		debug(3, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
 		return _gameStateFlags[index];
 	}
 
 	inline void setGameFlag(uint8 index, uint8 value) {
-		_gameStateFlags[index] = value;
 		debug(2, "Set gameStateFlags[%u]=%u", index, value);
+		_gameStateFlags[index] = value;
 	}
 
 	/**

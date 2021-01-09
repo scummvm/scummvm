@@ -50,7 +50,7 @@
 namespace TwinE {
 
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
-	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	clearGameFlags();
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 	playerName[0] = '\0';
@@ -75,7 +75,7 @@ void GameState::initGameStateVars() {
 		_engine->_scene->sceneFlags[i] = 0;
 	}
 
-	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	clearGameFlags();
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 
 	_engine->_scene->initSceneVars();
