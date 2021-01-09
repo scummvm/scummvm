@@ -20,13 +20,13 @@ ifdef DIST_FILES_DOCS
 	# Prepare README.md for AmigaGuide conversion.
 	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amigaos/convertRM.sed > README.conv
 	# AmigaOS AREXX will break with a "Program not found" error, if srcdir is
-	# '.'. cp the script to cwd instead.
+	# '.'. Copy the script to cwd instead.
 	cp ${srcdir}/dists/amigaos/RM2AG.rexx .
 	rx RM2AG.rexx README.conv $(AMIGAOSPATH)/doc/
 	rm -f README.conv
 	rm -f RM2AG.rexx
 endif
-	# cp mandatory installation files.
+	# Copy mandatory installation files.
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
