@@ -102,7 +102,7 @@ static int voxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
 	uint32 realSize = file.readUint32LE();
 	uint32 compSize = file.readUint32LE();
 
-	    // exist hidden entries
+	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
 		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
 		offsetToData = offsetToData + compSize + 10;  // current hidden offset
