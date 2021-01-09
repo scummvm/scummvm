@@ -137,12 +137,11 @@ bool Scene::loadSceneLBA1() {
 	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
-	alphaLight = stream.readUint16LE();
-	betaLight = stream.readUint16LE();
-
 	// FIXME: Workaround to fix lighting issue - not using proper dark light
-	alphaLight = ANGLE_315;
-	betaLight = ANGLE_334;
+	// Using 1215 and 1087 as light vectors - scene 8
+	alphaLight = ClampAngle(stream.readUint16LE());
+	betaLight = ClampAngle(stream.readUint16LE());
+	debug(2, "Using %i and %i as light vectors", alphaLight, betaLight);
 
 	_sampleAmbiance[0] = stream.readUint16LE();
 	_sampleRepeat[0] = stream.readUint16LE();
@@ -374,6 +373,7 @@ void Scene::changeScene() {
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
 	if (_sceneMusic != -1) {
+		debug(2, "Scene %i music track id: %i", currentSceneIdx, _sceneMusic);
 		_engine->_music->playTrackMusic(_sceneMusic);
 	}
 }
