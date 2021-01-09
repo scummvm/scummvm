@@ -69,7 +69,7 @@ IF ~OPEN(readme_read,readme_md,'R')  THEN DO
 	EXIT
 END
 IF ~OPEN(guide_write,'README.guide','W') THEN DO
-	SAY 'README.guide opening failed!'
+	SAY README.guide' opening failed!'
 	EXIT
 END
 
