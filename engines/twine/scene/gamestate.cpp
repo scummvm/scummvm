@@ -108,8 +108,8 @@ void GameState::initEngineVars() {
 	debug(2, "Init engine variables");
 	_engine->_interface->resetClip();
 
-	_engine->_scene->alphaLight = 896;
-	_engine->_scene->betaLight = 950;
+	_engine->_scene->alphaLight = ANGLE_315;
+	_engine->_scene->betaLight = ANGLE_334;
 	initEngineProjections();
 	initGameStateVars();
 	initHeroVars();
