@@ -78,7 +78,7 @@ void loadSetting(Common::String *name)
     progp = prog;
 
 
-    for (Inst *pc_ = progp; pc_-progp < 100; pc_++) {
+    /*for (Inst *pc_ = progp; pc_-progp < 100; pc_++) {
         if (_functions.contains((void *) *pc_))
             debug("%p: %s", (void*) pc_, _functions.getVal((void*) *pc_)->c_str());
         else if ( (Inst *) *pc_ >= progp && (Inst *) *pc_ <= (progp + NPROG))
@@ -87,8 +87,7 @@ void loadSetting(Common::String *name)
             debugN("%p:", (void*) pc_);
             showSymbol((Symbol *) *pc_);
         }
-
-    }
+    }*/
 }
 
 

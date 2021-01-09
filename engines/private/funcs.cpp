@@ -14,7 +14,25 @@ void ChgMode(ArgArray args) {
     g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
+
+    if (g_private->_mode == 0) {
+        g_private->_origin->x = 0;
+        g_private->_origin->y = 0;
+    } 
+    else if (g_private->_mode == 1) {
+        g_private->_origin->x = 63;
+        g_private->_origin->y = 48;
+    }
+    else
+        assert(0);
 }
+
+void VSPicture(ArgArray args) {
+    // assert types
+    debug("VSPicture(%s)", args[0].u.str);
+    g_private->_nextVS = new Common::String(args[0].u.str);
+}
+
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
     // assert types
@@ -29,6 +47,15 @@ void Quit(ArgArray args) {
 }
 
 
+void RestartGame(ArgArray args) {
+    // assert types
+    debug("WARNING: RestartGame is not implemented");
+}
+
+void DossierAdd(ArgArray args) {
+    // assert types
+    debug("WARNING: DossierAdd is not implemented");
+}
 
 void SetFlag(ArgArray args) {
     // assert types
@@ -39,15 +66,22 @@ void SetFlag(ArgArray args) {
 void Exit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
-    debug("Exit(%s, %s, %s)", args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
+    debug("Exit(..)"); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
     ExitInfo *e = (ExitInfo*) malloc(sizeof(ExitInfo));
-    e->nextSetting = new Common::String(args[0].u.str);
-    e->cursor = args[1].u.sym->name;
+
+    if (args[0].type == NUM && args[0].u.val == 0)
+        e->nextSetting = NULL;
+    else
+        e->nextSetting = new Common::String(args[0].u.str);
+
+    if (args[1].type == NUM && args[1].u.val == 0)
+        e->cursor = NULL;
+    else
+        e->cursor = args[1].u.sym->name;
+
     e->rect = args[2].u.rect;
     g_private->_exits.push_front(*e);
 }
-
-
 
 void SetModifiedFlag(ArgArray args) {
     // assert types
@@ -71,9 +105,18 @@ void Sound(ArgArray args) {
 void Transition(ArgArray args) {
     // assert types
     debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
-    g_private->_nextMovie = new Common::String(args[0].u.str);
+    //g_private->_nextMovie = new Common::String(args[0].u.str);
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
+
+void Movie(ArgArray args) {
+    // assert types
+    debug("Movie(%s, %s)", args[0].u.str, args[1].u.str);
+    if (strcmp(args[0].u.str, "\"\"") != 0)
+        g_private->_nextMovie = new Common::String(args[0].u.str);
+    g_private->_nextSetting = new Common::String(args[1].u.str);
+}
+
 
 
 void CRect(ArgArray args) {
@@ -113,6 +156,36 @@ void Bitmap(ArgArray args) {
     g_private->loadImage(*s, x, y);
 }
 
+void Mask(ArgArray args, bool drawn) {
+    assert(args.size() == 3 || args.size() == 5);
+
+    int x = 0;
+    int y = 0;
+
+    char *f = args[0].u.str;
+    char *e = args[1].u.str;
+    Common::String *c = args[2].u.sym->name;
+    
+    if (args.size() == 5) {
+        x = args[3].u.val;
+        y = args[4].u.val;
+    }
+
+    debug("Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
+    const Common::String *s = new Common::String(f);
+    //if (drawed)
+    //    g_private->loadImage(*s, x, y);
+
+    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    m->surf = g_private->loadMask(*s, x, y, drawn);
+    m->nextSetting = new Common::String(e);
+    m->cursor = c;
+    m->point = new Common::Point(x,y);
+    g_private->_masks.push_front(*m);
+
+}
+
+
 void Timer(ArgArray args) {
     debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
     g_system->delayMillis(100 * args[0].u.val);
@@ -138,11 +211,21 @@ void execFunction(char *name, ArgArray args) {
     else if (strcmp(name, "Bitmap") == 0) {
         Bitmap(args);
     }
+    else if (strcmp(name, "Mask") == 0) {
+        Mask(args, false);
+    }
+    else if (strcmp(name, "MaskDrawn") == 0) {
+        Mask(args, true);
+    }
+ 
     else if (strcmp(name, "Timer") == 0) {
         Timer(args);
     }
     else if (strcmp(name, "Transition") == 0) {
         Transition(args);
+    }
+    else if (strcmp(name, "Movie") == 0) {
+        Movie(args);
     }
     else if (strcmp(name, "SetModifiedFlag") == 0) {
         SetModifiedFlag(args);
@@ -156,8 +239,17 @@ void execFunction(char *name, ArgArray args) {
     else if (strcmp(name, "LoadGame") == 0) {
         ;
     }
+    else if (strcmp(name, "DossierAdd") == 0) {
+        DossierAdd(args);
+    }
+    else if (strcmp(name, "VSPicture") == 0) {
+        VSPicture(args);
+    }
     else if (strcmp(name, "CRect") == 0) {
         CRect(args);
+    }
+    else if (strcmp(name, "RestartGame") == 0) {
+        RestartGame(args);
     }
     else {
         debug("I don't know how to exec %s", name);
