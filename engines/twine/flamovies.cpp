@@ -307,7 +307,6 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	samplesInFla = file.readUint16LE();
 	const uint16 unk2 = file.readUint16LE();
 	debug(2, "Unknown uint16 in fla file: %i", unk2);
-	_engine->_music->playMidiMusic(unk2);
 
 	file.skip(4 * samplesInFla);
 
