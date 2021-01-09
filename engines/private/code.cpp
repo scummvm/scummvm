@@ -192,17 +192,17 @@ int add()		/* add top two elems on stack */
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
     assert(d1.type == NUM);
@@ -255,17 +255,17 @@ int gt()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 
@@ -280,17 +280,17 @@ int lt()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 
@@ -305,17 +305,17 @@ int ge()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 
@@ -330,17 +330,17 @@ int le()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 
@@ -355,17 +355,17 @@ int eq()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 
@@ -380,17 +380,17 @@ int ne()
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d1.u.val = d1.u.sym->u.val;
-	d1.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d1.u.val = d1.u.sym->u.val;
+        d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-	//char *name =  d1.u.sym->name->c_str();     
-        //debug("eval %s to %d", 
-	d2.u.val = d2.u.sym->u.val;
-	d2.type = NUM;
+        //char *name =  d1.u.sym->name->c_str();
+        //debug("eval %s to %d",
+        d2.u.val = d2.u.sym->u.val;
+        d2.type = NUM;
     }
 
 

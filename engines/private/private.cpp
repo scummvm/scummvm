@@ -98,7 +98,7 @@ Common::Error PrivateEngine::run() {
     Common::File *file = new Common::File();
     if (!file->open("GAME.DAT")) // if the full game is not used
         assert(file->open("assets/GAME.TXT")); // open the demo file
-			
+
     void *buf = malloc(191000);
     file->read(buf, 191000);
     initFuncs();
@@ -149,24 +149,24 @@ Common::Error PrivateEngine::run() {
         while (g_system->getEventManager()->pollEvent(event)) {
             // Events
             switch (event.type) {
-                case Common::EVENT_KEYDOWN:
-                    if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
-                       skipVideo();
-	            break;
+            case Common::EVENT_KEYDOWN:
+                if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+                    skipVideo();
+                break;
 
-                case Common::EVENT_QUIT:
-                case Common::EVENT_RETURN_TO_LAUNCHER:
-                    break;
+            case Common::EVENT_QUIT:
+            case Common::EVENT_RETURN_TO_LAUNCHER:
+                break;
 
-                case Common::EVENT_LBUTTONDOWN:
-                    mousePos = g_system->getEventManager()->getMousePos();
-                    selectMask(mousePos);
-		    if (!_nextSetting)
-                        selectExit(mousePos);
-	            break;
+            case Common::EVENT_LBUTTONDOWN:
+                mousePos = g_system->getEventManager()->getMousePos();
+                selectMask(mousePos);
+                if (!_nextSetting)
+                    selectExit(mousePos);
+                break;
 
-	        default:
-	            {}
+            default:
+            {}
 
             }
         }
@@ -192,7 +192,7 @@ Common::Error PrivateEngine::run() {
             continue;
         }
 
-	if (_nextSetting != NULL) {
+        if (_nextSetting != NULL) {
             debug("Executing %s", _nextSetting->c_str());
             _exits.clear();
             _masks.clear();
@@ -211,18 +211,18 @@ Common::Error PrivateEngine::run() {
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
-    debug("Mousepos %d %d", mousePos.x, mousePos.y); 
-    mousePos = mousePos - *_origin; 
+    debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
     Common::String *ns = NULL;
     int rs = 100000000;
     int cs = 0;
     ExitInfo e;
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
-    	cs = e.rect->width()*e.rect->height();
+        cs = e.rect->width()*e.rect->height();
         debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect->contains(mousePos)) {
-	    debug("Inside! %d %d", cs, rs);
+            debug("Inside! %d %d", cs, rs);
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
                 debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
                 rs = cs;
@@ -244,14 +244,14 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
-	
+
         debug("Testing mask %s", m.nextSetting->c_str());
         if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-	    debug("Inside!");
+            debug("Inside!");
             if (m.nextSetting != NULL) { // TODO: check this
                 debug("Found Mask %s", m.nextSetting->c_str());
                 ns = m.nextSetting;
-		break;
+                break;
             }
 
         }
@@ -392,7 +392,7 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
         drawScreen();
     }
 
-    return surf; 
+    return surf;
 }
 
 
@@ -402,9 +402,9 @@ void PrivateEngine::drawScreen() {
     if (_videoDecoder ? _videoDecoder->needsUpdate() : false || _compositeSurface) {
         Graphics::Surface *screen = g_system->lockScreen();
         //screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
-	//
-	//if (_mode == 1)
-	//    drawScreenFrame();
+        //
+        //if (_mode == 1)
+        //    drawScreenFrame();
 
         Graphics::ManagedSurface *surface = _compositeSurface;
 

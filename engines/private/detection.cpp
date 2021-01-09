@@ -27,7 +27,7 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)
     },
- 
+
     AD_TABLE_END_MARKER
 };
 } // End of namespace Private

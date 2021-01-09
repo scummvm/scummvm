@@ -43,7 +43,7 @@ Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table sy
     Symbol *r = symlist.getVal(s);
     /*if (strcmp(s.c_str(), "m_640x480") == 0) {
         showSymbol(r);
-	assert(0);
+    assert(0);
     }*/
 
     return r;
