@@ -605,6 +605,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 		ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 		ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 		for (;;) {
+			FrameMarker frame;
 			ScopedFPS scopedFps(66);
 			_engine->readKeys();
 			if (textState == ProgressiveTextState::ContinueRunning) {
@@ -631,6 +632,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 		}
 	}
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {

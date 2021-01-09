@@ -332,6 +332,7 @@ void GameState::processFoundItem(int32 item) {
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS fps(66);
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
@@ -392,6 +393,7 @@ void GameState::processFoundItem(int32 item) {
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
@@ -426,6 +428,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+			FrameMarker frame;
 			ScopedFPS scopedFps;
 			if (_engine->shouldQuit()) {
 				break;
@@ -467,6 +470,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_interface->setClip(rect);
 
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
+		FrameMarker frame;
 		ScopedFPS scopedFps(66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {

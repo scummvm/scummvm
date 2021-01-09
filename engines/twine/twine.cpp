@@ -106,6 +106,10 @@ ScopedFPS::~ScopedFPS() {
 	g_system->delayMillis(waitMillis);
 }
 
+FrameMarker::~FrameMarker() {
+	g_system->updateScreen();
+}
+
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
     : Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
 	// Add default file directories
@@ -673,6 +677,7 @@ void TwinEEngine::centerScreenOnActor() {
 }
 
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
+	FrameMarker frame;
 	_input->enableKeyMap(mainKeyMapId);
 
 	readKeys();
@@ -798,6 +803,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
 			copyBlockPhys(5, 446, 100, 479);
 			do {
+				FrameMarker frameWait;
 				ScopedFPS scopedFps;
 				readKeys();
 				if (shouldQuit()) {
@@ -1008,6 +1014,7 @@ bool TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
 	do {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		readKeys();
 		if (_input->toggleAbortAction()) {

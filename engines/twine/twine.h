@@ -174,6 +174,11 @@ public:
 	~ScopedFPS();
 };
 
+class FrameMarker {
+public:
+	~FrameMarker();
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
@@ -326,8 +331,8 @@ public:
 	 * @param bottom bottom position to start copy
 	 * @param updateScreen Perform blitting to screen if @c true, otherwise just prepare the blit
 	 */
-	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen = true);
-	void copyBlockPhys(const Common::Rect &rect, bool updateScreen = true);
+	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen = false);
+	void copyBlockPhys(const Common::Rect &rect, bool updateScreen = false);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer

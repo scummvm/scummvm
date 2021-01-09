@@ -406,6 +406,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 	}
 	uint32 startMillis = _engine->_system->getMillis();
 	do {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		const uint32 loopMillis = _engine->_system->getMillis();
 		_engine->readKeys();
@@ -721,6 +722,7 @@ bool Menu::init() {
 }
 
 EngineState Menu::run() {
+	FrameMarker frame;
 	ScopedFPS scopedFps;
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
@@ -772,6 +774,7 @@ int32 Menu::giveupMenu() {
 
 	int32 menuId;
 	do {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
@@ -999,6 +1002,7 @@ void Menu::processBehaviourMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
+		FrameMarker frame;
 		ScopedFPS scopedFps(50);
 		_engine->readKeys();
 
@@ -1139,6 +1143,7 @@ void Menu::processInventoryMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS fps(66);
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;

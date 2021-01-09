@@ -262,6 +262,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);
 	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
