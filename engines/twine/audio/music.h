@@ -76,7 +76,7 @@ public:
 	/**
 	 * Play MIDI music
 	 * @param midiIdx music index under mini_mi_win.hqr
-	 * @note valid indices for lba1 are [1-33]
+	 * @note valid indices for lba1 are [1-32]
 	 */
 	bool playMidiMusic(int32 midiIdx, int32 loop = 0);
 	/** Stop MIDI music */

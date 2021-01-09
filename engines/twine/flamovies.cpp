@@ -232,6 +232,7 @@ void FlaMovies::processFrame() {
 FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
 
 void FlaMovies::prepareGIF(int index) {
+	// TODO: version 87a 640x480
 #if 0
 	Image::GIFDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream("FLA_GIF.HQR", index);
@@ -264,9 +265,39 @@ void FlaMovies::playGIFMovie(const char *flaName) {
 	}
 
 	debug("Play gif %s", flaName);
-	const Common::Array<int32>& frames = _engine->_resources->getFlaMovieInfo(flaName);
-	for (int32 frame : frames) {
-		prepareGIF(frame);
+	// TODO: use the HQR 23th entry (movies informations)
+	// TODO: there are gifs [1-18]
+	if (!strcmp(flaName, FLA_INTROD)) {
+		prepareGIF(3);
+		prepareGIF(4);
+		prepareGIF(5);
+	} else if (!strcmp(flaName, "BAFFE") || !strcmp(flaName, "BAFFE2") || !strcmp(flaName, "BAFFE3") || !strcmp(flaName, "BAFFE4")) {
+		prepareGIF(6);
+	} else if (!strcmp(flaName, "bateau") || !strcmp(flaName, "bateau2")) {
+		prepareGIF(7);
+	} else if (!strcmp(flaName, "navette")) {
+		prepareGIF(15);
+	} else if (!strcmp(flaName, "templebu")) {
+		prepareGIF(12);
+	} else if (!strcmp(flaName, "flute2")) {
+		prepareGIF(8); // TODO: same as glass2?
+	} else if (!strcmp(flaName, "glass2")) {
+		prepareGIF(8); // TODO: same as flute2?
+	} else if (!strcmp(flaName, "surf")) {
+		prepareGIF(9);
+	} else if (!strcmp(flaName, "verser") || !strcmp(flaName, "verser2")) {
+		prepareGIF(10);
+	} else if (!strcmp(flaName, "neige2")) {
+		prepareGIF(11);
+	} else if (!strcmp(flaName, "capture")) {
+		prepareGIF(14); // TODO: same as sendel?
+	} else if (!strcmp(flaName, "sendel")) {
+		prepareGIF(14); // TODO: same as capture?
+	} else if (!strcmp(flaName, "sendel2")) {
+		prepareGIF(17);
+	} else if (!strcmp(flaName, FLA_DRAGON3)) {
+		prepareGIF(1);
+		prepareGIF(2);
 	}
 }
 
