@@ -293,6 +293,7 @@ void Scene::changeScene() {
 	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
+	debug(2, "Change scene to %i (currently in %i)", needChangeScene, currentSceneIdx);
 
 	// local backup previous scene
 	previousSceneIdx = currentSceneIdx;
