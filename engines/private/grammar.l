@@ -29,6 +29,7 @@ goto                    return GOTOTOK;
 RECT                    return RECT;
 FALSE                   return FALSETOK;
 TRUE                    return TRUETOK;
+NULL                    return NULLTOK;
 Random                  return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  yylval.s = strdup(yytext); return NAME;
 [\-]?[0-9]+             yylval.sym = Private::addconstant(NUM, atoi(yytext), NULL); return NUM;

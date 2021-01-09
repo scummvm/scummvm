@@ -41,8 +41,15 @@ typedef struct ExitInfo {
     Common::String *cursor;    
 } ExitInfo;
 
-typedef Common::List<ExitInfo> ExitList;  
+typedef struct MaskInfo {
+    Graphics::ManagedSurface *surf;
+    Common::String *nextSetting;
+    Common::Point *point;
+    Common::String *cursor;    
+} MaskInfo;
 
+typedef Common::List<ExitInfo> ExitList;  
+typedef Common::List<MaskInfo> MaskList;  
 
 class PrivateEngine : public Engine {
 private:
@@ -64,6 +71,7 @@ public:
 	//Mohawk::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
+	void selectMask(Common::Point);
         void selectExit(Common::Point); 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
@@ -77,15 +85,23 @@ public:
 	void playVideo(const Common::String &name);	
 	void stopSound();
 
-	void loadImage(const Common::String &name, int x, int y);	
+	void loadImage(const Common::String &, int, int);
+        Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
+ 
+        uint32 _transparentColor;	
 	void drawScreen();
 
         // global state
+	Common::Point *_origin;
         Common::String *_nextSetting;
-        int _mode;
+        Common::String *_nextVS;
+
+	int _mode;
         bool _modified;
         Common::String *_nextMovie;
         ExitList _exits;
+        MaskList _masks;
+
 };
 
 extern PrivateEngine *g_private;

@@ -106,15 +106,17 @@ Common::Error PrivateEngine::run() {
     _screenH = 480;
     //_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
     _pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+    _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
 
     CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 
+    _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
     _compositeSurface = new Graphics::ManagedSurface();
     _compositeSurface->create(_screenW, _screenH, _pixelFormat);
-    _compositeSurface->setTransparentColor(0x00ff00);
+    _compositeSurface->setTransparentColor(_transparentColor);
 
     // You could use backend transactions directly as an alternative,
     // but it isn't recommended, until you want to handle the error values
@@ -162,12 +164,17 @@ Common::Error PrivateEngine::run() {
 
         // Events
         switch (event.type) {
-        case Common::EVENT_QUIT:
-        case Common::EVENT_RETURN_TO_LAUNCHER:
-            break;
+            case Common::EVENT_QUIT:
+            case Common::EVENT_RETURN_TO_LAUNCHER:
+                break;
 
-        case Common::EVENT_LBUTTONDOWN:
-            selectExit(mousePos);
+            case Common::EVENT_LBUTTONDOWN:
+                selectMask(mousePos);
+		selectExit(mousePos);
+	        break;
+
+	    default:
+	        {}
 
         }
 
@@ -198,6 +205,7 @@ Common::Error PrivateEngine::run() {
         if (_nextSetting != NULL) {
             debug("Executing %s", _nextSetting->c_str());
             _exits.clear();
+            _masks.clear();
             loadSetting(_nextSetting);
             _nextSetting = NULL;
             CursorMan.showMouse(false);
@@ -215,26 +223,54 @@ Common::Error PrivateEngine::run() {
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y); 
     Common::String *ns = NULL;
-    int rs = 1 << 31;
+    int rs = 100000000;
     int cs = 0;
-
-    for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
-        const ExitInfo e = *it;
-        cs = e.rect->width()*e.rect->height();
+    ExitInfo e;
+    for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
+        e = *it;
+    	cs = e.rect->width()*e.rect->height();
+        //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect->contains(mousePos)) {
-            debug("Exit %s %d", e.nextSetting->c_str(), cs);
-            if (cs < rs) {
+	    //debug("Inside! %d %d", cs, rs);
+            if (cs < rs && e.nextSetting != NULL) { // TODO: check this
+                debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
                 rs = cs;
                 ns = e.nextSetting;
             }
 
         }
     }
-    if (cs > 0)
+    if (ns != NULL) {
+        debug("Exit selected %s", ns->c_str());
         _nextSetting = ns;
+    }
 }
 
+void PrivateEngine::selectMask(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y); 
+    Common::String *ns = NULL;
+    MaskInfo m;
+    for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
+        m = *it;
+	
+        debug("Testing mask %s", m.nextSetting->c_str());
+        if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+	    debug("Inside!");
+            if (m.nextSetting != NULL) { // TODO: check this
+                debug("Found Mask %s", m.nextSetting->c_str());
+                ns = m.nextSetting;
+		break;
+            }
+
+        }
+    }
+    if (ns != NULL) {
+        debug("Mask selected %s", ns->c_str());
+        _nextSetting = ns;
+    }
+}
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
     return
@@ -295,7 +331,7 @@ void PrivateEngine::playSound(const Common::String &name) {
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
-    debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+    debug("%s : %s", __FUNCTION__, name.c_str());
     Common::File *file = new Common::File();
     Common::String path = convertPath(name);
 
@@ -326,9 +362,31 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
     //for (int i = 0; i < 30; i=i+3)
     //    debug("%x %x %x", *(_image->getPalette()+i), *(_image->getPalette()+i+1), *(_image->getPalette()+i+2));
 
-    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y), _pixelFormat.RGBToColor(0,255,0));
+    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y), _transparentColor);
     drawScreen();
 }
+
+Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
+    debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+    Common::File file;
+    Common::String path = convertPath(name);
+    if (!file.open(path))
+        error("unable to load mask %s", path.c_str());
+
+    _image->loadStream(file);
+    Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
+    surf->create(_screenW, _screenH, _pixelFormat);
+    surf->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y));
+
+    if (drawn) {
+        _compositeSurface->transBlitFrom(surf->rawSurface(), Common::Point(x,y), _transparentColor);
+        drawScreen();
+    }
+
+    return surf; 
+}
+
+
 
 
 void PrivateEngine::drawScreen() {
@@ -342,7 +400,8 @@ void PrivateEngine::drawScreen() {
             Graphics::Surface *frame = new Graphics::Surface;
             frame->create(_screenW, _screenH, _pixelFormat);
             frame->copyFrom(*_videoDecoder->decodeNextFrame());
-            surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette()));
+            const Common::Point o(_origin->x, _origin->y);
+            surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette()), o);
         }
 
         int w = surface->w; //CLIP<int>(surface->w, 0, _screenW);

@@ -46,7 +46,7 @@ int yywrap()
 %token<s> NAME
 %token<sym> STRING NUM
 %type <inst> body if startp cond end expr statements statement fcall value
-%token LTE GTE NEQ EQ FALSETOK TRUETOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
+%token LTE GTE NEQ EQ FALSETOK TRUETOK NULLTOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 %type<narg> params
 
 %%
@@ -136,7 +136,8 @@ params:   /* nothing */     { $$ = 0; }
         | fcall       { $$ = 1; }
         ;
 
-value:    FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
+value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
+        | FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
         | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL)); }
         |  NUM     { code2(Private::constpush, (Private::Inst)$NUM); }
         | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
