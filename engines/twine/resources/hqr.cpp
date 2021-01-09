@@ -256,6 +256,26 @@ int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
 	return entrySize;
 }
 
+bool dumpEntry(const char *filename, int32 index, const char *targetFileName) {
+	Common::DumpFile out;
+	if (!out.open(targetFileName)) {
+		warning("Failed to save to %s", targetFileName);
+		return false;
+	}
+
+	uint8 *content = nullptr;
+	const int size = getAllocEntry(&content, filename, index);
+	if (size == 0) {
+		warning("Could not get hqr entry in %s for index %i", filename, index);
+		return false;
+	}
+	out.write(content, size);
+	out.flush();
+	out.close();
+	free(content);
+	return true;
+}
+
 int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex) {
 	if (!ptr) {
 		return 0;
