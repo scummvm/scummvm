@@ -65,6 +65,7 @@ void GameState::initEngineProjections() {
 }
 
 void GameState::initGameStateVars() {
+	debug(2, "Init game state variables");
 	_engine->_extra->resetExtras();
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
@@ -104,6 +105,7 @@ void GameState::initHeroVars() {
 }
 
 void GameState::initEngineVars() {
+	debug(2, "Init engine variables");
 	_engine->_interface->resetClip();
 
 	_engine->_scene->alphaLight = 896;
@@ -149,7 +151,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		return false;
 	}
 
+	debug(2, "Load game");
 	if (file->readByte() != 0x03) {
+		warning("Could not load savegame - wrong magic byte");
 		return false;
 	}
 
@@ -218,6 +222,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 }
 
 bool GameState::saveGame(Common::WriteStream *file) {
+	debug(2, "Save game");
 	if (playerName[0] == '\0') {
 		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
 	}
