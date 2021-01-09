@@ -146,32 +146,29 @@ Common::Error PrivateEngine::run() {
     _nextSetting = new Common::String("kGoIntro");
 
     while (!shouldQuit()) {
-        g_system->getEventManager()->pollEvent(event);
-        mousePos = g_system->getEventManager()->getMousePos();
+        while (g_system->getEventManager()->pollEvent(event)) {
+            // Events
+            switch (event.type) {
+                case Common::EVENT_KEYDOWN:
+                    if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+                       skipVideo();
+	            break;
 
-        g_system->delayMillis(10);
+                case Common::EVENT_QUIT:
+                case Common::EVENT_RETURN_TO_LAUNCHER:
+                    break;
 
-        // Events
-        switch (event.type) {
-           case Common::EVENT_KEYDOWN:
-	    if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
-		skipVideo();
-	        break;
+                case Common::EVENT_LBUTTONDOWN:
+                    mousePos = g_system->getEventManager()->getMousePos();
+                    selectMask(mousePos);
+		    if (!_nextSetting)
+                        selectExit(mousePos);
+	            break;
 
-            case Common::EVENT_QUIT:
-            case Common::EVENT_RETURN_TO_LAUNCHER:
-                break;
+	        default:
+	            {}
 
-            case Common::EVENT_LBUTTONDOWN:
-                selectMask(mousePos);
-		if (!_nextSetting)
-		    selectExit(mousePos);
-                g_system->delayMillis(30);
-	        break;
-
-	    default:
-	        {}
-
+            }
         }
 
         // Movies
@@ -207,7 +204,7 @@ Common::Error PrivateEngine::run() {
         }
 
         g_system->updateScreen();
-
+        g_system->delayMillis(10);
     }
 
     return Common::kNoError;
