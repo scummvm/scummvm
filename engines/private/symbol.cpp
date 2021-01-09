@@ -31,7 +31,7 @@ void showSymbol(Symbol *s)
     else if (s->type == STRING)
         debug("%s %s", s->name->c_str(), s->u.str);
     else if (s->type == NAME)
-        debug("%s",s->name->c_str());
+        debug("%s %d",s->name->c_str(), s->type);
     else
         debug("%s %d", s->name->c_str(), s->type);
 }
@@ -40,7 +40,13 @@ void showSymbol(Symbol *s)
 Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
 {
     //debug("looking up %s", s.c_str());
-    return symlist.getVal(s);
+    Symbol *r = symlist.getVal(s);
+    /*if (strcmp(s.c_str(), "m_640x480") == 0) {
+        showSymbol(r);
+	assert(0);
+    }*/
+
+    return r;
 }
 
 Symbol *lookupName(char *n)  /* install s in some symbol table */
@@ -106,7 +112,7 @@ void installall(char *n) {
 
         else if (strcmp(n, "rects") == 0) {
             assert(r != NULL);
-            install(s, NAME, 0, NULL, r, &rects);
+            install(s, RECT, 0, NULL, r, &rects);
         }
         else
             assert(0);

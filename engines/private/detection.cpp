@@ -18,12 +18,22 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_NO_FLAGS,
         GUIO1(GUIO_NOMIDI)
     },
+    {
+        "private-eye",
+        0,
+        AD_ENTRY1s("GAME.TXT", "28ee7295db2cf6d9358ad737e3a4c4c0", 19286),
+        Common::EN_ANY,
+        Common::kPlatformWindows,
+        ADGF_DEMO,
+        GUIO1(GUIO_NOMIDI)
+    },
+ 
     AD_TABLE_END_MARKER
 };
 } // End of namespace Private
 
 static const char *const directoryGlobs[] = {
-    "support", // english CD
+    "assets", // english CD
     0
 };
 

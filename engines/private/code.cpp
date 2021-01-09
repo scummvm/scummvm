@@ -171,6 +171,9 @@ int eval()		/* evaluate variable on stack */
     } else if (d.u.sym->type == STRING) {
         d.type = STRING;
         d.u.str = d.u.sym->u.str;
+    } else if (d.u.sym->type == RECT) {
+        d.type = RECT;
+        d.u.rect = d.u.sym->u.rect;
     } else if (d.u.sym->type == NAME) {
         //debug("NAME %s", d.sym->name->c_str());
         //d.sym = d.sym;
@@ -188,6 +191,23 @@ int add()		/* add top two elems on stack */
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+    assert(d1.type == NUM);
+    assert(d2.type == NUM);
+
     //printf("adding %d %d\n",d1.val, d2.val);
     d1.u.val += d2.u.val;
     push(d1);
@@ -234,6 +254,21 @@ int gt()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
     d1.u.val = (int)(d1.u.val > d2.u.val);
     push(d1);
     return 0;
@@ -244,6 +279,21 @@ int lt()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
     d1.u.val = (int)(d1.u.val < d2.u.val);
     push(d1);
     return 0;
@@ -254,6 +304,21 @@ int ge()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
     d1.u.val = (int)(d1.u.val >= d2.u.val);
     push(d1);
     return 0;
@@ -264,6 +329,21 @@ int le()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
     d1.u.val = (int)(d1.u.val <= d2.u.val);
     push(d1);
     return 0;
@@ -274,6 +354,21 @@ int eq()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
     d1.u.val = (int)(d1.u.val == d2.u.val);
     push(d1);
     return 0;
@@ -284,7 +379,22 @@ int ne()
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
-    d1.u.val = (int)(d1.u.val  !=  d2.u.val);
+    if (d1.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d1.u.val = d1.u.sym->u.val;
+	d1.type = NUM;
+    }
+
+    if (d2.type == NAME) {
+	//char *name =  d1.u.sym->name->c_str();     
+        //debug("eval %s to %d", 
+	d2.u.val = d2.u.sym->u.val;
+	d2.type = NUM;
+    }
+
+
+    d1.u.val = (int)(d1.u.val != d2.u.val);
     push(d1);
     return 0;
 }

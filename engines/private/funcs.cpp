@@ -18,10 +18,12 @@ void ChgMode(ArgArray args) {
     if (g_private->_mode == 0) {
         g_private->_origin->x = 0;
         g_private->_origin->y = 0;
+	// TODO: should clear the screen?
     } 
     else if (g_private->_mode == 1) {
         g_private->_origin->x = 63;
         g_private->_origin->y = 48;
+        g_private->drawScreenFrame();
     }
     else
         assert(0);
@@ -57,6 +59,11 @@ void DossierAdd(ArgArray args) {
     debug("WARNING: DossierAdd is not implemented");
 }
 
+void Inventory(ArgArray args) {
+    // assert types
+    debug("WARNING: Inventory is not implemented");
+}
+
 void SetFlag(ArgArray args) {
     // assert types
     debug("SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
@@ -66,7 +73,7 @@ void SetFlag(ArgArray args) {
 void Exit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
-    debug("Exit(..)"); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
+    debug("Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
     ExitInfo *e = (ExitInfo*) malloc(sizeof(ExitInfo));
 
     if (args[0].type == NUM && args[0].u.val == 0)
@@ -79,7 +86,13 @@ void Exit(ArgArray args) {
     else
         e->cursor = args[1].u.sym->name;
 
+    if (args[2].type == NAME) {
+	assert(args[2].u.sym->type == RECT);
+	args[2].u.rect = args[2].u.sym->u.rect;
+    }
+
     e->rect = args[2].u.rect;
+    debug("Rect %d %d %d %d", args[2].u.rect->top, args[2].u.rect->left, args[2].u.rect->bottom, args[2].u.rect->right);
     g_private->_exits.push_front(*e);
 }
 
@@ -102,10 +115,25 @@ void Sound(ArgArray args) {
     }
 }
 
+void LoopedSound(ArgArray args) {
+    // assert types
+    assert(args.size() == 1);
+    debug("LoopedSound(%s)", args[0].u.str);
+    if (strcmp("\"\"", args[0].u.str) != 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        g_private->playSound(*s);
+        //assert(0);
+    } else {
+        g_private->stopSound();
+    }
+}
+
+
+
 void Transition(ArgArray args) {
     // assert types
     debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
-    //g_private->_nextMovie = new Common::String(args[0].u.str);
+    g_private->_nextMovie = new Common::String(args[0].u.str);
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
@@ -187,7 +215,13 @@ void Mask(ArgArray args, bool drawn) {
 
 
 void Timer(ArgArray args) {
-    debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
+    assert (args.size() == 2 || args.size() == 3);
+
+    if (args.size() == 3)
+        debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
+    else 
+        debug("Timer(%d, %s)", args[0].u.val, args[1].u.str);
+ 
     g_system->delayMillis(100 * args[0].u.val);
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
@@ -207,6 +241,12 @@ void execFunction(char *name, ArgArray args) {
     }
     else if (strcmp(name, "Sound") == 0) {
         Sound(args);
+    }
+    else if (strcmp(name, "SoundEffect") == 0) {
+        Sound(args); // Unclear how this is different from Sound
+    }
+    else if (strcmp(name, "LoopedSound") == 0) {
+        LoopedSound(args);
     }
     else if (strcmp(name, "Bitmap") == 0) {
         Bitmap(args);
@@ -241,6 +281,9 @@ void execFunction(char *name, ArgArray args) {
     }
     else if (strcmp(name, "DossierAdd") == 0) {
         DossierAdd(args);
+    }
+    else if (strcmp(name, "Inventory") == 0) {
+        Inventory(args);
     }
     else if (strcmp(name, "VSPicture") == 0) {
         VSPicture(args);
