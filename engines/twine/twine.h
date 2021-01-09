@@ -86,6 +86,8 @@ struct ConfigFile {
 	bool Voice = true;
 	/** Enable/Disable game dialogues */
 	bool FlagDisplayText = false;
+	/** Flag to display game debug */
+	bool Debug = false;
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */
@@ -98,8 +100,6 @@ struct ConfigFile {
 	int32 Movie = CONF_MOVIE_FLA;
 	/** Flag used to keep the game frames per second */
 	int32 Fps = 0;
-	/** Flag to display game debug */
-	bool Debug = false;
 
 	// these settings are not available in the original version
 	/** Use cross fade effect while changing images, or be as the original */
