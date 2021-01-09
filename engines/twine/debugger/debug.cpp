@@ -429,6 +429,7 @@ void Debug::debugProcessWindow() {
 	debugDrawWindows();
 
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS scopedFps(25);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {

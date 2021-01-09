@@ -194,6 +194,7 @@ void Holomap::processHolomap() {
 
 	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->_input->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
