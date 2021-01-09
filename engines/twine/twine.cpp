@@ -711,8 +711,6 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (giveUp == 1) {
 				unfreezeTime();
 				_redraw->redrawEngineActions(true);
-				ScopedEngineFreeze freeze(this);
-				autoSave();
 				quitGame = 0;
 				return 0;
 			}

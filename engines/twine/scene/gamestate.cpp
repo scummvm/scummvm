@@ -508,6 +508,8 @@ void GameState::processGameoverAnimation() {
 
 void GameState::giveUp() {
 	_engine->_sound->stopSamples();
+	// TODO: is an autosave desired on giving up? I don't think so. What did the original game do here?
+	//_engine->autoSave();
 	initGameStateVars();
 	_engine->_scene->stopRunningGame();
 }
