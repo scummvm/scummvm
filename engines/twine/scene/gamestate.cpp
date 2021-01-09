@@ -226,7 +226,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeString(playerName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
-	file->write(_gameStateFlags, NUM_GAME_FLAGS);
+	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {
+		file->writeByte(hasGameFlag(i));
+	}
 	file->writeByte(_engine->_scene->currentSceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);
