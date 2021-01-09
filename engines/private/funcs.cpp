@@ -18,8 +18,8 @@ void ChgMode(ArgArray args) {
     if (g_private->_mode == 0) {
         g_private->_origin->x = 0;
         g_private->_origin->y = 0;
-	// TODO: should clear the screen?
-    } 
+        // TODO: should clear the screen?
+    }
     else if (g_private->_mode == 1) {
         g_private->_origin->x = 63;
         g_private->_origin->y = 48;
@@ -87,8 +87,8 @@ void Exit(ArgArray args) {
         e->cursor = args[1].u.sym->name;
 
     if (args[2].type == NAME) {
-	assert(args[2].u.sym->type == RECT);
-	args[2].u.rect = args[2].u.sym->u.rect;
+        assert(args[2].u.sym->type == RECT);
+        args[2].u.rect = args[2].u.sym->u.rect;
     }
 
     e->rect = args[2].u.rect;
@@ -193,7 +193,7 @@ void Mask(ArgArray args, bool drawn) {
     char *f = args[0].u.str;
     char *e = args[1].u.str;
     Common::String *c = args[2].u.sym->name;
-    
+
     if (args.size() == 5) {
         x = args[3].u.val;
         y = args[4].u.val;
@@ -219,9 +219,9 @@ void Timer(ArgArray args) {
 
     if (args.size() == 3)
         debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
-    else 
+    else
         debug("Timer(%d, %s)", args[0].u.val, args[1].u.str);
- 
+
     g_system->delayMillis(100 * args[0].u.val);
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
@@ -257,7 +257,7 @@ void execFunction(char *name, ArgArray args) {
     else if (strcmp(name, "MaskDrawn") == 0) {
         Mask(args, true);
     }
- 
+
     else if (strcmp(name, "Timer") == 0) {
         Timer(args);
     }
