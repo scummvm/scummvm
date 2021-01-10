@@ -18,9 +18,11 @@
 #include "image/bmp.h"
 #include "graphics/cursorman.h"
 
+#include "private/cursors.h"
 #include "private/private.h"
 #include "private/grammar.tab.h"
 #include "private/grammar.h"
+
 
 namespace Private {
 
@@ -76,8 +78,12 @@ Common::Error PrivateEngine::run() {
 
     void *buf = malloc(191000);
     file->read(buf, 191000);
+
+    // Initialize stuff
     initInsts();
     initFuncs();
+    initCursors();
+
     parse((char *) buf);
     assert(constants.size() > 0);
 
@@ -89,7 +95,7 @@ Common::Error PrivateEngine::run() {
     _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
 
-    CursorMan.replaceCursor(MOUSECURSOR_kExit, 32, 32, 0, 0, 0);
+    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 
     _origin = new Common::Point(0, 0);
@@ -123,6 +129,7 @@ Common::Error PrivateEngine::run() {
 
     while (!shouldQuit()) {
         while (g_system->getEventManager()->pollEvent(event)) {
+            mousePos = g_system->getEventManager()->getMousePos();
             // Events
             switch (event.type) {
             case Common::EVENT_KEYDOWN:
@@ -135,10 +142,16 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
-                mousePos = g_system->getEventManager()->getMousePos();
                 selectMask(mousePos);
                 if (!_nextSetting)
                     selectExit(mousePos);
+                break;
+
+            case Common::EVENT_MOUSEMOVE:
+                CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
+                cursorExit(mousePos);
+                cursorMask(mousePos);
+                //
                 break;
 
             default:
@@ -186,9 +199,64 @@ Common::Error PrivateEngine::run() {
     return Common::kNoError;
 }
 
-void PrivateEngine::selectExit(Common::Point mousePos) {
-    debug("Mousepos %d %d", mousePos.x, mousePos.y);
+bool PrivateEngine::cursorExit(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return false;
+
+    ExitInfo e;
+    bool inside = false;
+    for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
+        e = *it;
+        if (e.rect->contains(mousePos)) {
+            inside = true;
+            if (e.cursor != NULL)
+                CursorMan.replaceCursor(_cursors.getVal(*e.cursor), 32, 32, 0, 0, 0, true);
+        }
+    }
+    //if (!inside)
+    //    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
+
+    return inside;
+}
+
+bool PrivateEngine::cursorMask(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return false;
+
+    MaskInfo m;
+    bool inside = false;
+    for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
+        m = *it;
+
+        //debug("Testing mask %s", m.nextSetting->c_str());
+        if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+            //debug("Inside!");
+            if (m.nextSetting != NULL) { // TODO: check this
+                inside = true;
+                debug("Rendering cursor mask %s", m.cursor->c_str());
+                assert(_cursors.contains(*m.cursor));
+                CursorMan.replaceCursor(_cursors.getVal(*m.cursor), 32, 32, 0, 0, 0, true);
+                break;
+            }
+
+        }
+    }
+    //if (!inside)
+    //    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
+    return inside;
+}
+
+
+void PrivateEngine::selectExit(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return;
+
     Common::String *ns = NULL;
     int rs = 100000000;
     int cs = 0;
@@ -196,7 +264,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
         cs = e.rect->width()*e.rect->height();
-        debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
+        //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect->contains(mousePos)) {
             debug("Inside! %d %d", cs, rs);
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
@@ -216,12 +284,15 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 void PrivateEngine::selectMask(Common::Point mousePos) {
     //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return;
+
     Common::String *ns = NULL;
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
 
-        debug("Testing mask %s", m.nextSetting->c_str());
+        //debug("Testing mask %s", m.nextSetting->c_str());
         if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
             debug("Inside!");
             if (m.nextSetting != NULL) { // TODO: check this
@@ -364,48 +435,38 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
     surf->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y));
 
     if (drawn) {
-        _compositeSurface->transBlitFrom(surf->rawSurface(), Common::Point(x,y), _transparentColor);
+        _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin + Common::Point(x,y), _transparentColor);
         drawScreen();
     }
 
     return surf;
 }
 
+void PrivateEngine::drawScreen() {    
+    Graphics::Surface *screen = g_system->lockScreen();
+    Graphics::ManagedSurface *surface = _compositeSurface;
+    int w = surface->w;
+    int h = surface->h;
 
-
-
-void PrivateEngine::drawScreen() {
-    if (_videoDecoder ? _videoDecoder->needsUpdate() : false || _compositeSurface) {
-        Graphics::Surface *screen = g_system->lockScreen();
-        //screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
-        //
-        //if (_mode == 1)
-        //    drawScreenFrame();
-
-        Graphics::ManagedSurface *surface = _compositeSurface;
-
-        if (_videoDecoder) {
-            Graphics::Surface *frame = new Graphics::Surface;
-            frame->create(_screenW, _screenH, _pixelFormat);
-            frame->copyFrom(*_videoDecoder->decodeNextFrame());
-            const Common::Point o(_origin->x, _origin->y);
-            surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette()), o);
-        }
-
-        int w = surface->w; //CLIP<int>(surface->w, 0, _screenW);
-        int h = surface->h; //CLIP<int>(surface->h, 0, _screenH);
-        assert(w == _screenW && h == _screenH);
-
-        screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
-
-        g_system->unlockScreen();
-        //if (_image->getPalette() != nullptr)
-        //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
-        //if (_image->getPalette() != nullptr)
-        //	g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
-        //g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
-        g_system->updateScreen();
+    if (_videoDecoder) {
+        Graphics::Surface *frame = new Graphics::Surface;
+        frame->create(_screenW, _screenH, _pixelFormat);
+        frame->copyFrom(*_videoDecoder->decodeNextFrame());
+        const Common::Point o(_origin->x, _origin->y);
+        surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette()), o);
     }
+
+    assert(w == _screenW && h == _screenH);
+
+    screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    g_system->unlockScreen();
+    //if (_image->getPalette() != nullptr)
+    //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
+    //if (_image->getPalette() != nullptr)
+    //	g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
+    //g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
+    g_system->updateScreen();
+
 }
 
 
