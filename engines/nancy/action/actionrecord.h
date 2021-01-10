@@ -23,8 +23,11 @@
 #ifndef NANCY_ACTION_ACTIONRECORD_H
 #define NANCY_ACTION_ACTIONRECORD_H
 
+#include "engines/nancy/time.h"
+
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/rect.h"
 
 namespace Nancy {
 
@@ -34,11 +37,14 @@ enum DependencyType : byte {
     kNone               = 0,
     kInventory          = 1,
     kEventFlag          = 2,
-    // ...
-    kPlayTime           = 4,
+    kLogicCondition     = 3,
+    kTotalTime          = 4,
     kSceneTime          = 5,
+    kPlayerTime         = 6,
+    // ...
     kSceneCount         = 9,
     // ...
+    kTimeOfDay          = 12,
     kTimerNotDone       = 13,
     kTimerDone          = 14,
     kDifficultyLevel    = 15
@@ -63,11 +69,13 @@ public:
         execType(0),
         dependencies(nullptr),
         numDependencies(0),
-        hasNoDependencies(0),
-        hasSatisfiedCondition(false),
+        isActive(0),
+        satisfiedDependencies(nullptr),
+        timers(nullptr),
+        orFlags(nullptr),
         isDone(false),
         state(ExecutionState::Start) {}
-    virtual ~ActionRecord() { delete[] dependencies; delete rawData; }
+    virtual ~ActionRecord() { delete[] dependencies; delete rawData; delete[] satisfiedDependencies; delete[] timers; delete orFlags; }
 
     virtual uint16 readData(Common::SeekableReadStream &stream) =0;
     virtual void execute(NancyEngine *engine) {};
@@ -88,12 +96,14 @@ public:
     // 0x32 data
     DependencyRecord *dependencies; // 0x36
     byte numDependencies;           // 0x3A
-    bool hasNoDependencies;         // 0x3B, not sure abt this one
-    bool hasSatisfiedCondition;     // 0x3C
-    int32 timers[12];               // 0x48, not sure how many there can be
+    bool isActive;                  // 0x3B
+    bool *satisfiedDependencies;    // 0x3C
+    Time *timers;                   // 0x48
+    bool *orFlags;                  // 0x78
     bool isDone;                    // 0x84
+    Common::Rect activeZone;        // 0x89
     ExecutionState state;           // 0x91
-    };
+};
 
 } // End of namespace Nancy
 

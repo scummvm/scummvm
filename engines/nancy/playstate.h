@@ -30,13 +30,18 @@ namespace Nancy {
 // A catch-all struct for storing all player progress and related variables
 // TODO split to PlayerState/SceneState
 struct PlayState {
-    enum Flag { kFalse = 1, kTrue = 2 };
+    enum Flag { kFalse = 1, kTrue = 2 }; // Could be the other way around
     enum TimeOfDay { kDay, kNight, kDuskDawn };
 
+    // These two are used to keep track of what options the player picked in the
+    // current conversation. Since they don't get stored they probably shouldn't
+    // be here
+    Flag logicConditions[30];
+    Time logicConditionsTimestamps[30]; // Stores when the condition got satisfied
+    
     Flag inventory[11];
     Flag eventFlags[672];
-    // Second array with the same size as EventFlags that never gets used?
-    bool sceneHitCount[1000];
+    byte sceneHitCount[1000];
     uint16 difficulty; // 0, 1, 2
     Time totalTime;
     Time sceneTime;

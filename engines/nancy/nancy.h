@@ -25,6 +25,7 @@
 
 #include "nancy/console.h"
 #include "nancy/detection.h"
+#include "nancy/playstate.h"
 
 #include "engines/engine.h"
 #include "common/file.h"
@@ -114,6 +115,9 @@ public:
 	SceneManager *sceneManager;
 	GraphicsManager *graphics;
 	InputManager *input;
+	
+	// Contains all player data
+    PlayState playState;
 
 protected:
 	// Engine APIs

@@ -62,11 +62,11 @@ void SceneManager::process() {
 
 void SceneManager::init() {
     for (uint i = 0; i < 672; ++i) {
-        playState.eventFlags[i] = PlayState::Flag::kFalse;
+        _engine->playState.eventFlags[i] = PlayState::Flag::kFalse;
     }
 
     for (uint i = 0; i < 1000; ++i) {
-        playState.sceneHitCount[i] = 0;
+        _engine->playState.sceneHitCount[i] = 0;
     }
 
     _sceneID = _engine->_firstSceneID;
@@ -268,15 +268,15 @@ void SceneManager::load() {
     View &viewportDesc = _engine->graphics->viewportDesc;
 
     if (!hasLoadedFromSavefile) {
-        playState.currentMaxVerticalScroll = playState.queuedMaxVerticalScroll;
-        playState.currentViewFrame = playState.queuedViewFrame;
+        _engine->playState.currentMaxVerticalScroll = _engine->playState.queuedMaxVerticalScroll;
+        _engine->playState.currentViewFrame = _engine->playState.queuedViewFrame;
 
         if (currentScene.videoFormat == 1) {
             // TODO not sure this ever gets hit
         } else if (currentScene.videoFormat == 2) {
             // always start from the bottom
-            playState.verticalScroll = playState.currentMaxVerticalScroll;
-            playState.verticalScrollDelta = currentScene.verticalScrollDelta;
+            _engine->playState.verticalScroll = _engine->playState.currentMaxVerticalScroll;
+            _engine->playState.verticalScrollDelta = currentScene.verticalScrollDelta;
         } else {
             error("Unrecognized Scene summary chunk video file format");
         }
@@ -394,10 +394,10 @@ void SceneManager::run() {
         if (hasLoadedFromSavefile) {
             if (playTimeThisFrame > _stashedTickCount) {
                 playTimeThisFrame -= _stashedTickCount;
-                playState.totalTime -= playTimeThisFrame;
-                playState.sceneTime -= playTimeThisFrame;
-                if (playState.timerIsActive)
-                    playState.timerTime -= playTimeThisFrame;
+                _engine->playState.totalTime -= playTimeThisFrame;
+                _engine->playState.sceneTime -= playTimeThisFrame;
+                if (_engine->playState.timerIsActive)
+                    _engine->playState.timerTime -= playTimeThisFrame;
             }
         }
             
@@ -414,24 +414,24 @@ void SceneManager::run() {
         diff = playTimeThisFrame - _tickCount;
         _tickCount = playTimeThisFrame;
     }
-    playState.totalTime += diff;
-    if (playState.timerIsActive)
-        playState.timerTime += diff;
-    playState.sceneTime =+ diff;
+    _engine->playState.totalTime += diff;
+    if (_engine->playState.timerIsActive)
+        _engine->playState.timerTime += diff;
+    _engine->playState.sceneTime =+ diff;
 
     // Calculate the in-game time (playerTime)
-    if (playTimeThisFrame > playState.playerTimeNextMinute) {
-        playState.playerTime += 60000; // Add a minute
-        playState.playerTimeNextMinute = playTimeThisFrame + playerTimeMinuteLength; // Set when we're going to add the next minute
+    if (playTimeThisFrame > _engine->playState.playerTimeNextMinute) {
+        _engine->playState.playerTime += 60000; // Add a minute
+        _engine->playState.playerTimeNextMinute = playTimeThisFrame + playerTimeMinuteLength; // Set when we're going to add the next minute
     }
 
     // Set the time of day according to playerTime
-    if (playState.playerTime.getHours_alt() >= 7 && playState.playerTime.getHours_alt() < 18) {
-        playState.timeOfDay = playState.kDay;
-    } else if ((playState.playerTime.getHours_alt() >= 19 || playState.playerTime.getHours_alt() < 6)) {
-        playState.timeOfDay = playState.kNight;
+    if (_engine->playState.playerTime.getHours_alt() >= 7 && _engine->playState.playerTime.getHours_alt() < 18) {
+        _engine->playState.timeOfDay = _engine->playState.kDay;
+    } else if ((_engine->playState.playerTime.getHours_alt() >= 19 || _engine->playState.playerTime.getHours_alt() < 6)) {
+        _engine->playState.timeOfDay = _engine->playState.kNight;
     } else {
-        playState.timeOfDay = playState.kDuskDawn;
+        _engine->playState.timeOfDay = _engine->playState.kDuskDawn;
     }
 
     if (_engine->input->isClickValidLMB) {
@@ -531,67 +531,67 @@ void SceneManager::run() {
             ) {
             switch(movementDirection) {
                 case kLeft:
-                    playState.currentViewFrame += 1;
-                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
-                        playState.currentViewFrame = 0;
+                    _engine->playState.currentViewFrame += 1;
+                    if (_engine->playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        _engine->playState.currentViewFrame = 0;
                     }
                     break;
                 case kRight:
-                    playState.currentViewFrame -= 1;
-                    if (playState.currentViewFrame < 0) {
-                        playState.currentViewFrame = (int16)_engine->graphics->getBackgroundFrameCount() -1;
+                    _engine->playState.currentViewFrame -= 1;
+                    if (_engine->playState.currentViewFrame < 0) {
+                        _engine->playState.currentViewFrame = (int16)_engine->graphics->getBackgroundFrameCount() -1;
                     }
                     break;
                 case kUp:
-                    if (playState.verticalScroll != 0) {
-                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
-                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    if (_engine->playState.verticalScroll != 0) {
+                        int16 newScroll = _engine->playState.verticalScroll - _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MAX(newScroll, (int16)0);
                     }
                     break;
                 case kDown:
-                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
-                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
-                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    if (_engine->playState.verticalScroll != _engine->playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = _engine->playState.verticalScroll + _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MIN(newScroll, _engine->playState.currentMaxVerticalScroll);
                     }
                     break;
                 case kUp | kLeft:
-                    if (playState.verticalScroll != 0) {
-                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
-                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    if (_engine->playState.verticalScroll != 0) {
+                        int16 newScroll = _engine->playState.verticalScroll - _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MAX(newScroll, (int16)0);
                     }
-                    playState.currentViewFrame += 1;
-                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
-                        playState.currentViewFrame = 0;
+                    _engine->playState.currentViewFrame += 1;
+                    if (_engine->playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        _engine->playState.currentViewFrame = 0;
                     }
                     break;
                 case kUp | kRight:
-                    if (playState.verticalScroll != 0) {
-                        int16 newScroll = playState.verticalScroll - playState.verticalScrollDelta;
-                        playState.verticalScroll = MAX(newScroll, (int16)0);
+                    if (_engine->playState.verticalScroll != 0) {
+                        int16 newScroll = _engine->playState.verticalScroll - _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MAX(newScroll, (int16)0);
                     }
-                    playState.currentViewFrame -= 1;
-                    if (playState.currentViewFrame < 0) {
-                        playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() - 1;
+                    _engine->playState.currentViewFrame -= 1;
+                    if (_engine->playState.currentViewFrame < 0) {
+                        _engine->playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() - 1;
                     }
                     break;
                 case kDown | kLeft:
-                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
-                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
-                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    if (_engine->playState.verticalScroll != _engine->playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = _engine->playState.verticalScroll + _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MIN(newScroll, _engine->playState.currentMaxVerticalScroll);
                     }
-                    playState.currentViewFrame += 1;
-                    if (playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
-                        playState.currentViewFrame = 0;
+                    _engine->playState.currentViewFrame += 1;
+                    if (_engine->playState.currentViewFrame >= (int16)_engine->graphics->getBackgroundFrameCount()) {
+                        _engine->playState.currentViewFrame = 0;
                     }
                     break;
                 case kDown | kRight:
-                    if (playState.verticalScroll != playState.currentMaxVerticalScroll) {
-                        uint16 newScroll = playState.verticalScroll + playState.verticalScrollDelta;
-                        playState.verticalScroll = MIN(newScroll, playState.currentMaxVerticalScroll);
+                    if (_engine->playState.verticalScroll != _engine->playState.currentMaxVerticalScroll) {
+                        uint16 newScroll = _engine->playState.verticalScroll + _engine->playState.verticalScrollDelta;
+                        _engine->playState.verticalScroll = MIN(newScroll, _engine->playState.currentMaxVerticalScroll);
                     }
-                    playState.currentViewFrame -= 1;
-                    if (playState.currentViewFrame < 0) {
-                        playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() -1;
+                    _engine->playState.currentViewFrame -= 1;
+                    if (_engine->playState.currentViewFrame < 0) {
+                        _engine->playState.currentViewFrame = _engine->graphics->getBackgroundFrameCount() -1;
                     }
                     break;
             }
@@ -606,22 +606,22 @@ void SceneManager::run() {
     }
 
     // Redraw the Background surface if we've moved
-    if (playState.currentViewFrame != playState.lastDrawnViewFrame) {
+    if (_engine->playState.currentViewFrame != _engine->playState.lastDrawnViewFrame) {
         if (currentScene.videoFormat == 1) {
             // TODO if it ever gets hit
         } else if (currentScene.videoFormat == 2) {
             _engine->graphics->_background.copyRectToSurface(
-            *_engine->graphics->getBackgroundFrame(playState.currentViewFrame),
+            *_engine->graphics->getBackgroundFrame(_engine->playState.currentViewFrame),
             0, 0,
-            Common::Rect(0, playState.verticalScroll, _engine->graphics->getBackgroundWidth() - 1,
-                playState.verticalScroll + _engine->graphics->viewportDesc.srcBottom));
+            Common::Rect(0, _engine->playState.verticalScroll, _engine->graphics->getBackgroundWidth() - 1,
+                _engine->playState.verticalScroll + _engine->graphics->viewportDesc.srcBottom));
         }
         // TODO some if related to PlaySoundPanFrameAnchorAndDie
-        playState.lastDrawnViewFrame = playState.currentViewFrame;
+        _engine->playState.lastDrawnViewFrame = _engine->playState.currentViewFrame;
         // TODO function call that sets a val to 1 and 3 others to 0
     }
 
-    //_engine->logic->processActionRecords();
+    _engine->logic->processActionRecords();
 
     // code that skips rendering for the first 12 frames??? why
 
