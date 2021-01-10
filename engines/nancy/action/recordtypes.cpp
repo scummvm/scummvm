@@ -255,8 +255,8 @@ uint16 ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 }
 
 void ResetAndStartTimer::execute(NancyEngine *engine) {
-    engine->sceneManager->playState.timerIsActive = true;
-    engine->sceneManager->playState.timerTime = 0;
+    engine->playState.timerIsActive = true;
+    engine->playState.timerTime = 0;
     isDone = true;
 }
 
@@ -266,8 +266,8 @@ uint16 StopTimer::readData(Common::SeekableReadStream &stream) {
 }
 
 void StopTimer::execute(NancyEngine *engine) {
-    engine->sceneManager->playState.timerIsActive = false;
-    engine->sceneManager->playState.timerTime = 0;
+    engine->playState.timerIsActive = false;
+    engine->playState.timerTime = 0;
     isDone = true;
 }
 
@@ -290,7 +290,7 @@ uint16 EventFlags::readData(Common::SeekableReadStream &stream) {
 void EventFlags::execute(NancyEngine *engine) {
     for (uint i = 0; i < 10; ++i) {
         if (descs[i].label != -1) {
-            engine->sceneManager->playState.eventFlags[descs[i].label] = descs[i].flag;
+            engine->playState.eventFlags[descs[i].label] = descs[i].flag;
         }
     }
     isDone = true;
@@ -357,9 +357,9 @@ uint16 DifficultyLevel::readData(Common::SeekableReadStream &stream) {
 }
 
 void DifficultyLevel::execute(NancyEngine *engine) {
-    engine->sceneManager->playState.difficulty = difficulty;
+    engine->playState.difficulty = difficulty;
     if (flagLabel != -1) {
-        engine->sceneManager->playState.eventFlags[flagLabel] = (PlayState::Flag)flagCondition;
+        engine->playState.eventFlags[flagLabel] = (PlayState::Flag)flagCondition;
     }
     isDone = true;
 }

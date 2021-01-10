@@ -43,6 +43,7 @@ public:
     virtual ~Logic() {}
 
     bool addNewActionRecord(Common::SeekableReadStream &inputData);
+    void processActionRecords();
 
 protected:
     virtual ActionRecord *createActionRecord(uint16 type);

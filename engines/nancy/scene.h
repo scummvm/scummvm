@@ -70,7 +70,6 @@ private:
     };
 
 public:
-    PlayState playState;
     int32 playerTimeMinuteLength;
     byte movementDirection;
 
