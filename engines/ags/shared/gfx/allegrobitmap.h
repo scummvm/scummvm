@@ -105,7 +105,7 @@ public:
 		return Size(_alBitmap->w, _alBitmap->h);
 	}
 	inline int  GetColorDepth() const {
-		return _alBitmap->format.bpp();
+		return (_alBitmap->format.bytesPerPixel == 1) ? 8 : _alBitmap->format.bpp();
 	}
 	// BPP: bytes per pixel
 	inline int  GetBPP() const {
