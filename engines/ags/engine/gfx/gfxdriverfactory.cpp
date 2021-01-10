@@ -57,16 +57,9 @@ void GetGfxDriverFactoryNames(StringV &ids) {
 }
 
 IGfxDriverFactory *GetGfxDriverFactory(const String id) {
-#if AGS_HAS_DIRECT3D
-	if (id.CompareNoCase("D3D9") == 0)
-		return D3D::D3DGraphicsFactory::GetFactory();
-#endif
-#if AGS_HAS_OPENGL
-	if (id.CompareNoCase("OGL") == 0)
-		return OGL::OGLGraphicsFactory::GetFactory();
-#endif
 	if (id.CompareNoCase("Software") == 0)
 		return ALSW::ALSWGraphicsFactory::GetFactory();
+
 	set_allegro_error("No graphics factory with such id: %s", id.GetCStr());
 	return nullptr;
 }
