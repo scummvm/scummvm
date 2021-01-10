@@ -41,7 +41,7 @@ namespace TwinE {
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
 
 bool Holomap::loadLocations() {
-	uint8 *locationsPtr;
+	uint8 *locationsPtr = nullptr;
 	const int32 locationsSize = HQR::getAllocEntry(&locationsPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
 	if (locationsSize == 0) {
 		warning("Could not find holomap locations at index %i in %s", RESSHQR_HOLOARROWINFO, Resources::HQR_RESS_FILE);
@@ -137,9 +137,10 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 size = _engine->_text->getTextSize(title);
 	const int32 x = centerx - size / 2;
 	const int32 y = top;
-	_engine->_text->setFontColor(15);
+	_engine->_text->setFontColor(COLOR_WHITE);
+	// TODO: handle @ newline
+	// TODO: faded in?
 	_engine->_text->drawText(x, y, title);
-	_engine->copyBlockPhys(x, y, x + 400, y + 100);
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
@@ -147,26 +148,34 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	// TODO
 }
 
-void Holomap::drawHolomapLocation() {
+void Holomap::drawHolomapLocation(int32 location) {
 	char title[256] = "";
-	for (int i = 0; i < NUM_LOCATIONS; ++i) {
-		if (!(_engine->_gameState->holomapFlags[i] & 0x81)) {
-			continue;
-		}
-		_engine->_text->getMenuText(200 + _locations[i].textIndex, title, sizeof(title));
-		break;
-	}
+	_engine->_text->getMenuText(_locations[location].textIndex, title, sizeof(title));
 	const int padding = 17;
 	Common::Rect rect;
 	rect.left = padding - 1;
 	rect.top = _engine->height() - 146;
 	rect.right = _engine->width() - padding;
 	rect.bottom = _engine->height() - padding;
+	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->_menu->drawBox(rect);
 	rect.grow(-1);
 	_engine->_interface->drawTransparentBox(rect, 3);
+	_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 	const int32 height = _engine->_text->getCharHeight(title[0]);
 	drawHolomapText(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2 - height / 2, title);
+	rect.grow(1);
+	_engine->copyBlockPhys(rect);
+}
+
+int32 Holomap::getNextHolomapLocation(int32 currentLocation, int dir) const {
+	const uint32 idx = currentLocation;
+	for (uint32 i = currentLocation + dir; i != idx; i = (i + dir) % NUM_LOCATIONS) {
+		if (_engine->_gameState->holomapFlags[i % NUM_LOCATIONS] & 0x81) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 void Holomap::processHolomap() {
@@ -188,9 +197,13 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
-	drawHolomapText(_engine->width() / 2, 25, "Holomap"); // TODO: fix the index
-	drawHolomapLocation();
+	drawHolomapText(_engine->width() / 2, 25, "HoloMap"); // TODO: fix the index
+	int currentLocation = _engine->_scene->currentSceneIdx;
+	drawHolomapLocation(currentLocation);
 	_engine->flip();
+
+	// TODO: load RESSHQR_HOLOSURFACE and project the texture to the surface
+	//_engine->_screens->loadImage(RESSHQR_HOLOIMG, RESSHQR_HOLOPAL);
 
 	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	for (;;) {
@@ -202,7 +215,17 @@ void Holomap::processHolomap() {
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapLeft)) {
+			const int32 nextLocation = getNextHolomapLocation(currentLocation, -1);
+			if (nextLocation != -1) {
+				currentLocation = nextLocation;
+				drawHolomapLocation(currentLocation);
+			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapRight)) {
+			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
+			if (nextLocation != -1) {
+				currentLocation = nextLocation;
+				drawHolomapLocation(currentLocation);
+			}
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapUp)) {

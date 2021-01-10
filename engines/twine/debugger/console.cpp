@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
+#include "twine/holomap.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
@@ -48,7 +49,10 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("hero_pos", WRAP_METHOD(TwinEConsole, doSetHeroPosition));
 	registerCmd("set_game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
 	registerCmd("show_game_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
-	registerCmd("inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
+	registerCmd("set_inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
+	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
+	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
+	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -111,13 +115,13 @@ bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
 bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		debugPrintf("Expected to get a inventory flag index as first parameter\n");
-		return false;
+		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx >= NUM_INVENTORY_ITEMS) {
 		debugPrintf("given index exceeds the max allowed value of %i\n", NUM_INVENTORY_ITEMS - 1);
-		return false;
+		return true;
 	}
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
 	_engine->_gameState->inventoryFlags[idx] = val;
@@ -125,10 +129,25 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 	return true;
 }
 
+bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a holomap flag index as first parameter\n");
+		return true;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	if (idx >= NUM_LOCATIONS) {
+		debugPrintf("given index exceeds the max allowed value of %i\n", NUM_LOCATIONS - 1);
+		return true;
+	}
+	_engine->_holomap->setHolomapPosition(idx);
+	return true;
+}
+
 bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		debugPrintf("Expected to get a game flag index as first parameter\n");
-		return false;
+		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
@@ -148,6 +167,38 @@ bool TwinEConsole::doPrintGameFlag(int argc, const char **argv) {
 
 	const uint8 idx = atoi(argv[1]);
 	debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->hasGameFlag(idx));
+
+	return true;
+}
+
+bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		for (int i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->inventoryFlags[i]);
+		}
+		return true;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	if (idx < NUM_INVENTORY_ITEMS) {
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->inventoryFlags[idx]);
+	}
+
+	return true;
+}
+
+bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		for (int i = 0; i < NUM_LOCATIONS; ++i) {
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->holomapFlags[i]);
+		}
+		return true;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	if (idx < NUM_LOCATIONS) {
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->holomapFlags[idx]);
+	}
 
 	return true;
 }

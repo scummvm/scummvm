@@ -219,6 +219,7 @@ Common::Error TwinEEngine::run() {
 	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
 
 	_menu->init();
+	_holomap->loadLocations();
 
 	if (ConfMan.hasKey("save_slot")) {
 		const int saveSlot = ConfMan.getInt("save_slot");
