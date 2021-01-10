@@ -173,7 +173,7 @@ LDFLAGS += -Wl,-T../../plugins/psp/main_prog.ld
 all: $(PSP_EBOOT)
 
 $(TARGET).elf: $(OBJS)
-	$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) $(LIBS) -o $@
+	+$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) $(LIBS) -o $@
 	cp $(TARGET).elf $(TARGET).org.elf
 	$(FIXUP) $@
 

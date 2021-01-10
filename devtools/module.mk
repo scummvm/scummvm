@@ -34,15 +34,15 @@ clean-devtools:
 
 devtools/convbdf$(EXEEXT): $(srcdir)/devtools/convbdf.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
+	+$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
 
 devtools/md5table$(EXEEXT): $(srcdir)/devtools/md5table.c
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
+	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
 devtools/make-scumm-fontdata$(EXEEXT): $(srcdir)/devtools/make-scumm-fontdata.c
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
-	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
+	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
 # Rule to explicitly rebuild the wwwroot archive
 wwwroot:
