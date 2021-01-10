@@ -22,6 +22,7 @@
 
 #include "ags/ags.h"
 #include "ags/detection.h"
+#include "ags/events.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -325,11 +326,14 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+
+	_events = new EventsManager();
 }
 
 AGSEngine::~AGSEngine() {
 	delete _screen;
 	delete _rawScreen;
+	delete _events;
 }
 
 uint32 AGSEngine::getFeatures() const {

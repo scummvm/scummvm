@@ -30,6 +30,7 @@
 #include "ags/engine/device/mousew32.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -260,14 +261,18 @@ int ags_getch() {
 }
 
 void ags_clear_input_buffer() {
-	while (ags_kbhit()) ags_getch();
-	while (mgetbutton() != NONE);
+	while (!SHOULD_QUIT && ags_kbhit())
+		ags_getch();
+
+	while (!SHOULD_QUIT && mgetbutton() != NONE) {
+	}
 }
 
 void ags_wait_until_keypress() {
-	while (!ags_kbhit()) {
+	while (!SHOULD_QUIT && !ags_kbhit()) {
 		platform->YieldCPU();
 	}
+
 	ags_getch();
 }
 

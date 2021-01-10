@@ -48,12 +48,14 @@ enum AGSDebugChannels {
 };
 
 struct AGSGameDescription;
+class EventsManager;
 
 class AGSEngine : public Engine {
 private:
 	const AGSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 public:
+	EventsManager *_events;
 	Graphics::Screen *_rawScreen;
 	::AGS3::BITMAP *_screen;
 	::AGS3::GFX_DRIVER *_gfxDriver;
@@ -102,6 +104,7 @@ public:
 extern AGSEngine *g_vm;
 #define screen ::AGS::g_vm->_screen
 #define gfx_driver ::AGS::g_vm->_gfxDriver
+#define SHOULD_QUIT ::AGS::g_vm->shouldQuit()
 
 } // namespace AGS
 
