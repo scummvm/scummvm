@@ -9,14 +9,13 @@ ConstantList constants;
 StringQueue stringToDefine;
 RectQueue rectToDefine;
 
-void define(char *n, Common::Rect *r) {
+void defineSymbol(char *n, Common::Rect *r) {
     Common::String *s = new Common::String(n);
     stringToDefine.push(*s);
     rectToDefine.push(r);
 }
 
-char *emalloc(unsigned n)	/* check return from malloc */
-{
+char *emalloc(unsigned n) {
     char *p;
 
     p = (char*) malloc(n);
@@ -24,8 +23,7 @@ char *emalloc(unsigned n)	/* check return from malloc */
     return p;
 }
 
-void showSymbol(Symbol *s)
-{
+void showSymbol(Symbol *s) {
     if (s->type == NUM)
         debug("%s %d",s->name->c_str(), s->u.val);
     else if (s->type == STRING)
@@ -41,8 +39,8 @@ void setSymbol(Symbol *s, int v) {
     s->u.val = v;
 }
 
-Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
-{
+/* find s in symbol table symlist */
+Symbol *lookup(Common::String s, SymbolMap symlist)	 {
     //debug("looking up %s", s.c_str());
     Symbol *r = symlist.getVal(s);
     /*if (strcmp(s.c_str(), "m_640x480") == 0) {
@@ -53,8 +51,8 @@ Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table sy
     return r;
 }
 
-Symbol *lookupName(char *n)  /* install s in some symbol table */
-{
+/* lookup some name in some symbol table */
+Symbol *lookupName(char *n) {
     //debug("looking up %s", n);
     Common::String *s = new Common::String(n);
 
@@ -75,15 +73,13 @@ Symbol *lookupName(char *n)  /* install s in some symbol table */
 
     else {
         debug("WARNING: %s not defined", n);
-        return addconstant(NAME, 0, n);
+        return constant(NAME, 0, n);
     }
 
 }
 
 
-
-
-void installall(char *n) {
+void installAll(char *n) {
     Common::String *s;
     Common::Rect *r;
 
@@ -125,8 +121,7 @@ void installall(char *n) {
 
 }
 
-Symbol *addconstant(int t, int d, char *s)
-{
+Symbol *constant(int t, int d, char *s) {
     Symbol *sp;
     Common::String *n = new Common::String("<constant>");
 
@@ -144,9 +139,8 @@ Symbol *addconstant(int t, int d, char *s)
     return sp;
 }
 
-
-Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist)  /* install s in symbol table */
-{
+/* install some symbol s in a symbol table */
+Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist) {
     Common::String *name = new Common::String(*n);
 
     Symbol *sp;

@@ -5,6 +5,7 @@
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "private/symbol.h"
 
 #ifndef PRIVATE_GRAMMAR_H
 #define PRIVATE_GRAMMAR_H
@@ -12,20 +13,8 @@
 #define	NSTACK	256
 #define	NPROG	10000
 
-typedef struct Arg {
-  int n;
-  int (**inst)();
-} Arg;
 
-typedef struct Symbol {	/* symbol table entry */
-	Common::String *name;
-	short	type;	/* NAME, NUM, STRING or RECT  */
-	union {
-		int	val;	    /* NAME or NUM */
-		char	*str;	    /* STRING */
-		Common::Rect *rect; /* RECT */
-	} u;
-} Symbol;
+namespace Private {
 
 typedef struct Datum {	/* interpreter stack type */
         short type;
@@ -37,7 +26,11 @@ typedef struct Datum {	/* interpreter stack type */
 	} u;
 } Datum;
 
-namespace Private {
+
+typedef struct Arg {
+  int n;
+  int (**inst)();
+} Arg;
 
 typedef int (*Inst)();	/* machine instruction */
 #define	STOP	(Inst) 0
@@ -67,28 +60,6 @@ extern Setting *psetting;
 typedef Common::HashMap<Common::String, Setting*> SettingMap;
 typedef Common::Queue<Common::String> StringQueue;
 typedef Common::Queue<Common::Rect*> RectQueue;
-
-
-extern StringQueue todefine;
-extern SettingMap settingcode;
-
-// Symbols
-
-extern void showSymbol(Symbol *);
-extern void setSymbol(Symbol *, int);
-
-typedef Common::HashMap<Common::String, Symbol*> SymbolMap;
-typedef Common::List<Symbol*> ConstantList;
-
-extern SymbolMap settings, variables, cursors, locations, rects;
-extern ConstantList constants;
-
-extern void define(char *, Common::Rect *); 
-extern Symbol  *install(Common::String *, int, int, char *, Common::Rect *, SymbolMap*);
-extern Symbol  *lookupName(char *);
-extern Symbol *addconstant(int, int, char *);
-extern void     installall(char *);
-extern Symbol  *lookup(Common::String, SymbolMap);
 
 // Funtions
 

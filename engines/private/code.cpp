@@ -8,8 +8,8 @@
 
 namespace Private {
 
-Setting *psetting;
-SettingMap settingcode;
+Setting *setting;
+SettingMap settingMap;
 
 Datum	*stack       = NULL;	/* the stack */
 Datum	*stackp      = NULL;	/* next free spot on stack */
@@ -47,11 +47,11 @@ void initInsts() {
 
 void initSetting()	/* initialize for code generation */
 {
-    psetting = (Setting*) malloc(sizeof(Setting));
-    memset((void *) psetting, 0, sizeof(Setting));
+    setting = (Setting*) malloc(sizeof(Setting));
+    memset((void *) setting, 0, sizeof(Setting));
 
-    prog = (Inst *) &psetting->prog;
-    stack = (Datum *) &psetting->stack;
+    prog = (Inst *) &setting->prog;
+    stack = (Datum *) &setting->stack;
 
     stackp = stack;
     progp = prog;
@@ -60,19 +60,19 @@ void initSetting()	/* initialize for code generation */
 void saveSetting(char *name)
 {
     Common::String s(name);
-    settingcode.setVal(s, psetting);
+    settingMap.setVal(s, setting);
     //debug("setting %s", name);
 }
 
 void loadSetting(Common::String *name)
 {
-    assert(settingcode.contains(*name));
-    psetting = settingcode.getVal(*name);
+    assert(settingMap.contains(*name));
+    setting = settingMap.getVal(*name);
 
     debug("loading setting %s", name->c_str());
 
-    prog = (Inst *) &psetting->prog;
-    stack = (Datum *) &psetting->stack;
+    prog = (Inst *) &setting->prog;
+    stack = (Datum *) &setting->stack;
 
     stackp = stack;
     progp = prog;
