@@ -43,6 +43,14 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
     g_private->_nextSetting = s;
 }
 
+
+void SyncSound(ArgArray args) { // should be goto, but this is a reserved word
+    // assert types
+    debug("SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
+    Common::String *s = new Common::String(args[1].u.str);
+    g_private->_nextSetting = s;
+}
+
 void Quit(ArgArray args) {
     debug("Quit()");
     g_private->quitGame();
@@ -69,9 +77,62 @@ void DossierAdd(ArgArray args) {
     debug("WARNING: DossierAdd is not implemented");
 }
 
-void Inventory(ArgArray args) {
+void NoStopSounds(ArgArray args) {
     // assert types
-    debug("WARNING: Inventory is not implemented");
+    debug("WARNING: NoStopSounds is not implemented");
+}
+
+void Inventory(ArgArray args) {
+
+    // assert types
+    Datum b1 = args[0]; 
+    Datum v1 = args[1];
+    Datum v2 = args[2];
+    Datum e = args[3];
+
+    Datum snd = args[8];
+
+    assert(v1.type == STRING || v1.type == NAME);
+    assert(b1.type == STRING);
+    assert(e.type == STRING || e.type == NUM);
+    assert(snd.type == STRING);
+
+
+    if (v1.type == STRING)
+        assert(strcmp(v1.u.str, "\"\"") == 0);
+
+    debug("Inventory(...)");
+    
+    if (strcmp(b1.u.str, "\"\"") != 0) {
+        Common::String *s = new Common::String(b1.u.str);
+        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        m->surf = g_private->loadMask(*s, 0, 0, true);
+        
+        if (e.type == NUM)
+            m->nextSetting = NULL;
+        else
+            m->nextSetting = new Common::String(e.u.str);
+
+        m->cursor = new Common::String("kInventory");
+        m->point = new Common::Point(0,0);
+        if (v1.type == NAME)
+            m->flag = v2.u.sym;
+        else
+            m->flag = NULL;
+        
+        g_private->_masks.push_front(*m);
+
+    }
+
+    if (v1.type == NAME)
+        v1.u.sym->u.val = 1;
+    
+    if (strcmp(snd.u.str, "\"\"") != 0) {
+        Common::String *s = new Common::String(snd.u.str);
+        g_private->playSound(*s);
+    }
+ 
+    // TODO: Keep track of inventory is missing    
 }
 
 void SetFlag(ArgArray args) {
@@ -112,7 +173,6 @@ void SetModifiedFlag(ArgArray args) {
     g_private->_modified = (bool) args[0].u.val;
 }
 
-
 void Sound(ArgArray args) {
     // assert types
     debug("Sound(%s)", args[0].u.str);
@@ -138,6 +198,11 @@ void LoopedSound(ArgArray args) {
     }
 }
 
+
+void ViewScreen(ArgArray args) {
+    // assert types
+    debug("WARNING: ViewScreen not implemented!");
+}
 
 void Transition(ArgArray args) {
     // assert types
@@ -215,6 +280,7 @@ void _Mask(ArgArray args, bool drawn) {
     m->surf = g_private->loadMask(*s, x, y, drawn);
     m->nextSetting = new Common::String(e);
     m->cursor = c;
+    m->flag = NULL;
     m->point = new Common::Point(x,y);
     g_private->_masks.push_front(*m);
 
@@ -247,6 +313,8 @@ static struct FuncTable {
     { Sound,           "Sound"},
     { Sound,           "SoundEffect"},
     { Sound,           "LoopedSound"},
+    { NoStopSounds,    "NoStopSounds"},
+    { SyncSound,       "SyncSound"},
     { Mask,            "Mask"},
     { MaskDrawn,       "MaskDrawn"},
     { Timer,	       "Timer"},
@@ -255,6 +323,7 @@ static struct FuncTable {
     { SetModifiedFlag, "SetModifiedFlag"},
     { Exit,            "Exit"},
     { Quit,            "Quit"},
+    { ViewScreen,      "ViewScreen"},
     { LoadGame,        "LoadGame"},
     { DossierAdd,      "DossierAdd"},
     { Inventory,       "Inventory"},

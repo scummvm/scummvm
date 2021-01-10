@@ -4,6 +4,7 @@
 
 #include "grammar.h"
 #include "grammar.tab.h"
+#include "private.h"
 
 namespace Private {
 
@@ -422,6 +423,18 @@ int ifcode()
     }
     debug("ifcode finished");
     pc = *((Inst **)(savepc+2));	 /* next stmt */
+    return 0;
+}
+
+int randbool()
+{
+    Datum d;
+    d = pop();
+    
+    int v = g_private->getRandomBool(d.u.val);
+     
+    d.u.val = v;
+    push(d);
     return 0;
 }
 

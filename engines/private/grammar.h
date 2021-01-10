@@ -75,6 +75,7 @@ extern SettingMap settingcode;
 // Symbols
 
 extern void showSymbol(Symbol *);
+extern void setSymbol(Symbol *, int);
 
 typedef Common::HashMap<Common::String, Symbol*> SymbolMap;
 typedef Common::List<Symbol*> ConstantList;
@@ -121,6 +122,7 @@ extern  int le();
 extern  int ge();
 extern  int eq();
 extern  int ne();
+extern  int randbool();
 
 // Code Execution
 
