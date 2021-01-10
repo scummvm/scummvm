@@ -3145,8 +3145,8 @@ EOF
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
 		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto=20"
-		append_var LDFLAGS "-flto=20"
+		append_var CXXFLAGS "-flto"
+		append_var LDFLAGS "-flto=jobserver"
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
