@@ -18,29 +18,28 @@ Inst	*progp       = NULL;	/* next free spot for code generation */
 Inst	*pc          = NULL;	/* program counter during execution */
 
 
-static struct FuncDescr {
+static struct InstDescr {
     const Inst func;
     const char *name;
-    const char *args;
-} funcDescr[] = {
-    { 0,					"STOP",				""  },
-    { constpush,	"constpush",	"" },
-    { strpush,	"strpush",	"" },
-    { varpush,	"varpush",	"" },
-    { funcpush,	"funcpush",	"" },
-    { eval,	"eval",	"" },
-    { ifcode,	"ifcode",	"" },
-    { add,	"add",	"" },
-    { negate,	"negate",	"" },
+} instDescr[] = {
+    { 0,        "STOP",     },
+    { constpush,"constpush" },
+    { strpush,  "strpush",	},
+    { varpush,  "varpush",	},
+    { funcpush, "funcpush",	},
+    { eval,	    "eval",     },
+    { ifcode,   "ifcode",	},
+    { add,      "add",      },
+    { negate,	"negate",	},
 
-    { 0, 0, 0 }
+    { 0, 0}
 };
 
-FuncHash _functions;
+PtrToName _insts;
 
-void initFuncs() {
-    for (FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
-        _functions[(void *)fnc->func] = new Common::String(fnc->name);
+void initInsts() {
+    for (InstDescr *fnc = instDescr; fnc->name; fnc++) {
+        _insts[(void *)fnc->func] = new Common::String(fnc->name);
     }
 }
 
@@ -148,11 +147,10 @@ int funcpush() //(char *name, int nargs)
     debug("executing %s with %d params", s.u.str, n.u.val);
     for (int i = 0; i < n.u.val; i++) {
         arg = pop();
-        //debug("%d", arg.val);
         args.insert(args.begin(), arg) ;
     }
 
-    execFunction(s.u.str, args);
+    call(s.u.str, args);
     return 0;
 }
 
@@ -232,20 +230,6 @@ int negate()
 
     d.u.val = !v;
     push(d);
-    return 0;
-}
-
-int assign()	/* assign top value to next value */
-{
-    Datum d1, d2;
-    d1 = pop();
-    d2 = pop();
-    /*if (d1.sym->type != VAR && d1.sym->type != UNDEF)
-    	execerror("assignment to non-variable",
-    		d1.sym->name);*/
-    d1.u.sym->u.val = d2.u.val;
-    d1.u.sym->type = NAME;
-    push(d2);
     return 0;
 }
 

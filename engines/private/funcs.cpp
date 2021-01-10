@@ -44,10 +44,15 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
 }
 
 void Quit(ArgArray args) {
-    debug("quit()");
+    debug("Quit()");
     g_private->quitGame();
 }
 
+
+void LoadGame(ArgArray args) {
+    // assert types
+    debug("WARNING: RestartGame is not implemented");
+}
 
 void RestartGame(ArgArray args) {
     // assert types
@@ -129,7 +134,6 @@ void LoopedSound(ArgArray args) {
 }
 
 
-
 void Transition(ArgArray args) {
     // assert types
     debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
@@ -144,8 +148,6 @@ void Movie(ArgArray args) {
         g_private->_nextMovie = new Common::String(args[0].u.str);
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
-
-
 
 void CRect(ArgArray args) {
     // assert types
@@ -184,7 +186,7 @@ void Bitmap(ArgArray args) {
     g_private->loadImage(*s, x, y);
 }
 
-void Mask(ArgArray args, bool drawn) {
+void _Mask(ArgArray args, bool drawn) {
     assert(args.size() == 3 || args.size() == 5);
 
     int x = 0;
@@ -213,6 +215,8 @@ void Mask(ArgArray args, bool drawn) {
 
 }
 
+void Mask(ArgArray args) { _Mask(args, false); }
+void MaskDrawn(ArgArray args) { _Mask(args, true); }
 
 void Timer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
@@ -227,77 +231,52 @@ void Timer(ArgArray args) {
     g_private->_nextSetting = s;
 }
 
+static struct FuncTable {
+    void (*func)(Private::ArgArray);
+    const char *name;
+} funcTable[] = {
+    { Bitmap,          "Bitmap"},
+    { ChgMode,         "ChgMode"},
+    { Goto,            "goto"},
+    { SetFlag,         "SetFlag"},
+    { Sound,           "Sound"},
+    { Sound,           "SoundEffect"},
+    { Sound,           "LoopedSound"},
+    { Mask,            "Mask"},
+    { MaskDrawn,       "MaskDrawn"},
+    { Timer,	       "Timer"},
+    { Transition,      "Transition"},
+    { Movie,           "Movie"},
+    { SetModifiedFlag, "SetModifiedFlag"},
+    { Exit,            "Exit"},
+    { Quit,            "Quit"},
+    { LoadGame,        "LoadGame"},
+    { DossierAdd,      "DossierAdd"},
+    { Inventory,       "Inventory"},
+    { VSPicture,       "VSPicture"},
+    { CRect,           "CRect"},
+    { RestartGame,     "RestartGame"},
+    { 0, 0}
+};
 
-void execFunction(char *name, ArgArray args) {
-    if (strcmp(name, "ChgMode") == 0) {
-        ChgMode(args);
-    }
-    else if (strcmp(name, "goto") == 0) {
-        Goto(args);
-    }
+NameToPtr _functions;
 
-    else if (strcmp(name, "SetFlag") == 0) {
-        SetFlag(args);
+void initFuncs() {
+    for (Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
+        Common::String *name = new Common::String(fnc->name);
+        _functions.setVal(*name, (void *)fnc->func);
     }
-    else if (strcmp(name, "Sound") == 0) {
-        Sound(args);
-    }
-    else if (strcmp(name, "SoundEffect") == 0) {
-        Sound(args); // Unclear how this is different from Sound
-    }
-    else if (strcmp(name, "LoopedSound") == 0) {
-        LoopedSound(args);
-    }
-    else if (strcmp(name, "Bitmap") == 0) {
-        Bitmap(args);
-    }
-    else if (strcmp(name, "Mask") == 0) {
-        Mask(args, false);
-    }
-    else if (strcmp(name, "MaskDrawn") == 0) {
-        Mask(args, true);
-    }
+}
 
-    else if (strcmp(name, "Timer") == 0) {
-        Timer(args);
-    }
-    else if (strcmp(name, "Transition") == 0) {
-        Transition(args);
-    }
-    else if (strcmp(name, "Movie") == 0) {
-        Movie(args);
-    }
-    else if (strcmp(name, "SetModifiedFlag") == 0) {
-        SetModifiedFlag(args);
-    }
-    else if (strcmp(name, "Exit") == 0) {
-        Exit(args);
-    }
-    else if (strcmp(name, "Quit") == 0) {
-        Quit(args);
-    }
-    else if (strcmp(name, "LoadGame") == 0) {
-        ;
-    }
-    else if (strcmp(name, "DossierAdd") == 0) {
-        DossierAdd(args);
-    }
-    else if (strcmp(name, "Inventory") == 0) {
-        Inventory(args);
-    }
-    else if (strcmp(name, "VSPicture") == 0) {
-        VSPicture(args);
-    }
-    else if (strcmp(name, "CRect") == 0) {
-        CRect(args);
-    }
-    else if (strcmp(name, "RestartGame") == 0) {
-        RestartGame(args);
-    }
-    else {
-        debug("I don't know how to exec %s", name);
+void call(char *name, ArgArray args) {
+    Common::String n(name);
+    if (!_functions.contains(n)) {
+        debug("I don't know how to execute %s", name);
         assert(0);
     }
+    
+    void (*func)(ArgArray) = (void (*)(ArgArray)) _functions.getVal(n);
+    func(args);
 
 }
 

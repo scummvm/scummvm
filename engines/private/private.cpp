@@ -101,6 +101,7 @@ Common::Error PrivateEngine::run() {
 
     void *buf = malloc(191000);
     file->read(buf, 191000);
+    initInsts();
     initFuncs();
     parse((char *) buf);
     assert(constants.size() > 0);

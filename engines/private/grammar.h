@@ -42,9 +42,12 @@ namespace Private {
 typedef int (*Inst)();	/* machine instruction */
 #define	STOP	(Inst) 0
 
-typedef Common::HashMap<void *, Common::String *> FuncHash;
+typedef Common::HashMap<void *, Common::String *> PtrToName;
+typedef Common::HashMap<Common::String, void *> NameToPtr;
 
+extern void initInsts();
 extern void initFuncs();
+
 
 typedef struct Setting {
 
@@ -89,7 +92,7 @@ extern Symbol  *lookup(Common::String, SymbolMap);
 // Funtions
 
 typedef Common::Array<Datum> ArgArray;
-extern void execFunction(char *, ArgArray);
+extern void call(char *, ArgArray);
 
 // Code Generation
 
