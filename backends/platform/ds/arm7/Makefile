@@ -156,7 +156,7 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 %.elf:
 	echo ELF
-	$(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
+	+$(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
 
 
 

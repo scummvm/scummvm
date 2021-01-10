@@ -80,7 +80,7 @@ ROMFS.img:
 	genromfs -f ./ROMFS.img -d ./ROMFS -V romtest
 
 $(TARGET).elf: $(OBJS)
-	$(LD) -o $(TARGET).elf $(OBJS) $(LDFLAGS)
+	+$(LD) -o $(TARGET).elf $(OBJS) $(LDFLAGS)
 
 $(TARGET).bin : $(TARGET).elf
 	$(OBJCOPY) $(TARGET).elf $(TARGET).bin -O binary
