@@ -85,7 +85,7 @@ void NoStopSounds(ArgArray args) {
 void Inventory(ArgArray args) {
 
     // assert types
-    Datum b1 = args[0]; 
+    Datum b1 = args[0];
     Datum v1 = args[1];
     Datum v2 = args[2];
     Datum e = args[3];
@@ -102,12 +102,12 @@ void Inventory(ArgArray args) {
         assert(strcmp(v1.u.str, "\"\"") == 0);
 
     debug("Inventory(...)");
-    
+
     if (strcmp(b1.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(b1.u.str);
         MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
-        
+
         if (e.type == NUM)
             m->nextSetting = NULL;
         else
@@ -119,20 +119,20 @@ void Inventory(ArgArray args) {
             m->flag = v2.u.sym;
         else
             m->flag = NULL;
-        
+
         g_private->_masks.push_front(*m);
 
     }
 
     if (v1.type == NAME)
         v1.u.sym->u.val = 1;
-    
+
     if (strcmp(snd.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(snd.u.str);
         g_private->playSound(*s);
     }
- 
-    // TODO: Keep track of inventory is missing    
+
+    // TODO: Keep track of inventory is missing
 }
 
 void SetFlag(ArgArray args) {
@@ -286,8 +286,12 @@ void _Mask(ArgArray args, bool drawn) {
 
 }
 
-void Mask(ArgArray args) { _Mask(args, false); }
-void MaskDrawn(ArgArray args) { _Mask(args, true); }
+void Mask(ArgArray args) {
+    _Mask(args, false);
+}
+void MaskDrawn(ArgArray args) {
+    _Mask(args, true);
+}
 
 void AddSound(char *s, char *t) {
     Common::String str(t);
@@ -301,9 +305,15 @@ void AddSound(char *s, char *t) {
         debug("error: invalid sound type %s", t);
 }
 
-void AMRadioClip(ArgArray args) { AddSound(args[0].u.str, "AMRadioClip"); }
-void PoliceClip(ArgArray args) { AddSound(args[0].u.str, "PoliceClip"); }
-void PhoneClip(ArgArray args) { AddSound(args[0].u.str, "PhoneClip"); }
+void AMRadioClip(ArgArray args) {
+    AddSound(args[0].u.str, "AMRadioClip");
+}
+void PoliceClip(ArgArray args) {
+    AddSound(args[0].u.str, "PoliceClip");
+}
+void PhoneClip(ArgArray args) {
+    AddSound(args[0].u.str, "PhoneClip");
+}
 
 void SoundArea(ArgArray args) {
     // assert types
@@ -343,14 +353,14 @@ static struct FuncTable {
     { PoliceClip,      "PoliceClip"},
     { PhoneClip,       "PhoneClip"},
     { SoundArea,       "SoundArea"},
- 
+
     // Images
     { Bitmap,          "Bitmap"},
     { Mask,            "Mask"},
     { MaskDrawn,       "MaskDrawn"},
     { VSPicture,       "VSPicture"},
     { ViewScreen,      "ViewScreen"},
- 
+
     // Video
     { Transition,      "Transition"},
     { Movie,           "Movie"},
@@ -382,7 +392,7 @@ void call(char *name, ArgArray args) {
         debug("I don't know how to execute %s", name);
         assert(0);
     }
-    
+
     void (*func)(ArgArray) = (void (*)(ArgArray)) _functions.getVal(n);
     func(args);
 
