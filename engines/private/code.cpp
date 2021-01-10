@@ -430,9 +430,9 @@ int randbool()
 {
     Datum d;
     d = pop();
-    
+
     int v = g_private->getRandomBool(d.u.val);
-     
+
     d.u.val = v;
     push(d);
     return 0;

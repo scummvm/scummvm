@@ -72,14 +72,14 @@ PrivateEngine::~PrivateEngine() {
 }
 
 Common::Error PrivateEngine::run() {
-    
-    assert(_installerArchive.open("SUPPORT/ASSETS.Z"));    
-    Common::SeekableReadStream *file = NULL; 
+
+    assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
+    Common::SeekableReadStream *file = NULL;
 
     if (_installerArchive.hasFile("GAME.DAT")) // if the full game is used
-        file = _installerArchive.createReadStreamForMember("GAME.DAT"); 
+        file = _installerArchive.createReadStreamForMember("GAME.DAT");
     else if (_installerArchive.hasFile("GAME.TXT")) // if the demo is used
-        file = _installerArchive.createReadStreamForMember("GAME.TXT"); 
+        file = _installerArchive.createReadStreamForMember("GAME.TXT");
 
     assert(file != NULL);
     void *buf = malloc(191000);
@@ -459,7 +459,7 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
     return surf;
 }
 
-void PrivateEngine::drawScreen() {    
+void PrivateEngine::drawScreen() {
     Graphics::Surface *screen = g_system->lockScreen();
     Graphics::ManagedSurface *surface = _compositeSurface;
     int w = surface->w;
@@ -488,7 +488,7 @@ void PrivateEngine::drawScreen() {
 
 bool PrivateEngine::getRandomBool(uint p) {
     uint r = _rnd->getRandomNumber(100);
-    return (r <= p);   
+    return (r <= p);
 }
 
 

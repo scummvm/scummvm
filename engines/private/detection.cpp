@@ -33,7 +33,7 @@ static const ADGameDescription gameDescriptions[] = {
 } // End of namespace Private
 
 static const char *const directoryGlobs[] = {
-    "SUPPORT", 
+    "SUPPORT",
     0
 };
 
