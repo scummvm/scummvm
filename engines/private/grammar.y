@@ -159,6 +159,6 @@ expr:     value           { $$ = $1; }
         | value '>' value { code1(Private::gt); }
         | value LTE value { code1(Private::le); }
         | value GTE value { code1(Private::ge); }
-        | value '+'       { code1(fail); } 
+        | value '+'       { $$ = $1; } // unclear what it should do 
         | RANDOMTOK '(' NUM '%' ')' { code3(Private::constpush, (Private::Inst)$NUM, randbool); }
         ;
