@@ -6,7 +6,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-//#include "engines/mohawk/installer_archive.h"
+#include "common/installer_archive.h"
 
 #include "audio/mixer.h"
 #include "video/smk_decoder.h"
@@ -52,7 +52,8 @@ typedef struct MaskInfo {
 } MaskInfo;
 
 typedef Common::List<ExitInfo> ExitList;  
-typedef Common::List<MaskInfo> MaskList;  
+typedef Common::List<MaskInfo> MaskList;
+typedef Common::List<Common::String> SoundList;   
 
 class PrivateEngine : public Engine {
 private:
@@ -71,7 +72,7 @@ public:
 
 	Audio::SoundHandle _soundHandle;
 	Video::SmackerDecoder *_videoDecoder;
-	//Mohawk::InstallerArchive _installerArchive;
+	Common::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
 	void selectMask(Common::Point);
@@ -113,6 +114,11 @@ public:
     Common::String *_nextMovie;
     ExitList _exits;
     MaskList _masks;
+
+	// Radios
+	SoundList _radio;
+	SoundList _police;
+	SoundList _phone;
 
 	bool getRandomBool(uint);
 

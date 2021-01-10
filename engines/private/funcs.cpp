@@ -289,6 +289,27 @@ void _Mask(ArgArray args, bool drawn) {
 void Mask(ArgArray args) { _Mask(args, false); }
 void MaskDrawn(ArgArray args) { _Mask(args, true); }
 
+void AddSound(char *s, char *t) {
+    Common::String str(t);
+    if (strcmp(t, "AMRadioClip") == 0)
+        g_private->_radio.push_front(str);
+    else if (strcmp(t, "PoliceClip") == 0)
+        g_private->_police.push_front(str);
+    else if (strcmp(t, "PhoneClip") == 0)
+        g_private->_phone.push_front(str);
+    else
+        debug("error: invalid sound type %s", t);
+}
+
+void AMRadioClip(ArgArray args) { AddSound(args[0].u.str, "AMRadioClip"); }
+void PoliceClip(ArgArray args) { AddSound(args[0].u.str, "PoliceClip"); }
+void PhoneClip(ArgArray args) { AddSound(args[0].u.str, "PhoneClip"); }
+
+void SoundArea(ArgArray args) {
+    // assert types
+    debug("WARNING: SoundArea not implemented!");
+}
+
 void Timer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
 
@@ -306,28 +327,40 @@ static struct FuncTable {
     void (*func)(Private::ArgArray);
     const char *name;
 } funcTable[] = {
-    { Bitmap,          "Bitmap"},
+
     { ChgMode,         "ChgMode"},
     { Goto,            "goto"},
     { SetFlag,         "SetFlag"},
+    { Timer,	       "Timer"},
+
+    // Sounds
     { Sound,           "Sound"},
     { Sound,           "SoundEffect"},
     { Sound,           "LoopedSound"},
     { NoStopSounds,    "NoStopSounds"},
     { SyncSound,       "SyncSound"},
+    { AMRadioClip,     "AMRadioClip"},
+    { PoliceClip,      "PoliceClip"},
+    { PhoneClip,       "PhoneClip"},
+    { SoundArea,       "SoundArea"},
+ 
+    // Images
+    { Bitmap,          "Bitmap"},
     { Mask,            "Mask"},
     { MaskDrawn,       "MaskDrawn"},
-    { Timer,	       "Timer"},
+    { VSPicture,       "VSPicture"},
+    { ViewScreen,      "ViewScreen"},
+ 
+    // Video
     { Transition,      "Transition"},
     { Movie,           "Movie"},
+
     { SetModifiedFlag, "SetModifiedFlag"},
     { Exit,            "Exit"},
     { Quit,            "Quit"},
-    { ViewScreen,      "ViewScreen"},
     { LoadGame,        "LoadGame"},
     { DossierAdd,      "DossierAdd"},
     { Inventory,       "Inventory"},
-    { VSPicture,       "VSPicture"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},
     { PoliceBust,      "PoliceBust"},

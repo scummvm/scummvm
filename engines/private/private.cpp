@@ -72,10 +72,16 @@ PrivateEngine::~PrivateEngine() {
 }
 
 Common::Error PrivateEngine::run() {
-    Common::File *file = new Common::File();
-    if (!file->open("GAME.DAT")) // if the full game is not used
-        assert(file->open("assets/GAME.TXT")); // open the demo file
+    
+    assert(_installerArchive.open("SUPPORT/ASSETS.Z"));    
+    Common::SeekableReadStream *file = NULL; 
 
+    if (_installerArchive.hasFile("GAME.DAT")) // if the full game is used
+        file = _installerArchive.createReadStreamForMember("GAME.DAT"); 
+    else if (_installerArchive.hasFile("GAME.TXT")) // if the demo is used
+        file = _installerArchive.createReadStreamForMember("GAME.TXT"); 
+
+    assert(file != NULL);
     void *buf = malloc(191000);
     file->read(buf, 191000);
 
@@ -98,7 +104,7 @@ Common::Error PrivateEngine::run() {
     CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
     CursorMan.showMouse(true);
-    
+
     _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
     _compositeSurface = new Graphics::ManagedSurface();
@@ -236,6 +242,9 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
     bool inside = false;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
+
+        if (mousePos.x > m.surf->h || mousePos.y > m.surf->w)
+            continue;
 
         //debug("Testing mask %s", m.nextSetting->c_str());
         if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {

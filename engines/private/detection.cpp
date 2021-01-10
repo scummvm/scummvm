@@ -12,7 +12,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",
         0,
-        AD_ENTRY1s("GAME.DAT", "7a3eb7d9dedf40680ac3d088524f976e", 190735),
+        AD_ENTRY1s("ASSETS.Z", "3a7532349cda8126e96dd5e49884af3a", 40232),
         Common::EN_ANY,
         Common::kPlatformWindows,
         ADGF_NO_FLAGS,
@@ -21,7 +21,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",
         0,
-        AD_ENTRY1s("GAME.TXT", "28ee7295db2cf6d9358ad737e3a4c4c0", 19286),
+        AD_ENTRY1s("ASSETS.Z", "854e141bb67535359620a1833fcc1566", 5955),
         Common::EN_ANY,
         Common::kPlatformWindows,
         ADGF_DEMO,
@@ -33,7 +33,7 @@ static const ADGameDescription gameDescriptions[] = {
 } // End of namespace Private
 
 static const char *const directoryGlobs[] = {
-    "assets", // english CD
+    "SUPPORT", 
     0
 };
 
