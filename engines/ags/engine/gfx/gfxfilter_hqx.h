@@ -34,7 +34,7 @@
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
-namespace ALSW {
+namespace ALGfx {
 
 class HqxGfxFilter : public AllegroGfxFilter {
 public:

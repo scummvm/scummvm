@@ -49,12 +49,12 @@
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
-namespace ALSW {
+namespace ALGfx {
 
 class AllegroGfxFilter;
 using AGS::Shared::Bitmap;
 
-class ALSoftwareBitmap : public IDriverDependantBitmap {
+class ALScummVMBitmap : public IDriverDependantBitmap {
 public:
 	// NOTE by CJ:
 	// Transparency is a bit counter-intuitive
@@ -92,7 +92,7 @@ public:
 	bool _hasAlpha;
 	int _transparency;
 
-	ALSoftwareBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
+	ALScummVMBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
 		_bmp = bmp;
 		_width = bmp->GetWidth();
 		_height = bmp->GetHeight();
@@ -116,15 +116,15 @@ public:
 		// do we want to free the bitmap?
 	}
 
-	~ALSoftwareBitmap() override {
+	~ALScummVMBitmap() override {
 		Dispose();
 	}
 };
 
 
-class ALSoftwareGfxModeList : public IGfxModeList {
+class ALScummVMGfxModeList : public IGfxModeList {
 public:
-	ALSoftwareGfxModeList(const GFX_MODE_LIST *alsw_gfx_mode_list)
+	ALScummVMGfxModeList(const GFX_MODE_LIST *alsw_gfx_mode_list)
 		: _gfxModeList(alsw_gfx_mode_list) {
 	}
 
@@ -139,7 +139,7 @@ private:
 };
 
 
-typedef SpriteDrawListEntry<ALSoftwareBitmap> ALDrawListEntry;
+typedef SpriteDrawListEntry<ALScummVMBitmap> ALDrawListEntry;
 // Software renderer's sprite batch
 struct ALSpriteBatch {
 	// List of sprites to render
@@ -154,9 +154,9 @@ struct ALSpriteBatch {
 typedef std::vector<ALSpriteBatch> ALSpriteBatches;
 
 
-class ALSoftwareGraphicsDriver : public GraphicsDriverBase {
+class ALScummVMGraphicsDriver : public GraphicsDriverBase {
 public:
-	ALSoftwareGraphicsDriver();
+	ALScummVMGraphicsDriver();
 
 	const char *GetDriverName() override {
 		return "Software renderer";
@@ -216,14 +216,14 @@ public:
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer() override;
-	~ALSoftwareGraphicsDriver() override;
+	~ALScummVMGraphicsDriver() override;
 
-	typedef std::shared_ptr<AllegroGfxFilter> PALSWFilter;
+	typedef std::shared_ptr<AllegroGfxFilter> PALScummVMFilter;
 
-	void SetGraphicsFilter(PALSWFilter filter);
+	void SetGraphicsFilter(PALScummVMFilter filter);
 
 private:
-	PALSWFilter _filter;
+	PALScummVMFilter _filter;
 
 	bool _autoVsync;
 	Bitmap *_allegroScreenWrapper;
@@ -273,24 +273,24 @@ private:
 };
 
 
-class ALSWGraphicsFactory : public GfxDriverFactoryBase<ALSoftwareGraphicsDriver, AllegroGfxFilter> {
+class ALScummVMGraphicsFactory : public GfxDriverFactoryBase<ALScummVMGraphicsDriver, AllegroGfxFilter> {
 public:
-	~ALSWGraphicsFactory() override;
+	~ALScummVMGraphicsFactory() override;
 
 	size_t               GetFilterCount() const override;
 	const GfxFilterInfo *GetFilterInfo(size_t index) const override;
 	String               GetDefaultFilterID() const override;
 
-	static  ALSWGraphicsFactory *GetFactory();
+	static  ALScummVMGraphicsFactory *GetFactory();
 
 private:
-	ALSoftwareGraphicsDriver *EnsureDriverCreated() override;
+	ALScummVMGraphicsDriver *EnsureDriverCreated() override;
 	AllegroGfxFilter *CreateFilter(const String &id) override;
 
-	static ALSWGraphicsFactory *_factory;
+	static ALScummVMGraphicsFactory *_factory;
 };
 
-} // namespace ALSW
+} // namespace ALGfx
 } // namespace Engine
 } // namespace AGS
 } // namespace AGS3

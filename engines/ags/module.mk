@@ -245,7 +245,7 @@ MODULE_OBJS = \
 	engine/game/savegame.o \
 	engine/game/savegame_components.o \
 	engine/game/viewport.o \
-	engine/gfx/ali3dsw.o \
+	engine/gfx/ali3dscummvm.o \
 	engine/gfx/blender.o \
 	engine/gfx/color_engine.o \
 	engine/gfx/gfx_util.o \

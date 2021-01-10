@@ -25,7 +25,7 @@
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
-namespace ALSW {
+namespace ALGfx {
 
 using namespace Shared;
 
