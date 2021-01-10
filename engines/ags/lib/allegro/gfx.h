@@ -189,6 +189,12 @@ public:
 	Graphics::ManagedSurface &operator*() const {
 		return *_owner;
 	}
+	Graphics::ManagedSurface &getSurface() {
+		return *_owner;
+	}
+	const Graphics::ManagedSurface &getSurface() const {
+		return *_owner;
+	}
 
 	unsigned char *getPixels() const {
 		return (unsigned char *)_owner->getPixels();

@@ -210,7 +210,7 @@ void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int 
 }
 
 void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	error("TODO: draw_trans_sprite");
+	bmp->getSurface().blitFrom(sprite->getSurface(), Common::Point(x, y));
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
