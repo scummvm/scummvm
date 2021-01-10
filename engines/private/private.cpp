@@ -28,31 +28,6 @@ PrivateEngine *g_private = NULL;
 
 extern int parse(char*);
 
-static const byte MOUSECURSOR_SCI[] = {
-    1,1,0,0,0,0,0,0,0,0,0,
-    1,2,1,0,0,0,0,0,0,0,0,
-    1,2,2,1,0,0,0,0,0,0,0,
-    1,2,2,2,1,0,0,0,0,0,0,
-    1,2,2,2,2,1,0,0,0,0,0,
-    1,2,2,2,2,2,1,0,0,0,0,
-    1,2,2,2,2,2,2,1,0,0,0,
-    1,2,2,2,2,2,2,2,1,0,0,
-    1,2,2,2,2,2,2,2,2,1,0,
-    1,2,2,2,2,2,2,2,2,2,1,
-    1,2,2,2,2,2,1,0,0,0,0,
-    1,2,1,0,1,2,2,1,0,0,0,
-    1,1,0,0,1,2,2,1,0,0,0,
-    0,0,0,0,0,1,2,2,1,0,0,
-    0,0,0,0,0,1,2,2,1,0,0,
-    0,0,0,0,0,0,1,2,2,1,0
-};
-
-static const byte cursorPalette[] = {
-    0, 0, 0,           // Black / Transparent
-    0x80, 0x80, 0x80,  // Gray
-    0xff, 0xff, 0xff   // White
-};
-
 PrivateEngine::PrivateEngine(OSystem *syst)
     : Engine(syst) {
     // Put your engine in a sane state, but do nothing big yet;
@@ -114,7 +89,7 @@ Common::Error PrivateEngine::run() {
     _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
 
-    CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
+    CursorMan.replaceCursor(MOUSECURSOR_kExit, 32, 32, 0, 0, 0);
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 
     _origin = new Common::Point(0, 0);

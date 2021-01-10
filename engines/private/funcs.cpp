@@ -59,6 +59,11 @@ void RestartGame(ArgArray args) {
     debug("WARNING: RestartGame is not implemented");
 }
 
+void PoliceBust(ArgArray args) {
+    // assert types
+    debug("WARNING: PoliceBust is not implemented");
+}
+
 void DossierAdd(ArgArray args) {
     // assert types
     debug("WARNING: DossierAdd is not implemented");
@@ -256,6 +261,7 @@ static struct FuncTable {
     { VSPicture,       "VSPicture"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},
+    { PoliceBust,      "PoliceBust"},
     { 0, 0}
 };
 

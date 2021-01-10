@@ -23,6 +23,10 @@ struct ManagedSurface;
 
 namespace Private {
 
+extern const byte MOUSECURSOR_SCI[];
+extern const byte MOUSECURSOR_kExit[];
+extern const byte cursorPalette[];
+
 class Console;
 
 // our engine debug channels
