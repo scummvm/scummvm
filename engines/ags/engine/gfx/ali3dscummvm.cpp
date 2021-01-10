@@ -26,7 +26,7 @@
 //
 //=============================================================================
 
-#include "ags/engine/gfx/ali3dsw.h"
+#include "ags/engine/gfx/ali3dscummvm.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/gfx/ali3dexception.h"
 #include "ags/engine/gfx/gfxfilter_allegro.h"
@@ -63,11 +63,11 @@ extern int dxmedia_play_video(const char *, bool, int, int);
 
 namespace AGS {
 namespace Engine {
-namespace ALSW {
+namespace ALGfx {
 
 using namespace Shared;
 
-bool ALSoftwareGfxModeList::GetMode(int index, DisplayMode &mode) const {
+bool ALScummVMGfxModeList::GetMode(int index, DisplayMode &mode) const {
 	if (_gfxModeList && index >= 0 && index < _gfxModeList->num_modes) {
 		mode.Width = _gfxModeList->mode[index].width;
 		mode.Height = _gfxModeList->mode[index].height;
@@ -81,7 +81,7 @@ unsigned long _trans_alpha_blender32(unsigned long x, unsigned long y, unsigned 
 RGB faded_out_palette[256];
 
 
-ALSoftwareGraphicsDriver::ALSoftwareGraphicsDriver() {
+ALScummVMGraphicsDriver::ALScummVMGraphicsDriver() {
 	_tint_red = 0;
 	_tint_green = 0;
 	_tint_blue = 0;
@@ -97,10 +97,10 @@ ALSoftwareGraphicsDriver::ALSoftwareGraphicsDriver() {
 	_stageVirtualScreen = nullptr;
 
 	// Initialize default sprite batch, it will be used when no other batch was activated
-	ALSoftwareGraphicsDriver::InitSpriteBatch(0, _spriteBatchDesc[0]);
+	ALScummVMGraphicsDriver::InitSpriteBatch(0, _spriteBatchDesc[0]);
 }
 
-bool ALSoftwareGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
+bool ALScummVMGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 	if (mode.Width <= 0 || mode.Height <= 0 || mode.ColorDepth <= 0) {
 		set_allegro_error("Invalid resolution parameters: %d x %d x %d", mode.Width, mode.Height, mode.ColorDepth);
 		return false;
@@ -132,28 +132,28 @@ bool ALSoftwareGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 	return true;
 }
 
-int ALSoftwareGraphicsDriver::GetDisplayDepthForNativeDepth(int native_color_depth) const {
+int ALScummVMGraphicsDriver::GetDisplayDepthForNativeDepth(int native_color_depth) const {
 	// TODO: check for device caps to know which depth is supported?
 	if (native_color_depth > 8)
 		return 32;
 	return native_color_depth;
 }
 
-IGfxModeList *ALSoftwareGraphicsDriver::GetSupportedModeList(int color_depth) {
+IGfxModeList *ALScummVMGraphicsDriver::GetSupportedModeList(int color_depth) {
 	if (_gfxModeList == nullptr) {
 		_gfxModeList = get_gfx_mode_list(GetAllegroGfxDriverID(false));
 	}
 	if (_gfxModeList == nullptr) {
 		return nullptr;
 	}
-	return new ALSoftwareGfxModeList(_gfxModeList);
+	return new ALScummVMGfxModeList(_gfxModeList);
 }
 
-PGfxFilter ALSoftwareGraphicsDriver::GetGraphicsFilter() const {
+PGfxFilter ALScummVMGraphicsDriver::GetGraphicsFilter() const {
 	return _filter;
 }
 
-int ALSoftwareGraphicsDriver::GetAllegroGfxDriverID(bool windowed) {
+int ALScummVMGraphicsDriver::GetAllegroGfxDriverID(bool windowed) {
 #if AGS_PLATFORM_OS_WINDOWS
 	if (windowed)
 		return GFX_DIRECTX_WIN;
@@ -174,7 +174,7 @@ int ALSoftwareGraphicsDriver::GetAllegroGfxDriverID(bool windowed) {
 #endif
 }
 
-void ALSoftwareGraphicsDriver::SetGraphicsFilter(PALSWFilter filter) {
+void ALScummVMGraphicsDriver::SetGraphicsFilter(PALScummVMFilter filter) {
 	_filter = filter;
 	OnSetFilter();
 
@@ -182,11 +182,11 @@ void ALSoftwareGraphicsDriver::SetGraphicsFilter(PALSWFilter filter) {
 	CreateVirtualScreen();
 }
 
-void ALSoftwareGraphicsDriver::SetTintMethod(TintMethod method) {
+void ALScummVMGraphicsDriver::SetTintMethod(TintMethod method) {
 	// TODO: support new D3D-style tint method
 }
 
-bool ALSoftwareGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile int *loopTimer) {
+bool ALScummVMGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile int *loopTimer) {
 	ReleaseDisplayMode();
 
 	const int driver = GetAllegroGfxDriverID(mode.Windowed);
@@ -226,7 +226,7 @@ bool ALSoftwareGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile 
 	return true;
 }
 
-void ALSoftwareGraphicsDriver::CreateVirtualScreen() {
+void ALScummVMGraphicsDriver::CreateVirtualScreen() {
 	if (!IsModeSet() || !IsRenderFrameValid() || !IsNativeSizeValid() || !_filter)
 		return;
 	DestroyVirtualScreen();
@@ -246,7 +246,7 @@ void ALSoftwareGraphicsDriver::CreateVirtualScreen() {
 	screen = (BITMAP *)_origVirtualScreen->GetAllegroBitmap();
 }
 
-void ALSoftwareGraphicsDriver::DestroyVirtualScreen() {
+void ALScummVMGraphicsDriver::DestroyVirtualScreen() {
 	if (_filter && _origVirtualScreen) {
 		screen = (BITMAP *)_filter->ShutdownAndReturnRealScreen()->GetAllegroBitmap();
 	}
@@ -255,7 +255,7 @@ void ALSoftwareGraphicsDriver::DestroyVirtualScreen() {
 	_stageVirtualScreen = nullptr;
 }
 
-void ALSoftwareGraphicsDriver::ReleaseDisplayMode() {
+void ALScummVMGraphicsDriver::ReleaseDisplayMode() {
 	OnModeReleased();
 	ClearDrawLists();
 
@@ -273,21 +273,21 @@ void ALSoftwareGraphicsDriver::ReleaseDisplayMode() {
 	_allegroScreenWrapper = nullptr;
 }
 
-bool ALSoftwareGraphicsDriver::SetNativeSize(const Size &src_size) {
+bool ALScummVMGraphicsDriver::SetNativeSize(const Size &src_size) {
 	OnSetNativeSize(src_size);
 	// If we already have a gfx mode and gfx filter set, then use it to update virtual screen immediately
 	CreateVirtualScreen();
 	return !_srcRect.IsEmpty();
 }
 
-bool ALSoftwareGraphicsDriver::SetRenderFrame(const Rect &dst_rect) {
+bool ALScummVMGraphicsDriver::SetRenderFrame(const Rect &dst_rect) {
 	OnSetRenderFrame(dst_rect);
 	// If we already have a gfx mode and gfx filter set, then use it to update virtual screen immediately
 	CreateVirtualScreen();
 	return !_dstRect.IsEmpty();
 }
 
-void ALSoftwareGraphicsDriver::ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) {
+void ALScummVMGraphicsDriver::ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) {
 	if (!_filter) return;
 	int color = 0;
 	if (colorToUse != nullptr)
@@ -296,11 +296,11 @@ void ALSoftwareGraphicsDriver::ClearRectangle(int x1, int y1, int x2, int y2, RG
 	_filter->ClearRect(x1, y1, x2, y2, color);
 }
 
-ALSoftwareGraphicsDriver::~ALSoftwareGraphicsDriver() {
-	ALSoftwareGraphicsDriver::UnInit();
+ALScummVMGraphicsDriver::~ALScummVMGraphicsDriver() {
+	ALScummVMGraphicsDriver::UnInit();
 }
 
-void ALSoftwareGraphicsDriver::UnInit() {
+void ALScummVMGraphicsDriver::UnInit() {
 	OnUnInit();
 	ReleaseDisplayMode();
 
@@ -310,7 +310,7 @@ void ALSoftwareGraphicsDriver::UnInit() {
 	}
 }
 
-bool ALSoftwareGraphicsDriver::SupportsGammaControl() {
+bool ALScummVMGraphicsDriver::SupportsGammaControl() {
 #if AGS_DDRAW_GAMMA_CONTROL
 
 	if (dxGammaControl != NULL) {
@@ -322,7 +322,7 @@ bool ALSoftwareGraphicsDriver::SupportsGammaControl() {
 	return 0;
 }
 
-void ALSoftwareGraphicsDriver::SetGamma(int newGamma) {
+void ALScummVMGraphicsDriver::SetGamma(int newGamma) {
 #if AGS_DDRAW_GAMMA_CONTROL
 	for (int i = 0; i < 256; i++) {
 		int newValue = ((int)defaultGammaRamp.red[i] * newGamma) / 100;
@@ -337,26 +337,26 @@ void ALSoftwareGraphicsDriver::SetGamma(int newGamma) {
 #endif
 }
 
-int ALSoftwareGraphicsDriver::GetCompatibleBitmapFormat(int color_depth) {
+int ALScummVMGraphicsDriver::GetCompatibleBitmapFormat(int color_depth) {
 	return color_depth;
 }
 
-IDriverDependantBitmap *ALSoftwareGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
-	ALSoftwareBitmap *newBitmap = new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
+IDriverDependantBitmap *ALScummVMGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	ALScummVMBitmap *newBitmap = new ALScummVMBitmap(bitmap, opaque, hasAlpha);
 	return newBitmap;
 }
 
-void ALSoftwareGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
-	ALSoftwareBitmap *alSwBmp = (ALSoftwareBitmap *)bitmapToUpdate;
-	alSwBmp->_bmp = bitmap;
-	alSwBmp->_hasAlpha = hasAlpha;
+void ALScummVMGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
+	ALScummVMBitmap *ALScummVMBmp = (ALScummVMBitmap *)bitmapToUpdate;
+	ALScummVMBmp->_bmp = bitmap;
+	ALScummVMBmp->_hasAlpha = hasAlpha;
 }
 
-void ALSoftwareGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {
+void ALScummVMGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {
 	delete bitmap;
 }
 
-void ALSoftwareGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) {
+void ALScummVMGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) {
 	if (_spriteBatches.size() <= index)
 		_spriteBatches.resize(index + 1);
 	ALSpriteBatch &batch = _spriteBatches[index];
@@ -393,29 +393,29 @@ void ALSoftwareGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBatchDe
 	}
 }
 
-void ALSoftwareGraphicsDriver::ResetAllBatches() {
+void ALScummVMGraphicsDriver::ResetAllBatches() {
 	for (ALSpriteBatches::iterator it = _spriteBatches.begin(); it != _spriteBatches.end(); ++it)
 		it->List.clear();
 }
 
-void ALSoftwareGraphicsDriver::DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) {
-	_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALSoftwareBitmap *)bitmap, x, y));
+void ALScummVMGraphicsDriver::DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) {
+	_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALScummVMBitmap *)bitmap, x, y));
 }
 
-void ALSoftwareGraphicsDriver::SetScreenFade(int red, int green, int blue) {
+void ALScummVMGraphicsDriver::SetScreenFade(int red, int green, int blue) {
 	// TODO: was not necessary atm
 }
 
-void ALSoftwareGraphicsDriver::SetScreenTint(int red, int green, int blue) {
+void ALScummVMGraphicsDriver::SetScreenTint(int red, int green, int blue) {
 	_tint_red = red;
 	_tint_green = green;
 	_tint_blue = blue;
 	if (((_tint_red > 0) || (_tint_green > 0) || (_tint_blue > 0)) && (_mode.ColorDepth > 8)) {
-		_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALSoftwareBitmap *)0x1, 0, 0));
+		_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALScummVMBitmap *)0x1, 0, 0));
 	}
 }
 
-void ALSoftwareGraphicsDriver::RenderToBackBuffer() {
+void ALScummVMGraphicsDriver::RenderToBackBuffer() {
 	// Render all the sprite batches with necessary transformations
 	//
 	// NOTE: that's not immediately clear whether it would be faster to first draw upon a camera-sized
@@ -452,7 +452,7 @@ void ALSoftwareGraphicsDriver::RenderToBackBuffer() {
 	ClearDrawLists();
 }
 
-void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Shared::Bitmap *surface, int surf_offx, int surf_offy) {
+void ALScummVMGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Shared::Bitmap *surface, int surf_offx, int surf_offy) {
 	const std::vector<ALDrawListEntry> &drawlist = batch.List;
 	for (size_t i = 0; i < drawlist.size(); i++) {
 		if (drawlist[i].bitmap == nullptr) {
@@ -462,14 +462,14 @@ void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Sha
 				error("Unhandled attempt to draw null sprite");
 
 			continue;
-		} else if (drawlist[i].bitmap == (ALSoftwareBitmap *)0x1) {
+		} else if (drawlist[i].bitmap == (ALScummVMBitmap *)0x1) {
 			// draw screen tint fx
 			set_trans_blender(_tint_red, _tint_green, _tint_blue, 0);
 			surface->LitBlendBlt(surface, 0, 0, 128);
 			continue;
 		}
 
-		ALSoftwareBitmap *bitmap = drawlist[i].bitmap;
+		ALScummVMBitmap *bitmap = drawlist[i].bitmap;
 		int drawAtX = drawlist[i].x + surf_offx;
 		int drawAtY = drawlist[i].y + surf_offy;
 
@@ -511,7 +511,7 @@ void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Sha
 		Blit(_spareTintingScreen, surface, 0, 0, 0, 0, _spareTintingScreen->GetWidth(), _spareTintingScreen->GetHeight());*/
 }
 
-void ALSoftwareGraphicsDriver::Render(int xoff, int yoff, GlobalFlipType flip) {
+void ALScummVMGraphicsDriver::Render(int xoff, int yoff, GlobalFlipType flip) {
 	RenderToBackBuffer();
 
 	if (_autoVsync)
@@ -523,19 +523,19 @@ void ALSoftwareGraphicsDriver::Render(int xoff, int yoff, GlobalFlipType flip) {
 		_filter->RenderScreenFlipped(virtualScreen, xoff, yoff, flip);
 }
 
-void ALSoftwareGraphicsDriver::Render() {
+void ALScummVMGraphicsDriver::Render() {
 	Render(0, 0, kFlip_None);
 }
 
-void ALSoftwareGraphicsDriver::Vsync() {
+void ALScummVMGraphicsDriver::Vsync() {
 	vsync();
 }
 
-Bitmap *ALSoftwareGraphicsDriver::GetMemoryBackBuffer() {
+Bitmap *ALScummVMGraphicsDriver::GetMemoryBackBuffer() {
 	return virtualScreen;
 }
 
-void ALSoftwareGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) {
+void ALScummVMGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) {
 	if (backBuffer) {
 		virtualScreen = backBuffer;
 	} else {
@@ -550,11 +550,11 @@ void ALSoftwareGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) {
 	}
 }
 
-Bitmap *ALSoftwareGraphicsDriver::GetStageBackBuffer() {
+Bitmap *ALScummVMGraphicsDriver::GetStageBackBuffer() {
 	return _stageVirtualScreen;
 }
 
-bool ALSoftwareGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) {
+bool ALScummVMGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) {
 	(void)at_native_res; // software driver always renders at native resolution at the moment
 	// software filter is taught to copy to any size
 	if (destination->GetColorDepth() != _mode.ColorDepth) {
@@ -573,7 +573,7 @@ bool ALSoftwareGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bo
 
 	Author: Matthew Leverton
 **/
-void ALSoftwareGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ALScummVMGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = bmp_orig->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);
@@ -605,7 +605,7 @@ void ALSoftwareGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback
 	_filter->RenderScreen(vs, offx, offy);
 }
 
-void ALSoftwareGraphicsDriver::highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ALScummVMGraphicsDriver::highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = vs->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);
@@ -650,7 +650,7 @@ void initialize_fade_256(int r, int g, int b) {
 	}
 }
 
-void ALSoftwareGraphicsDriver::__fade_from_range(PALETTE source, PALETTE dest, int speed, int from, int to) {
+void ALScummVMGraphicsDriver::__fade_from_range(PALETTE source, PALETTE dest, int speed, int from, int to) {
 	PALETTE temp;
 	int c;
 
@@ -667,7 +667,7 @@ void ALSoftwareGraphicsDriver::__fade_from_range(PALETTE source, PALETTE dest, i
 	set_palette_range(dest, from, to, TRUE);
 }
 
-void ALSoftwareGraphicsDriver::__fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ALScummVMGraphicsDriver::__fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	PALETTE temp;
 
 	initialize_fade_256(targetColourRed, targetColourGreen, targetColourBlue);
@@ -675,7 +675,7 @@ void ALSoftwareGraphicsDriver::__fade_out_range(int speed, int from, int to, int
 	__fade_from_range(temp, faded_out_palette, speed, from, to);
 }
 
-void ALSoftwareGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ALScummVMGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	if (_mode.ColorDepth > 8) {
 		highcolor_fade_out(virtualScreen, _drawPostScreenCallback, 0, 0, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
@@ -683,7 +683,7 @@ void ALSoftwareGraphicsDriver::FadeOut(int speed, int targetColourRed, int targe
 	}
 }
 
-void ALSoftwareGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ALScummVMGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	if (_drawScreenCallback) {
 		_drawScreenCallback();
 		RenderToBackBuffer();
@@ -696,7 +696,7 @@ void ALSoftwareGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColourRed,
 	}
 }
 
-void ALSoftwareGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int delay) {
+void ALScummVMGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int delay) {
 	if (blackingOut) {
 		int yspeed = _srcRect.GetHeight() / (_srcRect.GetWidth() / speed);
 		int boxwid = speed, boxhit = yspeed;
@@ -734,7 +734,7 @@ void ALSoftwareGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int del
 
 #ifndef AGS_NO_VIDEO_PLAYER
 
-bool ALSoftwareGraphicsDriver::PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen) {
+bool ALScummVMGraphicsDriver::PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen) {
 #if AGS_PLATFORM_OS_WINDOWS
 	int result = dxmedia_play_video(filename, useAVISound, skipType, stretchToFullScreen ? 1 : 0);
 	return (result == 0);
@@ -766,17 +766,17 @@ unsigned long _trans_alpha_blender32(unsigned long x, unsigned long y, unsigned 
 }
 
 
-ALSWGraphicsFactory *ALSWGraphicsFactory::_factory = nullptr;
+ALScummVMGraphicsFactory *ALScummVMGraphicsFactory::_factory = nullptr;
 
-ALSWGraphicsFactory::~ALSWGraphicsFactory() {
+ALScummVMGraphicsFactory::~ALScummVMGraphicsFactory() {
 	_factory = nullptr;
 }
 
-size_t ALSWGraphicsFactory::GetFilterCount() const {
+size_t ALScummVMGraphicsFactory::GetFilterCount() const {
 	return 2;
 }
 
-const GfxFilterInfo *ALSWGraphicsFactory::GetFilterInfo(size_t index) const {
+const GfxFilterInfo *ALScummVMGraphicsFactory::GetFilterInfo(size_t index) const {
 	switch (index) {
 	case 0:
 		return &AllegroGfxFilter::FilterInfo;
@@ -787,23 +787,23 @@ const GfxFilterInfo *ALSWGraphicsFactory::GetFilterInfo(size_t index) const {
 	}
 }
 
-String ALSWGraphicsFactory::GetDefaultFilterID() const {
+String ALScummVMGraphicsFactory::GetDefaultFilterID() const {
 	return AllegroGfxFilter::FilterInfo.Id;
 }
 
-/* static */ ALSWGraphicsFactory *ALSWGraphicsFactory::GetFactory() {
+/* static */ ALScummVMGraphicsFactory *ALScummVMGraphicsFactory::GetFactory() {
 	if (!_factory)
-		_factory = new ALSWGraphicsFactory();
+		_factory = new ALScummVMGraphicsFactory();
 	return _factory;
 }
 
-ALSoftwareGraphicsDriver *ALSWGraphicsFactory::EnsureDriverCreated() {
+ALScummVMGraphicsDriver *ALScummVMGraphicsFactory::EnsureDriverCreated() {
 	if (!_driver)
-		_driver = new ALSoftwareGraphicsDriver();
+		_driver = new ALScummVMGraphicsDriver();
 	return _driver;
 }
 
-AllegroGfxFilter *ALSWGraphicsFactory::CreateFilter(const String &id) {
+AllegroGfxFilter *ALScummVMGraphicsFactory::CreateFilter(const String &id) {
 	if (AllegroGfxFilter::FilterInfo.Id.CompareNoCase(id) == 0)
 		return new AllegroGfxFilter();
 	else if (HqxGfxFilter::FilterInfo.Id.CompareNoCase(id) == 0)
@@ -811,7 +811,7 @@ AllegroGfxFilter *ALSWGraphicsFactory::CreateFilter(const String &id) {
 	return nullptr;
 }
 
-} // namespace ALSW
+} // namespace ALScummVM
 } // namespace Engine
 } // namespace AGS
 } // namespace AGS3

@@ -27,19 +27,8 @@
 #define AGS_HAS_DIRECT3D (AGS_PLATFORM_OS_WINDOWS)
 #define AGS_HAS_OPENGL (AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX)
 
-#include "ags/engine/gfx/ali3dsw.h"
+#include "ags/engine/gfx/ali3dscummvm.h"
 #include "ags/engine/gfx/gfxfilter_allegro.h"
-
-#if AGS_HAS_OPENGL
-#include "ags/engine/gfx/ali3dogl.h"
-#include "ags/engine/gfx/gfxfilter_ogl.h"
-#endif
-
-#if AGS_HAS_DIRECT3D
-#include "ags/engine/platform/windows/gfx/ali3dd3d.h"
-#include "ags/engine/gfx/gfxfilter_d3d.h"
-#endif
-
 #include "ags/engine/main/main_allegro.h"
 
 namespace AGS3 {
@@ -47,18 +36,12 @@ namespace AGS {
 namespace Engine {
 
 void GetGfxDriverFactoryNames(StringV &ids) {
-#if AGS_HAS_DIRECT3D
-	ids.push_back("D3D9");
-#endif
-#if AGS_HAS_OPENGL
-	ids.push_back("OGL");
-#endif
-	ids.push_back("Software");
+	ids.push_back("ScummVM");
 }
 
 IGfxDriverFactory *GetGfxDriverFactory(const String id) {
-	if (id.CompareNoCase("Software") == 0)
-		return ALSW::ALSWGraphicsFactory::GetFactory();
+	if (id.CompareNoCase("ScummVM") == 0)
+		return ALGfx::ALScummVMGraphicsFactory::GetFactory();
 
 	set_allegro_error("No graphics factory with such id: %s", id.GetCStr());
 	return nullptr;

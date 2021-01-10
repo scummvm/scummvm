@@ -299,7 +299,7 @@ void config_defaults() {
 #if AGS_PLATFORM_OS_WINDOWS
 	usetup.Screen.DriverID = "D3D9";
 #else
-	usetup.Screen.DriverID = "OGL";
+	usetup.Screen.DriverID = "ScummVM";
 #endif
 #if AGS_PLATFORM_OS_WINDOWS
 	usetup.digicard = DIGI_DIRECTAMX(0);
@@ -401,17 +401,8 @@ void override_config_ext(ConfigTree &cfg) {
 	INIwriteint(cfg, "graphics", "windowed", 0);
 #endif
 
-	// psp_gfx_renderer - rendering mode
-	//    * 0 - software renderer
-	//    * 1 - hardware, render to screen
-	//    * 2 - hardware, render to texture
-	if (psp_gfx_renderer == 0) {
-		INIwritestring(cfg, "graphics", "driver", "Software");
-		INIwriteint(cfg, "graphics", "render_at_screenres", 1);
-	} else {
-		INIwritestring(cfg, "graphics", "driver", "OGL");
-		INIwriteint(cfg, "graphics", "render_at_screenres", psp_gfx_renderer == 1);
-	}
+	INIwritestring(cfg, "graphics", "driver", "ScummVM");
+	INIwriteint(cfg, "graphics", "render_at_screenres", 1);
 
 	// psp_gfx_scaling - scaling style:
 	//    * 0 - no scaling
