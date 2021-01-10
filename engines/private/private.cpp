@@ -97,7 +97,8 @@ Common::Error PrivateEngine::run() {
 
     CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-
+    CursorMan.showMouse(true);
+    
     _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
     _compositeSurface = new Graphics::ManagedSurface();
@@ -128,6 +129,9 @@ Common::Error PrivateEngine::run() {
     _nextSetting = new Common::String("kGoIntro");
 
     while (!shouldQuit()) {
+        if (_mode == 1)
+            drawScreenFrame();
+
         while (g_system->getEventManager()->pollEvent(event)) {
             mousePos = g_system->getEventManager()->getMousePos();
             // Events
@@ -187,9 +191,10 @@ Common::Error PrivateEngine::run() {
             _masks.clear();
             loadSetting(_nextSetting);
             _nextSetting = NULL;
-            CursorMan.showMouse(false);
+            //CursorMan.showMouse(false);
             execute(prog);
-            CursorMan.showMouse(true);
+            CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
+            //CursorMan.showMouse(true);
         }
 
         g_system->updateScreen();
@@ -298,8 +303,13 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
             if (m.nextSetting != NULL) { // TODO: check this
                 debug("Found Mask %s", m.nextSetting->c_str());
                 ns = m.nextSetting;
-                break;
             }
+
+            if (m.flag != NULL) { // TODO: check this
+                setSymbol(m.flag, 1);
+            }
+
+            break;
 
         }
     }
@@ -311,9 +321,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
     return
-        (f == kSupportsReturnToLauncher) ||
-        (f == kSupportsLoadingDuringRuntime) ||
-        (f == kSupportsSavingDuringRuntime);
+        (f == kSupportsReturnToLauncher);
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -469,6 +477,10 @@ void PrivateEngine::drawScreen() {
 
 }
 
+bool PrivateEngine::getRandomBool(uint p) {
+    uint r = _rnd->getRandomNumber(100);
+    return (r <= p);   
+}
 
 
 } // End of namespace Private

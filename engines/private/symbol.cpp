@@ -36,6 +36,10 @@ void showSymbol(Symbol *s)
         debug("%s %d", s->name->c_str(), s->type);
 }
 
+void setSymbol(Symbol *s, int v) {
+    //assert(s->type == STRING);
+    s->u.val = v;
+}
 
 Symbol *lookup(Common::String s, SymbolMap symlist)	/* find s in symbol table symlist */
 {

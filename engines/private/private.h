@@ -13,6 +13,8 @@
 #include "graphics/palette.h"
 #include "graphics/managed_surface.h"
 
+#include "private/grammar.h"
+
 namespace Image {
 class ImageDecoder;
 }
@@ -45,6 +47,7 @@ typedef struct MaskInfo {
     Graphics::ManagedSurface *surf;
     Common::String *nextSetting;
     Common::Point *point;
+	Symbol *flag;
     Common::String *cursor;    
 } MaskInfo;
 
@@ -56,7 +59,7 @@ private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 
-        Graphics::PixelFormat _pixelFormat;
+    Graphics::PixelFormat _pixelFormat;
 	Image::ImageDecoder *_image;
 	Graphics::ManagedSurface *_compositeSurface;
 
@@ -110,6 +113,8 @@ public:
     Common::String *_nextMovie;
     ExitList _exits;
     MaskList _masks;
+
+	bool getRandomBool(uint);
 
 };
 
