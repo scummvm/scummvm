@@ -54,6 +54,7 @@ private:
 	const AGSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 public:
+	Graphics::Screen *_rawScreen;
 	::AGS3::BITMAP *_screen;
 	::AGS3::GFX_DRIVER *_gfxDriver;
 	::AGS3::AGS::Engine::Mutex _sMutex;
@@ -91,6 +92,11 @@ public:
 	void setRandomNumberSeed(uint32 seed) {
 		_randomSource.setSeed(seed);
 	}
+
+	/**
+	 * Setse up the graphics mode
+	 */
+	void setGraphicsMode(size_t w, size_t h);
 };
 
 extern AGSEngine *g_vm;

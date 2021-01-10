@@ -21,6 +21,7 @@
  */
 
 #include "ags/lib/allegro/gfx.h"
+#include "ags/ags.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
@@ -77,7 +78,9 @@ int get_color_conversion() {
 }
 
 int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
-	error("TODO: set_gfx_mode");
+	assert(card == SCUMMVM_ID);
+	::AGS::g_vm->setGraphicsMode(w, h);
+	return 0;
 }
 
 BITMAP *create_bitmap(int width, int height) {

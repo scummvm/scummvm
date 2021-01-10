@@ -27,6 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "engines/util.h"
 
 #include "ags/shared/core/platform.h"
 #define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
@@ -319,13 +320,16 @@ AGSEngine *g_vm;
 /*------------------------------------------------------------------*/
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("AGS"), _screen(nullptr), _gfxDriver(nullptr) {
+		_gameDescription(gameDesc), _randomSource("AGS"), _rawScreen(nullptr),
+		_screen(nullptr), _gfxDriver(nullptr) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 }
 
 AGSEngine::~AGSEngine() {
+	delete _screen;
+	delete _rawScreen;
 }
 
 uint32 AGSEngine::getFeatures() const {
@@ -394,6 +398,14 @@ Common::Error AGSEngine::run() {
 
 SaveStateList AGSEngine::listSaves() const {
 	return getMetaEngine().listSaves(_targetName.c_str());
+}
+
+void AGSEngine::setGraphicsMode(size_t w, size_t h) {
+	Graphics::PixelFormat FORMAT(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(w, h, &FORMAT);
+
+	_rawScreen = new Graphics::Screen();
+	_screen = new ::AGS3::BITMAP(_rawScreen);
 }
 
 } // namespace AGS

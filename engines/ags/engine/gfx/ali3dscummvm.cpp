@@ -201,6 +201,7 @@ bool ALScummVMGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile i
 
 	OnInit(loopTimer);
 	OnModeSet(mode);
+
 	// set_gfx_mode is an allegro function that creates screen bitmap;
 	// following code assumes the screen is already created, therefore we should
 	// ensure global bitmap wraps over existing allegro screen bitmap.
