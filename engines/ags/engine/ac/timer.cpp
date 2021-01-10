@@ -30,6 +30,7 @@
 //include <unistd.h>
 #endif
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -79,12 +80,14 @@ void WaitForNextFrame() {
 		next_frame_timestamp = now;
 	}
 
-	auto frame_time_remaining = next_frame_timestamp - now;
-	if (frame_time_remaining > std::chrono::milliseconds::zero()) {
+	if (next_frame_timestamp > now) {
+		auto frame_time_remaining = next_frame_timestamp - now;
 		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
 	next_frame_timestamp += frameDuration;
+
+	::AGS::g_vm->_rawScreen->update();
 }
 
 bool waitingForNextTick() {
