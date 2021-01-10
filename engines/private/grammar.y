@@ -36,7 +36,7 @@ int yywrap()
 %}
 
 %union {
-	struct Symbol	*sym;	/* symbol table pointer */
+	Private::Symbol	*sym;	/* symbol table pointer */
         int (**inst)();	/* machine instruction */
         char *s;
         int *i;
@@ -56,7 +56,7 @@ lines:   line lines
        ;
 
 line:     DEBUGTOK '{' debug '}'             { /* Not used in the game */ }
-        | DEFINETOK NAME '{' define '}'      { installall($NAME); }
+        | DEFINETOK NAME '{' define '}'      { installAll($NAME); }
         | SETTINGTOK NAME '{' statements '}' { saveSetting($NAME); initSetting(); }
         ;
 
@@ -69,9 +69,9 @@ statements:  /* nothing */     { $$ = progp; }
 
 
 statement: GOTOTOK NAME ';' {
-	code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
-        code2(constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
-        code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
+	code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
+        code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
+        code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
         | fcall ';'         { }   
@@ -105,29 +105,29 @@ define:  /* nothing */
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  { 
           Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);
           assert(r->isValidRect()); 
-          define($NAME, r); 
+          defineSymbol($NAME, r); 
           }
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' {
           Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);  
-          define($NAME, r); 
+          defineSymbol($NAME, r); 
           }
-        | NAME ',' define { define($NAME, NULL); }
-        | NAME            { define($NAME, NULL); }  
+        | NAME ',' define { defineSymbol($NAME, NULL); }
+        | NAME            { defineSymbol($NAME, NULL); }  
         ;
 
 fcall:    GOTOTOK '(' NAME ')' {
                                $$ = progp;
-                               code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, $NAME));
-                               code2(constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL));
-                               code2(strpush, (Private::Inst) Private::addconstant(STRING, 0, "goto")); 
+                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
+                               code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
+                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
                                code1(funcpush);
                                }
 
         | RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
         | NAME '(' startp params ')'  {
                                $$ = $startp;
-                               code2(constpush, (Private::Inst) addconstant(NUM, $params, NULL));
-                               code2(strpush, (Private::Inst) addconstant(STRING, 0, $NAME)); 
+                               code2(constpush, (Private::Inst) constant(NUM, $params, NULL));
+                               code2(strpush, (Private::Inst) constant(STRING, 0, $NAME)); 
                                code1(funcpush);
                                }
         ;
@@ -142,9 +142,9 @@ params:   /* nothing */     { $$ = 0; }
         | fcall       { $$ = 1; }
         ;
 
-value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
-        | FALSETOK { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 0, NULL)); }
-        | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::addconstant(NUM, 1, NULL)); }
+value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
+        | FALSETOK { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
+        | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 1, NULL)); }
         |  NUM     { code2(Private::constpush, (Private::Inst)$NUM); }
         | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
         | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }

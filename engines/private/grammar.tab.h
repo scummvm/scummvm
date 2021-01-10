@@ -82,7 +82,7 @@ union YYSTYPE
 {
 #line 38 "engines/private/grammar.y"
 
-	struct Symbol	*sym;	/* symbol table pointer */
+	Private::Symbol	*sym;	/* symbol table pointer */
         int (**inst)();	/* machine instruction */
         char *s;
         int *i;
