@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "ags/events.h"
 
 namespace AGS3 {
 
@@ -42,14 +43,13 @@ void remove_keyboard() {
 }
 
 bool keyboard_needs_poll() {
-	// TODO: Check if it's okay to be hardcoded for events, since I'm not sure
-	// how to check with ScummVM event manager for pending events
+	// We allow allow keyboard polling in ScummVM
 	return true;
 }
 
 int poll_keyboard() {
-	warning("TODO: poll_keyboard");
-	return false;
+	::AGS::g_events->pollEvents();
+	return 0;
 }
 
 void simulate_keypress(int keycode) {
@@ -69,13 +69,11 @@ void simulate_ukeypress(int keycode, int scancode) {
 }
 
 bool keypressed() {
-	warning("TODO: keypressed");
-	return true;
+	return ::AGS::g_events->keypressed();
 }
 
-int readkey(void) {
-	warning("TODO: readkey");
-	return 0;
+int readkey() {
+	return ::AGS::g_events->readKey();
 }
 
 } // namespace AGS3

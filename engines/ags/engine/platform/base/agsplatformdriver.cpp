@@ -136,7 +136,7 @@ void AGSPlatformDriver::WriteStdErr(const char *fmt, ...) {
 void AGSPlatformDriver::YieldCPU() {
 	// NOTE: this is called yield, but if we actually yield instead of delay,
 	// we get a massive increase in CPU usage.
-	this->Delay(1);
+	this->Delay(10);
 	//std::this_thread::yield();
 }
 
