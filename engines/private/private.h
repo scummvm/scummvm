@@ -23,10 +23,6 @@ struct ManagedSurface;
 
 namespace Private {
 
-extern const byte MOUSECURSOR_SCI[];
-extern const byte MOUSECURSOR_kExit[];
-extern const byte cursorPalette[];
-
 class Console;
 
 // our engine debug channels
@@ -76,7 +72,12 @@ public:
 
 	Common::Error run() override;
 	void selectMask(Common::Point);
-        void selectExit(Common::Point); 
+    void selectExit(Common::Point);
+
+	bool cursorExit(Common::Point);
+	bool cursorMask(Common::Point);
+	
+
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return true; }
@@ -84,31 +85,31 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
 
-        Common::String convertPath(Common::String); 
+    Common::String convertPath(Common::String); 
 	void playSound(const Common::String &name);
 	void playVideo(const Common::String &name);
-        void skipVideo();
+    void skipVideo();
 	void stopSound();
 
 	void loadImage(const Common::String &file, int x, int y, bool drawn = true);
-        void drawScreenFrame();
+    void drawScreenFrame();
         
 	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
  
-        uint32 _transparentColor;	
+    uint32 _transparentColor;	
 	void drawScreen();
 
-        // global state
+    // global state
 	Common::Point *_origin;
-        Common::String *_nextSetting;
-        Common::String *_nextVS;
-        Common::String *_frame;
+    Common::String *_nextSetting;
+    Common::String *_nextVS;
+    Common::String *_frame;
 
 	int _mode;
-        bool _modified;
-        Common::String *_nextMovie;
-        ExitList _exits;
-        MaskList _masks;
+    bool _modified;
+    Common::String *_nextMovie;
+    ExitList _exits;
+    MaskList _masks;
 
 };
 

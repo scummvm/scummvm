@@ -1,6 +1,4 @@
-#include "common/scummsys.h"
-
-#include "private.h"
+#include "private/cursors.h"
 
 namespace Private {
 
@@ -23,7 +21,7 @@ const byte MOUSECURSOR_SCI[] = {
     0,0,0,0,0,0,1,2,2,1,0
 };
 
-const byte MOUSECURSOR_kExit[] = {
+extern const byte MOUSECURSOR_kExit[] = {
 0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,1,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -268,10 +266,34 @@ const byte MOUSECURSOR_kPhone[] {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-const byte cursorPalette[] = {
+extern const byte cursorPalette[] = {
     0, 0, 0,           // Black / Transparent
     0x01, 0x01, 0x01,  // Gray
     0xff, 0xff, 0xff   // White
 };
+
+static struct CursorTable {
+    const char *name;
+    const byte *cursor;
+} cursorTable[] = {
+    { "kExit",         MOUSECURSOR_kExit},
+    { "kInventory",    MOUSECURSOR_kInventory},
+    { "kTurnLeft",     MOUSECURSOR_kTurnLeft},
+    { "kTurnRight",    MOUSECURSOR_kTurnRight},
+    { "kZoomIn",       MOUSECURSOR_kZoomIn},
+    { "kZoomOut",      MOUSECURSOR_kZoomOut},
+    { "kPhone",        MOUSECURSOR_kPhone},
+    { "default",       MOUSECURSOR_SCI},
+    { 0, 0}
+};
+
+CursorMap _cursors;
+
+void initCursors() {
+    for (Private::CursorTable *cur = Private::cursorTable; cur->name; cur++) {
+        Common::String *name = new Common::String(cur->name);
+        _cursors.setVal(*name, cur->cursor);
+    }
+}
 
 }
