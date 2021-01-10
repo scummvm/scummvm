@@ -2,10 +2,11 @@ MODULE := engines/private
  
 MODULE_OBJS := \
 	metaengine.o \
-        code.o \
+    code.o \
+	cursors.o \
 	symbol.o \
 	funcs.o \
-        grammar.tab.o \
+    grammar.tab.o \
 	lex.yy.o \
 	private.o
  
