@@ -3792,6 +3792,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
 					"xlanguage_zh_t.dcp", "6ca6a83edad54ec1c384fbcea2989ee4", 10170999), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_2),
 
+	// Reversion: The Return (Steam, November 2020) (Serbian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_sr.dcp", "dc43cc4e382dfa8b4a336e9fcc723bf3", 10164273), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_2),
+
 	// Reversion: The Return (Steam, December 2020) (Spanish)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
