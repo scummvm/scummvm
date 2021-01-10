@@ -109,13 +109,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// SurfaceHolder callback
 	final public void surfaceChanged(SurfaceHolder holder, int format,
 										int width, int height) {
-		// the orientation may reset on standby mode and the theme manager
-		// could assert when using a portrait resolution. so lets not do that.
-		if (height > width) {
-			Log.d(LOG_TAG, String.format(Locale.ROOT, "Ignoring surfaceChanged: %dx%d (%d)",
-											width, height, format));
-			return;
-		}
 
 		PixelFormat pixelFormat = new PixelFormat();
 		PixelFormat.getPixelFormatInfo(format, pixelFormat);
