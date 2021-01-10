@@ -20,22 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/speech_flex.h"
-#include "ultima/ultima8/audio/audio_sample.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "common/util.h"
 
 namespace Ultima {
 namespace Ultima8 {

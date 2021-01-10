@@ -24,7 +24,6 @@
 #define ULTIMA8_GRAPHICS_SHAPEARCHIVE_H
 
 #include "ultima/ultima8/filesys/archive.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {

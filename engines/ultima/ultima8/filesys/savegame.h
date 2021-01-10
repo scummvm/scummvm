@@ -27,7 +27,6 @@
 #include "common/hashmap.h"
 #include "common/stream.h"
 #include "engines/metaengine.h"
-#include "graphics/surface.h"
 
 namespace Ultima {
 namespace Ultima8 {

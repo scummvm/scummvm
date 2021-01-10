@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/create_item_process.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item.h"

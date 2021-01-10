@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/get_object.h"

@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/misc/direction_util.h"
 

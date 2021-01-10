@@ -24,14 +24,10 @@
 
 #include "ultima/ultima8/graphics/anim_dat.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/world/actors/actor_anim.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
 
 namespace Ultima {
 namespace Ultima8 {

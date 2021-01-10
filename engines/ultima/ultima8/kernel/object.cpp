@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 

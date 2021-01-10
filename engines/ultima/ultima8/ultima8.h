@@ -42,7 +42,6 @@
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "common/events.h"
 
 namespace Ultima {

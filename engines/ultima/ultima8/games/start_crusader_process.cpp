@@ -20,27 +20,18 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/start_crusader_process.h"
-#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/games/remorse_game.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/egg.h"
-#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
-#include "ultima/ultima8/audio/music_process.h"
 
 namespace Ultima {
 namespace Ultima8 {

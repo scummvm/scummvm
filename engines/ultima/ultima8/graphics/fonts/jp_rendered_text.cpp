@@ -24,7 +24,6 @@
 #include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/misc/encoding.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 

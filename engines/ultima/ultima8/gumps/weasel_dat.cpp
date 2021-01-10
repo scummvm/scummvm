@@ -21,8 +21,6 @@
  */
 
 #include "ultima/ultima8/gumps/weasel_dat.h"
-#include "common/util.h"
-#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima8 {

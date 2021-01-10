@@ -24,7 +24,6 @@
 
 #include "ultima/ultima8/usecode/usecode_flex.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
 
 namespace Ultima {
 namespace Ultima8 {

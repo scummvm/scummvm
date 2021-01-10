@@ -24,7 +24,6 @@
 #define ULTIMA8_FILESYS_ARCHIVEFILE_H
 
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {

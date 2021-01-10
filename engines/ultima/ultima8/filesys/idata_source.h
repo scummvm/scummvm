@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_FILESYS_IDATASOURCE_H
 #define ULTIMA8_FILESYS_IDATASOURCE_H
 
-#include "common/file.h"
 #include "common/stream.h"
 #include "ultima/shared/std/misc.h"
 #include "ultima/shared/std/string.h"

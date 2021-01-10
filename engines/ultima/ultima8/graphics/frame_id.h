@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_GRAPHICS_FRAMEID_H
 #define ULTIMA8_GRAPHICS_FRAMEID_H
 
-#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima8 {

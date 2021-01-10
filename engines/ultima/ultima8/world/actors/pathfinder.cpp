@@ -20,16 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
+
+#ifdef DEBUG
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/ultima8.h"
-#include "common/system.h"
+#endif
 
 namespace Ultima {
 namespace Ultima8 {

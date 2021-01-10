@@ -20,9 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/graphics/xform_blend.h"
 
 namespace Ultima {
 namespace Ultima8 {

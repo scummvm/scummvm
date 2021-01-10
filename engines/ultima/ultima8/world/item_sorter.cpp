@@ -25,7 +25,6 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/misc/rect.h"

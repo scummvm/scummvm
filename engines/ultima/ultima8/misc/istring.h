@@ -45,7 +45,7 @@ public:
 		return compareToIgnoreCase(s);
 	}
 
-	void split(Common::Array<istring> &arr) const ;
+	void split(Common::Array<istring> &arr) const;
 };
 
 } // End of namespace Ultima8

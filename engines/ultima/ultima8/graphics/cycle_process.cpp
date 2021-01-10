@@ -20,10 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/cycle_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/graphics/palette.h"
 
 namespace Ultima {
 namespace Ultima8 {

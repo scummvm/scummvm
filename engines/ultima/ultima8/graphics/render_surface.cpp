@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/soft_render_surface.h"
 #include "common/system.h"
 #include "engines/util.h"

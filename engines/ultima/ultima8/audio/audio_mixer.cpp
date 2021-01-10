@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
@@ -29,7 +28,6 @@
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "audio/decoders/raw.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/games/u8_game.h"
 #include "ultima/ultima8/games/remorse_game.h"
 #include "ultima/ultima8/conf/setting_manager.h"

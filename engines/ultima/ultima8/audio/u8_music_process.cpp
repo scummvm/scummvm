@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/music_flex.h"

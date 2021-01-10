@@ -26,7 +26,6 @@
 
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
@@ -38,7 +37,6 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/gumps/credits_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/audio/music_process.h"

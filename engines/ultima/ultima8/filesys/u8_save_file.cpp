@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/filesys/u8_save_file.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

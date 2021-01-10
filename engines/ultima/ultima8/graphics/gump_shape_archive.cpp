@@ -24,7 +24,6 @@
 
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/misc/rect.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -21,7 +21,6 @@
  */
 
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"

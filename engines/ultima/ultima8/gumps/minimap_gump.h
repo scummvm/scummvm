@@ -24,9 +24,9 @@
 #define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {

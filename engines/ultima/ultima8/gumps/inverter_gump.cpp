@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
 
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {

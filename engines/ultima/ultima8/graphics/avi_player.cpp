@@ -21,14 +21,8 @@
  */
 
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/avi_player.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/ultima8.h"
-#include "graphics/surface.h"
-#include "common/system.h"
-#include "common/stream.h"
 #include "video/avi_decoder.h"
 
 namespace Ultima {

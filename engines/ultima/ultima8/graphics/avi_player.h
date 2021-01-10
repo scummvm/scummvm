@@ -23,9 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_AVIPLAYER_H
 #define ULTIMA8_GRAPHICS_AVIPLAYER_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/graphics/movie_player.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "graphics/managed_surface.h"
 
 namespace Video {
 class AVIDecoder;

@@ -24,16 +24,13 @@
 
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 
-#include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "graphics/fonts/ttf.h"
 

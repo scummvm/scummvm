@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/fire_type.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -32,7 +30,6 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {

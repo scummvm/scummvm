@@ -20,21 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/avi_player.h"
 #include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 

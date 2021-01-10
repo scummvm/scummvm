@@ -25,7 +25,6 @@
 #include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 #include "common/memstream.h"
 

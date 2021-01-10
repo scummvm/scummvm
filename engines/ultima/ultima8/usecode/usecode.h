@@ -23,8 +23,6 @@
 #ifndef ULTIMA8_USECODE_USECODE_H
 #define ULTIMA8_USECODE_USECODE_H
 
-#include "ultima/shared/std/string.h"
-
 namespace Ultima {
 namespace Ultima8 {
 

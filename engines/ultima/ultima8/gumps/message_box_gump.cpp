@@ -20,23 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 

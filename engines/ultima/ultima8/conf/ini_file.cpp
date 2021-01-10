@@ -24,7 +24,6 @@
 #include "ultima/ultima8/conf/ini_file.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

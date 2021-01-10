@@ -20,14 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/get_object.h"

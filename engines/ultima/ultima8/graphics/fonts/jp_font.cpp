@@ -23,10 +23,8 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
-#include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
-#include "ultima/ultima8/misc/encoding.h"
 
 namespace Ultima {
 namespace Ultima8 {

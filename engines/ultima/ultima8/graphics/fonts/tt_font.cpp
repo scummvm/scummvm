@@ -21,16 +21,10 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/misc/encoding.h"
 
-#include "common/ustr.h"
-#include "common/system.h"
-#include "graphics/managed_surface.h"
 
 //include iomanip
 

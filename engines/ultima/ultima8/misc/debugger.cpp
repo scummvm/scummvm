@@ -21,14 +21,11 @@
  */
 
 #include "image/png.h"
-#include "image/bmp.h"
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
@@ -39,13 +36,11 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/bit_set.h"
-#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -55,7 +50,11 @@
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+
+#ifdef DEBUG
 #include "ultima/ultima8/world/actors/pathfinder.h"
+#endif
+
 
 namespace Ultima {
 namespace Ultima8 {

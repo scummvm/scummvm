@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/kernel/kernel.h"

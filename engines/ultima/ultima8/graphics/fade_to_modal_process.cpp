@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 
 namespace Ultima {

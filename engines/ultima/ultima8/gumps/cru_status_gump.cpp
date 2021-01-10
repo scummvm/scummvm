@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/cru_weapon_gump.h"
 #include "ultima/ultima8/gumps/cru_ammo_gump.h"
@@ -32,9 +31,6 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {

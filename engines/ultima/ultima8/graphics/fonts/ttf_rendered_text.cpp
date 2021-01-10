@@ -24,7 +24,6 @@
 #include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

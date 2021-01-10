@@ -26,8 +26,6 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
 #include "ultima/ultima8/world/crosshair_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/ultima8.h"

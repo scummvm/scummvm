@@ -20,16 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/world/get_object.h"
 

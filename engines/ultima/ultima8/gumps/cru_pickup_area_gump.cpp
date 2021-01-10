@@ -20,12 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
 #include "ultima/ultima8/gumps/cru_pickup_gump.h"
 
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 
 namespace Ultima {

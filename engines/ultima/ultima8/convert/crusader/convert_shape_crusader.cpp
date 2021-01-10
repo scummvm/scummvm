@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 
 namespace Ultima {

@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/weasel_gump.h"
 #include "ultima/ultima8/gumps/weasel_dat.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -31,18 +30,12 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
-#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/meta_engine.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "engines/dialogs.h"
 
 namespace Ultima {
 namespace Ultima8 {

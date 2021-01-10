@@ -20,10 +20,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/sliding_widget.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape.h"
 
 namespace Ultima {
 namespace Ultima8 {

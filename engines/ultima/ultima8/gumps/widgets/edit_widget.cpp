@@ -20,14 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/fonts/tt_font.h"
-#include "ultima/ultima8/misc/encoding.h"
 #include "common/system.h"
 #include "common/events.h"
 

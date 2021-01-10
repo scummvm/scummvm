@@ -23,8 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_RENDEREDTEXT_H
 #define ULTIMA8_GRAPHICS_FONTS_RENDEREDTEXT_H
 
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
-
 namespace Ultima {
 namespace Ultima8 {
 

@@ -23,11 +23,8 @@
 #ifndef ULTIMA8_FILESYS_ODATASOURCE_H
 #define ULTIMA8_FILESYS_ODATASOURCE_H
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/shared/std/containers.h"
 #include "common/stream.h"
-#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima8 {

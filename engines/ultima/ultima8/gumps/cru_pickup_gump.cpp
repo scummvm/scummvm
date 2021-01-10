@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/cru_pickup_gump.h"
 
 #include "ultima/ultima8/gumps/translucent_gump.h"
@@ -30,8 +29,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 
 namespace Ultima {

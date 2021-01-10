@@ -20,13 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"

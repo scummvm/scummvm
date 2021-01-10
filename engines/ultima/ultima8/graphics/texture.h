@@ -23,8 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_TEXTURE_H
 #define ULTIMA8_GRAPHICS_TEXTURE_H
 
-#include "graphics/managed_surface.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -48,9 +46,6 @@ namespace Ultima8 {
 #define TEX32_R_SHIFT           0
 #define TEX32_R_MASK            0x000000FF
 #define TEX32_R(col32)          (((col32)&TEX32_R_MASK)>>TEX32_R_SHIFT)
-
-#define TEX32_AG(col32)         (((col32) >> 8) & 0x00FF00FF)
-#define TEX32_RB(col32)         (((col32) >> 0) & 0x00FF00FF)
 
 #define TEX32_PACK_RGBA(r,g,b,a)    (((a)<<TEX32_A_SHIFT)|((r)<<TEX32_R_SHIFT)|\
                                      ((g)<<TEX32_G_SHIFT)|((b)<<TEX32_B_SHIFT))

@@ -23,8 +23,6 @@
 #ifndef WORLD_DAMAGE_INFO_H
 #define WORLD_DAMAGE_INFO_H
 
-#include "common/stream.h"
-
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {

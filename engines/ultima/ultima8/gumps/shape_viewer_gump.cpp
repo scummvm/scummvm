@@ -20,10 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 
-#include "ultima/ultima8/graphics/shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -38,7 +36,6 @@
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"

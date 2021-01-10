@@ -23,12 +23,9 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/graphics/shape_info.h" // debugging only
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 

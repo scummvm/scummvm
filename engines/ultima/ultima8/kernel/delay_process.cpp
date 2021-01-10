@@ -20,10 +20,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
-#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {

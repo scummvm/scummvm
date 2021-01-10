@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/translucent_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 

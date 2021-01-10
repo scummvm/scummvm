@@ -25,17 +25,11 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/glob_egg.h"
-#include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/monster_egg.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

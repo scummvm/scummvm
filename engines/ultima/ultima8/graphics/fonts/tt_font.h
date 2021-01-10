@@ -24,9 +24,7 @@
 #define ULTIMA8_GRAPHICS_FONTS_TTFONT_H
 
 #include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "graphics/font.h"
-#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima8 {

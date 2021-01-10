@@ -24,7 +24,6 @@
 #define ULTIMA8_FILESYS_FLEXFILE_H
 
 #include "ultima/ultima8/filesys/archive_file.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {

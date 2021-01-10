@@ -24,7 +24,6 @@
 
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/archive_file.h"
 
 namespace Ultima {
 namespace Ultima8 {

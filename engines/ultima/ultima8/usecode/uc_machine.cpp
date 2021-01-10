@@ -27,7 +27,6 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/usecode/bit_set.h"
@@ -38,7 +37,6 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 
 #include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
-#include "ultima/ultima8/convert/crusader/convert_usecode_crusader.h"
 #include "ultima/ultima8/convert/crusader/convert_usecode_regret.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 

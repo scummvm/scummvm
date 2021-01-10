@@ -24,7 +24,6 @@
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/translation.h"
-#include "common/ustr.h"
 #include "backends/keymapper/action.h"
 
 namespace Ultima {
