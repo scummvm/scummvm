@@ -43,8 +43,9 @@ int ags_fseek(Common::Stream *stream, file_off_t offset, int whence) {
 
 file_off_t ags_ftell(Common::Stream *stream) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-	assert(rs);
-	return rs->pos();
+	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(stream);
+	assert(rs || ws);
+	return rs ? rs->pos() : ws->pos();
 }
 
 Common::FSNode getFSNode(const char *path) {
