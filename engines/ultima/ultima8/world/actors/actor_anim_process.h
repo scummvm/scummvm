@@ -39,7 +39,6 @@ class Item;
 class ActorAnimProcess : public Process {
 public:
 	ActorAnimProcess();
-	//! note: this probably needs some more parameters
 	ActorAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                 uint32 steps = 0);
 

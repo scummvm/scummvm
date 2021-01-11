@@ -26,6 +26,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Usecode is the main engine code in the U8 engine.  It has a simple assembly language
+ * executed by the UCMachine.
+ */
 class Usecode {
 public:
 	Usecode() { }

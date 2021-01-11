@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// multiple inheritance. um, yes :-)
 class UsecodeFlex : public Usecode, protected RawArchive {
 public:
 	UsecodeFlex(Common::SeekableReadStream *rs) : RawArchive(rs) { }
