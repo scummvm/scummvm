@@ -90,6 +90,8 @@ enum TwinEActionType {
 	HolomapRight,
 	HolomapUp,
 	HolomapDown,
+	HolomapNext,
+	HolomapPrev,
 
 	Max
 };

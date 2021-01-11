@@ -31,6 +31,7 @@
 #include "twine/renderer/screens.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/collision.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
@@ -139,7 +140,7 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 y = top;
 	_engine->_text->setFontColor(COLOR_WHITE);
 	// TODO: handle @ newline
-	// TODO: faded in?
+	// TODO: faded in? - looks like it - printText10 was used
 	_engine->_text->drawText(x, y, title);
 }
 
@@ -201,8 +202,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			_engine->_screens->fadeToPal((int)palette);
 		}
 	}
-	// TODO: fade to black
-	// TODO: flip
+	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
+	// TODO: flip()?
 #endif
 }
 
@@ -263,6 +264,11 @@ void Holomap::processHolomap() {
 	// TODO: load RESSHQR_HOLOSURFACE and project the texture to the surface
 	//_engine->_screens->loadImage(RESSHQR_HOLOIMG, RESSHQR_HOLOPAL);
 
+	const int32 time = _engine->lbaTime;
+	int32 xRot = 0;
+	int32 yRot = 0;
+	bool rotate = false;
+	bool redraw = true;
 	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	for (;;) {
 		FrameMarker frame;
@@ -272,13 +278,13 @@ void Holomap::processHolomap() {
 			break;
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapLeft)) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, -1);
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
 				drawHolomapLocation(currentLocation);
 			}
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapRight)) {
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
@@ -286,11 +292,35 @@ void Holomap::processHolomap() {
 			}
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapUp)) {
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapDown)) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapLeft)) {
+			xRot += 8;
+			rotate = true;
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapRight)) {
+			xRot -= 8;
+			rotate = true;
 		}
 
-		// TODO
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapUp)) {
+			yRot += 8;
+			rotate = true;
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapDown)) {
+			yRot -= 8;
+			rotate = true;
+		}
+		if (rotate) {
+			xRot = _engine->_collision->getAverageValue(xRot, _locations[currentLocation].x, 75, _engine->lbaTime - time);
+			yRot = _engine->_collision->getAverageValue(yRot, _locations[currentLocation].y, 75, _engine->lbaTime - time);
+			redraw = true;
+		}
+
+		if (rotate && xRot == _locations[currentLocation].x && yRot == _locations[currentLocation].y) {
+			rotate = false;
+		}
+
+		if (redraw) {
+			redraw = false;
+			// TODO
+		}
 
 		//_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 		//_engine->flip();
