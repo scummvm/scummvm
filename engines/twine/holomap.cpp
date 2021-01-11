@@ -25,13 +25,13 @@
 #include "common/memstream.h"
 #include "common/types.h"
 #include "twine/audio/sound.h"
-#include "twine/scene/gamestate.h"
-#include "twine/resources/hqr.h"
 #include "twine/menu/interface.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 #include "twine/twine.h"
@@ -145,7 +145,65 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
-	// TODO
+#if 0
+	ScopedEngineFreeze timeFreeze(_engine);
+	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
+	ActorMoveStruct move;
+	for (;;) {
+		ScopedFPS scopedFps;
+		_engine->readKeys();
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			break;
+		}
+
+		// TODO
+		if (!v28) {
+			setPalette2(192, 32, (int)&palette2[3 * needToLoadHolomapGFX++]);
+			if (needToLoadHolomapGFX == 32) {
+				needToLoadHolomapGFX = 0;
+			}
+		}
+		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
+		if (move.numOfStep == 0) {
+			_engine->_movements->setActorAngleSafe(v18, v18 - ANGLE_90, 500, &move);
+		}
+		if (SetInterAnimObjet(v5)) {
+			++v27;
+			if (v27 == _engine->_animations->getNumKeyframes(v14)) {
+				v27 = _engine->_animations->getStartKeyframe(v14);
+			}
+		}
+		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);
+		_engine->_renderer->setCameraAngle(v5);
+		_engine->_renderer->setLightVector(v5);
+		_engine->_interface->blitBox(v5);
+		_engine->_renderer->renderIsoModel(v19, v5);
+		_engine->copyBlockPhys(v5);
+		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
+		_engine->_renderer->setCameraAngle(v5);
+		_engine->_renderer->setLightVector(v5);
+		if (v24 + 40 <= _engine->lbaTime) {
+			v24 = _engine->lbaTime;
+			if (v17 >= v29 && v17 > v29) {
+				break;
+			}
+			++v17;
+			_engine->_renderer->setBaseRotation(v0);
+			_engine->_renderer->getBaseRotationPosition(v1, v0);
+			_engine->_renderer->setCameraAngle(v0);
+			_engine->_renderer->getBaseRotationPosition(v2, v0);
+			_engine->_renderer->resetClip();
+			_engine->_renderer->renderIsoModel(v3, v0);
+			_engine->copyBlockPhys(v0);
+		}
+		if (v28) {
+			v28 = 0;
+			_engine->_screens->fadeToPal((int)palette);
+		}
+	}
+	// TODO: fade to black
+	// TODO: flip
+#endif
 }
 
 void Holomap::drawHolomapLocation(int32 location) {
