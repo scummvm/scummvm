@@ -23,16 +23,22 @@
 #ifndef AGS_PLUGINS_DLL_H
 #define AGS_PLUGINS_DLL_H
 
+#include "ags/shared/util/string.h"
+#include "ags/engine/plugin/agsplugin.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
 namespace AGS {
 namespace Plugins {
 
-#define ADD_METHOD(NAME) _methods[#NAME] = (void *)&NAME
+#define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
+#define SCRIPT_METHOD(NAME) engine->RegisterScriptFunction(#NAME, (void *)&NAME)
 
-typedef void *IAGSEditor;
-typedef void *IAGSEngine;
+// TODO: Refactor string into core AGS namespace
+using string = ::AGS3::AGS::Shared::String;
+
+using IAGSEngine = ::AGS3::IAGSEngine;
+using IAGSEditor = ::AGS3::IAGSEditor;
 typedef uint32 HWND;
 
 /**
