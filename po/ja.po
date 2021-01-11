@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-11 03:05+0000\n"
-"PO-Revision-Date: 2021-01-07 20:23+0000\n"
+"PO-Revision-Date: 2021-01-11 20:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3422,7 +3422,7 @@ msgstr "下"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:45
 #: backends/platform/ds/arm9/source/scummhelp.cpp:62
 msgid "Skip dialog line (some games)"
-msgstr ""
+msgstr "ダイアログラインをスキップ(一部のゲーム)"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
@@ -3439,7 +3439,7 @@ msgstr "設定"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:48
 #: backends/platform/ds/arm9/source/scummhelp.cpp:65
 msgid "Skip cutscenes"
-msgstr ""
+msgstr "ムービーをスキップ"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:49
 #, fuzzy
@@ -3455,12 +3455,12 @@ msgstr "隠しファイルを表示する"
 #: backends/platform/ds/arm9/source/scummhelp.cpp:51
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
 msgid "Show/hide keyboard"
-msgstr ""
+msgstr "キーボードを表示/非表示"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:69
 msgid "Scroll current touch screen view"
-msgstr ""
+msgstr "現在のタッチスクリーンをスクロール"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:70
@@ -3470,7 +3470,7 @@ msgstr "ズームアウト"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:58
 msgid "DS Controls (left handed):"
-msgstr ""
+msgstr "DSの操作(左利き)："
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
 #, fuzzy
@@ -3479,7 +3479,7 @@ msgstr "スクショを保存する"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:75
 msgid "Indiana Jones Fight controls:"
-msgstr ""
+msgstr "インディの戦闘操作："
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/metaengine.cpp:205
@@ -3493,39 +3493,39 @@ msgstr "右に行く"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
-msgstr ""
+msgstr "上ガード"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:79
 msgid "Guard down"
-msgstr ""
+msgstr "下ガード"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:80
 msgid "Guard middle"
-msgstr ""
+msgstr "中ガード"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
 msgid "Punch high"
-msgstr ""
+msgstr "上パンチ"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
 msgid "Punch middle"
-msgstr ""
+msgstr "中パンチ"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
 msgid "Punch low"
-msgstr ""
+msgstr "下パンチ"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr ""
+msgstr "クリック&ドラッグモードが有効になりました。"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:329
 #: backends/platform/ios7/ios7_osys_events.cpp:457
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
-msgstr ""
+msgstr "クリック&ドラッグモードが無効になりました。"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:340
 #: backends/platform/ios7/ios7_osys_events.cpp:476
@@ -3564,7 +3564,7 @@ msgstr "ウインドウ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:220
 msgid "Minimize"
-msgstr ""
+msgstr "最小化"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
 #: engines/zvision/metaengine.cpp:158
@@ -3578,15 +3578,15 @@ msgstr "キャンセルされました"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "General Information"
-msgstr ""
+msgstr "総合案内"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "ScummVMの新情報"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Credits"
-msgstr ""
+msgstr "クレジット"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "GPL License"
@@ -3625,33 +3625,33 @@ msgstr "四角"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 msgid "Minus"
@@ -3672,11 +3672,11 @@ msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:50
 msgid "Swap character"
-msgstr ""
+msgstr "キャラクターを入れ替える"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Skip text"
-msgstr ""
+msgstr "テキストをスキップ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 #, fuzzy
@@ -3700,7 +3700,7 @@ msgstr "キーボードの表示"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:58
 msgid "Key mapper"
-msgstr ""
+msgstr "キーマッピング"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
