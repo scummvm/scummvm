@@ -20,25 +20,24 @@
  *
  */
 
-#include "ags/engine/plugin/library.h"
+#ifndef AGS_PLUGINS_AGSCREDITZ_AGSCREDITZ_H
+#define AGS_PLUGINS_AGSCREDITZ_AGSCREDITZ_H
+
 #include "ags/plugins/dll.h"
 
-namespace AGS3 {
+namespace AGS {
+namespace Plugins {
+namespace AgsCreditz {
 
-void *dlopen(const char *filename, bool) {
-	return ::AGS::Plugins::dlopen(filename);
-}
+class AgsCreditz : public DLL {
+private:
+	static const char *AGS_GetPluginName();
+public:
+	AgsCreditz();
+};
 
-int dlclose(void *lib) {
-	return ::AGS::Plugins::dlclose(lib);
-}
+} // namespace AgsCreditz
+} // namespace Plugins
+} // namespace AGS
 
-void *dlsym(void *lib, const char *method) {
-	return ::AGS::Plugins::dlsym(lib, method);
-}
-
-const char *dlerror() {
-	return ::AGS::Plugins::dlerror();
-}
-
-} // namespace AGS3
+#endif
