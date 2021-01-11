@@ -366,7 +366,7 @@ int linfget(lindef *lin)
     /* make sure buffer pointer is correct */
     lin->linbuf = linf->linfbuf;
 
-    LINFDEBUG(printf("%s\n", linf->linfbuf));
+    LINFDEBUG(debug(10, "%s\n", linf->linfbuf));
 
     /* success */
     return FALSE;
