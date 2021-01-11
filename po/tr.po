@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-10 07:53+0000\n"
+"POT-Creation-Date: 2021-01-11 03:05+0000\n"
 "PO-Revision-Date: 2020-11-08 20:03+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -4885,13 +4885,13 @@ msgstr "Özellikler derlenmiştir:"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:139
+#: engines/ultima/ultima8/meta_engine.cpp:138
 msgid "Interact via Left Click"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:145
+#: engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Interact via Right Click"
 msgstr ""
 
@@ -7039,31 +7039,31 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:132
+#: engines/ultima/ultima8/meta_engine.cpp:131
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:132
+#: engines/ultima/ultima8/meta_engine.cpp:131
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:179
+#: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:196
+#: engines/ultima/ultima8/meta_engine.cpp:195
 msgid "Ultima VIII Debug"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:295
 msgid "[corrupt]"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:298
 msgid "[outdated]"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:301
 msgid "[too modern]"
 msgstr ""
 
