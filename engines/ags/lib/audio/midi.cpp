@@ -32,10 +32,6 @@ BEGIN_MIDI_DRIVER_LIST
 { SCUMMVM_ID, &dummy_driver_data, true },
 END_MIDI_DRIVER_LIST
 
-MIDI_DRIVER *midi_driver;
-
-MIDI_DRIVER *midi_input_driver;
-
 int midi_card;
 
 int midi_input_card;
