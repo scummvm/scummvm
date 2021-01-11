@@ -22,6 +22,7 @@
 
 #include "ags/lib/audio/midi.h"
 #include "ags/lib/allegro/file.h"
+#include "ags/music.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {
@@ -49,7 +50,7 @@ int detect_midi_driver(int driver_id) {
 
 
 void stop_midi() {
-	warning("TODO: stop_midi");
+	::AGS::g_music->stop();
 }
 
 void destroy_midi(MIDI *midi) {
@@ -57,7 +58,7 @@ void destroy_midi(MIDI *midi) {
 }
 
 int play_midi(MIDI *tune, bool repeat) {
-	warning("TODO: play_midi");
+	::AGS::g_music->playMusic(tune, repeat);
 	return 0;
 }
 
@@ -67,15 +68,15 @@ size_t get_midi_length(MIDI *tune) {
 }
 
 void midi_seek(int target) {
-	warning("TODO: midi_seek");
+	::AGS::g_music->seek(target);
 }
 
 void midi_pause() {
-	warning("TODO: midi_pause");
+	::AGS::g_music->pause();
 }
 
 void midi_resume() {
-	warning("TODO: midi_resume");
+	::AGS::g_music->resume();
 }
 
 int load_midi_patches() {
@@ -83,8 +84,25 @@ int load_midi_patches() {
 	return 0;
 }
 
+#define MIDI_BLOCK_SIZE 32768
+
 MIDI *load_midi_pf(PACKFILE *fp) {
-	error("TODO: load_midi_pf");
+	MIDI *midi = new MIDI();
+	int bytesRead;
+
+	// Iterate through loading blocks of MIDI data
+	for (;;) {
+		size_t priorSize = midi->size();
+		midi->resize(priorSize + MIDI_BLOCK_SIZE);
+		bytesRead = pack_fread(&(*midi)[priorSize], MIDI_BLOCK_SIZE, fp);
+
+		if (bytesRead < MIDI_BLOCK_SIZE) {
+			midi->resize(priorSize + bytesRead);
+			break;
+		}
+	}
+
+	return midi;
 }
 
 } // namespace AGS3

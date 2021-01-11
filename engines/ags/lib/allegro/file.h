@@ -114,7 +114,7 @@ public:
 	}
 
 	int pack_fseek(int offset) override {
-		return _stream->seek(offset);
+		return _stream->seek(offset, SEEK_CUR);
 	}
 
 	int pack_getc() override {

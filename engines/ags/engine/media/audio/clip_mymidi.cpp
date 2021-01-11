@@ -113,6 +113,7 @@ int MYMIDI::play() {
 
 	lengthInSeconds = get_midi_length(tune);
 	if (AGS3::play_midi(tune, repeat)) {
+		lengthInSeconds = 0;
 		return 0;
 	}
 

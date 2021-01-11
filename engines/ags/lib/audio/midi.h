@@ -27,12 +27,9 @@
 #include "common/array.h"
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/alconfig.h"
+#include "ags/music.h"
 
 namespace AGS3 {
-
-/* a midi file */
-typedef Common::Array<byte> MIDI;
-
 
 #define MIDI_AUTODETECT       -1
 #define MIDI_NONE             0
@@ -40,6 +37,7 @@ typedef Common::Array<byte> MIDI;
 
 AL_ARRAY(_DRIVER_INFO, _midi_driver_list);
 
+using MIDI = ::AGS::MIDI;
 
 /* macros for constructing the driver lists */
 #define BEGIN_MIDI_DRIVER_LIST                                 \

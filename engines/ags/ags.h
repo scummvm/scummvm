@@ -49,6 +49,7 @@ enum AGSDebugChannels {
 
 struct AGSGameDescription;
 class EventsManager;
+class Music;
 
 class AGSEngine : public Engine {
 private:
@@ -56,6 +57,7 @@ private:
 	Common::RandomSource _randomSource;
 public:
 	EventsManager *_events;
+	Music *_music;
 	Graphics::Screen *_rawScreen;
 	::AGS3::BITMAP *_screen;
 	::AGS3::GFX_DRIVER *_gfxDriver;

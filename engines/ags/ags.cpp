@@ -23,6 +23,7 @@
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "ags/events.h"
+#include "ags/music.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -321,19 +322,21 @@ AGSEngine *g_vm;
 /*------------------------------------------------------------------*/
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("AGS"), _rawScreen(nullptr),
-		_screen(nullptr), _gfxDriver(nullptr) {
+		_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
+		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
 	_events = new EventsManager();
+	_music = new Music(_mixer);
 }
 
 AGSEngine::~AGSEngine() {
 	delete _screen;
 	delete _rawScreen;
 	delete _events;
+	delete _music;
 }
 
 uint32 AGSEngine::getFeatures() const {
