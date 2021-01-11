@@ -625,7 +625,13 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	}
 
 	bool done = false;
-	for (Direction dir = curdir; !done; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
+	Direction firstanimdir = curdir;
+
+	// Skip animating "stand" for the current direction in Crusader.
+	if (GAME_IS_CRUSADER)
+		firstanimdir = Direction_TurnByDelta(curdir, stepDelta, mode);
+
+	for (Direction dir = firstanimdir; !done; dir = Direction_TurnByDelta(dir, stepDelta, mode)) {
 		Animation::Sequence nextanim = turnanim;
 		if (dir == targetdir) {
 			nextanim = standanim;

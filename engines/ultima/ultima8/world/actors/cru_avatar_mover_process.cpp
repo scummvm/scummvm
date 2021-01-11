@@ -132,7 +132,8 @@ void CruAvatarMoverProcess::handleCombatMode() {
 			avatar->toggleInCombat();
 		}
 
-		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		// don't check weapon here, Avatar can go straight from drawn-weapon to
+		// walking forward.
 		step(nextanim, direction);
 		return;
 	} else if (hasMovementFlags(MOVE_BACK)) {
