@@ -22,26 +22,30 @@
 
 namespace AGS {
 
-static const PlainGameDescriptor AGS_GAMES[] = {
+static const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ags", "Adventure Game Studio Game" },
 
 	{ "bcremake", "Black Cauldron Remake" },
+	{ "kq2agdi", "Kings Quest II - Romancing The Stones" },
+
 	{ 0, 0 }
 };
 
+#define ENGLISH_ENTRY(ID, FILENAME, MD5, SIZE) { \
+		{ \
+			ID, \
+			nullptr, \
+			AD_ENTRY1s(FILENAME, MD5, SIZE), \
+			Common::EN_ANY, \
+			Common::kPlatformUnknown, \
+			ADGF_NO_FLAGS, \
+			GUIO1(GUIO_NOSPEECH) \
+		} \
+	}
 
 static const AGSGameDescription GAME_DESCRIPTIONS[] = {
-	{
-		{
-			"bcremake",
-			nullptr,
-			AD_ENTRY1s("bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		}
-	},
+	ENGLISH_ENTRY("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
+	ENGLISH_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),
 
 	{ AD_TABLE_END_MARKER }
 };
