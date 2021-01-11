@@ -154,7 +154,7 @@ void clear_to_color(BITMAP *bitmap, int color) {
 int bitmap_color_depth(BITMAP *bmp) {
 	Graphics::ManagedSurface &surf = **bmp;
 
-	return surf.format.bpp();
+	return (surf.format.bytesPerPixel == 1) ? 8 : surf.format.bpp();
 }
 
 int bitmap_mask_color(BITMAP *bmp) {
