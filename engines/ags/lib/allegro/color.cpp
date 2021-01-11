@@ -50,26 +50,17 @@ COLOR_MAP *color_map;
 
 void set_color(int idx, const RGB *p) {
 	_current_palette[idx] = *p;
-	g_system->getPaletteManager()->setPalette((const byte *)p, idx, 1);
 }
 
 void set_palette(const PALETTE p) {
 	for (int idx = 0; idx < PAL_SIZE; ++idx)
 		_current_palette[idx] = p[idx];
-	g_system->getPaletteManager()->setPalette((const byte *)p, 0, PAL_SIZE);
 }
 
 void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
-	byte palette[256 * 3];
-	byte *destP = palette;
-	for (int i = 0; i < 256; ++i, destP += 3) {
-		_current_palette[i] = *p;
-		destP[0] = p->r;
-		destP[1] = p->g;
-		destP[2] = p->b;
+	for (int i = from; i < to; ++i) {
+		_current_palette[i] = p[i];
 	}
-
-	g_system->getPaletteManager()->setPalette(&palette[from], from, to - from + 1);
 }
 
 int makecol15(int r, int g, int b) {
