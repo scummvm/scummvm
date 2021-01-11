@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	ags.o \
 	events.o \
 	metaengine.o \
+	music.o \
 	lib/aastr-0.1.1/aarot.o \
 	lib/aastr-0.1.1/aastr.o \
 	lib/aastr-0.1.1/aautil.o \
