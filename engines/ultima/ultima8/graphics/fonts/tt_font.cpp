@@ -197,7 +197,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						}
 					}
 				} else if (_antiAliased) {
-					uint32 pixColor = *((uint32 *)(surfrow + x * 4));
+					uint32 pixColor = *((const uint32 *)(surfrow + x * 4));
 					if (pixColor == 0)
 						continue;
 
