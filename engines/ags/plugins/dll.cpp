@@ -53,17 +53,17 @@ const char *dlerror() {
 /*------------------------------------------------------------------*/
 
 DLL::DLL() {
-	ADD_METHOD(AGS_PluginV2);
-	ADD_METHOD(AGS_EditorStartup);
-	ADD_METHOD(AGS_EditorShutdown);
-	ADD_METHOD(AGS_EditorProperties);
-	ADD_METHOD(AGS_EditorSaveGame);
-	ADD_METHOD(AGS_EditorLoadGame);
-	ADD_METHOD(AGS_EngineStartup);
-	ADD_METHOD(AGS_EngineShutdown);
-	ADD_METHOD(AGS_EngineOnEvent);
-	ADD_METHOD(AGS_EngineDebugHook);
-	ADD_METHOD(AGS_EngineInitGfx);
+	DLL_METHOD(AGS_PluginV2);
+	DLL_METHOD(AGS_EditorStartup);
+	DLL_METHOD(AGS_EditorShutdown);
+	DLL_METHOD(AGS_EditorProperties);
+	DLL_METHOD(AGS_EditorSaveGame);
+	DLL_METHOD(AGS_EditorLoadGame);
+	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineShutdown);
+	DLL_METHOD(AGS_EngineOnEvent);
+	DLL_METHOD(AGS_EngineDebugHook);
+	DLL_METHOD(AGS_EngineInitGfx);
 }
 
 int DLL::AGS_EditorStartup(IAGSEditor *) {
