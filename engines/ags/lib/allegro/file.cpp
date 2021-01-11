@@ -21,10 +21,86 @@
  */
 
 #include "ags/lib/allegro/file.h"
+#include "common/file.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {
+
+PACKFILE *PACKFILE::pack_fopen_chunk(int pack) {
+	error("TODO: pack_fopen_chunk is not yet supported");
+}
+
+PACKFILE *PACKFILE::pack_fclose_chunk() {
+	error("TODO: pack_fclose_chunk is not yet supported");
+}
+
+int PACKFILE::pack_igetw() {
+	byte buf[2];
+	return pack_fread(buf, 2) == 2 ? READ_LE_UINT16(buf) : 0;
+}
+
+long PACKFILE::pack_igetl() {
+	byte buf[4];
+	return pack_fread(buf, 4) == 4 ? READ_LE_UINT32(buf) : 0;
+}
+
+int PACKFILE::pack_iputw(int w) {
+	byte buf[2];
+	WRITE_LE_UINT16(buf, w);
+	pack_fwrite(buf, 2);
+	return 0;
+}
+
+long PACKFILE::pack_iputl(long l) {
+	byte buf[4];
+	WRITE_LE_UINT32(buf, l);
+	pack_fwrite(buf, 4);
+	return 0;
+}
+
+int PACKFILE::pack_mgetw() {
+	byte buf[2];
+	return pack_fread(buf, 2) == 2 ? READ_BE_UINT16(buf) : 0;
+}
+
+long PACKFILE::pack_mgetl() {
+	byte buf[4];
+	return pack_fread(buf, 4) == 4 ? READ_BE_UINT32(buf) : 0;
+}
+
+int PACKFILE::pack_mputw(int w) {
+	byte buf[2];
+	WRITE_BE_UINT16(buf, 2);
+	pack_fwrite(buf, 2);
+	return 0;
+}
+
+long PACKFILE::pack_mputl(long l) {
+	byte buf[4];
+	WRITE_BE_UINT16(buf, 4);
+	pack_fwrite(buf, 4);
+	return 0;
+}
+
+char *PACKFILE::pack_fgets(char *p, int max) {
+	int c;
+	char *dest = p;
+
+	while ((c = pack_getc()) != 0 && !pack_feof() && max-- > 0) {
+		*dest++ = c;
+	}
+
+	return p;
+}
+
+int PACKFILE::pack_fputs(AL_CONST char *p) {
+	pack_fwrite(p, strlen(p));
+	pack_putc(0);
+	return 0;
+}
+
+/*------------------------------------------------------------------*/
 
 char *fix_filename_case(char *path) {
 	return path;
@@ -55,48 +131,61 @@ int is_relative_filename(const char *filename) {
 	return !fname.contains('/') && !fname.contains('\\') ? 0 : -1;
 }
 
+/*------------------------------------------------------------------*/
+
 void packfile_password(AL_CONST char *password) {
 	error("TODO: packfile_password");
 }
 
 PACKFILE *pack_fopen(AL_CONST char *filename, AL_CONST char *mode) {
-	error("TODO: pack_fopen");
+	assert(!strcmp(mode, "r") || !strcmp(mode, "rb"));
+
+	Common::File *f = new Common::File();
+	if (f->open(filename)) {
+		return new ScummVMPackFile(f);
+
+	} else {
+		delete f;
+		return nullptr;
+	}
 }
 
 PACKFILE *pack_fopen_vtable(AL_CONST PACKFILE_VTABLE *vtable, void *userdata) {
-	error("TODO: pack_fopen_vtable");
+	return new VTablePackFile(vtable, userdata);
 }
 
 int pack_fclose(PACKFILE *f) {
-	error("TODO: xxx");
+	f->close();
+	delete f;
+	return 0;
 }
 
 int pack_fseek(PACKFILE *f, int offset) {
-	error("TODO: xxx");
+	return f->pack_fseek(offset);
 }
 
 PACKFILE *pack_fopen_chunk(PACKFILE *f, int pack) {
-	error("TODO: xxx");
+	return f->pack_fopen_chunk(pack);
 }
 
 PACKFILE *pack_fclose_chunk(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_fclose_chunk();
 }
 
 int pack_getc(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_getc();
 }
 
 int pack_putc(int c, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_putc(c);
 }
 
 int pack_feof(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_feof();
 }
 
 int pack_ferror(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_ferror();
 }
 
 int pack_igetw(PACKFILE *f) {
@@ -104,55 +193,55 @@ int pack_igetw(PACKFILE *f) {
 }
 
 long pack_igetl(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_igetl();
 }
 
 int pack_iputw(int w, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_iputw(w);
 }
 
 long pack_iputl(long l, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_iputl(l);
 }
 
 int pack_mgetw(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_mgetw();
 }
 
 long pack_mgetl(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_mgetl();
 }
 
 int pack_mputw(int w, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_mputw(w);
 }
 
 long pack_mputl(long l, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_mputl(l);
 }
 
 long pack_fread(void *p, long n, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_fread(p, n);
 }
 
 long pack_fwrite(AL_CONST void *p, long n, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_fwrite(p, n);
 }
 
 int pack_ungetc(int c, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_ungetc(c);
 }
 
 char *pack_fgets(char *p, int max, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_fgets(p, max);
 }
 
 int pack_fputs(AL_CONST char *p, PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_fputs(p);
 }
 
 void *pack_get_userdata(PACKFILE *f) {
-	error("TODO: xxx");
+	return f->pack_get_userdata();
 }
 
 } // namespace AGS3
