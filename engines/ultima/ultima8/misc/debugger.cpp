@@ -21,6 +21,7 @@
  */
 
 #include "image/png.h"
+#include "image/bmp.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
