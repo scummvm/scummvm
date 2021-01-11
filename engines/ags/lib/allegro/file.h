@@ -24,6 +24,7 @@
 #define AGS_LIB_ALLEGRO_FILE_H
 
 #include "ags/lib/allegro/alconfig.h"
+#include "common/file.h"
 
 namespace AGS3 {
 
@@ -69,16 +70,130 @@ struct PACKFILE_VTABLE {
  * Allegro file class
  */
 struct PACKFILE {
-	AL_CONST PACKFILE_VTABLE *vtable;
-	void *userdata;
-	int is_normal_packfile;
+	virtual ~PACKFILE() {
+		close();
+	}
 
-	/* The following is only to be used for the "normal" PACKFILE vtable,
-	 * i.e. what is implemented by Allegro itself. If is_normal_packfile is
-	 * false then the following is not even allocated. This must be the last
-	 * member in the structure.
-	 */
-	struct _al_normal_packfile_details normal;
+	virtual void close() {}
+	virtual int pack_fseek(int offset) = 0;
+	virtual int pack_getc() = 0;
+	virtual int pack_putc(int c) = 0;
+	virtual int pack_ungetc(int c) = 0;
+	virtual long pack_fread(void *p, long n) = 0;
+	virtual long pack_fwrite(AL_CONST void *p, long n) = 0;
+	virtual int pack_feof() = 0;
+	virtual int pack_ferror() = 0;
+	virtual void *pack_get_userdata() const { return nullptr; }
+
+	PACKFILE *pack_fopen_chunk(int pack);
+	PACKFILE *pack_fclose_chunk();
+	int pack_igetw();
+	long pack_igetl();
+	int pack_iputw(int w);
+	long pack_iputl(long l);
+	int pack_mgetw();
+	long pack_mgetl();
+	int pack_mputw(int w);
+	long pack_mputl(long l);
+	char *pack_fgets(char *p, int max);
+	int pack_fputs(AL_CONST char *p);
+};
+
+struct ScummVMPackFile : public PACKFILE {
+public:
+	Common::SeekableReadStream *_stream;
+
+	ScummVMPackFile(Common::SeekableReadStream *rs) : PACKFILE(), _stream(rs) {
+	}
+
+	virtual ~ScummVMPackFile() {}
+
+	void close() override {
+		delete _stream;
+		_stream = nullptr;
+	}
+
+	int pack_fseek(int offset) override {
+		return _stream->seek(offset);
+	}
+
+	int pack_getc() override {
+		return _stream->readByte();
+	}
+
+	int pack_putc(int c) override {
+		error("pack_putc is not yet supported");
+	}
+
+	int pack_ungetc(int c) override {
+		_stream->seek(-1, SEEK_CUR);
+		return 0;
+	}
+
+	long pack_fread(void *p, long n) override {
+		return _stream->read(p, n);
+	}
+
+	long pack_fwrite(AL_CONST void *p, long n) override {
+		error("pack_fwrite is not yet supported");
+	}
+
+	int pack_feof() override {
+		return _stream->eos();
+	}
+
+	int pack_ferror() override {
+		return _stream->err();
+	}
+};
+
+struct VTablePackFile : public PACKFILE {
+	AL_CONST PACKFILE_VTABLE *_vTable;
+	void *_userData;
+
+	VTablePackFile(AL_CONST PACKFILE_VTABLE *vTable, void *userData) :
+		_vTable(vTable), _userData(userData) {
+	}
+
+	void close() override {
+		_vTable->pf_fclose(_userData);
+	}
+
+	int pack_fseek(int offset) override {
+		return _vTable->pf_fseek(_userData, offset);
+	}
+
+	int pack_getc() override {
+		return _vTable->pf_getc(_userData);
+	}
+
+	int pack_putc(int c) override {
+		return _vTable->pf_putc(c, _userData);
+	}
+
+	int pack_ungetc(int c) override {
+		return _vTable->pf_ungetc(c, _userData);
+	}
+
+	long pack_fread(void *p, long n) override {
+		return _vTable->pf_fread(p, n, _userData);
+	}
+
+	long pack_fwrite(AL_CONST void *p, long n) override {
+		return _vTable->pf_fwrite(p, n, _userData);
+	}
+
+	int pack_feof() override {
+		return _vTable->pf_feof(_userData);
+	}
+
+	int pack_ferror() override {
+		return _vTable->pf_ferror(_userData);
+	}
+
+	virtual void *pack_get_userdata() const override {
+		return _userData;
+	}
 };
 
 extern char *fix_filename_case(char *path);
