@@ -106,6 +106,7 @@ private:
 	int32 _lerpFactor;       //!< Interpolation factor for this frame (0-256)
 	bool _inBetweenFrame;    //!< Set true if we are doing an inbetween frame
 
+	bool _highRes;			 //!< Set to true to enable larger screen size
 	bool _frameSkip;         //!< Set to true to enable frame skipping (default false)
 	bool _frameLimit;        //!< Set to true to enable frame limiting (default true)
 	bool _interpolate;       //!< Set to true to enable interpolation (default true)
@@ -215,6 +216,11 @@ public:
 	static const int U8_DEFAULT_SCREEN_HEIGHT = 200;
 	static const int CRUSADER_DEFAULT_SCREEN_WIDTH = 640;
 	static const int CRUSADER_DEFAULT_SCREEN_HEIGHT = 480;
+
+	static const int U8_HIRES_SCREEN_WIDTH = 640;
+	static const int U8_HIRES_SCREEN_HEIGHT = 400;
+	static const int CRUSADER_HIRES_SCREEN_WIDTH = 1024;
+	static const int CRUSADER_HIRES_SCREEN_HEIGHT = 768;
 
 	INTRINSIC(I_getCurrentTimerTick);
 	INTRINSIC(I_setAvatarInStasis);

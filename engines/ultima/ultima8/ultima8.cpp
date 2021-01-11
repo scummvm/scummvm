@@ -130,7 +130,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_avatarInStasis(false), _cruStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
-	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
+	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0),
+		_highRes(false) {
 	_instance = this;
 }
 
@@ -584,11 +585,14 @@ void Ultima8Engine::paint() {
 
 	tpaint -= g_system->getMillis();
 
-#ifdef DEBUG
-	// Fill the screen with an annoying color so we can see fast area bugs
 	Rect r;
 	_screen->GetSurfaceDims(r);
-	_screen->Fill32(0xFF1010FF, 0, 0, r.width(), r.height());
+	if (_highRes)
+		_screen->Fill32(0, 0, 0, r.width(), r.height());
+
+#ifdef DEBUG
+	// Fill the screen with an annoying color so we can see fast area bugs
+	_screen->Fill32(0xFF10FF10, 0, 0, r.width(), r.height());
 #endif
 
 	_desktopGump->Paint(_screen, _lerpFactor, false);
@@ -602,12 +606,16 @@ void Ultima8Engine::paint() {
 }
 
 void Ultima8Engine::GraphicSysInit() {
+	if (ConfMan.hasKey("usehighres")) {
+		_highRes = ConfMan.getBool("usehighres");
+	}
+
 	if (GAME_IS_U8) {
-		ConfMan.registerDefault("width", U8_DEFAULT_SCREEN_WIDTH);
-		ConfMan.registerDefault("height", U8_DEFAULT_SCREEN_HEIGHT);
+		ConfMan.registerDefault("width", _highRes ? U8_HIRES_SCREEN_WIDTH : U8_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", _highRes ? U8_HIRES_SCREEN_HEIGHT : U8_DEFAULT_SCREEN_HEIGHT);
 	} else {
-		ConfMan.registerDefault("width", CRUSADER_DEFAULT_SCREEN_WIDTH);
-		ConfMan.registerDefault("height", CRUSADER_DEFAULT_SCREEN_HEIGHT);
+		ConfMan.registerDefault("width", _highRes ? CRUSADER_HIRES_SCREEN_WIDTH : CRUSADER_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", _highRes ? CRUSADER_HIRES_SCREEN_HEIGHT : CRUSADER_DEFAULT_SCREEN_HEIGHT);
 	}
 	ConfMan.registerDefault("bpp", 16);
 
@@ -1204,7 +1212,6 @@ void Ultima8Engine::applyGameSettings() {
 	_frameLimit = ConfMan.getBool("frameLimit");
 	_interpolate = ConfMan.getBool("interpolate");
 	_cheatsEnabled = ConfMan.getBool("cheat");
-
 }
 
 void Ultima8Engine::openConfigDialog() {

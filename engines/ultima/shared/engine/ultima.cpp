@@ -76,6 +76,7 @@ bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
 

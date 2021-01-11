@@ -143,6 +143,12 @@ static const ExtraGuiOption COMMON_OPTIONS[] = {
 		"cheat",
 		false
 	},
+	{
+		_s("Enable high resolution"),
+		_s("Enable a higher resolution for the game"),
+		"usehighres",
+		false
+	},
 	{ nullptr, nullptr, nullptr, false }
 };
 

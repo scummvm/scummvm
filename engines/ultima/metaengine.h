@@ -54,7 +54,6 @@ public:
 	* Return the extra GUI options used by the target.
 	*/
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
 };
 
 #endif

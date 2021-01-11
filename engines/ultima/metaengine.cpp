@@ -27,6 +27,7 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
+#include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/meta_engine.h"
