@@ -497,6 +497,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	memset(_lettersToPrintBuf, 0, sizeof(_lettersToPrintBuf));
 
 	_planarBuf = 0;
+	_pak98Buf = 0;
 
 	_midiEnabled = false;
 
@@ -582,11 +583,9 @@ Common::Error AGOSEngine::init() {
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
-		(getPlatform() == Common::kPlatformDOS)) {
+		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformPC98)) {
 
-		bool isDemo = (getFeatures() & GF_DEMO) ? true : false;
-
-		int ret = _midi->open(getGameType(), isDemo);
+		int ret = _midi->open(getGameType(), getPlatform(), (getFeatures() & GF_DEMO));
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
@@ -945,6 +944,7 @@ AGOSEngine::~AGOSEngine() {
 		_backBuf->free();
 	delete _backBuf;
 	free(_planarBuf);
+	delete[] _pak98Buf;
 	if (_scaleBuf)
 		_scaleBuf->free();
 	delete _scaleBuf;

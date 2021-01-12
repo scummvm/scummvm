@@ -268,9 +268,11 @@ int AGOSEngine::vcReadVarOrWord() {
 	}
 }
 
-uint AGOSEngine::vcReadNextWord() {
+uint AGOSEngine::vcReadNextWord(bool forceLERead) {
 	uint a;
 	a = readUint16Wrapper(_vcPtr);
+	if (forceLERead)
+		a = FROM_BE_16(a);
 	_vcPtr += 2;
 	return a;
 }
@@ -635,13 +637,13 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 	state.flags = flags;
 
 	src = _curVgaFile2 + state.image * 8;
-	state.srcPtr = _curVgaFile2 + readUint32Wrapper(src);
+	state.srcPtr = _curVgaFile2 + (getPlatform() == Common::kPlatformPC98 ? READ_LE_UINT32(src) : readUint32Wrapper(src));
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		width = READ_LE_UINT16(src + 6);
 		height = READ_LE_UINT16(src + 4) & 0x7FFF;
 		flags = src[5];
 	} else {
-		width = READ_BE_UINT16(src + 6) / 16;
+		width = (getPlatform() == Common::kPlatformPC98 ? READ_LE_UINT16(src + 6) : READ_BE_UINT16(src + 6)) / 16;
 		height = src[5];
 		flags = src[4];
 	}
@@ -662,10 +664,9 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 
 	if (getFeatures() & GF_PLANAR) {
 		if (getGameType() == GType_PN) {
-			state.srcPtr = convertImage(&state, ((state.flags & (kDFCompressed | kDFCompressedFlip)) != 0));
-		}
-		else
-			state.srcPtr = convertImage(&state, ((flags & 0x80) != 0));
+			state.srcPtr = convertAmigaImage(&state, ((state.flags & (kDFCompressed | kDFCompressedFlip)) != 0));
+		} else
+			state.srcPtr = convertAmigaImage(&state, ((flags & 0x80) != 0));
 
 		// converted planar clip is already uncompressed
 		if (state.flags & kDFCompressedFlip) {
@@ -689,6 +690,9 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 			}
 		}
 	}
+
+	if (getPlatform() == Common::kPlatformPC98)
+		convertPC98Image(state);
 
 	uint maxWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? 640 : 20;
 	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && width > maxWidth) {

@@ -294,10 +294,10 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 	int16 channelVolumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
 	channelVolumeAdjust += adjustedVelocity;
 	channelVolumeAdjust = CLIP<int16>(channelVolumeAdjust, 0, 0x7F);
-	
+
 	// adjust velocity with the master volume
 	byte volumeAdjust = adjustedVelocity * ((float) (128 + _masterVolume) / 128);
-	
+
 	adjustedVelocity = volumeAdjust;
 
 	if (!_musicDrvMode) {

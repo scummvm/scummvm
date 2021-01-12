@@ -140,7 +140,7 @@ static void convertCompressedImage(const byte *src, byte *dst, uint8 colorDepth,
 	}
 }
 
-byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
+byte *AGOSEngine::convertAmigaImage(VC10_state *state, bool compressed) {
 	int length, i, j;
 
 	uint8 colorDepth = 4;

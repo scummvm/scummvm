@@ -290,16 +290,22 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	} else {
 		_midi->setLoop(true); // Must do this BEFORE loading music.
 
-		char filename[15];
-		Common::File f;
-		sprintf(filename, "MOD%d.MUS", music);
-		f.open(filename);
-		if (f.isOpen() == false)
-			error("playMusic: Can't load music from '%s'", filename);
+		Common::SeekableReadStream *str = 0;
+		if (getPlatform() == Common::kPlatformPC98) {
+			str = createPak98FileStream(Common::String::format("MOD%d.PAK", music).c_str());
+			if (!str)
+				error("playMusic: Can't load music from 'MOD%d.PAK'", music);
+		} else {
+			Common::File *file = new Common::File();
+			if (!file->open(Common::String::format("MOD%d.MUS", music)))
+				error("playMusic: Can't load music from 'MOD%d.MUS'", music);
+			str = file;
+		}
 
-		_midi->loadS1D(&f);
+		_midi->loadS1D(str);
 		_midi->startTrack(0);
 		_midi->startTrack(track);
+		delete str;
 	}
 }
 

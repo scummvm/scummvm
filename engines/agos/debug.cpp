@@ -499,7 +499,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 	state.width = w / 16;
 
 	if (getFeatures() & GF_PLANAR) {
-		state.srcPtr = convertImage(&state, (getGameType() == GType_PN || (flags & 0x80) != 0));
+		state.srcPtr = convertAmigaImage(&state, (getGameType() == GType_PN || (flags & 0x80) != 0));
 		flags &= ~0x80;
 	}
 

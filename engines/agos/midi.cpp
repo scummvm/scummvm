@@ -87,17 +87,23 @@ MidiPlayer::~MidiPlayer() {
 	clearConstructs();
 }
 
-int MidiPlayer::open(int gameType, bool isDemo) {
+int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	// Don't call open() twice!
 	assert(!_driver);
 
 	Common::String accoladeDriverFilename;
 	musicType = MT_INVALID;
+	int devFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
-		_musicMode = kMusicModeAccolade;
-		accoladeDriverFilename = "INSTR.DAT";
+		if (platform == Common::kPlatformPC98) {
+			_musicMode = kMusicModeDisabled;
+			devFlags = (devFlags & ~MDT_ADLIB) | MDT_PC98;
+		} else {
+			_musicMode = kMusicModeAccolade;
+			accoladeDriverFilename = "INSTR.DAT";
+		}
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
@@ -130,7 +136,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	int ret = 0;
 
 	if (_musicMode != kMusicModeDisabled) {
-		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		dev = MidiDriver::detectDevice(devFlags);
 		musicType = MidiDriver::getMusicType(dev);
 
 		switch (musicType) {
@@ -163,7 +169,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		switch (musicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
-			
+
 			break;
 		case MT_MT32:
 			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
@@ -577,7 +583,7 @@ static const int simon1_gmf_size[] = {
 	17256, 5103, 8794, 4884, 16
 };
 
-void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
+void MidiPlayer::loadSMF(Common::SeekableReadStream *in, int song, bool sfx) {
 	Common::StackLock lock(_mutex);
 
 	MusicInfo *p = sfx ? &_sfx : &_music;
@@ -666,7 +672,7 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 }
 
-void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
+void MidiPlayer::loadMultipleSMF(Common::SeekableReadStream *in, bool sfx) {
 	// This is a special case for Simon 2 Windows.
 	// Instead of having multiple sequences as
 	// separate tracks in a Type 2 file, simon2win
@@ -722,7 +728,7 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 	}
 }
 
-void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
+void MidiPlayer::loadXMIDI(Common::SeekableReadStream *in, bool sfx) {
 	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
@@ -768,7 +774,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 	p->parser = parser; // That plugs the power cord into the wall
 }
 
-void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
+void MidiPlayer::loadS1D(Common::SeekableReadStream *in, bool sfx) {
 	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);

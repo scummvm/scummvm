@@ -806,6 +806,91 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 	}
 }
 
+void decodePak98(uint8 *dst, const uint8 *src, uint32 inSize) {
+	const uint8 *src2 = 0;
+	uint8 cmd = 0x80;
+
+	for (uint32 bytesLeft = inSize; bytesLeft; ) {
+		if (cmd == 0x80) {
+			src2 = src + 1;
+			--bytesLeft;
+		}
+
+		if (cmd & *src) {
+			*dst++ = *src2++;
+			--bytesLeft;
+		} else {
+			bytesLeft -= 2;
+			uint16 cmd2 = READ_LE_UINT16(src2);
+			src2 += 2;
+			uint8 cmd3 = cmd2 & 0x0F;
+			cmd2 >>= 4;
+
+			if (cmd2 == 0) {
+				uint16 count = cmd3 + 4;
+				--bytesLeft;
+				if (cmd3 == 0x0F) {
+					count = READ_LE_UINT16(src2);
+					src2 += 2;
+					bytesLeft -= 2;
+				} else if (cmd3 == 0x0E) {
+					count = 18 + (*src2++);
+					--bytesLeft;
+				}
+
+				uint8 destVal = *src2++;
+				while (count--)
+					*dst++ = destVal;
+
+			} else if (cmd2 == 1) {
+				uint16 count = cmd3 + 3;
+				if (cmd3 == 0x0F) {
+					count = READ_LE_UINT16(src2);
+					src2 += 2;
+					bytesLeft -= 2;
+				} else if (cmd3 == 0x0E) {
+					count = 17 + (*src2++);
+					--bytesLeft;
+				}
+
+				dst += count;
+
+			} else if (cmd2 == 2) {
+				uint16 count = cmd3 + 16;
+				if (cmd3 == 0x0F) {
+					count = READ_LE_UINT16(src2);
+					src2 += 2;
+					bytesLeft -= 2;
+				} else if (cmd3 == 0x0E) {
+					count = 30 + (*src2++);
+					--bytesLeft;
+				}
+
+				bytesLeft -= count;
+				while (count--)
+					*dst++ = *src2++;
+
+			} else {
+				uint16 count = cmd3 + 3;
+				if (cmd3 == 0x0F) {
+					count = 18 + (*src2++);
+					--bytesLeft;
+				}
+
+				uint8 *src3 = dst - cmd2;
+				while (count--)
+					*dst++ = *src3++;
+			}
+		}
+
+		cmd >>= 1;
+		if (cmd == 0) {
+			cmd = 0x80;
+			src = src2;
+		}
+	}
+}
+
 void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	Common::File in;
 	char filename[15];
@@ -851,7 +936,9 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 				sprintf(filename, "%.3d%d.pkd", id, type);
 			}
 		} else {
-			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+			if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
+				sprintf(filename, "%.2d.GR2", id);
+			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 				sprintf(filename, "%.2d%d.VGA", id, type);
 			} else if (getGameType() == GType_PN) {
 				sprintf(filename, "%c%d.out", id + 48, type);
@@ -901,6 +988,40 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			dst = allocBlock (dstSize + extraBuffer);
 			decrunchFile(srcBuffer, dst, srcSize);
 			free(srcBuffer);
+		} else if (getPlatform() == Common::kPlatformPC98) {
+			bool compressed = (in.readUint16LE() == 1);
+			srcSize = in.readUint32LE();
+			if (type == 1) {
+				if (compressed)
+					srcSize = in.readUint32LE() + 2;
+				in.seek(srcSize, SEEK_CUR);
+				compressed = (in.readUint16LE() == 1);
+				srcSize = in.readUint32LE();
+			}
+
+			if (compressed) {
+				dstSize = srcSize;
+				srcSize = in.readUint32LE();
+				uint16 fill = in.readUint16LE();
+
+				uint8 *srcBuffer = new uint8[srcSize];
+				if (in.read(srcBuffer, srcSize) != srcSize)
+					error("loadVGAVideoFile: Read failed");
+				dst = allocBlock(dstSize);
+
+				Common::fill<uint16*, uint16>((uint16*)dst, (uint16*)(dst + (dstSize & ~1)), fill);
+				if (dstSize & 1)
+					*(dst + dstSize - 1) = fill & 0xff;
+
+				decodePak98(dst, srcBuffer, srcSize);
+
+				delete[] srcBuffer;
+			} else {
+				dstSize = srcSize;
+				dst = allocBlock(dstSize + extraBuffer);
+				if (in.read(dst, dstSize) != dstSize)
+					error("loadVGAVideoFile: Read failed");
+			}
 		} else {
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in.read(dst, dstSize) != dstSize)
@@ -922,6 +1043,82 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}
+}
+
+Common::SeekableReadStream *AGOSEngine::createPak98FileStream(const char *filename) {
+	Common::File in;
+	if (!in.open(filename))
+		return 0;
+
+	/*uint16 cmpType = */in.readUint16LE();
+	uint32 outSize = in.readUint32LE();
+	uint32 inSize = in.readUint32LE();
+	uint16 fill = in.readUint16LE();
+
+	uint8 *tempBuffer = new uint8[inSize];
+	uint8 *decBuffer = new uint8[outSize];
+	Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), fill);
+	if (outSize & 1)
+		*(decBuffer + outSize - 1) = fill & 0xff;
+
+	in.read(tempBuffer, inSize);
+	decodePak98(decBuffer, tempBuffer, inSize);
+	delete[] tempBuffer;
+
+	return new Common::MemoryReadStream(decBuffer, outSize, DisposeAfterUse::YES);
+}
+
+void AGOSEngine::convertPC98Image(VC10_state &state) {
+	if (state.flags & (kDFCompressedFlip | kDFCompressed)) {
+		const byte *src = state.srcPtr;
+		uint32 outSize = READ_LE_UINT32(src + 2);
+		assert(outSize == (state.width << 3) * state.height);
+		uint32 inSize = READ_LE_UINT32(src + 6);
+		uint16 fill = READ_LE_UINT16(src + 10);
+		delete[] _pak98Buf;
+		byte *decBuffer = new uint8[outSize];
+		Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), fill);
+		if (outSize & 1)
+			*(decBuffer + outSize - 1) = fill & 0xff;
+
+		decodePak98(decBuffer, src + 12, inSize);
+		_pak98Buf = state.srcPtr = decBuffer;
+	}
+
+	// The PC-98 images are in a planar format, but slightly different from the Amiga format. It does
+	// not make much sense to set the GF_PLANAR flag, since the icons do not require the conversion.
+	delete[] _planarBuf;
+	uint16 planeLW = state.width << 1;
+	uint16 planePitch = planeLW * 3;
+	_planarBuf = new byte[(state.width << 3) * state.height];
+
+	const byte *src[4];
+	memset(src, 0, sizeof(src));
+	for (int i = 0; i < 4; ++i)
+		src[i] = state.srcPtr + i * planeLW;
+	byte *dst = _planarBuf;
+
+	for (int y = 0; y < state.height; ++y) {
+		for (int x = 0; x < planeLW; ++x) {
+			for (int i = 0; i <= 6; i += 2) {
+				byte col = 0;
+				for (int ii = 0; ii < 4; ++ii) {
+					col |= ((*src[ii] >> (7 - i)) & 1) << (ii + 4);
+					col |= ((*src[ii] >> (6 - i)) & 1) << ii;
+				}
+				*dst++ = col;
+			}
+			for (int ii = 0; ii < 4; ++ii)
+				++src[ii];
+		}
+		for (int ii = 0; ii < 4; ++ii)
+			src[ii] += planePitch;
+	}
+
+	state.srcPtr = _planarBuf;
+	if (state.flags & kDFCompressedFlip)
+		state.flags |= kDFFlip;
+	state.flags &= ~(kDFCompressedFlip | kDFCompressed);
 }
 
 } // End of namespace AGOS

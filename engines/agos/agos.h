@@ -551,6 +551,7 @@ protected:
 	byte *_planarBuf;
 	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
+	const byte *_pak98Buf;
 
 	uint8 _window3Flag;
 	uint8 _window4Flag;
@@ -806,6 +807,9 @@ protected:
 
 	uint loadTextFile_simon1(const char *filename, byte *dst);
 	Common::SeekableReadStream *openTablesFile_simon1(const char *filename);
+	Common::SeekableReadStream *openTablesFile_pak98(const char *filename);
+	Common::SeekableReadStream *createPak98FileStream(const char *filename);
+	void convertPC98Image(VC10_state &state);
 
 	uint loadTextFile_gme(const char *filename, byte *dst);
 	Common::SeekableReadStream *openTablesFile_gme(const char *filename);
@@ -1153,7 +1157,7 @@ protected:
 	void verticalScroll(VC10_state *state);
 
 	int vcReadVarOrWord();
-	uint vcReadNextWord();
+	uint vcReadNextWord(bool forceLERead = false);
 	uint vcReadNextByte();
 	uint vcReadVar(uint var);
 	void vcWriteVar(uint var, int16 value);
@@ -1206,7 +1210,7 @@ protected:
 	byte *getBackGround();
 	byte *getScaleBuf();
 
-	byte *convertImage(VC10_state *state, bool compressed);
+	byte *convertAmigaImage(VC10_state *state, bool compressed);
 
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	void loadVGABeardFile(uint16 id);

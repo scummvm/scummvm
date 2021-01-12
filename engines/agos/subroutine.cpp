@@ -23,6 +23,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -259,7 +260,9 @@ void AGOSEngine::endCutscene() {
 }
 
 Common::SeekableReadStream *AGOSEngine::openTablesFile(const char *filename) {
-	if (getFeatures() & GF_OLD_BUNDLE)
+	if (getPlatform() == Common::kPlatformPC98)
+		return openTablesFile_pak98(filename);
+	else if (getFeatures() & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
@@ -269,6 +272,13 @@ Common::SeekableReadStream *AGOSEngine::openTablesFile_simon1(const char *filena
 	Common::File *in = new Common::File();
 	if (!in->open(filename))
 		error("openTablesFile: Can't open '%s'", filename);
+	return in;
+}
+
+Common::SeekableReadStream *AGOSEngine::openTablesFile_pak98(const char *filename) {
+	Common::SeekableReadStream *in = createPak98FileStream(filename);
+	if (!in)
+		error("openTablesFile_pak98: Can't open '%s'", filename);
 	return in;
 }
 
@@ -287,7 +297,6 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
 	Common::SeekableReadStream *in;
-	char filename[30];
 
 	if (_tblList == NULL)
 		return 0;
@@ -306,9 +315,8 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 			_tablesHeapCurPos = _tablesHeapCurPosOrg;
 			_stringIdLocalMin = 1;
 			_stringIdLocalMax = 0;
-
-			sprintf(filename, "TABLES%.2d", file_num);
-			in = openTablesFile(filename);
+			Common::String filename = Common::String::format("TABLES%.2d%s", file_num, getPlatform() == Common::kPlatformPC98 ? ".PAK" : "");
+			in = openTablesFile(filename.c_str());
 			readSubroutineBlock(in);
 			closeTablesFile(in);
 
