@@ -6789,6 +6789,14 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
+#: engines/twine/metaengine.cpp:507
+msgid "Previous location"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:512
+msgid "Next location"
+msgstr ""
+
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""

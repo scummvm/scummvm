@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-11 03:05+0000\n"
+"POT-Creation-Date: 2021-01-11 22:08+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7299,6 +7299,18 @@ msgstr ""
 #, fuzzy
 msgid "Next Page"
 msgstr "Volgende pagina"
+
+#: engines/twine/metaengine.cpp:507
+#, fuzzy
+#| msgid "Previous action"
+msgid "Previous location"
+msgstr "Vorige actie"
+
+#: engines/twine/metaengine.cpp:512
+#, fuzzy
+#| msgid "Next action"
+msgid "Next location"
+msgstr "Volgende actie"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
