@@ -116,6 +116,27 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vox");
+	if (flags & TF_DOTEMU_ENHANCED) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/fla");
+		if (_gameLang == Common::Language::DE_DEU) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/de_voice");
+		}
+		if (_gameLang == Common::Language::EN_ANY || _gameLang == Common::Language::EN_GRB || _gameLang == Common::Language::EN_USA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/en_voice");
+		}
+		if (_gameLang == Common::Language::FR_FRA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/fr_voice");
+		}
+#ifdef USE_MAD
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/music");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/midi_mp3");
+#endif
+#ifdef USE_VORBIS
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/music/ogg");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/midi_mp3/ogg");
+#endif
+	}
 
 	setDebugger(new TwinEConsole(this));
 	_actor = new Actor(this);

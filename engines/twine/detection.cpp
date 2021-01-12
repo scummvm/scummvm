@@ -286,7 +286,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -295,7 +295,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -304,7 +304,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -313,7 +313,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -322,7 +322,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_TESTING | TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 
