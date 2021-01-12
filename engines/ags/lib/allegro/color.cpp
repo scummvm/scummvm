@@ -63,6 +63,16 @@ void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 	}
 }
 
+void palette_to_rgb8(const PALETTE src, byte dest[PALETTE_SIZE]) {
+	byte *pDest = dest;
+	for (int i = 0; i < 256; ++i, pDest += 3) {
+		pDest[0] = src[i].r;
+		pDest[1] = src[i].g;
+		pDest[2] = src[i].b;
+	}
+}
+
+
 int makecol15(int r, int g, int b) {
 	return (((r >> 3) << _rgb_r_shift_15) |
 		((g >> 3) << _rgb_g_shift_15) |
