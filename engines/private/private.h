@@ -81,10 +81,17 @@ public:
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);
 	
-
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveAutosaveCurrently() override  { return false; }
 	bool canSaveGameStateCurrently() override { return true; }
+	
+	void selectLoadGame(Common::Point);
+	bool cursorLoadGame(Common::Point);
+
+	void selectSaveGame(Common::Point);
+	bool cursorSaveGame(Common::Point);
+
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
@@ -106,8 +113,13 @@ public:
     // global state
 	Common::Point *_origin;
     Common::String *_nextSetting;
+	Common::String *_currentSetting;
     Common::String *_nextVS;
     Common::String *_frame;
+
+	// Save/Load games
+	MaskInfo *_saveGameMask;
+	MaskInfo *_loadGameMask;
 
 	int _mode;
     bool _modified;

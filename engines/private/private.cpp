@@ -12,7 +12,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/str.h"
-
+#include "common/savefile.h"
 #include "engines/util.h"
 
 #include "image/bmp.h"
@@ -52,6 +52,9 @@ PrivateEngine::PrivateEngine(OSystem *syst)
 
     g_private = this;
 
+    _saveGameMask = NULL;
+    _loadGameMask = NULL;
+    
     _nextSetting = NULL;
     _nextMovie = NULL;
     _modified = false;
@@ -132,7 +135,12 @@ Common::Error PrivateEngine::run() {
     Common::Point mousePos;
     _videoDecoder = nullptr; //new Video::SmackerDecoder();
 
-    _nextSetting = new Common::String("kGoIntro");
+    int saveSlot = ConfMan.hasKey("save_slot");
+    if (saveSlot >= 0) { // load the savegame
+        loadGameState(saveSlot);
+    } else {
+        _nextSetting = new Common::String("kGoIntro");
+    }
 
     while (!shouldQuit()) {
         if (_mode == 1)
@@ -152,6 +160,8 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
+                selectLoadGame(mousePos);
+                selectSaveGame(mousePos);
                 selectMask(mousePos);
                 if (!_nextSetting)
                     selectExit(mousePos);
@@ -161,6 +171,9 @@ Common::Error PrivateEngine::run() {
                 CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
                 cursorExit(mousePos);
                 cursorMask(mousePos);
+                cursorLoadGame(mousePos);
+                cursorSaveGame(mousePos);
+                
                 //
                 break;
 
@@ -195,6 +208,8 @@ Common::Error PrivateEngine::run() {
             debug("Executing %s", _nextSetting->c_str());
             _exits.clear();
             _masks.clear();
+            _loadGameMask = NULL;
+            _saveGameMask = NULL;
             loadSetting(_nextSetting);
             _nextSetting = NULL;
             //CursorMan.showMouse(false);
@@ -264,7 +279,6 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
     return inside;
 }
 
-
 void PrivateEngine::selectExit(Common::Point mousePos) {
     //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     mousePos = mousePos - *_origin;
@@ -328,6 +342,76 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     }
 }
 
+void PrivateEngine::selectLoadGame(Common::Point mousePos) {
+    if (_loadGameMask == NULL)
+        return;
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return;
+
+    //debug("Testing mask %s", m.nextSetting->c_str());
+    if ( *((uint32*) _loadGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        //debug("loadGame!");
+        loadGameDialog();
+    }
+
+}
+
+bool PrivateEngine::cursorLoadGame(Common::Point mousePos) {
+    if (_loadGameMask == NULL)
+        return false;
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return false;
+
+    if (mousePos.x > _loadGameMask->surf->h || mousePos.y > _loadGameMask->surf->w)
+        return false;
+
+    if ( *((uint32*) _loadGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        assert(_cursors.contains(*_loadGameMask->cursor));
+        CursorMan.replaceCursor(_cursors.getVal(*_loadGameMask->cursor), 32, 32, 0, 0, 0, true);
+        return true;
+    }
+    return false;
+}
+
+void PrivateEngine::selectSaveGame(Common::Point mousePos) {
+    if (_saveGameMask == NULL)
+        return;
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return;
+
+    //debug("Testing mask %s", m.nextSetting->c_str());
+    if ( *((uint32*) _saveGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        saveGameDialog();
+    }
+
+}
+
+bool PrivateEngine::cursorSaveGame(Common::Point mousePos) {
+    if (_saveGameMask == NULL)
+        return false;
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+    mousePos = mousePos - *_origin;
+    if (mousePos.x < 0 || mousePos.y < 0)
+        return false;
+
+    if (mousePos.x > _saveGameMask->surf->h || mousePos.y > _saveGameMask->surf->w)
+        return false;
+
+    if ( *((uint32*) _saveGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        assert(_cursors.contains(*_saveGameMask->cursor));
+        CursorMan.replaceCursor(_cursors.getVal(*_saveGameMask->cursor), 32, 32, 0, 0, 0, true);
+        return true;
+    }
+    return false;
+}
+
+
 bool PrivateEngine::hasFeature(EngineFeature f) const {
     return
         (f == kSupportsReturnToLauncher);
@@ -335,20 +419,46 @@ bool PrivateEngine::hasFeature(EngineFeature f) const {
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
-    syncGameStream(s);
+    debug("loadGameStream");
+    _nextSetting = new Common::String("kMainDesktop");
+    //for (SymbolMap::iterator it = variables.begin(); it != variables.end(); ++it)
+    //    debug("%s %s", it->_key.c_str(), it->_value->name->c_str());
+    Common::String *key = new Common::String();
+    int val;
+        
+    for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+        //Common::String key = *it;
+        //debug("key: %s", key.c_str());
+        s.syncAsUint32LE(val); 
+        Private::Symbol *sym = variables.getVal(*it);
+        sym->u.val = val;
+    }
+
+    //syncGameStream(s);
     return Common::kNoError;
 }
 
 Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-    Common::Serializer s(nullptr, stream);
-    syncGameStream(s);
+    debug("saveGameStream %d", isAutosave);
+    if (isAutosave)
+        return Common::kNoError;
+    //Common::Serializer s(nullptr, stream);
+    //short type;
+    //assert(_nextSetting->matchString("kMainDesktop"));    
+    for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+        //Common::String key = *it;
+        //debug("key: %s", key.c_str());
+        Private::Symbol *sym = variables.getVal(*it);
+        stream->writeUint32LE(sym->u.val);
+    }
     return Common::kNoError;
 }
 
 void PrivateEngine::syncGameStream(Common::Serializer &s) {
+    debug("syncGameStream");
     // Use methods of Serializer to save/load fields
-    int dummy = 0;
-    s.syncAsUint16LE(dummy);
+    //int dummy = 0;
+    //s.syncString(*_currentSetting);
 }
 
 Common::String PrivateEngine::convertPath(Common::String name) {

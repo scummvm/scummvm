@@ -6,6 +6,8 @@ namespace Private {
 
 SymbolMap settings, variables, cursors, locations, rects;
 ConstantList constants;
+VariableList variableList;
+
 StringQueue stringToDefine;
 RectQueue rectToDefine;
 
@@ -98,6 +100,7 @@ void installAll(char *n) {
         else if (strcmp(n, "variables") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &variables);
+            variableList.push_front(*s);
         }
 
         else if (strcmp(n, "cursors") == 0) {

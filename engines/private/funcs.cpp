@@ -56,10 +56,24 @@ void Quit(ArgArray args) {
     g_private->quitGame();
 }
 
-
 void LoadGame(ArgArray args) {
     // assert types
-    debug("WARNING: RestartGame is not implemented");
+    debug("LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
+    Common::String *s = new Common::String(args[0].u.str);
+    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    m->surf = g_private->loadMask(*s, 0, 0, true);
+    m->cursor = args[2].u.sym->name;
+    g_private->_loadGameMask = m;
+}
+
+void SaveGame(ArgArray args) {
+    // assert types
+    debug("SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
+    Common::String *s = new Common::String(args[0].u.str);
+    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    m->surf = g_private->loadMask(*s, 0, 0, true);
+    m->cursor = args[1].u.sym->name;
+    g_private->_saveGameMask = m;
 }
 
 void RestartGame(ArgArray args) {
@@ -320,6 +334,13 @@ void SoundArea(ArgArray args) {
     debug("WARNING: SoundArea not implemented!");
 }
 
+void AskSave(ArgArray args) {
+    // This is not needed, since scummvm will take care of this
+    debug("WARNING: AskSave is partially implemented");
+    Common::String *s = new Common::String(args[0].u.str);
+    g_private->_nextSetting = s;
+}
+
 void Timer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
 
@@ -369,6 +390,9 @@ static struct FuncTable {
     { Exit,            "Exit"},
     { Quit,            "Quit"},
     { LoadGame,        "LoadGame"},
+    { SaveGame,        "SaveGame"},
+    { AskSave,         "AskSave"},
+    
     { DossierAdd,      "DossierAdd"},
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
