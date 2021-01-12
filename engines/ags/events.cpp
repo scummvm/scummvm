@@ -23,6 +23,11 @@
 #include "ags/events.h"
 #include "common/system.h"
 
+namespace AGS3 {
+extern volatile char want_exit, abort_engine;
+extern char check_dynamic_sprites_at_exit;
+}
+
 namespace AGS {
 
 EventsManager *g_events;
@@ -39,7 +44,12 @@ void EventsManager::pollEvents() {
 	Common::Event e;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_KEYDOWN) {
+		if (e.type == Common::EVENT_QUIT) {
+			::AGS3::want_exit = 1;
+			::AGS3::abort_engine = 1;
+			::AGS3::check_dynamic_sprites_at_exit = 0;
+
+		} else if (e.type == Common::EVENT_KEYDOWN) {
 			// Add keypresses to the pending key list
 			_pendingKeys.push(e.kbd.keycode);
 		} else {

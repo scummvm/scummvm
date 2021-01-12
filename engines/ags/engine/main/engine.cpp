@@ -143,18 +143,11 @@ void engine_setup_allegro() {
 	override_config_data(al_config_data, ustrsize(al_config_data));
 }
 
-void winclosehook() {
-	want_exit = 1;
-	abort_engine = 1;
-	check_dynamic_sprites_at_exit = 0;
-}
-
 void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
 	our_eip = -198;
 	//set_window_title("Adventure Game Studio");
-	set_close_button_callback(winclosehook);
 	our_eip = -197;
 
 	platform->SetGameWindowIcon();
