@@ -44,9 +44,8 @@ void initInsts() {
     }
 }
 
-
-void initSetting()	/* initialize for code generation */
-{
+/* initialize for code generation */ 
+void initSetting() {
     setting = (Setting*) malloc(sizeof(Setting));
     memset((void *) setting, 0, sizeof(Setting));
 
@@ -57,15 +56,12 @@ void initSetting()	/* initialize for code generation */
     progp = prog;
 }
 
-void saveSetting(char *name)
-{
+void saveSetting(char *name) {
     Common::String s(name);
     settingMap.setVal(s, setting);
-    //debug("setting %s", name);
 }
 
-void loadSetting(Common::String *name)
-{
+void loadSetting(Common::String *name) {
     assert(settingMap.contains(*name));
     setting = settingMap.getVal(*name);
 
@@ -76,7 +72,6 @@ void loadSetting(Common::String *name)
 
     stackp = stack;
     progp = prog;
-
 
     /*for (Inst *pc_ = progp; pc_-progp < 100; pc_++) {
         if (_functions.contains((void *) *pc_))
@@ -90,22 +85,21 @@ void loadSetting(Common::String *name)
     }*/
 }
 
-
-int push(Datum d)		/* push d onto stack */
-{
+/* push d onto stack */ 
+int push(Datum d) {
     assert (!(stackp >= &stack[NSTACK]));
     *stackp++ = d;
     return 0;
 }
 
-Datum pop()	/* pop and return top elem from stack */
-{
+/* pop and return top elem from stack */
+Datum pop()	{
     assert (!(stackp <= stack));
     return *--stackp;
 }
 
-int constpush()	/* push constant onto stack */
-{
+/* push constant onto stack */ 
+int constpush()	{
     Datum d;
     Symbol *s = (Symbol *)*pc++;
     d.type = NUM;
@@ -155,10 +149,8 @@ int funcpush() //(char *name, int nargs)
     return 0;
 }
 
-
-
-int eval()		/* evaluate variable on stack */
-{
+/* evaluate variable on stack */ 
+int eval() {
     Datum d;
     d = pop();
     debug("eval %s", d.u.sym->name->c_str());
@@ -180,13 +172,12 @@ int eval()		/* evaluate variable on stack */
     else
         assert(0);
 
-
     push(d);
     return 0;
 }
 
-int add()		/* add top two elems on stack */
-{
+/* add top two elems on stack */ 
+int add() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -213,8 +204,7 @@ int add()		/* add top two elems on stack */
     return 0;
 }
 
-int negate()
-{
+int negate() {
     Datum d;
     d = pop();
     int v;
@@ -234,8 +224,7 @@ int negate()
     return 0;
 }
 
-int gt()
-{
+int gt() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -253,14 +242,12 @@ int gt()
         d2.type = NUM;
     }
 
-
     d1.u.val = (int)(d1.u.val > d2.u.val);
     push(d1);
     return 0;
 }
 
-int lt()
-{
+int lt() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -284,8 +271,7 @@ int lt()
     return 0;
 }
 
-int ge()
-{
+int ge() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -309,8 +295,7 @@ int ge()
     return 0;
 }
 
-int le()
-{
+int le() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -334,8 +319,7 @@ int le()
     return 0;
 }
 
-int eq()
-{
+int eq() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -359,8 +343,7 @@ int eq()
     return 0;
 }
 
-int ne()
-{
+int ne() {
     Datum d1, d2;
     d2 = pop();
     d1 = pop();
@@ -384,8 +367,8 @@ int ne()
     return 0;
 }
 
-Inst *code(Inst f)	/* install one instruction or operand */
-{
+/* install one instruction or operand */ 
+Inst *code(Inst f) {
     //debug("pushing code at %d", progp);
     Inst *oprogp = progp;
     assert (!(progp >= &prog[NPROG]));
@@ -393,8 +376,7 @@ Inst *code(Inst f)	/* install one instruction or operand */
     return oprogp;
 }
 
-int ifcode()
-{
+int ifcode() {
     Datum d;
     Inst *savepc = pc;	/* then part */
     debug("ifcode: evaluating condition");
@@ -408,11 +390,7 @@ int ifcode()
         debug("name %s", d.u.sym->name->c_str()); //, d.sym->u.val);
         d.u.val = d.u.sym->u.val;
     }
-    //debug("ptr: %x", *((Inst **)(savepc+1)));
-    //debug("ptr: %x", *((Inst **)(savepc+2)));
-    //debug("ptr: %x", *((Inst **)(savepc+3)));
 
-    //assert(0);
     if (d.u.val) {
         debug("ifcode: true branch");
         execute(*((Inst **)(savepc)));
@@ -426,8 +404,7 @@ int ifcode()
     return 0;
 }
 
-int randbool()
-{
+int randbool() {
     Datum d;
     d = pop();
 
@@ -438,14 +415,13 @@ int randbool()
     return 0;
 }
 
-int fail()
-{
+int fail() {
     assert(0);
     return 0;
 }
 
-void execute(Inst *p)	/* run the machine */
-{
+/* run the machine */ 
+void execute(Inst *p) {
     for (pc = p; *pc != STOP; ) {
         (*(*pc++))();
     }
