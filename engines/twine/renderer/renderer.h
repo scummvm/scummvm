@@ -320,7 +320,6 @@ private:
 	bool renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	bool renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData);
-	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix);
 	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix);
@@ -411,6 +410,7 @@ public:
 	const int16 *const shadeAngleTab3;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
+	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 
 	static void prepareIsoModel(uint8 *bodyPtr);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);

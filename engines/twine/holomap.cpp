@@ -29,6 +29,8 @@
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/scene/animations.h"
+#include "twine/scene/movements.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/collision.h"
@@ -149,7 +151,11 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 #if 0
 	ScopedEngineFreeze timeFreeze(_engine);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
+	_engine->_renderer->setCameraAngle(0, 0, 0, (int)(short)DAT_0043f706, (int)(short)DAT_0043f710, (int)DAT_0043f7f8, 0x14b4);
 	ActorMoveStruct move;
+	const uint8 *animPtr = nullptr;
+	int frameNumber = 0;
+	int frameTime = _engine->lbaTime;
 	for (;;) {
 		ScopedFPS scopedFps;
 		_engine->readKeys();
@@ -166,25 +172,27 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		}
 		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
 		if (move.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(v18, v18 - ANGLE_90, 500, &move);
+			const int startAngle = ANGLE_0;
+			_engine->_movements->setActorAngleSafe(startAngle, startAngle - ANGLE_90, 500, &move);
 		}
-		if (SetInterAnimObjet(v5)) {
-			++v27;
-			if (v27 == _engine->_animations->getNumKeyframes(v14)) {
-				v27 = _engine->_animations->getStartKeyframe(v14);
+
+		if (_engine->_animations->setModelAnimation(frameNumber, animPtr, modelPtr, &move)) {
+			frameNumber++;
+			if (frameNumber >= _engine->_animations->getNumKeyframes(animPtr)) {
+				frameNumber = _engine->_animations->getStartKeyframe(animPtr);
 			}
 		}
 		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);
-		_engine->_renderer->setCameraAngle(v5);
-		_engine->_renderer->setLightVector(v5);
+		_engine->_renderer->setCameraAngle(0, 0, 0, angle1, angle2, angle3, 5300);
+		_engine->_renderer->setLightVector(angle1, angle2, 0);
 		_engine->_interface->blitBox(v5);
 		_engine->_renderer->renderIsoModel(v19, v5);
 		_engine->copyBlockPhys(v5);
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 		_engine->_renderer->setCameraAngle(v5);
 		_engine->_renderer->setLightVector(v5);
-		if (v24 + 40 <= _engine->lbaTime) {
-			v24 = _engine->lbaTime;
+		if (frameTime + 40 <= _engine->lbaTime) {
+			frameTime = _engine->lbaTime;
 			if (v17 >= v29 && v17 > v29) {
 				break;
 			}
@@ -193,7 +201,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			_engine->_renderer->getBaseRotationPosition(v1, v0);
 			_engine->_renderer->setCameraAngle(v0);
 			_engine->_renderer->getBaseRotationPosition(v2, v0);
-			_engine->_renderer->resetClip();
+			_engine->_interface->resetClip();
 			_engine->_renderer->renderIsoModel(v3, v0);
 			_engine->copyBlockPhys(v0);
 		}
@@ -236,6 +244,24 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 	}
 	return -1;
 }
+
+#if 0
+static int sortHolomapSurfaceCoordsByX(int a1, int a2) {
+	return *(_WORD *)a1 - *(_WORD *)a2;
+}
+
+int fullRedrawS2S1S3(int a1, int a2)
+{
+	int result = 24 * (a1 - a2) >> 9;
+	return orthoProjX + result;
+}
+
+int sub_2654F(int a1, int a2)
+{
+  return getBaseRotationPosition(*(_DWORD *)(a2 + 8), a1, *(_DWORD *)(a2 + 12), *(_DWORD *)(a2 + 16));
+}
+
+#endif
 
 void Holomap::processHolomap() {
 	ScopedEngineFreeze freeze(_engine);
@@ -319,6 +345,17 @@ void Holomap::processHolomap() {
 
 		if (redraw) {
 			redraw = false;
+			int n = 0;
+			for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
+				if (_engine->_gameState->holomapFlags[locationIdx] & 0x80 || locationIdx == _engine->_scene->currentSceneIdx) {
+					uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & 1;
+					if (locationIdx == _engine->_scene->currentSceneIdx) {
+						flags |= 2u; // model type
+					}
+					++n;
+				}
+			}
+			// TODO: sort drawlist (for what? y?)
 			// TODO
 		}
 
