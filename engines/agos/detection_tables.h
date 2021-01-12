@@ -385,6 +385,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 1 - Japanese PC-98
+	{
+		{
+			"elvira1",
+			0,
+			{
+				{ "gamepcj.dat",	GAME_BASEFILE,	"f170990deafbf9adee360021a6b5f375", -1},
+				{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
+				{ "tbllist.dat",	GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
+				AD_LISTEND
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE
+	},
+
 	// Elvira 2 - English Amiga Floppy
 	{
 		{
