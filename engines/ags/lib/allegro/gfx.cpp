@@ -33,7 +33,7 @@ int color_conversion;
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
 		w(owner->w), h(owner->h), format(owner->format),
-		clip(false), ct(0), cb(0), cl(0), cr(0) {
+		clip(false), ct(0), cl(0), cr(owner->w), cb(owner->h) {
 	line.resize(h);
 	for (uint y = 0; y < h; ++y)
 		line[y] = (byte *)_owner->getBasePtr(0, y);
@@ -128,16 +128,25 @@ void destroy_bitmap(BITMAP *bitmap) {
 }
 
 void set_clip_rect(BITMAP *bitmap, int x1, int y1, int x2, int y2) {
-	warning("TODO: set_clip_rect");
+	bitmap->cl = x1;
+	bitmap->ct = y1;
+	bitmap->cr = x2;
+	bitmap->cb = y2;
+}
+
+void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
+	if (x1)
+		*x1 = bitmap->cl;
+	if (y1)
+		*y1 = bitmap->ct;
+	if (x2)
+		*x2 = bitmap->cr;
+	if (y2)
+		*y2 = bitmap->cb;
 }
 
 void add_clip_rect(BITMAP *bitmap, int x1, int y1, int x2, int y2) {
 	warning("TODO: add_clip_rect");
-}
-
-void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
-	warning("TODO: get_clip_rect");
-	*x1 = *y1 = *x2 = *y2 = 0;
 }
 
 void acquire_bitmap(BITMAP *bitmap) {
