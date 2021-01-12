@@ -227,7 +227,7 @@ void Holomap::drawHolomapLocation(int32 location) {
 	_engine->copyBlockPhys(rect);
 }
 
-int32 Holomap::getNextHolomapLocation(int32 currentLocation, int dir) const {
+int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 	const uint32 idx = currentLocation;
 	for (uint32 i = currentLocation + dir; i != idx; i = (i + dir) % NUM_LOCATIONS) {
 		if (_engine->_gameState->holomapFlags[i % NUM_LOCATIONS] & 0x81) {
