@@ -169,6 +169,12 @@ void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int 
 	Graphics::ManagedSurface &srcS = **src;
 	Graphics::ManagedSurface &destS = **dest;
 
+	if (srcS.format.bytesPerPixel == 1 && dest->format.bytesPerPixel > 1) {
+		byte pal[PALETTE_SIZE];
+		palette_to_rgb8(_current_palette, pal);
+		srcS.setPalette(pal, 0, PALETTE_COUNT);
+	}
+
 	destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height), Common::Point(dst_x, dst_y));
 }
 

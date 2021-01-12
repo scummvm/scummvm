@@ -24,6 +24,7 @@
 #define AGS_LIB_ALLEGRO_COLOR_H
 
 #include "common/scummsys.h"
+#include "graphics/screen.h"
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/alconfig.h"
 
@@ -89,6 +90,7 @@ AL_ARRAY(int, _rgb_scale_6);
 AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));
 AL_FUNC(void, set_palette_range, (AL_CONST PALETTE p, int from, int to, int retracesync));
+AL_FUNC(void, palette_to_rgb8, (AL_CONST PALETTE src, byte dest[PALETTE_SIZE]));
 
 AL_FUNC(void, get_color, (int idx, RGB *p));
 AL_FUNC(void, get_palette, (PALETTE p));
