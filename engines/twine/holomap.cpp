@@ -345,17 +345,172 @@ void Holomap::processHolomap() {
 
 		if (redraw) {
 			redraw = false;
+#if 0
+			_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+			_engine->_renderer->setCameraAngle();
+			_engine->_renderer->setLightVector(v0);
+#endif
 			int n = 0;
 			for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
-				if (_engine->_gameState->holomapFlags[locationIdx] & 0x80 || locationIdx == _engine->_scene->currentSceneIdx) {
+				if ((_engine->_gameState->holomapFlags[locationIdx] & 0x80) || locationIdx == _engine->_scene->currentSceneIdx) {
 					uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & 1;
 					if (locationIdx == _engine->_scene->currentSceneIdx) {
 						flags |= 2u; // model type
 					}
+#if 0
+					const Location &loc = _locations[locationIdx];
+					_engine->_renderer->setBaseRotation(angles);
+					_engine->_renderer->getBaseRotationPosition(loc.x, loc.y, loc.z);
+					int32 v20 = _engine->_renderer->destX;
+					int32 v19 = _engine->_renderer->destZ;
+					int32 v18 = _engine->_renderer->destY;
+					_engine->_renderer->getBaseRotationPosition(v9, v4);
+					_engine->_renderer->setBaseRotation(v4);
+					_engine->_renderer->baseRotPosX = 0;
+					_engine->_renderer->baseRotPosY = 0;
+					_engine->_renderer->baseRotPosZ = 9500;
+					_engine->_renderer->getBaseRotationPosition(v10, v4);
+					int32 v21 = _engine->_renderer->destY;
+					_engine->_renderer->getBaseRotationPosition(v11, v4);
+					if (a4) {
+						if (v21 > _engine->_renderer->destY) {
+							continue;
+						}
+					} else {
+						if (v21 < _engine->_renderer->destY) {
+							continue;
+						}
+					}
+
+					DrawListStruct &drawList = _engine->_redraw->drawList[n];
+					drawList.posValue = locationIdx;
+					drawList.y = v18; // ? TODO
+					drawList.z = v19;
+					drawList.x = v20;
+					drawList.y = v21;
+					drawList.field_A = flags;
+#endif
 					++n;
 				}
 			}
 			// TODO: sort drawlist (for what? y?)
+#if 0
+			for (int v13 = 0; v13 < n; ++v13) {
+				const DrawListStruct &drawList = _engine->_redraw->drawList[n];
+				const uint8 flags = drawList.field_A;
+				const uint8* bodyPtr = nullptr;
+				if (flags < 2u) {
+					if (flags == 1) {
+						bodyPtr = _engine->_resources->holomapArrowPtr;
+					}
+				} else {
+					if (flags <= 2u) {
+						bodyPtr = _engine->_resources->holomapTwinsenModelPtr;
+					} else {
+						if (flags == 3) {
+							bodyPtr = _engine->_resources->holomapTwinsenArrowPtr;
+						}
+					}
+				}
+				if (bodyPtr != nullptr) {
+					_engine->_renderer->renderIsoModel(x, y, z, angleX, angleY, angleZ, bodyPtr);
+				}
+			}
+
+			_engine->_renderer->setCameraAngle();
+
+			_engine->_renderer->baseRotPosX = 0;
+			_engine->_renderer->baseRotPosY = 0;
+			_engine->_renderer->baseRotPosZ = 9500;
+			v12 = -256;
+			v1 = videoPtr1;
+			v2 = videoPtr2;  // holomap surface - 748 * 4 == 4488 (size of that buffer)
+			v3 = videoPtr11; // rotated x and y positions sorted
+			do {
+				v13 = 0;
+				while (1) {
+					v7 = v2 + 2;     // rot y
+					v8 = v2 + 4;     // rot z
+					if (v13 >= 1024) {// 1024 == 360 degree
+						break;
+					}
+					destZ = *(_WORD *)v7;
+					v4 = *(_WORD *)v8;
+					destX = *(_WORD *)v2;
+					destY = v4;
+					v2 += 6; // advance to next entry in holomap surface surface coordinates
+					sub_2654F(v8, v0);
+					if (v12 != 256) {
+						*(_WORD *)v3 = destY;
+						v5 = v3 + 2;
+						*(_WORD *)v5 = (v1 - videoPtr1) >> 1;
+						v3 = v5 + 2;
+					}
+					_engine->_renderer->projectPositionOnScreen(v0);
+					*(_WORD *)v1 = _engine->_renderer->projPosX;
+					v6 = v1 + 2;
+					v13 += 32;
+					*(_WORD *)v6 = _engine->_renderer->projPosY;
+					v1 = v6 + 6;
+				}
+				destZ = *(_WORD *)v7;
+				destY = *(_WORD *)v8;
+				destX = *(_WORD *)v2;
+				v2 += 6;
+				sub_2654F(v8, v0);
+				_engine->_renderer->projectPositionOnScreen(v0);
+				*(_WORD *)v1 = _engine->_renderer->projPosX;
+				v10 = v1 + 2;
+				v12 += 32;
+				*(_WORD *)v10 = _engine->_renderer->projPosY;
+				v1 = v10 + 6;
+			} while (v12 <= 256);
+			qsort(videoPtr11, 512, 4, sortHolomapSurfaceCoordsByX);
+
+			v1 = 0;
+			do { // y
+				v2 = videoPtr1 + 2 * *(_WORD *)(v1 + videoPtr11 + 2);
+				backDialogueBoxRight = *(_WORD *)v2;
+				backDialogueBoxBottom = *(_WORD *)(v2 + 2);
+				back2DialogueBoxRight = *(_WORD *)(v2 + 264);
+				back2DialogueBoxBottom = *(_WORD *)(v2 + 266);
+				back3DialogueBoxRight = *(_WORD *)(v2 + 8);
+				back3DialogueBoxBottom = *(_WORD *)(v2 + 10);
+				if (sub_26DAB(v0)) {
+					word_4B776 = *(_WORD *)(v2 + 4);
+					word_4B778 = *(_WORD *)(v2 + 6);
+					word_4B77C = *(_WORD *)(v2 + 268);
+					word_4B77E = *(_WORD *)(v2 + 270);
+					word_4B782 = *(_WORD *)(v2 + 12);
+					word_4B784 = *(_WORD *)(v2 + 14);
+					sub_2E894(); // handles polyTab, polyTab2, circleBuffer, maybe model rendering?
+					sub_2F1D1(v0); // some kind of blitting?
+				}
+				backDialogueBoxRight = *(_WORD *)(v2 + 264);
+				backDialogueBoxBottom = *(_WORD *)(v2 + 266);
+				back2DialogueBoxRight = *(_WORD *)(v2 + 272);
+				back2DialogueBoxBottom = *(_WORD *)(v2 + 274);
+				back3DialogueBoxRight = *(_WORD *)(v2 + 8);
+				back3DialogueBoxBottom = *(_WORD *)(v2 + 10);
+				v3 = sub_26DAB(v0);
+				if (v3) {
+					word_4B776 = *(_WORD *)(v2 + 268);
+					word_4B778 = *(_WORD *)(v2 + 270);
+					word_4B77C = *(_WORD *)(v2 + 276);
+					word_4B77E = *(_WORD *)(v2 + 278);
+					word_4B782 = *(_WORD *)(v2 + 12);
+					word_4B784 = *(_WORD *)(v2 + 14);
+					sub_2E894();
+					LOBYTE(v3) = sub_2F1D1(v0); // some kind of blitting?
+				}
+				v1 += 4;
+			} while (v1 != 4 * 512);
+
+			if (v10) {
+				blitRect();
+			}
+			_engine->_renderer->copyBlockPhys(v0);
+#endif
 			// TODO
 		}
 
