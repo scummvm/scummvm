@@ -29,40 +29,153 @@
 namespace AGS3 {
 namespace std {
 
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
+template<class Key, class Val, class CompFunc = Common::Less<Key> >
+class map {
+	struct KeyValue {
+		Key _key;
+		Val _value;
+	};
+private:
+	Common::Array<KeyValue> _items;
+	CompFunc _comp;
 public:
-	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
+	using iterator = typename Common::Array<KeyValue>::iterator;
+	using const_iterator = typename Common::Array<KeyValue>::const_iterator;
 
-	pair<Key, Val> insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-		return elem;
-	}
-
-	// FUNCTION TEMPLATE lower_bound
-	iterator lower_bound(Key &val) {
-		iterator it;
-		for (it = this->begin(); it != this->end(); ++it) {
-			if (it->_key >= val)
-				break;
-		}
-
-		return it;
+	/**
+	 * Clears the map
+	 */
+	void clear() {
+		_items.clear();
 	}
 
 	/**
-	 * Checks if the maps have identical contents
+	 * Gets the iterator start
 	 */
-	bool operator==(const map &rhs) {
-		if (this->size() != rhs.size())
-			return false;
-		for (iterator it = this->begin(); it != this->end(); ++it) {
-			if (!(it->_value == rhs[it->_key]))
-				return false;
+	iterator begin() {
+		return _items.begin();
+	}
+
+	/**
+	 * Get the iterator end
+	 */
+	iterator end() {
+		return _items.end();
+	}
+
+	/**
+	 * Get the const iterator start
+	 */
+	const_iterator begin() const {
+		return _items.begin();
+	}
+
+	/**
+	 * Get the const iterator end
+	 */
+	const_iterator end() const {
+		return _items.end();
+	}
+
+	/**
+	 * Returns an iterator for the first element of the map that is
+	 * not less than the given key
+	 */
+	const_iterator lower_bound(const Key &theKey) const {
+		const_iterator first = this->begin();
+		const_iterator it;
+		int count = _items.size(), step;
+
+		while (count > 0) {
+			it = first;
+			step = count / 2;
+			it += step;
+
+			if (_comp(it->_key, theKey)) {
+				first = ++it;
+				count -= step + 1;
+			} else {
+				count = step;
+			}
 		}
 
-		return true;
+		return first;
+	}
+
+	iterator lower_bound(const Key &theKey) {
+		iterator first = this->begin();
+		iterator it;
+		int count = _items.size(), step;
+
+		while (count > 0) {
+			it = first;
+			step = count / 2;
+			it += step;
+
+			if (_comp(it->_key, theKey)) {
+				first = ++it;
+				count -= step + 1;
+			} else {
+				count = step;
+			}
+		}
+
+		return first;
+	}
+
+	/**
+	 * Find the entry with the given key
+	 */
+	iterator find(const Key &theKey) {
+		iterator it = this->lower_bound(theKey);
+
+		if (it != this->end() && it->_key == theKey)
+			return it;
+		return this->end();
+	}
+
+	const_iterator find(const Key &theKey) const {
+		const_iterator it = this->lower_bound(theKey);
+
+		if (it != this->end() && it->_key == theKey)
+			return it;
+		return this->end();
+	}
+
+	/**
+	 * Square brackets operator accesses items by key, creating if necessary
+	 */
+	Val &operator[](const Key &theKey) {
+		iterator it = this->lower_bound(theKey);
+		if (it == this->end() || it->_key != theKey) {
+			size_t idx = it - this->begin();
+			_items.insert_at(idx, KeyValue());
+			_items[idx]._key = theKey;
+			return _items[idx]._value;
+		} else {
+			return _items[it - this->begin()]._value;
+		}
+	}
+
+	/**
+	 * Erases an entry in the map
+	 */
+	iterator erase(iterator it) {
+		iterator next = it;
+		++next;
+		_items.remove_at(it - begin());
+		return next;
+	}
+
+	iterator erase(const Key &theKey) {
+		return erase(find(theKey));
+	}
+
+	/**
+	 * Returns the size of the map
+	 */
+	size_t size() const {
+		return _items.size();
 	}
 };
 

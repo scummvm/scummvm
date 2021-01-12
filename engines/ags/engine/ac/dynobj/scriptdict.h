@@ -187,7 +187,7 @@ private:
 
 typedef ScriptDictImpl< std::map<String, String>, true, true > ScriptDict;
 // TODO: Not sure if current std::map implement works for LessThan to give a key ordering
-typedef ScriptDictImpl< std::map<String, String, IgnoreCase_Hash, IgnoreCase_LessThan>, true, false > ScriptDictCI;
+typedef ScriptDictImpl< std::map<String, String, IgnoreCase_LessThan>, true, false > ScriptDictCI;
 typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
 typedef ScriptDictImpl< std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashDictCI;
 
