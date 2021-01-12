@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-11 22:08+0000\n"
-"PO-Revision-Date: 2021-01-08 14:05+0000\n"
+"PO-Revision-Date: 2021-01-13 07:23+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7229,16 +7229,12 @@ msgid "Next Page"
 msgstr "Seuraava sivu"
 
 #: engines/twine/metaengine.cpp:507
-#, fuzzy
-#| msgid "Previous action"
 msgid "Previous location"
-msgstr "Edellinen toiminto"
+msgstr "Edellinen lokaatio"
 
 #: engines/twine/metaengine.cpp:512
-#, fuzzy
-#| msgid "Next action"
 msgid "Next location"
-msgstr "Seuraava toiminto"
+msgstr "Seuraava lokaatio"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
