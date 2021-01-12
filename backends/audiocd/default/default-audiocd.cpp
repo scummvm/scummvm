@@ -24,6 +24,7 @@
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/util.h"
 
 DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.playing = false;
@@ -67,12 +68,14 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 		// Try to load the track from a compressed data file, and if found, use
 		// that. If not found, attempt to start regular Audio CD playback of
 		// the requested track.
-		char trackName[2][16];
-		sprintf(trackName[0], "track%d", track);
-		sprintf(trackName[1], "track%02d", track);
+		Common::String trackName[4];
+		trackName[0] = Common::String::format("track%d", track);
+		trackName[1] = Common::String::format("track%02d", track);
+		trackName[2] = Common::String::format("track_%d", track);
+		trackName[3] = Common::String::format("track_%02d", track);
 		Audio::SeekableAudioStream *stream = 0;
 
-		for (int i = 0; !stream && i < 2; ++i)
+		for (int i = 0; !stream && i < ARRAYSIZE(trackName); ++i)
 			stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 
 		if (stream != 0) {
