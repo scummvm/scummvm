@@ -568,6 +568,8 @@ void post_config() {
 }
 
 void save_config_file() {
+// Change to use ScummVM configuration
+#ifdef TODO
 	ConfigTree cfg;
 
 	// Last display mode
@@ -602,6 +604,7 @@ void save_config_file() {
 	String cfg_file = find_user_cfg_file();
 	if (!cfg_file.IsEmpty())
 		IniUtil::Merge(cfg_file, cfg);
+#endif
 }
 
 } // namespace AGS3
