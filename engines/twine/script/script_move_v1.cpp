@@ -155,8 +155,9 @@ static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x06
  */
 static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
-	// TODO no params
-	return -1;
+	ctx.actor->positionInMoveScript = 0;
+	ctx.stream.seek(0);
+	return 0;
 }
 
 /**
