@@ -366,7 +366,7 @@ void Bitmap::FillTransparent() {
 }
 
 void Bitmap::FloodFill(int x, int y, color_t color) {
-	floodfill(_alBitmap, x, y, color);
+	_alBitmap->floodfill(x, y, color);
 }
 
 //=============================================================================

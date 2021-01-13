@@ -20,17 +20,17 @@
  *
  */
 
-#include "ags/lib/allegro/base.h"
-#include "ags/lib/allegro/gfx.h"
+#ifndef AGS_LIB_ALLEGRO_FLOOD_H
+#define AGS_LIB_ALLEGRO_FLOOD_H
 
-#ifndef AGS_LIB_ALLEGRO_DRAW_H
-#define AGS_LIB_ALLEGRO_DRAW_H
+#include "graphics/managed_surface.h"
+#include "ags/lib/allegro/base.h"
 
 namespace AGS3 {
 
-typedef void (*DrawMethod)(BITMAP *, int, int, int);
+class BITMAP;
 
-extern void do_line(BITMAP *bmp, int x1, int y1, int x2, int y2, int d, DrawMethod proc);
+extern void floodfill(BITMAP *bmp, int x, int y, int color);
 
 } // namespace AGS3
 

@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	lib/allegro/error.o \
 	lib/allegro/file.o \
 	lib/allegro/fixed.o \
+	lib/allegro/flood.o \
 	lib/allegro/gfx.o \
 	lib/allegro/graphics.o \
 	lib/allegro/keyboard.o \

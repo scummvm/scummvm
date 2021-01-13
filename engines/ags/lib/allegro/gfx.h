@@ -184,7 +184,8 @@ public:
 	Common::Array<byte *> line;
 public:
 	BITMAP(Graphics::ManagedSurface *owner);
-	virtual ~BITMAP() {}
+	virtual ~BITMAP() {
+	}
 
 	Graphics::ManagedSurface &operator*() const {
 		return *_owner;
@@ -212,6 +213,30 @@ public:
 
 	void clear() {
 		_owner->clear();
+	}
+
+	/**
+	 * Draws a solid filled in circle
+	 */
+	void circlefill(int x, int y, int radius, int color);
+
+	/**
+	 * Fills an enclosed area starting at a given point
+	 */
+	void floodfill(int x, int y, int color);
+
+	/**
+	 * Draw a horizontal line
+	 */
+	void hLine(int x, int y, int x2, uint32 color) {
+		_owner->hLine(x, y, x2, color);
+	}
+
+	/**
+	 * Draw a vertical line.
+	 */
+	void vLine(int x, int y, int y2, uint32 color) {
+		_owner->vLine(x, y, y2, color);
 	}
 };
 
@@ -305,7 +330,6 @@ extern void line(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void rect(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void rectfill(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void triangle(BITMAP *bmp, int x1, int y_1, int x2, int y2, int x3, int y3, int color);
-extern void floodfill(BITMAP *bmp, int x, int y, int color);
 extern void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
 
 } // namespace AGS3
