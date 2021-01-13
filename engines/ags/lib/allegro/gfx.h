@@ -227,10 +227,16 @@ public:
 	Surface(int width, int height) : Graphics::ManagedSurface(width, height), BITMAP(this) {
 	}
 	Surface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
-		Graphics::ManagedSurface(width, height, pixelFormat), BITMAP(this) {
+			Graphics::ManagedSurface(width, height, pixelFormat), BITMAP(this) {
+		// Allegro uses 255, 0, 255 RGB as the transparent color
+		if (pixelFormat.bytesPerPixel == 4)
+			setTransparentColor(pixelFormat.RGBToColor(255, 0, 255));
 	}
 	Surface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
-		Graphics::ManagedSurface(surf, bounds), BITMAP(this) {
+			Graphics::ManagedSurface(surf, bounds), BITMAP(this) {
+		// Allegro uses 255, 0, 255 RGB as the transparent color
+		if (surf.format.bytesPerPixel == 4)
+			setTransparentColor(surf.format.RGBToColor(255, 0, 255));
 	}
 	~Surface() override {
 	}
