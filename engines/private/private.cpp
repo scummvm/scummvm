@@ -3,6 +3,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -40,8 +41,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     // Do not initialize audio devices here
 
     // However this is the place to specify all default directories
-    //const Common::FSNode gameDataDir(ConfMan.get("path"));
-    //SearchMan.addSubDirectoryMatching(gameDataDir, "..");
+    //SearchMan.addSubDirectoryMatching(gameDataDir, "global", 0, 10, false);
 
     // Here is the right place to set up the engine specific debug channels
     //DebugMan.addDebugChannel(kPrivateDebugExample, "example", "this is just an example for a engine specific debug channel");
@@ -74,8 +74,22 @@ PrivateEngine::~PrivateEngine() {
     DebugMan.clearAllDebugChannels();
 }
 
+void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
+    SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
+}
+
 Common::Error PrivateEngine::run() {
 
+    const Common::FSNode gameDataDir(ConfMan.get("path"));
+    //SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "global/transiti/animatio/driving");
+    //SearchMan.addSubDirectoryMatching(gameDataDir, "global", , 10, false);
+    
+    Common::ArchiveMemberList list;
+    SearchMan.listMembers(list);
+    for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
+        debug("%s", (*it)->getName().c_str());
+    }
+    
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
     Common::SeekableReadStream *file = NULL;
 
@@ -135,7 +149,7 @@ Common::Error PrivateEngine::run() {
     Common::Point mousePos;
     _videoDecoder = nullptr; //new Video::SmackerDecoder();
 
-    int saveSlot = ConfMan.hasKey("save_slot");
+    int saveSlot = ConfMan.getInt("save_slot");
     if (saveSlot >= 0) { // load the savegame
         loadGameState(saveSlot);
     } else {

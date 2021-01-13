@@ -69,12 +69,13 @@ statements:  /* nothing */     { $$ = progp; }
 
 
 statement: GOTOTOK NAME ';' {
+        $$ = progp;
 	code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
         code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
         code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
-        | fcall ';'         { }   
+        | fcall ';'         { $$ = $1; }   
         | if cond body end {
          	/* else-less if */
 		($1)[1] = (Inst)$3;	/* thenpart */

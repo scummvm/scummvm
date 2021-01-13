@@ -75,6 +75,7 @@ public:
 	Common::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
+	void initializePath(const Common::FSNode &gamePath) override;
 	void selectMask(Common::Point);
     void selectExit(Common::Point);
 
