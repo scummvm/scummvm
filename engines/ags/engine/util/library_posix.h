@@ -113,7 +113,10 @@ public:
 
 	bool Unload() override {
 		if (_library) {
-			return (dlclose(_library) == 0);
+			void *lib = _library;
+			_library = nullptr;
+
+			return (dlclose(lib) == 0);
 		} else {
 			return true;
 		}
