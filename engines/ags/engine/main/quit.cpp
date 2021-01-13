@@ -67,6 +67,7 @@ extern IAGSEditorDebugger *editor_debugger;
 extern int need_to_stop_cd;
 extern int use_cdplayer;
 extern IGraphicsDriver *gfxDriver;
+extern volatile char abort_engine;
 
 bool handledErrorInEditor;
 
@@ -221,6 +222,8 @@ void allegro_bitmap_test_release() {
 
 char return_to_roomedit[30] = "\0";
 char return_to_room[150] = "\0";
+char quit_message[256] = "\0";
+
 // quit - exits the engine, shutting down everything gracefully
 // The parameter is the message to print. If this message begins with
 // an '!' character, then it is printed as a "contact game author" error.
@@ -229,11 +232,17 @@ char return_to_room[150] = "\0";
 // error.
 // "!|" is a special code used to mean that the player has aborted (Alt+X)
 void quit(const char *quitmsg) {
+	strncpy(quit_message, quitmsg, 256);
+	abort_engine = true;
+}
+
+void quit_free() {
 	String alertis;
+	if (strlen(quit_message) == 0)
+		strcpy(quit_message, "|bye!");
+
+	const char *quitmsg = quit_message;
 	QuitReason qreason = quit_check_for_error_state(quitmsg, alertis);
-	// Need to copy it in case it's from a plugin (since we're
-	// about to free plugins)
-	String qmsg = quitmsg;
 
 	if (qreason & kQuitKind_NormalExit)
 		save_config_file();
@@ -242,7 +251,7 @@ void quit(const char *quitmsg) {
 
 	handledErrorInEditor = false;
 
-	quit_tell_editor_debugger(qmsg, qreason);
+	quit_tell_editor_debugger(quit_message, qreason);
 
 	our_eip = 9900;
 
@@ -275,7 +284,7 @@ void quit(const char *quitmsg) {
 
 	engine_shutdown_gfxmode();
 
-	quit_message_on_exit(qmsg, alertis, qreason);
+	quit_message_on_exit(quitmsg, alertis, qreason);
 
 	quit_release_data();
 
@@ -297,7 +306,6 @@ void quit(const char *quitmsg) {
 	shutdown_debug();
 
 	our_eip = 9904;
-	error("%s", qmsg.GetNullableCStr());
 }
 
 extern "C" {

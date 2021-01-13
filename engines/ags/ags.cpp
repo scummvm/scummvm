@@ -130,6 +130,7 @@ Version SavedgameLowestBackwardCompatVersion;
 // Lowest engine version, which would accept current savedgames
 Version SavedgameLowestForwardCompatVersion;
 
+extern void quit_free();
 
 void main_pre_init() {
 	our_eip = -999;
@@ -390,8 +391,10 @@ Common::Error AGSEngine::run() {
 #endif
 	{
 		int result = AGS3::initialize_engine(startup_opts);
-		// TODO: refactor engine shutdown routine (must shutdown and delete everything started and created)
-		AGS3::platform->PostAllegroExit();
+
+		// Do shutdown stuff
+		::AGS3::quit_free();
+
 		return result ? Common::kUnknownError : Common::kNoError;
 	}
 #ifdef USE_CUSTOM_EXCEPTION_HANDLER

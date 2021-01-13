@@ -1464,7 +1464,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	initialize_start_and_play_game(override_start_room, loadSaveGameOnStartup);
 
-	quit("|bye!");
 	return EXIT_NORMAL;
 }
 
