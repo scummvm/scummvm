@@ -21,6 +21,7 @@
  */
 
 #include "ags/lib/allegro/gfx.h"
+#include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
@@ -50,6 +51,46 @@ int BITMAP::getpixel(int x, int y) const {
 		return *(const uint16 *)pixel;
 	else
 		return *(const uint32 *)pixel;
+}
+
+void BITMAP::circlefill(int x, int y, int radius, int color) {
+	int cx = 0;
+	int cy = radius;
+	int df = 1 - radius;
+	int d_e = 3;
+	int d_se = -2 * radius + 5;
+
+	do {
+		_owner->hLine(x - cy, y - cx, x + cy, color);
+
+		if (cx)
+			_owner->hLine(x - cy, y + cx, x + cy, color);
+
+		if (df < 0) {
+			df += d_e;
+			d_e += 2;
+			d_se += 2;
+		} else {
+			if (cx != cy) {
+				_owner->hLine(x - cx, y - cy, x + cx, color);
+
+				if (cy)
+					_owner->hLine(x - cx, y + cy, x + cx, color);
+			}
+
+			df += d_se;
+			d_e += 2;
+			d_se += 4;
+			cy--;
+		}
+
+		cx++;
+
+	} while (cx <= cy);
+}
+
+void BITMAP::floodfill(int x, int y, int color) {
+	AGS3::floodfill(this, x, y, color);
 }
 
 /*-------------------------------------------------------------------*/
@@ -423,17 +464,12 @@ void triangle(BITMAP *bmp, int x1, int y1, int x2, int y2, int x3, int y3, int c
 	surf.drawLine(x3, y3, x1, y1, color);
 }
 
-void floodfill(BITMAP *bmp, int x, int y, int color) {
-	error("TODO: floodfill");
-}
-
 void circlefill(BITMAP *bmp, int x, int y, int radius, int color) {
-	error("TODO: circlefill");
+	bmp->circlefill(x, y, radius, color);
 }
 
 void clear_bitmap(BITMAP *bmp) {
 	bmp->clear();
 }
-
 
 } // namespace AGS3
