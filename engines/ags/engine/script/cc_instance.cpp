@@ -58,6 +58,7 @@ extern int maxWhileLoops;
 extern new_line_hook_type new_line_hook;
 
 extern ScriptString myScriptStringImpl;
+extern volatile char abort_engine;
 
 enum ScriptOpArgIsReg {
 	kScOpNoArgIsReg     = 0,
@@ -434,6 +435,8 @@ int ccInstance::Run(int32_t curpc) {
 	FunctionCallStack func_callstack;
 
 	while (1) {
+		if (abort_engine)
+			return -1;
 
 		/*
 		if (!codeInst->ReadOperation(codeOp, pc))

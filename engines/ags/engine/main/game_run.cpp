@@ -946,7 +946,8 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	auto cached_user_disabled_for = user_disabled_for;
 
 	SetupLoopParameters(untilwhat, daaa);
-	while (GameTick() == 0);
+	while (GameTick() == 0 && !abort_engine) {
+	}
 
 	our_eip = 78;
 
