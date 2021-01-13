@@ -227,6 +227,14 @@ bool GameState::saveGame(Common::WriteStream *file) {
 		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
 	}
 
+	int32 sceneIdx = _engine->_scene->currentSceneIdx;
+	if (sceneIdx == Polar_Island_end_scene || sceneIdx == Citadel_Island_end_sequence_1 || sceneIdx == Citadel_Island_end_sequence_2 || sceneIdx == Credits_List_Sequence) {
+		/* inventoryMagicPoints = 0x50 */
+		/* herobehaviour = 0 */
+		/* newherox = 0xffff */
+		sceneIdx = Polar_Island_Final_Battle;
+	}
+
 	file->writeByte(0x03);
 	file->writeString(playerName);
 	file->writeByte('\0');
@@ -234,7 +242,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {
 		file->writeByte(hasGameFlag(i));
 	}
-	file->writeByte(_engine->_scene->currentSceneIdx);
+	file->writeByte(sceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);
 	file->writeByte(_engine->_scene->sceneHero->life);
@@ -261,6 +269,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
+	// TODO: writeUInt16LE in disassembly
 	file->writeByte(usingSabre ? 1 : 0);
 	file->writeByte(0);
 
