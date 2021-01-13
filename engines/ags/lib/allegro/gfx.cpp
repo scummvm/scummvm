@@ -228,7 +228,10 @@ void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 
 	add_palette_if_needed(spriteS, bmpS);
 
-	bmpS.blitFrom(spriteS, Common::Point(x, y));
+	// For Allegro, paletted sprites always use index 0 as the transparent color,
+	// and for higher resolution formats uses bright pink RGB 255, 0, 255
+	bmpS.transBlitFrom(spriteS, Common::Point(x, y),
+		(spriteS.format.bytesPerPixel == 1) ? 0 : spriteS.format.RGBToColor(255, 0, 255));
 }
 
 void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h) {
