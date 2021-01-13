@@ -37,7 +37,8 @@ void *dlopen(const char *filename) {
 }
 
 int dlclose(void *lib) {
-	delete lib;
+	DLL *dll = static_cast<DLL *>(lib);
+	delete dll;
 	return 0;
 }
 
