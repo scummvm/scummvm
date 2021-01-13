@@ -89,7 +89,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 			dst += width * 2;
 		}
 	} else {
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 		byte *dst = (byte *)screen->getBasePtr(vlut[0] * 16, vlut[1]);
 
 		if (getGameType() == GType_ELVIRA2 && num == 7) {
@@ -107,7 +107,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 			dst += screen->pitch;
 		}
 
-		_system->unlockScreen();
+		updateBackendSurface();
 	}
 }
 
@@ -223,7 +223,7 @@ void AGOSEngine::vc53_dissolveIn() {
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 		byte *dstPtr = (byte *)screen->getBasePtr(x, y);
 
 		yoffs = _rnd.getRandomNumber(dissolveY);
@@ -264,7 +264,7 @@ void AGOSEngine::vc53_dissolveIn() {
 		*dst &= color;
 		*dst |= *src & 0xF;
 
-		_system->unlockScreen();
+		updateBackendSurface();
 
 		dissolveCount--;
 		if (!dissolveCount) {
@@ -296,7 +296,7 @@ void AGOSEngine::vc54_dissolveOut() {
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 		byte *dstPtr = (byte *)screen->getBasePtr(x, y);
 		color |= dstPtr[0] & 0xF0;
 
@@ -318,7 +318,7 @@ void AGOSEngine::vc54_dissolveOut() {
 		dst += xoffs;
 		*dst = color;
 
-		_system->unlockScreen();
+		updateBackendSurface();
 
 		dissolveCount--;
 		if (!dissolveCount) {
@@ -378,7 +378,7 @@ void AGOSEngine::fullFade() {
 }
 
 void AGOSEngine::vc56_fullScreen() {
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	byte *dst = (byte *)screen->getPixels();
 	byte *src = _curVgaFile2 + 800;
 
@@ -387,7 +387,7 @@ void AGOSEngine::vc56_fullScreen() {
 		src += 320;
 		dst += screen->pitch;
 	}
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	fullFade();
 }

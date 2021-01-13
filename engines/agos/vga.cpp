@@ -1182,7 +1182,7 @@ void AGOSEngine::vc31_setWindow() {
 
 void AGOSEngine::vc32_saveScreen() {
 	if (getGameType() == GType_PN) {
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 		byte *dst = getBackGround();
 		byte *src = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
@@ -1190,7 +1190,7 @@ void AGOSEngine::vc32_saveScreen() {
 			dst += _backGroundBuf->pitch;
 			src += screen->pitch;
 		}
-		_system->unlockScreen();
+		updateBackendSurface();
 	} else {
 		uint16 xoffs = _videoWindows[4 * 4 + 0] * 16;
 		uint16 yoffs = _videoWindows[4 * 4 + 1];
@@ -1251,13 +1251,14 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 	}
 
 	if (getGameType() == GType_ELVIRA1 && num == 3) {
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 		byte *dst = (byte *)screen->getPixels();
 		for (int i = 0; i < _screenHeight; i++) {
 			memset(dst, color, _screenWidth);
 			dst += screen->pitch;
 		}
-		 _system->unlockScreen();
+		clearHiResTextLayer();
+		updateBackendSurface();
 	} else {
 		const uint16 *vlut = &_videoWindows[num * 4];
 		uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;

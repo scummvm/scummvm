@@ -1166,6 +1166,7 @@ void AGOSEngine::printStats() {
 	window->flags = 1;
 
 	mouseOff();
+	_forceAscii = true;
 
 	// Strength
 	val = _variableArray[0];
@@ -1215,6 +1216,7 @@ void AGOSEngine::printStats() {
 		val = 99;
 	writeChar(window, 36, 133, 4, val);
 
+	_forceAscii = false;
 	mouseOn();
 }
 

@@ -37,6 +37,7 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/surface.h"
+#include "graphics/sjis.h"
 
 #include "audio/mididrv.h"
 
@@ -140,7 +141,23 @@ AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescriptio
 }
 
 AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine(system, gd) {
+	: AGOSEngine(system, gd), _sjisCurChar(0), _sjisFont(0) {
+}
+
+AGOSEngine_Elvira1::~AGOSEngine_Elvira1() {
+	delete _sjisFont;
+}
+
+Common::Error AGOSEngine_Elvira1::init() {
+	Common::Error ret = AGOSEngine::init();
+	if (ret.getCode() == Common::kNoError && getPlatform() == Common::kPlatformPC98) {
+		_sjisFont = Graphics::FontSJIS::createFont(Common::kPlatformPC98);
+		if (_sjisFont)
+			_sjisFont->toggleFatPrint(true);
+		else
+			error("AGOSEngine_Elvira1::init(): Failed to load SJIS font.");
+	}
+	return ret;
 }
 
 AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
@@ -541,10 +558,11 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_moveXMax = 0;
 	_moveYMax = 0;
 
+	_forceAscii = false;
+
 	_vc10BasePtrOld = 0;
 	memcpy (_hebrewCharWidths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
-
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -576,7 +594,15 @@ Common::Error AGOSEngine::init() {
 		_screenHeight = 200;
 	}
 
-	initGraphics(_screenWidth, _screenHeight);
+	_internalWidth = _screenWidth;
+	_internalHeight = _screenHeight;
+
+	if (getPlatform() == Common::kPlatformPC98) {
+		_internalWidth <<= 1;
+		_internalHeight <<= 1;
+	}
+
+	initGraphics(_internalWidth, _internalHeight);
 
 	_midi = new MidiPlayer();
 
@@ -601,11 +627,11 @@ Common::Error AGOSEngine::init() {
 	_backGroundBuf = new Graphics::Surface();
 	_backGroundBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP || (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98)) {
 		_backBuf = new Graphics::Surface();
 		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 		_scaleBuf = new Graphics::Surface();
-		_scaleBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_scaleBuf->create(_internalWidth, _internalHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	if (getGameType() == GType_SIMON2) {

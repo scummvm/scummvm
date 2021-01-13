@@ -365,7 +365,7 @@ static const byte _image4[32] = {
 void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 135;
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	byte *dst = (byte *)screen->getBasePtr(xoffs, y);
 
 	for (uint h = 0; h < 6; h++) {
@@ -374,7 +374,7 @@ void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 		dst += screen->pitch;
 	}
 
-	_system->unlockScreen();
+	updateBackendSurface();
 }
 
 void AGOSEngine::playerDamageEvent(VgaTimerEntry * vte, uint dx) {

@@ -154,7 +154,7 @@ void AGOSEngine::vc48_specialEffect() {
 
 	if (getPlatform() == Common::kPlatformDOS) {
 		if (num == 1) {
-			Graphics::Surface *screen = _system->lockScreen();
+			Graphics::Surface *screen = getBackendSurface();
 			byte *dst = (byte *)screen->getPixels();
 
 			for (uint h = 0; h < _screenHeight; h++) {
@@ -164,7 +164,7 @@ void AGOSEngine::vc48_specialEffect() {
 				}
 				dst += screen->pitch;
 			}
-			_system->unlockScreen();
+			updateBackendSurface();
 		} else if (num == 2) {
 			const char *str = "There are gurgling noises from the sink.";
 			for (; *str; str++)
@@ -204,13 +204,13 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 	uint16 xoffs = vlut[0] * 16;
 	uint16 yoffs = vlut[1];
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	byte *dst = (byte *)screen->getBasePtr(xoffs, yoffs);
 	for (uint h = 0; h < vlut[3]; h++) {
 		memset(dst, color, vlut[2] * 16);
 		dst += screen->pitch;
 	}
-	 _system->unlockScreen();
+	 updateBackendSurface();
 }
 
 } // End of namespace AGOS

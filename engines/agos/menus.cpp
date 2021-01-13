@@ -163,7 +163,7 @@ void AGOSEngine::unlightMenuStrip() {
 
 	mouseOff();
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	src = (byte *)screen->getBasePtr(272, 8);
 	w = 48;
 	h = 82;
@@ -179,7 +179,7 @@ void AGOSEngine::unlightMenuStrip() {
 	for (i = 120; i != 130; i++)
 		disableBox(i);
 
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	mouseOn();
 }
@@ -191,7 +191,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 
 	mouseOff();
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	src = (byte *)screen->getBasePtr(ha->x, ha->y);
 	w = ha->width;
 	h = ha->height;
@@ -204,7 +204,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 		src += screen->pitch;
 	} while (--h);
 
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	mouseOn();
 }

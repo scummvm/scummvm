@@ -28,6 +28,7 @@
 #include "agos/intern.h"
 
 #include "graphics/surface.h"
+#include "graphics/sjis.h"
 
 namespace AGOS {
 
@@ -2921,7 +2922,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 
 	_videoLockOut |= 0x8000;
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		dst = (byte *)screen->getPixels();
@@ -3019,9 +3020,85 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		dst += dstPitch;
 	} while (--h);
 
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	_videoLockOut &= ~0x8000;
+}
+
+void AGOSEngine_Elvira1::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	if (_language != Common::JA_JPN || _forceAscii) {
+		AGOSEngine::windowDrawChar(window, x, y, chr);
+		return;
+	}
+
+	if (_sjisCurChar) {
+		_sjisCurChar |= (chr << 8);
+	} else {
+		_sjisCurChar = chr;
+		if ((chr >= 0x80 && chr < 0xA0) || chr >= 0xE0)
+			return;		
+	}
+
+	_videoLockOut |= 0x8000;
+
+	x = x & ~7;
+	y = (y + 4) & ~3;
+	// PC-98 uses text mode black (hardware colors, not related to the graphics mode palette
+	// colors) for font drawing, so I just set one of the unused black colors (color 33) here.
+	_sjisFont->drawChar(*_scaleBuf, _sjisCurChar, x << 1, y << 1, 33, 0);
+	Common::Rect dirtyRect(x, y, x + (_sjisFont->getCharWidth(_sjisCurChar) >> 1), y + (_sjisFont->getFontHeight() >> 1));
+	addHiResTextDirtyRect(dirtyRect);
+	updateBackendSurface(&dirtyRect);
+	_sjisCurChar = 0;
+
+	_videoLockOut &= ~0x8000;
+}
+
+void AGOSEngine_Elvira1::addHiResTextDirtyRect(Common::Rect rect) {
+	rect.left >>= 1;
+	rect.top <<= 1;
+	rect.right >>= 1;
+	rect.bottom <<= 1;
+
+	for (Common::Array<Common::Rect>::iterator i = _sjisTextFields.begin(); i != _sjisTextFields.end(); ++i) {
+		// Merge rects if it makes sense, but only once.
+		if (rect.left <= i->right && rect.right >= i->left && rect.top <= i->bottom && rect.bottom >= i->top) {
+			i->left = MIN<int16>(i->left, rect.left);
+			i->top = MIN<int16>(i->top, rect.top);
+			i->right = MAX<int16>(i->right, rect.right);
+			i->bottom = MAX<int16>(i->bottom, rect.bottom);
+			return;
+		}
+	}
+
+	_sjisTextFields.push_back(rect);
+}
+
+void AGOSEngine_Elvira1::clearHiResTextLayer() {
+	if (getPlatform() != Common::kPlatformPC98)
+		return;
+
+	void *p = _scaleBuf->getPixels();
+	assert(p);
+
+	if (_sjisTextFields.size() < 10) {
+		for (Common::Array<Common::Rect>::iterator i = _sjisTextFields.begin(); i != _sjisTextFields.end(); ++i) {
+			uint16 w = i->width();
+			uint16 ptch = _scaleBuf->pitch >> 2;
+			uint32 *dst = (uint32*)p + i->top * ptch + i->left;
+			for (uint32 *end = dst + i->height() * ptch; dst < end; dst += ptch)
+				Common::fill<uint32*, uint32>(dst, &dst[w], 0);
+			i->left <<= 1;
+			i->top >>= 1;
+			i->right <<= 1;
+			i->bottom >>= 1;
+			updateBackendSurface(i);
+		}
+	} else {
+		memset(p, 0, _scaleBuf->w * _scaleBuf->h);
+		updateBackendSurface();
+	}
+	_sjisTextFields.clear();
 }
 
 } // End of namespace AGOS

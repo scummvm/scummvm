@@ -559,6 +559,10 @@ void AGOSEngine::handleMouseMoved() {
 			_needHitAreaRecalc++;
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
+		if (getPlatform() == Common::kPlatformPC98) {
+			_mouse.x >>= 1;
+			_mouse.y >>= 1;
+		}
 		if (_mouseCursor != _variableArray[438]) {
 			_mouseCursor = _variableArray[438];
 			_needHitAreaRecalc++;
@@ -784,6 +788,12 @@ static const byte mouseCursorPalette[] = {
 void AGOSEngine::initMouse() {
 	_maxCursorWidth = 16;
 	_maxCursorHeight = 16;
+
+	if (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
+		_maxCursorWidth <<= 1;
+		_maxCursorHeight <<= 1;
+	}
+
 	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
 
 	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
@@ -864,7 +874,21 @@ void AGOSEngine::drawMousePointer() {
 			src += 2;
 		}
 
-		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
+		if (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
+			// Simple 2x upscaling for the cursor in dual layer hi-res mode.
+			uint8 ptch = 16;
+			uint16 *dst1 = &((uint16*)_mouseData)[16 * 16 * 2 - 1];
+			uint16 *dst2 = dst1 - ptch;
+			for (const byte *src = &_mouseData[16 * 16 - 1]; src >= _mouseData; --src) {
+				*dst1-- = *dst2-- = (*src << 8) | *src;
+				if (!(ptch = (ptch - 1) % 16)) {
+					dst1 -= 16;
+					dst2 -= 16;
+				}
+			}
+		}
+
+		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 0, 0, 0xFF);
 	}
 }
 

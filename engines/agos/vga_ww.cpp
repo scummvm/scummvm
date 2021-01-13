@@ -142,7 +142,7 @@ void AGOSEngine::vc61() {
 	byte *src, *dst, *dstPtr;
 	uint h, tmp;
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	dstPtr = (byte *)screen->getPixels();
 
 	if (a == 6) {
@@ -175,7 +175,7 @@ void AGOSEngine::vc61() {
 		}
 
 		if (a != 6) {
-			_system->unlockScreen();
+			updateBackendSurface();
 			return;
 		}
 
@@ -189,7 +189,7 @@ void AGOSEngine::vc61() {
 		dst += screen->pitch;
 	}
 
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	if (a == 6)
 		fullFade();

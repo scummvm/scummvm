@@ -536,7 +536,7 @@ void AGOSEngine::displayBoxStars() {
 		ha = _hitAreas;
 		count = ARRAYSIZE(_hitAreas);
 
-		Graphics::Surface *screen = _system->lockScreen();
+		Graphics::Surface *screen = getBackendSurface();
 
 		do {
 			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
@@ -604,7 +604,7 @@ void AGOSEngine::displayBoxStars() {
 			}
 		} while (ha++, --count);
 
-		_system->unlockScreen();
+		updateBackendSurface();
 
 		delay(100);
 
@@ -724,7 +724,7 @@ void AGOSEngine::fillBackFromBackGround(uint16 height, uint16 width) {
 }
 
 void AGOSEngine::fillBackFromFront() {
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	byte *src = (byte *)screen->getPixels();
 	byte *dst = getBackBuf();
 
@@ -733,7 +733,7 @@ void AGOSEngine::fillBackFromFront() {
 		src += screen->pitch;
 		dst += _backBuf->pitch;
 	}
-	_system->unlockScreen();
+	updateBackendSurface();
 }
 
 void AGOSEngine::fillBackGroundFromBack() {
@@ -747,7 +747,7 @@ void AGOSEngine::fillBackGroundFromBack() {
 }
 
 void AGOSEngine::fillBackGroundFromFront() {
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	byte *src = (byte *)screen->getPixels();
 	byte *dst = getBackGround();
 
@@ -756,7 +756,7 @@ void AGOSEngine::fillBackGroundFromFront() {
 		src += screen->pitch;
 		dst += _backGroundBuf->pitch;
 	}
-	_system->unlockScreen();
+	updateBackendSurface();
 }
 
 void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
@@ -782,7 +782,7 @@ void AGOSEngine::displayScreen() {
 		}
 	}
 
-	Graphics::Surface *screen = _system->lockScreen();
+	Graphics::Surface *screen = getBackendSurface();
 	if (getGameType() == GType_PP || getGameType() == GType_FF) {
 		byte *src = getBackBuf();
 		byte *dst = (byte *)screen->getPixels();
@@ -841,7 +841,7 @@ void AGOSEngine::displayScreen() {
 		}
 	}
 
-	_system->unlockScreen();
+	updateBackendSurface();
 
 	if (getGameType() == GType_FF && _scrollFlag) {
 		scrollScreen();
