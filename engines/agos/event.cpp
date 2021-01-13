@@ -374,7 +374,8 @@ void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 		dst += screen->pitch;
 	}
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(xoffs, y, xoffs + 4, y + 6);
+	updateBackendSurface(&dirtyRect);
 }
 
 void AGOSEngine::playerDamageEvent(VgaTimerEntry * vte, uint dx) {

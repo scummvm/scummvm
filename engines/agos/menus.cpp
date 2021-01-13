@@ -179,7 +179,8 @@ void AGOSEngine::unlightMenuStrip() {
 	for (i = 120; i != 130; i++)
 		disableBox(i);
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(272, 8, 320, 90);
+	updateBackendSurface(&dirtyRect);
 
 	mouseOn();
 }
@@ -204,7 +205,8 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 		src += screen->pitch;
 	} while (--h);
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(ha->x, ha->y, ha->x + w, ha->y + ha->height);
+	updateBackendSurface(&dirtyRect);
 
 	mouseOn();
 }

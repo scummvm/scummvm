@@ -3020,7 +3020,8 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		dst += dstPitch;
 	} while (--h);
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(x, y, x + 6, y + 8);
+	updateBackendSurface(&dirtyRect);
 
 	_videoLockOut &= ~0x8000;
 }

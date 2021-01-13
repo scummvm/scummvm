@@ -1041,7 +1041,8 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 		src += screen->pitch;
 	} while (--h);
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(ha->x, ha->y, ha->x + w, ha->y + ha->height);
+	updateBackendSurface(&dirtyRect);
 
 	_videoLockOut &= ~0x8000;
 }

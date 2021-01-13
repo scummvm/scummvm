@@ -178,13 +178,15 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
+	uint16 h2 = h;
 
 	do {
 		memset(dst, color, w);
 		dst += screen->pitch;
 	} while (--h);
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(x, y, x + w, y + h2);
+	updateBackendSurface(&dirtyRect);
 
 	_videoLockOut &= ~0x8000;
 }
@@ -242,6 +244,7 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	src += y * _backGroundBuf->pitch;
 
 	uint8 paletteMod = 0;
+	uint16 h2 = 2;
 	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO) && y >= 133)
 		paletteMod = 16;
 
@@ -253,7 +256,8 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 		src += _backGroundBuf->pitch;
 	}
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(x, y, x + w, y + h2);
+	updateBackendSurface(&dirtyRect);
 }
 
 void AGOSEngine::setTextColor(uint color) {

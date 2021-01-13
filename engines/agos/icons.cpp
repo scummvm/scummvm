@@ -315,8 +315,9 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 	Graphics::Surface *screen = getBackendSurface();
 	dst = (byte *)screen->getPixels();
 
-	dst += (x + window->x) * 8;
-	dst += (y * 8 + window->y) * screen->pitch;
+	x = (x + window->x) * 8;
+	y = (y * 8 + window->y);
+	dst += y * screen->pitch + x;
 
 	if (getFeatures() & GF_PLANAR) {
 		src = _iconFilePtr;
@@ -328,7 +329,8 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 		decompressIconPlanar(dst, src, 24, 12, 16, screen->pitch, false);
 	}
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(x, y, x + 24, y + 12);
+	updateBackendSurface(&dirtyRect);
 
 	_videoLockOut &= ~0x8000;
 }
@@ -964,7 +966,8 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 		dst+= screen->pitch;
 	}
 
-	updateBackendSurface();
+	Common::Rect dirtyRect(x * 8, y, x * 8 + 16, y + 19);
+	updateBackendSurface(&dirtyRect);
 }
 
 void AGOSEngine_Simon1::removeArrows(WindowBlock *window, uint num) {
