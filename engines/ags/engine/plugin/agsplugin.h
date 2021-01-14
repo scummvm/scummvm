@@ -31,7 +31,11 @@
 #ifndef AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 #define AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 
+#include "common/array.h"
+
 namespace AGS3 {
+
+typedef Common::Array<intptr_t> ScriptMethodParams;
 
 // If the plugin isn't using DDraw, don't require the headers
 #ifndef DIRECTDRAW_VERSION
