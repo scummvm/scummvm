@@ -183,7 +183,7 @@ AL_FUNC(void, simulate_keypress, (int keycode));
 AL_FUNC(void, simulate_ukeypress, (int keycode, int scancode));
 
 AL_FUNC(bool, keypressed, (void));
-AL_FUNC(int, readkey, (void));
+AL_FUNC(Common::KeyState, readkey, (void));
 
 } // namespace AGS3
 

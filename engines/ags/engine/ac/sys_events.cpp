@@ -56,7 +56,7 @@ int ags_kbhit() {
 }
 
 int ags_iskeypressed(int keycode) {
-	if (keycode >= 0 && keycode < __allegro_KEY_MAX) {
+	if (keycode >= 0 && keycode < Common::KEYCODE_LAST) {
 		return key[keycode] != 0;
 	}
 	return 0;
@@ -99,153 +99,100 @@ int ags_check_mouse_wheel() {
 }
 
 int ags_getch() {
-	const int read_key_value = readkey();
-	int gott = read_key_value;
-	const int scancode = ((gott >> 8) & 0x00ff);
-	const int ascii = (gott & 0x00ff);
+	const Common::KeyState keyState = readkey();
+	int gott;
 
-	bool is_extended = (ascii == EXTENDED_KEY_CODE);
-	// On macos, the extended keycode is the ascii character '?' or '\0' if alt-key
-	// so check it's not actually the character '?'
-#if AGS_PLATFORM_OS_MACOS && ! AGS_PLATFORM_OS_IOS
-	is_extended = is_extended || ((ascii == EXTENDED_KEY_CODE_MACOS) && (scancode != __allegro_KEY_SLASH));
-#endif
+	// I believe we rely on a lot of keys being converted to ASCII, which is why
+	// the complete scan code list is not here.
 
-	/*  char message[200];
-	sprintf(message, "Scancode: %04X", gott);
-	Debug::Printf(message);*/
+	switch (keyState.keycode) {
+	case Common::KEYCODE_F1:
+		gott = eAGSKeyCodeF1;
+		break;
+	case Common::KEYCODE_F2:
+		gott = eAGSKeyCodeF2;
+		break;
+	case Common::KEYCODE_F3:
+		gott = eAGSKeyCodeF3;
+		break;
+	case Common::KEYCODE_F4:
+		gott = eAGSKeyCodeF4;
+		break;
+	case Common::KEYCODE_F5:
+		gott = eAGSKeyCodeF5;
+		break;
+	case Common::KEYCODE_F6:
+		gott = eAGSKeyCodeF6;
+		break;
+	case Common::KEYCODE_F7:
+		gott = eAGSKeyCodeF7;
+		break;
+	case Common::KEYCODE_F8:
+		gott = eAGSKeyCodeF8;
+		break;
+	case Common::KEYCODE_F9:
+		gott = eAGSKeyCodeF9;
+		break;
+	case Common::KEYCODE_F10:
+		gott = eAGSKeyCodeF10;
+		break;
+	case Common::KEYCODE_F11:
+		gott = eAGSKeyCodeF11;
+		break;
+	case Common::KEYCODE_F12:
+		gott = eAGSKeyCodeF12;
+		break;
 
-	/*if ((scancode >= KEY_0_PAD) && (scancode <= KEY_9_PAD)) {
-	// fix numeric pad keys if numlock is off (allegro 4.2 changed this behaviour)
-	if ((key_shifts & KB_NUMLOCK_FLAG) == 0)
-	gott = (gott & 0xff00) | EXTENDED_KEY_CODE;
-	}*/
+	case Common::KEYCODE_INSERT:
+	case Common::KEYCODE_KP0:
+		gott = eAGSKeyCodeInsert;
+		break;
+	case Common::KEYCODE_DELETE:
+	case Common::KEYCODE_KP_PERIOD:
+		gott = eAGSKeyCodeDelete;
+		break;
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
+		gott = eAGSKeyCodeHome;
+		break;
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
+		gott = eAGSKeyCodeEnd;
+		break;
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_KP9:
+		gott = eAGSKeyCodePageUp;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP3:
+		gott = eAGSKeyCodePageDown;
+		break;
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		gott = eAGSKeyCodeLeftArrow;
+		break;
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		gott = eAGSKeyCodeRightArrow;
+		break;
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		gott = eAGSKeyCodeUpArrow;
+		break;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		gott = eAGSKeyCodeDownArrow;
+		break;
 
-	if (gott == READKEY_CODE_ALT_TAB) {
-		// Alt+Tab, it gets stuck down unless we do this
-		gott = AGS_KEYCODE_ALT_TAB;
-	}
-#if AGS_PLATFORM_OS_MACOS
-	else if (scancode == __allegro_KEY_BACKSPACE) {
-		gott = eAGSKeyCodeBackspace;
-	}
-#endif
-	else if (is_extended) {
-
-		// I believe we rely on a lot of keys being converted to ASCII, which is why
-		// the complete scan code list is not here.
-
-		switch (scancode) {
-		case __allegro_KEY_F1:
-			gott = eAGSKeyCodeF1;
-			break;
-		case __allegro_KEY_F2:
-			gott = eAGSKeyCodeF2;
-			break;
-		case __allegro_KEY_F3:
-			gott = eAGSKeyCodeF3;
-			break;
-		case __allegro_KEY_F4:
-			gott = eAGSKeyCodeF4;
-			break;
-		case __allegro_KEY_F5:
-			gott = eAGSKeyCodeF5;
-			break;
-		case __allegro_KEY_F6:
-			gott = eAGSKeyCodeF6;
-			break;
-		case __allegro_KEY_F7:
-			gott = eAGSKeyCodeF7;
-			break;
-		case __allegro_KEY_F8:
-			gott = eAGSKeyCodeF8;
-			break;
-		case __allegro_KEY_F9:
-			gott = eAGSKeyCodeF9;
-			break;
-		case __allegro_KEY_F10:
-			gott = eAGSKeyCodeF10;
-			break;
-		case __allegro_KEY_F11:
-			gott = eAGSKeyCodeF11;
-			break;
-		case __allegro_KEY_F12:
-			gott = eAGSKeyCodeF12;
-			break;
-
-		case __allegro_KEY_INSERT:
-			gott = eAGSKeyCodeInsert;
-			break;
-		case __allegro_KEY_DEL:
-			gott = eAGSKeyCodeDelete;
-			break;
-		case __allegro_KEY_HOME:
-			gott = eAGSKeyCodeHome;
-			break;
-		case __allegro_KEY_END:
-			gott = eAGSKeyCodeEnd;
-			break;
-		case __allegro_KEY_PGUP:
-			gott = eAGSKeyCodePageUp;
-			break;
-		case __allegro_KEY_PGDN:
-			gott = eAGSKeyCodePageDown;
-			break;
-		case __allegro_KEY_LEFT:
-			gott = eAGSKeyCodeLeftArrow;
-			break;
-		case __allegro_KEY_RIGHT:
-			gott = eAGSKeyCodeRightArrow;
-			break;
-		case __allegro_KEY_UP:
-			gott = eAGSKeyCodeUpArrow;
-			break;
-		case __allegro_KEY_DOWN:
-			gott = eAGSKeyCodeDownArrow;
-			break;
-
-		case __allegro_KEY_0_PAD:
-			gott = eAGSKeyCodeInsert;
-			break;
-		case __allegro_KEY_1_PAD:
-			gott = eAGSKeyCodeEnd;
-			break;
-		case __allegro_KEY_2_PAD:
-			gott = eAGSKeyCodeDownArrow;
-			break;
-		case __allegro_KEY_3_PAD:
-			gott = eAGSKeyCodePageDown;
-			break;
-		case __allegro_KEY_4_PAD:
-			gott = eAGSKeyCodeLeftArrow;
-			break;
-		case __allegro_KEY_5_PAD:
-			gott = eAGSKeyCodeNumPad5;
-			break;
-		case __allegro_KEY_6_PAD:
-			gott = eAGSKeyCodeRightArrow;
-			break;
-		case __allegro_KEY_7_PAD:
-			gott = eAGSKeyCodeHome;
-			break;
-		case __allegro_KEY_8_PAD:
-			gott = eAGSKeyCodeUpArrow;
-			break;
-		case __allegro_KEY_9_PAD:
-			gott = eAGSKeyCodePageUp;
-			break;
-		case __allegro_KEY_DEL_PAD:
-			gott = eAGSKeyCodeDelete;
-			break;
-
-		default:
+	default:
+		if (keyState.flags & (Common::KBD_ALT | Common::KBD_CTRL) &&
+			keyState.keycode >= Common::KEYCODE_a && keyState.keycode <= Common::KEYCODE_z)
 			// no meaningful mappings
 			// this is how we accidentally got the alt-key mappings
-			gott = scancode + AGS_EXT_KEY_SHIFT;
-		}
-	} else {
-		// this includes ascii characters and ctrl-A-Z
-		gott = ascii;
+			gott = AGS_EXT_KEY_SHIFT + (keyState.keycode - Common::KEYCODE_a) + 1;
+		else
+			gott = keyState.ascii;
+		break;
 	}
 
 	// Alt+X, abort (but only once game is loaded)
