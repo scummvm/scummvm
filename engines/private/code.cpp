@@ -139,7 +139,7 @@ int funcpush() //(char *name, int nargs)
     n = pop();
     ArgArray args;
 
-    debug("executing %s with %d params", s.u.str, n.u.val);
+    //debug("executing %s with %d params", s.u.str, n.u.val);
     for (int i = 0; i < n.u.val; i++) {
         arg = pop();
         args.insert(args.begin(), arg) ;
@@ -153,7 +153,7 @@ int funcpush() //(char *name, int nargs)
 int eval() {
     Datum d;
     d = pop();
-    debug("eval %s", d.u.sym->name->c_str());
+    //debug("eval %s", d.u.sym->name->c_str());
     //if (d.sym->type == UNDEF)
     //	execerror("undefined variable", d.sym->name);
     if (d.u.sym->type == NUM) {
@@ -166,8 +166,7 @@ int eval() {
         d.type = RECT;
         d.u.rect = d.u.sym->u.rect;
     } else if (d.u.sym->type == NAME) {
-        //debug("NAME %s", d.sym->name->c_str());
-        //d.sym = d.sym;
+    // No evaluation until is absolutely needed
     }
     else
         assert(0);
@@ -182,15 +181,11 @@ int add() {
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-        //char *name =  d1.u.sym->name->c_str();
-        //debug("eval %s to %d",
         d1.u.val = d1.u.sym->u.val;
         d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-        //char *name =  d1.u.sym->name->c_str();
-        //debug("eval %s to %d",
         d2.u.val = d2.u.sym->u.val;
         d2.type = NUM;
     }
@@ -209,7 +204,7 @@ int negate() {
     d = pop();
     int v;
     if (d.type == NAME) {
-        debug("negating %s", d.u.sym->name->c_str());
+        //debug("negating %s", d.u.sym->name->c_str());
         v = d.u.sym->u.val;
         d.type = NUM;
     }
