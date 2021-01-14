@@ -143,7 +143,7 @@ void Inventory(ArgArray args) {
 
     if (strcmp(snd.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(snd.u.str);
-        g_private->playSound(*s);
+        g_private->playSound(*s, 1);
     }
 
     // TODO: Keep track of inventory is missing
@@ -192,7 +192,7 @@ void Sound(ArgArray args) {
     debug("Sound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s);
+        g_private->playSound(*s, 1);
         //assert(0);
     } else {
         g_private->stopSound();
@@ -205,7 +205,7 @@ void LoopedSound(ArgArray args) {
     debug("LoopedSound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s);
+        g_private->playSound(*s, 0);
         //assert(0);
     } else {
         g_private->stopSound();
@@ -367,7 +367,7 @@ static struct FuncTable {
     // Sounds
     { Sound,           "Sound"},
     { Sound,           "SoundEffect"},
-    { Sound,           "LoopedSound"},
+    { LoopedSound,     "LoopedSound"},
     { NoStopSounds,    "NoStopSounds"},
     { SyncSound,       "SyncSound"},
     { AMRadioClip,     "AMRadioClip"},

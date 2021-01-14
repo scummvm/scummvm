@@ -169,11 +169,11 @@ Common::Error PrivateEngine::run() {
 
             case Common::EVENT_MOUSEMOVE:
                 changeCursor("default");
-                cursorExit(mousePos);
-                cursorMask(mousePos);
-                cursorLoadGame(mousePos);
-                cursorSaveGame(mousePos);
                 
+                if      (cursorLoadGame(mousePos)) {}
+                else if (cursorSaveGame(mousePos)) {}
+                else if (cursorMask(mousePos))     {}
+                else if (cursorExit(mousePos))     {}
                 //
                 break;
 
@@ -229,19 +229,31 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
     mousePos = mousePos - *_origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
-
+    
+    int rs = 100000000;
+    int cs = 0;
     ExitInfo e;
-    bool inside = false;
+    Common::String *cursor = NULL;
+    
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
-        if (e.rect->contains(mousePos)) {
-            inside = true;
-            if (e.cursor != NULL)
-                changeCursor(*e.cursor);
+        cs = e.rect->width()*e.rect->height();
+
+        if (e.rect->contains(mousePos)) {            
+            if (cs < rs && e.cursor != NULL) {
+                rs = cs;
+                cursor = e.cursor;
+            }
+            
         }
     }
 
-    return inside;
+    if (cursor != NULL) {
+        changeCursor(*cursor);
+        return true;
+    }
+
+    return false;
 }
 
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
@@ -462,7 +474,7 @@ Common::String PrivateEngine::convertPath(Common::String name) {
     return path;
 }
 
-void PrivateEngine::playSound(const Common::String &name) {
+void PrivateEngine::playSound(const Common::String &name, uint loops) {
     debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
 
     Common::File *file = new Common::File();
@@ -472,7 +484,7 @@ void PrivateEngine::playSound(const Common::String &name) {
         error("unable to find sound file %s", path.c_str());
 
     Audio::LoopingAudioStream *stream;
-    stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), 1);
+    stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loops);
     stopSound();
     _mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
