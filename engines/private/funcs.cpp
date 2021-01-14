@@ -21,7 +21,7 @@ void ChgMode(ArgArray args) {
         // TODO: should clear the screen?
     }
     else if (g_private->_mode == 1) {
-        g_private->_origin->x = 63;
+        g_private->_origin->x = 64;
         g_private->_origin->y = 48;
         //g_private->drawScreenFrame();
     }
