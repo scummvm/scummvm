@@ -666,6 +666,9 @@ extern char android_base_directory[256];
 #endif // AGS_PLATFORM_OS_ANDROID
 
 int check_write_access() {
+#if AGS_PLATFORM_SCUMMVM
+	return true;
+#else
 
 	if (platform->GetDiskFreeSpaceMB() < 2)
 		return 0;
@@ -701,6 +704,7 @@ int check_write_access() {
 		return 0;
 
 	return 1;
+#endif
 }
 
 int engine_check_disk_space() {

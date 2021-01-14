@@ -36,12 +36,14 @@
 
 #include "ags/lib/std/set.h"
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/shared/core/def_version.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/engine/game/savegame.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/mainheader.h"
@@ -63,6 +65,8 @@ extern char return_to_room[150];
 
 using namespace Shared;
 using namespace Engine;
+
+extern HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten);
 
 String appDirectory; // Needed for library loading
 String cmdGameDataPath;
@@ -416,6 +420,17 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 
 	_rawScreen = new Graphics::Screen();
 	_screen = new ::AGS3::BITMAP(_rawScreen);
+}
+
+Common::Error AGSEngine::loadGameState(int slot) {
+	bool dataOverwritten;
+	(void)AGS3::load_game("", slot, dataOverwritten);
+	return Common::kNoError;
+}
+
+Common::Error AGSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	(void)AGS3::save_game(slot, desc.c_str());
+	return Common::kNoError;
 }
 
 } // namespace AGS

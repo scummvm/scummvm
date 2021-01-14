@@ -101,6 +101,16 @@ public:
 	 * Setse up the graphics mode
 	 */
 	void setGraphicsMode(size_t w, size_t h);
+
+	/**
+	 * Load a savegame
+	 */
+	Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Save a savegame
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 };
 
 extern AGSEngine *g_vm;

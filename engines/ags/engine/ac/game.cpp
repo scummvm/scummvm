@@ -209,7 +209,6 @@ String saveGameDirectory = "./";
 // Custom save game parent directory
 String saveGameParent;
 
-const char *sgnametemplate = "agssave.%03d";
 String saveGameSuffix;
 
 int game_paused = 0;
@@ -361,12 +360,16 @@ void set_save_game_suffix(const String &suffix) {
 }
 
 String get_save_game_path(int slotNum) {
+#if AGS_PLATFORM_SCUMMVM
+	return ::AGS::g_vm->getSaveStateName(slotNum);
+#else
 	String filename;
 	filename.Format(sgnametemplate, slotNum);
 	String path = saveGameDirectory;
 	path.Append(filename);
 	path.Append(saveGameSuffix);
 	return path;
+#endif
 }
 
 // Convert a path possibly containing path tags into acceptable save path
@@ -1041,7 +1044,6 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 }
 
 void save_game(int slotn, const char *descript) {
-
 	// dont allow save in rep_exec_always, because we dont save
 	// the state of blocked scripts
 	can_run_delayed_command();
