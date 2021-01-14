@@ -23,11 +23,11 @@
 #ifndef AGS_SHARED_UTIL_FILESTREAM_H
 #define AGS_SHARED_UTIL_FILESTREAM_H
 
-//include <stdio.h>
-
 #include "ags/shared/util/datastream.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 #include "common/stream.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -73,6 +73,8 @@ private:
 	Common::Stream *_file;
 	const FileOpenMode  _openMode;
 	const FileWorkMode  _workMode;
+	Common::MemoryWriteStreamDynamic _writeBuffer;
+	Common::OutSaveFile *_outSave;
 };
 
 } // namespace Shared
