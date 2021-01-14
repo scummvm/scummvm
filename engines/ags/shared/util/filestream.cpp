@@ -23,7 +23,9 @@
 #include "ags/shared/util/filestream.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
+#include "ags/ags.h"
 #include "common/file.h"
+#include "common/system.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -31,10 +33,8 @@ namespace Shared {
 
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
 	DataEndianess stream_endianess)
-	: DataStream(stream_endianess)
-	, _file(nullptr)
-	, _openMode(open_mode)
-	, _workMode(work_mode) {
+		: DataStream(stream_endianess), _writeBuffer(DisposeAfterUse::YES),
+		_openMode(open_mode), _workMode(work_mode), _file(nullptr), _outSave(nullptr) {
 	Open(file_name, open_mode, work_mode);
 }
 
@@ -47,9 +47,15 @@ bool FileStream::HasErrors() const {
 }
 
 void FileStream::Close() {
-	if (_file) {
+	if (_outSave) {
+		_outSave->write(_writeBuffer.getData(), _writeBuffer.size());
+		_outSave->finalize();
+		delete _outSave;
+
+	} else if (_file) {
 		delete _file;
 	}
+
 	_file = nullptr;
 }
 
@@ -168,21 +174,30 @@ bool FileStream::Seek(soff_t offset, StreamSeek origin) {
 
 void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode) {
 	if (open_mode == kFile_Open) {
+		// First try to open file in game folder
 		Common::File *f = new Common::File();
-		if (!f->open(getFSNode(file_name.GetNullableCStr()))) {
+		if (!file_name.CompareLeftNoCase("agssave.") || !f->open(getFSNode(file_name.GetNullableCStr()))) {
 			delete f;
-			_file = nullptr;
+
+			// Fall back on any save file with the given name
+			String saveName = file_name;
+			if (!file_name.CompareLeftNoCase("agssave.")) {
+				int saveSlot = atoi(file_name.GetNullableCStr() + 8);
+				saveName = ::AGS::g_vm->getSaveStateName(saveSlot);
+			}
+
+			_file = g_system->getSavefileManager()->openForLoading(saveName);
 		} else {
 			_file = f;
 		}
 
 	} else {
-		Common::DumpFile *f = new Common::DumpFile();
-		if (!f->open(file_name.GetNullableCStr())) {
-			delete f;
-			_file = nullptr;
-		} else {
-			_file = f;
+		// All newly created files are created as save files
+		_outSave = g_system->getSavefileManager()->openForSaving(file_name, false);
+		if (_outSave) {
+			// Any data written has to first go through the memory stream buffer,
+			// since the savegame code uses Seeks, which OutSaveFile doesn't support
+			_file = &_writeBuffer;
 		}
 	}
 }

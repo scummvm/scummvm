@@ -425,6 +425,9 @@ bool SetCustomSaveParent(const String &path) {
 }
 
 bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
+#if AGS_PLATFORM_SCUMMVM
+	return false;
+#else
 	if (!newFolder || newFolder[0] == 0)
 		newFolder = ".";
 	String newSaveGameDir;
@@ -465,6 +468,7 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 
 	saveGameDirectory = newSaveGameDir;
 	return true;
+#endif
 }
 
 int Game_SetSaveGameDirectory(const char *newFolder) {
