@@ -34,8 +34,55 @@ namespace Plugins {
 #define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
 #define SCRIPT_METHOD(NAME) engine->RegisterScriptFunction(#NAME, (void *)&NAME)
 
+#define PARAMS1(T1, N1) \
+	T1 N1 = (T1)params[0]
+#define PARAMS2(T1, N1, T2, N2) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]
+#define PARAMS3(T1, N1, T2, N2, T3, N3) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]
+#define PARAMS4(T1, N1, T2, N2, T3, N3, T4, N4) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]
+#define PARAMS5(T1, N1, T2, N2, T3, N3, T4, N4, T5, N5) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]; \
+	T5 N5 = (T5)params[4]
+#define PARAMS6(T1, N1, T2, N2, T3, N3, T4, N4, T5, N5, T6, N6) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]; \
+	T5 N5 = (T5)params[4]; \
+	T6 N6 = (T6)params[5]
+#define PARAMS7(T1, N1, T2, N2, T3, N3, T4, N4, T5, N5, T6, N6, T7, N7) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]; \
+	T5 N5 = (T5)params[4]; \
+	T6 N6 = (T6)params[5]; \
+	T7 N7 = (T7)params[6]
+#define PARAMS8(T1, N1, T2, N2, T3, N3, T4, N4, T5, N5, T6, N6, T7, N7, T8, N8) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]; \
+	T5 N5 = (T5)params[4]; \
+	T6 N6 = (T6)params[5]; \
+	T7 N7 = (T7)params[6]; \
+	T8 N8 = (T8)params[7]
+
+
 // TODO: Refactor string into core AGS namespace
-using string = ::AGS3::AGS::Shared::String;
+using string = const char *;
+using ScriptMethodParams = ::AGS3::ScriptMethodParams;
 
 using IAGSEngine = ::AGS3::IAGSEngine;
 using IAGSEditor = ::AGS3::IAGSEditor;
