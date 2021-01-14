@@ -31,7 +31,9 @@ namespace AGS {
 class EventsManager {
 private:
 	Common::Queue<Common::Event> _pendingEvents;
-	Common::Queue<Common::KeyCode> _pendingKeys;
+	Common::Queue<Common::KeyState> _pendingKeys;
+
+	bool isModifierKey(const Common::KeyCode &keycode) const;
 public:
 	EventsManager();
 	~EventsManager();
@@ -49,7 +51,7 @@ public:
 	/**
 	 * Returns the next keypress, if any is pending
 	 */
-	int readKey();
+	Common::KeyState readKey();
 
 	/**
 	 * Returns the next event, if any

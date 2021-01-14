@@ -50,8 +50,10 @@ void EventsManager::pollEvents() {
 			::AGS3::check_dynamic_sprites_at_exit = 0;
 
 		} else if (e.type == Common::EVENT_KEYDOWN) {
-			// Add keypresses to the pending key list
-			_pendingKeys.push(e.kbd.keycode);
+			if (!isModifierKey(e.kbd.keycode)) {
+				// Add keypresses to the pending key list
+				_pendingKeys.push(e.kbd);
+			}
 		} else {
 			// Add other event types to the pending events queue. If the event is a
 			// mouse move and the prior one was also, then discard the prior one.
@@ -65,14 +67,23 @@ void EventsManager::pollEvents() {
 	}
 }
 
+bool EventsManager::isModifierKey(const Common::KeyCode &keycode) const {
+	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
+		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
+		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
+		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
+		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
+		|| keycode == Common::KEYCODE_SCROLLOCK;
+}
+
 bool EventsManager::keypressed() {
 	pollEvents();
 	return !_pendingKeys.empty();
 }
 
-int EventsManager::readKey() {
+Common::KeyState EventsManager::readKey() {
 	pollEvents();
-	return _pendingKeys.empty() ? 0 : _pendingKeys.pop();
+	return _pendingKeys.empty() ? Common::KeyState() : _pendingKeys.pop();
 }
 
 Common::Event EventsManager::readEvent() {

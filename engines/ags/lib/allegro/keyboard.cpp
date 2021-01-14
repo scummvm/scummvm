@@ -72,7 +72,7 @@ bool keypressed() {
 	return ::AGS::g_events->keypressed();
 }
 
-int readkey() {
+Common::KeyState readkey() {
 	return ::AGS::g_events->readKey();
 }
 
