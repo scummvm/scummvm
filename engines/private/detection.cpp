@@ -10,7 +10,7 @@ static const PlainGameDescriptor privateGames[] = {
 
 static const ADGameDescription gameDescriptions[] = {
     {
-        "private-eye",
+        "private-eye",  // Full game
         0,
         AD_ENTRY1s("ASSETS.Z", "3a7532349cda8126e96dd5e49884af3a", 40232),
         Common::EN_ANY,
@@ -19,10 +19,20 @@ static const ADGameDescription gameDescriptions[] = {
         GUIO1(GUIO_NOMIDI)
     },
     {
-        "private-eye",
-        0,
+        "private-eye", // Demo from archive.org
+        "Demo",
         AD_ENTRY1s("ASSETS.Z", "854e141bb67535359620a1833fcc1566", 5955),
-        Common::EN_ANY,
+        Common::EN_ANY, 
+        Common::kPlatformWindows,
+        ADGF_DEMO,
+        GUIO1(GUIO_NOMIDI)
+    },
+
+    {
+        "private-eye", // Demo from the full game CDROM
+        "Demo",
+        AD_ENTRY1s("ASSETS.Z", "045766e39f44d6ee3bf92f0d4521587c", 5961),
+        Common::EN_ANY, 
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)

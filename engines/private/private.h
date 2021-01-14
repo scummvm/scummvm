@@ -104,8 +104,11 @@ public:
 	void stopSound();
 
 	void loadImage(const Common::String &file, int x, int y, bool drawn = true);
-    void drawScreenFrame();
-        
+    void drawScreenFrame(Graphics::Surface *);
+
+	void changeCursor(Common::String);
+    void initCursors();
+
 	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
  
     uint32 _transparentColor;	

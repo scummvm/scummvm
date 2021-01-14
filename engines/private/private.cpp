@@ -79,24 +79,16 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 Common::Error PrivateEngine::run() {
-
-    const Common::FSNode gameDataDir(ConfMan.get("path"));
-    //SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "global/transiti/animatio/driving");
-    //SearchMan.addSubDirectoryMatching(gameDataDir, "global", , 10, false);
-    
-    Common::ArchiveMemberList list;
-    SearchMan.listMembers(list);
-    for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-        debug("%s", (*it)->getName().c_str());
-    }
     
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
     Common::SeekableReadStream *file = NULL;
 
     if (_installerArchive.hasFile("GAME.DAT")) // if the full game is used
         file = _installerArchive.createReadStreamForMember("GAME.DAT");
-    else if (_installerArchive.hasFile("GAME.TXT")) // if the demo is used
+    else if (_installerArchive.hasFile("GAME.TXT")) // if the archive.org demo is used
         file = _installerArchive.createReadStreamForMember("GAME.TXT");
+    else if (_installerArchive.hasFile("DEMOGAME.DAT")) // if full retail CDROM demo is used
+        file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
 
     assert(file != NULL);
     void *buf = malloc(191000);
@@ -117,10 +109,7 @@ Common::Error PrivateEngine::run() {
     _pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
     _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
-
-    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
-    CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-    CursorMan.showMouse(true);
+    changeCursor("default");
 
     _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
@@ -157,9 +146,6 @@ Common::Error PrivateEngine::run() {
     }
 
     while (!shouldQuit()) {
-        if (_mode == 1)
-            drawScreenFrame();
-
         while (g_system->getEventManager()->pollEvent(event)) {
             mousePos = g_system->getEventManager()->getMousePos();
             // Events
@@ -182,7 +168,7 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_MOUSEMOVE:
-                CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
+                changeCursor("default");
                 cursorExit(mousePos);
                 cursorMask(mousePos);
                 cursorLoadGame(mousePos);
@@ -207,6 +193,7 @@ Common::Error PrivateEngine::run() {
         }
 
         if (_videoDecoder) {
+
             stopSound();
             if (_videoDecoder->endOfVideo()) {
                 _videoDecoder->close();
@@ -226,10 +213,8 @@ Common::Error PrivateEngine::run() {
             _saveGameMask = NULL;
             loadSetting(_nextSetting);
             _nextSetting = NULL;
-            //CursorMan.showMouse(false);
             execute(prog);
-            CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
-            //CursorMan.showMouse(true);
+            changeCursor("default");
         }
 
         g_system->updateScreen();
@@ -252,11 +237,9 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
         if (e.rect->contains(mousePos)) {
             inside = true;
             if (e.cursor != NULL)
-                CursorMan.replaceCursor(_cursors.getVal(*e.cursor), 32, 32, 0, 0, 0, true);
+                changeCursor(*e.cursor);
         }
     }
-    //if (!inside)
-    //    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
 
     return inside;
 }
@@ -280,16 +263,13 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
             //debug("Inside!");
             if (m.nextSetting != NULL) { // TODO: check this
                 inside = true;
-                debug("Rendering cursor mask %s", m.cursor->c_str());
-                assert(_cursors.contains(*m.cursor));
-                CursorMan.replaceCursor(_cursors.getVal(*m.cursor), 32, 32, 0, 0, 0, true);
+                //debug("Rendering cursor mask %s", m.cursor->c_str());
+                changeCursor(*m.cursor);
                 break;
             }
 
         }
     }
-    //if (!inside)
-    //    CursorMan.replaceCursor(_cursors.getVal("default"), 11, 16, 0, 0, 0, true);
     return inside;
 }
 
@@ -308,9 +288,9 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
         cs = e.rect->width()*e.rect->height();
         //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect->contains(mousePos)) {
-            debug("Inside! %d %d", cs, rs);
+            //debug("Inside! %d %d", cs, rs);
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
-                debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
+                //debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
                 rs = cs;
                 ns = e.nextSetting;
             }
@@ -318,7 +298,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
         }
     }
     if (ns != NULL) {
-        debug("Exit selected %s", ns->c_str());
+        //debug("Exit selected %s", ns->c_str());
         _nextSetting = ns;
     }
 }
@@ -336,9 +316,9 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 
         //debug("Testing mask %s", m.nextSetting->c_str());
         if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-            debug("Inside!");
+            //debug("Inside!");
             if (m.nextSetting != NULL) { // TODO: check this
-                debug("Found Mask %s", m.nextSetting->c_str());
+                //debug("Found Mask %s", m.nextSetting->c_str());
                 ns = m.nextSetting;
             }
 
@@ -351,7 +331,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
         }
     }
     if (ns != NULL) {
-        debug("Mask selected %s", ns->c_str());
+        //debug("Mask selected %s", ns->c_str());
         _nextSetting = ns;
     }
 }
@@ -384,8 +364,7 @@ bool PrivateEngine::cursorLoadGame(Common::Point mousePos) {
         return false;
 
     if ( *((uint32*) _loadGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-        assert(_cursors.contains(*_loadGameMask->cursor));
-        CursorMan.replaceCursor(_cursors.getVal(*_loadGameMask->cursor), 32, 32, 0, 0, 0, true);
+        changeCursor(*_loadGameMask->cursor);
         return true;
     }
     return false;
@@ -418,8 +397,7 @@ bool PrivateEngine::cursorSaveGame(Common::Point mousePos) {
         return false;
 
     if ( *((uint32*) _saveGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-        assert(_cursors.contains(*_saveGameMask->cursor));
-        CursorMan.replaceCursor(_cursors.getVal(*_saveGameMask->cursor), 32, 32, 0, 0, 0, true);
+        changeCursor(*_saveGameMask->cursor);
         return true;
     }
     return false;
@@ -435,14 +413,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     Common::Serializer s(stream, nullptr);
     debug("loadGameStream");
     _nextSetting = new Common::String("kMainDesktop");
-    //for (SymbolMap::iterator it = variables.begin(); it != variables.end(); ++it)
-    //    debug("%s %s", it->_key.c_str(), it->_value->name->c_str());
-    Common::String *key = new Common::String();
     int val;
         
     for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
-        //Common::String key = *it;
-        //debug("key: %s", key.c_str());
         s.syncAsUint32LE(val); 
         Private::Symbol *sym = variables.getVal(*it);
         sym->u.val = val;
@@ -456,12 +429,8 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     debug("saveGameStream %d", isAutosave);
     if (isAutosave)
         return Common::kNoError;
-    //Common::Serializer s(nullptr, stream);
-    //short type;
-    //assert(_nextSetting->matchString("kMainDesktop"));    
+
     for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
-        //Common::String key = *it;
-        //debug("key: %s", key.c_str());
         Private::Symbol *sym = variables.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
@@ -551,15 +520,12 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y, bool dra
     drawScreen();
 }
 
-void PrivateEngine::drawScreenFrame() {
-    Common::File file;
+void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
     Common::String path = convertPath(*_frame);
-    if (!file.open(path))
-        error("unable to load image %s", path.c_str());
-
+    Common::File file;
+    assert(file.open(path));
     _image->loadStream(file);
-    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(0,0));
-    //drawScreen();
+    screen->copyRectToSurface(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 }
 
 
@@ -599,7 +565,11 @@ void PrivateEngine::drawScreen() {
 
     assert(w == _screenW && h == _screenH);
 
-    screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    if (_mode == 1) {
+        drawScreenFrame(screen);
+    }
+    screen->copyRectToSurface(*surface, _origin->x, _origin->y, Common::Rect(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y));
+    //screen->copyRectToSurface(*surface, _origin.x, _origin.y, Common::Rect(0, 0, _screenW, _screenH));
     g_system->unlockScreen();
     //if (_image->getPalette() != nullptr)
     //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());

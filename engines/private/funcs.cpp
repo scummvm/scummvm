@@ -23,7 +23,7 @@ void ChgMode(ArgArray args) {
     else if (g_private->_mode == 1) {
         g_private->_origin->x = 63;
         g_private->_origin->y = 48;
-        g_private->drawScreenFrame();
+        //g_private->drawScreenFrame();
     }
     else
         assert(0);
