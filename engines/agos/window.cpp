@@ -293,9 +293,11 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	window->textRow = window->height - 1;
 	window->textLength = 0;
 
+	_forceAscii = true;
 	message = "[ OK ]";
 	for (; *message; message++)
 		windowPutChar(window, *message);
+	_forceAscii = false;
 
 	ha = findEmptyHitArea();
 	ha->x = (window->width / 2 + window->x - 3) * 8;
@@ -328,6 +330,7 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 
 void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val) {
 	int chr;
+	_forceAscii = true;
 
 	// Clear background of first digit
 	window->textColumnOffset = offs;
@@ -358,6 +361,8 @@ void AGOSEngine::writeChar(WindowBlock *window, int x, int y, int offs, int val)
 		window->textColor = 15;
 		windowDrawChar(window, x * 8, y, chr);
 	}
+
+	_forceAscii = false;
 }
 
 } // End of namespace AGOS

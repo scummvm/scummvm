@@ -927,6 +927,10 @@ restart:
 		message1 = "   Juego en Pausa\r\r\r";
 		message2 = "Continuar      Salir";
 		break;
+	case Common::JA_JPN:
+		message1 = "             ""\x83""Q""\x81""[""\x83\x80\x92\x86\x92""f\r\r\r";
+		message2 = "        ""\x91\xb1\x82\xaf\x82\xe9""         ""\x82\xe2\x82\xdf\x82\xe9";
+		break;
 	default:
 		message1 = "     Game Paused\r\r\r";
 		message2 = " Continue      Quit";
@@ -958,6 +962,10 @@ restart:
 			message1 = "    Estas seguro ?\r\r\r";
 			message2 = "    Si          No";
 			break;
+		case Common::JA_JPN:
+			message1 = "           ""\x82\xe6\x82\xeb\x82\xb5\x82\xa2\x82\xc5\x82\xb7\x82\xa9\x81""H\r\r\r";
+			message2 = "         ""\x82\xcd\x82\xa2""          ""\x82\xa2\x82\xa2\x82\xa6";
+			break;
 		default:
 			message1 = "    Are you sure ?\r\r\r";
 			message2 = "     Yes       No";
@@ -978,6 +986,7 @@ restart:
 		}
 	}
 
+	clearHiResTextLayer();
 	restartAnimation();
 	_gameStoppedClock = getTime() - pauseTime + _gameStoppedClock;
 }
@@ -1154,6 +1163,7 @@ void AGOSEngine::printScroll() {
 
 	_windowNum = 3;
 	_curVgaFile2 = vpe->vgaFile2;
+	clearHiResTextLayer();
 	drawImage_init(9, 0, 10, 32, 0);
 
 	_curVgaFile2 = curVgaFile2Orig;
@@ -1166,7 +1176,6 @@ void AGOSEngine::printStats() {
 	window->flags = 1;
 
 	mouseOff();
-	_forceAscii = true;
 
 	// Strength
 	val = _variableArray[0];
@@ -1216,7 +1225,6 @@ void AGOSEngine::printStats() {
 		val = 99;
 	writeChar(window, 36, 133, 4, val);
 
-	_forceAscii = false;
 	mouseOn();
 }
 

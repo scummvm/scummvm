@@ -148,7 +148,7 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		_printCharPixelCount = 0;
 		doOutput(&chr, 1);
 		clsCheck(_textWindow);
-	} else if (getLanguage() == Common::JA_JPN) {
+	} else if (getLanguage() == Common::JA_JPN && !_forceAscii) {
 		// Japanese has no word wrapping
 		_lettersToPrintBuf[0] = chr;
 		_lettersToPrintBuf[1] = '\0';
@@ -262,7 +262,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 			return;
 		}
 
-		if (_language == Common::JA_JPN)
+		if (_language == Common::JA_JPN && !_forceAscii)
 			textColumnWidth = width = 4;
 		else if (c - 32 > 98) // Ignore invalid characters
 			return;

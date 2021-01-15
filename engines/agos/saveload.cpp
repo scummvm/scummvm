@@ -238,6 +238,11 @@ bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
 		message2 = "   Ueberschreiben ?\r\r";
 		message3 = "     Ja        Nein";
 		break;
+	case Common::JA_JPN:
+		message1 = "\r   ""\x82\xbb\x82\xcc\x83""t""\x83""@""\x83""C""\x83\x8b\x82\xcd\x82\xb7\x82\xc5\x82\xc9\x91\xb6\x8d\xdd\x82\xb5\x82\xdc\x82\xb7""\r\r";			
+		message2 = "     ""\x8f\xe3\x8f\x91\x82\xab\x82\xb5\x82\xc4\x82\xe6\x82\xeb\x82\xb5\x82\xa2\x82\xc5\x82\xb7\x82\xa9\x81""H\r\r";
+		message3 = "       ""\x82\xcd\x82\xa2""           ""\x82\xa2\x82\xa2\x82\xa6";
+		break;
 	default:
 		message1 = "\r File already exists.\r\r";
 		message2 = "    Overwrite it ?\r\r";
@@ -310,17 +315,22 @@ restart:
 	case Common::DE_DEU:
 		message1 = "\rLege Spielstandsdiskette ein. Dateinamen eingeben:\r\r   ";
 		break;
+	case Common::JA_JPN:
+		message1 = "\r  ""\x83""t""\x83""@""\x83""C""\x83\x8b\x96\xbc\x82\xf0\x93\xfc\x97\xcd\x82\xb5\x82\xc4\x82\xad\x82\xbe\x82\xb3\x82\xa2\x81""F\r\r\r   ";
+		break;
 	default:
 		message1 = "\r Insert savegame data disk & enter filename:\r\r   ";
 		break;
 	}
 
+	clearHiResTextLayer();
 	for (; *message1; message1++)
 		windowPutChar(window, *message1);
 
 	memset(_saveBuf, 0, 10);
 	name = _saveBuf;
 	_saveGameNameLen = 0;
+	_forceAscii = true;
 
 	while (!shouldQuit()) {
 		windowPutChar(window, 128);
@@ -350,6 +360,8 @@ restart:
 		}
 	}
 
+	_forceAscii = false;
+
 	if (_saveGameNameLen != 0) {
 		int16 slot = matchSaveGame(name, numSaveGames);
 		if (!load) {
@@ -373,6 +385,7 @@ restart:
 		printStats();
 	}
 
+	clearHiResTextLayer();
 	restartAnimation();
 	_gameStoppedClock = getTime() - saveTime + _gameStoppedClock;
 }
@@ -942,6 +955,10 @@ void AGOSEngine::fileError(WindowBlock *window, bool saveError) {
 			message1 = "\r  Sicherung erfolglos.";
 			message2 = "\rVersuche eine andere     Diskette.";
 			break;
+		case Common::JA_JPN:
+			message1 = "\r       ""\x83""Z""\x81""[""\x83""u""\x82\xc9\x8e\xb8\x94""s""\x82\xb5\x82\xdc\x82\xb5\x82\xbd";
+			message2 = "\r   ""\x95\xca\x82\xcc\x83""f""\x83""B""\x83""X""\x83""N""\x82\xf0\x8e""g""\x97""p""\x82\xb5\x82\xc4\x82\xad\x82\xbe\x82\xb3\x82\xa2";
+			break;
 		default:
 			message1 = "\r       Save failed.";
 			message2 = "\r       Disk error.";
@@ -977,6 +994,10 @@ void AGOSEngine::fileError(WindowBlock *window, bool saveError) {
 		case Common::DE_DEU:
 			message1 = "\r    Laden erfolglos.";
 			message2 = "\r  Datei nicht gefunden.";
+			break;
+		case Common::JA_JPN:
+			message1 = "\r       ""\x83\x8d\x81""[""\x83""h""\x82\xc9\x8e\xb8\x94""s""\x82\xb5\x82\xdc\x82\xb5\x82\xbd";
+			message2 = "\r     ""\x83""t""\x83""@""\x83""C""\x83\x8b\x82\xaa\x8c\xa9\x82\xc2\x82\xa9\x82\xe8\x82\xdc\x82\xb9\x82\xf1";
 			break;
 		default:
 			message1 = "\r       Load failed.";
