@@ -23,6 +23,10 @@
 #include "ags/metaengine.h"
 #include "ags/detection.h"
 #include "ags/ags.h"
+#include "ags/shared/util/filestream.h"
+#include "ags/engine/ac/richgamemedia.h"
+#include "ags/engine/game/savegame.h"
+#include "common/savefile.h"
 
 const char *AGSMetaEngine::getName() const {
 	return "ags";
@@ -33,6 +37,44 @@ Common::Error AGSMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 
 	*engine = new AGS::AGSEngine(syst, gd);
 	return Common::kNoError;
+}
+
+SaveStateList AGSMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern(getSavegameFilePattern(target));
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		Common::String filename = Common::String::format("%s%s",
+			::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX, file->c_str());
+
+		::AGS3::AGS::Shared::FileStream saveFile(filename, ::AGS3::AGS::Shared::kFile_Open,
+			::AGS3::AGS::Shared::kFile_Read);
+		if (saveFile.IsValid()) {
+			AGS3::RICH_GAME_MEDIA_HEADER rich_media_header;
+			rich_media_header.ReadFromFile(&saveFile);
+
+			if (rich_media_header.dwMagicNumber == RM_MAGICNUMBER) {
+				int slotNum = atoi(file->c_str() + file->size() - 3);
+
+				SaveStateDescriptor desc;
+				desc.setSaveSlot(slotNum);
+				desc.setDescription(rich_media_header.getSaveName());
+
+				if (slotNum == getAutosaveSlot())
+					desc.setWriteProtectedFlag(true);
+
+				saveList.push_back(desc);
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGS)

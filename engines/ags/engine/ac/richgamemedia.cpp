@@ -55,4 +55,15 @@ void RICH_GAME_MEDIA_HEADER::WriteToFile(Stream *out) {
 	out->WriteArrayOfInt16((int16_t *)szComments, RM_MAXLENGTH);
 }
 
+void RICH_GAME_MEDIA_HEADER::setSaveName(const Common::String &saveName) {
+	uconvert<char, uint16>(saveName.c_str(), szSaveName, RM_MAXLENGTH);
+}
+
+Common::String RICH_GAME_MEDIA_HEADER::getSaveName() const {
+	char buf[RM_MAXLENGTH];
+	uconvert<uint16, char>(szSaveName, buf, RM_MAXLENGTH);
+
+	return Common::String(buf);
+}
+
 } // namespace AGS3

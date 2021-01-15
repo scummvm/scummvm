@@ -361,7 +361,8 @@ void set_save_game_suffix(const String &suffix) {
 
 String get_save_game_path(int slotNum) {
 #if AGS_PLATFORM_SCUMMVM
-	return ::AGS::g_vm->getSaveStateName(slotNum);
+	return Common::String::format("%s%s", SAVE_FOLDER_PREFIX,
+		::AGS::g_vm->getSaveStateName(slotNum).c_str());
 #else
 	String filename;
 	filename.Format(sgnametemplate, slotNum);
