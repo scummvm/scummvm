@@ -2241,7 +2241,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 			     << "process (pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
-			Std::memcpy(data, proc->_stack.access(offset), size);
+			memcpy(data, proc->_stack.access(offset), size);
 		}
 	} else if (segment == SEG_OBJ) {
 		if (size != 2) {

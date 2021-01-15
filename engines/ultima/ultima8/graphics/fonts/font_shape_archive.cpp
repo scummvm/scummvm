@@ -68,7 +68,7 @@ void FontShapeArchive::setHVLeads() {
 	KeyMap::const_iterator iter;
 
 	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {
-		int fontnum = Std::atoi(iter->_key.c_str());
+		int fontnum = atoi(iter->_key.c_str());
 		Std::string leaddesc = iter->_value;
 
 		Std::vector<Std::string> vals;
@@ -79,8 +79,8 @@ void FontShapeArchive::setHVLeads() {
 			continue;
 		}
 
-		int hlead = Std::atoi(vals[0].c_str());
-		int vlead = Std::atoi(vals[1].c_str());
+		int hlead = atoi(vals[0].c_str());
+		int vlead = atoi(vals[1].c_str());
 
 		ShapeFont *font = getFont(fontnum);
 		if (font) {

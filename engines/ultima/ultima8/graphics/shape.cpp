@@ -150,7 +150,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	if (format->_bytes_ident) {
 		uint8 *ident = new uint8[format->_bytes_ident];
 		ds.read(ident, format->_bytes_ident);
-		bool match = Std::memcmp(ident, format->_ident, format->_bytes_ident) == 0;
+		bool match = memcmp(ident, format->_ident, format->_bytes_ident) == 0;
 		delete[] ident;
 
 		if (!match) {

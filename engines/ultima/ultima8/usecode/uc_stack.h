@@ -24,7 +24,6 @@
 #define ULTIMA8_USECODE_UCSTACK_H
 
 #include "common/scummsys.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -87,12 +86,12 @@ public:
 	// Push an arbitrary number of bytes of 0
 	inline void push0(const uint32 count) {
 		_bufPtr -= count;
-		Std::memset(_bufPtr, 0, count);
+		memset(_bufPtr, 0, count);
 	}
 	// Push an arbitrary number of bytes
 	inline void push(const uint8 *in, const uint32 count) {
 		_bufPtr -= count;
-		Std::memcpy(_bufPtr, in, count);
+		memcpy(_bufPtr, in, count);
 	}
 
 	//
@@ -114,7 +113,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 	inline void pop(uint8 *out, const uint32 count) {
-		Std::memcpy(out, _bufPtr, count);
+		memcpy(out, _bufPtr, count);
 		_bufPtr += count;
 	}
 
@@ -157,7 +156,7 @@ public:
 		const_cast<uint8 *>(_buf)[offset + 3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
 	inline void assign(const uint32 offset, const uint8 *in, const uint32 len) {
-		Std::memcpy(const_cast<uint8 *>(_buf) + offset, in, len);
+		memcpy(const_cast<uint8 *>(_buf) + offset, in, len);
 	}
 };
 

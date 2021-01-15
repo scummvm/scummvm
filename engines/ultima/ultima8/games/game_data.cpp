@@ -381,7 +381,7 @@ void GameData::setupJPOverrides() {
 
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
-		int fontnum = Std::atoi(iter->_key.c_str());
+		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
@@ -391,8 +391,8 @@ void GameData::setupJPOverrides() {
 			continue;
 		}
 
-		unsigned int jpfontnum = Std::atoi(vals[0].c_str());
-		uint32 col32 = Std::strtol(vals[1].c_str(), 0, 0);
+		unsigned int jpfontnum = atoi(vals[0].c_str());
+		uint32 col32 = strtol(vals[1].c_str(), 0, 0);
 
 		if (!fontmanager->addJPOverride(fontnum, jpfontnum, col32)) {
 			perr << "failed to setup jpfont override for font " << fontnum
@@ -419,7 +419,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 
 	ttfkeyvals = config->listKeyValues(configkey);
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
-		int fontnum = Std::atoi(iter->_key.c_str());
+		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
@@ -430,9 +430,9 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 		}
 
 		const Std::string &filename = vals[0];
-		int pointsize = Std::atoi(vals[1].c_str());
-		uint32 col32 = Std::strtol(vals[2].c_str(), 0, 0);
-		int border = Std::atoi(vals[3].c_str());
+		int pointsize = atoi(vals[1].c_str());
+		uint32 col32 = strtol(vals[2].c_str(), 0, 0);
+		int border = atoi(vals[3].c_str());
 
 		if (!fontmanager->addTTFOverride(fontnum, filename, pointsize,
 		                                 col32, border, SJIS)) {

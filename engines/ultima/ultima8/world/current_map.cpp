@@ -47,7 +47,7 @@ static const int INT_MAX_VALUE = 0x7fffffff;
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	if (GAME_IS_U8) {
@@ -76,7 +76,7 @@ void CurrentMap::clear() {
 				delete *iter;
 			_items[i][j].clear();
 		}
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	_fastXMin =  _fastYMin = _fastXMax = _fastYMax = -1;
@@ -183,7 +183,7 @@ void CurrentMap::loadMap(Map *map) {
 
 	// Clear fast area
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 	_fastXMin = -1;
 	_fastYMin = -1;

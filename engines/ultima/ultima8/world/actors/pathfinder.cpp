@@ -222,7 +222,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) const {
 	sqrddist += (_targetY - node->state._y + _actorYd / 2) *
 	            (_targetY - node->state._y + _actorYd / 2);
 
-	unsigned int dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
+	unsigned int dist = static_cast<unsigned int>(sqrt(sqrddist));
 #else
 	// This calculates the distance to the target using only lines in
 	// the 8 available directions (instead of the straight line above)
@@ -379,7 +379,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	             (newnode->state._z - oldnode->state._z));
 
 	unsigned int dist;
-	dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
+	dist = static_cast<unsigned int>(sqrt(sqrddist));
 
 	int turn = 0;
 

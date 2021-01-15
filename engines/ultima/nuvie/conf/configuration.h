@@ -25,7 +25,6 @@
 
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
 #include "ultima/detection.h"
 
 namespace Ultima {

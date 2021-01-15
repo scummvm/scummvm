@@ -22,7 +22,6 @@
 
 #include "ultima/shared/conf/xml_tree.h"
 #include "ultima/shared/conf/xml_node.h"
-#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
 #include "common/file.h"
 

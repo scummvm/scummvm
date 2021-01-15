@@ -63,7 +63,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 		char ident[4];
 		source->read(ident, csf->_bytes_ident);
 
-		if (Std::memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
 			perr << "Warning: Corrupt shape!" << Std::endl;
 			return;
 		}
@@ -102,7 +102,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 
 	// Create _frames array
 	_frames = new ConvertShapeFrame[_num_frames];
-	Std::memset (_frames, 0, _num_frames * sizeof(ConvertShapeFrame));
+	memset (_frames, 0, _num_frames * sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for(uint32 f = 0; f < _num_frames; ++f) {
@@ -429,7 +429,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 		ident[csf->_bytes_ident] = 0;
 		source->read(ident, csf->_bytes_ident);
 
-		if (Std::memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
 			// Return to start position
 			source->seek(start_pos);
 			return false;
@@ -449,7 +449,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
-	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for (int f = 0; f < numFrames; f++) {
@@ -608,7 +608,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 		ident[csf->_bytes_ident] = 0;
 		source->read(ident, csf->_bytes_ident);
 
-		if (Std::memcmp (ident, csf->_ident, csf->_bytes_ident)) {
+		if (memcmp (ident, csf->_ident, csf->_bytes_ident)) {
 			// Return to start position
 			source->seek(start_pos);
 			return false;
@@ -628,7 +628,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 
 	// Create _frames array
 	ConvertShapeFrame oneframe;
-	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the _frames
 	for (int f = 0; f < numFrames; f++) {
