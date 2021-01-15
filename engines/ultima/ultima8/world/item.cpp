@@ -101,7 +101,7 @@ void Item::dumpInfo() const {
 
 	pout << ") q:" << getQuality()
 	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f:0x" << Std::hex << getFlags() << ", ef:0x"
+	     << ", f:0x" << ConsoleStream::hex << getFlags() << ", ef:0x"
 		 << getExtFlags();
 
 	const ShapeInfo *info = getShapeInfo();
@@ -110,7 +110,7 @@ void Item::dumpInfo() const {
 			 << info->_family << ", et:" << info->_equipType;
 	}
 
-	pout << ")" << Std::dec << Std::endl;
+	pout << ")" << ConsoleStream::dec << Std::endl;
 }
 
 Container *Item::getParentAsContainer() const {

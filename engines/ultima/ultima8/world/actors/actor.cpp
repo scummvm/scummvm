@@ -1000,8 +1000,8 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 	}
 
 	pout << "Actor " << getObjId() << " received hit from " << other
-	     << " (dmg=" << damage << ",type=" << Std::hex << damage_type
-	     << Std::dec << "). ";
+	     << " (dmg=" << damage << ",type=" << ConsoleStream::hex << damage_type
+	     << ConsoleStream::dec << "). ";
 
 	damage = calculateAttackDamage(other, damage, damage_type);
 
@@ -1565,10 +1565,10 @@ void Actor::dumpInfo() const {
 
 	pout << "hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength
 	     << ", dex: " << _dexterity << ", int: " << _intelligence
-	     << ", ac: " << getArmourClass() << ", defense: " << Std::hex
+	     << ", ac: " << getArmourClass() << ", defense: " << ConsoleStream::hex
 	     << getDefenseType() << " align: " << getAlignment() << " enemy: "
 	     << getEnemyAlignment() << ", flags: " << _actorFlags
-	     << Std::dec << Std::endl;
+	     << ConsoleStream::dec << Std::endl;
 }
 
 void Actor::saveData(Common::WriteStream *ws) {
