@@ -31,7 +31,14 @@ class AGSMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	SaveStateList listSaves(const char *target) const override;
+
+	int getAutosaveSlot() const override {
+		return 999;
+	}
+
 };
 
 #endif

@@ -683,14 +683,6 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	WriteSaveImage(out, user_image);
 }
 
-static void uconvert(const char *src, unsigned short *dest, int maxSize) {
-	do {
-		*dest++ = *src;
-	} while (*src++ != 0 && --maxSize > 1);
-
-	*dest = '\0';
-}
-
 PStream StartSavegame(const String &filename, const String &user_text, const Bitmap *user_image) {
 	Stream *out = Shared::File::CreateFile(filename);
 	if (!out)
@@ -699,7 +691,7 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	// Initialize and write Vista header
 	RICH_GAME_MEDIA_HEADER vistaHeader;
 	memset(&vistaHeader, 0, sizeof(RICH_GAME_MEDIA_HEADER));
-	memcpy(&vistaHeader.dwMagicNumber, RM_MAGICNUMBER, sizeof(int));
+	vistaHeader.dwMagicNumber = RM_MAGICNUMBER;
 	vistaHeader.dwHeaderVersion = 1;
 	vistaHeader.dwHeaderSize = sizeof(RICH_GAME_MEDIA_HEADER);
 	vistaHeader.dwThumbnailOffsetHigherDword = 0;
@@ -708,8 +700,7 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	convert_guid_from_text_to_binary(game.guid, &vistaHeader.guidGameId[0]);
 
 #if 1
-	Common::String name = Common::String::format("%s %s", game.gamename, user_text.GetNullableCStr());
-	uconvert(name.c_str(), vistaHeader.szSaveName, RM_MAXLENGTH);
+	vistaHeader.setSaveName(user_text);
 #else
 	uconvert(game.gamename, U_ASCII, (char *)&vistaHeader.szGameName[0], U_UNICODE, RM_MAXLENGTH);
 	uconvert(user_text, U_ASCII, (char *)&vistaHeader.szSaveName[0], U_UNICODE, RM_MAXLENGTH);

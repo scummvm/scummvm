@@ -23,12 +23,15 @@
 #ifndef AGS_ENGINE_AC_RICHGAMEMEDIA_H
 #define AGS_ENGINE_AC_RICHGAMEMEDIA_H
 
+#include "common/algorithm.h"
+#include "common/str.h"
+
 namespace AGS3 {
 
 // Windows Vista Rich Save Games, modified to be platform-agnostic
 
 #define RM_MAXLENGTH    1024
-#define RM_MAGICNUMBER  "RGMH"
+#define RM_MAGICNUMBER  MKTAG('R', 'G', 'M', 'H')
 
 // Forward declaration
 namespace AGS {
@@ -41,22 +44,35 @@ using namespace AGS; // FIXME later
 
 #pragma pack(push)
 #pragma pack(1)
-typedef struct _RICH_GAME_MEDIA_HEADER {
-	int       dwMagicNumber;
+struct RICH_GAME_MEDIA_HEADER {
+private:
+	template<class SRC, class DEST>
+	static void uconvert(const SRC *src, DEST *dest, size_t maxSize) {
+		do {
+			*dest++ = *src;
+		} while (*src++ != 0 && --maxSize > 1);
+
+		*dest = '\0';
+	}
+public:
+	uint32    dwMagicNumber;
 	int       dwHeaderVersion;
 	int       dwHeaderSize;
 	int       dwThumbnailOffsetLowerDword;
 	int       dwThumbnailOffsetHigherDword;
 	int       dwThumbnailSize;
-	unsigned char guidGameId[16];
-	unsigned short szGameName[RM_MAXLENGTH];
-	unsigned short szSaveName[RM_MAXLENGTH];
-	unsigned short szLevelName[RM_MAXLENGTH];
-	unsigned short szComments[RM_MAXLENGTH];
+	byte guidGameId[16];
+	uint16 szGameName[RM_MAXLENGTH];
+	uint16 szSaveName[RM_MAXLENGTH];
+	uint16 szLevelName[RM_MAXLENGTH];
+	uint16 szComments[RM_MAXLENGTH];
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);
-} RICH_GAME_MEDIA_HEADER;
+
+	void setSaveName(const Common::String &saveName);
+	Common::String getSaveName() const;
+};
 #pragma pack(pop)
 
 } // namespace AGS3
