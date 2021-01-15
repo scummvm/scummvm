@@ -239,13 +239,13 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << Std::endl;
+		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << ConsoleStream::hex << flags << ConsoleStream::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << Std::endl;
 #endif
 
 		Item *item = ItemFactory::createItem(shape, frame, quality, flags, npcNum,
 		                                     mapNum, extendedflags, false);
 		if (!item) {
-			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
+			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << ConsoleStream::hex << flags << ConsoleStream::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
 
 			const ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);

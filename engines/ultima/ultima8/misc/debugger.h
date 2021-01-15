@@ -30,18 +30,15 @@
 #include "common/stream.h"
 
 namespace Ultima {
-
-namespace Std {
-enum Precision { hex = 16, dec = 10 };
-}
-
 namespace Ultima8 {
 
 class ConsoleStream : public Common::WriteStream {
-private:
-	Std::Precision _precision;
 public:
-	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {
+	enum Precision { hex = 16, dec = 10 };
+private:
+	Precision _precision;
+public:
+	ConsoleStream() : Common::WriteStream(), _precision(dec) {
 	}
 
 	int32 pos() const override {
@@ -73,14 +70,14 @@ public:
 		return *this;
 	}
 
-	ConsoleStream &operator<<(Std::Precision p) {
+	ConsoleStream &operator<<(Precision p) {
 		_precision = p;
 		return *this;
 	}
 
 	ConsoleStream &operator<<(int val) {
 		Common::String str = Common::String::format(
-			(_precision == Std::hex) ? "%x" : "%d", val);
+			(_precision == hex) ? "%x" : "%d", val);
 		write(str.c_str(), str.size());
 		return *this;
 	}

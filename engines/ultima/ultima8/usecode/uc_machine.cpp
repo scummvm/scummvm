@@ -162,10 +162,10 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 	if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-		pout << Std::hex << "running process " << p->_pid
+		pout << ConsoleStream::hex << "running process " << p->_pid
 		     << ", item " << p->_itemNum << ", type " << p->_type
 		     << ", class " << p->_classId << ", offset " << p->_ip
-		     << Std::dec << Std::endl;
+		     << ConsoleStream::dec << Std::endl;
 	}
 #endif
 
@@ -398,7 +398,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				//!! hackish
 				if (_intrinsics[func] == UCMachine::I_dummyProcess ||
 				        _intrinsics[func] == UCMachine::I_true) {
-//						perr << "Unhandled intrinsic \'" << _convUse->_intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
+//						perr << "Unhandled intrinsic \'" << _convUse->_intrinsics()[func] << "\' (" << ConsoleStream::hex << func << ConsoleStream::dec << ") called" << Std::endl;
 				}
 				uint8 *argbuf = new uint8[arg_bytes];
 				p->_stack.pop(argbuf, arg_bytes);
@@ -1237,7 +1237,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			_globals->setEntries(ui16a, ui16b, ui32a);
 
 			if ((GAME_IS_U8 && (ui32a & ~(((1 << ui16b) - 1)))) || ui16b > 2) {
-				perr << "Warning: value popped into a flag it doesn't fit in (" << Std::hex
+				perr << "Warning: value popped into a flag it doesn't fit in (" << ConsoleStream::hex
 					 << ui16a << " " << ui16b << " " << ui32a << ")" << Std::endl;
 			}
 
@@ -1397,10 +1397,10 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << Std::hex << "(still) running process " << p->_pid
+				pout << ConsoleStream::hex << "(still) running process " << p->_pid
 				     << ", item " << p->_itemNum << ", type " << p->_type
 				     << ", class " << p->_classId << ", offset " << p->_ip
-				     << Std::dec << Std::endl;
+				     << ConsoleStream::dec << Std::endl;
 			}
 #endif
 			break;
@@ -1431,9 +1431,9 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << Std::hex << "(still) running process " << p->_pid
+				pout << ConsoleStream::hex << "(still) running process " << p->_pid
 				     << ", item " << p->_itemNum << ", class " << p->_classId
-				     << ", offset " << p->_ip << Std::dec << Std::endl;
+				     << ", offset " << p->_ip << ConsoleStream::dec << Std::endl;
 			}
 #endif
 			p->_stack.push2(newpid); //! push pid of new proc
@@ -2209,8 +2209,8 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
 		}
 	} else {
-		perr << "Trying to access segment " << Std::hex
-		     << segment << Std::dec << Std::endl;
+		perr << "Trying to access segment " << ConsoleStream::hex
+		     << segment << ConsoleStream::dec << Std::endl;
 		return false;
 	}
 
@@ -2267,8 +2267,8 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
 		}
 	} else {
-		perr << "Trying to access segment " << Std::hex
-		     << segment << Std::dec << Std::endl;
+		perr << "Trying to access segment " << ConsoleStream::hex
+		     << segment << ConsoleStream::dec << Std::endl;
 		return false;
 	}
 	return true;
@@ -2303,8 +2303,8 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 	} else if (segment == SEG_GLOBAL) {
 		return get_instance()->_globals->getEntries(offset, 2);
 	} else {
-		perr << "Trying to access segment " << Std::hex
-		     << segment << Std::dec << Std::endl;
+		perr << "Trying to access segment " << ConsoleStream::hex
+		     << segment << ConsoleStream::dec << Std::endl;
 		return 0;
 	}
 }
