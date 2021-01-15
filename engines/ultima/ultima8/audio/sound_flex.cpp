@@ -81,7 +81,7 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!_samples) {
 		_samples = new AudioSample * [_count];
-		Std::memset(_samples, 0, sizeof(AudioSample *) * _count);
+		memset(_samples, 0, sizeof(AudioSample *) * _count);
 	}
 
 	if (_samples[index]) return;
@@ -92,7 +92,7 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!buf || !size) return;
 
-	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
+	if (strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
 		// After the 32 byte header, ASFX (crusader audio) is just raw 11025 data
 		const SoundFlexEntry &entry = _index[index];
 		debug(6, "SoundFlex: Playing sfx %d (%s) with data 0x%04X", index, entry._name.c_str(), entry._data);

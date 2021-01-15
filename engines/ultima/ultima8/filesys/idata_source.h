@@ -24,7 +24,6 @@
 #define ULTIMA8_FILESYS_IDATASOURCE_H
 
 #include "common/stream.h"
-#include "ultima/shared/std/misc.h"
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {
@@ -148,7 +147,7 @@ public:
 		uint32 count = num_bytes;
 		if (_bufPtr + num_bytes > _buf + _size)
 			count = static_cast<int32>(_buf - _bufPtr + _size);
-		Std::memcpy(str, _bufPtr, count);
+		memcpy(str, _bufPtr, count);
 		_bufPtr += count;
 		return count;
 	}

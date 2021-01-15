@@ -376,7 +376,7 @@ bool INIFile::value(istring key, int &ret) {
 
 	if (!found) return false;
 
-	ret = Std::strtol(stringval.c_str(), 0, 0);
+	ret = strtol(stringval.c_str(), 0, 0);
 	return true;
 }
 

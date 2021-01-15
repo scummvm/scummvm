@@ -52,7 +52,6 @@ MODULE_OBJS := \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	shared/std/misc.o \
 	shared/std/string.o \
 	ultima0/core/resources.o \
 	ultima0/game.o \

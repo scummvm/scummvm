@@ -94,7 +94,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 
 	// Handle opening savegames
 	if (name.hasPrefix("@save/")) {
-		int slotNumber = Std::atoi(name.c_str() + 6);
+		int slotNumber = atoi(name.c_str() + 6);
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		in = g_system->getSavefileManager()->openForLoading(saveFilename);
@@ -126,7 +126,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 	switch_slashes(name);
 
 	if (name.hasPrefix("@save/")) {
-		int slotNumber = Std::atoi(name.c_str() + 6);
+		int slotNumber = atoi(name.c_str() + 6);
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
@@ -178,7 +178,7 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 		if (todo <= 0)
 			break;
 
-		*X = static_cast<char>(Std::toUpper(*X));
+		*X = static_cast<char>(toupper(*X));
 	}
 	if (X == str.rend())
 		todo--; // start of pathname counts as separator too

@@ -390,7 +390,7 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 		else if (istr)
 			*istr = argv[2];
 		else if (i)
-			*i = Std::strtol(argv[2], 0, 0);
+			*i = strtol(argv[2], 0, 0);
 		else if (str)
 			*str = argv[2];
 

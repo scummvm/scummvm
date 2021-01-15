@@ -26,11 +26,15 @@
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
 #include "common/debug.h"
 #include "common/stream.h"
 
 namespace Ultima {
+
+namespace Std {
+enum Precision { hex = 16, dec = 10 };
+}
+
 namespace Ultima8 {
 
 class ConsoleStream : public Common::WriteStream {

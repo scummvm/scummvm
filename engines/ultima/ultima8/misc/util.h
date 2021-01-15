@@ -24,7 +24,6 @@
 #define ULTIMA8_MISC_UTIL_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {

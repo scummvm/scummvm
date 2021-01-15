@@ -57,7 +57,7 @@ uint32 RawAudioSample::decompressFrame(void *DecompData, void *samples) const {
 		count = _bufferSize - decomp->_pos;
 
 	if (!_signedData) {
-		Std::memcpy(samples, _buffer + decomp->_pos, count);
+		memcpy(samples, _buffer + decomp->_pos, count);
 	} else {
 		uint8 *dest = static_cast<uint8 *>(samples);
 		for (unsigned int i = 0; i < count; ++i)

@@ -35,7 +35,7 @@ bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
 	char *endptr;
 	long val;
 
-	val = Std::strtol(name.c_str(), &endptr, 10);
+	val = strtol(name.c_str(), &endptr, 10);
 
 	// if remainder of name doesn't start with a '.', invalid name
 	if (*endptr != '\0' && *endptr != '.') return false;
