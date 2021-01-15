@@ -244,7 +244,7 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	src += y * _backGroundBuf->pitch;
 
 	uint8 paletteMod = 0;
-	uint16 h2 = 2;
+	Common::Rect dirtyRect(x, y, x + w, h);
 	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO) && y >= 133)
 		paletteMod = 16;
 
@@ -256,7 +256,6 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 		src += _backGroundBuf->pitch;
 	}
 
-	Common::Rect dirtyRect(x, y, x + w, y + h2);
 	updateBackendSurface(&dirtyRect);
 }
 

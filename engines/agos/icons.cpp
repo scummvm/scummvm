@@ -329,7 +329,7 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 		decompressIconPlanar(dst, src, 24, 12, 16, screen->pitch, false);
 	}
 
-	Common::Rect dirtyRect(x, y, x + 24, y + 12);
+	Common::Rect dirtyRect(x, y, x + 24, y + 24);
 	updateBackendSurface(&dirtyRect);
 
 	_videoLockOut &= ~0x8000;

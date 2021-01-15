@@ -879,8 +879,8 @@ void AGOSEngine::drawMousePointer() {
 			uint8 ptch = 16;
 			uint16 *dst1 = &((uint16*)_mouseData)[16 * 16 * 2 - 1];
 			uint16 *dst2 = dst1 - ptch;
-			for (const byte *src = &_mouseData[16 * 16 - 1]; src >= _mouseData; --src) {
-				*dst1-- = *dst2-- = (*src << 8) | *src;
+			for (const byte *pos = &_mouseData[16 * 16 - 1]; pos >= _mouseData; --pos) {
+				*dst1-- = *dst2-- = (*pos << 8) | *pos;
 				if (!(ptch = (ptch - 1) % 16)) {
 					dst1 -= 16;
 					dst2 -= 16;

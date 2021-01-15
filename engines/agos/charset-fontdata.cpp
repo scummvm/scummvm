@@ -3037,7 +3037,7 @@ void AGOSEngine_Elvira1::windowDrawChar(WindowBlock *window, uint x, uint y, byt
 	} else {
 		_sjisCurChar = chr;
 		if ((chr >= 0x80 && chr < 0xA0) || chr >= 0xE0)
-			return;		
+			return;
 	}
 
 	_videoLockOut |= 0x8000;

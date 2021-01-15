@@ -806,51 +806,61 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 	}
 }
 
-void decodePak98(uint8 *dst, const uint8 *src, uint32 inSize) {
-	const uint8 *src2 = 0;
-	uint8 cmd = 0x80;
+uint8 safeReadByte(const uint8 *&src, const uint8 *end) {
+	if (src < end)
+		return (*src++);
+	error("decodePak98(): invalid data");
+	return 0;
+}
 
-	for (uint32 bytesLeft = inSize; bytesLeft; ) {
-		if (cmd == 0x80) {
-			src2 = src + 1;
-			--bytesLeft;
-		}
+uint16 safeReadWord(const uint8 *&src, const uint8 *end) {
+	uint8 lo = safeReadByte(src, end);
+	return (safeReadByte(src, end) << 8) | lo;
+}
 
-		if (cmd & *src) {
-			*dst++ = *src2++;
-			--bytesLeft;
+#define S_NEXTBYTE safeReadByte(src, endSrc)
+#define S_NEXTWORD safeReadWord(src, endSrc)
+
+void decodePak98(uint8 *dst, uint32 outSize, const uint8 *src, uint32 inSize) {
+	const uint8 *end = dst + outSize;
+	const uint8 *endSrc = src + inSize;
+	uint8 state = 0x80;
+	uint8 flg = S_NEXTBYTE;
+
+	for (uint32 srcBytesLeft = inSize - 1; srcBytesLeft; ) {
+		if (state & flg) {
+			if (dst < end)
+				*dst++ = S_NEXTBYTE;
+			--srcBytesLeft;
 		} else {
-			bytesLeft -= 2;
-			uint16 cmd2 = READ_LE_UINT16(src2);
-			src2 += 2;
+			srcBytesLeft -= 2;
+			uint16 cmd2 = S_NEXTWORD;
 			uint8 cmd3 = cmd2 & 0x0F;
 			cmd2 >>= 4;
 
 			if (cmd2 == 0) {
 				uint16 count = cmd3 + 4;
-				--bytesLeft;
+				--srcBytesLeft;
 				if (cmd3 == 0x0F) {
-					count = READ_LE_UINT16(src2);
-					src2 += 2;
-					bytesLeft -= 2;
+					count = S_NEXTWORD;
+					srcBytesLeft -= 2;
 				} else if (cmd3 == 0x0E) {
-					count = 18 + (*src2++);
-					--bytesLeft;
+					count = 18 + (S_NEXTBYTE);
+					--srcBytesLeft;
 				}
 
-				uint8 destVal = *src2++;
-				while (count--)
+				uint8 destVal = S_NEXTBYTE;
+				while (count-- && dst < end)
 					*dst++ = destVal;
 
 			} else if (cmd2 == 1) {
 				uint16 count = cmd3 + 3;
 				if (cmd3 == 0x0F) {
-					count = READ_LE_UINT16(src2);
-					src2 += 2;
-					bytesLeft -= 2;
+					count = S_NEXTWORD;
+					srcBytesLeft -= 2;
 				} else if (cmd3 == 0x0E) {
-					count = 17 + (*src2++);
-					--bytesLeft;
+					count = 17 + (S_NEXTBYTE);
+					--srcBytesLeft;
 				}
 
 				dst += count;
@@ -858,38 +868,42 @@ void decodePak98(uint8 *dst, const uint8 *src, uint32 inSize) {
 			} else if (cmd2 == 2) {
 				uint16 count = cmd3 + 16;
 				if (cmd3 == 0x0F) {
-					count = READ_LE_UINT16(src2);
-					src2 += 2;
-					bytesLeft -= 2;
+					count = S_NEXTWORD;
+					srcBytesLeft -= 2;
 				} else if (cmd3 == 0x0E) {
-					count = 30 + (*src2++);
-					--bytesLeft;
+					count = 30 + (S_NEXTBYTE);
+					--srcBytesLeft;
 				}
 
-				bytesLeft -= count;
-				while (count--)
-					*dst++ = *src2++;
+				srcBytesLeft -= count;
+				while (count-- && dst < end)
+					*dst++ = S_NEXTBYTE;
 
 			} else {
 				uint16 count = cmd3 + 3;
 				if (cmd3 == 0x0F) {
-					count = 18 + (*src2++);
-					--bytesLeft;
+					count = 18 + (S_NEXTBYTE);
+					--srcBytesLeft;
 				}
 
-				uint8 *src3 = dst - cmd2;
-				while (count--)
-					*dst++ = *src3++;
+				const uint8 *src2 = dst - cmd2;
+				while (count-- && dst < end)
+					*dst++ = *src2++;
 			}
 		}
 
-		cmd >>= 1;
-		if (cmd == 0) {
-			cmd = 0x80;
-			src = src2;
+		if (!(state >>= 1)) {
+			state = 0x80;
+			if (srcBytesLeft) {
+				flg = S_NEXTBYTE;
+				srcBytesLeft--;
+			}
 		}
 	}
 }
+
+#undef S_NEXTBYTE
+#undef S_NEXTWORD
 
 void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	Common::File in;
@@ -1003,19 +1017,19 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 				dstSize = srcSize;
 				srcSize = in.readUint32LE();
 				uint16 fill = in.readUint16LE();
-
-				uint8 *srcBuffer = new uint8[srcSize];
-				if (in.read(srcBuffer, srcSize) != srcSize)
-					error("loadVGAVideoFile: Read failed");
 				dst = allocBlock(dstSize);
 
-				Common::fill<uint16*, uint16>((uint16*)dst, (uint16*)(dst + (dstSize & ~1)), fill);
+				Common::fill<uint16*, uint16>((uint16*)dst, (uint16*)(dst + (dstSize & ~1)), TO_LE_16(fill));
 				if (dstSize & 1)
 					*(dst + dstSize - 1) = fill & 0xff;
 
-				decodePak98(dst, srcBuffer, srcSize);
-
-				delete[] srcBuffer;
+				if (srcSize) {
+					uint8 *srcBuffer = new uint8[srcSize];
+					if (in.read(srcBuffer, srcSize) != srcSize)
+						error("loadVGAVideoFile: Read failed");
+					decodePak98(dst, dstSize, srcBuffer, srcSize);
+					delete[] srcBuffer;
+				}
 			} else {
 				dstSize = srcSize;
 				dst = allocBlock(dstSize + extraBuffer);
@@ -1055,15 +1069,17 @@ Common::SeekableReadStream *AGOSEngine::createPak98FileStream(const char *filena
 	uint32 inSize = in.readUint32LE();
 	uint16 fill = in.readUint16LE();
 
-	uint8 *tempBuffer = new uint8[inSize];
-	uint8 *decBuffer = new uint8[outSize];
-	Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), fill);
+	uint8 *decBuffer = (uint8*)malloc(outSize);
+	Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), TO_LE_16(fill));
 	if (outSize & 1)
 		*(decBuffer + outSize - 1) = fill & 0xff;
 
-	in.read(tempBuffer, inSize);
-	decodePak98(decBuffer, tempBuffer, inSize);
-	delete[] tempBuffer;
+	if (inSize) {
+		uint8 *tempBuffer = new uint8[inSize];
+		in.read(tempBuffer, inSize);
+		decodePak98(decBuffer, outSize, tempBuffer, inSize);
+		delete[] tempBuffer;
+	}
 
 	return new Common::MemoryReadStream(decBuffer, outSize, DisposeAfterUse::YES);
 }
@@ -1072,25 +1088,27 @@ void AGOSEngine::convertPC98Image(VC10_state &state) {
 	if (state.flags & (kDFCompressedFlip | kDFCompressed)) {
 		const byte *src = state.srcPtr;
 		uint32 outSize = READ_LE_UINT32(src + 2);
-		assert(outSize == (state.width << 3) * state.height);
+		assert(outSize >= (uint32)((state.width << 3) * state.height));
 		uint32 inSize = READ_LE_UINT32(src + 6);
 		uint16 fill = READ_LE_UINT16(src + 10);
 		delete[] _pak98Buf;
 		byte *decBuffer = new uint8[outSize];
-		Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), fill);
+		Common::fill<uint16*, uint16>((uint16*)decBuffer, (uint16*)(decBuffer + (outSize & ~1)), TO_LE_16(fill));
 		if (outSize & 1)
 			*(decBuffer + outSize - 1) = fill & 0xff;
-
-		decodePak98(decBuffer, src + 12, inSize);
+		if (inSize)
+			decodePak98(decBuffer, outSize, src + 12, inSize);
 		_pak98Buf = state.srcPtr = decBuffer;
+		_paletteModNext = 0;
 	}
 
 	// The PC-98 images are in a planar format, but slightly different from the Amiga format. It does
-	// not make much sense to set the GF_PLANAR flag, since the icons do not require the conversion.
-	delete[] _planarBuf;
+	// not make much sense to set the GF_PLANAR flag, since the Amiga code can't be used anyway.
+	free(_planarBuf);
 	uint16 planeLW = state.width << 1;
 	uint16 planePitch = planeLW * 3;
-	_planarBuf = new byte[(state.width << 3) * state.height];
+
+	_planarBuf = (byte*)malloc((state.width << 3) * state.height);
 
 	const byte *src[4];
 	memset(src, 0, sizeof(src));

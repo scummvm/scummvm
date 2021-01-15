@@ -944,8 +944,9 @@ void AGOSEngine::drawImage(VC10_state *state) {
 
 	state->surf_addr += xoffs + yoffs * state->surf_pitch;
 
-	if (getGameType() == GType_ELVIRA1 && getPlatform() != Common::kPlatformPC98 && (state->flags & kDFNonTrans) && yoffs > 133)
-		state->paletteMod = 16;
+	if (getGameType() == GType_ELVIRA1 && (state->flags & kDFNonTrans) && yoffs > 133)
+		state->paletteMod = _paletteModNext;
+	_paletteModNext = 16;
 
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		state->palette = state->surf_addr[0] & 0xF0;
@@ -958,7 +959,6 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	} else {
 		drawVertImage(state);
 	}
-
 
 	Common::Rect dirtyRect(xoffs, yoffs, xmax, ymax);
 	updateBackendSurface(&dirtyRect);

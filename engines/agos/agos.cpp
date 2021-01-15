@@ -515,6 +515,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_planarBuf = 0;
 	_pak98Buf = 0;
+	_paletteModNext = 16;
 
 	_midiEnabled = false;
 

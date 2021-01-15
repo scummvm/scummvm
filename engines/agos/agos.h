@@ -555,6 +555,7 @@ protected:
 	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
 	const byte *_pak98Buf;
+	byte _paletteModNext;
 
 	uint8 _window3Flag;
 	uint8 _window4Flag;
