@@ -143,6 +143,9 @@ void Redraw::blitBackgroundAreas() {
 }
 
 void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
+	if (listSize == 1) {
+		return;
+	}
 	for (int32 i = 0; i < listSize - 1; i++) {
 		for (int32 j = 0; j < listSize - 1 - i; j++) {
 			if (list[j + 1].posValue < list[j].posValue) {
