@@ -57,10 +57,19 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     
     _nextSetting = NULL;
     _nextMovie = NULL;
+    _nextVS = NULL;
     _modified = false;
     _mode = -1;
     _frame = new Common::String("inface/general/inface2.bmp");
 
+    _policeRadioArea = NULL;
+    _AMRadioArea = NULL;
+    _phoneArea = NULL;
+
+    _AMRadioPrefix = new Common::String("inface/radio/comm_/");
+    _policeRadioPrefix = new Common::String("inface/radio/police/");
+    _phonePrefix = new Common::String("inface/telephon/");
+    _phoneCallSound = new Common::String("phone.wav");  
 
 }
 
@@ -83,11 +92,16 @@ Common::Error PrivateEngine::run() {
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
     Common::SeekableReadStream *file = NULL;
 
-    if (_installerArchive.hasFile("GAME.DAT")) // if the full game is used
+    // if the full game is used
+    if (_installerArchive.hasFile("GAME.DAT")) 
         file = _installerArchive.createReadStreamForMember("GAME.DAT");
-    else if (_installerArchive.hasFile("GAME.TXT")) // if the archive.org demo is used
+ 
+    // if the demo from archive.org is used
+    else if (_installerArchive.hasFile("GAME.TXT")) 
         file = _installerArchive.createReadStreamForMember("GAME.TXT");
-    else if (_installerArchive.hasFile("DEMOGAME.DAT")) // if full retail CDROM demo is used
+ 
+    // if the demo from the full retail CDROM is used
+    else if (_installerArchive.hasFile("DEMOGAME.DAT")) 
         file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
 
     assert(file != NULL);
@@ -124,15 +138,6 @@ Common::Error PrivateEngine::run() {
     // Additional setup.
     debug("PrivateEngine::init");
 
-    // Your main even loop should be (invoked from) here.
-    //debug("PrivateEngine::go: Hello, World!");
-
-    // This test will show up if -d1 and --debugflags=example are specified on the commandline
-    //debugC(1, kPrivateDebugExample, "Example debug call");
-
-    // This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-    //debugC(3, kPrivateDebugExample | kPrivateDebugExample2, "Example debug call two");
-
     // Simple main event loop
     Common::Event event;
     Common::Point mousePos;
@@ -160,6 +165,8 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
+                selectPoliceRadioArea(mousePos);
+                selectAMRadioArea(mousePos);
                 selectLoadGame(mousePos);
                 selectSaveGame(mousePos);
                 selectMask(mousePos);
@@ -169,10 +176,7 @@ Common::Error PrivateEngine::run() {
 
             case Common::EVENT_MOUSEMOVE:
                 changeCursor("default");
-                
-                if      (cursorLoadGame(mousePos)) {}
-                else if (cursorSaveGame(mousePos)) {}
-                else if (cursorMask(mousePos))     {}
+                if (cursorMask(mousePos))      {}
                 else if (cursorExit(mousePos))     {}
                 //
                 break;
@@ -190,6 +194,11 @@ Common::Error PrivateEngine::run() {
             _nextMovie = NULL;
             continue;
 
+        }
+
+        if (_nextVS != NULL) {
+            loadImage(*_nextVS, 160, 120, true);
+            _nextVS = NULL;
         }
 
         if (_videoDecoder) {
@@ -256,24 +265,31 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
     return false;
 }
 
-bool PrivateEngine::cursorMask(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
+bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePos) {
+    if (surf == NULL)
+        return false;
+
     mousePos = mousePos - *_origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
 
+    if (mousePos.x > surf->w || mousePos.y > surf->h)
+        return false;
+
+    return ( *((uint32*) surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
+}
+
+
+bool PrivateEngine::cursorMask(Common::Point mousePos) {
+    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     MaskInfo m;
     bool inside = false;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
 
-        if (mousePos.x > m.surf->h || mousePos.y > m.surf->w)
-            continue;
-
-        //debug("Testing mask %s", m.nextSetting->c_str());
-        if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        if (inMask(m.surf, mousePos)) {
             //debug("Inside!");
-            if (m.nextSetting != NULL) { // TODO: check this
+            if (m.cursor != NULL) { // TODO: check this
                 inside = true;
                 //debug("Rendering cursor mask %s", m.cursor->c_str());
                 changeCursor(*m.cursor);
@@ -316,18 +332,13 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectMask(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
-    mousePos = mousePos - *_origin;
-    if (mousePos.x < 0 || mousePos.y < 0)
-        return;
-
     Common::String *ns = NULL;
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
 
         //debug("Testing mask %s", m.nextSetting->c_str());
-        if ( *((uint32*) m.surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+        if (inMask(m.surf, mousePos)) {
             //debug("Inside!");
             if (m.nextSetting != NULL) { // TODO: check this
                 //debug("Found Mask %s", m.nextSetting->c_str());
@@ -348,77 +359,70 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     }
 }
 
-void PrivateEngine::selectLoadGame(Common::Point mousePos) {
-    if (_loadGameMask == NULL)
-        return;
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
-    mousePos = mousePos - *_origin;
-    if (mousePos.x < 0 || mousePos.y < 0)
+void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
+    if (_AMRadioArea == NULL)
         return;
 
-    //debug("Testing mask %s", m.nextSetting->c_str());
-    if ( *((uint32*) _loadGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-        //debug("loadGame!");
-        loadGameDialog();
+    if (_AMRadio.empty())
+        return;
+
+    debug("AMRadio");
+    if (inMask(_AMRadioArea->surf, mousePos)) { 
+        Common::String sound = *_AMRadioPrefix + _AMRadio.back() + ".wav";
+        playSound(sound.c_str(), 1);
+        _AMRadio.pop_back();
     }
 
 }
 
-bool PrivateEngine::cursorLoadGame(Common::Point mousePos) {
-    if (_loadGameMask == NULL)
-        return false;
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
-    mousePos = mousePos - *_origin;
-    if (mousePos.x < 0 || mousePos.y < 0)
-        return false;
+void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
+    if (_policeRadioArea == NULL)
+        return;
 
-    if (mousePos.x > _loadGameMask->surf->h || mousePos.y > _loadGameMask->surf->w)
-        return false;
+    if (_policeRadio.empty())
+        return;
 
-    if ( *((uint32*) _loadGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-        changeCursor(*_loadGameMask->cursor);
-        return true;
+    debug("PoliceRadio");
+    if (inMask(_policeRadioArea->surf, mousePos)) {
+        Common::String sound = *_policeRadioPrefix + _policeRadio.back() + ".wav";
+        playSound(sound.c_str(), 1);
+        _policeRadio.pop_back();
     }
-    return false;
+
+}
+
+void PrivateEngine::selectLoadGame(Common::Point mousePos) {
+    if (_loadGameMask == NULL)
+        return;
+
+    if (inMask(_loadGameMask->surf, mousePos)) {
+        loadGameDialog();
+    }
 }
 
 void PrivateEngine::selectSaveGame(Common::Point mousePos) {
     if (_saveGameMask == NULL)
         return;
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
-    mousePos = mousePos - *_origin;
-    if (mousePos.x < 0 || mousePos.y < 0)
-        return;
-
-    //debug("Testing mask %s", m.nextSetting->c_str());
-    if ( *((uint32*) _saveGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
+ 
+    if (inMask(_saveGameMask->surf, mousePos)) {
         saveGameDialog();
     }
 
 }
 
-bool PrivateEngine::cursorSaveGame(Common::Point mousePos) {
-    if (_saveGameMask == NULL)
-        return false;
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
-    mousePos = mousePos - *_origin;
-    if (mousePos.x < 0 || mousePos.y < 0)
-        return false;
-
-    if (mousePos.x > _saveGameMask->surf->h || mousePos.y > _saveGameMask->surf->w)
-        return false;
-
-    if ( *((uint32*) _saveGameMask->surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor) {
-        changeCursor(*_saveGameMask->cursor);
-        return true;
-    }
-    return false;
-}
-
-
 bool PrivateEngine::hasFeature(EngineFeature f) const {
     return
         (f == kSupportsReturnToLauncher);
+}
+
+void PrivateEngine::restartGame() {
+    debug("restartGame");
+        
+    for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+        Private::Symbol *sym = variables.getVal(*it);
+        if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
+            sym->u.val = 0;
+    }
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -524,10 +528,6 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y, bool dra
         error("unable to load image %s", path.c_str());
 
     _image->loadStream(file);
-    //debug("palette %d %d", _image->getPaletteStartIndex(), _image->getPaletteColorCount());
-    //for (int i = 0; i < 30; i=i+3)
-    //    debug("%x %x %x", *(_image->getPalette()+i), *(_image->getPalette()+i+1), *(_image->getPalette()+i+2));
-
     _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), *_origin + Common::Point(x,y), _transparentColor);
     drawScreen();
 }

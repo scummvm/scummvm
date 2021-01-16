@@ -162,6 +162,7 @@ int eval() {
     } else if (d.u.sym->type == STRING) {
         d.type = STRING;
         d.u.str = d.u.sym->u.str;
+        debug("eval returned %s", d.u.str );
     } else if (d.u.sym->type == RECT) {
         d.type = RECT;
         d.u.rect = d.u.sym->u.rect;

@@ -15,15 +15,13 @@ void ChgMode(ArgArray args) {
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
 
-    if (g_private->_mode == 0) {
-        g_private->_origin->x = 0;
+    if (g_private->_mode == 0) { 
+        g_private->_origin->x = 0; // use a constant
         g_private->_origin->y = 0;
-        // TODO: should clear the screen?
     }
-    else if (g_private->_mode == 1) {
-        g_private->_origin->x = 64;
+    else if (g_private->_mode == 1) { 
+        g_private->_origin->x = 64;  // use a constant
         g_private->_origin->y = 48;
-        //g_private->drawScreenFrame();
     }
     else
         assert(0);
@@ -44,11 +42,19 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
 }
 
 
-void SyncSound(ArgArray args) { // should be goto, but this is a reserved word
+void SyncSound(ArgArray args) {
     // assert types
     debug("SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
+
+    if (strcmp("\"\"", args[0].u.str) != 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        g_private->playSound(*s, 1);
+        //assert(0);
+    } else {
+        g_private->stopSound();
+    }
 }
 
 void Quit(ArgArray args) {
@@ -63,7 +69,10 @@ void LoadGame(ArgArray args) {
     MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[2].u.sym->name;
+    m->nextSetting = NULL;
+    m->flag = NULL;
     g_private->_loadGameMask = m;
+    g_private->_masks.push_front(*m);
 }
 
 void SaveGame(ArgArray args) {
@@ -73,12 +82,16 @@ void SaveGame(ArgArray args) {
     MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[1].u.sym->name;
+    m->nextSetting = NULL;
+    m->flag = NULL;
     g_private->_saveGameMask = m;
+    g_private->_masks.push_front(*m);
 }
 
 void RestartGame(ArgArray args) {
     // assert types
-    debug("WARNING: RestartGame is not implemented");
+    g_private->restartGame();
+    //debug("WARNING: RestartGame is not implemented");
 }
 
 void PoliceBust(ArgArray args) {
@@ -307,14 +320,20 @@ void MaskDrawn(ArgArray args) {
     _Mask(args, true);
 }
 
-void AddSound(char *s, char *t) {
-    Common::String str(t);
+void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
+    Common::String *sound = new Common::String(s);
     if (strcmp(t, "AMRadioClip") == 0)
-        g_private->_radio.push_front(str);
+        g_private->_AMRadio.push_front(*sound);
     else if (strcmp(t, "PoliceClip") == 0)
-        g_private->_police.push_front(str);
-    else if (strcmp(t, "PhoneClip") == 0)
-        g_private->_phone.push_front(str);
+        g_private->_policeRadio.push_front(*sound);
+    else if (strcmp(t, "PhoneClip") == 0) {
+        PhoneInfo *p = (PhoneInfo*) malloc(sizeof(PhoneInfo));
+        p->sound = sound;
+        p->flag = flag;
+        p->val = val;
+        g_private->_phone.push_front(*p);
+    }
+        
     else
         debug("error: invalid sound type %s", t);
 }
@@ -326,12 +345,45 @@ void PoliceClip(ArgArray args) {
     AddSound(args[0].u.str, "PoliceClip");
 }
 void PhoneClip(ArgArray args) {
-    AddSound(args[0].u.str, "PhoneClip");
+    if (args.size() == 2) {
+        debug("Unimplemented PhoneClip special case");
+        return;
+    }
+    AddSound(args[0].u.str, "PhoneClip", args[5].u.sym, args[6].u.val);
 }
 
 void SoundArea(ArgArray args) {
     // assert types
-    debug("WARNING: SoundArea not implemented!");
+    char *n;
+
+    if (args[1].type == NAME)
+        n = (char *) args[1].u.sym->name->c_str();
+    else if (args[1].type == STRING)
+        n = args[1].u.str;
+    else
+        assert(0);
+
+    debug("SoundArea(%s, %s)", args[0].u.str, n);
+    if (strcmp(n, "kAMRadio") == 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->cursor = args[2].u.sym->name;
+        m->nextSetting = NULL;
+        m->flag = NULL;
+        g_private->_AMRadioArea = m;
+        g_private->_masks.push_front(*m);
+    } else if (strcmp(n, "kPoliceRadio") == 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        m->surf = g_private->loadMask(*s, 0, 0, true);
+        debug("size %d %d", m->surf->h, m->surf->w);
+        m->cursor = args[2].u.sym->name;
+        m->nextSetting = NULL;
+        m->flag = NULL;
+        g_private->_policeRadioArea = m;
+        g_private->_masks.push_front(*m);
+    }
 }
 
 void AskSave(ArgArray args) {

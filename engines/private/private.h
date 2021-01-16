@@ -35,7 +35,7 @@ enum {
 	// the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
-// exits
+// structs
 
 typedef struct ExitInfo {
     Common::String *nextSetting;
@@ -51,9 +51,20 @@ typedef struct MaskInfo {
     Common::String *cursor;    
 } MaskInfo;
 
+typedef struct PhoneInfo {
+    Common::String *sound;
+	Symbol *flag;
+	int val;
+} PhoneInfo;
+
+// lists
+
 typedef Common::List<ExitInfo> ExitList;  
 typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;   
+typedef Common::List<PhoneInfo> PhoneList;
+
+// hash tables
 
 class PrivateEngine : public Engine {
 private:
@@ -75,6 +86,7 @@ public:
 	Common::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
+	void restartGame();
 	void initializePath(const Common::FSNode &gamePath) override;
 	void selectMask(Common::Point);
     void selectExit(Common::Point);
@@ -88,10 +100,8 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	
 	void selectLoadGame(Common::Point);
-	bool cursorLoadGame(Common::Point);
-
 	void selectSaveGame(Common::Point);
-	bool cursorSaveGame(Common::Point);
+
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -110,7 +120,7 @@ public:
     void initCursors();
 
 	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
- 
+    bool inMask(Graphics::ManagedSurface*, Common::Point);
     uint32 _transparentColor;	
 	void drawScreen();
 
@@ -132,9 +142,25 @@ public:
     MaskList _masks;
 
 	// Radios
-	SoundList _radio;
-	SoundList _police;
-	SoundList _phone;
+
+    MaskInfo *_AMRadioArea;
+	Common::String *_AMRadioPrefix;
+
+	MaskInfo *_policeRadioArea;
+	Common::String *_policeRadioPrefix;
+
+	MaskInfo *_phoneArea;
+	Common::String *_phonePrefix;
+	Common::String *_phoneCallSound;
+
+	SoundList _AMRadio;
+	SoundList _policeRadio;
+	PhoneList _phone;
+
+	void selectAMRadioArea(Common::Point);
+	void selectPoliceRadioArea(Common::Point);
+
+    // Random values
 
 	bool getRandomBool(uint);
 
