@@ -74,8 +74,8 @@ Symbol *lookupName(char *n) {
         return lookup(*s, rects);
 
     else {
-        debug("WARNING: %s not defined", n);
-        return constant(NAME, 0, n);
+        debug("WARNING: %s not defined", s->c_str());
+        return constant(STRING, 0, (char*) s->c_str());
     }
 
 }
