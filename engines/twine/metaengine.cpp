@@ -476,7 +476,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("UP", _("Up"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapUp);
-		act->addDefaultInputMapping("CTRL+UP");
+		act->addDefaultInputMapping("C+UP");
 		act->addDefaultInputMapping("KP8");
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 		act->addDefaultInputMapping("JOY_UP");
@@ -484,7 +484,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("DOWN", _("Down"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapDown);
-		act->addDefaultInputMapping("CTRL+DOWN");
+		act->addDefaultInputMapping("C+DOWN");
 		act->addDefaultInputMapping("KP2");
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 		act->addDefaultInputMapping("JOY_DOWN");
@@ -492,14 +492,14 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("RIGHT", _("Right"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapRight);
-		act->addDefaultInputMapping("CTRL+RIGHT");
+		act->addDefaultInputMapping("C+RIGHT");
 		act->addDefaultInputMapping("KP6");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		holomapKeyMap->addAction(act);
 
 		act = new Action("LEFT", _("Left"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapLeft);
-		act->addDefaultInputMapping("CTRL+LEFT");
+		act->addDefaultInputMapping("C+LEFT");
 		act->addDefaultInputMapping("KP4");
 		act->addDefaultInputMapping("JOY_LEFT");
 		holomapKeyMap->addAction(act);
