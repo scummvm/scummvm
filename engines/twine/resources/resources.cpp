@@ -25,9 +25,11 @@
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/renderer/screens.h"
+#include "twine/renderer/renderer.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
+#include "twine/twine.h"
 
 namespace TwinE {
 
@@ -158,16 +160,19 @@ void Resources::initResources() {
 	if (holomapTwinsenModelSize == 0) {
 		error("Failed to load holomap twinsen model");
 	}
+	Renderer::prepareIsoModel(holomapTwinsenModelPtr);
 
 	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
 	if (holomapArrowSize == 0) {
 		error("Failed to load holomap arrow model");
 	}
+	Renderer::prepareIsoModel(holomapArrowPtr);
 
 	holomapTwinsenArrowSize = HQR::getAllocEntry(&holomapTwinsenArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
 	if (holomapTwinsenArrowSize == 0) {
 		error("Failed to load holomap twinsen arrow model");
 	}
+	Renderer::prepareIsoModel(holomapTwinsenArrowPtr);
 
 	preloadSprites();
 	preloadAnimations();
