@@ -85,6 +85,8 @@ public:
 	/** Load Holomap content */
 	void loadHolomapGFX();
 
+	void prepareHolomapSurface();
+
 	/** Main holomap process loop */
 	void processHolomap();
 };

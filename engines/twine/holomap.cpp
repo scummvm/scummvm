@@ -23,19 +23,21 @@
 #include "twine/holomap.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 #include "common/types.h"
 #include "twine/audio/sound.h"
 #include "twine/menu/interface.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
-#include "twine/scene/animations.h"
-#include "twine/scene/movements.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/animations.h"
 #include "twine/scene/collision.h"
 #include "twine/scene/gamestate.h"
+#include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -136,6 +138,41 @@ void Holomap::loadHolomapGFX() {
 	needToLoadHolomapGFX = 0;
 }
 
+void Holomap::prepareHolomapSurface() {
+	//int16 *puVar1 = _DAT_0043f7ec;
+	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
+	//Vec3 buffer[10000];
+	//int16 *puVar3 = _DAT_0043f7f0;
+	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+		//int16 *puVar4;
+		for (int stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+			//puVar4 = puVar3;
+			const int32 destX = stream.readSint16LE();
+			const int32 destY = stream.readSint16LE();
+			const int32 destZ = stream.readSint16LE();
+			_engine->_renderer->getBaseRotationPosition(destX, destY, destZ);
+			if (angle != 0x100) {
+				//	puVar1[0] = destZ;
+				//	puVar1[1] = (short)((int)((int)puVar4 - (int)_DAT_0043f7f0) >> 1);
+				//	++puVar1;
+			}
+			_engine->_renderer->projectPositionOnScreen(destX, destY, destZ);
+			//puVar4[0] = projPosX;
+			//puVar4[1] = projPosY;
+			//puVar3 = puVar4 + 4;
+		}
+		const int32 destX = stream.readSint16LE();
+		const int32 destY = stream.readSint16LE();
+		const int32 destZ = stream.readSint16LE();
+		_engine->_renderer->getBaseRotationPosition(destX, destY, destZ);
+		_engine->_renderer->projectPositionOnScreen(destX, destY, destZ);
+		//puVar4[4] = projPosX;
+		//puVar4[5] = projPosY;
+		//puVar3 = puVar4 + 8;
+	}
+	//FUN_004253e8(_DAT_0043f7ec,(undefined4 *)0x200,4,&LAB_00413d20);
+}
+
 void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 size = _engine->_text->getTextSize(title);
 	const int32 x = centerx - size / 2;
@@ -150,6 +187,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
 #if 0
 	ScopedEngineFreeze timeFreeze(_engine);
+	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 	_engine->_renderer->setCameraAngle(0, 0, 0, (int)(short)DAT_0043f706, (int)(short)DAT_0043f710, (int)DAT_0043f7f8, 0x14b4);
 	ActorMoveStruct move;
