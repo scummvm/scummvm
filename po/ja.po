@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-11 22:08+0000\n"
-"PO-Revision-Date: 2021-01-11 20:23+0000\n"
+"PO-Revision-Date: 2021-01-16 21:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5502,23 +5502,23 @@ msgstr "自発的"
 
 #: engines/pegasus/pegasus.cpp:2531
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "インベントリートレイの表示/非表示"
 
 #: engines/pegasus/pegasus.cpp:2538
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "バイオチップトレイの表示/非表示"
 
 #: engines/pegasus/pegasus.cpp:2546
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "センターディスプレイの切り替え"
 
 #: engines/pegasus/pegasus.cpp:2553
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "情報スクリーンの表示/非表示"
 
 #: engines/pegasus/pegasus.cpp:2560
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "ポーズメニューの表示/非表示"
 
 #: engines/pegasus/pegasus.cpp:2571 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
@@ -5533,7 +5533,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1498
 #: engines/wintermute/keymapper_tables.h:1556
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2577
 msgid "Save Game"
@@ -5545,15 +5545,15 @@ msgstr "ゲームをロード"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "このメニューは未実装です"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
-msgstr ""
+msgstr "代替のイントロ"
 
 #: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
-msgstr ""
+msgstr "もう1つのイントロを使用する(CD版のみ)"
 
 #: engines/saga/metaengine.cpp:114
 #, fuzzy
@@ -5567,15 +5567,15 @@ msgstr "含まれた機能："
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
-msgstr ""
+msgstr "リソースのロード中にエラーが発生しました。"
 
 #: engines/sci/detection.cpp:143
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "EGAディザリングパスをスキップ(フルカラー背景)"
 
 #: engines/sci/detection.cpp:144
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "EGAディザリングパスをスキップし、フルカラーでグラフィックを表示"
 
 #: engines/sci/detection.cpp:153
 #, fuzzy
@@ -5584,7 +5584,7 @@ msgstr "高解像度なMPEGファイルを使用する"
 
 #: engines/sci/detection.cpp:154
 msgid "Enable high resolution graphics/content"
-msgstr ""
+msgstr "高解像度のグラフィック/コンテンツを有効にする"
 
 #: engines/sci/detection.cpp:163
 msgid "Enable black-lined video"
@@ -5596,7 +5596,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:174
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "高品質なビデオスケーリングを使用する"
 
 #: engines/sci/detection.cpp:175
 #, fuzzy
@@ -7633,7 +7633,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Chapayevを使用"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
@@ -7857,3 +7857,7 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"このゲームをプレイする前に、以下のフォントをScummVMのextrasディレクトリー、もしくはゲームのディレクトリーにコピーしてください。Windows"
+"のシステムフォントを使用する場合、Times New Roman、Century Schoolbook、Garamond、Courier New、Aria"
+"lが必要です。LiberationFontsを使用する場合、LiberationMono、LiberationSans、LiberationSerifが必"
+"要です。GNUFreeFontを使用する場合、FreeMono、FreeSans、FreeSerifが必要です。"
