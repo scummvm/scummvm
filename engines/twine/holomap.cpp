@@ -309,21 +309,23 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			if (locationIdx == _engine->_scene->currentSceneIdx) {
 				flags |= 2u; // model type
 			}
-#if 0
 			const Location &loc = _locations[locationIdx];
-			_engine->_renderer->setBaseRotation(angles);
-			_engine->_renderer->getBaseRotationPosition(loc.x, loc.y, loc.z);
+			_engine->_renderer->setBaseRotation(loc.x, loc.y, 0);
+			_engine->_renderer->getBaseRotationPosition(0, 0, loc.z + 1000);
 			int32 v20 = _engine->_renderer->destX;
-			int32 v19 = _engine->_renderer->destZ;
 			int32 v18 = _engine->_renderer->destY;
-			_engine->_renderer->getBaseRotationPosition(v9, v4);
-			_engine->_renderer->setBaseRotation(v4);
+			int32 v19 = _engine->_renderer->destZ;
+			_engine->_renderer->getBaseRotationPosition(0, 0, 1500);
+			int32 v22 = _engine->_renderer->destX;
+			int32 v23 = _engine->_renderer->destY;
+			int32 v24 = _engine->_renderer->destZ;
+			_engine->_renderer->setBaseRotation(xRot, yRot, zRot);
 			_engine->_renderer->baseRotPosX = 0;
 			_engine->_renderer->baseRotPosY = 0;
 			_engine->_renderer->baseRotPosZ = 9500;
-			_engine->_renderer->getBaseRotationPosition(v10, v4);
-			int32 v21 = _engine->_renderer->destY;
-			_engine->_renderer->getBaseRotationPosition(v11, v4);
+			_engine->_renderer->getBaseRotationPosition(v20, v18, v19);
+			int v21 = _engine->_renderer->destZ;
+			_engine->_renderer->getBaseRotationPosition(v22, v23, v24);
 			if (lower) {
 				if (v21 > _engine->_renderer->destY) {
 					continue;
@@ -335,40 +337,39 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			}
 
 			DrawListStruct &drawList = _engine->_redraw->drawList[n];
-			drawList.posValue = locationIdx;
-			drawList.y = v18; // ? TODO
-			drawList.z = v19;
+			drawList.posValue = v21;
+			drawList.actorIdx = locationIdx;
+			drawList.type = 0;
 			drawList.x = v20;
-			drawList.y = v21;
-			drawList.field_A = flags;
-#endif
+			drawList.y = v18;
+			drawList.z = v21;
+			drawList.offset = n;
+			drawList.field_C = flags;
+			drawList.field_E = 0;
+			drawList.field_10 = 0;
 			++n;
 		}
 	}
-	// TODO: sort drawlist (for what? y?)
-#if 0
+	_engine->_redraw->sortDrawingList(_engine->_redraw->drawList, n);
 	for (int v13 = 0; v13 < n; ++v13) {
-		const DrawListStruct &drawList = _engine->_redraw->drawList[n];
-		const uint8 flags = drawList.field_A;
-		const uint8* bodyPtr = nullptr;
-		if (flags < 2u) {
-			if (flags == 1) {
-				bodyPtr = _engine->_resources->holomapArrowPtr;
-			}
-		} else {
-			if (flags <= 2u) {
-				bodyPtr = _engine->_resources->holomapTwinsenModelPtr;
-			} else {
-				if (flags == 3) {
-					bodyPtr = _engine->_resources->holomapTwinsenArrowPtr;
-				}
-			}
+		const DrawListStruct &drawList = _engine->_redraw->drawList[v13];
+		const uint16 flags = drawList.field_C;
+		const uint8 *bodyPtr = nullptr;
+		if (flags == 1) {
+			bodyPtr = _engine->_resources->holomapArrowPtr;
+		} else if (flags == 2u) {
+			bodyPtr = _engine->_resources->holomapTwinsenModelPtr;
+		} else if (flags == 3) {
+			bodyPtr = _engine->_resources->holomapTwinsenArrowPtr;
 		}
 		if (bodyPtr != nullptr) {
-			_engine->_renderer->renderIsoModel(x, y, z, angleX, angleY, angleZ, bodyPtr);
+			int32 angleX = _locations[drawList.actorIdx].x;
+			int32 angleY = _locations[drawList.actorIdx].y;
+			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, 0, bodyPtr);
 		}
 	}
 
+#if 0
 	_engine->_renderer->setCameraAngle();
 
 	_engine->_renderer->baseRotPosX = 0;
@@ -487,7 +488,7 @@ void Holomap::processHolomap() {
 	// TODO: load RESSHQR_HOLOSURFACE and project the texture to the surface
 	//_engine->_screens->loadImage(RESSHQR_HOLOIMG, RESSHQR_HOLOPAL);
 
-	const int32 time = _engine->lbaTime;
+	int32 time = _engine->lbaTime;
 	int32 xRot = 0;
 	int32 yRot = 0;
 	bool rotate = false;
@@ -506,33 +507,43 @@ void Holomap::processHolomap() {
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
 				drawHolomapLocation(currentLocation);
+				time = _engine->lbaTime;
+				rotate = true;
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
 				drawHolomapLocation(currentLocation);
+				time = _engine->lbaTime;
+				rotate = true;
 			}
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapLeft)) {
+		if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 			xRot += 8;
 			rotate = true;
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapRight)) {
+			time = _engine->lbaTime;
+		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 			xRot -= 8;
 			rotate = true;
+			time = _engine->lbaTime;
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapUp)) {
+		if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 			yRot += 8;
 			rotate = true;
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapDown)) {
+			time = _engine->lbaTime;
+		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 			yRot -= 8;
 			rotate = true;
+			time = _engine->lbaTime;
 		}
+
 		if (rotate) {
-			xRot = _engine->_collision->getAverageValue(xRot, _locations[currentLocation].x, 75, _engine->lbaTime - time);
-			yRot = _engine->_collision->getAverageValue(yRot, _locations[currentLocation].y, 75, _engine->lbaTime - time);
+			const int32 dt = _engine->lbaTime - time;
+			xRot = _engine->_collision->getAverageValue(xRot, _locations[currentLocation].x, 75, dt);
+			yRot = _engine->_collision->getAverageValue(yRot, _locations[currentLocation].y, 75, dt);
 			redraw = true;
 		}
 
@@ -548,12 +559,15 @@ void Holomap::processHolomap() {
 			if (rotate) {
 				_engine->_menu->drawBox(300, 170, 340, 210);
 			}
-			_engine->copyBlockPhys(rect);
+			//_engine->copyBlockPhys(rect);
+			_engine->flip();
 		}
 
 		if (rotate && xRot == _locations[currentLocation].x && yRot == _locations[currentLocation].y) {
 			rotate = false;
 		}
+
+		++_engine->lbaTime;
 
 		// TODO: text afterwards on top (not before as it is currently implemented)?
 		// pos 0x140,0x19?

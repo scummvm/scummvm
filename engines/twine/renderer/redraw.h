@@ -54,6 +54,19 @@ struct OverlayListStruct {
 	int16 lifeTime = 0;
 };
 
+struct DrawListStruct {
+	int16 posValue = 0;
+	uint32 type = 0;
+	uint16 actorIdx = 0;
+	uint16 x = 0;
+	uint16 y = 0;
+	uint16 z = 0;
+	uint16 offset = 0;
+	uint16 field_C = 0;
+	uint16 field_E = 0;
+	uint16 field_10 = 0;
+};
+
 class TwinEEngine;
 class Redraw {
 private:
@@ -63,22 +76,6 @@ private:
 		DrawExtras = 0x1800,
 		DrawShadows = 0xC00
 	};
-
-	struct DrawListStruct {
-		int16 posValue = 0;
-		uint32 type = 0;
-		uint16 actorIdx = 0;
-		uint16 x = 0;
-		uint16 y = 0;
-		uint16 z = 0;
-		uint16 offset = 0;
-		uint16 field_C = 0;
-		uint16 field_E = 0;
-		uint16 field_10 = 0;
-	};
-
-	/** Draw list array to grab the necessary */
-	DrawListStruct drawList[150];
 
 	Common::Rect currentRedrawList[300];
 	Common::Rect nextRedrawList[300];
@@ -91,12 +88,6 @@ private:
 	void addRedrawCurrentArea(const Common::Rect &redrawArea);
 	/** Move next regions to the current redraw list */
 	void moveNextAreas();
-	/**
-	 * Sort drawing list struct ordered as the first objects appear in the top left corner of the screen
-	 * @param list drawing list variable which contains information of the drawing objects
-	 * @param listSize number of drawing objects in the list
-	 */
-	void sortDrawingList(DrawListStruct *list, int32 listSize);
 	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
 	void processDrawListShadows(const DrawListStruct& drawCmd);
@@ -162,6 +153,16 @@ public:
 	void drawBubble(int32 actorIdx);
 
 	void zoomScreenScale();
+
+	/**
+	 * Sort drawing list struct ordered as the first objects appear in the top left corner of the screen
+	 * @param list drawing list variable which contains information of the drawing objects
+	 * @param listSize number of drawing objects in the list
+	 */
+	void sortDrawingList(DrawListStruct *list, int32 listSize);
+
+	/** Draw list array to grab the necessary */
+	DrawListStruct drawList[150];
 };
 
 } // namespace TwinE

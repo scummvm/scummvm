@@ -334,10 +334,6 @@ private:
 	int32 baseTransPosY = 0; // setSomething2Var2
 	int32 baseTransPosZ = 0; // setSomething2Var3
 
-	int32 baseRotPosX = 0; // setSomething3Var12
-	int32 baseRotPosY = 0; // setSomething3Var14
-	int32 baseRotPosZ = 0; // setSomething3Var16
-
 	int32 cameraPosX = 0; // cameraVar1
 	int32 cameraPosY = 0; // cameraVar2
 	int32 cameraPosZ = 0; // cameraVar3
@@ -398,6 +394,10 @@ public:
 	int16 projPosX = 0;
 	int16 projPosY = 0;
 	int16 projPosZ = 0;
+
+	int32 baseRotPosX = 0; // setSomething3Var12
+	int32 baseRotPosY = 0; // setSomething3Var14
+	int32 baseRotPosZ = 0; // setSomething3Var16
 
 	int32 orthoProjX = 0; // setSomethingVar1
 	int32 orthoProjY = 0; // setSomethingVar2
