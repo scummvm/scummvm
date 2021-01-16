@@ -67,81 +67,171 @@ GraphicsManager::~GraphicsManager() {
     _screen.free();
 
     for (auto st : _ZRender) {
-        delete st.sourceRect;
-        delete st.destPoint;
-        delete st.renderFunction;
+        delete st._value.renderFunction;
     }
 }
 
-void GraphicsManager::clearGenericZRenderStruct(uint id) {
-    ZRenderStruct *st = getGenericZRenderStruct(id);
-    st->isActive = false;
-    st->isInitialized = false;
+void GraphicsManager::clearZRenderStruct(Common::String name) {
+    _ZRender.erase(name);
 }
 
-ZRenderStruct *GraphicsManager::getGenericZRenderStruct(uint id) {
-    if (id > 60)
-        error("Bad ZRender ID!");
+void GraphicsManager::clearZRenderStructs() {
+    _ZRender.clear();
+}
+
+ZRenderStruct &GraphicsManager::getZRenderStruct(Common::String name) {
+    // Creates a new struct if one didn't exist before
+    return _ZRender[name];
+}
+
+void GraphicsManager::initZRenderStruct(char const *name,
+                                        uint32 z,
+                                        bool isActive,
+                                        ZRenderStruct::BltType bltType,
+                                        Graphics::Surface *surface,
+                                        RenderFunction *func,
+                                        Common::Rect *sourceRect,
+                                        Common::Rect *destRect ) {
+    clearZRenderStruct(name);
+    ZRenderStruct &st = getZRenderStruct(name);
+    st.name = name;
+    st.z = z;
+    st.isActive = isActive;
+    st.isInitialized = true;
+    st.bltType = bltType;
+    st.sourceSurface = surface;
+    if (sourceRect)
+        st.sourceRect = *sourceRect;
+    else st.sourceRect = Common::Rect();
+    if (destRect)
+        st.destRect = *destRect;
+    else st.destRect = Common::Rect();
+    st.renderFunction = func;
+}
+
+// TODO nancy1 only, move to subclass whenever we support multiple games
+// TODO most of these are wrong and/or incomplete
+// The original engine uses dirty rectangles for optimization and marks
+// their location with zrender structs whose names start with RES.
+// I'm using a more naive implementation where everything is redrawn every frame
+// for code simplicity, but that can be changed in the future if needed
+void GraphicsManager::initSceneZRenderStructs() {
+    Common::Rect *source = new Common::Rect();
+    Common::Rect *dest = new Common::Rect();
+    Common::SeekableReadStream *chunk = nullptr;
     
-    return &_ZRender[id];
+    #define READ_RECT(where, x) chunk->seek(x); \
+                                where->left = chunk->readUint32LE(); \
+                                where->top = chunk->readUint32LE(); \
+                                where->right = chunk->readUint32LE(); \
+                                where->bottom = chunk->readUint32LE();
+
+    chunk = _engine->getBootChunkStream("MENU");
+    READ_RECT(source, 16)
+    initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::BltType::kNone, &_primaryFrameSurface,
+                        new RenderFunction(this, &GraphicsManager::renderFrame), source, source);
+    initZRenderStruct(  "CUR IMAGE CURSOR", 11, false, ZRenderStruct::BltType::kTrans, &_object0Surface);
+
+    chunk = _engine->getBootChunkStream("TBOX");
+    READ_RECT(source, 0)
+    initZRenderStruct(  "CUR TB BAT SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
+                        &_object0Surface, nullptr, source, nullptr);
+
+    chunk = _engine->getBootChunkStream("BSUM");
+    READ_RECT(dest, 356)
+    initZRenderStruct(  "FRAME TB SURF", 6, false, ZRenderStruct::BltType::kNoTrans,
+                        &_frameTextBox, nullptr, nullptr, dest);
+
+    READ_RECT(source, 388)
+    READ_RECT(dest, 420)
+    initZRenderStruct(  "MENU BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
+                        &_object0Surface, nullptr, source, dest);
+
+    READ_RECT(source, 404)
+    READ_RECT(dest, 436)
+    initZRenderStruct(  "HELP BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
+                        &_object0Surface, nullptr, source, dest);
+
+    chunk = _engine->getBootChunkStream("INV");
+    READ_RECT(source, 0)
+    initZRenderStruct(  "CUR INV SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
+                         &_object0Surface, nullptr, source, nullptr);
+
+    initZRenderStruct(  "FRAME INV BOX", 6, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderFrameInvBox));
+    
+    initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::BltType::kNoTrans);
+    initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderPrimaryVideo));
+    initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderSecVideo0));
+    initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderSecVideo1));
+    initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderSecMovie));
+    initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderOrderingPuzzle));
+    initZRenderStruct(  "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderRotatingLockPuzzle));
+    initZRenderStruct(  "LEVER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderLeverPuzzle));
+    initZRenderStruct(  "TELEPHONE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderTelephone));
+    initZRenderStruct(  "SLIDER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderSliderPuzzle));
+    initZRenderStruct(  "PASSWORD PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderPasswordPuzzle));
+
+    // Moved here from SceneManager::load(), should be ok
+    *source = Common::Rect(viewportDesc.srcLeft, viewportDesc.srcTop, viewportDesc.srcRight, viewportDesc.srcBottom);
+    *dest = Common::Rect(viewportDesc.destLeft, viewportDesc.destTop, viewportDesc.destRight, viewportDesc.destBottom);
+    initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::BltType::kNoTrans,
+                        &_background, nullptr, source, dest);
+    #undef READ_RECT
+
+    delete source;
+    delete dest;
 }
 
-void GraphicsManager::initGenericZRenderStruct(uint id, char const *name, uint32 z, bool isActive, ZRenderStruct::BltType bltType, Graphics::Surface *surface, RenderFunction *func, Common::Rect *sourceRect, Common::Point *destPoint) {
-    clearGenericZRenderStruct(id);
-    ZRenderStruct *st = getGenericZRenderStruct(id);
-    delete st->sourceRect;
-    delete st->destPoint;
-    delete st->renderFunction;
-    st->name = name;
-    st->z = z;
-    st->isActive = isActive;
-    st->isInitialized = true;
-    st->bltType = bltType;
-    st->sourceSurface = surface;
-    st->sourceRect = sourceRect;
-    st->destPoint = destPoint;
-    st->renderFunction = func;
-}
-
-void GraphicsManager::renderDisplay(uint last) {
-    int *mask = new int[last+2];
-    for (uint i = 0; i <= last; ++i) {
-        mask[i] = i;
+void GraphicsManager::renderDisplay() {
+    // Construct a list containing every struct and pass it along
+    Common::Array<Common::String> array;
+    for (auto i : _ZRender) {
+        array.push_back(i._key);
     }
-    // set final member to -1
-    mask[last+1] = -1;
-    renderDisplay(mask);
-    delete[] mask;
+
+    renderDisplay(array);
 }
 
-void GraphicsManager::renderDisplay(int *idMask) {
-    char hasBeenRendered[60]{};
-    if (!idMask)
-        error("Bad ZRender ID Mask!");
-
+void GraphicsManager::renderDisplay(Common::Array<Common::String> ids) {
     for (uint currentZ = _startingZ; currentZ < 12; ++currentZ) {
-        for (uint i = 0; idMask[i] != -1; ++i) {
-            int maskCur = idMask[i];
-            ZRenderStruct &current = _ZRender[maskCur];
-            if (!hasBeenRendered[i] && current.isActive && current.isInitialized && current.z == currentZ) {
+        for (uint i = 0; i < ids.size(); ++i) {
+            ZRenderStruct &current = getZRenderStruct(ids[i]);
+            if (current.isActive && current.isInitialized && current.z == currentZ) {
                 if (current.renderFunction && current.renderFunction->isValid()) {
                     current.renderFunction->operator()();
                 }
                 else {
                     switch (current.bltType) {
                         // making some assumptions here
-                        case ZRenderStruct::BltType::kNoTrans:
-                            _screen.blitFrom(*current.sourceSurface, *current.sourceRect, *current.destPoint);
+                        case ZRenderStruct::BltType::kNoTrans: {
+                            Common::Point dest(current.destRect.left, current.destRect.top);
+                            _screen.blitFrom(*current.sourceSurface, current.sourceRect, dest);
                             break;
+                        }
                         case ZRenderStruct::BltType::kTrans: {
-                            
-                            _screen.transBlitFrom(*current.sourceSurface, *current.sourceRect, *current.destPoint, transColor);
-                            break; }
+                            Common::Point dest(current.destRect.left, current.destRect.top);
+                            _screen.transBlitFrom(*current.sourceSurface, current.sourceRect, dest, transColor);
+                            break;
+                        }
                         default:
                             error("Bad ZRender Blt type!");
                     }
                 }
-                hasBeenRendered[i] = 1;
+
+                // Current struct has been rendered, remove from list
+                ids.remove_at(i);
+                break;
             }
         }
     }
@@ -176,9 +266,9 @@ uint32 GraphicsManager::getBackgroundHeight() {
 }
 
 void GraphicsManager::renderFrame() {
-    Graphics::Surface n = *_ZRender[0].sourceSurface->convertTo(pixelFormat);
-    _screen.blitFrom(n, *_ZRender[0].sourceRect, *_ZRender[0].destPoint);
-    n.free();
+    ZRenderStruct &zr = getZRenderStruct("FRAME");
+    Common::Point dest(zr.destRect.left, zr.destRect.top);
+    _screen.blitFrom(*zr.sourceSurface, zr.sourceRect, dest);
 
     // not sure why we do this
     _numTimesRenderedFrame += 1;
@@ -188,12 +278,6 @@ void GraphicsManager::renderFrame() {
     } else {
         _startingZ = 1;
     }
-}
-
-void GraphicsManager::renderResTBBatSlider() {
-    // not sure why this is its own function
-    ZRenderStruct &st = _ZRender[10];
-    _screen.blitFrom(*st.sourceSurface, *st.sourceRect, *st.destPoint);
 }
 
 void GraphicsManager::renderFrameInvBox() {

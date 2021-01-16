@@ -74,9 +74,7 @@ void SceneManager::init() {
 
     // TODO init action records
     
-    for (uint i = 0; i <= 60; ++i) {
-		_engine->graphics->clearGenericZRenderStruct(i);
-	}
+    _engine->graphics->clearZRenderStructs();
 
     // Load the primary frame
     if (!_engine->_res->loadImage("ciftree", _engine->_frames[0].name, _engine->graphics->_primaryFrameSurface)) {
@@ -106,119 +104,7 @@ void SceneManager::init() {
 
     delete[] name;
 
-    // TODO init various rects for the ZRender structs
-
-    // Init the ZRender structs themselves:
-    // TODO most of these are wrong and/or incomplete
-    #define READ_SOURCE_RECT(x) chunk->seek(x); source = new Common::Rect(chunk->readUint32LE(), chunk->readUint32LE(), chunk->readUint32LE(), chunk->readUint32LE());
-    #define READ_DEST_POINT(x) chunk->seek(x); dest = new Common::Point(chunk->readUint32LE(), chunk->readUint32LE());
-
-    Common::SeekableReadStream *chunk;
-    Common::Rect *source;
-    Common::Point *dest;
-
-    // CUR: current
-    // RES: redraws the background of a moved element so it doesnt get doubled
-    // VP: viewport
-
-    chunk = _engine->getBootChunkStream("MENU");
-    READ_SOURCE_RECT(16)
-    READ_DEST_POINT(16)
-    _engine->graphics->initGenericZRenderStruct(0, "FRAME", 1, true, ZRenderStruct::BltType::kNone, &_engine->graphics->_primaryFrameSurface,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderFrame),
-                                                source, dest);
-    _engine->graphics->initGenericZRenderStruct(2, "CUR IMAGE CURSOR", 11, false, ZRenderStruct::BltType::kTrans,
-                                                &_engine->graphics->_object0Surface, nullptr, new Common::Rect(), new Common::Point());
-    _engine->graphics->initGenericZRenderStruct(3, "RES IMAGE CURSOR - FRAME", 2, false, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_primaryFrameSurface, nullptr, new Common::Rect(), new Common::Point());
-    _engine->graphics->initGenericZRenderStruct(4, "RES IMAGE CURSOR - VP", 3, false, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_background, nullptr, new Common::Rect(), new Common::Point());
-    // Skip DIAGNOSTICS and VERSION
-
-    chunk = _engine->getBootChunkStream("TBOX");
-    READ_SOURCE_RECT(0)
-    _engine->graphics->initGenericZRenderStruct(9, "CUR TB BAT SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
-                                                &_engine->graphics->_object0Surface, nullptr, source, new Common::Point());           
-
-    _engine->graphics->initGenericZRenderStruct(10, "RES TB BAT SLIDER", 3, false, ZRenderStruct::BltType::kNoTrans, &_engine->graphics->_primaryFrameSurface,
-                                               new RenderFunction(_engine->graphics, &GraphicsManager::renderResTBBatSlider),
-                                               new Common::Rect(), new Common::Point());
-
-    chunk = _engine->getBootChunkStream("BSUM");
-    READ_DEST_POINT(356)
-    _engine->graphics->initGenericZRenderStruct(8, "FRAME TB SURF", 6, false, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_frameTextBox, nullptr, source, dest);
-
-    READ_SOURCE_RECT(356)
-    READ_DEST_POINT(356)
-    _engine->graphics->initGenericZRenderStruct(11, "TB FRAME RES", 2, false, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_primaryFrameSurface, nullptr, source, dest);  
-
-    READ_SOURCE_RECT(388)
-    READ_DEST_POINT(420)
-    _engine->graphics->initGenericZRenderStruct(12, "MENU BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
-                                                &_engine->graphics->_object0Surface, nullptr, source, dest);
-    READ_SOURCE_RECT(404)
-    READ_DEST_POINT(436)
-    _engine->graphics->initGenericZRenderStruct(13, "HELP BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
-                                                &_engine->graphics->_object0Surface, nullptr, source, dest);
-    
-    chunk = _engine->getBootChunkStream("INV");
-    READ_SOURCE_RECT(0)
-    _engine->graphics->initGenericZRenderStruct(14, "CUR INV SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
-                                                &_engine->graphics->_object0Surface, nullptr, source, new Common::Point());
-
-    _engine->graphics->initGenericZRenderStruct(15, "RES INV SLIDER", 3, false, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_primaryFrameSurface, nullptr, new Common::Rect(), new Common::Point());
-
-    _engine->graphics->initGenericZRenderStruct(16, "FRAME INV BOX", 6, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderFrameInvBox),
-                                                nullptr, nullptr);
-
-    _engine->graphics->initGenericZRenderStruct(5, "INV BITMAP", 9, false, ZRenderStruct::BltType::kNoTrans,
-                                                nullptr, nullptr, new Common::Rect(), new Common::Point());
-
-    _engine->graphics->initGenericZRenderStruct(17, "PRIMARY VIDEO", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderPrimaryVideo),
-                                                new Common::Rect(), new Common::Point());
-
-    _engine->graphics->initGenericZRenderStruct(18, "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderSecVideo0),
-                                                new Common::Rect(), new Common::Point());
-
-    _engine->graphics->initGenericZRenderStruct(19, "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderSecVideo1),
-                                                new Common::Rect(), new Common::Point());
-    
-    _engine->graphics->initGenericZRenderStruct(20, "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderSecMovie),
-                                                new Common::Rect(), new Common::Point());
-    
-    _engine->graphics->initGenericZRenderStruct(21, "ORDERING PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderOrderingPuzzle),
-                                                nullptr);
-    
-    _engine->graphics->initGenericZRenderStruct(22, "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderRotatingLockPuzzle),
-                                                nullptr, nullptr);
-
-    _engine->graphics->initGenericZRenderStruct(23, "LEVER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderLeverPuzzle),
-                                                nullptr, nullptr);
-
-    _engine->graphics->initGenericZRenderStruct(24, "TELEPHONE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderTelephone),
-                                                nullptr, nullptr);
-    
-    _engine->graphics->initGenericZRenderStruct(25, "SLIDER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderSliderPuzzle),
-                                                nullptr, nullptr);
-    
-    _engine->graphics->initGenericZRenderStruct(26, "PASSWORD PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                                                new RenderFunction(_engine->graphics, &GraphicsManager::renderPasswordPuzzle),
-                                                nullptr, nullptr);
-    #undef READ_SOURCE_RECT
-    #undef READ_DEST_POINT
+    _engine->graphics->initSceneZRenderStructs();
 
     _state = kLoad;
 }
@@ -294,11 +180,6 @@ void SceneManager::load() {
 
     delete sceneSummaryChunk;
 
-    Common::Point *dest = new Common::Point(viewportDesc.destLeft, viewportDesc.destTop);
-    Common::Rect *source = new Common::Rect(viewportDesc.srcLeft, viewportDesc.srcTop, viewportDesc.srcRight, viewportDesc.srcBottom);
-   _engine->graphics->initGenericZRenderStruct(2, "VIEWPORT AVF", 6, true, ZRenderStruct::BltType::kNoTrans,
-                                                &_engine->graphics->_background, nullptr, source, dest);
-
     _state = kRun; // TODO temp, is actually StartSound
 }
 
@@ -309,17 +190,17 @@ void SceneManager::run() {
     isComingFromMenu = false;
 
     if (orderingPuzzleIsActive)
-        _engine->graphics->getGenericZRenderStruct(21)->isActive = true;
+        _engine->graphics->getZRenderStruct("ORDERING PUZZLE").isActive = true;
     if (rotatingLockPuzzleIsActive)
-        _engine->graphics->getGenericZRenderStruct(22)->isActive = true;
+        _engine->graphics->getZRenderStruct("ROTATING LOCK PUZZLE").isActive = true;
     if (leverPuzzleIsActive)
-        _engine->graphics->getGenericZRenderStruct(23)->isActive = true;
+        _engine->graphics->getZRenderStruct("LEVER PUZZLE").isActive = true;
     if (sliderPuzzleIsActive)
-        _engine->graphics->getGenericZRenderStruct(25)->isActive = true;
+        _engine->graphics->getZRenderStruct("SLIDER PUZZLE").isActive = true;
     if (passwordPuzzleIsActive)
-        _engine->graphics->getGenericZRenderStruct(26)->isActive = true;
+        _engine->graphics->getZRenderStruct("PASSWORD PUZZLE").isActive = true;
     if (telephoneIsActive)
-        _engine->graphics->getGenericZRenderStruct(24)->isActive = true;
+        _engine->graphics->getZRenderStruct("TELEPHONE").isActive = true;
 
     if (helpMenuRequested) {
         _stashedTickCount = _engine->getTotalPlayTime();
@@ -401,8 +282,8 @@ void SceneManager::run() {
             }
         }
             
-        _engine->graphics->getGenericZRenderStruct(12)->isActive = false; // MENU BTN DN
-        _engine->graphics->getGenericZRenderStruct(13)->isActive = false; // HELP BTN DN
+        _engine->graphics->getZRenderStruct("MENU BTN DN").isActive = false;
+        _engine->graphics->getZRenderStruct("HELP BTN DN").isActive = false;
         _engine->input->hoveredElementID = -1;
         // TODO a bunch of function calls
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
@@ -626,8 +507,7 @@ void SceneManager::run() {
     // code that skips rendering for the first 12 frames??? why
 
     // TODO
-    
-    _engine->graphics->renderDisplay(25);
+    _engine->graphics->renderDisplay();
 }
 
 void SceneManager::clearSceneData() {

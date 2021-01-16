@@ -42,8 +42,8 @@ public:
     uint32 z = 0;
     RenderFunction *renderFunction = nullptr;
     Graphics::Surface *sourceSurface = nullptr;
-    Common::Rect *sourceRect = nullptr;
-    Common::Point *destPoint = nullptr;
+    Common::Rect sourceRect;
+    Common::Rect destRect;
     bool isActive = false;
     bool isInitialized = false;
     BltType bltType = kNone;
@@ -53,16 +53,26 @@ public:
 class GraphicsManager {
 public:
     GraphicsManager(NancyEngine *engine);
-    ~GraphicsManager();
+    virtual ~GraphicsManager();
 
     void init();
 
-    void clearGenericZRenderStruct(uint id);
-    ZRenderStruct *getGenericZRenderStruct(uint id);
-    void initGenericZRenderStruct(uint id, char const *name, uint32 z, bool isActive, ZRenderStruct::BltType bltType, Graphics::Surface *surface = nullptr, RenderFunction *func = nullptr, Common::Rect *sourceRect = nullptr, Common::Point *destPoint = nullptr);
+    void clearZRenderStruct(Common::String name);
+    void clearZRenderStructs();
+    ZRenderStruct &getZRenderStruct(Common::String name);
+    void initZRenderStruct( char const *name,
+                            uint32 z,
+                            bool isActive,
+                            ZRenderStruct::BltType bltType,
+                            Graphics::Surface *surface = nullptr,
+                            RenderFunction *func = nullptr,
+                            Common::Rect *sourceRect = nullptr,
+                            Common::Rect *destRect = nullptr );
 
-    void renderDisplay(uint last);
-    void renderDisplay(int *idMask);
+    virtual void initSceneZRenderStructs();
+
+    void renderDisplay();
+    void renderDisplay(Common::Array<Common::String> ids);
 
     void loadBackgroundVideo(const Common::String &filename);
     const Graphics::Surface *getBackgroundFrame(uint16 frameId);
@@ -84,7 +94,7 @@ public:
 
 private:
     NancyEngine *_engine;
-    ZRenderStruct _ZRender[60];
+    Common::HashMap<Common::String, ZRenderStruct> _ZRender;
     Graphics::Screen _screen;
     AVFDecoder _videoDecoder;
 
@@ -94,7 +104,6 @@ private:
 public:
     // custom render functions
     void renderFrame();
-    void renderResTBBatSlider();
     void renderFrameInvBox();
     void renderPrimaryVideo();
     void renderSecVideo0();
