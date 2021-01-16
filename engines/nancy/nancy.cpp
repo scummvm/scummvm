@@ -214,9 +214,7 @@ void NancyEngine::bootGameEngine() {
 	// TODO another loop that does the same thing but with CURS
 	// TODO reset some vars
 
-	for (uint i = 0; i <= 60; ++i) {
-		graphics->clearGenericZRenderStruct(i);
-	}
+	graphics->clearZRenderStructs();
 
 	// TODO reset some more vars
 
