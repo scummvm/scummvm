@@ -24,6 +24,7 @@
 #define NANCY_DATATYPES_H
 
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -79,6 +80,16 @@ struct View {
     uint32 f2Top;           // 0x34
     uint32 f2Right;         // 0x38
     uint32 f2Bottom;        // 0x3C
+};
+
+// Holds the coordinates for the bitmaps of all cursors
+struct Cursors {
+    Cursors() =default;
+    Cursors(Common::SeekableReadStream *stream);
+    Common::Rect rects[85];
+    // The cursor gets set to this location at some point during PrimaryVideoSequence 
+    uint16 primaryVideoCursorX;
+    uint16 primaryVideoCursorY;
 };
 
 } // End of namespace Nancy

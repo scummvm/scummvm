@@ -202,6 +202,8 @@ void NancyEngine::bootGameEngine() {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
+	input->cursorsData = Cursors(getBootChunkStream("CURS"));
+
 	// The FR, LG and OB chunks get added here	
 
 	Common::SeekableReadStream *font = getBootChunkStream("FONT");

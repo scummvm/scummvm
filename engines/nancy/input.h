@@ -23,7 +23,10 @@
 #ifndef NANCY_INPUT_H
 #define NANCY_INPUT_H
 
+#include "engines/nancy/datatypes.h"
+
 #include "common/rect.h"
+
 namespace Common {
 template <class T>
 class Array;
@@ -77,6 +80,7 @@ enum InputType : byte {
     bool isClickValidLMB;
     bool isClickValidRMB;
     int16 hoveredElementID;
+    Cursors cursorsData;
     
     // TODO consider using a namespace for these
     static const int16 mapButtonID;

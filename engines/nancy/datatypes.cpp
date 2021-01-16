@@ -62,6 +62,7 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
     delete[] buf;
 }
 
+// Takes a VIEW chunk as input
 View::View(Common::SeekableReadStream *stream) {
     stream->seek(0);
     destLeft = stream->readUint32LE();
@@ -80,6 +81,20 @@ View::View(Common::SeekableReadStream *stream) {
     f2Top = stream->readUint32LE();
     f2Right = stream->readUint32LE();
     f2Bottom = stream->readUint32LE();
+}
+
+// Takes a CURS chunk as input
+Cursors::Cursors(Common::SeekableReadStream *stream) {
+    stream->seek(0);
+    for (uint i = 0; i < 85; ++i) {
+        Common::Rect &rect = rects[i];
+        rect.left = stream->readUint32LE();
+        rect.top = stream->readUint32LE();
+        rect.right = stream->readUint32LE();
+        rect.bottom = stream->readUint32LE();
+    }
+    primaryVideoCursorX = stream->readUint16LE();
+    primaryVideoCursorY = stream->readUint16LE();
 }
 
 } // End of namespace Nancy
