@@ -1,5 +1,5 @@
 
-![ScummVm](ScummVmlogo.png)
+![ScummVmlogo](https://user-images.githubusercontent.com/61404154/104828316-225c3280-588e-11eb-8511-d0ceef67b757.png)
  [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) ![CI](https://github.com/scummvm/scummvm/workflows/CI/badge.svg) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e06e5b18f8464fef859b5a7f78d10357)](https://www.codacy.com/gh/scummvm/scummvm/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scummvm/scummvm&amp;utm_campaign=Badge_Grade)
 
 For more information, compatibility lists, details on donating, the
