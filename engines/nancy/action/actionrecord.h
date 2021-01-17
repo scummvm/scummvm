@@ -63,7 +63,7 @@ struct DependencyRecord {
 
 class ActionRecord {
 public:
-    enum ExecutionState { Start }; // TODO has 4 states
+    enum ExecutionState { kBegin, kRun, kEnd };
     ActionRecord() :
         type(0),
         execType(0),
@@ -74,7 +74,8 @@ public:
         timers(nullptr),
         orFlags(nullptr),
         isDone(false),
-        state(ExecutionState::Start) {}
+        hasHotspot(false),
+        state(ExecutionState::kBegin) {}
     virtual ~ActionRecord() { delete[] dependencies; delete rawData; delete[] satisfiedDependencies; delete[] timers; delete orFlags; }
 
     virtual uint16 readData(Common::SeekableReadStream &stream) =0;
@@ -101,7 +102,8 @@ public:
     Time *timers;                   // 0x48
     bool *orFlags;                  // 0x78
     bool isDone;                    // 0x84
-    Common::Rect activeZone;        // 0x89
+    bool hasHotspot;                // 0x85
+    Common::Rect hotspot;           // 0x89
     ExecutionState state;           // 0x91
 };
 
