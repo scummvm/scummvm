@@ -622,7 +622,7 @@ void FixupSaveDirectory(GameSetupStruct &game) {
 	String s = Path::FixupSharedFilename(game.saveGameFolderName);
 	snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", s.GetCStr());
 #else
-	sprintf(game.saveGameFolderName, "");
+	strcpy(game.saveGameFolderName, SAVE_FOLDER_PREFIX);
 #endif
 }
 

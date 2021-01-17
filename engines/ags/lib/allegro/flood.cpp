@@ -22,6 +22,7 @@
 
 #include "ags/lib/allegro/flood.h"
 #include "ags/lib/allegro/gfx.h"
+#include "ags/shared/core/types.h"
 #include "common/array.h"
 
 namespace AGS3 {
@@ -183,8 +184,8 @@ void floodfill(BITMAP *bmp, int x, int y, int color) {
 	p = FLOOD_LINE(0);
 	for (c = 0; c < (int)scratchMem.size(); c++) {
 		p[c].flags = 0;
-		p[c].lpos = SHRT_MAX;
-		p[c].rpos = SHRT_MIN;
+		p[c].lpos = INT16_MAX;
+		p[c].rpos = INT16_MIN;
 		p[c].y = y;
 		p[c].next = 0;
 	}
