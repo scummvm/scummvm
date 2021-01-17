@@ -187,6 +187,8 @@ public:
 	uint8 *holomapSurfacePtr = nullptr;
 	uint32 holomapImageSize = 0;
 	uint8 *holomapImagePtr = nullptr;
+	uint32 holomapPointModelSize = 0;
+	uint8 *holomapPointModelPtr = nullptr;
 	uint32 holomapTwinsenModelSize = 0;
 	uint8 *holomapTwinsenModelPtr = nullptr;
 	uint32 holomapTwinsenArrowSize = 0;

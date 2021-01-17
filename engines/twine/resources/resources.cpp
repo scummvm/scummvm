@@ -162,6 +162,12 @@ void Resources::initResources() {
 	}
 	Renderer::prepareIsoModel(holomapTwinsenModelPtr);
 
+	holomapPointModelSize = HQR::getAllocEntry(&holomapPointModelPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
+	if (holomapPointModelSize == 0) {
+		error("Failed to load holomap point model");
+	}
+	Renderer::prepareIsoModel(holomapPointModelPtr);
+
 	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
 	if (holomapArrowSize == 0) {
 		error("Failed to load holomap arrow model");
