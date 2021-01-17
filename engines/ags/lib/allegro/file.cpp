@@ -128,7 +128,7 @@ char *make_relative_filename(char *dest, const char *path, const char *filename,
 
 int is_relative_filename(const char *filename) {
 	Common::String fname(filename);
-	return !fname.contains('/') && !fname.contains('\\') ? 0 : -1;
+	return !fname.contains('/') && !fname.contains('\\') ? 1 : 0;
 }
 
 /*------------------------------------------------------------------*/

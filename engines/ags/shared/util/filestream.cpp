@@ -23,6 +23,7 @@
 #include "ags/shared/util/filestream.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
+#include "ags/shared/util/directory.h"
 #include "ags/ags.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -30,8 +31,6 @@
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
-
-const char *SAVE_FOLDER_PREFIX = "/saves/";
 
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
 	DataEndianess stream_endianess)

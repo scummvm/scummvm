@@ -37,6 +37,7 @@
 #include "ags/shared/util/misc.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/filestream.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/core/asset.h"
 #include "ags/engine/main/engine.h"
@@ -271,12 +272,7 @@ String MakeSpecialSubDir(const String &sp_dir) {
 }
 
 String MakeAppDataPath() {
-	String app_data_path = usetup.shared_data_dir;
-	if (app_data_path.IsEmpty())
-		app_data_path = MakeSpecialSubDir(PathOrCurDir(platform->GetAllUsersDataDirectory()));
-	Directory::CreateDirectory(app_data_path);
-	app_data_path.AppendChar('/');
-	return app_data_path;
+	return AGS::Shared::SAVE_FOLDER_PREFIX;
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {

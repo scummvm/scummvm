@@ -23,6 +23,7 @@
 #include "ags/metaengine.h"
 #include "ags/detection.h"
 #include "ags/ags.h"
+#include "ags/shared/util/directory.h"
 #include "ags/shared/util/filestream.h"
 #include "ags/engine/ac/richgamemedia.h"
 #include "ags/engine/game/savegame.h"
