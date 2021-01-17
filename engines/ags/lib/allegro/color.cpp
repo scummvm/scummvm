@@ -223,11 +223,21 @@ void fade_out(int speed) {
 }
 
 void select_palette(AL_CONST PALETTE p) {
-	warning("TODO: select_palette");
+	int c;
+
+	for (c = 0; c < PAL_SIZE; c++) {
+		_prev_current_palette[c] = _current_palette[c];
+		_current_palette[c] = p[c];
+	}
+
+	// TODO: See if the remainder of Allegro's select_palette method is needed for AGS
 }
 
 void unselect_palette(void) {
-	warning("TODO: unselect_palette");
+	int c;
+
+	for (c = 0; c < PAL_SIZE; c++)
+		_current_palette[c] = _prev_current_palette[c];
 }
 
 void generate_332_palette(PALETTE pal) {

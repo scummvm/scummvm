@@ -50,6 +50,7 @@ typedef color RGB;
 typedef RGB PALETTE[PAL_SIZE];
 
 AL_VAR(PALETTE, _current_palette);
+AL_VAR(PALETTE, _prev_current_palette);
 
 #include "common/pack-end.h"    // END STRUCT PACKING
 

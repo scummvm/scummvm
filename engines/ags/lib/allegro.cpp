@@ -27,6 +27,7 @@ namespace AGS3 {
 /* default palette structures */
 PALETTE black_palette;
 PALETTE _current_palette;
+PALETTE _prev_current_palette;
 
 int _current_palette_changed = 0xFFFFFFFF;
 
