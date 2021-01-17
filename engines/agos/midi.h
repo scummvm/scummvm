@@ -37,7 +37,8 @@ enum kMusicMode {
 	kMusicModeDisabled = 0,
 	kMusicModeAccolade = 1,
 	kMusicModeMilesAudio = 2,
-	kMusicModeSimon1 = 3
+	kMusicModeSimon1 = 3,
+	kMusicModePC98 = 4
 };
 
 struct MusicInfo {

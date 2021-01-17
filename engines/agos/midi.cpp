@@ -98,7 +98,7 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	switch (gameType) {
 	case GType_ELVIRA1:
 		if (platform == Common::kPlatformPC98) {
-			_musicMode = kMusicModeDisabled;
+			_musicMode = kMusicModePC98;
 			devFlags = (devFlags & ~MDT_ADLIB) | MDT_PC98;
 		} else {
 			_musicMode = kMusicModeAccolade;
@@ -135,7 +135,14 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 	MidiDriver::DeviceHandle dev;
 	int ret = 0;
 
-	if (_musicMode != kMusicModeDisabled) {
+	if (_musicMode == kMusicModePC98) {
+		dev = MidiDriver::detectDevice(devFlags);
+		_driver = MidiDriverPC98_create(dev);
+		if (_driver && !_driver->open()) {
+			_driver->setTimerCallback(this, &onTimer);
+			return 0;
+		}
+	} else if (_musicMode != kMusicModeDisabled) {
 		dev = MidiDriver::detectDevice(devFlags);
 		musicType = MidiDriver::getMusicType(dev);
 
@@ -169,7 +176,6 @@ int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
 		switch (musicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
-
 			break;
 		case MT_MT32:
 			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
@@ -487,7 +493,10 @@ void MidiPlayer::pause(bool b) {
 	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
 	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
 		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : 128);
+	} else if (_musicMode == kMusicModePC98) {
+		_driver->property(0x30, _paused ? 1 : 0);
 	}
+
 	for (int i = 0; i < 16; ++i) {
 		if (_music.channel[i])
 			_music.channel[i]->volume(_paused ? 0 : (_music.volume[i] * _musicVolume / 255));
@@ -505,6 +514,11 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 
 	_musicVolume = musicVol;
 	_sfxVolume   = sfxVol;
+
+	if (_musicMode == kMusicModePC98) {
+		_driver->property(0x10, _musicVolume);
+		_driver->property(0x20, _sfxVolume);
+	}
 
 	// Now tell all the channels this.
 	Common::StackLock lock(_mutex);
