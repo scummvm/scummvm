@@ -321,17 +321,27 @@ void MaskDrawn(ArgArray args) {
 }
 
 void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
+    if (strcmp(s, "\"\"") == 0)
+        return;
+
     Common::String *sound = new Common::String(s);
     if (strcmp(t, "AMRadioClip") == 0)
-        g_private->_AMRadio.push_front(*sound);
+        g_private->_AMRadio.push_back(*sound);
     else if (strcmp(t, "PoliceClip") == 0)
-        g_private->_policeRadio.push_front(*sound);
+        g_private->_policeRadio.push_back(*sound);
     else if (strcmp(t, "PhoneClip") == 0) {
         PhoneInfo *p = (PhoneInfo*) malloc(sizeof(PhoneInfo));
         p->sound = sound;
         p->flag = flag;
         p->val = val;
-        g_private->_phone.push_front(*p);
+        // This condition will avoid adding the same phone call twice,
+        // it is unclear why this could be useful, but it looks like a bug
+        // in the original script
+        if (g_private->_phone.size() > 0 && 
+             strcmp(g_private->_phone.back().sound->c_str(), s) == 0)
+            return;
+
+        g_private->_phone.push_back(*p);
     }
         
     else
@@ -349,7 +359,7 @@ void PhoneClip(ArgArray args) {
         debug("Unimplemented PhoneClip special case");
         return;
     }
-    AddSound(args[0].u.str, "PhoneClip", args[5].u.sym, args[6].u.val);
+    AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
 }
 
 void SoundArea(ArgArray args) {
@@ -377,11 +387,19 @@ void SoundArea(ArgArray args) {
         Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
-        debug("size %d %d", m->surf->h, m->surf->w);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
         m->flag = NULL;
         g_private->_policeRadioArea = m;
+        g_private->_masks.push_front(*m);
+    } else if (strcmp(n, "kPhone") == 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->cursor = args[2].u.sym->name;
+        m->nextSetting = NULL;
+        m->flag = NULL;
+        g_private->_phoneArea = m;
         g_private->_masks.push_front(*m);
     }
 }
