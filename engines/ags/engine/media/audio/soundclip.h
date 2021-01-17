@@ -64,6 +64,7 @@ struct SOUNDCLIP {
 	int _volAsPercentage;
 	int _vol;
 	int _volModifier;
+	bool _repeat;
 
 	SOUNDCLIP();
 	virtual ~SOUNDCLIP();

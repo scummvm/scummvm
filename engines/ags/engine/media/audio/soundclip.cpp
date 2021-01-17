@@ -28,7 +28,7 @@ namespace AGS3 {
 SOUNDCLIP::SOUNDCLIP() : _state(SoundClipInitial), _panning(128), _panningAsPercentage(0),
 		_sourceClip(nullptr), _sourceClipType(0), _speed(1000), _priority(50),
 		_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0),
-		_volAsPercentage(100), _vol(0), _volModifier(0) {
+		_volAsPercentage(100), _vol(0), _volModifier(0), _repeat(false) {
 	_mixer = ::AGS::g_vm->_mixer;
 }
 
@@ -69,6 +69,8 @@ int SOUNDCLIP::play_from(int position) {
 SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat) :
 		SOUNDCLIP(), _stream(stream) {
 	_mixer = ::AGS::g_vm->_mixer;
+	_repeat = repeat;
+	_vol = volume;
 
 	if (repeat) {
 		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);

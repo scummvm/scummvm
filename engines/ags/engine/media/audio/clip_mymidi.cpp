@@ -28,7 +28,8 @@
 namespace AGS3 {
 
 MYMIDI::MYMIDI(Common::SeekableReadStream *data, bool repeat) :
-		_data(data), _repeat(repeat), lengthInSeconds(0) {
+		_data(data), lengthInSeconds(0) {
+	_repeat = repeat;
 }
 
 void MYMIDI::destroy() {

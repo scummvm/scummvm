@@ -30,7 +30,6 @@ namespace AGS3 {
 // MIDI
 struct MYMIDI : public SOUNDCLIP {
 	Common::SeekableReadStream *_data;
-	bool _repeat;
 	int lengthInSeconds;
 
 	MYMIDI(Common::SeekableReadStream *data, bool repeat);
