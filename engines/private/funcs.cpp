@@ -45,8 +45,8 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
 void SyncSound(ArgArray args) {
     // assert types
     debug("SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
-    Common::String *s = new Common::String(args[1].u.str);
-    g_private->_nextSetting = s;
+    Common::String *nextSetting = new Common::String(args[1].u.str);
+    g_private->_nextSetting = nextSetting;
 
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
@@ -200,6 +200,13 @@ void SetModifiedFlag(ArgArray args) {
     g_private->_modified = (bool) args[0].u.val;
 }
 
+void PaperShuffleSound(ArgArray args) {
+    // assert types
+    debug("PaperShuffleSound()");
+    Common::String *s = g_private->getPaperShuffleSound();
+    g_private->playSound(*s, 1); 
+}
+
 void Sound(ArgArray args) {
     // assert types
     debug("Sound(%s)", args[0].u.str);
@@ -241,9 +248,24 @@ void Transition(ArgArray args) {
 void Movie(ArgArray args) {
     // assert types
     debug("Movie(%s, %s)", args[0].u.str, args[1].u.str);
-    if (strcmp(args[0].u.str, "\"\"") != 0)
-        g_private->_nextMovie = new Common::String(args[0].u.str);
-    g_private->_nextSetting = new Common::String(args[1].u.str);
+    Common::String *movie = new Common::String(args[0].u.str);
+    Common::String *nextSetting = new Common::String(args[1].u.str);
+    bool isEmptyString = strcmp(args[0].u.str, "\"\"") == 0;
+
+    if (!g_private->_playedMovies.contains(*movie) && !isEmptyString) {
+        g_private->_nextMovie = movie;
+        g_private->_playedMovies.setVal(*movie, true);
+        g_private->_nextSetting = nextSetting;
+
+    } else if (isEmptyString) {
+        g_private->_repeatedMovieExit = nextSetting;
+        debug("repeated movie exit is %s", nextSetting->c_str());
+    } else {
+        debug("movie %s already played", movie->c_str());
+        g_private->_nextSetting = g_private->_repeatedMovieExit;
+    }
+
+    //g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
 void CRect(ArgArray args) {
@@ -349,9 +371,11 @@ void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
 }
 
 void AMRadioClip(ArgArray args) {
+    assert(args.size() <= 4);
     AddSound(args[0].u.str, "AMRadioClip");
 }
 void PoliceClip(ArgArray args) {
+    assert(args.size() <= 4);
     AddSound(args[0].u.str, "PoliceClip");
 }
 void PhoneClip(ArgArray args) {
@@ -359,6 +383,7 @@ void PhoneClip(ArgArray args) {
         debug("Unimplemented PhoneClip special case");
         return;
     }
+    
     AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
 }
 
@@ -444,6 +469,7 @@ static struct FuncTable {
     { PoliceClip,      "PoliceClip"},
     { PhoneClip,       "PhoneClip"},
     { SoundArea,       "SoundArea"},
+    { PaperShuffleSound, "PaperShuffleSound"},
 
     // Images
     { Bitmap,          "Bitmap"},

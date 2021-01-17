@@ -66,6 +66,8 @@ typedef Common::List<PhoneInfo> PhoneList;
 
 // hash tables
 
+typedef Common::HashMap<Common::String, bool> PlayedMovieTable;
+
 class PrivateEngine : public Engine {
 private:
 	// We need random numbers
@@ -138,8 +140,15 @@ public:
 	int _mode;
     bool _modified;
     Common::String *_nextMovie;
+	PlayedMovieTable _playedMovies;
+	Common::String *_repeatedMovieExit;
     ExitList _exits;
     MaskList _masks;
+
+	// Sounds
+
+    Common::String *getPaperShuffleSound();
+	Common::String *_paperShuffleSound;
 
 	// Radios
 
