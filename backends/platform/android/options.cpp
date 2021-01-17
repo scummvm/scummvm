@@ -53,6 +53,8 @@ public:
 	// OptionsContainerWidget API
 	void load() override;
 	bool save() override;
+	bool hasKeys() override;
+	void setEnabled(bool e) override;
 
 private:
 	// OptionsContainerWidget API
@@ -60,10 +62,12 @@ private:
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
 	GUI::CheckboxWidget *_touchpadCheckbox;
+
+	bool _enabled;
 };
 
 AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", false, domain) {
+		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", false, domain), _enabled(true) {
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.TouchpadMode", _("Touchpad mouse mode"));
@@ -75,7 +79,7 @@ AndroidOptionsWidget::~AndroidOptionsWidget() {
 void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(16, 16, 16, 16)
+	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
 	            .addWidget("TouchpadMode", "Checkbox")
 	        .closeLayout()
@@ -88,12 +92,28 @@ void AndroidOptionsWidget::load() {
 }
 
 bool AndroidOptionsWidget::save() {
-	ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
-	ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
+	if (_enabled) {
+		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
+		ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
+	} else {
+		ConfMan.removeKey("onscreen_control", _domain);
+		ConfMan.removeKey("touchpad_mouse_mode", _domain);
+	}
 
 	return true;
 }
 
+bool AndroidOptionsWidget::hasKeys() {
+	return ConfMan.hasKey("onscreen_control", _domain) ||
+	       ConfMan.hasKey("touchpad_mouse_mode", _domain);
+}
+
+void AndroidOptionsWidget::setEnabled(bool e) {
+	_enabled = e;
+
+	_onscreenCheckbox->setEnabled(e);
+	_touchpadCheckbox->setEnabled(e);
+}
 
 
 GUI::OptionsContainerWidget *OSystem_Android::buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
