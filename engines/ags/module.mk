@@ -28,10 +28,7 @@ MODULE_OBJS = \
 	lib/audio/aldumb.o \
 	lib/audio/digi.o \
 	lib/audio/midi.o \
-	lib/audio/mp3.o \
-	lib/audio/ogg.o \
 	lib/audio/sound.o \
-	lib/audio/wav.o \
 	lib/dumb-0.9.2/dumb.o \
 	lib/dumb-0.9.2/dumbfile.o \
 	lib/dumb-0.9.2/helpers/clickrem.o \
@@ -281,14 +278,7 @@ MODULE_OBJS = \
 	engine/main/update.o \
     engine/media/audio/ambientsound.o \
     engine/media/audio/audio.o \
-    engine/media/audio/clip_mydumbmod.o \
-    engine/media/audio/clip_myjgmod.o \
     engine/media/audio/clip_mymidi.o \
-    engine/media/audio/clip_mymp3.o \
-    engine/media/audio/clip_myogg.o \
-    engine/media/audio/clip_mystaticmp3.o \
-    engine/media/audio/clip_mystaticogg.o \
-    engine/media/audio/clip_mywave.o \
     engine/media/audio/queuedaudioitem.o \
     engine/media/audio/sound.o \
     engine/media/audio/soundcache.o \

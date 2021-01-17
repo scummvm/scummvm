@@ -34,15 +34,7 @@ BEGIN_MIDI_DRIVER_LIST
 END_MIDI_DRIVER_LIST
 
 int midi_card;
-
 int midi_input_card;
-
-volatile long midi_pos;       /* current position in the midi file, in beats */
-volatile long midi_time;      /* current position in the midi file, in seconds */
-
-long midi_loop_start;         /* where to loop back to at EOF */
-long midi_loop_end;           /* loop when we hit this position */
-
 
 int detect_midi_driver(int driver_id) {
 	return 16;
