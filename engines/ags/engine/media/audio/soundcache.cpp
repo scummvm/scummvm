@@ -216,7 +216,7 @@ Common::SeekableReadStream *get_cached_sound(const AssetPath &asset_name) {
 		return nullptr;
 
 	// Create a read stream for the sound
-	return new Common::MemoryReadStream(data, muslen, DisposeAfterUse::YES);
+	return new Common::MemoryReadStream(data, muslen, DisposeAfterUse::NO);
 }
 
 } // namespace AGS3
