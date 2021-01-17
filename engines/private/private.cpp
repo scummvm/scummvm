@@ -62,6 +62,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _mode = -1;
     _frame = new Common::String("inface/general/inface2.bmp");
 
+    _paperShuffleSound = new Common::String("global/audio/glsfx0");
     _policeRadioArea = NULL;
     _AMRadioArea = NULL;
     _phoneArea = NULL;
@@ -400,6 +401,9 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 }
 
 void PrivateEngine::checkPhoneCall() {
+    if (_phoneArea == NULL)
+        return;
+
     if (_phone.empty())
         return;
 
@@ -498,6 +502,8 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     }
 
     size = stream->readUint32LE();
+    _phone.clear();
+
     for (uint32 j = 0; j < size; ++j) {
         PhoneInfo *i = (PhoneInfo*) malloc(sizeof(PhoneInfo));
 
@@ -505,6 +511,17 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         i->flag  = variables.getVal(stream->readString()); 
         i->val   = stream->readUint32LE();
         _phone.push_back(*i);
+    }
+
+    *_repeatedMovieExit = stream->readString();
+
+    _playedMovies.clear();
+    size = stream->readUint32LE();
+    Common::String *movie;
+
+    for (uint32 i = 0; i < size; ++i) {
+        movie = new Common::String(stream->readString());
+        _playedMovies.setVal(movie, true);
     }
 
     //syncGameStream(s);
@@ -541,6 +558,15 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
         stream->writeString(*it->flag->name);
         stream->writeByte(0);
         stream->writeUint32LE(it->val);
+    }
+
+    stream->writeString(*_repeatedMovieExit);
+    stream->writeByte(0);
+
+    stream->writeUint32LE(_playedMovies.size());
+    for (PlayedMovieTable::iterator it = _playedMovies.begin(); it != _playedMovies.end(); ++it) {
+        stream->writeString(it->_key);
+        stream->writeByte(0);
     }
 
     return Common::kNoError;
@@ -686,5 +712,17 @@ bool PrivateEngine::getRandomBool(uint p) {
     return (r <= p);
 }
 
+Common::String *PrivateEngine::getPaperShuffleSound() {
+    uint r = 32 + _rnd->getRandomNumber(8);
+
+    // there is no global/audio/glsfx038.wav, 
+    // so we should avoid that number
+    if ( r == 38)
+      r = 0;
+
+    char f[7];
+    sprintf(f, "%d.wav", r);
+    return (new Common::String(*_paperShuffleSound + f));
+}
 
 } // End of namespace Private
