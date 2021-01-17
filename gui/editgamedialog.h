@@ -87,6 +87,7 @@ protected:
 
 	CheckboxWidget *_globalGraphicsOverride;
 	CheckboxWidget *_globalShaderOverride;
+	CheckboxWidget *_globalBackendOverride;
 	CheckboxWidget *_globalAudioOverride;
 	CheckboxWidget *_globalMIDIOverride;
 	CheckboxWidget *_globalMT32Override;

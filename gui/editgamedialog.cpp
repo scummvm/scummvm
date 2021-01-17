@@ -65,6 +65,7 @@ enum {
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalShaderOverride = 'OSHD',
+	kCmdGlobalBackendOverride = 'OBAK',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
 	kCmdGlobalMT32Override = 'OM32',
@@ -245,6 +246,11 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend");
 
+	if (g_system->getOverlayWidth() > 320)
+		_globalBackendOverride = new CheckboxWidget(tab, "GameOptions_Backend.EnableTabCheckbox", _("Override global backend settings"), Common::U32String(), kCmdGlobalBackendOverride);
+	else
+		_globalBackendOverride = new CheckboxWidget(tab, "GameOptions_Backend.EnableTabCheckbox", _c("Override global backend settings", "lowres"), Common::U32String(), kCmdGlobalBackendOverride);
+
 	g_system->registerDefaultSettings(_domain);
 	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GameOptions_Backend.Container", _domain);
 
@@ -410,6 +416,11 @@ void EditGameDialog::open() {
 		_globalShaderOverride->setState(e);
 	}
 
+	if (_backendOptions) {
+		e = _backendOptions->hasKeys();
+		_globalBackendOverride->setState(e);
+	}
+
 	e = ConfMan.hasKey("music_driver", _domain) ||
 		ConfMan.hasKey("output_rate", _domain) ||
 		ConfMan.hasKey("opl_driver", _domain) ||
@@ -508,6 +519,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdGlobalShaderOverride:
 		setShaderSettingsState(data != 0);
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kCmdGlobalBackendOverride:
+		_backendOptions->setEnabled(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalAudioOverride:

@@ -476,6 +476,15 @@ public:
 	 */
 	virtual bool save() = 0;
 
+	/** Implementing classes should return if there are relevant keys set in the configuration domain
+	 *
+	 * @return true if there are relevant keys set in the configuration domain
+	 */
+	virtual bool hasKeys() { return true; }
+
+	/** Implementing classes should enable or disable all active widgets */
+	virtual void setEnabled(bool e) {}
+
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	void setDomain(const Common::String &domain) { _domain = domain; }
 
