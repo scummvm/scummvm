@@ -517,6 +517,21 @@ bool Actor::hasAnim(Animation::Sequence anim) {
 	return tracker.init(this, anim, dir_north);
 }
 
+void Actor::setToStartOfAnim(Animation::Sequence anim) {
+	AnimationTracker tracker;
+	if (tracker.init(this, anim, getDir())) {
+		const AnimFrame *f = tracker.getAnimFrame();
+		setFrame(f->_frame);
+		if ((GAME_IS_U8 && f->is_flipped())
+			|| (GAME_IS_CRUSADER && f->is_cruflipped())) {
+			setFlag(Item::FLG_FLIPPED);
+		} else {
+			clearFlag(Item::FLG_FLIPPED);
+		}
+		setLastAnim(anim);
+	}
+}
+
 Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
                                  unsigned int steps, PathfindingState *state) {
 	if (dir < 0 || dir > 16) return Animation::FAILURE;

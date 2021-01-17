@@ -1768,6 +1768,8 @@ void Item::enterFastArea() {
 	if (_shape == 0x2c8 && GAME_IS_U8)
 		return;
 
+	const ShapeInfo *si = getShapeInfo();
+
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
 		Actor *actor = dynamic_cast<Actor *>(this);
@@ -1778,16 +1780,26 @@ void Item::enterFastArea() {
 			// dead actor, don't call the usecode
 		} else {
 			if (actor && GAME_IS_CRUSADER) {
+				uint16 lastactivity = actor->getLastActivityNo();
 				actor->clearLastActivityNo();
 				actor->clearInCombat();
+				actor->setToStartOfAnim(Animation::stand);
 				actor->clearActorFlag(Actor::ACT_WEAPONREADY);
+				actor->setActivity(lastactivity);
 			}
+
+			//
+			// TODO: Check this. The original games only call usecode for actors or
+			// NOISY types.  Calling for all types like this shouldn't cause any issues
+			// as long as all the types which implement event F are NPC or NOISY.
+			// Should confirm if that is the case.
+			//
+			// if (actor || si->_flags & ShapeInfo::SI_NOISY)
 			callUsecodeEvent_enterFastArea();
 		}
 	}
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
-		const ShapeInfo *si = getShapeInfo();
 		if ((si->_flags & ShapeInfo::SI_CRU_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}

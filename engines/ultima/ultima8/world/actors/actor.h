@@ -232,6 +232,10 @@ public:
 	//! check if this actor has a specific animation
 	bool hasAnim(Animation::Sequence anim);
 
+	//! Set the frame to the first frame of an anim (used in resetting NPCs etc)
+	//! Uses current direction and sets last anim no.
+	void setToStartOfAnim(Animation::Sequence anim);
+
 	//! check if the given animation can be done from the location in state,
 	//! without walking into things. If state is non-zero, and successful,
 	//! state will be updated to after the animation. If unsuccessful,
