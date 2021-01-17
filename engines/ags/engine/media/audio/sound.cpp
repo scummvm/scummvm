@@ -32,7 +32,6 @@
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/media/audio/sound.h"
 #include "ags/engine/media/audio/audiointernaldefs.h"
-#include "ags/engine/media/audio/clip_mywave.h"
 #include "ags/engine/media/audio/soundcache.h"
 #include "ags/engine/media/audio/clip_mymidi.h"
 #include "ags/engine/util/mutex_lock.h"

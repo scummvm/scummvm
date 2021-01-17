@@ -597,7 +597,7 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 	else if (soundType == PSND_OGGSTATIC)
 		newcha = my_load_static_ogg(asset_name, volume, (loop != 0));
 	else if (soundType == PSND_MIDI) {
-		if (midi_pos >= 0)
+		if (::AGS::g_music->isPlaying())
 			quit("!IAGSEngine::PlaySoundChannel: MIDI already in use");
 		newcha = my_load_midi(asset_name, loop);
 		newcha->set_volume(volume);

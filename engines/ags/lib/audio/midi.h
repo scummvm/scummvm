@@ -54,9 +54,6 @@ AL_VAR(int, midi_card);
 
 AL_VAR(int, midi_input_card);
 
-AL_VAR(volatile long, midi_pos);       /* current position in the midi file, in beats */
-AL_VAR(volatile long, midi_time);      /* current position in the midi file, in seconds */
-
 AL_VAR(long, midi_loop_start);         /* where to loop back to at EOF */
 AL_VAR(long, midi_loop_end);           /* loop when we hit this position */
 
