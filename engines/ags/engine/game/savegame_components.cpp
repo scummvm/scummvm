@@ -361,20 +361,16 @@ HSaveError WriteAudio(PStream out) {
 	// Audio clips and crossfade
 	for (int i = 0; i <= MAX_SOUND_CHANNELS; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
-		if ((ch != nullptr) && (ch->sourceClip != nullptr)) {
-			out->WriteInt32(((ScriptAudioClip *)ch->sourceClip)->id);
+		if ((ch != nullptr) && (ch->_sourceClip != nullptr)) {
+			out->WriteInt32(((ScriptAudioClip *)ch->_sourceClip)->id);
 			out->WriteInt32(ch->get_pos());
-			out->WriteInt32(ch->priority);
-			out->WriteInt32(ch->repeat ? 1 : 0);
-			out->WriteInt32(ch->vol);
-			out->WriteInt32(ch->panning);
-			out->WriteInt32(ch->volAsPercentage);
-			out->WriteInt32(ch->panningAsPercentage);
+			out->WriteInt32(ch->_priority);
+ 			out->WriteInt32(ch->_panningAsPercentage);
 			out->WriteInt32(ch->get_speed());
 			// since version 1
-			out->WriteInt32(ch->xSource);
-			out->WriteInt32(ch->ySource);
-			out->WriteInt32(ch->maximumPossibleDistanceAway);
+			out->WriteInt32(ch->_xSource);
+			out->WriteInt32(ch->_ySource);
+			out->WriteInt32(ch->_maximumPossibleDistanceAway);
 		} else {
 			out->WriteInt32(-1);
 		}

@@ -30,14 +30,12 @@
 
 namespace AGS {
 
-// A MIDI file
-typedef Common::Array<byte> MIDI;
-
 class Music : public Audio::MidiPlayer {
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Common::Array<byte> _midiData;
+	bool _isFirstTime;
 protected:
 	// Overload Audio::MidiPlayer method
 	void sendToChannel(byte channel, uint32 b) override;
@@ -48,7 +46,7 @@ public:
 	/**
 	 * Play music
 	 */
-	void playMusic(const MIDI *midi, bool repeat = false);
+	void playMusic(Common::SeekableReadStream *midi, bool repeat = false);
 
 	/**
 	 * Seek within the MIDI

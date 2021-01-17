@@ -28,7 +28,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
-
+#ifdef DEPRECATED
 struct MYOGG : public SOUNDCLIP {
 	ALOGG_OGGSTREAM *stream;
 	PACKFILE *in;
@@ -67,6 +67,7 @@ private:
 	void adjust_stream();
 };
 
+#endif
 } // namespace AGS3
 
 #endif

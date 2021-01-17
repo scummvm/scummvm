@@ -37,8 +37,6 @@ namespace AGS3 {
 
 AL_ARRAY(_DRIVER_INFO, _midi_driver_list);
 
-using MIDI = ::AGS::MIDI;
-
 /* macros for constructing the driver lists */
 #define BEGIN_MIDI_DRIVER_LIST                                 \
 	_DRIVER_INFO _midi_driver_list[] =                          \
@@ -64,15 +62,7 @@ AL_VAR(long, midi_loop_end);           /* loop when we hit this position */
 
 
 AL_FUNC(int, detect_midi_driver, (int driver_id));
-
-extern void stop_midi();
-extern void destroy_midi(MIDI *tune);
-extern int play_midi(MIDI *tune, bool repeat);
-extern size_t get_midi_length(MIDI *tune);
-extern void midi_seek(int target);
-extern void midi_pause();
-extern void midi_resume();
-extern int load_midi_patches();
+AL_FUNC(int, load_midi_patches, ());
 
 } // namespace AGS3
 

@@ -27,7 +27,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
-
+#ifdef DEPRECATED
 // pre-loaded (non-streaming) MP3 file
 struct MYSTATICMP3 : public SOUNDCLIP {
 	ALMP3_MP3 *tune;
@@ -60,6 +60,7 @@ protected:
 private:
 	void adjust_stream();
 };
+#endif
 
 } // namespace AGS3
 

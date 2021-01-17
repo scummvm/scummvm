@@ -54,7 +54,7 @@ void AudioClip_Stop(ScriptAudioClip *clip) {
 	AudioChannelsLock lock;
 	for (int i = 0; i < MAX_SOUND_CHANNELS; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
-		if ((ch != nullptr) && (ch->sourceClip == clip)) {
+		if ((ch != nullptr) && (ch->_sourceClip == clip)) {
 			AudioChannel_Stop(&scrAudioChannel[i]);
 		}
 	}

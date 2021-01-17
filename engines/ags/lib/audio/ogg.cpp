@@ -25,7 +25,7 @@
 #include "ags/ags.h"
 
 namespace AGS3 {
-
+#ifdef DEPRECATED
 ALOGG_OGG *alogg_create_ogg_from_buffer(void *data, int data_len) {
 	warning("TODO: alogg_create_ogg_from_buffer");
 	return nullptr;
@@ -142,5 +142,5 @@ int alogg_get_pos_msecs_oggstream(ALOGG_OGGSTREAM *ogg) {
 	warning("TODO: alogg_get_pos_msecs_oggstream");
 	return 0;
 }
-
+#endif
 } // namespace AGS3

@@ -48,61 +48,9 @@ int detect_midi_driver(int driver_id) {
 	return 16;
 }
 
-
-void stop_midi() {
-	::AGS::g_music->stop();
-}
-
-void destroy_midi(MIDI *midi) {
-	delete midi;
-}
-
-int play_midi(MIDI *tune, bool repeat) {
-	::AGS::g_music->playMusic(tune, repeat);
-	return 0;
-}
-
-size_t get_midi_length(MIDI *tune) {
-	warning("TODO: get_midi_length");
-	return 0;
-}
-
-void midi_seek(int target) {
-	::AGS::g_music->seek(target);
-}
-
-void midi_pause() {
-	::AGS::g_music->pause();
-}
-
-void midi_resume() {
-	::AGS::g_music->resume();
-}
-
 int load_midi_patches() {
 	warning("TODO: load_midi_patches");
 	return 0;
-}
-
-#define MIDI_BLOCK_SIZE 32768
-
-MIDI *load_midi_pf(PACKFILE *fp) {
-	MIDI *midi = new MIDI();
-	int bytesRead;
-
-	// Iterate through loading blocks of MIDI data
-	for (;;) {
-		size_t priorSize = midi->size();
-		midi->resize(priorSize + MIDI_BLOCK_SIZE);
-		bytesRead = pack_fread(&(*midi)[priorSize], MIDI_BLOCK_SIZE, fp);
-
-		if (bytesRead < MIDI_BLOCK_SIZE) {
-			midi->resize(priorSize + bytesRead);
-			break;
-		}
-	}
-
-	return midi;
 }
 
 } // namespace AGS3

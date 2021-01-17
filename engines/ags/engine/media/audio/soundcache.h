@@ -24,6 +24,7 @@
 #define AGS_ENGINE_MEDIA_AUDIO_SOUNDCACHE_H
 
 #include "ags/engine/ac/asset_helper.h"
+#include "common/stream.h"
 
 namespace AGS3 {
 
@@ -52,6 +53,7 @@ extern int psp_midi_preload_patches;
 void clear_sound_cache();
 void sound_cache_free(char *buffer, bool is_wave);
 char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size);
+Common::SeekableReadStream *get_cached_sound(const AssetPath &asset_name);
 
 } // namespace AGS3
 

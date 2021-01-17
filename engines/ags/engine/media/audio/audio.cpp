@@ -202,9 +202,9 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 			stop_and_destroy_channel(i);
 			break;
 		}
-		if ((ch->priority < lowestPrioritySoFar) &&
-			(ch->sourceClipType == clip->type)) {
-			lowestPrioritySoFar = ch->priority;
+		if ((ch->_priority < lowestPrioritySoFar) &&
+			(ch->_sourceClipType == clip->type)) {
+			lowestPrioritySoFar = ch->_priority;
 			lowestPriorityID = i;
 		}
 	}
@@ -259,8 +259,8 @@ SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
 	}
 	if (soundClip != nullptr) {
 		soundClip->set_volume_percent(audioClip->defaultVolume);
-		soundClip->sourceClip = audioClip;
-		soundClip->sourceClipType = audioClip->type;
+		soundClip->_sourceClip = audioClip;
+		soundClip->_sourceClipType = audioClip->type;
 	}
 	return soundClip;
 }
@@ -337,7 +337,7 @@ static void audio_update_polled_stuff() {
 
 // Applies a volume drop modifier to the clip, in accordance to its audio type
 static void apply_volume_drop_to_clip(SOUNDCLIP *clip) {
-	int audiotype = clip->sourceClipType;
+	int audiotype = clip->_sourceClipType;
 	clip->apply_volume_modifier(-(game.audioClipTypes[audiotype].volume_reduction_while_speech_playing * 255 / 100));
 }
 
@@ -370,7 +370,7 @@ ScriptAudioChannel *play_audio_clip_on_channel(int channel, ScriptAudioClip *cli
 		}
 		return nullptr;
 	}
-	soundfx->priority = priority;
+	soundfx->_priority = priority;
 
 	if (play.crossfading_in_channel == channel) {
 		soundfx->set_volume_percent(0);
@@ -573,13 +573,13 @@ void update_directional_sound_vol() {
 
 	for (int chnum = 1; chnum < MAX_SOUND_CHANNELS; chnum++) {
 		auto *ch = lock.GetChannelIfPlaying(chnum);
-		if ((ch != nullptr) && (ch->xSource >= 0)) {
+		if ((ch != nullptr) && (ch->_xSource >= 0)) {
 			ch->apply_directional_modifier(
-				get_volume_adjusted_for_distance(ch->vol,
-					ch->xSource,
-					ch->ySource,
-					ch->maximumPossibleDistanceAway) -
-				ch->vol);
+				get_volume_adjusted_for_distance(ch->_vol,
+					ch->_xSource,
+					ch->_ySource,
+					ch->_maximumPossibleDistanceAway) -
+				ch->_vol);
 		}
 	}
 }
@@ -685,11 +685,11 @@ static int play_sound_priority(int val1, int priority) {
 				assert(usechan == i);
 				auto *chan = lock.GetChannel(usechan);
 				if (chan)
-					chan->priority = priority;
+					chan->_priority = priority;
 			}
 			return usechan;
-		} else if (ch->priority < lowest_pri) {
-			lowest_pri = ch->priority;
+		} else if (ch->_priority < lowest_pri) {
+			lowest_pri = ch->_priority;
 			lowest_pri_id = i;
 		}
 
@@ -705,7 +705,7 @@ static int play_sound_priority(int val1, int priority) {
 			assert(usechan == lowest_pri_id);
 			auto *ch = lock.GetChannel(usechan);
 			if (ch)
-				ch->priority = priority;
+				ch->_priority = priority;
 			return usechan;
 		}
 	}
@@ -830,7 +830,7 @@ void apply_volume_drop_modifier(bool applyModifier) {
 
 	for (int i = 0; i < MAX_SOUND_CHANNELS; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
-		if (ch && ch->sourceClip != nullptr) {
+		if (ch && ch->_sourceClip != nullptr) {
 			if (applyModifier)
 				apply_volume_drop_to_clip(ch);
 			else
