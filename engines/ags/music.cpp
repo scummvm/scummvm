@@ -97,7 +97,7 @@ void Music::playMusic(Common::SeekableReadStream *midi, bool repeat) {
 }
 
 void Music::seek(size_t offset) {
-	warning("TODO: Music::seek to offset %u", offset);
+	warning("TODO: Music::seek to offset %u", (uint32)offset);
 }
 
 } // End of namespace AGS
