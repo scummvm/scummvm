@@ -352,6 +352,7 @@ HSaveError WriteAudio(PStream out) {
 	// Game content assertion
 	out->WriteInt32(game.audioClipTypes.size());
 	out->WriteInt32(game.audioClips.size()); // [ivan-mogilko] not necessary, kept only to avoid changing save format
+
 	// Audio types
 	for (size_t i = 0; i < game.audioClipTypes.size(); ++i) {
 		game.audioClipTypes[i].WriteToSavegame(out.get());
@@ -365,6 +366,10 @@ HSaveError WriteAudio(PStream out) {
 			out->WriteInt32(((ScriptAudioClip *)ch->_sourceClip)->id);
 			out->WriteInt32(ch->get_pos());
 			out->WriteInt32(ch->_priority);
+			out->WriteInt32(ch->_repeat ? 1 : 0);
+			out->WriteInt32(ch->_vol);
+			out->WriteInt32(ch->_panning);
+			out->WriteInt32(ch->_volAsPercentage);
  			out->WriteInt32(ch->_panningAsPercentage);
 			out->WriteInt32(ch->get_speed());
 			// since version 1
@@ -375,6 +380,7 @@ HSaveError WriteAudio(PStream out) {
 			out->WriteInt32(-1);
 		}
 	}
+
 	out->WriteInt32(crossFading);
 	out->WriteInt32(crossFadeVolumePerStep);
 	out->WriteInt32(crossFadeStep);
@@ -385,18 +391,17 @@ HSaveError WriteAudio(PStream out) {
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)
 		ambient[i].WriteToFile(out.get());
+
 	return HSaveError::None();
 }
 
 HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
+
 	// Game content assertion
 	if (!AssertGameContent(err, in->ReadInt32(), game.audioClipTypes.size(), "Audio Clip Types"))
 		return err;
 	in->ReadInt32(); // audio clip count
-	/* [ivan-mogilko] looks like it's not necessary to assert, as there's no data serialized for clips
-	if (!AssertGameContent(err, in->ReadInt32(), game.audioClips.size(), "Audio Clips"))
-	    return err;*/
 
 	// Audio types
 	for (size_t i = 0; i < game.audioClipTypes.size(); ++i) {
@@ -428,6 +433,7 @@ HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 			}
 		}
 	}
+
 	crossFading = in->ReadInt32();
 	crossFadeVolumePerStep = in->ReadInt32();
 	crossFadeStep = in->ReadInt32();
@@ -438,6 +444,7 @@ HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)
 		ambient[i].ReadFromFile(in.get());
+
 	for (int i = 1; i < MAX_SOUND_CHANNELS; ++i) {
 		if (ambient[i].channel == 0) {
 			r_data.DoAmbient[i] = 0;
