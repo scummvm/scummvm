@@ -221,7 +221,7 @@ private:
 	void createEggHatcher();
 
 	//! clip the given map chunk numbers to iterate over them safely
-	void clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const;
+	static void clipMapChunks(int &minx, int &maxx, int &miny, int &maxy);
 
 	Map *_currentMap;
 

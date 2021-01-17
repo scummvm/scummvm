@@ -495,7 +495,7 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	}
 }
 
-void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const {
+inline void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) {
 	minx = CLIP(minx, 0, MAP_NUM_CHUNKS - 1);
 	maxx = CLIP(maxx, 0, MAP_NUM_CHUNKS - 1);
 	miny = CLIP(miny, 0, MAP_NUM_CHUNKS - 1);
@@ -707,9 +707,9 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shapeflags,
                                  ObjId item_, const Item **support_,
                                  ObjId *roof_, const Item **blocker_) const {
-	const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
+	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
 	                         ShapeInfo::SI_ROOF);
-	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
+	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
 	const Item *support = nullptr;

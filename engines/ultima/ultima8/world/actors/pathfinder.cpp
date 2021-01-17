@@ -90,7 +90,7 @@ bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) cons
 	return (range <= xyRange);
 }
 
-bool PathfindingState::checkHit(const Actor *_actor, const Actor *target) const {
+bool PathfindingState::checkHit(const Actor *_actor, const Item *target) const {
 	assert(target);
 #if 0
 	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
@@ -201,8 +201,7 @@ bool Pathfinder::checkTarget(const PathNode *node) const {
 	// but otherwise it won't work properly yet -wjp
 	if (_targetItem) {
 		if (_hitMode) {
-			return node->state.checkHit(_actor,
-			                            dynamic_cast<Actor *>(_targetItem));
+			return node->state.checkHit(_actor, _targetItem);
 		} else {
 			return node->state.checkItem(_targetItem, 32, 8);
 		}
