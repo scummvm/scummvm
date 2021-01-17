@@ -25,6 +25,7 @@
 #include "engines/nancy/scene.h"
 #include "engines/nancy/logic.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/graphics.h"
 
 namespace Nancy {
 
@@ -271,14 +272,6 @@ void StopTimer::execute(NancyEngine *engine) {
     isDone = true;
 }
 
-uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
-    stream.seek(0x28, SEEK_CUR);
-    uint16 size = stream.readUint16LE() * 0x12 + 0x2A;
-    stream.seek(-0x2A, SEEK_CUR);
-
-    return readRaw(stream, size); // TODO
-}
-
 uint16 EventFlags::readData(Common::SeekableReadStream &stream) {
     for (uint i = 0; i < 10; ++i) {
         descs[i].label = stream.readSint16LE();
@@ -294,6 +287,47 @@ void EventFlags::execute(NancyEngine *engine) {
         }
     }
     isDone = true;
+}
+
+uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
+    uint16 returnSize = EventFlags::readData(stream);
+    uint16 numHotspots = stream.readUint16LE();
+    for (uint16 i = 0; i < numHotspots; ++i) {
+        hotspots.push_back(HotspotDesc());
+        HotspotDesc &newDesc = hotspots[i];
+        newDesc.frameID = stream.readUint16LE();
+        newDesc.coords.left = stream.readUint32LE();
+        newDesc.coords.top = stream.readUint32LE();
+        newDesc.coords.right = stream.readUint32LE();
+        newDesc.coords.bottom = stream.readUint32LE();
+    }
+    returnSize += numHotspots * 0x12 + 0x2;
+
+    return returnSize;
+}
+
+void EventFlagsMultiHS::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            // turn main rendering on
+            state = kRun;
+            // fall through
+        case kRun:
+            hasHotspot = false;
+            for (uint i = 0; i < hotspots.size(); ++i) {
+                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                    hasHotspot = true;
+                    hotspot = hotspots[i].coords;
+                }
+            }
+            break;
+        case kEnd:
+            hasHotspot = false;
+            EventFlags::execute(engine);
+            break;
+        default:
+            break;
+    }
 }
 
 uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {

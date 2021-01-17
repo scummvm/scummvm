@@ -218,11 +218,6 @@ public:
     virtual void execute(NancyEngine *engine) override;
 };
 
-class EventFlagsMultiHS : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class EventFlags : public ActionRecord {
 public:
     struct FlagDesc {
@@ -233,6 +228,18 @@ public:
     virtual void execute(NancyEngine *engine) override;
 
     FlagDesc descs[10];
+};
+
+class EventFlagsMultiHS : public EventFlags {
+public:
+    struct HotspotDesc {
+        uint16 frameID = 0;
+        Common::Rect coords;
+    };
+    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    Common::Array<HotspotDesc> hotspots;
 };
 
 class OrderingPuzzle : public ActionRecord {
