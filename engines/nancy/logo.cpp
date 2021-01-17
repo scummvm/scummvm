@@ -84,7 +84,7 @@ void LogoSequence::run() {
 		_runState = kWait;
 		break;
 	case kWait:
-		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput(InputManager::kLeftMouseButton)))
+		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput(InputManager::kLeftMouseButtonDown)))
 			_state = kStop;
 	}
 }

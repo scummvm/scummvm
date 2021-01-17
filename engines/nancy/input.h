@@ -59,14 +59,16 @@ enum NancyAction {
 };
 
 public:
-enum InputType : byte {
-    kLeftMouseButton    = 1 << 0,
-    kRightMouseButton   = 1 << 1,
-    kMoveUp             = 1 << 2,
-    kMoveDown           = 1 << 3,
-    kMoveLeft           = 1 << 4,
-    kMoveRight          = 1 << 5,
-    kMoveFastModifier   = 1 << 6
+enum InputType : uint16 {
+    kLeftMouseButtonDown    = 1 << 0,
+    kRightMouseButtonDown   = 1 << 1,
+    kLeftMouseButtonUp    = 1 << 2,
+    kRightMouseButtonUp   = 1 << 3,
+    kMoveUp             = 1 << 4,
+    kMoveDown           = 1 << 5,
+    kMoveLeft           = 1 << 6,
+    kMoveRight          = 1 << 7,
+    kMoveFastModifier   = 1 << 8
 };
 
     InputManager(NancyEngine *engine) : _engine(engine), _inputs(0), isClickValidLMB(false), isClickValidRMB(false), hoveredElementID(-1) {}
@@ -116,7 +118,7 @@ private:
     int16 pointerStyle = 0;
     bool itemHeld = false;
 
-    byte _inputs;
+    uint16 _inputs;
     Common::Point _mousePos;
 };
 

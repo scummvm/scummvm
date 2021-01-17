@@ -60,6 +60,7 @@ void InputManager::processEvents() {
 
     isClickValidLMB = false;
     isClickValidRMB = false;
+    _inputs &= ~(kLeftMouseButtonUp | kRightMouseButtonUp);
 
     Common::Event event;
 
@@ -90,10 +91,10 @@ void InputManager::processEvents() {
                         _inputs |= kMoveFastModifier;
                         break;
                     case kNancyActionLeftClick:
-                        _inputs |= kLeftMouseButton;
+                        _inputs |= kLeftMouseButtonDown;
                         break;
                     case kNancyActionRightClick:
-                        _inputs |= kRightMouseButton;
+                        _inputs |= kRightMouseButtonDown;
                         break;
                     default:
                         break;
@@ -117,13 +118,15 @@ void InputManager::processEvents() {
                         _inputs &= ~kMoveFastModifier;
                         break;
                     case kNancyActionLeftClick:
-                        _inputs &= ~kLeftMouseButton;
+                        _inputs &= ~kLeftMouseButtonDown;
+                        _inputs |= kLeftMouseButtonUp;
                         if (hoveredElementID != -1) {
                             isClickValidLMB = true;
                         }
                         break;
                     case kNancyActionRightClick:
-                        _inputs &= ~kRightMouseButton;
+                        _inputs &= ~kRightMouseButtonDown;
+                        _inputs |= kRightMouseButtonUp;
                         if (hoveredElementID != -1) {
                             isClickValidRMB = true;
                         }
