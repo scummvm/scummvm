@@ -151,6 +151,8 @@ Common::Error PrivateEngine::run() {
     }
 
     while (!shouldQuit()) {
+        checkPhoneCall();
+
         while (g_system->getEventManager()->pollEvent(event)) {
             mousePos = g_system->getEventManager()->getMousePos();
             // Events
@@ -165,6 +167,7 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
+                selectPhoneArea(mousePos);
                 selectPoliceRadioArea(mousePos);
                 selectAMRadioArea(mousePos);
                 selectLoadGame(mousePos);
@@ -220,6 +223,11 @@ Common::Error PrivateEngine::run() {
             _masks.clear();
             _loadGameMask = NULL;
             _saveGameMask = NULL;
+            _policeRadioArea = NULL;
+            _policeRadioArea = NULL;
+            _AMRadioArea = NULL;
+            _phoneArea = NULL;
+
             loadSetting(_nextSetting);
             _nextSetting = NULL;
             execute(prog);
@@ -391,6 +399,35 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 
 }
 
+void PrivateEngine::checkPhoneCall() {
+    if (_phone.empty())
+        return;
+
+    if (!_mixer->isSoundHandleActive(_soundHandle))
+        playSound(*_phonePrefix + *_phoneCallSound, 1);
+
+}
+
+void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
+    if (_phoneArea == NULL)
+        return;
+
+    if (_phone.empty())
+        return;
+
+    debug("Phone");
+    if (inMask(_phoneArea->surf, mousePos)) {
+        PhoneInfo i = _phone.back();
+        Common::String sound(*i.sound);
+        setSymbol(i.flag, i.val); 
+        sound = *_phonePrefix + sound + ".wav";
+        playSound(sound.c_str(), 1);
+        _phone.pop_back();
+    }
+
+}
+
+
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
     if (_loadGameMask == NULL)
         return;
@@ -423,6 +460,7 @@ void PrivateEngine::restartGame() {
         if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
             sym->u.val = 0;
     }
+    // TODO: reset sound lists
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -435,6 +473,38 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         s.syncAsUint32LE(val); 
         Private::Symbol *sym = variables.getVal(*it);
         sym->u.val = val;
+    }
+
+    uint32 size = 0;
+    Common::String *sound;
+    size = stream->readUint32LE();
+    debug("AMRadio size %d", size);
+    _AMRadio.clear();
+
+    for (uint32 i = 0; i < size; ++i) {
+        sound = new Common::String(stream->readString());
+        debug("sound: %s", sound->c_str());
+        _AMRadio.push_back(*sound);
+    }
+
+    size = stream->readUint32LE();
+    debug("policeRadio size %d", size);
+    _policeRadio.clear();
+
+    for (uint32 i = 0; i < size; ++i) {
+        sound = new Common::String(stream->readString());
+        debug("sound: %s", sound->c_str());
+        _policeRadio.push_back(*sound);
+    }
+
+    size = stream->readUint32LE();
+    for (uint32 j = 0; j < size; ++j) {
+        PhoneInfo *i = (PhoneInfo*) malloc(sizeof(PhoneInfo));
+
+        i->sound = new Common::String(stream->readString());
+        i->flag  = variables.getVal(stream->readString()); 
+        i->val   = stream->readUint32LE();
+        _phone.push_back(*i);
     }
 
     //syncGameStream(s);
@@ -450,6 +520,29 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
         Private::Symbol *sym = variables.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
+
+    stream->writeUint32LE(_AMRadio.size());
+    for (SoundList::iterator it = _AMRadio.begin(); it != _AMRadio.end(); ++it) {
+        stream->writeString(*it);
+        stream->writeByte(0);
+    }
+
+    stream->writeUint32LE(_policeRadio.size());
+    for (SoundList::iterator it = _policeRadio.begin(); it != _policeRadio.end(); ++it) {
+        stream->writeString(*it);
+        stream->writeByte(0);
+    }
+
+    stream->writeUint32LE(_phone.size());
+    for (PhoneList::iterator it = _phone.begin(); it != _phone.end(); ++it) {
+        //PhoneInfo *i = *it;
+        stream->writeString(*it->sound);
+        stream->writeByte(0);
+        stream->writeString(*it->flag->name);
+        stream->writeByte(0);
+        stream->writeUint32LE(it->val);
+    }
+
     return Common::kNoError;
 }
 
@@ -581,13 +674,9 @@ void PrivateEngine::drawScreen() {
         drawScreenFrame(screen);
     }
     screen->copyRectToSurface(*surface, _origin->x, _origin->y, Common::Rect(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y));
-    //screen->copyRectToSurface(*surface, _origin.x, _origin.y, Common::Rect(0, 0, _screenW, _screenH));
     g_system->unlockScreen();
     //if (_image->getPalette() != nullptr)
     //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
-    //if (_image->getPalette() != nullptr)
-    //	g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
-    //g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);
     g_system->updateScreen();
 
 }

@@ -159,6 +159,8 @@ public:
 
 	void selectAMRadioArea(Common::Point);
 	void selectPoliceRadioArea(Common::Point);
+	void selectPhoneArea(Common::Point);
+	void checkPhoneCall();
 
     // Random values
 
