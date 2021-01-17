@@ -360,7 +360,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			}
 			processFrame();
 			scaleFla2x();
-			_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, _engine->imageBuffer.getBounds(), _engine->frontVideoBuffer.getBounds());
+			_engine->frontVideoBuffer.blitFrom(_engine->imageBuffer, _engine->imageBuffer.getBounds(), _engine->frontVideoBuffer.getBounds());
 
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
