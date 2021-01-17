@@ -47,8 +47,8 @@ struct SceneSummary {
     Common::String audioFile;   // 0x40
     //
     uint16 verticalScrollDelta; // 0x72
-    uint16 sceneHasRotation;    // 0x74, could be an enum?
-    uint16 sceneHasMovement;    // 0x76, also an enum??
+    uint16 horizontalEdgeSize;  // 0x74
+    uint16 verticalEdgeSize;    // 0x76
     uint16 slowMoveTimeDelta;   // 0x78
     uint16 fastMoveTimeDelta;   // 0x7A
     byte unknown7C;             // 0x7C, enum with 4 values
@@ -61,25 +61,13 @@ struct View {
     View() =default;
     View(Common::SeekableReadStream *stream);
     // The bounds of the destination rectangle on screen
-    uint32 destLeft;        // 0x00
-    uint32 destTop;         // 0x04
-    uint32 destRight;       // 0x08
-    uint32 destBottom;      // 0x0C
+    Common::Rect destination;
     // The bounds of the source rectangle (Background -> screen)
-    uint32 srcLeft;         // 0x10
-    uint32 srcTop;          // 0x14
-    uint32 srcRight;        // 0x18
-    uint32 srcBottom;       // 0x1C
+    Common::Rect source;
     // VideoFileFormat 1 rectangle bounds (video -> Background)
-    uint32 f1Left;          // 0x20
-    uint32 f1Top;           // 0x24
-    uint32 f1Right;         // 0x28
-    uint32 f1Bottom;        // 0x2C
+    Common::Rect f1Dest;
     // VideoFileFormat 2 rectangle bounds (video -> Background)
-    uint32 f2Left;          // 0x30
-    uint32 f2Top;           // 0x34
-    uint32 f2Right;         // 0x38
-    uint32 f2Bottom;        // 0x3C
+    Common::Rect f2Dest;
 };
 
 // Holds the coordinates for the bitmaps of all cursors
