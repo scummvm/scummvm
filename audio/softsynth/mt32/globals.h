@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2020 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -22,25 +22,25 @@
 
 /* Support for compiling shared library. */
 #ifdef MT32EMU_SHARED
-#if defined _WIN32 || defined __CYGWIN__
-#ifdef _MSC_VER
-#ifdef mt32emu_EXPORTS
-#define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllexport)
-#else /* #ifdef mt32emu_EXPORTS */
-#define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllimport)
-#endif /* #ifdef mt32emu_EXPORTS */
-#else /* #ifdef _MSC_VER */
-#ifdef mt32emu_EXPORTS
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllexport))
-#else /* #ifdef mt32emu_EXPORTS */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllimport))
-#endif /* #ifdef mt32emu_EXPORTS */
-#endif /* #ifdef _MSC_VER */
-#else /* #if defined _WIN32 || defined __CYGWIN__ */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
-#endif /* #if defined _WIN32 || defined __CYGWIN__ */
+#  if defined _WIN32 || defined __CYGWIN__ || defined __OS2__
+#    ifdef _MSC_VER
+#      ifdef mt32emu_EXPORTS
+#        define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllexport)
+#      else /* #ifdef mt32emu_EXPORTS */
+#        define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllimport)
+#      endif /* #ifdef mt32emu_EXPORTS */
+#    else /* #ifdef _MSC_VER */
+#      ifdef mt32emu_EXPORTS
+#        define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllexport))
+#      else /* #ifdef mt32emu_EXPORTS */
+#        define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllimport))
+#      endif /* #ifdef mt32emu_EXPORTS */
+#    endif /* #ifdef _MSC_VER */
+#  else /* #if defined _WIN32 || defined __CYGWIN__ || defined __OS2__ */
+#    define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
+#  endif /* #if defined _WIN32 || defined __CYGWIN__ || defined __OS2__ */
 #else /* #ifdef MT32EMU_SHARED */
-#define MT32EMU_EXPORT_ATTRIBUTE
+#  define MT32EMU_EXPORT_ATTRIBUTE
 #endif /* #ifdef MT32EMU_SHARED */
 
 #if MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2

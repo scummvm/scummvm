@@ -20,7 +20,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
-   - Code der Roland MT-32-Emulation auf Munt 2.4.1 aktualisiert.
+   - Code der Roland MT-32-Emulation auf Munt 2.4.2 aktualisiert.
 
  Dreamweb:
    - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
