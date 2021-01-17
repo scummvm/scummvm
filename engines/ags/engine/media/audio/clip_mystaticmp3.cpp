@@ -32,6 +32,7 @@
 #include "ags/ags.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
 
 extern int our_eip;
 
@@ -159,7 +160,7 @@ MYSTATICMP3::MYSTATICMP3() : SOUNDCLIP() {
 	tune = nullptr;
 	mp3buffer = nullptr;
 }
-
+#endif
 } // namespace AGS3
 
 #endif

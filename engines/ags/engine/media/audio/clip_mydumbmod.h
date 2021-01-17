@@ -27,6 +27,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
 
 #define VOLUME_TO_DUMB_VOL(vol) ((float)vol) / 256.0
 
@@ -74,7 +75,7 @@ protected:
 	// Returns real MOD/XM playing position
 	int get_real_mod_pos();
 };
-
+#endif
 } // namespace AGS3
 
 #endif

@@ -86,7 +86,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 
 		debug_script_log("Playing ambient sound %d on channel %d", sndnum, channel);
 		ambient[channel].channel = channel;
-		asound->priority = 15;  // ambient sound higher priority than normal sfx
+		asound->_priority = 15;  // ambient sound higher priority than normal sfx
 		set_clip_to_channel(channel, asound);
 	}
 	// calculate the maximum distance away the player can be, using X
@@ -161,7 +161,7 @@ int PlaySoundEx(int val1, int channel) {
 		return -1;
 	}
 
-	soundfx->priority = 10;
+	soundfx->_priority = 10;
 	soundfx->set_volume(play.sound_volume);
 	set_clip_to_channel(channel, soundfx);
 	return channel;
@@ -547,7 +547,7 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 	if (speechmp3 != nullptr) {
 		if (!speechmp3->play()) {
 			// not assigned to a channel, so clean up manually.
-			speechmp3->destroy();
+			//speechmp3->destroy();
 			delete speechmp3;
 			speechmp3 = nullptr;
 		}

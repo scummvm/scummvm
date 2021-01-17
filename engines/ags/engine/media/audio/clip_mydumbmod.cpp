@@ -28,6 +28,7 @@
 #include "ags/engine/media/audio/audiointernaldefs.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
 
 void al_duh_set_loop(AL_DUH_PLAYER *dp, int loop) {
 	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
@@ -178,6 +179,7 @@ MYMOD::MYMOD() : SOUNDCLIP() {
 	duhPlayer = nullptr;
 }
 
+#endif
 } // namespace AGS3
 
 #endif // DUMB_MOD_PLAYER

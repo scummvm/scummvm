@@ -58,7 +58,7 @@ int AudioChannel_GetPanning(ScriptAudioChannel *channel) {
 	auto *ch = lock.GetChannelIfPlaying(channel->id);
 
 	if (ch) {
-		return ch->panningAsPercentage;
+		return ch->_panningAsPercentage;
 	}
 	return 0;
 }
@@ -72,7 +72,7 @@ void AudioChannel_SetPanning(ScriptAudioChannel *channel, int newPanning) {
 
 	if (ch) {
 		ch->set_panning(((newPanning + 100) * 255) / 200);
-		ch->panningAsPercentage = newPanning;
+		ch->_panningAsPercentage = newPanning;
 	}
 }
 
@@ -81,7 +81,7 @@ ScriptAudioClip *AudioChannel_GetPlayingClip(ScriptAudioChannel *channel) {
 	auto *ch = lock.GetChannelIfPlaying(channel->id);
 
 	if (ch) {
-		return (ScriptAudioClip *)ch->sourceClip;
+		return (ScriptAudioClip *)ch->_sourceClip;
 	}
 	return nullptr;
 }
@@ -189,9 +189,9 @@ void AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPo
 
 	if (ch) {
 		int maxDist = ((xPos > thisroom.Width / 2) ? xPos : (thisroom.Width - xPos)) - AMBIENCE_FULL_DIST;
-		ch->xSource = (xPos > 0) ? xPos : -1;
-		ch->ySource = yPos;
-		ch->maximumPossibleDistanceAway = maxDist;
+		ch->_xSource = (xPos > 0) ? xPos : -1;
+		ch->_ySource = yPos;
+		ch->_maximumPossibleDistanceAway = maxDist;
 		if (xPos > 0) {
 			update_directional_sound_vol();
 		} else {

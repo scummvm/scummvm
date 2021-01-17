@@ -26,6 +26,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
 
 // My new MP3STREAM wrapper
 struct MYWAVE : public SOUNDCLIP {
@@ -55,7 +56,7 @@ protected:
 	int get_voice() override;
 	void adjust_volume() override;
 };
-
+#endif
 } // namespace AGS3
 
 #endif

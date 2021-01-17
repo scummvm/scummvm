@@ -31,7 +31,7 @@
 #include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
-
+#ifdef DEPRECATED
 void MYOGG::poll() {
 	if (state_ != SoundClipPlaying) {
 		return;
@@ -202,5 +202,5 @@ MYOGG::MYOGG() : SOUNDCLIP() {
 	last_but_one = 0;
 	last_ms_offs = 0;
 }
-
+#endif
 } // namespace AGS3

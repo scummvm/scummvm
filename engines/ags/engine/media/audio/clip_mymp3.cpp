@@ -33,6 +33,7 @@
 #include "ags/ags.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
 
 void MYMP3::poll() {
 	if (state_ != SoundClipPlaying) {
@@ -182,6 +183,7 @@ MYMP3::MYMP3() : SOUNDCLIP() {
 	chunksize = 0;
 }
 
+#endif
 } // namespace AGS3
 
 #endif

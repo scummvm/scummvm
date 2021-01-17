@@ -20,8 +20,6 @@
  *
  */
 
-//include <stdlib.h>
-//include <string.h>
 #include "ags/engine/ac/file.h"
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/engine/media/audio/soundcache.h"
@@ -31,6 +29,7 @@
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/ags.h"
+#include "common/memstream.h"
 
 namespace AGS3 {
 
@@ -208,7 +207,16 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 
 		return sound_cache_entries[i].data;
 	}
+}
 
+Common::SeekableReadStream *get_cached_sound(const AssetPath &asset_name) {
+	size_t muslen = 0;
+	const byte *data = (byte *)get_cached_sound(asset_name, false, muslen);
+	if (data == nullptr)
+		return nullptr;
+
+	// Create a read stream for the sound
+	return new Common::MemoryReadStream(data, muslen, DisposeAfterUse::YES);
 }
 
 } // namespace AGS3

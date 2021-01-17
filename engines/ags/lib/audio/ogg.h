@@ -27,7 +27,7 @@
 #include "audio/mixer.h"
 
 namespace AGS3 {
-
+#ifdef DEPRECATED
 #define ALOGG_OK 0
 
 #define ALOGG_PLAY_BUFFERTOOSMALL    -1
@@ -70,7 +70,7 @@ extern bool alogg_is_playing_oggstream(ALOGG_OGGSTREAM *ogg);
 extern int alogg_is_end_of_oggstream(ALOGG_OGGSTREAM *ogg);
 extern AUDIOSTREAM *alogg_get_audiostream_oggstream(ALOGG_OGGSTREAM *ogg);
 extern int alogg_get_pos_msecs_oggstream(ALOGG_OGGSTREAM *ogg);
-
+#endif
 } // namespace AGS3
 
 #endif

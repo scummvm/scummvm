@@ -24,51 +24,20 @@
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICOGG_H
 
 #include "ags/lib/audio/ogg.h"
-#include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
+#ifdef DEPRECATED
+/**
+ * Pre-loaded (non-streaming) OGG file
+ */
+struct MYSTATICOGG : public AUDIO_STREAM {
+	MYSTATICOGG(const byte *data, size_t len, bool repeat);
 
-// pre-loaded (non-streaming) OGG file
-struct MYSTATICOGG : public SOUNDCLIP {
-	ALOGG_OGG *tune;
-	char *mp3buffer;
-	int mp3buffersize;
-	int extraOffset;
-
-	int last_but_one_but_one;
-	int last_but_one;
-	int last_ms_offs;
-
-	void poll() override;
-
-	void set_volume(int newvol) override;
-	void set_speed(int new_speed) override;
-
-	void destroy() override;
-
-	void seek(int pos) override;
-
-	int get_pos() override;
-
-	int get_pos_ms() override;
-
-	int get_length_ms() override;
-
-	int get_sound_type() override;
-
-	int play_from(int position) override;
-
-	int play() override;
-
-	MYSTATICOGG();
-
-protected:
-	int get_voice() override;
-	void adjust_volume() override;
-private:
-	void adjust_stream();
+	int get_sound_type() override {
+		return MUS_OGG;
+	}
 };
-
+#endif
 } // namespace AGS3
 
 #endif

@@ -21,6 +21,8 @@
  */
 
 #include "ags/music.h"
+#include "ags/engine/main/main.h"
+#include "ags/lib/audio/midi.h"
 #include "audio/midiparser.h"
 
 namespace AGS {
@@ -28,7 +30,7 @@ namespace AGS {
 Music *g_music;
 
 Music::Music(Audio::Mixer *mixer) :
-		Audio::MidiPlayer(), _mixer(mixer) {
+		Audio::MidiPlayer(), _mixer(mixer), _isFirstTime(true) {
 	g_music = this;
 	Audio::MidiPlayer::createDriver();
 
@@ -61,14 +63,20 @@ void Music::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-void Music::playMusic(const MIDI *midi, bool repeat) {
+void Music::playMusic(Common::SeekableReadStream *midi, bool repeat) {
+	if (_isFirstTime) {
+		if (::AGS3::psp_midi_preload_patches)
+			::AGS3::load_midi_patches();
+		_isFirstTime = false;
+	}
+
 	stop();
 
 	// Load MIDI resource data
 	int midiMusicSize = midi->size();
 
 	_midiData.resize(midi->size());
-	Common::copy(&(*midi)[0], &(*midi)[0] + midi->size(), &_midiData[0]);
+	midi->read(&_midiData[0], midi->size());
 
 	MidiParser *parser = MidiParser::createParser_SMF();
 	if (parser->loadMusic(&_midiData[0], midiMusicSize)) {

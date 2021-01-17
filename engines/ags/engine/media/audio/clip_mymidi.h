@@ -29,12 +29,12 @@ namespace AGS3 {
 
 // MIDI
 struct MYMIDI : public SOUNDCLIP {
-	MIDI *tune;
+	Common::SeekableReadStream *_data;
+	bool _repeat;
 	int lengthInSeconds;
 
-	void poll() override;
-
-	void set_volume(int newvol) override;
+	MYMIDI(Common::SeekableReadStream *data, bool repeat);
+	~MYMIDI() override {}
 
 	void destroy() override;
 
@@ -50,15 +50,16 @@ struct MYMIDI : public SOUNDCLIP {
 
 	void resume() override;
 
-	int get_sound_type() override;
+	int get_sound_type() const override {
+		return MUS_MIDI;
+	}
 
 	int play() override;
-
-	MYMIDI();
-
-protected:
-	int get_voice() override;
-	void adjust_volume() override;
+	void stop() override;
+	bool is_playing() const override;
+	int get_volume() const override;
+	void set_volume(int volume) override;
+	void set_panning(int newPanning) override;
 };
 
 } // namespace AGS3

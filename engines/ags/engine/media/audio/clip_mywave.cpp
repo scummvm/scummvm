@@ -31,6 +31,7 @@
 #include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
+#ifdef  DEPRECATED
 
 void MYWAVE::poll() {
 	if (state_ != SoundClipPlaying) {
@@ -131,5 +132,5 @@ MYWAVE::MYWAVE() : SOUNDCLIP() {
 	wave = nullptr;
 	voice = -1;
 }
-
+#endif
 } // namespace AGS3

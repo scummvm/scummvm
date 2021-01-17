@@ -20,77 +20,121 @@
  *
  */
 
-#include "ags/shared/util/wgt2allg.h"
-#include "ags/engine/media/audio/audio.h"
-#include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/media/audio/soundclip.h"
-#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
+SOUNDCLIP::SOUNDCLIP() : _state(SoundClipInitial), _panning(128), _panningAsPercentage(0),
+		_sourceClip(nullptr), _sourceClipType(0), _speed(1000), _priority(50),
+		_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0),
+		_volAsPercentage(100), _vol(0), _volModifier(0) {
+	_mixer = ::AGS::g_vm->_mixer;
+}
+
+void SOUNDCLIP::poll() {
+	bool playing = is_playing();
+	if (playing)
+		_state = SoundClipPlaying;
+	else if (_state == SoundClipPlaying)
+		_state = SoundClipStopped;
+}
+
+SOUNDCLIP::~SOUNDCLIP() {
+	destroy();
+}
+
+void SOUNDCLIP::set_speed(int new_speed) {
+	warning("TODO: SOUNDCLIP::set_speed");
+	_speed = new_speed;
+}
+
+void SOUNDCLIP::adjust_volume() {
+	// TODO: See if this method is needed
+}
+
 int SOUNDCLIP::play_from(int position) {
-	int retVal = play();
-	if ((retVal != 0) && (position > 0)) {
-		seek(position);
-	}
-	return retVal;
-}
-
-void SOUNDCLIP::set_panning(int newPanning) {
-	if (!is_playing()) {
-		return;
-	}
-
-	int voice = get_voice();
-	if (voice >= 0) {
-		voice_set_pan(voice, newPanning);
-		panning = newPanning;
+	// TODO: Implement playing from arbitrary positions
+	if (position == 0) {
+		play();
+		return 1;
+	} else {
+		return 0;
 	}
 }
 
-void SOUNDCLIP::pause() {
-	if (state_ != SoundClipPlaying) {
-		return;
-	}
 
-	int voice = get_voice();
-	if (voice >= 0) {
-		voice_stop(voice);
-		state_ = SoundClipPaused;
-	}
-}
+/*------------------------------------------------------------------*/
 
-void SOUNDCLIP::resume() {
-	if (state_ != SoundClipPaused) {
-		return;
-	}
+SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat) :
+		SOUNDCLIP(), _stream(stream) {
+	_mixer = ::AGS::g_vm->_mixer;
 
-	int voice = get_voice();
-	if (voice >= 0) {
-		voice_start(voice);
-		state_ = SoundClipPlaying;
+	if (repeat) {
+		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);
+		assert(str);
+		_stream = new Audio::LoopingAudioStream(str, 0);
 	}
 }
 
-SOUNDCLIP::SOUNDCLIP() {
-	state_ = SoundClipInitial;
-	priority = 50;
-	panning = 128;
-	panningAsPercentage = 0;
-	speed = 1000;
-	sourceClipType = 0;
-	sourceClip = nullptr;
-	vol = 0;
-	volAsPercentage = 0;
-	volModifier = 0;
-	muted = false;
-	repeat = false;
-	xSource = -1;
-	ySource = -1;
-	maximumPossibleDistanceAway = 0;
-	directionalVolModifier = 0;
+void SoundClipWaveBase::destroy() {
+	stop();
+	delete _stream;
+	_stream = nullptr;
 }
 
-SOUNDCLIP::~SOUNDCLIP() = default;
+int SoundClipWaveBase::play() {
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream,
+		-1, 255, 0, DisposeAfterUse::NO);
+	return 1;
+}
+
+void SoundClipWaveBase::stop() {
+	_mixer->stopHandle(_soundHandle);
+}
+
+void SoundClipWaveBase::pause() {
+	_mixer->pauseHandle(_soundHandle, false);
+	_state = SoundClipPaused;
+}
+
+void SoundClipWaveBase::resume() {
+	_mixer->pauseHandle(_soundHandle, false);
+	_state = SoundClipPlaying;
+	poll();
+}
+
+bool SoundClipWaveBase::is_playing() const {
+	return _mixer->isSoundHandleActive(_soundHandle);
+}
+
+void SoundClipWaveBase::seek(int offset) {
+	warning("TODO: SoundClipWaveBase::seek");
+}
+
+int SoundClipWaveBase::get_pos() {
+	return _mixer->getSoundElapsedTime(_soundHandle) / 1000;
+}
+
+int SoundClipWaveBase::get_pos_ms() {
+	return _mixer->getSoundElapsedTime(_soundHandle);
+}
+
+int SoundClipWaveBase::get_length_ms() {
+	warning("TODO: SoundClipWaveBase::get_length_ms");
+	return 0;
+}
+
+int SoundClipWaveBase::get_volume() const {
+	return _mixer->getChannelVolume(_soundHandle);
+}
+
+void SoundClipWaveBase::set_volume(int volume) {
+	_mixer->setChannelVolume(_soundHandle, volume);
+}
+
+void SoundClipWaveBase::set_panning(int newPanning) {
+	_mixer->setChannelBalance(_soundHandle, newPanning);
+}
 
 } // namespace AGS3

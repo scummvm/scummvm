@@ -27,103 +27,79 @@
 
 namespace AGS3 {
 
-void MYMIDI::poll() {
-	if (state_ != SoundClipPlaying) {
-		return;
-	}
-
-	if (midi_pos < 0)
-		state_ = SoundClipStopped;
-}
-
-void MYMIDI::adjust_volume() {
-	if (!is_playing()) {
-		return;
-	}
-	AGS3::set_volume(-1, get_final_volume());
-}
-
-void MYMIDI::set_volume(int newvol) {
-	vol = newvol;
-	adjust_volume();
+MYMIDI::MYMIDI(Common::SeekableReadStream *data, bool repeat) :
+		_data(data), _repeat(repeat), lengthInSeconds(0) {
 }
 
 void MYMIDI::destroy() {
-	stop_midi();
-
-	if (tune) {
-		destroy_midi(tune);
-	}
-	tune = nullptr;
-
-	state_ = SoundClipStopped;
+	stop();
+	delete _data;
+	_data = nullptr;
 }
 
 void MYMIDI::seek(int pos) {
-	if (!is_playing()) {
-		return;
-	}
-	midi_seek(pos);
+	warning("TODO: MYMIDI::seek");
 }
 
 int MYMIDI::get_pos() {
-	if (!is_playing()) {
-		return -1;
-	}
-	return midi_pos;
+	// We don't know ms with midi
+	return 0;
 }
 
 int MYMIDI::get_pos_ms() {
-	return 0;                   // we don't know ms with midi
+	// We don't know ms with midi
+	return 0;
 }
 
 int MYMIDI::get_length_ms() {
+	warning("TODO: MYMIDI::get_length_ms");
 	return lengthInSeconds * 1000;
 }
 
+void MYMIDI::pause() {
+	::AGS::g_music->pause();
+	_state = SoundClipPaused;
+}
+
+void MYMIDI::resume() {
+	if (_state != SoundClipPaused)
+		return;
+
+	::AGS::g_music->resume();
+	_state = SoundClipPlaying;
+}
+
+int MYMIDI::play() {
+	::AGS::g_music->playMusic(_data, _repeat);
+	_state =  SoundClipPlaying;
+	return 1;
+}
+
+void MYMIDI::stop() {
+	::AGS::g_music->stop();
+}
+
+bool MYMIDI::is_playing() const {
+	return ::AGS::g_music->isPlaying();
+}
+
+int MYMIDI::get_volume() const {
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+}
+
+void MYMIDI::set_volume(int volume) {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+}
+
+void MYMIDI::set_panning(int newPanning) {
+	// No implementation for MIDI
+}
+
+/*
 int MYMIDI::get_voice() {
 	// voice is N/A for midi
 	return -1;
 }
-
-void MYMIDI::pause() {
-	if (state_ != SoundClipPlaying) {
-		return;
-	}
-	midi_pause();
-	state_ = SoundClipPaused;
-}
-
-void MYMIDI::resume() {
-	if (state_ != SoundClipPaused) {
-		return;
-	}
-	midi_resume();
-	state_ = SoundClipPlaying;
-}
-
-int MYMIDI::get_sound_type() {
-	return MUS_MIDI;
-}
-
-int MYMIDI::play() {
-	if (tune == nullptr) {
-		return 0;
-	}
-
-	lengthInSeconds = get_midi_length(tune);
-	if (AGS3::play_midi(tune, repeat)) {
-		lengthInSeconds = 0;
-		return 0;
-	}
-
-	state_ = SoundClipPlaying;
-	return 1;
-}
-
-MYMIDI::MYMIDI() : SOUNDCLIP() {
-	tune = nullptr;
-	lengthInSeconds = 0;
-}
+*/
 
 } // namespace AGS3

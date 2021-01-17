@@ -28,6 +28,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
+#ifdef  DEPRECATED
 
 struct MYMP3 : public SOUNDCLIP {
 	ALMP3_MP3STREAM *stream;
@@ -54,7 +55,7 @@ protected:
 private:
 	void adjust_stream();
 };
-
+#endif
 } // namespace AGS3
 
 #endif
