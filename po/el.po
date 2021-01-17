@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-11 22:08+0000\n"
-"PO-Revision-Date: 2020-12-17 17:00+0000\n"
+"PO-Revision-Date: 2021-01-18 03:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7254,16 +7254,12 @@ msgid "Enable the USA specific version flags"
 msgstr "Ενεργοποίηση ειδικών ρυθμίσεων που είχε η έκδοση από ΗΠΑ"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
-msgstr "Ενεργοποίηση γραφικών υψηλής ανάλυσης"
+msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 
 #: engines/twine/metaengine.cpp:145
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable a higher resolution for the game"
-msgstr "Ενεργοποίηση του ήχου για το παιχνίδι"
+msgstr "Ενεργοποίηση υψηλής ανάλυσης για το παιχνίδι"
 
 #: engines/twine/metaengine.cpp:192
 msgid "Debug Next Room"
@@ -7379,16 +7375,12 @@ msgid "Next Page"
 msgstr "Επόμενη Σελίδα"
 
 #: engines/twine/metaengine.cpp:507
-#, fuzzy
-#| msgid "Previous action"
 msgid "Previous location"
-msgstr "Προηγούμενη ενέργεια"
+msgstr "Προηγούμενο μέρος"
 
 #: engines/twine/metaengine.cpp:512
-#, fuzzy
-#| msgid "Next action"
 msgid "Next location"
-msgstr "Επόμενη ενέργεια"
+msgstr "Επόμενο μέρος"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
