@@ -240,71 +240,71 @@ int generate_optimized_palette(BITMAP *image, PALETTE pal, AL_CONST signed char 
 }
 
 void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a) {
-	warning("TODO: set_blender_mode");
+	// TODO: set_blender_mode
 }
 
 void set_blender_mode_ex(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, BLENDER_FUNC b32, BLENDER_FUNC b15x, BLENDER_FUNC b16x, BLENDER_FUNC b24x, int r, int g, int b, int a) {
-	warning("TODO: set_blender_mode_ex");
+	// TODO: set_blender_mode_ex
 }
 
 void set_alpha_blender(void) {
-	warning("TODO: set_alpha_blender");
+	// TODO: set_alpha_blender
 }
 
 void set_write_alpha_blender(void) {
-	warning("TODO: set_write_alpha_blender");
+	// TODO: set_write_alpha_blender
 }
 
 void set_trans_blender(int r, int g, int b, int a) {
-	warning("TODO: set_trans_blender");
+	// TODO: set_trans_blender
 }
 
 void set_add_blender(int r, int g, int b, int a) {
-	warning("TODO: set_add_blender");
+	// TODO: set_add_blender
 }
 
 void set_burn_blender(int r, int g, int b, int a) {
-	warning("TODO: set_burn_blender");
+	// TODO: set_burn_blender
 }
 
 void set_color_blender(int r, int g, int b, int a) {
-	warning("TODO: set_color_blender");
+	// TODO: set_color_blender
 }
 
 void set_difference_blender(int r, int g, int b, int a) {
-	warning("TODO: set_difference_blender");
+	// TODO: set_difference_blender
 }
 
 void set_dissolve_blender(int r, int g, int b, int a) {
-	warning("TODO: set_dissolve_blender");
+	// TODO: set_dissolve_blender
 }
 
 void set_dodge_blender(int r, int g, int b, int a) {
-	warning("TODO: set_dodge_blender");
+	// TODO: set_dodge_blender
 }
 
 void set_hue_blender(int r, int g, int b, int a) {
-	warning("TODO: set_hue_blender");
+	// TODO: set_hue_blender
 }
 
 void set_invert_blender(int r, int g, int b, int a) {
-	warning("TODO: set_invert_blender");
+	// TODO: set_invert_blender
 }
 
 void set_luminance_blender(int r, int g, int b, int a) {
-	warning("TODO: set_luminance_blender");
+	// TODO: set_luminance_blender
 }
 
 void set_multiply_blender(int r, int g, int b, int a) {
-	warning("TODO: set_multiply_blender");
+	// TODO: set_multiply_blender
 }
 
 void set_saturation_blender(int r, int g, int b, int a) {
-	warning("TODO: set_saturation_blender");
+	// TODO: set_saturation_blender
 }
 
 void set_screen_blender(int r, int g, int b, int a) {
-	warning("TODO: set_screen_blender");
+	// TODO: set_screen_blender
 }
 
 
