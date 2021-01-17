@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-11 22:08+0000\n"
-"PO-Revision-Date: 2021-01-16 21:23+0000\n"
+"PO-Revision-Date: 2021-01-18 03:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5830,6 +5830,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"Sierraが追加パッチとして一部のゲーム用に作成した\n"
+"いくつかのオーディオドライバーは、元のゲームの\n"
+"セットアップ時に組み込まれていない可能性があります。\n"
+"\n"
+"これらのファイルを、ゲームのディレクトリーにコピーしてください。\n"
+"\n"
+"ただし、パッチ適用済みのコンテンツにバンドルされたリソースが\n"
+"使えない可能性に注意してください。その場合、Sierraのオリジナルパッチを\n"
+"適用する必要があるかもしれません。\n"
+"\n"
 
 #: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
@@ -5841,37 +5853,37 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
-msgstr ""
+msgstr "NES Classicのパレットを使用する"
 
 #: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "NES Classicを厳密にエミュレートした、よりニュートラルなカラーパレットを使用する"
 
 #: engines/scumm/dialogs.cpp:169
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr ""
+msgstr "続けるにはディスク%cを入れてボタンを押してください。"
 
 #: engines/scumm/dialogs.cpp:170
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr ""
+msgstr "%sが見つかりません(%c%d)。ボタンを押してください。"
 
 #: engines/scumm/dialogs.cpp:171
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr ""
+msgstr "ディスク%cのロード中にエラーが発生しました(%c%d)。ボタンを押してください。"
 
 #: engines/scumm/dialogs.cpp:172
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr ""
+msgstr "ポーズ中です。 スペースキーで再開します。"
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:176
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr ""
+msgstr "リスタートしてもよろしいですか?  (Y/N)Y"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:178
@@ -5890,11 +5902,11 @@ msgstr "セーブデータの同期を始まる"
 
 #: engines/scumm/dialogs.cpp:188
 msgid "You must enter a name"
-msgstr ""
+msgstr "名前を入れてください"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "The game was NOT saved (disk full?)"
-msgstr ""
+msgstr "セーブされませんでした(ディスクの容量不足?)"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "The game was NOT loaded"
@@ -5903,16 +5915,16 @@ msgstr "ゲームがロードできませんでした"
 #: engines/scumm/dialogs.cpp:191
 #, c-format
 msgid "Saving '%s'"
-msgstr ""
+msgstr "%sをセーブしています"
 
 #: engines/scumm/dialogs.cpp:192
 #, c-format
 msgid "Loading '%s'"
-msgstr ""
+msgstr "%sをロードしています"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "Name your SAVE game"
-msgstr ""
+msgstr "セーブ名を入力してください"
 
 #: engines/scumm/dialogs.cpp:194
 #, fuzzy
@@ -5954,19 +5966,19 @@ msgstr "音声と字幕"
 
 #: engines/scumm/dialogs.cpp:676
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "習熟度を選択してください。"
 
 #: engines/scumm/dialogs.cpp:678
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "ヘルプについては、Loom(TM)のマニュアルを参照してください。"
 
 #: engines/scumm/dialogs.cpp:682
 msgid "Practice"
-msgstr ""
+msgstr "練習"
 
 #: engines/scumm/dialogs.cpp:683
 msgid "Expert"
-msgstr ""
+msgstr "エキスパート"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -5974,23 +5986,23 @@ msgstr ""
 
 #: engines/scumm/help.cpp:74
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "セーブ/ロード"
 
 #: engines/scumm/help.cpp:76
 msgid "Skip line of text"
-msgstr ""
+msgstr "テキストを行単位でスキップ"
 
 #: engines/scumm/help.cpp:77
 msgid "Esc"
-msgstr ""
+msgstr "Esc"
 
 #: engines/scumm/help.cpp:77 engines/zvision/metaengine.cpp:216
 msgid "Skip cutscene"
-msgstr ""
+msgstr "ムービーをスキップ"
 
 #: engines/scumm/help.cpp:78 engines/wintermute/keymapper_tables.h:1686
 msgid "Space"
-msgstr ""
+msgstr "スペース"
 
 #: engines/scumm/help.cpp:78
 #, fuzzy
@@ -6003,7 +6015,7 @@ msgstr "ゲームをセーブ："
 #: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 #: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
 msgid "Ctrl"
-msgstr ""
+msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:79
 #, fuzzy
@@ -6014,7 +6026,7 @@ msgstr "ゲームをロード"
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:100
 #: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #: engines/scumm/help.cpp:80
 #, fuzzy
@@ -6027,7 +6039,7 @@ msgstr "BGMの音量アップ/ダウン"
 
 #: engines/scumm/help.cpp:88
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "テキスト表示速度を下げる/上げる"
 
 #: engines/scumm/help.cpp:89
 #, fuzzy
@@ -6036,7 +6048,7 @@ msgstr "マウスの左ボタン"
 
 #: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1741
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:90
 #, fuzzy
@@ -6208,40 +6220,40 @@ msgstr "旅する"
 
 #: engines/scumm/help.cpp:175
 msgid "To Henry / To Indy"
-msgstr ""
+msgstr "ヘンリー/インディ"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:179
 msgid "play C minor on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードCマイナーを演奏"
 
 #: engines/scumm/help.cpp:180
 msgid "play D on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードDを演奏"
 
 #: engines/scumm/help.cpp:181
 msgid "play E on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードEを演奏"
 
 #: engines/scumm/help.cpp:182
 msgid "play F on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードFを演奏"
 
 #: engines/scumm/help.cpp:183
 msgid "play G on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードGを演奏"
 
 #: engines/scumm/help.cpp:184
 msgid "play A on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードAを演奏"
 
 #: engines/scumm/help.cpp:185
 msgid "play B on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードBを演奏"
 
 #: engines/scumm/help.cpp:186
 msgid "play C major on distaff"
-msgstr ""
+msgstr "糸巻き棒でコードCメジャーを演奏"
 
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "puSh"
