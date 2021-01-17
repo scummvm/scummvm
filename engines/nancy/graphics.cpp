@@ -135,7 +135,7 @@ void GraphicsManager::initSceneZRenderStructs() {
 
     chunk = _engine->getBootChunkStream("TBOX");
     READ_RECT(source, 0)
-    initZRenderStruct(  "CUR TB BAT SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
+    initZRenderStruct(  "CUR TB BAT SLIDER", 9, true, ZRenderStruct::BltType::kTrans,
                         &_object0Surface, nullptr, source, nullptr);
 
     chunk = _engine->getBootChunkStream("BSUM");
@@ -155,7 +155,7 @@ void GraphicsManager::initSceneZRenderStructs() {
 
     chunk = _engine->getBootChunkStream("INV");
     READ_RECT(source, 0)
-    initZRenderStruct(  "CUR INV SLIDER", 9, false, ZRenderStruct::BltType::kTrans,
+    initZRenderStruct(  "CUR INV SLIDER", 9, true, ZRenderStruct::BltType::kTrans,
                          &_object0Surface, nullptr, source, nullptr);
 
     initZRenderStruct(  "FRAME INV BOX", 6, false, ZRenderStruct::BltType::kNoTrans, nullptr,
@@ -230,7 +230,7 @@ void GraphicsManager::renderDisplay(Common::Array<Common::String> ids) {
 
                 // Current struct has been rendered, remove from list
                 ids.remove_at(i);
-                break;
+                --i;
             }
         }
     }

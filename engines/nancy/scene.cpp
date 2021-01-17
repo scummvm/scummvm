@@ -106,6 +106,26 @@ void SceneManager::init() {
 
     _engine->graphics->initSceneZRenderStructs();
 
+    // Set the scroll bar destinations
+    Common::SeekableReadStream *tbox = _engine->getBootChunkStream("TBOX");
+    tbox->seek(0x30);
+    ZRenderStruct &tbzr = _engine->graphics->getZRenderStruct("CUR TB BAT SLIDER");
+    uint16 width = tbzr.sourceRect.right - tbzr.sourceRect.left;
+    uint16 height = tbzr.sourceRect.bottom - tbzr.sourceRect.top;
+    tbzr.destRect.left =  tbox->readUint16LE() - (width / 2); // coords in file are for center position
+    tbzr.destRect.top =  tbox->readUint16LE();
+    tbzr.destRect.right = tbzr.destRect.left + width;
+    tbzr.destRect.bottom = tbzr.destRect.top + height;
+
+    inv->seek(0x10);
+    ZRenderStruct &invzr = _engine->graphics->getZRenderStruct("CUR INV SLIDER");
+    width = invzr.sourceRect.right - invzr.sourceRect.left;
+    height = invzr.sourceRect.bottom - invzr.sourceRect.top;
+    invzr.destRect.left = inv->readUint16LE() - (width / 2); // coords in file are for center position
+    invzr.destRect.top = inv->readUint16LE();
+    invzr.destRect.right = invzr.destRect.left + width;
+    invzr.destRect.bottom = invzr.destRect.top + height;
+
     _state = kLoad;
 }
 
@@ -567,10 +587,19 @@ void SceneManager::handleMouse() {
             }
         }
     } else {
-        
-        // pointers are out of order from the one on Object0
-        _engine->input->setPointerBitmap(1, 1, 0);
-        
+        // Check if we're hovering above a UI element
+        ZRenderStruct *uizr = &_engine->graphics->getZRenderStruct("CUR TB BAT SLIDER");
+        if (uizr->destRect.contains(mousePos)) {
+            _engine->input->hoveredElementID = InputManager::textBoxScrollbarID;
+            // call handler function
+            _engine->input->setPointerBitmap(1, 2, -1);
+        } else if (uizr = &_engine->graphics->getZRenderStruct("CUR INV SLIDER"), uizr->destRect.contains(mousePos)) {
+            _engine->input->hoveredElementID = InputManager::inventoryScrollbarID;
+            // call handler function
+            _engine->input->setPointerBitmap(1, 2, -1);
+        } else {
+            _engine->input->setPointerBitmap(1, 1, 0);
+        }
     }
         
 }
