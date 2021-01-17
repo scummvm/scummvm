@@ -22,6 +22,7 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/string.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -34,6 +35,8 @@ void quitprintf(const char *fmt, ...) {
 	va_start(ap, fmt);
 	String text = String::FromFormatV(fmt, ap);
 	va_end(ap);
+
+	::AGS::g_vm->GUIError(text);
 	quit(text);
 }
 

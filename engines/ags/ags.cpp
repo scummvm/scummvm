@@ -433,4 +433,8 @@ Common::Error AGSEngine::saveGameState(int slot, const Common::String &desc, boo
 	return Common::kNoError;
 }
 
+void AGSEngine::GUIError(const Common::String &msg) {
+	GUIErrorMessage(msg);
+}
+
 } // namespace AGS
