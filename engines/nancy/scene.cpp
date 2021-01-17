@@ -403,7 +403,7 @@ void SceneManager::run() {
         // Perform movement
         byte inputs = _engine->input->getInput();
         if  ( ( (
-                    (inputs & InputManager::kLeftMouseButton) != (inputs & InputManager::kRightMouseButton) 
+                    (inputs & InputManager::kLeftMouseButtonDown) != (inputs & InputManager::kRightMouseButtonDown) 
                 ) ||
                 (inputs & (InputManager::kMoveUp | InputManager::kMoveDown | InputManager::kMoveLeft | InputManager::kMoveRight) )
               ) &&
@@ -477,7 +477,7 @@ void SceneManager::run() {
                     break;
             }
             if (_engine->input->getInput(InputManager::kMoveFastModifier) ||
-                _engine->input->getInput(InputManager::kRightMouseButton)) {
+                _engine->input->getInput(InputManager::kRightMouseButtonDown)) {
                 _nextBackgroundMovement = playTimeThisFrame + currentScene.fastMoveTimeDelta;
 
             } else {
@@ -518,6 +518,7 @@ void SceneManager::handleMouse() {
     zr.destRect.left = zr.destRect.right = mousePos.x;
     zr.destRect.top = zr.destRect.bottom = mousePos.y;
     movementDirection = 0;
+    _engine->input->hoveredElementID = -1;
 
     View &view = _engine->graphics->viewportDesc;
 
@@ -542,12 +543,34 @@ void SceneManager::handleMouse() {
                 movementDirection |= kDown;
             }
         }
+
         if (movementDirection != 0) {
             _engine->input->setPointerBitmap(0, 2, 0);
+        } else {
+            // Go through all action records and find hotspots
+            Common::Array<ActionRecord *> &records = _engine->logic->getActionRecords();
+            for (uint i = 0; i < records.size(); ++i) {
+                ActionRecord *r = records[i];
+                if (r->isActive && r->hasHotspot) {
+                    // Adjust the hotspot coordinates relative to the viewport
+                    Common::Rect hotspot = r->hotspot;
+                    hotspot.left += view.destination.left;
+                    hotspot.top += view.destination.top;
+                    hotspot.right += view.destination.left;
+                    hotspot.bottom += view.destination.top;
+
+                    if (hotspot.contains(viewportMouse)) {
+                        _engine->input->setPointerBitmap(-1, 1, 0);
+                        _engine->input->hoveredElementID = i;
+                    }
+                }
+            }
         }
     } else {
+        
         // pointers are out of order from the one on Object0
         _engine->input->setPointerBitmap(1, 1, 0);
+        
     }
         
 }
