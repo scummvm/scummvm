@@ -148,7 +148,7 @@ void SceneManager::load() {
     }
     _engine->graphics->loadBackgroundVideo(currentScene.videoFile);
     if (_engine->graphics->getBackgroundFrameCount() == 1) {
-        currentScene.sceneHasMovement = 0;
+        currentScene.horizontalEdgeSize = 0;
     }
 
     View &viewportDesc = _engine->graphics->viewportDesc;
@@ -172,13 +172,13 @@ void SceneManager::load() {
         if (currentScene.videoFormat == 1) {
             // TODO not sure this ever gets hit
         } else if (currentScene.videoFormat == 2) {
-            if (_engine->graphics->getBackgroundHeight() == viewportDesc.f2Bottom) {
-                currentScene.sceneHasMovement = false;
+            if (_engine->graphics->getBackgroundHeight() == (uint32)viewportDesc.f2Dest.bottom + 1) {
+                currentScene.verticalEdgeSize = 0;
             }
         }
     }
 
-    delete sceneSummaryChunk;
+    _engine->input->setPointerBitmap(0, 0, false);
 
     _state = kRun; // TODO temp, is actually StartSound
 }
@@ -495,7 +495,7 @@ void SceneManager::run() {
             *_engine->graphics->getBackgroundFrame(_engine->playState.currentViewFrame),
             0, 0,
             Common::Rect(0, _engine->playState.verticalScroll, _engine->graphics->getBackgroundWidth() - 1,
-                _engine->playState.verticalScroll + _engine->graphics->viewportDesc.srcBottom));
+                _engine->playState.verticalScroll + _engine->graphics->viewportDesc.source.bottom));
         }
         // TODO some if related to PlaySoundPanFrameAnchorAndDie
         _engine->playState.lastDrawnViewFrame = _engine->playState.currentViewFrame;
@@ -506,8 +506,50 @@ void SceneManager::run() {
 
     // code that skips rendering for the first 12 frames??? why
 
+    handleMouse();
+
     // TODO
     _engine->graphics->renderDisplay();
+}
+
+void SceneManager::handleMouse() {
+    ZRenderStruct &zr = _engine->graphics->getZRenderStruct("CUR IMAGE CURSOR");
+    Common::Point mousePos = _engine->input->getMousePosition();
+    zr.destRect.left = zr.destRect.right = mousePos.x;
+    zr.destRect.top = zr.destRect.bottom = mousePos.y;
+    movementDirection = 0;
+
+    View &view = _engine->graphics->viewportDesc;
+
+    // TODO hotpoints for scene movement are not correct, figure out how they're actually calculated
+    Common::Point viewportMouse = mousePos + Common::Point(10, 10);
+    
+    // Check if the mouse is within the viewport
+    if (view.destination.contains(viewportMouse)){
+        _engine->input->setPointerBitmap(0, 0, 0);
+        // We can scroll left and right
+        if (currentScene.horizontalEdgeSize > 0) {
+            if (viewportMouse.x < view.destination.left + currentScene.horizontalEdgeSize) {
+                movementDirection |= kLeft;
+            } else if (viewportMouse.x > view.destination.right - currentScene.horizontalEdgeSize) {
+                movementDirection |= kRight;
+            }
+        }
+        if (currentScene.verticalEdgeSize > 0) {
+            if (viewportMouse.y < view.destination.top + currentScene.verticalEdgeSize) {
+                movementDirection |= kUp;
+            } else if (viewportMouse.y > view.destination.bottom - currentScene.verticalEdgeSize) {
+                movementDirection |= kDown;
+            }
+        }
+        if (movementDirection != 0) {
+            _engine->input->setPointerBitmap(0, 2, 0);
+        }
+    } else {
+        // pointers are out of order from the one on Object0
+        _engine->input->setPointerBitmap(1, 1, 0);
+    }
+        
 }
 
 void SceneManager::clearSceneData() {

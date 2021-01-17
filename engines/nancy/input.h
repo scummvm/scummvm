@@ -75,6 +75,10 @@ enum InputType : byte {
     bool getInput(InputType type);
     byte getInput() { return _inputs; }
 
+    Common::Point getMousePosition();
+    void setMousePosition(const Common::Point &newPos);
+    void setPointerBitmap(int16 id, int16 style, int16 itemHeld = 0);
+
     static void initKeymaps(Common::KeymapArray &keymaps);
 
     bool isClickValidLMB;
@@ -107,6 +111,10 @@ enum InputType : byte {
 
 private:
     NancyEngine *_engine;
+
+    int16 pointerId = 0;
+    int16 pointerStyle = 0;
+    bool itemHeld = false;
 
     byte _inputs;
     Common::Point _mousePos;

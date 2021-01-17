@@ -59,6 +59,7 @@ private:
     void load();
     void run();
 
+    void handleMouse();
     void clearSceneData();
 
     enum State {

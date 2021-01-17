@@ -48,8 +48,8 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
 
     stream->seek(0x72);
     verticalScrollDelta = stream->readUint16LE();
-    sceneHasRotation = stream->readUint16LE();
-    sceneHasMovement = stream->readUint16LE();
+    horizontalEdgeSize = stream->readUint16LE();
+    verticalEdgeSize = stream->readUint16LE();
     slowMoveTimeDelta = stream->readUint16LE();
     fastMoveTimeDelta = stream->readUint16LE();
     unknown7C = stream->readByte();
@@ -65,22 +65,22 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
 // Takes a VIEW chunk as input
 View::View(Common::SeekableReadStream *stream) {
     stream->seek(0);
-    destLeft = stream->readUint32LE();
-    destTop = stream->readUint32LE();
-    destRight = stream->readUint32LE();
-    destBottom = stream->readUint32LE();
-    srcLeft = stream->readUint32LE();
-    srcTop = stream->readUint32LE();
-    srcRight = stream->readUint32LE();
-    srcBottom = stream->readUint32LE();
-    f1Left = stream->readUint32LE();
-    f1Top = stream->readUint32LE();
-    f1Right = stream->readUint32LE();
-    f1Bottom = stream->readUint32LE();
-    f2Left = stream->readUint32LE();
-    f2Top = stream->readUint32LE();
-    f2Right = stream->readUint32LE();
-    f2Bottom = stream->readUint32LE();
+    destination.left = stream->readUint32LE();
+    destination.top = stream->readUint32LE();
+    destination.right = stream->readUint32LE();
+    destination.bottom = stream->readUint32LE();
+    source.left = stream->readUint32LE();
+    source.top = stream->readUint32LE();
+    source.right = stream->readUint32LE();
+    source.bottom = stream->readUint32LE();
+    f1Dest.left = stream->readUint32LE();
+    f1Dest.top = stream->readUint32LE();
+    f1Dest.right = stream->readUint32LE();
+    f1Dest.bottom = stream->readUint32LE();
+    f2Dest.left = stream->readUint32LE();
+    f2Dest.top = stream->readUint32LE();
+    f2Dest.right = stream->readUint32LE();
+    f2Dest.bottom = stream->readUint32LE();
 }
 
 // Takes a CURS chunk as input

@@ -46,8 +46,8 @@ GraphicsManager::GraphicsManager(NancyEngine *engine) :
 void GraphicsManager::init() {  
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("VIEW");
     viewportDesc = View(chunk);
-    uint32 width = viewportDesc.destRight - viewportDesc.destLeft;
-    uint32 height = viewportDesc.destBottom - viewportDesc.destTop;
+    uint32 width = viewportDesc.destination.right - viewportDesc.destination.left;
+    uint32 height = viewportDesc.destination.bottom - viewportDesc.destination.top;
     _background.create(width, height, pixelFormat);
 
     // TODO make a TBOX struct
@@ -128,9 +128,10 @@ void GraphicsManager::initSceneZRenderStructs() {
 
     chunk = _engine->getBootChunkStream("MENU");
     READ_RECT(source, 16)
-    initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::BltType::kNone, &_primaryFrameSurface,
-                        new RenderFunction(this, &GraphicsManager::renderFrame), source, source);
-    initZRenderStruct(  "CUR IMAGE CURSOR", 11, false, ZRenderStruct::BltType::kTrans, &_object0Surface);
+    // Skip the custom rendering function since we're not doing dirty rectangles
+    initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::BltType::kNoTrans, &_primaryFrameSurface,
+                        nullptr, source, source);
+    initZRenderStruct(  "CUR IMAGE CURSOR", 11, true, ZRenderStruct::BltType::kTrans, &_object0Surface);
 
     chunk = _engine->getBootChunkStream("TBOX");
     READ_RECT(source, 0)
@@ -183,10 +184,8 @@ void GraphicsManager::initSceneZRenderStructs() {
                         new RenderFunction(this, &GraphicsManager::renderPasswordPuzzle));
 
     // Moved here from SceneManager::load(), should be ok
-    *source = Common::Rect(viewportDesc.srcLeft, viewportDesc.srcTop, viewportDesc.srcRight, viewportDesc.srcBottom);
-    *dest = Common::Rect(viewportDesc.destLeft, viewportDesc.destTop, viewportDesc.destRight, viewportDesc.destBottom);
     initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::BltType::kNoTrans,
-                        &_background, nullptr, source, dest);
+                        &_background, nullptr, &viewportDesc.source, &viewportDesc.destination);
     #undef READ_RECT
 
     delete source;

@@ -23,6 +23,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/scene.h"
+#include "engines/nancy/graphics.h"
 
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -169,6 +170,40 @@ void InputManager::processEvents() {
 
 bool InputManager::getInput(InputManager::InputType type) {
     return _inputs & type;
+}
+
+Common::Point InputManager::getMousePosition() {
+    return _engine->getEventManager()->getMousePos();
+}
+
+void InputManager::setMousePosition(const Common::Point &newPos) {
+    // Hopefully having two mouse move events in the queue won't break my handling code
+    Common::Event newEvent;
+    newEvent.mouse = newPos;
+    newEvent.type = Common::EventType::EVENT_MOUSEMOVE;
+    _engine->getEventManager()->pushEvent(newEvent);
+}
+
+// Passing -1 means keeping the previous value
+void InputManager::setPointerBitmap(int16 id, int16 style, int16 isHoldingItem) {
+    ZRenderStruct &zr = _engine->graphics->getZRenderStruct("CUR IMAGE CURSOR");
+    
+    if (id != -1)
+        pointerId = id;
+    
+    if (style != -1)
+        pointerStyle = style;
+
+    if (isHoldingItem != -1)
+        itemHeld = (bool)isHoldingItem;
+
+    if (itemHeld) {
+        zr.sourceSurface = &_engine->graphics->_inventoryCursorsSurface;
+    } else {
+        zr.sourceSurface = &_engine->graphics->_object0Surface;
+    }
+
+    zr.sourceRect = cursorsData.rects[pointerId*3 + pointerStyle];
 }
 
 void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
