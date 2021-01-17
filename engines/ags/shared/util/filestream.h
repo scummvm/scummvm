@@ -33,8 +33,6 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-extern const char *SAVE_FOLDER_PREFIX;
-
 class FileStream : public DataStream {
 public:
 

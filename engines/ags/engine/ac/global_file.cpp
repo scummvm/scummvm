@@ -29,6 +29,7 @@
 #include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/directory.h"
+#include "ags/shared/util/filestream.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stream.h"
 
@@ -81,8 +82,12 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 	}
 
 	Stream *s = File::OpenFile(rp.FullPath, open_mode, work_mode);
-	if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-		s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+	if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0) {
+		if (rp.FullPath.CompareLeft(AGS::Shared::SAVE_FOLDER_PREFIX))
+			// When file not found in main path, only check in AltPath if it's not a
+			// savegame file. Because ScummVM doesn't have any alt for saves
+			s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+	}
 
 	valid_handles[useindx].stream = s;
 	if (valid_handles[useindx].stream == nullptr)

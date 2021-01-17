@@ -31,6 +31,8 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+const char *SAVE_FOLDER_PREFIX = "/saves/";
+
 namespace Directory {
 
 bool CreateDirectory(const String &path) {
@@ -38,6 +40,10 @@ bool CreateDirectory(const String &path) {
 }
 
 bool CreateAllDirectories(const String &parent, const String &path) {
+	if (path == SAVE_FOLDER_PREFIX)
+		// ScummVM save folder doesn't need creating
+		return true;
+
 	if (!ags_directory_exists(parent.GetCStr()))
 		return false;
 	if (path.IsEmpty())

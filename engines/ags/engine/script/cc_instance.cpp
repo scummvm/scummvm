@@ -1024,7 +1024,8 @@ int ccInstance::Run(int32_t curpc) {
 					cc_error("invalid pointer type for object function call: %d", reg1.Type);
 				}
 			} else if (reg1.Type == kScValStaticFunction) {
-				return_value = reg1.SPfn(func_callstack.GetHead() + 1, num_args_to_func);
+				RuntimeScriptValue *head = func_callstack.GetHead();
+				return_value = reg1.SPfn(head + 1, num_args_to_func);
 			} else if (reg1.Type == kScValObjectFunction) {
 				cc_error("unexpected object function pointer on SCMD_CALLEXT");
 			} else {
