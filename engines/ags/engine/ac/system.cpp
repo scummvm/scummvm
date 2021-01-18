@@ -44,6 +44,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/globals.h"
 #include "ags/events.h"
 
 namespace AGS3 {
@@ -110,7 +111,7 @@ int System_GetViewportWidth() {
 }
 
 const char *System_GetVersion() {
-	return CreateNewScriptString(EngineVersion.LongString);
+	return CreateNewScriptString(_G(EngineVersion).LongString);
 }
 
 int System_GetHardwareAcceleration() {

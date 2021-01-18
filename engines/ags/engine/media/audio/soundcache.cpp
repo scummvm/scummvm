@@ -28,6 +28,7 @@
 #include "ags/engine/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/engine/globals.h"
 #include "ags/ags.h"
 #include "common/memstream.h"
 
@@ -43,7 +44,7 @@ void clear_sound_cache() {
 
 	if (sound_cache_entries) {
 		int i;
-		for (i = 0; i < psp_audio_cachesize; i++) {
+		for (i = 0; i < _G(psp_audio_cachesize); i++) {
 			if (sound_cache_entries[i].data) {
 				free(sound_cache_entries[i].data);
 				sound_cache_entries[i].data = nullptr;
@@ -53,8 +54,8 @@ void clear_sound_cache() {
 			}
 		}
 	} else {
-		sound_cache_entries = (sound_cache_entry_t *)malloc(psp_audio_cachesize * sizeof(sound_cache_entry_t));
-		memset(sound_cache_entries, 0, psp_audio_cachesize * sizeof(sound_cache_entry_t));
+		sound_cache_entries = (sound_cache_entry_t *)malloc(_G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
+		memset(sound_cache_entries, 0, _G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
 	}
 }
 
@@ -65,7 +66,7 @@ void sound_cache_free(char *buffer, bool is_wave) {
 	Debug::Printf("sound_cache_free(%p %d)\n", buffer, (unsigned int)is_wave);
 #endif
 	int i;
-	for (i = 0; i < psp_audio_cachesize; i++) {
+	for (i = 0; i < _G(psp_audio_cachesize); i++) {
 		if (sound_cache_entries[i].data == buffer) {
 			if (sound_cache_entries[i].reference > 0)
 				sound_cache_entries[i].reference--;
@@ -82,7 +83,7 @@ void sound_cache_free(char *buffer, bool is_wave) {
 #endif
 
 	// Sound is uncached
-	if (i == psp_audio_cachesize) {
+	if (i == _G(psp_audio_cachesize)) {
 		if (is_wave)
 			destroy_sample((SAMPLE *)buffer);
 		else
@@ -101,7 +102,7 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 	size = 0;
 
 	int i;
-	for (i = 0; i < psp_audio_cachesize; i++) {
+	for (i = 0; i < _G(psp_audio_cachesize); i++) {
 		if (sound_cache_entries[i].data == nullptr)
 			continue;
 
@@ -135,17 +136,17 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 	}
 
 	// Find free slot
-	for (i = 0; i < psp_audio_cachesize; i++) {
+	for (i = 0; i < _G(psp_audio_cachesize); i++) {
 		if (sound_cache_entries[i].data == nullptr)
 			break;
 	}
 
 	// No free slot?
-	if (i == psp_audio_cachesize) {
+	if (i == _G(psp_audio_cachesize)) {
 		unsigned int oldest = sound_cache_counter;
 		int index = -1;
 
-		for (i = 0; i < psp_audio_cachesize; i++) {
+		for (i = 0; i < _G(psp_audio_cachesize); i++) {
 			if (sound_cache_entries[i].reference == 0) {
 				if (sound_cache_entries[i].last_used < oldest) {
 					oldest = sound_cache_entries[i].last_used;

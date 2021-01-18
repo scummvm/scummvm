@@ -28,40 +28,7 @@
 
 namespace AGS3 {
 
-// Current engine version
-extern AGS::Shared::Version EngineVersion;
-// Lowest savedgame version, accepted by this engine
-extern AGS::Shared::Version SavedgameLowestBackwardCompatVersion;
-// Lowest engine version, which would accept current savedgames
-extern AGS::Shared::Version SavedgameLowestForwardCompatVersion;
-
 //=============================================================================
-
-extern const char **global_argv;
-
-// Location of the engine executable
-extern AGS::Shared::String appDirectory;
-// Game path from the startup options (before reading config)
-extern AGS::Shared::String cmdGameDataPath;
-
-// Startup flags, set from parameters to engine
-extern int force_window;
-extern int override_start_room;
-extern bool justRegisterGame;
-extern bool justUnRegisterGame;
-extern bool justTellInfo;
-extern const char *loadSaveGameOnStartup;
-
-extern int psp_video_framedrop;
-extern int psp_audio_enabled;
-extern int psp_midi_enabled;
-extern int psp_ignore_acsetup_cfg_file;
-extern int psp_clear_cache_on_room_change;
-
-extern int psp_midi_preload_patches;
-extern int psp_audio_cachesize;
-extern char psp_game_file_name[];
-extern char psp_translation[];
 
 void main_print_help();
 

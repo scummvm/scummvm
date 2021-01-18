@@ -23,7 +23,6 @@
 //
 // Game configuration
 //
-//include <ctype.h> // toupper
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/gamesetup.h"
@@ -44,6 +43,7 @@
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -53,7 +53,6 @@ using namespace AGS::Engine;
 extern GameSetupStruct game;
 extern GameSetup usetup;
 extern SpriteCache spriteset;
-extern int force_window;
 extern GameState play;
 
 // Filename of the default config file, the one found in the game installation
@@ -385,16 +384,6 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 	usetup.Screen.DisplayMode.RefreshRate = INIreadint(cfg, "misc", "refresh");
 }
 
-// Variables used for mobile port configs
-extern int psp_gfx_renderer;
-extern int psp_gfx_scaling;
-extern int psp_gfx_super_sampling;
-extern int psp_gfx_smoothing;
-extern int psp_gfx_smooth_sprites;
-extern int psp_audio_enabled;
-extern int psp_midi_enabled;
-extern char psp_translation[];
-
 void override_config_ext(ConfigTree &cfg) {
 	// Mobile ports always run in fullscreen mode
 #if AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS
@@ -404,35 +393,35 @@ void override_config_ext(ConfigTree &cfg) {
 	INIwritestring(cfg, "graphics", "driver", "ScummVM");
 	INIwriteint(cfg, "graphics", "render_at_screenres", 1);
 
-	// psp_gfx_scaling - scaling style:
+	// _G(psp_gfx_scaling) - scaling style:
 	//    * 0 - no scaling
 	//    * 1 - stretch and preserve aspect ratio
 	//    * 2 - stretch to whole screen
-	if (psp_gfx_scaling == 0)
+	if (_G(psp_gfx_scaling) == 0)
 		INIwritestring(cfg, "graphics", "game_scale_fs", "1");
-	else if (psp_gfx_scaling == 1)
+	else if (_G(psp_gfx_scaling) == 1)
 		INIwritestring(cfg, "graphics", "game_scale_fs", "proportional");
 	else
 		INIwritestring(cfg, "graphics", "game_scale_fs", "stretch");
 
-	// psp_gfx_smoothing - scaling filter:
+	// _G(psp_gfx_smoothing) - scaling filter:
 	//    * 0 - nearest-neighbour
 	//    * 1 - linear
-	if (psp_gfx_smoothing == 0)
+	if (_G(psp_gfx_smoothing) == 0)
 		INIwritestring(cfg, "graphics", "filter", "StdScale");
 	else
 		INIwritestring(cfg, "graphics", "filter", "Linear");
 
-	// psp_gfx_super_sampling - enable super sampling
+	// _G(psp_gfx_super_sampling) - enable super sampling
 	//    * 0 - x1
 	//    * 1 - x2
-	if (psp_gfx_renderer == 2)
-		INIwriteint(cfg, "graphics", "supersampling", psp_gfx_super_sampling + 1);
+	if (_G(psp_gfx_renderer) == 2)
+		INIwriteint(cfg, "graphics", "supersampling", _G(psp_gfx_super_sampling) + 1);
 	else
 		INIwriteint(cfg, "graphics", "supersampling", 0);
 
-	INIwriteint(cfg, "misc", "antialias", psp_gfx_smooth_sprites != 0);
-	INIwritestring(cfg, "language", "translation", psp_translation);
+	INIwriteint(cfg, "misc", "antialias", _G(psp_gfx_smooth_sprites) != 0);
+	INIwritestring(cfg, "language", "translation", _G(psp_translation));
 }
 
 void apply_config(const ConfigTree &cfg) {
@@ -440,9 +429,9 @@ void apply_config(const ConfigTree &cfg) {
 		// Legacy settings has to be translated into new options;
 		// they must be read first, to let newer options override them, if ones are present
 		read_legacy_audio_config(cfg);
-		if (psp_audio_enabled) {
+		if (_G(psp_audio_enabled)) {
 			usetup.digicard = read_driverid(cfg, "sound", "digiid", usetup.digicard);
-			if (psp_midi_enabled)
+			if (_G(psp_midi_enabled))
 				usetup.midicard = read_driverid(cfg, "sound", "midiid", usetup.midicard);
 			else
 				usetup.midicard = MIDI_NONE;
@@ -573,8 +562,8 @@ void save_config_file() {
 	ConfigTree cfg;
 
 	// Last display mode
-	// TODO: force_window check is a temporary workaround (see comment below)
-	if (force_window == 0) {
+	// TODO: _G(force_window) check is a temporary workaround (see comment below)
+	if (_G(force_window) == 0) {
 		bool is_windowed = System_GetWindowed() != 0;
 		cfg["graphics"]["windowed"] = String::FromFormat("%d", is_windowed ? 1 : 0);
 		// TODO: this is a hack, necessary because the original config system was designed when
