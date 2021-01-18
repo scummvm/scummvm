@@ -66,6 +66,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/ac/keycode.h"
 #include "ags/lib/allegro/keyboard.h"
+#include "ags/events.h"
 
 namespace AGS3 {
 
@@ -280,14 +281,7 @@ static void check_mouse_controls() {
 // situation: if first modifier gets pressed, 'key_shifts' will be zero,
 // when second modifier gets pressed it will only contain first one, and so on.
 static int get_active_shifts() {
-	int shifts = 0;
-	if (key[KEY_LSHIFT] || key[KEY_RSHIFT])
-		shifts |= KB_SHIFT_FLAG;
-	if (key[KEY_LCONTROL] || key[KEY_RCONTROL])
-		shifts |= KB_CTRL_FLAG;
-	if (key[KEY_ALT] || key[KEY_ALTGR])
-		shifts |= KB_ALT_FLAG;
-	return shifts;
+	return ::AGS::g_events->getModifierFlags();
 }
 
 // Special flags to OR saved shift flags with:
@@ -345,7 +339,10 @@ bool run_service_key_controls(int &kgn) {
 
 	// LAlt or RAlt + Enter
 	// NOTE: for some reason LAlt + Enter produces same code as F9
-	if (act_shifts == KB_ALT_FLAG && ((keycode == eAGSKeyCodeF9 && !key[KEY_F9]) || keycode == eAGSKeyCodeReturn)) {
+	if (act_shifts == KB_ALT_FLAG && (
+			(keycode == eAGSKeyCodeF9 && !::AGS::g_events->isKeyPressed(KEY_F9)) ||
+			keycode == eAGSKeyCodeReturn)
+	) {
 		engine_try_switch_windowed_gfxmode();
 		return false;
 	}
@@ -476,7 +473,8 @@ static void check_keyboard_controls() {
 	//     return;
 	// }
 
-	if ((kgn == eAGSKeyCodeAltV) && (key[KEY_LCONTROL] || key[KEY_RCONTROL]) && (play.wait_counter < 1) && (is_text_overlay == 0) && (restrict_until == 0)) {
+	if (kgn == eAGSKeyCodeAltV && (::AGS::g_events->getModifierFlags() & KB_CTRL_FLAG)
+			&& (play.wait_counter < 1) && (is_text_overlay == 0) && (restrict_until == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
 		play.debug_mode++;

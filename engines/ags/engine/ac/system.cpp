@@ -40,11 +40,11 @@
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/shared/util/string_compat.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/events.h"
 
 namespace AGS3 {
 
@@ -118,15 +118,15 @@ int System_GetHardwareAcceleration() {
 }
 
 int System_GetNumLock() {
-	return (key_shifts & KB_NUMLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & __allegro_KB_NUMLOCK_FLAG) ? 1 : 0;
 }
 
 int System_GetCapsLock() {
-	return (key_shifts & KB_CAPSLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & __allegro_KB_CAPSLOCK_FLAG) ? 1 : 0;
 }
 
 int System_GetScrollLock() {
-	return (key_shifts & KB_SCROLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & __allegro_KB_SCROLOCK_FLAG) ? 1 : 0;
 }
 
 void System_SetNumLock(int newValue) {
