@@ -294,7 +294,11 @@ void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color)
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	error("TODO: draw_sprite_h_flip");
+	Graphics::ManagedSurface &bmpS = **bmp;
+	Graphics::ManagedSurface &spriteS = **sprite;
+
+	add_palette_if_needed(spriteS, bmpS);
+	bmpS.transBlitFrom(spriteS, Common::Point(x, y), (uint)-1, true);
 }
 
 void draw_sprite_v_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
