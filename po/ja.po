@@ -5857,7 +5857,9 @@ msgstr "NES Classicのパレットを使用する"
 
 #: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr "NES Classicを厳密にエミュレートした、よりニュートラルなカラーパレットを使用する"
+msgstr ""
+"NES Classicを厳密にエミュレートした、よりニュートラルなカラーパレットを使用す"
+"る"
 
 #: engines/scumm/dialogs.cpp:169
 #, c-format
@@ -5872,7 +5874,8 @@ msgstr "%sが見つかりません(%c%d)。ボタンを押してください。"
 #: engines/scumm/dialogs.cpp:171
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr "ディスク%cのロード中にエラーが発生しました(%c%d)。ボタンを押してください。"
+msgstr ""
+"ディスク%cのロード中にエラーが発生しました(%c%d)。ボタンを押してください。"
 
 #: engines/scumm/dialogs.cpp:172
 msgid "Game Paused.  Press SPACE to Continue."
