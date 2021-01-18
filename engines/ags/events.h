@@ -23,6 +23,8 @@
 #ifndef AGS_EVENTS_H
 #define AGS_EVENTS_H
 
+#include "lib/allegro/keyboard.h"
+#include "common/array.h"
 #include "common/queue.h"
 #include "common/events.h"
 
@@ -32,8 +34,14 @@ class EventsManager {
 private:
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::KeyState> _pendingKeys;
+	Common::Array<bool> _keys;
+	uint _keyFlags;
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
+
+	int getScancode(Common::KeyCode keycode) const;
+
+	void updateKeys(const Common::KeyState &keyState, bool isDown);
 public:
 	EventsManager();
 	~EventsManager();
@@ -51,7 +59,7 @@ public:
 	/**
 	 * Returns the next keypress, if any is pending
 	 */
-	Common::KeyState readKey();
+	int readKey();
 
 	/**
 	 * Returns the next event, if any
@@ -62,6 +70,18 @@ public:
 	 * Sets the mouse position
 	 */
 	void warpMouse(const Common::Point &newPos);
+
+	/**
+	 * Returns true if a given key is pressed
+	 */
+	bool isKeyPressed(AGS3::AllegroKbdKeycode keycode) const;
+
+	/**
+	 * Returns the bitset of currently pressed modifier keys
+	 */
+	uint getModifierFlags() const {
+		return _keyFlags;
+	}
 };
 
 extern EventsManager *g_events;

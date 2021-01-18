@@ -44,6 +44,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/textstreamwriter.h"
+#include "ags/events.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 //include <winalleg.h>
@@ -564,14 +565,12 @@ void check_debug_keys() {
 	if (play.debug_mode) {
 		// do the run-time script debugging
 
-		if ((!key[KEY_SCRLOCK]) && (scrlockWasDown))
+		if (!::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && scrlockWasDown)
 			scrlockWasDown = 0;
-		else if ((key[KEY_SCRLOCK]) && (!scrlockWasDown)) {
-
+		else if (::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && !scrlockWasDown) {
 			break_on_next_script_step = 1;
 			scrlockWasDown = 1;
 		}
-
 	}
 }
 
