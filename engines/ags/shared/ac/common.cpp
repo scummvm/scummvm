@@ -29,6 +29,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 const char *game_file_sig = "Adventure Creator Game File v2";
+extern volatile char abort_engine;
 
 void quitprintf(const char *fmt, ...) {
 	va_list ap;
@@ -36,7 +37,8 @@ void quitprintf(const char *fmt, ...) {
 	String text = String::FromFormatV(fmt, ap);
 	va_end(ap);
 
-	::AGS::g_vm->GUIError(text);
+	if (!abort_engine)
+		::AGS::g_vm->GUIError(text);
 	quit(text);
 }
 
