@@ -22,9 +22,9 @@
 
 #include "ags/events.h"
 #include "common/system.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
-extern volatile char want_exit, abort_engine;
 extern char check_dynamic_sprites_at_exit;
 }
 
@@ -46,8 +46,8 @@ void EventsManager::pollEvents() {
 
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (e.type == Common::EVENT_QUIT) {
-			::AGS3::want_exit = 1;
-			::AGS3::abort_engine = 1;
+			_G(want_exit) = true;
+			_G(abort_engine) = true;
 			::AGS3::check_dynamic_sprites_at_exit = 0;
 
 		} else if (e.type == Common::EVENT_KEYDOWN) {

@@ -102,6 +102,7 @@ MODULE_OBJS = \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
 	shared/util/wgt2allg.o \
+	engine/globals.o \
 	engine/ac/dynobj/cc_agsdynamicobject.o \
 	engine/ac/dynobj/cc_audiochannel.o \
 	engine/ac/dynobj/cc_audioclip.o \

@@ -44,6 +44,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/textstreamwriter.h"
+#include "ags/engine/globals.h"
 #include "ags/events.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
@@ -59,7 +60,6 @@ extern char check_dynamic_sprites_at_exit;
 extern int displayed_room;
 extern RoomStruct thisroom;
 extern char pexbuf[STD_BUFFER_SIZE];
-extern volatile char want_exit, abort_engine;
 extern GameSetupStruct game;
 
 
@@ -471,8 +471,8 @@ int check_for_messages_from_editor() {
 			game_paused_in_debugger = 0;
 			break_on_next_script_step = 1;
 		} else if (strncmp(msgPtr, "EXIT", 4) == 0) {
-			want_exit = 1;
-			abort_engine = 1;
+			_G(want_exit) = 1;
+			_G(abort_engine) = 1;
 			check_dynamic_sprites_at_exit = 0;
 		}
 
@@ -488,7 +488,7 @@ int check_for_messages_from_editor() {
 
 bool send_exception_to_editor(const char *qmsg) {
 #if AGS_PLATFORM_OS_WINDOWS
-	want_exit = 0;
+	_G(want_exit) = 0;
 	// allow the editor to break with the error message
 	if (editor_window_handle != NULL)
 		SetForegroundWindow(editor_window_handle);
@@ -496,7 +496,7 @@ bool send_exception_to_editor(const char *qmsg) {
 	if (!send_message_to_editor("ERROR", qmsg))
 		return false;
 
-	while ((check_for_messages_from_editor() == 0) && (want_exit == 0)) {
+	while ((check_for_messages_from_editor() == 0) && (_G(want_exit) == 0)) {
 		update_polled_mp3();
 		platform->Delay(10);
 	}

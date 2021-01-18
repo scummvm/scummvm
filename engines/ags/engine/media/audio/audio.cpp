@@ -844,8 +844,6 @@ void update_volume_drop_if_voiceover() {
 	apply_volume_drop_modifier(play.speech_has_voice);
 }
 
-extern volatile char want_exit;
-
 void update_mp3_thread() {
 	if (switching_away_from_game) {
 		return;

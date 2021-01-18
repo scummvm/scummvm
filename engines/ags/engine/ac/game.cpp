@@ -158,7 +158,6 @@ RoomStruct thisroom;
 
 volatile int switching_away_from_game = 0;
 volatile bool switched_away = false;
-volatile char want_exit = 0, abort_engine = 0;
 GameDataVersion loaded_game_file_version = kGameVersion_Undefined;
 int frames_per_second = 40;
 int displayed_room = -10, starting_room = -1;
