@@ -556,6 +556,11 @@ begin_credits("Credits");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
 
+			begin_section("AGS");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("", "AGA", "AgsCreditz");
+			end_section();
+
 			begin_section("Avalanche");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
