@@ -406,8 +406,6 @@ Common::Error AGSEngine::run() {
 		return initialize_engine_with_exception_handling(initialize_engine, startup_opts);
 	}
 #endif
-
-	return Common::kNoError;
 }
 
 SaveStateList AGSEngine::listSaves() const {
