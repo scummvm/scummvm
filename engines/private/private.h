@@ -66,7 +66,7 @@ typedef Common::List<PhoneInfo> PhoneList;
 
 // hash tables
 
-typedef Common::HashMap<Common::String, bool> PlayedMovieTable;
+typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 
 class PrivateEngine : public Engine {
 private:
@@ -132,6 +132,7 @@ public:
 	Common::String *_currentSetting;
     Common::String *_nextVS;
     Common::String *_frame;
+	bool            _toTake;
 
 	// Save/Load games
 	MaskInfo *_saveGameMask;
@@ -140,15 +141,21 @@ public:
 	int _mode;
     bool _modified;
     Common::String *_nextMovie;
-	PlayedMovieTable _playedMovies;
+	PlayedMediaTable _playedMovies;
+	PlayedMediaTable _playedPhoneClips;
 	Common::String *_repeatedMovieExit;
     ExitList _exits;
     MaskList _masks;
 
 	// Sounds
 
-    Common::String *getPaperShuffleSound();
+	Common::String *getPaperShuffleSound();
 	Common::String *_paperShuffleSound;
+
+	Common::String *getTakeSound();
+	Common::String *getLeaveSound();
+	Common::String *_takeSound;
+	Common::String *_leaveSound;
 
 	// Radios
 

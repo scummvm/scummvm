@@ -44,7 +44,7 @@ void initInsts() {
     }
 }
 
-/* initialize for code generation */ 
+/* initialize for code generation */
 void initSetting() {
     setting = (Setting*) malloc(sizeof(Setting));
     memset((void *) setting, 0, sizeof(Setting));
@@ -85,7 +85,7 @@ void loadSetting(Common::String *name) {
     }*/
 }
 
-/* push d onto stack */ 
+/* push d onto stack */
 int push(Datum d) {
     assert (!(stackp >= &stack[NSTACK]));
     *stackp++ = d;
@@ -98,7 +98,7 @@ Datum pop()	{
     return *--stackp;
 }
 
-/* push constant onto stack */ 
+/* push constant onto stack */
 int constpush()	{
     Datum d;
     Symbol *s = (Symbol *)*pc++;
@@ -149,7 +149,7 @@ int funcpush() //(char *name, int nargs)
     return 0;
 }
 
-/* evaluate variable on stack */ 
+/* evaluate variable on stack */
 int eval() {
     Datum d;
     d = pop();
@@ -167,7 +167,7 @@ int eval() {
         d.type = RECT;
         d.u.rect = d.u.sym->u.rect;
     } else if (d.u.sym->type == NAME) {
-    // No evaluation until is absolutely needed
+        // No evaluation until is absolutely needed
     }
     else
         assert(0);
@@ -176,7 +176,7 @@ int eval() {
     return 0;
 }
 
-/* add top two elems on stack */ 
+/* add top two elems on stack */
 int add() {
     Datum d1, d2;
     d2 = pop();
@@ -363,7 +363,7 @@ int ne() {
     return 0;
 }
 
-/* install one instruction or operand */ 
+/* install one instruction or operand */
 Inst *code(Inst f) {
     //debug("pushing code at %d", progp);
     Inst *oprogp = progp;
@@ -416,7 +416,7 @@ int fail() {
     return 0;
 }
 
-/* run the machine */ 
+/* run the machine */
 void execute(Inst *p) {
     for (pc = p; *pc != STOP; ) {
         (*(*pc++))();

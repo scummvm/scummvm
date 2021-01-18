@@ -22,7 +22,7 @@ static const ADGameDescription gameDescriptions[] = {
         "private-eye", // Demo from archive.org
         "Demo",
         AD_ENTRY1s("ASSETS.Z", "854e141bb67535359620a1833fcc1566", 5955),
-        Common::EN_ANY, 
+        Common::EN_ANY,
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)
@@ -32,7 +32,7 @@ static const ADGameDescription gameDescriptions[] = {
         "private-eye", // Demo from the full game CDROM
         "Demo",
         AD_ENTRY1s("ASSETS.Z", "045766e39f44d6ee3bf92f0d4521587c", 5961),
-        Common::EN_ANY, 
+        Common::EN_ANY,
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)

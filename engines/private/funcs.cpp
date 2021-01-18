@@ -15,11 +15,11 @@ void ChgMode(ArgArray args) {
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
 
-    if (g_private->_mode == 0) { 
+    if (g_private->_mode == 0) {
         g_private->_origin->x = 0; // use a constant
         g_private->_origin->y = 0;
     }
-    else if (g_private->_mode == 1) { 
+    else if (g_private->_mode == 1) {
         g_private->_origin->x = 64;  // use a constant
         g_private->_origin->y = 48;
     }
@@ -142,13 +142,13 @@ void Inventory(ArgArray args) {
 
         m->cursor = new Common::String("kInventory");
         m->point = new Common::Point(0,0);
-        if (v1.type == NAME)
+        if (v2.type == NAME)
             m->flag = v2.u.sym;
         else
             m->flag = NULL;
 
         g_private->_masks.push_front(*m);
-
+        g_private->_toTake = true;
     }
 
     if (v1.type == NAME)
@@ -158,6 +158,8 @@ void Inventory(ArgArray args) {
         Common::String *s = new Common::String(snd.u.str);
         g_private->playSound(*s, 1);
     }
+
+
 
     // TODO: Keep track of inventory is missing
 }
@@ -204,7 +206,7 @@ void PaperShuffleSound(ArgArray args) {
     // assert types
     debug("PaperShuffleSound()");
     Common::String *s = g_private->getPaperShuffleSound();
-    g_private->playSound(*s, 1); 
+    g_private->playSound(*s, 1);
 }
 
 void Sound(ArgArray args) {
@@ -352,20 +354,20 @@ void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
     else if (strcmp(t, "PoliceClip") == 0)
         g_private->_policeRadio.push_back(*sound);
     else if (strcmp(t, "PhoneClip") == 0) {
+        // This condition will avoid adding the same phone call twice,
+        // it is unclear why this could be useful, but it looks like a bug
+        // in the original scripts
+        if (g_private->_playedPhoneClips.contains(*sound))
+            return;
+
+        g_private->_playedPhoneClips.setVal(*sound, true);
         PhoneInfo *p = (PhoneInfo*) malloc(sizeof(PhoneInfo));
         p->sound = sound;
         p->flag = flag;
         p->val = val;
-        // This condition will avoid adding the same phone call twice,
-        // it is unclear why this could be useful, but it looks like a bug
-        // in the original script
-        if (g_private->_phone.size() > 0 && 
-             strcmp(g_private->_phone.back().sound->c_str(), s) == 0)
-            return;
-
         g_private->_phone.push_back(*p);
     }
-        
+
     else
         debug("error: invalid sound type %s", t);
 }
@@ -383,7 +385,7 @@ void PhoneClip(ArgArray args) {
         debug("Unimplemented PhoneClip special case");
         return;
     }
-    
+
     AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
 }
 
@@ -488,7 +490,7 @@ static struct FuncTable {
     { LoadGame,        "LoadGame"},
     { SaveGame,        "SaveGame"},
     { AskSave,         "AskSave"},
-    
+
     { DossierAdd,      "DossierAdd"},
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
