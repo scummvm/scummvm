@@ -69,12 +69,14 @@ extern int need_to_stop_cd;
 extern int use_cdplayer;
 extern IGraphicsDriver *gfxDriver;
 
-bool handledErrorInEditor;
+// TODO: move to test unit
+extern Bitmap *test_allegro_bitmap;
+extern IDriverDependantBitmap *test_allegro_ddb;
 
 void quit_tell_editor_debugger(const String &qmsg, QuitReason qreason) {
 	if (editor_debugging_initialized) {
 		if (qreason & kQuitKind_GameException)
-			handledErrorInEditor = send_exception_to_editor(qmsg);
+			_G(handledErrorInEditor) = send_exception_to_editor(qmsg);
 		send_message_to_editor("EXIT");
 		editor_debugger->Shutdown();
 	}
@@ -179,7 +181,7 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 void quit_message_on_exit(const char *qmsg, String &alertis, QuitReason qreason) {
 	// successful exit displays no messages (because Windoze closes the dos-box
 	// if it is empty).
-	if ((qreason & kQuitKind_NormalExit) == 0 && !handledErrorInEditor) {
+	if ((qreason & kQuitKind_NormalExit) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
 		sprintf(pexbuf, "%s\n", qmsg);
 		alertis.Append(pexbuf);
@@ -212,17 +214,11 @@ void quit_delete_temp_files() {
 }
 
 // TODO: move to test unit
-extern Bitmap *test_allegro_bitmap;
-extern IDriverDependantBitmap *test_allegro_ddb;
 void allegro_bitmap_test_release() {
 	delete test_allegro_bitmap;
 	if (test_allegro_ddb)
 		gfxDriver->DestroyDDB(test_allegro_ddb);
 }
-
-char return_to_roomedit[30] = "\0";
-char return_to_room[150] = "\0";
-char quit_message[256] = "\0";
 
 // quit - exits the engine, shutting down everything gracefully
 // The parameter is the message to print. If this message begins with
@@ -232,16 +228,16 @@ char quit_message[256] = "\0";
 // error.
 // "!|" is a special code used to mean that the player has aborted (Alt+X)
 void quit(const char *quitmsg) {
-	strncpy(quit_message, quitmsg, 256);
+	strncpy(_G(quit_message), quitmsg, 256);
 	_G(abort_engine) = true;
 }
 
 void quit_free() {
 	String alertis;
-	if (strlen(quit_message) == 0)
-		strcpy(quit_message, "|bye!");
+	if (strlen(_G(quit_message)) == 0)
+		strcpy(_G(quit_message), "|bye!");
 
-	const char *quitmsg = quit_message;
+	const char *quitmsg = _G(quit_message);
 	QuitReason qreason = quit_check_for_error_state(quitmsg, alertis);
 
 	if (qreason & kQuitKind_NormalExit)
@@ -249,9 +245,9 @@ void quit_free() {
 
 	allegro_bitmap_test_release();
 
-	handledErrorInEditor = false;
+	_G(handledErrorInEditor) = false;
 
-	quit_tell_editor_debugger(quit_message, qreason);
+	quit_tell_editor_debugger(_G(quit_message), qreason);
 
 	our_eip = 9900;
 

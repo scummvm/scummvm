@@ -96,6 +96,18 @@ public:
 
 	/**@}*/
 
+	/**
+	 * \defgroup quit globals
+	 * @{
+	 */
+
+	bool _handledErrorInEditor = false;
+	char _return_to_roomedit[30] = "\0";
+	char _return_to_room[150] = "\0";
+	char _quit_message[256] = "\0";
+
+	 /**@}*/
+
 public:
 	Globals();
 	~Globals();
@@ -103,7 +115,12 @@ public:
 
 extern Globals *g_globals;
 
+// Macro for accessing a globals member
 #define _G(FIELD) (::AGS3::g_globals->_##FIELD)
+// Macro for accessing a globals member that was an object in the original,
+// but is a pointer to the object in ScummVM, so that we don't need to
+// provide the full class/struct definition here in the header file
+#define _GP(FIELD) (*::AGS3::g_globals->_##FIELD)
 
 } // namespace AGS3
 
