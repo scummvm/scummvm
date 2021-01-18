@@ -206,7 +206,7 @@ public:
 	}
 
 	uint getTransparentColor() const {
-		return _owner->getTransparentColor();
+		return format.RGBToColor(255, 0, 255);
 	}
 
 	int getpixel(int x, int y) const;
