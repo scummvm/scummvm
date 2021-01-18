@@ -26,7 +26,7 @@ namespace AGS3 {
 
 Globals *g_globals;
 
-Globals::Globals() : _want_exit(false), _abort_engine(false) {
+Globals::Globals() {
 	g_globals = this;
 }
 

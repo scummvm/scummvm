@@ -61,6 +61,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -240,11 +241,11 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 
 	String version_str = String::FromStream(in);
 	Version eng_version(version_str);
-	if (eng_version > EngineVersion ||
-		eng_version < SavedgameLowestBackwardCompatVersion) {
+	if (eng_version > _G(EngineVersion) ||
+		eng_version < _G(SavedgameLowestBackwardCompatVersion)) {
 		// Engine version is either non-forward or non-backward compatible
 		return new SavegameError(kSvgErr_IncompatibleEngine,
-			String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), SavedgameLowestBackwardCompatVersion.LongString.GetCStr(), EngineVersion.LongString.GetCStr()));
+			String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), _G(SavedgameLowestBackwardCompatVersion).LongString.GetCStr(), _G(EngineVersion).LongString.GetCStr()));
 	}
 	if (elems & kSvgDesc_EnvInfo) {
 		desc.MainDataFilename.Read(in);
@@ -672,7 +673,7 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	out->WriteInt32(kSvgVersion_Current);
 	// Enviroment information
 	StrUtil::WriteString("Adventure Game Studio run-time engine", out);
-	StrUtil::WriteString(EngineVersion.LongString, out);
+	StrUtil::WriteString(_G(EngineVersion).LongString, out);
 	StrUtil::WriteString(game.guid, out);
 	StrUtil::WriteString(game.gamename, out);
 	StrUtil::WriteString(ResPaths.GamePak.Name, out);

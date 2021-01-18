@@ -43,6 +43,7 @@
 #include "ags/engine/script/script.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/engine/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -53,7 +54,6 @@ using namespace AGS::Engine;
 extern int our_eip, displayed_room;
 extern GameSetupStruct game;
 extern GameState play;
-extern const char *loadSaveGameOnStartup;
 extern std::vector<ccInstance *> moduleInst;
 extern int numScriptModules;
 extern CharacterInfo *playerchar;
@@ -75,14 +75,14 @@ void start_game_init_editor_debugging() {
 }
 
 void start_game_load_savegame_on_startup() {
-	if (loadSaveGameOnStartup != nullptr) {
+	if (_G(loadSaveGameOnStartup) != nullptr) {
 		int saveGameNumber = 1000;
-		const char *sgName = strstr(loadSaveGameOnStartup, "agssave.");
+		const char *sgName = strstr(_G(loadSaveGameOnStartup), "agssave.");
 		if (sgName != nullptr) {
 			sscanf(sgName, "agssave.%03d", &saveGameNumber);
 		}
 		current_fade_out_effect();
-		try_restore_save(loadSaveGameOnStartup, saveGameNumber);
+		try_restore_save(_G(loadSaveGameOnStartup), saveGameNumber);
 	}
 }
 

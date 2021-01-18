@@ -25,6 +25,7 @@
 //
 
 #include "ags/shared/core/platform.h"
+#include "ags/engine/globals.h"
 
 //include <errno.h>
 #if AGS_PLATFORM_OS_WINDOWS
@@ -89,7 +90,6 @@ using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
 extern int our_eip;
-extern bool justRunSetup;
 extern GameSetup usetup;
 extern GameSetupStruct game;
 extern int proper_exit;
@@ -193,10 +193,10 @@ bool engine_run_setup(const String &exe_path, ConfigTree &cfg, int &app_res) {
 void engine_force_window() {
 	// Force to run in a window, override the config file
 	// TODO: actually overwrite config tree instead
-	if (force_window == 1) {
+	if (_G(force_window) == 1) {
 		usetup.Screen.DisplayMode.Windowed = true;
 		usetup.Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_ByGameScaling;
-	} else if (force_window == 2) {
+	} else if (_G(force_window) == 2) {
 		usetup.Screen.DisplayMode.Windowed = false;
 		usetup.Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_MaxDisplay;
 	}
@@ -247,9 +247,9 @@ String find_game_data_in_directory(const String &path) {
 bool search_for_game_data_file(String &filename, String &search_path) {
 	Debug::Printf("Looking for the game data file");
 	// 1. From command line argument, treated as a directory
-	if (!cmdGameDataPath.IsEmpty()) {
+	if (!_G(cmdGameDataPath).IsEmpty()) {
 		// set from cmd arg (do any conversions if needed)
-		filename = cmdGameDataPath;
+		filename = _G(cmdGameDataPath);
 		if (!filename.IsEmpty() && Path::IsDirectory(filename)) {
 			search_path = filename;
 			filename = find_game_data_in_directory(search_path);
@@ -273,8 +273,8 @@ bool search_for_game_data_file(String &filename, String &search_path) {
 			filename = find_game_data_in_directory(search_path);
 			if (filename.IsEmpty()) {
 				// 3.3 Look in executable's directory (if it's different from current dir)
-				if (Path::ComparePaths(appDirectory, search_path)) {
-					search_path = appDirectory;
+				if (Path::ComparePaths(_G(appDirectory), search_path)) {
+					search_path = _G(appDirectory);
 					filename = find_game_data_in_directory(search_path);
 				}
 			}
@@ -559,7 +559,7 @@ void atexit_handler() {
 		                       "Program pointer: %+03d  (write this number down), ACI version %s\n"
 		                       "If you see a list of numbers above, please write them down and contact\n"
 		                       "developers. Otherwise, note down any other information displayed.",
-		                       our_eip, EngineVersion.LongString.GetCStr());
+		                       our_eip, _G(EngineVersion).LongString.GetCStr());
 	}
 }
 
@@ -598,13 +598,13 @@ int engine_load_game_data() {
 }
 
 int engine_check_register_game() {
-	if (justRegisterGame) {
+	if (_G(justRegisterGame)) {
 		platform->RegisterGameWithGameExplorer();
 		proper_exit = 1;
 		return EXIT_NORMAL;
 	}
 
-	if (justUnRegisterGame) {
+	if (_G(justUnRegisterGame)) {
 		platform->UnRegisterGameWithGameExplorer();
 		proper_exit = 1;
 		return EXIT_NORMAL;
@@ -1052,7 +1052,7 @@ void engine_init_game_settings() {
 
 void engine_setup_scsystem_auxiliary() {
 	// ScriptSystem::aci_version is only 10 chars long
-	strncpy(scsystem.aci_version, EngineVersion.LongString, 10);
+	strncpy(scsystem.aci_version, _G(EngineVersion).LongString, 10);
 	if (usetup.override_script_os >= 0) {
 		scsystem.os = usetup.override_script_os;
 	} else {
@@ -1114,15 +1114,15 @@ void allegro_bitmap_test_init() {
 // for the available resource packs in common locations
 HError define_gamedata_location_checkall(const String &exe_path) {
 	// First try if they provided a startup option
-	if (!cmdGameDataPath.IsEmpty()) {
+	if (!_G(cmdGameDataPath).IsEmpty()) {
 		// If not a valid path - bail out
-		if (!Path::IsFileOrDir(cmdGameDataPath))
-			return new Error(String::FromFormat("Defined game location is not a valid path.\nPath: '%s'", cmdGameDataPath.GetCStr()));
+		if (!Path::IsFileOrDir(_G(cmdGameDataPath)))
+			return new Error(String::FromFormat("Defined game location is not a valid path.\nPath: '%s'", _G(cmdGameDataPath).GetCStr()));
 		// Switch working dir to this path to be able to look for config and other assets there
-		Directory::SetCurrentDirectory(Path::GetDirectoryPath(cmdGameDataPath));
+		Directory::SetCurrentDirectory(Path::GetDirectoryPath(_G(cmdGameDataPath)));
 		// If it's a file, then keep it and proceed
-		if (Path::IsFile(cmdGameDataPath)) {
-			usetup.main_data_filepath = cmdGameDataPath;
+		if (Path::IsFile(_G(cmdGameDataPath))) {
+			usetup.main_data_filepath = _G(cmdGameDataPath);
 			return HError::None();
 		}
 	}
@@ -1219,7 +1219,7 @@ void engine_read_config(const String &exe_path, ConfigTree &cfg) {
 	// Apply overriding options from mobile port settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
 	// NOTE: the variable is historically called "ignore" but we use it in "override" meaning here
-	if (psp_ignore_acsetup_cfg_file)
+	if (_G(psp_ignore_acsetup_cfg_file))
 		override_config_ext(cfg);
 }
 
@@ -1257,7 +1257,7 @@ void engine_set_config(const ConfigTree cfg) {
 //
 // --tell command support: printing engine/game info by request
 //
-extern std::set<String> tellInfoKeys;
+
 static bool print_info_needs_game(const std::set<String> &keys) {
 	return keys.count("all") > 0 || keys.count("config") > 0 || keys.count("configpath") > 0 ||
 	       keys.count("data") > 0;
@@ -1329,9 +1329,9 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	//-----------------------------------------------------
 	// Locate game data and assemble game config
-	const String exe_path = global_argv[0];
-	if (justTellInfo && !print_info_needs_game(tellInfoKeys)) {
-		engine_print_info(tellInfoKeys, exe_path, nullptr);
+	const String exe_path = _G(global_argv)[0];
+	if (_G(justTellInfo) && !print_info_needs_game(_G(tellInfoKeys))) {
+		engine_print_info(_G(tellInfoKeys), exe_path, nullptr);
 		return EXIT_NORMAL;
 	}
 
@@ -1339,12 +1339,12 @@ int initialize_engine(const ConfigTree &startup_opts) {
 		return EXIT_ERROR;
 	ConfigTree cfg;
 	engine_prepare_config(cfg, exe_path, startup_opts);
-	if (justTellInfo) {
-		engine_print_info(tellInfoKeys, exe_path, &cfg);
+	if (_G(justTellInfo)) {
+		engine_print_info(_G(tellInfoKeys), exe_path, &cfg);
 		return EXIT_NORMAL;
 	}
 	// Test if need to run built-in setup program (where available)
-	if (justRunSetup) {
+	if (_G(justRunSetup)) {
 		int res;
 		if (!engine_run_setup(exe_path, cfg, res))
 			return res;
@@ -1465,7 +1465,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	allegro_bitmap_test_init();
 
-	initialize_start_and_play_game(override_start_room, loadSaveGameOnStartup);
+	initialize_start_and_play_game(_G(override_start_room), _G(loadSaveGameOnStartup));
 
 	return EXIT_NORMAL;
 }
@@ -1545,7 +1545,7 @@ const char *get_engine_name() {
 }
 
 const char *get_engine_version() {
-	return EngineVersion.LongString.GetCStr();
+	return _G(EngineVersion).LongString.GetCStr();
 }
 
 void engine_set_pre_init_callback(t_engine_pre_init_callback callback) {

@@ -69,12 +69,6 @@ using namespace Engine;
 
 extern HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten);
 
-String appDirectory; // Needed for library loading
-String cmdGameDataPath;
-
-const char **global_argv = nullptr;
-int    global_argc = 0;
-
 extern GameSetup usetup;
 extern GameState play;
 extern int our_eip;
@@ -83,38 +77,6 @@ extern int convert_16bit_bgr;
 extern int editor_debugging_enabled;
 extern int editor_debugging_initialized;
 extern char editor_debugger_instance_token[100];
-
-
-// Startup flags, set from parameters to engine
-int force_window = 0;
-int override_start_room = 0;
-bool justDisplayHelp = false;
-bool justDisplayVersion = false;
-bool justRunSetup = false;
-bool justRegisterGame = false;
-bool justUnRegisterGame = false;
-bool justTellInfo = false;
-std::set<String> tellInfoKeys;
-const char *loadSaveGameOnStartup = nullptr;
-
-#if ! AGS_PLATFORM_DEFINES_PSP_VARS
-int psp_video_framedrop = 1;
-int psp_audio_enabled = 1;
-int psp_midi_enabled = 1;
-int psp_ignore_acsetup_cfg_file = 0;
-int psp_clear_cache_on_room_change = 0;
-
-int psp_midi_preload_patches = 0;
-int psp_audio_cachesize = 10;
-char psp_game_file_name[] = "";
-char psp_translation[] = "default";
-
-int psp_gfx_renderer = 0;
-int psp_gfx_scaling = 1;
-int psp_gfx_smoothing = 0;
-int psp_gfx_super_sampling = 1;
-int psp_gfx_smooth_sprites = 0;
-#endif
 
 // this needs to be updated if the "play" struct changes
 #define SVG_VERSION_BWCOMPAT_MAJOR      3
@@ -127,13 +89,6 @@ int psp_gfx_smooth_sprites = 0;
 #define SVG_VERSION_FWCOMPAT_MINOR      2
 #define SVG_VERSION_FWCOMPAT_RELEASE    1
 #define SVG_VERSION_FWCOMPAT_REVISION   1111
-
-// Current engine version
-Version EngineVersion;
-// Lowest savedgame version, accepted by this engine
-Version SavedgameLowestBackwardCompatVersion;
-// Lowest engine version, which would accept current savedgames
-Version SavedgameLowestForwardCompatVersion;
 
 extern void quit_free();
 
@@ -148,23 +103,23 @@ void main_create_platform_driver() {
 }
 
 void main_init(int argc, const char *argv[]) {
-	EngineVersion = Version(ACI_VERSION_STR " " SPECIAL_VERSION);
+	_G(EngineVersion) = Version(ACI_VERSION_STR " " SPECIAL_VERSION);
 
-	SavedgameLowestBackwardCompatVersion = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
-	SavedgameLowestForwardCompatVersion = Version(SVG_VERSION_FWCOMPAT_MAJOR, SVG_VERSION_FWCOMPAT_MINOR, SVG_VERSION_FWCOMPAT_RELEASE, SVG_VERSION_FWCOMPAT_REVISION);
+	_G(SavedgameLowestBackwardCompatVersion) = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
+	_G(SavedgameLowestForwardCompatVersion) = Version(SVG_VERSION_FWCOMPAT_MAJOR, SVG_VERSION_FWCOMPAT_MINOR, SVG_VERSION_FWCOMPAT_RELEASE, SVG_VERSION_FWCOMPAT_REVISION);
 
 	Shared::AssetManager::CreateInstance();
 	main_pre_init();
 	main_create_platform_driver();
 
-	global_argv = argv;
-	global_argc = argc;
+	_G(global_argv) = argv;
+	_G(global_argc) = argc;
 }
 
 String get_engine_string() {
 	return String::FromFormat("Adventure Game Studio v%s Interpreter\n"
 		"Copyright (c) 1999-2011 Chris Jones and " ACI_COPYRIGHT_YEARS " others\n"
-		"ACI version %s\n", EngineVersion.ShortString.GetCStr(), EngineVersion.LongString.GetCStr());
+		"ACI version %s\n", _G(EngineVersion).ShortString.GetCStr(), _G(EngineVersion).LongString.GetCStr());
 }
 
 void main_print_help() {
@@ -179,17 +134,17 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		// Startup options
 		//
 		if (scumm_stricmp(arg, "--help") == 0 || scumm_stricmp(arg, "/?") == 0 || scumm_stricmp(arg, "-?") == 0) {
-			justDisplayHelp = true;
+			_G(justDisplayHelp) = true;
 			return 0;
 		}
 		if (scumm_stricmp(arg, "-v") == 0 || scumm_stricmp(arg, "--version") == 0) {
-			justDisplayVersion = true;
+			_G(justDisplayVersion) = true;
 			return 0;
 		} else if (scumm_stricmp(arg, "-updatereg") == 0)
 			debug_flags |= DBG_REGONLY;
 #if AGS_PLATFORM_DEBUG
 		else if ((scumm_stricmp(arg, "--startr") == 0) && (ee < argc - 1)) {
-			override_start_room = atoi(argv[ee + 1]);
+			_G(override_start_room) = atoi(argv[ee + 1]);
 			ee++;
 		}
 #endif
@@ -199,18 +154,18 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			ee += 2;
 		} else if (scumm_stricmp(arg, "-noexceptionhandler") == 0) usetup.disable_exception_handling = true;
 		else if (scumm_stricmp(arg, "--setup") == 0) {
-			justRunSetup = true;
+			_G(justRunSetup) = true;
 		} else if (scumm_stricmp(arg, "-registergame") == 0) {
-			justRegisterGame = true;
+			_G(justRegisterGame) = true;
 		} else if (scumm_stricmp(arg, "-unregistergame") == 0) {
-			justUnRegisterGame = true;
+			_G(justUnRegisterGame) = true;
 		} else if ((scumm_stricmp(arg, "-loadsavedgame") == 0) && (argc > ee + 1)) {
-			loadSaveGameOnStartup = argv[ee + 1];
+			_G(loadSaveGameOnStartup) = argv[ee + 1];
 			ee++;
 		} else if ((scumm_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
 			strcpy(editor_debugger_instance_token, argv[ee + 1]);
 			editor_debugging_enabled = 1;
-			force_window = 1;
+			_G(force_window) = 1;
 			ee++;
 		} else if (scumm_stricmp(arg, "--runfromide") == 0 && (argc > ee + 3)) {
 			usetup.install_dir = argv[ee + 1];
@@ -226,17 +181,17 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			ee += 2;
 		} else if (scumm_strnicmp(arg, "--tell", 6) == 0) {
 			if (arg[6] == 0)
-				tellInfoKeys.insert(String("all"));
+				_G(tellInfoKeys).insert(String("all"));
 			else if (arg[6] == '-' && arg[7] != 0)
-				tellInfoKeys.insert(String(arg + 7));
+				_G(tellInfoKeys).insert(String(arg + 7));
 		}
 		//
 		// Config overrides
 		//
 		else if (scumm_stricmp(arg, "-windowed") == 0 || scumm_stricmp(arg, "--windowed") == 0)
-			force_window = 1;
+			_G(force_window) = 1;
 		else if (scumm_stricmp(arg, "-fullscreen") == 0 || scumm_stricmp(arg, "--fullscreen") == 0)
-			force_window = 2;
+			_G(force_window) = 2;
 		else if ((scumm_stricmp(arg, "-gfxdriver") == 0 || scumm_stricmp(arg, "--gfxdriver") == 0) && (argc > ee + 1)) {
 			INIwritestring(cfg, "graphics", "driver", argv[++ee]);
 		} else if ((scumm_stricmp(arg, "-gfxfilter") == 0 || scumm_stricmp(arg, "--gfxfilter") == 0) && (argc > ee + 1)) {
@@ -267,25 +222,25 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 	}
 
 	if (datafile_argv > 0) {
-		cmdGameDataPath = argv[datafile_argv];
+		_G(cmdGameDataPath) = argv[datafile_argv];
 	} else {
 		// assign standard path for mobile/consoles (defined in their own platform implementation)
-		cmdGameDataPath = psp_game_file_name;
+		_G(cmdGameDataPath) = _G(psp_game_file_name);
 	}
 
-	if (!tellInfoKeys.empty())
-		justTellInfo = true;
+	if (!_G(tellInfoKeys).empty())
+		_G(justTellInfo) = true;
 
 	return 0;
 }
 
 void main_set_gamedir(int argc, const char *argv[]) {
-	appDirectory = Path::GetDirectoryPath("./");
+	_G(appDirectory) = Path::GetDirectoryPath("./");
 #ifdef DEPRECATED
-	if ((loadSaveGameOnStartup != nullptr) && (argv[0] != nullptr)) {
+	if ((_G(loadSaveGameOnStartup) != nullptr) && (argv[0] != nullptr)) {
 		// When launched by double-clicking a save game file, the curdir will
 		// be the save game folder unless we correct it
-		Directory::SetCurrentDirectory(appDirectory);
+		Directory::SetCurrentDirectory(_G(appDirectory));
 	} else {
 		// It looks like Allegro library does not like ANSI (ACP) paths.
 		// When *not* working in U_UNICODE filepath mode, whenever it gets
@@ -373,19 +328,19 @@ Common::Error AGSEngine::run() {
 	if (res != 0)
 		return Common::kUnknownError;
 
-	if (AGS3::justDisplayVersion) {
+	if (_G(justDisplayVersion)) {
 		AGS3::platform->WriteStdOut(AGS3::get_engine_string());
 		return Common::kNoError;
 	}
 
-	if (AGS3::justDisplayHelp) {
+	if (_G(justDisplayHelp)) {
 		AGS3::main_print_help();
 		return Common::kNoError;
 	}
 
-	if (!AGS3::justTellInfo)
+	if (!_G(justTellInfo))
 		AGS3::platform->SetGUIMode(true);
-	AGS3::init_debug(startup_opts, AGS3::justTellInfo);
+	AGS3::init_debug(startup_opts, _G(justTellInfo));
 	AGS3::Debug::Printf("%s", AGS3::get_engine_string().GetNullableCStr());
 
 	AGS3::main_set_gamedir(ARGC, ARGV);

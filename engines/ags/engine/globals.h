@@ -23,12 +23,78 @@
 #ifndef AGS_ENGINE_GLOBALS_H
 #define AGS_ENGINE_GLOBALS_H
 
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/version.h"
+#include "ags/lib/std/set.h"
+
 namespace AGS3 {
+
+using String = AGS::Shared::String;
+using Version = AGS::Shared::Version;
 
 class Globals {
 public:
-	bool _want_exit;
-	bool _abort_engine;
+	/**
+	 * \defgroup Overall flags
+	 * @{
+	 */
+
+	// Major overall flags
+	bool _want_exit = false;
+	bool _abort_engine = false;
+
+	/**@}*/
+
+	/**
+	 * \defgroup main globals
+	 * @{
+	 */
+
+	String _appDirectory; // Needed for library loading
+	String _cmdGameDataPath;
+
+	const char **_global_argv = nullptr;
+	int _global_argc = 0;
+
+	// Startup flags, set from parameters to engine
+	int _force_window = 0;
+	int _override_start_room = 0;
+	bool _justDisplayHelp = false;
+	bool _justDisplayVersion = false;
+	bool _justRunSetup = false;
+	bool _justRegisterGame = false;
+	bool _justUnRegisterGame = false;
+	bool _justTellInfo = false;
+	std::set<String> _tellInfoKeys;
+	const char *_loadSaveGameOnStartup = nullptr;
+
+#if ! AGS_PLATFORM_DEFINES_PSP_VARS
+	int _psp_video_framedrop = 1;
+	int _psp_audio_enabled = 1;
+	int _psp_midi_enabled = 1;
+	int _psp_ignore_acsetup_cfg_file = 0;
+	int _psp_clear_cache_on_room_change = 0;
+
+	int _psp_midi_preload_patches = 0;
+	int _psp_audio_cachesize = 10;
+	const char *_psp_game_file_name = "";
+	const char *_psp_translation = "default";
+
+	int _psp_gfx_renderer = 0;
+	int _psp_gfx_scaling = 1;
+	int _psp_gfx_smoothing = 0;
+	int _psp_gfx_super_sampling = 1;
+	int _psp_gfx_smooth_sprites = 0;
+#endif
+
+	// Current engine version
+	Version _EngineVersion;
+	// Lowest savedgame version, accepted by this engine
+	Version _SavedgameLowestBackwardCompatVersion;
+	// Lowest engine version, which would accept current savedgames
+	Version _SavedgameLowestForwardCompatVersion;
+
+	/**@}*/
 
 public:
 	Globals();
