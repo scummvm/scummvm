@@ -115,7 +115,8 @@ void AllegroGfxFilter::RenderScreenFlipped(Bitmap *toRender, int x, int y, Globa
 }
 
 void AllegroGfxFilter::ClearRect(int x1, int y1, int x2, int y2, int color) {
-	if (!realScreen) return;
+	if (!realScreen || x2 < x1 || y2 < y1)
+		return;
 	Rect r = _scaling.ScaleRange(Rect(x1, y1, x2, y2));
 	realScreen->FillRect(r, color);
 }
