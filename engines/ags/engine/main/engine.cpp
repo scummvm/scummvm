@@ -89,7 +89,6 @@ using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
 extern int our_eip;
-extern volatile char want_exit, abort_engine;
 extern bool justRunSetup;
 extern GameSetup usetup;
 extern GameSetupStruct game;

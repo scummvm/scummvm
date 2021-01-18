@@ -37,6 +37,10 @@
 #include "ags/lib/allegro/system.h"
 #include "ags/engine/util/mutex_std.h"
 
+namespace AGS3 {
+class Globals;
+}
+
 namespace AGS {
 
 #define SCREEN_WIDTH 320
@@ -64,6 +68,7 @@ public:
 	::AGS3::AGS::Engine::Mutex _sMutex;
 	::AGS3::AGS::Engine::Mutex _soundCacheMutex;
 	::AGS3::AGS::Engine::Mutex _mp3Mutex;
+	::AGS3::Globals *_globals;
 protected:
 	// Engine APIs
 	virtual Common::Error run();

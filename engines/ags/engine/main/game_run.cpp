@@ -66,6 +66,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/ac/keycode.h"
 #include "ags/lib/allegro/keyboard.h"
+#include "ags/engine/globals.h"
 #include "ags/events.h"
 
 namespace AGS3 {
@@ -77,7 +78,6 @@ extern int numAnimButs;
 extern int mouse_on_iface;   // mouse cursor is over this interface
 extern int ifacepopped;
 extern int is_text_overlay;
-extern volatile char want_exit, abort_engine;
 extern int proper_exit, our_eip;
 extern int displayed_room, starting_room, in_new_room, new_room_was;
 extern GameSetupStruct game;
@@ -124,7 +124,7 @@ unsigned int loopcounter = 0;
 static unsigned int lastcounter = 0;
 
 static void ProperExit() {
-	want_exit = 0;
+	_G(want_exit) = 0;
 	proper_exit = 1;
 	quit("||exit!");
 }
@@ -737,7 +737,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	numEventsAtStartOfFunction = numevents;
 
-	if (want_exit) {
+	if (_G(want_exit)) {
 		ProperExit();
 	}
 
@@ -944,7 +944,7 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	auto cached_user_disabled_for = user_disabled_for;
 
 	SetupLoopParameters(untilwhat, daaa);
-	while (GameTick() == 0 && !abort_engine) {
+	while (GameTick() == 0 && !_G(abort_engine)) {
 	}
 
 	our_eip = 78;
@@ -992,7 +992,7 @@ void RunGameUntilAborted() {
 	// skip ticks to account for time spent starting game.
 	skipMissedTicks();
 
-	while (!abort_engine) {
+	while (!_G(abort_engine)) {
 		GameTick();
 
 		if (load_new_game) {
@@ -1003,8 +1003,8 @@ void RunGameUntilAborted() {
 }
 
 void update_polled_stuff_if_runtime() {
-	if (want_exit) {
-		want_exit = 0;
+	if (_G(want_exit)) {
+		_G(want_exit) = 0;
 		quit("||exit!");
 	}
 

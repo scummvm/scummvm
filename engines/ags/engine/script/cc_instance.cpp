@@ -20,8 +20,6 @@
  *
  */
 
-//include <cstdio>
-//include <string.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
@@ -45,6 +43,7 @@
 #include "ags/engine/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -58,7 +57,6 @@ extern int maxWhileLoops;
 extern new_line_hook_type new_line_hook;
 
 extern ScriptString myScriptStringImpl;
-extern volatile char abort_engine;
 
 enum ScriptOpArgIsReg {
 	kScOpNoArgIsReg     = 0,
@@ -435,7 +433,7 @@ int ccInstance::Run(int32_t curpc) {
 	FunctionCallStack func_callstack;
 
 	while (1) {
-		if (abort_engine)
+		if (_G(abort_engine))
 			return -1;
 
 		/*

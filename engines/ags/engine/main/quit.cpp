@@ -46,6 +46,7 @@
 #include "ags/shared/core/assetmanager.h"
 #include "ags/engine/plugin/plugin_engine.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -67,7 +68,6 @@ extern IAGSEditorDebugger *editor_debugger;
 extern int need_to_stop_cd;
 extern int use_cdplayer;
 extern IGraphicsDriver *gfxDriver;
-extern volatile char abort_engine;
 
 bool handledErrorInEditor;
 
@@ -233,7 +233,7 @@ char quit_message[256] = "\0";
 // "!|" is a special code used to mean that the player has aborted (Alt+X)
 void quit(const char *quitmsg) {
 	strncpy(quit_message, quitmsg, 256);
-	abort_engine = true;
+	_G(abort_engine) = true;
 }
 
 void quit_free() {

@@ -20,26 +20,18 @@
  *
  */
 
-#include "ags/shared/ac/common.h"
-#include "ags/shared/util/string.h"
 #include "ags/engine/globals.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
-using namespace AGS::Shared;
+Globals *g_globals;
 
-const char *game_file_sig = "Adventure Creator Game File v2";
+Globals::Globals() : _want_exit(false), _abort_engine(false) {
+	g_globals = this;
+}
 
-void quitprintf(const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	String text = String::FromFormatV(fmt, ap);
-	va_end(ap);
-
-	if (!_G(abort_engine))
-		::AGS::g_vm->GUIError(text);
-	quit(text);
+Globals::~Globals() {
+	g_globals = nullptr;
 }
 
 } // namespace AGS3

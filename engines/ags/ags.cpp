@@ -37,6 +37,7 @@
 #include "ags/lib/std/set.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
+#include "ags/engine/globals.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/shared/core/def_version.h"
@@ -328,13 +329,15 @@ AGSEngine *g_vm;
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
-		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr) {
+		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
+		_globals(nullptr) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
 	_events = new EventsManager();
 	_music = new Music(_mixer);
+	_globals = new ::AGS3::Globals();
 }
 
 AGSEngine::~AGSEngine() {
@@ -342,6 +345,7 @@ AGSEngine::~AGSEngine() {
 	delete _rawScreen;
 	delete _events;
 	delete _music;
+	delete _globals;
 }
 
 uint32 AGSEngine::getFeatures() const {
