@@ -314,7 +314,7 @@ void PrivateEngine::initCursors() {
         Common::String *name = new Common::String(cur->name);
         _cursorData.setVal(*name, cur->cursor);
     }
-   
+
     for (Private::CursorPointTable *cur = Private::cursorPointTable; cur->name; cur++) {
         Common::String *name = new Common::String(cur->name);
         Common::Point *point = new Common::Point(*cur->point);
@@ -330,9 +330,9 @@ void PrivateEngine::changeCursor(Common::String cursor) {
     Common::Point s;
     if (strcmp(cursor.c_str(), "default") == 0)
         s = Common::Point(11, 16);
-    else 
+    else
         s = Common::Point(32, 32);
-     
+
     CursorMan.replaceCursor(_cursorData.getVal(cursor), s.x, s.y, p.x, p.y, 0, true);
     CursorMan.showMouse(true);
 }

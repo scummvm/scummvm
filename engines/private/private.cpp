@@ -54,15 +54,20 @@ PrivateEngine::PrivateEngine(OSystem *syst)
 
     _saveGameMask = NULL;
     _loadGameMask = NULL;
-    
+
     _nextSetting = NULL;
     _nextMovie = NULL;
     _nextVS = NULL;
     _modified = false;
     _mode = -1;
+    _toTake = false;
     _frame = new Common::String("inface/general/inface2.bmp");
+    _repeatedMovieExit = new Common::String("");
 
     _paperShuffleSound = new Common::String("global/audio/glsfx0");
+    _takeSound = new Common::String("global/audio/took");
+    _leaveSound = new Common::String("global/audio/left");
+
     _policeRadioArea = NULL;
     _AMRadioArea = NULL;
     _phoneArea = NULL;
@@ -70,7 +75,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _AMRadioPrefix = new Common::String("inface/radio/comm_/");
     _policeRadioPrefix = new Common::String("inface/radio/police/");
     _phonePrefix = new Common::String("inface/telephon/");
-    _phoneCallSound = new Common::String("phone.wav");  
+    _phoneCallSound = new Common::String("phone.wav");
 
 }
 
@@ -89,20 +94,20 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 Common::Error PrivateEngine::run() {
-    
+
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
     Common::SeekableReadStream *file = NULL;
 
     // if the full game is used
-    if (_installerArchive.hasFile("GAME.DAT")) 
+    if (_installerArchive.hasFile("GAME.DAT"))
         file = _installerArchive.createReadStreamForMember("GAME.DAT");
- 
+
     // if the demo from archive.org is used
-    else if (_installerArchive.hasFile("GAME.TXT")) 
+    else if (_installerArchive.hasFile("GAME.TXT"))
         file = _installerArchive.createReadStreamForMember("GAME.TXT");
- 
+
     // if the demo from the full retail CDROM is used
-    else if (_installerArchive.hasFile("DEMOGAME.DAT")) 
+    else if (_installerArchive.hasFile("DEMOGAME.DAT"))
         file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
 
     assert(file != NULL);
@@ -247,22 +252,22 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
     mousePos = mousePos - *_origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
-    
+
     int rs = 100000000;
     int cs = 0;
     ExitInfo e;
     Common::String *cursor = NULL;
-    
+
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
         cs = e.rect->width()*e.rect->height();
 
-        if (e.rect->contains(mousePos)) {            
+        if (e.rect->contains(mousePos)) {
             if (cs < rs && e.cursor != NULL) {
                 rs = cs;
                 cursor = e.cursor;
             }
-            
+
         }
     }
 
@@ -327,6 +332,12 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
         if (e.rect->contains(mousePos)) {
             //debug("Inside! %d %d", cs, rs);
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
+                // an item was not taken
+                if (_toTake) {
+                    playSound(* getLeaveSound(), 1);
+                    _toTake = false;
+                }
+
                 //debug("Found Exit %s %d", e.nextSetting->c_str(), cs);
                 rs = cs;
                 ns = e.nextSetting;
@@ -356,6 +367,11 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 
             if (m.flag != NULL) { // TODO: check this
                 setSymbol(m.flag, 1);
+                // an item was taken
+                if (_toTake) {
+                    playSound(*getTakeSound(), 1);
+                    _toTake = false;
+                }
             }
 
             break;
@@ -376,7 +392,7 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
         return;
 
     debug("AMRadio");
-    if (inMask(_AMRadioArea->surf, mousePos)) { 
+    if (inMask(_AMRadioArea->surf, mousePos)) {
         Common::String sound = *_AMRadioPrefix + _AMRadio.back() + ".wav";
         playSound(sound.c_str(), 1);
         _AMRadio.pop_back();
@@ -423,7 +439,7 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
     if (inMask(_phoneArea->surf, mousePos)) {
         PhoneInfo i = _phone.back();
         Common::String sound(*i.sound);
-        setSymbol(i.flag, i.val); 
+        setSymbol(i.flag, i.val);
         sound = *_phonePrefix + sound + ".wav";
         playSound(sound.c_str(), 1);
         _phone.pop_back();
@@ -444,7 +460,7 @@ void PrivateEngine::selectLoadGame(Common::Point mousePos) {
 void PrivateEngine::selectSaveGame(Common::Point mousePos) {
     if (_saveGameMask == NULL)
         return;
- 
+
     if (inMask(_saveGameMask->surf, mousePos)) {
         saveGameDialog();
     }
@@ -458,7 +474,7 @@ bool PrivateEngine::hasFeature(EngineFeature f) const {
 
 void PrivateEngine::restartGame() {
     debug("restartGame");
-        
+
     for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
         Private::Symbol *sym = variables.getVal(*it);
         if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
@@ -472,9 +488,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     debug("loadGameStream");
     _nextSetting = new Common::String("kMainDesktop");
     int val;
-        
+
     for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
-        s.syncAsUint32LE(val); 
+        s.syncAsUint32LE(val);
         Private::Symbol *sym = variables.getVal(*it);
         sym->u.val = val;
     }
@@ -508,7 +524,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         PhoneInfo *i = (PhoneInfo*) malloc(sizeof(PhoneInfo));
 
         i->sound = new Common::String(stream->readString());
-        i->flag  = variables.getVal(stream->readString()); 
+        i->flag  = variables.getVal(stream->readString());
         i->val   = stream->readUint32LE();
         _phone.push_back(*i);
     }
@@ -521,7 +537,16 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     for (uint32 i = 0; i < size; ++i) {
         movie = new Common::String(stream->readString());
-        _playedMovies.setVal(movie, true);
+        _playedMovies.setVal(*movie, true);
+    }
+
+    _playedPhoneClips.clear();
+    size = stream->readUint32LE();
+    Common::String *phone;
+
+    for (uint32 i = 0; i < size; ++i) {
+        phone = new Common::String(stream->readString());
+        _playedPhoneClips.setVal(*phone, true);
     }
 
     //syncGameStream(s);
@@ -564,7 +589,13 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     stream->writeByte(0);
 
     stream->writeUint32LE(_playedMovies.size());
-    for (PlayedMovieTable::iterator it = _playedMovies.begin(); it != _playedMovies.end(); ++it) {
+    for (PlayedMediaTable::iterator it = _playedMovies.begin(); it != _playedMovies.end(); ++it) {
+        stream->writeString(it->_key);
+        stream->writeByte(0);
+    }
+
+    stream->writeUint32LE(_playedPhoneClips.size());
+    for (PlayedMediaTable::iterator it = _playedPhoneClips.begin(); it != _playedPhoneClips.end(); ++it) {
         stream->writeString(it->_key);
         stream->writeByte(0);
     }
@@ -713,16 +744,32 @@ bool PrivateEngine::getRandomBool(uint p) {
 }
 
 Common::String *PrivateEngine::getPaperShuffleSound() {
-    uint r = 32 + _rnd->getRandomNumber(8);
+    uint r = 32 + _rnd->getRandomNumber(7);
 
-    // there is no global/audio/glsfx038.wav, 
+    // there is no global/audio/glsfx038.wav,
     // so we should avoid that number
     if ( r == 38)
-      r = 0;
+        r = 39;
 
     char f[7];
     sprintf(f, "%d.wav", r);
     return (new Common::String(*_paperShuffleSound + f));
+}
+
+Common::String *PrivateEngine::getTakeSound() {
+    uint r = 1 + _rnd->getRandomNumber(4);
+
+    char f[6];
+    sprintf(f, "%d.wav", r);
+    return (new Common::String(*_takeSound + f));
+}
+
+Common::String *PrivateEngine::getLeaveSound() {
+    uint r = 1 + _rnd->getRandomNumber(4);
+
+    char f[6];
+    sprintf(f, "%d.wav", r);
+    return (new Common::String(*_leaveSound + f));
 }
 
 } // End of namespace Private
