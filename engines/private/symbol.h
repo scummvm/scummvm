@@ -12,13 +12,13 @@
 namespace Private {
 
 typedef struct Symbol {	/* symbol table entry */
-	Common::String *name;
-	short	type;	/* NAME, NUM, STRING or RECT  */
-	union {
-		int	val;	    /* NAME or NUM */
-		char	*str;	    /* STRING */
-		Common::Rect *rect; /* RECT */
-	} u;
+    Common::String *name;
+    short	type;	/* NAME, NUM, STRING or RECT  */
+    union {
+        int	val;	    /* NAME or NUM */
+        char	*str;	    /* STRING */
+        Common::Rect *rect; /* RECT */
+    } u;
 } Symbol;
 
 // Symbols
@@ -34,7 +34,7 @@ extern SymbolMap settings, variables, cursors, locations, rects;
 extern ConstantList constants;
 extern VariableList variableList;
 
-extern void     defineSymbol(char *, Common::Rect *); 
+extern void     defineSymbol(char *, Common::Rect *);
 extern Symbol  *install(Common::String *, int, int, char *, Common::Rect *, SymbolMap*);
 extern Symbol  *lookupName(char *);
 extern Symbol  *constant(int, int, char *);

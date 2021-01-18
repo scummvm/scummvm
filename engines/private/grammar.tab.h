@@ -48,8 +48,8 @@ extern int yydebug;
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-  enum yytokentype
-  {
+enum yytokentype
+{
     YYEMPTY = -2,
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
@@ -72,8 +72,8 @@ extern int yydebug;
     DEFINETOK = 273,               /* DEFINETOK  */
     SETTINGTOK = 274,              /* SETTINGTOK  */
     RANDOMTOK = 275                /* RANDOMTOK  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
+};
+typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
@@ -82,11 +82,11 @@ union YYSTYPE
 {
 #line 38 "engines/private/grammar.y"
 
-	Private::Symbol	*sym;	/* symbol table pointer */
-        int (**inst)();	/* machine instruction */
-        char *s;
-        int *i;
-        int narg;
+    Private::Symbol	*sym;	/* symbol table pointer */
+    int (**inst)();	/* machine instruction */
+    char *s;
+    int *i;
+    int narg;
 
 #line 92 "engines/private/grammar.tab.h"
 
