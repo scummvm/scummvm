@@ -406,13 +406,10 @@ int getpixel(BITMAP *bmp, int x, int y) {
 	switch (surf.format.bytesPerPixel) {
 	case 1:
 		return *((uint8 *)p);
-		break;
 	case 2:
 		return *((uint16 *)p);
-		break;
 	case 4:
 		return *((uint32 *)p);
-		break;
 	default:
 		break;
 	}

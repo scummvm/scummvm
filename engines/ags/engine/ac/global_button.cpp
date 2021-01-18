@@ -81,8 +81,6 @@ int GetButtonPic(int guin, int objn, int ptype) {
 	} else { // pushed pic
 		return guil->PushedImage;
 	}
-
-	quit("internal error in getbuttonpic");
 }
 
 void SetButtonPic(int guin, int objn, int ptype, int slotn) {
