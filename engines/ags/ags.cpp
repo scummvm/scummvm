@@ -193,8 +193,8 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		}
 #endif
 		else if ((scumm_stricmp(arg, "--testre") == 0) && (ee < argc - 2)) {
-			strcpy(return_to_roomedit, argv[ee + 1]);
-			strcpy(return_to_room, argv[ee + 2]);
+			strncpy(return_to_roomedit, argv[ee + 1], 30);
+			strncpy(return_to_room, argv[ee + 2], 150);
 			ee += 2;
 		} else if (scumm_stricmp(arg, "-noexceptionhandler") == 0) usetup.disable_exception_handling = true;
 		else if (scumm_stricmp(arg, "--setup") == 0) {

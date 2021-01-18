@@ -301,7 +301,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	int32_t startat = -1;
 	int k;
 	char mangledName[200];
-	sprintf(mangledName, "%s$", funcname);
+	snprintf(mangledName, 200, "%s$", funcname);
 
 	for (k = 0; k < instanceof->numexports; k++) {
 		char *thisExportName = instanceof->exports[k];
@@ -1239,7 +1239,7 @@ void ccInstance::GetScriptPosition(ScriptPosition &script_pos) {
 RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) {
 	int k;
 	char altName[200];
-	sprintf(altName, "%s$", symname);
+	snprintf(altName, 200, "%s$", symname);
 	RuntimeScriptValue rval_null;
 
 	for (k = 0; k < instanceof->numexports; k++) {
