@@ -17,19 +17,19 @@
 namespace Private {
 
 typedef struct Datum {	/* interpreter stack type */
-        short type;
-	union {	
-	        int	 val;
-	        char    *str;
-	        Symbol	*sym;
-		Common::Rect *rect;
-	} u;
+    short type;
+    union {
+        int	 val;
+        char    *str;
+        Symbol	*sym;
+        Common::Rect *rect;
+    } u;
 } Datum;
 
 
 typedef struct Arg {
-  int n;
-  int (**inst)();
+    int n;
+    int (**inst)();
 } Arg;
 
 typedef int (*Inst)();	/* machine instruction */
@@ -76,11 +76,11 @@ extern  Inst *code(Inst);
 extern	Inst *prog;
 extern	int eval();
 extern  int add();
-extern  int negate(); 
+extern  int negate();
 extern  int power();
 extern	int assign();
 extern  int bltin();
-extern  int varpush(); 
+extern  int varpush();
 extern  int constpush();
 extern  int strpush();
 extern  int funcpush();
