@@ -24,7 +24,6 @@
 // Graphics initialization
 //
 
-//include <algorithm>
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/debugging/debugger.h"
@@ -39,6 +38,7 @@
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/main/main_allegro.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -378,7 +378,7 @@ bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id, const Size
 
 	bool result = try_init_mode_using_setup(game_size, dm_setup, use_col_depth, frame_setup, filter_setup);
 	// Try windowed mode if fullscreen failed, and vice versa
-	if (!result && editor_debugging_enabled == 0) {
+	if (!result && _G(editor_debugging_enabled) == 0) {
 		// we need to clone from initial config, because not every parameter is set by graphics_mode_get_defaults()
 		DisplayModeSetup dm_setup_alt = dm_setup;
 		dm_setup_alt.Windowed = !dm_setup.Windowed;

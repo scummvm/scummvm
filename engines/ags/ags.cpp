@@ -72,9 +72,6 @@ extern GameState play;
 extern int our_eip;
 extern AGSPlatformDriver *platform;
 extern int convert_16bit_bgr;
-extern int editor_debugging_enabled;
-extern int editor_debugging_initialized;
-extern char editor_debugger_instance_token[100];
 
 // this needs to be updated if the "play" struct changes
 #define SVG_VERSION_BWCOMPAT_MAJOR      3
@@ -161,8 +158,8 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			_G(loadSaveGameOnStartup) = argv[ee + 1];
 			ee++;
 		} else if ((scumm_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
-			strcpy(editor_debugger_instance_token, argv[ee + 1]);
-			editor_debugging_enabled = 1;
+			strcpy(_G(editor_debugger_instance_token), argv[ee + 1]);
+			_G(editor_debugging_enabled) = 1;
 			_G(force_window) = 1;
 			ee++;
 		} else if (scumm_stricmp(arg, "--runfromide") == 0 && (argc > ee + 3)) {

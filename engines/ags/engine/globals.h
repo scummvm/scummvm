@@ -40,6 +40,8 @@ class Bitmap;
 } // namespace Shared
 } // namespace AGS
 
+struct IAGSEditorDebugger;
+
 class Globals {
 public:
 	/**
@@ -50,6 +52,20 @@ public:
 	// Major overall flags
 	bool _want_exit = false;
 	bool _abort_engine = false;
+
+	/**@}*/
+
+	/**
+	 * \defgroup debug globals
+	 * @{
+	 */
+
+	int _editor_debugging_enabled = 0;
+	int _editor_debugging_initialized = 0;
+	char _editor_debugger_instance_token[100];
+	IAGSEditorDebugger *_editor_debugger = nullptr;
+	int _break_on_next_script_step = 0;
+	volatile int _game_paused_in_debugger = 0;
 
 	/**@}*/
 
