@@ -56,6 +56,7 @@
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/math.h"
+#include "ags/engine/globals.h"
 #if AGS_SIMULATE_RIGHT_CLICK
 #include "ags/shared/ac/sys_events.h" // j for ags_iskeypressed
 #endif
@@ -65,25 +66,15 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
+const int NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2;
 
 extern char lib_file_name[13];
-
-const char *mouselibcopyr = "MouseLib32 (c) 1994, 1998 Chris Jones";
-const int NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2;
-char currentcursor = 0;
-// virtual mouse cursor coordinates
-int mousex = 0, mousey = 0, numcurso = -1, hotx = 0, hoty = 0;
-// real mouse coordinates and bounds
-int real_mouse_x = 0, real_mouse_y = 0;
-int boundx1 = 0, boundx2 = 99999, boundy1 = 0, boundy2 = 99999;
-int disable_mgetgraphpos = 0;
-char ignore_bounds = 0;
 extern char alpha_blend_cursor;
-Bitmap *mousecurs[MAXCURSORS];
 extern color palette[256];
 extern volatile bool switched_away;
 
 namespace Mouse {
+
 // Tells whether mouse was locked to the game window
 bool LockedToWindow = false;
 
@@ -114,14 +105,14 @@ void mgraphconfine(int x1, int y1, int x2, int y2) {
 
 void mgetgraphpos() {
 	poll_mouse();
-	if (disable_mgetgraphpos) {
+	if (_G(disable_mgetgraphpos)) {
 		// The cursor coordinates are provided from alternate source;
 		// in this case we completely ignore actual cursor movement.
-		if (!ignore_bounds &&
-			(mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
-			mousex = Math::Clamp(mousex, boundx1, boundx2);
-			mousey = Math::Clamp(mousey, boundy1, boundy2);
-			msetgraphpos(mousex, mousey);
+		if (!_G(ignore_bounds) &&
+			(_G(mousex) < _G(boundx1) || _G(mousey) < _G(boundy1) || _G(mousex) > _G(boundx2) || _G(mousey) > _G(boundy2))) {
+			_G(mousex) = Math::Clamp(_G(mousex), _G(boundx1), _G(boundx2));
+			_G(mousey) = Math::Clamp(_G(mousey), _G(boundy1), _G(boundy2));
+			msetgraphpos(_G(mousex), _G(mousey));
 		}
 		return;
 	}
@@ -141,55 +132,55 @@ void mgetgraphpos() {
 		//---------------------------------------------------------------------
 		// If the real cursor is inside the control rectangle (read - game window),
 		// then apply sensitivity factors and adjust real cursor position
-		if (Mouse::ControlRect.IsInside(real_mouse_x + dx, real_mouse_y + dy)) {
-			real_mouse_x += dx;
-			real_mouse_y += dy;
-			position_mouse(real_mouse_x, real_mouse_y);
+		if (Mouse::ControlRect.IsInside(_G(real_mouse_x) + dx, _G(real_mouse_y) + dy)) {
+			_G(real_mouse_x) += dx;
+			_G(real_mouse_y) += dy;
+			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
 		}
 		// Otherwise, if real cursor was moved outside the control rect, yet we
 		// are required to confine cursor inside one, then adjust cursor position
 		// to stay inside the rect's bounds.
 		else if (Mouse::ConfineInCtrlRect) {
-			real_mouse_x = Math::Clamp(real_mouse_x + dx, Mouse::ControlRect.Left, Mouse::ControlRect.Right);
-			real_mouse_y = Math::Clamp(real_mouse_y + dy, Mouse::ControlRect.Top, Mouse::ControlRect.Bottom);
-			position_mouse(real_mouse_x, real_mouse_y);
+			_G(real_mouse_x) = Math::Clamp(_G(real_mouse_x) + dx, Mouse::ControlRect.Left, Mouse::ControlRect.Right);
+			_G(real_mouse_y) = Math::Clamp(_G(real_mouse_y) + dy, Mouse::ControlRect.Top, Mouse::ControlRect.Bottom);
+			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
 		}
 		// Lastly, if the real cursor is out of the control rect, simply add
 		// actual movement to keep up with the system cursor coordinates.
 		else {
-			real_mouse_x += mickey_x;
-			real_mouse_y += mickey_y;
+			_G(real_mouse_x) += mickey_x;
+			_G(real_mouse_y) += mickey_y;
 		}
 
 		// Do not update the game cursor if the real cursor is beyond the control rect
-		if (!Mouse::ControlRect.IsInside(real_mouse_x, real_mouse_y))
+		if (!Mouse::ControlRect.IsInside(_G(real_mouse_x), _G(real_mouse_y)))
 			return;
 	} else {
 		// Save real cursor coordinates provided by system
-		real_mouse_x = mouse_x;
-		real_mouse_y = mouse_y;
+		_G(real_mouse_x) = mouse_x;
+		_G(real_mouse_y) = mouse_y;
 	}
 
 	// Set new in-game cursor position
-	mousex = real_mouse_x;
-	mousey = real_mouse_y;
+	_G(mousex) = _G(real_mouse_x);
+	_G(mousey) = _G(real_mouse_y);
 
-	if (!ignore_bounds &&
-		(mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
-		mousex = Math::Clamp(mousex, boundx1, boundx2);
-		mousey = Math::Clamp(mousey, boundy1, boundy2);
-		msetgraphpos(mousex, mousey);
+	if (!_G(ignore_bounds) &&
+		(_G(mousex) < _G(boundx1) || _G(mousey) < _G(boundy1) || _G(mousex) > _G(boundx2) || _G(mousey) > _G(boundy2))) {
+		_G(mousex) = Math::Clamp(_G(mousex), _G(boundx1), _G(boundx2));
+		_G(mousey) = Math::Clamp(_G(mousey), _G(boundy1), _G(boundy2));
+		msetgraphpos(_G(mousex), _G(mousey));
 	}
 
 	// Convert to virtual coordinates
-	Mouse::AdjustPosition(mousex, mousey);
+	Mouse::AdjustPosition(_G(mousex), _G(mousey));
 }
 
 void msetcursorlimit(int x1, int y1, int x2, int y2) {
-	boundx1 = x1;
-	boundy1 = y1;
-	boundx2 = x2;
-	boundy2 = y2;
+	_G(boundx1) = x1;
+	_G(boundy1) = y1;
+	_G(boundx2) = x2;
+	_G(boundy2) = y2;
 }
 
 int hotxwas = 0, hotywas = 0;
@@ -198,37 +189,37 @@ void domouse(int str) {
 	   TO USE THIS ROUTINE YOU MUST LOAD A MOUSE CURSOR USING mloadcursor.
 	   YOU MUST ALSO REMEMBER TO CALL mfreemem AT THE END OF THE PROGRAM.
 	*/
-	int poow = mousecurs[(int)currentcursor]->GetWidth();
-	int pooh = mousecurs[(int)currentcursor]->GetHeight();
-	//int smx = mousex - hotxwas, smy = mousey - hotywas;
+	int poow = _G(mousecurs)[(int)_G(currentcursor)]->GetWidth();
+	int pooh = _G(mousecurs)[(int)_G(currentcursor)]->GetHeight();
+	//int smx = _G(mousex) - hotxwas, smy = _G(mousey) - hotywas;
 	const Rect &viewport = play.GetMainViewport();
 
 	mgetgraphpos();
-	mousex -= hotx;
-	mousey -= hoty;
+	_G(mousex) -= _G(hotx);
+	_G(mousey) -= _G(hoty);
 
-	if (mousex + poow >= viewport.GetWidth())
-		poow = viewport.GetWidth() - mousex;
+	if (_G(mousex) + poow >= viewport.GetWidth())
+		poow = viewport.GetWidth() - _G(mousex);
 
-	if (mousey + pooh >= viewport.GetHeight())
-		pooh = viewport.GetHeight() - mousey;
+	if (_G(mousey) + pooh >= viewport.GetHeight())
+		pooh = viewport.GetHeight() - _G(mousey);
 
-	mousex += hotx;
-	mousey += hoty;
-	hotxwas = hotx;
-	hotywas = hoty;
+	_G(mousex) += _G(hotx);
+	_G(mousey) += _G(hoty);
+	hotxwas = _G(hotx);
+	hotywas = _G(hoty);
 }
 
 int ismouseinbox(int lf, int tp, int rt, int bt) {
-	if ((mousex >= lf) & (mousex <= rt) & (mousey >= tp) & (mousey <= bt))
+	if ((_G(mousex) >= lf) & (_G(mousex) <= rt) & (_G(mousey) >= tp) & (_G(mousey) <= bt))
 		return TRUE;
 	else
 		return FALSE;
 }
 
 void mfreemem() {
-	for (int re = 0; re < numcurso; re++) {
-		delete mousecurs[re];
+	for (int re = 0; re < _G(numcurso); re++) {
+		delete _G(mousecurs)[re];
 	}
 }
 
@@ -237,7 +228,7 @@ void mfreemem() {
 
 void mloadwcursor(char *namm) {
 	color dummypal[256];
-	if (wloadsprites(&dummypal[0], namm, mousecurs, 0, MAXCURSORS)) {
+	if (wloadsprites(&dummypal[0], namm, _G(mousecurs), 0, MAXCURSORS)) {
 		error("mloadwcursor: Error reading mouse cursor file");
 	}
 }
@@ -277,14 +268,14 @@ int misbuttondown(int buno) {
 }
 
 void msetgraphpos(int xa, int ya) {
-	real_mouse_x = xa;
-	real_mouse_y = ya;
-	position_mouse(real_mouse_x, real_mouse_y);
+	_G(real_mouse_x) = xa;
+	_G(real_mouse_y) = ya;
+	position_mouse(_G(real_mouse_x), _G(real_mouse_y));
 }
 
 void msethotspot(int xx, int yy) {
-	hotx = xx;  // mousex -= hotx; mousey -= hoty;
-	hoty = yy;  // mousex += hotx; mousey += hoty;
+	_G(hotx) = xx;  // _G(mousex) -= _G(hotx); _G(mousey) -= _G(hoty);
+	_G(hoty) = yy;  // _G(mousex) += _G(hotx); _G(mousey) += _G(hoty);
 }
 
 int minstalled() {

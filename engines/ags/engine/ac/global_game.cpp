@@ -69,6 +69,7 @@
 #include "ags/engine/main/game_file.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -520,7 +521,7 @@ int GetLocationType(int xxx, int yyy) {
 void SaveCursorForLocationChange() {
 	// update the current location name
 	char tempo[100];
-	GetLocationName(game_to_data_coord(mousex), game_to_data_coord(mousey), tempo);
+	GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 
 	if (play.get_loc_name_save_cursor != play.get_loc_name_last_time) {
 		play.get_loc_name_save_cursor = play.get_loc_name_last_time;

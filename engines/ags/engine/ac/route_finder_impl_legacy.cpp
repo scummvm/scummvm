@@ -51,7 +51,7 @@ namespace BitmapHelper = AGS::Shared::BitmapHelper;
 // #define DEBUG_PATHFINDER
 
 #ifdef DEBUG_PATHFINDER
-// extern Bitmap *mousecurs[10];
+// extern Bitmap *_G(mousecurs)[10];
 #endif
 
 namespace AGS {
@@ -294,7 +294,7 @@ static int try_this_square(int srcx, int srcy, int tox, int toy) {
 	}
 
 #ifdef DEBUG_PATHFINDER
-	// wputblock(lastcx, lastcy, mousecurs[C_CROSS], 1);
+	// wputblock(lastcx, lastcy, _G(mousecurs)[C_CROSS], 1);
 #endif
 
 	int trydir = DIR_UP;

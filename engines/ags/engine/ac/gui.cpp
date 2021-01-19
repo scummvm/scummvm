@@ -54,10 +54,10 @@
 #include "ags/engine/ac/dynobj/cc_guiobject.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_compat.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -304,15 +304,15 @@ void GUI_Click(ScriptGUI *scgui, int mbut) {
 void GUI_ProcessClick(int x, int y, int mbut) {
 	int guiid = gui_get_interactable(x, y);
 	if (guiid >= 0) {
-		const int real_mousex = mousex;
-		const int real_mousey = mousey;
-		mousex = x;
-		mousey = y;
+		const int real_mousex = _G(mousex);
+		const int real_mousey = _G(mousey);
+		_G(mousex) = x;
+		_G(mousey) = y;
 		guis[guiid].Poll();
 		gui_on_mouse_down(guiid, mbut);
 		gui_on_mouse_up(guiid, mbut);
-		mousex = real_mousex;
-		mousey = real_mousey;
+		_G(mousex) = real_mousex;
+		_G(mousey) = real_mousey;
 	}
 }
 
@@ -323,8 +323,8 @@ void remove_popup_interface(int ifacenum) {
 	ifacepopped = -1;
 	UnPauseGame();
 	guis[ifacenum].SetConceal(true);
-	if (mousey <= guis[ifacenum].PopupAtMouseY)
-		Mouse::SetPosition(Point(mousex, guis[ifacenum].PopupAtMouseY + 2));
+	if (_G(mousey) <= guis[ifacenum].PopupAtMouseY)
+		Mouse::SetPosition(Point(_G(mousex), guis[ifacenum].PopupAtMouseY + 2));
 	if ((!IsInterfaceEnabled()) && (cur_cursor == cur_mode))
 		// Only change the mouse cursor if it hasn't been specifically changed first
 		set_mouse_cursor(CURS_WAIT);
@@ -422,7 +422,7 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 				if (!IsInterfaceEnabled())
 					tempo[0] = 0;
 				else
-					GetLocationName(game_to_data_coord(mousex), game_to_data_coord(mousey), tempo);
+					GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 			} else { // not a macro, there's just a @ in the message
 				curptr = curptrWasAt + 1;
 				strcpy(tempo, "@");
@@ -598,7 +598,7 @@ int gui_on_mouse_move() {
 		int ll;
 		for (ll = 0; ll < game.numgui; ll++) {
 			const int guin = play.gui_draw_order[ll];
-			if (guis[guin].IsInteractableAt(mousex, mousey)) mouse_over_gui = guin;
+			if (guis[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
 
 			if (guis[guin].PopupStyle != kGUIPopupMouseY) continue;
 			if (is_complete_overlay > 0) break; // interfaces disabled
@@ -608,7 +608,7 @@ int gui_on_mouse_move() {
 			// Don't allow it to be popped up while skipping cutscene
 			if (play.fast_forward) continue;
 
-			if (mousey < guis[guin].PopupAtMouseY) {
+			if (_G(mousey) < guis[guin].PopupAtMouseY) {
 				set_mouse_cursor(CURS_ARROW);
 				guis[guin].SetConceal(false);
 				guis_need_update = 1;
@@ -646,8 +646,8 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 		if ((cttype == kGUIButton) || (cttype == kGUISlider) || (cttype == kGUIListBox)) {
 			force_event(EV_IFACECLICK, wasongui, i, wasbutdown);
 		} else if (cttype == kGUIInvWindow) {
-			mouse_ifacebut_xoffs = mousex - (guio->X) - guis[wasongui].X;
-			mouse_ifacebut_yoffs = mousey - (guio->Y) - guis[wasongui].Y;
+			mouse_ifacebut_xoffs = _G(mousex) - (guio->X) - guis[wasongui].X;
+			mouse_ifacebut_yoffs = _G(mousey) - (guio->Y) - guis[wasongui].Y;
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
 				evblocknum = iit;

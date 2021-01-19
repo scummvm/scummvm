@@ -810,7 +810,7 @@ void engine_init_game_settings() {
 	}
 
 	for (ee = 0; ee < game.numcursors; ee++) {
-		// The cursor graphics are assigned to mousecurs[] and so cannot
+		// The cursor graphics are assigned to _G(mousecurs)[] and so cannot
 		// be removed from memory
 		if (game.mcurs[ee].pic >= 0)
 			spriteset.Precache(game.mcurs[ee].pic);
@@ -1039,9 +1039,9 @@ void engine_init_game_settings() {
 	update_invorder();
 	displayed_room = -10;
 
-	currentcursor = 0;
+	_G(currentcursor) = 0;
 	our_eip = -4;
-	mousey = 100; // stop icon bar popping up
+	_G(mousey) = 100; // stop icon bar popping up
 
 	// We use same variable to read config and be used at runtime for now,
 	// so update it here with regards to game design option

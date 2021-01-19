@@ -74,6 +74,7 @@
 #include "ags/shared/util/filestream.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/util/library.h"
+#include "ags/engine/globals.h"
 
 #if defined(BUILTIN_PLUGINS)
 #include "ags/shared/../Plugins/AGSflashlight/agsflashlight.h"
@@ -93,7 +94,6 @@ using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
-extern int mousex, mousey;
 extern int displayed_room;
 extern RoomStruct thisroom;
 extern GameSetupStruct game;
@@ -290,8 +290,8 @@ void IAGSEngine::ReleaseBitmapSurface(BITMAP *bmp) {
 }
 
 void IAGSEngine::GetMousePosition(int32 *x, int32 *y) {
-	if (x) x[0] = mousex;
-	if (y) y[0] = mousey;
+	if (x) x[0] = _G(mousex);
+	if (y) y[0] = _G(mousey);
 }
 int IAGSEngine::GetCurrentRoom() {
 	return displayed_room;

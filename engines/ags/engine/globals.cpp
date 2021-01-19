@@ -28,6 +28,8 @@ Globals *g_globals;
 
 Globals::Globals() {
 	g_globals = this;
+
+	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
 }
 
 Globals::~Globals() {

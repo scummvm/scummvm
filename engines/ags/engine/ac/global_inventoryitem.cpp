@@ -33,6 +33,7 @@
 #include "ags/shared/gui/guiinv.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -40,7 +41,6 @@ using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern GameState play;
-extern int mousex, mousey;
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern const char *evblockbasename;
 extern int evblocknum;
@@ -79,17 +79,17 @@ void SetInvItemName(int invi, const char *newName) {
 int GetInvAt(int xxx, int yyy) {
 	int ongui = GetGUIAt(xxx, yyy);
 	if (ongui >= 0) {
-		int mxwas = mousex, mywas = mousey;
-		mousex = data_to_game_coord(xxx) - guis[ongui].X;
-		mousey = data_to_game_coord(yyy) - guis[ongui].Y;
+		int mxwas = _G(mousex), mywas = _G(mousey);
+		_G(mousex) = data_to_game_coord(xxx) - guis[ongui].X;
+		_G(mousey) = data_to_game_coord(yyy) - guis[ongui].Y;
 		int onobj = guis[ongui].FindControlUnderMouse();
 		GUIObject *guio = guis[ongui].GetControl(onobj);
 		if (guio) {
-			mouse_ifacebut_xoffs = mousex - (guio->X);
-			mouse_ifacebut_yoffs = mousey - (guio->Y);
+			mouse_ifacebut_xoffs = _G(mousex) - (guio->X);
+			mouse_ifacebut_yoffs = _G(mousey) - (guio->Y);
 		}
-		mousex = mxwas;
-		mousey = mywas;
+		_G(mousex) = mxwas;
+		_G(mousey) = mywas;
 		if (guio && (guis[ongui].GetControlType(onobj) == kGUIInvWindow))
 			return offset_over_inv((GUIInvWindow *)guio);
 	}
