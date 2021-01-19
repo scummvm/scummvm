@@ -37,7 +37,7 @@ struct InterfaceElement {
 	InterfaceButton button[MAXBUTTON];
 	int             flags;
 	int             reserved_for_future;
-	int             popupyp;   // pops up when mousey < this
+	int             popupyp;   // pops up when _G(mousey) < this
 	char            popup;     // does it pop up? (like sierra icon bar)
 	char            on;
 	InterfaceElement();

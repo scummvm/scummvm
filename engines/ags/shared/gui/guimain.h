@@ -171,7 +171,7 @@ public:
 	// and text color in text windows)
 	int32_t Padding;        // padding surrounding a GUI text window
 	GUIPopupStyle PopupStyle; // GUI popup behavior
-	int32_t PopupAtMouseY;  // popup when mousey < this
+	int32_t PopupAtMouseY;  // popup when _G(mousey) < this
 	int32_t Transparency;   // "incorrect" alpha (in legacy 255-range units)
 	int32_t ZOrder;
 
@@ -221,8 +221,6 @@ void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 extern std::vector<Shared::GUIMain> guis;
 extern int all_buttons_disabled, gui_inv_pic;
 extern int gui_disabled_style;
-
-extern int mousex, mousey;
 
 extern int get_adjusted_spritewidth(int spr);
 extern int get_adjusted_spriteheight(int spr);

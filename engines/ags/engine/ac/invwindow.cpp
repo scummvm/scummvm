@@ -44,10 +44,10 @@
 #include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -59,7 +59,6 @@ extern CharacterExtras *charextra;
 extern ScriptInvItem scrInv[MAX_INV];
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern SpriteCache spriteset;
-extern int mousex, mousey;
 extern int evblocknum;
 extern CharacterInfo *playerchar;
 extern AGSPlatformDriver *platform;
@@ -366,8 +365,8 @@ bool InventoryScreen::Run() {
 	refresh_gui_screen();
 
 	// NOTE: this is because old code was working with full game screen
-	const int mouseX = AGS3::mousex - windowxp;
-	const int mouseY = AGS3::mousey - windowyp;
+	const int mouseX = _G(mousex) - windowxp;
+	const int mouseY = _G(mousey) - windowyp;
 
 	int isonitem = ((mouseY - bartop) / highest) * ICONSPERLINE + (mouseX - barxp) / widest;
 	if (mouseY <= bartop) isonitem = -1;

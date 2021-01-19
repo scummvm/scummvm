@@ -34,6 +34,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/lib/std/algorithm.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -98,7 +99,7 @@ int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 				continue;
 			if (!_controls[i]->IsClickable() && must_be_clickable)
 				continue;
-			if (_controls[i]->IsOverControl(mousex, mousey, leeway))
+			if (_controls[i]->IsOverControl(_G(mousex), _G(mousey), leeway))
 				return i;
 		}
 	} else {
@@ -108,7 +109,7 @@ int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 				continue;
 			if (!_controls[ctrl_index]->IsClickable() && must_be_clickable)
 				continue;
-			if (_controls[ctrl_index]->IsOverControl(mousex, mousey, leeway))
+			if (_controls[ctrl_index]->IsOverControl(_G(mousex), _G(mousey), leeway))
 				return ctrl_index;
 		}
 	}
@@ -279,15 +280,15 @@ void GUIMain::DrawBlob(Bitmap *ds, int x, int y, color_t draw_color) {
 }
 
 void GUIMain::Poll() {
-	int mxwas = mousex, mywas = mousey;
+	int mxwas = _G(mousex), mywas = _G(mousey);
 
-	mousex -= X;
-	mousey -= Y;
-	if (mousex != MouseWasAt.X || mousey != MouseWasAt.Y) {
+	_G(mousex) -= X;
+	_G(mousey) -= Y;
+	if (_G(mousex) != MouseWasAt.X || _G(mousey) != MouseWasAt.Y) {
 		int ctrl_index = FindControlUnderMouse();
 
 		if (MouseOverCtrl == MOVER_MOUSEDOWNLOCKED)
-			_controls[MouseDownCtrl]->OnMouseMove(mousex, mousey);
+			_controls[MouseDownCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 		else if (ctrl_index != MouseOverCtrl) {
 			if (MouseOverCtrl >= 0)
 				_controls[MouseOverCtrl]->OnMouseLeave();
@@ -303,18 +304,18 @@ void GUIMain::Poll() {
 				MouseOverCtrl = ctrl_index;
 				if (MouseOverCtrl >= 0) {
 					_controls[MouseOverCtrl]->OnMouseEnter();
-					_controls[MouseOverCtrl]->OnMouseMove(mousex, mousey);
+					_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 				}
 			}
 			guis_need_update = 1;
 		} else if (MouseOverCtrl >= 0)
-			_controls[MouseOverCtrl]->OnMouseMove(mousex, mousey);
+			_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 	}
 
-	MouseWasAt.X = mousex;
-	MouseWasAt.Y = mousey;
-	mousex = mxwas;
-	mousey = mywas;
+	MouseWasAt.X = _G(mousex);
+	MouseWasAt.Y = _G(mousey);
+	_G(mousex) = mxwas;
+	_G(mousey) = mywas;
 }
 
 HError GUIMain::RebuildArray() {
@@ -449,7 +450,7 @@ void GUIMain::OnMouseButtonDown() {
 	MouseDownCtrl = MouseOverCtrl;
 	if (_controls[MouseOverCtrl]->OnMouseDown())
 		MouseOverCtrl = MOVER_MOUSEDOWNLOCKED;
-	_controls[MouseDownCtrl]->OnMouseMove(mousex - X, mousey - Y);
+	_controls[MouseDownCtrl]->OnMouseMove(_G(mousex) - X, _G(mousey) - Y);
 	guis_need_update = 1;
 }
 

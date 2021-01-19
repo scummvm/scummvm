@@ -32,6 +32,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -85,7 +86,7 @@ int MyPushButton::pressedon(int mousex, int mousey) {
 	while (mbutrelease(LEFT) == 0) {
 
 		wasstat = state;
-		state = mouseisinarea(mousex, mousey);
+		state = mouseisinarea(_G(mousex), _G(mousey));
 		// stop mp3 skipping if button held down
 		update_polled_stuff_if_runtime();
 		if (wasstat != state) {

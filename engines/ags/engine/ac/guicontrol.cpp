@@ -34,10 +34,10 @@
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_guiobject.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -54,12 +54,12 @@ GUIObject *GetGUIControlAtLocation(int xx, int yy) {
 
 	data_to_game_coords(&xx, &yy);
 
-	int oldmousex = mousex, oldmousey = mousey;
-	mousex = xx - guis[guinum].X;
-	mousey = yy - guis[guinum].Y;
+	int oldmousex = _G(mousex), oldmousey = _G(mousey);
+	_G(mousex) = xx - guis[guinum].X;
+	_G(mousey) = yy - guis[guinum].Y;
 	int toret = guis[guinum].FindControlUnderMouse(0, false);
-	mousex = oldmousex;
-	mousey = oldmousey;
+	_G(mousex) = oldmousex;
+	_G(mousey) = oldmousey;
 	if (toret < 0)
 		return nullptr;
 

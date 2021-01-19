@@ -70,6 +70,7 @@
 #include "ags/engine/gfx/blender.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/game.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -121,7 +122,6 @@ extern int cur_mode, cur_cursor;
 extern int mouse_frame, mouse_delay;
 extern int lastmx, lastmy;
 extern IDriverDependantBitmap *mouseCursor;
-extern int hotx, hoty;
 extern int bg_just_changed;
 
 color palette[256];
@@ -2207,10 +2207,10 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		ags_domouse(DOMOUSE_NOCURSOR);
 		// only on mousemove, and it's not moving
 		if (((game.mcurs[cur_cursor].flags & MCF_ANIMMOVE) != 0) &&
-		        (mousex == lastmx) && (mousey == lastmy));
+		        (_G(mousex) == lastmx) && (_G(mousey) == lastmy));
 		// only on hotspot, and it's not on one
 		else if (((game.mcurs[cur_cursor].flags & MCF_HOTSPOT) != 0) &&
-		         (GetLocationType(game_to_data_coord(mousex), game_to_data_coord(mousey)) == 0))
+		         (GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey))) == 0))
 			set_new_cursor_graphic(game.mcurs[cur_cursor].pic);
 		else if (mouse_delay > 0) mouse_delay--;
 		else {
@@ -2228,16 +2228,16 @@ void construct_game_screen_overlay(bool draw_mouse) {
 			mouse_delay = views[viewnum].loops[loopnum].frames[mouse_frame].speed + 5;
 			CheckViewFrame(viewnum, loopnum, mouse_frame);
 		}
-		lastmx = mousex;
-		lastmy = mousey;
+		lastmx = _G(mousex);
+		lastmy = _G(mousey);
 	}
 
 	ags_domouse(DOMOUSE_NOCURSOR);
 
 	// Stage: mouse cursor
 	if (draw_mouse && !play.mouse_cursor_hidden && play.screen_is_faded_out == 0) {
-		gfxDriver->DrawSprite(mousex - hotx, mousey - hoty, mouseCursor);
-		invalidate_sprite(mousex - hotx, mousey - hoty, mouseCursor, false);
+		gfxDriver->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor);
+		invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor, false);
 	}
 
 	if (play.screen_is_faded_out == 0) {

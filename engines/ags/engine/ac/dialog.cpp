@@ -59,11 +59,11 @@
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/media/audio/audio_system.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
@@ -872,9 +872,9 @@ bool DialogOptions::Run() {
 	mouseison = -1;
 	if (new_custom_render); // do not automatically detect option under mouse
 	else if (usingCustomRendering) {
-		if ((mousex >= dirtyx) && (mousey >= dirtyy) &&
-		        (mousex < dirtyx + tempScrn->GetWidth()) &&
-		        (mousey < dirtyy + tempScrn->GetHeight())) {
+		if ((_G(mousex) >= dirtyx) && (_G(mousey) >= dirtyy) &&
+		        (_G(mousex) < dirtyx + tempScrn->GetWidth()) &&
+		        (_G(mousey) < dirtyy + tempScrn->GetHeight())) {
 			getDialogOptionUnderCursorFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
 			run_function_on_non_blocking_thread(&getDialogOptionUnderCursorFunc);
 
@@ -885,11 +885,11 @@ bool DialogOptions::Run() {
 		} else {
 			ccDialogOptionsRendering.activeOptionID = -1;
 		}
-	} else if (mousex >= dialog_abs_x && mousex < (dialog_abs_x + areawid) &&
-	           mousey >= dlgyp && mousey < curyp) {
+	} else if (_G(mousex) >= dialog_abs_x && _G(mousex) < (dialog_abs_x + areawid) &&
+	           _G(mousey) >= dlgyp && _G(mousey) < curyp) {
 		mouseison = numdisp - 1;
 		for (int i = 0; i < numdisp; ++i) {
-			if (mousey < dispyp[i]) {
+			if (_G(mousey) < dispyp[i]) {
 				mouseison = i - 1;
 				break;
 			}
@@ -898,7 +898,7 @@ bool DialogOptions::Run() {
 	}
 
 	if (parserInput != nullptr) {
-		int relativeMousey = mousey;
+		int relativeMousey = _G(mousey);
 		if (usingCustomRendering)
 			relativeMousey -= dirtyy;
 

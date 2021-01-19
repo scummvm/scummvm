@@ -29,8 +29,16 @@
 
 namespace AGS3 {
 
+#define MAXCURSORS 20
+
 using String = AGS::Shared::String;
 using Version = AGS::Shared::Version;
+
+namespace AGS {
+namespace Shared {
+class Bitmap;
+} // namespace Shared
+} // namespace AGS
 
 class Globals {
 public:
@@ -93,6 +101,23 @@ public:
 	Version _SavedgameLowestBackwardCompatVersion;
 	// Lowest engine version, which would accept current savedgames
 	Version _SavedgameLowestForwardCompatVersion;
+
+	/**@}*/
+
+	/**
+	 * \defgroup mouse globals
+	 * @{
+	 */
+
+	char _currentcursor = 0;
+	// virtual mouse cursor coordinates
+	int _mousex = 0, _mousey = 0, _numcurso = -1, _hotx = 0, _hoty = 0;
+	// real mouse coordinates and bounds
+	int _real_mouse_x = 0, _real_mouse_y = 0;
+	int _boundx1 = 0, _boundx2 = 99999, _boundy1 = 0, _boundy2 = 99999;
+	int _disable_mgetgraphpos = 0;
+	char _ignore_bounds = 0;
+	AGS::Shared::Bitmap *_mousecurs[MAXCURSORS];
 
 	/**@}*/
 

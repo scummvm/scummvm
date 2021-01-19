@@ -29,14 +29,13 @@
 #include "ags/engine/gui/guidialog.h"
 #include "ags/engine/gui/guidialoginternaldefs.h"
 #include "ags/engine/gui/mylistbox.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 
 extern GameSetup usetup;
-extern int numcurso, hotx, hoty;
-
 extern int windowbackgroundcolor;
 extern int cbuttfont;
 extern int smcode;
@@ -111,14 +110,14 @@ void MyListBox::draw(Bitmap *ds) {
 }
 
 int MyListBox::pressedon(int mousex, int mousey) {
-	if (mousex > x + wid - ARROWWIDTH) {
-		if ((mousey - y < hit / 2) & (topitem > 0))
+	if (_G(mousex) > x + wid - ARROWWIDTH) {
+		if ((_G(mousey) - y < hit / 2) & (topitem > 0))
 			topitem--;
-		else if ((mousey - y > hit / 2) &(topitem + numonscreen < items))
+		else if ((_G(mousey) - y > hit / 2) &(topitem + numonscreen < items))
 			topitem++;
 
 	} else {
-		selected = ((mousey - y) - 2) / TEXT_HT + topitem;
+		selected = ((_G(mousey) - y) - 2) / TEXT_HT + topitem;
 		if (selected >= items)
 			selected = items - 1;
 

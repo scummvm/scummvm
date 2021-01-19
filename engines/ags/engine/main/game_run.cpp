@@ -227,7 +227,7 @@ static void check_mouse_controls() {
 	mongu = gui_on_mouse_move();
 
 	mouse_on_iface = mongu;
-	if ((ifacepopped >= 0) && (mousey >= guis[ifacepopped].Y + guis[ifacepopped].Height))
+	if ((ifacepopped >= 0) && (_G(mousey) >= guis[ifacepopped].Y + guis[ifacepopped].Height))
 		remove_popup_interface(ifacepopped);
 
 	// check mouse clicks on GUIs
@@ -621,7 +621,7 @@ static void game_loop_update_animated_buttons() {
 
 static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {
 	if (!play.fast_forward) {
-		int mwasatx = mousex, mwasaty = mousey;
+		int mwasatx = _G(mousex), mwasaty = _G(mousey);
 
 		// Only do this if we are not skipping a cutscene
 		render_graphics(extraBitmap, extraX, extraY);
@@ -632,7 +632,7 @@ static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBit
 		// TODO: if we support rotation then we also need to compare full transform!
 		if (displayed_room < 0)
 			return;
-		auto view = play.GetRoomViewportAt(mousex, mousey);
+		auto view = play.GetRoomViewportAt(_G(mousex), _G(mousey));
 		auto cam = view ? view->GetCamera() : nullptr;
 		if (cam) {
 			// NOTE: all cameras are in same room right now, so their positions are in same coordinate system;
@@ -641,10 +641,10 @@ static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBit
 			int offsetx = cam->GetRect().Left;
 			int offsety = cam->GetRect().Top;
 
-			if (((mwasatx != mousex) || (mwasaty != mousey) ||
+			if (((mwasatx != _G(mousex)) || (mwasaty != _G(mousey)) ||
 				(offsetxWas != offsetx) || (offsetyWas != offsety))) {
 				// mouse moves over hotspot
-				if (__GetLocationType(game_to_data_coord(mousex), game_to_data_coord(mousey), 1) == LOCTYPE_HOTSPOT) {
+				if (__GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), 1) == LOCTYPE_HOTSPOT) {
 					int onhs = getloctype_index;
 
 					setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, onhs, 6);
@@ -813,7 +813,7 @@ static void UpdateMouseOverLocation() {
 	// Call GetLocationName - it will internally force a GUI refresh
 	// if the result it returns has changed from last time
 	char tempo[STD_BUFFER_SIZE];
-	GetLocationName(game_to_data_coord(mousex), game_to_data_coord(mousey), tempo);
+	GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 
 	if ((play.get_loc_name_save_cursor >= 0) &&
 		(play.get_loc_name_save_cursor != play.get_loc_name_last_time) &&

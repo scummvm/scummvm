@@ -32,9 +32,6 @@
 //=============================================================================
 
 #include "ags/shared/util/geometry.h"
-
-#define MAXCURSORS 20
-
 #include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
@@ -98,13 +95,4 @@ void SetMoveLimit(const Rect &r);
 void SetPosition(const Point p);
 
 } // namespace Mouse
-
-
-extern int mousex, mousey;
-extern int hotx, hoty;
-extern int disable_mgetgraphpos;
-extern char currentcursor;
-
-extern Shared::Bitmap *mousecurs[MAXCURSORS];
-
 } // namespace AGS3

@@ -42,13 +42,13 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
-extern char ignore_bounds; // from mousew32
 extern IGraphicsDriver *gfxDriver;
 extern GameSetup usetup;
 
@@ -97,7 +97,7 @@ int CSCIGetVersion() {
 int windowcount = 0, curswas = 0;
 int win_x = 0, win_y = 0, win_width = 0, win_height = 0;
 int CSCIDrawWindow(int xx, int yy, int wid, int hit) {
-	ignore_bounds++;
+	_G(ignore_bounds)++;
 	multiply_up(&xx, &yy, &wid, &hit);
 	int drawit = -1;
 	for (int aa = 0; aa < MAXSCREENWINDOWS; aa++) {
@@ -133,7 +133,7 @@ int CSCIDrawWindow(int xx, int yy, int wid, int hit) {
 
 void CSCIEraseWindow(int handl) {
 	//  ags_domouse(DOMOUSE_DISABLE);
-	ignore_bounds--;
+	_G(ignore_bounds)--;
 	topwindowhandle = oswi[handl].oldtop;
 	oswi[handl].handle = -1;
 	//  ags_domouse(DOMOUSE_ENABLE);
@@ -275,8 +275,8 @@ void multiply_up(int *x1, int *y1, int *x2, int *y2) {
 
 int checkcontrols() {
 	// NOTE: this is because old code was working with full game screen
-	const int mouseX = AGS3::mousex - win_x;
-	const int mouseY = AGS3::mousey - win_y;
+	const int mouseX = _G(mousex) - win_x;
+	const int mouseY = _G(mousey) - win_y;
 
 	smcode = 0;
 	for (int kk = 0; kk < MAXCONTROLS; kk++) {
