@@ -833,7 +833,7 @@ void IAGSEngine::GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int3
 }
 
 int IAGSEngine::IsRunningUnderDebugger() {
-	return (editor_debugging_enabled != 0) ? 1 : 0;
+	return (_G(editor_debugging_enabled) != 0) ? 1 : 0;
 }
 
 void IAGSEngine::GetPathToFileInCompiledFolder(const char *fileName, char *buffer) {
@@ -841,7 +841,7 @@ void IAGSEngine::GetPathToFileInCompiledFolder(const char *fileName, char *buffe
 }
 
 void IAGSEngine::BreakIntoDebugger() {
-	break_on_next_script_step = 1;
+	_G(break_on_next_script_step) = 1;
 }
 
 IAGSFontRenderer *IAGSEngine::ReplaceFontRenderer(int fontNumber, IAGSFontRenderer *newRenderer) {

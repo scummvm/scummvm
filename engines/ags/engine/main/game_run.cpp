@@ -1010,7 +1010,7 @@ void update_polled_stuff_if_runtime() {
 
 	update_polled_mp3();
 
-	if (editor_debugging_initialized)
+	if (_G(editor_debugging_initialized))
 		check_for_messages_from_editor();
 }
 

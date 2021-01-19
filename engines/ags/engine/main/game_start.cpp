@@ -60,7 +60,7 @@ extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 
 void start_game_init_editor_debugging() {
-	if (editor_debugging_enabled) {
+	if (_G(editor_debugging_enabled)) {
 		SetMultitasking(1);
 		if (init_editor_debugging()) {
 			auto waitUntil = AGS_Clock::now() + std::chrono::milliseconds(500);

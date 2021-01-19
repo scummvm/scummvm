@@ -62,14 +62,6 @@ extern RoomStruct thisroom;
 extern char pexbuf[STD_BUFFER_SIZE];
 extern GameSetupStruct game;
 
-
-int editor_debugging_enabled = 0;
-int editor_debugging_initialized = 0;
-char editor_debugger_instance_token[100];
-IAGSEditorDebugger *editor_debugger = nullptr;
-int break_on_next_script_step = 0;
-volatile int game_paused_in_debugger = 0;
-
 #if AGS_PLATFORM_OS_WINDOWS
 
 #include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
@@ -373,7 +365,7 @@ bool send_message_to_editor(const char *msg, const char *errorMsg) {
 	}
 	strcat(messageToSend, "</Debugger>");
 
-	editor_debugger->SendMessageToEditor(messageToSend);
+	_G(editor_debugger)->SendMessageToEditor(messageToSend);
 
 	return true;
 }
@@ -384,17 +376,17 @@ bool send_message_to_editor(const char *msg) {
 
 bool init_editor_debugging() {
 #if AGS_PLATFORM_OS_WINDOWS
-	editor_debugger = GetEditorDebugger(editor_debugger_instance_token);
+	_G(editor_debugger) = GetEditorDebugger(_G(editor_debugger_instance_token));
 #else
 	// Editor isn't ported yet
-	editor_debugger = nullptr;
+	_G(editor_debugger) = nullptr;
 #endif
 
-	if (editor_debugger == nullptr)
-		quit("editor_debugger is NULL but debugger enabled");
+	if (_G(editor_debugger) == nullptr)
+		quit("_G(editor_debugger) is NULL but debugger enabled");
 
-	if (editor_debugger->Initialize()) {
-		editor_debugging_initialized = 1;
+	if (_G(editor_debugger)->Initialize()) {
+		_G(editor_debugging_initialized) = 1;
 
 		// Wait for the editor to send the initial breakpoints
 		// and then its READY message
@@ -410,8 +402,8 @@ bool init_editor_debugging() {
 }
 
 int check_for_messages_from_editor() {
-	if (editor_debugger->IsMessageAvailable()) {
-		char *msg = editor_debugger->GetNextMessage();
+	if (_G(editor_debugger)->IsMessageAvailable()) {
+		char *msg = _G(editor_debugger)->GetNextMessage();
 		if (msg == nullptr) {
 			return 0;
 		}
@@ -466,10 +458,10 @@ int check_for_messages_from_editor() {
 				numBreakpoints++;
 			}
 		} else if (strncmp(msgPtr, "RESUME", 6) == 0) {
-			game_paused_in_debugger = 0;
+			_G(game_paused_in_debugger) = 0;
 		} else if (strncmp(msgPtr, "STEP", 4) == 0) {
-			game_paused_in_debugger = 0;
-			break_on_next_script_step = 1;
+			_G(game_paused_in_debugger) = 0;
+			_G(break_on_next_script_step) = 1;
 		} else if (strncmp(msgPtr, "EXIT", 4) == 0) {
 			_G(want_exit) = 1;
 			_G(abort_engine) = 1;
@@ -512,9 +504,9 @@ void break_into_debugger() {
 		SetForegroundWindow(editor_window_handle);
 
 	send_message_to_editor("BREAK");
-	game_paused_in_debugger = 1;
+	_G(game_paused_in_debugger) = 1;
 
-	while (game_paused_in_debugger) {
+	while (_G(game_paused_in_debugger)) {
 		update_polled_stuff_if_runtime();
 		platform->YieldCPU();
 	}
@@ -542,8 +534,8 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 		return;
 	}
 
-	if (break_on_next_script_step) {
-		break_on_next_script_step = 0;
+	if (_G(break_on_next_script_step)) {
+		_G(break_on_next_script_step) = 0;
 		break_into_debugger();
 		return;
 	}
@@ -568,7 +560,7 @@ void check_debug_keys() {
 		if (!::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && scrlockWasDown)
 			scrlockWasDown = 0;
 		else if (::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && !scrlockWasDown) {
-			break_on_next_script_step = 1;
+			_G(break_on_next_script_step) = 1;
 			scrlockWasDown = 1;
 		}
 	}
