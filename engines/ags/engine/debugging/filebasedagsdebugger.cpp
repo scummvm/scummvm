@@ -74,7 +74,7 @@ bool FileBasedAGSDebugger::SendMessageToEditor(const char *message) {
 }
 
 bool FileBasedAGSDebugger::IsMessageAvailable() {
-	return (exists("dbgsend.tmp") != 0);
+	return exists("dbgsend.tmp");
 }
 
 char *FileBasedAGSDebugger::GetNextMessage() {

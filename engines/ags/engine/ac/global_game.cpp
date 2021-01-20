@@ -850,7 +850,7 @@ int SaveScreenShot(const char *namm) {
 		fileName.Format("%s%s", svg_dir.GetCStr(), namm);
 
 	Bitmap *buffer = CopyScreenIntoBitmap(play.GetMainViewport().GetWidth(), play.GetMainViewport().GetHeight());
-	if (!buffer->SaveToFile(fileName, palette) != 0) {
+	if (!buffer->SaveToFile(fileName, palette)) {
 		delete buffer;
 		return 0;
 	}
