@@ -119,7 +119,7 @@ int Dict_GetItemCount(ScriptDictBase *dic) {
 void *Dict_GetKeysAsArray(ScriptDictBase *dic) {
 	std::vector<const char *> items;
 	dic->GetKeys(items);
-	if (items.size() == 0)
+	if (items.empty())
 		return nullptr;
 	DynObjectRef arr = DynamicArrayHelpers::CreateStringArray(items);
 	return arr.second;
