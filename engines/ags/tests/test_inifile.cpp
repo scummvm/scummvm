@@ -75,6 +75,35 @@ const char *IniFileText2 = ""
 "item5_2=value5_2" ENDL
 "item5_3=value5_3" ENDL;
 
+bool operator==(const StringOrderMap &lhs, const StringOrderMap &rhs) {
+	if (lhs.size() != rhs.size())
+		return false;
+
+	StringOrderMap::const_iterator it1 = lhs.begin();
+	StringOrderMap::const_iterator it2 = rhs.begin();
+
+	for (; it1 != lhs.end(); ++it1, ++it2) {
+		if (it1->_key || it2->_key || it1->_value != it2->_value)
+			return false;
+	}
+
+	return true;
+}
+
+bool operator==(const ConfigTree &lhs, const ConfigTree &rhs) {
+	if (lhs.size() != rhs.size())
+		return false;
+
+	ConfigTree::const_iterator it1 = lhs.begin();
+	ConfigTree::const_iterator it2 = rhs.begin();
+
+	for (; it1 != lhs.end(); ++it1, ++it2) {
+		if (it1->_key || it2->_key || !(it1->_value == it2->_value))
+			return false;
+	}
+
+	return true;
+}
 
 void Test_IniFile() {
 	Stream *fs = File::CreateFile("test.ini");
