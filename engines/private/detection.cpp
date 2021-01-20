@@ -10,31 +10,53 @@ static const PlainGameDescriptor privateGames[] = {
 
 static const ADGameDescription gameDescriptions[] = {
     {
-        "private-eye",  // Full game
+        "private-eye",  // US release
         0,
         AD_ENTRY1s("ASSETS.Z", "3a7532349cda8126e96dd5e49884af3a", 40232),
-        Common::EN_ANY,
+        Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_NO_FLAGS,
         GUIO1(GUIO_NOMIDI)
     },
+
+    {
+        "private-eye",  // EU release
+        0,
+        AD_ENTRY1s("ASSETS.Z", "73874f969026d6fd21a4e9834ce4a1a7", 17695),
+        Common::EN_GRB,
+        Common::kPlatformWindows,
+        ADGF_UNSUPPORTED,
+        GUIO1(GUIO_NOMIDI)
+    },
+
     {
         "private-eye", // Demo from archive.org
         "Demo",
         AD_ENTRY1s("ASSETS.Z", "854e141bb67535359620a1833fcc1566", 5955),
-        Common::EN_ANY,
+        Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)
     },
 
     {
-        "private-eye", // Demo from the full game CDROM
+        "private-eye", // Demo from the US release
         "Demo",
         AD_ENTRY1s("ASSETS.Z", "045766e39f44d6ee3bf92f0d4521587c", 5961),
-        Common::EN_ANY,
+        Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
+        GUIO1(GUIO_NOMIDI)
+    },
+
+    
+    {
+        "private-eye", // Demo from the EU release
+        "Demo",
+        AD_ENTRY1s("ASSETS.Z", "15e10e8fbb1e9aac4d32c5d8215e7c86", 2299),
+        Common::EN_GRB,
+        Common::kPlatformWindows,
+        ADGF_DEMO | ADGF_UNSUPPORTED,
         GUIO1(GUIO_NOMIDI)
     },
 

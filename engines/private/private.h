@@ -47,7 +47,8 @@ typedef struct MaskInfo {
     Graphics::ManagedSurface *surf;
     Common::String *nextSetting;
     Common::Point *point;
-    Symbol *flag;
+    Symbol *flag1;
+    Symbol *flag2;
     Common::String *cursor;
 } MaskInfo;
 
@@ -150,6 +151,8 @@ public:
     PlayedMediaTable _playedMovies;
     PlayedMediaTable _playedPhoneClips;
     Common::String *_repeatedMovieExit;
+    Common::String *_pausedSetting;
+
     ExitList _exits;
     MaskList _masks;
 
