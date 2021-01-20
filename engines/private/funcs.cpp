@@ -70,7 +70,8 @@ void LoadGame(ArgArray args) {
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[2].u.sym->name;
     m->nextSetting = NULL;
-    m->flag = NULL;
+    m->flag1 = NULL;
+    m->flag2 = NULL;
     g_private->_loadGameMask = m;
     g_private->_masks.push_front(*m);
 }
@@ -83,7 +84,8 @@ void SaveGame(ArgArray args) {
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[1].u.sym->name;
     m->nextSetting = NULL;
-    m->flag = NULL;
+    m->flag1 = NULL;
+    m->flag2 = NULL;
     g_private->_saveGameMask = m;
     g_private->_masks.push_front(*m);
 }
@@ -117,6 +119,8 @@ void Inventory(ArgArray args) {
     Datum v2 = args[2];
     Datum e = args[3];
 
+    Datum c = args[5];
+
     Datum snd = args[8];
 
     assert(v1.type == STRING || v1.type == NAME);
@@ -142,17 +146,30 @@ void Inventory(ArgArray args) {
 
         m->cursor = new Common::String("kInventory");
         m->point = new Common::Point(0,0);
-        if (v2.type == NAME)
-            m->flag = v2.u.sym;
+
+        if (v1.type == NAME)
+            m->flag1 = v1.u.sym;
         else
-            m->flag = NULL;
+            m->flag1 = NULL;
+
+
+        if (v2.type == NAME)
+            m->flag2 = v2.u.sym;
+        else
+            m->flag2 = NULL;
 
         g_private->_masks.push_front(*m);
         g_private->_toTake = true;
-    }
+    } else { 
+        if (v1.type == NAME)
+            if (strcmp(c.u.str, "\"REMOVE\"") == 0)
+                v1.u.sym->u.val = 0;
+            else
+                v1.u.sym->u.val = 1;
 
-    if (v1.type == NAME)
-        v1.u.sym->u.val = 1;
+        if (v2.type == NAME)
+            v2.u.sym->u.val = 1;
+    }
 
     if (strcmp(snd.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(snd.u.str);
@@ -247,6 +264,17 @@ void Transition(ArgArray args) {
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
+void Resume(ArgArray args) {
+    // assert types
+    debug("Resume(%d)", args[0].u.val); // this value is always 1
+    g_private->_nextSetting = g_private->_pausedSetting;
+    g_private->_pausedSetting = NULL;
+    g_private->_mode = 1;
+    g_private->_origin->x = 64;  // use a constant
+    g_private->_origin->y = 48;
+
+}
+
 void Movie(ArgArray args) {
     // assert types
     debug("Movie(%s, %s)", args[0].u.str, args[1].u.str);
@@ -331,7 +359,8 @@ void _Mask(ArgArray args, bool drawn) {
     m->surf = g_private->loadMask(*s, x, y, drawn);
     m->nextSetting = new Common::String(e);
     m->cursor = c;
-    m->flag = NULL;
+    m->flag1 = NULL;
+    m->flag2 = NULL;
     m->point = new Common::Point(x,y);
     g_private->_masks.push_front(*m);
 
@@ -407,7 +436,8 @@ void SoundArea(ArgArray args) {
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
-        m->flag = NULL;
+        m->flag1 = NULL;
+        m->flag2 = NULL;
         g_private->_AMRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (strcmp(n, "kPoliceRadio") == 0) {
@@ -416,7 +446,8 @@ void SoundArea(ArgArray args) {
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
-        m->flag = NULL;
+        m->flag1 = NULL;
+        m->flag2 = NULL;
         g_private->_policeRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (strcmp(n, "kPhone") == 0) {
@@ -425,7 +456,8 @@ void SoundArea(ArgArray args) {
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
-        m->flag = NULL;
+        m->flag1 = NULL;
+        m->flag2 = NULL;
         g_private->_phoneArea = m;
         g_private->_masks.push_front(*m);
     }
@@ -457,6 +489,7 @@ static struct FuncTable {
 } funcTable[] = {
 
     { ChgMode,         "ChgMode"},
+    { Resume,          "Resume"},
     { Goto,            "goto"},
     { SetFlag,         "SetFlag"},
     { Timer,	       "Timer"},

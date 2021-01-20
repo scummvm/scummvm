@@ -56,6 +56,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _loadGameMask = NULL;
 
     _nextSetting = NULL;
+    _currentSetting = NULL;
     _nextMovie = NULL;
     _nextVS = NULL;
     _modified = false;
@@ -63,6 +64,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _toTake = false;
     _frame = new Common::String("inface/general/inface2.bmp");
     _repeatedMovieExit = new Common::String("");
+    _pausedSetting = NULL;
 
     _paperShuffleSound = new Common::String("global/audio/glsfx0");
     _takeSound = new Common::String("global/audio/took");
@@ -166,6 +168,12 @@ Common::Error PrivateEngine::run() {
             case Common::EVENT_KEYDOWN:
                 if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
                     skipVideo();
+                else if (event.kbd.keycode == Common::KEYCODE_m) {
+                    if ( _pausedSetting == NULL) {
+                        _pausedSetting = _currentSetting;
+                        _nextSetting = new Common::String("kPauseMovie");
+                    }
+                }
                 break;
 
             case Common::EVENT_QUIT:
@@ -233,7 +241,7 @@ Common::Error PrivateEngine::run() {
             _policeRadioArea = NULL;
             _AMRadioArea = NULL;
             _phoneArea = NULL;
-
+            _currentSetting = _nextSetting;
             loadSetting(_nextSetting);
             _nextSetting = NULL;
             execute(prog);
@@ -365,13 +373,18 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
                 ns = m.nextSetting;
             }
 
-            if (m.flag != NULL) { // TODO: check this
-                setSymbol(m.flag, 1);
+            if (m.flag1 != NULL) { // TODO: check this
+                setSymbol(m.flag1, 1);
+                debug("!!!!!!!!!!!!!! setting %s to 1 !!!!!!!!!!!!!!!!!!1", m.flag1->name->c_str());
                 // an item was taken
                 if (_toTake) {
                     playSound(*getTakeSound(), 1);
                     _toTake = false;
                 }
+            }
+
+            if (m.flag2 != NULL) {
+                setSymbol(m.flag2, 1);
             }
 
             break;
@@ -687,7 +700,8 @@ void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
     Common::File file;
     assert(file.open(path));
     _image->loadStream(file);
-    screen->copyRectToSurface(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    Graphics::Surface *frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+    screen->copyRectToSurface(*frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 }
 
 
@@ -722,7 +736,10 @@ void PrivateEngine::drawScreen() {
         frame->create(_screenW, _screenH, _pixelFormat);
         frame->copyFrom(*_videoDecoder->decodeNextFrame());
         const Common::Point o(_origin->x, _origin->y);
-        surface->transBlitFrom(*frame->convertTo(_pixelFormat, _videoDecoder->getPalette()), o);
+        Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
+        surface->transBlitFrom(*cframe, o);
+        delete frame;
+        delete cframe;
     }
 
     assert(w == _screenW && h == _screenH);
