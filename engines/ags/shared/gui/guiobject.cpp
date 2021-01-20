@@ -167,7 +167,7 @@ void GUIObject::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
 	Height = in->ReadInt32();
 	ZOrder = in->ReadInt32();
 	// Dynamic state
-	IsActivated = in->ReadBool() ? 1 : 0;
+	IsActivated = in->ReadBool();
 }
 
 void GUIObject::WriteToSavegame(Stream *out) const {
@@ -179,7 +179,7 @@ void GUIObject::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(Height);
 	out->WriteInt32(ZOrder);
 	// Dynamic state
-	out->WriteBool(IsActivated != 0);
+	out->WriteBool(IsActivated);
 }
 
 

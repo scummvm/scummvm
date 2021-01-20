@@ -959,7 +959,7 @@ bool DialogOptions::Run() {
 
 	if (parserActivated) {
 		// They have selected a custom parser-based option
-		if (!parserInput->Text.IsEmpty() != 0) {
+		if (!parserInput->Text.IsEmpty()) {
 			chose = DLG_OPTION_PARSER;
 			return false; // end dialog options running loop
 		} else {
