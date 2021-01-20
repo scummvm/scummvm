@@ -95,7 +95,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), Common::U32String(), kLauncherCmd);
 	_returnToLauncherButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
 
-	if (!g_system->hasFeature(OSystem::kFeatureNoQuit) && !(ConfMan.getBool("gui_return_to_launcher_at_exit")))
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit) && (!(ConfMan.getBool("gui_return_to_launcher_at_exit")) || !_engine->hasFeature(Engine::kSupportsReturnToLauncher)))
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), Common::U32String(), kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();

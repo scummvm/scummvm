@@ -99,7 +99,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	// replace "Quit" event with "Return to Launcher". This is also handled in scummvm_main, but
 	// doing it here allows getting the correct confirmation dialog if the "confirm_exit" setting
 	// is set to true.
-	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine)))
+	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine && g_engine->hasFeature(Engine::kSupportsReturnToLauncher))))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
