@@ -48,6 +48,9 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/mixer/symbiansdl/symbiansdl-mixer.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
+
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #define DEFAULT_SAVE_PATH "Savegames"
 
@@ -156,6 +159,12 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 
 RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
+}
+
+Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindings(){
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "ASTERISK");
+	return keymapperDefaultBindings;
 }
 
 // Symbian bsearch implementation is flawed

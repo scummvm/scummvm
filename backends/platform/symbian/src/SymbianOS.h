@@ -32,10 +32,10 @@ public:
 	OSystem_SDL_Symbian();
 
 	// Override from OSystem_SDL
-	virtual void init();
-	virtual void initBackend();
-	virtual Common::String getDefaultConfigFileName();
-	virtual bool hasFeature(Feature f);
+	void init() override;
+	void initBackend() override;
+	Common::String getDefaultConfigFileName() override;
+	bool hasFeature(Feature f) override;
 
 	/**
 	 * Returns reference to File session
@@ -45,6 +45,8 @@ public:
 	void quitWithErrorMsg(const char *msg);
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 protected:
 	RFs* _RFs;
