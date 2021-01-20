@@ -41,13 +41,13 @@
 namespace Griffon {
 
 #define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
-		if (_event.type == Common::EVENT_QUIT) { \
+		if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER) { \
 			_shouldQuit = true; \
 			return; \
 		} \
 	}
 
-#define CHECK_QUIT() 		if (_event.type == Common::EVENT_QUIT) { \
+#define CHECK_QUIT() 		if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER) { \
 		_shouldQuit = true; \
 		return; \
 	}

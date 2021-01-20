@@ -34,6 +34,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Bargon Attack Russian translation.
    - Added support for Woodruff Russian translation.
 
+ Griffon:
+   - Fixed Return to Launcher from The Griffon Legend.
+
  Grim:
    - Added support for Brazillian Portuguese Grim Fandango.
    - Added support for Russian EMI.

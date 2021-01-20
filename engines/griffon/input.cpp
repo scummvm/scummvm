@@ -69,7 +69,7 @@ void GriffonEngine::checkInputs() {
 	if (_attacking || (_forcePause && !_itemSelOn))
 		return;
 
-	if (_event.type == Common::EVENT_QUIT) {
+	if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 		_shouldQuit = true;
 		return;
 	}

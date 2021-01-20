@@ -160,7 +160,7 @@ void GriffonEngine::title(int mode) {
 			_itemyloc = _itemyloc - 16;
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT)
+			if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				_shouldQuit = true;
 
 			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
@@ -353,6 +353,7 @@ void GriffonEngine::configMenu() {
 		while (g_system->getEventManager()->pollEvent(_event)) {
 			switch (_event.type) {
 			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_shouldQuit = true;
 				break;
 
@@ -592,7 +593,7 @@ void GriffonEngine::saveLoadNew() {
 		_saveLoadImg->blit(*_videoBuffer);
 
 		if (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_QUIT) {
+			if (_event.type == Common::EVENT_QUIT || _event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_shouldQuit = true;
 				return;
 			}
