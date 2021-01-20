@@ -20,21 +20,15 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
@@ -161,7 +155,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 				return;
 
 			waitFor(avatar->doAnim(Animation::attack, mousedir));
-			_lastAttack = _lastFrame;
+			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// attacking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -193,7 +187,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 				return;
 
 			waitFor(avatar->doAnim(Animation::kick, mousedir));
-			_lastAttack = _lastFrame;
+			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// kicking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -348,7 +342,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// If still in combat stance, sheathe weapon
-	if (!stasis && Animation::isCombatAnim(lastanim)) {
+	if (!stasis && Animation::isCombatAnimU8(lastanim)) {
 		putAwayWeapon(direction);
 		return;
 	}
@@ -750,20 +744,11 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 
 bool U8AvatarMoverProcess::canAttack() {
 	MainActor *avatar = getMainActor();
-	return (_lastFrame > _lastAttack + (25 - avatar->getDex()));
+	return (Kernel::get_instance()->getFrameNum() > _lastAttack + (25 - avatar->getDex()));
 }
 
 void U8AvatarMoverProcess::tryAttack() {
-	MainActor *avatar = getMainActor();
-	Direction dir = avatar->getDir();
-	if (!avatar->isInCombat()) {
-		avatar->setInCombat(0);
-		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
-	} else {
-		if (canAttack()) {
-			waitFor(avatar->doAnim(Animation::attack, dir));
-		}
-	}
+	error("tryAttack should only be called in Crusader");
 }
 
 void U8AvatarMoverProcess::saveData(Common::WriteStream *ws) {

@@ -112,7 +112,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		return 0;
 	}
 
-	const int32 destAngle = (difZ << 14) / targetActorDistance;
+	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
 
 	int32 startAngle = ANGLE_0;
 	//	stopAngle  = 0x100;
@@ -161,12 +161,12 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	movePtr->from = from;
 	movePtr->to = to;
 
-	const int16 numOfStep = (from - to) << 6;
+	const int16 numOfStep = (from - to) * 64;
 	int32 numOfStepInt = ABS(numOfStep);
-	numOfStepInt >>= 6;
+	numOfStepInt /= 64;
 
 	numOfStepInt *= speed;
-	numOfStepInt >>= 8;
+	numOfStepInt /= 256;
 
 	movePtr->numOfStep = (int16)numOfStepInt;
 	movePtr->timeOfChange = _engine->lbaTime;
@@ -227,7 +227,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
 		break;
 	case HeroBehaviourType::kAggressive:
-		if (_engine->_actor->autoAgressive) {
+		if (_engine->_actor->autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 			heroMoved = true;
 			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
@@ -248,11 +248,11 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 				}
 			}
 		} else {
-			if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnLeft)) {
+			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
-			} else if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnRight)) {
+			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
-			} else if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
+			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
 			}
 		}
@@ -292,6 +292,12 @@ bool Movements::processAttackExecution(int actorIdx) {
 
 void Movements::processMovementExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+		return;
+	}
+	if (actor->isJumpAnimationActive()) {
+		return;
+	}
 	if (!changedCursorKeys || heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
@@ -336,6 +342,13 @@ void Movements::processMovementExecution(int actorIdx) {
 
 void Movements::processRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (!_engine->_actor->autoAggressive && _engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
+		return;
+	}
+	if (actor->isJumpAnimationActive()) {
+		return;
+	}
 	int16 tempAngle;
 	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 		tempAngle = ANGLE_90;

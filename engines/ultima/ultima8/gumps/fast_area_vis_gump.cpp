@@ -20,9 +20,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/render_surface.h"

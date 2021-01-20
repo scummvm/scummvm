@@ -113,6 +113,28 @@ void Util::convertISOToDOS(char &c) {
 	c = code;
 }
 
+Common::String Util::convertISOToDOS(const Common::String &str) {
+	char *tmp = new char[str.size() + 1];
+
+	memcpy(tmp, str.c_str(), str.size() + 1);
+	convertISOToDOS(tmp);
+	Common::String res = tmp;
+	delete[] tmp;
+	return res;
+}
+
+Common::String Util::decodeString1(const Common::String &src) {
+	char *tmp = new char[src.size() * 2 + 2];
+	Util::decodeString1(src.c_str(), tmp);
+	return tmp;
+}
+
+Common::String Util::decodeString2(const Common::String &src) {
+	char *tmp = new char[src.size() * 2 + 2];
+	Util::decodeString2(src.c_str(), tmp);
+	return tmp;
+}
+
 // CP850 to ISO-8859-1 (borrowed from engines/saga/font_map.cpp)
 const uint8 Util::_charMapDOSToISO[128] = {
 	199, 252, 233, 226, 228, 224, 229, 231, 234, 235, 232,

@@ -106,7 +106,7 @@ void Room::tug1Tick1() {
 void Room::tug1UseSTricorderOnAnything() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 14, true);
 
 	// NOTE: this action has a second implementation (which is never called). It displayed
@@ -125,7 +125,7 @@ void Room::tug1UseSTricorderOnBridgeDoor() {
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 2, true);
 }
 
@@ -145,7 +145,7 @@ void Room::tug1KirkReachedFiringPosition() {
 
 void Room::tug1KirkPulledOutPhaser() {
 	loadActorAnim2(OBJECT_PHASERSHOT, "t1phas", 0, 0, 5);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::tug1KirkFinishedFiringPhaser() {
@@ -162,7 +162,7 @@ void Room::tug1TalkToSpock() {
 void Room::tug1UseSTricorderOnJunkPile() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 9, true);
 }
 
@@ -301,7 +301,7 @@ void Room::tug1LookAtBrigDoor() {
 void Room::tug1UseSTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 18, true);
 }
 
@@ -338,21 +338,21 @@ void Room::tug1WalkToBrigDoor() {
 void Room::tug1UseMTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 3, true);
 }
 
 void Room::tug1UseMTricorderOnBridgeDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 7, true);
 }
 
 void Room::tug1UseMTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 5, true);
 }
 

@@ -5,7 +5,6 @@
 /**
  * Test suite for the functions in engines/ultima/ultima8/misc/util.h
  */
-
 class U8UtilTestSuite : public CxxTest::TestSuite {
 
 	public:

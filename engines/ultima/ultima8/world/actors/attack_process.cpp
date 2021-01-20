@@ -20,14 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/actors/attack_process.h"
 
-#include "common/memstream.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/usecode/uc_list.h"
@@ -37,12 +34,9 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/weapon_info.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/world/actors/combat_dat.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
@@ -213,14 +207,14 @@ void AttackProcess::run() {
 		case 0x88:
 		{
 			// Turn 90 degrees left
-			Direction newdir = Direction_OneLeft(Direction_OneLeft(curdir, dirmode_8dirs), dirmode_8dirs);
+			Direction newdir = Direction_TurnByDelta(curdir, -2, dirmode_8dirs);
 			a->turnTowardDir(newdir);
 			return;
 		}
 		case 0x89:
 		{
 			// Turn 90 degrees right
-			Direction newdir = Direction_OneRight(Direction_OneLeft(curdir, dirmode_8dirs), dirmode_8dirs);
+			Direction newdir = Direction_TurnByDelta(curdir, 2, dirmode_8dirs);
 			a->turnTowardDir(newdir);
 			return;
 		}
@@ -535,7 +529,7 @@ void AttackProcess::genericAttack() {
 
 	AudioProcess *audio = AudioProcess::get_instance();
 	const Direction curdir = a->getDir();
-	const int32 now = Kernel::get_instance()->getFrameNum() * 2;
+	const int32 now = Kernel::get_instance()->getTickNum();
 	int wpnField8 = wpn ? wpn->getShapeInfo()->_weaponInfo->_field8 : 1;
 	const uint16 controlledNPC = World::get_instance()->getControlledNPCNum();
 	Direction targetdir = dir_invalid;
@@ -563,15 +557,13 @@ void AttackProcess::genericAttack() {
 			return;
 		}
 	} else {
-		// TODO: Get directions anim has (8 or 16)
-		DirectionMode standDirMode = dirmode_8dirs;
-		/*
 		Animation::Sequence anim;
 		if (a->isInCombat()) {
 			anim = Animation::combatStand;
 		} else {
 			anim = Animation::stand;
-		}*/
+		}
+		DirectionMode standDirMode = a->animDirMode(anim);
 		if (_timer3set) {
 			if (_timer3 >= now) {
 				if (a->isInCombat()) {
@@ -815,14 +807,14 @@ bool AttackProcess::checkTimer2PlusDelayElapsed(int now) {
 
 void AttackProcess::setAttackData(uint16 off, uint16 val) {
 	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray) - 1)
-		_dataArray[off] = val;
+		_dataArray[off - MAGIC_DATA_OFF] = val;
 
 	warning("Invalid offset to setAttackDataArray %d %d", off, val);
 }
 
 uint16 AttackProcess::getAttackData(uint16 off) const {
 	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray) - 1)
-		return _dataArray[off];
+		return _dataArray[off - MAGIC_DATA_OFF];
 
 	warning("Invalid offset to getAttackDataArray: %d", off);
 	return 0;
@@ -882,13 +874,15 @@ void AttackProcess::timeNowToTimerVal2(int now) {
 }
 
 void AttackProcess::setTimer3() {
-	const int32 now = Kernel::get_instance()->getFrameNum() * 2;
+	const int32 now = Kernel::get_instance()->getTickNum();
 	_timer3set = true;
 	_timer3 = randomOf(10) * 60 + now;
 	return;
 }
 
 void AttackProcess::sleep(int ticks) {
+	// waiting less than 2 ticks can cause a tight loop
+	ticks = MAX(ticks, 2);
 	Process *delayProc = new DelayProcess(ticks);
 	ProcId pid = Kernel::get_instance()->addProcess(delayProc);
 	waitFor(pid);
@@ -979,6 +973,7 @@ bool AttackProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_target = rs->readUint16LE();
 	setTacticNo(rs->readUint16LE());
 	setBlockNo(rs->readUint16LE());
+	_tacticDatStartOffset = rs->readUint16LE();
 
 	_soundNo = rs->readUint16LE();
 	_playedStartSound = rs->readByte();

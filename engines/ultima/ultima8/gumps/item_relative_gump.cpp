@@ -20,12 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -62,7 +59,7 @@ void ItemRelativeGump::MoveOnScreen() {
 	_x = 0;
 	_y = 0;
 
-	// get rectangle that gump occupies in scalerGump's coordinate space
+	// get rectangle that gump occupies in desktops's coordinate space
 	int32 left, right, top, bottom;
 	left = -_dims.left;
 	right = left + _dims.width();

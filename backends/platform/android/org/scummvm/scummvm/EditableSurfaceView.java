@@ -1,6 +1,7 @@
 package org.scummvm.scummvm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;
@@ -18,15 +19,22 @@ import android.annotation.TargetApi;
 
 public class EditableSurfaceView extends SurfaceView {
 	final Context _context;
+	final boolean _allowHideSystemMousePointer;
+	private boolean _mouseIsInCapturedState;
+
 	public EditableSurfaceView(Context context) {
 
 		super(context);
 		_context = context;
+		_mouseIsInCapturedState = false;
+		_allowHideSystemMousePointer = true;
 	}
 
 	public EditableSurfaceView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		_context = context;
+		_mouseIsInCapturedState = false;
+		_allowHideSystemMousePointer = true;
 	}
 
 	public EditableSurfaceView(Context context,
@@ -34,6 +42,8 @@ public class EditableSurfaceView extends SurfaceView {
 	                           int defStyle) {
 		super(context, attrs, defStyle);
 		_context = context;
+		_mouseIsInCapturedState = false;
+		_allowHideSystemMousePointer = true;
 	}
 
 	@Override
@@ -288,8 +298,30 @@ public class EditableSurfaceView extends SurfaceView {
 		return new MyInputConnection();
 	}
 
+	public void showSystemMouseCursor(boolean show) {
+		//Log.d(ScummVM.LOG_TAG, "captureMouse::showSystemMouseCursor2 " + show);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			// Android N (Nougat) is Android 7.0
+			//SurfaceView main_surface = findViewById(R.id.main_surface);
+			int type = show ? PointerIcon.TYPE_DEFAULT : PointerIcon.TYPE_NULL;
+			// https://stackoverflow.com/a/55482761
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::showSystemMouseCursor3a");
+			setPointerIcon(PointerIcon.getSystemIcon(_context, type));
+		} else {
+			/* Currently hiding the system mouse cursor is only
+			   supported on OUYA.  If other systems provide similar
+			   intents, please add them here as well */
+			Intent intent =
+				new Intent(show?
+					"tv.ouya.controller.action.SHOW_CURSOR" :
+					"tv.ouya.controller.action.HIDE_CURSOR");
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::showSystemMouseCursor3b");
+			_context.sendBroadcast(intent);
+		}
+	}
+
 	// This re-inforces the code for hiding the system mouse.
-	// We already had code for this in ScummVMActivity (see showMouseCursor())
+	// We already had code for this in ScummVMActivity (see showSystemMouseCursor())
 	// so this might be redundant
 	//
 	// It applies on devices running Android 7 and above
@@ -299,34 +331,78 @@ public class EditableSurfaceView extends SurfaceView {
 	@TargetApi(24)
 	@Override
 	public PointerIcon onResolvePointerIcon(MotionEvent me, int pointerIndex) {
-		return PointerIcon.getSystemIcon(_context, PointerIcon.TYPE_NULL);
-	}
-
-	public void captureMouse(boolean capture) {
-		final boolean bGlobalsHideSystemMousePointer = true;
-		if (capture) {
-			setFocusableInTouchMode(true);
-			setFocusable(true);
-			requestFocus();
-			if (bGlobalsHideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
-				postDelayed( new Runnable() {
-					public void run()
-					{
-						Log.v(ScummVM.LOG_TAG, "captureMouse::requestPointerCapture() delayed");
-						requestPointerCapture();
-					}
-				}, 50 );
+		if (_allowHideSystemMousePointer) {
+			if (_mouseIsInCapturedState) {
+				return PointerIcon.getSystemIcon(_context, PointerIcon.TYPE_NULL);
+			} else {
+				return PointerIcon.getSystemIcon(_context, PointerIcon.TYPE_DEFAULT);
 			}
 		} else {
-			if (bGlobalsHideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
-				postDelayed( new Runnable() {
-					public void run() {
-						Log.v(ScummVM.LOG_TAG, "captureMouse::releasePointerCapture()");
-						releasePointerCapture();
-					}
-				}, 50 );
-			}
+			return PointerIcon.getSystemIcon(_context, PointerIcon.TYPE_DEFAULT);
 		}
+	}
+
+	public void captureMouse(final boolean capture) {
+
+		if ((!_mouseIsInCapturedState && ((ScummVMActivity)_context).isKeyboardOverlayShown() && capture)) {
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::returned - keyboard is shown");
+			return;
+		}
+
+		if ((capture && _mouseIsInCapturedState) ||
+			(!capture && ! _mouseIsInCapturedState)) {
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::returned - nothing to do");
+			return;
+		}
+
+		if (capture) {
+//			setFocusableInTouchMode(true);
+//			setFocusable(true);
+//			requestFocus();
+			_mouseIsInCapturedState = true;
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::_mouseIsInCapturedState");
+		} else {
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::no _mouseIsInCapturedState");
+			_mouseIsInCapturedState = false;
+		}
+
+		showSystemMouseCursor(!capture);
+
+		// trying capturing the pointer resulted in firing TrackBallEvent instead of HoverEvent for our SurfaceView
+		// also the behavior was inconsistent when resuming to the app from a pause
+//		if (_allowHideSystemMousePointer) {
+//			// for API 26 and above
+//			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//				Log.d(ScummVM.LOG_TAG, "captureMouse::CODES 0");
+//				if (capture) {
+//					postDelayed( new Runnable() {
+//						public void run()
+//						{
+//							Log.v(ScummVM.LOG_TAG, "captureMouse::requestPointerCapture() delayed");
+////							if (!hasPointerCapture()) {
+//								requestPointerCapture();
+////								showSystemMouseCursor(!capture);
+////							}
+//						}
+//					}, 50 );
+//				} else {
+//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//						postDelayed(new Runnable() {
+//							public void run() {
+//								Log.v(ScummVM.LOG_TAG, "captureMouse::releasePointerCapture()");
+////								if (hasPointerCapture()) {
+//									releasePointerCapture();
+////									showSystemMouseCursor(!capture);
+////								}
+//							}
+//						}, 50);
+//					}
+//				}
+//			} else {
+//				Log.d(ScummVM.LOG_TAG, "captureMouse::NO CODES 0 showSystemMouseCursor " + !capture);
+//				showSystemMouseCursor(!capture);
+//			}
+//		}
 	}
 
 }

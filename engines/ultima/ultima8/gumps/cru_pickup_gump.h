@@ -39,10 +39,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CruPickupGump();
-	//! Create a new gump for an item pickup. CurrentQ is the value of an existing gump
-	//! so they can be combined (eg, pick up one medikit then another -> show medikit 2)
-	CruPickupGump(Item *item, int y, uint16 currentq);
-	~CruPickupGump() override;
+	CruPickupGump(const Item *item, int y);
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -57,6 +54,10 @@ public:
 	uint16 getQ() {
 		return _q;
 	}
+
+	//! Update for a second item pickup - generally just replace existing count text.
+	void updateForNewItem(const Item *item);
+	void addCountText();
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

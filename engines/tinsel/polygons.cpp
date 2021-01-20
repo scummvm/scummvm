@@ -1408,7 +1408,7 @@ void CheckNPathIntegrity() {
 	int		i, j;	// Loop counters
 	int		n;	// Last node in current path
 
-	pps = LockMem(pHandle);		// All polygons
+	pps = _vm->_handle->LockMem(pHandle);		// All polygons
 
 	for (i = 0; i < MAX_POLY; i++) {		// For each polygon..
 		rp = Polys[i];
@@ -1422,9 +1422,9 @@ void CheckNPathIntegrity() {
 			hp = PolygonIndex(rp);
 			for (j = 0; j <= n; j++) {
 				if (!IsInPolygon(cp.getNodeX(j), cp.getNodeY(j), hp)) {
-					sprintf(TextBufferAddr(), "Node (%d, %d) is not in its own path (starting (%d, %d))",
+					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is not in its own path (starting (%d, %d))",
 						 cp.getNodeX(j), cp.getNodeY(j), rp->cx[0], rp->cy[0]);
-					error(TextBufferAddr());
+					error(_vm->_font->TextBufferAddr());
 				}
 			}
 
@@ -1434,14 +1434,14 @@ void CheckNPathIntegrity() {
 					break;
 
 				if (IsInPolygon(cp.getNodeX(0), cp.getNodeY(0), PolygonIndex(rp->adjpaths[j]))) {
-					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
+					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 cp.getNodeX(0), cp.getNodeY(0), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
-					error(TextBufferAddr());
+					error(_vm->_font->TextBufferAddr());
 				}
 				if (IsInPolygon(cp.getNodeX(n), cp.getNodeY(n), PolygonIndex(rp->adjpaths[j]))) {
-					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
+					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 cp.getNodeX(n), cp.getNodeY(n), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
-					error(TextBufferAddr());
+					error(_vm->_font->TextBufferAddr());
 				}
 			}
 		}
@@ -1659,9 +1659,9 @@ static void PseudoCenter(POLYGON *p) {
 #ifdef DEBUG
 	//	assert(IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p)));  // Pseudo-center is not in path
 	if (!IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p))) {
-		sprintf(TextBufferAddr(), "Pseudo-center is not in path (starting (%d, %d)) - polygon reversed?",
+		sprintf(_vm->_font->TextBufferAddr(), "Pseudo-center is not in path (starting (%d, %d)) - polygon reversed?",
 			p->cx[0], p->cy[0]);
-		error(TextBufferAddr());
+		error(_vm->_font->TextBufferAddr());
 	}
 #endif
 }

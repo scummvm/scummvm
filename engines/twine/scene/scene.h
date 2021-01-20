@@ -310,8 +310,8 @@ public:
 	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
 	int32 sceneTextBank = TextBankId::None;
-	int32 alphaLight = 0;
-	int32 betaLight = 0;
+	int32 alphaLight = ANGLE_0;
+	int32 betaLight = ANGLE_0;
 
 	int16 newHeroX = 0; // newTwinsenX
 	int16 newHeroY = 0; // newTwinsenY
@@ -345,8 +345,7 @@ public:
 	int32 sceneNumTracks = 0;
 	ScenePoint sceneTracks[NUM_MAX_TRACKS];
 
-	// TODO: check what is this - disables rendering of the grid tiles - used for credits only?
-	bool changeRoomVar10 = false;
+	bool enableGridTileRendering = true;
 
 	uint8 sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
 

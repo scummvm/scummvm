@@ -34,7 +34,10 @@ class TwinEConsole : public GUI::Debugger {
 private:
 	TwinEEngine *_engine;
 
+	bool doPlayVideo(int argc, const char **argv);
 	bool doPrintGameFlag(int argc, const char **argv);
+	bool doPrintInventoryFlag(int argc, const char **argv);
+	bool doPrintHolomapFlag(int argc, const char **argv);
 	bool doSetHeroPosition(int argc, const char **argv);
 	bool doGiveAllItems(int argc, const char **argv);
 	bool doChangeScene(int argc, const char **argv);
@@ -48,6 +51,8 @@ private:
 	bool doSkipSceneActorsBut(int argc, const char **argv);
 	bool doSetGameFlag(int argc, const char **argv);
 	bool doSetInventoryFlag(int argc, const char **argv);
+	bool doSetHolomapFlag(int argc, const char **argv);
+	bool doAddMagicPoints(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;

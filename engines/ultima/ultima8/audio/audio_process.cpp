@@ -20,22 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/speech_flex.h"
-#include "ultima/ultima8/audio/audio_sample.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "common/util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -44,6 +36,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess)
 
 AudioProcess *AudioProcess::_theAudioProcess = nullptr;
+const uint32 AudioProcess::PITCH_SHIFT_NONE = 0x10000;
 
 AudioProcess::AudioProcess(void) : _paused(0) {
 	_theAudioProcess = this;
@@ -213,7 +206,8 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 				lVol = 255;
 				rVol = 255;
 			}
-			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol);
+			// Note: Small inconsistency for backward compatibility - reload ambient sounds as non-ambient.
+			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol, false);
 		} else {                // Speech
 			uint32 slen = rs->readUint32LE();
 
@@ -230,9 +224,9 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint32 pitchShift, int16 lVol, int16 rVol) {
+int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint32 pitchShift, int16 lVol, int16 rVol, bool ambient) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	int channel = mixer->playSample(sample, loops, priority, false, pitchShift, lVol, rVol);
+	int channel = mixer->playSample(sample, loops, priority, false, pitchShift, lVol, rVol, ambient);
 
 	if (channel == -1) return channel;
 
@@ -251,7 +245,7 @@ int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint3
 
 void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
                            bool no_duplicates, uint32 pitchShift, uint16 volume,
-                           int16 lVol, int16 rVol) {
+                           int16 lVol, int16 rVol, bool ambient) {
 
 	SoundFlex *soundflx = GameData::get_instance()->getSoundFlex();
 
@@ -266,7 +260,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 				// Exactly the same (and playing) so just return
 				//if (it->priority == priority)
 				if (mixer->isPlaying(it->_channel)) {
-					pout << "Sound already playing" << Std::endl;
+					pout << "Sound " << sfxNum << " already playing on obj " << objId << Std::endl;
 					return;
 				} else {
 					it = _sampleInfo.erase(it);
@@ -287,11 +281,11 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 		if (objId) calculateSoundVolume(objId, lVol, rVol);
 	}
 
-	int channel = playSample(sample, priority, loops, pitchShift, (lVol * volume) / 256, (rVol * volume) / 256);
+	int channel = playSample(sample, priority, loops, pitchShift, (lVol * volume) / 256, (rVol * volume) / 256, ambient);
 	if (channel == -1) return;
 
 	// Update list
-	_sampleInfo.push_back(SampleInfo(sfxNum, priority, objId, loops, channel, pitchShift, volume, lVol, rVol));
+	_sampleInfo.push_back(SampleInfo(sfxNum, priority, objId, loops, channel, pitchShift, volume, lVol, rVol, ambient));
 }
 
 void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
@@ -387,7 +381,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 
 	// Update list
 	_sampleInfo.push_back(SampleInfo(barked, shapeNum, objId, channel,
-	                                 speech_start, speech_end, pitchShift, volume, 256, 256));
+	                                 speech_start, speech_end, pitchShift, volume, 256, 256, false));
 
 	return true;
 }
@@ -538,7 +532,7 @@ uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
 		if (ap) {
 			// Crusader stops any existing item sounds before starting the next.
 			ap->stopSFX(item->getObjId(), -1);
-			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true);
+			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true, PITCH_SHIFT_NONE, 0x80, false);
 		} else {
 			warning("I_playSFXCru Error: No AudioProcess");
 		}
@@ -557,12 +551,11 @@ uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
 		if (ap)
-			ap->playSFX(sfxNum, 0x10, item->getObjId(), -1, true);
+			ap->playSFX(sfxNum, 0x10, item->getObjId(), -1, true, PITCH_SHIFT_NONE, 0xff, true);
 		else
 			warning("I_playAmbientSFXCru Error: No AudioProcess");
 	}
 	return 0;
-
 }
 
 uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {

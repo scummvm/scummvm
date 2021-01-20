@@ -34,7 +34,7 @@ const int32 RIGHT = 2;  // 0010
 const int32 TOP = 4;    // 0100
 const int32 BOTTOM = 8; // 1000
 
-int32 Interface::checkClipping(int32 x, int32 y) {
+int32 Interface::checkClipping(int32 x, int32 y) const {
 	int32 code = INSIDE;
 	if (x < textWindow.left) {
 		code |= LEFT;
@@ -97,7 +97,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 	}
 
-	int32 pitch = SCREEN_WIDTH;
+	int32 pitch = _engine->width();
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
@@ -139,62 +139,24 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-// TODO: this should get replaced by the surface blitting functions
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
-		return;
-	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
-		return;
-	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
-		return;
-	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
-		return;
-	}
-
-	const int8 *s = (const int8 *)source.getBasePtr(left, top);
-	int8 *d = (int8 *)dest.getBasePtr(left, top);
-
-	const int32 width = right - left + 1;
-	const int32 height = bottom - top + 1;
-
-	for (int32 j = 0; j < height; j++) {
-		memcpy(d, s, width);
-		d += SCREEN_WIDTH;
-		s += SCREEN_WIDTH;
-	}
+	Common::Rect r(rect);
+	r.right += 1;
+	r.bottom += 1;
+	dest.blitFrom(source, r, Common::Point(rect.left, rect.top));
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
-		return;
-	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
-		return;
-	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
-		return;
-	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
+	Common::Rect r = rect;
+	r.clip(_engine->rect());
+	if (r.isEmpty()) {
 		return;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, rect.top);
 
-	for (int32 y = top; y < bottom; ++y) {
-		for (int32 x = left; x < right; ++x) {
+	for (int32 y = rect.top; y < rect.bottom; ++y) {
+		for (int32 x = rect.left; x < rect.right; ++x) {
 			const int8 color = (pos[x] & 0x0F) - colorAdj;
 			const int8 color2 = pos[x] & 0xF0;
 			if (color < 0) {
@@ -203,62 +165,31 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 				pos[x] = color + color2;
 			}
 		}
-		pos += SCREEN_WIDTH;
+		pos += _engine->frontVideoBuffer.pitch;
 	}
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
-		return;
-	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
-		return;
-	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
-		return;
-	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
-		return;
-	}
-
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
-	for (int32 y = top; y < bottom; y++) {
-		memset(ptr, colorIndex, right - left);
-		ptr += SCREEN_WIDTH;
-	}
+	_engine->frontVideoBuffer.fillRect(rect, colorIndex);
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	textWindow.left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	textWindow.top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	textWindow.right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	textWindow.bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	textWindow.left = MAX((int32)0, (int32)rect.left);
+	textWindow.top = MAX((int32)0, (int32)rect.top);
+	textWindow.right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
+	textWindow.bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
 }
 
 void Interface::saveClip() {
-	textWindowLeftSave = textWindow.left;
-	textWindowTopSave = textWindow.top;
-	textWindowRightSave = textWindow.right;
-	textWindowBottomSave = textWindow.bottom;
+	textWindowSave = textWindow;
 }
 
 void Interface::loadClip() {
-	textWindow.left = textWindowLeftSave;
-	textWindow.top = textWindowTopSave;
-	textWindow.right = textWindowRightSave;
-	textWindow.bottom = textWindowBottomSave;
+	textWindow = textWindowSave;
 }
 
 void Interface::resetClip() {
-	textWindow.top = SCREEN_TEXTLIMIT_TOP;
-	textWindow.left = SCREEN_TEXTLIMIT_LEFT;
-	textWindow.right = SCREEN_TEXTLIMIT_RIGHT;
-	textWindow.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	textWindow = _engine->rect();
 }
 
 } // namespace TwinE

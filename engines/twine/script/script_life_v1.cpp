@@ -46,9 +46,9 @@
 
 namespace TwinE {
 
-// TODO: validate that lTEXTCLEAR is called before lTEXT - if that is the case
-// move this into the LifeScriptContext
-static int32 drawVar1;
+// the y position for lTEXT opcode - see lCLEAR (used in credits scene)
+// TODO: move into scene class?
+static int32 lTextYPos;
 
 struct LifeScriptContext {
 	int32 actorIdx;
@@ -263,9 +263,10 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		int32 flagIdx = ctx.stream.readByte();
 		if (!engine->_gameState->inventoryDisabled() ||
 		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
-			engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
+			engine->_scene->currentScriptValue = engine->_gameState->hasGameFlag(flagIdx);
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {
+				// TODO: this case should already get handled in the above if branch as the flagIdx is bigger than MaxInventoryItems
 				engine->_scene->currentScriptValue = engine->_gameState->inventoryDisabled();
 			} else {
 				engine->_scene->currentScriptValue = 0;
@@ -708,9 +709,9 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	if (engine->_scene->currentlyFollowedActor != followedActorIdx) {
 		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
-		engine->_grid->newCameraX = followedActor->x >> 9;
-		engine->_grid->newCameraY = followedActor->y >> 8;
-		engine->_grid->newCameraZ = followedActor->z >> 9;
+		engine->_grid->newCameraX = followedActor->x / BRICK_SIZE;
+		engine->_grid->newCameraY = followedActor->y / BRICK_HEIGHT;
+		engine->_grid->newCameraZ = followedActor->z / BRICK_SIZE;
 
 		engine->_scene->currentlyFollowedActor = followedActorIdx;
 		engine->_redraw->reqBgRedraw = true;
@@ -788,7 +789,7 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 flagIdx = ctx.stream.readByte();
 	const uint8 flagValue = ctx.stream.readByte();
-	engine->_gameState->setFlag(flagIdx, flagValue);
+	engine->_gameState->setGameFlag(flagIdx, flagValue);
 	return 0;
 }
 
@@ -1606,17 +1607,17 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
 	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELLIMG, RESSHQR_TWINSEN_ZOE_SENDELLPAL);
 	engine->_text->textClipFull();
-	engine->_text->setFontCrossColor(15);
+	engine->_text->setFontCrossColor(COLOR_WHITE);
 	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
-	engine->_text->drawTextFullscreen(6);
+	engine->_text->drawTextFullscreen(TextId::kSendell);
+	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->paletteRGBA);
-	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	return 0;
 }
 
@@ -1695,10 +1696,7 @@ static int32 lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x65
  */
 static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_renderer->setOrthoProjection(311, 240, 512);
-	engine->_renderer->setBaseTranslation(0, 0, 0);
-	engine->_renderer->setBaseRotation(0, 0, 0);
-	engine->_renderer->setLightVector(engine->_scene->alphaLight, engine->_scene->betaLight, 0);
+	engine->_gameState->initEngineProjections();
 	return 0;
 }
 
@@ -1707,13 +1705,14 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x66
  */
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
+	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
 	engine->_screens->copyScreen(engine->frontVideoBuffer, engine->workVideoBuffer);
 	engine->flip();
-	engine->_scene->changeRoomVar10 = false;
+	engine->_scene->enableGridTileRendering = false;
 
-	engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 1024, 1024);
+	engine->_renderer->setCameraPosition(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
-	engine->_renderer->setLightVector(896, 950, ANGLE_0);
+	engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
 	engine->_text->initTextBank(TextBankId::Credits);
 
@@ -1727,7 +1726,8 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 textIdx = ctx.stream.readSint16LE();
 
-	if (drawVar1 < 440) {
+	const int32 textHeight = 40;
+	if (lTextYPos < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
 			if (!textIdx) {
 				textIdx = TextId::kSaveSettings;
@@ -1738,15 +1738,15 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
 		int32 textSize = engine->_text->getTextSize(textStr);
 		int32 textBoxRight = textSize;
-		engine->_text->setFontColor(15);
-		engine->_text->drawText(0, drawVar1, textStr);
-		if (textSize > SCREEN_WIDTH - 1) {
-			textBoxRight = SCREEN_WIDTH - 1;
+		int32 textBoxBottom = lTextYPos + textHeight;
+		engine->_text->setFontColor(COLOR_WHITE);
+		engine->_text->drawText(0, lTextYPos, textStr);
+		if (textSize > engine->width() - 1) {
+			textBoxRight = engine->width() - 1;
 		}
 
-		drawVar1 += 40;
-		// TODO: this looks wrong, top and bottom var are the same coordinates - the text height might be missing here
-		engine->copyBlockPhys(0, drawVar1, textBoxRight, drawVar1);
+		engine->copyBlockPhys(0, lTextYPos, textBoxRight, textBoxBottom);
+		lTextYPos += textHeight;
 	}
 
 	return 0;
@@ -1757,8 +1757,8 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x68
  */
 static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	drawVar1 = 0;
-	const Common::Rect rect(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2);
+	lTextYPos = 0;
+	const Common::Rect rect(0, 0, engine->width() - 1, engine->height() / 2);
 	engine->_interface->drawSplittedBox(rect, 0);
 	engine->copyBlockPhys(rect);
 	return 0;
@@ -1882,7 +1882,7 @@ static const ScriptLifeFunction function_map[] = {
     /*0x69*/ MAPFUNC("BRUTAL_EXIT", lBRUTAL_EXIT)};
 
 ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
-	drawVar1 = 0;
+	lTextYPos = 0;
 }
 
 void ScriptLife::processLifeScript(int32 actorIdx) {

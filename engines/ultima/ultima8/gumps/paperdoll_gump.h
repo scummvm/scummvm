@@ -39,7 +39,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PaperdollGump();
-	PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
+	PaperdollGump(const Shape *shape, uint32 frameNum, uint16 owner,
 	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	~PaperdollGump() override;
 

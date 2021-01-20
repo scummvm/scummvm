@@ -23,7 +23,6 @@
 #ifndef MADS_ASSETS_H
 #define MADS_ASSETS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "mads/palette.h"
 
@@ -77,10 +76,11 @@ private:
 	 * Load the data for the asset
 	 */
 	void load(Common::SeekableReadStream *stream, int flags);
+
 public:
 	SpriteSetCharInfo *_charInfo;
 	int _usageIndex;
-public:
+
 	/**
 	 * Constructor
 	 */

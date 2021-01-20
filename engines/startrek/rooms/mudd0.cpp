@@ -177,7 +177,7 @@ void Room::mudd0LookAtLense() {
 void Room::mudd0UseSTricorderAnywhere() {
 	// Narrator says something, not Spock (so we don't use "spockScan" function)
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showDescription(15, true);
 }
 
@@ -186,7 +186,7 @@ void Room::mudd0UseMTricorderAnywhere() {
 	// BUGFIX-ish: original game had "McCoy" as the speaker, which is inconsistent with
 	// above.
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showDescription(15, true);
 }
 
@@ -198,7 +198,7 @@ void Room::mudd0UseSTricorderOnDegrimerBox() {
 	// Narrator says something, not Spock (so we don't use "spockScan" function)
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorAnim2(OBJECT_SPOCK, "sscanw", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showDescription(0, true);
 }
 

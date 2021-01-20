@@ -333,8 +333,8 @@ protected:
 	int _newChapterFile;
 
 	uint8 *getTableEntry(uint8 *buffer, int id);
-	char *getTableString(int id, uint8 *buffer, bool decode);
-	const char *getChapterString(int id);
+	Common::String getTableString(int id, uint8 *buffer, bool decode);
+	Common::String getChapterString(int id);
 
 	void changeFileExtension(char *buffer);
 
@@ -367,12 +367,13 @@ protected:
 
 	// text
 	void showMessageFromCCode(int id, int16 palIndex, int);
-	void showMessage(const char *string, int16 palIndex);
+	void showMessage(const Common::String &string, int16 palIndex);
+	void clearMessage();
 	void showChapterMessage(int id, int16 palIndex);
 
 	void updateCommandLineEx(int str1, int str2, int16 palIndex);
 
-	const char *_shownMessage;
+	Common::String _shownMessage;
 
 	byte _messagePal[3];
 	bool _fadeMessagePalette;
@@ -382,11 +383,11 @@ protected:
 	bool _chatIsNote;
 
 	int chatGetType(const char *text);
-	int chatCalcDuration(const char *text);
+	int chatCalcDuration(const Common::String &text);
 
-	void objectChat(const char *text, int object, int vocHigh = -1, int vocLow = -1);
-	void objectChatInit(const char *text, int object, int vocHigh = -1, int vocLow = -1);
-	void objectChatPrintText(const char *text, int object);
+	void objectChat(const Common::String &text, int object, int vocHigh = -1, int vocLow = -1);
+	void objectChatInit(const Common::String &text, int object, int vocHigh = -1, int vocLow = -1);
+	void objectChatPrintText(const Common::String &text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
 
@@ -397,7 +398,7 @@ protected:
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
-	void npcChatSequence(const char *str, int objectId, int vocHigh = -1, int vocLow = -1);
+	void npcChatSequence(const Common::String &str, int objectId, int vocHigh = -1, int vocLow = -1);
 	void setDlgIndex(int dlgIndex) override;
 
 	int _npcTalkChpIndex;
@@ -615,9 +616,6 @@ protected:
 
 	EMCData _npcScriptData;
 
-	// pathfinder
-	uint8 *_unkBuf500Bytes;
-	uint8 *_unkBuf200kByte;
 	bool _chatAltFlag;
 
 	// sequence player

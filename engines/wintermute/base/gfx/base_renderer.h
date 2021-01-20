@@ -239,7 +239,6 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSD
 #ifdef ENABLE_WME3D
 class BaseRenderer3D;
 
-BaseRenderer *makeOpenGLTextureRenderer(BaseGame *inGame);
 BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame);
 BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame);
 #endif

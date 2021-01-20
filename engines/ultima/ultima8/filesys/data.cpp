@@ -20,12 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 
 #ifdef BUILTIN_DATA
-#include "data/data.h"
 #endif
 
 namespace Ultima {

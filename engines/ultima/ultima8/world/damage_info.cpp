@@ -20,8 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/world/damage_info.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/audio/audio_process.h"

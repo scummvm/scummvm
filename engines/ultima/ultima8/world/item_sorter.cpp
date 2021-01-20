@@ -25,7 +25,6 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/misc/rect.h"
@@ -57,7 +56,7 @@ struct SortItem {
 
 	uint16                  _itemNum;   // Owner item number
 
-	Shape                   *_shape;
+	const Shape             *_shape;
 	uint32                  _shapeNum;
 	uint32                  _frame;
 	uint32                  _flags;     // Item flags
@@ -147,10 +146,10 @@ struct SortItem {
 			}
 		};
 
-		iterator begin() {
+		iterator begin() const {
 			return iterator(list);
 		}
-		iterator end() {
+		iterator end() const {
 			return iterator(nullptr);
 		}
 
@@ -871,7 +870,7 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 		uint32 wo_shapenum;
 		av->getWeaponOverlay(wo_frame, wo_shapenum);
 		if (wo_frame) {
-			Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
+			const Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
 			_surf->Paint(wo_shape, wo_frame->_frame,
 			            si->_sxBot + wo_frame->_xOff,
 			            si->_syBot + wo_frame->_yOff);

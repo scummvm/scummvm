@@ -132,11 +132,11 @@ void Room::mudd4UseCommunicator() {
 }
 
 void Room::mudd4Timer2Expired() {
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::mudd4Timer3Expired() {
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::mudd4UseSpockOnLeftConsole() {

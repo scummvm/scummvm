@@ -253,7 +253,7 @@ int  Creature::getDamage() const {
 	int damage, val, x;
 	val = _baseHp;
 	x = xu4_random(val >> 2);
-	damage = (x >> 4) + ((x >> 2) & 0xfc);
+	damage = (x >> 4) * 10;
 	damage += x % 10;
 	return damage;
 }

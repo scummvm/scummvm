@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'ScummVM Documentation'
-copyright = '2020, CadiH'
+copyright = '2020, 2021, CadiH'
 author = 'CadiH'
 
 
@@ -31,7 +31,7 @@ author = 'CadiH'
 import sphinx_rtd_theme
 
 extensions = [
-    
+
     "sphinx_rtd_theme",
     "recommonmark",
     "sphinx_panels"
@@ -95,4 +95,3 @@ latex_elements = {
     ''',
 
 }
-

@@ -24,8 +24,6 @@
 #define ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
 
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"

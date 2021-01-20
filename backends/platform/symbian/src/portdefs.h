@@ -166,6 +166,8 @@ namespace std
 #endif
 
 
+
+
 #ifndef signbit
 #define signbit(x)     \
     ((sizeof (x) == sizeof (float)) ? __signbitf(x) \
@@ -180,9 +182,11 @@ extern "C" int __signbit(double);
 extern "C" int __signbitf(float);
 extern "C" int __signbitl(long double);
 extern "C" float truncf(float);
+
 extern "C" float fminf(float x, float y);
 extern "C" float fmaxf(float x, float y);
 extern "C" double fmax (double x, double y);
+
 
 
 #ifndef __WINS__

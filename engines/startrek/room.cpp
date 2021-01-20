@@ -122,25 +122,32 @@ Room::~Room() {
 void Room::loadRoomMessages() {
 	// TODO: There are some more messages which are not stored in that offset
 	uint16 messagesOffset = readRdfWord(32);
+	uint16 offset = messagesOffset;
 	const char *text = (const char *)_rdfData + messagesOffset;
 	const char roomIndexChar = '0' + _vm->_roomIndex;
 
 	do {
-		while (text[0] != '#' || (text[1] != _vm->_missionName[0] && text[4] != roomIndexChar))
+		while ((text[0] != '#' || (text[1] != _vm->_missionName[0] && text[4] != roomIndexChar)) && offset < _rdfSize) {
 			text++;
+			offset++;
+		}
 
 		if (text[5] == '\\')
 			loadRoomMessage(text);
 
-		while (*text != '\0')
+		while (*text != '\0' && offset < _rdfSize) {
 			text++;
+			offset++;
+		}
 
 		// Peek the next byte, in case there's a filler text
 		if (Common::isAlpha(*(text + 1))) {
-			while (*text != '\0')
+			while (*text != '\0' && offset < _rdfSize) {
 				text++;
+				offset++;
+			}
 		}
-	} while (*(text + 1) == '#');
+	} while (*(text + 1) == '#' && offset < _rdfSize);
 }
 
 void Room::loadRoomMessage(const char *text) {
@@ -758,7 +765,7 @@ void Room::spockScan(int direction, TextRef text, bool changeDirection, bool fro
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = direction;
 
 	loadActorAnim2(OBJECT_SPOCK, anim, -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (text != -1)
 		showText(TX_SPEAKER_SPOCK, text, fromRDF);
@@ -773,7 +780,7 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection, bool fro
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = direction;
 
 	loadActorAnim2(OBJECT_MCCOY, anim, -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (text != -1)
 		showText(TX_SPEAKER_MCCOY, text, fromRDF);

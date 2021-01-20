@@ -70,7 +70,6 @@ public:
 	void run() override;
 
 	INTRINSIC(I_createSprite);
-//	INTRINSIC(I_createSpriteEx);
 
 protected:
 	void init();

@@ -23,10 +23,8 @@
 #ifndef ULTIMA8_KERNEL_COREAPP_H
 #define ULTIMA8_KERNEL_COREAPP_H
 
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/detection.h"
 
 namespace Ultima {

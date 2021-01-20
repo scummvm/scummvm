@@ -20,7 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifdef ENABLE_MADSV2
+
 #include "common/config-manager.h"
 #include "mads/mads.h"
 #include "mads/compression.h"
@@ -211,3 +212,5 @@ void SceneInfoPhantom::loadCodes(BaseSurface &depthSurface, Common::SeekableRead
 } // End of namespace Phantom
 
 } // End of namespace MADS
+
+#endif

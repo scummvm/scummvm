@@ -84,6 +84,10 @@ public:
 		return (_actorFlags & ACT_INCOMBAT) != 0;
 	}
 
+	bool isKneeling() const {
+		return (_actorFlags & ACT_KNEELING) != 0;
+	}
+
 	CombatProcess *getCombatProcess(); 	// in U8
 	AttackProcess *getAttackProcess();	// in Crusader
 	virtual void setInCombat(int activity);
@@ -201,9 +205,6 @@ public:
 	//! check if NPCs are near which are in combat mode and hostile
 	bool areEnemiesNear();
 
-	//! check if NPCs are near which are in combat mode and hostile
-	void notifyNearbyItems();
-
 	//! starts an activity
 	//! \return processID of process handling the activity or zero
 	uint16 setActivity(int activity);
@@ -230,6 +231,10 @@ public:
 
 	//! check if this actor has a specific animation
 	bool hasAnim(Animation::Sequence anim);
+
+	//! Set the frame to the first frame of an anim (used in resetting NPCs etc)
+	//! Uses current direction and sets last anim no.
+	void setToStartOfAnim(Animation::Sequence anim);
 
 	//! check if the given animation can be done from the location in state,
 	//! without walking into things. If state is non-zero, and successful,

@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/games/game.h"
@@ -33,7 +32,6 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 

@@ -47,7 +47,7 @@ struct PathfindingState {
 	void load(const Actor *actor);
 	bool checkPoint(int32 x, int32 y, int32 z, int range) const;
 	bool checkItem(const Item *item, int xyRange, int zRange) const;
-	bool checkHit(const Actor *actor, const Actor *target) const;
+	bool checkHit(const Actor *actor, const Item *target) const;
 };
 
 struct PathfindingAction {
@@ -93,7 +93,7 @@ protected:
 
 	int32 _actorXd, _actorYd, _actorZd;
 
-	Std::list<PathfindingState> _visited;
+	Common::Array<PathfindingState> _visited;
 	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
 	/** List of nodes for garbage collection later and order is not important */
@@ -103,7 +103,7 @@ protected:
 	void newNode(PathNode *oldnode, PathfindingState &state,
 				 unsigned int steps);
 	void expandNode(PathNode *node);
-	unsigned int costHeuristic(PathNode *node);
+	unsigned int costHeuristic(PathNode *node) const;
 	bool checkTarget(const PathNode *node) const;
 };
 

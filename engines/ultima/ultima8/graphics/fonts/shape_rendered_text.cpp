@@ -46,6 +46,8 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 
 	Std::list<PositionedText>::const_iterator iter;
 
+	surface->BeginPainting();
+
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
 		int line_x = x + iter->_dims.left;
 		int line_y = y + iter->_dims.top;
@@ -69,6 +71,8 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 			                1, iter->_dims.height());
 		}
 	}
+
+	surface->EndPainting();
 }
 
 void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,

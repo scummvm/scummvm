@@ -23,9 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_AVIPLAYER_H
 #define ULTIMA8_GRAPHICS_AVIPLAYER_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/graphics/movie_player.h"
-#include "ultima/ultima8/graphics/texture.h"
+#include "graphics/managed_surface.h"
 
 namespace Video {
 class AVIDecoder;
@@ -52,7 +51,7 @@ private:
 
 	bool _playing;
 	Video::AVIDecoder *_decoder;
-	Texture _currentFrame;
+	Graphics::ManagedSurface _currentFrame;
 	// Width and height of the area we've been given to play back in
 	uint32 _width;
 	uint32 _height;

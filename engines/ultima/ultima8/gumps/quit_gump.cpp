@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -28,7 +27,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 
@@ -110,7 +108,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 			widget->InitGump(this, false);
 			widget->setRelativePosition(TOP_CENTER, 0, 13);
 		} else {
-			Shape *askShape = GameData::get_instance()->getShape(askshape);
+			const Shape *askShape = GameData::get_instance()->getShape(askshape);
 			const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
 			assert(sf);
 

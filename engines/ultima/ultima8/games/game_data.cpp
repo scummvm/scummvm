@@ -24,8 +24,6 @@
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/usecode/usecode_flex.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
@@ -37,14 +35,12 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/gumps/weasel_dat.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/speech_flex.h"
 
 namespace Ultima {
@@ -385,7 +381,7 @@ void GameData::setupJPOverrides() {
 
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
-		int fontnum = Std::atoi(iter->_key.c_str());
+		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
@@ -395,8 +391,8 @@ void GameData::setupJPOverrides() {
 			continue;
 		}
 
-		unsigned int jpfontnum = Std::atoi(vals[0].c_str());
-		uint32 col32 = Std::strtol(vals[1].c_str(), 0, 0);
+		unsigned int jpfontnum = atoi(vals[0].c_str());
+		uint32 col32 = strtol(vals[1].c_str(), 0, 0);
 
 		if (!fontmanager->addJPOverride(fontnum, jpfontnum, col32)) {
 			perr << "failed to setup jpfont override for font " << fontnum
@@ -423,7 +419,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 
 	ttfkeyvals = config->listKeyValues(configkey);
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
-		int fontnum = Std::atoi(iter->_key.c_str());
+		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
@@ -434,9 +430,9 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 		}
 
 		const Std::string &filename = vals[0];
-		int pointsize = Std::atoi(vals[1].c_str());
-		uint32 col32 = Std::strtol(vals[2].c_str(), 0, 0);
-		int border = Std::atoi(vals[3].c_str());
+		int pointsize = atoi(vals[1].c_str());
+		uint32 col32 = strtol(vals[2].c_str(), 0, 0);
+		int border = atoi(vals[3].c_str());
 
 		if (!fontmanager->addTTFOverride(fontnum, filename, pointsize,
 		                                 col32, border, SJIS)) {
@@ -500,6 +496,13 @@ const NPCDat *GameData::getNPCDataForShape(uint16 shapeno) const {
 const CombatDat *GameData::getCombatDat(uint16 entry) const {
 	if (entry < _combatData.size()) {
 		return _combatData[entry];
+	}
+	return nullptr;
+}
+
+const WeaselDat *GameData::getWeaselDat(uint16 entry) const {
+	if (entry < _weaselData.size()) {
+		return _weaselData[entry];
 	}
 	return nullptr;
 }
@@ -671,6 +674,10 @@ void GameData::loadRemorseData() {
 	// 14 blocks of 323 bytes, references like W01 and I07
 	// (presumably weapon and inventory)
 	// shop data?
+	while (!stuffds->eos()) {
+		WeaselDat *data = new WeaselDat(stuffds);
+		_weaselData.push_back(data);
+	}
 
 	delete stuffds;
 

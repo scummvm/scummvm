@@ -23,26 +23,18 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/glob_egg.h"
-#include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/world_point.h"
-#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/egg_hatcher_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -55,7 +47,7 @@ static const int INT_MAX_VALUE = 0x7fffffff;
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	if (GAME_IS_U8) {
@@ -84,7 +76,7 @@ void CurrentMap::clear() {
 				delete *iter;
 			_items[i][j].clear();
 		}
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	_fastXMin =  _fastYMin = _fastXMax = _fastYMax = -1;
@@ -191,7 +183,7 @@ void CurrentMap::loadMap(Map *map) {
 
 	// Clear fast area
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 	_fastXMin = -1;
 	_fastYMin = -1;
@@ -343,7 +335,7 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionM
 			continue;
 
 		const Actor *actor = dynamic_cast<const Actor *>(item);
-		if ((bestisoccl && !isoccl) || (bestisnpc && !actor) || !item->isOnScreen())
+		if ((bestisoccl && !isoccl) || (bestisnpc && !actor) || !item->isPartlyOnScreen())
 			continue;
 
 		int xdiff = abs(x - ix);
@@ -503,7 +495,7 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	}
 }
 
-void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const {
+inline void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) {
 	minx = CLIP(minx, 0, MAP_NUM_CHUNKS - 1);
 	maxx = CLIP(maxx, 0, MAP_NUM_CHUNKS - 1);
 	miny = CLIP(miny, 0, MAP_NUM_CHUNKS - 1);
@@ -715,9 +707,9 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shapeflags,
                                  ObjId item_, const Item **support_,
                                  ObjId *roof_, const Item **blocker_) const {
-	const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
+	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
 	                         ShapeInfo::SI_ROOF);
-	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
+	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
 	const Item *support = nullptr;
@@ -1324,13 +1316,17 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	if (shape > 0x800)
 		return 0;
 
+	int32 x = pt.getX();
+	int32 y = pt.getY();
+	int32 z = pt.getZ();
+
 	if (GAME_IS_CRUSADER) {
-		pt.setX(pt.getX() * 2);
-		pt.setY(pt.getY() * 2);
+		x *= 2;
+		y *= 2;
 	}
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(pt.getX(), pt.getY(), pt.getZ(), shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 
 	if (valid)
 		return 1;

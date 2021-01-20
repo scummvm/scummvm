@@ -40,7 +40,6 @@
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/actors/u6_actor.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Nuvie {

@@ -25,7 +25,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/raw_shape_frame.h"
-#include "ultima/ultima8/convert/convert_shape.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -151,7 +150,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	if (format->_bytes_ident) {
 		uint8 *ident = new uint8[format->_bytes_ident];
 		ds.read(ident, format->_bytes_ident);
-		bool match = Std::memcmp(ident, format->_ident, format->_bytes_ident) == 0;
+		bool match = memcmp(ident, format->_ident, format->_bytes_ident) == 0;
 		delete[] ident;
 
 		if (!match) {

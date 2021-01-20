@@ -20,13 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/remorse_music_process.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "audio/mods/mod_xm_s3m.h"
 

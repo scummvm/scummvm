@@ -95,16 +95,16 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) {
 	return true; // standing
 }
 
-int32 Collision::getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3) {
-	if (var3 <= 0) {
-		return var0;
+int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) {
+	if (delay <= 0) {
+		return start;
 	}
 
-	if (var3 >= var2) {
-		return var1;
+	if (delay >= maxDelay) {
+		return end;
 	}
 
-	return (((var1 - var0) * var3) / var2) + var0;
+	return (((end - start) * delay) / maxDelay) + start;
 }
 
 void Collision::reajustActorPosition(ShapeType brickShape) {
@@ -112,9 +112,9 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 		return;
 	}
 
-	const int32 brkX = (collisionX << 9) - 0x100;
-	const int32 brkY = collisionY << 8;
-	const int32 brkZ = (collisionZ << 9) - 0x100;
+	const int32 brkX = (collisionX * BRICK_SIZE) - BRICK_HEIGHT;
+	const int32 brkY = collisionY * BRICK_HEIGHT;
+	const int32 brkZ = (collisionZ * BRICK_SIZE) - BRICK_HEIGHT;
 
 	// double-side stairs
 	if (brickShape >= ShapeType::kDoubleSideStairsTop1 && brickShape <= ShapeType::kDoubleSideStairsRight2) {
@@ -186,16 +186,16 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 	if (brickShape >= ShapeType::kStairsTopLeft && brickShape <= ShapeType::kStairsBottomRight) {
 		switch (brickShape) {
 		case ShapeType::kStairsTopLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, _engine->_movements->processActorX - brkX);
 			break;
 		case ShapeType::kStairsTopRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, _engine->_movements->processActorZ - brkZ);
 			break;
 		case ShapeType::kStairsBottomLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, _engine->_movements->processActorZ - brkZ);
 			break;
 		case ShapeType::kStairsBottomRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, _engine->_movements->processActorX - brkX);
 			break;
 		default:
 			break;
@@ -450,7 +450,7 @@ void Collision::stopFalling() { // ReceptionObj()
 	if (IS_HERO(_engine->_animations->currentlyProcessedActorIdx)) {
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
-		if (fall >= 2048) {
+		if (fall >= BRICK_HEIGHT * 8) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, ExtraSpecialType::kHitStars);
 			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);

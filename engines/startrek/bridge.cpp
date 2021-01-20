@@ -155,7 +155,16 @@ enum BridgeTalkers {
 	kBridgeTalkerCaptainsLog,
 	kBridgeTalkerElasiCaptain,
 	kBridgeTalkerElasiCereth,
-	kBridgeTalkerAutobeacon
+	kBridgeTalkerAutobeacon,
+	kBridgeTalkerVoice,
+	kBridgeTalkerHarryMudd
+};
+
+enum RandomEncounterType {
+	kRandomEncounterNone = 0,
+	kRandomEncounterKlingon = 1,
+	kRandomEncounterRomulan = 2,
+	kRandomEncounterElasi = 3
 };
 
 void StarTrekEngine::initBridge(bool b) {
@@ -240,6 +249,12 @@ void StarTrekEngine::showTextboxBridge(int talker, Common::String text) {
 	case kBridgeTalkerAutobeacon:
 		showTextbox("Autobeacon", text, 160, 130, 161, 0);
 		break;
+	case kBridgeTalkerVoice:
+		showTextbox("Voice", text, 160, 130, 44, 0);
+		break;
+	case kBridgeTalkerHarryMudd:
+		showTextbox("Harry Mudd", text, 160, 190, 44, 0);
+		break;
 	}
 }
 
@@ -259,7 +274,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		// TODO: sub_2FF19("enterpri") // random number generation
 		// TODO: changeBridgeMode 1
 		_sound->playMidiMusicTracks(2, -1);
-		_sound->playSoundEffectIndex(40);
+		_sound->playSoundEffectIndex(kSfxRedAlert);
 
 		// HACK: Play the end of the mock battle sequence, until the 3D code is implemented
 		_bridgeSequenceToLoad = kSeqEndMockBattle;
@@ -296,10 +311,10 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName("DEMON");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0);
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 23); // Message from Starfleet
 		showTextboxBridge(kBridgeTalkerKirk, 24);
-		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29);
+		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29, 0);
 		showTextboxBridge(kBridgeTalkerMcCoy, 25);
 		showTextboxBridge(kBridgeTalkerKirk, 26);
 		showTextboxBridge(kBridgeTalkerSpock, 27);
@@ -315,7 +330,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridge");
 		showMissionStartEnterpriseFlyby("TUG0\\FLYBY", "hijacked");
 		_sound->playMidiMusicTracks(0, -1);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -323,7 +338,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqStartElasiPirateBattle:
 		showTextboxBridge(kBridgeTalkerSpock, 6);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 7);
 		showTextboxBridge(kBridgeTalkerKirk, 8);
 		showBridgeScreenTalkerWithMessage(9, "Elasi Captain", "pira", false);
@@ -331,7 +346,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerElasiCaptain, 11);
 		removeActorFromScreen(_currentScreenTalker);
 		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
-		_sound->playSoundEffectIndex(40);
+		_sound->playSoundEffectIndex(kSfxRedAlert);
 		_enterpriseState.underAttack = true;
 		_sound->playMidiMusicTracks(2, -1);
 		startBattle("orion"); // Elasi Pirate battle
@@ -357,10 +372,10 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
 		if (_missionEndFlag == 0) {
 			// Good ending
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 29);
 			showTextboxBridge(kBridgeTalkerKirk, 30);
-			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31);
+			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31, 1);
 			showTextboxBridge(kBridgeTalkerMcCoy, 32); // Trying to hold a Federation starship captive. Can you believe it?
 			showTextboxBridge(kBridgeTalkerSpock, 33); // Since we just witnessed that very event, Doctor, I'm surprised you ask.
 			showTextboxBridge(kBridgeTalkerMcCoy, 34);
@@ -369,15 +384,15 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 			showTextboxBridge(kBridgeTalkerKirk, 37);
 		} else if (_missionEndFlag == 1) {
 			// Bad ending 1 (0 score): the Masada got destroyed, everyone died
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 39);
 			showTextboxBridge(kBridgeTalkerKirk, 40);
-			showMissionPerformance(0, 41);
+			showMissionPerformance(0, 41, 1);
 		} else if (_missionEndFlag == 2) {
 			// Bad ending 2 (0 score): bad handling of the situation, some prisoners died
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 42);
-			showMissionPerformance(0, 43);
+			showMissionPerformance(0, 43, 1);
 		}
 		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
 		removeActorFromScreen(2);
@@ -389,7 +404,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridge");
 		showMissionStartEnterpriseFlyby("LOV0\\FLYBY", "tlove");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -401,7 +416,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqStartRomulanBattle:
 		showTextboxBridge(kBridgeTalkerSpock, "#BRID\\B_160#Romulan ship decloaking, Captain.");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 6);	// Message from the Romulan ship, Sir
 		showBridgeScreenTalkerWithMessage(9, "Romulan Captain", "romula");
 		showTextboxBridge(kBridgeTalkerSpock, 10);
@@ -414,12 +429,12 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_enterpriseState.underAttack = false;
 		showTextboxBridge(kBridgeTalkerSpock, 11);	// They activated a self-destruct device...
 		showTextboxBridge(kBridgeTalkerSulu, 12);	// Resuming course to ARK7, Captain
-		orbitPlanetSequence();
+		orbitPlanetSequence(4);
 		_bridgeSequenceToLoad = kSeqArrivedAtArk7;
 		break;
 	case kSeqArrivedAtArk7:
 		_hailedTarget = false;
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 17);
 		showTextboxBridge(kBridgeTalkerAutobeacon, 16);
 		break;
@@ -427,10 +442,10 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName("LOVE");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 18);
 		showTextboxBridge(kBridgeTalkerKirk, 19);
-		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26);
+		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26, 2);
 		showTextboxBridge(kBridgeTalkerKirk, 20);
 		showTextboxBridge(kBridgeTalkerMcCoy, 21);
 		showTextboxBridge(kBridgeTalkerKirk, 22);
@@ -448,7 +463,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridge");
 		// TODO: sub_321F9()
 		showMissionStartEnterpriseFlyby("MUD0\\FLYBY", "another");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -457,13 +472,34 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqFightElasiShipsAndContactMudd:
 		showTextboxBridge(kBridgeTalkerSpock, 5);	// We have arrived at Harlequin
-		// TODO
+		//_beamDownAllowed = false;	// TODO: unused, since the player jumps straight into a battle?
+		showTextboxBridge(kBridgeTalkerSpock, 6);
+		_sound->playSoundEffectIndex(kSfxHailing);
+		showTextboxBridge(kBridgeTalkerUhura, 7);
+		showBridgeScreenTalkerWithMessage(14, "Elasi Pirate", "pira");
+		_enterpriseState.underAttack = true;
+		_sound->playMidiMusicTracks(2, -1);
+		startBattle("orion");	// Pirate Ship 1
+		startBattle("orion");	// Pirate Ship 2
+		_enterpriseState.underAttack = false;
+		showTextboxBridge(kBridgeTalkerSpock, 8);	// The ion trail of the scout ship leads to the Harrapan system, Captain
+		showTextboxBridge(kBridgeTalkerUhura, 9);
+		showTextboxBridge(kBridgeTalkerKirk, 10);
+		showTextboxBridge(kBridgeTalkerVoice, 11);
+		showTextboxBridge(kBridgeTalkerKirk, 12);
+		showTextboxBridge(kBridgeTalkerUhura, 13);
+		showBridgeScreenTalkerWithMessage(15, "Harry Mudd", "mudd", false);
+		showTextboxBridge(kBridgeTalkerKirk, 16);
+		showTextboxBridge(kBridgeTalkerHarryMudd, 17);
+		removeActorFromScreen(_currentScreenTalker);
+		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
+		showTextboxBridge(kBridgeTalkerSpock, 18);
 		break;
 	case kSeqEndMissionMudd:
 		_resource->setTxtFileName("MUDD");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
-		showMissionPerformance(_awayMission.mudd.missionScore * 100 / 32, 35);
+		showMissionPerformance(_awayMission.mudd.missionScore * 100 / 32, 35, 3);
 		if (_missionEndFlag != 0) {
 			// Obtained alien contraption
 			showTextboxBridge(kBridgeTalkerScotty, 36);
@@ -487,7 +523,37 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridgeb");
 		// TODO: sub_321F9()
 		showMissionStartEnterpriseFlyby("FEA0\\FLYBY", "feather");
-		showTextboxBridge(kBridgeTalkerKirk, 5);
+		showTextboxBridge(kBridgeTalkerKirk, 5);	// Captain's log, Stardate 5097.3. Starfleet reports major military activity...
+		// TODO
+		break;
+	case kSeqStartMissionTrial:
+		_currentPlanet = _targetPlanet = kPlanetHrakkour;
+		_missionName = _missionToLoad = "TRIAL";
+		_resource->setTxtFileName(_missionName);
+		orbitPlanet();
+		showTextboxBridge(kBridgeTalkerKirk, 0);	// Captain's Log. We have come to the ruined Klingon planet of Hrakkour...
+		// TODO
+		break;
+	case kSeqStartMissionSins:
+		_targetPlanet = kPlanetAlphaProxima; // We set it earlier for uniformity
+		_missionName = _missionToLoad = "SINS";
+		_resource->setTxtFileName(_missionName);
+		_sound->loadMusicFile("bridge");
+		showMissionStartEnterpriseFlyby("SIN0\\FLYBY", "devilmon");
+		_sound->playSoundEffectIndex(kSfxHailing);
+		showTextboxBridge(kBridgeTalkerUhura, 0);
+		showTextboxBridge(kBridgeTalkerKirk, 1);
+		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
+		showTextboxBridge(kBridgeTalkerSpock, 3);
+		showTextboxBridge(kBridgeTalkerKirk, 4);
+		showTextboxBridge(kBridgeTalkerSpock, 5);
+		showTextboxBridge(kBridgeTalkerChekov, 6);
+		showTextboxBridge(kBridgeTalkerSpock, 7);
+		showTextboxBridge(kBridgeTalkerKirk, 8);
+		showTextboxBridge(kBridgeTalkerSpock, 9);
+		// TODO
+		break;
+	case kSeqStartMissionVeng:
 		// TODO
 		break;
 	// TODO: The rest
@@ -506,14 +572,21 @@ struct CrewTextsForChapter {
 };
 
 CrewTextsForChapter crewTexts[] = {
-	{ kPlanetPollux,     kBridgeTalkerSpock, 10, 20, 21, 22 },
-	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19},
-	{ kPlanetBetaMyamid, kBridgeTalkerSpock, 13,  5, 17, 27 },
-	{ kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
-	{ kPlanetArk7,       kBridgeTalkerSpock,  8,  4, -1, 13 },
-	{ kPlanetArk7,       kBridgeTalkerUhura,  7,  5, -1, -1 },
-	{ kPlanetHarlequin,  kBridgeTalkerSpock, -1,  4, -1, -1 },
-	{ kPlanetHarlequin,  kBridgeTalkerUhura, -1,  3, -1, -1 },
+    // -- Chapter 1 ----
+	{ kPlanetPollux,       kBridgeTalkerSpock, 10, 20, 21, 22 },
+	{ kPlanetPollux,       kBridgeTalkerUhura,  9, 16, 19, 19 },
+    // -- Chapter 2 ----
+	{ kPlanetBetaMyamid,   kBridgeTalkerSpock, 13,  5, 17, 27 },
+	{ kPlanetBetaMyamid,   kBridgeTalkerUhura, 12,  4, 16, -1 },
+    // -- Chapter 3 ----
+	{ kPlanetArk7,         kBridgeTalkerSpock,  8,  4, -1, 13 },
+	{ kPlanetArk7,         kBridgeTalkerUhura,  7,  5, -1, -1 },
+    // -- Chapter 4 ----
+	{ kPlanetHarlequin,    kBridgeTalkerSpock, 21,  4, 22, -1 },
+	{ kPlanetHarlequin,    kBridgeTalkerUhura, 19,  3, 20, -1 },
+    // -- Chapter 6 ----
+	{ kPlanetAlphaProxima, kBridgeTalkerSpock, -1, 11, -1, -1 },
+	{ kPlanetAlphaProxima, kBridgeTalkerUhura, -1, 10, -1, -1 },
 	// TODO: The rest
 	{ kPlanetNone,       kBridgeTalkerNone,   0,  0,  0,  0 }
 };
@@ -521,49 +594,115 @@ CrewTextsForChapter crewTexts[] = {
 void StarTrekEngine::bridgeCrewAction(int crewId) {
 	CrewTextsForChapter *curCrewTexts = crewTexts;
 	int textId = -1;
+	const char *underAttackText = "#BRID\\B_348#Unable to comply, Captain.  We're under attack.";
+	const char *missionNotOverText = "#BRID\\B_338#May I respectfully remind the Captain that we haven't accomplished our mission, Sir.";
+	const char *leaveOrbitText = "#BRID\\B_349#We must first leave orbit, Sir.";
+	const char *nothingToReportText = "#BRID\\B_155 #Nothing to report, Captain.";
+	const char *hailingFrequenciesOpenText = "#BRID\\BRIDU016#Hailing frequencies open.";
+	const char *shieldsUpText = "#BRID\\B_332#Captain, the shields are up.";
+	const char *notInOrbitText = "#BRID\\B_350#We're not in orbit, Captain.";
+	const char *wrongDestinationText = "#BRID\\B_346#This isn't our destination.";
+	const char *transporterText = "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.";
+	const char *transporterTextFeather = "#BRID\\C_006#Assemble a landing party. Unless we find this so-called criminal, we're going to war.";
 
-	while (curCrewTexts->targetPlanet != kPlanetNone) {
-		if (_targetPlanet == curCrewTexts->targetPlanet && curCrewTexts->talker == crewId) {
-			if (_enterpriseState.underAttack) {
-				textId = curCrewTexts->underAttackTextId;
-			} else if (_currentPlanet != _targetPlanet) {
-				textId = curCrewTexts->notReachedPlanetTextId;
-			} else if (!_enterpriseState.inOrbit) {
-				textId = curCrewTexts->notInOrbitTextId;
-			} else {
-				textId = curCrewTexts->inOrbitTextId;
+	switch (crewId) {
+	case kBridgeTalkerSpock:
+	case kBridgeTalkerUhura:
+		while (curCrewTexts->targetPlanet != kPlanetNone) {
+			if (_targetPlanet == curCrewTexts->targetPlanet && curCrewTexts->talker == crewId) {
+				if (_enterpriseState.underAttack) {
+					textId = curCrewTexts->underAttackTextId;
+				} else if (_currentPlanet != _targetPlanet) {
+					textId = curCrewTexts->notReachedPlanetTextId;
+				} else if (!_enterpriseState.inOrbit) {
+					textId = curCrewTexts->notInOrbitTextId;
+				} else {
+					textId = curCrewTexts->inOrbitTextId;
+				}
+				break;
 			}
-			break;
+
+			curCrewTexts++;
 		}
 
-		curCrewTexts++;
-	}
-
-	// Uhura's hailing sequences
-	if (crewId == kBridgeTalkerUhura && _currentPlanet == _targetPlanet) {
-		if (!_hailedTarget) {
-			contactTargetAction();
-			_hailedTarget = true;
-			return;
-		} else if (_currentPlanet == kPlanetBetaMyamid && _hailedTarget) {
-			hailTheMasada();
-			return;
+		// Uhura's hailing sequences
+		if (crewId == kBridgeTalkerUhura && _currentPlanet == _targetPlanet) {
+			if (!_hailedTarget) {
+				contactTargetAction();
+				_hailedTarget = true;
+				return;
+			} else if (_currentPlanet == kPlanetBetaMyamid && _hailedTarget) {
+				hailTheMasada();
+				return;
+			}
 		}
+		break;
+	case kBridgeTalkerChekov:
+		if (_enterpriseState.underAttack) {
+			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
+		} else if (_currentPlanet == _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
+		} else if (_enterpriseState.inOrbit) {
+			showTextboxBridge(kBridgeTalkerSulu, leaveOrbitText);
+		} else {
+			showStarMap();
+			if (_currentPlanet != _targetPlanet) {
+				wrongDestinationRandomEncounter();
+				// TODO: Redraw sprites
+			}
+		}
+		break;
+	case kBridgeTalkerSulu:
+		if (_enterpriseState.underAttack) {
+			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
+		} else if (_currentPlanet == _targetPlanet && _enterpriseState.inOrbit) {
+			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
+		} else {
+			if (_targetPlanet == kPlanetBetaMyamid) {
+				orbitPlanetSequence(6);
+				_bridgeSequenceToLoad = kSeqApproachedTheMasada;
+			} else if (_targetPlanet == kPlanetHarlequin) {
+				orbitPlanetSequence(5);
+			}
+
+			orbitPlanet();
+		}
+		break;
+	case kBridgeTalkerKirk:
+		if (_enterpriseState.shields) {
+			showTextboxBridge(kBridgeTalkerSulu, shieldsUpText);
+		} else if (!_enterpriseState.inOrbit) {
+			showTextboxBridge(kBridgeTalkerSulu, notInOrbitText);
+		} else if (_currentPlanet != _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSulu, wrongDestinationText);
+		} else {
+			if (_targetPlanet == kPlanetBetaMyamid && !_beamDownAllowed) {
+				// Chapter 2, disallow beaming down until the correct code is set
+				showTextboxBridge(kBridgeTalkerSulu, 28); // Captain, the Masada's shields are still up
+			} else {
+				if (_missionToLoad != "FEATHER")
+					showTextboxBridge(kBridgeTalkerKirk, transporterText);
+				else
+					showTextboxBridge(kBridgeTalkerKirk, transporterTextFeather);
+				_gameMode = GAMEMODE_BEAMDOWN;
+			}
+		}
+		break;
 	}
 
 	if (textId >= 0) {
 		showTextboxBridge(crewId, textId);
 	} else if (crewId == kBridgeTalkerSpock) {
-		showTextboxBridge(crewId, "#BRID\\B_155 #Nothing to report, Captain.");
+		showTextboxBridge(crewId, nothingToReportText);
 	} else if (crewId == kBridgeTalkerUhura) {
-		showTextboxBridge(crewId, "#BRID\\BRIDU016#Hailing frequencies open.");
+		showTextboxBridge(crewId, hailingFrequenciesOpenText);
 	}
 }
 
 void StarTrekEngine::contactTargetAction() {
 	switch (_targetPlanet) {
 	case kPlanetPollux:	// Chapter 1: Demon world (demon)
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 17);
 		showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
 		break;
@@ -579,7 +718,7 @@ void StarTrekEngine::contactTargetAction() {
 		}	
 		break;
 	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 14);
 		showBridgeScreenTalkerWithMessage(15, "Centurion Preax", "romula");
 		break;
@@ -588,6 +727,7 @@ void StarTrekEngine::contactTargetAction() {
 }
 
 void StarTrekEngine::negotiateWithElasiCereth() {
+	// TODO: Read these from tug.txt
 	const char *options1[] = {
 	    "Captain Kirk",
 		"#BRID\\C_074#This is Captain James T. Kirk of the U.S.S. Enterprise. You are illegally in possession of Starfleet property.",
@@ -649,6 +789,7 @@ void StarTrekEngine::negotiateWithElasiCereth() {
 }
 
 void StarTrekEngine::hailTheMasada() {
+	// TODO: Read these from tug.txt
 	const char *options[] = {
 		"Captain Kirk",
 	    "Hail the Masada.",
@@ -699,31 +840,36 @@ Common::String StarTrekEngine::getSpeechSampleForNumber(int number) {
 	return result;
 }
 
-// TODO: two more parameters
-void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
+// TODO: one more parameter
+void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId, int missionId) {
 	Common::String performanceDescription;
 	int midiTrack = 0;
+	int commendationPoints = 0;
 
 	if (score >= 0 && score <= 50) {
 		performanceDescription = "#BRID\\B_199#I'll be frank, Kirk. Starfleet expects more of you than that. Try to do better on your next assignment.";
+		commendationPoints = 0;
 		midiTrack = 13;
 	} else if (score >= 60 && score <= 70) {
 		performanceDescription = "#BRID\\B_197#A satisfactory performance, Captain, but there's still room for improvement.";
+		commendationPoints = 1;
 		midiTrack = 13;
 	} else if (score >= 71 && score <= 85) {
 		performanceDescription = "#BRID\\B_214#Well done, Captain. Keep up the good work.";
+		commendationPoints = 2;
 		midiTrack = 11;
 	} else if (score >= 86 && score <= 99) {
 		performanceDescription = "#BRID\\B_414#The top brass at Starfleet are impressed. Outstanding work, Jim.";
+		commendationPoints = 3;
 		midiTrack = 12;
 	} else if (score == 100) {
 		performanceDescription = "#BRID\\B_195#A perfect mission, Jim! You are a model for all Starfleet!";
+		commendationPoints = 4;
 		midiTrack = 14;
 	}
 
 	_sound->playMidiMusicTracks(midiTrack, -1);
 
-	int commendationPoints = 0;	// TODO
 	Common::String speechIdPerformance = getSpeechSampleForNumber(score);
 	Common::String speechIdCommendationPoints = getSpeechSampleForNumber(commendationPoints);
 
@@ -742,6 +888,9 @@ void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
 	};
 
 	showBridgeScreenTalkerWithMessages(texts, "Admiral", "woman");
+
+	_lastMissionId = missionId;
+	_missionPoints[missionId] = commendationPoints;
 }
 
 void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId, bool removeTalker) {
@@ -927,17 +1076,17 @@ void StarTrekEngine::handleBridgeEvents() {
 				_gameIsPaused = true;
 				break;
 			case Common::KEYCODE_e:	// Toggle SFX / emergency power
-				if (event.kbd.flags && Common::KBD_CTRL)
+				if (event.kbd.flags & Common::KBD_CTRL)
 					_sound->toggleSfx();
 				else
 					handleBridgeMenu(kBridgeScottyEmergencyPower);
 				break;
 			case Common::KEYCODE_m:
-				if (event.kbd.flags && Common::KBD_CTRL)
+				if (event.kbd.flags & Common::KBD_CTRL)
 					_sound->toggleMusic();
 				break;
 			case Common::KEYCODE_q:
-				if (event.kbd.flags && Common::KBD_CTRL)
+				if (event.kbd.flags & Common::KBD_CTRL)
 					showQuitGamePrompt(20, 20);
 				break;
 			case Common::KEYCODE_TILDE:	// Ship speed: reverse
@@ -970,21 +1119,12 @@ void StarTrekEngine::handleBridgeEvents() {
 }
 
 void StarTrekEngine::handleBridgeMenu(int menuEvent) {
-	// TODO: Move these
-	const char *shieldsUpText = "#BRID\\B_332#Captain, the shields are up.";
-	const char *notInOrbitText = "#BRID\\B_350#We're not in orbit, Captain.";
-	const char *wrongDestinationText = "#BRID\\B_346#This isn't our destination.";
-	const char *transporterText = "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.";
-	const char *transporterTextFeather = "#BRID\\C_006#Assemble a landing party. Unless we find this so-called criminal, we're going to war.";
 	const char *raiseShieldsText = "#BRID\\B_340#Raising shields.";
 	const char *lowerShieldsText = "#BRID\\B_337#Lowering shields, Captain.";
 	const char *armWeaponsText = "#BRID\\B_351#Arming weapons.";
 	const char *disarmWeaponsText = "#BRID\\B_354#Disarming weapons.";
 	const char *emergencyPowerText = "#BRID\\BRID_S32#I don't know how long she can take it, Captain.";
 	const char *noEmergencyPowerText = "#BRID\\BRID_S41#She can't take it, Captain.";
-	const char *underAttackText = "#BRID\\B_348#Unable to comply, Captain.  We're under attack.";
-	const char *missionNotOverText = "#BRID\\B_338#May I respectfully remind the Captain that we haven't accomplished our mission, Sir.";
-	const char *leaveOrbitText = "#BRID\\B_349#We must first leave orbit, Sir.";
 	const char *targetAnalysisOnText = "#BRID\\B_344#Target Analysis On.";
 	const char *targetAnalysisOffText = "#BRID\\B_343#Target Analysis Off.";
 	const char *ayeSirText = "#BRID\\BRID_S22#Aye Sir.";
@@ -1006,24 +1146,7 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		captainsLog();
 		break;
 	case kBridgeKirkTransporter: // Kirk, transporter
-		if (_enterpriseState.shields) {
-			showTextboxBridge(kBridgeTalkerSulu, shieldsUpText);
-		} else if (!_enterpriseState.inOrbit) {
-			showTextboxBridge(kBridgeTalkerSulu, notInOrbitText);
-		} else if (_currentPlanet != _targetPlanet) {
-			showTextboxBridge(kBridgeTalkerSulu, wrongDestinationText);
-		} else {
-			if (_targetPlanet == kPlanetBetaMyamid && !_beamDownAllowed) {
-				// Chapter 2, disallow beaming down until the correct code is set
-				showTextboxBridge(kBridgeTalkerSulu, 28); // Captain, the Masada's shields are still up
-			} else {
-				if (_missionToLoad != "FEATHER")
-					showTextboxBridge(kBridgeTalkerKirk, transporterText);
-				else
-					showTextboxBridge(kBridgeTalkerKirk, transporterTextFeather);
-				runGameMode(GAMEMODE_BEAMDOWN, false);
-			}
-		}
+		bridgeCrewAction(kBridgeTalkerKirk);
 		break;
 	case kBridgeKirkOptions: // Kirk, options
 		showOptionsMenu(65, 60);
@@ -1045,37 +1168,14 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		bridgeCrewAction(kBridgeTalkerUhura);
 		break;
 	case kBridgeSuluOrbit: // Sulu, orbit
-		if (_enterpriseState.underAttack) {
-			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
-		} else if (_currentPlanet == _targetPlanet && _enterpriseState.inOrbit) {
-			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
-		} else {
-			if (_targetPlanet == kPlanetBetaMyamid) {
-				orbitPlanetSequence();
-				_bridgeSequenceToLoad = kSeqApproachedTheMasada;
-			}
-
-			orbitPlanet();
-		}
+		bridgeCrewAction(kBridgeTalkerSulu);
 		break;
 	case kBridgeSuluShields: // Sulu, shields
 		_enterpriseState.shields = !_enterpriseState.shields;
 		showTextboxBridge(kBridgeTalkerSulu, _enterpriseState.shields ? raiseShieldsText : lowerShieldsText);
 		break;
 	case kBridgeChekovNavigation: // Chekov, navigation
-		if (_enterpriseState.underAttack) {
-			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
-		} else if (_currentPlanet == _targetPlanet) {
-			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
-		} else if (_enterpriseState.inOrbit) {
-			showTextboxBridge(kBridgeTalkerSulu, leaveOrbitText);
-		} else {
-			showStarMap();
-			if (_currentPlanet != _targetPlanet) {
-				wrongDestinationRandomEncounter();
-				// TODO: Redraw sprites
-			}
-		}
+		bridgeCrewAction(kBridgeTalkerChekov);
 		break;
 	case kBridgeChekovWeapons: // Chekov, weapons
 		_enterpriseState.weapons = !_enterpriseState.weapons;
@@ -1126,11 +1226,30 @@ void StarTrekEngine::startBattle(Common::String enemyShip) {
 }
 
 void StarTrekEngine::wrongDestinationRandomEncounter() {
-	// TODO
+	_randomEncounterType = _randomSource.getRandomNumberRng(1, 3);
+
+	switch (_randomEncounterType) {
+	case kRandomEncounterKlingon:
+		_resource->setTxtFileName("klingon");
+		break;
+	case kRandomEncounterRomulan:
+		_resource->setTxtFileName("romulan");
+		break;
+	case kRandomEncounterElasi:
+		_resource->setTxtFileName("elasi");
+		break;
+	default:
+		break;
+	}
+
+	// TODO: The rest
+
+	_enterpriseState.underAttack = true;
+	_sound->loadMusicFile("bridge");	// TODO: check for bridgeb
 }
 
 // Used when approaching Beta Myamid / Masada in chapter 2, and Ark 7 in chapter 3
-void StarTrekEngine::orbitPlanetSequence() {
+void StarTrekEngine::orbitPlanetSequence(int sequenceId) {
 	// TODO
 }
 
@@ -1147,9 +1266,44 @@ void StarTrekEngine::orbitPlanet() {
 }
 
 void StarTrekEngine::captainsLog() {
-	// TODO: Show points for recently completed missions
-	const char *noRecentMissions = "#BRID\\C_007#No recent missions have been completed.";
-	showTextboxBridge(kBridgeTalkerCaptainsLog, noRecentMissions);
+	const char *missionNames[] = {
+		"Demon World",
+		"Hijacked",
+		"Love's Labor Jeopardized",
+		"Another Fine Mess",
+		"Feathered Serpent",
+		"That Old Devil Moon",
+		"Vengeance"
+	};
+
+	int totalPoints = 0;
+	for (int i = 0; i < 7; i++)
+		totalPoints += _missionPoints[i];
+
+	Common::String captainsLogMessage = "";
+
+	if (_lastMissionId > -1) {
+		captainsLogMessage = Common::String::format(
+			"#BRID\\C_007#We have earned %d point",
+			totalPoints
+		);
+
+		if (totalPoints > 1)
+			captainsLogMessage += "s";
+
+		captainsLogMessage += " for the following recently completed missions:\n";
+
+		for (int i = 6; i >= 0; i--) {
+			captainsLogMessage += missionNames[i] + Common::String::format(":   %d point", _missionPoints[i]);
+			if (_missionPoints[i] > 1)
+				captainsLogMessage += "s";
+			captainsLogMessage + ".\n\n";
+		}
+	} else {
+		captainsLogMessage = "#BRID\\C_007#No recent missions have been completed.";
+	}
+
+	showTextboxBridge(kBridgeTalkerCaptainsLog, captainsLogMessage);
 }
 
 void StarTrekEngine::loadBridgeComputerTopics() {

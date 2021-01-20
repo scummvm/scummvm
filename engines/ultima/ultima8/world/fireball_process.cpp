@@ -20,19 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/fireball_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {

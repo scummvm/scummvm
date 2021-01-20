@@ -444,6 +444,10 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 		// SCI32 seems to support having digits in stage directions
 		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
 			return false;
+
+		// If it contains Hebrew letters, it's not a stage direction
+		if (g_sci->getLanguage() == Common::HE_ISR && (byte)inStr[i] >= 128 && (byte)inStr[i] <= 255)
+			return false;
 	}
 
 	// We ran into the end of the string without finding a closing bracket

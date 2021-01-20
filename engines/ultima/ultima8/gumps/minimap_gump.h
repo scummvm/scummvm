@@ -24,21 +24,19 @@
 #define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-#define MINMAPGUMP_SCALE 8
-
 class MiniMapGump : public Gump {
 private:
-	Texture             _minimap;
+	Graphics::ManagedSurface _minimap;
 	unsigned int        _lastMapNum;
 
-	uint32 getPixelAt(int x, int y);
+	uint32 getPixelAt(int x, int y) const;
 	void setPixelAt(int x, int y, uint32 pixel);
 	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
 public:

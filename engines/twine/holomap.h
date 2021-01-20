@@ -55,7 +55,10 @@ private:
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
 
 	void drawHolomapText(int32 centerx, int32 top, const char *title);
-	void drawHolomapLocation();
+	void drawHolomapLocation(int32 location);
+	int32 getNextHolomapLocation(int32 currentLocation, int32 dir) const;
+
+	void renderLocations(int xRot, int yRot, int zRot, bool lower);
 
 public:
 	Holomap(TwinEEngine *engine);
@@ -81,6 +84,8 @@ public:
 
 	/** Load Holomap content */
 	void loadHolomapGFX();
+
+	void prepareHolomapSurface();
 
 	/** Main holomap process loop */
 	void processHolomap();

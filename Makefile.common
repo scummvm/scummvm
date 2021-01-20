@@ -123,7 +123,7 @@ endif
 
 # The build rule for the ScummVM executable
 $(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
-	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	+$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 ifdef SPLIT_DWARF
 $(EXECUTABLE).dwp: $(EXECUTABLE)
@@ -133,7 +133,8 @@ endif
 distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
-clean:
+clean: clean-toplevel
+clean-toplevel:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
@@ -463,4 +464,4 @@ DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/wintermute/base/gfx/opengl/shad
 endif
 endif
 
-.PHONY: all clean distclean plugins dist-src
+.PHONY: all clean distclean plugins dist-src clean-toplevel

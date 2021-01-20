@@ -25,10 +25,10 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/audio/sound.h"
-#include "twine/resources/hqr.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/extra.h"
@@ -75,7 +75,7 @@ void Actor::restartHeroScene() {
 	sceneHero->zone = -1;
 	sceneHero->angle = previousHeroAngle;
 
-	_engine->_movements->setActorAngleSafe(sceneHero->angle, sceneHero->angle, 0, &sceneHero->move);
+	_engine->_movements->setActorAngleSafe(sceneHero->angle, sceneHero->angle, ANGLE_0, &sceneHero->move);
 	setBehaviour(previousHeroBehaviour);
 
 	cropBottomScreen = 0;
@@ -166,8 +166,8 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 int32 Actor::getTextIdForBehaviour() const {
-	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAgressive) {
-		return TextId::kBehaviourAgressiveAuto;
+	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAggressive) {
+		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
 	return (int32)_engine->_actor->heroBehaviour;
@@ -240,7 +240,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		return;
 	}
 
-	debug("Load body %i for actor %i", bodyIdx, actorIdx);
+	debug(1, "Load body %i for actor %i", bodyIdx, actorIdx);
 
 	if (IS_HERO(actorIdx) && heroBehaviour == HeroBehaviourType::kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
 		setBehaviour(HeroBehaviourType::kNormal);
@@ -319,7 +319,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
 			actor->lastX = actor->x;
@@ -329,7 +329,7 @@ void Actor::initActor(int16 actorIdx) {
 	} else {
 		actor->entity = -1;
 
-		debug("Init actor %i with model %i", actorIdx, actor->body);
+		debug(1, "Init actor %i with model %i", actorIdx, actor->body);
 		initModelActor(actor->body, actorIdx);
 
 		actor->previousAnimIdx = -1;
@@ -339,7 +339,7 @@ void Actor::initActor(int16 actorIdx) {
 			_engine->_animations->initAnim(actor->anim, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
-		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, ANGLE_0, &actor->move);
 	}
 
 	actor->positionInMoveScript = -1;
@@ -394,7 +394,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->animType = 0;
 	actor->animPosition = 0;
 
-	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
+	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 	actor->positionInMoveScript = -1;
 	actor->positionInLifeScript = 0;
@@ -418,7 +418,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			actor->animPosition = tmpAnimPos;
 		} else {
 			if (angle != -1) {
-				_engine->_movements->setActorAngleSafe(angle, angle, 0, &actor->move);
+				_engine->_movements->setActorAngleSafe(angle, angle, ANGLE_0, &actor->move);
 			}
 
 			if (_engine->getRandomNumber() & 1) {
@@ -485,7 +485,7 @@ ActorStruct::~ActorStruct() {
 void ActorStruct::loadModel(int32 modelIndex) {
 	entity = modelIndex;
 	if (!staticFlags.bIsSpriteActor) {
-		debug("Init actor with model %i", modelIndex);
+		debug(1, "Init actor with model %i", modelIndex);
 		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
 	} else {
 		entityDataSize = 0;
@@ -529,6 +529,14 @@ int32 ActorMoveStruct::getRealValue(int32 time) {
 	tempStep /= numOfStep;
 
 	return tempStep + from;
+}
+
+bool ActorStruct::isAttackAnimationActive() const {
+	return anim == AnimationTypes::kRightPunch || anim == AnimationTypes::kLeftPunch || anim == AnimationTypes::kKick;
+}
+
+bool ActorStruct::isJumpAnimationActive() const {
+	return anim == AnimationTypes::kJump;
 }
 
 } // namespace TwinE

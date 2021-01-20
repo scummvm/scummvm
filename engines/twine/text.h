@@ -55,10 +55,11 @@ namespace TextId {
 enum _TextId {
 	kBehaviourNormal = 0,
 	kBehaviourSporty = 1,
-	kBehaviourAgressiveManual = 2,
+	kBehaviourAggressiveManual = 2,
 	kBehaviourHiding = 3,
-	kBehaviourAgressiveAuto = 4,
+	kBehaviourAggressiveAuto = 4,
 	kUseProtopack = 5,
+	kSendell = 6,
 	kMusicVolume = 10,
 	kSoundVolume = 11,
 	kCDVolume = 12,
@@ -93,6 +94,11 @@ enum _TextId {
 	kDetailsPolygonsMiddle = 131,
 	kShadowsFigures = 132,
 	kScenaryZoomOn = 133,
+	kIntroText1 = 150,
+	kIntroText2 = 151,
+	kIntroText3 = 152,
+	kBookOfBu = 161,
+	kBonusList = 162,
 	kDetailsPolygonsLow = 231,
 	kShadowsDisabled = 232,
 	kNoScenaryZoom = 233
@@ -101,13 +107,19 @@ enum _TextId {
 
 #define TEXT_MAX_FADE_IN_CHR 32
 
+#define COLOR_BLACK 0
+#define COLOR_BRIGHT_BLUE 4
+#define COLOR_WHITE 15
+#define COLOR_GOLD 155
+
 enum class ProgressiveTextState {
-	End = 0,
-	UNK1 = 1,
-	NextPage = 2
+	End = 0,				/**< Text has reached its end and we are waiting for user input */
+	ContinueRunning = 1,	/**< Text is fading in */
+	NextPage = 2			/**< Waiting for user input to abort or start the next page to fade in */
 };
 
 class TwinEEngine;
+
 class Text {
 private:
 	TwinEEngine *_engine;
@@ -168,14 +180,15 @@ private:
 
 	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
-	const char *_progressiveTextNextWord = nullptr;
+	const char *_currentTextPosition = nullptr;
 
 	int32 _dialTextXPos = 0;
 	int32 _dialTextYPos = 0;
+
+	/** Current position of in the buffer of characters that are currently faded in */
 	char *_progressiveTextBufferPtr = nullptr;
+
 	int32 _dialTextBoxCurrentLine = 0;
-	bool _progressiveTextEnd = false;
-	bool _progressiveTextNextPage = false;
 	struct BlendInCharacter {
 		int16 chr = 0;
 		int16 x = 0;
@@ -188,6 +201,7 @@ private:
 	char *_currDialTextPtr = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
+	static const int32 _lineHeight = 38;
 
 	char currMenuTextBuffer[256];
 	int32 currMenuTextBank = TextBankId::None;
@@ -217,6 +231,8 @@ private:
 
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
+
+	bool displayText(int32 index, bool showText, bool playVox);
 public:
 	Text(TwinEEngine *engine);
 	~Text();
@@ -231,7 +247,6 @@ public:
 	// ---
 
 	int32 currDialTextEntry = 0; // ordered entry
-	int32 nextDialTextEntry = 0; // ordered entry
 	Common::String currentVoxBankFile;
 
 	bool showDialogueBubble = true;
@@ -267,6 +282,7 @@ public:
 	void initText(int32 index);
 	void initInventoryText(int index);
 	void initItemFoundText(int index);
+	void fadeInRemainingChars();
 	ProgressiveTextState updateProgressiveText();
 
 	/**

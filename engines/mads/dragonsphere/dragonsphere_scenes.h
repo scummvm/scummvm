@@ -20,11 +20,11 @@
  *
  */
 
+#ifdef ENABLE_MADSV2
+
 #ifndef MADS_DRAGONSPHERE_SCENES_H
 #define MADS_DRAGONSPHERE_SCENES_H
 
-#include "common/scummsys.h"
-#include "mads/game.h"
 #include "mads/scene.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/dragonsphere/globals_dragonsphere.h"
@@ -674,3 +674,5 @@ public:
 } // End of namespace MADS
 
 #endif /* MADS_DRAGONSPHERE_SCENES_H */
+
+#endif

@@ -20,10 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {

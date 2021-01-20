@@ -102,7 +102,7 @@ static int voxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
 	uint32 realSize = file.readUint32LE();
 	uint32 compSize = file.readUint32LE();
 
-	    // exist hidden entries
+	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
 		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
 		offsetToData = offsetToData + compSize + 10;  // current hidden offset
@@ -254,6 +254,26 @@ int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
 	const int32 entrySize = getEntry(*ptr, filename, index);
 	assert(entrySize == size);
 	return entrySize;
+}
+
+bool dumpEntry(const char *filename, int32 index, const char *targetFileName) {
+	Common::DumpFile out;
+	if (!out.open(targetFileName)) {
+		warning("Failed to save to %s", targetFileName);
+		return false;
+	}
+
+	uint8 *content = nullptr;
+	const int size = getAllocEntry(&content, filename, index);
+	if (size == 0) {
+		warning("Could not get hqr entry in %s for index %i", filename, index);
+		return false;
+	}
+	out.write(content, size);
+	out.flush();
+	out.close();
+	free(content);
+	return true;
 }
 
 int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex) {

@@ -24,6 +24,7 @@
 #define KYRA_UTIL_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Kyra {
 
@@ -31,12 +32,16 @@ class Util {
 public:
 	static int decodeString1(const char *src, char *dst);
 	static void decodeString2(const char *src, char *dst);
+	static Common::String decodeString1(const Common::String &src);
+	static Common::String decodeString2(const Common::String &src);
+	
 
 	// Since our current GUI font uses ISO-8859-1, this
 	// conversion functionallty uses that as a base.
 	static void convertDOSToISO(char *str);
 	static void convertISOToDOS(char *str);
 	static void convertISOToDOS(char &c);
+	static Common::String convertISOToDOS(const Common::String &str);
 
 private:
 	static const uint8 _charMapDOSToISO[128];

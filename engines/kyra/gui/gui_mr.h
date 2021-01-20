@@ -47,10 +47,10 @@ public:
 
 	void createScreenThumbnail(Graphics::Surface &dst) override;
 private:
-	const char *getMenuTitle(const Menu &menu) override;
-	const char *getMenuItemTitle(const MenuItem &menuItem) override;
-	const char *getMenuItemLabel(const MenuItem &menuItem) override;
-	char *getTableString(int id, bool) override;
+	Common::String getMenuTitle(const Menu &menu) override;
+	Common::String getMenuItemTitle(const MenuItem &menuItem) override;
+	Common::String getMenuItemLabel(const MenuItem &menuItem) override;
+	Common::String getTableString(int id, bool) override;
 
 	uint8 textFieldColor1() const override { return 0xFF; }
 	uint8 textFieldColor2() const override { return 0xCF; }

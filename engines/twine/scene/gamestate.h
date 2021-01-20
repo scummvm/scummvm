@@ -91,34 +91,6 @@ private:
 
 	MenuSettings gameChoicesSettings;
 
-public:
-	GameState(TwinEEngine *engine);
-
-	inline bool inventoryDisabled() const {
-		return gameFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
-	}
-
-	inline bool hasOpenedFunfrocksSafe() const {
-		return gameFlags[30] != 0;
-	}
-
-	inline bool hasItem(InventoryItems item) const {
-		return gameFlags[item] != 0;
-	}
-
-	inline void giveItem(InventoryItems item) {
-		gameFlags[item] = 1;
-	}
-
-	inline void removeItem(InventoryItems item) {
-		gameFlags[item] = 0;
-	}
-
-	inline void setFlag(uint8 index, uint8 value) {
-		gameFlags[index] = value;
-		debug(2, "Set gameflag[%u]=%u", index, value);
-	}
-
 	/**
 	 * LBA engine game flags to save quest states
 	 *
@@ -138,7 +110,45 @@ public:
 	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
 	 */
 	// TODO: why not NUM_GAME_FLAGS?
-	uint8 gameFlags[256];
+	uint8 _gameStateFlags[256];
+
+public:
+	GameState(TwinEEngine *engine);
+
+	inline bool inventoryDisabled() const {
+		return hasGameFlag(GAMEFLAG_INVENTORY_DISABLED) != 0;
+	}
+
+	inline bool hasOpenedFunfrocksSafe() const {
+		return hasGameFlag(30) != 0;
+	}
+
+	inline bool hasItem(InventoryItems item) const {
+		return hasGameFlag(item) != 0;
+	}
+
+	inline void giveItem(InventoryItems item) {
+		setGameFlag(item, 1);
+	}
+
+	inline void removeItem(InventoryItems item) {
+		setGameFlag(item, 0);
+	}
+
+	void clearGameFlags() {
+		debug(2, "Clear all gameStateFlags");
+		Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	}
+
+	inline uint8 hasGameFlag(uint8 index) const {
+		debug(3, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
+		return _gameStateFlags[index];
+	}
+
+	inline void setGameFlag(uint8 index, uint8 value) {
+		debug(2, "Set gameStateFlags[%u]=%u", index, value);
+		_gameStateFlags[index] = value;
+	}
 
 	/**
 	 * LBA engine chapter

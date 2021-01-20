@@ -25,7 +25,6 @@
 
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {

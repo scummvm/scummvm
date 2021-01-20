@@ -24,14 +24,10 @@
 
 #include "ultima/ultima8/graphics/anim_dat.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/world/actors/actor_anim.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -137,6 +133,10 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return 0;
 		case Animation::lookRight:
 			return 0;
+		case Animation::jump:
+			return 58; // 58 is a shorter jump?
+		case Animation::startRunWithLargeWeapon:
+			return (smallwpn ? 34 : 35);
 		default:
 			return action_int;
 		}
@@ -189,10 +189,18 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			a->_actions[action]->_size = actionsize;
 			// byte 1: flags low byte
 			uint32 rawflags = rs->readByte();
-			// byte 2: frame repeat
-			a->_actions[action]->_frameRepeat = rs->readByte();
+			// byte 2: frame repeat and rotated flag
+			byte repeatAndRotateFlag = rs->readByte();
+			a->_actions[action]->_frameRepeat = repeatAndRotateFlag & 0xf;
+			if (GAME_IS_U8 && (repeatAndRotateFlag & 0xf0)) {
+				// This should never happen..
+				error("Anim data: frame repeat byte should never be > 0xf");
+			}
 			// byte 3: flags high byte
 			rawflags |= rs->readByte() << 8;
+
+			// Only one flag in this byte in crusader.. the "rotate" flag.
+			rawflags |= (repeatAndRotateFlag & 0xf0) << 12;
 
 			a->_actions[action]->_flags = AnimAction::loadAnimActionFlags(rawflags);
 
@@ -230,7 +238,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						const uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
 						// byte 2: delta z
-						f._deltaZ = rs->readByte();
+						f._deltaZ = rs->readSByte();
 						// byte 3: sfx
 						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels

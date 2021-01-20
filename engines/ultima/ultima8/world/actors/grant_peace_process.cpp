@@ -20,17 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/grant_peace_process.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/gumps/target_gump.h"
-#include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"

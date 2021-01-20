@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -32,7 +30,6 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
 #include "ultima/ultima8/ultima8.h"
@@ -87,7 +84,7 @@ PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
-PaperdollGump::PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
+PaperdollGump::PaperdollGump(const Shape *shape, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
 		: ContainerGump(shape, frameNum, owner, Flags, layer),
 		_statButtonId(0), _backpackRect(49, 25, 59, 50) {
@@ -203,7 +200,7 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		itemy = equipcoords[i].y;
 		itemx += _itemArea.left;
 		itemy += _itemArea.top;
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, frame, itemx, itemy);
 	}

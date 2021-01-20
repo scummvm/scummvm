@@ -26,7 +26,7 @@
 namespace Xeen {
 
 #define CALLBACKS_PER_SECOND 73
-	
+
 const byte SoundDriverAdlib::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
 	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
 };
@@ -95,9 +95,9 @@ int SoundDriverAdlib::songCommand(uint commandId, byte musicVolume, byte sfxVolu
 		resetFrequencies();
 	} else if (commandId == RESTART_SONG) {
 		_field180 = 0;
-		_musicPlaying = true;
+		_streams[stMUSIC]._playing = true;
 	} else if (commandId < 0x100) {
-		if (_musicPlaying) {
+		if (_streams[stMUSIC]._playing) {
 			_field180 = commandId;
 			_field182 = 63;
 		}
@@ -128,7 +128,7 @@ void SoundDriverAdlib::flush() {
 void SoundDriverAdlib::pausePostProcess() {
 	if (_field180 && ((_field181 += _field180) < 0)) {
 		if (--_field182 < 0) {
-			_musicPlaying = false;
+			_streams[stMUSIC]._playing = false;
 			_field180 = 0;
 			resetFrequencies();
 		} else {
@@ -139,7 +139,7 @@ void SoundDriverAdlib::pausePostProcess() {
 		}
 	}
 
-	for (int channelNum = 8; channelNum > (_exclude7 ? 7 : 6); --channelNum) {
+	for (int channelNum = 8; channelNum > 6; --channelNum) {
 		Channel &chan = _channels[channelNum];
 		if (!chan._changeFrequency || (chan._freqCtr += chan._freqCtrChange) >= 0)
 			continue;
@@ -177,12 +177,10 @@ void SoundDriverAdlib::pausePostProcess() {
 }
 
 void SoundDriverAdlib::resetFX() {
-	if (!_exclude7) {
-		_channels[7]._frequency = 0;
-		setFrequency(7, 0);
-		_channels[7]._volume = 63;
-		setOutputLevel(7, 63);
-	}
+	_channels[7]._frequency = 0;
+	setFrequency(7, 0);
+	_channels[7]._volume = 63;
+	setOutputLevel(7, 63);
 
 	_channels[8]._frequency = 0;
 	setFrequency(8, 0);
@@ -340,7 +338,7 @@ bool SoundDriverAdlib::fxSetInstrument(const byte *&srcP, byte param) {
 bool SoundDriverAdlib::fxSetVolume(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxSetVolume %d", (int)*srcP);
 
-	if (!_field180 && (!_exclude7 || param != 7)) {
+	if (!_field180) {
 		_channels[param]._volume = *srcP;
 		setOutputLevel(param, *srcP);
 	}
@@ -363,11 +361,9 @@ bool SoundDriverAdlib::fxSetPanning(const byte *&srcP, byte param) {
 	byte note = *srcP++;
 	debugC(3, kDebugSound, "fxSetPanning - %x", note);
 
-	if (!_exclude7 || param != 7) {
-		uint freq = calcFrequency(note);
-		setFrequency(param, freq);
-		_channels[param]._frequency = freq;
-	}
+	uint freq = calcFrequency(note);
+	setFrequency(param, freq);
+	_channels[param]._frequency = freq;
 
 	return false;
 }
@@ -383,28 +379,21 @@ bool SoundDriverAdlib::fxFade(const byte *&srcP, byte param) {
 	uint freq = calcFrequency(*srcP++);
 	debugC(3, kDebugSound, "fxFade %d %x", param, freq);
 
-	if (!_exclude7 || param != 7) {
-		_channels[param]._frequency = freq;
-		setFrequency(param, freq);
-	}
+	_channels[param]._frequency = freq;
+	setFrequency(param, freq);
 
 	return false;
 }
 
 bool SoundDriverAdlib::fxStartNote(const byte *&srcP, byte param) {
-	if (!_exclude7 || param != 7) {
-		byte note = *srcP++;
-		uint freq = calcFrequency(note);
-		debugC(3, kDebugSound, "fxStartNote %x -> %x", note, freq);
+	byte note = *srcP++;
+	uint freq = calcFrequency(note);
+	debugC(3, kDebugSound, "fxStartNote %x -> %x", note, freq);
 
-		setFrequency(param, freq);
-		freq |= 0x2000;
-		_channels[param]._frequency = freq;
-		setFrequency(param, freq);
-	} else {
-		++srcP;
-		debugC(3, kDebugSound, "fxStartNote skipped");
-	}
+	setFrequency(param, freq);
+	freq |= 0x2000;
+	_channels[param]._frequency = freq;
+	setFrequency(param, freq);
 
 	return false;
 }
@@ -421,8 +410,7 @@ bool SoundDriverAdlib::fxPlayInstrument(const byte *&srcP, byte param) {
 	byte instrument = *srcP++;
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
-	if (!_exclude7 || param != 7)
-		playInstrument(param, _fxInstrumentPtrs[instrument], true);
+	playInstrument(param, _fxInstrumentPtrs[instrument], true);
 
 	return false;
 }

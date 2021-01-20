@@ -49,9 +49,9 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
 		return;
 	}
-	const int32 camX = _engine->_grid->newCameraX << 9;
-	const int32 camY = _engine->_grid->newCameraY << 8;
-	const int32 camZ = _engine->_grid->newCameraZ << 9;
+	const int32 camX = _engine->_grid->newCameraX * BRICK_SIZE;
+	const int32 camY = _engine->_grid->newCameraY * BRICK_HEIGHT;
+	const int32 camZ = _engine->_grid->newCameraZ * BRICK_SIZE;
 	int32 distance = _engine->_movements->getDistance3D(camX, camY, camZ, x, y, z);
 	distance = _engine->_collision->getAverageValue(0, distance, 10000, 255);
 	const byte targetVolume = CLIP<byte>(255 - distance, 0, 255);
@@ -74,6 +74,13 @@ void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
 	if (sampSize == 0) {
 		warning("Failed to load %s", Resources::HQR_FLASAMP_FILE);
 		return;
+	}
+
+	// Fix incorrect sample files first byte
+	if (*sampPtr != 'C') {
+		_engine->_text->hasHiddenVox = *sampPtr != '\0';
+		_engine->_text->voxHiddenIndex++;
+		*sampPtr = 'C';
 	}
 
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_FLASAMP_FILE);

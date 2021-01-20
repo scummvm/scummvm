@@ -41,9 +41,9 @@ public:
 
 	void createScreenThumbnail(Graphics::Surface &dst) override;
 private:
-	const char *getMenuTitle(const Menu &menu) override;
-	const char *getMenuItemTitle(const MenuItem &menuItem) override;
-	const char *getMenuItemLabel(const MenuItem &menuItem) override;
+	Common::String getMenuTitle(const Menu &menu) override;
+	Common::String getMenuItemTitle(const MenuItem &menuItem) override;
+	Common::String getMenuItemLabel(const MenuItem &menuItem) override;
 
 	uint8 defaultColor1() const override { return 0xCF; }
 	uint8 defaultColor2() const override { return 0xF8; }
@@ -57,7 +57,7 @@ private:
 
 	void resetState(int item);
 
-	char *getTableString(int id, bool decode) override;
+	Common::String getTableString(int id, bool decode) override;
 
 	KyraEngine_HoF *_vm;
 	Screen_HoF *_screen;

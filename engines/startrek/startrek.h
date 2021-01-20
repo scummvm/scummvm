@@ -261,7 +261,7 @@ public:
 	void playBridgeSequence(int sequenceId);
 	void handleBridgeEvents();
 	void handleBridgeComputer();
-	void showMissionPerformance(int score, int missionScoreTextId);
+	void showMissionPerformance(int score, int missionScoreTextId, int missionId);
 
 	int _bridgeSequenceToLoad;
 
@@ -276,18 +276,21 @@ private:
 	void wrongDestinationRandomEncounter();
 	void bridgeCrewAction(int crewId);
 	void contactTargetAction();
-	void orbitPlanetSequence();
+	void orbitPlanetSequence(int sequenceId);
 	void negotiateWithElasiCereth();
 	void hailTheMasada();
 
-	int _targetPlanet;
-	int _currentPlanet;
+	int16 _targetPlanet;
+	int16 _currentPlanet;
 	int _currentScreenTalker;
 	bool _gameIsPaused;
 	bool _hailedTarget;
 	int _deadMasadaPrisoners;
 	bool _beamDownAllowed;
 	int _missionEndFlag;
+	int16 _randomEncounterType;	// 1: Klingon, 2: Romulan, 3: Elasi
+	int16 _lastMissionId;
+	int16 _missionPoints[7];
 
 public:
 	void playMovie(Common::String filename);

@@ -21,12 +21,14 @@
  */
 
 #include "twine/audio/music.h"
+#include "audio/audiostream.h"
 #include "audio/midiparser.h"
 #include "audio/midiplayer.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "twine/detection.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/twine.h"
@@ -191,6 +193,17 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		stopMidiMusic();
 	}
 
+	if (_engine->_gameFlags & TF_DOTEMU_ENHANCED) {
+		const Common::String &trackName = Common::String::format("lba1-%02i", midiIdx);
+		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
+		if (stream != nullptr) {
+			const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+			_engine->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_midiHandle,
+						Audio::makeLoopingAudioStream(stream, loop), volume);
+			return true;
+		}
+	}
+
 	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
 	if (midiSize == 0) {
 		return false;
@@ -200,6 +213,10 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 }
 
 void Music::stopMidiMusic() {
+	if (_engine->_gameFlags & TF_DOTEMU_ENHANCED) {
+		_engine->_system->getMixer()->stopHandle(_midiHandle);
+	}
+
 	_midiPlayer.stop();
 	free(midiPtr);
 	midiPtr = nullptr;

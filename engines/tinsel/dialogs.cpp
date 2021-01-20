@@ -5081,7 +5081,7 @@ void Dialogs::setInvWinParts(SCNHANDLE hf) {
 	_hWinParts = hf;
 
 #ifdef DEBUG
-	pfilm = (const FILM *)LockMem(hf);
+	pfilm = (const FILM *)_vm->_handle->LockMem(hf);
 	assert(FROM_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
 #endif
 }
@@ -5098,7 +5098,7 @@ void Dialogs::setFlagFilms(SCNHANDLE hf) {
 	_flagFilm = hf;
 
 #ifdef DEBUG
-	pfilm = (const FILM *)LockMem(hf);
+	pfilm = (const FILM *)_vm->_handle->LockMem(hf);
 	assert(FROM_32(pfilm->numreels) >= HOPEDFORFREELS); // not as many reels as expected
 #endif
 }

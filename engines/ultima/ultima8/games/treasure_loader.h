@@ -25,7 +25,6 @@
 
 #include "ultima/ultima8/world/actors/treasure_info.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {

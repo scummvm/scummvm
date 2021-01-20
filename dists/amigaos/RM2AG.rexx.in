@@ -1,8 +1,7 @@
 /*
-$VER: RM2AG.rexx 0.24 (23.08.2020) README(.md) to .guide converter.
-This script converts a given markdown README file (right now, only
-ScummVM is supported) to a basic hypertext AmigaGuide file and installs
-it to a given path, if available.
+$VER: RM2AG.rexx 0.25 (09.01.2021) README (.md) to .guide converter.
+Converts the ScummVM markdown README file to a basic hypertext AmigaGuide
+file and installs it to the given path.
 */
 
 PARSE ARG readme_md install_path
@@ -17,10 +16,10 @@ IF ~ARG() THEN DO
 END
 
 /*
-If the given filename/path has spaces in it, AmigaDOS/CLI
-will add extra quotation marks to secure a sane working path.
-Get rid of them to make AREXX find the file and remove leading
-and trailing spaces.
+If the given filename/path has spaces in it, AmigaDOS/CLI will add extra
+quotation marks to secure a sane working path.
+Get rid of them to make AREXX find the file and remove leading and trailing
+spaces.
 */
 IF ~EXISTS(readme_md) THEN DO
 	SAY readme_md' not available!'
@@ -42,7 +41,7 @@ ELSE DO
 	Check for destination path and create it, if needed.
 	*/
 	IF ~EXISTS(install_path'/') THEN
-		ADDRESS COMMAND 'makedir 'install_path
+		ADDRESS COMMAND 'makedir ALL FORCE 'install_path
 END
 
 IF ~OPEN(check_readme,readme_md,'R') THEN DO
@@ -75,7 +74,7 @@ IF ~OPEN(guide_write,'README.guide','W') THEN DO
 END
 
 /*
-Prepare the AmigaGuide file, add intro and fixed text.
+Prepare AmigaGuide file, add intro and fixed text.
 */
 CALL WRITELN guide_write,'@DATABASE ScummVM README.guide'
 CALL WRITELN guide_write,'@$VER: ScummVM Readme @VERSION@'
@@ -102,9 +101,9 @@ DO WHILE EOF(readme_read) = 0
 
 	/*
 	Check for any "rolled over" lines and, if available, read in the rest
-	(on the following line) and rejoin them again before processing any further.
-	e.g.	- [<>3.6.3<>) Broken Sword games
-		cutscenes](#363-broken-sword-games-cutscenes)
+	(on the following line) and rejoin them before processing any further.
+	e.g.      - [3.11) Flight of the Amazon Queen
+        notes](#311-flight-of-the-amazon-queen-notes)
 	*/
 	IF POS('- [<>',working_line) > 0 THEN DO
 		IF POS('(#',working_line) = 0 THEN DO
@@ -121,16 +120,15 @@ DO WHILE EOF(readme_read) = 0
 	ELSE DO
 		/*
 		Fix empty chapters:
-		Two chapters (1.0 and 7.8) are "empty", consisting of only
-		it`s chapter names. Link them to their respective sub chapters
-		(1.1 and 7.8.1) to not display a blank page.
-
+		Two chapters (1.0 and 7.8) are "empty", consisting of only it's
+		chapter names. Link them to their respective sub chapters (1.1 and
+		7.8.1) to not display a blank page.
 		If chapter 1.0 is found, add a link node to chapter 1.1.
 		*/
 		IF POS('  - [<>1.0<>)',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			working_line=COMPRESS(working_line,'[<>')
 			CALL WRITELN guide_write,'  @{" 1.0 " Link "1.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1)
@@ -141,17 +139,17 @@ DO WHILE EOF(readme_read) = 0
 		*/
 		IF POS('      - [<>7.8<>)',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			working_line=COMPRESS(working_line,'[<>')
 			CALL WRITELN guide_write,'    @{" 7.8 " Link "7.8.1"} 'SUBSTR(working_line,1,LASTPOS(']',working_line)-1)
 		END
 
 		/*
-		If a single number main chapter is found (1.0 upto 9.0),
-		prepare and write the link node.
-		Just for the record:
+		If a single number main chapter is found (1.0 upto 9.0), prepare and
+		write the link node.
+		Note:
 		A "\" (backslash) is treated as escape character in AmigaGuides.
 		Remove it from the node links.
 		*/
@@ -159,34 +157,34 @@ DO WHILE EOF(readme_read) = 0
 			CALL WRITELN guide_write,' '
 			CALL WRITELN guide_write,'  @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			working_line=COMPRESS(working_line,'-[<>')
 		END
 
 		/*
-		If a level one sub chapter is found (i.e. 1.1, 1.2 etc.),
-		prepare and write the link node.
+		If a level one sub chapter is found (i.e. 1.1, 1.2 etc.), prepare and
+		write the link node.
 		*/
 		IF POS('- [<>',working_line) = 7 THEN DO
 			CALL WRITELN guide_write,'    @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			working_line=COMPRESS(working_line,'.[<>')
 		END
 
 		/*
-		If a level two sub chapter is found (i.e. 3.6.1, 3.6.2 etc.),
-		prepare and write the link node.
+		If a level two sub chapter is found (i.e. 3.6.1, 3.6.2 etc.), prepare
+		and write the link node.
 		*/
 		IF POS('- [<>',working_line) = 11 THEN DO
 			CALL WRITELN guide_write,'      @{" 'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2) '" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"} 'COMPRESS(SUBSTR(working_line,1,LASTPOS(']',working_line)-1),'*<>[]\')
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			working_line=COMPRESS(working_line,'.[<>')
 		END
@@ -194,8 +192,8 @@ DO WHILE EOF(readme_read) = 0
 END
 
 /*
-Finish TOC (hardcoded as the outro text would be read in last,
-but needs to be written after TOC creation finished).
+Finish TOC (hardcoded as the outro text would be read in last, but needs to
+be written after TOC creation finished).
 */
 CALL WRITELN guide_write,'-----'
 CALL WRITELN guide_write,' '
@@ -225,41 +223,40 @@ DO WHILE EOF(readme_read) = 0
 	ELSE DO
 		/*
 		Fix empty chapters:
-		Two chapters (1.0 and 7.8) are "empty", consisting of only
-		it`s chapter names. Link them to their respective sub chapters
-		(1.1 and 7.8.1) to not display a blank page.
-
-		If chapter 1.1 is found, don`t close the NODE, just write the line.
+		Two chapters (1.0 and 7.8) are "empty", consisting of only it's
+		chapter names. Link them to their respective sub chapters (1.1 and
+		7.8.1) to not display a blank page.
+		If chapter 1.1 is found, don't close the NODE, just write the line.
 		*/
 		IF POS('<>1.1<>',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 		END
 
 		/*
-		If chapter 7.8.1 is found don`t close the NODE, just write the line.
+		If chapter 7.8.1 is found don't close the NODE, just write the line.
 		*/
 		IF POS('<>7.8.1<>',working_line) = 1 THEN DO
 			/*
-			Get rid of the markers, so the following loops won`t process
-			them again.
+			Get rid of the markers, so the following loops won't process them
+			again.
 			*/
 			CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 		END
 
 		IF POS('<>',working_line) > 0 THEN DO
 			/*
-			Check for link references inside the text and create link
-			nodes for them.
+			Check for link references inside the text and create link nodes
+			for them.
 			*/
 			IF POS('section <>',working_line) > 0 THEN DO
 				working_line=SUBSTR(working_line,1,POS('<>',working_line)-1)'@{"'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" Link "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'"}'SUBSTR(working_line,LASTPOS('<>',working_line)+2)
 				/*
-				Get rid of the markers, so the following loops won`t
-				process them again.
+				Get rid of the markers, so the following loops won't process
+				them again.
 				*/
 				CALL WRITELN guide_write,COMPRESS(working_line,'<>')
 			END
@@ -271,7 +268,7 @@ DO WHILE EOF(readme_read) = 0
 				CALL WRITELN guide_write,'@NODE "'SUBSTR(working_line,POS('<>',working_line)+2,LASTPOS('<>',working_line)-POS('<>',working_line)-2)'" "'COMPRESS(working_line,'<>#')'"'
 				CALL WRITELN guide_write,' '
 				/*
-				Get rid of the markers, so the following loops won`t process
+				Get rid of the markers, so the following loops won't process
 				them again.
 				*/
 				CALL WRITELN guide_write,COMPRESS(working_line,'<>')
@@ -279,15 +276,15 @@ DO WHILE EOF(readme_read) = 0
 		END
 	END
 	/*
-	Read in the line at the end of the second loop, as the first line to
-	work with was already read in on the end of the first loop.
+	Read in the line at the end of the second loop, as the first line to work
+	with was already read in on the end of the first loop.
 	*/
 	working_line=READLN(readme_read)
 
 	/*
 	If the outtro text has been found, leave loop and prepare for closing.
 	*/
-	IF POS('-----',working_line,1) =1 THEN
+	IF WORD(working_line,1) = '-----' THEN
 		LEAVE
 END
 
@@ -308,10 +305,9 @@ IF ~CLOSE(guide_write) THEN DO
 END
 
 /*
-Install finished README.guide to installation path
-and delete README.guide.
+Install finished README.guide to installation path and delete it on closure.
 */
-ADDRESS COMMAND 'copy README.guide 'install_path
-ADDRESS COMMAND 'delete README.guide'
+ADDRESS COMMAND 'copy QUIET README.guide 'install_path
+ADDRESS COMMAND 'delete FORCE QUIET README.guide'
 
 EXIT

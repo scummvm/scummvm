@@ -24,12 +24,11 @@
 #include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-TTFRenderedText::TTFRenderedText(Texture *texture, int width, int height,
+TTFRenderedText::TTFRenderedText(Graphics::ManagedSurface *texture, int width, int height,
 		int vLead, TTFont *font) : _texture(texture), _font(font) {
 	_width = width;
 	_height = height;

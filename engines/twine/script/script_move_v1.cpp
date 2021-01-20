@@ -155,8 +155,9 @@ static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x06
  */
 static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
-	// TODO no params
-	return -1;
+	ctx.actor->positionInMoveScript = 0;
+	ctx.stream.seek(0);
+	return 0;
 }
 
 /**
@@ -322,6 +323,7 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_renderer->destZ = sp.z;
 
 	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
+	// TODO: this adds an angle to the animType value
 	ctx.actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->y, 0, sp.y, engine->_movements->targetActorDistance);
 
 	if (engine->_movements->targetActorDistance > 100) {
@@ -343,7 +345,7 @@ static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->speed = ctx.stream.readSint16LE();
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
-		engine->_movements->setActorAngle(0, ctx.actor->speed, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ctx.actor->speed, ANGLE_17, &ctx.actor->move);
 	}
 
 	return 0;
@@ -434,7 +436,7 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -450,7 +452,7 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -466,7 +468,7 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -482,7 +484,7 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -496,7 +498,7 @@ static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = 0;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = -1000;
-		engine->_movements->setActorAngle(ANGLE_0, -1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, -ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }

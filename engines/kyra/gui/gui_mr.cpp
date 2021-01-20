@@ -489,7 +489,7 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 		_itemInHand = slotItem;
 		_mainCharacter.inventory[slot] = kItemNone;
 	} else if (_itemInHand == 27) {
-		if (_chatText)
+		if (!_chatText.empty())
 			return 0;
 		return buttonJesterStaff(&_mainButtonData[3]);
 	} else {
@@ -1062,29 +1062,32 @@ void GUI_MR::flagButtonDisable(Button *button) {
 	}
 }
 
-const char *GUI_MR::getMenuTitle(const Menu &menu) {
+Common::String GUI_MR::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
-		return 0;
+		return Common::String();
 
 	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menu.menuNameId);
 }
 
-const char *GUI_MR::getMenuItemTitle(const MenuItem &menuItem) {
+Common::String GUI_MR::getMenuItemTitle(const MenuItem &menuItem) {
+	if (menuItem.useItemString)
+		return menuItem.itemString;
+
 	if (!menuItem.itemId)
-		return 0;
+		return Common::String();
 
 	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menuItem.itemId);
 }
 
-const char *GUI_MR::getMenuItemLabel(const MenuItem &menuItem) {
+Common::String GUI_MR::getMenuItemLabel(const MenuItem &menuItem) {
 	if (!menuItem.labelId)
-		return 0;
+		return Common::String();
 
 	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menuItem.labelId);
 }
 
-char *GUI_MR::getTableString(int id, bool) {
-	return (char *)_vm->getTableEntry(_vm->_optionsFile, id);
+Common::String GUI_MR::getTableString(int id, bool) {
+	return Common::String((char *)_vm->getTableEntry(_vm->_optionsFile, id));
 }
 
 int GUI_MR::redrawButtonCallback(Button *button) {

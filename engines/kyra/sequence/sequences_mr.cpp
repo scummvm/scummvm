@@ -178,7 +178,7 @@ void KyraEngine_MR::hideGoodConscience() {
 }
 
 void KyraEngine_MR::eelScript() {
-	if (_chatText)
+	if (!_chatText.empty())
 		return;
 	_screen->hideMouse();
 

@@ -24,7 +24,6 @@
 #define ULTIMA4_GFX_IMAGE_H
 
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "graphics/managed_surface.h"
 

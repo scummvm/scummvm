@@ -161,11 +161,6 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
     return(outlen);
 }
 
-#ifdef DEBUG
-#error longjump unsupported in ScummVM
-#endif /* DEBUG */
-
-
 
 #ifdef ERR_NO_MACRO
 

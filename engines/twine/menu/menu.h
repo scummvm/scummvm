@@ -30,7 +30,7 @@
 namespace TwinE {
 
 #define MAX_BUTTONS 10
-#define PLASMA_WIDTH (SCREEN_WIDTH / 2)
+#define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
@@ -164,14 +164,14 @@ private:
 	int32 volumeMenu();
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
-	void drawInfoMenu(int16 left, int16 top);
+	void drawInfoMenu(int16 left, int16 top, int16 width);
 	Common::Rect calcBehaviourRect(HeroBehaviourType behaviour) const;
 	bool isBehaviourHovered(HeroBehaviourType behaviour) const;
-	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox);
+	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect);
 	void drawInventoryItems();
-	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour);
+	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect);
 	void drawBehaviourMenu(int32 angle);
-	void drawItem(int32 item);
+	void drawItem(int32 item, Common::Rect &dirtyRect);
 	/**
 	 * Draw the entire button box
 	 * @param left start width to draw the button
@@ -203,10 +203,9 @@ public:
 
 	/**
 	 * Process the plasma effect
-	 * @param top top height where the effect will be draw in the front buffer
 	 * @param color plasma effect start color
 	 */
-	void processPlasmaEffect(int32 left, int32 top, int32 color);
+	void processPlasmaEffect(const Common::Rect &rect, int32 color);
 
 	/**
 	 * Draw the entire button box

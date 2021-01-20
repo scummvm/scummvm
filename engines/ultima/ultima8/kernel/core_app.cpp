@@ -23,12 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/misc/args.h"
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {

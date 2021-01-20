@@ -27,23 +27,18 @@
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/camera_process.h" // for resetting the camera
 #include "ultima/ultima8/gumps/gump.h" // For CloseItemDependents notification
-#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {

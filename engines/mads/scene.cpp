@@ -129,12 +129,14 @@ void Scene::loadSceneLogic() {
 	case GType_RexNebular:
 		_sceneLogic = Nebular::SceneFactory::createScene(_vm);
 		break;
+#ifdef ENABLE_MADSV2
 	case GType_Dragonsphere:
 		_sceneLogic = Dragonsphere::SceneFactory::createScene(_vm);
 		break;
 	case GType_Phantom:
 		_sceneLogic = Phantom::SceneFactory::createScene(_vm);
 		break;
+#endif
 	default:
 		error("Scene logic: Unknown game");
 	}

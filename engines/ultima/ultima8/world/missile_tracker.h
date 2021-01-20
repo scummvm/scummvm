@@ -30,14 +30,14 @@ class Item;
 
 class MissileTracker {
 public:
-	MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
+	MissileTracker(const Item *item, int32 sx, int32 sy, int32 sz,
 	               int32 tx, int32 ty, int32 tz,
 	               int32 speed, int32 gravity);
-	MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
+	MissileTracker(const Item *item, int32 tx, int32 ty, int32 tz,
 	               int32 speed, int32 gravity);
 	~MissileTracker();
 
-	bool isPathClear();
+	bool isPathClear() const;
 
 	void launchItem();
 

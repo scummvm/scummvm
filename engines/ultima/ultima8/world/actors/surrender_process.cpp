@@ -20,17 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {

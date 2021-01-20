@@ -20,10 +20,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/sliding_widget.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +31,7 @@ SlidingWidget::SlidingWidget()
 	: Gump() {
 }
 
-SlidingWidget::SlidingWidget(int x, int y, Shape *shape, uint32 frameNum)
+SlidingWidget::SlidingWidget(int x, int y, const Shape *shape, uint32 frameNum)
 	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
 	_shape = shape;
 	_frameNum = frameNum;

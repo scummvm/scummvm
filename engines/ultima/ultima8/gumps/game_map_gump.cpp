@@ -20,36 +20,21 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/item_sorter.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/missile_tracker.h"
-#include "ultima/ultima8/misc/direction.h"
 
-#include "ultima/ultima8/world/gravity_process.h" // hack...
-#include "ultima/ultima8/kernel/object_manager.h" // hack...
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
 
 // map dumping
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/filesys/file_system.h"
-#include "image/png.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -125,8 +110,6 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	_displayList->BeginDisplayList(surf, lx, ly, lz);
 
 	uint32 gametick = Kernel::get_instance()->getFrameNum();
-	if (GAME_IS_CRUSADER)
-		gametick /= 2;
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
@@ -266,7 +249,7 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	int32 cx, cy, cz;
 	CameraProcess *cam = CameraProcess::GetCameraProcess();
 	if (!cam) CameraProcess::GetCameraLocation(cx, cy, cz);
-	else cam->GetLerped(cx, cy, cz, lerp_factor);
+	else cam->GetLerped(cx, cy, cz, lerp_factor, true);
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
 	gx = (ix - iy) / 4;

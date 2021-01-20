@@ -20,80 +20,46 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/translation.h"
-#include "common/unzip.h"
-#include "common/translation.h"
-#include "common/config-manager.h"
-#include "gui/saveload.h"
 #include "image/png.h"
-#include "ultima/shared/engine/events.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/misc/pent_include.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/filesys/savegame.h"
-#include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
-#include "ultima/ultima8/gumps/scaler_gump.h"
-#include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
-#include "ultima/ultima8/gumps/quit_gump.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/gumps/weasel_gump.h"
 
 // For gump positioning... perhaps shouldn't do it this way....
-#include "ultima/ultima8/gumps/bark_gump.h"
-#include "ultima/ultima8/gumps/ask_gump.h"
-#include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
 #include "ultima/ultima8/gumps/keypad_gump.h"
 #include "ultima/ultima8/gumps/computer_gump.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/battery_charger_process.h"
 #include "ultima/ultima8/world/actors/cru_healer_process.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/usecode/u8_intrinsics.h"
 #include "ultima/ultima8/usecode/remorse_intrinsics.h"
 #include "ultima/ultima8/usecode/regret_intrinsics.h"
-#include "ultima/ultima8/world/egg.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/graphics/inverter_process.h"
+
 #include "ultima/ultima8/graphics/cycle_process.h"
-#include "ultima/ultima8/world/actors/heal_process.h"
 #include "ultima/ultima8/world/actors/scheduler_process.h"
 #include "ultima/ultima8/world/egg_hatcher_process.h" // for a hack
 #include "ultima/ultima8/usecode/uc_process.h" // more hacking
-#include "ultima/ultima8/gumps/gump_notify_process.h" // guess
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h" // guess
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
-#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
@@ -106,26 +72,19 @@
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/avatar_death_process.h"
-#include "ultima/ultima8/world/actors/grant_peace_process.h"
-#include "ultima/ultima8/world/actors/cru_healer_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
-#include "ultima/ultima8/world/fireball_process.h"
 #include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
-#include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
 #include "ultima/ultima8/audio/remorse_music_process.h"
-#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
-#include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/meta_engine.h"
 
 namespace Ultima {
@@ -156,9 +115,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
-		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false),
-		_unkCrusaderFlag(false), _moveKeyFrame(0) {
+		_ttfOverrides(false), _audioMixer(0), _inverterGump(nullptr), _lerpFactor(256),
+		_inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
 	_application = this;
 }
 
@@ -438,7 +396,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	_desktopGump = nullptr;
 	_gameMapGump = nullptr;
-	_scalerGump = nullptr;
 	_inverterGump = nullptr;
 
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
@@ -460,15 +417,8 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		_desktopGump->MakeFocus();
 
 		if (GAME_IS_U8) {
-			debugN(MM_INFO, "Creating _scalerGump...\n");
-			_scalerGump = new ScalerGump(0, 0, dims.width(), dims.height());
-			_scalerGump->InitGump(0);
-
-			Rect scaled_dims;
-			_scalerGump->GetDims(scaled_dims);
-
 			debugN(MM_INFO, "Creating Inverter...\n");
-			_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+			_inverterGump = new InverterGump(0, 0, dims.width(), dims.height());
 			_inverterGump->InitGump(0);
 		}
 	}
@@ -504,33 +454,40 @@ void Ultima8Engine::menuInitMinimal(istring gamename) {
 	pout << "-- Finished loading minimal--" << Std::endl << Std::endl;
 }
 
+//
+// To time the frames, we use "fast" ticks which come 3000 times a second.
+//
+static uint32 _fastTicksNow() {
+	return g_system->getMillis() * 3;
+}
+
 bool Ultima8Engine::runGame() {
 	_isRunning = true;
 
-	int32 next_ticks = g_system->getMillis() * 3;  // Next time is right now!
+	int32 next_ticks = _fastTicksNow();  // Next time is right now!
 
 	Common::Event event;
 	while (_isRunning) {
 		_inBetweenFrame = true;  // Will get set false if it's not an _inBetweenFrame
 
 		if (!_frameLimit) {
-			_kernel->runProcesses();
-			if (GAME_IS_CRUSADER)
+			for (unsigned int tick = 0; tick < Kernel::TICKS_PER_FRAME; tick++) {
 				_kernel->runProcesses();
-			_desktopGump->run();
+				_desktopGump->run();
+			}
 			_inBetweenFrame = false;
-			next_ticks = _animationRate + g_system->getMillis() * 3;
+			next_ticks = _animationRate + _fastTicksNow();
 			_lerpFactor = 256;
 		} else {
-			int32 ticks = g_system->getMillis() * 3;
+			int32 ticks = _fastTicksNow();
 			int32 diff = next_ticks - ticks;
 
 			while (diff < 0) {
 				next_ticks += _animationRate;
-				_kernel->runProcesses();
-				if (GAME_IS_CRUSADER)
+				for (unsigned int tick = 0; tick < Kernel::TICKS_PER_FRAME; tick++) {
 					_kernel->runProcesses();
-				_desktopGump->run();
+					_desktopGump->run();
+				}
 #if 0
 				perr << "--------------------------------------" << Std::endl;
 				perr << "NEW FRAME" << Std::endl;
@@ -538,7 +495,7 @@ bool Ultima8Engine::runGame() {
 #endif
 				_inBetweenFrame = false;
 
-				ticks = g_system->getMillis() * 3;
+				ticks = _fastTicksNow();
 
 				// If frame skipping is off, we will only recalc next
 				// ticks IF the frames are taking up 'way' too much time.
@@ -682,33 +639,12 @@ void Ultima8Engine::GraphicSysInit() {
 	debugN(MM_INFO, "Loading Default Mouse Cursor...\n");
 	_mouse->setup();
 
-	Std::string alt_confont;
-	bool confont_loaded = false;
-
-	if (_settingMan->get("console_font", alt_confont)) {
-		debugN(MM_INFO, "Alternate console font found...\n");
-		confont_loaded = LoadConsoleFont(alt_confont);
-	}
-
-	if (!confont_loaded) {
-		debugN(MM_INFO, "Loading default console font...\n");
-		if (!LoadConsoleFont("@data/fixedfont.ini")) {
-			error("Failed to load console font. Exiting");
-		}
-	}
-
 	_desktopGump = new DesktopGump(0, 0, width, height);
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
 
 	if (GAME_IS_U8) {
-		_scalerGump = new ScalerGump(0, 0, width, height);
-		_scalerGump->InitGump(0);
-
-		Rect scaled_dims;
-		_scalerGump->GetDims(scaled_dims);
-
-		_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+		_inverterGump = new InverterGump(0, 0, width, height);
 		_inverterGump->InitGump(0);
 	}
 
@@ -747,19 +683,6 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 	if (height > 0) _settingMan->set("height", height);
 
 	GraphicSysInit();
-}
-
-bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
-	// try to load the file
-	debugN(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
-	if (_configFileMan->readConfigFile(confontini, "confont", true))
-		pout << "Ok" << Std::endl;
-	else {
-		pout << "Failed" << Std::endl;
-		return false;
-	}
-
-	return true;
 }
 
 void Ultima8Engine::enterTextMode(Gump *gump) {
@@ -1067,7 +990,6 @@ void Ultima8Engine::resetEngine() {
 	// Reset thet gumps
 	_desktopGump = nullptr;
 	_gameMapGump = nullptr;
-	_scalerGump = nullptr;
 	_inverterGump = nullptr;
 
 	_textModes.clear();
@@ -1096,34 +1018,22 @@ void Ultima8Engine::setupCoreGumps() {
 	_desktopGump->MakeFocus();
 
 	if (GAME_IS_U8) {
-		debugN(MM_INFO, "Creating ScalerGump...\n");
-		_scalerGump = new ScalerGump(0, 0, dims.width(), dims.height());
-		_scalerGump->InitGump(0);
-
-		Rect scaled_dims;
-		_scalerGump->GetDims(scaled_dims);
-
 		debugN(MM_INFO, "Creating Inverter...\n");
-		_inverterGump = new InverterGump(0, 0, scaled_dims.width(), scaled_dims.height());
+		_inverterGump = new InverterGump(0, 0, dims.width(), dims.height());
 		_inverterGump->InitGump(0);
-
-		debugN(MM_INFO, "Creating GameMapGump...\n");
-		_gameMapGump = new GameMapGump(0, 0, scaled_dims.width(), scaled_dims.height());
-		_gameMapGump->InitGump(0);
-	} else {
-		_gameMapGump = new GameMapGump(0, 0, dims.width(), dims.height());
-		_gameMapGump->InitGump(0);
 	}
+	debugN(MM_INFO, "Creating GameMapGump...\n");
+	_gameMapGump = new GameMapGump(0, 0, dims.width(), dims.height());
+	_gameMapGump->InitGump(0);
 
 	// TODO: clean this up
 	if (GAME_IS_U8) {
 		assert(_desktopGump->getObjId() == 256);
-		assert(_scalerGump->getObjId() == 257);
-		assert(_inverterGump->getObjId() == 258);
-		assert(_gameMapGump->getObjId() == 259);
+		assert(_inverterGump->getObjId() == 257);
+		assert(_gameMapGump->getObjId() == 258);
 	}
 
-	for (uint16 i = 261; i < 384; ++i)
+	for (uint16 i = 259; i < 384; ++i)
 		_objectManager->reserveObjId(i);
 }
 
@@ -1366,7 +1276,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 	assert(_desktopGump);
 
 	if (dynamic_cast<ShapeViewerGump *>(gump) || dynamic_cast<MiniMapGump *>(gump) ||
-		dynamic_cast<ScalerGump *>(gump) || dynamic_cast<MessageBoxGump *>(gump)// ||
+		dynamic_cast<MessageBoxGump *>(gump)// ||
 		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
 		//                dynamic_cast<AskGump *>(gump)))
 		) {
@@ -1377,19 +1287,16 @@ void Ultima8Engine::addGump(Gump *gump) {
 		else
 			_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<InverterGump *>(gump)) {
-		_scalerGump->AddChild(gump);
+		_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<DesktopGump *>(gump)) {
 	} else {
-		if (GAME_IS_U8)
-			_scalerGump->AddChild(gump);
-		else
-			_desktopGump->AddChild(gump);
+		_desktopGump->AddChild(gump);
 	}
 }
 
 uint32 Ultima8Engine::getGameTimeInSeconds() {
 	// 1 second per every 30 frames
-	return (Kernel::get_instance()->getFrameNum() + _timeOffset) / 30; // constant!
+	return (Kernel::get_instance()->getFrameNum() + _timeOffset) / Kernel::FRAMES_PER_SECOND; // constant!
 }
 
 void Ultima8Engine::moveKeyEvent() {
@@ -1398,7 +1305,7 @@ void Ultima8Engine::moveKeyEvent() {
 
 bool Ultima8Engine::moveKeyDownRecently() {
 	uint32 nowframe = Kernel::get_instance()->getFrameNum();
-	return (nowframe - _moveKeyFrame) < 60;
+	return (nowframe - _moveKeyFrame) < 2 * Kernel::FRAMES_PER_SECOND;
 }
 
 void Ultima8Engine::save(Common::WriteStream *ws) {
@@ -1469,7 +1376,7 @@ uint32 Ultima8Engine::I_makeAvatarACheater(const uint8 * /*args*/,
 uint32 Ultima8Engine::I_getCurrentTimerTick(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	// number of ticks of a 60Hz timer, with the default animrate of 30Hz
-	return Kernel::get_instance()->getFrameNum() * 2;
+	return Kernel::get_instance()->getTickNum();
 }
 
 uint32 Ultima8Engine::I_setAvatarInStasis(const uint8 *args, unsigned int argsize) {
@@ -1535,7 +1442,7 @@ uint32 Ultima8Engine::I_setTimeInGameHours(const uint8 *args,
 	ARG_UINT16(newhour);
 
 	// 1 _game hour per every 27000 frames
-	int32   absolute = newhour * 27000;
+	int32 absolute = newhour * 27000;
 	get_instance()->_timeOffset = absolute - Kernel::get_instance()->getFrameNum();
 
 	return 0;

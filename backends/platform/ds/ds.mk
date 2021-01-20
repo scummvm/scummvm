@@ -207,7 +207,7 @@ $(ndsdir)/arm7/source/main.o: CPPFLAGS=
 $(ndsdir)/arm7/arm7.elf: \
 	$(ndsdir)/arm7/source/libcartreset/cartreset.o \
 	$(ndsdir)/arm7/source/main.o
-	$(CXX) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
+	+$(LD) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
 
 
 

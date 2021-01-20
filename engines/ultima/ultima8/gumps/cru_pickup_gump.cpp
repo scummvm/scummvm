@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/cru_pickup_gump.h"
 
 #include "ultima/ultima8/gumps/translucent_gump.h"
@@ -30,8 +29,6 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 
 namespace Ultima {
@@ -42,20 +39,19 @@ static const int COUNT_TEXT_FONT = 12;
 static const int ITEM_TEXT_FONT = 13;
 static const int ITEM_AREA_WIDTH = 60;
 
+// A high "random" index so we can always find this..
+static const int COUNT_TEXT_INDEX = 0x100;
+
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruPickupGump)
 CruPickupGump::CruPickupGump() : Gump(), _startFrame(0), _itemShapeNo(0), _q(0),
 	_gumpShapeNo(0), _gumpFrameNo(0) {
 }
 
-CruPickupGump::CruPickupGump(Item *item, int y, uint16 currentq) : Gump(0, y, 5, 5, 0), _startFrame(0) {
+CruPickupGump::CruPickupGump(const Item *item, int y) : Gump(0, y, 5, 5, 0), _startFrame(0) {
 	const WeaponInfo *weaponInfo = item->getShapeInfo()->_weaponInfo;
 	if (weaponInfo) {
 		_itemShapeNo = item->getShape();
 		_q = item->getQuality();
-		// TODO: should we add current q? + currentq;
-		// It seems like the items are hacked to give the right "q" for
-		// this gump from the last item, which is why the add process
-		// uses q + 1 instead of adding the new q.
 		_itemName = weaponInfo->_name;
 		_gumpShapeNo = weaponInfo->_displayGumpShape;
 		_gumpFrameNo = weaponInfo->_displayGumpFrame;
@@ -65,9 +61,6 @@ CruPickupGump::CruPickupGump(Item *item, int y, uint16 currentq) : Gump(0, y, 5,
 		_gumpShapeNo = 0;
 		_gumpFrameNo = 0;
 	}
-}
-
-CruPickupGump::~CruPickupGump() {
 }
 
 void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
@@ -115,11 +108,7 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 	text->InitGump(this, false);
 
 	// Paint the count if needed
-	if (_q > 1) {
-		Std::string qstr = Std::string::format("%d", _q);
-		TextWidget *count = new TextWidget(ITEM_AREA_WIDTH / 2 + 22, _dims.height() / 2 + 3, qstr, true, COUNT_TEXT_FONT);
-		count->InitGump(this, false);
-	}
+	addCountText();
 
 	// Paint the item in the mid-left item area.
 	const ShapeFrame *itemframe = itemshape->getFrame(_gumpFrameNo);
@@ -129,6 +118,30 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 	itemgump->UpdateDimsFromShape();
 	itemgump->Move(ITEM_AREA_WIDTH / 2 - itemframe->_width / 2, _dims.height() / 2 - itemframe->_height / 2);
 }
+
+void CruPickupGump::updateForNewItem(const Item *item) {
+	assert(item);
+	assert(item->getShape() == _itemShapeNo);
+	TextWidget *oldtext = dynamic_cast<TextWidget *>(FindGump(&FindByIndex<COUNT_TEXT_INDEX>));
+	if (oldtext)
+		oldtext->Close();
+	// TODO: should we add current q? + currentq;
+	// It seems like the items are hacked to give the right "q" for
+	// this gump from the last item, which is why the add process
+	// uses q + 1 instead of adding the new q.
+	_q = item->getQuality();
+	addCountText();
+}
+
+void CruPickupGump::addCountText() {
+	if (_q <= 1)
+		return;
+	Std::string qstr = Std::string::format("%d", _q);
+	TextWidget *count = new TextWidget(ITEM_AREA_WIDTH / 2 + 22, _dims.height() / 2 + 3, qstr, true, COUNT_TEXT_FONT);
+	count->InitGump(this, false);
+	count->SetIndex(COUNT_TEXT_INDEX);
+}
+
 
 void CruPickupGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	uint32 frameno = Kernel::get_instance()->getFrameNum();

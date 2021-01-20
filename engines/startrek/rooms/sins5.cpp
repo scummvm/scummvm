@@ -332,7 +332,7 @@ void Room::sins5ReachedPositionToShootLeftComputer() {
 
 void Room::sins5DrewPhaserToShootLeftComputer() {
 	loadActorAnimC(OBJECT_LEFT_COMPUTER_EXPLOSION, "s5phal", 0, 0xaf, &Room::sins5ComputerLaunchesMissiles);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	_awayMission->timers[3] = 10;
 	_awayMission->timers[0] = 24;
 }
@@ -355,7 +355,7 @@ void Room::sins5ReachedPositionToShootMiddleComputer() {
 
 void Room::sins5DrewPhaserToShootMiddleComputer() {
 	loadActorAnimC(OBJECT_MIDDLE_COMPUTER_EXPLOSION, "s5phac", 0, 0x8c, &Room::sins5ComputerLaunchesMissiles);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	_awayMission->timers[3] = 10;
 	_awayMission->timers[1] = 24;
 }
@@ -378,7 +378,7 @@ void Room::sins5ReachedPositionToShootRightComputer() {
 
 void Room::sins5DrewPhaserToShootRightComputer() {
 	loadActorAnimC(OBJECT_RIGHT_COMPUTER_EXPLOSION, "s5phar", 0, 0xaf, &Room::sins5ComputerLaunchesMissiles);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	_awayMission->timers[3] = 10;
 	_awayMission->timers[2] = 24;
 }
@@ -397,7 +397,6 @@ void Room::sins5ComputerLaunchesMissiles() {
 }
 
 void Room::sins5Timer3Expired() {
-	playSoundEffectIndex(SND_BLANK_14);
 }
 
 void Room::sins5LookAnywhere() {

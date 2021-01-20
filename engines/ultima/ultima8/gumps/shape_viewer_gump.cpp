@@ -20,10 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 
-#include "ultima/ultima8/graphics/shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -38,7 +36,6 @@
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
@@ -95,7 +92,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
 	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;
 
-	Shape *shape = _flex->getShape(_curShape);
+	const Shape *shape = _flex->getShape(_curShape);
 	if (shape && _curFrame < shape->frameCount())
 		surf->Paint(shape, _curFrame, posx, posy);
 	

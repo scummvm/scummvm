@@ -22,8 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -29,7 +29,7 @@ namespace Nuvie {
 
 using Std::vector;
 
-SeekPath::SeekPath() : A_scan(0), B_scan(0) {
+SeekPath::SeekPath() {
 
 }
 
@@ -188,8 +188,8 @@ bool SeekPath::path_search(MapCoord &start, MapCoord &goal) {
 }
 
 void SeekPath::delete_nodes() {
-	A_scan.resize(0);
-	B_scan.resize(0);
+	A_scan.clear();
+	B_scan.clear();
 }
 
 } // End of namespace Nuvie

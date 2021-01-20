@@ -148,7 +148,7 @@ void Room::tug0UseSpockOnControls() {
 
 void Room::tug0SpockReachedControlsToExamine() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 17);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 }
 
 void Room::tug0SpockExaminedControls() {
@@ -175,7 +175,6 @@ void Room::tug0UseTransmogrifierWithBitOnControls() {
 void Room::tug0SpockReachedControlsWithTransmogrifier() {
 	showText(TX_SPEAKER_SPOCK, 29, true);
 	loadActorAnim2(OBJECT_SPOCK, "susehn", -1, -1, 7);
-	playSoundEffectIndex(SND_BLANK_0b); // FIXME: blank sound?
 }
 
 void Room::tug0SpockFinishedUsingTransmogrifier() {
@@ -334,8 +333,8 @@ void Room::tug0UseTransporter() {
 
 void Room::tug0SpockReachedControlsToTransport() {
 	loadActorAnim2(OBJECT_SPOCK, "susehw", -1, -1, 18);
-	playSoundEffectIndex(SND_07);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxButton);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::tug0SpockPreparedTransporter() {
@@ -345,7 +344,7 @@ void Room::tug0SpockPreparedTransporter() {
 }
 
 void Room::tug0SpockReachedTransporter() {
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 	loadActorAnim2(OBJECT_KIRK,     "kteled", -1, -1, 21);
 	loadActorAnim2(OBJECT_SPOCK,    "steled", -1, -1, 0);
 	loadActorAnim2(OBJECT_MCCOY,    "mteled", -1, -1, 0);
@@ -384,17 +383,16 @@ void Room::tug0KirkPlacedBomb() {
 
 void Room::tug0SpockReachedControlsForBomb() {
 	loadActorAnim2(OBJECT_SPOCK, "susehw", -1, -1, 19);
-	playSoundEffectIndex(SND_07);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxButton);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::tug0SpockBeginsBeamingBomb() {
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 	loadActorAnim2(10, "bomb2", 0x5a, 0x7f, 12);
 }
 
 void Room::tug0SpockFinishesBeamingBomb() {
-	playSoundEffectIndex(SND_BLANK_14);
 	_awayMission->tug.missionScore = 0;
 	_awayMission->timers[0] = 64;
 }
@@ -419,13 +417,13 @@ void Room::tug0BombExploded() {
 void Room::tug0UseMTricorderOnControls() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 16, true);
 }
 
 void Room::tug0UseSTricorderOnControls() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 23);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 15, true);
 }
 
@@ -436,7 +434,7 @@ void Room::tug0UseMTricorderOnEngineer() {
 }
 
 void Room::tug0MccoyReachedEngineerToScan() {
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 25);
 }
 
@@ -454,7 +452,7 @@ void Room::tug0MccoyFinishedScanningEngineer() {
 void Room::tug0UseSTricorderOnEngineer() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 30, true);
 }
 
@@ -526,14 +524,14 @@ void Room::tug0LookAnywhere() {
 void Room::tug0UseSTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, 28, true);
 }
 
 void Room::tug0UseMTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 20, true); // BUG: typo
 }
 

@@ -246,7 +246,7 @@ void Room::love1WalkToDoor3() {
 void Room::love1OpenDoor3() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR3, "s3r2d3", 0xdb, 0x7e, 2);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -266,7 +266,7 @@ void Room::love1WalkToDoor1() {
 void Room::love1OpenDoor1() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR1, "s3r2d1", 0, 0, 3);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -286,7 +286,7 @@ void Room::love1WalkToDoor2() {
 void Room::love1OpenDoor2() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR2, "s3r2d2", 0, 0, 4);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -458,7 +458,7 @@ void Room::love1KirkGotCureSample() {
 
 	loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
 	loadActorAnim2(OBJECT_CHAMBER, "s3r2d6", 0xb4, 0x75, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.chamberHasDish = false;
 }
 
@@ -574,7 +574,7 @@ void Room::love1MccoyUsedReplicator() {
 	if (_roomVar.love.itemInNozzle == OBJECT_INH3) {
 		loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
 		loadActorAnim2(OBJECT_CHAMBER, "s3r2d6", 0xb4, 0x75, 7);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else {
 		showText(TX_SPEAKER_MCCOY, 19, true);
@@ -584,7 +584,7 @@ void Room::love1MccoyUsedReplicator() {
 
 void Room::love1ChamberClosed() {
 	loadActorAnim2(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 8);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::love1ChamberOpened() {
@@ -606,7 +606,7 @@ void Room::love1KirkReachedChamberToPut() {
 		showText(TX_SPEAKER_MCCOY, 14, true); // TODO: test
 	else {
 		loadActorAnim(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 1);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -685,7 +685,7 @@ void Room::love1CrewmanOpenedOrClosedFreezer() {
 	else
 		loadActorAnim(OBJECT_FREEZER, "s3r2d4", 0x67, 0x8d, 0);
 
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.freezerOpen = !_awayMission->love.freezerOpen;
 
 	walkCrewman(_roomVar.love.crewmanUsingDevice, _roomVar.love.crewmanUsingFreezerRetX, _roomVar.love.crewmanUsingFreezerRetY, 0);
@@ -768,7 +768,7 @@ void Room::love1CrewmanReachedLadder() {
 		loadRoomIndex(4, 3);
 	else { // Romulans still conscious, they shoot you
 		loadActorAnim(OBJECT_PHASERSHOT, "s3r2s2", 0xf3, 0x89, 0);
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 
 		Common::String anim = getCrewmanAnimFilename(_roomVar.love.crewmanUsingDevice, "killw");
 		loadActorAnim(_roomVar.love.crewmanUsingDevice, anim, 0x102, 0x89, 6);
@@ -792,7 +792,7 @@ void Room::love1TouchedHotspot0() {
 	if (_awayMission->love.romulansUnconsciousFromLaughingGas || _awayMission->love.romulansUnconsciousFromVirus)
 		return;
 	loadActorAnim(OBJECT_PHASERSHOT, "s3r2s1", 0xf3, 0x89, 0);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_FERRIS, 28, true);
 }

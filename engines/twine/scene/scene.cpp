@@ -137,12 +137,11 @@ bool Scene::loadSceneLBA1() {
 	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
-	alphaLight = stream.readUint16LE();
-	betaLight = stream.readUint16LE();
-
 	// FIXME: Workaround to fix lighting issue - not using proper dark light
-	alphaLight = 896;
-	betaLight = 950;
+	// Using 1215 and 1087 as light vectors - scene 8
+	alphaLight = ClampAngle(stream.readUint16LE());
+	betaLight = ClampAngle(stream.readUint16LE());
+	debug(2, "Using %i and %i as light vectors", alphaLight, betaLight);
 
 	_sampleAmbiance[0] = stream.readUint16LE();
 	_sampleRepeat[0] = stream.readUint16LE();
@@ -293,6 +292,7 @@ void Scene::changeScene() {
 	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
+	debug(2, "Change scene to %i (currently in %i)", needChangeScene, currentSceneIdx);
 
 	// local backup previous scene
 	previousSceneIdx = currentSceneIdx;
@@ -336,9 +336,9 @@ void Scene::changeScene() {
 	sceneHero->y = heroYBeforeFall = newHeroY;
 	sceneHero->z = newHeroZ;
 
-	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
+	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
-	if (previousSceneIdx != needChangeScene) {
+	if (previousSceneIdx != -1 && previousSceneIdx != needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
 		_engine->_actor->previousHeroAngle = sceneHero->angle;
 		_engine->autoSave();
@@ -356,9 +356,9 @@ void Scene::changeScene() {
 	_sampleAmbienceTime = 0;
 
 	ActorStruct *followedActor = getActor(currentlyFollowedActor);
-	_engine->_grid->newCameraX = followedActor->x >> 9;
-	_engine->_grid->newCameraY = followedActor->y >> 8;
-	_engine->_grid->newCameraZ = followedActor->z >> 9;
+	_engine->_grid->newCameraX = followedActor->x / BRICK_SIZE;
+	_engine->_grid->newCameraY = followedActor->y / BRICK_HEIGHT;
+	_engine->_grid->newCameraZ = followedActor->z / BRICK_SIZE;
 
 	_engine->_gameState->magicBallIdx = -1;
 	_engine->_movements->heroMoved = true;
@@ -368,11 +368,12 @@ void Scene::changeScene() {
 	_engine->_screens->lockPalette = false;
 
 	needChangeScene = -1;
-	changeRoomVar10 = true;
+	enableGridTileRendering = true;
 
-	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
+	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
 	if (_sceneMusic != -1) {
+		debug(2, "Scene %i music track id: %i", currentSceneIdx, _sceneMusic);
 		_engine->_music->playTrackMusic(_sceneMusic);
 	}
 }
@@ -450,7 +451,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
-		_engine->_extra->extraList[index].type |= 0x400;
+		_engine->_extra->extraList[index].type |= ExtraType::TIME_IN;
 		zone->infoData.Bonus.used = 1; // set as used
 	}
 }

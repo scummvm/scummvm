@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_MISC_ISTRING_H
 #define ULTIMA8_MISC_ISTRING_H
 
-#include "ultima/shared/std/misc.h"
 #include "ultima/shared/std/string.h"
 #include "common/array.h"
 
@@ -45,7 +44,7 @@ public:
 		return compareToIgnoreCase(s);
 	}
 
-	void split(Common::Array<istring> &arr) const ;
+	void split(Common::Array<istring> &arr) const;
 };
 
 } // End of namespace Ultima8

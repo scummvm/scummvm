@@ -24,6 +24,7 @@
 #define TWINE_MUSIC_H
 
 #include "audio/midiplayer.h"
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 
 namespace TwinE {
@@ -48,6 +49,7 @@ private:
 
 	/** Auxiliar midi pointer to  */
 	uint8 *midiPtr = nullptr;
+	Audio::SoundHandle _midiHandle;
 	/** Track number of the current playing music */
 	int32 currentMusic = -1;
 	/**
@@ -76,6 +78,7 @@ public:
 	/**
 	 * Play MIDI music
 	 * @param midiIdx music index under mini_mi_win.hqr
+	 * @note valid indices for lba1 are [1-32]
 	 */
 	bool playMidiMusic(int32 midiIdx, int32 loop = 0);
 	/** Stop MIDI music */

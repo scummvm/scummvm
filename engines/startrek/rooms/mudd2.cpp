@@ -332,7 +332,6 @@ void Room::mudd2RedshirtReachedMudd() {
 }
 
 void Room::mudd2Timer2Expired() {
-	playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::mudd2MuddFinishedPushingRedshirt() {

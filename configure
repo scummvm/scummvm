@@ -2905,7 +2905,7 @@ case $_host_os in
 		# Building with SDK 10.14+ causes blurry display on Retina screens.
 		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
 		# to n/a (i.e. 0.0). See bug #11430 for details.
-		echocheck "macOS deployement target"
+		echocheck "macOS deployment target"
 		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
 
@@ -3145,8 +3145,8 @@ EOF
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
 		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto=20"
-		append_var LDFLAGS "-flto=20"
+		append_var CXXFLAGS "-flto"
+		append_var LDFLAGS "-flto=jobserver"
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
@@ -3204,7 +3204,7 @@ EOF
 		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include -I$DEVKITPRO/portlibs/switch/include"
 		append_var LDFLAGS "-L$DEVKITPRO/libnx/lib -L$DEVKITPRO/portlibs/switch/lib"
-		append_var LIBS "-specs=$DEVKITPRO/libnx/switch.specs"
+		append_var LDFLAGS "-specs=$DEVKITPRO/libnx/switch.specs"
 		add_line_to_config_mk 'SWITCH = 1'
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-D__SWITCH_DEBUG__"
@@ -3779,7 +3779,7 @@ case $_backend in
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
-		append_var LIBS "-lSceTouch_stub -lSceHid_stub"
+		append_var LIBS "-lSceTouch_stub -lSceHid_stub -lSceMotion_stub"
 		_sdl=yes
 		_sdlversion=2.0.0
 		append_var MODULES "backends/platform/sdl"

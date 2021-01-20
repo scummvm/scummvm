@@ -93,6 +93,9 @@ private:
 	void scaleFla2x();
 	void processFrame();
 
+	void prepareGIF(int index);
+	void playGIFMovie(const char *flaName);
+
 public:
 	FlaMovies(TwinEEngine *engine);
 

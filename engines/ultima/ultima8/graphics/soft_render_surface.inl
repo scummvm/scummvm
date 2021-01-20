@@ -176,20 +176,22 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 		return;
 	const uint8		*srcpixels		= frame->_pixels;
 	const uint8		*srcmask		= frame->_mask;
-	const uint32	*pal			= untformed_pal?
-										&(s->getPalette()->_native_untransformed[0]):
-										&(s->getPalette()->_native[0]);
+	const uint32	*pal			= untformed_pal ?
+										s->getPalette()->_native_untransformed:
+										s->getPalette()->_native;
 
 #ifdef XFORM_SHAPES
-	const uint32	*xform_pal		= untformed_pal?
-										&(s->getPalette()->_xform_untransformed[0]):
-										&(s->getPalette()->_xform[0]);
+	const uint32	*xform_pal		= untformed_pal ?
+										s->getPalette()->_xform_untransformed:
+										s->getPalette()->_xform;
 #endif
 
 	const int32 width_ = frame->_width;
 	const int32 height_ = frame->_height;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
+
+	assert(_pixels && srcpixels && srcmask);
 
 	for (int i = 0; i < height_; i++)  {
 		int line = y + i;

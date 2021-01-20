@@ -25,12 +25,8 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {

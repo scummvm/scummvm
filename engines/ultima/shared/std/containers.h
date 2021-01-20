@@ -311,10 +311,6 @@ template<class VAL>
 class stack : public Common::Stack<VAL> {
 };
 
-template<class T>
-class queue : public Common::Queue<T> {
-};
-
 /**
  * Queue ordered by a provided priority function
  * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
@@ -356,7 +352,7 @@ public:
 	}
 
 	typename _Container::const_reference top() const {
-		return c.front();
+		return c.back();
 	}
 
 	void push(const typename _Container::value_type &_Val) {
@@ -365,7 +361,7 @@ public:
 	}
 
 	void pop() {
-		c.pop_front();
+		c.pop_back();
 	}
 
 	void swap(priority_queue &_Right) {

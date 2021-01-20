@@ -653,7 +653,13 @@ int ImuseDigiSndMgr::getJumpFade(SoundDesc *soundDesc, int number) {
 int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size) {
 	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
-	assert(buf && offset >= 0 && size >= 0);
+
+	// In COMI we allow at least -size*2 as offset, since music
+	// tracks need that in order to be realigned after crossfades
+	if (_vm->_game.id == GID_CMI)
+		assert(buf && offset >= -(size * 2) && size >= 0);
+	else
+		assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundDesc->numRegions);
 
 	int32 region_offset = soundDesc->region[region].offset;

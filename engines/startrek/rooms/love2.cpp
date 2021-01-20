@@ -299,7 +299,7 @@ void Room::love2Tick1() {
 
 void Room::love2TouchedWarp1() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->timers[3] = 10;
 }
 
@@ -317,7 +317,7 @@ void Room::love2WalkToDoor() {
 void Room::love2TouchedHotspot0() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR, "s3r3d3", 0x12a, 0xb5, 1);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -464,7 +464,7 @@ void Room::love2CrewmanAccessedCabinet() {
 	else
 		loadActorAnim2(OBJECT_CABINET, "s3r3d1", 0x1e, 0xaf, 2);
 
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 
 	if (_awayMission->love.cabinetOpen)
 		loadActorStandAnim(OBJECT_ANTIGRAV);
@@ -688,7 +688,7 @@ void Room::love2UseSynthesizer() {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Romulan Laughing Gas
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", -1, -1, 27); // -> love2ClosedSynthesizerDoorMakingRLG
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					break;
 
@@ -698,7 +698,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -708,7 +708,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -722,7 +722,7 @@ void Room::love2UseSynthesizer() {
 					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					break;
 				}
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
@@ -733,7 +733,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -744,14 +744,14 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Cure
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					loadActorAnim2(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 8); // -> love2ClosedSynthesizerDoorMakingCure
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
@@ -764,7 +764,7 @@ void Room::love2UseSynthesizer() {
 					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					break;
 				}
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
@@ -775,7 +775,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -785,7 +785,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -795,7 +795,7 @@ void Room::love2UseSynthesizer() {
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					_awayMission->love.synthesizerContents = 0;
 					break;
 
@@ -809,7 +809,7 @@ void Room::love2UseSynthesizer() {
 					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-					playSoundEffectIndex(SND_DOOR1);
+					playSoundEffectIndex(kSfxDoor);
 					break;
 				}
 			}
@@ -870,7 +870,7 @@ void Room::love2ClosedSynthesizerDoorMakingRLG() {
 	_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_RLG;
 	strcpy(_roomVar.love.chamberOutputAnim, "btle4");
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 // Synthesizer door closed, using N2 + O2 on cure sample
@@ -899,7 +899,7 @@ void Room::love2KirkReachedSynthesizerWithPolyberylcarbonate() {
 		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 5);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -925,7 +925,7 @@ void Room::love2KirkReachedSynthesizerWithVirusSample() {
 		showDescription(25, true);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 6);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -951,7 +951,7 @@ void Room::love2KirkReachedSynthesizerWithCureSample() {
 		showDescription(25, true); // BUGFIX: original didn't play audio
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 7);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -1015,7 +1015,7 @@ void Room::love2GotPolyberylcarbonate() {
 	giveItem(OBJECT_IPBC);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -1035,7 +1035,7 @@ void Room::love2GotDishes() {
 	giveItem(OBJECT_IDISHES);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -1055,7 +1055,7 @@ void Room::love2GotSample() {
 	giveItem(OBJECT_ISAMPLE);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 
@@ -1099,7 +1099,7 @@ void Room::love2GotSynthesizerOutput() {
 
 	loadActorStandAnim(OBJECT_SYNTHESIZER_OUTPUT);
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 
 	_awayMission->love.synthesizerContents = 0;
 	_awayMission->love.synthesizerBottleIndex = 0;
@@ -1126,7 +1126,7 @@ void Room::love2GotCure() {
 	showDescription(43, true);
 
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->love.synthesizerContents = 0;
 }
 

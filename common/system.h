@@ -112,7 +112,7 @@ namespace LogMessageType {
 /**
  * Enumeration for log message types.
  * @ingroup common_system
- * 
+ *
  */
 enum Type {
 	kInfo,    /**< Info logs. */
@@ -254,7 +254,7 @@ protected:
 
 	/** Workaround for a bug in the osx_intel toolchain introduced by
 	 * 014bef9eab9fb409cfb3ec66830e033e4aaa29a9. Adding this variable fixes it.
-	 */ 
+	 */
 	bool _dummyUnused;
 	 /** @} */
 private:
@@ -309,10 +309,10 @@ public:
 	 */
 	virtual void engineDone() { }
 
-	/** 
+	/**
 	 * @defgroup common_system_flags Feature flags
-	 * @ingroup common_system 
-	 * @{ 
+	 * @ingroup common_system
+	 * @{
 	 */
 
 	/**
@@ -651,7 +651,7 @@ public:
 	 * Switch to the specified graphics mode.
 	 *
 	 * If switching to the new mode fails, this method returns false.
-	 * 
+	 *
 	 * The flag 'kGfxModeRender3d' is optional. It allows to switch to 3D-only rendering mode.
 	 * In this mode, the game engine is allowed to use OpenGL(ES) directly.
 	 *
@@ -666,7 +666,7 @@ public:
 	 * Switch to the graphics mode with the given name.
 	 *
 	 * If @p name is unknown, or if switching to the new mode fails, this method returns false.
-	 * 
+	 *
 	 * @param name Name of the new graphics mode.
 	 *
 	 * @return True if the switch was successful, false otherwise.
@@ -721,13 +721,13 @@ public:
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
-	};
+	}
 
 	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> list;
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
-	};
+	}
 #endif
 
 	/**
@@ -782,7 +782,7 @@ public:
 	 * Switch to the shader mode with the given name.
 	 *
 	 * If @p name is unknown, or if switching to the new mode fails,
-	 * this method returns false. 
+	 * this method returns false.
 	 *
 	 * @param name Name of the new shader mode.
 	 *
@@ -1000,7 +1000,7 @@ public:
 	 * The real screen will not immediately be updated to reflect the changes.
 	 * Client code must call updateScreen to ensure any changes are visible
 	 * to the user. This can be used to optimize drawing and reduce flicker.
-	 * 
+	 *
 	 * If the current pixel format has one byte per pixel, the graphics data
 	 * uses 8 bits per pixel, using the palette specified via setPalette.
 	 * If more than one byte per pixel is in use, the graphics data uses the
@@ -1090,7 +1090,7 @@ public:
 	 * For example, when a character is speaking, they will have the focus.
 	 * This allows for pan-and-scan style views where the backend
 	 * can follow the speaking character or area of interest on the screen.
-	 * 
+	 *
 	 * The backend is responsible for clipping the rectangle and deciding how best to
 	 * zoom the screen to show any shape and size rectangle the engine provides.
 	 *
@@ -1479,10 +1479,10 @@ public:
 	/**
 	 * Display a message in an 'on-screen display'.
 	 *
-	 * Displays a message in such a way that it is visible on or near the screen, 
+	 * Displays a message in such a way that it is visible on or near the screen,
 	 * for example in a transparent rectangle over the regular screen content,
 	 * or in a message box beneath it.
-	 * 
+	 *
 	 * The message is expected to be provided in the current TranslationManager
 	 * charset.
 	 *
@@ -1513,12 +1513,12 @@ public:
 	 */
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
     /** @} */
-	
+
 	/**
 	 * @addtogroup common_system_module
-	 * @{ 
+	 * @{
 	 */
-	 
+
 	 /**
 	 * Return the SaveFileManager, which is used to store and load savestates
 	 * and other modifiable persistent game data.
@@ -1538,7 +1538,7 @@ public:
 		return _taskbarManager;
 	}
 #endif
-	 
+
 #if defined(USE_UPDATES)
 	/**
 	 * Return the UpdateManager, which is used to handle auto-updating
@@ -1580,12 +1580,12 @@ public:
 	 */
 	virtual FilesystemFactory *getFilesystemFactory();
     /** @} */
-	
+
 	/**
 	 * @addtogroup common_system_misc
 	 * @{
 	 */
-	 
+
 	/** Add system-specific Common::Archive objects to the given SearchSet.
 	 * For example, on Unix, the directory corresponding to DATA_PATH (if set), or, on
 	 * Mac OS X, the 'Resource' dir in the app bundle.

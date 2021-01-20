@@ -74,7 +74,17 @@ struct BrickEntry {
 /** Grip Z size */
 #define GRID_SIZE_Z GRID_SIZE_X
 
-#define NUMBRICKENTRIES (1 + (SCREEN_WIDTH + 24) / 24)
+// short max
+#define SCENE_SIZE_MAX (BRICK_SIZE * GRID_SIZE_X - 1)
+// short min
+#define SCENE_SIZE_MIN (-BRICK_SIZE * GRID_SIZE_X)
+#define SCENE_SIZE_HALF (BRICK_SIZE * GRID_SIZE_X / 2)
+#define SCENE_SIZE_HALFF (BRICK_SIZE * GRID_SIZE_X / 2.0f)
+
+#define BRICK_SIZE 512
+#define BRICK_HEIGHT 256
+
+#define MAXBRICKS 150
 
 class TwinEEngine;
 
@@ -117,10 +127,8 @@ private:
 	void createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Load grid bricks according with block librarie usage
-	 * @param gridSize size of the current grid
-	 * @return true if everything went ok
 	 */
-	void loadGridBricks(int32 gridSize);
+	void loadGridBricks();
 	/** Create grid masks to allow display actors over the bricks */
 	void createGridMask();
 	/**
@@ -128,7 +136,7 @@ private:
 	 * @param buffer brick pointer buffer
 	 * @param ptr brick mask pointer buffer
 	 */
-	int processGridMask(const uint8 *buffer, uint8 *ptr);
+	void processGridMask(const uint8 *buffer, uint8 *ptr);
 	/**
 	 * Copy grid mask to allow actors to display over the bricks
 	 * @param index current brick index
@@ -156,9 +164,10 @@ private:
 	int32 numberOfBll = 0;
 
 	/** Brick data buffer */
-	BrickEntry bricksDataBuffer[NUMBRICKENTRIES][150];
+	BrickEntry *bricksDataBuffer = nullptr;
 	/** Brick info buffer */
-	int16 brickInfoBuffer[NUMBRICKENTRIES]{0};
+	int16 *brickInfoBuffer = nullptr;
+	int32 _brickInfoBufferSize = 0;
 
 	/** Current brick pixel X position */
 	int32 brickPixelPosX = 0;
@@ -169,20 +178,23 @@ private:
 	int32 blockBufferSize = 0;
 	uint8 *blockBuffer = nullptr;
 
+	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
+	const BrickEntry* getBrickEntry(int32 j, int32 i) const;
+
+	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 public:
 	Grid(TwinEEngine *engine);
 	~Grid();
 
+	void init(int32 w, int32 h);
+
 	/** Grid block entry types */
 	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
 
-	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
 	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
-
-	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 
 	/** New grid camera X coordinates */
 	int32 newCameraX = 0;

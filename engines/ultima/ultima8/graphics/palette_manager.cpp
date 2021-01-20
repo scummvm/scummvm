@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 

@@ -20,12 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
@@ -126,7 +123,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
 	UpdateDimsFromShape();
 
-	Shape *childshape = GameData::get_instance()->
+	const Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);
 
 	// Create the SlidingWidget

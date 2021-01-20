@@ -419,7 +419,7 @@ private:
 
 	void objectChat(const char *text, int object, int vocHigh, int vocLow);
 	void objectChatInit(const char *text, int object, int vocHigh, int vocLow);
-	void objectChatPrintText(const char *text, int object);
+	void objectChatPrintText(const Common::String &text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
 

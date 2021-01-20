@@ -129,7 +129,7 @@ void Room::love0WalkToDoor2() {
 void Room::love0OpenDoor2() {
 	if (_roomVar.love.walkingToDoor == 2) {
 		loadActorAnim(OBJECT_DOOR2, "s3r0d2", 0xe6, 0x80, 3);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 
@@ -148,7 +148,7 @@ void Room::love0WalkToDoor1() {
 void Room::love0OpenDoor1() {
 	if (_roomVar.love.walkingToDoor == 1) {
 		loadActorAnim(OBJECT_DOOR1, "s3r0d1", 0x123, 0x8d, 4);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 

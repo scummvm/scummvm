@@ -95,12 +95,6 @@ public:
 	// \return true on success, false on failure
 	virtual bool EndPainting() = 0;
 
-	//! Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
-	// \note Do not delete the texture.
-	// \note Do not assume anything about the contents of the Texture object.
-	// \note It should only be used with Painting and Blitting methods.
-	virtual Texture *GetSurfaceAsTexture() = 0;
-
 	//
 	// Surface Properties
 	//
@@ -154,9 +148,6 @@ public:
 	// Surface Filling
 	//
 
-	//! Fill buffer (using a palette index)
-	virtual void Fill8(uint8 index, int32 sx, int32 sy, int32 w, int32 h) = 0;
-
 	//! Fill buffer (using a RGB colour)
 	virtual void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) = 0;
 
@@ -179,52 +170,32 @@ public:
 	//
 
 	//! Paint a Shape
-	// TODO: virtual void Paint(CachedShape* s, uint32 frame, int32 x, int32 y) = 0;
-	virtual void Paint(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	virtual void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
 
 	//! Paint a Shape without clipping
-	// TODO: virtual void PaintNoClip(CachedShape*s, uint32 frame, int32 x, int32 y) = 0;
-	virtual void PaintNoClip(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	virtual void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
 
 	//! Paint a Translucent Shape.
-	// TODO: virtual void PaintTranslucent(CachedShape* s, uint32 frame, int32 x, int32 y) = 0;
-	virtual void PaintTranslucent(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
+	virtual void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) = 0;
 
 	//! Paint a Mirrored Shape
-	// TODO: virtual void PaintMirrored(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans = false) = 0;
-	virtual void PaintMirrored(Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false) = 0;
+	virtual void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false) = 0;
 
 	//! Paint an Invisible Shape
-	// TODO: virtual void PaintInvisible(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored) = 0;
-	virtual void PaintInvisible(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false) = 0;
+	virtual void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false) = 0;
 
 	//! Paint a Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	// TODO: virtual void PaintHighlight(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
-	virtual void PaintHighlight(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
+	virtual void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
 
 	//! Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	// TODO: virtual void PaintHighlightInvis(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
-	virtual void PaintHighlightInvis(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
+	virtual void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
 
 	//
 	// Basic Line Drawing
 	//
 
-	// Draw a Line (using a palette index)
-	// TODO: virtual void DrawLine8(uint8 index, int32 sx, int32 sy, int32 ex, int32 ey) = 0;
-
 	// Draw a RGB Line
 	virtual void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) = 0;
-
-
-	//
-	// Basic Font Drawing
-	//
-	//! Draw FixedWidthFont
-	virtual void PrintTextFixed(FixedWidthFont *, const char *text, int x, int y) = 0;
-
-	//! Draw a fixed width character from a FixedWidthFont
-	virtual void PrintCharFixed(FixedWidthFont *, int character, int x, int y) = 0;
 
 
 	//
@@ -232,24 +203,14 @@ public:
 	//
 
 	//! Blit a region from a Texture (Alpha == 0 -> skipped)
-	virtual void Blit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) = 0;
+	virtual void Blit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) = 0;
 
 	//! Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void FadedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
+	virtual void FadedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
 
 	//! Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void MaskedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
+	virtual void MaskedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
 
-	//! Blit a stretched region from a Texture (Alpha == 0 -> skipped???)
-	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) = 0;
-
-	//! Blit a region from a Texture using a scaler
-	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false) = 0;
-
-
-	////////////////////////////////////////
-	// TODO: Add in Abstract 3d code Here //
-	////////////////////////////////////////
 };
 
 } // End of namespace Ultima8

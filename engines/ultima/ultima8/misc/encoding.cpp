@@ -29,7 +29,6 @@ Copyright (C) 1999-2004 Free Software Foundation, Inc.
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/misc/encoding.h"
 
 namespace Ultima {
 namespace Ultima8 {

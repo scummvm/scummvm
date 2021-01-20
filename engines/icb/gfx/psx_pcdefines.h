@@ -28,6 +28,7 @@
 #ifndef ICB_PSX_PCDEFINES_H
 #define ICB_PSX_PCDEFINES_H
 
+#include "common/types.h"
 #include "engines/icb/common/px_rccommon.h"
 
 namespace ICB {
@@ -43,24 +44,6 @@ typedef unsigned short u_short;
 
 // a uint type
 typedef unsigned int u_int;
-
-// another uint type
-typedef unsigned int uint;
-
-// a uint32 type
-typedef unsigned int uint32;
-
-// a uint16 type
-typedef unsigned short uint16;
-
-// a int32 type
-typedef signed int int32;
-
-// a int16 type
-typedef short int16;
-
-// a uint8 type
-typedef unsigned char uint8;
 
 // make our own equivalents
 typedef struct MATRIX {

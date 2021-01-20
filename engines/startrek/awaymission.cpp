@@ -400,7 +400,7 @@ void StarTrekEngine::awayMissionSelectAction(bool openActionMenu) {
 		if (_awayMission.disableInput)
 			return;
 		hideInventoryIcons();
-		_sound->playSoundEffectIndex(SND_07);
+		_sound->playSoundEffectIndex(kSfxButton);
 		_awayMission.activeAction = showActionMenu();
 	}
 

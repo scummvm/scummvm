@@ -23,14 +23,12 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/type_flags.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/games/treasure_loader.h"
-#include "ultima/ultima8/games/game_info.h"
 
 namespace Ultima {
 namespace Ultima8 {

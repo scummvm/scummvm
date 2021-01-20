@@ -22,14 +22,13 @@
 
 #include "image/png.h"
 #include "image/bmp.h"
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -38,13 +37,11 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/bit_set.h"
-#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -54,7 +51,11 @@
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+
+#ifdef DEBUG
 #include "ultima/ultima8/world/actors/pathfinder.h"
+#endif
+
 
 namespace Ultima {
 namespace Ultima8 {
@@ -370,13 +371,13 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[1], "_frameLimit")) {
 		b = &g->_frameLimit;
-		ini = "_frameLimit";
+		ini = "frameLimit";
 	} else if (!scumm_stricmp(argv[1], "_frameSkip")) {
 		b = &g->_frameSkip;
-		ini = "_frameSkip";
+		ini = "frameSkip";
 	} else if (!scumm_stricmp(argv[1], "_interpolate")) {
 		b = &g->_interpolate;
-		ini = "_interpolate";
+		ini = "interpolate";
 	} else {
 		debugPrintf("Unknown member: %s\n", argv[1]);
 		return true;
@@ -389,7 +390,7 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 		else if (istr)
 			*istr = argv[2];
 		else if (i)
-			*i = Std::strtol(argv[2], 0, 0);
+			*i = strtol(argv[2], 0, 0);
 		else if (str)
 			*str = argv[2];
 
@@ -828,9 +829,6 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(bwidth,
 		bheight);
 
-	Texture *t = s->GetSurfaceAsTexture();
-	//t->clear();
-
 	debugPrintf("Rendering map...\n");
 
 	// Now render the map
@@ -878,9 +876,9 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	bool result = dumpFile.open(filename);
 	if (result) {
 #ifdef USE_PNG
-		result = Image::writePNG(dumpFile, *t);
+		result = Image::writePNG(dumpFile, *(s->getRawSurface()));
 #else
-		result = Image::writeBMP(dumpFile, *t);
+		result = Image::writeBMP(dumpFile, *(s->getRawSurface()));
 #endif
 	}
 

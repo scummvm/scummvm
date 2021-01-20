@@ -24,7 +24,6 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
@@ -80,7 +79,7 @@ bool SoundManager::load(Sound sound) {
 	assertMsg(sound < SOUND_MAX, "Attempted to load an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
-		Common::String pathname(u4find_sound(_soundFilenames[sound]));
+		Common::String pathname("data/sound/" + _soundFilenames[sound]);
 		Common::String basename = pathname.substr(pathname.findLastOf("/") + 1);
 		if (!basename.empty())
 			return load_sys(sound, pathname);

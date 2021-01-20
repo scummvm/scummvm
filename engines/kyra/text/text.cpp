@@ -43,9 +43,9 @@ void TextDisplayer::setTalkCoords(uint16 y) {
 	_talkCoords.y = y;
 }
 
-int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
+int TextDisplayer::getCenterStringX(const Common::String &str, int x1, int x2) {
 	_screen->_charSpacing = -2;
-	int strWidth = _screen->getTextWidth(str);
+	int strWidth = _screen->getTextWidth(str.c_str());
 	_screen->_charSpacing = 0;
 	int w = x2 - x1 + 1;
 	return x1 + (w - strWidth) / 2;
@@ -203,21 +203,19 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_talkMessagePrinted = true;
 }
 
-void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
-	char revBuffer[384];
-	memset(revBuffer, 0, sizeof(revBuffer));
+void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	Common::String revBuffer;
+	const char *tmp = str.c_str();
 	if (_vm->gameFlags().lang == Common::HE_ISR) {
-		int len = strlen(str);
-		for (int i = 0; i < len; i++) {
-			revBuffer[i] = str[len - i - 1];
-		}
-		str = revBuffer;
+		for (int i = str.size() - 1; i >= 0; --i)
+			revBuffer += str[i];
+		tmp = revBuffer.c_str();
 	}
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
-	_screen->printText(str, x, y, c0, c2);
+	_screen->printText(tmp, x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
 

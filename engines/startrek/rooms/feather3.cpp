@@ -241,7 +241,6 @@ void Room::feather3KirkReachedPositionToThrowRock() {
 }
 
 void Room::feather3Timer4Expired() {
-	playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::feather3Timer2Expired() {

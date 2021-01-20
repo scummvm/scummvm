@@ -37,7 +37,6 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/xml_map.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/config.h"
 
 namespace Ultima {

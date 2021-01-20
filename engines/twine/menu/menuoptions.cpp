@@ -59,18 +59,18 @@ void MenuOptions::newGame() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
-	_engine->_text->setFontCrossColor(15);
+	_engine->_text->setFontCrossColor(COLOR_WHITE);
 
-	bool aborted = _engine->_text->drawTextFullscreen(150);
+	bool aborted = _engine->_text->drawTextFullscreen(TextId::kIntroText1);
 
 	// intro screen 2
 	if (!aborted) {
 		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG, RESSHQR_INTROSCREEN2PAL);
-		aborted |= _engine->_text->drawTextFullscreen(151);
+		aborted |= _engine->_text->drawTextFullscreen(TextId::kIntroText2);
 
 		if (!aborted) {
 			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG, RESSHQR_INTROSCREEN3PAL);
-			aborted |= _engine->_text->drawTextFullscreen(152);
+			aborted |= _engine->_text->drawTextFullscreen(TextId::kIntroText3);
 		}
 	}
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
@@ -124,7 +124,7 @@ void MenuOptions::showEndSequence() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
 	const int32 borderTop = 200;
 	const int32 borderLeft = 25;
 	const int32 halfButtonHeight = 25;
@@ -158,13 +158,17 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 
 	_engine->_menu->drawBox(rect);
 
-	_engine->_text->setFontColor(15);
+	_engine->_text->setFontColor(COLOR_WHITE);
 	const uint8 character = (uint8)allowedCharIndex[idx];
 	const int32 textX = centerX - _engine->_text->getCharWidth(character) / 2;
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
 	_engine->_text->drawText(textX, textY, buffer);
 
-	_engine->copyBlockPhys(rect);
+	if (dirtyRect.isEmpty()) {
+		dirtyRect = rect;
+	} else {
+		dirtyRect.extend(rect);
+	}
 }
 
 void MenuOptions::setOnScreenKeyboard(int x, int y) {
@@ -194,22 +198,27 @@ void MenuOptions::setOnScreenKeyboard(int x, int y) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
+	Common::Rect dirtyRect;
 	for (int8 x = 0; x < ONSCREENKEYBOARD_WIDTH; x++) {
 		for (int8 y = 0; y < ONSCREENKEYBOARD_HEIGHT; y++) {
-			drawSelectableCharacter(x, y);
+			drawSelectableCharacter(x, y, dirtyRect);
 		}
 	}
+	if (dirtyRect.isEmpty()) {
+		return;
+	}
+	_engine->copyBlockPhys(dirtyRect);
 }
 
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	const int32 left = 10;
-	if (type == 1) {
-		_engine->_menu->processPlasmaEffect(left, top, 32);
-	}
-
-	const int right = SCREEN_WIDTH - left;
+	const int right = _engine->width() - left;
 	const int bottom = top + PLASMA_HEIGHT;
 	const Common::Rect rect(left, top, right, bottom);
+	if (type == 1) {
+		_engine->_menu->processPlasmaEffect(rect, 32);
+	}
+
 	Common::Rect rectBox(rect);
 	rectBox.grow(-1);
 	_engine->_menu->drawBox(rect);
@@ -244,15 +253,16 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
-	_engine->_text->setFontColor(15);
-	const int halfScreenWidth = (SCREEN_WIDTH / 2);
+	_engine->_text->setFontColor(COLOR_WHITE);
+	const int halfScreenWidth = (_engine->width() / 2);
 	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
+	_engine->copyBlockPhys(0, 0, _engine->width() - 1, 99);
 	_engine->flip();
 
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);
 	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {

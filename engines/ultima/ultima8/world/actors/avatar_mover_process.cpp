@@ -20,29 +20,18 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
-#include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
-		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_movementFlags(0) {
+		_lastAttack(0), _idleTime(0), _movementFlags(0) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -52,12 +41,6 @@ AvatarMoverProcess::~AvatarMoverProcess() {
 
 void AvatarMoverProcess::run() {
 	Kernel *kernel = Kernel::get_instance();
-	uint32 framenum = kernel->getFrameNum();
-
-	// only run once per frame
-	if (framenum == _lastFrame)
-		return;
-	_lastFrame = framenum;
 
 	// busy, so don't move
 	if (kernel->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE) > 0) {
@@ -66,6 +49,7 @@ void AvatarMoverProcess::run() {
 	}
 
 	MainActor *avatar = getMainActor();
+	assert(avatar);
 
 	if (avatar->getLastAnim() == Animation::hang) {
 		handleHangingMode();

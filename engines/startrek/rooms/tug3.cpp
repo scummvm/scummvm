@@ -162,7 +162,7 @@ void Room::tug3UseStunPhaserOnElasi1() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi1Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_1, "p1stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem05", 5);
 	_awayMission->tug.bridgeElasi1Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -172,7 +172,7 @@ void Room::tug3UseStunPhaserOnElasi2() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi2Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_2, "p2stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem06", 5);
 	_awayMission->tug.bridgeElasi2Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -182,7 +182,7 @@ void Room::tug3UseStunPhaserOnElasi3() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi3Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_3, "p3stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem07", 5);
 	_awayMission->tug.bridgeElasi3Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -192,7 +192,7 @@ void Room::tug3UseStunPhaserOnElasi4() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi4Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_4, "p4stun", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem04", 5);
 	_awayMission->tug.bridgeElasi4Status = GUARDSTAT_STUNNED;
 	tug3ElasiDrawPhasers();
@@ -202,7 +202,7 @@ void Room::tug3UseKillPhaserOnElasi1() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi1Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_1, "p1Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem25", 5);
 	_awayMission->tug.bridgeElasi1Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -213,7 +213,7 @@ void Room::tug3UseKillPhaserOnElasi2() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi2Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_2, "p2Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem27", 5);
 	_awayMission->tug.bridgeElasi2Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -224,7 +224,7 @@ void Room::tug3UseKillPhaserOnElasi3() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi3Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_3, "p3Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem26", 5);
 	_awayMission->tug.bridgeElasi3Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -235,7 +235,7 @@ void Room::tug3UseKillPhaserOnElasi4() {
 	if (_awayMission->tug.crewmanKilled[OBJECT_KIRK] || _awayMission->tug.bridgeElasi4Status != GUARDSTAT_UP)
 		return;
 	loadActorAnim2(OBJECT_ELASI_4, "p4Kill", -1, -1, 12);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem24", 5);
 	_awayMission->tug.bridgeElasi4Status = GUARDSTAT_DEAD;
 	_awayMission->tug.missionScore -= 2;
@@ -303,9 +303,8 @@ void Room::tug3TalkToElasi1() {
 }
 
 void Room::tug3Elasi1DrewPhaser() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem41", 13);
-	playSoundEffectIndex(SND_BLANK_16);
 	loadActorAnim2(OBJECT_12, "sparks", 0xa0, 0xad, 4);
 }
 
@@ -317,7 +316,7 @@ void Room::tug3Elasi1ShotConsole() {
 }
 
 void Room::tug3Elasi1DrewPhaser2() {
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem41", 13);
 	loadActorAnim2(OBJECT_12, "sparks", 0xa0, 0xad, 6);
 }
@@ -482,7 +481,7 @@ void Room::tug3Timer0Expired() {
 	} else
 		return;
 
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks(beamAnims[elasiShooter][elasiTarget], 5);
 	_awayMission->timers[0] = 50;
 }
@@ -511,7 +510,7 @@ void Room::tug3Timer1Expired() {
 void Room::tug3EndMission() {
 	playMidiMusicTracks(28, -1);
 	showText(TX_SPEAKER_KIRK, 1, true);
-	playSoundEffectIndex(SND_TRANSMAT);
+	playSoundEffectIndex(kSfxTransporterMaterialize);
 	loadActorAnim2(OBJECT_13, "rteleb", 0x14, 0xa0, 7);
 	loadActorAnim2(OBJECT_14, "rteleb", 0x118, 0xa0, 0);
 	loadActorAnim2(OBJECT_15, "rteleb", 0x96, 0xbe, 0);

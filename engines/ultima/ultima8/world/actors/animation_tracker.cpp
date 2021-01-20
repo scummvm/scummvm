@@ -29,13 +29,10 @@
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -168,9 +165,6 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, D
 bool AnimationTracker::step() {
 	if (_done) return false;
 
-	Actor *a = getActor(_actor);
-	assert(a);
-
 	if (_firstFrame)
 		_currentFrame = _startFrame;
 	else
@@ -231,6 +225,9 @@ bool AnimationTracker::step() {
 	}
 
 	// determine footpad
+	Actor *a = getActor(_actor);
+	assert(a);
+
 	bool actorflipped = a->hasFlags(Item::FLG_FLIPPED);
 	int32 xd, yd, zd;
 	a->getFootpadWorld(xd, yd, zd);
@@ -239,6 +236,7 @@ bool AnimationTracker::step() {
 		xd = yd;
 		yd = t;
 	}
+
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
 	// TODO: check if this step is allowed
@@ -282,7 +280,7 @@ bool AnimationTracker::step() {
 		// Do the sweep test
 		Std::list<CurrentMap::SweepItem> collisions;
 		Std::list<CurrentMap::SweepItem>::const_iterator it;
-		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, a->getObjId(),
+		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, _actor,
 		              false, &collisions);
 
 

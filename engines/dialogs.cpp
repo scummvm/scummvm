@@ -360,7 +360,7 @@ ConfigDialog::ConfigDialog() :
 	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), Common::U32String(), kKeysCmd);
 	_keysDialog = NULL;
 #endif
 }

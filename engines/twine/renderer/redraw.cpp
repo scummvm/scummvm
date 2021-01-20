@@ -24,122 +24,103 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
-#include "twine/parser/sprite.h"
-#include "twine/scene/actor.h"
-#include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
-#include "twine/scene/collision.h"
 #include "twine/debugger/debug_scene.h"
-#include "twine/scene/grid.h"
-#include "twine/resources/hqr.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
-#include "twine/scene/movements.h"
+#include "twine/parser/sprite.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/actor.h"
+#include "twine/scene/animations.h"
+#include "twine/scene/collision.h"
+#include "twine/scene/grid.h"
+#include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 
 namespace TwinE {
 
-void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
-	int32 i = 0;
+void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
+	const int32 area = (redrawArea.right - redrawArea.left) * (redrawArea.bottom - redrawArea.top);
 
-	const int32 area = (right - left) * (bottom - top);
+	for (int32 i = 0; i < numOfRedrawBox; ++i) {
+		Common::Rect &rect = currentRedrawList[i];
+		const int32 leftValue = MIN<int32>(redrawArea.left, rect.left);
+		const int32 rightValue = MAX<int32>(redrawArea.right, rect.right);
+		const int32 topValue = MIN<int32>(redrawArea.top, rect.top);
+		const int32 bottomValue = MAX<int32>(redrawArea.bottom, rect.bottom);
 
-	while (i < numOfRedrawBox) {
-		int32 leftValue;
-		if (currentRedrawList[i].left >= left) {
-			leftValue = left;
-		} else {
-			leftValue = currentRedrawList[i].left;
-		}
+		const int32 areaValue = (rightValue - leftValue) * (bottomValue - topValue);
+		const int32 areaValueDiff = ((rect.right - rect.left) * (rect.bottom - rect.top) + area);
+		if (areaValue < areaValueDiff) {
+			rect.left = leftValue;
+			rect.top = topValue;
+			rect.right = rightValue;
+			rect.bottom = MIN<int32>((_engine->height() - 1), bottomValue);
 
-		int32 rightValue;
-		if (currentRedrawList[i].right <= right) {
-			rightValue = right;
-		} else {
-			rightValue = currentRedrawList[i].right;
-		}
-
-		int32 topValue;
-		if (currentRedrawList[i].top >= top) {
-			topValue = top;
-		} else {
-			topValue = currentRedrawList[i].top;
-		}
-
-		int32 bottomValue;
-		if (currentRedrawList[i].bottom <= bottom) {
-			bottomValue = bottom;
-		} else {
-			bottomValue = currentRedrawList[i].bottom;
-		}
-
-		if ((rightValue - leftValue) * (bottomValue - topValue) < ((currentRedrawList[i].bottom - currentRedrawList[i].top) * (currentRedrawList[i].right - currentRedrawList[i].left) + area)) {
-			currentRedrawList[i].left = leftValue;
-			currentRedrawList[i].top = topValue;
-			currentRedrawList[i].right = rightValue;
-			currentRedrawList[i].bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottomValue);
-
-			assert(currentRedrawList[i].left <= currentRedrawList[i].right);
-			assert(currentRedrawList[i].top <= currentRedrawList[i].bottom);
+			assert(rect.left <= rect.right);
+			assert(rect.top <= rect.bottom);
 			return;
 		}
-
-		i++;
 	}
 
-	currentRedrawList[i].left = left;
-	currentRedrawList[i].top = top;
-	currentRedrawList[i].right = right;
-	currentRedrawList[i].bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottom);
+	Common::Rect &rect = currentRedrawList[numOfRedrawBox];
+	rect.left = redrawArea.left;
+	rect.top = redrawArea.top;
+	rect.right = redrawArea.right;
+	rect.bottom = MIN<int32>((_engine->height() - 1), redrawArea.bottom);
 
-	assert(currentRedrawList[i].left <= currentRedrawList[i].right);
-	assert(currentRedrawList[i].top <= currentRedrawList[i].bottom);
+	assert(rect.left <= rect.right);
+	assert(rect.top <= rect.bottom);
 
 	numOfRedrawBox++;
 }
 
 void Redraw::addRedrawArea(const Common::Rect &rect) {
+	if (!rect.isValidRect()) {
+		return;
+	}
 	addRedrawArea(rect.left, rect.top, rect.right, rect.bottom);
 }
 
 void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
-	if (left < SCREEN_TEXTLIMIT_LEFT) {
-		left = SCREEN_TEXTLIMIT_LEFT;
+	if (left < 0) {
+		left = 0;
 	}
-	if (top < SCREEN_TEXTLIMIT_TOP) {
-		top = SCREEN_TEXTLIMIT_TOP;
+	if (top < 0) {
+		top = 0;
 	}
-	if (right >= SCREEN_WIDTH) {
-		right = SCREEN_TEXTLIMIT_RIGHT;
+	if (right >= _engine->width()) {
+		right = (_engine->width() - 1);
 	}
-	if (bottom >= SCREEN_HEIGHT) {
-		bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	if (bottom >= _engine->height()) {
+		bottom = (_engine->height() - 1);
 	}
 
 	if (left > right || top > bottom) {
 		return;
 	}
 
-	nextRedrawList[currNumOfRedrawBox].left = left;
-	nextRedrawList[currNumOfRedrawBox].top = top;
-	nextRedrawList[currNumOfRedrawBox].right = right;
-	nextRedrawList[currNumOfRedrawBox].bottom = bottom;
+	Common::Rect &rect = nextRedrawList[currNumOfRedrawBox];
+	rect.left = left;
+	rect.top = top;
+	rect.right = right;
+	rect.bottom = bottom;
 
 	currNumOfRedrawBox++;
 
-	addRedrawCurrentArea(left, top, right, bottom);
+	addRedrawCurrentArea(rect);
 }
 
 void Redraw::moveNextAreas() {
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) {
-		addRedrawCurrentArea(nextRedrawList[i].left, nextRedrawList[i].top, nextRedrawList[i].right, nextRedrawList[i].bottom);
+		addRedrawCurrentArea(nextRedrawList[i]);
 	}
 }
 
@@ -151,7 +132,7 @@ void Redraw::flipRedrawAreas() {
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) { //setup the redraw areas for next display
-		addRedrawCurrentArea(nextRedrawList[i].left, nextRedrawList[i].top, nextRedrawList[i].right, nextRedrawList[i].bottom);
+		addRedrawCurrentArea(nextRedrawList[i]);
 	}
 }
 
@@ -162,6 +143,9 @@ void Redraw::blitBackgroundAreas() {
 }
 
 void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
+	if (listSize == 1) {
+		return;
+	}
 	for (int32 i = 0; i < listSize - 1; i++) {
 		for (int32 j = 0; j < listSize - 1 - i; j++) {
 			if (list[j + 1].posValue < list[j].posValue) {
@@ -220,7 +204,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 			_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
 			// check if actor is visible on screen, otherwise don't display it
-			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100) {
+			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100) {
 				actor->dynamicFlags.bIsVisible = 1;
 			}
 			continue;
@@ -232,8 +216,8 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 		// get actor position on screen
 		_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < SCREEN_WIDTH + 112 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 171) ||
-		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100)) {
+		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < _engine->width() + 112 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < _engine->height() + 171) ||
+		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100)) {
 
 			int32 tmpVal = actor->z + actor->x - _engine->_grid->cameraX - _engine->_grid->cameraZ;
 
@@ -300,7 +284,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->spawnTime) & 8))) {
 			_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
-			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100) {
+			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100) {
 				drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
 				drawList[drawListPos].actorIdx = i;
 				drawList[drawListPos].type = DrawListType::DrawExtras;
@@ -343,13 +327,13 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 		_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->spriteShadowPtr);
 	}
 
-	const int32 tmpX = (drawCmd.x + 0x100) >> 9;
-	const int32 tmpY = drawCmd.y >> 8;
-	const int32 tmpZ = (drawCmd.z + 0x100) >> 9;
+	const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
+	const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
-	addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
+	addRedrawArea(_engine->_interface->textWindow);
 
 	// show clipping area
 	//drawBox(_engine->_renderer->renderRect.left, _engine->_renderer->renderRect.top, _engine->_renderer->renderRect.right, _engine->_renderer->renderRect.bottom);
@@ -363,24 +347,24 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	const int32 x = actor->x - _engine->_grid->cameraX;
 	const int32 y = actor->y - _engine->_grid->cameraY;
 	const int32 z = actor->z - _engine->_grid->cameraZ;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, 0, actor->angle, 0, _engine->_actor->bodyTable[actor->entity])) {
+	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_actor->bodyTable[actor->entity])) {
 		return;
 	}
 
-	if (renderRect.left < SCREEN_TEXTLIMIT_LEFT) {
-		renderRect.left = SCREEN_TEXTLIMIT_LEFT;
+	if (renderRect.left < 0) {
+		renderRect.left = 0;
 	}
 
-	if (renderRect.top < SCREEN_TEXTLIMIT_TOP) {
-		renderRect.top = SCREEN_TEXTLIMIT_TOP;
+	if (renderRect.top < 0) {
+		renderRect.top = 0;
 	}
 
-	if (renderRect.right >= SCREEN_WIDTH) {
-		renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
+	if (renderRect.right >= _engine->width()) {
+		renderRect.right = (_engine->width() - 1);
 	}
 
-	if (renderRect.bottom >= SCREEN_HEIGHT) {
-		renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	if (renderRect.bottom >= _engine->height()) {
+		renderRect.bottom = (_engine->height() - 1);
 	}
 
 	_engine->_interface->setClip(renderRect);
@@ -388,9 +372,9 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
 		actor->dynamicFlags.bIsVisible = 1;
 
-		const int32 tempX = (actor->x + 0x100) >> 9;
-		int32 tempY = actor->y >> 8;
-		const int32 tempZ = (actor->z + 0x100) >> 9;
+		const int32 tempX = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
+		int32 tempY = actor->y / BRICK_HEIGHT;
+		const int32 tempZ = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
 		if (actor->brickShape() != ShapeType::kNone) {
 			tempY++;
 		}
@@ -401,11 +385,10 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 			renderRect.bottom = _engine->_interface->textWindow.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
-		const Common::Rect rect(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-		addRedrawArea(rect);
+		addRedrawArea(_engine->_interface->textWindow);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
+			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -415,16 +398,18 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const SpriteData &spritePtr = _engine->_resources->spriteData[actor->entity];
+	const SpriteData &spriteData = _engine->_resources->spriteData[actor->entity];
+	// TODO: using the raw pointer and not the SpriteData surface here is a workaround for issue https://bugs.scummvm.org/ticket/12024
+	const uint8 *spritePtr = _engine->_resources->spriteTable[actor->entity];
 
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-	const int32 spriteWidth = spritePtr.surface().w;
-	const int32 spriteHeight = spritePtr.surface().h;
+	const int32 spriteWidth = spriteData.surface().w;
+	const int32 spriteHeight = spriteData.surface().h;
 
 	// calculate sprite position on screen
-	const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
+	const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
 	renderRect.left = _engine->_renderer->projPosX + dim->x;
 	renderRect.top = _engine->_renderer->projPosY + dim->y;
 	renderRect.right = renderRect.left + spriteWidth;
@@ -438,19 +423,19 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	}
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->dynamicFlags.bIsVisible = 1;
 
 		if (actor->staticFlags.bUsesClipping) {
-			const int32 tmpX = (actor->lastX + 0x100) >> 9;
-			const int32 tmpY = actor->lastY >> 8;
-			const int32 tmpZ = (actor->lastZ + 0x100) >> 9;
+			const int32 tmpX = (actor->lastX + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpY = actor->lastY / BRICK_HEIGHT;
+			const int32 tmpZ = (actor->lastZ + BRICK_HEIGHT) / BRICK_SIZE;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor->x + actor->boudingBox.x.topRight + 0x100) >> 9;
-			int32 tmpY = actor->y >> 8;
-			const int32 tmpZ = (actor->z + actor->boudingBox.z.topRight + 0x100) >> 9;
+			const int32 tmpX = (actor->x + actor->boudingBox.x.topRight + BRICK_HEIGHT) / BRICK_SIZE;
+			int32 tmpY = actor->y / BRICK_HEIGHT;
+			const int32 tmpZ = (actor->z + actor->boudingBox.z.topRight + BRICK_HEIGHT) / BRICK_SIZE;
 			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
@@ -483,7 +468,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		const int32 spriteHeight = spritePtr.surface().h;
 
 		// calculate sprite position on screen
-		const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(extra->info0);
+		const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(extra->info0);
 		renderRect.left = _engine->_renderer->projPosX + dim->x;
 		renderRect.top = _engine->_renderer->projPosY + dim->y;
 		renderRect.right = renderRect.left + spriteWidth;
@@ -495,12 +480,12 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	_engine->_interface->setClip(renderRect);
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		const int32 tmpX = (drawCmd.x + 0x100) >> 9;
-		const int32 tmpY = drawCmd.y >> 8;
-		const int32 tmpZ = (drawCmd.z + 0x100) >> 9;
+		const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
+		const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
+		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
-		addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
+		addRedrawArea(_engine->_interface->textWindow);
 
 		// show clipping area
 		//drawBox(renderRect);
@@ -574,7 +559,7 @@ void Redraw::renderOverlays() {
 				const int32 spriteWidth = spritePtr.surface().w;
 				const int32 spriteHeight = spritePtr.surface().h;
 
-				const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
+				const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
 				renderRect.left = dim->x + overlay->x;
 				renderRect.top = dim->y + overlay->y;
 				renderRect.right = renderRect.left + spriteWidth;
@@ -582,9 +567,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koNumber: {
@@ -605,9 +588,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -626,13 +607,11 @@ void Redraw::renderOverlays() {
 
 				_engine->_interface->setClip(renderRect);
 
-				_engine->_text->setFontColor(155);
+				_engine->_text->setFontColor(COLOR_GOLD);
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -642,13 +621,10 @@ void Redraw::renderOverlays() {
 				_engine->_interface->drawSplittedBox(rect, 0);
 				_engine->_interface->setClip(rect);
 
-				Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
-				_engine->_renderer->setCameraPosition(40, 40, 128, 200, 200);
-				_engine->_renderer->setCameraAngle(0, 0, 0, 60, 0, 0, 16000);
-
+				uint8* bodyPtr = _engine->_resources->inventoryTable[item];
+				Renderer::prepareIsoModel(bodyPtr);
 				overlayRotation += 1; // overlayRotation += 8;
-
-				_engine->_renderer->renderIsoModel(0, 0, 0, 0, overlayRotation, 0, _engine->_resources->inventoryTable[item]);
+				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
@@ -666,20 +642,20 @@ void Redraw::renderOverlays() {
 				renderRect.right = overlay->x + (textLength / 2);
 				renderRect.bottom = overlay->y + textHeight;
 
-				if (renderRect.left < SCREEN_TEXTLIMIT_LEFT) {
-					renderRect.left = SCREEN_TEXTLIMIT_LEFT;
+				if (renderRect.left < 0) {
+					renderRect.left = 0;
 				}
 
-				if (renderRect.top < SCREEN_TEXTLIMIT_TOP) {
-					renderRect.top = SCREEN_TEXTLIMIT_TOP;
+				if (renderRect.top < 0) {
+					renderRect.top = 0;
 				}
 
-				if (renderRect.right > SCREEN_TEXTLIMIT_RIGHT) {
-					renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
+				if (renderRect.right > (_engine->width() - 1)) {
+					renderRect.right = (_engine->width() - 1);
 				}
 
-				if (renderRect.bottom > SCREEN_TEXTLIMIT_BOTTOM) {
-					renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+				if (renderRect.bottom > (_engine->height() - 1)) {
+					renderRect.bottom = (_engine->height() - 1);
 				}
 
 				_engine->_interface->setClip(renderRect);
@@ -688,9 +664,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			}
@@ -794,8 +768,9 @@ void Redraw::drawBubble(int32 actorIdx) {
 	_engine->_interface->setClip(renderRect);
 
 	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+	// TODO: shouldn't we check for renderRect here?
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		_engine->copyBlockPhys(renderRect);
+		_engine->copyBlockPhys(renderRect, true);
 	}
 
 	_engine->_interface->resetClip();
@@ -814,8 +789,8 @@ void Redraw::zoomScreenScale() {
 			*dest++ = *src;
 			*dest++ = *src++;
 		}
-		//memcpy(dest, dest - SCREEN_WIDTH, SCREEN_WIDTH);
-		//dest += SCREEN_WIDTH;
+		//memcpy(dest, dest - _engine->width(), _engine->width());
+		//dest += _engine->width();
 	}
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	zoomWorkVideoBuffer.free();

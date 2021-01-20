@@ -19,7 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Switched ScummVM GUI output to UTF-32.
-   - Updated the Roland MT-32 emulation code to Munt 2.4.1.
+   - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
 
  Dreamweb:
    - Rendering fixes for Russian fan translation.

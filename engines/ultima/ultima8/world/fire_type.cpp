@@ -20,11 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/fire_type.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -32,7 +30,6 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {
@@ -49,6 +46,8 @@ FireType::FireType(uint16 typeNo, uint16 minDamage, uint16 maxDamage, uint8 rang
 }
 
 uint16 FireType::getRandomDamage() const {
+	if (_minDamage == _maxDamage)
+		return _minDamage;
 	return _minDamage + (getRandom() % (_maxDamage - _minDamage));
 }
 
@@ -173,15 +172,20 @@ void FireType::applySplashDamageAround(const Point3 &pt, int damage, const Item 
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 
 	//
-	// Find items in range and apply splash damage
+	// Find items in range and apply splash damage.  Coordinates here are 2x the
+	// original game code (in line with our other x2 multipliers for game coords)
 	//
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	currentmap->areaSearch(&uclist, script, sizeof(script), nullptr,
-						   getRange() * 16, true);
+						   getRange() * 32, true, pt.x, pt.y);
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *splashitem = getItem(uclist.getuint16(i));
-		assert(splashitem);
+		if (!splashitem) {
+			// already gone - probably got destroyed by some chain-reaction?
+			continue;
+		}
+
 		//
 		// Other items don't get splash damage from their own fire.. but the
 		// player does.  Life is not fair..

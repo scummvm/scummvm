@@ -247,7 +247,7 @@ public:
 	const ShapeInfo *getShapeInfoFromGameInstance() const;
 
 	//! Get the Shape object for this Item. (The pointer will be cached.)
-	Shape *getShapeObject() const;
+	const Shape *getShapeObject() const;
 
 	//! Get the family of the shape number of this Item. (This is a
 	//! member of the ShapeInfo object.)
@@ -285,8 +285,11 @@ public:
 	//! Check if the centre of this item is on top of another item
 	bool isCentreOn(const Item &item2) const;
 
-	//! Check if the item is currently visible on screen
+	//! Check if the item is currently entirely visible on screen
 	bool isOnScreen() const;
+
+	//! Check if the item is currently partly visible on screen
+	bool isPartlyOnScreen() const;
 
 	//! Check if this item can exist at the given coordinates
 	bool canExistAt(int32 x, int32 y, int32 z, bool needsupport = false) const;
@@ -614,7 +617,7 @@ protected:
 
 	ObjId _parent; // objid container this item is in (or 0 for top-level items)
 
-	mutable Shape *_cachedShape;
+	mutable const Shape *_cachedShape;
 	mutable const ShapeInfo *_cachedShapeInfo;
 
 	// This is stuff that is used for displaying and interpolation

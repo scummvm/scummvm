@@ -20,15 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/cru_ammo_gump.h"
 
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -113,11 +107,11 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 void CruAmmoGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
+	CruStatGump::saveData(ws);
 }
 
 bool CruAmmoGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	return CruStatGump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

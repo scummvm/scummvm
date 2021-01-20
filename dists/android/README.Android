@@ -32,23 +32,27 @@ CONTROLS
     In touchpad mode, the mouse cursor is independent of the touched point, it
     is moved relative to its current position - like on a touchpad.
 
-    The mode can be toggled with the "Touchpad mouse mode" on the Control tab
+    The mode can be toggled with the "Touchpad mouse mode" on the Backend tab
     in ScummVM's own option dialog.
 
     Tap + movement: Mouse movement
     Tap without movement: Left mouse button click
     Tap held for >0.5s without movement: Right mouse button click
     Tap held for >1s without movement: Middle mouse button click
-    Double Tap + movement: Drag and drop
+    Double Tap + movement: Drag-and-drop 
+                           or (for some games): emulates left mouse button hold and drag,
+                              eg. for selection from action wheel in Curse of Monkey Island
 
     On devices supporting multitouch:
 
     Two finger tap: Right mouse button click
+    Two finger tap + movement of second finger: Right mouse button hold and drag,
+                                                eg. for selection from action wheel in Tony Tough
     Three finger tap: Middle mouse button click
+    Three finger tap  + movement of third finger: Middle mouse button hold and drag
 
   System keys
 
-    Back button: Escape
+    Back button: Escape/Skip
     Menu button: ScummVM menu
     Menu button held for 0.5s: Toggle virtual keyboard
-    Camera or Search button: Right mouse button click

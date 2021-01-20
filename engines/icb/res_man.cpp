@@ -335,7 +335,7 @@ uint32 res_man::Fetch_old_memory(int number_of_cycles) {
 // is computed and stored in hash/cluster_hash
 uint8 *res_man::Res_open(const char *url, uint32 &url_hash, const char *cluster, uint32 &cluster_hash,
                          int compressed, // non zero if the resource is compressed
-                         int *ret_len) {
+                         int32 *ret_len) {
 	// make the hash names if we need to
 	MakeHash(url, url_hash);
 	MakeHash(cluster, cluster_hash);
@@ -705,7 +705,7 @@ uint32 res_man::Check_file_size(const char *url, uint32 url_hash, const char *cl
 	return (0);
 }
 
-uint8 *res_man::Internal_open(RMParams *params, int *ret_len) {
+uint8 *res_man::Internal_open(RMParams *params, int32 *ret_len) {
 	// Loads if not in memory here already
 
 	// resoures cannot be locked in memory

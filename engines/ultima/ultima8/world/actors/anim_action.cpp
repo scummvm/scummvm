@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/core_app.h"
@@ -87,7 +86,7 @@ const AnimFrame &AnimAction::getFrame(Direction dir, unsigned int frameno) const
  having to check against game type each time they are used
 */
 /*static*/
-AnimAction::AnimActionFlags AnimAction::loadAnimActionFlags(uint16 rawflags) {
+AnimAction::AnimActionFlags AnimAction::loadAnimActionFlags(uint32 rawflags) {
 	uint32 ret = AAF_NONE;
 	ret |= (rawflags & AAF_COMMONFLAGS);
 	if (GAME_IS_U8) {

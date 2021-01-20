@@ -20,19 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/container.h"
 
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/core_app.h"
 
-#include "ultima/ultima8/graphics/shape_info.h"
 
 namespace Ultima {
 namespace Ultima8 {

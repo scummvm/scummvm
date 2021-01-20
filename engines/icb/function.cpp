@@ -895,8 +895,12 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 			// get the address of the script we want to run
 			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
 
+			int result = static_cast<int>(*retval);
+
 			// run the script - pass its object so vars can be accessed
-			RunScript(pc, socket_object, retval);
+			RunScript(pc, socket_object, &result);
+
+			*retval = result;
 
 			return (TRUE8);
 		}

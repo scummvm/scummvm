@@ -38,7 +38,7 @@ public:
 			delete _actions[i];
 	}
 
-	AnimAction *getAction(unsigned int n) {
+	const AnimAction *getAction(unsigned int n) const {
 		if (n >= _actions.size())
 			return nullptr;
 		return _actions[n];

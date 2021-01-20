@@ -185,7 +185,7 @@ void Room::veng4UseMccoyOnBrittany() {
 void Room::veng4MccoyReachedBrittany() {
 	if (!_roomVar.veng.usingMedkitOnBrittany) {
 		loadActorAnimC(OBJECT_MCCOY, "mscane", -1, -1, &Room::veng4MccoyScannedBrittany);
-		playSoundEffectIndex(SND_TRICORDER);
+		playSoundEffectIndex(kSfxTricorder);
 	} else {
 		loadActorAnimC(OBJECT_MCCOY, "museme", -1, -1, &Room::veng4UsedMedkitOnBrittany);
 	}
@@ -343,7 +343,7 @@ void Room::veng4PickedUpDrill() {
 
 void Room::veng4TouchedHotspot0() { // Trigger door opening
 	if (_roomVar.veng.walkingToDoor) {
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 		loadActorAnim(OBJECT_DOOR, "s9r1do", DOOR_X, DOOR_Y);
 	}
 }

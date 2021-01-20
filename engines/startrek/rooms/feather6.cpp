@@ -134,7 +134,6 @@ void Room::feather6ReachedPositionToThrowRock() {
 }
 
 void Room::feather6DoneThrowingRock() {
-	playSoundEffectIndex(SND_BLANK_0b);
 	loadActorAnim2(OBJECT_STALACTITES, "s5r6tf");
 	loadActorAnimC(OBJECT_KIRK, "s5r6kd", -1, -1, &Room::feather6KirkDiedFromStalactites);
 	playMidiMusicTracks(1);
@@ -165,8 +164,6 @@ void Room::feather6ReachedCrystalsWithRock() {
 }
 
 void Room::feather6Tick() {
-	if (_awayMission->timers[2] == 55 || _awayMission->timers[2] == 89 || _awayMission->timers[2] == 119)
-		playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::feather6HitCrystalsWithRockFirstTime() {

@@ -178,7 +178,7 @@ mcsseg mcsout(mcscxdef *ctx, uint objid, uchar *ptr, ushort siz,
 	mcsseg cur;
 	ushort minsiz = 0;
 
-	IF_DEBUG(printf("<< mcsout: objid=%d, ptr=%lx, siz=%u, oldseg=%u >>\n",
+	IF_DEBUG(debug(10, "<< mcsout: objid=%d, ptr=%lx, siz=%u, oldseg=%u >>\n",
 	                objid, (unsigned long)ptr, siz, oldseg));
 
 	/* see if old segment can be reused */
@@ -258,7 +258,7 @@ mcsseg mcsout(mcscxdef *ctx, uint objid, uchar *ptr, ushort siz,
 void mcsin(mcscxdef *ctx, mcsseg seg, uchar *ptr, ushort siz) {
 	mcsdsdef *desc = mcsdsc(ctx, seg);
 
-	IF_DEBUG(printf("<< mcsin: seg=%u, ptr=%lx, siz=%d, objid=%u >>\n",
+	IF_DEBUG(debug(10, "<< mcsin: seg=%u, ptr=%lx, siz=%d, objid=%u >>\n",
 	                seg, (unsigned long)ptr, siz, desc->mcsdsobj));
 
 	assert(seg < ctx->mcscxmsg);

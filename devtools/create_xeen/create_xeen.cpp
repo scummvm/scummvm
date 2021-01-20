@@ -42,7 +42,14 @@
 #define VERSION_NUMBER 4
 
 void NORETURN_PRE error(const char *s, ...) {
-	fprintf(stderr, "%s\n", s);
+	va_list ap;
+
+	va_start(ap, s);
+	vfprintf(stderr, s, ap);
+	va_end(ap);
+
+	fputc('\n', stderr);
+
 	exit(1);
 }
 

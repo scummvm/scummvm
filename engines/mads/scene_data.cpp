@@ -116,10 +116,12 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	switch (vm->getGameID()) {
 	case GType_RexNebular:
 		return new Nebular::SceneInfoNebular(vm);
+#ifdef ENABLE_MADSV2
 	case GType_Dragonsphere:
 		return new Dragonsphere::SceneInfoDragonsphere(vm);
 	case GType_Phantom:
 		return new Phantom::SceneInfoPhantom(vm);
+#endif
 	default:
 		error("SceneInfo: Unknown game");
 	}

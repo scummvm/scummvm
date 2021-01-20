@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/translucent_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
@@ -33,7 +32,7 @@ TranslucentGump::TranslucentGump() : Gump() {
 
 TranslucentGump::TranslucentGump(int x, int y, int width, int height,
 								 uint16 owner, uint32 flags, int32 layer) :
-	Gump(x, y, width, height, owner, flags ,layer) {
+	Gump(x, y, width, height, owner, flags, layer) {
 }
 
 TranslucentGump::~TranslucentGump() {
@@ -43,6 +42,14 @@ void TranslucentGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	if (_shape) {
 		surf->PaintTranslucent(_shape, _frameNum, 0, 0);
 	}
+}
+
+void TranslucentGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
+}
+
+bool TranslucentGump::loadData(Common::ReadStream *rs, uint32 version) {
+	return Gump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

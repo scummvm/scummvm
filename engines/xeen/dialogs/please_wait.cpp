@@ -37,14 +37,15 @@ PleaseWait::~PleaseWait() {
 }
 
 void PleaseWait::show() {
+	if (g_vm->_mode == MODE_STARTUP) {
+		return;
+	}
+
 	Windows &windows = *g_vm->_windows;
 	Window &w = windows[9];
-
-	if (g_vm->_mode != MODE_STARTUP) {
-		w.open();
-		w.writeString(_msg);
-		w.update();
-	}
+	w.open();
+	w.writeString(_msg);
+	w.update();
 }
 
 } // End of namespace Xeen

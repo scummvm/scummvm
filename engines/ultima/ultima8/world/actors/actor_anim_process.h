@@ -32,14 +32,13 @@ namespace Ultima8 {
 
 class Actor;
 class AnimAction;
-class AnimFrame;
+struct AnimFrame;
 class AnimationTracker;
 class Item;
 
 class ActorAnimProcess : public Process {
 public:
 	ActorAnimProcess();
-	//! note: this probably needs some more parameters
 	ActorAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                 uint32 steps = 0);
 

@@ -21,12 +21,15 @@
  */
 
 #include "twine/resources/resources.h"
+#include "common/tokenizer.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/renderer/screens.h"
+#include "twine/renderer/renderer.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
+#include "twine/twine.h"
 
 namespace TwinE {
 
@@ -54,8 +57,8 @@ Resources::~Resources() {
 }
 
 void Resources::initPalettes() {
-	// Init standard palette
-	if (HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL) == 0) {
+	const int32 size = HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	if (size == 0) {
 		error("Failed to load main palette");
 	}
 	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
@@ -64,9 +67,6 @@ void Resources::initPalettes() {
 
 	_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBA);
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-
-	// We use it now
-	_engine->_screens->palCustom = false;
 }
 
 void Resources::preloadSprites() {
@@ -126,7 +126,6 @@ void Resources::preloadInventoryItems() {
 }
 
 void Resources::initResources() {
-	// Menu and in-game palette
 	initPalettes();
 
 	fontBufSize = HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
@@ -161,21 +160,57 @@ void Resources::initResources() {
 	if (holomapTwinsenModelSize == 0) {
 		error("Failed to load holomap twinsen model");
 	}
+	Renderer::prepareIsoModel(holomapTwinsenModelPtr);
 
 	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
 	if (holomapArrowSize == 0) {
 		error("Failed to load holomap arrow model");
 	}
+	Renderer::prepareIsoModel(holomapArrowPtr);
 
 	holomapTwinsenArrowSize = HQR::getAllocEntry(&holomapTwinsenArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
 	if (holomapTwinsenArrowSize == 0) {
 		error("Failed to load holomap twinsen arrow model");
 	}
+	Renderer::prepareIsoModel(holomapTwinsenArrowPtr);
 
 	preloadSprites();
 	preloadAnimations();
 	preloadSamples();
 	preloadInventoryItems();
+
+	loadFlaInfo();
+}
+
+void Resources::loadFlaInfo() {
+	uint8 *content = nullptr;
+	const int32 size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+	if (size == 0) {
+		return;
+	}
+	const Common::String str((const char*)content, size);
+	free(content);
+
+	Common::StringTokenizer tok(str, "\r\n");
+	while (!tok.empty()) {
+		const Common::String &line = tok.nextToken();
+		Common::StringTokenizer lineTok(line);
+		if (lineTok.empty()) {
+			continue;
+		}
+		const Common::String &name = lineTok.nextToken();
+		Common::Array<int32> frames;
+		while (!lineTok.empty()) {
+			const Common::String &frame = lineTok.nextToken();
+			const int32 frameIdx = atoi(frame.c_str());
+			frames.push_back(frameIdx);
+		}
+		_flaMovieFrames.setVal(name, frames);
+	}
+}
+
+const Common::Array<int32>& Resources::getFlaMovieInfo(const Common::String &name) const {
+	return _flaMovieFrames.getVal(name);
 }
 
 } // namespace TwinE

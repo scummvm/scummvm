@@ -164,7 +164,7 @@ bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
 
 	if (ignoreMD5) return true;
 
-	return (Std::memcmp(_md5, other._md5, 16) == 0);
+	return (memcmp(_md5, other._md5, 16) == 0);
 }
 
 void GameInfo::save(Common::WriteStream *ws) {
@@ -213,14 +213,14 @@ bool GameInfo::load(IDataSource *ids, uint32 ver) {
 	}
 	if (!gamelangs[i].name) return false;
 
-	this->version = Std::strtol(parts[2].c_str(), 0, 0);
+	this->version = strtol(parts[2].c_str(), 0, 0);
 
 	for (i = 0; i < 16; ++i) {
 		char buf[3];
 		buf[0] = parts[3][2 * i];
 		buf[1] = parts[3][2 * i + 1];
 		buf[2] = 0;
-		long x = Std::strtol(buf, 0, 16);
+		long x = strtol(buf, 0, 16);
 		_md5[i] = static_cast<uint8>(x);
 	}
 

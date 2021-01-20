@@ -23,7 +23,6 @@
 #ifndef MADS_ACTION_H
 #define MADS_ACTION_H
 
-#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str.h"
 

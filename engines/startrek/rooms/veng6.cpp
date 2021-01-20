@@ -178,7 +178,7 @@ void Room::veng6WalkToDoor() {
 
 void Room::veng6ReachedDoor() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "s7r6d1", DOOR_X, DOOR_Y, &Room::veng6DoorOpened);
 }
 
@@ -403,11 +403,11 @@ void Room::veng6OpenedOrClosedCabinet() {
 
 	if (_awayMission->veng.engineeringCabinetOpen) {
 		loadActorAnim(OBJECT_CABINET, "s7r6p2", CABINET_X, CABINET_Y);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 		_awayMission->veng.engineeringCabinetOpen = false;
 	} else {
 		loadActorAnim(OBJECT_CABINET, "s7r6p1", CABINET_X, CABINET_Y);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 		_awayMission->veng.engineeringCabinetOpen = true;
 		if (!_awayMission->veng.tookEngineeringJournal)
 			showDescription(5, true);

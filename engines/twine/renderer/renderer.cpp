@@ -31,6 +31,7 @@
 #include "twine/renderer/shadeangletab.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/movements.h"
+#include "twine/scene/grid.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
 
@@ -43,10 +44,21 @@ namespace TwinE {
 Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shadeAngleTable[384]) {
 }
 
+Renderer::~Renderer() {
+	free(_polyTab);
+	free(_polyTab2);
+}
+
+void Renderer::init(int32 w, int32 h) {
+	_polyTabSize = _engine->height() * 2;
+	_polyTab = (int16*)malloc(_polyTabSize * sizeof(int16));
+	_polyTab2 = (int16*)malloc(_polyTabSize * sizeof(int16));
+}
+
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
-	if (isUsingOrhoProjection) {
-		projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
-		projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
+	if (isUsingOrthoProjection) {
+		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjX;
+		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjY;
 		projPosZ = cZ - cY - cX;
 		return 1;
 	}
@@ -81,7 +93,7 @@ void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ)
 	cameraPosY = cY;
 	cameraPosZ = cZ;
 
-	isUsingOrhoProjection = false;
+	isUsingOrthoProjection = false;
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
@@ -95,37 +107,37 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 	orthoProjY = y;
 	orthoProjZ = z;
 
-	isUsingOrhoProjection = true;
+	isUsingOrthoProjection = true;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) >> 14;
-	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) >> 14;
-	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
-	double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
-	baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
-	baseMatrix.row1[1] = (int32)(-cos(Zradians) * 16384);
-	baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * 16384);
-	baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * 16384);
-	baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * 16384);
-	baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * 16384);
-	baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * 16384);
+	baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row1[1] = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
 
 	int32 matrixElem = baseMatrix.row2[0];
 
-	baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + 16384 * cos(Yradians) * cos(Xradians));
-	baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - 16384 * sin(Yradians) * cos(Xradians));
+	baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
+	baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
 
 	matrixElem = baseMatrix.row3[0];
 
-	baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - 16384 * sin(Xradians) * cos(Yradians));
-	baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + 16384 * sin(Xradians) * sin(Yradians));
+	baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
+	baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
 
 	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
 
@@ -135,9 +147,9 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) >> 14;
-	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) >> 14;
-	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
+	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
+	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -170,12 +182,12 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		matrix1.row2[0] = currentMatrix->row2[0];
 		matrix1.row3[0] = currentMatrix->row3[0];
 
-		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) >> 14;
-		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) >> 14;
-		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) >> 14;
-		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) >> 14;
-		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) >> 14;
-		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) >> 14;
+		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) / SCENE_SIZE_HALF;
+		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) / SCENE_SIZE_HALF;
+		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) / SCENE_SIZE_HALF;
 	} else {
 		matrix1 = *currentMatrix;
 	}
@@ -190,12 +202,12 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		matrix2.row2[2] = matrix1.row2[2];
 		matrix2.row3[2] = matrix1.row3[2];
 
-		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) >> 14;
-		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) >> 14;
-		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) >> 14;
-		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) >> 14;
-		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) >> 14;
-		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) >> 14;
+		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) / SCENE_SIZE_HALF;
+		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) / SCENE_SIZE_HALF;
+		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) / SCENE_SIZE_HALF;
 	} else {
 		matrix2 = matrix1;
 	}
@@ -210,13 +222,13 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		targetMatrix->row2[1] = matrix2.row2[1];
 		targetMatrix->row3[1] = matrix2.row3[1];
 
-		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) >> 14;
-		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) >> 14;
-		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) >> 14;
-		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) >> 14;
+		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) / SCENE_SIZE_HALF;
+		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) / SCENE_SIZE_HALF;
 
-		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) >> 14;
-		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) >> 14;
+		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) / SCENE_SIZE_HALF;
 	} else {
 		*targetMatrix = matrix2;
 	}
@@ -230,9 +242,9 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 		const int32 tmpY = pointsPtr->y;
 		const int32 tmpZ = pointsPtr->z;
 
-		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) >> 14) + destY;
-		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destX;
+		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destY;
+		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destZ;
 
 		destPoints++;
 		pointsPtr++;
@@ -283,9 +295,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 		const int32 tmpY = pointsPtr->y + renderAngleY;
 		const int32 tmpZ = pointsPtr->z + renderAngleX;
 
-		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) >> 14) + destY;
-		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destX;
+		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destY;
+		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destZ;
 
 		destPoints++;
 		pointsPtr++;
@@ -330,7 +342,7 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	eax = shadeMatrix.row1[2];
 	eax *= ecx;
 	eax += edi;
-	eax >>= 14;
+	eax /= SCENE_SIZE_HALF;
 
 	destX = eax;
 
@@ -342,7 +354,7 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	eax = shadeMatrix.row2[2];
 	eax *= ecx;
 	eax += edi;
-	eax >>= 14;
+	eax /= SCENE_SIZE_HALF;
 	destY = eax;
 	destZ = eax;
 }
@@ -370,12 +382,12 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 }
 
 void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const {
-	vleft = vtop = 32767;
-	vright = vbottom = -32768;
+	vleft = vtop = SCENE_SIZE_MAX;
+	vright = vbottom = SCENE_SIZE_MIN;
 
 	for (int32 i = 0; i < numVertices; i++) {
-		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
-		vertices[i].y = clamp(vertices[i].y, 0, SCREEN_HEIGHT - 1);
+		vertices[i].x = clamp(vertices[i].x, 0, _engine->width() - 1);
+		vertices[i].y = clamp(vertices[i].y, 0, _engine->height() - 1);
 		const int vertexX = vertices[i].x;
 		vleft = MIN(vleft, vertexX);
 		vright = MAX(vright, vertexX);
@@ -424,23 +436,24 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
 			xpos = currentVertexX;
 			ypos = currentVertexY;
-			cvalue = (vertexParam2 << 8) + ((oldVertexParam - vertexParam2) << 8) % vsize;
-			cdelta = ((oldVertexParam - vertexParam2) << 8) / vsize;
+			cvalue = (vertexParam2 * 256) + ((oldVertexParam - vertexParam2) * 256) % vsize;
+			cdelta = ((oldVertexParam - vertexParam2) * 256) / vsize;
 			direction = -direction; // we will draw by going down the tab
 		} else {
 			xpos = oldVertexX;
 			ypos = oldVertexY;
-			cvalue = (oldVertexParam << 8) + ((vertexParam2 - oldVertexParam) << 8) % vsize;
-			cdelta = ((vertexParam2 - oldVertexParam) << 8) / vsize;
+			cvalue = (oldVertexParam * 256) + ((vertexParam2 - oldVertexParam) * 256) % vsize;
+			cdelta = ((vertexParam2 - oldVertexParam) * 256) / vsize;
 		}
-		int16 *outPtr = &polyTab[ypos + (up ? SCREEN_HEIGHT : 0)]; // outPtr is the output ptr in the renderTab
+		const int32 polyTabIndex = ypos + (up ? _engine->height() : 0);
+		int16 *outPtr = &_polyTab[polyTabIndex]; // outPtr is the output ptr in the renderTab
 
 		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
 		for (int32 i = 0; i < vsize + 2; i++) {
-			if (outPtr - polyTab < ARRAYSIZE(polyTab)) {
-				if (outPtr - polyTab > 0) {
+			if (outPtr - _polyTab < _polyTabSize) {
+				if (outPtr - _polyTab > 0) {
 					*outPtr = xpos;
 				}
 			}
@@ -449,11 +462,11 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		}
 
 		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
-			int16 *outPtr2 = &polyTab2[ypos + (up ? SCREEN_HEIGHT : 0)];
+			int16 *outPtr2 = &_polyTab2[polyTabIndex];
 
 			for (int32 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 - polyTab2 < ARRAYSIZE(polyTab2)) {
-					if (outPtr2 - polyTab2 > 0) {
+				if (outPtr2 - _polyTab2 < _polyTabSize) {
+					if (outPtr2 - _polyTab2 > 0) {
 						*outPtr2 = cvalue;
 					}
 				}
@@ -465,12 +478,12 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 }
 
 void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 stop = ptr1[_engine->height()];
 
 			ptr1++;
 			int32 hsize = stop - start;
@@ -486,28 +499,28 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 
 				for (int32 j = startCopy; j < hsize + startCopy; j++) {
 					start += mask;
-					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
+					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
 					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-					if (j >= 0 && j < SCREEN_WIDTH) {
+					if (j >= 0 && j < _engine->width()) {
 						out[j] = start & 0xFF;
 					}
-					mask = (mask << 2) | (mask >> 14);
+					mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
 					mask++;
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--vsize);
 }
 
 void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 stop = ptr1[_engine->height()];
 			ptr1++;
 			int32 hsize = stop - start;
 
@@ -515,44 +528,44 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 col
 				hsize++;
 				for (int32 j = start; j < hsize + start; j++) {
 					if ((start + (vtop % 1)) & 1) {
-						if (j >= 0 && j < SCREEN_WIDTH) {
+						if (j >= 0 && j < _engine->width()) {
 							out[j] = color;
 						}
 					}
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--vsize);
 }
 
 void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 stop = ptr1[_engine->height()];
 			ptr1++;
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				hsize++;
 				for (int32 j = start; j < hsize + start; j++) {
-					if (j >= 0 && j < SCREEN_WIDTH) {
+					if (j >= 0 && j < _engine->width()) {
 						out[j] = color;
 					}
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--vsize);
 }
 
 void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
 	int32 renderLoop = vsize;
 	do {
@@ -561,7 +574,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 		int32 hsize;
 		while (1) {
 			start = ptr1[0];
-			stop = ptr1[SCREEN_HEIGHT];
+			stop = ptr1[_engine->height()];
 			ptr1++;
 			hsize = stop - start;
 
@@ -570,11 +583,11 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			}
 
 			uint8 *out2 = start + out;
-			*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
+			*out2 = ((unsigned short)(bx / 24)) & 0x0F;
 
 			color = *(out2 + 1);
 
-			out += SCREEN_WIDTH;
+			out += _engine->width();
 
 			--renderLoop;
 			if (!renderLoop) {
@@ -584,11 +597,11 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 		if (stop >= start) {
 			hsize++;
-			bx = (unsigned short)(color >> 0x10);
+			bx = (unsigned short)(color / 16);
 			uint8 *out2 = start + out;
 
-			int ax = (bx & 0xF0) << 8;
-			bx = bx << 8;
+			int ax = (bx & 0xF0) * 256;
+			bx = bx * 256;
 			ax += (bx & 0x0F);
 			ax -= bx;
 			ax++;
@@ -596,7 +609,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 			ax = ax / hsize;
 			uint16 temp = (ax & 0xF0);
-			temp = temp >> 8;
+			temp = temp / 256;
 			temp += (ax & 0x0F);
 			ax = temp;
 
@@ -625,7 +638,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			}
 		}
 
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		--renderLoop;
 
 	} while (renderLoop);
@@ -633,12 +646,12 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 // FIXME: buggy
 void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	do {
 		unsigned short int bx;
 
 		int16 start = ptr1[0];
-		int16 stop = ptr1[SCREEN_HEIGHT];
+		int16 stop = ptr1[_engine->height()];
 
 		ptr1++;
 		int32 hsize = stop - start;
@@ -647,9 +660,9 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 			hsize++;
 			uint8 *out2 = start + out;
 
-			if ((hsize >> 1) < 0) {
+			if (hsize / 2 < 0) {
 				bx = color & 0xFF;
-				bx = bx << 8;
+				bx = bx * 256;
 				bx += color & 0xFF;
 				for (int32 j = 0; j < hsize; j++) {
 					*(out2) = (*(out2)&0x0F0F) | bx;
@@ -659,20 +672,20 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 				out2++;
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 	} while (--vsize);
 }
 
 // FIXME: buggy
 void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 stop = ptr1[_engine->height()];
 			ptr1++;
 			int32 hsize = stop - start;
 
@@ -697,31 +710,31 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--vsize);
 }
 
 void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
-	const int16 *ptr2 = &polyTab2[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop];
 	int32 renderLoop = vsize;
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
 			uint16 startColor = ptr2[0];
-			uint16 stopColor = ptr2[SCREEN_HEIGHT];
+			uint16 stopColor = ptr2[_engine->height()];
 
 			int16 colorSize = stopColor - startColor;
 
-			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+			int16 stop = ptr1[_engine->height()]; // stop
 			int16 start = ptr1[0];            // start
 
 			ptr1++;
 			uint8 *out2 = start + out;
 			int32 hsize = stop - start;
 
-			//varf2 = ptr2[SCREEN_HEIGHT];
+			//varf2 = ptr2[_engine->height()];
 			//varf3 = ptr2[0];
 
 			ptr2++;
@@ -729,29 +742,29 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 			//varf4 = (float)((int32)varf2 - (int32)varf3);
 
 			if (hsize == 0) {
-				if (start >= 0 && start < SCREEN_WIDTH) {
-					*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+				if (start >= 0 && start < _engine->width()) {
+					*out2 = ((startColor + stopColor) / 2) / 256; // moyenne des 2 couleurs
 				}
 			} else if (hsize > 0) {
 				if (hsize == 1) {
-					if (start >= -1 && start < SCREEN_WIDTH - 1) {
-						*(out2 + 1) = stopColor >> 8;
+					if (start >= -1 && start < _engine->width() - 1) {
+						*(out2 + 1) = stopColor / 256;
 					}
 
-					if (start >= 0 && start < SCREEN_WIDTH) {
-						*(out2) = startColor >> 8;
+					if (start >= 0 && start < _engine->width()) {
+						*(out2) = startColor / 256;
 					}
 				} else if (hsize == 2) {
-					if (start >= -2 && start < SCREEN_WIDTH - 2) {
-						*(out2 + 2) = stopColor >> 8;
+					if (start >= -2 && start < _engine->width() - 2) {
+						*(out2 + 2) = stopColor / 256;
 					}
 
-					if (start >= -1 && start < SCREEN_WIDTH - 1) {
-						*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+					if (start >= -1 && start < _engine->width() - 1) {
+						*(out2 + 1) = ((startColor + stopColor) / 2) / 256;
 					}
 
-					if (start >= 0 && start < SCREEN_WIDTH) {
-						*(out2) = startColor >> 8;
+					if (start >= 0 && start < _engine->width()) {
+						*(out2) = startColor / 256;
 					}
 				} else {
 					int32 currentXPos = start;
@@ -760,8 +773,8 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 
 					if (hsize % 2) {
 						hsize /= 2;
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2) = startColor / 256;
 						}
 						out2++;
 						currentXPos++;
@@ -771,15 +784,15 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 					}
 
 					do {
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2) = startColor / 256;
 						}
 
 						currentXPos++;
 						startColor += colorSize;
 
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2 + 1) = startColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2 + 1) = startColor / 256;
 						}
 
 						currentXPos++;
@@ -789,35 +802,35 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--renderLoop);
 }
 
 void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
-	const int16 *ptr1 = &polyTab[vtop];
-	const int16 *ptr2 = &polyTab2[vtop];
+	const int16 *ptr1 = &_polyTab[vtop];
+	const int16 *ptr2 = &_polyTab2[vtop];
 	int32 renderLoop = vsize;
 
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+		if (currentLine >= 0 && currentLine < _engine->height()) {
+			int16 stop = ptr1[_engine->height()]; // stop
 			int16 start = ptr1[0];            // start
 			ptr1++;
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				uint16 startColor = ptr2[0];
-				uint16 stopColor = ptr2[SCREEN_HEIGHT];
+				uint16 stopColor = ptr2[_engine->height()];
 				int32 currentXPos = start;
 
 				uint8 *out2 = start + out;
 				ptr2++;
 
 				if (hsize == 0) {
-					if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-						*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
+					if (currentXPos >= 0 && currentXPos < _engine->width()) {
+						*(out2) = (uint8)(((startColor + stopColor) / 2) / 256);
 					}
 				} else {
 					int16 colorSize = stopColor - startColor;
@@ -828,8 +841,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 
 						currentColor &= 0xFF;
 						currentColor += startColor;
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = currentColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2) = currentColor / 256;
 						}
 
 						currentColor &= 0xFF;
@@ -838,8 +851,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor += startColor;
 
 						currentXPos++;
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2 + 1) = currentColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2 + 1) = currentColor / 256;
 						}
 					} else if (hsize == 2) {
 						uint16 currentColor = startColor;
@@ -850,8 +863,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						colorSize /= 2;
 						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 						currentColor += startColor;
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = currentColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2) = currentColor / 256;
 						}
 
 						out2++;
@@ -861,8 +874,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor &= 0xFF;
 						currentColor += startColor;
 
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = currentColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2) = currentColor / 256;
 						}
 
 						currentColor &= 0xFF;
@@ -871,8 +884,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						currentColor += startColor;
 
 						currentXPos++;
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2 + 1) = currentColor >> 8;
+						if (currentXPos >= 0 && currentXPos < _engine->width()) {
+							*(out2 + 1) = currentColor / 256;
 						}
 					} else {
 						uint16 currentColor = startColor;
@@ -884,8 +897,8 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 							currentColor &= 0xFF;
 							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
+							if (currentXPos >= 0 && currentXPos < _engine->width()) {
+								*(out2) = currentColor / 256;
 							}
 							out2++;
 							currentXPos++;
@@ -896,16 +909,16 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 						do {
 							currentColor &= 0xFF;
 							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
+							if (currentXPos >= 0 && currentXPos < _engine->width()) {
+								*(out2) = currentColor / 256;
 							}
 							currentXPos++;
 							currentColor &= 0xFF;
 							startColor += colorSize;
 							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = currentColor >> 8;
+							if (currentXPos >= 0 && currentXPos < _engine->width()) {
+								*(out2 + 1) = currentColor / 256;
 							}
 							currentXPos++;
 							out2 += 2;
@@ -915,7 +928,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 				}
 			}
 		}
-		out += SCREEN_WIDTH;
+		out += _engine->width();
 		currentLine++;
 	} while (--renderLoop);
 }
@@ -1170,11 +1183,11 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
-			if (isUsingOrhoProjection) {
-				radius = (radius * 34) >> 9;
-			} else {
-				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
-			}
+			//if (isUsingOrthoProjection) {
+				radius = (radius * 34) / 512;
+			//} else {
+			//	radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
+			//}
 
 			radius += 3;
 
@@ -1246,14 +1259,14 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	const pointTab *pointPtr = &modelData->computedPoints[0];
 	pointTab *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (isUsingOrhoProjection) { // use standard projection
+	if (isUsingOrthoProjection) { // use standard projection
 		do {
 			const int32 coX = pointPtr->x + renderX;
 			const int32 coY = pointPtr->y + renderY;
 			const int32 coZ = -(pointPtr->z + renderZ);
 
-			pointPtrDest->x = (coX + coZ) * 24 / 512 + orthoProjX;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
+			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + orthoProjX;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + orthoProjY;
 			pointPtrDest->z = coZ - coX - coY;
 
 			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
@@ -1421,12 +1434,12 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	renderAngleZ = angleZ;
 
 	// model render size reset
-	_engine->_redraw->renderRect.left = 32767;
-	_engine->_redraw->renderRect.top = 32767;
-	_engine->_redraw->renderRect.right = -32767;
-	_engine->_redraw->renderRect.bottom = -32767;
+	_engine->_redraw->renderRect.left = SCENE_SIZE_MAX;
+	_engine->_redraw->renderRect.top = SCENE_SIZE_MAX;
+	_engine->_redraw->renderRect.right = SCENE_SIZE_MIN;
+	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
-	if (isUsingOrhoProjection) {
+	if (isUsingOrthoProjection) {
 		renderX = x;
 		renderY = y;
 		renderZ = z;
@@ -1450,26 +1463,21 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 }
 
 void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr) {
-	int32 tmpBoxRight = boxRight;
-
-	int32 ypos = boxBottom + boxTop;
-	ypos >>= 1;
-
-	int32 xpos = boxRight + boxLeft;
-	xpos >>= 1;
+	const int32 ypos = (boxBottom + boxTop) / 2;
+	const int32 xpos = (boxRight + boxLeft) / 2;
 
 	setOrthoProjection(xpos, ypos, 0);
-	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, tmpBoxRight, boxBottom));
+	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, boxRight, boxBottom));
 
 	if (angle == -1) {
 		ActorMoveStruct &move = _engine->_menu->moveMenu;
 		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
 		if (move.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &move);
+			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, 0, newAngle, 0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyPtr);
 	} else {
-		renderIsoModel(0, y, 0, 0, angle, 0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 	}
 }
 
@@ -1477,7 +1485,7 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 	setCameraPosition(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
-	renderIsoModel(0, 0, 0, 0, angle, 0, bodyPtr);
+	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 }
 
 } // namespace TwinE

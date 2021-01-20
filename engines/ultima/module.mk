@@ -52,7 +52,6 @@ MODULE_OBJS := \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	shared/std/misc.o \
 	shared/std/string.o \
 	ultima0/core/resources.o \
 	ultima0/game.o \
@@ -166,7 +165,6 @@ MODULE_OBJS := \
 	ultima4/core/utils.o \
 	ultima4/events/event_handler.o \
 	ultima4/events/timed_event_mgr.o \
-	ultima4/filesys/filesystem.o \
 	ultima4/filesys/rle.o \
 	ultima4/filesys/savegame.o \
 	ultima4/filesys/u4file.o \
@@ -428,7 +426,6 @@ MODULE_OBJS := \
 	ultima8/graphics/palette.o \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
-	ultima8/graphics/point_scaler.o \
 	ultima8/graphics/raw_shape_frame.o \
 	ultima8/graphics/render_surface.o \
 	ultima8/graphics/shape.o \
@@ -437,14 +434,9 @@ MODULE_OBJS := \
 	ultima8/graphics/shape_info.o \
 	ultima8/graphics/skf_player.o \
 	ultima8/graphics/soft_render_surface.o \
-	ultima8/graphics/texture.o \
-	ultima8/graphics/texture_bitmap.o \
-	ultima8/graphics/texture_png.o \
 	ultima8/graphics/type_flags.o \
 	ultima8/graphics/wpn_ovlay_dat.o \
 	ultima8/graphics/xform_blend.o \
-	ultima8/graphics/texture_targa.o \
-	ultima8/graphics/fonts/fixed_width_font.o \
 	ultima8/graphics/fonts/font.o \
 	ultima8/graphics/fonts/font_manager.o \
 	ultima8/graphics/fonts/font_shape_archive.o \
@@ -491,13 +483,14 @@ MODULE_OBJS := \
 	ultima8/gumps/readable_gump.o \
 	ultima8/gumps/remorse_menu_gump.o \
 	ultima8/gumps/resizable_gump.o \
-	ultima8/gumps/scaler_gump.o \
 	ultima8/gumps/scroll_gump.o \
 	ultima8/gumps/shape_viewer_gump.o \
 	ultima8/gumps/slider_gump.o \
 	ultima8/gumps/target_gump.o \
 	ultima8/gumps/translucent_gump.o \
 	ultima8/gumps/u8_save_gump.o \
+	ultima8/gumps/weasel_dat.o \
+	ultima8/gumps/weasel_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \

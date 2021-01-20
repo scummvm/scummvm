@@ -542,7 +542,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				_engine->_movements->processActorX = actor->x + _engine->_renderer->destX;
 				_engine->_movements->processActorZ = actor->z + _engine->_renderer->destZ;
 
-				_engine->_movements->setActorAngle(ANGLE_0, actor->speed, 50, &actor->move);
+				_engine->_movements->setActorAngle(ANGLE_0, actor->speed, ANGLE_17, &actor->move);
 
 				if (actor->dynamicFlags.bIsSpriteMoving) {
 					if (actor->doorStatus) { // open door
@@ -652,7 +652,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				if (numKeyframe == getNumKeyframes(animPtr)) {
 					actor->dynamicFlags.bIsHitting = 0;
 
-					if (actor->animType == 0) {
+					if (actor->animType == kAnimationTypeLoop) {
 						actor->animPosition = getStartKeyframe(animPtr);
 					} else {
 						actor->anim = (AnimationTypes)actor->animExtra;
@@ -665,7 +665,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 						actor->animExtraPtr = currentActorAnimExtraPtr;
 
-						actor->animType = 0;
+						actor->animType = kAnimationTypeLoop;
 						actor->animPosition = 0;
 						actor->strengthOfHit = 0;
 					}
@@ -717,7 +717,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (brickShape != ShapeType::kSolid) {
 				_engine->_collision->reajustActorPosition(brickShape);
 			} /*else { // this shouldn't happen (collision should avoid it)
-				actor->y = processActorY = (processActorY / 256) * 256 + 256; // go upper
+				actor->y = processActorY = (processActorY / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
 			}*/
 		}
 
@@ -757,7 +757,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 			if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 256, _engine->_renderer->destZ) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
+				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + BRICK_HEIGHT, _engine->_renderer->destZ) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);
 					initAnim(AnimationTypes::kBigHit, 2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 
@@ -777,7 +777,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (brickShape == ShapeType::kSolid) {
 				if (actor->dynamicFlags.bIsFalling) {
 					_engine->_collision->stopFalling();
-					_engine->_movements->processActorY = (_engine->_collision->collisionY << 8) + 0x100;
+					_engine->_movements->processActorY = (_engine->_collision->collisionY * BRICK_HEIGHT) + BRICK_HEIGHT;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);

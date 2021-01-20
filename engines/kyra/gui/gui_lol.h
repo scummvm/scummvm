@@ -60,7 +60,8 @@ namespace Kyra {
 	do { \
 		item.enabled = 1; \
 		item.itemId = a; \
-		item.itemString = 0; \
+		item.itemString = ""; \
+		item.useItemString = false; \
 		item.x = b; \
 		item.y = c; \
 		item.width = d; \
@@ -113,8 +114,8 @@ private:
 
 	void setupSaveMenuSlots(Menu &menu, int num);
 
-	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) override;
-	int getMenuCenterStringX(const char *str, int x1, int x2) override;
+	void printMenuText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 flags) override;
+	int getMenuCenterStringX(const Common::String &str, int x1, int x2) override;
 
 	int getInput();
 
@@ -142,9 +143,9 @@ private:
 	uint8 defaultColor1() const override { return 0xFE; }
 	uint8 defaultColor2() const override { return 0x00; }
 
-	const char *getMenuTitle(const Menu &menu) override;
-	const char *getMenuItemTitle(const MenuItem &menuItem) override;
-	const char *getMenuItemLabel(const MenuItem &menuItem) override;
+	Common::String getMenuTitle(const Menu &menu) override;
+	Common::String getMenuItemTitle(const MenuItem &menuItem) override;
+	Common::String getMenuItemLabel(const MenuItem &menuItem) override;
 
 	Button _menuButtons[10];
 	Button _scrollUpButton;

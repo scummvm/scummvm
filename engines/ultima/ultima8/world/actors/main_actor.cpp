@@ -20,25 +20,20 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/avatar_death_process.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
-#include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/world.h"
@@ -50,6 +45,7 @@
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -254,8 +250,26 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			Item *existing = getFirstItemWithShape(shapeno, true);
 			if (!existing) {
 				if ((shapeno == 0x52e) || (shapeno == 0x52f) || (shapeno == 0x530)) {
-					warning("TODO: Properly handle giving avatar a shield 0x%x", shapeno);
-					return 0;
+					int shieldtype;
+					switch (shapeno) {
+						default:
+						case 0x52e:
+							shieldtype = 1;
+							break;
+						case 0x52f:
+							shieldtype = 2;
+							break;
+						case 0x530:
+							shieldtype = 3;
+							break;
+					}
+					if (_shieldType < shieldtype) {
+						_shieldType = shieldtype;
+					}
+					if (showtoast)
+						pickupArea->addPickup(item);
+					item->destroy();
+					return 1;
 				} else {
 					item->setFrame(0);
 					item->setQuality(1);
@@ -314,6 +328,12 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 	}
 
 	Actor::teleport(mapNum, x, y, z);
+
+	if (GAME_IS_CRUSADER) {
+		// Keep the camera on the avatar (the snap process will update on next move)
+		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+	}
+
 	_justTeleported = true;
 }
 
@@ -355,6 +375,12 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	egg->dumpInfo();
 
 	Actor::teleport(mapNum, xv, yv, zv);
+
+	if (GAME_IS_CRUSADER) {
+		// Keep the camera on the avatar (the snap process will update on next move)
+		CameraProcess::SetCameraProcess(new CameraProcess(xv, yv, zv));
+	}
+
 	_justTeleported = true;
 }
 
@@ -653,6 +679,24 @@ void MainActor::nextInvItem() {
 	Std::vector<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
 	_activeInvItem = getIdOfNextItemInList(items, _activeInvItem);
+}
+
+void MainActor::addFireAnimOffsets(int32 &x, int32 &y, int32 &z) {
+	assert(GAME_IS_CRUSADER);
+	Animation::Sequence fireanim = (isKneeling() ? Animation::kneelAndFire : Animation::attack);
+	uint32 actionno = AnimDat::getActionNumberForSequence(fireanim, this);
+	Direction dir = getDir();
+
+	const AnimAction *animaction = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+	for (unsigned int i = 0; i < animaction->getSize(); i++) {
+		const AnimFrame &frame = animaction->getFrame(dir, i);
+		if (frame.is_cruattack()) {
+			x += frame.cru_attackx();
+			y += frame.cru_attacky();
+			z += frame.cru_attackz();
+			return;
+		}
+	}
 }
 
 

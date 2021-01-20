@@ -141,7 +141,7 @@ void Room::loveaTimer2Expired() {
 void Room::loveaUseMTricorderOnSpock() {
 	// Mccoy doesn't do his animation, I guess because he doesn't know which way to face?
 	// (possible future enhancement?)
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->love.spockCured)
 		showText(TX_SPEAKER_MCCOY, 1 + COMMON_MESSAGE_OFFSET, true);
@@ -162,7 +162,7 @@ void Room::loveaUseMTricorderOnSpock() {
 }
 
 void Room::loveaUseMTricorderOnHuman() {
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, 7 + COMMON_MESSAGE_OFFSET, true);
 }
 

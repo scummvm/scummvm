@@ -139,6 +139,8 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
+#define kAnimationTypeLoop 0
+
 /**
  * Actors structure
  *
@@ -181,6 +183,9 @@ public:
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
 	int32 entityDataSize = 0;
+
+	bool isAttackAnimationActive() const;
+	bool isJumpAnimationActive() const;
 
 	int32 x = 0;
 	int32 y = 0;
@@ -230,8 +235,7 @@ public:
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
-	// 0 == loop
-	int32 animType = 0;   // field_78
+	int32 animType = kAnimationTypeLoop;   // field_78
 	int32 brickSound = 0; // field_7A
 
 	ZVBox boudingBox;
@@ -288,8 +292,8 @@ public:
 	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
 
 	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
-	/** Hero auto agressive mode */
-	bool autoAgressive = true;
+	/** Hero auto aggressive mode */
+	bool autoAggressive = true;
 	/** Previous Hero behaviour */
 	HeroBehaviourType previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */

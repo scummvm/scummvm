@@ -28,7 +28,6 @@
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -38,10 +37,10 @@
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/xml_map.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "common/file.h"
 #include "common/system.h"
 
 namespace Ultima {
@@ -77,7 +76,7 @@ MapLoader *MapLoaders::getLoader(Map::Type type) {
 
 /*-------------------------------------------------------------------*/
 
-bool MapLoader::loadData(Map *map, Common::File *f) {
+bool MapLoader::loadData(Map *map, Common::SeekableReadStream &f) {
 	uint x, xch, y, ych;
 
 	// Allocate the space we need for the map data
@@ -90,7 +89,7 @@ bool MapLoader::loadData(Map *map, Common::File *f) {
 		map->_chunkWidth = map->_width;
 
 	uint32 total = 0;
-	u4fseek(f, map->_offset, SEEK_CUR);
+	f.seek(map->_offset, SEEK_CUR);
 
 	for (ych = 0; ych < (map->_height / map->_chunkHeight); ++ych) {
 		for (xch = 0; xch < (map->_width / map->_chunkWidth); ++xch) {
@@ -104,7 +103,7 @@ bool MapLoader::loadData(Map *map, Common::File *f) {
 			} else {
 				for (y = 0; y < map->_chunkHeight; ++y) {
 					for (x = 0; x < map->_chunkWidth; ++x) {
-						int c = u4fgetc(f);
+						int c = f.readByte();
 						if (c == EOF)
 							return false;
 
@@ -143,9 +142,8 @@ bool CityMapLoader::load(Map *map) {
 	Dialogue *dialogues[CITY_MAX_PERSONS];
 	DialogueLoader *dlgLoader = DialogueLoaders::getLoader("application/x-u4tlk");
 
-	Common::File *ult = u4fopen(city->_fname);
-	Common::File *tlk = u4fopen(city->_tlkFname);
-	if (!ult || !tlk)
+	Common::File ult, tlk;
+	if (!ult.open(city->_fname) || !tlk.open(city->_tlkFname))
 		error("unable to load map data");
 
 	// The map must be 32x32 to be read from an .ULT file
@@ -157,22 +155,22 @@ bool CityMapLoader::load(Map *map) {
 
 	// Properly construct people for the city
 	for (i = 0; i < CITY_MAX_PERSONS; i++)
-		people[i] = new Person(map->translateFromRawTileIndex(u4fgetc(ult)));
+		people[i] = new Person(map->translateFromRawTileIndex(ult.readByte()));
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++)
-		people[i]->getStart().x = u4fgetc(ult);
+		people[i]->getStart().x = ult.readByte();
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++)
-		people[i]->getStart().y = u4fgetc(ult);
+		people[i]->getStart().y = ult.readByte();
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++)
-		people[i]->setPrevTile(map->translateFromRawTileIndex(u4fgetc(ult)));
+		people[i]->setPrevTile(map->translateFromRawTileIndex(ult.readByte()));
 
 	for (i = 0; i < CITY_MAX_PERSONS * 2; i++)
-		u4fgetc(ult);           // Read redundant startx/starty
+		ult.readByte();           // Read redundant startx/starty
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
-		byte c = u4fgetc(ult);
+		byte c = ult.readByte();
 		if (c == 0)
 			people[i]->setMovementBehavior(MOVEMENT_FIXED);
 		else if (c == 1)
@@ -187,7 +185,7 @@ bool CityMapLoader::load(Map *map) {
 
 	byte conv_idx[CITY_MAX_PERSONS];
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
-		conv_idx[i] = u4fgetc(ult);
+		conv_idx[i] = ult.readByte();
 	}
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
@@ -195,7 +193,7 @@ bool CityMapLoader::load(Map *map) {
 	}
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
-		dialogues[i] = dlgLoader->load(tlk);
+		dialogues[i] = dlgLoader->load(&tlk);
 
 		if (!dialogues[i])
 			break;
@@ -247,9 +245,6 @@ bool CityMapLoader::load(Map *map) {
 			delete people[i];
 	}
 
-	u4fclose(ult);
-	u4fclose(tlk);
-
 	return true;
 }
 
@@ -258,8 +253,8 @@ bool CityMapLoader::load(Map *map) {
 bool ConMapLoader::load(Map *map) {
 	int i;
 
-	Common::File *con = u4fopen(map->_fname);
-	if (!con)
+	Common::File con;
+	if (!con.open(map->_fname))
 		error("unable to load map data");
 
 	// The map must be 11x11 to be read from an .CON file
@@ -270,24 +265,22 @@ bool ConMapLoader::load(Map *map) {
 		CombatMap *cm = getCombatMap(map);
 
 		for (i = 0; i < AREA_CREATURES; i++)
-			cm->creature_start[i] = MapCoords(u4fgetc(con));
+			cm->creature_start[i] = MapCoords(con.readByte());
 
 		for (i = 0; i < AREA_CREATURES; i++)
-			cm->creature_start[i].y = u4fgetc(con);
+			cm->creature_start[i].y = con.readByte();
 
 		for (i = 0; i < AREA_PLAYERS; i++)
-			cm->player_start[i] = MapCoords(u4fgetc(con));
+			cm->player_start[i] = MapCoords(con.readByte());
 
 		for (i = 0; i < AREA_PLAYERS; i++)
-			cm->player_start[i].y = u4fgetc(con);
+			cm->player_start[i].y = con.readByte();
 
-		u4fseek(con, 16L, SEEK_CUR);
+		con.seek(16L, SEEK_CUR);
 	}
 
 	if (!loadData(map, con))
 		return false;
-
-	u4fclose(con);
 
 	return true;
 }
@@ -298,8 +291,8 @@ bool DngMapLoader::load(Map *map) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
 	assert(dungeon);
 
-	Common::File *dng = u4fopen(dungeon->_fname);
-	if (!dng)
+	Common::File dng;
+	if (!dng.open(dungeon->_fname))
 		error("unable to load map data");
 
 	// The map must be 11x11 to be read from an .CON file
@@ -309,7 +302,7 @@ bool DngMapLoader::load(Map *map) {
 	// Load the dungeon map
 	uint i, j;
 	for (i = 0; i < (DNG_HEIGHT * DNG_WIDTH * dungeon->_levels); i++) {
-		byte mapData = u4fgetc(dng);
+		byte mapData = dng.readByte();
 		MapTile tile = map->translateFromRawTileIndex(mapData);
 
 		// Determine what type of tile it is
@@ -327,30 +320,30 @@ bool DngMapLoader::load(Map *map) {
 		for (j = 0; j < DNGROOM_NTRIGGERS; j++) {
 			int tmp;
 
-			dungeon->_rooms[i]._triggers[j]._tile = g_tileMaps->get("base")->translate(u4fgetc(dng))._id;
+			dungeon->_rooms[i]._triggers[j]._tile = g_tileMaps->get("base")->translate(dng.readByte())._id;
 
-			tmp = u4fgetc(dng);
+			tmp = dng.readByte();
 			if (tmp == EOF)
 				return false;
 			dungeon->_rooms[i]._triggers[j].x = (tmp >> 4) & 0x0F;
 			dungeon->_rooms[i]._triggers[j].y = tmp & 0x0F;
 
-			tmp = u4fgetc(dng);
+			tmp = dng.readByte();
 			if (tmp == EOF)
 				return false;
 			dungeon->_rooms[i]._triggers[j]._changeX1 = (tmp >> 4) & 0x0F;
 			dungeon->_rooms[i]._triggers[j]._changeY1 = tmp & 0x0F;
 
-			tmp = u4fgetc(dng);
+			tmp = dng.readByte();
 			if (tmp == EOF)
 				return false;
 			dungeon->_rooms[i]._triggers[j].changeX2 = (tmp >> 4) & 0x0F;
 			dungeon->_rooms[i]._triggers[j].changeY2 = tmp & 0x0F;
 		}
 
-		dungeon->_rooms[i].load(*dng);
-		u4fread(room_tiles, sizeof(room_tiles), 1, dng);
-		u4fread(dungeon->_rooms[i]._buffer, sizeof(dungeon->_rooms[i]._buffer), 1, dng);
+		dungeon->_rooms[i].load(dng);
+		dng.read(room_tiles, sizeof(room_tiles));
+		dng.read(dungeon->_rooms[i]._buffer, sizeof(dungeon->_rooms[i]._buffer));
 
 		// Translate each creature tile to a tile id
 		for (j = 0; j < sizeof(dungeon->_rooms[i]._creatureTiles); j++)
@@ -371,7 +364,6 @@ bool DngMapLoader::load(Map *map) {
 			}
 		}
 	}
-	u4fclose(dng);
 
 	dungeon->_roomMaps = new CombatMap *[dungeon->_nRooms];
 	for (i = 0; i < dungeon->_nRooms; i++)
@@ -398,14 +390,12 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 /*-------------------------------------------------------------------*/
 
 bool WorldMapLoader::load(Map *map) {
-	Common::File *world = u4fopen(map->_fname);
-	if (!world)
+	Common::File world;
+	if (!world.open(map->_fname))
 		error("unable to load map data");
 
 	if (!loadData(map, world))
 		return false;
-
-	u4fclose(world);
 
 	// Check for any tile overrides for the portals
 	for (uint idx = 0; idx < map->_portals.size(); ++idx) {

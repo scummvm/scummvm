@@ -23,8 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_TEXTURE_H
 #define ULTIMA8_GRAPHICS_TEXTURE_H
 
-#include "graphics/managed_surface.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -49,9 +47,6 @@ namespace Ultima8 {
 #define TEX32_R_MASK            0x000000FF
 #define TEX32_R(col32)          (((col32)&TEX32_R_MASK)>>TEX32_R_SHIFT)
 
-#define TEX32_AG(col32)         (((col32) >> 8) & 0x00FF00FF)
-#define TEX32_RB(col32)         (((col32) >> 0) & 0x00FF00FF)
-
 #define TEX32_PACK_RGBA(r,g,b,a)    (((a)<<TEX32_A_SHIFT)|((r)<<TEX32_R_SHIFT)|\
                                      ((g)<<TEX32_G_SHIFT)|((b)<<TEX32_B_SHIFT))
 #define TEX32_PACK_RGBA16(r,g,b,a)  ((((a)>>8)<<TEX32_A_SHIFT)|\
@@ -59,91 +54,6 @@ namespace Ultima8 {
                                      (((g)>>8)<<TEX32_G_SHIFT)|\
                                      (((b)>>8)<<TEX32_B_SHIFT))
 
-// 64 Bit Texture bit operations
-#define TEX64_A_SHIFT           16
-#define TEX64_A_MASK            0xFFFF0000
-#define TEX64_A_MASK_H          0xFF000000
-
-#define TEX64_G_SHIFT           0
-#define TEX64_G_MASK            0x0000FFFF
-#define TEX64_G_MASK_H          0x0000FF00
-
-#define TEX64_B_SHIFT           16
-#define TEX64_B_MASK            0xFFFF0000
-#define TEX64_B_MASK_H          0xFF000000
-
-#define TEX64_R_SHIFT           0
-#define TEX64_R_MASK            0x0000FFFF
-#define TEX64_R_MASK_H          0x0000FF00
-
-enum TextureFormat {
-	TEX_FMT_STANDARD        = 0,    // Standard texture format as defined using Macros above
-	TEX_FMT_NATIVE          = 1     // The native format of the RenderSurface
-};
-
-
-//
-// Basic 32 Bit Texture
-//
-class Texture : public Graphics::ManagedSurface {
-public:
-	uint32          _format;
-
-	// Use CalcLOG2s to calculate these (can be -1 which indicates not log2)
-	int32           _wlog2;
-	int32           _hlog2;
-
-	// For OpenGL
-	uint32          _glTex;
-	Texture         *_next;
-
-	static Graphics::PixelFormat getPixelFormat() {
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, TEX32_R_SHIFT, TEX32_G_SHIFT, TEX32_B_SHIFT, TEX32_A_SHIFT);
-	}
-
-	Texture();
-
-	virtual ~Texture();
-
-	void create(uint16 width, uint16 height) override {
-		Graphics::ManagedSurface::create(width, height);
-	}
-	void create(uint16 width, uint16 height, const Graphics::PixelFormat &pixelFormat) override {
-		Graphics::ManagedSurface::create(width, height, pixelFormat);
-	}
-	void create(ManagedSurface &surf, const Common::Rect &bounds) override {
-		Graphics::ManagedSurface::create(surf, bounds);
-	}
-	void create(uint16 width, uint16 height, TextureFormat textureFormat);
-
-	// Calc texture log2's
-	void CalcLOG2s() {
-		_wlog2 = -1;
-		_hlog2 = -1;
-		for (int i = 0; i < 32; i++) {
-			if (this->w == (1 << i))
-				_wlog2 = i;
-
-			if (this->h == (1 << i))
-				_hlog2 = i;
-		}
-	}
-
-	// Create a texture from a Data Source (filename is use to help detection of type)
-	static Texture *Create(Common::SeekableReadStream *rs, const char *filename = NULL);
-
-	// Loads the data from the passed surfcae
-	void loadSurface(const Graphics::Surface *surf);
-
-	// Load data from a passed 8bit surface
-	void loadSurface8Bit(const Graphics::Surface *surf, const byte *pal);
-protected:
-
-	// Read from a File. No filetype supported by this class
-	virtual bool Read(Common::SeekableReadStream *rs) {
-		return false;
-	}
-};
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

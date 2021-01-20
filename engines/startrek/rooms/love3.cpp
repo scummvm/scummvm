@@ -200,7 +200,7 @@ void Room::love3Tick80() {
 
 void Room::love3TouchedWarp1() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->timers[3] = 10;
 }
 

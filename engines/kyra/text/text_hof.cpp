@@ -150,15 +150,15 @@ int KyraEngine_HoF::chatGetType(const char *str) {
 	}
 }
 
-int KyraEngine_HoF::chatCalcDuration(const char *str) {
+int KyraEngine_HoF::chatCalcDuration(const Common::String &str) {
 	static const uint8 durationMultiplicator[] = { 16, 14, 12, 10, 8, 8, 7, 6, 5, 4 };
 
-	int duration = strlen(str);
+	int duration = str.size();
 	duration *= _flags.isTalkie ? 8 : durationMultiplicator[(_configTextspeed / 10)];
 	return MAX<int>(duration, 120);
 }
 
-void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vocLow) {
+void KyraEngine_HoF::objectChat(const Common::String &str, int object, int vocHigh, int vocLow) {
 	setNextIdleAnimTimer();
 
 	_chatVocHigh = _chatVocLow = -1;
@@ -166,7 +166,7 @@ void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vo
 	objectChatInit(str, object, vocHigh, vocLow);
 	_chatText = str;
 	_chatObject = object;
-	int chatType = chatGetType(str);
+	int chatType = chatGetType(str.c_str());
 	if (chatType == -1) {
 		_chatIsNote = true;
 		chatType = 0;
@@ -209,15 +209,15 @@ void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vo
 	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 	updateCharacterAnim(0);
 
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 
 	setNextIdleAnimTimer();
 }
 
-void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
-	str = _text->preprocessString(str);
-	int lineNum = _text->buildMessageSubstrings(str);
+void KyraEngine_HoF::objectChatInit(const Common::String &str0, int object, int vocHigh, int vocLow) {
+	Common::String str = _text->preprocessString(str0.c_str());
+	int lineNum = _text->buildMessageSubstrings(str.c_str());
 
 	int yPos = 0, xPos = 0;
 
@@ -259,17 +259,17 @@ void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, in
 	}
 }
 
-void KyraEngine_HoF::objectChatPrintText(const char *str, int object) {
+void KyraEngine_HoF::objectChatPrintText(const Common::String &str0, int object) {
 	int c1 = _talkObjectList[object].color;
-	str = _text->preprocessString(str);
-	int lineNum = _text->buildMessageSubstrings(str);
+	Common::String str = _text->preprocessString(str0.c_str());
+	int lineNum = _text->buildMessageSubstrings(str.c_str());
 	int maxWidth = _text->getWidestLineWidth(lineNum);
 	int x = (object == 0) ? _mainCharacter.x1 : _talkObjectList[object].x;
 	int cX1 = 0, cX2 = 0;
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = &_text->_talkSubstrings[i*_text->maxSubstringLen()];
+		str = Common::String(&_text->_talkSubstrings[i*_text->maxSubstringLen()]);
 
 		int y = _text->_talkMessageY + i * 10;
 		x = _text->getCenterStringX(str, cX1, cX2);
@@ -498,6 +498,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 			offs += 2;
 
 		} else {
+			Common::String str;
 			if (!_flags.isTalkie || cmd == 11) {
 				int len = READ_LE_UINT16(_dlgBuffer + offs);
 				offs += 2;
@@ -505,8 +506,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 					vocLo = READ_LE_UINT16(_dlgBuffer + offs);
 					offs += 2;
 				}
-				memcpy(_unkBuf500Bytes, _dlgBuffer + offs, len);
-				_unkBuf500Bytes[len] = 0;
+				str = Common::String((const char *) _dlgBuffer + offs, len);
 				offs += len;
 				if (_flags.isTalkie)
 					continue;
@@ -518,18 +518,17 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 				vocHi = irnv[vocH - 1] + csEntry;
 				vocLo = READ_LE_UINT16(_dlgBuffer + offs);
 				offs += 2;
-				memcpy(_unkBuf500Bytes, _dlgBuffer + offs, len);
-				_unkBuf500Bytes[len] = 0;
+				str = Common::String((const char *) _dlgBuffer + offs, len);
 				offs += len;
 			}
 
-			if (_unkBuf500Bytes[0]) {
+			if (!str.empty()) {
 				if ((!_flags.isTalkie && cmd == 11) || (_flags.isTalkie && cmd == 12)) {
 					if (activeTimSequence > -1) {
 						deinitTalkObject(activeTimSequence);
 						activeTimSequence = -1;
 					}
-					objectChat((const char *)_unkBuf500Bytes, 0, vocHi, vocLo);
+					objectChat(str, 0, vocHi, vocLo);
 				} else {
 					if (activeTimSequence != nextTimSequence) {
 						if (activeTimSequence > -1) {
@@ -539,7 +538,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 						initTalkObject(nextTimSequence);
 						activeTimSequence = nextTimSequence;
 					}
-					npcChatSequence((const char *)_unkBuf500Bytes, nextTimSequence, vocHi, vocLo);
+					npcChatSequence(str, nextTimSequence, vocHi, vocLo);
 				}
 			}
 		}
@@ -578,7 +577,7 @@ void KyraEngine_HoF::initTalkObject(int index) {
 		_tim->resetFinishedFlag();
 		while (!shouldQuit() && !_tim->finished()) {
 			_tim->exec(_currentTalkSections.STATim, false);
-			if (_chatText)
+			if (!_chatText.empty())
 				updateWithText();
 			else
 				update();
@@ -594,7 +593,7 @@ void KyraEngine_HoF::deinitTalkObject(int index) {
 		_tim->resetFinishedFlag();
 		while (!shouldQuit() && !_tim->finished()) {
 			_tim->exec(_currentTalkSections.ENDTim, false);
-			if (_chatText)
+			if (!_chatText.empty())
 				updateWithText();
 			else
 				update();
@@ -610,7 +609,7 @@ void KyraEngine_HoF::deinitTalkObject(int index) {
 	_tim->unload(_currentTalkSections.ENDTim);
 }
 
-void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh, int vocLow) {
+void KyraEngine_HoF::npcChatSequence(const Common::String &str, int objectId, int vocHigh, int vocLow) {
 	_chatText = str;
 	_chatObject = objectId;
 	objectChatInit(str, objectId, vocHigh, vocLow);
@@ -654,7 +653,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 	_tim->unload(_currentTalkSections.TLKTim);
 
 	_text->restoreScreen();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 	setNextIdleAnimTimer();
 }

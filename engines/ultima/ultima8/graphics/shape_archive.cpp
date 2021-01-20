@@ -24,7 +24,6 @@
 
 #include "ultima/ultima8/graphics/shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/convert/convert_shape.h"
 
 namespace Ultima {

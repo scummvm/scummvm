@@ -196,13 +196,13 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 
 bool TreasureLoader::parseDouble(const Std::string &val, double &d) {
 	// TODO: error checking
-	d = Std::atof(val.c_str());
+	d = atof(val.c_str());
 	return true;
 }
 
 bool TreasureLoader::parseInt(const Std::string &val, int &i) {
 	// TODO: error checking
-	i = Std::strtol(val.c_str(), 0, 0);
+	i = strtol(val.c_str(), 0, 0);
 	return true;
 }
 

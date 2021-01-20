@@ -20,19 +20,15 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/container_gump.h"
 
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -52,7 +48,7 @@ ContainerGump::ContainerGump()
 
 }
 
-ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
+ContainerGump::ContainerGump(const Shape *shape, uint32 frameNum, uint16 owner,
                              uint32 flags, int32 layer)
 	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
 	  _displayDragging(false), _draggingShape(0), _draggingFrame(0),
@@ -117,7 +113,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 
 	Std::list<Item *> &contents = c->_contents;
-	int32 gametick = Kernel::get_instance()->getFrameNum();
+	int32 gameframeno = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
@@ -125,14 +121,14 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		Item *item = *iter;
-		item->setupLerp(gametick);
+		item->setupLerp(gameframeno);
 
 		if (!paintEditorItems && item->getShapeInfo()->is_editor())
 			continue;
 
 		int32 itemx, itemy;
 		getItemCoords(item, itemx, itemy);
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
 		surf->Paint(s, item->getFrame(), itemx, itemy);
 	}

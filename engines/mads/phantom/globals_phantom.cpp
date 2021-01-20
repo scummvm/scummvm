@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
+#ifdef ENABLE_MADSV2
+
 #include "mads/phantom/globals_phantom.h"
 
 namespace MADS {
@@ -48,3 +48,5 @@ void PhantomGlobals::synchronize(Common::Serializer &s) {
 } // End of namespace Phantom
 
 } // End of namespace MADS
+
+#endif

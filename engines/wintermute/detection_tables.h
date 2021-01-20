@@ -620,25 +620,29 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("corrosion", "Enhanced Edition",
 		WME_ENTRY1s("data.dcp", "eeeb63910f6fc6ad1fe9c06db0b0ea2c", 643363346), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.0)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.0)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.0",
 		WME_ENTRY2s("data.dcp", "d14d3c858026b1422a2a420e9a49fd16", 643372377,
 					"steam_001.dcp", "e5ee8fcadec5dcc24484300c77017bd0", 41986), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.1)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.1)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.1",
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "c69ca653d0b630302afece19c5e9b52a", 42039), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.2)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.2)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.2",
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "e10b58c16e9487cfaf395c3b88ca1fd1", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
-	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.3)
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (Steam, v1.2.3)
 	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.3",
 		WME_ENTRY2s("data.dcp", "1feab5a4bbf6bbc2ddee61f885abc096", 643363368,
 					"steam_001.dcp", "bad99743e3d64368004fb2c172b96346", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (IndieGala, v1.2.3)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.3",
+		WME_ENTRY1s("data.dcp", "07de81442b011d4b820fb1ec5e735ec8", 642860751), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Dark Fall: Lost Souls
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -3786,6 +3790,56 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Reversion: The Return (Steam, May 2020) (Traditional Chinese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_zh_t.dcp", "6ca6a83edad54ec1c384fbcea2989ee4", 10170999), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, November 2020) (Serbian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "5df2540652f0b77d8bb48e7454840c5e", 1806937960,
+					"xlanguage_sr.dcp", "dc43cc4e382dfa8b4a336e9fcc723bf3", 10164273), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_de.dcp", "cb3c666a014148529321cf30dc81d6c6", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_en.dcp", "de87f56e65ac48010bab0dac8decb7e6", 10107964), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Italian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_it.dcp", "dec219bf9289af361a40efeb0a59ab37", 10307721), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_pt.dcp", "71df5ba5b0b37b5df60bc114d16f37da", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_ru.dcp", "3112bec9708620107c1a459e890d1320", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Serbian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_sr.dcp", "e16438a25527e99fb974dd2cdb5ed945", 10164285), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
+					"xlanguage_zh_s.dcp", "d82a5708af24a879cbeaf7338ea89ab4", 10233899), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, December 2020) (Traditional Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "ca788ebe1b607c24c3e4db4771c16559", 1806937971,
 					"xlanguage_zh_t.dcp", "6ca6a83edad54ec1c384fbcea2989ee4", 10170999), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Rhiannon: Curse of the four Branches

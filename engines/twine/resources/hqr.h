@@ -72,6 +72,11 @@ int32 numEntries(const char *filename);
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index);
 
 /**
+ * @brief Helper method to dump the content of the given hqr index to a file
+ */
+bool dumpEntry(const char *filename, int32 index, const char *targetFileName);
+
+/**
  * Get a HQR entry pointer
  * @param ptr pointer to save the entry
  * @param filename HQR file name

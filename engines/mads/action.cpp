@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/action.h"
 #include "mads/inventory.h"

@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/filesys/u8_save_file.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,7 +45,7 @@ bool U8SaveFile::isU8SaveFile(Common::SeekableReadStream *_rs) {
 	_rs->read(buf, 23);
 	buf[23] = '\0';
 
-	return (Std::strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);
+	return (strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);
 }
 
 bool U8SaveFile::readMetadata() {

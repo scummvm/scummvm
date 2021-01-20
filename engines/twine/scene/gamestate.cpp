@@ -49,12 +49,10 @@
 
 namespace TwinE {
 
-#define SAVE_DIR "save/"
-
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
-	Common::fill(&gameFlags[0], &gameFlags[256], 0);
+	clearGameFlags();
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
-	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
+	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 	playerName[0] = '\0';
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
 }
@@ -62,11 +60,12 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 void GameState::initEngineProjections() {
 	_engine->_renderer->setOrthoProjection(311, 240, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
-	_engine->_renderer->setBaseRotation(0, 0, 0);
-	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, 0);
+	_engine->_renderer->setBaseRotation(ANGLE_0, ANGLE_0, ANGLE_0);
+	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, ANGLE_0);
 }
 
 void GameState::initGameStateVars() {
+	debug(2, "Init game state variables");
 	_engine->_extra->resetExtras();
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
@@ -77,19 +76,12 @@ void GameState::initGameStateVars() {
 		_engine->_scene->sceneFlags[i] = 0;
 	}
 
-	for (int32 i = 0; i < ARRAYSIZE(gameFlags); i++) {
-		gameFlags[i] = 0;
-	}
-
-	for (int32 i = 0; i < ARRAYSIZE(inventoryFlags); i++) {
-		inventoryFlags[i] = 0;
-	}
+	clearGameFlags();
+	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 
 	_engine->_scene->initSceneVars();
 
-	for (int32 i = 0; i < ARRAYSIZE(holomapFlags); i++) {
-		holomapFlags[i] = 0;
-	}
+	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 
 	_engine->_actor->clearBodyTable();
 }
@@ -113,10 +105,11 @@ void GameState::initHeroVars() {
 }
 
 void GameState::initEngineVars() {
+	debug(2, "Init engine variables");
 	_engine->_interface->resetClip();
 
-	_engine->_scene->alphaLight = 896;
-	_engine->_scene->betaLight = 950;
+	_engine->_scene->alphaLight = ANGLE_315;
+	_engine->_scene->betaLight = ANGLE_334;
 	initEngineProjections();
 	initGameStateVars();
 	initHeroVars();
@@ -158,7 +151,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		return false;
 	}
 
+	debug(2, "Load game");
 	if (file->readByte() != 0x03) {
+		warning("Could not load savegame - wrong magic byte");
 		return false;
 	}
 
@@ -182,7 +177,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
-	file->read(gameFlags, NUM_GAME_FLAGS);
+	for (uint8 i = 0; i < numGameFlags; ++i) {
+		setGameFlag(i, file->readByte());
+	}
 	_engine->_scene->needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
 
@@ -225,16 +222,27 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 }
 
 bool GameState::saveGame(Common::WriteStream *file) {
+	debug(2, "Save game");
 	if (playerName[0] == '\0') {
 		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+	}
+
+	int32 sceneIdx = _engine->_scene->currentSceneIdx;
+	if (sceneIdx == Polar_Island_end_scene || sceneIdx == Citadel_Island_end_sequence_1 || sceneIdx == Citadel_Island_end_sequence_2 || sceneIdx == Credits_List_Sequence) {
+		/* inventoryMagicPoints = 0x50 */
+		/* herobehaviour = 0 */
+		/* newherox = 0xffff */
+		sceneIdx = Polar_Island_Final_Battle;
 	}
 
 	file->writeByte(0x03);
 	file->writeString(playerName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
-	file->write(gameFlags, NUM_GAME_FLAGS);
-	file->writeByte(_engine->_scene->currentSceneIdx);
+	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {
+		file->writeByte(hasGameFlag(i));
+	}
+	file->writeByte(sceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);
 	file->writeByte(_engine->_scene->sceneHero->life);
@@ -261,6 +269,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
+	// TODO: writeUInt16LE in disassembly
 	file->writeByte(usingSabre ? 1 : 0);
 	file->writeByte(0);
 
@@ -268,9 +277,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 }
 
 void GameState::processFoundItem(int32 item) {
-	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
-	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + 0x100) >> 8;
-	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
+	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
+	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	// Hide hero in scene
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
@@ -279,19 +288,19 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	const int32 itemCameraX = _engine->_grid->newCameraX << 9;
-	const int32 itemCameraY = _engine->_grid->newCameraY << 8;
-	const int32 itemCameraZ = _engine->_grid->newCameraZ << 9;
+	const int32 itemCameraX = _engine->_grid->newCameraX * BRICK_SIZE;
+	const int32 itemCameraY = _engine->_grid->newCameraY * BRICK_HEIGHT;
+	const int32 itemCameraZ = _engine->_grid->newCameraZ * BRICK_SIZE;
 
-	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
+	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, ANGLE_0, ANGLE_45, ANGLE_0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
-	const int32 itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
-	int32 itemY = _engine->_scene->sceneHero->y >> 8;
+	const int32 itemX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
+	int32 itemY = _engine->_scene->sceneHero->y / BRICK_HEIGHT;
 	if (_engine->_scene->sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
+	const int32 itemZ = (_engine->_scene->sceneHero->z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 	_engine->flip();
@@ -314,7 +323,7 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initItemFoundText(item);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState textState = ProgressiveTextState::UNK1;
+	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
 	_engine->_text->initVoxToPlay(item);
 
@@ -332,7 +341,8 @@ void GameState::processFoundItem(int32 item) {
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	for (;;) {
-		ScopedFPS fps(1000 / 15);
+		FrameMarker frame;
+		ScopedFPS fps(66);
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
@@ -361,9 +371,11 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
 
-		if (textState != ProgressiveTextState::End) {
+		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->resetClip();
 			textState = _engine->_text->updateProgressiveText();
+		} else {
+			_engine->_text->fadeInRemainingChars();
 		}
 
 		_engine->_redraw->flipRedrawAreas();
@@ -376,17 +388,21 @@ void GameState::processFoundItem(int32 item) {
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (textState == ProgressiveTextState::End) {
+				_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 				break;
 			}
 			if (textState == ProgressiveTextState::NextPage) {
-				textState = ProgressiveTextState::UNK1;
+				textState = ProgressiveTextState::ContinueRunning;
 			}
 		}
+
+		_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry);
 
 		_engine->lbaTime++;
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
@@ -421,6 +437,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+			FrameMarker frame;
 			ScopedFPS scopedFps;
 			if (_engine->shouldQuit()) {
 				break;
@@ -434,7 +451,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 }
 
 void GameState::processGameoverAnimation() {
-	int32 tmpLbaTime = _engine->lbaTime;
+	const int32 tmpLbaTime = _engine->lbaTime;
 
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
@@ -457,11 +474,12 @@ void GameState::processGameoverAnimation() {
 	Renderer::prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
-	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 200, 200);
+	_engine->_renderer->setCameraPosition(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->lbaTime;
 	_engine->_interface->setClip(rect);
 
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
+		FrameMarker frame;
 		ScopedFPS scopedFps(66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
@@ -474,7 +492,7 @@ void GameState::processGameoverAnimation() {
 
 		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
-		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
+		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
 		_engine->copyBlockPhys(rect);
 
 		_engine->lbaTime++;
@@ -483,7 +501,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->playSample(Samples::Explode);
 	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
-	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
+	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
 	_engine->copyBlockPhys(rect);
 
 	_engine->delaySkip(2000);
@@ -499,6 +517,8 @@ void GameState::processGameoverAnimation() {
 
 void GameState::giveUp() {
 	_engine->_sound->stopSamples();
+	// TODO: is an autosave desired on giving up? I don't think so. What did the original game do here?
+	//_engine->autoSave();
 	initGameStateVars();
 	_engine->_scene->stopRunningGame();
 }

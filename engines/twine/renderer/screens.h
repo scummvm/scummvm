@@ -47,9 +47,6 @@ public:
 	/** converted custom palette */
 	uint32 paletteRGBACustom[NUMOFCOLORS]{0};
 
-	/** flag to check if a custom palette is in use */
-	bool palCustom = false;
-
 	/** flag to check in the game palette was changed */
 	bool palResetted = false;
 
@@ -77,15 +74,15 @@ public:
 	void loadCustomPalette(int32 index);
 
 	/** Load and display Main Menu image */
-	void loadMenuImage(bool fade_in = true);
+	void loadMenuImage(bool fadeIn = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
-	 * @param fade_in if we fade in before using the palette
+	 * @param fadeIn if we fade in before using the palette
 	 */
-	void loadImage(int32 index, int32 paletteIndex, bool fade_in = true);
+	void loadImage(int32 index, int32 paletteIndex, bool fadeIn = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
@@ -119,13 +116,13 @@ public:
 
 	/**
 	 * Adjust palette intensity
-	 * @param R red component of color
-	 * @param G green component of color
-	 * @param B blue component of color
+	 * @param r red component of color
+	 * @param g green component of color
+	 * @param b blue component of color
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *palette, int32 intensity);
+	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
 
 	/**
 	 * Adjust between two palettes

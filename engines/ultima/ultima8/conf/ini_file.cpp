@@ -24,7 +24,6 @@
 #include "ultima/ultima8/conf/ini_file.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -377,7 +376,7 @@ bool INIFile::value(istring key, int &ret) {
 
 	if (!found) return false;
 
-	ret = Std::strtol(stringval.c_str(), 0, 0);
+	ret = strtol(stringval.c_str(), 0, 0);
 	return true;
 }
 

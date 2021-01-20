@@ -708,7 +708,7 @@ void _set::Init_base_bitmap_buffers() {
 	decoder.ReadImage(ptr, bg_buffer_id);
 
 	// find the start of the weather data
-	int32 *weatherPtr = (int *)(bgPtr + shadowTable[1]);
+	int32 *weatherPtr = (int32 *)(bgPtr + shadowTable[1]);
 
 	InitWeather(*(weatherPtr), *(weatherPtr + 1), *(weatherPtr + 2), *(weatherPtr + 3), *(weatherPtr + 4), *(weatherPtr + 5));
 

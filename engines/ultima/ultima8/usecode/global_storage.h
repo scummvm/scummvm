@@ -26,6 +26,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for globals that are accessed by the Usecode.
+ * In U8 this is a bitfield, in Crusader it's a byte array.
+ */
 class GlobalStorage {
 public:
 	virtual ~GlobalStorage() {};

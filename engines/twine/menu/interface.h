@@ -32,25 +32,13 @@ class ManagedSurface;
 
 namespace TwinE {
 
-/** Screen top limit to display the texts */
-#define SCREEN_TEXTLIMIT_TOP 0
-/** Screen left limit to display the texts */
-#define SCREEN_TEXTLIMIT_LEFT 0
-/** Screen right limit to display the texts */
-#define SCREEN_TEXTLIMIT_RIGHT (SCREEN_WIDTH - 1)
-/** Screen bottom limit to display the texts */
-#define SCREEN_TEXTLIMIT_BOTTOM (SCREEN_HEIGHT - 1)
-
 class TwinEEngine;
 
 class Interface {
 private:
 	TwinEEngine *_engine;
-	int32 checkClipping(int32 x, int32 y);
-	int32 textWindowTopSave = 0;
-	int32 textWindowLeftSave = 0;
-	int32 textWindowRightSave = 0;
-	int32 textWindowBottomSave = 0;
+	int32 checkClipping(int32 x, int32 y) const;
+	Common::Rect textWindowSave;
 
 public:
 	Interface(TwinEEngine *engine);

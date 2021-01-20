@@ -20,36 +20,24 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/fire_type.h"
-#include "ultima/ultima8/usecode/uc_stack.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
-#include "ultima/ultima8/gumps/container_gump.h"
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/world/world_point.h"
@@ -64,7 +52,6 @@
 #include "ultima/ultima8/world/snap_process.h"
 #include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/missile_tracker.h"
 #include "ultima/ultima8/world/crosshair_process.h"
@@ -114,7 +101,7 @@ void Item::dumpInfo() const {
 
 	pout << ") q:" << getQuality()
 	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f:0x" << Std::hex << getFlags() << ", ef:0x"
+	     << ", f:0x" << ConsoleStream::hex << getFlags() << ", ef:0x"
 		 << getExtFlags();
 
 	const ShapeInfo *info = getShapeInfo();
@@ -123,7 +110,7 @@ void Item::dumpInfo() const {
 			 << info->_family << ", et:" << info->_equipType;
 	}
 
-	pout << ")" << Std::dec << Std::endl;
+	pout << ")" << ConsoleStream::dec << Std::endl;
 }
 
 Container *Item::getParentAsContainer() const {
@@ -616,6 +603,28 @@ bool Item::isOnScreen() const {
 	return false;
 }
 
+bool Item::isPartlyOnScreen() const {
+	GameMapGump *game_map = Ultima8Engine::get_instance()->getGameMapGump();
+
+	if (!game_map)
+		return false;
+
+	Rect game_map_dims;
+	int32 screenx = -1;
+	int32 screeny = -1;
+	game_map->GetLocationOfItem(_objId, screenx, screeny);
+	game_map->GetDims(game_map_dims);
+	int32 xd, yd, zd;
+	getFootpadWorld(xd, yd, zd);
+
+	if (game_map_dims.contains(screenx, screeny) ||
+		game_map_dims.contains(screenx + xd, screeny + yd)) {
+		return true;
+	}
+
+	return false;
+}
+
 bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	const Item *support;
@@ -719,7 +728,7 @@ const ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape);
 }
 
-Shape *Item::getShapeObject() const {
+const Shape *Item::getShapeObject() const {
 	if (!_cachedShape) _cachedShape = GameData::get_instance()->getMainShapes()->getShape(_shape);
 	return _cachedShape;
 }
@@ -1120,8 +1129,11 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			uint16 proc_gothit = 0, proc_rel = 0;
 
 			// If hitting at start, we should have already
-			// called gotHit and hit.
-			if ((!it->_touching || it->_touchingFloor) && it->_hitTime >= 0) {
+			// called gotHit and hit.  In Crusader we call
+			// hit for every hitting frame to make sickbays
+			// and teleporters work.
+			bool call_hit = it->_hitTime >= 0 || GAME_IS_CRUSADER;
+			if ((!it->_touching || it->_touchingFloor) && call_hit) {
 				if (_objId == 1 && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1302,7 +1314,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 	Actor *a = dynamic_cast<Actor *>(this);
 	if (a) {
 		Animation::Sequence anim;
-		bool kneeling = a->hasActorFlags(Actor::ACT_KNEELING);
+		bool kneeling = a->isKneeling();
 		bool smallwpn = true;
 		MainActor *ma = dynamic_cast<MainActor *>(this);
 		Item *wpn = getItem(a->getActiveWeapon());
@@ -1316,6 +1328,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 			else
 				anim = Animation::kneelAndFireLargeWeapon;
 		} else {
+			// TODO: fire2 seems to be different in Regret, check me.
 			if (ma || smallwpn)
 				anim = Animation::attack;
 			else
@@ -1324,7 +1337,8 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 
 		bool first_offsets = false;
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(_shape, static_cast<int32>(anim));
-		for (unsigned int i = 0; i < action->getSize(); i++) {
+		unsigned int nframes = action ? action->getSize() : 0;
+		for (unsigned int i = 0; i < nframes; i++) {
 			const AnimFrame &frame = action->getFrame(dir, i);
 			if (frame.is_cruattack()) {
 				if (!first_offsets) {
@@ -1754,6 +1768,8 @@ void Item::enterFastArea() {
 	if (_shape == 0x2c8 && GAME_IS_U8)
 		return;
 
+	const ShapeInfo *si = getShapeInfo();
+
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
 		Actor *actor = dynamic_cast<Actor *>(this);
@@ -1764,15 +1780,26 @@ void Item::enterFastArea() {
 			// dead actor, don't call the usecode
 		} else {
 			if (actor && GAME_IS_CRUSADER) {
+				uint16 lastactivity = actor->getLastActivityNo();
 				actor->clearLastActivityNo();
 				actor->clearInCombat();
+				actor->setToStartOfAnim(Animation::stand);
+				actor->clearActorFlag(Actor::ACT_WEAPONREADY);
+				actor->setActivity(lastactivity);
 			}
+
+			//
+			// TODO: Check this. The original games only call usecode for actors or
+			// NOISY types.  Calling for all types like this shouldn't cause any issues
+			// as long as all the types which implement event F are NPC or NOISY.
+			// Should confirm if that is the case.
+			//
+			// if (actor || si->_flags & ShapeInfo::SI_NOISY)
 			callUsecodeEvent_enterFastArea();
 		}
 	}
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
-		const ShapeInfo *si = getShapeInfo();
 		if ((si->_flags & ShapeInfo::SI_CRU_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
@@ -1798,6 +1825,10 @@ void Item::leaveFastArea() {
 	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
 		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
 		if (g) g->Close();
+	}
+
+	if (_objId == 1) {
+		debug(6, "avatar leaving fast area");
 	}
 
 	// Unset the flag
@@ -1839,7 +1870,7 @@ void Item::leaveFastArea() {
 uint16 Item::openGump(uint32 gumpshape) {
 	if (_flags & FLG_GUMP_OPEN) return 0;
 	assert(_gump == 0);
-	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
+	const Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
 
 	ContainerGump *cgump;
 
@@ -2053,21 +2084,34 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	if (!cause_damage)
 		return;
 
-	UCList itemlist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
-	currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
-	                       160, false, xv, yv); //! CHECKME: 128?
+	if (GAME_IS_U8) {
+		UCList itemlist(2);
+		LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
+		CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+		currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
+							   160, false, xv, yv); //! CHECKME: 128?
 
-	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
-		Item *item = getItem(itemlist.getuint16(i));
-		if (!item) continue;
-		if (getRange(*item, true) > 160) continue; // check vertical distance
+		for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
+			Item *item = getItem(itemlist.getuint16(i));
+			if (!item) continue;
+			if (getRange(*item, true) > 160) continue; // check vertical distance
 
-		item->getLocation(xv, yv, zv);
-		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
-		item->receiveHit(0, dir, 6 + (getRandom() % 6),
-		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
+			item->getLocation(xv, yv, zv);
+			Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
+			item->receiveHit(0, dir, 6 + (getRandom() % 6),
+							 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
+		}
+	} else {
+		Point3 pt;
+		getLocation(pt);
+		// Note: same FireType number used in both Remorse and Regret
+		const FireType *firetypedat = GameData::get_instance()->getFireType(4);
+		if (firetypedat) {
+			int damage = firetypedat->getRandomDamage();
+			firetypedat->applySplashDamageAround(pt, damage, this, this);
+		} else {
+			warning("couldn't explode properly - no firetype 4 data");
+		}
 	}
 }
 
@@ -2503,7 +2547,11 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+	int mul = 16;
+	if (GAME_IS_CRUSADER) {
+		x /= 2;
+		mul /= 2;
+	}
 
 	if (item->_flags & FLG_FLIPPED)
 		return x - item->getShapeInfo()->_y * mul;
@@ -2518,7 +2566,11 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+	int mul = 16;
+	if (GAME_IS_CRUSADER) {
+		y /= 2;
+		mul /= 2;
+	}
 
 	if (item->_flags & FLG_FLIPPED)
 		return y - item->getShapeInfo()->_x * mul;
@@ -2936,10 +2988,18 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(frame);
 	ARG_WORLDPOINT(point);
 
+	int32 x = point.getX();
+	int32 y = point.getY();
+	int32 z = point.getZ();
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(point.getX(), point.getY(), point.getZ(),
-	                                 shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 	if (!valid)
 		return 0;
 
@@ -2950,7 +3010,7 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
-	newitem->move(point.getX(), point.getY(), point.getZ());
+	newitem->move(x, y, z);
 
 	uint8 buf[2];
 	buf[0] = static_cast<uint8>(objID);
@@ -3347,21 +3407,21 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(force); // 0/1
 	ARG_UINT16(unknown2); // always 0
 
+	int32 x = point.getX();
+	int32 y = point.getY();
+	int32 z = point.getZ();
+
 	if (GAME_IS_CRUSADER) {
-		point.setX(point.getX() * 2);
-		point.setY(point.getY() * 2);
+		x *= 2;
+		y *= 2;
 	}
 
 	if (!item)
 		return 0;
 	//! What should this do to ethereal items?
-
-//	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
-//		item->move(point.getX(), point.getY(), point.getZ());
-//		return 1;
-//	} else {
-	return item->collideMove(point.getX(), point.getY(), point.getZ(), false, force == 1) == 0x4000;
-//	}
+	if (item->collideMove(x, y, z, false, force == 1) == 0x4000)
+		return 1;
+	return 0;
 }
 
 uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/) {
@@ -3527,6 +3587,7 @@ uint32 Item::I_shoot(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(gravity); // either 2 (fish) or 1 (death disk, dart)
 	if (!item) return 0;
 
+	assert(GAME_IS_U8);
 	MissileTracker tracker(item, point.getX(), point.getY(), point.getZ(),
 	                       speed, gravity);
 	tracker.launchItem();
@@ -3697,6 +3758,8 @@ uint32 Item::I_getRange(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_ID(other);
 	if (!item) return 0;
 	if (!other) return 0;
+
+	assert(GAME_IS_U8);
 
 	return item->getRange(*other);
 }

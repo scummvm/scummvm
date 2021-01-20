@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 
 #include "ultima/ultima8/ultima8.h"

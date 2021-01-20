@@ -38,6 +38,9 @@
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
 static uint32 convUTF8ToUTF32(const char *src) {
+	if (!src || src[0] == 0)
+		return 0;
+
 	Common::U32String u32(src);
 	return u32[0];
 }

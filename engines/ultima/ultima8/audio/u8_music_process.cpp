@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/music_flex.h"
@@ -36,13 +35,13 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(U8MusicProcess)
 U8MusicProcess::U8MusicProcess() : _midiPlayer(nullptr), _state(PLAYBACK_NORMAL),
 		_currentTrack(0), _combatMusicActive(false),
 		_savedTrackState(nullptr) {
-	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
+	memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
 
 U8MusicProcess::U8MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 		_state(PLAYBACK_NORMAL), _currentTrack(0), _combatMusicActive(false),
 		_savedTrackState(nullptr) {
-	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
+	memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	_theMusicProcess = this;
 	_type = 1; // persistent

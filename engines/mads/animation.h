@@ -23,13 +23,11 @@
 #ifndef MADS_ANIMATION_H
 #define MADS_ANIMATION_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/font.h"
-#include "mads/user_interface.h"
 
 namespace MADS {
 

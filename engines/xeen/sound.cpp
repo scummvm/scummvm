@@ -119,11 +119,16 @@ void Sound::loadEffectsData() {
 
 	if (!_effectsData) {
 		// Load in an entire driver so we have quick access to the effects data that's hardcoded within it
-		File file("blastmus");
-		byte *effectsData = new byte[file.size()];
-		file.seek(0);
-		file.read(effectsData, file.size());
-		file.close();
+		const char *name = "blastmus";
+		File file(name);
+		size_t size = file.size();
+		byte *effectsData = new byte[size];
+
+		if (file.read(effectsData, size) != size) {
+			delete[] effectsData;
+			error("Failed to read %zu bytes from '%s'", size, name);
+		}
+
 		_effectsData = effectsData;
 
 		// Locate the playFX routine
@@ -170,9 +175,18 @@ void Sound::playSong(Common::SeekableReadStream &stream) {
 	if (!_musicOn)
 		return;
 
-	byte *songData = new byte[stream.size()];
-	stream.seek(0);
-	stream.read(songData, stream.size());
+	if (!stream.seek(0))
+		error("Failed to seek to 0 for song data");
+
+	size_t size = stream.size();
+	byte *songData = new byte[size];
+
+	if (stream.read(songData, size) != size) {
+		delete[] songData;
+		error("Failed to read %zu bytes of song data", size);
+	}
+
+	assert(!_songData);
 	_songData = songData;
 
 	_SoundDriver->playSong(_songData);

@@ -128,7 +128,7 @@ void Room::love5Tick1() {
 
 void Room::love5TouchedWarp1() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->timers[4] = 10;
 }
 
