@@ -440,7 +440,7 @@ void update_black_invreg_and_reset(Bitmap *ds) {
 }
 
 void update_room_invreg_and_reset(int view_index, Bitmap *ds, Bitmap *src, bool no_transform) {
-	if (view_index < 0 || RoomCamRects.size() == 0)
+	if (view_index < 0 || RoomCamRects.empty())
 		return;
 
 	update_invalid_region(ds, src, RoomCamRects[view_index], no_transform);
