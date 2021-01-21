@@ -1047,12 +1047,16 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 
 	if (restartMode) {
 		// Load restart state
-		Common::File *file = new Common::File();
-		if (!file->open(filename)) {
-			delete file;
-			file = nullptr;
+		if (getPlatform() == Common::kPlatformPC98 && !filename.compareToIgnoreCase("start")) {
+			f = createPak98FileStream("START.PAK");
+		} else {
+			Common::File *file = new Common::File();
+			if (!file->open(filename)) {
+				delete file;
+				file = nullptr;
+			}
+			f = file;
 		}
-		f = file;
 	} else {
 		f = _saveFileMan->openForLoading(filename);
 	}
