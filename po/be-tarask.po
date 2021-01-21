@@ -8,13 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-20 23:37+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-01-21 17:05+0000\n"
+"Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
+"Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
+"projects/scummvm/scummvm/be-tarask/>\n"
 "Language: be-tarask\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.4\n"
 
 #: gui/about.cpp:102
 #, c-format
@@ -44,7 +48,7 @@ msgstr ""
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "Вярнуцца да папярэдняе тэчкі"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -73,7 +77,7 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
-msgstr ""
+msgstr "Скасаваць"
 
 #: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
@@ -81,15 +85,16 @@ msgstr ""
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
 #: backends/dialogs/win32/win32-dialogs.cpp:137
 msgid "Choose"
-msgstr ""
+msgstr "Выбраць"
 
 #: gui/downloaddialog.cpp:49
+#, fuzzy
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "Выберыце тэчку ў якую зладаваць файлы гульні"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:554 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr ""
+msgstr "Выберыце тэчку з файламі гульні"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
@@ -101,16 +106,16 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr ""
+msgstr "Скасаваць ладаваньне"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Скасаваць ладаваньне"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr ""
+msgstr "Схаваць"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
@@ -143,7 +148,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:567
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM ня можа адкрыць гэтую тэчку!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -178,14 +183,14 @@ msgid ""
 msgstr ""
 
 #: gui/downloaddialog.cpp:215
-#, c-format
+#, c-format, fuzzy
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "Зладавана %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
 msgid "Download speed: %s %S"
-msgstr ""
+msgstr "Хуткасьць ладаваньня: %s %S"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:285
 msgid "Game"
@@ -224,7 +229,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:158 engines/mohawk/dialogs.cpp:140
 #: engines/mohawk/dialogs.cpp:341
 msgid "Language:"
-msgstr ""
+msgstr "Мова:"
 
 #: gui/editgamedialog.cpp:158 gui/editgamedialog.cpp:159
 msgid ""
@@ -299,8 +304,9 @@ msgid "Backend"
 msgstr ""
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1858 engines/dialogs.cpp:301
+#, fuzzy
 msgid "Audio"
-msgstr ""
+msgstr "Гук"
 
 #: gui/editgamedialog.cpp:263
 msgid "Override global audio settings"
@@ -331,7 +337,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:292 gui/options.cpp:1873
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:295
 msgid "Override global MIDI settings"
@@ -343,8 +349,9 @@ msgid "Override global MIDI settings"
 msgstr ""
 
 #: gui/editgamedialog.cpp:307 gui/options.cpp:1879
+#, fuzzy
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:310
 msgid "Override global MT-32 settings"
@@ -503,7 +510,7 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr ""
+msgstr "Хуткасьць:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
@@ -574,7 +581,7 @@ msgstr ""
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Close"
-msgstr ""
+msgstr "Закрыць"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
@@ -654,8 +661,9 @@ msgid "Choose an action to map"
 msgstr ""
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
+#, fuzzy
 msgid "~Q~uit"
-msgstr ""
+msgstr "~В~ыйсьце"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
@@ -666,8 +674,9 @@ msgid "A~b~out..."
 msgstr ""
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#, fuzzy
 msgid "About ScummVM"
-msgstr ""
+msgstr "Пра ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
@@ -679,7 +688,7 @@ msgstr ""
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr ""
+msgstr "П~а~чаць"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
