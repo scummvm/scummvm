@@ -27,6 +27,7 @@ static const PlainGameDescriptor GAME_NAMES[] = {
 
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "bcremake", "Black Cauldron Remake" },
+	{ "blackwelllegacy", "The Blackwell Legacy" },
 	{ "kq2agdi", "Kings Quest II - Romancing The Stones" },
 
 	{ 0, 0 }
@@ -47,6 +48,7 @@ static const PlainGameDescriptor GAME_NAMES[] = {
 static const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
 	ENGLISH_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
+	ENGLISH_ENTRY("blackwelllegacy", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697),
 	ENGLISH_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
 
 	{ AD_TABLE_END_MARKER }

@@ -272,7 +272,7 @@ String MakeSpecialSubDir(const String &sp_dir) {
 }
 
 String MakeAppDataPath() {
-	return AGS::Shared::SAVE_FOLDER_PREFIX;
+	return "./";
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {
@@ -289,6 +289,23 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		return true;
 	}
 
+#if AGS_PLATFORM_SCUMMVM
+	if (read_only) {
+		// For reading files, first try as a save file, then fall back
+		// in the game folder. This handles cases where some games like
+		// The Blackwell Legacy write to files in the game folder
+		rp.BaseDir = SAVE_FOLDER_PREFIX;
+		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
+			orig_sc_path.GetNullableCStr());
+		rp.AltPath = orig_sc_path;
+	} else {
+		// For writing files, always use as save files
+		rp.BaseDir = SAVE_FOLDER_PREFIX;
+		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
+			orig_sc_path.GetNullableCStr());
+	}
+
+#else
 	String sc_path = FixSlashAfterToken(orig_sc_path);
 	String parent_dir;
 	String child_path;
@@ -348,6 +365,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	rp.BaseDir = parent_dir;
 	rp.FullPath = full_path;
 	rp.AltPath = alt_path;
+#endif
 	return true;
 }
 

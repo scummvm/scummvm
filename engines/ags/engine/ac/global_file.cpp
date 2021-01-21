@@ -83,10 +83,7 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 
 	Stream *s = File::OpenFile(rp.FullPath, open_mode, work_mode);
 	if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0) {
-		if (rp.FullPath.CompareLeft(AGS::Shared::SAVE_FOLDER_PREFIX))
-			// When file not found in main path, only check in AltPath if it's not a
-			// savegame file. Because ScummVM doesn't have any alt for saves
-			s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+		s = File::OpenFile(rp.AltPath, open_mode, work_mode);
 	}
 
 	valid_handles[useindx].stream = s;
