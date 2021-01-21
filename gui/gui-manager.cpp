@@ -354,7 +354,7 @@ void GuiManager::runLoop() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	const uint32 targetFrameDuration = 1000 / 60;
 
-	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit()) {
+	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit() && (!g_engine || !eventMan->shouldReturnToLauncher())) {
 		uint32 frameStartTime = _system->getMillis(true);
 
 		// Don't "tickle" the dialog until the theme has had a chance
@@ -434,7 +434,7 @@ void GuiManager::runLoop() {
 	// it will never be removed. Since we can have multiple run loops being
 	// called we cannot rely on catching EVENT_QUIT in the event loop above,
 	// since it would only catch it for the top run loop.
-	if (eventMan->shouldQuit() && activeDialog == getTopDialog())
+	if ((eventMan->shouldQuit() || (g_engine && eventMan->shouldReturnToLauncher())) && activeDialog == getTopDialog())
 		getTopDialog()->close();
 
 	if (didSaveState) {
