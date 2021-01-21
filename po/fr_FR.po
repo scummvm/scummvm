@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-11 22:08+0000\n"
+"POT-Creation-Date: 2021-01-20 23:37+0000\n"
 "PO-Revision-Date: 2021-01-14 12:09+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1975,11 +1975,11 @@ msgstr "Appliquer"
 msgid "Clear value"
 msgstr "Effacer la valeur"
 
-#: base/main.cpp:619
+#: base/main.cpp:623
 msgid "Error running game:"
 msgstr "Erreur lors de l'exécution du jeu :"
 
-#: base/main.cpp:666
+#: base/main.cpp:670
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Impossible de trouver un moteur pour exécuter le jeu sélectionné"
 
