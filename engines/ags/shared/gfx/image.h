@@ -36,7 +36,7 @@ BITMAP *load_pcx_pf(PACKFILE *f, color *pal);
 BITMAP *load_tga(const char *filename, color *pal);
 BITMAP *load_tga_pf(PACKFILE *f, color *pal);
 
-int save_bitmap(const char *filename, BITMAP *bmp, const RGB *pal);
+int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
 
 } // namespace AGS3
 

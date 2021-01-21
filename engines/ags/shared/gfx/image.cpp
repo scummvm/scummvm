@@ -24,6 +24,7 @@
 #include "ags/lib/allegro.h"
 #include "common/file.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/textconsole.h"
 #include "image/pcx.h"
 
@@ -103,8 +104,56 @@ BITMAP *load_bitmap(const char *filename, color *pal) {
 		error("Unknown image file - %s", filename);
 }
 
-int save_bitmap(const char *filename, BITMAP *bmp, const RGB *pal) {
-	error("TODO: save_bitmap");
+int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
+
+	Graphics::ManagedSurface &src = bmp->getSurface();
+	Graphics::Surface *tmp = nullptr;
+	const Graphics::Surface *surface;
+
+	if (bmp->format == requiredFormat_3byte) {
+		surface = &src.rawSurface();
+	} else {
+		surface = tmp = src.rawSurface().convertTo(requiredFormat_3byte);
+	}
+
+	int dstPitch = surface->w * 3;
+	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
+	int padding = 0;
+
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(surface->h * dstPitch + 54);
+	out.writeUint32LE(0);
+	out.writeUint32LE(54);
+	out.writeUint32LE(40);
+	out.writeUint32LE(surface->w);
+	out.writeUint32LE(surface->h);
+	out.writeUint16LE(1);
+	out.writeUint16LE(24);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+
+	for (uint y = surface->h; y-- > 0;) {
+		out.write((const void *)surface->getBasePtr(0, y), dstPitch);
+		out.write(&padding, extraDataLength);
+	}
+
+	// free tmp surface
+	if (tmp) {
+		tmp->free();
+		delete tmp;
+	}
+
+	return true;
 }
 
 } // namespace AGS

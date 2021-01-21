@@ -24,6 +24,8 @@
 #include "ags/shared/gfx/image.h"
 #include "ags/shared/debugging/assert.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace AGS3 {
 
@@ -123,8 +125,18 @@ bool Bitmap::LoadFromFile(const char *filename) {
 	return _alBitmap != nullptr;
 }
 
+bool Bitmap::SaveToFile(Common::WriteStream &out, const void *palette) {
+	return save_bitmap(out, _alBitmap, (const RGB *)palette) == 0;
+}
+
 bool Bitmap::SaveToFile(const char *filename, const void *palette) {
-	return save_bitmap(filename, _alBitmap, (const RGB *)palette) == 0;
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(filename, false);
+	assert(out);
+	bool result = SaveToFile(*out, palette);
+	out->finalize();
+	delete out;
+
+	return result;
 }
 
 void Bitmap::SetMaskColor(color_t color) {

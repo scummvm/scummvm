@@ -97,11 +97,11 @@
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/ac/keycode.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/ags.h"
+#include "common/memstream.h"
 
 namespace AGS3 {
 
@@ -997,30 +997,16 @@ void skip_serialized_bitmap(Stream *in) {
 }
 
 long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
-#ifdef TODO
-	long fileSize = 0;
-	String tempFileName = String::FromFormat("%s""_tmpscht.bmp", saveGameDirectory.GetCStr());
-
-	screenshot->SaveToFile(tempFileName, palette);
+	// Save the screenshot to a memory stream so we can access the raw data
+	Common::MemoryWriteStreamDynamic bitmap(DisposeAfterUse::YES);
+	screenshot->SaveToFile(bitmap, palette);
 
 	update_polled_stuff_if_runtime();
 
-	if (exists(tempFileName)) {
-		fileSize = file_size_ex(tempFileName);
-		char *buffer = (char *)malloc(fileSize);
+	// Write the bitmap to the output stream
+	out->Write(bitmap.getData(), bitmap.size());
 
-		Stream *temp_in = Shared::File::OpenFileRead(tempFileName);
-		temp_in->Read(buffer, fileSize);
-		delete temp_in;
-		::remove(tempFileName);
-
-		out->Write(buffer, fileSize);
-		free(buffer);
-	}
-	return fileSize;
-#else
-	error("TODO: write_screen_shot_for_vista");
-#endif
+	return bitmap.size();
 }
 
 void WriteGameSetupStructBase_Aligned(Stream *out) {
