@@ -21,6 +21,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
 
+ AGOS:
+   - Added support for the Japanese PC-98 version of Elvira 1.
+
  Dreamweb:
    - Rendering fixes for Russian fan translation.
 
