@@ -96,7 +96,9 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 		_buffer = RenderSurface::CreateSecondaryRenderSurface(width, height);
 	}
 
+	_buffer->BeginPainting();
 	DesktopGump::PaintChildren(_buffer, lerp_factor, scaled);
+	_buffer->EndPainting();
 
 	// now invert-blit _buffer to screen
 	int t = (state * height) / 0x10000;
