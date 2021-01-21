@@ -66,6 +66,7 @@ public:
 	void    Destroy();
 
 	bool    LoadFromFile(const char *filename);
+	bool    SaveToFile(Common::WriteStream &out, const void *palette);
 	bool    SaveToFile(const char *filename, const void *palette);
 
 	// TODO: This is temporary solution for cases when we cannot replace
