@@ -702,6 +702,8 @@ void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
     _image->loadStream(file);
     Graphics::Surface *frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
     screen->copyRectToSurface(*frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    frame->free();
+    delete frame;
 }
 
 
@@ -738,6 +740,8 @@ void PrivateEngine::drawScreen() {
         const Common::Point o(_origin->x, _origin->y);
         Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
         surface->transBlitFrom(*cframe, o);
+        frame->free();
+        cframe->free();
         delete frame;
         delete cframe;
     }
