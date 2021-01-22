@@ -71,10 +71,10 @@ public:
 	::AGS3::Globals *_globals;
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 public:
 	AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc);
-	virtual ~AGSEngine();
+	virtual ~AGSEngine() override;
 	void GUIError(const Common::String &msg);
 
 	void set_window_title(const char *str) {
