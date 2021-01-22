@@ -517,7 +517,8 @@ void SceneManager::run() {
     }
 
     // Redraw the Background surface if we've moved
-    if (_engine->playState.currentViewFrame != _engine->playState.lastDrawnViewFrame) {
+    if (_engine->playState.currentViewFrame != _engine->playState.lastDrawnViewFrame ||
+        _engine->playState.verticalScroll != _engine->playState.lastVerticalScroll) {
         if (currentScene.videoFormat == 1) {
             // TODO if it ever gets hit
         } else if (currentScene.videoFormat == 2) {
@@ -539,6 +540,7 @@ void SceneManager::run() {
     handleMouse();
 
     // TODO
+    _engine->playState.lastVerticalScroll = _engine->playState.verticalScroll;
     _engine->graphics->renderDisplay();
 }
 

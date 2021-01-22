@@ -56,6 +56,7 @@ struct PlayState {
     uint16 currentMaxVerticalScroll = 0;
     uint16 queuedMaxVerticalScroll = 0;
     uint16 verticalScroll = 0; // This replaces rDisplayed
+    uint16 lastVerticalScroll = 0;
     uint16 verticalScrollDelta = 0;
 };
 
