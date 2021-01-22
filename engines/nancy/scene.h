@@ -62,6 +62,7 @@ private:
     void handleMouse();
     void clearSceneData();
 
+public:
     enum State {
         kInit,
         kLoad,
@@ -69,15 +70,15 @@ private:
         kRun,
         kLoadNew
     };
-
-public:
+    
     int32 playerTimeMinuteLength;
     byte movementDirection;
+    State _state;
+    uint16 _sceneID;
+    bool doNotStartSound = false;
 
 private:
     NancyEngine *_engine;
-    State _state;
-    uint16 _sceneID;
     SceneSummary currentScene;
     // TODO these two can be Time
     uint32 _tickCount;

@@ -45,6 +45,8 @@ public:
     bool addNewActionRecord(Common::SeekableReadStream &inputData);
     void processActionRecords();
     Common::Array<ActionRecord *> &getActionRecords() { return _records; }
+    ActionRecord * getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
+    void clearActionRecords();
 
 protected:
     virtual ActionRecord *createActionRecord(uint16 type);
