@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_CORE_PLATFORM_H
 #define AGS_SHARED_CORE_PLATFORM_H
 
+#include <common/scummsys.h>
+
 namespace AGS3 {
 
 // platform definitions. Not intended for replacing types or checking for libraries.
@@ -117,17 +119,14 @@ namespace AGS3 {
 #define AGS_PLATFORM_64BIT (0)
 #endif
 
-#if defined(_WIN32)
+#if defined(SCUMM_LITTLE_ENDIAN)
 #define AGS_PLATFORM_ENDIAN_LITTLE  (1)
 #define AGS_PLATFORM_ENDIAN_BIG     (0)
-#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define AGS_PLATFORM_ENDIAN_LITTLE  (1)
-#define AGS_PLATFORM_ENDIAN_BIG     (0)
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#elif defined(SCUMM_BIG_ENDIAN)
 #define AGS_PLATFORM_ENDIAN_LITTLE  (0)
 #define AGS_PLATFORM_ENDIAN_BIG     (1)
 #else
-#error "Unknown platform"
+#error "No endianness defined"
 #endif
 
 #if defined(_DEBUG)
