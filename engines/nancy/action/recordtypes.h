@@ -33,9 +33,12 @@ namespace Nancy {
 
 class NancyEngine;
 
-class Hot1FrSceneChange : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+// Describes a hotspot
+struct HotspotDesc {
+    uint16 frameID = 0;
+    Common::Rect coords;
+
+    void readData(Common::SeekableReadStream &stream);
 };
 
 class HotMultiframeSceneChange : public ActionRecord {
@@ -52,6 +55,14 @@ public:
     uint16 frameID = 0;
     uint16 verticalOffset = 0;
     bool doNotStartSound = false;
+};
+
+class Hot1FrSceneChange : public SceneChange {
+public:
+    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    HotspotDesc hotspotDesc;
 };
 
 class HotMultiframeMultisceneChange : public ActionRecord {
@@ -238,10 +249,6 @@ public:
 
 class EventFlagsMultiHS : public EventFlags {
 public:
-    struct HotspotDesc {
-        uint16 frameID = 0;
-        Common::Rect coords;
-    };
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 
