@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-22 00:20+0000\n"
-"PO-Revision-Date: 2021-01-22 09:50+0000\n"
+"PO-Revision-Date: 2021-01-22 11:20+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -708,8 +708,9 @@ msgid "Record..."
 msgstr ""
 
 #: gui/launcher.cpp:156
+#, fuzzy
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~Д~адаць гульню..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
