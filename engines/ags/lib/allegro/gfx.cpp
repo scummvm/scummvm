@@ -211,8 +211,8 @@ int bitmap_color_depth(BITMAP *bmp) {
 }
 
 int bitmap_mask_color(BITMAP *bmp) {
-	Graphics::ManagedSurface &surf = **bmp;
-	return surf.getTransparentColor();
+	assert(bmp->format.bytesPerPixel > 1);
+	return bmp->format.RGBToColor(255, 0, 255);
 }
 
 void add_palette_if_needed(Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) {
