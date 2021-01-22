@@ -29,10 +29,13 @@
 
 namespace Nancy {
 
-uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x1A); // TODO
+void HotspotDesc::readData(Common::SeekableReadStream &stream) {
+    frameID = stream.readUint16LE();
+    coords.left = stream.readUint32LE();
+    coords.top = stream.readUint32LE();
+    coords.right = stream.readUint32LE();
+    coords.bottom = stream.readUint32LE();
 }
-
 uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
     stream.seek(8, SEEK_CUR);
     int16 size = stream.readSint16LE() * 0x12 + 0xA;
@@ -55,6 +58,30 @@ void SceneChange::execute(NancyEngine *engine) {
     engine->playState.queuedMaxVerticalScroll = verticalOffset;
     engine->sceneManager->doNotStartSound = doNotStartSound;
     engine->sceneManager->_state = SceneManager::kLoadNew;
+}
+
+uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
+    SceneChange::readData(stream);
+    hotspotDesc.readData(stream);
+    return 0x1A;
+}
+
+void Hot1FrSceneChange::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            hotspot = hotspotDesc.coords;
+            // fall through
+        case kRun:
+            if (hotspotDesc.frameID == engine->playState.currentViewFrame) {
+                hasHotspot = true;
+            } else {
+                hasHotspot = false;
+            }
+            break;
+        case kEnd:
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
@@ -307,11 +334,7 @@ uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
     for (uint16 i = 0; i < numHotspots; ++i) {
         hotspots.push_back(HotspotDesc());
         HotspotDesc &newDesc = hotspots[i];
-        newDesc.frameID = stream.readUint16LE();
-        newDesc.coords.left = stream.readUint32LE();
-        newDesc.coords.top = stream.readUint32LE();
-        newDesc.coords.right = stream.readUint32LE();
-        newDesc.coords.bottom = stream.readUint32LE();
+        newDesc.readData(stream);
     }
     returnSize += numHotspots * 0x12 + 0x2;
 
