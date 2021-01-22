@@ -3892,7 +3892,7 @@ msgstr ""
 msgid "AGOS 2 support is not compiled in"
 msgstr ""
 
-#: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"

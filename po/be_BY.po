@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-20 23:37+0000\n"
+"POT-Creation-Date: 2021-01-22 00:20+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4075,7 +4075,7 @@ msgstr "Файл застаўкі '%s' не знойдзены!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "Уключаныя ў зборку опцыі:"
 
-#: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
