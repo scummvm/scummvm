@@ -183,7 +183,7 @@ msgid ""
 msgstr ""
 
 #: gui/downloaddialog.cpp:215
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Зладавана %s %S / %s %S"
 
