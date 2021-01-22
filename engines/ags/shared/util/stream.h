@@ -36,6 +36,8 @@
 #define AGS_SHARED_UTIL_STREAM_H
 
 #include "ags/shared/api/stream_api.h"
+#include "common/stream.h"
+#include "common/types.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -81,6 +83,46 @@ public:
 
 	// Fill the requested number of bytes with particular value
 	size_t WriteByteCount(uint8_t b, size_t count);
+};
+
+class ScummVMReadStream : public Common::SeekableReadStream {
+private:
+	IAGSStream *_stream;
+	DisposeAfterUse::Flag _disposeAfterUse;
+public:
+	ScummVMReadStream(IAGSStream *src, DisposeAfterUse::Flag disposeAfterUse =
+			DisposeAfterUse::YES) : _stream(src), _disposeAfterUse(disposeAfterUse) {
+	}
+	~ScummVMReadStream() override {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _stream;
+	}
+
+	bool eos() const override {
+		return _stream->EOS();
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		return _stream->Read(dataPtr, dataSize);
+	}
+
+	int32 pos() const override {
+		return _stream->GetPosition();
+	}
+
+	int32 size() const override {
+		return _stream->GetLength();
+	}
+
+	bool seek(int32 offset, int whence = SEEK_SET) override {
+		StreamSeek origin = kSeekBegin;
+		if (whence == SEEK_CUR)
+			origin = kSeekCurrent;
+		if (whence == SEEK_END)
+			origin = kSeekEnd;
+
+		return _stream->Seek(offset, origin);
+	}
 };
 
 } // namespace Shared
