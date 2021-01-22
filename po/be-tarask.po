@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-22 00:20+0000\n"
-"PO-Revision-Date: 2021-01-21 17:05+0000\n"
+"PO-Revision-Date: 2021-01-22 09:50+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -34,12 +34,14 @@ msgid "Available engines:"
 msgstr ""
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
+#, fuzzy
 msgid "Show hidden files"
-msgstr ""
+msgstr "Паказваць схаваныя файлы"
 
 #: gui/browser.cpp:75
+#, fuzzy
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Паказваць файлы, што пазначаны схаванымі"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -88,9 +90,8 @@ msgid "Choose"
 msgstr "Выбраць"
 
 #: gui/downloaddialog.cpp:49
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Выберыце тэчку ў якую зладаваць файлы гульні"
+msgstr "Выберыце тэчку, у якую зладаваць файлы гульні"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:554 gui/launcher.cpp:207
 msgid "Select directory with game data"
