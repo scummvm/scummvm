@@ -42,7 +42,19 @@ uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x8); // TODO
+    sceneID = stream.readUint16LE();
+    frameID = stream.readUint16LE();
+    verticalOffset = stream.readUint16LE();
+    doNotStartSound = (bool)(stream.readUint16LE());
+    return 8; // TODO
+}
+
+void SceneChange::execute(NancyEngine *engine) {
+    engine->sceneManager->_sceneID = sceneID;
+    engine->playState.queuedViewFrame = frameID;
+    engine->playState.queuedMaxVerticalScroll = verticalOffset;
+    engine->sceneManager->doNotStartSound = doNotStartSound;
+    engine->sceneManager->_state = SceneManager::kLoadNew;
 }
 
 uint16 HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {

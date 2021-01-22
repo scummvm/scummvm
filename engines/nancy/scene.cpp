@@ -146,7 +146,6 @@ void SceneManager::load() {
 
     // The check to see if we need to switch the CD is performed here
 
-    // Not sure what these do yet
     Common::SeekableReadStream *bsum = _engine->getBootChunkStream("BSUM");
     bsum->seek(0x1F1);
     byte overrideMovementDeltas = bsum->readByte();
@@ -156,6 +155,7 @@ void SceneManager::load() {
     }
 
     // Search for Action Records, maximum for a scene is 30
+    _engine->logic->clearActionRecords();
     Common::SeekableReadStream *actionRecordChunk = nullptr;
 
     while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _engine->logic->_records.size()), actionRecordChunk != nullptr)
@@ -198,6 +198,8 @@ void SceneManager::load() {
         }
     }
 
+    // Redraw the viewport
+    _engine->playState.lastDrawnViewFrame = -1;
     _engine->input->setPointerBitmap(0, 0, false);
 
     _state = kRun; // TODO temp, is actually StartSound
@@ -410,6 +412,14 @@ void SceneManager::run() {
                 hovered == InputManager::passwordPuzzleEndID) {
             // TODO
         }
+
+        // ID must be an action record's
+        ActionRecord *rec = _engine->logic->getActionRecord(hovered);
+        if (rec->isActive /*&& another condition !- 0*/) {
+            // TODO item holding logic
+            rec->state = ActionRecord::ExecutionState::kEnd;
+        }
+
 
     } else if (_engine->input->isClickValidRMB) {
         if (_engine->input->hoveredElementID == InputManager::textBoxScrollbarID) {

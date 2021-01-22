@@ -46,6 +46,12 @@ public:
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    uint16 sceneID = 0;
+    uint16 frameID = 0;
+    uint16 verticalOffset = 0;
+    bool doNotStartSound = false;
 };
 
 class HotMultiframeMultisceneChange : public ActionRecord {

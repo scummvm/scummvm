@@ -104,9 +104,9 @@ void Logic::processActionRecords() {
         if (!record->isActive) {
             if (record->numDependencies > 0) {
                 for (uint i = 0; i < record->numDependencies; ++i) {
-                    if (record->satisfiedDependencies[i] != 0) {
+                    if (record->satisfiedDependencies[i] == 0) {
                         DependencyRecord &dep = record->dependencies[i];
-                        switch (record->dependencies[1].type) {
+                        switch (dep.type) {
                             case kNone:
                                 record->satisfiedDependencies[i] = true;
                             case kInventory:
@@ -217,6 +217,10 @@ void Logic::processActionRecords() {
             record->execute(_engine);
         }
     }
+}
+
+void Logic::clearActionRecords() {
+    _records.clear();
 }
 
 } // End of namespace Nancy
