@@ -609,7 +609,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if ((_vm->_game.id != GID_CMI && jumpId != -1) || (_vm->_game.id == GID_CMI && jumpId != -1 && !track->alreadyCrossfading)) {
+	if ((_vm->_game.id != GID_CMI && jumpId != -1) || (_vm->_game.id == GID_CMI && jumpId != -1 && !track->toBeRemoved && !track->alreadyCrossfading)) {
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
