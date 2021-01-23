@@ -1779,7 +1779,7 @@ void Item::enterFastArea() {
 		if (actor && actor->isDead() && !call_even_if_dead) {
 			// dead actor, don't call the usecode
 		} else {
-			if (actor && GAME_IS_CRUSADER) {
+			if (actor && _objId != 1 && GAME_IS_CRUSADER) {
 				uint16 lastactivity = actor->getLastActivityNo();
 				actor->clearLastActivityNo();
 				actor->clearInCombat();
@@ -1816,6 +1816,10 @@ void Item::enterFastArea() {
 
 // Called when an item is leaving the fast area
 void Item::leaveFastArea() {
+	if (_objId == 1) {
+		debug(6, "avatar leaving fast area");
+	}
+
 	// Call usecode
 	if ((!(_flags & FLG_FAST_ONLY) || getShapeInfo()->is_noisy()) &&
 	        (_flags & FLG_FASTAREA))
@@ -1825,10 +1829,6 @@ void Item::leaveFastArea() {
 	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
 		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
 		if (g) g->Close();
-	}
-
-	if (_objId == 1) {
-		debug(6, "avatar leaving fast area");
 	}
 
 	// Unset the flag
