@@ -40,6 +40,8 @@ TTFRenderedText::~TTFRenderedText() {
 }
 
 void TTFRenderedText::draw(RenderSurface *surface, int x, int y, bool destmasked) {
+	if (!_width)
+		return;
 	if (!destmasked)
 		surface->Blit(_texture, 0, 0, _width, _height, x, y - _font->getBaseline(),
 			_font->isAntialiased());
