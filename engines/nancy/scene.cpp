@@ -56,10 +56,14 @@ void SceneManager::process() {
     case kStartSound:
         // Stop all sounds, unless the new scene's background music matches the last one's;
         // in that case, stop everything except the background music
-        if (!_engine->sound->stopAllSounds(&currentScene.audioFile)) {
+        /*if (!_engine->sound->stopAllSounds(&currentScene.audioFile)) {
+            
+        }*/
+        _state = kRun;
+        if (!doNotStartSound) {
+            _engine->sound->stopAllSounds();
             _engine->sound->loadSound(currentScene.audioFile, currentScene.audioID, 0, currentScene.audioVolume);
         }
-        _state = kRun;
         // fall through
     case kRun:
         run();
