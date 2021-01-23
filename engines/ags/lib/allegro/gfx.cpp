@@ -290,7 +290,39 @@ void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
-	error("TODO: draw_lit_sprite");
+	// TODO: For now, only 32-bit bitmaps
+	assert(sprite->format.bytesPerPixel == 4 && bmp->format.bytesPerPixel == 4);
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest, gDest, bDest;
+	double alpha = (double)color / 255.0;
+
+	for (int yCtr = 0, yp = y; yCtr < sprite->h && yp < bmp->h; ++yCtr, ++yp) {
+		if (yp < 0)
+			continue;
+
+		const uint32 *srcP = (const uint32 *)sprite->getBasePtr(0, yCtr);
+		uint32 *destP = (uint32 *)bmp->getBasePtr(x, yp);
+
+		for (int xCtr = 0, xp = x; xCtr < sprite->w && xp < bmp->w; ++xCtr, ++xp, ++destP) {
+			if (x < 0 || x >= bmp->w)
+				continue;
+
+			// Get the source and dest pixels
+			sprite->format.colorToARGB(*srcP, aSrc, rSrc, gSrc, bSrc);
+			bmp->format.colorToRGB(*destP, rDest, gDest, bDest);
+
+			if (rSrc == 255 && gSrc == 0 && bSrc == 255)
+				// Skip transparent pixels
+				continue;
+
+			// Blend the two
+			rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
+			gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
+			bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
+
+			*destP = bmp->format.RGBToColor(rDest, gDest, bDest);
+		}
+	}
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
