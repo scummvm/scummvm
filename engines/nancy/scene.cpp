@@ -27,6 +27,7 @@
 #include "engines/nancy/logic.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/audio.h"
 
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -49,8 +50,13 @@ void SceneManager::process() {
         load();
         break;
     case kStartSound:
-        // TODO
-        break;
+        // Stop all sounds, unless the new scene's background music matches the last one's;
+        // in that case, stop everything except the background music
+        if (!_engine->sound->stopAllSounds(&currentScene.audioFile)) {
+            _engine->sound->loadSound(currentScene.audioFile, currentScene.audioID, 0, currentScene.audioVolume);
+        }
+        _state = kRun;
+        // fall through
     case kRun:
         run();
         break;
@@ -202,7 +208,7 @@ void SceneManager::load() {
     _engine->playState.lastDrawnViewFrame = -1;
     _engine->input->setPointerBitmap(0, 0, false);
 
-    _state = kRun; // TODO temp, is actually StartSound
+    _state = kStartSound; // TODO temp, is actually StartSound
 }
 
 void SceneManager::run() {

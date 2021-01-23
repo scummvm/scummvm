@@ -29,6 +29,7 @@
 #include "engines/nancy/scene.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/audio.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -77,6 +78,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	sceneManager = new SceneManager(this);
 	graphics = new GraphicsManager(this);
 	input = new InputManager(this);
+	sound = new SoundManager(this);
 
 	launchConsole = false;
 }
@@ -90,6 +92,7 @@ NancyEngine::~NancyEngine() {
 	delete logic;
 	delete sceneManager;
 	delete input;
+	delete sound;
 }
 
 GUI::Debugger *NancyEngine::getDebugger() {
@@ -184,7 +187,6 @@ void NancyEngine::bootGameEngine() {
 	if (!boot->load())
 		error("Failed to load boot script");
 	preloadCals(*boot);
-	readSound(*boot, "MSND", _menuSound);
 
 	addBootChunk("BSUM", boot->getChunkStream("BSUM"));
 	readBootSummary(*boot);
@@ -321,15 +323,6 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 
 		delete chunkStream;
 	}
-}
-
-void NancyEngine::readSound(const IFF &boot, const Common::String &name, NancyEngine::Sound &sound) {
-	Common::SeekableReadStream *stream = boot.getChunkStream(name);
-
-	if (!stream)
-		error("Failed to read BOOT %s", name.c_str());
-
-	sound.name = readFilename(stream);
 }
 
 class NancyEngine_v0 : public NancyEngine {

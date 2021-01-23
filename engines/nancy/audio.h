@@ -23,6 +23,11 @@
 #ifndef NANCY_AUDIO_H
 #define NANCY_AUDIO_H
 
+#include "common/types.h"
+#include "common/str.h"
+
+#include "audio/mixer.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -31,13 +36,30 @@ namespace Audio {
 class SeekableAudioStream;
 }
 
-namespace DisposeAfterUse {
-enum Flag;
-}
-
 namespace Nancy {
 
+class NancyEngine;
+
 Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+
+class SoundManager {
+public:
+    enum SoundLoopType { kLoop = 0, kOneShot = 1 };
+    SoundManager(NancyEngine *engine);
+    ~SoundManager() =default;
+
+    void loadSound(Common::String &name, int16 id, uint16 numLoops = 0, uint16 volume = 60);
+    void stopSound(int16 id);
+    bool isSoundPlaying(int16 id);
+    bool stopAllSounds(Common::String *except = nullptr);
+
+private:
+    NancyEngine *_engine;
+    Audio::Mixer *_mixer;
+
+    Audio::SoundHandle handles[20];
+    Common::String names[20];
+};
 
 } // End of namespace Nancy
 

@@ -45,6 +45,8 @@ struct SceneSummary {
     //
     uint16 videoFormat;         // 0x3E, value is 1 or 2
     Common::String audioFile;   // 0x40
+    int16 audioID;              // 0x4A
+    uint16 audioVolume;         // 0x5A
     //
     uint16 verticalScrollDelta; // 0x72
     uint16 horizontalEdgeSize;  // 0x74

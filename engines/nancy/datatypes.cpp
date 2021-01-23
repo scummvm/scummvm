@@ -42,9 +42,12 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
     stream->seek(3, SEEK_CUR);
     videoFormat = stream->readUint16LE();
 
-    stream->read(buf, 9);
+    stream->read(buf, 10);
     buf[9] = 0;
     audioFile = Common::String(buf);
+    audioID = stream->readSint16LE();
+    stream->skip(0xE);
+    audioVolume = stream->readUint16LE();
 
     stream->seek(0x72);
     verticalScrollDelta = stream->readUint16LE();
