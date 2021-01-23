@@ -29,7 +29,7 @@
 namespace AGS3 {
 
 // Check that a supplied buffer from a text script function was not null
-#define VALIDATE_STRING(strin) if ((unsigned long)strin <= 4096) quit("!String argument was null: make sure you pass a string, not an int, as a buffer")
+#define VALIDATE_STRING(strin) if (reinterpret_cast<intptr_t>(strin) <= 4096) quit("!String argument was null: make sure you pass a string, not an int, as a buffer")
 
 int String_IsNullOrEmpty(const char *thisString);
 const char *String_Copy(const char *srcString);

@@ -102,6 +102,19 @@ enum {
 	kUnit = 1 << kShift
 };
 
+/**
+ * Basic union that can be either a number or a pointer. Helps avoid some
+ * of the more nasty casts the codebase does, which was causing issues
+ * on 64-bit systems
+ */
+union NumberPtr {
+	int32 _value;
+	void *_ptr;
+
+	NumberPtr(int value) : _value(value) {}
+	NumberPtr(void *ptr) : _ptr(ptr) {}
+};
+
 } // namespace AGS3
 
 #endif

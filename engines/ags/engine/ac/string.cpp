@@ -273,9 +273,9 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 int MAXSTRLEN = MAX_MAXSTRLEN;
 void check_strlen(char *ptt) {
 	MAXSTRLEN = MAX_MAXSTRLEN;
-	long charstart = (long)&game.chars[0];
-	long charend = charstart + sizeof(CharacterInfo) * game.numcharacters;
-	if (((long)&ptt[0] >= charstart) && ((long)&ptt[0] <= charend))
+	const byte *charstart = (const byte *)&game.chars[0];
+	const byte *charend = charstart + sizeof(CharacterInfo) * game.numcharacters;
+	if (((const byte *)&ptt[0] >= charstart) && ((const byte *)&ptt[0] <= charend))
 		MAXSTRLEN = 30;
 }
 

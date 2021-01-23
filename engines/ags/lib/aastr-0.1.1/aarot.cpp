@@ -66,7 +66,7 @@ _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 	int syinc, sydd, syi1, syi2;
 	unsigned long num;
 	void (*add) (BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
-	void (*put) (unsigned long _addr, int _x);
+	void (*put) (byte *_addr, int _x);
 
 	if (_dst->clip) {
 		xbeg = _dst->cl;
@@ -449,7 +449,7 @@ _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 
 	/* Stretch lines.  */
 	while (dy < yend) {
-		unsigned long daddr = bmp_write_line(_dst, dy);
+		byte *daddr = bmp_write_line(_dst, dy);
 
 		if ((ldx < xend) && (rdx >= xbeg)) {
 			int curxend;
