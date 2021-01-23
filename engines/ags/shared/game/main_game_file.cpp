@@ -310,13 +310,13 @@ void ReadDialogs(DialogTopic *&dialog,
 	} else {
 		// Encrypted text on > 2.60
 		while (1) {
-			size_t newlen = (size_t)in->ReadInt32();
+			uint32_t newlen = (uint32_t)in->ReadInt32();
 			if (newlen == 0xCAFEBEEF) { // GUI magic
 				in->Seek(-4);
 				break;
 			}
 
-			newlen = Math::Min(newlen, sizeof(buffer) - 1);
+			newlen = Math::Min(newlen, (uint32_t)sizeof(buffer) - 1);
 			in->Read(buffer, newlen);
 			buffer[newlen] = 0;
 			decrypt_text(buffer);
