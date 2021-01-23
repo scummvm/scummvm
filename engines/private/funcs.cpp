@@ -16,12 +16,10 @@ void ChgMode(ArgArray args) {
     g_private->_nextSetting = s;
 
     if (g_private->_mode == 0) {
-        g_private->_origin->x = 0; // use a constant
-        g_private->_origin->y = 0;
+        g_private->_origin = &kPrivateOriginZero;
     }
     else if (g_private->_mode == 1) {
-        g_private->_origin->x = 64;  // use a constant
-        g_private->_origin->y = 48;
+        g_private->_origin = &kPrivateOriginOne;
     }
     else
         assert(0);
@@ -270,9 +268,7 @@ void Resume(ArgArray args) {
     g_private->_nextSetting = g_private->_pausedSetting;
     g_private->_pausedSetting = NULL;
     g_private->_mode = 1;
-    g_private->_origin->x = 64;  // use a constant
-    g_private->_origin->y = 48;
-
+    g_private->_origin = &kPrivateOriginOne;
 }
 
 void Movie(ArgArray args) {
@@ -414,8 +410,19 @@ void PhoneClip(ArgArray args) {
         debug("Unimplemented PhoneClip special case");
         return;
     }
+    int i = args[2].u.val;
+    int j = args[3].u.val;
 
-    AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
+    if (i == j)
+        AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
+    else {
+
+        assert(i < j);
+        char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
+        AddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
+ 
+    }
+
 }
 
 void SoundArea(ArgArray args) {

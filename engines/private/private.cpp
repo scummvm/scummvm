@@ -737,9 +737,8 @@ void PrivateEngine::drawScreen() {
         Graphics::Surface *frame = new Graphics::Surface;
         frame->create(_screenW, _screenH, _pixelFormat);
         frame->copyFrom(*_videoDecoder->decodeNextFrame());
-        const Common::Point o(_origin->x, _origin->y);
         Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
-        surface->transBlitFrom(*cframe, o);
+        surface->transBlitFrom(*cframe, *_origin);
         frame->free();
         cframe->free();
         delete frame;
@@ -751,7 +750,8 @@ void PrivateEngine::drawScreen() {
     if (_mode == 1) {
         drawScreenFrame(screen);
     }
-    screen->copyRectToSurface(*surface, _origin->x, _origin->y, Common::Rect(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y));
+    Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+    screen->copyRectToSurface(*surface, _origin->x, _origin->y, window);
     g_system->unlockScreen();
     //if (_image->getPalette() != nullptr)
     //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
@@ -792,5 +792,15 @@ Common::String *PrivateEngine::getLeaveSound() {
     sprintf(f, "%d.wav", r);
     return (new Common::String(*_leaveSound + f));
 }
+
+
+char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
+    uint r = i + _rnd->getRandomNumber(j - i);
+
+    char *f = (char*) malloc((strlen(clip)+3)*sizeof(char));
+    sprintf(f, "%s%02d", clip, r);
+    return f;
+}
+
 
 } // End of namespace Private
