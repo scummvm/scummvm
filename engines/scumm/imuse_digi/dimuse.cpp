@@ -589,22 +589,25 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if ((_vm->_game.id != GID_CMI && jumpId != -1) || (_vm->_game.id == GID_CMI && jumpId != -1 && !track->alreadyCrossfading)) {
+	if ((_vm->_game.id != GID_CMI && jumpId != -1) || (_vm->_game.id == GID_CMI && jumpId != -1 && !track->toBeRemoved && !track->alreadyCrossfading)) {
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
 
-		bool isJumpToStart = (soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start"));
+		bool isJumpToStart = false;
 		bool isJumpToLoop = false;
-		if (!isJumpToStart) {
-			for (int m = 0; m < soundDesc->numMarkers; m++) {
-				if (soundDesc->jump[jumpId].dest == soundDesc->marker[m].pos) {
-					Common::String markerDesc = soundDesc->marker[m].ptr;
-					if (markerDesc.contains("loop")) {
-						isJumpToLoop = true;
+		if (_vm->_game.id == GID_CMI) {
+			isJumpToStart = (soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start"));
+			if (!isJumpToStart) {
+				for (int m = 0; m < soundDesc->numMarkers; m++) {
+					if (soundDesc->jump[jumpId].dest == soundDesc->marker[m].pos) {
+						Common::String markerDesc = soundDesc->marker[m].ptr;
+						if (markerDesc.contains("loop")) {
+							isJumpToLoop = true;
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
