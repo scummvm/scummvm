@@ -90,7 +90,7 @@ void DLL::AGS_EngineStartup(IAGSEngine *) {
 void DLL::AGS_EngineShutdown() {
 }
 
-int DLL::AGS_EngineOnEvent(int, int) {
+NumberPtr DLL::AGS_EngineOnEvent(int, NumberPtr) {
 	return 0;
 }
 

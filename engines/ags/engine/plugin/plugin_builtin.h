@@ -41,7 +41,7 @@ struct InbuiltPluginDetails {
 	char      filename[PLUGIN_FILENAME_MAX + 1];
 	void (*engineStartup)(IAGSEngine *);
 	void (*engineShutdown)();
-	int (*onEvent)(int, int);
+	NumberPtr (*onEvent)(int, NumberPtr);
 	void (*initGfxHook)(const char *driverName, void *data);
 	int (*debugHook)(const char *whichscript, int lineNumber, int reserved);
 };

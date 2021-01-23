@@ -128,7 +128,7 @@ struct EnginePlugin {
 	int         invalidatedRegion;
 	void (*engineStartup)(IAGSEngine *) = nullptr;
 	void (*engineShutdown)() = nullptr;
-	int (*onEvent)(int, int) = nullptr;
+	NumberPtr (*onEvent)(int, NumberPtr) = nullptr;
 	void (*initGfxHook)(const char *driverName, void *data) = nullptr;
 	int (*debugHook)(const char *whichscript, int lineNumber, int reserved) = nullptr;
 	IAGSEngine  eiface;
@@ -880,8 +880,9 @@ void pl_startup_plugins() {
 	}
 }
 
-int pl_run_plugin_hooks(int event, int data) {
-	int i, retval = 0;
+NumberPtr pl_run_plugin_hooks(int event, NumberPtr data) {
+	int i;
+	NumberPtr retval = 0;
 	for (i = 0; i < numPlugins; i++) {
 		if (plugins[i].wantHook & event) {
 			retval = plugins[i].onEvent(event, data);
@@ -1040,7 +1041,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 			if (apl->engineStartup == nullptr) {
 				quitprintf("Plugin '%s' is not a valid AGS plugin (no engine startup entry point)", apl->filename);
 			}
-			apl->onEvent = (int(*)(int, int))apl->library.GetFunctionAddress("AGS_EngineOnEvent");
+			apl->onEvent = (NumberPtr(*)(int, NumberPtr))apl->library.GetFunctionAddress("AGS_EngineOnEvent");
 			apl->debugHook = (int(*)(const char *, int, int))apl->library.GetFunctionAddress("AGS_EngineDebugHook");
 			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {

@@ -111,8 +111,9 @@ union NumberPtr {
 	int32 _value;
 	void *_ptr;
 
-	NumberPtr(int value) : _value(value) {}
+	NumberPtr(int value) { _ptr = nullptr; _value = value; }
 	NumberPtr(void *ptr) : _ptr(ptr) {}
+	operator bool() const { return _ptr != nullptr; }
 };
 
 } // namespace AGS3
