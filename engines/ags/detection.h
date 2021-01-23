@@ -38,15 +38,15 @@ public:
 	AGSMetaEngineDetection();
 	~AGSMetaEngineDetection() override {}
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "ags";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Adventure Game Studio";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "";
 	}
 };
