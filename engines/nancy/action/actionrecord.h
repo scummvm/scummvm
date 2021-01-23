@@ -63,7 +63,7 @@ struct DependencyRecord {
 
 class ActionRecord {
 public:
-    enum ExecutionState { kBegin, kRun, kEnd };
+    enum ExecutionState { kBegin, kRun, kActionTrigger };
     ActionRecord() :
         type(0),
         execType(0),

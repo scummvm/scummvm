@@ -428,7 +428,7 @@ void SceneManager::run() {
         ActionRecord *rec = _engine->logic->getActionRecord(hovered);
         if (rec->isActive /*&& another condition !- 0*/) {
             // TODO item holding logic
-            rec->state = ActionRecord::ExecutionState::kEnd;
+            rec->state = ActionRecord::ExecutionState::kActionTrigger;
         }
 
 
