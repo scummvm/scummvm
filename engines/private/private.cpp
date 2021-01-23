@@ -66,6 +66,11 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _repeatedMovieExit = new Common::String("");
     _pausedSetting = NULL;
 
+
+    _policeBustEnabled = false;
+    _policeBustSetting = NULL;
+
+
     _paperShuffleSound = new Common::String("global/audio/glsfx0");
     _takeSound = new Common::String("global/audio/took");
     _leaveSound = new Common::String("global/audio/left");
@@ -155,7 +160,7 @@ Common::Error PrivateEngine::run() {
     if (saveSlot >= 0) { // load the savegame
         loadGameState(saveSlot);
     } else {
-        _nextSetting = new Common::String("kGoIntro");
+        _nextSetting = &kGoIntro;
     }
 
     while (!shouldQuit()) {
@@ -171,7 +176,15 @@ Common::Error PrivateEngine::run() {
                 else if (event.kbd.keycode == Common::KEYCODE_m) {
                     if ( _pausedSetting == NULL) {
                         _pausedSetting = _currentSetting;
-                        _nextSetting = new Common::String("kPauseMovie");
+                        _nextSetting = &kPauseMovie;
+                    }
+                }
+                else if (event.kbd.keycode == Common::KEYCODE_p) {
+                    if ( _policeBustEnabled) {
+                        Common::String *pv = new Common::String("po/animatio/spoc02xs.smk");
+                        _nextMovie = pv;
+                        _policeBustSetting = _currentSetting;
+                        _nextSetting = &kPoliceBustFromMO;
                     }
                 }
                 break;
@@ -499,7 +512,7 @@ void PrivateEngine::restartGame() {
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
     debug("loadGameStream");
-    _nextSetting = new Common::String("kMainDesktop");
+    _nextSetting = &kMainDesktop;
     int val;
 
     for (VariableList::iterator it = variableList.begin(); it != variableList.end(); ++it) {

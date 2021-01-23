@@ -96,7 +96,22 @@ void RestartGame(ArgArray args) {
 
 void PoliceBust(ArgArray args) {
     // assert types
-    debug("WARNING: PoliceBust is not implemented");
+    assert (args.size() == 1 || args.size() == 2);
+    g_private->_policeBustEnabled = args[0].u.val;
+
+    if (args.size() == 2) {
+        if (args[1].u.val == 2) {
+            Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
+            g_private->playSound(*s, 1);
+            assert(0);
+
+        }
+        else if (args[1].u.val == 2) {
+            g_private->_nextSetting = &kMainDesktop;
+        } else
+            assert(0);
+    }
+    debug("WARNING: PoliceBust partially implemented");
 }
 
 void DossierAdd(ArgArray args) {
