@@ -585,14 +585,21 @@ void SceneManager::handleMouse() {
                 ActionRecord *r = records[i];
                 if (r->isActive && r->hasHotspot) {
                     // Adjust the hotspot coordinates relative to the viewport
+                    // taking into account the vertical scroll as well
                     Common::Rect hotspot = r->hotspot;
                     hotspot.left += view.destination.left;
-                    hotspot.top += view.destination.top;
+                    hotspot.top += view.destination.top - _engine->playState.verticalScroll;
                     hotspot.right += view.destination.left;
-                    hotspot.bottom += view.destination.top;
+                    hotspot.bottom += view.destination.top - _engine->playState.verticalScroll;
 
                     if (hotspot.contains(viewportMouse)) {
-                        _engine->input->setPointerBitmap(-1, 1, 0);
+                        if (r->type == 0xE) {
+                            // Set the pointer to the U-shaped arrow if
+                            // the type is Hot1FrExitSceneChange
+                            _engine->input->setPointerBitmap(1, 0, 0);
+                        } else {
+                            _engine->input->setPointerBitmap(-1, 1, 0);
+                        }
                         _engine->input->hoveredElementID = i;
                     }
                 }

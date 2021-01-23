@@ -36,13 +36,6 @@ void HotspotDesc::readData(Common::SeekableReadStream &stream) {
     coords.right = stream.readUint32LE();
     coords.bottom = stream.readUint32LE();
 }
-uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
-    stream.seek(8, SEEK_CUR);
-    int16 size = stream.readSint16LE() * 0x12 + 0xA;
-    stream.seek(-10, SEEK_CUR);
-
-    return readRaw(stream, size); // TODO
-}
 
 uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
     sceneID = stream.readUint16LE();
@@ -58,6 +51,40 @@ void SceneChange::execute(NancyEngine *engine) {
     engine->playState.queuedMaxVerticalScroll = verticalOffset;
     engine->sceneManager->doNotStartSound = doNotStartSound;
     engine->sceneManager->_state = SceneManager::kLoadNew;
+    isDone = true;
+}
+
+uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
+    uint16 ret = SceneChange::readData(stream);
+    uint16 numHotspots = stream.readUint16LE();
+
+    for (uint i = 0; i < numHotspots; ++i) {
+        hotspots.push_back(HotspotDesc());
+        HotspotDesc &newDesc = hotspots[i];
+        newDesc.readData(stream);
+    }
+
+    return ret + (numHotspots * 0x12) + 2;
+}
+
+void HotMultiframeSceneChange::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            // turn main rendering on
+            // fall through
+        case kRun:
+            hasHotspot = false;
+            for (uint i = 0; i < hotspots.size(); ++i) {
+                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                    hasHotspot = true;
+                    hotspot = hotspots[i].coords;
+                }
+            }
+            break;
+        case kEnd:
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
@@ -90,10 +117,6 @@ uint16 HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &strea
     stream.seek(-0x16, SEEK_CUR);
 
     return readRaw(stream, size); // TODO
-}
-
-uint16 Hot1frExitSceneChange::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x1A); // TODO, could be same struct as Hot1FrSceneChange
 }
 
 uint16 StartFrameNextScene::readData(Common::SeekableReadStream &stream) {

@@ -39,7 +39,7 @@ ActionRecord *Logic::createActionRecord(uint16 type) {
         case 0x03:
             return new HotMultiframeMultisceneChange();
         case 0x04:
-            return new Hot1frExitSceneChange();
+            return new Hot1FrSceneChange();
         case 0x0C:
             return new StartFrameNextScene();
         case 0x14:
