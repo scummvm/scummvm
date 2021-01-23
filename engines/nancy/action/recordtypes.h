@@ -41,11 +41,6 @@ struct HotspotDesc {
     void readData(Common::SeekableReadStream &stream);
 };
 
-class HotMultiframeSceneChange : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -57,6 +52,15 @@ public:
     bool doNotStartSound = false;
 };
 
+class HotMultiframeSceneChange : public SceneChange {
+public:
+    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    Common::Array<HotspotDesc> hotspots;
+};
+
+// The exact same logic as Hot1FrExitSceneChange
 class Hot1FrSceneChange : public SceneChange {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -66,11 +70,6 @@ public:
 };
 
 class HotMultiframeMultisceneChange : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
-class Hot1frExitSceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 };
