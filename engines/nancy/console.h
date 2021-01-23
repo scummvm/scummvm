@@ -48,13 +48,8 @@ private:
 	bool Cmd_showImage(int argc, const char **argv);
 	bool Cmd_playVideo(int argc, const char **argv);
 	bool Cmd_playAudio(int argc, const char **argv);
-
-	bool Cmd_listScreens(int argc, const char **argv);
-	bool Cmd_listObjects(int argc, const char **argv);
-	bool Cmd_getObject(int argc, const char **argv);
-	bool Cmd_getAllObjects(int argc, const char **argv);
-	bool Cmd_gotoScreen(int argc, const char **argv);
-	bool Cmd_boundaries(int argc, const char **argv);
+	bool Cmd_loadScene(int argc, const char **argv);
+	bool Cmd_sceneID(int argc, const char **argv);
 
 	Common::String _videoFile;
 };
