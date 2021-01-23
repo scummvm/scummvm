@@ -40,7 +40,7 @@ struct PlayState {
     Time logicConditionsTimestamps[30]; // Stores when the condition got satisfied
     
     Flag inventory[11];
-    Flag eventFlags[672];
+    Flag eventFlags[168];
     byte sceneHitCount[1000];
     uint16 difficulty; // 0, 1, 2
     Time totalTime;
