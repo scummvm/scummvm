@@ -133,6 +133,8 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 
+	uint32 borderColor = PF_RGBA.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
 	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, PF_RGBA);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
@@ -164,83 +166,74 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			const byte *surfrow = (const byte *)textSurf.getBasePtr(0, y);
 
 			// CHECKME: _borderSize!
-			uint32 *bufrow = texBuf + (iter->_dims.top + y + _borderSize) * resultWidth;
+			int ty = iter->_dims.top + y + _borderSize;
 			for (int x = 0; x < textSurf.w; x++) {
-
+				int tx = iter->_dims.left + x + _borderSize;
 				if (!_antiAliased && surfrow[x] == 1) {
-					bufrow[iter->_dims.left + x + _borderSize] = _color;
-					uint32 borderColor = texture->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+					texBuf[ty * resultWidth + tx] = _color;
+					
 					if (_borderSize <= 0) continue;
-					if (_borderSize == 1) {
-						// optimize common case
-						for (int dx = -1; dx <= 1; dx++) {
-							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->_dims.left + dx >= 0 &&
-									    x + 1 + iter->_dims.left + dx < resultWidth &&
-									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									if (texBuf[(y + iter->_dims.top + dy + 1)*resultWidth + x + 1 + iter->_dims.left + dx] == 0) {
-										texBuf[(y + iter->_dims.top + dy + 1) * resultWidth + x + 1 + iter->_dims.left + dx] = borderColor;
-									}
-								}
-							}
-						}
-						continue;
-					}
+
 					for (int dx = -_borderSize; dx <= _borderSize; dx++) {
 						for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-							if (x + _borderSize + iter->_dims.left + dx >= 0 &&
-								    x + _borderSize + iter->_dims.left + dx < resultWidth &&
-								    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-								if (texBuf[(y + iter->_dims.top + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.left + dx] == 0) {
-									texBuf[(y + iter->_dims.top + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.left + dx] = borderColor;
+							int bx = iter->_dims.left + x + _borderSize + dx;
+							int by = iter->_dims.top + y + _borderSize + dy;
+							if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
+								if (texBuf[by * resultWidth + bx] == 0) {
+									texBuf[by * resultWidth + bx] = borderColor;
 								}
 							}
 						}
 					}
 				} else if (_antiAliased) {
 					uint32 pixColor = *((const uint32 *)(surfrow + x * 4));
-					if (pixColor == 0)
+					uint8 sR, sG, sB, sA;
+					PF_RGBA.colorToARGB(pixColor, sA, sR, sG, sB);
+
+					if (sA == 0x00)
 						continue;
 
-					byte pixR, pixG, pixB, pixA;
-					textSurf.format.colorToARGB(pixColor, pixA, pixR, pixG, pixB);
-
 					if (_borderSize <= 0) {
-						bufrow[iter->_dims.left + x + _borderSize] = texture->format.ARGBToColor(pixA, pixR, pixG, pixB);
+						texBuf[ty * resultWidth + tx] = pixColor;
 					} else {
-						int idx = texture->format.ARGBToColor(pixA, pixR, pixG, pixB);
-						bufrow[iter->_dims.left + x + _borderSize] = texture->format.ARGBToColor(0xFF, pixR, pixG, pixB);
+						uint8 dR, dG, dB;
+						switch (sA) {
+						case 0xFF:
+							texBuf[ty * resultWidth + tx] = pixColor;
+							break;
+						default:
+							// Blend color with border color
+							PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
 
-						// optimize common case
-						if (_borderSize == 1) for (int dx = -1; dx <= 1; dx++) {
-							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->_dims.left + dx >= 0 &&
-										x + 1 + iter->_dims.left + dx < resultWidth &&
-										y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									pixColor = texBuf[(y + iter->_dims.top + dy + 1) * resultWidth + x + 1 + iter->_dims.left + dx];
-									texture->format.colorToARGB(pixColor, pixA, pixR, pixG, pixB);
-									if (pixA != 0xFF) {
-										// Blend edge color at current transparency with black
-										texture->format.colorToRGB(idx, pixR, pixG, pixB);
-										uint32 borderColor = texture->format.RGBToColor((pixA * pixR) / 255, (pixA * pixG) / 255, (pixA * pixB) / 255);
-										texBuf[(y + iter->_dims.top + dy + 1) * resultWidth + x + 1 + iter->_dims.left + dx] = borderColor;
-									}
-								}
-							}
-						} else {
-							for (int dx = -_borderSize; dx <= _borderSize; dx++) {
-								for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-									if (x + _borderSize + iter->_dims.left + dx >= 0 &&
-											x + _borderSize + iter->_dims.left + dx < resultWidth &&
-											y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-										pixColor = texBuf[(y + iter->_dims.top + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.left + dx];
-										texture->format.colorToARGB(pixColor, pixA, pixR, pixG, pixB);
-										if (pixA != 0xFF) {
-											// Blend edge color at current transparency with black
-											texture->format.colorToRGB(idx, pixR, pixG, pixB);
-											uint32 borderColor = texture->format.RGBToColor((pixA * pixR) / 255, (pixA * pixG) / 255,  (pixA * pixB) / 255);
-											texBuf[(y + iter->_dims.top + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.left + dx] = borderColor;
-										}
+							dR = ((255 - sA) * dR + sA * sR) / 255;
+							dG = ((255 - sA) * dG + sA * sG) / 255;
+							dB = ((255 - sA) * dB + sA * sB) / 255;
+
+							texBuf[ty * resultWidth + tx] = PF_RGBA.RGBToColor(dR, dG, dB);
+							break;
+						}
+
+						for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+							for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+								int bx = iter->_dims.left + x + _borderSize + dx;
+								int by = iter->_dims.top + y + _borderSize + dy;
+								if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
+									pixColor = texBuf[by * resultWidth + bx];
+									PF_RGBA.colorToARGB(pixColor, sA, sR, sG, sB);
+									switch (sA) {
+									case 0x00:
+										texBuf[by * resultWidth + bx] = borderColor;
+										break;
+									default:
+										// Blend color with border color
+										PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
+
+										dR = ((255 - sA) * dR + sA * sR) / 255;
+										dG = ((255 - sA) * dG + sA * sG) / 255;
+										dB = ((255 - sA) * dB + sA * sB) / 255;
+
+										texBuf[by * resultWidth + bx] = PF_RGBA.RGBToColor(dR, dG, dB);
+										break;
 									}
 								}
 							}
@@ -257,10 +250,9 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			int w = _ttfFont->getStringWidth(unicodeText);
 
 			for (int y = 0; y < iter->_dims.height(); y++) {
-				uint32 *bufrow = texBuf + (iter->_dims.top + y) * resultWidth;
-				bufrow[iter->_dims.left + w + _borderSize] = 0xFF000000;
-//				if (_borderSize > 0)
-//					bufrow[iter->_dims.left+w+_borderSize-1] = 0xFF000000;
+				int tx = iter->_dims.left + w + _borderSize;
+				int ty = iter->_dims.top + y;
+				texBuf[ty * resultWidth + tx] = borderColor;
 			}
 		}
 	}
