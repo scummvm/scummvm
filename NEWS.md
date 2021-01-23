@@ -113,6 +113,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added native system file browser feature
    - Added Cloud feature
    - Re-activate nuked OPL Adlib driver
+   - Added CAMD MIDI driver support
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 

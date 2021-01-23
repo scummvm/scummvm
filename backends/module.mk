@@ -252,7 +252,8 @@ ifdef MORPHOS
 MODULE_OBJS += \
 	fs/morphos/morphos-fs.o \
 	fs/morphos/morphos-fs-factory.o \
-	dialogs/morphos/morphos-dialogs.o
+	dialogs/morphos/morphos-dialogs.o \
+	midi/camd-morphos.o
 endif
 
 ifdef RISCOS

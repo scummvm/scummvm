@@ -124,7 +124,7 @@ public:
 		#if defined(IRIX)
 		LINK_PLUGIN(DMEDIA)
 		#endif
-		#if defined(__amigaos4__)
+		#if defined(__amigaos4__) || defined(__MORPHOS__)
 		LINK_PLUGIN(CAMD)
 		#endif
 		#if defined(MACOSX)
