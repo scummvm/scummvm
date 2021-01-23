@@ -69,6 +69,7 @@ class SceneManager;
 class Logic;
 class GraphicsManager;
 class InputManager;
+class SoundManager;
 
 class NancyEngine : public Engine {
 public:
@@ -115,6 +116,7 @@ public:
 	SceneManager *sceneManager;
 	GraphicsManager *graphics;
 	InputManager *input;
+	SoundManager *sound;
 	
 	// Contains all player data
     PlayState playState;
@@ -136,10 +138,6 @@ protected:
 		Common::String name;
 		uint16 width;
 		uint16 height;
-	};
-
-	struct Sound {
-		Common::String name;
 	};
 
 	enum GameState {
@@ -173,12 +171,10 @@ protected:
 	ImageList _objects;
 	uint16 _firstSceneID;
 	int32 _fontSize;
-	Sound _menuSound;
 	GameFlow _gameFlow;
 
 	void preloadCals(const IFF &boot);
 	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
-	void readSound(const IFF &boot, const Common::String &name, Sound &sound);
 	Common::String readFilename(Common::ReadStream *stream) const;
 
 	virtual uint getFilenameLen() const = 0;

@@ -63,15 +63,12 @@ void LogoSequence::init() {
 }
 
 void LogoSequence::startSound() {
-	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(_engine->_menuSound.name + ".his");
-	if (mSnd) {
-		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
-		if (aStr) {
-			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, 0);
-			Audio::SoundHandle handle;
-			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, aStrLoop);
-		}
-	}
+	Common::SeekableReadStream *msnd = _engine->getBootChunkStream("MSND");
+	char name[10];
+	msnd->seek(0);
+	msnd->read(name, 10);
+	Common::String sname(name);
+	_engine->sound->loadSound(sname, 0);
 
 	_startTicks = _engine->_system->getMillis();
 	_state = kRun;

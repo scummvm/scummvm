@@ -337,10 +337,18 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 };
 
-class PlayDigiSoundAndDie : public ActionRecord {
+class PlayDigiSoundAndDie : public SceneChange {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
     // TODO subclass into Play and Stop (?)
+
+    Common::String filename;
+    int16 id = -1; // 0xA
+    uint16 numLoops = 0; // 0x10
+    uint16 volume = 0; // 0x16, between 0 and 60
+    // ...
+    // SceneChange elements at 0x1E
 };
 
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {

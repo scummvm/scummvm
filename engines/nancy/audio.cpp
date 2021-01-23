@@ -20,6 +20,10 @@
  *
  */
 
+#include "engines/nancy/audio.h"
+#include "engines/nancy/nancy.h"
+
+#include "common/system.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
@@ -170,6 +174,54 @@ Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, Di
 		return Audio::makeRawStream(subStream, samplesPerSec, flags, DisposeAfterUse::YES);
 	else
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
+}
+
+SoundManager::SoundManager(NancyEngine *engine) :
+		_engine(engine) {
+	_mixer = _engine->_system->getMixer();
+}
+
+// Combine load and play until i find a reason not to
+void SoundManager::loadSound(Common::String &name, int16 id, uint16 numLoops, uint16 volume) {
+	if (_mixer->isSoundHandleActive(handles[id])) {
+		_mixer->stopHandle(handles[id]);
+	}
+	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(name + ".his");
+	if (mSnd) {
+		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
+		if (aStr) {
+			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, numLoops);
+			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 60);
+			names[id] = name;
+		}
+	}
+}
+
+void SoundManager::stopSound(int16 id) {
+	if (isSoundPlaying(id)) {
+		_mixer->stopHandle(handles[id]);
+	}
+	names[id] = Common::String();
+}
+
+bool SoundManager::isSoundPlaying(int16 id) {
+	if (id >= 0 && id < 20) {
+		return _mixer->isSoundHandleActive(handles[id]);
+	}
+	return false;
+}
+
+// Returns whether the exception was skipped
+bool SoundManager::stopAllSounds(Common::String *except) {
+	bool ret = false;
+	for (uint i = 0; i < 20; ++i) {
+		if (except == nullptr || names[i] != *except) {
+			stopSound(i);
+		} else {
+			ret = true;
+		}
+	}
+	return ret;
 }
 
 } // End of namespace Nancy

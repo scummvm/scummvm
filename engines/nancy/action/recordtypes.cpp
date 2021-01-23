@@ -26,6 +26,9 @@
 #include "engines/nancy/logic.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/audio.h"
+
+#include "common/str.h"
 
 namespace Nancy {
 
@@ -71,6 +74,7 @@ void HotMultiframeSceneChange::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
             // turn main rendering on
+            state = kRun;
             // fall through
         case kRun:
             hasHotspot = false;
@@ -97,6 +101,7 @@ void Hot1FrSceneChange::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
             hotspot = hotspotDesc.coords;
+            state = kRun;
             // fall through
         case kRun:
             if (hotspotDesc.frameID == engine->playState.currentViewFrame) {
@@ -469,7 +474,34 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x2B); // TODO
+    char str[10];
+    stream.read(str, 10);
+    filename = Common::String(str);
+    id = stream.readSint16LE();
+    stream.skip(4);
+    numLoops = stream.readUint16LE();
+    stream.skip(4);
+    volume = stream.readUint16LE();
+    stream.skip(6);
+    SceneChange::readData(stream);
+    return 0x2B;
+}
+
+void PlayDigiSoundAndDie::execute(NancyEngine *engine){
+    switch (state) {
+        case kBegin:
+            engine->sound->loadSound(filename, id, numLoops, volume);
+            state = kRun;
+            break;
+        case kRun:
+            if (!engine->sound->isSoundPlaying(id)) {
+                state = kEnd;
+            }
+            break;
+        case kEnd:
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
