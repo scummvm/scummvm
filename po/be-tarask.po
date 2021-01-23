@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-22 00:20+0000\n"
-"PO-Revision-Date: 2021-01-22 11:20+0000\n"
+"PO-Revision-Date: 2021-01-23 18:11+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -21,17 +21,19 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 
 #: gui/about.cpp:102
-#, c-format
+#, c-format, fuzzy
 msgid "(built on %s)"
-msgstr ""
+msgstr "(збор ад  %s)"
 
 #: gui/about.cpp:109
+#, fuzzy
 msgid "Features compiled in:"
-msgstr ""
+msgstr "Склад збору:"
 
 #: gui/about.cpp:118
+#, fuzzy
 msgid "Available engines:"
-msgstr ""
+msgstr "Даступныя рухавікі:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 #, fuzzy
@@ -134,7 +136,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
-msgstr ""
+msgstr "Так"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -145,7 +147,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
-msgstr ""
+msgstr "Не"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:567
 msgid "ScummVM couldn't open the specified directory!"
@@ -177,11 +179,13 @@ msgid "OK"
 msgstr ""
 
 #: gui/downloaddialog.cpp:152
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"У гэтай тэчке ўжо ёсьць \"%s\".\n"
+"Вы упэўнены, што хаціце зладаваць файлы ў гэтую тэчку?"
 
 #: gui/downloaddialog.cpp:215
 #, fuzzy, c-format
@@ -195,11 +199,12 @@ msgstr "Хуткасьць ладаваньня: %s %S"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:285
 msgid "Game"
-msgstr ""
+msgstr "Гульня"
 
 #: gui/editgamedialog.cpp:145
+#, fuzzy
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:145 gui/editgamedialog.cpp:147
 #: gui/editgamedialog.cpp:148
@@ -211,21 +216,22 @@ msgstr ""
 #: gui/editgamedialog.cpp:147
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:152 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "Назва:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:154
 #: gui/editgamedialog.cpp:155
+#, fuzzy
 msgid "Full title of the game"
-msgstr ""
+msgstr "Цэлая назва гульні"
 
 #: gui/editgamedialog.cpp:154
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "Назва:"
 
 #: gui/editgamedialog.cpp:158 engines/mohawk/dialogs.cpp:140
 #: engines/mohawk/dialogs.cpp:341
