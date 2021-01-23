@@ -192,11 +192,11 @@ int savegamedialog() {
 
 	lpTemp = nullptr;
 	if (numsaves > 0)
-		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0, (long)&buffer2[0]);
+		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0,  &buffer2[0]);
 	else
 		buffer2[0] = 0;
 
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&buffer2[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
 
 	int toret = -1;
 	while (1) {
@@ -204,10 +204,10 @@ int savegamedialog() {
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				int cursell = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
 
 				if (numsaves > 0)
-					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, (long)&bufTemp[0]);
+					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, &bufTemp[0]);
 				else
 					strcpy(bufTemp, "_NOSAVEGAMENAME");
 
@@ -231,7 +231,7 @@ int savegamedialog() {
 						CSCIWaitMessage(&cmes);
 					} while (cmes.code != CM_COMMAND);
 
-					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, (long)&buffer2[0]);
+					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, &buffer2[0]);
 					CSCIDeleteControl(btnCancel);
 					CSCIDeleteControl(btnOk);
 					CSCIDeleteControl(txt1);
@@ -279,8 +279,8 @@ int savegamedialog() {
 		} else if (mes.code == CM_SELCHANGE) {
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, (long)&buffer2[0]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, &buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
 			}
 		}
 	}
@@ -305,7 +305,8 @@ void preparesavegamelist(int ctrllist) {
 		Common::String desc = it->getDescription();
 
 		// TODO: Casting pointer to long is nasty
-		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, (long)desc.c_str());
+		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0,
+			const_cast<char *>(desc.c_str()));
 
 		// Select the first item
 		CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
@@ -321,10 +322,10 @@ void preparesavegamelist(int ctrllist) {
 	for (int nn = 0; nn < numsaves - 1; nn++) {
 		for (int kk = 0; kk < numsaves - 1; kk++) { // Date order the games
 			if (filedates[kk] < filedates[kk + 1]) {  // swap them round
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, (long)&buff[0]);
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, (long)&buffer2[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, (long)&buff[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, &buff[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, &buffer2[0]);
+				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, &buff[0]);
+				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, &buffer2[0]);
 				int numtem = filenumbers[kk];
 				filenumbers[kk] = filenumbers[kk + 1];
 				filenumbers[kk + 1] = numtem;
@@ -361,7 +362,7 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 			if (mes.id == ctrlcancel)
 				buffer2[0] = 0;
 			else
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
 			break;
 		}
 	}
@@ -400,7 +401,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	for (int aa = 0; aa < numRooms; aa++) {
 		sprintf(buff, "%3d %s", roomNumbers[aa], roomNames[aa]);
-		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, (long)&buff[0]);
+		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, &buff[0]);
 		if (roomNumbers[aa] == currentRoom) {
 			CSCISendControlMessage(ctrllist, CLB_SETCURSEL, aa, 0);
 		}
@@ -414,14 +415,14 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	buffer2[0] = 0;
 
 	int ctrltbox = CSCICreateControl(CNT_TEXTBOX, 10, 29, 120, 0, nullptr);
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&buffer2[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
 
 	int toret = -1;
 	while (1) {
 		CSCIWaitMessage(&mes);      //printf("mess: %d, id %d ",mes.code,mes.id);
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
 				if (Common::isDigit(buffer2[0])) {
 					toret = atoi(buffer2);
 				}
@@ -432,7 +433,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
 				sprintf(buffer2, "%d", roomNumbers[cursel]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
 			}
 		}
 	}

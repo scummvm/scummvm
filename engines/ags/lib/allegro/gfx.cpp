@@ -338,16 +338,16 @@ void bmp_select(BITMAP *bmp) {
 	// No implementation needed
 }
 
-long bmp_write_line(BITMAP *bmp, int line) {
-	return (long)bmp->line[line];
+byte *bmp_write_line(BITMAP *bmp, int line) {
+	return bmp->line[line];
 }
 
 void bmp_unwrite_line(BITMAP *bmp) {
 	// No implementation needed
 }
 
-void bmp_write8(unsigned long addr, int color) {
-	*((byte *)addr) = color;
+void bmp_write8(byte *addr, int color) {
+	*addr = color;
 }
 
 void memory_putpixel(BITMAP *bmp, int x, int y, int color) {
