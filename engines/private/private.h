@@ -38,7 +38,14 @@ enum {
 // points
 
 const Common::Point kPrivateOriginZero(0, 0); 
-const Common::Point kPrivateOriginOne(64, 48); 
+const Common::Point kPrivateOriginOne(64, 48);
+
+// settings
+
+static Common::String kPauseMovie("kPauseMovie");
+static Common::String kGoIntro("kGoIntro");
+static Common::String kPoliceBustFromMO("kPoliceBustFromMO");
+static Common::String kMainDesktop("kMainDesktop");
 
 // structs
 
@@ -145,6 +152,11 @@ public:
     Common::String *_nextVS;
     Common::String *_frame;
     bool            _toTake;
+
+    // Police Bust
+
+    bool _policeBustEnabled;
+    Common::String *_policeBustSetting;
 
     // Save/Load games
     MaskInfo *_saveGameMask;
