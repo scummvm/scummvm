@@ -205,9 +205,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 							// Blend color with border color
 							PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
 
-							dR = ((255 - sA) * dR + sA * sR) / 255;
-							dG = ((255 - sA) * dG + sA * sG) / 255;
-							dB = ((255 - sA) * dB + sA * sB) / 255;
+							double alpha = (double)sA / 255.0;
+							dR = static_cast<uint8>((sR * alpha) + (dR * (1.0 - alpha)));
+							dG = static_cast<uint8>((sG * alpha) + (dG * (1.0 - alpha)));
+							dB = static_cast<uint8>((sB * alpha) + (dB * (1.0 - alpha)));
 
 							texBuf[ty * resultWidth + tx] = PF_RGBA.RGBToColor(dR, dG, dB);
 							break;
@@ -218,25 +219,8 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 								int bx = iter->_dims.left + x + _borderSize + dx;
 								int by = iter->_dims.top + y + _borderSize + dy;
 								if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
-									uint32 dColor = texBuf[by * resultWidth + bx];
-									PF_RGBA.colorToARGB(dColor, sA, dR, dG, dB);
-									switch (sA) {
-									case 0x00:
+									if (texBuf[by * resultWidth + bx] == 0) {
 										texBuf[by * resultWidth + bx] = borderColor;
-										break;
-									case 0xFF:
-										// Color already set 
-										break;
-									default:
-										// Blend source color at dest alpha with border color
-										PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
-
-										dR = ((255 - sA) * dR + sA * sR) / 255;
-										dG = ((255 - sA) * dG + sA * sG) / 255;
-										dB = ((255 - sA) * dB + sA * sB) / 255;
-
-										texBuf[by * resultWidth + bx] = PF_RGBA.RGBToColor(dR, dG, dB);
-										break;
 									}
 								}
 							}
