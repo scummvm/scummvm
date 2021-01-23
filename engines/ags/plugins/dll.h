@@ -98,7 +98,7 @@ protected:
 	static void   AGS_EditorLoadGame(char *, int);
 	static void   AGS_EngineStartup(IAGSEngine *);
 	static void   AGS_EngineShutdown();
-	static int    AGS_EngineOnEvent(int, int);
+	static NumberPtr AGS_EngineOnEvent(int, NumberPtr);
 	static int    AGS_EngineDebugHook(const char *, int, int);
 	static void   AGS_EngineInitGfx(const char *driverID, void *data);
 public:

@@ -597,7 +597,8 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		return;
 	}
 	onhs = getloctype_index;
-	if (onhs > 0) strcpy(tempo, get_translation(thisroom.Hotspots[onhs].Name));
+	if (onhs > 0)
+		strcpy(tempo, get_translation(thisroom.Hotspots[onhs].Name));
 	if (play.get_loc_name_last_time != onhs)
 		guis_need_update = 1;
 	play.get_loc_name_last_time = onhs;
