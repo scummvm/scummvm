@@ -91,6 +91,9 @@ struct SOUNDCLIP {
 	inline void set_volume_percent(int volume) {
 		set_volume((volume * 255) / 100);
 	}
+	inline int get_volume_percent() const {
+		return get_volume() * 100 / 255;
+	}
 	void adjust_volume();
 	int play_from(int position);
 
