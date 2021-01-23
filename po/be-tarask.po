@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-22 00:20+0000\n"
-"PO-Revision-Date: 2021-01-23 18:11+0000\n"
+"PO-Revision-Date: 2021-01-23 22:25+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -21,9 +21,9 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 
 #: gui/about.cpp:102
-#, c-format, fuzzy
+#, c-format
 msgid "(built on %s)"
-msgstr "(збор ад  %s)"
+msgstr "(збор ад %s)"
 
 #: gui/about.cpp:109
 #, fuzzy
@@ -47,7 +47,7 @@ msgstr "Паказваць файлы, што пазначаны схаваны�
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr ""
+msgstr "Угару"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
@@ -154,10 +154,13 @@ msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM ня можа адкрыць гэтую тэчку!"
 
 #: gui/downloaddialog.cpp:147
+#, fuzzy
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Нельга стварыць тэчку для ладаваньня, бо ў гэтай тэчцы ёсьць файл с гэтай ж "
+"назвай."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:371
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:517
@@ -242,14 +245,15 @@ msgstr "Мова:"
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr ""
+msgstr "Мова гульні. Ангельская мова гульні ня ператворыцца ў беларускую"
 
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
 #: gui/options.cpp:2307 audio/null.cpp:41
+#, fuzzy
 msgid "<default>"
-msgstr ""
+msgstr "<стандартная>"
 
 #: gui/editgamedialog.cpp:170
 msgid "Platform:"
@@ -267,7 +271,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:186
 msgid "Engine"
-msgstr ""
+msgstr "Рухавік"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
 #: backends/graphics/sdl/sdl-graphics.cpp:374
@@ -446,8 +450,9 @@ msgid "Select additional game directory"
 msgstr ""
 
 #: gui/editgamedialog.cpp:586 gui/options.cpp:2530
+#, fuzzy
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "Выберыце тэчку для захаваньняў"
 
 #: gui/editgamedialog.cpp:592
 msgid ""
@@ -600,7 +605,7 @@ msgstr "Закрыць"
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
 msgid "Up"
-msgstr ""
+msgstr "Угару"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
@@ -673,8 +678,9 @@ msgid "~Q~uit"
 msgstr "~В~ыйсьце"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
+#, fuzzy
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "Выйсьці з ScummVM"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
@@ -687,27 +693,29 @@ msgstr "Пра ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr ""
+msgstr "~Н~алады..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "Зьмяніць агульныя налады ScummVM"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr "П~а~чаць"
+msgstr "~П~ачаць"
 
 #: gui/launcher.cpp:144
+#, fuzzy
 msgid "Start selected game"
-msgstr ""
+msgstr "Распачаць выбраную гульню"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr ""
+msgstr "~З~аладаваць..."
 
 #: gui/launcher.cpp:147
+#, fuzzy
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "Заладаваць захаванку для выбранай гульні"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -727,12 +735,13 @@ msgid "Mass Add..."
 msgstr ""
 
 #: gui/launcher.cpp:161
+#, fuzzy
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "На~л~адзіць гульню..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "Зьмяніць налады гульні"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
@@ -745,7 +754,7 @@ msgstr ""
 #: gui/launcher.cpp:166
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~Д~адаць гульню..."
 
 #: gui/launcher.cpp:167
 msgctxt "lowres"
@@ -753,9 +762,10 @@ msgid "Mass Add..."
 msgstr ""
 
 #: gui/launcher.cpp:171
+#, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "На~л~адзіць гульню..."
 
 #: gui/launcher.cpp:173
 msgctxt "lowres"
@@ -774,14 +784,14 @@ msgstr ""
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
-msgstr ""
+msgstr "Заладаваць гульню:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:182 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
-msgstr ""
+msgstr "Заладаваць"
 
 #: gui/launcher.cpp:386
 msgid "This directory cannot be used yet, it is being downloaded into!"
