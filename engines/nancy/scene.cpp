@@ -39,6 +39,10 @@ namespace Nancy {
 
 SceneManager::~SceneManager() {
     clearSceneData();
+    _engine->graphics->_primaryFrameSurface.free();
+    _engine->graphics->_object0Surface.free();
+    _engine->graphics->_inventoryBoxIconsSurface.free();
+    _engine->graphics->_inventoryCursorsSurface.free();
 }
 
 void SceneManager::process() {
@@ -67,7 +71,7 @@ void SceneManager::process() {
 }
 
 void SceneManager::init() {
-    for (uint i = 0; i < 672; ++i) {
+    for (uint i = 0; i < 168; ++i) {
         _engine->playState.eventFlags[i] = PlayState::Flag::kFalse;
     }
 
@@ -136,6 +140,8 @@ void SceneManager::init() {
 }
 
 void SceneManager::load() {
+    clearSceneData();
+
     // Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100                                                                                    
     Common::String sceneName = Common::String::format("S%u", _sceneID);
     IFF sceneIFF(_engine, sceneName);
@@ -161,7 +167,6 @@ void SceneManager::load() {
     }
 
     // Search for Action Records, maximum for a scene is 30
-    _engine->logic->clearActionRecords();
     Common::SeekableReadStream *actionRecordChunk = nullptr;
 
     while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _engine->logic->_records.size()), actionRecordChunk != nullptr)
@@ -630,11 +635,18 @@ void SceneManager::handleMouse() {
 }
 
 void SceneManager::clearSceneData() {
-    // TODO these shouldn't be here
-    _engine->graphics->_primaryFrameSurface.free();
-    _engine->graphics->_object0Surface.free();
-    _engine->graphics->_inventoryBoxIconsSurface.free();
-    _engine->graphics->_inventoryCursorsSurface.free();
+    // only clear select flags
+    for (uint i = 44; i < 54; ++i) {
+        _engine->playState.eventFlags[i] = PlayState::kFalse;
+    }
+    for (uint i = 63; i < 74; ++i) {
+        _engine->playState.eventFlags[i] = PlayState::kFalse;
+    }
+    for (uint i = 75; i < 85; ++i) {
+        _engine->playState.eventFlags[i] = PlayState::kFalse;
+    }
+
+    _engine->logic->clearActionRecords();
 }
 
 } // End of namespace Nancy
