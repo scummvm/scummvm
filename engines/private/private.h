@@ -35,6 +35,11 @@ enum {
                             // the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
+// points
+
+const Common::Point kPrivateOriginZero(0, 0); 
+const Common::Point kPrivateOriginOne(64, 48); 
+
 // structs
 
 typedef struct ExitInfo {
@@ -134,7 +139,7 @@ public:
     void drawScreen();
 
     // global state
-    Common::Point *_origin;
+    const Common::Point *_origin;
     Common::String *_nextSetting;
     Common::String *_currentSetting;
     Common::String *_nextVS;
@@ -181,6 +186,8 @@ public:
     SoundList _AMRadio;
     SoundList _policeRadio;
     PhoneList _phone;
+
+    char *getRandomPhoneClip(char *, int, int);
 
     void selectAMRadioArea(Common::Point);
     void selectPoliceRadioArea(Common::Point);
