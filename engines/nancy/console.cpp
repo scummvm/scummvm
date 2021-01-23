@@ -26,6 +26,7 @@
 #include "engines/nancy/video.h"
 #include "engines/nancy/audio.h"
 #include "engines/nancy/iff.h"
+#include "engines/nancy/scene.h"
 
 #include "common/system.h"
 #include "common/events.h"
@@ -47,6 +48,8 @@ NancyConsole::NancyConsole(NancyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
 	registerCmd("play_video", WRAP_METHOD(NancyConsole, Cmd_playVideo));
 	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
+	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
+	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 }
 
 NancyConsole::~NancyConsole() {
@@ -276,6 +279,43 @@ bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
 	}
 	Audio::SoundHandle handle;
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+	return true;
+}
+
+bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Loads a scene\n");
+		debugPrintf("Usage: %s sceneID\n", argv[0]);
+		return true;
+	}
+	
+	if (_vm->_gameFlow.minGameState != NancyEngine::GameState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	Common::String sceneName = Common::String::format("S%s", argv[1]);
+    IFF iff(_vm, sceneName);
+	if (!iff.load()) {
+		debugPrintf("Invalid scene S%s\n", argv[1]);
+		return true;
+	}
+
+	_vm->sceneManager->_sceneID = (uint16)atoi(argv[1]);
+	_vm->playState.queuedViewFrame = 0;
+	_vm->playState.queuedMaxVerticalScroll = 0;
+	_vm->sceneManager->doNotStartSound = false;
+	_vm->sceneManager->_state = SceneManager::kLoadNew;
+	return cmdExit(0, 0);
+}
+
+bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
+	if (_vm->_gameFlow.minGameState != NancyEngine::GameState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	debugPrintf("Scene: %u, Frame: %i \n", _vm->sceneManager->_sceneID, _vm->playState.currentViewFrame);
 	return true;
 }
 
