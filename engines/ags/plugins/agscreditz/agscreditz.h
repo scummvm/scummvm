@@ -25,7 +25,7 @@
 
 #include "ags/plugins/dll.h"
 
-namespace AGS {
+namespace AGS3 {
 namespace Plugins {
 namespace AgsCreditz {
 
@@ -62,6 +62,6 @@ public:
 
 } // namespace AgsCreditz
 } // namespace Plugins
-} // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -26,19 +26,19 @@
 namespace AGS3 {
 
 void *dlopen(const char *filename, bool) {
-	return ::AGS::Plugins::dlopen(filename);
+	return Plugins::dlopen(filename);
 }
 
 int dlclose(void *lib) {
-	return ::AGS::Plugins::dlclose(lib);
+	return Plugins::dlclose(lib);
 }
 
 void *dlsym(void *lib, const char *method) {
-	return ::AGS::Plugins::dlsym(lib, method);
+	return Plugins::dlsym(lib, method);
 }
 
 const char *dlerror() {
-	return ::AGS::Plugins::dlerror();
+	return Plugins::dlerror();
 }
 
 } // namespace AGS3
