@@ -583,7 +583,7 @@ namespace {
 
 template<typename ColorType>
 static void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, const int srcPitch, const int w, const int h, ColorType color, const PixelFormat &dstFormat) {
-	uint8 sR, sG, sB;
+	uint8 sA, sR, sG, sB;
 	dstFormat.colorToRGB(color, sR, sG, sB);
 
 	for (int y = 0; y < h; ++y) {
@@ -594,16 +594,25 @@ static void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, 
 			if (*src == 255) {
 				*rDst = color;
 			} else if (*src) {
-				const uint8 a = *src;
+				sA = *src;
 
-				uint8 dR, dG, dB;
-				dstFormat.colorToRGB(*rDst, dR, dG, dB);
+				uint8 dA, dR, dG, dB;
+				dstFormat.colorToARGB(*rDst, dA, dR, dG, dB);
 
-				dR = ((255 - a) * dR + a * sR) / 255;
-				dG = ((255 - a) * dG + a * sG) / 255;
-				dB = ((255 - a) * dB + a * sB) / 255;
+				if (dA == 0) {
+					*rDst = dstFormat.ARGBToColor(sA, sR, sG, sB);
+				} else {
+					double alpha = (double)sA / 255.0;
+					dR = static_cast<uint8>((sR * alpha) + (dR * (1.0 - alpha)));
+					dG = static_cast<uint8>((sG * alpha) + (dG * (1.0 - alpha)));
+					dB = static_cast<uint8>((sB * alpha) + (dB * (1.0 - alpha)));
 
-				*rDst = dstFormat.RGBToColor(dR, dG, dB);
+					if (sA > dA) {
+						dA = static_cast<uint8>((sA * alpha) + (dA * (1.0 - alpha)));
+					}
+
+					*rDst = dstFormat.ARGBToColor(dA, dR, dG, dB);
+				}
 			}
 
 			++rDst;
