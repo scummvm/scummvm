@@ -23,6 +23,8 @@
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
 namespace Ultima {
@@ -47,6 +49,18 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	for (int yp = 0; yp < MAP_NUM_CHUNKS; yp++)
 		for (int xp = 0; xp < MAP_NUM_CHUNKS; xp++)
 			if (currentmap->isChunkFast(xp, yp)) surf->Fill32(0xFFFFFFFF, xp + 1, yp + 1, 1, 1);
+
+	// Put a red dot where the avatar is
+	Item *avatar = getItem(1);
+	if (avatar) {
+		int32 x, y, z;
+		avatar->getLocation(x, y, z);
+		int chunksize = currentmap->getChunkSize();
+		x /= chunksize;
+		y /= chunksize;
+		if (x >= 0 && x < MAP_NUM_CHUNKS && y >= 0 && y < MAP_NUM_CHUNKS)
+			surf->Fill32(0xFFFF1010, x + 1, y + 1, 1, 1);
+	}
 }
 
 uint16 FastAreaVisGump::TraceObjId(int32 mx, int32 my) {
