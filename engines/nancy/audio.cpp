@@ -212,16 +212,8 @@ bool SoundManager::isSoundPlaying(int16 id) {
 }
 
 // Returns whether the exception was skipped
-bool SoundManager::stopAllSounds(Common::String *except) {
-	bool ret = false;
-	for (uint i = 0; i < 20; ++i) {
-		if (except == nullptr || names[i] != *except) {
-			stopSound(i);
-		} else {
-			ret = true;
-		}
-	}
-	return ret;
+void SoundManager::stopAllSounds() {
+	_mixer->stopAll();
 }
 
 } // End of namespace Nancy

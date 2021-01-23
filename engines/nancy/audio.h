@@ -51,7 +51,7 @@ public:
     void loadSound(Common::String &name, int16 id, uint16 numLoops = 0, uint16 volume = 60);
     void stopSound(int16 id);
     bool isSoundPlaying(int16 id);
-    bool stopAllSounds(Common::String *except = nullptr);
+    void stopAllSounds();
 
 private:
     NancyEngine *_engine;
