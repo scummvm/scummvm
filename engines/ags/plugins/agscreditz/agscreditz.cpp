@@ -22,7 +22,7 @@
 
 #include "ags/plugins/agscreditz/agscreditz.h"
 
-namespace AGS {
+namespace AGS3 {
 namespace Plugins {
 namespace AgsCreditz {
 
@@ -147,4 +147,4 @@ int AgsCreditz::IsStaticCreditsFinished(const ScriptMethodParams &params) {
 
 } // namespace AgsCreditz
 } // namespace Plugins
-} // namespace AGS
+} // namespace AGS3

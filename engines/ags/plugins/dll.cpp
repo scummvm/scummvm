@@ -24,7 +24,7 @@
 #include "ags/plugins/agscreditz/agscreditz.h"
 #include "common/str.h"
 
-namespace AGS {
+namespace AGS3 {
 namespace Plugins {
 
 void *dlopen(const char *filename) {
@@ -103,4 +103,4 @@ void DLL::AGS_EngineInitGfx(const char *driverID, void *data) {
 }
 
 } // namespace Plugins
-} // namespace AGS
+} // namespace AGS3

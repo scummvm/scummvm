@@ -28,7 +28,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-namespace AGS {
+namespace AGS3 {
 namespace Plugins {
 
 #define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
@@ -80,12 +80,7 @@ namespace Plugins {
 	T8 N8 = (T8)params[7]
 
 
-// TODO: Refactor string into core AGS namespace
 using string = const char *;
-using ScriptMethodParams = ::AGS3::ScriptMethodParams;
-
-using IAGSEngine = ::AGS3::IAGSEngine;
-using IAGSEditor = ::AGS3::IAGSEditor;
 typedef uint32 HWND;
 
 /**
@@ -123,6 +118,6 @@ extern void *dlsym(void *lib, const char *method);
 extern const char *dlerror();
 
 } // namespace Plugins
-} // namespace AGS
+} // namespace AGS3
 
 #endif
