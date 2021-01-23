@@ -52,6 +52,9 @@ namespace AGS3 {
 using AGS::Shared::AssetManager;
 
 void play_theora_video(const char *name, int skip, int flags) {
+#if !defined (USE_THEORADEC)
+	Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
+#else
 	std::unique_ptr<Stream> video_stream(AssetManager::OpenAsset(name));
 	if (!video_stream) {
 		Display("Unable to load theora video '%s'", name);
@@ -120,7 +123,9 @@ void play_theora_video(const char *name, int skip, int flags) {
 	}
 
 	invalidate_screen();
+#endif
 }
+
 void play_flc_file(int numb, int playflags) {
 	warning("TODO: play_flc_file");
 }
