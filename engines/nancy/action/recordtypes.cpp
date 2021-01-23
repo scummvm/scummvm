@@ -45,7 +45,7 @@ uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
     frameID = stream.readUint16LE();
     verticalOffset = stream.readUint16LE();
     doNotStartSound = (bool)(stream.readUint16LE());
-    return 8; // TODO
+    return 8;
 }
 
 void SceneChange::execute(NancyEngine *engine) {
@@ -499,7 +499,9 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine){
             }
             break;
         case kEnd:
-            SceneChange::execute(engine);
+            if (sceneID != 9999) {
+                SceneChange::execute(engine);
+            }
             break;
     }
 }
