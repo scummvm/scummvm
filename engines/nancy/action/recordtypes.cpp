@@ -85,7 +85,7 @@ void HotMultiframeSceneChange::execute(NancyEngine *engine) {
                 }
             }
             break;
-        case kEnd:
+        case kActionTrigger:
             SceneChange::execute(engine);
             break;
     }
@@ -110,7 +110,7 @@ void Hot1FrSceneChange::execute(NancyEngine *engine) {
                 hasHotspot = false;
             }
             break;
-        case kEnd:
+        case kActionTrigger:
             SceneChange::execute(engine);
             break;
     }
@@ -384,7 +384,7 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
                 }
             }
             break;
-        case kEnd:
+        case kActionTrigger:
             hasHotspot = false;
             EventFlags::execute(engine);
             break;
@@ -495,10 +495,10 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine){
             break;
         case kRun:
             if (!engine->sound->isSoundPlaying(id)) {
-                state = kEnd;
+                state = kActionTrigger;
             }
             break;
-        case kEnd:
+        case kActionTrigger:
             if (sceneID != 9999) {
                 SceneChange::execute(engine);
             }
