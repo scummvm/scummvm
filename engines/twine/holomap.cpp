@@ -126,11 +126,11 @@ void Holomap::prepareHolomapSurface() {
 			_engine->_renderer->projectPositionOnScreen(destX, destY, destZ);
 			_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
 			_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
-			_projectedSurfacePositions[projectedIndex].unk1 = _engine->_screens->crossDot(0, 0xffff, 0x3ff, rotation);
+			_projectedSurfacePositions[projectedIndex].unk1 = _engine->_screens->crossDot(0, 0xffff, ANGLE_360 - 1, rotation);
 			if (angle == ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
 			} else {
-				_projectedSurfacePositions[projectedIndex].unk2 = (short)(((angle + ANGLE_90) * ANGLE_90) / 2);
+				_projectedSurfacePositions[projectedIndex].unk2 = (int16)(((angle + ANGLE_90) * ANGLE_90) / 2);
 			}
 			rotation = rotation + ANGLE_11_25;
 			++projectedIndex;
@@ -146,7 +146,7 @@ void Holomap::prepareHolomapSurface() {
 		if (angle == ANGLE_90) {
 			_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
 		} else {
-			_projectedSurfacePositions[projectedIndex].unk2 = (short)(((angle + ANGLE_90) * ANGLE_90) / 2);
+			_projectedSurfacePositions[projectedIndex].unk2 = (int16)(((angle + ANGLE_90) * ANGLE_90) / 2);
 		}
 		++projectedIndex;
 	}
