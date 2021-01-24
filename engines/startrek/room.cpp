@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/bridge.h"
 #include "startrek/iwfile.h"
 #include "startrek/resource.h"
 #include "startrek/room.h"
@@ -674,45 +675,23 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 		_vm->handleAwayMissionEvents();
 
 	_vm->_awayMission.disableInput = false;
+	_vm->_roomIndexToLoad = 0;
+	_vm->_gameMode = GAMEMODE_BEAMUP;
 
 	if (_vm->_missionName == "DEMON") {
-		_vm->_gameMode = GAMEMODE_BEAMUP;
-		_vm->_roomIndexToLoad = 0;
-		_vm->_bridgeSequenceToLoad = 4; // kSeqEndMissionDemon
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionDemon;
 	} else if (_vm->_missionName == "TUG") {
-		_vm->_gameMode = GAMEMODE_BEAMUP;
-		_vm->_roomIndexToLoad = 0;
-		_vm->_bridgeSequenceToLoad = 9; // kSeqEndMissionTug
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionTug;
 	} else if (_vm->_missionName == "LOVE") {
-		_vm->_gameMode = GAMEMODE_BEAMUP;
-		_vm->_roomIndexToLoad = 0;
-		_vm->_bridgeSequenceToLoad = 15; // kSeqEndMissionLove
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionLove;
 	} else if (_vm->_missionName == "MUDD") {
-		_vm->_gameMode = GAMEMODE_BEAMUP;
-		_vm->_roomIndexToLoad = 0;
-		_vm->_bridgeSequenceToLoad = 18; // kSeqEndMissionMudd
-	} else {
-		// TODO: This is a stopgap measure (loading the next away mission immediately).
-		// Replace this with the proper code later.
-		_vm->_gameMode = GAMEMODE_BEAMDOWN;
-		_vm->_roomIndexToLoad = 0;
-
-		const char *missionNames[] = {
-		    //"DEMON",
-		    //"TUG",
-		    //"LOVE",
-		    //"MUDD",
-		    "FEATHER",
-		    "TRIAL",
-		    "SINS",
-		    "VENG"};
-
-		for (int i = 0; i < ARRAYSIZE(missionNames) - 1; i++) {
-			if (_vm->_missionName == missionNames[i]) {
-				_vm->_missionToLoad = missionNames[i + 1];
-				break;
-			}
-		}
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionMudd;
+	} else if (_vm->_missionName == "FEATHER") {
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionFeather;
+	} else if (_vm->_missionName == "TRIAL") {
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionTrial;
+	} else if (_vm->_missionName == "SINS") {
+		_vm->_bridgeSequenceToLoad = kSeqEndMissionSins;
 	}
 }
 
