@@ -22,7 +22,7 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/dll.h"
-#include "ags/plugins/agscreditz/agscreditz.h"
+#include "ags/plugins/ags_creditz/ags_creditz.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -36,7 +36,7 @@ void *dlopen(const char *filename) {
 	// Check for if the game specifies a specific plugin version for this game
 	int version = 0;
 	for (const ::AGS::PluginVersion *v = ::AGS::g_vm->getNeededPlugins();
-			v->_plugin; ++v) {
+	        v->_plugin; ++v) {
 		if (Common::String::format("lib%s.so", v->_plugin).equalsIgnoreCase(filename)) {
 			version = v->_version;
 			break;
