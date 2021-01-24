@@ -288,8 +288,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		rp.FullPath = orig_sc_path;
 		return true;
 	}
-
-#if AGS_PLATFORM_SCUMMVM
+	/*
 	if (read_only) {
 		// For reading files, first try as a save file, then fall back
 		// in the game folder. This handles cases where some games like
@@ -304,13 +303,12 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
 			orig_sc_path.GetNullableCStr());
 	}
-
-#else
+	*/
 	String sc_path = FixSlashAfterToken(orig_sc_path);
 	String parent_dir;
 	String child_path;
 	String alt_path;
-	if (sc_path.CompareLeft(GameInstallRootToken, GameInstallRootToken.GetLength()) == 0) {
+	if (sc_path.CompareLeft(GameInstallRootToken) == 0) {
 		if (!read_only) {
 			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory)",
 				sc_path.GetCStr());
@@ -318,36 +316,26 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		}
 		parent_dir = get_install_dir();
 		parent_dir.AppendChar('/');
-		child_path = sc_path.Mid(GameInstallRootToken.GetLength());
-	} else if (sc_path.CompareLeft(GameSavedgamesDirToken, GameSavedgamesDirToken.GetLength()) == 0) {
+		child_path = sc_path.Mid(strlen(GameInstallRootToken));
+	} else if (sc_path.CompareLeft(GameSavedgamesDirToken) == 0) {
 		parent_dir = get_save_game_directory();
-		child_path = sc_path.Mid(GameSavedgamesDirToken.GetLength());
-	} else if (sc_path.CompareLeft(GameDataDirToken, GameDataDirToken.GetLength()) == 0) {
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
 		parent_dir = MakeAppDataPath();
-		child_path = sc_path.Mid(GameDataDirToken.GetLength());
+		child_path = sc_path.Mid(strlen(GameDataDirToken));
 	} else {
 		child_path = sc_path;
 
-		// For games which were made without having safe paths in mind,
-		// provide two paths: a path to the local directory and a path to
-		// AppData directory.
-		// This is done in case game writes a file by local path, and would
-		// like to read it back later. Since AppData path has higher priority,
-		// game will first check the AppData location and find a previously
-		// written file.
-		// If no file was written yet, but game is trying to read a pre-created
-		// file in the installation directory, then such file will be found
-		// following the 'alt_path'.
-		parent_dir = MakeAppDataPath();
-		// Set alternate non-remapped "unsafe" path for read-only operations
-		if (read_only)
-			alt_path = String::FromFormat("%s/%s", get_install_dir().GetCStr(), sc_path.GetCStr());
+		// For cases where a file is trying to write to a game path, always remap
+		// it to write to a savefile. For normal reading, we thus need to give
+		// preference to any save file with a given name before looking in the
+		// game folder. This for example fixes an issue with The Blackwell Legacy,
+		// which wants to create a new prog.bwl in the game folder
+		parent_dir = SAVE_FOLDER_PREFIX;
 
-		// For games made in the safe-path-aware versions of AGS, report a warning
-		// if the unsafe path is used for write operation
-		if (!read_only && game.options[OPT_SAFEFILEPATHS]) {
-			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory);\nPath will be remapped to the app data directory: '%s'",
-				sc_path.GetCStr(), parent_dir.GetCStr());
+		if (read_only) {
+			alt_path = String::FromFormat("%s/%s", get_install_dir().GetCStr(),
+				sc_path.GetCStr());
 		}
 	}
 
@@ -365,7 +353,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	rp.BaseDir = parent_dir;
 	rp.FullPath = full_path;
 	rp.AltPath = alt_path;
-#endif
+
 	return true;
 }
 

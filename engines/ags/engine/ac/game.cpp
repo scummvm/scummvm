@@ -204,7 +204,7 @@ MoveList *mls = nullptr;
 
 //=============================================================================
 
-String saveGameDirectory = "./";
+String saveGameDirectory = SAVE_FOLDER_PREFIX;
 // Custom save game parent directory
 String saveGameParent;
 
