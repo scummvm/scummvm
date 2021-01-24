@@ -225,8 +225,8 @@ void CurrentMap::addItem(Item *item) {
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << Std::endl;
+		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
+		     << ix << "," << iy << ")" << Std::endl;*/
 		return;
 	}
 
@@ -251,8 +251,8 @@ void CurrentMap::addItemToEnd(Item *item) {
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << Std::endl;
+		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
+		     << ix << "," << iy << ")" << Std::endl;*/
 		return;
 	}
 
@@ -360,8 +360,8 @@ void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 
 	if (oldx < 0 || oldx >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        oldy < 0 || oldy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << oldx << "," << oldy << ")" << Std::endl;
+		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
+		     << oldx << "," << oldy << ")" << Std::endl;*/
 		return;
 	}
 
@@ -375,7 +375,7 @@ void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 // Check to see if the chunk is on the screen
 static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, int32 sright, int32 sbot, int mapChunkSize) {
 	int32 scx = (cx * mapChunkSize - cy * mapChunkSize) / 4;
-	int32 scy = ((cx * mapChunkSize + cy * mapChunkSize) / 8);
+	int32 scy = (cx * mapChunkSize + cy * mapChunkSize) / 8;
 
 	// Screenspace bounding box left extent    (LNT x coord)
 	int32 cxleft = scx - mapChunkSize / 4;
@@ -383,9 +383,9 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 	int32 cxright = scx + mapChunkSize / 4;
 
 	// Screenspace bounding box top extent     (LFT y coord)
-	int32 cytop = scy - 256;
+	int32 cytop = scy - mapChunkSize / 2;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	int32 cybot = scy + 128;
+	int32 cybot = scy + mapChunkSize / 4;
 
 	const bool right_clear = cxright <= sleft;
 	const bool left_clear = cxleft >= sright;
@@ -400,12 +400,16 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 static inline void CalcFastAreaLimits(int32 &sx_limit,
                                       int32 &sy_limit,
                                       int32 &xy_limit,
-                                      const Rect &dims) {
-	// By default the fastArea is the screensize plus a border of no more
-	// than 256 pixels wide and 384 pixels high
-	// dims.w and dims.h need to be divided by 2 for crusader
-	sx_limit = dims.width() / 256 + 3;
-	sy_limit = dims.height() / 128 + 7;
+                                      const Rect &dims,
+									  int mapChunkSize) {
+	// By default the fastArea is the screensize rounded down to the nearest
+	// map chunk, plus 3 wide and 7 high.
+
+	// In the original games, the fast area is +/- 3,7 in U8
+	// map chunks and +/- 3,5 for Cruasder.  We have to do it a
+	// bit differently because the screen size is adjustable.
+	sx_limit = dims.width() / (mapChunkSize / 2) + 3;
+	sy_limit = dims.height() / (mapChunkSize / 4) + 7;
 	xy_limit = (sy_limit + sx_limit) / 2;
 }
 
@@ -444,7 +448,7 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 	int32 sy_limit;
 	int32 xy_limit;
 
-	CalcFastAreaLimits(sx_limit, sy_limit, xy_limit, dims);
+	CalcFastAreaLimits(sx_limit, sy_limit, xy_limit, dims, _mapChunkSize);
 
 	x_min = x_min / _mapChunkSize - xy_limit;
 	x_max = x_max / _mapChunkSize + xy_limit;
