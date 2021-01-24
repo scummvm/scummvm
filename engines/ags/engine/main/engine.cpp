@@ -655,7 +655,7 @@ void engine_init_directories() {
 	// if there is no custom path, or if custom path failed, use default system path
 	if (!res) {
 		char newDirBuffer[MAX_PATH];
-		sprintf(newDirBuffer, "%s/%s", UserSavedgamesRootToken.GetCStr(), game.saveGameFolderName);
+		sprintf(newDirBuffer, "%s/%s", UserSavedgamesRootToken, game.saveGameFolderName);
 		SetSaveGameDirectoryPath(newDirBuffer);
 	}
 }

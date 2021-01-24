@@ -36,9 +36,9 @@ namespace AGS3 {
 using AGS::Shared::String;
 
 // Filepath tokens, which are replaced by platform-specific directory names
-extern const String UserSavedgamesRootToken;
-extern const String GameSavedgamesDirToken;
-extern const String GameDataDirToken;
+extern const char *UserSavedgamesRootToken;
+extern const char *GameSavedgamesDirToken;
+extern const char *GameDataDirToken;
 
 inline const char *PathOrCurDir(const char *path) {
 	return path ? path : ".";

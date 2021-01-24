@@ -382,10 +382,10 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 	String base_dir;
 	String newSaveGameDir = FixSlashAfterToken(newFolder);
 
-	if (newSaveGameDir.CompareLeft(UserSavedgamesRootToken, UserSavedgamesRootToken.GetLength()) == 0) {
+	if (newSaveGameDir.CompareLeft(UserSavedgamesRootToken, strlen(UserSavedgamesRootToken)) == 0) {
 		if (saveGameParent.IsEmpty()) {
 			base_dir = PathOrCurDir(platform->GetUserSavedgamesDirectory());
-			newSaveGameDir.ReplaceMid(0, UserSavedgamesRootToken.GetLength(), base_dir);
+			newSaveGameDir.ReplaceMid(0, strlen(UserSavedgamesRootToken), base_dir);
 		} else {
 			// If there is a custom save parent directory, then replace
 			// not only root token, but also first subdirectory

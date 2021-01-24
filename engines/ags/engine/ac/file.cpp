@@ -218,10 +218,10 @@ int File_GetPosition(sc_File *fil) {
 //=============================================================================
 
 
-const String GameInstallRootToken = "$INSTALLDIR$";
-const String UserSavedgamesRootToken = "$MYDOCS$";
-const String GameSavedgamesDirToken = "$SAVEGAMEDIR$";
-const String GameDataDirToken = "$APPDATADIR$";
+const char *GameInstallRootToken = "$INSTALLDIR$";
+const char *UserSavedgamesRootToken = "$MYDOCS$";
+const char *GameSavedgamesDirToken = "$SAVEGAMEDIR$";
+const char *GameDataDirToken = "$APPDATADIR$";
 
 void FixupFilename(char *filename) {
 	const char *illegal = platform->GetIllegalFileChars();
