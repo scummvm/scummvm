@@ -60,6 +60,9 @@ private:
 		virtual int getFrameCount() const override { return _frameCount; }
 		virtual bool isSeekable() const override { return true; }
 		virtual bool seek(const Audio::Timestamp &time);
+		virtual bool setReverse(bool reverse) override;
+		virtual bool isReversed() const override { return _reversed; }
+		virtual bool endOfTrack() const override;
 		virtual const Graphics::Surface *decodeNextFrame() override;
 		const Graphics::Surface *decodeFrame(uint frameNr);
 
@@ -87,6 +90,7 @@ private:
 		int _refFrame;
 		Common::Array<ChunkInfo> _chunkInfo;
 		Decompressor *_dec;
+		bool _reversed;
 	};
 };
 
