@@ -1732,7 +1732,7 @@ void Item::animateItem() {
 		break;
 
 	case 4:
-		if (!(getRandom() % anim_data)) break;
+		if (anim_data && !(getRandom() % anim_data)) break;
 		_frame ++;
 		if (shp && _frame == shp->frameCount()) _frame = 0;
 		break;
