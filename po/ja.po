@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-24 02:09+0000\n"
-"PO-Revision-Date: 2021-01-18 03:23+0000\n"
+"PO-Revision-Date: 2021-01-24 08:43+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4309,24 +4309,24 @@ msgstr "保存されたゲームが復元できませんでした"
 
 #: engines/glk/advsys/vm.cpp:561
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "声量を上げてください! 音声認識ができません!\n"
 
 #: engines/glk/advsys/vm.cpp:597
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "ワード\"%s\"が認識できません。\n"
 
 #: engines/glk/advsys/vm.cpp:683
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "文章が認識できません。\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "短すぎて、有効なAlan2ファイルにできません。"
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "有効なAlan2ファイルにできません。"
 
 #: engines/glk/comprehend/game.cpp:322
 msgid "Savegame"
@@ -4338,39 +4338,39 @@ msgstr ""
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "短すぎて、有効なGlulxファイルにできません。"
 
 #: engines/glk/glulx/glulx.cpp:87
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "有効なGlulxファイルにできません。"
 
 #: engines/glk/glulx/glulx.cpp:94
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "このGlulxファイルは、バージョンが古すぎて実行できません。"
 
 #: engines/glk/glulx/glulx.cpp:98
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "このGlulxファイルは、バージョンが新しすぎて実行できません。"
 
 #: engines/glk/quest/quest.cpp:45
 msgid "Could not start Quest game"
-msgstr ""
+msgstr "クエストを開始できませんでした"
 
 #: engines/glk/scott/scott.cpp:100
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "コマンドを認識できません。 "
 
 #: engines/glk/scott/scott.cpp:103
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "まだできません。 "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Light has run out! "
-msgstr ""
+msgstr "光が尽きました! "
 
 #: engines/glk/scott/scott.cpp:121
 msgid "Your light has run out. "
-msgstr ""
+msgstr "光が尽きました。 "
 
 #: engines/glk/scott/scott.cpp:130
 msgid "Light runs out in "
@@ -4382,7 +4382,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:135
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "光が暗くなってきています。 "
 
 #: engines/glk/scott/scott.cpp:412
 msgid "North"
@@ -4402,27 +4402,29 @@ msgstr "西"
 
 #: engines/glk/scott/scott.cpp:424
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "あなたには見えません。暗すぎます!\n"
 
 #: engines/glk/scott/scott.cpp:426
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "私には見えません。暗すぎます!\n"
 
 #: engines/glk/scott/scott.cpp:436
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "あなたは%sにいます\n"
 
 #: engines/glk/scott/scott.cpp:438
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "私は%sにいます\n"
 
 #: engines/glk/scott/scott.cpp:443
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"明白な出口： "
 
 #: engines/glk/scott/scott.cpp:456
 #, fuzzy
@@ -4434,12 +4436,16 @@ msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"あなたもまた見る事ができます： "
 
 #: engines/glk/scott/scott.cpp:468
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"私もまた見る事ができます： "
 
 #: engines/glk/scott/scott.cpp:551
 msgid "Saved.\n"
