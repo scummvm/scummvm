@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-24 02:09+0000\n"
-"PO-Revision-Date: 2021-01-23 22:25+0000\n"
+"PO-Revision-Date: 2021-01-24 08:43+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -778,7 +778,7 @@ msgstr ""
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:786
 msgid "Search:"
-msgstr ""
+msgstr "Пошук:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
@@ -794,8 +794,9 @@ msgid "Load"
 msgstr "Заладаваць"
 
 #: gui/launcher.cpp:386
+#, fuzzy
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Гэтай тэчкай нельга карыстацца пакуль што, бо ідзе ладаваньне ў яе."
 
 #: gui/launcher.cpp:397
 msgid ""
@@ -829,7 +830,7 @@ msgstr ""
 
 #: gui/launcher.cpp:607
 msgid "Pick the game:"
-msgstr ""
+msgstr "Выберыце гульню:"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -859,8 +860,9 @@ msgid "Open URL"
 msgstr ""
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
+#, fuzzy
 msgid "Stop"
-msgstr ""
+msgstr "Спыніць"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
@@ -876,23 +878,23 @@ msgstr ""
 
 #: gui/options.cpp:136 common/updates.cpp:56
 msgid "Never"
-msgstr ""
+msgstr "Ніколі"
 
 #: gui/options.cpp:136
 msgid "Every 5 mins"
-msgstr ""
+msgstr "Кожныя 5 хвілін"
 
 #: gui/options.cpp:136
 msgid "Every 10 mins"
-msgstr ""
+msgstr "Кожныя 10 хвілін"
 
 #: gui/options.cpp:136
 msgid "Every 15 mins"
-msgstr ""
+msgstr "Кожныя 15 хвілін"
 
 #: gui/options.cpp:136
 msgid "Every 30 mins"
-msgstr ""
+msgstr "Кожныя 30"
 
 #: gui/options.cpp:421 gui/options.cpp:809 gui/options.cpp:947
 #: gui/options.cpp:1058 gui/options.cpp:1444
@@ -1047,11 +1049,12 @@ msgstr ""
 
 #: gui/options.cpp:1364
 msgid "Preferred device:"
-msgstr ""
+msgstr "Пераважная прылада:"
 
 #: gui/options.cpp:1364
+#, fuzzy
 msgid "Music device:"
-msgstr ""
+msgstr "Музычная прылада:"
 
 #: gui/options.cpp:1364 gui/options.cpp:1366
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1064,12 +1067,12 @@ msgstr ""
 #: gui/options.cpp:1366
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr ""
+msgstr "Пераважн. прыл.:"
 
 #: gui/options.cpp:1366
 msgctxt "lowres"
 msgid "Music device:"
-msgstr ""
+msgstr "Муз. прыл.:"
 
 #: gui/options.cpp:1393
 msgid "AdLib emulator:"
@@ -1081,23 +1084,26 @@ msgstr ""
 
 #: gui/options.cpp:1407
 msgid "GM device:"
-msgstr ""
+msgstr "Прылада GM:"
 
 #: gui/options.cpp:1407
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 
 #: gui/options.cpp:1418
+#, fuzzy
 msgid "Don't use General MIDI music"
-msgstr ""
+msgstr "Ня карыстацца музыкай General MIDI"
 
 #: gui/options.cpp:1429 gui/options.cpp:1491
+#, fuzzy
 msgid "Use first available device"
-msgstr ""
+msgstr "Карыстацца першай даступнай прыладай"
 
 #: gui/options.cpp:1441
+#, fuzzy
 msgid "SoundFont:"
-msgstr ""
+msgstr "SoundFont:"
 
 #: gui/options.cpp:1441 gui/options.cpp:1443 gui/options.cpp:1444
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
@@ -1106,7 +1112,7 @@ msgstr ""
 #: gui/options.cpp:1443
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr ""
+msgstr "SoundFont:"
 
 #: gui/options.cpp:1449
 msgid "Mixed AdLib/MIDI mode"
@@ -1122,7 +1128,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "Прылада MT-32:"
 
 #: gui/options.cpp:1462
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -1154,33 +1160,37 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:1481
+#, fuzzy
 msgid "Don't use Roland MT-32 music"
-msgstr ""
+msgstr "Ня карыстацца музыкай Roland MT-32"
 
 #: gui/options.cpp:1508
 msgid "Text and speech:"
-msgstr ""
+msgstr "Тэкст ды мова:"
 
 #: gui/options.cpp:1512 gui/options.cpp:1522
 msgid "Speech"
 msgstr ""
 
 #: gui/options.cpp:1513 gui/options.cpp:1523
+#, fuzzy
 msgid "Subtitles"
-msgstr ""
+msgstr "Субтытры"
 
 #: gui/options.cpp:1514
+#, fuzzy
 msgid "Both"
-msgstr ""
+msgstr "Разам"
 
 #: gui/options.cpp:1516
+#, fuzzy
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "Хуткасьць субтытраў:"
 
 #: gui/options.cpp:1518
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr ""
+msgstr "Тэкст ды мова:"
 
 #: gui/options.cpp:1522
 msgid "Spch"
@@ -1191,27 +1201,30 @@ msgid "Subs"
 msgstr ""
 
 #: gui/options.cpp:1524
+#, fuzzy
 msgctxt "lowres"
 msgid "Both"
-msgstr ""
+msgstr "Разам"
 
 #: gui/options.cpp:1524
 msgid "Show subtitles and play speech"
 msgstr ""
 
 #: gui/options.cpp:1526
+#, fuzzy
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "Хуткасьць субтытраў:"
 
 #: gui/options.cpp:1542
+#, fuzzy
 msgid "Music volume:"
-msgstr ""
+msgstr "Гучнасьць музыкі:"
 
 #: gui/options.cpp:1544
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr ""
+msgstr "Гучнасьць музыкі:"
 
 #: gui/options.cpp:1551
 msgid "Mute all"
