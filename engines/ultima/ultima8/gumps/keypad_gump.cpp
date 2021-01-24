@@ -39,6 +39,12 @@ static const int TXT_CONTAINER_IDX = 0x100;
 static const int MAX_CODE_VAL = 9999999;
 static const int CHEAT_CODE_VAL = 74697689;
 
+static const uint16 SFXNO_BUTTON = 0x3b;
+static const uint16 SFXNO_CORRECT = 0x32;
+static const uint16 SFXNO_WRONG = 0x31;
+static const uint16 SFXNO_DEL = 0x3a;
+
+
 KeypadGump::KeypadGump(int targetValue, uint16 ucnotifypid): ModalGump(0, 0, 5, 5),
 		_value(0), _targetValue(targetValue), _ucNotifyPid(ucnotifypid) {
 	Mouse *mouse = Mouse::get_instance();
@@ -80,16 +86,32 @@ void KeypadGump::InitGump(Gump *newparent, bool take_focus) {
 
 void KeypadGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
-	// TODO: paint text version of _value.
 }
 
 bool KeypadGump::OnKeyDown(int key, int mod) {
+	uint16 sfxno = 0;
+	bool shouldclose = false;
+
 	switch (key) {
-	case Common::KEYCODE_ESCAPE: {
-		_value = 0xff;
-		Close();
+	case Common::KEYCODE_ESCAPE:
+		_value = -1;
+		shouldclose = true;
 		break;
-	}
+	case Common::KEYCODE_BACKSPACE:
+		_value /= 10;
+		sfxno = SFXNO_DEL;
+		break;
+	case Common::KEYCODE_RETURN:
+		if (_value == _targetValue || _value == CHEAT_CODE_VAL) {
+			sfxno = SFXNO_CORRECT;
+			SetResult(_value);
+		} else {
+			// wrong.
+			sfxno = SFXNO_WRONG;
+			SetResult(0);
+		}
+		shouldclose = true;
+		break;
 	case Common::KEYCODE_0:
 	case Common::KEYCODE_1:
 	case Common::KEYCODE_2:
@@ -99,18 +121,21 @@ bool KeypadGump::OnKeyDown(int key, int mod) {
 	case Common::KEYCODE_6:
 	case Common::KEYCODE_7:
 	case Common::KEYCODE_8:
-	case Common::KEYCODE_9: {
+	case Common::KEYCODE_9:
 		onDigit(key - (int)Common::KEYCODE_0);
 		updateDigitDisplay();
-		AudioProcess *audio = AudioProcess::get_instance();
-		if (audio)
-			audio->playSFX(0x3b, 0x10, _objId, 1);
+		sfxno = SFXNO_BUTTON;
 		break;
-	}
-	break;
 	default:
 		break;
 	}
+
+	AudioProcess *audio = AudioProcess::get_instance();
+	if (audio && sfxno)
+		audio->playSFX(sfxno, 0x10, _objId, 1);
+
+	if (shouldclose)
+		Close();
 
 	return true;
 }
@@ -124,38 +149,39 @@ void KeypadGump::onDigit(int digit) {
 }
 
 void KeypadGump::ChildNotify(Gump *child, uint32 message) {
-	//ObjId cid = child->getObjId();
 	bool update = true;
+	bool shouldclose = false;
 	if (message == ButtonWidget::BUTTON_CLICK) {
-		uint16 sfxno = 0x3b;
+		uint16 sfxno = SFXNO_BUTTON;
 		int buttonNo = child->GetIndex();
 		if (buttonNo < 9) {
 			onDigit(buttonNo + 1);
 		} else if (buttonNo == 10) {
 			onDigit(0);
 		} else if (buttonNo == 9) {
+			// Backspace key
 			_value /= 10;
-			sfxno = 0x3a;
+			sfxno = SFXNO_DEL;
 		} else if (buttonNo == 11) {
 			update = false;
 			if (_value == _targetValue || _value == CHEAT_CODE_VAL) {
-				sfxno = 0x32;
+				sfxno = SFXNO_CORRECT;
 				SetResult(_value);
 			} else {
 				// wrong.
-				sfxno = 0x31;
+				sfxno = SFXNO_WRONG;
 				SetResult(0);
 			}
-			Close();
-			// Note: careful, this is now deleted.
+			shouldclose = true;
 		}
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio && sfxno)
 			audio->playSFX(sfxno, 0x10, _objId, 1);
 	}
-	if (update) {
+	if (update)
 		updateDigitDisplay();
-	}
+	if (shouldclose)
+		Close();
 }
 
 void KeypadGump::updateDigitDisplay() {
