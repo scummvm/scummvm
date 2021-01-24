@@ -553,7 +553,11 @@ void AttackProcess::genericAttack() {
 			_field96 = true;
 			const ProcId pid = Kernel::get_instance()->addProcess(
 								new PathfinderProcess(a, x, y, z));
-			waitFor(pid);
+			// add a tiny delay to avoid tight loops
+			Process *delayproc = new DelayProcess(2);
+			Kernel::get_instance()->addProcess(delayproc);
+			delayproc->waitFor(pid);
+			waitFor(delayproc);
 			return;
 		}
 	} else {
