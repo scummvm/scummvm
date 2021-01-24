@@ -1,131 +1,241 @@
-/*
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-This is not the AGS Flashlight plugin,
-but a workalike plugin created by JJS for the AGS engine PSP port.
+#include "ags/lib/allegro.h"
+#include "ags/plugins/ags_flashlight/ags_flashlight.h"
+#include "ags/shared/core/platform.h"
+#include "common/str.h"
 
-*/
-
-#include "core/platform.h"
-
-#if AGS_PLATFORM_OS_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#pragma warning(disable : 4244)
-#endif
-
-#if !defined(BUILTIN_PLUGINS)
-#define THIS_IS_THE_PLUGIN
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#if defined(PSP_VERSION)
-#include <pspsdk.h>
-#include <pspmath.h>
-#include <pspdisplay.h>
-#define sin(x) vfpu_sinf(x)
-#endif
-
-#include "plugin/agsplugin.h"
-
-#if defined(BUILTIN_PLUGINS)
-namespace agsflashlight {
-#endif
-
-#if defined(__GNUC__)
-inline unsigned long _blender_alpha16_bgr(unsigned long y) __attribute__((always_inline));
-inline void calc_x_n(unsigned long bla) __attribute__((always_inline));
-#endif
+namespace AGS3 {
+namespace Plugins {
+namespace AGSFlashlight {
 
 const unsigned int Magic = 0xBABE0000;
 const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 const float PI = 3.14159265f;
 
-int screen_width = 320;
-int screen_height = 200;
-int screen_color_depth = 16;
+int AGSFlashlight::AGSFlashlight::screen_width = 320;
+int AGSFlashlight::screen_height = 200;
+int AGSFlashlight::screen_color_depth = 16;
 
-IAGSEngine *engine;
+bool AGSFlashlight::g_BitmapMustBeUpdated = true;
 
-bool g_BitmapMustBeUpdated = true;
+int AGSFlashlight::g_RedTint = 0;
+int AGSFlashlight::g_GreenTint = 0;
+int AGSFlashlight::g_BlueTint = 0;
 
-int g_RedTint = 0;
-int g_GreenTint = 0;
-int g_BlueTint = 0;
+int AGSFlashlight::g_DarknessLightLevel = 100;
+int AGSFlashlight::g_BrightnessLightLevel = 100;
+int AGSFlashlight::g_DarknessSize = 0;
+int AGSFlashlight::g_DarknessDiameter = 0;
+int AGSFlashlight::g_BrightnessSize = 0;
 
-int g_DarknessLightLevel = 100;
-int g_BrightnessLightLevel = 100;
-int g_DarknessSize = 0;
-int g_DarknessDiameter = 0;
-int g_BrightnessSize = 0;
+int AGSFlashlight::g_FlashlightX = 0;
+int AGSFlashlight::g_FlashlightY = 0;
+int AGSFlashlight::g_FlashlightDrawAtX = 0;
+int AGSFlashlight::g_FlashlightDrawAtY = 0;
 
-int g_FlashlightX = 0;
-int g_FlashlightY = 0;
-int g_FlashlightDrawAtX = 0;
-int g_FlashlightDrawAtY = 0;
+bool AGSFlashlight::g_FlashlightFollowMouse = false;
 
-bool g_FlashlightFollowMouse = false;
+int AGSFlashlight::g_FollowCharacterId = 0;
+int AGSFlashlight::g_FollowCharacterDx = 0;
+int AGSFlashlight::g_FollowCharacterDy = 0;
+int AGSFlashlight::g_FollowCharacterHorz = 0;
+int AGSFlashlight::g_FollowCharacterVert = 0;
 
-int g_FollowCharacterId = 0;
-int g_FollowCharacterDx = 0;
-int g_FollowCharacterDy = 0;
-int g_FollowCharacterHorz = 0;
-int g_FollowCharacterVert = 0;
+AGSCharacter *AGSFlashlight::g_FollowCharacter = nullptr;
 
-AGSCharacter *g_FollowCharacter = nullptr;
+BITMAP *AGSFlashlight::g_LightBitmap = nullptr;
 
-BITMAP *g_LightBitmap = nullptr;
+unsigned long AGSFlashlight::flashlight_x;
+unsigned long AGSFlashlight::flashlight_n;
 
 
-// This function is from Allegro, split for more performance.
+IAGSEngine *AGSFlashlight::_engine;
 
-/* _blender_alpha16_bgr
- *  Combines a 32 bit RGBA sprite with a 16 bit RGB destination, optimised
- *  for when one pixel is in an RGB layout and the other is BGR.
- */
+AGSFlashlight::AGSFlashlight() {
+	_engine = nullptr;
+	screen_width = 320;
+	screen_height = 200;
+	screen_color_depth = 16;
 
-unsigned long x, n;
+	g_BitmapMustBeUpdated = true;
 
-inline void calc_x_n(unsigned long _x) {
-	x = _x;
+	g_RedTint = 0;
+	g_GreenTint = 0;
+	g_BlueTint = 0;
 
-	n = x >> 24;
+	g_DarknessLightLevel = 100;
+	g_BrightnessLightLevel = 100;
+	g_DarknessSize = 0;
+	g_DarknessDiameter = 0;
+	g_BrightnessSize = 0;
 
-	if (n)
-		n = (n + 1) / 8;
+	g_FlashlightX = 0;
+	g_FlashlightY = 0;
+	g_FlashlightDrawAtX = 0;
+	g_FlashlightDrawAtY = 0;
 
-	x = ((x >> 19) & 0x001F) | ((x >> 5) & 0x07E0) | ((x << 8) & 0xF800);
+	g_FlashlightFollowMouse = false;
 
-	x = (x | (x << 16)) & 0x7E0F81F;
+	g_FollowCharacterId = 0;
+	g_FollowCharacterDx = 0;
+	g_FollowCharacterDy = 0;
+	g_FollowCharacterHorz = 0;
+	g_FollowCharacterVert = 0;
+
+	g_FollowCharacter = nullptr;
+	g_LightBitmap = nullptr;
+	flashlight_x = 0;
+	flashlight_n = 0;
+
+
+	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineShutdown);
+	DLL_METHOD(AGS_EngineOnEvent);
+	DLL_METHOD(AGS_EngineDebugHook);
+	DLL_METHOD(AGS_EngineInitGfx);
+}
+
+const char *AGSFlashlight::AGS_GetPluginName() {
+	return "Flashlight plugin recreation";
+}
+
+void AGSFlashlight::AGS_EngineStartup(IAGSEngine *engine) {
+	_engine = engine;
+
+	if (_engine->version < 13)
+		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
+
+	SCRIPT_METHOD("SetFlashlightTint");
+	SCRIPT_METHOD("GetFlashlightTintRed");
+	SCRIPT_METHOD("GetFlashlightTintGreen");
+	SCRIPT_METHOD("GetFlashlightTintBlue");
+
+	SCRIPT_METHOD("GetFlashlightMinLightLevel");
+	SCRIPT_METHOD("GetFlashlightMaxLightLevel");
+
+	SCRIPT_METHOD("SetFlashlightDarkness");
+	SCRIPT_METHOD("GetFlashlightDarkness");
+	SCRIPT_METHOD("SetFlashlightDarknessSize");
+	SCRIPT_METHOD("GetFlashlightDarknessSize");
+
+	SCRIPT_METHOD("SetFlashlightBrightness");
+	SCRIPT_METHOD("GetFlashlightBrightness");
+	SCRIPT_METHOD("SetFlashlightBrightnessSize");
+	SCRIPT_METHOD("GetFlashlightBrightnessSize");
+
+	SCRIPT_METHOD("SetFlashlightPosition");
+	SCRIPT_METHOD("GetFlashlightPositionX");
+	SCRIPT_METHOD("GetFlashlightPositionY");
+
+
+	SCRIPT_METHOD("SetFlashlightFollowMouse");
+	SCRIPT_METHOD("GetFlashlightFollowMouse");
+
+	SCRIPT_METHOD("SetFlashlightFollowCharacter");
+	SCRIPT_METHOD("GetFlashlightFollowCharacter");
+	SCRIPT_METHOD("GetFlashlightCharacterDX");
+	SCRIPT_METHOD("GetFlashlightCharacterDY");
+	SCRIPT_METHOD("GetFlashlightCharacterHorz");
+	SCRIPT_METHOD("GetFlashlightCharacterVert");
+
+	SCRIPT_METHOD("SetFlashlightMask");
+	SCRIPT_METHOD("GetFlashlightMask");
+
+	_engine->RequestEventHook(AGSE_PREGUIDRAW);
+	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
+	_engine->RequestEventHook(AGSE_SAVEGAME);
+	_engine->RequestEventHook(AGSE_RESTOREGAME);
+}
+
+void AGSFlashlight::AGS_EngineShutdown() {
+}
+
+int AGSFlashlight::AGS_EngineOnEvent(int event, int data) {
+	if (event == AGSE_PREGUIDRAW) {
+		Update();
+	} else if (event == AGSE_RESTOREGAME) {
+		RestoreGame(data);
+	} else if (event == AGSE_SAVEGAME) {
+		SaveGame(data);
+	} else if (event == AGSE_PRESCREENDRAW) {
+		// Get screen size once here.
+		_engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
+		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
+
+		// Only 16 bit color depth is supported.
+		if (screen_color_depth != 16) {
+			_engine->UnrequestEventHook(AGSE_PREGUIDRAW);
+			_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
+			_engine->UnrequestEventHook(AGSE_SAVEGAME);
+			_engine->UnrequestEventHook(AGSE_RESTOREGAME);
+		}
+	}
+
+	return 0;
+}
+
+int AGSFlashlight::AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved) {
+	return 0;
+}
+
+void AGSFlashlight::AGS_EngineInitGfx(const char *driverID, void *data) {
 }
 
 
-inline unsigned long _blender_alpha16_bgr(unsigned long y) {
+void AGSFlashlight::calc_x_n(unsigned long x) {
+	flashlight_x = x;
+
+	flashlight_n = flashlight_x >> 24;
+
+	if (flashlight_n)
+		flashlight_n = (flashlight_n + 1) / 8;
+
+	flashlight_x = ((flashlight_x >> 19) & 0x001F) | ((flashlight_x >> 5) & 0x07E0) | ((flashlight_x << 8) & 0xF800);
+
+	flashlight_x = (flashlight_x | (flashlight_x << 16)) & 0x7E0F81F;
+}
+
+inline unsigned long AGSFlashlight::_blender_alpha16_bgr(unsigned long y) {
 	unsigned long result;
 
 	y = ((y & 0xFFFF) | (y << 16)) & 0x7E0F81F;
 
-	result = ((x - y) * n / 32 + y) & 0x7E0F81F;
+	result = ((flashlight_x - y) * flashlight_n / 32 + y) & 0x7E0F81F;
 
 	return ((result & 0xFFFF) | (result >> 16));
 }
 
-
-
-inline void setPixel(int x, int y, int color, unsigned int *pixel) {
+inline void AGSFlashlight::setPixel(int x, int y, int color, unsigned int *pixel) {
 	if ((x >= g_DarknessDiameter) || (y >= g_DarknessDiameter) || (x < 0) || (y < 0))
 		return;
 
 	*(pixel + (y * g_DarknessDiameter) + x) = color;
 }
 
-
-void plotCircle(int xm, int ym, int r, unsigned int color) {
-	unsigned int *pixel = *(unsigned int **)engine->GetRawBitmapSurface(g_LightBitmap);
+void AGSFlashlight::plotCircle(int xm, int ym, int r, unsigned int color) {
+	unsigned int *pixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int x = -r;
 	int y = 0;
@@ -152,11 +262,10 @@ void plotCircle(int xm, int ym, int r, unsigned int color) {
 			err +=  ++y * 2 + 1;
 	} while (x < 0);
 
-	engine->ReleaseBitmapSurface(g_LightBitmap);
+	_engine->ReleaseBitmapSurface(g_LightBitmap);
 }
 
-
-void ClipToRange(int &variable, int min, int max) {
+void AGSFlashlight::ClipToRange(int &variable, int min, int max) {
 	if (variable < min)
 		variable = min;
 
@@ -164,10 +273,9 @@ void ClipToRange(int &variable, int min, int max) {
 		variable = max;
 }
 
-
-void AlphaBlendBitmap() {
-	unsigned short *destpixel = *(unsigned short **)engine->GetRawBitmapSurface(engine->GetVirtualScreen());
-	unsigned int *sourcepixel = *(unsigned int **)engine->GetRawBitmapSurface(g_LightBitmap);
+void AGSFlashlight::AlphaBlendBitmap() {
+	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
+	unsigned int *sourcepixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	unsigned short *currentdestpixel = destpixel;
 	unsigned int *currentsourcepixel = sourcepixel;
@@ -196,21 +304,20 @@ void AlphaBlendBitmap() {
 		}
 	}
 
-	engine->ReleaseBitmapSurface(engine->GetVirtualScreen());
-	engine->ReleaseBitmapSurface(g_LightBitmap);
+	_engine->ReleaseBitmapSurface(_engine->GetVirtualScreen());
+	_engine->ReleaseBitmapSurface(g_LightBitmap);
 }
 
-
-void DrawTint() {
+void AGSFlashlight::DrawTint() {
 	int x, y;
-	BITMAP *screen = engine->GetVirtualScreen();
-	unsigned short *destpixel = *(unsigned short **)engine->GetRawBitmapSurface(screen);
+	BITMAP *screen = _engine->GetVirtualScreen();
+	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(screen);
 
 	int32 red, blue, green, alpha;
 
 	for (y = 0; y < screen_height; y++) {
 		for (x = 0; x < screen_width; x++) {
-			engine->GetRawColorComponents(16, *destpixel, &red, &green, &blue, &alpha);
+			_engine->GetRawColorComponents(16, *destpixel, &red, &green, &blue, &alpha);
 
 			if (g_RedTint != 0) {
 				red += g_RedTint * 8;
@@ -236,20 +343,19 @@ void DrawTint() {
 					green = 0;
 			}
 
-			*destpixel = engine->MakeRawColorPixel(16, red, green, blue, alpha);
+			*destpixel = _engine->MakeRawColorPixel(16, red, green, blue, alpha);
 			destpixel++;
 		}
 	}
 
-	engine->ReleaseBitmapSurface(screen);
+	_engine->ReleaseBitmapSurface(screen);
 }
 
-
-void DrawDarkness() {
+void AGSFlashlight::DrawDarkness() {
 	int x, y;
 	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
-	BITMAP *screen = engine->GetVirtualScreen();
-	unsigned short *destpixel = *(unsigned short **)engine->GetRawBitmapSurface(screen);
+	BITMAP *screen = _engine->GetVirtualScreen();
+	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(screen);
 	unsigned short *currentpixel;
 
 	calc_x_n(color);
@@ -314,22 +420,21 @@ void DrawDarkness() {
 		}
 	}
 
-	engine->ReleaseBitmapSurface(screen);
+	_engine->ReleaseBitmapSurface(screen);
 }
 
-
-void CreateLightBitmap() {
+void AGSFlashlight::CreateLightBitmap() {
 	if (g_DarknessSize == 0)
 		return;
 
 	if (g_LightBitmap)
-		engine->FreeBitmap(g_LightBitmap);
+		_engine->FreeBitmap(g_LightBitmap);
 
-	g_LightBitmap = engine->CreateBlankBitmap(g_DarknessDiameter, g_DarknessDiameter, 32);
+	g_LightBitmap = _engine->CreateBlankBitmap(g_DarknessDiameter, g_DarknessDiameter, 32);
 
 	// Fill with darkness color.
 	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
-	unsigned int *pixel = *(unsigned int **)engine->GetRawBitmapSurface(g_LightBitmap);
+	unsigned int *pixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int i;
 	for (i = 0; i < g_DarknessDiameter * g_DarknessDiameter; i++)
@@ -356,7 +461,7 @@ void CreateLightBitmap() {
 
 			current_value += increment;
 
-			if (current_value > targetcolor)
+			if ((uint)current_value > targetcolor)
 				current_value = targetcolor;
 
 			plotCircle(g_DarknessSize, g_DarknessSize, i, (current_value << 24) + color);
@@ -371,18 +476,17 @@ void CreateLightBitmap() {
 			plotCircle(g_DarknessSize, g_DarknessSize, i, color);
 	}
 
-	engine->ReleaseBitmapSurface(g_LightBitmap);
+	_engine->ReleaseBitmapSurface(g_LightBitmap);
 }
 
-
-void Update() {
+void AGSFlashlight::Update() {
 	if (g_BitmapMustBeUpdated) {
 		CreateLightBitmap();
 		g_BitmapMustBeUpdated = false;
 	}
 
 	if (g_FlashlightFollowMouse) {
-		engine->GetMousePosition(&g_FlashlightX, &g_FlashlightY);
+		_engine->GetMousePosition(&g_FlashlightX, &g_FlashlightY);
 	} else if (g_FollowCharacter != nullptr) {
 		g_FlashlightX = g_FollowCharacter->x + g_FollowCharacterDx;
 		g_FlashlightY = g_FollowCharacter->y + g_FollowCharacterDy;
@@ -429,25 +533,25 @@ void Update() {
 	if (g_DarknessLightLevel != 100)
 		DrawDarkness();
 
-	engine->MarkRegionDirty(0, 0, screen_width, screen_height);
+	_engine->MarkRegionDirty(0, 0, screen_width, screen_height);
 }
 
-static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = engine->FRead(ptr, size * count, fileHandle);
+size_t AGSFlashlight::engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
+	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
 	return totalBytes / size;
 }
 
-static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
+size_t AGSFlashlight::engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
+	auto totalBytes = _engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
 	return totalBytes / size;
 }
 
-void RestoreGame(long file) {
+void AGSFlashlight::RestoreGame(long file) {
 	unsigned int SaveVersion = 0;
 	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, file);
 
 	if (SaveVersion != SaveMagic) {
-		engine->AbortGame("agsflashlight: bad save.");
+		_engine->AbortGame("agsflashlight: bad save.");
 	}
 
 	// Current version
@@ -473,13 +577,12 @@ void RestoreGame(long file) {
 	engineFileRead(&g_FollowCharacterVert, 4, 1, file);
 
 	if (g_FollowCharacterId != 0)
-		g_FollowCharacter = engine->GetCharacter(g_FollowCharacterId);
+		g_FollowCharacter = _engine->GetCharacter(g_FollowCharacterId);
 
 	g_BitmapMustBeUpdated = true;
 }
 
-
-void SaveGame(long file) {
+void AGSFlashlight::SaveGame(long file) {
 	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
 
 	engineFileWrite(&g_RedTint, 4, 1, file);
@@ -509,10 +612,7 @@ void SaveGame(long file) {
 // ************  AGS Interface  ***************
 // ********************************************
 
-
-
-// tint screen
-void SetFlashlightTint(int RedTint, int GreenTint, int BlueTint) {
+void AGSFlashlight::SetFlashlightTint(int RedTint, int GreenTint, int BlueTint) {
 	ClipToRange(RedTint, -31, 31);
 	ClipToRange(GreenTint, -31, 31);
 	ClipToRange(BlueTint, -31, 31);
@@ -525,27 +625,27 @@ void SetFlashlightTint(int RedTint, int GreenTint, int BlueTint) {
 	g_BlueTint = BlueTint;
 }
 
-int GetFlashlightTintRed() {
+int AGSFlashlight::GetFlashlightTintRed() {
 	return g_RedTint;
 }
 
-int GetFlashlightTintGreen() {
+int AGSFlashlight::GetFlashlightTintGreen() {
 	return g_GreenTint;
 }
 
-int GetFlashlightTintBlue() {
+int AGSFlashlight::GetFlashlightTintBlue() {
 	return g_BlueTint;
 }
 
-int GetFlashlightMinLightLevel() {
+int AGSFlashlight::GetFlashlightMinLightLevel() {
 	return 0;
 }
 
-int GetFlashlightMaxLightLevel() {
+int AGSFlashlight::GetFlashlightMaxLightLevel() {
 	return 100;
 }
 
-void SetFlashlightDarkness(int LightLevel) {
+void AGSFlashlight::SetFlashlightDarkness(int LightLevel) {
 	ClipToRange(LightLevel, 0, 100);
 
 	if (LightLevel != g_DarknessLightLevel) {
@@ -557,11 +657,11 @@ void SetFlashlightDarkness(int LightLevel) {
 	}
 }
 
-int GetFlashlightDarkness() {
+int AGSFlashlight::GetFlashlightDarkness() {
 	return g_DarknessLightLevel;
 }
 
-void SetFlashlightDarknessSize(int Size) {
+void AGSFlashlight::SetFlashlightDarknessSize(int Size) {
 	if (Size != g_DarknessSize) {
 		g_BitmapMustBeUpdated = true;
 		g_DarknessSize = Size;
@@ -569,12 +669,12 @@ void SetFlashlightDarknessSize(int Size) {
 	}
 }
 
-int GetFlashlightDarknessSize() {
+int AGSFlashlight::GetFlashlightDarknessSize() {
 	return g_DarknessSize;
 }
 
 
-void SetFlashlightBrightness(int LightLevel) {
+void AGSFlashlight::SetFlashlightBrightness(int LightLevel) {
 	ClipToRange(LightLevel, 0, 100);
 
 	if (LightLevel != g_BrightnessLightLevel) {
@@ -586,244 +686,80 @@ void SetFlashlightBrightness(int LightLevel) {
 	}
 }
 
-int GetFlashlightBrightness() {
+int AGSFlashlight::GetFlashlightBrightness() {
 	return g_BrightnessLightLevel;
 }
 
-void SetFlashlightBrightnessSize(int Size) {
+void AGSFlashlight::SetFlashlightBrightnessSize(int Size) {
 	if (Size != g_BrightnessSize) {
 		g_BitmapMustBeUpdated = true;
 		g_BrightnessSize = Size;
 	}
 }
 
-int GetFlashlightBrightnessSize() {
+int AGSFlashlight::GetFlashlightBrightnessSize() {
 	return g_BrightnessSize;
 }
 
-void SetFlashlightPosition(int X, int Y) {
+void AGSFlashlight::SetFlashlightPosition(int X, int Y) {
 	g_FlashlightX = X;
 	g_FlashlightY = Y;
 }
 
-int GetFlashlightPositionX() {
+int AGSFlashlight::GetFlashlightPositionX() {
 	return g_FlashlightX;
 }
 
-int GetFlashlightPositionY() {
+int AGSFlashlight::GetFlashlightPositionY() {
 	return g_FlashlightY;
 }
 
-void SetFlashlightFollowMouse(int OnOff) {
+void AGSFlashlight::SetFlashlightFollowMouse(int OnOff) {
 	g_FlashlightFollowMouse = (OnOff != 0);
 }
 
-int GetFlashlightFollowMouse() {
+int AGSFlashlight::GetFlashlightFollowMouse() {
 	return g_FlashlightFollowMouse ? 1 : 0;
 }
 
-void SetFlashlightFollowCharacter(int CharacterId, int dx, int dy, int horz, int vert) {
+void AGSFlashlight::SetFlashlightFollowCharacter(int CharacterId, int dx, int dy, int horz, int vert) {
 	g_FollowCharacterId = CharacterId;
 	g_FollowCharacterDx = dx;
 	g_FollowCharacterDy = dy;
 	g_FollowCharacterHorz = horz;
 	g_FollowCharacterVert = vert;
 
-	g_FollowCharacter = engine->GetCharacter(CharacterId);
+	g_FollowCharacter = _engine->GetCharacter(CharacterId);
 }
 
-int GetFlashlightFollowCharacter() {
+int AGSFlashlight::GetFlashlightFollowCharacter() {
 	return g_FollowCharacterId;
 }
 
-int GetFlashlightCharacterDX() {
+int AGSFlashlight::GetFlashlightCharacterDX() {
 	return g_FollowCharacterDx;
 }
 
-int GetFlashlightCharacterDY() {
+int AGSFlashlight::GetFlashlightCharacterDY() {
 	return g_FollowCharacterDy;
 }
 
-int GetFlashlightCharacterHorz() {
+int AGSFlashlight::GetFlashlightCharacterHorz() {
 	return g_FollowCharacterHorz;
 }
 
-int GetFlashlightCharacterVert() {
+int AGSFlashlight::GetFlashlightCharacterVert() {
 	return g_FollowCharacterVert;
 }
 
-void SetFlashlightMask(int SpriteSlot) {
+void AGSFlashlight::SetFlashlightMask(int SpriteSlot) {
 	// Not implemented.
 }
 
-int GetFlashlightMask() {
+int AGSFlashlight::GetFlashlightMask() {
 	return 0;
 }
 
-void AGS_EngineStartup(IAGSEngine *lpEngine) {
-	engine = lpEngine;
-
-	if (engine->version < 13)
-		engine->AbortGame("Engine interface is too old, need newer version of AGS.");
-
-	engine->RegisterScriptFunction("SetFlashlightTint", (void *)&SetFlashlightTint);
-	engine->RegisterScriptFunction("GetFlashlightTintRed", (void *)&GetFlashlightTintRed);
-	engine->RegisterScriptFunction("GetFlashlightTintGreen", (void *)&GetFlashlightTintGreen);
-	engine->RegisterScriptFunction("GetFlashlightTintBlue", (void *)&GetFlashlightTintBlue);
-
-	engine->RegisterScriptFunction("GetFlashlightMinLightLevel", (void *)&GetFlashlightMinLightLevel);
-	engine->RegisterScriptFunction("GetFlashlightMaxLightLevel", (void *)&GetFlashlightMaxLightLevel);
-
-	engine->RegisterScriptFunction("SetFlashlightDarkness", (void *)&SetFlashlightDarkness);
-	engine->RegisterScriptFunction("GetFlashlightDarkness", (void *)&GetFlashlightDarkness);
-	engine->RegisterScriptFunction("SetFlashlightDarknessSize", (void *)&SetFlashlightDarknessSize);
-	engine->RegisterScriptFunction("GetFlashlightDarknessSize", (void *)&GetFlashlightDarknessSize);
-
-	engine->RegisterScriptFunction("SetFlashlightBrightness", (void *)&SetFlashlightBrightness);
-	engine->RegisterScriptFunction("GetFlashlightBrightness", (void *)&GetFlashlightBrightness);
-	engine->RegisterScriptFunction("SetFlashlightBrightnessSize", (void *)&SetFlashlightBrightnessSize);
-	engine->RegisterScriptFunction("GetFlashlightBrightnessSize", (void *)&GetFlashlightBrightnessSize);
-
-	engine->RegisterScriptFunction("SetFlashlightPosition", (void *)&SetFlashlightPosition);
-	engine->RegisterScriptFunction("GetFlashlightPositionX", (void *)&GetFlashlightPositionX);
-	engine->RegisterScriptFunction("GetFlashlightPositionY", (void *)&GetFlashlightPositionY);
-
-
-	engine->RegisterScriptFunction("SetFlashlightFollowMouse", (void *)&SetFlashlightFollowMouse);
-	engine->RegisterScriptFunction("GetFlashlightFollowMouse", (void *)&GetFlashlightFollowMouse);
-
-	engine->RegisterScriptFunction("SetFlashlightFollowCharacter", (void *)&SetFlashlightFollowCharacter);
-	engine->RegisterScriptFunction("GetFlashlightFollowCharacter", (void *)&GetFlashlightFollowCharacter);
-	engine->RegisterScriptFunction("GetFlashlightCharacterDX", (void *)&GetFlashlightCharacterDX);
-	engine->RegisterScriptFunction("GetFlashlightCharacterDY", (void *)&GetFlashlightCharacterDY);
-	engine->RegisterScriptFunction("GetFlashlightCharacterHorz", (void *)&GetFlashlightCharacterHorz);
-	engine->RegisterScriptFunction("GetFlashlightCharacterVert", (void *)&GetFlashlightCharacterVert);
-
-	engine->RegisterScriptFunction("SetFlashlightMask", (void *)&SetFlashlightMask);
-	engine->RegisterScriptFunction("GetFlashlightMask", (void *)&GetFlashlightMask);
-
-	engine->RequestEventHook(AGSE_PREGUIDRAW);
-	engine->RequestEventHook(AGSE_PRESCREENDRAW);
-	engine->RequestEventHook(AGSE_SAVEGAME);
-	engine->RequestEventHook(AGSE_RESTOREGAME);
-}
-
-void AGS_EngineShutdown() {
-
-}
-
-int AGS_EngineOnEvent(int event, int data) {
-	if (event == AGSE_PREGUIDRAW) {
-		Update();
-	} else if (event == AGSE_RESTOREGAME) {
-		RestoreGame(data);
-	} else if (event == AGSE_SAVEGAME) {
-		SaveGame(data);
-	} else if (event == AGSE_PRESCREENDRAW) {
-		// Get screen size once here.
-		engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
-		engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
-
-		// Only 16 bit color depth is supported.
-		if (screen_color_depth != 16) {
-			engine->UnrequestEventHook(AGSE_PREGUIDRAW);
-			engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
-			engine->UnrequestEventHook(AGSE_SAVEGAME);
-			engine->UnrequestEventHook(AGSE_RESTOREGAME);
-		}
-	}
-
-	return 0;
-}
-
-int AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved) {
-	return 0;
-}
-
-void AGS_EngineInitGfx(const char *driverID, void *data) {
-}
-
-
-
-#if AGS_PLATFORM_OS_WINDOWS && !defined(BUILTIN_PLUGINS)
-
-// ********************************************
-// ***********  Editor Interface  *************
-// ********************************************
-
-const char *scriptHeader =
-    "import void SetFlashlightTint(int RedTint, int GreenTint, int BlueTint);\r\n"
-    "import int GetFlashlightTintRed();\r\n"
-    "import int GetFlashlightTintGreen();\r\n"
-    "import int GetFlashlightTintBlue();\r\n"
-    "import int GetFlashlightMinLightLevel();\r\n"
-    "import int GetFlashlightMaxLightLevel();\r\n"
-    "import void SetFlashlightDarkness(int LightLevel);\r\n"
-    "import int GetFlashlightDarkness();\r\n"
-    "import void SetFlashlightDarknessSize(int Size);\r\n"
-    "import int GetFlashlightDarknessSize();\r\n"
-    "import void SetFlashlightBrightness(int LightLevel);\r\n"
-    "import int GetFlashlightBrightness();\r\n"
-    "import void SetFlashlightBrightnessSize(int Size);\r\n"
-    "import int GetFlashlightBrightnessSize();\r\n"
-    "import void SetFlashlightPosition(int X, int Y);\r\n"
-    "import int GetFlashlightPositionX();\r\n"
-    "import int GetFlashlightPositionY();\r\n"
-    "import void SetFlashlightFollowMouse(int OnOff);\r\n"
-    "import int GetFlashlightFollowMouse ();\r\n"
-    "import void SetFlashlightFollowCharacter(int CharacterId, int dx, int dy, int horz, int vert);\r\n"
-    "import int GetFlashlightFollowCharacter();\r\n"
-    "import int GetFlashlightCharacterDX();\r\n"
-    "import int GetFlashlightCharacterDY();\r\n"
-    "import int GetFlashlightCharacterHorz();\r\n"
-    "import int GetFlashlightCharacterVert();\r\n";
-
-
-IAGSEditor *editor;
-
-
-LPCSTR AGS_GetPluginName(void) {
-	// Return the plugin description
-	return "Flashlight plugin recreation";
-}
-
-int  AGS_EditorStartup(IAGSEditor *lpEditor) {
-	// User has checked the plugin to use it in their game
-
-	// If it's an earlier version than what we need, abort.
-	if (lpEditor->version < 1)
-		return -1;
-
-	editor = lpEditor;
-	editor->RegisterScriptHeader(scriptHeader);
-
-	// Return 0 to indicate success
-	return 0;
-}
-
-void AGS_EditorShutdown() {
-	// User has un-checked the plugin from their game
-	editor->UnregisterScriptHeader(scriptHeader);
-}
-
-void AGS_EditorProperties(HWND parent) {
-	// User has chosen to view the Properties of the plugin
-	// We could load up an options dialog or something here instead
-	MessageBoxA(parent, "Flashlight plugin recreation by JJS", "About", MB_OK | MB_ICONINFORMATION);
-}
-
-int AGS_EditorSaveGame(char *buffer, int bufsize) {
-	// We don't want to save any persistent data
-	return 0;
-}
-
-void AGS_EditorLoadGame(char *buffer, int bufsize) {
-	// Nothing to load for this plugin
-}
-
-#endif
-
-
-#if defined(BUILTIN_PLUGINS)
-} // namespace agsflashlight
-#endif
+} // namespace AGSFlashlight
+} // namespace Plugins
+} // namespace AGS3

@@ -23,6 +23,7 @@
 #include "ags/lib/allegro.h"
 #include "ags/plugins/dll.h"
 #include "ags/plugins/ags_creditz/ags_creditz.h"
+#include "ags/plugins/ags_flashlight/ags_flashlight.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -49,6 +50,8 @@ void *dlopen(const char *filename) {
 		else
 			return new AGSCreditz::AGSCreditz11();
 	}
+	if (fname.equalsIgnoreCase("libAGSFlashlight.so"))
+		return new AGSFlashlight::AGSFlashlight();
 
 	return nullptr;
 }

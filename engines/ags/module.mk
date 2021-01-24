@@ -301,7 +301,8 @@ MODULE_OBJS = \
 	engine/script/script_runtime.o \
 	engine/script/systemimports.o \
 	plugins/dll.o \
-	plugins/ags_creditz/ags_creditz.o
+	plugins/ags_creditz/ags_creditz.o \
+	plugins/ags_flashlight/ags_flashlight.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \
