@@ -83,39 +83,7 @@ void Holomap::clearHolomapPosition(int32 locationIdx) {
 	_engine->_gameState->holomapFlags[locationIdx] |= 0x40;
 }
 
-void Holomap::loadGfxSub1() {
-	// TODO
-}
-
-void Holomap::loadGfxSub2() {
-	// TODO
-}
-
 void Holomap::loadHolomapGFX() {
-	uint8 *videoPtr3 = (uint8 *)_engine->workVideoBuffer.getBasePtr(174, 12);
-	uint8 *videoPtr4 = (uint8 *)_engine->workVideoBuffer.getBasePtr(78, 13);
-	uint8 *videoPtr5 = (uint8 *)_engine->workVideoBuffer.getBasePtr(334, 115);
-
-	HQR::getEntry(videoPtr3, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
-	HQR::getEntry(videoPtr4, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
-
-	uint8 *videoPtr6 = videoPtr5 + HQR::getEntry(videoPtr5, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
-	uint8 *videoPtr7 = videoPtr6 + HQR::getEntry(videoPtr6, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
-	uint8 *videoPtr8 = videoPtr7 + HQR::getEntry(videoPtr7, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
-
-	Renderer::prepareIsoModel(videoPtr5);
-	Renderer::prepareIsoModel(videoPtr6);
-	Renderer::prepareIsoModel(videoPtr7);
-	Renderer::prepareIsoModel(videoPtr8);
-
-	// TODO:
-	// uint8 *videoPtr1 = (uint8 *)_engine->workVideoBuffer.getPixels();
-	// uint8 *videoPtr2 = videoPtr1 + 4488;
-	// uint8 *videoPtr11 = videoPtr8 + HQR::getEntry(videoPtr8, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
-	// uint8 *videoPtr10 = videoPtr11 + 4488;
-	// uint8 *videoPtr12 = videoPtr10 + HQR::getEntry(videoPtr10, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
-	// uint8 *videoPtr13 = videoPtr12 + HQR::getEntry(videoPtr12, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
-
 	_engine->_screens->loadCustomPalette(RESSHQR_HOLOPAL);
 
 	int32 j = 576;
@@ -131,9 +99,6 @@ void Holomap::loadHolomapGFX() {
 		paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
 		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
 	}
-
-	loadGfxSub1();
-	loadGfxSub2();
 
 	needToLoadHolomapGFX = 0;
 }
@@ -173,6 +138,9 @@ void Holomap::prepareHolomapSurface() {
 	//FUN_004253e8(_DAT_0043f7ec,(undefined4 *)0x200,4,&LAB_00413d20);
 }
 
+void Holomap::prepareHolomapPolygons() {
+}
+
 void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 size = _engine->_text->getTextSize(title);
 	const int32 x = centerx - size / 2;
@@ -183,13 +151,53 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
+void Holomap::renderHolomapModel(byte *mdl_1, int32 x_2, int32 y_3, int32 zPos) {
+	_engine->_renderer->setBaseRotation(x_2, y_3, 0);
+	_engine->_renderer->getBaseRotationPosition(0, 0, zPos + 1000);
+	const int32 iVar1 = _engine->_renderer->destZ;
+	const int32 y_2 = _engine->_renderer->destY;
+	const int32 x_1 = _engine->_renderer->destX;
+	int32 trajRotPosX = 0; // TODO DAT_0043f706 4th short value of the trajectory data TrajectoryData::x
+	int32 trajRotPosY = 0; // TODO DAT_0043f710 5th short value of the trajectory data TrajectoryData::y
+	int32 trajRotPosZ = 0; // TODO _DAT_0043f7f8 6th short value of the trajectory data TrajectoryData::z
+	_engine->_renderer->setCameraAngle(0, 0, 0, trajRotPosX, trajRotPosY, trajRotPosZ, 5300);
+	_engine->_renderer->getBaseRotationPosition(x_1, y_2, (short)iVar1);
+	_engine->_interface->resetClip();
+	_engine->_renderer->renderIsoModel(x_1, y_2, iVar1, (int)x_2, (int)y_3, 0, mdl_1);
+}
+
+Holomap::TrajectoryData Holomap::loadTrajectoryData(int32 trajectoryIdx) {
+	TrajectoryData data;
+	const uint8 *ptr = _engine->_resources->holomapPointAnimPtr;
+	//Common::MemoryReadStream stream(_engine->_resources->holomapPointAnimPtr, _engine->_resources->holomapPointAnimSize);
+	for (int32 trajIdx = 0; trajIdx < trajectoryIdx; ++trajIdx) {
+		const int16 animVal = *(const int16 *)(ptr + 12);
+		ptr += 4 * animVal + 14;
+	}
+	data.unk1 = *(const int16 *)(ptr + 0);
+	data.unk2 = *(const int16 *)(ptr + 2);
+	data.vehicleIdx = *(const int16 *)(ptr + 4);
+	data.x = *(const int16 *)(ptr + 6);
+	data.y = *(const int16 *)(ptr + 8);
+	data.z = *(const int16 *)(ptr + 10);
+	data.unk4 = *(const int16 *)(ptr + 12); // amount of something of size 4
+	return data;
+}
+
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
 #if 0
+	const Holomap::TrajectoryData &data = loadTrajectoryData(trajectoryIndex);
 	ScopedEngineFreeze timeFreeze(_engine);
 	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
-	_engine->_renderer->setCameraAngle(0, 0, 0, (int)(short)DAT_0043f706, (int)(short)DAT_0043f710, (int)DAT_0043f7f8, 0x14b4);
+	prepareHolomapSurface();
+	prepareHolomapPolygons();
+
+	const Location &loc = _locations[_engine->_scene->currentSceneIdx]; // TODO: id is most likely wrong
+	renderHolomapModel(_engine->_resources->holomapPointModelPtr, loc.x, loc.y, 0);
+
+	_engine->flip();
 	ActorMoveStruct move;
 	const uint8 *animPtr = nullptr;
 	int frameNumber = 0;
@@ -221,27 +229,31 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			}
 		}
 		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);
-		_engine->_renderer->setCameraAngle(0, 0, 0, angle1, angle2, angle3, 5300);
-		_engine->_renderer->setLightVector(angle1, angle2, 0);
-		_engine->_interface->blitBox(v5);
-		_engine->_renderer->renderIsoModel(v19, v5);
-		_engine->copyBlockPhys(v5);
+		_engine->_renderer->setCameraAngle(0, 0, 0, 0x3c, 0x80, 0, 30000);
+		_engine->_renderer->setLightVector(0xffffffc4, 0x80, 0);
+		_engine->_interface->drawSplittedBox(0, 200, 199, 0x1df, 0);
+		_engine->_renderer->renderIsoModel(0, 0, 0, 0, uVar8, 0);
+		_engine->copyBlockPhys(0, 200, 199, 0x1df);
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
-		_engine->_renderer->setCameraAngle(v5);
-		_engine->_renderer->setLightVector(v5);
+		const int32 trajRotPosX = data.x; // DAT_0043f706
+		const int32 trajRotPosY = data.y; // DAT_0043f710
+		const int32 trajRotPosZ = data.z; // _DAT_0043f7f8
+		_engine->_renderer->setCameraAngle(0, 0, 0, trajRotPosX, trajRotPosY, trajRotPosZ, 0x14b4);
+		_engine->_renderer->setLightVector(trajRotPosX, trajRotPosY, 0);
 		if (frameTime + 40 <= _engine->lbaTime) {
 			frameTime = _engine->lbaTime;
-			if (v17 >= v29 && v17 > v29) {
-				break;
+			if (locationIdx < sVar3) {
+				model_x = psVar9[locationIdx * 2 + 7];
+				model_y = psVar9[locationIdx * 2 + 8];
+			} else {
+				if (sVar3 < locationIdx) {
+					break;
+				}
+				model_x = *(short *)(sVar2 * 8 + holomapLocationInfo._0_4_);
+				model_y = *(short *)(sVar2 * 8 + 2 + holomapLocationInfo._0_4_);
 			}
-			++v17;
-			_engine->_renderer->setBaseRotation(v0);
-			_engine->_renderer->getBaseRotationPosition(v1, v0);
-			_engine->_renderer->setCameraAngle(v0);
-			_engine->_renderer->getBaseRotationPosition(v2, v0);
-			_engine->_interface->resetClip();
-			_engine->_renderer->renderIsoModel(v3, v0);
-			_engine->copyBlockPhys(v0);
+			renderHolomapModel(_holomappointmdl, model_x, model_y, 0);
+			locationIdx = locationIdx + 1;
 		}
 		if (v28) {
 			v28 = 0;
@@ -553,9 +565,11 @@ void Holomap::processHolomap() {
 			_engine->_interface->drawSplittedBox(rect, 0);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
-			renderLocations(xRot, yRot, 0, false);
+			//renderLocations(xRot, yRot, 0, false); // TODO: activate me
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
-			renderLocations(xRot, yRot, 0, true);
+			prepareHolomapSurface();
+			prepareHolomapPolygons();
+			//renderLocations(xRot, yRot, 0, true); // TODO: activate me
 			if (rotate) {
 				_engine->_menu->drawBox(300, 170, 340, 210);
 			}

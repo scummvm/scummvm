@@ -195,6 +195,8 @@ public:
 	uint8 *holomapTwinsenArrowPtr = nullptr;
 	uint32 holomapArrowSize = 0;
 	uint8 *holomapArrowPtr = nullptr;
+	uint32 holomapPointAnimSize = 0;
+	uint8 *holomapPointAnimPtr = nullptr;
 
 	/** Initialize resource pointers */
 	void initResources();

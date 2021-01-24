@@ -48,6 +48,36 @@ private:
 		uint16 textIndex = 0;
 	};
 
+	enum HolomapVehicle {
+		FerryBoat = 31,
+		Motorbike = 33,
+		Car = 35,
+		FishingBoat = 37,
+		Catamaran = 39,
+		Hovercraft = 41,
+		Dino = 43,
+		ArmyBoat = 45,
+		HamalayiTransporter = 47
+	};
+
+	struct TrajectoryData {
+		int16_t unk1;
+		int16_t unk2;
+		int16_t vehicleIdx;
+		int16_t x;
+		int16_t y;
+		int16_t z;
+		int16_t unk4;
+
+		/**
+		 * The HQR index of the vehicle model for the holomap
+		 * @note Multiplied by 2 because the model index is always followed by the corresponding animation index for that model
+		 */
+		int32 getModel() const {
+			return 2 * vehicleIdx + HolomapVehicle::FerryBoat;
+		}
+	};
+
 	int32 _numLocations = 0;
 	Location _locations[NUM_LOCATIONS];
 
@@ -59,6 +89,12 @@ private:
 	int32 getNextHolomapLocation(int32 currentLocation, int32 dir) const;
 
 	void renderLocations(int xRot, int yRot, int zRot, bool lower);
+	TrajectoryData loadTrajectoryData(int32 trajectoryIdx);
+
+	void renderHolomapModel(byte *mdl_1, int32 x_2, int32 y_3, int32 zPos);
+
+	void prepareHolomapSurface();
+	void prepareHolomapPolygons();
 
 public:
 	Holomap(TwinEEngine *engine);
@@ -79,13 +115,8 @@ public:
 
 	void drawHolomapTrajectory(int32 trajectoryIndex);
 
-	void loadGfxSub1();
-	void loadGfxSub2();
-
 	/** Load Holomap content */
 	void loadHolomapGFX();
-
-	void prepareHolomapSurface();
 
 	/** Main holomap process loop */
 	void processHolomap();

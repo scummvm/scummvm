@@ -180,6 +180,11 @@ void Resources::initResources() {
 	}
 	Renderer::prepareIsoModel(holomapTwinsenArrowPtr);
 
+	holomapPointAnimSize = HQR::getAllocEntry(&holomapPointAnimPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
+	if (holomapPointAnimSize == 0) {
+		error("Failed to load holomap point anim data");
+	}
+
 	preloadSprites();
 	preloadAnimations();
 	preloadSamples();
