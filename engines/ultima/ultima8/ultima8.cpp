@@ -576,6 +576,14 @@ void Ultima8Engine::paint() {
 	_screen->BeginPainting();
 
 	tpaint -= g_system->getMillis();
+
+#ifdef DEBUG
+	// Fill the screen with an annoying color so we can see fast area bugs
+	Rect r;
+	_screen->GetSurfaceDims(r);
+	_screen->Fill32(0xFF1010FF, 0, 0, r.width(), r.height());
+#endif
+
 	_desktopGump->Paint(_screen, _lerpFactor, false);
 	tpaint += g_system->getMillis();
 
