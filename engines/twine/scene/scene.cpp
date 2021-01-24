@@ -478,7 +478,7 @@ void Scene::processActorZones(int32 actorIdx) {
 		    (currentY >= zone->bottomLeft.y && currentY <= zone->topRight.y) &&
 		    (currentZ >= zone->bottomLeft.z && currentZ <= zone->topRight.z)) {
 			switch (zone->type) {
-			case kCube:
+			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
 					_zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
@@ -487,7 +487,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;
-			case kCamera:
+			case ZoneType::kCamera:
 				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->useFreeCamera) {
 					_engine->disableScreenRecenter = true;
 					if (_engine->_grid->newCameraX != zone->infoData.CameraView.x || _engine->_grid->newCameraY != zone->infoData.CameraView.y || _engine->_grid->newCameraZ != zone->infoData.CameraView.z) {
@@ -498,10 +498,10 @@ void Scene::processActorZones(int32 actorIdx) {
 					}
 				}
 				break;
-			case kSceneric:
+			case ZoneType::kSceneric:
 				actor->zone = zone->infoData.Sceneric.zoneIdx;
 				break;
-			case kGrid:
+			case ZoneType::kGrid:
 				if (currentlyFollowedActor == actorIdx) {
 					tmpCellingGrid = 1;
 					if (_engine->_grid->useCellingGrid != zone->infoData.CeillingGrid.newGrid) {
@@ -516,13 +516,13 @@ void Scene::processActorZones(int32 actorIdx) {
 					}
 				}
 				break;
-			case kObject:
+			case ZoneType::kObject:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, 1, AnimationTypes::kStanding, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
-			case kText:
+			case ZoneType::kText:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
@@ -532,7 +532,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
-			case kLadder:
+			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->destX += _engine->_movements->processActorX;
