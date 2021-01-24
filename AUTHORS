@@ -396,6 +396,18 @@ ScummVM Team
     Tucker:
        Gregory Montoir                - (retired)
 
+    TwinE:
+       Alexandre Fontoura             - (retired)
+       Vincent Hamm                   - (retired)
+       Felipe Sanches                 - (retired)
+       Nikita Tereshin                - (retired)
+       Patrik Dahlstroem              - (retired)
+       Arthur Blot                    - (retired)
+       Kyuubu                         - (retired)
+       Toel Hartmann                  - (retired)
+       Sebastien Viannay              - (retired)
+       Martin Gerhardy
+
     Ultima:
        Paul Gilbert
        Matthew Duggan
@@ -879,79 +891,82 @@ Other contributions
      Special thanks to Bob Heitman and Corey Cole for their support of
      FreeSCI.
 
-  Grim Contributors
-  -----------------
-     Thomas Allen                   - Various engine code fixes and
-                                      improvements
-     Torbjorn Andersson             - Various code fixes
-     Ori Avtalion                   - Lipsync, LAF support, various code
-                                      fixes
-     Robert Biro                    - Antialiasing support
-     Bastien Bouclet                - Various fixes to engine
-     David Cardwell                 - Few fixes to EMI
-     Marcus Comstedt                - Initial Dreamcast port
-     Andrea Corna                   - Patcher module, various engine
-                                      improvements
-     Jonathan Gray                  - Various code fixes
-     Tobias Gunkel                  - Initial Android port, few engines fixes
-     Azamat H. Hackimov             - Configure fix
-     Vincent Hamm                   - Various engine code fixes and
-                                      improvements
-     Sven Hesse                     - Various compilation fixes
-     Matthew Hoops                  - Smush codec48, Grim and EMI engine
-                                      improvements
-     Erich Hoover                   - x86-64 fixes, various code fixes and
-                                      improvements
-     Max Horn                       - Few code fixes
-     Travis Howell                  - Various code fixes, Windows port
-     Joseph Jezak                   - A lot of engine improvements and fixes
-     Guillem Jover                  - Few code improvements
-     Filippos Karapetis             - Compilation fixes
-     Ingo van Lil                   - Various fixes and improvements for EMI
-     Vincent Pelletier              - Various engine and TinyGL improvements
-     Joost Peters                   - Various code fixes
-     George Macon                   - Few fixes
-     Josh Matthews                  - Few fixes to engine
-     Matthieu Milan                 - Various engine improvements
-     Gregory Montoir                - Few fixes to engine
-     Stefano Musumeci               - TinyGL backend and engine driver
-                                      improvements
-     Christian Neumair              - Various optimisation patches
-     Daniel Schepler                - Initial grim engine contributor, LUA
-                                      support
-     Dmitry Smirnov                 - Minor spelling corrections
-     Yaron Tausky                   - Fixes to subtitles
-     Julien Templier                - create_project tool
-     Pino Toscano                   - Debian GNU/Linux package files
-     Lionel Ulmer                   - OpenGL optimisations
-     cmayer0087                     - Various engine code fixes
-     JenniBee                       - Compilation fixes
-     karjonas                       - Various engine code fixes
-     mparnaudeau                    - Various grim engine code fixes
-     PoulpiFr                       - Few fixes to Android port
-     sietschie                      - Few fixes to engine
+  ResidualVM Contributors
+  -----------------------
+    Grim:
+       Thomas Allen                   - Various engine code fixes and
+                                        improvements
+       Torbjorn Andersson             - Various code fixes
+       Ori Avtalion                   - Lipsync, LAF support, various code
+                                        fixes
+       Robert Biro                    - Antialiasing support
+       Bastien Bouclet                - Various fixes to engine
+       David Cardwell                 - Few fixes to EMI
+       Marcus Comstedt                - Initial Dreamcast port
+       Andrea Corna                   - Patcher module, various engine
+                                        improvements
+       Jonathan Gray                  - Various code fixes
+       Tobias Gunkel                  - Initial Android port, few engines
+                                        fixes
+       Azamat H. Hackimov             - Configure fix
+       Vincent Hamm                   - Various engine code fixes and
+                                        improvements
+       Sven Hesse                     - Various compilation fixes
+       Matthew Hoops                  - Smush codec48, Grim and EMI engine
+                                        improvements
+       Erich Hoover                   - x86-64 fixes, various code fixes and
+                                        improvements
+       Max Horn                       - Few code fixes
+       Travis Howell                  - Various code fixes, Windows port
+       Joseph Jezak                   - A lot of engine improvements and
+                                        fixes
+       Guillem Jover                  - Few code improvements
+       Filippos Karapetis             - Compilation fixes
+       Ingo van Lil                   - Various fixes and improvements for
+                                        EMI
+       Vincent Pelletier              - Various engine and TinyGL
+                                        improvements
+       Joost Peters                   - Various code fixes
+       George Macon                   - Few fixes
+       Josh Matthews                  - Few fixes to engine
+       Matthieu Milan                 - Various engine improvements
+       Gregory Montoir                - Few fixes to engine
+       Stefano Musumeci               - TinyGL backend and engine driver
+                                        improvements
+       Christian Neumair              - Various optimisation patches
+       Daniel Schepler                - Initial grim engine contributor, LUA
+                                        support
+       Dmitry Smirnov                 - Minor spelling corrections
+       Yaron Tausky                   - Fixes to subtitles
+       Julien Templier                - create_project tool
+       Pino Toscano                   - Debian GNU/Linux package files
+       Lionel Ulmer                   - OpenGL optimisations
+       cmayer0087                     - Various engine code fixes
+       JenniBee                       - Compilation fixes
+       karjonas                       - Various engine code fixes
+       mparnaudeau                    - Various grim engine code fixes
+       PoulpiFr                       - Few fixes to Android port
+       sietschie                      - Few fixes to engine
 
-  Myst 3
-  ------
-     David Fioramonti               - Autosave support and few fixes
-     Matthew Hoops                  - Various engine improvements and code
-                                      fixes
-     Stefano Musumeci               - TinyGL engine support
+    Myst 3:
+       David Fioramonti               - Autosave support and few fixes
+       Matthew Hoops                  - Various engine improvements and code
+                                        fixes
+       Stefano Musumeci               - TinyGL engine support
 
-  Stark
-  -----
-     Bartosz Dudziak                - Various engine improvements and code
-                                      fixes
-     Matthew Hoops                  - ADPCM decoder
-     Pawel Kolodziejski             - Various engine code fixes
-     Awad Mackie                    - Few fixes to engine
-     Marius Ioan Orban              - Code fix
-     Vincent Pelletier              - Raw sound support
-     Jordi Vilalta Prat             - Initial engine contributor
-     Scott Thomas                   - Initial engine author
-     Will Thomson                   - Few fixes to engine
-     Faalagorn                      - Few code improvements
-     orangeforest11                 - Few engine improvements
+    Stark:
+       Bartosz Dudziak                - Various engine improvements and code
+                                        fixes
+       Matthew Hoops                  - ADPCM decoder
+       Pawel Kolodziejski             - Various engine code fixes
+       Awad Mackie                    - Few fixes to engine
+       Marius Ioan Orban              - Code fix
+       Vincent Pelletier              - Raw sound support
+       Jordi Vilalta Prat             - Initial engine contributor
+       Scott Thomas                   - Initial engine author
+       Will Thomson                   - Few fixes to engine
+       Faalagorn                      - Few code improvements
+       orangeforest11                 - Few engine improvements
 
    And to all the contributors, users, and beta testers we've missed. Thanks!
 

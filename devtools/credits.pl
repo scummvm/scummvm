@@ -685,7 +685,7 @@ begin_credits("Credits");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Grim");
 				add_person("Christian Krause", "chkr", "EMI (retired)");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Grim, EMI");
-				add_person("Joel Teichroeb ", "klusark", "EMI");
+				add_person("Joel Teichroeb", "klusark", "EMI");
 				add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "EMI (retired)");
 			end_section();
 
@@ -693,6 +693,10 @@ begin_credits("Credits");
 				add_person("Henry Bush", "spookypeanut", "");
 				add_person("Scott Thomas", "ST", "");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
+			end_section();
+
+			begin_section("Hades' Challenge");
+				add_person("Vladimir Serbinenko/Google", "phcoder", "");
 			end_section();
 
 			begin_section("HDB");
@@ -1423,7 +1427,7 @@ begin_credits("Credits");
 				add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 				add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 				add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
-				add_person("Joel Teichroeb ", "klusark", "Android port for ResidualVM");
+				add_person("Joel Teichroeb", "klusark", "Android port for ResidualVM");
 				add_person("Tom Frost", "TomFrost", "WebOS port contributions");
 			end_persons();
 		end_section();
@@ -1473,8 +1477,8 @@ begin_credits("Credits");
 			add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
 		end_section();
 
-		begin_section("Grim Contributors", "grim_contrib");
-			begin_persons();
+		begin_section("ResidualVM Contributors", "residualvm_contrib");
+			begin_section("Grim");
 				add_person("Thomas Allen", "olldray", "Various engine code fixes and improvements");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
 				add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support, various code fixes");
@@ -1516,19 +1520,15 @@ begin_credits("Credits");
 				add_person("", "mparnaudeau", "Various grim engine code fixes");
 				add_person("", "PoulpiFr", "Few fixes to Android port");
 				add_person("", "sietschie", "Few fixes to engine");
-			end_persons();
-		end_section();
+			end_section();
 
-		begin_section("Myst 3", "myst3_contrib");
-			begin_persons();
+			begin_section("Myst 3");
 				add_person("David Fioramonti", "dafioram", "Autosave support and few fixes");
 				add_person("Matthew Hoops", "clone2727", "Various engine improvements and code fixes");
 				add_person("Stefano Musumeci", "subr3v", "TinyGL engine support");
-			end_persons();
-		end_section();
+			end_section();
 
-		begin_section("Stark", "stark_contrib");
-			begin_persons();
+			begin_section("Stark");
 				add_person("Bartosz Dudziak", "Snejp", "Various engine improvements and code fixes");
 				add_person("Matthew Hoops", "clone2727", "ADPCM decoder");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Various engine code fixes");
@@ -1540,15 +1540,8 @@ begin_credits("Credits");
 				add_person("Will Thomson", "wlthomson", "Few fixes to engine");
 				add_person("", "Faalagorn", "Few code improvements");
 				add_person("", "orangeforest11", "Few engine improvements");
-			end_persons();
-                end_section();
-
-		begin_section("Hades' Challenge", "hadesch_contrib");
-			begin_persons();
-				add_person("Vladimir Serbinenko/Google", "phcoder", "Engine implementation");
-			end_persons();
+			end_section();
 		end_section();
-
 
 		add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
 
