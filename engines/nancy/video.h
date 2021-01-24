@@ -44,22 +44,24 @@ class AVFDecoder : public Video::VideoDecoder {
 public:
 	virtual ~AVFDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	virtual bool loadStream(Common::SeekableReadStream *stream) override;
 	const Graphics::Surface *decodeFrame(uint frameNr);
 
 private:
 	class AVFVideoTrack : public FixedRateVideoTrack {
 	public:
 		AVFVideoTrack(Common::SeekableReadStream *stream);
-		~AVFVideoTrack();
+		virtual ~AVFVideoTrack();
 
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
+		virtual uint16 getWidth() const override { return _width; }
+		virtual uint16 getHeight() const override { return _height; }
+		virtual Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+		virtual int getCurFrame() const override { return _curFrame; }
+		virtual int getFrameCount() const override { return _frameCount; }
+		virtual bool isSeekable() const override { return true; }
+		virtual bool seek(const Audio::Timestamp &time);
+		virtual const Graphics::Surface *decodeNextFrame() override;
 		const Graphics::Surface *decodeFrame(uint frameNr);
-		const Graphics::Surface *decodeNextFrame();
 
 	protected:
 		Common::Rational getFrameRate() const { return Common::Rational(1000, _frameTime); }

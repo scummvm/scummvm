@@ -116,6 +116,12 @@ AVFDecoder::AVFVideoTrack::~AVFVideoTrack() {
 	delete _dec;
 }
 
+bool AVFDecoder::AVFVideoTrack::seek(const Audio::Timestamp &time) {
+	// TODO this will almost definitely break video type 2
+	_curFrame = getFrameAtTime(time);
+	return true;
+}
+
 bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const {
 	byte cmd = inBuf.readByte();
 	while (!inBuf.eos()) {
