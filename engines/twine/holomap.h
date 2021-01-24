@@ -103,7 +103,7 @@ private:
 	int32 _numLocations = 0;
 	Location _locations[NUM_LOCATIONS];
 
-	int32 needToLoadHolomapGFX = 0;
+	int32 holomapPaletteIndex = 0;
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
 
 	void drawHolomapText(int32 centerx, int32 top, const char *title);
@@ -113,7 +113,7 @@ private:
 	void renderLocations(int xRot, int yRot, int zRot, bool lower);
 	TrajectoryData loadTrajectoryData(int32 trajectoryIdx);
 
-	void renderHolomapModel(byte *mdl_1, int32 x_2, int32 y_3, int32 zPos);
+	void renderHolomapModel(const uint8 *bodyPtr, int32 x, int32 y, int32 zPos);
 
 	void prepareHolomapSurface();
 	void renderHolomapSurfacePolygons();
