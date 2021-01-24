@@ -387,7 +387,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	return mouseActiveButton;
 }
 
-int32 Menu::processMenu(MenuSettings *menuSettings) {
+int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 	int16 currentButton = menuSettings->getActiveButton();
 	bool buttonsNeedRedraw = true;
 	const int32 numEntry = menuSettings->getButtonCount();
@@ -558,7 +558,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			}
 			startMillis = loopMillis;
 		}
-		if (loopMillis - startMillis > 15000) {
+		if (showCredits && loopMillis - startMillis > 15000) {
 			_engine->_menuOptions->showCredits();
 			startMillis = _engine->_system->getMillis();
 			_engine->_screens->loadMenuImage(false);
