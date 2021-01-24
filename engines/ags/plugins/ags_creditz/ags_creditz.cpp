@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/plugins/AGSCreditz/AGSCreditz.h"
+#include "ags/plugins/ags_creditz/ags_creditz.h"
 
 namespace AGS3 {
 namespace Plugins {

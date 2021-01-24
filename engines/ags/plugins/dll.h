@@ -91,7 +91,9 @@ class DLL {
 protected:
 	Common::HashMap<Common::String, void *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methods;
 
-	static int    AGS_PluginV2() { return 1; }
+	static int    AGS_PluginV2() {
+		return 1;
+	}
 	static int    AGS_EditorStartup(IAGSEditor *);
 	static void   AGS_EditorShutdown();
 	static void   AGS_EditorProperties(HWND);

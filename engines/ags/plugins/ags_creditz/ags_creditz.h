@@ -119,7 +119,7 @@ protected:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	// Shared Script methods 
+	// Shared Script methods
 	static void ScrollCredits(const ScriptMethodParams &params);
 	static string GetCredit(const ScriptMethodParams &params);
 	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
