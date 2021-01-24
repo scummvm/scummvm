@@ -789,14 +789,25 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	_graphicsMode = mode;
 
 	if (switchedManager) {
-		if (sdlGraphicsManager) {
+		if (sdlGraphicsManager)
 			sdlGraphicsManager->activateManager();
-			// This failing will probably have bad consequences...
-			if (!sdlGraphicsManager->setState(_gfxManagerState)) {
-				return false;
-			}
-		} else if (sdlGraphics3dManager) {
+		else if (sdlGraphics3dManager)
 			sdlGraphics3dManager->activateManager();
+
+		// Setup the graphics mode and size first
+		// This is needed so that we can check the supported pixel formats when
+		// restoring the state.
+		_graphicsManager->beginGFXTransaction();
+		if (!_graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags))
+			return false;
+		_graphicsManager->initSize(_gfxManagerState.screenWidth, _gfxManagerState.screenHeight);
+		_graphicsManager->endGFXTransaction();
+
+		// Restore state
+		if (sdlGraphicsManager) {
+			// This failing will probably have bad consequences...
+			if (!sdlGraphicsManager->setState(_gfxManagerState))
+				return false;
 		}
 
 		// Next setup the cursor again
@@ -810,8 +821,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		}
 
 		_graphicsManager->beginGFXTransaction();
-		// Oh my god if this failed the client code might just explode.
-		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags);
+		return true;
 	} else {
 		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags);
 	}
