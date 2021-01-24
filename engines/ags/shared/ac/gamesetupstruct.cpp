@@ -295,11 +295,15 @@ HGameFileError GameSetupStruct::read_customprops(Shared::Stream *in, GameDataVer
 		for (int i = 0; i < numviews; ++i)
 			viewNames[i] = String::FromStream(in);
 
-		for (int i = 0; i < numinvitems; ++i)
-			invScriptNames[i] = String::FromStream(in);
+		if (data_ver >= kGameVersion_270) {
+			for (int i = 0; i < numinvitems; ++i)
+				invScriptNames[i] = String::FromStream(in);
 
-		for (int i = 0; i < numdialog; ++i)
-			dialogScriptNames[i] = String::FromStream(in);
+			if (data_ver >= kGameVersion_272) {
+				for (int i = 0; i < numdialog; ++i)
+					dialogScriptNames[i] = String::FromStream(in);
+			}
+		}
 	}
 	return HGameFileError::None();
 }
