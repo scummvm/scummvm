@@ -333,7 +333,12 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		}
 	}
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
-	// TODO: flip()?
+	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->_gameState->initEngineProjections();
+	_engine->_interface->loadClip();
+
+	_engine->_text->initSceneTextBank();
 	free(animPtr);
 	free(modelPtr);
 }
