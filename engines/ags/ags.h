@@ -52,6 +52,7 @@ enum AGSDebugChannels {
 };
 
 struct AGSGameDescription;
+struct PluginVersion;
 class EventsManager;
 class Music;
 
@@ -82,6 +83,8 @@ public:
 	}
 
 	uint32 getFeatures() const;
+
+	const PluginVersion *getNeededPlugins() const;
 
 	/**
 	 * Returns the current list of savegames
