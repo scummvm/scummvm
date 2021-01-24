@@ -311,7 +311,10 @@ void Scene::changeScene() {
 
 	initScene(needChangeScene);
 
-	// TODO: treat holomap trajectories
+	if (holomapTrajectory != -1) {
+		_engine->_holomap->drawHolomapTrajectory(holomapTrajectory);
+		holomapTrajectory = -1;
+	}
 
 	if (needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
 		sceneTextBank = TextBankId::Tippet_Island;

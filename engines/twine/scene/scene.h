@@ -309,6 +309,8 @@ public:
 	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
+	int32 holomapTrajectory = -1;
+
 	int32 sceneTextBank = TextBankId::None;
 	int32 alphaLight = ANGLE_0;
 	int32 betaLight = ANGLE_0;
