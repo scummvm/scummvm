@@ -80,6 +80,7 @@ static const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
 	ENGLISH_ENTRY("oott", "OotT-TKC.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
+	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	// For some macOS and iOS releases the executable was renamed to ac2game.dat
 	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
