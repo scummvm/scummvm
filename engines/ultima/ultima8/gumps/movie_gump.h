@@ -61,6 +61,7 @@ public:
 
 	INTRINSIC(I_playMovieOverlay);
 	INTRINSIC(I_playMovieCutscene);
+	INTRINSIC(I_playMovieCutsceneAlt);
 
 protected:
 	MoviePlayer *_player;

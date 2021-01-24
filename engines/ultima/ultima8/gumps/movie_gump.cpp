@@ -220,7 +220,6 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	if (item) {
 		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
 		if (rs) {
-			// TODO: Support playback with gap lines for the CRT effect
 			Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
@@ -228,7 +227,26 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	}
 
 	return 0;
+}
 
+uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_STRING(name);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+
+	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
+
+	if (item) {
+		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		if (rs) {
+			Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
+			gump->InitGump(nullptr, true);
+			gump->setRelativePosition(CENTER);
+		}
+	}
+
+	return 0;
 }
 
 
