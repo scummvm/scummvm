@@ -80,19 +80,24 @@ struct SOUNDCLIP {
 	virtual int get_pos_ms() = 0;
 	virtual int get_length_ms() = 0; // return total track length in ms (or 0)
 	virtual int get_sound_type() const = 0;
-	virtual int get_volume() const = 0;
 	virtual void set_volume(int volume) = 0;
 	virtual void set_panning(int newPanning) = 0;
 	inline int get_speed() const { return _speed; }
 	virtual void set_speed(int new_speed);
 
 	void poll();
+
+	// Gets clip's volume property, as percentage (0 - 100);
+	// note this may not be the real volume of playback (which could e.g. be muted)
+	inline int get_volume() const {
+		return _volAsPercentage;
+	}
+
 	// Sets the current volume property, as percentage (0 - 100).
 	inline void set_volume_percent(int volume) {
-		set_volume((volume * 255) / 100);
-	}
-	inline int get_volume_percent() const {
-		return get_volume() * 100 / 255;
+		_volAsPercentage = volume;
+		if (!_muted)
+			set_volume((volume * 255) / 100);
 	}
 	void adjust_volume();
 	int play_from(int position);
@@ -139,13 +144,6 @@ struct SOUNDCLIP {
 	/*
 	inline bool is_playing() const {
 		return state_ == SoundClipPlaying || state_ == SoundClipPaused;
-	}
-
-
-	// Gets clip's volume property, as percentage (0 - 100);
-	// note this may not be the real volume of playback (which could e.g. be muted)
-	inline int get_volume() const {
-		return volAsPercentage;
 	}
 
 	inline bool is_muted() const {
@@ -198,7 +196,6 @@ struct SoundClipWaveBase : public SOUNDCLIP {
 	int get_pos() override;
 	int get_pos_ms() override;
 	int get_length_ms() override;
-	int get_volume() const override;
 	void set_volume(int volume) override;
 	void set_panning(int newPanning) override;
 };

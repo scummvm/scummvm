@@ -56,7 +56,6 @@ struct MYMIDI : public SOUNDCLIP {
 	int play() override;
 	void stop() override;
 	bool is_playing() const override;
-	int get_volume() const override;
 	void set_volume(int volume) override;
 	void set_panning(int newPanning) override;
 };

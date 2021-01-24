@@ -27,8 +27,8 @@ namespace AGS3 {
 
 SOUNDCLIP::SOUNDCLIP() : _state(SoundClipInitial), _panning(128), _panningAsPercentage(0),
 		_sourceClip(nullptr), _sourceClipType(0), _speed(1000), _priority(50),
-		_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0),
-		_volAsPercentage(100), _vol(0), _volModifier(0), _repeat(false) {
+		_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0), _muted(false),
+		_volAsPercentage(0), _vol(0), _volModifier(0), _repeat(false) {
 	_mixer = ::AGS::g_vm->_mixer;
 }
 
@@ -125,10 +125,6 @@ int SoundClipWaveBase::get_pos_ms() {
 int SoundClipWaveBase::get_length_ms() {
 	warning("TODO: SoundClipWaveBase::get_length_ms");
 	return 0;
-}
-
-int SoundClipWaveBase::get_volume() const {
-	return _mixer->getChannelVolume(_soundHandle);
 }
 
 void SoundClipWaveBase::set_volume(int volume) {

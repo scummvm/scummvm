@@ -84,10 +84,6 @@ bool MYMIDI::is_playing() const {
 	return ::AGS::g_music->isPlaying();
 }
 
-int MYMIDI::get_volume() const {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-}
-
 void MYMIDI::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 }
