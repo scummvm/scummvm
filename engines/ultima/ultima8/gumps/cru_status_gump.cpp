@@ -54,7 +54,7 @@ CruStatusGump::CruStatusGump(bool unused) : Gump(PX_FROM_LEFT, PX_FROM_BOTTOM, 5
 }
 
 CruStatusGump::~CruStatusGump() {
-	assert(_instance == this);
+	assert(!_instance || _instance == this);
 	_instance = nullptr;
 }
 
