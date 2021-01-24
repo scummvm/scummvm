@@ -2,3 +2,21 @@
 #define NULL_DRIVER_USE_FOR_TEST 1
 #include "null_osystem.h"
 #include "../backends/platform/null/null.cpp" 
+
+void Common::install_null_g_system() {
+	g_system = OSystem_NULL_create();
+}
+
+void BaseBackend::displayMessageOnOSD(const Common::U32String &msg) {
+}
+
+void BaseBackend::initBackend() {
+	OSystem::initBackend();
+}
+
+void BaseBackend::fillScreen(uint32 col) {
+}
+
+void EventsBaseBackend::initBackend() {
+	BaseBackend::initBackend();
+}
