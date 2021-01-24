@@ -33,6 +33,7 @@ namespace Plugins {
 
 #define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
 #define SCRIPT_METHOD(NAME) engine->RegisterScriptFunction(#NAME, (void *)&NAME)
+#define SCRIPT_METHOD_EXT(NAME, PROC) engine->RegisterScriptFunction(#NAME, (void *)&(PROC))
 
 #define PARAMS1(T1, N1) \
 	T1 N1 = (T1)params[0]

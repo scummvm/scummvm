@@ -27,8 +27,14 @@
 
 namespace AGS {
 
+struct PluginVersion {
+	const char *_plugin;
+	int _version;
+};
+
 struct AGSGameDescription {
 	ADGameDescription desc;
+	const PluginVersion *_plugins;
 };
 
 } // namespace AGS

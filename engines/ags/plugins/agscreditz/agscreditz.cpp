@@ -20,23 +20,34 @@
  *
  */
 
-#include "ags/plugins/agscreditz/agscreditz.h"
+#include "ags/plugins/AGSCreditz/AGSCreditz.h"
 
 namespace AGS3 {
 namespace Plugins {
-namespace AgsCreditz {
+namespace AGSCreditz {
 
-AgsCreditz::AgsCreditz() {
+AGSCreditz::Version AGSCreditz::_version;
+State *AGSCreditz::_state;
+
+AGSCreditz::AGSCreditz() {
+	_state = new State();
+
 	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
 }
 
-const char *AgsCreditz::AGS_GetPluginName() {
-	return "agsCreditz v1.1 by AJA";
+AGSCreditz::~AGSCreditz() {
+	delete _state;
 }
 
-void AgsCreditz::AGS_EngineStartup(IAGSEngine *engine) {
-	SCRIPT_METHOD(SetCredit);
+
+const char *AGSCreditz::AGS_GetPluginName() {
+	if (_version == VERSION_11)
+		return "AGSCreditz v1.1 by AJA";
+	else
+		return "AGSCreditz 2.0 (by Dima Software: AJA)";
+}
+
+void AGSCreditz::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ScrollCredits);
 	SCRIPT_METHOD(GetCredit);
 	SCRIPT_METHOD(IsCreditScrollingFinished);
@@ -59,92 +70,138 @@ void AgsCreditz::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(IsStaticCreditsFinished);
 }
 
-void AgsCreditz::SetCredit(const ScriptMethodParams &params) {
-	PARAMS7(int, ID, string, credit, int, colour, int, font, int, center, int, xpos, int, generateoutline);
-}
-
-void AgsCreditz::ScrollCredits(const ScriptMethodParams &params) {
+void AGSCreditz::ScrollCredits(const ScriptMethodParams &params) {
 	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, res);
 }
 
-string AgsCreditz::GetCredit(const ScriptMethodParams &params) {
+string AGSCreditz::GetCredit(const ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 	return nullptr;
 }
 
-int AgsCreditz::IsCreditScrollingFinished(const ScriptMethodParams &params) {
+int AGSCreditz::IsCreditScrollingFinished(const ScriptMethodParams &params) {
 	return true;
 }
 
-void AgsCreditz::SetCreditImage(const ScriptMethodParams &params) {
+void AGSCreditz::SetCreditImage(const ScriptMethodParams &params) {
 	PARAMS5(int, ID, int, Slot, int, center, int, xpos, int, pixtonext);
 }
 
-void AgsCreditz::PauseScroll(const ScriptMethodParams &params) {
+void AGSCreditz::PauseScroll(const ScriptMethodParams &params) {
 	PARAMS1(int, onoff);
 }
 
-void AgsCreditz::ScrollReset(const ScriptMethodParams &params) {
+void AGSCreditz::ScrollReset(const ScriptMethodParams &params) {
 }
 
-void AgsCreditz::SetEmptyLineHeight(const ScriptMethodParams &params) {
+void AGSCreditz::SetEmptyLineHeight(const ScriptMethodParams &params) {
 	PARAMS1(int, Height);
 }
 
-int AgsCreditz::GetEmptyLineHeight(const ScriptMethodParams &params) {
+int AGSCreditz::GetEmptyLineHeight(const ScriptMethodParams &params) {
 	return 0;
 }
 
-void AgsCreditz::SetStaticCredit(const ScriptMethodParams &params) {
+void AGSCreditz::SetStaticCredit(const ScriptMethodParams &params) {
 	PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, int, centered, int, generateoutline, string, credit);
 
 }
 
-string AgsCreditz::GetStaticCredit(const ScriptMethodParams &params) {
+string AGSCreditz::GetStaticCredit(const ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 	return nullptr;
 }
 
-void AgsCreditz::StartEndStaticCredits(const ScriptMethodParams &params) {
+void AGSCreditz::StartEndStaticCredits(const ScriptMethodParams &params) {
 	PARAMS2(int, onoff, int, res);
 }
 
-int AgsCreditz::GetCurrentStaticCredit(const ScriptMethodParams &params) {
+int AGSCreditz::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 	return 0;
 }
 
-void AgsCreditz::SetDefaultStaticDelay(const ScriptMethodParams &params) {
+void AGSCreditz::SetDefaultStaticDelay(const ScriptMethodParams &params) {
 	PARAMS1(int, Cyclesperchar);
 }
 
-void AgsCreditz::SetStaticPause(const ScriptMethodParams &params) {
+void AGSCreditz::SetStaticPause(const ScriptMethodParams &params) {
 	PARAMS2(int, ID, int, length);
 }
 
-void AgsCreditz::SetStaticCreditTitle(const ScriptMethodParams &params) {
+void AGSCreditz::SetStaticCreditTitle(const ScriptMethodParams &params) {
 	PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, int, centered, int, generateoutline, string, title);
 }
 
-void AgsCreditz::ShowStaticCredit(const ScriptMethodParams &params) {
+void AGSCreditz::ShowStaticCredit(const ScriptMethodParams &params) {
 	PARAMS6(int, ID, int, time, int, style, int, transtime, int, sound, int, resolution);
 }
 
-void AgsCreditz::StaticReset(const ScriptMethodParams &params) {
+void AGSCreditz::StaticReset(const ScriptMethodParams &params) {
 }
 
-string AgsCreditz::GetStaticCreditTitle(const ScriptMethodParams &params) {
+string AGSCreditz::GetStaticCreditTitle(const ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 	return nullptr;
 }
 
-void AgsCreditz::SetStaticCreditImage(const ScriptMethodParams &params) {
+void AGSCreditz::SetStaticCreditImage(const ScriptMethodParams &params) {
 //int ID, int x, int y, int Slot, int Hcentered, int Vcentered, int time) {
 }
 
-int AgsCreditz::IsStaticCreditsFinished(const ScriptMethodParams &params) {
+int AGSCreditz::IsStaticCreditsFinished(const ScriptMethodParams &params) {
 	return true;
 }
 
-} // namespace AgsCreditz
+/*------------------------------------------------------------------*/
+
+AGSCreditz11::AGSCreditz11() {
+	_version = VERSION_11;
+
+	DLL_METHOD(AGS_EngineStartup);
+}
+
+void AGSCreditz11::AGS_EngineStartup(IAGSEngine *engine) {
+	AGSCreditz::AGS_EngineStartup(engine);
+	SCRIPT_METHOD(SetCredit);
+}
+
+void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
+	PARAMS7(int, ID, string, credit, int, colour, int, font, int, center, int, xpos, int, generateoutline);
+
+}
+
+/*------------------------------------------------------------------*/
+
+AGSCreditz20::AGSCreditz20() {
+	_version = VERSION_20;
+
+	DLL_METHOD(AGS_EngineStartup);
+}
+
+void AGSCreditz20::AGS_EngineStartup(IAGSEngine *engine) {
+	AGSCreditz::AGS_EngineStartup(engine);
+	SCRIPT_METHOD(SetCredit);
+}
+
+void AGSCreditz20::SetCredit(const ScriptMethodParams &params) {
+	PARAMS7(int, sequence, int, line, string, credit, int, x_pos, int, font, int, color, int, gen_outline);
+
+	assert(sequence >= 0 && sequence <= 10);
+	if (line >= (int)_state->_credits[sequence].size())
+		_state->_credits[sequence].resize(line + 1);
+
+	Credit &c = _state->_credits[sequence][line];
+	c._credit = credit;
+	c._fontSlot = font;
+	c._colorHeight = color;
+	c._x = x_pos;
+	c._isSet = true;
+	if (gen_outline > 0)
+		c._outline = true;
+}
+
+
+
+} // namespace AGSCreditz
 } // namespace Plugins
 } // namespace AGS3

@@ -56,13 +56,29 @@ static const PlainGameDescriptor GAME_NAMES[] = {
 			AD_ENTRY1s(FILENAME, MD5, SIZE), \
 			Common::EN_ANY, \
 			Common::kPlatformUnknown, \
-			ADGF_NO_FLAGS, \
+			ADGF_UNSTABLE, \
 			GUIO1(GUIO_NOSPEECH) \
-		} \
+		}, \
+		nullptr \
 	}
 
+#define ENGLISH_PLUGIN(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) { \
+		{ \
+			ID, \
+			nullptr, \
+			AD_ENTRY1s(FILENAME, MD5, SIZE), \
+			Common::EN_ANY, \
+			Common::kPlatformUnknown, \
+			ADGF_UNSTABLE, \
+			GUIO1(GUIO_NOSPEECH) \
+		}, \
+		PLUGIN_ARR \
+	}
+
+static const PluginVersion AGSCREDITZ_11[] = { { "agscreditz", 11 }, { nullptr, 0 } };
+
 static const AGSGameDescription GAME_DESCRIPTIONS[] = {
-	ENGLISH_ENTRY("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
+	ENGLISH_PLUGIN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255, AGSCREDITZ_11),
 	ENGLISH_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
 	ENGLISH_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42740200),
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG

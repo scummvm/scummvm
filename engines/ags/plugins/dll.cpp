@@ -20,8 +20,11 @@
  *
  */
 
+#include "ags/lib/allegro.h"
 #include "ags/plugins/dll.h"
 #include "ags/plugins/agscreditz/agscreditz.h"
+#include "ags/ags.h"
+#include "ags/detection.h"
 #include "common/str.h"
 
 namespace AGS3 {
@@ -30,8 +33,22 @@ namespace Plugins {
 void *dlopen(const char *filename) {
 	Common::String fname(filename);
 
-	if (fname.equalsIgnoreCase("libagsCreditz.so"))
-		return new AgsCreditz::AgsCreditz();
+	// Check for if the game specifies a specific plugin version for this game
+	int version = 0;
+	for (const ::AGS::PluginVersion *v = ::AGS::g_vm->getNeededPlugins();
+			v->_plugin; ++v) {
+		if (Common::String::format("lib%s.so", v->_plugin).equalsIgnoreCase(filename)) {
+			version = v->_version;
+			break;
+		}
+	}
+
+	if (fname.equalsIgnoreCase("libagsCreditz.so")) {
+		if (version == 20)
+			return new AGSCreditz::AGSCreditz20();
+		else
+			return new AGSCreditz::AGSCreditz11();
+	}
 
 	return nullptr;
 }

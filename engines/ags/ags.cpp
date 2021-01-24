@@ -302,6 +302,10 @@ uint32 AGSEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+const PluginVersion *AGSEngine::getNeededPlugins() const {
+	return _gameDescription->_plugins;
+}
+
 Common::Error AGSEngine::run() {
 	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
 	const char *ARGV[] = { "scummvm.exe", filename };
