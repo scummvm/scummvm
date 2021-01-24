@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-22 00:20+0000\n"
+"POT-Creation-Date: 2021-01-24 02:09+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1934,11 +1934,11 @@ msgstr "진행"
 msgid "Clear value"
 msgstr "값 제거"
 
-#: base/main.cpp:623
+#: base/main.cpp:621
 msgid "Error running game:"
 msgstr "게임 실행 에러:"
 
-#: base/main.cpp:670
+#: base/main.cpp:668
 msgid "Could not find any engine capable of running the selected game"
 msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다."
 

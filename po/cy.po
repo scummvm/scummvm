@@ -1873,11 +1873,11 @@ msgstr ""
 msgid "Clear value"
 msgstr ""
 
-#: base/main.cpp:623
+#: base/main.cpp:621
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:670
+#: base/main.cpp:668
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
