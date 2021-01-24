@@ -60,14 +60,32 @@ private:
 		HamalayiTransporter = 47
 	};
 
+	struct HolomapSurface {
+		int16 z;
+		uint16 projectedPosIdx;
+	};
+	HolomapSurface _holomapSurface[512];
+	struct HolomapProjectedPos {
+		int16 x;
+		int16 y;
+		uint16 unk1;
+		uint16 unk2;
+	};
+	HolomapProjectedPos _projectedSurfacePositions[2048];
+
 	struct TrajectoryData {
-		int16 unk1;
-		int16 unk2;
+		int16 locationIdx;
+		int16 trajLocationIdx;
 		int16 vehicleIdx;
 		int16 x;
 		int16 y;
 		int16 z;
-		int16 unk4;
+		int16 numAnimFrames;
+		struct TrajectoryPos {
+			int16 x;
+			int16 y;
+		};
+		TrajectoryPos positions[512];
 
 		/**
 		 * The HQR index of the vehicle model for the holomap
@@ -75,6 +93,10 @@ private:
 		 */
 		int32 getModel() const {
 			return 2 * vehicleIdx + HolomapVehicle::FerryBoat;
+		}
+
+		int32 getAnimation() const {
+			return getModel() + 1;
 		}
 	};
 
@@ -94,7 +116,7 @@ private:
 	void renderHolomapModel(byte *mdl_1, int32 x_2, int32 y_3, int32 zPos);
 
 	void prepareHolomapSurface();
-	void prepareHolomapPolygons();
+	void renderHolomapSurfacePolygons();
 
 public:
 	Holomap(TwinEEngine *engine);

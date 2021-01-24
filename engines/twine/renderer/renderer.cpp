@@ -975,7 +975,7 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices)
 		renderPolygonsMarble(out, vtop, vsize, polygon.colorIndex);
 		break;
 	default:
-		warning("RENDER WARNING: Unsuported render type %d", polygon.renderType);
+		warning("RENDER WARNING: Unsupported render type %d", polygon.renderType);
 		break;
 	}
 }
