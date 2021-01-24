@@ -77,7 +77,15 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 bool SdlGraphicsManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+		// When switching between the SDL and OpenGL graphics manager, the list
+		// of supported format changes. This means that the pixel format in the
+		// state may not be supported. In that case use the preferred supported
+		// pixel format instead.
+		Graphics::PixelFormat format = state.pixelFormat;
+		Common::List<Graphics::PixelFormat> supportedFormats = getSupportedFormats();
+		if (Common::find(supportedFormats.begin(), supportedFormats.end(), format) == supportedFormats.end())
+			format = supportedFormats.front();
+		initSize(state.screenWidth, state.screenHeight, &format);
 #else
 		initSize(state.screenWidth, state.screenHeight, nullptr);
 #endif
