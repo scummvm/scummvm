@@ -182,7 +182,7 @@ msgid "OK"
 msgstr ""
 
 #: gui/downloaddialog.cpp:152
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
