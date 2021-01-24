@@ -61,13 +61,13 @@ private:
 	};
 
 	struct TrajectoryData {
-		int16_t unk1;
-		int16_t unk2;
-		int16_t vehicleIdx;
-		int16_t x;
-		int16_t y;
-		int16_t z;
-		int16_t unk4;
+		int16 unk1;
+		int16 unk2;
+		int16 vehicleIdx;
+		int16 x;
+		int16 y;
+		int16 z;
+		int16 unk4;
 
 		/**
 		 * The HQR index of the vehicle model for the holomap
