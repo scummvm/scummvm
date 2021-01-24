@@ -73,7 +73,7 @@ unsigned long AGSFlashlight::flashlight_n;
 
 IAGSEngine *AGSFlashlight::_engine;
 
-AGSFlashlight::AGSFlashlight() {
+AGSFlashlight::AGSFlashlight() : DLL() {
 	_engine = nullptr;
 	screen_width = 320;
 	screen_height = 200;

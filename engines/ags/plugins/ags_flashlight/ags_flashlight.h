@@ -25,9 +25,6 @@
 
 #include "ags/plugins/dll.h"
 #include "ags/lib/allegro.h"
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/str.h"
 
 namespace AGS3 {
 namespace Plugins {
