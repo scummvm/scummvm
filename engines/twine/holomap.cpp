@@ -252,7 +252,6 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 	const Holomap::TrajectoryData &data = loadTrajectoryData(trajectoryIndex);
 	ScopedEngineFreeze timeFreeze(_engine);
-	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 
 	renderHolomapSurfacePolygons();
@@ -275,6 +274,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 	int32 local18 = 0;
 	bool fadeInPalette = true;
+	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
 		ScopedFPS scopedFps;
 		_engine->readKeys();
@@ -339,6 +339,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->_interface->loadClip();
 
 	_engine->_text->initSceneTextBank();
+	_engine->_input->enableKeyMap(mainKeyMapId);
 	free(animPtr);
 	free(modelPtr);
 }
@@ -461,7 +462,7 @@ void Holomap::processHolomap() {
 	int32 yRot = 0;
 	bool rotate = false;
 	bool redraw = true;
-	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
+	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
 		FrameMarker frame;
 		ScopedFPS scopedFps;
@@ -553,6 +554,7 @@ void Holomap::processHolomap() {
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
+	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();
 }
 
