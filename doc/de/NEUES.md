@@ -21,6 +21,10 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
    - Code der Roland MT-32-Emulation auf mt32emu 2.4.2 des Munt-Projekts aktualisiert.
+   - Unterstützung für die neue OAuth-Implementierung von Dropbox hinzugefügt.
+
+ AGOS:
+   - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
 
  Dreamweb:
    - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
@@ -35,6 +39,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die russische Fan-Übersetzung von Bargon Attack hinzugefügt.
    - Unterstützung für die russische Übersetzung von Woodruff hinzugefügt.
 
+ Griffon:
+   - Fehler korrigiert, der die Rückkehr zur Spiele-Liste/zum Launcher in The Griffon Legend verhindert hat.
+
  Grim:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
@@ -44,7 +51,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia hinzugefügt.
 
  Lure:
-   - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
+   - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines korrekt Spielstands abgespielt.
    - Unterstützung für MT-32 korrigiert.
 
  SAGA:
@@ -71,6 +78,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
    - Unterstützung für die Russobit-M-Versionen von Pajama2 und SpyOzone hinzugefügt.
    - Sprachausgabe in der Akella-Version von COMI korrigiert.
+   - Unterstützung für die Discord- und Humble Bundle-Versionen von Indiana Jones and the Fate of Atlantis hinzugefügt
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
