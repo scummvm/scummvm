@@ -108,7 +108,7 @@ void Input::enableKeyMap(const char *id) {
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
 	for (Common::Keymap *keymap : keymaps) {
 		const Common::String& keymapId = keymap->getId();
-		if (keymapId == mainKeyMapId || keymapId == uiKeyMapId || keymapId == cutsceneKeyMapId) {
+		if (keymapId == mainKeyMapId || keymapId == uiKeyMapId || keymapId == cutsceneKeyMapId || keymapId == holomapKeyMapId) {
 			keymap->setEnabled(keymapId == id);
 		}
 	}
