@@ -24,6 +24,7 @@
 #define AGS_PLUGINS_AGS_PARALLAX_AGS_PARALLAX_H
 
 #include "ags/plugins/dll.h"
+#include "ags/plugins/serializer.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -35,10 +36,7 @@ struct Sprite {
 	int slot = -1;
 	int speed = 0;
 
-	void save(IAGSEngine *engine, long file);
-	void load(IAGSEngine *engine, long file);
-	void saveInt(IAGSEngine *engine, long file, int value);
-	int loadInt(IAGSEngine *engine, long file);
+	void SyncGame(Serializer &s);
 };
 
 #define MAX_SPEED 1000
@@ -66,10 +64,7 @@ private:
 	static void pxDeleteSprite(int id);
 
 private:
-	static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle);
-	static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle);
-	static void RestoreGame(long file);
-	static void SaveGame(long file);
+	static void SyncGame(Serializer &s);
 	static void Draw(bool foreground);
 	static void clear();
 

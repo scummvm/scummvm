@@ -85,9 +85,11 @@ int AGSParallax::AGS_EngineOnEvent(int event, int data) {
 		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
 		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	} else if (event == AGSE_RESTOREGAME) {
-		RestoreGame(data);
+		Serializer s(_engine, data, true);
+		SyncGame(s);
 	} else if (event == AGSE_SAVEGAME) {
-		SaveGame(data);
+		Serializer s(_engine, data, false);
+		SyncGame(s);
 	}
 
 	return 0;
@@ -102,37 +104,17 @@ void AGSParallax::clear() {
 	_enabled = false;
 }
 
-size_t AGSParallax::engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
-	return totalBytes / size;
-}
-
-size_t AGSParallax::engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
-	return totalBytes / size;
-}
-
-void AGSParallax::RestoreGame(long file) {
-	byte saveVersion[4];
-	engineFileRead(&saveVersion, 4, 1, file);
-
-	if (READ_LE_UINT32(saveVersion) != SaveMagic) {
+void AGSParallax::SyncGame(Serializer &s) {
+	int saveVersion = SaveMagic;
+	s.syncAsInt(saveVersion);
+	if (saveVersion != SaveMagic) {
 		_engine->AbortGame("ags_parallax: bad save.");
+		return;
 	}
 
 	for (int i = 0; i < MAX_SPRITES; ++i)
-		_sprites[i].load(_engine, file);
-	engineFileRead(&_enabled, sizeof(bool), 1, file);
-}
-
-void AGSParallax::SaveGame(long file) {
-	byte saveVersion[4];
-	WRITE_LE_UINT32(saveVersion, SaveMagic);
-	engineFileWrite(&SaveMagic, 4, 1, file);
-
-	for (int i = 0; i < MAX_SPRITES; ++i)
-		_sprites[i].save(_engine, file);
-	engineFileWrite(&_enabled, 1, 1, file);
+		_sprites[i].SyncGame(s);
+	s.syncAsBool(_enabled);
 }
 
 void AGSParallax::Draw(bool foreground) {
@@ -204,30 +186,11 @@ void AGSParallax::pxDeleteSprite(int id) {
 
 /*------------------------------------------------------------------*/
 
-void Sprite::save(IAGSEngine *engine, long file) {
-	saveInt(engine, file, x);
-	saveInt(engine, file, y);
-	saveInt(engine, file, slot);
-	saveInt(engine, file, speed);
-}
-
-void Sprite::load(IAGSEngine *engine, long file) {
-	x = loadInt(engine, file);
-	y = loadInt(engine, file);
-	slot = loadInt(engine, file);
-	speed = loadInt(engine, file);
-}
-
-void saveInt(IAGSEngine *engine, long file, int value) {
-	byte buf[4];
-	WRITE_LE_INT32(buf, value);
-	engine->FWrite(buf, 4, file);
-}
-
-int loadInt(IAGSEngine *engine, long file) {
-	byte buf[4];
-	engine->FRead(buf, 4, file);
-	return READ_LE_INT32(buf);
+void Sprite::SyncGame(Serializer &s) {
+	s.syncAsInt(x);
+	s.syncAsInt(y);
+	s.syncAsInt(slot);
+	s.syncAsInt(speed);
 }
 
 } // namespace AGSParallax

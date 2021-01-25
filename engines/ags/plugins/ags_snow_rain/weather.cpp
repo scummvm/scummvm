@@ -134,7 +134,7 @@ void Weather::UpdateWithDrift() {
 }
 
 void Weather::SyncGame(Serializer &s) {
-	int saveVersion = 0;
+	int saveVersion = SaveMagic;
 	s.syncAsInt(saveVersion);
 
 	if (s.isLoading() && saveVersion != SaveMagic) {
