@@ -305,7 +305,8 @@ MODULE_OBJS = \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_pal_render/ags_pal_render.o \
-	plugins/ags_pal_render/raycast.o
+	plugins/ags_pal_render/raycast.o \
+	plugins/ags_parallax/ags_parallax.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \

@@ -1485,7 +1485,7 @@ void combSort(int *order, double *dist, int amount) {
 	}
 }
 
-} // namespace AGSBlend
+} // namespace AGSPalRender
 } // namespace Plugins
 } // namespace AGS3
 
