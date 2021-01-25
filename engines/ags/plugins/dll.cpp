@@ -27,6 +27,7 @@
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
+#include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -65,6 +66,9 @@ void *dlopen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("libAGSSnowRain.so"))
 		return new AGSSnowRain::AGSSnowRain();
+
+	if (fname.equalsIgnoreCase("libAGSSpriteFont.so"))
+		return new AGSSpriteFont::AGSSpriteFont();
 
 	return nullptr;
 }

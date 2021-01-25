@@ -1,9 +1,31 @@
-#include "VariableWidthSpriteFont.h"
-#include <string>
-#include <string.h>
-#include "color.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
+#include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
+#include "ags/plugins/ags_sprite_font/color.h"
 
+namespace AGS3 {
+namespace Plugins {
+namespace AGSSpriteFont {
 
 VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *engine) {
 	_engine = engine;
@@ -22,7 +44,7 @@ bool VariableWidthSpriteFontRenderer::SupportsExtendedCharacters(int fontNumber)
 int VariableWidthSpriteFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	int total = 0;
 	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		if (font->characters.count(text[i]) > 0) {
 			total += font->characters[text[i]].Width;
 			if (text[i] != ' ') total += font->Spacing;
@@ -33,7 +55,7 @@ int VariableWidthSpriteFontRenderer::GetTextWidth(const char *text, int fontNumb
 
 int VariableWidthSpriteFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		if (font->characters.count(text[i]) > 0) {
 			return font->characters[text[i]].Height;
 		}
@@ -50,9 +72,9 @@ void VariableWidthSpriteFontRenderer::SetSpacing(int fontNum, int spacing) {
 
 void VariableWidthSpriteFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
-	std::string s(text);
+	Common::String s(text);
 
-	for (int i = s.length() - 1; i >= 0 ; i--) {
+	for (int i = (int)s.size() - 1; i >= 0 ; i--) {
 		if (font->characters.count(s[i]) == 0) {
 			s.erase(i, 1);
 		}
@@ -74,7 +96,7 @@ void VariableWidthSpriteFontRenderer::SetSprite(int fontNum, int spriteNum) {
 
 VariableWidthFont *VariableWidthSpriteFontRenderer::getFontFor(int fontNum) {
 	VariableWidthFont *font;
-	for (int i = 0; i < _fonts.size(); i ++) {
+	for (int i = 0; i < (int)_fonts.size(); i ++) {
 		font = _fonts.at(i);
 		if (font->FontReplaced == fontNum) return font;
 	}
@@ -88,7 +110,7 @@ VariableWidthFont *VariableWidthSpriteFontRenderer::getFontFor(int fontNum) {
 void VariableWidthSpriteFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	int totalWidth = 0;
-	for (int i = 0; i < strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		char c = text[i];
 
 		BITMAP *src = _engine->GetSpriteGraphic(font->SpriteNumber);
@@ -175,8 +197,8 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 
 	_engine->ReleaseBitmapSurface(src);
 	_engine->ReleaseBitmapSurface(dest);
-
-
-
 }
 
+} // namespace AGSSpriteFont
+} // namespace Plugins
+} // namespace AGS3
