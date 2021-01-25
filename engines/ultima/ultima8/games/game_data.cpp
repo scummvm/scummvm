@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -373,7 +375,6 @@ void GameData::setupFontOverrides() {
 }
 
 void GameData::setupJPOverrides() {
-	SettingManager *settingman = SettingManager::get_instance();
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap jpkeyvals;
@@ -400,22 +401,19 @@ void GameData::setupJPOverrides() {
 		}
 	}
 
-	bool ttfoverrides = false;
-	settingman->get("ttf", ttfoverrides);
-	if (ttfoverrides)
+	bool overridefonts = ConfMan.getBool("overridefonts");
+	if (overridefonts)
 		setupTTFOverrides("language/fontoverride", true);
 }
 
 void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	SettingManager *settingman = SettingManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap ttfkeyvals;
 	KeyMap::const_iterator iter;
 
-	bool ttfoverrides = false;
-	settingman->get("ttf", ttfoverrides);
-	if (!ttfoverrides) return;
+	bool overridefonts = ConfMan.getBool("overridefonts");
+	if (!overridefonts) return;
 
 	ttfkeyvals = config->listKeyValues(configkey);
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {

@@ -22,7 +22,10 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
+
 #include "ultima/detection.h"
+#include "ultima/detection_tables.h"
 
 namespace Ultima {
 
@@ -45,12 +48,21 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ 0, 0 }
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+    GAMEOPTION_OVERRIDE_FONTS,
+	{
+        _s("Enable font replacement"),
+        _s("Replaces game fonts with rendered fonts"),
+        "overridefonts",
+        false
+	},
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 } // End of namespace Ultima
 
-#include "ultima/detection_tables.h"
-
 UltimaMetaEngineDetection::UltimaMetaEngineDetection() : AdvancedMetaEngineDetection(Ultima::GAME_DESCRIPTIONS,
-	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
+	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES, Ultima::optionsList) {
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;

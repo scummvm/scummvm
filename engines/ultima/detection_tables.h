@@ -22,6 +22,8 @@
 
 namespace Ultima {
 
+#define GAMEOPTION_OVERRIDE_FONTS GUIO_GAMEOPTIONS1
+
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 #ifndef RELEASE_BUILD
 	{
@@ -248,7 +250,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -263,7 +265,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -278,7 +280,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -292,7 +294,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -306,7 +308,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -321,7 +323,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -335,7 +337,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
@@ -349,7 +351,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::JA_JPN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_OVERRIDE_FONTS)
 		},
 		GAME_ULTIMA8,
 		0
