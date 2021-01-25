@@ -30,10 +30,15 @@ namespace Plugins {
 namespace AGSParallax {
 
 struct Sprite {
-	int x;
-	int y;
-	int slot;
-	int speed;
+	int x = 0;
+	int y = 0;
+	int slot = -1;
+	int speed = 0;
+
+	void save(IAGSEngine *engine, long file);
+	void load(IAGSEngine *engine, long file);
+	void saveInt(IAGSEngine *engine, long file, int value);
+	int loadInt(IAGSEngine *engine, long file);
 };
 
 #define MAX_SPEED 1000
@@ -63,10 +68,10 @@ private:
 private:
 	static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle);
 	static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle);
-	static void RestoreGame(long fileHandle);
+	static void RestoreGame(long file);
 	static void SaveGame(long file);
-	static void Initialize();
 	static void Draw(bool foreground);
+	static void clear();
 
 public:
 	AGSParallax();
