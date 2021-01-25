@@ -1,36 +1,34 @@
-//
-// ags_template.cpp : Example AGS plugin file
-// See the online API reference for details of how this works.
-// Copyright (c) 2002 Chris Jones
-//
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-#include "core/platform.h"
+#include "ags/lib/allegro.h"
+#include "ags/plugins/ags_pal_render/ags_pal_render.h"
+#include "ags/plugins/ags_pal_render/pal_render.h"
+#include "ags/plugins/ags_pal_render/raycast.h"
+#include "ags/ags.h"
 
-#if AGS_PLATFORM_OS_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
-#if !defined(BUILTIN_PLUGINS)
-#define THIS_IS_THE_PLUGIN
-#endif
-
-#include <algorithm>
-#include <cmath>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <math.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string>
-#include <stdio.h>
-
-
-
-#include "plugin/agsplugin.h"
-#include "palrender.h"
-#include "raycast.h"
+namespace AGS3 {
+namespace Plugins {
+namespace AGSPalRender {
 
 #define MAX_OVERLAYS 128
 #define MAX_STARS 1024
@@ -40,37 +38,14 @@
 #define HALF_PI    (0.5f * PI)
 #define TWO_PI     (2.0f * PI)
 #define TWO_PI_INV (1.0f / TWO_PI)
-// DllMain - standard Windows DLL entry point.
-// The AGS editor will cause this to get called when the editor first
-// starts up, and when it shuts down at the end.
-
-#if AGS_PLATFORM_OS_WINDOWS
-bool APIENTRY DllMain(HANDLE hModule,
-                      DWORD  ul_reason_for_call,
-                      LPVOID lpReserved) {
-
-	switch (ul_reason_for_call)   {
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
-#endif
-
-
-
-#if defined(BUILTIN_PLUGINS)
-namespace agspalrender {
-#endif
 
 const float halfpi = (0.5f * PI);
 const float twopi  = (2.0f * PI);
 const float twopi_inv = (1.0f / TWO_PI);
 const float pisquared = PI * PI;
 const float picubed = PI * PI * PI;
+
+IAGSEngine *engine;
 
 //unsigned char clut[256][256];
 unsigned char clut[65536];
@@ -161,313 +136,6 @@ BITMAP *backgroundimage;
 PALSTRUCT objectivepal[256];
 int bgimgspr;
 
-// ***** DESIGN TIME CALLS *******
-#if AGS_PLATFORM_OS_WINDOWS && !defined(BUILTIN_PLUGINS)
-
-IAGSEditor *editor;
-const char *ourScriptHeader =
-    "enum BlendingMode {																	\r\n"
-    "eBlendAlpha = 0,																		\r\n"
-    "eBlendAdditive = 1																	\r\n"
-    "};																					\r\n"
-    "enum ObjectiveMode {																	\r\n"
-    "eUseStandardPal = 0,																	\r\n"
-    "eUseObjectivePal = 1																	\r\n"
-    "};																					\r\n"
-    "enum PlasmaMixMode {																	\r\n"
-    "ePlasmaNone = 0,																		\r\n"
-    "ePlasmaHorzBars = 1,																    \r\n"
-    "ePlasmaVertBars = 2,																    \r\n"
-    "ePlasmaCircle   = 3,																    \r\n"
-    "ePlasmaDiagBars = 4																    \r\n"
-    "};																					\r\n"
-    "enum PlasmaRootType {																\r\n"
-    "ePlasmaSlowRoot = 1,																	\r\n"
-    "ePlasmaFastRoot = 0																    \r\n"
-    "};																					\r\n"
-    "enum TransOverlayLevel {																\r\n"
-    "eTOBackground = 0,																	\r\n"
-    "eTOPreGUI     = 1,																	\r\n"
-    "eTOPostGUI    = 2																	\r\n"
-    "};																					\r\n"
-    "enum LensLevel {																		\r\n"
-    "eLensBackgroundPreTO = 0,															\r\n"
-    "eLensBackgroundPostTO = 1,															\r\n"
-    "eLensPreGUIPreTO     = 2,															\r\n"
-    "eLensPreGUIPostTO     = 3,															\r\n"
-    "eLensPostGUIPreTO     = 4,															\r\n"
-    "eLensPostGUIPostTO     = 5															\r\n"
-    "};																					\r\n"
-
-    "struct Raycast {																					   \r\n"
-    "import static void Render (int slot);															   \r\n"
-    "import static void UnloadEngine ();	//$AUTOCOMPLETEIGNORE$										   \r\n"
-    "import static void MoveForward ();																   \r\n"
-    "import static void MoveBackward ();																   \r\n"
-    "import static void RotateLeft ();																   \r\n"
-    "import static void RotateRight ();																   \r\n"
-    "import static void MakeTextures (int slot);														   \r\n"
-    "import static void Initialize (); 																   \r\n"
-    "import static void LoadMap (int worldmapSlot,int lightmapSlot,int ceilingmapSlot,int floormapSlot); \r\n"
-    "import static void SetCameraPosition (float x,float y);				 						   \r\n"
-    "import static float GetCameraX (); 														       \r\n"
-    "import static float GetCameraY (); 															   \r\n"
-    "import static int GetCameraAngle (); 														   \r\n"
-    "import static void SetCameraAngle (int angle); 												   \r\n"
-    "import static void InitSprite (int id, float x, float y, int slot, char alpha=255, BlendingMode blendmode=0, float scale_x=0, float scale_y=0, float vMove=0);\r\n"
-    "import static int GetHotspotAtXY (int x,int y); 												   \r\n"
-    "import static int GetObjectAtXY (int x,int y); 												   \r\n"
-
-    "import static void SetSpriteInteractObj (int id,int obj); 									   \r\n"
-    "import static int  GetSpriteInteractObj (int id);		 									   \r\n"
-    "import static void SetSpritePosition (int id, float x, float y); 							   \r\n"
-    "import static void SetSpriteVertOffset (int id, float vMove); 								   \r\n"
-    "import static float GetSpriteVertOffset (int id);	 										   \r\n"
-    "import static float GetSpriteX (int id); 													   \r\n"
-    "import static float GetSpriteY (int id);														   \r\n"
-    "import static int GetSpriteAngle (int id);													   \r\n"
-    "import static void SetSpriteAngle (int id,int angle);										   \r\n"
-    "import static void SetSpriteView (int id,int view);											   \r\n"
-    "import static int GetSpriteView (int id);													   \r\n"
-    "import static void SetSpriteFrame (int id,int frame);										   \r\n"
-    "import static int GetSpriteFrame (int id);													   \r\n"
-    "import static float GetSpriteScaleX (int id);											       \r\n"
-    "import static void SetSpriteScaleX (int id,float scale);									       \r\n"
-    "import static float GetSpriteScaleY (int id);												   \r\n"
-    "import static void SetSpriteScaleY (int id,float scale);										   \r\n"
-
-
-    "import static void SetWallHotspot (int id,char hotsp);	 									   \r\n"
-    "import static void SetWallTextures (int id,int n,int s,int w,int e);							   \r\n"
-    "import static void SetWallSolid (int id,int n,int s,int w,int e); 							   \r\n"
-    "import static void SetWallIgnoreLighting (int id,int n,int s,int w,int e);					   \r\n"
-    "import static void SetWallAlpha (int id,int n,int s,int w,int e); 							   \r\n"
-    "import static void SetWallBlendType (int id,BlendingMode n,BlendingMode s,BlendingMode w,BlendingMode e);\r\n"
-
-    "import static float GetMoveSpeed ();															   \r\n"
-    "import static void SetMoveSpeed (float speed);												   \r\n"
-    "import static float GetRotSpeed ();															   \r\n"
-    "import static void SetRotSpeed (float speed); 												   \r\n"
-    "import static int GetWallAt (int x,int y); 													   \r\n"
-    "import static int GetLightAt (int x,int y); 													   \r\n"
-    "import static void SetLightAt (int x,int y, int light); 										   \r\n"
-    "import static void SetWallAt (int x,int y,int id);											   \r\n"
-    "import static void SetPlaneY (float y);	 													   \r\n"
-    "import static float GetDistanceAt (int x,int y);					  							   \r\n"
-    "import static void SetSkyBox (int slot);						  							   	   \r\n"
-    "import static int GetSkyBox (int slot);						  							       \r\n"
-    "import static void SetAmbientLight (int value);				  							       \r\n"
-    "import static int GetAmbientLight ();						  							       \r\n"
-    "import static void SetFloorAt (int x,int y,int tex);										       \r\n"
-    "import static void SetCeilingAt (int x,int y,int tex);									       \r\n"
-    "import static int GetCeilingAt (int x,int y);											       \r\n"
-    "import static int GetFloorAt (int x,int y);						  						       \r\n"
-    "import static int GetLightingAt (int x,int y);						 					       \r\n"
-    "import static void SetLightingAt (int x,int y,char lighting);						 		   \r\n"
-    "import static int GetAmbientWeight ();														   \r\n"
-    "import static int GetTileX_At (int x,int y);													   \r\n"
-    "import static int GetTileY_At (int x,int y);													   \r\n"
-    "///Draws a loaded tile onto a sprite (make sure it's 64x64 pixels).							   \r\n"
-    "import static void DrawTile (int spr,int tile);												   \r\n"
-    "///Draws a sprite onto a tile (make sure it's 64x64 pixels).									   \r\n"
-    "import static void DrawOntoTile (int spr,int tile);											   \r\n"
-    "import static int GetWallHotspot (int id);													   \r\n"
-    "import static int GetWallTexture (int id,int dir);											   \r\n"
-    "import static int GetWallSolid (int id,int dir);												   \r\n"
-    "import static int GetWallIgnoreLighting (int id,int dir);									   \r\n"
-    "import static int GetWallAlpha (int id, int dir);											   \r\n"
-    "import static int GetWallBlendType (int id,int dir);											   \r\n"
-    "import static void SelectTile (int x,int y, char color);										   \r\n"
-    "import static void SetNoClip (int value);													   \r\n"
-    "import static int GetNoClip ();																   \r\n"
-    "import static int HasSeenTile (int x,int y);													   \r\n"
-    "import static int GetSpriteAlpha (int id);													   \r\n"
-    "import static void SetSpriteAlpha (int id,int alpha);										   \r\n"
-    "import static int GetSpritePic (int id);														   \r\n"
-    "import static void SetSpritePic (int id,int slot);											   \r\n"
-    "import static void SetSpriteBlendType (int id,BlendingMode type);							   \r\n"
-    "import static int GetSpriteBlendType (int id);												   \r\n"
-    "import static void SetAmbientColor (int color,int amount);									   \r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$															   \r\n"
-    "};																							   \r\n"
-
-    "struct PALInternal {																	\r\n"
-    "///Loads the colour lookup table for translucency effects. Used by module.			\r\n"
-    "import static int LoadCLUT (int slot);// $AUTOCOMPLETESTATICONLY$					\r\n"
-    "///Cycles the internal palette structure of the plugin. Internal use only.			\r\n"
-    "import static void CycleRemap (int start, int end);// $AUTOCOMPLETESTATICONLY$		\r\n"
-    "///Resets the remap array.															\r\n"
-    "import static void ResetRemapping ();				// $AUTOCOMPLETESTATICONLY$		\r\n"
-    "///Gets the closest palette slot from 16 bit colour space.							\r\n"
-    "import static char GetColor565 (char r,char g,char b);// $AUTOCOMPLETESTATICONLY$	\r\n"
-    "///Returns the true location of a remapped colour.									\r\n"
-    "import static char GetRemappedSlot (char slot);//$AUTOCOMPLETESTATICONLY$			\r\n"
-    "///Gets the luminosity of the palette slot.											\r\n"
-    "import static int GetLuminosityFromPalette (int slot);// $AUTOCOMPLETESTATICONLY$	\r\n"
-    "///Polynomial Sine Approximation.													\r\n"
-    "import static float FastSin (float x);// $AUTOCOMPLETESTATICONLY$					\r\n"
-    "///Polynomial Cosine Approximation.													\r\n"
-    "import static float FastCos (float x);// $AUTOCOMPLETESTATICONLY$					\r\n"
-    "///Ludicrously Fast Integer Root (0-0xFFFF)											\r\n"
-    "import static int FastRoot(int x);	 // $AUTOCOMPLETESTATICONLY$					\r\n"
-    "import static int GetModifiedBackgroundImage ();	//$AUTOCOMPLETEIGNORE$				\r\n"
-    "import static void WriteObjectivePalette (char index,char r,char b, char g);			\r\n"
-    "import static int ReadObjectivePaletteR (char index);								\r\n"
-    "import static int ReadObjectivePaletteB (char index);								\r\n"
-    "import static int ReadObjectivePaletteG (char index);								\r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$													\r\n"
-    "};																					\r\n"
-
-    "struct Translucence {																																	 \r\n"
-    "///Creates a translucent overlay. level=0: Background,level=1: Below GUIs,level=2:Above GUIs. blendmode=0: Alpha, blendmode=1: Additive			 		 \r\n"
-    "import static int CreateOverlay (int id, int sprite, int alpha, int level, int ox, int oy,int mask=0,BlendingMode blendmode=0);// $AUTOCOMPLETESTATICONLY$\r\n"
-    "///Deletes translucent overlay.																															 \r\n"
-    "import static int DeleteOverlay (int id);// $AUTOCOMPLETESTATICONLY$																						 \r\n"
-    "///Moves Translucent Overlay to OX,OY.																													 \r\n"
-    "import static int Move (int id, int ox, int oy);// $AUTOCOMPLETESTATICONLY$																				 \r\n"
-    "///Get X coordinate of translucent overlay.																												 \r\n"
-    "import static int GetOverlayX (int id);// $AUTOCOMPLETESTATICONLY$																						 \r\n"
-    "///Get Y coordinate of translucent overlay.																												 \r\n"
-    "import static int GetOverlayY (int id);// $AUTOCOMPLETESTATICONLY$																						 \r\n"
-    "///Get the sprite slot for translucent overlay id																										 \r\n"
-    "import static int GetOverlaySprite (int id);// $AUTOCOMPLETESTATICONLY$																					 \r\n"
-    "///Get the level the overlay is drawn on currently.																										 \r\n"
-    "import static int GetOverlayLevel (int id);// $AUTOCOMPLETESTATICONLY$																					 \r\n"
-    "///Get whether Translucent Overlay is currently being drawn.																								 \r\n"
-    "import static int GetOverlayEnabled (int id);// $AUTOCOMPLETESTATICONLY$																					 \r\n"
-    "///Get the alpha channel for translucent overlay id. (0-255)																								 \r\n"
-    "import static int GetOverlayAlpha (int id);// $AUTOCOMPLETESTATICONLY$																					 \r\n"
-    "///Set translucent overlay id's alpha. (0-255)																											 \r\n"
-    "import static int SetOverlayAlpha (int id, int alpha);// $AUTOCOMPLETESTATICONLY$																		 \r\n"
-    "///Turn overlay on or off.																																 \r\n"
-    "import static int SetOverlayEnabled (int id, int toggle);// $AUTOCOMPLETESTATICONLY$																		 \r\n"
-    "///Blend bg with fg (fg is changed) together at alpha translevel.																						 \r\n"
-    "import static int DrawTransSprite (int sprite, int bg, int translevel,int mask=0,BlendingMode blendmode=0,ObjectiveMode use_objpal=0);// $AUTOCOMPLETESTATICONLY$ \r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$																														 \r\n"
-    "};																																						 \r\n"
-
-    "struct Reflections {																																\r\n"
-    "///Turn reflective floors off or on.																												\r\n"
-    "import static int Set (int toggle);// $AUTOCOMPLETESTATICONLY$																					\r\n"
-    "///Check if reflections are turned on.																											\r\n"
-    "import static int IsReflecting ();// $AUTOCOMPLETESTATICONLY$																					\r\n"
-    "import static void SetCharacterReflected (int id,int refl);// $AUTOCOMPLETESTATICONLY$															\r\n"
-    "import static void SetObjectReflected (int id,int refl);// $AUTOCOMPLETESTATICONLY$																\r\n"
-    "import static int GetCharacterReflected (int id);// $AUTOCOMPLETESTATICONLY$																		\r\n"
-    "import static int GetObjectReflected (int id);// $AUTOCOMPLETESTATICONLY$																		\r\n"
-    "import static void ReplaceCharacterReflectionView (int id,int view);// $AUTOCOMPLETESTATICONLY$													\r\n"
-    "import static void SetObjectReflectionIgnoreScaling (int id,int wb);// $AUTOCOMPLETESTATICONLY$													\r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$																												\r\n"
-    "};																																				\r\n"
-
-
-    "struct LensDistort {																																\r\n"
-    "import static void SetPos (int x,int y);															// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static int GetX ();																		// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static int GetY ();																		// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static void Set (int toggle);																// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static int IsDrawn ();																	// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static void SetOffsetClamp (int clamp);													//$AUTOCOMPLETEIGNORE$							\r\n"
-    "import static int GetOffsetClamp ();																//$AUTOCOMPLETEIGNORE$							\r\n"
-    "import static int GetLevel ();																	// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static void SetLevel (int level);															// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "import static void Initialize (int width, int zoom, int lensx,int lensy,LensLevel level,int clamp=-1);	// $AUTOCOMPLETESTATICONLY$				\r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$																												\r\n"
-    "};																																				\r\n"
-
-    "struct Plasma {																																	\r\n"
-    "///Set options for plasma generation. 0 = None. 1 = Horizontal Bars (data=width). 2 = Vertical Bars (data=width). 3 = Circle (data=x,data2=y,data3=width). 4 = Diagonal Bars (data=width) \r\n"
-    "import static void SetPlasmaType (int component, PlasmaMixMode type, int data=0, int data2=0, int data3=0);// $AUTOCOMPLETESTATICONLY$						\r\n"
-    "///Set all plasma settings to 0.																													\r\n"
-    "import static void ResetPlasmaSettings ();// $AUTOCOMPLETESTATICONLY$\r\n"
-    "///Draw Plasma into dynamic sprite slot using range palstart-palend. Remember to use SetPlasmaType first!										\r\n"
-    "import static void DrawPlasma (int slot, int palstart, int palend);// $AUTOCOMPLETESTATICONLY$													\r\n"
-    "///Draw fire effect into sprite, and alpha channel into masksprite.																				\r\n"
-    "import static void DoFire (int sprite, int masksprite, int palstart,int palend, int strength, int seed=0,int cutoff=0,int windspeed=0);// $AUTOCOMPLETESTATICONLY$\r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$																												\r\n"
-    "import static void SetRootType (PlasmaRootType real);// $AUTOCOMPLETESTATICONLY$															\r\n"
-    "import static int GetRootType ();// $AUTOCOMPLETESTATICONLY$																				\r\n"
-    "};																																				\r\n"
-
-    "struct Starfield {																																\r\n"
-    "import static void Draw (int slot, int maskslot);																								\r\n"
-    "import static void RotateStar (int star, int angle,int px,int py);																				\r\n"
-    "import static void Iterate (int slot);																											\r\n"
-    "import static void Initialize (int slot,int maxstars);																							\r\n"
-    "import static void SetOriginPoint (int x,int y);																									\r\n"
-    "import static float GetStarX (int i);																											\r\n"
-    "import static float GetStarY (int i);																											\r\n"
-    "import static float GetStarZ (int i);																											\r\n"
-    "import static void SetStarPosition (int star,float x,float y,float z);																			\r\n"
-    "import static void SetStarColor (int star, char color);																							\r\n"
-    "import static char GetStarColor (int star);																										\r\n"
-    "import static void SetStarSprite (int star, int slot);																							\r\n"
-    "import static int GetStarSprite (int star);																										\r\n"
-    "import static void SetStarSpriteRange (int start, int end, int slot);																			\r\n"
-    "import static int GetOverscan ();																												\r\n"
-    "import static void SetOverscan (int overscan);																									\r\n"
-    "import static int GetOriginX ();																													\r\n"
-    "import static int GetOriginY ();																													\r\n"
-    "import static void SetDepthMultiplier (int multi);																								\r\n"
-    "import static int GetDepthMultiplier ();																											\r\n"
-    "import static int GetMaxStars ();																												\r\n"
-    "import static void SetStarSpriteScaleBoost (int star,int boost);																					\r\n"
-    "import static int GetStarSpriteScaleBoost (int star);																							\r\n"
-    "import static void SetStarMaxRadius (int star,int radius);																						\r\n"
-    "import static int GetStarMaxRadius (int star);																									\r\n"
-    "int dummy; //$AUTOCOMPLETEIGNORE$																												\r\n"
-    "};																																				\r\n";
-
-const char *AGS_GetPluginName(void) {
-	// Return the plugin description
-	return "PALgorithms Translucent Overlay Renderer";
-}
-
-int  AGS_EditorStartup(IAGSEditor *lpEditor) {
-	// User has checked the plugin to use it in their game
-
-	// If it's an earlier version than what we need, abort.
-	if (lpEditor->version < 1)
-		return -1;
-
-	editor = lpEditor;
-	editor->RegisterScriptHeader(ourScriptHeader);
-
-	// Return 0 to indicate success
-	return 0;
-}
-
-void AGS_EditorShutdown() {
-	// User has un-checked the plugin from their game
-	editor->UnregisterScriptHeader(ourScriptHeader);
-}
-
-#if AGS_PLATFORM_OS_WINDOWS
-void AGS_EditorProperties(HWND parent) {
-	// User has chosen to view the Properties of the plugin
-	// We could load up an options dialog or something here instead
-	MessageBox(parent, "PALgorithms Translucent Overlay Renderer & Other Demo Effects (c) 2015 Scavenger", "About", MB_OK | MB_ICONINFORMATION);
-}
-
-#endif
-
-int AGS_EditorSaveGame(char *buffer, int bufsize) {
-	// We don't want to save any persistent data
-	return 0;
-}
-
-void AGS_EditorLoadGame(char *buffer, int bufsize) {
-	// Nothing to load for this dummy plugin
-}
-
-#endif // #if AGS_PLATFORM_OS_WINDOWS && !defined(BUILTIN_PLUGINS)
-// ******* END DESIGN TIME  *******
-
-
-// ****** RUN TIME ********
-
-IAGSEngine *engine;
-
 void WriteObjectivePalette(unsigned char index, unsigned char r, unsigned char b, unsigned char g) {
 	objectivepal[index].r = r;
 	objectivepal[index].b = b;
@@ -534,7 +202,7 @@ unsigned short root(unsigned short x) {
 }
 
 
-inline float Hill(float x) {
+float Hill(float x) {
 	const float a0 = 1.0f;
 	const float a2 = 2.0f / PI - 12.0f / (pisquared);
 	const float a3 = 16.0f / (picubed) - 4.0f / (pisquared);
@@ -585,7 +253,7 @@ void DrawLens(int ox, int oy) {
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	if (!virtsc) engine->AbortGame("DrawLens: Cannot get virtual screen.");
 	BITMAP *lenswrite = engine->CreateBlankBitmap(LensOption.lenswidth, LensOption.lenswidth, 8);
-	unsigned char **screen = engine->GetRawBitmapSurface(virtsc);
+	unsigned char **vScreen = engine->GetRawBitmapSurface(virtsc);
 	unsigned char **lensarray = engine->GetRawBitmapSurface(lenswrite);
 	int radius = LensOption.lenswidth >> 1;
 	for (int y = 0; y < LensOption.lenswidth; y++) {
@@ -595,8 +263,8 @@ void DrawLens(int ox, int oy) {
 			int coffx = lens[lenspos].xoffset;
 			int coffy = lens[lenspos].yoffset;
 			if (oy + coffy > 0 && oy + coffy < sh && ox + coffx > 0 && ox + coffx < sw) {
-				lensarray[y][x] = screen[oy + coffy][ox + coffx];
-				//screen[oy+coffy][ox+coffx] = abs(coffy);
+				lensarray[y][x] = vScreen[oy + coffy][ox + coffx];
+				//vScreen[oy+coffy][ox+coffx] = ABS(coffy);
 			}
 		}
 	}
@@ -608,7 +276,7 @@ void DrawLens(int ox, int oy) {
 	    {
 	        if (oy+y > 0 && oy+y < sh && ox+x > 0 && ox+x < sw)
 	        {
-	            screen[oy+y][ox+x] = lensarray[y][x];
+	            vScreen[oy+y][ox+x] = lensarray[y][x];
 	        }
 	    }
 	}
@@ -622,7 +290,7 @@ void DrawLens(int ox, int oy) {
 			int dy = cy + oy;
 			if ((cxsq + cysq <= radsq) && dx < sw && dx >= 0 && dy < sh && dy >= 0 && cy + radius < LensOption.lenswidth - 1 && cx + radius < LensOption.lenswidth - 1) {
 				//if (cy+radius < 0 || cx+radius < 0) engine->AbortGame ("I did something wrong");
-				screen[dy][dx] = lensarray[cy + radius][cx + radius];
+				vScreen[dy][dx] = lensarray[cy + radius][cx + radius];
 			}
 		}
 	}
@@ -810,9 +478,9 @@ void DrawPlasma(int slot, int palstart, int palend) {
 	engine->NotifySpriteUpdated(slot);
 }
 
-void DoFire(int sprite, int masksprite, int palstart, int palend, int strength, int seed, int cutoff, int windspeed) {
+void DoFire(int spriteId, int masksprite, int palstart, int palend, int strength, int seed, int cutoff, int windspeed) {
 	BITMAP *firespr = engine->GetSpriteGraphic(masksprite);
-	BITMAP *firecolorspr = engine->GetSpriteGraphic(sprite);
+	BITMAP *firecolorspr = engine->GetSpriteGraphic(spriteId);
 	BITMAP *seedspr;
 	int32 w, h = 0;
 	int range, basecol, dir = 0;
@@ -832,25 +500,31 @@ void DoFire(int sprite, int masksprite, int palstart, int palend, int strength, 
 	int sparky = 0;
 	//srand(time(NULL));
 	for (int y = 0; y < h - 1; y++) {
-		if (rand() % 10 > 7 - windspeed) { //Wind right
+		if ((int)::AGS::g_vm->getRandomNumber(9) > 7 - windspeed) { //Wind right
 			for (int x = w - 1; x > 1; x--) {
 				fire[y][x] = fire[y][x - 1];
 			}
-		} else if (rand() % 10 > 7 + windspeed) { // wind left
+		} else if ((int)::AGS::g_vm->getRandomNumber(9) > 7 + windspeed) { // wind left
 			for (int x = 0; x < w - 1; x++) {
 				fire[y][x] = fire[y][x + 1];
 			}
 		}
 	}
 	for (int x = 0; x < w; x++) {
-		sparky = abs(rand() % (h - 2));
-		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff && abs(rand() % 10) > 7) fire[h - sparky][x] = 255;
-		sparky = abs(rand() % (h - 2));
-		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff && abs(rand() % 10) > 7) fire[h - sparky][x] = 0;
+		sparky = ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % (h - 2));
+		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff &&
+				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
+			fire[h - sparky][x] = 255;
+		sparky = ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % (h - 2));
+		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff &&
+				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
+			fire[h - sparky][x] = 0;
 	}
 	if (seed == 0) {
-		for (int x = 0; x < w; x++) fire[h - 1][x] = 255;
-		for (int x = 0; x < w; x++) fire[h - 2][x] = abs(32768 + rand()) % 256;
+		for (int x = 0; x < w; x++)
+			fire[h - 1][x] = 255;
+		for (int x = 0; x < w; x++)
+			fire[h - 2][x] = ::AGS::g_vm->getRandomNumber(255);
 	} else if (seed > 0) {
 		seedspr = engine->GetSpriteGraphic(seed);
 		BITMAP *virtsc = engine->GetVirtualScreen();
@@ -859,7 +533,7 @@ void DoFire(int sprite, int masksprite, int palstart, int palend, int strength, 
 		engine->SetVirtualScreen(virtsc);
 		engine->ReleaseBitmapSurface(virtsc);
 		engine->ReleaseBitmapSurface(seedspr);
-		engine->NotifySpriteUpdated(sprite);
+		engine->NotifySpriteUpdated(spriteId);
 		engine->NotifySpriteUpdated(masksprite);
 	}
 
@@ -878,7 +552,7 @@ void DoFire(int sprite, int masksprite, int palstart, int palend, int strength, 
 	}
 	engine->ReleaseBitmapSurface(firespr);
 	engine->ReleaseBitmapSurface(firecolorspr);
-	engine->NotifySpriteUpdated(sprite);
+	engine->NotifySpriteUpdated(spriteId);
 	engine->NotifySpriteUpdated(masksprite);
 }
 
@@ -1025,14 +699,14 @@ void InitializeStars(int slot, int maxstars) {
 	Starfield.overscan = 20;
 	stars = new starstype [Starfield.maxstars];
 	for (int i = 0; i < Starfield.maxstars; i++) {
-		stars[i].x = (float)((rand() % sw) << 1) - sw;
+		stars[i].x = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sw) << 1) - sw;
 		if (stars[i].x < 1.0 && stars[i].x > -1.0) stars[i].x = (float)sw;
-		stars[i].y = (float)((rand() % sh) << 1) - sh;
+		stars[i].y = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sh) << 1) - sh;
 		if (stars[i].y < 1.0 && stars[i].y > -1.0) stars[i].y = (float)sh;
 		stars[i].z = (float)(MAX_DEPTH);
-		stars[i].color = (rand() % 240);
+		stars[i].color = (::AGS::g_vm->getRandomNumber(0x7fffffff) % 240);
 		stars[i].sprite = 0;
-		stars[i].maxrad = (rand() % 5);
+		stars[i].maxrad = (::AGS::g_vm->getRandomNumber(0x7fffffff) % 5);
 	}
 }
 
@@ -1047,9 +721,9 @@ void IterateStars(int slot) {
 		int px = static_cast<int>(stars[i].x * k + Starfield.originx);
 		int py = static_cast<int>(stars[i].y * k + Starfield.originy);
 		if (px >= sw + Starfield.overscan || px < 0 - Starfield.overscan || py >= sh + Starfield.overscan || py < 0 - Starfield.overscan) {
-			stars[i].x = (float)((rand() % sw) << 1) - sw;
+			stars[i].x = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sw) << 1) - sw;
 			if (stars[i].x < 1.0 && stars[i].x > -1.0) stars[i].x = (float)sw;
-			stars[i].y = (float)((rand() % sh) << 1) - sh;
+			stars[i].y = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sh) << 1) - sh;
 			if (stars[i].y < 1.0 && stars[i].y > 1.0) stars[i].y = (float)sh;
 			stars[i].z = (float)MAX_DEPTH;
 			//stars[i].color = (rand () %240);
@@ -1180,9 +854,9 @@ void DrawStars(int slot, int maskslot) {
 		int px = static_cast<int>(stars[i].x * k + Starfield.originx);
 		int py = static_cast<int>(stars[i].y * k + Starfield.originy);
 		if (px >= sw + Starfield.overscan || px < 0 - Starfield.overscan || py >= sh + Starfield.overscan || py < 0 - Starfield.overscan) {
-			stars[i].x = (float)((rand() % sw) << 1) - sw;
+			stars[i].x = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sw) << 1) - sw;
 			if (stars[i].x < 1.0 && stars[i].x > -1.0) stars[i].x = (float)sw;
-			stars[i].y = (float)((rand() % sh) << 1) - sh;
+			stars[i].y = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sh) << 1) - sh;
 			if (stars[i].y < 1.0 && stars[i].y > 1.0) stars[i].y = (float)sh;
 			stars[i].z = (float)MAX_DEPTH;
 			//stars[i].color = (rand () %240);
@@ -1265,9 +939,9 @@ void DrawStars(int slot, int maskslot) {
 				int x2, y2 ;
 				int ox = px - (w2 >> 1);
 				int oy = py - (h2 >> 1);
-				for (int i = 0; i < h2; i++) {
-					int temprzy = i * y_ratio;
-					int ey = oy + i;
+				for (int ii = 0; ii < h2; ii++) {
+					int temprzy = ii * y_ratio;
+					int ey = oy + ii;
 					for (int j = 0; j < w2; j++) {
 						x2 = ((j * x_ratio) >> 16);
 						y2 = ((temprzy) >> 16);
@@ -1278,7 +952,7 @@ void DrawStars(int slot, int maskslot) {
 								screenarray [ey][ex] = orig[y2][x2];
 							}
 						}
-						//resized [i][j] = orig [y2][x2];
+						//resized [ii][j] = orig [y2][x2];
 					}
 				}
 				engine->ReleaseBitmapSurface(origspr);
@@ -1338,14 +1012,13 @@ void DrawStars(int slot, int maskslot) {
 }
 
 
-int CreateTranslucentOverlay(int id, int sprite, int alpha, int level, int ox, int oy, int mask = 0, int blendmode = 0) {
-
-	BITMAP *testspr = engine->GetSpriteGraphic(sprite);
-	if (testspr) overlay[id].sprite = sprite;
-	else engine->AbortGame("CreateTranslucentOverlay: Invalid sprite.");
+int CreateTranslucentOverlay(int id, int spriteId, int alpha, int level, int ox, int oy, int mask = 0, int blendmode = 0) {
+	BITMAP *testspr = engine->GetSpriteGraphic(spriteId);
+	if (testspr) overlay[id].sprite = spriteId;
+	else engine->AbortGame("CreateTranslucentOverlay: Invalid spriteId.");
 	engine->ReleaseBitmapSurface(testspr);
-	overlay[id].level = std::max(0, std::min(level, 4));
-	overlay[id].trans = std::max(0, std::min(alpha, 255));
+	overlay[id].level = MAX(0, MIN(level, 4));
+	overlay[id].trans = MAX(0, MIN(alpha, 255));
 	overlay[id].spritemask = mask;
 	overlay[id].x = ox;
 	overlay[id].y = oy;
@@ -1523,8 +1196,8 @@ int DrawReflections(int id, int charobj = 0) {
 	engine->RoomToViewport(&ox, &oy);
 	int yoffset = 0;
 	int translevel = 7;
-	bool dither = false;
-	bool dodither = false;
+	//bool dither = false;
+	//bool dodither = false;
 	int counter = 0;
 	int rowcount = 101 - (int)(50.0 * ((double)(scale) / 100.0));
 	int delay = screenh / rowcount;
@@ -1591,7 +1264,7 @@ int DrawReflections(int id, int charobj = 0) {
 }
 
 
-int DrawTransSprite(int sprite, int bg, int translevel, int mask = 0, int blendmode = 0, int use_objpal = 0) {
+int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blendmode = 0, int use_objpal = 0) {
 	BITMAP *maskspr = nullptr;
 	unsigned char **maskarray;
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
@@ -1604,10 +1277,10 @@ int DrawTransSprite(int sprite, int bg, int translevel, int mask = 0, int blendm
 	// Get a reference to the screen we'll draw onto
 	BITMAP *bgspr = engine->GetSpriteGraphic(bg);
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
-	BITMAP *spritespr = engine->GetSpriteGraphic(sprite);
+	BITMAP *spritespr = engine->GetSpriteGraphic(spriteId);
 	if (!bgspr) engine->AbortGame("DrawTransSprite: Can't load background");
-	//if (!clutspr) engine->AbortGame ("Can't load CLUT sprite into memory.");
-	if (!spritespr) engine->AbortGame("DrawTransSprite: Can't load overlay sprite into memory.");
+	//if (!clutspr) engine->AbortGame ("Can't load CLUT spriteId into memory.");
+	if (!spritespr) engine->AbortGame("DrawTransSprite: Can't load overlay spriteId into memory.");
 	// Get its surface
 	int32 sprw, sprh, coldepth;
 	int32 bgw, bgh;
@@ -1624,9 +1297,9 @@ int DrawTransSprite(int sprite, int bg, int translevel, int mask = 0, int blendm
 	//int transamount = 256 * translevel; //old
 	while (y < sprh) {
 		while (x < sprw) {
-			if (spritearray [y][x] != 0 && y < bgh && x < bgw && y >= 0 && x >= 0) { // If the sprite isn't transparent, and isn't drawn off the edge of the bg.
+			if (spritearray [y][x] != 0 && y < bgh && x < bgw && y >= 0 && x >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the bg.
 				if (mask > 0) {
-					translevel = std::max(maskarray [y][x] - tloffset, 0);
+					translevel = MAX(maskarray [y][x] - tloffset, 0);
 				}
 				//spritearray[y][x] = cycle_remap[clutarray [cycle_remap[bgarray[y][x]]+transamount][cycle_remap[spritearray [y][x]]]]; //old
 				if (blendmode == 0) spritearray[y][x] = Mix::MixColorAlpha(spritearray [y][x], bgarray[y][x], translevel, use_objpal);
@@ -1642,22 +1315,22 @@ int DrawTransSprite(int sprite, int bg, int translevel, int mask = 0, int blendm
 	engine->ReleaseBitmapSurface(bgspr);
 	//engine->ReleaseBitmapSurface (clutspr);
 	engine->ReleaseBitmapSurface(spritespr);
-	engine->NotifySpriteUpdated(sprite);
+	engine->NotifySpriteUpdated(spriteId);
 	return 0;
 }
 
-int DrawTranslucentOverlay(int sprite, int translevel, int ox, int oy, int mask = 0, int blendmode = 0) {
+int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mask = 0, int blendmode = 0) {
 	if (translevel == 0) return 0;
 	BITMAP *maskspr;
 	unsigned char **maskarray;
 	// Get a reference to the screen we'll draw onto
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
-	BITMAP *spritespr = engine->GetSpriteGraphic(sprite);
+	BITMAP *spritespr = engine->GetSpriteGraphic(spriteId);
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
 	if (!virtsc) engine->AbortGame("DrawTranslucentOverlay: Can't load virtual screen.");
-	//if (!clutspr) engine->AbortGame ("Can't load CLUT sprite into memory.");
-	if (!spritespr) engine->AbortGame("DrawTranslucentOverlay: Can't load overlay sprite into memory.");
+	//if (!clutspr) engine->AbortGame ("Can't load CLUT spriteId into memory.");
+	if (!spritespr) engine->AbortGame("DrawTranslucentOverlay: Can't load overlay spriteId into memory.");
 	// Get its surface
 	int32 sprw, sprh, coldepth;
 	int32 screenw, screenh;
@@ -1679,10 +1352,10 @@ int DrawTranslucentOverlay(int sprite, int translevel, int ox, int oy, int mask 
 	//int transamount = 256 * translevel; //old
 	while (y < sprh) {
 		while (x < sprw) {
-			if (spritearray [y][x] != 0 && y + oy < screenh && x + ox < screenw && y + oy >= 0 && x + ox >= 0) { // If the sprite isn't transparent, and isn't drawn off the edge of the screen.
+			if (spritearray [y][x] != 0 && y + oy < screenh && x + ox < screenw && y + oy >= 0 && x + ox >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the screen.
 				//charbuffer[y+oy][x+ox] = cycle_remap[clutarray [cycle_remap[charbuffer[y+oy][x+ox]]+transamount][cycle_remap[spritearray [y][x]]]]; //old
 				if (mask > 0) {
-					translevel = std::max(maskarray [y][x] - tloffset, 0);
+					translevel = MAX(maskarray [y][x] - tloffset, 0);
 				}
 				if (blendmode == 0) {
 					if (translevel == 255) {
@@ -1706,10 +1379,24 @@ int DrawTranslucentOverlay(int sprite, int translevel, int ox, int oy, int mask 
 	engine->ReleaseBitmapSurface(spritespr);
 	if (mask > 0) engine->ReleaseBitmapSurface(maskspr);
 	engine->MarkRegionDirty(ox, oy, dirtywidth, dirtyheight);
+
 	return 0;
 }
 
-void AGS_EngineStartup(IAGSEngine *lpEngine) {
+/*------------------------------------------------------------------*/
+
+AGSPalRender::AGSPalRender() : DLL() {
+	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineShutdown);
+	DLL_METHOD(AGS_EngineOnEvent);
+}
+
+const char *AGSPalRender::AGS_GetPluginName() {
+	return "PALgorithms Translucent Overlay Renderer";
+}
+
+void AGSPalRender::AGS_EngineStartup(IAGSEngine *lpEngine) {
 	engine = lpEngine;
 
 	// Make sure it's got the version with the features we need
@@ -1901,16 +1588,15 @@ void AGS_EngineStartup(IAGSEngine *lpEngine) {
 	Init_Raycaster();
 }
 
-void AGS_EngineShutdown() {
+void AGSPalRender::AGS_EngineShutdown() {
 	// no work to do here - but if we had created any dynamic sprites,
 	// we should delete them here
-	delete [] Reflection.Characters;
-	delete [] Reflection.Objects;
-	//QuitCleanup ();
+	delete[] Reflection.Characters;
+	delete[] Reflection.Objects;
+	//QuitCleanup();
 }
 
-
-int AGS_EngineOnEvent(int event, int data) {
+int AGSPalRender::AGS_EngineOnEvent(int event, int data) {
 	if (event == AGSE_PRESCREENDRAW && clutslot > 0) {
 		if (drawreflections) {
 			int32 sh, sw = 0;
@@ -2152,13 +1838,6 @@ int AGS_EngineOnEvent(int event, int data) {
 	return 0;
 }
 
-int AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved) {
-	return 0;
-}
-void AGS_EngineInitGfx(const char *driverID, void *data) {}
-
-// *** END RUN TIME ****
-
-#if defined(BUILTIN_PLUGINS)
-} // namespace agspalrender
-#endif
+} // namespace AGSPalRender
+} // namespace Plugins
+} // namespace AGS3

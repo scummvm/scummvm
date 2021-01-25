@@ -111,10 +111,9 @@ AGSFlashlight::AGSFlashlight() : DLL() {
 
 
 	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineStartup);
 	DLL_METHOD(AGS_EngineShutdown);
 	DLL_METHOD(AGS_EngineOnEvent);
-	DLL_METHOD(AGS_EngineDebugHook);
-	DLL_METHOD(AGS_EngineInitGfx);
 }
 
 const char *AGSFlashlight::AGS_GetPluginName() {
@@ -195,14 +194,6 @@ int AGSFlashlight::AGS_EngineOnEvent(int event, int data) {
 
 	return 0;
 }
-
-int AGSFlashlight::AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved) {
-	return 0;
-}
-
-void AGSFlashlight::AGS_EngineInitGfx(const char *driverID, void *data) {
-}
-
 
 void AGSFlashlight::calc_x_n(unsigned long x) {
 	flashlight_x = x;

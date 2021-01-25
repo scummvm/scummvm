@@ -1,39 +1,31 @@
-/*
-Copyright (c) 2004-2007, Lode Vandevenne
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-All rights reserved.
+#include "ags/lib/allegro.h"
+#include "ags/plugins/ags_pal_render/raycast.h"
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-#include "raycast.h"
-
-#include <cmath>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <stdio.h>
-#include <math.h>
-
-#if defined(BUILTIN_PLUGINS)
-namespace agspalrender {
-#endif
+namespace AGS3 {
+namespace Plugins {
+namespace AGSPalRender {
 
 #define PI         (3.1415926535f)
 
@@ -163,7 +155,7 @@ int Ray_GetAmbientWeight() {
 }
 
 void Ray_SetAmbientLight(int value) {
-	ambientlight = std::min(255, std::max(0, value));
+	ambientlight = MIN(255, MAX(0, value));
 }
 
 void Ray_SetAmbientColor(int color, int amount) {
@@ -202,31 +194,31 @@ void Ray_SetWallTextures(int id, int n, int s, int w, int e) {
 }
 
 void Ray_SetWallSolid(int id, int n, int s, int w, int e) {
-	wallData[id].solid [0] = std::max(0, std::min(n, 1));
-	wallData[id].solid [1] = std::max(0, std::min(s, 1));
-	wallData[id].solid [2] = std::max(0, std::min(w, 1));
-	wallData[id].solid [3] = std::max(0, std::min(e, 1));
+	wallData[id].solid [0] = MAX(0, MIN(n, 1));
+	wallData[id].solid [1] = MAX(0, MIN(s, 1));
+	wallData[id].solid [2] = MAX(0, MIN(w, 1));
+	wallData[id].solid [3] = MAX(0, MIN(e, 1));
 }
 
 void Ray_SetWallIgnoreLighting(int id, int n, int s, int w, int e) {
-	wallData[id].ignorelighting [0] = std::max(0, std::min(n, 1));
-	wallData[id].ignorelighting [1] = std::max(0, std::min(s, 1));
-	wallData[id].ignorelighting [2] = std::max(0, std::min(w, 1));
-	wallData[id].ignorelighting [3] = std::max(0, std::min(e, 1));
+	wallData[id].ignorelighting [0] = MAX(0, MIN(n, 1));
+	wallData[id].ignorelighting [1] = MAX(0, MIN(s, 1));
+	wallData[id].ignorelighting [2] = MAX(0, MIN(w, 1));
+	wallData[id].ignorelighting [3] = MAX(0, MIN(e, 1));
 }
 
 void Ray_SetWallAlpha(int id, int n, int s, int w, int e) {
-	wallData[id].alpha [0] = std::max(0, std::min(n, 255));
-	wallData[id].alpha [1] = std::max(0, std::min(s, 255));
-	wallData[id].alpha [2] = std::max(0, std::min(w, 255));
-	wallData[id].alpha [3] = std::max(0, std::min(e, 255));
+	wallData[id].alpha [0] = MAX(0, MIN(n, 255));
+	wallData[id].alpha [1] = MAX(0, MIN(s, 255));
+	wallData[id].alpha [2] = MAX(0, MIN(w, 255));
+	wallData[id].alpha [3] = MAX(0, MIN(e, 255));
 }
 
 void Ray_SetWallBlendType(int id, int n, int s, int w, int e) {
-	wallData[id].blendtype [0] = std::max(0, std::min(n, 10));
-	wallData[id].blendtype [1] = std::max(0, std::min(s, 10));
-	wallData[id].blendtype [2] = std::max(0, std::min(w, 10));
-	wallData[id].blendtype [3] = std::max(0, std::min(e, 10));
+	wallData[id].blendtype [0] = MAX(0, MIN(n, 10));
+	wallData[id].blendtype [1] = MAX(0, MIN(s, 10));
+	wallData[id].blendtype [2] = MAX(0, MIN(w, 10));
+	wallData[id].blendtype [3] = MAX(0, MIN(e, 10));
 }
 
 
@@ -893,9 +885,9 @@ void Raycast_Render(int slot) {
 				}
 				if (do_ambient) {
 					ambientpixels = true;
-					wall_light = std::max(wall_light, ambientlight);
+					wall_light = MAX(wall_light, ambientlight);
 				}
-				wall_light = std::min(255, std::max(0, wall_light));
+				wall_light = MIN(255, MAX(0, wall_light));
 				bool alphastripe = false;
 				for (int y = drawStart; y < drawEnd; y++) {
 					if (ZBuffer[x][y] > perpWallDist || ZBuffer[x][y] == 0) { //We can draw.
@@ -1033,7 +1025,7 @@ void Raycast_Render(int slot) {
 				if (cmapY < 0) cmapY = 0;
 				if (heightMap[cmapX][cmapY] - 1 < 1) continue;
 				int lighting = lightMap [cmapX][cmapY] << 5;
-				lighting = std::min(255, std::max(0, lighting));
+				lighting = MIN(255, MAX(0, lighting));
 				floorTexX = int(currentFloorX * texWidth) % texWidth;
 				floorTexY = int(currentFloorY * texHeight) % texHeight;
 				int floorcolor = 0;
@@ -1046,7 +1038,7 @@ void Raycast_Render(int slot) {
 					floorcolor = texture[floorMap[cmapX][cmapY] - 1][texpos];
 				} else continue;
 				if (ceilingcolor == 0) {
-					lighting = std::max(lighting, ambientlight);
+					lighting = MAX(lighting, ambientlight);
 					ambientweight ++;
 				}
 				if (lighting < 255) {
@@ -1081,7 +1073,7 @@ void Raycast_Render(int slot) {
 				int cmapY = (int)currentFloorY % mapHeight;
 				if (cmapY < 0) cmapY = 0;
 				int lighting = lightMap [cmapX][cmapY] << 5;
-				lighting = std::min(255, std::max(0, lighting));
+				lighting = MIN(255, MAX(0, lighting));
 				floorTexX = int(currentFloorX * texWidth) % texWidth;
 				floorTexY = int(currentFloorY * texHeight) % texHeight;
 				int floorcolor = 0;
@@ -1093,7 +1085,7 @@ void Raycast_Render(int slot) {
 					ceilingcolor = texture[ceilingMap[cmapX][cmapY] - 1][texWidth * floorTexY + floorTexX];
 				}
 				if (ceilingcolor == 0) {
-					lighting = std::max(lighting, ambientlight);
+					lighting = MAX(lighting, ambientlight);
 					ambientweight++;
 				}
 				if (lighting < 255) {
@@ -1252,12 +1244,12 @@ void Raycast_Render(int slot) {
 		int drawEndX = spriteWidth / 2 + spriteScreenX + hMoveScreen;
 		if (drawEndX >= w) drawEndX = w - 1;
 		int spr_light = lightMap [(int)sprite[spriteOrder[i]].x][(int)sprite[spriteOrder[i]].y] << 5;
-		spr_light = std::min(255, std::max(0, spr_light));
+		spr_light = MIN(255, MAX(0, spr_light));
 		int floorTexX = int(sprite[spriteOrder[i]].x * texWidth) % texWidth;
 		int floorTexY = int(sprite[spriteOrder[i]].y * texHeight) % texHeight;
 		if (ceilingMap [(int)sprite[spriteOrder[i]].x][(int)sprite[spriteOrder[i]].y] == 0) {
-			spr_light = std::max(spr_light, ambientlight);
-		} else if (texture[ceilingMap [(int)sprite[spriteOrder[i]].x][(int)sprite[spriteOrder[i]].y] - 1][texWidth * floorTexY + floorTexX] == 0) spr_light = std::max(spr_light, ambientlight);
+			spr_light = MAX(spr_light, ambientlight);
+		} else if (texture[ceilingMap [(int)sprite[spriteOrder[i]].x][(int)sprite[spriteOrder[i]].y] - 1][texWidth * floorTexY + floorTexX] == 0) spr_light = MAX(spr_light, ambientlight);
 		//loop through every vertical stripe of the sprite on screen
 
 
@@ -1485,14 +1477,15 @@ void combSort(int *order, double *dist, int amount) {
 		for (int i = 0; i < amount - gap; i++) {
 			int j = i + gap;
 			if (dist[i] < dist[j]) {
-				std::swap(dist[i], dist[j]);
-				std::swap(order[i], order[j]);
+				SWAP(dist[i], dist[j]);
+				SWAP(order[i], order[j]);
 				swapped = true;
 			}
 		}
 	}
 }
 
-#if defined(BUILTIN_PLUGINS)
-} // namespace agspalrender
-#endif
+} // namespace AGSBlend
+} // namespace Plugins
+} // namespace AGS3
+

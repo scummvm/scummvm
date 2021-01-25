@@ -68,8 +68,6 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 	static void AGS_EngineShutdown();
 	static int AGS_EngineOnEvent(int event, int data);
-	static int AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved);
-	static void AGS_EngineInitGfx(const char *driverID, void *data);
 
 private:
 	/**
