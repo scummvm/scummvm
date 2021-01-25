@@ -134,12 +134,23 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		debugPrintf("Expected to get a holomap flag index as first parameter\n");
+		debugPrintf("Expected to get a holomap flag index as first parameter. Use -1 to set all flags\n");
 		return true;
 	}
 
-	const uint8 idx = atoi(argv[1]);
-	if (idx >= NUM_LOCATIONS) {
+	GameState* state = _engine->_gameState;
+	state->setGameFlag(InventoryItems::kiHolomap, 1);
+	state->inventoryFlags[InventoryItems::kiHolomap] = 1;
+	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
+
+	const int idx = atoi(argv[1]);
+	if (idx == -1) {
+		for (int i = 0; i < NUM_LOCATIONS; ++i) {
+			_engine->_holomap->setHolomapPosition(i);
+		}
+		return true;
+	}
+	if (idx >= 0 && idx >= NUM_LOCATIONS) {
 		debugPrintf("given index exceeds the max allowed value of %i\n", NUM_LOCATIONS - 1);
 		return true;
 	}
