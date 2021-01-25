@@ -1,214 +1,90 @@
-/*
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-This is not the AGS Parallax plugin by Scorpiorus
-but a workalike plugin created by JJS for the AGS engine ports.
+#include "ags/plugins/ags_parallax/ags_parallax.h"
+#include "ags/shared/core/platform.h"
 
-*/
-
-#include "core/platform.h"
-
-#if AGS_PLATFORM_OS_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#pragma warning(disable : 4244)
-#endif
-
-#if !defined(BUILTIN_PLUGINS)
-#define THIS_IS_THE_PLUGIN
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#include "plugin/agsplugin.h"
-
-#if defined(BUILTIN_PLUGINS)
-namespace ags_parallax {
-#endif
-
-//#define DEBUG
+namespace AGS3 {
+namespace Plugins {
+namespace AGSParallax {
 
 const unsigned int Magic = 0xCAFE0000;
 const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 
-int screen_width = 320;
-int screen_height = 200;
-int screen_color_depth = 32;
+IAGSEngine *AGSParallax::_engine;
+int AGSParallax::_screenWidth;
+int AGSParallax::_screenHeight;
+int AGSParallax::_screenColorDepth;
+bool AGSParallax::_enabled;
+Sprite AGSParallax::_sprites[MAX_SPRITES];
 
-IAGSEngine *engine;
 
-bool enabled = false;
+AGSParallax::AGSParallax() : DLL() {
+	_engine = nullptr;
+	_screenWidth = 320;
+	_screenHeight = 200;
+	_screenColorDepth = 32;
+	_enabled = false;
 
-
-typedef struct {
-	int x;
-	int y;
-	int slot;
-	int speed;
-} sprite_t;
-
-#define MAX_SPEED 1000
-#define MAX_SPRITES 100
-sprite_t sprites[MAX_SPRITES];
-
-// workaround to fix this error:
-//   psp-fixup-imports ags_parallax.elf
-//   Error, no .lib.stub section found
-void dummy() {
-	void *tmp = new int;
+	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineOnEvent);
 }
 
-static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = engine->FRead(ptr, size * count, fileHandle);
-	return totalBytes / size;
+const char *AGSParallax::AGS_GetPluginName() {
+	return "Parallax plugin recreation";
 }
 
-static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
-	return totalBytes / size;
-}
+void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
+	_engine = engine;
 
-void RestoreGame(long fileHandle) {
-	unsigned int SaveVersion = 0;
-	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, fileHandle);
+	if (_engine->version < 13)
+		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	if (SaveVersion != SaveMagic) {
-		engine->AbortGame("ags_parallax: bad save.");
-	}
+	SCRIPT_METHOD("pxDrawSprite");
+	SCRIPT_METHOD("pxDeleteSprite");
 
-	engineFileRead(sprites, sizeof(sprite_t), MAX_SPRITES, fileHandle);
-	engineFileRead(&enabled, sizeof(bool), 1, fileHandle);
-}
-
-void SaveGame(long file) {
-	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
-	engineFileWrite(sprites, sizeof(sprite_t), MAX_SPRITES, file);
-	engineFileWrite(&enabled, sizeof(bool), 1, file);
-}
-
-
-void Initialize() {
-	memset(sprites, 0, sizeof(sprite_t) * MAX_SPRITES);
-
-	int i;
-	for (i = 0; i < MAX_SPRITES; i++)
-		sprites[i].slot = -1;
-
-	enabled = false;
-}
-
-
-void Draw(bool foreground) {
-	if (!enabled)
-		return;
-
-	BITMAP *bmp;
-	int i;
-
-	int offsetX = 0;
-	int offsetY = 0;
-	engine->ViewportToRoom(&offsetX, &offsetY);
-
-	for (i = 0; i < MAX_SPRITES; i++) {
-		if (sprites[i].slot > -1) {
-			if (foreground) {
-				if (sprites[i].speed > 0) {
-					bmp = engine->GetSpriteGraphic(sprites[i].slot);
-					if (bmp)
-						engine->BlitBitmap(sprites[i].x - offsetX - (sprites[i].speed * offsetX / 100), sprites[i].y, bmp, 1);
-				}
-			} else {
-				if (sprites[i].speed <= 0) {
-					bmp = engine->GetSpriteGraphic(sprites[i].slot);
-					if (bmp)
-						engine->BlitBitmap(sprites[i].x - offsetX - (sprites[i].speed * offsetX / 1000), sprites[i].y, bmp, 1);
-				}
-			}
-		}
-	}
-}
-
-
-
-
-
-// ********************************************
-// ************  AGS Interface  ***************
-// ********************************************
-
-void pxDrawSprite(int id, int x, int y, int slot, int speed) {
-#ifdef DEBUG
-	char buffer[200];
-	sprintf(buffer, "%s %d %d %d %d %d\n", "pxDrawSprite", id, x, y, slot, speed);
-	engine->PrintDebugConsole(buffer);
-#endif
-
-	if ((id < 0) || (id >= MAX_SPRITES))
-		return;
-
-	if ((speed < -MAX_SPEED) || (speed > MAX_SPEED))
-		speed = 0;
-
-	sprites[id].x = x;
-	sprites[id].y = y;
-	sprites[id].slot = slot;
-	sprites[id].speed = speed;
-
-	engine->RoomToViewport(&sprites[id].x, &sprites[id].y);
-
-	enabled = true;
-}
-
-
-void pxDeleteSprite(int id) {
-#ifdef DEBUG
-	char buffer[200];
-	sprintf(buffer, "%s %d\n", "pxDeleteSprite", id);
-	engine->PrintDebugConsole(buffer);
-#endif
-
-	if ((id < 0) || (id >= MAX_SPRITES))
-		return;
-
-	sprites[id].slot = -1;
-}
-
-void AGS_EngineStartup(IAGSEngine *lpEngine) {
-	engine = lpEngine;
-
-	if (engine->version < 13)
-		engine->AbortGame("Engine interface is too old, need newer version of AGS.");
-
-	engine->RegisterScriptFunction("pxDrawSprite", (void *)&pxDrawSprite);
-	engine->RegisterScriptFunction("pxDeleteSprite", (void *)&pxDeleteSprite);
-
-	engine->RequestEventHook(AGSE_PREGUIDRAW);
-	engine->RequestEventHook(AGSE_PRESCREENDRAW);
-	engine->RequestEventHook(AGSE_ENTERROOM);
-	engine->RequestEventHook(AGSE_SAVEGAME);
-	engine->RequestEventHook(AGSE_RESTOREGAME);
+	_engine->RequestEventHook(AGSE_PREGUIDRAW);
+	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
+	_engine->RequestEventHook(AGSE_ENTERROOM);
+	_engine->RequestEventHook(AGSE_SAVEGAME);
+	_engine->RequestEventHook(AGSE_RESTOREGAME);
 
 	Initialize();
 }
 
-void AGS_EngineShutdown() {
-}
-
-int AGS_EngineOnEvent(int event, int data) {
+int AGSParallax::AGS_EngineOnEvent(int event, int data) {
 	if (event == AGSE_PREGUIDRAW) {
 		Draw(true);
 	} else if (event == AGSE_PRESCREENDRAW) {
 		Draw(false);
 	} else if (event == AGSE_ENTERROOM) {
-		// Reset all sprites
+		// Reset all _sprites
 		Initialize();
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here
-		engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
-		engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
+		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
+		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	} else if (event == AGSE_RESTOREGAME) {
 		RestoreGame(data);
 	} else if (event == AGSE_SAVEGAME) {
@@ -218,70 +94,116 @@ int AGS_EngineOnEvent(int event, int data) {
 	return 0;
 }
 
-int AGS_EngineDebugHook(const char *scriptName, int lineNum, int reserved) {
-	return 0;
+size_t AGSParallax::engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
+	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
+	return totalBytes / size;
 }
 
-void AGS_EngineInitGfx(const char *driverID, void *data) {
+size_t AGSParallax::engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
+	auto totalBytes = _engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
+	return totalBytes / size;
+}
+
+void AGSParallax::RestoreGame(long fileHandle) {
+	unsigned int SaveVersion = 0;
+	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, fileHandle);
+
+	if (SaveVersion != SaveMagic) {
+		_engine->AbortGame("ags_parallax: bad save.");
+	}
+
+	// TODO: This seems endian/packing unsafe
+	engineFileRead(_sprites, sizeof(Sprite), MAX_SPRITES, fileHandle);
+	engineFileRead(&_enabled, sizeof(bool), 1, fileHandle);
+}
+
+void AGSParallax::SaveGame(long file) {
+	warning("TODO: AGSParallax::SaveGame is endian unsafe");
+	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
+	engineFileWrite(_sprites, sizeof(Sprite), MAX_SPRITES, file);
+	engineFileWrite(&_enabled, sizeof(bool), 1, file);
 }
 
 
+void AGSParallax::Initialize() {
+	memset(_sprites, 0, sizeof(Sprite) * MAX_SPRITES);
 
-#if AGS_PLATFORM_OS_WINDOWS && !defined(BUILTIN_PLUGINS)
+	int i;
+	for (i = 0; i < MAX_SPRITES; i++)
+		_sprites[i].slot = -1;
 
-// ********************************************
-// ***********  Editor Interface  *************
-// ********************************************
-
-const char *scriptHeader =
-    "import void pxDrawSprite(int ID, int X, int Y, int SlotNum, int Speed);\r\n"
-    "import void pxDeleteSprite(int ID);\r\n";
-
-IAGSEditor *editor;
-
-
-LPCSTR AGS_GetPluginName(void) {
-	// Return the plugin description
-	return "Parallax plugin recreation";
+	_enabled = false;
 }
 
-int  AGS_EditorStartup(IAGSEditor *lpEditor) {
-	// User has checked the plugin to use it in their game
 
-	// If it's an earlier version than what we need, abort.
-	if (lpEditor->version < 1)
-		return -1;
+void AGSParallax::Draw(bool foreground) {
+	if (!_enabled)
+		return;
 
-	editor = lpEditor;
-	editor->RegisterScriptHeader(scriptHeader);
+	BITMAP *bmp;
+	int i;
 
-	// Return 0 to indicate success
-	return 0;
+	int offsetX = 0;
+	int offsetY = 0;
+	_engine->ViewportToRoom(&offsetX, &offsetY);
+
+	for (i = 0; i < MAX_SPRITES; i++) {
+		if (_sprites[i].slot > -1) {
+			if (foreground) {
+				if (_sprites[i].speed > 0) {
+					bmp = _engine->GetSpriteGraphic(_sprites[i].slot);
+					if (bmp)
+						_engine->BlitBitmap(_sprites[i].x - offsetX - (_sprites[i].speed * offsetX / 100), _sprites[i].y, bmp, 1);
+				}
+			} else {
+				if (_sprites[i].speed <= 0) {
+					bmp = _engine->GetSpriteGraphic(_sprites[i].slot);
+					if (bmp)
+						_engine->BlitBitmap(_sprites[i].x - offsetX - (_sprites[i].speed * offsetX / 1000), _sprites[i].y, bmp, 1);
+				}
+			}
+		}
+	}
 }
 
-void AGS_EditorShutdown() {
-	// User has un-checked the plugin from their game
-	editor->UnregisterScriptHeader(scriptHeader);
-}
 
-void AGS_EditorProperties(HWND parent) {
-	// User has chosen to view the Properties of the plugin
-	// We could load up an options dialog or something here instead
-	MessageBoxA(parent, "Parallax plugin recreation by JJS", "About", MB_OK | MB_ICONINFORMATION);
-}
-
-int AGS_EditorSaveGame(char *buffer, int bufsize) {
-	// We don't want to save any persistent data
-	return 0;
-}
-
-void AGS_EditorLoadGame(char *buffer, int bufsize) {
-	// Nothing to load for this plugin
-}
-
+void AGSParallax::pxDrawSprite(int id, int x, int y, int slot, int speed) {
+#ifdef DEBUG
+	char buffer[200];
+	sprintf(buffer, "%s %d %d %d %d %d\n", "pxDrawSprite", id, x, y, slot, speed);
+	_engine->PrintDebugConsole(buffer);
 #endif
 
+	if ((id < 0) || (id >= MAX_SPRITES))
+		return;
 
-#if defined(BUILTIN_PLUGINS)
-} // namespace ags_parallax
+	if ((speed < -MAX_SPEED) || (speed > MAX_SPEED))
+		speed = 0;
+
+	_sprites[id].x = x;
+	_sprites[id].y = y;
+	_sprites[id].slot = slot;
+	_sprites[id].speed = speed;
+
+	_engine->RoomToViewport(&_sprites[id].x, &_sprites[id].y);
+
+	_enabled = true;
+}
+
+
+void AGSParallax::pxDeleteSprite(int id) {
+#ifdef DEBUG
+	char buffer[200];
+	sprintf(buffer, "%s %d\n", "pxDeleteSprite", id);
+	_engine->PrintDebugConsole(buffer);
 #endif
+
+	if ((id < 0) || (id >= MAX_SPRITES))
+		return;
+
+	_sprites[id].slot = -1;
+}
+
+} // namespace AGSParallax
+} // namespace Plugins
+} // namespace AGS3
