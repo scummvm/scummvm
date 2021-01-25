@@ -25,6 +25,7 @@
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_creditz/ags_creditz.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
+#include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -57,6 +58,9 @@ void *dlopen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("libAGSFlashlight.so"))
 		return new AGSFlashlight::AGSFlashlight();
+
+	if (fname.equalsIgnoreCase("libAGSPalRender.so"))
+		return new AGSPalRender::AGSPalRender();
 
 	return nullptr;
 }
