@@ -27,6 +27,7 @@
 #include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
+#include "twine/text.h"
 
 namespace TwinE {
 
@@ -203,7 +204,7 @@ public:
 	int32 cropBottom = 0;
 	int32 followedActor = 0; // same as info3
 	int32 bonusAmount = 0;   // field_12
-	int32 talkColor = 0;
+	int32 talkColor = COLOR_BLACK;
 	int32 armor = 0; // field_14
 	int32 life = 0;
 

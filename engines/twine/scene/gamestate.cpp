@@ -87,7 +87,7 @@ void GameState::initGameStateVars() {
 }
 
 void GameState::initHeroVars() {
-	_engine->_actor->resetActor(0); // reset Hero
+	_engine->_actor->resetActor(OWN_ACTOR_SCENE_INDEX); // reset Hero
 
 	magicBallIdx = -1;
 
@@ -101,7 +101,7 @@ void GameState::initHeroVars() {
 
 	_engine->_scene->sceneHero->body = 0;
 	_engine->_scene->sceneHero->life = 50;
-	_engine->_scene->sceneHero->talkColor = 4;
+	_engine->_scene->sceneHero->talkColor = COLOR_BRIGHT_BLUE;
 }
 
 void GameState::initEngineVars() {

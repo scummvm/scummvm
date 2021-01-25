@@ -518,7 +518,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime * 32) & ANGLE_270, 4);
+		drawSpecialShape(hitStarsShapeTable, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
@@ -527,7 +527,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 			cloudTime = 32;
 		}
 
-		drawSpecialShape(explodeCloudShapeTable, x, y, 15, 0, cloudTime);
+		drawSpecialShape(explodeCloudShapeTable, x, y, COLOR_WHITE, 0, cloudTime);
 		break;
 	}
 	}

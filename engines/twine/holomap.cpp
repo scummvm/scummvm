@@ -441,7 +441,7 @@ void Holomap::processHolomap() {
 	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-	_engine->_text->setFontCrossColor(9);
+	_engine->_text->setFontCrossColor(COLOR_9);
 
 	drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 	int currentLocation = _engine->_scene->currentSceneIdx;

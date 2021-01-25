@@ -237,10 +237,10 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 }
 
 void Menu::drawBox(const Common::Rect &rect) {
-	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, 79);           // top line
-	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, 79);         // left line
-	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, 73);   // right line
-	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, 73); // bottom line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, COLOR_79);           // top line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, COLOR_79);         // left line
+	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, COLOR_73);   // right line
+	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, COLOR_73); // bottom line
 }
 
 void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
@@ -283,11 +283,11 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawSplittedBox(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), 68);
+			_engine->_interface->drawSplittedBox(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_RED);
 		} else {
 			processPlasmaEffect(rect, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
-				plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
+				plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 			}
 		}
 	} else {
@@ -806,7 +806,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	drawBox(rect);
 	Common::Rect splittedBoxRect(rect);
 	splittedBoxRect.grow(-1);
-	_engine->_interface->drawSplittedBox(splittedBoxRect, 0);
+	_engine->_interface->drawSplittedBox(splittedBoxRect, COLOR_BLACK);
 
 	const int32 newBoxLeft2 = left + 9;
 
@@ -818,7 +818,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 
 	const int32 boxTop = top + 10;
 	const int32 boxBottom = top + 25;
-	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), 91);
+	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), COLOR_91);
 	drawBox(newBoxLeft, boxTop, left + 324, boxTop + 14);
 
 	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
@@ -826,7 +826,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			const int32 pointBoxRight = _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints);
 			const Common::Rect pointsRect(newBoxLeft, top + 35, pointBoxRight, top + 50);
-			_engine->_interface->drawSplittedBox(pointsRect, 75);
+			_engine->_interface->drawSplittedBox(pointsRect, COLOR_75);
 			drawBox(newBoxLeft, top + 35, newBoxLeft + _engine->_gameState->magicLevelIdx * 80, top + 35 + 15);
 		}
 	}
@@ -914,11 +914,11 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		const int32 titleBoxTop = boxRect.bottom + titleOffset;
 		const int32 titleBoxBottom = titleBoxTop + titleHeight;
 
-		_engine->_interface->drawSplittedBox(boxRect, 69);
+		_engine->_interface->drawSplittedBox(boxRect, COLOR_BRIGHT_BLUE2);
 
 		// behaviour menu title
 		const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
-		_engine->_interface->drawSplittedBox(titleRect, 0);
+		_engine->_interface->drawSplittedBox(titleRect, COLOR_BLACK);
 		drawBox(titleRect);
 
 		_engine->_text->setFontColor(COLOR_WHITE);
@@ -929,7 +929,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
 		_engine->copyBlockPhys(titleRect);
 	} else {
-		_engine->_interface->drawSplittedBox(boxRect, 0);
+		_engine->_interface->drawSplittedBox(boxRect, COLOR_BLACK);
 	}
 
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);

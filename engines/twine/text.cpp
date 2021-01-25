@@ -170,7 +170,7 @@ void Text::initSceneTextBank() {
 	initTextBank(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
 }
 
-void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
+void Text::drawCharacter(int32 x, int32 y, uint8 character) {
 	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
 	stream.seek(character * 4);
 	stream.seek(stream.readSint16LE());
@@ -214,7 +214,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	}
 }
 
-void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect &dirtyRect) { // drawDoubleLetter
+void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect &dirtyRect) {
 	if (character == ' ') {
 		return;
 	}
@@ -260,7 +260,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 	} while (1);
 }
 
-int32 Text::getTextSize(const char *dialogue) { // SizeFont
+int32 Text::getTextSize(const char *dialogue) {
 	int32 dialTextSize = 0;
 
 	do {
@@ -280,7 +280,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 	return dialTextSize;
 }
 
-void Text::initDialogueBox() { // InitDialWindow
+void Text::initDialogueBox() {
 	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 
 	if (drawTextBoxBackground) {
@@ -295,7 +295,7 @@ void Text::initDialogueBox() { // InitDialWindow
 	_engine->_interface->blitBox(_dialTextBox, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 }
 
-void Text::initInventoryDialogueBox() { // SecondInitDialWindow
+void Text::initInventoryDialogueBox() {
 	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
@@ -303,7 +303,6 @@ void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 
 void Text::initInventoryText(int index) {
 	// 100 if the offset for the inventory item descriptions
-	//
 	initText(100 + index);
 }
 
@@ -311,7 +310,6 @@ void Text::initItemFoundText(int index) {
 	initText(100 + index);
 }
 
-// TODO: refactor this code
 void Text::initText(int32 index) {
 	if (!getText(index)) {
 		_hasValidTextHandle = false;

@@ -150,7 +150,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyR
 
 	const bool selected = _onScreenKeyboardX == x && _onScreenKeyboardY == y;
 	if (selected) {
-		_engine->_interface->drawSplittedBox(rect, 91);
+		_engine->_interface->drawSplittedBox(rect, COLOR_91);
 	} else {
 		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_interface->drawTransparentBox(rect, 4);
