@@ -75,7 +75,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for numerous Korean translations from scummkor project.
    - Added support for Russobit-M versions of Pajama2 and SpyOzone.
    - Fixed speech playback in Akella version of COMI.
-   - Added support for Discord and Humble Bundle versions of Indiana Jones and the fate of Atlantis.
+   - Added support for Discord and Humble Bundle versions of Indiana Jones and the Fate of Atlantis.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
