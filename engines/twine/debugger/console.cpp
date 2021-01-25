@@ -34,8 +34,11 @@
 namespace TwinE {
 
 TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger() {
+	registerCmd("give_item", WRAP_METHOD(TwinEConsole, doGiveItem));
 	registerCmd("give_allitems", WRAP_METHOD(TwinEConsole, doGiveAllItems));
 	registerCmd("give_key", WRAP_METHOD(TwinEConsole, doGiveKey));
+	registerCmd("give_gas", WRAP_METHOD(TwinEConsole, doGiveGas));
+	registerCmd("give_kashes", WRAP_METHOD(TwinEConsole, doGiveKashes));
 	registerCmd("play_video", WRAP_METHOD(TwinEConsole, doPlayVideo));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
@@ -208,7 +211,25 @@ bool TwinEConsole::doGiveKey(int argc, const char **argv) {
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
-	_engine->_gameState->inventoryNumKeys += amount;
+	_engine->_gameState->setKeys(_engine->_gameState->inventoryNumKeys + amount);
+	return true;
+}
+
+bool TwinEConsole::doGiveGas(int argc, const char **argv) {
+	int amount = 1;
+	if (argc >= 2) {
+		amount = atoi(argv[1]);
+	}
+	_engine->_gameState->setGas(_engine->_gameState->inventoryNumGas + amount);
+	return true;
+}
+
+bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
+	int amount = 1;
+	if (argc >= 2) {
+		amount = atoi(argv[1]);
+	}
+	_engine->_gameState->setKashes(_engine->_gameState->inventoryNumKashes + amount);
 	return true;
 }
 
@@ -251,7 +272,7 @@ bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
 bool TwinEConsole::doPlayVideo(int argc, const char **argv) {
 	if (argc <= 1) {
 		debugPrintf("Expected to get a video filename as first parameter\n");
-		return false;
+		return true;
 	}
 	_engine->queueMovie(argv[1]);
 	return true;
@@ -260,15 +281,68 @@ bool TwinEConsole::doPlayVideo(int argc, const char **argv) {
 bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 	if (argc <= 1) {
 		debugPrintf("Expected to get a scene index as first parameter\n");
-		return false;
+		return true;
 	}
 	byte newSceneIndex = atoi(argv[1]);
 	if (newSceneIndex >= LBA1SceneId::SceneIdMax) {
 		debugPrintf("Scene index out of bounds\n");
-		return false;
+		return true;
 	}
 	_engine->_scene->needChangeScene = atoi(argv[1]);
 	_engine->_scene->changeScene();
+	return true;
+}
+
+static const char *ItemNames[] = {
+	"Holomap",
+	"MagicBall",
+	"UseSabre",
+	"GawleysHorn",
+	"Tunic",
+	"BookOfBu",
+	"SendellsMedallion",
+	"FlaskOfClearWater",
+	"RedCard",
+	"BlueCard",
+	"IDCard",
+	"MrMiesPass",
+	"ProtoPack",
+	"Snowboard",
+	"Pinguin",
+	"GasItem",
+	"PirateFlag",
+	"MagicFlute",
+	"SpaceGuitar",
+	"HairDryer",
+	"AncesteralKey",
+	"BottleOfSyrup",
+	"EmptyBottle",
+	"FerryTicket",
+	"Keypad",
+	"CoffeeCan",
+	"BonusList",
+	"CloverLeaf"
+};
+static_assert(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
+
+bool TwinEConsole::doGiveItem(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get an item as first parameter\n");
+		for (int i = 0; i < ARRAYSIZE(ItemNames); ++i) {
+			debugPrintf(" - %2i: %s\n", i, ItemNames[i]);
+		}
+		return true;
+	}
+	byte itemIdx = atoi(argv[1]);
+	if (itemIdx >= InventoryItems::MaxInventoryItems) {
+		debugPrintf("Item index out of bounds\n");
+		return true;
+	}
+	GameState* state = _engine->_gameState;
+	state->setGameFlag(itemIdx, 1);
+	state->inventoryFlags[itemIdx] = 1;
+	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
+
 	return true;
 }
 
@@ -278,7 +352,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 		state->setGameFlag(i, 1);
 		state->inventoryFlags[i] = 1;
 	}
-	_engine->_gameState->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
+	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 	int amount = 1;
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
@@ -288,11 +362,8 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	state->inventoryNumLeafsBox += amount;
 	state->inventoryNumLeafs += amount;
 	state->inventoryMagicPoints += amount;
-	state->inventoryNumGas += amount;
-
-	if (state->inventoryNumKashes > 999) {
-		state->inventoryNumKashes = 999;
-	}
+	state->setGas(state->inventoryNumGas + amount);
+	state->setKashes(state->inventoryNumKashes + amount);
 
 	if (state->inventoryNumLeafsBox > 10) {
 		state->inventoryNumLeafsBox = 10;
@@ -300,10 +371,6 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 
 	if (state->inventoryNumLeafs > state->inventoryNumLeafsBox) {
 		state->inventoryNumLeafs = state->inventoryNumLeafsBox;
-	}
-
-	if (state->inventoryNumGas > 100) {
-		state->inventoryNumGas = 100;
 	}
 
 	if (state->inventoryMagicPoints > state->magicLevelIdx * 20) {

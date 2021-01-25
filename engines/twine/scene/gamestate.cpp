@@ -523,4 +523,19 @@ void GameState::giveUp() {
 	_engine->_scene->stopRunningGame();
 }
 
+int16 GameState::setGas(int16 value) {
+	inventoryNumGas = MIN<int16>(100, value);
+	return inventoryNumGas;
+}
+
+int16 GameState::setKashes(int16 value) {
+	inventoryNumKashes = MIN<int16>(999, value);
+	return inventoryNumKashes;
+}
+
+int16 GameState::setKeys(int16 value) {
+	inventoryNumKeys = value;
+	return inventoryNumKeys;
+}
+
 } // namespace TwinE

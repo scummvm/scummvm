@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "twine/holomap.h"
 #include "twine/menu/menu.h"
 #include "twine/scene/actor.h"
@@ -192,6 +193,10 @@ public:
 	int16 inventoryMagicPoints = 0;
 	/** Store the number of gas */
 	int16 inventoryNumGas = 0;
+
+	int16 setKeys(int16 value);
+	int16 setGas(int16 value);
+	int16 setKashes(int16 value);
 
 	/** Its using FunFrock Sabre */
 	bool usingSabre = false;
