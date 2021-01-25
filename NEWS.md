@@ -20,6 +20,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
+   - Updated Dropbox Cloud Storage to use the new Dropbox OAuth workflow.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
@@ -74,6 +75,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for numerous Korean translations from scummkor project.
    - Added support for Russobit-M versions of Pajama2 and SpyOzone.
    - Fixed speech playback in Akella version of COMI.
+   - Added support for Discord and Humble Bundle versions of Indiana Jones and the fate of Atlantis.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
