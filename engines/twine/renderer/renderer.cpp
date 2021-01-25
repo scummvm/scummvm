@@ -152,6 +152,12 @@ void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
 	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
+void Renderer::translateGroup(int32 x, int32 y, int32 z) {
+	destX = (shadeMatrix.row1[0] * x + shadeMatrix.row1[1] * y + shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destY = (shadeMatrix.row2[0] * x + shadeMatrix.row2[1] * y + shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destZ = destY;
+}
+
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
 	baseTransPosX = transPosX;
 	baseTransPosY = transPosY;
@@ -327,36 +333,6 @@ void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *po
 	}
 
 	applyPointsTranslation(&pointsPtr[elemPtr->firstPoint / sizeof(pointTab)], elemPtr->numOfPoints, &modelData->computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
-}
-
-void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
-	const int32 ebp = ax;
-	const int32 ebx = bx;
-	const int32 ecx = cx;
-
-	int32 edi = shadeMatrix.row1[0];
-	int32 eax = shadeMatrix.row1[1];
-	edi *= ebp;
-	eax *= ebx;
-	edi += eax;
-	eax = shadeMatrix.row1[2];
-	eax *= ecx;
-	eax += edi;
-	eax /= SCENE_SIZE_HALF;
-
-	destX = eax;
-
-	edi = shadeMatrix.row2[0];
-	eax = shadeMatrix.row2[1];
-	edi *= ebp;
-	eax *= ebx;
-	edi += eax;
-	eax = shadeMatrix.row2[2];
-	eax *= ecx;
-	eax += edi;
-	eax /= SCENE_SIZE_HALF;
-	destY = eax;
-	destZ = eax;
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
