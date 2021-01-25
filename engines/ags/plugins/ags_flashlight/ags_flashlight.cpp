@@ -126,41 +126,41 @@ void AGSFlashlight::AGS_EngineStartup(IAGSEngine *engine) {
 	if (_engine->version < 13)
 		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	SCRIPT_METHOD("SetFlashlightTint");
-	SCRIPT_METHOD("GetFlashlightTintRed");
-	SCRIPT_METHOD("GetFlashlightTintGreen");
-	SCRIPT_METHOD("GetFlashlightTintBlue");
+	SCRIPT_METHOD(SetFlashlightTint);
+	SCRIPT_METHOD(GetFlashlightTintRed);
+	SCRIPT_METHOD(GetFlashlightTintGreen);
+	SCRIPT_METHOD(GetFlashlightTintBlue);
 
-	SCRIPT_METHOD("GetFlashlightMinLightLevel");
-	SCRIPT_METHOD("GetFlashlightMaxLightLevel");
+	SCRIPT_METHOD(GetFlashlightMinLightLevel);
+	SCRIPT_METHOD(GetFlashlightMaxLightLevel);
 
-	SCRIPT_METHOD("SetFlashlightDarkness");
-	SCRIPT_METHOD("GetFlashlightDarkness");
-	SCRIPT_METHOD("SetFlashlightDarknessSize");
-	SCRIPT_METHOD("GetFlashlightDarknessSize");
+	SCRIPT_METHOD(SetFlashlightDarkness);
+	SCRIPT_METHOD(GetFlashlightDarkness);
+	SCRIPT_METHOD(SetFlashlightDarknessSize);
+	SCRIPT_METHOD(GetFlashlightDarknessSize);
 
-	SCRIPT_METHOD("SetFlashlightBrightness");
-	SCRIPT_METHOD("GetFlashlightBrightness");
-	SCRIPT_METHOD("SetFlashlightBrightnessSize");
-	SCRIPT_METHOD("GetFlashlightBrightnessSize");
+	SCRIPT_METHOD(SetFlashlightBrightness);
+	SCRIPT_METHOD(GetFlashlightBrightness);
+	SCRIPT_METHOD(SetFlashlightBrightnessSize);
+	SCRIPT_METHOD(GetFlashlightBrightnessSize);
 
-	SCRIPT_METHOD("SetFlashlightPosition");
-	SCRIPT_METHOD("GetFlashlightPositionX");
-	SCRIPT_METHOD("GetFlashlightPositionY");
+	SCRIPT_METHOD(SetFlashlightPosition);
+	SCRIPT_METHOD(GetFlashlightPositionX);
+	SCRIPT_METHOD(GetFlashlightPositionY);
 
 
-	SCRIPT_METHOD("SetFlashlightFollowMouse");
-	SCRIPT_METHOD("GetFlashlightFollowMouse");
+	SCRIPT_METHOD(SetFlashlightFollowMouse);
+	SCRIPT_METHOD(GetFlashlightFollowMouse);
 
-	SCRIPT_METHOD("SetFlashlightFollowCharacter");
-	SCRIPT_METHOD("GetFlashlightFollowCharacter");
-	SCRIPT_METHOD("GetFlashlightCharacterDX");
-	SCRIPT_METHOD("GetFlashlightCharacterDY");
-	SCRIPT_METHOD("GetFlashlightCharacterHorz");
-	SCRIPT_METHOD("GetFlashlightCharacterVert");
+	SCRIPT_METHOD(SetFlashlightFollowCharacter);
+	SCRIPT_METHOD(GetFlashlightFollowCharacter);
+	SCRIPT_METHOD(GetFlashlightCharacterDX);
+	SCRIPT_METHOD(GetFlashlightCharacterDY);
+	SCRIPT_METHOD(GetFlashlightCharacterHorz);
+	SCRIPT_METHOD(GetFlashlightCharacterVert);
 
-	SCRIPT_METHOD("SetFlashlightMask");
-	SCRIPT_METHOD("GetFlashlightMask");
+	SCRIPT_METHOD(SetFlashlightMask);
+	SCRIPT_METHOD(GetFlashlightMask);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);

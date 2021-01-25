@@ -137,7 +137,7 @@ void Weather::SyncGame(Serializer &s) {
 	int saveVersion = SaveMagic;
 	s.syncAsInt(saveVersion);
 
-	if (s.isLoading() && saveVersion != SaveMagic) {
+	if (s.isLoading() && (uint)saveVersion != SaveMagic) {
 		_engine->AbortGame("ags_snowrain: bad save.");
 		return;
 	}

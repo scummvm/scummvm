@@ -62,8 +62,8 @@ void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
 	if (_engine->version < 13)
 		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	SCRIPT_METHOD("pxDrawSprite");
-	SCRIPT_METHOD("pxDeleteSprite");
+	SCRIPT_METHOD(pxDrawSprite);
+	SCRIPT_METHOD(pxDeleteSprite);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
@@ -107,7 +107,7 @@ void AGSParallax::clear() {
 void AGSParallax::SyncGame(Serializer &s) {
 	int saveVersion = SaveMagic;
 	s.syncAsInt(saveVersion);
-	if (saveVersion != SaveMagic) {
+	if ((uint)saveVersion != SaveMagic) {
 		_engine->AbortGame("ags_parallax: bad save.");
 		return;
 	}

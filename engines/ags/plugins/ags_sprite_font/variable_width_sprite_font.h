@@ -32,11 +32,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class VariableWidthSpriteFontRenderer :
-	public IAGSFontRenderer {
+class VariableWidthSpriteFontRenderer : public IAGSFontRenderer {
 public:
 	VariableWidthSpriteFontRenderer(IAGSEngine *engine);
-	~VariableWidthSpriteFontRenderer(void);
+	virtual ~VariableWidthSpriteFontRenderer();
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;
 	}

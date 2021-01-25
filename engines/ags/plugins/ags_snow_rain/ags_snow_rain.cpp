@@ -57,30 +57,30 @@ void AGSSnowRain::AGS_EngineStartup(IAGSEngine *engine) {
 	if (_engine->version < 13)
 		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	SCRIPT_METHOD("srSetSnowDriftRange");
-	SCRIPT_METHOD("srSetSnowDriftSpeed");
-	SCRIPT_METHOD("srSetSnowFallSpeed");
-	SCRIPT_METHOD("srChangeSnowAmount");
-	SCRIPT_METHOD("srSetSnowBaseline");
-	SCRIPT_METHOD("srSetSnowTransparency");
-	SCRIPT_METHOD("srSetSnowDefaultView");
-	SCRIPT_METHOD("srSetSnowWindSpeed");
-	SCRIPT_METHOD("srSetSnowAmount");
-	SCRIPT_METHOD("srSetSnowView");
+	SCRIPT_METHOD(srSetSnowDriftRange);
+	SCRIPT_METHOD(srSetSnowDriftSpeed);
+	SCRIPT_METHOD(srSetSnowFallSpeed);
+	SCRIPT_METHOD(srChangeSnowAmount);
+	SCRIPT_METHOD(srSetSnowBaseline);
+	SCRIPT_METHOD(srSetSnowTransparency);
+	SCRIPT_METHOD(srSetSnowDefaultView);
+	SCRIPT_METHOD(srSetSnowWindSpeed);
+	SCRIPT_METHOD(srSetSnowAmount);
+	SCRIPT_METHOD(srSetSnowView);
 
-	SCRIPT_METHOD("srSetRainDriftRange");
-	SCRIPT_METHOD("srSetRainDriftSpeed");
-	SCRIPT_METHOD("srSetRainFallSpeed");
-	SCRIPT_METHOD("srChangeRainAmount");
-	SCRIPT_METHOD("srSetRainBaseline");
-	SCRIPT_METHOD("srSetRainTransparency");
-	SCRIPT_METHOD("srSetRainDefaultView");
-	SCRIPT_METHOD("srSetRainWindSpeed");
-	SCRIPT_METHOD("srSetRainAmount");
-	SCRIPT_METHOD("srSetRainView");
+	SCRIPT_METHOD(srSetRainDriftRange);
+	SCRIPT_METHOD(srSetRainDriftSpeed);
+	SCRIPT_METHOD(srSetRainFallSpeed);
+	SCRIPT_METHOD(srChangeRainAmount);
+	SCRIPT_METHOD(srSetRainBaseline);
+	SCRIPT_METHOD(srSetRainTransparency);
+	SCRIPT_METHOD(srSetRainDefaultView);
+	SCRIPT_METHOD(srSetRainWindSpeed);
+	SCRIPT_METHOD(srSetRainAmount);
+	SCRIPT_METHOD(srSetRainView);
 
-	SCRIPT_METHOD("srSetWindSpeed");
-	SCRIPT_METHOD("srSetBaseline");
+	SCRIPT_METHOD(srSetWindSpeed);
+	SCRIPT_METHOD(srSetBaseline);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
