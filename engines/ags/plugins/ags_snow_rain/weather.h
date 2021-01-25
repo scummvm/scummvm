@@ -24,6 +24,7 @@
 #define AGS_PLUGINS_AGS_SNOW_RAIN_WEATHER_H
 
 #include "ags/plugins/dll.h"
+#include "ags/plugins/serializer.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -34,6 +35,8 @@ struct View {
 	int loop = 0;
 	bool is_default = false;
 	BITMAP *bitmap = nullptr;
+
+	void SyncGame(Serializer &s);
 };
 
 struct Drop {
@@ -49,6 +52,41 @@ struct Drop {
 };
 
 class Weather {
+private:
+	void ClipToRange(int &variable, int min, int max);
+
+	bool _mIsSnow;
+
+	int _mMinDrift = 0;
+	int _mMaxDrift = 0;
+	int _mDeltaDrift = 0;
+
+	int _mMinDriftSpeed = 0;
+	int _mMaxDriftSpeed = 0;
+	int _mDeltaDriftSpeed = 0;
+
+	int _mAmount = 0;
+	int _mTargetAmount = 0;
+
+	int _mMinAlpha = 0;
+	int _mMaxAlpha = 0;
+	int _mDeltaAlpha = 0;
+
+	float _mWindSpeed = 0;
+
+	int _mTopBaseline = 0;
+	int _mBottomBaseline = 0;
+	int _mDeltaBaseline = 0;
+
+	int _mMinFallSpeed = 0;
+	int _mMaxFallSpeed = 0;
+	int _mDeltaFallSpeed = 0;
+
+	Drop _mParticles[2000];
+	View _mViews[5];
+
+	bool _mViewsInitialized;
+
 public:
 	Weather();
 	Weather(bool IsSnow);
@@ -57,8 +95,7 @@ public:
 	void Initialize();
 	void InitializeParticles();
 
-	void RestoreGame(long file);
-	void SaveGame(long file);
+	void SyncGame(Serializer &s);
 	bool ReinitializeViews();
 
 	bool IsActive();
@@ -77,40 +114,6 @@ public:
 	void SetAmount(int amount);
 	void SetFallSpeed(int min_value, int max_value);
 
-private:
-	void ClipToRange(int &variable, int min, int max);
-
-	bool mIsSnow;
-
-	int mMinDrift;
-	int mMaxDrift;
-	int mDeltaDrift;
-
-	int mMinDriftSpeed;
-	int mMaxDriftSpeed;
-	int mDeltaDriftSpeed;
-
-	int mAmount;
-	int mTargetAmount;
-
-	int mMinAlpha;
-	int mMaxAlpha;
-	int mDeltaAlpha;
-
-	float mWindSpeed;
-
-	int mTopBaseline;
-	int mBottomBaseline;
-	int mDeltaBaseline;
-
-	int mMinFallSpeed;
-	int mMaxFallSpeed;
-	int mDeltaFallSpeed;
-
-	Drop mParticles[2000];
-	View mViews[5];
-
-	bool mViewsInitialized;
 };
 
 } // namespace AGSSnowRain
