@@ -39,10 +39,6 @@ namespace Nancy {
 
 SceneManager::~SceneManager() {
     clearSceneData();
-    _engine->graphics->_primaryFrameSurface.free();
-    _engine->graphics->_object0Surface.free();
-    _engine->graphics->_inventoryBoxIconsSurface.free();
-    _engine->graphics->_inventoryCursorsSurface.free();
 }
 
 void SceneManager::process() {
@@ -54,11 +50,6 @@ void SceneManager::process() {
         load();
         break;
     case kStartSound:
-        // Stop all sounds, unless the new scene's background music matches the last one's;
-        // in that case, stop everything except the background music
-        /*if (!_engine->sound->stopAllSounds(&currentScene.audioFile)) {
-            
-        }*/
         _state = kRun;
         if (!doNotStartSound) {
             _engine->sound->stopAllSounds();
@@ -85,8 +76,6 @@ void SceneManager::init() {
 
     _sceneID = _engine->_firstSceneID;
     _engine->_gameFlow.previousGameState = NancyEngine::kScene;
-
-    // TODO init action records
     
     _engine->graphics->clearZRenderStructs();
 
@@ -217,7 +206,7 @@ void SceneManager::load() {
     _engine->playState.lastDrawnViewFrame = -1;
     _engine->input->setPointerBitmap(0, 0, false);
 
-    _state = kStartSound; // TODO temp, is actually StartSound
+    _state = kStartSound;
 }
 
 void SceneManager::run() {
@@ -651,6 +640,9 @@ void SceneManager::clearSceneData() {
     }
 
     _engine->logic->clearActionRecords();
+
+    _engine->graphics->getZRenderStruct("SEC VIDEO 0").isActive = false;
+    _engine->graphics->getZRenderStruct("SEC VIDEO 1").isActive = false;
 }
 
 } // End of namespace Nancy

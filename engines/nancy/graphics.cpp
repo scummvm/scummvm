@@ -21,6 +21,8 @@
  */
 
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/action/recordtypes.h"
 
 #include "common/error.h"
 #include "common/system.h"
@@ -65,6 +67,11 @@ GraphicsManager::~GraphicsManager() {
     _background.free();
     _frameTextBox.free();
     _screen.free();
+    _primaryFrameSurface.free();
+    _object0Surface.free();
+    _inventoryBoxIconsSurface.free();
+    _inventoryCursorsSurface.free();
+    _object0Surface.free();
 
     for (auto st : _ZRender) {
         delete st._value.renderFunction;
@@ -164,10 +171,8 @@ void GraphicsManager::initSceneZRenderStructs() {
     initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::BltType::kNoTrans);
     initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderPrimaryVideo));
-    initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderSecVideo0));
-    initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderSecVideo1));
+    initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, &channels[0].surf);
+    initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, &channels[1].surf);
     initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderSecMovie));
     initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
@@ -262,6 +267,68 @@ uint32 GraphicsManager::getBackgroundWidth() {
 
 uint32 GraphicsManager::getBackgroundHeight() {
     return _videoDecoder.getHeight();
+}
+
+void GraphicsManager::loadSecondaryVideo(uint channel, Common::String &filename, PlaySecondaryVideo *record) {
+    AVFDecoder &decoder = channels[channel].decoder;
+    if (decoder.isVideoLoaded()) {
+        decoder.close();
+    }
+    decoder.loadFile(filename + ".avf");
+    channels[channel].record = record;
+}
+
+void GraphicsManager::setupSecondaryVideo(uint channel, uint16 begin, uint16 end, bool loop) {
+    channels[channel].beginFrame = begin;
+    channels[channel].endFrame = end;
+    channels[channel].loop = loop;
+    channels[channel].decoder.seekToFrame(begin);
+}
+
+void GraphicsManager::playSecondaryVideo(uint channel) {
+    AVFDecoder &decoder = channels[channel].decoder;
+    VideoChannel &chan = channels[channel];
+    if (!decoder.isVideoLoaded()) {
+        return;
+    }
+
+    // toggle between normal and reverse playback if needed
+    bool isReversed = chan.endFrame < chan.beginFrame;
+    bool wasReversed = decoder.getRate() < 0;
+    if (isReversed != wasReversed) {
+        decoder.setRate(-decoder.getRate());
+    }
+
+    if (!decoder.isPlaying()) {
+        decoder.start();
+        decoder.seekToFrame(chan.beginFrame);
+        
+        chan.surf.w = decoder.getWidth();
+        chan.surf.h = decoder.getHeight();
+        chan.surf.format = decoder.getPixelFormat();
+    }
+
+
+    if (decoder.needsUpdate()) {
+        const Graphics::Surface *fr = nullptr;
+        fr = decoder.decodeNextFrame();
+        chan.surf = *fr;
+    }
+    
+    // TODO loop is choppy and repeats a frame
+    if (decoder.getCurFrame() == chan.endFrame || decoder.endOfVideo()) {
+        if (chan.record->hoverState == PlaySecondaryVideo::kEndHover) {
+            chan.record->hoverState = PlaySecondaryVideo::kEndHoverDone;
+        }
+
+        if (chan.loop) {
+            decoder.seekToFrame(chan.beginFrame);
+        }
+    }
+}
+
+void GraphicsManager::stopSecondaryVideo(uint channel) {
+    channels[channel].decoder.stop();
 }
 
 void GraphicsManager::renderFrame() {
