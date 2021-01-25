@@ -1068,14 +1068,18 @@ int GetTranslucentOverlayAlpha(int id) {
 }
 
 int SetTranslucentOverlayAlpha(int id, int alpha) {
-	if (alpha >= 0 && alpha < 256) overlay[id].trans = alpha;
-	else engine->AbortGame("CreateTranslucentOverlay: Invalid alpha selected.");
+	if (alpha >= 0 && alpha < 256)
+		overlay[id].trans = alpha;
+	else
+		engine->AbortGame("CreateTranslucentOverlay: Invalid alpha selected.");
 	return 0;
 }
 
 int SetTranslucentOverlayEnabled(int id, int toggle) {
-	if (toggle > 0) overlay[id].enabled = true;
-	else overlay[id].enabled = false;
+	if (toggle > 0)
+		overlay[id].enabled = true;
+	else
+		overlay[id].enabled = false;
 	return 0;
 }
 
@@ -1085,16 +1089,18 @@ void SetCharacterReflected(int id, int refl) {
 }
 
 void SetObjectReflected(int id, int refl) {
-	if (refl > 0) Reflection.Objects[id].reflect = 1;
-	else Reflection.Objects[id].reflect = 0;
+	if (refl > 0)
+		Reflection.Objects[id].reflect = 1;
+	else
+		Reflection.Objects[id].reflect = 0;
 }
 
 int GetCharacterReflected(int id) {
 	return Reflection.Characters[id].reflect;
 }
 
-void GetObjectReflected(int id) {
-	Reflection.Objects[id].reflect;
+int GetObjectReflected(int id) {
+	return Reflection.Objects[id].reflect;
 }
 
 void ReplaceCharacterReflectionView(int id, int view) {
@@ -1131,9 +1137,10 @@ int DrawReflections(int id, int charobj = 0) {
 	//Get character, and their sprite.
 	if (charobj == 0) {
 		currchar = engine->GetCharacter(id);
-		int view = 0;
+		/*int view = 0;
 		if (Reflection.Characters[id].replaceview == 0) view = currchar->view + 1;
 		else view = Reflection.Characters[id].replaceview;
+		*/
 		AGSViewFrame *vf = engine->GetViewFrame(currchar->view + 1, currchar->loop, currchar->frame);
 		charsprite = engine->GetSpriteGraphic(vf->pic);
 		long scaling = currchar->flags & CHF_NOSCALING;
@@ -1270,8 +1277,7 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
 	if (!maskspr && mask > 0) {
 		char maskerr [100];
-		int cx;
-		cx = snprintf(maskerr, 100, "DrawTransSprite: Can't load mask from slot %d.", mask);
+		snprintf(maskerr, 100, "DrawTransSprite: Can't load mask from slot %d.", mask);
 		engine->AbortGame(maskerr);
 	}
 	// Get a reference to the screen we'll draw onto

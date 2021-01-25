@@ -31,6 +31,7 @@
 #ifndef AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 #define AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 
+#include "ags/shared/core/types.h"
 #include "common/array.h"
 
 namespace AGS3 {

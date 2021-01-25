@@ -31,11 +31,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class SpriteFontRenderer :
-	public IAGSFontRenderer {
+class SpriteFontRenderer : public IAGSFontRenderer {
 public:
 	SpriteFontRenderer(IAGSEngine *engine);
-	~SpriteFontRenderer(void);
+	virtual ~SpriteFontRenderer(void);
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;
 	}

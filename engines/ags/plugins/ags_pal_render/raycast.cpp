@@ -111,21 +111,21 @@ int Ray_GetNoClip() {
 }
 
 void Ray_DrawTile(int spr, int tile) {
-	BITMAP *sprite = engine->GetSpriteGraphic(spr);
-	unsigned char **sprarray = engine->GetRawBitmapSurface(sprite);
+	BITMAP *img = engine->GetSpriteGraphic(spr);
+	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
 	for (int y = 0; y < 64; ++y)
 		for (int x = 0; x < 64; ++x)
 			sprarray [y][x] = texture [tile][(texWidth * y) + x];
-	engine->ReleaseBitmapSurface(sprite);
+	engine->ReleaseBitmapSurface(img);
 }
 
 void Ray_DrawOntoTile(int spr, int tile) {
-	BITMAP *sprite = engine->GetSpriteGraphic(spr);
-	unsigned char **sprarray = engine->GetRawBitmapSurface(sprite);
+	BITMAP *img = engine->GetSpriteGraphic(spr);
+	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
 	for (int y = 0; y < 64; ++y)
 		for (int x = 0; x < 64; ++x)
 			texture [tile][(texWidth * y) + x] = sprarray [y][x];
-	engine->ReleaseBitmapSurface(sprite);
+	engine->ReleaseBitmapSurface(img);
 }
 
 int Ray_GetTileX_At(int x, int y) {
@@ -351,14 +351,14 @@ void LoadHeightMap(int heightmapSlot) {
 void LoadMap(int worldmapSlot, int lightmapSlot, int ceilingmapSlot, int floormapSlot) {
 	int tempw = engine->GetSpriteWidth(worldmapSlot);
 	int temph = engine->GetSpriteHeight(worldmapSlot);
-	BITMAP *worldmapBm;
-	BITMAP *lightmapBm;
-	BITMAP *floormapBm;
-	BITMAP *ceilingmapBm;
-	unsigned char **wmArray;
-	unsigned char **lmArray;
-	unsigned char **fmArray;
-	unsigned char **cmArray;
+	BITMAP *worldmapBm = nullptr;
+	BITMAP *lightmapBm = nullptr;
+	BITMAP *floormapBm = nullptr;
+	BITMAP *ceilingmapBm = nullptr;
+	unsigned char **wmArray = nullptr;
+	unsigned char **lmArray = nullptr;
+	unsigned char **fmArray = nullptr;
+	unsigned char **cmArray = nullptr;
 	worldmapBm = engine->GetSpriteGraphic(worldmapSlot);
 	if (!worldmapBm) engine->AbortGame("LoadMap: Couldn't load worldmap sprite into memory.");
 	wmArray = engine->GetRawBitmapSurface(worldmapBm);
@@ -533,7 +533,7 @@ void MakeTextures(int slot) {
 	unsigned char **texbuffer = engine->GetRawBitmapSurface(texspr);
 	int numTilesX = sourceWidth / texWidth;
 	int numTilesY = sourceHeight / texHeight;
-	int totaltiles = numTilesX * numTilesY;
+	//int totaltiles = numTilesX * numTilesY;
 	for (int numX = 0; numX < numTilesX; ++numX) {
 		for (int numY = 0; numY < numTilesY; ++numY) {
 			for (int x = 0; x < texWidth; ++x)
@@ -648,8 +648,9 @@ FLOAT_RETURN_TYPE Ray_GetDistanceAt(int x, int y) {
 }
 
 void Init_Raycaster() {
-	if (ZBuffer) return;
-	if (!worldMap) return;
+	if (ZBuffer)
+		return;
+	//if (!worldMap) return;
 	transcolorbuffer = new unsigned char *[sWidth];
 	transalphabuffer = new unsigned char *[sWidth];
 	transslicedrawn = new bool[sWidth]();
@@ -683,7 +684,7 @@ void Raycast_Render(int slot) {
 	BITMAP *sbBm = engine->GetSpriteGraphic(skybox);
 	if (!sbBm) engine->AbortGame("Raycast_Render: No valid skybox sprite.");
 	if (skybox > 0) {
-		int bgdeg = (int)((playerrad / PI) * 180.0) + 180;
+		//int bgdeg = (int)((playerrad / PI) * 180.0) + 180;
 		int xoffset = (int)(playerrad * 320.0);
 		BITMAP *virtsc = engine->GetVirtualScreen();
 		engine->SetVirtualScreen(screen);
@@ -702,7 +703,7 @@ void Raycast_Render(int slot) {
 			ZBuffer[x][y] = 0;
 		}
 	}
-	int multiplier = mapWidth;
+	//int multiplier = mapWidth;
 	memset(interactionmap, 0, sizeof(short) * (sHeight * sWidth));
 	//start the main loop
 	for (int x = 0; x < w; x++) {
@@ -725,7 +726,7 @@ void Raycast_Render(int slot) {
 		//length of ray from one x or y-side to next x or y-side
 		double deltaDistX = fsqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX));
 		double deltaDistY = fsqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY));
-		double perpWallDist;
+		double perpWallDist = 0.0;
 
 		//what direction to step in x or y-direction (either +1 or -1)
 		int stepX;
@@ -733,7 +734,7 @@ void Raycast_Render(int slot) {
 		int prevmapX = 0;
 		int prevmapY = 0;
 		int hit = 0; //was there a wall hit?
-		int side; //was a NS or a EW wall hit?
+		int side = 0; //was a NS or a EW wall hit?
 
 		//calculate step and initial sideDist
 		if (rayDirX < 0) {
@@ -750,13 +751,13 @@ void Raycast_Render(int slot) {
 			stepY = 1;
 			sideDistY = (mapY + 1.0 - rayPosY) * deltaDistY;
 		}
-		//perform DDA
+		// Perform DDA
 		bool deeper = true;
 		bool opposite = true;
 		bool oppositedrawn = false;
-		double wallX; //where exactly the wall was hit
+		double wallX = 0; // Where exactly the wall was hit
 		int drawStart;
-		int drawEnd;
+		int drawEnd = 0;
 		while (hit == 0 && deeper == true) {
 			if (opposite) {
 				rayDirX = -rayDirX;
@@ -765,7 +766,7 @@ void Raycast_Render(int slot) {
 				stepY = -stepY;
 				if (sideDistX < sideDistY) side = 0;
 				else side = 1;
-			} else if (sideDistX < sideDistY) { //jump to next map square, OR in x-direction, OR in y-direction
+			} else if (sideDistX < sideDistY) { // jump to next map square, OR in x-direction, OR in y-direction
 				sideDistX += deltaDistX;
 				mapX += stepX;
 				mapX = abs(mapX) % mapHeight;
@@ -802,7 +803,7 @@ void Raycast_Render(int slot) {
 					opposite = false;
 				}
 			}
-			int texside;
+			int texside = 0;
 			if (rayDirX > 0 && side == 0) texside = 0;
 			if (rayDirX < 0 && side == 0) texside = 1;
 			if (rayDirY > 0 && side == 1) texside = 2;
@@ -976,6 +977,10 @@ void Raycast_Render(int slot) {
 			//End of loop.
 		}
 
+		// Unused variables
+		(void)prevmapX;
+		(void)prevmapY;
+
 		//FLOOR CASTING
 
 		double floorXWall, floorYWall; //x, y position of the floor texel at the bottom of the wall
@@ -1002,7 +1007,8 @@ void Raycast_Render(int slot) {
 
 		distWall = perpWallDist;
 		distPlayer = 0.0;
-		if (drawEnd < 0) drawEnd = h - 1; //becomes < 0 when the integer overflows
+		if (drawEnd < 0)
+			drawEnd = h - 1; //becomes < 0 when the integer overflows
 		//draw the floor from drawEnd to the bottom of the screen
 		int drawdist = h;
 		int expandeddraw = h >> 1;
@@ -1010,7 +1016,7 @@ void Raycast_Render(int slot) {
 			//currentDist = h / (2.0 * y - h); //you could make a small lookup table for this instead
 			currentDist = distTable[y];
 			if (y > h - 1) {
-				if (!heightMap) break;
+				//if (!heightMap) break;
 				double weight = (currentDist - distPlayer) / (distWall - distPlayer);
 
 				double currentFloorX = weight * floorXWall + (1.0 - weight) * posX;
@@ -1045,7 +1051,7 @@ void Raycast_Render(int slot) {
 					if (floorcolor) floorcolor = Mix::MixColorLightLevel(floorcolor, lighting);
 				}
 
-				if (heightMap && floorcolor > 0) {
+				if (/*heightMap &&*/ floorcolor > 0) {
 					if (heightMap[cmapX][cmapY] - 1 > 0) {
 						int raisedfloorstart = y - (int)(texture[heightMap[cmapX][cmapY] - 1][texpos] / currentDist);
 						if (raisedfloorstart > h - 1) continue;
@@ -1093,7 +1099,7 @@ void Raycast_Render(int slot) {
 					if (ceilingcolor) ceilingcolor = Mix::MixColorLightLevel(ceilingcolor, lighting);
 				}
 
-				if (heightMap && floorcolor > 0 && (currentDist < ZBuffer[x][y] || ZBuffer[x][y] == 0)) {
+				if (/*heightMap &&*/ floorcolor > 0 && (currentDist < ZBuffer[x][y] || ZBuffer[x][y] == 0)) {
 					if (heightMap[cmapX][cmapY] - 1 > 0) {
 						int raisedfloorstart = y - (int)(texture[heightMap[cmapX][cmapY] - 1][texWidth * floorTexY + floorTexX] / currentDist);
 						if (raisedfloorstart > h - 1) continue;
@@ -1210,8 +1216,8 @@ void Raycast_Render(int slot) {
 		// [ planeY   dirY ]                                          [ -planeY  planeX ]
 
 		//double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
-		double spriteX = sprite[spriteOrder[i]].x - posX;
-		double spriteY = sprite[spriteOrder[i]].y - posY;
+		//double spriteX = sprite[spriteOrder[i]].x - posX;
+		//double spriteY = sprite[spriteOrder[i]].y - posY;
 		//double transformX = invDet * (dirY * spriteX - dirX * spriteY);
 		//double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
 

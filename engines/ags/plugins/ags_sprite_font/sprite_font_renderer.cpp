@@ -49,7 +49,7 @@ void SpriteFontRenderer::SetSpriteFont(int fontNum, int sprite, int rows, int co
 
 void SpriteFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
 	SpriteFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		if (text[i] < font->MinChar || text[i] > font->MaxChar) {
 			if (font->MinChar < 63 || font->MaxChar > 63) text[i] = 63;
 			else text[i] = font->MinChar;
@@ -65,7 +65,7 @@ bool SpriteFontRenderer::SupportsExtendedCharacters(int fontNumber) {
 
 int SpriteFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	SpriteFont *font = getFontFor(fontNumber);
-	int len = strlen(text);
+	int len = (int)strlen(text);
 	return font->CharWidth * len;
 
 }
@@ -77,7 +77,7 @@ int SpriteFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 
 SpriteFont *SpriteFontRenderer::getFontFor(int fontNum) {
 	SpriteFont *font;
-	for (int i = 0; i < _fonts.size(); i ++) {
+	for (int i = 0; i < (int)_fonts.size(); i ++) {
 		font = _fonts.at(i);
 		if (font->FontReplaced == fontNum) return font;
 	}
@@ -91,13 +91,12 @@ SpriteFont *SpriteFontRenderer::getFontFor(int fontNum) {
 
 
 void SpriteFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
-
 	SpriteFont *font = getFontFor(fontNumber);
-	BITMAP *vScreen = _engine->GetVirtualScreen();
+	//BITMAP *vScreen = _engine->GetVirtualScreen();
 
 	//_engine->SetVirtualScreen(destination);
 
-	for (int i = 0; i < strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		char c = text[i];
 		c -= font->MinChar;
 		int row = c / font->Columns;
