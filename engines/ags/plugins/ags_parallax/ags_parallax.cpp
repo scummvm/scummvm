@@ -22,6 +22,7 @@
 
 #include "ags/plugins/ags_parallax/ags_parallax.h"
 #include "ags/shared/core/platform.h"
+#include "common/endian.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -69,8 +70,6 @@ void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine->RequestEventHook(AGSE_ENTERROOM);
 	_engine->RequestEventHook(AGSE_SAVEGAME);
 	_engine->RequestEventHook(AGSE_RESTOREGAME);
-
-	Initialize();
 }
 
 int AGSParallax::AGS_EngineOnEvent(int event, int data) {
@@ -80,7 +79,7 @@ int AGSParallax::AGS_EngineOnEvent(int event, int data) {
 		Draw(false);
 	} else if (event == AGSE_ENTERROOM) {
 		// Reset all _sprites
-		Initialize();
+		clear();
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here
 		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
@@ -94,6 +93,15 @@ int AGSParallax::AGS_EngineOnEvent(int event, int data) {
 	return 0;
 }
 
+void AGSParallax::clear() {
+	for (int i = 0; i < MAX_SPRITES; i++) {
+		_sprites[i] = Sprite();
+		_sprites[i].slot = -1;
+	}
+
+	_enabled = false;
+}
+
 size_t AGSParallax::engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
 	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
 	return totalBytes / size;
@@ -104,37 +112,28 @@ size_t AGSParallax::engineFileWrite(const void *ptr, size_t size, size_t count, 
 	return totalBytes / size;
 }
 
-void AGSParallax::RestoreGame(long fileHandle) {
-	unsigned int SaveVersion = 0;
-	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, fileHandle);
+void AGSParallax::RestoreGame(long file) {
+	byte saveVersion[4];
+	engineFileRead(&saveVersion, 4, 1, file);
 
-	if (SaveVersion != SaveMagic) {
+	if (READ_LE_UINT32(saveVersion) != SaveMagic) {
 		_engine->AbortGame("ags_parallax: bad save.");
 	}
 
-	// TODO: This seems endian/packing unsafe
-	engineFileRead(_sprites, sizeof(Sprite), MAX_SPRITES, fileHandle);
-	engineFileRead(&_enabled, sizeof(bool), 1, fileHandle);
+	for (int i = 0; i < MAX_SPRITES; ++i)
+		_sprites[i].load(_engine, file);
+	engineFileRead(&_enabled, sizeof(bool), 1, file);
 }
 
 void AGSParallax::SaveGame(long file) {
-	warning("TODO: AGSParallax::SaveGame is endian unsafe");
-	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
-	engineFileWrite(_sprites, sizeof(Sprite), MAX_SPRITES, file);
-	engineFileWrite(&_enabled, sizeof(bool), 1, file);
+	byte saveVersion[4];
+	WRITE_LE_UINT32(saveVersion, SaveMagic);
+	engineFileWrite(&SaveMagic, 4, 1, file);
+
+	for (int i = 0; i < MAX_SPRITES; ++i)
+		_sprites[i].save(_engine, file);
+	engineFileWrite(&_enabled, 1, 1, file);
 }
-
-
-void AGSParallax::Initialize() {
-	memset(_sprites, 0, sizeof(Sprite) * MAX_SPRITES);
-
-	int i;
-	for (i = 0; i < MAX_SPRITES; i++)
-		_sprites[i].slot = -1;
-
-	_enabled = false;
-}
-
 
 void AGSParallax::Draw(bool foreground) {
 	if (!_enabled)
@@ -165,7 +164,6 @@ void AGSParallax::Draw(bool foreground) {
 		}
 	}
 }
-
 
 void AGSParallax::pxDrawSprite(int id, int x, int y, int slot, int speed) {
 #ifdef DEBUG
@@ -202,6 +200,34 @@ void AGSParallax::pxDeleteSprite(int id) {
 		return;
 
 	_sprites[id].slot = -1;
+}
+
+/*------------------------------------------------------------------*/
+
+void Sprite::save(IAGSEngine *engine, long file) {
+	saveInt(engine, file, x);
+	saveInt(engine, file, y);
+	saveInt(engine, file, slot);
+	saveInt(engine, file, speed);
+}
+
+void Sprite::load(IAGSEngine *engine, long file) {
+	x = loadInt(engine, file);
+	y = loadInt(engine, file);
+	slot = loadInt(engine, file);
+	speed = loadInt(engine, file);
+}
+
+void saveInt(IAGSEngine *engine, long file, int value) {
+	byte buf[4];
+	WRITE_LE_INT32(buf, value);
+	engine->FWrite(buf, 4, file);
+}
+
+int loadInt(IAGSEngine *engine, long file) {
+	byte buf[4];
+	engine->FRead(buf, 4, file);
+	return READ_LE_INT32(buf);
 }
 
 } // namespace AGSParallax
