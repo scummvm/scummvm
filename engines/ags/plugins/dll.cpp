@@ -26,6 +26,7 @@
 #include "ags/plugins/ags_creditz/ags_creditz.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
+#include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -61,6 +62,9 @@ void *dlopen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("libAGSPalRender.so"))
 		return new AGSPalRender::AGSPalRender();
+
+	if (fname.equalsIgnoreCase("libAGSSnowRain.so"))
+		return new AGSSnowRain::AGSSnowRain();
 
 	return nullptr;
 }

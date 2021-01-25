@@ -306,7 +306,9 @@ MODULE_OBJS = \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_pal_render/ags_pal_render.o \
 	plugins/ags_pal_render/raycast.o \
-	plugins/ags_parallax/ags_parallax.o
+	plugins/ags_parallax/ags_parallax.o \
+	plugins/ags_snow_rain/ags_snow_rain.o \
+	plugins/ags_snow_rain/weather.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \
