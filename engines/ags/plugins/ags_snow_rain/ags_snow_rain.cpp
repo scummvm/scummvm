@@ -108,11 +108,13 @@ int AGSSnowRain::AGS_EngineOnEvent(int event, int data) {
 		_rain->EnterRoom();
 		_snow->EnterRoom();
 	} else if (event == AGSE_RESTOREGAME) {
-		_rain->RestoreGame(data);
-		_snow->RestoreGame(data);
+		Serializer s(_engine, data, true);
+		_rain->SyncGame(s);
+		_snow->SyncGame(s);
 	} else if (event == AGSE_SAVEGAME) {
-		_rain->SaveGame(data);
-		_snow->SaveGame(data);
+		Serializer s(_engine, data, false);
+		_rain->SyncGame(s);
+		_snow->SyncGame(s);
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here
 		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight , &_screenColorDepth);

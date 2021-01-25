@@ -36,175 +36,156 @@ const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 const float PI = 3.14159265f;
 
-Weather::Weather() {
-	mIsSnow = false;
+
+void View::SyncGame(Serializer &s) {
+	s.syncAsInt(view);
+	s.syncAsInt(loop);
+	s.syncAsBool(is_default);
+
+	// Pointer saved/loaded raw structure, which included bitmap pointer
+	int dummy = 0;
+	s.syncAsInt(dummy);
+}
+
+/*------------------------------------------------------------------*/
+
+Weather::Weather() : _mIsSnow(false) {
 	Initialize();
 }
 
-Weather::Weather(bool IsSnow) {
-	mIsSnow = IsSnow;
+Weather::Weather(bool IsSnow) : _mIsSnow(IsSnow) {
 	Initialize();
 }
 
 Weather::~Weather() = default;
 
 void Weather::Update() {
-	if (mTargetAmount > mAmount)
-		mAmount++;
-	else if (mTargetAmount < mAmount)
-		mAmount--;
+	if (_mTargetAmount > _mAmount)
+		_mAmount++;
+	else if (_mTargetAmount < _mAmount)
+		_mAmount--;
 
 	if (!ReinitializeViews())
 		return;
 
 	int i;
-	for (i = 0; i < mAmount * 2; i++) {
-		mParticles[i].y += mParticles[i].speed;
-		mParticles[i].x += mWindSpeed;
+	for (i = 0; i < _mAmount * 2; i++) {
+		_mParticles[i].y += _mParticles[i].speed;
+		_mParticles[i].x += _mWindSpeed;
 
-		if (mParticles[i].x < 0)
-			mParticles[i].x += _screenWidth;
+		if (_mParticles[i].x < 0)
+			_mParticles[i].x += _screenWidth;
 
-		if (mParticles[i].x > _screenWidth - 1)
-			mParticles[i].x -= _screenWidth;
+		if (_mParticles[i].x > _screenWidth - 1)
+			_mParticles[i].x -= _screenWidth;
 
-		if (mParticles[i].y > mParticles[i].max_y) {
-			mParticles[i].y = -1 * (::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenHeight);
-			mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
-			mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaAlpha + mMinAlpha;
-			mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaFallSpeed + mMinFallSpeed) / 50.0f;
-			mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaBaseline + mTopBaseline;
-		} else if ((mParticles[i].y > 0) && (mParticles[i].alpha > 0))
-			_engine->BlitSpriteTranslucent(mParticles[i].x, mParticles[i].y, mViews[mParticles[i].kind_id].bitmap, mParticles[i].alpha);
+		if (_mParticles[i].y > _mParticles[i].max_y) {
+			_mParticles[i].y = -1 * (::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenHeight);
+			_mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
+			_mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaAlpha + _mMinAlpha;
+			_mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaFallSpeed + _mMinFallSpeed) / 50.0f;
+			_mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaBaseline + _mTopBaseline;
+		} else if ((_mParticles[i].y > 0) && (_mParticles[i].alpha > 0))
+			_engine->BlitSpriteTranslucent(_mParticles[i].x, _mParticles[i].y, _mViews[_mParticles[i].kind_id].bitmap, _mParticles[i].alpha);
 	}
 
 	_engine->MarkRegionDirty(0, 0, _screenWidth, _screenHeight);
 }
 
 void Weather::UpdateWithDrift() {
-	if (mTargetAmount > mAmount)
-		mAmount++;
-	else if (mTargetAmount < mAmount)
-		mAmount--;
+	if (_mTargetAmount > _mAmount)
+		_mAmount++;
+	else if (_mTargetAmount < _mAmount)
+		_mAmount--;
 
 	if (!ReinitializeViews())
 		return;
 
 	int i, drift;
-	for (i = 0; i < mAmount * 2; i++) {
-		mParticles[i].y += mParticles[i].speed;
-		drift = mParticles[i].drift * sin((float)(mParticles[i].y +
-			mParticles[i].drift_offset) * mParticles[i].drift_speed * 2.0f * PI / 360.0f);
+	for (i = 0; i < _mAmount * 2; i++) {
+		_mParticles[i].y += _mParticles[i].speed;
+		drift = _mParticles[i].drift * sin((float)(_mParticles[i].y +
+			_mParticles[i].drift_offset) * _mParticles[i].drift_speed * 2.0f * PI / 360.0f);
 
-		if (signum(mWindSpeed) == signum(drift))
-			mParticles[i].x += mWindSpeed;
+		if (signum(_mWindSpeed) == signum(drift))
+			_mParticles[i].x += _mWindSpeed;
 		else
-			mParticles[i].x += mWindSpeed / 4;
+			_mParticles[i].x += _mWindSpeed / 4;
 
-		if (mParticles[i].x < 0)
-			mParticles[i].x += _screenWidth;
+		if (_mParticles[i].x < 0)
+			_mParticles[i].x += _screenWidth;
 
-		if (mParticles[i].x > _screenWidth - 1)
-			mParticles[i].x -= _screenWidth;
+		if (_mParticles[i].x > _screenWidth - 1)
+			_mParticles[i].x -= _screenWidth;
 
-		if (mParticles[i].y > mParticles[i].max_y) {
-			mParticles[i].y = -1 * (::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenHeight);
-			mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
-			mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaAlpha + mMinAlpha;
-			mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaFallSpeed + mMinFallSpeed) / 50.0f;
-			mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaBaseline + mTopBaseline;
-			mParticles[i].drift = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaDrift + mMinDrift;
-			mParticles[i].drift_speed = (::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaDriftSpeed + mMinDriftSpeed) / 50.0f;
-		} else if ((mParticles[i].y > 0) && (mParticles[i].alpha > 0))
-			_engine->BlitSpriteTranslucent(mParticles[i].x + drift, mParticles[i].y, mViews[mParticles[i].kind_id].bitmap, mParticles[i].alpha);
+		if (_mParticles[i].y > _mParticles[i].max_y) {
+			_mParticles[i].y = -1 * (::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenHeight);
+			_mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
+			_mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaAlpha + _mMinAlpha;
+			_mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaFallSpeed + _mMinFallSpeed) / 50.0f;
+			_mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaBaseline + _mTopBaseline;
+			_mParticles[i].drift = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaDrift + _mMinDrift;
+			_mParticles[i].drift_speed = (::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaDriftSpeed + _mMinDriftSpeed) / 50.0f;
+		} else if ((_mParticles[i].y > 0) && (_mParticles[i].alpha > 0))
+			_engine->BlitSpriteTranslucent(_mParticles[i].x + drift, _mParticles[i].y, _mViews[_mParticles[i].kind_id].bitmap, _mParticles[i].alpha);
 	}
 
 	_engine->MarkRegionDirty(0, 0, _screenWidth, _screenHeight);
 }
 
-static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
-	return totalBytes / size;
-}
+void Weather::SyncGame(Serializer &s) {
+	int saveVersion = 0;
+	s.syncAsInt(saveVersion);
 
-static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
-	return totalBytes / size;
-}
-
-void Weather::RestoreGame(long file) {
-	unsigned int SaveVersion = 0;
-	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, file);
-
-	if (SaveVersion != SaveMagic) {
+	if (s.isLoading() && saveVersion != SaveMagic) {
 		_engine->AbortGame("ags_snowrain: bad save.");
+		return;
 	}
 
-	// Current version
-	engineFileRead(&mIsSnow, 4, 1, file);
-	engineFileRead(&mMinDrift, 4, 1, file);
-	engineFileRead(&mMaxDrift, 4, 1, file);
-	engineFileRead(&mDeltaDrift, 4, 1, file);
-	engineFileRead(&mMinDriftSpeed, 4, 1, file);
-	engineFileRead(&mMaxDriftSpeed, 4, 1, file);
-	engineFileRead(&mDeltaDriftSpeed, 4, 1, file);
-	engineFileRead(&mAmount, 4, 1, file);
-	engineFileRead(&mTargetAmount, 4, 1, file);
-	engineFileRead(&mMinAlpha, 4, 1, file);
-	engineFileRead(&mMaxAlpha, 4, 1, file);
-	engineFileRead(&mDeltaAlpha, 4, 1, file);
-	engineFileRead(&mWindSpeed, 4, 1, file);
-	engineFileRead(&mTopBaseline, 4, 1, file);
-	engineFileRead(&mBottomBaseline, 4, 1, file);
-	engineFileRead(&mDeltaBaseline, 4, 1, file);
-	engineFileRead(&mMinFallSpeed, 4, 1, file);
-	engineFileRead(&mMaxFallSpeed, 4, 1, file);
-	engineFileRead(&mDeltaFallSpeed, 4, 1, file);
-	engineFileRead(mViews, sizeof(View) * 5, 1, file);
+	// TODO: At some point check whether the original did a packed
+	// structure for Weather, or if bools were padded to 4 bytes
+	s.syncAsBool(_mIsSnow);
+	s.syncAsInt(_mMinDrift);
+	s.syncAsInt(_mMaxDrift);
+	s.syncAsInt(_mDeltaDrift);
+	s.syncAsInt(_mMinDriftSpeed);
+	s.syncAsInt(_mMaxDriftSpeed);
+	s.syncAsInt(_mDeltaDriftSpeed);
+	s.syncAsInt(_mAmount);
+	s.syncAsInt(_mTargetAmount);
+	s.syncAsInt(_mMinAlpha);
+	s.syncAsInt(_mMaxAlpha);
+	s.syncAsInt(_mDeltaAlpha);
+	s.syncAsFloat(_mWindSpeed);
+	s.syncAsInt(_mTopBaseline);
+	s.syncAsInt(_mBottomBaseline);
+	s.syncAsInt(_mDeltaBaseline);
+	s.syncAsInt(_mMinFallSpeed);
+	s.syncAsInt(_mMaxFallSpeed);
+	s.syncAsInt(_mDeltaFallSpeed);
 
-	InitializeParticles();
-}
+	for (int i = 0; i < 5; ++i)
+		_mViews[i].SyncGame(s);
 
-void Weather::SaveGame(long file) {
-	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
-
-	engineFileWrite(&mIsSnow, 4, 1, file);
-	engineFileWrite(&mMinDrift, 4, 1, file);
-	engineFileWrite(&mMaxDrift, 4, 1, file);
-	engineFileWrite(&mDeltaDrift, 4, 1, file);
-	engineFileWrite(&mMinDriftSpeed, 4, 1, file);
-	engineFileWrite(&mMaxDriftSpeed, 4, 1, file);
-	engineFileWrite(&mDeltaDriftSpeed, 4, 1, file);
-	engineFileWrite(&mAmount, 4, 1, file);
-	engineFileWrite(&mTargetAmount, 4, 1, file);
-	engineFileWrite(&mMinAlpha, 4, 1, file);
-	engineFileWrite(&mMaxAlpha, 4, 1, file);
-	engineFileWrite(&mDeltaAlpha, 4, 1, file);
-	engineFileWrite(&mWindSpeed, 4, 1, file);
-	engineFileWrite(&mTopBaseline, 4, 1, file);
-	engineFileWrite(&mBottomBaseline, 4, 1, file);
-	engineFileWrite(&mDeltaBaseline, 4, 1, file);
-	engineFileWrite(&mMinFallSpeed, 4, 1, file);
-	engineFileWrite(&mMaxFallSpeed, 4, 1, file);
-	engineFileWrite(&mDeltaFallSpeed, 4, 1, file);
-	engineFileWrite(mViews, sizeof(View) * 5, 1, file);
+	if (s.isLoading())
+		InitializeParticles();
 }
 
 bool Weather::ReinitializeViews() {
-	if ((mViews[4].view == -1) || (mViews[4].loop == -1))
+	if ((_mViews[4].view == -1) || (_mViews[4].loop == -1))
 		return false;
 
-	AGSViewFrame *view_frame = _engine->GetViewFrame(mViews[4].view, mViews[4].loop, 0);
+	AGSViewFrame *view_frame = _engine->GetViewFrame(_mViews[4].view, _mViews[4].loop, 0);
 	BITMAP *default_bitmap = _engine->GetSpriteGraphic(view_frame->pic);
 
 	int i;
 	for (i = 0; i < 5; i++) {
-		if (mViews[i].bitmap != nullptr) {
-			if (mViews[i].is_default)
-				mViews[i].bitmap = default_bitmap;
+		if (_mViews[i].bitmap != nullptr) {
+			if (_mViews[i].is_default)
+				_mViews[i].bitmap = default_bitmap;
 			else {
-				view_frame = _engine->GetViewFrame(mViews[i].view, mViews[i].loop, 0);
-				mViews[i].bitmap = _engine->GetSpriteGraphic(view_frame->pic);
+				view_frame = _engine->GetViewFrame(_mViews[i].view, _mViews[i].loop, 0);
+				_mViews[i].bitmap = _engine->GetSpriteGraphic(view_frame->pic);
 			}
 		}
 	}
@@ -213,11 +194,11 @@ bool Weather::ReinitializeViews() {
 }
 
 bool Weather::IsActive() {
-	return (mAmount > 0) || (mTargetAmount != mAmount);
+	return (_mAmount > 0) || (_mTargetAmount != _mAmount);
 }
 
 void Weather::EnterRoom() {
-	mAmount = mTargetAmount;
+	_mAmount = _mTargetAmount;
 }
 
 void Weather::ClipToRange(int &variable, int min, int max) {
@@ -236,37 +217,37 @@ void Weather::Initialize() {
 	SetWindSpeed(0);
 	SetBaseline(0, 200);
 
-	if (mIsSnow)
+	if (_mIsSnow)
 		SetFallSpeed(10, 70);
 	else
 		SetFallSpeed(100, 300);
 
-	mViewsInitialized = false;
+	_mViewsInitialized = false;
 
 	int i;
 	for (i = 0; i < 5; i++) {
-		mViews[i].is_default = true;
-		mViews[i].view = -1;
-		mViews[i].loop = -1;
-		mViews[i].bitmap = nullptr;
+		_mViews[i].is_default = true;
+		_mViews[i].view = -1;
+		_mViews[i].loop = -1;
+		_mViews[i].bitmap = nullptr;
 	}
 
 	SetAmount(0);
 }
 
 void Weather::InitializeParticles() {
-	memset(mParticles, 0, sizeof(Drop) * 2000);
+	memset(_mParticles, 0, sizeof(Drop) * 2000);
 	int i;
 	for (i = 0; i < 2000; i++) {
-		mParticles[i].kind_id = ::AGS::g_vm->getRandomNumber(0x7fffffff) % 5;
-		mParticles[i].y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % (_screenHeight * 2) - _screenHeight;
-		mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
-		mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaAlpha + mMinAlpha;
-		mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaFallSpeed + mMinFallSpeed) / 50.0f;
-		mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaBaseline + mTopBaseline;
-		mParticles[i].drift = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaDrift + mMinDrift;
-		mParticles[i].drift_speed = (::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaDriftSpeed + mMinDriftSpeed) / 50.0f;
-		mParticles[i].drift_offset = ::AGS::g_vm->getRandomNumber(0x7fffffff) % 100;
+		_mParticles[i].kind_id = ::AGS::g_vm->getRandomNumber(0x7fffffff) % 5;
+		_mParticles[i].y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % (_screenHeight * 2) - _screenHeight;
+		_mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;
+		_mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaAlpha + _mMinAlpha;
+		_mParticles[i].speed = (float)(::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaFallSpeed + _mMinFallSpeed) / 50.0f;
+		_mParticles[i].max_y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaBaseline + _mTopBaseline;
+		_mParticles[i].drift = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaDrift + _mMinDrift;
+		_mParticles[i].drift_speed = (::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaDriftSpeed + _mMinDriftSpeed) / 50.0f;
+		_mParticles[i].drift_offset = ::AGS::g_vm->getRandomNumber(0x7fffffff) % 100;
 	}
 }
 
@@ -283,12 +264,12 @@ void Weather::SetDriftRange(int min_value, int max_value) {
 	if (min_value > max_value)
 		min_value = max_value;
 
-	mMinDrift = min_value / 2;
-	mMaxDrift = max_value / 2;
-	mDeltaDrift = mMaxDrift - mMinDrift;
+	_mMinDrift = min_value / 2;
+	_mMaxDrift = max_value / 2;
+	_mDeltaDrift = _mMaxDrift - _mMinDrift;
 
-	if (mDeltaDrift == 0)
-		mDeltaDrift = 1;
+	if (_mDeltaDrift == 0)
+		_mDeltaDrift = 1;
 }
 
 void Weather::SetDriftSpeed(int min_value, int max_value) {
@@ -304,12 +285,12 @@ void Weather::SetDriftSpeed(int min_value, int max_value) {
 	if (min_value > max_value)
 		min_value = max_value;
 
-	mMinDriftSpeed = min_value;
-	mMaxDriftSpeed = max_value;
-	mDeltaDriftSpeed = mMaxDriftSpeed - mMinDriftSpeed;
+	_mMinDriftSpeed = min_value;
+	_mMaxDriftSpeed = max_value;
+	_mDeltaDriftSpeed = _mMaxDriftSpeed - _mMinDriftSpeed;
 
-	if (mDeltaDriftSpeed == 0)
-		mDeltaDriftSpeed = 1;
+	if (_mDeltaDriftSpeed == 0)
+		_mDeltaDriftSpeed = 1;
 }
 
 void Weather::ChangeAmount(int amount) {
@@ -321,7 +302,7 @@ void Weather::ChangeAmount(int amount) {
 
 	ClipToRange(amount, 0, 1000);
 
-	mTargetAmount = amount;
+	_mTargetAmount = amount;
 }
 
 void Weather::SetView(int kind_id, int event, int view, int loop) {
@@ -332,12 +313,12 @@ void Weather::SetView(int kind_id, int event, int view, int loop) {
 #endif
 
 	AGSViewFrame *view_frame = _engine->GetViewFrame(view, loop, 0);
-	mViews[kind_id].bitmap = _engine->GetSpriteGraphic(view_frame->pic);
-	mViews[kind_id].is_default = false;
-	mViews[kind_id].view = view;
-	mViews[kind_id].loop = loop;
+	_mViews[kind_id].bitmap = _engine->GetSpriteGraphic(view_frame->pic);
+	_mViews[kind_id].is_default = false;
+	_mViews[kind_id].view = view;
+	_mViews[kind_id].loop = loop;
 
-	if (!mViewsInitialized)
+	if (!_mViewsInitialized)
 		SetDefaultView(view, loop);
 }
 
@@ -351,14 +332,14 @@ void Weather::SetDefaultView(int view, int loop) {
 	AGSViewFrame *view_frame = _engine->GetViewFrame(view, loop, 0);
 	BITMAP *bitmap = _engine->GetSpriteGraphic(view_frame->pic);
 
-	mViewsInitialized = true;
+	_mViewsInitialized = true;
 
 	int i;
 	for (i = 0; i < 5; i++) {
-		if (mViews[i].is_default) {
-			mViews[i].view = view;
-			mViews[i].loop = loop;
-			mViews[i].bitmap = bitmap;
+		if (_mViews[i].is_default) {
+			_mViews[i].view = view;
+			_mViews[i].loop = loop;
+			_mViews[i].bitmap = bitmap;
 		}
 	}
 }
@@ -376,16 +357,16 @@ void Weather::SetTransparency(int min_value, int max_value) {
 	if (min_value > max_value)
 		min_value = max_value;
 
-	mMinAlpha = 255 - floor((float)max_value * 2.55f + 0.5f);
-	mMaxAlpha = 255 - floor((float)min_value * 2.55f + 0.5f);
-	mDeltaAlpha = mMaxAlpha - mMinAlpha;
+	_mMinAlpha = 255 - floor((float)max_value * 2.55f + 0.5f);
+	_mMaxAlpha = 255 - floor((float)min_value * 2.55f + 0.5f);
+	_mDeltaAlpha = _mMaxAlpha - _mMinAlpha;
 
-	if (mDeltaAlpha == 0)
-		mDeltaAlpha = 1;
+	if (_mDeltaAlpha == 0)
+		_mDeltaAlpha = 1;
 
 	int i;
 	for (i = 0; i < 2000; i++)
-		mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % mDeltaAlpha + mMinAlpha;
+		_mParticles[i].alpha = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _mDeltaAlpha + _mMinAlpha;
 }
 
 void Weather::SetWindSpeed(int value) {
@@ -397,7 +378,7 @@ void Weather::SetWindSpeed(int value) {
 
 	ClipToRange(value, -200, 200);
 
-	mWindSpeed = (float)value / 20.0f;
+	_mWindSpeed = (float)value / 20.0f;
 }
 
 void Weather::SetBaseline(int top, int bottom) {
@@ -415,12 +396,12 @@ void Weather::SetBaseline(int top, int bottom) {
 	if (top > bottom)
 		top = bottom;
 
-	mTopBaseline = top;
-	mBottomBaseline = bottom;
-	mDeltaBaseline = mBottomBaseline - mTopBaseline;
+	_mTopBaseline = top;
+	_mBottomBaseline = bottom;
+	_mDeltaBaseline = _mBottomBaseline - _mTopBaseline;
 
-	if (mDeltaBaseline == 0)
-		mDeltaBaseline = 1;
+	if (_mDeltaBaseline == 0)
+		_mDeltaBaseline = 1;
 }
 
 void Weather::SetAmount(int amount) {
@@ -432,7 +413,7 @@ void Weather::SetAmount(int amount) {
 
 	ClipToRange(amount, 0, 1000);
 
-	mAmount = mTargetAmount = amount;
+	_mAmount = _mTargetAmount = amount;
 
 	InitializeParticles();
 }
@@ -450,12 +431,12 @@ void Weather::SetFallSpeed(int min_value, int max_value) {
 	if (min_value > max_value)
 		min_value = max_value;
 
-	mMinFallSpeed = min_value;
-	mMaxFallSpeed = max_value;
-	mDeltaFallSpeed = mMaxFallSpeed - mMinFallSpeed;
+	_mMinFallSpeed = min_value;
+	_mMaxFallSpeed = max_value;
+	_mDeltaFallSpeed = _mMaxFallSpeed - _mMinFallSpeed;
 
-	if (mDeltaFallSpeed == 0)
-		mDeltaFallSpeed = 1;
+	if (_mDeltaFallSpeed == 0)
+		_mDeltaFallSpeed = 1;
 }
 
 } // namespace AGSSnowRain
