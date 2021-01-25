@@ -1013,9 +1013,6 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		if (_language == Common::HE_ISR) {
-			vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
-		}
 		vs->curRect.right = 0;
 		vs->curRect.bottom = 0;
 		const byte *msg2 = msg;
@@ -1046,12 +1043,26 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 				}
 				--len;
 			}
+			if (_language == Common::HE_ISR) {
+				vs->curRect.right -= vs->curRect.left;
+				vs->curRect.left = _screenWidth - _charset->getStringWidth(0, tmpBuf);
+				vs->curRect.right += vs->curRect.left;
+			}
 			enqueueText(tmpBuf, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
 			if (len >= 0) {
-				enqueueText(&msg[len + 1], vs->curRect.left, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
+				int16 leftPos = vs->curRect.left;
+				if (_language == Common::HE_ISR) {
+					leftPos = _screenWidth - _charset->getStringWidth(0, &msg[len + 1]);
+				}
+				enqueueText(&msg[len + 1], leftPos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
 				vs->curRect.bottom += _verbLineSpacing;
 			}
 		} else {
+			if (_language == Common::HE_ISR) {
+				vs->curRect.right -= vs->curRect.left;
+				vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
+				vs->curRect.right += vs->curRect.left;
+			}
 			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
 		}
 		_charset->setCurID(oldID);
