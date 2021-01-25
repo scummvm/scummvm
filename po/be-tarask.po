@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-24 02:09+0000\n"
+"POT-Creation-Date: 2021-01-25 23:00+0000\n"
 "PO-Revision-Date: 2021-01-24 08:43+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -600,7 +600,7 @@ msgstr "Закрыць"
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
 #: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:407
-#: engines/twine/metaengine.cpp:477 engines/wintermute/keymapper_tables.h:1011
+#: engines/twine/metaengine.cpp:474 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -612,7 +612,7 @@ msgstr "Угару"
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
 #: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:414
-#: engines/twine/metaengine.cpp:485 engines/wintermute/keymapper_tables.h:1017
+#: engines/twine/metaengine.cpp:482 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -623,7 +623,7 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:429 engines/twine/metaengine.cpp:500
+#: engines/twine/metaengine.cpp:429 engines/twine/metaengine.cpp:497
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -635,7 +635,7 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:421 engines/twine/metaengine.cpp:493
+#: engines/twine/metaengine.cpp:421 engines/twine/metaengine.cpp:490
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -6839,7 +6839,7 @@ msgid "Accept"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:399 engines/twine/metaengine.cpp:451
-#: engines/twine/metaengine.cpp:470
+#: engines/twine/metaengine.cpp:467
 msgid "Abort"
 msgstr ""
 
@@ -6847,11 +6847,11 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:507
+#: engines/twine/metaengine.cpp:504
 msgid "Previous location"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:512
+#: engines/twine/metaengine.cpp:509
 msgid "Next location"
 msgstr ""
 
