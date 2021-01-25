@@ -589,7 +589,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	return ProgressiveTextState::ContinueRunning;
 }
 
-bool Text::displayText(int32 index, bool showText, bool playVox) {
+bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
 	if (playVox) {
 		// get right VOX entry index
 		initVoxToPlay(index);
@@ -613,6 +613,17 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 			} else {
 				fadeInRemainingChars();
 			}
+
+			if (!loop) {
+				if (textState == ProgressiveTextState::End) {
+					fadeInRemainingChars();
+					break;
+				}
+				if (textState == ProgressiveTextState::NextPage) {
+					textState = ProgressiveTextState::ContinueRunning;
+				}
+			}
+
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 				if (textState == ProgressiveTextState::End) {
 					stopVox(currDialTextEntry);
@@ -649,11 +660,11 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 	return aborted;
 }
 
-bool Text::drawTextFullscreen(int32 index) {
+bool Text::drawTextFullscreen(int32 index, bool playVox, bool loop) {
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-	const bool aborted = displayText(index, _engine->cfgfile.FlagDisplayText, true);
+	const bool aborted = displayText(index, _engine->cfgfile.FlagDisplayText, playVox, loop);
 	_engine->_interface->loadClip();
 	return aborted;
 }
@@ -770,7 +781,7 @@ void Text::textClipSmall() {
 }
 
 void Text::drawAskQuestion(int32 index) {
-	displayText(index, true, true);
+	displayText(index, true, true, true);
 }
 
 } // namespace TwinE

@@ -347,7 +347,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 void Holomap::drawHolomapLocation(int32 location) {
 	_engine->_text->textClipSmall();
 	_engine->_text->setFontCrossColor(COLOR_WHITE);
-	_engine->_text->drawTextFullscreen(_locations[location].textIndex);
+	_engine->_text->drawTextFullscreen(_locations[location].textIndex, false, false);
 }
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {

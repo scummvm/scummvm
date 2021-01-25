@@ -232,7 +232,7 @@ private:
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
 
-	bool displayText(int32 index, bool showText, bool playVox);
+	bool displayText(int32 index, bool showText, bool playVox, bool loop);
 public:
 	Text(TwinEEngine *engine);
 	~Text();
@@ -266,7 +266,7 @@ public:
 	 */
 	void drawText(int32 x, int32 y, const char *dialogue);
 
-	bool drawTextFullscreen(int32 index);
+	bool drawTextFullscreen(int32 index, bool playVox = true, bool loop = true);
 
 	/**
 	 * Gets dialogue text width size
