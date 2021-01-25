@@ -112,17 +112,44 @@ public:
 };
 
 // Base class for PlaySecondaryVideoChan0 and PlaySecondaryVideoChan1
-class PlaySecondaryVideo : public ActionRecord {
+class PlaySecondaryVideo : public SceneChange {
 public:
+    struct SecondaryVideoDesc {
+        int16 frameID;
+        Common::Rect srcRect;
+        Common::Rect destRect;
+        // 2 unknown/empty rects
+    };
+
+    enum HoverState { kNoHover, kHover, kEndHover, kEndHoverDone };
+
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    virtual uint channelID() =0;
+
+    Common::String filename;
+    //...
+    uint16 loopFirstFrame = 0; // 0x1E
+    uint16 loopLastFrame = 0; // 0x20
+    uint16 onHoverFirstFrame = 0; // 0x22
+    uint16 onHoverLastFrame = 0; // 0x24
+    uint16 onHoverEndFirstFrame = 0; // 0x26
+    uint16 onHoverEndLastFrame = 0; // 0x28
+    // SceneChange data is at 0x2A
+    // unknown byte
+    Common::Array<SecondaryVideoDesc> videoDescs; // 0x35
+
+    // not present in original data
+    HoverState hoverState = kNoHover;
 };
 
 class PlaySecondaryVideoChan0 : public PlaySecondaryVideo {
-    // TODO
+    virtual uint channelID() override { return 0; }
 };
 
 class PlaySecondaryVideoChan1 : public PlaySecondaryVideo {
-    // TODO
+    virtual uint channelID() override { return 1; }
 };
 
 class PlaySecondaryMovie : public ActionRecord {

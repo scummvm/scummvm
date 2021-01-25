@@ -33,6 +33,8 @@
 
 namespace Nancy {
 
+class PlaySecondaryVideo;
+
 typedef Common::Functor0Mem<void, GraphicsManager> RenderFunction;
 
 struct ZRenderStruct {
@@ -48,6 +50,15 @@ public:
     bool isInitialized = false;
     BltType bltType = kNone;
     Common::String name;
+};
+
+struct VideoChannel {
+        Graphics::Surface surf;
+        uint16 beginFrame = 0;
+        uint16 endFrame = 0;
+        bool loop = false;
+        PlaySecondaryVideo *record = nullptr;
+        AVFDecoder decoder;
 };
 
 class GraphicsManager {
@@ -80,12 +91,20 @@ public:
     uint32 getBackgroundWidth();
     uint32 getBackgroundHeight();
 
+    void loadSecondaryVideo(uint channel, Common::String &filename, PlaySecondaryVideo *record);
+    void setupSecondaryVideo(uint channel, uint16 begin, uint16 end, bool loop);
+    void playSecondaryVideo(uint channel);
+    void stopSecondaryVideo(uint channel);
+
     Graphics::Surface _background;
     Graphics::Surface _frameTextBox;
     Graphics::Surface _primaryFrameSurface;
     Graphics::Surface _object0Surface;
     Graphics::Surface _inventoryBoxIconsSurface;
     Graphics::Surface _inventoryCursorsSurface;
+
+    // move these to their own struct
+    VideoChannel channels[2];
 
     View viewportDesc;
 

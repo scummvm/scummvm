@@ -27,6 +27,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/audio.h"
+#include "engines/nancy/input.h"
 
 #include "common/str.h"
 
@@ -188,11 +189,132 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
-    stream.seek(0x33, SEEK_CUR);
-    int16 size = stream.readSint16LE() * 0x42 + 0x35;
-    stream.seek(-0x35, SEEK_CUR);
+    char buf[10];
+    stream.read(buf, 10);
+    filename = Common::String(buf);
+    stream.skip(0x14);
+    loopFirstFrame = stream.readUint16LE();
+    loopLastFrame = stream.readUint16LE();
+    onHoverFirstFrame = stream.readUint16LE();
+    onHoverLastFrame = stream.readUint16LE();
+    onHoverEndFirstFrame = stream.readUint16LE();
+    onHoverEndLastFrame = stream.readUint16LE();
+    SceneChange::readData(stream);
+    stream.skip(1);
 
-    return readRaw(stream, size); // TODO
+    uint16 numVideoDescs = stream.readUint16LE();
+    for (uint i = 0; i < numVideoDescs; ++i) {
+        videoDescs.push_back(SecondaryVideoDesc());
+        SecondaryVideoDesc &cur = videoDescs[i];
+        cur.frameID = stream.readSint16LE();
+        cur.srcRect.left = stream.readUint32LE();
+        cur.srcRect.top = stream.readUint32LE();
+        cur.srcRect.right = stream.readUint32LE();
+        cur.srcRect.bottom = stream.readUint32LE();
+        cur.destRect.left = stream.readUint32LE();
+        cur.destRect.top = stream.readUint32LE();
+        cur.destRect.right = stream.readUint32LE();
+        cur.destRect.bottom = stream.readUint32LE();
+        stream.skip(0x20);
+    }
+
+    return 0x35 + (numVideoDescs * 0x42);
+}
+
+void PlaySecondaryVideo::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            engine->graphics->loadSecondaryVideo(channelID(), filename, this);
+            engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
+            state = kRun;
+            // fall through
+        case kRun: {
+            ZRenderStruct &zr = engine->graphics->getZRenderStruct("SEC VIDEO 0");
+            zr.isActive = false;
+            hasHotspot = false;
+
+            uint activeFrame = 0;
+
+            for (uint i = 0; i < videoDescs.size(); ++i) {
+                if (videoDescs[i].frameID == engine->playState.currentViewFrame) {
+                    activeFrame = i;
+                }
+            }
+
+            if (activeFrame) {
+                // Activate the ZRenderStruct
+                zr.sourceRect = videoDescs[activeFrame].srcRect;
+                zr.destRect = videoDescs[activeFrame].destRect;
+                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.top -= engine->playState.verticalScroll;
+                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.bottom -= engine->playState.verticalScroll;
+                zr.isActive = true;
+
+                // Activate the hotspot
+                hotspot = videoDescs[activeFrame].destRect;
+                hasHotspot = true;
+
+                // check if we're hovered this frame
+                bool isHovered = engine->logic->getActionRecord(engine->input->hoveredElementID) == this;
+
+                switch (hoverState) {
+                    case kEndHoverDone:
+                        hoverState = kNoHover;
+                        engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
+                        break;
+                    case kNoHover:
+                        if (isHovered) {
+                            // Player has just hovered over, play the hover animation once
+                            hoverState = kHover;
+                            engine->graphics->setupSecondaryVideo(channelID(), onHoverFirstFrame, onHoverLastFrame, false);
+                        }
+                        break;
+                    case kHover:
+                        if (!isHovered) {
+                            // Player has just stopped hovering, reverse the playback and go back to frame 0
+                            hoverState = kEndHover;
+                            engine->graphics->setupSecondaryVideo(channelID(), onHoverEndLastFrame, onHoverEndFirstFrame, false);
+                        }
+                        break;
+                    case kEndHover:
+                        break;
+                }
+
+                /*// The reverse playback of the whole animation ended, go back to regular loop
+                if (hoverAnimationEnded) {
+                    hoverAnimationEnded = false;
+                    engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
+                } else {
+                    bool isHovered = engine->logic->getActionRecord(engine->input->hoveredElementID) == this;
+                    if (!wasHovered) {
+                        if (isHovered) {
+                            // Player has just hovered over, play the hover animation once
+                            wasHovered = true;
+                            engine->graphics->setupSecondaryVideo(channelID(), onHoverFirstFrame, onHoverLastFrame, false);
+                        }
+                    } else {
+                        if (!isHovered) {
+                            // Player has just stopped hovering, reverse the playback and go back to frame 0
+                            wasHovered = false;
+                            engine->graphics->setupSecondaryVideo(channelID(), onHoverEndLastFrame, onHoverEndFirstFrame, false);
+                        }
+                    }
+                }*/
+
+                engine->graphics->playSecondaryVideo(channelID());
+            } else {
+                engine->graphics->stopSecondaryVideo(channelID());
+            }
+
+            break;
+        }
+        case kActionTrigger:
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
