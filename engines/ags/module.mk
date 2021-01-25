@@ -308,7 +308,14 @@ MODULE_OBJS = \
 	plugins/ags_pal_render/raycast.o \
 	plugins/ags_parallax/ags_parallax.o \
 	plugins/ags_snow_rain/ags_snow_rain.o \
-	plugins/ags_snow_rain/weather.o
+	plugins/ags_snow_rain/weather.o \
+	plugins/ags_sprite_font/ags_sprite_font.o \
+	plugins/ags_sprite_font/character_entry.o \
+	plugins/ags_sprite_font/color.o \
+	plugins/ags_sprite_font/sprite_font.o \
+	plugins/ags_sprite_font/sprite_font_renderer.o \
+	plugins/ags_sprite_font/variable_width_font.o \
+	plugins/ags_sprite_font/variable_width_sprite_font.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \

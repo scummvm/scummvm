@@ -1,32 +1,36 @@
-/***********************************************************
- * AGSBlend                                                *
- *                                                         *
- * Author: Steven Poulton                                  *
- *                                                         *
- * Date: 09/01/2011                                        *
- *                                                         *
- * Description: An AGS Plugin to allow true Alpha Blending *
- *                                                         *
- ***********************************************************/
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
-#pragma region Defines_and_Includes
+#include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
+#include "ags/shared/core/platform.h"
 
-#include "core/platform.h"
+namespace AGS3 {
+namespace Plugins {
+namespace AGSSpriteFont {
+
+#pragma region Defines
 
 #define MIN_EDITOR_VERSION 1
 #define MIN_ENGINE_VERSION 3
-
-#if AGS_PLATFORM_OS_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <WinBase.h>
-#endif
-
-#define THIS_IS_THE_PLUGIN
-#include "plugin/agsplugin.h"
-#include "SpriteFontRenderer.h"
-#include "VariableWidthSpriteFont.h"
-
 
 #define DEFAULT_RGB_R_SHIFT_32  16
 #define DEFAULT_RGB_G_SHIFT_32  8
@@ -65,215 +69,71 @@
 
 #pragma endregion
 
+IAGSEngine *AGSSpriteFont::_engine;
+SpriteFontRenderer *AGSSpriteFont::_fontRenderer;
+VariableWidthSpriteFontRenderer *AGSSpriteFont::_vWidthRenderer;
 
-#if AGS_PLATFORM_OS_WINDOWS
-// The standard Windows DLL entry point
-
-BOOL APIENTRY DllMain(HANDLE hModule,
-                      DWORD  ul_reason_for_call,
-                      LPVOID lpReserved) {
-
-	switch (ul_reason_for_call)   {
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
-#endif
-
-
-//define engine
-
-IAGSEngine *engine = nullptr;
-SpriteFontRenderer *fontRenderer = nullptr;
-VariableWidthSpriteFontRenderer *vWidthRenderer = nullptr;
-
-
-
-void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit) {
-	engine->PrintDebugConsole("AGSSpriteFont: SetSpriteFont");
-	fontRenderer->SetSpriteFont(fontNum, sprite, rows, columns, charWidth, charHeight, charMin, charMax, use32bit);
-	engine->ReplaceFontRenderer(fontNum, fontRenderer);
-
-}
-
-void SetVariableSpriteFont(int fontNum, int sprite) {
-	engine->PrintDebugConsole("AGSSpriteFont: SetVariableFont");
-	vWidthRenderer->SetSprite(fontNum, sprite);
-	engine->ReplaceFontRenderer(fontNum, vWidthRenderer);
-}
-
-void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height) {
-	engine->PrintDebugConsole("AGSSpriteFont: SetGlyph");
-	vWidthRenderer->SetGlyph(fontNum, charNum, x, y, width, height);
-}
-
-void SetSpacing(int fontNum, int spacing) {
-	engine->PrintDebugConsole("AGSSpriteFont: SetSpacing");
-	vWidthRenderer->SetSpacing(fontNum, spacing);
-}
-//==============================================================================
-
-#if AGS_PLATFORM_OS_WINDOWS && !defined(BUILTIN_PLUGINS)
-// ***** Design time *****
-
-IAGSEditor *editor; // Editor interface
-
-const char *ourScriptHeader =
-    "import void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);\r\n"
-    "import void SetVariableSpriteFont(int fontNum, int sprite);\r\n"
-    "import void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);\r\n"
-    "import void SetSpacing(int fontNum, int spacing);\r\n"
-    ;
-
-//------------------------------------------------------------------------------
-
-LPCSTR AGS_GetPluginName() {
-	return ("AGSSpriteFont");
-}
-
-//------------------------------------------------------------------------------
-
-int AGS_EditorStartup(IAGSEditor *lpEditor) {
-	// User has checked the plugin to use it in their game
-
-	// If it's an earlier version than what we need, abort.
-	if (lpEditor->version < MIN_EDITOR_VERSION)
-		return (-1);
-
-	editor = lpEditor;
-	editor->RegisterScriptHeader(ourScriptHeader);
-
-	// Return 0 to indicate success
-	return (0);
-}
-
-//------------------------------------------------------------------------------
-
-void AGS_EditorShutdown() {
-	// User has un-checked the plugin from their game
-	editor->UnregisterScriptHeader(ourScriptHeader);
-}
-
-//------------------------------------------------------------------------------
-
-void AGS_EditorProperties(HWND parent) {                      //*** optional ***
-	// User has chosen to view the Properties of the plugin
-	// We could load up an options dialog or something here instead
-	MessageBox(parent,
-	           L"AGSSpriteFont v1.0 By Calin Leafshade",
-	           L"About",
-	           MB_OK | MB_ICONINFORMATION);
-}
-
-//------------------------------------------------------------------------------
-
-int AGS_EditorSaveGame(char *buffer, int bufsize) {           //*** optional ***
-	// Called by the editor when the current game is saved to disk.
-	// Plugin configuration can be stored in [buffer] (max [bufsize] bytes)
-	// Return the amount of bytes written in the buffer
-	return (0);
-}
-
-//------------------------------------------------------------------------------
-
-void AGS_EditorLoadGame(char *buffer, int bufsize) {          //*** optional ***
-	// Called by the editor when a game is loaded from disk
-	// Previous written data can be read from [buffer] (size [bufsize]).
-	// Make a copy of the data, the buffer is freed after this function call.
-}
-
-//==============================================================================
-#endif
-
-
-// ***** Run time *****
-
-// Engine interface
-
-//------------------------------------------------------------------------------
-
-#define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));
 #define STRINGIFY(s) STRINGIFY_X(s)
 #define STRINGIFY_X(s) #s
 
+AGSSpriteFont::AGSSpriteFont() : DLL() {
+	_engine = nullptr;
 
+	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineShutdown);
+}
 
-void AGS_EngineStartup(IAGSEngine *lpEngine) {
-	engine = lpEngine;
-	engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
-	fontRenderer = new SpriteFontRenderer(engine);
-	engine->PrintDebugConsole("AGSSpriteFont: Init vari width renderer");
-	vWidthRenderer = new VariableWidthSpriteFontRenderer(engine);
+const char *AGSSpriteFont::AGS_GetPluginName() {
+	return "AGSSpriteFont";
+}
+
+void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
+	engine = engine;
+
+	_engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
+	_fontRenderer = new SpriteFontRenderer(engine);
+	_engine->PrintDebugConsole("AGSSpriteFont: Init vari width renderer");
+	_vWidthRenderer = new VariableWidthSpriteFontRenderer(engine);
 	// Make sure it's got the version with the features we need
-	if (engine->version < MIN_ENGINE_VERSION)
-		engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
+	if (_engine->version < MIN_ENGINE_VERSION)
+		_engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
 	//register functions
-	engine->PrintDebugConsole("AGSSpriteFont: Register functions");
-	REGISTER(SetSpriteFont)
-	REGISTER(SetVariableSpriteFont)
-	REGISTER(SetGlyph)
-	REGISTER(SetSpacing)
+	_engine->PrintDebugConsole("AGSSpriteFont: Register functions");
+	SCRIPT_METHOD(SetSpriteFont);
+	SCRIPT_METHOD(SetVariableSpriteFont);
+	SCRIPT_METHOD(SetGlyph);
+	SCRIPT_METHOD(SetSpacing);
 }
 
-//------------------------------------------------------------------------------
-
-void AGS_EngineShutdown() {
-	// Called by the game engine just before it exits.
-	// This gives you a chance to free any memory and do any cleanup
-	// that you need to do before the engine shuts down.
+void AGSSpriteFont::AGS_EngineShutdown() {
+	delete _fontRenderer;
+	delete _vWidthRenderer;
 }
 
-//------------------------------------------------------------------------------
-
-int AGS_EngineOnEvent(int event, int data) {                  //*** optional ***
-	switch (event) {
-	/*
-	        case AGSE_KEYPRESS:
-	        case AGSE_MOUSECLICK:
-	        case AGSE_POSTSCREENDRAW:
-	        case AGSE_PRESCREENDRAW:
-	        case AGSE_SAVEGAME:
-	        case AGSE_RESTOREGAME:
-	        case AGSE_PREGUIDRAW:
-	        case AGSE_LEAVEROOM:
-	        case AGSE_ENTERROOM:
-	        case AGSE_TRANSITIONIN:
-	        case AGSE_TRANSITIONOUT:
-	        case AGSE_FINALSCREENDRAW:
-	        case AGSE_TRANSLATETEXT:
-	        case AGSE_SCRIPTDEBUG:
-	        case AGSE_SPRITELOAD:
-	        case AGSE_PRERENDER:
-	        case AGSE_PRESAVEGAME:
-	        case AGSE_POSTRESTOREGAME:
-	*/
-	default:
-		break;
-	}
-
-	// Return 1 to stop event from processing further (when needed)
-	return (0);
+void AGSSpriteFont::SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit) {
+	_engine->PrintDebugConsole("AGSSpriteFont: SetSpriteFont");
+	_fontRenderer->SetSpriteFont(fontNum, sprite, rows, columns, charWidth, charHeight, charMin, charMax, use32bit);
+	_engine->ReplaceFontRenderer(fontNum, _fontRenderer);
 }
 
-//------------------------------------------------------------------------------
-/*
-int AGS_EngineDebugHook(const char *scriptName,
-                        int lineNum, int reserved)            //*** optional ***
-{
-    // Can be used to debug scripts, see documentation
+void AGSSpriteFont::SetVariableSpriteFont(int fontNum, int sprite) {
+	_engine->PrintDebugConsole("AGSSpriteFont: SetVariableFont");
+	_vWidthRenderer->SetSprite(fontNum, sprite);
+	_engine->ReplaceFontRenderer(fontNum, _vWidthRenderer);
 }
-*/
-//------------------------------------------------------------------------------
-/*
-void AGS_EngineInitGfx(const char *driverID, void *data)      //*** optional ***
-{
-    // This allows you to make changes to how the graphics driver starts up.
-    // See documentation
+
+void AGSSpriteFont::SetGlyph(int fontNum, int charNum, int x, int y, int width, int height) {
+	_engine->PrintDebugConsole("AGSSpriteFont: SetGlyph");
+	_vWidthRenderer->SetGlyph(fontNum, charNum, x, y, width, height);
 }
-*/
-//..............................................................................
+
+void AGSSpriteFont::SetSpacing(int fontNum, int spacing) {
+	_engine->PrintDebugConsole("AGSSpriteFont: SetSpacing");
+	_vWidthRenderer->SetSpacing(fontNum, spacing);
+}
+
+} // namespace AGSSpriteFont
+} // namespace Plugins
+} // namespace AGS3

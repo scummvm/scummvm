@@ -177,6 +177,19 @@ public:
 	size_t size() const {
 		return _items.size();
 	}
+
+	/**
+	 * Returns the number of elements with a matching key
+	 */
+	size_t count(const Key &theKey) {
+		int count = 0;
+		for (iterator it = this->begin(); it != this->end(); ++it) {
+			if (it->_key == theKey)
+				++count;
+		}
+
+		return count;
+	}
 };
 
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
