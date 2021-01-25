@@ -334,7 +334,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	}
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	//_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
@@ -344,23 +344,9 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 }
 
 void Holomap::drawHolomapLocation(int32 location) {
-	char title[256] = "";
-	_engine->_text->getMenuText(_locations[location].textIndex, title, sizeof(title));
-	const int padding = 17;
-	Common::Rect rect;
-	rect.left = padding - 1;
-	rect.top = _engine->height() - 146;
-	rect.right = _engine->width() - padding;
-	rect.bottom = _engine->height() - padding;
-	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->_menu->drawBox(rect);
-	rect.grow(-1);
-	_engine->_interface->drawTransparentBox(rect, 3);
-	_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
-	const int32 height = _engine->_text->getCharHeight(title[0]);
-	drawHolomapText(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2 - height / 2, title);
-	rect.grow(1);
-	_engine->copyBlockPhys(rect);
+	_engine->_text->textClipSmall();
+	_engine->_text->setFontCrossColor(COLOR_WHITE);
+	_engine->_text->drawTextFullscreen(_locations[location].textIndex);
 }
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
