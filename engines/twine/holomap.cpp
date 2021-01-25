@@ -448,7 +448,7 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
-	drawHolomapText(_engine->width() / 2, 25, "HoloMap"); // TODO: fix the index
+	drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 	int currentLocation = _engine->_scene->currentSceneIdx;
 	drawHolomapLocation(currentLocation);
 	_engine->flip();
