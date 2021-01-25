@@ -639,10 +639,10 @@ bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
 				break;
 			}
 
-			_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry);
+			playVoxSimple(currDialTextEntry);
 		}
 	}
-	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+	while (playVoxSimple(currDialTextEntry)) {
 		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->readKeys();
@@ -782,6 +782,13 @@ void Text::textClipSmall() {
 
 void Text::drawAskQuestion(int32 index) {
 	displayText(index, true, true, true);
+}
+
+void Text::drawHolomapLocation(int32 index) {
+	textClipSmall();
+	setFontCrossColor(COLOR_WHITE);
+	_engine->_interface->drawSplittedBox(_dialTextBox, COLOR_BLACK);
+	drawTextFullscreen(index, false, false);
 }
 
 } // namespace TwinE

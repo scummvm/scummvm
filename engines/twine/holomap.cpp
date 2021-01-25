@@ -304,7 +304,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
 		_engine->_renderer->setLightVector(0xffffffc4, 128, 0);
 		const Common::Rect rect(0, 200, 199, 479);
-		_engine->_interface->drawSplittedBox(rect, 0);
+		_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, newAngle, 0, modelPtr);
 		_engine->copyBlockPhys(rect);
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
@@ -342,12 +342,6 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	free(animPtr);
 	free(modelPtr);
-}
-
-void Holomap::drawHolomapLocation(int32 location) {
-	_engine->_text->textClipSmall();
-	_engine->_text->setFontCrossColor(COLOR_WHITE);
-	_engine->_text->drawTextFullscreen(_locations[location].textIndex, false, false);
 }
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
@@ -451,7 +445,7 @@ void Holomap::processHolomap() {
 
 	drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 	int currentLocation = _engine->_scene->currentSceneIdx;
-	drawHolomapLocation(currentLocation);
+	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 	_engine->flip();
 
 	// TODO: load RESSHQR_HOLOSURFACE and project the texture to the surface
@@ -475,7 +469,7 @@ void Holomap::processHolomap() {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, -1);
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
-				drawHolomapLocation(currentLocation);
+				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->lbaTime;
 				rotate = true;
 			}
@@ -483,7 +477,7 @@ void Holomap::processHolomap() {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
-				drawHolomapLocation(currentLocation);
+				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->lbaTime;
 				rotate = true;
 			}
@@ -519,7 +513,7 @@ void Holomap::processHolomap() {
 		if (redraw) {
 			redraw = false;
 			const Common::Rect rect(170, 0, 470, 330);
-			_engine->_interface->drawSplittedBox(rect, 0);
+			_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			// renderLocations(xRot, yRot, 0, false); // TODO: activate me

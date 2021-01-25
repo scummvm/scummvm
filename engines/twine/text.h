@@ -331,6 +331,7 @@ public:
 	void textClipSmall();
 
 	void drawAskQuestion(int32 index);
+	void drawHolomapLocation(int32 index);
 
 	bool playVox(int32 index);
 	bool playVoxSimple(int32 index);
