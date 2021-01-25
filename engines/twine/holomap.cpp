@@ -516,10 +516,10 @@ void Holomap::processHolomap() {
 			_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
-			// renderLocations(xRot, yRot, 0, false); // TODO: activate me
+			renderLocations(xRot, yRot, 0, false);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			renderHolomapSurfacePolygons();
-			// renderLocations(xRot, yRot, 0, true); // TODO: activate me
+			renderLocations(xRot, yRot, 0, true);
 			if (rotate) {
 				_engine->_menu->drawBox(300, 170, 340, 210);
 			}
