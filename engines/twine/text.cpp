@@ -644,6 +644,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
 	_hasValidTextHandle = false;
+	_engine->_input->resetHeroActions();
 
 	return aborted;
 }

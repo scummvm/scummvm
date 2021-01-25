@@ -150,6 +150,7 @@ public:
 	bool isQuickBehaviourActionActive() const;
 	bool isMoveOrTurnActionActive() const;
 	bool isHeroActionActive() const;
+	bool resetHeroActions();
 
 	/**
 	 * Gets mouse positions

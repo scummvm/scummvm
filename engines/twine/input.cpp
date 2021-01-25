@@ -84,6 +84,10 @@ bool Input::isHeroActionActive() const {
 	return isActionActive(TwinEActionType::ExecuteBehaviourAction) || isActionActive(TwinEActionType::SpecialAction);
 }
 
+bool Input::resetHeroActions() {
+	return toggleActionIfActive(TwinEActionType::ExecuteBehaviourAction) || toggleActionIfActive(TwinEActionType::SpecialAction);
+}
+
 bool Input::enableAdditionalKeyMap(const char *id, bool enable) {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	Common::Keymap *keymap = keymapper->getKeymap(id);
