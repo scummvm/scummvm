@@ -402,53 +402,6 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// https://bugs.scummvm.org/ticket/12078
-	{
-		"lba",
-		"",
-		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
-		Common::EN_USA,
-		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"lba",
-		"",
-		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
-		Common::ES_ESP,
-		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"lba",
-		"",
-		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
-		Common::IT_ITA,
-		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"lba",
-		"",
-		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
-		Common::FR_FRA,
-		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"lba",
-		"",
-		AD_ENTRY1s("text.hqr", "ae7343552f8fbd17a1fc6cea2197a912", 248654),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_TESTING | TwinE::TF_VERSION_USA,
-		GUIO1(GUIO_NONE)
-	},
-
 	// FAN Translations - http://lba.fishos.net/bit/index.html
 
 	// Portuguese by xesf (alexfont)
