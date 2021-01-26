@@ -57,11 +57,6 @@ SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
     fastMoveTimeDelta = stream->readUint16LE();
     unknown7C = stream->readByte();
 
-    // put the entire chunk into a temp buffer until we figure out the rest of the structure
-    stream->seek(0);
-    chunkData = new byte[stream->size()];
-    stream->read(chunkData, stream->size());
-
     delete[] buf;
 }
 
