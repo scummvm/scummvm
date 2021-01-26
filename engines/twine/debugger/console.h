@@ -56,6 +56,7 @@ private:
 	bool doSetInventoryFlag(int argc, const char **argv);
 	bool doSetHolomapFlag(int argc, const char **argv);
 	bool doAddMagicPoints(int argc, const char **argv);
+	bool doDumpFile(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;

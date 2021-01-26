@@ -26,6 +26,7 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/holomap.h"
+#include "twine/resources/hqr.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
@@ -42,6 +43,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("play_video", WRAP_METHOD(TwinEConsole, doPlayVideo));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
+	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
@@ -301,6 +303,18 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 	}
 	_engine->_scene->needChangeScene = atoi(argv[1]);
 	_engine->_scene->changeScene();
+	return true;
+}
+
+bool TwinEConsole::doDumpFile(int argc, const char **argv) {
+	if (argc <= 2) {
+		debugPrintf("Expected to get a a hqr file and an index\n");
+		return true;
+	}
+	const char *hqr = argv[0];
+	const int index = atoi(argv[1]);
+	const Common::String &targetFileName = Common::String::format("dumps/%03i-%s.dump", index, hqr);
+	HQR::dumpEntry(hqr, index, targetFileName.c_str());
 	return true;
 }
 
