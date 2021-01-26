@@ -258,7 +258,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		}
 		break;
 	case HeroBehaviourType::kDiscrete:
-		_engine->_animations->initAnim(AnimationTypes::kHide, 0, AnimationTypes::kAnimInvalid, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kHide, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		break;
 	case HeroBehaviourType::kProtoPack:
 		break;
@@ -302,7 +302,7 @@ void Movements::processMovementExecution(int actorIdx) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 			if (heroMoved && (heroActionKey != previousLoopActionKey || changedCursorKeys != previousChangedCursorKeys)) {
-				_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
 
@@ -310,17 +310,17 @@ void Movements::processMovementExecution(int actorIdx) {
 
 		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 			if (!_engine->_scene->currentActorInZone) {
-				_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kForward, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 			heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			_engine->_animations->initAnim(AnimationTypes::kBackward, 0, AnimationTypes::kAnimInvalid, actorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kBackward, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			heroMoved = true;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 			if (actor->anim == AnimationTypes::kStanding) {
-				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, 0, AnimationTypes::kAnimInvalid, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
 					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
@@ -329,7 +329,7 @@ void Movements::processMovementExecution(int actorIdx) {
 			heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			if (actor->anim == AnimationTypes::kStanding) {
-				_engine->_animations->initAnim(AnimationTypes::kTurnRight, 0, AnimationTypes::kAnimInvalid, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kTurnRight, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
 					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
@@ -399,11 +399,11 @@ void Movements::processRandomAction(int actorIdx) {
 	if (actor->brickCausesDamage()) {
 		moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
 		actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
-		_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 	}
 
 	if (!actor->move.numOfStep) {
-		_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kForward, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->lbaTime > actor->delayInMillis) {
 			moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
 			actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;

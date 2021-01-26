@@ -457,7 +457,7 @@ void Collision::stopFalling() { // ReceptionObj()
 		} else if (fall > 10) {
 			_engine->_animations->initAnim(AnimationTypes::kLanding, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else {
-			_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		}
 
 		_engine->_scene->heroYBeforeFall = 0;

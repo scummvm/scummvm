@@ -829,7 +829,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 							_engine->_scene->heroYBeforeFall = _engine->_movements->processActorY;
 						}
 
-						initAnim(AnimationTypes::kFall, 0, AnimationTypes::kAnimInvalid, actorIdx);
+						initAnim(AnimationTypes::kFall, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 					}
 				}
 			}

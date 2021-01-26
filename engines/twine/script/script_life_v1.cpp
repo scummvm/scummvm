@@ -585,7 +585,7 @@ static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
-	engine->_animations->initAnim(animIdx, 0, AnimationTypes::kStanding, ctx.actorIdx);
+	engine->_animations->initAnim(animIdx, kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 	return 0;
 }
 
@@ -596,7 +596,7 @@ static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
 	AnimationTypes otherAnimIdx = (AnimationTypes)ctx.stream.readByte();
-	engine->_animations->initAnim(otherAnimIdx, 0, AnimationTypes::kStanding, otherActorIdx);
+	engine->_animations->initAnim(otherAnimIdx, kAnimationTypeLoop, AnimationTypes::kStanding, otherActorIdx);
 	return 0;
 }
 
@@ -727,7 +727,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const HeroBehaviourType behavior = (HeroBehaviourType)ctx.stream.readByte();
 
-	engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, 0);
+	engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, 0);
 	engine->_actor->setBehaviour(behavior);
 
 	return 0;
@@ -1630,7 +1630,7 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->anim = AnimationTypes::kAnimNone;
 	ctx.actor->previousAnimIdx = -1;
-	engine->_animations->initAnim(animIdx, 0, AnimationTypes::kStanding, ctx.actorIdx);
+	engine->_animations->initAnim(animIdx, kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 
 	return 0;
 }

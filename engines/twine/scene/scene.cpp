@@ -547,7 +547,7 @@ void Scene::processActorZones(int32 actorIdx) {
 							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, 2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
-								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, 0, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
+								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
 							}
 						}
 					}

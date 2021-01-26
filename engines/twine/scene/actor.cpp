@@ -146,7 +146,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	sceneHero->anim = AnimationTypes::kAnimNone;
 	sceneHero->animType = 0;
 
-	_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, 0);
+	_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, 0);
 }
 
 void Actor::initSpriteActor(int32 actorIdx) {
@@ -336,7 +336,7 @@ void Actor::initActor(int16 actorIdx) {
 		actor->animType = 0;
 
 		if (actor->entity != -1) {
-			_engine->_animations->initAnim(actor->anim, 0, AnimationTypes::kAnimInvalid, actorIdx);
+			_engine->_animations->initAnim(actor->anim, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
 		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, ANGLE_0, &actor->move);
