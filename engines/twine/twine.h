@@ -196,6 +196,14 @@ private:
 	/** recenter screen on followed actor automatically */
 	void centerScreenOnActor();
 
+	void initConfigurations();
+	/** Initialize all needed stuffs at first time running engine */
+	void initAll();
+	void initEngine();
+	void processActorSamplePosition(int32 actorIdx);
+	/** Allocate video memory, both front and back buffers */
+	void allocVideoMemory(int32 w, int32 h);
+
 	Common::String _queuedFlaMovie;
 
 public:
@@ -256,24 +264,16 @@ public:
 	int height() const;
 	Common::Rect rect() const;
 
-	/** Initialize LBA engine */
-	void initEngine();
 	void initMCGA();
 	void initSVGA();
 
 	void queueMovie(const char *filename);
 
-	void initConfigurations();
-	/** Initialize all needed stuffs at first time running engine */
-	void initAll();
-	void processActorSamplePosition(int32 actorIdx);
 	/**
 	 * Game engine main loop
 	 * @return true if we want to show credit sequence
 	 */
 	int32 runGameEngine();
-	/** Allocate video memory, both front and back buffers */
-	void allocVideoMemory(int32 w, int32 h);
 	/**
 	 * @return A random value between [0-max)
 	 */
