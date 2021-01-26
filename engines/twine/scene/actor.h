@@ -141,6 +141,10 @@ struct BonusParameter {
 };
 
 #define kAnimationTypeLoop 0
+#define kAnimationType_1 1
+#define kAnimationType_2 2
+#define kAnimationType_3 3
+#define kAnimationType_4 4
 
 /**
  * Actors structure

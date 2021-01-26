@@ -224,7 +224,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		executeAction = true;
 		break;
 	case HeroBehaviourType::kAthletic:
-		_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kJump, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 		break;
 	case HeroBehaviourType::kAggressive:
 		if (_engine->_actor->autoAggressive) {
@@ -237,23 +237,23 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 
 				switch (aggresiveMode) {
 				case 0:
-					_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
+					_engine->_animations->initAnim(AnimationTypes::kKick, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 					break;
 				case 1:
-					_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
+					_engine->_animations->initAnim(AnimationTypes::kRightPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 					break;
 				case 2:
-					_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
+					_engine->_animations->initAnim(AnimationTypes::kLeftPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 					break;
 				}
 			}
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-				_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kRightPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-				_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kKick, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 			}
 		}
 		break;
@@ -271,7 +271,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 	if (!_engine->_gameState->usingSabre) { // Use Magic Ball
 		if (_engine->_gameState->hasItem(InventoryItems::kiMagicBall)) {
 			if (_engine->_gameState->magicBallIdx == -1) {
-				_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kThrowBall, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 			}
 
 			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
@@ -282,7 +282,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 			_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 		}
 
-		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, 1, AnimationTypes::kStanding, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 
 		actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 		return true;

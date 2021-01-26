@@ -422,9 +422,9 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 
 			if (_engine->getRandomNumber() & 1) {
-				_engine->_animations->initAnim(AnimationTypes::kHit2, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kHit2, kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			} else {
-				_engine->_animations->initAnim(AnimationTypes::kBigHit, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kBigHit, kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			}
 		}
 
@@ -440,7 +440,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			actor->life = 0;
 		}
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kHit, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
+		_engine->_animations->initAnim(AnimationTypes::kHit, kAnimationType_3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 	}
 }
 

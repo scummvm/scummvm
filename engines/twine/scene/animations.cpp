@@ -759,7 +759,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
 				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + BRICK_HEIGHT, _engine->_renderer->destZ) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);
-					initAnim(AnimationTypes::kBigHit, 2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
+					initAnim(AnimationTypes::kBigHit, kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 
 					if (IS_HERO(currentlyProcessedActorIdx)) {
 						_engine->_movements->heroMoved = true;
@@ -781,7 +781,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);
-						initAnim(AnimationTypes::kBigHit, 2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
+						initAnim(AnimationTypes::kBigHit, kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 						_engine->_movements->heroMoved = true;
 						actor->life--;
 					}

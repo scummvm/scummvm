@@ -453,16 +453,16 @@ void Collision::stopFalling() { // ReceptionObj()
 		if (fall >= BRICK_HEIGHT * 8) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, ExtraSpecialType::kHitStars);
 			_engine->_actor->processActorPtr->life--;
-			_engine->_animations->initAnim(AnimationTypes::kLandingHit, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLandingHit, kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall > 10) {
-			_engine->_animations->initAnim(AnimationTypes::kLanding, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLanding, kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else {
 			_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		}
 
 		_engine->_scene->heroYBeforeFall = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, 2, _engine->_actor->processActorPtr->animExtra, _engine->_animations->currentlyProcessedActorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, kAnimationType_2, _engine->_actor->processActorPtr->animExtra, _engine->_animations->currentlyProcessedActorIdx);
 	}
 
 	_engine->_actor->processActorPtr->dynamicFlags.bIsFalling = 0;
