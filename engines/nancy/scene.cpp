@@ -37,10 +37,6 @@
 
 namespace Nancy {
 
-SceneManager::~SceneManager() {
-    clearSceneData();
-}
-
 void SceneManager::process() {
     switch (_state) {
     case kInit:

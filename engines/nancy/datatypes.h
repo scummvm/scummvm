@@ -36,9 +36,8 @@ namespace Nancy {
 
 // Describes a scene
 struct SceneSummary {
-    SceneSummary() { chunkData = nullptr; }
+    SceneSummary() =default;
     SceneSummary(Common::SeekableReadStream *stream);
-    ~SceneSummary() { delete[] chunkData; }
 
     Common::String description; // 0x00
     Common::String videoFile;   // 0x32
@@ -55,7 +54,6 @@ struct SceneSummary {
     uint16 fastMoveTimeDelta;   // 0x7A
     byte unknown7C;             // 0x7C, enum with 4 values
     //
-    byte *chunkData;
 };
 
 // Describes the viewport

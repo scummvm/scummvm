@@ -50,7 +50,6 @@ public:
         _state {kInit},
         _sceneID {0},
         movementDirection{0} { }
-    ~SceneManager();
 
     void process();
 
