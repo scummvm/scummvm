@@ -278,7 +278,19 @@ Common::Error TwinEEngine::run() {
 			_state = EngineState::Menu;
 			break;
 		case EngineState::Menu:
+		#if 0
+			// this will enter the game and execute the commands in the file "debug"
+			_gameState->initEngineVars();
+			_text->textClipSmall();
+			_text->drawTextBoxBackground = true;
+			_text->renderTextTriangle = false;
+			if (!((TwinEConsole*)getDebugger())->exec("debug")) {
+				debug("Failed to execute debug file before entering the scene");
+			}
+			gameEngineLoop();
+		#else
 			_state = _menu->run();
+		#endif
 			break;
 		}
 	}
