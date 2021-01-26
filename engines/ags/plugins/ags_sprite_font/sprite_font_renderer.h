@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_AGS_SPRITE_FONT_SPR_FONT_RENDERER_H
 
 #include "ags/plugins/ags_sprite_font/sprite_font.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/lib/std/vector.h"
 
 namespace AGS3 {

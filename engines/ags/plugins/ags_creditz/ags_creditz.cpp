@@ -49,7 +49,6 @@ const char *AGSCreditz::AGS_GetPluginName() {
 
 void AGSCreditz::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ScrollCredits);
-	SCRIPT_METHOD(GetCredit);
 	SCRIPT_METHOD(IsCreditScrollingFinished);
 	SCRIPT_METHOD(SetCreditImage);
 	SCRIPT_METHOD(PauseScroll);
@@ -72,11 +71,6 @@ void AGSCreditz::AGS_EngineStartup(IAGSEngine *engine) {
 
 void AGSCreditz::ScrollCredits(const ScriptMethodParams &params) {
 	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, res);
-}
-
-string AGSCreditz::GetCredit(const ScriptMethodParams &params) {
-	PARAMS1(int, ID);
-	return nullptr;
 }
 
 int AGSCreditz::IsCreditScrollingFinished(const ScriptMethodParams &params) {
@@ -154,6 +148,8 @@ int AGSCreditz::IsStaticCreditsFinished(const ScriptMethodParams &params) {
 
 /*------------------------------------------------------------------*/
 
+const char *IMAGE_TEXT = "*i*m*a*g*e*";
+
 AGSCreditz11::AGSCreditz11() {
 	_version = VERSION_11;
 
@@ -162,12 +158,31 @@ AGSCreditz11::AGSCreditz11() {
 
 void AGSCreditz11::AGS_EngineStartup(IAGSEngine *engine) {
 	AGSCreditz::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(SetCredit);
+	SCRIPT_METHOD(GetCredit);
 }
 
 void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
 	PARAMS7(int, ID, string, credit, int, colour, int, font, int, center, int, xpos, int, generateoutline);
 
+	if (ID >= _state->_credits[0].size())
+		_state->_credits[0].resize(ID + 1);
+
+	Credit &c = _state->_credits[0][ID];
+	c._text = credit;
+	c._fontSlot = font;
+	c._center = center;
+	c._x = xpos;
+	c._isSet = true;
+	c._outline = generateoutline;
+}
+
+const string AGSCreditz11::GetCredit(const ScriptMethodParams &params) {
+	PARAMS1(int, ID);
+
+	return (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
+		"image" : _state->_credits[0][ID]._text.c_str();
 }
 
 /*------------------------------------------------------------------*/
@@ -180,6 +195,7 @@ AGSCreditz20::AGSCreditz20() {
 
 void AGSCreditz20::AGS_EngineStartup(IAGSEngine *engine) {
 	AGSCreditz::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(SetCredit);
 }
 
@@ -191,9 +207,9 @@ void AGSCreditz20::SetCredit(const ScriptMethodParams &params) {
 		_state->_credits[sequence].resize(line + 1);
 
 	Credit &c = _state->_credits[sequence][line];
-	c._credit = credit;
+	c._text = credit;
 	c._fontSlot = font;
-	c._colorHeight = color;
+	c._color = color;
 	c._x = x_pos;
 	c._isSet = true;
 	if (gen_outline > 0)
