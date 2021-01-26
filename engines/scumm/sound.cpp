@@ -544,6 +544,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			return;
 		}
 	} else {
+		// This has been verified for INDY4, DOTT and SAM
+		if (_vm->_voiceMode == 2 && _vm->_game.version <= 6)
+			return;
 
 		if (_sfxFilename.empty()) {
 			warning("startTalkSound: SFX file not found");

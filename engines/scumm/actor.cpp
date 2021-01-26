@@ -2912,6 +2912,7 @@ void ScummEngine::stopTalk() {
 
 	_haveMsg = 0;
 	_talkDelay = 0;
+	_sound->_sfxMode = 0;
 
 	act = getTalkingActor();
 	if (act && act < 0x80) {
