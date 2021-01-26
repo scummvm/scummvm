@@ -165,6 +165,26 @@ enum class HeroBehaviourType {
 	kProtoPack = 4
 };
 
+/**
+ * 0: tunic + medallion
+ * 1: tunic
+ * 2: tunic + medallion + sword
+ * 3: prison suit
+ * 4: nurse outfit
+ * 5: tunic + medallion + horn
+ * 6: snowboard (WARNING, this can crash the game when you change behavior)
+ */
+enum class BodyType {
+	btNone = -1,
+	btNormal = 0,
+	btTunic = 1,
+	btSabre = 2,
+	btPrisonSuit = 3,
+	btNurseSuit = 4,
+	btHorn = 5,
+	btSnowboard = 6
+};
+
 enum class ExtraSpecialType {
 	kHitStars = 0,
 	kExplodeCloud = 1

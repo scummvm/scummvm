@@ -136,15 +136,15 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 		break;
 	};
 
-	const int32 bodyIdx = sceneHero->body;
+	const BodyType bodyIdx = sceneHero->body;
 
 	sceneHero->entity = -1;
-	sceneHero->body = -1;
+	sceneHero->body = BodyType::btNone;
 
-	initModelActor(bodyIdx, 0);
+	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
 	sceneHero->anim = AnimationTypes::kAnimNone;
-	sceneHero->animType = 0;
+	sceneHero->animType = kAnimationTypeLoop;
 
 	_engine->_animations->initAnim(AnimationTypes::kStanding, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, 0);
 }
@@ -174,8 +174,8 @@ int32 Actor::getTextIdForBehaviour() const {
 }
 
 // see Animations::getBodyAnimIndex
-int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
-	if (bodyIdx == -1) {
+int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
+	if (bodyIdx == BodyType::btNone) {
 		return -1;
 	}
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
@@ -186,7 +186,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 			return -1;
 		}
 
-		uint8 idx = stream.readByte();
+		BodyType idx = (BodyType)stream.readByte();
 		const int32 pos = stream.pos();
 		const uint8 size = stream.readByte();
 		if (type == 1) { // 1 = body data - 3 is animdata
@@ -234,13 +234,13 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 	} while (1);
 }
 
-void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
+void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	if (localActor->staticFlags.bIsSpriteActor) {
 		return;
 	}
 
-	debug(1, "Load body %i for actor %i", bodyIdx, actorIdx);
+	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
 
 	if (IS_HERO(actorIdx) && heroBehaviour == HeroBehaviourType::kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
 		setBehaviour(HeroBehaviourType::kNormal);
@@ -249,7 +249,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 	ActorBoundingBox actorBoundingBox;
 	const int32 entityIdx = initBody(bodyIdx, actorIdx, actorBoundingBox);
 	if (entityIdx == -1) {
-		localActor->body = -1;
+		localActor->body = BodyType::btNone;
 		localActor->entity = -1;
 
 		ZVBox &bbox = localActor->boudingBox;
@@ -259,7 +259,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		bbox.y.topRight = 0;
 		bbox.z.bottomLeft = 0;
 		bbox.z.topRight = 0;
-		debug("Failed to initialize body %i for actor %i", bodyIdx, actorIdx);
+		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
 
@@ -329,11 +329,11 @@ void Actor::initActor(int16 actorIdx) {
 	} else {
 		actor->entity = -1;
 
-		debug(1, "Init actor %i with model %i", actorIdx, actor->body);
+		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->body);
 		initModelActor(actor->body, actorIdx);
 
 		actor->previousAnimIdx = -1;
-		actor->animType = 0;
+		actor->animType = kAnimationTypeLoop;
 
 		if (actor->entity != -1) {
 			_engine->_animations->initAnim(actor->anim, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -350,7 +350,7 @@ void Actor::initActor(int16 actorIdx) {
 void Actor::resetActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	actor->body = 0;
+	actor->body = BodyType::btNormal;
 	actor->anim = AnimationTypes::kStanding;
 	actor->x = 0;
 	actor->y = -1;
@@ -385,13 +385,13 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->life = 50;
 	actor->armor = 1;
 	actor->hitBy = -1;
-	actor->lastRotationAngle = 0;
+	actor->lastRotationAngle = ANGLE_0;
 	actor->lastX = 0;
 	actor->lastY = 0;
 	actor->lastZ = 0;
 	actor->entity = -1;
 	actor->previousAnimIdx = -1;
-	actor->animType = 0;
+	actor->animType = kAnimationTypeLoop;
 	actor->animPosition = 0;
 
 	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);

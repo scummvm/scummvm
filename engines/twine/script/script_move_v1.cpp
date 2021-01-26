@@ -91,7 +91,7 @@ static int32 mNOP(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x02
  */
 static int32 mBODY(TwinEEngine *engine, MoveScriptContext &ctx) {
-	int32 bodyIdx = ctx.stream.readByte();
+	BodyType bodyIdx = (BodyType)ctx.stream.readByte();
 	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
 	return 0;
 }
@@ -405,7 +405,7 @@ static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x13
  */
 static int32 mNO_BODY(TwinEEngine *engine, MoveScriptContext &ctx) {
-	engine->_actor->initModelActor(-1, ctx.actorIdx);
+	engine->_actor->initModelActor(BodyType::btNone, ctx.actorIdx);
 	return 0;
 }
 

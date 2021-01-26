@@ -187,7 +187,7 @@ bool Scene::loadSceneLBA1() {
 
 		act->loadModel(stream.readUint16LE());
 
-		act->body = stream.readByte();
+		act->body = (BodyType)stream.readByte();
 		act->anim = (AnimationTypes)stream.readByte();
 		act->sprite = stream.readUint16LE();
 		act->x = stream.readUint16LE();

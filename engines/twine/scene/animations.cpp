@@ -442,7 +442,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		return true;
 	}
 
-	if (animExtra == AnimationTypes::kAnimInvalid && actor->animType != 2) {
+	if (animExtra == AnimationTypes::kAnimInvalid && actor->animType != kAnimationType_2) {
 		animExtra = actor->anim;
 	}
 
@@ -452,13 +452,13 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		animIndex = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
 	}
 
-	if (animType != 4 && actor->animType == 2) {
+	if (animType != kAnimationType_4 && actor->animType == kAnimationType_2) {
 		actor->animExtra = newAnim;
 		return false;
 	}
 
-	if (animType == 3) {
-		animType = 2;
+	if (animType == kAnimationType_3) {
+		animType = kAnimationType_2;
 
 		animExtra = actor->anim;
 
@@ -467,8 +467,8 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		}
 	}
 
-	if (animType == 4) {
-		animType = 2;
+	if (animType == kAnimationType_4) {
+		animType = kAnimationType_2;
 	}
 
 	if (actor->previousAnimIdx == -1) {
@@ -491,7 +491,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 
 	processAnimActions(actorIdx);
 
-	actor->lastRotationAngle = 0;
+	actor->lastRotationAngle = ANGLE_0;
 	actor->lastX = 0;
 	actor->lastY = 0;
 	actor->lastZ = 0;
@@ -675,7 +675,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					actor->dynamicFlags.bAnimEnded = 1;
 				}
 
-				actor->lastRotationAngle = 0;
+				actor->lastRotationAngle = ANGLE_0;
 
 				actor->lastX = 0;
 				actor->lastY = 0;

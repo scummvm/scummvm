@@ -182,11 +182,11 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	}
 	case kcBODY:
-		engine->_scene->currentScriptValue = ctx.actor->body;
+		engine->_scene->currentScriptValue = (int16)ctx.actor->body;
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->body;
+		engine->_scene->currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->body;
 		break;
 	}
 	case kcANIM:
@@ -563,7 +563,7 @@ static int32 lELSE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x11
  */
 static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 bodyIdx = ctx.stream.readByte();
+	BodyType bodyIdx = (BodyType)ctx.stream.readByte();
 	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
 	return 0;
 }
@@ -574,7 +574,7 @@ static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
-	int32 otherBodyIdx = ctx.stream.readByte();
+	BodyType otherBodyIdx = (BodyType)ctx.stream.readByte();
 	engine->_actor->initModelActor(otherBodyIdx, otherActorIdx);
 	return 0;
 }

@@ -142,8 +142,13 @@ struct BonusParameter {
 
 #define kAnimationTypeLoop 0
 #define kAnimationType_1 1
+// play animation and let animExtra follow as next animation
+// if there is already a next animation set - replace the value
 #define kAnimationType_2 2
+// replace animation and let the current animation follow
 #define kAnimationType_3 3
+// play animation and let animExtra follow as next animation
+// but don't take the current state in account
 #define kAnimationType_4 4
 
 /**
@@ -172,16 +177,7 @@ public:
 	void loadModel(int32 modelIndex);
 
 	int32 entity = 0; // costumeIndex - index into bodyTable
-	/**
-	 * 0: tunic + medallion
-	 * 1: tunic
-	 * 2: tunic + medallion + sword
-	 * 3: prison suit
-	 * 4: nurse outfit
-	 * 5: tunic + medallion + horn
-	 * 6: snowboard (WARNING, this can crash the game when you change behavior)
-	 */
-	int32 body = 0;
+	BodyType body = BodyType::btNormal;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
 	AnimationTypes animExtra = AnimationTypes::kStanding; //field_2
 	AnimationTypes animExtraPtr = AnimationTypes::kAnimNone;
@@ -233,7 +229,7 @@ public:
 	int32 standOn = 0;
 	int32 zone = 0;
 
-	int32 lastRotationAngle = 0;
+	int32 lastRotationAngle = ANGLE_0;
 	int32 lastX = 0;
 	int32 lastZ = 0;
 	int32 lastY = 0;
@@ -277,7 +273,7 @@ private:
 	 * @param bodyIdx 3D actor body index
 	 * @param actorIdx 3D actor index
 	 */
-	int32 initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
+	int32 initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
 	int32 loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16 &bodyAnimIndex, int32 index);
 
@@ -351,7 +347,7 @@ public:
 	 * @param bodyIdx 3D actor body index
 	 * @param actorIdx 3D actor index
 	 */
-	void initModelActor(int32 bodyIdx, int16 actorIdx);
+	void initModelActor(BodyType bodyIdx, int16 actorIdx);
 
 	/**
 	 * Initialize actors

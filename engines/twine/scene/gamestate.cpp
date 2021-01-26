@@ -99,7 +99,7 @@ void GameState::initHeroVars() {
 
 	usingSabre = false;
 
-	_engine->_scene->sceneHero->body = 0;
+	_engine->_scene->sceneHero->body = BodyType::btNormal;
 	_engine->_scene->sceneHero->life = 50;
 	_engine->_scene->sceneHero->talkColor = COLOR_BRIGHT_BLUE;
 }
@@ -195,7 +195,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->newHeroZ = file->readSint16LE();
 	_engine->_scene->sceneHero->angle = ToAngle(file->readSint16LE());
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
-	_engine->_scene->sceneHero->body = file->readByte();
+	_engine->_scene->sceneHero->body = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
 	if (numHolomapFlags != NUM_LOCATIONS) {
@@ -256,7 +256,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeSint16LE(_engine->_scene->newHeroY);
 	file->writeSint16LE(_engine->_scene->newHeroZ);
 	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
-	file->writeByte(_engine->_scene->sceneHero->body);
+	file->writeByte((uint8)_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
 	file->writeByte(NUM_LOCATIONS);

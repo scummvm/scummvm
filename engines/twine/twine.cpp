@@ -596,16 +596,16 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	case kiMagicBall:
 		if (_gameState->usingSabre) {
-			_actor->initModelActor(0, OWN_ACTOR_SCENE_INDEX);
+			_actor->initModelActor(BodyType::btNormal, OWN_ACTOR_SCENE_INDEX);
 		}
 		_gameState->usingSabre = false;
 		break;
 	case kiUseSabre:
-		if (_scene->sceneHero->body != 2) {
+		if (_scene->sceneHero->body != BodyType::btSabre) {
 			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
-			_actor->initModelActor(2, OWN_ACTOR_SCENE_INDEX);
+			_actor->initModelActor(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
 			_animations->initAnim(AnimationTypes::kSabreUnknown, kAnimationType_1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 			_gameState->usingSabre = true;
@@ -617,9 +617,9 @@ void TwinEEngine::processInventoryAction() {
 	}
 	case kiProtoPack:
 		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-			_scene->sceneHero->body = 0;
+			_scene->sceneHero->body = BodyType::btNormal;
 		} else {
-			_scene->sceneHero->body = 1;
+			_scene->sceneHero->body = BodyType::btTunic;
 		}
 
 		if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -640,8 +640,8 @@ void TwinEEngine::processInventoryAction() {
 
 		if (!_collision->checkCollisionWithActors(_scene->mecaPinguinIdx)) {
 			pinguin->life = 50;
-			pinguin->body = -1;
-			_actor->initModelActor(0, _scene->mecaPinguinIdx);
+			pinguin->body = BodyType::btNone;
+			_actor->initModelActor(BodyType::btNormal, _scene->mecaPinguinIdx);
 			pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
 			pinguin->setBrickShape(ShapeType::kNone);
 			_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
@@ -797,9 +797,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// use Proto-Pack
 		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->hasItem(InventoryItems::kiProtoPack)) {
 			if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-				_scene->sceneHero->body = 0;
+				_scene->sceneHero->body = BodyType::btNormal;
 			} else {
-				_scene->sceneHero->body = 1;
+				_scene->sceneHero->body = BodyType::btTunic;
 			}
 
 			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
