@@ -74,24 +74,24 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		return 0;
 	}
 
-	int32 posZ = cZ + cameraPosX;
+	int32 posZ = cZ + cameraDepthOffset;
 	if (posZ < 0) {
 		posZ = 0x7FFF;
 	}
 
-	projPosX = (cX * cameraPosY) / posZ + orthoProjX;
-	projPosY = (-cY * cameraPosZ) / posZ + orthoProjY;
+	projPosX = (cX * cameraScaleY) / posZ + orthoProjX;
+	projPosY = (-cY * cameraScaleZ) / posZ + orthoProjY;
 	projPosZ = posZ;
 	return -1;
 }
 
-void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ) {
+void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ) {
 	orthoProjX = x;
 	orthoProjY = y;
 
-	cameraPosX = cX;
-	cameraPosY = cY;
-	cameraPosZ = cZ;
+	cameraDepthOffset = depthOffset;
+	cameraScaleY = scaleY;
+	cameraScaleZ = scaleZ;
 
 	isUsingOrthoProjection = false;
 }
@@ -1162,7 +1162,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			//if (isUsingOrthoProjection) {
 				radius = (radius * 34) / 512;
 			//} else {
-			//	radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
+			//	radius = (radius * cameraScaleY) / (cameraDepthOffset + *(const int16 *)pointer); // TODO: this does not make sense.
 			//}
 
 			radius += 3;
@@ -1268,7 +1268,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			int32 coY = pointPtr->y + renderY;
 			int32 coZ = -(pointPtr->z + renderZ);
 
-			coZ += cameraPosX;
+			coZ += cameraDepthOffset;
 
 			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
@@ -1276,7 +1276,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// X projection
 			{
-				coX = orthoProjX + ((coX * cameraPosY) / coZ);
+				coX = orthoProjX + ((coX * cameraScaleY) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1295,7 +1295,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// Y projection
 			{
-				coY = orthoProjY + ((-coY * cameraPosZ) / coZ);
+				coY = orthoProjY + ((-coY * cameraScaleZ) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
