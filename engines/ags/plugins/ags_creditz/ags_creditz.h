@@ -33,11 +33,12 @@ namespace Plugins {
 namespace AGSCreditz {
 
 struct Credit {
-	Common::String _credit;
+	Common::String _text;
 	int _x = 0;
 	int _y = 0;
 	int _fontSlot = 0;
-	int _colorHeight = 0;
+	int _color = 0;
+	int _center = 0;
 	bool _isSet = false;
 	bool _image = false;
 	bool _outline = false;
@@ -121,7 +122,6 @@ protected:
 
 	// Shared Script methods
 	static void ScrollCredits(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
 	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
 	static void SetCreditImage(const ScriptMethodParams &params);
 	static void PauseScroll(const ScriptMethodParams &params);
@@ -150,6 +150,7 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
 	static void SetCredit(const ScriptMethodParams &params);
+	static const string GetCredit(const ScriptMethodParams &params);
 public:
 	AGSCreditz11();
 };

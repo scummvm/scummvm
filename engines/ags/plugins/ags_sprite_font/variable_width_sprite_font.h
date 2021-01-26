@@ -25,7 +25,7 @@
 
 #include "ags/plugins/dll.h"
 #include "ags/plugins/serializer.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/plugins/ags_sprite_font/variable_width_font.h"
 
 namespace AGS3 {

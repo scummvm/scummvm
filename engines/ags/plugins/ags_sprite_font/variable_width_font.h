@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_AGS_SPRITE_FONT_VAR_WIDTH_FONT_H
 
 #include "ags/plugins/ags_sprite_font/character_entry.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/lib/std/map.h"
 
 namespace AGS3 {
