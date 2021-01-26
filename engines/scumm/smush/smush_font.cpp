@@ -200,9 +200,8 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 
 void SmushFont::drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y) {
 	if (_vm->_language == Common::HE_ISR) {
-		for (int i = strlen(str); i >= 0 && numBytesMax; i--) {
-			x += drawChar(buffer, dst_width, x, y, str[i]);
-			--numBytesMax;
+		for (int i = numBytesMax; i > 0; i--) {
+			x += drawChar(buffer, dst_width, x, y, str[i - 1]);
 		}
 	} else {
 		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
