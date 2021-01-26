@@ -10793,7 +10793,7 @@ static const uint16 pq4CdSpeechAndSubtitlesTalkerPatch1[] = {
 	0x80, PATCH_UINT16(0x005a),     // lag 005a
 	0xa0, PATCH_UINT16(0x00c0),     // sag 00c0 [ save message mode ]
 	0x39, 0x01,                     // pushi 01
-	0x14,                           // or [ enable text ]
+	0x14,                           // or [ enable text ] - always display text, regardless of the mode
 	PATCH_END
 };
 
