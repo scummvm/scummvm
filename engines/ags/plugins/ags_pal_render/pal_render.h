@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_AGS_PAL_RENDER_PAL_RENDER_H
 
 #include "ags/lib/allegro.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "common/algorithm.h"
 
 namespace AGS3 {

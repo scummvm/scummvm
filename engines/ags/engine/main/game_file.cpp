@@ -50,7 +50,7 @@
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/game/main_game_file.h"
 #include "ags/engine/game/game_init.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/engine/script/script.h"
 
 namespace AGS3 {

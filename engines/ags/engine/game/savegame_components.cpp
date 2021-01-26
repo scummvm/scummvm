@@ -53,8 +53,8 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guislider.h"
 #include "ags/shared/gui/guitextbox.h"
-#include "ags/engine/plugin/agsplugin.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/util/filestream.h" // TODO: needed only because plugins expect file handle

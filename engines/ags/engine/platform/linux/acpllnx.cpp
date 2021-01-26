@@ -36,7 +36,7 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/gfx/gfxdefines.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

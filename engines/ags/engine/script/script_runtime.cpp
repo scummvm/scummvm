@@ -39,7 +39,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_options.h"
 #include "ags/engine/script/systemimports.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h"
 #include "ags/engine/ac/statobj/staticobject.h"
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/engine/plugin/pluginobjectreader.h"
+#include "ags/plugins/pluginobjectreader.h"
 #include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {

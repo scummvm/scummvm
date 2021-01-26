@@ -28,8 +28,8 @@
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/tree_map.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/plugin/agsplugin.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/core/types.h"
 

@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_DLL_H
 
 #include "ags/shared/util/string.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/engine/plugin/library.h"
+#include "ags/plugins/library.h"
 #include "ags/plugins/dll.h"
 
 namespace AGS3 {

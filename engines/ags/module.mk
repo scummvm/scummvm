@@ -287,10 +287,6 @@ MODULE_OBJS = \
 	engine/media/video/video.o \
 	engine/platform/base/agsplatformdriver.o \
 	engine/platform/linux/acpllnx.o \
-	engine/plugin/agsplugin.o \
-	engine/plugin/global_plugin.o \
-	engine/plugin/library.o \
-	engine/plugin/pluginobjectreader.o \
 	engine/script/cc_instance.o \
 	engine/script/executingscript.o \
 	engine/script/exports.o \
@@ -300,7 +296,11 @@ MODULE_OBJS = \
 	engine/script/script_engine.o \
 	engine/script/script_runtime.o \
 	engine/script/systemimports.o \
+	plugins/agsplugin.o \
 	plugins/dll.o \
+	plugins/global_plugin.o \
+	plugins/library.o \
+	plugins/pluginobjectreader.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_flashlight/ags_flashlight.o \
