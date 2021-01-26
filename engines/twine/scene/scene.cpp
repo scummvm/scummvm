@@ -287,6 +287,10 @@ void Scene::resetScene() {
 	_engine->_screens->useAlternatePalette = false;
 }
 
+void Scene::reloadCurrentScene() {
+	needChangeScene = currentSceneIdx;
+}
+
 void Scene::changeScene() {
 	// change twinsen house destroyed hard-coded
 	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {

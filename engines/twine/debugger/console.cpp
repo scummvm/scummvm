@@ -57,6 +57,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("set_inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
 	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
+	registerCmd("set_holomap_trajectory", WRAP_METHOD(TwinEConsole, doSetHolomapTrajectory));
 	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 }
 
@@ -132,6 +133,16 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 	_engine->_gameState->inventoryFlags[idx] = val;
 
 	return true;
+}
+
+bool TwinEConsole::doSetHolomapTrajectory(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a holomap trajectory index as parameter\n");
+		return true;
+	}
+	_engine->_scene->holomapTrajectory = atoi(argv[1]);
+	_engine->_scene->reloadCurrentScene();
+	return false;
 }
 
 bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {

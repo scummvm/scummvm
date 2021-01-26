@@ -303,6 +303,7 @@ public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
 	~Scene();
 
+	void reloadCurrentScene();
 	uint8 *currentScene = nullptr;
 
 	int32 needChangeScene = LBA1SceneId::Citadel_Island_Prison;
