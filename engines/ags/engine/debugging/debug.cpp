@@ -38,7 +38,7 @@
 #include "ags/engine/main/config.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/script_common.h"
 #include "ags/shared/script/cc_error.h"

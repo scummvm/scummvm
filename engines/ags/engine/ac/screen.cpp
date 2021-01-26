@@ -31,8 +31,8 @@
 #include "ags/engine/ac/dynobj/scriptuserobject.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/plugin/agsplugin.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 

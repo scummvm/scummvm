@@ -44,7 +44,7 @@
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/core/assetmanager.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/globals.h"
 #include "ags/ags.h"

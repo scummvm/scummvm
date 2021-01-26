@@ -31,8 +31,8 @@
 #include "ags/engine/ac/dynobj/scriptviewport.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/plugin/agsplugin.h"
-#include "ags/engine/plugin/pluginobjectreader.h"
+#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/pluginobjectreader.h"
 
 namespace AGS3 {
 

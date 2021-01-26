@@ -43,7 +43,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/gui/guilabel.h"
-#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/plugins/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/engine/script/exports.h"
 #include "ags/engine/script/script.h"

@@ -33,7 +33,7 @@
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/plugin/agsplugin.h"
+#include "ags/plugins/agsplugin.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/lib/system/datetime.h"
