@@ -61,6 +61,10 @@ public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;
 
+	bool exec(const char *file) {
+		const char *argv[] = {"", file};
+		return cmdExecFile(2, argv);
+	}
 };
 
 } // End of namespace TwinE
