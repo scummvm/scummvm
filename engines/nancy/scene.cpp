@@ -50,6 +50,7 @@ void SceneManager::process() {
         if (!doNotStartSound) {
             _engine->sound->stopAllSounds();
             _engine->sound->loadSound(currentScene.audioFile, currentScene.audioID, 0, currentScene.audioVolume);
+            _engine->sound->pauseSound(currentScene.audioID, false);
         }
         // fall through
     case kRun:
@@ -639,6 +640,7 @@ void SceneManager::clearSceneData() {
 
     _engine->graphics->getZRenderStruct("SEC VIDEO 0").isActive = false;
     _engine->graphics->getZRenderStruct("SEC VIDEO 1").isActive = false;
+    _engine->graphics->getZRenderStruct("SEC MOVIE").isActive = false;
     _engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION").isActive = false;
 }
 

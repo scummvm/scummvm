@@ -47,6 +47,28 @@ void HotspotDesc::readData(Common::SeekableReadStream &stream) {
     readRect(stream, coords);
 }
 
+void SecondaryVideoDesc::readData(Common::SeekableReadStream &stream) {
+    frameID = stream.readUint16LE();
+    readRect(stream, srcRect);
+    readRect(stream, destRect);
+    stream.skip(0x20);
+}
+
+void EventFlagsDesc::readData(Common::SeekableReadStream &stream) {
+    for (uint i = 0; i < 10; ++i) {
+        descs[i].label = stream.readSint16LE();
+        descs[i].flag = (PlayState::Flag)stream.readUint16LE();
+    }
+}
+
+void EventFlagsDesc::execute(NancyEngine *engine) {
+    for (uint i = 0; i < 10; ++i) {
+        if (descs[i].label != -1) {
+            engine->playState.eventFlags[descs[i].label] = descs[i].flag;
+        }
+    }
+}
+
 uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
     sceneID = stream.readUint16LE();
     frameID = stream.readUint16LE();
@@ -211,11 +233,7 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
         videoDescs.push_back(SecondaryVideoDesc());
-        SecondaryVideoDesc &cur = videoDescs[i];
-        cur.frameID = stream.readSint16LE();
-        readRect(stream, cur.srcRect);
-        readRect(stream, cur.destRect);
-        stream.skip(0x20);
+        videoDescs[i].readData(stream);
     }
 
     return 0x35 + (numVideoDescs * 0x42);
@@ -233,7 +251,7 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
             zr.isActive = false;
             hasHotspot = false;
 
-            uint activeFrame = 0;
+            int activeFrame = -1;
 
             for (uint i = 0; i < videoDescs.size(); ++i) {
                 if (videoDescs[i].frameID == engine->playState.currentViewFrame) {
@@ -241,7 +259,7 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
                 }
             }
 
-            if (activeFrame) {
+            if (activeFrame != -1) {
                 // Activate the ZRenderStruct
                 zr.sourceRect = videoDescs[activeFrame].srcRect;
                 zr.destRect = videoDescs[activeFrame].destRect;
@@ -283,27 +301,6 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
                         break;
                 }
 
-                /*// The reverse playback of the whole animation ended, go back to regular loop
-                if (hoverAnimationEnded) {
-                    hoverAnimationEnded = false;
-                    engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
-                } else {
-                    bool isHovered = engine->logic->getActionRecord(engine->input->hoveredElementID) == this;
-                    if (!wasHovered) {
-                        if (isHovered) {
-                            // Player has just hovered over, play the hover animation once
-                            wasHovered = true;
-                            engine->graphics->setupSecondaryVideo(channelID(), onHoverFirstFrame, onHoverLastFrame, false);
-                        }
-                    } else {
-                        if (!isHovered) {
-                            // Player has just stopped hovering, reverse the playback and go back to frame 0
-                            wasHovered = false;
-                            engine->graphics->setupSecondaryVideo(channelID(), onHoverEndLastFrame, onHoverEndFirstFrame, false);
-                        }
-                    }
-                }*/
-
                 engine->graphics->playSecondaryVideo(channelID());
             } else {
                 engine->graphics->stopSecondaryVideo(channelID());
@@ -317,12 +314,95 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
     }
 }
 
-uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
-    stream.seek(0xD2, SEEK_CUR);
-    uint16 size = stream.readUint16LE() * 0x42 + 0xD4;
-    stream.seek(-0xD4, SEEK_CUR);
+uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
+    char name[10];
+    stream.read(name, 10);
+    videoName = Common::String(name);
 
-    return readRaw(stream, size); // TODO
+    stream.skip(0x1C);
+    for (uint i = 0; i < 15; ++i) {
+        frameFlags[i].frameID = stream.readSint16LE();
+        frameFlags[i].flagDesc.label = stream.readSint16LE();
+        frameFlags[i].flagDesc.flag = (PlayState::Flag)stream.readUint16LE();
+    }
+
+    triggerFlags.readData(stream);
+    stream.read(name, 10);
+    soundName = Common::String(name);
+    soundChannel = stream.readUint16LE();
+    stream.skip(0xE);
+    soundVolume = stream.readUint16LE();
+    
+    stream.skip(6);
+    SceneChange::readData(stream);
+
+    uint16 numVideoDescs = stream.readUint16LE();
+    for (uint i = 0; i < numVideoDescs; ++i) {
+        videoDescs.push_back(SecondaryVideoDesc());
+        videoDescs[i].readData(stream);
+    }
+
+    return 0xD4 + numVideoDescs * 0x42; // TODO
+}
+
+void PlaySecondaryMovie::execute(NancyEngine *engine) {
+    ZRenderStruct &zr = engine->graphics->getZRenderStruct("SEC MOVIE");
+
+    switch (state) {
+        case kBegin:
+            engine->graphics->loadSecondaryMovie(videoName);
+            if (soundName != "NO SOUND") {
+                engine->sound->loadSound(soundName, soundChannel, 1, soundVolume);
+            }
+            state = kRun;
+            // fall through
+        case kRun: {
+            zr.isActive = false;
+            engine->graphics->getZRenderStruct("CUR IMAGE CURSOR").isActive = false;
+            
+            int activeFrame = -1;
+
+            for (uint i = 0; i < videoDescs.size(); ++i) {
+                if (videoDescs[i].frameID == engine->playState.currentViewFrame) {
+                    activeFrame = i;
+                }
+            }
+
+            if (activeFrame != -1) {
+                // Activate the ZRenderStruct
+                zr.sourceRect = videoDescs[activeFrame].srcRect;
+                zr.destRect = videoDescs[activeFrame].destRect;
+                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.top -= engine->playState.verticalScroll;
+                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.bottom -= engine->playState.verticalScroll;
+                zr.isActive = true;
+
+                // Start sound if any
+                if (soundName != "NO SOUND") {
+                    engine->sound->pauseSound(soundChannel, false);
+                }
+            }
+
+            uint16 frame = 0;
+            if (!engine->graphics->playSecondaryMovie(frame)) {
+                // No new frame, check for flags
+                for (uint i = 0; i < 16; ++i) {
+                    if (frameFlags[i].frameID == frame) {
+                        engine->playState.eventFlags[frameFlags[i].flagDesc.label] = frameFlags[i].flagDesc.flag;
+                    }
+                }
+            }
+
+            break;
+        }
+        case kActionTrigger:
+            triggerFlags.execute(engine);
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
@@ -365,10 +445,7 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
 
     SceneChange::readData(stream);
 
-    for (uint i = 0; i < 10; ++i) {
-        triggerFlagDescs[i].label = stream.readSint16LE();
-        triggerFlagDescs[i].flag = (PlayState::Flag)stream.readUint16LE();
-    }
+    triggerFlags.readData(stream);
 
     stream.read(name, 10);
     soundName = Common::String(name);
@@ -391,27 +468,6 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     }
 
     return 0x76 + numFrames * 0x22 + (lastFrame - firstFrame + 1) * 16;
-
-    /* TODO
-    uint16 bytesRead = stream.pos();
-    byte *seek = bitmapData;
-    
-    uint16 currentSize = 0x76;
-    stream.read(seek, currentSize);
-
-    seek += currentSize;
-    currentSize = (uint16)(bitmapData[0x18]) - (uint16)(bitmapData[0x16]);
-    ++currentSize;
-    currentSize *= 16;
-    stream.read(seek, currentSize);
-
-    seek += 0x256;
-    currentSize = (uint16)(bitmapData[0x74]);
-    currentSize *= 34;
-    stream.read(seek, currentSize);
-
-    bytesRead= stream.pos() - bytesRead;
-    return bytesRead;*/
 }
 
 void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
@@ -493,11 +549,7 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             }
             break;
         case kActionTrigger:
-            for (uint i = 0; i < 10; ++i) {
-                if (triggerFlagDescs[i].label != -1) {
-                    engine->playState.eventFlags[triggerFlagDescs[i].label] = triggerFlagDescs[i].flag;
-                }
-            }
+            triggerFlags.execute(engine);
 
             SceneChange::execute(engine);
             break;
@@ -595,19 +647,12 @@ void StopTimer::execute(NancyEngine *engine) {
 }
 
 uint16 EventFlags::readData(Common::SeekableReadStream &stream) {
-    for (uint i = 0; i < 10; ++i) {
-        descs[i].label = stream.readSint16LE();
-        descs[i].flag = (PlayState::Flag)(stream.readUint16LE());
-    }
+    flags.readData(stream);
     return 0x28;
 }
 
 void EventFlags::execute(NancyEngine *engine) {
-    for (uint i = 0; i < 10; ++i) {
-        if (descs[i].label != -1) {
-            engine->playState.eventFlags[descs[i].label] = descs[i].flag;
-        }
-    }
+    flags.execute(engine);
     isDone = true;
 }
 
@@ -746,6 +791,7 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine){
     switch (state) {
         case kBegin:
             engine->sound->loadSound(filename, id, numLoops, volume);
+            engine->sound->pauseSound(id, false);
             state = kRun;
             break;
         case kRun:

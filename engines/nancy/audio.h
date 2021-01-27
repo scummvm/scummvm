@@ -49,6 +49,7 @@ public:
     ~SoundManager() =default;
 
     void loadSound(Common::String &name, int16 id, uint16 numLoops = 0, uint16 volume = 60);
+    void pauseSound(int16 id, bool pause);
     void stopSound(int16 id);
     bool isSoundPlaying(int16 id);
     void stopAllSounds();

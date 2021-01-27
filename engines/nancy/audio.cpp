@@ -181,7 +181,7 @@ SoundManager::SoundManager(NancyEngine *engine) :
 	_mixer = _engine->_system->getMixer();
 }
 
-// Combine load and play until i find a reason not to
+
 void SoundManager::loadSound(Common::String &name, int16 id, uint16 numLoops, uint16 volume) {
 	if (_mixer->isSoundHandleActive(handles[id])) {
 		_mixer->stopHandle(handles[id]);
@@ -191,10 +191,18 @@ void SoundManager::loadSound(Common::String &name, int16 id, uint16 numLoops, ui
 		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
 		if (aStr) {
 			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, numLoops);
-			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 60);
+			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 64);
+			_engine->_system->getMixer()->pauseHandle(handles[id], true);
 			names[id] = name;
 		}
 	}
+}
+
+void SoundManager::pauseSound(int16 id, bool pause) {
+	if (id < 0 || id > 20)
+		return;
+
+	_engine->_system->getMixer()->pauseHandle(handles[id], pause);
 }
 
 void SoundManager::stopSound(int16 id) {
