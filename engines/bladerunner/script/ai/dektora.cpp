@@ -278,7 +278,7 @@ bool AIScriptDektora::ShotAtAndHit() {
 		Actor_Set_Health(kActorDektora, 100, 100);
 		if (_vm->_cutContent) {
 		// add hit sounds with small probability
-		switch (Random_Query(1, 10)) {
+			switch (Random_Query(1, 10)) {
 			case 1:
 				Sound_Play_Speech_Line(kActorDektora, 9000, 65, 0, 99);
 				break;
@@ -1444,7 +1444,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeDie:
 		if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 5) {
-			// only play the rattle sound in the Act 5 death (moon bud), but not in chapter 3 death
+			// only play the rattle sound in the Act 5 death (moon bus), but not in chapter 3 death
 			// The rattle also plays in ShotAtAndHit() in Act 3 (if Dektora is shot at the back in NR11,
 			// and she is Human) but that case is currently never triggered.
 			Sound_Play_Speech_Line(kActorDektora, 9020, 60, 0, 99); // add Dektora's death rattle here

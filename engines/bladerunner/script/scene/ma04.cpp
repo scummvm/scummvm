@@ -609,7 +609,7 @@ void SceneScriptMA04::sleep() {
 				}
 			}
 #else // ensure valid kFlagZubenBountyPaid flag state
-			// NOTE If not for the "Report Im" to Guzza, it would be simpler to have McCoy get the money as soon as he retires Zuben
+			// NOTE If not for the "Report In" to Guzza, it would be simpler to have McCoy get the money as soon as he retires Zuben
 			//		so that would be in a single place in the code
 			if (!Game_Flag_Query(kFlagZubenBountyPaid) && Game_Flag_Query(kFlagZubenRetired)) { // get retirement money at end of day 1 only if Zuben was retired.
 				if (Query_Difficulty_Level() != kGameDifficultyEasy) {

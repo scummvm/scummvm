@@ -262,7 +262,7 @@ void SceneScriptMA06::activateElevator() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		// Fix for a crash/ freeze bug;
-		//  To reproduce original issue: in Act 4, visit Rajiff, then exit to ground floor. Re-enter elevator and press Alt+F4
+		//  To reproduce original issue: in Act 4, visit Rajif, then exit to ground floor. Re-enter elevator and press Alt+F4
 		if (floorLevel < 0) {
 			break;
 		}

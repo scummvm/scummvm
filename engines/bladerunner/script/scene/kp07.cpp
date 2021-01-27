@@ -38,7 +38,7 @@ void SceneScriptKP07::InitializeScene() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
-				Game_Flag_Reset(kFlagNR11DektoraBurning); // resolves a bug of an original game, where Dektora would default to burning state
+				Game_Flag_Reset(kFlagNR11DektoraBurning); // resolves a bug of the original game, where Dektora would default to burning state
 				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeTalk); // dummy animation change to ensure that the next will trigger the mode change case
 				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 			}
