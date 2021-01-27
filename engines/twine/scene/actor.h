@@ -78,23 +78,29 @@ struct AnimTimerDataStruct {
 
 /** Actors static flags structure */
 struct StaticFlagsStruct {
-	uint16 bComputeCollisionWithObj : 1;    // 0x0001
-	uint16 bComputeCollisionWithBricks : 1; // 0x0002
-	uint16 bIsZonable : 1;                  // 0x0004
-	uint16 bUsesClipping : 1;               // 0x0008
-	uint16 bCanBePushed : 1;                // 0x0010
-	uint16 bComputeLowCollision : 1;        // 0x0020
-	uint16 bCanDrown : 1;                   // 0x0040
-	uint16 bComputeCollisionWithFloor : 1;  // 0x0080
-	uint16 bUnk0100 : 1;                    // 0x0100
-	uint16 bIsHidden : 1;                   // 0x0200
-	uint16 bIsSpriteActor : 1;              // 0x0400
-	uint16 bCanFall : 1;                    // 0x0800
-	uint16 bDoesntCastShadow : 1;           // 0x1000
-	uint16 bIsBackgrounded : 1;             // 0x2000
-	uint16 bIsCarrierActor : 1;             // 0x4000
+	uint32 bComputeCollisionWithObj : 1;    // 0x000001
+	uint32 bComputeCollisionWithBricks : 1; // 0x000002
+	uint32 bIsZonable : 1;                  // 0x000004
+	uint32 bUsesClipping : 1;               // 0x000008
+	uint32 bCanBePushed : 1;                // 0x000010
+	uint32 bComputeLowCollision : 1;        // 0x000020
+	uint32 bCanDrown : 1;                   // 0x000040
+	uint32 bComputeCollisionWithFloor : 1;  // 0x000080
+	uint32 bUnk0100 : 1;                    // 0x000100
+	uint32 bIsHidden : 1;                   // 0x000200
+	uint32 bIsSpriteActor : 1;              // 0x000400
+	uint32 bCanFall : 1;                    // 0x000800
+	uint32 bDoesntCastShadow : 1;           // 0x001000
+	uint32 bIsBackgrounded : 1;             // 0x002000
+	uint32 bIsCarrierActor : 1;             // 0x004000
 	// take smaller value for bound, or if not set take average for bound
-	uint16 bUseMiniZv : 1; // 0x8000
+	uint32 bUseMiniZv : 1;                  // 0x008000
+	uint32 bHasInvalidPosition : 1;          // 0x010000
+	uint32 bNoElectricShock : 1;             // 0x020000
+	uint32 bHasSpriteAnim3D : 1;             // 0x040000
+	uint32 bNoPreClipping : 1;               // 0x080000
+	uint32 bHasZBuffer : 1;                  // 0x100000
+	uint32 bHasZBufferInWater : 1;           // 0x200000
 };
 
 /** Actors dynamic flags structure */

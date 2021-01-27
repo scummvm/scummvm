@@ -47,7 +47,7 @@ Scene::~Scene() {
 	free(currentScene);
 }
 
-void Scene::setActorStaticFlags(ActorStruct *act, uint16 staticFlags) {
+void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 	if (staticFlags & 0x1) {
 		act->staticFlags.bComputeCollisionWithObj = 1;
 	}
@@ -89,13 +89,31 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint16 staticFlags) {
 		act->staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
-		//sceneActors[actorIdx].staticFlags.bIsBackgrounded = 1;
+		//act->staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
 		act->staticFlags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
 		act->staticFlags.bUseMiniZv = 1;
+	}
+	if (staticFlags & 0x10000) {
+		act->staticFlags.bHasInvalidPosition = 1;
+	}
+	if (staticFlags & 0x20000) {
+		act->staticFlags.bNoElectricShock = 1;
+	}
+	if (staticFlags & 0x40000) {
+		act->staticFlags.bHasSpriteAnim3D = 1;
+	}
+	if (staticFlags & 0x80000) {
+		act->staticFlags.bNoPreClipping = 1;
+	}
+	if (staticFlags & 0x100000) {
+		act->staticFlags.bHasZBuffer = 1;
+	}
+	if (staticFlags & 0x200000) {
+		act->staticFlags.bHasZBufferInWater = 1;
 	}
 }
 
@@ -129,6 +147,138 @@ void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	}
 }
 
+bool Scene::loadSceneLBA2() {
+	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
+	sceneTextBank = stream.readByte();
+	_currentGameOverScene = stream.readByte();
+	stream.skip(4);
+
+	alphaLight = ClampAngle(stream.readUint16LE());
+	betaLight = ClampAngle(stream.readUint16LE());
+	debug(2, "Using %i and %i as light vectors", alphaLight, betaLight);
+
+	_isOutsideScene = stream.readByte();
+
+	for (int i = 0; i < 4; ++i) {
+		_sampleAmbiance[i] = stream.readUint16LE();
+		_sampleRepeat[i] = stream.readUint16LE();
+		_sampleRound[i] = stream.readUint16LE();
+		_sampleFrequency[i] = stream.readUint16LE();
+		_sampleVolume[i] = stream.readUint16LE();
+	}
+
+	_sampleMinDelay = stream.readUint16LE();
+	_sampleMinDelayRnd = stream.readUint16LE();
+
+	_sceneMusic = stream.readByte();
+
+	// load hero properties
+	_sceneHeroX = stream.readUint16LE();
+	_sceneHeroY = stream.readUint16LE();
+	_sceneHeroZ = stream.readUint16LE();
+
+	sceneHero->moveScriptSize = stream.readUint16LE();
+	sceneHero->moveScript = currentScene + stream.pos();
+	stream.skip(sceneHero->moveScriptSize);
+
+	sceneHero->lifeScriptSize = stream.readUint16LE();
+	sceneHero->lifeScript = currentScene + stream.pos();
+	stream.skip(sceneHero->lifeScriptSize);
+
+	sceneNumActors = stream.readUint16LE();
+	int cnt = 1;
+	for (int32 i = 1; i < sceneNumActors; i++, cnt++) {
+		_engine->_actor->resetActor(i);
+		ActorStruct *act = &_sceneActors[i];
+		setActorStaticFlags(act, stream.readUint32LE());
+
+		act->loadModel(stream.readUint16LE());
+
+		act->body = (BodyType)stream.readSint16LE();
+		act->anim = (AnimationTypes)stream.readByte();
+		act->sprite = stream.readUint16LE();
+		act->x = stream.readUint16LE();
+		act->collisionX = act->x;
+		act->y = stream.readUint16LE();
+		act->collisionY = act->y;
+		act->z = stream.readUint16LE();
+		act->collisionZ = act->z;
+		act->strengthOfHit = stream.readByte();
+		setBonusParameterFlags(act, stream.readUint16LE());
+		act->angle = stream.readUint16LE();
+		act->speed = stream.readUint16LE();
+		act->controlMode = (ControlMode)stream.readByte();
+		act->cropLeft = stream.readSint16LE();
+		act->delayInMillis = act->cropLeft; // TODO: this might not be needed
+		act->cropTop = stream.readSint16LE();
+		act->cropRight = stream.readSint16LE();
+		act->cropBottom = stream.readSint16LE();
+		act->followedActor = act->cropBottom; // TODO: is this needed? and valid?
+		act->bonusAmount = stream.readSint16LE();
+		act->talkColor = stream.readByte();
+		if (act->staticFlags.bHasSpriteAnim3D) {
+			/*act->spriteAnim3DNumber = */stream.readSint32LE();
+			/*act->spriteSizeHit = */stream.readSint16LE();
+			/*act->cropBottom = act->spriteSizeHit;*/
+		}
+		act->armor = stream.readByte();
+		act->life = stream.readByte();
+
+		act->moveScriptSize = stream.readUint16LE();
+		act->moveScript = currentScene + stream.pos();
+		stream.skip(act->moveScriptSize);
+
+		act->lifeScriptSize = stream.readUint16LE();
+		act->lifeScript = currentScene + stream.pos();
+		stream.skip(act->lifeScriptSize);
+
+		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
+			sceneNumActors--;
+			i--;
+		}
+	}
+
+	sceneNumZones = stream.readUint16LE();
+	for (int32 i = 0; i < sceneNumZones; i++) {
+		ZoneStruct *zone = &sceneZones[i];
+		zone->bottomLeft.x = stream.readSint32LE();
+		zone->bottomLeft.y = stream.readSint32LE();
+		zone->bottomLeft.z = stream.readSint32LE();
+
+		zone->topRight.x = stream.readSint32LE();
+		zone->topRight.y = stream.readSint32LE();
+		zone->topRight.z = stream.readSint32LE();
+
+		zone->infoData.generic.info0 = stream.readSint32LE();
+		zone->infoData.generic.info1 = stream.readSint32LE();
+		zone->infoData.generic.info2 = stream.readSint32LE();
+		zone->infoData.generic.info3 = stream.readSint32LE();
+		zone->infoData.generic.info4 = stream.readSint32LE();
+		zone->infoData.generic.info5 = stream.readSint32LE();
+		zone->infoData.generic.info6 = stream.readSint32LE();
+		zone->infoData.generic.info7 = stream.readSint32LE();
+
+		zone->type = stream.readUint16LE();
+		zone->snap = stream.readUint16LE();
+	}
+
+	sceneNumTracks = stream.readUint16LE();
+	for (int32 i = 0; i < sceneNumTracks; i++) {
+		ScenePoint *point = &sceneTracks[i];
+		point->x = stream.readSint32LE();
+		point->y = stream.readSint32LE();
+		point->z = stream.readSint32LE();
+	}
+
+	int32 sceneNumPatches = stream.readUint16LE();
+	for (int32 i = 0; i < sceneNumPatches; i++) {
+		/*size = */stream.readUint16LE();
+		/*offset = */stream.readUint16LE();
+	}
+
+	return true;
+}
+
 bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
 
@@ -143,21 +293,11 @@ bool Scene::loadSceneLBA1() {
 	betaLight = ClampAngle(stream.readUint16LE());
 	debug(2, "Using %i and %i as light vectors", alphaLight, betaLight);
 
-	_sampleAmbiance[0] = stream.readUint16LE();
-	_sampleRepeat[0] = stream.readUint16LE();
-	_sampleRound[0] = stream.readUint16LE();
-
-	_sampleAmbiance[1] = stream.readUint16LE();
-	_sampleRepeat[1] = stream.readUint16LE();
-	_sampleRound[1] = stream.readUint16LE();
-
-	_sampleAmbiance[2] = stream.readUint16LE();
-	_sampleRepeat[2] = stream.readUint16LE();
-	_sampleRound[2] = stream.readUint16LE();
-
-	_sampleAmbiance[3] = stream.readUint16LE();
-	_sampleRepeat[3] = stream.readUint16LE();
-	_sampleRound[3] = stream.readUint16LE();
+	for (int i = 0; i < 4; ++i) {
+		_sampleAmbiance[i] = stream.readUint16LE();
+		_sampleRepeat[i] = stream.readUint16LE();
+		_sampleRound[i] = stream.readUint16LE();
+	}
 
 	_sampleMinDelay = stream.readUint16LE();
 	_sampleMinDelayRnd = stream.readUint16LE();
@@ -267,6 +407,8 @@ bool Scene::initScene(int32 index) {
 
 	if (_engine->isLBA1()) {
 		return loadSceneLBA1();
+	} else if (_engine->isLBA2()) {
+		return loadSceneLBA2();
 	}
 
 	return false;

@@ -93,10 +93,14 @@ struct ZoneStruct {
 			int16 used;
 		} Bonus;
 		struct {
-			int16 info0;
-			int16 info1;
-			int16 info2;
-			int16 info3;
+			int32 info0;
+			int32 info1;
+			int32 info2;
+			int32 info3;
+			int32 info4;
+			int32 info5;
+			int32 info6;
+			int32 info7;
 		} generic;
 	} infoData;
 	int16 snap = 0;
@@ -266,9 +270,11 @@ private:
 
 	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
-	void setActorStaticFlags(ActorStruct *act, uint16 staticFlags);
+	void setActorStaticFlags(ActorStruct *act, uint32 staticFlags);
 	void setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags);
 	bool loadSceneLBA1();
+	bool loadSceneLBA2();
+
 	/** Initialize new scene */
 	bool initScene(int32 index);
 	/** Reset scene */
@@ -277,12 +283,15 @@ private:
 	// the first actor is the own hero
 	ActorStruct _sceneActors[NUM_MAX_ACTORS];
 	int32 _currentSceneSize = 0;
+	bool _isOutsideScene = false; // lba2
 
 	/** Timer for the next sample ambience in scene */
 	int32 _sampleAmbienceTime = 0;
 	int16 _sampleAmbiance[4]{0};
 	int16 _sampleRepeat[4]{0};
 	int16 _sampleRound[4]{0};
+	int16 _sampleFrequency[4]{0}; // lba2
+	int16 _sampleVolume[4]{0}; // lba2
 	int16 _sampleMinDelay = 0;
 	int16 _sampleMinDelayRnd = 0;
 
