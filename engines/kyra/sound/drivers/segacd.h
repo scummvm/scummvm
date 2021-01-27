@@ -28,10 +28,6 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
-namespace Common {
-	class SeekableReadStream;
-}
-
 namespace Audio {
 	class Mixer;
 }
