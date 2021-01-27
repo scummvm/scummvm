@@ -185,6 +185,7 @@ public:
 	uint8 *entityDataPtr = nullptr;
 	int32 entityDataSize = 0;
 
+	bool isAttackWeaponAnimationActive() const;
 	bool isAttackAnimationActive() const;
 	bool isJumpAnimationActive() const;
 

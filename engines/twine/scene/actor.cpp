@@ -535,6 +535,10 @@ bool ActorStruct::isAttackAnimationActive() const {
 	return anim == AnimationTypes::kRightPunch || anim == AnimationTypes::kLeftPunch || anim == AnimationTypes::kKick;
 }
 
+bool ActorStruct::isAttackWeaponAnimationActive() const {
+	return anim == AnimationTypes::kSabreAttack || anim == AnimationTypes::kThrowBall || anim == AnimationTypes::kSabreUnknown;
+}
+
 bool ActorStruct::isJumpAnimationActive() const {
 	return anim == AnimationTypes::kJump;
 }

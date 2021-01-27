@@ -298,6 +298,9 @@ void Movements::processMovementExecution(int actorIdx) {
 	if (actor->isJumpAnimationActive()) {
 		return;
 	}
+	if (actor->isAttackWeaponAnimationActive()) {
+		return;
+	}
 	if (!changedCursorKeys || heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
