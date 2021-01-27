@@ -39,6 +39,33 @@ public:
 		return 999;
 	}
 
+	/**
+	 * Return the name of the save file for the given slot and optional target,
+	 * or a pattern for matching filenames against.
+	 *
+	 * @param saveGameIdx  Index of the save, or kSavegameFilePattern
+	 *                     for returning a filename pattern.
+	 * @param target       Game target. If omitted, then the engine ID is used.
+	 */
+	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature.
+	 *
+	 * Used by e.g. the launcher to determine whether to enable the Load button.
+	 */
+	bool hasFeature(MetaEngineFeature f) const override;
+
+	/**
+	 * Return meta information from the specified save state.
+	 *
+	 * Depending on the MetaEngineFeatures set, this can include
+	 * thumbnails, save date and time, play time.
+	 *
+	 * @param target  Name of a config manager target.
+	 * @param slot    Slot number of the save state.
+	 */
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 #endif

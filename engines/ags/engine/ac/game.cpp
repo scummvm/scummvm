@@ -1017,7 +1017,9 @@ void WriteGameSetupStructBase_Aligned(Stream *out) {
 #define MAGICNUMBER 0xbeefcafe
 
 void create_savegame_screenshot(Bitmap *&screenShot) {
-	if (game.options[OPT_SAVESCREENSHOT]) {
+	// WORKAROUND: AGS originally only creates savegames if the game flags
+	// that it supports it. But we want it all the time for ScummVM GMM
+	if (/*game.options[OPT_SAVESCREENSHOT] */true) {
 		int usewid = data_to_game_coord(play.screenshot_width);
 		int usehit = data_to_game_coord(play.screenshot_height);
 		const Rect &viewport = play.GetMainViewport();
@@ -1072,15 +1074,13 @@ void save_game(int slotn, const char *descript) {
 
 		update_polled_stuff_if_runtime();
 
-		out.reset(Shared::File::OpenFile(nametouse, Shared::kFile_Open, Shared::kFile_ReadWrite));
 		out->Seek(12, kSeekBegin);
 		out->WriteInt32(screenShotOffset);
 		out->Seek(4);
 		out->WriteInt32(screenShotSize);
-	}
 
-	if (screenShot != nullptr)
 		delete screenShot;
+	}
 }
 
 HSaveError restore_game_head_dynamic_values(Stream *in, RestoredData &r_data) {

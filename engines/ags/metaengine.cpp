@@ -27,7 +27,9 @@
 #include "ags/shared/util/filestream.h"
 #include "ags/engine/ac/richgamemedia.h"
 #include "ags/engine/game/savegame.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
+#include "image/bmp.h"
 
 const char *AGSMetaEngine::getName() const {
 	return "ags";
@@ -76,6 +78,73 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+bool AGSMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSupportsLoadingDuringStartup);
+}
+
+Common::String AGSMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (saveGameIdx == kSavegameFilePattern) {
+		// Pattern requested
+		return Common::String::format("%s.###", target == nullptr ? getEngineId() : target);
+	} else {
+		// Specific filename requested
+		return Common::String::format("%s.%03d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	}
+}
+
+SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s%s",
+		::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX,
+		getSavegameFile(slot, target).c_str());
+
+	::AGS3::AGS::Shared::FileStream saveFile(filename, ::AGS3::AGS::Shared::kFile_Open,
+		::AGS3::AGS::Shared::kFile_Read);
+	if (saveFile.IsValid()) {
+		AGS3::RICH_GAME_MEDIA_HEADER rich_media_header;
+		rich_media_header.ReadFromFile(&saveFile);
+
+		if (rich_media_header.dwMagicNumber == RM_MAGICNUMBER) {
+			SaveStateDescriptor desc;
+			desc.setSaveSlot(slot);
+			if (slot == getAutosaveSlot()) {
+				desc.setAutosave(true);
+				desc.setWriteProtectedFlag(true);
+			}
+
+			// Thumbnail handling
+			if (rich_media_header.dwThumbnailOffsetLowerDword != 0 &&
+					rich_media_header.dwThumbnailSize != 0) {
+				// Read in the thumbnail data
+				byte *thumbData = (byte *)malloc(rich_media_header.dwThumbnailSize);
+				saveFile.Seek(rich_media_header.dwThumbnailOffsetLowerDword,
+					AGS3::AGS::Shared::kSeekCurrent);
+				saveFile.Read(thumbData, rich_media_header.dwThumbnailSize);
+				Common::MemoryReadStream thumbStream(thumbData,
+					rich_media_header.dwThumbnailSize, DisposeAfterUse::YES);
+
+				// Read in the thumbnail
+				Image::BitmapDecoder decoder;
+				if (decoder.loadStream(thumbStream)) {
+					const Graphics::Surface *src = decoder.getSurface();
+					Graphics::Surface *dest = new Graphics::Surface();
+					dest->copyFrom(*src);
+
+					desc.setThumbnail(dest);
+				}
+			}
+
+			return desc;
+		}
+	}
+
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGS)
