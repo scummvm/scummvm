@@ -106,6 +106,10 @@ struct State {
 	void *_maskScreen = nullptr;
 	void *_maski = nullptr;
 	void *_creditScreen = nullptr;
+
+	// Version 1.1 specific
+	bool _resolutionFlag = false;
+	int _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
 };
 
 class AGSCreditz : public DLL {
@@ -116,12 +120,12 @@ protected:
 
 	static Version _version;
 	static State *_state;
+	static IAGSEngine *_engine;
 protected:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
 	// Shared Script methods
-	static void ScrollCredits(const ScriptMethodParams &params);
 	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
 	static void SetCreditImage(const ScriptMethodParams &params);
 	static void PauseScroll(const ScriptMethodParams &params);
@@ -150,6 +154,7 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
 	static void SetCredit(const ScriptMethodParams &params);
+	static void ScrollCredits(const ScriptMethodParams &params);
 	static const string GetCredit(const ScriptMethodParams &params);
 public:
 	AGSCreditz11();
