@@ -28,6 +28,7 @@
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/util/directory.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/mouse.h"
@@ -75,14 +76,9 @@ void start_game_init_editor_debugging() {
 }
 
 void start_game_load_savegame_on_startup() {
-	if (_G(loadSaveGameOnStartup) != nullptr) {
-		int saveGameNumber = 1000;
-		const char *sgName = strstr(_G(loadSaveGameOnStartup), "agssave.");
-		if (sgName != nullptr) {
-			sscanf(sgName, "agssave.%03d", &saveGameNumber);
-		}
+	if (_G(loadSaveGameOnStartup) != -1) {
 		current_fade_out_effect();
-		try_restore_save(_G(loadSaveGameOnStartup), saveGameNumber);
+		try_restore_save(_G(loadSaveGameOnStartup));
 	}
 }
 
@@ -123,7 +119,7 @@ void do_start_game() {
 		start_game();
 }
 
-void initialize_start_and_play_game(int override_start_room, const char *loadSaveOnStartup) {
+void initialize_start_and_play_game(int override_start_room, int loadSaveOnStartup) {
 //	try { // BEGIN try for ALI3DEXception
 
 		set_cursor_mode(MODE_WALK);

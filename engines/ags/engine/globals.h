@@ -90,7 +90,7 @@ public:
 	bool _justUnRegisterGame = false;
 	bool _justTellInfo = false;
 	std::set<String> _tellInfoKeys;
-	const char *_loadSaveGameOnStartup = nullptr;
+	int _loadSaveGameOnStartup = -1;
 
 #if ! AGS_PLATFORM_DEFINES_PSP_VARS
 	int _psp_video_framedrop = 1;

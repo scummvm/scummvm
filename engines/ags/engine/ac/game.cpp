@@ -1552,7 +1552,7 @@ bool read_savedgame_screenshot(const String &savedgame, int &want_shot) {
 	return true;
 }
 
-HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten) {
+HSaveError load_game(int slotNumber, bool &data_overwritten) {
 	data_overwritten = false;
 	gameHasBeenRestored++;
 
@@ -1562,6 +1562,8 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	HSaveError err;
 	SavegameSource src;
 	SavegameDescription desc;
+
+	String path = get_save_game_path(slotNumber);
 	err = OpenSavegame(path, src, desc, kSvgDesc_EnvInfo);
 
 	// saved in incompatible enviroment
@@ -1602,12 +1604,8 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 }
 
 bool try_restore_save(int slot) {
-	return try_restore_save(get_save_game_path(slot), slot);
-}
-
-bool try_restore_save(const Shared::String &path, int slot) {
 	bool data_overwritten;
-	HSaveError err = load_game(path, slot, data_overwritten);
+	HSaveError err = load_game(slot, data_overwritten);
 	if (!err) {
 		String error = String::FromFormat("Unable to restore the saved game.\n%s",
 		                                  err->FullMessage().GetCStr());
