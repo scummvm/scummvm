@@ -211,6 +211,11 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool i
 	return keymapArray;
 }
 
+void MetaEngine::setTextInputActive(bool isActive) {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
+	mapper->setEnabled(!isActive);
+}
+
 void MetaEngine::setGameMenuActive(bool isActive) {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->cleanupGameKeymaps();
