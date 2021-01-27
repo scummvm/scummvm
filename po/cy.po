@@ -1,7 +1,24 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2021-01-27 11:15+0000\n"
+"PO-Revision-Date: 2021-01-27 11:15+0000\n"
+"Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
+"Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/cy/>\n"
+"Language: cy\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0) ? 0 : (n==1) ? 1 : (n==2) ? 2 : "
+"(n==3) ? 3 :(n==6) ? 4 : 5;\n"
+"X-Generator: Weblate 4.4\n"
+
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(adeiladwyd ar %s)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
