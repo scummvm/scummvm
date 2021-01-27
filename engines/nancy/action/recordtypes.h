@@ -41,6 +41,12 @@ struct HotspotDesc {
     void readData(Common::SeekableReadStream &stream);
 };
 
+// Describes an event flag change or comparison
+struct FlagDesc {
+    int16 label;
+    PlayState::Flag flag;
+};
+
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -164,12 +170,39 @@ public:
     byte bitmapData[0xA88];
 };
 
-// TODO should inherit from above as the only difference is one int of data
-class PlayIntStaticBitmapAnimation : public ActionRecord {
+class PlayIntStaticBitmapAnimation : public SceneChange {
+// TODO this effectively also contains an EventFlags, consider multiple inheritance
+// or maybe splitting EventFlags into a separate struct
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    struct SrcDestDesc {
+        uint16 frameId = 0;
+        Common::Rect src;
+        Common::Rect dest;
+    };
 
-    byte bitmapData[0xA8C];
+    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    Common::String imageName;
+    uint16 firstFrame;
+    uint16 lastFrame;
+    FlagDesc soundFlagDesc;
+    FlagDesc triggerFlagDescs[10];
+    Time frameTime;
+
+    Common::String soundName;
+    uint16 channelID;
+
+    // Describes a single frame in this animation
+    Common::Array<Common::Rect> frameRects;
+    // Describes how the animation will be displayed on a single
+    // frame of the viewport
+    Common::Array<SrcDestDesc> srcDestRects;
+
+    uint16 currentFrame = 0;
+    uint16 lastViewFrame = 0;
+    int16 currentViewFrameID = -1;
+    Time nextFrameTime;
 };
 
 class MapCall : public ActionRecord {
@@ -263,10 +296,6 @@ public:
 
 class EventFlags : public ActionRecord {
 public:
-    struct FlagDesc {
-        int16 label;
-        PlayState::Flag flag;
-    };
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 

@@ -72,6 +72,7 @@ GraphicsManager::~GraphicsManager() {
     _inventoryBoxIconsSurface.free();
     _inventoryCursorsSurface.free();
     _object0Surface.free();
+    _genericSurface.free();
 
     for (auto st : _ZRender) {
         delete st._value.renderFunction;
@@ -191,6 +192,10 @@ void GraphicsManager::initSceneZRenderStructs() {
     // Moved here from SceneManager::load(), should be ok
     initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::BltType::kNoTrans,
                         &_background, nullptr, &viewportDesc.source, &viewportDesc.destination);
+
+    // Moved from PlayIntStaticBitmap
+    initZRenderStruct(  "STATIC BITMAP ANIMATION", 7, false, ZRenderStruct::BltType::kNoTrans,
+                        &_genericSurface);
     #undef READ_RECT
 
     delete source;

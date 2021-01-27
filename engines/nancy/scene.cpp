@@ -639,6 +639,7 @@ void SceneManager::clearSceneData() {
 
     _engine->graphics->getZRenderStruct("SEC VIDEO 0").isActive = false;
     _engine->graphics->getZRenderStruct("SEC VIDEO 1").isActive = false;
+    _engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION").isActive = false;
 }
 
 } // End of namespace Nancy

@@ -28,17 +28,23 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/audio.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/resource.h"
 
 #include "common/str.h"
 
 namespace Nancy {
 
+// Simple helper function to read rectangles
+static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
+    inRect.left = stream.readUint32LE();
+    inRect.top = stream.readUint32LE();
+    inRect.right = stream.readUint32LE();
+    inRect.bottom = stream.readUint32LE();
+}
+
 void HotspotDesc::readData(Common::SeekableReadStream &stream) {
     frameID = stream.readUint16LE();
-    coords.left = stream.readUint32LE();
-    coords.top = stream.readUint32LE();
-    coords.right = stream.readUint32LE();
-    coords.bottom = stream.readUint32LE();
+    readRect(stream, coords);
 }
 
 uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
@@ -207,14 +213,8 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
         videoDescs.push_back(SecondaryVideoDesc());
         SecondaryVideoDesc &cur = videoDescs[i];
         cur.frameID = stream.readSint16LE();
-        cur.srcRect.left = stream.readUint32LE();
-        cur.srcRect.top = stream.readUint32LE();
-        cur.srcRect.right = stream.readUint32LE();
-        cur.srcRect.bottom = stream.readUint32LE();
-        cur.destRect.left = stream.readUint32LE();
-        cur.destRect.top = stream.readUint32LE();
-        cur.destRect.right = stream.readUint32LE();
-        cur.destRect.bottom = stream.readUint32LE();
+        readRect(stream, cur.srcRect);
+        readRect(stream, cur.destRect);
         stream.skip(0x20);
     }
 
@@ -349,7 +349,50 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-    // TODO
+    uint beginOffset = stream.pos();
+    char name[10];
+    stream.read(name, 10);
+    imageName = Common::String(name);
+
+    stream.skip(0xA);
+    firstFrame = stream.readUint16LE();
+    stream.skip(2);
+    lastFrame = stream.readUint16LE();
+    frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
+    stream.skip(2);
+    soundFlagDesc.label = stream.readSint16LE();
+    soundFlagDesc.flag = (PlayState::Flag)stream.readUint16LE();
+
+    SceneChange::readData(stream);
+
+    for (uint i = 0; i < 10; ++i) {
+        triggerFlagDescs[i].label = stream.readSint16LE();
+        triggerFlagDescs[i].flag = (PlayState::Flag)stream.readUint16LE();
+    }
+
+    stream.read(name, 10);
+    soundName = Common::String(name);
+    channelID = stream.readUint16LE();
+
+    stream.seek(beginOffset + 0x74, SEEK_SET);
+    uint numFrames = stream.readUint16LE();
+
+    for (uint i = firstFrame; i <= lastFrame; ++i) {
+        frameRects.push_back(Common::Rect());
+        readRect(stream, frameRects[i]);
+    }
+
+    for (uint i = 0; i < numFrames; ++i) {
+        srcDestRects.push_back(SrcDestDesc());
+        SrcDestDesc &rects = srcDestRects[i];
+        rects.frameId = stream.readUint16LE();
+        readRect(stream, rects.src);
+        readRect(stream, rects.dest);
+    }
+
+    return 0x76 + numFrames * 0x22 + (lastFrame - firstFrame + 1) * 16;
+
+    /* TODO
     uint16 bytesRead = stream.pos();
     byte *seek = bitmapData;
     
@@ -368,7 +411,97 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     stream.read(seek, currentSize);
 
     bytesRead= stream.pos() - bytesRead;
-    return bytesRead;
+    return bytesRead;*/
+}
+
+void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
+    // TODO handle sound, event flags
+    ZRenderStruct &zr = engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION");
+    uint32 currentFrameTime = engine->getTotalPlayTime();
+    switch (state) {
+        case kBegin:
+
+            // find the correct source and destination for the current viewport frame
+            lastViewFrame = engine->playState.currentViewFrame;
+            for (uint i = 0; i < srcDestRects.size(); ++i) {
+                if (lastViewFrame == srcDestRects[i].frameId) {
+                    currentViewFrameID = i;
+                    break;
+                }
+            }
+
+            currentFrame = firstFrame;
+            nextFrameTime = currentFrameTime + frameTime;
+
+            // Load the image directly into the generic surface
+            // instead of inside the record; this also means we skip
+            // using the source rect in srcDestRect.
+            // This _may_ lead to problems (but probably won't)
+            zr.sourceSurface->free();
+            engine->_res->loadImage("ciftree", imageName, *zr.sourceSurface);
+
+            // Set up the ZRenderStruct and its surface
+            zr.sourceRect = frameRects[currentFrame - firstFrame];
+            if (currentViewFrameID != -1) {
+                zr.isActive = true;
+                zr.destRect = srcDestRects[currentViewFrameID].dest;
+                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.top -= engine->playState.verticalScroll;
+                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
+                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
+                zr.destRect.bottom -= engine->playState.verticalScroll;
+            }
+
+            if (soundName != "NO SOUND") {
+                warning("PlayIntStaticBitmapAnimation has a sound, please implement it!");
+            }
+            state = kRun;
+            // fall through
+        case kRun:
+            // Check if we've moved the viewport
+            if (lastViewFrame != engine->playState.currentViewFrame) {
+                lastViewFrame = engine->playState.currentViewFrame;
+                currentViewFrameID = -1;
+                for (uint i = 0; i < srcDestRects.size(); ++i) {
+                    if (lastViewFrame == srcDestRects[i].frameId) {
+                        currentViewFrameID = i;
+                        zr.isActive = true;
+                        zr.destRect = srcDestRects[currentViewFrameID].dest;
+                        zr.destRect.left += engine->graphics->viewportDesc.destination.left;
+                        zr.destRect.top += engine->graphics->viewportDesc.destination.top;
+                        zr.destRect.top -= engine->playState.verticalScroll;
+                        zr.destRect.right += engine->graphics->viewportDesc.destination.left;
+                        zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
+                        zr.destRect.bottom -= engine->playState.verticalScroll;
+                        break;
+                    }
+                }
+            }
+
+            if (currentViewFrameID == -1) {
+                break;
+            }
+
+            // Check the timer to see if we need to draw the next animation frame
+            if (nextFrameTime <= currentFrameTime) {
+                nextFrameTime = currentFrameTime + frameTime;
+
+                currentFrame = ++currentFrame > lastFrame ? firstFrame : currentFrame;
+
+                zr.sourceRect = frameRects[currentFrame - firstFrame];
+            }
+            break;
+        case kActionTrigger:
+            for (uint i = 0; i < 10; ++i) {
+                if (triggerFlagDescs[i].label != -1) {
+                    engine->playState.eventFlags[triggerFlagDescs[i].label] = triggerFlagDescs[i].flag;
+                }
+            }
+
+            SceneChange::execute(engine);
+            break;
+    }
 }
 
 uint16 MapCall::readData(Common::SeekableReadStream &stream) {

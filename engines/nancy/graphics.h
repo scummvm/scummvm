@@ -102,6 +102,7 @@ public:
     Graphics::Surface _object0Surface;
     Graphics::Surface _inventoryBoxIconsSurface;
     Graphics::Surface _inventoryCursorsSurface;
+    Graphics::Surface _genericSurface;
 
     // move these to their own struct
     VideoChannel channels[2];
