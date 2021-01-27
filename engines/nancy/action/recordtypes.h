@@ -41,10 +41,28 @@ struct HotspotDesc {
     void readData(Common::SeekableReadStream &stream);
 };
 
-// Describes an event flag change or comparison
+// Describes a secondary video/movie's source and destination
+struct SecondaryVideoDesc {
+    int16 frameID;
+    Common::Rect srcRect;
+    Common::Rect destRect;
+    // 2 unknown/empty rects
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
+// Describes a single event flag change or comparison
 struct FlagDesc {
     int16 label;
     PlayState::Flag flag;
+};
+
+// Describes 10 event flag changes to be executed when an action is triggered
+struct EventFlagsDesc {
+    FlagDesc descs[10];
+
+    void readData(Common::SeekableReadStream &stream);
+    void execute(NancyEngine *engine);
 };
 
 class SceneChange : public ActionRecord {
@@ -120,12 +138,6 @@ public:
 // Base class for PlaySecondaryVideoChan0 and PlaySecondaryVideoChan1
 class PlaySecondaryVideo : public SceneChange {
 public:
-    struct SecondaryVideoDesc {
-        int16 frameID;
-        Common::Rect srcRect;
-        Common::Rect destRect;
-        // 2 unknown/empty rects
-    };
 
     enum HoverState { kNoHover, kHover, kEndHover, kEndHoverDone };
 
@@ -158,9 +170,29 @@ class PlaySecondaryVideoChan1 : public PlaySecondaryVideo {
     virtual uint channelID() override { return 1; }
 };
 
-class PlaySecondaryMovie : public ActionRecord {
+class PlaySecondaryMovie : public SceneChange {
 public:
+    struct FlagAtFrame {
+        int16 frameID;
+        FlagDesc flagDesc;
+    };
+
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    Common::String videoName; // 0x00
+
+    FlagAtFrame frameFlags[15]; // 0x26
+    EventFlagsDesc triggerFlags; // 0x80
+
+    Common::String soundName; // 0xA8
+    uint16 soundChannel = 0; // 0xB2
+    uint16 soundVolume = 0; // 0xC2
+
+    // SceneChange data at 0xCA
+    Common::Array<SecondaryVideoDesc> videoDescs; // 0xD4
+
+
 };
 
 class PlayStaticBitmapAnimation : public ActionRecord {
@@ -187,9 +219,10 @@ public:
     uint16 firstFrame;
     uint16 lastFrame;
     FlagDesc soundFlagDesc;
-    FlagDesc triggerFlagDescs[10];
+    EventFlagsDesc triggerFlags;
     Time frameTime;
 
+    // Todo
     Common::String soundName;
     uint16 channelID;
 
@@ -299,7 +332,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 
-    FlagDesc descs[10];
+    EventFlagsDesc flags;
 };
 
 class EventFlagsMultiHS : public EventFlags {
@@ -402,7 +435,7 @@ public:
     Common::String filename;
     int16 id = -1; // 0xA
     uint16 numLoops = 0; // 0x10
-    uint16 volume = 0; // 0x16, between 0 and 60
+    uint16 volume = 0; // 0x16, maximum is 65?
     // ...
     // SceneChange elements at 0x1E
 };

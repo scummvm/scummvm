@@ -59,6 +59,8 @@ struct VideoChannel {
         bool loop = false;
         PlaySecondaryVideo *record = nullptr;
         AVFDecoder decoder;
+
+        ~VideoChannel() { surf.free(); decoder.close(); }
 };
 
 class GraphicsManager {
@@ -96,6 +98,9 @@ public:
     void playSecondaryVideo(uint channel);
     void stopSecondaryVideo(uint channel);
 
+    void loadSecondaryMovie(Common::String &filename);
+    bool playSecondaryMovie(uint16 &outFrameNr);
+
     Graphics::Surface _background;
     Graphics::Surface _frameTextBox;
     Graphics::Surface _primaryFrameSurface;
@@ -104,8 +109,9 @@ public:
     Graphics::Surface _inventoryCursorsSurface;
     Graphics::Surface _genericSurface;
 
-    // move these to their own struct
     VideoChannel channels[2];
+    Graphics::Surface _secMovieSurface;
+    AVFDecoder _secMovieDecoder;
 
     View viewportDesc;
 

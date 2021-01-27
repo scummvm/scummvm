@@ -74,6 +74,10 @@ GraphicsManager::~GraphicsManager() {
     _object0Surface.free();
     _genericSurface.free();
 
+    _secMovieSurface.free();
+    _secMovieDecoder.close();
+
+
     for (auto st : _ZRender) {
         delete st._value.renderFunction;
     }
@@ -174,8 +178,7 @@ void GraphicsManager::initSceneZRenderStructs() {
                         new RenderFunction(this, &GraphicsManager::renderPrimaryVideo));
     initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, &channels[0].surf);
     initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, &channels[1].surf);
-    initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderSecMovie));
+    initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, &_secMovieSurface);
     initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderOrderingPuzzle));
     initZRenderStruct(  "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
@@ -315,9 +318,7 @@ void GraphicsManager::playSecondaryVideo(uint channel) {
 
 
     if (decoder.needsUpdate()) {
-        const Graphics::Surface *fr = nullptr;
-        fr = decoder.decodeNextFrame();
-        chan.surf = *fr;
+        chan.surf = *decoder.decodeNextFrame();
     }
     
     // TODO loop is choppy and repeats a frame
@@ -334,6 +335,31 @@ void GraphicsManager::playSecondaryVideo(uint channel) {
 
 void GraphicsManager::stopSecondaryVideo(uint channel) {
     channels[channel].decoder.stop();
+}
+
+void GraphicsManager::loadSecondaryMovie(Common::String &filename) {
+    if (_secMovieDecoder.isVideoLoaded()) {
+        _secMovieDecoder.close();
+    }
+    _secMovieDecoder.loadFile(filename + ".avf");
+}
+
+bool GraphicsManager::playSecondaryMovie(uint16 &outFrameNr) {
+    if (!_secMovieDecoder.isPlaying()) {
+        _secMovieDecoder.start();
+        
+        _secMovieSurface.w = _secMovieDecoder.getWidth();
+        _secMovieSurface.h = _secMovieDecoder.getHeight();
+        _secMovieSurface.format = _secMovieDecoder.getPixelFormat();
+    }
+
+    outFrameNr = _secMovieDecoder.getCurFrame();
+    if (_secMovieDecoder.needsUpdate()) {
+        _secMovieSurface = *_secMovieDecoder.decodeNextFrame();
+        return true;
+    }
+
+    return false;
 }
 
 void GraphicsManager::renderFrame() {

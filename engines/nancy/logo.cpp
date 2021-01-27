@@ -69,6 +69,7 @@ void LogoSequence::startSound() {
 	msnd->read(name, 10);
 	Common::String sname(name);
 	_engine->sound->loadSound(sname, 0);
+	_engine->sound->pauseSound(0, false);
 
 	_startTicks = _engine->_system->getMillis();
 	_state = kRun;
