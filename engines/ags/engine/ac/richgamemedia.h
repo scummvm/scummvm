@@ -58,8 +58,8 @@ public:
 	uint32    dwMagicNumber;
 	int       dwHeaderVersion;
 	int       dwHeaderSize;
-	int       dwThumbnailOffsetLowerDword;
-	int       dwThumbnailOffsetHigherDword;
+	uint32    dwThumbnailOffsetLowerDword;
+	uint32    dwThumbnailOffsetHigherDword;
 	int       dwThumbnailSize;
 	byte guidGameId[16];
 	uint16 szGameName[RM_MAXLENGTH];
