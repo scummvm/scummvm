@@ -28,9 +28,11 @@ namespace AGSCreditz {
 
 AGSCreditz::Version AGSCreditz::_version;
 State *AGSCreditz::_state;
+IAGSEngine *AGSCreditz::_engine;
 
 AGSCreditz::AGSCreditz() {
 	_state = new State();
+	_engine = nullptr;
 
 	DLL_METHOD(AGS_GetPluginName);
 }
@@ -48,7 +50,8 @@ const char *AGSCreditz::AGS_GetPluginName() {
 }
 
 void AGSCreditz::AGS_EngineStartup(IAGSEngine *engine) {
-	SCRIPT_METHOD(ScrollCredits);
+	_engine = engine;
+
 	SCRIPT_METHOD(IsCreditScrollingFinished);
 	SCRIPT_METHOD(SetCreditImage);
 	SCRIPT_METHOD(PauseScroll);
@@ -67,10 +70,6 @@ void AGSCreditz::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(GetStaticCreditTitle);
 	SCRIPT_METHOD(SetStaticCreditImage);
 	SCRIPT_METHOD(IsStaticCreditsFinished);
-}
-
-void AGSCreditz::ScrollCredits(const ScriptMethodParams &params) {
-	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, res);
 }
 
 int AGSCreditz::IsCreditScrollingFinished(const ScriptMethodParams &params) {
@@ -160,6 +159,7 @@ void AGSCreditz11::AGS_EngineStartup(IAGSEngine *engine) {
 	AGSCreditz::AGS_EngineStartup(engine);
 
 	SCRIPT_METHOD(SetCredit);
+	SCRIPT_METHOD(ScrollCredits);
 	SCRIPT_METHOD(GetCredit);
 }
 
@@ -176,6 +176,33 @@ void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
 	c._x = xpos;
 	c._isSet = true;
 	c._outline = generateoutline;
+}
+
+void AGSCreditz11::ScrollCredits(const ScriptMethodParams &params) {
+	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, resolution);
+
+	if (onoff == 1) {
+		_state->_creditsRunning = true;
+		_state->_seqSettings[0].speed = speed;
+		_state->_seqSettings[0].endwait = wait;
+		_state->_seqSettings[0].startpoint = fromY;
+		_state->_seqSettings[0].endpoint = toY;
+		_state->_seqSettings[0].automatic = isautom;
+
+		_engine->GetScreenDimensions(&_state->_screenWidth,
+			&_state->_screenHeight, &_state->_screenColorDepth);
+		if (_state->_screenWidth == 320) {
+			_state->_resolutionFlag = (resolution != 2) ? 1 : 0;
+		} else if (_state->_screenWidth == 640) {
+			_state->_resolutionFlag = (resolution != 1) ? 1 : 0;
+		}
+
+	} else if (onoff == 0) {
+		_state->_creditsRunning = false;
+
+	} else {
+		_engine->AbortGame("ScrollCredits: OnOff value must be 1 or 0!");
+	}
 }
 
 const string AGSCreditz11::GetCredit(const ScriptMethodParams &params) {
