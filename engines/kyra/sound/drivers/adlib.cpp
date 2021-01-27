@@ -68,12 +68,6 @@ public:
 	void setSfxVolume(uint8 volume) override;
 
 private:
-	// These variables have not yet been named, but some of them are partly
-	// known nevertheless:
-	//
-	// unk39 - Currently unused, except for updateCallback56()
-	// unk40 - Currently unused, except for updateCallback56()
-
 	struct Channel {
 		bool lock;	// New to ScummVM
 		uint8 opExtraLevel2;
@@ -173,7 +167,6 @@ private:
 	// The sound data has two lookup tables:
 	// * One for programs, starting at offset 0.
 	// * One for instruments, starting at offset 300, 500, or 1000.
-
 	const uint8 *getInstrument(int instrumentId) {
 		return getProgram(_numPrograms + instrumentId);
 	}
@@ -246,15 +239,8 @@ private:
 	int update_setSoundTrigger(Channel &channel, const uint8 *values);
 	int update_setTempoReset(Channel &channel, const uint8 *values);
 	int updateCallback56(Channel &channel, const uint8 *values);
-private:
-	// These variables have not yet been named, but some of them are partly
-	// known nevertheless:
-	//
-	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
-	// _unkTable2_1[]  - One of the tables in _unkTable2[]
-	// _unkTable2_2[]  - One of the tables in _unkTable2[]
-	// _unkTable2_3[]  - One of the tables in _unkTable2[]
 
+private:
 	int _curChannel;
 	uint8 _soundTrigger;
 
@@ -789,9 +775,6 @@ void AdLibDriver::resetAdLibState() {
 		initChannel(_channels[loop]);
 	}
 }
-
-// Old calling style: output0x388(0xABCD)
-// New calling style: writeOPL(0xAB, 0xCD)
 
 void AdLibDriver::writeOPL(byte reg, byte val) {
 	_adlib->writeReg(reg, val);
@@ -1580,7 +1563,7 @@ int AdLibDriver::update_setPriority(Channel &channel, const uint8 *values) {
 //    - _beatDivider is not further modified
 //
 // callback()
-//    - _beatDivCnt is a countdown, gets reinitialized to _beatDivider on zero 
+//    - _beatDivCnt is a countdown, gets reinitialized to _beatDivider on zero
 //    - _beatCounter is incremented when _beatDivCnt is reset, i.e., it's a
 //      counter which updates with the global _tempo divided by _beatDivider.
 //
