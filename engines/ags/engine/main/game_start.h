@@ -25,8 +25,8 @@
 
 namespace AGS3 {
 
-void start_game();
-void initialize_start_and_play_game(int override_start_room, const char *loadSaveGameOnStartup);
+extern void start_game();
+extern void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnStartup);
 
 } // namespace AGS3
 

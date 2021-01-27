@@ -164,7 +164,6 @@ bool read_savedgame_screenshot(const Shared::String &savedgame, int &want_shot);
 // Tries to restore saved game and displays an error on failure; if the error occured
 // too late, when the game data was already overwritten, shuts engine down.
 bool try_restore_save(int slot);
-bool try_restore_save(const Shared::String &path, int slot);
 void serialize_bitmap(const Shared::Bitmap *thispic, Shared::Stream *out);
 // On Windows we could just use IIDFromString but this is platform-independant
 void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffer);

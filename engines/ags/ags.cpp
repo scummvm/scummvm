@@ -65,7 +65,7 @@ namespace AGS3 {
 using namespace Shared;
 using namespace Engine;
 
-extern HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten);
+extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 
 extern GameSetup usetup;
 extern GameState play;
@@ -155,7 +155,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if (scumm_stricmp(arg, "-unregistergame") == 0) {
 			_G(justUnRegisterGame) = true;
 		} else if ((scumm_stricmp(arg, "-loadsavedgame") == 0) && (argc > ee + 1)) {
-			_G(loadSaveGameOnStartup) = argv[ee + 1];
+			_G(loadSaveGameOnStartup) = atoi(argv[ee + 1]);
 			ee++;
 		} else if ((scumm_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
 			strcpy(_G(editor_debugger_instance_token), argv[ee + 1]);
@@ -348,6 +348,8 @@ Common::Error AGSEngine::run() {
 	if (AGS3::debug_flags & DBG_REGONLY)
 		return Common::kNoError;
 
+	_G(loadSaveGameOnStartup) = ConfMan.getInt("save_slot");
+
 #ifdef USE_CUSTOM_EXCEPTION_HANDLER
 	if (usetup.disable_exception_handling)
 #endif
@@ -380,7 +382,7 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 
 Common::Error AGSEngine::loadGameState(int slot) {
 	bool dataOverwritten;
-	(void)AGS3::load_game("", slot, dataOverwritten);
+	(void)AGS3::load_game(slot, dataOverwritten);
 	return Common::kNoError;
 }
 
