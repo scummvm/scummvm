@@ -934,6 +934,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			g_sci->sleep(2500 / 1000);
 			break;
 
+		case kSciEventQuit:
+			return NULL;
+
 		default:
 			break;
 		}
