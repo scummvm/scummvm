@@ -54,6 +54,7 @@ bool SpriteData::loadFromStream(Common::SeekableReadStream &stream) {
 	_offsetY = stream.readByte();
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	_surface.create(width, height, format);
+	const uint8 *last = (const uint8 *)_surface.getBasePtr(width, height - 1);
 	const int maxY = _offsetY + height;
 	for (int y = _offsetY; y < maxY; ++y) {
 		const uint8 numRuns = stream.readByte();
@@ -65,10 +66,16 @@ bool SpriteData::loadFromStream(Common::SeekableReadStream &stream) {
 			if (type == 2) {
 				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
 				uint8 *end = (uint8 *)_surface.getBasePtr(x + runLength, y);
+				if (end > last) {
+					return false;
+				}
 				Common::fill(start, end, stream.readByte());
 			} else if (type == 1 || type == 3) {
 				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
 				for (uint8 i = 0; i < runLength; ++i) {
+					if (start > last) {
+						return false;
+					}
 					*start++ = stream.readByte();
 				}
 			}
