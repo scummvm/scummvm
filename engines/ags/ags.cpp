@@ -40,6 +40,7 @@
 #include "ags/engine/globals.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/room.h"
 #include "ags/shared/core/def_version.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -50,6 +51,7 @@
 #include "ags/engine/main/mainheader.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/script/script.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/util/directory.h"
@@ -380,9 +382,17 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 	_screen = new ::AGS3::BITMAP(_rawScreen);
 }
 
+bool AGSEngine::canLoadGameStateCurrently() {
+	return !::AGS3::thisroom.Options.SaveLoadDisabled && !::AGS3::inside_script;
+}
+
+bool AGSEngine::canSaveGameStateCurrently() {
+	return !::AGS3::thisroom.Options.SaveLoadDisabled && !::AGS3::inside_script;
+}
+
 Common::Error AGSEngine::loadGameState(int slot) {
 	bool dataOverwritten;
-	(void)AGS3::load_game(slot, dataOverwritten);
+	(void)AGS3::try_restore_save(slot);
 	return Common::kNoError;
 }
 

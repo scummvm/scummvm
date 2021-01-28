@@ -110,6 +110,22 @@ public:
 	 */
 	void setGraphicsMode(size_t w, size_t h);
 
+	bool hasFeature(EngineFeature f) const override {
+		return
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime);
+	};
+
+	/**
+	 * Indicate whether a game state can be loaded.
+	 */
+	bool canLoadGameStateCurrently() override;
+
+	/**
+	 * Indicate whether a game state can be saved.
+	 */
+	bool canSaveGameStateCurrently() override;
+
 	/**
 	 * Load a savegame
 	 */
