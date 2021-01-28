@@ -30,6 +30,8 @@ namespace Scumm {
 Localizer::Localizer() {
 	Common::File _file;
 
+	_isValid = false;
+
 	if (!_file.open("lokalizator.big"))
 		return;
 
