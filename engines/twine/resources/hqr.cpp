@@ -208,14 +208,22 @@ Common::SeekableReadStream *makeReadStream(const char *filename, int index) {
 
 	const uint32 headerSize = file->readUint32LE();
 	if ((uint32)index >= headerSize / 4) {
-		warning("HQR: Invalid entry index");
+		warning("HQR: Invalid entry index: %i", index);
 		delete file;
 		return nullptr;
 	}
 
-	file->seek(index * 4);
+	if (!file->seek(index * 4)) {
+		warning("HQR: Invalid index: %i", index);
+		delete file;
+		return nullptr;
+	}
 	const uint32 offsetToData = file->readUint32LE();
-	file->seek(offsetToData);
+	if (!file->seek(offsetToData)) {
+		warning("HQR: Invalid index: %i", index);
+		delete file;
+		return nullptr;
+	}
 
 	const uint32 realSize = file->readUint32LE();
 	const uint32 compressedSize = file->readUint32LE();

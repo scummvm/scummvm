@@ -29,19 +29,22 @@ private:
 	uint8 *_outLzssBufData;
 	uint32 _size;
 	uint32 _pos;
+	bool _err = false;
 
 	void decodeLZSS(Common::ReadStream *indata, uint32 mode, uint32 length);
 
 public:
 	LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 realsize);
-	~LzssReadStream();
+	virtual ~LzssReadStream();
 
-	virtual int32 pos() const { return _pos; }
-	virtual int32 size() const { return _size; }
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	void clearErr() override { _err = false; }
+	bool err() const override { return _err; }
+	int32 pos() const override { return _pos; }
+	int32 size() const override { return _size; }
+	bool seek(int32 offset, int whence = SEEK_SET) override;
 
-	bool eos() const;
-	uint32 read(void *buf, uint32 size);
+	bool eos() const override;
+	uint32 read(void *buf, uint32 size) override;
 };
 
 } // namespace TwinE

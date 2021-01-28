@@ -39,21 +39,41 @@ LzssReadStream::~LzssReadStream() {
 }
 
 void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 dataSize) {
+	if (in->eos() || in->err() || dataSize == 0) {
+		_err = dataSize > 0;
+		return;
+	}
+
 	uint8 *dst = _outLzssBufData;
+	int32 remainingBytes = (int32)dataSize;
 
 	do {
 		uint8 b = in->readByte();
 		for (int32 d = 0; d < 8; d++) {
+			if (in->eos() || in->err()) {
+				_err = dataSize > 0;
+				return;
+			}
 			int32 length;
 			if (!(b & (1 << d))) {
 				const uint16 offset = in->readUint16LE();
 				length = (offset & 0x0F) + (mode + 1);
 				const uint8 *ptr = dst - (offset >> 4) - 1;
+				if (remainingBytes < length) {
+					_err = true;
+					return;
+				}
+				remainingBytes -= length;
 				for (int32 i = 0; i < length; i++) {
 					*dst++ = *ptr++;
 				}
 			} else {
 				length = 1;
+				if (remainingBytes < length) {
+					_err = true;
+					return;
+				}
+				remainingBytes -= length;
 				*dst++ = in->readByte();
 			}
 			dataSize -= length;
@@ -70,7 +90,8 @@ bool LzssReadStream::eos() const {
 
 uint32 LzssReadStream::read(void *buf, uint32 dataSize) {
 	if (dataSize > _size - _pos) {
-		error("LzssReadStream::read past end of buffer");
+		_err = true;
+		return 0;
 	}
 
 	memcpy(buf, &_outLzssBufData[_pos], dataSize);
