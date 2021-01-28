@@ -32,7 +32,7 @@
 namespace TwinE {
 
 /** Total number of sprites allowed in the game */
-#define NUM_SPRITES 200
+#define NUM_SPRITES 425 // 200 for lba1
 
 /** Total number of bodies allowed in the game */
 #define NUM_BODIES 200

@@ -124,10 +124,10 @@ namespace TwinE {
 #define SPRITEHQR_DIAG_BUBBLE_LEFT 91
 
 /** Total number of animations allowed in the game */
-#define NUM_ANIMS 600
+#define NUM_ANIMS 2083 // 600 for lba1
 
 /** Total number of samples allowed in the game */
-#define NUM_SAMPLES 243
+#define NUM_SAMPLES 895 // 243 for lba1
 
 class TwinEEngine;
 
