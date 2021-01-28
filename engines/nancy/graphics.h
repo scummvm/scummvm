@@ -73,7 +73,7 @@ public:
     void clearZRenderStruct(Common::String name);
     void clearZRenderStructs();
     ZRenderStruct &getZRenderStruct(Common::String name);
-    void initZRenderStruct( char const *name,
+    Common::String &initZRenderStruct( char const *name,
                             uint32 z,
                             bool isActive,
                             ZRenderStruct::BltType bltType,
@@ -82,7 +82,8 @@ public:
                             Common::Rect *sourceRect = nullptr,
                             Common::Rect *destRect = nullptr );
 
-    virtual void initSceneZRenderStructs();
+    virtual void initSceneZRenderStructs(Common::Array<Common::String> &outNames);
+    virtual void initMapRenderStructs(Common::Array<Common::String> &outNames);
 
     void renderDisplay();
     void renderDisplay(Common::Array<Common::String> ids);
@@ -141,6 +142,7 @@ public:
     void renderTelephone();
     void renderSliderPuzzle();
     void renderPasswordPuzzle();
+    void renderMapLabels();
 };
 
 } // End of namespace Nancy

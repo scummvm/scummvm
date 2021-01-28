@@ -241,18 +241,23 @@ public:
 class MapCall : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte mapData = 0;
+    virtual void execute(NancyEngine *engine) override;
 };
 
-class MapCallHot1Fr : public ActionRecord {
+class MapCallHot1Fr : public MapCall {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    HotspotDesc hotspotDesc;
 };
 
-class MapCallHotMultiframe : public ActionRecord {
+class MapCallHotMultiframe : public MapCall {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+
+    Common::Array<HotspotDesc> hotspots;
 };
 
 class MapLocationAccess : public ActionRecord {

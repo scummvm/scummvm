@@ -12,6 +12,7 @@ MODULE_OBJS = \
   input.o \
   logic.o \
   logo.o \
+  map.o \
   metaengine.o \
   nancy.o \
   resource.o \
