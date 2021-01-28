@@ -622,7 +622,6 @@ void Redraw::renderOverlays() {
 				_engine->_interface->setClip(rect);
 
 				uint8* bodyPtr = _engine->_resources->inventoryTable[item];
-				Renderer::prepareIsoModel(bodyPtr);
 				overlayRotation += 1; // overlayRotation += 8;
 				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);

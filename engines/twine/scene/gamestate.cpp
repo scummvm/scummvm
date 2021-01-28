@@ -336,7 +336,6 @@ void GameState::processFoundItem(int32 item) {
 
 	int32 currentAnimState = 0;
 
-	Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
 	_engine->_redraw->numOfRedrawBox = 0;
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);

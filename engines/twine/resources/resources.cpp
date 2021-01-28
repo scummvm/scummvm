@@ -122,6 +122,7 @@ void Resources::preloadInventoryItems() {
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		inventorySizeTable[i] = HQR::getAllocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
+		Renderer::prepareIsoModel(_engine->_resources->inventoryTable[i]);
 	}
 }
 

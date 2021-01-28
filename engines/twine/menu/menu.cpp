@@ -1077,7 +1077,6 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	_engine->_interface->drawSplittedBox(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
-		Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
 		itemAngle[item] += 8;
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
 
