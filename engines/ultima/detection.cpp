@@ -49,12 +49,23 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 };
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-    GAMEOPTION_OVERRIDE_FONTS,
 	{
-        _s("Enable font replacement"),
-        _s("Replaces game fonts with rendered fonts"),
-        "overridefonts",
-        false
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+    {
+		GAMEOPTION_OVERRIDE_FONTS,
+		{
+			_s("Enable font replacement"),
+			_s("Replaces game fonts with rendered fonts"),
+			"overridefonts",
+			false
+		}
 	},
     AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

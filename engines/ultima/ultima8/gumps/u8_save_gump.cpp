@@ -31,6 +31,7 @@
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 
@@ -319,6 +320,12 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		const MainActor *av = getMainActor();
 		if (!av || av->hasActorFlags(Actor::ACT_DEAD))
 			return nullptr;
+	}
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		// ScummVM save screen
+		Ultima8Engine::get_instance()->scummVMSaveLoadDialog(save);
+		return nullptr;
 	}
 
 	PagedGump *gump = new PagedGump(34, -38, 3, 35);

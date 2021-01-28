@@ -279,6 +279,11 @@ public:
 	void syncSoundSettings() override;
 
 	/**
+	 * Open the ScummVM save/load screens
+	 */
+	bool scummVMSaveLoadDialog(bool isSave);
+
+	/**
 	 * Returns true if a savegame can be loaded
 	 */
 	bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
