@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "image/png.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
@@ -841,6 +843,37 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 
 	// write _game-specific info
 	_game->writeSaveInfo(ws);
+}
+
+bool Ultima8Engine::scummVMSaveLoadDialog(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (slot < 0)
+		return false;
+
+	if (isSave) {
+		return saveGameState(slot, desc).getCode() == Common::kNoError;
+	} else {
+		return loadGameState(slot).getCode() == Common::kNoError;
+	}
 }
 
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
