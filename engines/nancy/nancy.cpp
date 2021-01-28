@@ -30,6 +30,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/audio.h"
+#include "engines/nancy/map.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -76,6 +77,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 
 	logic = new Logic(this);
 	sceneManager = new SceneManager(this);
+	map = new Map(this);
 	graphics = new GraphicsManager(this);
 	input = new InputManager(this);
 	sound = new SoundManager(this);
@@ -91,6 +93,8 @@ NancyEngine::~NancyEngine() {
 	
 	delete logic;
 	delete sceneManager;
+	delete map;
+	delete graphics;
 	delete input;
 	delete sound;
 }
@@ -161,6 +165,10 @@ Common::Error NancyEngine::run() {
 			break;
 		case kScene:
 			sceneManager->process();
+			break;
+		case kMap:
+			map->process();
+			break;
 		case kIdle:
 		default:
 			break;

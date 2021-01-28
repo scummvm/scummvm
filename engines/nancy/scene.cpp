@@ -62,6 +62,14 @@ void SceneManager::process() {
     }
 }
 
+void SceneManager::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {
+    _sceneID = id;
+    _engine->playState.queuedViewFrame = frame;
+    _engine->playState.queuedMaxVerticalScroll = verticalOffset;
+    doNotStartSound = noSound;
+    _state = kLoadNew;
+}
+
 void SceneManager::init() {
     for (uint i = 0; i < 168; ++i) {
         _engine->playState.eventFlags[i] = PlayState::Flag::kFalse;
@@ -104,7 +112,7 @@ void SceneManager::init() {
 
     delete[] name;
 
-    _engine->graphics->initSceneZRenderStructs();
+    _engine->graphics->initSceneZRenderStructs(_ZRenderFilter);
 
     // Set the scroll bar destinations
     Common::SeekableReadStream *tbox = _engine->getBootChunkStream("TBOX");
@@ -225,67 +233,67 @@ void SceneManager::run() {
     if (telephoneIsActive)
         _engine->graphics->getZRenderStruct("TELEPHONE").isActive = true;
 
-    if (helpMenuRequested) {
+    if (stateChangeRequests & kHelpMenu) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         _engine->_gameFlow.minGameState = NancyEngine::GameState::kHelp;
         // _engine->helpMenu->state = HelpMenu::State::kInit;
-        helpMenuRequested = false;
+        stateChangeRequests &= ~kHelpMenu;
         // _engine->sound->stopSceneSpecificSounds();
         return;
     }
 
-    if (mainMenuRequested) {
+    if (stateChangeRequests & kMainMenu) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         _engine->_gameFlow.minGameState = NancyEngine::GameState::kMainMenu;
         // _engine->mainMenu->state = MainMenu::State::kInit;
-        mainMenuRequested = false;
+        stateChangeRequests &= ~kMainMenu;
         // _engine->sound->stopSceneSpecificSounds();
         return;
     }
 
-    if (saveLoadRequested) {
+    if (stateChangeRequests & kSaveLoad) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         _engine->_gameFlow.minGameState = NancyEngine::GameState::kLoadSave;
         // _engine->loadSaveMenu->state = LoadSaveMenu::State::kInit;
-        saveLoadRequested = false;
+        stateChangeRequests &= ~kSaveLoad;
         // _engine->sound->stopSceneSpecificSounds();
         return;
     }
 
-    if (saveReloadRequested) {
+    if (stateChangeRequests & kReloadSave) {
         // TODO
     }
 
-    if (setupMenuRequested) {
+    if (stateChangeRequests & kSetupMenu) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         _engine->_gameFlow.minGameState = NancyEngine::GameState::kSetup;
         // _engine->setupMenu->state = setupMenu::State::kInit;
-        setupMenuRequested = false;
+        stateChangeRequests &= ~kSetupMenu;
         // _engine->sound->stopSceneSpecificSounds();
         return;
     }
 
-    if (creditsSequenceRequested) {
+    if (stateChangeRequests & kCredits) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
         _engine->_gameFlow.minGameState = NancyEngine::GameState::kHelp;
         // _engine->credits->state = CreditsSequence::State::kInit;
-        creditsSequenceRequested = false;
+        stateChangeRequests &= ~kCredits;
         // _engine->sound->stopSceneSpecificSounds();
         return;
     }
 
-    if (mapScreenRequested) {
+    if (stateChangeRequests & kMap) {
         _stashedTickCount = _engine->getTotalPlayTime();
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
-        _engine->_gameFlow.minGameState = NancyEngine::GameState::kHelp;
+        _engine->_gameFlow.minGameState = NancyEngine::GameState::kMap;
         // _engine->map->state = Map::State::kInit;
-        mapScreenRequested = false;
-        // _engine->sound->stopSceneSpecificSounds();
+        stateChangeRequests &= ~kMap;
+        _engine->sound->stopAllSounds();
         return;
     }
 
@@ -310,6 +318,12 @@ void SceneManager::run() {
         _engine->input->hoveredElementID = -1;
         // TODO a bunch of function calls
         _engine->_gameFlow.previousGameState = NancyEngine::GameState::kScene;
+
+        // Viewport gets reused, set it back to the correct surface
+        ZRenderStruct &zr = _engine->graphics->getZRenderStruct("VIEWPORT AVF");
+        zr.sourceSurface = &_engine->graphics->_background;
+        zr.sourceRect = _engine->graphics->viewportDesc.source;
+        _engine->playState.lastDrawnViewFrame = -1;
         return;
     }
 
@@ -367,7 +381,7 @@ void SceneManager::run() {
 
         if (hovered == InputManager::mapButtonID) {
             // TODO another if
-            mapScreenRequested = true;
+            stateChangeRequests |= kMap;
             return;
         }
 
@@ -542,7 +556,7 @@ void SceneManager::run() {
 
     // TODO
     _engine->playState.lastVerticalScroll = _engine->playState.verticalScroll;
-    _engine->graphics->renderDisplay();
+    _engine->graphics->renderDisplay(_ZRenderFilter);
 }
 
 void SceneManager::handleMouse() {
@@ -555,7 +569,7 @@ void SceneManager::handleMouse() {
 
     View &view = _engine->graphics->viewportDesc;
 
-    // TODO hotpoints for scene movement are not correct, figure out how they're actually calculated
+    // TODO incorrect magic number, figure out where this comes from
     Common::Point viewportMouse = mousePos + Common::Point(10, 10);
     
     // Check if the mouse is within the viewport
@@ -594,9 +608,9 @@ void SceneManager::handleMouse() {
                     hotspot.bottom += view.destination.top - _engine->playState.verticalScroll;
 
                     if (hotspot.contains(viewportMouse)) {
-                        if (r->type == 0xE) {
+                        if (r->type == 0xE || r->type == 0x3D || r->type == 0x3E) {
                             // Set the pointer to the U-shaped arrow if
-                            // the type is Hot1FrExitSceneChange
+                            // the type is Hot1FrExitSceneChange, MapCallHot1Fr, or MapCallHotMultiframe
                             _engine->input->setPointerBitmap(1, 0, 0);
                         } else {
                             _engine->input->setPointerBitmap(-1, 1, 0);

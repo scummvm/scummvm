@@ -66,6 +66,7 @@ class ResourceManager;
 class IFF;
 class LogoSequence;
 class SceneManager;
+class Map;
 class Logic;
 class GraphicsManager;
 class InputManager;
@@ -77,6 +78,7 @@ public:
 	friend class LogoSequence;
 	friend class SceneManager;
 	friend class NancyConsole;
+	friend class Map;
 
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
@@ -114,6 +116,7 @@ public:
 	ResourceManager *_res;
 	Logic *logic;
 	SceneManager *sceneManager;
+	Map *map;
 	GraphicsManager *graphics;
 	InputManager *input;
 	SoundManager *sound;

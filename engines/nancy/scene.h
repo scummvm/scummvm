@@ -28,6 +28,7 @@
 #include "engines/nancy/datatypes.h"
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Graphics {
@@ -43,15 +44,19 @@ namespace Nancy {
 class NancyEngine;
 
 class SceneManager {
+    friend class ActionRecord;
 public:
     enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8 };
     SceneManager(NancyEngine *engine) :
-        _engine {engine},
-        _state {kInit},
-        _sceneID {0},
-        movementDirection{0} { }
+        _engine (engine),
+        _state (kInit),
+        _sceneID (0),
+        movementDirection(0),
+        stateChangeRequests(0) { }
 
     void process();
+
+    void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
 
 private:
     void init();
@@ -69,7 +74,19 @@ public:
         kRun,
         kLoadNew
     };
+
+    enum GameStateChange : byte {
+        kHelpMenu = 1 << 0,
+        kMainMenu = 1 << 1,
+        kSaveLoad = 1 << 2,
+        kReloadSave = 1 << 3,
+        kSetupMenu = 1 << 4,
+        kCredits = 1 << 5,
+        kMap = 1 << 6
+    };
     
+    byte stateChangeRequests; // GameStateChange
+
     int32 playerTimeMinuteLength;
     byte movementDirection;
     State _state;
@@ -94,15 +111,7 @@ private:
     bool passwordPuzzleIsActive = false;
     bool telephoneIsActive = false;
 
-    // These could be condensed into an enum
-    bool helpMenuRequested = false;
-    bool mainMenuRequested = false;
-    bool saveLoadRequested = false;
-    bool saveReloadRequested = false;
-    bool setupMenuRequested = false;
-    bool creditsSequenceRequested = false;
-    bool mapScreenRequested = false;
-    
+    Common::Array<Common::String> _ZRenderFilter;
 };
 
 } // End of namespace Nancy

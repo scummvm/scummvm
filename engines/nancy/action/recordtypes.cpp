@@ -78,11 +78,7 @@ uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
 }
 
 void SceneChange::execute(NancyEngine *engine) {
-    engine->sceneManager->_sceneID = sceneID;
-    engine->playState.queuedViewFrame = frameID;
-    engine->playState.queuedMaxVerticalScroll = verticalOffset;
-    engine->sceneManager->doNotStartSound = doNotStartSound;
-    engine->sceneManager->_state = SceneManager::kLoadNew;
+    engine->sceneManager->changeScene(sceneID, frameID, verticalOffset, doNotStartSound);
     isDone = true;
 }
 
@@ -557,19 +553,66 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
 }
 
 uint16 MapCall::readData(Common::SeekableReadStream &stream) {
-    mapData = stream.readByte();
+    stream.skip(1);
     return 1;
 }
 
+void MapCall::execute(NancyEngine *engine) {
+    execType = 2;
+    engine->sceneManager->stateChangeRequests |= SceneManager::kMap;
+    // call base, depends on execType
+}
+
 uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x12); // TODO
+    hotspotDesc.readData(stream);
+    return 0x12;
+}
+
+void MapCallHot1Fr::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            hotspot = hotspotDesc.coords;
+            state = kRun;
+            // fall through
+        case kRun:
+            if (engine->playState.currentViewFrame == hotspotDesc.frameID) {
+                hasHotspot = true;
+            }
+            break;
+        case kActionTrigger:
+            MapCall::execute(engine);
+            break;
+    }
 }
 
 uint16 MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
-    uint16 size = stream.readUint16LE() * 0x12 + 0x2;
-    stream.seek(-2, SEEK_CUR);
+    uint16 numDescs = stream.readUint16LE();
+    for (uint i = 0; i < numDescs; ++i) {
+        hotspots.push_back(HotspotDesc());
+        hotspots[i].readData(stream);
+    }
 
-    return readRaw(stream, size); // TODO
+    return 2 + numDescs * 0x12;
+}
+
+void MapCallHotMultiframe::execute(NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            state = kRun;
+            // fall through
+        case kRun:
+            hasHotspot = false;
+            for (uint i = 0; i < hotspots.size(); ++i) {
+                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                    hasHotspot = true;
+                    hotspot = hotspots[i].coords;
+                }
+            }
+            break;
+        case kActionTrigger:
+            MapCall::execute(engine);
+            break;  
+    }
 }
 
 uint16 MapLocationAccess::readData(Common::SeekableReadStream &stream) {

@@ -96,7 +96,7 @@ ZRenderStruct &GraphicsManager::getZRenderStruct(Common::String name) {
     return _ZRender[name];
 }
 
-void GraphicsManager::initZRenderStruct(char const *name,
+Common::String &GraphicsManager::initZRenderStruct(char const *name,
                                         uint32 z,
                                         bool isActive,
                                         ZRenderStruct::BltType bltType,
@@ -119,6 +119,8 @@ void GraphicsManager::initZRenderStruct(char const *name,
         st.destRect = *destRect;
     else st.destRect = Common::Rect();
     st.renderFunction = func;
+
+    return st.name;
 }
 
 // TODO nancy1 only, move to subclass whenever we support multiple games
@@ -127,7 +129,7 @@ void GraphicsManager::initZRenderStruct(char const *name,
 // their location with zrender structs whose names start with RES.
 // I'm using a more naive implementation where everything is redrawn every frame
 // for code simplicity, but that can be changed in the future if needed
-void GraphicsManager::initSceneZRenderStructs() {
+void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &outNames) {
     Common::Rect *source = new Common::Rect();
     Common::Rect *dest = new Common::Rect();
     Common::SeekableReadStream *chunk = nullptr;
@@ -141,68 +143,89 @@ void GraphicsManager::initSceneZRenderStructs() {
     chunk = _engine->getBootChunkStream("MENU");
     READ_RECT(source, 16)
     // Skip the custom rendering function since we're not doing dirty rectangles
-    initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::BltType::kNoTrans, &_primaryFrameSurface,
-                        nullptr, source, source);
-    initZRenderStruct(  "CUR IMAGE CURSOR", 11, true, ZRenderStruct::BltType::kTrans, &_object0Surface);
+    outNames.push_back(initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::kNoTrans, &_primaryFrameSurface,
+                        nullptr, source, source));
+    outNames.push_back(initZRenderStruct(  "CUR IMAGE CURSOR", 11, true, ZRenderStruct::kTrans, &_object0Surface));
 
     chunk = _engine->getBootChunkStream("TBOX");
     READ_RECT(source, 0)
-    initZRenderStruct(  "CUR TB BAT SLIDER", 9, true, ZRenderStruct::BltType::kTrans,
-                        &_object0Surface, nullptr, source, nullptr);
+    outNames.push_back(initZRenderStruct(  "CUR TB BAT SLIDER", 9, true, ZRenderStruct::kTrans,
+                        &_object0Surface, nullptr, source, nullptr));
 
     chunk = _engine->getBootChunkStream("BSUM");
     READ_RECT(dest, 356)
-    initZRenderStruct(  "FRAME TB SURF", 6, false, ZRenderStruct::BltType::kNoTrans,
-                        &_frameTextBox, nullptr, nullptr, dest);
+    outNames.push_back(initZRenderStruct(  "FRAME TB SURF", 6, false, ZRenderStruct::kNoTrans,
+                        &_frameTextBox, nullptr, nullptr, dest));
 
     READ_RECT(source, 388)
     READ_RECT(dest, 420)
-    initZRenderStruct(  "MENU BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
-                        &_object0Surface, nullptr, source, dest);
+    outNames.push_back(initZRenderStruct(  "MENU BUT DN", 5, false, ZRenderStruct::kTrans,
+                        &_object0Surface, nullptr, source, dest));
 
     READ_RECT(source, 404)
     READ_RECT(dest, 436)
-    initZRenderStruct(  "HELP BUT DN", 5, false, ZRenderStruct::BltType::kTrans,
-                        &_object0Surface, nullptr, source, dest);
+    outNames.push_back(initZRenderStruct(  "HELP BUT DN", 5, false, ZRenderStruct::kTrans,
+                        &_object0Surface, nullptr, source, dest));
 
     chunk = _engine->getBootChunkStream("INV");
     READ_RECT(source, 0)
-    initZRenderStruct(  "CUR INV SLIDER", 9, true, ZRenderStruct::BltType::kTrans,
-                         &_object0Surface, nullptr, source, nullptr);
+    outNames.push_back(initZRenderStruct(  "CUR INV SLIDER", 9, true, ZRenderStruct::kTrans,
+                         &_object0Surface, nullptr, source, nullptr));
 
-    initZRenderStruct(  "FRAME INV BOX", 6, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderFrameInvBox));
+    outNames.push_back(initZRenderStruct(  "FRAME INV BOX", 6, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderFrameInvBox)));
     
-    initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::BltType::kNoTrans);
-    initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderPrimaryVideo));
-    initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::BltType::kTrans, &channels[0].surf);
-    initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::BltType::kTrans, &channels[1].surf);
-    initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::BltType::kNoTrans, &_secMovieSurface);
-    initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderOrderingPuzzle));
-    initZRenderStruct(  "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderRotatingLockPuzzle));
-    initZRenderStruct(  "LEVER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderLeverPuzzle));
-    initZRenderStruct(  "TELEPHONE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderTelephone));
-    initZRenderStruct(  "SLIDER PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderSliderPuzzle));
-    initZRenderStruct(  "PASSWORD PUZZLE", 7, false, ZRenderStruct::BltType::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderPasswordPuzzle));
+    outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans));
+    outNames.push_back(initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderPrimaryVideo)));
+    outNames.push_back(initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::kTrans, &channels[0].surf));
+    outNames.push_back(initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::kTrans, &channels[1].surf));
+    outNames.push_back(initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::kNoTrans, &_secMovieSurface));
+    outNames.push_back(initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderOrderingPuzzle)));
+    outNames.push_back(initZRenderStruct(  "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderRotatingLockPuzzle)));
+    outNames.push_back(initZRenderStruct(  "LEVER PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderLeverPuzzle)));
+    outNames.push_back(initZRenderStruct(  "TELEPHONE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderTelephone)));
+    outNames.push_back(initZRenderStruct(  "SLIDER PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderSliderPuzzle)));
+    outNames.push_back(initZRenderStruct(  "PASSWORD PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
+                        new RenderFunction(this, &GraphicsManager::renderPasswordPuzzle)));
 
     // Moved here from SceneManager::load(), should be ok
-    initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::BltType::kNoTrans,
-                        &_background, nullptr, &viewportDesc.source, &viewportDesc.destination);
+    outNames.push_back(initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::kNoTrans,
+                        &_background, nullptr, &viewportDesc.source, &viewportDesc.destination));
 
     // Moved from PlayIntStaticBitmap
-    initZRenderStruct(  "STATIC BITMAP ANIMATION", 7, false, ZRenderStruct::BltType::kNoTrans,
-                        &_genericSurface);
+    outNames.push_back(initZRenderStruct(  "STATIC BITMAP ANIMATION", 7, false, ZRenderStruct::kNoTrans,
+                        &_genericSurface));
     #undef READ_RECT
 
     delete source;
     delete dest;
+}
+
+void GraphicsManager::initMapRenderStructs(Common::Array<Common::String> &outNames) {
+    outNames.push_back("FRAME");
+    outNames.push_back("VIEWPORT AVF"); // Replaces MAP AVF
+    outNames.push_back("CUR IMAGE CURSOR"); // Replaces CUR MAP CURSOR
+    outNames.push_back("CUR TB BAT SLIDER");
+    outNames.push_back("CUR INV SLIDER");
+    outNames.push_back(initZRenderStruct("MAP LABELS", 7, true, ZRenderStruct::kTrans, &_object0Surface,
+                        new RenderFunction(this, &GraphicsManager::renderMapLabels)));
+    outNames.push_back(initZRenderStruct("MAP ANIM", 9, true, ZRenderStruct::kNoTrans, &_object0Surface,
+                        new RenderFunction(this, &GraphicsManager::renderMapLabels)));
+
+    Common::Rect src;
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+    chunk->seek(0x58, SEEK_SET);
+    src.left = chunk->readUint32LE();
+    src.top = chunk->readUint32LE();
+    src.right = chunk->readUint32LE();
+    src.bottom = chunk->readUint32LE();
+    getZRenderStruct("VIEWPORT AVF").sourceRect = src;
 }
 
 void GraphicsManager::renderDisplay() {
@@ -226,12 +249,12 @@ void GraphicsManager::renderDisplay(Common::Array<Common::String> ids) {
                 else {
                     switch (current.bltType) {
                         // making some assumptions here
-                        case ZRenderStruct::BltType::kNoTrans: {
+                        case ZRenderStruct::kNoTrans: {
                             Common::Point dest(current.destRect.left, current.destRect.top);
                             _screen.blitFrom(*current.sourceSurface, current.sourceRect, dest);
                             break;
                         }
-                        case ZRenderStruct::BltType::kTrans: {
+                        case ZRenderStruct::kTrans: {
                             Common::Point dest(current.destRect.left, current.destRect.top);
                             _screen.transBlitFrom(*current.sourceSurface, current.sourceRect, dest, transColor);
                             break;
@@ -418,6 +441,10 @@ void GraphicsManager::renderSliderPuzzle() {
 }
 
 void GraphicsManager::renderPasswordPuzzle() {
+    // TODO
+}
+
+void GraphicsManager::renderMapLabels() {
     // TODO
 }
 
