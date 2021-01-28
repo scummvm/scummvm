@@ -129,7 +129,7 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 				Common::MemoryReadStream thumbStream(thumbData,
 					rich_media_header.dwThumbnailSize, DisposeAfterUse::YES);
 
-				// Read in the thumbnail
+				// Decode the thumbnail
 				Image::BitmapDecoder decoder;
 				if (decoder.loadStream(thumbStream)) {
 					const Graphics::Surface *src = decoder.getSurface();

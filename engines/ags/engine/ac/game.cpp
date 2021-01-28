@@ -486,7 +486,7 @@ const char *Game_GetSaveSlotDescription(int slnum) {
 
 void restore_game_dialog() {
 	can_run_delayed_command();
-	if (thisroom.Options.SaveLoadDisabled == 1) {
+	if (thisroom.Options.SaveLoadDisabled) {
 		DisplayMessage(983);
 		return;
 	}
