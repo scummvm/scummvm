@@ -30,6 +30,11 @@ namespace AGS3 {
 
 int color_conversion;
 
+// For Allegro, paletted sprites always use index 0 as the transparent color,
+// and for higher resolution formats uses bright pink RGB 255, 0, 255
+#define TRANSPARENT_COLOR(BITMAP) ((BITMAP).format.bytesPerPixel == 1 ? 0 : \
+	(BITMAP).format.RGBToColor(255, 0, 255))
+
 /*-------------------------------------------------------------------*/
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
@@ -212,7 +217,7 @@ int bitmap_color_depth(BITMAP *bmp) {
 
 int bitmap_mask_color(BITMAP *bmp) {
 	assert(bmp->format.bytesPerPixel > 1);
-	return bmp->format.RGBToColor(255, 0, 255);
+	return TRANSPARENT_COLOR(*bmp);
 }
 
 void add_palette_if_needed(Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) {
@@ -269,10 +274,7 @@ void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 
 	add_palette_if_needed(spriteS, bmpS);
 
-	// For Allegro, paletted sprites always use index 0 as the transparent color,
-	// and for higher resolution formats uses bright pink RGB 255, 0, 255
-	bmpS.transBlitFrom(spriteS, Common::Point(x, y),
-		(spriteS.format.bytesPerPixel == 1) ? 0 : spriteS.format.RGBToColor(255, 0, 255));
+	bmpS.transBlitFrom(spriteS, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
 }
 
 void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h) {
