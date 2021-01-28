@@ -71,11 +71,14 @@ enum InputType : uint16 {
     kMoveFastModifier   = 1 << 8
 };
 
-    InputManager(NancyEngine *engine) : _engine(engine), _inputs(0), isClickValidLMB(false), isClickValidRMB(false), hoveredElementID(-1) {}
+    InputManager(NancyEngine *engine) : _engine(engine), _inputs(0), hoveredElementID(-1) {}
     void processEvents();
 
     bool getInput(InputType type);
     byte getInput() { return _inputs; }
+    void clearInput();
+    bool isClickValidLMB() { return hoveredElementID != -1 && _inputs & kLeftMouseButtonUp; }
+    bool isClickValidRMB() { return hoveredElementID != -1 && _inputs & kLeftMouseButtonDown; }
 
     Common::Point getMousePosition();
     void setMousePosition(const Common::Point &newPos);
@@ -83,8 +86,6 @@ enum InputType : uint16 {
 
     static void initKeymaps(Common::KeymapArray &keymaps);
 
-    bool isClickValidLMB;
-    bool isClickValidRMB;
     int16 hoveredElementID;
     Cursors cursorsData;
     
@@ -119,7 +120,6 @@ private:
     bool itemHeld = false;
 
     uint16 _inputs;
-    Common::Point _mousePos;
 };
 
 } // End of namespace Nancy

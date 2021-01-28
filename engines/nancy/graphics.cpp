@@ -122,6 +122,11 @@ Common::String &GraphicsManager::initZRenderStruct(char const *name,
 
     return st.name;
 }
+#define READ_RECT(where, x) chunk->seek(x); \
+                            where->left = chunk->readUint32LE(); \
+                            where->top = chunk->readUint32LE(); \
+                            where->right = chunk->readUint32LE(); \
+                            where->bottom = chunk->readUint32LE();
 
 // TODO nancy1 only, move to subclass whenever we support multiple games
 // TODO most of these are wrong and/or incomplete
@@ -134,11 +139,6 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
     Common::Rect *dest = new Common::Rect();
     Common::SeekableReadStream *chunk = nullptr;
     
-    #define READ_RECT(where, x) chunk->seek(x); \
-                                where->left = chunk->readUint32LE(); \
-                                where->top = chunk->readUint32LE(); \
-                                where->right = chunk->readUint32LE(); \
-                                where->bottom = chunk->readUint32LE();
 
     chunk = _engine->getBootChunkStream("MENU");
     READ_RECT(source, 16)
@@ -201,32 +201,36 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
     // Moved from PlayIntStaticBitmap
     outNames.push_back(initZRenderStruct(  "STATIC BITMAP ANIMATION", 7, false, ZRenderStruct::kNoTrans,
                         &_genericSurface));
-    #undef READ_RECT
+
 
     delete source;
     delete dest;
 }
 
 void GraphicsManager::initMapRenderStructs(Common::Array<Common::String> &outNames) {
+    Common::Rect *src = new Common::Rect();
+    Common::Rect *dest = new Common::Rect();
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+
     outNames.push_back("FRAME");
     outNames.push_back("VIEWPORT AVF"); // Replaces MAP AVF
     outNames.push_back("CUR IMAGE CURSOR"); // Replaces CUR MAP CURSOR
     outNames.push_back("CUR TB BAT SLIDER");
     outNames.push_back("CUR INV SLIDER");
-    outNames.push_back(initZRenderStruct("MAP LABELS", 7, true, ZRenderStruct::kTrans, &_object0Surface,
-                        new RenderFunction(this, &GraphicsManager::renderMapLabels)));
+    outNames.push_back(initZRenderStruct("MAP LABELS", 7, true, ZRenderStruct::kTrans, &_object0Surface));
+    READ_RECT(src, 0x7A);
+    READ_RECT(dest, 0x8A);
     outNames.push_back(initZRenderStruct("MAP ANIM", 9, true, ZRenderStruct::kNoTrans, &_object0Surface,
-                        new RenderFunction(this, &GraphicsManager::renderMapLabels)));
+                        nullptr, src, dest));
 
-    Common::Rect src;
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
-    chunk->seek(0x58, SEEK_SET);
-    src.left = chunk->readUint32LE();
-    src.top = chunk->readUint32LE();
-    src.right = chunk->readUint32LE();
-    src.bottom = chunk->readUint32LE();
-    getZRenderStruct("VIEWPORT AVF").sourceRect = src;
-}
+    READ_RECT(src, 0x58)
+    getZRenderStruct("VIEWPORT AVF").sourceRect = *src;
+
+    delete src;
+    delete dest;
+}   
+
+#undef READ_RECT
 
 void GraphicsManager::renderDisplay() {
     // Construct a list containing every struct and pass it along
@@ -441,10 +445,6 @@ void GraphicsManager::renderSliderPuzzle() {
 }
 
 void GraphicsManager::renderPasswordPuzzle() {
-    // TODO
-}
-
-void GraphicsManager::renderMapLabels() {
     // TODO
 }
 

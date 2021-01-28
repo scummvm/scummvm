@@ -352,7 +352,7 @@ void SceneManager::run() {
         _engine->playState.timeOfDay = _engine->playState.kDuskDawn;
     }
 
-    if (_engine->input->isClickValidLMB) {
+    if (_engine->input->isClickValidLMB()) {
         if (orderingPuzzleIsActive) {
             // TODO
         }
@@ -436,7 +436,7 @@ void SceneManager::run() {
         }
 
 
-    } else if (_engine->input->isClickValidRMB) {
+    } else if (_engine->input->isClickValidRMB()) {
         if (_engine->input->hoveredElementID == InputManager::textBoxScrollbarID) {
             // TODO, moves scrollbar one line up
         } else if (_engine->input->hoveredElementID == InputManager::inventoryScrollbarID) {

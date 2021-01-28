@@ -43,7 +43,7 @@ public:
     void process();
 
 private:
-    struct Hotspot {
+    struct Location {
         struct SceneChange {
             uint16 sceneID = 0;
             uint16 frameID = 0;
@@ -53,6 +53,9 @@ private:
         bool isActive = false;
         Common::Rect hotspot;
         Common::Array<SceneChange> scenes;
+
+        Common::Rect labelSrc;
+        Common::Rect labelDest;
     };
 
     void init();
@@ -65,7 +68,7 @@ private:
     uint16 _mapID;
     AVFDecoder _decoder;
     Graphics::Surface _mapImage;
-    Common::Array<Hotspot> _hotspots;
+    Common::Array<Location> _locations;
 
     Common::Array<Common::String> _ZRenderFilter;
 };

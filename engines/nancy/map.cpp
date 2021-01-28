@@ -73,8 +73,8 @@ void Map::init() {
 
     for (uint i = 0; i < 4; ++i) {
         chunk->seek(0x162 + i * 16, SEEK_SET);
-        _hotspots.push_back(Hotspot());
-        Hotspot &h = _hotspots[i];
+        _locations.push_back(Location());
+        Location &h = _locations[i];
         h.hotspot.left = chunk->readUint32LE();
         h.hotspot.top = chunk->readUint32LE();
         h.hotspot.right = chunk->readUint32LE();
@@ -87,39 +87,61 @@ void Map::init() {
         }
 
         for (uint j = 0; j < 2; ++j) {
-            h.scenes.push_back(Hotspot::SceneChange());
-            Hotspot::SceneChange &sc = h.scenes[j];
-            chunk->seek(0x1BE + 6 * i * (j + 1));
+            h.scenes.push_back(Location::SceneChange());
+            Location::SceneChange &sc = h.scenes[j];
+            chunk->seek(0x1BE + 6 * i * (j + 1), SEEK_SET);
             sc.sceneID = chunk->readUint16LE();
             sc.frameID = chunk->readUint16LE();
             sc.verticalOffset = chunk->readUint16LE();
         }
+
+        chunk->seek(0x9A + i * 16, SEEK_SET);
+        h.labelSrc.left = chunk->readUint32LE();
+        h.labelSrc.top = chunk->readUint32LE();
+        h.labelSrc.right = chunk->readUint32LE();
+        h.labelSrc.bottom = chunk->readUint32LE();
+
+        // TODO this gets initialized using MAP and the textbox's on-screen location
+        // but the code is annoyingly long so fpr now i just directly write the result
+        h.labelDest = Common::Rect(0x56, 0x166, 0x15E, 0x19B);
+        
     }
 
     ZRenderStruct &zr = _engine->graphics->getZRenderStruct("VIEWPORT AVF");
     zr.sourceSurface = &_mapImage;
 
     _engine->graphics->initMapRenderStructs(_ZRenderFilter);
+	_engine->_gameFlow.previousGameState = NancyEngine::kMap;
     _state = kRun;
 }
 
 void Map::run() {
     handleMouse();
+    int16 hover = _engine->input->hoveredElementID;
+    ZRenderStruct &labels = _engine->graphics->getZRenderStruct("MAP LABELS");
+    if (hover != -1 && hover < 10000) {
+        labels.isActive = true;
+        labels.sourceRect = _locations[hover].labelSrc;
+        labels.destRect = _locations[hover].labelDest;
+    } else {
+        labels.isActive = false;
+    }
 
-    if ((_engine->sceneManager->stateChangeRequests & SceneManager::kMap) == 0 &&
-            !(_engine->input->isClickValidLMB && _engine->input->hoveredElementID == InputManager::mapButtonID)) {
-        if (_engine->input->isClickValidLMB) {
-            Hotspot::SceneChange &sc = _hotspots[_engine->input->hoveredElementID].scenes[_mapID];
-            _engine->sceneManager->changeScene(sc.sceneID, sc.frameID, sc.verticalOffset, false);
+    if (_engine->input->isClickValidLMB()) {
+        if (_engine->sceneManager->stateChangeRequests & SceneManager::kMap ||
+                hover == InputManager::mapButtonID) {
             _state = kInit;
             _engine->_gameFlow.minGameState = NancyEngine::kScene;
             _engine->_gameFlow.previousGameState = NancyEngine::kMap;
+            _engine->sceneManager->stateChangeRequests &= ~NancyEngine::kMap;
+            return;
         }
-    } else {
+
+        Location::SceneChange &sc = _locations[hover].scenes[_mapID];
+        _engine->sceneManager->changeScene(sc.sceneID, sc.frameID, sc.verticalOffset, false);
         _state = kInit;
         _engine->_gameFlow.minGameState = NancyEngine::kScene;
         _engine->_gameFlow.previousGameState = NancyEngine::kMap;
-        return;
     }
 
     _engine->graphics->renderDisplay(_ZRenderFilter);
@@ -139,19 +161,26 @@ void Map::handleMouse() {
 
     if (view.destination.contains(viewportMouse)) {
         _engine->input->setPointerBitmap(0, 0, 0);
-        for (uint i = 0; i < _hotspots.size(); ++i) {
+        for (uint i = 0; i < _locations.size(); ++i) {
             // Adjust the hotspot coordinates
-            Common::Rect hs = _hotspots[i].hotspot;
+            Common::Rect hs = _locations[i].hotspot;
             hs.left += view.destination.left;
             hs.top += view.destination.top;
             hs.right += view.destination.left;
             hs.bottom += view.destination.top;
 
-            if (_hotspots[i].isActive && hs.contains(viewportMouse)) {
+            if (_locations[i].isActive && hs.contains(viewportMouse)) {
                 _engine->input->hoveredElementID = i;
                 _engine->input->setPointerBitmap(-1, 1, 0);   
                 break;             
             }
+        }
+    } else {
+        if (_engine->graphics->getZRenderStruct("MAP ANIM").destRect.contains(mousePos)) {
+            _engine->input->hoveredElementID = InputManager::mapButtonID;
+            _engine->input->setPointerBitmap(1, 2, -1);
+        } else {
+            _engine->input->setPointerBitmap(1, 1, 0);
         }
     }
 }

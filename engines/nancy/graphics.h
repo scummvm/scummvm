@@ -142,7 +142,6 @@ public:
     void renderTelephone();
     void renderSliderPuzzle();
     void renderPasswordPuzzle();
-    void renderMapLabels();
 };
 
 } // End of namespace Nancy
