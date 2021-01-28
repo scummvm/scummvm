@@ -561,6 +561,7 @@ void MapCall::execute(NancyEngine *engine) {
     execType = 2;
     engine->sceneManager->stateChangeRequests |= SceneManager::kMap;
     // call base, depends on execType
+    state = kBegin;
 }
 
 uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {

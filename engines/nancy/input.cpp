@@ -58,8 +58,6 @@ const int16 InputManager::passwordPuzzleEndID       = 10020;
 void InputManager::processEvents() {
     using namespace Common;
 
-    isClickValidLMB = false;
-    isClickValidRMB = false;
     _inputs &= ~(kLeftMouseButtonUp | kRightMouseButtonUp);
 
     Common::Event event;
@@ -120,16 +118,10 @@ void InputManager::processEvents() {
                     case kNancyActionLeftClick:
                         _inputs &= ~kLeftMouseButtonDown;
                         _inputs |= kLeftMouseButtonUp;
-                        if (hoveredElementID != -1) {
-                            isClickValidLMB = true;
-                        }
                         break;
                     case kNancyActionRightClick:
                         _inputs &= ~kRightMouseButtonDown;
                         _inputs |= kRightMouseButtonUp;
-                        if (hoveredElementID != -1) {
-                            isClickValidRMB = true;
-                        }
                         break;
                     default:
                         break;
@@ -173,6 +165,11 @@ void InputManager::processEvents() {
 
 bool InputManager::getInput(InputManager::InputType type) {
     return _inputs & type;
+}
+
+void InputManager::clearInput() {
+    _inputs = 0;
+    hoveredElementID = -1;
 }
 
 Common::Point InputManager::getMousePosition() {

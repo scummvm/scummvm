@@ -60,6 +60,7 @@ void LogoSequence::init() {
 		error("Failed to load %s", _engine->_logos[0].name.c_str());
 
 	_state = kStartSound;
+	_engine->_gameFlow.previousGameState = NancyEngine::kLogo;
 }
 
 void LogoSequence::startSound() {

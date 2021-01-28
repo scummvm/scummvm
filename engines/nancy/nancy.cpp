@@ -151,6 +151,11 @@ Common::Error NancyEngine::run() {
 	_gameFlow.minGameState = kBoot;
 
 	while (!shouldQuit()) {
+		input->processEvents();
+		if (_gameFlow.minGameState != _gameFlow.previousGameState) {
+			input->clearInput();
+		}
+
 		switch (_gameFlow.minGameState) {
 		case kBoot:
 			bootGameEngine();
@@ -174,7 +179,6 @@ Common::Error NancyEngine::run() {
 			break;
 		}
 
-		input->processEvents();
 
 		if (launchConsole) {
 			_console->attach();
