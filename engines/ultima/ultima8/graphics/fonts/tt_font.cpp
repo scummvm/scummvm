@@ -136,6 +136,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	uint32 borderColor = PF_RGBA.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, PF_RGBA);
+	texture->setTransparentColor(0);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
 	Std::list<PositionedText>::const_iterator iter;
@@ -154,10 +155,12 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			// When not in antialiased mode, use a paletted surface where '1' is
 			// used for pixels of the text
 			textSurf.create(resultWidth, lineHeight, Graphics::PixelFormat::createFormatCLUT8());
+			texture->setTransparentColor(0);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, 1);
 		} else {
 			// Use a high color surface with the specified _color color for text
 			textSurf.create(resultWidth, lineHeight, PF_RGBA);
+			texture->setTransparentColor(0);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, _color);
 		};
 
@@ -196,7 +199,9 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					if (_borderSize <= 0) {
 						texBuf[ty * resultWidth + tx] = sColor;
 					} else {
-						uint8 dR, dG, dB;
+						uint8 dA, dR, dG, dB;
+						double alpha = (double)sA / 255.0;
+
 						switch (sA) {
 						case 0xFF:
 							texBuf[ty * resultWidth + tx] = sColor;
@@ -205,22 +210,37 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 							// Blend color with border color
 							PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
 
-							double alpha = (double)sA / 255.0;
 							dR = static_cast<uint8>((sR * alpha) + (dR * (1.0 - alpha)));
 							dG = static_cast<uint8>((sG * alpha) + (dG * (1.0 - alpha)));
 							dB = static_cast<uint8>((sB * alpha) + (dB * (1.0 - alpha)));
-
+							
 							texBuf[ty * resultWidth + tx] = PF_RGBA.RGBToColor(dR, dG, dB);
 							break;
 						}
 
-						for (int dx = -_borderSize; dx <= _borderSize; dx++) {
-							for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-								int bx = iter->_dims.left + x + _borderSize + dx;
-								int by = iter->_dims.top + y + _borderSize + dy;
-								if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
-									if (texBuf[by * resultWidth + bx] == 0) {
-										texBuf[by * resultWidth + bx] = borderColor;
+						// Add border around pixel if alpha is greater than threshold  
+						if (sA > 0x04) {
+							for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+								for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+									int bx = iter->_dims.left + x + _borderSize + dx;
+									int by = iter->_dims.top + y + _borderSize + dy;
+									if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
+										int32 dColor = texBuf[by * resultWidth + bx];
+										PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
+										if (dA < 255) {
+											// Add border within radius. Pixels on the line are alpha blended 
+											int sqrSize = (_borderSize + 1) * (_borderSize + 1);
+											int sqrDist = (dx * dx) + (dy * dy);
+											if (sqrDist < sqrSize) {
+												sqrSize = _borderSize * _borderSize;
+												uint8 bA = sqrDist < sqrSize ? 255 : static_cast<uint8>((255 * sqrSize) / sqrDist);
+
+												if (bA > dA) {
+													PF_RGBA.colorToRGB(borderColor, dR, dG, dB);
+													texBuf[by * resultWidth + bx] = PF_RGBA.ARGBToColor(bA, dR, dG, dB);
+												}
+											}
+										}
 									}
 								}
 							}
