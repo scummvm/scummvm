@@ -41,6 +41,7 @@ namespace Nancy {
 const Graphics::PixelFormat GraphicsManager::pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 const uint GraphicsManager::transColor = 0x3E0;
 
+
 GraphicsManager::GraphicsManager(NancyEngine *engine) :
         _engine(engine) {
     _screen.create(640, 480, pixelFormat);
@@ -72,6 +73,7 @@ GraphicsManager::~GraphicsManager() {
     _object0Surface.free();
     _inventoryBoxIconsSurface.free();
     _inventoryCursorsSurface.free();
+    _inventoryBitmapSurface.free();
     _object0Surface.free();
     _genericSurface.free();
 
@@ -176,7 +178,7 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
     outNames.push_back(initZRenderStruct(  "FRAME INV BOX", 6, true, ZRenderStruct::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderFrameInvBox)));
     
-    outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans));
+    outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans, &_inventoryBitmapSurface));
     outNames.push_back(initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderPrimaryVideo)));
     outNames.push_back(initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::kTrans, &channels[0].surf));
@@ -390,6 +392,25 @@ bool GraphicsManager::playSecondaryMovie(uint16 &outFrameNr) {
     return false;
 }
 
+// Called when the order has changed
+void GraphicsManager::updateInvBox() {
+    Inventory &inventoryDesc = _engine->sceneManager->inventoryDesc;
+    for (uint i = 0; i < 4; ++i) {
+        if (i < inventoryBoxDesc.itemsOrder.size()) {
+            uint oi = inventoryBoxDesc.itemsOrder.size() - i - 1;
+            inventoryBoxDesc.onScreenItems[i].itemId = inventoryBoxDesc.itemsOrder[oi];
+            inventoryBoxDesc.onScreenItems[i].source = inventoryDesc.items[inventoryBoxDesc.itemsOrder[oi]].sourceRect;
+        } else {
+            inventoryBoxDesc.onScreenItems[i].itemId = -1;
+        }
+    }
+
+    // If size is 0 or 1, trigger the blinds closing/opening animation
+    if (inventoryBoxDesc.itemsOrder.size() < 2) {
+        inventoryBoxDesc.nextFrameTime = _engine->getTotalPlayTime() + inventoryDesc.shadesFrameTime;
+    }
+}
+
 void GraphicsManager::renderFrame() {
     ZRenderStruct &zr = getZRenderStruct("FRAME");
     Common::Point dest(zr.destRect.left, zr.destRect.top);
@@ -407,25 +428,45 @@ void GraphicsManager::renderFrame() {
 
 void GraphicsManager::renderFrameInvBox() {
     Inventory &inv = _engine->sceneManager->inventoryDesc;
-    SceneManager::InventoryBox &invBox = _engine->sceneManager->inventoryBoxDesc;
 
     // Draw the current four visible items if any
     for (uint i = 0; i < 4; ++i) {
-        if (invBox.onScreenItems[i].itemId != -1) {
-            Common::Point dest(invBox.onScreenItems[i].dest.left, invBox.onScreenItems[i].dest.top);
-            _screen.blitFrom(_inventoryBoxIconsSurface, invBox.onScreenItems->source, dest);
+        if (inventoryBoxDesc.onScreenItems[i].itemId != -1) {
+            Common::Point dest(inventoryBoxDesc.onScreenItems[i].dest.left, inventoryBoxDesc.onScreenItems[i].dest.top);
+            _screen.blitFrom(_inventoryBoxIconsSurface, inventoryBoxDesc.onScreenItems[i].source, dest);
         }
     }
 
+    // Check if we need to draw the next frame
+    if (inventoryBoxDesc.nextFrameTime != 0 &&
+        inventoryBoxDesc.nextFrameTime < _engine->getTotalPlayTime()) {
+            bool isInventoryEmpty = true;
+            for (uint i = 0; i < 11; ++i) {
+                if (_engine->playState.inventory.items[i] == PlayState::kTrue) {
+                    isInventoryEmpty = false;
+                    break;
+                }
+            }
+
+            inventoryBoxDesc.blindsAnimFrame += isInventoryEmpty ? 1 : -1;
+            if (inventoryBoxDesc.blindsAnimFrame < 0 || inventoryBoxDesc.blindsAnimFrame > 6) {
+                inventoryBoxDesc.blindsAnimFrame = CLIP<int16>(inventoryBoxDesc.blindsAnimFrame, 0, 6);
+                inventoryBoxDesc.nextFrameTime = 0;
+            } else {
+                inventoryBoxDesc.nextFrameTime = _engine->getTotalPlayTime() + _engine->sceneManager->inventoryDesc.shadesFrameTime;
+            }
+        }
+
     // Draw the shades
-    if (invBox.blindsAnimFrame < 7) {
+    if (inventoryBoxDesc.blindsAnimFrame < 7 &&
+        inventoryBoxDesc.blindsAnimFrame > 0) {
         // Draw left shade
         Common::Point dest(inv.shadesDst.left, inv.shadesDst.top);
-        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2], dest);
+        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2], dest);
 
         // Draw right shade
-        dest.x = inv.shadesDst.right - inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2 + 1].width();
-        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2 + 1], dest);
+        dest.x = inv.shadesDst.right - inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2 + 1].width();
+        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2 + 1], dest);
     }
 }
 

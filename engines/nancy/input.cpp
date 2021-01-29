@@ -185,6 +185,7 @@ void InputManager::setMousePosition(const Common::Point &newPos) {
 }
 
 // Passing -1 means keeping the previous value
+// Style 0 is regular, 1 is red highlight, 2 is blue highlight, 4 is red highlight again
 void InputManager::setPointerBitmap(int16 id, int16 style, int16 isHoldingItem) {
     ZRenderStruct &zr = _engine->graphics->getZRenderStruct("CUR IMAGE CURSOR");
     
@@ -203,7 +204,7 @@ void InputManager::setPointerBitmap(int16 id, int16 style, int16 isHoldingItem) 
         zr.sourceSurface = &_engine->graphics->_object0Surface;
     }
 
-    zr.sourceRect = cursorsData.rects[pointerId*3 + pointerStyle];
+    zr.sourceRect = cursorsData.rects[pointerId * 4 + pointerStyle];
 }
 
 void InputManager::initKeymaps(Common::KeymapArray &keymaps) {

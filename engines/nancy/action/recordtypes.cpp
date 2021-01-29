@@ -47,6 +47,12 @@ void HotspotDesc::readData(Common::SeekableReadStream &stream) {
     readRect(stream, coords);
 }
 
+void BitmapDesc::readData(Common::SeekableReadStream &stream) {
+    frameID = stream.readUint16LE();
+    readRect(stream, src);
+    readRect(stream, dest);
+}
+
 void SecondaryVideoDesc::readData(Common::SeekableReadStream &stream) {
     frameID = stream.readUint16LE();
     readRect(stream, srcRect);
@@ -456,9 +462,9 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     }
 
     for (uint i = 0; i < numFrames; ++i) {
-        srcDestRects.push_back(SrcDestDesc());
-        SrcDestDesc &rects = srcDestRects[i];
-        rects.frameId = stream.readUint16LE();
+        bitmaps.push_back(BitmapDesc());
+        BitmapDesc &rects = bitmaps[i];
+        rects.frameID = stream.readUint16LE();
         readRect(stream, rects.src);
         readRect(stream, rects.dest);
     }
@@ -475,8 +481,8 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
 
             // find the correct source and destination for the current viewport frame
             lastViewFrame = engine->playState.currentViewFrame;
-            for (uint i = 0; i < srcDestRects.size(); ++i) {
-                if (lastViewFrame == srcDestRects[i].frameId) {
+            for (uint i = 0; i < bitmaps.size(); ++i) {
+                if (lastViewFrame == bitmaps[i].frameID) {
                     currentViewFrameID = i;
                     break;
                 }
@@ -496,7 +502,7 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             zr.sourceRect = frameRects[currentFrame - firstFrame];
             if (currentViewFrameID != -1) {
                 zr.isActive = true;
-                zr.destRect = srcDestRects[currentViewFrameID].dest;
+                zr.destRect = bitmaps[currentViewFrameID].dest;
                 zr.destRect.left += engine->graphics->viewportDesc.destination.left;
                 zr.destRect.top += engine->graphics->viewportDesc.destination.top;
                 zr.destRect.top -= engine->playState.verticalScroll;
@@ -515,11 +521,11 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             if (lastViewFrame != engine->playState.currentViewFrame) {
                 lastViewFrame = engine->playState.currentViewFrame;
                 currentViewFrameID = -1;
-                for (uint i = 0; i < srcDestRects.size(); ++i) {
-                    if (lastViewFrame == srcDestRects[i].frameId) {
+                for (uint i = 0; i < bitmaps.size(); ++i) {
+                    if (lastViewFrame == bitmaps[i].frameID) {
                         currentViewFrameID = i;
                         zr.isActive = true;
-                        zr.destRect = srcDestRects[currentViewFrameID].dest;
+                        zr.destRect = bitmaps[currentViewFrameID].dest;
                         zr.destRect.left += engine->graphics->viewportDesc.destination.left;
                         zr.destRect.top += engine->graphics->viewportDesc.destination.top;
                         zr.destRect.top -= engine->playState.verticalScroll;
@@ -810,11 +816,56 @@ uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
-    stream.seek(0xC, SEEK_CUR);
-    uint16 size = stream.readUint16LE() * 0x22 + 0xE;
-    stream.seek(-0xE, SEEK_CUR);
+    objectID = stream.readUint16LE();
+    char name[10];
+    stream.read(name, 10);
+    imageName = Common::String(name);
 
-    return readRaw(stream, size); // TODO
+    uint16 numFrames = stream.readUint16LE();
+
+    for (uint i = 0; i < numFrames; ++i) {
+        bitmaps.push_back(BitmapDesc());
+        bitmaps[i].readData(stream);
+    }
+
+    return 0xE + 0x22 * numFrames;
+}
+
+void ShowInventoryItem::execute(NancyEngine *engine) {
+    ZRenderStruct &zr = engine->graphics->getZRenderStruct("INV BITMAP");
+    switch (state) {
+        case kBegin:
+            zr.sourceSurface->free();
+            engine->_res->loadImage("ciftree", imageName, *zr.sourceSurface);
+            state = kRun;
+            // fall through
+        case kRun:
+            zr.isActive = false;
+            hasHotspot = false;
+
+            for (uint i = 0; i < bitmaps.size(); ++i) {
+                if (bitmaps[i].frameID == engine->playState.currentViewFrame) {
+                    hasHotspot = true;
+                    hotspot = bitmaps[i].dest;
+                    
+                    zr.isActive = true;
+                    zr.sourceRect = bitmaps[i].src;
+                    zr.destRect = bitmaps[i].dest;
+                    View &viewport = engine->graphics->viewportDesc;
+                    zr.destRect.left += viewport.destination.left;
+                    zr.destRect.right += viewport.destination.left;
+                    zr.destRect.top += viewport.destination.top - engine->playState.verticalScroll;
+                    zr.destRect.bottom += viewport.destination.top - engine->playState.verticalScroll;
+                }
+            }
+            break;
+        case kActionTrigger:
+            // TODO play sound
+            engine->sceneManager->addObjectToInventory(objectID);
+            zr.isActive = false;
+            hasHotspot = false;
+            isDone = true;
+    }
 }
 
 uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
@@ -831,7 +882,7 @@ uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
     return 0x2B;
 }
 
-void PlayDigiSoundAndDie::execute(NancyEngine *engine){
+void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
             engine->sound->loadSound(filename, id, numLoops, volume);
