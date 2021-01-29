@@ -23,6 +23,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/scene.h"
 
 #include "common/error.h"
 #include "common/system.h"
@@ -47,7 +48,7 @@ GraphicsManager::GraphicsManager(NancyEngine *engine) :
 
 void GraphicsManager::init() {  
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("VIEW");
-    viewportDesc = View(chunk);
+    viewportDesc.read(*chunk);
     uint32 width = viewportDesc.destination.right - viewportDesc.destination.left;
     uint32 height = viewportDesc.destination.bottom - viewportDesc.destination.top;
     _background.create(width, height, pixelFormat);
@@ -172,7 +173,7 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
     outNames.push_back(initZRenderStruct(  "CUR INV SLIDER", 9, true, ZRenderStruct::kTrans,
                          &_object0Surface, nullptr, source, nullptr));
 
-    outNames.push_back(initZRenderStruct(  "FRAME INV BOX", 6, false, ZRenderStruct::kNoTrans, nullptr,
+    outNames.push_back(initZRenderStruct(  "FRAME INV BOX", 6, true, ZRenderStruct::kNoTrans, nullptr,
                         new RenderFunction(this, &GraphicsManager::renderFrameInvBox)));
     
     outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans));
@@ -405,7 +406,27 @@ void GraphicsManager::renderFrame() {
 }
 
 void GraphicsManager::renderFrameInvBox() {
-    // TODO
+    Inventory &inv = _engine->sceneManager->inventoryDesc;
+    SceneManager::InventoryBox &invBox = _engine->sceneManager->inventoryBoxDesc;
+
+    // Draw the current four visible items if any
+    for (uint i = 0; i < 4; ++i) {
+        if (invBox.onScreenItems[i].itemId != -1) {
+            Common::Point dest(invBox.onScreenItems[i].dest.left, invBox.onScreenItems[i].dest.top);
+            _screen.blitFrom(_inventoryBoxIconsSurface, invBox.onScreenItems->source, dest);
+        }
+    }
+
+    // Draw the shades
+    if (invBox.blindsAnimFrame < 7) {
+        // Draw left shade
+        Common::Point dest(inv.shadesDst.left, inv.shadesDst.top);
+        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2], dest);
+
+        // Draw right shade
+        dest.x = inv.shadesDst.right - inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2 + 1].width();
+        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - invBox.blindsAnimFrame) * 2 + 1], dest);
+    }
 }
 
 void GraphicsManager::renderPrimaryVideo() {
