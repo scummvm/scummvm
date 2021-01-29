@@ -69,15 +69,20 @@ PrivateEngine::PrivateEngine(OSystem *syst)
 
     _policeBustEnabled = false;
     _policeBustSetting = NULL;
-
+    _numberClicks = 0;
+    policeVideoIndex = 0;
 
     _paperShuffleSound = new Common::String("global/audio/glsfx0");
     _takeSound = new Common::String("global/audio/took");
     _leaveSound = new Common::String("global/audio/left");
+    _sirenSound = new Common::String("po/audio/posfx002.wav");
 
     _policeRadioArea = NULL;
     _AMRadioArea = NULL;
     _phoneArea = NULL;
+
+    // TODO: use this as a default sound for radio
+    _radioSound = new Common::String("inface/radio/radio.wav");
 
     _AMRadioPrefix = new Common::String("inface/radio/comm_/");
     _policeRadioPrefix = new Common::String("inface/radio/police/");
@@ -180,12 +185,8 @@ Common::Error PrivateEngine::run() {
                     }
                 }
                 else if (event.kbd.keycode == Common::KEYCODE_p) {
-                    if ( _policeBustEnabled) {
-                        Common::String *pv = new Common::String("po/animatio/spoc02xs.smk");
-                        _nextMovie = pv;
-                        _policeBustSetting = _currentSetting;
-                        _nextSetting = &kPoliceBustFromMO;
-                    }
+                    debug("Number of clicks %d", _numberClicks);
+
                 }
                 break;
 
@@ -194,6 +195,7 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
+                _numberClicks++; 
                 selectPhoneArea(mousePos);
                 selectPoliceRadioArea(mousePos);
                 selectAMRadioArea(mousePos);
@@ -216,6 +218,8 @@ Common::Error PrivateEngine::run() {
 
             }
         }
+
+        checkPoliceBust();
 
         // Movies
         if (_nextMovie != NULL) {
@@ -267,6 +271,55 @@ Common::Error PrivateEngine::run() {
 
     return Common::kNoError;
 }
+
+void PrivateEngine::startPoliceBust() {
+    Common::String k("kPoliceIndex");
+    int policeIndex = variables.getVal(k)->u.val;
+
+    int r = _rnd->getRandomNumber(0xc);
+    if (0x14 < policeIndex) {
+        policeIndex = 0x15;
+    }
+    _maxNumberClicks = r + 0x10 + (policeIndex * 0xe) / -0x15;
+    _sirenWarning = 3 + _rnd->getRandomNumber(0x7);
+    _numberClicks = 0;
+    assert(_sirenWarning < _maxNumberClicks);
+}
+
+void PrivateEngine::checkPoliceBust() {
+    if (!_policeBustEnabled)
+        return;
+
+    if (_numberClicks < _sirenWarning)
+        return;
+     
+    if (_numberClicks == _sirenWarning) {
+        stopSound(); 
+        playSound(*_sirenSound, 0);
+        _numberClicks++; // Won't execute again
+        return;
+    }
+
+    if (_numberClicks == _maxNumberClicks+1) {
+        Common::String k("kPoliceIndex");
+        uint kPoliceIndex = variables.getVal(k)->u.val;
+
+        if (kPoliceIndex <= 12) {
+            assert(policeVideoIndex/2 <= 5);
+            char f[30];
+            sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[policeVideoIndex/2]);
+            policeVideoIndex++;
+
+            Common::String *pv = new Common::String(f);
+            _nextMovie = pv;
+        }
+        _policeBustSetting = _currentSetting;
+        _nextSetting = &kPoliceBustFromMO;
+        _numberClicks++; // Won't execute again
+    }
+
+}
+
 
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
     //debug("Mousepos %d %d", mousePos.x, mousePos.y);
@@ -796,6 +849,15 @@ Common::String *PrivateEngine::getTakeSound() {
     char f[6];
     sprintf(f, "%d.wav", r);
     return (new Common::String(*_takeSound + f));
+}
+
+Common::String *PrivateEngine::getTakeLeaveSound() {
+    uint r = _rnd->getRandomNumber(1);
+    if (r == 0) {
+        return (new Common::String("global/audio/mvo001.wav"));
+    } else {
+        return (new Common::String("global/audio/mvo006.wav"));
+    }
 }
 
 Common::String *PrivateEngine::getLeaveSound() {

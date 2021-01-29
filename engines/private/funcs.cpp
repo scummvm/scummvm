@@ -98,6 +98,10 @@ void PoliceBust(ArgArray args) {
     // assert types
     assert (args.size() == 1 || args.size() == 2);
     g_private->_policeBustEnabled = args[0].u.val;
+    //debug("Number of clicks %d", g_private->computePoliceIndex());
+
+    if (g_private->_policeBustEnabled)
+        g_private->startPoliceBust();
 
     if (args.size() == 2) {
         if (args[1].u.val == 2) {
@@ -106,8 +110,10 @@ void PoliceBust(ArgArray args) {
             assert(0);
 
         }
-        else if (args[1].u.val == 2) {
+        else if (args[1].u.val == 3) {
             g_private->_nextSetting = &kMainDesktop;
+            g_private->_mode = 0;
+            g_private->_origin = &kPrivateOriginZero;
         } else
             assert(0);
     }
@@ -173,6 +179,16 @@ void Inventory(ArgArray args) {
 
         g_private->_masks.push_front(*m);
         g_private->_toTake = true;
+
+        Common::String *f;
+
+        if (strcmp(snd.u.str, "\"\"") != 0) {
+            f = new Common::String(snd.u.str);
+        } else {
+            f = g_private->getTakeLeaveSound();
+        }
+        g_private->playSound(*f, 1);
+
     } else { 
         if (v1.type == NAME)
             if (strcmp(c.u.str, "\"REMOVE\"") == 0)
@@ -182,11 +198,6 @@ void Inventory(ArgArray args) {
 
         if (v2.type == NAME)
             v2.u.sym->u.val = 1;
-    }
-
-    if (strcmp(snd.u.str, "\"\"") != 0) {
-        Common::String *s = new Common::String(snd.u.str);
-        g_private->playSound(*s, 1);
     }
 
 

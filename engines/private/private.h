@@ -35,6 +35,10 @@ enum {
                             // the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
+// police
+
+const int kPoliceBustVideos[6] = {1, 2, 4, 5, 7, 8};
+
 // points
 
 const Common::Point kPrivateOriginZero(0, 0); 
@@ -155,7 +159,14 @@ public:
 
     // Police Bust
 
+    int policeVideoIndex;
+    void policeBust();
     bool _policeBustEnabled;
+    void startPoliceBust();
+    void checkPoliceBust();
+    int _numberClicks;
+    int _maxNumberClicks;
+    int _sirenWarning;
     Common::String *_policeBustSetting;
 
     // Save/Load games
@@ -179,11 +190,16 @@ public:
     Common::String *_paperShuffleSound;
 
     Common::String *getTakeSound();
+    Common::String *getTakeLeaveSound();
     Common::String *getLeaveSound();
     Common::String *_takeSound;
     Common::String *_leaveSound;
+    Common::String *_sirenSound;
+
 
     // Radios
+
+    Common::String *_radioSound;
 
     MaskInfo *_AMRadioArea;
     Common::String *_AMRadioPrefix;

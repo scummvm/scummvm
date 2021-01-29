@@ -37,7 +37,6 @@ void showSymbol(Symbol *s) {
 }
 
 void setSymbol(Symbol *s, int v) {
-    //assert(s->type == STRING);
     s->u.val = v;
 }
 
