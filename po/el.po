@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-25 23:00+0000\n"
+"POT-Creation-Date: 2021-01-29 02:16+0000\n"
 "PO-Revision-Date: 2021-01-18 03:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -780,14 +780,16 @@ msgstr "Αναζήτηση:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
+#: engines/ultima/ultima8/ultima8.cpp:863 engines/wage/saveload.cpp:742
+#: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:182 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
+#: engines/ultima/ultima8/ultima8.cpp:863 engines/wage/saveload.cpp:742
+#: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Φόρτωση"
 
@@ -2176,8 +2178,9 @@ msgstr "Επισ~τ~ρ. στο Launcher"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:854
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
@@ -2196,9 +2199,9 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
-#: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
-#: engines/zvision/metaengine.cpp:194
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:854
+#: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
+#: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
 msgstr "Αποθήκευση"
 
@@ -7432,15 +7435,15 @@ msgstr "Ultima VIII Κόλπα"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Αποσφαλμάτωση"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:295
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
 msgid "[corrupt]"
 msgstr "[κατεστραμμένο]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:298
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
 msgid "[outdated]"
 msgstr "[ξεπερασμένο]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:301
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
 msgid "[too modern]"
 msgstr "[πολύ καινούργιο]"
 
