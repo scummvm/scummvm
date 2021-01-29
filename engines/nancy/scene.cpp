@@ -96,17 +96,14 @@ void SceneManager::init() {
         error("Failed to load %s", _engine->_objects[0].name.c_str());
     }
 
-    // Load inventory icons
-    Common::SeekableReadStream *inv = _engine->getBootChunkStream("INV");
-    inv->seek(0x1C8);
-    inv->read(name, 10); // should be TOOL
-    if (!_engine->_res->loadImage("ciftree", Common::String(name), _engine->graphics->_inventoryBoxIconsSurface)) {
+    // Load inventory
+    inventoryDesc.read(*_engine->getBootChunkStream("INV"));
+    if (!_engine->_res->loadImage("ciftree", inventoryDesc.inventoryBoxIconsImageName, _engine->graphics->_inventoryBoxIconsSurface)) {
         error("Failed to load inventory icons (TOOL)");
     }
 
     // Load the cursors
-    inv->read(name, 10); // should be TOOLCUR1
-    if (!_engine->_res->loadImage("ciftree", Common::String(name), _engine->graphics->_inventoryCursorsSurface)) {
+    if (!_engine->_res->loadImage("ciftree", inventoryDesc.inventoryCursorsImageName, _engine->graphics->_inventoryCursorsSurface)) {
         error("Failed to load cursors (TOOLCUR1)");
     }
 
@@ -118,21 +115,16 @@ void SceneManager::init() {
     Common::SeekableReadStream *tbox = _engine->getBootChunkStream("TBOX");
     tbox->seek(0x30);
     ZRenderStruct &tbzr = _engine->graphics->getZRenderStruct("CUR TB BAT SLIDER");
-    uint16 width = tbzr.sourceRect.right - tbzr.sourceRect.left;
-    uint16 height = tbzr.sourceRect.bottom - tbzr.sourceRect.top;
-    tbzr.destRect.left =  tbox->readUint16LE() - (width / 2); // coords in file are for center position
+    tbzr.destRect.left =  tbox->readUint16LE() - (tbzr.sourceRect.width() / 2); // coords in file are for center position
     tbzr.destRect.top =  tbox->readUint16LE();
-    tbzr.destRect.right = tbzr.destRect.left + width;
-    tbzr.destRect.bottom = tbzr.destRect.top + height;
+    tbzr.destRect.right = tbzr.destRect.left + tbzr.sourceRect.width();
+    tbzr.destRect.bottom = tbzr.destRect.top + tbzr.sourceRect.height();
 
-    inv->seek(0x10);
     ZRenderStruct &invzr = _engine->graphics->getZRenderStruct("CUR INV SLIDER");
-    width = invzr.sourceRect.right - invzr.sourceRect.left;
-    height = invzr.sourceRect.bottom - invzr.sourceRect.top;
-    invzr.destRect.left = inv->readUint16LE() - (width / 2); // coords in file are for center position
-    invzr.destRect.top = inv->readUint16LE();
-    invzr.destRect.right = invzr.destRect.left + width;
-    invzr.destRect.bottom = invzr.destRect.top + height;
+    invzr.destRect.left = inventoryDesc.sliderDefaultDest.x - (invzr.sourceRect.width() / 2); // coords in file are for center position
+    invzr.destRect.top = inventoryDesc.sliderDefaultDest.y;
+    invzr.destRect.right = invzr.destRect.left + invzr.sourceRect.width();
+    invzr.destRect.bottom = invzr.destRect.top + invzr.sourceRect.height();
 
     _state = kLoad;
 }
@@ -152,7 +144,8 @@ void SceneManager::load() {
         error("Invalid IFF Chunk SSUM");
     }
 
-    currentScene = SceneSummary(sceneSummaryChunk);
+    currentScene = SceneSummary();
+    currentScene.read(*sceneSummaryChunk);
 
     // The check to see if we need to switch the CD is performed here
 
@@ -383,56 +376,40 @@ void SceneManager::run() {
             // TODO another if
             stateChangeRequests |= kMap;
             return;
-        }
-
-        if (hovered == InputManager::textBoxID) {
+        } else if (hovered == InputManager::textBoxID) {
             // TODO
-        }
-
-        if (hovered == InputManager::inventoryItemTakeID) {
+        } else if (hovered == InputManager::inventoryItemTakeID) {
             // TODO
-        }
-
-        if (hovered == InputManager::inventoryItemReturnID) {
+        } else if (hovered == InputManager::inventoryItemReturnID) {
             // TODO
-        }
-
-        if (hovered == InputManager::textBoxScrollbarID) {
+        } else if (hovered == InputManager::textBoxScrollbarID) {
+            handleScrollbar(0);
+        } else if (hovered == InputManager::inventoryScrollbarID) {
+            handleScrollbar(1);
+        } else if (hovered == InputManager::menuButtonID) {
             // TODO
-        }
-
-        if (hovered == InputManager::inventoryScrollbarID) {
+        } else if (hovered == InputManager::helpButtonID) {
             // TODO
-        }
-
-        if (hovered == InputManager::menuButtonID) {
+        } else if (hovered == InputManager::orderingPuzzleID ||
+                    hovered == InputManager::orderingPuzzleEndID ||
+                    hovered == InputManager::rotatingLockPuzzleUpID ||
+                    hovered == InputManager::rotatingLockPuzzleDownID ||
+                    hovered == InputManager::rotatingLockPuzzleEndID ||
+                    hovered == InputManager::leverPuzzleID ||
+                    hovered == InputManager::leverPuzzleEndID ||
+                    hovered == InputManager::telephoneID ||
+                    hovered == InputManager::telephoneEndID ||
+                    hovered == InputManager::sliderPuzzleID ||
+                    hovered == InputManager::sliderPuzzleEndID ||
+                    hovered == InputManager::passwordPuzzleEndID) {
             // TODO
-        }
-
-        if (hovered == InputManager::helpButtonID) {
-            // TODO
-        }
-
-        if (    hovered == InputManager::orderingPuzzleID ||
-                hovered == InputManager::orderingPuzzleEndID ||
-                hovered == InputManager::rotatingLockPuzzleUpID ||
-                hovered == InputManager::rotatingLockPuzzleDownID ||
-                hovered == InputManager::rotatingLockPuzzleEndID ||
-                hovered == InputManager::leverPuzzleID ||
-                hovered == InputManager::leverPuzzleEndID ||
-                hovered == InputManager::telephoneID ||
-                hovered == InputManager::telephoneEndID ||
-                hovered == InputManager::sliderPuzzleID ||
-                hovered == InputManager::sliderPuzzleEndID ||
-                hovered == InputManager::passwordPuzzleEndID) {
-            // TODO
-        }
-
-        // ID must be an action record's
-        ActionRecord *rec = _engine->logic->getActionRecord(hovered);
-        if (rec->isActive /*&& another condition !- 0*/) {
-            // TODO item holding logic
-            rec->state = ActionRecord::ExecutionState::kActionTrigger;
+        } else {
+            // ID must be an action record's
+            ActionRecord *rec = _engine->logic->getActionRecord(hovered);
+            if (rec->isActive /*&& another condition !- 0*/) {
+                // TODO item holding logic
+                rec->state = ActionRecord::ExecutionState::kActionTrigger;
+            }
         }
 
 
@@ -625,12 +602,12 @@ void SceneManager::handleMouse() {
         ZRenderStruct *uizr = &_engine->graphics->getZRenderStruct("CUR TB BAT SLIDER");
         if (uizr->destRect.contains(mousePos)) {
             _engine->input->hoveredElementID = InputManager::textBoxScrollbarID;
-            // call handler function
             _engine->input->setPointerBitmap(1, 2, -1);
+            handleScrollbar(0);
         } else if (uizr = &_engine->graphics->getZRenderStruct("CUR INV SLIDER"), uizr->destRect.contains(mousePos)) {
             _engine->input->hoveredElementID = InputManager::inventoryScrollbarID;
-            // call handler function
             _engine->input->setPointerBitmap(1, 2, -1);
+            handleScrollbar(1);
         } else {
             _engine->input->setPointerBitmap(1, 1, 0);
         }
@@ -656,6 +633,48 @@ void SceneManager::clearSceneData() {
     _engine->graphics->getZRenderStruct("SEC VIDEO 1").isActive = false;
     _engine->graphics->getZRenderStruct("SEC MOVIE").isActive = false;
     _engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION").isActive = false;
+}
+
+// 0 is textbox, 1 is inventory, returns -1 when movement is stopped/disabled
+float SceneManager::handleScrollbar(uint id) {
+    Common::SeekableReadStream *chunk;
+    ZRenderStruct *zr;
+    if (id == 0) {
+        chunk = _engine->getBootChunkStream("TBOX");
+        chunk->seek(0x30);
+        zr = &_engine->graphics->getZRenderStruct("CUR TB BAT SLIDER");
+    } else if (id == 1) {
+        chunk = _engine->getBootChunkStream("INV");
+        chunk->seek(0x10);
+        zr = &_engine->graphics->getZRenderStruct("CUR INV SLIDER");
+    }
+    Common::Point origDest;
+    origDest.x = chunk->readUint16LE() - (zr->sourceRect.width() / 2); // coords in file are for center position
+    origDest.y = chunk->readUint16LE();
+
+    Common::Rect &tboxRect = _engine->graphics->getZRenderStruct("FRAME TB SURF").destRect;
+    Common::Rect &scrollRect = zr->destRect;
+    Common::Point newMousePos = _engine->input->getMousePosition();
+
+    if (_engine->input->getInput() & InputManager::kLeftMouseButtonDown) {
+        if (scrollbarMouse.x == -1 && scrollbarMouse.y == -1) {
+            scrollbarMouse = newMousePos - Common::Point(scrollRect.left, scrollRect.top);
+        }
+        newMousePos -= Common::Point(scrollRect.left, scrollRect.top);
+
+        uint16 minY = origDest.y;
+        uint16 maxY = tboxRect.bottom - scrollRect.height() + tboxRect.top - origDest.y; // TODO goes a little out of bounds
+        uint16 newTop = CLIP((uint16)(scrollRect.top + newMousePos.y - scrollbarMouse.y), minY, maxY);
+        scrollRect.bottom += newTop - scrollRect.top;
+        scrollRect.top = newTop;
+
+        return (float)(maxY - minY) / newTop;
+    } else {
+        scrollbarMouse.x = -1;
+        scrollbarMouse.y = -1;
+    }
+
+    return -1;
 }
 
 } // End of namespace Nancy

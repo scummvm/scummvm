@@ -216,7 +216,7 @@ void NancyEngine::bootGameEngine() {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
-	input->cursorsData = Cursors(getBootChunkStream("CURS"));
+	input->cursorsData.read(*getBootChunkStream("CURS"));
 
 	// The FR, LG and OB chunks get added here	
 

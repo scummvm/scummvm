@@ -36,8 +36,7 @@ namespace Nancy {
 
 // Describes a scene
 struct SceneSummary {
-    SceneSummary() =default;
-    SceneSummary(Common::SeekableReadStream *stream);
+    void read(Common::SeekableReadStream &stream);
 
     Common::String description; // 0x00
     Common::String videoFile;   // 0x32
@@ -58,8 +57,7 @@ struct SceneSummary {
 
 // Describes the viewport
 struct View {
-    View() =default;
-    View(Common::SeekableReadStream *stream);
+    void read(Common::SeekableReadStream &stream);
     // The bounds of the destination rectangle on screen
     Common::Rect destination;
     // The bounds of the source rectangle (Background -> screen)
@@ -72,12 +70,34 @@ struct View {
 
 // Holds the coordinates for the bitmaps of all cursors
 struct Cursors {
-    Cursors() =default;
-    Cursors(Common::SeekableReadStream *stream);
+    void read(Common::SeekableReadStream &stream);
+
     Common::Rect rects[85];
     // The cursor gets set to this location at some point during PrimaryVideoSequence 
     uint16 primaryVideoCursorX;
     uint16 primaryVideoCursorY;
+};
+
+struct Inventory {
+    struct ItemDesc {
+        Common::String name; // 0x00
+        byte unknown = 0; // 0x14
+        Common::Rect sourceRect; // 0x16
+    };
+
+    void read(Common::SeekableReadStream &stream);
+
+    Common::Rect sliderSource; // 0x00
+    Common::Point sliderDefaultDest; // 0x10
+    //...
+    Common::Rect shadesSrc[14]; // 0xD6
+    Common::Rect shadesDst; // 0x1B6
+    uint16 shadesFrameTime; // 0x1C6
+    Common::String inventoryBoxIconsImageName; // 0x1C8
+    Common::String inventoryCursorsImageName; // 0x1D2
+
+    Common::Rect emptySpaceSource; // 0x1E4
+    ItemDesc items[11]; // 0x1F4
 };
 
 } // End of namespace Nancy

@@ -52,7 +52,8 @@ public:
         _state (kInit),
         _sceneID (0),
         movementDirection(0),
-        stateChangeRequests(0) { }
+        stateChangeRequests(0),
+        scrollbarMouse(-1, -1) { }
 
     void process();
 
@@ -65,6 +66,8 @@ private:
 
     void handleMouse();
     void clearSceneData();
+
+    float handleScrollbar(uint id);
 
 public:
     enum State {
@@ -84,6 +87,19 @@ public:
         kCredits = 1 << 5,
         kMap = 1 << 6
     };
+
+    struct InventoryBox {
+        struct Item {
+            Common::Rect source;
+            Common::Rect dest;
+            int16 itemId = -1;
+        };
+
+        Item onScreenItems[4];
+        uint16 blindsAnimFrame = 6;
+
+        Time nextFrameTime;
+    };
     
     byte stateChangeRequests; // GameStateChange
 
@@ -93,6 +109,9 @@ public:
     uint16 _sceneID;
     bool doNotStartSound = false;
 
+    Inventory inventoryDesc;
+    InventoryBox inventoryBoxDesc;
+
 private:
     NancyEngine *_engine;
     SceneSummary currentScene;
@@ -100,6 +119,8 @@ private:
     uint32 _tickCount;
     uint32 _stashedTickCount;
     Time _nextBackgroundMovement;
+
+    Common::Point scrollbarMouse;
 
     bool isComingFromMenu = true;
     bool hasLoadedFromSavefile = false;

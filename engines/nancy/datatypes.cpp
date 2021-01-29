@@ -26,73 +26,103 @@
 
 namespace Nancy {
 
-SceneSummary::SceneSummary(Common::SeekableReadStream *stream) {
+// Simple helper function to read rectangles
+// TODO identical to the one in recordtypes.h, move somewhere else
+static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
+    inRect.left = stream.readUint32LE();
+    inRect.top = stream.readUint32LE();
+    inRect.right = stream.readUint32LE();
+    inRect.bottom = stream.readUint32LE();
+}
+
+void SceneSummary::read(Common::SeekableReadStream &stream) {
     char *buf = new char[0x32];
 
-    stream->read(buf, 0x31);
+    stream.read(buf, 0x31);
     buf[32] = 0;
     description = Common::String(buf);
 
-    stream->seek(1, SEEK_CUR);
-    stream->read(buf, 9);
+    stream.seek(1, SEEK_CUR);
+    stream.read(buf, 9);
     buf[9] = 0;
     videoFile = Common::String(buf);
 
     // skip 1 extra byte & 2 unknown bytes
-    stream->seek(3, SEEK_CUR);
-    videoFormat = stream->readUint16LE();
+    stream.seek(3, SEEK_CUR);
+    videoFormat = stream.readUint16LE();
 
-    stream->read(buf, 10);
+    stream.read(buf, 10);
     buf[9] = 0;
     audioFile = Common::String(buf);
-    audioID = stream->readSint16LE();
-    stream->skip(0xE);
-    audioVolume = stream->readUint16LE();
+    audioID = stream.readSint16LE();
+    stream.skip(0xE);
+    audioVolume = stream.readUint16LE();
 
-    stream->seek(0x72);
-    verticalScrollDelta = stream->readUint16LE();
-    horizontalEdgeSize = stream->readUint16LE();
-    verticalEdgeSize = stream->readUint16LE();
-    slowMoveTimeDelta = stream->readUint16LE();
-    fastMoveTimeDelta = stream->readUint16LE();
-    unknown7C = stream->readByte();
+    stream.seek(0x72);
+    verticalScrollDelta = stream.readUint16LE();
+    horizontalEdgeSize = stream.readUint16LE();
+    verticalEdgeSize = stream.readUint16LE();
+    slowMoveTimeDelta = stream.readUint16LE();
+    fastMoveTimeDelta = stream.readUint16LE();
+    unknown7C = stream.readByte();
 
     delete[] buf;
 }
 
 // Takes a VIEW chunk as input
-View::View(Common::SeekableReadStream *stream) {
-    stream->seek(0);
-    destination.left = stream->readUint32LE();
-    destination.top = stream->readUint32LE();
-    destination.right = stream->readUint32LE();
-    destination.bottom = stream->readUint32LE();
-    source.left = stream->readUint32LE();
-    source.top = stream->readUint32LE();
-    source.right = stream->readUint32LE();
-    source.bottom = stream->readUint32LE();
-    f1Dest.left = stream->readUint32LE();
-    f1Dest.top = stream->readUint32LE();
-    f1Dest.right = stream->readUint32LE();
-    f1Dest.bottom = stream->readUint32LE();
-    f2Dest.left = stream->readUint32LE();
-    f2Dest.top = stream->readUint32LE();
-    f2Dest.right = stream->readUint32LE();
-    f2Dest.bottom = stream->readUint32LE();
+void View::read(Common::SeekableReadStream &stream) {
+    stream.seek(0);
+    readRect(stream, destination);
+    readRect(stream, source);
+    readRect(stream, f1Dest);
+    readRect(stream, f2Dest);
 }
 
 // Takes a CURS chunk as input
-Cursors::Cursors(Common::SeekableReadStream *stream) {
-    stream->seek(0);
+void Cursors::read(Common::SeekableReadStream &stream) {
+    stream.seek(0);
     for (uint i = 0; i < 85; ++i) {
         Common::Rect &rect = rects[i];
-        rect.left = stream->readUint32LE();
-        rect.top = stream->readUint32LE();
-        rect.right = stream->readUint32LE();
-        rect.bottom = stream->readUint32LE();
+        rect.left = stream.readUint32LE();
+        rect.top = stream.readUint32LE();
+        rect.right = stream.readUint32LE();
+        rect.bottom = stream.readUint32LE();
     }
-    primaryVideoCursorX = stream->readUint16LE();
-    primaryVideoCursorY = stream->readUint16LE();
+    primaryVideoCursorX = stream.readUint16LE();
+    primaryVideoCursorY = stream.readUint16LE();
+}
+
+void Inventory::read(Common::SeekableReadStream &stream) {
+    stream.seek(0, SEEK_SET);
+
+    readRect(stream, sliderSource);
+    // Stored with uint16s for some reason
+    sliderDefaultDest.x = stream.readUint16LE();
+    sliderDefaultDest.y = stream.readUint16LE();
+
+    stream.seek(0xD6, SEEK_SET);
+    for (uint i = 0; i < 14; ++i) {
+        readRect(stream, shadesSrc[i]);
+    }
+    readRect(stream, shadesDst);
+    shadesFrameTime = stream.readUint16LE();
+
+    char name[10];
+    stream.read(name, 10);
+    inventoryBoxIconsImageName = Common::String(name);
+    stream.read(name, 10);
+    inventoryCursorsImageName = Common::String(name);
+
+    stream.skip(8);
+    readRect(stream, emptySpaceSource);
+
+    char itemName[14];
+    for (uint i = 0; i < 11; ++i) {
+        stream.read(itemName, 14);
+        items[i].name = Common::String(itemName);
+        items[i].unknown = stream.readUint16LE();
+        readRect(stream, items[i].sourceRect);
+    }
 }
 
 } // End of namespace Nancy
