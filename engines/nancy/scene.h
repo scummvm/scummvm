@@ -58,6 +58,8 @@ public:
     void process();
 
     void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
+    void addObjectToInventory(uint16 id);
+    void pickUpObject(uint16 id);
 
 private:
     void init();
@@ -87,19 +89,6 @@ public:
         kCredits = 1 << 5,
         kMap = 1 << 6
     };
-
-    struct InventoryBox {
-        struct Item {
-            Common::Rect source;
-            Common::Rect dest;
-            int16 itemId = -1;
-        };
-
-        Item onScreenItems[4];
-        uint16 blindsAnimFrame = 6;
-
-        Time nextFrameTime;
-    };
     
     byte stateChangeRequests; // GameStateChange
 
@@ -110,7 +99,6 @@ public:
     bool doNotStartSound = false;
 
     Inventory inventoryDesc;
-    InventoryBox inventoryBoxDesc;
 
 private:
     NancyEngine *_engine;

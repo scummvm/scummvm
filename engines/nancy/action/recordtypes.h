@@ -41,6 +41,15 @@ struct HotspotDesc {
     void readData(Common::SeekableReadStream &stream);
 };
 
+// Describes a single bitmap draw
+struct BitmapDesc {
+    uint16 frameID = 0;
+    Common::Rect src;
+    Common::Rect dest;
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
 // Describes a secondary video/movie's source and destination
 struct SecondaryVideoDesc {
     int16 frameID;
@@ -206,11 +215,6 @@ class PlayIntStaticBitmapAnimation : public SceneChange {
 // TODO this effectively also contains an EventFlags, consider multiple inheritance
 // or maybe splitting EventFlags into a separate struct
 public:
-    struct SrcDestDesc {
-        uint16 frameId = 0;
-        Common::Rect src;
-        Common::Rect dest;
-    };
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
@@ -230,7 +234,7 @@ public:
     Common::Array<Common::Rect> frameRects;
     // Describes how the animation will be displayed on a single
     // frame of the viewport
-    Common::Array<SrcDestDesc> srcDestRects;
+    Common::Array<BitmapDesc> bitmaps;
 
     uint16 currentFrame = 0;
     uint16 lastViewFrame = 0;
@@ -429,6 +433,11 @@ public:
 class ShowInventoryItem : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(NancyEngine *engine) override;
+ 
+    uint16 objectID = 0;
+    Common::String imageName;
+    Common::Array<BitmapDesc> bitmaps;
 };
 
 class PlayDigiSoundAndDie : public SceneChange {

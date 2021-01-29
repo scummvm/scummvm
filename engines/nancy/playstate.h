@@ -33,13 +33,18 @@ struct PlayState {
     enum Flag { kFalse = 1, kTrue = 2 }; // Could be the other way around
     enum TimeOfDay { kDay, kNight, kDuskDawn };
 
+    struct Inventory {
+        Inventory() { for (uint i = 0; i < 11; ++i) items[i] = kFalse; }
+        Flag items[11];
+        int16 heldItem = -1;
+    };
+
     // These two are used to keep track of what options the player picked in the
     // current conversation. Since they don't get stored they probably shouldn't
     // be here
     Flag logicConditions[30];
     Time logicConditionsTimestamps[30]; // Stores when the condition got satisfied
-    
-    Flag inventory[11];
+    Inventory inventory;
     Flag eventFlags[168];
     byte sceneHitCount[1000];
     uint16 difficulty; // 0, 1, 2

@@ -109,8 +109,25 @@ void Logic::processActionRecords() {
                         switch (dep.type) {
                             case kNone:
                                 record->satisfiedDependencies[i] = true;
+                                break;
                             case kInventory:
-                                // TODO
+                                switch (dep.condition) {
+                                    case 1:
+                                        // Item not in possession or held
+                                        if (_engine->playState.inventory.items[dep.label] == PlayState::kFalse &&
+                                            dep.label != _engine->playState.inventory.heldItem) {
+                                            record->satisfiedDependencies[i] = true;
+                                        }
+                                        break;
+                                    case 2:
+                                        if (_engine->playState.inventory.items[dep.label] == PlayState::kTrue ||
+                                            dep.label == _engine->playState.inventory.heldItem) {
+                                            record->satisfiedDependencies[i] = true;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
                                 break;
                             case kEventFlag:
                                 if (_engine->playState.eventFlags[dep.label] == dep.condition)

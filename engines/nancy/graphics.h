@@ -28,6 +28,7 @@
 #include "engines/nancy/datatypes.h"
 
 #include "common/func.h"
+#include "common/stack.h"
 
 #include "graphics/screen.h"
 
@@ -65,6 +66,29 @@ struct VideoChannel {
 
 class GraphicsManager {
 public:
+    struct InventoryBox {
+        struct Item {
+            Common::Rect source;
+            Common::Rect dest;
+            int16 itemId = -1;
+        };
+
+        // The generation of these coordinates is really long and stupid so
+        // just directly copy them for now
+        InventoryBox() {
+            onScreenItems[0].dest = Common::Rect(0x1B6, 0x152, 0x200, 0x18F);
+            onScreenItems[1].dest = Common::Rect(0x201, 0x152, 0x24B, 0x18F);
+            onScreenItems[2].dest = Common::Rect(0x1B6, 0x18F, 0x200, 0x1CC);
+            onScreenItems[3].dest = Common::Rect(0x201, 0x18F, 0x24B, 0x1CC);
+        }
+
+        Item onScreenItems[4];
+        Common::Array<uint16> itemsOrder;
+        int16 blindsAnimFrame = 6;
+
+        Time nextFrameTime;
+    };
+
     GraphicsManager(NancyEngine *engine);
     virtual ~GraphicsManager();
 
@@ -98,9 +122,10 @@ public:
     void setupSecondaryVideo(uint channel, uint16 begin, uint16 end, bool loop);
     void playSecondaryVideo(uint channel);
     void stopSecondaryVideo(uint channel);
-
     void loadSecondaryMovie(Common::String &filename);
     bool playSecondaryMovie(uint16 &outFrameNr);
+
+    void updateInvBox();
 
     Graphics::Surface _background;
     Graphics::Surface _frameTextBox;
@@ -108,6 +133,7 @@ public:
     Graphics::Surface _object0Surface;
     Graphics::Surface _inventoryBoxIconsSurface;
     Graphics::Surface _inventoryCursorsSurface;
+    Graphics::Surface _inventoryBitmapSurface;
     Graphics::Surface _genericSurface;
 
     VideoChannel channels[2];
@@ -115,6 +141,7 @@ public:
     AVFDecoder _secMovieDecoder;
 
     View viewportDesc;
+    InventoryBox inventoryBoxDesc;
 
     static const Graphics::PixelFormat pixelFormat;
     static const uint transColor;
