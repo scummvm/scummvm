@@ -511,6 +511,7 @@ void Player_PCE::updateSound() {
 int Player_PCE::readBuffer(int16 *buffer, const int numSamples) {
 	int sampleCopyCnt;
 	int samplesLeft = numSamples;
+	int16 *sampleBufferPtr = _sampleBuffer;
 
 	Common::StackLock lock(_mutex);
 
@@ -518,10 +519,11 @@ int Player_PCE::readBuffer(int16 *buffer, const int numSamples) {
 		// copy samples to output buffer
 		sampleCopyCnt = (samplesLeft < _sampleBufferCnt) ? samplesLeft : _sampleBufferCnt;
 		if (sampleCopyCnt > 0) {
-			memcpy(buffer, _sampleBuffer, sampleCopyCnt * sizeof(int16));
+			memcpy(buffer, sampleBufferPtr, sampleCopyCnt * sizeof(int16));
 			buffer += sampleCopyCnt;
 			samplesLeft -= sampleCopyCnt;
 			_sampleBufferCnt -= sampleCopyCnt;
+			sampleBufferPtr += sampleCopyCnt;
 		}
 
 		if (samplesLeft == 0)
@@ -531,12 +533,13 @@ int Player_PCE::readBuffer(int16 *buffer, const int numSamples) {
 		updateSound();
 		_psg->update(_sampleBuffer, _samplesPerPeriod / 2);
 		_sampleBufferCnt = _samplesPerPeriod;
+		sampleBufferPtr = _sampleBuffer;
 	}
 
 	// copy remaining samples to the front of the buffer
 	if (_sampleBufferCnt > 0) {
-		memmove(&_sampleBuffer[0],
-			&_sampleBuffer[_samplesPerPeriod - _sampleBufferCnt],
+		memmove(_sampleBuffer,
+			sampleBufferPtr,
 			_sampleBufferCnt * sizeof(int16));
 	}
 
