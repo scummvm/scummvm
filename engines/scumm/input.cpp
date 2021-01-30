@@ -395,7 +395,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			// WORKAROUND bug #12022: For some reason, skipping the cutscene in which Ben fires up
 			// his bike (after retrieving the keys from the bartender), will outright skip the first
 			// bike fight sequence. Because of this, the script which handles playing ambient and wind SFX
-			// outside the bar is never stopped, so those SFX are unintentionally played throughout the 
+			// outside the bar is never stopped, so those SFX are unintentionally played throughout the
 			// rest of the game.
 			// This fix produces the intended behaviour from the original interpreter.
 			if (_game.id == GID_FT && _currentRoom == 6

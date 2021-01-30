@@ -1348,6 +1348,7 @@ public:
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
+	void towns_clearStrip(int strip);
 #ifdef USE_RGB_COLOR
 	void towns_setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	void towns_setTextPaletteFromPtr(const byte *ptr);
@@ -1356,9 +1357,21 @@ protected:
 	void towns_processPalCycleField();
 	void towns_resetPalCycleFields();
 	void towns_restoreCharsetBg();
+	void towns_scriptScrollEffect(int dir);
+
+	void requestScroll(int dir);
+	void scrollLeft() {	requestScroll(-1); }
+	void scrollRight() { requestScroll(1); }
+	void towns_waitForScroll(int waitForDirection, int threshold = 0);
+	void towns_updateGfx();
 
 	Common::Rect _cyclRects[16];
 	int _numCyclRects;
+	int _scrollRequest;
+	int _scrollDeltaAdjust;
+	uint32 _scrollTimer;
+	uint32 _scrollDestOffset;
+	uint16 _scrollFeedStrips[3];
 
 	Common::Rect _curStringRect;
 
@@ -1369,6 +1382,11 @@ protected:
 	static const uint8 _townsLayer2Mask[];
 
 	TownsScreen *_townsScreen;
+#else
+	void scrollLeft() { redrawBGStrip(_gdi->_numStrips - 1, 1); }
+	void scrollRight() { redrawBGStrip(0, 1); }
+	void towns_updateGfx() {}
+	void towns_waitForScroll(int waitForDirection, int threshold = 0) {}
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 };
 

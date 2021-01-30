@@ -456,28 +456,28 @@ public:
 #endif
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-// Helper class for FM-Towns output (required for specific hardware effects like
-// switching graphics layers on and off).
+// Helper class for FM-Towns output (required for specific hardware effects like switching graphics layers on and off).
 class TownsScreen {
 public:
 	TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format);
 	~TownsScreen();
 
-	void setupLayer(int layer, int width, int height, int numCol, void *srcPal = 0);
+	void setupLayer(int layer, int width, int height, int scaleW, int scaleH, int numCol, void *srcPal = 0);
 	void clearLayer(int layer);
 	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
-	//void copyRectToLayer(int layer, int x, int y, int w, int h, const uint8 *src);
-
-	uint8 *getLayerPixels(int layer, int x, int y);
-	int getLayerPitch(int layer);
-	int getLayerHeight(int layer);
-	int getLayerBpp(int layer);
-	int getLayerScaleW(int layer);
-	int getLayerScaleH(int layer);
-
 	void addDirtyRect(int x, int y, int w, int h);
-	void toggleLayers(int flag);
+	void toggleLayers(int flags);
+	void scrollLayers(int flags, int offset);
 	void update();
+	bool isScrolling(int direction, int threshold = 0) const { return (direction == 0) ? _scrollRemainder != threshold : (direction == 1 ? _scrollRemainder > threshold : _scrollRemainder < threshold); }
+
+	uint8 *getLayerPixels(int layer, int x, int y) const;
+	int getLayerPitch(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].pitch : 0; }
+	int getLayerWidth(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].width : 0; }
+	int getLayerHeight(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].height : 0; }
+	int getLayerBpp(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].bpp : 0; }
+	int getLayerScaleW(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleW : 0; }
+	int getLayerScaleH(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleH : 0; }
 
 private:
 	void updateOutputBuffer();
@@ -488,9 +488,12 @@ private:
 		uint8 *pixels;
 		uint8 *palette;
 		int pitch;
+		int width;
 		int height;
+		int modW;
 		int bpp;
 		int numCol;
+		int hScroll;
 		uint8 scaleW;
 		uint8 scaleH;
 		bool onBottom;
@@ -507,6 +510,8 @@ private:
 	int _height;
 	int _width;
 	int _pitch;
+	uint16 _scrollOffset;
+	int _scrollRemainder;
 	Graphics::PixelFormat _pixelFormat;
 
 	int _numDirtyRects;

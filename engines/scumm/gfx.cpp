@@ -372,6 +372,11 @@ void ScummEngine::initScreens(int b, int h) {
 	_screenH = h;
 
 	_gdi->init();
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	// The right most visible strip for FM-Towns smooth scrolling
+	_scrollFeedStrips[0] = _gdi->_numStrips - 1;
+#endif
 }
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs,
@@ -661,13 +666,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		assert(IS_ALIGNED(text, 4));
 		assert(0 == (width & 3));
 
-		// Compose the text over the game graphics
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (_game.platform == Common::kPlatformFMTowns) {
 			towns_drawStripToScreen(vs, x, y, x, top, width, height);
 			return;
 		} else
 #endif
+		// Compose the text over the game graphics
 		if (_outputPixelFormat.bytesPerPixel == 2) {
 			const byte *srcPtr = (const byte *)src;
 			const byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
@@ -965,10 +970,10 @@ void ScummEngine::redrawBGAreas() {
 		diff = camera._cur.x - camera._last.x;
 		if (!_fullRedraw && diff == 8) {
 			val = -1;
-			redrawBGStrip(_gdi->_numStrips - 1, 1);
+			scrollLeft();
 		} else if (!_fullRedraw && diff == -8) {
 			val = +1;
-			redrawBGStrip(0, 1);
+			scrollRight();
 		} else if (_fullRedraw || diff != 0) {
 			if (_game.version <= 5) {
 				((ScummEngine_v5 *)this)->clearFlashlight();
@@ -3769,7 +3774,7 @@ void ScummEngine::fadeIn(int effect) {
 		_screenEffectFlag = true;
 		return;
 	}
-
+	towns_waitForScroll(0);
 	updatePalette();
 
 	switch (effect) {
@@ -3815,8 +3820,9 @@ void ScummEngine::fadeIn(int effect) {
 }
 
 void ScummEngine::fadeOut(int effect) {
-	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	towns_waitForScroll(0);
 
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	vs->setDirtyRange(0, 0);
 	if (_game.version < 7)
 		camera._last.x = camera._cur.x;
@@ -3859,10 +3865,7 @@ void ScummEngine::fadeOut(int effect) {
 			// Just blit screen 0 to the display (i.e. display will be black)
 			vs->setDirtyRange(0, vs->h);
 			updateDirtyScreen(kMainVirtScreen);
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			if (_townsScreen)
-				_townsScreen->update();
-#endif
+			towns_updateGfx();
 			break;
 		case 134:
 			dissolveEffect(1, 1);
@@ -4062,6 +4065,13 @@ void ScummEngine::dissolveEffect(int width, int height) {
 }
 
 void ScummEngine::scrollEffect(int dir) {
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	// The FM-Towns versions use smooth scrolling here, but only for left and right.
+	if (_game.platform == Common::kPlatformFMTowns && dir > 1) {
+		towns_scriptScrollEffect((dir & 1) * 2 - 1);
+		return;
+	}
+#endif
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
@@ -4084,7 +4094,7 @@ void ScummEngine::scrollEffect(int dir) {
 		//up
 		y = 1 + step;
 		while (y < vs->h) {
-			moveScreen(0, -step, vs->h);
+			moveScreen(0, -step * m, vs->h * m);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline + vs->h - step, 0, y - step, vs->w, step);
@@ -4107,7 +4117,7 @@ void ScummEngine::scrollEffect(int dir) {
 		// down
 		y = 1 + step;
 		while (y < vs->h) {
-			moveScreen(0, step, vs->h);
+			moveScreen(0, step * m, vs->h * m);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_townsScreen) {
 				towns_drawStripToScreen(vs, 0, vs->topline, 0, vs->h - y, vs->w, step);
@@ -4130,21 +4140,14 @@ void ScummEngine::scrollEffect(int dir) {
 		// left
 		x = 1 + step;
 		while (x < vs->w) {
-			moveScreen(-step, 0, vs->h);
+			moveScreen(-step * m, 0, vs->h * m);
 
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			if (_townsScreen) {
-				towns_drawStripToScreen(vs, vs->w - step, vs->topline, x - step, 0, step, vs->h);
-			} else
-#endif
-			{
-				src = vs->getPixels(x - step, 0);
-				_system->copyRectToScreen(src,
-					vsPitch,
-					(vs->w - step) * m, 0,
-					step * m, vs->h * m);
-				_system->updateScreen();
-			}
+			src = vs->getPixels(x - step, 0);
+			_system->copyRectToScreen(src,
+				vsPitch,
+				(vs->w - step) * m, 0,
+				step * m, vs->h * m);
+			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
@@ -4154,21 +4157,14 @@ void ScummEngine::scrollEffect(int dir) {
 		// right
 		x = 1 + step;
 		while (x < vs->w) {
-			moveScreen(step, 0, vs->h);
+			moveScreen(step * m, 0, vs->h * m);
 
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			if (_townsScreen) {
-				towns_drawStripToScreen(vs, 0, vs->topline, vs->w - x, 0, step, vs->h);
-			} else
-#endif
-			{
-				src = vs->getPixels(vs->w - x, 0);
-				_system->copyRectToScreen(src,
-					vsPitch,
-					0, 0,
-					step, vs->h);
-				_system->updateScreen();
-			}
+			src = vs->getPixels(vs->w - x, 0);
+			_system->copyRectToScreen(src,
+				vsPitch,
+				0, 0,
+				step, vs->h);
+			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
