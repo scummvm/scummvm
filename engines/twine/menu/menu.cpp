@@ -283,7 +283,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawSplittedBox(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_RED);
+			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_RED);
 		} else {
 			processPlasmaEffect(rect, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
@@ -806,7 +806,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	drawBox(rect);
 	Common::Rect splittedBoxRect(rect);
 	splittedBoxRect.grow(-1);
-	_engine->_interface->drawSplittedBox(splittedBoxRect, COLOR_BLACK);
+	_engine->_interface->drawFilledRect(splittedBoxRect, COLOR_BLACK);
 
 	const int32 newBoxLeft2 = left + 9;
 
@@ -818,7 +818,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 
 	const int32 boxTop = top + 10;
 	const int32 boxBottom = top + 25;
-	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), COLOR_91);
+	_engine->_interface->drawFilledRect(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), COLOR_91);
 	drawBox(newBoxLeft, boxTop, left + 324, boxTop + 14);
 
 	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
@@ -826,7 +826,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			const int32 pointBoxRight = _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints);
 			const Common::Rect pointsRect(newBoxLeft, top + 35, pointBoxRight, top + 50);
-			_engine->_interface->drawSplittedBox(pointsRect, COLOR_75);
+			_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
 			drawBox(newBoxLeft, top + 35, newBoxLeft + _engine->_gameState->magicLevelIdx * 80, top + 35 + 15);
 		}
 	}
@@ -914,11 +914,11 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		const int32 titleBoxTop = boxRect.bottom + titleOffset;
 		const int32 titleBoxBottom = titleBoxTop + titleHeight;
 
-		_engine->_interface->drawSplittedBox(boxRect, COLOR_BRIGHT_BLUE2);
+		_engine->_interface->drawFilledRect(boxRect, COLOR_BRIGHT_BLUE2);
 
 		// behaviour menu title
 		const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
-		_engine->_interface->drawSplittedBox(titleRect, COLOR_BLACK);
+		_engine->_interface->drawFilledRect(titleRect, COLOR_BLACK);
 		drawBox(titleRect);
 
 		_engine->_text->setFontColor(COLOR_WHITE);
@@ -929,7 +929,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
 		_engine->copyBlockPhys(titleRect);
 	} else {
-		_engine->_interface->drawSplittedBox(boxRect, COLOR_BLACK);
+		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}
 
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
@@ -1074,7 +1074,7 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	const int32 top = itemY - 32;
 	const int32 bottom = itemY + 32;
 	const Common::Rect rect(left, top, right, bottom);
-	_engine->_interface->drawSplittedBox(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
+	_engine->_interface->drawFilledRect(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
 		itemAngle[item] += 8;

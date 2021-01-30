@@ -66,7 +66,7 @@ public:
 	 */
 	void drawTransparentBox(const Common::Rect &rect, int32 colorAdj);
 
-	void drawSplittedBox(const Common::Rect &rect, uint8 colorIndex);
+	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
 
 	void setClip(const Common::Rect &rect);
 	void saveClip(); // saveTextWindow

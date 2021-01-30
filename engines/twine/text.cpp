@@ -785,7 +785,7 @@ void Text::drawAskQuestion(int32 index) {
 void Text::drawHolomapLocation(int32 index) {
 	textClipSmall();
 	setFontCrossColor(COLOR_WHITE);
-	_engine->_interface->drawSplittedBox(_dialTextBox, COLOR_BLACK);
+	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);
 	drawTextProgressive(index, false, false);
 }
 

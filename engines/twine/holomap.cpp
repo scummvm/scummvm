@@ -304,7 +304,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
 		_engine->_renderer->setLightVector(0xffffffc4, 128, 0);
 		const Common::Rect rect(0, 200, 199, 479);
-		_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
+		_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, newAngle, 0, modelPtr);
 		_engine->copyBlockPhys(rect);
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
@@ -513,7 +513,7 @@ void Holomap::processHolomap() {
 		if (redraw) {
 			redraw = false;
 			const Common::Rect rect(170, 0, 470, 330);
-			_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
+			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);

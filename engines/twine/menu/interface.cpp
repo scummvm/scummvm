@@ -169,7 +169,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 	}
 }
 
-void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
+void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
 	_engine->frontVideoBuffer.fillRect(rect, colorIndex);
 }
 

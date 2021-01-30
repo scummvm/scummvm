@@ -618,7 +618,7 @@ void Redraw::renderOverlays() {
 				const int32 item = overlay->info0;
 				const Common::Rect rect(10, 10, 69, 69);
 
-				_engine->_interface->drawSplittedBox(rect, COLOR_BLACK);
+				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 				_engine->_interface->setClip(rect);
 
 				uint8* bodyPtr = _engine->_resources->inventoryTable[item];
