@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-01-29 02:16+0000\n"
-"PO-Revision-Date: 2021-01-24 08:43+0000\n"
+"PO-Revision-Date: 2021-01-30 11:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4456,24 +4456,24 @@ msgstr "セーブしました。\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "あなたの言葉がわかりません! "
 
 #: engines/glk/scott/scott.cpp:774 engines/glk/scott/scott.cpp:1097
 #: engines/glk/scott/scott.cpp:1119
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "あなたの荷物はいっぱいです。 "
 
 #: engines/glk/scott/scott.cpp:776
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "私はもう持てません! "
 
 #: engines/glk/scott/scott.cpp:807
 msgid "You are dead.\n"
-msgstr ""
+msgstr "あなたは死にました。\n"
 
 #: engines/glk/scott/scott.cpp:809
 msgid "I am dead.\n"
-msgstr ""
+msgstr "私は死にました。\n"
 
 #: engines/glk/scott/scott.cpp:821
 msgid "The game is now over.\n"
@@ -4481,11 +4481,11 @@ msgstr "ゲームが終了しました。\n"
 
 #: engines/glk/scott/scott.cpp:836
 msgid "You have stored "
-msgstr ""
+msgstr "あなたは保存しました "
 
 #: engines/glk/scott/scott.cpp:838
 msgid "I've stored "
-msgstr ""
+msgstr "私は保存しました "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -4493,47 +4493,47 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Well done.\n"
-msgstr ""
+msgstr "やりましたね。\n"
 
 #: engines/glk/scott/scott.cpp:853
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "あなたが運んでいるもの：\n"
 
 #: engines/glk/scott/scott.cpp:855
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "私が運んでいるもの：\n"
 
 #: engines/glk/scott/scott.cpp:870
 msgid "Nothing"
-msgstr ""
+msgstr "なし"
 
 #: engines/glk/scott/scott.cpp:999
 msgid "Give me a direction too."
-msgstr ""
+msgstr "方向を指示してください。"
 
 #: engines/glk/scott/scott.cpp:1008
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "暗闇を進むのは危険です! "
 
 #: engines/glk/scott/scott.cpp:1016
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "あなたは倒れ、首が折れました。 "
 
 #: engines/glk/scott/scott.cpp:1018
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "私は倒れ、首が折れました。 "
 
 #: engines/glk/scott/scott.cpp:1023
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "あなたはその方向に行けません。 "
 
 #: engines/glk/scott/scott.cpp:1025
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "私はその方向に行けません。 "
 
 #: engines/glk/scott/scott.cpp:1083
 msgid "It is dark.\n"
-msgstr ""
+msgstr "暗闇です。\n"
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
@@ -4553,11 +4553,11 @@ msgstr "何を? "
 
 #: engines/glk/scott/scott.cpp:1127
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "それはあなたの力を超えています。 "
 
 #: engines/glk/scott/scott.cpp:1129
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "それは私の力を超えています。 "
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
@@ -4569,11 +4569,11 @@ msgstr "何も落ちていなかった。\n"
 
 #: engines/glk/scott/scott.cpp:1168
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "それはあなたの力を超えています。\n"
 
 #: engines/glk/scott/scott.cpp:1170
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "それは私の力を超えています。\n"
 
 #: engines/glk/zcode/zcode.cpp:145
 msgid "Error writing save file\n"
@@ -4612,7 +4612,7 @@ msgstr "攻撃"
 
 #: engines/griffon/metaengine.cpp:134
 msgid "Speed Up Cutscene"
-msgstr ""
+msgstr "ムービーをスピードアップ"
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
@@ -4641,6 +4641,9 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"ゲームデータのファイルに、いくつかの問題が見つかりました。\n"
+"このまま実行すると、ゲームのバグが発生したり、クラッシュする可能性があります。\n"
+"それでも%sを実行しますか?"
 
 #: engines/grim/grim.cpp:471 engines/grim/grim.cpp:558
 msgid "Run"
