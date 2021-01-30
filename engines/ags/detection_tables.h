@@ -105,4 +105,20 @@ static const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
+/**
+ * The fallback game descriptor used by the fallback detection code
+ */
+static AGSGameDescription g_fallbackDesc = {
+	{
+		"",
+		"",
+		AD_ENTRY1(0, 0),
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	nullptr
+};
+
 } // namespace AGS
