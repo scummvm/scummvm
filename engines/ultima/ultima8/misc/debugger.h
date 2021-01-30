@@ -151,7 +151,6 @@ private:
 	bool cmdTogglePaintEditorItems(int argc, const char **argv);
 	bool cmdToggleShowTouchingItems(int argc, const char **argv);
 	bool cmdCloseItemGumps(int argc, const char **argv);
-	bool cmdMemberVar(int argc, const char **argv);
 
 	// Avatar mover
 	bool cmdStartJump(int argc, const char **argv);

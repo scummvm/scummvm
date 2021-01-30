@@ -83,7 +83,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Ultima8Engine::engineStats", WRAP_METHOD(Debugger, cmdEngineStats));
 	registerCmd("Ultima8Engine::changeGame", WRAP_METHOD(Debugger, cmdChangeGame));
 	registerCmd("Ultima8Engine::listGames", WRAP_METHOD(Debugger, cmdListGames));
-	registerCmd("Ultima8Engine::memberVar", WRAP_METHOD(Debugger, cmdMemberVar));
 	registerCmd("Ultima8Engine::setVideoMode", WRAP_METHOD(Debugger, cmdSetVideoMode));
 	registerCmd("Ultima8Engine::toggleAvatarInStasis", WRAP_METHOD(Debugger, cmdToggleAvatarInStasis));
 	registerCmd("Ultima8Engine::togglePaintEditorItems", WRAP_METHOD(Debugger, cmdTogglePaintEditorItems));
@@ -351,77 +350,6 @@ bool Debugger::cmdCloseItemGumps(int argc, const char **argv) {
 	g->getDesktopGump()->CloseItemDependents();
 	return false;
 }
-
-bool Debugger::cmdMemberVar(int argc, const char **argv) {
-	if (argc == 1) {
-		debugPrintf("Usage: Ultima8Engine::memberVar <member> [newvalue] [updateini]\n");
-		return true;
-	}
-
-	Ultima8Engine *g = Ultima8Engine::get_instance();
-
-	// Set the pointer to the correct type
-	bool *b = nullptr;
-	int *i = nullptr;
-	Std::string *str = nullptr;
-	istring *istr = nullptr;
-
-	// ini entry name if supported
-	const char *ini = nullptr;
-
-	if (!scumm_stricmp(argv[1], "_frameLimit")) {
-		b = &g->_frameLimit;
-		ini = "frameLimit";
-	} else if (!scumm_stricmp(argv[1], "_frameSkip")) {
-		b = &g->_frameSkip;
-		ini = "frameSkip";
-	} else if (!scumm_stricmp(argv[1], "_interpolate")) {
-		b = &g->_interpolate;
-		ini = "interpolate";
-	} else {
-		debugPrintf("Unknown member: %s\n", argv[1]);
-		return true;
-	}
-
-	// Set the value
-	if (argc >= 3) {
-		if (b)
-			*b = !scumm_stricmp(argv[2], "yes") || !scumm_stricmp(argv[2], "true");
-		else if (istr)
-			*istr = argv[2];
-		else if (i)
-			*i = strtol(argv[2], 0, 0);
-		else if (str)
-			*str = argv[2];
-
-		// Set config value
-		if (argc >= 4 && ini && *ini && (!scumm_stricmp(argv[3], "yes") || !scumm_stricmp(argv[3], "true"))) {
-			if (b)
-				g->_settingMan->set(ini, *b);
-			else if (istr)
-				g->_settingMan->set(ini, *istr);
-			else if (i)
-				g->_settingMan->set(ini, *i);
-			else if (str)
-				g->_settingMan->set(ini, *str);
-		}
-	}
-
-	// Print the value
-	debugPrintf("Ultima8Engine::%s = ", argv[1]);
-	if (b)
-		debugPrintf("%s", strBool(*b));
-	else if (istr)
-		debugPrintf("%s", istr->c_str());
-	else if (i)
-		debugPrintf("%d", *i);
-	else if (str)
-		debugPrintf("%s", str->c_str());
-	debugPrintf("\n");
-
-	return true;
-}
-
 
 bool Debugger::cmdListSFX(int argc, const char **argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
