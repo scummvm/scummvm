@@ -451,11 +451,44 @@ void SceneManager::run() {
                     hovered == InputManager::passwordPuzzleEndID) {
             // TODO
         } else {
-            // ID must be an action record's
+            // Not a UI element, ID must be an action record's
             ActionRecord *rec = _engine->logic->getActionRecord(hovered);
             if (rec->isActive /*&& another condition !- 0*/) {
-                // TODO item holding logic
-                rec->state = ActionRecord::ExecutionState::kActionTrigger;
+                bool shouldTrigger = false;
+                int16 &heldItem = _engine->playState.inventory.heldItem;
+                if (rec->itemRequired != -1) {
+                    if (heldItem == -1 && rec->itemRequired == -2) {
+                        shouldTrigger = true;
+                    } else {
+                        if (rec->itemRequired <= 100) {
+                            if (heldItem == rec->itemRequired) {
+                                shouldTrigger = true;
+                            }
+                        } else if (rec->itemRequired <= 110 && rec->itemRequired - 100 != heldItem) {
+                            // IDs 100 - 110 mean the record will activate when the object is _not_ the specified one
+                            shouldTrigger = true;
+                        }
+                    }
+                } else {
+                    shouldTrigger = true;
+                }
+                if (shouldTrigger) {
+                    rec->state = ActionRecord::ExecutionState::kActionTrigger;
+                    
+                    if (rec->itemRequired > 100 && rec->itemRequired <= 110) {
+                        rec->itemRequired -= 100;
+                    }
+
+                    // Re-add the object to the inventory unless it's marked as a one-time use
+                    if (rec->itemRequired == heldItem && rec->itemRequired != -1) {
+                        if (inventoryDesc.items[heldItem].oneTimeUse != 0) {
+                            addObjectToInventory(heldItem);
+                        }
+
+                        heldItem = -1;
+                    }
+                }
+                
             }
         }
 
