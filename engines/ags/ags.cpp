@@ -391,7 +391,6 @@ bool AGSEngine::canSaveGameStateCurrently() {
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {
-	bool dataOverwritten;
 	(void)AGS3::try_restore_save(slot);
 	return Common::kNoError;
 }

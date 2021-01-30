@@ -39,7 +39,12 @@ struct AGSGameDescription {
 
 } // namespace AGS
 
+
 class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
+	mutable Common::String _gameid;
+	mutable Common::String _extra;
+	mutable Common::String _filename;
+
 public:
 	AGSMetaEngineDetection();
 	~AGSMetaEngineDetection() override {}
@@ -53,8 +58,10 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "";
+		return "AGS Engine (C) Chris Jones";
 	}
+
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
 #endif
