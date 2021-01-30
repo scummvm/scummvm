@@ -224,6 +224,12 @@ void add_palette_if_needed(Graphics::ManagedSurface &src, Graphics::ManagedSurfa
 	if (src.format.bytesPerPixel == 1 && dest.format.bytesPerPixel > 1) {
 		byte pal[PALETTE_SIZE];
 		palette_to_rgb8(_current_palette, pal);
+
+		// Set transparent color for index 0
+		pal[0] = 0xff;
+		pal[1] = 0;
+		pal[2] = 0xff;
+
 		src.setPalette(pal, 0, PALETTE_COUNT);
 	}
 }
@@ -234,7 +240,13 @@ void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int 
 
 	add_palette_if_needed(srcS, destS);
 
-	destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height), Common::Point(dst_x, dst_y));
+	if (dynamic_cast<Graphics::Screen *>(&destS) != nullptr) {
+		destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height),
+			Common::Point(dst_x, dst_y));
+	} else {
+		destS.rawBlitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height),
+			Common::Point(dst_x, dst_y), srcS.getPalette());
+	}
 }
 
 void stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
