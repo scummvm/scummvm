@@ -4543,8 +4543,40 @@ static const uint16 kq4PatchFallDownStairs[] = {
 	PATCH_END
 };
 
+// KQ4 1.003.006 is missing view 653 and crashes room 24 outside the waterfall.
+//  In the original this only occurred at high CPU speeds. View 653 animates the
+//  river's current, which was first added in this version, but it's only loaded
+//  when the game's speed test detects a fast machine. Sierra later released a
+//  KQ4FIX patch with the missing view and included it in subsequent versions.
+//  We fix this by not initializing view 653 when it's not present.
+//
+// Applies to: PC and Atari ST 1.003.006
+// Responsible method: Room24:init
+static const uint16 kq4SignatureMissingWaterfallView[] = {
+	0x39, SIG_SELECTOR8(new),       // pushi new
+	0x76,                           // push0
+	0x51, SIG_ADDTOOFFSET(+1),      // class Prop
+	0x4a, 0x04,                     // send 04 [ Prop new: ]
+	0xa3, 0x0c,                     // sal 0c  [ local12 = new Prop ]
+	SIG_ADDTOOFFSET(+14),
+	0x39, SIG_SELECTOR8(view),      // pushi view
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x028d),       // pusi 028d
+	SIG_ADDTOOFFSET(+83),
+	0x83, 0x0d,                     // lal 0d
+	0x4a, 0x34,                     // send 34 [ local13 ... view: 653 ... ]
+	SIG_END
+};
+
+static const uint16 kq4PatchMissingWaterfallView[] = {
+	0x33, 0x72,                     // jmp 72 [ skip missing view (local12 and local13) ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq4Signatures[] = {
+	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -20761,6 +20793,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				// Enable subtitle compatibility if a sync resource is present
 				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeSync, 10))) {
 					enablePatch(signatureTable, "subtitle patch compatibility");
+				}
+				break;
+			case GID_KQ4:
+				if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 653))) {
+					enablePatch(signatureTable, "missing waterfall view");
 				}
 				break;
 			case GID_KQ5:
