@@ -260,7 +260,11 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case KGETTIME_TIME_12HOUR :
-		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
+		loc_time.tm_hour %= 12;
+		if (loc_time.tm_hour == 0) {
+			loc_time.tm_hour = 12;
+		}
+		retval = (loc_time.tm_hour << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
 	case KGETTIME_TIME_24HOUR :
