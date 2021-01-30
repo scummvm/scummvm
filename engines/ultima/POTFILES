@@ -1,3 +1,4 @@
+engines/ultima/detection.cpp
 engines/ultima/shared/early/ultima_early.cpp
 engines/ultima/shared/engine/ultima.cpp
 engines/ultima/shared/engine/data_archive.cpp
