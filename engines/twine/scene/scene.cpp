@@ -676,7 +676,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
-					_engine->_text->drawTextFullscreen(zone->infoData.DisplayText.textIdx);
+					_engine->_text->drawTextProgressive(zone->infoData.DisplayText.textIdx);
 					_engine->unfreezeTime();
 					_engine->_redraw->redrawEngineActions(true);
 				}

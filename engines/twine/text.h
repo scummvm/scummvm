@@ -273,7 +273,7 @@ public:
 	 */
 	void drawText(int32 x, int32 y, const char *dialogue);
 
-	bool drawTextFullscreen(int32 index, bool playVox = true, bool loop = true);
+	bool drawTextProgressive(int32 index, bool playVox = true, bool loop = true);
 
 	/**
 	 * Gets dialogue text width size

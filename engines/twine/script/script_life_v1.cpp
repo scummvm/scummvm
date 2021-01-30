@@ -651,7 +651,7 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
 	engine->_scene->talkingActor = ctx.actorIdx;
-	engine->_text->drawTextFullscreen(textIdx);
+	engine->_text->drawTextProgressive(textIdx);
 	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
@@ -916,7 +916,7 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->talkColor);
 	engine->_scene->talkingActor = otherActorIdx;
-	engine->_text->drawTextFullscreen(textIdx);
+	engine->_text->drawTextProgressive(textIdx);
 	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
@@ -1302,7 +1302,7 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
 	engine->_scene->talkingActor = ctx.actorIdx;
-	engine->_text->drawTextFullscreen(textIdx);
+	engine->_text->drawTextProgressive(textIdx);
 	engine->_text->textClipSmall();
 	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
@@ -1611,7 +1611,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
-	engine->_text->drawTextFullscreen(TextId::kSendell);
+	engine->_text->drawTextProgressive(TextId::kSendell);
 	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();

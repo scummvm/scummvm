@@ -561,7 +561,7 @@ void TwinEEngine::processBookOfBu() {
 	_text->setFontCrossColor(COLOR_WHITE);
 	const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
 	cfgfile.FlagDisplayText = true;
-	_text->drawTextFullscreen(TextId::kBookOfBu);
+	_text->drawTextProgressive(TextId::kBookOfBu);
 	cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	_text->textClipSmall();
 	_text->drawTextBoxBackground = true;
@@ -579,7 +579,7 @@ void TwinEEngine::processBonusList() {
 	_text->setFontCrossColor(COLOR_WHITE);
 	const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
 	cfgfile.FlagDisplayText = true;
-	_text->drawTextFullscreen(TextId::kBonusList);
+	_text->drawTextProgressive(TextId::kBonusList);
 	cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	_text->textClipSmall();
 	_text->initSceneTextBank();

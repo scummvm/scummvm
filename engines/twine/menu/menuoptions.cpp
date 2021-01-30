@@ -61,16 +61,16 @@ void MenuOptions::newGame() {
 	_engine->_text->textClipFull();
 	_engine->_text->setFontCrossColor(COLOR_WHITE);
 
-	bool aborted = _engine->_text->drawTextFullscreen(TextId::kIntroText1);
+	bool aborted = _engine->_text->drawTextProgressive(TextId::kIntroText1);
 
 	// intro screen 2
 	if (!aborted) {
 		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG, RESSHQR_INTROSCREEN2PAL);
-		aborted |= _engine->_text->drawTextFullscreen(TextId::kIntroText2);
+		aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText2);
 
 		if (!aborted) {
 			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG, RESSHQR_INTROSCREEN3PAL);
-			aborted |= _engine->_text->drawTextFullscreen(TextId::kIntroText3);
+			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
 		}
 	}
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
