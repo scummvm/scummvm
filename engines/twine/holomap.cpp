@@ -205,8 +205,6 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	const int32 x = centerx - size / 2;
 	const int32 y = top;
 	_engine->_text->setFontColor(COLOR_WHITE);
-	// TODO: handle @ newline
-	// TODO: faded in? - looks like it - printText10 was used
 	_engine->_text->drawText(x, y, title);
 }
 
@@ -365,37 +363,37 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.x, loc.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.z + 1000);
-			int32 v20 = _engine->_renderer->destX;
-			int32 v18 = _engine->_renderer->destY;
-			int32 v19 = _engine->_renderer->destZ;
+			int32 xpos1 = _engine->_renderer->destX;
+			int32 ypos1 = _engine->_renderer->destY;
+			int32 zpos1 = _engine->_renderer->destZ;
 			_engine->_renderer->getBaseRotationPosition(0, 0, 1500);
-			int32 v22 = _engine->_renderer->destX;
-			int32 v23 = _engine->_renderer->destY;
-			int32 v24 = _engine->_renderer->destZ;
-			_engine->_renderer->setBaseRotation(xRot, yRot, zRot);
+			int32 xpos2 = _engine->_renderer->destX;
+			int32 ypos2 = _engine->_renderer->destY;
+			int32 zpos2 = _engine->_renderer->destZ;
+			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
 			_engine->_renderer->baseRotPosX = 0;
 			_engine->_renderer->baseRotPosY = 0;
 			_engine->_renderer->baseRotPosZ = 9500;
-			_engine->_renderer->getBaseRotationPosition(v20, v18, v19);
-			int v21 = _engine->_renderer->destZ;
-			_engine->_renderer->getBaseRotationPosition(v22, v23, v24);
+			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
+			int zpos1_copy = _engine->_renderer->destZ;
+			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (v21 > _engine->_renderer->destY) {
+				if (zpos1_copy > _engine->_renderer->destY) {
 					continue;
 				}
 			} else {
-				if (v21 < _engine->_renderer->destY) {
+				if (zpos1_copy < _engine->_renderer->destY) {
 					continue;
 				}
 			}
 
 			DrawListStruct &drawList = _engine->_redraw->drawList[n];
-			drawList.posValue = v21;
+			drawList.posValue = zpos1_copy;
 			drawList.actorIdx = locationIdx;
 			drawList.type = 0;
-			drawList.x = v20;
-			drawList.y = v18;
-			drawList.z = v21;
+			drawList.x = xpos1;
+			drawList.y = ypos1;
+			drawList.z = zpos1_copy;
 			drawList.offset = n;
 			drawList.field_C = flags;
 			drawList.field_E = 0;
@@ -404,8 +402,8 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 		}
 	}
 	_engine->_redraw->sortDrawingList(_engine->_redraw->drawList, n);
-	for (int v13 = 0; v13 < n; ++v13) {
-		const DrawListStruct &drawList = _engine->_redraw->drawList[v13];
+	for (int i = 0; i < n; ++i) {
+		const DrawListStruct &drawList = _engine->_redraw->drawList[i];
 		const uint16 flags = drawList.field_C;
 		const uint8 *bodyPtr = nullptr;
 		if (flags == 1u) {

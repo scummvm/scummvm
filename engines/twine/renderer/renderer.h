@@ -382,6 +382,8 @@ private:
 	uint8 *prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
 	uint8 *prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
 
+	void baseMatrixTranspose();
+
 public:
 	Renderer(TwinEEngine *engine);
 	~Renderer();
@@ -419,7 +421,7 @@ public:
 	void setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ);
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
-	void setBaseRotation(int32 x, int32 y, int32 z);
+	void setBaseRotation(int32 x, int32 y, int32 z, bool transpose = false);
 	void setOrthoProjection(int32 x, int32 y, int32 z);
 
 	bool renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr);

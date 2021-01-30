@@ -110,7 +110,20 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 	isUsingOrthoProjection = true;
 }
 
-void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
+void Renderer::baseMatrixTranspose() {
+	const Matrix tmpMatrix = baseMatrix;
+	baseMatrix.row1[0] = tmpMatrix.row1[0];
+	baseMatrix.row1[1] = tmpMatrix.row2[0];
+	baseMatrix.row1[2] = tmpMatrix.row3[0];
+	baseMatrix.row2[0] = tmpMatrix.row1[1];
+	baseMatrix.row2[1] = tmpMatrix.row2[1];
+	baseMatrix.row2[2] = tmpMatrix.row3[1];
+	baseMatrix.row3[0] = tmpMatrix.row1[2];
+	baseMatrix.row3[1] = tmpMatrix.row2[2];
+	baseMatrix.row3[2] = tmpMatrix.row3[2];
+}
+
+void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
@@ -133,6 +146,9 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 	baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
 	baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
 
+	if (transpose) {
+		baseMatrixTranspose();
+	}
 	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
 
 	baseRotPosX = destX;
