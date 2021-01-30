@@ -110,6 +110,7 @@ enum _TextId {
 #define COLOR_BLACK 0
 #define COLOR_BRIGHT_BLUE 4
 #define COLOR_9 9
+#define COLOR_14 14
 #define COLOR_RED 68
 #define COLOR_73 73
 #define COLOR_75 75

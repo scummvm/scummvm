@@ -138,7 +138,7 @@ void Resources::initResources() {
 	}
 
 	_engine->_text->setFontParameters(2, 8);
-	_engine->_text->setFontColor(14);
+	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
 	spriteShadowSize = HQR::getAllocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
