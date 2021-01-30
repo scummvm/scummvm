@@ -443,7 +443,6 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(COLOR_9);
 
-	drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 	int currentLocation = _engine->_scene->currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 	_engine->flip();
@@ -514,6 +513,7 @@ void Holomap::processHolomap() {
 			redraw = false;
 			const Common::Rect rect(170, 0, 470, 330);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
+			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
