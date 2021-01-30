@@ -513,10 +513,18 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 		const uint32 *dstPalette, const Surface *mask, bool maskOnly) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+	byte rt1 = 0, gt1 = 0, bt1 = 0, rt2 = 0, gt2 = 0, bt2 = 0;
 
 	byte *lookup = nullptr;
 	if (srcPalette && dstPalette)
 		lookup = createPaletteLookup(srcPalette, dstPalette);
+
+	// If we're dealing with a 32-bit source surface, we need to split up the RGB,
+	// since we'll want to find matching RGB pixels irrespective of the alpha
+	bool isTrans32 = src.format.bytesPerPixel == 4 && transColor != (uint32)-1;
+	if (isTrans32) {
+		src.format.colorToRGB(transColor, rt1, gt1, bt1);
+	}
 
 	// Loop through drawing output lines
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
@@ -536,7 +544,12 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 				continue;
 
 			TSRC srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
-			if (srcVal == transColor && !maskOnly)
+			if (isTrans32 && !maskOnly) {
+				src.format.colorToRGB(srcVal, rt2, gt2, bt2);
+				if (rt1 == rt2 && gt1 == gt2 && bt1 == bt2)
+					continue;
+
+			} else if (srcVal == transColor && !maskOnly)
 				continue;
 
 			if (mask) {
