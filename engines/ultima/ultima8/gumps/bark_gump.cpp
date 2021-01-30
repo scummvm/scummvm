@@ -44,7 +44,7 @@ BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) 
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
 	_speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
-	_textDelay = ConfMan.getBool("textdelay");
+	_textDelay = ConfMan.getInt("textdelay");
 }
 
 BarkGump::~BarkGump(void) {
@@ -213,7 +213,7 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!widget)
 		return false;
 
-	_textDelay = ConfMan.getBool("textdelay");
+	_textDelay = ConfMan.getInt("textdelay");
 
 	// This is just a hack
 	Rect d;
