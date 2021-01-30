@@ -20,10 +20,11 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/u8_game.h"
 #include "ultima/ultima8/games/remorse_game.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
@@ -59,9 +60,7 @@ Game *Game::createGame(const GameInfo *info) {
 }
 
 uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
-	SettingManager *settingman = SettingManager::get_instance();
-	settingman->set("endgame", true);
-	settingman->write();
+	ConfMan.setBool("endgame", true);
 
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->untransformPalette(PaletteManager::Pal_Game);

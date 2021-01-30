@@ -20,12 +20,13 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,7 +44,7 @@ BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) 
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
 	_speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
-	SettingManager::get_instance()->get("textdelay", _textDelay);
+	_textDelay = ConfMan.getBool("textdelay");
 }
 
 BarkGump::~BarkGump(void) {
@@ -212,7 +213,7 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!widget)
 		return false;
 
-	SettingManager::get_instance()->get("textdelay", _textDelay);
+	_textDelay = ConfMan.getBool("textdelay");
 
 	// This is just a hack
 	Rect d;

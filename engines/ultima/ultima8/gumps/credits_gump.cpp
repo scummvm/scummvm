@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/gumps/credits_gump.h"
 
 #include "ultima/ultima8/ultima8.h"
@@ -28,7 +30,6 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -160,9 +161,7 @@ void CreditsGump::run() {
 		_state = CS_CLOSING;
 
 		if (!_configKey.empty()) {
-			SettingManager *settingman = SettingManager::get_instance();
-			settingman->set(_configKey, true);
-			settingman->write();
+			ConfMan.setBool(_configKey, true);
 		}
 
 		return;

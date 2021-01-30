@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
@@ -32,7 +33,6 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
@@ -432,9 +432,7 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 	// play PC/NPC footsteps
-	SettingManager *settingman = SettingManager::get_instance();
-	bool playavfootsteps;
-	settingman->get("footsteps", playavfootsteps);
+	bool playavfootsteps = ConfMan.getBool("footsteps");
 	if (_itemNum != 1 || playavfootsteps) {
 		UCList itemlist(2);
 		LOOPSCRIPT(script, LS_TOKEN_TRUE);

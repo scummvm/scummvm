@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/remorse_menu_gump.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -33,7 +35,6 @@
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
@@ -124,11 +125,8 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 	logo->InitGump(this, false);
 
 	if (!_nameEntryMode) {
-		SettingManager *settingman = SettingManager::get_instance();
-		bool endgame = false;
-		bool quotes = false;
-		settingman->get("endgame", endgame);
-		settingman->get("quotes", quotes);
+		bool endgame = ConfMan.getBool("endgame");
+		bool quotes = ConfMan.getBool("quotes");
 
 		int x = _dims.width() / 2 + 14;
 		int y = 18;
@@ -222,10 +220,8 @@ void MenuGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 void MenuGump::selectEntry(int entry) {
-	SettingManager *settingman = SettingManager::get_instance();
-	bool endgame, quotes;
-	settingman->get("endgame", endgame);
-	settingman->get("quotes", quotes);
+	bool endgame = ConfMan.getBool("endgame");
+	bool quotes = ConfMan.getBool("quotes");
 
 	switch (entry) {
 	case 1: // Intro

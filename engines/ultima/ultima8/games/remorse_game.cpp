@@ -20,10 +20,11 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/remorse_game.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
@@ -42,11 +43,9 @@ namespace Ultima8 {
 
 RemorseGame::RemorseGame() : Game() {
 	// Set some defaults for gameplay-related settings
-	SettingManager *settingman = SettingManager::get_instance();
-	settingman->setDefault("skipstart", false);
-	settingman->setDefault("endgame", false);
-	settingman->setDefault("footsteps", true);
-	settingman->setDefault("textdelay", 5);
+	ConfMan.registerDefault("endgame", true);
+	ConfMan.registerDefault("footsteps", true);
+	ConfMan.registerDefault("textdelay", 5);
 }
 
 RemorseGame::~RemorseGame() {

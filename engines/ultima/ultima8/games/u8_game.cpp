@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/u8_game.h"
@@ -35,7 +37,6 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/credits_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -49,18 +50,16 @@ namespace Ultima8 {
 
 U8Game::U8Game() : Game() {
 	// Set some defaults for gameplay-related settings
-	SettingManager *settingman = SettingManager::get_instance();
-	settingman->setDefault("skipstart", false);
-	settingman->setDefault("endgame", false);
-	settingman->setDefault("quotes", false);
-	settingman->setDefault("footsteps", true);
-	settingman->setDefault("targetedjump", true);
+	ConfMan.registerDefault("endgame", false);
+	ConfMan.registerDefault("quotes", false);
+	ConfMan.registerDefault("footsteps", true);
+	ConfMan.registerDefault("targetedjump", true);
 
 	const GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
 	if (info->_language == GameInfo::GAMELANG_JAPANESE) {
-		settingman->setDefault("textdelay", 20);
+		ConfMan.registerDefault("textdelay", 20);
 	} else {
-		settingman->setDefault("textdelay", 8);
+		ConfMan.registerDefault("textdelay", 8);
 	}
 }
 

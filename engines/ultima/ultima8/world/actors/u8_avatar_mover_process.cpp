@@ -20,13 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/misc/direction_util.h"
@@ -706,9 +707,7 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 		return;
 	}
 
-	bool targeting;
-	SettingManager::get_instance()->get("targetedjump", targeting);
-
+	bool targeting = ConfMan.getBool("targetedjump");
 	if (targeting) {
 		Mouse *mouse = Mouse::get_instance();
 		int32 coords[3];
