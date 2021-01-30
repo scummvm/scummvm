@@ -121,8 +121,75 @@ void PoliceBust(ArgArray args) {
 }
 
 void DossierAdd(ArgArray args) {
-    // assert types
-    debug("WARNING: DossierAdd is not implemented");
+
+    assert (args.size() == 2);
+    Common::String *s = new Common::String(args[0].u.str);
+    DossierInfo *m = (DossierInfo*) malloc(sizeof(DossierInfo));
+    m->page1 = s;
+
+    if (strcmp(args[1].u.str, "\"\"") != 0) {
+        Common::String *s = new Common::String(args[1].u.str);
+        m->page2 = s;
+
+    } else {
+        m->page2 = NULL;
+    }
+
+    g_private->_dossiers.push_back(*m);
+}
+
+void DossierBitmap(ArgArray args) {
+
+    assert (args.size() == 2);
+    
+    int x = args[0].u.val;
+    int y = args[1].u.val;
+
+    assert(x == 40 && y == 30);
+
+    g_private->loadDossier();
+
+}
+
+void DossierChgSheet(ArgArray args) {
+    debug("WARNING: DossierChgSheet is not implemented");
+}
+
+void DossierPrevSuspect(ArgArray args) {
+    assert (args.size() == 3);
+    Common::String *s = new Common::String(args[0].u.str);
+    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+
+    int x = args[1].u.val;
+    int y = args[2].u.val;
+
+    m->surf = g_private->loadMask(*s, x, y, true);
+    m->cursor = new Common::String("kExit");
+    m->nextSetting = NULL;
+    m->flag1 = NULL;
+    m->flag2 = NULL;
+    g_private->_dossierPrevSuspectMask = m;
+    g_private->_masks.push_front(*m);
+    debug("origin: %d, %d, %d", g_private->_origin->x, g_private->_origin->y, g_private->_mode);
+    //debug("WARNING: DossierPrevSuspect is not implemented");
+}
+
+void DossierNextSuspect(ArgArray args) {
+    assert (args.size() == 3);
+    Common::String *s = new Common::String(args[0].u.str);
+    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+
+    int x = args[1].u.val;
+    int y = args[2].u.val;
+
+    m->surf = g_private->loadMask(*s, x, y, true);
+    m->cursor = new Common::String("kExit");
+    m->nextSetting = NULL;
+    m->flag1 = NULL;
+    m->flag2 = NULL;
+    g_private->_dossierNextSuspectMask = m;
+    g_private->_masks.push_front(*m);
+    //debug("WARNING: DossierNextSuspect is not implemented");
 }
 
 void NoStopSounds(ArgArray args) {
@@ -190,11 +257,12 @@ void Inventory(ArgArray args) {
         g_private->playSound(*f, 1);
 
     } else { 
-        if (v1.type == NAME)
+        if (v1.type == NAME) {
             if (strcmp(c.u.str, "\"REMOVE\"") == 0)
                 v1.u.sym->u.val = 0;
             else
                 v1.u.sym->u.val = 1;
+        }
 
         if (v2.type == NAME)
             v2.u.sym->u.val = 1;
@@ -525,6 +593,7 @@ static struct FuncTable {
     { Resume,          "Resume"},
     { Goto,            "goto"},
     { SetFlag,         "SetFlag"},
+    { SetModifiedFlag, "SetModifiedFlag"},
     { Timer,	       "Timer"},
 
     // Sounds
@@ -550,14 +619,20 @@ static struct FuncTable {
     { Transition,      "Transition"},
     { Movie,           "Movie"},
 
-    { SetModifiedFlag, "SetModifiedFlag"},
+
     { Exit,            "Exit"},
     { Quit,            "Quit"},
     { LoadGame,        "LoadGame"},
     { SaveGame,        "SaveGame"},
     { AskSave,         "AskSave"},
 
+    // Dossiers
     { DossierAdd,      "DossierAdd"},
+    { DossierChgSheet, "DossierChgSheet"},
+    { DossierBitmap,   "DossierBitmap"},
+    { DossierPrevSuspect, "DossierPrevSuspect"},
+    { DossierNextSuspect, "DossierNextSuspect"},
+    
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},

@@ -55,6 +55,9 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _saveGameMask = NULL;
     _loadGameMask = NULL;
 
+    _dossierNextSuspectMask = NULL;
+    _dossierPrevSuspectMask = NULL;
+
     _nextSetting = NULL;
     _currentSetting = NULL;
     _nextMovie = NULL;
@@ -88,6 +91,9 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _policeRadioPrefix = new Common::String("inface/radio/police/");
     _phonePrefix = new Common::String("inface/telephon/");
     _phoneCallSound = new Common::String("phone.wav");
+
+    _dossierPage = 0;
+    _dossierSuspect = 0;
 
 }
 
@@ -178,16 +184,16 @@ Common::Error PrivateEngine::run() {
             case Common::EVENT_KEYDOWN:
                 if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
                     skipVideo();
-                else if (event.kbd.keycode == Common::KEYCODE_m) {
-                    if ( _pausedSetting == NULL) {
-                        _pausedSetting = _currentSetting;
-                        _nextSetting = &kPauseMovie;
-                    }
-                }
-                else if (event.kbd.keycode == Common::KEYCODE_p) {
-                    debug("Number of clicks %d", _numberClicks);
+                //else if (event.kbd.keycode == Common::KEYCODE_m) {
+                //    if ( _pausedSetting == NULL) {
+                //        _pausedSetting = _currentSetting;
+                //        _nextSetting = &kPauseMovie;
+                //    }
+                //}
+                //else if (event.kbd.keycode == Common::KEYCODE_p) {
+                //    debug("Number of clicks %d", _numberClicks);
 
-                }
+                //}
                 break;
 
             case Common::EVENT_QUIT:
@@ -195,7 +201,13 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_LBUTTONDOWN:
-                _numberClicks++; 
+                _numberClicks++;
+                if (selectDossierNextSuspect(mousePos))
+                  break;
+                else if (selectDossierPrevSuspect(mousePos))
+                  break;
+
+                selectPauseMovie(mousePos);
                 selectPhoneArea(mousePos);
                 selectPoliceRadioArea(mousePos);
                 selectAMRadioArea(mousePos);
@@ -250,14 +262,7 @@ Common::Error PrivateEngine::run() {
 
         if (_nextSetting != NULL) {
             debug("Executing %s", _nextSetting->c_str());
-            _exits.clear();
-            _masks.clear();
-            _loadGameMask = NULL;
-            _saveGameMask = NULL;
-            _policeRadioArea = NULL;
-            _policeRadioArea = NULL;
-            _AMRadioArea = NULL;
-            _phoneArea = NULL;
+            clearAreas();
             _currentSetting = _nextSetting;
             loadSetting(_nextSetting);
             _nextSetting = NULL;
@@ -270,6 +275,17 @@ Common::Error PrivateEngine::run() {
     }
 
     return Common::kNoError;
+}
+
+void PrivateEngine::clearAreas() {
+    _exits.clear();
+    _masks.clear();
+    _loadGameMask = NULL;
+    _saveGameMask = NULL;
+    _policeRadioArea = NULL;
+    _policeRadioArea = NULL;
+    _AMRadioArea = NULL;
+    _phoneArea = NULL;
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -313,13 +329,14 @@ void PrivateEngine::checkPoliceBust() {
             Common::String *pv = new Common::String(f);
             _nextMovie = pv;
         }
+
         _policeBustSetting = _currentSetting;
         _nextSetting = &kPoliceBustFromMO;
         _numberClicks++; // Won't execute again
+        clearAreas();
+        // FIXME: this should clear all the masks and exits
     }
-
 }
-
 
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
     //debug("Mousepos %d %d", mousePos.x, mousePos.y);
@@ -387,6 +404,19 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
         }
     }
     return inside;
+}
+
+void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
+    if (_mode == 1) {
+        Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+        if (!window.contains(mousePos)) {
+            if ( _pausedSetting == NULL) {
+                _pausedSetting = _currentSetting;
+                _nextSetting = &kPauseMovie;
+            }
+        }
+    }
+
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
@@ -526,6 +556,57 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 
 }
 
+void PrivateEngine::loadDossier() {
+    int x = 40;
+    int y = 30;
+    int i = _dossierSuspect;
+    int j = _dossierPage;
+
+    DossierInfo m = _dossiers[i];
+
+    if (j == 0) {
+        loadImage(*m.page1, x, y);
+    } else if (j == 1) {
+        loadImage(*m.page2, x, y);
+    } else
+        assert(0);
+}
+
+
+bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
+    if (_dossierNextSuspectMask == NULL)
+        return false;
+
+    if (inMask(_dossierNextSuspectMask->surf, mousePos)) {
+        if ((_dossierSuspect + 1) < _dossiers.size()) {
+            _dossierSuspect++;
+            _dossierPage = 0;
+            loadDossier();
+            drawMask(_dossierNextSuspectMask->surf);
+            drawMask(_dossierPrevSuspectMask->surf);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
+    if (_dossierPrevSuspectMask == NULL)
+        return false;
+
+    if (inMask(_dossierPrevSuspectMask->surf, mousePos)) {
+        if (_dossierSuspect > 0) {
+            _dossierSuspect--;
+            _dossierPage = 0;
+            loadDossier();
+            drawMask(_dossierNextSuspectMask->surf);
+            drawMask(_dossierPrevSuspectMask->surf);
+        }
+        return true;
+    }
+    return false;
+
+}
 
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
     if (_loadGameMask == NULL)
@@ -559,7 +640,7 @@ void PrivateEngine::restartGame() {
         if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
             sym->u.val = 0;
     }
-    // TODO: reset sound lists
+    // FIXME: reset movies/sound lists
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -782,15 +863,25 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 
     _image->loadStream(file);
     Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
+    Graphics::Surface *screen = g_system->lockScreen();
+
     surf->create(_screenW, _screenH, _pixelFormat);
+    surf->transBlitFrom(*screen);
+    g_system->unlockScreen();
+
     surf->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y));
 
     if (drawn) {
-        _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin + Common::Point(x,y), _transparentColor);
+        _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin, _transparentColor);
         drawScreen();
     }
 
     return surf;
+}
+
+void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
+    _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin, _transparentColor);
+    drawScreen();
 }
 
 void PrivateEngine::drawScreen() {

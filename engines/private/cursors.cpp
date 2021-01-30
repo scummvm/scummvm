@@ -333,7 +333,7 @@ void PrivateEngine::changeCursor(Common::String cursor) {
     else
         s = Common::Point(32, 32);
 
-    CursorMan.replaceCursor(_cursorData.getVal(cursor), s.x, s.y, p.x, p.y, 0, true);
+    CursorMan.replaceCursor(_cursorData.getVal(cursor), s.x, s.y, p.x, p.y, 0, false);
     CursorMan.showMouse(true);
 }
 
