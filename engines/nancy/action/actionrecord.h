@@ -43,7 +43,8 @@ enum DependencyType : byte {
     kPlayerTime         = 6,
     // ...
     kSceneCount         = 9,
-    // ...
+    kResetOnNewDay      = 10,
+    kUseItem            = 11,
     kTimeOfDay          = 12,
     kTimerNotDone       = 13,
     kTimerDone          = 14,
@@ -75,7 +76,9 @@ public:
         orFlags(nullptr),
         isDone(false),
         hasHotspot(false),
-        state(ExecutionState::kBegin) {}
+        state(ExecutionState::kBegin),
+        days(-1),
+        itemRequired(-1) {}
     virtual ~ActionRecord() { delete[] dependencies; delete rawData; delete[] satisfiedDependencies; delete[] timers; delete orFlags; }
 
     virtual uint16 readData(Common::SeekableReadStream &stream) =0;
@@ -105,6 +108,8 @@ public:
     bool hasHotspot;                // 0x85
     Common::Rect hotspot;           // 0x89
     ExecutionState state;           // 0x91
+    int16 days;                     // 0x95
+    int8 itemRequired;              // 0x97
 };
 
 } // End of namespace Nancy

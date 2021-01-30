@@ -81,7 +81,7 @@ struct Cursors {
 struct Inventory {
     struct ItemDesc {
         Common::String name; // 0x00
-        byte unknown = 0; // 0x14
+        byte oneTimeUse = 0; // 0x14
         Common::Rect sourceRect; // 0x16
     };
 

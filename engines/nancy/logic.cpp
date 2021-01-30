@@ -179,12 +179,45 @@ void Logic::processActionRecords() {
                                         break;
                                 }
                                 break;
-                            /*case 10:
-                                // TODO
+                            case kResetOnNewDay:
+                                if (record->days == -1) {
+                                    record->days = _engine->playState.playerTime.getDays();
+                                    record->satisfiedDependencies[i] = true;
+                                    break;
+                                }
+
+                                if (record->days < _engine->playState.playerTime.getDays()) {
+                                    record->days = _engine->playState.playerTime.getDays();
+                                    for (uint j = 0; j < record->numDependencies; ++j) {
+                                        if (record->dependencies[j].type == kPlayerTime) {
+                                            record->satisfiedDependencies[j] = false;
+                                        }
+                                    }
+                                }
                                 break;
-                            case 11:
-                                // TODO
-                                break;*/
+                            case kUseItem: {
+                                bool hasUnsatisfiedDeps = false;
+                                if (record->numDependencies > 1) {
+                                    for (uint j = 0; j < record->numDependencies; ++j) {
+                                        if (j != i && record->satisfiedDependencies[j] == false) {
+                                            hasUnsatisfiedDeps = true;
+                                        }
+                                    }
+                                }
+
+                                if (hasUnsatisfiedDeps) {
+                                    break;
+                                }
+
+                                record->itemRequired = dep.label;
+
+                                if (dep.condition == 1) {
+                                    record->itemRequired += 100;
+                                }
+                                
+                                record->satisfiedDependencies[i] = true;
+                                break;
+                            }
                             case kTimeOfDay:
                                 if (dep.label == (byte)_engine->playState.timeOfDay)
                                     record->satisfiedDependencies[i] = true;

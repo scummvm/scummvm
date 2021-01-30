@@ -120,7 +120,7 @@ void Inventory::read(Common::SeekableReadStream &stream) {
     for (uint i = 0; i < 11; ++i) {
         stream.read(itemName, 0x14);
         items[i].name = Common::String(itemName);
-        items[i].unknown = stream.readUint16LE();
+        items[i].oneTimeUse = stream.readUint16LE();
         readRect(stream, items[i].sourceRect);
     }
 }
