@@ -334,17 +334,17 @@ bool Ultima8Engine::startupGame() {
 	ConfMan.registerDefault("overridefonts", false);
 	_ttfOverrides = ConfMan.getBool("overridefonts");
 
-	_settingMan->setDefault("frameSkip", false);
-	_settingMan->get("frameSkip", _frameSkip);
+	ConfMan.registerDefault("frameSkip", false);
+	_frameSkip = ConfMan.getBool("frameSkip");
 
-	_settingMan->setDefault("frameLimit", true);
-	_settingMan->get("frameLimit", _frameLimit);
+	ConfMan.registerDefault("frameLimit", true);
+	_frameLimit = ConfMan.getBool("frameLimit");
 
-	_settingMan->setDefault("interpolate", true);
-	_settingMan->get("interpolate", _interpolate);
+	ConfMan.registerDefault("interpolate", true);
+	_interpolate = ConfMan.getBool("interpolate");
 
-	_settingMan->setDefault("cheat", false);
-	_settingMan->get("cheat", _cheatsEnabled);
+	ConfMan.registerDefault("cheat", false);
+	_cheatsEnabled = ConfMan.getBool("cheat");
 
 	bool loaded = _game->loadFiles();
 	if (!loaded)
