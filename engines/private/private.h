@@ -74,12 +74,21 @@ typedef struct PhoneInfo {
     int val;
 } PhoneInfo;
 
+typedef struct DossierInfo {
+    Common::String *page1;
+    Common::String *page2;
+} DossierInfo;
+
 // lists
 
 typedef Common::List<ExitInfo> ExitList;
 typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
+
+// arrays
+
+typedef Common::Array<DossierInfo> DossierArray;
 
 // hash tables
 
@@ -106,7 +115,10 @@ public:
 
     Common::Error run() override;
     void restartGame();
+    void clearAreas();
     void initializePath(const Common::FSNode &gamePath) override;
+
+    void selectPauseMovie(Common::Point);
     void selectMask(Common::Point);
     void selectExit(Common::Point);
 
@@ -145,6 +157,7 @@ public:
     void initCursors();
 
     Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
+    void drawMask(Graphics::ManagedSurface *);
     bool inMask(Graphics::ManagedSurface*, Common::Point);
     uint32 _transparentColor;
     void drawScreen();
@@ -156,6 +169,17 @@ public:
     Common::String *_nextVS;
     Common::String *_frame;
     bool            _toTake;
+
+    // Dossiers 
+
+    DossierArray _dossiers;
+    unsigned int _dossierSuspect;
+    unsigned int _dossierPage;
+    MaskInfo *_dossierNextSuspectMask;
+    MaskInfo *_dossierPrevSuspectMask;
+    bool selectDossierNextSuspect(Common::Point);
+    bool selectDossierPrevSuspect(Common::Point);
+    void loadDossier();
 
     // Police Bust
 
@@ -180,6 +204,8 @@ public:
     PlayedMediaTable _playedPhoneClips;
     Common::String *_repeatedMovieExit;
     Common::String *_pausedSetting;
+
+    // Masks/Exits
 
     ExitList _exits;
     MaskList _masks;
