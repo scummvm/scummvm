@@ -461,6 +461,15 @@ public:
 		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**
+	 * Does a blitFrom ignoring any transparency settings
+	 */
+	void rawBlitFrom(const Surface &src, const Common::Rect &srcRect,
+			const Common::Point &destPos, const uint32 *palette) {
+		blitFromInner(src, srcRect, Common::Rect(destPos.x, destPos.y,
+			destPos.x + srcRect.width(), destPos.y + srcRect.height()), palette);
+	}
+
+	/**
 	 * Clear the entire surface.
 	 */
 	void clear(uint color = 0);
