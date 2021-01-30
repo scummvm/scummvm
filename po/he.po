@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-29 02:16+0000\n"
+"POT-Creation-Date: 2021-01-30 09:54+0000\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3909,7 +3909,7 @@ msgstr "אל תחקה חפצי NTSC לטקסט"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "השתמש במסכי שמירה / טעינה מקוריים"
 
@@ -3917,7 +3917,7 @@ msgstr "השתמש במסכי שמירה / טעינה מקוריים"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "השתמש במסכי השמירה / הטעינה המקוריים במקום במסכי ScummVM"
 
@@ -7200,6 +7200,15 @@ msgstr "~ P ~ נלהב"
 #, fuzzy
 msgid "Next location"
 msgstr "~ P ~ נלהב"
+
+#: engines/ultima/detection.cpp:64
+#, fuzzy
+msgid "Enable font replacement"
+msgstr "אפשר צנזורה של תוכן"
+
+#: engines/ultima/detection.cpp:65
+msgid "Replaces game fonts with rendered fonts"
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"

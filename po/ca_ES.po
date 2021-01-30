@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-29 02:16+0000\n"
+"POT-Creation-Date: 2021-01-30 09:54+0000\n"
 "PO-Revision-Date: 2020-11-29 18:15+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3990,7 +3990,7 @@ msgstr ""
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Utilitza les pantalles originals de desat/càrrega"
 
@@ -3998,7 +3998,7 @@ msgstr "Utilitza les pantalles originals de desat/càrrega"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -7272,6 +7272,15 @@ msgstr "~A~nterior"
 #, fuzzy
 msgid "Next location"
 msgstr "~A~nterior"
+
+#: engines/ultima/detection.cpp:64
+#, fuzzy
+msgid "Enable font replacement"
+msgstr "Activa els cursors flotants"
+
+#: engines/ultima/detection.cpp:65
+msgid "Replaces game fonts with rendered fonts"
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"

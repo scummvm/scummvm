@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-29 02:16+0000\n"
+"POT-Creation-Date: 2021-01-30 09:54+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3906,7 +3906,7 @@ msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "원본 저장/불러오기 화면 사용"
 
@@ -3914,7 +3914,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVM의 화면 대신 원래의 저장/불러오기 화면을 사용합니다."
 
@@ -7183,6 +7183,16 @@ msgstr "이전(~P~)"
 
 #: engines/twine/metaengine.cpp:509
 msgid "Next location"
+msgstr ""
+
+#: engines/ultima/detection.cpp:64
+#, fuzzy
+#| msgid "Enable loading of external replacement assets."
+msgid "Enable font replacement"
+msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
+
+#: engines/ultima/detection.cpp:65
+msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
