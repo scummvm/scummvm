@@ -14,6 +14,7 @@
 #include "common/system.h"
 #include "common/str.h"
 #include "common/savefile.h"
+#include "common/timer.h"
 #include "engines/util.h"
 
 #include "image/bmp.h"
@@ -184,16 +185,7 @@ Common::Error PrivateEngine::run() {
             case Common::EVENT_KEYDOWN:
                 if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
                     skipVideo();
-                //else if (event.kbd.keycode == Common::KEYCODE_m) {
-                //    if ( _pausedSetting == NULL) {
-                //        _pausedSetting = _currentSetting;
-                //        _nextSetting = &kPauseMovie;
-                //    }
-                //}
-                //else if (event.kbd.keycode == Common::KEYCODE_p) {
-                //    debug("Number of clicks %d", _numberClicks);
 
-                //}
                 break;
 
             case Common::EVENT_QUIT:
@@ -213,15 +205,17 @@ Common::Error PrivateEngine::run() {
                 selectAMRadioArea(mousePos);
                 selectLoadGame(mousePos);
                 selectSaveGame(mousePos);
-                selectMask(mousePos);
+                if (!_nextSetting)
+                    selectMask(mousePos);
                 if (!_nextSetting)
                     selectExit(mousePos);
                 break;
 
             case Common::EVENT_MOUSEMOVE:
                 changeCursor("default");
-                if (cursorMask(mousePos))      {}
-                else if (cursorExit(mousePos))     {}
+                if      (cursorPauseMovie(mousePos)) {}
+                else if (cursorMask(mousePos))       {}
+                else if (cursorExit(mousePos))       {}
                 //
                 break;
 
@@ -235,6 +229,7 @@ Common::Error PrivateEngine::run() {
 
         // Movies
         if (_nextMovie != NULL) {
+            removeTimer();
             _videoDecoder = new Video::SmackerDecoder();
             playVideo(*_nextMovie);
             _nextMovie = NULL;
@@ -242,9 +237,8 @@ Common::Error PrivateEngine::run() {
 
         }
 
-        if (_nextVS != NULL) {
+        if (_nextVS != NULL && _currentSetting->c_str() == kMainDesktop) {
             loadImage(*_nextVS, 160, 120, true);
-            _nextVS = NULL;
         }
 
         if (_videoDecoder) {
@@ -261,6 +255,8 @@ Common::Error PrivateEngine::run() {
         }
 
         if (_nextSetting != NULL) {
+
+            removeTimer();
             debug("Executing %s", _nextSetting->c_str());
             clearAreas();
             _currentSetting = _nextSetting;
@@ -283,9 +279,11 @@ void PrivateEngine::clearAreas() {
     _loadGameMask = NULL;
     _saveGameMask = NULL;
     _policeRadioArea = NULL;
-    _policeRadioArea = NULL;
     _AMRadioArea = NULL;
     _phoneArea = NULL;
+    _dossierNextSuspectMask = NULL;
+    _dossierPrevSuspectMask = NULL;
+
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -332,9 +330,8 @@ void PrivateEngine::checkPoliceBust() {
 
         _policeBustSetting = _currentSetting;
         _nextSetting = &kPoliceBustFromMO;
-        _numberClicks++; // Won't execute again
         clearAreas();
-        // FIXME: this should clear all the masks and exits
+        _policeBustEnabled = false;
     }
 }
 
@@ -406,9 +403,24 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
     return inside;
 }
 
-void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
+bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
     if (_mode == 1) {
         Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+        if (!window.contains(mousePos)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
+    if (_mode == 1) {        
+        Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+        //debug("%d, %d", mousePos.x, mousePos.y);
+        //debug("%d, %d", window.top, window.left);
+        //debug("%d, %d", window.bottom, window.right);
+
+        //debug("%d, %d", window.y2, window.y2);
         if (!window.contains(mousePos)) {
             if ( _pausedSetting == NULL) {
                 _pausedSetting = _currentSetting;
@@ -471,7 +483,6 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 
             if (m.flag1 != NULL) { // TODO: check this
                 setSymbol(m.flag1, 1);
-                debug("!!!!!!!!!!!!!! setting %s to 1 !!!!!!!!!!!!!!!!!!1", m.flag1->name->c_str());
                 // an item was taken
                 if (_toTake) {
                     playSound(*getTakeSound(), 1);
@@ -823,7 +834,6 @@ void PrivateEngine::skipVideo() {
     _videoDecoder = nullptr;
 }
 
-
 void PrivateEngine::stopSound() {
     debugC(3, kPrivateDebugExample, "%s", __FUNCTION__);
     if (_mixer->isSoundHandleActive(_soundHandle))
@@ -892,10 +902,11 @@ void PrivateEngine::drawScreen() {
 
     if (_videoDecoder) {
         Graphics::Surface *frame = new Graphics::Surface;
-        frame->create(_screenW, _screenH, _pixelFormat);
+        frame->create(_videoDecoder->getWidth(), _videoDecoder->getHeight(), _pixelFormat);
         frame->copyFrom(*_videoDecoder->decodeNextFrame());
         Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
-        surface->transBlitFrom(*cframe, *_origin);
+        Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
+        surface->transBlitFrom(*cframe, center);
         frame->free();
         cframe->free();
         delete frame;
@@ -968,5 +979,19 @@ char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     return f;
 }
 
+// Timers
+
+void timerCallback(void *refCon) {
+    g_private->removeTimer();
+    g_private->_nextSetting = (Common::String*) refCon;
+}
+
+bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
+    return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void*) ns, "timerCallback");
+}
+
+void PrivateEngine::removeTimer() {
+    g_system->getTimerManager()->removeTimerProc(&timerCallback);
+}
 
 } // End of namespace Private

@@ -93,7 +93,7 @@ const byte MOUSECURSOR_kZoomIn[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
-
+ 
 const byte MOUSECURSOR_kTurnRight[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -297,11 +297,11 @@ static struct CursorPointTable {
 } cursorPointTable[] = {
     { "kExit",         new Common::Point(9, 0)},
     { "kInventory",    new Common::Point(15, 3)},
-    { "kTurnLeft",     new Common::Point(0, 0)},
-    { "kTurnRight",    new Common::Point(0, 0)},
+    { "kTurnLeft",     new Common::Point(29, 16)},
+    { "kTurnRight",    new Common::Point(1, 15)},
     { "kZoomIn",       new Common::Point(10, 8)},
     { "kZoomOut",      new Common::Point(13, 31)},
-    { "kPhone",        new Common::Point(0, 0)},
+    { "kPhone",        new Common::Point(17, 19)},
     { "default",       new Common::Point(0, 0)},
     { 0, 0}
 };
