@@ -426,10 +426,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	}
 }
 
-void Ultima8Engine::changeGame(istring newgame) {
-	_changeGameName = newgame;
-}
-
 //
 // To time the frames, we use "fast" ticks which come 3000 times a second.
 //
@@ -496,28 +492,6 @@ bool Ultima8Engine::runGame() {
 
 		// Paint Screen
 		paint();
-
-		if (!_changeGameName.empty()) {
-			pout << "Changing Game to: " << _changeGameName << Std::endl;
-
-			GameInfo *info = getGameInfo(_changeGameName);
-
-			if (info) {
-				shutdownGame();
-
-				_changeGameName.clear();
-
-				if (setupGame(info)) {
-					if (!startupGame())
-						return false;
-				} else {
-					CANT_HAPPEN_MSG("Failed to start up game with valid info.");
-				}
-			} else {
-				perr << "Game '" << _changeGameName << "' not found" << Std::endl;
-				_changeGameName.clear();
-			}
-		}
 
 		if (!_errorMessage.empty()) {
 			MessageBoxGump::Show(_errorTitle, _errorMessage, 0xFF8F3030);
@@ -1256,7 +1230,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	_mouse->pushMouseCursor();
 
 	if (!totalok) {
-		Error(message, "Error Loading savegame", true);
+		Error(message, "Error Loading savegame");
 		delete sg;
 		return Common::kReadingFailed;
 	}
@@ -1267,18 +1241,13 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	return Common::kNoError;
 }
 
-void Ultima8Engine::Error(Std::string message, Std::string title, bool exit_to_menu) {
-	if (title.empty()) title = exit_to_menu ? "Fatal Game Error" : "Error";
+void Ultima8Engine::Error(Std::string message, Std::string title) {
+	if (title.empty()) title = "Error";
 
 	perr << title << ": " << message << Std::endl;
 
 	_errorMessage = message;
 	_errorTitle = title;
-
-	if (exit_to_menu) {
-		_changeGameName = "pentagram";
-		Kernel::get_instance()->killProcesses(0, 6, false);
-	}
 }
 
 Gump *Ultima8Engine::getGump(uint16 gumpid) {

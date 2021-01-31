@@ -129,18 +129,7 @@ void CoreApp::setupGameList() {
 }
 
 GameInfo *CoreApp::getDefaultGame() {
-	istring gamename;
-
-	Std::string defaultgame;
-	bool defaultset = _settingMan->get("defaultgame", defaultgame,
-	                                  SettingManager::DOM_GLOBAL);
-	if (defaultset) {
-		// default game specified in config file
-		gamename = defaultgame;
-	} else {
-		gamename = _gameDesc->desc.gameId;
-	}
-
+	istring gamename = _gameDesc->desc.gameId;
 	GameInfo *info = getGameInfo(gamename);
 
 	if (!info) {

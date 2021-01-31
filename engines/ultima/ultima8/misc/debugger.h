@@ -143,8 +143,6 @@ private:
 	bool cmdLoadGame(int argc, const char **argv);
 	bool cmdNewGame(int argc, const char **argv);
 	bool cmdQuit(int argc, const char **argv);
-	bool cmdChangeGame(int argc, const char **argv);
-	bool cmdListGames(int argc, const char **argv);
 	bool cmdSetVideoMode(int argc, const char **argv);
 	bool cmdEngineStats(int argc, const char **argv);
 	bool cmdToggleAvatarInStasis(int argc, const char **argv);

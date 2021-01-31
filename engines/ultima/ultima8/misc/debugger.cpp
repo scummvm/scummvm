@@ -81,8 +81,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Ultima8Engine::loadGame", WRAP_METHOD(Debugger, cmdLoadGame));
 	registerCmd("Ultima8Engine::newGame", WRAP_METHOD(Debugger, cmdNewGame));
 	registerCmd("Ultima8Engine::engineStats", WRAP_METHOD(Debugger, cmdEngineStats));
-	registerCmd("Ultima8Engine::changeGame", WRAP_METHOD(Debugger, cmdChangeGame));
-	registerCmd("Ultima8Engine::listGames", WRAP_METHOD(Debugger, cmdListGames));
 	registerCmd("Ultima8Engine::setVideoMode", WRAP_METHOD(Debugger, cmdSetVideoMode));
 	registerCmd("Ultima8Engine::toggleAvatarInStasis", WRAP_METHOD(Debugger, cmdToggleAvatarInStasis));
 	registerCmd("Ultima8Engine::togglePaintEditorItems", WRAP_METHOD(Debugger, cmdTogglePaintEditorItems));
@@ -280,36 +278,6 @@ bool Debugger::cmdEngineStats(int argc, const char **argv) {
 	UCMachine::get_instance()->usecodeStats();
 	World::get_instance()->worldStats();
 
-
-	return true;
-}
-
-bool Debugger::cmdChangeGame(int argc, const char **argv) {
-	if (argc == 1) {
-		debugPrintf("Current _game is: %s\n", Ultima8Engine::get_instance()->_gameInfo->_name.c_str());
-	} else {
-		Ultima8Engine::get_instance()->changeGame(argv[1]);
-	}
-
-	return true;
-}
-
-bool Debugger::cmdListGames(int argc, const char **argv) {
-	Ultima8Engine *app = Ultima8Engine::get_instance();
-	Std::vector<istring> games;
-	games = app->_settingMan->listGames();
-	Std::vector<istring>::const_iterator iter;
-	for (iter = games.begin(); iter != games.end(); ++iter) {
-		const istring &_game = *iter;
-		GameInfo *info = app->getGameInfo(_game);
-		debugPrintf("%s: ", _game.c_str());
-		if (info) {
-			Std::string details = info->getPrintDetails();
-			debugPrintf("%s\n", details.c_str());
-		} else {
-			debugPrintf("(unknown)\n");
-		}
-	}
 
 	return true;
 }

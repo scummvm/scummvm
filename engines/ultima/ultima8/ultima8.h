@@ -77,7 +77,6 @@ private:
 
 	// full system
 	Game *_game;
-	istring _changeGameName;
 	Std::string _errorMessage;
 	Std::string _errorTitle;
 
@@ -178,7 +177,6 @@ public:
 
 	bool startupGame();
 	void shutdownGame(bool reloading = true);
-	void changeGame(istring newgame);
 
 	void changeVideoMode(int width, int height);
 
@@ -325,8 +323,7 @@ public:
 
 	//! Display an error message box
 	//! \param message The message to display on the box
-	//! \param exit_to_menu If true, then exit to the Pentagram menu then display the message
-	void Error(Std::string message, Std::string title = Std::string(), bool exit_to_menu = false);
+	void Error(Std::string message, Std::string title = Std::string());
 public:
 	unsigned int getInversion() const {
 		return _inversion;
