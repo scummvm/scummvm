@@ -377,24 +377,24 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			int32 ypos2 = _engine->_renderer->destY;
 			int32 zpos2 = _engine->_renderer->destZ;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
+			int32 zpos1_copy = zpos1;
 			_engine->_renderer->baseRotPosX = 0;
 			_engine->_renderer->baseRotPosY = 0;
 			_engine->_renderer->baseRotPosZ = 9500;
 			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
-			int zpos1_copy = _engine->_renderer->destZ;
+			int zpos1_copy2 = _engine->_renderer->destZ;
 			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (zpos1_copy > _engine->_renderer->destY) {
+				if (zpos1_copy2 <= _engine->_renderer->destZ) {
 					continue;
 				}
 			} else {
-				if (zpos1_copy < _engine->_renderer->destY) {
+				if (_engine->_renderer->destZ <= zpos1_copy2) {
 					continue;
 				}
 			}
-
 			DrawListStruct &drawList = _engine->_redraw->drawList[n];
-			drawList.posValue = zpos1_copy;
+			drawList.posValue = zpos1_copy2;
 			drawList.actorIdx = locationIdx;
 			drawList.type = 0;
 			drawList.x = xpos1;
@@ -518,10 +518,13 @@ void Holomap::processHolomap() {
 			const Common::Rect rect(170, 0, 470, 330);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
-			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
+			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
-			_engine->_renderer->setBaseRotation(xRot, yRot, 0);
+			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
+			_engine->_renderer->baseRotPosX = 0;
+			_engine->_renderer->baseRotPosY = 0;
+			_engine->_renderer->baseRotPosZ = 9500;
 			renderHolomapSurfacePolygons();
 			renderLocations(xRot, yRot, 0, true);
 			if (rotate) {

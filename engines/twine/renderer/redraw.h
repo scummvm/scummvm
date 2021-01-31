@@ -55,7 +55,7 @@ struct OverlayListStruct {
 };
 
 struct DrawListStruct {
-	int16 posValue = 0;
+	int16 posValue = 0; // sorting value
 	uint32 type = 0;
 	uint16 actorIdx = 0;
 	uint16 x = 0;
