@@ -599,18 +599,17 @@ void Ultima8Engine::paint() {
 
 void Ultima8Engine::GraphicSysInit() {
 	if (GAME_IS_U8) {
-		_settingMan->setDefault("width", U8_DEFAULT_SCREEN_WIDTH);
-		_settingMan->setDefault("height", U8_DEFAULT_SCREEN_HEIGHT);
+		ConfMan.registerDefault("width", U8_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", U8_DEFAULT_SCREEN_HEIGHT);
 	} else {
-		_settingMan->setDefault("width", CRUSADER_DEFAULT_SCREEN_WIDTH);
-		_settingMan->setDefault("height", CRUSADER_DEFAULT_SCREEN_HEIGHT);
+		ConfMan.registerDefault("width", CRUSADER_DEFAULT_SCREEN_WIDTH);
+		ConfMan.registerDefault("height", CRUSADER_DEFAULT_SCREEN_HEIGHT);
 	}
-	_settingMan->setDefault("bpp", 16);
+	ConfMan.registerDefault("bpp", 16);
 
-	int width, height, bpp;
-	_settingMan->get("width", width);
-	_settingMan->get("height", height);
-	_settingMan->get("bpp", bpp);
+	int width = ConfMan.getInt("width");
+	int height = ConfMan.getInt("height");
+	int bpp = ConfMan.getInt("bpp");
 
 	if (_screen) {
 		Rect old_dims;
