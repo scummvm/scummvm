@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-01-30 09:54+0000\n"
+"POT-Creation-Date: 2021-01-31 19:04+0000\n"
 "PO-Revision-Date: 2021-01-14 12:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -776,7 +776,7 @@ msgstr "Пошук:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:863 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:862 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Завантажити гру:"
@@ -784,7 +784,7 @@ msgstr "Завантажити гру:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:182 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:863 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:862 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Завантажити"
@@ -2140,7 +2140,7 @@ msgstr "~П~овер.в головне меню"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:854
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:853
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
@@ -2161,7 +2161,7 @@ msgstr "Зберегти гру:"
 #: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:854
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:853
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
