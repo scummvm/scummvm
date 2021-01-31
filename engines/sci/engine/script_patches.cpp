@@ -126,6 +126,7 @@ static const char *const selectorNameTable[] = {
 	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
+	"message",      // King's Quest 6
 	"cycler",       // Space Quest 4 / system selector
 	"setCel",       // Space Quest 4, Phant2, GK1
 	"addToPic",     // Space Quest 4
@@ -249,6 +250,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_givePoints,
 	SELECTOR_has,
 	SELECTOR_modeless,
+	SELECTOR_message,
 	SELECTOR_cycler,
 	SELECTOR_setCel,
 	SELECTOR_addToPic,
@@ -5108,6 +5110,71 @@ static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
 	PATCH_END
 };
 
+// Attempting to pick a second head of frozen lettuce accidentally succeeds or
+//  fails depending on the time of day in real life.
+//
+// Upon picking the lettuce it starts to melt. After 150 seconds it's half
+//  melted, after 300 seconds it's a puddle, and after 450 seconds it disappears
+//  from inventory. When trying to pick a second head while one is inventory,
+//  lettuce:doVerb attempts to figure out if the lettuce is melted enough to
+//  replace or if it should say that Alexander already has frozen lettuce.
+//  The script's logic is:
+//
+//    if (kGetTime(1) - global157) < 150 then don't replace lettuce
+//
+// The first problem is that this code is outdated. Global 157 is never set, but
+//  presumably it was the original timer implementation before lettuceTimer.
+//  This code is supposed to test an elapsed time period, but since global 157
+//  is always zero, instead it's an accidental test of the current clock time.
+//  The second problem is that this is a signed comparison and kGetTime(1) is
+//  unsigned with the hour as the upper four bits. When the current clock time
+//  is between 8:00 and 12:59 (am or pm) then kGetTime(1) appears negative and
+//  the lettuce can never be replaced. During the other 14 hours of the day the
+//  lettuce can always be replaced, even if it's frozen.
+//
+// We fix this by replacing the time test with the correct frozen lettuce test.
+//
+// Applies to: All versions
+// Responsible method: lettuce:doVerb
+static const uint16 kq6SignatureSecondLettuceFix[] = {
+	0x31, 0x12,                         // bnt 12 [ skip message if clock hour < 8 (unintentional) ]
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_ADDTOOFFSET(+15),
+	0x78,                               // push1
+	0x78,                               // push1
+	0x43, 0x42, 0x02,                   // callk GetTime 02
+	0x36,                               // push
+	0x81, 0x9d,                         // lag 9d [ always zero ]
+	0x04,                               // sub
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x012c),           // ldi 012c
+	0x22,                               // lt? [ (kGetTime(1) - global157) < 300 ]
+	0x31, 0x0a,                         // bnt 0a [ pick lettuce ]
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x46, SIG_UINT16(0x01e3),           // calle 01e3 ... [ pick lettuce ]
+	SIG_END
+};
+
+static const uint16 kq6PatchSecondLettuceFix[] = {
+	0x33, 0x12,                         // jmp 12 [ skip to correct lettuce logic ]
+	PATCH_ADDTOOFFSET(+18),
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x39, 0x15,                         // pushi 15
+	0x81, 0x09,                         // lag 09
+	0x4a, 0x06,                         // send 06 [ KqInv at: 21 ]
+	0x39, PATCH_SELECTOR8(message),     // pushi message
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04  [ lettuce message? ]
+	0x39, 0x34,                         // pushi 34 [ frozen ]
+	0x1a,                               // eq?      [ is lettuce frozen? ]
+	0x2f, 0xdb,                         // bt db    [ "Alexander already has a frozen head of lettuce." ]
+	0x33, 0x05,                         // jmp 05   [ pick lettuce ]
+	PATCH_END
+};
+
 // In room 300 at the bottom of the logic cliffs, clicking Walk while Alexander
 //  randomly wobbles on lower steps causes him to float around the room. Scripts
 //  attempt to prevent this by ignoring Walk when ego:view is 301 and ego:loop
@@ -6080,6 +6147,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,            kq6PatchDarkRoomInventory },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
+	{  true,   480, "fix picking second lettuce",                     1, kq6SignatureSecondLettuceFix,             kq6PatchSecondLettuceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
