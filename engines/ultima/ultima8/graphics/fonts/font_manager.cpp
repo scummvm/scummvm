@@ -109,7 +109,8 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 #ifdef USE_FREETYPE2
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
-	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize);
+	Graphics::TTFRenderMode mode = _ttfAntialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
+	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, mode, 0, false);
 
 	if (!font) {
 		perr << "Failed to open TTF: @data/" << filename << Std::endl;
