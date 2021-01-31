@@ -55,56 +55,36 @@ class KyraMetaEngine;
  *
  * Status of this engine:
  *
- * The KYRA engine supports all three Kyrandia games by Westwood. It also
- * supports Westwood's Lands of Lore. There are various platform ports of
- * the different games, almost all of them are fully supported. Only the
- * Macintosh port of Kyrandia 1 makes a difference here, which lacks support
- * for sound effects and music.
- *
- * The different translations of the games are mostly supported, since every
- * translation requires some work for kyra.dat for example, it is almost
- * impossible to support translations, without owning them. There a currently
- * a few reported unsupported translations:
- *
- * - Official translations
- * None known.
- * - Probably official translations (currently no sources are known to verify this)
- * Kyrandia 2 Spanish (feature request #2499966 "KYRA2: Add support for Spanish floppy version")
- * - Doubtful official translations (no sources here either, but less likely to be official)
- * Kyrandia 1 Korean (feature request #1758252 "KYRA1: Add support for Korean/DOS version")
- * Kyrandia 2 Polish (feature request #2146192 "KYRA2: Add support for Polish floppy version")
- * - Fan translations:
- * Kyrandia 3 Russian (feature request #2812792 "Kyrandia3 Russian")
- *
- * The primary maintainer for the engine is LordHoto, although some parts are
- * maintained by _athrxx. If you have questions about parts of the code, the
- * following rough description might help in determining who you should ask:
- * _athrxx is the maintainer for the Lands of Lore subengine, he also
- * maintains most of the FM-TOWNS and PC98 specific code (especially the sound
- * code, also some ingame code) and the Kyrandia 2 sequence player code.
- * LordHoto is responsible for the rest of the codebase, he also worked on the
- * graphics output for 16 color PC98 games.
- *
- * Other people who worked on this engine include cyx, who initially started
- * to work on Kyrandia 1 support. Vinterstum, who did various things for
- * Kyrandia 1 and started to work on the Kyrandia 2 sequence player code and
- * also on the TIM script code. Eriktorbjorn, who helped out naming our AdLib
- * player code and also contributed a work around for a music bug in the
- * "Pool of Sorrow" scene of Kyrandia 1, which is also present in the original.
- * He also contributed the VQA player for Kyrandia 3.
- *
- * The engine is mostly finished code wise. A possible remaining task is
- * proper refactoring, which might help in reducing binary size and along with
- * it runtime memory use, but of course might lead to regressions (since the
- * current code makes no problems on our low end ports, it is pretty minor
- * priority though, since the benefit would be mostly nicer code). The biggest
- * task left is the kyra.dat handling.
- *
- * Games using this engine:
- * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
- * - (The) Hand of Fate (fully supported)
- * - Malcolm's Revenge (fully supported)
+ * The KYRA engine supports the following games by Westwood:
+ * - Eye of the Beholder (fully supported)
+ * - Eye of the Beholder II - The Legend of Darkmoon (fully supported)
+ * - The Legend of Kyrandia (fully supported)
+ * - The Legend of Kyrandia 2: Hand of Fate (fully supported)
  * - Lands of Lore: The Throne of Chaos (fully supported)
+ * - The Legend of Kyrandia 3: Malcolm's Revenge (fully supported)
+ *
+ * There are various platform ports of the different games, almost all of
+ * them are fully supported. We also offer legacy graphics modes like CGA
+ * and EGA for games that originally supported this and also try to offer
+ * all sound drivers that the originals had.
+ * Some execeptions:
+ * - The PC-98 version of Eye of the Beholder II is not yet supported.
+ * - We don't support NES or Gameboy versions of Eye of the Beholder.
+ * - The Macintosh version of Kyrandia 1 lacks sound effects and music.
+ *
+ * The official translations of the games of which we are aware are mostly
+ * supported. Some of the more rare versions (of which we don't even know
+ * whether they are official or fan-translated) are missing. Unfortunately,
+ * adding new languages is more complicated than just adding a detection
+ * entry. It usually requires extra resources in kyra.dat and sometimes
+ * even adjustments to the code. So it is almost impossible to support
+ * translations without owning them.
+ *
+ * Apart from the official translations we also support an increasing number
+ * of fan translations. If there is a request for a new fan translation we
+ * might demand that the requesting person supplies the necessary kyra.dat
+ * resource files.
+ *
  */
 namespace Kyra {
 
