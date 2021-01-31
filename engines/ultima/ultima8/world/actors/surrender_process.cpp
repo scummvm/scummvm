@@ -48,7 +48,8 @@ SurrenderProcess::SurrenderProcess(Actor *actor) : _playedSound(false) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 
-	actor->doAnim(Animation::surrender, actor->getDir());
+	if (!actor->hasActorFlags(Actor::ACT_SURRENDERED))
+		actor->doAnim(Animation::surrender, actor->getDir());
 
 	_type = 0x25f; // CONSTANT!
 }
@@ -57,7 +58,7 @@ void SurrenderProcess::run() {
 	Actor *a = getActor(_itemNum);
 	MainActor *main = getMainActor();
 	if (!a || a->isDead() || !main) {
-		// dead?
+		// dead
 		terminate();
 		return;
 	}

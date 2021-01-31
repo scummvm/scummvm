@@ -714,7 +714,8 @@ uint16 Actor::setActivityCru(int activity) {
 	    // Does nothing in game..
 	    break;
 	case 7:
-		return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
+		if (_lastActivityNo != 7)
+			return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
 	    break;
 	case 8:
 		return Kernel::get_instance()->addProcess(new GuardProcess(this));
