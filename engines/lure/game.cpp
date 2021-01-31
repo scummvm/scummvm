@@ -280,7 +280,7 @@ void Game::execute() {
 			Palette palette(SKORL_CATCH_PALETTE_ID);
 			mouse.cursorOff();
 
-			static const AnimSoundSequence catchSound[] = { { 12, 0xFF, 0xFF, 1, false }, { 1, 41, 41, 1, false } };
+			static const AnimSoundSequence catchSound[] = { { 12, 0xFF, 0xFF, 1, false }, { 1, 41, 41, 1, false }, {0, 0, 0, 0, false} };
 			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, true, 5, catchSound);
 			anim->show();
 			delete anim;
