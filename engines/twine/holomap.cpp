@@ -61,9 +61,9 @@ bool Holomap::loadLocations() {
 	}
 
 	for (int i = 0; i < _numLocations; i++) {
-		_locations[i].x = stream.readUint16LE();
-		_locations[i].y = stream.readUint16LE();
-		_locations[i].z = stream.readUint16LE();
+		_locations[i].x = ClampAngle(stream.readSint16LE());
+		_locations[i].y = ClampAngle(stream.readSint16LE());
+		_locations[i].z = ClampAngle(stream.readSint16LE());
 		_locations[i].textIndex = stream.readUint16LE();
 	}
 	return true;
@@ -502,8 +502,8 @@ void Holomap::processHolomap() {
 
 		if (rotate) {
 			const int32 dt = _engine->lbaTime - time;
-			xRot = _engine->_collision->getAverageValue(xRot, _locations[currentLocation].x, 75, dt);
-			yRot = _engine->_collision->getAverageValue(yRot, _locations[currentLocation].y, 75, dt);
+			xRot = _engine->_collision->getAverageValue(ClampAngle(xRot), _locations[currentLocation].x, 75, dt);
+			yRot = _engine->_collision->getAverageValue(ClampAngle(yRot), _locations[currentLocation].y, 75, dt);
 			redraw = true;
 		}
 
