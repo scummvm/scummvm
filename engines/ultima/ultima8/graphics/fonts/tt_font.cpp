@@ -183,7 +183,12 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 							int by = iter->_dims.top + y + _borderSize + dy;
 							if (bx >= 0 && bx < resultWidth && by >= 0 && by < resultHeight) {
 								if (texBuf[by * resultWidth + bx] == 0) {
-									texBuf[by * resultWidth + bx] = borderColor;
+									// Add border within radius.
+									int sqrSize = (_borderSize + 1) * (_borderSize + 1);
+									int sqrDist = (dx * dx) + (dy * dy);
+									if (sqrDist < sqrSize) {
+										texBuf[by * resultWidth + bx] = borderColor;
+									}
 								}
 							}
 						}
