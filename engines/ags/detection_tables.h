@@ -22,9 +22,12 @@
 
 namespace AGS {
 
-static const PlainGameDescriptor GAME_NAMES[] = {
+const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ags", "Adventure Game Studio Game" },
 
+	{ "5daysastranger", "5 Days A Stranger" },
+	{ "7daysaskeptic", "7 Days A Skeptic" },
+	{ "absentparti", "Absent - Part I" },
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "bcremake", "Black Cauldron Remake" },
 	{ "blackwell1", "The Blackwell Legacy"},
@@ -77,10 +80,13 @@ static const PlainGameDescriptor GAME_NAMES[] = {
 
 static const PluginVersion AGSCREDITZ_11[] = { { "agscreditz", 11 }, { nullptr, 0 } };
 
-static const AGSGameDescription GAME_DESCRIPTIONS[] = {
-	ENGLISH_PLUGIN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255, AGSCREDITZ_11),
+const AGSGameDescription GAME_DESCRIPTIONS[] = {
+	ENGLISH_ENTRY("5daysastranger", "5days.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4440143),
+	ENGLISH_ENTRY("7daysaskeptic", "7days.exe", "465f972675db2da6040518221af5b0ba", 4693374),
+	ENGLISH_ENTRY("absentparti", "Absent - Part I.exe", "34ca36e3948aae8527dd0e90f0861a75", 31421924),
 	ENGLISH_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
 	ENGLISH_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42740200),
+	ENGLISH_PLUGIN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255, AGSCREDITZ_11),
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG
@@ -98,7 +104,7 @@ static const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
-	// For some macOS and iOS releases the executable was renamed to ac2game.dat
+
 	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
 	ENGLISH_ENTRY("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Steam, Mac
 

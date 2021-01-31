@@ -125,6 +125,85 @@ public:
 	}
 };
 
+class StreamScummVMFile : public Stream {
+private:
+	Common::SeekableReadStream *_stream;
+	DisposeAfterUse::Flag _disposeAfterUse;
+public:
+	StreamScummVMFile(Common::SeekableReadStream *stream,
+		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO) :
+		_stream(stream), _disposeAfterUse(disposeAfterUse) {}
+	~StreamScummVMFile() override {
+		Close();
+	}
+
+	void Close() {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _stream;
+		_stream = nullptr;
+	}
+
+	bool IsValid() const override { return _stream != nullptr; }
+	bool EOS() const override { return _stream->eos(); }
+	soff_t GetLength() const override { return _stream->size(); }
+	soff_t GetPosition() const override { return _stream->pos(); }
+	bool CanRead() const override { return true; }
+	bool CanWrite() const override { return false; }
+	bool CanSeek() const override { return true; }
+
+	size_t Read(void *buffer, size_t size) override {
+		return _stream->read(buffer, size);
+	}
+	int32_t ReadByte() override { return _stream->readByte(); }
+	size_t Write(const void *buffer, size_t size) override { return 0; }
+	int32_t WriteByte(uint8_t b) override { return 0; }
+
+	int8_t ReadInt8() override { return (int8)_stream->readByte(); }
+	int16_t ReadInt16() override { return _stream->readSint16LE(); }
+	int32_t ReadInt32() override { return _stream->readSint32LE(); }
+	int64_t ReadInt64() override { return _stream->readSint64LE(); }
+	bool ReadBool() override { return _stream->readByte() != 0; }
+	size_t ReadArray(void *buffer, size_t elem_size, size_t count) override {
+		return _stream->read(buffer, elem_size * count) / elem_size;
+	}
+	size_t ReadArrayOfInt8(int8_t *buffer, size_t count) override {
+		return _stream->read(buffer, count);
+	}
+	size_t ReadArrayOfInt16(int16_t *buffer, size_t count) override {
+		for (size_t i = 0; i < count; ++i)
+			*buffer++ = _stream->readSint16LE();
+		return count;
+	}
+	size_t ReadArrayOfInt32(int32_t *buffer, size_t count) override {
+		for (size_t i = 0; i < count; ++i)
+			*buffer++ = _stream->readSint32LE();
+		return count;
+	}
+	size_t ReadArrayOfInt64(int64_t *buffer, size_t count) override {
+		for (size_t i = 0; i < count; ++i)
+			*buffer++ = _stream->readSint64LE();
+		return count;
+	}
+
+	size_t WriteInt8(int8_t val) override { return 0; }
+	size_t WriteInt16(int16_t val) override { return 0; }
+	size_t WriteInt32(int32_t val) override { return 0; }
+	size_t WriteInt64(int64_t val) override { return 0; }
+	size_t WriteBool(bool val) override { return 0; }
+	size_t WriteArray(const void *buffer, size_t elem_size, size_t count) override { return 0; }
+	size_t WriteArrayOfInt8(const int8_t *buffer, size_t count) override { return 0; }
+	size_t WriteArrayOfInt16(const int16_t *buffer, size_t count) override { return 0; }
+	size_t WriteArrayOfInt32(const int32_t *buffer, size_t count) override { return 0; }
+	size_t WriteArrayOfInt64(const int64_t *buffer, size_t count) override { return 0; }
+
+	bool Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override {
+		return _stream->seek(offset, origin);
+	}
+
+	bool HasErrors() const override { return _stream->err(); }
+	bool Flush() override { return true; }
+};
+
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3

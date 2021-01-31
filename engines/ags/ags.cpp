@@ -57,7 +57,7 @@
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 
-
+#include "ags/tests/game_scanner.h"
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"
 #endif
@@ -313,6 +313,11 @@ Common::Error AGSEngine::run() {
 	const char *ARGV[] = { "scummvm.exe", filename };
 	const int ARGC = 2;
 
+#if ENABLE_AGS_SCANNER
+	AGS3::GameScanner scanner;
+	scanner.scan();
+	return Common::kNoError;
+#endif
 #ifdef ENABLE_AGS_TESTS
 	AGS3::Test_DoAllTests();
 	return Common::kNoError;

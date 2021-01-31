@@ -92,6 +92,7 @@ public:
 	static bool         IsDataFile(const String &data_file);
 	// Read data file table of contents into provided struct
 	static AssetError   ReadDataFileTOC(const String &data_file, AssetLibInfo &lib);
+	static AssetError   ReadDataFileTOC(Stream *data_file, AssetLibInfo &lib);
 
 	// NOTE: this group of methods are only temporarily public
 	static AssetError   SetDataFile(const String &data_file);

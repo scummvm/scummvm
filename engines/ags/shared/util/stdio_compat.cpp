@@ -49,7 +49,11 @@ file_off_t ags_ftell(Common::Stream *stream) {
 }
 
 Common::FSNode getFSNode(const char *path) {
-	Common::FSNode node(ConfMan.get("path"));
+	Common::FSNode node(path);
+	if (node.isReadable())
+		return node;
+
+	node = Common::FSNode(ConfMan.get("path"));
 	Common::String filePath(path);
 
 	// If it's the root game folder, return the node for it
