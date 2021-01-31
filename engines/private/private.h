@@ -118,10 +118,17 @@ public:
     void clearAreas();
     void initializePath(const Common::FSNode &gamePath) override;
 
+    // User input
+
     void selectPauseMovie(Common::Point);
     void selectMask(Common::Point);
     void selectExit(Common::Point);
+    void selectLoadGame(Common::Point);
+    void selectSaveGame(Common::Point);
+    
+    // Cursors
 
+    bool cursorPauseMovie(Common::Point);
     bool cursorExit(Common::Point);
     bool cursorMask(Common::Point);
 
@@ -136,8 +143,7 @@ public:
         return true;
     }
 
-    void selectLoadGame(Common::Point);
-    void selectSaveGame(Common::Point);
+
 
 
     Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
@@ -251,6 +257,12 @@ public:
     // Random values
 
     bool getRandomBool(uint);
+
+    // Timers
+
+    bool installTimer(uint32, Common::String *);
+    void removeTimer();
+    //static void timerCallback(void *);
 
 };
 

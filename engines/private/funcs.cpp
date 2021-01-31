@@ -1,4 +1,5 @@
 #include "common/str.h"
+#include "common/timer.h"
 #include "common/debug.h"
 #include "common/system.h"
 
@@ -141,7 +142,7 @@ void DossierAdd(ArgArray args) {
 void DossierBitmap(ArgArray args) {
 
     assert (args.size() == 2);
-    
+
     int x = args[0].u.val;
     int y = args[1].u.val;
 
@@ -579,9 +580,17 @@ void Timer(ArgArray args) {
     else
         debug("Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
-    g_system->delayMillis(100 * args[0].u.val);
+    //g_system->delayMillis(1000 * args[0].u.val);
+    int32 delay = 1000000 * args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
-    g_private->_nextSetting = s;
+    if (delay > 0) {
+        assert(g_private->installTimer(delay, s));
+    } else if (delay == 0) {
+        g_private->_nextSetting = s;
+    } else {
+        assert(0);
+    }
+
 }
 
 static struct FuncTable {
