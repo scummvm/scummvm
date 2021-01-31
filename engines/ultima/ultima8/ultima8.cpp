@@ -357,7 +357,7 @@ bool Ultima8Engine::startupGame() {
 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot == -1)
-		_settingMan->get("lastSave", saveSlot);
+		saveSlot = ConfMan.getInt("lastSave");
 
 	newGame(saveSlot);
 
@@ -914,9 +914,9 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_moda
 Common::Error Ultima8Engine::loadGameState(int slot) {
 	Common::Error result = Shared::UltimaEngine::loadGameState(slot);
 	if (result.getCode() == Common::kNoError)
-		_settingMan->set("lastSave", slot);
+		ConfMan.setInt("lastSave", slot);
 	else
-		_settingMan->set("lastSave", "");
+		ConfMan.set("lastSave", "");
 
 	return result;
 }
@@ -926,9 +926,9 @@ Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc,
 
 	if (!isAutosave) {
 		if (result.getCode() == Common::kNoError)
-			_settingMan->set("lastSave", slot);
+			ConfMan.setInt("lastSave", slot);
 		else
-			_settingMan->set("lastSave", "");
+			ConfMan.set("lastSave", "");
 	}
 
 	return result;
@@ -1136,7 +1136,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	}
 
 	if (saveSlot == -1)
-		_settingMan->set("lastSave", "");
+		ConfMan.set("lastSave", "");
 
 	return true;
 }
