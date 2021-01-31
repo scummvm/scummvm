@@ -719,6 +719,16 @@ protected:
 		void setBalance(int8 balance);
 
 		/**
+		 * Get the sound type for this track
+		 */
+		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+
+		/**
+		 * Set the sound type for this track
+		 */
+		void setSoundType(Audio::Mixer::SoundType soundType) { _soundType = soundType; }
+
+		/**
 		 * Get the time the AudioStream behind this track has been
 		 * running
 		 */

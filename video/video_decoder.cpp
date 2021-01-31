@@ -149,8 +149,11 @@ Audio::Mixer::SoundType VideoDecoder::getSoundType() const {
 }
 
 void VideoDecoder::setSoundType(Audio::Mixer::SoundType soundType) {
-	assert(!isVideoLoaded());
 	_soundType = soundType;
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
+			((AudioTrack *)*it)->setSoundType(_soundType);
 }
 
 bool VideoDecoder::isVideoLoaded() const {
