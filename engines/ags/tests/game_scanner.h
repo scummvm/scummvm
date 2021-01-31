@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/hashmap.h"
+#include "common/array.h"
 #include "common/fs.h"
 
 namespace AGS3 {
@@ -32,14 +32,15 @@ namespace AGS3 {
  */
 class GameScanner {
 	struct Entry {
+		Common::String _id;
 		Common::String _gameName;
 		Common::String _filename;
 		Common::String _md5;
 		size_t _filesize;
 	};
 private:
-	typedef Common::HashMap<Common::String, Entry> EntryMap;
-	EntryMap _games;
+	typedef Common::Array<Entry> EntryArray;
+	EntryArray _games;
 private:
 	/**
 	 * Scan a folder for AGS games
@@ -55,6 +56,11 @@ private:
 	 * Convert a game name to an appropriate game Id
 	 */
 	static Common::String convertGameNameToId(const Common::String &name);
+
+	/**
+	 * Detects clashes with game Ids in the existing detection table.
+	 */
+	static void detectClashes();
 public:
 	/**
 	 * Main execution method

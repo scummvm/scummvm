@@ -29,8 +29,8 @@
 #include "ags/engine/main/game_file.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "common/md5.h"
-#include "common/unzip.h"
 
 namespace AGS3 {
 
@@ -39,18 +39,23 @@ extern bool engine_try_init_gamedata(AGS::Shared::String gamepak_path);
 extern GameSetupStruct game;
 
 void GameScanner::scan() {
+	detectClashes();
+
 	Common::FSNode folder("."); //ConfMan.get("path"));
 	scanFolder(folder);
 
-	for (EntryMap::iterator it = _games.begin(); it != _games.end(); ++it) {
-		debug("{ \"%s\", \"%s\" },", it->_key.c_str(), it->_value._gameName.c_str());
+	Common::HashMap<Common::String, bool> gameDescs;
+	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
+		if (!gameDescs.contains(it->_id))
+			debug("{ \"%s\", \"%s\" },", it->_id.c_str(), it->_gameName.c_str());
+		gameDescs[it->_id] = true;
 	}
 	debug("");
 
-	for (EntryMap::iterator it = _games.begin(); it != _games.end(); ++it) {
+	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
 		debug("ENGLISH_ENTRY(\"%s\", \"%s\", \"%s\", %u),",
-			it->_key.c_str(), it->_value._filename.c_str(),
-			it->_value._md5.c_str(), it->_value._filesize);
+			it->_id.c_str(), it->_filename.c_str(),
+			it->_md5.c_str(), it->_filesize);
 	}
 	debug("");
 }
@@ -115,10 +120,10 @@ void GameScanner::scanFile(const Common::String &filename) {
 	e._filename = fsNode.getName();
 	e._filesize = size;
 	e._gameName = game.gamename;
+	e._id = convertGameNameToId(e._gameName);
 	e._md5 = md5;
 
-	Common::String id = convertGameNameToId(e._gameName);
-	_games[id] = e;
+	_games.push_back(e);
 } 
 
 Common::String GameScanner::convertGameNameToId(const Common::String &name) {
@@ -131,6 +136,22 @@ Common::String GameScanner::convertGameNameToId(const Common::String &name) {
 	}
 
 	return result;
+}
+
+void GameScanner::detectClashes() {
+	Common::HashMap<Common::String, bool> gameIds;
+	Common::HashMap<Common::String, bool> gameNames;
+
+	const PlainGameDescriptor *nameP = ::AGS::GAME_NAMES;
+	for (; nameP->gameId; ++nameP) {
+		if (gameIds.contains(nameP->gameId))
+			debug("Duplicate game Id: %s", nameP->gameId);
+		gameIds[nameP->gameId] = true;
+
+		if (gameNames.contains(nameP->description))
+			debug("Duplicate game name: %s", nameP->description);
+		gameNames[nameP->description] = true;
+	}
 }
 
 } // namespace AGS3

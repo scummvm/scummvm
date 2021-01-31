@@ -57,7 +57,9 @@
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 
+#ifdef ENABLE_AGS_SCANNER
 #include "ags/tests/game_scanner.h"
+#endif
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"
 #endif
