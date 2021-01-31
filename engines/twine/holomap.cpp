@@ -343,9 +343,15 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 }
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
-	const uint32 idx = currentLocation;
-	for (uint32 i = currentLocation + dir; i != idx; i = (i + dir) % NUM_LOCATIONS) {
-		if (_engine->_gameState->holomapFlags[i % NUM_LOCATIONS] & 0x81) {
+	const int32 idx = currentLocation;
+	int32 i = currentLocation + dir;
+	if (i < 0) {
+		i = NUM_LOCATIONS - 1;
+	} else {
+		i %= NUM_LOCATIONS;
+	}
+	for (; i != idx; i = (i + dir) % NUM_LOCATIONS) {
+		if (_engine->_gameState->holomapFlags[i] & 0x81) {
 			return i;
 		}
 	}
