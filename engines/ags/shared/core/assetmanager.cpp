@@ -78,11 +78,16 @@ AssetManager::~AssetManager() {
 
 AssetError AssetManager::ReadDataFileTOC(const String &data_file, AssetLibInfo &lib) {
 	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
+	return ReadDataFileTOC(in, lib);
+}
+
+AssetError AssetManager::ReadDataFileTOC(Stream *in, AssetLibInfo &lib) {
 	if (in) {
 		MFLUtil::MFLError err = MFLUtil::ReadHeader(lib, in);
 		delete in;
 		return (err != MFLUtil::kMFLNoError) ? kAssetErrLibParse : kAssetNoError;
 	}
+
 	return kAssetErrNoLibFile;
 }
 

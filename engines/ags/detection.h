@@ -37,6 +37,10 @@ struct AGSGameDescription {
 	const PluginVersion *_plugins;
 };
 
+extern const PlainGameDescriptor GAME_NAMES[];
+
+extern const AGSGameDescription GAME_DESCRIPTIONS[];
+
 } // namespace AGS
 
 
