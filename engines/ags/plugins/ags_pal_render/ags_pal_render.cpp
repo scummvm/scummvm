@@ -1130,9 +1130,9 @@ int DrawReflections(int id, int charobj = 0) {
 	//Initialize stuff
 	BITMAP *charsprite = nullptr;
 	BITMAP *charsprite2 = nullptr;
-	AGSCharacter *currchar;
+	AGSCharacter *currchar = nullptr;
 	AGSObject *currobj;
-	int cox, coy, coz = 0;
+	int cox = 0, coy = 0, coz = 0;
 	int scale = 0;
 	//Get character, and their sprite.
 	if (charobj == 0) {
@@ -1273,7 +1273,7 @@ int DrawReflections(int id, int charobj = 0) {
 
 int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blendmode = 0, int use_objpal = 0) {
 	BITMAP *maskspr = nullptr;
-	unsigned char **maskarray;
+	unsigned char **maskarray = nullptr;
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
 	if (!maskspr && mask > 0) {
 		char maskerr [100];
@@ -1327,8 +1327,8 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 
 int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mask = 0, int blendmode = 0) {
 	if (translevel == 0) return 0;
-	BITMAP *maskspr;
-	unsigned char **maskarray;
+	BITMAP *maskspr = nullptr;
+	unsigned char **maskarray = nullptr;
 	// Get a reference to the screen we'll draw onto
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);

@@ -155,7 +155,7 @@ private:
 
 	static void SetCredit(const ScriptMethodParams &params);
 	static void ScrollCredits(const ScriptMethodParams &params);
-	static const string GetCredit(const ScriptMethodParams &params);
+	static string GetCredit(const ScriptMethodParams &params);
 public:
 	AGSCreditz11();
 };

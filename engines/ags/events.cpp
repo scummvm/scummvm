@@ -86,7 +86,7 @@ int EventsManager::readKey() {
 	Common::KeyState keyState = _pendingKeys.pop();
 
 	int code = getScancode(keyState.keycode) << 8;
-	if (keyState.ascii >= 0 && keyState.ascii <= 127)
+	if (keyState.ascii <= 127)
 		code = keyState.ascii;
 
 	return code;

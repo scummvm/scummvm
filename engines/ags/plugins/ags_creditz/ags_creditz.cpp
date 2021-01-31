@@ -77,18 +77,18 @@ int AGSCreditz::IsCreditScrollingFinished(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz::SetCreditImage(const ScriptMethodParams &params) {
-	PARAMS5(int, ID, int, Slot, int, center, int, xpos, int, pixtonext);
+	//PARAMS5(int, ID, int, Slot, int, center, int, xpos, int, pixtonext);
 }
 
 void AGSCreditz::PauseScroll(const ScriptMethodParams &params) {
-	PARAMS1(int, onoff);
+	//PARAMS1(int, onoff);
 }
 
 void AGSCreditz::ScrollReset(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz::SetEmptyLineHeight(const ScriptMethodParams &params) {
-	PARAMS1(int, Height);
+	//PARAMS1(int, Height);
 }
 
 int AGSCreditz::GetEmptyLineHeight(const ScriptMethodParams &params) {
@@ -96,17 +96,17 @@ int AGSCreditz::GetEmptyLineHeight(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz::SetStaticCredit(const ScriptMethodParams &params) {
-	PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, int, centered, int, generateoutline, string, credit);
+	//PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, int, centered, int, generateoutline, string, credit);
 
 }
 
 string AGSCreditz::GetStaticCredit(const ScriptMethodParams &params) {
-	PARAMS1(int, ID);
+	//PARAMS1(int, ID);
 	return nullptr;
 }
 
 void AGSCreditz::StartEndStaticCredits(const ScriptMethodParams &params) {
-	PARAMS2(int, onoff, int, res);
+	//PARAMS2(int, onoff, int, res);
 }
 
 int AGSCreditz::GetCurrentStaticCredit(const ScriptMethodParams &params) {
@@ -114,26 +114,26 @@ int AGSCreditz::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz::SetDefaultStaticDelay(const ScriptMethodParams &params) {
-	PARAMS1(int, Cyclesperchar);
+	//PARAMS1(int, Cyclesperchar);
 }
 
 void AGSCreditz::SetStaticPause(const ScriptMethodParams &params) {
-	PARAMS2(int, ID, int, length);
+	//PARAMS2(int, ID, int, length);
 }
 
 void AGSCreditz::SetStaticCreditTitle(const ScriptMethodParams &params) {
-	PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, int, centered, int, generateoutline, string, title);
+	//PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, int, centered, int, generateoutline, string, title);
 }
 
 void AGSCreditz::ShowStaticCredit(const ScriptMethodParams &params) {
-	PARAMS6(int, ID, int, time, int, style, int, transtime, int, sound, int, resolution);
+	//PARAMS6(int, ID, int, time, int, style, int, transtime, int, sound, int, resolution);
 }
 
 void AGSCreditz::StaticReset(const ScriptMethodParams &params) {
 }
 
 string AGSCreditz::GetStaticCreditTitle(const ScriptMethodParams &params) {
-	PARAMS1(int, ID);
+	//PARAMS1(int, ID);
 	return nullptr;
 }
 
@@ -166,7 +166,7 @@ void AGSCreditz11::AGS_EngineStartup(IAGSEngine *engine) {
 void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
 	PARAMS7(int, ID, string, credit, int, colour, int, font, int, center, int, xpos, int, generateoutline);
 
-	if (ID >= _state->_credits[0].size())
+	if (ID >= (int)_state->_credits[0].size())
 		_state->_credits[0].resize(ID + 1);
 
 	Credit &c = _state->_credits[0][ID];
@@ -176,6 +176,7 @@ void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
 	c._x = xpos;
 	c._isSet = true;
 	c._outline = generateoutline;
+	c._color = colour;
 }
 
 void AGSCreditz11::ScrollCredits(const ScriptMethodParams &params) {
@@ -205,7 +206,7 @@ void AGSCreditz11::ScrollCredits(const ScriptMethodParams &params) {
 	}
 }
 
-const string AGSCreditz11::GetCredit(const ScriptMethodParams &params) {
+string AGSCreditz11::GetCredit(const ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 
 	return (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
@@ -242,8 +243,6 @@ void AGSCreditz20::SetCredit(const ScriptMethodParams &params) {
 	if (gen_outline > 0)
 		c._outline = true;
 }
-
-
 
 } // namespace AGSCreditz
 } // namespace Plugins
