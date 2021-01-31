@@ -430,32 +430,6 @@ void Ultima8Engine::changeGame(istring newgame) {
 	_changeGameName = newgame;
 }
 
-void Ultima8Engine::menuInitMinimal(istring gamename) {
-	// Only if in the pentagram menu
-	if (_gameInfo->_name != "pentagram") return;
-	GameInfo *info = getGameInfo(gamename);
-	if (!info) info = getGameInfo("pentagram");
-	assert(info);
-
-	pout  << Std::endl << "-- Loading minimal _game data for: " << info->_name << " --" << Std::endl;
-
-	FORGET_OBJECT(_game);
-	FORGET_OBJECT(_gameData);
-
-
-	setupGamePaths(info);
-
-	if (info->_name == "pentagram") return;
-
-	_gameData = new GameData(info);
-	_game = Game::createGame(info);
-
-	_game->loadFiles();
-	_gameData->setupFontOverrides();
-
-	pout << "-- Finished loading minimal--" << Std::endl << Std::endl;
-}
-
 //
 // To time the frames, we use "fast" ticks which come 3000 times a second.
 //
@@ -666,11 +640,10 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	bool ttf_antialiasing = true;
-	_settingMan->setDefault("ttf_antialiasing", true);
-	_settingMan->get("ttf_antialiasing", ttf_antialiasing);
+	ConfMan.registerDefault("font_antialiasing", true);
+	bool font_antialiasing = ConfMan.getBool("font_antialiasing");
 
-	_fontManager = new FontManager(ttf_antialiasing);
+	_fontManager = new FontManager(font_antialiasing);
 	_paletteManager = new PaletteManager(new_screen);
 
 	// TODO: assign names to these fontnumbers somehow
@@ -679,17 +652,16 @@ void Ultima8Engine::GraphicSysInit() {
 	// GameWidget's version number information:
 	_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
 
-	bool faded_modal = true;
-	_settingMan->setDefault("fadedModal", faded_modal);
-	_settingMan->get("fadedModal", faded_modal);
+	ConfMan.registerDefault("fadedModal", true);
+	bool faded_modal = ConfMan.getBool("fadedModal");
 	DesktopGump::SetFadedModal(faded_modal);
 
 	paint();
 }
 
 void Ultima8Engine::changeVideoMode(int width, int height) {
-	if (width > 0) _settingMan->set("width", width);
-	if (height > 0) _settingMan->set("height", height);
+	if (width > 0) width = ConfMan.getInt("width");
+	if (height > 0) height = ConfMan.getInt("height");
 
 	GraphicSysInit();
 }
@@ -1189,9 +1161,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		message += "Savegame    : " + saveinfo.getPrintDetails();
 
 #ifdef DEBUG
-		bool ignore;
-		_settingMan->setDefault("ignore_savegame_mismatch", false);
-		_settingMan->get("ignore_savegame_mismatch", ignore);
+		ConfMan.registerDefault("ignore_savegame_mismatch", true);
+		bool ignore = ConfMan.getBool("ignore_savegame_mismatch");
 
 		if (!ignore) {
 			error("%s", message.c_str());

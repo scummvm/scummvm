@@ -31,7 +31,8 @@
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/conf/setting_manager.h"
+
+#include "common/config-manager.h"
 #include "graphics/fonts/ttf.h"
 
 namespace Ultima {
@@ -44,8 +45,7 @@ FontManager::FontManager(bool ttf_antialiasing) : _ttfAntialiasing(ttf_antialias
 
 	_fontManager = this;
 
-	SettingManager *settingman = SettingManager::get_instance();
-	settingman->setDefault("ttf_highres", true);
+	ConfMan.registerDefault("font_highres", true);
 }
 
 FontManager::~FontManager() {
@@ -148,9 +148,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 		return false;
 
 	TTFont *font = new TTFont(f, rgb, bordersize, _ttfAntialiasing, SJIS);
-	SettingManager *settingman = SettingManager::get_instance();
-	bool highres;
-	settingman->get("ttf_highres", highres);
+	bool highres = ConfMan.getBool("font_highres");
 	font->setHighRes(highres);
 
 	setOverride(fontnum, font);
@@ -204,9 +202,7 @@ bool FontManager::loadTTFont(unsigned int fontnum, const Std::string &filename,
 	TTFont *font = new TTFont(f, rgb, bordersize, _ttfAntialiasing, false);
 
 	// TODO: check if this is indeed what we want for non-gamefonts
-	SettingManager *settingman = SettingManager::get_instance();
-	bool highres;
-	settingman->get("ttf_highres", highres);
+	bool highres = ConfMan.getBool("font_highres");
 	font->setHighRes(highres);
 
 	if (fontnum >= _ttFonts.size())

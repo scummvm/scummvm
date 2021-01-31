@@ -177,13 +177,8 @@ public:
 	void shutdown();
 
 	bool startupGame();
-	void startupPentagramMenu();
 	void shutdownGame(bool reloading = true);
 	void changeGame(istring newgame);
-
-	// When in the Pentagram Menu, load minimal amount of data for the specific game
-	// Used to enable access to the games gumps and shapes
-	void menuInitMinimal(istring game);
 
 	void changeVideoMode(int width, int height);
 
