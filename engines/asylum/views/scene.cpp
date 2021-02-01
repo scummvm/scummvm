@@ -1661,19 +1661,17 @@ void Scene::playerReaction() {
 
 	player->adjustCoordinates(&point);
 
-	uint32 maxIndex;
-	for (maxIndex = 0; maxIndex < 8; maxIndex++) {
-		if (!player->getReactionValue(maxIndex))
+	uint32 count;
+	for (count = 0; count < 8; count++) {
+		if (!player->getReactionValue(count))
 			break;
 	}
 
-	maxIndex -= 1;
-
 	player->setField638(0);
 
-	if (maxIndex > 0) {
-		for (uint32 i = 0; i < maxIndex; i++) {
-			Common::Point ret = _vm->getSinCosValues(maxIndex, i);
+	if (count > 0) {
+		for (uint32 i = 0; i < count; i++) {
+			Common::Point ret = _vm->getSinCosValues(count, i);
 			int32 x = point.x + player->getPoint2()->x + ret.x;
 			int32 y = point.y + player->getPoint2()->y / 2 - ret.y;
 
