@@ -151,7 +151,7 @@ public:
     void syncGameStream(Common::Serializer &s);
 
     Common::String convertPath(Common::String);
-    void playSound(const Common::String &, uint);
+    void playSound(const Common::String &, uint, bool);
     void playVideo(const Common::String &);
     void skipVideo();
     void stopSound();

@@ -309,7 +309,7 @@ void PrivateEngine::checkPoliceBust() {
      
     if (_numberClicks == _sirenWarning) {
         stopSound(); 
-        playSound(*_sirenSound, 0);
+        playSound(*_sirenSound, 0, false);
         _numberClicks++; // Won't execute again
         return;
     }
@@ -450,7 +450,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
                 // an item was not taken
                 if (_toTake) {
-                    playSound(* getLeaveSound(), 1);
+                    playSound(* getLeaveSound(), 1, false);
                     _toTake = false;
                 }
 
@@ -485,7 +485,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
                 setSymbol(m.flag1, 1);
                 // an item was taken
                 if (_toTake) {
-                    playSound(*getTakeSound(), 1);
+                    playSound(*getTakeSound(), 1, false);
                     _toTake = false;
                 }
             }
@@ -514,7 +514,7 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
     debug("AMRadio");
     if (inMask(_AMRadioArea->surf, mousePos)) {
         Common::String sound = *_AMRadioPrefix + _AMRadio.back() + ".wav";
-        playSound(sound.c_str(), 1);
+        playSound(sound.c_str(), 1, false);
         _AMRadio.pop_back();
     }
 
@@ -530,7 +530,7 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
     debug("PoliceRadio");
     if (inMask(_policeRadioArea->surf, mousePos)) {
         Common::String sound = *_policeRadioPrefix + _policeRadio.back() + ".wav";
-        playSound(sound.c_str(), 1);
+        playSound(sound.c_str(), 1, false);
         _policeRadio.pop_back();
     }
 
@@ -544,7 +544,7 @@ void PrivateEngine::checkPhoneCall() {
         return;
 
     if (!_mixer->isSoundHandleActive(_soundHandle))
-        playSound(*_phonePrefix + *_phoneCallSound, 1);
+        playSound(*_phonePrefix + *_phoneCallSound, 1, false);
 
 }
 
@@ -561,7 +561,7 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
         Common::String sound(*i.sound);
         setSymbol(i.flag, i.val);
         sound = *_phonePrefix + sound + ".wav";
-        playSound(sound.c_str(), 1);
+        playSound(sound.c_str(), 1, true);
         _phone.pop_back();
     }
 
@@ -799,7 +799,7 @@ Common::String PrivateEngine::convertPath(Common::String name) {
     return path;
 }
 
-void PrivateEngine::playSound(const Common::String &name, uint loops) {
+void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers) {
     debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
 
     Common::File *file = new Common::File();
@@ -810,12 +810,15 @@ void PrivateEngine::playSound(const Common::String &name, uint loops) {
 
     Audio::LoopingAudioStream *stream;
     stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loops);
-    stopSound();
+    if (stopOthers) {
+        stopSound();
+    }
     _mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
     debug("%s : %s", __FUNCTION__, name.c_str());
+    stopSound();
     Common::File *file = new Common::File();
     Common::String path = convertPath(name);
 
@@ -848,7 +851,11 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y, bool dra
         error("unable to load image %s", path.c_str());
 
     _image->loadStream(file);
-    _compositeSurface->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), *_origin + Common::Point(x,y), _transparentColor);
+    Graphics::Surface *surf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+    _compositeSurface->transBlitFrom(*surf, *_origin + Common::Point(x,y), _transparentColor);
+    surf->free();
+    delete surf;
+    _image->destroy();
     drawScreen();
 }
 
@@ -857,10 +864,11 @@ void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
     Common::File file;
     assert(file.open(path));
     _image->loadStream(file);
-    Graphics::Surface *frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
-    screen->copyRectToSurface(*frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
-    frame->free();
-    delete frame;
+    Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+    screen->copyRectToSurface(*csurf, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    csurf->free();
+    delete csurf;
+    _image->destroy();
 }
 
 
@@ -878,12 +886,14 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
     surf->create(_screenW, _screenH, _pixelFormat);
     surf->transBlitFrom(*screen);
     g_system->unlockScreen();
-
-    surf->transBlitFrom(*_image->getSurface()->convertTo(_pixelFormat, _image->getPalette()), Common::Point(x,y));
+    Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+    surf->transBlitFrom(*csurf, Common::Point(x,y));
+    csurf->free();
+    delete csurf;
+    _image->destroy();
 
     if (drawn) {
-        _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin, _transparentColor);
-        drawScreen();
+        drawMask(surf);
     }
 
     return surf;
@@ -901,15 +911,15 @@ void PrivateEngine::drawScreen() {
     int h = surface->h;
 
     if (_videoDecoder) {
-        Graphics::Surface *frame = new Graphics::Surface;
-        frame->create(_videoDecoder->getWidth(), _videoDecoder->getHeight(), _pixelFormat);
-        frame->copyFrom(*_videoDecoder->decodeNextFrame());
+        const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
+        //frame->create(_videoDecoder->getWidth(), _videoDecoder->getHeight(), _pixelFormat);
+        //frame->copyFrom(*_videoDecoder->decodeNextFrame());
         Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
         Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
         surface->transBlitFrom(*cframe, center);
-        frame->free();
+        //frame->free();
         cframe->free();
-        delete frame;
+        //delete frame;
         delete cframe;
     }
 

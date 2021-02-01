@@ -24,6 +24,8 @@ void ChgMode(ArgArray args) {
     }
     else
         assert(0);
+
+    g_private->stopSound();
 }
 
 void VSPicture(ArgArray args) {
@@ -49,7 +51,7 @@ void SyncSound(ArgArray args) {
 
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1);
+        g_private->playSound(*s, 1, true);
         //assert(0);
     } else {
         g_private->stopSound();
@@ -90,9 +92,8 @@ void SaveGame(ArgArray args) {
 }
 
 void RestartGame(ArgArray args) {
-    // assert types
+    assert(args.size() == 0);
     g_private->restartGame();
-    //debug("WARNING: RestartGame is not implemented");
 }
 
 void PoliceBust(ArgArray args) {
@@ -107,7 +108,7 @@ void PoliceBust(ArgArray args) {
     if (args.size() == 2) {
         if (args[1].u.val == 2) {
             Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
-            g_private->playSound(*s, 1);
+            g_private->playSound(*s, 1, false);
             assert(0);
 
         }
@@ -124,13 +125,13 @@ void PoliceBust(ArgArray args) {
 void DossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
-    Common::String *s = new Common::String(args[0].u.str);
+    Common::String *s1 = new Common::String(args[0].u.str);
     DossierInfo *m = (DossierInfo*) malloc(sizeof(DossierInfo));
-    m->page1 = s;
+    m->page1 = s1;
 
     if (strcmp(args[1].u.str, "\"\"") != 0) {
-        Common::String *s = new Common::String(args[1].u.str);
-        m->page2 = s;
+        Common::String *s2 = new Common::String(args[1].u.str);
+        m->page2 = s2;
 
     } else {
         m->page2 = NULL;
@@ -255,7 +256,7 @@ void Inventory(ArgArray args) {
         } else {
             f = g_private->getTakeLeaveSound();
         }
-        g_private->playSound(*f, 1);
+        g_private->playSound(*f, 1, false);
 
     } else { 
         if (v1.type == NAME) {
@@ -316,7 +317,19 @@ void PaperShuffleSound(ArgArray args) {
     // assert types
     debug("PaperShuffleSound()");
     Common::String *s = g_private->getPaperShuffleSound();
-    g_private->playSound(*s, 1);
+    g_private->playSound(*s, 1, false);
+}
+
+void SoundEffect(ArgArray args) {
+    // assert types
+    debug("SoundEffect(%s)", args[0].u.str);
+    if (strcmp("\"\"", args[0].u.str) != 0) {
+        Common::String *s = new Common::String(args[0].u.str);
+        g_private->playSound(*s, 1, false);
+        //assert(0);
+    } else {
+        g_private->stopSound();
+    }
 }
 
 void Sound(ArgArray args) {
@@ -324,7 +337,7 @@ void Sound(ArgArray args) {
     debug("Sound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1);
+        g_private->playSound(*s, 1, true);
         //assert(0);
     } else {
         g_private->stopSound();
@@ -337,7 +350,7 @@ void LoopedSound(ArgArray args) {
     debug("LoopedSound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 0);
+        g_private->playSound(*s, 0, true);
         //assert(0);
     } else {
         g_private->stopSound();
@@ -607,7 +620,7 @@ static struct FuncTable {
 
     // Sounds
     { Sound,           "Sound"},
-    { Sound,           "SoundEffect"},
+    { SoundEffect,     "SoundEffect"},
     { LoopedSound,     "LoopedSound"},
     { NoStopSounds,    "NoStopSounds"},
     { SyncSound,       "SyncSound"},
