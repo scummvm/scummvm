@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-01 05:45+0000\n"
-"PO-Revision-Date: 2021-01-13 07:23+0000\n"
+"PO-Revision-Date: 2021-02-01 15:45+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7240,14 +7240,12 @@ msgid "Next location"
 msgstr "Seuraava lokaatio"
 
 #: engines/ultima/detection.cpp:64
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
 msgid "Enable font replacement"
-msgstr "Mahdollista ulkoisten korvaavien peliresurssien lataus."
+msgstr "Mahdollista fonttien korvaaminen"
 
 #: engines/ultima/detection.cpp:65
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Korvaa pelin fontit renderöidyillä fonteilla"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
