@@ -289,17 +289,13 @@ bool Ultima8Engine::startup() {
 
 	pout << "-- Pentagram Initialized -- " << Std::endl << Std::endl;
 
-	// We Attempt to startup _game
-	setupGameList();
-	GameInfo *info = getDefaultGame();
-
-	if (setupGame(info)) {
+	if (setupGame()) {
 		GraphicSysInit();
 		if (!startupGame())
 			return false;
 	} else {
 		// Couldn't setup the game, should never happen?
-		CANT_HAPPEN_MSG("default game failed to initialize");
+		CANT_HAPPEN_MSG("game failed to initialize");
 	}
 	paint();
 	return true;

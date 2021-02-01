@@ -102,9 +102,6 @@ public:
 	//! unregister a callback
 	void unregisterCallback(istring key, ConfigCallback callback);
 
-	//! list all games
-	Std::vector<istring> listGames();
-
 	//! list all keys in a game data section
 	//! \param section The section to return setkeys of
 	//! \return the keys. They have no guaranteed order.

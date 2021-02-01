@@ -39,11 +39,6 @@ CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
 }
 
 CoreApp::~CoreApp() {
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
-		delete i->_value;
-
-	_games.clear();
-
 	FORGET_OBJECT(_fileSystem);
 	FORGET_OBJECT(_settingMan);
 	FORGET_OBJECT(_configFileMan);
@@ -101,48 +96,21 @@ void CoreApp::loadConfig() {
 	}
 }
 
-void CoreApp::setupGameList() {
-	Std::vector<istring> gamelist;
-	gamelist = _settingMan->listGames();
-	debugN(MM_INFO, "Scanning config file for games:\n");
-	Std::vector<istring>::iterator iter;
-	istring gamename;
-
-	for (iter = gamelist.begin(); iter != gamelist.end(); ++iter) {
-		istring game = *iter;
-		GameInfo *info = new GameInfo;
-		bool detected = getGameInfo(game, info);
-
-		// output detected game info
-		debugN(MM_INFO, "%s: ", game.c_str());
-		if (detected) {
-			// add game to games map
-			_games[game] = info;
-
-			Std::string details = info->getPrintDetails();
-			debugN(MM_INFO, "%s", details.c_str());
-		} else {
-			debugN(MM_INFO, "unknown, skipping");
-		}
-		debugN(MM_INFO, "\n");
-	}
-}
-
-GameInfo *CoreApp::getDefaultGame() {
+bool CoreApp::setupGame() {
 	istring gamename = _gameDesc->desc.gameId;
-	GameInfo *info = getGameInfo(gamename);
+	GameInfo *info = new GameInfo;
+	bool detected = getGameInfo(gamename, info);
 
-	if (!info) {
-		perr << "Game \"" << gamename << "\" not found." << Std::endl;
+	// output detected game info
+	debugN(MM_INFO, "%s: ", gamename.c_str());
+	if (detected) {
+		// add game to games map
+		Std::string details = info->getPrintDetails();
+		debugN(MM_INFO, "%s", details.c_str());
+	} else {
+		debugN(MM_INFO, "unknown, skipping");
+		return false;
 	}
-
-	// We've got a default game name, doesn't mean it will work though
-	return info;
-}
-
-bool CoreApp::setupGame(GameInfo *info) {
-	if (!info) return false;
-	assert(info->_name != "");
 
 	_gameInfo = info;
 
@@ -151,7 +119,7 @@ bool CoreApp::setupGame(GameInfo *info) {
 
 	setupGamePaths(info);
 
-	return info->_name != "pentagram";
+	return true;
 }
 
 void CoreApp::killGame() {
@@ -184,50 +152,41 @@ bool CoreApp::getGameInfo(const istring &game, GameInfo *ginfo) {
 	ginfo->version = 0;
 	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
 
-	istring gamekey = "settings/";
-	gamekey += game;
+	assert(game == "ultima8" || game == "remorse" || game == "regret");
 
-	if (game == "pentagram") {
-		ginfo->_type = GameInfo::GAME_PENTAGRAM_MENU;
+	if (game == "ultima8")
+		ginfo->_type = GameInfo::GAME_U8;
+	else if (game == "remorse")
+		ginfo->_type = GameInfo::GAME_REMORSE;
+	else if (game == "regret")
+		ginfo->_type = GameInfo::GAME_REGRET;
+
+	switch (_gameDesc->desc.language) {
+	case Common::EN_ANY:
 		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
-
-	} else {
-		assert(game == "ultima8" || game == "remorse" || game == "regret");
-
-		if (game == "ultima8")
-			ginfo->_type = GameInfo::GAME_U8;
-		else if (game == "remorse")
-			ginfo->_type = GameInfo::GAME_REMORSE;
-		else if (game == "regret")
-			ginfo->_type = GameInfo::GAME_REGRET;
-
-		switch (_gameDesc->desc.language) {
-		case Common::EN_ANY:
-			ginfo->_language = GameInfo::GAMELANG_ENGLISH;
-			break;
-		case Common::FR_FRA:
-			ginfo->_language = GameInfo::GAMELANG_FRENCH;
-			break;
-		case Common::DE_DEU:
-			ginfo->_language = GameInfo::GAMELANG_GERMAN;
-			break;
-		case Common::ES_ESP:
-			ginfo->_language = GameInfo::GAMELANG_SPANISH;
-			break;
-		case Common::JA_JPN:
-			ginfo->_language = GameInfo::GAMELANG_JAPANESE;
-			break;
-		default:
-			error("Unknown language");
-			break;
-		}
+		break;
+	case Common::FR_FRA:
+		ginfo->_language = GameInfo::GAMELANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		ginfo->_language = GameInfo::GAMELANG_GERMAN;
+		break;
+	case Common::ES_ESP:
+		ginfo->_language = GameInfo::GAMELANG_SPANISH;
+		break;
+	case Common::JA_JPN:
+		ginfo->_language = GameInfo::GAMELANG_JAPANESE;
+		break;
+	default:
+		error("Unknown language");
+		break;
 	}
 
 	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
 void CoreApp::setupGamePaths(GameInfo *ginfo) {
-	if (!ginfo || ginfo->_name == "pentagram") {
+	if (!ginfo) {
 		_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 		return;
 	}
@@ -260,16 +219,6 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 
 void CoreApp::ParseArgs(const int argc, const char *const *const argv) {
 	_parameters.process(argc, argv);
-}
-
-GameInfo *CoreApp::getGameInfo(const istring &game) const {
-	GameMap::const_iterator i;
-	i = _games.find(game);
-
-	if (i != _games.end())
-		return i->_value;
-	else
-		return nullptr;
 }
 
 } // End of namespace Ultima8

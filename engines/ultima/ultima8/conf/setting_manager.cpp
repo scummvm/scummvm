@@ -177,16 +177,6 @@ void SettingManager::unregisterCallback(istring key, ConfigCallback callback) {
 	}
 }
 
-Std::vector<istring> SettingManager::listGames() {
-	Std::vector<istring> games;
-	games.push_back("pentagram");
-	games.push_back("ultima8");
-	games.push_back("remorse");
-	games.push_back("regret");
-
-	return games;
-}
-
 Std::vector<istring> SettingManager::listDataKeys(istring section) {
 	istring csection = "settings/" + _domains[DOM_GAME] + ":" + section;
 

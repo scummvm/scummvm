@@ -67,14 +67,8 @@ public:
 		return _gameInfo;
 	}
 
-	//! Get GameInfo for other configured game, or 0 for an invalid name.
-	GameInfo *getGameInfo(const istring &game) const;
-
 protected:
 	bool _isRunning;
-
-	typedef Std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
-	GameMap _games;
 	GameInfo *_gameInfo;
 
 	// minimal system
@@ -105,15 +99,9 @@ private:
 	void loadConfig();
 
 protected:
-	void setupGameList();
-
-	//! return default game
-	//! \return nullptr if no default game (implies go to Pentagram Menu)
-	GameInfo *getDefaultGame();
-
 	//! Setup up a game
-	//! \return false if failed (implies go to Pentagram Menu)
-	bool setupGame(GameInfo *info);
+	//! \return false if failed
+	bool setupGame();
 
 	//! kill current gameinfo
 	void killGame();
