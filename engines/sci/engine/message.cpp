@@ -446,7 +446,7 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 			return false;
 
 		// If it contains Hebrew letters, it's not a stage direction
-		if (g_sci->getLanguage() == Common::HE_ISR && (byte)inStr[i] >= 128 && (byte)inStr[i] <= 255)
+		if (g_sci->getLanguage() == Common::HE_ISR && (byte)inStr[i] >= 128)
 			return false;
 	}
 
