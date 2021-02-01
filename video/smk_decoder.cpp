@@ -326,6 +326,8 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// If bits 1 or 2 are set, the frame should be scaled to twice its height
 	// before it is displayed.
 	_header.flags = _fileStream->readUint32LE();
+	if (_header.flags & 1)
+		frameCount++;
 
 	SmackerVideoTrack *videoTrack = createVideoTrack(width, height, frameCount, frameRate, _header.flags, _header.signature);
 	addTrack(videoTrack);
@@ -528,7 +530,7 @@ VideoDecoder::AudioTrack *SmackerDecoder::getAudioTrack(int index) {
 
 SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) {
 	_surface = new Graphics::Surface();
-	_surface->create(width, height * (flags ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(width, height * ((flags & 6) ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
 	_frameCount = frameCount;
 	_frameRate = frameRate;
 	_flags = flags;
@@ -575,7 +577,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 	_TypeTree->reset();
 
 	// Height needs to be doubled if we have flags (Y-interlaced or Y-doubled)
-	uint doubleY = _flags ? 2 : 1;
+	uint doubleY = (_flags & 6) ? 2 : 1;
 
 	uint bw = getWidth() / 4;
 	uint bh = getHeight() / doubleY / 4;
