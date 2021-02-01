@@ -190,6 +190,7 @@ struct SelectorCache {
 	Selector scratch; // for Phant2 save/load patching
 	Selector num; // for Phant2 restore from launcher
 	Selector reallyRestore; // for Phant2 restore from launcher
+	Selector canInput; // for Phant2 restore from launcher
 	Selector bookMark; // for Phant2 auto-save
 	Selector fileNumber; // for RAMA save/load
 	Selector description; // for RAMA save/load

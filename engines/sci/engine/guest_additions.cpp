@@ -780,7 +780,14 @@ bool GuestAdditions::restoreFromLauncher() const {
 		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
 			// Phantasmagoria 2 moves the function that actually restores
 			// a game, and uses a property of the main game object when picking
-			// the save game to restore
+			// the save game to restore. Before calling this function, we
+			// must ensure that input is enabled, as the "Click to continue"
+			// prompt expects this. Otherwise, restoring from our overlay during
+			// a handsOff sequence breaks the prompt and crashes the next room.
+			// We enable input by calling p2User:canInput(1).
+			reg_t canInputParams[] = { TRUE_REG };
+			invokeSelector(_state->variables[VAR_GLOBAL][kGlobalVarPhant2User], SELECTOR(canInput), 1, canInputParams);
+
 			writeSelectorValue(_segMan, g_sci->getGameObject(), SELECTOR(num), _state->_delayedRestoreGameId - kSaveIdShift);
 			invokeSelector(g_sci->getGameObject(), SELECTOR(reallyRestore));
 		} else if (g_sci->getGameId() == GID_SHIVERS) {

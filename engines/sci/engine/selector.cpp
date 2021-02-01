@@ -232,6 +232,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(scratch);
 	FIND_SELECTOR(num);
 	FIND_SELECTOR(reallyRestore);
+	FIND_SELECTOR(canInput);
 	FIND_SELECTOR(bookMark);
 	FIND_SELECTOR(fileNumber);
 	FIND_SELECTOR(description);
