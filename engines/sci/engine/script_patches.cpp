@@ -10037,6 +10037,30 @@ static const uint16 phant2RatboyPatch[] = {
 	PATCH_END
 };
 
+// The game uses a spin loop during the floating head easter egg, which causes
+//  the mouse to appear unresponsive. Replace the inner loop with kWait.
+//
+// Applies to at least: US English
+// Responsible method: bigScript:changeState
+static const uint16 phant2FloatingHeadSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x00,                   // lst 00
+	0x78,                         // push1
+	0x78,                         // push1
+	0x43, 0x79, SIG_UINT16(0x02), // callk GetTime, 2
+	0x1a,                         // eq?
+	0x31, 0x02,                   // bnt 02
+	SIG_END
+};
+
+static const uint16 phant2FloatingHeadPatch[] = {
+	0x78,                                     // push1
+	0x39, 0x3c,                               // pushi 3c [ 1 second ]
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x33, 0x04,                               // jmp 04
+	PATCH_END
+};
+
 // Phant2 has separate in-game volume controls for handling movie volume and
 // in-game volume (misleadingly labelled "music volume"), but really needs the
 // in-game volume to always be significantly lower than the movie volume in
@@ -10403,27 +10427,28 @@ static const uint16 phant2ScrollbarArrowPatch[] = {
 
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
-	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,                  phant2SlowIFadePatch },
-	{  true,     0, "fix bad arguments to get game version",       1, phant2GetVersionSignature,                 phant2GetVersionPatch },
-	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
-	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,                     phant2RatboyPatch },
-	{  true, 63001, "fix inventory left scroll delta",             1, phant2InvLeftDeltaSignature,               phant2InvLeftDeltaPatch },
-	{  true, 63001, "fix inventory right scroll delta",            1, phant2InvRightDeltaSignature,              phant2InvRightDeltaPatch },
-	{  true, 63001, "fix inventory wrong initial offset",          1, phant2InvOffsetSignature,                  phant2InvOffsetPatch },
-	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,                phant2AudioVolumePatch },
-	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,                  phant2Wait4FadePatch },
-	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
-	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,                 phant2SlowScrollPatch },
-	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,                phant2BadPositionPatch },
-	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,                    phant2BadIconPatch },
-	{  true, 63019, "fix file and note content placement",         1, phant2DocuStoreFileNotePlacementSignature, phant2DocuStoreFileNotePlacementPatch },
-	{  true, 63019, "fix email content placement",                 1, phant2DocuStoreEmailPlacementSignature,    phant2DocuStoreEmailPlacementPatch },
-	{  true, 64926, "fix computer scrollbar crash",                1, phant2ComputerScrollbarCrashSignature,     phant2ComputerScrollbarCrashPatch },
-	{  true, 64926, "fix volume scrollbar arrows",                 1, phant2ScrollbarArrowSignature,             phant2ScrollbarArrowPatch },
-	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,                  phant2SaveNamePatch1 },
-	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,                  phant2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,                  phant2NumSavesPatch2 },
-	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,                  phant2SaveNamePatch2 },
+	{  true,     0, "speed up interface fades",                      3, phant2SlowIFadeSignature,                  phant2SlowIFadePatch },
+	{  true,     0, "fix bad arguments to get game version",         1, phant2GetVersionSignature,                 phant2GetVersionPatch },
+	{  true,  3000, "replace spin loop in alien password window",    1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
+	{  true,  3310, "replace spin loop in floating head easter egg", 2, phant2FloatingHeadSignature,               phant2FloatingHeadPatch },
+	{  true,  4081, "replace spin loop after ratboy puzzle",         1, phant2RatboySignature,                     phant2RatboyPatch },
+	{  true, 63001, "fix inventory left scroll delta",               1, phant2InvLeftDeltaSignature,               phant2InvLeftDeltaPatch },
+	{  true, 63001, "fix inventory right scroll delta",              1, phant2InvRightDeltaSignature,              phant2InvRightDeltaPatch },
+	{  true, 63001, "fix inventory wrong initial offset",            1, phant2InvOffsetSignature,                  phant2InvOffsetPatch },
+	{  true, 63004, "limit in-game audio volume",                    1, phant2AudioVolumeSignature,                phant2AudioVolumePatch },
+	{  true, 63016, "replace spin loop during music fades",          1, phant2Wait4FadeSignature,                  phant2Wait4FadePatch },
+	{  true, 63019, "replace spin loop during computer load",        1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
+	{  true, 63019, "replace spin loop during computer scrolling",   1, phant2SlowScrollSignature,                 phant2SlowScrollPatch },
+	{  true, 63019, "fix bad doc/email name & memo positioning",     2, phant2BadPositionSignature,                phant2BadPositionPatch },
+	{  true, 63019, "fix bad folder/doc icon refresh",               2, phant2BadIconSignature,                    phant2BadIconPatch },
+	{  true, 63019, "fix file and note content placement",           1, phant2DocuStoreFileNotePlacementSignature, phant2DocuStoreFileNotePlacementPatch },
+	{  true, 63019, "fix email content placement",                   1, phant2DocuStoreEmailPlacementSignature,    phant2DocuStoreEmailPlacementPatch },
+	{  true, 64926, "fix computer scrollbar crash",                  1, phant2ComputerScrollbarCrashSignature,     phant2ComputerScrollbarCrashPatch },
+	{  true, 64926, "fix volume scrollbar arrows",                   1, phant2ScrollbarArrowSignature,             phant2ScrollbarArrowPatch },
+	{  true, 64990, "remove save game name mangling (1/2)",          1, phant2SaveNameSignature1,                  phant2SaveNamePatch1 },
+	{  true, 64990, "increase number of save games (1/2)",           1, phant2NumSavesSignature1,                  phant2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",           2, phant2NumSavesSignature2,                  phant2NumSavesPatch2 },
+	{  true, 64994, "remove save game name mangling (2/2)",          1, phant2SaveNameSignature2,                  phant2SaveNamePatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
