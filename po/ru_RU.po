@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-01 05:45+0000\n"
-"PO-Revision-Date: 2021-01-14 12:09+0000\n"
+"PO-Revision-Date: 2021-02-01 15:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -7252,14 +7252,12 @@ msgid "Next location"
 msgstr "Следующая локация"
 
 #: engines/ultima/detection.cpp:64
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
 msgid "Enable font replacement"
-msgstr "Включить загрузку внешних файлов замены игровых ресурсов."
+msgstr "Включить замену шрифтов"
 
 #: engines/ultima/detection.cpp:65
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Заменяет шрифты игры на шрифты лучшего качества"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
