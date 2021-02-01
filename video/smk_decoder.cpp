@@ -70,23 +70,28 @@ private:
 	byte _prefixlength[256];
 
 	Common::BitStreamMemory8LSB &_bs;
+	bool _empty;
 };
 
 SmallHuffmanTree::SmallHuffmanTree(Common::BitStreamMemory8LSB &bs)
-	: _treeSize(0), _bs(bs) {
-	uint32 bit = _bs.getBit();
-	assert(bit);
+	: _treeSize(0), _bs(bs), _empty(false) {
+	if (!_bs.getBit()) {
+		_empty = true;
+		return;
+	}
 
 	for (uint16 i = 0; i < 256; ++i)
 		_prefixtree[i] = _prefixlength[i] = 0;
 
 	decodeTree(0, 0);
 
-	bit = _bs.getBit();
-	assert(!bit);
+	(void)_bs.getBit();
 }
 
 uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
+	if (_empty)
+		return 0;
+
 	if (!_bs.getBit()) { // Leaf
 		_tree[_treeSize] = _bs.getBits(8);
 
@@ -118,6 +123,9 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 }
 
 uint16 SmallHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
+	if (_empty)
+		return 0;
+
 	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
 	uint16 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
@@ -189,8 +197,7 @@ BigHuffmanTree::BigHuffmanTree(Common::BitStreamMemory8LSB &bs, int allocSize)
 	_treeSize = 0;
 	_tree = new uint32[allocSize / 4];
 	decodeTree(0, 0);
-	bit = _bs.getBit();
-	assert(!bit);
+	(void)_bs.getBit();
 
 	for (uint32 i = 0; i < 3; ++i) {
 		if (_last[i] == 0xffffffff) {
