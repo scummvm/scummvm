@@ -1834,7 +1834,7 @@ void Actor::addReactionHive(int32 reactionIndex, int32 numberValue01Add) {
 	if (count == 8)
 		return;
 
-	if (!hasMoreReactions(reactionIndex, false))
+	if (!numberValue01Add || !_numberValue01)
 		_reaction[count] = reactionIndex;
 
 	if (numberValue01Add)
