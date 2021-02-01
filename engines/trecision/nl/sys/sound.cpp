@@ -21,7 +21,6 @@
  */
 
 #include <stdio.h>
-//#include <i86.h>
 #include <stdlib.h>
 #include <string.h>
 #include "trecision/nl/lib/addtype.h"
