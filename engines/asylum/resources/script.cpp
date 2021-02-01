@@ -936,7 +936,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfActorField638)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->getField638())
+	if (actor->getField638() != cmd->param2)
 		_currentQueueEntry->currentLine = cmd->param3;
 END_OPCODE
 
