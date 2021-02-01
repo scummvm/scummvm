@@ -41,8 +41,17 @@ extern GameSetupStruct game;
 void GameScanner::scan() {
 	detectClashes();
 
-	Common::FSNode folder("."); //ConfMan.get("path"));
+	Common::FSNode folder(".");
 	scanFolder(folder);
+
+	if (!_oldGames.empty()) {
+		debug("// Pre 2.5 games that aren't supported");
+		for (EntryArray::iterator it = _oldGames.begin(); it != _oldGames.end(); ++it) {
+			debug("UNSUPPORTED_ENTRY(\"\", \"%s\", \"%s\", %u),",
+				it->_filename.c_str(), it->_md5.c_str(), it->_filesize);
+		}
+		debug("");
+	}
 
 	Common::HashMap<Common::String, bool> gameDescs;
 	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
@@ -112,18 +121,28 @@ void GameScanner::scanFile(const Common::String &filename) {
 		return;
 
 	AGS::Shared::HError err = preload_game_data();
-	if (!err)
-		return;
+	if (!err) {
+		if (err->Code() == AGS::Shared::kMGFErr_FormatVersionTooOld) {
+			Entry e;
+			e._filename = fsNode.getName();
+			e._filename.toLowercase();
+			e._filesize = size;
+			e._md5 = md5;
 
-	// Add an entry for the found game
-	Entry e;
-	e._filename = fsNode.getName();
-	e._filesize = size;
-	e._gameName = game.gamename;
-	e._id = convertGameNameToId(e._gameName);
-	e._md5 = md5;
+			_oldGames.push_back(e);
+		}
+	} else {
+		// Add an entry for the found game
+		Entry e;
+		e._filename = fsNode.getName();
+		e._filename.toLowercase();
+		e._filesize = size;
+		e._gameName = game.gamename;
+		e._id = convertGameNameToId(e._gameName);
+		e._md5 = md5;
 
-	_games.push_back(e);
+		_games.push_back(e);
+	}
 } 
 
 Common::String GameScanner::convertGameNameToId(const Common::String &name) {
@@ -131,7 +150,7 @@ Common::String GameScanner::convertGameNameToId(const Common::String &name) {
 
 	for (uint idx = 0; idx < name.size(); ++idx) {
 		char c = name[idx];
-		if (Common::isAlnum(c))
+		if (Common::isDigit(c) || (tolower(c) >= 'a' && tolower(c) <= 'z'))
 			result += tolower(c);
 	}
 
