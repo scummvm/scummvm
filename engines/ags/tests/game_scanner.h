@@ -41,6 +41,7 @@ class GameScanner {
 private:
 	typedef Common::Array<Entry> EntryArray;
 	EntryArray _games;
+	EntryArray _oldGames;
 private:
 	/**
 	 * Scan a folder for AGS games
