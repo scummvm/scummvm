@@ -177,6 +177,15 @@ private:
 		AudioInfo _audioInfo;
 	};
 
+	class SmackerEmptyTrack : public Track {
+		TrackType getTrackType() const { return TrackType::kTrackTypeNone; }
+
+		bool endOfTrack() const { return true; }
+
+		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time) { return true; }
+	};
+
 	// The FrameTypes section of a Smacker file contains an array of bytes, where
 	// the 8 bits of each byte describe the contents of the corresponding frame.
 	// The highest 7 bits correspond to audio frames (bit 7 is track 6, bit 6 track 5
