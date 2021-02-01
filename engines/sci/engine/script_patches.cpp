@@ -9928,6 +9928,7 @@ static const uint16 phant2WaitParam1Patch[] = {
 // is set to 1, which means that these fades are quite slow. We replace the use
 // of global[227] with an immediate value for a reasonable fade speed.
 // Applies to at least: US English
+// Responsible method: topInterfacePlane:handleEvent
 static const uint16 phant2SlowIFadeSignature[] = {
 	0x43, 0x21, SIG_UINT16(0x0000),     // callk FrameOut, 0
 	SIG_MAGICDWORD,
@@ -9969,6 +9970,7 @@ static const uint16 phant2Wait4FadePatch[] = {
 // and size arguments, so the version file data never actually makes it into the
 // game.
 // Applies to at least: Phant2 US English CD
+// Responsible method: p2:init
 static const uint16 phant2GetVersionSignature[] = {
 	0x36,                         // push
 	0x35, 0xff,                   // ldi $ff
@@ -10014,6 +10016,7 @@ static const uint16 phant2GetVersionPatch[] = {
 // puzzle, which causes the mouse to appear unresponsive. Replace the spin loop
 // with a call to ScummVM kWait.
 // Applies to at least: US English
+// Responsible method: thePuzzle:doit
 static const uint16 phant2RatboySignature[] = {
 	0x8d, 0x01,                   // lst temp[1]
 	0x35, 0x1e,                   // ldi $1e
@@ -10040,6 +10043,7 @@ static const uint16 phant2RatboyPatch[] = {
 // order for dialogue in movies to be consistently audible, so patch the
 // in-game volume slider to limit it to our maximum.
 // Applies to at least: US English
+// Responsible method: optionsD:init
 // Fixes bug: #10165
 static const uint16 phant2AudioVolumeSignature[] = {
 	SIG_MAGICDWORD,
@@ -10130,6 +10134,7 @@ static const uint16 phant2NumSavesPatch2[] = {
 // ScrollbarArrow::action would only send cues once every N ticks whilst being
 // held down, but unfortunately the game was not programmed to do this.
 // Applies to at least: US English
+// Responsible method: WynDocTextView:cue
 static const uint16 phant2SlowScrollSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x0a,                         // ldi 10
@@ -10157,6 +10162,7 @@ static const uint16 phant2SlowScrollPatch[] = {
 // computer is displaying scary messages, since every time the scary message is
 // rendered the text fields re-render at the top-left corner of the screen.
 // Applies to at least: US English
+// Responsible method: WynNetDoco:open
 // Fixes bug: #10036
 static const uint16 phant2BadPositionSignature[] = {
 	SIG_MAGICDWORD,
@@ -10193,6 +10199,7 @@ static const uint16 phant2BadPositionPatch[] = {
 // messages, since every time the scary message is rendered the icons re-render
 // as closed.
 // Applies to at least: US English
+// Responsible method: WynNetDoco:refresh
 static const uint16 phant2BadIconSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(setCel), // pushi setCel
@@ -10219,9 +10226,10 @@ static const uint16 phant2BadIconPatch[] = {
 // inventory item is wide, which causes the inventory to creep to the left by
 // one pixel per scrolled item.
 // Applies to at least: US English
+// Responsible method: Heap in script 63001
 // Fixes bug: #10037
 static const uint16 phant2InvLeftDeltaSignature[] = {
-	SIG_MAGICDWORD,
+	SIG_MAGICDWORD,                     // lftButn
 	SIG_UINT16(0x0042),                 // delta
 	SIG_UINT16(0x0019),                 // moveDelay
 	SIG_END
@@ -10233,7 +10241,7 @@ static const uint16 phant2InvLeftDeltaPatch[] = {
 };
 
 static const uint16 phant2InvRightDeltaSignature[] = {
-	SIG_MAGICDWORD,
+	SIG_MAGICDWORD,                     // rtButn
 	SIG_UINT16(0xffbe),                 // delta
 	SIG_UINT16(0x0019),                 // moveDelay
 	SIG_END
@@ -10247,6 +10255,7 @@ static const uint16 phant2InvRightDeltaPatch[] = {
 // The first inventory item is put too far to the right, which causes wide items
 // to get cut off on the right side of the inventory.
 // Applies to at least: US English
+// Responsible method: InvPlane:addItem
 static const uint16 phant2InvOffsetSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x26,                         // ldi 38
