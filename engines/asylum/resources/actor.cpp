@@ -1855,18 +1855,18 @@ void Actor::removeReactionHive(int32 reactionIndex, int32 numberValue01Substract
 
 	if (!numberValue01Substract || !_numberValue01) {
 
-		uint32 count = 0;
-		for (int i = 0; i < 8; i++)
-			if (_reaction[i])
-				count++;
+		uint32 i = 0;
+		for (i = 0; i < 8; i++)
+			if (_reaction[i] == reactionIndex)
+				break;
 
-		if (count == 8)
+		if (i == 8)
 			return;
 
-		if (count == 7) {
+		if (i == 7) {
 			_reaction[7] = 0;
 		} else {
-			memcpy(&_reaction[count], &_reaction[count + 1], 28 - 4 * count);
+			memmove(&_reaction[i], &_reaction[i + 1], 32 - 4 * i);
 			_reaction[7] = 0;
 		}
 	}
