@@ -369,6 +369,8 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 				warning("Unhandled Smacker v2 audio compression");
 
 			addTrack(new SmackerAudioTrack(_header.audioInfo[i], getSoundType()));
+		} else {
+			addTrack(new SmackerEmptyTrack());
 		}
 	}
 
