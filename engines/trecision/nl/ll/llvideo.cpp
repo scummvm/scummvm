@@ -23,8 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <dos.h>
-#include <conio.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"

@@ -21,7 +21,6 @@
  */
 
 #include <stdio.h>
-#include <conio.h>
 #include <stdlib.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/3d/3dinc.h"
