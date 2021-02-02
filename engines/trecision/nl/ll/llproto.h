@@ -22,7 +22,7 @@
 
 namespace Trecision {
 
-int ACompare(const void *p1, const void *p2);
+int Compare(const void *p1, const void *p2);
 char AnimFileInit(const char *fname);
 void AnimFileFinish();
 int AnimFileOpen(const char *name);
