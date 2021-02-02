@@ -48,7 +48,7 @@ namespace Asylum {
 const char *opcodeNames[] = {
 	"Return",
 	"SetScriptVariable",
-	"SetCounterFromVars"
+	"SetCounterFromVars",
 	"SetOffset",
 	"SetOffsetIfCounterNegative",
 	"SetOffsetIfCounterNegativeOrNull",
