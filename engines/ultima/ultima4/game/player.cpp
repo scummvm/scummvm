@@ -665,7 +665,7 @@ void Party::adjustGold(int gold) {
 }
 
 void Party::adjustKarma(KarmaAction action) {
-	int timeLimited = 0;
+	bool timeLimited = false;
 	int v, newKarma[VIRT_MAX], maxVal[VIRT_MAX];
 
 	/*
@@ -693,19 +693,19 @@ void Party::adjustKarma(KarmaAction action) {
 	case KA_GAVE_TO_BEGGAR:
 		//  In U4DOS, we only get +2 COMPASSION, no HONOR or SACRIFICE even if
 		//  donating all.
-		timeLimited = 1;
+		timeLimited = true;
 		AdjustValueMax(newKarma[VIRT_COMPASSION], 2, maxVal[VIRT_COMPASSION]);
 		break;
 	case KA_BRAGGED:
 		AdjustValueMin(newKarma[VIRT_HUMILITY], -5, 1);
 		break;
 	case KA_HUMBLE:
-		timeLimited = 1;
+		timeLimited = true;
 		AdjustValueMax(newKarma[VIRT_HUMILITY], 10, maxVal[VIRT_HUMILITY]);
 		break;
 	case KA_HAWKWIND:
 	case KA_MEDITATION:
-		timeLimited = 1;
+		timeLimited = true;
 		AdjustValueMax(newKarma[VIRT_SPIRITUALITY], 3, maxVal[VIRT_SPIRITUALITY]);
 		break;
 	case KA_BAD_MANTRA:
@@ -746,7 +746,7 @@ void Party::adjustKarma(KarmaAction action) {
 		AdjustValueMin(newKarma[VIRT_HONOR], -10, 1);
 		break;
 	case KA_DIDNT_CHEAT_REAGENTS:
-		timeLimited = 1;
+		timeLimited = true;
 		AdjustValueMax(newKarma[VIRT_HONESTY], 2, maxVal[VIRT_HONESTY]);
 		AdjustValueMax(newKarma[VIRT_JUSTICE], 2, maxVal[VIRT_JUSTICE]);
 		AdjustValueMax(newKarma[VIRT_HONOR], 2, maxVal[VIRT_HONOR]);
