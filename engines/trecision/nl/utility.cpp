@@ -32,6 +32,9 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/3d/3dinc.h"
 
+#include "common/config-manager.h"
+#include "engines/engine.h"
+
 namespace Trecision {
 
 #define SendFrame(i) doEvent(ScriptFrame[i].cls, 	\
@@ -331,12 +334,6 @@ void DoClearText() {
  * 				DoSys
  * --------------------------------------------------*/
 void DoSys(uint16 TheObj) {
-	extern short SpeechON;
-	extern short TextON;
-	extern short SFxVol;
-	extern short SpeechVol;
-	extern short MusicVol;
-
 	switch (TheObj) {
 	case o00QUIT:
 		if (QuitGame())
@@ -372,10 +369,10 @@ void DoSys(uint16 TheObj) {
 		break;
 
 	case o00SPEECHON:
-		if (TextON) {
+		if (ConfMan.getBool("subtitles")) {
 			_obj[o00SPEECHON]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
-			SpeechON = false;
+			ConfMan.setBool("speech_mute", true);
 			_curObj = o00SPEECHOFF;
 			RegenRoom();
 			ShowObjName(_curObj, true);
@@ -385,17 +382,17 @@ void DoSys(uint16 TheObj) {
 	case o00SPEECHOFF:
 		_obj[o00SPEECHOFF]._mode &= ~OBJMODE_OBJSTATUS;
 		_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
-		SpeechON = true;
+		ConfMan.setBool("speech_mute", false);
 		_curObj = o00SPEECHON;
 		RegenRoom();
 		ShowObjName(_curObj, true);
 		break;
 
 	case o00TEXTON:
-		if (SpeechON) {
+		if (!ConfMan.getBool("speech_mute")) {
 			_obj[o00TEXTON]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
-			TextON = false;
+			ConfMan.setBool("subtitles", false);
 			_curObj = o00TEXTOFF;
 			RegenRoom();
 			ShowObjName(_curObj, true);
@@ -405,7 +402,7 @@ void DoSys(uint16 TheObj) {
 	case o00TEXTOFF:
 		_obj[o00TEXTOFF]._mode &= ~OBJMODE_OBJSTATUS;
 		_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
-		TextON = true;
+		ConfMan.setBool("subtitles", true);
 		_curObj = o00TEXTON;
 		RegenRoom();
 		ShowObjName(_curObj, true);
@@ -436,11 +433,11 @@ void DoSys(uint16 TheObj) {
 		_obj[TheObj - 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (TheObj < o00MUSIC1D)
-			SpeechVol = ((TheObj - 2 - o00SPEECH1D) / 2) * 25;
+			ConfMan.setInt("speech_volume", ((TheObj - 2 - o00SPEECH1D) / 2) * 51);
 		else if (TheObj > o00MUSIC6D)
-			SFxVol = ((TheObj - 2 - o00SOUND1D) / 2) * 25;
+			ConfMan.setInt("sfx_volume", ((TheObj - 2 - o00SOUND1D) / 2) * 51);
 		else
-			MusicVol = ((TheObj - 2 - o00MUSIC1D) / 2) * 25;
+			ConfMan.setInt("music_volume", ((TheObj - 2 - o00MUSIC1D) / 2) * 51);
 		break;
 
 	case o00SPEECH1U:
@@ -465,13 +462,15 @@ void DoSys(uint16 TheObj) {
 			_obj[TheObj + 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (TheObj < o00MUSIC1D)
-			SpeechVol = ((TheObj + 1 - o00SPEECH1D) / 2) * 25;
+			ConfMan.setInt("speech_volume", ((TheObj + 1 - o00SPEECH1D) / 2) * 51);
 		else if (TheObj > o00MUSIC6D)
-			SFxVol = ((TheObj + 1 - o00SOUND1D) / 2) * 25;
+			ConfMan.setInt("sfx_volume", ((TheObj + 1 - o00SOUND1D) / 2) * 51);
 		else
-			MusicVol = ((TheObj + 1 - o00MUSIC1D) / 2) * 25;
+			ConfMan.setInt("music_volume", ((TheObj + 1 - o00MUSIC1D) / 2) * 51);
 		break;
 	}
+
+	g_engine->syncSoundSettings();
 }
 
 /* -----------------09/02/98 15.44-------------------

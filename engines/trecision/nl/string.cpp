@@ -30,6 +30,8 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 
+#include "common/config-manager.h"
+
 namespace Trecision {
 
 // Variabili di servizio comuni a piu' funzioni di string.c
@@ -48,7 +50,6 @@ uint16 SubStringUsed;
 
 char sn[13];
 uint32 TalkTime;
-extern short TextON;
 extern uint16 _playingAnims[];
 const char *dunno = "?";
 
@@ -404,7 +405,7 @@ void CharacterContinueTalk() {
 		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
 
 	ClearText();
-	if (TextON)
+	if (ConfMan.getBool("subtitles"))
 		Text(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
 
 	if (!SemDialogActive) {
@@ -488,7 +489,7 @@ void SomeOneContinueTalk() {
 		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
 
 	ClearText();
-	if (TextON)
+	if (ConfMan.getBool("subtitles"))
 		Text(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
 
 	if (CurSubString)

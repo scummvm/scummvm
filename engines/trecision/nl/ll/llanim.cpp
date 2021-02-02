@@ -161,7 +161,6 @@ void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 --------------------------------------------------*/
 void StartSmackAnim(uint16 num) {
 	extern char UStr[];
-	extern short SFxVol;
 	int pos;
 
 	_curSmackAction = SMACKOPEN;
@@ -195,9 +194,6 @@ void StartSmackAnim(uint16 num) {
 	if (AnimTab[num].flag & SMKANIM_BKG) {
 		sprintf(UStr, "Bkg\\%s", AnimTab[num].name);
 		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num].name));
-		CallSmackVolumePan(0, 3, (32768 * 2 * SFxVol) / 125);
-		CallSmackVolumePan(0, 2, (32768 * 2 * SFxVol) / 125);
-		CallSmackVolumePan(0, 1, (32768 * 2 * SFxVol) / 125);
 
 		// spegne quelle che non servono
 		if ((num == aBKG11) && (AnimTab[num].flag & SMKANIM_OFF1))
@@ -238,7 +234,6 @@ void StartSmackAnim(uint16 num) {
 
 		sprintf(UStr, "Anim\\%s", AnimTab[num].name);
 		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num].name));
-		CallSmackVolumePan(1, 1, (32768 * 2 * SFxVol) / 125);
 		NextRefresh += (ReadTime() - st);    // fixup opening time
 	}
 
@@ -299,7 +294,6 @@ void StopAllSmackAnims() {
 void StartFullMotion(const char *name) {
 	int pos;
 	extern int FullStart, FullEnd;
-	extern short SpeechVol, SFxVol, SpeechON;
 
 	// spegne tutte le altre animazioni
 	for (pos = 0; pos < MAXSMACK; pos++) {
@@ -334,12 +328,6 @@ void StartFullMotion(const char *name) {
 	SemMouseEnabled = false;
 
 	CallSmackOpen((const char *)FmvFileOpen(name));
-	CallSmackVolumePan(pos, 2, (32768 * 2 * SFxVol) / 125);
-	CallSmackVolumePan(pos, 1, (32768 * 2 * SFxVol) / 125);
-	if (SpeechON)
-		CallSmackVolumePan(pos, 7, (32768 * 2 * SpeechVol) / 125);
-	else
-		CallSmackVolumePan(pos, 7, 0);
 
 	_curSmackAction = SMACKNULL;
 }

@@ -3943,11 +3943,10 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
 		break;
 	case fVALVOLAON34: {
-		extern short SFxVol;
 		if (!(_choice[616]._flag & OBJFLAG_DONE) &&		// non ho fatto fmv e
 				(_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS)	&&	// c'e' il tubo tagliato e
 				!(_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS))	// non c'e' il tubo fuori il tubo fuori
-			CallSmackVolumePan(0, 2, (32768 * 2 * SFxVol) / 125);
+			CallSmackVolumePan(0, 2, 1);
 	}
 	break;
 	case fVALVOLAOFF34:
@@ -3998,15 +3997,13 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 	case fANIMON1:
 		AnimTab[Room[_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF1;
 		if ((_curRoom == r14) || (_curRoom == r1D) || (_curRoom == r22) || (_curRoom == r48) || (_curRoom == r4P)) {
-			extern short SFxVol;
-			CallSmackVolumePan(0, 1, (32768 * 2 * SFxVol) / 125);
+			CallSmackVolumePan(0, 1, 1);
 		}
 		break;
 	case fANIMON2:
 		AnimTab[Room[_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF2;
 		if ((_curRoom == r2E)) {
-			extern short SFxVol;
-			CallSmackVolumePan(0, 2, (32768 * 2 * SFxVol) / 125);
+			CallSmackVolumePan(0, 2, 1);
 		}
 		break;
 	case fANIMON3:
@@ -4121,8 +4118,7 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 			read3D(UStr);
 			Room[_curRoom]._flag |= OBJFLAG_EXTRA;
 			if ((_curRoom == r37)) {
-				extern short SFxVol;
-				CallSmackVolumePan(0, 1, (32768 * 2 * SFxVol) / 125);
+				CallSmackVolumePan(0, 1, 1);
 			}
 		}
 		break;
