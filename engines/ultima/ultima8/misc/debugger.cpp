@@ -20,12 +20,13 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/tokenizer.h"
 #include "image/png.h"
 #include "image/bmp.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/graphics/render_surface.h"
@@ -926,20 +927,16 @@ bool Debugger::cmdMark(int argc, const char **argv) {
 		return true;
 	}
 
-	SettingManager *settings = SettingManager::get_instance();
 	MainActor *mainActor = getMainActor();
 	int curmap = mainActor->getMapNum();
 	int32 x, y, z;
 	mainActor->getLocation(x, y, z);
 
-	istring confkey = Common::String::format("marks/%s", argv[1]);
-	char buf[100]; // large enough for 4 ints
-	sprintf(buf, "%d %d %d %d", curmap, x, y, z);
+	Common::String key = Common::String::format("mark_%s", argv[1]);
+	Common::String value = Common::String::format("%d %d %d %d", curmap, x, y, z);
+	ConfMan.set(key, value);
 
-	settings->set(confkey, buf);
-	settings->write(); //!! FIXME: clean this up
-
-	debugPrintf("Set mark \"%s\" to %s\n", argv[1], buf);
+	debugPrintf("Set mark \"%s\" to %s\n", argv[1], value.c_str());
 	return true;
 }
 
@@ -953,15 +950,14 @@ bool Debugger::cmdRecall(int argc, const char **argv) {
 		return true;
 	}
 
-	SettingManager *settings = SettingManager::get_instance();
 	MainActor *mainActor = getMainActor();
-	Common::String confKey = Common::String::format("marks/%s", argv[1]);
-	Std::string target;
-	if (!settings->get(confKey, target)) {
+	Common::String key = Common::String::format("mark_%s", argv[1]);
+	if (!ConfMan.hasKey(key)) {
 		debugPrintf("recall: no such mark\n");
 		return true;
 	}
 
+	Common::String target = ConfMan.get(key);
 	int t[4];
 	int n = sscanf(target.c_str(), "%d%d%d%d", &t[0], &t[1], &t[2], &t[3]);
 	if (n != 4) {
@@ -974,12 +970,19 @@ bool Debugger::cmdRecall(int argc, const char **argv) {
 }
 
 bool Debugger::cmdListMarks(int argc, const char **argv) {
-	SettingManager *settings = SettingManager::get_instance();
-	Std::vector<istring> marks;
-	marks = settings->listDataKeys("marks");
-	for (Std::vector<istring>::const_iterator iter = marks.begin();
-		iter != marks.end(); ++iter) {
-		debugPrintf("%s\n", iter->c_str());
+	const Common::ConfigManager::Domain *domain = ConfMan.getActiveDomain();
+	Common::ConfigManager::Domain::const_iterator dit;
+	Common::StringArray marks;
+	for (dit = domain->begin(); dit != domain->end(); ++dit) {
+		if (dit->_key.hasPrefix("mark_")) {
+			marks.push_back(dit->_key.substr(5));
+		}
+	}
+
+	Common::sort(marks.begin(), marks.end());
+	Common::StringArray::const_iterator mit;
+	for (mit = marks.begin(); mit != marks.end(); ++mit) {
+		debugPrintf("%s\n", mit->c_str());
 	}
 
 	return true;
