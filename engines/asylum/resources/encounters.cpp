@@ -599,7 +599,7 @@ int32 Encounter::getKeywordIndex() {
 
 		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && isKeywordVisible(_item->keywords[index])) {
 			int32 x = _drawingStructs[0].point1.y + 145 * (counter % 3) + _point.x + _portrait1.rect.width() + 15;
-			int32 y = 16 * counter / 3 + _point.y + 5;
+			int32 y = 16 * (counter / 3) + _point.y + 5;
 
 			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (_item->keywords[index] & KEYWORD_MASK))))
 			 && mousePos.y >= y && mousePos.y <= (y + 16))
@@ -1122,8 +1122,8 @@ void Encounter::drawDialogOptions() {
 			else
 				getText()->loadFont(getWorld()->font1);
 
-			Common::Point coords(_drawingStructs[0].point1.y + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15,
-			                     _point.y + (int16)(16 * counter / 3));
+			Common::Point coords(_drawingStructs[0].point1.y + 145 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15,
+			                     _point.y + (int16)(16 * (counter / 3)));
 
 			if (getKeywordIndex() == keywordIndex)
 				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK))), 18, 0);
