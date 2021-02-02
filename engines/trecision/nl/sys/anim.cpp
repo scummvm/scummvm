@@ -37,6 +37,7 @@
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Trecision {
 
@@ -95,7 +96,6 @@ extern uint32 _newData2[260];
 NightlongSmackerDecoder *SmkAnims[MAXSMACK];
 extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 extern Graphics::PixelFormat ScreenFormat;
-extern short SpeechVol, SFxVol, SpeechON, TextON;
 
 // from regen.c
 extern int16 limiti[20][4];
@@ -451,12 +451,6 @@ void PlayFullMotion(int start, int end) {
 				SmkAnims[pos]->seekToFrame(1);
 
 			CallSmackSoundOnOff(pos, 1);
-			CallSmackVolumePan(pos, 2, (32768 * 2 * SFxVol) / 125);
-			CallSmackVolumePan(pos, 1, (32768 * 2 * SFxVol) / 125);
-			if (SpeechON)
-				CallSmackVolumePan(pos, 7, (32768 * 2 * SpeechVol) / 125);
-			else
-				CallSmackVolumePan(pos, 7, 0);
 
 			/*while ( SmkAnims[pos]->getCurFrame() < start - 1 )
 			{
@@ -471,12 +465,6 @@ void PlayFullMotion(int start, int end) {
 	} else {
 		if ((end - start) > 2) {
 			CallSmackSoundOnOff(pos, 1);
-			CallSmackVolumePan(pos, 2, (32768 * 2 * SFxVol) / 125);
-			CallSmackVolumePan(pos, 1, (32768 * 2 * SFxVol) / 125);
-			if (SpeechON)
-				CallSmackVolumePan(pos, 7, (32768 * 2 * SpeechVol) / 125);
-			else
-				CallSmackVolumePan(pos, 7, 0);
 		}
 	}
 
@@ -578,7 +566,7 @@ void RegenFullMotion() {
 		if (sdt.sign != NULL) {
 			PaintSmackBuffer(0, sdt.y - TOP, MAXX, sdt.dy);
 			// scrive stringa
-			if (TextON)
+			if (ConfMan.getBool("subtitles"))
 				DText(sdt);
 			// e la fa vedere
 			//ShowScreen( 0, sdt._y, MAXX,  sdt._dy );

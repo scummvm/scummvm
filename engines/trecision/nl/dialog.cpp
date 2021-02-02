@@ -170,7 +170,6 @@ void PlayDialog(uint16 i) {
 					afterChoice
 --------------------------------------------------*/
 void afterChoice(int numframe) {
-	extern short SFxVol;
 	Dialog *d = &_dialog[_curDialog];
 
 	wordset(Video2, 0, MAXX * TOP);
@@ -431,7 +430,7 @@ void afterChoice(int numframe) {
 
 		case dF371:
 			_obj[oSCAFFALE36]._anim = a3615AAPRENDESCAFFALE;
-			CallSmackVolumePan(0, 1, (32768 * 2 * SFxVol) / 125);
+			CallSmackVolumePan(0, 1, 1);
 			break;
 
 		case dF431:

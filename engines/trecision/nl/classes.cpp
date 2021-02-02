@@ -32,6 +32,8 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 
+#include "common/config-manager.h"
+
 namespace Trecision {
 
 extern int32 CurRoomMaxX;
@@ -781,17 +783,22 @@ void doSystem() {
 		else if ((OldRoom == r2BL) || (OldRoom == r36F))
 			OldRoom = _curRoom;
 		else if (_curRoom == rSYS) {
-			extern short SpeechON, TextON, SpeechVol, MusicVol, SFxVol;
+			bool SpeechON = !ConfMan.getBool("speech_mute");
+			bool TextON = ConfMan.getBool("subtitles");
+			int SpeechVol = ConfMan.getInt("speech_volume");
+			int MusicVol = ConfMan.getInt("music_volume");
+			int SFxVol = ConfMan.getInt("sfx_volume");
+
 			if (SpeechON) _obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
 			else _obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
 			if (TextON)   _obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
 			else _obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00SPEECH1D + ((SpeechVol) / 25) * 2]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00MUSIC1D + ((MusicVol) / 25) * 2]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00SOUND1D + ((SFxVol) / 25) * 2]._mode |= OBJMODE_OBJSTATUS;
-			if (SpeechVol < 125) _obj[o00SPEECH1D + ((SpeechVol) / 25) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (MusicVol  < 125) _obj[o00MUSIC1D + ((MusicVol) / 25) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (SFxVol    < 125) _obj[o00SOUND1D + ((SFxVol) / 25) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+			_obj[o00MUSIC1D + ((MusicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+			_obj[o00SOUND1D + ((SFxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+			if (SpeechVol < 256) _obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			if (MusicVol  < 256) _obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			if (SFxVol    < 256) _obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 		}
 
 		ReadLoc();

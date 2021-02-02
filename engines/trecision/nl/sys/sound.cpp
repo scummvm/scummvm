@@ -81,10 +81,6 @@ int fadoutcount;
 
 extern uint8 *SpeechBuf[2];
 extern uint8  SpeechTrackEnabled;
-extern short SpeechON;
-extern short SpeechVol;
-extern short MusicVol;
-extern short SFxVol;
 void CloseSys(const char *str);
 void CheckSystem();
 void ReadExtraObj41D();
@@ -410,7 +406,7 @@ int32 Talk(const char *name) {
 	StopTalk();
 
 	int Len = SpeechFileLen(name);
-	if ((Len > SPEECHSIZE) || (SoundSystemActive == SOUND_OFF) || (SpeechON == 0)) {
+	if ((Len > SPEECHSIZE) || (SoundSystemActive == SOUND_OFF)) {
 		SpeechTrackEnabled = 0;
 		return ((Len * 60L) / (11025));
 	}
@@ -423,7 +419,7 @@ int32 Talk(const char *name) {
 	if (LoadAudioWav(0xFFFF, SpeechBuf[0], Len))
 		Len *= 2;
 
-	if ((SoundSystemActive == SOUND_OFF) || (SpeechON == 0))
+	if ((SoundSystemActive == SOUND_OFF))
 		SpeechTrackEnabled = 0;
 	else {
 		extern uint32 CharacterSpeakTime;

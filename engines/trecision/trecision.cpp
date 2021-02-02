@@ -49,6 +49,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FMV");
 
+	syncSoundSettings();
+
 	g_vm = this;
 }
 

@@ -112,12 +112,6 @@ struct SDText OldString;
 int8   MouseONOFF = 1;
 uint8  TextStatus;
 // AOT.CFG
-short SpeechON = 1;
-short TextON = 1;
-short SpeechVol = 75;
-short MusicVol = 75;
-short SFxVol = 75;
-char  CDLetter = 'F';
 char  CurCDSet = 1;
 char  GamePath[250];
 // ALTERNATIVE SCROLLING
