@@ -128,8 +128,6 @@ void CoreApp::killGame() {
 	_settingMan->write();
 
 	_fileSystem->RemoveVirtualPath("@game");
-	_fileSystem->RemoveVirtualPath("@work");
-	_fileSystem->RemoveVirtualPath("@save");
 
 	_configFileMan->clearRoot("bindings");
 	_configFileMan->clearRoot("language");
@@ -200,21 +198,6 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	Std::string gpath;
 	_settingMan->get("path", gpath, SettingManager::DOM_GAME);
 	_fileSystem->AddVirtualPath("@game", gpath);
-
-	// load work path. Default is @home/game-work
-	// where 'game' in the above is the specified 'game' loaded
-	Std::string work;
-	if (!_settingMan->get("work", work, SettingManager::DOM_GAME))
-		work = "@home/" + game + "-work";
-
-	// load savegame path. Default is @home/game-save
-	Std::string save;
-	if (!_settingMan->get("save", save, SettingManager::DOM_GAME))
-		save = "@home/" + game + "-save";
-
-	// force creation if it doesn't exist
-	_fileSystem->AddVirtualPath("@save", save, true);
-	debugN(MM_INFO, "Savegame directory: %s\n", save.c_str());
 }
 
 void CoreApp::ParseArgs(const int argc, const char *const *const argv) {

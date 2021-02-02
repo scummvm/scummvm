@@ -107,7 +107,7 @@ protected:
 	void killGame();
 
 	//! Setup the virtual game paths for the current game (set in gameinfo)
-	//! Specifically, @game and @work
+	//! Specifically, @game
 	void setupGamePaths(GameInfo *gameinfo);
 };
 

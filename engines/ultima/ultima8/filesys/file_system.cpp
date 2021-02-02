@@ -83,15 +83,6 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 		delete f;
 	}
 
-	// Handle opening savegames
-	if (name.hasPrefix("@save/")) {
-		int slotNumber = atoi(name.c_str() + 6);
-		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
-
-		in = g_system->getSavefileManager()->openForLoading(saveFilename);
-		return in != nullptr;
-	}
-
 	if (!rewrite_virtual_path(name))
 		return false;
 
@@ -116,15 +107,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 	string name = fname;
 	switch_slashes(name);
 
-	if (name.hasPrefix("@save/")) {
-		int slotNumber = atoi(name.c_str() + 6);
-		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
-
-		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
-		return out != nullptr;
-	} else {
-		return false;
-	}
+	return false;
 
 #if 0
 	if (!rewrite_virtual_path(name)) {
