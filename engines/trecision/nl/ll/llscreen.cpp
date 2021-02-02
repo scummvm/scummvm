@@ -33,6 +33,7 @@
 #include "trecision/nl/define.h"
 
 #include <common/file.h>
+#include <common/str.h>
 
 namespace Trecision {
 
@@ -756,7 +757,7 @@ void ReadSounds() {
 		SoundPointer[a] = (uint8 *)(Video2 + GameWordPointer);
 
 		sprintf(UStr, "%s", GSample[b].name);
-		if (!stricmp(UStr, "RUOTE2C.WAV")) break;
+		if (!scumm_stricmp(UStr, "RUOTE2C.WAV")) break;
 
 		ff = FastFileOpen(UStr);
 		if (ff == NULL)

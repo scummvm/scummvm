@@ -20,14 +20,14 @@
  *
  */
 
-#include <io.h>
-#include <fcntl.h>
 #include <search.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void warning(const char *format, ...);
+#include "trecision/nl/lib/addtype.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 
 namespace Trecision {
 
@@ -45,7 +45,6 @@ typedef struct SFileHandle {
 
 #define MAXFHANDLE		10
 #define MAXFILES		500
-int Compare(const void *p1, const void *p2);
 
 static FILE				*hFile;
 static FILEENTRY		pFE[MAXFILES];
@@ -69,8 +68,7 @@ void SpeechFileFinish();
  * --------------------------------------------------*/
 int Compare(const void *p1, const void *p2) {
 	LPFILEENTRY p1c = (LPFILEENTRY)p1, p2c = (LPFILEENTRY)p2;
-
-	return (stricmp((p1c)->name, (p2c)->name));
+	return (scumm_stricmp((p1c)->name, (p2c)->name));
 }
 
 /* -----------------19/01/98 17.13-------------------
@@ -228,14 +226,6 @@ FILE *aFile[MAXSMACK] = {NULL, NULL, NULL}, *FmvFile = NULL;
 FILEENTRY AFE[1000];
 int AFNum;
 
-/* -----------------26/01/98 16.53-------------------
- * 					ACompare
- * --------------------------------------------------*/
-int ACompare(const void *p1, const void *p2) {
-	LPFILEENTRY p1c = (LPFILEENTRY)p1, p2c = (LPFILEENTRY)p2;
-	return (stricmp((p1c)->name, (p2c)->name));
-}
-
 /* -----------------19/01/98 17.13-------------------
  * AnimFileInit
  * --------------------------------------------------*/
@@ -286,10 +276,10 @@ int AnimFileOpen(const char *name) {
 	}
 
 	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), ACompare);
+	pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), Compare);
 	if (pfe == NULL) {
 		CheckFileInCD(name);
-		pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), ACompare);
+		pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), Compare);
 	}
 
 	if (pfe != NULL) {
@@ -379,7 +369,7 @@ int SpeechFileLen(const char *name) {
 	}
 
 	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), ACompare);
+	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
 	if (pfe != NULL)
 		return ((pfe + 1)->offset - pfe->offset);
 
@@ -401,10 +391,10 @@ int SpeechFileRead(const char *name, unsigned char *buf) {
 	}
 
 	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), ACompare);
+	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
 	if (pfe == NULL) {
 		CheckFileInCD(name);
-		pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), ACompare);
+		pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
 	}
 
 	if (pfe != NULL) {

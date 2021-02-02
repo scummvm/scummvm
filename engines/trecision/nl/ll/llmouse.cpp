@@ -1193,7 +1193,7 @@ void CheckFileInCD(const char *name) {
 	int a;
 
 	strcpy(fe.name, name);
-	LPFILEENTRY pfe = (LPFILEENTRY)bsearch(&fe, FileRef, NumFileRef, sizeof(FILEENTRY), ACompare);
+	LPFILEENTRY pfe = (LPFILEENTRY)bsearch(&fe, FileRef, NumFileRef, sizeof(FILEENTRY), Compare);
 	if (pfe == NULL)
 		CloseSys(_sysSent[5]);
 
