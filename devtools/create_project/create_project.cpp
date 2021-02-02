@@ -1479,11 +1479,11 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 			continue;
 		}
 
-		if (isInList(dir, i->name, excludeList))
-			continue;
-
 		std::string name, ext;
 		splitFilename(i->name, name, ext);
+
+		if (ext != "h" && isInList(dir, i->name, excludeList))
+			continue;
 
 		if (!isInList(dir, i->name, includeList))
 			continue;
