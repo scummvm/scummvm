@@ -268,6 +268,10 @@ FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 }
 
 int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
+	// always initialize because some scripts don't test for errors and
+	//  just use the results, even from invalid file handles. bug #12060 
+	memset(dest, 0, maxsize);
+
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return 0;
@@ -278,7 +282,6 @@ int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	}
 	int readBytes = 0;
 	if (maxsize > 1) {
-		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
 		readBytes = Common::strnlen(dest, maxsize); // FIXME: sierra sci returned byte count and didn't react on NUL characters
 		// The returned string must not have an ending LF
