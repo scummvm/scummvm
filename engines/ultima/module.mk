@@ -400,7 +400,6 @@ MODULE_OBJS := \
 	ultima8/convert/crusader/convert_shape_crusader.o \
 	ultima8/filesys/archive.o \
 	ultima8/filesys/archive_file.o \
-	ultima8/filesys/data.o \
 	ultima8/filesys/file_system.o \
 	ultima8/filesys/flex_file.o \
 	ultima8/filesys/raw_archive.o \

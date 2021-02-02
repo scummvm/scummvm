@@ -26,7 +26,6 @@
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
@@ -174,12 +173,6 @@ bool Ultima8Engine::startup() {
 
 	// parent's startup first
 	CoreApp::startup();
-
-	bool dataoverride;
-	if (!_settingMan->get("dataoverride", dataoverride,
-		SettingManager::DOM_GLOBAL))
-		dataoverride = false;
-	_fileSystem->initBuiltinData(dataoverride);
 
 	_kernel = new Kernel();
 

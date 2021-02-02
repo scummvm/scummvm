@@ -37,9 +37,6 @@ public:
 	FileSystem(bool noforcedvpaths = false);
 	~FileSystem();
 
-	//! Initialize builtin data files.
-	void initBuiltinData(bool allowoverride);
-
 	static FileSystem *get_instance() {
 		return _fileSystem;
 	}
@@ -97,26 +94,11 @@ private:
 	// It's useful for 'tools'
 	bool    _noForcedVPaths;
 
-	// This enables/disables overriding builtin data files with external ones
-	bool    _allowDataOverride;
-
 	// rewrite virtual path in-place (i.e., fvn is replaced)
 	// returns false if no rewriting was done
 	bool rewrite_virtual_path(Std::string &vfn) const;
 
 	Std::map<Common::String, Std::string> _virtualPaths;
-
-	//! Check if the given file is a builtin data file.
-	//! If so, return an IDataSource for it. If not, return nullptr.
-	IDataSource *checkBuiltinData(const Std::string &vfn, bool is_text = false);
-
-	struct MemoryFile {
-		MemoryFile(const uint8 *data, const uint32 len)
-			: _data(data), _len(len) { }
-		const uint8 *_data;
-		const uint32 _len;
-	};
-	Std::map<Common::String, MemoryFile *> _memoryFiles; // Files mounted in memory
 };
 
 } // End of namespace Ultima8

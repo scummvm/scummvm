@@ -32,7 +32,7 @@ using Std::string;
 FileSystem *FileSystem::_fileSystem = nullptr;
 
 FileSystem::FileSystem(bool noforced)
-	: _noForcedVPaths(noforced), _allowDataOverride(true) {
+	: _noForcedVPaths(noforced) {
 	debugN(MM_INFO, "Creating FileSystem...\n");
 
 	_fileSystem = this;
@@ -48,15 +48,6 @@ FileSystem::~FileSystem() {
 
 // Open a streaming file as readable. Streamed (0 on failure)
 IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
-	IDataSource *data = checkBuiltinData(vfn, is_text);
-
-	// allow data-override?
-	if (!_allowDataOverride && data)
-		return data;
-
-	if (data)
-		delete data;
-
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, vfn))
 		return nullptr;
@@ -249,17 +240,6 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 		_virtualPaths.erase(vp);
 		return true;
 	}
-}
-
-IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) {
-	// Is it a Memory file?
-	Std::map<Common::String, MemoryFile *>::const_iterator mf = _memoryFiles.find(vfn);
-
-	if (mf != _memoryFiles.end())
-		return new IBufferDataSource(mf->_value->_data,
-		                             mf->_value->_len, is_text);
-
-	return nullptr;
 }
 
 bool FileSystem::rewrite_virtual_path(string &vfn) const {
