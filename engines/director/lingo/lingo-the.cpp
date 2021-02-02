@@ -564,7 +564,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->_machineType;
 		break;
 	case kTheMaxInteger:
-		getTheEntitySTUB(kTheMaxInteger);
+		d.type = INT;
+		d.u.i = 2147483647; // (2^31)-1 [max 32bit signed integer]
 		break;
 	case kTheMemorySize:
 		d.type = INT;
