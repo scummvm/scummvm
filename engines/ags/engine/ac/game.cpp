@@ -70,6 +70,7 @@
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/scriptcamera.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/device/mousew32.h"
 #include "ags/shared/font/fonts.h"
@@ -1020,6 +1021,11 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 	// WORKAROUND: AGS originally only creates savegames if the game flags
 	// that it supports it. But we want it all the time for ScummVM GMM
 	if (/*game.options[OPT_SAVESCREENSHOT] */true) {
+		// Render the view without any UI elements
+		int old_flags = debug_flags;
+		debug_flags |= DBG_NOIFACE;
+		construct_game_scene(true);
+
 		int usewid = data_to_game_coord(play.screenshot_width);
 		int usehit = data_to_game_coord(play.screenshot_height);
 		const Rect &viewport = play.GetMainViewport();
@@ -1032,6 +1038,10 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 			quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
 
 		screenShot = CopyScreenIntoBitmap(usewid, usehit);
+
+		// Restore original screen
+		debug_flags = old_flags;
+		construct_game_scene(true);
 	}
 }
 

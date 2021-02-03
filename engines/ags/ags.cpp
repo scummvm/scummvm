@@ -390,11 +390,13 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 }
 
 bool AGSEngine::canLoadGameStateCurrently() {
-	return !::AGS3::thisroom.Options.SaveLoadDisabled && !::AGS3::inside_script;
+	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
+		!::AGS3::inside_script && !AGS3::play.fast_forward;
 }
 
 bool AGSEngine::canSaveGameStateCurrently() {
-	return !::AGS3::thisroom.Options.SaveLoadDisabled && !::AGS3::inside_script;
+	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
+		!::AGS3::inside_script && !AGS3::play.fast_forward;
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {
