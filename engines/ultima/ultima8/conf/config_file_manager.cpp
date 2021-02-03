@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
-#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -40,7 +39,6 @@ ConfigFileManager::ConfigFileManager() {
 ConfigFileManager::~ConfigFileManager() {
 	debugN(MM_INFO, "Destroying ConfigFileManager...\n");
 
-	ConfMan.flushToDisk();
 	clear();
 	_configFileManager = nullptr;
 }
@@ -79,15 +77,10 @@ void ConfigFileManager::clearRoot(istring root) {
 }
 
 bool ConfigFileManager::exists(istring key) {
-	return ConfMan.hasKey(key) || (findKeyINI(key) != nullptr);
+	return (findKeyINI(key) != nullptr);
 }
 
 bool ConfigFileManager::get(istring key, string &ret) {
-	if (ConfMan.hasKey(key)) {
-		ret = ConfMan.get(key);
-		return true;
-	}
-
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -97,11 +90,6 @@ bool ConfigFileManager::get(istring key, string &ret) {
 
 
 bool ConfigFileManager::get(istring key, int &ret) {
-	if (ConfMan.hasKey(key)) {
-		ret = ConfMan.getInt(key);
-		return true;
-	}
-
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
@@ -110,11 +98,6 @@ bool ConfigFileManager::get(istring key, int &ret) {
 }
 
 bool ConfigFileManager::get(istring key, bool &ret) {
-	if (ConfMan.hasKey(key)) {
-		ret = ConfMan.getBool(key);
-		return true;
-	}
-
 	INIFile *ini = findKeyINI(key);
 	if (!ini) return false;
 
