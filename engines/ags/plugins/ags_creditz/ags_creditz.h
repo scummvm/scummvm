@@ -121,11 +121,19 @@ protected:
 	static Version _version;
 	static State *_state;
 	static IAGSEngine *_engine;
-protected:
+public:
+	AGSCreditz();
+	~AGSCreditz();
+};
+
+class AGSCreditz11 : public AGSCreditz {
+private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	// Shared Script methods
+	static void SetCredit(const ScriptMethodParams &params);
+	static void ScrollCredits(const ScriptMethodParams &params);
+	static string GetCredit(const ScriptMethodParams &params);
 	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
 	static void SetCreditImage(const ScriptMethodParams &params);
 	static void PauseScroll(const ScriptMethodParams &params);
@@ -144,27 +152,37 @@ protected:
 	static string GetStaticCreditTitle(const ScriptMethodParams &params);
 	static void SetStaticCreditImage(const ScriptMethodParams &params);
 	static int IsStaticCreditsFinished(const ScriptMethodParams &params);
-public:
-	AGSCreditz();
-	~AGSCreditz();
-};
 
-class AGSCreditz11 : public AGSCreditz {
-private:
-	static void AGS_EngineStartup(IAGSEngine *engine);
-
-	static void SetCredit(const ScriptMethodParams &params);
-	static void ScrollCredits(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
 public:
 	AGSCreditz11();
 };
 
 class AGSCreditz20 : public AGSCreditz {
 private:
+	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
 	static void SetCredit(const ScriptMethodParams &params);
+	static void ScrollCredits(const ScriptMethodParams &params);
+	static string GetCredit(const ScriptMethodParams &params);
+	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
+	static void SetCreditImage(const ScriptMethodParams &params);
+	static void PauseScroll(const ScriptMethodParams &params);
+	static void ScrollReset(const ScriptMethodParams &params);
+	static void SetEmptyLineHeight(const ScriptMethodParams &params);
+	static int GetEmptyLineHeight(const ScriptMethodParams &params);
+	static void SetStaticCredit(const ScriptMethodParams &params);
+	static string GetStaticCredit(const ScriptMethodParams &params);
+	static void StartEndStaticCredits(const ScriptMethodParams &params);
+	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
+	static void SetDefaultStaticDelay(const ScriptMethodParams &params);
+	static void SetStaticPause(const ScriptMethodParams &params);
+	static void SetStaticCreditTitle(const ScriptMethodParams &params);
+	static void ShowStaticCredit(const ScriptMethodParams &params);
+	static void StaticReset(const ScriptMethodParams &params);
+	static string GetStaticCreditTitle(const ScriptMethodParams &params);
+	static void SetStaticCreditImage(const ScriptMethodParams &params);
+	static int IsStaticCreditsFinished(const ScriptMethodParams &params);
 public:
 	AGSCreditz20();
 };
