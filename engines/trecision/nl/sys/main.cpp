@@ -57,20 +57,15 @@ extern int			KeybInput;
 void initMain();
 void NextMessage();
 void longset(void *dest, uint32 value, uint32 len);
-void MCopy(unsigned short *Dest, unsigned short *Src, unsigned int Len);
 void StopAllSmackAnims();
 void StopSoundSystem();
 void RefreshAllAnimations();
 void FastFileFinish();
 void AnimFileFinish();
 void SpeechFileFinish();
-void DisableAutorun();
-void RestoreAutorun();
 void VMouseON();
 void VMouseOFF();
 void ClearScreen();
-void UnacquireDIG(short wParam);
-void ReacquireDIG();
 void UnlockVideo();
 char waitKey();
 void ShowScreen(int px, int py, int dx, int dy);
@@ -82,38 +77,6 @@ void GetColorMask(const Graphics::PixelFormat &format) {
 	_bitMask[0] = format.rMax() << format.rShift;
 	_bitMask[1] = format.gMax() << format.gShift;
 	_bitMask[2] = format.bMax() << format.bShift;
-}
-
-void SetCapsLock(bool bState) {
-	/*
-	extern int FastWalk,FastWalkLocked;
-	BYTE keyState[256];
-
-	GetKeyboardState((LPBYTE)&keyState);
-	if( (bState && !(keyState[VK_CAPITAL] & 1)) || (!bState && (keyState[VK_CAPITAL] & 1)) )
-	{
-		// Simulate a key press
-		keybd_event( VK_CAPITAL, 0x45,	KEYEVENTF_EXTENDEDKEY | 0,	0 );
-
-		// Simulate a key release
-		keybd_event( VK_CAPITAL, 0x45,	KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-
-		FastWalk = true;
-	}
-	*/
-}
-
-int GetCapsLock() {
-	/*
-	BYTE keyState[256];
-
-	GetKeyboardState((LPBYTE)&keyState);
-	if( keyState[VK_CAPITAL] & 1 )
-		return true;
-	else
-		return false;
-	*/
-	return false;
 }
 
 void EventLoop() {
@@ -128,7 +91,6 @@ void EventLoop() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			wmleft = 1;
-			FastWalk = GetCapsLock();
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -137,7 +99,6 @@ void EventLoop() {
 
 		case Common::EVENT_RBUTTONDOWN:
 			wmright = 1;
-			FastWalk = GetCapsLock();
 			break;
 
 		case Common::EVENT_RBUTTONUP:
@@ -190,8 +151,6 @@ void NlInit() {
 
 	_linearMode = true;
 	initMain();
-
-	SetCapsLock(false);
 
 	while (!g_engine->shouldQuit()) {
 		EventLoop();
