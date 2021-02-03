@@ -1436,6 +1436,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),
+	ENGLISH_ENTRY("qfg2agdi", "Game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
 
 	// Comercial games
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
@@ -2256,8 +2257,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("questfighter", "Quest Fighter.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2914128),
 	ENGLISH_ENTRY("questfighterii", "Quest Fighter 2.exe", "4d7d2addcde045dae6e0363a43f9acad", 5219511),
 	ENGLISH_ENTRY("questforcinema", "Questforcinema.exe", "465f972675db2da6040518221af5b0ba", 2670632),
-	ENGLISH_ENTRY("questforglory2vga", "Game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
-	ENGLISH_ENTRY("questforgloryii", "Qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),
 	ENGLISH_ENTRY("questforjesus", "QuestForJesus.exe", "495d45fb8adfd49690ae3b97921feec6", 3973088),
 	ENGLISH_ENTRY("questforpalette", "Palette Quest.exe", "0710e2ec71042617f565c01824f0cf3c", 754395),
 	ENGLISH_ENTRY("questforthebluecup", "Quest for the Cup.exe", "9cb3c8dc7a8ab9c44815955696be2677", 8760015),
