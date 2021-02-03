@@ -23,6 +23,9 @@
 #include "config.h"
 #include "xcode.h"
 
+#include <limits.h>
+#include <stdlib.h>
+
 #include <fstream>
 #include <algorithm>
 
@@ -938,9 +941,9 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 
 	std::string projectOutputDirectory;
 #ifdef POSIX
-	char *rp = realpath(setup.outputDir.c_str(), NULL);
+	char tmpbuf[PATH_MAX];
+	char *rp = realpath(setup.outputDir.c_str(), tmpbuf);
 	projectOutputDirectory = rp;
-	free(rp);
 #endif
 
 	/****************************************
