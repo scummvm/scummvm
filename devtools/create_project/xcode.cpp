@@ -29,7 +29,7 @@
 #ifdef MACOSX
 #include <sstream>
 #include <iomanip>
-#include <CommonCrypto/CommonCrypto.h>
+#include <CommonCrypto/CommonDigest.h>
 #endif
 
 namespace CreateProjectTool {
