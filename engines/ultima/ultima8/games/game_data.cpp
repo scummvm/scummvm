@@ -40,7 +40,7 @@
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/gumps/weasel_dat.h"
-#include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima/ultima8/audio/music_flex.h"
 #include "ultima/ultima8/audio/speech_flex.h"

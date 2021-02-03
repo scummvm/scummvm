@@ -33,7 +33,6 @@ namespace Ultima8 {
 class Console;
 class FileSystem;
 class ConfigFileManager;
-class SettingManager;
 struct GameInfo;
 
 
@@ -74,7 +73,6 @@ protected:
 	// minimal system
 	FileSystem *_fileSystem;
 	ConfigFileManager *_configFileMan;
-	SettingManager *_settingMan;
 
 	Args _parameters;
 
@@ -82,9 +80,6 @@ protected:
 
 private:
 	const Ultima::UltimaGameDescription *_gameDesc;
-
-	//! start filesystem, kernel, config
-	virtual void sysInit();
 
 	//! parse commandline arguments
 	void ParseArgs(int argc, const char *const  *argv);
@@ -95,9 +90,6 @@ private:
 	//! \return true if detected all the fields, false if detection failed
 	bool getGameInfo(const istring &game, GameInfo *gameinfo);
 
-	//! load configuration files
-	void loadConfig();
-
 protected:
 	//! Setup up a game
 	//! \return false if failed
@@ -105,10 +97,6 @@ protected:
 
 	//! kill current gameinfo
 	void killGame();
-
-	//! Setup the virtual game paths for the current game (set in gameinfo)
-	//! Specifically, @game
-	void setupGamePaths(GameInfo *gameinfo);
 };
 
 } // End of namespace Ultima8

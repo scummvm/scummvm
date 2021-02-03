@@ -109,8 +109,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 		uint32 shapeid = item->getShape();
 		if (GAME_IS_U8 && (shapeid == 115 /*Barrel*/
 		                   || shapeid == 78 || shapeid == 117 /*Chests*/)) {
-			// TODO: make this off by default, but can enable it through
-			// pentagram.ini
+			// TODO: make this off by default, but can enable it through config
 			MainActor *avatar = getMainActor();
 			ObjId bp = avatar->getEquip(7); // !! constant
 			Container *avatarbackpack = getContainer(bp);

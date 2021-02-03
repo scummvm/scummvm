@@ -20,10 +20,11 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/conf/config_file_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,13 +35,12 @@ CoreApp *CoreApp::_application = nullptr;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
 		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(nullptr), _fileSystem(nullptr),
-		_configFileMan(nullptr), _settingMan(nullptr) {
+		_configFileMan(nullptr){
 	_application = this;
 }
 
 CoreApp::~CoreApp() {
 	FORGET_OBJECT(_fileSystem);
-	FORGET_OBJECT(_settingMan);
 	FORGET_OBJECT(_configFileMan);
 	FORGET_OBJECT(_gameInfo);
 
@@ -48,52 +48,12 @@ CoreApp::~CoreApp() {
 }
 
 void CoreApp::startup() {
-	sysInit();
-	loadConfig(); // load config files
-}
-
-void CoreApp::sysInit() {
 	_gameInfo = nullptr;
 
 	_fileSystem = new FileSystem;
 
 	_configFileMan = new ConfigFileManager();
-	_settingMan = new SettingManager();
-	_settingMan->setDomainName(SettingManager::DOM_GLOBAL, "pentagram");
-	_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
-}
 
-// load configuration files
-void CoreApp::loadConfig() {
-	pout << "Loading configuration files:" << Std::endl;
-
-	bool dataconf, homeconf;
-
-	// system-wide config, read-only
-	dataconf = _settingMan->readConfigFile("@data/pentagram.ini", true);
-
-	// user config
-	homeconf = _settingMan->readConfigFile("@home/pentagram.ini");
-
-	if (!homeconf && !dataconf) {
-		pout << "No configuration files found." << Std::endl;
-	} else {
-
-		if (dataconf)
-			pout << "@data/pentagram.ini" << Std::endl;
-		if (homeconf)
-			pout << "@home/pentagram.ini" << Std::endl;
-	}
-
-	//  load pentagram specific data path
-	Std::string data;
-	if (_settingMan->get("data", data, SettingManager::DOM_GLOBAL)) {
-		pout << "Setting custom data path: " << data << Std::endl;
-		bool ok = _fileSystem->AddVirtualPath("@data", data);
-		if (!ok) {
-			perr << "Error opening data directory." << Std::endl;
-		}
-	}
 }
 
 bool CoreApp::setupGame() {
@@ -117,16 +77,14 @@ bool CoreApp::setupGame() {
 	pout << "Selected game: " << info->_name << Std::endl;
 	pout << info->getPrintDetails() << Std::endl;
 
-	setupGamePaths(info);
+	// load main game data path - it needs to be empty
+	//Std::string gpath = ConfMan.get("path");
+	_fileSystem->AddVirtualPath("@game", "");
 
 	return true;
 }
 
 void CoreApp::killGame() {
-	// Save the settings!
-	pout << "Saving settings" << Std::endl;
-	_settingMan->write();
-
 	_fileSystem->RemoveVirtualPath("@game");
 
 	_configFileMan->clearRoot("bindings");
@@ -135,8 +93,6 @@ void CoreApp::killGame() {
 	_configFileMan->clearRoot("armour");
 	_configFileMan->clearRoot("monsters");
 	_configFileMan->clearRoot("game");
-	_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
-
 	_gameInfo = nullptr;
 }
 
@@ -183,22 +139,6 @@ bool CoreApp::getGameInfo(const istring &game, GameInfo *ginfo) {
 	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
-void CoreApp::setupGamePaths(GameInfo *ginfo) {
-	if (!ginfo) {
-		_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
-		return;
-	}
-
-	istring game = ginfo->_name;
-
-	_settingMan->setDomainName(SettingManager::DOM_GAME, game);
-	_settingMan->setCurrentDomain(SettingManager::DOM_GAME);
-
-	// load main game data path
-	Std::string gpath;
-	_settingMan->get("path", gpath, SettingManager::DOM_GAME);
-	_fileSystem->AddVirtualPath("@game", gpath);
-}
 
 void CoreApp::ParseArgs(const int argc, const char *const *const argv) {
 	_parameters.process(argc, argv);
