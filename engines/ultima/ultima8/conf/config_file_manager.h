@@ -45,14 +45,7 @@ public:
 	//! \param root The name of the root node in the file
 	//! \param readonly If true, don't write to this file's tree (or the file)
 	//! \return true if succesful
-	bool readConfigFile(Std::string fname, istring root,
-	                    bool readonly = false);
-	bool readConfigString(Std::string config, istring root,
-	                      bool readonly = false);
-
-	//! write all (writable) config files in the given root
-	//! \param root The root to write, or empty string to write everything
-	void write(istring root = "");
+	bool readConfigFile(Std::string fname, istring root);
 
 	//! clear everything
 	void clear();
@@ -70,26 +63,6 @@ public:
 	//! get value
 	bool get(istring, bool &ret);
 
-	//! set value
-	void set(istring key, Std::string value);
-	//! set value
-	void set(istring key, const char *value);
-	//! set value
-	void set(istring key, int value);
-	//! set value
-	void set(istring key, bool value);
-
-	//! remove key
-	void unset(istring key);
-
-	//! list all keys in a section
-	//! \param section The section to return setkeys of
-	//! \param longformat If true, return the full key name, instead of
-	//!                   just the last part
-	//! \return the keys. They have no guaranteed order.
-	Std::vector<istring> listKeys(istring section,
-	        bool longformat = false);
-
 	//! list all sections
 	//! \param root The config root to list all sections in
 	//! \param longformat If true, return the full key name (including section)
@@ -106,7 +79,6 @@ public:
 private:
 
 	INIFile *findKeyINI(istring key);
-	INIFile *findWriteINI(istring key);
 
 	Std::vector<INIFile *> _iniFiles;
 

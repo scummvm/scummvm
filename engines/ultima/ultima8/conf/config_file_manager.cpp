@@ -45,42 +45,16 @@ ConfigFileManager::~ConfigFileManager() {
 	_configFileManager = nullptr;
 }
 
-bool ConfigFileManager::readConfigFile(string fname, istring root,
-                                       bool readonly) {
+bool ConfigFileManager::readConfigFile(string fname, istring root) {
 	INIFile *inifile = new INIFile();
 	inifile->clear(root);
 	if (!inifile->readConfigFile(fname)) {
 		delete inifile;
 		return false;
 	}
-	if (readonly)
-		inifile->setReadonly();
 
 	_iniFiles.push_back(inifile);
 	return true;
-}
-
-bool ConfigFileManager::readConfigString(string config, istring root,
-        bool readonly) {
-	INIFile *inifile = new INIFile();
-	inifile->clear(root);
-	if (!inifile->readConfigString(config)) {
-		delete inifile;
-		return false;
-	}
-	if (readonly)
-		inifile->setReadonly();
-
-	_iniFiles.push_back(inifile);
-	return true;
-}
-
-void ConfigFileManager::write(istring root) {
-	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
-	        i != _iniFiles.end(); ++i) {
-		if (!(*i)->isReadonly() && (root == "" || (*i)->checkRoot(root)))
-			(*i)->write();
-	}
 }
 
 void ConfigFileManager::clear() {
@@ -148,89 +122,6 @@ bool ConfigFileManager::get(istring key, bool &ret) {
 	return true;
 }
 
-void ConfigFileManager::set(istring key, string val) {
-	if (key.hasPrefix("settings/")) {
-		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
-		ConfMan.set(subKey, val);
-	} else {
-		INIFile *ini = findWriteINI(key);
-		if (!ini) return;
-
-		ini->set(key, val);
-	}
-}
-
-void ConfigFileManager::set(istring key, const char *val) {
-	if (key.hasPrefix("settings/")) {
-		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
-		ConfMan.set(subKey, val);
-	} else {
-		INIFile *ini = findWriteINI(key);
-		if (!ini) return;
-
-		ini->set(key, val);
-	}
-}
-
-void ConfigFileManager::set(istring key, int val) {
-	if (key.hasPrefix("settings/")) {
-		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
-		ConfMan.setInt(subKey, val);
-	} else {
-		INIFile *ini = findWriteINI(key);
-		if (!ini) return;
-
-		ini->set(key, val);
-	}
-}
-
-void ConfigFileManager::set(istring key, bool val) {
-	if (key.hasPrefix("settings/")) {
-		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
-		ConfMan.setBool(subKey, val);
-	} else {
-		INIFile *ini = findWriteINI(key);
-		if (!ini) return;
-
-		ini->set(key, val);
-	}
-}
-
-void ConfigFileManager::unset(istring key) {
-	if (key.hasPrefix("settings/")) {
-		Common::String subKey(key.c_str() + key.findLastOf('/') + 1);
-		ConfMan.set(subKey, "");
-	} else {
-		INIFile *ini = findWriteINI(key);
-		if (!ini) return;
-
-		ini->unset(key);
-	}
-}
-
-
-
-Std::vector<istring> ConfigFileManager::listKeys(istring section,
-        bool longformat) {
-	Std::vector<istring> keys;
-
-	Std::set<istring> keyset;
-	Std::set<istring>::iterator iter;
-
-	for (Std::vector<INIFile *>::iterator i = _iniFiles.begin();
-	        i != _iniFiles.end(); ++i) {
-		if ((*i)->checkRoot(section)) {
-			(*i)->listKeys(keyset, section, longformat);
-		}
-	}
-
-	for (iter = keyset.begin(); iter != keyset.end(); ++iter) {
-		keys.push_back(*iter);
-	}
-
-	return keys;
-}
-
 Std::vector<istring> ConfigFileManager::listSections(istring root,
         bool longformat) {
 	Std::vector<istring> sections;
@@ -271,16 +162,6 @@ INIFile *ConfigFileManager::findKeyINI(istring key) {
 	for (Std::vector<INIFile *>::reverse_iterator i = _iniFiles.rbegin();
 	        i != _iniFiles.rend(); ++i) {
 		if ((*i)->hasKey(key))
-			return (*i);
-	}
-
-	return nullptr;
-}
-
-INIFile *ConfigFileManager::findWriteINI(istring key) {
-	for (Std::vector<INIFile *>::reverse_iterator i = _iniFiles.rbegin();
-	        i != _iniFiles.rend(); ++i) {
-		if (!(*i)->isReadonly() && (*i)->checkRoot(key))
 			return (*i);
 	}
 

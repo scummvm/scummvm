@@ -175,7 +175,7 @@ void GameData::loadTranslation() {
 
 		pout << "Loading translation: " << translationfile << Std::endl;
 
-		config->readConfigFile(translationfile, "language", true);
+		config->readConfigFile(translationfile, "language");
 	}
 }
 
@@ -266,10 +266,10 @@ void GameData::loadU8Data() {
 
 	// Load weapon, armour info
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	config->readConfigFile("@data/u8weapons.ini", "weapons", true);
-	config->readConfigFile("@data/u8armour.ini", "armour", true);
-	config->readConfigFile("@data/u8monsters.ini", "monsters", true);
-	config->readConfigFile("@data/u8.ini", "game", true);
+	config->readConfigFile("@data/u8weapons.ini", "weapons");
+	config->readConfigFile("@data/u8armour.ini", "armour");
+	config->readConfigFile("@data/u8monsters.ini", "monsters");
+	config->readConfigFile("@data/u8.ini", "game");
 
 	// Load typeflags
 	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
@@ -546,12 +546,12 @@ void GameData::loadRemorseData() {
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	// Load weapon, armour info
-	config->readConfigFile("@data/remorseweapons.ini", "weapons", true);
+	config->readConfigFile("@data/remorseweapons.ini", "weapons");
 #if 0
-	config->readConfigFile("@data/u8armour.ini", "armour", true);
-	config->readConfigFile("@data/u8monsters.ini", "monsters", true);
+	config->readConfigFile("@data/u8armour.ini", "armour");
+	config->readConfigFile("@data/u8monsters.ini", "monsters");
 #endif
-	config->readConfigFile("@data/remorse.ini", "game", true);
+	config->readConfigFile("@data/remorse.ini", "game");
 
 	// Load typeflags
 	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
