@@ -20,10 +20,7 @@
  *
  */
 
-#include <stdlib.h>
 #include <string.h>
-#include <io.h>
-#include <ctype.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
