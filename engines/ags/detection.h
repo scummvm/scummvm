@@ -48,6 +48,7 @@ class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
 	mutable Common::String _filename;
+	mutable Common::String _md5;
 
 public:
 	AGSMetaEngineDetection();

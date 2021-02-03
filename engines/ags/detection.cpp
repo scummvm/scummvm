@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "ags/detection.h"
 #include "ags/detection_tables.h"
 
@@ -90,13 +91,21 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 		if (AGS3::isAGSFile(f)) {
 			_filename = filename;
+			f.seek(0);
+			_md5 = Common::computeStreamMD5AsString(f, 5000);
 
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = f.size();
+			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 
-			return ADDetectedGame(&AGS::g_fallbackDesc.desc);
+			ADDetectedGame game(&AGS::g_fallbackDesc.desc);
+			game.matchedFiles[_filename].md5 = _md5;
+			game.matchedFiles[_filename].size = f.size();
+
+			game.hasUnknownFiles = true;
+			return game;
 		}
 	}
 
