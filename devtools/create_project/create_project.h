@@ -27,6 +27,10 @@
 #define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
+#if __cplusplus < 201103L && (!defined(_MSC_VER) || _MSC_VER < 1700)
+#define override           // Compatibility with non-C++11 compilers.
+#endif
+
 #include <list>
 #include <map>
 #include <map>
