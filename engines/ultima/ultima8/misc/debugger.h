@@ -192,6 +192,8 @@ private:
 	bool cmdToggleInvincibility(int argc, const char **argv);
 
 	// Game Map Gump
+	bool cmdStartHighlightItems(int argc, const char **argv);
+	bool cmdStopHighlightItems(int argc, const char **argv);
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);

@@ -127,6 +127,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Cheat::items", WRAP_METHOD(Debugger, cmdCheatItems));
 	registerCmd("Cheat::equip", WRAP_METHOD(Debugger, cmdCheatEquip));
 
+	registerCmd("GameMapGump::startHighlightItems", WRAP_METHOD(Debugger, cmdStartHighlightItems));
+	registerCmd("GameMapGump::stopHighlightItems", WRAP_METHOD(Debugger, cmdStopHighlightItems));
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
@@ -631,6 +633,14 @@ bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
 }
 
 
+bool Debugger::cmdStartHighlightItems(int argc, const char **argv) {
+	GameMapGump::Set_highlightItems(true);
+	return false;
+}
+bool Debugger::cmdStopHighlightItems(int argc, const char **argv) {
+	GameMapGump::Set_highlightItems(false);
+	return false;
+}
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	GameMapGump::Set_highlightItems(!GameMapGump::is_highlightItems());
 	return false;
