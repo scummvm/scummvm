@@ -64,7 +64,7 @@ void FontShapeArchive::cache(uint32 shapenum) {
 void FontShapeArchive::setHVLeads() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
-	KeyMap leadkeyvals = config->listKeyValues("game/fontleads");
+	KeyMap leadkeyvals = config->listKeyValues("game", "fontleads");
 	KeyMap::const_iterator iter;
 
 	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {

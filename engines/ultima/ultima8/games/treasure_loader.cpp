@@ -40,7 +40,7 @@ void TreasureLoader::loadDefaults() {
 	KeyMap lootkeyvals;
 
 	// load default treasure types
-	lootkeyvals = config->listKeyValues("game/treasure");
+	lootkeyvals = config->listKeyValues("game", "treasure");
 	KeyMap::const_iterator defaultiter;
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {

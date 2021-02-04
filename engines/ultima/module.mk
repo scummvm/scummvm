@@ -393,7 +393,6 @@ MODULE_OBJS := \
 	ultima8/audio/speech_flex.o \
 	ultima8/audio/u8_music_process.o \
 	ultima8/conf/config_file_manager.o \
-	ultima8/conf/ini_file.o \
 	ultima8/convert/convert_shape.o \
 	ultima8/convert/u8/convert_shape_u8.o \
 	ultima8/convert/crusader/convert_shape_crusader.o \

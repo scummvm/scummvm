@@ -114,7 +114,7 @@ public:
 	};
 private:
 	void loadTranslation();
-	void setupTTFOverrides(const char *configkey, bool SJIS);
+	void setupTTFOverrides(const char *category, bool SJIS);
 	void setupJPOverrides();
 
 	RawArchive *_fixed;

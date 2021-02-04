@@ -177,83 +177,83 @@ void TypeFlags::loadWeaponInfo() {
 
 	// load weapons
 	Std::vector<istring> weaponkeys;
-	weaponkeys = config->listSections("weapons", true);
+	istring category = "weapons";
+	weaponkeys = config->listSections(category);
 	for (Std::vector<istring>::const_iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
-		const istring &k = *iter;
+		const istring &section = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val = 0;
 
-		// Slight hack.. get the name after the the /
-		wi->_name = k.substr(k.findLastOf('/') + 1, Std::string::npos);
+		wi->_name = section;
 
-		config->get(k + "/shape", val);
+		config->get(category, section, "shape", val);
 		wi->_shape = static_cast<uint32>(val);
 
-		config->get(k + "/overlay", val);
+		config->get(category, section, "overlay", val);
 		wi->_overlayType = static_cast<uint8>(val);
 
-		config->get(k + "/overlay_shape", val);
+		config->get(category, section, "overlay_shape", val);
 		wi->_overlayShape = static_cast<uint32>(val);
 
-		config->get(k + "/damage_mod", val);
+		config->get(category, section, "damage_mod", val);
 		wi->_damageModifier = static_cast<uint8>(val);
 
-		config->get(k + "/base_damage", val);
+		config->get(category, section, "base_damage", val);
 		wi->_baseDamage = static_cast<uint8>(val);
 
-		if (config->get(k + "/attack_dex", val))
+		if (config->get(category, section, "attack_dex", val))
 			wi->_dexAttackBonus = static_cast<uint8>(val);
 		else
 			wi->_dexAttackBonus = 0;
 
-		if (config->get(k + "/defend_dex", val))
+		if (config->get(category, section, "defend_dex", val))
 			wi->_dexDefendBonus = static_cast<uint8>(val);
 		else
 			wi->_dexDefendBonus = 0;
 
-		if (config->get(k + "/armour", val))
+		if (config->get(category, section, "armour", val))
 			wi->_armourBonus = static_cast<uint8>(val);
 		else
 			wi->_armourBonus = 0;
 
-		config->get(k + "/damage_type", val);
+		config->get(category, section, "damage_type", val);
 		wi->_damageType = static_cast<uint16>(val);
 
-		if (config->get(k + "/treasure_chance", val))
+		if (config->get(category, section, "treasure_chance", val))
 			wi->_treasureChance = static_cast<uint16>(val);
 		else
 			wi->_treasureChance = 0;
 
 		// Crusader-specific fields:
 
-		if (config->get(k + "/ammo_type", val))
+		if (config->get(category, section, "ammo_type", val))
 			wi->_ammoType = static_cast<uint16>(val);
 		else
 			wi->_ammoType = 0;
 
-		if (config->get(k + "/ammo_shape", val))
+		if (config->get(category, section, "ammo_shape", val))
 			wi->_ammoShape = static_cast<uint16>(val);
 		else
 			wi->_ammoShape = 0;
 
-		if (config->get(k + "/sound", val))
+		if (config->get(category, section, "sound", val))
 			wi->_sound = static_cast<uint16>(val);
 		else
 			wi->_sound = 0;
 
-		if (config->get(k + "/display_frame", val))
+		if (config->get(category, section, "display_frame", val))
 			wi->_displayGumpFrame = static_cast<uint16>(val);
 		else
 			wi->_displayGumpFrame = 0;
 
-		if (config->get(k + "/display_shape", val))
+		if (config->get(category, section, "display_shape", val))
 			wi->_displayGumpShape = static_cast<uint16>(val);
 		else
 			wi->_displayGumpShape = 3;
 
-		if (config->get(k + "/small", val))
+		if (config->get(category, section, "small", val))
 			wi->_small = static_cast<uint8>(val);
 		else
 			wi->_small = 0;
@@ -282,15 +282,16 @@ void TypeFlags::loadArmourInfo() {
 
 	// load armour
 	Std::vector<istring> armourkeys;
-	armourkeys = config->listSections("armour", true);
+	istring category = "armour";
+	armourkeys = config->listSections(category);
 	for (Std::vector<istring>::const_iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
-		const istring &k = *iter;
+		const istring &section = *iter;
 		ArmourInfo ai;
 
 		int val;
 
-		config->get(k + "/shape", val);
+		config->get(category, section, "shape", val);
 		ai._shape = static_cast<uint32>(val);
 
 		assert(ai._shape < _shapeInfo.size());
@@ -309,20 +310,20 @@ void TypeFlags::loadArmourInfo() {
 			}
 		}
 
-		config->get(k + "/frame", val);
+		config->get(category, section, "frame", val);
 		ai._frame = static_cast<uint32>(val);
 
 		assert(ai._frame < framecount);
 
-		config->get(k + "/armour", val);
+		config->get(category, section, "armour", val);
 		ai._armourClass = static_cast<uint16>(val);
 
-		if (config->get(k + "/type", val))
+		if (config->get(category, section, "type", val))
 			ai._defenseType = static_cast<uint16>(val);
 		else
 			ai._defenseType = 0;
 
-		if (config->get(k + "/kick_bonus", val))
+		if (config->get(category, section, "kick_bonus", val))
 			ai._kickAttackBonus = static_cast<uint16>(val);
 		else
 			ai._kickAttackBonus = 0;
@@ -339,75 +340,76 @@ void TypeFlags::loadMonsterInfo() {
 
 	// load monsters
 	Std::vector<istring> monsterkeys;
-	monsterkeys = config->listSections("monsters", true);
+	istring category = "monsters";
+	monsterkeys = config->listSections(category);
 	for (Std::vector<istring>::const_iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
-		const istring k = *iter;
+		const istring section = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;
 
-		config->get(k + "/shape", val);
+		config->get(category, section, "shape", val);
 		mi->_shape = static_cast<uint32>(val);
 
-		config->get(k + "/hp_min", val);
+		config->get(category, section, "hp_min", val);
 		mi->_minHp = static_cast<uint16>(val);
 
-		config->get(k + "/hp_max", val);
+		config->get(category, section, "hp_max", val);
 		mi->_maxHp = static_cast<uint16>(val);
 
-		config->get(k + "/dex_min", val);
+		config->get(category, section, "dex_min", val);
 		mi->_minDex = static_cast<uint16>(val);
 
-		config->get(k + "/dex_max", val);
+		config->get(category, section, "dex_max", val);
 		mi->_maxDex = static_cast<uint16>(val);
 
-		config->get(k + "/damage_min", val);
+		config->get(category, section, "damage_min", val);
 		mi->_minDmg = static_cast<uint16>(val);
 
-		config->get(k + "/damage_max", val);
+		config->get(category, section, "damage_max", val);
 		mi->_maxDmg = static_cast<uint16>(val);
 
-		config->get(k + "/armour", val);
+		config->get(category, section, "armour", val);
 		mi->_armourClass = static_cast<uint16>(val);
 
-		config->get(k + "/alignment", val);
+		config->get(category, section, "alignment", val);
 		mi->_alignment = static_cast<uint8>(val);
 
-		config->get(k + "/unk", val);
+		config->get(category, section, "unk", val);
 		mi->_unk = (val != 0);
 
-		config->get(k + "/damage_type", val);
+		config->get(category, section, "damage_type", val);
 		mi->_damageType = static_cast<uint16>(val);
 
-		config->get(k + "/defense_type", val);
+		config->get(category, section, "defense_type", val);
 		mi->_defenseType = static_cast<uint16>(val);
 
-		if (config->get(k + "/resurrection", val))
+		if (config->get(category, section, "resurrection", val))
 			mi->_resurrection = (val != 0);
 		else
 			mi->_resurrection = false;
 
-		if (config->get(k + "/ranged", val))
+		if (config->get(category, section, "ranged", val))
 			mi->_ranged = (val != 0);
 		else
 			mi->_ranged = false;
 
-		if (config->get(k + "/shifter", val))
+		if (config->get(category, section, "shifter", val))
 			mi->_shifter = (val != 0);
 		else
 			mi->_shifter = false;
 
-		if (config->get(k + "/explode", val))
+		if (config->get(category, section, "explode", val))
 			mi->_explode = val;
 		else
 			mi->_explode = 0;
 
 		Std::string treasure;
-		if (config->get(k + "/treasure", treasure)) {
+		if (config->get(category, section, "treasure", treasure)) {
 			bool ok = treasureLoader.parse(treasure, mi->_treasure);
 			if (!ok) {
-				perr << "failed to parse treasure info for monster '" << k
+				perr << "failed to parse treasure info for monster '" << section
 				     << "'"  << Std::endl;
 				mi->_treasure.clear();
 			}

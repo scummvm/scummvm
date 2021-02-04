@@ -181,16 +181,12 @@ void GameData::loadTranslation() {
 
 Std::string GameData::translate(const Std::string &text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
-
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	istring key = "language/text/" + text;
-	if (!config->exists(key))
-		return text;
-
 	Std::string trans;
-	config->get(key, trans);
-
-	return trans;
+	if (config->get("language", "text", text, trans)) {
+		return trans;
+	}
+	return text;
 }
 
 FrameID GameData::translate(FrameID f) {
@@ -199,10 +195,12 @@ FrameID GameData::translate(FrameID f) {
 	// TODO: allow translations to be in another shapeflex
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	istring key = "language/";
+	istring category = "language";
+	istring section;
+
 	switch (f._flexId) {
 	case GUMPS:
-		key += "gumps/";
+		section = "gumps";
 		break;
 	default:
 		return f;
@@ -211,12 +209,11 @@ FrameID GameData::translate(FrameID f) {
 	char buf[100];
 	sprintf(buf, "%d,%d", f._shapeNum, f._frameNum);
 
-	key += buf;
-	if (!config->exists(key))
-		return f;
-
+	istring key = buf;
 	Std::string trans;
-	config->get(key, trans);
+	if (!config->get(category, section, key, trans)) {
+		return f;
+	}
 
 	FrameID t;
 	t._flexId = f._flexId;
@@ -368,7 +365,7 @@ void GameData::loadU8Data() {
 }
 
 void GameData::setupFontOverrides() {
-	setupTTFOverrides("game/fontoverride", false);
+	setupTTFOverrides("game", false);
 
 	if (_gameInfo->_language == GameInfo::GAMELANG_JAPANESE)
 		setupJPOverrides();
@@ -380,7 +377,7 @@ void GameData::setupJPOverrides() {
 	KeyMap jpkeyvals;
 	KeyMap::const_iterator iter;
 
-	jpkeyvals = config->listKeyValues("language/jpfonts");
+	jpkeyvals = config->listKeyValues("language", "jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
 		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
@@ -403,10 +400,10 @@ void GameData::setupJPOverrides() {
 
 	bool overridefonts = ConfMan.getBool("overridefonts");
 	if (overridefonts)
-		setupTTFOverrides("language/fontoverride", true);
+		setupTTFOverrides("language", true);
 }
 
-void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
+void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FontManager *fontmanager = FontManager::get_instance();
 	KeyMap ttfkeyvals;
@@ -415,7 +412,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	bool overridefonts = ConfMan.getBool("overridefonts");
 	if (!overridefonts) return;
 
-	ttfkeyvals = config->listKeyValues(configkey);
+	ttfkeyvals = config->listKeyValues(category, "fontoverride");
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
 		int fontnum = atoi(iter->_key.c_str());
 		const Std::string &fontdesc = iter->_value;
