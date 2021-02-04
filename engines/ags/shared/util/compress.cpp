@@ -295,7 +295,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const color *pall) {
 	// Now open same file for reading, and begin writing compressed data into required output stream
 	lz_temp_s = ci_fopen(lztempfnm);
 	soff_t temp_sz = lz_temp_s->GetLength();
-	out->WriteArray(&pall[0], sizeof(color), 256);
+	out->SafeWriteArray(&pall[0], PALETTE_COUNT);
 	out->WriteInt32(temp_sz);
 	soff_t gobacto = out->GetPosition();
 
@@ -321,7 +321,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 	unsigned char *membuffer;
 	int           arin;
 
-	in->Read(&pall[0], sizeof(color) * 256);
+	in->SafeReadArray(&pall[0], PALETTE_COUNT);
 	maxsize = in->ReadInt32();
 	uncompsiz = in->ReadInt32();
 

@@ -1226,7 +1226,7 @@ void ReadCharacterExtras_Aligned(Stream *in) {
 }
 
 void restore_game_palette(Stream *in) {
-	in->ReadArray(&palette[0], sizeof(color), 256);
+	in->SafeReadArray(&palette[0], PALETTE_COUNT);
 }
 
 void restore_game_dialogs(Stream *in) {
