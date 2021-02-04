@@ -81,9 +81,9 @@ void ProcessTime() {
 /*                              PROCESSMOUSE          					   */
 /*-------------------------------------------------------------------------*/
 void ProcessMouse() {
-	static LLBOOL MaskMouse;
+	static bool MaskMouse;
 	static uint16 oldmx, oldmy;
-	static LLBOOL LastMouseON = true;
+	static bool LastMouseON = true;
 	uint16 tmpmx;
 
 	if ((LastMouseON == true) && (SemMouseEnabled == false)) {

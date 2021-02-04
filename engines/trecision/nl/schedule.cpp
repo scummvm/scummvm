@@ -37,7 +37,7 @@ int maxmesg, maxmesh, maxmesa;
 /*-------------------------------------------------------------------------*/
 /*                               GETMESSAGE           					   */
 /*-------------------------------------------------------------------------*/
-LLBOOL GetMessage(pqueue *lq) {
+bool GetMessage(pqueue *lq) {
 	if (!(lq->len)) return true;
 
 	TheMessage = lq->event[lq->head++];
@@ -115,7 +115,7 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 void Scheduler() {
 	static uint8 token = CLASS_HOMO;
 	static uint8 Counter;
-	LLBOOL retry = true;
+	bool retry = true;
 
 	while (retry) {
 		retry = false;
@@ -218,7 +218,7 @@ void OrderEvent(pqueue *lq) {
 /*-------------------------------------------------------------------------*/
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
-LLBOOL TestEmptyQueue(pqueue *lq, uint8 cls) {
+bool TestEmptyQueue(pqueue *lq, uint8 cls) {
 	uint8 pos;
 
 	for (pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1)
@@ -230,7 +230,7 @@ LLBOOL TestEmptyQueue(pqueue *lq, uint8 cls) {
 /*-------------------------------------------------------------------------*/
 /*                       TESTEMPTYHOMOQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
-LLBOOL TestEmptyHomoQueue4Script(pqueue *lq) {
+bool TestEmptyHomoQueue4Script(pqueue *lq) {
 	uint8 pos;
 
 	for (pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1)

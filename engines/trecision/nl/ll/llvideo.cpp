@@ -150,7 +150,7 @@ uint16 UnUpdatePixelFormat(uint16 t) {
 /*-----------------10/12/95 15.53-------------------
 				CheckMask - Compreso
 --------------------------------------------------*/
-LLBOOL CheckMask(uint16 MX, uint16 my) {
+bool CheckMask(uint16 MX, uint16 my) {
 	for (int8 a = (MAXOBJINROOM - 1); a >= 0; a--) {
 
 		uint16 CheckedObj = Room[_curRoom]._object[a];
