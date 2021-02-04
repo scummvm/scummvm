@@ -472,8 +472,42 @@ int AGSCreditz20::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 	return result;
 }
 
-int AGSCreditz20::calculateSequenceHeight(int sequence) {
-	return 0;
+void AGSCreditz20::calculateSequenceHeight(int sequence) {
+	int height, creditHeight, dum;
+	height = 0;
+
+	for (uint currentCredit = 0; currentCredit < _state->_credits[sequence].size();
+			++currentCredit) {
+
+		if (_state->_credits[sequence][currentCredit]._isSet) {
+			if (_state->_credits[sequence][currentCredit]._image) {
+				if (_state->_credits[sequence][currentCredit]._colorHeight < 0)
+					creditHeight = _engine->GetSpriteHeight(_state->_credits[sequence][currentCredit]._fontSlot);
+				else
+					creditHeight = _state->_credits[sequence][currentCredit]._colorHeight;
+			} else {
+				_engine->GetTextExtent(_state->_credits[sequence][currentCredit]._fontSlot,
+					_state->_credits[sequence][currentCredit]._text.c_str(),
+					&dum, &creditHeight);
+			}
+
+			height += creditHeight;
+		} else {
+			height += VGACheck(_state->_emptyLineHeight);
+		}
+	}
+
+	_state->_calculatedSequenceHeight = height;
+}
+
+int AGSCreditz20::VGACheck(int value) {
+	int screenX, dum;
+	_engine->GetScreenDimensions(&screenX, &dum, &dum);
+
+	if (screenX == 640)
+		return value * 2;
+	else
+		return value;
 }
 
 void AGSCreditz20::draw() {

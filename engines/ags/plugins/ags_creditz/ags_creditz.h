@@ -182,7 +182,8 @@ private:
 	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
 
 private:
-	static int calculateSequenceHeight(int sequence);
+	static void calculateSequenceHeight(int sequence);
+	static int VGACheck(int value);
 	static void draw();
 public:
 	AGSCreditz20();
