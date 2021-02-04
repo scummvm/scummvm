@@ -243,7 +243,7 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
-	int retval = 0; // Avoid spurious warning
+	uint16 retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
 
