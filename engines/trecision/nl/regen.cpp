@@ -70,7 +70,7 @@ void PaintScreen(uint8 flag) {
 	Hlim = 255;
 	Tlim = 255;
 	for (a = 0; a < 20; a++)
-		VisualRef[ a ] = 255;
+		VisualRef[a] = 255;
 
 	limitinum = 0;
 	SemPaintHomo = 1;                      // ridisegna sempre l'omino
@@ -166,10 +166,10 @@ void PaintScreen(uint8 flag) {
 			DObj.dy   = 480;
 
 			if (SortTable[a].typology == TYPO_BMP) {
-				DObj.l[0] = _obj[ SortTable[a].index ]._px;
-				DObj.l[1] = _obj[ SortTable[a].index ]._py;
-				DObj.l[2] = DObj.l[0] + _obj[ SortTable[a].index ]._dx;
-				DObj.l[3] = DObj.l[1] + _obj[ SortTable[a].index ]._dy;
+				DObj.l[0] = _obj[SortTable[a].index]._px;
+				DObj.l[1] = _obj[SortTable[a].index]._py;
+				DObj.l[2] = DObj.l[0] + _obj[SortTable[a].index]._dx;
+				DObj.l[3] = DObj.l[1] + _obj[SortTable[a].index]._dy;
 			}
 
 			DObj.buf  = ImagePointer;
@@ -183,7 +183,7 @@ void PaintScreen(uint8 flag) {
 
 			if ((SortTable[a + 1].typology  == SortTable[a].typology) &&
 					(SortTable[a + 1].roomindex == SortTable[a].roomindex))
-				VisualRef[ a + 1 ] = limitinum;
+				VisualRef[a + 1] = limitinum;
 
 			limitinum ++;
 		}
@@ -389,39 +389,39 @@ void PaintObjAnm(uint16 CurBox) {
 			if (SortTable[a].typology == TYPO_BMP) {
 				if (_obj[SortTable[a].index]._nbox == CurBox) {
 					// l'oggetto bitmap Š al livello desiderato
-					DObj.x    = _obj[ SortTable[a].index ]._px;
-					DObj.y    = _obj[ SortTable[a].index ]._py + TOP;
-					DObj.dx   = _obj[ SortTable[a].index ]._dx;
-					DObj.dy   = _obj[ SortTable[a].index ]._dy;
+					DObj.x    = _obj[SortTable[a].index]._px;
+					DObj.y    = _obj[SortTable[a].index]._py + TOP;
+					DObj.dx   = _obj[SortTable[a].index]._dx;
+					DObj.dy   = _obj[SortTable[a].index]._dy;
 					DObj.l[0] = 0;
 					DObj.l[1] = 0;
 					DObj.l[2] = DObj.dx;
 					DObj.l[3] = DObj.dy;
-					DObj.buf  = ObjPointers[ SortTable[a].roomindex ];
-					DObj.mask = MaskPointers[ SortTable[a].roomindex ];
+					DObj.buf  = ObjPointers[SortTable[a].roomindex];
+					DObj.mask = MaskPointers[SortTable[a].roomindex];
 					DObj.flag = COPYTORAM;
 					if (_obj[SortTable[a].index]._mode & OBJMODE_MASK)
 						DObj.flag += DRAWMASK;
 					DrawObj(DObj);
 
-					if (VisualRef[ a ] == 255) {
+					if (VisualRef[a] == 255) {
 						limiti[limitinum][0] = DObj.x;    // aggiunge rettangolo
 						limiti[limitinum][1] = DObj.y;
 						limiti[limitinum][2] = DObj.x + DObj.dx;
 						limiti[limitinum][3] = DObj.y + DObj.dy;
 						limitinum ++;
 					} else {
-						if (limiti[ VisualRef[a] ][0] > DObj.x)
-							limiti[ VisualRef[a] ][0] = DObj.x;
+						if (limiti[VisualRef[a]][0] > DObj.x)
+							limiti[VisualRef[a]][0] = DObj.x;
 
-						if (limiti[ VisualRef[a] ][1] > DObj.y)
-							limiti[ VisualRef[a] ][1] = DObj.y;
+						if (limiti[VisualRef[a]][1] > DObj.y)
+							limiti[VisualRef[a]][1] = DObj.y;
 
-						if (limiti[ VisualRef[a] ][2] < (DObj.x + DObj.dx))
-							limiti[ VisualRef[a] ][2] = DObj.x + DObj.dx;
+						if (limiti[VisualRef[a]][2] < (DObj.x + DObj.dx))
+							limiti[VisualRef[a]][2] = DObj.x + DObj.dx;
 
-						if (limiti[ VisualRef[a] ][3] < (DObj.y + DObj.dy))
-							limiti[ VisualRef[a] ][3] = DObj.y + DObj.dy;
+						if (limiti[VisualRef[a]][3] < (DObj.y + DObj.dy))
+							limiti[VisualRef[a]][3] = DObj.y + DObj.dy;
 					}
 				}
 			}
@@ -443,17 +443,17 @@ void PaintObjAnm(uint16 CurBox) {
 									_obj[TheObject]._px, _obj[TheObject]._py + TOP,
 									_obj[TheObject]._px + _obj[TheObject]._dx,
 									_obj[TheObject]._py + _obj[TheObject]._dy + TOP)) {
-					DObj.x    = _obj[ TheObject ]._px;
-					DObj.y    = _obj[ TheObject ]._py + TOP;
-					DObj.dx   = _obj[ TheObject ]._dx;
-					DObj.dy   = _obj[ TheObject ]._dy;
+					DObj.x    = _obj[TheObject]._px;
+					DObj.y    = _obj[TheObject]._py + TOP;
+					DObj.dx   = _obj[TheObject]._dx;
+					DObj.dy   = _obj[TheObject]._dy;
 					DObj.l[0] = xr1;
 					DObj.l[1] = yr1;
 					DObj.l[2] = xr2;
 					DObj.l[3] = yr2;
 
-					DObj.buf  = ObjPointers[ b ];
-					DObj.mask = MaskPointers[ b ];
+					DObj.buf  = ObjPointers[b];
+					DObj.mask = MaskPointers[b];
 					DObj.flag = COPYTORAM;
 
 					if (_obj[TheObject]._mode & OBJMODE_MASK)

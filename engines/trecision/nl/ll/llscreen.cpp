@@ -795,19 +795,19 @@ void RegenRoom() {
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		if ((OldObjStatus[a]) && (!VideoObjStatus[a])) {
-			SortTable[ CurSortTableNum ].index		= Room[_curRoom]._object[a];
-			SortTable[ CurSortTableNum ].roomindex	= a;
-			SortTable[ CurSortTableNum ].togli		= false;
-			SortTable[ CurSortTableNum ].framecur	= 0;
-			SortTable[ CurSortTableNum ].typology	= TYPO_BMP;
+			SortTable[CurSortTableNum].index		= Room[_curRoom]._object[a];
+			SortTable[CurSortTableNum].roomindex	= a;
+			SortTable[CurSortTableNum].togli		= false;
+			SortTable[CurSortTableNum].framecur	= 0;
+			SortTable[CurSortTableNum].typology	= TYPO_BMP;
 			VideoObjStatus[a] = 1;
 			CurSortTableNum ++;
 		} else if ((!OldObjStatus[a]) && (VideoObjStatus[a])) {
-			SortTable[ CurSortTableNum ].index		= Room[_curRoom]._object[a];
-			SortTable[ CurSortTableNum ].roomindex	= a;
-			SortTable[ CurSortTableNum ].togli		= true;
-			SortTable[ CurSortTableNum ].framecur	= 0;
-			SortTable[ CurSortTableNum ].typology	= TYPO_BMP;
+			SortTable[CurSortTableNum].index		= Room[_curRoom]._object[a];
+			SortTable[CurSortTableNum].roomindex	= a;
+			SortTable[CurSortTableNum].togli		= true;
+			SortTable[CurSortTableNum].framecur	= 0;
+			SortTable[CurSortTableNum].typology	= TYPO_BMP;
 			VideoObjStatus[a] = 0;
 			CurSortTableNum ++;
 		}

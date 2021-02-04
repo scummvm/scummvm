@@ -652,7 +652,7 @@ void buildFramelist() {
 				if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
 									  _panel[c]._x2, _panel[c]._z2,
 									  _pathNode[a - 1]._x, _pathNode[a - 1]._z,
-									  _pathNode[a  ]._x, _pathNode[a  ]._z)) {
+									  _pathNode[a]._x, _pathNode[a]._z)) {
 					_numPathNodes = a;
 					break;
 				}
@@ -830,7 +830,7 @@ void buildFramelist() {
 	oldtheta = -1.0;
 	for (a = 0; a < _numPathNodes - 1; a++) {
 		curlen = 0.0;
-		len   += dist3D(_pathNode[a  ]._x, 0.0, _pathNode[a  ]._z,
+		len   += dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z,
 						_pathNode[a + 1]._x, 0.0, _pathNode[a + 1]._z);
 
 		// cerca direzione del tratto
