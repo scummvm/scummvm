@@ -457,14 +457,17 @@ bool Encounter::update() {
 
 		bool doScript = false;
 		if ((_soundResourceId/*getSpeech()->getSoundResourceId()*/ && !getSound()->isPlaying(_soundResourceId/*getSpeech()->getSoundResourceId()*/) && !_data_455BE0) // TODO replace with speech
-		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
+		 /*|| (getSpeech()->getTick() && tick >= getSpeech()->getTick())*/)
 			doScript = true;
 
 		if (doScript
 		 && !getSharedData()->getMatteBarHeight()
-		 && _isScriptRunning
-		 && !setupSpeechTest(id))
-			runScript();
+		 && _isScriptRunning) {
+			if (getSpeech()->getTextData() && _objectId1)
+				setupSpeechTest(id);
+			else
+				runScript();
+		}
 	}
 
 	// Redraw screen
