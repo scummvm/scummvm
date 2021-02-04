@@ -90,7 +90,7 @@ int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, unsigned char *buf);
 uint32 ReadTime();
 
-#define VOLUME(a)	( (a*255)/125 )
+#define VOLUME(a)	( (a*255)/127 )
 #define TIME(a)		( (a*3)/50 )
 #define FADMULT		100
 /* -----------------05/08/97 16.36-------------------
