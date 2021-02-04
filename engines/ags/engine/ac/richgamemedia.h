@@ -31,7 +31,7 @@ namespace AGS3 {
 // Windows Vista Rich Save Games, modified to be platform-agnostic
 
 #define RM_MAXLENGTH    1024
-#define RM_MAGICNUMBER  MKTAG('R', 'G', 'M', 'H')
+#define RM_MAGICNUMBER  MKTAG('H', 'M', 'G', 'R')
 
 // Forward declaration
 namespace AGS {
