@@ -670,7 +670,7 @@ void drawCharacter(uint8 flag) {
 			int cfp = 0;
 			int cur = 0;
 			while (cur < _actor._curAction)
-				cfp += _defActionLen[ cur++ ];
+				cfp += _defActionLen[cur++];
 
 			if (_actor._curAction == hWALKOUT)
 				cfp = 1;
@@ -685,7 +685,7 @@ void drawCharacter(uint8 flag) {
 			extern uint8 *_actionPointer[];
 			extern uint16 _actionPosition[];
 
-			_actor._vertex = (struct SVertex *)(_actionPointer[ _actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
+			_actor._vertex = (struct SVertex *)(_actionPointer[_actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
 
 			if (_actor._vertex == NULL)
 				return ;

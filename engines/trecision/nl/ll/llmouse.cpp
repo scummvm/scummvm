@@ -466,7 +466,7 @@ insave:
 
 	for (a = 0; a < _inventorySize; a++) {
 		strcpy(tempname, "SaveGame._X_");
-		tempname[ 10 ] = 'A' + a;
+		tempname[10] = 'A' + a;
 
 		// Controlla se esistono i file gia' salvati
 		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
@@ -475,11 +475,11 @@ insave:
 			fclose(fh);
 			UpdatePixelFormat(Icone + (READICON + 1 + a)*ICONDX * ICONDY, ICONDX * ICONDY);
 
-			_inventory[ a ] = LASTICON + a;
+			_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], _sysSent[10]);
 			if (fh) fclose(fh);
-			_inventory[ a ] = iEMPTYSLOT;
+			_inventory[a] = iEMPTYSLOT;
 		}
 	}
 
@@ -516,7 +516,7 @@ insave:
 				SText.y = FIRSTLINE + ICONDY + 10;
 				SText.dx = LenText;
 				SText.dy   = CARHEI;
-				SText.sign = savename[ CurPos ];
+				SText.sign = savename[CurPos];
 				SText.l[0] = 0;
 				SText.l[1] = 0;
 				SText.l[2] = LenText;
@@ -553,11 +553,11 @@ insave:
 
 	}
 
-	if (_inventory[ CurPos ] != iEMPTYSLOT)
-		strcount = strlen(savename[ CurPos ]);
+	if (_inventory[CurPos] != iEMPTYSLOT)
+		strcount = strlen(savename[CurPos]);
 	else {
 		strcount = 0;
-		savename[ CurPos ][ 0 ] = '\0';
+		savename[CurPos][0] = '\0';
 
 		for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 			wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
@@ -587,13 +587,13 @@ insave:
 			goto insave;
 		} else if (ch == 0x08) {
 			if (strcount > 0)
-				savename[CurPos][ --strcount ] = '\0';
+				savename[CurPos][--strcount] = '\0';
 			ch = 0;
 		} else if (ch == 0x0D)
 			break;
 		else if ((strcount < 39) && (((ch >= 'a') && (ch <= 'z')) || ((ch >= 'A') && (ch <= 'Z')) || ((ch >= '0') && (ch <= '9')) || (ch == 0x20))) {
-			savename[CurPos][ strcount++ ] = ch;
-			savename[CurPos][ strcount ] = '\0';
+			savename[CurPos][strcount++] = ch;
+			savename[CurPos][strcount] = '\0';
 			ch = 0;
 		} else
 			ch = 0;
@@ -601,9 +601,9 @@ insave:
 		for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 			wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-		a = strlen(savename[ CurPos ]);
-		savename[ CurPos ][ a ] = '_';
-		savename[ CurPos ][ a + 1 ] = '\0';
+		a = strlen(savename[CurPos]);
+		savename[CurPos][a] = '_';
+		savename[CurPos][a + 1] = '\0';
 
 		posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2 ;
 		LenText  = TextLength(savename[CurPos], 0);
@@ -618,7 +618,7 @@ insave:
 		SText.y = FIRSTLINE + ICONDY + 10;
 		SText.dx = LenText;
 		SText.dy   = CARHEI;
-		SText.sign = savename[ CurPos ];
+		SText.sign = savename[CurPos];
 		SText.l[0] = 0;
 		SText.l[1] = 0;
 		SText.l[2] = LenText;
@@ -631,8 +631,8 @@ insave:
 		DText(SText);
 		BlinkLastDTextChar = MASKCOL;
 
-		a = strlen(savename[ CurPos ]);
-		savename[ CurPos ][ a - 1 ] = '\0';
+		a = strlen(savename[CurPos]);
+		savename[CurPos][a - 1] = '\0';
 
 		ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 	}
@@ -641,8 +641,8 @@ insave:
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	strcpy(tempname, "SaveGame._X_");
-	tempname[ 10 ] = 'A' + CurPos;
-	tempname[ 12 ] = '\0';
+	tempname[10] = 'A' + CurPos;
+	tempname[12] = '\0';
 	ret = false;
 
 	fh = fopen(tempname, "wb");
@@ -838,7 +838,7 @@ bool DataLoad() {
 
 	for (a = 0; a < _inventorySize; a++) {
 		strcpy(tempname, "SaveGame._X_");
-		tempname[ 10 ] = 'A' + a;
+		tempname[10] = 'A' + a;
 
 		// Controlla se esistono i file gia' salvati
 		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
@@ -847,12 +847,12 @@ bool DataLoad() {
 			fclose(fh);
 			UpdatePixelFormat(Icone + (READICON + 1 + a)*ICONDX * ICONDY, ICONDX * ICONDY);
 
-			_inventory[ a ] = LASTICON + a;
+			_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], _sysSent[10]);
 			if (fh) fclose(fh);
 			fh = NULL;
-			_inventory[ a ] = iEMPTYSLOT;
+			_inventory[a] = iEMPTYSLOT;
 		}
 	}
 
@@ -890,7 +890,7 @@ bool DataLoad() {
 				SText.y = FIRSTLINE + ICONDY + 10;
 				SText.dx = LenText;
 				SText.dy   = CARHEI;
-				SText.sign = savename[ CurPos ];
+				SText.sign = savename[CurPos];
 				SText.l[0] = 0;
 				SText.l[1] = 0;
 				SText.l[2] = LenText;
@@ -905,7 +905,7 @@ bool DataLoad() {
 //  					Video2+a*CurRoomMaxX+CurScrollPageDx, SCREENLEN );
 			}
 
-			if ((mleft) && (_inventory[ CurPos ] !=  iEMPTYSLOT))
+			if ((mleft) && (_inventory[CurPos] !=  iEMPTYSLOT))
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -934,8 +934,8 @@ bool DataLoad() {
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	strcpy(tempname, "SaveGame._X_");
-	tempname[ 10 ] = 'A' + CurPos;
-	tempname[ 12 ] = '\0';
+	tempname[10] = 'A' + CurPos;
+	tempname[12] = '\0';
 
 	fh = fopen(tempname, "rb");
 	if (!fh) {
