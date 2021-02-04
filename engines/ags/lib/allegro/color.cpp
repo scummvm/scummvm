@@ -24,6 +24,7 @@
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/aintern.h"
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/stream.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -48,6 +49,20 @@ int _rgb_a_shift_32 = 0;
 
 RGB_MAP *rgb_map;
 COLOR_MAP *color_map;
+
+void color::readFromFile(AGS::Shared::Stream *file) {
+	r = file->ReadByte();
+	g = file->ReadByte();
+	b = file->ReadByte();
+	filler = file->ReadByte();
+}
+
+void color::writeToFile(AGS::Shared::Stream *file) const {
+	file->WriteByte(r);
+	file->WriteByte(g);
+	file->WriteByte(b);
+	file->WriteByte(filler);
+}
 
 
 void set_color(int idx, const RGB *p) {
