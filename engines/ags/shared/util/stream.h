@@ -83,6 +83,18 @@ public:
 
 	// Fill the requested number of bytes with particular value
 	size_t WriteByteCount(uint8_t b, size_t count);
+
+	template<class T>
+	inline void SafeReadArray(T *arr, size_t count) {
+		for (size_t i = 0; i < count; ++i, ++arr)
+			arr->readFromFile(this);
+	}
+
+	template<class T>
+	inline void SafeWriteArray(const T *arr, size_t count) {
+		for (size_t i = 0; i < count; ++i, ++arr)
+			arr->writeToFile(this);
+	}
 };
 
 class ScummVMReadStream : public Common::SeekableReadStream {

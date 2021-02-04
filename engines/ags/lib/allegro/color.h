@@ -39,11 +39,20 @@ namespace AGS3 {
 
 class BITMAP;
 
+namespace AGS {
+namespace Shared {
+class Stream;
+} // namespace Shared
+} // namespace AGS
+
 #include "common/pack-start.h"  // START STRUCT PACKING
 
 struct color {
 	byte r, g, b;
 	byte filler;
+
+	void readFromFile(AGS::Shared::Stream *file);
+	void writeToFile(AGS::Shared::Stream *file) const;
 } PACKED_STRUCT;
 
 typedef color RGB;

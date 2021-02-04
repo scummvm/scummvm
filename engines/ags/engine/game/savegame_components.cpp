@@ -207,8 +207,7 @@ HSaveError WriteGameState(PStream out) {
 	// Game base
 	game.WriteForSavegame(out);
 	// Game palette
-	// TODO: probably no need to save this for hi/true-res game
-	out->WriteArray(palette, sizeof(color), 256);
+	out->SafeWriteArray(palette, PALETTE_COUNT);
 
 	if (loaded_game_file_version <= kGameVersion_272) {
 		// Global variables
@@ -297,7 +296,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	// Game base
 	game.ReadFromSavegame(in);
 	// Game palette
-	in->ReadArray(palette, sizeof(color), 256);
+	in->SafeReadArray(palette, PALETTE_COUNT);
 
 	if (loaded_game_file_version <= kGameVersion_272) {
 		// Legacy interaction global variables
