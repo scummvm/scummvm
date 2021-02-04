@@ -1505,14 +1505,14 @@ void Encounter::runScript() {
 			if (_scriptData.counter >= 0)
 				break;
 
-			_scriptData.offset = entry.param2;
+			_scriptData.offset = entry.param2 - 1;
 			break;
 
 		case kOpcodeSetOffsetIfCounterNegativeOrNull:
 			if (_scriptData.counter > 0)
 				break;
 
-			_scriptData.offset = entry.param2;
+			_scriptData.offset = entry.param2 - 1;
 			break;
 
 		case kOpcodeSetOffsetIfCounterIsNull:
@@ -1526,14 +1526,14 @@ void Encounter::runScript() {
 			if (!_scriptData.counter)
 				break;
 
-			_scriptData.offset = entry.param2;
+			_scriptData.offset = entry.param2 - 1;
 			break;
 
 		case kOpcodeSetOffsetIfCounterPositiveOrNull:
 			if (_scriptData.counter < 0)
 				break;
 
-			_scriptData.offset = entry.param2;
+			_scriptData.offset = entry.param2 - 1;
 			break;
 
 		case kOpcodeSetOffsetIfCounterPositive:
