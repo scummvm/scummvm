@@ -65,19 +65,16 @@ Audio::SoundHandle    smp[SAMPLEVOICES];	// Sample handles for each mixer channe
 uint32        nltime;			// timer variable
 int32 	   MinSampleBuffer;
 
-volatile int16 playing[SAMPLEVOICES];			// sample currently playing
-volatile int16  smpvol[SAMPLEVOICES];
+int16 playing[SAMPLEVOICES];			// sample currently playing
+int16  smpvol[SAMPLEVOICES];
 
-volatile uint8 StepChannel = 1;
-volatile uint8 BackChannel = 0;
-volatile uint8 SpeechChannel = 5;
-volatile uint8 SoundFadStatus = 0;
+uint8 StepChannel = 1;
+uint8 BackChannel = 0;
+uint8 SpeechChannel = 5;
+uint8 SoundFadStatus = 0;
 
-volatile int16 SoundFadInVal;
-volatile int16 SoundFadOutVal;
-
-int fadincount;
-int fadoutcount;
+int16 SoundFadInVal;
+int16 SoundFadOutVal;
 
 extern uint8 *SpeechBuf[2];
 extern uint8  SpeechTrackEnabled;
@@ -114,8 +111,6 @@ void soundtimefunct() {
 			if (!g_system->getMixer()->isSoundHandleActive(smp[BackChannel])) {
 				SoundFadStatus &= (~SFADOUT);
 			} else {
-				fadoutcount ++;
-
 				SoundFadOutVal -= FADMULT;
 
 				if (SoundFadOutVal > 0)
@@ -129,8 +124,6 @@ void soundtimefunct() {
 			}
 		}
 		if (SoundFadStatus & SFADIN) {
-			fadincount ++;
-
 			SoundFadInVal += FADMULT;
 
 			if (SoundFadInVal < (GSample[playing[StepChannel]].volume * FADMULT))
@@ -142,7 +135,7 @@ void soundtimefunct() {
 				//SoundFadStatus &= ( ~SFADIN );
 			}
 
-			for (volatile int a = 2; a < SAMPLEVOICES; a++) {
+			for (int a = 2; a < SAMPLEVOICES; a++) {
 				if (playing[a] != 0) {
 					smpvol[a] += FADMULT;
 
@@ -259,8 +252,6 @@ void SoundFadOut() {
 			playing[a] = 0;
 		}
 	}
-
-	SoundFadOutVal = 0;
 
 	SoundFadOutVal = g_system->getMixer()->getChannelVolume(smp[BackChannel]) * FADMULT;
 	SoundFadStatus = SFADOUT;
