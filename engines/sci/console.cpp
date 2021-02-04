@@ -529,7 +529,7 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 		int type = r->getUint16LEAt(offset + 2);
 		// QFG3 has empty opcodes
 		Common::String name = len > 0 ? r->getStringAt(offset + 4, len) : "Dummy";
-		debugPrintf("%03x: %03x %20s | ", i, type, name.c_str());
+		debugPrintf("%03x: %03x %15s | ", i, type, name.c_str());
 		if ((i % 3) == 2)
 			debugPrintf("\n");
 	}
