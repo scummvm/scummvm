@@ -1486,6 +1486,7 @@ void Encounter::runScript() {
 			_isScriptRunning = false;
 			done = true;
 			_value1 = 0;
+			getSpeech()->resetTextData();
 			break;
 
 		case kOpcodeSetScriptVariable:
