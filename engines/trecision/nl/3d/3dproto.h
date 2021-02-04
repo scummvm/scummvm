@@ -54,7 +54,7 @@ void buildFramelist();
 int nextStep();
 void displayPath();
 int findAttachedPanel(int srcP, int destP);
-int pointInside(int pan, double x, double z);
+bool pointInside(int pan, double x, double z);
 int pathCompare(const void *arg1, const void *arg2);
 void sortPath();
 float distF(float x1, float y1, float x2, float y2);

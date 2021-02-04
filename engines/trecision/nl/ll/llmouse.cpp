@@ -401,7 +401,7 @@ void IconSnapShot() {
 /* -----------------25/10/97 15.16-------------------
 						DataSave
  --------------------------------------------------*/
-LLBOOL DataSave() {
+bool DataSave() {
 	FILE *fh;
 	int a;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
@@ -410,7 +410,7 @@ LLBOOL DataSave() {
 	char savename[MAXSAVEFILE][40];
 	struct SDText SText;
 	uint16 posx, LenText;
-	LLBOOL ret = true;
+	bool ret = true;
 
 	actorStop();
 	nextStep();
@@ -769,7 +769,7 @@ outsave:
 /*-----------------09/02/96 20.57-------------------
 					DataLoad
 --------------------------------------------------*/
-LLBOOL DataLoad() {
+bool DataLoad() {
 	extern char CurCDSet, CDLetter;
 	extern uint8 CurStack;
 	FILE *fh;
@@ -779,7 +779,7 @@ LLBOOL DataLoad() {
 	char savename[MAXSAVEFILE][40];
 	struct SDText SText;
 	uint16 posx, LenText;
-	LLBOOL retval = true;
+	bool retval = true;
 
 	for (a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
@@ -1081,11 +1081,11 @@ outload:
 /*-----------------09/02/96 20.57-------------------
 					QuitGame
 --------------------------------------------------*/
-LLBOOL QuitGame() {
+bool QuitGame() {
 	char ch;
 	struct SDText SText;
 	int a;
-	LLBOOL esito;
+	bool esito;
 
 	for (a = 0; a < TOP; a++)
 		memcpy(ZBuffer + a * CurRoomMaxX, Video2 + CurRoomMaxX * a + CurScrollPageDx, SCREENLEN * 2);

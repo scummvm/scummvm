@@ -44,7 +44,7 @@ const char  *SuperString;
 uint16 SuperStringLen;
 char  SubString[MAXSUBSTRING][MAXLENSUBSTRING];
 uint16 SubStringStart;
-LLBOOL  substringagain;
+bool  substringagain;
 uint16 CurSubString;
 uint16 SubStringUsed;
 
@@ -70,7 +70,7 @@ void RepaintString() {
 /*-------------------------------------------------------------------------*/
 /*                                 POSITIONSTRING           			   */
 /*-------------------------------------------------------------------------*/
-void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, LLBOOL characterFl) {
+void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
 	uint16 TheVideoLen = MAXX;
 
 	uint16 LenText = TextLength(string, 0);
@@ -100,7 +100,7 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 /*-------------------------------------------------------------------------*/
 /*                                 SHOWOBJNAME           				   */
 /*-------------------------------------------------------------------------*/
-void ShowObjName(uint16 obj, LLBOOL showhide) {
+void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posx;
 	uint16 posy;
 	char locsent[256];
@@ -198,7 +198,7 @@ void ShowObjName(uint16 obj, LLBOOL showhide) {
 /*-------------------------------------------------------------------------*/
 /*                                 SHOWINVNAME           				   */
 /*-------------------------------------------------------------------------*/
-void ShowInvName(uint16 obj, LLBOOL showhide) {
+void ShowInvName(uint16 obj, bool showhide) {
 	uint16 posx;
 	uint16 posy;
 	uint16 LenText;
@@ -344,7 +344,7 @@ void CharacterSay(uint16 i) {
 /*-------------------------------------------------------------------------*/
 /*                                CharacterTalk            				   */
 /*-------------------------------------------------------------------------*/
-void CharacterTalk(const char *s, LLBOOL FromCharacterSay) {
+void CharacterTalk(const char *s, bool FromCharacterSay) {
 	SemSomeOneSpeak = true;
 	SemCharacterSpeak = true;
 	Semskiptalk = false;
@@ -450,7 +450,7 @@ void CharacterMute() {
 /*-------------------------------------------------------------------------*/
 /*                                 SOMEONETALK            				   */
 /*-------------------------------------------------------------------------*/
-void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, LLBOOL FromSomeOneSay) {
+void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
 	SemSomeOneSpeak = true;

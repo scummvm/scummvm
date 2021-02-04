@@ -112,7 +112,7 @@ void doRoomOut(uint16 TheObj) {
 /*                                 EXAMINE           					   */
 /*-------------------------------------------------------------------------*/
 void doMouseExamine(uint16 TheObj) {
-	LLBOOL printsent = false;
+	bool printsent = false;
 	int a;
 
 	if (!TheObj)
@@ -496,7 +496,7 @@ void doMouseExamine(uint16 TheObj) {
 /*                                 OPERATE           					   */
 /*-------------------------------------------------------------------------*/
 void doMouseOperate(uint16 TheObj) {
-	LLBOOL printsent = false;
+	bool printsent = false;
 	int a;
 
 	if (!TheObj)
@@ -1311,7 +1311,7 @@ void doMouseOperate(uint16 TheObj) {
 /*                                  TAKE           						   */
 /*-------------------------------------------------------------------------*/
 void doMouseTake(uint16 TheObj) {
-	LLBOOL del = true;
+	bool del = true;
 
 	if (!TheObj)
 		warning("doMouseTake");
@@ -1453,7 +1453,7 @@ void doUseWith() {
 /*                          USE WITH / INV - INV         				   */
 /*-------------------------------------------------------------------------*/
 void doInvInvUseWith() {
-	LLBOOL updateinv = true, printsent = true;
+	bool updateinv = true, printsent = true;
 
 	if ((!UseWith[USED]) || (!UseWith[WITH]))
 		warning("doInvInvUseWith");
@@ -1738,7 +1738,7 @@ void doInvInvUseWith() {
 /*                          USE WITH / INV - SCR         				   */
 /*-------------------------------------------------------------------------*/
 void doInvScrUseWith() {
-	LLBOOL updateinv = true, printsent = true;
+	bool updateinv = true, printsent = true;
 	extern uint16 _curAnimFrame[];
 
 	if ((!UseWith[USED]) || (!UseWith[WITH]))
@@ -2887,7 +2887,7 @@ void doInvScrUseWith() {
 /*                          USE WITH / SCR - SCR         				   */
 /*-------------------------------------------------------------------------*/
 void doScrScrUseWith() {
-	LLBOOL printsent = true;
+	bool printsent = true;
 
 	if ((!UseWith[USED]) || (!UseWith[WITH]))
 		warning("doScrScrUseWith");
@@ -2999,7 +2999,7 @@ void doInvExamine() {
 /*                               OPERATE INV          					   */
 /*-------------------------------------------------------------------------*/
 void doInvOperate() {
-	LLBOOL printsent = true;
+	bool printsent = true;
 	int a;
 
 	if (!CurInventory)
@@ -3387,8 +3387,8 @@ void doScript() {
 /*-------------------------------------------------------------------------*/
 /*                               AtMouseClick           				   */
 /*-------------------------------------------------------------------------*/
-LLBOOL AtMouseClick(uint16 TheObj) {
-	LLBOOL ret = true;
+bool AtMouseClick(uint16 TheObj) {
+	bool ret = true;
 
 	if ((_curRoom == r1D) && !(Room[r1D]._flag & OBJFLAG_EXTRA) && (TheObj != oSCALA1D)) {
 		_curObj = oDONNA1D;

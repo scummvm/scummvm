@@ -99,6 +99,6 @@ uint8  _defActionLen[hLAST + 1] = {
 	/* LAST  */		15
 };
 
-LLBOOL    _shadowSplit;
+bool    _shadowSplit;
 
 } // End of namespace Trecision

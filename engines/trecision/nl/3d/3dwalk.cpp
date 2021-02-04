@@ -1098,8 +1098,8 @@ int findAttachedPanel(int srcP, int destP) {
 /*-----------------02/11/96 21.50-------------------
 	Guarda se un pto e' all'interno di un pannello
 --------------------------------------------------*/
-int pointInside(int pan, double x, double z) {
-	LLBOOL inside_flag;
+bool pointInside(int pan, double x, double z) {
+	bool inside_flag;
 	double pgon[4][2], ox, oz, s;
 
 	if (pan < 0)

@@ -165,7 +165,7 @@ extern int    _lastStep;
 
 extern uint8  _defActionLen[];
 
-extern LLBOOL   _shadowSplit;
+extern bool   _shadowSplit;
 
 } // End of namespace Trecision
 
