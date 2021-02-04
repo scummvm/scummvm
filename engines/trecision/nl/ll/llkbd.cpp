@@ -73,14 +73,6 @@ class File;
 
 namespace Trecision {
 
-char kbdtable[256];			// table of key presses low 128 is current
-// high 128 has been
-volatile char ct1;           // keyboad interrupt vars
-volatile int ct2;
-
-volatile char kbdbuffer[128];	// keep in memory last 128 key
-volatile char kbdbufferptr = 0;
-
 char *TextPtr;
 
 /* -----------------19/01/98 11.11-------------------
