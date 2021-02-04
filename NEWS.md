@@ -17,6 +17,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos
    - Added support for Glulx interactive fiction games
 
+ New ports:
+   - The Nintendo DS port got a major rewrite.
+
  General:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
