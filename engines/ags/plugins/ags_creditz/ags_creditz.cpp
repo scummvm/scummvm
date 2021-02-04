@@ -93,7 +93,7 @@ void AGSCreditz11::SetCredit(const ScriptMethodParams &params) {
 	c._x = xpos;
 	c._isSet = true;
 	c._outline = generateoutline;
-	c._color = colour;
+	c._colorHeight = colour;
 }
 
 void AGSCreditz11::ScrollCredits(const ScriptMethodParams &params) {
@@ -213,33 +213,59 @@ AGSCreditz20::AGSCreditz20() : AGSCreditz() {
 }
 
 const char *AGSCreditz20::AGS_GetPluginName() {
-	return "AGSCreditz v1.1 by AJA";
+	return "AGSCreditz 2.0 (by Dima Software: AJA)";
 }
 
 void AGSCreditz20::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 
+	SCRIPT_METHOD(RunCreditSequence);
 	SCRIPT_METHOD(SetCredit);
-	SCRIPT_METHOD(ScrollCredits);
 	SCRIPT_METHOD(GetCredit);
-	SCRIPT_METHOD(IsCreditScrollingFinished);
+	SCRIPT_METHOD(CreditsSettings);
+	SCRIPT_METHOD(SequenceSettings);
+	SCRIPT_METHOD(IsSequenceFinished);
+	SCRIPT_METHOD(PauseScrolling);
 	SCRIPT_METHOD(SetCreditImage);
-	SCRIPT_METHOD(PauseScroll);
-	SCRIPT_METHOD(ScrollReset);
-	SCRIPT_METHOD(SetEmptyLineHeight);
-	SCRIPT_METHOD(GetEmptyLineHeight);
+	SCRIPT_METHOD(ResetSequence);
+
 	SCRIPT_METHOD(SetStaticCredit);
-	SCRIPT_METHOD(GetStaticCredit);
-	SCRIPT_METHOD(StartEndStaticCredits);
-	SCRIPT_METHOD(GetCurrentStaticCredit);
-	SCRIPT_METHOD(SetDefaultStaticDelay);
-	SCRIPT_METHOD(SetStaticPause);
 	SCRIPT_METHOD(SetStaticCreditTitle);
+	SCRIPT_METHOD(SetStaticPause);
+	SCRIPT_METHOD(RunStaticCreditSequence);
+	SCRIPT_METHOD(IsStaticSequenceFinished);
 	SCRIPT_METHOD(ShowStaticCredit);
-	SCRIPT_METHOD(StaticReset);
-	SCRIPT_METHOD(GetStaticCreditTitle);
-	SCRIPT_METHOD(SetStaticCreditImage);
-	SCRIPT_METHOD(IsStaticCreditsFinished);
+	SCRIPT_METHOD(SetStaticImage);
+	SCRIPT_METHOD(GetCurrentStaticCredit);
+}
+
+void AGSCreditz20::RunCreditSequence(const ScriptMethodParams &params) {
+	PARAMS1(int, sequence);
+
+	if (!_state->_creditsRunning) {
+		_state->_seqSettings[sequence].finished = false;
+		_state->_creditsRunning = true;
+		_state->_creditSequence = sequence;
+
+		_engine->GetScreenDimensions(&_state->_screenWidth, &_state->_screenHeight,
+			&_state->_screenColorDepth);
+
+		if (_state->_seqSettings[sequence].automatic) {
+			calculateSequenceHeight(sequence);
+			_state->_yPos = _state->_screenHeight + 1;
+		} else {
+			_state->_yPos = _state->_seqSettings[sequence].startpoint;
+		}
+
+		_state->_speedPoint = 0;
+		_state->_timer = 0;
+		draw();
+	} else {
+		_state->_paused = false;
+		_state->_creditsRunning = false;
+		_state->_creditSequence = -1;
+		_state->_seqSettings[sequence].finished = true;
+	}
 }
 
 void AGSCreditz20::SetCredit(const ScriptMethodParams &params) {
@@ -252,119 +278,205 @@ void AGSCreditz20::SetCredit(const ScriptMethodParams &params) {
 	Credit &c = _state->_credits[sequence][line];
 	c._text = credit;
 	c._fontSlot = font;
-	c._color = color;
+	c._colorHeight = color;
 	c._x = x_pos;
 	c._isSet = true;
 	if (gen_outline > 0)
 		c._outline = true;
 }
 
+string AGSCreditz20::GetCredit(const ScriptMethodParams &params) {
+	PARAMS2(int, sequence, int, ID);
 
-void AGSCreditz20::ScrollCredits(const ScriptMethodParams &params) {
-	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, resolution);
+	return _state->_credits[sequence][ID]._text.c_str();
+}
 
-	if (onoff == 1) {
-		_state->_creditsRunning = true;
-		_state->_seqSettings[0].speed = speed;
-		_state->_seqSettings[0].endwait = wait;
-		_state->_seqSettings[0].startpoint = fromY;
-		_state->_seqSettings[0].endpoint = toY;
-		_state->_seqSettings[0].automatic = isautom;
+void AGSCreditz20::CreditsSettings(const ScriptMethodParams &params) {
+	PARAMS1(int, emptylineheight);
 
-		_engine->GetScreenDimensions(&_state->_screenWidth,
-			&_state->_screenHeight, &_state->_screenColorDepth);
-		if (_state->_screenWidth == 320) {
-			_state->_resolutionFlag = (resolution != 2) ? 1 : 0;
-		} else if (_state->_screenWidth == 640) {
-			_state->_resolutionFlag = (resolution != 1) ? 1 : 0;
-		}
+	if (emptylineheight >= 0)
+		_state->_emptyLineHeight = emptylineheight;
+}
 
-	} else if (onoff == 0) {
-		_state->_creditsRunning = false;
+void AGSCreditz20::SequenceSettings(const ScriptMethodParams &params) {
+	PARAMS6(int, sequence, int, startpoint, int, endpoint, int, speed, int, automatic, int, endwait);
 
-	} else {
-		_engine->AbortGame("ScrollCredits: OnOff value must be 1 or 0!");
+	_state->_seqSettings[sequence].startpoint = startpoint;
+	_state->_seqSettings[sequence].endpoint = endpoint;
+	_state->_seqSettings[sequence].speed = speed;
+	_state->_seqSettings[sequence].automatic = automatic;
+	_state->_seqSettings[sequence].endwait = endwait;
+}
+
+int AGSCreditz20::IsSequenceFinished(const ScriptMethodParams &params) {
+	PARAMS1(int, sequence);
+
+	if (_state->_seqSettings[sequence].finished) {
+		_state->_seqSettings[sequence].finished = false;
+		return 1;
+	}
+
+	return 0;
+}
+
+void AGSCreditz20::PauseScrolling(const ScriptMethodParams &params) {
+	if (_state->_creditsRunning) {
+		_state->_paused = !_state->_paused;
 	}
 }
 
-string AGSCreditz20::GetCredit(const ScriptMethodParams &params) {
-	PARAMS1(int, ID);
-
-	return (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
-		"image" : _state->_credits[0][ID]._text.c_str();
-}
-
-int AGSCreditz20::IsCreditScrollingFinished(const ScriptMethodParams &params) {
-	return true;
-}
-
 void AGSCreditz20::SetCreditImage(const ScriptMethodParams &params) {
-	//PARAMS5(int, ID, int, Slot, int, center, int, xpos, int, pixtonext);
+	PARAMS5(int, sequence, int, line, int, xPos, int, slot, int, height);
+
+	assert(sequence >= 0 && sequence <= 10);
+	if (line >= (int)_state->_credits[sequence].size())
+		_state->_credits[sequence].resize(line + 1);
+
+	_state->_credits[sequence][line]._image = true;
+	_state->_credits[sequence][line]._isSet = true;
+	_state->_credits[sequence][line]._x = xPos;
+	_state->_credits[sequence][line]._fontSlot = slot;
+	_state->_credits[sequence][line]._colorHeight = height;
 }
 
-void AGSCreditz20::PauseScroll(const ScriptMethodParams &params) {
-	//PARAMS1(int, onoff);
-}
+void AGSCreditz20::ResetSequence(const ScriptMethodParams &params) {
+	PARAMS1(int, seqtype);
 
-void AGSCreditz20::ScrollReset(const ScriptMethodParams &params) {
-}
-
-void AGSCreditz20::SetEmptyLineHeight(const ScriptMethodParams &params) {
-	//PARAMS1(int, Height);
-}
-
-int AGSCreditz20::GetEmptyLineHeight(const ScriptMethodParams &params) {
-	return 0;
+	for (int i = 0; i < 10; ++i) {
+		if (seqtype != 2)
+			// Scrolling
+			_state->_credits[i].clear();
+		else
+			// Static
+			_state->_stCredits[i].clear();
+	}
 }
 
 void AGSCreditz20::SetStaticCredit(const ScriptMethodParams &params) {
-	//PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, int, centered, int, generateoutline, string, credit);
+	PARAMS8(int, sequence, int, id, string, credit, int, xPos, int, yPos,
+		int, font, int, color, int, genOutline);
 
-}
+	assert(sequence >= 0 && sequence <= 10);
+	if (id >= (int)_state->_stCredits[sequence].size())
+		_state->_stCredits[sequence].resize(id + 1);
 
-string AGSCreditz20::GetStaticCredit(const ScriptMethodParams &params) {
-	//PARAMS1(int, ID);
-	return nullptr;
-}
+	_state->_stCredits[sequence][id].credit = credit;
+	_state->_stCredits[sequence][id].x = xPos;
+	_state->_stCredits[sequence][id].y = yPos;
+	_state->_stCredits[sequence][id].font = font;
+	_state->_stCredits[sequence][id].color = color;
 
-void AGSCreditz20::StartEndStaticCredits(const ScriptMethodParams &params) {
-	//PARAMS2(int, onoff, int, res);
-}
-
-int AGSCreditz20::GetCurrentStaticCredit(const ScriptMethodParams &params) {
-	return 0;
-}
-
-void AGSCreditz20::SetDefaultStaticDelay(const ScriptMethodParams &params) {
-	//PARAMS1(int, Cyclesperchar);
-}
-
-void AGSCreditz20::SetStaticPause(const ScriptMethodParams &params) {
-	//PARAMS2(int, ID, int, length);
+	if (genOutline > 0)
+		_state->_stCredits[sequence][id].outline = true;
 }
 
 void AGSCreditz20::SetStaticCreditTitle(const ScriptMethodParams &params) {
-	//PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, int, centered, int, generateoutline, string, title);
+	PARAMS8(int, sequence, int, id, string, title, int, xPos, int, yPos,
+		int, font, int, color, int, genOutline);
+
+	assert(sequence >= 0 && sequence < 10);
+	if (id >= (int)_state->_stCredits[sequence].size())
+		_state->_stCredits[sequence].resize(id + 1);
+
+	_state->_stCredits[sequence][id].title = title;
+	_state->_stCredits[sequence][id].title_x = xPos;
+	_state->_stCredits[sequence][id].title_y = yPos;
+	_state->_stCredits[sequence][id].title_font = font;
+	_state->_stCredits[sequence][id].title_color = color;
+
+	if (genOutline > 0)
+		_state->_stCredits[sequence][id].title_outline = true;
+}
+
+void AGSCreditz20::SetStaticPause(const ScriptMethodParams &params) {
+	PARAMS3(int, sequence, int, id, int, length);
+
+	assert(sequence >= 0 && sequence <= 10);
+	if (id >= (int)_state->_stCredits[sequence].size())
+		_state->_stCredits[sequence].resize(id + 1);
+
+	_state->_stCredits[sequence][id].pause = length;
+}
+
+void AGSCreditz20::RunStaticCreditSequence(const ScriptMethodParams &params) {
+	PARAMS2(int, sequence, int, speed);
+
+	if (!_state->_creditsRunning) {
+		_state->_stSeqSettings[sequence].finished = false;
+		_state->_stSeqSettings[sequence].speed = speed;
+		_state->_creditSequence = sequence;
+		_state->_staticCredits = true;
+		_state->_creditsRunning = true;
+		_state->_currentStatic = 1;
+		_state->_timer = 0;
+		draw();
+
+	} else {
+		_state->_staticCredits = false;
+		_state->_creditSequence = -1;
+		_state->_stSeqSettings[sequence].finished = false;
+		_state->_creditsRunning = false;
+		_state->_currentStatic = 0;
+		_state->_timer = 0;
+	}
+}
+
+int AGSCreditz20::IsStaticSequenceFinished(const ScriptMethodParams &params) {
+	PARAMS1(int, sequence);
+
+	int result = (_state->_stSeqSettings[sequence].finished) ? 1 : 0;
+	_state->_stSeqSettings[sequence].finished = false;
+
+	return result;
 }
 
 void AGSCreditz20::ShowStaticCredit(const ScriptMethodParams &params) {
-	//PARAMS6(int, ID, int, time, int, style, int, transtime, int, sound, int, resolution);
+	PARAMS6(int, sequence, int, id, int, time, int, style,
+		int, styleSettings1, int, styleSettings2);
+
+	_state->_creditSequence = sequence;
+	_state->_creditsRunning = true;
+	_state->_staticCredits = true;
+	_state->_singleStatic.id = id;
+	_state->_singleStatic.time = time;
+	_state->_singleStatic.style = style;
+	_state->_singleStatic.settings1 = styleSettings1;
+	_state->_singleStatic.settings2 = styleSettings2;
+	_state->_singleStatic.bool_ = true;
+	_state->_stSeqSettings[sequence].finished = false;
+	_state->_timer = 0;
+	_state->_timer2 = 0;
+	_state->_numChars = 0;
+	draw();
 }
 
-void AGSCreditz20::StaticReset(const ScriptMethodParams &params) {
+void AGSCreditz20::SetStaticImage(const ScriptMethodParams &params) {
+	PARAMS6(int, sequence, int, id, int, slot, int, xPos, int, yPos, int, length);
+
+	assert(sequence >= 0 && sequence < 10);
+	if (id >= (int)_state->_stCredits[sequence].size())
+		_state->_stCredits[sequence].resize(id + 1);
+
+	_state->_stCredits[sequence][id].image = true;
+	_state->_stCredits[sequence][id].image_slot = slot;
+	_state->_stCredits[sequence][id].x = xPos;
+	_state->_stCredits[sequence][id].y = yPos;
+	_state->_stCredits[sequence][id].image_time = length;
 }
 
-string AGSCreditz20::GetStaticCreditTitle(const ScriptMethodParams &params) {
-	//PARAMS1(int, ID);
-	return nullptr;
+int AGSCreditz20::GetCurrentStaticCredit(const ScriptMethodParams &params) {
+	int result = -1;
+	if (_state->_creditsRunning && _state->_staticCredits)
+		result = _state->_currentStatic;
+
+	return result;
 }
 
-void AGSCreditz20::SetStaticCreditImage(const ScriptMethodParams &params) {
-	//int ID, int x, int y, int Slot, int Hcentered, int Vcentered, int time) {
+int AGSCreditz20::calculateSequenceHeight(int sequence) {
+	return 0;
 }
 
-int AGSCreditz20::IsStaticCreditsFinished(const ScriptMethodParams &params) {
-	return true;
+void AGSCreditz20::draw() {
 }
 
 } // namespace AGSCreditz
