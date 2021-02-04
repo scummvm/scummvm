@@ -311,7 +311,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("gc_interval: Number of kernel calls in between garbage collections\n");
 	debugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	debugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
-	debugPrintf("weak_validations: Turns some validation errors into warnings\n");
 	debugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
 	debugPrintf("\n");
 	debugPrintf("Debug flags\n");
