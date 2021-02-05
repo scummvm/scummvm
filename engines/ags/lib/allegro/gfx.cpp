@@ -153,7 +153,11 @@ BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
 		error("Invalid color depth");
 	}
 
-	return new Surface(width, height, format);
+	BITMAP *bitmap = new Surface(width, height, format);
+	if (color_depth == 8)
+		add_palette_if_needed(bitmap->getSurface());
+
+	return bitmap;
 }
 
 BITMAP *create_sub_bitmap(BITMAP *parent, int x, int y, int width, int height) {
@@ -216,12 +220,11 @@ int bitmap_color_depth(BITMAP *bmp) {
 }
 
 int bitmap_mask_color(BITMAP *bmp) {
-	assert(bmp->format.bytesPerPixel > 1);
 	return TRANSPARENT_COLOR(*bmp);
 }
 
-void add_palette_if_needed(Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) {
-	if (src.format.bytesPerPixel == 1 && dest.format.bytesPerPixel > 1) {
+void add_palette_if_needed(Graphics::ManagedSurface &surf) {
+	if (surf.format.bytesPerPixel == 1) {
 		byte pal[PALETTE_SIZE];
 		palette_to_rgb8(_current_palette, pal);
 
@@ -230,7 +233,7 @@ void add_palette_if_needed(Graphics::ManagedSurface &src, Graphics::ManagedSurfa
 		pal[1] = 0;
 		pal[2] = 0xff;
 
-		src.setPalette(pal, 0, PALETTE_COUNT);
+		surf.setPalette(pal, 0, PALETTE_COUNT);
 	}
 }
 
@@ -238,7 +241,7 @@ void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int 
 	Graphics::ManagedSurface &srcS = **src;
 	Graphics::ManagedSurface &destS = **dest;
 
-	add_palette_if_needed(srcS, destS);
+	add_palette_if_needed(srcS);
 
 	if (dynamic_cast<Graphics::Screen *>(&destS) != nullptr) {
 		destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height),
@@ -254,7 +257,7 @@ void stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, i
 	Graphics::ManagedSurface &srcS = **src;
 	Graphics::ManagedSurface &destS = **dest;
 
-	add_palette_if_needed(srcS, destS);
+	add_palette_if_needed(srcS);
 
 	destS.transBlitFrom(srcS, Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
 		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height));
@@ -264,7 +267,7 @@ void masked_blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_
 	Graphics::ManagedSurface &srcS = **src;
 	Graphics::ManagedSurface &destS = **dest;
 
-	add_palette_if_needed(srcS, destS);
+	add_palette_if_needed(srcS);
 
 	destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height), Common::Point(dst_x, dst_y));
 }
@@ -274,7 +277,7 @@ void masked_stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int sour
 	Graphics::ManagedSurface &srcS = **src;
 	Graphics::ManagedSurface &destS = **dest;
 
-	add_palette_if_needed(srcS, destS);
+	add_palette_if_needed(srcS);
 
 	destS.transBlitFrom(srcS, Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
 		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height));
@@ -284,7 +287,7 @@ void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	Graphics::ManagedSurface &bmpS = **bmp;
 	Graphics::ManagedSurface &spriteS = **sprite;
 
-	add_palette_if_needed(spriteS, bmpS);
+	add_palette_if_needed(spriteS);
 
 	bmpS.transBlitFrom(spriteS, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
 }
@@ -293,7 +296,7 @@ void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int 
 	Graphics::ManagedSurface &bmpS = **bmp;
 	Graphics::ManagedSurface &spriteS = **sprite;
 
-	add_palette_if_needed(spriteS, bmpS);
+	add_palette_if_needed(spriteS);
 
 	bmpS.transBlitFrom(spriteS, Common::Rect(0, 0, sprite->w, sprite->h),
 		Common::Rect(x, y, x + w, y + h));
@@ -343,7 +346,7 @@ void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	Graphics::ManagedSurface &bmpS = **bmp;
 	Graphics::ManagedSurface &spriteS = **sprite;
 
-	add_palette_if_needed(spriteS, bmpS);
+	add_palette_if_needed(spriteS);
 	bmpS.transBlitFrom(spriteS, Common::Point(x, y), (uint)-1, true);
 }
 
