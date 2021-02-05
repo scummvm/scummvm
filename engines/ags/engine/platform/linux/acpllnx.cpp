@@ -21,6 +21,7 @@
  */
 
 #include "ags/shared/core/platform.h"
+#include "ags/ags.h"
 
 #if AGS_PLATFORM_OS_LINUX
 
@@ -81,15 +82,15 @@ int AGSLinux::CDPlayerCommand(int cmdd, int datt) {
 }
 
 void AGSLinux::DisplayAlert(const char *text, ...) {
-	char displbuf[2000];
 	va_list ap;
 	va_start(ap, text);
-	vsprintf(displbuf, text, ap);
+	Common::String msg = Common::String::vformat(text, ap);
 	va_end(ap);
+
 	if (_logToStdErr)
-		debug("ERROR: %s\n", displbuf);
+		debug("ERROR: %s\n", msg.c_str());
 	else
-		debug("ERROR: %s\n", displbuf);
+		::AGS::g_vm->GUIError(msg);
 }
 
 size_t BuildXDGPath(char *destPath, size_t destSize) {
