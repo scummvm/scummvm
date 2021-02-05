@@ -50,9 +50,9 @@ SXSteamAPI::SXSteamAPI(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame
 
 //////////////////////////////////////////////////////////////////////////
 void SXSteamAPI::init() {
-	const MetaEngine &meta = ((WintermuteEngine *)g_engine)->getMetaEngine();
+	const MetaEngine *meta = g_engine->getMetaEngine();
 	const Common::String target = BaseEngine::instance().getGameTargetName();
-	_achievementsInfo = meta.getAchievementsInfo(target);
+	_achievementsInfo = meta->getAchievementsInfo(target);
 
 	if (!_achievementsInfo.appId.empty()) {
 		AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, _achievementsInfo.appId);

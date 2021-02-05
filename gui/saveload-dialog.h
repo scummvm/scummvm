@@ -65,7 +65,7 @@ enum SaveLoadChooserType {
 	kSaveLoadDialogGrid = 1
 };
 
-SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine);
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine *metaEngine);
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 class SaveLoadChooserDialog : protected Dialog {

@@ -168,8 +168,8 @@ void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSGalaxy::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSGalaxy::Initialize^2, Initialize);
 
-	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
 	const Common::String target = achievementsInfo.appId;
 	if (!target.empty()) {
 		AchMan.setActiveDomain(Common::GALAXY_ACHIEVEMENTS, target);
@@ -187,8 +187,8 @@ void AGSGalaxy::IsAchievementAchieved(ScriptMethodParams &params) {
 void AGSGalaxy::SetAchievementAchieved(ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
-	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
@@ -304,8 +304,8 @@ void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSteam::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSteam::FindLeaderboard^1, FindLeaderboard);
 
-	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
 	const Common::String target = achievementsInfo.appId;
 	if (!target.empty()) {
 		AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, target);
@@ -323,8 +323,8 @@ void AGSSteam::IsAchievementAchieved(ScriptMethodParams &params) {
 void AGSSteam::SetAchievementAchieved(ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
-	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {

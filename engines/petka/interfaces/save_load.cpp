@@ -72,9 +72,9 @@ void InterfaceSaveLoad::start(int id) {
 
 	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 20));
 
-	MetaEngine &metaEngine = PetkaEngine::getMetaEngine();
+	MetaEngine *metaEngine = g_engine->getMetaEngine();
 	for (int i = 0, j = _page * 6; i < 6; ++i, ++j) {
-		SaveStateDescriptor save = metaEngine.querySaveMetaInfos(g_vm->_desc->gameId, j);
+		SaveStateDescriptor save = metaEngine->querySaveMetaInfos(g_vm->_desc->gameId, j);
 
 		auto surface = save.getThumbnail();
 		if (!surface)

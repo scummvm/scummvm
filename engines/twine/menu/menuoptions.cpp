@@ -375,7 +375,7 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 	MenuSettings saveFiles;
 	saveFiles.addButton(TextId::kReturnMenu);
 
-	const int maxButtons = _engine->getMetaEngine().getMaximumSaveSlot() + 1;
+	const int maxButtons = _engine->getMetaEngine()->getMaximumSaveSlot() + 1;
 	for (const SaveStateDescriptor &savegame : savegames) {
 		saveFiles.addButton(savegame.getDescription().encode().c_str(), savegame.getSaveSlot());
 		if (saveFiles.getButtonCount() >= maxButtons) {

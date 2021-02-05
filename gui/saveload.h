@@ -40,7 +40,7 @@ protected:
 	const U32String _buttonLabel;
 	const bool _saveMode;
 
-	void selectChooser(const MetaEngine &engine);
+	void selectChooser(const MetaEngine *engine);
 public:
 	SaveLoadChooser(const U32String &title, const U32String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
@@ -52,7 +52,7 @@ public:
 	 * @return The selcted save slot. -1 in case none is selected.
 	 */
 	int runModalWithCurrentTarget();
-	int runModalWithPluginAndTarget(const Plugin *plugin, const String &target);
+	int runModalWithMetaEngineAndTarget(const MetaEngine *engine, const String &target);
 
 	const Common::U32String &getResultString() const;
 

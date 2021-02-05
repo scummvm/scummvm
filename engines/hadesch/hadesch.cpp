@@ -896,7 +896,7 @@ int HadeschEngine::genSubtitleID() {
 
 int HadeschEngine::firstAvailableSlot() {
 	for (unsigned slot = 3; ; slot++) {
-		SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(_targetName.c_str(), slot);
+		SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slot);
 		if (desc.getSaveSlot() == -1 && !desc.getWriteProtectedFlag())
 			return slot;
 	}
@@ -909,7 +909,7 @@ void HadeschEngine::quit() {
 bool HadeschEngine::hasAnySaves() {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
 	Common::StringArray filenames;
-	Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
+	Common::String pattern(getMetaEngine()->getSavegameFilePattern(_targetName.c_str()));
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -919,7 +919,7 @@ bool HadeschEngine::hasAnySaves() {
 Common::Array<HadeschSaveDescriptor> HadeschEngine::getHadeschSavesList() {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
 	Common::StringArray filenames;
-	Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
+	Common::String pattern(getMetaEngine()->getSavegameFilePattern(_targetName.c_str()));
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -947,7 +947,7 @@ Common::Array<HadeschSaveDescriptor> HadeschEngine::getHadeschSavesList() {
 }
 
 void HadeschEngine::deleteSave(int slot) {
-	getMetaEngine().removeSaveState(_targetName.c_str(), slot);
+	getMetaEngine()->removeSaveState(_targetName.c_str(), slot);
 }
 
 void EventHandlerWrapper::operator()() const {

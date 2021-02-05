@@ -540,7 +540,7 @@ void Engine::saveAutosaveIfEnabled() {
 
 		if (saveFlag) {
 			// First check for an existing savegame in the slot, and if present, if it's an autosave
-			SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(
+			SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
 				_targetName.c_str(), getAutosaveSlot());
 			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
 		}
@@ -774,7 +774,7 @@ Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool i
 
 	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
-		getMetaEngine().appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
+		getMetaEngine()->appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
 
 		saveFile->finalize();
 	}
@@ -886,16 +886,6 @@ MetaEngineDetection &Engine::getMetaEngineDetection() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	assert(plugin);
 	return plugin->get<MetaEngineDetection>();
-}
-
-MetaEngine &Engine::getMetaEngine() {
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(ConfMan.get("engineid"));
-	assert(metaEnginePlugin);
-
-	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
-	assert(enginePlugin);
-
-	return enginePlugin->get<MetaEngine>();
 }
 
 PauseToken::PauseToken() : _engine(nullptr) {}

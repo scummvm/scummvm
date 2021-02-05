@@ -324,7 +324,7 @@ bool TwinEEngine::hasFeature(EngineFeature f) const {
 }
 
 SaveStateList TwinEEngine::getSaveSlots() const {
-	return getMetaEngine().listSaves(_targetName.c_str());
+	return getMetaEngine()->listSaves(_targetName.c_str());
 }
 
 void TwinEEngine::wipeSaveSlot(int slot) {
@@ -1148,8 +1148,8 @@ const char *TwinEEngine::getGameId() const {
 }
 
 bool TwinEEngine::unlockAchievement(const Common::String &id) {
-	const MetaEngine &meta = getMetaEngine();
-	const Common::AchievementsInfo &achievementsInfo = meta.getAchievementsInfo(ConfMan.getActiveDomainName());
+	const MetaEngine *meta = getMetaEngine();
+	const Common::AchievementsInfo &achievementsInfo = meta->getAchievementsInfo(ConfMan.getActiveDomainName());
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {

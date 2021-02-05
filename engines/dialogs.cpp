@@ -273,7 +273,7 @@ ConfigDialog::ConfigDialog() :
 	assert(g_engine);
 
 	const Common::String &gameDomain = ConfMan.getActiveDomainName();
-	const MetaEngine &metaEngine = g_engine->getMetaEngine();
+	const MetaEngine *metaEngine = g_engine->getMetaEngine();
 
 	// GUI:  Add tab widget
 	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
@@ -285,7 +285,7 @@ ConfigDialog::ConfigDialog() :
 	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
-		_engineOptions = metaEngine.buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
+		_engineOptions = metaEngine->buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
 	}
 
 	if (_engineOptions) {
@@ -321,7 +321,7 @@ ConfigDialog::ConfigDialog() :
 	// The Keymap tab
 	//
 
-	Common::KeymapArray keymaps = metaEngine.initKeymaps(gameDomain.c_str());
+	Common::KeymapArray keymaps = metaEngine->initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
@@ -343,7 +343,7 @@ ConfigDialog::ConfigDialog() :
 	//
 	// The Achievements tab
 	//
-	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
+	Common::AchievementsInfo achievementsInfo = metaEngine->getAchievementsInfo(gameDomain);
 	if (achievementsInfo.descriptions.size() > 0) {
 		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
 		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
