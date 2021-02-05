@@ -253,9 +253,9 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		return;
 
 	if (format != src.format) {
-		// When the pixel format differs, the destination must be 2 or 4 bytes per pixel,
-		// and the source be 2/4 bytes as well or be paletted
-		assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4);
+		// When the pixel format differs, the destination must be non-paletted
+		assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 3
+			|| format.bytesPerPixel == 4);
 		assert(src.format.bytesPerPixel == 2 || src.format.bytesPerPixel == 4
 			|| (src.format.bytesPerPixel == 1 && srcPalette));
 	}
@@ -322,8 +322,13 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
 				if (format.bytesPerPixel == 2)
 					*(uint16 *)destVal = destPixel;
-				else
+				else if (format.bytesPerPixel == 4)
 					*(uint32 *)destVal = destPixel;
+				else {
+					destVal[0] = rDest;
+					destVal[1] = gDest;
+					destVal[2] = bDest;
+				}
 			}
 		}
 	}
