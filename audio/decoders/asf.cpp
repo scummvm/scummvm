@@ -382,7 +382,7 @@ ASFStream::Packet *ASFStream::readPacket() {
 
 Codec *ASFStream::createCodec() {
 	switch (_compression) {
-	case kWaveWMAv2:
+	case kWaveFormatWMAv2:
 		return new WMACodec(2, _sampleRate, _channels, _bitRate, _blockAlign, _extraData);
 	default:
 		error("ASFStream::createAudioStream(): Unknown compression 0x%04x", _compression);
