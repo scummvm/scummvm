@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-02 05:52+0000\n"
-"PO-Revision-Date: 2021-01-30 11:23+0000\n"
+"PO-Revision-Date: 2021-02-05 19:52+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6738,23 +6738,23 @@ msgstr "%s語用のテキストがエンジンデータファイル内に存在�
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
+msgstr "エンジン%sの、正しくないバージョンのデータを発見しました。想定バージョンは%dですが、取得されたのは%dです。"
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "パーツ%dのブロックが見つかりません"
 
 #: engines/supernova/supernova.cpp:523
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr ""
+msgstr "ゲームフォルダー、またはエンジンのデータファイルに%sが見つかりません。"
 
 #: engines/supernova/supernova.cpp:827
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr ""
+msgstr "一時セーブに失敗しました。ディレクトリーがScummVMに設定されており、書き込み可能である事を確認してください。"
 
 #: engines/supernova/supernova.cpp:828
 msgid "Failed to load temporary game state."
@@ -6799,6 +6799,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"古いフォーマットのBroken Sword 1用セーブデータを発見しました。\n"
+"この形式はサポートされなくなったため、変換しなければ使用できません。\n"
+"\n"
+"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねられます。\n"
 
 #: engines/sword1/control.cpp:1261
 #, c-format
@@ -6806,31 +6810,33 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
+"すでにセーブデータが存在します!\n"
+"古いフォーマット(%s)と新しいフォーマット(%s)の、どちらを残しますか?\n"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
-msgstr ""
+msgstr "古いフォーマットのデータを残す"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the new one"
-msgstr ""
+msgstr "新しいフォーマットのデータを残す"
 
 #: engines/sword1/logic.cpp:1635
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "Broken Sword 1のデモはここで終了です"
 
 #: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
+msgstr "PSXのムービーが見つかりましたが、ScummVMはRGBカラーサポートなしで構築されています"
 
 #: engines/sword2/detection.cpp:33
 msgid "Show object labels"
-msgstr ""
+msgstr "オブジェクトのラベルを表示する"
 
 #: engines/sword2/detection.cpp:34
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "マウスホバー時、オブジェクトのラベルを表示する"
 
 #: engines/sword25/detection.cpp:41
 msgid "Use English speech"
@@ -6901,7 +6907,7 @@ msgstr "クロスフェードを有効にする"
 
 #: engines/twine/metaengine.cpp:74
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "画像と映像のクロスフェードを有効にする"
 
 #: engines/twine/metaengine.cpp:81
 msgid "Disable save menu"
@@ -6910,7 +6916,7 @@ msgstr "セーブメニューを無効にする"
 #: engines/twine/metaengine.cpp:82
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr ""
+msgstr "オリジナル版はオートセーブのみでしたが、これでいつでもセーブできます。"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Enable debug mode"
@@ -6970,11 +6976,11 @@ msgstr "マウスでのUI操作を有効にする"
 
 #: engines/twine/metaengine.cpp:137
 msgid "Use the USA version"
-msgstr ""
+msgstr "北米版を使用する"
 
 #: engines/twine/metaengine.cpp:138
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "北米版のバージョンフラグを有効にする"
 
 #: engines/twine/metaengine.cpp:144
 #, fuzzy
