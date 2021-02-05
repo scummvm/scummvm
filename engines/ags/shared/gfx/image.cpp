@@ -111,28 +111,23 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #endif
 
-	Graphics::ManagedSurface &src = bmp->getSurface();
-	Graphics::Surface *tmp = nullptr;
-	const Graphics::Surface *surface;
+	const Graphics::ManagedSurface &src = bmp->getSurface();
+	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
+	surface.rawBlitFrom(bmp->getSurface(), Common::Rect(0, 0, src.w, src.h),
+		Common::Point(0, 0), src.getPalette());
 
-	if (bmp->format == requiredFormat_3byte) {
-		surface = &src.rawSurface();
-	} else {
-		surface = tmp = src.rawSurface().convertTo(requiredFormat_3byte);
-	}
-
-	int dstPitch = surface->w * 3;
+	int dstPitch = surface.w * 3;
 	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
 	int padding = 0;
 
 	out.writeByte('B');
 	out.writeByte('M');
-	out.writeUint32LE(surface->h * dstPitch + 54);
+	out.writeUint32LE(surface.h * dstPitch + 54);
 	out.writeUint32LE(0);
 	out.writeUint32LE(54);
 	out.writeUint32LE(40);
-	out.writeUint32LE(surface->w);
-	out.writeUint32LE(surface->h);
+	out.writeUint32LE(surface.w);
+	out.writeUint32LE(surface.h);
 	out.writeUint16LE(1);
 	out.writeUint16LE(24);
 	out.writeUint32LE(0);
@@ -142,15 +137,9 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 
-	for (uint y = surface->h; y-- > 0;) {
-		out.write((const void *)surface->getBasePtr(0, y), dstPitch);
+	for (uint y = surface.h; y-- > 0;) {
+		out.write((const void *)surface.getBasePtr(0, y), dstPitch);
 		out.write(&padding, extraDataLength);
-	}
-
-	// free tmp surface
-	if (tmp) {
-		tmp->free();
-		delete tmp;
 	}
 
 	return true;

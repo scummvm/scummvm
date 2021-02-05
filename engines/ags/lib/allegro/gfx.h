@@ -291,6 +291,7 @@ AL_FUNC(void, stretch_sprite, (BITMAP *bmp, const BITMAP *sprite, int x, int y, 
 extern void clear_to_color(BITMAP *bitmap, int color);
 extern int bitmap_color_depth(BITMAP *bmp);
 extern int bitmap_mask_color(BITMAP *bmp);
+extern void add_palette_if_needed(Graphics::ManagedSurface &surf);
 extern void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 extern void masked_blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 extern void stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
