@@ -103,7 +103,7 @@ void SaveLoadCloudSyncProgressDialog::handleTickle() {
 #endif
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
+SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine *metaEngine) {
 	const Common::String &userConfig = ConfMan.get("gui_saveload_chooser", Common::ConfigManager::kApplicationDomain);
 
 	// Check (and update if necessary) the theme config here. This catches
@@ -114,8 +114,8 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine &metaEngine) {
 	g_gui.checkScreenChange();
 
 	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
-		&& metaEngine.hasFeature(MetaEngine::kSavesSupportMetaInfo)
-		&& metaEngine.hasFeature(MetaEngine::kSavesSupportThumbnail)
+		&& metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo)
+		&& metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail)
 		&& userConfig.equalsIgnoreCase("grid")) {
 		// In case we are 640x400 or higher, this dialog is not in save mode,
 		// the user requested the grid dialog and the engines supports it we
@@ -268,7 +268,7 @@ void SaveLoadChooserDialog::handleTickle() {
 void SaveLoadChooserDialog::reflowLayout() {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	const SaveLoadChooserType currentType = getType();
-	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_metaEngine);
 
 	addChooserButtons();
 	if (currentType == kSaveLoadDialogList) {
@@ -1036,7 +1036,7 @@ int SaveLoadChooserGrid::runIntern() {
 	int slot;
 	do {
 		const SaveLoadChooserType currentType = getType();
-		const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+		const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(_metaEngine);
 
 		// Catch resolution changes when the save name dialog was open.
 		if (currentType != requestedType) {

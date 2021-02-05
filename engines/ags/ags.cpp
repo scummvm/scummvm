@@ -385,7 +385,7 @@ Common::Error AGSEngine::run() {
 }
 
 SaveStateList AGSEngine::listSaves() const {
-	return getMetaEngine().listSaves(_targetName.c_str());
+	return getMetaEngine()->listSaves(_targetName.c_str());
 }
 
 void AGSEngine::setGraphicsMode(size_t w, size_t h) {

@@ -269,7 +269,7 @@ void OSystem_iOS7::saveState() {
 		Common::String targetName(ConfMan.getActiveDomainName());
 		int saveSlot = g_engine->getAutosaveSlot();
 		// Make sure we do not overwrite a user save
-		SaveStateDescriptor desc = g_engine->getMetaEngine().querySaveMetaInfos(targetName.c_str(), saveSlot);
+		SaveStateDescriptor desc = g_engine->getMetaEngine()->querySaveMetaInfos(targetName.c_str(), saveSlot);
 		if (desc.getSaveSlot() != -1 && !desc.isAutosave())
 			return;
 

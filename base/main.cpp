@@ -152,7 +152,7 @@ void saveLastLaunchedTarget(const Common::String &target) {
 }
 
 // TODO: specify the possible return values here
-static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
+static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, OSystem &system, const Common::String &edebuglevels) {
 	assert(plugin);
 
 	// Determine the game data path, for validation and error messages
@@ -190,17 +190,8 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		metaEngineDetection.registerDefaultSettings(target);
 	}
 
-	// Right now we have a MetaEngineDetection plugin. We must find the matching
-	// engine plugin to call createInstance and other connecting functions.
-	Plugin *enginePluginToLaunchGame = PluginMan.getEngineFromMetaEngine(plugin);
-
-	if (!enginePluginToLaunchGame) {
-		err = Common::kEnginePluginNotFound;
-		return err;
-	}
-
 	// Create the game's MetaEngine.
-	const MetaEngine &metaEngine = enginePluginToLaunchGame->get<MetaEngine>();
+	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 	err = metaEngine.createInstance(&system, &engine);
 
 	// Check for errors
@@ -224,6 +215,9 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 		return err;
 	}
+
+	// Set up the metaengine
+	engine->setMetaEngine(&metaEngine);
 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
@@ -591,7 +585,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 #endif
 			// Try to run the game
-			Common::Error result = runGame(plugin, system, specialDebug);
+			Common::Error result = runGame(plugin, enginePlugin, system, specialDebug);
 
 #ifdef USE_TTS
 			if (ttsMan != nullptr) {

@@ -495,10 +495,11 @@ void LauncherDialog::loadGame(int item) {
 	}
 
 	if (enginePlugin) {
+		assert(enginePlugin->getType() == PLUGIN_TYPE_ENGINE);
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
 			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
-			int slot = _loadDialog->runModalWithPluginAndTarget(enginePlugin, target);
+			int slot = _loadDialog->runModalWithMetaEngineAndTarget(&metaEngine, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
 				ConfMan.setInt("save_slot", slot, Common::ConfigManager::kTransientDomain);
