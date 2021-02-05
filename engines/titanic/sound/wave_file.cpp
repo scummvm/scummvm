@@ -22,6 +22,7 @@
 
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/wave_types.h"
 #include "common/memstream.h"
 #include "titanic/sound/wave_file.h"
 #include "titanic/sound/sound_manager.h"
@@ -176,14 +177,12 @@ Audio::SeekableAudioStream *CWaveFile::createAudioStream() {
 
 
 const int16 *CWaveFile::lock() {
-	enum { kWaveFormatPCM = 1 };
-
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		// Sanity checking that only raw 16-bit LE 22Khz waves can be locked
 		assert(_waveData && _rate == AUDIO_SAMPLING_RATE);
 		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
-		assert(_wavType == kWaveFormatPCM);
+		assert(_wavType == Audio::kWaveFormatPCM);
 
 		// Return a pointer to the data section of the wave file
 		return (const int16 *)(_waveData + _headerSize);
