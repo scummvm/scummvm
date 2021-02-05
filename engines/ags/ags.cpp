@@ -368,7 +368,7 @@ Common::Error AGSEngine::run() {
 		// Do shutdown stuff
 		::AGS3::quit_free();
 
-		return result ? Common::kUnknownError : Common::kNoError;
+		return Common::kNoError;
 	}
 #ifdef USE_CUSTOM_EXCEPTION_HANDLER
 	else {

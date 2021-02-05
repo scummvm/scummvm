@@ -119,7 +119,8 @@ void init_pathfinder(GameDataVersion game_file_version) {
 }
 
 void shutdown_pathfinder() {
-	route_finder_impl->shutdown_pathfinder();
+	if (route_finder_impl)
+		route_finder_impl->shutdown_pathfinder();
 }
 
 void set_wallscreen(Bitmap *wallscreen) {
