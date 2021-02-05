@@ -6738,7 +6738,9 @@ msgstr "%s語用のテキストがエンジンデータファイル内に存在�
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr "エンジン%sの、正しくないバージョンのデータを発見しました。想定バージョンは%dですが、取得されたのは%dです。"
+msgstr ""
+"エンジン%sの、正しくないバージョンのデータを発見しました。想定バージョンは%d"
+"ですが、取得されたのは%dです。"
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
@@ -6754,7 +6756,9 @@ msgstr "ゲームフォルダー、またはエンジンのデータファイル
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr "一時セーブに失敗しました。ディレクトリーがScummVMに設定されており、書き込み可能である事を確認してください。"
+msgstr ""
+"一時セーブに失敗しました。ディレクトリーがScummVMに設定されており、書き込み可"
+"能である事を確認してください。"
 
 #: engines/supernova/supernova.cpp:828
 msgid "Failed to load temporary game state."
@@ -6802,7 +6806,8 @@ msgstr ""
 "古いフォーマットのBroken Sword 1用セーブデータを発見しました。\n"
 "この形式はサポートされなくなったため、変換しなければ使用できません。\n"
 "\n"
-"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねられます。\n"
+"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねら"
+"れます。\n"
 
 #: engines/sword1/control.cpp:1261
 #, c-format
@@ -6828,7 +6833,9 @@ msgstr "Broken Sword 1のデモはここで終了です"
 #: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSXのムービーが見つかりましたが、ScummVMはRGBカラーサポートなしで構築されています"
+msgstr ""
+"PSXのムービーが見つかりましたが、ScummVMはRGBカラーサポートなしで構築されてい"
+"ます"
 
 #: engines/sword2/detection.cpp:33
 msgid "Show object labels"
