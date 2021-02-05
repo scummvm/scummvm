@@ -34,6 +34,7 @@
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
+#include "tinsel/noir/lzss.h"
 
 namespace Tinsel {
 
@@ -254,7 +255,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 	memcpy(szFilename, pH->szName, sizeof(pH->szName));
 	szFilename[sizeof(pH->szName)] = 0;
 
-	if (pH->filesize & fCompressed) {
+	if (!TinselV3 && MEMFLAGS(pH) & fCompressed) {
 		error("Compression handling has been removed - %s", szFilename);
 	}
 
@@ -269,7 +270,11 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 		// make sure address is valid
 		assert(addr);
 
-		bytes = f.read(addr, pH->filesize & FSIZE_MASK);
+		if (TinselV3 && MEMFLAGS(pH) & fCompressed) {
+			bytes = decompressLZSS(f, addr);
+		} else {
+			bytes = f.read(addr, pH->filesize & FSIZE_MASK);
+		}
 
 		// close the file
 		f.close();

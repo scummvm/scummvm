@@ -1,6 +1,7 @@
 MODULE := engines/tinsel
 
 MODULE_OBJS := \
+    noir/lzss.o \
 	actors.o \
 	adpcm.o \
 	anim.o \
