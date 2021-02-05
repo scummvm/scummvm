@@ -25,12 +25,16 @@
 
 namespace Audio {
 
+// Audio Codecs
 enum WaveCompressionType {
-	kWavePCM         = 0x0001,
-	kWaveMSADPCM     = 0x0002,
-	kWaveMSIMAADPCM  = 0x0011,
-	kWaveMSIMAADPCM2 = 0x0069,
-	kWaveWMAv2       = 0x0161
+	kWaveFormatNone        = 0x0000,
+	kWaveFormatPCM         = 0x0001,
+	kWaveFormatMSADPCM     = 0x0002,
+	kWaveFormatMSIMAADPCM  = 0x0011,
+	kWaveFormatMP3         = 0x0055,
+	kWaveFormatDK3         = 0x0062, // rogue format number
+	kWaveFormatMSIMAADPCM2 = 0x0069,
+	kWaveFormatWMAv2       = 0x0161
 };
 
 } // End of namespace Audio

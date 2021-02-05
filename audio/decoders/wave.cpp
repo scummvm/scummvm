@@ -25,20 +25,13 @@
 #include "common/stream.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/wave_types.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 
 namespace Audio {
-
-// Audio Codecs
-enum {
-	kWaveFormatPCM = 1,
-	kWaveFormatMSADPCM = 2,
-	kWaveFormatMSIMAADPCM = 17,
-	kWaveFormatMP3 = 85
-};
 
 bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
 	const int32 initialPos = stream.pos();

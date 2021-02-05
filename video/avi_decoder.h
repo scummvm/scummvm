@@ -296,16 +296,6 @@ protected:
 	protected:
 		Audio::AudioStream *getAudioStream() const { return _audioStream; }
 
-		// Audio Codecs
-		enum {
-			kWaveFormatNone = 0,
-			kWaveFormatPCM = 1,
-			kWaveFormatMSADPCM = 2,
-			kWaveFormatMSIMAADPCM = 17,
-			kWaveFormatMP3 = 85,
-			kWaveFormatDK3 = 98		// rogue format number
-		};
-
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
 		Audio::AudioStream *_audioStream;
