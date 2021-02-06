@@ -165,6 +165,9 @@ void IMuseDigital::flushTrack(Track *track) {
 	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
 		track->reset();
 	}
+
+	if (_vm->_game.id == GID_CMI && track->trackId < MAX_DIGITAL_TRACKS)
+		_scheduledCrossfades[track->trackId].scheduled = false;
 }
 
 void IMuseDigital::flushTracks() {
@@ -174,6 +177,8 @@ void IMuseDigital::flushTracks() {
 		Track *track = _track[l];
 		if (track->used && track->toBeRemoved && !_mixer->isSoundHandleActive(track->mixChanHandle)) {
 			debug(5, "flushTracks() - trackId:%d, soundId:%d", track->trackId, track->soundId);
+			if (_vm->_game.id == GID_CMI && l < MAX_DIGITAL_TRACKS)
+				_scheduledCrossfades[track->trackId].scheduled = false;
 			track->reset();
 		}
 	}
