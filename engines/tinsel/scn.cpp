@@ -42,7 +42,7 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	uint32 add;
 
 	// Initial adjustmnet for Tinsel 1 chunk types
-	if ((TinselVersion != TINSEL_V2) && (chunk >= CHUNK_SCENE) &&
+	if ((TinselV0 || TinselV1) && (chunk >= CHUNK_SCENE) &&
 		(chunk != CHUNK_MBSTRING))
 		--chunk;
 
