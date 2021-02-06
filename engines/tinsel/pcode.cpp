@@ -48,6 +48,7 @@ extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONT
 
 /** list of all opcodes */
 enum OPCODE {
+	OP_NOOP = 0x3F, ///< Do nothing (Actually 0 in Noir, but due to -1 we get this)
 	OP_HALT = 0,	///< end of program
 	OP_IMM = 1,		///< loads signed immediate onto stack
 	OP_ZERO = 2,	///< loads zero onto stack
@@ -625,6 +626,12 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		if (TinselV0 && ((opcode & OPMASK) > OP_IMM))
 			opcode += 3;
 
+		if (TinselV3) {
+			// Discworld Noir adds a NOOP-operation as opcode 0, leaving everything
+			// else 1 higher, so we subtract 1, and add NOOP as the highest opcode instead.
+			opcode -= 1;
+		}
+
 		debug(7, "ip=%d  Opcode %d (-> %d)", ic->ip, opcode, opcode & OPMASK);
 		switch (opcode & OPMASK) {
 		case OP_HALT:			// end of program
@@ -849,6 +856,12 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_ESCOFF:
 			ic->escOn = false;
 			ic->myEscape = 0;
+			break;
+
+		case OP_NOOP:
+			if (!TinselV3) {
+				error("OP_NOOP seen outside Discworld Noir");
+			}
 			break;
 
 		default:
