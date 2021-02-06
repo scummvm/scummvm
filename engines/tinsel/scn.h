@@ -73,6 +73,9 @@ namespace Tinsel {
 // This single chunk is common to all Tinsel versions
 #define	CHUNK_MBSTRING			0x33340022L
 
+// Used in Discworld Noir
+#define CHUNK_GAME	        	0x33340031L
+
 // This is a base, subsequent numbers may also get used
 #define CHUNK_GRAB_NAME			0x33340100L
 

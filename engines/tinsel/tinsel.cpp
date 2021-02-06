@@ -24,6 +24,7 @@
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/memstream.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -718,66 +719,113 @@ void CuttingScene(bool bCutting) {
 		WrapScene();
 }
 
+struct GameChunk {
+	int numActors;
+	int numGlobals;
+	int numObjects;
+	int numProcesses;
+	int numPolygons;
+	int cdPlayHandle;
+};
+
+GameChunk loadGameChunkV3() {
+	byte *cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_GAME);
+	Common::MemoryReadStream stream(cptr, 36);
+	stream.readUint32LE(); // Size of Game Chunk
+	stream.readUint32LE();
+	stream.readUint32LE();
+
+	GameChunk chunk;
+	chunk.numActors = stream.readUint32LE();
+	chunk.numGlobals =  stream.readUint32LE();
+	chunk.numPolygons = stream.readUint32LE();
+	chunk.numProcesses = stream.readUint32LE();
+	chunk.cdPlayHandle = stream.readUint32LE();
+	chunk.numObjects = stream.readUint32LE();
+	return chunk;
+}
+
+GameChunk createGameChunkV2() {
+	byte *cptr = nullptr;
+	GameChunk chunk;
+
+	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
+	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
+	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_ACTORS);
+	chunk.numActors = (cptr != NULL) ? READ_32(cptr) : 511;
+
+	// CHUNK_TOTAL_GLOBALS seems to be missing in some versions.
+	// So if it is missing, set a reasonably high value for the number of globals.
+	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_GLOBALS);
+	chunk.numGlobals = (cptr != NULL) ? READ_32(cptr) : 512;
+
+	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_TOTAL_OBJECTS);
+	chunk.numObjects = (cptr != NULL) ? READ_32(cptr) : 0;
+
+	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
+	if (cptr != NULL)
+		chunk.numPolygons = *cptr;
+
+	if (TinselV2) {
+		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
+		assert(cptr && (*cptr < 100));
+		chunk.numProcesses = *cptr;
+
+		// CdPlay() stuff
+		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_CDPLAY_HANDLE);
+		assert(cptr);
+		chunk.cdPlayHandle = READ_32(cptr);
+		assert(chunk.cdPlayHandle < 512);
+	}
+	return chunk;
+}
+
+GameChunk loadGameChunk() {
+	if (TinselV3) {
+		return loadGameChunkV3();
+	} else {
+		return createGameChunkV2();
+	}
+}
+
 /**
  * LoadBasicChunks
  */
 void LoadBasicChunks() {
 	byte *cptr;
-	int numObjects;
-
-	if (TinselV3) {
-		error("TODO: Implement LoadBasicChunks for Noir");
-	}
+	GameChunk game = loadGameChunk();
 
 	// Allocate RAM for savescene data
 	InitializeSaveScenes();
 
-	// CHUNK_TOTAL_ACTORS seems to be missing in the released version, hard coding a value
-	// TODO: Would be nice to just change 511 to MAX_SAVED_ALIVES
-	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_ACTORS);
-	_vm->_actor->RegisterActors((cptr != NULL) ? READ_32(cptr) : 511);
+	_vm->_actor->RegisterActors(game.numActors);
 
-	// CHUNK_TOTAL_GLOBALS seems to be missing in some versions.
-	// So if it is missing, set a reasonably high value for the number of globals.
-	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_GLOBALS);
-	RegisterGlobals((cptr != NULL) ? READ_32(cptr) : 512);
-
-	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_TOTAL_OBJECTS);
-	numObjects = (cptr != NULL) ? READ_32(cptr) : 0;
+	RegisterGlobals(game.numGlobals);
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
 
 	// Convert to native endianness
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
-	for (int i = 0; i < numObjects; i++, io++) {
+	for (int i = 0; i < game.numObjects; i++, io++) {
 		io->id        = FROM_32(io->id);
 		io->hIconFilm = FROM_32(io->hIconFilm);
 		io->hScript   = FROM_32(io->hScript);
 		io->attribute = FROM_32(io->attribute);
 	}
 
-	_vm->_dialogs->RegisterIcons(cptr, numObjects);
+	_vm->_dialogs->RegisterIcons(cptr, game.numObjects);
 
-	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
 	// Max polygons are 0 in DW1 Mac (both in the demo and the full version)
-	if (cptr != NULL && *cptr != 0)
-		MaxPolygons(*cptr);
+	if (game.numPolygons != 0)
+		MaxPolygons(game.numPolygons);
 
 	if (TinselV2) {
 		// Global processes
-		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
-		assert(cptr && (*cptr < 100));
-		int num = *cptr;
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_PROCESSES);
-		assert(!num || cptr);
-		GlobalProcesses(num, cptr);
+		assert(!game.numProcesses || cptr);
+		GlobalProcesses(game.numProcesses, cptr);
 
-		// CdPlay() stuff
-		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_CDPLAY_HANDLE);
-		assert(cptr);
-		uint32 playHandle = READ_32(cptr);
-		assert(playHandle < 512);
-		_vm->_handle->SetCdPlayHandle(playHandle);
+		_vm->_handle->SetCdPlayHandle(game.cdPlayHandle);
 	}
 }
 
