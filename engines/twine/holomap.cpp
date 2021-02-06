@@ -132,7 +132,7 @@ void Holomap::prepareHolomapSurface() {
 			} else {
 				_projectedSurfacePositions[projectedIndex].unk2 = (int16)(((angle + ANGLE_90) * ANGLE_90) / 2);
 			}
-			rotation = rotation + ANGLE_11_25;
+			rotation += ANGLE_11_25;
 			++projectedIndex;
 		}
 		const int32 destX = stream.readSint16LE();
@@ -487,7 +487,7 @@ void Holomap::processHolomap() {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
-			xRot += 8;
+			xRot += ANGLE_1;
 			rotate = true;
 			time = _engine->lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
