@@ -16,7 +16,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Transylvania hinzugefügt.
    - Unterstützung für Crimson Crown hinzugefügt.
    - Unterstützung für OO-Topos hinzugefügt.
-   - Unterstptzung für die Glulx interactive fiction-Spiele hinzugefügt.
+   - Unterstützung für die Glulx interactive fiction-Spiele hinzugefügt.
+
+ Neue Portierungen:
+   - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
 
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
