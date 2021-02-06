@@ -36,12 +36,16 @@ namespace TwinE {
 
 /** FLA Frame Opcode types */
 enum FlaFrameOpcode {
-	kLoadPalette = 0,
-	kFade = 1,
-	kPlaySample = 2,
-	kStopSample = 4,
-	kDeltaFrame = 5,
-	kKeyFrame = 7
+	kLoadPalette = 1,
+	kFade = 2,
+	kPlaySample = 3,
+	kFlaUnknown4 = 4,
+	kStopSample = 5,
+	kDeltaFrame = 6,
+	kFlaUnknown7 = 7,
+	kKeyFrame = 8,
+	kFlaUnknown9 = 9,
+	kFlaUnknown16SameAs9 = 16
 };
 
 /** FLA movie sample structure */
@@ -172,12 +176,11 @@ void FlaMovies::processFrame() {
 
 	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
 	for (int32 frame = 0; frame < frameData.videoSize; ++frame) {
-		const uint8 opcode = stream.readByte();
-		stream.skip(1);
-		const uint32 opcodeBlockSize = stream.readUint16LE();
+		const uint16 opcode = stream.readUint16LE();
+		const uint16 opcodeBlockSize = stream.readUint16LE();
 		const int32 pos = stream.pos();
 
-		switch (opcode - 1) {
+		switch (opcode) {
 		case kLoadPalette: {
 			int16 numOfColor = stream.readSint16LE();
 			int16 startColor = stream.readSint16LE();
@@ -186,12 +189,25 @@ void FlaMovies::processFrame() {
 			break;
 		}
 		case kFade: {
-			// FLA movies don't use cross fade
-			// fade out tricky
-			if (_fadeOut != 1) {
-				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
-				_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
-				_fadeOut = 1;
+			int16 innerOpcpde = stream.readSint16LE();
+			switch (innerOpcpde) {
+			case 1:
+				_engine->_music->playMidiMusic(26);
+				break;
+			case 2:
+				// FLA movies don't use cross fade
+				// fade out tricky
+				if (_fadeOut != 1) {
+					_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
+					_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
+					_fadeOut = 1;
+				}
+				break;
+			case 3:
+				_flaPaletteVar = true;
+				break;
+			case 4:
+				_engine->_music->stopMidiMusic();
 			}
 			break;
 		}
@@ -220,6 +236,28 @@ void FlaMovies::processFrame() {
 			drawKeyFrame(stream, FLASCREEN_WIDTH, FLASCREEN_HEIGHT);
 			break;
 		}
+		case kFlaUnknown7: {
+			byte *ptr = (byte *)_engine->frontVideoBuffer.getPixels();
+			for (int y = 0; y < 200; ++y) {
+				for (int x = 0; x < 80; ++x) {
+					*ptr++ = 0;
+				}
+				ptr = ptr + 80;
+			}
+			break;
+		}
+		case kFlaUnknown9:
+		case kFlaUnknown16SameAs9: {
+			byte *ptr = (byte *)_engine->frontVideoBuffer.getPixels();
+			for (int y = 0; y < 200; ++y) {
+				for (int x = 0; x < 80; ++x) {
+					*ptr++ = stream.readByte();
+				}
+				ptr = ptr + 80;
+			}
+			break;
+		}
+		case kFlaUnknown4:
 		default: {
 			break;
 		}
@@ -348,6 +386,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
+		_flaPaletteVar = true;
 		do {
 			FrameMarker frame;
 			ScopedFPS scopedFps(flaHeaderData.speed);

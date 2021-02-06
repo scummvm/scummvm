@@ -72,6 +72,7 @@ private:
 	int32 _fadeOut = 0;
 	/** Auxiliar FLA fade out variable to count frames between the fade */
 	int32 fadeOutFrames = 0;
+	bool _flaPaletteVar = false;
 
 	/** FLA movie file buffer */
 	uint8 flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
