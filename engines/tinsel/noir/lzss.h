@@ -28,7 +28,7 @@
 
 namespace Tinsel {
 
-int decompressLZSS(Common::ReadStream &input, byte *output);
+int decompressLZSS(Common::SeekableReadStream &input, byte *output);
 
 }
 

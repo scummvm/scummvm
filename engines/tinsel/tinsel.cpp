@@ -725,6 +725,10 @@ void LoadBasicChunks() {
 	byte *cptr;
 	int numObjects;
 
+	if (TinselV3) {
+		error("TODO: Implement LoadBasicChunks for Noir");
+	}
+
 	// Allocate RAM for savescene data
 	InitializeSaveScenes();
 
