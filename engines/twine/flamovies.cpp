@@ -208,6 +208,7 @@ void FlaMovies::processFrame() {
 				break;
 			case 4:
 				_engine->_music->stopMidiMusic();
+				break;
 			}
 			break;
 		}
