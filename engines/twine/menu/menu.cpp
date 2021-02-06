@@ -558,8 +558,17 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			}
 			startMillis = loopMillis;
 		}
-		if (showCredits && loopMillis - startMillis > 15000) {
+		if (showCredits && loopMillis - startMillis > 11650) {
 			_engine->_menuOptions->showCredits();
+			// TODO the original game also performs these actions:
+			// play FLA_DRAGON3 fla
+			// display RESSHQR_INTROSCREEN1IMG
+			// display RESSHQR_INTROSCREEN2IMG
+			// display RESSHQR_INTROSCREEN3IMG
+			// play FLA_BATEAU fla
+			// if version == EUROPE_VERSION display RESSHQR_LBAIMG else display RESSHQR_RELLENTIMG
+			// display adeline logo
+			// pressing any key during these actions will abort everything and return to the menu
 			startMillis = _engine->_system->getMillis();
 			_engine->_screens->loadMenuImage(false);
 		}

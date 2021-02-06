@@ -75,6 +75,7 @@ namespace TwinE {
 #define FLA_DRAGON3 "dragon3"
 #define FLA_INTROD "introd"
 #define FLA_THEEND "the_end"
+#define FLA_BATEAU "bateau"
 
 #define FILE3DHQR_HERONORMAL 0
 #define FILE3DHQR_HEROATHLETIC 1
