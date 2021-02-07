@@ -31,6 +31,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
+#include "trecision/trecision.h"
 
 #include <common/file.h>
 #include <common/str.h>
@@ -48,7 +49,7 @@ uint16 BlinkLastDTextChar = MASKCOL;
 uint16 MouseBuf[50];
 int	KeybInput;
 extern bool _linearMode;
-extern int VideoLocked;
+extern bool VideoLocked;
 extern int NlVer;
 
 // joint management
@@ -91,8 +92,8 @@ void VPix(int16 x, int16 y, uint16 col) {
 void VMouseOFF() {
 	int32 comx = omx;
 
-	int32 vl = VideoLocked;
-	if (vl == 0)
+	bool vl = VideoLocked;
+	if (!vl)
 		LockVideo();
 
 	for (int32 i = (comx - 10); i <= (comx + 10); i++)
@@ -101,7 +102,7 @@ void VMouseOFF() {
 	for (int32 i = (omy - 10); i <= (omy + 10); i++)
 		VPix(comx, i, vr(comx, i));
 
-	if (vl == 0)
+	if (!vl)
 		UnlockVideo();
 }
 
@@ -109,45 +110,43 @@ void VMouseOFF() {
 					VMouseON
 --------------------------------------------------*/
 void VMouseON() {
-	int32 cmx, comx, i, vl;
-	uint16 mc;
-
 	if (!MouseONOFF)
 		return ;
 
-	comx = omx;
-	cmx = mx;
-	mc = PalTo16bit(255, 255, 255);
+	int32 comx = omx;
+	int32 cmx = mx;
+	uint16 mc = PalTo16bit(255, 255, 255);
 
-	if ((vl = VideoLocked) == 0)
+	bool vl = VideoLocked;
+	if (!vl)
 		LockVideo();
 
-	for (i = (comx - 10); i <= (comx + 10); i++) {
+	for (int32 i = (comx - 10); i <= (comx + 10); i++) {
 		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (omy == my))))
 			VPix(i, omy, vr(i, omy));
 	}
 
-	for (i = (omy - 10); i <= (omy + 10); i++) {
+	for (int32 i = (omy - 10); i <= (omy + 10); i++) {
 		if ((!(((i >= (my - 10)) && (i <= (my + 10))) && (comx == cmx))))
 			VPix(comx, i, vr(comx, i));
 	}
 
-	for (i = (cmx - 10); i <= (cmx - 3); i++)
+	for (int32 i = (cmx - 10); i <= (cmx - 3); i++)
 		VPix(i, my, mc);
-	for (i = (cmx + 3); i <= (cmx + 10); i++)
+	for (int32 i = (cmx + 3); i <= (cmx + 10); i++)
 		VPix(i, my, mc);
 
-	for (i = (my - 10); i <= (my - 3); i++)
+	for (int32 i = (my - 10); i <= (my - 3); i++)
 		VPix(cmx, i, mc);
-	for (i = (my + 3); i <= (my + 10); i++)
+	for (int32 i = (my + 3); i <= (my + 10); i++)
 		VPix(cmx, i, mc);
 
-	for (i = (cmx - 2); i <= (cmx + 2); i++) {
+	for (int32 i = (cmx - 2); i <= (cmx + 2); i++) {
 		if (cmx == i)
 			i++;
 		VPix(i, my, vr(i, my));
 	}
-	for (i = (my - 2); i <= (my + 2); i++) {
+	for (int32 i = (my - 2); i <= (my + 2); i++) {
 		if (i == my)
 			i++;
 		VPix(cmx, i, vr(cmx, i));
@@ -157,7 +156,7 @@ void VMouseON() {
 	omx = mx;
 	omy = my;
 
-	if (vl == 0)
+	if (!vl)
 		UnlockVideo();
 }
 
@@ -165,16 +164,15 @@ void VMouseON() {
 					VMouseCopy
 --------------------------------------------------*/
 void VMouseRestore() {
-	int32 i, c;
+	int32 c = 0;
 
-	c = 0;
 	if (!MouseONOFF)
 		return ;
 
-	for (i = (omx - 10); i <= (omx + 10); i++)
+	for (int32 i = (omx - 10); i <= (omx + 10); i++)
 		Video2[i + omy * MAXX] = MouseBuf[c++];
 
-	for (i = (omy - 10); i <= (omy + 10); i++)
+	for (int32 i = (omy - 10); i <= (omy + 10); i++)
 		Video2[omx + i * MAXX] = MouseBuf[c++];
 }
 
@@ -182,47 +180,46 @@ void VMouseRestore() {
 					VMouseCopy
 --------------------------------------------------*/
 void VMouseCopy() {
-	int32 i, c;
-	uint16 mc;
+	int32 c = 0;
+	uint16 mc = PalTo16bit(255, 255, 255);
 
-	c = 0;
-	mc = PalTo16bit(255, 255, 255);
 	if (!MouseONOFF)
 		return ;
 
-	for (i = (omx - 10); i <= (omx + 10); i++)
+	for (int32 i = (omx - 10); i <= (omx + 10); i++)
 		MouseBuf[c++] = Video2[i + omy * MAXX];
-	for (i = (omy - 10); i <= (omy + 10); i++)
+	for (int32 i = (omy - 10); i <= (omy + 10); i++)
 		MouseBuf[c++] = Video2[omx + i * MAXX];
 
-	for (i = (omx - 10); i <= (omx + 10); i++)
+	for (int32 i = (omx - 10); i <= (omx + 10); i++) {
 		if ((i != omx - 2) && (i != omx - 1) && (i != omx + 1) && (i != omx + 2))
 			Video2[i + omy * MAXX] = mc;
+	}
 
-	for (i = (omy - 10); i <= (omy + 10); i++)
+	for (int32 i = (omy - 10); i <= (omy + 10); i++) {
 		if ((i != omy - 2) && (i != omy - 1) && (i != omy + 1) && (i != omy + 2))
 			Video2[omx + i * MAXX] = mc;
+	}
 }
 
 /*-----------------17/02/95 09.53-------------------
  TextLength - calcola lunghezza str dal car 0 a num
 --------------------------------------------------*/
 uint16 TextLength(const char *sign, uint16 num) {
-	uint16 Len, b, c;
-	b = 0;
-
 	if (sign == NULL)
-		return (0);
+		return 0;
 
+	uint16 Len;
 	if (num == 0)
 		Len = strlen(sign);
 	else
 		Len = num;
 
-	for (c = 0; c < Len; c++)
+	uint16 b = 0;
+	for (uint16 c = 0; c < Len; c++)
 		b += (Font[(uint8)sign[c] * 3 + 2]);
 
-	return (b);
+	return b;
 }
 
 /*-----------------14/05/95 12.12-------------------
@@ -389,9 +386,9 @@ void DText(struct SDText t) {
  * --------------------------------------------------*/
 void IconSnapShot() {
 	uint16 BlackPixel = 0x0000;
-	int a, b;
+	int a;
 
-	for (b = 0; b < ICONDY; b++) {
+	for (int b = 0; b < ICONDY; b++) {
 		for (a = 0; a < (ICONDX - 1); a++)
 			Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = (uint16)UnUpdatePixelFormat(Video2[CurRoomMaxX * b * 10 + a * (CurRoomMaxX / ICONDX)]);
 		Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = BlackPixel;
@@ -652,7 +649,7 @@ insave:
 
 	fwrite(Icone + (READICON + 13)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
 
-	fwrite(&_curRoom,             sizeof(uint16), 1, fh);
+	fwrite(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 	fwrite(&OldInvLen,           sizeof(uint8), 1, fh);
 	fwrite(&_cyberInventorySize,		  sizeof(uint8), 1, fh);
 	fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
@@ -744,8 +741,8 @@ outsave:
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	ShowScreen(0, 0, MAXX, TOP);
-	CurInventory = 0;
-//	for ( a=TOP-20; a<TOP-20+CARHEI; a++ )
+	g_vm->_curInventory = 0;
+	//	for ( a=TOP-20; a<TOP-20+CARHEI; a++ )
 //		VCopy( a*VirtualPageLen+VideoScrollPageDx,
 //			Video2+a*CurRoomMaxX+CurScrollPageDx, SCREENLEN );
 
@@ -948,7 +945,7 @@ bool DataLoad() {
 	fread(Icone + (READICON + 1)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
 	UpdatePixelFormat(Icone + (READICON + 1)*ICONDX * ICONDY, ICONDX * ICONDY);
 
-	fread(&_curRoom,             sizeof(uint16), 1, fh);
+	fread(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 	fread(&OldInvLen,           sizeof(uint8), 1, fh);
 	fread(&_cyberInventorySize,		 sizeof(uint8), 1, fh);
 	fread(&OldIconBase,         sizeof(uint8), 1, fh);
@@ -1032,15 +1029,15 @@ bool DataLoad() {
 	CurStack = 0;
 	Semscriptactive = false;
 
-	OldRoom = _curRoom;
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
+	g_vm->_oldRoom = g_vm->_curRoom;
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curRoom, 0, 0, 0);
 
 	// setta il CD preferenziale
-	if ((CurCDSet != 1) && ((_curRoom == r11) || (_curRoom == r12) || (_curRoom == r13) || (_curRoom == r14) || (_curRoom == r15) || (_curRoom == r16) || (_curRoom == r17) || (_curRoom == r18) || (_curRoom == r19) || (_curRoom == r1A) || (_curRoom == r1B) || (_curRoom == r1C) || (_curRoom == r1D) || (_curRoom == rINTRO) || (_curRoom == rSYS) || (_curRoom == r12CU) || (_curRoom == r13CU)))
+	if ((CurCDSet != 1) && ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)))
 		CheckFileInCD("11.bkg");
-	else if ((CurCDSet != 2) && ((_curRoom == r21) || (_curRoom == r22) || (_curRoom == r23A) || (_curRoom == r24) || (_curRoom == r25) || (_curRoom == r26) || (_curRoom == r27) || (_curRoom == r28) || (_curRoom == r29) || (_curRoom == r2A) || (_curRoom == r2B) || (_curRoom == r2C) || (_curRoom == r2D) || (_curRoom == r2E) || (_curRoom == r2F) || (_curRoom == r2G) || (_curRoom == r2H) || (_curRoom == r31) || (_curRoom == r32) || (_curRoom == r33) || (_curRoom == r34) || (_curRoom == r35) || (_curRoom == r36) || (_curRoom == r37) || (_curRoom == r23B) || (_curRoom == r29L) || (_curRoom == r2BL) || (_curRoom == r2GV) || (_curRoom == r31P) || (_curRoom == r35P) || (_curRoom == r36F)))
+	else if ((CurCDSet != 2) && ((g_vm->_curRoom == r21) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r23A) || (g_vm->_curRoom == r24) || (g_vm->_curRoom == r25) || (g_vm->_curRoom == r26) || (g_vm->_curRoom == r27) || (g_vm->_curRoom == r28) || (g_vm->_curRoom == r29) || (g_vm->_curRoom == r2A) || (g_vm->_curRoom == r2B) || (g_vm->_curRoom == r2C) || (g_vm->_curRoom == r2D) || (g_vm->_curRoom == r2E) || (g_vm->_curRoom == r2F) || (g_vm->_curRoom == r2G) || (g_vm->_curRoom == r2H) || (g_vm->_curRoom == r31) || (g_vm->_curRoom == r32) || (g_vm->_curRoom == r33) || (g_vm->_curRoom == r34) || (g_vm->_curRoom == r35) || (g_vm->_curRoom == r36) || (g_vm->_curRoom == r37) || (g_vm->_curRoom == r23B) || (g_vm->_curRoom == r29L) || (g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r2GV) || (g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P) || (g_vm->_curRoom == r36F)))
 		CheckFileInCD("33.bkg");
-	else if ((CurCDSet != 3) && ((_curRoom == r41) || (_curRoom == r42) || (_curRoom == r43) || (_curRoom == r44) || (_curRoom == r45) || (_curRoom == r46) || (_curRoom == r47) || (_curRoom == r48) || (_curRoom == r49) || (_curRoom == r4A) || (_curRoom == r4B) || (_curRoom == r4C) || (_curRoom == r4D) || (_curRoom == r4E) || (_curRoom == r4F) || (_curRoom == r4G) || (_curRoom == r4H) || (_curRoom == r4I) || (_curRoom == r4J) || (_curRoom == r4K) || (_curRoom == r4L) || (_curRoom == r4M) || (_curRoom == r4N) || (_curRoom == r4O) || (_curRoom == r4P) || (_curRoom == r4Q) || (_curRoom == r4R) || (_curRoom == r4S) || (_curRoom == r4T) || (_curRoom == r4U) || (_curRoom == r4V) || (_curRoom == r4W) || (_curRoom == r4X) || (_curRoom == r51) || (_curRoom == r52) || (_curRoom == r53) || (_curRoom == r54) || (_curRoom == r55) || (_curRoom == r56) || (_curRoom == r57) || (_curRoom == r58) || (_curRoom == r59) || (_curRoom == r5A) || (_curRoom == r41D) || (_curRoom == r45S) || (_curRoom == r49M) || (_curRoom == r4CT) || (_curRoom == r58M) || (_curRoom == r58T) || (_curRoom == r59L)))
+	else if ((CurCDSet != 3) && ((g_vm->_curRoom == r41) || (g_vm->_curRoom == r42) || (g_vm->_curRoom == r43) || (g_vm->_curRoom == r44) || (g_vm->_curRoom == r45) || (g_vm->_curRoom == r46) || (g_vm->_curRoom == r47) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r49) || (g_vm->_curRoom == r4A) || (g_vm->_curRoom == r4B) || (g_vm->_curRoom == r4C) || (g_vm->_curRoom == r4D) || (g_vm->_curRoom == r4E) || (g_vm->_curRoom == r4F) || (g_vm->_curRoom == r4G) || (g_vm->_curRoom == r4H) || (g_vm->_curRoom == r4I) || (g_vm->_curRoom == r4J) || (g_vm->_curRoom == r4K) || (g_vm->_curRoom == r4L) || (g_vm->_curRoom == r4M) || (g_vm->_curRoom == r4N) || (g_vm->_curRoom == r4O) || (g_vm->_curRoom == r4P) || (g_vm->_curRoom == r4Q) || (g_vm->_curRoom == r4R) || (g_vm->_curRoom == r4S) || (g_vm->_curRoom == r4T) || (g_vm->_curRoom == r4U) || (g_vm->_curRoom == r4V) || (g_vm->_curRoom == r4W) || (g_vm->_curRoom == r4X) || (g_vm->_curRoom == r51) || (g_vm->_curRoom == r52) || (g_vm->_curRoom == r53) || (g_vm->_curRoom == r54) || (g_vm->_curRoom == r55) || (g_vm->_curRoom == r56) || (g_vm->_curRoom == r57) || (g_vm->_curRoom == r58) || (g_vm->_curRoom == r59) || (g_vm->_curRoom == r5A) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r45S) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r59L)))
 		CheckFileInCD("51.bkg");
 
 outload:
@@ -1061,7 +1058,7 @@ outload:
 
 	memcpy(_inventory, OldInv, MAXICON);
 
-	CurInventory = 0;
+	g_vm->_curInventory = 0;
 	TheIconBase = OldIconBase;
 	_inventorySize = OldInvLen;
 
@@ -1186,7 +1183,6 @@ void DemoOver() {
 void CheckFileInCD(const char *name) {
 	extern char CurCDSet, CDLetter;
 	extern const char *_sysSent[];
-	extern char GamePath[];
 	struct SDText SText;
 	char str[200];
 	FILEENTRY fe;
@@ -1198,11 +1194,11 @@ void CheckFileInCD(const char *name) {
 		CloseSys(_sysSent[5]);
 
 	char optcd = 1;
-	if ((_curRoom == r11) || (_curRoom == r12) || (_curRoom == r13) || (_curRoom == r14) || (_curRoom == r15) || (_curRoom == r16) || (_curRoom == r17) || (_curRoom == r18) || (_curRoom == r19) || (_curRoom == r1A) || (_curRoom == r1B) || (_curRoom == r1C) || (_curRoom == r1D) || (_curRoom == rINTRO) || (_curRoom == rSYS) || (_curRoom == r12CU) || (_curRoom == r13CU))
+	if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
 		optcd = 1;
-	else if ((_curRoom == r21) || (_curRoom == r22) || (_curRoom == r23A) || (_curRoom == r24) || (_curRoom == r25) || (_curRoom == r26) || (_curRoom == r27) || (_curRoom == r28) || (_curRoom == r29) || (_curRoom == r2A) || (_curRoom == r2B) || (_curRoom == r2C) || (_curRoom == r2D) || (_curRoom == r2E) || (_curRoom == r2F) || (_curRoom == r2G) || (_curRoom == r2H) || (_curRoom == r31) || (_curRoom == r32) || (_curRoom == r33) || (_curRoom == r34) || (_curRoom == r35) || (_curRoom == r36) || (_curRoom == r37) || (_curRoom == r23B) || (_curRoom == r29L) || (_curRoom == r2BL) || (_curRoom == r2GV) || (_curRoom == r31P) || (_curRoom == r35P) || (_curRoom == r36F))
+	else if ((g_vm->_curRoom == r21) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r23A) || (g_vm->_curRoom == r24) || (g_vm->_curRoom == r25) || (g_vm->_curRoom == r26) || (g_vm->_curRoom == r27) || (g_vm->_curRoom == r28) || (g_vm->_curRoom == r29) || (g_vm->_curRoom == r2A) || (g_vm->_curRoom == r2B) || (g_vm->_curRoom == r2C) || (g_vm->_curRoom == r2D) || (g_vm->_curRoom == r2E) || (g_vm->_curRoom == r2F) || (g_vm->_curRoom == r2G) || (g_vm->_curRoom == r2H) || (g_vm->_curRoom == r31) || (g_vm->_curRoom == r32) || (g_vm->_curRoom == r33) || (g_vm->_curRoom == r34) || (g_vm->_curRoom == r35) || (g_vm->_curRoom == r36) || (g_vm->_curRoom == r37) || (g_vm->_curRoom == r23B) || (g_vm->_curRoom == r29L) || (g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r2GV) || (g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P) || (g_vm->_curRoom == r36F))
 		optcd = 2;
-	else if ((_curRoom == r41) || (_curRoom == r42) || (_curRoom == r43) || (_curRoom == r44) || (_curRoom == r45) || (_curRoom == r46) || (_curRoom == r47) || (_curRoom == r48) || (_curRoom == r49) || (_curRoom == r4A) || (_curRoom == r4B) || (_curRoom == r4C) || (_curRoom == r4D) || (_curRoom == r4E) || (_curRoom == r4F) || (_curRoom == r4G) || (_curRoom == r4H) || (_curRoom == r4I) || (_curRoom == r4J) || (_curRoom == r4K) || (_curRoom == r4L) || (_curRoom == r4M) || (_curRoom == r4N) || (_curRoom == r4O) || (_curRoom == r4P) || (_curRoom == r4Q) || (_curRoom == r4R) || (_curRoom == r4S) || (_curRoom == r4T) || (_curRoom == r4U) || (_curRoom == r4V) || (_curRoom == r4W) || (_curRoom == r4X) || (_curRoom == r51) || (_curRoom == r52) || (_curRoom == r53) || (_curRoom == r54) || (_curRoom == r55) || (_curRoom == r56) || (_curRoom == r57) || (_curRoom == r58) || (_curRoom == r59) || (_curRoom == r5A) || (_curRoom == r41D) || (_curRoom == r45S) || (_curRoom == r49M) || (_curRoom == r4CT) || (_curRoom == r58M) || (_curRoom == r58T) || (_curRoom == r59L))
+	else if ((g_vm->_curRoom == r41) || (g_vm->_curRoom == r42) || (g_vm->_curRoom == r43) || (g_vm->_curRoom == r44) || (g_vm->_curRoom == r45) || (g_vm->_curRoom == r46) || (g_vm->_curRoom == r47) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r49) || (g_vm->_curRoom == r4A) || (g_vm->_curRoom == r4B) || (g_vm->_curRoom == r4C) || (g_vm->_curRoom == r4D) || (g_vm->_curRoom == r4E) || (g_vm->_curRoom == r4F) || (g_vm->_curRoom == r4G) || (g_vm->_curRoom == r4H) || (g_vm->_curRoom == r4I) || (g_vm->_curRoom == r4J) || (g_vm->_curRoom == r4K) || (g_vm->_curRoom == r4L) || (g_vm->_curRoom == r4M) || (g_vm->_curRoom == r4N) || (g_vm->_curRoom == r4O) || (g_vm->_curRoom == r4P) || (g_vm->_curRoom == r4Q) || (g_vm->_curRoom == r4R) || (g_vm->_curRoom == r4S) || (g_vm->_curRoom == r4T) || (g_vm->_curRoom == r4U) || (g_vm->_curRoom == r4V) || (g_vm->_curRoom == r4W) || (g_vm->_curRoom == r4X) || (g_vm->_curRoom == r51) || (g_vm->_curRoom == r52) || (g_vm->_curRoom == r53) || (g_vm->_curRoom == r54) || (g_vm->_curRoom == r55) || (g_vm->_curRoom == r56) || (g_vm->_curRoom == r57) || (g_vm->_curRoom == r58) || (g_vm->_curRoom == r59) || (g_vm->_curRoom == r5A) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r45S) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r59L))
 		optcd = 3;
 
 	char ncd = 1;
@@ -1267,11 +1263,11 @@ void CheckFileInCD(const char *name) {
 
 	CurCDSet = ncd;
 
-	sprintf(str, "%sData\\NlData.cd0", GamePath);
+	sprintf(str, "%sData\\NlData.cd0", g_vm->_gamePath);
 	FastFileInit(str);
-	sprintf(str, "%sData\\NlSpeech.cd0", GamePath);
+	sprintf(str, "%sData\\NlSpeech.cd0", g_vm->_gamePath);
 	SpeechFileInit(str);
-	sprintf(str, "%sData\\NlAnim.cd%c", GamePath, CurCDSet + '0');
+	sprintf(str, "%sData\\NlAnim.cd%c", g_vm->_gamePath, CurCDSet + '0');
 	AnimFileInit(str);
 
 	VMouseON();

@@ -31,6 +31,7 @@
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/3d/3dinc.h"
+#include "trecision/trecision.h"
 
 #include "common/config-manager.h"
 #include "engines/engine.h"
@@ -186,18 +187,18 @@ void PlayScript(uint16 i) {
 	CurStack++;
 	Semscriptactive = true;
 	SemMouseEnabled = false;
-	CurScriptFrame[CurStack] = Script[i].firstframe;
+	g_vm->CurScriptFrame[CurStack] = Script[i].firstframe;
 
 	// se evento vuoto termina lo scrpt
-	if ((ScriptFrame[CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[CurScriptFrame[CurStack]].event == 0)) {
+	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]].event == 0)) {
 		EndScript();
 		return;
 	}
 
 LOOP:
-	SendFrame(CurScriptFrame[CurStack]);
-	if ((ScriptFrame[CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[CurScriptFrame[CurStack] + 1].event == 0))) {
-		CurScriptFrame[CurStack]++;
+	SendFrame(g_vm->CurScriptFrame[CurStack]);
+	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].event == 0))) {
+		g_vm->CurScriptFrame[CurStack]++;
 		goto LOOP;
 	}
 }
@@ -208,18 +209,18 @@ LOOP:
 void EvalScript() {
 	if ((TestEmptyHomoQueue4Script(&Homo) && (TestEmptyQueue(&Game, MC_DIALOG)) && (SemScreenRefreshed))) {
 //if(( Homo.len == 0 ) && (TestEmptyQueue(&Game,MC_DIALOG)) && (SemScreenRefreshed)) {
-		CurScriptFrame[CurStack]++;
+		g_vm->CurScriptFrame[CurStack]++;
 		SemMouseEnabled = false;
 
-		if ((ScriptFrame[CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[CurScriptFrame[CurStack]].event == 0)) {
+		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]].event == 0)) {
 			EndScript();
 			return;
 		}
 
 LOOP:
-		SendFrame(CurScriptFrame[CurStack]);
-		if ((ScriptFrame[CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[CurScriptFrame[CurStack] + 1].event == 0))) {
-			CurScriptFrame[CurStack]++;
+		SendFrame(g_vm->CurScriptFrame[CurStack]);
+		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].event == 0))) {
+			g_vm->CurScriptFrame[CurStack]++;
 			goto LOOP;
 		}
 	}
@@ -341,15 +342,15 @@ void DoSys(uint16 TheObj) {
 		break;
 
 	case o00EXIT:
-		if (OldRoom == rSYS)
+		if (g_vm->_oldRoom == rSYS)
 			break;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[o00EXIT]._goRoom, 0, 0, 0);
 		break;
 
 	case o00SAVE:
-		if (OldRoom == rSYS)
+		if (g_vm->_oldRoom == rSYS)
 			break;
-		_curRoom = _obj[o00EXIT]._goRoom;
+		g_vm->_curRoom = _obj[o00EXIT]._goRoom;
 		SemSaveInventory = true;
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
@@ -357,7 +358,7 @@ void DoSys(uint16 TheObj) {
 //				RegenInventory(RegenInvStartIcon,RegenInvStartLine);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
-		_curRoom = rSYS;
+		g_vm->_curRoom = rSYS;
 		break;
 
 	case o00LOAD:
@@ -373,9 +374,9 @@ void DoSys(uint16 TheObj) {
 			_obj[o00SPEECHON]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
 			ConfMan.setBool("speech_mute", true);
-			_curObj = o00SPEECHOFF;
+			g_vm->_curObj = o00SPEECHOFF;
 			RegenRoom();
-			ShowObjName(_curObj, true);
+			ShowObjName(g_vm->_curObj, true);
 		}
 		break;
 
@@ -383,9 +384,9 @@ void DoSys(uint16 TheObj) {
 		_obj[o00SPEECHOFF]._mode &= ~OBJMODE_OBJSTATUS;
 		_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
 		ConfMan.setBool("speech_mute", false);
-		_curObj = o00SPEECHON;
+		g_vm->_curObj = o00SPEECHON;
 		RegenRoom();
-		ShowObjName(_curObj, true);
+		ShowObjName(g_vm->_curObj, true);
 		break;
 
 	case o00TEXTON:
@@ -393,9 +394,9 @@ void DoSys(uint16 TheObj) {
 			_obj[o00TEXTON]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
 			ConfMan.setBool("subtitles", false);
-			_curObj = o00TEXTOFF;
+			g_vm->_curObj = o00TEXTOFF;
 			RegenRoom();
-			ShowObjName(_curObj, true);
+			ShowObjName(g_vm->_curObj, true);
 		}
 		break;
 
@@ -403,9 +404,9 @@ void DoSys(uint16 TheObj) {
 		_obj[o00TEXTOFF]._mode &= ~OBJMODE_OBJSTATUS;
 		_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
 		ConfMan.setBool("subtitles", true);
-		_curObj = o00TEXTON;
+		g_vm->_curObj = o00TEXTON;
 		RegenRoom();
-		ShowObjName(_curObj, true);
+		ShowObjName(g_vm->_curObj, true);
 		break;
 
 	case o00SPEECH1D:

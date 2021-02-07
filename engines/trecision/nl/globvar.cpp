@@ -70,16 +70,10 @@ struct SScript Script[MAXSCRIPT];
 /*-------------------------------------------------------------------------*/
 /*                            VARIABILI ATTUALI          				   */
 /*-------------------------------------------------------------------------*/
-uint16 _curRoom;
-uint16 OldRoom;
 
-uint16 _curObj = 1;
-uint16 CurInventory;
-int32  CurSortTableNum;
-uint16 CurScriptFrame[10];
 
-int8 _homoInMovement = false;
-int8 _homoGoToPosition = -1;
+int8 _characterInMovement = false;
+int8 _characterGoToPosition = -1;
 
 /*-------------------------------------------------------------------------*/
 /*                          VARIABILI DI SERVIZIO         				   */

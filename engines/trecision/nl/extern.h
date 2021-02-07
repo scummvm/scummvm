@@ -67,16 +67,8 @@ extern struct SScript Script[];
 /*-------------------------------------------------------------------------*/
 /*                            VARIABILI ATTUALI          				   */
 /*-------------------------------------------------------------------------*/
-extern uint16 _curRoom;
-extern uint16 OldRoom;
-
-extern uint16 _curObj;
-extern uint16 CurInventory;
-extern int32  CurSortTableNum;
-extern uint16 CurScriptFrame[];
-
-extern int8 _homoInMovement;
-extern int8 _homoGoToPosition;
+extern int8 _characterInMovement;
+extern int8 _characterGoToPosition;
 
 /*-------------------------------------------------------------------------*/
 /*                          VARIABILI DI SERVIZIO         				   */

@@ -516,7 +516,6 @@ void PaintSmackBuffer(int px, int py, int dx, int dy) {
 			Aggiorna FullMotion
 --------------------------------------------------*/
 void RegenFullMotion() {
-	extern uint16 CurDialog;
 	int32 a, yfact;
 
 	int pos = 1;

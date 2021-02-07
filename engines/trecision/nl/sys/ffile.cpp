@@ -26,6 +26,8 @@
 #include <string.h>
 
 #include "trecision/nl/lib/addtype.h"
+#include "trecision/trecision.h"
+
 #include "common/str.h"
 #include "common/textconsole.h"
 
@@ -297,7 +299,6 @@ int AnimFileOpen(const char *name) {
  * --------------------------------------------------*/
 int FmvFileOpen(const char *name) {
 	extern char UStr[];
-	extern char GamePath[];
 
 	if (FmvFile != NULL) fclose(FmvFile);
 	FmvFile = NULL;
@@ -307,7 +308,7 @@ int FmvFileOpen(const char *name) {
 		return NULL;
 	}
 
-	sprintf(UStr, "%sFMV\\%s", GamePath, name);
+	sprintf(UStr, "%sFMV\\%s", g_vm->_gamePath, name);
 	FmvFile = fopen(UStr, "rb");
 	if (FmvFile != NULL)
 		return (int)FmvFile;

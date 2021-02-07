@@ -33,7 +33,6 @@
 #include <common/config-manager.h>
 #include <common/fs.h>
 
-#include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/sysdef.h"
 
 namespace Trecision {
@@ -52,6 +51,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	syncSoundSettings();
 
 	g_vm = this;
+
+	_curObj = 1;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -61,6 +62,8 @@ Common::Error TrecisionEngine::run() {
 	const Graphics::PixelFormat kVideoFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
 	initGraphics(MAXX, MAXY, &kVideoFormat);
 	
+	strcpy(g_vm->_gamePath, ConfMan.get("path").c_str());
+
 	NlInit();
 
 	return Common::kNoError;

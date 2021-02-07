@@ -29,6 +29,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -64,7 +65,7 @@ void PaintScreen(uint8 flag) {
 
 	PaintRegenRoom();
 
-//	if( ( !SemPaintHomo) && ( CurSortTableNum == 0 ) &&  ( TheString.sign == NULL ) && ( OldString.sign == NULL ) )
+//	if( ( !SemPaintHomo) && ( _curSortTableNum == 0 ) &&  ( TheString.sign == NULL ) && ( OldString.sign == NULL ) )
 //		return;
 
 	Hlim = 255;
@@ -158,7 +159,7 @@ void PaintScreen(uint8 flag) {
 //		TextStatus = TEXT_OFF;
 
 // CANCELLA TUTTI GLI OGGETTI TOGLI
-	for (a = 0; a < CurSortTableNum; a++) {
+	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (SortTable[a].togli == true) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
@@ -239,7 +240,7 @@ void PaintScreen(uint8 flag) {
 		TextStatus = TEXT_DRAW;                 // attiva aggiornamento scritta
 	}
 
-	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, Room[_curRoom]._sounds);
+	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, Room[g_vm->_curRoom]._sounds);
 
 	for (liv = 0; liv < limitinum; liv++) {
 		for (int b = limiti[liv][1]; b < limiti[liv][3]; b++) {
@@ -265,20 +266,20 @@ void PaintScreen(uint8 flag) {
 
 	framenum ++;
 
-	for (a = 0; a < CurSortTableNum; a++) {
+	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		SortTable[a].index = 0;
 		SortTable[a].roomindex = 0;
 		SortTable[a].typology = 0;
 		SortTable[a].framecur = 0;
 	}
 
-	CurSortTableNum = 0;
+	g_vm->_curSortTableNum = 0;
 
 	SemPaintHomo = 0;
 	SemWaitRegen = false;
 
 	// gestione papaverina ritardata
-	if ((_curRoom == r4A) && (_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
+	if ((g_vm->_curRoom == r4A) && (_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
 		extern uint16 _curAnimFrame[];
 		if (_curAnimFrame[0] > 480) {
 			PlayScript(s4AHELLEN);
@@ -384,7 +385,7 @@ void PaintObjAnm(uint16 CurBox) {
 	RegenAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
-	for (a = 0; a < CurSortTableNum; a++) {
+	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (!SortTable[a].togli) {
 			if (SortTable[a].typology == TYPO_BMP) {
 				if (_obj[SortTable[a].index]._nbox == CurBox) {
@@ -429,7 +430,7 @@ void PaintObjAnm(uint16 CurBox) {
 	}
 	for (a = 0; a < limitinum; a++) {
 		for (b = 0; b < MAXOBJINROOM; b++) {
-			TheObject = Room[_curRoom]._object[b];
+			TheObject = Room[g_vm->_curRoom]._object[b];
 
 			if (!TheObject)
 				break;

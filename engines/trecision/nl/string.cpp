@@ -29,6 +29,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
+#include "trecision/trecision.h"
 
 #include "common/config-manager.h"
 
@@ -62,7 +63,7 @@ void RepaintString() {
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
 			CheckMask(mx, my);
-			ShowObjName(_curObj, true);
+			ShowObjName(g_vm->_curObj, true);
 		}
 	}
 }
@@ -119,7 +120,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		}
 
-		if ((_obj[_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(_obj[_curObj]._flag & OBJFLAG_EXAMINE))
+		if ((_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
 		strcpy(locsent, _sysSent[23]);
@@ -203,12 +204,14 @@ void ShowInvName(uint16 obj, bool showhide) {
 	uint16 posy;
 	uint16 LenText;
 
-	if ((_curRoom == r2BL) || (_curRoom == r36F) || (_curRoom == r41D) || (_curRoom == r49M) || (_curRoom == r4CT) ||
-			(_curRoom == r58T) || (_curRoom == r58M) || (_curRoom == r59L) || (_curRoom == rSYS) || (_curRoom == r12CU) || (_curRoom == r13CU))
+	if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT)
+		|| (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU)
+		|| (g_vm->_curRoom == r13CU))
 		return;
 
 	if (SemSomeOneSpeak)
 		return;
+
 	if (lastobj) {
 		ClearText();
 		lastobj = 0;
@@ -264,7 +267,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 			lastinv = 0;
 			return;
 		}
-		posx = ICONMARGSX + ((IconPos(CurInventory) - TheIconBase) * (ICONDX)) + ICONDX / 2;
+		posx = ICONMARGSX + ((IconPos(g_vm->_curInventory) - TheIconBase) * (ICONDX)) + ICONDX / 2;
 		posy = MAXY - CARHEI;
 		lastinv = obj;
 		LenText = TextLength(ObjName[InvObj[obj]._name], 0);
@@ -440,8 +443,8 @@ void CharacterMute() {
 	RepaintString();
 	StopTalk();
 
-	if ((_curRoom == r12CU) || (_curRoom == r13CU))
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, OldRoom, 0, 0, _curObj);
+	if ((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
 
 	//	actorStop();
 	//	if(SemDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);

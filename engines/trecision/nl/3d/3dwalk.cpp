@@ -1003,8 +1003,8 @@ int nextStep() {
 		_curStep ++;
 		return false;
 	} else {
-		if (_homoGoToPosition != -1)
-			setPosition(_homoGoToPosition);
+		if (_characterGoToPosition != -1)
+			setPosition(_characterGoToPosition);
 		return true;
 	}
 }
