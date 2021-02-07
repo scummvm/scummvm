@@ -26,6 +26,7 @@
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -39,7 +40,7 @@ namespace Trecision {
 
 int CurKey, CurAscii;
 short wmx = 0, wmy = 0, wmleft = 0, wmright = 0, omx = 0, omy = 0;
-int VideoLocked = 0;
+bool VideoLocked = false;
 Graphics::PixelFormat ScreenFormat;
 bool _linearMode, _gamePaused = false;
 
@@ -141,9 +142,6 @@ void EventLoop() {
 }
 
 void NlInit() {
-	extern char GamePath[];
-	strcpy(GamePath, ConfMan.get("path").c_str());
-
 	ClearScreen();
 
 	ScreenFormat = g_system->getScreenFormat();
@@ -178,7 +176,7 @@ void LockVideo() {
 		Video = (uint16 *)surface->getPixels();
 		VideoPitch = surface->pitch;
 
-		VideoLocked = 1;
+		VideoLocked = true;
 	}
 }
 
@@ -188,7 +186,7 @@ void LockVideo() {
 void UnlockVideo() {
 	if (VideoLocked) {
 		g_system->unlockScreen();
-		VideoLocked = 0;
+		VideoLocked = false;
 		VideoPitch = 0;
 		Video = nullptr;
 	}

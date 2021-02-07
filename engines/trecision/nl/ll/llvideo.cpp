@@ -29,6 +29,7 @@
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 #include "graphics/pixelformat.h"
 
@@ -153,7 +154,7 @@ uint16 UnUpdatePixelFormat(uint16 t) {
 bool CheckMask(uint16 MX, uint16 my) {
 	for (int8 a = (MAXOBJINROOM - 1); a >= 0; a--) {
 
-		uint16 CheckedObj = Room[_curRoom]._object[a];
+		uint16 CheckedObj = Room[g_vm->_curRoom]._object[a];
 
 		if ((CheckedObj) && (_obj[CheckedObj]._mode & (OBJMODE_OBJSTATUS))) {
 			if ((MX >= _obj[CheckedObj]._lim[0]) &&
@@ -162,12 +163,12 @@ bool CheckMask(uint16 MX, uint16 my) {
 					(my <= _obj[CheckedObj]._lim[3] + TOP)) {
 
 				if (_obj[CheckedObj]._mode & OBJMODE_FULL) {
-					_curObj = CheckedObj;
+					g_vm->_curObj = CheckedObj;
 					return true;
 				}
 
 				if (_obj[CheckedObj]._mode & OBJMODE_LIM) {
-					_curObj = CheckedObj;
+					g_vm->_curObj = CheckedObj;
 					return true;
 				}
 
@@ -182,7 +183,7 @@ bool CheckMask(uint16 MX, uint16 my) {
 							if (!c) {		// fuori oggetto
 								if ((b + TOP) == my) {
 									if ((MX >= (d + e)) && (MX < (d + e + *mask))) {
-										_curObj = 0;
+										g_vm->_curObj = 0;
 // cosi' non cerca piu' 				return false;
 									}
 								}
@@ -193,7 +194,7 @@ bool CheckMask(uint16 MX, uint16 my) {
 							} else {			// dentro oggetto
 								if ((b + TOP) == my) {
 									if ((MX >= (d + e)) && (MX < (d + e + *mask))) {
-										_curObj = CheckedObj;
+										g_vm->_curObj = CheckedObj;
 										return true;
 									}
 								}
@@ -209,7 +210,7 @@ bool CheckMask(uint16 MX, uint16 my) {
 			}
 		}
 	}
-	_curObj = 0;
+	g_vm->_curObj = 0;
 	return false;
 }
 

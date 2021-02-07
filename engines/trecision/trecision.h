@@ -33,6 +33,14 @@ public:
 	~TrecisionEngine() override;
 
 	Common::Error run() override;
+
+	char _gamePath[250];
+	uint16 _curRoom;
+	uint16 _oldRoom;
+	uint16 _curInventory;
+	int32 _curSortTableNum;
+	uint16 _curObj;
+	uint16 CurScriptFrame[10];
 };
 
 extern TrecisionEngine *g_vm;

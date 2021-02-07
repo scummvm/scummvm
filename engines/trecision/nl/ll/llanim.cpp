@@ -30,6 +30,7 @@
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 // locals
 #define SMACKNULL	0
@@ -213,7 +214,7 @@ void StartSmackAnim(uint16 num) {
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG28) && (AnimTab[num].flag & SMKANIM_OFF4))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG37) && (!(Room[_curRoom]._flag & OBJFLAG_EXTRA)))
+		else if ((num == aBKG37) && (!(Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA)))
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG2E) && (AnimTab[num].flag & SMKANIM_OFF2))
 			CallSmackVolumePan(0, 2, 0);
@@ -424,19 +425,19 @@ void RedrawRoom() {
 		break;
 	}
 
-	CurSortTableNum = 0;
+	g_vm->_curSortTableNum = 0;
 	memset(OldObjStatus, 0, MAXOBJINROOM);
 	memset(VideoObjStatus, 0, MAXOBJINROOM);
 
 	wordset(Video2, 0, CurRoomMaxX * MAXY);
-	if (Room[_curRoom]._bkgAnim)
+	if (Room[g_vm->_curRoom]._bkgAnim)
 		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
 	MCopy(Video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
-	if (Room[_curRoom]._bkgAnim)
-		StartSmackAnim(Room[_curRoom]._bkgAnim);
+	if (Room[g_vm->_curRoom]._bkgAnim)
+		StartSmackAnim(Room[g_vm->_curRoom]._bkgAnim);
 
-	if ((_curRoom == r4P) && (_curDialog == dF4PI)) {
+	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
 		memset(SmackBuffer[0], 0, SCREENLEN * AREA);
 		CallSmackGoto(0, 21);
 	}

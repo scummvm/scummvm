@@ -26,6 +26,7 @@
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 #include "audio/mixer.h"
 #include "common/memstream.h"
@@ -85,7 +86,6 @@ void StopTalk();
 
 extern uint8 SoundSystemActive;
 extern const char *_sysSent[];
-extern uint16 _curRoom;
 int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, unsigned char *buf);
 uint32 ReadTime();
@@ -277,7 +277,7 @@ void SoundFadIn(int num) {
  --------------------------------------------------*/
 void WaitSoundFadEnd() {
 	if (!SoundSystemActive) {
-		if (_curRoom == r41D)
+		if (g_vm->_curRoom == r41D)
 			ReadExtraObj41D();
 		return;
 	}
@@ -297,7 +297,7 @@ void WaitSoundFadEnd() {
 
 	SWAP(StepChannel, BackChannel);
 
-	if (_curRoom == r41D)
+	if (g_vm->_curRoom == r41D)
 		ReadExtraObj41D();
 }
 

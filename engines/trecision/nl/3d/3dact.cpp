@@ -29,6 +29,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -117,8 +118,8 @@ void actorDoAction(int whatAction) {
 	_lastStep = b;		// Last step
 
 	// Starts action
-	if (_obj[_curObj]._flag & OBJFLAG_ROOMOUT)
-		doEvent(MC_HOMO, ME_HOMOGOTOEXIT, MP_DEFAULT, _obj[_curObj]._goRoom, 0, _obj[_curObj]._ninv, _curObj);
+	if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		doEvent(MC_HOMO, ME_HOMOGOTOEXIT, MP_DEFAULT, _obj[g_vm->_curObj]._goRoom, 0, _obj[g_vm->_curObj]._ninv, g_vm->_curObj);
 	else
 		doEvent(MC_HOMO, ME_HOMODOACTION, MP_DEFAULT, 0, 0, 0, 0);
 }
@@ -139,7 +140,7 @@ void actorStop() {
 	_step[b]._curFrame  = 0;
 	_step[b]._curPanel  = _curPanel;
 
-	_homoGoToPosition = -1;
+	_characterGoToPosition = -1;
 
 	_curStep = 0;
 	_lastStep = 0;
@@ -197,7 +198,7 @@ void setPosition(int num) {
 				_step[0]._curFrame  = 0;
 				_step[0]._curPanel  = _curPanel;
 
-				_homoGoToPosition = num;
+				_characterGoToPosition = num;
 				return ;
 			}
 		}
@@ -243,7 +244,7 @@ void goToPosition(int num) {
 
 				findPath();
 
-				_homoGoToPosition = num;
+				_characterGoToPosition = num;
 				break;
 			}
 		}

@@ -28,6 +28,7 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -336,7 +337,7 @@ void afterChoice(int numframe) {
 
 		case dNEGOZIANTE1A:
 			if (_curChoice == 185) {
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r18, a1810ENTRADALNEGOZIO, 10, _curObj);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
 				_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;
 				_obj[oPORTAN18]._action = 218;
 				_obj[oPORTAN18]._anim = 0;
@@ -419,7 +420,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF381:
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41, 0, 18, _curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41, 0, 18, g_vm->_curObj);
 			memcpy(_cyberInventory, _inventory, MAXICON);
 			_cyberInventorySize = _inventorySize;
 			_inventorySize = 0;
@@ -538,7 +539,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dINTRO:
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r11, 0, 20, _curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r11, 0, 20, g_vm->_curObj);
 			break;
 
 		case dF582:

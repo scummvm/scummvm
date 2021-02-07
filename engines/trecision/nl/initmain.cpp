@@ -27,6 +27,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -53,7 +54,7 @@ void initMain() {
 	_inventory[_inventorySize++]  = iPEN;
 	_inventory[_inventorySize++]  = iKEY05;
 
-	_curRoom = rINTRO;
+	g_vm->_curRoom = rINTRO;
 
 	ProcessTime();
 

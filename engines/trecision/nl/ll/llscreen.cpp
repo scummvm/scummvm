@@ -25,6 +25,7 @@
 #include <string.h>
 #include <math.h>
 #include "trecision/nl/lib/addtype.h"
+#include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
@@ -113,7 +114,6 @@ int8   MouseONOFF = 1;
 uint8  TextStatus;
 // AOT.CFG
 char  CurCDSet = 1;
-char  GamePath[250];
 // ALTERNATIVE SCROLLING
 int   ScrollBottle;
 short LeftArrow;
@@ -166,13 +166,13 @@ void OpenVideo() {
 	GameBytePointer = 0;
 	GameWordPointer = 0;
 
-	sprintf(UStr, "%sData\\NlData.cd0", GamePath);
+	sprintf(UStr, "%sData\\NlData.cd0", g_vm->_gamePath);
 	//	sprintf( UStr, "Data\\NlData.cd0" );
 	FastFileInit(UStr);
-	sprintf(UStr, "%sData\\NlSpeech.cd0", GamePath);
+	sprintf(UStr, "%sData\\NlSpeech.cd0", g_vm->_gamePath);
 	//	sprintf( UStr, "Data\\NlSpeech.cd0" );
 	SpeechFileInit(UStr);
-	sprintf(UStr, "%sData\\NlAnim.cd%c", GamePath, CurCDSet + '0');
+	sprintf(UStr, "%sData\\NlAnim.cd%c", g_vm->_gamePath, CurCDSet + '0');
 	//	sprintf( UStr, "Data\\NlAnim.cd%c", CurCDSet+'0' );
 	AnimFileInit(UStr);
 
@@ -482,12 +482,12 @@ int actionInRoom(int curA) {
 	int b;
 
 	for (b = 0; b < MAXACTIONINROOM; b++) {
-		if (Room[_curRoom]._actions[b] == curA)
+		if (Room[g_vm->_curRoom]._actions[b] == curA)
 			break;
 	}
 
 	if (b >= MAXACTIONINROOM) {
-		warning("Action %d not found in room %d", curA, _curRoom);
+		warning("Action %d not found in room %d", curA, g_vm->_curRoom);
 		return (0) ;
 	}
 
@@ -502,7 +502,7 @@ void ReadLoc() {
 	extern uint16 _playingAnims[];
 
 	RoomReady = 0;
-	if ((_curRoom == r11) && !(Room[r11]._flag & OBJFLAG_DONE))
+	if ((g_vm->_curRoom == r11) && !(Room[r11]._flag & OBJFLAG_DONE))
 		SemShowHomo = 1;
 
 	SoundFadOut();
@@ -511,7 +511,7 @@ void ReadLoc() {
 
 	GameWordPointer = (CurRoomMaxX * MAXY);           // space for Video2
 
-	sprintf(UStr, "%s.cr", Room[_curRoom]._baseName);
+	sprintf(UStr, "%s.cr", Room[g_vm->_curRoom]._baseName);
 	ImagePointer = (uint16 *)Video2 + GameWordPointer - 4;
 
 	GameWordPointer += (DecCR(UStr, (uint8 *)ImagePointer, (uint8 *)Video2) + 1) / 2;
@@ -520,31 +520,32 @@ void ReadLoc() {
 	UpdatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
-	if ((Room[_curRoom]._sounds[0] != 0)) ReadSounds();
+	if ((Room[g_vm->_curRoom]._sounds[0] != 0))
+		ReadSounds();
 
-	sprintf(UStr, "%s.3d", Room[_curRoom]._baseName);
+	sprintf(UStr, "%s.3d", Room[g_vm->_curRoom]._baseName);
 	_actionPointer[0] = (uint8 *)(Video2 + GameWordPointer);
 	GameWordPointer += read3D(UStr) / 2;
 
-	sprintf(UStr, "act\\%s.act", Room[_curRoom]._baseName);
-//	ReadAction( UStr );
+	sprintf(UStr, "act\\%s.act", Room[g_vm->_curRoom]._baseName);
+	//	ReadAction( UStr );
 
 	wordset(Video2, 0, CurRoomMaxX * MAXY);
 	MCopy(Video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
-	CurSortTableNum = 0;
+	g_vm->_curSortTableNum = 0;
 	memset(OldObjStatus, 0, MAXOBJINROOM);
 	memset(VideoObjStatus, 0, MAXOBJINROOM);
 
 	RegenRoom();
 
-	if (Room[_curRoom]._bkgAnim) {
+	if (Room[g_vm->_curRoom]._bkgAnim) {
 		wordcopy(SmackImagePointer, ImagePointer, MAXX * AREA);
-		StartSmackAnim(Room[_curRoom]._bkgAnim);
+		StartSmackAnim(Room[g_vm->_curRoom]._bkgAnim);
 	} else
 		StopSmackAnim(_playingAnims[0]);
 
-	InitAtFrameHandler(Room[_curRoom]._bkgAnim, 0);
+	InitAtFrameHandler(Room[g_vm->_curRoom]._bkgAnim, 0);
 
 	if (MaxMemory < (GameWordPointer * 2 + GameBytePointer))
 		MaxMemory = (GameWordPointer * 2 + GameBytePointer);
@@ -558,7 +559,7 @@ void TendIn() {
 
 	TextStatus = TEXT_OFF;
 
-	if (_curRoom == rINTRO) {
+	if (g_vm->_curRoom == rINTRO) {
 		PlayDialog(dFLOG);
 		return ;
 	}
@@ -578,18 +579,18 @@ void TendIn() {
 						ReadObj
 --------------------------------------------------*/
 void ReadObj() {
-	if (Room[_curRoom]._object[0]) {
+	if (Room[g_vm->_curRoom]._object[0]) {
 		uint16 *o = (uint16 *)ImagePointer + BmInfo.dx * BmInfo.dy;
 
 		uint32 b = 0;
 		for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-			uint16 c = Room[_curRoom]._object[a];
+			uint16 c = Room[g_vm->_curRoom]._object[a];
 			if (!c)
 				break;
 
-			if ((_curRoom == r41D) && (a == 89))
+			if ((g_vm->_curRoom == r41D) && (a == 89))
 				break;
-			else if ((_curRoom == r2C) && (a == 20))
+			else if ((g_vm->_curRoom == r2C) && (a == 20))
 				break;
 
 			if (_obj[c]._mode & OBJMODE_FULL) {
@@ -633,7 +634,7 @@ void ReadObj() {
 						ReadObj
 --------------------------------------------------*/
 void ReadExtraObj2C() {
-	if (Room[_curRoom]._object[32]) {
+	if (Room[g_vm->_curRoom]._object[32]) {
 		uint16 *o = (uint16 *)ExtraObj2C;
 		ff = FastFileOpen("2C2.bm");
 		FastFileRead(ff, ExtraObj2C, FastFileLen(ff));
@@ -641,7 +642,7 @@ void ReadExtraObj2C() {
 
 		uint32 b = 0;
 		for (uint16 a = 20; a < MAXOBJINROOM; a++) {
-			uint16 c = Room[_curRoom]._object[a];
+			uint16 c = Room[g_vm->_curRoom]._object[a];
 			if (!c)
 				break;
 
@@ -686,7 +687,7 @@ void ReadExtraObj2C() {
 						ReadObj
 --------------------------------------------------*/
 void ReadExtraObj41D() {
-	if (Room[_curRoom]._object[32]) {
+	if (Room[g_vm->_curRoom]._object[32]) {
 		uint16 *o = (uint16 *)ExtraObj41D;
 		ff = FastFileOpen("41D2.bm");
 		FastFileRead(ff, ExtraObj41D, FastFileLen(ff));
@@ -694,7 +695,7 @@ void ReadExtraObj41D() {
 
 		uint32 b = 0;
 		for (uint16 a = 89; a < MAXOBJINROOM; a++) {
-			uint16 c = Room[_curRoom]._object[a];
+			uint16 c = Room[g_vm->_curRoom]._object[a];
 			if (!c)
 				break;
 
@@ -743,7 +744,7 @@ void ReadSounds() {
 		return;
 
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
-		uint16 b = Room[_curRoom]._sounds[a];
+		uint16 b = Room[g_vm->_curRoom]._sounds[a];
 
 		if (b == 0)
 			break;
@@ -775,16 +776,16 @@ void ReadSounds() {
 --------------------------------------------------*/
 void RegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-		if (Room[_curRoom]._object[a] == 0)
+		if (Room[g_vm->_curRoom]._object[a] == 0)
 			break;
 
-		int status = (_obj[Room[_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
+		int status = (_obj[Room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
 
 		if (status) {
-			if ((!OldObjStatus[a]) && (_obj[Room[_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
+			if ((!OldObjStatus[a]) && (_obj[Room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
 				OldObjStatus[a] = 1;
 			}
-		} else if ((OldObjStatus[a]) && (_obj[Room[_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
+		} else if ((OldObjStatus[a]) && (_obj[Room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
 			OldObjStatus[a] = 0;
 	}
 }
@@ -795,21 +796,21 @@ void RegenRoom() {
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		if ((OldObjStatus[a]) && (!VideoObjStatus[a])) {
-			SortTable[CurSortTableNum].index		= Room[_curRoom]._object[a];
-			SortTable[CurSortTableNum].roomindex	= a;
-			SortTable[CurSortTableNum].togli		= false;
-			SortTable[CurSortTableNum].framecur	= 0;
-			SortTable[CurSortTableNum].typology	= TYPO_BMP;
+			SortTable[g_vm->_curSortTableNum].index = Room[g_vm->_curRoom]._object[a];
+			SortTable[g_vm->_curSortTableNum].roomindex = a;
+			SortTable[g_vm->_curSortTableNum].togli = false;
+			SortTable[g_vm->_curSortTableNum].framecur = 0;
+			SortTable[g_vm->_curSortTableNum].typology = TYPO_BMP;
 			VideoObjStatus[a] = 1;
-			CurSortTableNum ++;
+			g_vm->_curSortTableNum++;
 		} else if ((!OldObjStatus[a]) && (VideoObjStatus[a])) {
-			SortTable[CurSortTableNum].index		= Room[_curRoom]._object[a];
-			SortTable[CurSortTableNum].roomindex	= a;
-			SortTable[CurSortTableNum].togli		= true;
-			SortTable[CurSortTableNum].framecur	= 0;
-			SortTable[CurSortTableNum].typology	= TYPO_BMP;
+			SortTable[g_vm->_curSortTableNum].index = Room[g_vm->_curRoom]._object[a];
+			SortTable[g_vm->_curSortTableNum].roomindex = a;
+			SortTable[g_vm->_curSortTableNum].togli = true;
+			SortTable[g_vm->_curSortTableNum].framecur = 0;
+			SortTable[g_vm->_curSortTableNum].typology = TYPO_BMP;
 			VideoObjStatus[a] = 0;
-			CurSortTableNum ++;
+			g_vm->_curSortTableNum++;
 		}
 
 	}
