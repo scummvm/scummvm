@@ -35,6 +35,7 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 
 namespace Ultima {
@@ -172,6 +173,9 @@ void SKFPlayer::run() {
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	AudioProcess *audioproc = AudioProcess::get_instance();
 
+	bool subtitles = ConfMan.getBool("subtitles");
+	bool speechMute = ConfMan.getBool("speech_mute");
+
 	// handle _events for the current frame
 	while (_curEvent < _events.size() && _events[_curEvent]->_frame <= _curFrame) {
 //		pout << "event " << _curEvent << Std::endl;
@@ -221,7 +225,7 @@ void SKFPlayer::run() {
 		case SKF_PlaySound: {
 //			pout << "PlaySound " << _events[_curEvent]->_data << Std::endl;
 
-			if (audioproc) {
+			if (!speechMute && audioproc) {
 				uint8 *buf = _skf->get_object(_events[_curEvent]->_data);
 				uint32 bufsize = _skf->get_size(_events[_curEvent]->_data);
 				AudioSample *s;
@@ -237,7 +241,7 @@ void SKFPlayer::run() {
 			char *textbuf = reinterpret_cast<char *>(
 			                    _skf->get_object(_events[_curEvent]->_data - 1));
 			uint32 textsize = _skf->get_size(_events[_curEvent]->_data - 1);
-			if (textsize > 7) {
+			if (subtitles && textsize > 7) {
 				Std::string subtitle = (textbuf + 6);
 				delete _subs;
 				_subtitleY = textbuf[4] + (textbuf[5] << 8);

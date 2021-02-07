@@ -54,12 +54,14 @@ U8Game::U8Game() : Game() {
 	ConfMan.registerDefault("quotes", false);
 	ConfMan.registerDefault("footsteps", true);
 	ConfMan.registerDefault("targetedjump", true);
+	ConfMan.registerDefault("subtitles", true);
+	ConfMan.registerDefault("speech_mute", false);
 
 	const GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
 	if (info->_language == GameInfo::GAMELANG_JAPANESE) {
-		ConfMan.registerDefault("textdelay", 20);
+		ConfMan.registerDefault("talkspeed", 24);
 	} else {
-		ConfMan.registerDefault("textdelay", 8);
+		ConfMan.registerDefault("talkspeed", 60);
 	}
 }
 

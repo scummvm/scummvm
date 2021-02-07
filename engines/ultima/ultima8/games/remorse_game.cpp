@@ -45,7 +45,9 @@ RemorseGame::RemorseGame() : Game() {
 	// Set some defaults for gameplay-related settings
 	ConfMan.registerDefault("endgame", true);
 	ConfMan.registerDefault("footsteps", true);
-	ConfMan.registerDefault("textdelay", 5);
+	ConfMan.registerDefault("talkspeed", 96);
+	ConfMan.registerDefault("subtitles", true);
+	ConfMan.registerDefault("speech_mute", false);
 }
 
 RemorseGame::~RemorseGame() {

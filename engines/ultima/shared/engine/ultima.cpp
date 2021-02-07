@@ -74,6 +74,7 @@ void UltimaEngine::GUIError(const Common::U32String &msg) {
 
 bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
+		(f == kSupportsSubtitleOptions) ||
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);

@@ -65,7 +65,9 @@ protected:
 	//! returns false if no more text available
 	bool NextText();
 
-	int _textDelay;
+	bool _subtitles;
+	bool _speechMute;
+	int _talkSpeed;
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);

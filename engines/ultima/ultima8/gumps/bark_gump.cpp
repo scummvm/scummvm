@@ -31,20 +31,29 @@
 namespace Ultima {
 namespace Ultima8 {
 
+static const int INT_MAX_VALUE = 0x7fffffff;
+static const int NO_SPEECH_LENGTH = 480;
+
 DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump)
 
 // TODO: Remove all the hacks
 
 BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
 		_speechShapeNum(0), _speechLength(0), _totalTextHeight(0),
-		_textDelay(20) {
+		_subtitles(false), _speechMute(false), _talkSpeed(0) {
+	_subtitles = ConfMan.getBool("subtitles");
+	_speechMute = ConfMan.getBool("speech_mute");
+	_talkSpeed = ConfMan.getInt("talkspeed");
 }
 
 BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
-	_speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
-	_textDelay = ConfMan.getInt("textdelay");
+	_speechLength(0), _totalTextHeight(0), _textWidget(0),
+	_subtitles(false), _speechMute(false), _talkSpeed(0) {
+	_subtitles = ConfMan.getBool("subtitles");
+	_speechMute = ConfMan.getBool("speech_mute");
+	_talkSpeed = ConfMan.getInt("talkspeed");
 }
 
 BarkGump::~BarkGump(void) {
@@ -81,7 +90,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	// see if we need to play speech
 	AudioProcess *ap = AudioProcess::get_instance();
 	_speechLength = 0;
-	if (_speechShapeNum && ap) {
+	if (!_speechMute && _speechShapeNum && ap) {
 		if (ap->playSpeech(_barked, _speechShapeNum, _owner)) {
 			_speechLength = ap->getSpeechLength(_barked, _speechShapeNum) / 33;
 			if (_speechLength == 0) _speechLength = 1;
@@ -96,6 +105,10 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 				_totalTextHeight += d.height();
 			}
 			widget->rewind();
+
+			if (!_subtitles) {
+				widget->SetVisibility(false);
+			}
 		}
 	}
 
@@ -104,8 +117,11 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->GetDims(d);
 	if (_speechLength && _totalTextHeight) {
 		_counter = (d.height() * _speechLength) / _totalTextHeight;
-	} else {
-		_counter = d.height() * _textDelay;
+	} else if (_talkSpeed) {
+		_counter = (d.height() * NO_SPEECH_LENGTH) / _talkSpeed;
+	}
+	else {
+		_counter = INT_MAX_VALUE;
 	}
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
@@ -123,8 +139,11 @@ bool BarkGump::NextText() {
 		widget->GetDims(d);
 		if (_speechLength && _totalTextHeight) {
 			_counter = (d.height() * _speechLength) / _totalTextHeight;
-		} else {
-			_counter = d.height() * _textDelay;
+		} else if (_talkSpeed) {
+			_counter = (d.height() * NO_SPEECH_LENGTH) / _talkSpeed;
+		}
+		else {
+			_counter = INT_MAX_VALUE;
 		}
 		_dims.setHeight(d.height());
 		_dims.setWidth(d.width());
@@ -144,7 +163,7 @@ void BarkGump::run() {
 			bool done = !NextText();
 			if (done) {
 				bool speechplaying = false;
-				if (_speechLength) {
+				if (!_speechMute && _speechLength) {
 					// waiting for speech to finish?
 					AudioProcess *ap = AudioProcess::get_instance();
 					if (ap)
@@ -155,8 +174,10 @@ void BarkGump::run() {
 				// if speech done too, close
 				if (!speechplaying)
 					Close();
+				else if (_talkSpeed)
+					_counter = NO_SPEECH_LENGTH / _talkSpeed;
 				else
-					_counter = _textDelay;
+					_counter = INT_MAX_VALUE;
 			}
 		}
 	}
@@ -168,7 +189,7 @@ Gump *BarkGump::onMouseDown(int button, int32 mx, int32 my) {
 
 	// Scroll to next text, if possible
 	if (!NextText()) {
-		if (_speechLength) {
+		if (!_speechMute && _speechLength) {
 			AudioProcess *ap = AudioProcess::get_instance();
 			if (ap) ap->stopSpeech(_barked, _speechShapeNum, _owner);
 		}
@@ -213,14 +234,19 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!widget)
 		return false;
 
-	_textDelay = ConfMan.getInt("textdelay");
-
 	// This is just a hack
 	Rect d;
 	widget->GetDims(d);
-	_counter = d.height() * _textDelay;
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
+
+	_subtitles = ConfMan.getBool("subtitles");
+	_speechMute = ConfMan.getBool("speech_mute");
+	_talkSpeed = ConfMan.getInt("talkspeed");
+	if (_talkSpeed)
+		_counter = (d.height() * NO_SPEECH_LENGTH) / _talkSpeed;
+	else
+		_counter = INT_MAX_VALUE;
 
 	return true;
 }
