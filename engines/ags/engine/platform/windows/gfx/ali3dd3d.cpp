@@ -47,11 +47,6 @@
 
 namespace AGS3 {
 
-#ifndef AGS_NO_VIDEO_PLAYER
-extern int dxmedia_play_video_3d(const char *filename, IDirect3DDevice9 *device, bool useAVISound, int canskip, int stretch);
-extern void dxmedia_shutdown_3d();
-#endif
-
 using namespace AGS::Shared;
 
 // Necessary to update textures from 8-bit bitmaps
@@ -906,11 +901,6 @@ PGfxFilter D3DGraphicsDriver::GetGraphicsFilter() const {
 }
 
 void D3DGraphicsDriver::UnInit() {
-#ifndef AGS_NO_VIDEO_PLAYER
-	// TODO: this should not be done inside the graphics driver!
-	dxmedia_shutdown_3d();
-#endif
-
 	OnUnInit();
 	ReleaseDisplayMode();
 
@@ -1739,17 +1729,6 @@ void D3DGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int delay) {
 	this->ClearDrawLists();
 	ResetFxPool();
 }
-
-#ifndef AGS_NO_VIDEO_PLAYER
-
-bool D3DGraphicsDriver::PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen) {
-	direct3ddevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(0, 0, 0, 255), 0.5f, 0);
-
-	int result = dxmedia_play_video_3d(filename, direct3ddevice, useAVISound, skipType, stretchToFullScreen ? 1 : 0);
-	return (result == 0);
-}
-
-#endif
 
 void D3DGraphicsDriver::SetScreenFade(int red, int green, int blue) {
 	D3DBitmap *ddb = static_cast<D3DBitmap *>(MakeFx(red, green, blue));

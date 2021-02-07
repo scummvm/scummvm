@@ -191,9 +191,6 @@ public:
 	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
 	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
 	void BoxOutEffect(bool blackingOut, int speed, int delay) override;
-#ifndef AGS_NO_VIDEO_PLAYER
-	bool PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen) override;
-#endif
 	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool enabled) override {
