@@ -2556,6 +2556,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("uglyfiles", "ugly.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 4169486),
 	ENGLISH_ENTRY("ulitsadimitrova", "ulitsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 291828379),
 	ENGLISH_ENTRY("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Steam, Mac
+	ENGLISH_ENTRY("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248), // Steam + GoG, Windows
 	ENGLISH_ENTRY("unboundver10", "Unbound.exe", "900b277d7e1601c65b42868cd7fae662", 10448702),
 	ENGLISH_ENTRY("unfinished", "mags.exe", "0710e2ec71042617f565c01824f0cf3c", 12092514),
 	ENGLISH_ENTRY("unganeedsmumba", "UNGA needs MUMBA.exe", "2ca6bb6d5b2710ac89fea7d69c2eaf77", 5470102),
