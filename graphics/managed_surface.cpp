@@ -526,7 +526,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 
 	// If we're dealing with a 32-bit source surface, we need to split up the RGB,
 	// since we'll want to find matching RGB pixels irrespective of the alpha
-	bool isTrans32 = src.format.bytesPerPixel == 4 && transColor != (uint32)-1;
+	bool isTrans32 = src.format.bytesPerPixel == 4 && transColor != (uint32)-1 && transColor > 0;
 	if (isTrans32) {
 		src.format.colorToRGB(transColor, rt1, gt1, bt1);
 	}
