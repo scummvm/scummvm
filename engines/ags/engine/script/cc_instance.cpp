@@ -1549,7 +1549,7 @@ bool ccInstance::AddGlobalVar(const ScriptVariable &glvar) {
 		*/
 		Debug::Printf(kDbgMsg_Warn, "WARNING: global variable refers to data beyond allocated buffer (%d, %d)", glvar.ScAddress, globaldatasize);
 	}
-	globalvars->insert(std::make_pair(glvar.ScAddress, glvar));
+	globalvars->insert(std::make_pair((int)glvar.ScAddress, glvar));
 	return true;
 }
 

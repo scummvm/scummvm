@@ -108,7 +108,7 @@ struct ScriptPosition {
 struct ccInstance {
 public:
 	// TODO: change to std:: if moved to C++11
-	typedef std::unordered_map<int32_t, ScriptVariable> ScVarMap;
+	typedef std::unordered_map<int, ScriptVariable> ScVarMap;
 	typedef std::shared_ptr<ScVarMap>                   PScVarMap;
 public:
 	int32_t flags;

@@ -188,7 +188,7 @@ private:
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
-	typedef std::pair<GUIControlType, int32_t> ControlRef;
+	typedef std::pair<GUIControlType, int> ControlRef;
 	std::vector<ControlRef> _ctrlRefs;
 	// Array of child control references (not exclusively owned!)
 	std::vector<GUIObject *> _controls;
@@ -238,7 +238,7 @@ extern AGS_INLINE int get_fixed_pixel_size(int pixels);
 // Those function have distinct implementations in Engine and Editor
 extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
-extern void check_font(int *fontnum);
+extern void check_font(int32_t *fontnum);
 
 extern void set_our_eip(int eip);
 #define SET_EIP(x) set_our_eip(x);

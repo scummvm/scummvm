@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_INVENTORYITEMINFO_H
 #define AGS_SHARED_AC_INVENTORYITEMINFO_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 namespace AGS {
@@ -38,7 +40,7 @@ struct InventoryItemInfo {
 	char name[25];
 	int  pic;
 	int  cursorPic, hotx, hoty;
-	int  reserved[5];
+	int32_t reserved[5];
 	char flags;
 
 	void ReadFromFile(Shared::Stream *in);

@@ -80,7 +80,7 @@ bool GUIMain::HasAlphaChannel() const {
 // Engine-specific implementation split out of acgui.h
 //=============================================================================
 
-void check_font(int *fontnum) {
+void check_font(int32_t *fontnum) {
 	// do nothing
 }
 
