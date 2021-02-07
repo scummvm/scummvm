@@ -87,8 +87,8 @@ backends/networking/sdl_net/localwebserver.cpp
 backends/networking/sdl_net/uploadfileclienthandler.cpp
 backends/platform/3ds/options-dialog.cpp
 backends/platform/3ds/osystem-events.cpp
-backends/platform/ds/arm9/source/dsoptions.cpp
-backends/platform/ds/arm9/source/scummhelp.cpp
+backends/platform/ds/ds-graphics.cpp
+backends/platform/ds/osystem_ds.cpp
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/ios7/ios7_osys_main.cpp
 backends/platform/iphone/osys_events.cpp
