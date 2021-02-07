@@ -70,6 +70,17 @@ void SceneManager::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, b
     _state = kLoadNew;
 }
 
+void SceneManager::pushScene() {
+    _pushedSceneID = _sceneID;
+    _pushedFrameID = _engine->playState.currentViewFrame;
+    _pushedVerticalScroll = _engine->playState.verticalScroll;
+}
+
+void SceneManager::popScene() {
+    changeScene(_pushedSceneID, _pushedFrameID, _pushedVerticalScroll, true);
+    _pushedSceneID = 10000;
+}
+
 void SceneManager::addObjectToInventory(uint16 id) {
     if (_engine->playState.inventory.heldItem == id) {
         _engine->playState.inventory.heldItem = -1;
@@ -83,7 +94,7 @@ void SceneManager::addObjectToInventory(uint16 id) {
     _engine->graphics->updateInvBox();
 }
 
-void SceneManager::pickUpObject(uint16 id) {
+void SceneManager::removeObjectFromInventory(uint16 id, bool pickUp) {
     Common::Array<uint16> &order = _engine->graphics->inventoryBoxDesc.itemsOrder;
     Common::Array<uint16> temp;
 
@@ -94,7 +105,9 @@ void SceneManager::pickUpObject(uint16 id) {
         uint16 thisElem = order.back();
         order.pop_back();
         if (thisElem == id) {
-            _engine->playState.inventory.heldItem = id;
+            if (pickUp) {
+                _engine->playState.inventory.heldItem = id;
+            }
             break;
         } else {
             temp.push_back(thisElem);
@@ -417,13 +430,23 @@ void SceneManager::run() {
             stateChangeRequests |= kMap;
             return;
         } else if (hovered == InputManager::textBoxID) {
-            // TODO
+            int16 picked = _engine->graphics->_textbox.getHovered(_engine->input->getMousePosition());
+            if (picked != -1) {
+                // clear logic conditions and timestamps
+                for (uint i = 0; i < 30; ++i) {
+                    _engine->playState.logicConditions[i] = PlayState::kFalse;
+                    _engine->playState.logicConditionsTimestamps[i] = 0;
+                }
+
+                _engine->playState.logicConditions[picked] = PlayState::kTrue;
+                _engine->playState.logicConditionsTimestamps[picked] = playTimeThisFrame;
+            }
         } else if (hovered == InputManager::inventoryItemTakeID) {
             GraphicsManager::InventoryBox &box = _engine->graphics->inventoryBoxDesc;
             Common::Point mousePos = _engine->input->getMousePosition();
             for (uint i = 0; i < 4; ++i) {
                 if (box.onScreenItems[i].dest.contains(mousePos)) {
-                    pickUpObject(box.onScreenItems[i].itemId);
+                    removeObjectFromInventory(box.onScreenItems[i].itemId, true);
                     break;
                 }
             }
@@ -696,6 +719,13 @@ void SceneManager::handleMouse() {
             _engine->input->hoveredElementID = InputManager::inventoryScrollbarID;
             _engine->input->setPointerBitmap(1, 2, -1);
             handleScrollbar(1);
+        } else if (uizr = &_engine->graphics->getZRenderStruct("FRAME TB SURF"), uizr->destRect.contains(mousePos)) {
+            _engine->input->hoveredElementID = InputManager::textBoxID;
+            if (_engine->graphics->_textbox.getHovered(mousePos) != -1) {
+                _engine->input->setPointerBitmap(1, 2, -1);
+            } else {
+                _engine->input->setPointerBitmap(1, 0, -1);
+            }
         } else if (_engine->sceneManager->inventoryDesc.shadesDst.contains(mousePos)) {
             if (_engine->playState.inventory.heldItem != -1) {
                 _engine->input->hoveredElementID = InputManager::inventoryItemReturnID;
@@ -703,7 +733,7 @@ void SceneManager::handleMouse() {
                 _engine->input->hoveredElementID = InputManager::inventoryItemTakeID;
             }
         } else {
-            _engine->input->setPointerBitmap(1, 1, 0);
+            _engine->input->setPointerBitmap(1, 0, 0);
         }
     }     
 }
@@ -720,11 +750,19 @@ void SceneManager::clearSceneData() {
         _engine->playState.eventFlags[i] = PlayState::kFalse;
     }
 
+    // clear all logic flags and timestamps
+    for (uint i = 0; i < 30; ++i) {
+        _engine->playState.logicConditions[i] = PlayState::kFalse;
+        _engine->playState.logicConditionsTimestamps[i] = 0;
+    }
+
     _engine->logic->clearActionRecords();
 
+    _engine->graphics->getZRenderStruct("PRIMARY VIDEO").isActive = false;
     _engine->graphics->getZRenderStruct("SEC VIDEO 0").isActive = false;
     _engine->graphics->getZRenderStruct("SEC VIDEO 1").isActive = false;
     _engine->graphics->getZRenderStruct("SEC MOVIE").isActive = false;
+    _engine->graphics->getZRenderStruct("FRAME TB SURF").isActive = false;
     _engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION").isActive = false;
 }
 

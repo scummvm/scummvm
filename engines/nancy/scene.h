@@ -58,8 +58,10 @@ public:
     void process();
 
     void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
+    void pushScene();
+    void popScene();
     void addObjectToInventory(uint16 id);
-    void pickUpObject(uint16 id);
+    void removeObjectFromInventory(uint16 id, bool pickUp = false);
 
 private:
     void init();
@@ -107,6 +109,10 @@ private:
     uint32 _tickCount;
     uint32 _stashedTickCount;
     Time _nextBackgroundMovement;
+
+    uint16 _pushedSceneID = 10000;
+    uint16 _pushedFrameID = 0;
+    uint16 _pushedVerticalScroll = 0;
 
     Common::Point scrollbarMouse;
 

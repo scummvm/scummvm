@@ -3,6 +3,7 @@ MODULE := engines/nancy
 MODULE_OBJS = \
   action/recordtypes.o \
   action/arfactory_v1.o \
+  action/primaryvideo.o \
   audio.o \
   console.o \
   datatypes.o \
@@ -17,6 +18,7 @@ MODULE_OBJS = \
   nancy.o \
   resource.o \
   scene.o \
+  textbox.o \
   video.o
 
 # This module can be built as a plugin

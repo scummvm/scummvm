@@ -191,7 +191,7 @@ void SoundManager::loadSound(Common::String &name, int16 id, uint16 numLoops, ui
 		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
 		if (aStr) {
 			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, numLoops);
-			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 64);
+			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 100);
 			_engine->_system->getMixer()->pauseHandle(handles[id], true);
 			names[id] = name;
 		}

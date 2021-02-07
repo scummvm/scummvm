@@ -25,6 +25,9 @@
 
 #include "common/str.h"
 #include "common/rect.h"
+#include "common/array.h"
+
+#include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -72,10 +75,9 @@ struct View {
 struct Cursors {
     void read(Common::SeekableReadStream &stream);
 
-    Common::Rect rects[85];
-    // The cursor gets set to this location at some point during PrimaryVideoSequence 
-    uint16 primaryVideoCursorX;
-    uint16 primaryVideoCursorY;
+    Common::Rect rects[84];
+    Common::Rect primaryVideoInactiveZone;
+    Common::Point primaryVideoInitialPos;
 };
 
 struct Inventory {
@@ -98,6 +100,41 @@ struct Inventory {
 
     Common::Rect emptySpaceSource; // 0x1E4
     ItemDesc items[11]; // 0x1F4
+};
+
+struct Font {
+    void read(Common::SeekableReadStream &stream);
+
+    Common::String imageName; // 0x00
+    Common::String description; // 0xA
+    //
+    Common::Point colorCoordsOffset; // y is def at 0x34, x is just a guess
+
+    uint16 spaceWidth = 0;              // 0x38
+    
+    uint16 uppercaseOffset = 0;         // 0x3C
+    uint16 lowercaseOffset = 0;         // 0x3E
+    uint16 digitOffset = 0;             // 0x40
+    uint16 periodOffset = 0;            // 0x42
+    uint16 commaOffset = 0;             // 0x44
+    uint16 equalitySignOffset = 0;      // 0x46
+    uint16 colonOffset = 0;             // 0x48
+    uint16 dashOffset = 0;              // 0x4A
+    uint16 questionMarkOffset = 0;      // 0x4C
+    uint16 exclamationMarkOffset = 0;   // 0x4E
+    uint16 percentOffset = 0;           // 0x50
+    uint16 ampersandOffset = 0;         // 0x52
+    uint16 asteriskOffset = 0;          // 0x54
+    uint16 leftBracketOffset = 0;       // 0x56
+    uint16 rightBracketOffset = 0;      // 0x58
+    uint16 plusOffset = 0;              // 0x5A
+    uint16 apostropheOffset = 0;        // 0x5C
+    uint16 semicolonOffset = 0;         // 0x5E
+    uint16 slashOffset = 0;             // 0x60
+
+    Common::Array<Common::Rect> symbolRects; // 0x62
+    
+    Graphics::Surface image;
 };
 
 } // End of namespace Nancy

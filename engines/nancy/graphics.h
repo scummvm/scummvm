@@ -26,6 +26,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/video.h"
 #include "engines/nancy/datatypes.h"
+#include "engines/nancy/textbox.h"
 
 #include "common/func.h"
 #include "common/stack.h"
@@ -45,6 +46,7 @@ public:
     uint32 z = 0;
     RenderFunction *renderFunction = nullptr;
     Graphics::Surface *sourceSurface = nullptr;
+    Graphics::ManagedSurface *managedSource = nullptr;
     Common::Rect sourceRect;
     Common::Rect destRect;
     bool isActive = false;
@@ -128,7 +130,6 @@ public:
     void updateInvBox();
 
     Graphics::Surface _background;
-    Graphics::Surface _frameTextBox;
     Graphics::Surface _primaryFrameSurface;
     Graphics::Surface _object0Surface;
     Graphics::Surface _inventoryBoxIconsSurface;
@@ -137,8 +138,11 @@ public:
     Graphics::Surface _genericSurface;
 
     VideoChannel channels[2];
+    Graphics::Surface _primaryVideoSurface;
+    AVFDecoder _primaryVideoDecoder;
     Graphics::Surface _secMovieSurface;
     AVFDecoder _secMovieDecoder;
+    Textbox _textbox;
 
     View viewportDesc;
     InventoryBox inventoryBoxDesc;

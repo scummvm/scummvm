@@ -75,16 +75,20 @@ void EventFlagsDesc::execute(NancyEngine *engine) {
     }
 }
 
-uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
+void SceneChangeDesc::readData(Common::SeekableReadStream &stream) {
     sceneID = stream.readUint16LE();
     frameID = stream.readUint16LE();
     verticalOffset = stream.readUint16LE();
     doNotStartSound = (bool)(stream.readUint16LE());
+}
+
+uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
+    sceneChange.readData(stream);
     return 8;
 }
 
 void SceneChange::execute(NancyEngine *engine) {
-    engine->sceneManager->changeScene(sceneID, frameID, verticalOffset, doNotStartSound);
+    engine->sceneManager->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
     isDone = true;
 }
 
@@ -162,60 +166,6 @@ uint16 StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
 uint16 StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
     type = stream.readByte();    
     return 1;
-}
-
-uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
-    uint16 bytesRead = stream.pos();
-    stream.read(videoData, 0x69C);
-
-    uint16 numResponses = stream.readUint16LE();
-    if (numResponses > 0) {
-        for (uint i = 0; i < numResponses; ++i) {
-            uint16 numConditionFlags = stream.readUint32LE();
-            responses.push_back(ResponseStruct());
-            ResponseStruct &response = responses[responses.size()-1];
-
-            if (numConditionFlags > 0) {
-                for (uint16 j = 0; j < numConditionFlags; ++j) {
-                    response.conditionFlags.push_back(ConditionFlags());
-                    ConditionFlags &flags = response.conditionFlags[response.conditionFlags.size()-1];
-                    stream.read(flags.unknown, 5);
-                }
-            }
-
-            stream.read(response.unknown, 0x1D8);
-        }
-    }
-
-    uint16 numSceneBranchStructs = stream.readUint16LE();
-    if (numSceneBranchStructs > 0) {
-        // TODO
-    }
-
-    uint16 numFlagsStructs = stream.readUint16LE();
-    if (numFlagsStructs > 0)  {
-        for (uint16 i = 0; i < numFlagsStructs; ++i) {
-            uint16 numConditionFlags = stream.readUint16LE();
-            flagsStructs.push_back(FlagsStruct());
-            FlagsStruct &flagsStruct = flagsStructs[flagsStructs.size()-1];
-
-            if (numConditionFlags > 0) {
-                // Not sure about this
-                if (numConditionFlags > 0) {
-                for (uint16 j = 0; j < numConditionFlags; ++j) {
-                    flagsStruct.conditionFlags.push_back(ConditionFlags());
-                    ConditionFlags &flags = flagsStruct.conditionFlags[flagsStruct.conditionFlags.size()-1];
-                    stream.read(flags.unknown, 5);
-                }
-            }
-            }
-
-            flagsStruct.unknown = stream.readUint32LE();
-        }
-    }
-
-    bytesRead = stream.pos() - bytesRead;
-    return bytesRead;
 }
 
 uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
@@ -311,6 +261,7 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
             break;
         }
         case kActionTrigger:
+            engine->sceneManager->pushScene();
             SceneChange::execute(engine);
             break;
     }
@@ -895,7 +846,7 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
             }
             break;
         case kActionTrigger:
-            if (sceneID != 9999) {
+            if (sceneChange.sceneID != 9999) {
                 SceneChange::execute(engine);
             }
             break;

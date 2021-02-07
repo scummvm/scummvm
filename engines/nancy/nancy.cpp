@@ -72,9 +72,10 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
 
 	_console = new NancyConsole(this);
-	_logoSequence = new LogoSequence(this);
-	_rnd = nullptr;
+	_rnd = new Common::RandomSource("Nancy");
+	_rnd->setSeed(_rnd->getSeed());
 
+	_logoSequence = new LogoSequence(this);
 	logic = new Logic(this);
 	sceneManager = new SceneManager(this);
 	map = new Map(this);
@@ -224,8 +225,7 @@ void NancyEngine::bootGameEngine() {
 	if (_fontSize != font->size()) {
 		error("Mismatch NumFonts and FONT memory... %i, %i", _fontSize, font->size());
 	}
-	// TODO a loop that uses FONT
-	// TODO another loop that does the same thing but with CURS
+	
 	// TODO reset some vars
 
 	graphics->clearZRenderStructs();
@@ -254,13 +254,6 @@ void NancyEngine::clearBootChunks() {
 		delete i._value;
 	}
 	_bootChunks.clear();
-}
-
-void NancyEngine::initialize() {
-	debugC(1, kDebugEngine, "initialize");
-
-	_rnd = new Common::RandomSource("nancy");
-	_rnd->setSeed(42);                              // Kick random number generator
 }
 
 void NancyEngine::preloadCals(const IFF &boot) {

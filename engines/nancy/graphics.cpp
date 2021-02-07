@@ -43,7 +43,8 @@ const uint GraphicsManager::transColor = 0x3E0;
 
 
 GraphicsManager::GraphicsManager(NancyEngine *engine) :
-        _engine(engine) {
+        _engine(engine),
+        _textbox(engine) {
     _screen.create(640, 480, pixelFormat);
 }
 
@@ -54,20 +55,11 @@ void GraphicsManager::init() {
     uint32 height = viewportDesc.destination.bottom - viewportDesc.destination.top;
     _background.create(width, height, pixelFormat);
 
-    // TODO make a TBOX struct
-    chunk = _engine->getBootChunkStream("TBOX");
-    chunk->seek(0x28);
-    width = chunk->readUint32LE();
-    height = chunk->readUint32LE();
-    chunk->seek(0x20);
-    width -= chunk->readUint32LE();
-    height -= chunk->readUint32LE();
-    _frameTextBox.create(width, height, pixelFormat);
+    _textbox.init();
 }
 
 GraphicsManager::~GraphicsManager() {
     _background.free();
-    _frameTextBox.free();
     _screen.free();
     _primaryFrameSurface.free();
     _object0Surface.free();
@@ -78,7 +70,7 @@ GraphicsManager::~GraphicsManager() {
     _genericSurface.free();
 
     _secMovieSurface.free();
-    _secMovieDecoder.close();
+    _primaryVideoSurface.free();
 
 
     for (auto st : _ZRender) {
@@ -125,6 +117,7 @@ Common::String &GraphicsManager::initZRenderStruct(char const *name,
 
     return st.name;
 }
+
 #define READ_RECT(where, x) chunk->seek(x); \
                             where->left = chunk->readUint32LE(); \
                             where->top = chunk->readUint32LE(); \
@@ -158,7 +151,8 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
     chunk = _engine->getBootChunkStream("BSUM");
     READ_RECT(dest, 356)
     outNames.push_back(initZRenderStruct(  "FRAME TB SURF", 6, false, ZRenderStruct::kNoTrans,
-                        &_frameTextBox, nullptr, nullptr, dest));
+                        nullptr, nullptr, nullptr, dest));
+    getZRenderStruct("FRAME TB SURF").managedSource = &_textbox._surface;
 
     READ_RECT(source, 388)
     READ_RECT(dest, 420)
@@ -179,7 +173,7 @@ void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &out
                         new RenderFunction(this, &GraphicsManager::renderFrameInvBox)));
     
     outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans, &_inventoryBitmapSurface));
-    outNames.push_back(initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::kNoTrans, nullptr,
+    outNames.push_back(initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::kNoTrans, &_primaryVideoSurface,
                         new RenderFunction(this, &GraphicsManager::renderPrimaryVideo)));
     outNames.push_back(initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::kTrans, &channels[0].surf));
     outNames.push_back(initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::kTrans, &channels[1].surf));
@@ -258,12 +252,20 @@ void GraphicsManager::renderDisplay(Common::Array<Common::String> ids) {
                         // making some assumptions here
                         case ZRenderStruct::kNoTrans: {
                             Common::Point dest(current.destRect.left, current.destRect.top);
-                            _screen.blitFrom(*current.sourceSurface, current.sourceRect, dest);
+                            if (current.sourceSurface) {
+                                _screen.blitFrom(*current.sourceSurface, current.sourceRect, dest);
+                            } else {
+                                _screen.blitFrom(*current.managedSource, current.sourceRect, dest);
+                            }
                             break;
                         }
                         case ZRenderStruct::kTrans: {
                             Common::Point dest(current.destRect.left, current.destRect.top);
-                            _screen.transBlitFrom(*current.sourceSurface, current.sourceRect, dest, transColor);
+                            if (current.sourceSurface) {
+                                _screen.transBlitFrom(*current.sourceSurface, current.sourceRect, dest, transColor);
+                            } else {
+                                _screen.transBlitFrom(*current.managedSource, current.sourceRect, dest, transColor);
+                            }
                             break;
                         }
                         default:
@@ -471,7 +473,21 @@ void GraphicsManager::renderFrameInvBox() {
 }
 
 void GraphicsManager::renderPrimaryVideo() {
-    // TODO
+    ZRenderStruct &zr = getZRenderStruct("PRIMARY VIDEO");
+    if (!_primaryVideoDecoder.isPlaying()) {
+        _primaryVideoDecoder.start();
+        
+        _primaryVideoSurface.w = _secMovieDecoder.getWidth();
+        _primaryVideoSurface.h = _secMovieDecoder.getHeight();
+        _primaryVideoSurface.format = _secMovieDecoder.getPixelFormat();
+    }
+
+    if (_primaryVideoDecoder.needsUpdate()) {
+        _primaryVideoSurface = *_primaryVideoDecoder.decodeNextFrame();
+    }
+
+    Common::Point dest(zr.destRect.left, zr.destRect.top);
+     _screen.blitFrom(_primaryVideoSurface, zr.sourceRect, dest);
 }
 
 void GraphicsManager::renderSecVideo0() {

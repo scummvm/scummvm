@@ -192,8 +192,6 @@ private:
 
 	LogoSequence *_logoSequence;
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
-
-	void initialize();
 };
 
 } // End of namespace Nancy
