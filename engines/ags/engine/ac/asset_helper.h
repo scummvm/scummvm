@@ -53,7 +53,6 @@ Stream *find_open_asset(const String &filename);
 
 extern "C" {
 	struct PACKFILE; // Allegro 4's own stream type
-	struct DUMBFILE; // DUMB stream type
 }
 
 // AssetPath combines asset library and item names
@@ -78,8 +77,6 @@ struct AGS_PACKFILE_OBJ {
 // This function is supposed to be used only when you have to create Allegro
 // object, passing PACKFILE stream to constructor.
 PACKFILE *PackfileFromAsset(const AssetPath &path, size_t &asset_size);
-// Creates DUMBFILE stream from AGS asset. Used for creating DUMB objects
-DUMBFILE *DUMBfileFromAsset(const AssetPath &path, size_t &asset_size);
 bool DoesAssetExistInLib(const AssetPath &assetname);
 
 } // namespace AGS3
