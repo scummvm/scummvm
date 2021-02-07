@@ -57,7 +57,7 @@ Weather::Weather(bool IsSnow) : _mIsSnow(IsSnow) {
 	Initialize();
 }
 
-Weather::~Weather() = default;
+Weather::~Weather() {}
 
 void Weather::Update() {
 	if (_mTargetAmount > _mAmount)

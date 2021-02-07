@@ -26,10 +26,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-SpriteFont::SpriteFont(void) = default;
+SpriteFont::SpriteFont(void) {}
 
 
-SpriteFont::~SpriteFont(void) = default;
+SpriteFont::~SpriteFont(void) {}
 
 } // namespace AGSSpriteFont
 } // namespace Plugins

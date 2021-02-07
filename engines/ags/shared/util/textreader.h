@@ -37,7 +37,7 @@ namespace Shared {
 
 class TextReader {
 public:
-	virtual ~TextReader() = default;
+	virtual ~TextReader() {}
 
 	virtual bool IsValid() const = 0;
 

@@ -57,7 +57,7 @@ struct GfxFilterInfo {
 
 class IGfxFilter {
 public:
-	virtual ~IGfxFilter() = default;
+	virtual ~IGfxFilter() {}
 
 	virtual const GfxFilterInfo &GetInfo() const = 0;
 

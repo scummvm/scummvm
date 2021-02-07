@@ -51,7 +51,7 @@ typedef std::shared_ptr<IGfxFilter> PGfxFilter;
 
 class IGfxDriverFactory {
 public:
-	virtual ~IGfxDriverFactory() = default;
+	virtual ~IGfxDriverFactory() {}
 
 	// Shutdown graphics factory and deallocate any resources it owns;
 	// graphics factory will be unusable after calling this function.

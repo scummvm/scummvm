@@ -36,7 +36,7 @@
 namespace AGS3 {
 
 struct ICCStaticObject {
-	virtual ~ICCStaticObject() = default;
+	virtual ~ICCStaticObject() {}
 
 	// Legacy support for reading and writing object values by their relative offset
 	virtual const char *GetFieldPtr(const char *address, intptr_t offset) = 0;

@@ -35,7 +35,7 @@ CharacterEntry::CharacterEntry(void) {
 }
 
 
-CharacterEntry::~CharacterEntry(void) = default;
+CharacterEntry::~CharacterEntry(void) {}
 
 } // namespace AGSSpriteFont
 } // namespace Plugins

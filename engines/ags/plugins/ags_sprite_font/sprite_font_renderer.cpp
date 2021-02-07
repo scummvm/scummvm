@@ -32,7 +32,7 @@ SpriteFontRenderer::SpriteFontRenderer(IAGSEngine *engine) {
 }
 
 
-SpriteFontRenderer::~SpriteFontRenderer(void) = default;
+SpriteFontRenderer::~SpriteFontRenderer(void) {}
 
 void SpriteFontRenderer::SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit) {
 	SpriteFont *font = getFontFor(fontNum);

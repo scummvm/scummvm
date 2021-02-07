@@ -31,7 +31,7 @@ namespace Engine {
 ConsoleOutputTarget::ConsoleOutputTarget() {
 }
 
-ConsoleOutputTarget::~ConsoleOutputTarget() = default;
+ConsoleOutputTarget::~ConsoleOutputTarget() {}
 
 void ConsoleOutputTarget::PrintMessage(const DebugMessage &msg) {
 	// limit number of characters for console

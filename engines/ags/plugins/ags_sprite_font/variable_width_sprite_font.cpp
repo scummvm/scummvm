@@ -32,7 +32,7 @@ VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *eng
 }
 
 
-VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) = default;
+VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {}
 
 
 

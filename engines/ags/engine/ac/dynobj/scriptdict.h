@@ -76,7 +76,7 @@ class ScriptDictImpl final : public ScriptDictBase {
 public:
 	typedef typename TDict::const_iterator ConstIterator;
 
-	ScriptDictImpl() = default;
+	ScriptDictImpl() {}
 
 	bool IsCaseSensitive() const override {
 		return is_casesensitive;

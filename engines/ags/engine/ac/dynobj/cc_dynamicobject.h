@@ -91,8 +91,8 @@ struct ICCDynamicObject {
 	virtual void    WriteFloat(const char *address, intptr_t offset, float val) = 0;
 
 protected:
-	ICCDynamicObject() = default;
-	~ICCDynamicObject() = default;
+	ICCDynamicObject() {}
+	~ICCDynamicObject() {}
 };
 
 struct ICCObjectReader {

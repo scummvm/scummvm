@@ -33,7 +33,7 @@ VariableWidthFont::VariableWidthFont(void) {
 }
 
 
-VariableWidthFont::~VariableWidthFont(void) = default;
+VariableWidthFont::~VariableWidthFont(void) {}
 
 void VariableWidthFont::SetGlyph(int character, int x, int y, int width, int height) {
 	characters[character].X = x;
