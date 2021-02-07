@@ -26,7 +26,10 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "image/bmp.h"
+#include "image/iff.h"
 #include "image/pcx.h"
+#include "image/tga.h"
 
 namespace AGS3 {
 
@@ -74,11 +77,11 @@ BITMAP *load_tga_pf(PACKFILE *f, color *pal) {
 }
 
 BITMAP *load_bmp(const char *filename, color *pal) {
-	error("TODO: load_bmp");
+	return decodeImage<Image::BitmapDecoder>(filename, pal);
 }
 
 BITMAP *load_lbm(const char *filename, color *pal) {
-	error("TODO: load_lbm");
+	return decodeImage<Image::IFFDecoder>(filename, pal);
 }
 
 BITMAP *load_pcx(const char *filename, color *pal) {
@@ -86,7 +89,7 @@ BITMAP *load_pcx(const char *filename, color *pal) {
 }
 
 BITMAP *load_tga(const char *filename, color *pal) {
-	error("TODO: load_tga");
+	return decodeImage<Image::TGADecoder>(filename, pal);
 }
 
 BITMAP *load_bitmap(const char *filename, color *pal) {
