@@ -36,7 +36,6 @@
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/lib/allegro/color.h"
-#include "ags/lib/opengl/opengl.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/ags.h"
 
@@ -154,24 +153,9 @@ PGfxFilter ALScummVMGraphicsDriver::GetGraphicsFilter() const {
 }
 
 int ALScummVMGraphicsDriver::GetAllegroGfxDriverID(bool windowed) {
-#if AGS_PLATFORM_OS_WINDOWS
 	if (windowed)
-		return GFX_DIRECTX_WIN;
-	return GFX_DIRECTX;
-#elif AGS_PLATFORM_OS_LINUX && (!defined (ALLEGRO_MAGIC_DRV))
-	if (windowed)
-		return GFX_XWINDOWS;
-	return GFX_XWINDOWS_FULLSCREEN;
-#elif AGS_PLATFORM_OS_MACOS
-	if (windowed) {
-		return GFX_COCOAGL_WINDOW;
-	}
-	return GFX_COCOAGL_FULLSCREEN;
-#else
-	if (windowed)
-		return GFX_AUTODETECT_WINDOWED;
-	return GFX_AUTODETECT_FULLSCREEN;
-#endif
+		return GFX_SCUMMVM;
+	return GFX_SCUMMVM_FULLSCREEN;
 }
 
 void ALScummVMGraphicsDriver::SetGraphicsFilter(PALScummVMFilter filter) {

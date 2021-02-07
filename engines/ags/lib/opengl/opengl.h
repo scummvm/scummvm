@@ -31,8 +31,6 @@ namespace AGS3 {
 #define GL_TRUE   1
 #define GL_FALSE  2
 
-#define GFX_XWINDOWS MKTAG('S', 'C', 'V', 'M')
-#define GFX_XWINDOWS_FULLSCREEN MKTAG('S', 'C', 'V', 'M')
 #define GL_FLOAT 1
 
 // glEnable/glDisable
