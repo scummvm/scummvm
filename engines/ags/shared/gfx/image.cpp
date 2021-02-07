@@ -64,18 +64,6 @@ BITMAP *decodeImage(const char *filename, color *pal) {
 	}
 }
 
-BITMAP *load_bmp_pf(PACKFILE *f, color *pal) {
-	error("TODO: load_bmp_pf");
-}
-
-BITMAP *load_pcx_pf(PACKFILE *f, color *pal) {
-	error("TODO: load_pcx_pf");
-}
-
-BITMAP *load_tga_pf(PACKFILE *f, color *pal) {
-	error("TODO: load_tga_pf");
-}
-
 BITMAP *load_bmp(const char *filename, color *pal) {
 	return decodeImage<Image::BitmapDecoder>(filename, pal);
 }

@@ -29,12 +29,9 @@ namespace AGS3 {
 
 BITMAP *load_bitmap(const char *filename, color *pal);
 BITMAP *load_bmp(const char *filename, color *pal);
-BITMAP *load_bmp_pf(PACKFILE *f, color *pal);
 BITMAP *load_lbm(const char *filename, color *pal);
 BITMAP *load_pcx(const char *filename, color *pal);
-BITMAP *load_pcx_pf(PACKFILE *f, color *pal);
 BITMAP *load_tga(const char *filename, color *pal);
-BITMAP *load_tga_pf(PACKFILE *f, color *pal);
 
 int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
 
