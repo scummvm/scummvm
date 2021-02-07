@@ -1070,6 +1070,7 @@ int ccInstance::Run(int32_t curpc) {
 			case kScValStackPtr:
 				registers[SREG_OP] = reg1;
 				break;
+
 			case kScValStaticArray:
 				if (reg1.StcArr->GetDynamicManager()) {
 					registers[SREG_OP].SetDynamicObject(
@@ -1077,7 +1078,8 @@ int ccInstance::Run(int32_t curpc) {
 					    reg1.StcArr->GetDynamicManager());
 					break;
 				}
-			// fall-through intended
+				// fall through
+
 			default:
 				cc_error("internal error: SCMD_CALLOBJ argument is not an object of built-in or user-defined type");
 				return -1;

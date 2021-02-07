@@ -80,6 +80,7 @@ SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
 }
 
 SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop) {
+#ifdef USE_VORBIS
 	Common::SeekableReadStream *data = get_cached_sound(asset_name);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeVorbisStream(data, DisposeAfterUse::YES);
@@ -87,6 +88,9 @@ SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop) 
 	} else {
 		return nullptr;
 	}
+#else
+	return nullptr;
+#endif
 }
 
 SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll) {
