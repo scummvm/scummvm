@@ -20,7 +20,7 @@
  *
  */
 
-#include <cmath>
+#include "ags/lib/std/math.h"
 
 #ifndef AGS_STD_LIMITS_H
 #define AGS_STD_LIMITS_H
@@ -38,8 +38,8 @@ class numeric_limits : public _Num_base {
 template <>
 class numeric_limits<float> {
 public:
-	static constexpr float quiet_NaN() {
-		return NAN;
+	static constexpr float quiet_undefined() {
+		return FLOAT_UNASSIGNED;
 	}
 };
 

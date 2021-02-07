@@ -29,12 +29,10 @@
 namespace AGS3 {
 namespace std {
 
-#ifndef NAN
-#define NAN        ((float)(INFINITY * 0.0F))
-#endif
+#define FLOAT_UNASSIGNED (float)999999.0
 
 template<class T>
-inline bool isnan(T val) { return val == NAN; }
+inline bool isUndefined(T val) { return val == FLOAT_UNASSIGNED; }
 
 } // namespace std
 } // namespace AGS3

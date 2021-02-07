@@ -726,7 +726,7 @@ void set_loop_counter(unsigned int new_counter) {
 	loopcounter = new_counter;
 	t1 = AGS_Clock::now();
 	lastcounter = loopcounter;
-	fps = std::numeric_limits<float>::quiet_NaN();
+	fps = std::numeric_limits<float>::quiet_undefined();
 }
 
 void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {
