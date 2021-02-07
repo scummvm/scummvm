@@ -23,7 +23,6 @@
 #ifndef VIDEO_MPEGPS_DECODER_H
 #define VIDEO_MPEGPS_DECODER_H
 
-#include "common/inttypes.h"
 #include "common/hashmap.h"
 #include "common/queue.h"
 #include "graphics/surface.h"
