@@ -1087,6 +1087,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("starcross", "R15-820901", "fb2e6d9a0ad5822f3a8d4aec949e4e3c", 84984),
 	ENTRY0("starcross", "R17", "57b93a825b3011c8b4fbef5337c06fbc", 83792),
 	ENTRY0("starcross", "R17-821021", "ed1e62e1f0eb9d819be45c076c5729f7", 83792),
+	ENTRY0("starcross", "", "99b605d973984fbb3b5ec25c0f0dc8df", 84740),
 	ENTRY0("stationfall", "R107-870430", "cfadfb66afabaa2971ec9b4ae65266ca", 128934),
 	ENTRY0("suspect", "R14-000000", "94df6e910558b3c514e42f9a8d4075dd", 118692),
 	ENTRY0("suspect", "R14-841005", "3d759ccb19233f51968fa79d7374b393", 118692),
