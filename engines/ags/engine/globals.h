@@ -143,9 +143,9 @@ public:
 	 */
 
 	bool _handledErrorInEditor = false;
-	char _return_to_roomedit[30] = "\0";
-	char _return_to_room[150] = "\0";
-	char _quit_message[256] = "\0";
+	char _return_to_roomedit[30] = { '\0' };
+	char _return_to_room[150] = { '\0' };
+	char _quit_message[256] = { '\0' };
 
 	 /**@}*/
 
