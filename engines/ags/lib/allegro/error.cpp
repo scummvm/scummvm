@@ -24,7 +24,7 @@
 
 namespace AGS3 {
 
-int errnum;
-int *allegro_errno = &errnum;
+AllegroError errnum;
+AllegroError *allegro_errno = &errnum;
 
 } // namespace AGS3

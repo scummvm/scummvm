@@ -109,7 +109,7 @@ PALETTE default_palette = {
 
 
 int install_allegro() {
-	errnum = 0;
+	errnum = AL_NOERROR;
 	return 0;
 }
 

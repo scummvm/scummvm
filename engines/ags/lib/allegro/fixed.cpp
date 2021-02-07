@@ -30,12 +30,12 @@ fixed radtofix_r;
 
 fixed ftofix(double x) {
 	if (x > 32767.0) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return 0x7FFFFFFF;
 	}
 
 	if (x < -32767.0) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return (fixed) - 0x7FFFFFFF;
 	}
 
@@ -51,13 +51,13 @@ fixed fixadd(fixed x, fixed y) {
 
 	if (result >= 0) {
 		if ((x < 0) && (y < 0)) {
-			*allegro_errno = ERANGE;
+			*allegro_errno = AL_ERANGE;
 			return (fixed) - 0x7FFFFFFF;
 		} else
 			return result;
 	} else {
 		if ((x > 0) && (y > 0)) {
-			*allegro_errno = ERANGE;
+			*allegro_errno = AL_ERANGE;
 			return 0x7FFFFFFF;
 		} else
 			return result;
@@ -69,13 +69,13 @@ fixed fixsub(fixed x, fixed y) {
 
 	if (result >= 0) {
 		if ((x < 0) && (y > 0)) {
-			*allegro_errno = ERANGE;
+			*allegro_errno = AL_ERANGE;
 			return (fixed) - 0x7FFFFFFF;
 		} else
 			return result;
 	} else {
 		if ((x > 0) && (y < 0)) {
-			*allegro_errno = ERANGE;
+			*allegro_errno = AL_ERANGE;
 			return 0x7FFFFFFF;
 		} else
 			return result;
@@ -88,10 +88,10 @@ fixed fixmul(fixed x, fixed y) {
 	int64 lres = (lx * ly);
 
 	if (lres > 0x7FFFFFFF0000LL) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return 0x7FFFFFFF;
 	} else if (lres < -0x7FFFFFFF0000LL) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return 0x80000000;
 	} else {
 		int res = lres >> 16;
@@ -101,7 +101,7 @@ fixed fixmul(fixed x, fixed y) {
 
 fixed fixdiv(fixed x, fixed y) {
 	if (y == 0) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return (fixed)(x < 0) ? -0x7FFFFFFF : 0x7FFFFFFF;
 	} else
 		return ftofix(fixtof(x) / fixtof(y));
@@ -118,7 +118,7 @@ int fixfloor(fixed x) {
 
 int fixceil(fixed x) {
 	if (x > 0x7FFF0000) {
-		*allegro_errno = ERANGE;
+		*allegro_errno = AL_ERANGE;
 		return 0x7FFF;
 	}
 
@@ -152,7 +152,7 @@ fixed fixtan(fixed x) {
 
 fixed fixacos(fixed x) {
 	if ((x < -65536) || (x > 65536)) {
-		*allegro_errno = EDOM;
+		*allegro_errno = AL_EDOM;
 		return 0;
 	}
 
@@ -162,7 +162,7 @@ fixed fixacos(fixed x) {
 
 fixed fixasin(fixed x) {
 	if ((x < -65536) || (x > 65536)) {
-		*allegro_errno = EDOM;
+		*allegro_errno = AL_EDOM;
 		return 0;
 	}
 

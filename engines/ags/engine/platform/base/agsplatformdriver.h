@@ -73,7 +73,7 @@ struct AGSPlatformDriver
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
 	virtual int  GetLastSystemError() {
-		return errnum;
+		return (int)errnum;
 	}
 	// Get root directory for storing per-game shared data
 	virtual const char *GetAllUsersDataDirectory() {

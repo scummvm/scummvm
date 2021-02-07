@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
+#include "ags/lib/allegro/error.h"
 
 namespace AGS3 {
 
@@ -42,8 +43,6 @@ namespace AGS3 {
                                            (x)): (y)))
 
 #define AL_ID MKTAG
-
-extern int *allegro_errno;
 
 /**
  * info about a hardware driver
