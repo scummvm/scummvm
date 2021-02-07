@@ -23,6 +23,7 @@
 #include "engines/nancy/logic.h"
 #include "engines/nancy/action/recordtypes.h"
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/primaryvideo.h"
 
 namespace Nancy {
 

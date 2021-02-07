@@ -39,7 +39,7 @@ class Logic {
     friend class SceneManager;
 
 public:
-    Logic(NancyEngine* engine): _engine(engine) {}
+    Logic(NancyEngine* engine): _engine(engine), ignorePrimaryVideo(false) {}
     virtual ~Logic() {}
 
     bool addNewActionRecord(Common::SeekableReadStream &inputData);
@@ -47,6 +47,8 @@ public:
     Common::Array<ActionRecord *> &getActionRecords() { return _records; }
     ActionRecord * getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
     void clearActionRecords();
+
+    bool ignorePrimaryVideo; // hack
 
 protected:
     virtual ActionRecord *createActionRecord(uint16 type);

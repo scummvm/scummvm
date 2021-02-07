@@ -96,6 +96,8 @@ bool Logic::addNewActionRecord(Common::SeekableReadStream &inputData) {
 }
 
 void Logic::processActionRecords() {
+    ignorePrimaryVideo = false;
+    
     for (auto record : _records) {
         if (record->isDone) {
             continue;
@@ -264,7 +266,9 @@ void Logic::processActionRecords() {
         }
 
         if (record->isActive) {
-            record->execute(_engine);
+            if (record->type != 0x32 || !ignorePrimaryVideo) { 
+                record->execute(_engine);
+            }
         }
     }
 }

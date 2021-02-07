@@ -74,15 +74,22 @@ struct EventFlagsDesc {
     void execute(NancyEngine *engine);
 };
 
+// Describes a scene transition
+struct SceneChangeDesc {
+    uint16 sceneID = 0;
+    uint16 frameID = 0;
+    uint16 verticalOffset = 0;
+    bool doNotStartSound = false;
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 
-    uint16 sceneID = 0;
-    uint16 frameID = 0;
-    uint16 verticalOffset = 0;
-    bool doNotStartSound = false;
+    SceneChangeDesc sceneChange;
 };
 
 class HotMultiframeSceneChange : public SceneChange {
@@ -118,30 +125,6 @@ public:
     // TODO add a Start and Stop subclass
 
     byte type = 0;
-};
-
-class PlayPrimaryVideoChan0 : public ActionRecord {
-
-struct ConditionFlags {
-    byte unknown[5];
-};
-
-struct ResponseStruct {
-    Common::Array<ConditionFlags> conditionFlags;
-    byte unknown[0x1d8]; // TODO
-};
-
-struct FlagsStruct {
-    Common::Array<ConditionFlags> conditionFlags;
-    uint32 unknown; // TODO
-};
-
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte videoData[0x69C]; // TODO this is its own class
-    Common::Array<ResponseStruct> responses;
-    Common::Array<FlagsStruct> flagsStructs;
 };
 
 // Base class for PlaySecondaryVideoChan0 and PlaySecondaryVideoChan1

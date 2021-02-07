@@ -81,15 +81,12 @@ void View::read(Common::SeekableReadStream &stream) {
 // Takes a CURS chunk as input
 void Cursors::read(Common::SeekableReadStream &stream) {
     stream.seek(0);
-    for (uint i = 0; i < 85; ++i) {
-        Common::Rect &rect = rects[i];
-        rect.left = stream.readUint32LE();
-        rect.top = stream.readUint32LE();
-        rect.right = stream.readUint32LE();
-        rect.bottom = stream.readUint32LE();
+    for (uint i = 0; i < 84; ++i) {
+        readRect(stream, rects[i]);
     }
-    primaryVideoCursorX = stream.readUint16LE();
-    primaryVideoCursorY = stream.readUint16LE();
+    readRect(stream, primaryVideoInactiveZone);
+    primaryVideoInitialPos.x = stream.readUint16LE();
+    primaryVideoInitialPos.y = stream.readUint16LE();
 }
 
 void Inventory::read(Common::SeekableReadStream &stream) {
@@ -122,6 +119,47 @@ void Inventory::read(Common::SeekableReadStream &stream) {
         items[i].name = Common::String(itemName);
         items[i].oneTimeUse = stream.readUint16LE();
         readRect(stream, items[i].sourceRect);
+    }
+}
+
+void Font::read(Common::SeekableReadStream &stream) {
+    char name[10];
+    stream.read(name, 10);
+    imageName = name;
+
+    char desc[0x20];
+    stream.read(desc, 0x20);
+    description = desc;
+    stream.skip(8);
+    colorCoordsOffset.x = stream.readUint16LE();
+    colorCoordsOffset.y = stream.readUint16LE();
+
+    stream.skip(2);
+    spaceWidth = stream.readUint16LE();
+    stream.skip(2);
+    uppercaseOffset = stream.readUint16LE();
+    lowercaseOffset = stream.readUint16LE();
+    digitOffset = stream.readUint16LE();
+    periodOffset = stream.readUint16LE();
+    commaOffset = stream.readUint16LE();
+    equalitySignOffset = stream.readUint16LE();
+    colonOffset = stream.readUint16LE();
+    dashOffset = stream.readUint16LE();
+    questionMarkOffset = stream.readUint16LE();
+    exclamationMarkOffset = stream.readUint16LE();
+    percentOffset = stream.readUint16LE();
+    ampersandOffset = stream.readUint16LE();
+    asteriskOffset = stream.readUint16LE();
+    leftBracketOffset = stream.readUint16LE();
+    rightBracketOffset = stream.readUint16LE();
+    plusOffset = stream.readUint16LE();
+    apostropheOffset = stream.readUint16LE();
+    semicolonOffset = stream.readUint16LE();
+    slashOffset = stream.readUint16LE();
+
+    for (uint i = 0; i < 78; ++i) {
+        symbolRects.push_back(Common::Rect());
+        readRect(stream, symbolRects[i]);
     }
 }
 
