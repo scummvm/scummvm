@@ -238,7 +238,12 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 template<class uintX> void SoftRenderSurface<uintX>::Blit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
 	Common::Rect srect = Common::Rect(sx, sy, sx + w, sy + h);
 	Common::Point dpoint = Common::Point(_ox + dx, _oy + dy);
-	_surface->blitFrom(*tex, srect, dpoint);
+	if (alpha_blend) {
+		_surface->transBlitFrom(*tex, srect, dpoint);
+	} 
+	else {
+		_surface->blitFrom(*tex, srect, dpoint);
+	}
 }
 
 

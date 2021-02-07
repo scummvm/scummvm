@@ -136,7 +136,6 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	uint32 borderColor = PF_RGBA.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, PF_RGBA);
-	texture->setTransparentColor(0);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
 	Std::list<PositionedText>::const_iterator iter;
@@ -155,12 +154,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			// When not in antialiased mode, use a paletted surface where '1' is
 			// used for pixels of the text
 			textSurf.create(resultWidth, lineHeight, Graphics::PixelFormat::createFormatCLUT8());
-			texture->setTransparentColor(0);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, 1);
 		} else {
 			// Use a high color surface with the specified _color color for text
 			textSurf.create(resultWidth, lineHeight, PF_RGBA);
-			texture->setTransparentColor(0);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, _color);
 		};
 
