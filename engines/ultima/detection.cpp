@@ -76,6 +76,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_FOOTSTEPS,
+		{
+			_s("Play foot step sounds"),
+			_s("Plays sound when the player moves."),
+			"footsteps",
+			true
+		}
+	},
     AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
