@@ -3405,72 +3405,88 @@ bool AtMouseClick(uint16 TheObj) {
 	switch (TheObj) {
 	case oPORTAA13:
 		if ((mright) && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
-			if (_characterGoToPosition != 4) goToPosition(4);
+			if (_characterGoToPosition != 4)
+				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oDIVANO14:
 		if (mleft) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oSCAFFALE1D:
 		if (mright) {
-			if (_characterGoToPosition != 9) goToPosition(9);
+			if (_characterGoToPosition != 9)
+				goToPosition(9);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oDIVANOR4A:
 		if (mright) {
-			if (_characterGoToPosition != 1) goToPosition(1);
+			if (_characterGoToPosition != 1)
+				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oPORTAC21:
 		if ((UseWith[USED] == iPISTOLA15) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 1) goToPosition(1);
+			if (_characterGoToPosition != 1)
+				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oTUBO21:
 		if ((UseWith[USED] == oRAMPINO21) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 4) goToPosition(4);
+			if (_characterGoToPosition != 4)
+				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oCAMPO23:
 		if ((UseWith[USED] == oCAVIE23) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oTASTO2F:
 		if ((UseWith[USED] == iTELECOMANDO2G) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 9) goToPosition(9);
+			if (_characterGoToPosition != 9)
+				goToPosition(9);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3478,90 +3494,110 @@ bool AtMouseClick(uint16 TheObj) {
 	case oSAMA33:
 	case oSERRATURA33:
 		if ((UseWith[USED] == oTUBOT33) && (_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 4) goToPosition(4);
+			if (_characterGoToPosition != 4)
+				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oFINESTRA33:
 		if (mleft) {
-			if (_characterGoToPosition != 7) goToPosition(7);
+			if (_characterGoToPosition != 7)
+				goToPosition(7);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oPRESA35:
 		if (!(SemUseWithStarted)) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oTRIPLA35:
 		if (!(SemUseWithStarted) && (mleft)) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oPORTALC36:
 		if ((UseWith[USED] == iSTETOSCOPIO) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 8) goToPosition(8);
+			if (_characterGoToPosition != 8)
+				goToPosition(8);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oSERBATOIOA2G:
 		if ((UseWith[USED] == iCANDELOTTO) && (InvObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA)  && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 6) goToPosition(6);
+			if (_characterGoToPosition != 6)
+				goToPosition(6);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oRAGNO41:
 		if ((UseWith[USED] == iMARTELLO) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 1) goToPosition(1);
+			if (_characterGoToPosition != 1)
+				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oTAMBURO43:
 		if ((UseWith[USED] == iMAZZA) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 5) goToPosition(5);
+			if (_characterGoToPosition != 5)
+				goToPosition(5);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oLUCCHETTO53:
 		if ((UseWith[USED] == iLASER35) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oPORTA58C55:
 		if ((UseWith[USED] == iCHIAVI) && (SemUseWithStarted)) {
-			if (_characterGoToPosition != 2) goToPosition(2);
+			if (_characterGoToPosition != 2)
+				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position) goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != _obj[TheObj]._position)
+				goToPosition(_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
