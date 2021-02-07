@@ -211,7 +211,6 @@ MODULE_OBJS = \
     engine/ac/route_finder_impl.o \
     engine/ac/route_finder_impl_legacy.o \
     engine/ac/scriptcontainers.o \
-    engine/ac/sys_events.o \
     engine/ac/region.o \
     engine/ac/richgamemedia.o \
     engine/ac/room.o \
