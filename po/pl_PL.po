@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-02 05:52+0000\n"
+"POT-Creation-Date: 2021-02-07 12:07+0000\n"
 "PO-Revision-Date: 2020-09-29 17:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "W górę"
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:370
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
-#: gui/options.cpp:1946 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:68
+#: gui/options.cpp:1946 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
 #: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
@@ -79,7 +79,7 @@ msgstr "W górę"
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
-#: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
+#: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
 msgstr "Anuluj"
@@ -131,7 +131,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
+#: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
@@ -143,7 +143,7 @@ msgstr "Tak"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
+#: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
@@ -152,7 +152,7 @@ msgstr "Tak"
 msgid "No"
 msgstr "Nie"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:567
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:559
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM nie może otworzyć katalogu!"
 
@@ -165,13 +165,13 @@ msgstr ""
 "jednakowej nazwie."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:371
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:517
-#: gui/launcher.cpp:521 gui/massadd.cpp:89 gui/options.cpp:1948
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:509
+#: gui/launcher.cpp:513 gui/massadd.cpp:89 gui/options.cpp:1948
 #: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:186
+#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
 #: engines/scumm/scumm.cpp:1931 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
@@ -277,7 +277,6 @@ msgstr "Silnik"
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
 #: backends/graphics/sdl/sdl-graphics.cpp:374
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
-#: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Grafika"
 
@@ -472,7 +471,7 @@ msgstr "Autor:"
 msgid "Notes:"
 msgstr "Uwagi:"
 
-#: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
+#: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
 msgid "Ok"
 msgstr "Ok"
 
@@ -580,23 +579,23 @@ msgid ""
 msgstr ""
 "Na pewno chcesz przywrócić domyślne wartości wszystkich ustawień FluidSynth?"
 
-#: gui/gui-manager.cpp:122
+#: gui/gui-manager.cpp:113
 msgid "GUI"
 msgstr "Interfejs graficzny"
 
-#: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "Interakcja"
 
-#: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Zamknij"
 
-#: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -608,7 +607,7 @@ msgstr "Zamknij"
 msgid "Up"
 msgstr "Do góry"
 
-#: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -620,7 +619,7 @@ msgstr "Do góry"
 msgid "Down"
 msgstr "W dół"
 
-#: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -632,7 +631,7 @@ msgstr "W dół"
 msgid "Left"
 msgstr "W lewo"
 
-#: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -769,7 +768,7 @@ msgstr "~U~suń grę"
 msgid "Search in game list"
 msgstr "Wyszukaj grę na liście"
 
-#: gui/launcher.cpp:185 gui/launcher.cpp:786
+#: gui/launcher.cpp:185 gui/launcher.cpp:778
 msgid "Search:"
 msgstr "Szukaj:"
 
@@ -782,48 +781,48 @@ msgstr "Wczytaj grę:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
-#: engines/scumm/dialogs.cpp:182 engines/tsage/scenes.cpp:601
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
 #: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Wczytaj"
 
-#: gui/launcher.cpp:386
+#: gui/launcher.cpp:378
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "Z tego katalogu nie można jeszcze korzystać, trwa pobieranie!"
 
-#: gui/launcher.cpp:397
+#: gui/launcher.cpp:389
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 "Chcesz uruchomić masowy detektor gier? Może dodać wiele tytułów do listy."
 
-#: gui/launcher.cpp:419
+#: gui/launcher.cpp:411
 msgid "Do you really want to remove this game configuration?"
 msgstr "Na pewno chcesz usunąć tę grę z konfiguracji?"
 
-#: gui/launcher.cpp:461
+#: gui/launcher.cpp:453
 msgid "Do you want to load saved game?"
 msgstr "Chcesz wczytać zapis stanu gry?"
 
-#: gui/launcher.cpp:517
+#: gui/launcher.cpp:509
 msgid "This game does not support loading games from the launcher."
 msgstr "Ta gra nie wspiera wczytywania z launchera."
 
-#: gui/launcher.cpp:521
+#: gui/launcher.cpp:513
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM nie znalazł silnika zdolnego uruchomić wybraną grę!"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:578
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM nie znalazł żadnej gry w tym katalogu!"
 
-#: gui/launcher.cpp:601
+#: gui/launcher.cpp:593
 msgid "Unknown variant"
 msgstr "Nieznany wariant gry"
 
-#: gui/launcher.cpp:607
+#: gui/launcher.cpp:599
 msgid "Pick the game:"
 msgstr "Wybierz grę:"
 
@@ -831,21 +830,21 @@ msgstr "Wybierz grę:"
 msgid "... progress ..."
 msgstr "... postęp ..."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:257
 msgid "Scan complete!"
 msgstr "Skanowanie zakończone!"
 
-#: gui/massadd.cpp:269
+#: gui/massadd.cpp:260
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr "Wykryto %d nową grę, zignorowano %d poprzednio dodanych."
 
-#: gui/massadd.cpp:273
+#: gui/massadd.cpp:264
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Przeskanowano %d katalog..."
 
-#: gui/massadd.cpp:276
+#: gui/massadd.cpp:267
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Wykryto %d nową grę, zignorowano %d poprzednio dodanych..."
@@ -1721,34 +1720,34 @@ msgstr ""
 "Proszę sprawdzić połączenie z Internetem."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
-#: gui/predictivedialog.cpp:106
+#: gui/predictivedialog.cpp:102
 msgid "#  next"
 msgstr "#  następny"
 
-#: gui/predictivedialog.cpp:107
+#: gui/predictivedialog.cpp:103
 msgid "add"
 msgstr "dodaj"
 
-#: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:189
+#: gui/predictivedialog.cpp:108 gui/predictivedialog.cpp:185
 msgid "Delete char"
 msgstr "Usuń znak"
 
-#: gui/predictivedialog.cpp:117 gui/predictivedialog.cpp:193
+#: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:189
 msgid "<"
 msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
-#: gui/predictivedialog.cpp:119 gui/predictivedialog.cpp:606
+#: gui/predictivedialog.cpp:115 gui/predictivedialog.cpp:602
 msgid "*  Pre"
 msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
-#: gui/predictivedialog.cpp:609
+#: gui/predictivedialog.cpp:605
 msgid "*  Num"
 msgstr "*  Num"
 
 #. I18N: 'Abc' means Latin alphabet input
-#: gui/predictivedialog.cpp:612
+#: gui/predictivedialog.cpp:608
 msgid "*  Abc"
 msgstr "*  Abc"
 
@@ -1886,7 +1885,7 @@ msgstr "Wyłączona grafika"
 msgid "Standard renderer"
 msgstr "Standardowy renderer"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:681
+#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Standardowy"
 
@@ -2145,7 +2144,7 @@ msgstr "Zapis:"
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1075
-#: engines/scumm/dialogs.cpp:181 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
@@ -2577,7 +2576,7 @@ msgstr "   Na pewno chcesz wyjść?   "
 #: backends/events/default/default-events.cpp:326
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
-#: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
+#: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
 #: engines/zvision/metaengine.cpp:204 engines/zvision/metaengine.cpp:222
 msgid "Quit"
@@ -2882,28 +2881,32 @@ msgstr "Prawy Bumper RB"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/ds/osystem_ds.cpp:148 backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Up"
 msgstr "Krzyżak w górę"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
+#: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Down"
 msgstr "Krzyżak w dół"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
+#: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Left"
 msgstr "Krzyżak w lewo"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
-#: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
+#: backends/platform/ds/osystem_ds.cpp:151 backends/platform/sdl/ps3/ps3.cpp:55
+#: backends/platform/sdl/psp2/psp2.cpp:56
 #: backends/platform/sdl/switch/switch.cpp:52
 msgid "D-pad Right"
 msgstr "Krzyżak w prawo"
@@ -3148,19 +3151,15 @@ msgstr ""
 msgid "Uploaded successfully!"
 msgstr "DVD zamontowane pomyślnie"
 
-#: backends/platform/3ds/options-dialog.cpp:45
-#: backends/platform/ds/arm9/source/dsoptions.cpp:56
-#: engines/scumm/dialogs.cpp:284
+#: backends/platform/3ds/options-dialog.cpp:45 engines/scumm/dialogs.cpp:280
 msgid "~C~lose"
 msgstr "~Z~amknij"
 
 #: backends/platform/3ds/options-dialog.cpp:48
-#: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
 msgstr "Wyświetl kursor myszy"
 
 #: backends/platform/3ds/options-dialog.cpp:51
-#: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
 msgstr "Przyciąganie do krawędzi"
 
@@ -3191,37 +3190,39 @@ msgid "Both"
 msgstr "Oba"
 
 #: backends/platform/3ds/osystem-events.cpp:48
+#: backends/platform/ds/osystem_ds.cpp:140
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:49
+#: backends/platform/ds/osystem_ds.cpp:141
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:50
+#: backends/platform/ds/osystem_ds.cpp:142
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:51
+#: backends/platform/ds/osystem_ds.cpp:143
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/ds/arm9/source/scummhelp.cpp:47
-#: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
+#: backends/platform/ds/osystem_ds.cpp:144 backends/platform/sdl/ps3/ps3.cpp:45
+#: backends/platform/sdl/psp2/psp2.cpp:49
 #, fuzzy
 msgid "Select"
 msgstr "Akcja/Wybór"
 
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/ds/arm9/source/scummhelp.cpp:46
-#: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
+#: backends/platform/ds/osystem_ds.cpp:145 backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/sdl/psp2/psp2.cpp:50
 #, fuzzy
 msgid "Start"
 msgstr "~S~tart"
@@ -3237,6 +3238,7 @@ msgid "ZR"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:47
 #, fuzzy
@@ -3244,6 +3246,7 @@ msgid "L"
 msgstr "L3"
 
 #: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:48
 #, fuzzy
@@ -3261,6 +3264,7 @@ msgid "C-Pad Y"
 msgstr "Krzyżak w górę"
 
 #: backends/platform/3ds/osystem-events.cpp:72
+#: backends/platform/ds/osystem_ds.cpp:160
 msgid "Touch"
 msgstr ""
 
@@ -3332,231 +3336,19 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:57
-msgid "ScummVM Main Menu"
-msgstr "Główne menu ScummVM"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:61
+#: backends/platform/ds/ds-graphics.cpp:219
 #, fuzzy
-msgid "Controls"
-msgstr "Kontrola"
+#| msgid "Upscale videos"
+msgid "Unscaled"
+msgstr "Powiększaj filmy"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:63
-msgid "~L~eft handed mode"
-msgstr "~T~ryb dla leworęcznych"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:64
-msgid "~I~ndy fight controls"
-msgstr "~S~terowanie walczącym Indym"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:68
-msgid "Touch X Offset"
-msgstr "Przesunięcie X ekranu do dotykania"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:75
-msgid "Touch Y Offset"
-msgstr "Przesunięcie Y ekranu do dotykania"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:87
-msgid "Use laptop trackpad-style cursor control"
-msgstr "Użyj kursora w stylu gładzika laptopa do sterowania"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:88
-msgid "Tap for left click, double tap right click"
-msgstr "Puknij raz, aby kliknąć LPM; dwa razy, aby kliknąć PPM"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:90
-msgid "Sensitivity"
-msgstr "Czułość"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:99
-msgid "Initial top screen scale:"
-msgstr "Wstępna skala górnego ekranu:"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:105
-msgid "Main screen scaling:"
-msgstr "Skalowanie głównego ekranu:"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:107
+#: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Skalowanie sprzętowe (szybsze, ale niższej jakości)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:108
+#: backends/platform/ds/ds-graphics.cpp:221
 msgid "Software scale (good quality, but slower)"
 msgstr "Skalowanie programowe (wyższej jakości, ale wolniejsze)"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:109
-msgid "Unscaled (you must scroll left and right)"
-msgstr "Nieskalowany (musisz przewijać w lewo i prawo)"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:111
-msgid "Brightness:"
-msgstr "Jasność:"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:119
-msgid "General"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:121
-msgid "High quality audio (slower) (reboot)"
-msgstr "Dźwięk wysokiej jakości (wolniejszy) (restart)"
-
-#: backends/platform/ds/arm9/source/dsoptions.cpp:122
-msgid "Disable power off"
-msgstr "Nie wyłączaj zasilania"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:41
-msgid "DS Controls (right handed):"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:42
-#: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#, fuzzy
-msgid "Pad Left"
-msgstr "Krzyżak w lewo"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:42
-#: backends/platform/ds/arm9/source/scummhelp.cpp:59
-#, fuzzy
-msgid "Left mouse button"
-msgstr "Lewy przycisk myszy"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:43
-#: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#, fuzzy
-msgid "Pad Right"
-msgstr "Krzyżak w prawo"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:43
-#: backends/platform/ds/arm9/source/scummhelp.cpp:60
-#, fuzzy
-msgid "Right mouse button"
-msgstr "Prawy przycisk myszy"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:44
-#: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#: backends/platform/ds/arm9/source/scummhelp.cpp:78
-#, fuzzy
-msgid "Pad Up"
-msgstr "Krzyżak w górę"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:44
-#: backends/platform/ds/arm9/source/scummhelp.cpp:61
-msgid "Mouse hover mode (no click)"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:45
-#: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
-msgid "Pad Down"
-msgstr "Krzyżak w dół"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:45
-#: backends/platform/ds/arm9/source/scummhelp.cpp:62
-#, fuzzy
-msgid "Skip dialog line (some games)"
-msgstr "Pomiń linię"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:46
-#: backends/platform/ds/arm9/source/scummhelp.cpp:63
-#, fuzzy
-msgid "Pause/Game menu"
-msgstr "Menu gry"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:47
-#: backends/platform/ds/arm9/source/scummhelp.cpp:64
-#, fuzzy
-msgid "DS Options menu"
-msgstr "Opcje"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:48
-#: backends/platform/ds/arm9/source/scummhelp.cpp:65
-#, fuzzy
-msgid "Skip cutscenes"
-msgstr "Pomiń scenkę"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:49
-#, fuzzy
-msgid "Switch screens"
-msgstr "Zmiana postaci:"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:50
-#: backends/platform/ds/arm9/source/scummhelp.cpp:67
-#, fuzzy
-msgid "Show/hide debug console"
-msgstr "Schowaj / pokaż konsolę"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:51
-#: backends/platform/ds/arm9/source/scummhelp.cpp:66
-#, fuzzy
-msgid "Show/hide keyboard"
-msgstr "Pokaż klawiaturę"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:52
-#: backends/platform/ds/arm9/source/scummhelp.cpp:69
-msgid "Scroll current touch screen view"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:53
-#: backends/platform/ds/arm9/source/scummhelp.cpp:70
-#, fuzzy
-msgid "Zoom in/out"
-msgstr "Przybliż"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:58
-msgid "DS Controls (left handed):"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:68
-#, fuzzy
-msgid "Swap screens"
-msgstr "Zapisz zrzut ekranu"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:75
-#, fuzzy
-msgid "Indiana Jones Fight controls:"
-msgstr "~S~terowanie walczącym Indym"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:76
-#: engines/hdb/metaengine.cpp:205
-#, fuzzy
-msgid "Move left"
-msgstr "Ślizg w lewo"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:77
-#: engines/hdb/metaengine.cpp:211
-#, fuzzy
-msgid "Move right"
-msgstr "Ślizg w prawo"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:78
-msgid "High guard"
-msgstr ""
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:79
-#, fuzzy
-msgid "Guard down"
-msgstr "Środkowe uderzenie"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:80
-#, fuzzy
-msgid "Guard middle"
-msgstr "Środkowe uderzenie"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:81 engines/scumm/help.cpp:312
-msgid "Punch high"
-msgstr "Wysokie uderzenie"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:82 engines/scumm/help.cpp:313
-msgid "Punch middle"
-msgstr "Środkowe uderzenie"
-
-#: backends/platform/ds/arm9/source/scummhelp.cpp:83 engines/scumm/help.cpp:314
-msgid "Punch low"
-msgstr "Niskie uderzenie"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
@@ -4845,6 +4637,16 @@ msgstr "Ruch wstecz"
 msgid "Move down"
 msgstr "Przerwij pobieranie"
 
+#: engines/hdb/metaengine.cpp:205
+#, fuzzy
+msgid "Move left"
+msgstr "Ślizg w lewo"
+
+#: engines/hdb/metaengine.cpp:211
+#, fuzzy
+msgid "Move right"
+msgstr "Ślizg w prawo"
+
 #: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
@@ -4967,14 +4769,14 @@ msgstr "Wkompilowane funkcje:"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:138
+#: engines/ultima/ultima8/meta_engine.cpp:137
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Kliknięcie LPM"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:144
+#: engines/ultima/ultima8/meta_engine.cpp:143
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "Kliknięcie PPM"
@@ -5985,119 +5787,119 @@ msgstr "Użyj alternatywnej palety"
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:169
+#: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
 msgstr "Włóż dysk %c i naciśnij przycisk, aby kontynuować."
 
-#: engines/scumm/dialogs.cpp:170
+#: engines/scumm/dialogs.cpp:166
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
 msgstr "Nie znaleziono %s, (%c%d). Naciśnij przycisk."
 
-#: engines/scumm/dialogs.cpp:171
+#: engines/scumm/dialogs.cpp:167
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr "Błąd podczas odczytu dysku %c, (%c%d). Naciśnij przycisk."
 
-#: engines/scumm/dialogs.cpp:172
+#: engines/scumm/dialogs.cpp:168
 msgid "Game Paused.  Press SPACE to Continue."
 msgstr "Gra wstrzymana. Naciśnij spację, aby wznowić."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:176
+#: engines/scumm/dialogs.cpp:172
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Na pewno chcesz zrestartować?  (T/N)T"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:178
+#: engines/scumm/dialogs.cpp:174
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "Na pewno chcesz wyjść?  (T/N)T"
 
-#: engines/scumm/dialogs.cpp:183
+#: engines/scumm/dialogs.cpp:179
 msgid "Play"
 msgstr "Uruchom"
 
-#: engines/scumm/dialogs.cpp:187
+#: engines/scumm/dialogs.cpp:183
 msgid "Insert save/load game disk"
 msgstr "Włóż dysk zapisu"
 
-#: engines/scumm/dialogs.cpp:188
+#: engines/scumm/dialogs.cpp:184
 msgid "You must enter a name"
 msgstr "Musisz podać nazwę"
 
-#: engines/scumm/dialogs.cpp:189
+#: engines/scumm/dialogs.cpp:185
 msgid "The game was NOT saved (disk full?)"
 msgstr "NIE zapisano stanu gry (brak miejsca?)"
 
-#: engines/scumm/dialogs.cpp:190
+#: engines/scumm/dialogs.cpp:186
 msgid "The game was NOT loaded"
 msgstr "NIE wczytano gry"
 
-#: engines/scumm/dialogs.cpp:191
+#: engines/scumm/dialogs.cpp:187
 #, c-format
 msgid "Saving '%s'"
 msgstr "Zapisywanie '%s'"
 
-#: engines/scumm/dialogs.cpp:192
+#: engines/scumm/dialogs.cpp:188
 #, c-format
 msgid "Loading '%s'"
 msgstr "Wczytywanie '%s'"
 
-#: engines/scumm/dialogs.cpp:193
+#: engines/scumm/dialogs.cpp:189
 msgid "Name your SAVE game"
 msgstr "Podaj nazwę zapisu"
 
-#: engines/scumm/dialogs.cpp:194
+#: engines/scumm/dialogs.cpp:190
 msgid "Select a game to LOAD"
 msgstr "Wybierz zapis do wczytania"
 
-#: engines/scumm/dialogs.cpp:195
+#: engines/scumm/dialogs.cpp:191
 msgid "Game title)"
 msgstr "Tytuł gry)"
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:281
+#: engines/scumm/dialogs.cpp:277
 msgid "~P~revious"
 msgstr "~P~oprzednia"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:283
+#: engines/scumm/dialogs.cpp:279
 msgid "~N~ext"
 msgstr "~N~astępna"
 
-#: engines/scumm/dialogs.cpp:620
+#: engines/scumm/dialogs.cpp:611
 msgid "Speech Only"
 msgstr "Tylko mowa"
 
-#: engines/scumm/dialogs.cpp:621
+#: engines/scumm/dialogs.cpp:612
 msgid "Speech and Subtitles"
 msgstr "Mowa i napisy"
 
-#: engines/scumm/dialogs.cpp:622
+#: engines/scumm/dialogs.cpp:613
 msgid "Subtitles Only"
 msgstr "Tylko napisy"
 
-#: engines/scumm/dialogs.cpp:630
+#: engines/scumm/dialogs.cpp:621
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Mowa i napisy"
 
-#: engines/scumm/dialogs.cpp:676
+#: engines/scumm/dialogs.cpp:667
 msgid "Select a Proficiency Level."
 msgstr "Wybierz poziom umiejętności."
 
-#: engines/scumm/dialogs.cpp:678
+#: engines/scumm/dialogs.cpp:669
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Pomocy szukaj w instrukcji dołączonej do Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:682
+#: engines/scumm/dialogs.cpp:673
 msgid "Practice"
 msgstr "Trening"
 
-#: engines/scumm/dialogs.cpp:683
+#: engines/scumm/dialogs.cpp:674
 msgid "Expert"
 msgstr "Ekspert"
 
@@ -6543,6 +6345,18 @@ msgstr "Środkowy blok"
 #: engines/scumm/help.cpp:311
 msgid "Block low"
 msgstr "Dolny blok"
+
+#: engines/scumm/help.cpp:312
+msgid "Punch high"
+msgstr "Wysokie uderzenie"
+
+#: engines/scumm/help.cpp:313
+msgid "Punch middle"
+msgstr "Środkowe uderzenie"
+
+#: engines/scumm/help.cpp:314
+msgid "Punch low"
+msgstr "Niskie uderzenie"
 
 #: engines/scumm/help.cpp:316
 msgid "Sucker punch"
@@ -7298,19 +7112,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "Zmień postać"
 
-#: engines/ultima/ultima8/meta_engine.cpp:131
+#: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:131
+#: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:178
+#: engines/ultima/ultima8/meta_engine.cpp:177
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:195
+#: engines/ultima/ultima8/meta_engine.cpp:194
 #, fuzzy
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII"
@@ -8077,6 +7891,124 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "ScummVM Main Menu"
+#~ msgstr "Główne menu ScummVM"
+
+#, fuzzy
+#~ msgid "Controls"
+#~ msgstr "Kontrola"
+
+#~ msgid "~L~eft handed mode"
+#~ msgstr "~T~ryb dla leworęcznych"
+
+#~ msgid "~I~ndy fight controls"
+#~ msgstr "~S~terowanie walczącym Indym"
+
+#~ msgid "Touch X Offset"
+#~ msgstr "Przesunięcie X ekranu do dotykania"
+
+#~ msgid "Touch Y Offset"
+#~ msgstr "Przesunięcie Y ekranu do dotykania"
+
+#~ msgid "Use laptop trackpad-style cursor control"
+#~ msgstr "Użyj kursora w stylu gładzika laptopa do sterowania"
+
+#~ msgid "Tap for left click, double tap right click"
+#~ msgstr "Puknij raz, aby kliknąć LPM; dwa razy, aby kliknąć PPM"
+
+#~ msgid "Sensitivity"
+#~ msgstr "Czułość"
+
+#~ msgid "Initial top screen scale:"
+#~ msgstr "Wstępna skala górnego ekranu:"
+
+#~ msgid "Main screen scaling:"
+#~ msgstr "Skalowanie głównego ekranu:"
+
+#~ msgid "Unscaled (you must scroll left and right)"
+#~ msgstr "Nieskalowany (musisz przewijać w lewo i prawo)"
+
+#~ msgid "Brightness:"
+#~ msgstr "Jasność:"
+
+#~ msgid "High quality audio (slower) (reboot)"
+#~ msgstr "Dźwięk wysokiej jakości (wolniejszy) (restart)"
+
+#~ msgid "Disable power off"
+#~ msgstr "Nie wyłączaj zasilania"
+
+#, fuzzy
+#~ msgid "Pad Left"
+#~ msgstr "Krzyżak w lewo"
+
+#, fuzzy
+#~ msgid "Left mouse button"
+#~ msgstr "Lewy przycisk myszy"
+
+#, fuzzy
+#~ msgid "Pad Right"
+#~ msgstr "Krzyżak w prawo"
+
+#, fuzzy
+#~ msgid "Right mouse button"
+#~ msgstr "Prawy przycisk myszy"
+
+#, fuzzy
+#~ msgid "Pad Up"
+#~ msgstr "Krzyżak w górę"
+
+#, fuzzy
+#~ msgid "Pad Down"
+#~ msgstr "Krzyżak w dół"
+
+#, fuzzy
+#~ msgid "Skip dialog line (some games)"
+#~ msgstr "Pomiń linię"
+
+#, fuzzy
+#~ msgid "Pause/Game menu"
+#~ msgstr "Menu gry"
+
+#, fuzzy
+#~ msgid "DS Options menu"
+#~ msgstr "Opcje"
+
+#, fuzzy
+#~ msgid "Skip cutscenes"
+#~ msgstr "Pomiń scenkę"
+
+#, fuzzy
+#~ msgid "Switch screens"
+#~ msgstr "Zmiana postaci:"
+
+#, fuzzy
+#~ msgid "Show/hide debug console"
+#~ msgstr "Schowaj / pokaż konsolę"
+
+#, fuzzy
+#~ msgid "Show/hide keyboard"
+#~ msgstr "Pokaż klawiaturę"
+
+#, fuzzy
+#~ msgid "Zoom in/out"
+#~ msgstr "Przybliż"
+
+#, fuzzy
+#~ msgid "Swap screens"
+#~ msgstr "Zapisz zrzut ekranu"
+
+#, fuzzy
+#~ msgid "Indiana Jones Fight controls:"
+#~ msgstr "~S~terowanie walczącym Indym"
+
+#, fuzzy
+#~ msgid "Guard down"
+#~ msgstr "Środkowe uderzenie"
+
+#, fuzzy
+#~ msgid "Guard middle"
+#~ msgstr "Środkowe uderzenie"
 
 #~ msgid "Do you really want to return to the Launcher?"
 #~ msgstr "Na pewno chcesz powrócić do launchera?"
