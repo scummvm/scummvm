@@ -395,6 +395,27 @@ bool Scene::loadSceneLBA1() {
 		point->z = stream.readUint16LE();
 	}
 
+#if 0
+	// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
+	switch (currentSceneIdx) {
+	case LBA1SceneId::Hamalayi_Mountains_landing_place:
+		assert(sceneNumActors >= 22);
+		_sceneActors[21].x = _sceneActors[21].collisionX = 0x1b00;
+		_sceneActors[21].z = _sceneActors[21].collisionZ = 0x300;
+		break;
+	case Principal_Island_outside_the_fortress:
+		assert(sceneNumActors >= 30);
+		_sceneActors[29].z = _sceneActors[29].collisionZ = 0x703;
+		break;
+	case Tippet_Island_Secret_passage_scene_1:
+		(ushort*)puVar4[78] = 0xe20;
+		break;
+	case Principal_Island_inside_the_fortress:
+		(ushort*)puVar4[140] = 0x32;
+		break;
+	}
+#endif
+
 	return true;
 }
 
