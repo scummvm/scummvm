@@ -66,6 +66,7 @@ SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, int loop) {
 }
 
 SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop) {
+#ifdef USE_MAD
 	Common::SeekableReadStream *data = get_cached_sound(asset_name);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(data, DisposeAfterUse::YES);
@@ -73,6 +74,9 @@ SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop) 
 	} else {
 		return nullptr;
 	}
+#else
+	return nullptr;
+#endif
 }
 
 SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
