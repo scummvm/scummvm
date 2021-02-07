@@ -304,7 +304,8 @@ MODULE_OBJS = \
 	plugins/ags_sprite_font/sprite_font.o \
 	plugins/ags_sprite_font/sprite_font_renderer.o \
 	plugins/ags_sprite_font/variable_width_font.o \
-	plugins/ags_sprite_font/variable_width_sprite_font.o
+	plugins/ags_sprite_font/variable_width_sprite_font.o \
+	plugins/ags_steam/ags_steam.o
 
 ifdef ENABLE_AGS_SCANNER
 MODULE_OBJS += \

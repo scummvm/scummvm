@@ -140,7 +140,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "qfg2agdi", "Quest for Glory II: Trial By Fire" },
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
 
-	// Comercial games
+	// Commercial games
+	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
 	{ "blackwell3", "The Blackwell Convergence" },
@@ -1437,7 +1438,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),
 	ENGLISH_ENTRY("qfg2agdi", "Game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
 
-	// Comercial games
+	// Commercial games
+	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG

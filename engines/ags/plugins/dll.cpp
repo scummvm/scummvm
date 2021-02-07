@@ -28,6 +28,7 @@
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
+#include "ags/plugins/ags_steam/ags_steam.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -41,7 +42,7 @@ void *dlopen(const char *filename) {
 	// Check for if the game specifies a specific plugin version for this game
 	int version = 0;
 	for (const ::AGS::PluginVersion *v = ::AGS::g_vm->getNeededPlugins();
-	        v->_plugin; ++v) {
+	        v && v->_plugin; ++v) {
 		if (Common::String::format("lib%s.so", v->_plugin).equalsIgnoreCase(filename)) {
 			version = v->_version;
 			break;
@@ -69,6 +70,9 @@ void *dlopen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("libAGSSpriteFont.so"))
 		return new AGSSpriteFont::AGSSpriteFont();
+
+	if (fname.equalsIgnoreCase("libagsteam.so"))
+		return new AGSSteam::AGSSteam();
 
 	return nullptr;
 }

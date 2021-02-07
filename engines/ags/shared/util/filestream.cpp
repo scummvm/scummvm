@@ -194,8 +194,14 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
 			_outSave = g_system->getSavefileManager()->openForSaving(
 				file_name + strlen(SAVE_FOLDER_PREFIX), false);
-		} else if (file_name == "warnings.log") {
-			_outSave = g_system->getSavefileManager()->openForSaving(file_name, false);
+		} else if (!file_name.CompareRightNoCase(".log")) {
+			Common::String fname = file_name;
+			if (fname.hasPrefix("./"))
+				fname = fname.substr(2);
+			else if (fname.hasPrefix("/"))
+				fname.deleteChar(0);
+
+			_outSave = g_system->getSavefileManager()->openForSaving(fname, false);
 		} else {
 			error("Creating files is only supported for savegames");
 		}
