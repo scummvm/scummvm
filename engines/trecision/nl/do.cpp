@@ -3328,7 +3328,7 @@ void doScript() {
 	case ME_SETSEM:
 		switch (TheMessage->wparam1) {
 		case C_SEMDIAG:
-//F					SemDialogActive = (LLBOOL)TheMessage->wparam2;
+//F					SemDialogActive = TheMessage->wparam2 == 0 ? 0 : 1;
 			break;
 		}
 		break;

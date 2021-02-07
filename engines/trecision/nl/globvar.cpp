@@ -54,8 +54,6 @@ message supereventmessage;
 
 message *TheMessage;
 
-LLBOOL SuperEventActivate;
-
 pqueue Game;
 pqueue Anim;
 pqueue Homo;

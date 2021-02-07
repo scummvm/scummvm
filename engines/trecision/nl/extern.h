@@ -51,8 +51,6 @@ extern message supereventmessage;
 
 extern message *TheMessage;
 
-extern LLBOOL SuperEventActivate;
-
 extern pqueue Game;
 extern pqueue Anim;
 extern pqueue Homo;

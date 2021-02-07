@@ -193,11 +193,6 @@ SUPEREVENT:
 		doScript();
 		break;
 	}
-
-	if (SuperEventActivate) {
-		SuperEventActivate = false;
-		goto SUPEREVENT;
-	}
 }
 
 /*-------------------------------------------------------------------------*/
