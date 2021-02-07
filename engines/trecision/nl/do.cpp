@@ -490,7 +490,8 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 	}
 
-	if ((printsent) && (_obj[TheObj]._examine)) CharacterSay(_obj[TheObj]._examine);
+	if ((printsent) && (_obj[TheObj]._examine))
+		CharacterSay(_obj[TheObj]._examine);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1305,7 +1306,8 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 	}
 
-	if ((printsent) && (_obj[TheObj]._action)) CharacterSay(_obj[TheObj]._action);
+	if ((printsent) && (_obj[TheObj]._action))
+		CharacterSay(_obj[TheObj]._action);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2880,8 +2882,11 @@ void doInvScrUseWith() {
 		break;
 	}
 
-	if (printsent) CharacterSay(InvObj[UseWith[USED]]._action);
-	if (updateinv) RegenInv(TheIconBase, INVENTORY_SHOW);
+	if (printsent)
+		CharacterSay(InvObj[UseWith[USED]]._action);
+
+	if (updateinv)
+		RegenInv(TheIconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2983,7 +2988,8 @@ void doScrScrUseWith() {
 
 	}
 
-	if (printsent) CharacterSay(_obj[UseWith[USED]]._action);
+	if (printsent)
+		CharacterSay(_obj[UseWith[USED]]._action);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3150,7 +3156,8 @@ void doDoing() {
 	switch (TheMessage->event) {
 
 	case ME_INITOPENCLOSE:
-		if (_actor._curAction == hSTAND) REEVENT;
+		if (_actor._curAction == hSTAND)
+			REEVENT;
 		else {
 			uint16 cont = false;
 			switch (TheObj) {
@@ -3159,11 +3166,14 @@ void doDoing() {
 //      break;
 
 			default:
-				if (_actor._curFrame == 4) cont = true;
+				if (_actor._curFrame == 4)
+					cont = true;
 				break;
 			}
-			if (cont) doEvent(TheMessage->cls, ME_OPENCLOSE, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
-			else REEVENT;
+			if (cont)
+				doEvent(TheMessage->cls, ME_OPENCLOSE, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
+			else
+				REEVENT;
 		}
 		break;
 
@@ -3197,7 +3207,8 @@ void doDoing() {
 			}
 //			_obj[TheAliasObj]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
-		if (_actor._curAction == hSTAND) SemMouseEnabled = true;
+		if (_actor._curAction == hSTAND)
+			SemMouseEnabled = true;
 		break;
 	}
 }
@@ -3219,8 +3230,10 @@ void doScript() {
 			me_pausestarttime = TheTime;
 			doEvent(TheMessage->cls, TheMessage->event, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
 		} else {
-			if (TheTime >= (me_pausestarttime + TheMessage->wparam1)) me_pausestarttime = 0;
-			else doEvent(TheMessage->cls, TheMessage->event, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
+			if (TheTime >= (me_pausestarttime + TheMessage->wparam1))
+				me_pausestarttime = 0;
+			else
+				doEvent(TheMessage->cls, TheMessage->event, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
 		}
 		break;
 
@@ -3245,12 +3258,16 @@ void doScript() {
 			_obj[indice]._goRoom = (uint8)valore;
 			break;
 		case C_OMODE:
-			if (valore)  _obj[indice]._mode |= (uint8)indice2;
-			else  _obj[indice]._mode &= ~(uint8)indice2;
+			if (valore)
+				_obj[indice]._mode |= (uint8)indice2;
+			else
+				_obj[indice]._mode &= ~(uint8)indice2;
 			break;
 		case C_OFLAG:
-			if (valore)  _obj[indice]._flag |= (uint8)indice2;
-			else  _obj[indice]._flag &= ~(uint8)indice2;
+			if (valore)
+				_obj[indice]._flag |= (uint8)indice2;
+			else
+				_obj[indice]._flag &= ~(uint8)indice2;
 			break;
 
 		}
