@@ -76,7 +76,7 @@ bool g_debug_track_mouse_clicks = false;
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState) {
+	_engine(engine), _debugState(engine->_debugState), _videoFrameDelay(0) {
 
 	assert(_engine);
 	assert(_engine->_gamestate);

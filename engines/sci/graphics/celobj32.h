@@ -101,7 +101,8 @@ struct CelInfo32 {
 		resourceId(0),
 		loopNo(0),
 		celNo(0),
-		bitmap(NULL_REG) {}
+		bitmap(NULL_REG),
+		color(0) {}
 
 	// This is the equivalence criteria used by CelObj::searchCache in at least
 	// SSCI SQ6. Notably, it does not check the color field.

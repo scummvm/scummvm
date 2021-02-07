@@ -51,7 +51,17 @@ enum ResourceCompression {
  */
 class Decompressor {
 public:
-	Decompressor() {}
+	Decompressor() :
+		_dwBits(0),
+		_nBits(0),
+		_szPacked(0),
+		_szUnpacked(0),
+		_dwRead(0),
+		_dwWrote(0),
+		_src(nullptr),
+		_dest(nullptr)
+	{}
+
 	virtual ~Decompressor() {}
 
 
@@ -138,7 +148,7 @@ protected:
  */
 class DecompressorLZW : public Decompressor {
 public:
-	DecompressorLZW(int nCompression) {
+	DecompressorLZW(int nCompression) : _numbits(0), _curtoken(0), _endtoken(0) {
 		_compression = nCompression;
 	}
 	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;

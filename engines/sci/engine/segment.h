@@ -216,7 +216,7 @@ struct List {
 	 */
 	int numRecursions;
 
-	List() : numRecursions(0) {}
+	List() : numRecursions(0), first(NULL_REG), last(NULL_REG) {}
 #endif
 };
 
@@ -434,7 +434,8 @@ public:
 	SciArray() :
 		_type(kArrayTypeInvalid),
 		_size(0),
-		_data(nullptr) {}
+		_data(nullptr),
+	    _elementSize(0) {}
 
 	SciArray(const SciArray &array) {
 		_type = array._type;

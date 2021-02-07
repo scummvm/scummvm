@@ -73,12 +73,13 @@ public:
 		_name(NULL_REG),
 		_offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5),
 		_isFreed(false),
-		_baseObj(),
-		_baseVars(),
-		_methodCount(0)
+		_methodCount(0),
+	    _pos(NULL_REG)
 #ifdef ENABLE_SCI32
 		,
-		_propertyOffsetsSci3()
+		_infoSelectorSci3(NULL_REG),
+		_speciesSelectorSci3(NULL_REG),
+		_superClassPosSci3(NULL_REG)
 #endif
 		{}
 
