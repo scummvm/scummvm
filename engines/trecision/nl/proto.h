@@ -67,7 +67,6 @@ void openSys();
 void OpenVideo();
 uint32 ReadActor(const char *filename, uint8 *Area);
 int actionInRoom(int curA);
-void ReadAction(const char *name);
 void ReadLoc();
 void TendIn();
 void ReadObj();

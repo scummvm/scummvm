@@ -24,6 +24,9 @@
 			Structures definitions
  --------------------------------------------------*/
 
+#ifndef TRECISION_NL_STRUCT_H
+#define TRECISION_NL_STRUCT_H
+
 namespace Trecision {
 
 struct SRoom {
@@ -150,7 +153,7 @@ typedef struct  queue {
 struct SSortTable {
 	uint16 index;                           // indice nell' elenco
 	uint16 typology;                        // tipo di bitmap
-	LLBOOL  togli;                           // se copiare o togliere
+	bool  togli;                           // se copiare o togliere
 	uint16 roomindex;                       // indice nella room
 	uint16 framecur;                        // frame corrente se animazione
 };
@@ -166,7 +169,7 @@ struct SScriptFrame {
 
 	uint16 lparam;
 
-	LLBOOL  nowait;
+	bool  nowait;
 };
 
 struct SScript {
@@ -182,3 +185,4 @@ struct SSound {
 };
 
 } // End of namespace Trecision
+#endif

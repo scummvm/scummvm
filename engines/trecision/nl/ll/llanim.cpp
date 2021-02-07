@@ -214,7 +214,7 @@ void StartSmackAnim(uint16 num) {
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG28) && (AnimTab[num].flag & SMKANIM_OFF4))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG37) && (!(Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA)))
+		else if ((num == aBKG37) && (!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA)))
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG2E) && (AnimTab[num].flag & SMKANIM_OFF2))
 			CallSmackVolumePan(0, 2, 0);
@@ -371,7 +371,7 @@ void StopFullMotion() {
 	if (/*( _curDialog != dF1C1 ) && */ !((_curDialog == dNEGOZIANTE1A) && (_curChoice == 185))) {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
 				(_curDialog == dF491) || ((_curDialog == dC581) && !(_choice[886]._flag & OBJFLAG_DONE) && (_choice[258]._flag & OBJFLAG_DONE)) ||
-				((_curDialog == dC5A1) && (Room[r5A]._flag & OBJFLAG_EXTRA)))
+		    ((_curDialog == dC5A1) && (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
 			SemShowHomo = 0;
 		else
 			RedrawRoom();
@@ -430,12 +430,12 @@ void RedrawRoom() {
 	memset(VideoObjStatus, 0, MAXOBJINROOM);
 
 	wordset(Video2, 0, CurRoomMaxX * MAXY);
-	if (Room[g_vm->_curRoom]._bkgAnim)
+	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
 	MCopy(Video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
-	if (Room[g_vm->_curRoom]._bkgAnim)
-		StartSmackAnim(Room[g_vm->_curRoom]._bkgAnim);
+	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
+		StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
 		memset(SmackBuffer[0], 0, SCREENLEN * AREA);

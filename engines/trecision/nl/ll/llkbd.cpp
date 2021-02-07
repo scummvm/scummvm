@@ -28,6 +28,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 #include <common/file.h>
 
@@ -98,16 +99,16 @@ void LoadAll() {
 
 	for (int i = 0; i < MAXROOMS; ++i) {
 		for (int j = 0; j < 4; ++j)
-			Room[i]._baseName[j] = dataNl.readSByte();
-		Room[i]._flag = dataNl.readByte();
+			g_vm->_room[i]._baseName[j] = dataNl.readSByte();
+		g_vm->_room[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		Room[i]._bkgAnim = dataNl.readUint16LE();
+		g_vm->_room[i]._bkgAnim = dataNl.readUint16LE();
 		for (int j = 0; j < MAXOBJINROOM; ++j)
-			Room[i]._object[j] = dataNl.readUint16LE();
+			g_vm->_room[i]._object[j] = dataNl.readUint16LE();
 		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
-			Room[i]._sounds[j] = dataNl.readUint16LE();
+			g_vm->_room[i]._sounds[j] = dataNl.readUint16LE();
 		for (int j = 0; j < MAXACTIONINROOM; ++j)
-			Room[i]._actions[j] = dataNl.readUint16LE();
+			g_vm->_room[i]._actions[j] = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXOBJ; ++i) {

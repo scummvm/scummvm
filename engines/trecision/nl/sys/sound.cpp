@@ -51,12 +51,6 @@ struct SNLSample {
 } NLSample[NUMSAMPLES];
 SNLSample SpeechSample;
 
-struct SSound {
-	char  name[14];
-	uint8 volume;
-	uint8 flag;
-	int8 panning;
-};
 extern SSound GSample[];
 
 int SoundDevice = -1;

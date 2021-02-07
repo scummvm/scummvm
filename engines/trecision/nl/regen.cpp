@@ -160,7 +160,7 @@ void PaintScreen(uint8 flag) {
 
 // CANCELLA TUTTI GLI OGGETTI TOGLI
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
-		if (SortTable[a].togli == true) {
+		if (SortTable[a].togli) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
 			DObj.dx   = CurRoomMaxX;
@@ -240,7 +240,7 @@ void PaintScreen(uint8 flag) {
 		TextStatus = TEXT_DRAW;                 // attiva aggiornamento scritta
 	}
 
-	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, Room[g_vm->_curRoom]._sounds);
+	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
 	for (liv = 0; liv < limitinum; liv++) {
 		for (int b = limiti[liv][1]; b < limiti[liv][3]; b++) {
@@ -430,7 +430,7 @@ void PaintObjAnm(uint16 CurBox) {
 	}
 	for (a = 0; a < limitinum; a++) {
 		for (b = 0; b < MAXOBJINROOM; b++) {
-			TheObject = Room[g_vm->_curRoom]._object[b];
+			TheObject = g_vm->_room[g_vm->_curRoom]._object[b];
 
 			if (!TheObject)
 				break;

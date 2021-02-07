@@ -24,6 +24,8 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
+#include "nl/sysdef.h"
+#include "trecision/nl/struct.h"
 
 namespace Trecision {
 
@@ -41,6 +43,8 @@ public:
 	int32 _curSortTableNum;
 	uint16 _curObj;
 	uint16 CurScriptFrame[10];
+
+	SRoom _room[MAXROOMS];
 };
 
 extern TrecisionEngine *g_vm;

@@ -679,10 +679,10 @@ insave:
 	fwrite(&_oldPanel,            sizeof(int),   1, fh);
 
 	for (a = 0; a < MAXROOMS; a++) {
-		fwrite(Room[a]._baseName, sizeof(char), 4,               fh);
-		fwrite(Room[a]._actions,  sizeof(uint16), MAXACTIONINROOM, fh);
-		fwrite(&Room[a]._flag,    sizeof(uint8), 1, fh);
-		fwrite(&Room[a]._bkgAnim, sizeof(uint16), 1, fh);
+		fwrite(g_vm->_room[a]._baseName, sizeof(char), 4, fh);
+		fwrite(g_vm->_room[a]._actions, sizeof(uint16), MAXACTIONINROOM, fh);
+		fwrite(&g_vm->_room[a]._flag, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
 	}
 	for (a = 0; a < MAXOBJ; a++) {
 		fwrite(&_obj[a]._lim,      sizeof(uint16), 4, fh);
@@ -975,10 +975,10 @@ bool DataLoad() {
 	fread(&_oldPanel,            sizeof(int),   1, fh);
 
 	for (a = 0; a < MAXROOMS; a++) {
-		fread(Room[a]._baseName, sizeof(char), 4,               fh);
-		fread(Room[a]._actions,  sizeof(uint16), MAXACTIONINROOM, fh);
-		fread(&Room[a]._flag,    sizeof(uint8), 1, fh);
-		fread(&Room[a]._bkgAnim, sizeof(uint16), 1, fh);
+		fread(g_vm->_room[a]._baseName, sizeof(char), 4, fh);
+		fread(g_vm->_room[a]._actions, sizeof(uint16), MAXACTIONINROOM, fh);
+		fread(&g_vm->_room[a]._flag, sizeof(uint8), 1, fh);
+		fread(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
 	}
 	for (a = 0; a < MAXOBJ; a++) {
 		fread(&_obj[a]._lim,      sizeof(uint16), 4, fh);
