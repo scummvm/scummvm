@@ -673,6 +673,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "laffaireaspirox", "L'Affaire Aspirox" },
 	{ "lagrancastanya", "La Gran Castanya" },
 	{ "lallaveyfabianshones", "LA LLAVE Y FABIAN SHONES" },
+	{ "lamplightcity", "Lamplight City" },
 	{ "laodiseadelfracasoii", "La Odisea del Fracaso II" },
 	{ "laportenoire", "La porte noire" },
 	{ "lastnfurious", "Last'n'Furious" },
@@ -2006,6 +2007,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("laffaireaspirox", "L'Affaire Aspirox.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 139865345),
 	ENGLISH_ENTRY("lagrancastanya", "PROJECT1.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 39298012),
 	ENGLISH_ENTRY("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527),
+	ENGLISH_ENTRY("lamplightcity", "Lamplight City.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	ENGLISH_ENTRY("laodiseadelfracasoii", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622),
 	ENGLISH_ENTRY("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
 	ENGLISH_ENTRY("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17696093),
