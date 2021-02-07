@@ -2617,7 +2617,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	ENGLISH_ENTRY("zugzwang", "Zugzwang.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 17209702),
 
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, nullptr }
 };
 
 /**
