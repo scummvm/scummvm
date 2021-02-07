@@ -163,21 +163,23 @@ public:
 	byte *_rdfData;
 
 private:
-	uint16 _rdfSize;
+	//uint16 _rdfSize;
 
 	StarTrekEngine *_vm;
 	AwayMission *_awayMission;
 
 	const RoomAction *_roomActionList;
+	const RoomTextOffsets *_roomTextList;
+	const RoomTextOffsets *_roomCommonTextList;
+	const RoomText *_roomStaticTextList;
+	Common::String _commonTextRdf;
+	byte *_commonRdfData;
 
-	Common::HashMap<int, Common::String> _lookMessages;
-	Common::HashMap<int, Common::String> _lookWithTalkerMessages;
-	Common::HashMap<int, Common::String> _talkMessages;
-
+	byte *loadRoomRDF(Common::String fileName);
 	void loadRoomMessages();
 	void loadOtherRoomMessages();
 	void loadRoomMessage(const char *text);
-	Common::String patchRoomMessage(const char *text);
+	const char *getText(uint16 textId);
 
 	Common::MemoryReadStreamEndian *loadBitmapFile(Common::String baseName);
 	Common::MemoryReadStreamEndian *loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
@@ -207,9 +209,9 @@ private:
 	 * Cmd 0x03
 	 */
 	int showRoomSpecificText(const char **textAddr);
-	int showMultipleTexts(const TextRef *text, bool fromRDF = false, bool lookWithTalker = false);
-	int showDescription(TextRef text, bool fromRDF = false, bool lookWithTalker = false);
-	int showText(TextRef speaker, TextRef text, bool fromRDF = false, bool lookWithTalker = false);
+	int showMultipleTexts(const TextRef *text);
+	int showDescription(TextRef text);
+	int showText(TextRef speaker, TextRef text);
 
 	/**
 	 * Cmd 0x04
@@ -301,8 +303,8 @@ private:
 	 * If "changeDirection" is true, they remain facing that direction even after their
 	 * animation is finished. The game is inconsistent about doing this.
 	 */
-	void spockScan(int direction, TextRef text, bool changeDirection = false, bool fromRDF = false);
-	void mccoyScan(int direction, TextRef text, bool changeDirection = false, bool fromRDF = false);
+	void spockScan(int direction, TextRef speaker, TextRef text, bool changeDirection = false);
+	void mccoyScan(int direction, TextRef speaker, TextRef text, bool changeDirection = false);
 
 	// Room-specific code
 public:

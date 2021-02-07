@@ -96,6 +96,65 @@ extern const RoomAction tug1ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum tug1TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_CHRISTENSEN,
+	TX_TUG1_001, TX_TUG1_002, TX_TUG1_003, TX_TUG1_004, TX_TUG1_005,
+	TX_TUG1_006, TX_TUG1_007, TX_TUG1_008, TX_TUG1_009, TX_TUG1_010,
+	TX_TUG1_011, TX_TUG1_012, TX_TUG1_013, TX_TUG1_014, TX_TUG1_015,
+	TX_TUG1_016, TX_TUG1_017, TX_TUG1_018, TX_SIN3_012, TX_TUG1L000,
+	TX_TUG1L005, TX_TUG1N000, TX_TUG1N001, TX_TUG1N002, TX_TUG1N003,
+	TX_TUG1N004, TX_TUG1N005, TX_TUG1N006, TX_TUG1N007, TX_TUG1N008,
+	TX_TUG1N009, TX_TUG1N010, TX_TUG1N011, TX_TUG1N013
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets tug1TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 5549, 0 },
+	{ TX_SPEAKER_MCCOY, 5560, 0 },
+	{ TX_SPEAKER_SPOCK, 5570, 0 },
+	{ TX_SPEAKER_CHRISTENSEN, 5580, 0 },
+	{ TX_TUG1_001, 4050, 0 },
+	{ TX_TUG1_002,  751, 0 },
+	{ TX_TUG1_003, 4598, 0 },
+	{ TX_TUG1_004, 5380, 0 },
+	{ TX_TUG1_005, 4920, 0 },
+	{ TX_TUG1_006, 5788, 0 },
+	{ TX_TUG1_007, 4764, 0 },
+	{ TX_TUG1_008, 4106, 0 },
+	{ TX_TUG1_009, 1461, 0 },
+	{ TX_TUG1_010, 1233, 0 },
+	{ TX_TUG1_011, 4223, 0 },
+	{ TX_TUG1_012, 2253, 0 },
+	{ TX_TUG1_013, 5098, 0 },
+	{ TX_TUG1_014,  482, 0 },
+	{ TX_TUG1_015, 3075, 0 },
+	{ TX_TUG1_016, 2895, 0 },
+	{ TX_TUG1_017, 2426, 0 },
+	{ TX_TUG1_018, 3872, 0 },
+	{ TX_SIN3_012, 5745, 0 },
+	{ TX_TUG1L000, 5267, 0 },
+	{ TX_TUG1L005, 3312, 0 },
+	{ TX_TUG1N000, 1620, 0 },
+	{ TX_TUG1N001, 3693, 0 },
+	{ TX_TUG1N002, 3213, 0 },
+	{ TX_TUG1N003, 5596, 0 },
+	{ TX_TUG1N004, 2040, 0 },
+	{ TX_TUG1N005,  606, 0 },
+	{ TX_TUG1N006, 5638, 0 },
+	{ TX_TUG1N007, 2673, 0 },
+	//{ TX_TUG1N007, 1017, 0 },	 // ignore duplicate text
+	{ TX_TUG1N008, 2552, 0 },
+	{ TX_TUG1N009, 2107, 0 },
+	{ TX_TUG1N010, 3489, 0 },
+	{ TX_TUG1N011, 3594, 0 },
+	{ TX_TUG1N013, 5690, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText tug1Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::tug1Tick1() {
 	playVoc("TUG1LOOP");
 
@@ -107,7 +166,7 @@ void Room::tug1UseSTricorderOnAnything() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_SPOCK, 14, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_014);
 
 	// NOTE: this action has a second implementation (which is never called). It displayed
 	// TX_TUG1_006. Was this meant to be displayed after the force field is down?
@@ -116,7 +175,7 @@ void Room::tug1UseSTricorderOnAnything() {
 void Room::tug1LookAtBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
 		return;
-	showDescription(5, true);
+	showDescription(TX_TUG1N005);
 }
 
 void Room::tug1UseSTricorderOnBridgeDoor() {
@@ -126,12 +185,12 @@ void Room::tug1UseSTricorderOnBridgeDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_SPOCK, 2, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_002);
 }
 
 void Room::tug1UsePhaserOnBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showDescription(7, true);
+		showDescription(TX_TUG1N007);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -156,18 +215,18 @@ void Room::tug1KirkFinishedFiringPhaser() {
 
 void Room::tug1TalkToSpock() {
 	if (!_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_SPEAKER_SPOCK, 10, true);
+		showText(TX_SPEAKER_SPOCK, TX_TUG1_010);
 }
 
 void Room::tug1UseSTricorderOnJunkPile() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_SPOCK, 9, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_009);
 }
 
 void Room::tug1LookAtJunkPile() {
-	showDescription(0, true);
+	showDescription(TX_TUG1N000);
 }
 
 void Room::tug1GetJunkPile() {
@@ -193,24 +252,24 @@ void Room::tug1KirkFinishedTakingJunkPile() {
 void Room::tug1UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
-	showDescription(4, true);
+	showDescription(TX_TUG1N004);
 
 	_awayMission->tug.missionScore += 3;
 }
 
 void Room::tug1UseWelderOnWireScraps() {
-	showDescription(9, true);
+	showDescription(TX_TUG1N009);
 	loseItem(OBJECT_IWIRSCRP);
 }
 
 void Room::tug1UseWelderOnMetalScraps() {
-	showText(TX_SPEAKER_SPOCK, 12, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_012);
 	loseItem(OBJECT_IJNKMETL);
 	giveItem(OBJECT_ICOMBBIT);
 }
 
 void Room::tug1UseCombBitOnTransmogrifier() {
-	showText(TX_SPEAKER_SPOCK, 17, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_017);
 	loseItem(OBJECT_ICOMBBIT);
 	loseItem(OBJECT_IRT);
 	giveItem(OBJECT_IRTWB);
@@ -218,7 +277,7 @@ void Room::tug1UseCombBitOnTransmogrifier() {
 
 void Room::tug1UsePhaserWelderOnBridgeDoor() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showDescription(8, true);
+		showDescription(TX_TUG1N008);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -228,7 +287,7 @@ void Room::tug1UsePhaserWelderOnBridgeDoor() {
 
 void Room::tug1UsePhaserWelderOnBridgeDoorInLeftSpot() {
 	if (_awayMission->tug.bridgeForceFieldDown)
-		showDescription(7, true);
+		showDescription(TX_TUG1N007);
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -244,7 +303,7 @@ void Room::tug1KirkReachedBridgeDoorWithWelder() {
 
 void Room::tug1KirkFinishedUsingWelder() {
 	loadActorStandAnim(OBJECT_PHASERSHOT);
-	showText(TX_SPEAKER_SPOCK, 16, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_016);
 	_awayMission->disableInput = false;
 }
 
@@ -256,26 +315,26 @@ void Room::tug1KirkReachedBridgeDoorWithWelderInLeftSpot() {
 
 void Room::tug1KirkFinishedUsingWelderInLeftSpot() {
 	loadActorStandAnim(OBJECT_PHASERSHOT);
-	showText(TX_SPEAKER_SPOCK, 15, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_015);
 	_awayMission->tug.bridgeForceFieldDown = true;
 	_awayMission->disableInput = false;
 	_awayMission->tug.missionScore++;
 }
 
 void Room::tug1LookAnywhere() {
-	showDescription(13, true);
+	showDescription(TX_TUG1N013);
 }
 
 void Room::tug1LookAtMccoy() {
-	showDescription(3, true);
+	showDescription(TX_TUG1N003);
 }
 
 void Room::tug1LookAtSpock() {
-	showDescription(6, true);
+	showDescription(TX_TUG1N006);
 }
 
 void Room::tug1LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(TX_TUG1N002);
 }
 
 void Room::tug1TalkToMccoy() {
@@ -283,36 +342,36 @@ void Room::tug1TalkToMccoy() {
 }
 
 void Room::tug1TalkToRedshirt() {
-	showText(TX_SPEAKER_CHRISTENSEN, 5, true, true);
+	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG1L005);
 }
 
 void Room::tug1LookAtTerminal() {
-	showDescription(10, true);
+	showDescription(TX_TUG1N010);
 }
 
 void Room::tug1LookAtDebris() {
-	showDescription(11, true);
+	showDescription(TX_TUG1N011);
 }
 
 void Room::tug1LookAtBrigDoor() {
-	showDescription(1, true);
+	showDescription(TX_TUG1N001);
 }
 
 void Room::tug1UseSTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_SPOCK, 18, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_018);
 }
 
 void Room::tug1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  1, true);
-	showText(TX_SPEAKER_MCCOY, 8, true);
+	showText(TX_SPEAKER_KIRK,  TX_TUG1_001);
+	showText(TX_SPEAKER_MCCOY, TX_TUG1_008);
 }
 
 // FIXME: not working
 void Room::tug1UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, 11, true);
+	showText(TX_SPEAKER_SPOCK, TX_TUG1_011);
 }
 
 void Room::tug1WalkToBridgeDoor() {
@@ -339,36 +398,36 @@ void Room::tug1UseMTricorderAnywhere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_MCCOY, 3, true);
+	showText(TX_SPEAKER_MCCOY, TX_TUG1_003);
 }
 
 void Room::tug1UseMTricorderOnBridgeDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_MCCOY, 7, true);
+	showText(TX_SPEAKER_MCCOY, TX_TUG1_007);
 }
 
 void Room::tug1UseMTricorderOnBrigDoor() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(kSfxTricorder);
-	showText(TX_SPEAKER_MCCOY, 5, true);
+	showText(TX_SPEAKER_MCCOY, TX_TUG1_005);
 }
 
 void Room::tug1UseSpockOnBridgeDoor() {
 	if (!_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_SPEAKER_SPOCK, 13, true);
+		showText(TX_SPEAKER_SPOCK, TX_TUG1_013);
 }
 
 void Room::tug1UseRedshirtOnBridgeDoor() {
 	if (!_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_SPEAKER_CHRISTENSEN, 0, true, true);
+		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG1L000);
 }
 
 void Room::tug1UseMedkitOnBridgeDoor() {
 	if (!_awayMission->tug.bridgeForceFieldDown)
-		showText(TX_SPEAKER_MCCOY, 4, true);
+		showText(TX_SPEAKER_MCCOY, TX_TUG1_004);
 }
 
 }

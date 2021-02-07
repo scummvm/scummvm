@@ -106,6 +106,120 @@ extern const RoomAction demon6ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum demon6TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_STEPHEN,
+	TX_DEM6_001, TX_DEM6_002, TX_DEM6_003, TX_DEM6_004, TX_DEM6_005,
+	TX_DEM6_006, TX_DEM6_007, TX_DEM6_008, TX_DEM6_009, TX_DEM6_010,
+	TX_DEM6_011, TX_DEM6_012, TX_DEM6_013, TX_DEM6_014, TX_DEM6_015,
+	TX_DEM6_016, TX_DEM6_017, TX_DEM6_018, TX_DEM6_019, TX_DEM6_020,
+	TX_DEM6_021, TX_DEM6_022, TX_DEM6_023, TX_DEM6_024, TX_DEM6_025,
+	TX_DEM6_026, TX_DEM6_027, TX_DEM6_028, TX_DEM6_029, TX_DEM6_030,
+	TX_DEM6_031, TX_DEM6_032, TX_DEM6_033, TX_DEM6_034, TX_DEM6_035,
+	TX_DEM6_036, TX_DEM6_037, TX_DEM6_038, TX_DEM6_039, TX_DEM6_040,
+	TX_DEM6_041, TX_DEM6_042, TX_DEM6_043, TX_DEM6_044, TX_DEM6_045,
+	TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050,
+	TX_DEM6_051, TX_DEM6_052, TX_DEM6_053, TX_DEM6N000, TX_DEM6N001,
+	TX_DEM6N002, TX_DEM6N003, TX_DEM6N004, TX_DEM6N005, TX_DEM6N006,
+	TX_DEM6N007, TX_DEM6N008, TX_DEM6N009, TX_DEM6N010, TX_DEM6N011,
+	TX_DEM6N012, TX_DEM6N013, TX_DEM6N014, TX_DEM6N015, TX_DEM6N016,
+	TX_DEM6N017, TX_DEM6N018, TX_DEM6N019, TX_DEM6N020, TX_DEM6N021,
+	TX_DEM6N022, TX_DEM6N023, TX_DEM6N024, TX_DIALOG_ERROR
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets demon6TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 4150, 0 },
+	{ TX_SPEAKER_MCCOY, 4161, 0 },
+	{ TX_SPEAKER_SPOCK, 4171, 0 },
+	{ TX_SPEAKER_EVERTS, 4181, 0 },
+	{ TX_SPEAKER_STEPHEN, 4195, 0 },
+	{ TX_DEM6_001, 6283, 0 },
+	{ TX_DEM6_002, 9373, 0 },
+	{ TX_DEM6_003, 6387, 0 },
+	{ TX_DEM6_004, 2427, 0 },
+	{ TX_DEM6_005, 1927, 0 },
+	{ TX_DEM6_006, 6339, 0 },
+	{ TX_DEM6_007, 3239, 0 },
+	{ TX_DEM6_008, 3668, 0 },
+	{ TX_DEM6_009, 3057, 0 },
+	{ TX_DEM6_010, 10137, 0 },
+	{ TX_DEM6_011, 10040, 0 },
+	{ TX_DEM6_012, 9812, 0 },
+	{ TX_DEM6_013, 9601, 0 },
+	{ TX_DEM6_014, 8244, 0 },
+	{ TX_DEM6_015, 2549, 0 },
+	{ TX_DEM6_016, 2942, 0 },
+	{ TX_DEM6_017, 715, 0 },
+	{ TX_DEM6_018, 1765, 0 },
+	{ TX_DEM6_019, 6103, 0 },
+	{ TX_DEM6_020, 8973, 0 },
+	{ TX_DEM6_021, 9718, 0 },
+	{ TX_DEM6_022, 5898, 0 },
+	{ TX_DEM6_023, 10197, 0 },
+	{ TX_DEM6_024, 5812, 0 },
+	{ TX_DEM6_025, 9188, 0 },
+	{ TX_DEM6_026, 1485, 0 },
+	{ TX_DEM6_027, 1322, 0 },
+	{ TX_DEM6_028, 613, 0 },
+	{ TX_DEM6_029, 8443, 0 },
+	{ TX_DEM6_030, 6431, 0 },
+	{ TX_DEM6_031, 6524, 0 },
+	{ TX_DEM6_032, 8881, 0 },
+	{ TX_DEM6_033, 7758, 0 },
+	{ TX_DEM6_034, 6613, 0 },
+	{ TX_DEM6_035, 9475, 0 },
+	{ TX_DEM6_036, 7210, 0 },
+	{ TX_DEM6_037, 8785, 0 },
+	{ TX_DEM6_038, 7315, 0 },
+	{ TX_DEM6_039, 6930, 0 },
+	{ TX_DEM6_040, 7122, 0 },
+	{ TX_DEM6_041, 7566, 0 },
+	{ TX_DEM6_042, 4216, 0 },
+	{ TX_DEM6_043, 8493, 0 },
+	{ TX_DEM6_044, 6213, 0 },
+	{ TX_DEM6_045, 6701, 0 },
+	{ TX_DEM6_046, 6735, 0 },
+	{ TX_DEM6_047, 6761, 0 },
+	{ TX_DEM6_048, 6791, 0 },
+	{ TX_DEM6_049, 6837, 0 },
+	{ TX_DEM6_050, 6868, 0 },
+	{ TX_DEM6_051, 6667, 0 },
+	{ TX_DEM6_052, 2655, 0 },
+	{ TX_DEM6_053, 9413, 0 },
+	{ TX_DEM6N000, 5105, 0 },
+	{ TX_DEM6N001, 4691, 0 },
+	{ TX_DEM6N002, 5174, 0 },
+	{ TX_DEM6N003, 4592, 0 },
+	{ TX_DEM6N004, 5252, 0 },
+	{ TX_DEM6N005, 5058, 0 },
+	{ TX_DEM6N006, 4498, 0 },
+	{ TX_DEM6N007, 5323, 0 },
+	{ TX_DEM6N008, 5424, 0 },
+	{ TX_DEM6N009, 5594, 0 },
+	{ TX_DEM6N010, 5662, 0 },
+	{ TX_DEM6N011, 4909, 0 },
+	{ TX_DEM6N012, 6074, 0 },
+	{ TX_DEM6N013, 6188, 0 },
+	{ TX_DEM6N014, 10359, 0 },
+	{ TX_DEM6N015, 5501, 0 },
+	{ TX_DEM6N016, 4871, 0 },
+	{ TX_DEM6N017, 4960, 0 },
+	{ TX_DEM6N018, 6006, 0 },
+	{ TX_DEM6N019, 8372, 0 },
+	{ TX_DEM6N020, 5750, 0 },
+	{ TX_DEM6N021, 1139, 0 },
+	{ TX_DEM6N022, 3812, 0 },
+	{ TX_DEM6N023, 1687, 0 },
+	{ TX_DEM6N024, 1036, 0 },
+    {TX_DIALOG_ERROR, 8214, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText demon6Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::demon6Tick1() {
 	playVoc("DEM6LOOP");
 	if (_awayMission->demon.gotBerries || (!_awayMission->demon.field3e && _awayMission->demon.field37)) {
@@ -126,12 +240,12 @@ void Room::demon6Tick30() {
 	if (_awayMission->demon.stephenWelcomedToStudy)
 		return;
 
-	showText(TX_SPEAKER_STEPHEN, 42, true);
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_042);
 	_awayMission->demon.stephenWelcomedToStudy = true;
 }
 
 void Room::demon6SpockReachedComputer() {
-	showText(TX_SPEAKER_SPOCK, 14, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_014);
 }
 
 void Room::demon6WalkToDoor() {
@@ -154,71 +268,71 @@ void Room::demon6DoorOpenedOrReachedDoor() {
 }
 
 void Room::demon6UsePhaserOnStephen() {
-	showText(TX_SPEAKER_STEPHEN, 28, true);
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_028);
 }
 
 void Room::demon6UsePhaserOnCase() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM6_017);
 }
 
 void Room::demon6LookAtWorkspace() {
-	showDescription(3, true);
+	showDescription(TX_DEM6N003);
 }
 
 void Room::demon6LookAtCase() {
-	showDescription(1, true);
+	showDescription(TX_DEM6N001);
 }
 
 void Room::demon6LookAtTable() {
-	showDescription(7, true);
+	showDescription(TX_DEM6N007);
 }
 
 void Room::demon6LookAtMineral() {
-	showDescription(16, true);
+	showDescription(TX_DEM6N016);
 }
 
 void Room::demon6LookAtShells() {
-	showDescription(11, true);
+	showDescription(TX_DEM6N011);
 }
 
 void Room::demon6LookAtSkull() {
-	showDescription(17, true);
+	showDescription(TX_DEM6N017);
 }
 
 void Room::demon6LookAtMetal() {
-	showDescription(5, true);
+	showDescription(TX_DEM6N005);
 }
 
 void Room::demon6LookAtMeteor() {
-	showDescription(0, true);
+	showDescription(TX_DEM6N000);
 }
 
 void Room::demon6LookAtMountain() {
-	showDescription(2, true);
+	showDescription(TX_DEM6N002);
 }
 
 void Room::demon6LookAtSynthesizer() {
-	showDescription(4, true);
+	showDescription(TX_DEM6N004);
 }
 
 void Room::demon6LookAtKirk() {
-	showDescription(8, true);
+	showDescription(TX_DEM6N008);
 }
 
 void Room::demon6LookAtSpock() {
-	showDescription(15, true);
+	showDescription(TX_DEM6N015);
 }
 
 void Room::demon6LookAtMccoy() {
-	showDescription(9, true);
+	showDescription(TX_DEM6N009);
 }
 
 void Room::demon6LookAtRedshirt() {
-	showDescription(10, true);
+	showDescription(TX_DEM6N010);
 }
 
 void Room::demon6LookAtComputer() {
-	showDescription(6, true);
+	showDescription(TX_DEM6N006);
 	if (!_awayMission->demon.lookedAtComputer) {
 		_awayMission->demon.lookedAtComputer = true;
 		_awayMission->demon.missionScore++;
@@ -226,38 +340,38 @@ void Room::demon6LookAtComputer() {
 }
 
 void Room::demon6LookAnywhere() {
-	showDescription(24, true);
+	showDescription(TX_DEM6N024);
 }
 
 void Room::demon6LookAtStephen() {
-	showDescription(21, true);
+	showDescription(TX_DEM6N021);
 }
 
 void Room::demon6TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 20, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM6_020);
 }
 
 void Room::demon6TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 25, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_025);
 }
 
 void Room::demon6TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 2, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM6_002);
 }
 
 void Room::demon6TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, 53, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM6_053);
 }
 
 void Room::demon6TalkToStephen() {
-	showText(TX_SPEAKER_STEPHEN, 35, true);
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_035);
 }
 
 void Room::demon6UseBerryOnStephen() {
 	if (_awayMission->demon.knowAboutHypoDytoxin) {
-		showText(TX_SPEAKER_STEPHEN, 27, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_027);
 	} else {
-		showText(TX_SPEAKER_STEPHEN, 26, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_026);
 	}
 }
 
@@ -274,8 +388,8 @@ void Room::demon6MccoyReachedSynthesizer() {
 
 void Room::demon6FinishedMakingHypoDytoxin() {
 	playMidiMusicTracks(-1, -1);
-	showDescription(23, true);
-	showText(TX_SPEAKER_MCCOY, 18, true);
+	showDescription(TX_DEM6N023);
+	showText(TX_SPEAKER_MCCOY, TX_DEM6_018);
 
 	giveItem(OBJECT_IDETOXIN);
 	_awayMission->demon.madeHypoDytoxin = true;
@@ -289,10 +403,10 @@ void Room::demon6FinishedMakingHypoDytoxin() {
 
 void Room::demon6UseHandOnWorkspace() {
 	if (_awayMission->demon.repairedHand) {
-		showText(TX_SPEAKER_SPOCK, 18, true); // FIXME
+		showText(TX_SPEAKER_SPOCK, TX_DEM6N018); // FIXME
 	} else {
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_KIRK, 5, true);
+		showText(TX_SPEAKER_KIRK, TX_DEM6_005);
 		walkCrewman(OBJECT_SPOCK, 0xb3, 0xbb, 2);
 	}
 }
@@ -302,7 +416,7 @@ void Room::demon6SpockReachedWorkspace() {
 }
 
 void Room::demon6SpockFinishedRepairingHand() {
-	showText(TX_SPEAKER_SPOCK, 24, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_024);
 	_awayMission->demon.repairedHand = true;
 	_awayMission->demon.missionScore += 2;
 	loadActorStandAnim(OBJECT_SPOCK);
@@ -311,39 +425,39 @@ void Room::demon6SpockFinishedRepairingHand() {
 
 // FIXME: doesn't work
 void Room::demon6UseAnythingOnWorkspace() {
-	showDescription(20, true);
+	showDescription(TX_DEM6N020);
 }
 
 void Room::demon6StephenIsInsulted() {
-	showText(TX_SPEAKER_STEPHEN, 30, true);
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
 	_roomVar.demon.insultedStephenRecently = true;
 	_awayMission->demon.insultedStephen = true;
 }
 
 void Room::demon6StephenDescribesItemsInCase() {
 	while (true) {
-		showText(TX_SPEAKER_STEPHEN, 51, true);
-		TextRef choices2[] = { TX_SPEAKER_STEPHEN, 45, 46, 47, 48, 49, 50, TX_BLANK };
-		TextRef choice = showMultipleTexts(choices2, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_051);
+		TextRef choices2[] = { TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_END };
+		TextRef choice = showMultipleTexts(choices2);
 
 		switch (choice) {
 		case 0:
-			showText(TX_SPEAKER_STEPHEN, 40, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_040);
 			break;
 		case 1:
-			showText(TX_SPEAKER_STEPHEN, 33, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_033);
 			break;
 		case 2:
-			showText(TX_SPEAKER_STEPHEN, 36, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_036);
 			break;
 		case 3:
-			showText(TX_SPEAKER_STEPHEN, 38, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_038);
 			break;
 		case 4:
-			showText(TX_SPEAKER_STEPHEN, 39, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_039);
 			break;
 		case 5:
-			showText(TX_SPEAKER_STEPHEN, 41, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_041);
 			_roomVar.demon.caseOpened = true;
 			return;
 		default:
@@ -356,19 +470,19 @@ void Room::demon6UseCrewmanOnCase() {
 	if (_roomVar.demon.stephenInRoom) {
 		if (_roomVar.demon.insultedStephenRecently)
 			return;
-		showText(TX_SPEAKER_STEPHEN, 44, true);
-		TextRef choices1[] = {TX_SPEAKER_KIRK, 1, 6, 3, TX_BLANK};
-		TextRef choice = showMultipleTexts(choices1, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_044);
+		TextRef choices1[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_DEM6_003, TX_END};
+		TextRef choice = showMultipleTexts(choices1);
 
 		if (choice == 0) {
 			demon6StephenIsInsulted();
 		} else if (choice == 1) {
-			showText(TX_SPEAKER_STEPHEN, 34, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
 			demon6StephenDescribesItemsInCase();
 		} else if (choice == 2) {
-			showText(TX_SPEAKER_STEPHEN, 31, true);
-			TextRef choices3[] = {TX_SPEAKER_KIRK, 1, 6, TX_BLANK};
-			choice = showMultipleTexts(choices3, true);
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_031);
+			TextRef choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_END};
+			choice = showMultipleTexts(choices3);
 
 			if (choice == 0)
 				demon6StephenIsInsulted();
@@ -380,22 +494,22 @@ void Room::demon6UseCrewmanOnCase() {
 			showDescription(TX_DIALOG_ERROR);
 		}
 	} else {
-		showDescription(12, true);
-		showText(TX_SPEAKER_MCCOY, 19, true);
+		showDescription(TX_DEM6N012);
+		showText(TX_SPEAKER_MCCOY, TX_DEM6_019);
 	}
 }
 
 void Room::demon6UseKirkOnComputer() {
-	showText(TX_SPEAKER_KIRK, 4, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM6_004);
 	demon6UseSpockOnComputer();
 }
 
 void Room::demon6UseMccoyOnComputer() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM6_015);
 }
 
 void Room::demon6UseRedshirtOnComputer() {
-	showText(TX_SPEAKER_EVERTS, 52, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM6_052);
 }
 
 void Room::demon6UseSpockOnComputer() {
@@ -429,80 +543,80 @@ void Room::demon6UseMetalOnStephen() {
 
 void Room::demon6ReturnItemToStephen(int item) {
 	loseItem(item);
-	showDescription(19, true);
-	showText(TX_SPEAKER_STEPHEN, 29, true);
+	showDescription(TX_DEM6N019);
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_029);
 }
 
 void Room::demon6UseHandOnStephen() {
 	if (_awayMission->demon.repairedHand)
-		showText(TX_SPEAKER_STEPHEN, 37, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_037);
 	else
-		showText(TX_SPEAKER_STEPHEN, 43, true);
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_043);
 }
 
 void Room::demon6UseMTricoderOnStephen() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM6_016);
 }
 
 void Room::demon6UseSTricoderOnTable() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 9, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_009);
 }
 
 void Room::demon6UseSTricoderOnComputer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 7, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_007);
 }
 
 void Room::demon6UseSTricoderOnMineral() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_013);
 }
 
 void Room::demon6UseSTricoderOnShells() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 21, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_021);
 }
 
 void Room::demon6UseSTricoderOnSkull() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 12, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_012);
 }
 
 void Room::demon6UseSTricoderOnMetal() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 11, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_011);
 }
 
 void Room::demon6UseSTricoderOnMeteor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 10, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_010);
 }
 
 void Room::demon6UseSTricoderOnCase() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 23, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_023);
 }
 
 void Room::demon6UseSTricoderOnSynthesizer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 8, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM6_008);
 }
 
 void Room::demon6GetCase() {
 	if (!_roomVar.demon.caseOpened)
-		showDescription(22, true);
+		showDescription(TX_DEM6N022);
 	else
 		walkCrewman(OBJECT_KIRK, 0xff, 0xba, 5);
 }

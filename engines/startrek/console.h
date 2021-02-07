@@ -45,6 +45,7 @@ private:
 	bool Cmd_SearchFile(int argc, const char **argv);
 	bool Cmd_Score(int argc, const char **argv);
 	bool Cmd_BridgeSequence(int argc, const char **argv);
+	bool Cmd_DumpText(int argc, const char **argv);
 
 	Common::String EventToString(uint32 action);
 	Common::String ItemToString(byte index);

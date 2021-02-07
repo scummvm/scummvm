@@ -67,6 +67,63 @@ extern const RoomAction demon2ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum demon2TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_DEM2_001, TX_DEM2_002, TX_DEM2_003, TX_DEM2_004, TX_DEM2_005,
+	TX_DEM2_006, TX_DEM2_007, TX_DEM2_008, TX_DEM2_009, TX_DEM2_010,
+	TX_DEM2_011, TX_DEM2_012, TX_DEM2_013, TX_DEM2_014, TX_DEM2_015,
+	TX_DEM2_016, TX_DEM2_017, TX_DEM2_018, TX_DEM2_019, TX_DEM2_020,
+	TX_DEM2N000, TX_DEM2N002, TX_DEM2N003, TX_DEM2N004, TX_DEM2N005,
+	TX_DEM2N006, TX_DEM2N007, TX_DEM2N008, TX_DEM2N009, TX_DEM2N010,
+	TX_DEM2N011, TX_DEM2N012, TX_DEM2N013
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets demon2TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 2890, 0 },
+    { TX_SPEAKER_MCCOY, 2901, 0 },
+    { TX_SPEAKER_SPOCK, 2911, 0 },
+	{ TX_SPEAKER_EVERTS, 2921, 0 },
+	{ TX_DEM2_001, 3275, 0 },
+	{ TX_DEM2_002, 3732, 0 },
+	{ TX_DEM2_003, 4228, 0 },
+	{ TX_DEM2_004, 3912, 0 },
+	{ TX_DEM2_005, 1613, 0 },
+	{ TX_DEM2_006, 1466, 0 },
+	{ TX_DEM2_007, 1336, 0 },
+	{ TX_DEM2_008, 1161, 0 },
+	{ TX_DEM2_009, 1963, 0 },
+	{ TX_DEM2_010, 2071, 0 },
+	{ TX_DEM2_011, 1050, 0 },
+	{ TX_DEM2_012, 2212, 0 },
+	{ TX_DEM2_013, 1869, 0 },
+	{ TX_DEM2_014, 2384, 0 },
+	{ TX_DEM2_015, 3346, 0 },
+	{ TX_DEM2_016, 3561, 0 },
+	{ TX_DEM2_017, 3414, 0 },
+	{ TX_DEM2_018, 4111, 0 },
+	{ TX_DEM2_019, 3618, 0 },
+	{ TX_DEM2_020, 3791, 0 },
+	{ TX_DEM2N000, 3197, 0 },
+	{ TX_DEM2N002, 2935, 0 },
+	{ TX_DEM2N003, 3117, 0 },
+	{ TX_DEM2N004, 3014, 0 },
+	{ TX_DEM2N005, 586, 0 },
+	{ TX_DEM2N006, 710, 0 },
+	{ TX_DEM2N007, 405, 0 },
+	{ TX_DEM2N008, 454, 0 },
+	{ TX_DEM2N009, 357, 0 },
+	{ TX_DEM2N010, 637, 0 },
+	{ TX_DEM2N011, 785, 0 },
+	{ TX_DEM2N012, 503, 0 },
+	{ TX_DEM2N013, 2529, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText demon2Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::demon2Tick1() {
 	playVoc("DEM2LOOP");
 }
@@ -85,91 +142,91 @@ void Room::demon2TouchedWarp1() {
 }
 
 void Room::demon2LookAtCave() {
-	showDescription(9, true);
+	showDescription(TX_DEM2N009);
 }
 
 void Room::demon2LookAtMountain() {
-	showDescription(7, true);
+	showDescription(TX_DEM2N007);
 }
 
 void Room::demon2LookAtBerries() {
-	showDescription(12, true);
+	showDescription(TX_DEM2N012);
 }
 
 void Room::demon2LookAtFern() {
-	showDescription(5, true);
+	showDescription(TX_DEM2N005);
 }
 
 void Room::demon2LookAtMoss() {
-	showDescription(10, true);
+	showDescription(TX_DEM2N010);
 }
 
 void Room::demon2LookAtLights() {
-	showDescription(6, true);
+	showDescription(TX_DEM2N006);
 }
 
 void Room::demon2LookAtAnything() {
-	showDescription(11, true);
+	showDescription(TX_DEM2N011);
 }
 
 void Room::demon2LookAtKirk() {
-	showDescription(2, true);
+	showDescription(TX_DEM2N002);
 }
 
 void Room::demon2LookAtSpock() {
-	showDescription(4, true);
+	showDescription(TX_DEM2N004);
 }
 
 void Room::demon2LookAtMcCoy() {
-	showDescription(3, true);
+	showDescription(TX_DEM2N003);
 }
 
 void Room::demon2LookAtRedshirt() {
-	showDescription(0, true);
+	showDescription(TX_DEM2N000);
 }
 
 void Room::demon2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM2_001);
 }
 
 void Room::demon2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 18, true);
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_018);
+	showText(TX_SPEAKER_KIRK, TX_DEM2_003);
 }
 
 void Room::demon2TalkToMcCoy() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
-	showText(TX_SPEAKER_SPOCK, 17, true);
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM2_015);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_017);
+	showText(TX_SPEAKER_MCCOY, TX_DEM2_016);
 }
 
 void Room::demon2TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, 19, true);
-	showText(TX_SPEAKER_KIRK,   2, true);
-	showText(TX_SPEAKER_EVERTS, 20, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM2_019);
+	showText(TX_SPEAKER_KIRK, TX_DEM2_002);
+	showText(TX_SPEAKER_EVERTS, TX_DEM2_020);
+	showText(TX_SPEAKER_KIRK, TX_DEM2_004);
 }
 
 void Room::demon2UsePhaserOnBerries() {
-	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM2_011);
 }
 
 void Room::demon2UseSTricorderOnBerries() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 8, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_008);
 }
 
 void Room::demon2UseSTricorderOnMoss() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 7, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_007);
 }
 
 void Room::demon2UseSTricorderOnFern() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 6, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_006);
 }
 
 void Room::demon2UseSTricorderOnCave() {
@@ -177,7 +234,7 @@ void Room::demon2UseSTricorderOnCave() {
 	playSoundEffectIndex(0x04);
 
 	// NOTE: audio file for this is empty.
-	showText(TX_SPEAKER_SPOCK, 5, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM2_005);
 }
 
 void Room::demon2UseMTricorderOnBerries() {
@@ -185,18 +242,18 @@ void Room::demon2UseMTricorderOnBerries() {
 	playSoundEffectIndex(0x04);
 
 	if (_awayMission->demon.curedChub)
-		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM2_013);
 	else if (_awayMission->demon.madeHypoDytoxin)
-		showText(TX_SPEAKER_MCCOY, 9, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM2_009);
 	else if (_awayMission->demon.knowAboutHypoDytoxin)
-		showText(TX_SPEAKER_MCCOY, 10, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM2_010);
 	else
-		showText(TX_SPEAKER_MCCOY, 12, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM2_012);
 }
 
 void Room::demon2GetBerries() {
 	if (_awayMission->demon.gotBerries)
-		showText(TX_SPEAKER_MCCOY, 14, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM2_014);
 	else
 		walkCrewman(OBJECT_KIRK, 0xe8, 0x97, 1);
 }
@@ -207,7 +264,7 @@ void Room::demon2ReachedBerries() {
 }
 
 void Room::demon2PickedUpBerries() {
-	showDescription(13, true);
+	showDescription(TX_DEM2N013);
 	giveItem(OBJECT_IBERRY);
 	_awayMission->demon.gotBerries = true;
 	_awayMission->demon.missionScore += 1;

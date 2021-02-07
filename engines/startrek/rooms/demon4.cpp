@@ -95,6 +95,98 @@ extern const RoomAction demon4ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum demon4TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_NAUIAN, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_DEM4_001, TX_DEM4_002, TX_DEM4_003, TX_DEM4_004, TX_DEM4_005,
+	TX_DEM4_006, TX_DEM4_007, TX_DEM4_008, TX_DEM4_009, TX_DEM4_010,
+	TX_DEM4_011, TX_DEM4_012, TX_DEM4_013, TX_DEM4_014, TX_DEM4_015,
+	TX_DEM4_017, TX_DEM4_018, TX_DEM4_019, TX_DEM4_020, TX_DEM4_021,
+	TX_DEM4_022, TX_DEM4_023, TX_DEM4_024, TX_DEM4_025, TX_DEM4_026,
+	TX_DEM4_027, TX_DEM4_029, TX_DEM4_030, TX_DEM4_031, TX_DEM4_032,
+	TX_DEM4_033, TX_DEM4_034, TX_DEM4_035, TX_DEM4_036, TX_DEM4_037,
+	TX_DEM4_038, TX_DEM4_039, TX_DEM4_040, TX_DEM4_041, TX_DEM4_042,
+	TX_DEM4_043, TX_DEM4_044, TX_DEM4_045, TX_DEM4_046, TX_DEM4_047,
+	TX_DEM4N000, TX_DEM4N001, TX_DEM4N002, TX_DEM4N003, TX_DEM4N004,
+	TX_DEM4N005, TX_DEM4N006, TX_DEM4N007, TX_DEM4N008, TX_DEM4N009,
+	TX_DEM4N010, TX_DEM4N011, TX_DEM4N012, TX_DEM4N013, TX_DEM4N014,
+	TX_DIALOG_ERROR
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets demon4TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 3902, 0 },
+	{ TX_SPEAKER_NAUIAN, 3913, 0 },
+	{ TX_SPEAKER_MCCOY, 3920, 0 },
+	{ TX_SPEAKER_SPOCK, 3930, 0 },
+	{ TX_SPEAKER_EVERTS, 3940, 0 },
+	{ TX_DEM4_001, 2980, 0 },
+	{ TX_DEM4_002, 4032, 0 },
+	{ TX_DEM4_003, 9925, 0 },
+	{ TX_DEM4_004, 4097, 0 },
+	{ TX_DEM4_005, 9991, 0 },
+	{ TX_DEM4_006, 9774, 0 },
+	{ TX_DEM4_007, 5073, 0 },
+	{ TX_DEM4_008, 5030, 0 },
+	{ TX_DEM4_009, 4210, 0 },
+	{ TX_DEM4_010,  596, 0 },
+	{ TX_DEM4_011, 1055, 0 },
+	{ TX_DEM4_012, 3195, 0 },
+	{ TX_DEM4_013, 8780, 0 },
+	{ TX_DEM4_014, 7484, 0 },
+	{ TX_DEM4_015, 6822, 0 },
+	{ TX_DEM4_017, 9415, 0 },
+	{ TX_DEM4_018, 8903, 0 },
+	{ TX_DEM4_019, 7104, 0 },
+	{ TX_DEM4_020, 7376, 0 },
+	{ TX_DEM4_021, 7334, 0 },
+	{ TX_DEM4_022, 7172, 0 },
+	{ TX_DEM4_023, 7999, 0 },
+	{ TX_DEM4_024, 6882, 0 },
+	{ TX_DEM4_025, 7756, 0 },
+	{ TX_DEM4_026, 8239, 0 },
+	{ TX_DEM4_027, 8146, 0 },
+	{ TX_DEM4_029, 8429, 0 },
+	{ TX_DEM4_030,  914, 0 },
+	{ TX_DEM4_031, 1971, 0 },
+	{ TX_DEM4_032, 8718, 0 },
+	{ TX_DEM4_033, 8637, 0 },
+	{ TX_DEM4_034, 9051, 0 },
+	{ TX_DEM4_035,  755, 0 },
+	{ TX_DEM4_036, 9539, 0 },
+	{ TX_DEM4_037, 6019, 0 },
+	{ TX_DEM4_038, 5821, 0 },
+	{ TX_DEM4_039, 4845, 0 },
+	{ TX_DEM4_040, 5272, 0 },
+	{ TX_DEM4_041, 5130, 0 },
+	{ TX_DEM4_042, 4310, 0 },
+	{ TX_DEM4_043, 4476, 0 },
+	{ TX_DEM4_044, 3955, 0 },
+	{ TX_DEM4_045, 8836, 0 },
+	{ TX_DEM4_046, 7055, 0 },
+	{ TX_DEM4_047, 7305, 0 },
+	{ TX_DEM4N000, 6576, 0 },
+	{ TX_DEM4N001, 6667, 0 },
+	{ TX_DEM4N002, 6301, 0 },
+	{ TX_DEM4N003, 6765, 0 },
+	{ TX_DEM4N004, 6715, 0 },
+	{ TX_DEM4N005, 6613, 0 },
+	{ TX_DEM4N006, 10194, 0 },
+	{ TX_DEM4N007, 6491, 0 },
+	{ TX_DEM4N008, 6419, 0 },
+	{ TX_DEM4N009, 10116, 0 },
+	{ TX_DEM4N010, 6365, 0 },
+	{ TX_DEM4N011, 8924, 0 },
+	{ TX_DEM4N012, 2666, 0 },
+	{ TX_DEM4N013, 2868, 0 },
+	{ TX_DEM4N014, 1602, 0 },
+	{ TX_DIALOG_ERROR, 10252, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText demon4Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 // TODO: this room should have animations on computer terminals, but this isn't where
 // they're implemented. Could be related to ".BAN" files which rooms can load?
 
@@ -130,7 +222,7 @@ void Room::demon4FinishedAnimation1() {
 void Room::demon4FinishedAnimation2() {
 	if (!_roomVar.demon.cd) {
 		_roomVar.demon.cd = true;
-		showDescription(11, true);
+		showDescription(TX_DEM4N011);
 	}
 
 	showGameOverMenu();
@@ -142,10 +234,10 @@ void Room::demon4FinishedAnimation2() {
 }
 
 void Room::demon4FinishedAnimation3() {
-	showText(TX_SPEAKER_NAUIAN, 34, true);
-	showText(TX_SPEAKER_KIRK, 10, true);
-	showText(TX_SPEAKER_NAUIAN, 35, true);
-	showText(TX_SPEAKER_SPOCK, 30, true);
+	showText(TX_SPEAKER_NAUIAN, TX_DEM4_034);
+	showText(TX_SPEAKER_KIRK,   TX_DEM4_010);
+	showText(TX_SPEAKER_NAUIAN, TX_DEM4_035);
+	showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
 	_awayMission->disableInput = true;
 	_awayMission->demon.missionScore += 5;
@@ -162,7 +254,7 @@ void Room::demon4Timer0Expired() {
 
 // Mission end
 void Room::demon4Timer1Expired() {
-	showText(TX_SPEAKER_KIRK, 11, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM4_011);
 
 	walkCrewman(OBJECT_KIRK, 0xbe, 0xa5, 4);
 	walkCrewman(OBJECT_SPOCK, 0xb4, 0x9b, 4);
@@ -204,15 +296,15 @@ void Room::demon4Timer5Expired() {
 }
 
 void Room::demon4Timer6Expired() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM4_017);
 }
 
 void Room::demon4UsePhaserOnNauian() {
 	if (!_roomVar.demon.triedToShootNauian) { // Lenient the first time
-		showText(TX_SPEAKER_NAUIAN, 33, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_033);
 		_roomVar.demon.triedToShootNauian = true;
 	} else { // Murdery the second time
-		showText(TX_SPEAKER_NAUIAN, 32, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_032);
 		loadActorAnim2(10, "bxfire", 0, 0, 2);
 		playVoc("V0SPOCKT");
 		_awayMission->disableInput = true;
@@ -234,7 +326,7 @@ void Room::demon4KirkReachedSecurityEquipment() {
 
 void Room::demon4KirkFinishedUsingSecurityEquipment() {
 	_awayMission->disableInput = false;
-	showDescription(14, true);
+	showDescription(TX_DEM4N014);
 }
 
 void Room::demon4UseMetalOnNauian() {
@@ -254,10 +346,10 @@ void Room::demon4UseSkullOnNauian() {
 }
 
 void Room::demon4KirkReachedNauianWithSkull() {
-	showText(TX_SPEAKER_NAUIAN, 36, true);
+	showText(TX_SPEAKER_NAUIAN, TX_DEM4_036);
 
-	const TextRef choices[] = {TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK};
-	int choice = showMultipleTexts(choices, true);
+	const TextRef choices[] = { TX_SPEAKER_KIRK, TX_DEM4_006, TX_DEM4_003, TX_DEM4_005, TX_END };
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0:
@@ -279,15 +371,15 @@ void Room::demon4KirkReachedNauianWithSkull() {
 }
 
 void Room::demon4UsePhaserOnPanel() {
-	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_013);
 }
 
 void Room::demon4UsePhaserOnPattern() {
-	showText(TX_SPEAKER_SPOCK, 45, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_045);
 }
 
 void Room::demon4UsePhaserOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, 18, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM4_018);
 }
 
 void Room::demon4TalkToNauian() {
@@ -295,22 +387,22 @@ void Room::demon4TalkToNauian() {
 
 	if (!_awayMission->demon.metNauian) {
 		_awayMission->demon.metNauian = true;
-		showText(TX_SPEAKER_NAUIAN, 44, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_044);
 
-		const TextRef choices[] = {TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK};
-		int choice = showMultipleTexts(choices, true);
+		const TextRef choices[] = { TX_SPEAKER_KIRK, TX_DEM4_002, TX_DEM4_004, TX_DEM4_009, TX_END };
+		int choice = showMultipleTexts(choices);
 
 		switch (choice) {
 		case 0:
 			_awayMission->demon.field2d = true;
-			showText(TX_SPEAKER_NAUIAN, 42, true);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_042);
 			break;
 
 		case 1:
 			break;
 
 		case 2:
-			showText(TX_SPEAKER_NAUIAN, 39, true);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_039);
 			break;
 
 		default:
@@ -318,15 +410,15 @@ void Room::demon4TalkToNauian() {
 			break;
 		}
 
-		showText(TX_SPEAKER_NAUIAN, 43, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_043);
 
-		const TextRef choices2[] = {TX_SPEAKER_KIRK, 8, 7, TX_BLANK};
-		choice = showMultipleTexts(choices2, true);
+		const TextRef choices2[] = { TX_SPEAKER_KIRK, TX_DEM4_008, TX_DEM4_007, TX_END };
+		choice = showMultipleTexts(choices2);
 
 		switch (choice) {
 		case 0:
 			_awayMission->demon.field2d = true;
-			showText(TX_SPEAKER_NAUIAN, 41, true);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_041);
 			break;
 		case 1:
 			break;
@@ -335,70 +427,70 @@ void Room::demon4TalkToNauian() {
 			break;
 		}
 
-		showText(TX_SPEAKER_NAUIAN, 40, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_040);
 
 		if (_roomVar.demon.disabledSecurity) { // Impossible condition?
-			showText(TX_SPEAKER_NAUIAN, 37, true);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_037);
 
 			// BUGFIX: Originally all of these used no audio, despite the files existing
 			// (being used elsewhere).
-			showText(TX_SPEAKER_KIRK, 10, true);
-			showText(TX_SPEAKER_NAUIAN, 35, true);
-			showText(TX_SPEAKER_SPOCK, 30, true);
+			showText(TX_SPEAKER_KIRK,   TX_DEM4_010);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_035);
+			showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
 			_awayMission->disableInput = true;
 			_awayMission->demon.missionScore += 5;
 			_awayMission->timers[1] = 20;
 		} else {
-			showText(TX_SPEAKER_NAUIAN, 38, true);
+			showText(TX_SPEAKER_NAUIAN, TX_DEM4_038);
 		}
 	} else {
-		showText(TX_SPEAKER_NAUIAN, 31, true);
+		showText(TX_SPEAKER_NAUIAN, TX_DEM4_031);
 	}
 }
 
 void Room::demon4LookAtPattern() {
-	showDescription(2, true);
+	showDescription(TX_DEM4N002);
 }
 
 void Room::demon4LookAtAlien() {
-	showDescription(7, true);
+	showDescription(TX_DEM4N007);
 }
 
 void Room::demon4LookAnywhere() {
-	showDescription(4, true);
+	showDescription(TX_DEM4N004);
 }
 
 void Room::demon4LookAtSecurityEquipment() {
-	showDescription(8, true);
+	showDescription(TX_DEM4N008);
 }
 
 void Room::demon4LookAtFloor() {
-	showDescription(9, true);
+	showDescription(TX_DEM4N009);
 }
 
 void Room::demon4LookAtKirk() {
-	showDescription(3, true);
+	showDescription(TX_DEM4N003);
 }
 
 void Room::demon4LookAtMccoy() {
-	showDescription(0, true);
+	showDescription(TX_DEM4N000);
 }
 
 void Room::demon4LookAtSpock() {
-	showDescription(5, true);
+	showDescription(TX_DEM4N005);
 }
 
 void Room::demon4LookAtRedshirt() {
-	showDescription(1, true);
+	showDescription(TX_DEM4N001);
 }
 
 void Room::demon4LookAtChamber() {
-	showDescription(6, true);
+	showDescription(TX_DEM4N006);
 }
 
 void Room::demon4LookAtPanel() {
-	showDescription(12, true);
+	showDescription(TX_DEM4N012);
 }
 
 void Room::demon4UseKirkOnPanel() {
@@ -436,7 +528,7 @@ void Room::demon4CrewmanReachedPanel() {
 		_awayMission->demon.missionScore += 3;
 		_awayMission->timers[0] = 10;
 	} else
-		showDescription(13, true);
+		showDescription(TX_DEM4N013);
 
 	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xae, 0x93, 0);
 	_awayMission->disableInput = false;
@@ -628,93 +720,93 @@ bool Room::demon4ShowSunPuzzle() {
 }
 
 void Room::demon4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM4_001);
 }
 
 void Room::demon4TalkToMccoy() {
 	if (_roomVar.demon.nauianEmerged)
-		showText(TX_SPEAKER_MCCOY, 19, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM4_019);
 	else
-		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM4_015);
 }
 
 void Room::demon4TalkToSpock() {
 	if (_roomVar.demon.nauianEmerged)
-		showText(TX_SPEAKER_SPOCK, 22, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM4_022);
 	else
-		showText(TX_SPEAKER_SPOCK, 24, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM4_024);
 }
 
 void Room::demon4TalkToRedshirt() {
 	if (_roomVar.demon.nauianEmerged)
-		showText(TX_SPEAKER_EVERTS, 47, true);
+		showText(TX_SPEAKER_EVERTS, TX_DEM4_047);
 	else
-		showText(TX_SPEAKER_EVERTS, 46, true);
+		showText(TX_SPEAKER_EVERTS, TX_DEM4_046);
 }
 
 void Room::demon4UseSTricorderOnChamber() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 12, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_012);
 }
 
 void Room::demon4UseSTricorderOnPattern() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 14, true);
-	showText(TX_SPEAKER_SPOCK, 25, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_014);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_025);
 }
 
 void Room::demon4UseMTricorderOnPattern() {
-	showText(TX_SPEAKER_MCCOY, 21, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM4_021);
 }
 
 void Room::demon4UseSTricorderOnPanel() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_027);
 }
 
 void Room::demon4UseMTricorderOnPanel() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_MCCOY, 27, true); // BUG: Uses spock's voice (though speaker says "Mccoy")
+	showText(TX_SPEAKER_MCCOY, TX_DEM4_027); // BUG: Uses spock's voice (though speaker says "Mccoy")
 }
 
 void Room::demon4UseSTricorderOnAnything() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 23, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_023);
 }
 
 void Room::demon4UseMTricorderOnAnything() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_MCCOY, 20, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM4_020);
 }
 
 void Room::demon4UseSTricorderOnNauian() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 29, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_029);
 }
 
 void Room::demon4UseMTricorderOnNauian() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 29, true); // BUG: Uses spock's voice (speaker says "Spock" too)
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_029); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 
 void Room::demon4UseSTricorderOnSecurityEquipment() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 26, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_026);
 }
 
 void Room::demon4UseMTricorderOnSecurityEquipment() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(4);
-	showText(TX_SPEAKER_SPOCK, 26, true); // BUG: Uses spock's voice (speaker says "Spock" too)
+	showText(TX_SPEAKER_SPOCK, TX_DEM4_026); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 
 } // namespace StarTrek

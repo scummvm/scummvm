@@ -24,6 +24,23 @@
 
 namespace StarTrek {
 
+enum vengTextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_ELASI_CAPTAIN, TX_SPEAKER_UHURA,
+	TX_VEN0_016, TX_VEN2_098, TX_VEN2_028, TX_VEN2_066, TX_VENA_F32,
+	TX_VENA_F34, TX_VENA_F40, TX_VEN4N007, TX_VEN4N010, TX_VEN2U093,
+	TX_VEN4_016, TX_MUD4_018, TX_DEM3_019, TX_BRIDU146, TX_G_014
+};
+
+// TODO: Finish offsets
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets vengTextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_ELASI_CAPTAIN, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
 void Room::vengaTick() {
 	if (_awayMission->veng.counterUntilElasiBoardWithShieldsDown != 0) {
 		_awayMission->veng.counterUntilElasiBoardWithShieldsDown--;
@@ -60,7 +77,7 @@ void Room::vengaTick() {
 		_awayMission->veng.counterUntilElasiDestroyShip--;
 		if (_awayMission->veng.counterUntilElasiDestroyShip == 0 && !_awayMission->veng.firedTorpedo) {
 			// Elasi fire torpedoes at you since you wouldn't lower your shields.
-			showDescription(40 + COMMON_MESSAGE_OFFSET, true);
+			showDescription(TX_VENA_F40);
 			showGameOverMenu();
 			return;
 		}
@@ -76,12 +93,12 @@ void Room::vengaTick() {
 }
 
 void Room::vengaElasiBeamOver() {
-	showDescription(32 + COMMON_MESSAGE_OFFSET, true);
+	showDescription(TX_VENA_F32);
 	showGameOverMenu();
 }
 
 void Room::vengaUsePhaserAnywhere() {
-	showText(TX_SPEAKER_SPOCK, 34 + COMMON_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_SPOCK, TX_VENA_F34);
 }
 
 void Room::vengaLookAtHypo() {

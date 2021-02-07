@@ -119,7 +119,97 @@ extern const RoomAction demon3ActionList[] = {
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon3LookAtPanel },
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon3LookAtLight },
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+};
 
+enum demon3TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KANDREY,
+	TX_DEM3_001, TX_DEM3_002, TX_DEM3_003, TX_DEM3_004, TX_DEM3_005,
+	TX_DEM3_006, TX_DEM3_007, TX_DEM3_008, TX_DEM3_009, TX_DEM3_010,
+	TX_DEM3_011, TX_DEM3_012, TX_DEM3_013, TX_DEM3_014, TX_DEM3_015,
+	TX_DEM3_016, TX_DEM3_017, TX_DEM3_018, TX_DEM3_019, TX_DEM3_020,
+	TX_DEM3_021, TX_DEM3_022, TX_DEM3_023, TX_DEM3_024, TX_DEM3_025,
+	TX_DEM3_026, TX_DEM3_027, TX_DEM3_028, TX_DEM3_029, TX_DEM3_030,
+	TX_DEM3_031, TX_DEM3_033, TX_DEM3_034, TX_DEM3_035, TX_DEM3_036,
+	TX_DEM3_A32, TX_DEM3_B32, TX_DEM3_F21, TX_DEM3N000, TX_DEM3N001,
+	TX_DEM3N002, TX_DEM3N003, TX_DEM3N004, TX_DEM3N005, TX_DEM3N006,
+	TX_DEM3N007, TX_DEM3N008, TX_DEM3N009, TX_DEM3N010, TX_DEM3N011,
+	TX_DEM3N012, TX_DEM3N013, TX_DEM3N014, TX_DEM3N015, TX_DEM3N016,
+	TX_DEM3N017, TX_DEM3N018, TX_DEM3N019, TX_DEM3N020
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets demon3TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 6011, 0 },
+	{ TX_SPEAKER_MCCOY, 6022, 0 },
+	{ TX_SPEAKER_SPOCK, 6032, 0 },
+	{ TX_SPEAKER_EVERTS, 6042, 0 },
+	{ TX_SPEAKER_KANDREY, 6056, 0 },
+	{ TX_DEM3_001, 7134, 0 },
+	{ TX_DEM3_002, 6521, 0 },
+	{ TX_DEM3_003, 6854, 0 },
+	{ TX_DEM3_004, 7058, 0 },
+	{ TX_DEM3_005, 3794, 0 },
+	{ TX_DEM3_006, 1957, 0 },
+	{ TX_DEM3_007, 1747, 0 },
+	{ TX_DEM3_008, 2585, 0 },
+	{ TX_DEM3_009, 2714, 0 },
+	{ TX_DEM3_010, 7277, 0 },
+	{ TX_DEM3_011, 8332, 0 },
+	{ TX_DEM3_012, 7918, 0 },
+	{ TX_DEM3_013, 1634, 0 },
+	{ TX_DEM3_014, 4494, 0 },
+	{ TX_DEM3_015, 4174, 0 },
+	{ TX_DEM3_016, 3603, 0 },
+	{ TX_DEM3_017, 7606, 0 },
+	{ TX_DEM3_018, 7876, 0 },
+	{ TX_DEM3_019, 8548, 0 },
+	{ TX_DEM3_020, 7174, 0 },
+	{ TX_DEM3_021, 7520, 0 },
+	{ TX_DEM3_022, 7572, 0 },
+	{ TX_DEM3_023, 7434, 0 },
+	{ TX_DEM3_024, 6877, 0 },
+	{ TX_DEM3_025, 6781, 0 },
+	{ TX_DEM3_026, 6659, 0 },
+	{ TX_DEM3_027, 8059, 0 },
+	{ TX_DEM3_028, 6704, 0 },
+	{ TX_DEM3_029, 6627, 0 },
+	{ TX_DEM3_030, 3120, 0 },
+	{ TX_DEM3_031, 3031, 0 },
+	{ TX_DEM3_033, 7728, 0 },
+	{ TX_DEM3_034, 7820, 0 },
+	{ TX_DEM3_035, 7771, 0 },
+	{ TX_DEM3_036, 6927, 0 },
+	{ TX_DEM3_A32, 3326, 0 },
+	{ TX_DEM3_B32, 7852, 0 },
+	{ TX_DEM3_F21, 8642, 0 },
+	{ TX_DEM3N000, 6418, 0 },
+	{ TX_DEM3N001, 6134, 0 },
+	{ TX_DEM3N002, 6197, 0 },
+	{ TX_DEM3N003, 6292, 0 },
+	{ TX_DEM3N004, 6077, 0 },
+	{ TX_DEM3N005, 7696, 0 },
+	{ TX_DEM3N006, 6345, 0 },
+	{ TX_DEM3N007, 8394, 0 },
+	{ TX_DEM3N008, 8469, 0 },
+	{ TX_DEM3N009, 8288, 0 },
+	{ TX_DEM3N010, 4772, 0 },
+	{ TX_DEM3N011, 4995, 0 },
+	{ TX_DEM3N012, 5547, 0 },
+	{ TX_DEM3N013, 5077, 0 },
+	{ TX_DEM3N013, 5187, 0 },
+	{ TX_DEM3N014, 5621, 0 },
+	{ TX_DEM3N015, 5805, 0 },
+	{ TX_DEM3N016, 5410, 0 },
+	{ TX_DEM3N017, 4680, 0 },
+	{ TX_DEM3N018, 4852, 0 },
+	{ TX_DEM3N019, 5704, 0 },
+	{ TX_DEM3N020, 5297, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText demon3Texts[] = {
+    { -1, Common::UNK_LANG, "" }
 };
 
 void Room::demon3Tick1() {
@@ -183,13 +273,13 @@ void Room::demon3Timer1Expired() {
 // Door just opened
 void Room::demon3Timer3Expired() {
 	if (_awayMission->demon.repairedHand) {
-		showDescription(8, true);
+		showDescription(TX_DEM3N008);
 		loadActorAnim(14, "door", 0x82, 0xc, 0);
 		loadMapFile("demon3");
 		_awayMission->demon.doorOpened = true;
 		_awayMission->demon.missionScore += 2;
 	} else {
-		showDescription(7, true);
+		showDescription(TX_DEM3N007);
 	}
 }
 
@@ -210,7 +300,7 @@ void Room::demon3FinishedAnimation2() {
 void Room::demon3FinishedWalking5() {
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, 19, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_019);
 
 	_awayMission->disableInput = false;
 }
@@ -277,9 +367,9 @@ void Room::demon3FireAtBoulder() {
 		// This should never happen (in the original game, this would cause a stack
 		// misalignment?
 		const char *text[] = {
-			"wes",
-			"There is a boulder check error.",
-			""
+		    "wes",
+		    "There is a boulder check error.",
+		    ""
 		};
 		showRoomSpecificText(text);
 		break;
@@ -296,11 +386,11 @@ void Room::demon3FireAtBoulder() {
 void Room::demon3UsePhaserOnRedshirt() {
 	if (!_awayMission->redshirtDead)
 		return;
-	showText(TX_SPEAKER_MCCOY, 13, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_013);
 }
 
 void Room::demon3UseStunPhaserOnBoulder() {
-	showText(TX_SPEAKER_SPOCK, 7, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_007);
 }
 
 void Room::demon3UsePhaserOnBoulder1() {
@@ -334,7 +424,7 @@ void Room::demon3UsePhaserOnBoulder3() {
 		strcpy(_roomVar.demon.boulderAnim, "s0r3s1");
 		demon3BoulderCommon();
 	} else {
-		showText(TX_SPEAKER_SPOCK, 6, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
 	}
 }
 
@@ -351,7 +441,7 @@ void Room::demon3UsePhaserOnBoulder4() {
 	} else {
 		// BUGFIX: In the original, the audio didn't play, despite the file existing (and
 		// despite it being used for the boulder on the left).
-		showText(TX_SPEAKER_SPOCK, 6, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
 	}
 }
 
@@ -366,7 +456,7 @@ void Room::demon3BoulderCommon() {
 	if (_roomVar.demon.inFiringPosition) {
 		demon3PullOutPhaserAndFireAtBoulder();
 	} else {
-		showText(TX_SPEAKER_KIRK, 1, true);
+		showText(TX_SPEAKER_KIRK, TX_DEM3_001);
 
 		walkCrewman(OBJECT_KIRK, 0x79, 0xa0, 1);
 		walkCrewman(OBJECT_SPOCK, 0xae, 0xb4, 2);
@@ -382,13 +472,13 @@ void Room::demon3BoulderCommon() {
 void Room::demon3UseSTricorderOnMiner() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 8, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_008);
 }
 
 void Room::demon3UseSTricorderOnPanel() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 9, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_009);
 }
 
 void Room::demon3UseSTricorderOnBoulder() {
@@ -396,7 +486,7 @@ void Room::demon3UseSTricorderOnBoulder() {
 		return;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 10, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_010);
 }
 
 void Room::demon3UseMTricorderOnBoulder() {
@@ -404,13 +494,13 @@ void Room::demon3UseMTricorderOnBoulder() {
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, 20, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_020);
 }
 
 void Room::demon3UseCrewmanOnPanel() {
 	if (_awayMission->demon.numBouldersGone != 4 || _awayMission->redshirtDead)
 		return;
-	showText(TX_SPEAKER_EVERTS, 31, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM3_031);
 	demon3UseRedshirtOnPanel();
 }
 
@@ -419,7 +509,7 @@ void Room::demon3UseRedshirtOnPanel() {
 		return;
 
 	if (_awayMission->demon.numBouldersGone != 4)
-		showText(TX_SPEAKER_EVERTS, 30, true);
+		showText(TX_SPEAKER_EVERTS, TX_DEM3_030);
 	else
 		walkCrewman(OBJECT_REDSHIRT, 0xd8, 0x70, 8);
 }
@@ -443,52 +533,52 @@ void Room::demon3RedshirtUsedPanel() {
 		_awayMission->demon.field45 = true;
 	} else {
 		const TextRef textTable[] = {
-			5,
-			33,
-			35,
-			34,
+		    TX_DEM3N005,
+		    TX_DEM3_033,
+		    TX_DEM3_035,
+		    TX_DEM3_034,
 		};
 
 		TextRef text[] = {
-			TX_SPEAKER_EVERTS,
-			TX_NULL,
-			TX_BLANK
+		    TX_SPEAKER_EVERTS,
+		    TX_EMPTY,
+		    TX_END
 		};
 		text[1] = textTable[_awayMission->demon.field41 - 1];
-		showMultipleTexts(text, true);
+		showMultipleTexts(text);
 		walkCrewman(OBJECT_REDSHIRT, 0xbe, 0x9b, 0);
 	}
 }
 
 void Room::demon3RedshirtElectrocuted() {
-	showText(TX_SPEAKER_MCCOY, 18, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_018);
 }
 
 void Room::demon3UseSTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 12, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_012);
 }
 
 void Room::demon3UseSTricorderOnAnything() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_027);
 }
 
 void Room::demon3UseMTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_016);
 }
 
 void Room::demon3UsePhaserOnDoor() {
 	_roomVar.demon.usedPhaserOnDoor++;
 
 	if (_roomVar.demon.usedPhaserOnDoor == 1)
-		showDescription(9, true);
+		showDescription(TX_DEM3N009);
 	else if (_roomVar.demon.usedPhaserOnDoor == 2)
-		showText(TX_SPEAKER_SPOCK, 11, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_011);
 }
 
 void Room::demon3UseHandOnPanel() {
@@ -497,7 +587,7 @@ void Room::demon3UseHandOnPanel() {
 			return;
 		walkCrewman(OBJECT_KIRK, 0xd8, 0x70, 7);
 	} else {
-		showText(TX_SPEAKER_SPOCK, 5, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_005);
 	}
 }
 
@@ -518,15 +608,15 @@ void Room::demon3UseMTricorderOnMiner() {
 	playSoundEffectIndex(0x04);
 
 	if (_awayMission->demon.minerDead) {
-		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
 	} else {
-		showText(TX_SPEAKER_MCCOY, 23, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_023);
 	}
 }
 
 void Room::demon3UseMedkitOnMiner() {
 	if (_awayMission->demon.healedMiner) {
-		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_015);
 	} else {
 		walkCrewman(OBJECT_MCCOY, 0xe6, 0x7b, 6);
 		_roomVar.demon.inFiringPosition = false;
@@ -540,9 +630,9 @@ void Room::demon3McCoyReachedMiner() {
 
 void Room::demon3McCoyFinishedHealingMiner() {
 	if (_awayMission->demon.minerDead) {
-		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
 	} else {
-		showText(TX_SPEAKER_MCCOY, 21, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_021);
 		_awayMission->demon.healedMiner = true;
 		loadActorAnim2(13, "drmine", 0xda, 0x6c, 0);
 		_awayMission->demon.missionScore += 2;
@@ -551,110 +641,110 @@ void Room::demon3McCoyFinishedHealingMiner() {
 }
 
 void Room::demon3GetMiner() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_017);
 }
 
 void Room::demon3TalkToMiner() {
 	if (!_awayMission->demon.healedMiner)
 		return;
-	showText(TX_SPEAKER_KANDREY, 21 + FOLLOWUP_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_KANDREY, TX_DEM3_F21);
 }
 
 void Room::demon3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  2, true);
-	showText(TX_SPEAKER_SPOCK, 29, true);
-	showText(TX_SPEAKER_MCCOY, 26, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM3_002);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_029);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_026);
 }
 
 void Room::demon3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 28, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_028);
 }
 
 void Room::demon3TalkToMccoy() {
 	if (_awayMission->redshirtDead) {
-		showText(TX_SPEAKER_MCCOY, 14, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_014);
 	} else {
-		showText(TX_SPEAKER_MCCOY, 25, true);
-		showText(TX_SPEAKER_KIRK,  3, true);
-		showText(TX_SPEAKER_MCCOY, 24, true);
-
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_025);
+		showText(TX_SPEAKER_KIRK, TX_DEM3_003);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_024);
 	}
 }
 
 void Room::demon3TalkToRedshirt() {
 	// FIXME: this shouldn't work if he's dead. Should it check higher up whether that's
 	// the case?
-	showText(TX_SPEAKER_EVERTS, 36, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM3_036);
+	showText(TX_SPEAKER_KIRK, TX_DEM3_004);
 }
 
 void Room::demon3LookAtKirk() {
-	showDescription(4, true);
+	showDescription(TX_DEM3N004);
 }
 
 void Room::demon3LookAtSpock() {
-	showDescription(1, true);
+	showDescription(TX_DEM3N001);
 }
 
 void Room::demon3LookAtMccoy() {
-	showDescription(2, true);
+	showDescription(TX_DEM3N002);
 }
 
 void Room::demon3LookAtRedshirt() {
 	if (_awayMission->redshirtDead) {
-		showDescription(17, true);
+		showDescription(TX_DEM3N017);
 		// NOTE: there's an alternate string that isn't used? (TX_DEM3N018)
 	} else {
-		showDescription(3, true);
+		showDescription(TX_DEM3N003);
 	}
 }
 
 void Room::demon3LookAnywhere() {
-	showDescription(10, true);
+	showDescription(TX_DEM3N010);
 }
 
 void Room::demon3LookAtMiner() {
 	if (_awayMission->demon.healedMiner) {
-		showDescription(0, true);
+		showDescription(TX_DEM3N000);
 	} else {
-		showDescription(6, true);
+		showDescription(TX_DEM3N006);
 	}
 }
 
 void Room::demon3LookAtBoulder1() {
-	showDescription(11, true);
+	showDescription(TX_DEM3N011);
 }
 
 void Room::demon3LookAtBoulder2() {
-	showDescription(13, true);
+	showDescription(TX_DEM3N013);
 }
 
 void Room::demon3LookAtBoulder3() {
-	showDescription(13, true);
+	showDescription(TX_DEM3N013);
 }
 
 void Room::demon3LookAtBoulder4() {
-	showDescription(20, true);
+	showDescription(TX_DEM3N020);
 }
 
 void Room::demon3LookAtStructure() {
-	showDescription(16, true);
+	showDescription(TX_DEM3N016);
 }
 
 void Room::demon3LookAtDoor() {
 	if (_awayMission->demon.doorOpened) {
-		showDescription(14, true);
+		showDescription(TX_DEM3N014);
 	} else {
-		showDescription(12, true);
+		showDescription(TX_DEM3N012);
 	}
 }
 
 void Room::demon3LookAtPanel() {
-	showDescription(19, true);
+	showDescription(TX_DEM3N019);
 }
 
 void Room::demon3LookAtLight() {
-	showDescription(15, true);
+	showDescription(TX_DEM3N015);
 }
+
 
 }

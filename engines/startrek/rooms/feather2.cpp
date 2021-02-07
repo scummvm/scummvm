@@ -58,50 +58,91 @@ extern const RoomAction feather2ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum feather2TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_QUETZECOATL, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_STRAGEY,
+	TX_FEA2_001, TX_FEA2_002, TX_FEA2_003, TX_FEA2_004, TX_FEA2_005,
+	TX_FEA2_006, TX_FEA2_007, TX_FEA2_008, TX_FEA2_009, TX_FEA2_010,
+	TX_FEA2N000, TX_FEA2N001, TX_FEA2N002, TX_FEA2N003, TX_FEA2N004,
+	TX_FEA2N005, TX_FEA2N006, TX_FEA2N007, TX_FEA2N008
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets feather2TextOffsets[] = {
+	{ TX_SPEAKER_KIRK,  965, 0 },
+	{ TX_SPEAKER_MCCOY, 988, 0 },
+	{ TX_SPEAKER_SPOCK, 998, 0 },
+	{ TX_SPEAKER_QUETZECOATL, 976, 0 },
+	{ TX_SPEAKER_STRAGEY, 1008, 0 },
+	{ TX_FEA2_001, 465, 0 },
+	{ TX_FEA2_002, 1827, 0 },
+	{ TX_FEA2_003, 1713, 0 },
+	{ TX_FEA2_004, 1894, 0 },
+	{ TX_FEA2_005, 1390, 0 },
+	{ TX_FEA2_006, 1624, 0 },
+	{ TX_FEA2_007, 1747, 0 },
+	{ TX_FEA2_008, 2003, 0 },
+	{ TX_FEA2_009, 2112, 0 },
+	{ TX_FEA2_010, 1253, 0 },
+	{ TX_FEA2N000, 1209, 0 },
+	{ TX_FEA2N001, 1461, 0 },
+	{ TX_FEA2N002, 2172, 0 },
+	{ TX_FEA2N003, 2479, 0 },
+	{ TX_FEA2N004, 2365, 0 },
+	{ TX_FEA2N005, 2252, 0 },
+	{ TX_FEA2N006, 1021, 0 },
+	{ TX_FEA2N007, 1091, 0 },
+	{ TX_FEA2N008, 1521, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText feather2Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::feather2Tick1() {
 	playVoc("FEA2LOOP");
 	playMidiMusicTracks(27);
 }
 
 void Room::feather2UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, 6, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA2_006);
 }
 
 void Room::feather2UsePhaser() {
 	// FIXME: Why does McCoy say "They're dead, Jim"?
-	showText(TX_SPEAKER_MCCOY, 3, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA2_003);
 }
 
 void Room::feather2UseSTricorderAnywhere() {
-	spockScan(DIR_S, 7, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_FEA2_007);
 }
 
 void Room::feather2UseMTricorderAnywhere() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_S, 2, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_FEA2_002);
 }
 
 void Room::feather2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 4, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA2_004);
 }
 
 void Room::feather2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 8, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA2_008);
 }
 
 void Room::feather2TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, 9, true);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA2_009);
 }
 
 void Room::feather2LookAtVines() {
 	// NOTE: This might be unused? I can't find where HOTSPOT_VINES is supposed to be.
-	showDescription(0, true);
-	showText(TX_SPEAKER_STRAGEY, 10, true);
-	showText(TX_SPEAKER_MCCOY,   5, true);
+	showDescription(TX_FEA2N000);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA2_010);
+	showText(TX_SPEAKER_MCCOY,   TX_FEA2_005);
 }
 
 void Room::feather2UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, 1, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA2_001);
 }
 
 void Room::feather2WalkToLeftExit() {
@@ -109,35 +150,35 @@ void Room::feather2WalkToLeftExit() {
 }
 
 void Room::feather2LookAtEyes() {
-	showDescription(1, true);
+	showDescription(TX_FEA2N001);
 }
 
 void Room::feather2LookAtBigTree() {
-	showDescription(6, true);
+	showDescription(TX_FEA2N006);
 }
 
 void Room::feather2LookAtTrees() {
-	showDescription(7, true);
+	showDescription(TX_FEA2N007);
 }
 
 void Room::feather2LookAnywhere() {
-	showDescription(8, true);
+	showDescription(TX_FEA2N008);
 }
 
 void Room::feather2LookAtKirk() {
-	showDescription(2, true);
+	showDescription(TX_FEA2N002);
 }
 
 void Room::feather2LookAtSpock() {
-	showDescription(5, true);
+	showDescription(TX_FEA2N005);
 }
 
 void Room::feather2LookAtMccoy() {
-	showDescription(4, true);
+	showDescription(TX_FEA2N004);
 }
 
 void Room::feather2LookAtRedshirt() {
-	showDescription(3, true);
+	showDescription(TX_FEA2N003);
 }
 
 }

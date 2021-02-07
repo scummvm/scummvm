@@ -142,6 +142,122 @@ extern const RoomAction feather1ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum feather1TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_QUETZECOATL, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_STRAGEY,
+	TX_FEA1_001, TX_FEA1_002, TX_FEA1_003, TX_FEA1_004, TX_FEA1_005,
+	TX_FEA1_006, TX_FEA1_007, TX_FEA1_008, TX_FEA1_009, TX_FEA1_010,
+	TX_FEA1_011, TX_FEA1_012, TX_FEA1_013, TX_FEA1_014, TX_FEA1_015,
+	TX_FEA1_017, TX_FEA1_018, TX_FEA1_019, TX_FEA1_020, TX_FEA1_021,
+	TX_FEA1_022, TX_FEA1_023, TX_FEA1_024, TX_FEA1_025, TX_FEA1_026,
+	TX_FEA1_027, TX_FEA1_028, TX_FEA1_029, TX_FEA1_030, TX_FEA1_031,
+	TX_FEA1_032, TX_FEA1_033, TX_FEA1_034, TX_FEA1_035, TX_FEA1_037,
+	TX_FEA1_038, TX_FEA1_039, TX_FEA1_040, TX_FEA1_041, TX_FEA1_042,
+	TX_FEA1_043, TX_FEA1_044, TX_FEA1_045, TX_FEA1_046, TX_FEA1_047,
+	TX_FEA1_048, TX_FEA1_049, TX_FEA1_050, TX_FEA1_051, TX_FEA1_052,
+	TX_FEA1_053, TX_FEA1_054, TX_FEA1_055, TX_FEA1_056, TX_FEA1_057,
+	TX_FEA1_A46, TX_FEA1_F25, TX_FEA1N000, TX_FEA1N001, TX_FEA1N002,
+	TX_FEA1N003, TX_FEA1N004, TX_FEA1N005, TX_FEA1N006, TX_FEA1N007,
+	TX_FEA1N008, TX_FEA1N009, TX_FEA1N010, TX_FEA1N011, TX_FEA1N012,
+	TX_FEA1N013, TX_FEA1N014, TX_FEA1N015, TX_FEA1N016, TX_FEA1N017,
+	TX_FEA1N018, TX_FEA1N019, TX_FEA1N020, TX_FEA1N021, TX_FEA1N022
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets feather1TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 4412, 0 },
+	{ TX_SPEAKER_MCCOY, 4435, 0 },
+	{ TX_SPEAKER_SPOCK, 4445, 0 },
+	{ TX_SPEAKER_QUETZECOATL, 4423, 0 },
+	{ TX_SPEAKER_STRAGEY, 4455, 0 },
+	{ TX_FEA1_001, 10730, 0 },
+	{ TX_FEA1_002, 9907, 0 },
+	{ TX_FEA1_003, 10929, 0 },
+	{ TX_FEA1_004, 6487, 0 },
+	{ TX_FEA1_005, 6143, 0 },
+	{ TX_FEA1_006, 7970, 0 },
+	{ TX_FEA1_007, 9933, 0 },
+	{ TX_FEA1_008, 3761, 0 },
+	{ TX_FEA1_009, 4949, 0 },
+	{ TX_FEA1_010, 6430, 0 },
+	{ TX_FEA1_011, 9554, 0 },
+	{ TX_FEA1_012, 9519, 0 },
+	{ TX_FEA1_013, 5288, 0 },
+	{ TX_FEA1_014, 9462, 0 },
+	{ TX_FEA1_015, 6775, 0 },
+	{ TX_FEA1_017, 5616, 0 },
+	{ TX_FEA1_018, 10805, 0 },
+	{ TX_FEA1_019, 9608, 0 },
+	{ TX_FEA1_020, 10217, 0 },
+	{ TX_FEA1_021, 5876, 0 },
+	{ TX_FEA1_022, 9983, 0 },
+	{ TX_FEA1_023, 4693, 0 },
+	{ TX_FEA1_023, 4693, 0 },
+	{ TX_FEA1_024, 10984, 0 },
+	{ TX_FEA1_025, 6379, 0 },
+	{ TX_FEA1_026, 7037, 0 },
+	{ TX_FEA1_027, 6312, 0 },
+	{ TX_FEA1_028, 8659, 0 },
+	{ TX_FEA1_029, 8901, 0 },
+	{ TX_FEA1_030, 9168, 0 },
+	{ TX_FEA1_031, 9092, 0 },
+	{ TX_FEA1_032, 4842, 0 },
+	{ TX_FEA1_033, 6704, 0 },
+	{ TX_FEA1_034, 5992, 0 },
+	{ TX_FEA1_035, 6055, 0 },
+	{ TX_FEA1_037, 5146, 0 },
+	{ TX_FEA1_038, 9268, 0 },
+	{ TX_FEA1_039, 8771, 0 },
+	{ TX_FEA1_040, 8095, 0 },
+	{ TX_FEA1_041, 10597, 0 },
+	{ TX_FEA1_042, 5503, 0 },
+	{ TX_FEA1_043, 5770, 0 },
+	{ TX_FEA1_044, 9705, 0 },
+	{ TX_FEA1_045, 4988, 0 },
+	{ TX_FEA1_046, 6218, 0 },
+	{ TX_FEA1_047, 6618, 0 },
+	{ TX_FEA1_048, 8173, 0 },
+	{ TX_FEA1_049, 6859, 0 },
+	{ TX_FEA1_049, 6859, 0 },
+	{ TX_FEA1_050, 7132, 0 },
+	{ TX_FEA1_051, 6579, 0 },
+	{ TX_FEA1_052, 5409, 0 },
+	{ TX_FEA1_053, 5948, 0 },
+	{ TX_FEA1_054, 5696, 0 },
+	{ TX_FEA1_055, 9851, 0 },
+	{ TX_FEA1_056, 10123, 0 },
+	{ TX_FEA1_057, 4468, 0 },
+	{ TX_FEA1_A46, 5235, 0 },
+	{ TX_FEA1_F25, 6966, 0 },
+	{ TX_FEA1N000, 4782, 0 },
+	{ TX_FEA1N001, 10345, 0 },
+	{ TX_FEA1N002, 10538, 0 },
+	{ TX_FEA1N003, 10482, 0 },
+	{ TX_FEA1N004, 10429, 0 },
+	{ TX_FEA1N005, 5056, 0 },
+	{ TX_FEA1N006, 6661, 0 },
+	{ TX_FEA1N007, 8511, 0 },
+	{ TX_FEA1N008, 8454, 0 },
+	{ TX_FEA1N009, 8409, 0 },
+	{ TX_FEA1N010, 5100, 0 },
+	{ TX_FEA1N011, 7824, 0 },
+	{ TX_FEA1N012, 7295, 0 },
+	{ TX_FEA1N013, 7905, 0 },
+	{ TX_FEA1N014, 7650, 0 },
+	{ TX_FEA1N015, 7409, 0 },
+	{ TX_FEA1N016, 7758, 0 },
+	{ TX_FEA1N017, 7542, 0 },
+	{ TX_FEA1N018, 8586, 0 },
+	{ TX_FEA1N019, 8370, 0 },
+	{ TX_FEA1N020, 7467, 0 },
+	{ TX_FEA1N021, 8262, 0 },
+	{ TX_FEA1N022, 8317, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText feather1Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::feather1Tick1() {
 	playVoc("FEA1LOOP");
 	playMidiMusicTracks(27);
@@ -171,7 +287,7 @@ void Room::feather1Tick45() {
 
 void Room::feather1Tick85() {
 	if (_awayMission->feather.vineState == 0)
-		showText(TX_SPEAKER_QUETZECOATL, 57, true);
+		showText(TX_SPEAKER_QUETZECOATL, TX_FEA1_057);
 }
 
 void Room::feather1Tick95() {
@@ -186,21 +302,21 @@ void Room::feather1QuetzecoatlDisappeared() {
 }
 
 void Room::feather1GetRightVine() {
-	showDescription(8, true);
+	showDescription(TX_FEA1N008);
 }
 
 void Room::feather1GetLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showDescription(9, true);
+		showDescription(TX_FEA1N009);
 	else
-		showDescription(8, true);
+		showDescription(TX_FEA1N008);
 }
 
 void Room::feather1GetRocks() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showDescription(21, true);
+		showDescription(TX_FEA1N021);
 	else if (_awayMission->feather.gotRock)
-		showDescription(19, true);
+		showDescription(TX_FEA1N019);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xb6, &Room::feather1ReachedRocks);
 		_awayMission->disableInput = true;
@@ -215,7 +331,7 @@ void Room::feather1PickedUpRocks() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IROCK);
-	showDescription(22, true);
+	showDescription(TX_FEA1N022);
 	_awayMission->feather.gotRock = true;
 }
 
@@ -227,7 +343,7 @@ void Room::feather1GetSnake() {
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0xbe, &Room::feather1ReachedSnake);
 		_awayMission->disableInput = true;
 	} else
-		showDescription(21, true);
+		showDescription(TX_FEA1N021);
 }
 
 void Room::feather1ReachedSnake() {
@@ -265,14 +381,14 @@ void Room::feather1Timer0Expired() { // Snake comes back out of hole
 }
 
 void Room::feather1UseCommunicator() {
-	showText(TX_SPEAKER_SPOCK, 23, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_023);
 }
 
 void Room::feather1UseRockOnHole() {
 	if (_roomVar.feather.crewEscaped[OBJECT_KIRK])
-		showDescription(21, true);
+		showDescription(TX_FEA1N021);
 	else if (_awayMission->feather.holeBlocked)
-		showDescription(5, true);
+		showDescription(TX_FEA1N005);
 	else {
 		_awayMission->feather.missionScore++;
 		walkCrewmanC(OBJECT_KIRK, 0xa3, 0xb6, &Room::feather1ReachedHole);
@@ -298,25 +414,25 @@ void Room::feather1PutRockInHole() {
 }
 
 void Room::feather1UseSnakeOnLeftVine() {
-	showText(TX_SPEAKER_SPOCK, 37, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_037);
 }
 
 void Room::feather1UseSnakeOnSpock() {
-	showText(TX_SPEAKER_SPOCK, 41, true);
-	showText(TX_SPEAKER_KIRK,   1, true);
-	showText(TX_SPEAKER_MCCOY, 18, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_041);
+	showText(TX_SPEAKER_KIRK,  TX_FEA1_001);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_018);
 }
 
 void Room::feather1UseSnakeOnKirk() {
-	showText(TX_SPEAKER_SPOCK, 26, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_026);
 }
 
 void Room::feather1UseSnakeOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, 25 + FOLLOWUP_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_F25);
 }
 
 void Room::feather1UseSnakeOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, 50, true);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_050);
 }
 
 void Room::feather1UseRockOnSnake() {
@@ -324,69 +440,69 @@ void Room::feather1UseRockOnSnake() {
 		loadActorAnim2(OBJECT_SNAKE, "s5r1si");
 		_awayMission->timers[0] = 80;
 		_roomVar.feather.snakeInHole = true;
-		showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: speaker is Spock, not Stragey
+		showText(TX_SPEAKER_SPOCK, TX_FEA1_034); // BUGFIX: speaker is Spock, not Stragey
 	}
 }
 
 void Room::feather1UseSpockOnSnake() {
-	showText(TX_SPEAKER_SPOCK, 35, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_035);
 }
 
 void Room::feather1UseMccoyOnSnake() {
-	showText(TX_SPEAKER_MCCOY, 5, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_005);
 }
 
 void Room::feather1UseRedshirtOnSnake() {
-	showText(TX_SPEAKER_STRAGEY, 46, true);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_046);
 }
 
 void Room::feather1UseSpockOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_SPOCK, 25, true);
+		showText(TX_SPEAKER_SPOCK, TX_FEA1_025);
 	else
-		showText(TX_SPEAKER_SPOCK, 27, true);
+		showText(TX_SPEAKER_SPOCK, TX_FEA1_027);
 }
 
 void Room::feather1UseMccoyOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_MCCOY, 4, true);
+		showText(TX_SPEAKER_MCCOY, TX_FEA1_004);
 	else
-		showText(TX_SPEAKER_MCCOY, 10, true);
+		showText(TX_SPEAKER_MCCOY, TX_FEA1_010);
 }
 
 void Room::feather1UseRedshirtOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		showText(TX_SPEAKER_STRAGEY, 47, true);
+		showText(TX_SPEAKER_STRAGEY, TX_FEA1_047);
 	else
-		showText(TX_SPEAKER_STRAGEY, 51, true);
+		showText(TX_SPEAKER_STRAGEY, TX_FEA1_051);
 }
 
 void Room::feather1UseRockOnMoss() {
-	showDescription(6, true);
+	showDescription(TX_FEA1N006);
 }
 
 void Room::feather1UseRockOnSpock() {
-	showText(TX_SPEAKER_SPOCK, 32, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_032);
 }
 
 void Room::feather1UseRockOnMccoy() {
-	showText(TX_SPEAKER_MCCOY, 9, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_009);
 }
 
 void Room::feather1UseRockOnRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, 45, true);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_045);
 }
 
 void Room::feather1UseSpockOnMoss() {
-	showText(TX_SPEAKER_SPOCK, 33, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_033);
 }
 
 void Room::feather1UseMccoyOnMoss() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_015);
 }
 
 void Room::feather1UseRedshirtOnMoss() {
-	showText(TX_SPEAKER_MCCOY, 49, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_049);
 }
 
 void Room::feather1UseRockOnLeftVine() {
@@ -412,9 +528,9 @@ void Room::feather1ThrewRock1() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showText(TX_SPEAKER_SPOCK, 42, true);
-	showText(TX_SPEAKER_MCCOY, 17, true);
-	showText(TX_SPEAKER_STRAGEY, 54, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_042);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_017);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_054);
 }
 
 void Room::feather1ReadyToThrowRock2() {
@@ -429,9 +545,9 @@ void Room::feather1ThrewRock2() {
 	loadActorStandAnim(OBJECT_KIRK);
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_SPOCK, 43, true);
-	showText(TX_SPEAKER_MCCOY, 21, true);
-	showText(TX_SPEAKER_STRAGEY, 53, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_043);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_021);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_053);
 }
 
 
@@ -448,7 +564,7 @@ void Room::feather1UseMccoyOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_MCCOY;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_MCCOY, TX_FEA1_013);
 }
 
 void Room::feather1UseRedshirtOnVine() {
@@ -456,7 +572,7 @@ void Room::feather1UseRedshirtOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_REDSHIRT;
 		feather1CrewmanClimbVine();
 	} else
-		showText(TX_SPEAKER_STRAGEY, 52, true);
+		showText(TX_SPEAKER_STRAGEY, TX_FEA1_052);
 }
 
 void Room::feather1UseKirkOnVine() {
@@ -464,7 +580,7 @@ void Room::feather1UseKirkOnVine() {
 		_roomVar.feather.crewmanClimbingVine = OBJECT_KIRK;
 		feather1CrewmanClimbVine();
 	} else
-		showDescription(10, true);
+		showDescription(TX_FEA1N010);
 }
 
 // This was refactored, due to the similarity of the code for each crewman. Originally, the
@@ -544,76 +660,76 @@ void Room::feather1ClimbedDownVine() {
 }
 
 void Room::feather1UsePhaser() {
-	showText(TX_SPEAKER_SPOCK, 28, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_028);
 }
 
 void Room::feather1UseSTricorderOnRightVine() {
-	spockScan(DIR_N, 39, false, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_FEA1_039);
 }
 
 void Room::feather1UseSTricorderOnSnake() {
-	spockScan(DIR_S, 29, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_FEA1_029);
 }
 
 void Room::feather1UseSTricorderOnMoss() {
-	spockScan(DIR_E, 38, false, true);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_FEA1_038);
 }
 
 void Room::feather1UseSTricorderOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		spockScan(DIR_E, 30, false, true);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_FEA1_030);
 	else
-		spockScan(DIR_E, 31, false, true);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_FEA1_031);
 }
 
 void Room::feather1UseSTricorderAnywhere() {
-	spockScan(DIR_S, 24, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_FEA1_024);
 }
 
 void Room::feather1UseSTricorderOnRocks() {
-	spockScan(DIR_E, 3, false, true);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_FEA1_003);
 }
 
 void Room::feather1UseMTricorderOnVine() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_E, 7, false, true);
+	mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_FEA1_007);
 }
 
 void Room::feather1UseMTricorderOnMoss() {
-	mccoyScan(DIR_E, 14, false, true);
+	mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_FEA1_014);
 }
 
 void Room::feather1UseMTricorderOnHole() {
 	if (_roomVar.feather.snakeInHole)
-		mccoyScan(DIR_E, 11, false, true);
+		mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_FEA1_011);
 	else
-		mccoyScan(DIR_E, 12, false, true);
+		mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_FEA1_012);
 }
 
 void Room::feather1UseMTricorderOnSnake() {
-	mccoyScan(DIR_S, 19, false, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_FEA1_019);
 	if (!_roomVar.feather.scannedSnake) {
-		showText(TX_SPEAKER_SPOCK,   44, true);
-		showText(TX_SPEAKER_STRAGEY, 55, true);
-		showText(TX_SPEAKER_KIRK,    2, true);
+		showText(TX_SPEAKER_SPOCK,   TX_FEA1_044);
+		showText(TX_SPEAKER_STRAGEY, TX_FEA1_055);
+		showText(TX_SPEAKER_KIRK,    TX_FEA1_002);
 		_roomVar.feather.scannedSnake = true;
 	}
 }
 
 void Room::feather1UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, 8, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_008);
 }
 
 void Room::feather1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 6, true);
+	showText(TX_SPEAKER_MCCOY, TX_FEA1_006);
 }
 
 void Room::feather1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 40, true);
+	showText(TX_SPEAKER_SPOCK, TX_FEA1_040);
 }
 
 void Room::feather1TalkToRedshirt() {
-	showText(TX_SPEAKER_STRAGEY, 48, true);
+	showText(TX_SPEAKER_STRAGEY, TX_FEA1_048);
 }
 
 void Room::feather1WalkToExit() {
@@ -621,58 +737,58 @@ void Room::feather1WalkToExit() {
 }
 
 void Room::feather1LookAnywhere() {
-	showDescription(20, true);
+	showDescription(TX_FEA1N020);
 }
 
 void Room::feather1LookAtSnake() {
-	showDescription(17, true);
+	showDescription(TX_FEA1N017);
 }
 
 void Room::feather1LookAtRightVine() {
-	showDescription(15, true);
+	showDescription(TX_FEA1N015);
 }
 
 void Room::feather1LookAtHole() {
-	showDescription(14, true);
+	showDescription(TX_FEA1N014);
 }
 
 void Room::feather1LookAtMoss() {
-	showDescription(16, true);
+	showDescription(TX_FEA1N016);
 }
 
 void Room::feather1LookAtRocks() {
-	showDescription(11, true);
+	showDescription(TX_FEA1N011);
 }
 
 void Room::feather1LookAtLight() {
-	showDescription(13, true);
+	showDescription(TX_FEA1N013);
 }
 
 void Room::feather1LookAtEyes() {
-	showDescription(0, true);
+	showDescription(TX_FEA1N000);
 }
 
 void Room::feather1LookAtKirk() {
-	showDescription(1, true);
+	showDescription(TX_FEA1N001);
 }
 
 void Room::feather1LookAtSpock() {
-	showDescription(4, true);
+	showDescription(TX_FEA1N004);
 }
 
 void Room::feather1LookAtMccoy() {
-	showDescription(3, true);
+	showDescription(TX_FEA1N003);
 }
 
 void Room::feather1LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(TX_FEA1N002);
 }
 
 void Room::feather1LookAtLeftVine() {
 	if (_awayMission->feather.vineState == 0)
-		showDescription(12, true);
+		showDescription(TX_FEA1N012);
 	else
-		showDescription(15, true);
+		showDescription(TX_FEA1N015);
 }
 
 }

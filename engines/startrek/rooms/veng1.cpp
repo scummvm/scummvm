@@ -128,6 +128,93 @@ extern const RoomAction veng1ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum veng1TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_KIJE,
+	TX_VEN0_016, TX_VEN1_001, TX_VEN1_002, TX_VEN1_004, TX_VEN1_005,
+	TX_VEN1_006, TX_VEN1_007, TX_VEN1_008, TX_VEN1_009, TX_VEN1_010,
+	TX_VEN1_011, TX_VEN1_012, TX_VEN1_013, TX_VEN1_014, TX_VEN1_015,
+	TX_VEN1_016, TX_VEN1_F33, TX_VEN2_028, TX_VEN2_066, TX_VEN2_098,
+	TX_VEN4_016, TX_VENA_F32, TX_VENA_F34, TX_VENA_F40, TX_DEM3_019,
+	TX_MUD4_018, /*TX_BRIDU146,*/ TX_VEN1N000, TX_VEN1N001, TX_VEN1N002,
+	TX_VEN1N003, TX_VEN1N004, TX_VEN1N005, TX_VEN1N006, TX_VEN1N007,
+	TX_VEN1N008, TX_VEN1N009, TX_VEN1N010, TX_VEN1N011, TX_VEN1N012,
+	TX_VEN1N013, TX_VEN1N014, TX_VEN1N015, TX_VEN1N016, TX_VEN1N017,
+	TX_VEN1N018, TX_VEN1N019, TX_VEN1N020, TX_VEN1N021, TX_VEN1N022,
+	TX_VEN1N023, TX_VEN2U093, TX_VEN4N010, TX_VEN4N014, TX_VEN6N007
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets veng1TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 7612, 0 },
+	{ TX_SPEAKER_MCCOY, 7623, 0 },
+	{ TX_SPEAKER_SPOCK, 7633, 0 },
+	{ TX_SPEAKER_KIJE, 7643, 0 },
+	{ TX_VEN0_016, 7429, 0 },
+	//{ TX_VEN0_016, 7370, 0 },	// ignore duplicate line
+	{ TX_VEN1_001, 2202, 0 },
+	{ TX_VEN1_002, 2602, 0 },
+	{ TX_VEN1_004, 2493, 0 },
+	{ TX_VEN1_005, 2415, 0 },
+	{ TX_VEN1_006, 3777, 0 },
+	{ TX_VEN1_007, 3415, 0 },
+	{ TX_VEN1_008, 3016, 0 },
+	{ TX_VEN1_009, 3501, 0 },
+	{ TX_VEN1_010, 3889, 0 },
+	{ TX_VEN1_011, 938, 0 },
+	{ TX_VEN1_012, 3195, 0 },
+	{ TX_VEN1_013, 2293, 0 },
+	{ TX_VEN1_014, 3640, 0 },
+	{ TX_VEN1_015, 2777, 0 },
+	{ TX_VEN1_016, 2677, 0 },
+	{ TX_VEN1_F33, 4328, 0 },
+	{ TX_VEN2_028, 6888, 0 },
+	{ TX_VEN2_066, 6966, 0 },
+	{ TX_VEN2_098, 5776, 0 },
+	{ TX_VEN4_016, 7184, 0 },
+	{ TX_VENA_F32, 6006, 0 },
+	{ TX_VENA_F34, 6276, 0 },
+	{ TX_VENA_F40, 5871, 0 },
+	{ TX_DEM3_019, 7133, 0 },
+	//{ TX_G_014, 7256, 0 },
+	//{ TX_G_014, 7313, 0 },
+	{ TX_MUD4_018, 6580, 0 },
+	//{ TX_MUD4_018, 6713, 0 },		// ignore duplicate line
+	//{ TX_BRIDU146, 6649, 0 },
+	{ TX_VEN1N000, 1545, 0 },
+	{ TX_VEN1N001, 1453, 0 },
+	{ TX_VEN1N002, 1626, 0 },
+	{ TX_VEN1N003, 1840, 0 },
+	{ TX_VEN1N004, 1753, 0 },
+	{ TX_VEN1N005, 2002, 0 },
+	{ TX_VEN1N006, 5529, 0 },
+	{ TX_VEN1N007, 549, 0 },
+	{ TX_VEN1N008, 4906, 0 },
+	{ TX_VEN1N009, 4587, 0 },
+	{ TX_VEN1N010, 1284, 0 },
+	{ TX_VEN1N011, 5638, 0 },
+	{ TX_VEN1N012, 5108, 0 },
+	{ TX_VEN1N013, 4408, 0 },
+	{ TX_VEN1N014, 4500, 0 },
+	{ TX_VEN1N015, 5158, 0 },
+	{ TX_VEN1N016, 4074, 0 },
+	{ TX_VEN1N017, 4202, 0 },
+	{ TX_VEN1N018, 4680, 0 },
+	{ TX_VEN1N019, 1200, 0 },
+	{ TX_VEN1N020, 2108, 0 },
+	{ TX_VEN1N021, 1382, 0 },
+	{ TX_VEN1N022, 1100, 0 },
+	{ TX_VEN1N023, 5326, 0 },
+	{ TX_VEN2U093, 6781, 0 },
+	{ TX_VEN4N010, 6430, 0 },
+	{ TX_VEN4N014,  777, 0 },
+	{ TX_VEN6N007, 6495, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText veng1Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::veng1Tick1() {
 	playVoc("VEN1LOOP");
 	loadActorAnim2(OBJECT_DOOR, "s7r1d1c", 0xa1, 0x7e);
@@ -156,7 +243,7 @@ void Room::veng1WalkToDoor() {
 		_roomVar.veng.walkingToDoor = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	} else
-		showDescription(7, true);
+		showDescription(TX_VEN1N007);
 }
 
 void Room::veng1TouchedHotspot0() {
@@ -182,94 +269,94 @@ void Room::veng1LookAtDeadGuy() {
 }
 
 void Room::veng1UseSTricorderOnVent() {
-	spockScan(DIR_W, 11, false, true);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_VEN1_011);
 }
 
 void Room::veng1LookAtPanel() {
 	if (!_awayMission->veng.openedPanel)
-		showDescription(22, true);
+		showDescription(TX_VEN1N022);
 	else if (!_awayMission->veng.removedPanelDebris)
-		showDescription(19, true);
+		showDescription(TX_VEN1N019);
 	else
-		showDescription(10, true);
+		showDescription(TX_VEN1N010);
 }
 
 void Room::veng1LookAtDoor() {
-	showDescription(21, true);
+	showDescription(TX_VEN1N021);
 }
 
 void Room::veng1LookAtSaw() {
-	showDescription(1, true);
+	showDescription(TX_VEN1N001);
 }
 
 void Room::veng1LookAtDebris() {
-	showDescription(0, true);
+	showDescription(TX_VEN1N000);
 }
 
 void Room::veng1LookAtKirk() {
-	showDescription(2, true);
+	showDescription(TX_VEN1N002);
 }
 
 void Room::veng1LookAtMccoy() {
-	showDescription(4, true);
+	showDescription(TX_VEN1N004);
 }
 
 void Room::veng1LookAtSpock() {
-	showDescription(3, true);
+	showDescription(TX_VEN1N003);
 }
 
 void Room::veng1LookAtRedshirt() {
-	showDescription(5, true);
+	showDescription(TX_VEN1N005);
 }
 
 void Room::veng1LookAnywhere() {
-	showDescription(20, true);
+	showDescription(TX_VEN1N020);
 }
 
 void Room::veng1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_VEN1_001);
 }
 
 void Room::veng1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 13, true);
-	showText(TX_SPEAKER_MCCOY,  5, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN1_013);
+	showText(TX_SPEAKER_MCCOY, TX_VEN1_005);
 }
 
 void Room::veng1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 4, true);
-	showText(TX_SPEAKER_KIRK,  2, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN1_004);
+	showText(TX_SPEAKER_KIRK,  TX_VEN1_002);
 }
 
 void Room::veng1TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, 16, true);
+	showText(TX_SPEAKER_KIJE, TX_VEN1_016);
 }
 
 void Room::veng1UsePhaserOnDoor() {
-	showText(TX_SPEAKER_KIJE, 15, true);
+	showText(TX_SPEAKER_KIJE, TX_VEN1_015);
 }
 
 void Room::veng1UsePhaserOnPanel() {
-	showText(TX_SPEAKER_SPOCK, 8, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN1_008);
 }
 
 void Room::veng1UseSTricorderOnSaw() {
-	spockScan(DIR_W, 12, false, true);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_VEN1_012);
 }
 
 void Room::veng1UseSTricorderOnDoor() {
 	if (_awayMission->veng.removedPanelDebris)
-		spockScan(DIR_N, 9, false, true);
+		spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_VEN1_009);
 	else
-		spockScan(DIR_N, 7, false, true);
+		spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_VEN1_007);
 }
 
 void Room::veng1UseSTricorderOnPanel() {
 	if (!_awayMission->veng.clearedPanelDebris)
-		spockScan(DIR_E, 14, false, true);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_VEN1_014);
 	else if (!_awayMission->veng.removedPanelDebris)
-		spockScan(DIR_E, 6, false, true);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_VEN1_006);
 	else
-		spockScan(DIR_E, 10, false, true);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_VEN1_010);
 }
 
 void Room::veng1GetPanel() {
@@ -285,32 +372,32 @@ void Room::veng1KirkAccessedPanel() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.clearedPanelDebris) {
-		showDescription(16, true);
+		showDescription(TX_VEN1N016);
 	} else if (!_awayMission->veng.openedPanel) {
 		_awayMission->veng.openedPanel = true;
-		showDescription(17, true);
+		showDescription(TX_VEN1N017);
 		loadActorAnim2(OBJECT_DEBRIS, "s7r1p2", 0xd1, 0x6a);
 		loadActorStandAnim(OBJECT_PANEL);
 	} else
-		showDescription(33 + FOLLOWUP_MESSAGE_OFFSET, true);
+		showDescription(TX_VEN1_F33);
 
 	walkCrewman(OBJECT_KIRK, 0xc9, 0x98);
 }
 
 void Room::veng1UseSawOnPanel() {
-	showDescription(13, true);
+	showDescription(TX_VEN1N013);
 }
 
 void Room::veng1UseSawOnDoor() {
-	showDescription(14, true);
+	showDescription(TX_VEN1N014);
 }
 
 void Room::veng1UseDrillOnDebris() {
-	showDescription(9, true);
+	showDescription(TX_VEN1N009);
 }
 
 void Room::veng1UseSawOnDebris() {
-	showDescription(18, true);
+	showDescription(TX_VEN1N018);
 }
 
 void Room::veng1UseDrillOnPanel() {
@@ -328,7 +415,7 @@ void Room::veng1KirkDoneDrillingPanel() {
 	_awayMission->disableInput = false;
 	if (!_awayMission->veng.clearedPanelDebris) {
 		_awayMission->veng.clearedPanelDebris = true;
-		showDescription(8, true);
+		showDescription(TX_VEN1N008);
 	}
 }
 
@@ -346,10 +433,10 @@ void Room::veng1KirkUsedHypoOnDebris() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.oilInHypo)
-		showDescription(12, true);
+		showDescription(TX_VEN1N012);
 	else {
 		_awayMission->veng.loosenedDebrisWithOil = true;
-		showDescription(15, true);
+		showDescription(TX_VEN1N015);
 	}
 }
 
@@ -364,7 +451,7 @@ void Room::veng1ReachedSaw() {
 
 void Room::veng1PickedUpSaw() {
 	loadActorStandAnim(OBJECT_SAW);
-	showDescription(23, true);
+	showDescription(TX_VEN1N023);
 	giveItem(OBJECT_ILMD);
 
 	_awayMission->veng.tookMolecularSaw = true;
@@ -385,11 +472,11 @@ void Room::veng1TriedToGetDebris() {
 	_awayMission->disableInput = false;
 
 	if (!_awayMission->veng.loosenedDebrisWithOil)
-		showDescription(6, true);
+		showDescription(TX_VEN1N006);
 	else {
 		loadActorStandAnim(OBJECT_DEBRIS);
 		loadActorAnim2(OBJECT_PANEL, "s7r1p3", 0xd1, 0x6a);
-		showDescription(11, true);
+		showDescription(TX_VEN1N011);
 		_awayMission->veng.removedPanelDebris = true;
 	}
 }

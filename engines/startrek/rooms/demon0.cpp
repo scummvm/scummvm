@@ -82,6 +82,94 @@ extern const RoomAction demon0ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum demon0TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_ANGIVEN, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_SIGN,
+	TX_DEM0_001,	TX_DEM0_002,	TX_DEM0_003,	TX_DEM0_004,	TX_DEM0_005,
+	TX_DEM0_006,	TX_DEM0_007,	TX_DEM0_008,	TX_DEM0_009,	TX_DEM0_010,
+	TX_DEM0_011,	TX_DEM0_012,	TX_DEM0_013,	TX_DEM0_014,	TX_DEM0_015,
+	TX_DEM0_016,	TX_DEM0_017,	TX_DEM0_018,	TX_DEM0_019,	TX_DEM0_020,
+	TX_DEM0_021,	TX_DEM0_022,	TX_DEM0_023,	TX_DEM0_024,	TX_DEM0_025,
+	TX_DEM0_026,	TX_DEM0_027,	TX_DEM0_028,	TX_DEM0_029,	TX_DEM0_030,
+	TX_DEM0_031,	TX_DEM0_032,	TX_DEM0_033,	TX_DEM0_034,	TX_DEM0_035,
+	TX_DEM0_036,	TX_DEM0_037,	TX_DEM0_038,	TX_DEM0_039,	TX_DEM0_040,
+	TX_DEM0_041,	TX_DEM0_042,	TX_DEM0_043,	TX_DEM0_044,	TX_DEM0N000,
+	TX_DEM0N001,	TX_DEM0N002,	TX_DEM0N003,	TX_DEM0N004,	TX_DEM0N005,
+	TX_DEM0N006,	TX_DEM0N007,	TX_DEM0N008,	TX_DEM0N009,	TX_DEM0N010,
+	TX_DEM0C001
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets demon0TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 2597, 2480 },
+	{ TX_SPEAKER_ANGIVEN, 2608, 2491 },
+	{ TX_SPEAKER_MCCOY, 2622, 2505 },
+	{ TX_SPEAKER_SPOCK, 2632, 2515 },
+	{ TX_SPEAKER_EVERTS, 2642, 2525 },
+	{ TX_SPEAKER_SIGN, 2661, 0 },
+	{ TX_DEM0_001, 7829, 7085 },
+	{ TX_DEM0_002, 3960, 3739 },
+	{ TX_DEM0_003, 3148, 2987 },
+	{ TX_DEM0_004, 7588, 6889 },
+	{ TX_DEM0_005, 4061, 3825 },
+	{ TX_DEM0_006, 2797, 2665 },
+	{ TX_DEM0_007, 7380, 6741 },
+	{ TX_DEM0_008, 2988, 2842 },
+	{ TX_DEM0_009, 7460, 6791 },
+	{ TX_DEM0_010, 4303, 4052 },
+	{ TX_DEM0_011, 6827, 6304 },
+	{ TX_DEM0_012, 4362, 4096 },
+	{ TX_DEM0_013, 1334, 0 },
+	{ TX_DEM0_014, 6593, 6085 },
+	{ TX_DEM0_015, 1233, 0 },
+	{ TX_DEM0_016,  473, 0 },
+	{ TX_DEM0_017, 1167, 0 },
+	{ TX_DEM0_018, 8094, 7320 },
+	{ TX_DEM0_019, 6427, 5934 },
+	{ TX_DEM0_020, 8648, 7829 },
+	{ TX_DEM0_021, 8180, 7391 },
+	{ TX_DEM0_022, 8050, 7291 },
+	{ TX_DEM0_023, 6871, 0 },
+	{ TX_DEM0_024, 7656, 0 },
+	{ TX_DEM0_025, 7357, 0 },
+	{ TX_DEM0_026, 7213, 0 },
+	{ TX_DEM0_027, 7526, 0 },
+	{ TX_DEM0_028, 8405, 7601 },
+	{ TX_DEM0_029, 6995, 0 },
+	{ TX_DEM0_030, 7709, 6980 },
+	{ TX_DEM0_031, 4125, 0 },
+	{ TX_DEM0_032, 3563, 0 },
+	{ TX_DEM0_033, 3743, 0 },
+	{ TX_DEM0_034, 5325, 0 },
+	{ TX_DEM0_035, 4533, 0 },
+	{ TX_DEM0_036, 2666, 2549 },
+	{ TX_DEM0_037, 5196, 4898 },
+	{ TX_DEM0_038, 3237, 3061 },
+	{ TX_DEM0_039, 1058, 0 },
+	{ TX_DEM0_040, 1400, 0 },
+	{ TX_DEM0_041, 7080, 0 },
+	{ TX_DEM0_042, 7275, 0 },
+	{ TX_DEM0_043, 7144, 0 },
+	{ TX_DEM0_044, 7429, 0 },
+	{ TX_DEM0N000, 5591, 0 },
+	{ TX_DEM0N001, 5805, 0 },
+	{ TX_DEM0N002, 6184, 0 },
+	{ TX_DEM0N003, 6290, 0 },
+	{ TX_DEM0N004, 5467, 0 },
+	{ TX_DEM0N005, 6076, 0 },
+	{ TX_DEM0N006, 5678, 0 },
+	{ TX_DEM0N007, 5897, 0 },
+	{ TX_DEM0N008, 5560, 0 },
+	{ TX_DEM0N009, 6036, 0 },
+	{ TX_DEM0N010, 5960, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText demon0Texts[] = {
+    { TX_DEM0C001, Common::EN_ANY, "All mining equipment use this road." },
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::demon0Tick1() {
 	playVoc("DEM0LOOP");
 	loadActorAnim(9, "s0r0d3", 252, 153, 0);
@@ -104,14 +192,14 @@ void Room::demon0Tick100() {
 	if (_awayMission->demon.talkedToPrelate || _awayMission->demon.prelateWelcomedCrew)
 		return;
 	_awayMission->demon.prelateWelcomedCrew = true;
-	showText(TX_SPEAKER_ANGIVEN, 36, true);
+	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_036);
 }
 
 void Room::demon0Tick140() {
 	if (_awayMission->demon.mccoyMentionedFlora)
 		return;
 
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_016);
 
 	_awayMission->demon.mccoyMentionedFlora = true;
 }
@@ -163,53 +251,53 @@ void Room::demon0ReachedTopDoor() {
 
 void Room::demon0TalkToPrelate() {
 	const TextRef options1[] = {
-		TX_SPEAKER_KIRK,
-		6,
-		8,
-		3,
-		TX_BLANK
+	    TX_SPEAKER_KIRK,
+	    TX_DEM0_006,
+	    TX_DEM0_008,
+	    TX_DEM0_003,
+	    TX_END
 	};
 	const TextRef firstResponse0[] = {
-		TX_SPEAKER_ANGIVEN,
-		38,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_038,
+	    TX_END
 	};
 	const TextRef firstResponse1[] = {
-		TX_SPEAKER_ANGIVEN,
-		32,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_032,
+	    TX_END
 	};
 	const TextRef options2[] = {
-		TX_SPEAKER_KIRK,
-		2,
-		5,
-		TX_BLANK
+	    TX_SPEAKER_KIRK,
+	    TX_DEM0_002,
+	    TX_DEM0_005,
+	    TX_END
 	};
 	const TextRef secondResponse[] = {
-		TX_SPEAKER_ANGIVEN,
-		31,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_031,
+	    TX_END
 	};
 	const TextRef options3[] = {
-		TX_SPEAKER_KIRK,
-		10,
-		12,
-		TX_BLANK
+	    TX_SPEAKER_KIRK,
+	    TX_DEM0_010,
+	    TX_DEM0_012,
+	    TX_END
 	};
 	const TextRef thirdResponse[] = {
-		TX_SPEAKER_ANGIVEN,
-		35,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_035,
+	    TX_END
 	};
 	const TextRef badConclusion[] = {
-		TX_SPEAKER_ANGIVEN,
-		37,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_037,
+	    TX_END
 	};
 	const TextRef goodConclusion[] = {
-		TX_SPEAKER_ANGIVEN,
-		34,
-		TX_BLANK
+	    TX_SPEAKER_ANGIVEN,
+	    TX_DEM0_034,
+	    TX_END
 	};
 
 	if (_awayMission->demon.talkedToPrelate)
@@ -220,7 +308,7 @@ void Room::demon0TalkToPrelate() {
 
 	const TextRef *response = nullptr;
 
-	switch (showMultipleTexts(options1, true)) {
+	switch (showMultipleTexts(options1)) {
 	case 0:
 		response = firstResponse0;
 		break;
@@ -235,46 +323,46 @@ void Room::demon0TalkToPrelate() {
 	}
 
 	if (response != nullptr)
-		showMultipleTexts(response, true);
+		showMultipleTexts(response);
 
-	if (showMultipleTexts(options2, true) == 1)
+	if (showMultipleTexts(options2) == 1)
 		demon0BadResponse();
 
-	showMultipleTexts(secondResponse, true);
+	showMultipleTexts(secondResponse);
 
-	if (showMultipleTexts(options3, true) == 1)
+	if (showMultipleTexts(options3) == 1)
 		demon0BadResponse();
 
-	showMultipleTexts(thirdResponse, true);
+	showMultipleTexts(thirdResponse);
 
 	if (_awayMission->demon.wasRudeToPrelate)
-		showMultipleTexts(badConclusion, true);
+		showMultipleTexts(badConclusion);
 	else
-		showMultipleTexts(goodConclusion, true);
+		showMultipleTexts(goodConclusion);
 }
 
 void Room::demon0LookAtPrelate() {
-	showDescription(4, true);
+	showDescription(TX_DEM0N004);
 }
 
 void Room::demon0UsePhaserOnSnow() {
 	// BUG: doesn't check if redshirt is dead.
-	showText(TX_SPEAKER_EVERTS, 39, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM0_039);
 }
 
 void Room::demon0UsePhaserOnSign() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_017);
 }
 
 void Room::demon0UsePhaserOnShelter() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
-	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_015);
+	showText(TX_SPEAKER_SPOCK, TX_DEM0_013);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_EVERTS, 40, true);
+		showText(TX_SPEAKER_EVERTS, TX_DEM0_040);
 }
 
 void Room::demon0UsePhaserOnPrelate() {
-	showText(TX_SPEAKER_MCCOY, 20, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_020);
 }
 
 void Room::demon0LookAtSign() {
@@ -282,66 +370,66 @@ void Room::demon0LookAtSign() {
 }
 
 void Room::demon0LookAtTrees() {
-	showDescription(6, true);
+	showDescription(TX_DEM0N006);
 }
 
 void Room::demon0LookAtSnow() {
-	showDescription(7, true);
+	showDescription(TX_DEM0N007);
 }
 
 void Room::demon0LookAnywhere() {
-	showDescription(0, true);
+	showDescription(TX_DEM0N000);
 }
 
 void Room::demon0LookAtBushes() {
-	showDescription(10, true);
+	showDescription(TX_DEM0N010);
 }
 
 void Room::demon0LookAtKirk() {
-	showDescription(5, true);
+	showDescription(TX_DEM0N005);
 }
 
 void Room::demon0LookAtMcCoy() {
-	showDescription(2, true);
+	showDescription(TX_DEM0N002);
 }
 
 void Room::demon0LookAtRedShirt() {
-	showDescription(3, true);
+	showDescription(TX_DEM0N003);
 }
 
 void Room::demon0LookAtSpock() {
-	showDescription(9, true);
+	showDescription(TX_DEM0N009);
 }
 
 void Room::demon0LookAtShelter() {
-	showDescription(1, true);
+	showDescription(TX_DEM0N001);
 }
 
 void Room::demon0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  9, true);
-	showText(TX_SPEAKER_MCCOY, 27, true);
-	showText(TX_SPEAKER_KIRK,  4, true);
-	showText(TX_SPEAKER_MCCOY, 24, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM0_009);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_027);
+	showText(TX_SPEAKER_KIRK, TX_DEM0_004);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_024);
 }
 
 void Room::demon0TalkToRedshirt() {
-	showText(TX_SPEAKER_EVERTS, 43, true);
-	showText(TX_SPEAKER_MCCOY,  26, true);
-	showText(TX_SPEAKER_EVERTS, 42, true);
-	showText(TX_SPEAKER_MCCOY,  25, true);
-	showText(TX_SPEAKER_KIRK,   7, true);
-	showText(TX_SPEAKER_EVERTS, 44, true);
+	showText(TX_SPEAKER_EVERTS, TX_DEM0_043);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_026);
+	showText(TX_SPEAKER_EVERTS, TX_DEM0_042);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_025);
+	showText(TX_SPEAKER_KIRK, TX_DEM0_007);
+	showText(TX_SPEAKER_EVERTS, TX_DEM0_044);
 }
 
 void Room::demon0TalkToMcCoy() {
 	if (_awayMission->demon.talkedToPrelate) {
-		showText(TX_SPEAKER_KIRK,  11, true);
-		showText(TX_SPEAKER_MCCOY, 23, true);
-		showText(TX_SPEAKER_SPOCK, 29, true);
+		showText(TX_SPEAKER_KIRK, TX_DEM0_011);
+		showText(TX_SPEAKER_MCCOY, TX_DEM0_023);
+		showText(TX_SPEAKER_SPOCK, TX_DEM0_029);
 		if (!_awayMission->redshirtDead)
-			showText(TX_SPEAKER_EVERTS, 41, true);
+			showText(TX_SPEAKER_EVERTS, TX_DEM0_041);
 	} else {
-		showText(TX_SPEAKER_MCCOY, 19, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM0_019);
 		if (!_awayMission->demon.askedPrelateAboutSightings) {
 			demon0AskPrelateAboutSightings();
 		}
@@ -349,15 +437,15 @@ void Room::demon0TalkToMcCoy() {
 }
 
 void Room::demon0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 14, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM0_014);
 
 	if (!_awayMission->demon.talkedToPrelate && !_awayMission->demon.askedPrelateAboutSightings)
 		demon0AskPrelateAboutSightings();
 }
 
 void Room::demon0AskPrelateAboutSightings() {
-	showText(TX_SPEAKER_KIRK, 1, true);
-	showText(TX_SPEAKER_ANGIVEN, 30, true);
+	showText(TX_SPEAKER_KIRK, TX_DEM0_001);
+	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_030);
 
 	_awayMission->demon.askedPrelateAboutSightings = true;
 }
@@ -365,13 +453,13 @@ void Room::demon0AskPrelateAboutSightings() {
 void Room::demon0UseSTricorderAnywhere() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_SPOCK, 28, true);
+	showText(TX_SPEAKER_SPOCK, TX_DEM0_028);
 }
 
 void Room::demon0UseMTricorderAnywhere() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showText(TX_SPEAKER_MCCOY, 21, true);
+	showText(TX_SPEAKER_MCCOY, TX_DEM0_021);
 }
 
 void Room::demon0UseMTricorderOnPrelate() {
@@ -379,9 +467,9 @@ void Room::demon0UseMTricorderOnPrelate() {
 	playSoundEffectIndex(0x04);
 
 	if (_awayMission->demon.talkedToPrelate)
-		showText(TX_SPEAKER_MCCOY, 18, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM0_018);
 	else
-		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_MCCOY, TX_DEM0_022);
 }
 
 // Helper functions
@@ -392,7 +480,7 @@ void Room::demon0BadResponse() {
 	_awayMission->demon.missionScore -= 3;
 	_awayMission->demon.wasRudeToPrelate = true;
 
-	showText(TX_SPEAKER_ANGIVEN, 33, true);
+	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_033);
 }
 }
 

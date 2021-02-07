@@ -93,6 +93,119 @@ extern const RoomAction love0ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum love0TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_FERRIS, TX_SPEAKER_COMPUTER,
+	TX_LOV0_001, TX_LOV0_002, TX_LOV0_003, TX_LOV0_004, TX_LOV0_005,
+	TX_LOV0_006, TX_LOV0_007, TX_LOV0_008, TX_LOV0_009, TX_LOV0_010,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_023, TX_LOV0_024, TX_LOV0_026,
+	TX_LOV0_027, TX_LOV0_028, TX_LOV0_029, TX_LOV0_030, TX_LOV0_031,
+	TX_LOV0_033, TX_LOV0_035, TX_LOV0_036, TX_LOV0_037, TX_LOV0_038,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_049,
+	TX_LOV0_050,
+	//TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104, TX_LOV0_105,
+	//TX_LOV0_106, TX_LOV0_107,
+	TX_LOV0_124, TX_LOV0N000,
+	TX_LOV0N001, TX_LOV0N002, TX_LOV0N003, TX_LOV0N004, TX_LOV0N005,
+	TX_LOV0N006, TX_LOV0N007, TX_LOV0N008, TX_LOV0N009, TX_COMPA186,
+	TX_COMPA187, TX_COMPA189, TX_COMPA190, TX_COMPA191, TX_COMPA193,
+	TX_COMPU186, TX_COMPU187, TX_COMPU188, TX_COMPU189, TX_COMPU190,
+	TX_COMPU192, TX_COMPU193, TX_DIALOG_ERROR
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets love0TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 5915, 0 },
+	{ TX_SPEAKER_MCCOY, 5926, 0 },
+	{ TX_SPEAKER_SPOCK, 5936, 0 },
+	{ TX_SPEAKER_FERRIS, 5946, 0 },
+	{ TX_SPEAKER_COMPUTER, 5957, 0 },
+	{ TX_LOV0_001, 10075, 0 },
+	{ TX_LOV0_002,  1488, 0 },
+	{ TX_LOV0_003,   959, 0 },
+	{ TX_LOV0_004,  7933, 0 },
+	{ TX_LOV0_005, 10149, 0 },
+	{ TX_LOV0_006,  1256, 0 },
+	{ TX_LOV0_007,  1105, 0 },
+	{ TX_LOV0_008,  6848, 0 },
+	{ TX_LOV0_009,  7999, 0 },
+	{ TX_LOV0_010, 10477, 0 },
+	{ TX_LOV0_011, 10498, 0 },
+	{ TX_LOV0_012, 10625, 0 },
+	{ TX_LOV0_013, 10921, 0 },
+	{ TX_LOV0_014, 10685, 0 },
+	{ TX_LOV0_015, 10789, 0 },
+	{ TX_LOV0_016, 10592, 0 },
+	{ TX_LOV0_017, 11055, 0 },
+	{ TX_LOV0_019, 10975, 0 },
+	{ TX_LOV0_020, 10532, 0 },
+	{ TX_LOV0_021, 10843, 0 },
+	{ TX_LOV0_022, 10733, 0 },
+	{ TX_LOV0_023,  7881, 0 },
+	{ TX_LOV0_024,  7536, 0 },
+	{ TX_LOV0_026, 11854, 0 },
+	{ TX_LOV0_027,  6650, 0 },
+	{ TX_LOV0_028,  7062, 0 },
+	{ TX_LOV0_029, 11734, 0 },
+	{ TX_LOV0_030, 10335, 0 },
+	{ TX_LOV0_031,  6931, 0 },
+	{ TX_LOV0_033, 11794, 0 },
+	{ TX_LOV0_035,  7805, 0 },
+	{ TX_LOV0_036,  1591, 0 },
+	{ TX_LOV0_037, 10240, 0 },
+	{ TX_LOV0_038,  6760, 0 },
+	{ TX_LOV0_039, 11116, 0 },
+	{ TX_LOV0_040, 11243, 0 },
+	{ TX_LOV0_041, 11539, 0 },
+	{ TX_LOV0_042, 11303, 0 },
+	{ TX_LOV0_043, 11407, 0 },
+	{ TX_LOV0_045, 11210, 0 },
+	{ TX_LOV0_046, 11673, 0 },
+	{ TX_LOV0_047, 11593, 0 },
+	{ TX_LOV0_048, 11150, 0 },
+	{ TX_LOV0_049, 11461, 0 },
+	{ TX_LOV0_050, 11351, 0 },
+	//{ TX_LOV0_101, 12062, 0 },	// global in lovea
+	//{ TX_LOV0_102, 12126, 0 },	// global in lovea
+	//{ TX_LOV0_103, 12196, 0 },	// global in lovea
+	//{ TX_LOV0_104, 12246, 0 },	// global in lovea
+	//{ TX_LOV0_105, 12303, 0 },	// global in lovea
+	//{ TX_LOV0_106, 12415, 0 },	// global in lovea
+	//{ TX_LOV0_107, 12483, 0 },	// global in lovea
+	{ TX_LOV0_124, 11931, 0 },
+	{ TX_LOV0N000,  6449, 0 },
+	{ TX_LOV0N001, 10380, 0 },
+	{ TX_LOV0N002,  6227, 0 },
+	{ TX_LOV0N003,  6344, 0 },
+	{ TX_LOV0N004,  6185, 0 },
+	{ TX_LOV0N005,  6292, 0 },
+	{ TX_LOV0N006,  6049, 0 },
+	{ TX_LOV0N007,  6525, 0 },
+	{ TX_LOV0N008,  5971, 0 },
+	{ TX_LOV0N009,  6399, 0 },
+	{ TX_COMPA186,  8349, 0 },
+	{ TX_COMPA187,  8372, 0 },
+	{ TX_COMPA189,  8320, 0 },
+	{ TX_COMPA190,  8265, 0 },
+	{ TX_COMPA191,  8405, 0 },
+	{ TX_COMPA193,  8295, 0 },
+	{ TX_COMPU186,  9642, 0 },
+	{ TX_COMPU187,  9864, 0 },
+	{ TX_COMPU188,  7106, 0 },
+	{ TX_COMPU189,  9381, 0 },
+	{ TX_COMPU190,  8434, 0 },
+	{ TX_COMPU192,  8220, 0 },
+	{ TX_COMPU193,  8858, 0 },
+	{ TX_DIALOG_ERROR, 12536, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText love0Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::love0Tick1() {
 	// BUGFIX: moved this out of the if statement below.
 	playVoc("LOV0LOOP");
@@ -159,79 +272,79 @@ void Room::love0ReachedDoor1() {
 }
 
 void Room::love0LookAtConsole() {
-	showDescription(6, true);
+	showDescription(TX_LOV0N006);
 }
 
 void Room::love0LookAtViewscreen() {
-	showDescription(0, true);
+	showDescription(TX_LOV0N000);
 }
 
 void Room::love0LookAnywhere() {
-	showDescription(9, true);
+	showDescription(TX_LOV0N009);
 }
 
 void Room::love0LookAtDoor1() {
-	showDescription(8, true);
+	showDescription(TX_LOV0N008);
 }
 
 void Room::love0LookAtDoor2() {
-	showDescription(7, true);
+	showDescription(TX_LOV0N007);
 }
 
 void Room::love0LookAtKirk() {
-	showDescription(2, true);
+	showDescription(TX_LOV0N002);
 }
 
 void Room::love0LookAtMccoy() {
-	showDescription(4, true);
+	showDescription(TX_LOV0N004);
 }
 
 void Room::love0LookAtSpock() {
-	showDescription(5, true);
+	showDescription(TX_LOV0N005);
 }
 
 void Room::love0LookAtRedshirt() {
-	showDescription(3, true);
+	showDescription(TX_LOV0N003);
 }
 
 void Room::love0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 3, true);
+	showText(TX_SPEAKER_KIRK, TX_LOV0_003);
 }
 
 void Room::love0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 7, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV0_007);
 }
 
 void Room::love0TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_SPOCK, TX_LOV0_027);
 }
 
 void Room::love0TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, 38, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV0_038);
 }
 
 void Room::love0UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_N, 8, false, true);
+		mccoyScan(DIR_N, TX_SPEAKER_MCCOY, TX_LOV0_008, false);
 	else
-		mccoyScan(DIR_N, 6, false, true);
+		mccoyScan(DIR_N, TX_SPEAKER_MCCOY, TX_LOV0_006, false);
 }
 
 void Room::love0UseSTricorderOnConsole() {
-	spockScan(DIR_N, 31, false, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK,TX_LOV0_031, false);
 }
 
 void Room::love0UseSTricorderAnywhere() {
-	spockScan(DIR_S, 28, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK,TX_LOV0_028, false);
 }
 
 void Room::love0UseKirkOnConsole() {
-	showText(TX_SPEAKER_KIRK, 2, true);
+	showText(TX_SPEAKER_KIRK, TX_LOV0_002);
 	love0UseSpockOnConsole();
 }
 
 void Room::love0UseRedshirtOnConsole() {
-	showText(TX_SPEAKER_FERRIS, 36, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV0_036);
 }
 
 void Room::love0UseSpockOnConsole() {
@@ -252,7 +365,7 @@ void Room::love0SpockAccessedConsole() {
 		love0InteractWithConsole();
 	else {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
-		showText(TX_SPEAKER_SPOCK, 5, true);
+		showText(TX_SPEAKER_SPOCK, TX_LOV0_005);
 		_roomVar.love.heardSummaryOfVirus = true;
 	}
 }
@@ -279,11 +392,11 @@ void Room::love0MccoyAccessedConsole() {
 			showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
 			_roomVar.love.heardSummaryOfVirus = true;
 		}
-		showText(TX_SPEAKER_MCCOY, 24, true);
-		showText(TX_SPEAKER_SPOCK, 35, true);
-		showText(TX_SPEAKER_MCCOY, 23, true);
-		showText(TX_SPEAKER_KIRK,  4, true);
-		showText(TX_SPEAKER_MCCOY, 9, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV0_024);
+		showText(TX_SPEAKER_SPOCK, TX_LOV0_035);
+		showText(TX_SPEAKER_MCCOY, TX_LOV0_023);
+		showText(TX_SPEAKER_KIRK,  TX_LOV0_004);
+		showText(TX_SPEAKER_MCCOY, TX_LOV0_009);
 		_awayMission->love.knowAboutVirus = true;
 	}
 }
@@ -298,7 +411,7 @@ void Room::love0InteractWithConsole() {
 		TX_COMPA186,
 		TX_COMPA187,
 		TX_COMPA191,
-		TX_BLANK
+		TX_END
 	};
 
 	while (true) {
@@ -334,7 +447,7 @@ void Room::love0GetDoorOrConsole() {
 	// BUGFIX: There was a problem with "get door 1" where it would execute a bit of
 	// non-code before reaching where it was supposed to be. Not sure if it had any actual
 	// effect.
-	showDescription(1, true);
+	showDescription(TX_LOV0N001);
 
 	// NOTE: There is an unused block of code that's jumped over in the "get door 2"
 	// function. (Spock says "that's not logical".)

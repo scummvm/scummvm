@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_VIEWSCREEN 8
@@ -116,6 +117,23 @@ extern const RoomAction mudd4ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum mudd4TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets mudd4TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText mudd4Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::mudd4Tick1() {
 	playVoc("MUD4LOOP");
 
@@ -127,8 +145,8 @@ void Room::mudd4Tick1() {
 }
 
 void Room::mudd4UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  18, true);
-	showText(TX_SPEAKER_UHURA, TX_STATICU1);
+	showText(TX_SPEAKER_KIRK,  18);
+	showText(TX_SPEAKER_UHURA_GLOBAL, TX_STATICU1);
 }
 
 void Room::mudd4Timer2Expired() {
@@ -155,17 +173,17 @@ void Room::mudd4UseSpockOnConsole() {
 
 	if (_awayMission->mudd.translatedAlienLanguage) {
 		if (!_roomVar.mudd.usingLeftConsole)
-			showText(TX_SPEAKER_SPOCK, 57, true);
+			showText(TX_SPEAKER_SPOCK, 57);
 	} else if (_awayMission->mudd.discoveredBase3System) {
-		showText(TX_SPEAKER_SPOCK, 62, true);
+		showText(TX_SPEAKER_SPOCK, 62);
 	} else {
-		showText(TX_SPEAKER_SPOCK, 61, true);
-		showText(TX_SPEAKER_KIRK,  13, true);
-		showText(TX_SPEAKER_SPOCK, 62, true);
-		showText(TX_SPEAKER_MCCOY, 48, true);
-		showText(TX_SPEAKER_SPOCK, 59, true);
-		showText(TX_SPEAKER_KIRK,  31, true);
-		showText(TX_SPEAKER_SPOCK, 60, true);
+		showText(TX_SPEAKER_SPOCK, 61);
+		showText(TX_SPEAKER_KIRK,  13);
+		showText(TX_SPEAKER_SPOCK, 62);
+		showText(TX_SPEAKER_MCCOY, 48);
+		showText(TX_SPEAKER_SPOCK, 59);
+		showText(TX_SPEAKER_KIRK,  31);
+		showText(TX_SPEAKER_SPOCK, 60);
 
 		if (!_awayMission->mudd.discoveredBase3System) {
 			_awayMission->mudd.discoveredBase3System = true;
@@ -188,7 +206,7 @@ void Room::mudd4SpockReachedChair() {
 void Room::mudd4SpockSatInChair() {
 	loadActorAnim2(OBJECT_SPOCK, "s4crsr", 0x55, 0x98);
 
-	showText(TX_SPEAKER_SPOCK, 58, true);
+	showText(TX_SPEAKER_SPOCK, 58);
 	mudd4ShowLeftConsoleMenu();
 }
 
@@ -202,7 +220,7 @@ void Room::mudd4ShowLeftConsoleMenu() {
 		TX_BLANK
 	};
 
-	int choice = showMultipleTexts(choices, true);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0: // Sensors
@@ -233,19 +251,19 @@ void Room::mudd4ShowLeftConsoleMenu() {
 
 void Room::mudd4SpockUsedSensors() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, 53, true);
+	showText(TX_SPEAKER_SPOCK, 53);
 	mudd4ShowLeftConsoleMenu();
 }
 
 void Room::mudd4SpockUsedEngineering() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, 56, true);
+	showText(TX_SPEAKER_SPOCK, 56);
 	mudd4ShowLeftConsoleMenu();
 }
 
 void Room::mudd4SpockUsedNavigation() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_SPOCK, 55, true);
+	showText(TX_SPEAKER_SPOCK, 55);
 	mudd4ShowLeftConsoleMenu();
 }
 
@@ -269,13 +287,13 @@ void Room::mudd4UseKirkOnConsole() {
 	loadActorStandAnim(OBJECT_KIRK);
 
 	if (!_awayMission->mudd.translatedAlienLanguage) {
-		showText(TX_SPEAKER_KIRK, 06, true);
+		showText(TX_SPEAKER_KIRK, 06);
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 		walkCrewmanC(OBJECT_SPOCK, 0x6d, 0x9a, &Room::mudd4FinishedWalking3);
 		_awayMission->disableInput = true;
 	} else {
 		if (!_roomVar.mudd.kirkUsingRightConsole)
-			showText(TX_SPEAKER_KIRK, 49, true);
+			showText(TX_SPEAKER_KIRK, 49);
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewmanC(OBJECT_KIRK, 0x7e, 0x98, &Room::mudd4KirkReachedRightConsole);
 		_awayMission->disableInput = true;
@@ -294,7 +312,7 @@ void Room::mudd4KirkSatInChair() {
 	_awayMission->timers[2] = 5;
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_SPOCK, 52, true); // NOTE: why is Spock talking here?
+	showText(TX_SPEAKER_SPOCK, 52); // NOTE: why is Spock talking here?
 
 	mudd4ShowRightConsoleMenu();
 }
@@ -308,7 +326,7 @@ void Room::mudd4ShowRightConsoleMenu() {
 		TX_BLANK
 	};
 
-	int choice = showMultipleTexts(choices, true);
+	int choice = showMultipleTexts(choices);
 
 	switch (choice) {
 	case 0: // Communications
@@ -353,27 +371,27 @@ void Room::mudd4KirkUsedViewScreen() {
 void Room::mudd4Timer1Expired() {
 	_awayMission->disableInput = false;
 	if (_awayMission->mudd.viewScreenEnabled)
-		showText(TX_SPEAKER_KIRK, 04, true);
+		showText(TX_SPEAKER_KIRK, 04);
 	mudd4ShowRightConsoleMenu();
 }
 
 void Room::mudd4KirkUsedCommunications() {
 	_awayMission->disableInput = false;
 	if (!_awayMission->mudd.knowAboutTorpedo) {
-		showText(TX_SPEAKER_SPOCK, 54, true);
+		showText(TX_SPEAKER_SPOCK, 54);
 		mudd4ShowRightConsoleMenu();
 	} else {
 		if (!_awayMission->mudd.contactedEnterpriseFirstTime) {
 			_awayMission->mudd.missionScore++;
-			showText(TX_SPEAKER_KIRK,  25, true);
-			showText(TX_SPEAKER_SCOTT, 2 + SCOTTY_MESSAGE_OFFSET, true);
+			showText(TX_SPEAKER_KIRK,  25);
+			showText(TX_SPEAKER_SCOTT_GLOBAL, 2 + SCOTTY_MESSAGE_OFFSET);
 
 			if (_awayMission->mudd.torpedoStatus == 1)
-				showText(TX_SPEAKER_KIRK, 27, true);
+				showText(TX_SPEAKER_KIRK, 27);
 			else
-				showText(TX_SPEAKER_KIRK, 28, true);
+				showText(TX_SPEAKER_KIRK, 28);
 
-			showText(TX_SPEAKER_SCOTT, 4 + SCOTTY_MESSAGE_OFFSET, true);
+			showText(TX_SPEAKER_SCOTT_GLOBAL, 4 + SCOTTY_MESSAGE_OFFSET);
 
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
@@ -383,7 +401,7 @@ void Room::mudd4KirkUsedCommunications() {
 				TX_BLANK
 			};
 
-			int choice = showMultipleTexts(choices, true);
+			int choice = showMultipleTexts(choices);
 
 			if (choice == 1) {
 				endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
@@ -401,8 +419,8 @@ void Room::mudd4KirkUsedCommunications() {
 				TX_BLANK
 			};
 
-			showText(TX_SPEAKER_KIRK,  20, true);
-			showText(TX_SPEAKER_SCOTT, 3 + SCOTTY_MESSAGE_OFFSET, true);
+			showText(TX_SPEAKER_KIRK,  20);
+			showText(TX_SPEAKER_SCOTT_GLOBAL, 3 + SCOTTY_MESSAGE_OFFSET);
 			int choice = showMultipleTexts(choices);
 
 			if (choice == 1) {
@@ -450,27 +468,27 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			TX_BLANK
 		};
 
-		showText(TX_SPEAKER_MUDD, 66, true);
-		int choice = showMultipleTexts(choices, true);
+		showText(TX_SPEAKER_MUDD, 66);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 1) {
 			// Copy of code at very bottom of function
-			showText(TX_SPEAKER_MUDD, 74, true);
-			showText(TX_SPEAKER_KIRK, 17, true);
-			showText(TX_SPEAKER_MUDD, 72, true);
-			showText(TX_SPEAKER_KIRK,  8, true);
-			showText(TX_SPEAKER_MUDD, 68, true);
-			showText(TX_SPEAKER_KIRK, 32, true);
+			showText(TX_SPEAKER_MUDD, 74);
+			showText(TX_SPEAKER_KIRK, 17);
+			showText(TX_SPEAKER_MUDD, 72);
+			showText(TX_SPEAKER_KIRK,  8);
+			showText(TX_SPEAKER_MUDD, 68);
+			showText(TX_SPEAKER_KIRK, 32);
 
 			endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
 		} else {
 			// Threaten to arrest Mudd.
 			if (_awayMission->mudd.muddErasedDatabase || _awayMission->mudd.databaseDestroyed)
-				showText(TX_SPEAKER_KIRK, 34, true);
+				showText(TX_SPEAKER_KIRK, 34);
 			if (_awayMission->mudd.discoveredLenseAndDegrimerFunction)
-				showText(TX_SPEAKER_KIRK, 37, true);
+				showText(TX_SPEAKER_KIRK, 37);
 
-			showText(TX_SPEAKER_KIRK, 26, true);
+			showText(TX_SPEAKER_KIRK, 26);
 
 			if (_awayMission->mudd.muddErasedDatabase && _awayMission->mudd.databaseDestroyed) {
 				// Mudd offers to copy the lost data to the enterprise computer. You don't
@@ -479,27 +497,27 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 				// NOTE: This combination is probably impossible, making this unused?
 				// (Either you give Mudd access to the database, or he destroys it.)
 
-				showText(TX_SPEAKER_MUDD,  71, true);
-				showText(TX_SPEAKER_KIRK,  36, true);
-				showText(TX_SPEAKER_SPOCK, 29, true);
-				showText(TX_SPEAKER_KIRK,  30, true);
+				showText(TX_SPEAKER_MUDD,  71);
+				showText(TX_SPEAKER_KIRK,  36);
+				showText(TX_SPEAKER_SPOCK, 29);
+				showText(TX_SPEAKER_KIRK,  30);
 			} else {
 				// Mudd is forced to agree to give samples to a university.
-				showText(TX_SPEAKER_MUDD, 64, true);
-				showText(TX_SPEAKER_KIRK, 12, true);
-				showText(TX_SPEAKER_MUDD, 70, true);
-				showText(TX_SPEAKER_KIRK, 10, true);
-				showText(TX_SPEAKER_MUDD, 67, true);
-				showText(TX_SPEAKER_KIRK, 11, true);
+				showText(TX_SPEAKER_MUDD, 64);
+				showText(TX_SPEAKER_KIRK, 12);
+				showText(TX_SPEAKER_MUDD, 70);
+				showText(TX_SPEAKER_KIRK, 10);
+				showText(TX_SPEAKER_MUDD, 67);
+				showText(TX_SPEAKER_KIRK, 11);
 
 				_awayMission->mudd.missionScore += 4;
 				playMidiMusicTracks(30);
 
-				showText(TX_SPEAKER_MUDD, 73, true);
-				showText(TX_SPEAKER_KIRK, 35, true);
+				showText(TX_SPEAKER_MUDD, 73);
+				showText(TX_SPEAKER_KIRK, 35);
 			}
-			showText(TX_SPEAKER_MUDD, 69, true);
-			showText(TX_SPEAKER_KIRK, 01, true);
+			showText(TX_SPEAKER_MUDD, 69);
+			showText(TX_SPEAKER_KIRK, 01);
 
 			endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
 		}
@@ -511,17 +529,17 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			TX_BLANK
 		};
 
-		showText(TX_SPEAKER_MUDD, 65, true);
-		int choice = showMultipleTexts(choices, true);
+		showText(TX_SPEAKER_MUDD, 65);
+		int choice = showMultipleTexts(choices);
 
 		if (choice == 1) {
-			showText(TX_SPEAKER_MUDD, 74, true);
-			showText(TX_SPEAKER_KIRK, 17, true);
+			showText(TX_SPEAKER_MUDD, 74);
+			showText(TX_SPEAKER_KIRK, 17);
 		}
-		showText(TX_SPEAKER_MUDD, 72, true);
-		showText(TX_SPEAKER_KIRK,  8, true);
-		showText(TX_SPEAKER_MUDD, 68, true);
-		showText(TX_SPEAKER_KIRK, 32, true);
+		showText(TX_SPEAKER_MUDD, 72);
+		showText(TX_SPEAKER_KIRK,  8);
+		showText(TX_SPEAKER_MUDD, 68);
+		showText(TX_SPEAKER_KIRK, 32);
 
 		endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
 	}
@@ -529,7 +547,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 
 void Room::mudd4UseMccoyOnConsole() {
 	// NOTE: This audio was recorded twice (45, true, and 44, true which is unused)
-	showText(TX_SPEAKER_MCCOY, 45, true);
+	showText(TX_SPEAKER_MCCOY, 45);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
 	walkCrewman(OBJECT_MCCOY, 0x7d, 0xc3);
@@ -539,33 +557,33 @@ void Room::mudd4UseRedshirtOnConsole() {
 	// Floppy version shows two different pieces of text here, but in the CD version,
 	// there's no difference
 	if (!_awayMission->mudd.translatedAlienLanguage)
-		showText(TX_SPEAKER_BUCHERT, 75, true);
+		showText(TX_SPEAKER_BUCHERT, 75);
 	else
-		showText(TX_SPEAKER_BUCHERT, 75, true);
+		showText(TX_SPEAKER_BUCHERT, 75);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
 	walkCrewman(OBJECT_REDSHIRT, 0x2a, 0xbb);
 }
 
 void Room::mudd4UseSTricorderOnRepairTool() {
-	spockScan(DIR_E, 51, false, true);
+	spockScan(DIR_E, 51, false);
 }
 
 void Room::mudd4UseSTricorderOnConsole() {
-	spockScan(DIR_N, 42, false, true);
+	spockScan(DIR_N, 42, false);
 }
 
 void Room::mudd4UseSTricorderOnViewscreen() {
-	spockScan(DIR_N, 50, false, true);
+	spockScan(DIR_N, 50, false);
 }
 
 void Room::mudd4UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, 43, true);
+	showText(TX_SPEAKER_MCCOY, 43);
 }
 
 void Room::mudd4GetRepairTool() {
 	if (_awayMission->mudd.tookRepairTool)
-		showDescription(12, true); // NOTE: unused, since the object disappears, can't be selected again
+		showDescription(12); // NOTE: unused, since the object disappears, can't be selected again
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -586,52 +604,52 @@ void Room::mudd4PickedUpRepairTool() {
 }
 
 void Room::mudd4LookAtConsole() {
-	showDescription(0, true);
+	showDescription(0);
 }
 
 void Room::mudd4LookAtViewscreen() {
 	if (_awayMission->mudd.viewScreenEnabled)
-		showDescription(8, true);
+		showDescription(8);
 	else
-		showDescription(13, true);
+		showDescription(13);
 }
 
 void Room::mudd4LookAtKirk() {
-	showDescription(3, true);
+	showDescription(3);
 }
 
 void Room::mudd4LookAtSpock() {
-	showDescription(6, true);
+	showDescription(6);
 }
 
 void Room::mudd4LookAtMccoy() {
-	showDescription(1, true);
+	showDescription(1);
 }
 
 void Room::mudd4LookAtRedshirt() {
-	showDescription(4, true);
+	showDescription(4);
 }
 
 void Room::mudd4LookAtRepairTool() {
-	showDescription(11, true);
+	showDescription(11);
 }
 
 void Room::mudd4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 05, true);
+	showText(TX_SPEAKER_KIRK, 05);
 }
 
 void Room::mudd4TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 63, true);
-	showText(TX_SPEAKER_KIRK,  15, true);
-	showText(TX_SPEAKER_MCCOY, 47, true);
+	showText(TX_SPEAKER_SPOCK, 63);
+	showText(TX_SPEAKER_KIRK,  15);
+	showText(TX_SPEAKER_MCCOY, 47);
 }
 
 void Room::mudd4TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 46, true);
+	showText(TX_SPEAKER_MCCOY, 46);
 }
 
 void Room::mudd4TalkToRedshirt() {
-	showText(TX_SPEAKER_BUCHERT, 76, true);
+	showText(TX_SPEAKER_BUCHERT, 76);
 }
 
 void Room::mudd4WalkToEastDoor() {
@@ -652,3 +670,4 @@ void Room::mudd4TouchedHotspot0() { // Trigger door sound
 }
 
 }
+#endif

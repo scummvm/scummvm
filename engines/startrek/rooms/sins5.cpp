@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_LEFT_COMPUTER_EXPLOSION 8
@@ -130,6 +131,23 @@ extern const RoomAction sins5ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum sins5TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets sins5TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText sins5Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::sins5Tick1() {
 	playVoc("SIN5LOOP");
 
@@ -150,7 +168,7 @@ void Room::sins5Tick1() {
 }
 
 void Room::sins5UseSTricorderAnywhere() {
-	spockScan(DIR_S, 13, false, true);
+	spockScan(DIR_S, 13, false);
 }
 
 void Room::sins5UseSTricorderOnRightComputer() {
@@ -158,7 +176,7 @@ void Room::sins5UseSTricorderOnRightComputer() {
 		_awayMission->sins.missionScore += 1;
 		_awayMission->sins.gotPointsForScanningRightComputer = true; // BUGFIX: add this line to prevent infinite score mechanism
 	}
-	spockScan(DIR_S, 30, false, true);
+	spockScan(DIR_S, 30, false);
 	_awayMission->sins.scannedAndUsedComputers |= 2;
 	sins5CheckGatheredAllClues();
 }
@@ -168,39 +186,39 @@ void Room::sins5UseSTricorderOnLeftComputer() {
 		_awayMission->sins.missionScore += 1;
 		_awayMission->sins.gotPointsForScanningLeftComputer = true; // BUGFIX: add this line to prevent infinite score mechanism
 	}
-	spockScan(DIR_S, 29, false, true);
+	spockScan(DIR_S, 29, false);
 	_awayMission->sins.scannedAndUsedComputers |= 1;
 	sins5CheckGatheredAllClues();
 }
 
 void Room::sins5UseSTricorderOnMiddleComputer() {
-	spockScan(DIR_S, 28, false, true);
+	spockScan(DIR_S, 28, false);
 }
 
 void Room::sins5UseKirkOnRightComputer() {
-	showText(TX_SPEAKER_KIRK, 3, true);
+	showText(TX_SPEAKER_KIRK, 3);
 	sins5UseSpockOnRightComputer();
 }
 
 void Room::sins5UseKirkOnLeftComputer() {
-	showText(TX_SPEAKER_KIRK, 4, true);
+	showText(TX_SPEAKER_KIRK, 4);
 	sins5UseSpockOnLeftComputer();
 }
 
 void Room::sins5UseKirkOnMiddleComputer() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, 1);
 }
 
 void Room::sins5UseMccoyOnComputer() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_MCCOY, 15);
 }
 
 void Room::sins5UseRedshirtOnComputer() {
-	showText(TX_SPEAKER_MOSHER, 42, true);
+	showText(TX_SPEAKER_MOSHER, 42);
 }
 
 void Room::sins5UseSpockOnMiddleComputer() {
-	showText(TX_SPEAKER_SPOCK, 27, true);
+	showText(TX_SPEAKER_SPOCK, 27);
 }
 
 void Room::sins5UseSpockOnRightComputer() {
@@ -220,7 +238,7 @@ void Room::sins5SpockReachedRightComputer() {
 
 void Room::sins5SpockUsedRightComputer() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_COMPUTER, 39, true);
+	showText(TX_SPEAKER_COMPUTER_GLOBAL, 39);
 	_awayMission->sins.scannedAndUsedComputers |= 8;
 	sins5CheckGatheredAllClues();
 }
@@ -242,8 +260,8 @@ void Room::sins5SpockReachedLeftComputer() {
 
 void Room::sins5SpockUsedLeftComputer() {
 	if (_awayMission->sins.wireConnected1 && _awayMission->sins.wireConnected2) {
-		showText(TX_SPEAKER_COMPUTER, 41, true);
-		showText(TX_SPEAKER_SPOCK,    25, true);
+		showText(TX_SPEAKER_COMPUTER_GLOBAL, 41);
+		showText(TX_SPEAKER_SPOCK,    25);
 
 		walkCrewmanC(OBJECT_KIRK,     0x8c, 0xb5, &Room::sins5CrewmanReadyToBeamOut);
 		walkCrewmanC(OBJECT_SPOCK,    0x82, 0xab, &Room::sins5CrewmanReadyToBeamOut);
@@ -251,7 +269,7 @@ void Room::sins5SpockUsedLeftComputer() {
 		walkCrewmanC(OBJECT_REDSHIRT, 0x91, 0xa1, &Room::sins5CrewmanReadyToBeamOut);
 	} else {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_COMPUTER, 40, true);
+		showText(TX_SPEAKER_COMPUTER_GLOBAL, 40);
 		_awayMission->sins.scannedAndUsedComputers |= 4;
 		sins5CheckGatheredAllClues();
 	}
@@ -259,9 +277,9 @@ void Room::sins5SpockUsedLeftComputer() {
 
 void Room::sins5CrewmanReadyToBeamOut() {
 	if (++_roomVar.sins.numCrewmenReadyToBeamOut == 4) {
-		showText(TX_SPEAKER_KIRK,  8, true);
-		showText(TX_SPEAKER_SCOTT, 19 + SCOTTY_MESSAGE_OFFSET);
-		showText(TX_SPEAKER_KIRK,  5, true);
+		showText(TX_SPEAKER_KIRK,  8);
+		showText(TX_SPEAKER_SCOTT_GLOBAL, 19 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_KIRK,  5);
 		_awayMission->sins.missionScore += 19;
 		endMission(_awayMission->sins.missionScore, 28, 0);
 	}
@@ -270,7 +288,7 @@ void Room::sins5CrewmanReadyToBeamOut() {
 void Room::sins5Tick20() {
 	if (!_awayMission->sins.enteredRoom5FirstTime) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_SPOCK, 26, true);
+		showText(TX_SPEAKER_SPOCK, 26);
 		_awayMission->sins.enteredRoom5FirstTime = true;
 	}
 }
@@ -279,15 +297,15 @@ void Room::sins5Tick20() {
 void Room::sins5CheckGatheredAllClues() {
 	if (_awayMission->sins.scannedAndUsedComputers == 0xf && !_awayMission->sins.discoveredComputersOutOfSync) {
 		_awayMission->sins.discoveredComputersOutOfSync = true;
-		showText(TX_SPEAKER_MOSHER, 44, true);
-		showText(TX_SPEAKER_SPOCK,  36, true);
-		showText(TX_SPEAKER_MCCOY,  20, true);
-		showText(TX_SPEAKER_SPOCK,  35, true);
-		showText(TX_SPEAKER_KIRK,   6, true);
-		showText(TX_SPEAKER_SPOCK,  37, true);
-		showText(TX_SPEAKER_MCCOY,  21, true);
-		showText(TX_SPEAKER_SPOCK,  32, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_MOSHER, 44);
+		showText(TX_SPEAKER_SPOCK,  36);
+		showText(TX_SPEAKER_MCCOY,  20);
+		showText(TX_SPEAKER_SPOCK,  35);
+		showText(TX_SPEAKER_KIRK,   6);
+		showText(TX_SPEAKER_SPOCK,  37);
+		showText(TX_SPEAKER_MCCOY,  21);
+		showText(TX_SPEAKER_SPOCK,  32);
+		showText(TX_SPEAKER_KIRK,   7);
 	}
 }
 
@@ -309,7 +327,7 @@ void Room::sins5WireConnected() {
 		_awayMission->sins.wireConnected1 = true;
 		_awayMission->sins.wireConnected2 = true;
 		loadActorAnim2(OBJECT_CABLE, "s5cabl", 0, 0);
-		showDescription(4, true);
+		showDescription(4);
 		loseItem(OBJECT_ICONECT);
 		playMidiMusicTracks(MIDITRACK_30, -1);
 	}
@@ -317,7 +335,7 @@ void Room::sins5WireConnected() {
 }
 
 void Room::sins5UseStunPhaserOnComputer() {
-	showText(TX_SPEAKER_MOSHER, 43, true);
+	showText(TX_SPEAKER_MOSHER, 43);
 }
 
 
@@ -391,8 +409,8 @@ void Room::sins5Timer2Expired() {
 
 void Room::sins5ComputerLaunchesMissiles() {
 	playMidiMusicTracks(MIDITRACK_2, -1);
-	showDescription(12, true);
-	showDescription(13, true);
+	showDescription(12);
+	showDescription(13);
 	showGameOverMenu();
 }
 
@@ -400,55 +418,55 @@ void Room::sins5Timer3Expired() {
 }
 
 void Room::sins5LookAnywhere() {
-	showDescription(5, true);
+	showDescription(5);
 }
 
 void Room::sins5LookAtKirk() {
-	showDescription(0, true);
+	showDescription(0);
 }
 
 void Room::sins5LookAtSpock() {
-	showDescription(6, true);
+	showDescription(6);
 }
 
 void Room::sins5LookAtMccoy() {
-	showDescription(1, true);
+	showDescription(1);
 }
 
 void Room::sins5LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(2);
 }
 
 void Room::sins5LookAtLight() {
-	showDescription(7, true);
+	showDescription(7);
 }
 
 void Room::sins5LookAtLeftComputer() {
-	showDescription(10, true);
+	showDescription(10);
 }
 
 void Room::sins5LookAtMiddleComputer() {
-	showDescription(8, true);
+	showDescription(8);
 }
 
 void Room::sins5LookAtRightComputer() {
-	showDescription(9, true);
+	showDescription(9);
 }
 
 void Room::sins5LookAtMissile() {
-	showDescription(3, true);
+	showDescription(3);
 }
 
 void Room::sins5LookAtNorthDoor() {
-	showDescription(11, true);
+	showDescription(11);
 }
 
 void Room::sins5UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, 17);
 }
 
 void Room::sins5UseMTricorderAnywhere() {
-	mccoyScan(DIR_S, 16, false, true);
+	mccoyScan(DIR_S, 16, false);
 	if (!_awayMission->sins.gotPointsForScanningRoom5) {
 		_awayMission->sins.missionScore += 1;
 		_awayMission->sins.gotPointsForScanningRoom5 = true; // BUGFIX: add this line to prevent infinite score mechanism
@@ -456,46 +474,47 @@ void Room::sins5UseMTricorderAnywhere() {
 }
 
 void Room::sins5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 2, true);
+	showText(TX_SPEAKER_KIRK, 2);
 }
 
 void Room::sins5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 38, true);
-	showText(TX_SPEAKER_MCCOY, 23, true);
-	showText(TX_SPEAKER_SPOCK, 33, true);
-	showText(TX_SPEAKER_MCCOY, 19, true);
+	showText(TX_SPEAKER_SPOCK, 38);
+	showText(TX_SPEAKER_MCCOY, 23);
+	showText(TX_SPEAKER_SPOCK, 33);
+	showText(TX_SPEAKER_MCCOY, 19);
 }
 
 void Room::sins5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 18, true);
-	showText(TX_SPEAKER_KIRK,  10, true);
+	showText(TX_SPEAKER_MCCOY, 18);
+	showText(TX_SPEAKER_KIRK,  10);
 
 	// The following code block is unused. It doesn't belong to any function, but would
 	// fit best as an alternative to this one.
 	if (false) {
-		showText(TX_SPEAKER_MCCOY, 22, true);
-		showText(TX_SPEAKER_SPOCK, 31, true);
-		showText(TX_SPEAKER_KIRK,  9, true);
+		showText(TX_SPEAKER_MCCOY, 22);
+		showText(TX_SPEAKER_SPOCK, 31);
+		showText(TX_SPEAKER_KIRK,  9);
 	}
 }
 
 void Room::sins5TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 46, true);
-	showText(TX_SPEAKER_SPOCK,  34, true);
-	showText(TX_SPEAKER_MOSHER, 45, true);
-	showText(TX_SPEAKER_KIRK,   11, true);
+	showText(TX_SPEAKER_MOSHER, 46);
+	showText(TX_SPEAKER_SPOCK,  34);
+	showText(TX_SPEAKER_MOSHER, 45);
+	showText(TX_SPEAKER_KIRK,   11);
 }
 
 void Room::sins5UseSTricorderOnMissile() {
-	spockScan(DIR_S, 12, false, true);
+	spockScan(DIR_S, 12, false);
 }
 
 void Room::sins5UseSTricorderOnNorthDoor() {
-	spockScan(DIR_S, 24, false, true);
+	spockScan(DIR_S, 24, false);
 }
 
 void Room::sins5UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, 14, false, true);
+	mccoyScan(DIR_S, 14, false);
 }
 
 }
+#endif

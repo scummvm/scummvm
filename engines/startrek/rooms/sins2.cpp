@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_DOOR 8
@@ -85,6 +86,23 @@ extern const RoomAction sins2ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum sins2TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets sins2TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText sins2Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::sins2Tick1() {
 	playVoc("SIN2LOOP");
 	playMidiMusicTracks(MIDITRACK_27, -3);
@@ -102,7 +120,7 @@ void Room::sins2Tick1() {
 }
 
 void Room::sins2UsePhaserOnDoor() {
-	showText(TX_SPEAKER_SPOCK, 25, true);
+	showText(TX_SPEAKER_SPOCK, 25);
 }
 
 void Room::sins2UseSTricorderAnywhere() {
@@ -110,7 +128,7 @@ void Room::sins2UseSTricorderAnywhere() {
 }
 
 void Room::sins2UseKirkOnTerminal() {
-	showText(TX_SPEAKER_KIRK, 2, true);
+	showText(TX_SPEAKER_KIRK, 2);
 	sins2UseSpockOnTerminal();
 }
 
@@ -125,56 +143,56 @@ void Room::sins2SpockReachedTerminal() {
 }
 
 void Room::sins2SpockUsedTerminal() {
-	showText(TX_SPEAKER_SPOCK, 42, true);
-	showText(TX_SPEAKER_SPOCK, 44, true);
+	showText(TX_SPEAKER_SPOCK, 42);
+	showText(TX_SPEAKER_SPOCK, 44);
 
 	if (!_awayMission->sins.gotPointsForAccessingTerminal) {
 		_awayMission->sins.missionScore += 2;
 		_awayMission->sins.gotPointsForAccessingTerminal = true;
 	}
 
-	showText(TX_SPEAKER_MCCOY,  15, true);
-	showText(TX_SPEAKER_SPOCK,  32, true);
-	showText(TX_SPEAKER_MOSHER, 50, true);
-	showText(TX_SPEAKER_SPOCK,  35, true);
-	showText(TX_SPEAKER_SPOCK,  43, true);
-	showText(TX_SPEAKER_SPOCK,  41, true);
-	showText(TX_SPEAKER_SPOCK,  40, true);
-	showText(TX_SPEAKER_MCCOY,  21, true);
-	showText(TX_SPEAKER_SPOCK,  34, true);
-	showText(TX_SPEAKER_SPOCK,  31, true);
-	showText(TX_SPEAKER_SPOCK,  38, true);
-	showText(TX_SPEAKER_MCCOY,  20, true);
-	showText(TX_SPEAKER_SPOCK,  33, true);
-	showText(TX_SPEAKER_KIRK,    7, true);
-	showText(TX_SPEAKER_SPOCK,  37, true);
-	showText(TX_SPEAKER_MCCOY,  22, true);
-	showText(TX_SPEAKER_SPOCK,  29, true);
+	showText(TX_SPEAKER_MCCOY,  15);
+	showText(TX_SPEAKER_SPOCK,  32);
+	showText(TX_SPEAKER_MOSHER, 50);
+	showText(TX_SPEAKER_SPOCK,  35);
+	showText(TX_SPEAKER_SPOCK,  43);
+	showText(TX_SPEAKER_SPOCK,  41);
+	showText(TX_SPEAKER_SPOCK,  40);
+	showText(TX_SPEAKER_MCCOY,  21);
+	showText(TX_SPEAKER_SPOCK,  34);
+	showText(TX_SPEAKER_SPOCK,  31);
+	showText(TX_SPEAKER_SPOCK,  38);
+	showText(TX_SPEAKER_MCCOY,  20);
+	showText(TX_SPEAKER_SPOCK,  33);
+	showText(TX_SPEAKER_KIRK,    7);
+	showText(TX_SPEAKER_SPOCK,  37);
+	showText(TX_SPEAKER_MCCOY,  22);
+	showText(TX_SPEAKER_SPOCK,  29);
 }
 
 void Room::sins2UseMccoyOnTerminal() {
-	showText(TX_SPEAKER_MCCOY, 12, true);
+	showText(TX_SPEAKER_MCCOY, 12);
 }
 
 void Room::sins2UseRedshirtOnTerminal() {
-	showText(TX_SPEAKER_MOSHER, 45, true);
+	showText(TX_SPEAKER_MOSHER, 45);
 }
 
 void Room::sins2UseSTricorderOnTerminal() {
-	spockScan(DIR_W, 9, false, true);
+	spockScan(DIR_W, 9, false);
 }
 
 void Room::sins2UseSTricorderOnKeypad() {
-	spockScan(DIR_N, 28, false, true);
+	spockScan(DIR_N, 28, false);
 }
 
 void Room::sins2UseSTricorderOnDoor() {
-	spockScan(DIR_N, 27, false, true);
+	spockScan(DIR_N, 27, false);
 }
 
 void Room::sins2UseKirkOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_KIRK, 01, true);
+		showText(TX_SPEAKER_KIRK, 01);
 		sins2UseSpockOnKeypad();
 	}
 }
@@ -210,105 +228,105 @@ void Room::sins2EnteredCorrectCode() {
 }
 
 void Room::sins2EnteredIncorrectCode() {
-	showText(TX_SPEAKER_SPOCK, 24, true); // BUGFIX: Speaker is spock, not "none"
+	showText(TX_SPEAKER_SPOCK, 24); // BUGFIX: Speaker is spock, not "none"
 }
 
 void Room::sins2DoorFinishedOpening() {
-	showText(TX_SPEAKER_SPOCK, 10, true);
+	showText(TX_SPEAKER_SPOCK, 10);
 }
 
 void Room::sins2Tick40() {
 	if (!_awayMission->sins.enteredRoom2FirstTime) {
 		_awayMission->disableInput = false;
 
-		showText(TX_SPEAKER_KIRK,   5, true);
-		showText(TX_SPEAKER_SCOTT,  5 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_UHURA, 85, true);
-		showText(TX_SPEAKER_KIRK,   8, true);
-		showText(TX_SPEAKER_UHURA, 97, true);
-		showText(TX_SPEAKER_MCCOY, 26 + FOLLOWUP_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_UHURA, 96, true);
-		showText(TX_SPEAKER_MCCOY, 19, true);
-		showText(TX_SPEAKER_KIRK,   4, true);
+		showText(TX_SPEAKER_KIRK,   5);
+		showText(TX_SPEAKER_SCOTT_GLOBAL,  5 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_UHURA_GLOBAL, 85);
+		showText(TX_SPEAKER_KIRK,   8);
+		showText(TX_SPEAKER_UHURA_GLOBAL, 97);
+		showText(TX_SPEAKER_MCCOY, 26 + FOLLOWUP_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_UHURA_GLOBAL, 96);
+		showText(TX_SPEAKER_MCCOY, 19);
+		showText(TX_SPEAKER_KIRK,   4);
 
 		_awayMission->sins.enteredRoom2FirstTime = true;
 	}
 }
 
 void Room::sins2LookAnywhere() {
-	showDescription(6, true);
+	showDescription(6);
 }
 
 void Room::sins2LookAtOpenDoor() {
-	showDescription(7, true);
+	showDescription(7);
 }
 
 void Room::sins2LookAtTerminal() {
-	showDescription(0, true);
+	showDescription(0);
 }
 
 void Room::sins2LookAtKeypad() {
-	showDescription(1, true);
+	showDescription(1);
 }
 
 void Room::sins2LookAtKirk() {
-	showDescription(3, true);
+	showDescription(3);
 }
 
 void Room::sins2LookAtSpock() {
-	showDescription(5, true);
+	showDescription(5);
 }
 
 void Room::sins2LookAtMccoy() {
-	showDescription(4, true);
+	showDescription(4);
 }
 
 void Room::sins2LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(2);
 }
 
 void Room::sins2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 3, true);
+	showText(TX_SPEAKER_KIRK, 3);
 }
 
 void Room::sins2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 39, true);
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_SPOCK, 39);
+	showText(TX_SPEAKER_MCCOY, 16);
 }
 
 void Room::sins2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY,  23, true);
-	showText(TX_SPEAKER_MOSHER, 49, true);
+	showText(TX_SPEAKER_MCCOY,  23);
+	showText(TX_SPEAKER_MOSHER, 49);
 }
 
 void Room::sins2TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 47, true);
+	showText(TX_SPEAKER_MOSHER, 47);
 }
 
 void Room::sins2LookAtDoor() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showDescription(8, true);
+		showDescription(8);
 }
 
 void Room::sins2UseSpockOnDoor() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_SPOCK,  12 + FOLLOWUP_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_MOSHER, 48, true);
-		showText(TX_SPEAKER_SPOCK,  30, true);
+		showText(TX_SPEAKER_SPOCK,  12 + FOLLOWUP_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_MOSHER, 48);
+		showText(TX_SPEAKER_SPOCK,  30);
 	}
 }
 
 void Room::sins2UseCommunicator() {
 	if (!_awayMission->sins.enteredRoom4FirstTime) {
-		showText(TX_SPEAKER_KIRK,  6, true);
-		showText(TX_SPEAKER_SCOTT, 16 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_MCCOY, 17, true);
+		showText(TX_SPEAKER_KIRK,  6);
+		showText(TX_SPEAKER_SCOTT_GLOBAL, 16 + SCOTTY_MESSAGE_OFFSET);
+		showText(TX_SPEAKER_MCCOY, 17);
 	} else
-		showText(TX_SPEAKER_UHURA, 70, true);
+		showText(TX_SPEAKER_UHURA_GLOBAL, 70);
 }
 
 void Room::sins2UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 14, true);
+	showText(TX_SPEAKER_MCCOY, 14);
 }
 
 void Room::sins2UseMTricorderOnCrewman() {
@@ -317,12 +335,12 @@ void Room::sins2UseMTricorderOnCrewman() {
 
 void Room::sins2UseMccoyOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_MCCOY, 13);
 }
 
 void Room::sins2UseRedshirtOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showText(TX_SPEAKER_MOSHER, 46, true);
+		showText(TX_SPEAKER_MOSHER, 46);
 }
 
 void Room::sins2WalkToDoor() {
@@ -331,3 +349,4 @@ void Room::sins2WalkToDoor() {
 }
 
 }
+#endif

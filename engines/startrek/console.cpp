@@ -36,8 +36,9 @@ Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("bg",			WRAP_METHOD(Console, Cmd_Bg));
 	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("filesearch",	WRAP_METHOD(Console, Cmd_SearchFile));
-	registerCmd("score",		WRAP_METHOD(Console, Cmd_Score));
-	registerCmd("bridgeseq",    WRAP_METHOD(Console, Cmd_BridgeSequence));
+	registerCmd("score",			WRAP_METHOD(Console, Cmd_Score));
+	registerCmd("bridgeseq",		WRAP_METHOD(Console, Cmd_BridgeSequence));
+	registerCmd("dumptext",		WRAP_METHOD(Console, Cmd_DumpText));
 }
 
 Console::~Console() {
@@ -93,25 +94,18 @@ bool Console::Cmd_Actions(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Text(int argc, const char **argv) {
-	typedef Common::HashMap<int, Common::String>::iterator MessageIterator;
+	const RoomTextOffsets *textList = _vm->_room->_roomTextList;
+	Common::String screenName = _vm->getScreenName();
+	byte *rdfData = _vm->_room->loadRoomRDF(screenName);
+	int index = 0;
+	
+	do {
+		uint16 offset = textList[index].offsetEnglishCD;
+		debugPrintf("%i - %i: %s\n", textList[index].id, offset, rdfData[offset]);
+		index++;
+	} while (textList[index].id != -1);
 
-	debugPrintf("\nLook messages\n");
-	debugPrintf("-------------\n");
-	for (MessageIterator i = _vm->_room->_lookMessages.begin(); i != _vm->_room->_lookMessages.end(); ++i) {
-		debugPrintf("%i: %s\n", i->_key, i->_value.c_str());
-	}
-
-	debugPrintf("\nLook with talker messages\n");
-	debugPrintf("-------------------------\n");
-	for (MessageIterator i = _vm->_room->_lookWithTalkerMessages.begin(); i != _vm->_room->_lookWithTalkerMessages.end(); ++i) {
-		debugPrintf("%i: %s\n", i->_key, i->_value.c_str());
-	}
-
-	debugPrintf("\nTalk messages\n");
-	debugPrintf("-------------\n");
-	for (MessageIterator i = _vm->_room->_talkMessages.begin(); i != _vm->_room->_talkMessages.end(); ++i) {
-		debugPrintf("%i: %s\n", i->_key, i->_value.c_str());
-	}
+	delete[] rdfData;
 
 	return true;
 }
@@ -210,6 +204,141 @@ bool Console::Cmd_BridgeSequence(int argc, const char **argv) {
 		_vm->_bridgeSequenceToLoad = atoi(argv[1]);
 		return false;
 	}
+}
+
+struct MessageInfo {
+	Common::String key;
+	Common::String value;
+	uint16 pos;
+};
+
+struct MessageInfoComparator {
+	bool operator()(const MessageInfo &x, const MessageInfo &y) const {
+		return x.key < y.key;
+	}
+};
+
+bool Console::Cmd_DumpText(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps room text messages from CD-ROM versions of ST25\n");
+		debugPrintf("Usage: %s <room RDF file name> <table format>\n", argv[0]);
+	} else {
+		Common::String fileName = argv[1];
+		bool tableFormat = false;
+		Common::List<MessageInfo> keys;
+
+		if (argc > 2)
+			tableFormat = !scumm_stricmp(argv[2], "true") || !strcmp(argv[2], "1");
+
+		Common::MemoryReadStreamEndian *rdfFile = _vm->_resource->loadFile(fileName + ".RDF");
+		rdfFile->seek(32, SEEK_SET);
+		uint16 messageOffset = rdfFile->readUint16LE();
+		rdfFile->seek(messageOffset, SEEK_SET);
+		
+		while (!rdfFile->eos() && !rdfFile->err()) {
+			Common::String message;
+			uint16 pos = rdfFile->pos();
+			byte c = rdfFile->readByte();
+			while (c != '\0') {
+				message += c;
+				c = rdfFile->readByte();
+			}
+			
+			if (!message.empty()) {
+				if (!tableFormat) {
+					debug("%s, %d", message.c_str(), pos);
+				} else {
+					MessageInfo m;
+					m.key = message.size() >= 14 ? message.substr(6, 8) : message;
+					m.value = message;
+					m.pos = pos;
+					keys.push_back(m);
+				}
+			}
+		}
+
+		int size = rdfFile->size();
+		rdfFile->seek(14, SEEK_SET);
+		uint16 startOffset = rdfFile->readUint16LE();
+		uint16 offset = startOffset;
+		rdfFile->seek(startOffset, SEEK_SET);
+		const char *validPrefixes[] = {
+		    "BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"};
+
+		while (!rdfFile->eos() && !rdfFile->err()) {
+			rdfFile->skip(4);
+			uint16 nextOffset = rdfFile->readUint16LE();
+			if (nextOffset >= size || offset >= nextOffset)
+				break;
+
+			while (offset < nextOffset) {
+				int pos = rdfFile->pos();
+				byte c = rdfFile->readByte();
+				bool found = false;
+				
+				if (c == '#') {
+					rdfFile->skip(4);
+					c = rdfFile->readByte();
+
+					if (c == '\\') {
+						found = true;
+						rdfFile->seek(pos, SEEK_SET);
+						Common::String message;
+						c = rdfFile->readByte();
+						while (c != '\0') {
+							message += c;
+							c = rdfFile->readByte();
+						}
+
+						Common::String prefix = message.substr(1, 3);
+						
+						for (uint i = 0; i < ARRAYSIZE(validPrefixes); i++) {
+							if (prefix == validPrefixes[i]) {
+								MessageInfo m;
+								m.key = message.size() >= 14 ? message.substr(6, 8) : message;
+								m.value = message;
+								m.pos = pos;
+								keys.push_back(m);
+								
+								break;
+							}
+						}
+					}
+				}
+
+				if (!found)
+					rdfFile->seek(pos + 1, SEEK_SET);
+
+				offset = rdfFile->pos();
+			}
+		}
+
+		if (tableFormat) {
+			int index = 0;
+			Common::String line;
+
+			Common::sort(keys.begin(), keys.end(), MessageInfoComparator());
+			
+			for (Common::List<MessageInfo>::const_iterator i = keys.begin(), end = keys.end(); i != end; ++i) {
+				line += "TX_" + (*i).key + ", ";
+				index++;
+				if (index % 5 == 0) {
+					debug(line.c_str());
+					line = "";
+				}
+			}
+
+			debug(line.c_str());
+			
+			for (Common::List<MessageInfo>::const_iterator i = keys.begin(), end = keys.end(); i != end; ++i) {
+				debug("{ TX_%s, %d, 0 },", (*i).key.c_str(), (*i).pos);
+			}
+		}
+		
+		delete rdfFile;
+	}
+
+	return true;
 }
 
 Common::String Console::EventToString(uint32 action) {

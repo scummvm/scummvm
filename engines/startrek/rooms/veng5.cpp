@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_DOOR 8
@@ -89,6 +90,23 @@ extern const RoomAction veng5ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum veng5TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets veng5TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText veng5Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::veng5Tick1() {
 	playVoc("VEN5LOOP");
 
@@ -103,7 +121,7 @@ void Room::veng5Tick1() {
 void Room::veng5Tick45() {
 	if (!_awayMission->veng.enteredRoom5FirstTime) {
 		_awayMission->veng.enteredRoom5FirstTime = true;
-		showText(TX_SPEAKER_SPOCK, 5, true); // "I'm picking up on a nearby power source"
+		showText(TX_SPEAKER_SPOCK, TX_VEN5_005); // "I'm picking up on a nearby power source"
 	}
 }
 
@@ -113,7 +131,7 @@ void Room::veng5WalkToDoor() {
 
 void Room::veng5ReachedDoor() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(kSfxDoor);
+	playSoundEffectIndex(SND_DOOR1);
 	loadActorAnimC(OBJECT_DOOR, "s7r5d1", 0x6b, 0x8c, &Room::veng5DoorOpened);
 	walkCrewman(OBJECT_KIRK, 0x64, 0x8e);
 }
@@ -123,56 +141,56 @@ void Room::veng5DoorOpened() {
 }
 
 void Room::veng5TouchedTurboliftDoor() {
-	playSoundEffectIndex(kSfxDoor);
+	playSoundEffectIndex(SND_DOOR1);
 	showRepublicMap(5, 1);
 }
 
 void Room::veng5LookAtDoor() {
-	showDescription(7, true);
+	showText(TX_VEN5N007);
 }
 
 void Room::veng5LookAtLadder() {
-	showDescription(8, true);
+	showText(TX_VEN5N008);
 }
 
 void Room::veng5LookAtDeadGuy() {
-	showDescription(0, true);
+	showText(TX_VEN5N000);
 }
 
 void Room::veng5LookAtPowerPack() {
-	showDescription(9, true);
+	showText(TX_VEN5N009);
 }
 
 void Room::veng5LookAtDebris() {
-	showDescription(1, true);
+	showText(TX_VEN5N001);
 }
 
 void Room::veng5LookAtKirk() {
-	showDescription(3, true);
+	showText(TX_VEN5N003);
 }
 
 void Room::veng5LookAtSpock() {
-	showDescription(2, true);
+	showText(TX_VEN5N002);
 }
 
 void Room::veng5LookAtMccoy() {
-	showDescription(4, true);
+	showText(TX_VEN5N004);
 }
 
 void Room::veng5LookAtRedshirt() {
-	showDescription(5, true);
+	showText(TX_VEN5N005);
 }
 
 void Room::veng5LookAnywhere() {
-	showDescription(6, true);
+	showText(TX_VEN5N006);
 }
 
 void Room::veng5UsePhaserOnPowerPack() {
-	showText(TX_SPEAKER_MCCOY, 7, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN5_007);
 }
 
 void Room::veng5UseStunPhaserOnDebris() {
-	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN5_013);
 }
 
 void Room::veng5UseKillPhaserOnDebris() {
@@ -186,49 +204,49 @@ void Room::veng5ReachedPositionToShootDebris() {
 
 void Room::veng5DrewPhaser() {
 	loadActorAnimC(OBJECT_POWER_PACK, "s7r5p1", 0xb1, 0x89, &Room::veng5VaporizedDebris);
-	playSoundEffectIndex(kSfxPhaser);
+	playSoundEffectIndex(SND_PHASSHOT);
 	loadActorStandAnim(OBJECT_DEBRIS);
 }
 
 void Room::veng5VaporizedDebris() {
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showText(TX_SPEAKER_MCCOY, 11, true);
-	showText(TX_SPEAKER_SPOCK, 18, true);
-	showText(TX_SPEAKER_MCCOY, 10, true);
-	showText(TX_SPEAKER_SPOCK, 19, true);
-	showText(TX_SPEAKER_KIRK,  03, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN5_011);
+	showText(TX_SPEAKER_SPOCK, TX_VEN5_018);
+	showText(TX_SPEAKER_MCCOY, TX_VEN5_010);
+	showText(TX_SPEAKER_SPOCK, TX_VEN5_019);
+	showText(TX_SPEAKER_KIRK,  TX_VEN5_003);
 
 	_awayMission->veng.clearedDebrisInRoom5 = true;
 	_awayMission->disableInput = false;
 }
 
 void Room::veng5UseMTricorderOnDebris() {
-	mccoyScan(DIR_W, 8, false, true);
+	mccoyScan(DIR_W, TX_VEN5_008);
 }
 
 void Room::veng5UseSTricorderOnDebris() {
-	spockScan(DIR_N, 12, false, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_VEN5_012);
 }
 
 void Room::veng5UseMTricorderOnPowerPack() {
-	mccoyScan(DIR_W,  9, false, true); // ENHANCEMENT: Use mccoyScan, not showText
+	mccoyScan(DIR_W, TX_VEN5_009); // ENHANCEMENT: Use mccoyScan, not showText
 }
 
 void Room::veng5UseSTricorderOnPowerPack() {
-	spockScan(DIR_N,  4, false, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_VEN5_004);
 }
 
 void Room::veng5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_VEN5_001);
 }
 
 void Room::veng5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 6, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN5_006);
 }
 
 void Room::veng5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 17, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN5_017);
 	showText(TX_SPEAKER_KIJE,  TX_VEN5_R20);
 }
 
@@ -237,12 +255,12 @@ void Room::veng5TalkToRedshirt() {
 }
 
 void Room::veng5TouchedHotspot0() { // Approached too close to fire
-	showText(TX_SPEAKER_SPOCK, 15, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN5_015);
 
 	if (!_awayMission->veng.askedSpockAboutFire) {
 		_awayMission->veng.askedSpockAboutFire = true;
-		showText(TX_SPEAKER_KIRK,   2, true);
-		showText(TX_SPEAKER_SPOCK, 16, true);
+		showText(TX_SPEAKER_KIRK,  TX_VEN5_002);
+		showText(TX_SPEAKER_SPOCK, TX_VEN5_016);
 	}
 }
 
@@ -257,10 +275,11 @@ void Room::veng5ReachedPowerPack() {
 void Room::veng5PickedUpPowerPack() {
 	if (!_awayMission->veng.havePowerPack) {
 		loadActorStandAnim(OBJECT_POWER_PACK);
-		showDescription(10, true);
+		showText(TX_VEN5N010);
 		_awayMission->veng.havePowerPack = true;
 		giveItem(OBJECT_IFUSION);
 	}
 }
 
 }
+#endif

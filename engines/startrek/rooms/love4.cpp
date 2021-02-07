@@ -126,6 +126,154 @@ extern const RoomAction love4ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum love4TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_FERRIS,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_025, TX_LOV0_026, TX_LOV0_029, TX_LOV0_033,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_049,
+	TX_LOV0_050, TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104,
+	TX_LOV0_105, TX_LOV0_106, TX_LOV0_107, TX_LOV0_124, TX_LOV4_001,
+	TX_LOV4_002, TX_LOV4_003, TX_LOV4_004, TX_LOV4_005, TX_LOV4_006,
+	TX_LOV4_007, TX_LOV4_009, TX_LOV4_010, TX_LOV4_011, TX_LOV4_012,
+	TX_LOV4_013, TX_LOV4_014, TX_LOV4_015, TX_LOV4_016, TX_LOV4_017,
+	TX_LOV4_018, TX_LOV4_019, TX_LOV4_020, TX_LOV4_021, TX_LOV4_022,
+	TX_LOV4_023, TX_LOV4_024, TX_LOV4_025, TX_LOV4_026, TX_LOV4_027,
+	TX_LOV4_028, TX_LOV4_029, TX_LOV5_015, TX_LOV5_019, TX_LOV5_027,
+	TX_LOV5_030, TX_LOV5_038, TX_LOVA_100, TX_LOVA_F01, TX_LOVA_F02,
+	TX_LOVA_F03, TX_LOVA_F04, TX_LOVA_F07, TX_LOVA_F08, TX_LOVA_F10,
+	TX_LOVA_F54, TX_LOVA_F55, TX_MUD2_040, TX_MUD4_018, TX_TUG2_010,
+	TX_VENA_F41, TX_FEA5_008, TX_LOV2N005, TX_LOV4N000, TX_LOV4N001,
+	TX_LOV4N002, TX_LOV4N003, TX_LOV4N004, TX_LOV4N005, TX_LOV4N006,
+	TX_LOV4N007, TX_LOV4N008, TX_LOV4N009, TX_LOV4N010, TX_LOV4N011,
+	TX_LOV4N013, TX_BRIDU146, TX_GENER004
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets love4TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 7266, 0 },
+	{ TX_SPEAKER_MCCOY, 7277, 0 },
+	{ TX_SPEAKER_SPOCK, 7287, 0 },
+	{ TX_SPEAKER_FERRIS, 7297, 0 },
+	{ TX_LOV0_011, 8771, 0 },
+	{ TX_LOV0_012, 8898, 0 },
+	{ TX_LOV0_013, 9194, 0 },
+	{ TX_LOV0_014, 8958, 0 },
+	{ TX_LOV0_015, 9062, 0 },
+	{ TX_LOV0_016, 8865, 0 },
+	{ TX_LOV0_017, 9328, 0 },
+	{ TX_LOV0_019, 9248, 0 },
+	{ TX_LOV0_020, 8805, 0 },
+	{ TX_LOV0_021, 9116, 0 },
+	{ TX_LOV0_022, 9006, 0 },
+	{ TX_LOV0_025, 10254, 0 },
+	{ TX_LOV0_026, 10127, 0 },
+	{ TX_LOV0_029, 10007, 0 },
+	{ TX_LOV0_033, 10067, 0 },
+	{ TX_LOV0_039, 9389, 0 },
+	{ TX_LOV0_040, 9516, 0 },
+	{ TX_LOV0_041, 9812, 0 },
+	{ TX_LOV0_042, 9576, 0 },
+	{ TX_LOV0_043, 9680, 0 },
+	{ TX_LOV0_045, 9483, 0 },
+	{ TX_LOV0_046, 9946, 0 },
+	{ TX_LOV0_047, 9866, 0 },
+	{ TX_LOV0_048, 9423, 0 },
+	{ TX_LOV0_049, 9734, 0 },
+	{ TX_LOV0_050, 9624, 0 },
+	{ TX_LOV0_101, 10335, 0 },
+	{ TX_LOV0_102, 10399, 0 },
+	{ TX_LOV0_103, 10469, 0 },
+	{ TX_LOV0_104, 10519, 0 },
+	{ TX_LOV0_105, 10576, 0 },
+	{ TX_LOV0_106, 10688, 0 },
+	{ TX_LOV0_107, 10756, 0 },
+	{ TX_LOV0_124, 10204, 0 },
+	{ TX_LOV4_001, 2899, 0 },
+	{ TX_LOV4_002, 1211, 0 },
+	{ TX_LOV4_003, 8428, 0 },
+	{ TX_LOV4_004, 3355, 0 },
+	{ TX_LOV4_005, 1095, 0 },
+	{ TX_LOV4_006, 8685, 0 },
+	{ TX_LOV4_007, 7977, 0 },
+	{ TX_LOV4_009, 3010, 0 },
+	{ TX_LOV4_010, 8197, 0 },
+	{ TX_LOV4_011, 3416, 0 },
+	{ TX_LOV4_012, 3537, 0 },
+	{ TX_LOV4_013, 2078, 0 },
+	{ TX_LOV4_014, 7908, 0 },
+	{ TX_LOV4_015, 1733, 0 },
+	{ TX_LOV4_016, 10809, 0 },
+	{ TX_LOV4_017, 8130, 0 },
+	{ TX_LOV4_018, 1601, 0 },
+	{ TX_LOV4_019, 1855, 0 },
+	{ TX_LOV4_020, 8489, 0 },
+	{ TX_LOV4_021, 8618, 0 },
+	{ TX_LOV4_022, 1301, 0 },
+	{ TX_LOV4_023, 2545, 0 },
+	{ TX_LOV4_024, 1164, 0 },
+	{ TX_LOV4_025, 7610, 0 },
+	{ TX_LOV4_026, 2772, 0 },
+	{ TX_LOV4_027, 8360, 0 },
+	{ TX_LOV4_028, 8291, 0 },
+	{ TX_LOV4_029, 3295, 0 },
+	{ TX_LOV5_015, 4669, 0 },
+	//{ TX_LOV5_015, 4490, 0 },
+	{ TX_LOV5_019, 4412, 0 },
+	{ TX_LOV5_027, 4925, 0 },
+	{ TX_LOV5_030, 4829, 0 },
+	{ TX_LOV5_038, 4880, 0 },
+	{ TX_LOVA_100, 6034, 0 },
+	{ TX_LOVA_F01, 5476, 0 },
+	{ TX_LOVA_F02, 5548, 0 },
+	{ TX_LOVA_F03, 5747, 0 },
+	{ TX_LOVA_F04, 5662, 0 },
+	{ TX_LOVA_F07, 6111, 0 },
+	{ TX_LOVA_F08, 5100, 0 },
+	//{ TX_LOVA_F08, 5815, 0 },
+	{ TX_LOVA_F10, 5982, 0 },
+	{ TX_LOVA_F54, 5256, 0 },
+	{ TX_LOVA_F55, 4557, 0 },
+	{ TX_FEA5_008, 8051, 0 },
+	{ TX_MUD2_040, 6307, 0 },
+	{ TX_MUD4_018, 7013, 0 },
+	//{ TX_MUD4_018, 6680, 0 },
+	//{ TX_MUD4_018, 6516, 0 },
+	//{ TX_MUD4_018, 6849, 0 },
+	{ TX_TUG2_010, 5912, 0 },
+	{ TX_VENA_F41, 7136, 0 },
+	//{ TX_VENA_F41, 6803, 0 },
+	//{ TX_VENA_F41, 6972, 0 },
+	//{ TX_VENA_F41, 6639, 0 },
+	{ TX_LOV2N005, 6170, 0 },
+	//{ TX_LOV2N005, 6250, 0 },
+	//{ TX_LOV2N005, 6396, 0 },
+	{ TX_LOV4N000, 8170, 0 },
+	{ TX_LOV4N001, 7740, 0 },
+	{ TX_LOV4N002, 7554, 0 },
+	{ TX_LOV4N003, 7690, 0 },
+	{ TX_LOV4N004, 3206, 0 },
+	{ TX_LOV4N005, 2437, 0 },
+	{ TX_LOV4N006, 7309, 0 },
+    { TX_LOV4N007, 1473, 0 },
+	{ TX_LOV4N008, 7843, 0 },
+	{ TX_LOV4N009, 7362, 0 },
+	{ TX_LOV4N010, 7495, 0 },
+	{ TX_LOV4N011, 7441, 0 },
+	{ TX_LOV4N013, 2692, 0 },
+	{ TX_BRIDU146, 6749, 0 },
+	//{ TX_BRIDU146, 7082, 0 },
+	//{ TX_BRIDU146, 6918, 0 },
+	//{ TX_BRIDU146, 6585, 0 },
+	{ TX_GENER004, 5405, 0 },	
+	{          -1, 0,    0 }
+};
+
+extern const RoomText love4Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::love4Tick1() {
 	playVoc("LOV4LOOP");
 
@@ -189,23 +337,23 @@ void Room::love4ReachedLadder() {
 }
 
 void Room::love4UseStunPhaserOnRomulan() {
-	showText(TX_SPEAKER_MCCOY, 7, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV4_007);
 }
 
 void Room::love4LookAnywhere() {
-	showDescription(9, true);
+	showDescription(TX_LOV4N009);
 }
 
 void Room::love4LookAtLadder() {
-	showDescription(10, true);
+	showDescription(TX_LOV4N010);
 }
 
 void Room::love4LookAtDoor() {
-	showDescription(8, true);
+	showDescription(TX_LOV4N008);
 }
 
 void Room::love4LookAtKirk() {
-	showDescription(2, true);
+	showDescription(TX_LOV4N002);
 }
 
 void Room::love4LookAtMccoy() {
@@ -214,76 +362,76 @@ void Room::love4LookAtMccoy() {
 	// is thinking it.
 	// Not sure if this was an intentional decision, but there is another unused audio
 	// file which matches with the text more accurately, so I'm using that instead.
-	showDescription(12, true);
+	//showDescription(TX_LOV4N012);	// TODO
 }
 
 void Room::love4LookAtSpock() {
-	showDescription(03, true);
+	showDescription(TX_LOV4N003);
 }
 
 void Room::love4LookAtRedshirt() {
-	showDescription(01, true);
+	showDescription(TX_LOV4N001);
 }
 
 void Room::love4LookAtRomulan() {
 	if (!_awayMission->love.romulansCured)
-		showDescription(06, true);
+		showDescription(TX_LOV4N006);
 	else
-		showDescription(11, true);
+		showDescription(TX_LOV4N011);
 }
 
 void Room::love4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  05, true);
-	showText(TX_SPEAKER_MCCOY, 24, true);
-	showText(TX_SPEAKER_KIRK,  02, true);
+	showText(TX_SPEAKER_KIRK,  TX_LOV4_005);
+	showText(TX_SPEAKER_MCCOY, TX_LOV4_024);
+	showText(TX_SPEAKER_KIRK,  TX_LOV4_002);
 }
 
 void Room::love4TalkToMccoy() {
 	if (_awayMission->love.romulansCured)
-		showText(TX_SPEAKER_MCCOY, 22, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_022);
 	else
-		showText(TX_SPEAKER_MCCOY, 10, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_010);
 }
 
 void Room::love4TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, 28, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV4_028);
 }
 
 void Room::love4TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 27, true);
-	showText(TX_SPEAKER_KIRK,   3, true);
+	showText(TX_SPEAKER_SPOCK, TX_LOV4_027);
+	showText(TX_SPEAKER_KIRK,  TX_LOV4_003);
 }
 
 void Room::love4TalkToRomulan() {
 	if (_awayMission->love.romulansCured)
-		showDescription(7, true); // BUGFIX: original didn't play audio
+		showDescription(TX_LOV4N007); // BUGFIX: original didn't play audio
 }
 
 void Room::love4UseMTricorderOnRomulan() {
 	if (_awayMission->love.romulansCured)
-		mccoyScan(DIR_S, 18, false, true);
+		mccoyScan(DIR_S, TX_LOV4_018, false);
 	else
-		mccoyScan(DIR_S, 15, false, true);
+		mccoyScan(DIR_S, TX_LOV4_015, false);
 }
 
 void Room::love4UseMTricorderAnywhere() {
 	if (_awayMission->love.romulansCured)
-		mccoyScan(DIR_S, 19, false, true);
+		mccoyScan(DIR_S, TX_LOV4_019, false);
 	else if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-		mccoyScan(DIR_S, 20, false, true);
+		mccoyScan(DIR_S, TX_LOV4_020, false);
 	else
-		mccoyScan(DIR_S, 21, false, true);
+		mccoyScan(DIR_S, TX_LOV4_021, false);
 }
 
 void Room::love4UseSTricorderAnywhere() {
-	spockScan(DIR_S, 6, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_LOV4_006, false);
 }
 
 
 // Mccoy walks around to all romulans, giving each the cure
 void Room::love4UseCureOnRomulan() {
 	if (_awayMission->love.romulansCured)
-		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_013);
 	else {
 		_awayMission->love.missionScore += 2;
 		_awayMission->love.romulansCured = true;
@@ -326,9 +474,9 @@ void Room::love4MccoyReachedRomulan1() {
 void Room::love4MccoyCuredRomulan1() {
 	loadActorAnim2(OBJECT_ROMULAN_1, "s3r5r1", 0x36, 0xb3, 0);
 
-	showDescription(05, true);
+	showDescription(TX_LOV4N005);
 	if (!_roomVar.love.gaveWaterToRomulans)
-		showText(TX_SPEAKER_MCCOY, 23, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_023);
 
 	_awayMission->disableInput = false;
 }
@@ -339,13 +487,13 @@ void Room::love4UseWaterOnRomulan() {
 	// In the original, you could use water on them, but there would be no corresponding
 	// narration, you'd get no points for it, and you'd lose the water anyway.
 	if (!_awayMission->love.romulansCured)
-		showText(TX_SPEAKER_MCCOY, 9, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_009);
 	else {
 		_roomVar.love.gaveWaterToRomulans = true;
 		if (_awayMission->love.romulansCured) {
-			showDescription(13, true);
-			showText(TX_SPEAKER_MCCOY, 26, true);
-			showText(TX_SPEAKER_KIRK, 1, true);
+			showDescription(TX_LOV4N013);
+			showText(TX_SPEAKER_MCCOY, TX_LOV4_026);
+			showText(TX_SPEAKER_KIRK, TX_LOV4_001);
 			if (!_awayMission->love.gotPointsForHydratingRomulans) {
 				_awayMission->love.gotPointsForHydratingRomulans = true;
 				_awayMission->love.missionScore += 2;
@@ -364,29 +512,29 @@ void Room::love4UseWaterOnRomulan() {
 	// they did get voice acted anyway.
 	if (false) {
 		if (_awayMission->love.romulansUnconsciousFromVirus)
-			showText(TX_SPEAKER_MCCOY, 9, true);
+			showText(TX_SPEAKER_MCCOY, TX_LOV4_009);
 		else {
-			showDescription(4, true);
+			showDescription(TX_LOV4N004);
 			if (!_awayMission->redshirtDead) {
-				showText(TX_SPEAKER_FERRIS, 29, true);
-				showText(TX_SPEAKER_KIRK,    4, true);
+				showText(TX_SPEAKER_FERRIS, TX_LOV4_029);
+				showText(TX_SPEAKER_KIRK,   TX_LOV4_004);
 			}
-			showText(TX_SPEAKER_MCCOY, 11, true);
+			showText(TX_SPEAKER_MCCOY, TX_LOV4_011);
 			loseItem(OBJECT_IH2O);
 		}
 	}
 }
 
 void Room::love4UseMedkitOnRomulan() {
-	showText(TX_SPEAKER_MCCOY, 12, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV4_012);
 }
 
 void Room::love4UseCureSampleOnRomulan() {
-	showText(TX_SPEAKER_MCCOY, 14, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV4_014);
 }
 
 void Room::love4UseAnythingOnRomulan() {
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV4_017);
 }
 
 }

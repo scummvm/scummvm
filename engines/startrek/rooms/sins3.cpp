@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_ITEM 8 // The item being "operated" on by the drill
@@ -123,6 +124,23 @@ extern const RoomAction sins3ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum sins3TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets sins3TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText sins3Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::sins3Tick1() {
 	playVoc("SIN3LOOP");
 
@@ -146,57 +164,57 @@ void Room::sins3Tick1() {
 }
 
 void Room::sins3UseSTricorderOnBox() {
-	spockScan(DIR_S, 3, false, true);
+	spockScan(DIR_S, 3, false);
 }
 
 void Room::sins3UseSTricorderOnMonitor() {
-	spockScan(DIR_N, 18, false, true);
+	spockScan(DIR_N, 18, false);
 }
 
 void Room::sins3UseSTricorderAnywhere() {
-	spockScan(DIR_S, 17, false, true);
+	spockScan(DIR_S, 17, false);
 }
 
 void Room::sins3UseSTricorderOnDrill() {
-	spockScan(DIR_E, 16, false, true);
+	spockScan(DIR_E, 16, false);
 }
 
 void Room::sins3UseSTricorderOnPanel() {
 	if (_awayMission->sins.scannedKeycardLock) {
-		spockScan(DIR_E, 15, false, true);
+		spockScan(DIR_E, 15, false);
 		_awayMission->sins.laserPattern = 1;
 	} else
-		spockScan(DIR_E, 19, false, true);
+		spockScan(DIR_E, 19, false);
 }
 
 void Room::sins3LookAtDrill() {
-	showDescription(12, true);
+	showDescription(12);
 }
 
 void Room::sins3LookAtPanel() {
-	showDescription(11, true);
+	showDescription(11);
 }
 
 void Room::sins3LookAtMonitor() {
-	showDescription(7, true);
+	showDescription(7);
 }
 
 void Room::sins3LookAnywhere() {
-	showDescription(13, true);
+	showDescription(13);
 }
 
 void Room::sins3UseSTricorderOnWall() {
 	// NOTE: this event has two implementations (index 23 and 22), one unused.
-	spockScan(DIR_E, 23, false, true);
+	spockScan(DIR_E, 23, false);
 }
 
 void Room::sins3LookAtBox() {
 	if (_awayMission->sins.boxState == 0)
-		showDescription(0, true);
+		showDescription(0);
 	else if (_awayMission->sins.boxState == 1)
-		showDescription(8, true);
+		showDescription(8);
 	else if (_awayMission->sins.boxState == 2)
-		showDescription(5, true);
+		showDescription(5);
 }
 
 void Room::sins3UseKirkOnBox() {
@@ -289,9 +307,9 @@ void Room::sins3KirkGotBoxContents() {
 
 void Room::sins3Tick30() {
 	if (!_awayMission->sins.enteredRoom3FirstTime) {
-		showText(TX_SPEAKER_MCCOY, 12, true);
-		showText(TX_SPEAKER_SPOCK, 24, true);
-		showText(TX_SPEAKER_MCCOY, 13, true);
+		showText(TX_SPEAKER_MCCOY, 12);
+		showText(TX_SPEAKER_SPOCK, 24);
+		showText(TX_SPEAKER_MCCOY, 13);
 		_awayMission->sins.enteredRoom3FirstTime = true;
 		_awayMission->disableInput = false;
 	}
@@ -299,13 +317,13 @@ void Room::sins3Tick30() {
 
 void Room::sins3Tick60() {
 	if (_awayMission->sins.gatheredClues == 7) {
-		showText(TX_SPEAKER_SPOCK, 7, true);
+		showText(TX_SPEAKER_SPOCK, 7);
 		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
 void Room::sins3UseKirkOnPanel() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, 1);
 	sins3UseSpockOnPanel();
 }
 
@@ -330,7 +348,7 @@ void Room::sins3SpockReachedPanel() {
 		if (_awayMission->sins.laserPattern == 0 && _awayMission->sins.laserSetting == 3)
 			// High setting can't be used until the template pattern has been uploaded to
 			// the machine
-			showText(TX_SPEAKER_SPOCK, 5, true);
+			showText(TX_SPEAKER_SPOCK, 5);
 		else if (_awayMission->sins.moldState != -1) {
 			if (_awayMission->sins.moldState == 0) { // Mold not yet created
 				loadActorAnim2(OBJECT_SPOCK, "susemn");
@@ -369,7 +387,7 @@ void Room::sins3SpockReachedPanel() {
 				}
 			} else { // moldState == 2 or 4 (mold created; either keycard is in it, or nothing)
 				// "Template would be damaged from direct fire"
-				showText(TX_SPEAKER_SPOCK, 6, true);
+				showText(TX_SPEAKER_SPOCK, 6);
 			}
 		}
 	}
@@ -417,12 +435,12 @@ void Room::sins3RockTurnedIntoIDCard() {
 }
 
 void Room::sins3RockVaporized() {
-	showText(TX_SPEAKER_SPOCK, 21, true);
+	showText(TX_SPEAKER_SPOCK, 21);
 }
 
 void Room::sins3UseDrillAnywhere() {
 	// It isn't possible to "use" a hotspot on something else, so this is never called?
-	showDescription(9, true);
+	showDescription(9);
 }
 
 void Room::sins3GetIDCard() {
@@ -446,61 +464,61 @@ void Room::sins3PickedUpIDCard() {
 
 void Room::sins3LookAtItemBeingDrilled() {
 	if (_awayMission->sins.moldState == 2)
-		showDescription(6, true);
+		showDescription(6);
 	else if (_awayMission->sins.moldState == 3)
-		showDescription(14, true);
+		showDescription(14);
 	else if (_awayMission->sins.moldState == 4)
-		showDescription(10, true);
+		showDescription(10);
 }
 
 void Room::sins3LookAtKirk() {
-	showDescription(3, true);
+	showDescription(3);
 }
 
 void Room::sins3LookAtSpock() {
-	showDescription(4, true);
+	showDescription(4);
 }
 
 void Room::sins3LookAtMccoy() {
-	showDescription(1, true); // BUGFIX: Speaker is "nobody", not Dr. McCoy
+	showDescription(1); // BUGFIX: Speaker is "nobody", not Dr. McCoy
 }
 
 void Room::sins3LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(2);
 }
 
 void Room::sins3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 2, true);
+	showText(TX_SPEAKER_KIRK, 2);
 }
 
 void Room::sins3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 20, true);
+	showText(TX_SPEAKER_SPOCK, 20);
 }
 
 void Room::sins3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_MCCOY, 11);
 }
 
 void Room::sins3TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 26, true);
-	showText(TX_SPEAKER_MCCOY,  14, true);
-	showText(TX_SPEAKER_MOSHER, 27, true);
+	showText(TX_SPEAKER_MOSHER, 26);
+	showText(TX_SPEAKER_MCCOY,  14);
+	showText(TX_SPEAKER_MOSHER, 27);
 }
 
 void Room::sins3UseCommunicator() {
-	showText(TX_SPEAKER_UHURA, 72, true);
+	showText(TX_SPEAKER_UHURA_GLOBAL, 72);
 }
 
 void Room::sins3UseSpockOnDrill() {
-	showText(TX_SPEAKER_SPOCK, 4, true);
+	showText(TX_SPEAKER_SPOCK, 4);
 }
 
 void Room::sins3UseMccoyOnDrill() {
-	showText(TX_SPEAKER_MCCOY, 9, true);
+	showText(TX_SPEAKER_MCCOY, 9);
 }
 
 void Room::sins3UseRedshirtOnDrill() {
-	showText(TX_SPEAKER_MOSHER, 25, true);
+	showText(TX_SPEAKER_MOSHER, 25);
 }
 
 void Room::sins3WalkToDoor() {
@@ -508,11 +526,12 @@ void Room::sins3WalkToDoor() {
 }
 
 void Room::sins3UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 10, true);
+	showText(TX_SPEAKER_MCCOY, 10);
 }
 
 void Room::sins3UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, 8, false, true);
+	mccoyScan(DIR_S, 8, false);
 }
 
 }
+#endif

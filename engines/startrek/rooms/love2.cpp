@@ -177,6 +177,214 @@ extern const RoomAction love2ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum love2TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_FERRIS, TX_SPEAKER_COMPUTER,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_025, TX_LOV0_026, TX_LOV0_029, TX_LOV0_033,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_049,
+	TX_LOV0_050, TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104,
+	TX_LOV0_105, TX_LOV0_106, TX_LOV0_107, TX_LOV0_124, TX_LOV2_001,
+	TX_LOV2_002, TX_LOV2_003, TX_LOV2_004, TX_LOV2_005, TX_LOV2_006,
+	TX_LOV2_007, TX_LOV2_008, TX_LOV2_009, TX_LOV2_010, TX_LOV2_011,
+	TX_LOV2_012, TX_LOV2_014, TX_LOV2_015, TX_LOV2_016, TX_LOV2_017,
+	TX_LOV2_018, TX_LOV2_019, TX_LOV2_020, TX_LOV2_021, TX_LOV2_022,
+	TX_LOV2_023, TX_LOV2_024, TX_LOV2_025, TX_LOV2_026, TX_LOV2_027,
+	TX_LOV2_028, TX_LOV2_029, TX_LOV2_030, TX_LOV2_031, TX_LOV2_032,
+	TX_LOV2_033, TX_LOV2_034, TX_LOV2_035, TX_LOV2_036, TX_LOV2_037,
+	TX_LOV2_038, TX_LOV2_039, TX_LOV2_040, TX_LOV2_041, TX_LOV2_043,
+	TX_LOV5_015, TX_LOV5_019, TX_LOV5_027, TX_LOV5_030, TX_LOV5_038,
+	TX_LOVA_100, TX_LOVA_F01, TX_LOVA_F02, TX_LOVA_F03, TX_LOVA_F04,
+	TX_LOVA_F07, TX_LOVA_F08, TX_LOVA_F10, TX_LOVA_F54, TX_LOVA_F55,
+	TX_LOV2N000, TX_LOV2N001, TX_LOV2N002, TX_LOV2N003, TX_LOV2N004,
+	TX_LOV2N005, TX_LOV2N006, TX_LOV2N007, TX_LOV2N008, TX_LOV2N009,
+	TX_LOV2N010, TX_LOV2N011, TX_LOV2N012, TX_LOV2N013, TX_LOV2N014,
+	TX_LOV2N015, TX_LOV2N016, TX_LOV2N017, TX_LOV2N018, TX_LOV2N019,
+	TX_LOV2N024, TX_LOV2N025, TX_LOV2N026, TX_LOV2N027, TX_LOV2N028,
+	TX_LOV2N029, TX_LOV2N030, TX_LOV2N031, TX_LOV2N033, TX_LOV2N034,
+	TX_LOV2N035, TX_LOV2N036, TX_LOV2N037, TX_LOV2N038, TX_LOV2N039,
+	TX_LOV2N040, TX_LOV2N041, TX_LOV2N042, TX_LOV2N043, TX_LOV2N044,
+	TX_LOV2N045, TX_LOV2N046, TX_LOV2N047, TX_LOV2N048, TX_LOV2N049,
+	TX_LOV2N050, TX_LOV2N051, TX_MUD2_040, TX_MUD4_018, TX_TUG2_010,
+	TX_VENA_F41, TX_BRIDU146, TX_GENER004
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets love2TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 14244, 0 },
+	{ TX_SPEAKER_MCCOY, 14255, 0 },
+	{ TX_SPEAKER_SPOCK, 14265, 0 },
+	{ TX_SPEAKER_FERRIS, 14275, 0 },
+	{ TX_SPEAKER_COMPUTER, 14287, 0 },
+	{ TX_LOV0_011, 16471, 0 },
+	{ TX_LOV0_012, 16598, 0 },
+	{ TX_LOV0_013, 16894, 0 },
+	{ TX_LOV0_014, 16658, 0 },
+	{ TX_LOV0_015, 16762, 0 },
+	{ TX_LOV0_016, 16565, 0 },
+	{ TX_LOV0_017, 17028, 0 },
+	{ TX_LOV0_019, 16948, 0 },
+	{ TX_LOV0_020, 16505, 0 },
+	{ TX_LOV0_021, 16816, 0 },
+	{ TX_LOV0_022, 16706, 0 },
+	{ TX_LOV0_025, 17954, 0 },
+	{ TX_LOV0_026, 17827, 0 },
+	{ TX_LOV0_029, 17707, 0 },
+	{ TX_LOV0_033, 17767, 0 },
+	{ TX_LOV0_039, 17089, 0 },
+	{ TX_LOV0_040, 17216, 0 },
+	{ TX_LOV0_041, 17512, 0 },
+	{ TX_LOV0_042, 17276, 0 },
+	{ TX_LOV0_043, 17380, 0 },
+	{ TX_LOV0_045, 17183, 0 },
+	{ TX_LOV0_046, 17646, 0 },
+	{ TX_LOV0_047, 17566, 0 },
+	{ TX_LOV0_048, 17123, 0 },
+	{ TX_LOV0_049, 17434, 0 },
+	{ TX_LOV0_050, 17324, 0 },
+	{ TX_LOV0_101, 18035, 0 },
+	{ TX_LOV0_102, 18099, 0 },
+	{ TX_LOV0_103, 18169, 0 },
+	{ TX_LOV0_104, 18219, 0 },
+	{ TX_LOV0_105, 18276, 0 },
+	{ TX_LOV0_106, 18388, 0 },
+	{ TX_LOV0_107, 18456, 0 },
+	{ TX_LOV0_124, 17904, 0 },
+	{ TX_LOV2_001, 1734, 0 },
+	{ TX_LOV2_002, 6690, 0 },
+	{ TX_LOV2_003, 5722, 0 },
+	{ TX_LOV2_004, 5885, 0 },
+	{ TX_LOV2_005, 4110, 0 },
+	{ TX_LOV2_006, 4025, 0 },
+	{ TX_LOV2_007, 8933, 0 },
+	{ TX_LOV2_008, 15998, 0 },
+	{ TX_LOV2_009, 15764, 0 },
+	{ TX_LOV2_010, 4710, 0 },
+	//{ TX_LOV2_010, 16437, 0 },	// ignore duplicate line
+	{ TX_LOV2_011, 9129, 0 },
+	{ TX_LOV2_012, 1916, 0 },
+	{ TX_LOV2_014, 8848, 0 },
+	{ TX_LOV2_015, 5377, 0 },
+	{ TX_LOV2_016, 15386, 0 },
+	{ TX_LOV2_017, 7699, 0 },
+	{ TX_LOV2_018, 6248, 0 },
+	{ TX_LOV2_019, 15259, 0 },
+	{ TX_LOV2_020, 8083, 0 },
+	{ TX_LOV2_021, 6856, 0 },
+	{ TX_LOV2_022, 6402, 0 },
+	{ TX_LOV2_023, 7371, 0 },
+	{ TX_LOV2_024, 4468, 0 },
+	{ TX_LOV2_025, 3226, 0 },
+	//{ TX_LOV2_025, 3540, 0 },		// ignore duplicate line
+	{ TX_LOV2_026, 2639, 0 },
+	{ TX_LOV2_027, 16081, 0 },
+	{ TX_LOV2_028, 6936, 0 },
+	{ TX_LOV2_029, 15832, 0 },
+	{ TX_LOV2_030, 6312, 0 },
+	{ TX_LOV2_031, 6088, 0 },
+	{ TX_LOV2_032, 5224, 0 },
+	{ TX_LOV2_033, 15321, 0 },
+	{ TX_LOV2_034, 7288, 0 },	// NOTE: has typo (dash instead of underscore)
+	{ TX_LOV2_035, 14978, 0 },
+	{ TX_LOV2_036, 5447, 0 },
+	{ TX_LOV2_037, 15561, 0 },
+	{ TX_LOV2_038, 6472, 0 },
+	{ TX_LOV2_039, 7111, 0 },	// NOTE: has typo (dash instead of underscore)
+	{ TX_LOV2_040, 9058, 0 },
+	{ TX_LOV2_041, 15889, 0 },
+	{ TX_LOV2_043, 5634, 0 },
+	{ TX_LOV5_015, 11567, 0 },
+	//{ TX_LOV5_015, 11388, 0 },	// ignore duplicate line
+	{ TX_LOV5_019, 11310, 0 },
+	{ TX_LOV5_027, 11823, 0 },
+	{ TX_LOV5_030, 11727, 0 },
+	{ TX_LOV5_038, 11778, 0 },
+	{ TX_LOVA_100, 12932, 0 },
+	{ TX_LOVA_F01, 12374, 0 },
+	{ TX_LOVA_F02, 12446, 0 },
+	{ TX_LOVA_F03, 12645, 0 },
+	{ TX_LOVA_F04, 12560, 0 },
+	{ TX_LOVA_F07, 13009, 0 },
+	{ TX_LOVA_F08, 11998, 0 },
+	//{ TX_LOVA_F08, 12713, 0 },	// ignore duplicate line
+	{ TX_LOVA_F10, 12880, 0 },
+	{ TX_LOVA_F54, 12154, 0 },
+	{ TX_LOVA_F55, 11455, 0 },
+	{ TX_LOV2N000, 16147, 0 },
+	{ TX_LOV2N001, 15741, 0 },
+	{ TX_LOV2N002, 14608, 0 },
+	{ TX_LOV2N003, 14647, 0 },
+	{ TX_LOV2N004, 14569, 0 },
+	{ TX_LOV2N005,  4653, 0 },
+	//{ TX_LOV2N005, 13294, 0 },	// ignore duplicate line
+	//{ TX_LOV2N005, 13148, 0 },	// ignore duplicate line
+	//{ TX_LOV2N005, 13068, 0 },	// ignore duplicate line
+	//{ TX_LOV2N005,  4410, 0 },	// ignore duplicate line
+	{ TX_LOV2N006, 14300, 0 },
+	{ TX_LOV2N007, 16217, 0 },
+	{ TX_LOV2N008, 16186, 0 },
+	{ TX_LOV2N009,  1467, 0 },
+	{ TX_LOV2N010, 14780, 0 },
+	{ TX_LOV2N011, 14686, 0 },
+	{ TX_LOV2N012,  4334, 0 },
+	{ TX_LOV2N013, 16249, 0 },
+	{ TX_LOV2N014, 14728, 0 },
+	{ TX_LOV2N015, 16281, 0 },
+	{ TX_LOV2N016,  5555, 0 },
+	{ TX_LOV2N017,  5147, 0 },
+	{ TX_LOV2N018,  5812, 0 },
+	{ TX_LOV2N019,  6013, 0 },
+	{ TX_LOV2N024,  2955, 0 },
+	{ TX_LOV2N025,  8231, 0 },
+	//{ TX_LOV2N025,  8454, 0 },	// ignore duplicate line
+	{ TX_LOV2N026, 14840, 0 },
+	{ TX_LOV2N027, 14878, 0 },
+	{ TX_LOV2N028, 14425, 0 },
+	{ TX_LOV2N029, 14920, 0 },
+	{ TX_LOV2N030,  3356, 0 },
+	{ TX_LOV2N031,  3696, 0 },
+	{ TX_LOV2N033, 16366, 0 },
+	{ TX_LOV2N034,  2843, 0 },
+	{ TX_LOV2N035,  3081, 0 },
+	{ TX_LOV2N036,  9618, 0 },
+	{ TX_LOV2N037,  9803, 0 },
+	{ TX_LOV2N038, 10228, 0 },
+	{ TX_LOV2N039, 10072, 0 },
+	{ TX_LOV2N040,  9986, 0 },
+	{ TX_LOV2N041, 10152, 0 },
+	{ TX_LOV2N042,  9298, 0 },
+	{ TX_LOV2N043, 10484, 0 },
+	{ TX_LOV2N044,  9430, 0 },
+	{ TX_LOV2N045, 15417, 0 },
+	{ TX_LOV2N046,  8005, 0 },
+	{ TX_LOV2N047,  7616, 0 },
+	{ TX_LOV2N048,  7209, 0 },
+	{ TX_LOV2N049,  7033, 0 },
+	{ TX_LOV2N050,  6778, 0 },
+	{ TX_LOV2N051,  6612, 0 },
+	{ TX_MUD2_040, 13205, 0 },
+	{ TX_MUD4_018, 13414, 0 },
+	//{ TX_MUD4_018, 13911, 0 },	// ignore duplicate line
+	//{ TX_MUD4_018, 13747, 0 },	// ignore duplicate line
+	//{ TX_MUD4_018, 13578, 0 },	// ignore duplicate line
+	{ TX_TUG2_010, 12810, 0 },
+	{ TX_VENA_F41, 14034, 0 },
+	//{ TX_VENA_F41, 13537, 0 },	// ignore duplicate line
+	//{ TX_VENA_F41, 13870, 0 },	// ignore duplicate line
+	//{ TX_VENA_F41, 13701, 0 },	// ignore duplicate line
+	{ TX_BRIDU146, 13647, 0 },
+	//{ TX_BRIDU146, 13980, 0 },	// ignore duplicate line
+	//{ TX_BRIDU146, 13816, 0 },	// ignore duplicate line
+	//{ TX_BRIDU146, 13483, 0 },	// ignore duplicate line
+	{ TX_GENER004, 12303, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText love2Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::love2Tick1() {
 	playVoc("LOV2LOOP");
 
@@ -328,65 +536,65 @@ void Room::love2DoorReachedOrOpened() {
 }
 
 void Room::love2LookAtCabinet() {
-	showDescription(27, true);
+	showDescription(27);
 }
 
 void Room::love2LookAtDoor() {
-	showDescription(1, true);
+	showDescription(1);
 }
 
 void Room::love2LookAtSynthesizer() {
-	showDescription(28, true);
+	showDescription(28);
 }
 
 void Room::love2LookAtAnywhere() {
-	showDescription(26, true);
+	showDescription(26);
 }
 
 void Room::love2LookAtAntigrav() {
-	showDescription(6, true);
+	showDescription(6);
 }
 
 void Room::love2LookAtMccoy() {
-	showDescription(11, true);
+	showDescription(11);
 }
 
 void Room::love2LookAtSpock() {
-	showDescription(14, true);
+	showDescription(14);
 }
 
 void Room::love2LookAtRedshirt() {
-	showDescription(10, true);
+	showDescription(10);
 }
 
 void Room::love2LookAtKirk() {
-	showDescription(9, true);
+	showDescription(9);
 }
 
 void Room::love2LookAtArdak() {
-	showDescription(45, true);
-	showText(TX_SPEAKER_SPOCK, 37, true);
+	showDescription(45);
+	showText(TX_SPEAKER_SPOCK, 37);
 }
 
 void Room::love2LookAtChamber() {
-	showDescription(29, true);
-	showText(TX_SPEAKER_SPOCK, 35, true);
-	showText(TX_SPEAKER_MCCOY, 19, true);
-	showText(TX_SPEAKER_SPOCK, 33, true);
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showDescription(29);
+	showText(TX_SPEAKER_SPOCK, 35);
+	showText(TX_SPEAKER_MCCOY, 19);
+	showText(TX_SPEAKER_SPOCK, 33);
+	showText(TX_SPEAKER_MCCOY, 16);
 }
 
 void Room::love2LookAtCan1() {
 	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
-		showDescription(4, true);
+		showDescription(4);
 		break;
 	case CANTYPE_H2:
-		showDescription(2, true);
+		showDescription(2);
 		break;
 	case CANTYPE_N2:
 	default:
-		showDescription(3, true);
+		showDescription(3);
 		break;
 	}
 }
@@ -394,43 +602,43 @@ void Room::love2LookAtCan1() {
 void Room::love2LookAtCan2() {
 	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
-		showDescription(4, true);
+		showDescription(4);
 		break;
 	case CANTYPE_H2:
-		showDescription(2, true);
+		showDescription(2);
 		break;
 	case CANTYPE_N2:
 	default:
-		showDescription(3, true);
+		showDescription(3);
 		break;
 	}
 }
 
 void Room::love2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, 1);
 }
 
 void Room::love2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 29, true);
+	showText(TX_SPEAKER_SPOCK, 29);
 }
 
 void Room::love2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 9, true);
+	showText(TX_SPEAKER_MCCOY, 9);
 }
 
 void Room::love2TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, 41, true);
+	showText(TX_SPEAKER_FERRIS, 41);
 }
 
 void Room::love2UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, 8, false, true);
+		mccoyScan(DIR_S, 8, false);
 	else
 		mccoyScan(DIR_S, 12, false);
 }
 
 void Room::love2UseSTricorderAnywhere() {
-	spockScan(DIR_S, 27, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, 27, false);
 }
 
 void Room::love2UseKirkOnCabinet() {
@@ -490,11 +698,11 @@ void Room::love2ChangedGasFeed() {
 	if (_awayMission->love.gasFeedOn) {
 		_awayMission->love.gasFeedOn = false;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v2", 0xac, 0x75, 0);
-		showDescription(7, true);
+		showDescription(7);
 	} else {
 		_awayMission->love.gasFeedOn = true;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
-		showDescription(8, true);
+		showDescription(8);
 	}
 }
 
@@ -521,14 +729,14 @@ void Room::love2UseN2GasOnCanisterSlot() {
 
 void Room::love2ReachedCanisterSlot() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, 26, true);
+		showText(TX_SPEAKER_SPOCK, 26);
 	else {
 		if (_awayMission->love.canister1 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 13);
 		else if (_awayMission->love.canister2 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 14);
 		else
-			showDescription(24, true);
+			showDescription(24);
 	}
 }
 
@@ -536,7 +744,7 @@ void Room::love2PutCanisterInSlot1() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN1, _roomVar.love.canisterAnim, 0xa7, 0xae, 0);
 	_awayMission->love.canister1 = _roomVar.love.canisterType;
-	showDescription(34, true);
+	showDescription(34);
 	loseItem(_roomVar.love.canisterItem);
 }
 
@@ -544,7 +752,7 @@ void Room::love2PutCanisterInSlot2() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN2, _roomVar.love.canisterAnim, 0xb1, 0xaf, 0);
 	_awayMission->love.canister2 = _roomVar.love.canisterType;
-	showDescription(35, true);
+	showDescription(35);
 	loseItem(_roomVar.love.canisterItem);
 }
 
@@ -554,7 +762,7 @@ void Room::love2UseAntigravOnCanister1() {
 
 void Room::love2ReachedCanisterSlot1ToGet() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, 25, true);
+		showText(TX_SPEAKER_SPOCK, 25);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 15);
 		// BUGFIX: original game only played this for canister 2
@@ -563,7 +771,7 @@ void Room::love2ReachedCanisterSlot1ToGet() {
 }
 
 void Room::love2TookCanister1() {
-	showDescription(30, true);
+	showDescription(30);
 	loadActorStandAnim(OBJECT_CAN1);
 
 	switch (_awayMission->love.canister1) {
@@ -588,7 +796,7 @@ void Room::love2UseAntigravOnCanister2() {
 
 void Room::love2ReachedCanisterSlot2ToGet() {
 	if (_awayMission->love.gasFeedOn)
-		showText(TX_SPEAKER_SPOCK, 25, true);
+		showText(TX_SPEAKER_SPOCK, 25);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 16);
 		playVoc("SE3PLBAT");
@@ -596,7 +804,7 @@ void Room::love2ReachedCanisterSlot2ToGet() {
 }
 
 void Room::love2TookCanister2() {
-	showDescription(31, true);
+	showDescription(31);
 	loadActorStandAnim(OBJECT_CAN2);
 
 	switch (_awayMission->love.canister2) {
@@ -646,13 +854,13 @@ void Room::love2CrewmanUsedSynthesizer() {
 	} else {
 		if (_roomVar.love.cb == 3) {
 			if (haveItem(OBJECT_IWRENCH)) {
-				showText(TX_SPEAKER_SPOCK, 5, true);
+				showText(TX_SPEAKER_SPOCK, 5);
 				walkCrewman(OBJECT_SPOCK, 0xa8, 0xb7, 16);
 			} else
-				showText(TX_SPEAKER_SPOCK, 6, true);
+				showText(TX_SPEAKER_SPOCK, 6);
 		} else {
 			_roomVar.love.cb++;
-			showDescription(12, true);
+			showDescription(12);
 		}
 	}
 }
@@ -666,7 +874,7 @@ void Room::love2SpockEnabledGasFeeds() {
 	_awayMission->love.gasFeedOn = true;
 
 	loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
-	showDescription(8, true);
+	showDescription(8);
 	walkCrewman(OBJECT_SPOCK, 0xc6, 0xbb, 0);
 
 	love2UseSynthesizer();
@@ -693,8 +901,8 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
-					showDescription(51, true);
-					showText(TX_SPEAKER_KIRK, 2, true);
+					showDescription(51);
+					showText(TX_SPEAKER_KIRK, 2);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -703,8 +911,8 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-					showDescription(50, true);
-					showText(TX_SPEAKER_MCCOY, 21, true);
+					showDescription(50);
+					showText(TX_SPEAKER_MCCOY, 21);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -713,7 +921,7 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					showText(TX_SPEAKER_SPOCK, 28, true);
+					showText(TX_SPEAKER_SPOCK, 28);
 					break;
 
 				case SYNTHITEM_NONE: // Water
@@ -728,8 +936,8 @@ void Room::love2UseSynthesizer() {
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-					showDescription(49, true);
-					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
+					showDescription(49);
+					showText(TX_SPEAKER_SPOCK, 39); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -738,9 +946,9 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Colorless goo (with useful information about virus in ammonia)
-					showDescription(48, true);
-					showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: original didn't play audio
-					showText(TX_SPEAKER_MCCOY, 23, true);
+					showDescription(48);
+					showText(TX_SPEAKER_SPOCK, 34); // BUGFIX: original didn't play audio
+					showText(TX_SPEAKER_MCCOY, 23);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -755,7 +963,7 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					showText(TX_SPEAKER_SPOCK, 28, true);
+					showText(TX_SPEAKER_SPOCK, 28);
 					break;
 
 				case SYNTHITEM_NONE: // Ammonia
@@ -770,8 +978,8 @@ void Room::love2UseSynthesizer() {
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-					showDescription(49, true);
-					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
+					showDescription(49);
+					showText(TX_SPEAKER_SPOCK, 39); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -780,8 +988,8 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
-					showDescription(47, true);
-					showText(TX_SPEAKER_MCCOY, 17, true);
+					showDescription(47);
+					showText(TX_SPEAKER_MCCOY, 17);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -790,8 +998,8 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-					showDescription(50, true);
-					showText(TX_SPEAKER_MCCOY, 21, true);
+					showDescription(50);
+					showText(TX_SPEAKER_MCCOY, 21);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					// Close synthesizer door
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -800,7 +1008,7 @@ void Room::love2UseSynthesizer() {
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					showText(TX_SPEAKER_SPOCK, 28, true);
+					showText(TX_SPEAKER_SPOCK, 28);
 					break;
 
 				case SYNTHITEM_NONE: // Laughing gas
@@ -815,13 +1023,13 @@ void Room::love2UseSynthesizer() {
 			}
 		} else {
 			playVoc("EFX24");
-			showDescription(5, true);
-			showText(TX_SPEAKER_MCCOY, 10, true);
+			showDescription(5);
+			showText(TX_SPEAKER_MCCOY, 10);
 		}
 	} else {
 		playVoc("EFX24");
-		showDescription(5, true);
-		showText(TX_SPEAKER_SPOCK, 24, true);
+		showDescription(5);
+		showText(TX_SPEAKER_SPOCK, 24);
 	}
 }
 
@@ -835,33 +1043,33 @@ void Room::love2SynthesizerDoorClosed() {
 void Room::love2SynthesizerFinished() {
 	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
-		showDescription(17, true);
+		showDescription(17);
 		showText(TX_SPEAKER_SPOCK, 32);
 		showText(TX_SPEAKER_MCCOY, 15);
 		showText(TX_SPEAKER_SPOCK, 36);
 		break;
 
 	case BOTTLETYPE_NH3:
-		showDescription(16, true);
+		showDescription(16);
 		if (!_awayMission->redshirtDead) {
-			showText(TX_SPEAKER_FERRIS, 43, true);
-			showText(TX_SPEAKER_KIRK, 3, true);
+			showText(TX_SPEAKER_FERRIS, 43);
+			showText(TX_SPEAKER_KIRK, 3);
 		}
 		break;
 
 	case BOTTLETYPE_H2O:
-		showDescription(18, true);
-		showText(TX_SPEAKER_SPOCK, 4, true);
+		showDescription(18);
+		showText(TX_SPEAKER_SPOCK, 4);
 		break;
 
 	case BOTTLETYPE_RLG:
 	default:
-		showDescription(19, true);
-		showText(TX_SPEAKER_SPOCK, 31, true);
-		showText(TX_SPEAKER_MCCOY, 18, true);
-		showText(TX_SPEAKER_SPOCK, 30, true);
-		showText(TX_SPEAKER_MCCOY, 22, true);
-		showText(TX_SPEAKER_SPOCK, 38, true);
+		showDescription(19);
+		showText(TX_SPEAKER_SPOCK, 31);
+		showText(TX_SPEAKER_MCCOY, 18);
+		showText(TX_SPEAKER_SPOCK, 30);
+		showText(TX_SPEAKER_MCCOY, 22);
+		showText(TX_SPEAKER_SPOCK, 38);
 		break;
 	}
 }
@@ -883,8 +1091,8 @@ void Room::love2CureStartedSynthesizing() {
 }
 
 void Room::love2CureSynthesized() {
-	showDescription(46, true);
-	showText(TX_SPEAKER_MCCOY, 20, true);
+	showDescription(46);
+	showText(TX_SPEAKER_MCCOY, 20);
 }
 
 
@@ -896,7 +1104,7 @@ void Room::love2UsePolyberylcarbonateOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithPolyberylcarbonate() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showDescription(25, true);
+		showDescription(25);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 5);
 		playSoundEffectIndex(kSfxDoor);
@@ -922,7 +1130,7 @@ void Room::love2UseVirusSampleOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithVirusSample() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showDescription(25, true);
+		showDescription(25);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 6);
 		playSoundEffectIndex(kSfxDoor);
@@ -948,7 +1156,7 @@ void Room::love2UseCureSampleOnSynthesizerDoor() {
 
 void Room::love2KirkReachedSynthesizerWithCureSample() {
 	if (_awayMission->love.synthesizerContents != 0)
-		showDescription(25, true); // BUGFIX: original didn't play audio
+		showDescription(25); // BUGFIX: original didn't play audio
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 7);
 		playSoundEffectIndex(kSfxDoor);
@@ -968,18 +1176,18 @@ void Room::love2PutCureSampleInSynthesizer() {
 
 
 void Room::love2UseAnythingOnSynthesizerDoor() {
-	showText(TX_SPEAKER_MCCOY, 14, true);
+	showText(TX_SPEAKER_MCCOY, 14);
 }
 
 void Room::love2UseAnythingOnSynthesizer() {
-	showText(TX_SPEAKER_SPOCK, 7, true);
+	showText(TX_SPEAKER_SPOCK, 7);
 }
 
 void Room::love2GetCanister() {
 	if (_awayMission->redshirtDead)
-		showText(TX_SPEAKER_MCCOY, 11, true);
+		showText(TX_SPEAKER_MCCOY, 11);
 	else
-		showText(TX_SPEAKER_FERRIS, 40, true);
+		showText(TX_SPEAKER_FERRIS, 40);
 }
 
 
@@ -995,7 +1203,7 @@ void Room::love2ReachedAntigrav() {
 void Room::love2GotAntigrav() {
 	loadActorStandAnim(OBJECT_ANTIGRAV);
 	giveItem(OBJECT_IANTIGRA);
-	showDescription(42, true);
+	showDescription(42);
 }
 
 
@@ -1011,7 +1219,7 @@ void Room::love2ReachedPolyberylcarbonate() {
 
 void Room::love2GotPolyberylcarbonate() {
 	loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
-	showDescription(44, true);
+	showDescription(44);
 	giveItem(OBJECT_IPBC);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -1031,7 +1239,7 @@ void Room::love2ReachedDishes() {
 
 void Room::love2GotDishes() {
 	loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-	showDescription(36, true); // FIXME: text doesn't match audio
+	showDescription(36); // FIXME: text doesn't match audio
 	giveItem(OBJECT_IDISHES);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -1051,7 +1259,7 @@ void Room::love2ReachedSample() {
 
 void Room::love2GotSample() {
 	loadActorStandAnim(OBJECT_CURESAMPLE);
-	showDescription(37, true);
+	showDescription(37);
 	giveItem(OBJECT_ISAMPLE);
 	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
@@ -1072,23 +1280,23 @@ void Room::love2ReachedSynthesizerOutput() {
 void Room::love2GotSynthesizerOutput() {
 	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
-		showDescription(40, true);
+		showDescription(40);
 		giveItem(OBJECT_IN2O);
 		break;
 
 	case BOTTLETYPE_NH3:
-		showDescription(39, true);
+		showDescription(39);
 		giveItem(OBJECT_INH3);
 		break;
 
 	case BOTTLETYPE_H2O:
-		showDescription(41, true);
+		showDescription(41);
 		giveItem(OBJECT_IH2O);
 		break;
 
 	case BOTTLETYPE_RLG:
 	default:
-		showDescription(38, true);
+		showDescription(38);
 		if (!_awayMission->love.gotTLDH) {
 			_awayMission->love.gotTLDH = true;
 			_awayMission->love.missionScore += 4;
@@ -1123,7 +1331,7 @@ void Room::love2GotCure() {
 
 	giveItem(OBJECT_ICURE);
 	loadActorStandAnim(OBJECT_CURE);
-	showDescription(43, true);
+	showDescription(43);
 
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(kSfxDoor);

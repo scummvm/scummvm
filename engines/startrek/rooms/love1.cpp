@@ -182,6 +182,168 @@ extern const RoomAction love1ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum love1TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_FERRIS,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_025, TX_LOV0_026, TX_LOV0_029, TX_LOV0_033,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_049,
+	TX_LOV0_050, TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104,
+	TX_LOV0_105, TX_LOV0_106, TX_LOV0_107, TX_LOV0_124, TX_LOV1_001,
+	TX_LOV1_002, TX_LOV1_003, TX_LOV1_004, TX_LOV1_005, TX_LOV1_006,
+	TX_LOV1_007, TX_LOV1_008, TX_LOV1_009, TX_LOV1_010, TX_LOV1_011,
+	TX_LOV1_012, TX_LOV1_013, TX_LOV1_014, TX_LOV1_015, TX_LOV1_016,
+	TX_LOV1_017, TX_LOV1_018, TX_LOV1_019, TX_LOV1_021, TX_LOV1_022,
+	TX_LOV1_023, TX_LOV1_024, TX_LOV1_025, TX_LOV1_026, TX_LOV1_027,
+	TX_LOV1_028, TX_LOV5_015, TX_LOV5_019, TX_LOV5_027, TX_LOV5_030,
+	TX_LOV5_038, TX_LOVA_100, TX_LOVA_F01, TX_LOVA_F02, TX_LOVA_F03,
+	TX_LOVA_F04, TX_LOVA_F07, TX_LOVA_F08, TX_LOVA_F10, TX_LOVA_F54,
+	TX_LOVA_F55, TX_MUD2_040, TX_MUD4_018, TX_TUG2_010, TX_VENA_F41,
+	TX_LOV1N000, TX_LOV1N001, TX_LOV1N002, TX_LOV1N003, TX_LOV1N004,
+	TX_LOV1N005, TX_LOV1N006, TX_LOV1N007, TX_LOV1N008, TX_LOV1N009,
+	TX_LOV1N010, TX_LOV1N011, TX_LOV1N012, TX_LOV1N013, TX_LOV1N014,
+	TX_LOV1N015, TX_LOV1N016, TX_LOV1N017, TX_LOV1N018, TX_LOV1N019,
+	TX_LOV1N020, TX_LOV1N021, TX_LOV1N022, TX_LOV1N023, TX_LOV1N034,
+	TX_LOV1N035, TX_LOV2N005, TX_BRIDU146, TX_GENER004, TX_GET_BOTTLE_ERROR
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets love1TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 11280, 0 },
+	{ TX_SPEAKER_MCCOY, 11291, 0 },
+	{ TX_SPEAKER_SPOCK, 11301, 0 },
+	{ TX_SPEAKER_FERRIS, 11311, 0 },
+	{ TX_LOV0_011, 12397, 0 },
+	{ TX_LOV0_012, 12524, 0 },
+	{ TX_LOV0_013, 12820, 0 },
+	{ TX_LOV0_014, 12584, 0 },
+	{ TX_LOV0_015, 12688, 0 },
+	{ TX_LOV0_016, 12491, 0 },
+	{ TX_LOV0_017, 12954, 0 },
+	{ TX_LOV0_019, 12874, 0 },
+	{ TX_LOV0_020, 12431, 0 },
+	{ TX_LOV0_021, 12742, 0 },
+	{ TX_LOV0_022, 12632, 0 },
+	{ TX_LOV0_025, 13880, 0 },
+	{ TX_LOV0_026, 13753, 0 },
+	{ TX_LOV0_029, 13633, 0 },
+	{ TX_LOV0_033, 13693, 0 },
+	{ TX_LOV0_039, 13015, 0 },
+	{ TX_LOV0_040, 13142, 0 },
+	{ TX_LOV0_041, 13438, 0 },
+	{ TX_LOV0_042, 13202, 0 },
+	{ TX_LOV0_043, 13306, 0 },
+	{ TX_LOV0_045, 13109, 0 },
+	{ TX_LOV0_046, 13572, 0 },
+	{ TX_LOV0_047, 13492, 0 },
+	{ TX_LOV0_048, 13049, 0 },
+	{ TX_LOV0_049, 13360, 0 },
+	{ TX_LOV0_050, 13250, 0 },
+	{ TX_LOV0_101, 13961, 0 },
+	{ TX_LOV0_102, 14025, 0 },
+	{ TX_LOV0_103, 14095, 0 },
+	{ TX_LOV0_104, 14145, 0 },
+	{ TX_LOV0_105, 14202, 0 },
+	{ TX_LOV0_106, 14314, 0 },
+	{ TX_LOV0_107, 14382, 0 },
+	{ TX_LOV0_124, 13830, 0 },
+	{ TX_LOV1_001,  2668, 0 },
+	{ TX_LOV1_002,  5066, 0 },
+	{ TX_LOV1_003,  3804, 0 },
+	{ TX_LOV1_004,  3901, 0 },
+	{ TX_LOV1_005,  2812, 0 },
+	{ TX_LOV1_006, 12236, 0 },
+	{ TX_LOV1_007, 11998, 0 },
+	{ TX_LOV1_008,  6774, 0 },
+	{ TX_LOV1_009,  3507, 0 },
+	{ TX_LOV1_010,  3389, 0 },
+	{ TX_LOV1_011,  2940, 0 },
+	{ TX_LOV1_012,  4991, 0 },
+	{ TX_LOV1_013,  5598, 0 },
+	{ TX_LOV1_014,  5709, 0 },
+	{ TX_LOV1_015,  5330, 0 },
+	{ TX_LOV1_016,  6618, 0 },
+	{ TX_LOV1_017,  3246, 0 },
+	{ TX_LOV1_018, 11433, 0 },
+	{ TX_LOV1_019, 11560, 0 },
+	{ TX_LOV1_021, 11620, 0 },
+	{ TX_LOV1_022, 12328, 0 },
+	{ TX_LOV1_023, 12144, 0 },
+	{ TX_LOV1_024,  7186, 0 },
+	{ TX_LOV1_025,  7248, 0 },
+	{ TX_LOV1_026,  5176, 0 },
+	{ TX_LOV1_027,  3073, 0 },
+	{ TX_LOV1_028,  7353, 0 },
+	{ TX_LOV5_015,  8435, 0 },
+	//{ TX_LOV5_015,  8256, 0 },	// ignore duplicate line
+	{ TX_LOV5_019,  8178, 0 },
+	{ TX_LOV5_027,  8691, 0 },
+	{ TX_LOV5_030,  8595, 0 },
+	{ TX_LOV5_038,  8646, 0 },
+	{ TX_LOVA_100,  9800, 0 },
+	{ TX_LOVA_F01,  9242, 0 },
+	{ TX_LOVA_F02,  9314, 0 },
+	{ TX_LOVA_F03,  9513, 0 },
+	{ TX_LOVA_F04,  9428, 0 },
+	{ TX_LOVA_F07,  9877, 0 },
+	{ TX_LOVA_F08,  8866, 0 },
+	//{ TX_LOVA_F08,  9581, 0 },	// ignore duplicate line
+	{ TX_LOVA_F10,  9748, 0 },
+	{ TX_LOVA_F54,  9022, 0 },
+	{ TX_LOVA_F55,  8323, 0 },
+	{ TX_MUD2_040, 10073, 0 },
+	{ TX_MUD4_018, 10446, 0 },
+	//{ TX_MUD4_018, 10779, 0 },	// ignore duplicate line
+	//{ TX_MUD4_018, 10282, 0 },	// ignore duplicate line
+	//{ TX_MUD4_018, 10615, 0 },	// ignore duplicate line
+	{ TX_TUG2_010,  9678, 0 },
+	{ TX_VENA_F41, 10569, 0 },
+	{ TX_VENA_F41, 10405, 0 },
+	//{ TX_VENA_F41, 10902, 0 },	// ignore duplicate line
+	//{ TX_VENA_F41, 10738, 0 },	// ignore duplicate line
+	{ TX_LOV1N000, 11684, 0 },
+	{ TX_LOV1N001, 11864, 0 },
+	{ TX_LOV1N002, 11926, 0 },
+	{ TX_LOV1N003, 11766, 0 },
+	{ TX_LOV1N004, 11802, 0 },
+	{ TX_LOV1N005, 11333, 0 },
+	{ TX_LOV1N006, 11381, 0 },
+	{ TX_LOV1N007,  4720, 0 },
+	{ TX_LOV1N008,  6479, 0 },
+	{ TX_LOV1N009,  4452, 0 },
+	{ TX_LOV1N010,  4093, 0 },
+	{ TX_LOV1N011,  4548, 0 },
+	{ TX_LOV1N012,  2547, 0 },
+	{ TX_LOV1N013,  2113, 0 },
+	{ TX_LOV1N014,  2038, 0 },
+	{ TX_LOV1N015,  2239, 0 },
+	{ TX_LOV1N016,  1914, 0 },
+	{ TX_LOV1N017,  1782, 0 },
+	{ TX_LOV1N018,  2478, 0 },
+	{ TX_LOV1N019,  1399, 0 },
+	{ TX_LOV1N020,  1686, 0 },
+	{ TX_LOV1N021,  1576, 0 },
+	{ TX_LOV1N022,  1498, 0 },
+	{ TX_LOV1N023,  2393, 0 },
+	{ TX_LOV1N034,  5974, 0 },
+	{ TX_LOV1N035,  4313, 0 },
+	{ TX_LOV2N005,  9936, 0 },
+	//{ TX_LOV2N005, 10016, 0 },	// ignore duplicate line
+	//{ TX_LOV2N005, 10162, 0 },	// ignore duplicate line
+	{ TX_BRIDU146, 10848, 0 },
+	//{ TX_BRIDU146, 10515, 0 },	// ignore duplicate line
+	//{ TX_BRIDU146, 10684, 0 },	// ignore duplicate line
+	//{ TX_BRIDU146, 10351, 0 },	// ignore duplicate line
+	{ TX_GENER004,  9171, 0 },
+	{ TX_GET_BOTTLE_ERROR, 4664, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText love1Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::love1Tick1() {
 	playVoc("LOV1LOOP");
 
@@ -298,122 +460,122 @@ void Room::love1ReachedDoor2() {
 }
 
 void Room::love1LookAtLaser() {
-	showDescription(0, true);
+	showDescription(TX_LOV1N000);
 }
 
 void Room::love1LookAtKirk() {
-	showDescription(3, true);
+	showDescription(TX_LOV1N003);
 }
 
 void Room::love1LookAtSpock() {
-	showDescription(4, true);
+	showDescription(TX_LOV1N004);
 }
 
 void Room::love1LookAtMccoy() {
-	showDescription(1, true);
+	showDescription(TX_LOV1N001);
 }
 
 void Room::love1LookAtRedshirt() {
-	showDescription(2, true);
+	showDescription(TX_LOV1N002);
 }
 
 void Room::love1LookAnywhere() {
-	showDescription(19, true);
+	showDescription(TX_LOV1N019);
 }
 
 void Room::love1LookAtNozzle() {
-	showDescription(22, true);
+	showDescription(TX_LOV1N022);
 }
 
 void Room::love1LookAtLadder() {
-	showDescription(21, true);
+	showDescription(TX_LOV1N021);
 }
 
 void Room::love1LookAtDoor1Or2() {
-	showDescription(20, true);
+	showDescription(TX_LOV1N020);
 }
 
 void Room::love1LookAtDoor3() {
-	showDescription(17, true);
+	showDescription(TX_LOV1N017);
 }
 
 void Room::love1LookAtDistillator() {
-	showDescription(16, true);
+	showDescription(TX_LOV1N016);
 }
 
 void Room::love1LookAtChamber() {
 	if (_awayMission->love.chamberHasCure)
-		showDescription(13, true);
+		showDescription(TX_LOV1N013);
 	else
-		showDescription(14, true);
+		showDescription(TX_LOV1N014);
 }
 
 void Room::love1LookAtReplicator() {
-	showDescription(15, true);
+	showDescription(TX_LOV1N015);
 }
 
 void Room::love1LookAtFreezer() {
 	if (_awayMission->love.freezerOpen)
-		showDescription(23, true);
+		showDescription(TX_LOV1N023);
 	else
-		showDescription(18, true);
+		showDescription(TX_LOV1N018);
 }
 
 void Room::love1LookAtDishes() {
-	showDescription(12, true);
+	showDescription(TX_LOV1N012);
 }
 
 void Room::love1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_LOV1_001);
 }
 
 void Room::love1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 5, true);
+	showText(TX_SPEAKER_SPOCK, TX_LOV1_005);
 }
 
 void Room::love1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_011);
 }
 
 void Room::love1TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, 27, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV1_027);
 }
 
 void Room::love1UseMTricorderOnDishes() {
-	mccoyScan(DIR_W, 17, false, true);
+	mccoyScan(DIR_W, TX_LOV1_017, false);
 	// TODO: only works in this room, despite being inventory item?
 }
 
 void Room::love1UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, 9, false, true);
+		mccoyScan(DIR_S, TX_LOV1_009, false);
 	else
-		mccoyScan(DIR_S, 10, false, true);
+		mccoyScan(DIR_S, TX_LOV1_010, false);
 }
 
 void Room::love1UseSTricorderOnReplicator() {
-	spockScan(DIR_N, 22, false, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_LOV1_022, false);
 }
 
 void Room::love1UseSTricorderOnLaser() {
-	spockScan(DIR_E, 6, false, true);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_LOV1_006, false);
 }
 
 void Room::love1UseSTricorderOnFreezer() {
-	spockScan(DIR_W, 23, false, true);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_LOV1_023, false);
 }
 
 void Room::love1UseSTricorderAnywhere() {
-	spockScan(DIR_S, 3, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_LOV1_003, false);
 }
 
 void Room::love1UseSTricorderOnDishes() {
-	spockScan(DIR_W, 4, false, true);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_LOV1_004, false);
 	// TODO: only works in this room, despite being inventory item?
 }
 
 void Room::love1UseSTricorderOnDistillator() {
-	spockScan(DIR_S, 7, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_LOV1_007, false);
 }
 
 void Room::love1GetFreezer() {
@@ -424,17 +586,17 @@ void Room::love1KirkReachedFreezer() {
 	if (_awayMission->love.freezerOpen)
 		loadActorAnim2(OBJECT_KIRK, "kusehw", -1, -1, 9);
 	else
-		showDescription(10, true);
+		showDescription(TX_LOV1N010);
 }
 
 void Room::love1KirkGotVirusCulture() {
 	giveItem(OBJECT_IDISHES);
-	showDescription(6, true);
+	showDescription(TX_LOV1N006);
 }
 
 void Room::love1GetFromChamber() {
 	if (!_awayMission->love.chamberHasDish)
-		showDescription(9, true);
+		showDescription(TX_LOV1N009);
 	else
 		walkCrewman(OBJECT_KIRK, 0xb5, 0x8c, 8);
 }
@@ -446,14 +608,14 @@ void Room::love1KirkReachedChamber() {
 void Room::love1KirkGotCureSample() {
 	if (_awayMission->love.chamberHasCure) {
 		giveItem(OBJECT_ISAMPLE);
-		showDescription(35, true);
+		showDescription(TX_LOV1N035);
 
 		// BUGFIX: after removing the cure, unset this variable.
 		// Otherwise, any normal dish inserted afterward automagically becomes a cure.
 		_awayMission->love.chamberHasCure = false;
 	} else {
 		giveItem(OBJECT_IDISHES);
-		showDescription(6, true);
+		showDescription(TX_LOV1N006);
 	}
 
 	loadActorStandAnim(OBJECT_DISH_IN_CHAMBER);
@@ -468,7 +630,7 @@ void Room::love1GetFromNozzle() {
 
 void Room::love1KirkReachedNozzleToGet() {
 	if (_awayMission->love.bottleInNozzle == 0)
-		showDescription(11, true);
+		showDescription(TX_LOV1N011);
 	else
 		loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 11);
 }
@@ -488,13 +650,13 @@ void Room::love1KirkGotBottleFromNozzle() {
 		giveItem(OBJECT_IRLG);
 		break;
 	default:
-		showDescription(TX_DIALOG_ERROR);
+		showDescription(TX_GET_BOTTLE_ERROR);
 		break;
 	}
 
 	_awayMission->love.bottleInNozzle = BOTTLETYPE_NONE;
 	loadActorStandAnim(OBJECT_BOTTLE);
-	showDescription(7, true);
+	showDescription(TX_LOV1N007);
 	_roomVar.love.itemInNozzle = 0;
 }
 
@@ -544,15 +706,15 @@ void Room::love1KirkPutBottleInNozzle() {
 }
 
 void Room::love1UseAnthingOnNozzle() {
-	showText(TX_SPEAKER_MCCOY, 12, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_012);
 }
 
 void Room::love1UseSpockOnReplicator() {
-	showText(TX_SPEAKER_SPOCK, 2, true);
+	showText(TX_SPEAKER_SPOCK, TX_LOV1_002);
 }
 
 void Room::love1UseRedshirtOnReplicator() {
-	showText(TX_SPEAKER_FERRIS, 26, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV1_026);
 }
 
 void Room::love1UseMccoyOnReplicator() {
@@ -561,10 +723,10 @@ void Room::love1UseMccoyOnReplicator() {
 
 void Room::love1MccoyReachedReplicator() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
-		showText(TX_SPEAKER_MCCOY, 21, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV1_021);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else if (!_awayMission->love.chamberHasDish) {
-		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV1_015);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else
 		loadActorAnim2(OBJECT_MCCOY, "musehn", -1, -1, 13);
@@ -577,7 +739,7 @@ void Room::love1MccoyUsedReplicator() {
 		playSoundEffectIndex(kSfxDoor);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	} else {
-		showText(TX_SPEAKER_MCCOY, 19, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV1_019);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	}
 }
@@ -589,12 +751,12 @@ void Room::love1ChamberClosed() {
 
 void Room::love1ChamberOpened() {
 	loadActorAnim(OBJECT_DISH_IN_CHAMBER, "dishes", 0xb4, 0x71, 0);
-	showText(TX_SPEAKER_MCCOY, 18, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_018);
 	_awayMission->love.chamberHasCure = true;
 }
 
 void Room::love1UseAnythingOnChamber() {
-	showText(TX_SPEAKER_MCCOY, 13, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_013);
 }
 
 void Room::love1UseDishesOnChamber() {
@@ -603,7 +765,7 @@ void Room::love1UseDishesOnChamber() {
 
 void Room::love1KirkReachedChamberToPut() {
 	if (_awayMission->love.chamberHasDish)
-		showText(TX_SPEAKER_MCCOY, 14, true); // TODO: test
+		showText(TX_SPEAKER_MCCOY, TX_LOV1_014); // TODO: test
 	else {
 		loadActorAnim(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 1);
 		playSoundEffectIndex(kSfxDoor);
@@ -631,7 +793,7 @@ void Room::love1KirkReachedDistillator() {
 
 void Room::love1KirkGotPolyberylcarbonate() {
 	// Result of using insulation on distillator
-	showDescription(34, true);
+	showDescription(TX_LOV1N034);
 	if (!_awayMission->love.gotPolyberylcarbonate) {
 		_awayMission->love.gotPolyberylcarbonate = true;
 		_awayMission->love.missionScore++;
@@ -701,7 +863,7 @@ void Room::love1ReachedFreezerWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnFreezer() {
-	showDescription(8, true);
+	showDescription(TX_LOV1N008);
 }
 
 void Room::love1UseAnythingOnReplicator() {
@@ -713,7 +875,7 @@ void Room::love1ReachedReplicatorWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnReplicator() {
-	showText(TX_SPEAKER_MCCOY, 16, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_016);
 }
 
 void Room::love1UseAnythingOnDistillator() {
@@ -725,7 +887,7 @@ void Room::love1ReachedDistillatorWithArbitraryItem() {
 }
 
 void Room::love1FinishedUsingArbitraryItemOnDistillator() {
-	showText(TX_SPEAKER_MCCOY, 8, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV1_008);
 }
 
 void Room::love1UseKirkOnLadder() {
@@ -779,10 +941,10 @@ void Room::love1CrewmanReachedLadder() {
 void Room::love1CrewmanDiedFromPhaser() {
 	if (_roomVar.love.crewmanUsingDevice == OBJECT_REDSHIRT) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_FERRIS, 24, true);
+		showText(TX_SPEAKER_FERRIS, TX_LOV1_024);
 		_awayMission->redshirtDead = true;
 	} else {
-		showText(_roomVar.love.dyingSpeaker, 25, true);
+		showText(_roomVar.love.dyingSpeaker, TX_LOV1_025);
 		showGameOverMenu();
 	}
 }
@@ -794,7 +956,8 @@ void Room::love1TouchedHotspot0() {
 	loadActorAnim(OBJECT_PHASERSHOT, "s3r2s1", 0xf3, 0x89, 0);
 	playSoundEffectIndex(kSfxPhaser);
 	if (!_awayMission->redshirtDead)
-		showText(TX_SPEAKER_FERRIS, 28, true);
+		showText(TX_SPEAKER_FERRIS, TX_LOV1_028);
 }
+
 
 }

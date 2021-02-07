@@ -1143,7 +1143,7 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	const char *lowerShieldsText = "#BRID\\B_337#Lowering shields, Captain.";
 	const char *armWeaponsText = "#BRID\\B_351#Arming weapons.";
 	const char *disarmWeaponsText = "#BRID\\B_354#Disarming weapons.";
-	const char *emergencyPowerText = "#BRID\\BRID_S32#I don't know how long she can take it, Captain.";
+	//const char *emergencyPowerText = "#BRID\\BRID_S32#I don't know how long she can take it, Captain.";
 	const char *noEmergencyPowerText = "#BRID\\BRID_S41#She can't take it, Captain.";
 	const char *targetAnalysisOnText = "#BRID\\B_344#Target Analysis On.";
 	const char *targetAnalysisOffText = "#BRID\\B_343#Target Analysis Off.";

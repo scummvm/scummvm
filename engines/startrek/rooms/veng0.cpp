@@ -107,6 +107,133 @@ extern const RoomAction veng0ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum veng0TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_SCOTT, TX_SPEAKER_CHEKOV,
+	TX_SPEAKER_PATTERSON, TX_SPEAKER_KIJE,
+	TX_VEN0_001, TX_VEN0_002, TX_VEN0_003, TX_VEN0_004, TX_VEN0_005,
+	TX_VEN0_006, TX_VEN0_007, TX_VEN0_008, TX_VEN0_009, TX_VEN0_010,
+	TX_VEN0_011, TX_VEN0_012, TX_VEN0_013, TX_VEN0_014, TX_VEN0_015,
+	TX_VEN0_016, TX_VEN0_017, TX_VEN0_018, TX_VEN0_019, TX_VEN0_020,
+	TX_VEN0_021, TX_VEN0_022, TX_VEN0_023, TX_VEN0_024, TX_VEN0_025,
+	TX_VEN0_026, TX_VEN0_027, TX_VEN0_028, TX_VEN0_029, TX_VEN0_030,
+	TX_VEN0_031, TX_VEN0_033, TX_VEN0_034, TX_VEN0_035, TX_VEN0_036,
+	TX_VEN0_037, TX_VEN0_038, TX_VEN0_039, TX_VEN0_S12, TX_VEN0_S15,
+	TX_VEN0_S52, TX_VEN0_S54, TX_VEN2_028, TX_VEN2_066, TX_VEN2_098,
+	TX_VENA_F32, TX_VENA_F34, TX_VENA_F40, TX_MUD4_018, /*TX_BRIDU146,*/
+	TX_VEN0N000, TX_VEN0N001, TX_VEN0N002, TX_VEN0N003, TX_VEN0N004,
+	TX_VEN0N005, TX_VEN0N006, TX_VEN0N007, TX_VEN0N008, TX_VEN0N009,
+	TX_VEN0N010, TX_VEN0N011, TX_VEN0N012, TX_VEN0N013, TX_VEN0N015,
+	TX_VEN0N016, TX_VEN0N017, TX_VEN0N018, TX_VEN0N019, /*TX_VEN2U093,*/
+	TX_VEN4N010, TX_VEN6N007, TX_VEN0_32
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets veng0TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 6590, 0 },
+	{ TX_SPEAKER_MCCOY, 6601, 0 },
+	{ TX_SPEAKER_SPOCK, 6611, 0 },
+	{ TX_SPEAKER_SCOTT, 6633, 0 },
+    { TX_SPEAKER_CHEKOV, 6661, 0 },
+    { TX_SPEAKER_PATTERSON, 6643, 0 },
+    { TX_SPEAKER_KIJE, 6621, 0 },
+	{ TX_VEN0_001, 7593, 0 },
+	{ TX_VEN0_001, 7593, 0 },
+	{ TX_VEN0_002, 7952, 0 },
+	{ TX_VEN0_003, 6809, 0 },
+	{ TX_VEN0_003, 6809, 0 },
+	{ TX_VEN0_004, 8768, 0 },
+	{ TX_VEN0_005, 1235, 0 },
+	{ TX_VEN0_006, 476, 0 },
+	{ TX_VEN0_007, 897, 0 },
+	{ TX_VEN0_008, 661, 0 },
+	{ TX_VEN0_009, 1392, 0 },
+	{ TX_VEN0_010, 1675, 0 },
+	{ TX_VEN0_011, 1600, 0 },
+	{ TX_VEN0_012, 8886, 0 },
+	{ TX_VEN0_013, 3075, 0 },
+	{ TX_VEN0_014, 7754, 0 },
+	{ TX_VEN0_014, 7754, 0 },
+	{ TX_VEN0_015, 2512, 0 },
+	{ TX_VEN0_016, 8838, 0 },
+	{ TX_VEN0_017, 1757, 0 },
+	{ TX_VEN0_018, 386, 0 },
+	{ TX_VEN0_019, 6848, 0 },
+	{ TX_VEN0_019, 6848, 0 },
+	{ TX_VEN0_020, 8101, 0 },
+	{ TX_VEN0_021, 2644, 0 },
+	{ TX_VEN0_022, 6730, 0 },
+	{ TX_VEN0_022, 6730, 0 },
+	{ TX_VEN0_023, 7666, 0 },
+	{ TX_VEN0_023, 7666, 0 },
+	{ TX_VEN0_024, 2827, 0 },
+	{ TX_VEN0_025, 2014, 0 },
+	{ TX_VEN0_026, 2209, 0 },
+	{ TX_VEN0_027, 2337, 0 },
+	{ TX_VEN0_028, 7849, 0 },
+	{ TX_VEN0_028, 7849, 0 },
+	{ TX_VEN0_029, 7997, 0 },
+	{ TX_VEN0_030, 994, 0 },
+	{ TX_VEN0_031, 8170, 0 },
+	{ TX_VEN0_033, 8723, 0 },
+	{ TX_VEN0_034, 9000, 0 },
+	{ TX_VEN0_035, 8473, 0 },
+	{ TX_VEN0_036, 7821, 0 },
+	{ TX_VEN0_036, 7821, 0 },
+	{ TX_VEN0_037, 2713, 0 },
+	{ TX_VEN0_038, 2969, 0 },
+	{ TX_VEN0_039, 1312, 0 },
+	{ TX_VEN0_32, 8399, 0 },
+	{ TX_VEN0_S12, 607, 0 },
+	{ TX_VEN0_S15, 1175, 0 },
+	{ TX_VEN0_S52, 719, 0 },
+	{ TX_VEN0_S54, 1535, 0 },
+	{ TX_VEN2_028, 6128, 0 },
+	{ TX_VEN2_066, 6206, 0 },
+	{ TX_VEN2_098, 5016, 0 },
+	{ TX_VENA_F32, 5246, 0 },
+	{ TX_VENA_F34, 5516, 0 },
+	{ TX_VENA_F40, 5111, 0 },
+	{ TX_MUD4_018, 5820, 0 },
+	{ TX_MUD4_018, 5953, 0 },
+	//{ TX_BRIDU146, 5889, 0 },
+	{ TX_VEN0N000, 4471, 0 },
+	{ TX_VEN0N001, 7291, 0 },
+	{ TX_VEN0N001, 7291, 0 },
+	{ TX_VEN0N002, 7418, 0 },
+	{ TX_VEN0N002, 7418, 0 },
+	{ TX_VEN0N003, 7501, 0 },
+	{ TX_VEN0N003, 7501, 0 },
+	{ TX_VEN0N004, 7002, 0 },
+	{ TX_VEN0N004, 7002, 0 },
+	{ TX_VEN0N005, 7139, 0 },
+	{ TX_VEN0N005, 7139, 0 },
+	{ TX_VEN0N006, 7375, 0 },
+	{ TX_VEN0N006, 7375, 0 },
+	{ TX_VEN0N007, 3624, 0 },
+	{ TX_VEN0N008, 3348, 0 },
+	{ TX_VEN0N009, 3888, 0 },
+	{ TX_VEN0N010, 4175, 0 },
+	{ TX_VEN0N011, 4243, 0 },
+	{ TX_VEN0N012, 4351, 0 },
+	{ TX_VEN0N013, 4577, 0 },
+	{ TX_VEN0N015, 7209, 0 },
+	{ TX_VEN0N015, 7209, 0 },
+	{ TX_VEN0N016, 6697, 0 },
+	{ TX_VEN0N016, 6697, 0 },
+	{ TX_VEN0N017, 7103, 0 },
+	{ TX_VEN0N017, 7103, 0 },
+	{ TX_VEN0N018, 4653, 0 },
+	{ TX_VEN0N019, 3748, 0 },
+	//{ TX_VEN2U093, 6021, 0 },
+	{ TX_VEN4N010, 5670, 0 },
+	{ TX_VEN6N007, 5735, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText veng0Texts[] = {
+      { -1, Common::UNK_LANG, "" }
+};
+
 void Room::veng0Tick1() {
 	playVoc("VEN0LOOP");
 
@@ -128,21 +255,21 @@ void Room::veng0Tick10() {
 void Room::veng0Tick50() {
 	if (!_awayMission->veng.enteredRoom0FirstTime) {
 		_awayMission->veng.enteredRoom0FirstTime = true;
-		showText(TX_SPEAKER_MCCOY, 18, true);
-		showText(TX_SPEAKER_KIRK,   6, true);
-		showText(TX_SPEAKER_SCOTT, 12 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   8, true);
-		showText(TX_SPEAKER_SCOTT, 52 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
-		showText(TX_SPEAKER_SPOCK, 30, true);
-		showText(TX_SPEAKER_SCOTT, 15 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   5, true);
-		showText(TX_SPEAKER_CHEKOV, 39, true);
-		showText(TX_SPEAKER_KIRK,   9, true);
-		showText(TX_SPEAKER_SCOTT, 54 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,  11, true);
-		showText(TX_SPEAKER_KIRK,  10, true);
-		showText(TX_SPEAKER_MCCOY, 17, true);
+		showText(TX_SPEAKER_MCCOY, TX_VEN0_018);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_006);
+		showText(TX_SPEAKER_SCOTT, TX_VEN0_S12);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_008);
+		showText(TX_SPEAKER_SCOTT, TX_VEN0_S52);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_007);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_030);
+		showText(TX_SPEAKER_SCOTT, TX_VEN0_S15);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_005);
+		showText(TX_SPEAKER_CHEKOV, TX_VEN0_039);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_009);
+		showText(TX_SPEAKER_SCOTT, TX_VEN0_S54);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_011);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_010);
+		showText(TX_SPEAKER_MCCOY, TX_VEN0_017);
 		_awayMission->veng.enterpriseLeftForDistressCall = true;
 	}
 }
@@ -157,13 +284,13 @@ void Room::veng0UseSTricorderOnComputerBank() {
 		_awayMission->veng.scannedComputerBank = true;
 		_awayMission->veng.field6c = true;
 
-		spockScan(DIR_S, 28, false, true);
-		showText(TX_SPEAKER_KIRK,   2, true);
-		showText(TX_SPEAKER_SPOCK, 29, true);
-		showText(TX_SPEAKER_MCCOY, 20, true);
-		showText(TX_SPEAKER_SPOCK, 31, true);
+		spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_VEN0_028);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_002);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_029);
+		showText(TX_SPEAKER_MCCOY, TX_VEN0_020);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_031);
 	} else
-		showText(TX_SPEAKER_SPOCK, 25, true);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_025);
 }
 
 void Room::veng0UseSTricorderOnChair() {
@@ -171,51 +298,51 @@ void Room::veng0UseSTricorderOnChair() {
 		_awayMission->veng.scannedCaptainsChair = true;
 		_awayMission->veng.field6b = true;
 
-		spockScan(DIR_S, 32, false, true);
-		showText(TX_SPEAKER_PATTERSON, 35, true);
-		showText(TX_SPEAKER_SPOCK, 33, true);
-		showText(TX_SPEAKER_KIRK,   4, true);
+		spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_VEN0_32);
+		showText(TX_SPEAKER_PATTERSON, TX_VEN0_035);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_033);
+		showText(TX_SPEAKER_KIRK,  TX_VEN0_004);
 	} else
-		showText(TX_SPEAKER_SPOCK, 26, true);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_026);
 }
 
 void Room::veng0UseSTricorderAnywhere() {
 	if (!_awayMission->veng.impulseEnginesOn)
-		spockScan(DIR_S, 27, false, true);
+		spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_VEN0_027);
 }
 
 void Room::veng0UseMccoyOnBeam() {
-	showText(TX_SPEAKER_MCCOY, 15, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN0_015);
 }
 
 void Room::veng0UseSTricorderOnBeam() {
-	spockScan(DIR_W, 34, false, true);
-	showText(TX_SPEAKER_MCCOY, 21, true);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_VEN0_034);
+	showText(TX_SPEAKER_MCCOY, TX_VEN0_021);
 }
 
 void Room::veng0UseRedshirtOnBeam() {
-	showText(TX_SPEAKER_KIJE, 37, true);
+	showText(TX_SPEAKER_KIJE, TX_VEN0_037);
 }
 
 void Room::veng0UseSpockOnConsole() {
-	showText(TX_SPEAKER_SPOCK, 24, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN0_024);
 }
 
 void Room::veng0UseRedshirtOnConsole() {
-	showText(TX_SPEAKER_KIJE, 38, true);
+	showText(TX_SPEAKER_KIJE, TX_VEN0_038);
 }
 
 void Room::veng0UsePhaserOnBeam() {
-	showText(TX_SPEAKER_SPOCK, 13, true);
+	showText(TX_SPEAKER_SPOCK, TX_VEN0_013);
 }
 
 void Room::veng0UseMccoyOnDeadCrewman() {
-	mccoyScan(DIR_S, 16, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_VEN0_016);
 }
 
 void Room::veng0UseSawOnBeam() {
 	if (_awayMission->veng.beamState == 1 || _awayMission->veng.beamState == 2)
-		showDescription(8, true);
+		showDescription(TX_VEN0N008);
 	else {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x24, 0xc2, &Room::veng0KirkReachedSaw);
@@ -239,7 +366,7 @@ void Room::veng0DoneCuttingBeam() {
 	loadActorStandAnim(OBJECT_9);
 	loadActorStandAnim(OBJECT_10);
 
-	showDescription(7, true);
+	showDescription(TX_VEN0N007);
 
 	_awayMission->veng.beamState = 1;
 	veng0GetBeam();
@@ -247,90 +374,90 @@ void Room::veng0DoneCuttingBeam() {
 
 void Room::veng0GetBeam() {
 	if (_awayMission->veng.beamState == 1) {
-		showDescription(19, true);
+		showDescription(TX_VEN0N019);
 		_awayMission->veng.beamState = 2;
 		giveItem(OBJECT_IBEAM);
 		loadActorAnim2(OBJECT_BEAM, "s7r0bf", 0x0e, 0x9a);
 	} else
-		showDescription(9, true);
+		showDescription(TX_VEN0N009);
 }
 
 void Room::veng0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, TX_VEN0_001);
 }
 
 void Room::veng0TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 14, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN0_014);
 }
 
 void Room::veng0TalkToSpock() {
 	if (_awayMission->veng.scannedComputerBank && _awayMission->veng.scannedCaptainsChair)
-		showText(TX_SPEAKER_SPOCK, 12, true);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_012);
 	else
-		showText(TX_SPEAKER_SPOCK, 23, true);
+		showText(TX_SPEAKER_SPOCK, TX_VEN0_023);
 }
 
 void Room::veng0TalkToRedshirt() {
-	showText(TX_SPEAKER_KIJE, 36, true);
+	showText(TX_SPEAKER_KIJE, TX_VEN0_036);
 }
 
 void Room::veng0LookAtPatterson() {
-	showDescription(4, true);
+	showDescription(TX_VEN0N004);
 }
 
 void Room::veng0LookAtDeadCrewman2() {
-	showDescription(17, true);
+	showDescription(TX_VEN0N017);
 }
 
 void Room::veng0LookAtComputerBank() {
-	showDescription(5, true);
+	showDescription(TX_VEN0N005);
 }
 
 void Room::veng0LookAtChair() {
-	showDescription(15, true);
+	showDescription(TX_VEN0N015);
 }
 
 void Room::veng0LookAtKirk() {
-	showDescription(1, true);
+	showDescription(TX_VEN0N001);
 }
 
 void Room::veng0LookAtSpock() {
-	showDescription(6, true);
+	showDescription(TX_VEN0N006);
 }
 
 void Room::veng0LookAtMccoy() {
-	showDescription(2, true);
+	showDescription(TX_VEN0N002);
 }
 
 void Room::veng0LookAtRedshirt() {
-	showDescription(3, true);
+	showDescription(TX_VEN0N003);
 }
 
 void Room::veng0LookAtViewscreen() {
-	showDescription(10, true);
+	showDescription(TX_VEN0N010);
 }
 
 void Room::veng0LookAtHelmConsole() {
-	showDescription(11, true);
+	showDescription(TX_VEN0N011);
 }
 
 void Room::veng0LookAtNavConsole() {
-	showDescription(12, true);
+	showDescription(TX_VEN0N012);
 }
 
 void Room::veng0LookAtBeam() {
 	if (_awayMission->veng.beamState == 1)
-		showDescription(13, true);
+		showDescription(TX_VEN0N013);
 	else
-		showDescription(0, true);
+		showDescription(TX_VEN0N000);
 }
 
 void Room::veng0LookAnywhere() {
-	showDescription(18, true);
+	showDescription(TX_VEN0N018);
 }
 
 void Room::veng0LookAtDeadCrewman1() {
-	showDescription(16, true);
+	showDescription(TX_VEN0N016);
 }
 
 void Room::veng0UseMccoyOnLivingCrewman() {
@@ -339,20 +466,20 @@ void Room::veng0UseMccoyOnLivingCrewman() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 		walkCrewmanC(OBJECT_MCCOY, 0xdc, 0xa0, &Room::veng0MccoyReachedCrewman);
 	} else
-		showText(TX_SPEAKER_MCCOY, 16, true);
+		showText(TX_SPEAKER_MCCOY, TX_VEN0_016);
 }
 
 void Room::veng0MccoyReachedCrewman() {
 	_awayMission->veng.bridgeCrewmanDead = true;
 	_awayMission->veng.field68 = true;
 
-	mccoyScan(DIR_E, 22, false, true);
-	showText(TX_SPEAKER_KIRK, 3, true);
+	mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_VEN0_022);
+	showText(TX_SPEAKER_KIRK, TX_VEN0_003);
 	loadActorAnimC(OBJECT_MCCOY, "mscane", -1, -1, &Room::veng0MccoyScannedCrewman);
 }
 
 void Room::veng0MccoyScannedCrewman() {
-	showText(TX_SPEAKER_MCCOY, 19, true);
+	showText(TX_SPEAKER_MCCOY, TX_VEN0_019);
 	_awayMission->disableInput = false;
 }
 

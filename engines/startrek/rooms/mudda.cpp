@@ -20,10 +20,24 @@
  *
  */
 
+#if 0
 #include "startrek/startrek.h"
 #include "startrek/room.h"
 
 namespace StarTrek {
+
+enum muddTextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets muddTextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 2597, 0 },
+	//{ TX_SPEAKER_MCCOY, 2622, 0 },
+	//{ TX_SPEAKER_SPOCK, 2632, 0 },
+	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{          -1, 0,    0 }
+};
 
 // The functions here used to be independently implemented in each room of the MUDD
 // mission, despite being mostly the same.
@@ -46,7 +60,7 @@ void Room::muddaUseLenseOnDegrimer() {
 	loseItem(OBJECT_ILENSES);
 
 	_awayMission->mudd.missionScore++;
-	showDescription(text[_vm->_roomIndex], true);
+	showDescription(text[_vm->_roomIndex]);
 }
 
 
@@ -78,7 +92,7 @@ void Room::muddaFiredAlienDevice() {
 	if (!_awayMission->mudd.discoveredLenseAndDegrimerFunction) {
 		_awayMission->mudd.discoveredLenseAndDegrimerFunction = true;
 		_awayMission->mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
-		showText(TX_SPEAKER_KIRK, 2, true);
+		showText(TX_SPEAKER_KIRK, 2);
 	}
 }
 
@@ -96,7 +110,7 @@ void Room::muddaUseDegrimer() {
 		1,	// MUDD5
 	};
 
-	showDescription(text[_vm->_roomIndex], true);
+	showDescription(text[_vm->_roomIndex]);
 }
 
 void Room::muddaTick() {
@@ -156,10 +170,11 @@ void Room::muddaTick() {
 				anim += directions[i][_vm->_roomIndex];
 				loadActorAnim2(i, anim);
 			}
-			showDescription(deathText[_vm->_roomIndex], true);
+			showDescription(deathText[_vm->_roomIndex]);
 			showGameOverMenu();
 		}
 	}
 }
 
 }
+#endif

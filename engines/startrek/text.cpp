@@ -1,173 +1,90 @@
 #include "common/scummsys.h"
-
-// In this file, the TYPO tag is used when a typo is fixed in a piece of text, or when
-// text is changed to match the audio.
+#include "common/str.h"
 
 namespace StarTrek {
 
-extern const char *const g_gameStrings[] = {
-	NULL,
-	"",
-	"Dialog error",
-	"Animation error",
-
-	"Capt. Kirk",
-	"Mr. Spock",
-	"Dr. McCoy",
-	"Lt. Uhura",
-	"Mr. Scott",
-	"Mr. Sulu",
-	"Mr. Chekov",
-
-	"Ensign Everts",
-	"Prel. Angiven",
-	"Sign",
-	"Klingon",
-	"Brother Kandrey",
-	"Brother Stephen",
-	"Brother Chub",
-	"Brother Roberts",
-	"Brother Grisnash",
-	"Nauian",
-	"Ship's Computer",
-
-	"Lt. Christensen",
-	"Crewman Simpson",
-	"Elasi Guard",
-	"Elasi Clansman",
-	"Elasi Cereth",
-	"Masada Crewman",
-
-	"Lt. Ferris",
-	"Computer",
-	"Dr. Marcus",
-	"Dr. Cheever",
-	"Preax",
-
-	"Lt. Buchert",
-	"Harry Mudd",
-
-	"Lt. Stragey",
-	"Quetzecoatl",
-	"Tlaoxac",
-
-	"Ensign Bennie",
-	"Vlict",
-	"Klingon Guard",
-	"Entity",
-	"Bialbi",
-	"A Voice Speaks",
-	"Light of War",
-	"Light of Knowledge",
-	"Light of Travel",
-
-	"Ensign Mosher",
-
-	"Ensign Kije",
-	"*Capt. Patterson*",
-	"*Commander Andrade*",
-	"Elasi Captain",
-	"Elasi Weapons Master",
-	"Elasi Crewman",
-	"Brittany Marata",
-
-	"#BRID\\BRIDU146#Nothing to report, Captain.",
-
-	"#GENE\\G_014#This person's dead, Jim.",
-	"#GENE\\G_024#Fascinating.",
-	"#GENE\\G_043#Ouch! Watch it with that thing!",
-
-	"#GENE\\GENER004#Game Over",
-
-	"#COMP\\COMPA180#Orbit Stabilized. Warning Cancelled.",
-	"#COMP\\COMPA185#Please select an impedence.",
-	"#COMP\\COMPA186#Ammonia",
-	"#COMP\\COMPA187#Di-hydrogen Oxide",
-	"#COMP\\COMPA189#Nitrous Oxide",
-	"#COMP\\COMPA190#Oroborus Virus",
-	"#COMP\\COMPA191#Exit Database",
-	"#COMP\\COMPA193#TLTDH Gas",
-	"#COMP\\COMPU181#Warning. Orbital Decay is now irreversible. Abandon Ship. Abandon Ship.",
-	"#COMP\\COMPU182#Warning. Orbital decay detected. Warning.",
-	"#COMP\\COMPU186#Ammonia: a colorless pungent compound NH3, a common byproduct of metabolism in carbon-based lifeforms. Liquid or gaseous at 1 atm. Compounds widely used in agricultural, medical and industrial applications.",
-	"#COMP\\COMPU187#Di-hydrogen Oxide: a colorless, tasteless, nonflammable compound HO- water. Liquid, solid, or gaseous at 1 atm. Temperature scales defined in most humanoid cultures by state-shift of pure water.",
-	"#COMP\\COMPU188#Dr. Marcus' Log, Supplemental: Continued testing of the Oroborus Virus confirms its potential harmful effects on Romulan/Vulcan humanoids. As soon as the spill has been cleaned up, we will sterilize both labs and purge the circulation system to make sure no traces of the virus will remain viable. Then all research files must be erased -- we must leave no chance that this terrible accident will ever be repeated.",
-	"#COMP\\COMPU189#Nitrous Oxide: a colorless nonflammable compound NO, gaseous at 1 atm and temperatures within the human norm. Early anesthetic among humans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness.",
-	"#COMP\\COMPU190#Oroborus virus: Atypical growth patterns for L-Type virus. Opportunistic pneumococcal mimic affecting Romulo-Vulcan genotype. Etiology: contact or airborne vector with alveoli microcollapse involvement immediately upon exposure. Tissue dehydration follows pneumal flooding. Mortality: 0.6 in 1.0 stardates, 1.0 within 2.0 stardates Treatment: none. Named for the mythic worldsnake that swallows its own tail.",
-	"#COMP\\COMPU192#Please select subject file...",
-	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
-
-	"#DEM0\\DEM0N009#Spock raises an eyebrow.",	// kept because it's used as an enhancement in mudd1
-	"All mining equipment use this road.",
-	"#DEM3\\DEM3_019#He's dead, Jim...",
-	"#DEM3\\DEM3_A32#Aieeee!",
-
-	"#TUG2\\TUG2J003#I recommend extreme caution, Captain. We must be ready to expect anything.",
-	"Snip...snip...snip.",
-
-	"#LOV3\\LOV3NA08#With a hiss, the Romulan Laughing Gas billows down the vent. Things are strangely quiet below.",
-	"#LOV3\\LOV3NA09#With a hiss, the Romulan Laughing Gas billows down the vent. You hear the muffled sounds through the vent of hearty Romulan laughter, followed by the dull thud of bodies hitting the deck.",
-	"#LOV3\\LOV3NA20#This is a service access panel, permitting used-up or worn materials to be replaced.",
-	"#LOV3\\LOV3NA21#This is a vent shaft that leads to the lower level.",
-	"#LOV3\\LOV3NA22#This is an engineering access panel, allowing repairs to be made to the interior wiring in the equipment.",
-	"#LOV3\\LOV3NA23#This is the engineering center for the ARK7 space station.",
-	"#LOV3\\LOV3NJ32#You attach the antigrav unit to the gas tank. It can be moved freely.",
-	"(Raises an eyebrow)", // NOTE: no corresponding audio
-
-	"#MUD0\\MUD0_018#Life support down to 25%, Captain.",
-	"#MUD0\\MUD0_019#Life support down to 50%, Captain.",
-	"#MUD0\\MUD0_020#Life support down to 75%, Captain.",
-	"#MUD1\\MUD1N014#This is much too heavy to lift.",
-	"#MUD2\\MUD2_040#You look troubled, Captain.",
-	"#MUD4\\MUD4_018#Kirk to Enterprise ... Kirk to Enterprise.", // TYPO: used in MUD4 and LOVE mission; the text was different in LOVE, not matching with audio.
-	"#MUD4\\MUD4_019#Later, Mr. Scott.",
-	"#MUD4\\MUD4_023#No, I need to have a word with Harry Mudd before we go.",
-	"#MUD4\\MUD4_A29#Very well, bring us home, Mr. Scott.",
-	
-	"#FEA1\\FEA1_A46#There is not enough support, Captain.",
-
-	"#TRI1\\TRI1_J00#Why do I have the feeling that I'm about to have a bad day?",
-	"#TRI1\\TRI1U080#Affirmative, sir.",
-	"Zzzt! Sptttz! Zzzt! Tttt!",
-	"Clunk.",
-	"#SFX\\QUIET#Zzzzzzzzzzzmmmm.",
-	"#TRI4\\TRI4_076#You humans have an excellent imagination, but a poor grasp of reality.",
-
-	"#SIN3\\SIN3_008#All readings are normal. The structure seems to be protecting us from the cosmic rays.",
-	"#SIN3\\SIN3_012#Can't say I like the decor.",
-	"Laser Setting: 001",
-	"Laser Setting: 010",
-	"Laser Setting: 100",
-	"cancel",
-	"#SIN4\\SIN4U83B#Captain, we'll help you all we can.",
-
-	"#VEN0\\VEN0_011#Yes, Scotty. Just don't take too long. Kirk out.",
-	"#VEN0\\VEN0_016#They're dead, Jim. All of them.", // TYPO (for only some rooms this text appears in)
-	"#VEN0\\VEN0N016#This man is dead.",
-	"#VEN1\\VEN1_004#I'd like to meet the people responsible for this and give them a piece of my mind.",
-	"#VEN2\\VEN2_028#Yes, Uhura, Just wanted a status report. Kirk out.",
-	"#VEN2\\VEN2_066#They are jamming all frequencies, Captain. We will not be able to contact the Enterprise.",
-	"#VEN2\\VEN2_098#What are you stalling for? Lower your shields.",
-	"#VEN2\\VEN2_SHI#Shields",
-	"#VEN2\\VEN2_TRA#Transporter Circuits",
-	"#VEN2\\VEN2_WEA#Weapons",
-	"#VEN2\\VEN2U093#Enterprise here. We're still tracking the distress call. Are you all right, Sir?",
-	"Hail Elasi",
-	"Hail Enterprise",
-	"cancel",
-	"#VEN4\\VEN4_016#There's nothing more I can do.", // TYPO (in some rooms, this has "Jim..." at the start of the text, though not in VENG4 itself)
-	"#VEN4\\VEN4_017#I believe nothing needs to be said, Captain.",
-	"#VEN4\\VEN4N007#The woman in this sickbed is alive, barely.",
-	"#VEN4\\VEN4N010#This is an empty hypodermic injector.",
-	"#VEN4\\VEN4N014#Yet another crewman of the Republic whose life was unfairly abbreviated.",
-	"#VEN5\\VEN5_R19#Is there a question, Captain?",
-	"#VEN5\\VEN5_R20#I will monitor the situation, Mr. Spock. I can use the distraction.",
-	"#VEN5\\VEN5N002#A resolute Mr. Spock.",
-	"#VEN5\\VEN5N004#Dr. McCoy avoids the glances of his crewmates.",
-	"#VEN5\\VEN5N007#This door leads to main engineering.",
-
-	"#sfx\\spokcoff#cough... cough...",
-	"#SFX\\STATICU1#Ent... neu ... trans...",
+struct TypoFix {
+	Common::String origText;
+	Common::String newText;
 };
+
+Common::String patchRoomMessage(const char *text) {
+	Common::String txt = text;
+	int i = 0;
+
+	TypoFix typoFixes[] = {
+	    { "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#" }, // LOV2_012: Audio file missing
+	    { "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#" },       // LOV3_000: Message index missing
+		{ "They are in no condition to talk right now", "#LOV4\\LOV4N007#They are in no condition to talk right now." },	// LOV4N007: add missing audio
+		{ "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" }, // FEA3_030: Wrong voice actor when McCoy says "He's dead, Jim"
+		{ "#FEA4\\TX_FEA4N008", "#FEA4\\FEA4_005" },	// FEA4N008: Fix wrong audio
+	    { "spock", "Spock" },	// LOVA_F08
+	    { "sysnthesize", "synthesize" },	// LOVA_F55
+	    { "gullability", "gullibility" },	// MUD0_023
+	    { "Well, now! I think", "Well, now I think" },	// MUD2_002
+	    { "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought," },	// MUD2_014
+	    { "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled," },	// MUD3_011
+	    { "and they were certain", "and they are certain" },	// MUD3_022
+	    { "DId you know", "Did you know" },	// MUD4_008
+	    { "before it retreats Captain", "before it retreats, Captain" },	// FEA1_035
+	    { "it must have a nasty bite", "it may have a nasty bite" },	// FEA1_041
+	    { "he'll be up in about an hour", "he'll be up in about a half hour" },	// FEA3_012
+	    { "sHe's dead, Jim!", "He's dead, Jim!" },	// FEA3_030
+	    { "those thorns.You might", "those thorns. You might" },	// FEA5_009
+	    { "with our phaser not working", "with our phasers not working" },	// FEA5_018
+	    { "in a previous life", "in your previous life" },	// FEA5_020
+	    { "isn't that just great", "isn't this just great" },	// FEA6_017
+	    { "that action, Captain It may", "that action, Captain. It may" },	// FEA6_019
+	    { "that attack you", "that attacked you" },	// FEA6N016
+	    { "I'm a surgeon not a alien", "I'm a surgeon, not an alien" },	// SIN2_012
+	    { "to bypass it's lock system", "to bypass its lock system" },	// SIN4_023
+	    { "Sparks explode and", "Sparks fly and" },	// SIN5N012
+	    { "the Enterprise!We've", "the Enterprise! We've" },	// TRI0_036
+	    { "Male Human-Vulcan", "One male Human-Vulcan" },	// TRI1_025
+	    { "with a phaser", "with your phaser" },	// TRI1_048
+	    { "Male Human,", "He's a male Human," },	// TRI2_015
+	    { "Male Human-Vulcan", "One male Human-Vulcan" },	// TRI2_017
+	    { "He's a Male Human", "One male Human" },	// TRI3_013
+	    { "Male Human,", "He's a male Human," },	// TRI3_014
+	    { "Male Human-Vulcan", "One male Human-Vulcan" },	// TRI3_016
+	    { "Captain, come in please!", "Captain, please come in!" },	// TRI3U084
+	    { "I didn't want it", "I don't want it" },	// TRI4_003
+	    { "a fair trail", "a fair trial" },	// TRI4_024
+	    { "what an enemy does not expect", "what the enemy does not expect" },	// TRI4_039
+	    { "will believe you", "to believe you" },	// TRI4_057
+	    { "at which to transport you", "to which to transport you" },	// TRI5_045
+	    { "a beam light", "a beam of light" },	// TRI5N002
+	    { "saphire", "sapphire" },	// TRI5N016, TRI5N017, TRI5N018
+	    { "a emerald", "an emerald" },	// TRI5N019, TRI5N020, TRI5N021
+	    { "torpedo is loaded", "torpedoes are loaded" },	// VEN2_050
+	    { "><upon", "upon" },	// VEN6_005
+	    { "Its not", "It's not" },	// VEN8_037
+	    { "", "" }
+	};
+
+	// Fix typos where some messages contain a hyphen instead of an underscore
+	// (e.g in LOV2)
+	if (txt[10] == '-')
+		txt.replace(10, 1, "_");
+
+	// Fix typos where some messages contain double spacing (e.g. in FEA3_020)
+	int32 spacePos = txt.find("  ");
+	if (spacePos > 0)
+		txt.deleteChar(spacePos);
+
+	// Fix typos
+	do {
+		const Common::String origText = typoFixes[i].origText;
+		const Common::String newText = typoFixes[i].newText;
+
+		int32 pos = txt.find(origText);
+		if (pos > 0)
+			txt.replace(pos, origText.size(), newText, pos, newText.size());
+
+		i++;
+	} while (typoFixes[i].origText != "");
+
+	return txt;
+}
 
 } // End of namespace StarTrek

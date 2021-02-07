@@ -20,6 +20,7 @@
  *
  */
 
+#if 0
 #include "startrek/room.h"
 
 #define OBJECT_8 8
@@ -161,6 +162,22 @@ extern const RoomAction trial5ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum trial5TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets trial5TextOffsets[] = {
+	//{ TX_SPEAKER_KIRK, 1064, 0 },
+	//{ TX_SPEAKER_MCCOY, 1075, 0 },
+	//{ TX_SPEAKER_SPOCK, 1085, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText trial5Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::trial5Tick1() {
 	playVoc("TRI5LOOP");
 	playMidiMusicTracks(MIDITRACK_31, -1);
@@ -177,37 +194,37 @@ void Room::trial5Tick1() {
 }
 
 void Room::trial5Tick60() {
-	showText(TX_SPEAKER_BENNIE, 52, true);
-	showText(TX_SPEAKER_SPOCK,  17, true);
-	showText(TX_SPEAKER_MCCOY,  14, true);
-	showText(TX_SPEAKER_KIRK,    2, true);
+	showText(TX_SPEAKER_BENNIE, 52);
+	showText(TX_SPEAKER_SPOCK,  17);
+	showText(TX_SPEAKER_MCCOY,  14);
+	showText(TX_SPEAKER_KIRK,    2);
 }
 
 void Room::trial5VlictAppeared() {
-	showText(TX_SPEAKER_BIALBI, 27, true);
-	showText(TX_SPEAKER_VLICT,  20, true);
-	showText(TX_SPEAKER_BIALBI, 31, true);
-	showText(TX_SPEAKER_VLICT,  22, true);
-	showText(TX_SPEAKER_BIALBI, 29, true);
-	showText(TX_SPEAKER_VLICT,  18, true);
+	showText(TX_SPEAKER_BIALBI, 27);
+	showText(TX_SPEAKER_VLICT,  20);
+	showText(TX_SPEAKER_BIALBI, 31);
+	showText(TX_SPEAKER_VLICT,  22);
+	showText(TX_SPEAKER_BIALBI, 29);
+	showText(TX_SPEAKER_VLICT,  18);
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		3, 8, 6,
 		TX_BLANK
 	};
-	int choice = showMultipleTexts(choices, true);
+	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // "Do you want me to help you?"
-		showText(TX_SPEAKER_VLICT, 23, true);
-		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_VLICT, 23);
+		showText(TX_SPEAKER_MCCOY, 15);
 
 		const TextRef choices2[] = {
 			TX_SPEAKER_KIRK,
 			9, 7,
 			TX_BLANK
 		};
-		choice = showMultipleTexts(choices2, true);
+		choice = showMultipleTexts(choices2);
 
 		if (choice == 0)
 			choice = 1;
@@ -216,24 +233,24 @@ void Room::trial5VlictAppeared() {
 	}
 
 	if (choice == 1) { // "Now you can rot as you deserve"
-		showText(TX_SPEAKER_BIALBI, 34, true);
+		showText(TX_SPEAKER_BIALBI, 34);
 
 		_awayMission->trial.missionEndMethod = 4;
 		endMission(_awayMission->trial.missionScore, 1, 4);
 	} else if (choice == 2) { // "I'll intervene if Quetzecoatl goes free"
-		showText(TX_SPEAKER_VLICT, 19, true);
+		showText(TX_SPEAKER_VLICT, 19);
 		playMidiMusicTracks(MIDITRACK_28, -1);
 
-		showText(TX_SPEAKER_BIALBI, 25, true);
+		showText(TX_SPEAKER_BIALBI, 25);
 		_awayMission->trial.missionScore += 4;
-		showText(TX_SPEAKER_KIRK,    4, true);
-		showText(TX_SPEAKER_BIALBI, 30, true);
-		showText(TX_SPEAKER_BIALBI, 26, true);
-		showText(TX_SPEAKER_VLICT,  21, true);
-		showText(TX_SPEAKER_BIALBI, 28, true);
-		showText(TX_SPEAKER_KIRK,    5, true);
-		showText(TX_SPEAKER_BIALBI, 33, true);
-		showText(TX_SPEAKER_BIALBI, 32, true);
+		showText(TX_SPEAKER_KIRK,    4);
+		showText(TX_SPEAKER_BIALBI, 30);
+		showText(TX_SPEAKER_BIALBI, 26);
+		showText(TX_SPEAKER_VLICT,  21);
+		showText(TX_SPEAKER_BIALBI, 28);
+		showText(TX_SPEAKER_KIRK,    5);
+		showText(TX_SPEAKER_BIALBI, 33);
+		showText(TX_SPEAKER_BIALBI, 32);
 
 		_awayMission->trial.missionEndMethod = 3;
 		endMission(1, 1, 3); // FIXME: Are these parameters correct?
@@ -246,9 +263,9 @@ void Room::trial5WalkToInterface() {
 
 void Room::trial5ReachedInterface() {
 	if (!_awayMission->trial.neuralInterfaceActive)
-		showText(TX_SPEAKER_VOICE, 35, true);
+		showText(TX_SPEAKER_VOICE, 35);
 	else {
-		showText(TX_SPEAKER_BIALBI, 24, true);
+		showText(TX_SPEAKER_BIALBI, 24);
 		loadActorAnimC(OBJECT_VLICT, "vlict1", 0xbe, 0x91, &Room::trial5VlictAppeared);
 		_awayMission->trial.missionScore += 5;
 		playMidiMusicTracks(MIDITRACK_1, -1);
@@ -330,110 +347,110 @@ void Room::trial5GetBlueGem3() {
 }
 
 void Room::trial5LookAtKirk() {
-	showDescription(5, true);
+	showDescription(5);
 }
 
 void Room::trial5LookAtSpock() {
-	showDescription(9, true);
+	showDescription(9);
 }
 
 void Room::trial5LookAtMccoy() {
-	showDescription(8, true);
+	showDescription(8);
 }
 
 void Room::trial5LookAtRedshirt() {
-	showDescription(10, true);
+	showDescription(10);
 }
 
 void Room::trial5LookAtBeam() {
-	showDescription(2, true);
+	showDescription(2);
 }
 
 void Room::trial5LookAtInterface() {
-	showDescription(4, true);
+	showDescription(4);
 }
 
 void Room::trial5UseSTricorderOnInterface() {
-	spockScan(DIR_E, 10, true, true);
+	spockScan(DIR_E, 10, true);
 }
 
 void Room::trial5UseMTricorderOnInterface() {
-	mccoyScan(DIR_E, 11, true, true);
+	mccoyScan(DIR_E, 11, true);
 }
 
 void Room::trial5LookAtRedGem1() {
-	showDescription(13, true);
+	showDescription(13);
 }
 
 void Room::trial5LookAtRedGem2() {
-	showDescription(14, true);
+	showDescription(14);
 }
 
 void Room::trial5LookAtRedGem3() {
-	showDescription(15, true);
+	showDescription(15);
 }
 
 void Room::trial5LookAtGreenGem1() {
-	showDescription(19, true);
+	showDescription(19);
 }
 
 void Room::trial5LookAtGreenGem2() {
-	showDescription(20, true);
+	showDescription(20);
 }
 
 void Room::trial5LookAtGreenGem3() {
-	showDescription(21, true);
+	showDescription(21);
 }
 
 void Room::trial5LookAtBlueGem1() {
-	showDescription(16, true);
+	showDescription(16);
 }
 
 void Room::trial5LookAtBlueGem2() {
-	showDescription(17, true);
+	showDescription(17);
 }
 
 void Room::trial5LookAtBlueGem3() {
-	showDescription(18, true);
+	showDescription(18);
 }
 
 void Room::trial5LookAtHole() {
-	showDescription(6, true);
+	showDescription(6);
 }
 
 void Room::trial5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1, true);
+	showText(TX_SPEAKER_KIRK, 1);
 }
 
 void Room::trial5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 16, true);
+	showText(TX_SPEAKER_SPOCK, 16);
 }
 
 void Room::trial5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 13, true);
+	showText(TX_SPEAKER_MCCOY, 13);
 }
 
 void Room::trial5TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, 51, true);
+	showText(TX_SPEAKER_BENNIE, 51);
 }
 
 void Room::trial5UsePhaser() {
-	showDescription(11, true);
+	showDescription(11);
 }
 
 void Room::trial5UseMTricorderAnywhere() {
 	// BUGFIX: Original had Spock doing the animation, not Mccoy
 	mccoyScan(DIR_S, -1, true);
-	showDescription(12, true);
+	showDescription(12);
 }
 
 void Room::trial5UseSTricorderAnywhere() {
 	spockScan(DIR_S, -1, true);
-	showDescription(12, true);
+	showDescription(12);
 }
 
 void Room::trial5UseCommunicator() {
-	showDescription(7, true);
+	showDescription(7);
 }
 
 void Room::trial5UseGemOnHole(int16 item, int16 object, int16 hole) {
@@ -500,7 +517,7 @@ void Room::trial5ReachedHoleToPutGem() {
 		if COMBO(RED, RED, RED) {
 			trial5ActivateLightOfWar();
 			playMidiMusicTracks(MIDITRACK_1, -1);
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 50, true); // All ships in orbit destroyed
+			showText(TX_SPEAKER_LIGHT_OF_WAR, 50); // All ships in orbit destroyed
 			showGameOverMenu();
 		} else if COMBO(RED, RED, GREEN) {
 			trial5RestrictedCombination1();
@@ -510,20 +527,20 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, GREEN, GREEN) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 36, true);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, 36);
 		} else if COMBO(RED, GREEN, BLUE) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 48, true);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, 48);
 		} else if COMBO(RED, BLUE, RED) {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, BLUE, GREEN) {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, BLUE, BLUE) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 49, true);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, 49);
 		} else if COMBO(GREEN, RED, RED) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 47, true);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 47);
 		} else if COMBO(GREEN, RED, GREEN) {
 			trial5RestrictedCombination2();
 		} else if COMBO(GREEN, RED, BLUE) {
@@ -533,8 +550,8 @@ void Room::trial5ReachedHoleToPutGem() {
 		} else if COMBO(GREEN, GREEN, GREEN) {
 			trial5ActivateLightOfKnowledge();
 			playVoc("EFX12B");
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 40, true);
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 37, true);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 40);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 37);
 			_awayMission->trial.neuralInterfaceActive = true;
 
 			if (!_awayMission->trial.gotPointsForActivatingInterface) {
@@ -545,25 +562,25 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(GREEN, BLUE, RED) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 41, true);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 41);
 		} else if COMBO(GREEN, BLUE, GREEN) {
 			trial5RestrictedCombination2();
 		} else if COMBO(GREEN, BLUE, BLUE) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 38, true);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 38);
 		} else if COMBO(BLUE, RED, RED) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 45, true);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 45);
 		} else if COMBO(BLUE, RED, GREEN) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, RED, BLUE) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, GREEN, RED) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 42, true);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 42);
 		} else if COMBO(BLUE, GREEN, GREEN) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 44, true);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 44);
 		} else if COMBO(BLUE, GREEN, BLUE) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, BLUE, RED) {
@@ -572,7 +589,7 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(BLUE, BLUE, BLUE) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 46, true);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 46);
 
 			_awayMission->disableInput = true;
 			playSoundEffectIndex(kSfxTransporterDematerialize);
@@ -610,17 +627,17 @@ void Room::trial5RestrictedCombination1() {
 	// knowledge.
 	// It's inconsistent, but I guess we can chalk it up to the aliens being mysterious...
 	playSoundEffectIndex(kSfxTransporterEnergize);
-	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39, true);
+	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39);
 }
 
 void Room::trial5RestrictedCombination2() {
 	trial5ActivateLightOfKnowledge();
-	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39, true);
+	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39);
 }
 
 void Room::trial5DestinationNoLongerExists() {
 	trial5ActivateLightOfTravel();
-	showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 43, true);
+	showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 43);
 }
 
 void Room::trial5CrewmanBeamedOut() {
@@ -744,7 +761,8 @@ void Room::trial5UseBlueGem3OnHole3() {
 
 
 void Room::trial5UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, 12, true);
+	showText(TX_SPEAKER_MCCOY, 12);
 }
 
 }
+#endif

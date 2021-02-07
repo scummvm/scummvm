@@ -98,6 +98,164 @@ extern const RoomAction love5ActionList[] = {
 	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
 
+enum love5TextIds {
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_FERRIS, TX_SPEAKER_MARCUS,
+	TX_SPEAKER_CHEEVER, TX_SPEAKER_PREAX,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_025, TX_LOV0_026, TX_LOV0_029, TX_LOV0_033,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_049,
+	TX_LOV0_050, TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104,
+	TX_LOV0_105, TX_LOV0_106, TX_LOV0_107, TX_LOV0_124, TX_LOV5_001,
+	TX_LOV5_002, TX_LOV5_003, TX_LOV5_004, TX_LOV5_005, TX_LOV5_006,
+	TX_LOV5_007, TX_LOV5_008, TX_LOV5_009, TX_LOV5_010, TX_LOV5_011,
+	TX_LOV5_013, TX_LOV5_014, TX_LOV5_015, TX_LOV5_016, TX_LOV5_017,
+	TX_LOV5_018, TX_LOV5_019, TX_LOV5_020, TX_LOV5_021, TX_LOV5_023,
+	TX_LOV5_024, TX_LOV5_025, TX_LOV5_026, TX_LOV5_027, TX_LOV5_028,
+	TX_LOV5_029, TX_LOV5_030, TX_LOV5_031, TX_LOV5_032, TX_LOV5_033,
+	TX_LOV5_034, TX_LOV5_036, TX_LOV5_038, TX_LOV5_039, TX_LOV5_040,
+	TX_LOV5_041, TX_LOV5_042, TX_LOV5_043, TX_LOV5_044, TX_LOV5_045,
+	TX_LOV5_046, TX_LOV5_047, TX_LOV5_048, TX_LOV5_049, TX_LOV5_050,
+	TX_LOV5_051, TX_LOV5_052, TX_LOV5_053, TX_LOV5_054, TX_LOV5_055,
+	TX_LOV5_056, TX_LOV5_057, TX_LOV5_058, TX_LOV5_059, TX_LOV5_060,
+	TX_LOV5_061, TX_FEA5_008, TX_LOV5N000, TX_LOV5N001, TX_LOV5N002,
+	TX_LOV5N003, TX_LOV5N004, TX_LOV5N005, TX_LOV5N006, TX_LOV5N007,
+	TX_LOV5N008, TX_LOV5N009, TX_LOV5N010, TX_LOV5N011, TX_LOV5N012,
+	TX_LOV5N013, TX_LOV5N014, TX_LOV5N016, TX_LOV5N017, TX_LOV5N018,
+	TX_LOV5C001, TX_G_024, TX_DIALOG_ERROR
+};
+
+// TODO: Finish floppy offsets
+extern const RoomTextOffsets love5TextOffsets[] = {
+	{ TX_SPEAKER_KIRK, 8968, 0 },
+	{ TX_SPEAKER_MCCOY, 8979, 0 },
+	{ TX_SPEAKER_SPOCK, 8989, 0 },
+	{ TX_SPEAKER_FERRIS, 8999, 0 },
+	{ TX_SPEAKER_CHEEVER, 9027, 0 },
+	{ TX_SPEAKER_MARCUS, 9016, 0 },
+	{ TX_SPEAKER_PREAX, 9010, 0 },
+	{ TX_LOV0_011, 13010, 0 },
+	{ TX_LOV0_012, 13137, 0 },
+	{ TX_LOV0_013, 13433, 0 },
+	{ TX_LOV0_014, 13197, 0 },
+	{ TX_LOV0_015, 13301, 0 },
+	{ TX_LOV0_016, 13104, 0 },
+	{ TX_LOV0_017, 13567, 0 },
+	{ TX_LOV0_019, 13487, 0 },
+	{ TX_LOV0_020, 13044, 0 },
+	{ TX_LOV0_021, 13355, 0 },
+	{ TX_LOV0_022, 13245, 0 },
+	{ TX_LOV0_025, 14493, 0 },
+	{ TX_LOV0_026, 14366, 0 },
+	{ TX_LOV0_029, 14246, 0 },
+	{ TX_LOV0_033, 14306, 0 },
+	{ TX_LOV0_039, 13628, 0 },
+	{ TX_LOV0_040, 13755, 0 },
+	{ TX_LOV0_041, 14051, 0 },
+	{ TX_LOV0_042, 13815, 0 },
+	{ TX_LOV0_043, 13919, 0 },
+	{ TX_LOV0_045, 13722, 0 },
+	{ TX_LOV0_046, 14185, 0 },
+	{ TX_LOV0_047, 14105, 0 },
+	{ TX_LOV0_048, 13662, 0 },
+	{ TX_LOV0_049, 13973, 0 },
+	{ TX_LOV0_050, 13863, 0 },
+	{ TX_LOV0_101, 14574, 0 },
+	{ TX_LOV0_102, 14638, 0 },
+	{ TX_LOV0_103, 14708, 0 },
+	{ TX_LOV0_104, 14758, 0 },
+	{ TX_LOV0_105, 14815, 0 },
+	{ TX_LOV0_106, 14927, 0 },
+	{ TX_LOV0_107, 14995, 0 },
+	{ TX_LOV0_124, 14443, 0 },
+	{ TX_LOV5_001, 2119, 0 },
+	{ TX_LOV5_002, 1715, 0 },
+	{ TX_LOV5_003, 10797, 0 },
+	{ TX_LOV5_004, 12334, 0 },
+	{ TX_LOV5_005, 4485, 0 },
+	{ TX_LOV5_006, 12464, 0 },
+	{ TX_LOV5_007, 4020, 0 },
+	{ TX_LOV5_008, 12178, 0 },
+	{ TX_LOV5_009, 10983, 0 },
+	{ TX_LOV5_010, 1502, 0 },
+	{ TX_LOV5_011,  614, 0 },
+	{ TX_LOV5_013, 4130, 0 },
+	{ TX_LOV5_014, 2897, 0 },
+	{ TX_LOV5_015, 3732, 0 },
+	{ TX_LOV5_016, 3576, 0 },
+	{ TX_LOV5_017, 4915, 0 },
+	{ TX_LOV5_018, 1263, 0 },
+	{ TX_LOV5_019, 3654, 0 },
+	{ TX_LOV5_020, 4640, 0 },
+	{ TX_LOV5_021, 1821, 0 },
+	{ TX_LOV5_024, 3407, 0 },
+	{ TX_LOV5_025, 11753, 0 },
+	{ TX_LOV5_026, 4543, 0 },
+	{ TX_LOV5_027, 2035, 0 },
+	{ TX_LOV5_028, 9148, 0 },
+	{ TX_LOV5_029, 3893, 0 },
+	{ TX_LOV5_030, 1939, 0 },
+	{ TX_LOV5_031, 9380, 0 },
+	{ TX_LOV5_032, 1629, 0 },
+	{ TX_LOV5_033, 3159, 0 },
+	{ TX_LOV5_034, 11526, 0 },
+	{ TX_LOV5_036, 11189, 0 },
+	{ TX_LOV5_038, 1990, 0 },
+	{ TX_LOV5_039, 2414, 0 },
+	{ TX_LOV5_040, 2334, 0 },
+	{ TX_LOV5_042, 2607, 0 },
+	{ TX_LOV5_043, 12668, 0 },
+	{ TX_LOV5_044, 9199, 0 },
+	{ TX_LOV5_045, 1756, 0 },
+	{ TX_LOV5_046, 9839, 0 },
+	{ TX_LOV5_047, 11049, 0 },
+	{ TX_LOV5_048, 10854, 0 },
+	{ TX_LOV5_049, 11642, 0 },
+	{ TX_LOV5_050, 9442, 0 },
+	{ TX_LOV5_051, 11290, 0 },
+	{ TX_LOV5_052,  3039, 0 },
+	{ TX_LOV5_053,  4426, 0 },
+	{ TX_LOV5_054, 10123, 0 },
+	{ TX_LOV5_055, 2685, 0 },
+	{ TX_LOV5_056, 2744, 0 },
+	{ TX_LOV5_057, 10052, 0 },
+	{ TX_LOV5_058, 10193, 0 },
+	{ TX_LOV5_059, 11980, 0 },
+	{ TX_LOV5_060, 12789, 0 },
+	{ TX_LOV5_061, 12604, 0 },
+	{ TX_LOV5_023,  5017, 0 },
+	{ TX_LOV5_041,  5296, 0 },
+	{ TX_FEA5_008,   706, 0 },
+	{ TX_G_024,    11501, 0 },
+	{ TX_LOV5N000, 10294, 0 },
+	{ TX_LOV5N001, 9732, 0 },
+	{ TX_LOV5N001, 9890, 0 },
+	{ TX_LOV5N002, 10571, 0 },
+	{ TX_LOV5N003, 10691, 0 },
+	{ TX_LOV5N004, 10481, 0 },
+	{ TX_LOV5N005, 10633, 0 },
+	{ TX_LOV5N006, 1352, 0 },
+	{ TX_LOV5N007, 4813, 0 },
+	{ TX_LOV5N008,  863, 0 },
+	{ TX_LOV5N009, 1115, 0 },
+	{ TX_LOV5N010, 9660, 0 },
+	{ TX_LOV5N011, 10413, 0 },
+	{ TX_LOV5N012, 10359, 0 },
+	{ TX_LOV5N013, 9040, 0 },
+	{ TX_LOV5N014, 9961, 0 },
+	{ TX_LOV5N016, 9311, 0 },
+	{ TX_LOV5N017, 4320, 0 },
+	{ TX_LOV5N018, 3805, 0 },
+	{ TX_LOV5C001, 1598, 0 },
+	{ TX_DIALOG_ERROR, 11927, 0 },
+	{          -1, 0,    0 }
+};
+
+extern const RoomText love5Texts[] = {
+    { -1, Common::UNK_LANG, "" }
+};
+
 void Room::love5Tick1() {
 	playVoc("LOV5LOOP");
 
@@ -137,7 +295,7 @@ void Room::love5Timer4Expired() {
 }
 
 void Room::love5UseStunPhaserOnPreax() {
-	showText(TX_SPEAKER_MCCOY, 11, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_011);
 
 	// BUG: this function has two implementations. The second one (which is shadowed) is
 	// below.
@@ -146,23 +304,23 @@ void Room::love5UseStunPhaserOnPreax() {
 }
 
 void Room::love5LookAtKirk() {
-	showDescription(04, true);
+	showDescription(TX_LOV5N004);
 }
 
 void Room::love5LookAtSpock() {
-	showDescription(05, true);
+	showDescription(TX_LOV5N005);
 }
 
 void Room::love5LookAtMccoy() {
-	showDescription(02, true);
+	showDescription(TX_LOV5N002);
 }
 
 void Room::love5LookAtRedshirt() {
-	showDescription(3, true);
+	showDescription(TX_LOV5N003);
 }
 
 void Room::love5LookAnywhere() {
-	showDescription(8, true);
+	showDescription(TX_LOV5N008);
 
 	// There is an unused version of this function, which states "This is Dr. Marcus's
 	// quarters, and there are hostages and 4 romulans here". That description doesn't
@@ -171,104 +329,104 @@ void Room::love5LookAnywhere() {
 	// load room LOVE6. This may be a leftover from a removed room that somehow ended up
 	// here.
 
-	//showText(09, true);
+	//showText(TX_LOV5N009);
 }
 
 void Room::love5LookAtDevice() {
-	showDescription(13, true);
-	showText(TX_SPEAKER_MCCOY, 28, true);
-	showText(TX_SPEAKER_MARCUS, 44, true);
+	showDescription(TX_LOV5N013);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_028);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_044);
 }
 
 void Room::love5LookAtConsole() {
-	showDescription(16, true);
-	showText(TX_SPEAKER_MCCOY, 31, true);
-	showText(TX_SPEAKER_MARCUS, 50, true);
+	showDescription(TX_LOV5N016);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_031);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_050);
 }
 
 void Room::love5LookAtDrMarcus() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showDescription(01, true);
+		showDescription(TX_LOV5N001);
 	else {
 		// BUGFIX: originally played audio "LOV5N001", which is only the first sentence of
 		// what should be spoken.
-		showDescription(15, true);
+		//showDescription(TX_LOV5N015);	// TODO
 
-		showText(TX_SPEAKER_MARCUS, 46, true);
+		showText(TX_SPEAKER_MARCUS, TX_LOV5_046);
 	}
 }
 
 void Room::love5LookAtDrCheever() {
 	if (_awayMission->love.freedMarcusAndCheever)
-		showDescription(00, true);
+		showDescription(TX_LOV5N000);
 	else {
-		showDescription(14, true);
-		showText(TX_SPEAKER_CHEEVER, 57, true);
+		showDescription(TX_LOV5N014);
+		showText(TX_SPEAKER_CHEEVER, TX_LOV5_057);
 		if (!_awayMission->redshirtDead) {
-			showText(TX_SPEAKER_FERRIS, 54, true);
-			showText(TX_SPEAKER_CHEEVER, 58, true);
+			showText(TX_SPEAKER_FERRIS, TX_LOV5_054);
+			showText(TX_SPEAKER_CHEEVER, TX_LOV5_058);
 		}
 	}
 }
 
 void Room::love5LookAtPreax() {
 	if (_awayMission->love.preaxCured)
-		showDescription(11, true);
+		showDescription(TX_LOV5N011);
 	else
-		showDescription(12, true);
+		showDescription(TX_LOV5N012);
 }
 
 void Room::love5TalkToPreax() {
 	if (_awayMission->love.preaxCured) {
 		if (!_awayMission->love.freedMarcusAndCheever)
-			showDescription(06, true);
+			showDescription(TX_LOV5N006);
 		else {
 			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
-				8,
-				4,
-				6,
-				TX_BLANK,
+				TX_LOV5_008,
+				TX_LOV5_004,
+				TX_LOV5_006,
+				TX_END,
 			};
 
-			showText(TX_SPEAKER_PREAX, 59, true);
-			int choice = showMultipleTexts(choices, true);
+			showText(TX_SPEAKER_PREAX, TX_LOV5_059);
+			int choice = showMultipleTexts(choices);
 
 			switch (choice) {
 			case 1:
-				showText(TX_SPEAKER_MARCUS, 43, true);
+				showText(TX_SPEAKER_MARCUS, TX_LOV5_043);
 			// fall through
 			case 0:
-				showText(TX_SPEAKER_PREAX, 61, true);
-				showText(TX_SPEAKER_KIRK, 10, true);
+				showText(TX_SPEAKER_PREAX, TX_LOV5_061);
+				showText(TX_SPEAKER_KIRK, TX_LOV5_010);
 
 				// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
 				showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 
-				showText(TX_SPEAKER_MCCOY, 32, true);
+				showText(TX_SPEAKER_MCCOY, TX_LOV5_032);
 
 				break;
 			case 2:
-				showText(TX_SPEAKER_PREAX, 60, true);
+				showText(TX_SPEAKER_PREAX, TX_LOV5_060);
 				break;
 			default:
 				showDescription(TX_DIALOG_ERROR);
 				break;
 			}
 
-			showText(TX_SPEAKER_KIRK,   02, true);
-			showText(TX_SPEAKER_MARCUS, 45, true);
+			showText(TX_SPEAKER_KIRK,   TX_LOV5_002);
+			showText(TX_SPEAKER_MARCUS, TX_LOV5_045);
 
 			_awayMission->disableInput = true;
 
 			if (!_awayMission->love.spockCured) {
-				showText(TX_SPEAKER_MCCOY, 21, true);
+				showText(TX_SPEAKER_MCCOY, TX_LOV5_021);
 				walkCrewmanC(OBJECT_MCCOY, 0x87, 0xc3, &Room::love5MccoyReachedSpockToCure);
 			} else
 				love5EndMission();
 		}
 	} else
-		showText(TX_SPEAKER_MARCUS, 18, true);
+		showText(TX_SPEAKER_MARCUS, TX_LOV5_018);
 }
 
 void Room::love5MccoyReachedSpockToCure() {
@@ -276,16 +434,16 @@ void Room::love5MccoyReachedSpockToCure() {
 }
 
 void Room::love5MccoyCuredSpock() {
-	showText(TX_SPEAKER_MCCOY, 30, true);
-	showText(TX_SPEAKER_SPOCK, 38, true);
-	showText(TX_SPEAKER_MCCOY, 27, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_030);
+	showText(TX_SPEAKER_SPOCK, TX_LOV5_038);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_027);
 	// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 	love5EndMission();
 }
 
 void Room::love5EndMission() {
-	showText(TX_SPEAKER_KIRK, 01, true);
+	showText(TX_SPEAKER_KIRK, TX_LOV5_001);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	walkCrewmanC(OBJECT_KIRK, 0x64, 0xc2, &Room::love5CrewmanReachedBeamoutPosition);
@@ -313,78 +471,78 @@ void Room::love5CrewmanReachedBeamoutPosition() {
 
 void Room::love5TalkToDrMarcus() {
 	if (!_awayMission->love.freedMarcusAndCheever)
-		showText(TX_SPEAKER_MARCUS, 40, true);
+		showText(TX_SPEAKER_MARCUS, TX_LOV5_040);
 	else {
 		if (!haveItem(OBJECT_ICURE))
-			showText(TX_SPEAKER_MARCUS, 39, true);
+			showText(TX_SPEAKER_MARCUS, TX_LOV5_039);
 		else
-			showText(TX_SPEAKER_MARCUS, 42, true);
+			showText(TX_SPEAKER_MARCUS, TX_LOV5_042);
 	}
 }
 
 void Room::love5TalkToDrCheever() {
 	if (!_awayMission->love.freedMarcusAndCheever)
-		showText(TX_SPEAKER_CHEEVER, 55, true);
+		showText(TX_SPEAKER_CHEEVER, TX_LOV5_055);
 	else
-		showText(TX_SPEAKER_CHEEVER, 56, true);
+		showText(TX_SPEAKER_CHEEVER, TX_LOV5_056);
 }
 
 void Room::love5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,    3, true);
-	showText(TX_SPEAKER_MARCUS, 48, true);
-	showText(TX_SPEAKER_KIRK,    9, true);
-	showText(TX_SPEAKER_MARCUS, 47, true);
+	showText(TX_SPEAKER_KIRK,   TX_LOV5_003);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_048);
+	showText(TX_SPEAKER_KIRK,   TX_LOV5_009);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_047);
 }
 
 void Room::love5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK,  36, true);
-	showText(TX_SPEAKER_MARCUS, 51, true);
+	showText(TX_SPEAKER_SPOCK,  TX_LOV5_036);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_051);
 	showText(TX_SPEAKER_SPOCK,  TX_G_024);
 }
 
 void Room::love5TalkToMccoy() {
 	if (!_awayMission->love.preaxCured)
-		showText(TX_SPEAKER_MCCOY, 14, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV5_014);
 }
 
 void Room::love5TalkToRedshirt() {
-	showText(TX_SPEAKER_FERRIS, 52, true);
+	showText(TX_SPEAKER_FERRIS, TX_LOV5_052);
 }
 
 void Room::love5UseSTricorderAnywhere() {
-	spockScan(DIR_S, 33, false, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_LOV5_033, false);
 }
 
 void Room::love5UseSTricorderOnDevice() {
-	spockScan(DIR_N, 34, false, true);
-	showText(TX_SPEAKER_MARCUS, 49, true);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_LOV5_034, false);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_049);
 }
 
 void Room::love5UseMTricorderOnMarcusOrCheever() {
-	mccoyScan(DIR_W, 25, false, true);
+	mccoyScan(DIR_W, TX_LOV5_025, false);
 }
 
 void Room::love5UseMTricorderOnPreax() {
 	if (!_awayMission->love.preaxCured) {
 		if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-			mccoyScan(DIR_E, 24, false, true);
+			mccoyScan(DIR_E, TX_LOV5_024, false);
 		else
-			mccoyScan(DIR_E, 16, false, true);
+			mccoyScan(DIR_E, TX_LOV5_016, false);
 	}
 }
 
 void Room::love5UseMedkitOnPreax() {
 	if (_awayMission->love.preaxCured)
-		showText(TX_SPEAKER_MCCOY, 15, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
 	else
-		showText(TX_SPEAKER_MCCOY, 19, true);
+		showText(TX_SPEAKER_MCCOY, TX_LOV5_019);
 }
 
 void Room::love5UseWaterOnPreax() {
 	if (_awayMission->love.preaxCured) {
-		showDescription(18, true);
-		showText(TX_SPEAKER_MCCOY, 29, true);
-		showText(TX_SPEAKER_KIRK,  07, true);
+		showDescription(TX_LOV5N018);
+		showText(TX_SPEAKER_MCCOY, TX_LOV5_029);
+		showText(TX_SPEAKER_KIRK,  TX_LOV5_007);
 		if (!_awayMission->love.gotPointsForHydratingPreax) {
 			_awayMission->love.gotPointsForHydratingPreax = true;
 			_awayMission->love.missionScore++;
@@ -392,16 +550,16 @@ void Room::love5UseWaterOnPreax() {
 		loseItem(OBJECT_IH2O);
 	} else {
 		if (_awayMission->love.romulansUnconsciousFromVirus) {
-			showText(TX_SPEAKER_MCCOY, 13, true);
+			showText(TX_SPEAKER_MCCOY, TX_LOV5_013);
 			// BUGFIX: original didn't have correct speaker. Also, you shouldn't lose your
 			// water since it's not actually used here, so a "loseItem" line was removed.
 		} else {
-			showDescription(17, true);
+			showDescription(TX_LOV5N017);
 			if (!_awayMission->redshirtDead) {
-				showText(TX_SPEAKER_FERRIS, 53, true);
-				showText(TX_SPEAKER_KIRK,   05, true);
+				showText(TX_SPEAKER_FERRIS, TX_LOV5_053);
+				showText(TX_SPEAKER_KIRK,   TX_LOV5_005);
 			}
-			showText(TX_SPEAKER_MCCOY,  26, true);
+			showText(TX_SPEAKER_MCCOY,  TX_LOV5_026);
 			loseItem(OBJECT_IH2O);
 
 			// BUGFIX: give a point for hydrating the Preax. It's inconsistent to only
@@ -415,7 +573,7 @@ void Room::love5UseWaterOnPreax() {
 }
 
 void Room::love5UseCureSampleOnPreax() {
-	showText(TX_SPEAKER_MCCOY, 20, true); // BUGFIX: original didn't have correct speaker
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_020); // BUGFIX: original didn't have correct speaker
 }
 
 
@@ -432,13 +590,13 @@ void Room::love5CuredPreax() {
 	walkCrewman(OBJECT_MCCOY, 0xdc, 0xc3);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 
-	showDescription(07, true);
+	showDescription(TX_LOV5N007);
 
 	// BUG: says he's dehydrated, but doesn't check whether you've given water to him
 	// already (like it does in LOVE4).
 	// TODO: make the whole "giving water to romulans" thing consistent between LOVE4 and
 	// LOVE5?
-	showText(TX_SPEAKER_MCCOY, 17, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_017);
 
 	loadActorAnim2(OBJECT_PREAX, "s3r6r1", 0x116, 0xba);
 	_awayMission->love.preaxCured = true;
@@ -446,7 +604,7 @@ void Room::love5CuredPreax() {
 
 
 void Room::love5UseAnythingOnPreax() {
-	showText(TX_SPEAKER_MCCOY, 23, true);
+	showText(TX_SPEAKER_MCCOY, TX_LOV5_023);
 }
 
 
@@ -481,7 +639,7 @@ void Room::love5KirkUntiedMarcus() {
 
 void Room::love5MarcusStoodUp() {
 	_awayMission->disableInput = false;
-	showText(TX_SPEAKER_MARCUS, 41, true);
+	showText(TX_SPEAKER_MARCUS, TX_LOV5_041);
 }
 
 }
