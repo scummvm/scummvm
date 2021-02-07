@@ -23,7 +23,8 @@
 #ifndef AGS_STD_INITIALIZER_LIST_H
 #define AGS_STD_INITIALIZER_LIST_H
 
-#include <initializer_list>
+#include "common/scummsys.h"
+#include "common/initializer_list.h"
 
 namespace AGS3 {
 namespace std {
