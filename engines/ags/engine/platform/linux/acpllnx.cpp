@@ -33,7 +33,6 @@
 //include <pwd.h>
 //include <sys/stat.h>
 #include "ags/lib/allegro.h"
-#include "ags/lib/opengl/opengl.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/gfx/gfxdefines.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
@@ -210,7 +209,7 @@ void AGSLinux::UnlockMouse() {
 
 void AGSLinux::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
 	dms.clear();
-	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_XWINDOWS_FULLSCREEN);
+	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_SCUMMVM_FULLSCREEN);
 	for (int i = 0; i < gmlist->num_modes; ++i) {
 		const GFX_MODE &m = gmlist->mode[i];
 		dms.push_back(Engine::DisplayMode(Engine::GraphicResolution(m.width, m.height, m.bpp)));
