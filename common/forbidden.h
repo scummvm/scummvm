@@ -383,6 +383,11 @@
 	#define isxdigit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isblank
+	#undef isblank
+	#define isblank(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir

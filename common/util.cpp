@@ -163,6 +163,10 @@ bool isGraph(int c) {
 	return isgraph((byte)c);
 }
 
+bool isBlank(int c) {
+	return c == ' ' || c == '\t';
+}
+
 
 #pragma mark -
 

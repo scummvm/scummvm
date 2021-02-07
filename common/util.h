@@ -286,6 +286,23 @@ bool isCntrl(int c);
  */
 bool isGraph(int c);
 
+/**
+ * Test whether the given character is blank.
+ *
+ * The following characters are considered blank:
+ * @code
+ * ' ', '\t'
+ * @endcode
+ *
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		The character to test.
+ *
+ * @return True if the character is blank, false otherwise.
+ */
+bool isBlank(int c);
+
 
 /**
  * Represent the size of a file in bytes as a number with floating point and

@@ -25,16 +25,9 @@
 #include "ags/shared/util/inifile.h"
 #include "ags/shared/util/textstreamreader.h"
 #include "ags/shared/util/textstreamwriter.h"
+#include "common/util.h"
 
 namespace AGS3 {
-
-// TODO: replace with C++11 std::isblank library function
-namespace agsstd {
-inline int isblank(int ch) {
-	return ch == ' ' || ch == '\t';
-}
-} // std
-
 namespace AGS {
 namespace Shared {
 
@@ -168,11 +161,11 @@ const char *SkipSpace(const char *line, const char *endl) {
 const char *ParsePaddedString(const char *line, const char *endl,
 	const char *&str_at, const char *&str_end) {
 	// skip left padding
-	for (; line != endl && agsstd::isblank(*line); ++line);
+	for (; line != endl && Common::isBlank(*line); ++line);
 	str_at = line;
 	// skip right padding
 	const char *p_value = line;
-	for (line = endl; line != p_value && agsstd::isblank(*(line - 1)); --line);
+	for (line = endl; line != p_value && Common::isBlank(*(line - 1)); --line);
 	str_end = line;
 	return line;
 }
