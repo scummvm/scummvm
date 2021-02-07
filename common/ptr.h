@@ -305,6 +305,17 @@ public:
 	SharedPtr(const SharedPtr<T2> &r) : BasePtr<T>(r) {
 	}
 
+	SharedPtr &operator=(const SharedPtr &r) {
+		BasePtr<T>::operator=(r);
+		return *this;
+	}
+
+	template<class T2>
+	SharedPtr &operator=(const SharedPtr<T2> &r) {
+		BasePtr<T>::operator=(r);
+		return *this;
+	}
+
 	T &operator*() const { assert(this->_pointer); return *this->_pointer; }
 	T *operator->() const { assert(this->_pointer); return this->_pointer; }
 
