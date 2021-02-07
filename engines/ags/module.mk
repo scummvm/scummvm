@@ -25,16 +25,9 @@ MODULE_OBJS = \
 	lib/allegro/mouse.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/audio/aldumb.o \
 	lib/audio/digi.o \
 	lib/audio/midi.o \
 	lib/audio/sound.o \
-	lib/dumb-0.9.2/dumb.o \
-	lib/dumb-0.9.2/dumbfile.o \
-	lib/dumb-0.9.2/helpers/clickrem.o \
-	lib/dumb-0.9.2/it/itmisc.o \
-	lib/dumb-0.9.2/it/itrender.o \
-	lib/dumb-0.9.2/it/itunload.o \
 	lib/hq2x/hq2x3x.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
