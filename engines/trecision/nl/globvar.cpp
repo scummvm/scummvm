@@ -31,7 +31,6 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                                  INIT                                   */
 /*-------------------------------------------------------------------------*/
-struct SRoom      Room[MAXROOMS];
 struct SObject    _obj[MAXOBJ];
 struct SInvObject InvObj[MAXINVENTORY];
 struct SSound     GSample[MAXSAMPLE];

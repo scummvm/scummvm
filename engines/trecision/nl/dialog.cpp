@@ -212,7 +212,7 @@ void afterChoice(int numframe) {
 		if (_curChoice == 136) {
 			_obj[ocBARBONE17]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[oBARBONED17]._mode |= OBJMODE_OBJSTATUS;
-			Room[r17]._bkgAnim = aBKG17B;
+			g_vm->_room[r17]._bkgAnim = aBKG17B;
 			AddIcon(iPATTINO);
 		} else if (_curChoice == 137) {
 			_obj[ocBARBONE17]._flag |= OBJFLAG_PERSON;
@@ -354,8 +354,8 @@ void afterChoice(int numframe) {
 			_obj[oPORTAUA17]._action = 193;
 			_obj[oPORTAUB17]._action = 197;
 			_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
-			Room[r17]._flag &= ~OBJFLAG_DONE;
-			Room[r17]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r17]._flag &= ~OBJFLAG_DONE;
+			g_vm->_room[r17]._flag |= OBJFLAG_EXTRA;
 			break;
 
 		case dF1C1:
@@ -530,7 +530,7 @@ void afterChoice(int numframe) {
 
 		case dC5A1:
 			_obj[oFINESTRAA5A]._action = 1402;
-			if (Room[r5A]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)
 				PlayDialog(dF5A1);
 			break;
 

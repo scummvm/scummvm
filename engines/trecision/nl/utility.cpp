@@ -482,7 +482,7 @@ void SetRoom(unsigned short r, bool b) {
 	case r21:
 		if (!b) {
 			read3D("21.3d");
-			Room[r21]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r21]._flag &= ~OBJFLAG_EXTRA;
 			setPosition(14);
 			_obj[oCATENAT21]._position = 5;
 			_obj[oUSCITA21]._position = 11;
@@ -509,7 +509,7 @@ void SetRoom(unsigned short r, bool b) {
 			_obj[oCARTELLONE21]._mode |= OBJMODE_OBJSTATUS;
 		} else {
 			read3D("212.3d");
-			Room[r21]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r21]._flag |= OBJFLAG_EXTRA;
 			setPosition(15);
 			_obj[oCATENAT21]._position = 6;
 			_obj[oUSCITA21]._position = 21;
@@ -541,14 +541,14 @@ void SetRoom(unsigned short r, bool b) {
 	case r24:
 		if (!b) {
 			read3D("24.3d");
-			Room[r24]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r24]._flag &= ~OBJFLAG_EXTRA;
 			_obj[oPASSAGGIO24]._position = 3;
 			_obj[oMACERIE24]._position = 3;
 			_obj[oDUMMY24]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[oDUMMY24A]._mode |= OBJMODE_OBJSTATUS;
 		} else {
 			read3D("242.3d");
-			Room[r24]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r24]._flag |= OBJFLAG_EXTRA;
 			_obj[od24ALLA26]._mode |= OBJMODE_OBJSTATUS;
 			_obj[oPASSAGGIO24]._position = 4;
 			_obj[oMACERIE24]._position = 4;
@@ -560,12 +560,12 @@ void SetRoom(unsigned short r, bool b) {
 	case r2A:
 		if (!b) {
 			read3D("2A.3d");
-			Room[r2A]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r2A]._flag &= ~OBJFLAG_EXTRA;
 			_obj[oDUMMY2A2]._mode |= OBJMODE_OBJSTATUS;
 			_obj[oDUMMY2A]._mode &= ~OBJMODE_OBJSTATUS;
 		} else {
 			read3D("2A2.3d");
-			Room[r2A]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r2A]._flag |= OBJFLAG_EXTRA;
 			_obj[oDUMMY2A]._mode |= OBJMODE_OBJSTATUS;
 			_obj[oDUMMY2A2]._mode &= ~OBJMODE_OBJSTATUS;
 		}
@@ -573,12 +573,12 @@ void SetRoom(unsigned short r, bool b) {
 	case r2B:
 		if (!b) {
 			read3D("2B.3d");
-			Room[r2B]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r2B]._flag &= ~OBJFLAG_EXTRA;
 			_obj[oPORTA2B]._mode |= OBJMODE_OBJSTATUS;
 			_obj[od2BALLA28]._mode &= ~OBJMODE_OBJSTATUS;
 		} else {
 			read3D("2B2.3d");
-			Room[r2B]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r2B]._flag |= OBJFLAG_EXTRA;
 			_obj[oPORTA2B]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[od2BALLA28]._mode |= OBJMODE_OBJSTATUS;
 		}
@@ -589,7 +589,7 @@ void SetRoom(unsigned short r, bool b) {
 			_obj[oCATWALKA2E]._position = 2;
 			_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
 			read3D("2E.3d");
-			Room[r2E]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r2E]._flag &= ~OBJFLAG_EXTRA;
 			_obj[oDUMMY2E]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[oENTRANCE2E]._flag &= ~OBJFLAG_EXAMINE;
 			_obj[oPASSERELLAB2E]._mode &= ~OBJMODE_OBJSTATUS;
@@ -600,7 +600,7 @@ void SetRoom(unsigned short r, bool b) {
 			_obj[oCATWALKA2E]._position = 3;
 			_obj[oCATWALKA2E]._anim = a2E3PRIMAPAVVICINANDO;
 			read3D("2E2.3d");
-			Room[r2E]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[r2E]._flag |= OBJFLAG_EXTRA;
 			_obj[oDUMMY2E]._mode |= OBJMODE_OBJSTATUS;
 			_obj[oENTRANCE2E]._mode |= OBJMODE_OBJSTATUS;
 			_obj[oENTRANCE2E]._flag |= OBJFLAG_EXAMINE;
@@ -616,7 +616,7 @@ void SetRoom(unsigned short r, bool b) {
 			_obj[oVIADOTTO2GV]._position = 7;
 			_obj[oVIADOTTO2GV]._anim = a2G7ATTRAVERSAPONTICELLO;
 			read3D("2GV.3d");
-			Room[r2GV]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[r2GV]._flag &= ~OBJFLAG_EXTRA;
 			_obj[oDUMMY2GV]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[oRAGAZZOS2GV]._mode &= ~OBJMODE_OBJSTATUS;
 			_obj[oCOCCODRILLO2GV]._mode &= ~OBJMODE_OBJSTATUS;

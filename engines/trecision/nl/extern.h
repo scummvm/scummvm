@@ -27,7 +27,6 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                                  INIT                                   */
 /*-------------------------------------------------------------------------*/
-extern struct SRoom      Room[];
 extern struct SObject    _obj[];
 extern struct SInvObject InvObj[];
 extern struct SSound     GSample[];

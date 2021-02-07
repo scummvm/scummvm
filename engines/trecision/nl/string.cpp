@@ -164,7 +164,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		if (obj == lastobj)
 			return;
 		if (!(_obj[obj]._flag & OBJFLAG_EXAMINE)) {
-			if ((_obj[obj]._flag & OBJFLAG_DONE) || (Room[_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
+			if ((_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
 				strcpy(locsent, _sysSent[25]);
 				if (_obj[obj]._mode & OBJMODE_HIDDEN)
 					strcat(locsent, dunno);

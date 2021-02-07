@@ -154,7 +154,7 @@ uint16 UnUpdatePixelFormat(uint16 t) {
 bool CheckMask(uint16 MX, uint16 my) {
 	for (int8 a = (MAXOBJINROOM - 1); a >= 0; a--) {
 
-		uint16 CheckedObj = Room[g_vm->_curRoom]._object[a];
+		uint16 CheckedObj = g_vm->_room[g_vm->_curRoom]._object[a];
 
 		if ((CheckedObj) && (_obj[CheckedObj]._mode & (OBJMODE_OBJSTATUS))) {
 			if ((MX >= _obj[CheckedObj]._lim[0]) &&

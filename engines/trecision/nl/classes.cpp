@@ -348,7 +348,7 @@ void doMouse() {
 					SemShowHomo = true;
 					RegenRoom();
 					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
-					StartSmackAnim(Room[g_vm->_curRoom]._bkgAnim);
+					StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 					// combinazione giusta
 					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
@@ -397,9 +397,9 @@ void doMouse() {
 			InitQueue(&Homo);
 
 			if (CheckMask(TheMessage->wparam1, TheMessage->wparam2) && (!SemDialogActive)) {
-				if ((g_vm->_curRoom == r1D) && !(Room[r1D]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oSCALA1D))
+				if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oSCALA1D))
 					g_vm->_curObj = oDONNA1D;
-				else if ((g_vm->_curRoom == r2B) && (Room[r2B]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oCARTELLO2B) && (g_vm->_curObj != od2BALLA28)) {
+				else if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oCARTELLO2B) && (g_vm->_curObj != od2BALLA28)) {
 					ClearText();
 					g_vm->_curObj = oPORTA2B;
 					StartCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
@@ -418,7 +418,7 @@ void doMouse() {
 						ClearText();
 					}
 					break;
-				} else if ((g_vm->_curRoom == r35) && !(Room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oSPORTELLOC35) || (g_vm->_curObj == oSPORTELLOA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
+				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oSPORTELLOC35) || (g_vm->_curObj == oSPORTELLOA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
 					g_vm->_curObj = oLASTLEV5;
 					doEvent(MC_HOMO, ME_HOMOGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
 					if (SemUseWithStarted) {
@@ -437,8 +437,8 @@ void doMouse() {
 					}
 					break;
 				} else if ((TheMessage->event == ME_MLEFT) &&
-				           ((!(Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
-				            ((Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
+				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
+				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
 					doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 					break;
 				}
@@ -787,7 +787,7 @@ void doSystem() {
 		nextStep();
 
 //			Gestione exit veloci in stanze doppie livello 2
-		if (Room[g_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
+		if (g_vm->_room[g_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
 			if (g_vm->_curObj == od2EALLA2C)
 				SetRoom(r2E, false);
 			if (g_vm->_curObj == od24ALLA23)
@@ -848,31 +848,31 @@ void doSystem() {
 		else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r2A))
 			SetRoom(r2B, false);
 		//			for save/load
-		else if ((g_vm->_curRoom == r15) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r15) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("152.3d");
-		else if ((g_vm->_curRoom == r17) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r17) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("172.3d");
-		else if ((g_vm->_curRoom == r1D) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r1D) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("1d2.3d");
-		else if ((g_vm->_curRoom == r21) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r21) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("212.3d");
-		else if ((g_vm->_curRoom == r24) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r24) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("242.3d");
-		else if ((g_vm->_curRoom == r28) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r28) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("282.3d");
-		else if ((g_vm->_curRoom == r2A) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r2A) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("2A2.3d");
-		else if ((g_vm->_curRoom == r2B) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r2B) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("2B2.3d");
-		else if ((g_vm->_curRoom == r2E) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r2E) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("2E2.3d");
-		else if ((g_vm->_curRoom == r2GV) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r2GV) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("2GV2.3d");
-		else if ((g_vm->_curRoom == r35) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r35) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("352.3d");
-		else if ((g_vm->_curRoom == r37) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r37) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("372.3d");
-		else if ((g_vm->_curRoom == r4P) && (Room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		else if ((g_vm->_curRoom == r4P) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("4P2.3d");
 		//			end save/load
 
@@ -884,7 +884,7 @@ void doSystem() {
 
 		AtEndChangeRoom();
 
-		Room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // visitata
+		g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // visitata
 		drawCharacter(CALCPOINTS);			// for right _actorPos entrance
 
 		break;
