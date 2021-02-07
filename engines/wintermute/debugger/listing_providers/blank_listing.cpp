@@ -21,13 +21,13 @@
  */
 
 #include "blank_listing.h"
-#include "limits.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
 BlankListing::BlankListing(const Common::String filename) : _filename(filename) {}
 
-uint BlankListing::getLength() const { return UINT_MAX; }
+uint BlankListing::getLength() const { return UINT_MAX_VALUE; }
 
 Common::String BlankListing::getLine(uint n) {
 	return "<no source for " + _filename + " ~~~ line: " + Common::String::format("%d", n) + ">";

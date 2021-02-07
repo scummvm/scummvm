@@ -35,8 +35,9 @@ class BaseGame;
 class SystemClassRegistry;
 class DebuggerController;
 
-const int INT_MAX_VALUE = 0x7fffffff;
-const int INT_MIN_VALUE = -INT_MAX_VALUE - 1; // WME3D
+const int INT_MAX_VALUE  = 0x7fffffff;
+const int INT_MIN_VALUE  = -INT_MAX_VALUE - 1;
+const int UINT_MAX_VALUE = 0xffffffff;
 
 // our engine debug channels
 enum {

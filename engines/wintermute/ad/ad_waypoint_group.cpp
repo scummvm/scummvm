@@ -44,7 +44,7 @@ AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
-	_lastMimicX = _lastMimicY = -INT_MAX_VALUE;
+	_lastMimicX = _lastMimicY = INT_MIN_VALUE;
 }
 
 

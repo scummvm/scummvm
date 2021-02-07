@@ -46,7 +46,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
-	_lastMimicX = _lastMimicY = -INT_MAX_VALUE;
+	_lastMimicX = _lastMimicY = INT_MIN_VALUE;
 
 	_rect.setEmpty();
 }
@@ -496,7 +496,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
 		rect->setEmpty();
 	} else {
-		int32 minX = INT_MAX_VALUE, minY = INT_MAX_VALUE, maxX = -INT_MAX_VALUE, maxY = -INT_MAX_VALUE;
+		int32 minX = INT_MAX_VALUE, minY = INT_MAX_VALUE, maxX = INT_MIN_VALUE, maxY = INT_MIN_VALUE;
 
 		for (uint32 i = 0; i < _points.size(); i++) {
 			minX = MIN(minX, _points[i]->x);
