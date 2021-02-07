@@ -63,6 +63,10 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 
 	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
 		play_theora_video(name, skip, flags);
+	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "mpg") == 0)) {
+		play_mpeg_video(name, skip, flags);
+	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "avi") == 0)) {
+		play_avi_video(name, skip, flags);
 	} else {
 		char videoFilePath[MAX_PATH];
 		get_install_dir_path(videoFilePath, name);

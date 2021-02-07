@@ -20,6 +20,8 @@
  *
  */
 
+#include "video/avi_decoder.h"
+#include "video/mpegps_decoder.h"
 #include "video/theora_decoder.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
@@ -51,10 +53,7 @@ namespace AGS3 {
 
 using AGS::Shared::AssetManager;
 
-void play_theora_video(const char *name, int skip, int flags) {
-#if !defined (USE_THEORADEC)
-	Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
-#else
+static void play_video(Video::VideoDecoder *decoder, const char *name, int skip, int flags) {
 	std::unique_ptr<Stream> video_stream(AssetManager::OpenAsset(name));
 	if (!video_stream) {
 		Display("Unable to load theora video '%s'", name);
@@ -72,10 +71,9 @@ void play_theora_video(const char *name, int skip, int flags) {
 		stop_all_sound_and_music();
 	}
 
-	Video::TheoraDecoder decoder;
 	AGS::Shared::ScummVMReadStream *stream = new AGS::Shared::ScummVMReadStream(video_stream.get(), DisposeAfterUse::NO);
 
-	if (!decoder.loadStream(stream)) {
+	if (!decoder->loadStream(stream)) {
 		delete stream;
 		Display("Unable to decode theora video '%s'", name);
 		return;
@@ -83,11 +81,11 @@ void play_theora_video(const char *name, int skip, int flags) {
 
 	update_polled_stuff_if_runtime();
 
-	decoder.start();
-	while (!SHOULD_QUIT && !decoder.endOfVideo()) {
-		if (decoder.needsUpdate()) {
+	decoder->start();
+	while (!SHOULD_QUIT && !decoder->endOfVideo()) {
+		if (decoder->needsUpdate()) {
 			// Get the next video frame and draw onto the screen
-			const Graphics::Surface *frame = decoder.decodeNextFrame();
+			const Graphics::Surface *frame = decoder->decodeNextFrame();
 
 			if (stretchVideo && frame->w == scr.w && frame->h == scr.h)
 				// Don't need to stretch video after all
@@ -123,6 +121,24 @@ void play_theora_video(const char *name, int skip, int flags) {
 	}
 
 	invalidate_screen();
+}
+
+void play_avi_video(const char *name, int skip, int flags) {
+	Video::AVIDecoder decoder;
+	play_video(&decoder, name, skip, flags);
+}
+
+void play_mpeg_video(const char *name, int skip, int flags) {
+	Video::MPEGPSDecoder decoder;
+	play_video(&decoder, name, skip, flags);
+}
+
+void play_theora_video(const char *name, int skip, int flags) {
+#if !defined (USE_THEORADEC)
+	Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
+#else
+	Video::TheoraDecoder decoder;
+	play_video(&decoder, name, skip, flags);
 #endif
 }
 

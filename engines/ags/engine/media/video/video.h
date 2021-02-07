@@ -25,6 +25,8 @@
 
 namespace AGS3 {
 
+void play_avi_video(const char *name, int skip, int flags);
+void play_mpeg_video(const char *name, int skip, int flags);
 void play_theora_video(const char *name, int skip, int flags);
 void play_flc_file(int numb, int playflags);
 
