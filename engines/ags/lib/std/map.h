@@ -197,6 +197,11 @@ template<class Key, class Val, class HashFunc = Common::Hash<Key>,
 class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
 	pair<Key, Val> insert(pair<Key, Val> elem) {
+		// unordered_map doesn't replace already existing keys
+		if (this->contains(elem.first))
+			return pair<Key, Val>(elem.first, this->operator[](elem.first));
+
+		// Add item to map
 		this->operator[](elem.first) = elem.second;
 		return elem;
 	}
