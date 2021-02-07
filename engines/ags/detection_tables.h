@@ -147,8 +147,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "geminirue", "Gemini Rue" },
+	{ "lamplightcity", "Lamplight City" },
 	{ "primordia", "Primordia" },
 	{ "resonance", "Resonance" },
+	{ "unavowed", "Unavowed" },
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	{ "10waysfromsunday", "10 Ways from Sunday" },
@@ -673,7 +675,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "laffaireaspirox", "L'Affaire Aspirox" },
 	{ "lagrancastanya", "La Gran Castanya" },
 	{ "lallaveyfabianshones", "LA LLAVE Y FABIAN SHONES" },
-	{ "lamplightcity", "Lamplight City" },
 	{ "laodiseadelfracasoii", "La Odisea del Fracaso II" },
 	{ "laportenoire", "La porte noire" },
 	{ "lastnfurious", "Last'n'Furious" },
@@ -1228,7 +1229,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "twoofakind", "Two of a Kind" },
 	{ "uglyfiles", "Ugly Files" },
 	{ "ulitsadimitrova", "Ulitsa Dimitrova" },
-	{ "unavowed", "Unavowed" },
 	{ "unboundver10", "Unbound Ver 1.0" },
 	{ "unfinished", "unfinished" },
 	{ "unganeedsmumba", "UNGA needs MUMBA" },
