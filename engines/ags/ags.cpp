@@ -363,7 +363,7 @@ Common::Error AGSEngine::run() {
 	if (usetup.disable_exception_handling)
 #endif
 	{
-		int result = AGS3::initialize_engine(startup_opts);
+		AGS3::initialize_engine(startup_opts);
 
 		// Do shutdown stuff
 		::AGS3::quit_free();
