@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-07 12:07+0000\n"
-"PO-Revision-Date: 2021-01-31 09:25+0000\n"
+"PO-Revision-Date: 2021-02-07 15:25+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3341,10 +3341,8 @@ msgid "Magnify Mode Off"
 msgstr "Vergrößerungs-Modus deaktiviert"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Videos hochskalieren"
+msgstr "Nicht skaliert"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
