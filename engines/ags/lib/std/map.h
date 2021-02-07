@@ -84,18 +84,18 @@ public:
 	const_iterator lower_bound(const Key &theKey) const {
 		const_iterator first = this->begin();
 		const_iterator it;
-		int count = _items.size(), step;
+		int count_ = _items.size(), step;
 
-		while (count > 0) {
+		while (count_ > 0) {
 			it = first;
-			step = count / 2;
+			step = count_ / 2;
 			it += step;
 
 			if (_comp(it->_key, theKey)) {
 				first = ++it;
-				count -= step + 1;
+				count_ -= step + 1;
 			} else {
-				count = step;
+				count_ = step;
 			}
 		}
 
@@ -105,18 +105,18 @@ public:
 	iterator lower_bound(const Key &theKey) {
 		iterator first = this->begin();
 		iterator it;
-		int count = _items.size(), step;
+		int count_ = _items.size(), step;
 
-		while (count > 0) {
+		while (count_ > 0) {
 			it = first;
-			step = count / 2;
+			step = count_ / 2;
 			it += step;
 
 			if (_comp(it->_key, theKey)) {
 				first = ++it;
-				count -= step + 1;
+				count_ -= step + 1;
 			} else {
-				count = step;
+				count_ = step;
 			}
 		}
 
@@ -182,13 +182,13 @@ public:
 	 * Returns the number of elements with a matching key
 	 */
 	size_t count(const Key &theKey) {
-		int count = 0;
+		int count_ = 0;
 		for (iterator it = this->begin(); it != this->end(); ++it) {
 			if (it->_key == theKey)
-				++count;
+				++count_;
 		}
 
-		return count;
+		return count_;
 	}
 };
 
