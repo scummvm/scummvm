@@ -36,7 +36,6 @@ MODULE_OBJS = \
 	lib/dumb-0.9.2/it/itrender.o \
 	lib/dumb-0.9.2/it/itunload.o \
 	lib/hq2x/hq2x3x.o \
-	lib/opengl/opengl.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/scriptaudioclip.o \
@@ -252,11 +251,9 @@ MODULE_OBJS = \
 	engine/gfx/gfxdriverbase.o \
 	engine/gfx/gfxdriverfactory.o \
 	engine/gfx/gfxfilter_aad3d.o \
-	engine/gfx/gfxfilter_aaogl.o \
 	engine/gfx/gfxfilter_allegro.o \
 	engine/gfx/gfxfilter_d3d.o \
 	engine/gfx/gfxfilter_hqx.o \
-	engine/gfx/gfxfilter_ogl.o \
 	engine/gfx/gfxfilter_scaling.o \
 	engine/gui/animatingguibutton.o \
 	engine/gui/cscidialog.o \
