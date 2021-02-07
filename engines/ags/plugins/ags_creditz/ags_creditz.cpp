@@ -473,7 +473,7 @@ int AGSCreditz20::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz20::calculateSequenceHeight(int sequence) {
-	int height, creditHeight, dum;
+	int32 height, creditHeight, dum;
 	height = 0;
 
 	for (uint currentCredit = 0; currentCredit < _state->_credits[sequence].size();
@@ -501,7 +501,7 @@ void AGSCreditz20::calculateSequenceHeight(int sequence) {
 }
 
 int AGSCreditz20::VGACheck(int value) {
-	int screenX, dum;
+	int32 screenX, dum;
 	_engine->GetScreenDimensions(&screenX, &dum, &dum);
 
 	if (screenX == 640)

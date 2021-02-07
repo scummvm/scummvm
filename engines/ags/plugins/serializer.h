@@ -41,14 +41,15 @@ public:
 	bool isLoading() const { return _isLoading; }
 	bool isSaving() const { return !_isLoading; }
 
-	void syncAsInt(int &value) {
+	template<typename T>
+	void syncAsInt(T &value) {
 		byte buf[4];
 		if (_isLoading) {
-			_engine->FRead(buf, sizeof(int32), _file);
+			_engine->FRead(buf, 4, _file);
 			value = READ_LE_INT32(buf);
 		} else {
 			WRITE_LE_UINT32(buf, value);
-			_engine->FWrite(buf, sizeof(int32), _file);
+			_engine->FWrite(buf, 4, _file);
 		}
 	}
 
