@@ -62,6 +62,7 @@ public:
     void popScene();
     void addObjectToInventory(uint16 id);
     void removeObjectFromInventory(uint16 id, bool pickUp = false);
+    float handleScrollbar(uint id, bool reset = false);
 
 private:
     void init();
@@ -71,7 +72,6 @@ private:
     void handleMouse();
     void clearSceneData();
 
-    float handleScrollbar(uint id);
 
 public:
     enum State {
