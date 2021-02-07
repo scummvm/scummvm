@@ -166,11 +166,12 @@ protected:
 public:
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima8Engine() override;
-	void GUIError(const Common::String &msg);
 
 	static Ultima8Engine *get_instance() {
 		return dynamic_cast<Ultima8Engine *>(_application);
 	}
+
+	bool hasFeature(EngineFeature f) const override;
 
 	bool startup();
 	void shutdown();
