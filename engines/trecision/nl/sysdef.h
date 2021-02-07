@@ -73,7 +73,7 @@ Screen management
 #define MAXX            640
 #define MAXY            480
 #define SCREENLEN		640
-/*PELS: define game area (you have to recompile everything!!!)  **************/
+
 #define AREA  			360
 #define TOP         	((MAXY-AREA)/2)             // Coordinate y of game screen
 #define VIDEOTOP		TOP
@@ -124,7 +124,7 @@ Inventory
 #define INV_DEPAINT     8               // Not yet OFF (Going up)
 #define INV_OFF        	16              // Not on screen
 
-#define INVENTORY_HIDE  40 		// ICONDY ...era a 48. PELS
+#define INVENTORY_HIDE  40 		// ICONDY ...era a 48.
 #define INVENTORY_SHOW  0
 
 /******************************************************************************

@@ -42,7 +42,7 @@ extern uint16 _playingAnims[];
 
 // inventory
 #define COUNTERSTEP 6
-//PELS:  e qui ci si gioca l'inv con accellerazione ***********
+
 int16 InvSpeed[8] = { 20, 10, 5, 3, 2};
 int InvSpeedIndex = 0;
 uint32 ScrollInvTime;
