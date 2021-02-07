@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "common/inttypes.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -28,6 +29,10 @@
 #include "graphics/yuv_to_rgb.h"
 
 #include "image/codecs/mpeg.h"
+
+extern "C" {
+	#include <mpeg2dec/mpeg2.h>
+}
 
 namespace Image {
 
