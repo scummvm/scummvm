@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-07 12:07+0000\n"
-"PO-Revision-Date: 2021-02-01 15:45+0000\n"
+"PO-Revision-Date: 2021-02-08 09:23+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3321,10 +3321,8 @@ msgid "Magnify Mode Off"
 msgstr "Suurennustila poissa"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Skaalaa videot"
+msgstr "Skaalaamaton"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
