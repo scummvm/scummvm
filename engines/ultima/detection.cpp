@@ -85,6 +85,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},
+	{
+		GAMEOPTION_TARGETED_JUMP,
+		{
+			_s("Enable jump to mouse position"),
+			_s("Jumping while not moving targets the mouse cursor rather than direction only."),
+			"targetedjump",
+			true
+		}
+	},
     AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
