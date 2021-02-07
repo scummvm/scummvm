@@ -205,9 +205,9 @@ Common::Error PrivateEngine::run() {
             case Common::EVENT_LBUTTONDOWN:
                 _numberClicks++;
                 if (selectDossierNextSuspect(mousePos))
-                  break;
+                    break;
                 else if (selectDossierPrevSuspect(mousePos))
-                  break;
+                    break;
 
                 selectPauseMovie(mousePos);
                 selectPhoneArea(mousePos);
@@ -316,9 +316,9 @@ void PrivateEngine::checkPoliceBust() {
 
     if (_numberClicks < _sirenWarning)
         return;
-     
+
     if (_numberClicks == _sirenWarning) {
-        stopSound(true); 
+        stopSound(true);
         playSound(*_sirenSound, 0, false, false);
         _numberClicks++; // Won't execute again
         return;
@@ -424,7 +424,7 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
-    if (_mode == 1) {        
+    if (_mode == 1) {
         Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
         //debug("%d, %d", mousePos.x, mousePos.y);
         //debug("%d, %d", window.top, window.left);
@@ -700,9 +700,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         DossierInfo *m = (DossierInfo*) malloc(sizeof(DossierInfo));
         m->page1 = file;
 
-        file = new Common::String(stream->readString());        
+        file = new Common::String(stream->readString());
         if (file->size() == 0) {
-            m->page2 = NULL; 
+            m->page2 = NULL;
         } else {
             m->page2 = file;
         }
@@ -797,7 +797,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     for (DossierArray::iterator it = _dossiers.begin(); it != _dossiers.end(); ++it) {
         stream->writeString(it->page1->c_str());
         stream->writeByte(0);
-        
+
         if (it->page2 != NULL)
             stream->writeString(it->page2->c_str());
         stream->writeByte(0);
@@ -884,7 +884,7 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
     if (stopOthers) {
         stopSound(true);
     }
-    
+
     Audio::SoundHandle *sh = NULL;
     if (background) {
         _mixer->stopHandle(_bgSoundHandle);
@@ -1111,7 +1111,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
             //debug("%hd %hd", rect->left, rect->top + offset);
             loadMask(s, rect->left + 120, rect->top + offset, true);
         }
-        
+
     }
 
 }
@@ -1123,7 +1123,7 @@ void PrivateEngine::loadInventory(uint32 x, Common::Rect *r1, Common::Rect *r2) 
         //debug("%hd %hd", rect->left, rect->top + offset);
         loadMask(*it, r1->left, r1->top + offset, true);
     }
-        
+
 }
 
 } // End of namespace Private

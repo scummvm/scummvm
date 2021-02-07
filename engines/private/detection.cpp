@@ -49,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
         GUIO1(GUIO_NOMIDI)
     },
 
-    
+
     {
         "private-eye", // Demo from the EU release
         "Demo",
