@@ -85,6 +85,7 @@ typedef Common::List<ExitInfo> ExitList;
 typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
+typedef Common::List<Common::String> InvList;
 
 // arrays
 
@@ -109,7 +110,8 @@ public:
     PrivateEngine(OSystem *syst);
     ~PrivateEngine();
 
-    Audio::SoundHandle _soundHandle;
+    Audio::SoundHandle _fgSoundHandle;
+    Audio::SoundHandle _bgSoundHandle;
     Video::SmackerDecoder *_videoDecoder;
     Common::InstallerArchive _installerArchive;
 
@@ -143,20 +145,17 @@ public:
         return true;
     }
 
-
-
-
     Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
     Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
     void syncGameStream(Common::Serializer &s);
 
     Common::String convertPath(Common::String);
-    void playSound(const Common::String &, uint, bool);
+    void playSound(const Common::String &, uint, bool, bool);
     void playVideo(const Common::String &);
     void skipVideo();
-    void stopSound();
+    void stopSound(bool);
 
-    void loadImage(const Common::String &file, int x, int y, bool drawn = true);
+    void loadImage(const Common::String &file, int x, int y);
     void drawScreenFrame(Graphics::Surface *);
 
     void changeCursor(Common::String);
@@ -199,6 +198,13 @@ public:
     int _sirenWarning;
     Common::String *_policeBustSetting;
 
+    // Diary
+
+    InvList inventory;
+    Common::String *_diaryLocPrefix;
+    void loadLocations(Common::Rect *);
+    void loadInventory(uint32, Common::Rect *, Common::Rect *);
+
     // Save/Load games
     MaskInfo *_saveGameMask;
     MaskInfo *_loadGameMask;
@@ -227,7 +233,6 @@ public:
     Common::String *_takeSound;
     Common::String *_leaveSound;
     Common::String *_sirenSound;
-
 
     // Radios
 

@@ -11,7 +11,14 @@ namespace Private {
 
 void ChgMode(ArgArray args) {
     // assert types
-    debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
+    assert (args.size() == 2 || args.size() == 3);
+    if (args.size() == 2)
+        debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
+    else if (args.size() == 3)
+        debug("ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
+    else 
+        assert(0);
+
     g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
     g_private->_nextSetting = s;
@@ -25,7 +32,10 @@ void ChgMode(ArgArray args) {
     else
         assert(0);
 
-    g_private->stopSound();
+    if (args.size() == 3)
+        setSymbol(args[2].u.sym, true);
+
+    g_private->stopSound(true);
 }
 
 void VSPicture(ArgArray args) {
@@ -34,6 +44,41 @@ void VSPicture(ArgArray args) {
     g_private->_nextVS = new Common::String(args[0].u.str);
 }
 
+
+void DiaryLocList(ArgArray args) {
+    int x1, y1, x2, y2;
+
+    debug("DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
+
+    x2 = args[0].u.val;
+    y2 = args[1].u.val;
+
+    x1 = args[2].u.val;
+    y1 = args[3].u.val;
+
+    Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
+    rect->debugPrint();
+    g_private->loadLocations(rect);
+
+}
+
+void DiaryGoLoc(ArgArray args) {
+    debug("WARNING: DiaryGoLoc not implemented");
+}
+
+void DiaryInvList(ArgArray args) {
+    Common::Rect *r1, *r2;
+
+    debug("DiaryInvList(%d, ..)", args[0].u.val);
+
+    r1 = args[1].u.rect;
+    r2 = args[2].u.rect;
+
+    r1->debugPrint();
+    r2->debugPrint();
+
+    g_private->loadInventory(args[0].u.val, r1, r2);
+}
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
     // assert types
@@ -51,10 +96,10 @@ void SyncSound(ArgArray args) {
 
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, true);
+        g_private->playSound(*s, 1, true, false);
         //assert(0);
     } else {
-        g_private->stopSound();
+        g_private->stopSound(true);
     }
 }
 
@@ -108,7 +153,7 @@ void PoliceBust(ArgArray args) {
     if (args.size() == 2) {
         if (args[1].u.val == 2) {
             Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
-            g_private->playSound(*s, 1, false);
+            g_private->playSound(*s, 1, false, false);
             assert(0);
 
         }
@@ -206,7 +251,7 @@ void Inventory(ArgArray args) {
     Datum v1 = args[1];
     Datum v2 = args[2];
     Datum e = args[3];
-
+    Datum i = args[4];
     Datum c = args[5];
 
     Datum snd = args[8];
@@ -215,7 +260,11 @@ void Inventory(ArgArray args) {
     assert(b1.type == STRING);
     assert(e.type == STRING || e.type == NUM);
     assert(snd.type == STRING);
+    assert(i.type == STRING);
 
+    Common::String *bmp = new Common::String(i.u.str);
+    assert(strcmp(bmp->c_str(), "\"\"") != 0);
+    
 
     if (v1.type == STRING)
         assert(strcmp(v1.u.str, "\"\"") == 0);
@@ -256,23 +305,25 @@ void Inventory(ArgArray args) {
         } else {
             f = g_private->getTakeLeaveSound();
         }
-        g_private->playSound(*f, 1, false);
-
+        g_private->playSound(*f, 1, false, false);
+        g_private->inventory.push_back(*bmp);
     } else { 
         if (v1.type == NAME) {
-            if (strcmp(c.u.str, "\"REMOVE\"") == 0)
+            if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
                 v1.u.sym->u.val = 0;
-            else
+                g_private->inventory.remove(*bmp);
+            } else {
                 v1.u.sym->u.val = 1;
+                g_private->inventory.push_back(*bmp);
+            }
+        } else  {
+            g_private->inventory.push_back(*bmp);
         }
 
         if (v2.type == NAME)
             v2.u.sym->u.val = 1;
     }
 
-
-
-    // TODO: Keep track of inventory is missing
 }
 
 void SetFlag(ArgArray args) {
@@ -317,7 +368,7 @@ void PaperShuffleSound(ArgArray args) {
     // assert types
     debug("PaperShuffleSound()");
     Common::String *s = g_private->getPaperShuffleSound();
-    g_private->playSound(*s, 1, false);
+    g_private->playSound(*s, 1, false, false);
 }
 
 void SoundEffect(ArgArray args) {
@@ -325,22 +376,35 @@ void SoundEffect(ArgArray args) {
     debug("SoundEffect(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, false);
+        g_private->playSound(*s, 1, false, false);
         //assert(0);
     } else {
-        g_private->stopSound();
+        g_private->stopSound(true);
     }
 }
 
 void Sound(ArgArray args) {
     // assert types
     debug("Sound(%s)", args[0].u.str);
+    if (args.size() == 4) {
+        bool b1 = args[1].u.val;
+        bool b2 = args[2].u.val;
+        int c = args[3].u.val;
+
+        if (!b1 && !b2 && c == 1) {
+            g_private->stopSound(true);
+        } else if (!b1 && !b2 && c == 2) {
+            g_private->stopSound(false);
+        } else
+            assert(0);
+    }
+
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, true);
+        g_private->playSound(*s, 1, false, false);
         //assert(0);
     } else {
-        g_private->stopSound();
+        g_private->stopSound(true);
     }
 }
 
@@ -350,10 +414,10 @@ void LoopedSound(ArgArray args) {
     debug("LoopedSound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 0, true);
+        g_private->playSound(*s, 0, true, true);
         //assert(0);
     } else {
-        g_private->stopSound();
+        g_private->stopSound(true);
     }
 }
 
@@ -398,7 +462,6 @@ void Movie(ArgArray args) {
         debug("movie %s already played", movie->c_str());
         g_private->_nextSetting = g_private->_repeatedMovieExit;
     }
-
     //g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
@@ -406,8 +469,8 @@ void CRect(ArgArray args) {
     // assert types
     int x1, y1, x2, y2;
 
-    debug("CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[0].u.val, args[1].u.val);
-    //assert(0);
+    debug("CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
+
     x1 = args[0].u.val;
     y1 = args[1].u.val;
 
@@ -641,6 +704,9 @@ static struct FuncTable {
     { Transition,      "Transition"},
     { Movie,           "Movie"},
 
+    // Diary
+    {DiaryLocList,     "DiaryLocList"},
+    {DiaryGoLoc,       "DiaryGoLoc"},
 
     { Exit,            "Exit"},
     { Quit,            "Quit"},
