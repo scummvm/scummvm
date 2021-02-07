@@ -31,8 +31,8 @@ class BaseThread {
 public:
 	typedef void(*AGSThreadEntry)();
 
-	BaseThread() = default;
-	virtual ~BaseThread() = default;
+	BaseThread() {}
+	virtual ~BaseThread() {}
 
 	BaseThread &operator=(const BaseThread &) = delete;
 	BaseThread(const BaseThread &) = delete;

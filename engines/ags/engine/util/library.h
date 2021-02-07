@@ -32,9 +32,9 @@ namespace Engine {
 
 class BaseLibrary {
 public:
-	BaseLibrary() = default;
+	BaseLibrary() {}
 
-	virtual ~BaseLibrary() = default;
+	virtual ~BaseLibrary() {}
 
 	virtual AGS::Shared::String GetFilenameForLib(AGS::Shared::String libraryName) = 0;
 
