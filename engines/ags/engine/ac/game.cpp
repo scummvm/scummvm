@@ -1191,7 +1191,7 @@ void restore_game_play(Stream *in, RestoredData &r_data) {
 	int screenfadedout_was = play.screen_is_faded_out;
 	int roomchanges_was = play.room_changes;
 	// make sure the pointer is preserved
-	int *gui_draw_order_was = play.gui_draw_order;
+	int32_t *gui_draw_order_was = play.gui_draw_order;
 
 	ReadGameState_Aligned(in, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;

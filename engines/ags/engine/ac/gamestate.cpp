@@ -234,7 +234,7 @@ PViewport GameState::CreateRoomViewport() {
 	viewport->SetRect(_mainViewport.GetRect());
 	ScriptViewport *scv = new ScriptViewport(index);
 	_roomViewports.push_back(viewport);
-	_scViewportRefs.push_back(std::make_pair(scv, 0));
+	_scViewportRefs.push_back(std::make_pair(scv, (int32_t)0));
 	_roomViewportsSorted.push_back(viewport);
 	_roomViewportZOrderChanged = true;
 	on_roomviewport_created(index);
@@ -291,7 +291,7 @@ PCamera GameState::CreateRoomCamera() {
 	camera->SetAt(0, 0);
 	camera->SetSize(_mainViewport.GetRect().GetSize());
 	ScriptCamera *scam = new ScriptCamera(index);
-	_scCameraRefs.push_back(std::make_pair(scam, 0));
+	_scCameraRefs.push_back(std::make_pair(scam, (int32_t)0));
 	_roomCameras.push_back(camera);
 	return camera;
 }

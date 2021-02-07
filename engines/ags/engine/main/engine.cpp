@@ -344,7 +344,7 @@ void engine_locate_speech_pak() {
 					for (int ee = 0; ee < numLipLines; ee++) {
 						splipsync[ee].numPhonemes = speechsync->ReadInt16();
 						speechsync->Read(splipsync[ee].filename, 14);
-						splipsync[ee].endtimeoffs = (int *)malloc(splipsync[ee].numPhonemes * sizeof(int));
+						splipsync[ee].endtimeoffs = (int32_t *)malloc(splipsync[ee].numPhonemes * sizeof(int32_t));
 						speechsync->ReadArrayOfInt32(splipsync[ee].endtimeoffs, splipsync[ee].numPhonemes);
 						splipsync[ee].frame = (short *)malloc(splipsync[ee].numPhonemes * sizeof(short));
 						speechsync->ReadArrayOfInt16(splipsync[ee].frame, splipsync[ee].numPhonemes);

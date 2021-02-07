@@ -24,6 +24,7 @@
 #define AGS_SHARED_AC_CHARACTERINFO_H
 
 #include "ags/shared/ac/common_defines.h" // constants
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -69,7 +70,7 @@ struct CharacterInfo {
 	int   talkview;
 	int   view;
 	int   room, prevroom;
-	int   x, y, wait;
+	int32_t x, y, wait;
 	int   flags;
 	short following;
 	short followinfo;

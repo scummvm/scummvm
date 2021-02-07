@@ -1856,7 +1856,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 	return 0;
 }
 
-int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
+int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int step) {
 	int ex, ey, nearest = 99999, thisis, nearx = 0, neary = 0;
 	int startx = 0, starty = 14;
 	int roomWidthLowRes = room_to_mask_coord(thisroom.Width);
@@ -1914,7 +1914,7 @@ int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
 	return 0;
 }
 
-void find_nearest_walkable_area(int *xx, int *yy) {
+void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
 
 	int pixValue = thisroom.WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
 	// only fix this code if the game was built with 2.61 or above

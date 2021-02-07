@@ -41,7 +41,7 @@ using namespace AGS; // FIXME later
 #define MAXNEEDSTAGES_LEGACY 40
 
 struct MoveList {
-	int   pos[MAXNEEDSTAGES];
+	int32_t pos[MAXNEEDSTAGES];
 	int   numstage;
 	fixed xpermove[MAXNEEDSTAGES], ypermove[MAXNEEDSTAGES];
 	int   fromx, fromy;

@@ -23,11 +23,13 @@
 #ifndef AGS_ENGINE_AC_LIPSYNC_H
 #define AGS_ENGINE_AC_LIPSYNC_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 struct SpeechLipSyncLine {
 	char  filename[14];
-	int *endtimeoffs;
+	int32_t *endtimeoffs;
 	short *frame;
 	short numPhonemes;
 };

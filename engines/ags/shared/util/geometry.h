@@ -30,6 +30,7 @@
 #define AGS_SHARED_UTIL_GEOMETRY_H
 
 #include "ags/shared/util/math.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -143,15 +144,15 @@ inline Line VLine(int x, int y1, int y2) {
 }
 
 struct Size {
-	int Width;
-	int Height;
+	int32_t Width;
+	int32_t Height;
 
 	Size() {
 		Width = 0;
 		Height = 0;
 	}
 
-	Size(int width, int height) {
+	Size(int32_t width, int32_t height) {
 		Width = width;
 		Height = height;
 	}

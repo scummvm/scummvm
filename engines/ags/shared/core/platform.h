@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_CORE_PLATFORM_H
 #define AGS_SHARED_CORE_PLATFORM_H
 
-#include <common/scummsys.h>
+#include "common/scummsys.h"
 
 namespace AGS3 {
 

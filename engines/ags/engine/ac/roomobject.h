@@ -24,6 +24,7 @@
 #define AGS_ENGINE_AC_ROOMOBJECT_H
 
 #include "ags/shared/ac/common_defines.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -37,8 +38,8 @@ using namespace AGS; // FIXME later
 
 // IMPORTANT: this struct is restricted by plugin API!
 struct RoomObject {
-	int   x, y;
-	int   transparent;    // current transparency setting
+	int32_t x, y;
+	int32_t transparent;    // current transparency setting
 	short tint_r, tint_g;   // specific object tint
 	short tint_b, tint_level;
 	short tint_light;

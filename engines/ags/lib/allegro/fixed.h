@@ -24,10 +24,11 @@
 #define AGS_LIB_ALLEGRO_FIXED_H
 
 #include "common/scummsys.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
-typedef int32 fixed;
+typedef int32_t fixed;
 
 extern fixed fixtorad_r;
 extern fixed radtofix_r;

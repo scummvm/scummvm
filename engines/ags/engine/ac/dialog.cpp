@@ -1030,7 +1030,7 @@ int show_dialog_options(int _dlgnum, int sayChosenOption, bool _runGameLoopsInBa
 	int dialog_choice = DlgOpt.chose;
 	if (dialog_choice != CHOSE_TEXTPARSER) {
 		DialogTopic *dialog_topic = DlgOpt.dtop;
-		int &option_flags = dialog_topic->optionflags[dialog_choice];
+		int32_t &option_flags = dialog_topic->optionflags[dialog_choice];
 		const char *option_name = DlgOpt.dtop->optionnames[dialog_choice];
 
 		option_flags |= DFLG_HASBEENCHOSEN;

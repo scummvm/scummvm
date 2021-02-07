@@ -66,7 +66,7 @@ struct RoomStatus {
 	char  hotspot_enabled[MAX_ROOM_HOTSPOTS];
 	char  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];
-	int   interactionVariableValues[MAX_GLOBAL_VARIABLES];
+	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
 
 	RoomStatus();
 	~RoomStatus();

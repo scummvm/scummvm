@@ -184,8 +184,8 @@ void fix_player_sprite(MoveList *cmls, CharacterInfo *chinf);
 // Check whether two characters have walked into each other
 int  has_hit_another_character(int sourceChar);
 int  doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *chex);
-int  find_nearest_walkable_area_within(int *xx, int *yy, int range, int step);
-void find_nearest_walkable_area(int *xx, int *yy);
+int  find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int step);
+void find_nearest_walkable_area(int32_t *xx, int32_t *yy);
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims);
 void FindReasonableLoopForCharacter(CharacterInfo *chap);
 void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int direct, bool isWalk);
