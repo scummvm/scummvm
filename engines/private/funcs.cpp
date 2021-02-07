@@ -35,7 +35,11 @@ void ChgMode(ArgArray args) {
     if (args.size() == 3)
         setSymbol(args[2].u.sym, true);
 
-    g_private->stopSound(true);
+    if (!g_private->_noStopSounds) {
+        // This is the only place where this should be used
+        g_private->stopSound(true);
+        g_private->_noStopSounds = false;
+    }
 }
 
 void VSPicture(ArgArray args) {
@@ -241,7 +245,9 @@ void DossierNextSuspect(ArgArray args) {
 
 void NoStopSounds(ArgArray args) {
     // assert types
-    debug("WARNING: NoStopSounds is not implemented");
+    assert(args.size() == 0);
+    debug("NoStopSounds()");
+    g_private->_noStopSounds = true;
 }
 
 void Inventory(ArgArray args) {
@@ -706,6 +712,7 @@ static struct FuncTable {
 
     // Diary
     {DiaryLocList,     "DiaryLocList"},
+    {DiaryInvList,     "DiaryInvList"},
     {DiaryGoLoc,       "DiaryGoLoc"},
 
     { Exit,            "Exit"},

@@ -85,6 +85,7 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _paperShuffleSound = new Common::String("global/audio/glsfx0");
     _takeSound = new Common::String("global/audio/took");
     _leaveSound = new Common::String("global/audio/left");
+    _noStopSounds = false;
 
     // Radios and phone
     _policeRadioArea = NULL;
@@ -1103,7 +1104,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
         i++;
         if (sym->u.val) {
             offset = offset + 22;
-            char *f = (char*) malloc(12*sizeof(char));
+            char *f = (char*) malloc(13*sizeof(char));
             sprintf(f, "dryloc%d.bmp", i);
             debug("%s, %d, %d", f, i, offset);
             Common::String s(*_diaryLocPrefix + f);
@@ -1116,11 +1117,11 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
 }
 
 void PrivateEngine::loadInventory(uint32 x, Common::Rect *r1, Common::Rect *r2) {
-    int16 offset = 44;
+    int16 offset = 0;
     for (NameList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
         offset = offset + 22;
-       //debug("%hd %hd", rect->left, rect->top + offset);
-        loadMask(*it, r1->left + 120, r1->top + offset, true);
+        //debug("%hd %hd", rect->left, rect->top + offset);
+        loadMask(*it, r1->left, r1->top + offset, true);
     }
         
 }

@@ -150,10 +150,8 @@ public:
     void syncGameStream(Common::Serializer &s);
 
     Common::String convertPath(Common::String);
-    void playSound(const Common::String &, uint, bool, bool);
     void playVideo(const Common::String &);
     void skipVideo();
-    void stopSound(bool);
 
     void loadImage(const Common::String &file, int x, int y);
     void drawScreenFrame(Graphics::Surface *);
@@ -223,6 +221,10 @@ public:
     MaskList _masks;
 
     // Sounds
+
+    void playSound(const Common::String &, uint, bool, bool);
+    void stopSound(bool);
+    bool _noStopSounds;
 
     Common::String *getPaperShuffleSound();
     Common::String *_paperShuffleSound;
