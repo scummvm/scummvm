@@ -347,6 +347,7 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 			return (pvf->flags & VFLG_FLIPSPRITE) ? 1 : 0;
 		else
 			quit("GetGameParameter internal error");
+		return 0;
 	}
 	case GP_ISRUNNEXTLOOP:
 		return Game_GetRunNextSettingForLoop(data1, data2);
