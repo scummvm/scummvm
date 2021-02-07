@@ -36,6 +36,11 @@
 //include <stddef.h>
 //include <math.h>
 
+// Not all platforms define INFINITY
+#ifndef INFINITY
+#define INFINITY   ((float)(1e+300 * 1e+300)) // This must overflow
+#endif
+
 namespace AGS3 {
 
 // TODO: this could be cleaned up/simplified ...
