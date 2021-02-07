@@ -50,13 +50,6 @@
 
 namespace AGS3 {
 
-#ifndef AGS_NO_VIDEO_PLAYER
-extern void dxmedia_abort_video();
-extern void dxmedia_pause_video();
-extern void dxmedia_resume_video();
-extern char lastError[200];
-#endif
-
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -147,10 +140,6 @@ struct AGSWin32 : AGSPlatformDriver {
 	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const;
 	virtual bool LockMouseToWindow();
 	virtual void UnlockMouse();
-
-#ifndef AGS_NO_VIDEO_PLAYER
-	virtual void PlayVideo(const char *name, int skip, int flags);
-#endif
 
 
 private:
@@ -683,15 +672,9 @@ void AGSWin32::DisplaySwitchIn() {
 }
 
 void AGSWin32::PauseApplication() {
-#ifndef AGS_NO_VIDEO_PLAYER
-	dxmedia_pause_video();
-#endif
 }
 
 void AGSWin32::ResumeApplication() {
-#ifndef AGS_NO_VIDEO_PLAYER
-	dxmedia_resume_video();
-#endif
 }
 
 void AGSWin32::GetSystemDisplayModes(std::vector<DisplayMode> &dms) {
@@ -852,56 +835,7 @@ int AGSWin32::InitializeCDPlayer() {
 #endif
 }
 
-#ifndef AGS_NO_VIDEO_PLAYER
-
-void AGSWin32::PlayVideo(const char *name, int skip, int flags) {
-
-	char useloc[250];
-	sprintf(useloc, "%s\\%s", ResPaths.DataDir.GetCStr(), name);
-
-	bool useSound = true;
-	if (flags >= 10) {
-		flags -= 10;
-		useSound = false;
-	} else {
-		// for some reason DirectSound can't be shared, so uninstall
-		// allegro sound before playing the video
-		shutdown_sound();
-	}
-
-	bool isError = false;
-	if (Common::File::TestReadFile(useloc)) {
-		isError = (gfxDriver->PlayVideo(useloc, useSound, (VideoSkipType)skip, (flags > 0)) == 0);
-	} else {
-		isError = true;
-		sprintf(lastError, "File not found: %s", useloc);
-	}
-
-	if (isError) {
-		// turn "Always display as speech" off, to make sure error
-		// gets displayed correctly
-		int oldalways = game.options[OPT_ALWAYSSPCH];
-		game.options[OPT_ALWAYSSPCH] = 0;
-		Display("Video playing error: %s", lastError);
-		game.options[OPT_ALWAYSSPCH] = oldalways;
-	}
-
-	if (useSound) {
-		// Restore sound system
-		install_sound(usetup.digicard, usetup.midicard, NULL);
-		if (usetup.mod_player)
-			init_mod_player(NUM_MOD_DIGI_VOICES);
-	}
-
-	set_palette_range(palette, 0, 255, 0);
-}
-
-#endif
-
 void AGSWin32::AboutToQuitGame() {
-#ifndef AGS_NO_VIDEO_PLAYER
-	dxmedia_abort_video();
-#endif
 }
 
 void AGSWin32::PostAllegroExit() {

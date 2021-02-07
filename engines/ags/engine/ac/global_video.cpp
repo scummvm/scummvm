@@ -24,6 +24,7 @@
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_display.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_video.h"
 #include "ags/engine/ac/path_helper.h"
@@ -52,9 +53,6 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 	pause_sound_if_necessary_and_play_video(name, skip, flags);
 }
 
-
-#ifndef AGS_NO_VIDEO_PLAYER
-
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
 	int musplaying = play.cur_music_number, i;
 	int ambientWas[MAX_SOUND_CHANNELS];
@@ -68,10 +66,7 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "avi") == 0)) {
 		play_avi_video(name, skip, flags);
 	} else {
-		char videoFilePath[MAX_PATH];
-		get_install_dir_path(videoFilePath, name);
-
-		platform->PlayVideo(videoFilePath, skip, flags);
+		Display("Unsupported video '%s'", name);
 	}
 
 	if (flags < 10) {
@@ -85,12 +80,5 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 		}
 	}
 }
-
-#else
-
-void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
-}
-
-#endif
 
 } // namespace AGS3
