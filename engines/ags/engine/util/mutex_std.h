@@ -34,7 +34,7 @@ class StdMutex : public BaseMutex {
 public:
 	inline StdMutex() : mutex_() {
 	}
-	inline ~StdMutex() override = default;
+	inline ~StdMutex() override {}
 
 	StdMutex &operator=(const StdMutex &) = delete;
 	StdMutex(const StdMutex &) = delete;

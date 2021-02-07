@@ -29,9 +29,9 @@ namespace Engine {
 
 class BaseMutex {
 public:
-	BaseMutex() = default;
+	BaseMutex() {}
 
-	virtual ~BaseMutex() = default;
+	virtual ~BaseMutex() {}
 
 	BaseMutex &operator=(const BaseMutex &) = delete;
 	BaseMutex(const BaseMutex &) = delete;
