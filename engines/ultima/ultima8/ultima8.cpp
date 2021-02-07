@@ -167,6 +167,14 @@ bool Ultima8Engine::initialize() {
 void Ultima8Engine::deinitialize() {
 }
 
+bool Ultima8Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsSubtitleOptions) ||
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 bool Ultima8Engine::startup() {
 	setDebugger(new Debugger());
 	pout << "-- Initializing Pentagram -- " << Std::endl;
