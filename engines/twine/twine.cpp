@@ -676,7 +676,7 @@ void TwinEEngine::processOptionsMenu() {
 	ScopedEngineFreeze scoped(this);
 	_sound->pauseSamples();
 	_menu->inGameOptionsMenu();
-	// TODO: play music
+	_scene->playSceneMusic();
 	_sound->resumeSamples();
 	_redraw->redrawEngineActions(true);
 }

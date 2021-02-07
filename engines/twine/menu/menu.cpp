@@ -670,7 +670,7 @@ int32 Menu::optionsMenu() {
 	_engine->flip();
 
 	_engine->_sound->stopSamples();
-	//_engine->_music->playTrackMusic(9);
+	_engine->_music->playTrackMusic(9);
 
 	ScopedCursor scoped(_engine);
 	for (;;) {

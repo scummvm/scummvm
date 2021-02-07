@@ -312,6 +312,8 @@ public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
 	~Scene();
 
+	void playSceneMusic();
+
 	void reloadCurrentScene();
 	uint8 *currentScene = nullptr;
 

@@ -554,6 +554,14 @@ void Scene::initSceneVars() {
 	sceneNumTracks = 0;
 }
 
+void Scene::playSceneMusic() {
+	if (currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasGameFlag(90)) {
+		_engine->_music->playMidiMusic(8);
+	} else {
+		_engine->_music->playMidiMusic(_sceneMusic);
+	}
+}
+
 void Scene::processEnvironmentSound() {
 	if (_engine->lbaTime >= _sampleAmbienceTime) {
 		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
