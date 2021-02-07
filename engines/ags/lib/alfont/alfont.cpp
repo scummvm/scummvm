@@ -27,6 +27,7 @@
 namespace AGS3 {
 
 Graphics::Font *ALFONT_FONT::getFont() {
+#ifdef USE_FREETYPE2
 	if (!_fonts.contains(_size)) {
 		// Instantiate the raw TTF data into a font of the given size
 		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size);
@@ -34,6 +35,9 @@ Graphics::Font *ALFONT_FONT::getFont() {
 	}
 
 	return _fonts[_size];
+#else
+	error("Game needs FreeType library, which was not included in this build");
+#endif
 }
 
 /*------------------------------------------------------------------*/
