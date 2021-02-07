@@ -328,8 +328,8 @@ bool Ultima8Engine::startupGame() {
 
 	_game = Game::createGame(getGameInfo());
 
-	ConfMan.registerDefault("overridefonts", false);
-	_ttfOverrides = ConfMan.getBool("overridefonts");
+	ConfMan.registerDefault("font_override", false);
+	_ttfOverrides = ConfMan.getBool("font_override");
 
 	ConfMan.registerDefault("frameSkip", false);
 	_frameSkip = ConfMan.getBool("frameSkip");

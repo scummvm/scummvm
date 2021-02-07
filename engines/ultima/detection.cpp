@@ -59,11 +59,20 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
     {
-		GAMEOPTION_OVERRIDE_FONTS,
+		GAMEOPTION_FONT_OVERRIDE,
 		{
 			_s("Enable font replacement"),
 			_s("Replaces game fonts with rendered fonts"),
-			"overridefonts",
+			"font_override",
+			false
+		}
+	},
+	{
+		GAMEOPTION_FONT_ANTIALIASING,
+		{
+			_s("Enable font anti-aliasing"),
+			_s("When font anti-aliasing is enabled, the text is smoother."),
+			"font_antialiasing",
 			false
 		}
 	},

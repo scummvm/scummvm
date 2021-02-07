@@ -398,7 +398,7 @@ void GameData::setupJPOverrides() {
 		}
 	}
 
-	bool overridefonts = ConfMan.getBool("overridefonts");
+	bool overridefonts = ConfMan.getBool("font_override");
 	if (overridefonts)
 		setupTTFOverrides("language", true);
 }
@@ -409,7 +409,7 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 	KeyMap ttfkeyvals;
 	KeyMap::const_iterator iter;
 
-	bool overridefonts = ConfMan.getBool("overridefonts");
+	bool overridefonts = ConfMan.getBool("font_override");
 	if (!overridefonts) return;
 
 	ttfkeyvals = config->listKeyValues(category, "fontoverride");
