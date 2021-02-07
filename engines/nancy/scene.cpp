@@ -518,7 +518,7 @@ void SceneManager::run() {
 
     } else if (_engine->input->isClickValidRMB()) {
         if (_engine->input->hoveredElementID == InputManager::textBoxScrollbarID) {
-            // TODO, moves scrollbar one line up
+            _engine->graphics->_textbox.setPosition(handleScrollbar(0, true));
         } else if (_engine->input->hoveredElementID == InputManager::inventoryScrollbarID) {
             // TODO, moves scrollbar one line up
         } else if (_engine->input->hoveredElementID == InputManager::textBoxID) {
@@ -714,7 +714,7 @@ void SceneManager::handleMouse() {
         if (uizr->destRect.contains(mousePos)) {
             _engine->input->hoveredElementID = InputManager::textBoxScrollbarID;
             _engine->input->setPointerBitmap(1, 2, -1);
-            handleScrollbar(0);
+            _engine->graphics->_textbox.setPosition(handleScrollbar(0));
         } else if (uizr = &_engine->graphics->getZRenderStruct("CUR INV SLIDER"), uizr->destRect.contains(mousePos)) {
             _engine->input->hoveredElementID = InputManager::inventoryScrollbarID;
             _engine->input->setPointerBitmap(1, 2, -1);
@@ -767,7 +767,7 @@ void SceneManager::clearSceneData() {
 }
 
 // 0 is textbox, 1 is inventory, returns -1 when movement is stopped/disabled
-float SceneManager::handleScrollbar(uint id) {
+float SceneManager::handleScrollbar(uint id, bool reset) {
     Common::SeekableReadStream *chunk;
     ZRenderStruct *zr;
     if (id == 0) {
@@ -787,6 +787,11 @@ float SceneManager::handleScrollbar(uint id) {
     Common::Rect &scrollRect = zr->destRect;
     Common::Point newMousePos = _engine->input->getMousePosition();
 
+    if (reset) {
+        scrollRect.moveTo(origDest);
+        return 0;
+    }
+
     if (_engine->input->getInput() & InputManager::kLeftMouseButtonDown) {
         if (scrollbarMouse.x == -1 && scrollbarMouse.y == -1) {
             scrollbarMouse = newMousePos - Common::Point(scrollRect.left, scrollRect.top);
@@ -795,11 +800,11 @@ float SceneManager::handleScrollbar(uint id) {
 
         uint16 minY = origDest.y;
         uint16 maxY = tboxRect.bottom - scrollRect.height() + tboxRect.top - origDest.y; // TODO goes a little out of bounds
-        uint16 newTop = CLIP((uint16)(scrollRect.top + newMousePos.y - scrollbarMouse.y), minY, maxY);
+        uint16 newTop = CLIP<uint16>((scrollRect.top + newMousePos.y - scrollbarMouse.y), minY, maxY);
         scrollRect.bottom += newTop - scrollRect.top;
         scrollRect.top = newTop;
 
-        return (float)(maxY - minY) / newTop;
+        return newTop == minY ? 0 : 1 - (float(maxY - newTop) / float(maxY - minY));
     } else {
         scrollbarMouse.x = -1;
         scrollbarMouse.y = -1;

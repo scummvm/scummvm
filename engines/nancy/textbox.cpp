@@ -25,6 +25,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/scene.h"
 
 #include "common/error.h"
 #include "common/util.h"
@@ -68,6 +69,7 @@ void Textbox::clear() {
     _surface.clear();
     lineNr = 0;
     _responses.clear();
+    setPosition(_engine->sceneManager->handleScrollbar(0, true));
 }
 
 Common::Rect Textbox::processTextLine(const Common::String &text, uint16 fontID) {
@@ -181,6 +183,21 @@ int16 Textbox::getHovered(Common::Point mousePos) {
     }
 
     return pickedResponse;
+}
+
+void Textbox::setPosition(float pos) {
+    if (pos == -1)
+        return;
+
+    pos = CLIP<float>(pos, 0, 1);
+    ZRenderStruct &zr = _engine->graphics->getZRenderStruct("FRAME TB SURF");
+
+    uint16 inner = getInnerHeight();
+    uint16 outer = zr.destRect.height();
+
+    if (inner > outer) {
+        zr.sourceRect.moveTo(zr.sourceRect.left, (inner - outer) * pos);
+    }
 }
 
 uint16 Textbox::getInnerHeight() {

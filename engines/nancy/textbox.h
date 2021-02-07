@@ -54,11 +54,12 @@ public:
     void processResponse(const Common::String &text, uint16 fontID, uint16 id, Common::String soundName);
 
     int16 getHovered(Common::Point mousePos);
-    uint16 getInnerHeight();
+    void setPosition(float pos);
 
     const Graphics::Surface *getSurface();
 
 private:
+    uint16 getInnerHeight();
     Common::Rect getCharacterSourceRect(char c, uint16 fontID);
     uint16 getCharacterWidth(char c, uint16 fontID);
     void drawText(const Common::String &text, uint16 fontID, uint16 left, uint16 bottom, bool color = false);

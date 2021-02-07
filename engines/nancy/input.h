@@ -78,7 +78,7 @@ enum InputType : uint16 {
     byte getInput() { return _inputs; }
     void clearInput();
     bool isClickValidLMB() { return hoveredElementID != -1 && _inputs & kLeftMouseButtonUp; }
-    bool isClickValidRMB() { return hoveredElementID != -1 && _inputs & kLeftMouseButtonDown; }
+    bool isClickValidRMB() { return hoveredElementID != -1 && _inputs & kRightMouseButtonUp; }
 
     Common::Point getMousePosition();
     void setMousePosition(const Common::Point &newPos);
