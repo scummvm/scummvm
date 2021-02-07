@@ -94,6 +94,24 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},
+	{
+		GAMEOPTION_FRAMESKIP,
+		{
+			_s("Enable frame skipping"),
+			_s("Allow the game to skip animation frames when running too slow."),
+			"frameSkip",
+			false
+		}
+	},
+	{
+		GAMEOPTION_FRAMELIMIT,
+		{
+			_s("Enable frame limiting"),
+			_s("Limits the speed of the game to prevent running too fast."),
+			"frameLimit",
+			true
+		}
+	},
     AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
