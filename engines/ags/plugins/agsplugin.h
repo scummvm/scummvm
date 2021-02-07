@@ -74,10 +74,6 @@ typedef int HWND;
 #define __stdcall
 #endif
 
-#ifndef int32
-#define int32 int
-#endif
-
 #define AGSIFUNC(type) virtual type __stdcall
 
 #define MASK_WALKABLE   1
