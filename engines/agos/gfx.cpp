@@ -940,6 +940,8 @@ void AGOSEngine::drawImage(VC10_state *state) {
 
 		xoffs = (vlut[0] * 2 + state->x) * 8;
 		yoffs = vlut[1] + state->y;
+		xmax = (xoffs + state->draw_width * 2);
+		ymax = (yoffs + state->draw_height);
 	}
 
 	state->surf_addr += xoffs + yoffs * state->surf_pitch;
