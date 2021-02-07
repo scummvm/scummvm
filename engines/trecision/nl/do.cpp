@@ -3878,7 +3878,6 @@ void AtEndChangeRoom() {
 /* -----------------26/11/97 10.38-------------------
  * 					GestioneATFrame
  * --------------------------------------------------*/
-/*PELS: GESTIONE ATFRAME PER ANIMAZIONI  ***************************/
 #define ATF_WAITTEXT 1
 
 static struct ATFHandle {
@@ -3891,12 +3890,6 @@ AnimType[3] = {	{true}, {true}, {true}	};
 
 //static uint16 atfnotvalid=true,atfrm=0,toframe=0,curframe;
 //static struct SAnim *curanim=NULL;
-
-/*PELS: Funzione di esecuzione comandi ATFDO *************/
-/*PELS: si potrebbe evitare il switccione con una tavola di ptr a funz.  */
-/*PELS: oppure fare pochi comandi ma a _flag in modo da poterne eseguire piu' di uno
-per frame ... abbiamo tutto index => 16 comandi => 16 if da fare...
-probabile che faremo meno comandi */
 
 /* -----------------11/07/97 11.43-------------------
 					ExecuteATFDO

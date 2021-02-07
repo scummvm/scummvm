@@ -99,8 +99,6 @@ struct SAnim {
 	struct SAtFrame atframe[MAXATFRAME];
 };
 
-/*PELS: DIALOG VERSION PELS.  ***************************/
-
 typedef struct {
 	uint16 _sentence;
 	uint16 _x, _y, _color;          // you can compact this info using a bit field

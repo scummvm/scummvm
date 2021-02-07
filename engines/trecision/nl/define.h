@@ -91,7 +91,6 @@
 #define ATFSETROOMF			26
 
 // Dialogs
-// PELS: Choice flags
 #define DLGCHOICE_ACTIVATE      1
 #define DLGCHOICE_EXITNOW   	2
 #define DLGCHOICE_ONETIME       4
@@ -100,10 +99,9 @@
 #define DLGCHOICE_EXITDLG		32
 #define DLGCHOICE_HIDE		  	64
 
-// PELS: Dialog flags
 #define  DLGFLAG_NOSKIP 		1
 
-// PELS: REDEFINE
+// REDEFINE
 #define MASKCOL  	 		0xEEEE
 #define MOUSECOL    		0x7FFF
 #define HRED        		0x7C00
@@ -118,7 +116,7 @@
 #define HBLUELT     		0x0010
 #define HDBLUE		 		0x000f
 
-// PELS: Functions for ATFDO
+// Functions for ATFDO
 #define fCLROBJSTATUS 		1
 #define fSETOBJSTATUS 		2
 #define fANIMOFF1			3
