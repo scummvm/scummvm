@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-07 12:07+0000\n"
-"PO-Revision-Date: 2021-02-07 00:23+0000\n"
+"PO-Revision-Date: 2021-02-08 09:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3312,11 +3312,11 @@ msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
-msgstr ""
+msgstr "ハードウェアスケーリング(高速・低画質)"
 
 #: backends/platform/ds/ds-graphics.cpp:221
 msgid "Software scale (good quality, but slower)"
-msgstr ""
+msgstr "ソフトウェアスケーリング(低速・高画質)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
@@ -3354,7 +3354,7 @@ msgstr "ScummVMを終了(~Q~)"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide Others"
-msgstr ""
+msgstr "他を隠す"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:213
 #, fuzzy
@@ -3467,11 +3467,11 @@ msgstr "プラス"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
-msgstr ""
+msgstr "ゾーン"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Multi Function"
-msgstr ""
+msgstr "多機能"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:50
 msgid "Swap character"
@@ -3516,15 +3516,15 @@ msgstr "レンダー："
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "ダブルストライク"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "水平アンダースキャン："
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "垂直アンダースキャン："
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -3532,11 +3532,11 @@ msgstr "入力"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr ""
+msgstr "GCパッド感度："
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr ""
+msgstr "GCパッド加速度："
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -3553,15 +3553,15 @@ msgstr "不明なエラー"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr ""
+msgstr "DVDをマウント"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr ""
+msgstr "DVDをアンマウント"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
@@ -3569,7 +3569,7 @@ msgstr "サーバー："
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr ""
+msgstr "共有："
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
@@ -3577,43 +3577,43 @@ msgstr "パスワード："
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr ""
+msgstr "ネットワークを初期化"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr ""
+msgstr "SMBをマウント"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr ""
+msgstr "SMBをアンマウント"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr ""
+msgstr "DVDをマウントしました"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "DVDのマウント中にエラーが発生しました"
 
 #: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVDはマウントされませんでした"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "ネットワークが起動し、共有フォルダーがマウントされました"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up"
-msgstr ""
+msgstr "ネットワークが起動しました"
 
 #: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
-msgstr ""
+msgstr "、共有フォルダーのマウント中にエラーが発生しました"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
-msgstr ""
+msgstr "、共有フォルダーはマウントされませんでした"
 
 #: backends/platform/wii/options.cpp:174
 #, fuzzy
@@ -3649,7 +3649,7 @@ msgstr "アップデートを確認中..."
 #: engines/tony/tony.cpp:196 engines/toon/toon.cpp:4956
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "%sエンジンのデータファイルが見つかりません。"
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:947
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -3657,7 +3657,7 @@ msgstr ""
 #: engines/tony/tony.cpp:209 engines/toon/toon.cpp:4969
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "エンジンデータファイル'%s'は壊れています。"
+msgstr "%sエンジンのデータファイルが壊れています。"
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:958
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -3667,12 +3667,11 @@ msgstr "エンジンデータファイル'%s'は壊れています。"
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
-msgstr ""
+msgstr "エンジン%sの、正しくないバージョンのデータを発見しました。想定バージョンは%d.%dですが、取得されたのは%d.%dです。"
 
 #: engines/adl/detection.cpp:48
-#, fuzzy
 msgid "TV emulation"
-msgstr "MT-32エミュレーター"
+msgstr "TV形式を再現する"
 
 #: engines/adl/detection.cpp:49
 msgid "Emulate composite output to an NTSC TV"
