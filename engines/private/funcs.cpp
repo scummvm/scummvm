@@ -16,7 +16,7 @@ void ChgMode(ArgArray args) {
         debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
     else if (args.size() == 3)
         debug("ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
-    else 
+    else
         assert(0);
 
     g_private->_mode = args[0].u.val;
@@ -270,7 +270,7 @@ void Inventory(ArgArray args) {
 
     Common::String *bmp = new Common::String(i.u.str);
     assert(strcmp(bmp->c_str(), "\"\"") != 0);
-    
+
 
     if (v1.type == STRING)
         assert(strcmp(v1.u.str, "\"\"") == 0);
@@ -313,7 +313,7 @@ void Inventory(ArgArray args) {
         }
         g_private->playSound(*f, 1, false, false);
         g_private->inventory.push_back(*bmp);
-    } else { 
+    } else {
         if (v1.type == NAME) {
             if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
                 v1.u.sym->u.val = 0;
@@ -597,7 +597,7 @@ void PhoneClip(ArgArray args) {
         assert(i < j);
         char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
         AddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
- 
+
     }
 
 }
@@ -727,7 +727,7 @@ static struct FuncTable {
     { DossierBitmap,   "DossierBitmap"},
     { DossierPrevSuspect, "DossierPrevSuspect"},
     { DossierNextSuspect, "DossierNextSuspect"},
-    
+
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},

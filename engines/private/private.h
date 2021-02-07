@@ -41,7 +41,7 @@ const int kPoliceBustVideos[6] = {1, 2, 4, 5, 7, 8};
 
 // points
 
-const Common::Point kPrivateOriginZero(0, 0); 
+const Common::Point kPrivateOriginZero(0, 0);
 const Common::Point kPrivateOriginOne(64, 48);
 
 // settings
@@ -127,7 +127,7 @@ public:
     void selectExit(Common::Point);
     void selectLoadGame(Common::Point);
     void selectSaveGame(Common::Point);
-    
+
     // Cursors
 
     bool cursorPauseMovie(Common::Point);
@@ -173,7 +173,7 @@ public:
     Common::String *_frame;
     bool            _toTake;
 
-    // Dossiers 
+    // Dossiers
 
     DossierArray _dossiers;
     unsigned int _dossierSuspect;
