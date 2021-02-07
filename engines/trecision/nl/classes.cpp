@@ -816,16 +816,23 @@ void doSystem() {
 			int MusicVol = ConfMan.getInt("music_volume");
 			int SFxVol = ConfMan.getInt("sfx_volume");
 
-			if (SpeechON) _obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
-			else _obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
-			if (TextON)   _obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
-			else _obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
+			if (SpeechON)
+				_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
+			else
+				_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
+			if (TextON)
+				_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
+			else
+				_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
 			_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
 			_obj[o00MUSIC1D + ((MusicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
 			_obj[o00SOUND1D + ((SFxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			if (SpeechVol < 256) _obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (MusicVol  < 256) _obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (SFxVol    < 256) _obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			if (SpeechVol < 256)
+				_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			if (MusicVol < 256)
+				_obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			if (SFxVol < 256)
+				_obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 		}
 
 		ReadLoc();
@@ -900,7 +907,6 @@ void doScrollInventory(uint16 mousex) {
 
 	if ((mousex <= ICONMARGSX) && (TheIconBase))
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-
 	else if (BETWEEN(SCREENLEN - ICONMARGDX, mousex, SCREENLEN) && (TheIconBase + ICONSHOWN < _inventorySize))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
@@ -928,8 +934,10 @@ void RollInventory(uint8 status) {
 			RegenInv(TheIconBase, INVENTORY_HIDE);
 			_inventoryStatus = INV_OFF;
 			_inventoryCounter = INVENTORY_HIDE;
-			if ((INVAREA(my)) && !(SemDialogActive || SemDialogMenuActive)) doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			else RepaintString();
+			if ((INVAREA(my)) && !(SemDialogActive || SemDialogMenuActive))
+				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+			else
+				RepaintString();
 			return ;
 		}
 	}
@@ -1018,10 +1026,14 @@ void doIdle() {
 		break;
 	}
 
-	if (GAMEAREA(my))
-		if ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)) doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
+	if (GAMEAREA(my)) {
+		if ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION))
+			doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
+	}
 
-	if (ScrollInvTime > TheTime) ScrollInvTime = TheTime;
+	if (ScrollInvTime > TheTime)
+		ScrollInvTime = TheTime;
+
 	if ((INVAREA(my)) && (TheTime > (INVSCROLLSP + ScrollInvTime))) {
 		doScrollInventory(mx);
 		ScrollInvTime = TheTime;
@@ -1029,7 +1041,6 @@ void doIdle() {
 
 	if (ForceQuit && !SemDialogActive  && !SemDialogMenuActive)
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
-
 }
 
 } // End of namespace Trecision
