@@ -276,8 +276,8 @@ class WeakPtr;
 template<class T>
 class SharedPtr : public BasePtr<T> {
 public:
-	using ReferenceType = typename BasePtr<T>::ReferenceType;
-	using PointerType = typename BasePtr<T>::PointerType;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
 
 	SharedPtr() : BasePtr<T>() {
 	}
