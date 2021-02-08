@@ -104,7 +104,7 @@ void doRoomOut(uint16 TheObj) {
 	}
 
 	if (TheAction)
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, TheAction, g_vm->_obj[TheObj]._goRoom, ThePos, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, TheAction, g_vm->_obj[TheObj]._goRoom, ThePos, TheObj);
 
 	g_vm->_obj[TheObj]._flag |= OBJFLAG_DONE;
 }
@@ -121,7 +121,7 @@ void doMouseExamine(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oMAPPA12:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1211OSSERVAMAPPAPALAZZO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1211OSSERVAMAPPAPALAZZO, 0, 0, TheObj);
 		_choice[4]._flag &= ~DLGCHOICE_HIDE;
 		_choice[18]._flag &= ~DLGCHOICE_HIDE;
 		_choice[33]._flag &= ~DLGCHOICE_HIDE;
@@ -129,11 +129,11 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oPORTAA13:
-		g_vm->_obj[oCASSETTA12]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oBOX12]._mode |= OBJMODE_OBJSTATUS;
 		printsent = true;
 		break;
 
-	case oPANNELLOA12:
+	case oPANELA12:
 	case oFUSIBILE12:
 		if (g_vm->_obj[oFUSIBILE12]._mode & OBJMODE_OBJSTATUS)
 			g_vm->_obj[oFUSE12CU]._mode |= OBJMODE_OBJSTATUS;
@@ -154,35 +154,35 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oCUCININO14:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1413OSSERVAPIANOCOTTURA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1413OSSERVAPIANOCOTTURA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSCAFFALE14:
 		if (!(g_vm->_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a145ESAMINASCAFFALE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a145ESAMINASCAFFALE, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a145CESAMINASCAFFALE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a145CESAMINASCAFFALE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oTAVOLINOPP14:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1412SPOSTASEDIA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1412SPOSTASEDIA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oBOCCETTE15:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1510TOCCABOCCETTE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1510TOCCABOCCETTE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSPECCHIO15:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1511SISPECCHIA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1511SISPECCHIA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oMONITORSA16:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1614GUARDAMONITORS14, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1614GUARDAMONITORS14, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -194,12 +194,12 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oMONITORSP16:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1615GUARDAMONITORS15, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1615GUARDAMONITORS15, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCARTACCE16:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1613GUARDACARTACCE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1613GUARDACARTACCE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -210,22 +210,22 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oSCATOLONE17:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a177SICHINA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a177SICHINA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oMURALES17:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a179MUOVETESTA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a179MUOVETESTA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSCHERMO18:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a181ESAMINACARTELLONE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a181ESAMINACARTELLONE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oVETRINA1A:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1A1ESAMINAVETRINA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1A1ESAMINAVETRINA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -237,101 +237,101 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oCARTACCE1B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B8FRUGACARTACCIE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B8FRUGACARTACCIE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oBIDONE1B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B10GUARDABIDONE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B10GUARDABIDONE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oGRATA1C:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1C2GUARDAGRATA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1C2GUARDAGRATA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSCAFFALE1D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1D8SALESGABELLO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D8SALESGABELLO, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oBARILOTTO1D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1D7SPINGEBARILOTTO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D7SPINGEBARILOTTO, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCASSA1D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1D10ESAMINABOTTIGLIE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D10ESAMINABOTTIGLIE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSCATOLETTA23:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2310, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2310, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oPALMA26:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a262, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a262, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oINSEGNA26:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a263, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a263, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oTEMPIO28:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2810, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2810, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSERPENTET28:
 	case oSERPENTEA28:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2811, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2811, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSERPENTE2B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B11ESAMINASERPENTE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B11ESAMINASERPENTE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oLEOPARDO2B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B9ESAMINALEOPARDO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B9ESAMINALEOPARDO, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oPELLICANO2B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B10ESAMINAPELLICANO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B10ESAMINAPELLICANO, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oBACHECA2B:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B13OSSERVAREFARFALLE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B13OSSERVAREFARFALLE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oROBOT2F:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F6TOCCADINOSAURO, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2F6TOCCADINOSAURO, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCREPACCIO2E:
 		if (g_vm->_room[r2E]._flag & OBJFLAG_EXTRA)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2E7GUARDACREPACCIODILA, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E7GUARDACREPACCIODILA, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2E6GUARDACREPACCIODIQUA, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E6GUARDACREPACCIODIQUA, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	/*		case oFOGLI34:
-				doEvent(MC_HOMO,ME_HOMOACTION, MP_DEFAULT, a348ESAMINAFOGLI, 0,0,TheObj);
+				doEvent(MC_CHARACTER,ME_CHARACTERACTION, MP_DEFAULT, a348ESAMINAFOGLI, 0,0,TheObj);
 				printsent = false;
 				break;
 	*/
 	case oGENERATORE34:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a347ESAMINAGENERATORE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a347ESAMINAGENERATORE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -376,73 +376,73 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oCASSE35:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a3522ESAMINACASSE, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3522ESAMINACASSE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oSCAFFALE35:
 		if (g_vm->_room[r35]._flag & OBJFLAG_EXTRA)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a3517ESAMINACIANFRUSAGLIE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517ESAMINACIANFRUSAGLIE, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a3517AESAMINACIANFRUSAGLIE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517AESAMINACIANFRUSAGLIE, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oGIORNALE35:
 		if (g_vm->_room[r35]._flag & OBJFLAG_EXTRA) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a3521LEGGEGIORNALE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3521LEGGEGIORNALE, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
 
 	case oSCAFFALE36:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[oSCAFFALE36]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[oSCAFFALE36]._anim, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oFESSURA41:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a411, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a411, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCARTELLOV42:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a424, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a424, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCARTELLOF42:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a426, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a426, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCAMPANAT43:
 		if (g_vm->_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a431R, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a431R, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a431, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a431, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oTAMBURO43:
 		if (g_vm->_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a432R, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a432R, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a432, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a432, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oRAGNATELA45:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a451, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a451, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oQUADROS4A:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4A5, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4A5, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oCARTELLO55:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5511, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5511, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -507,7 +507,7 @@ void doMouseOperate(uint16 TheObj) {
 	switch (TheObj) {
 	case oFAX17:
 		if (g_vm->_obj[oSCALA16]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			InvObj[iSAM]._action = 1416;
 			printsent = false;
 		}
@@ -528,12 +528,12 @@ void doMouseOperate(uint16 TheObj) {
 	case oPANNELLOC12:
 		if (g_vm->_obj[oPANNELLOC12]._flag & OBJFLAG_EXTRA) {
 			if (g_vm->_obj[oASCENSOREC12]._mode & OBJMODE_OBJSTATUS)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a128RIUSABOTTONE, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a128RIUSABOTTONE, 0, 0, TheObj);
 			else
 				CharacterSay(24);
 		} else {
 			g_vm->_obj[oPANNELLOC12]._flag |= OBJFLAG_EXTRA;
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		}
 		break;
 	case oPANNELLO13:
@@ -541,7 +541,7 @@ void doMouseOperate(uint16 TheObj) {
 			CharacterSay(48);
 			printsent = false;
 		} else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 
 		break;
 
@@ -550,17 +550,17 @@ void doMouseOperate(uint16 TheObj) {
 			CharacterSay(48);
 			printsent = false;
 		} else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		break;
 
 	case oLATTINA13:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a132PRENDELATTINA, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a132PRENDELATTINA, 0, 0, TheObj);
 		AddIcon(iLATTINA13);
 		break;
 
 	case oPORTAA13:
 		if (g_vm->_room[r14]._flag & OBJFLAG_DONE) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
 			printsent = false;
 		} else
 			printsent = true;
@@ -569,9 +569,9 @@ void doMouseOperate(uint16 TheObj) {
 	case oCESTINO14:
 		if (g_vm->_obj[TheObj]._anim) {
 			if (!(g_vm->_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a143CPRENDECREDITCARD, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a143CPRENDECREDITCARD, 0, 0, TheObj);
 			g_vm->_obj[TheObj]._anim = NULL;
 		} else
 			printsent = true;
@@ -584,7 +584,7 @@ void doMouseOperate(uint16 TheObj) {
 			if (!(g_vm->_obj[oNASTRO15]._flag & OBJFLAG_EXTRA))
 				g_vm->_obj[oNASTRO15]._mode |= OBJMODE_OBJSTATUS;
 			if (g_vm->_obj[TheObj]._anim)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
@@ -596,7 +596,7 @@ void doMouseOperate(uint16 TheObj) {
 		} else {
 			g_vm->_obj[oNASTRO15]._mode &= ~OBJMODE_OBJSTATUS;
 			if (g_vm->_obj[TheObj]._anim)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
@@ -606,12 +606,12 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPORTAC18:
-		if (g_vm->_obj[ocGUARDIANO18]._flag & OBJFLAG_PERSON) {
+		if (g_vm->_obj[ocGUARD18]._flag & OBJFLAG_PERSON) {
 			_choice[151]._flag |= DLGCHOICE_HIDE;
 			_choice[152]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dGUARDIANO18);
-			g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
-			g_vm->_obj[ocGUARDIANO18]._action = 227;
+			g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocGUARD18]._action = 227;
 			g_vm->_obj[oPORTAC18]._action = 220;
 		} else
 			printsent = true;
@@ -626,15 +626,15 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oBOTOLAC1B:
 		if ((g_vm->_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA) && (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B3AAPREBOTOLA, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B3AAPREBOTOLA, 0, 0, TheObj);
 		else if (g_vm->_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B3APREBOTOLA, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B3APREBOTOLA, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oARMADIETTORC22:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oMANIGLIONE22]._anim = a227A;
 		g_vm->_obj[oMANIGLIONEO22]._anim = a229A;
 		g_vm->_obj[od22ALLA29]._anim = a2214A;
@@ -642,7 +642,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oARMADIETTORA22:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oMANIGLIONE22]._anim = a227;
 		g_vm->_obj[oMANIGLIONEO22]._anim = a229;
 		g_vm->_obj[od22ALLA29]._anim = a2214;
@@ -667,12 +667,12 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPULSANTEACS2D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6V;
 		break;
 
 	case oPULSANTEACA2D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6R;
 		break;
 
@@ -683,7 +683,7 @@ void doMouseOperate(uint16 TheObj) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r29L, 0, 0, TheObj);
 			printsent = false;
 		} else if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a291USAINTERRUTTORELUCE, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a291USAINTERRUTTORELUCE, 0, 0, TheObj);
 			g_vm->_obj[g_vm->_curObj]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		} else
@@ -692,35 +692,35 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oLEVAS23:
 		if (g_vm->_obj[oCAVI23]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a238, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a238, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a234, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a234, 0, 0, TheObj);
 		break;
 
 	case oLEVAG23:
 		if (g_vm->_obj[oCAVIE23]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a239, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a239, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a235, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a235, 0, 0, TheObj);
 		break;
 
 	case oBOTOLAC25:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oTRONCHESE25]._anim = a254B;
 		break;
 
 	case oBOTOLAA25:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		g_vm->_obj[oTRONCHESE25]._anim = a254;
 		break;
 
 	case oPASSAGGIO24:
 		if (g_vm->_room[r24]._flag & OBJFLAG_EXTRA) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a244, 0, 14, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a244, 0, 14, TheObj);
 			SetRoom(r24, false);
 			printsent = false;
 		} else {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a243, 0, 13, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a243, 0, 13, TheObj);
 			SetRoom(r24, true);
 			printsent = false;
 		}
@@ -728,12 +728,12 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oPORTA26:
 		if (g_vm->_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 4, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 4, TheObj);
 		break;
 
 	case oRUBINETTOC28:
 		if (g_vm->_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			g_vm->_obj[oBRACIERES28]._examine = 455;
 			g_vm->_obj[oBRACIERES28]._flag |= OBJFLAG_EXTRA;
 		} else
@@ -835,7 +835,7 @@ void doMouseOperate(uint16 TheObj) {
 			AnimTab[aBKG2E].flag &= ~SMKANIM_OFF2;
 			printsent = false;
 		} else if (g_vm->_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		} else
 			printsent = true;
@@ -845,7 +845,7 @@ void doMouseOperate(uint16 TheObj) {
 	case oPORTALAMPADE2B:
 	case oMAPPAMONDO2B:
 		if (g_vm->_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			g_vm->_obj[TheObj]._anim = 0;
 		} else
 			printsent = true;
@@ -853,7 +853,7 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oTUBOF34:
 		if (!(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
@@ -880,14 +880,14 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oVALVOLAC34:
 		if (g_vm->_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oVALVOLA34:
 		if (g_vm->_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
@@ -908,7 +908,7 @@ void doMouseOperate(uint16 TheObj) {
 		g_vm->_obj[oMONITOR35]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[omPIANO35]._mode |= OBJMODE_OBJSTATUS;
 
-		g_vm->_obj[oSPORTELLOC35]._anim = a356PROVASPORTELLO;
+		g_vm->_obj[oFRONTOFFICEC35]._anim = a356PROVASPORTELLO;
 		g_vm->_obj[oASCENSORE35]._flag |= OBJFLAG_ROOMOUT;
 		g_vm->_obj[oASCENSORE35]._anim = a3514ENTRAASCENSORE;
 
@@ -953,10 +953,10 @@ void doMouseOperate(uint16 TheObj) {
 				g_vm->_obj[oPULSANTIV35]._mode |= OBJMODE_OBJSTATUS;
 				g_vm->_obj[oLEDS35]._mode &= ~OBJMODE_OBJSTATUS;
 
-				g_vm->_obj[oSPORTELLOA35]._anim = 0;
-				//					_obj[oSPORTELLOA35]._examine = 1843;
-				g_vm->_obj[oSPORTELLOA35]._action = 1844;
-				g_vm->_obj[oSPORTELLOA35]._flag |= OBJFLAG_EXTRA;
+				g_vm->_obj[oFRONTOFFICEA35]._anim = 0;
+				//					_obj[oFRONTOFFICEA35]._examine = 1843;
+				g_vm->_obj[oFRONTOFFICEA35]._action = 1844;
+				g_vm->_obj[oFRONTOFFICEA35]._flag |= OBJFLAG_EXTRA;
 				g_vm->_obj[oPORTAMC36]._flag |= OBJFLAG_ROOMOUT;
 				g_vm->_obj[oPORTAMC36]._anim = a3610APREPORTA;
 				g_vm->_obj[oSCAFFALE36]._anim = a3615APRENDESCAFFALE;
@@ -1140,7 +1140,7 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oPULSANTE4A:
 		if (g_vm->_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else if (!(_choice[244]._flag & OBJFLAG_DONE)) {
 			_choice[244]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dC4A1);
@@ -1153,9 +1153,9 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oFINESTRA56:
 		if (g_vm->_obj[oPANNELLOC56]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5614, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5614, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5614P, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5614P, 0, 0, TheObj);
 		break;
 
 	case oPULSANTECD:
@@ -1188,16 +1188,16 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oLAVATRICEL54:
 		if ((g_vm->_obj[TheObj]._anim) && (g_vm->_obj[oSECCHIOS54]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS) && !(_choice[841]._flag & OBJFLAG_DONE))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oSECCHIOS54:
 		if (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a544G, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a544G, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -1206,10 +1206,10 @@ void doMouseOperate(uint16 TheObj) {
 			if (g_vm->_obj[od56ALLA59]._mode & OBJMODE_OBJSTATUS)
 				CharacterSay(g_vm->_obj[TheObj]._action);
 			else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a567, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a567, 0, 0, TheObj);
 			printsent = false;
 		} else {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a564, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a564, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
@@ -1218,7 +1218,7 @@ void doMouseOperate(uint16 TheObj) {
 		if (g_vm->_room[r2C]._flag & OBJFLAG_DONE) { // se sono gia' stato nella 2C prendo libro
 			printsent = false;
 			if (g_vm->_obj[TheObj]._anim)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B4PRENDELIBRO, 0, 0, TheObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B4PRENDELIBRO, 0, 0, TheObj);
 			else
 				printsent = true;
 		} else {					// se non ci sono ancora stato dice che non gli serve
@@ -1300,7 +1300,7 @@ void doMouseOperate(uint16 TheObj) {
 
 	default:
 		if (g_vm->_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
@@ -1352,7 +1352,7 @@ void doMouseTake(uint16 TheObj) {
 	uint16 TheAction = g_vm->_obj[TheObj]._anim;
 
 	if (TheAction)
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, TheAction, 0, 0, TheObj);
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, TheAction, 0, 0, TheObj);
 
 	// spegne oggetto che viene preso
 	if (del) {
@@ -1387,7 +1387,7 @@ void doMouseTalk(uint16 TheObj) {
 		warning("doMouseTalk");
 
 	switch (TheObj) {
-	case oBIGLIETTERIA16:
+	case oTICKETOFFICE16:
 		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (_choice[50]._flag & OBJFLAG_DONE)) {
 			CharacterSay(147);
 			return ;
@@ -1395,10 +1395,10 @@ void doMouseTalk(uint16 TheObj) {
 			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
 				_choice[46]._flag &= ~DLGCHOICE_HIDE;
 				_choice[48]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_obj[oBIGLIETTERIA16]._flag |= OBJFLAG_EXTRA;
+				g_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
 			} else {
 				if (_choice[46]._flag & OBJFLAG_DONE) {
-					CharacterSay(g_vm->_obj[oBIGLIETTERIA16]._action);
+					CharacterSay(g_vm->_obj[oTICKETOFFICE16]._action);
 					return ;
 				} else {
 					_choice[46]._flag &= ~DLGCHOICE_HIDE;
@@ -1408,9 +1408,9 @@ void doMouseTalk(uint16 TheObj) {
 		}
 		break;
 
-	case ocGUARDIANO18:
-		g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
-		g_vm->_obj[ocGUARDIANO18]._action = 227;
+	case ocGUARD18:
+		g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
+		g_vm->_obj[ocGUARD18]._action = 227;
 		g_vm->_obj[oPORTAC18]._action = 220;
 		break;
 
@@ -1466,18 +1466,18 @@ void doInvInvUseWith() {
 	switch (UseWith[USED]) {
 	//	TT
 	case iSTAGNOLA:
-		if (UseWith[WITH] == iFUSIBILE) {
+		if (UseWith[WITH] == iFUSE) {
 			KillIcon(iSTAGNOLA);
-			ReplaceIcon(iFUSIBILE, iFUSIBILES);
+			ReplaceIcon(iFUSE, iFUSES);
 			StartCharacterAction(hUSEGG, 0, 0, 1441);
 			printsent = false;
 		}
 		break;
 
-	case iFUSIBILE:
+	case iFUSE:
 		if (UseWith[WITH] == iSTAGNOLA) {
 			KillIcon(iSTAGNOLA);
-			ReplaceIcon(iFUSIBILE, iFUSIBILES);
+			ReplaceIcon(iFUSE, iFUSES);
 			StartCharacterAction(hUSEGG, 0, 0, 1441);
 			printsent = false;
 		}
@@ -1504,9 +1504,9 @@ void doInvInvUseWith() {
 		break;
 
 	// GG
-	case iSBARRA11:
+	case iBAR11:
 		if (UseWith[WITH] == iMAGNETE) {
-			KillIcon(iSBARRA11);
+			KillIcon(iBAR11);
 			ReplaceIcon(iMAGNETE, iSBARRA21);
 			StartCharacterAction(hUSEGG, 0, 0, 1438);
 			printsent = false;
@@ -1514,8 +1514,8 @@ void doInvInvUseWith() {
 		break;
 
 	case iMAGNETE:
-		if (UseWith[WITH] == iSBARRA11) {
-			KillIcon(iSBARRA11);
+		if (UseWith[WITH] == iBAR11) {
+			KillIcon(iBAR11);
 			ReplaceIcon(iMAGNETE, iSBARRA21);
 			StartCharacterAction(hUSEGG, 0, 0, 1533);
 			printsent = false;
@@ -1753,7 +1753,7 @@ void doInvScrUseWith() {
 	switch (UseWith[USED]) {
 	case iBANCONOTE:
 		if (UseWith[WITH] == oDISTRIBUTORE13 && !(g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a131USABANCONOTA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a131USABANCONOTA, 0, 0, UseWith[WITH]);
 			printsent = false;
 			g_vm->_obj[oDISTRIBUTORE13]._flag |= OBJFLAG_EXTRA;
 		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS)) {
@@ -1762,13 +1762,13 @@ void doInvScrUseWith() {
 		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
 			if (!(g_vm->_obj[oSCOMPARTO13]._flag & OBJFLAG_EXTRA)) {
 				g_vm->_obj[oSCOMPARTO13]._flag |= OBJFLAG_EXTRA;
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1311DABOTTADISTRIBUTORE, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1311DABOTTADISTRIBUTORE, 0, 0, UseWith[WITH]);
 			} else
 				CharacterSay(1411);
 
 			printsent = false;
-		} else if (UseWith[WITH] == oBIGLIETTERIA16) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a165USABANCONOTA, 0, 0, UseWith[WITH]);
+		} else if (UseWith[WITH] == oTICKETOFFICE16) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a165USABANCONOTA, 0, 0, UseWith[WITH]);
 			InvObj[iBANCONOTE]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		} else if ((UseWith[WITH] == ocPOLIZIOTTO16) && (InvObj[iBANCONOTE]._flag & OBJFLAG_EXTRA)) {
@@ -1777,50 +1777,50 @@ void doInvScrUseWith() {
 			printsent = false;
 		}
 		break;
-	case iLETTERA12:
+	case iLETTER12:
 		if (UseWith[WITH] == oPENPADA13) {
 			if (g_vm->_room[r14]._flag & OBJFLAG_DONE)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
 			else {
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a135METTELETTERA, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a135METTELETTERA, 0, 0, UseWith[WITH]);
 				g_vm->_obj[oLETTERA13]._mode |= OBJMODE_OBJSTATUS;
-				InvObj[iLETTERA12]._flag |= OBJFLAG_EXTRA;
-				KillIcon(iLETTERA12);
+				InvObj[iLETTER12]._flag |= OBJFLAG_EXTRA;
+				KillIcon(iLETTER12);
 				RegenRoom();
 			}
 			printsent = false;
 		}
 		break;
-	case iFUSIBILES:
-		if (UseWith[WITH] == oPANNELLOA12) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a127USAFUSIBILEAVVOLTO, 0, 0, UseWith[WITH]);
+	case iFUSES:
+		if (UseWith[WITH] == oPANELA12) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a127USEWRAPPEDFUSED, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
-	case iFUSIBILE:
-		if (UseWith[WITH] == oPANNELLOA12) {
+	case iFUSE:
+		if (UseWith[WITH] == oPANELA12) {
 			CharacterSay(62);
 			printsent = false;
 		}
 		break;
 	case iKEY05:
-		if (UseWith[WITH] == oCASSETTE12) {
-			if (!(g_vm->_obj[oCASSETTE12]._flag & OBJFLAG_EXTRA)) {
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a121PROVACASSETTA, 0, 0, UseWith[WITH]);
-				g_vm->_obj[oCASSETTE12]._flag |= OBJFLAG_EXTRA;
+		if (UseWith[WITH] == oBOXES12) {
+			if (!(g_vm->_obj[oBOXES12]._flag & OBJFLAG_EXTRA)) {
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a121BOXTEST, 0, 0, UseWith[WITH]);
+				g_vm->_obj[oBOXES12]._flag |= OBJFLAG_EXTRA;
 				printsent = false;
 			} else {
 				CharacterSay(1426);
 				printsent = false;
 			}
-		} else if (UseWith[WITH] == oCASSETTA12 && !(InvObj[iLETTERA12]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a122APRECASSETTA, 0, 0, oCASSETTA12);
-			InvObj[iLETTERA12]._flag |= OBJFLAG_EXTRA;
+		} else if (UseWith[WITH] == oBOX12 && !(InvObj[iLETTER12]._flag & OBJFLAG_EXTRA)) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a122APREBOX, 0, 0, oBOX12);
+			InvObj[iLETTER12]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
-		} else if ((UseWith[WITH] == oCASSETTA12) && (InvObj[iLETTERA12]._flag & OBJFLAG_EXTRA)) {
+		} else if ((UseWith[WITH] == oBOX12) && (InvObj[iLETTER12]._flag & OBJFLAG_EXTRA)) {
 			CharacterSay(1429);
 			printsent = false;
-		} else if ((UseWith[WITH] == oCARA11) || (UseWith[WITH] == oCARB11) || (UseWith[WITH] == oPORTAR12) || (UseWith[WITH] == oCASSAFORTEC15) || (UseWith[WITH] == oPORTONE18) || (UseWith[WITH] == oLUCCHETTO1B) || (UseWith[WITH] == oPORTAC21) || (UseWith[WITH] == oPANNELLOC23) || (UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTAC33) || (UseWith[WITH] == oSPORTELLOC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
+		} else if ((UseWith[WITH] == oCARA11) || (UseWith[WITH] == oCARB11) || (UseWith[WITH] == oTAKE12) || (UseWith[WITH] == oSTRONGBOXC15) || (UseWith[WITH] == oDOOR18) || (UseWith[WITH] == oPADLOCK1B) || (UseWith[WITH] == oDOORC21) || (UseWith[WITH] == oPANELC23) || (UseWith[WITH] == oDOOR2A) || (UseWith[WITH] == oDOORC33) || (UseWith[WITH] == oFRONTOFFICEC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
 			printsent = false;
 			CharacterSay(1426);
 		}
@@ -1830,9 +1830,9 @@ void doInvScrUseWith() {
 			printsent = false;
 			InvObj[iCARD03]._flag |= OBJFLAG_EXTRA;
 			g_vm->_obj[oSLOT12]._flag |= OBJFLAG_PERSON;
-			g_vm->_obj[oASCENSOREA12]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[oLIFTA12]._flag |= OBJFLAG_PERSON;
 			doMouseTalk(UseWith[WITH]);
-		} else if ((UseWith[WITH] == oBIGLIETTERIA16) || (UseWith[WITH] == oSLOT23) || (UseWith[WITH] == oSPORTELLOA35) || (UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
+		} else if ((UseWith[WITH] == oTICKETOFFICE16) || (UseWith[WITH] == oSLOT23) || (UseWith[WITH] == oFRONTOFFICEA35) || (UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
 			printsent = false;
 			CharacterSay(1419);
 		}
@@ -1840,35 +1840,35 @@ void doInvScrUseWith() {
 	case iPEN:
 		printsent = false;
 		if (((UseWith[WITH] == oPENPADA13) || (UseWith[WITH] == oLETTERA13)) && (g_vm->_obj[oLETTERA13]._mode & OBJMODE_OBJSTATUS))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a137RICALCAFIRMA, r14, 14, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a137RICALCAFIRMA, r14, 14, UseWith[WITH]);
 		else if ((UseWith[WITH] == oPENPADA13) && (g_vm->_room[r14]._flag & OBJFLAG_DONE))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
 		else if (UseWith[WITH] == oPENPADA13) {
-			if (!(g_vm->_obj[oCASSETTA12]._mode & OBJMODE_OBJSTATUS)) {
+			if (!(g_vm->_obj[oBOX12]._mode & OBJMODE_OBJSTATUS)) {
 				printsent = false;
 				CharacterSay(2005);
 			} else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a134USAMAGNETICPEN, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a134USAMAGNETICPEN, 0, 0, UseWith[WITH]);
 		} else
 			printsent = true;
 		break;
 
 	case iACIDO15:
 		if (UseWith[WITH] == oBAR11) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a113USAFIALA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, UseWith[WITH]);
 			ReplaceIcon(iACIDO15, iFIALAMETA);
 			//AnimTab[a113USAFIALA].atframe[0].index = 1483;
 			printsent = false;
-		} else if (UseWith[WITH] == oLUCCHETTO1B) {
+		} else if (UseWith[WITH] == oPADLOCK1B) {
 			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
 			else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			ReplaceIcon(iACIDO15, iFIALAMETA);
 			AnimTab[a113USAFIALA].atframe[0].index = 1483;
 			printsent = false;
-		} else if ((UseWith[WITH] == ocGUARDIANO18) || (UseWith[WITH] == oTOMBINOC1B)) {
+		} else if ((UseWith[WITH] == ocGUARD18) || (UseWith[WITH] == oMANHOLEC1B)) {
 			printsent = false;
 			CharacterSay(1476);
 		}
@@ -1877,30 +1877,30 @@ void doInvScrUseWith() {
 	case iFIALAMETA:
 		if (UseWith[WITH] == oBAR11) {
 			AnimTab[a113USAFIALA].atframe[0].index = 1483;
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a113USAFIALA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, UseWith[WITH]);
 			KillIcon(iFIALAMETA);
 			printsent = false;
-		} else if (UseWith[WITH] == oLUCCHETTO1B) {
+		} else if (UseWith[WITH] == oPADLOCK1B) {
 			AnimTab[a1B2AVERSAACIDO].atframe[2].index = 1483;
 			AnimTab[a1B2VERSAACIDO].atframe[2].index = 1483;
 			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
 			else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			KillIcon(iFIALAMETA);
 			printsent = false;
-		} else if ((UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTA2B)) {
+		} else if ((UseWith[WITH] == oDOOR2A) || (UseWith[WITH] == oPORTA2B)) {
 			printsent = false;
 			CharacterSay(1508);
 		}
 		break;
 
 	case iKEY15:
-		if (UseWith[WITH] == oCASSAFORTEC15) {
+		if (UseWith[WITH] == oSTRONGBOXC15) {
 			// ParteFli
 			PlayDialog(dF151);
-			g_vm->_obj[oCASSAFORTEC15]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSTRONGBOXC15]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCASSAFORTEA15]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oSLOT13]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oASCENSOREA13]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1911,39 +1911,39 @@ void doInvScrUseWith() {
 			KillIcon(iKEY15);
 			printsent = false;
 			updateinv = false;
-		} else if ((UseWith[WITH] == oCARA11) || (UseWith[WITH] == oCARB11) || (UseWith[WITH] == oPORTAR12) || (UseWith[WITH] == oCASSETTA12) || (UseWith[WITH] == oPORTONE18) || (UseWith[WITH] == oLUCCHETTO1B) || (UseWith[WITH] == oPORTAC21) || (UseWith[WITH] == oPANNELLOC23) || (UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTAC33) || (UseWith[WITH] == oSPORTELLOC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
+		} else if ((UseWith[WITH] == oCARA11) || (UseWith[WITH] == oCARB11) || (UseWith[WITH] == oTAKE12) || (UseWith[WITH] == oBOX12) || (UseWith[WITH] == oDOOR18) || (UseWith[WITH] == oPADLOCK1B) || (UseWith[WITH] == oDOORC21) || (UseWith[WITH] == oPANELC23) || (UseWith[WITH] == oDOOR2A) || (UseWith[WITH] == oDOORC33) || (UseWith[WITH] == oFRONTOFFICEC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
 			printsent = false;
 			CharacterSay(1469);
 		}
 		break;
 
-	case iSBARRA11:
-		if (UseWith[WITH] == oTOMBINOC1B) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, UseWith[WITH]);
+	case iBAR11:
+		if (UseWith[WITH] == oMANHOLEC1B) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oBOTOLAA1B]._anim = a1B6ASCENDEBOTOLA;
 			//_obj[oBOTOLAC1B]._anim = a1B3AAPREBOTOLA;
 			printsent = false;
 		} else if (UseWith[WITH] == oCATENAT21) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a216, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a216, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oALTOPARLANTE25) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a251, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a251, 0, 0, UseWith[WITH]);
 			printsent = false;
-		} else if (UseWith[WITH] == oPORTAC33) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a333PERDESBARRA, 0, 0, UseWith[WITH]);
-			KillIcon(iSBARRA11);
+		} else if (UseWith[WITH] == oDOORC33) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, UseWith[WITH]);
+			KillIcon(iBAR11);
 			printsent = false;
 		} else if (g_vm->_obj[UseWith[WITH]]._flag & OBJFLAG_PERSON) {
 			CharacterSay(1436);
 			printsent = false;
-		} else if ((UseWith[WITH] == oPORTAR12) || (UseWith[WITH] == oCASSAFORTEC15) || (UseWith[WITH] == oPORTONE18) || (UseWith[WITH] == oLUCCHETTO1B) || (UseWith[WITH] == oPORTAC21) || (UseWith[WITH] == oPANNELLOC23) || (UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTA2B)) {
+		} else if ((UseWith[WITH] == oTAKE12) || (UseWith[WITH] == oSTRONGBOXC15) || (UseWith[WITH] == oDOOR18) || (UseWith[WITH] == oPADLOCK1B) || (UseWith[WITH] == oDOORC21) || (UseWith[WITH] == oPANELC23) || (UseWith[WITH] == oDOOR2A) || (UseWith[WITH] == oPORTA2B)) {
 			printsent = false;
 			CharacterSay(1435);
 		}
 		break;
 
 	case iCARD14:
-		if ((UseWith[WITH] == oBIGLIETTERIA16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oTICKETOFFICE16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
 			if (_choice[49]._flag & OBJFLAG_DONE) {
 				CharacterSay(1457);
 				printsent = false;
@@ -1957,16 +1957,16 @@ void doInvScrUseWith() {
 				printsent = false;
 			}
 		} else if (UseWith[WITH] == oSLOT23) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2311, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2311, 0, 0, UseWith[WITH]);
 			printsent = false;
-		} else if ((UseWith[WITH] == oSLOT12) || (UseWith[WITH] == oSLOT13) || (UseWith[WITH] == oSLOT16) || (UseWith[WITH] == oSPORTELLOA35) || (UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
+		} else if ((UseWith[WITH] == oSLOT12) || (UseWith[WITH] == oSLOT13) || (UseWith[WITH] == oSLOT16) || (UseWith[WITH] == oFRONTOFFICEA35) || (UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
 			printsent = false;
 			CharacterSay(1419);
 		}
 		break;
 
 	case iMONETA13:
-		if ((UseWith[WITH] == oBIGLIETTERIA16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oTICKETOFFICE16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
 			_choice[46]._flag |= DLGCHOICE_HIDE;
 			_choice[47]._flag |= DLGCHOICE_HIDE;
 			_choice[48]._flag |= DLGCHOICE_HIDE;
@@ -1976,7 +1976,7 @@ void doInvScrUseWith() {
 			printsent = false;
 			KillIcon(iMONETA13);
 			g_vm->_obj[oFINGERPADP16]._flag |= OBJFLAG_ROOMOUT;
-		} else if (UseWith[WITH] == oBIGLIETTERIA16) {
+		} else if (UseWith[WITH] == oTICKETOFFICE16) {
 			CharacterSay(146);
 			printsent = false;
 		}
@@ -1984,7 +1984,7 @@ void doInvScrUseWith() {
 
 	case iPLASTICA:
 		if (UseWith[WITH] == oTELEFAXF17) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a172USAPLASTICA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a172USAPLASTICA, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oTELEFAXF17]._examine = 1486;
 			printsent = false;
 		}
@@ -2017,7 +2017,7 @@ void doInvScrUseWith() {
 			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
 				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			printsent = false;
-		} else if (UseWith[WITH] == ocGUARDIANO18) {
+		} else if (UseWith[WITH] == ocGUARD18) {
 			if (_choice[152]._flag & OBJFLAG_DONE)
 				CharacterSay(1465);
 			else
@@ -2132,14 +2132,14 @@ void doInvScrUseWith() {
 		break;
 
 	case iTESSERA:
-		if ((UseWith[WITH] == ocGUARDIANO18) && !(_choice[155]._flag & OBJFLAG_DONE)) {
+		if ((UseWith[WITH] == ocGUARD18) && !(_choice[155]._flag & OBJFLAG_DONE)) {
 			_choice[155]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dGUARDIANO18);
 			updateinv = false;
-			g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
 			g_vm->_obj[oPORTAC18]._flag |= OBJFLAG_ROOMOUT;
 			printsent = false;
-		} else if (UseWith[WITH] == ocGUARDIANO18) {
+		} else if (UseWith[WITH] == ocGUARD18) {
 			CharacterSay(1494);
 			printsent = false;
 		}
@@ -2163,8 +2163,8 @@ void doInvScrUseWith() {
 		break;
 
 	case iPISTOLA15:
-		if ((UseWith[WITH] == oPORTAC21) && !(g_vm->_room[r21]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a211, 0, 0, UseWith[WITH]);
+		if ((UseWith[WITH] == oDOORC21) && !(g_vm->_room[r21]._flag & OBJFLAG_EXTRA)) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a211, 0, 0, UseWith[WITH]);
 			InvObj[iPISTOLA15]._examine = 1472;
 			InvObj[iPISTOLA15]._action = 1473;
 			printsent = false;
@@ -2173,7 +2173,7 @@ void doInvScrUseWith() {
 
 	case iCACCIAVITE:
 		if (UseWith[WITH] == oESSE21) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a213, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a213, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oCOPERCHIOC31) {
 			NLPlaySound(wCOVER31);
@@ -2197,10 +2197,10 @@ void doInvScrUseWith() {
 			printsent = false;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r31, a3118CHIUDEPANNELLO, 3, g_vm->_curObj);
 		} else if (UseWith[WITH] == oPANNELLO55) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5512, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5512, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oPANNELLOC56) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a568, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a568, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oSLOT23) || (UseWith[WITH] == oPRESA35) || (UseWith[WITH] == oSERRATURA33)) {
 			printsent = false;
@@ -2210,7 +2210,7 @@ void doInvScrUseWith() {
 
 	case iESSE:
 		if (UseWith[WITH] == oCATENA21) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a214, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a214, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2218,9 +2218,9 @@ void doInvScrUseWith() {
 	case iTANICHETTA27:
 		if (UseWith[WITH] == oMANIGLIONE22) {
 			if (g_vm->_obj[oARMADIETTORC22]._mode & OBJMODE_OBJSTATUS)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a228, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a228, 0, 0, UseWith[WITH]);
 			else
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a228A, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a228A, 0, 0, UseWith[WITH]);
 			KillIcon(iTANICHETTA27);
 			AddIcon(iTANICHETTA22);
 			if (InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA) {
@@ -2232,10 +2232,10 @@ void doInvScrUseWith() {
 			break;
 
 	case iKEY22:
-		if (UseWith[WITH] == oPORTA2A) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2A2USEKEY, 0, 0, UseWith[WITH]);
+		if (UseWith[WITH] == oDOOR2A) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2A2USEKEY, 0, 0, UseWith[WITH]);
 			printsent = false;
-		} else if ((UseWith[WITH] == oPANNELLOC23) || (UseWith[WITH] == oPORTAC33) || (UseWith[WITH] == oSPORTELLOC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
+		} else if ((UseWith[WITH] == oPANELC23) || (UseWith[WITH] == oDOORC33) || (UseWith[WITH] == oFRONTOFFICEC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
 			printsent = false;
 			CharacterSay(1512);
 		}
@@ -2243,16 +2243,16 @@ void doInvScrUseWith() {
 
 	case iLAMPADINA29:
 		if ((UseWith[WITH] == oPORTALAMPADE2B) && !(g_vm->_obj[UseWith[WITH]]._anim)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B6METTELAMPADINA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B6METTELAMPADINA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iPIPEWRENCH:
-		if (UseWith[WITH] == oPANNELLOC23) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a233, 0, 0, UseWith[WITH]);
+		if (UseWith[WITH] == oPANELC23) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a233, 0, 0, UseWith[WITH]);
 			printsent = false;
-		} else if ((UseWith[WITH] == oPORTAC33) || (UseWith[WITH] == oSPORTELLOC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
+		} else if ((UseWith[WITH] == oDOORC33) || (UseWith[WITH] == oFRONTOFFICEC35) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
 			printsent = false;
 			CharacterSay(1525);
 		}
@@ -2260,7 +2260,7 @@ void doInvScrUseWith() {
 
 	case iCAVI:
 		if ((UseWith[WITH] == oCONTATTI23) && (g_vm->_obj[oLEVAS23]._mode & OBJMODE_OBJSTATUS)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a236, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a236, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oLEVAG23) {
 			CharacterSay(2015);
@@ -2281,7 +2281,7 @@ void doInvScrUseWith() {
 			//_obj[oPASSERELLA24]._anim = 0;
 			printsent = false;
 		} else if ((UseWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a341USAPINZE, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a341USAPINZE, 0, 0, UseWith[WITH]);
 			//_obj[oVALVOLAC34]._anim = 0;
 			printsent = false;
 		} else if ((UseWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
@@ -2295,7 +2295,7 @@ void doInvScrUseWith() {
 
 	case iLATTINA28:
 		if ((UseWith[WITH] == oSERBATOIOA2G) && !(InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2G4VERSALATTINA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2G4VERSALATTINA, 0, 0, UseWith[WITH]);
 			InvObj[iLATTINA28]._flag |= OBJFLAG_EXTRA;
 			InvObj[iLATTINA28]._examine = 1537;
 			if (IconPos(iTANICHETTA22) != MAXICON) {
@@ -2315,7 +2315,7 @@ void doInvScrUseWith() {
 
 	case iBOMBOLA:
 		if (UseWith[WITH] == oSERBATOIOA2G) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2G5METTEBOMBOLA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2G5METTEBOMBOLA, 0, 0, UseWith[WITH]);
 			InvObj[iBOMBOLA]._flag |= OBJFLAG_EXTRA;
 			if ((InvObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA)) {
 				g_vm->_obj[oSERBATOIOA2G]._examine = 670;
@@ -2362,32 +2362,32 @@ void doInvScrUseWith() {
 					PlayDialog(dF213);
 				printsent = false;
 			}
-		} else if ((UseWith[WITH] == oPORTAC33) && (UseWith[USED] == iSBARRA21)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a333PERDESBARRA, 0, 0, UseWith[WITH]);
+		} else if ((UseWith[WITH] == oDOORC33) && (UseWith[USED] == iSBARRA21)) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oSERPENTEU52) && (UseWith[USED] == iPINZA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a527, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a527, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
 		} else if ((UseWith[WITH] == oSERPENTEA52) && (UseWith[USED] == iPINZA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a528, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a528, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oSERPENTEB52) && (UseWith[USED] == iPINZA) && (IconPos(iSERPENTEA) == MAXICON)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a523, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a523, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iLAMPADINA2B:
 		if (UseWith[WITH] == oPORTALAMPADE29) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a293AVVITALAMPADINA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a293AVVITALAMPADINA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iLATTINA27:
 		if ((UseWith[WITH] == oBRACIERES28) && (g_vm->_obj[oBRACIERES28]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a286, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a286, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oBRACIERES28]._examine = 456;
 			printsent = false;
 		} else
@@ -2397,13 +2397,13 @@ void doInvScrUseWith() {
 	case iTELECOMANDO2G:
 		if (UseWith[WITH] == oTASTO2F) {
 			if (g_vm->_obj[oASCENSORE2F]._mode & OBJMODE_OBJSTATUS) {
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F10PANNELLOSICHIUDE, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2F10PANNELLOSICHIUDE, 0, 0, UseWith[WITH]);
 				g_vm->_obj[oBIDONE2F]._anim = a2F5CFRUGABIDONE;
 			} else {
 				if (!(InvObj[iTELECOMANDO2G]._flag & OBJFLAG_EXTRA))
-					doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F9PPANNELLOSIAPRE, 0, 0, UseWith[WITH]);
+					doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2F9PPANNELLOSIAPRE, 0, 0, UseWith[WITH]);
 				else
-					doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F9PANNELLOSIAPRE, 0, 0, UseWith[WITH]);
+					doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2F9PANNELLOSIAPRE, 0, 0, UseWith[WITH]);
 				InvObj[iTELECOMANDO2G]._flag |= OBJFLAG_EXTRA;
 				g_vm->_obj[oBIDONE2F]._anim = a2F5FRUGABIDONE;
 			}
@@ -2413,7 +2413,7 @@ void doInvScrUseWith() {
 
 	case iSAMROTTO:
 		if (UseWith[WITH] == oSERRATURA33) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a338POSASAM, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a338POSASAM, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2439,10 +2439,10 @@ void doInvScrUseWith() {
 
 	case iPROIETTORE31:
 		if (UseWith[WITH] == oPRESA35) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a351PROVAPROIETTOREPRESA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a351PROVAPROIETTOREPRESA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oTRIPLA35) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a355ATTPROIETTORETRIPLAEPRESA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a355ATTPROIETTORETRIPLAEPRESA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oRIBELLEA35)) {
 			printsent = false;
@@ -2452,7 +2452,7 @@ void doInvScrUseWith() {
 
 	case iPROIETTORE35:
 		if (UseWith[WITH] == oPRESA35) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a352ATTPROIETTOREETRIPLAPRESA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a352ATTPROIETTOREETRIPLAPRESA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oRIBELLEA35)) {
 			printsent = false;
@@ -2462,21 +2462,21 @@ void doInvScrUseWith() {
 
 	case iTRIPLA:
 		if (UseWith[WITH] == oPRESA35) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a353ATTACCATRIPLAPRESA, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a353ATTACCATRIPLAPRESA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iLASER35:
-		if (UseWith[WITH] == oSPORTELLOC35) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a3511APRESPORTELLO, 0, 0, UseWith[WITH]);
+		if (UseWith[WITH] == oFRONTOFFICEC35) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3511APRESPORTELLO, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oSERPENTEU52) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a522, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a522, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
 		} else if (UseWith[WITH] == oLUCCHETTO53) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a532, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a532, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTAMC36) || (UseWith[WITH] == oPORTALC36) || (UseWith[WITH] == oSCANNERMA36) || (UseWith[WITH] == oSCANNERLA36) || (UseWith[WITH] == oCASSETTOC36) || (UseWith[WITH] == oRETE52) || (UseWith[WITH] == oTELECAMERA52) || (UseWith[WITH] == oSERPENTET52) || (UseWith[WITH] == oLAGO53)) {
 			printsent = false;
@@ -2486,9 +2486,9 @@ void doInvScrUseWith() {
 
 	case iKEY35:
 		if (UseWith[WITH] == oCASSETTOC36) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a364APRECASSETTO, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a364APRECASSETTO, 0, 0, UseWith[WITH]);
 			printsent = false;
-		} else if ((UseWith[WITH] == oSPORTELLOC35) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
+		} else if ((UseWith[WITH] == oFRONTOFFICEC35) || (UseWith[WITH] == oPORTAC54) || (UseWith[WITH] == oPORTA57C55) || (UseWith[WITH] == oPORTA58C55) || (UseWith[WITH] == oPORTAS56) || (UseWith[WITH] == oPORTAS57)) {
 			printsent = false;
 			CharacterSay(1594);
 		}
@@ -2496,17 +2496,17 @@ void doInvScrUseWith() {
 
 	case iSTETOSCOPIO:
 		if (UseWith[WITH] == oPORTALC36) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a368USASTETOSCOPIO, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a368USASTETOSCOPIO, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iCARD36:
-		if ((UseWith[WITH] == oSPORTELLOA35) && !(g_vm->_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oFRONTOFFICEA35) && !(g_vm->_obj[oFRONTOFFICEA35]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r35P, 0, 10, UseWith[WITH]);
 			KillIcon(iCARD36);
 			printsent = false;
-		} else if ((UseWith[WITH] == oSPORTELLOA35) && (g_vm->_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
+		} else if ((UseWith[WITH] == oFRONTOFFICEA35) && (g_vm->_obj[oFRONTOFFICEA35]._flag & OBJFLAG_EXTRA)) {
 			CharacterSay(1844);
 			printsent = false;
 		} else if ((UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
@@ -2518,7 +2518,7 @@ void doInvScrUseWith() {
 	case iMONETA4L:
 		if ((UseWith[WITH] == oFESSURA41) &&
 		    ((g_vm->_obj[oFUCILE42]._anim != 0) && (g_vm->_obj[oFUCILE42]._anim != a428) && (g_vm->_obj[oFUCILE42]._anim != a429))) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a412, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a412, 0, 0, UseWith[WITH]);
 			if (g_vm->_obj[oZAMPA41]._mode & OBJMODE_OBJSTATUS)
 				g_vm->_obj[oSLOT41]._anim = a417;
 			else if (Try41 <= 2)
@@ -2535,7 +2535,7 @@ void doInvScrUseWith() {
 			CharacterSay(924);
 			printsent = false;
 		} else if (UseWith[WITH] == oCAMPANA4U) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U3, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U3, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oCAMPANA4U]._flag |= OBJFLAG_EXTRA;
 			if ((g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
 				g_vm->_obj[oCAMPANA4U]._examine = 1202;
@@ -2548,7 +2548,7 @@ void doInvScrUseWith() {
 
 	case iMARTELLO:
 		if ((UseWith[WITH] == oRAGNO41) && !(g_vm->_obj[oRAGNO41]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a416, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a416, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oRAGNO41]._flag |= OBJFLAG_EXTRA;
 			g_vm->_obj[oRAGNO41]._anim = 0;
 			if (g_vm->_obj[oSLOT41]._anim == a414)
@@ -2562,7 +2562,7 @@ void doInvScrUseWith() {
 
 	case iMONETE:
 		if ((UseWith[WITH] == oFESSURA42) && (g_vm->_obj[oFUCILE42]._anim == a427)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a421, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a421, 0, 0, UseWith[WITH]);
 			if (g_vm->_obj[oPOLTIGLIA42]._mode & OBJMODE_OBJSTATUS)
 				g_vm->_obj[oFUCILE42]._anim = a429;
 			else
@@ -2573,7 +2573,7 @@ void doInvScrUseWith() {
 
 	case iPOLTIGLIA:
 		if (UseWith[WITH] == oGUIDE42) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a423, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a423, 0, 0, UseWith[WITH]);
 			if (g_vm->_obj[oFUCILE42]._anim != a427)
 				g_vm->_obj[oFUCILE42]._anim = a429;
 			printsent = false;
@@ -2582,7 +2582,7 @@ void doInvScrUseWith() {
 
 	case iMAZZA:
 		if ((UseWith[WITH] == oTAMBURO43) && !(g_vm->_obj[oTAMBURO43]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a435, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a435, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oTAMBURO43]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTAC4B) || (UseWith[WITH] == oSERRATURA4B) || (UseWith[WITH] == oLICANTROPO4P)) {
@@ -2594,7 +2594,7 @@ void doInvScrUseWith() {
 	case iPUPAZZO:
 		if (UseWith[WITH] == oCASSETTOAA44) {
 			ReplaceIcon(iPUPAZZO, iTELECOMANDO44);
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a442, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a442, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2604,7 +2604,7 @@ void doInvScrUseWith() {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 2, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oCAMPANA4U) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U5, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U5, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oCAMPANA4U]._examine = 1204;
 			g_vm->_obj[oCAMPANA4U]._action = 1205;
 			printsent = false;
@@ -2619,14 +2619,14 @@ void doInvScrUseWith() {
 
 	case iTESCHIO:
 		if (UseWith[WITH] == oPIASTRELLA48) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4810, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4810, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iTORCIA47:
 		if (UseWith[WITH] == oTESCHIO48) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4811, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4811, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oCALDAIAS45) || (UseWith[WITH] == oRAGNO46)) {
 			printsent = false;
@@ -2636,7 +2636,7 @@ void doInvScrUseWith() {
 
 	case iFIAMMIFERO:
 		if (UseWith[WITH] == oTORCIAS48) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4812, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4812, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oTORCIAS48]._lim[0] = 0;
 			g_vm->_obj[oTORCIAS48]._lim[1] = 0;
 			g_vm->_obj[oTORCIAS48]._lim[2] = 0;
@@ -2676,14 +2676,14 @@ void doInvScrUseWith() {
 
 	case iBARATTOLO:
 		if ((UseWith[WITH] == oSANGUE4P) || (UseWith[WITH] == oLICANTROPOM4P)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4P7, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4P7, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iCAMPANA:
 		if (UseWith[WITH] == oPOZZA4U) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U2, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U2, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2695,7 +2695,7 @@ void doInvScrUseWith() {
 			printsent = false;
 		} else if (UseWith[WITH] == oCAMPANA4U) {
 			KillIcon(UseWith[USED]);
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U4, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U4, 0, 0, UseWith[WITH]);
 			InvObj[iBIGLIAA]._flag |= OBJFLAG_EXTRA;
 			if ((g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
 				g_vm->_obj[oCAMPANA4U]._examine = 1202;
@@ -2720,7 +2720,7 @@ void doInvScrUseWith() {
 
 	case iSANGUE:
 		if (UseWith[WITH] == oSERRATURA4B) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B4, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B4, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oPORTAC4B]._anim = a4B5;
 			printsent = false;
 		}
@@ -2728,7 +2728,7 @@ void doInvScrUseWith() {
 
 	case iDIAPA4B:
 		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6A, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6A, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oPROIETTORE4B]._anim = a4B9A;
 			printsent = false;
 		}
@@ -2736,7 +2736,7 @@ void doInvScrUseWith() {
 
 	case iDIAPB4B:
 		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6B, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6B, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oPROIETTORE4B]._anim = a4B9B;
 			printsent = false;
 		}
@@ -2745,7 +2745,7 @@ void doInvScrUseWith() {
 	case iDIAP4C:
 		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			//
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6C, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6C, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oPROIETTORE4B]._anim = a4B9C;
 			printsent = false;
 		}
@@ -2753,7 +2753,7 @@ void doInvScrUseWith() {
 
 	case iUOVO:
 		if ((UseWith[WITH] == oRETE52) || (UseWith[WITH] == oSERPENTET52)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a521, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a521, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2765,7 +2765,7 @@ void doInvScrUseWith() {
 				StartCharacterAction(a533, r54, 11, 0);
 				KillIcon(UseWith[USED]);
 			} else if (UseWith[USED] != iSERPENTEB) {
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
 				KillIcon(UseWith[USED]);
 				g_vm->_obj[oLAGO53]._examine = 1237;
 			} else
@@ -2780,7 +2780,7 @@ void doInvScrUseWith() {
 				StartCharacterAction(a533C, r54, 11, 0);
 				KillIcon(UseWith[USED]);
 			} else if (UseWith[USED] != iSERPENTEB) {
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
 				KillIcon(UseWith[USED]);
 				g_vm->_obj[oLAGO53]._examine = 1237;
 			} else
@@ -2790,14 +2790,14 @@ void doInvScrUseWith() {
 
 	case iSAPONE:
 		if (UseWith[WITH] == oSECCHIOA54) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a543, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a543, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
 
 	case iLATTINE:
 		if (UseWith[WITH] == oLAVATRICEF54) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a546, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a546, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oLAVATRICEL54]._anim = a547;
 			printsent = false;
 		}
@@ -2805,13 +2805,13 @@ void doInvScrUseWith() {
 
 	case iCHIAVI:
 		if (UseWith[WITH] == oPORTAS56) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a563, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a563, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oPORTA57C55) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a551, r57, 17, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, r57, 17, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTA58C55) && (!(_choice[871]._flag & OBJFLAG_DONE) || (_choice[901]._flag & OBJFLAG_DONE))) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a552, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a552, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTA58C55) && (_choice[871]._flag & OBJFLAG_DONE)) {
 			CharacterSay(1287);
@@ -2821,7 +2821,7 @@ void doInvScrUseWith() {
 
 	case iMDVD:
 		if ((UseWith[WITH] == oTASTIERA56) && (_choice[260]._flag & OBJFLAG_DONE) && !(_choice[262]._flag & OBJFLAG_DONE) && (InvObj[iMDVD]._examine != 1752)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a566, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a566, 0, 0, UseWith[WITH]);
 			_choice[262]._flag &= ~DLGCHOICE_HIDE;
 			InvObj[iMDVD]._examine = 1752;
 			printsent = false;
@@ -2834,7 +2834,7 @@ void doInvScrUseWith() {
 
 	case iTESTER:
 		if ((UseWith[WITH] == oPANNELLOA) && (_choice[856]._flag & OBJFLAG_DONE)) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a569, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a569, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oPANNELLOA]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		}
@@ -2857,7 +2857,7 @@ void doInvScrUseWith() {
 
 	case iGUANTI59:
 		if (UseWith[WITH] == oBOMBOLA57) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a575, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a575, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
 		break;
@@ -2927,7 +2927,7 @@ void doScrScrUseWith() {
 
 	case oTUBOP33:
 		if (UseWith[WITH] == oTUBOF33) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, UseWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, UseWith[WITH]);
 			g_vm->_obj[oTUBOF34]._examine = 1832;
 			g_vm->_obj[oTUBOFT34]._examine = 773;
 			//g_vm->_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
@@ -3464,7 +3464,7 @@ bool AtMouseClick(uint16 TheObj) {
 		ret = true;
 		break;
 
-	case oPORTAC21:
+	case oDOORC21:
 		if ((UseWith[USED] == iPISTOLA15) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
@@ -3632,12 +3632,12 @@ bool AtMouseClick(uint16 TheObj) {
 	}
 
 	if (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) {
-		if ((TheObj == oTUBO21) || (TheObj == oCARTELLONE21) || (TheObj == oESSE21) || (TheObj == oRAMPINO21) || (TheObj == oCATENA21) || (TheObj == od21ALLA22) || (TheObj == oPORTAC21) || (TheObj == oPORTAA21) || (TheObj == oCUNICOLO21) || (TheObj == od24ALLA23) || (TheObj == od2EALLA2C) || (TheObj == od2GVALLA26)) {
+		if ((TheObj == oTUBO21) || (TheObj == oCARTELLONE21) || (TheObj == oESSE21) || (TheObj == oRAMPINO21) || (TheObj == oCATENA21) || (TheObj == od21ALLA22) || (TheObj == oDOORC21) || (TheObj == oPORTAA21) || (TheObj == oCUNICOLO21) || (TheObj == od24ALLA23) || (TheObj == od2EALLA2C) || (TheObj == od2GVALLA26)) {
 			_characterGoToPosition = -1;
 			ret = true;
 		}
 	} else {
-		if ((TheObj == od21ALLA23) || (TheObj == od24ALLA26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oSPORTELLOC35) || (TheObj == oSPORTELLOA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
+		if ((TheObj == od21ALLA23) || (TheObj == od24ALLA26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
 			_characterGoToPosition = -1;
 			ret = true;
 		}

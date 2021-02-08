@@ -232,7 +232,7 @@ void afterChoice(int numframe) {
 			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA)
 				_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 155)
-			g_vm->_obj[ocGUARDIANO18]._action = 228;
+			g_vm->_obj[ocGUARD18]._action = 228;
 		break;
 
 	/*		case dSAM17:
@@ -323,7 +323,7 @@ void afterChoice(int numframe) {
 
 		case dGUARDIANO18:
 			if (_curChoice == 152)
-				g_vm->_obj[ocGUARDIANO18]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[ocGUARD18]._mode &= ~OBJMODE_OBJSTATUS;
 			else if (_curChoice == 155)
 				StartCharacterAction(a184ENTRACLUB, r19, 2, 0);
 			break;
@@ -472,7 +472,7 @@ void afterChoice(int numframe) {
 			KillIcon(iCARD03);
 			KillIcon(iPEN);
 			KillIcon(iKEY05);
-			KillIcon(iLETTERA12);
+			KillIcon(iLETTER12);
 			KillIcon(iCARD14);
 			KillIcon(iFOTO);
 			KillIcon(iPISTOLA15);

@@ -236,7 +236,7 @@ DEFINIZIONI MESSAGGI
 * HOMO                                                                  *
 *************************************************************************/
 /* Notification of dialog event */
-#define MC_HOMO          128
+#define MC_CHARACTER          128
 
 #define ME_HOMOSHOW        0
 #define ME_HOMORESETMOVE   1
@@ -249,7 +249,7 @@ DEFINIZIONI MESSAGGI
 #define ME_HOMOOPEN        7
 #define ME_HOMOCLEARQUEUE  8
 
-#define ME_HOMOACTION          9
+#define ME_CHARACTERACTION          9
 #define ME_HOMOCONTINUEACTION 10
 #define ME_HOMOGOTOEXIT       11
 #define ME_HOMODOACTION		  12

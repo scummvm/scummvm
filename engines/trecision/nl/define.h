@@ -265,15 +265,15 @@
 #define oRINGMASKCX				11
 #define oRINGMASKDX				12
 #define oLIGHTS11				13
-#define oPORTAR12				14
+#define oTAKE12				14
 #define oASCENSOREC12			15
 #define oPANNELLOC12			16
-#define oPANNELLOA12			17
+#define oPANELA12			17
 #define oFUSIBILE12				18
-#define oASCENSOREA12			19
+#define oLIFTA12			19
 #define oSLOT12					20
-#define oCASSETTE12				21
-#define oCASSETTA12				22
+#define oBOXES12				21
+#define oBOX12				22
 #define oPORTAL12				23
 #define oMAPPA12				24
 #define oPIANTA12				25
@@ -325,7 +325,7 @@
 #define oTAVOLINOPP14			71
 #define oMASKSEDIA14			72
 #define oCASSAFORTEA15			73
-#define oCASSAFORTEC15			74
+#define oSTRONGBOXC15			74
 #define oVESTITI15				75
 #define oARMADIO15				76
 #define oTASTOA15				77
@@ -356,7 +356,7 @@
 #define oSEGGIOLE16				102
 #define oSCALA16				103
 #define ocPOLIZIOTTO16			104
-#define oBIGLIETTERIA16			105
+#define oTICKETOFFICE16			105
 #define oFINGERPADB16			106
 #define oMAPPA16				107
 #define oPORTAA16				108
@@ -391,9 +391,9 @@
 #define oSCHERMO18				137
 #define oCANCELLATA18			138
 #define od18ALLA17				139
-#define oPORTONE18				140
+#define oDOOR18				140
 #define oMONITORS18				141
-#define ocGUARDIANO18			142
+#define ocGUARD18			142
 #define oPORTAC18				143
 #define oPORTAN18				144
 #define oMASKPALO18				145
@@ -426,14 +426,14 @@
 #define oASSE1B					172
 #define oASSEROTTO1B			173
 #define oTOMBINOA1B				174
-#define oTOMBINOC1B				175
+#define oMANHOLEC1B				175
 #define oCOPERCHIO1B			176
 #define oMASKBIDONE1B			177
 #define oMASKTUBO1B				178
 #define oBOTOLAA1B				179
 #define oCARTACCE1B				180
 #define oBOTOLAC1B				181
-#define oLUCCHETTO1B			182
+#define oPADLOCK1B			182
 #define oLUCCHETTOFUSO1B		183
 #define oMASKCASSE1B			184
 #define oCANCELLATA1B			185
@@ -476,7 +476,7 @@
 #define od21ALLA22				222
 #define om21ALLA22				223
 #define oPORTAA21				224
-#define oPORTAC21				225
+#define oDOORC21				225
 #define oCATENA21				226
 #define oRAMPINO21				227
 #define oCARTELLONE21			228
@@ -518,7 +518,7 @@
 #define oCAVIE23				264
 #define oCAVI23					265
 #define oPANNELLOA23			266
-#define oPANNELLOC23			267
+#define oPANELC23			267
 #define od23ALLA24				268
 #define oPANNELLOB23			269
 #define oCAVIB23				270
@@ -635,7 +635,7 @@
 #define omA29L					381
 #define omB29L					382
 #define omC29L					383
-#define oPORTA2A				384
+#define oDOOR2A				384
 #define od2AALLA2B				385
 #define oSCATOLA2A				386
 #define oTUBI2A					387
@@ -885,7 +885,7 @@
 #define oTUBOS33				631
 #define omTUBOS33				632
 #define od33ALLA34				633
-#define oPORTAC33				634
+#define oDOORC33				634
 #define omPORTA33				635
 #define oBOTOLAA33				636
 #define oBRUCIATURA33			637
@@ -914,8 +914,8 @@
 #define oGENERATORE34			660
 #define od35ALLA31				661
 #define oSCAFFALE35				662
-#define oSPORTELLOC35			663
-#define oSPORTELLOA35			664
+#define oFRONTOFFICEC35			663
+#define oFRONTOFFICEA35			664
 #define omASCENSORE35			665
 #define oASCENSORE35			666
 #define oMONITOR35				667
@@ -1741,12 +1741,12 @@
 #define a115CAMMINAPORTA   						79
 #define a116PROVAAUTO         					80
 #define a117JOHSUAENTRA       					81
-#define a121PROVACASSETTA		   				82
-#define a122APRECASSETTA		   				83
+#define a121BOXTEST		   				82
+#define a122APREBOX		   				83
 #define a123SPINGEPORTA			   				84
 #define a124PROVAASCENSOREROMPE	   				85
 #define a125PRENDEFUSIBILE		   				86
-#define a127USAFUSIBILEAVVOLTO	  				87
+#define a127USEWRAPPEDFUSED	  				87
 #define a128RIUSABOTTONE		              	88
 #define a129PARLACOMPUTERESCENDE              	89
 #define a1211OSSERVAMAPPAPALAZZO              	90
@@ -2042,7 +2042,7 @@
 #define a326BOTOLACHIUDE						380
 #define a331PROVABOTOLA							381
 #define a332PROVAPORTA							382
-#define a333PERDESBARRA							383
+#define a333LOSEBAR							383
 #define a334SALERUBINETTO						384
 #define a335RUBINETTONULLA						385
 #define a336STACCATUBO							386
@@ -2407,10 +2407,10 @@
 #define iPEN                            4
 #define iKEY05                       5   // Small Key
 #define iSTAGNOLA                       6
-#define iSBARRA11                       7
-#define iFUSIBILE                       8  // FUSIBILEBR
-#define iFUSIBILES                      9  // FUSIBILEOK
-#define iLETTERA12                      10
+#define iBAR11                       7
+#define iFUSE                       8  // FUSIBILEBR
+#define iFUSES                      9  // FUSIBILEOK
+#define iLETTER12                      10
 #define iMONETA13                       11
 #define iLATTINA13                      12  // BIRRA
 #define iBOTTIGLIA14                    13
