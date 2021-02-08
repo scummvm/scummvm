@@ -180,8 +180,6 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
-		// TODO: this comparison is wrong - either posType or koNumber
-		//if (overlay->type == OverlayPosType::koFollowActor) {
 		if (overlay->posType == OverlayPosType::koFollowActor) {
 			overlay->x = newX;
 			overlay->y = newY;
