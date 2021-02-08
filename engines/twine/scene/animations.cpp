@@ -417,7 +417,10 @@ void Animations::processAnimActions(int32 actorIdx) {
 		case ActionType::ACTION_THROW_3D_SEARCH:
 			if (action.animFrame == actor->animPosition) {
 				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
-				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + action.distanceY, actor->z + action.distanceZ, action.spriteIndex,
+				const int32 x = actor->x + _engine->_renderer->destX;
+				const int32 y = actor->y + action.distanceY;
+				const int32 z = actor->z + action.distanceZ;
+				_engine->_extra->addExtraAiming(actorIdx, x, y, z, action.spriteIndex,
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
