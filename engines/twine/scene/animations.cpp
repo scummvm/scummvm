@@ -421,6 +421,15 @@ void Animations::processAnimActions(int32 actorIdx) {
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
+		case ActionType::ACTION_UNKNOWN_21:
+			if (_engine->_gameState->magicBallIdx == -1 && action.animFrame == actor->animPosition) {
+				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
+				const int32 x = actor->x + _engine->_renderer->destX;
+				const int32 y = actor->y + action.distanceY;
+				const int32 z = actor->z + _engine->_renderer->destZ;
+				_engine->_extra->addExtraThrowMagicball(x, y, z, action.xAngle, actor->angle, action.yAngle, action.finalAngle);
+			}
+			break;
 		case ActionType::ACTION_ZV:
 		default:
 			break;
