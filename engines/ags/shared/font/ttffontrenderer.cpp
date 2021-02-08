@@ -105,10 +105,11 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRen
 	delete reader;
 
 	ALFONT_FONT *alfptr = alfont_load_font_from_mem(membuffer, lenof);
-	free(membuffer);
 
-	if (alfptr == nullptr)
+	if (alfptr == nullptr) {
+		free(membuffer);
 		return false;
+	}
 
 	// TODO: move this somewhere, should not be right here
 #if AGS_OUTLINE_FONT_FIX
