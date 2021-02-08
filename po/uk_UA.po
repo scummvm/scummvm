@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-07 12:07+0000\n"
-"PO-Revision-Date: 2021-02-01 15:45+0000\n"
+"PO-Revision-Date: 2021-02-08 12:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3333,10 +3333,8 @@ msgid "Magnify Mode Off"
 msgstr "Режим збільшення вимкнено"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Висококласні відео"
+msgstr "Без масштабування"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
