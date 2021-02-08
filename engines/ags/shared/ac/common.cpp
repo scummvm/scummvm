@@ -37,8 +37,6 @@ void quitprintf(const char *fmt, ...) {
 	String text = String::FromFormatV(fmt, ap);
 	va_end(ap);
 
-	if (!_G(abort_engine))
-		::AGS::g_vm->GUIError(text);
 	quit(text);
 }
 

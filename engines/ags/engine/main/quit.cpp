@@ -169,7 +169,6 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
-			"If the problem persists, post the details on the AGS Technical Forum.\n"
 			"(ACI version %s)\n"
 			"\nError: ", _G(EngineVersion).LongString.GetCStr());
 		return kQuit_FatalError;
