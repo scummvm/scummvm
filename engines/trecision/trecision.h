@@ -46,6 +46,26 @@ public:
 
 	SRoom _room[MAXROOMS];
 	SObject _obj[MAXOBJ];
+	SInvObject _inventoryObj[MAXINVENTORY];
+	uint8 _actionLen[MAXACTION];
+
+	// Inventory
+	uint8 _inventory[MAXICON];
+	uint8 _inventorySize;
+	uint8 _cyberInventory[MAXICON];
+	uint8 _cyberInventorySize;
+	uint8 _iconBase;
+	uint8 _inventoryStatus;
+	uint8 _lightIcon;
+	uint8 _regenInvStartIcon;
+	uint8 _regenInvStartLine;
+	uint16 _lastCurInventory;
+	uint16 _lastLightIcon;
+	int16 _inventoryCounter;
+
+	// Use With
+	uint16 _useWith[2];
+	bool _useWithInv[2];
 };
 
 extern TrecisionEngine *g_vm;

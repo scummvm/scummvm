@@ -45,14 +45,14 @@ void initMain() {
 	LoadAll();
 
 	InitMessageSystem();                   // schedule.c
-	_inventorySize = 0;
-	memset(_inventory, iNULL, MAXICON);
+	g_vm->_inventorySize = 0;
+	memset(g_vm->_inventory, iNULL, MAXICON);
 
-	_inventory[_inventorySize++]  = iBANCONOTE;
-	_inventory[_inventorySize++]  = iSAM;
-	_inventory[_inventorySize++]  = iCARD03;
-	_inventory[_inventorySize++]  = iPEN;
-	_inventory[_inventorySize++]  = iKEY05;
+	g_vm->_inventory[g_vm->_inventorySize++] = iBANCONOTE;
+	g_vm->_inventory[g_vm->_inventorySize++] = iSAM;
+	g_vm->_inventory[g_vm->_inventorySize++] = iCARD03;
+	g_vm->_inventory[g_vm->_inventorySize++] = iPEN;
+	g_vm->_inventory[g_vm->_inventorySize++] = iKEY05;
 
 	g_vm->_curRoom = rINTRO;
 

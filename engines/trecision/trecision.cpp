@@ -53,6 +53,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	g_vm = this;
 
 	_curObj = 1;
+	_inventoryStatus = INV_OFF;
+	_lightIcon = 0xFF;
+	_regenInvStartLine = INVENTORY_HIDE;
+	_lastLightIcon = 0xFF;
+	_inventoryCounter = INVENTORY_HIDE;
 }
 
 TrecisionEngine::~TrecisionEngine() {

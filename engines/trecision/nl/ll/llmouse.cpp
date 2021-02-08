@@ -448,20 +448,20 @@ bool DataSave() {
 		Mouse(3);
 
 	// ferma omino, animazioni, spegne scritte
-	memcpy(OldInv, _inventory, MAXICON);
-	memset(_inventory, 0, MAXICON);
+	memcpy(OldInv, g_vm->_inventory, MAXICON);
+	memset(g_vm->_inventory, 0, MAXICON);
 
-	OldIconBase = TheIconBase;
-	TheIconBase = 0;
-	OldInvLen = _inventorySize;
-	_inventorySize = MAXSAVEFILE;
+	OldIconBase = g_vm->_iconBase;
+	g_vm->_iconBase = 0;
+	OldInvLen = g_vm->_inventorySize;
+	g_vm->_inventorySize = MAXSAVEFILE;
 
 insave:
 
 	CurPos = -1;
 	OldPos = -1;
 
-	for (a = 0; a < _inventorySize; a++) {
+	for (a = 0; a < g_vm->_inventorySize; a++) {
 		strcpy(tempname, "SaveGame._X_");
 		tempname[10] = 'A' + a;
 
@@ -472,11 +472,12 @@ insave:
 			fclose(fh);
 			UpdatePixelFormat(Icone + (READICON + 1 + a)*ICONDX * ICONDY, ICONDX * ICONDY);
 
-			_inventory[a] = LASTICON + a;
+			g_vm->_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], _sysSent[10]);
-			if (fh) fclose(fh);
-			_inventory[a] = iEMPTYSLOT;
+			if (fh)
+				fclose(fh);
+			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
 	}
 
@@ -550,7 +551,7 @@ insave:
 
 	}
 
-	if (_inventory[CurPos] != iEMPTYSLOT)
+	if (g_vm->_inventory[CurPos] != iEMPTYSLOT)
 		strcount = strlen(savename[CurPos]);
 	else {
 		strcount = 0;
@@ -651,7 +652,7 @@ insave:
 
 	fwrite(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 	fwrite(&OldInvLen,           sizeof(uint8), 1, fh);
-	fwrite(&_cyberInventorySize,		  sizeof(uint8), 1, fh);
+	fwrite(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
 	fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
 	fwrite(&Semskiptalk,         sizeof(LLBOOL), 1, fh);
 	fwrite(&Semskipenable,       sizeof(LLBOOL), 1, fh);
@@ -667,7 +668,7 @@ insave:
 	fwrite(&SemCharacterExist,        sizeof(LLBOOL), 1, fh);
 
 	fwrite(&OldInv[0],           sizeof(uint8), MAXICON, fh);
-	fwrite(&_cyberInventory[0],         sizeof(uint8), MAXICON, fh);
+	fwrite(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
 
 	fwrite(&_actor._px,              sizeof(float), 1, fh);
 	fwrite(&_actor._py,              sizeof(float), 1, fh);
@@ -698,11 +699,11 @@ insave:
 		fwrite(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
 	}
 	for (a = 0; a < MAXINVENTORY; a++) {
-		fwrite(&InvObj[a]._name,    sizeof(uint16), 1, fh);
-		fwrite(&InvObj[a]._examine, sizeof(uint16), 1, fh);
-		fwrite(&InvObj[a]._action,  sizeof(uint16), 1, fh);
-		fwrite(&InvObj[a]._anim,    sizeof(uint16), 1, fh);
-		fwrite(&InvObj[a]._flag,    sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_inventoryObj[a]._name, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_inventoryObj[a]._examine, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_inventoryObj[a]._action, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_inventoryObj[a]._anim, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 	}
 	for (a = 0; a < MAXANIM; a++)
 		fwrite(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
@@ -748,10 +749,10 @@ outsave:
 
 //	installlowisr();
 
-	memcpy(_inventory, OldInv, MAXICON);
+	memcpy(g_vm->_inventory, OldInv, MAXICON);
 
-	TheIconBase = OldIconBase;
-	_inventorySize = OldInvLen;
+	g_vm->_iconBase = OldIconBase;
+	g_vm->_inventorySize = OldInvLen;
 
 	UnlockVideo();
 
@@ -767,15 +768,14 @@ outsave:
 					DataLoad
 --------------------------------------------------*/
 bool DataLoad() {
-	extern char CurCDSet, CDLetter;
+	extern char CurCDSet;
 	extern uint8 CurStack;
 	FILE *fh;
 	int a;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
-	char tempname[20], ch;
+	char tempname[20];
 	char savename[MAXSAVEFILE][40];
 	struct SDText SText;
-	uint16 posx, LenText;
 	bool retval = true;
 
 	for (a = 0; a < TOP; a++)
@@ -823,17 +823,17 @@ bool DataLoad() {
 
 	// ferma omino, animzaioni, spegne scritte
 
-	memcpy(OldInv, _inventory, MAXICON);
-	memset(_inventory, 0, MAXICON);
+	memcpy(OldInv, g_vm->_inventory, MAXICON);
+	memset(g_vm->_inventory, 0, MAXICON);
 
-	OldIconBase = TheIconBase;
-	TheIconBase = 0;
-	OldInvLen = _inventorySize;
-	_inventorySize = MAXSAVEFILE;
+	OldIconBase = g_vm->_iconBase;
+	g_vm->_iconBase = 0;
+	OldInvLen = g_vm->_inventorySize;
+	g_vm->_inventorySize = MAXSAVEFILE;
 	int8 CurPos = -1;
 	int8 OldPos = -1;
 
-	for (a = 0; a < _inventorySize; a++) {
+	for (a = 0; a < g_vm->_inventorySize; a++) {
 		strcpy(tempname, "SaveGame._X_");
 		tempname[10] = 'A' + a;
 
@@ -844,19 +844,18 @@ bool DataLoad() {
 			fclose(fh);
 			UpdatePixelFormat(Icone + (READICON + 1 + a)*ICONDX * ICONDY, ICONDX * ICONDY);
 
-			_inventory[a] = LASTICON + a;
+			g_vm->_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], _sysSent[10]);
 			if (fh) fclose(fh);
 			fh = NULL;
-			_inventory[a] = iEMPTYSLOT;
+			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
 	}
 
 	RegenInventory(0, 0);
 	//ShowScreen(0,0,640,480);
 
-	ch = 0;
 	for (; ;) {
 		CheckSystem();
 		Mouse(3);
@@ -874,8 +873,8 @@ bool DataLoad() {
 				for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 					wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText  = TextLength(savename[CurPos], 0);
+				uint16 posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
+				uint16 LenText = TextLength(savename[CurPos], 0);
 				if (posx - (LenText / 2) < 2)
 					posx = 2;
 				else
@@ -902,7 +901,7 @@ bool DataLoad() {
 //  					Video2+a*CurRoomMaxX+CurScrollPageDx, SCREENLEN );
 			}
 
-			if ((mleft) && (_inventory[CurPos] !=  iEMPTYSLOT))
+			if ((mleft) && (g_vm->_inventory[CurPos] != iEMPTYSLOT))
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -947,7 +946,7 @@ bool DataLoad() {
 
 	fread(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 	fread(&OldInvLen,           sizeof(uint8), 1, fh);
-	fread(&_cyberInventorySize,		 sizeof(uint8), 1, fh);
+	fread(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
 	fread(&OldIconBase,         sizeof(uint8), 1, fh);
 	fread(&Semskiptalk,         sizeof(LLBOOL), 1, fh);
 	fread(&Semskipenable,       sizeof(LLBOOL), 1, fh);
@@ -963,7 +962,7 @@ bool DataLoad() {
 	fread(&SemCharacterExist,        sizeof(LLBOOL), 1, fh);
 
 	fread(&OldInv[0],           sizeof(uint8), MAXICON, fh);
-	fread(&_cyberInventory[0],         sizeof(uint8), MAXICON, fh);
+	fread(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
 
 	fread(&_actor._px,              sizeof(float), 1, fh);
 	fread(&_actor._py,              sizeof(float), 1, fh);
@@ -994,11 +993,11 @@ bool DataLoad() {
 		fread(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
 	}
 	for (a = 0; a < MAXINVENTORY; a++) {
-		fread(&InvObj[a]._name,    sizeof(uint16), 1, fh);
-		fread(&InvObj[a]._examine, sizeof(uint16), 1, fh);
-		fread(&InvObj[a]._action,  sizeof(uint16), 1, fh);
-		fread(&InvObj[a]._anim,    sizeof(uint16), 1, fh);
-		fread(&InvObj[a]._flag,    sizeof(uint8), 1, fh);
+		fread(&g_vm->_inventoryObj[a]._name, sizeof(uint16), 1, fh);
+		fread(&g_vm->_inventoryObj[a]._examine, sizeof(uint16), 1, fh);
+		fread(&g_vm->_inventoryObj[a]._action, sizeof(uint16), 1, fh);
+		fread(&g_vm->_inventoryObj[a]._anim, sizeof(uint16), 1, fh);
+		fread(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 	}
 	for (a = 0; a < MAXANIM; a++)
 		fread(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
@@ -1056,11 +1055,11 @@ outload:
 
 	ShowScreen(0, 0, MAXX, TOP);
 
-	memcpy(_inventory, OldInv, MAXICON);
+	memcpy(g_vm->_inventory, OldInv, MAXICON);
 
 	g_vm->_curInventory = 0;
-	TheIconBase = OldIconBase;
-	_inventorySize = OldInvLen;
+	g_vm->_iconBase = OldIconBase;
+	g_vm->_inventorySize = OldInvLen;
 
 	mleft = mright = 0;
 	Mouse(3);
@@ -1079,15 +1078,12 @@ outload:
 					QuitGame
 --------------------------------------------------*/
 bool QuitGame() {
-	char ch;
 	struct SDText SText;
-	int a;
-	bool esito;
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		memcpy(ZBuffer + a * CurRoomMaxX, Video2 + CurRoomMaxX * a + CurScrollPageDx, SCREENLEN * 2);
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	SText.x = CurScrollPageDx;
@@ -1103,9 +1099,8 @@ bool QuitGame() {
 	SText.scol = MASKCOL;
 	DText(SText);
 
-	for (a = 0; a < TOP; a++)
-		VCopy(a * VirtualPageLen + VideoScrollPageDx,
-			  Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
+	for (int a = 0; a < TOP; a++)
+		VCopy(a * VirtualPageLen + VideoScrollPageDx, Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
 
 	UnlockVideo();
 
@@ -1116,24 +1111,20 @@ bool QuitGame() {
 	while (mleft || mright)
 		Mouse(3);
 
-	ch = waitKey();
+	char ch = waitKey();
 	//ch = 'y';
 
-	if ((ch == 'y') || (ch == 'Y'))
-		esito = true;
-	else
-		esito = false;
+	bool esito = ((ch == 'y') || (ch == 'Y'));
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		memcpy(Video2 + CurRoomMaxX * a + CurScrollPageDx, ZBuffer + a * CurRoomMaxX, SCREENLEN * 2);
 
-	for (a = 0; a < TOP; a++)
-		VCopy(a * VirtualPageLen + VideoScrollPageDx,
-			  Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
+	for (int a = 0; a < TOP; a++)
+		VCopy(a * VirtualPageLen + VideoScrollPageDx, Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
 
 	UnlockVideo();
 
-	return (esito);
+	return esito;
 }
 
 /*-----------------09/02/96 20.57-------------------
@@ -1141,9 +1132,8 @@ bool QuitGame() {
 --------------------------------------------------*/
 void DemoOver() {
 	struct SDText SText;
-	int a;
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	SText.x = CurScrollPageDx;
@@ -1159,9 +1149,8 @@ void DemoOver() {
 	SText.scol = MASKCOL;
 	DText(SText);
 
-	for (a = 0; a < TOP; a++)
-		VCopy(a * VirtualPageLen + VideoScrollPageDx,
-			  Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
+	for (int a = 0; a < TOP; a++)
+		VCopy(a * VirtualPageLen + VideoScrollPageDx, Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
 
 	UnlockVideo();
 
@@ -1181,12 +1170,11 @@ void DemoOver() {
  * 					CheckFileInCD
  * --------------------------------------------------*/
 void CheckFileInCD(const char *name) {
-	extern char CurCDSet, CDLetter;
+	extern char CurCDSet;
 	extern const char *_sysSent[];
 	struct SDText SText;
 	char str[200];
 	FILEENTRY fe;
-	int a;
 
 	strcpy(fe.name, name);
 	LPFILEENTRY pfe = (LPFILEENTRY)bsearch(&fe, FileRef, NumFileRef, sizeof(FILEENTRY), Compare);
@@ -1216,7 +1204,7 @@ void CheckFileInCD(const char *name) {
 	wordset(Video2, 0, MAXX * MAXY);
 	VMouseOFF();
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + MAXX * a, 0, MAXX);
 
 	sprintf(str, "CD%c.bm", ncd + '0');
@@ -1239,7 +1227,7 @@ void CheckFileInCD(const char *name) {
 	SText.scol = MASKCOL;
 	DText(SText);
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		VCopy(a * MAXX, Video2 + a * MAXX, MAXX);
 	UnlockVideo();
 
@@ -1255,9 +1243,9 @@ void CheckFileInCD(const char *name) {
 	} while (!found);
 	testCD.close();
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + MAXX * a, 0, MAXX);
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		VCopy(a * MAXX, Video2 + a * MAXX, MAXX);
 	UnlockVideo();
 

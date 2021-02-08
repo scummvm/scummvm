@@ -28,6 +28,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -51,16 +52,15 @@ void ProcessTime() {
 	if (TheTime >= NextRefresh) {
 		PaintString();
 
-		if ((_inventoryStatus == INV_PAINT) || (_inventoryStatus == INV_DEPAINT))
-			RollInventory(_inventoryStatus);
+		if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
+			RollInventory(g_vm->_inventoryStatus);
 
-		if ((_inventoryStatus != INV_OFF)  && ((OldRegInvSI  != RegenInvStartIcon) ||
-											   (OldRegInvSL != RegenInvStartLine) || (OldLightIcon != LightIcon) ||
-											   (SemForceRegenInventory))) {
-			RegenInventory(RegenInvStartIcon, RegenInvStartLine);
-			OldRegInvSI = RegenInvStartIcon;
-			OldRegInvSL = RegenInvStartLine;
-			OldLightIcon = LightIcon;
+		if ((g_vm->_inventoryStatus != INV_OFF)
+			&& ((OldRegInvSI != g_vm->_regenInvStartIcon) || (OldRegInvSL != g_vm->_regenInvStartLine) || (OldLightIcon != g_vm->_lightIcon) || (SemForceRegenInventory))) {
+			RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+			OldRegInvSI = g_vm->_regenInvStartIcon;
+			OldRegInvSL = g_vm->_regenInvStartLine;
+			OldLightIcon = g_vm->_lightIcon;
 			SemForceRegenInventory = false;
 		}
 

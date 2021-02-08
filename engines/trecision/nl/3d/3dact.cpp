@@ -38,7 +38,6 @@ namespace Trecision {
 --------------------------------------------------*/
 void actorDoAction(int whatAction) {
 	int len;
-	extern uint8 _actionLen[];
 	extern uint8 *_actionPointer[];
 	extern uint16 _actionPosition[];
 
@@ -67,7 +66,7 @@ void actorDoAction(int whatAction) {
 
 	if (whatAction > hLAST) {
 		v = (struct SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
-		len = _actionLen[whatAction];
+		len = g_vm->_actionLen[whatAction];
 	} else {
 		int cfp = 0;
 		int cur = 0;

@@ -133,8 +133,8 @@ void PlayDialog(uint16 i) {
 	SemShowHomo = false;		        // prima non c'era
 
 	InitQueue(&Homo);
-	_inventoryStatus = INV_OFF;
-	_inventoryCounter = INVENTORY_HIDE;
+	g_vm->_inventoryStatus = INV_OFF;
+	g_vm->_inventoryCounter = INVENTORY_HIDE;
 	ClearText();
 	PaintString();
 	PaintScreen(1);
@@ -221,7 +221,7 @@ void afterChoice(int numframe) {
 
 	case dGUARDIANO18:
 		if ((_curChoice == 151) || (_curChoice == 152)) {
-			InvObj[iFOTO]._action = 1465;
+			g_vm->_inventoryObj[iFOTO]._action = 1465;
 			g_vm->_obj[oTESSERA1A]._action = 238;
 			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA) {
 				_choice[154]._flag &= ~DLGCHOICE_HIDE;
@@ -373,7 +373,7 @@ void afterChoice(int numframe) {
 
 		case dF2E2:
 			CharacterSay(1561);
-			InvObj[iFUCILE]._examine = 1562;
+			g_vm->_inventoryObj[iFUCILE]._examine = 1562;
 			break;
 
 		case dF231:
@@ -421,12 +421,12 @@ void afterChoice(int numframe) {
 
 		case dF381:
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41, 0, 18, g_vm->_curObj);
-			memcpy(_cyberInventory, _inventory, MAXICON);
-			_cyberInventorySize = _inventorySize;
-			_inventorySize = 0;
-			TheIconBase = 0;
-			memset(_inventory, iNULL, MAXICON);
-			_inventory[_inventorySize++] = iDISLOCATORE;
+			memcpy(g_vm->_cyberInventory, g_vm->_inventory, MAXICON);
+			g_vm->_cyberInventorySize = g_vm->_inventorySize;
+			g_vm->_inventorySize = 0;
+			g_vm->_iconBase = 0;
+			memset(g_vm->_inventory, iNULL, MAXICON);
+			g_vm->_inventory[g_vm->_inventorySize++] = iDISLOCATORE;
 			break;
 
 		case dF371:
@@ -466,9 +466,9 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF4C1:
-			memcpy(_inventory, _cyberInventory, MAXICON);
-			_inventorySize = _cyberInventorySize;
-			TheIconBase = 0;
+			memcpy(g_vm->_inventory, g_vm->_cyberInventory, MAXICON);
+			g_vm->_inventorySize = g_vm->_cyberInventorySize;
+			g_vm->_iconBase = 0;
 			KillIcon(iCARD03);
 			KillIcon(iPEN);
 			KillIcon(iKEY05);
