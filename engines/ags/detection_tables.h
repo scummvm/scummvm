@@ -1441,6 +1441,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336), // GOG
+	ENGLISH_ENTRY("blackwell4", "deception.exe", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // GOG
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
