@@ -100,7 +100,7 @@ bool ALScummVMGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 		set_allegro_error("Invalid resolution parameters: %d x %d x %d", mode.Width, mode.Height, mode.ColorDepth);
 		return false;
 	}
-#if AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_MACOS
+#if AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_MACOS || defined(USE_HIGHRES)
 	// Everything is drawn to a virtual screen, so all resolutions are supported.
 	return true;
 #endif
