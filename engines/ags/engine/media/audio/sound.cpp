@@ -26,34 +26,17 @@
 //
 //=============================================================================
 
-#include "ags/shared/core/platform.h"
-#include "ags/shared/util/wgt2allg.h"
-#include "ags/engine/ac/file.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/media/audio/sound.h"
-#include "ags/engine/media/audio/audiointernaldefs.h"
 #include "ags/engine/media/audio/soundcache.h"
+#include "ags/engine/media/audio/soundclip.h"
 #include "ags/engine/media/audio/clip_mymidi.h"
-#include "ags/engine/util/mutex_lock.h"
-#include "ags/ags.h"
-#include "common/memstream.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 
 namespace AGS3 {
-
-#if defined JGMOD_MOD_PLAYER && defined DUMB_MOD_PLAYER
-#error JGMOD_MOD_PLAYER and DUMB_MOD_PLAYER macros cannot be defined at the same time.
-#endif
-
-#if !defined PSP_NO_MOD_PLAYBACK && !defined JGMOD_MOD_PLAYER && !defined DUMB_MOD_PLAYER
-#error Either JGMOD_MOD_PLAYER or DUMB_MOD_PLAYER should be defined.
-#endif
-
-int use_extra_sound_offset = 0;
-
 
 SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, int loop) {
 	Common::SeekableReadStream *data = get_cached_sound(asset_name);
@@ -118,13 +101,6 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
 	} else {
 		return nullptr;
 	}
-}
-
-int init_mod_player(int numVoices) {
-	return 0;
-}
-
-void remove_mod_player() {
 }
 
 } // namespace AGS3

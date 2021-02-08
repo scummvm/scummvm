@@ -53,9 +53,7 @@ using AGS::Shared::String;
 // that engine may use a "config" object or combo of objects to store
 // current user config, which may also be changed from script, and saved.
 struct GameSetup {
-	int digicard;
-	int midicard;
-	int mod_player;
+	int audio_backend; // abstract option, currently only works as on/off
 	int textheight; // text height used on the certain built-in GUI // TODO: move out to game class?
 	bool  no_speech_pack;
 	bool  enable_antialiasing;

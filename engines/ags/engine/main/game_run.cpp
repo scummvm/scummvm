@@ -733,8 +733,6 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	int res;
 
-	update_polled_mp3();
-
 	numEventsAtStartOfFunction = numevents;
 
 	if (_G(want_exit)) {
@@ -1007,8 +1005,6 @@ void update_polled_stuff_if_runtime() {
 		_G(want_exit) = 0;
 		quit("||exit!");
 	}
-
-	update_polled_mp3();
 
 	if (_G(editor_debugging_initialized))
 		check_for_messages_from_editor();

@@ -121,16 +121,7 @@ void quit_shutdown_platform(QuitReason qreason) {
 void quit_shutdown_audio() {
 	our_eip = 9917;
 	game.options[OPT_CROSSFADEMUSIC] = 0;
-	stopmusic();
-#ifndef PSP_NO_MOD_PLAYBACK
-	if (usetup.mod_player)
-		remove_mod_player();
-#endif
-
-	// Quit the sound thread.
-	audioThread.Stop();
-
-	remove_sound();
+	shutdown_sound();
 }
 
 QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {

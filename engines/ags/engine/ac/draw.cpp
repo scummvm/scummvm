@@ -2179,7 +2179,6 @@ void construct_game_scene(bool full_redraw) {
 	if (play.screen_is_faded_out == 0 && is_complete_overlay == 0) {
 		if (displayed_room >= 0) {
 			construct_room_view();
-			update_polled_mp3();
 		} else if (!gfxDriver->RequiresFullRedrawEachFrame()) {
 			// black it out so we don't get cursor trails
 			// TODO: this is possible to do with dirty rects system now too (it can paint black rects outside of room viewport)

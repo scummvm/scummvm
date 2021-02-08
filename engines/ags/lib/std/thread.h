@@ -29,26 +29,6 @@
 namespace AGS3 {
 namespace std {
 
-class thread {
-public:
-	template <class _Fn, class... _Args>
-	explicit thread(_Fn &&_Fx, _Args &&... _Ax) {
-		warning("TODO: thread::constructor");
-	}
-
-	thread() {
-		warning("TODO: thread::constructor");
-	}
-
-	void join() {
-		warning("TODO: thread::join");
-	}
-	bool joinable() const {
-		// TODO: thread::joinable
-		return false;
-	}
-};
-
 class this_thread {
 public:
 	static void yield() {

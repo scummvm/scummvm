@@ -59,19 +59,6 @@ int convert_fp_to_scaling(uint32_t scaling);
 // Fill in setup structs with default settings for the given mode (windowed or fullscreen)
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup);
 
-typedef struct {
-	char s[5];
-} AlIDStr;
-// Converts Allegro driver ID type to 4-char string
-AlIDStr AlIDToChars(int al_id);
-AlIDStr AlIDToChars(const String &s);
-// Converts C-string into Allegro's driver ID; string must be at least 4 character long
-int StringToAlID(const char *cstr);
-// Reads driver ID from config, where it may be represented as string or number
-int read_driverid(const ConfigTree &cfg, const String &sectn, const String &item, int def_value);
-// Writes driver ID to config
-void write_driverid(ConfigTree &cfg, const String &sectn, const String &item, int value);
-
 
 bool INIreaditem(const ConfigTree &cfg, const String &sectn, const String &item, String &value);
 int INIreadint(const ConfigTree &cfg, const String &sectn, const String &item, int def_value = 0);

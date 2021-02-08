@@ -35,7 +35,6 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Common::Array<byte> _midiData;
-	bool _isFirstTime;
 protected:
 	// Overload Audio::MidiPlayer method
 	void sendToChannel(byte channel, uint32 b) override;

@@ -42,12 +42,11 @@ typedef struct {
 	unsigned int size;
 	char *data;
 	int reference;
-	bool is_wave;
 } sound_cache_entry_t;
 
 void clear_sound_cache();
-void sound_cache_free(char *buffer, bool is_wave);
-char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size);
+void sound_cache_free(char *buffer);
+char *get_cached_sound(const AssetPath &asset_name, size_t &size);
 Common::SeekableReadStream *get_cached_sound(const AssetPath &asset_name);
 
 } // namespace AGS3
