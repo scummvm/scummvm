@@ -60,13 +60,17 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 		ambientWas[i] = ambient[i].channel;
 
 	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
-		play_theora_video(name, skip, flags);
+		play_theora_video(name, skip, flags, true);
 	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "mpg") == 0)) {
-		play_mpeg_video(name, skip, flags);
+		play_mpeg_video(name, skip, flags, true);
 	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "avi") == 0)) {
-		play_avi_video(name, skip, flags);
+		play_avi_video(name, skip, flags, true);
 	} else {
-		Display("Unsupported video '%s'", name);
+		// Unsure what the video type is, so try each in turn
+		if (!play_avi_video(name, skip, flags, false) &&
+				!play_mpeg_video(name, skip, flags, false) &&
+				!play_theora_video(name, skip, flags, false))
+			Display("Unsupported video '%s'", name);
 	}
 
 	if (flags < 10) {

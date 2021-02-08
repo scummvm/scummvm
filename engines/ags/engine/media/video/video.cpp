@@ -53,11 +53,21 @@ namespace AGS3 {
 
 using AGS::Shared::AssetManager;
 
-static void play_video(Video::VideoDecoder *decoder, const char *name, int skip, int flags) {
+static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip, int flags, bool showError) {
 	std::unique_ptr<Stream> video_stream(AssetManager::OpenAsset(name));
 	if (!video_stream) {
-		Display("Unable to load theora video '%s'", name);
-		return;
+		if (showError)
+			Display("Unable to load video '%s'", name);
+		return false;
+	}
+
+	AGS::Shared::ScummVMReadStream *stream = new AGS::Shared::ScummVMReadStream(video_stream.get(), DisposeAfterUse::NO);
+
+	if (!decoder->loadStream(stream)) {
+		delete stream;
+		if (showError)
+			Display("Unable to decode video '%s'", name);
+		return false;
 	}
 
 	update_polled_stuff_if_runtime();
@@ -69,14 +79,6 @@ static void play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 
 	if (!ignoreAudio) {
 		stop_all_sound_and_music();
-	}
-
-	AGS::Shared::ScummVMReadStream *stream = new AGS::Shared::ScummVMReadStream(video_stream.get(), DisposeAfterUse::NO);
-
-	if (!decoder->loadStream(stream)) {
-		delete stream;
-		Display("Unable to decode theora video '%s'", name);
-		return;
 	}
 
 	update_polled_stuff_if_runtime();
@@ -110,40 +112,46 @@ static void play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 			int key, mbut, mwheelz;
 			if (run_service_key_controls(key)) {
 				if (key == 27 && canAbort)
-					return;
+					return true;
 				if (canAbort >= 2)
-					return;  // skip on any key
+					return true;  // skip on any key
 			}
+
 			if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && canAbort == 3) {
-				return; // skip on mouse click
+				return true; // skip on mouse click
 			}
 		}
 	}
 
 	invalidate_screen();
+
+	return true;
 }
 
-void play_avi_video(const char *name, int skip, int flags) {
+bool play_avi_video(const char *name, int skip, int flags, bool showError) {
 	Video::AVIDecoder decoder;
-	play_video(&decoder, name, skip, flags);
+	return play_video(&decoder, name, skip, flags, showError);
 }
 
-void play_mpeg_video(const char *name, int skip, int flags) {
+bool play_mpeg_video(const char *name, int skip, int flags, bool showError) {
 	Video::MPEGPSDecoder decoder;
-	play_video(&decoder, name, skip, flags);
+	return play_video(&decoder, name, skip, flags, showError);
 }
 
-void play_theora_video(const char *name, int skip, int flags) {
+bool play_theora_video(const char *name, int skip, int flags, bool showError) {
 #if !defined (USE_THEORADEC)
-	Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
+	if (showError)
+		Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
+	return false;
 #else
 	Video::TheoraDecoder decoder;
-	play_video(&decoder, name, skip, flags);
+	return play_video(&decoder, name, skip, flags, showError);
 #endif
 }
 
-void play_flc_file(int numb, int playflags) {
+bool play_flc_file(int numb, int playflags) {
 	warning("TODO: play_flc_file");
+	return false;
 }
 
 void video_on_gfxmode_changed() {
