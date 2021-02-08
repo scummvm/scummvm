@@ -135,6 +135,15 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 			action.finalAngle = ToAngle(stream.readSint16LE());
 			action.strength = stream.readByte();
 			break;
+		case ACTION_UNKNOWN_21:
+			action.animFrame = stream.readByte();
+			action.distanceX = stream.readSint16LE();
+			action.distanceY = stream.readSint16LE();
+			action.distanceZ = stream.readSint16LE();
+			action.xAngle = stream.readSint16LE();
+			action.yAngle = stream.readSint16LE();
+			action.finalAngle = stream.readByte();
+			break;
 		case ActionType::ACTION_ZV:
 		default:
 			break;
