@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-07 12:07+0000\n"
+"POT-Creation-Date: 2021-02-08 13:00+0000\n"
 "PO-Revision-Date: 2021-02-08 09:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "エンジン"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
-#: backends/graphics/sdl/sdl-graphics.cpp:374
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "画像"
@@ -995,7 +995,7 @@ msgstr "ゲームによって使える特別なディザリングモード"
 msgid "Stretch mode:"
 msgstr "拡大モード："
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:365
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
 msgid "Fullscreen mode"
 msgstr "全面モード"
 
@@ -2703,23 +2703,23 @@ msgstr "標準比率"
 msgid "Active graphics filter:"
 msgstr "適用中の映像フィルター："
 
-#: backends/graphics/sdl/sdl-graphics.cpp:367
+#: backends/graphics/sdl/sdl-graphics.cpp:375
 msgid "Windowed mode"
 msgstr "ウインドーモード"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:378
+#: backends/graphics/sdl/sdl-graphics.cpp:386
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "全面モードの切替"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:385
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 #, fuzzy
 msgid "Toggle mouse capture"
 msgstr "消音の切替"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:390
+#: backends/graphics/sdl/sdl-graphics.cpp:398
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2732,57 +2732,57 @@ msgstr "消音の切替"
 msgid "Save screenshot"
 msgstr "スクショを保存する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:396
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "縦横比修正の切替"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:403
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "線形フィルターによる画像を拡大する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:410
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Cycle through stretch modes"
 msgstr "ストレッチモードを繰り返し切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:424
 msgid "Increase the scale factor"
 msgstr "スケールを拡大する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Decrease the scale factor"
 msgstr "スケールを縮小する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 msgid "Switch to nearest neighbour scaling"
 msgstr "最近傍補間に切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:435
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Scale2x/3xに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:437
+#: backends/graphics/sdl/sdl-graphics.cpp:445
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "HQ 2x/3xに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:439
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Switch to 2xSai scaling"
 msgstr "2xSaiに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:440
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to Super2xSai scaling"
 msgstr "Super2xSaiに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:449
 msgid "Switch to SuperEagle scaling"
 msgstr "SuperEagleに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
+#: backends/graphics/sdl/sdl-graphics.cpp:450
 msgid "Switch to TV 2x scaling"
 msgstr "TV 2xに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:443
+#: backends/graphics/sdl/sdl-graphics.cpp:451
 msgid "Switch to DotMatrix scaling"
 msgstr "DotMatrixに切り替える"
 

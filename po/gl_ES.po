@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-07 12:07+0000\n"
+"POT-Creation-Date: 2021-02-08 13:00+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -270,7 +270,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
-#: backends/graphics/sdl/sdl-graphics.cpp:374
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Gráficos"
@@ -1008,7 +1008,7 @@ msgstr "Modos de interpolación de cores compatibles con algúns xogos"
 msgid "Stretch mode:"
 msgstr "Modo Helio"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:365
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -2764,22 +2764,22 @@ msgstr "Normal (sen escala)"
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:367
+#: backends/graphics/sdl/sdl-graphics.cpp:375
 msgid "Windowed mode"
 msgstr "Modo en ventá"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:378
+#: backends/graphics/sdl/sdl-graphics.cpp:386
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Activar/desactivar pantalla completa"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:385
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Activar/desactivar captura de rato"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:390
+#: backends/graphics/sdl/sdl-graphics.cpp:398
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2793,61 +2793,61 @@ msgstr "Activar/desactivar captura de rato"
 msgid "Save screenshot"
 msgstr "Axuste de desprazamento SI"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:396
+#: backends/graphics/sdl/sdl-graphics.cpp:404
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Activar/desactivar corrección de proporción"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:403
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Empregar filtrado linear ao escalar gráficos"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:410
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "Non se puido cambiar ao modo de vídeo: '"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:424
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "Aumentar/reducir factor de escala"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:430
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "Aumentar/reducir factor de escala"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434
+#: backends/graphics/sdl/sdl-graphics.cpp:442
 msgid "Switch to nearest neighbour scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:435
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:437
+#: backends/graphics/sdl/sdl-graphics.cpp:445
 msgid "Switch to HQ 2x/3x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:439
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Switch to 2xSai scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:440
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to Super2xSai scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:449
 msgid "Switch to SuperEagle scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
+#: backends/graphics/sdl/sdl-graphics.cpp:450
 msgid "Switch to TV 2x scaling"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:443
+#: backends/graphics/sdl/sdl-graphics.cpp:451
 msgid "Switch to DotMatrix scaling"
 msgstr ""
 
