@@ -134,16 +134,16 @@ struct DynamicFlagsStruct {
  * will be chosen randomly each time player uses Action.
  */
 struct BonusParameter {
-	uint16 unk1 : 1;
-	uint16 unk2 : 1;
-	uint16 unk3 : 1;
-	uint16 unk4 : 1;
-	uint16 kashes : 1;
-	uint16 lifepoints : 1;
-	uint16 magicpoints : 1;
-	uint16 key : 1;
-	uint16 cloverleaf : 1;
-	uint16 unused : 7;
+	uint32 unk1 : 1;
+	uint32 unk2 : 1;
+	uint32 unk3 : 1;
+	uint32 unk4 : 1;
+	uint32 kashes : 1;
+	uint32 lifepoints : 1;
+	uint32 magicpoints : 1;
+	uint32 key : 1;
+	uint32 cloverleaf : 1;
+	uint32 unused : 23;
 };
 
 #define kAnimationTypeLoop 0
