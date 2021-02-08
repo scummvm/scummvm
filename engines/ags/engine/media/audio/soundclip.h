@@ -47,42 +47,43 @@ enum SoundClipState {
 };
 
 struct SOUNDCLIP {
-	Audio::Mixer *_mixer;
-	SoundClipState _state;
+	int _priority;
+	int _sourceClipType;
+	int _vol;
+	int _volAsPercentage;
+	int _volModifier;
 	int _panning;
 	int _panningAsPercentage;
-	void *_sourceClip;		// Pointer to source object that spawned the clip
-	int _sourceClipType;
-	int _speed;
 	int _xSource, _ySource;		// Used for positioning sounds in game rooms
 	int _maximumPossibleDistanceAway;
-	int _priority;
-	bool _muted;
-	int _volAsPercentage;
-	int _vol;
-	int _volModifier;
+	int _directionalVolModifier;
 	bool _repeat;
+	void *_sourceClip;		// Pointer to source object that spawned the clip
 
-	SOUNDCLIP();
-	virtual ~SOUNDCLIP();
-
-	virtual void destroy() {}
-	virtual int play() = 0;
-	virtual void stop() = 0;
-	virtual void pause() = 0;
-	virtual void resume() = 0;
-	virtual bool is_playing() const = 0;
+	virtual void poll() = 0;
+	virtual void destroy() = 0;
+	// apply volume directly to playback; volume is given in units of 255
+	// NOTE: this completely ignores volAsPercentage and muted property
+	virtual void set_volume(int volume) = 0;
 	virtual void seek(int offset) = 0;
-	virtual int get_pos() = 0;
-	virtual int get_pos_ms() = 0;
+	virtual int get_pos() = 0; // return 0 to indicate seek not supported
+	virtual int get_pos_ms() = 0; // this must always return valid value if poss
 	virtual int get_length_ms() = 0; // return total track length in ms (or 0)
 	virtual int get_sound_type() const = 0;
-	virtual void set_volume(int volume) = 0;
-	virtual void set_panning(int newPanning) = 0;
-	inline int get_speed() const { return _speed; }
-	virtual void set_speed(int new_speed);
+	virtual int play() = 0;
+	virtual int play_from(int position) = 0;
 
-	void poll();
+	virtual void set_panning(int newPanning) = 0;
+	virtual void set_speed(int new_speed) = 0;
+
+	virtual void pause() = 0;
+	virtual void resume() = 0;
+
+	virtual bool is_playing() const = 0; // true if playing or paused. false if never played or stopped.
+
+	inline int get_speed() const {
+		return _speed;
+	}
 
 	// Gets clip's volume property, as percentage (0 - 100);
 	// note this may not be the real volume of playback (which could e.g. be muted)
@@ -90,22 +91,15 @@ struct SOUNDCLIP {
 		return _volAsPercentage;
 	}
 
+	inline bool is_muted() const {
+		return _muted;
+	}
+
 	// Sets the current volume property, as percentage (0 - 100).
 	inline void set_volume_percent(int volume) {
 		_volAsPercentage = volume;
 		if (!_muted)
 			set_volume((volume * 255) / 100);
-	}
-	void adjust_volume();
-	int play_from(int position);
-
-	/**
-	 * Apply permanent directional volume modifier, in absolute units (0 - 255)
-	 * this is distinct value that is used in conjunction with current volume
-	 * (can be both positive and negative).
-	 */
-	inline void apply_directional_modifier(int mod) {
-		warning("TODO: SOUNDCLIP::apply_directional_modifier");
 	}
 
 	/**
@@ -138,54 +132,49 @@ struct SOUNDCLIP {
 		adjust_volume();
 	}
 
-	/*
-	inline bool is_playing() const {
-		return state_ == SoundClipPlaying || state_ == SoundClipPaused;
-	}
-
-	inline bool is_muted() const {
-		return muted;
+	/**
+	 * Apply permanent directional volume modifier, in absolute units (0 - 255)
+	 * this is distinct value that is used in conjunction with current volume
+	 * (can be both positive and negative).
+	 */
+	inline void apply_directional_modifier(int mod) {
+		_directionalVolModifier = mod;
+		adjust_volume();
 	}
 
 	virtual void adjust_volume() = 0;
 
 	SOUNDCLIP();
-	virtual ~SOUNDCLIP();
-
+	virtual ~SOUNDCLIP() {}
 
 protected:
-
-	SoundClipState state_;
-
 	// mute mode overrides the volume; if set, any volume assigned is stored
 	// in properties, but not applied to playback itself
-	bool muted;
+	bool _muted;
 
 	// speed of playback, in clip ms per real second
-	int speed;
-
-	// Return the allegro voice number (or -1 if none)
-	// Used by generic pause/resume functions.
-	virtual int get_voice() = 0;
+	int _speed;
 
 	// helper function for calculating volume with applied modifiers
 	inline int get_final_volume() const {
-		int final_vol = vol + volModifier + directionalVolModifier;
+		int final_vol = _vol + _volModifier + _directionalVolModifier;
 		return final_vol >= 0 ? final_vol : 0;
 	}
-	*/
 };
 
 struct SoundClipWaveBase : public SOUNDCLIP {
+	Audio::Mixer *_mixer;
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
+	SoundClipState _state;
 
 	SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat = false);
-	~SoundClipWaveBase() override {}
+	~SoundClipWaveBase() override { destroy(); }
 
 	void destroy() override;
+	void poll() override;
 	int play() override;
-	void stop() override;
+	int play_from(int position) override;
 	void pause() override;
 	void resume() override;
 	bool is_playing() const override;
@@ -195,6 +184,8 @@ struct SoundClipWaveBase : public SOUNDCLIP {
 	int get_length_ms() override;
 	void set_volume(int volume) override;
 	void set_panning(int newPanning) override;
+	void set_speed(int new_speed) override;
+	void adjust_volume() override;
 };
 
 template<int SOUND_TYPE>

@@ -25,49 +25,16 @@
 
 namespace AGS3 {
 
-SOUNDCLIP::SOUNDCLIP() : _state(SoundClipInitial), _panning(128), _panningAsPercentage(0),
+SOUNDCLIP::SOUNDCLIP() : _panning(12./8), _panningAsPercentage(0),
 		_sourceClip(nullptr), _sourceClipType(0), _speed(1000), _priority(50),
 		_xSource(-1), _ySource(-1), _maximumPossibleDistanceAway(0), _muted(false),
-		_volAsPercentage(0), _vol(0), _volModifier(0), _repeat(false) {
-	_mixer = ::AGS::g_vm->_mixer;
+		_volAsPercentage(0), _vol(0), _volModifier(0), _repeat(false), _directionalVolModifier(0) {
 }
-
-void SOUNDCLIP::poll() {
-	bool playing = is_playing();
-	if (playing)
-		_state = SoundClipPlaying;
-	else if (_state == SoundClipPlaying)
-		_state = SoundClipStopped;
-}
-
-SOUNDCLIP::~SOUNDCLIP() {
-	destroy();
-}
-
-void SOUNDCLIP::set_speed(int new_speed) {
-	warning("TODO: SOUNDCLIP::set_speed");
-	_speed = new_speed;
-}
-
-void SOUNDCLIP::adjust_volume() {
-	// TODO: See if this method is needed
-}
-
-int SOUNDCLIP::play_from(int position) {
-	// TODO: Implement playing from arbitrary positions
-	if (position == 0) {
-		play();
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 
 /*------------------------------------------------------------------*/
 
 SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat) :
-		SOUNDCLIP(), _stream(stream) {
+		SOUNDCLIP(), _state(SoundClipInitial), _stream(stream) {
 	_mixer = ::AGS::g_vm->_mixer;
 	_repeat = repeat;
 	_vol = volume;
@@ -80,9 +47,17 @@ SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, boo
 }
 
 void SoundClipWaveBase::destroy() {
-	stop();
+	_mixer->stopHandle(_soundHandle);
 	delete _stream;
 	_stream = nullptr;
+}
+
+void SoundClipWaveBase::poll() {
+	bool playing = is_playing();
+	if (playing)
+		_state = SoundClipPlaying;
+	else if (_state == SoundClipPlaying)
+		_state = SoundClipStopped;
 }
 
 int SoundClipWaveBase::play() {
@@ -91,8 +66,14 @@ int SoundClipWaveBase::play() {
 	return 1;
 }
 
-void SoundClipWaveBase::stop() {
-	_mixer->stopHandle(_soundHandle);
+int SoundClipWaveBase::play_from(int position) {
+	// TODO: Implement playing from arbitrary positions
+	if (position == 0) {
+		play();
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 void SoundClipWaveBase::pause() {
@@ -133,6 +114,15 @@ void SoundClipWaveBase::set_volume(int volume) {
 
 void SoundClipWaveBase::set_panning(int newPanning) {
 	_mixer->setChannelBalance(_soundHandle, newPanning);
+}
+
+void SoundClipWaveBase::set_speed(int new_speed) {
+	warning("TODO: SoundClipWaveBase::set_speed");
+	_speed = new_speed;
+}
+
+void SoundClipWaveBase::adjust_volume() {
+	// TODO: See if this method is needed
 }
 
 } // namespace AGS3

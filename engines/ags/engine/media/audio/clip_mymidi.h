@@ -24,18 +24,23 @@
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMIDI_H
 
 #include "ags/engine/media/audio/soundclip.h"
+#include "ags/engine/media/audio/audiodefines.h"
 
 namespace AGS3 {
 
 // MIDI
 struct MYMIDI : public SOUNDCLIP {
+	Audio::Mixer *_mixer;
 	Common::SeekableReadStream *_data;
 	int lengthInSeconds;
+	SoundClipState _state;
 
 	MYMIDI(Common::SeekableReadStream *data, bool repeat);
-	~MYMIDI() override {}
+	~MYMIDI() override { destroy(); }
 
 	void destroy() override;
+
+	void poll() override;
 
 	void seek(int pos) override;
 
@@ -54,10 +59,12 @@ struct MYMIDI : public SOUNDCLIP {
 	}
 
 	int play() override;
-	void stop() override;
+	int play_from(int position) override;
 	bool is_playing() const override;
 	void set_volume(int volume) override;
 	void set_panning(int newPanning) override;
+	void set_speed(int new_speed) override;
+	void adjust_volume() override;
 };
 
 } // namespace AGS3

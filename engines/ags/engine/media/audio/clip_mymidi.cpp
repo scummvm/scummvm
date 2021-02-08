@@ -20,7 +20,6 @@
  *
  */
 
-#include "ags/engine/media/audio/audiodefines.h"
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/engine/media/audio/clip_mymidi.h"
 #include "ags/ags.h"
@@ -29,14 +28,23 @@
 namespace AGS3 {
 
 MYMIDI::MYMIDI(Common::SeekableReadStream *data, bool repeat) :
-		_data(data), lengthInSeconds(0) {
+		_state(SoundClipInitial), _data(data), lengthInSeconds(0) {
+	_mixer = ::AGS::g_vm->_mixer;
 	_repeat = repeat;
 }
 
 void MYMIDI::destroy() {
-	stop();
+	::AGS::g_music->stop();
 	delete _data;
 	_data = nullptr;
+}
+
+void MYMIDI::poll() {
+	bool playing = is_playing();
+	if (playing)
+		_state = SoundClipPlaying;
+	else if (_state == SoundClipPlaying)
+		_state = SoundClipStopped;
 }
 
 void MYMIDI::seek(int pos) {
@@ -77,8 +85,14 @@ int MYMIDI::play() {
 	return 1;
 }
 
-void MYMIDI::stop() {
-	::AGS::g_music->stop();
+int MYMIDI::play_from(int position) {
+	// TODO: Implement playing from arbitrary positions
+	if (position == 0) {
+		play();
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 bool MYMIDI::is_playing() const {
@@ -93,11 +107,13 @@ void MYMIDI::set_panning(int newPanning) {
 	// No implementation for MIDI
 }
 
-/*
-int MYMIDI::get_voice() {
-	// voice is N/A for midi
-	return -1;
+void MYMIDI::set_speed(int new_speed) {
+	warning("TODO: MYMIDI::set_speed");
+	_speed = new_speed;
 }
-*/
+
+void MYMIDI::adjust_volume() {
+	// TODO: See if this method is needed
+}
 
 } // namespace AGS3
