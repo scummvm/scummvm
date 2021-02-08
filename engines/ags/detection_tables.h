@@ -1311,9 +1311,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
 	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, PLUGIN_ARR }
 
-
-static const PluginVersion AGSCREDITZ_11[] = { { "agscreditz", 11 }, { nullptr, 0 } };
-
 const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Pre-2.5 games that aren't supported by the current AGS engine
 	UNSUPPORTED_DEMO("achristmastale", "tale.exe", "094135f05cf14fc3903e0d3697911a4e", 1484122),
@@ -1614,7 +1611,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("barnrunnerholiday2", "Xmas 2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 31770973),
 	ENGLISH_ENTRY("bartsquestfortv", "Simpsons.exe", "0500aacb6c176d47ac0f8158f055db83", 794013),
 	ENGLISH_ENTRY("battlewarriors", "Battle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16314318),
-	ENGLISH_PLUGIN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255, AGSCREDITZ_11),
+	ENGLISH_ENTRY("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
 	ENGLISH_ENTRY("beacon", "Beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
 	ENGLISH_ENTRY("bear", "Bear.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 3258662),
 	ENGLISH_ENTRY("beasts", "beasts.exe", "0500aacb6c176d47ac0f8158f055db83", 1295435),

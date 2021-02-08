@@ -126,69 +126,6 @@ public:
 	~AGSCreditz();
 };
 
-class AGSCreditz11 : public AGSCreditz {
-private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
-
-	static void SetCredit(const ScriptMethodParams &params);
-	static void ScrollCredits(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
-	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
-	static void SetCreditImage(const ScriptMethodParams &params);
-	static void PauseScroll(const ScriptMethodParams &params);
-	static void ScrollReset(const ScriptMethodParams &params);
-	static void SetEmptyLineHeight(const ScriptMethodParams &params);
-	static int GetEmptyLineHeight(const ScriptMethodParams &params);
-	static void SetStaticCredit(const ScriptMethodParams &params);
-	static string GetStaticCredit(const ScriptMethodParams &params);
-	static void StartEndStaticCredits(const ScriptMethodParams &params);
-	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
-	static void SetDefaultStaticDelay(const ScriptMethodParams &params);
-	static void SetStaticPause(const ScriptMethodParams &params);
-	static void SetStaticCreditTitle(const ScriptMethodParams &params);
-	static void ShowStaticCredit(const ScriptMethodParams &params);
-	static void StaticReset(const ScriptMethodParams &params);
-	static string GetStaticCreditTitle(const ScriptMethodParams &params);
-	static void SetStaticCreditImage(const ScriptMethodParams &params);
-	static int IsStaticCreditsFinished(const ScriptMethodParams &params);
-
-public:
-	AGSCreditz11();
-};
-
-class AGSCreditz20 : public AGSCreditz {
-private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
-
-	static void RunCreditSequence(const ScriptMethodParams &params);
-	static void SetCredit(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
-	static void CreditsSettings(const ScriptMethodParams &params);
-	static void SequenceSettings(const ScriptMethodParams &params);
-	static int IsSequenceFinished(const ScriptMethodParams &params);
-	static void PauseScrolling(const ScriptMethodParams &params);
-	static void SetCreditImage(const ScriptMethodParams &params);
-	static void ResetSequence(const ScriptMethodParams &params);
-
-	static void SetStaticCredit(const ScriptMethodParams &params);
-	static void SetStaticCreditTitle(const ScriptMethodParams &params);
-	static void SetStaticPause(const ScriptMethodParams &params);
-	static void RunStaticCreditSequence(const ScriptMethodParams &params);
-	static int IsStaticSequenceFinished(const ScriptMethodParams &params);
-	static void ShowStaticCredit(const ScriptMethodParams &params);
-	static void SetStaticImage(const ScriptMethodParams &params);
-	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
-
-private:
-	static void calculateSequenceHeight(int sequence);
-	static int VGACheck(int value);
-	static void draw();
-public:
-	AGSCreditz20();
-};
-
 } // namespace AGSCreditz
 } // namespace Plugins
 } // namespace AGS3

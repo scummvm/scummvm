@@ -23,7 +23,8 @@
 #include "ags/lib/allegro.h"
 #include "ags/plugins/dll.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
-#include "ags/plugins/ags_creditz/ags_creditz.h"
+#include "ags/plugins/ags_creditz/ags_creditz1.h"
+#include "ags/plugins/ags_creditz/ags_creditz2.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
@@ -52,12 +53,11 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();
 
-	if (fname.equalsIgnoreCase("agsCreditz")) {
-		if (version == 20)
-			return new AGSCreditz::AGSCreditz20();
-		else
-			return new AGSCreditz::AGSCreditz11();
-	}
+	if (fname.equalsIgnoreCase("agsCreditz"))
+		return new AGSCreditz::AGSCreditz1();
+
+	if (fname.equalsIgnoreCase("agsCreditz2"))
+		return new AGSCreditz::AGSCreditz2();
 
 	if (fname.equalsIgnoreCase("AGSFlashlight"))
 		return new AGSFlashlight::AGSFlashlight();
@@ -65,7 +65,7 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
 
-	if (fname.equalsIgnoreCase("AGSSnowRain"))
+	if (fname.equalsIgnoreCase("AGSSnowRain") || fname.equalsIgnoreCase("ags_snowrain"))
 		return new AGSSnowRain::AGSSnowRain();
 
 	if (fname.equalsIgnoreCase("AGSSpriteFont"))

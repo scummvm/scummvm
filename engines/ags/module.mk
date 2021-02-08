@@ -291,6 +291,8 @@ MODULE_OBJS = \
 	plugins/pluginobjectreader.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_creditz/ags_creditz.o \
+	plugins/ags_creditz/ags_creditz1.o \
+	plugins/ags_creditz/ags_creditz2.o \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_galaxy_steam/ags_galaxy_steam.o \
 	plugins/ags_pal_render/ags_pal_render.o \
