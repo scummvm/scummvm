@@ -419,7 +419,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
 				const int32 x = actor->x + _engine->_renderer->destX;
 				const int32 y = actor->y + action.distanceY;
-				const int32 z = actor->z + action.distanceZ;
+				const int32 z = actor->z + _engine->_renderer->destZ;
 				_engine->_extra->addExtraAiming(actorIdx, x, y, z, action.spriteIndex,
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
