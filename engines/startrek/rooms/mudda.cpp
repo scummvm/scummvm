@@ -20,22 +20,27 @@
  *
  */
 
-#if 0
 #include "startrek/startrek.h"
 #include "startrek/room.h"
 
 namespace StarTrek {
 
 enum muddTextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_COMMON_IDS_OFFSET_START = 5000, // needed to distinguish common IDs
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK,
+	TX_MUD0N011, TX_MUD1N013, TX_MUD2N010, TX_MUD3N016, TX_MUD4N009,
+	TX_MUD5N009, TX_MUD0_002, TX_MUD1_002, TX_MUD2_002, TX_MUD0_018,
+	TX_MUD0_019, TX_MUD0_020, TX_MUD0N002, TX_MUD1N004, TX_MUD2N001,
+	TX_MUD3N001, TX_MUD4N002, TX_MUD5N001, TX_MUD0N006, TX_MUD1N007,
+	TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
 };
 
+// TODO: Finish offsets
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets muddTextOffsets[] = {
 	//{ TX_SPEAKER_KIRK, 2597, 0 },
 	//{ TX_SPEAKER_MCCOY, 2622, 0 },
 	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -45,14 +50,13 @@ extern const RoomTextOffsets muddTextOffsets[] = {
 void Room::muddaUseLenseOnDegrimer() {
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
-	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		11,	// MUDD0
-		13,	// MUDD1
-		10,	// MUDD2
-		16,	// MUDD3
-		 9,	// MUDD4
-		 9,	// MUDD5
+		TX_MUD0N011, // All of these audio files are identical, but there's one for each room.
+		TX_MUD1N013,
+		TX_MUD2N010,
+		TX_MUD3N016,
+		TX_MUD4N009,
+		TX_MUD5N009,
 	};
 
 	giveItem(OBJECT_IALIENDV);
@@ -88,11 +92,20 @@ void Room::muddaUseAlienDevice() {
 void Room::muddaFiredAlienDevice() {
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
+	const TextRef text[] = {
+		TX_MUD0_002, // These audio files aren't identical, but the text is mostly the same.
+		TX_MUD1_002,
+		TX_MUD2_002,
+		TX_MUD2_002, // Rooms 3-5 reuse MUD2
+		TX_MUD2_002,
+		TX_MUD2_002,
+	};
+
 	_awayMission->disableInput = false;
 	if (!_awayMission->mudd.discoveredLenseAndDegrimerFunction) {
 		_awayMission->mudd.discoveredLenseAndDegrimerFunction = true;
 		_awayMission->mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
-		showText(TX_SPEAKER_KIRK, 2);
+		showText(TX_SPEAKER_KIRK, text[_vm->_roomIndex]);
 	}
 }
 
@@ -100,14 +113,13 @@ void Room::muddaFiredAlienDevice() {
 void Room::muddaUseDegrimer() {
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
-	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		2,	// MUDD0
-		4,	// MUDD1
-		1,	// MUDD2
-		1,	// MUDD3
-		2,	// MUDD4
-		1,	// MUDD5
+		TX_MUD0N002, // All of these audio files are identical, but there's one for each room.
+		TX_MUD1N004,
+		TX_MUD2N001,
+		TX_MUD3N001,
+		TX_MUD4N002,
+		TX_MUD5N001,
 	};
 
 	showDescription(text[_vm->_roomIndex]);
@@ -124,14 +136,8 @@ void Room::muddaTick() {
 
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
-	// All of these audio files are identical, but there's one for each room.
-	const TextRef deathText[] = {
-		6,	// MUDD0
-		7,	// MUDD1
-		5,	// MUDD2
-		8,	// MUDD3
-		5,	// MUDD4
-		5	// MUDD5
+	const TextRef deathText[] = { // All of these audio files are identical, but there's one for each room.
+		TX_MUD0N006, TX_MUD1N007, TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
 	};
 
 	const int TIMER_LENGTH = 27000;
@@ -177,4 +183,3 @@ void Room::muddaTick() {
 }
 
 }
-#endif

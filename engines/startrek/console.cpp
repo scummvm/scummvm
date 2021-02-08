@@ -239,6 +239,9 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 			Common::String message;
 			uint16 pos = rdfFile->pos();
 			byte c = rdfFile->readByte();
+			if (!Common::isPrint(c))
+				break;
+
 			while (c != '\0') {
 				message += c;
 				c = rdfFile->readByte();
