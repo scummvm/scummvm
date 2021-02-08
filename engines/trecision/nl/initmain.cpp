@@ -36,7 +36,7 @@ namespace Trecision {
 --------------------------------------------------*/
 void initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
-		_obj[c]._position = -1;
+		g_vm->_obj[c]._position = -1;
 
 	initNames();
 	initScript();

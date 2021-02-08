@@ -685,17 +685,17 @@ insave:
 		fwrite(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
 	}
 	for (a = 0; a < MAXOBJ; a++) {
-		fwrite(&_obj[a]._lim,      sizeof(uint16), 4, fh);
-		fwrite(&_obj[a]._name,  	  sizeof(uint16), 1, fh);
-		fwrite(&_obj[a]._examine,  sizeof(uint16), 1, fh);
-		fwrite(&_obj[a]._action,   sizeof(uint16), 1, fh);
-		fwrite(&_obj[a]._anim,     sizeof(uint16), 1, fh);
-		fwrite(&_obj[a]._mode,     sizeof(uint8), 1, fh);
-		fwrite(&_obj[a]._flag,     sizeof(uint8), 1, fh);
-		fwrite(&_obj[a]._goRoom,   sizeof(uint8), 1, fh);
-		fwrite(&_obj[a]._nbox,     sizeof(uint8), 1, fh);
-		fwrite(&_obj[a]._ninv,     sizeof(uint8), 1, fh);
-		fwrite(&_obj[a]._position, sizeof(int8), 1, fh);
+		fwrite(&g_vm->_obj[a]._lim, sizeof(uint16), 4, fh);
+		fwrite(&g_vm->_obj[a]._name, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_obj[a]._examine, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_obj[a]._action, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_obj[a]._anim, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_obj[a]._mode, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_obj[a]._flag, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_obj[a]._goRoom, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_obj[a]._nbox, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_obj[a]._ninv, sizeof(uint8), 1, fh);
+		fwrite(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
 	}
 	for (a = 0; a < MAXINVENTORY; a++) {
 		fwrite(&InvObj[a]._name,    sizeof(uint16), 1, fh);
@@ -981,17 +981,17 @@ bool DataLoad() {
 		fread(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
 	}
 	for (a = 0; a < MAXOBJ; a++) {
-		fread(&_obj[a]._lim,      sizeof(uint16), 4, fh);
-		fread(&_obj[a]._name,  	 sizeof(uint16), 1, fh);
-		fread(&_obj[a]._examine,  sizeof(uint16), 1, fh);
-		fread(&_obj[a]._action,   sizeof(uint16), 1, fh);
-		fread(&_obj[a]._anim,     sizeof(uint16), 1, fh);
-		fread(&_obj[a]._mode,     sizeof(uint8), 1, fh);
-		fread(&_obj[a]._flag,     sizeof(uint8), 1, fh);
-		fread(&_obj[a]._goRoom,   sizeof(uint8), 1, fh);
-		fread(&_obj[a]._nbox,     sizeof(uint8), 1, fh);
-		fread(&_obj[a]._ninv,     sizeof(uint8), 1, fh);
-		fread(&_obj[a]._position, sizeof(int8), 1, fh);
+		fread(&g_vm->_obj[a]._lim, sizeof(uint16), 4, fh);
+		fread(&g_vm->_obj[a]._name, sizeof(uint16), 1, fh);
+		fread(&g_vm->_obj[a]._examine, sizeof(uint16), 1, fh);
+		fread(&g_vm->_obj[a]._action, sizeof(uint16), 1, fh);
+		fread(&g_vm->_obj[a]._anim, sizeof(uint16), 1, fh);
+		fread(&g_vm->_obj[a]._mode, sizeof(uint8), 1, fh);
+		fread(&g_vm->_obj[a]._flag, sizeof(uint8), 1, fh);
+		fread(&g_vm->_obj[a]._goRoom, sizeof(uint8), 1, fh);
+		fread(&g_vm->_obj[a]._nbox, sizeof(uint8), 1, fh);
+		fread(&g_vm->_obj[a]._ninv, sizeof(uint8), 1, fh);
+		fread(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
 	}
 	for (a = 0; a < MAXINVENTORY; a++) {
 		fread(&InvObj[a]._name,    sizeof(uint16), 1, fh);

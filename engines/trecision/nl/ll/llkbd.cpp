@@ -112,26 +112,26 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXOBJ; ++i) {
-		_obj[i]._dx = dataNl.readUint16LE();
-		_obj[i]._dy = dataNl.readUint16LE();
-		_obj[i]._px = dataNl.readUint16LE();
-		_obj[i]._py = dataNl.readUint16LE();
+		g_vm->_obj[i]._dx = dataNl.readUint16LE();
+		g_vm->_obj[i]._dy = dataNl.readUint16LE();
+		g_vm->_obj[i]._px = dataNl.readUint16LE();
+		g_vm->_obj[i]._py = dataNl.readUint16LE();
 
 		for (int j = 0; j < 4; ++j)
-			_obj[i]._lim[j] = dataNl.readUint16LE();
+			g_vm->_obj[i]._lim[j] = dataNl.readUint16LE();
 
-		_obj[i]._position = dataNl.readSByte();
+		g_vm->_obj[i]._position = dataNl.readSByte();
 		dataNl.readByte(); // Padding
-		_obj[i]._name = dataNl.readUint16LE();
-		_obj[i]._examine = dataNl.readUint16LE();
-		_obj[i]._action = dataNl.readUint16LE();
-		_obj[i]._goRoom = dataNl.readByte();
-		_obj[i]._nbox = dataNl.readByte();
-		_obj[i]._ninv = dataNl.readByte();
-		_obj[i]._mode = dataNl.readByte();
-		_obj[i]._flag = dataNl.readByte();
+		g_vm->_obj[i]._name = dataNl.readUint16LE();
+		g_vm->_obj[i]._examine = dataNl.readUint16LE();
+		g_vm->_obj[i]._action = dataNl.readUint16LE();
+		g_vm->_obj[i]._goRoom = dataNl.readByte();
+		g_vm->_obj[i]._nbox = dataNl.readByte();
+		g_vm->_obj[i]._ninv = dataNl.readByte();
+		g_vm->_obj[i]._mode = dataNl.readByte();
+		g_vm->_obj[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		_obj[i]._anim = dataNl.readUint16LE();
+		g_vm->_obj[i]._anim = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXINVENTORY; ++i) {

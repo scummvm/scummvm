@@ -120,23 +120,23 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		}
 
-		if ((_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
+		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
 		strcpy(locsent, _sysSent[23]);
 		if (UseWithInv[USED])
 			strcat(locsent, ObjName[InvObj[UseWith[USED]]._name]);
-		else if (_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
+		else if (g_vm->_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
 			strcat(locsent, dunno);
 		else
-			strcat(locsent, ObjName[_obj[UseWith[USED]]._name]);
+			strcat(locsent, ObjName[g_vm->_obj[UseWith[USED]]._name]);
 
 		strcat(locsent, _sysSent[24]);
 		if (obj && (UseWithInv[USED] || (obj != UseWith[USED]))) {
-			if (_obj[obj]._mode & OBJMODE_HIDDEN)
+			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
-				strcat(locsent, ObjName[_obj[obj]._name]);
+				strcat(locsent, ObjName[g_vm->_obj[obj]._name]);
 		}
 
 		posx = 320;
@@ -163,29 +163,29 @@ void ShowObjName(uint16 obj, bool showhide) {
 
 		if (obj == lastobj)
 			return;
-		if (!(_obj[obj]._flag & OBJFLAG_EXAMINE)) {
-			if ((_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
+		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
+			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
 				strcpy(locsent, _sysSent[25]);
-				if (_obj[obj]._mode & OBJMODE_HIDDEN)
+				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					strcat(locsent, dunno);
 				else
-					strcat(locsent, ObjName[_obj[obj]._name]);
+					strcat(locsent, ObjName[g_vm->_obj[obj]._name]);
 			} else
 				strcpy(locsent, _sysSent[26]);
-		} else if (_obj[obj]._mode & OBJMODE_HIDDEN)
+		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 			strcpy(locsent, dunno);
 		else
-			strcpy(locsent, ObjName[_obj[obj]._name]);
+			strcpy(locsent, ObjName[g_vm->_obj[obj]._name]);
 
 		switch (obj) {
 		case oRUOTE2C:
-			posx = (_obj[obj]._lim[0] + _obj[obj]._lim[2]) / 2;
+			posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
 			posy = 187;
 			break;
 
 		default:
-			posx = (_obj[obj]._lim[0] + _obj[obj]._lim[2]) / 2;
-			posy = _obj[obj]._lim[1];
+			posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
+			posy = g_vm->_obj[obj]._lim[1];
 			break;
 		}
 		PositionString(posx, posy, locsent, &posx, &posy, false);
@@ -234,12 +234,12 @@ void ShowInvName(uint16 obj, bool showhide) {
 			if (obj && (InvObj[UseWith[USED]]._name != InvObj[obj]._name))
 				strcat(locsent, ObjName[InvObj[obj]._name]);
 		} else {
-			if (_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
+			if (g_vm->_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
-				strcat(locsent, ObjName[_obj[UseWith[USED]]._name]);
+				strcat(locsent, ObjName[g_vm->_obj[UseWith[USED]]._name]);
 			strcat(locsent, _sysSent[24]);
-			if (obj && (_obj[UseWith[USED]]._name != InvObj[obj]._name))
+			if (obj && (g_vm->_obj[UseWith[USED]]._name != InvObj[obj]._name))
 				strcat(locsent, ObjName[InvObj[obj]._name]);
 		}
 		posx = 320;
@@ -487,7 +487,7 @@ void SomeOneContinueTalk() {
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
 	if (SpeakSomeOnePerson)
-		PositionString(_obj[SpeakSomeOnePerson]._lim[0], _obj[SpeakSomeOnePerson]._lim[1], SubString[CurSubString], &posx, &posy, false);
+		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim[0], g_vm->_obj[SpeakSomeOnePerson]._lim[1], SubString[CurSubString], &posx, &posy, false);
 	else
 		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
 

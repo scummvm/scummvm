@@ -344,19 +344,19 @@ void DoSys(uint16 TheObj) {
 	case o00EXIT:
 		if (g_vm->_oldRoom == rSYS)
 			break;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[o00EXIT]._goRoom, 0, 0, 0);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		break;
 
 	case o00SAVE:
 		if (g_vm->_oldRoom == rSYS)
 			break;
-		g_vm->_curRoom = _obj[o00EXIT]._goRoom;
+		g_vm->_curRoom = g_vm->_obj[o00EXIT]._goRoom;
 		SemSaveInventory = true;
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
 //				RegenInventory(RegenInvStartIcon,RegenInvStartLine);
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[o00EXIT]._goRoom, 0, 0, 0);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
 		g_vm->_curRoom = rSYS;
 		break;
@@ -371,8 +371,8 @@ void DoSys(uint16 TheObj) {
 
 	case o00SPEECHON:
 		if (ConfMan.getBool("subtitles")) {
-			_obj[o00SPEECHON]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00SPEECHON]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
 			ConfMan.setBool("speech_mute", true);
 			g_vm->_curObj = o00SPEECHOFF;
 			RegenRoom();
@@ -381,8 +381,8 @@ void DoSys(uint16 TheObj) {
 		break;
 
 	case o00SPEECHOFF:
-		_obj[o00SPEECHOFF]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[o00SPEECHOFF]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
 		ConfMan.setBool("speech_mute", false);
 		g_vm->_curObj = o00SPEECHON;
 		RegenRoom();
@@ -391,8 +391,8 @@ void DoSys(uint16 TheObj) {
 
 	case o00TEXTON:
 		if (!ConfMan.getBool("speech_mute")) {
-			_obj[o00TEXTON]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00TEXTON]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
 			ConfMan.setBool("subtitles", false);
 			g_vm->_curObj = o00TEXTOFF;
 			RegenRoom();
@@ -401,8 +401,8 @@ void DoSys(uint16 TheObj) {
 		break;
 
 	case o00TEXTOFF:
-		_obj[o00TEXTOFF]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[o00TEXTOFF]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
 		ConfMan.setBool("subtitles", true);
 		g_vm->_curObj = o00TEXTON;
 		RegenRoom();
@@ -427,11 +427,11 @@ void DoSys(uint16 TheObj) {
 	case o00SOUND4D:
 	case o00SOUND5D:
 	case o00SOUND6D:
-		_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
 		if ((TheObj != o00SPEECH6D) && (TheObj != o00MUSIC6D) && (TheObj != o00SOUND6D))
-			_obj[TheObj + 1]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[TheObj - 1]._mode |= OBJMODE_OBJSTATUS;
-		_obj[TheObj - 2]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[TheObj + 1]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj - 1]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj - 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (TheObj < o00MUSIC1D)
 			ConfMan.setInt("speech_volume", ((TheObj - 2 - o00SPEECH1D) / 2) * 51);
@@ -456,11 +456,11 @@ void DoSys(uint16 TheObj) {
 	case o00SOUND3U:
 	case o00SOUND4U:
 	case o00SOUND5U:
-		_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[TheObj - 1]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[TheObj + 1]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj - 1]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj + 1]._mode |= OBJMODE_OBJSTATUS;
 		if ((TheObj != o00SPEECH5U) && (TheObj != o00MUSIC5U) && (TheObj != o00SOUND5U))
-			_obj[TheObj + 2]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[TheObj + 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (TheObj < o00MUSIC1D)
 			ConfMan.setInt("speech_volume", ((TheObj + 1 - o00SPEECH1D) / 2) * 51);
@@ -484,76 +484,76 @@ void SetRoom(unsigned short r, bool b) {
 			read3D("21.3d");
 			g_vm->_room[r21]._flag &= ~OBJFLAG_EXTRA;
 			setPosition(14);
-			_obj[oCATENAT21]._position = 5;
-			_obj[oUSCITA21]._position = 11;
+			g_vm->_obj[oCATENAT21]._position = 5;
+			g_vm->_obj[oUSCITA21]._position = 11;
 
 			// se so come andare di la'
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
-				_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
-				_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
+				g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
 			} else {
-				_obj[od21ALLA23]._flag &= ~OBJFLAG_ROOMOUT;
-				_obj[od21ALLA23]._flag |= OBJFLAG_EXAMINE;
+				g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_EXAMINE;
 			}
-			_obj[od21ALLA23]._anim = 0;
-			_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[od21ALLA23]._anim = 0;
+			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
-			_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
-			_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
-			_obj[od21ALLA22]._anim = aWALKOUT;
-			_obj[oPORTAA21]._anim = a212;
-			_obj[oPORTAC21]._anim = a219;
+			g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
+			g_vm->_obj[od21ALLA22]._anim = aWALKOUT;
+			g_vm->_obj[oPORTAA21]._anim = a212;
+			g_vm->_obj[oPORTAC21]._anim = a219;
 
-			_obj[oCUNICOLO21]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCARTELLONE21]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCUNICOLO21]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLONE21]._mode |= OBJMODE_OBJSTATUS;
 		} else {
 			read3D("212.3d");
 			g_vm->_room[r21]._flag |= OBJFLAG_EXTRA;
 			setPosition(15);
-			_obj[oCATENAT21]._position = 6;
-			_obj[oUSCITA21]._position = 21;
+			g_vm->_obj[oCATENAT21]._position = 6;
+			g_vm->_obj[oUSCITA21]._position = 21;
 
-			_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
-			_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
-			_obj[od21ALLA23]._anim = aWALKOUT;
-			_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
+			g_vm->_obj[od21ALLA23]._anim = aWALKOUT;
+			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
 			// se so come andare di la'
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
-				_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
-				_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
+				g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
 			} else {
-				_obj[od21ALLA22]._flag &= ~OBJFLAG_ROOMOUT;
-				_obj[od21ALLA22]._flag |= OBJFLAG_EXAMINE;
+				g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_EXAMINE;
 			}
-			_obj[od21ALLA22]._anim = 0;
-			_obj[od21ALLA22]._examine = 335;
-			_obj[od21ALLA22]._action = 335;
-			_obj[oPORTAA21]._anim = 0;
-			_obj[oPORTAC21]._anim = 0;
+			g_vm->_obj[od21ALLA22]._anim = 0;
+			g_vm->_obj[od21ALLA22]._examine = 335;
+			g_vm->_obj[od21ALLA22]._action = 335;
+			g_vm->_obj[oPORTAA21]._anim = 0;
+			g_vm->_obj[oPORTAC21]._anim = 0;
 
-			_obj[oCUNICOLO21]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCARTELLONE21]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCUNICOLO21]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLONE21]._mode &= ~OBJMODE_OBJSTATUS;
 		}
 		break;
 	case r24:
 		if (!b) {
 			read3D("24.3d");
 			g_vm->_room[r24]._flag &= ~OBJFLAG_EXTRA;
-			_obj[oPASSAGGIO24]._position = 3;
-			_obj[oMACERIE24]._position = 3;
-			_obj[oDUMMY24]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oDUMMY24A]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSAGGIO24]._position = 3;
+			g_vm->_obj[oMACERIE24]._position = 3;
+			g_vm->_obj[oDUMMY24]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY24A]._mode |= OBJMODE_OBJSTATUS;
 		} else {
 			read3D("242.3d");
 			g_vm->_room[r24]._flag |= OBJFLAG_EXTRA;
-			_obj[od24ALLA26]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPASSAGGIO24]._position = 4;
-			_obj[oMACERIE24]._position = 4;
-			_obj[oDUMMY24A]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oDUMMY24]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[od24ALLA26]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSAGGIO24]._position = 4;
+			g_vm->_obj[oMACERIE24]._position = 4;
+			g_vm->_obj[oDUMMY24A]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY24]._mode |= OBJMODE_OBJSTATUS;
 		}
 		break;
 
@@ -561,65 +561,65 @@ void SetRoom(unsigned short r, bool b) {
 		if (!b) {
 			read3D("2A.3d");
 			g_vm->_room[r2A]._flag &= ~OBJFLAG_EXTRA;
-			_obj[oDUMMY2A2]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oDUMMY2A]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY2A2]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY2A]._mode &= ~OBJMODE_OBJSTATUS;
 		} else {
 			read3D("2A2.3d");
 			g_vm->_room[r2A]._flag |= OBJFLAG_EXTRA;
-			_obj[oDUMMY2A]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oDUMMY2A2]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY2A]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY2A2]._mode &= ~OBJMODE_OBJSTATUS;
 		}
 		break;
 	case r2B:
 		if (!b) {
 			read3D("2B.3d");
 			g_vm->_room[r2B]._flag &= ~OBJFLAG_EXTRA;
-			_obj[oPORTA2B]._mode |= OBJMODE_OBJSTATUS;
-			_obj[od2BALLA28]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPORTA2B]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[od2BALLA28]._mode &= ~OBJMODE_OBJSTATUS;
 		} else {
 			read3D("2B2.3d");
 			g_vm->_room[r2B]._flag |= OBJFLAG_EXTRA;
-			_obj[oPORTA2B]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[od2BALLA28]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPORTA2B]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od2BALLA28]._mode |= OBJMODE_OBJSTATUS;
 		}
 		break;
 	case r2E:
 		if (!b) {
-			_obj[oCATWALKA2E]._nbox = BACKGROUND;
-			_obj[oCATWALKA2E]._position = 2;
-			_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
+			g_vm->_obj[oCATWALKA2E]._nbox = BACKGROUND;
+			g_vm->_obj[oCATWALKA2E]._position = 2;
+			g_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
 			read3D("2E.3d");
 			g_vm->_room[r2E]._flag &= ~OBJFLAG_EXTRA;
-			_obj[oDUMMY2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oENTRANCE2E]._flag &= ~OBJFLAG_EXAMINE;
-			_obj[oPASSERELLAB2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCRATERE2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oARBUSTI2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCREPACCIO2E]._position = 6;
+			g_vm->_obj[oDUMMY2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oENTRANCE2E]._flag &= ~OBJFLAG_EXAMINE;
+			g_vm->_obj[oPASSERELLAB2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCRATERE2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oARBUSTI2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCREPACCIO2E]._position = 6;
 		} else {
-			_obj[oCATWALKA2E]._position = 3;
-			_obj[oCATWALKA2E]._anim = a2E3PRIMAPAVVICINANDO;
+			g_vm->_obj[oCATWALKA2E]._position = 3;
+			g_vm->_obj[oCATWALKA2E]._anim = a2E3PRIMAPAVVICINANDO;
 			read3D("2E2.3d");
 			g_vm->_room[r2E]._flag |= OBJFLAG_EXTRA;
-			_obj[oDUMMY2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oENTRANCE2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oENTRANCE2E]._flag |= OBJFLAG_EXAMINE;
-			_obj[oPASSERELLAB2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCRATERE2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oARBUSTI2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCREPACCIO2E]._position = 7;
-			_obj[oCATWALKA2E]._nbox = FOREGROUND;
+			g_vm->_obj[oDUMMY2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oENTRANCE2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oENTRANCE2E]._flag |= OBJFLAG_EXAMINE;
+			g_vm->_obj[oPASSERELLAB2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCRATERE2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oARBUSTI2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCREPACCIO2E]._position = 7;
+			g_vm->_obj[oCATWALKA2E]._nbox = FOREGROUND;
 		}
 		break;
 	case r2GV:
 		if (!b) {
-			_obj[oVIADOTTO2GV]._position = 7;
-			_obj[oVIADOTTO2GV]._anim = a2G7ATTRAVERSAPONTICELLO;
+			g_vm->_obj[oVIADOTTO2GV]._position = 7;
+			g_vm->_obj[oVIADOTTO2GV]._anim = a2G7ATTRAVERSAPONTICELLO;
 			read3D("2GV.3d");
 			g_vm->_room[r2GV]._flag &= ~OBJFLAG_EXTRA;
-			_obj[oDUMMY2GV]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oRAGAZZOS2GV]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCOCCODRILLO2GV]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDUMMY2GV]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRAGAZZOS2GV]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCOCCODRILLO2GV]._mode &= ~OBJMODE_OBJSTATUS;
 		}
 		break;
 	default:
