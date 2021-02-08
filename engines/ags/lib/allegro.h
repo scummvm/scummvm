@@ -41,10 +41,6 @@
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/unicode.h"
 
-#include "ags/lib/audio/sound.h"
-#include "ags/lib/audio/digi.h"
-#include "ags/lib/audio/midi.h"
-
 namespace AGS3 {
 
 extern int install_allegro();

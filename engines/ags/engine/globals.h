@@ -94,13 +94,12 @@ public:
 
 #if ! AGS_PLATFORM_DEFINES_PSP_VARS
 	int _psp_video_framedrop = 1;
-	int _psp_audio_enabled = 1;
-	int _psp_midi_enabled = 1;
 	int _psp_ignore_acsetup_cfg_file = 0;
-	int _psp_clear_cache_on_room_change = 0;
+	int _psp_clear_cache_on_room_change = 0; // clear --sprite cache-- when room is unloaded
 
-	int _psp_midi_preload_patches = 0;
+#if AGS_PLATFORM_SCUMMVM
 	int _psp_audio_cachesize = 10;
+#endif
 	const char *_psp_game_file_name = "";
 	const char *_psp_translation = "default";
 

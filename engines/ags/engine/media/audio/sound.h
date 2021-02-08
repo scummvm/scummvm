@@ -22,7 +22,7 @@
 
 //=============================================================================
 //
-// ACSOUND - AGS sound system wrapper
+// SOUNDCLIP factory methods.
 //
 //=============================================================================
 
@@ -41,8 +41,6 @@ SOUNDCLIP *my_load_static_ogg(const AssetPath &asset_name, int voll, bool loop);
 SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll);
 SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool repeat);
 SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat);
-
-extern int use_extra_sound_offset;
 
 } // namespace AGS3
 

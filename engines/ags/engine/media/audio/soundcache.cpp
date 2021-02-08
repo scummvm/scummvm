@@ -23,7 +23,6 @@
 #include "ags/engine/ac/file.h"
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/engine/media/audio/soundcache.h"
-#include "ags/engine/media/audio/audiointernaldefs.h"
 #include "ags/engine/util/mutex.h"
 #include "ags/engine/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
@@ -59,11 +58,11 @@ void clear_sound_cache() {
 	}
 }
 
-void sound_cache_free(char *buffer, bool is_wave) {
+void sound_cache_free(char *buffer) {
 	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
 #ifdef SOUND_CACHE_DEBUG
-	Debug::Printf("sound_cache_free(%p %d)\n", buffer, (unsigned int)is_wave);
+	Debug::Printf("sound_cache_free(%p)\n", buffer);
 #endif
 	int i;
 	for (i = 0; i < _G(psp_audio_cachesize); i++) {
@@ -84,19 +83,16 @@ void sound_cache_free(char *buffer, bool is_wave) {
 
 	// Sound is uncached
 	if (i == _G(psp_audio_cachesize)) {
-		if (is_wave)
-			destroy_sample((SAMPLE *)buffer);
-		else
-			free(buffer);
+		free(buffer);
 	}
 }
 
 
-char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) {
+char *get_cached_sound(const AssetPath &asset_name, size_t &size) {
 	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
 #ifdef SOUND_CACHE_DEBUG
-	Debug::Printf("get_cached_sound(%s %d)\n", asset_name.first.GetCStr(), (unsigned int)is_wave);
+	Debug::Printf("get_cached_sound(%s)\n", asset_name.first.GetCStr());
 #endif
 
 	size = 0;
@@ -120,19 +116,10 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 
 	// Not found
 	PACKFILE *mp3in = nullptr;
-	SAMPLE *wave = nullptr;
 
-	if (is_wave) {
-		PACKFILE *wavin = PackfileFromAsset(asset_name, size);
-		if (wavin != nullptr) {
-			wave = load_wav_pf(wavin);
-			pack_fclose(wavin);
-		}
-	} else {
-		mp3in = PackfileFromAsset(asset_name, size);
-		if (mp3in == nullptr) {
-			return nullptr;
-		}
+	mp3in = PackfileFromAsset(asset_name, size);
+	if (mp3in == nullptr) {
+		return nullptr;
 	}
 
 	// Find free slot
@@ -161,20 +148,15 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 	// Load new file
 	char *newdata;
 
-	if (is_wave) {
-		size = 0; // ??? CHECKME
-		newdata = (char *)wave;
-	} else {
-		newdata = (char *)malloc(size);
+	newdata = (char *)malloc(size);
 
-		if (newdata == nullptr) {
-			pack_fclose(mp3in);
-			return nullptr;
-		}
-
-		pack_fread(newdata, size, mp3in);
+	if (newdata == nullptr) {
 		pack_fclose(mp3in);
+		return nullptr;
 	}
+
+	pack_fread(newdata, size, mp3in);
+	pack_fclose(mp3in);
 
 	if (i == -1) {
 		// No cache slot empty, return uncached data
@@ -189,10 +171,7 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 #endif
 
 		if (sound_cache_entries[i].data) {
-			if (sound_cache_entries[i].is_wave)
-				destroy_sample((SAMPLE *)sound_cache_entries[i].data);
-			else
-				free(sound_cache_entries[i].data);
+			free(sound_cache_entries[i].data);
 		}
 
 		sound_cache_entries[i].size = size;
@@ -204,7 +183,6 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 		strcpy(sound_cache_entries[i].file_name, asset_name.second);
 		sound_cache_entries[i].reference = 1;
 		sound_cache_entries[i].last_used = sound_cache_counter++;
-		sound_cache_entries[i].is_wave = is_wave;
 
 		return sound_cache_entries[i].data;
 	}
@@ -212,7 +190,7 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 
 Common::SeekableReadStream *get_cached_sound(const AssetPath &asset_name) {
 	size_t muslen = 0;
-	const byte *data = (byte *)get_cached_sound(asset_name, false, muslen);
+	const byte *data = (byte *)get_cached_sound(asset_name, muslen);
 	if (data == nullptr)
 		return nullptr;
 

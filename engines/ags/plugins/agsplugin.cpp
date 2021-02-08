@@ -76,6 +76,8 @@
 #include "ags/engine/globals.h"
 #include "ags/engine/util/library.h"
 #include "ags/engine/util/library_scummvm.h"
+#include "ags/ags.h"
+#include "ags/music.h"
 
 namespace AGS3 {
 
@@ -591,14 +593,10 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 			quit("!IAGSEngine::PlaySoundChannel: MIDI already in use");
 		newcha = my_load_midi(asset_name, loop);
 		newcha->set_volume(volume);
-	}
-#ifndef PSP_NO_MOD_PLAYBACK
-	else if (soundType == PSND_MOD) {
+	} else if (soundType == PSND_MOD) {
 		newcha = my_load_mod(asset_name, loop);
 		newcha->set_volume(volume);
-	}
-#endif
-	else
+	} else
 		quit("!IAGSEngine::PlaySoundChannel: unknown sound type");
 
 	set_clip_to_channel(channel, newcha);
@@ -669,10 +667,7 @@ int IAGSEngine::IsSpriteAlphaBlended(int32 slot) {
 // disable AGS's sound engine
 void IAGSEngine::DisableSound() {
 	shutdown_sound();
-	usetup.digicard = DIGI_NONE;
-	usetup.midicard = MIDI_NONE;
-	reserve_voices(0, 0);
-	install_sound(DIGI_NONE, MIDI_NONE, nullptr);
+	usetup.audio_backend = 0;
 }
 int IAGSEngine::CanRunScriptFunctionNow() {
 	if (inside_script)

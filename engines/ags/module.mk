@@ -25,9 +25,6 @@ MODULE_OBJS = \
 	lib/allegro/mouse.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/audio/digi.o \
-	lib/audio/midi.o \
-	lib/audio/sound.o \
 	lib/hq2x/hq2x3x.o \
 	lib/std/std.o \
 	lib/system/datetime.o \

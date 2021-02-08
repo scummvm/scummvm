@@ -36,9 +36,6 @@
 
 namespace AGS3 {
 
-// JJS: This is needed for the derieved classes
-extern volatile int psp_audio_multithreaded;
-
 // TODO: one of the biggest problems with sound clips currently is that it
 // provides several methods of applying volume, which may ignore or override
 // each other, and does not shape a consistent interface.

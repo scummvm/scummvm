@@ -23,7 +23,8 @@
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/engine/media/audio/clip_mymidi.h"
-#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/ags.h"
+#include "ags/music.h"
 
 namespace AGS3 {
 

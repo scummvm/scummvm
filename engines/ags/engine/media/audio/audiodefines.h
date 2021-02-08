@@ -29,10 +29,6 @@
 #define MUS_MOD  4
 #define MUS_OGG  5
 
-#ifndef PSP_NO_MOD_PLAYBACK
-#define DUMB_MOD_PLAYER
-#endif
-
 #define MAX_SOUND_CHANNELS 8
 #define SPECIAL_CROSSFADE_CHANNEL 8
 

@@ -30,7 +30,6 @@
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/util/mutex.h"
 #include "ags/engine/util/mutex_lock.h"
-#include "ags/engine/util/thread.h"
 #include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
@@ -92,9 +91,6 @@ SOUNDCLIP *load_sound_clip_from_old_style_number(bool isMusic, int indexNumber, 
 
 //=============================================================================
 
-int         init_mod_player(int numVoices);
-void        remove_mod_player();
-void        force_audiostream_include();
 int         get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist);
 void        update_directional_sound_vol();
 void        update_ambient_sound_vol();
@@ -134,12 +130,7 @@ ScriptAudioClip *get_audio_clip_for_music(int mnum);
 SOUNDCLIP *load_music_from_disk(int mnum, bool doRepeat);
 void        newmusic(int mnum);
 
-extern AGS::Engine::Thread audioThread;
 extern volatile bool _audio_doing_crossfade;
-extern volatile int psp_audio_multithreaded;
-
-void update_polled_mp3();
-void update_mp3_thread();
 
 extern void cancel_scheduled_music_update();
 extern void schedule_music_update_at(AGS_Clock::time_point);
