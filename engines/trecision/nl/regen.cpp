@@ -167,10 +167,10 @@ void PaintScreen(uint8 flag) {
 			DObj.dy   = 480;
 
 			if (SortTable[a].typology == TYPO_BMP) {
-				DObj.l[0] = _obj[SortTable[a].index]._px;
-				DObj.l[1] = _obj[SortTable[a].index]._py;
-				DObj.l[2] = DObj.l[0] + _obj[SortTable[a].index]._dx;
-				DObj.l[3] = DObj.l[1] + _obj[SortTable[a].index]._dy;
+				DObj.l[0] = g_vm->_obj[SortTable[a].index]._px;
+				DObj.l[1] = g_vm->_obj[SortTable[a].index]._py;
+				DObj.l[2] = DObj.l[0] + g_vm->_obj[SortTable[a].index]._dx;
+				DObj.l[3] = DObj.l[1] + g_vm->_obj[SortTable[a].index]._dy;
 			}
 
 			DObj.buf  = ImagePointer;
@@ -279,11 +279,11 @@ void PaintScreen(uint8 flag) {
 	SemWaitRegen = false;
 
 	// gestione papaverina ritardata
-	if ((g_vm->_curRoom == r4A) && (_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
+	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
 		extern uint16 _curAnimFrame[];
 		if (_curAnimFrame[0] > 480) {
 			PlayScript(s4AHELLEN);
-			_obj[oCIOCCOLATINI4A]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_obj[oCIOCCOLATINI4A]._flag &= ~OBJFLAG_EXTRA;
 		}
 		return;
 	}
@@ -388,12 +388,12 @@ void PaintObjAnm(uint16 CurBox) {
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (!SortTable[a].togli) {
 			if (SortTable[a].typology == TYPO_BMP) {
-				if (_obj[SortTable[a].index]._nbox == CurBox) {
+				if (g_vm->_obj[SortTable[a].index]._nbox == CurBox) {
 					// l'oggetto bitmap Š al livello desiderato
-					DObj.x    = _obj[SortTable[a].index]._px;
-					DObj.y    = _obj[SortTable[a].index]._py + TOP;
-					DObj.dx   = _obj[SortTable[a].index]._dx;
-					DObj.dy   = _obj[SortTable[a].index]._dy;
+					DObj.x = g_vm->_obj[SortTable[a].index]._px;
+					DObj.y = g_vm->_obj[SortTable[a].index]._py + TOP;
+					DObj.dx = g_vm->_obj[SortTable[a].index]._dx;
+					DObj.dy = g_vm->_obj[SortTable[a].index]._dy;
 					DObj.l[0] = 0;
 					DObj.l[1] = 0;
 					DObj.l[2] = DObj.dx;
@@ -401,7 +401,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.buf  = ObjPointers[SortTable[a].roomindex];
 					DObj.mask = MaskPointers[SortTable[a].roomindex];
 					DObj.flag = COPYTORAM;
-					if (_obj[SortTable[a].index]._mode & OBJMODE_MASK)
+					if (g_vm->_obj[SortTable[a].index]._mode & OBJMODE_MASK)
 						DObj.flag += DRAWMASK;
 					DrawObj(DObj);
 
@@ -435,19 +435,19 @@ void PaintObjAnm(uint16 CurBox) {
 			if (!TheObject)
 				break;
 
-			if ((_obj[TheObject]._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
-					(_obj[TheObject]._mode & OBJMODE_OBJSTATUS) &&
-					(_obj[TheObject]._nbox == CurBox)) {
+			if ((g_vm->_obj[TheObject]._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
+			    (g_vm->_obj[TheObject]._mode & OBJMODE_OBJSTATUS) &&
+			    (g_vm->_obj[TheObject]._nbox == CurBox)) {
 
 				if (IntersecateRect(limiti[a][0], limiti[a][1],
 									limiti[a][2], limiti[a][3],
-									_obj[TheObject]._px, _obj[TheObject]._py + TOP,
-									_obj[TheObject]._px + _obj[TheObject]._dx,
-									_obj[TheObject]._py + _obj[TheObject]._dy + TOP)) {
-					DObj.x    = _obj[TheObject]._px;
-					DObj.y    = _obj[TheObject]._py + TOP;
-					DObj.dx   = _obj[TheObject]._dx;
-					DObj.dy   = _obj[TheObject]._dy;
+				                    g_vm->_obj[TheObject]._px, g_vm->_obj[TheObject]._py + TOP,
+				                    g_vm->_obj[TheObject]._px + g_vm->_obj[TheObject]._dx,
+				                    g_vm->_obj[TheObject]._py + g_vm->_obj[TheObject]._dy + TOP)) {
+					DObj.x = g_vm->_obj[TheObject]._px;
+					DObj.y = g_vm->_obj[TheObject]._py + TOP;
+					DObj.dx = g_vm->_obj[TheObject]._dx;
+					DObj.dy = g_vm->_obj[TheObject]._dy;
 					DObj.l[0] = xr1;
 					DObj.l[1] = yr1;
 					DObj.l[2] = xr2;
@@ -457,7 +457,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.mask = MaskPointers[b];
 					DObj.flag = COPYTORAM;
 
-					if (_obj[TheObject]._mode & OBJMODE_MASK)
+					if (g_vm->_obj[TheObject]._mode & OBJMODE_MASK)
 						DObj.flag = COPYTORAM + DRAWMASK;
 
 					DrawObj(DObj);
@@ -515,8 +515,9 @@ int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int 
 			yr2 = y4 - y3;                       // _dy
 
 		return true;
-	} else
-		return false;
+	}
+	
+	return false;
 }
 
 } // End of namespace Trecision

@@ -45,6 +45,7 @@ public:
 	uint16 CurScriptFrame[10];
 
 	SRoom _room[MAXROOMS];
+	SObject _obj[MAXOBJ];
 };
 
 extern TrecisionEngine *g_vm;

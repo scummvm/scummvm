@@ -588,26 +588,26 @@ void ReadObj() {
 		if ((g_vm->_curRoom == r2C) && (a == 20))
 			break;
 
-		if (_obj[c]._mode & OBJMODE_FULL) {
+		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (_obj[c]._dx * _obj[c]._dy));
-			b += (_obj[c]._dx * _obj[c]._dy);
+			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
-		if ((_obj[c]._mode & OBJMODE_MASK)) {
+		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
@@ -642,26 +642,26 @@ void ReadExtraObj2C() {
 		if (!c)
 			break;
 
-		if (_obj[c]._mode & OBJMODE_FULL) {
+		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (_obj[c]._dx * _obj[c]._dy));
-			b += (_obj[c]._dx * _obj[c]._dy);
+			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
-		if ((_obj[c]._mode & OBJMODE_MASK)) {
+		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
@@ -696,26 +696,26 @@ void ReadExtraObj41D() {
 		if (!c)
 			break;
 
-		if (_obj[c]._mode & OBJMODE_FULL) {
+		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (_obj[c]._dx * _obj[c]._dy));
-			b += (_obj[c]._dx * _obj[c]._dy);
+			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
-		if ((_obj[c]._mode & OBJMODE_MASK)) {
+		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
-			_obj[c]._px = BmInfo.px;
-			_obj[c]._py = BmInfo.py;
-			_obj[c]._dx = BmInfo.dx;
-			_obj[c]._dy = BmInfo.dy;
+			g_vm->_obj[c]._px = BmInfo.px;
+			g_vm->_obj[c]._py = BmInfo.py;
+			g_vm->_obj[c]._dx = BmInfo.dx;
+			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
@@ -775,13 +775,13 @@ void RegenRoom() {
 		if (g_vm->_room[g_vm->_curRoom]._object[a] == 0)
 			break;
 
-		int status = (_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
+		int status = (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
 
 		if (status) {
-			if ((!OldObjStatus[a]) && (_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
+			if ((!OldObjStatus[a]) && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
 				OldObjStatus[a] = 1;
 			}
-		} else if ((OldObjStatus[a]) && (_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
+		} else if ((OldObjStatus[a]) && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
 			OldObjStatus[a] = 0;
 	}
 }

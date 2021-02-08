@@ -179,60 +179,60 @@ void afterChoice(int numframe) {
 	switch (_curDialog) {
 	case dBARBONE171:
 		if (_curChoice == 80) {
-			_obj[ocBARBONE17]._action = 213;
-			_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._action = 213;
+			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 		} else if (_curChoice == 77) {
-			_obj[ocBARBONE17]._action = 211;
-			_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._action = 211;
+			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
 	case dBARBONE1714:
 		if (_curChoice == 106) {
-			_obj[ocBARBONE17]._action = 213;
-			_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._action = 213;
+			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
 	case dBARBONE1713:
 		if (_curChoice == 91) {
-			_obj[ocBARBONE17]._action = 212;
-			_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._action = 212;
+			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
 	case dBARBONE1716:
 		if (_curChoice == 122) {
-			_obj[ocBARBONE17]._action = 212;
-			_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._action = 212;
+			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
 	case dBARBONE1717:
 		if (_curChoice == 136) {
-			_obj[ocBARBONE17]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oBARBONED17]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[ocBARBONE17]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBARBONED17]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r17]._bkgAnim = aBKG17B;
 			AddIcon(iPATTINO);
 		} else if (_curChoice == 137) {
-			_obj[ocBARBONE17]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[ocBARBONE17]._flag |= OBJFLAG_PERSON;
 		}
 		break;
 
 	case dGUARDIANO18:
 		if ((_curChoice == 151) || (_curChoice == 152)) {
 			InvObj[iFOTO]._action = 1465;
-			_obj[oTESSERA1A]._action = 238;
-			if (_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA) {
+			g_vm->_obj[oTESSERA1A]._action = 238;
+			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA) {
 				_choice[154]._flag &= ~DLGCHOICE_HIDE;
 				_choice[153]._flag |= DLGCHOICE_HIDE;
 			} else
 				_choice[153]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 154) {
-			if (_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA)
 				_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 155)
-			_obj[ocGUARDIANO18]._action = 228;
+			g_vm->_obj[ocGUARDIANO18]._action = 228;
 		break;
 
 	/*		case dSAM17:
@@ -256,28 +256,28 @@ void afterChoice(int numframe) {
 		break;
 
 	case dF4A3:
-		_obj[oCIOCCOLATINI4A]._examine = 1105;
-		_obj[oCIOCCOLATINI4A]._action = 1106;
-		_obj[oPORTAC4A]._action = 1118;
+		g_vm->_obj[oCIOCCOLATINI4A]._examine = 1105;
+		g_vm->_obj[oCIOCCOLATINI4A]._action = 1106;
+		g_vm->_obj[oPORTAC4A]._action = 1118;
 		AnimTab[aBKG4A].flag |= SMKANIM_OFF1;
-		_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oHELLENA4A]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oHELLENA4A]._mode |= OBJMODE_OBJSTATUS;
 		break;
 
 	case dC581:
-		_obj[oFINESTRAB58]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oFINESTRAB58]._mode |= OBJMODE_OBJSTATUS;
 		if (_curChoice == 262)
-			_obj[oTASTIERA56]._examine = 1307;
+			g_vm->_obj[oTASTIERA56]._examine = 1307;
 		break;
 
 	case dF542:
-		_obj[oGRATAC54]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPORTAC54]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oLAVATRICEL54]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oLAVATRICEF54]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oGRATAA54]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCHIAVI54]._mode |= OBJMODE_OBJSTATUS;
-		_obj[od54ALLA55]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oGRATAC54]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPORTAC54]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oLAVATRICEL54]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oLAVATRICEF54]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oGRATAA54]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCHIAVI54]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[od54ALLA55]._mode |= OBJMODE_OBJSTATUS;
 		break;
 	}
 	// Se ultima scelta era un esci dialogo
@@ -307,53 +307,53 @@ void afterChoice(int numframe) {
 		break;
 		*/
 		case dPOLIZIOTTO16:
-			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
-				_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
+			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
+				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			break;
 
 		case dBARBONE171:
 			if (_curChoice == 77) {
-				_obj[ocBARBONE17]._action = 211;
-				_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+				g_vm->_obj[ocBARBONE17]._action = 211;
+				g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
 			} else if (_curChoice == 80)
-				_obj[ocBARBONE17]._action = 213;
+				g_vm->_obj[ocBARBONE17]._action = 213;
 			else if (_curChoice == 122)
-				_obj[ocBARBONE17]._action = 211;
+				g_vm->_obj[ocBARBONE17]._action = 211;
 			break;
 
 		case dGUARDIANO18:
 			if (_curChoice == 152)
-				_obj[ocGUARDIANO18]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[ocGUARDIANO18]._mode &= ~OBJMODE_OBJSTATUS;
 			else if (_curChoice == 155)
 				StartCharacterAction(a184ENTRACLUB, r19, 2, 0);
 			break;
 
 		case dEVA19:
-			_obj[oPORTAC18]._flag &= ~OBJFLAG_ROOMOUT;
-			_obj[oPORTAC18]._action = 221;
-			_obj[ocEVA19]._action = 1999;
-			_obj[ocEVA19]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[oPORTAC18]._flag &= ~OBJFLAG_ROOMOUT;
+			g_vm->_obj[oPORTAC18]._action = 221;
+			g_vm->_obj[ocEVA19]._action = 1999;
+			g_vm->_obj[ocEVA19]._flag &= ~OBJFLAG_PERSON;
 			break;
 
 		case dNEGOZIANTE1A:
 			if (_curChoice == 185) {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
-				_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;
-				_obj[oPORTAN18]._action = 218;
-				_obj[oPORTAN18]._anim = 0;
+				g_vm->_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[oPORTAN18]._action = 218;
+				g_vm->_obj[oPORTAN18]._anim = 0;
 			} else if (_curChoice == 183)
-				_obj[oTESSERA1A]._action = 239;
+				g_vm->_obj[oTESSERA1A]._action = 239;
 			break;
 
 		case dF181:
-			_obj[oRETE17]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPORTAA17]._examine = 196;
-			_obj[oPORTAUA17]._examine = 187;
-			_obj[oPORTAUB17]._examine = 192;
-			_obj[oPORTAA17]._action = 188;
-			_obj[oPORTAUA17]._action = 193;
-			_obj[oPORTAUB17]._action = 197;
-			_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRETE17]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPORTAA17]._examine = 196;
+			g_vm->_obj[oPORTAUA17]._examine = 187;
+			g_vm->_obj[oPORTAUB17]._examine = 192;
+			g_vm->_obj[oPORTAA17]._action = 188;
+			g_vm->_obj[oPORTAUA17]._action = 193;
+			g_vm->_obj[oPORTAUB17]._action = 197;
+			g_vm->_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[r17]._flag &= ~OBJFLAG_DONE;
 			g_vm->_room[r17]._flag |= OBJFLAG_EXTRA;
 			break;
@@ -368,7 +368,7 @@ void afterChoice(int numframe) {
 
 		case dF2E1:
 			CharacterSay(621);
-			_obj[oCATWALKA2E]._action = 622;
+			g_vm->_obj[oCATWALKA2E]._action = 622;
 			break;
 
 		case dF2E2:
@@ -377,25 +377,25 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF231:
-			_obj[od21ALLA23]._goRoom = r23B;
-			_obj[od24ALLA23]._goRoom = r23B;
+			g_vm->_obj[od21ALLA23]._goRoom = r23B;
+			g_vm->_obj[od24ALLA23]._goRoom = r23B;
 			break;
 
 		case dF291:
-			_obj[oINTERRUTTORE29]._action = 479;
-			_obj[od22ALLA29]._goRoom = r29L;
-			_obj[od2AALLA29]._goRoom = r29L;
-			_obj[od22ALLA29]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[od22ALLA29I]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oINTERRUTTORE29]._action = 479;
+			g_vm->_obj[od22ALLA29]._goRoom = r29L;
+			g_vm->_obj[od2AALLA29]._goRoom = r29L;
+			g_vm->_obj[od22ALLA29]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od22ALLA29I]._mode |= OBJMODE_OBJSTATUS;
 			break;
 
 		case dF2G1:
-			_obj[oPANNELLOM2G]._action = 660;
+			g_vm->_obj[oPANNELLOM2G]._action = 660;
 			CharacterSay(659);
 			break;
 
 		case dF2G2:
-			_obj[od26ALLA2G]._goRoom = r2GV;
+			g_vm->_obj[od26ALLA2G]._goRoom = r2GV;
 			ReplaceIcon(iSAM, iSAMROTTO);
 			break;
 
@@ -404,10 +404,10 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF331:
-			_obj[oTUBOT33]._lim[0] = 0;
-			_obj[oTUBOT33]._lim[1] = 0;
-			_obj[oTUBOT33]._lim[2] = 0;
-			_obj[oTUBOT33]._lim[3] = 0;
+			g_vm->_obj[oTUBOT33]._lim[0] = 0;
+			g_vm->_obj[oTUBOT33]._lim[1] = 0;
+			g_vm->_obj[oTUBOT33]._lim[2] = 0;
+			g_vm->_obj[oTUBOT33]._lim[3] = 0;
 			CharacterSay(1997);
 			break;
 
@@ -430,7 +430,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF371:
-			_obj[oSCAFFALE36]._anim = a3615AAPRENDESCAFFALE;
+			g_vm->_obj[oSCAFFALE36]._anim = a3615AAPRENDESCAFFALE;
 			CallSmackVolumePan(0, 1, 1);
 			break;
 
@@ -440,16 +440,16 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF451:
-			_obj[od44ALLA45]._goRoom = r45S;
+			g_vm->_obj[od44ALLA45]._goRoom = r45S;
 			CharacterSay(1712);
 			break;
 
 		case dF491:
 			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; c++) {
-				if (!(_obj[c]._goRoom)) {
-					_obj[c]._goRoom = r4A;
-					_obj[c]._mode |= OBJMODE_OBJSTATUS;
-					_obj[c - 40]._mode &= ~OBJMODE_OBJSTATUS;
+				if (!(g_vm->_obj[c]._goRoom)) {
+					g_vm->_obj[c]._goRoom = r4A;
+					g_vm->_obj[c]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[c - 40]._mode &= ~OBJMODE_OBJSTATUS;
 					break;
 				}
 			}
@@ -501,18 +501,18 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF562:
-			_obj[oPORTA58C55]._action = 1287;
-			_obj[oPORTA58C55]._anim = 0;
-			_obj[oFINESTRA58P55]._action = 1292;
-			_obj[oFINESTRA58P55]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oFINESTRA58P55]._anim = 0;
+			g_vm->_obj[oPORTA58C55]._action = 1287;
+			g_vm->_obj[oPORTA58C55]._anim = 0;
+			g_vm->_obj[oFINESTRA58P55]._action = 1292;
+			g_vm->_obj[oFINESTRA58P55]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oFINESTRA58P55]._anim = 0;
 			break;
 
 		case dF5A1:
-			_obj[oPORTA58C55]._action = 1286;
-			_obj[oFINESTRA58P55]._action = 1291;
-			_obj[oFINESTRAA5A]._action = 1403;
-			_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPORTA58C55]._action = 1286;
+			g_vm->_obj[oFINESTRA58P55]._action = 1291;
+			g_vm->_obj[oFINESTRAA5A]._action = 1403;
+			g_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
 			_choice[286]._flag |= OBJFLAG_DONE;
 			break;
 
@@ -524,12 +524,12 @@ void afterChoice(int numframe) {
 			break;
 
 		case dC582:
-			_obj[oFINESTRAA58]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oFINESTRAA58]._mode |= OBJMODE_OBJSTATUS;
 			AddIcon(iCODICE);
 			break;
 
 		case dC5A1:
-			_obj[oFINESTRAA5A]._action = 1402;
+			g_vm->_obj[oFINESTRAA5A]._action = 1402;
 			if (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)
 				PlayDialog(dF5A1);
 			break;

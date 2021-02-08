@@ -201,7 +201,7 @@ void StartSmackAnim(uint16 num) {
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG14) && (AnimTab[num].flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG1C) && (_obj[oFAX17]._flag & OBJFLAG_EXTRA)) {
+		else if ((num == aBKG1C) && (g_vm->_obj[oFAX17]._flag & OBJFLAG_EXTRA)) {
 			AnimTab[num].flag |= SMKANIM_OFF1;
 			CallSmackVolumePan(0, 1, 0);
 		} else if ((num == aBKG1D) && (AnimTab[num].flag & SMKANIM_OFF1))
@@ -222,9 +222,9 @@ void StartSmackAnim(uint16 num) {
 			CallSmackVolumePan(0, 2, 0);
 		else if ((num == aBKG34) &&				// se sono nella 34 e
 				 ((_choice[616]._flag & OBJFLAG_DONE) ||		// ho gia' fatto fmv o
-				  (_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS)	||	// c'e' il tubo intero
-				  (_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||	// c'e' il tubo fuori o
-				  (_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))	// la valovola e' chiusa
+		          (g_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) || // c'e' il tubo intero
+		          (g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) || // c'e' il tubo fuori o
+		          (g_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS))) // la valovola e' chiusa
 			CallSmackVolumePan(0, 2, 0);
 	} else if (AnimTab[num].flag & SMKANIM_ICON) {
 		sprintf(UStr, "Icon\\%s", AnimTab[num].name);

@@ -156,30 +156,30 @@ bool CheckMask(uint16 MX, uint16 my) {
 
 		uint16 CheckedObj = g_vm->_room[g_vm->_curRoom]._object[a];
 
-		if ((CheckedObj) && (_obj[CheckedObj]._mode & (OBJMODE_OBJSTATUS))) {
-			if ((MX >= _obj[CheckedObj]._lim[0]) &&
-					(my >= _obj[CheckedObj]._lim[1] + TOP) &&
-					(MX <= _obj[CheckedObj]._lim[2]) &&
-					(my <= _obj[CheckedObj]._lim[3] + TOP)) {
+		if ((CheckedObj) && (g_vm->_obj[CheckedObj]._mode & (OBJMODE_OBJSTATUS))) {
+			if ((MX >= g_vm->_obj[CheckedObj]._lim[0]) &&
+			    (my >= g_vm->_obj[CheckedObj]._lim[1] + TOP) &&
+			    (MX <= g_vm->_obj[CheckedObj]._lim[2]) &&
+			    (my <= g_vm->_obj[CheckedObj]._lim[3] + TOP)) {
 
-				if (_obj[CheckedObj]._mode & OBJMODE_FULL) {
+				if (g_vm->_obj[CheckedObj]._mode & OBJMODE_FULL) {
 					g_vm->_curObj = CheckedObj;
 					return true;
 				}
 
-				if (_obj[CheckedObj]._mode & OBJMODE_LIM) {
+				if (g_vm->_obj[CheckedObj]._mode & OBJMODE_LIM) {
 					g_vm->_curObj = CheckedObj;
 					return true;
 				}
 
-				if (_obj[CheckedObj]._mode & OBJMODE_MASK) {
+				if (g_vm->_obj[CheckedObj]._mode & OBJMODE_MASK) {
 					uint8 *mask = MaskPointers[a];
-					int16 d = _obj[CheckedObj]._px;
+					int16 d = g_vm->_obj[CheckedObj]._px;
 
-					for (int16 b = _obj[CheckedObj]._py; b < (_obj[CheckedObj]._py + _obj[CheckedObj]._dy); b++) {
+					for (int16 b = g_vm->_obj[CheckedObj]._py; b < (g_vm->_obj[CheckedObj]._py + g_vm->_obj[CheckedObj]._dy); b++) {
 						int16 c = 0;
 						int16 e = 0;
-						while (e < _obj[CheckedObj]._dx) {
+						while (e < g_vm->_obj[CheckedObj]._dx) {
 							if (!c) {		// fuori oggetto
 								if ((b + TOP) == my) {
 									if ((MX >= (d + e)) && (MX < (d + e + *mask))) {

@@ -67,13 +67,13 @@ void doRoomIn(uint16 TheObj) {
 				break;
 	*/
 	default:
-		TheAction = _obj[TheObj]._anim;
-		ThePos = _obj[TheObj]._ninv;
+		TheAction = g_vm->_obj[TheObj]._anim;
+		ThePos = g_vm->_obj[TheObj]._ninv;
 		break;
 	}
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[TheObj]._goRoom, TheAction, ThePos, TheObj);
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[TheObj]._goRoom, TheAction, ThePos, TheObj);
 
-	_obj[TheObj]._flag |= OBJFLAG_DONE;
+	g_vm->_obj[TheObj]._flag |= OBJFLAG_DONE;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -86,27 +86,27 @@ void doRoomOut(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oSCALA32:
-		if (_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
-			CharacterSay(_obj[TheObj]._action);
+		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
+			CharacterSay(g_vm->_obj[TheObj]._action);
 			SemMouseEnabled = true;
 			TheAction = 0;
 			ThePos = 0;
 		} else {
-			TheAction = _obj[TheObj]._anim;
-			ThePos = _obj[TheObj]._ninv;
+			TheAction = g_vm->_obj[TheObj]._anim;
+			ThePos = g_vm->_obj[TheObj]._ninv;
 		}
 		break;
 
 	default:
-		TheAction = _obj[TheObj]._anim;
-		ThePos = _obj[TheObj]._ninv;
+		TheAction = g_vm->_obj[TheObj]._anim;
+		ThePos = g_vm->_obj[TheObj]._ninv;
 		break;
 	}
 
 	if (TheAction)
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, TheAction, _obj[TheObj]._goRoom, ThePos, TheObj);
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, TheAction, g_vm->_obj[TheObj]._goRoom, ThePos, TheObj);
 
-	_obj[TheObj]._flag |= OBJFLAG_DONE;
+	g_vm->_obj[TheObj]._flag |= OBJFLAG_DONE;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -129,26 +129,26 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oPORTAA13:
-		_obj[oCASSETTA12]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCASSETTA12]._mode |= OBJMODE_OBJSTATUS;
 		printsent = true;
 		break;
 
 	case oPANNELLOA12:
 	case oFUSIBILE12:
-		if (_obj[oFUSIBILE12]._mode & OBJMODE_OBJSTATUS)
-			_obj[oFUSE12CU]._mode |= OBJMODE_OBJSTATUS;
+		if (g_vm->_obj[oFUSIBILE12]._mode & OBJMODE_OBJSTATUS)
+			g_vm->_obj[oFUSE12CU]._mode |= OBJMODE_OBJSTATUS;
 		else
-			_obj[oFUSE12CU]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oFUSE12CU]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r12CU, 0, 0, TheObj);
 		CloseUpObj = TheObj;
 		break;
 
 	case oLETTERA13:
 	case oPENPADA13:
-		if (_obj[oLETTERA13]._mode & OBJMODE_OBJSTATUS)
-			_obj[oLETTER13CU]._mode |= OBJMODE_OBJSTATUS;
+		if (g_vm->_obj[oLETTERA13]._mode & OBJMODE_OBJSTATUS)
+			g_vm->_obj[oLETTER13CU]._mode |= OBJMODE_OBJSTATUS;
 		else
-			_obj[oLETTER13CU]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oLETTER13CU]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r13CU, 0, 0, TheObj);
 		CloseUpObj = TheObj;
 		break;
@@ -159,7 +159,7 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oSCAFFALE14:
-		if (!(_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
+		if (!(g_vm->_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a145ESAMINASCAFFALE, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a145CESAMINASCAFFALE, 0, 0, TheObj);
@@ -187,7 +187,7 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oFINESTRAA15:
-		if (_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS)
 			CharacterSay(1999);
 		else
 			printsent = true;
@@ -205,7 +205,7 @@ void doMouseExamine(uint16 TheObj) {
 
 	case oMAPPA16:
 		if (IconPos(iFOGLIO14) != MAXICON)
-			_obj[oMAPPA16]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oMAPPA16]._flag |= OBJFLAG_EXTRA;
 		printsent = true;
 		break;
 
@@ -232,7 +232,7 @@ void doMouseExamine(uint16 TheObj) {
 	case oTESSERA1A:
 		if (((_choice[151]._flag & OBJFLAG_DONE) || (_choice[152]._flag & OBJFLAG_DONE)) && !(_choice[183]._flag & OBJFLAG_DONE))
 			_choice[183]._flag &= ~DLGCHOICE_HIDE;
-		_obj[oTESSERA1A]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[oTESSERA1A]._flag |= OBJFLAG_EXTRA;
 		printsent = true;
 		break;
 
@@ -336,42 +336,42 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oTUBOF33:
-		if ((_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oVALVOLA34]._anim))
+		if ((g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oVALVOLA34]._anim))
 			CharacterSay(2000);
 		else
-			CharacterSay(_obj[TheObj]._examine);
+			CharacterSay(g_vm->_obj[TheObj]._examine);
 		printsent = false;
 		break;
 
 	case oTUBOT33:
-		if ((_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oVALVOLA34]._anim))
+		if ((g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oVALVOLA34]._anim))
 			CharacterSay(2001);
 		else
-			CharacterSay(_obj[TheObj]._examine);
+			CharacterSay(g_vm->_obj[TheObj]._examine);
 		printsent = false;
 		break;
 
 	case oTUBOA34:
-		if ((_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oVALVOLA34]._anim))
+		if ((g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oVALVOLA34]._anim))
 			CharacterSay(2002);
 		else
-			CharacterSay(_obj[TheObj]._examine);
+			CharacterSay(g_vm->_obj[TheObj]._examine);
 		printsent = false;
 		break;
 
 	case oTUBOF34:
-		if ((_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oVALVOLA34]._anim))
+		if ((g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oVALVOLA34]._anim))
 			CharacterSay(2000);
 		else
-			CharacterSay(_obj[TheObj]._examine);
+			CharacterSay(g_vm->_obj[TheObj]._examine);
 		printsent = false;
 		break;
 
 	case oTUBOFT34:
-		if ((_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oVALVOLA34]._anim))
+		if ((g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oVALVOLA34]._anim))
 			CharacterSay(2001);
 		else
-			CharacterSay(_obj[TheObj]._examine);
+			CharacterSay(g_vm->_obj[TheObj]._examine);
 		printsent = false;
 		break;
 
@@ -396,7 +396,7 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oSCAFFALE36:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[oSCAFFALE36]._anim, 0, 0, TheObj);
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[oSCAFFALE36]._anim, 0, 0, TheObj);
 		printsent = false;
 		break;
 
@@ -416,7 +416,7 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oCAMPANAT43:
-		if (_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a431R, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a431, 0, 0, TheObj);
@@ -424,7 +424,7 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oTAMBURO43:
-		if (_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oMARTELLOR43]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a432R, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a432, 0, 0, TheObj);
@@ -447,42 +447,42 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oEXIT12CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT12CU]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT12CU]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT13CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT13CU]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT13CU]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT2BL:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT2BL]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT2BL]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT36F:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT36F]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT36F]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT41D:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT41D]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT41D]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT4CT:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT4CT]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT4CT]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT58T:
 		Count58 = 0;
 		for (a = 0; a < 6; a++)
-			_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT58T]._goRoom, 0, 0, TheObj);
+			g_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT58T]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT58M:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT58M]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT58M]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT59L:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT59L]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT59L]._goRoom, 0, 0, TheObj);
 		break;
 
 	default:
@@ -490,8 +490,8 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 	}
 
-	if ((printsent) && (_obj[TheObj]._examine))
-		CharacterSay(_obj[TheObj]._examine);
+	if ((printsent) && (g_vm->_obj[TheObj]._examine))
+		CharacterSay(g_vm->_obj[TheObj]._examine);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -506,8 +506,8 @@ void doMouseOperate(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oFAX17:
-		if (_obj[oSCALA16]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[oSCALA16]._anim) {
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			InvObj[iSAM]._action = 1416;
 			printsent = false;
 		}
@@ -515,42 +515,42 @@ void doMouseOperate(uint16 TheObj) {
 
 	case ocPOLIZIOTTO16:
 	case oSCALA16:
-		if (!(_obj[oSCALA16]._flag & OBJFLAG_EXTRA)) {
-			_obj[oSCALA16]._flag |= OBJFLAG_EXTRA;
+		if (!(g_vm->_obj[oSCALA16]._flag & OBJFLAG_EXTRA)) {
+			g_vm->_obj[oSCALA16]._flag |= OBJFLAG_EXTRA;
 			_choice[61]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dPOLIZIOTTO16);
-			_obj[oSCALA16]._action = 166;
-			_obj[ocPOLIZIOTTO16]._action = 166;
+			g_vm->_obj[oSCALA16]._action = 166;
+			g_vm->_obj[ocPOLIZIOTTO16]._action = 166;
 		} else
 			printsent = true;
 		break;
 
 	case oPANNELLOC12:
-		if (_obj[oPANNELLOC12]._flag & OBJFLAG_EXTRA) {
-			if (_obj[oASCENSOREC12]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oPANNELLOC12]._flag & OBJFLAG_EXTRA) {
+			if (g_vm->_obj[oASCENSOREC12]._mode & OBJMODE_OBJSTATUS)
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a128RIUSABOTTONE, 0, 0, TheObj);
 			else
 				CharacterSay(24);
 		} else {
-			_obj[oPANNELLOC12]._flag |= OBJFLAG_EXTRA;
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			g_vm->_obj[oPANNELLOC12]._flag |= OBJFLAG_EXTRA;
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		}
 		break;
 	case oPANNELLO13:
-		if (_obj[oASCENSOREA13]._mode & OBJMODE_OBJSTATUS) {
+		if (g_vm->_obj[oASCENSOREA13]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(48);
 			printsent = false;
 		} else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 
 		break;
 
 	case oPANNELLO16:
-		if (_obj[oASCENSOREA16]._mode & OBJMODE_OBJSTATUS) {
+		if (g_vm->_obj[oASCENSOREA16]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(48);
 			printsent = false;
 		} else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		break;
 
 	case oLATTINA13:
@@ -567,36 +567,36 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oCESTINO14:
-		if (_obj[TheObj]._anim) {
-			if (!(_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[TheObj]._anim) {
+			if (!(g_vm->_obj[oPORTAR14]._mode & OBJMODE_OBJSTATUS))
+				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			else
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a143CPRENDECREDITCARD, 0, 0, TheObj);
-			_obj[TheObj]._anim = NULL;
+			g_vm->_obj[TheObj]._anim = NULL;
 		} else
 			printsent = true;
 		break;
 	case oTASTOB15:
-		if (_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS) {
-			CharacterSay(_obj[oTASTOB15]._action);
+		if (g_vm->_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS) {
+			CharacterSay(g_vm->_obj[oTASTOB15]._action);
 			printsent = false;
 		} else {
-			if (!(_obj[oNASTRO15]._flag & OBJFLAG_EXTRA))
-				_obj[oNASTRO15]._mode |= OBJMODE_OBJSTATUS;
-			if (_obj[TheObj]._anim)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			if (!(g_vm->_obj[oNASTRO15]._flag & OBJFLAG_EXTRA))
+				g_vm->_obj[oNASTRO15]._mode |= OBJMODE_OBJSTATUS;
+			if (g_vm->_obj[TheObj]._anim)
+				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
 
 	case oTASTOA15:
-		if (!(_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS)) {
-			CharacterSay(_obj[oTASTOA15]._action);
+		if (!(g_vm->_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS)) {
+			CharacterSay(g_vm->_obj[oTASTOA15]._action);
 			printsent = false;
 		} else {
-			_obj[oNASTRO15]._mode &= ~OBJMODE_OBJSTATUS;
-			if (_obj[TheObj]._anim)
-				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			g_vm->_obj[oNASTRO15]._mode &= ~OBJMODE_OBJSTATUS;
+			if (g_vm->_obj[TheObj]._anim)
+				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		}
 		break;
@@ -606,47 +606,47 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPORTAC18:
-		if (_obj[ocGUARDIANO18]._flag & OBJFLAG_PERSON) {
+		if (g_vm->_obj[ocGUARDIANO18]._flag & OBJFLAG_PERSON) {
 			_choice[151]._flag |= DLGCHOICE_HIDE;
 			_choice[152]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dGUARDIANO18);
-			_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
-			_obj[ocGUARDIANO18]._action = 227;
-			_obj[oPORTAC18]._action = 220;
+			g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocGUARDIANO18]._action = 227;
+			g_vm->_obj[oPORTAC18]._action = 220;
 		} else
 			printsent = true;
 		break;
 
 	case oGRATA1C:
-		if (_obj[oFAX17]._flag & OBJFLAG_EXTRA)
+		if (g_vm->_obj[oFAX17]._flag & OBJFLAG_EXTRA)
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r21, 0, 10, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oBOTOLAC1B:
-		if ((_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA) && (_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS))
+		if ((g_vm->_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA) && (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS))
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B3AAPREBOTOLA, 0, 0, TheObj);
-		else if (_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA)
+		else if (g_vm->_obj[oBOTOLAC1B]._anim == a1B3APREBOTOLA)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B3APREBOTOLA, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oARMADIETTORC22:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oMANIGLIONE22]._anim = a227A;
-		_obj[oMANIGLIONEO22]._anim = a229A;
-		_obj[od22ALLA29]._anim = a2214A;
-		_obj[od22ALLA29I]._anim = a2215A;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oMANIGLIONE22]._anim = a227A;
+		g_vm->_obj[oMANIGLIONEO22]._anim = a229A;
+		g_vm->_obj[od22ALLA29]._anim = a2214A;
+		g_vm->_obj[od22ALLA29I]._anim = a2215A;
 		break;
 
 	case oARMADIETTORA22:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oMANIGLIONE22]._anim = a227;
-		_obj[oMANIGLIONEO22]._anim = a229;
-		_obj[od22ALLA29]._anim = a2214;
-		_obj[od22ALLA29I]._anim = a2215;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oMANIGLIONE22]._anim = a227;
+		g_vm->_obj[oMANIGLIONEO22]._anim = a229;
+		g_vm->_obj[od22ALLA29]._anim = a2214;
+		g_vm->_obj[od22ALLA29I]._anim = a2215;
 		break;
 
 	case oCATENAT21:
@@ -667,51 +667,51 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPULSANTEACS2D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6V;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6V;
 		break;
 
 	case oPULSANTEACA2D:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6R;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6R;
 		break;
 
 	case oINTERRUTTORE29:
 		if (g_vm->_curRoom == r29L)
 			printsent = true;
-		else if ((_obj[oLAMPADINAS29]._mode & OBJMODE_OBJSTATUS)) {
+		else if ((g_vm->_obj[oLAMPADINAS29]._mode & OBJMODE_OBJSTATUS)) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r29L, 0, 0, TheObj);
 			printsent = false;
-		} else if (!(_obj[g_vm->_curObj]._flag & OBJFLAG_EXTRA)) {
+		} else if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a291USAINTERRUTTORELUCE, 0, 0, TheObj);
-			_obj[g_vm->_curObj]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[g_vm->_curObj]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		} else
 			printsent = true;
 		break;
 
 	case oLEVAS23:
-		if (_obj[oCAVI23]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oCAVI23]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a238, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a234, 0, 0, TheObj);
 		break;
 
 	case oLEVAG23:
-		if (_obj[oCAVIE23]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oCAVIE23]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a239, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a235, 0, 0, TheObj);
 		break;
 
 	case oBOTOLAC25:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oTRONCHESE25]._anim = a254B;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oTRONCHESE25]._anim = a254B;
 		break;
 
 	case oBOTOLAA25:
-		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-		_obj[oTRONCHESE25]._anim = a254;
+		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+		g_vm->_obj[oTRONCHESE25]._anim = a254;
 		break;
 
 	case oPASSAGGIO24:
@@ -727,69 +727,69 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPORTA26:
-		if (_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 4, TheObj);
+		if (g_vm->_obj[TheObj]._anim)
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 4, TheObj);
 		break;
 
 	case oRUBINETTOC28:
-		if (_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-			_obj[oBRACIERES28]._examine = 455;
-			_obj[oBRACIERES28]._flag |= OBJFLAG_EXTRA;
+		if (g_vm->_obj[TheObj]._anim) {
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			g_vm->_obj[oBRACIERES28]._examine = 455;
+			g_vm->_obj[oBRACIERES28]._flag |= OBJFLAG_EXTRA;
 		} else
 			printsent = true;
 		break;
 
 	case oEXIT12CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT12CU]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT12CU]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT13CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT13CU]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT13CU]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT2BL:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT2BL]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT2BL]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT36F:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT36F]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT36F]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT41D:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT41D]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT41D]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT4CT:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT4CT]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT4CT]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT58T:
 		Count58 = 0;
 		for (a = 0; a < 6; a++)
-			_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT58T]._goRoom, 0, 0, TheObj);
+			g_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT58T]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT58M:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT58M]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT58M]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oEXIT59L:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT59L]._goRoom, 0, 0, TheObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT59L]._goRoom, 0, 0, TheObj);
 		break;
 
 	case oPANNELLOM2G:
-		if (!(_obj[oPANNELLOM2G]._flag & OBJFLAG_EXTRA)) {
+		if (!(g_vm->_obj[oPANNELLOM2G]._flag & OBJFLAG_EXTRA)) {
 			PlayDialog(dF2G1);
-			_obj[oCOPERCHIO2G]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCOPERCHIO2G]._mode &= ~OBJMODE_OBJSTATUS;
 			//_obj[oPANNELLOM2G]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oSERBATOIOC2G]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oRAGAZZOP2G]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oRAGAZZOS2G]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSERBATOIOA2G]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOE2G]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOM2G]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oSERBATOIOC2G]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRAGAZZOP2G]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRAGAZZOS2G]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSERBATOIOA2G]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOE2G]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOM2G]._flag |= OBJFLAG_EXTRA;
 			AnimTab[aBKG2G].flag |= SMKANIM_OFF1;
 			printsent = false;
 		} else
@@ -798,28 +798,28 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oRUOTE2C:
-		if (!(_obj[od2CALLA2D]._mode & OBJMODE_OBJSTATUS)) {
+		if (!(g_vm->_obj[od2CALLA2D]._mode & OBJMODE_OBJSTATUS)) {
 			extern uint16 ruotepos[3];
 
 			StopSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 			AnimTab[aBKG2C].flag |= SMKANIM_OFF1;
-			_obj[oBASERUOTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[omRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPULSANTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oTEMPIO2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oLEONE2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[od2CALLA2D]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oSFINGE2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oSTATUA2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[od2CALLA2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[od2CALLA26]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBASERUOTE2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[omRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPULSANTE2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oTEMPIO2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oLEONE2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od2CALLA2D]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSFINGE2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSTATUA2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od2CALLA2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od2CALLA26]._mode &= ~OBJMODE_OBJSTATUS;
 			SemShowHomo = false;
 			ReadExtraObj2C();
 			RegenRoom();
@@ -828,14 +828,14 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oCATWALKA2E:
-		if (!(_obj[oCATWALKA2E]._flag & OBJFLAG_EXTRA)) {
+		if (!(g_vm->_obj[oCATWALKA2E]._flag & OBJFLAG_EXTRA)) {
 			PlayDialog(dF2E1);
-			_obj[oDINOSAURO2E]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCATWALKA2E]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oDINOSAURO2E]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCATWALKA2E]._flag |= OBJFLAG_EXTRA;
 			AnimTab[aBKG2E].flag &= ~SMKANIM_OFF2;
 			printsent = false;
-		} else if (_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		} else if (g_vm->_obj[TheObj]._anim) {
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 			printsent = false;
 		} else
 			printsent = true;
@@ -844,50 +844,50 @@ void doMouseOperate(uint16 TheObj) {
 	case oBORSA22:
 	case oPORTALAMPADE2B:
 	case oMAPPAMONDO2B:
-		if (_obj[TheObj]._anim) {
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
-			_obj[TheObj]._anim = 0;
+		if (g_vm->_obj[TheObj]._anim) {
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
+			g_vm->_obj[TheObj]._anim = 0;
 		} else
 			printsent = true;
 		break;
 
 	case oTUBOF34:
-		if (!(_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (!(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS))
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oFILOT31:
-		_obj[oFILOT31]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oFILOS31]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oFILOT31]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oFILOS31]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 
 	case oCOPERCHIOA31:
-		if (_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS) {
+		if (g_vm->_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS) {
 			NLPlaySound(wCOVER31);
-			_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOM31]._anim = 0;
-			_obj[oPANNELLOM31]._examine = 715;
-			_obj[oPANNELLOM31]._action = 716;
-			_obj[oPANNELLOM31]._flag &= ~OBJFLAG_ROOMOUT;
+			g_vm->_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOM31]._anim = 0;
+			g_vm->_obj[oPANNELLOM31]._examine = 715;
+			g_vm->_obj[oPANNELLOM31]._action = 716;
+			g_vm->_obj[oPANNELLOM31]._flag &= ~OBJFLAG_ROOMOUT;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r31, a3118CHIUDEPANNELLO, 3, TheObj);
 		} else
 			printsent = true;
 		break;
 
 	case oVALVOLAC34:
-		if (_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[TheObj]._anim)
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oVALVOLA34:
-		if (_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[TheObj]._anim)
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
@@ -896,21 +896,21 @@ void doMouseOperate(uint16 TheObj) {
 		g_vm->_room[r35]._flag |= OBJFLAG_EXTRA;
 		read3D("352.3d");		    // dopo scossa
 
-		_obj[oRIBELLEA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPORTAC35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[omPORTAC35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPRESA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oRIBELLEA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPORTAC35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[omPORTAC35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPRESA35]._mode &= ~OBJMODE_OBJSTATUS;
 
-		_obj[oPORTAA35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[omPORTAA35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oRIBELLES35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oSEDIA35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oMONITOR35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[omPIANO35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPORTAA35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[omPORTAA35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oRIBELLES35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oSEDIA35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oMONITOR35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[omPIANO35]._mode |= OBJMODE_OBJSTATUS;
 
-		_obj[oSPORTELLOC35]._anim = a356PROVASPORTELLO;
-		_obj[oASCENSORE35]._flag |= OBJFLAG_ROOMOUT;
-		_obj[oASCENSORE35]._anim = a3514ENTRAASCENSORE;
+		g_vm->_obj[oSPORTELLOC35]._anim = a356PROVASPORTELLO;
+		g_vm->_obj[oASCENSORE35]._flag |= OBJFLAG_ROOMOUT;
+		g_vm->_obj[oASCENSORE35]._anim = a3514ENTRAASCENSORE;
 
 		AnimTab[aBKG35].flag |= SMKANIM_OFF1;
 		PlayDialog(dF351);
@@ -920,7 +920,7 @@ void doMouseOperate(uint16 TheObj) {
 	case oCOMPUTER36:
 		if (!(_choice[646]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dF361);
-			_obj[oCOMPUTER36]._action = 2004;
+			g_vm->_obj[oCOMPUTER36]._action = 2004;
 			printsent = false;
 		} else
 			printsent = true;
@@ -933,8 +933,8 @@ void doMouseOperate(uint16 TheObj) {
 	case oPULSANTEE35:
 	case oPULSANTEF35:
 	case oPULSANTEG35:
-		_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[TheObj + 7]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj + 7]._mode |= OBJMODE_OBJSTATUS;
 		Comb35[Count35++] = TheObj;
 		NLPlaySound(wPAD5);
 		if (Count35 == 7) {
@@ -943,47 +943,47 @@ void doMouseOperate(uint16 TheObj) {
 					(Comb35[6] == oPULSANTEE35)) || ((Comb35[0] == oPULSANTEE35) &&
 							(Comb35[1] == oPULSANTEA35) && (Comb35[2] == oPULSANTEB35) && (Comb35[3] == oPULSANTEG35) &&
 							(Comb35[4] == oPULSANTEC35) && (Comb35[5] == oPULSANTED35) && (Comb35[6] == oPULSANTEF35))) {
-				_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTIV35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oLEDS35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTIV35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oLEDS35]._mode &= ~OBJMODE_OBJSTATUS;
 
-				_obj[oSPORTELLOA35]._anim = 0;
-//					_obj[oSPORTELLOA35]._examine = 1843;
-				_obj[oSPORTELLOA35]._action = 1844;
-				_obj[oSPORTELLOA35]._flag |= OBJFLAG_EXTRA;
-				_obj[oPORTAMC36]._flag |= OBJFLAG_ROOMOUT;
-				_obj[oPORTAMC36]._anim = a3610APREPORTA;
-				_obj[oSCAFFALE36]._anim = a3615APRENDESCAFFALE;
+				g_vm->_obj[oSPORTELLOA35]._anim = 0;
+				//					_obj[oSPORTELLOA35]._examine = 1843;
+				g_vm->_obj[oSPORTELLOA35]._action = 1844;
+				g_vm->_obj[oSPORTELLOA35]._flag |= OBJFLAG_EXTRA;
+				g_vm->_obj[oPORTAMC36]._flag |= OBJFLAG_ROOMOUT;
+				g_vm->_obj[oPORTAMC36]._anim = a3610APREPORTA;
+				g_vm->_obj[oSCAFFALE36]._anim = a3615APRENDESCAFFALE;
 
 				AnimTab[aBKG36].flag |= SMKANIM_OFF2;
 				AnimTab[aBKG36].flag |= SMKANIM_OFF3;
-				_obj[oSCANNERLA36]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oSCANNERLS36]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oSCANNERMA36]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oSCANNERMS36]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oSCANNERLA36]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oSCANNERLS36]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oSCANNERMA36]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oSCANNERMS36]._mode |= OBJMODE_OBJSTATUS;
 
 				NLPlaySound(wWIN35);
 			} else {
-				_obj[oPULSANTEA35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEB35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEC35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTED35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEE35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEF35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEG35]._mode |= OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEA35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEB35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEC35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTED35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEE35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEF35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEG35]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			Count35 = 0;
 			Comb35[0] = 0;
@@ -999,20 +999,20 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oCARD35:
-		_obj[oPULSANTEA35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEB35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEC35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTED35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEE35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEF35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEG35]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEA35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEB35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEC35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTED35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEE35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEF35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEG35]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEDA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEEA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
 		AddIcon(iCARD36);
 
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r35, a359RITIRACARD, 6, TheObj);
@@ -1036,8 +1036,8 @@ void doMouseOperate(uint16 TheObj) {
 	case oFORO649:
 	case oFORO749:
 		for (a = oASTAC49; a <= oASTA749; a++)
-			_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oASTAC49 + TheObj - oFOROC49]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oASTAC49 + TheObj - oFOROC49]._mode |= OBJMODE_OBJSTATUS;
 		Comb49[3] = Comb49[2];
 		Comb49[2] = Comb49[1];
 		Comb49[1] = Comb49[0];
@@ -1047,12 +1047,12 @@ void doMouseOperate(uint16 TheObj) {
 		if ((Comb49[3] ==  oFORO749) && (Comb49[2] ==  oFORO849) && (Comb49[1] ==  oFORO449) && (Comb49[0] ==  oFORO549)) {
 			PaintScreen(0);
 			NlDelay(60);
-			_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSCOMPARTO49]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oAGENDA49]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oMERIDIANA49]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oAGENDA49]._examine = 1099;
-			_obj[oAGENDA49]._action = 1100;
+			g_vm->_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSCOMPARTO49]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oAGENDA49]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oMERIDIANA49]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oAGENDA49]._examine = 1099;
+			g_vm->_obj[oAGENDA49]._action = 1100;
 			SemCharacterExist = true;
 			g_vm->_curObj = oAGENDA49;
 			//SemShowHomo=true;
@@ -1076,8 +1076,8 @@ void doMouseOperate(uint16 TheObj) {
 	case oASTA649:
 	case oASTA749:
 		for (a = oASTAC49; a <= oASTA749; a++)
-			_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oASTAC49]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oASTAC49]._mode |= OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r49, a496, 1, TheObj);
 		printsent = false;
 		break;
@@ -1094,7 +1094,7 @@ void doMouseOperate(uint16 TheObj) {
 	case oNUMERO04C:
 		for (a = 0; a < 6; a++) {
 			if (Comb4CT[a] == 0) {
-				_obj[a + oAST14C]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[a + oAST14C]._mode |= OBJMODE_OBJSTATUS;
 				Comb4CT[a] = TheObj - oNUMERO14C + 1;
 				break;
 			}
@@ -1109,7 +1109,7 @@ void doMouseOperate(uint16 TheObj) {
 				(Comb4CT[3] == 3) && (Comb4CT[4] == 9) && (Comb4CT[5] == 6)) {
 			for (a = 0; a < 6; a++) {
 				Comb4CT[a] = 0;
-				_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, TheObj);
 			SemCharacterExist = true;
@@ -1117,7 +1117,7 @@ void doMouseOperate(uint16 TheObj) {
 		} else {
 			for (a = 0; a < 6; a++) {
 				Comb4CT[a] = 0;
-				_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, TheObj);
 			SemCharacterExist = true;
@@ -1131,28 +1131,28 @@ void doMouseOperate(uint16 TheObj) {
 			_choice[245]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dC4A1);
 			setPosition(14);
-			_obj[oPORTAC4A]._action = 1117;
-			_obj[oPORTAC4A]._anim = 0;
+			g_vm->_obj[oPORTAC4A]._action = 1117;
+			g_vm->_obj[oPORTAC4A]._anim = 0;
 			printsent = false;
 		} else
 			printsent = true;
 		break;
 
 	case oPULSANTE4A:
-		if (_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[TheObj]._anim)
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else if (!(_choice[244]._flag & OBJFLAG_DONE)) {
 			_choice[244]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dC4A1);
-			_obj[oPULSANTE4A]._examine = 1108;
-			_obj[oPULSANTE4A]._action = 1109;
+			g_vm->_obj[oPULSANTE4A]._examine = 1108;
+			g_vm->_obj[oPULSANTE4A]._action = 1109;
 			printsent = false;
 		} else
 			printsent = true;
 		break;
 
 	case oFINESTRA56:
-		if (_obj[oPANNELLOC56]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oPANNELLOC56]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5614, 0, 0, TheObj);
 		else
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a5614P, 0, 0, TheObj);
@@ -1160,17 +1160,17 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oPULSANTECD:
 		for (a = oPULSANTE1AD; a <= oPULSANTE33AD; a++) {
-			if ((_obj[a]._goRoom == _obj[oEXIT41D]._goRoom) ||
-					((_obj[a]._goRoom == r45) && (_obj[oEXIT41D]._goRoom == r45S))) {
+			if ((g_vm->_obj[a]._goRoom == g_vm->_obj[oEXIT41D]._goRoom) ||
+			    ((g_vm->_obj[a]._goRoom == r45) && (g_vm->_obj[oEXIT41D]._goRoom == r45S))) {
 				CharacterSay(903);
 				break;
-			} else if (_obj[a]._goRoom == 0) {
-				if (_obj[oEXIT41D]._goRoom == r45S)
-					_obj[a]._goRoom = r45;
+			} else if (g_vm->_obj[a]._goRoom == 0) {
+				if (g_vm->_obj[oEXIT41D]._goRoom == r45S)
+					g_vm->_obj[a]._goRoom = r45;
 				else
-					_obj[a]._goRoom = _obj[oEXIT41D]._goRoom;
-				_obj[a]._mode |= OBJMODE_OBJSTATUS;
-				_obj[a - 40]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[a]._goRoom = g_vm->_obj[oEXIT41D]._goRoom;
+				g_vm->_obj[a]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[a - 40]._mode &= ~OBJMODE_OBJSTATUS;
 				RegenRoom();
 				break;
 			}
@@ -1187,24 +1187,24 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oLAVATRICEL54:
-		if ((_obj[TheObj]._anim) && (_obj[oSECCHIOS54]._flag & OBJFLAG_EXTRA) && (_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS) && !(_choice[841]._flag & OBJFLAG_DONE))
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if ((g_vm->_obj[TheObj]._anim) && (g_vm->_obj[oSECCHIOS54]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS) && !(_choice[841]._flag & OBJFLAG_DONE))
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 
 	case oSECCHIOS54:
-		if (_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS)
+		if (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS)
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a544G, 0, 0, TheObj);
 		else
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		printsent = false;
 		break;
 
 	case oTASTIERA56:
 		if (_choice[262]._flag & OBJFLAG_DONE) {
-			if (_obj[od56ALLA59]._mode & OBJMODE_OBJSTATUS)
-				CharacterSay(_obj[TheObj]._action);
+			if (g_vm->_obj[od56ALLA59]._mode & OBJMODE_OBJSTATUS)
+				CharacterSay(g_vm->_obj[TheObj]._action);
 			else
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a567, 0, 0, TheObj);
 			printsent = false;
@@ -1217,7 +1217,7 @@ void doMouseOperate(uint16 TheObj) {
 	case oLIBRIEG2B:
 		if (g_vm->_room[r2C]._flag & OBJFLAG_DONE) { // se sono gia' stato nella 2C prendo libro
 			printsent = false;
-			if (_obj[TheObj]._anim)
+			if (g_vm->_obj[TheObj]._anim)
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B4PRENDELIBRO, 0, 0, TheObj);
 			else
 				printsent = true;
@@ -1271,7 +1271,7 @@ void doMouseOperate(uint16 TheObj) {
 		Comb58[0] = TheObj;
 
 		NLPlaySound(wPAD1 + TheObj - oTASTO158);
-		_obj[oLED158 + Count58]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oLED158 + Count58]._mode |= OBJMODE_OBJSTATUS;
 		Count58 ++;
 		RegenRoom();
 		if (Count58 < 6)
@@ -1281,7 +1281,7 @@ void doMouseOperate(uint16 TheObj) {
 		NlDelay(60);
 		Count58 = 0;
 		for (a = 0; a < 6; a++)
-			_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
 
 		if ((Comb58[0] == oTASTO058) && (Comb58[1] == oTASTO258) && (Comb58[2] == oTASTO358) &&
 				(Comb58[3] == oTASTO858) && (Comb58[4] == oTASTO558) && (Comb58[5] == oTASTO958)) {
@@ -1299,15 +1299,15 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	default:
-		if (_obj[TheObj]._anim)
-			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, _obj[TheObj]._anim, 0, 0, TheObj);
+		if (g_vm->_obj[TheObj]._anim)
+			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
 		break;
 	}
 
-	if ((printsent) && (_obj[TheObj]._action))
-		CharacterSay(_obj[TheObj]._action);
+	if ((printsent) && (g_vm->_obj[TheObj]._action))
+		CharacterSay(g_vm->_obj[TheObj]._action);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1325,31 +1325,31 @@ void doMouseTake(uint16 TheObj) {
 		del = false;
 		break;
 	case oNASTRO15:
-		_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
 		del = false;
 		break;
 	case oMONETA13:
-		if (!(_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
-			_obj[TheObj]._anim = a133CPRENDEMONETA;
+		if (!(g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
+			g_vm->_obj[TheObj]._anim = a133CPRENDEMONETA;
 		break;
 	case oFOGLIETTO14:
-		_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
-		_obj[oMAPPA16]._examine = 152;
+		g_vm->_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[oMAPPA16]._examine = 152;
 		del = false;
 		break;
 	case oPOSTERC22:
-		_obj[oARMADIETTOCC22]._anim = a221;
-		_obj[oARMADIETTOCA22]._anim = a222;
+		g_vm->_obj[oARMADIETTOCC22]._anim = a221;
+		g_vm->_obj[oARMADIETTOCA22]._anim = a222;
 		break;
 	case oKEY22:
-		_obj[oARMADIETTORA22]._examine = 2013;
+		g_vm->_obj[oARMADIETTORA22]._examine = 2013;
 		del = true;
 		break;
 	default:
 		del = true;
 		break;
 	}
-	uint16 TheAction = _obj[TheObj]._anim;
+	uint16 TheAction = g_vm->_obj[TheObj]._anim;
 
 	if (TheAction)
 		doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, TheAction, 0, 0, TheObj);
@@ -1370,11 +1370,11 @@ void doMouseTake(uint16 TheObj) {
 				}
 			}
 		} else {
-			_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
 			RegenRoom();
 		}
 	}
-	AddIcon(_obj[g_vm->_curObj]._ninv);
+	AddIcon(g_vm->_obj[g_vm->_curObj]._ninv);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1388,17 +1388,17 @@ void doMouseTalk(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oBIGLIETTERIA16:
-		if ((_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (_choice[50]._flag & OBJFLAG_DONE)) {
+		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (_choice[50]._flag & OBJFLAG_DONE)) {
 			CharacterSay(147);
 			return ;
 		} else if ((_choice[49]._flag & DLGCHOICE_HIDE) && (_choice[50]._flag & DLGCHOICE_HIDE)) {
-			if (_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
+			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
 				_choice[46]._flag &= ~DLGCHOICE_HIDE;
 				_choice[48]._flag &= ~DLGCHOICE_HIDE;
-				_obj[oBIGLIETTERIA16]._flag |= OBJFLAG_EXTRA;
+				g_vm->_obj[oBIGLIETTERIA16]._flag |= OBJFLAG_EXTRA;
 			} else {
 				if (_choice[46]._flag & OBJFLAG_DONE) {
-					CharacterSay(_obj[oBIGLIETTERIA16]._action);
+					CharacterSay(g_vm->_obj[oBIGLIETTERIA16]._action);
 					return ;
 				} else {
 					_choice[46]._flag &= ~DLGCHOICE_HIDE;
@@ -1409,20 +1409,20 @@ void doMouseTalk(uint16 TheObj) {
 		break;
 
 	case ocGUARDIANO18:
-		_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
-		_obj[ocGUARDIANO18]._action = 227;
-		_obj[oPORTAC18]._action = 220;
+		g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
+		g_vm->_obj[ocGUARDIANO18]._action = 227;
+		g_vm->_obj[oPORTAC18]._action = 220;
 		break;
 
 	case ocNEGOZIANTE1A: {
 		int c;
 		for (c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++)
 			if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
-				PlayDialog(_obj[TheObj]._goRoom);
+				PlayDialog(g_vm->_obj[TheObj]._goRoom);
 				return;
 			}
-		if (_obj[ocNEGOZIANTE1A]._action) {
-			CharacterSay(_obj[ocNEGOZIANTE1A]._action);
+		if (g_vm->_obj[ocNEGOZIANTE1A]._action) {
+			CharacterSay(g_vm->_obj[ocNEGOZIANTE1A]._action);
 			return;
 		}
 	}
@@ -1433,7 +1433,7 @@ void doMouseTalk(uint16 TheObj) {
 		break;
 	}
 
-	PlayDialog(_obj[TheObj]._goRoom);
+	PlayDialog(g_vm->_obj[TheObj]._goRoom);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1752,16 +1752,16 @@ void doInvScrUseWith() {
 		return;
 	switch (UseWith[USED]) {
 	case iBANCONOTE:
-		if (UseWith[WITH] == oDISTRIBUTORE13 && !(_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
+		if (UseWith[WITH] == oDISTRIBUTORE13 && !(g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a131USABANCONOTA, 0, 0, UseWith[WITH]);
 			printsent = false;
-			_obj[oDISTRIBUTORE13]._flag |= OBJFLAG_EXTRA;
-		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA) && (_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS)) {
+			g_vm->_obj[oDISTRIBUTORE13]._flag |= OBJFLAG_EXTRA;
+		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS)) {
 			CharacterSay(1410);
 			printsent = false;
-		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
-			if (!(_obj[oSCOMPARTO13]._flag & OBJFLAG_EXTRA)) {
-				_obj[oSCOMPARTO13]._flag |= OBJFLAG_EXTRA;
+		} else if ((UseWith[WITH] == oDISTRIBUTORE13) && (g_vm->_obj[oDISTRIBUTORE13]._flag & OBJFLAG_EXTRA)) {
+			if (!(g_vm->_obj[oSCOMPARTO13]._flag & OBJFLAG_EXTRA)) {
+				g_vm->_obj[oSCOMPARTO13]._flag |= OBJFLAG_EXTRA;
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1311DABOTTADISTRIBUTORE, 0, 0, UseWith[WITH]);
 			} else
 				CharacterSay(1411);
@@ -1783,7 +1783,7 @@ void doInvScrUseWith() {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
 			else {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a135METTELETTERA, 0, 0, UseWith[WITH]);
-				_obj[oLETTERA13]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[oLETTERA13]._mode |= OBJMODE_OBJSTATUS;
 				InvObj[iLETTERA12]._flag |= OBJFLAG_EXTRA;
 				KillIcon(iLETTERA12);
 				RegenRoom();
@@ -1805,9 +1805,9 @@ void doInvScrUseWith() {
 		break;
 	case iKEY05:
 		if (UseWith[WITH] == oCASSETTE12) {
-			if (!(_obj[oCASSETTE12]._flag & OBJFLAG_EXTRA)) {
+			if (!(g_vm->_obj[oCASSETTE12]._flag & OBJFLAG_EXTRA)) {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a121PROVACASSETTA, 0, 0, UseWith[WITH]);
-				_obj[oCASSETTE12]._flag |= OBJFLAG_EXTRA;
+				g_vm->_obj[oCASSETTE12]._flag |= OBJFLAG_EXTRA;
 				printsent = false;
 			} else {
 				CharacterSay(1426);
@@ -1829,8 +1829,8 @@ void doInvScrUseWith() {
 		if (UseWith[WITH] == oSLOT12 || UseWith[WITH] == oSLOT13 || UseWith[WITH] == oSLOT16) {
 			printsent = false;
 			InvObj[iCARD03]._flag |= OBJFLAG_EXTRA;
-			_obj[oSLOT12]._flag |= OBJFLAG_PERSON;
-			_obj[oASCENSOREA12]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[oSLOT12]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[oASCENSOREA12]._flag |= OBJFLAG_PERSON;
 			doMouseTalk(UseWith[WITH]);
 		} else if ((UseWith[WITH] == oBIGLIETTERIA16) || (UseWith[WITH] == oSLOT23) || (UseWith[WITH] == oSPORTELLOA35) || (UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
 			printsent = false;
@@ -1839,12 +1839,12 @@ void doInvScrUseWith() {
 		break;
 	case iPEN:
 		printsent = false;
-		if (((UseWith[WITH] == oPENPADA13) || (UseWith[WITH] == oLETTERA13)) && (_obj[oLETTERA13]._mode & OBJMODE_OBJSTATUS))
+		if (((UseWith[WITH] == oPENPADA13) || (UseWith[WITH] == oLETTERA13)) && (g_vm->_obj[oLETTERA13]._mode & OBJMODE_OBJSTATUS))
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a137RICALCAFIRMA, r14, 14, UseWith[WITH]);
 		else if ((UseWith[WITH] == oPENPADA13) && (g_vm->_room[r14]._flag & OBJFLAG_DONE))
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1312METTELETTERARICALCA, r14, 14, UseWith[WITH]);
 		else if (UseWith[WITH] == oPENPADA13) {
-			if (!(_obj[oCASSETTA12]._mode & OBJMODE_OBJSTATUS)) {
+			if (!(g_vm->_obj[oCASSETTA12]._mode & OBJMODE_OBJSTATUS)) {
 				printsent = false;
 				CharacterSay(2005);
 			} else
@@ -1860,11 +1860,11 @@ void doInvScrUseWith() {
 			//AnimTab[a113USAFIALA].atframe[0].index = 1483;
 			printsent = false;
 		} else if (UseWith[WITH] == oLUCCHETTO1B) {
-			if (_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
+			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
 			else
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
-			_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
+			g_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			ReplaceIcon(iACIDO15, iFIALAMETA);
 			AnimTab[a113USAFIALA].atframe[0].index = 1483;
 			printsent = false;
@@ -1883,11 +1883,11 @@ void doInvScrUseWith() {
 		} else if (UseWith[WITH] == oLUCCHETTO1B) {
 			AnimTab[a1B2AVERSAACIDO].atframe[2].index = 1483;
 			AnimTab[a1B2VERSAACIDO].atframe[2].index = 1483;
-			if (_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
+			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, UseWith[WITH]);
 			else
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, UseWith[WITH]);
-			_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
+			g_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			KillIcon(iFIALAMETA);
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTA2B)) {
@@ -1900,11 +1900,11 @@ void doInvScrUseWith() {
 		if (UseWith[WITH] == oCASSAFORTEC15) {
 			// ParteFli
 			PlayDialog(dF151);
-			_obj[oCASSAFORTEC15]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCASSAFORTEA15]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSLOT13]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oASCENSOREA13]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oASCENSOREC13]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCASSAFORTEC15]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCASSAFORTEA15]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSLOT13]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oASCENSOREA13]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oASCENSOREC13]._mode |= OBJMODE_OBJSTATUS;
 			AddIcon(iPISTOLA15);
 			AddIcon(iACIDO15);
 			AddIcon(iRAPPORTO);
@@ -1920,7 +1920,7 @@ void doInvScrUseWith() {
 	case iSBARRA11:
 		if (UseWith[WITH] == oTOMBINOC1B) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, UseWith[WITH]);
-			_obj[oBOTOLAA1B]._anim = a1B6ASCENDEBOTOLA;
+			g_vm->_obj[oBOTOLAA1B]._anim = a1B6ASCENDEBOTOLA;
 			//_obj[oBOTOLAC1B]._anim = a1B3AAPREBOTOLA;
 			printsent = false;
 		} else if (UseWith[WITH] == oCATENAT21) {
@@ -1933,7 +1933,7 @@ void doInvScrUseWith() {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a333PERDESBARRA, 0, 0, UseWith[WITH]);
 			KillIcon(iSBARRA11);
 			printsent = false;
-		} else if (_obj[UseWith[WITH]]._flag & OBJFLAG_PERSON) {
+		} else if (g_vm->_obj[UseWith[WITH]]._flag & OBJFLAG_PERSON) {
 			CharacterSay(1436);
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTAR12) || (UseWith[WITH] == oCASSAFORTEC15) || (UseWith[WITH] == oPORTONE18) || (UseWith[WITH] == oLUCCHETTO1B) || (UseWith[WITH] == oPORTAC21) || (UseWith[WITH] == oPANNELLOC23) || (UseWith[WITH] == oPORTA2A) || (UseWith[WITH] == oPORTA2B)) {
@@ -1943,7 +1943,7 @@ void doInvScrUseWith() {
 		break;
 
 	case iCARD14:
-		if ((UseWith[WITH] == oBIGLIETTERIA16) && (_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oBIGLIETTERIA16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
 			if (_choice[49]._flag & OBJFLAG_DONE) {
 				CharacterSay(1457);
 				printsent = false;
@@ -1966,7 +1966,7 @@ void doInvScrUseWith() {
 		break;
 
 	case iMONETA13:
-		if ((UseWith[WITH] == oBIGLIETTERIA16) && (_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oBIGLIETTERIA16) && (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA)) {
 			_choice[46]._flag |= DLGCHOICE_HIDE;
 			_choice[47]._flag |= DLGCHOICE_HIDE;
 			_choice[48]._flag |= DLGCHOICE_HIDE;
@@ -1975,7 +1975,7 @@ void doInvScrUseWith() {
 //				doMouseTalk( UseWith[WITH] );
 			printsent = false;
 			KillIcon(iMONETA13);
-			_obj[oFINGERPADP16]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[oFINGERPADP16]._flag |= OBJFLAG_ROOMOUT;
 		} else if (UseWith[WITH] == oBIGLIETTERIA16) {
 			CharacterSay(146);
 			printsent = false;
@@ -1985,7 +1985,7 @@ void doInvScrUseWith() {
 	case iPLASTICA:
 		if (UseWith[WITH] == oTELEFAXF17) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a172USAPLASTICA, 0, 0, UseWith[WITH]);
-			_obj[oTELEFAXF17]._examine = 1486;
+			g_vm->_obj[oTELEFAXF17]._examine = 1486;
 			printsent = false;
 		}
 		break;
@@ -1995,8 +1995,8 @@ void doInvScrUseWith() {
 			CharacterSay(1463);
 			printsent = false;
 		} else if ((UseWith[WITH] == ocBARBONE17) && (_choice[91]._flag & OBJFLAG_DONE)) {
-			_obj[ocBARBONE17]._action = 1462;
-			CharacterSay(_obj[ocBARBONE17]._action);
+			g_vm->_obj[ocBARBONE17]._action = 1462;
+			CharacterSay(g_vm->_obj[ocBARBONE17]._action);
 			printsent = false;
 		} else if ((UseWith[WITH] == ocBARBONE17) && (!(_choice[78]._flag & OBJFLAG_DONE) || ((_choice[79]._flag & OBJFLAG_DONE) || (_choice[83]._flag & OBJFLAG_DONE) && !(_choice[92]._flag & OBJFLAG_DONE)))) {
 			_choice[78]._flag &= ~DLGCHOICE_HIDE;
@@ -2012,10 +2012,10 @@ void doInvScrUseWith() {
 			updateinv = false;
 			printsent = false;
 		} else if (UseWith[WITH] == ocPOLIZIOTTO16) {
-			_obj[ocPOLIZIOTTO16]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[ocPOLIZIOTTO16]._flag |= OBJFLAG_EXTRA;
 			CharacterSay(1461);
-			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
-				_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
+			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
+				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			printsent = false;
 		} else if (UseWith[WITH] == ocGUARDIANO18) {
 			if (_choice[152]._flag & OBJFLAG_DONE)
@@ -2054,7 +2054,7 @@ void doInvScrUseWith() {
 				_choice[79]._flag &= ~DLGCHOICE_HIDE;
 				if (!(_choice[78]._flag & OBJFLAG_DONE)) {
 					_choice[106]._flag &= ~DLGCHOICE_HIDE;
-					_obj[ocBARBONE17]._action = 213;
+					g_vm->_obj[ocBARBONE17]._action = 213;
 				} else {
 					_choice[107]._flag &= ~DLGCHOICE_HIDE;
 					if (_choice[80]._flag & OBJFLAG_DONE)
@@ -2094,7 +2094,7 @@ void doInvScrUseWith() {
 				_choice[83]._flag &= ~DLGCHOICE_HIDE;
 				if (!(_choice[78]._flag & OBJFLAG_DONE)) {
 					_choice[106]._flag &= ~DLGCHOICE_HIDE;
-					_obj[ocBARBONE17]._action = 213;
+					g_vm->_obj[ocBARBONE17]._action = 213;
 				} else {
 					_choice[107]._flag &= ~DLGCHOICE_HIDE;
 					if (_choice[80]._flag & OBJFLAG_DONE)
@@ -2136,8 +2136,8 @@ void doInvScrUseWith() {
 			_choice[155]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dGUARDIANO18);
 			updateinv = false;
-			_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
-			_obj[oPORTAC18]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[ocGUARDIANO18]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[oPORTAC18]._flag |= OBJFLAG_ROOMOUT;
 			printsent = false;
 		} else if (UseWith[WITH] == ocGUARDIANO18) {
 			CharacterSay(1494);
@@ -2147,15 +2147,15 @@ void doInvScrUseWith() {
 
 	case iTOPO1D:
 		if ((UseWith[WITH] == oDONNA1D) &&
-				((mx >= _obj[oDONNA1D]._lim[0]) &&
-				 (my >= _obj[oDONNA1D]._lim[1] + TOP) &&
-				 (mx <= _obj[oDONNA1D]._lim[2]) &&
-				 (my <= _obj[oDONNA1D]._lim[3] + TOP))) {
+		    ((mx >= g_vm->_obj[oDONNA1D]._lim[0]) &&
+		     (my >= g_vm->_obj[oDONNA1D]._lim[1] + TOP) &&
+		     (mx <= g_vm->_obj[oDONNA1D]._lim[2]) &&
+		     (my <= g_vm->_obj[oDONNA1D]._lim[3] + TOP))) {
 			PlayDialog(dF1D1);
 			updateinv = false;
 			KillIcon(iTOPO1D);
 			read3D("1d2.3d");		// dopo pattino
-			_obj[oDONNA1D]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oDONNA1D]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
 			AnimTab[aBKG1D].flag |= SMKANIM_OFF1;
 			printsent = false;
@@ -2177,20 +2177,20 @@ void doInvScrUseWith() {
 			printsent = false;
 		} else if (UseWith[WITH] == oCOPERCHIOC31) {
 			NLPlaySound(wCOVER31);
-			_obj[oCOPERCHIOC31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCOPERCHIOA31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCOPERCHIOC31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCOPERCHIOA31]._mode |= OBJMODE_OBJSTATUS;
 			RegenRoom();
 			printsent = false;
 		} else if (UseWith[WITH] == oCOPERCHIOA31) {
-			_obj[oCOPERCHIOA31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCOPERCHIOC31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
-			if (_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS) {
-				_obj[oPANNELLOM31]._anim = 0;
-				_obj[oPANNELLOM31]._examine = 715;
-				_obj[oPANNELLOM31]._action = 716;
-				_obj[oPANNELLOM31]._flag &= ~OBJFLAG_ROOMOUT;
+			g_vm->_obj[oCOPERCHIOA31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCOPERCHIOC31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
+			if (g_vm->_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS) {
+				g_vm->_obj[oPANNELLOM31]._anim = 0;
+				g_vm->_obj[oPANNELLOM31]._examine = 715;
+				g_vm->_obj[oPANNELLOM31]._action = 716;
+				g_vm->_obj[oPANNELLOM31]._flag &= ~OBJFLAG_ROOMOUT;
 			}
 			NLPlaySound(wCOVER31);
 			RegenRoom();
@@ -2217,7 +2217,7 @@ void doInvScrUseWith() {
 
 	case iTANICHETTA27:
 		if (UseWith[WITH] == oMANIGLIONE22) {
-			if (_obj[oARMADIETTORC22]._mode & OBJMODE_OBJSTATUS)
+			if (g_vm->_obj[oARMADIETTORC22]._mode & OBJMODE_OBJSTATUS)
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a228, 0, 0, UseWith[WITH]);
 			else
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a228A, 0, 0, UseWith[WITH]);
@@ -2242,7 +2242,7 @@ void doInvScrUseWith() {
 		break;
 
 	case iLAMPADINA29:
-		if ((UseWith[WITH] == oPORTALAMPADE2B) && !(_obj[UseWith[WITH]]._anim)) {
+		if ((UseWith[WITH] == oPORTALAMPADE2B) && !(g_vm->_obj[UseWith[WITH]]._anim)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2B6METTELAMPADINA, 0, 0, UseWith[WITH]);
 			printsent = false;
 		}
@@ -2259,7 +2259,7 @@ void doInvScrUseWith() {
 		break;
 
 	case iCAVI:
-		if ((UseWith[WITH] == oCONTATTI23) && (_obj[oLEVAS23]._mode & OBJMODE_OBJSTATUS)) {
+		if ((UseWith[WITH] == oCONTATTI23) && (g_vm->_obj[oLEVAS23]._mode & OBJMODE_OBJSTATUS)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a236, 0, 0, UseWith[WITH]);
 			printsent = false;
 		} else if (UseWith[WITH] == oLEVAG23) {
@@ -2269,22 +2269,22 @@ void doInvScrUseWith() {
 		break;
 
 	case iTRONCHESE:
-		if ((UseWith[WITH] == oCAVO2H) && (_obj[oCARTELLONE2H]._mode & OBJMODE_OBJSTATUS)) {
+		if ((UseWith[WITH] == oCAVO2H) && (g_vm->_obj[oCARTELLONE2H]._mode & OBJMODE_OBJSTATUS)) {
 			PlayDialog(dF2H1);
-			_obj[oPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
-			_obj[omPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oCARTELLONE24]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCARTELLONE2H]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oPASSERELLA24]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oMACERIE24]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[omPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLONE24]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCARTELLONE2H]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSERELLA24]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oMACERIE24]._mode &= ~OBJMODE_OBJSTATUS;
 			//_obj[oPASSERELLA24]._flag &= ~OBJFLAG_ROOMOUT;
 			//_obj[oPASSERELLA24]._anim = 0;
 			printsent = false;
-		} else if ((UseWith[WITH] == oTUBOT34) && (_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)) {
+		} else if ((UseWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a341USAPINZE, 0, 0, UseWith[WITH]);
 			//_obj[oVALVOLAC34]._anim = 0;
 			printsent = false;
-		} else if ((UseWith[WITH] == oTUBOT34) && (_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
+		} else if ((UseWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			CharacterSay(2007);
 			printsent = false;
 		} else
@@ -2303,11 +2303,11 @@ void doInvScrUseWith() {
 				ReplaceIcon(iLATTINA28, iLATTINE);
 			}
 			if ((InvObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA)) {
-				_obj[oSERBATOIOA2G]._examine = 670;
-				_obj[oSERBATOIOA2G]._action = 671;
+				g_vm->_obj[oSERBATOIOA2G]._examine = 670;
+				g_vm->_obj[oSERBATOIOA2G]._action = 671;
 			} else {
-				_obj[oSERBATOIOA2G]._examine = 667;
-				_obj[oSERBATOIOA2G]._action = 669;
+				g_vm->_obj[oSERBATOIOA2G]._examine = 667;
+				g_vm->_obj[oSERBATOIOA2G]._action = 669;
 			}
 			printsent = false;
 		}
@@ -2318,11 +2318,11 @@ void doInvScrUseWith() {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2G5METTEBOMBOLA, 0, 0, UseWith[WITH]);
 			InvObj[iBOMBOLA]._flag |= OBJFLAG_EXTRA;
 			if ((InvObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (InvObj[iLATTINA28]._flag & OBJFLAG_EXTRA)) {
-				_obj[oSERBATOIOA2G]._examine = 670;
-				_obj[oSERBATOIOA2G]._action = 671;
+				g_vm->_obj[oSERBATOIOA2G]._examine = 670;
+				g_vm->_obj[oSERBATOIOA2G]._action = 671;
 			} else {
-				_obj[oSERBATOIOA2G]._examine = 668;
-				_obj[oSERBATOIOA2G]._action = 669;
+				g_vm->_obj[oSERBATOIOA2G]._examine = 668;
+				g_vm->_obj[oSERBATOIOA2G]._action = 669;
 			}
 			printsent = false;
 		}
@@ -2339,8 +2339,8 @@ void doInvScrUseWith() {
 	case iFUCILE:
 		if (UseWith[WITH] == oDINOSAURO2E) {
 			PlayDialog(dF2E2);
-			_obj[oDINOSAURO2E]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
+			g_vm->_obj[oDINOSAURO2E]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
 			AnimTab[aBKG2E].flag |= SMKANIM_OFF2;
 			printsent = false;
 		}
@@ -2367,7 +2367,7 @@ void doInvScrUseWith() {
 			printsent = false;
 		} else if ((UseWith[WITH] == oSERPENTEU52) && (UseWith[USED] == iPINZA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a527, 0, 0, UseWith[WITH]);
-			_obj[oSCAVO51]._anim = a516;
+			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
 		} else if ((UseWith[WITH] == oSERPENTEA52) && (UseWith[USED] == iPINZA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a528, 0, 0, UseWith[WITH]);
@@ -2386,9 +2386,9 @@ void doInvScrUseWith() {
 		break;
 
 	case iLATTINA27:
-		if ((UseWith[WITH] == oBRACIERES28) && (_obj[oBRACIERES28]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oBRACIERES28) && (g_vm->_obj[oBRACIERES28]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a286, 0, 0, UseWith[WITH]);
-			_obj[oBRACIERES28]._examine = 456;
+			g_vm->_obj[oBRACIERES28]._examine = 456;
 			printsent = false;
 		} else
 			printsent = true;
@@ -2396,16 +2396,16 @@ void doInvScrUseWith() {
 
 	case iTELECOMANDO2G:
 		if (UseWith[WITH] == oTASTO2F) {
-			if (_obj[oASCENSORE2F]._mode & OBJMODE_OBJSTATUS) {
+			if (g_vm->_obj[oASCENSORE2F]._mode & OBJMODE_OBJSTATUS) {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F10PANNELLOSICHIUDE, 0, 0, UseWith[WITH]);
-				_obj[oBIDONE2F]._anim = a2F5CFRUGABIDONE;
+				g_vm->_obj[oBIDONE2F]._anim = a2F5CFRUGABIDONE;
 			} else {
 				if (!(InvObj[iTELECOMANDO2G]._flag & OBJFLAG_EXTRA))
 					doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F9PPANNELLOSIAPRE, 0, 0, UseWith[WITH]);
 				else
 					doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2F9PANNELLOSIAPRE, 0, 0, UseWith[WITH]);
 				InvObj[iTELECOMANDO2G]._flag |= OBJFLAG_EXTRA;
-				_obj[oBIDONE2F]._anim = a2F5FRUGABIDONE;
+				g_vm->_obj[oBIDONE2F]._anim = a2F5FRUGABIDONE;
 			}
 			printsent = false;
 		}
@@ -2419,17 +2419,17 @@ void doInvScrUseWith() {
 		break;
 
 	case iTORCIA32:
-		if ((UseWith[WITH] == oSENSOREV32) && (_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS)) {
-			_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOMA31]._examine = 717;
-			_obj[oPANNELLOMA31]._action = 718;
-			_obj[oCORPO31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[od31ALLA35]._mode |= OBJMODE_OBJSTATUS;
-			_obj[omd31ALLA35]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oMONTACARICHI31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLO31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oPANNELLON31]._mode &= ~OBJMODE_OBJSTATUS;
+		if ((UseWith[WITH] == oSENSOREV32) && (g_vm->_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS)) {
+			g_vm->_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOMA31]._examine = 717;
+			g_vm->_obj[oPANNELLOMA31]._action = 718;
+			g_vm->_obj[oCORPO31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[od31ALLA35]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[omd31ALLA35]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oMONTACARICHI31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLO31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLON31]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[r32]._flag |= OBJFLAG_EXTRA;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r31, 0, 11, UseWith[WITH]);
 
@@ -2473,7 +2473,7 @@ void doInvScrUseWith() {
 			printsent = false;
 		} else if (UseWith[WITH] == oSERPENTEU52) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a522, 0, 0, UseWith[WITH]);
-			_obj[oSCAVO51]._anim = a516;
+			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
 		} else if (UseWith[WITH] == oLUCCHETTO53) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a532, 0, 0, UseWith[WITH]);
@@ -2502,11 +2502,11 @@ void doInvScrUseWith() {
 		break;
 
 	case iCARD36:
-		if ((UseWith[WITH] == oSPORTELLOA35) && !(_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oSPORTELLOA35) && !(g_vm->_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r35P, 0, 10, UseWith[WITH]);
 			KillIcon(iCARD36);
 			printsent = false;
-		} else if ((UseWith[WITH] == oSPORTELLOA35) && (_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
+		} else if ((UseWith[WITH] == oSPORTELLOA35) && (g_vm->_obj[oSPORTELLOA35]._flag & OBJFLAG_EXTRA)) {
 			CharacterSay(1844);
 			printsent = false;
 		} else if ((UseWith[WITH] == oSLOTA58) || (UseWith[WITH] == oSLOTB58)) {
@@ -2517,18 +2517,18 @@ void doInvScrUseWith() {
 
 	case iMONETA4L:
 		if ((UseWith[WITH] == oFESSURA41) &&
-				((_obj[oFUCILE42]._anim != 0) && (_obj[oFUCILE42]._anim != a428) && (_obj[oFUCILE42]._anim != a429))) {
+		    ((g_vm->_obj[oFUCILE42]._anim != 0) && (g_vm->_obj[oFUCILE42]._anim != a428) && (g_vm->_obj[oFUCILE42]._anim != a429))) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a412, 0, 0, UseWith[WITH]);
-			if (_obj[oZAMPA41]._mode & OBJMODE_OBJSTATUS)
-				_obj[oSLOT41]._anim = a417;
+			if (g_vm->_obj[oZAMPA41]._mode & OBJMODE_OBJSTATUS)
+				g_vm->_obj[oSLOT41]._anim = a417;
 			else if (Try41 <= 2)
-				_obj[oSLOT41]._anim = a414;
+				g_vm->_obj[oSLOT41]._anim = a414;
 			else
 				CharacterSay(2015);
 			Try41 ++;
 			printsent = false;
 		} else if ((UseWith[WITH] == oFESSURA41) &&
-				   ((_obj[oFUCILE42]._anim == 0) || (_obj[oFUCILE42]._anim == a428) || (_obj[oFUCILE42]._anim == a429))) {
+		           ((g_vm->_obj[oFUCILE42]._anim == 0) || (g_vm->_obj[oFUCILE42]._anim == a428) || (g_vm->_obj[oFUCILE42]._anim == a429))) {
 			CharacterSay(2010);
 			printsent = false;
 		} else if (UseWith[WITH] == oFESSURA42) {
@@ -2536,23 +2536,23 @@ void doInvScrUseWith() {
 			printsent = false;
 		} else if (UseWith[WITH] == oCAMPANA4U) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U3, 0, 0, UseWith[WITH]);
-			_obj[oCAMPANA4U]._flag |= OBJFLAG_EXTRA;
-			if ((_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
-				_obj[oCAMPANA4U]._examine = 1202;
-				_obj[oCAMPANA4U]._action = 1203;
+			g_vm->_obj[oCAMPANA4U]._flag |= OBJFLAG_EXTRA;
+			if ((g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
+				g_vm->_obj[oCAMPANA4U]._examine = 1202;
+				g_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
-				_obj[oCAMPANA4U]._examine = 1200;
+				g_vm->_obj[oCAMPANA4U]._examine = 1200;
 			printsent = false;
 		}
 		break;
 
 	case iMARTELLO:
-		if ((UseWith[WITH] == oRAGNO41) && !(_obj[oRAGNO41]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oRAGNO41) && !(g_vm->_obj[oRAGNO41]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a416, 0, 0, UseWith[WITH]);
-			_obj[oRAGNO41]._flag |= OBJFLAG_EXTRA;
-			_obj[oRAGNO41]._anim = 0;
-			if (_obj[oSLOT41]._anim == a414)
-				_obj[oSLOT41]._anim = a417;
+			g_vm->_obj[oRAGNO41]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oRAGNO41]._anim = 0;
+			if (g_vm->_obj[oSLOT41]._anim == a414)
+				g_vm->_obj[oSLOT41]._anim = a417;
 			printsent = false;
 		} else if ((UseWith[WITH] == oSLOT41) || (UseWith[WITH] == oVETRINETTA42) || (UseWith[WITH] == oTAMBURO43) || (UseWith[WITH] == oSFIATO45) || (UseWith[WITH] == oPORTAC4A) || (UseWith[WITH] == oPORTAC4B) || (UseWith[WITH] == oSERRATURA4B) || (UseWith[WITH] == oLICANTROPO4P)) {
 			printsent = false;
@@ -2561,12 +2561,12 @@ void doInvScrUseWith() {
 		break;
 
 	case iMONETE:
-		if ((UseWith[WITH] == oFESSURA42) && (_obj[oFUCILE42]._anim == a427)) {
+		if ((UseWith[WITH] == oFESSURA42) && (g_vm->_obj[oFUCILE42]._anim == a427)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a421, 0, 0, UseWith[WITH]);
-			if (_obj[oPOLTIGLIA42]._mode & OBJMODE_OBJSTATUS)
-				_obj[oFUCILE42]._anim = a429;
+			if (g_vm->_obj[oPOLTIGLIA42]._mode & OBJMODE_OBJSTATUS)
+				g_vm->_obj[oFUCILE42]._anim = a429;
 			else
-				_obj[oFUCILE42]._anim = a428;
+				g_vm->_obj[oFUCILE42]._anim = a428;
 			printsent = false;
 		}
 		break;
@@ -2574,16 +2574,16 @@ void doInvScrUseWith() {
 	case iPOLTIGLIA:
 		if (UseWith[WITH] == oGUIDE42) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a423, 0, 0, UseWith[WITH]);
-			if (_obj[oFUCILE42]._anim != a427)
-				_obj[oFUCILE42]._anim = a429;
+			if (g_vm->_obj[oFUCILE42]._anim != a427)
+				g_vm->_obj[oFUCILE42]._anim = a429;
 			printsent = false;
 		}
 		break;
 
 	case iMAZZA:
-		if ((UseWith[WITH] == oTAMBURO43) && !(_obj[oTAMBURO43]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oTAMBURO43) && !(g_vm->_obj[oTAMBURO43]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a435, 0, 0, UseWith[WITH]);
-			_obj[oTAMBURO43]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oTAMBURO43]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		} else if ((UseWith[WITH] == oPORTAC4B) || (UseWith[WITH] == oSERRATURA4B) || (UseWith[WITH] == oLICANTROPO4P)) {
 			printsent = false;
@@ -2603,10 +2603,10 @@ void doInvScrUseWith() {
 		if (UseWith[WITH] == oMANOPOLAR45) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 2, UseWith[WITH]);
 			printsent = false;
-		} else if ((UseWith[WITH] == oCAMPANA4U) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA) && (_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA)) {
+		} else if ((UseWith[WITH] == oCAMPANA4U) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U5, 0, 0, UseWith[WITH]);
-			_obj[oCAMPANA4U]._examine = 1204;
-			_obj[oCAMPANA4U]._action = 1205;
+			g_vm->_obj[oCAMPANA4U]._examine = 1204;
+			g_vm->_obj[oCAMPANA4U]._action = 1205;
 			printsent = false;
 		} else if (UseWith[WITH] == oCAMPANA4U) {
 			CharacterSay(1713);
@@ -2637,10 +2637,10 @@ void doInvScrUseWith() {
 	case iFIAMMIFERO:
 		if (UseWith[WITH] == oTORCIAS48) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4812, 0, 0, UseWith[WITH]);
-			_obj[oTORCIAS48]._lim[0] = 0;
-			_obj[oTORCIAS48]._lim[1] = 0;
-			_obj[oTORCIAS48]._lim[2] = 0;
-			_obj[oTORCIAS48]._lim[3] = 0;
+			g_vm->_obj[oTORCIAS48]._lim[0] = 0;
+			g_vm->_obj[oTORCIAS48]._lim[1] = 0;
+			g_vm->_obj[oTORCIAS48]._lim[2] = 0;
+			g_vm->_obj[oTORCIAS48]._lim[3] = 0;
 			printsent = false;
 		}
 		break;
@@ -2656,9 +2656,9 @@ void doInvScrUseWith() {
 	case iPISTOLA4PD:
 		if ((UseWith[WITH] == oLICANTROPO4P) && (InvObj[iPISTOLA4PD]._flag & OBJFLAG_EXTRA)) {
 			ReplaceIcon(iPISTOLA4PD, iPISTOLA4B);
-			_obj[oLICANTROPO4P]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oLICANTROPOM4P]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSANGUE4P]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oLICANTROPO4P]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oLICANTROPOM4P]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSANGUE4P]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r4P]._flag |= OBJFLAG_EXTRA;
 			read3D("4p2.3d");		// dopo licantropo
 			AnimTab[aBKG4P].flag |= SMKANIM_OFF1;
@@ -2697,11 +2697,11 @@ void doInvScrUseWith() {
 			KillIcon(UseWith[USED]);
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4U4, 0, 0, UseWith[WITH]);
 			InvObj[iBIGLIAA]._flag |= OBJFLAG_EXTRA;
-			if ((_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
-				_obj[oCAMPANA4U]._examine = 1202;
-				_obj[oCAMPANA4U]._action = 1203;
+			if ((g_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA) && (InvObj[iBIGLIAA]._flag & OBJFLAG_EXTRA)) {
+				g_vm->_obj[oCAMPANA4U]._examine = 1202;
+				g_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
-				_obj[oCAMPANA4U]._examine = 1201;
+				g_vm->_obj[oCAMPANA4U]._examine = 1201;
 			printsent = false;
 		}
 		break;
@@ -2709,44 +2709,44 @@ void doInvScrUseWith() {
 	case iPAPAVERINA:
 		if ((UseWith[WITH] == oCIOCCOLATINI4A) && ((_curAnimFrame[0] < 370) || (_curAnimFrame[0] > 480))) {
 			PlayScript(s4AHELLEN);
-			_obj[oPULSANTE4A]._anim = a4A3;
+			g_vm->_obj[oPULSANTE4A]._anim = a4A3;
 			printsent = false;
 		} else if (UseWith[WITH] == oCIOCCOLATINI4A) {
-			_obj[oPULSANTE4A]._anim = a4A3;
+			g_vm->_obj[oPULSANTE4A]._anim = a4A3;
 			printsent = false;
-			_obj[oCIOCCOLATINI4A]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oCIOCCOLATINI4A]._flag |= OBJFLAG_EXTRA;
 		}
 		break;
 
 	case iSANGUE:
 		if (UseWith[WITH] == oSERRATURA4B) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B4, 0, 0, UseWith[WITH]);
-			_obj[oPORTAC4B]._anim = a4B5;
+			g_vm->_obj[oPORTAC4B]._anim = a4B5;
 			printsent = false;
 		}
 		break;
 
 	case iDIAPA4B:
-		if ((UseWith[WITH] == oPROIETTORE4B) && (_obj[oPROIETTORE4B]._anim < a4B9A)) {
+		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6A, 0, 0, UseWith[WITH]);
-			_obj[oPROIETTORE4B]._anim = a4B9A;
+			g_vm->_obj[oPROIETTORE4B]._anim = a4B9A;
 			printsent = false;
 		}
 		break;
 
 	case iDIAPB4B:
-		if ((UseWith[WITH] == oPROIETTORE4B) && (_obj[oPROIETTORE4B]._anim < a4B9A)) {
+		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6B, 0, 0, UseWith[WITH]);
-			_obj[oPROIETTORE4B]._anim = a4B9B;
+			g_vm->_obj[oPROIETTORE4B]._anim = a4B9B;
 			printsent = false;
 		}
 		break;
 
 	case iDIAP4C:
-		if ((UseWith[WITH] == oPROIETTORE4B) && (_obj[oPROIETTORE4B]._anim < a4B9A)) {
+		if ((UseWith[WITH] == oPROIETTORE4B) && (g_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			//
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a4B6C, 0, 0, UseWith[WITH]);
-			_obj[oPROIETTORE4B]._anim = a4B9C;
+			g_vm->_obj[oPROIETTORE4B]._anim = a4B9C;
 			printsent = false;
 		}
 		break;
@@ -2761,13 +2761,13 @@ void doInvScrUseWith() {
 	case iSERPENTEA:
 		if (UseWith[WITH] == oLAGO53) {
 			printsent = false;
-			if (!(_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
+			if (!(g_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
 				StartCharacterAction(a533, r54, 11, 0);
 				KillIcon(UseWith[USED]);
 			} else if (UseWith[USED] != iSERPENTEB) {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
 				KillIcon(UseWith[USED]);
-				_obj[oLAGO53]._examine = 1237;
+				g_vm->_obj[oLAGO53]._examine = 1237;
 			} else
 				CharacterSay(1740);
 		}
@@ -2776,13 +2776,13 @@ void doInvScrUseWith() {
 	case iSERPENTEB:
 		if (UseWith[WITH] == oLAGO53) {
 			printsent = false;
-			if (!(_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
+			if (!(g_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
 				StartCharacterAction(a533C, r54, 11, 0);
 				KillIcon(UseWith[USED]);
 			} else if (UseWith[USED] != iSERPENTEB) {
 				doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a534, 0, 0, UseWith[WITH]);
 				KillIcon(UseWith[USED]);
-				_obj[oLAGO53]._examine = 1237;
+				g_vm->_obj[oLAGO53]._examine = 1237;
 			} else
 				CharacterSay(1740);
 		}
@@ -2798,7 +2798,7 @@ void doInvScrUseWith() {
 	case iLATTINE:
 		if (UseWith[WITH] == oLAVATRICEF54) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a546, 0, 0, UseWith[WITH]);
-			_obj[oLAVATRICEL54]._anim = a547;
+			g_vm->_obj[oLAVATRICEL54]._anim = a547;
 			printsent = false;
 		}
 		break;
@@ -2835,17 +2835,17 @@ void doInvScrUseWith() {
 	case iTESTER:
 		if ((UseWith[WITH] == oPANNELLOA) && (_choice[856]._flag & OBJFLAG_DONE)) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a569, 0, 0, UseWith[WITH]);
-			_obj[oPANNELLOA]._flag |= OBJFLAG_EXTRA;
+			g_vm->_obj[oPANNELLOA]._flag |= OBJFLAG_EXTRA;
 			printsent = false;
 		}
 		break;
 
 	case iCUTTER:
-		if ((UseWith[WITH] == oPANNELLOA) && (_obj[oPANNELLOA]._flag & OBJFLAG_EXTRA)) {
+		if ((UseWith[WITH] == oPANNELLOA) && (g_vm->_obj[oPANNELLOA]._flag & OBJFLAG_EXTRA)) {
 			PlayDialog(dF562);
-			_obj[oPANNELLOA]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCAVOTAGLIATO56]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPORTA58C55]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOA]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCAVOTAGLIATO56]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPORTA58C55]._mode |= OBJMODE_OBJSTATUS;
 			setPosition(6);
 			KillIcon(iCUTTER);
 			printsent = false;
@@ -2866,13 +2866,13 @@ void doInvScrUseWith() {
 		if ((UseWith[WITH] == oFINESTRAA5A) && (_choice[871]._flag & OBJFLAG_DONE) && !(_choice[286]._flag & OBJFLAG_DONE)) {
 			KillIcon(iARMAEVA);
 			PlayDialog(dC5A1);
-			_obj[oFINESTRAA58]._anim = a587;
+			g_vm->_obj[oFINESTRAA58]._anim = a587;
 			printsent = false;
 			g_vm->_room[r5A]._flag |= OBJFLAG_EXTRA;
 		} else if ((UseWith[WITH] == oFINESTRAA5A) && (_choice[871]._flag & OBJFLAG_DONE)) {
 			KillIcon(iARMAEVA);
 			PlayDialog(dF5A1);
-			_obj[oFINESTRAA58]._anim = a587;
+			g_vm->_obj[oFINESTRAA58]._anim = a587;
 			printsent = false;
 		}
 		break;
@@ -2908,9 +2908,9 @@ void doScrScrUseWith() {
 			PlayDialog(dF211);
 			SetRoom(r21, true);
 			AnimTab[aBKG21].flag &= ~SMKANIM_OFF1;
-			_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCATENAT21]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCATENAT21]._mode |= OBJMODE_OBJSTATUS;
 			printsent = false;
 		}
 		break;
@@ -2928,47 +2928,47 @@ void doScrScrUseWith() {
 	case oTUBOP33:
 		if (UseWith[WITH] == oTUBOF33) {
 			doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, UseWith[WITH]);
-			_obj[oTUBOF34]._examine = 1832;
-			_obj[oTUBOFT34]._examine = 773;
-			//_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
+			g_vm->_obj[oTUBOF34]._examine = 1832;
+			g_vm->_obj[oTUBOFT34]._examine = 773;
+			//g_vm->_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
 			printsent = false;
 		}
 		break;
 
 	case oTUBOT33:
-		if (((UseWith[WITH] == oSAMA33) || (UseWith[WITH] == oSERRATURA33 && _obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
+		if (((UseWith[WITH] == oSAMA33) || (UseWith[WITH] == oSERRATURA33 && g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			PlayDialog(dF331);
 			setPosition(10);
-			_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oBOTOLAA33]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oBRUCIATURA33]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSERRATURAF33]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oSAMD33]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oTUBOS33]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBOTOLAA33]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBRUCIATURA33]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSERRATURAF33]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSAMD33]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oTUBOS33]._mode |= OBJMODE_OBJSTATUS;
 
-			_obj[oBOTOLAC32]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oBOTOLAB32]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oBOTOLAA32]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPULSANTI32]._anim = 0;
+			g_vm->_obj[oBOTOLAC32]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBOTOLAB32]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oBOTOLAA32]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPULSANTI32]._anim = 0;
 
-			_obj[oSIGARO31]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oPANNELLOM31]._anim = a314APREPANNELLO;
-			_obj[oPANNELLOM31]._examine = 713;
-			_obj[oPANNELLOM31]._action = 714;
-			_obj[oPANNELLOM31]._flag |= OBJFLAG_ROOMOUT;
-			_obj[oPANNELLON31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSIGARO31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPANNELLOM31]._anim = a314APREPANNELLO;
+			g_vm->_obj[oPANNELLOM31]._examine = 713;
+			g_vm->_obj[oPANNELLOM31]._action = 714;
+			g_vm->_obj[oPANNELLOM31]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[oPANNELLON31]._mode |= OBJMODE_OBJSTATUS;
 
-			_obj[oMANOMETROC34]._mode |= OBJMODE_OBJSTATUS;
-			_obj[oMANOMETRO34]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oMANOMETROC34]._examine = 804;
-			_obj[oVALVOLAC34]._anim = 0;
-			_obj[oVALVOLA34]._anim = 0;
-			_obj[oVALVOLAC34]._action = 1831;
-			_obj[oVALVOLA34]._action = 1831;
+			g_vm->_obj[oMANOMETROC34]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oMANOMETRO34]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oMANOMETROC34]._examine = 804;
+			g_vm->_obj[oVALVOLAC34]._anim = 0;
+			g_vm->_obj[oVALVOLA34]._anim = 0;
+			g_vm->_obj[oVALVOLAC34]._action = 1831;
+			g_vm->_obj[oVALVOLA34]._action = 1831;
 
-			_obj[oTUBOF34]._examine = 1832;
-			_obj[oTUBOFT34]._examine = 784;
+			g_vm->_obj[oTUBOF34]._examine = 1832;
+			g_vm->_obj[oTUBOFT34]._examine = 784;
 
 			printsent = false;
 		}
@@ -2976,9 +2976,9 @@ void doScrScrUseWith() {
 
 	case oFILOS31:
 		if (UseWith[WITH] == oCONTATTOP31) {
-			_obj[oFILOS31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oCONTATTOP31]._mode &= ~OBJMODE_OBJSTATUS;
-			_obj[oFILOTC31]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oFILOS31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oCONTATTOP31]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oFILOTC31]._mode |= OBJMODE_OBJSTATUS;
 			CharacterSay(746);
 			RegenRoom();
 
@@ -2989,7 +2989,7 @@ void doScrScrUseWith() {
 	}
 
 	if (printsent)
-		CharacterSay(_obj[UseWith[USED]]._action);
+		CharacterSay(g_vm->_obj[UseWith[USED]]._action);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3016,7 +3016,7 @@ void doInvOperate() {
 	switch (g_vm->_curInventory) {
 	case iSAM:
 		if ((_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
-			if (_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
+			if (g_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
 				if (!(_choice[196]._flag & OBJFLAG_DONE)) {
 					if (g_vm->_curRoom == r17) {
 						if (_choice[198]._flag & OBJFLAG_DONE) {
@@ -3027,7 +3027,7 @@ void doInvOperate() {
 							_choice[198]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
-							_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
 						if (_choice[199]._flag & OBJFLAG_DONE) {
@@ -3038,7 +3038,7 @@ void doInvOperate() {
 							_choice[199]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
-							_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				} else {
@@ -3053,7 +3053,7 @@ void doInvOperate() {
 							_choice[201]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
-							_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
 						if (_choice[200]._flag & OBJFLAG_DONE) {
@@ -3063,7 +3063,7 @@ void doInvOperate() {
 							_choice[200]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
-							_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				}
@@ -3087,7 +3087,7 @@ void doInvOperate() {
 
 	case iLIBRO:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, UseWith[WITH]);
-		_obj[oEXIT2BL]._goRoom = g_vm->_curRoom;
+		g_vm->_obj[oEXIT2BL]._goRoom = g_vm->_curRoom;
 		actorStop();
 		nextStep();
 		printsent = false;
@@ -3095,7 +3095,7 @@ void doInvOperate() {
 
 	case iFOGLIO36:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, UseWith[WITH]);
-		_obj[oEXIT36F]._goRoom = g_vm->_curRoom;
+		g_vm->_obj[oEXIT36F]._goRoom = g_vm->_curRoom;
 		actorStop();
 		nextStep();
 		printsent = false;
@@ -3103,9 +3103,9 @@ void doInvOperate() {
 
 	case iDISLOCATORE:
 		for (a = oROOM41; a <= oROOM45B; a++)
-			_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, UseWith[WITH]);
-		_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
+		g_vm->_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
 		InvObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 		actorStop();
 		nextStep();
@@ -3113,7 +3113,7 @@ void doInvOperate() {
 		break;
 
 	case iCODICE:
-		_obj[oEXIT58M]._goRoom = g_vm->_curRoom;
+		g_vm->_obj[oEXIT58M]._goRoom = g_vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, UseWith[WITH]);
 		actorStop();
 		nextStep();
@@ -3121,7 +3121,7 @@ void doInvOperate() {
 		break;
 
 	case iTELECOMANDO44:
-		if ((_actor._px < 5057.6) && (_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r43)) {
+		if ((_actor._px < 5057.6) && (g_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r43)) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, UseWith[WITH]);
 			printsent = false;
 		}
@@ -3178,7 +3178,7 @@ void doDoing() {
 		break;
 
 	case ME_OPENCLOSE:
-		_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (TheAnim) {
 //    if(TheObj == oFRIGO87V) doEvent(MC_ANIMATION,ME_ADDANIM,MP_SYSTEM,TheAnim,0,0,true);
@@ -3246,28 +3246,28 @@ void doScript() {
 	case ME_SETOBJ:
 		switch (campo) {
 		case C_ONAME:
-			_obj[indice]._name = (uint16)valore;
+			g_vm->_obj[indice]._name = (uint16)valore;
 			break;
 		case C_OEXAMINE:
-			_obj[indice]._examine = (uint16)valore;
+			g_vm->_obj[indice]._examine = (uint16)valore;
 			break;
 		case C_OACTION:
-			_obj[indice]._action = (uint16)valore;
+			g_vm->_obj[indice]._action = (uint16)valore;
 			break;
 		case C_OGOROOM:
-			_obj[indice]._goRoom = (uint8)valore;
+			g_vm->_obj[indice]._goRoom = (uint8)valore;
 			break;
 		case C_OMODE:
 			if (valore)
-				_obj[indice]._mode |= (uint8)indice2;
+				g_vm->_obj[indice]._mode |= (uint8)indice2;
 			else
-				_obj[indice]._mode &= ~(uint8)indice2;
+				g_vm->_obj[indice]._mode &= ~(uint8)indice2;
 			break;
 		case C_OFLAG:
 			if (valore)
-				_obj[indice]._flag |= (uint8)indice2;
+				g_vm->_obj[indice]._flag |= (uint8)indice2;
 			else
-				_obj[indice]._flag &= ~(uint8)indice2;
+				g_vm->_obj[indice]._flag &= ~(uint8)indice2;
 			break;
 
 		}
@@ -3411,11 +3411,11 @@ bool AtMouseClick(uint16 TheObj) {
 
 	if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (TheObj != oSCALA1D)) {
 		g_vm->_curObj = oDONNA1D;
-		goToPosition(_obj[oDONNA1D]._position);
+		goToPosition(g_vm->_obj[oDONNA1D]._position);
 		return (true);
 	} else if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (TheObj != oCARTELLO2B) && (TheObj != od2BALLA28)) {
 		g_vm->_curObj = oPORTA2B;
-		goToPosition(_obj[oCARTELLO2B]._position);
+		goToPosition(g_vm->_obj[oCARTELLO2B]._position);
 		return (true);
 	}
 
@@ -3425,8 +3425,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3436,8 +3436,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3447,8 +3447,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 9)
 				goToPosition(9);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3458,8 +3458,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3469,8 +3469,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3480,8 +3480,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3491,8 +3491,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3502,20 +3502,20 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 9)
 				goToPosition(9);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	case oSAMA33:
 	case oSERRATURA33:
-		if ((UseWith[USED] == oTUBOT33) && (_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (SemUseWithStarted)) {
+		if ((UseWith[USED] == oTUBOT33) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3525,8 +3525,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 7)
 				goToPosition(7);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3536,8 +3536,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3547,8 +3547,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3558,8 +3558,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 8)
 				goToPosition(8);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3569,8 +3569,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 6)
 				goToPosition(6);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3580,8 +3580,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3591,8 +3591,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 5)
 				goToPosition(5);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3602,8 +3602,8 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
@@ -3613,19 +3613,19 @@ bool AtMouseClick(uint16 TheObj) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 		}
 		ret = true;
 		break;
 
 	default:
-		if (_obj[TheObj]._position == -1) {
+		if (g_vm->_obj[TheObj]._position == -1) {
 			_characterGoToPosition = -1;
 			ret = false;
 		} else {
-			if (_characterGoToPosition != _obj[TheObj]._position)
-				goToPosition(_obj[TheObj]._position);
+			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+				goToPosition(g_vm->_obj[TheObj]._position);
 			ret = true;
 		}
 		break;
@@ -3650,52 +3650,52 @@ bool AtMouseClick(uint16 TheObj) {
  * --------------------------------------------------*/
 void AtEndChangeRoom() {
 //	gestione particolare campi magnetici
-	if ((g_vm->_curRoom == r2E) && (_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
+	if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG2E].flag |= SMKANIM_OFF1;
-		_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA2E]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS2E]._mode |= OBJMODE_OBJSTATUS;
-	} else if ((g_vm->_curRoom == r2E) && (_obj[oPULSANTEADA2D]._mode & OBJMODE_OBJSTATUS)) {
+		g_vm->_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA2E]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS2E]._mode |= OBJMODE_OBJSTATUS;
+	} else if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADA2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG2E].flag &= ~SMKANIM_OFF1;
-		_obj[oCAMPO2E]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA2E]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS2E]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCAMPO2E]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA2E]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS2E]._mode &= ~OBJMODE_OBJSTATUS;
 	}
-	if ((g_vm->_curRoom == r2C) && (_obj[oPULSANTEACS2D]._mode & OBJMODE_OBJSTATUS)) {
+	if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACS2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG2C].flag |= SMKANIM_OFF1;
-		_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS2C]._mode |= OBJMODE_OBJSTATUS;
-	} else if ((g_vm->_curRoom == r2C) && (_obj[oPULSANTEACA2D]._mode & OBJMODE_OBJSTATUS)) {
+		g_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS2C]._mode |= OBJMODE_OBJSTATUS;
+	} else if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACA2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG2C].flag &= ~SMKANIM_OFF1;
-		_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
 	}
-	if ((g_vm->_curRoom == r28) && (_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
+	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG28].flag |= SMKANIM_OFF2;
-		_obj[oCESPUGLIO28]._anim = a283;
-		_obj[oSERPENTETM28]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oSERPENTEAM28]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCESPUGLIO28]._anim = a283;
+		g_vm->_obj[oSERPENTETM28]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oSERPENTEAM28]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
-	} else if ((g_vm->_curRoom == r28) && (_obj[oPULSANTEBBA2D]._mode & OBJMODE_OBJSTATUS)) {
+	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBA2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG28].flag &= ~SMKANIM_OFF2;
-		_obj[oCESPUGLIO28]._anim = a282;
-		_obj[oSERPENTETM28]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCESPUGLIO28]._anim = a282;
+		g_vm->_obj[oSERPENTETM28]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 	}
-	if ((g_vm->_curRoom == r28) && (_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
+	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG28].flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
-		_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA28]._mode &= ~OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS28]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA28]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS28]._mode |= OBJMODE_OBJSTATUS;
 		read3D("282.3d");
-	} else if ((g_vm->_curRoom == r28) && (_obj[oPULSANTEABA2D]._mode & OBJMODE_OBJSTATUS)) {
+	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABA2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG28].flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
-		_obj[oCAMPO28]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
-		_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCAMPO28]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
 	}
 //	fine gestione particolare campi magnetici
 
@@ -3723,11 +3723,11 @@ void AtEndChangeRoom() {
 		StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
 	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1C))
 		StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && (_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
+	else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && (g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
 		StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
 		_actor._lim[0] = 60;
 		_actor._lim[2] = 240;
-	} else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && !(_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
+	} else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && !(g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
 		StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
 		_actor._lim[0] = 60;
 		_actor._lim[2] = 240;
@@ -3782,9 +3782,9 @@ void AtEndChangeRoom() {
 		setPosition(14);
 	else if ((g_vm->_curRoom == r32) && (g_vm->_oldRoom == r31))
 		StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
-	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && (_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
+	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && (g_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
 		StartCharacterAction(a3311SALESCALE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && !(_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
+	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && !(g_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
 		StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
 	else if ((g_vm->_curRoom == r32) && (g_vm->_oldRoom == r33))
 		StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
@@ -3860,7 +3860,7 @@ void AtEndChangeRoom() {
 	} else if ((g_vm->_curRoom == r4A) && (g_vm->_oldRoom == r49) && !(InvObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF491);
 		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r4A) && (g_vm->_oldRoom == r41D) && (InvObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
+	} else if ((g_vm->_curRoom == r4A) && (g_vm->_oldRoom == r41D) && (InvObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
 		WaitSoundFadEnd();
 		PlayDialog(dC4A1);
 	} else if ((g_vm->_curRoom == r4P) && (g_vm->_oldRoom == r4O) && !(g_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
@@ -3884,8 +3884,8 @@ void AtEndChangeRoom() {
 		if (!(g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dF1A1);
 			WaitSoundFadEnd();
-			_obj[oTOPO1C]._flag |= OBJFLAG_TAKE;
-			_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
+			g_vm->_obj[oTOPO1C]._flag |= OBJFLAG_TAKE;
+			g_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
 		} else {
 			TendIn();
 			SemNoPaintScreen = false;
@@ -3899,10 +3899,10 @@ void AtEndChangeRoom() {
 	}
 
 //	Sentence
-	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r18) && !(g_vm->_room[r17]._flag & OBJFLAG_DONE) && (_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
+	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r18) && !(g_vm->_room[r17]._flag & OBJFLAG_DONE) && (g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
 		CharacterSay(189);
-	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (CloseUpObj) && (_obj[CloseUpObj]._examine))
-		CharacterSay(_obj[CloseUpObj]._examine);
+	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (CloseUpObj) && (g_vm->_obj[CloseUpObj]._examine))
+		CharacterSay(g_vm->_obj[CloseUpObj]._examine);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE))) {
 		SemShowHomo = true;
 		StartCharacterAction(aWALKIN, 0, 0, 361);
@@ -3914,7 +3914,7 @@ void AtEndChangeRoom() {
 		CharacterSay(1163);
 	else if ((g_vm->_curRoom == r41) && (g_vm->_oldRoom == r36) && !(g_vm->_room[r41]._flag & OBJFLAG_DONE))
 		CharacterSay(900);
-	else if ((g_vm->_curRoom == r58) && (_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (_obj[oGUARDIA58]._anim)) {
+	else if ((g_vm->_curRoom == r58) && (g_vm->_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oGUARDIA58]._anim)) {
 		g_vm->_curObj = oGUARDIA58;
 		doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 372, 335 + TOP, 0, oGUARDIA58);
 	} else if ((g_vm->_curRoom == r59L))
@@ -3950,21 +3950,21 @@ AnimType[3] = {	{true}, {true}, {true}	};
 void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 	switch (doit) {
 	case fCLROBJSTATUS:
-		_obj[obj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[obj]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case fSETOBJSTATUS:
-		_obj[obj]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[obj]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case fONETIME:
-		_obj[obj]._anim = 0;
+		g_vm->_obj[obj]._anim = 0;
 		break;
 	case fCREPACCIO:
 		if (g_vm->_room[r2E]._flag & OBJFLAG_EXTRA)
-			_obj[oCREPACCIO2E]._position = 7;
+			g_vm->_obj[oCREPACCIO2E]._position = 7;
 		else
-			_obj[oCREPACCIO2E]._position = 6;
+			g_vm->_obj[oCREPACCIO2E]._position = 6;
 		break;
 	case fSERPVIA: {
 		extern message Serp52;
@@ -3972,17 +3972,17 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 	}
 	break;
 	case fPIRANHA:
-		_obj[oLUCCHETTO53]._anim = 0;
-		_obj[oGRATAC53]._anim = 0;
-		_obj[oGRATAA53]._anim = 0;
-		_obj[oLUCCHETTO53]._action = 1240;
-		_obj[oGRATAC53]._action = 1243;
-		_obj[oGRATAA53]._action = 1246;
-		_obj[oLAGO53]._examine = 1237;
+		g_vm->_obj[oLUCCHETTO53]._anim = 0;
+		g_vm->_obj[oGRATAC53]._anim = 0;
+		g_vm->_obj[oGRATAA53]._anim = 0;
+		g_vm->_obj[oLUCCHETTO53]._action = 1240;
+		g_vm->_obj[oGRATAC53]._action = 1243;
+		g_vm->_obj[oGRATAA53]._action = 1246;
+		g_vm->_obj[oLAGO53]._examine = 1237;
 		break;
 	case fMOREAU:
-		_obj[oFINESTRAB58]._anim = 0;
-		_obj[oFINESTRAB58]._action = 1358;
+		g_vm->_obj[oFINESTRAB58]._anim = 0;
+		g_vm->_obj[oFINESTRAB58]._action = 1358;
 		break;
 	case fPORTA58:
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 468, 180 + TOP, true, oPORTA58C55);
@@ -3993,8 +3993,8 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		break;
 	case fVALVOLAON34: {
 		if (!(_choice[616]._flag & OBJFLAG_DONE) &&		// non ho fatto fmv e
-				(_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS)	&&	// c'e' il tubo tagliato e
-				!(_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS))	// non c'e' il tubo fuori il tubo fuori
+		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // c'e' il tubo tagliato e
+		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // non c'e' il tubo fuori il tubo fuori
 			CallSmackVolumePan(0, 2, 1);
 	}
 	break;
@@ -4018,10 +4018,10 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		_forcedActorPos = 0;
 		break;
 	case fSETEXTRA:
-		_obj[obj]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[obj]._flag |= OBJFLAG_EXTRA;
 		break;
 	case fCLREXTRA:
-		_obj[obj]._flag &= ~OBJFLAG_EXTRA;
+		g_vm->_obj[obj]._flag &= ~OBJFLAG_EXTRA;
 		break;
 
 	case fANIMOFF1:
@@ -4090,26 +4090,26 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 		CharacterTalkInAction(h->curanim->atframe[atf].index);
 		break;
 	case ATFTEXTACT:
-		CharacterTalkInAction(_obj[h->object]._action);
+		CharacterTalkInAction(g_vm->_obj[h->object]._action);
 		break;
 	case ATFTEXTEX:
-		CharacterTalkInAction(_obj[h->object]._examine);
+		CharacterTalkInAction(g_vm->_obj[h->object]._examine);
 		break;
 	case ATFCLR:
-		_obj[h->curanim->atframe[atf].index]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->atframe[atf].index]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFCLRI:
 		KillIcon(h->curanim->atframe[atf].index);
 		break;
 	case ATFCEX:
-		_obj[h->object]._examine = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._examine = h->curanim->atframe[atf].index;
 		break;
 	case ATFCACT:
-		_obj[h->object]._action = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._action = h->curanim->atframe[atf].index;
 		break;
 	case ATFSET:
-		_obj[h->curanim->atframe[atf].index]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->atframe[atf].index]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETI:
@@ -4128,27 +4128,27 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 		PlayDialog(h->curanim->atframe[atf].index);
 		break;
 	case ATFCOBJANIM:
-		_obj[h->object]._anim = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._anim = h->curanim->atframe[atf].index;
 		RegenRoom();
 		break;
 	case ATFCOBJBOX:
-		_obj[h->object]._nbox = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._nbox = h->curanim->atframe[atf].index;
 		RegenRoom();
 		break;
 	case ATFCOBJPOS:
-		_obj[h->object]._position = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._position = h->curanim->atframe[atf].index;
 		RegenRoom();
 		break;
 	case ATFSETFORE:
-		_obj[h->curanim->atframe[atf].index]._nbox = FOREGROUND;
+		g_vm->_obj[h->curanim->atframe[atf].index]._nbox = FOREGROUND;
 		RegenRoom();
 		break;
 	case ATFSETBACK:
-		_obj[h->curanim->atframe[atf].index]._nbox = BACKGROUND;
+		g_vm->_obj[h->curanim->atframe[atf].index]._nbox = BACKGROUND;
 		RegenRoom();
 		break;
 	case ATFSWITCH:
-		_obj[h->curanim->atframe[atf].index]._mode ^= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->atframe[atf].index]._mode ^= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETROOMT:

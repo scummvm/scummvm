@@ -67,14 +67,14 @@ void doAction() {
 		if (g_vm->_curObj == oLASTLEV5)
 			CharacterSay(2003);
 
-		if ((!g_vm->_curObj) || (!(_obj[g_vm->_curObj]._mode & OBJMODE_OBJSTATUS)))
+		if ((!g_vm->_curObj) || (!(g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_OBJSTATUS)))
 			return;
 
-		if (_obj[g_vm->_curObj]._mode & OBJMODE_HIDDEN)
-			_obj[g_vm->_curObj]._mode &= ~OBJMODE_HIDDEN;
+		if (g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_HIDDEN)
+			g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_HIDDEN;
 
 		if (SemUseWithStarted) {
-			if ((_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
+			if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 				return;
 			SemUseWithStarted = false;
 			SemInventoryLocked = false;
@@ -95,7 +95,7 @@ void doAction() {
 			return;
 		}
 
-		if ((TheMessage->event == ME_MOUSEOPERATE) && (_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
+		if ((TheMessage->event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
 			SemUseWithStarted = true;
 			SemInventoryLocked = true;
 			UseWith[USED] = g_vm->_curObj;
@@ -109,26 +109,26 @@ void doAction() {
 
 	switch (TheMessage->event) {
 	case ME_MOUSEOPERATE:
-		if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+		if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 			doRoomIn(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
 			doMouseTalk(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
 			doRoomOut(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_TAKE)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_TAKE)
 			doMouseTake(g_vm->_curObj);
 		else
 			doMouseOperate(g_vm->_curObj);
 		break;
 
 	case ME_MOUSEEXAMINE:
-		if (_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)
+		if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)
 			doMouseExamine(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 			doRoomIn(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
 			doMouseExamine(g_vm->_curObj);
-		else if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
 			doRoomOut(g_vm->_curObj);
 		else
 			doMouseExamine(g_vm->_curObj);
@@ -177,25 +177,25 @@ void doMouse() {
 //				per il dislocatore
 			else if (g_vm->_curRoom == r41D) {
 				if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
-					if (!(_obj[oROOM41 + _obj[g_vm->_curObj]._goRoom - r41]._mode & OBJMODE_OBJSTATUS)) {
+					if (!(g_vm->_obj[oROOM41 + g_vm->_obj[g_vm->_curObj]._goRoom - r41]._mode & OBJMODE_OBJSTATUS)) {
 						for (int a = oROOM41; a <= oROOM4X; a++) {
-							if (_obj[a]._mode & OBJMODE_OBJSTATUS)
-								_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+							if (g_vm->_obj[a]._mode & OBJMODE_OBJSTATUS)
+								g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 						}
-						_obj[oROOM45B]._mode &= ~OBJMODE_OBJSTATUS;
+						g_vm->_obj[oROOM45B]._mode &= ~OBJMODE_OBJSTATUS;
 
-						if (((oROOM41 + _obj[g_vm->_curObj]._goRoom - r41) == oROOM45) && (_obj[od44ALLA45]._goRoom == r45S))
-							_obj[oROOM45B]._mode |= OBJMODE_OBJSTATUS;
+						if (((oROOM41 + g_vm->_obj[g_vm->_curObj]._goRoom - r41) == oROOM45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S))
+							g_vm->_obj[oROOM45B]._mode |= OBJMODE_OBJSTATUS;
 						else
-							_obj[oROOM41 + _obj[g_vm->_curObj]._goRoom - r41]._mode |= OBJMODE_OBJSTATUS;
+							g_vm->_obj[oROOM41 + g_vm->_obj[g_vm->_curObj]._goRoom - r41]._mode |= OBJMODE_OBJSTATUS;
 						RegenRoom();
 					}
 				} else {
 					for (int a = oROOM41; a <= oROOM4X; a++) {
-						if (_obj[a]._mode & OBJMODE_OBJSTATUS)
-							_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+						if (g_vm->_obj[a]._mode & OBJMODE_OBJSTATUS)
+							g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 					}
-					_obj[oROOM45B]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[oROOM45B]._mode &= ~OBJMODE_OBJSTATUS;
 
 					RegenRoom();
 				}
@@ -252,18 +252,18 @@ void doMouse() {
 		}
 //			per il dislocatore
 		if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
-			if ((_obj[g_vm->_curObj]._goRoom == r45) && (_obj[od44ALLA45]._goRoom == r45S) &&
-					(_obj[oEXIT41D]._goRoom == r45S) && (TheMessage->event == ME_MRIGHT))
+			if ((g_vm->_obj[g_vm->_curObj]._goRoom == r45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S) &&
+			    (g_vm->_obj[oEXIT41D]._goRoom == r45S) && (TheMessage->event == ME_MRIGHT))
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
-			else if ((_obj[g_vm->_curObj]._goRoom == r45) && (_obj[od44ALLA45]._goRoom == r45S) &&
-					 (_obj[oEXIT41D]._goRoom != r45S) && (TheMessage->event == ME_MRIGHT)) {
-				_obj[oEXIT41D]._goRoom = r45S;
+			else if ((g_vm->_obj[g_vm->_curObj]._goRoom == r45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S) &&
+			         (g_vm->_obj[oEXIT41D]._goRoom != r45S) && (TheMessage->event == ME_MRIGHT)) {
+				g_vm->_obj[oEXIT41D]._goRoom = r45S;
 				InvObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 0, g_vm->_curObj);
-			} else if (_obj[oEXIT41D]._goRoom != _obj[g_vm->_curObj]._goRoom && (TheMessage->event == ME_MRIGHT)) {
-				_obj[oEXIT41D]._goRoom = _obj[g_vm->_curObj]._goRoom;
+			} else if (g_vm->_obj[oEXIT41D]._goRoom != g_vm->_obj[g_vm->_curObj]._goRoom && (TheMessage->event == ME_MRIGHT)) {
+				g_vm->_obj[oEXIT41D]._goRoom = g_vm->_obj[g_vm->_curObj]._goRoom;
 				InvObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[oEXIT41D]._goRoom, 0, 0, g_vm->_curObj);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT41D]._goRoom, 0, 0, g_vm->_curObj);
 			} else if ((TheMessage->event == ME_MLEFT) && g_vm->_curObj)
 				doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 			else if ((TheMessage->event == ME_MRIGHT) && g_vm->_curObj)
@@ -273,10 +273,10 @@ void doMouse() {
 //			fine dislocatore
 //			serpente scappa 52
 		else if (g_vm->_curRoom == r52) {
-			if (_obj[oSERPENTEU52]._mode & OBJMODE_OBJSTATUS)
+			if (g_vm->_obj[oSERPENTEU52]._mode & OBJMODE_OBJSTATUS)
 				if (GAMEAREA(TheMessage->wparam2) && !SemUseWithStarted && (g_vm->_curObj != oSERPENTEU52)) {
 					StartCharacterAction(a526, 0, 1, 0);
-					_obj[oSCAVO51]._anim = a516;
+					g_vm->_obj[oSCAVO51]._anim = a516;
 					memcpy(&Serp52, TheMessage, sizeof(Serp52));
 					break;
 				}
@@ -317,7 +317,7 @@ void doMouse() {
 		}
 
 //			gestione particolare ruote 2C
-		if ((_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
+		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
 			if (CheckMask(TheMessage->wparam1, TheMessage->wparam2)) {
 				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 					ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
@@ -328,23 +328,23 @@ void doMouse() {
 						break;
 					}
 					AnimTab[aBKG2C].flag &= ~SMKANIM_OFF1;
-					_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					_obj[ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					_obj[ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					_obj[ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
 
-					_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oLEONE2C]._mode |= OBJMODE_OBJSTATUS;
-					//_obj[od2CALLA2D]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oSFINGE2C]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oSTATUA2C]._mode |= OBJMODE_OBJSTATUS;
-					_obj[od2CALLA2E]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
-					_obj[od2CALLA26]._mode |= OBJMODE_OBJSTATUS;
-					_obj[oRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oLEONE2C]._mode |= OBJMODE_OBJSTATUS;
+					//g_vm->_obj[od2CALLA2D]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oSFINGE2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oSTATUA2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[od2CALLA2E]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[od2CALLA26]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
 					SemShowHomo = true;
 					RegenRoom();
 					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
@@ -353,7 +353,7 @@ void doMouse() {
 					// combinazione giusta
 					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
 						doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
-						_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
+						g_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
 					} else
 						doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, g_vm->_curObj);
 
@@ -367,8 +367,8 @@ void doMouse() {
 					ruotepos[ruota] = (ruotepos[ruota] < 1) ? 11 : ruotepos[ruota] - 1;
 
 				NLPlaySound(wRUOTE2C);
-				_obj[g_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
-				_obj[ruotepos[ruota] * 3 + ruota + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
+				g_vm->_obj[ruotepos[ruota] * 3 + ruota + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
 				RegenRoom();
 			}
 			break;
@@ -386,9 +386,9 @@ void doMouse() {
 			pmousey  = TheMessage->wparam2;
 			if (!(AtMouseClick(g_vm->_curObj))) {
 				if (CheckMask(TheMessage->wparam1, TheMessage->wparam2)) {
-					if ((_obj[g_vm->_curObj]._lim[2] - _obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
-						pmousex = (_obj[g_vm->_curObj]._lim[0] + _obj[g_vm->_curObj]._lim[2]) / 2;
-						pmousey = ((_obj[g_vm->_curObj]._lim[1] + _obj[g_vm->_curObj]._lim[3]) / 2) + TOP;
+					if ((g_vm->_obj[g_vm->_curObj]._lim[2] - g_vm->_obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
+						pmousex = (g_vm->_obj[g_vm->_curObj]._lim[0] + g_vm->_obj[g_vm->_curObj]._lim[2]) / 2;
+						pmousey = ((g_vm->_obj[g_vm->_curObj]._lim[1] + g_vm->_obj[g_vm->_curObj]._lim[3]) / 2) + TOP;
 					}
 				}
 				whereIs(pmousex, pmousey);
@@ -437,25 +437,25 @@ void doMouse() {
 					}
 					break;
 				} else if ((TheMessage->event == ME_MLEFT) &&
-				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
-				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
+				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
+				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
 					doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 					break;
 				}
 
 				if (TheMessage->event == ME_MRIGHT) {
-					if (!(_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE) && (g_vm->_curObj != 0)) {
+					if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE) && (g_vm->_curObj != 0)) {
 						if (SemUseWithStarted) {
 							doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 							return;
-						} else if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
-							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[g_vm->_curObj]._goRoom, _obj[g_vm->_curObj]._anim, _obj[g_vm->_curObj]._ninv, g_vm->_curObj);
-						else if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
-							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[g_vm->_curObj]._goRoom, 0, _obj[g_vm->_curObj]._ninv, g_vm->_curObj);
+						} else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, g_vm->_obj[g_vm->_curObj]._anim, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
+						else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, 0, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
 						actorStop();
 						nextStep();
-						_obj[g_vm->_curObj]._flag |= OBJFLAG_DONE;
-					} else if (_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH) {
+						g_vm->_obj[g_vm->_curObj]._flag |= OBJFLAG_DONE;
+					} else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH) {
 						_characterGoToPosition = -1;
 						actorStop();
 						nextStep();
@@ -720,8 +720,8 @@ void doHomo() {
 			} else if (TheMessage->bparam)
 				setPosition(TheMessage->bparam);
 
-			if (TheMessage->wparam1 == _obj[oCANCELLATA1B]._anim)
-				if (!(_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
+			if (TheMessage->wparam1 == g_vm->_obj[oCANCELLATA1B]._anim)
+				if (!(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 					PlayDialog(dF181);
 					SemMouseEnabled = false;
 					setPosition(1);
@@ -817,22 +817,22 @@ void doSystem() {
 			int SFxVol = ConfMan.getInt("sfx_volume");
 
 			if (SpeechON)
-				_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
 			else
-				_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
 			if (TextON)
-				_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
 			else
-				_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00MUSIC1D + ((MusicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			_obj[o00SOUND1D + ((SFxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00MUSIC1D + ((MusicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[o00SOUND1D + ((SFxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
 			if (SpeechVol < 256)
-				_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 			if (MusicVol < 256)
-				_obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 			if (SFxVol < 256)
-				_obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 		}
 
 		ReadLoc();
@@ -978,7 +978,7 @@ void doIdle() {
 			nextStep();
 			Mouse(1);
 			SemMouseEnabled = true;
-			_obj[o00EXIT]._goRoom = g_vm->_curRoom;
+			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			SemShowHomo = false;
 			SemCharacterExist = false;
@@ -993,7 +993,7 @@ void doIdle() {
 			nextStep();
 			Mouse(1);
 			SemMouseEnabled = true;
-			_obj[o00EXIT]._goRoom = g_vm->_curRoom;
+			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			SemShowHomo = false;
 			SemCharacterExist = false;

@@ -118,8 +118,8 @@ void actorDoAction(int whatAction) {
 	_lastStep = b;		// Last step
 
 	// Starts action
-	if (_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
-		doEvent(MC_HOMO, ME_HOMOGOTOEXIT, MP_DEFAULT, _obj[g_vm->_curObj]._goRoom, 0, _obj[g_vm->_curObj]._ninv, g_vm->_curObj);
+	if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		doEvent(MC_HOMO, ME_HOMOGOTOEXIT, MP_DEFAULT, g_vm->_obj[g_vm->_curObj]._goRoom, 0, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
 	else
 		doEvent(MC_HOMO, ME_HOMODOACTION, MP_DEFAULT, 0, 0, 0, 0);
 }
