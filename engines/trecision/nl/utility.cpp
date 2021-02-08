@@ -503,7 +503,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
 			g_vm->_obj[od21ALLA22]._anim = aWALKOUT;
 			g_vm->_obj[oPORTAA21]._anim = a212;
-			g_vm->_obj[oPORTAC21]._anim = a219;
+			g_vm->_obj[oDOORC21]._anim = a219;
 
 			g_vm->_obj[oCUNICOLO21]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLONE21]._mode |= OBJMODE_OBJSTATUS;
@@ -532,7 +532,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[od21ALLA22]._examine = 335;
 			g_vm->_obj[od21ALLA22]._action = 335;
 			g_vm->_obj[oPORTAA21]._anim = 0;
-			g_vm->_obj[oPORTAC21]._anim = 0;
+			g_vm->_obj[oDOORC21]._anim = 0;
 
 			g_vm->_obj[oCUNICOLO21]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLONE21]._mode &= ~OBJMODE_OBJSTATUS;

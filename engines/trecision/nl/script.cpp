@@ -38,24 +38,24 @@ void initScript() {
 	Script[s16CARD].firstframe = f;
 	Script[s16CARD].flag = 0;
 
-	ScriptFrame[f].cls = MC_HOMO;
-	ScriptFrame[f].event = ME_HOMOACTION;
+	ScriptFrame[f].cls = MC_CHARACTER;
+	ScriptFrame[f].event = ME_CHARACTERACTION;
 	ScriptFrame[f++].wparam1 = a166USACREDITCARD;
 
 	ScriptFrame[f].cls = MC_ACTION;
 	ScriptFrame[f].event = ME_MOUSEOPERATE;
-	ScriptFrame[f++].lparam = oBIGLIETTERIA16;
+	ScriptFrame[f++].lparam = oTICKETOFFICE16;
 
 	Script[s16MONETA].firstframe = ++f;
 	Script[s16MONETA].flag = 0;
 
-	ScriptFrame[f].cls = MC_HOMO;
-	ScriptFrame[f].event = ME_HOMOACTION;
+	ScriptFrame[f].cls = MC_CHARACTER;
+	ScriptFrame[f].event = ME_CHARACTERACTION;
 	ScriptFrame[f++].wparam1 = a167USAMONETA;
 
 	ScriptFrame[f].cls = MC_ACTION;
 	ScriptFrame[f].event = ME_MOUSEOPERATE;
-	ScriptFrame[f++].lparam = oBIGLIETTERIA16;
+	ScriptFrame[f++].lparam = oTICKETOFFICE16;
 
 	Script[s19EVA].firstframe = ++f;
 	Script[s19EVA].flag = 0;
@@ -70,8 +70,8 @@ void initScript() {
 	Script[s4AHELLEN].firstframe = ++f;
 	Script[s4AHELLEN].flag = 0;
 
-	ScriptFrame[f].cls = MC_HOMO;
-	ScriptFrame[f].event = ME_HOMOACTION;
+	ScriptFrame[f].cls = MC_CHARACTER;
+	ScriptFrame[f].event = ME_CHARACTERACTION;
 	ScriptFrame[f++].wparam1 = a4A2;
 
 	ScriptFrame[f].cls = MC_MOUSE;

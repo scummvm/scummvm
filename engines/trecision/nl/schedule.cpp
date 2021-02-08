@@ -151,7 +151,7 @@ void Scheduler() {
 void ProcessTheMessage() {
 SUPEREVENT:
 	switch (TheMessage->cls) {
-	case MC_HOMO:
+	case MC_CHARACTER:
 		doHomo();
 		break;
 
@@ -230,17 +230,17 @@ bool TestEmptyHomoQueue4Script(pqueue *lq) {
 
 	for (pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1)
 
-		/*		if (!(( lq->event[pos]->cls == MC_HOMO) &&
-					(( lq->event[pos]->event == ME_HOMOACTION) ||
+		/*		if (!(( lq->event[pos]->cls == MC_CHARACTER) &&
+					(( lq->event[pos]->event == ME_CHARACTERACTION) ||
 			( lq->event[pos]->event == ME_HOMOCONTINUEACTION)) &&
 			( lq->event[pos]->lparam == false) &&
 			( lq->event[pos]->wparam1 > DEFAULTACTIONS)))
 		*/
-		if (((lq->event[pos]->cls == MC_HOMO) && (lq->event[pos]->event == ME_HOMOACTION)) ||
-				((lq->event[pos]->cls == MC_HOMO) && (lq->event[pos]->event == ME_HOMOGOTO)) ||
-				((lq->event[pos]->cls == MC_HOMO) && (lq->event[pos]->event == ME_HOMOGOTOACTION)) ||
-				((lq->event[pos]->cls == MC_HOMO) && (lq->event[pos]->event == ME_HOMOGOTOEXAMINE)) ||
-				((lq->event[pos]->cls == MC_HOMO) && (lq->event[pos]->event == ME_HOMOCONTINUEACTION)))
+		if (((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERACTION)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTO)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTOACTION)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTOEXAMINE)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOCONTINUEACTION)))
 			return false;
 
 //	true quando:

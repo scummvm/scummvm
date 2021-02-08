@@ -352,10 +352,10 @@ void doMouse() {
 
 					// combinazione giusta
 					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
-						doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
+						doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
 						g_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
 					} else
-						doEvent(MC_HOMO, ME_HOMOACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, g_vm->_curObj);
+						doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, g_vm->_curObj);
 
 					break;
 				} else
@@ -418,9 +418,9 @@ void doMouse() {
 						ClearText();
 					}
 					break;
-				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oSPORTELLOC35) || (g_vm->_curObj == oSPORTELLOA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
+				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oFRONTOFFICEC35) || (g_vm->_curObj == oFRONTOFFICEA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
 					g_vm->_curObj = oLASTLEV5;
-					doEvent(MC_HOMO, ME_HOMOGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_HOMOGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
 					if (SemUseWithStarted) {
 						if (UseWithInv[USED]) {
 							LightIcon = 0xFF;
@@ -439,14 +439,14 @@ void doMouse() {
 				} else if ((TheMessage->event == ME_MLEFT) &&
 				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
 				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
-					doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
+					doEvent(MC_CHARACTER, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 					break;
 				}
 
 				if (TheMessage->event == ME_MRIGHT) {
 					if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE) && (g_vm->_curObj != 0)) {
 						if (SemUseWithStarted) {
-							doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
+							doEvent(MC_CHARACTER, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 							return;
 						} else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, g_vm->_obj[g_vm->_curObj]._anim, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
@@ -461,13 +461,13 @@ void doMouse() {
 						nextStep();
 						doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
 					} else
-						doEvent(MC_HOMO, ME_HOMOGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
+						doEvent(MC_CHARACTER, ME_HOMOGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
 				} else
-					doEvent(MC_HOMO, ME_HOMOGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_HOMOGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, g_vm->_curObj);
 			} else if ((SemUseWithStarted) && !(UseWith[WITH]))
-				doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 			else
-				doEvent(MC_HOMO, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_HOMOGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 		}
 //			Zona INVENTORY
 		else if (INVAREA(TheMessage->wparam2)) {
@@ -479,7 +479,7 @@ void doMouse() {
 				InitQueue(&Homo);
 				actorStop();
 				nextStep();
-				doEvent(MC_HOMO, ME_HOMOGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_HOMOGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, 0);
 				UseWith[WITH] = 0;
 				g_vm->_curObj = 0;
 				LightIcon = 0xFF;
@@ -616,7 +616,7 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 		InitAtFrameHandler(Act, g_vm->_curObj);
 		SemMouseEnabled = false;
 		SemShowHomo = 0;
-		doEvent(MC_HOMO, ME_HOMOCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, g_vm->_curObj);
+		doEvent(MC_CHARACTER, ME_HOMOCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, g_vm->_curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			g_vm->_curObj = 0;
@@ -681,7 +681,7 @@ void doHomo() {
 		}
 		break;
 
-	case ME_HOMOACTION:
+	case ME_CHARACTERACTION:
 		if (SemWaitRegen)
 			REEVENT;
 		InitQueue(&Homo);
@@ -692,7 +692,7 @@ void doHomo() {
 			StartSmackAnim(TheMessage->wparam1);
 			InitAtFrameHandler(TheMessage->wparam1, TheMessage->lparam);
 			SemMouseEnabled = false;
-			doEvent(MC_HOMO, ME_HOMOCONTINUEACTION, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
+			doEvent(MC_CHARACTER, ME_HOMOCONTINUEACTION, TheMessage->priority, TheMessage->wparam1, TheMessage->wparam2, TheMessage->bparam, TheMessage->lparam);
 		} else
 			actorDoAction(TheMessage->wparam1);
 
