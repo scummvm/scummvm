@@ -20,39 +20,64 @@
  *
  */
 
-#ifndef AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
-#define AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
+#ifndef AGS_ENGINE_UTIL_LIBRARY_SCUMMVM_H
+#define AGS_ENGINE_UTIL_LIBRARY_SCUMMVM_H
+
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/plugins/dll.h"
+#include "ags/engine/globals.h"
 
 namespace AGS3 {
+
 namespace AGS {
 namespace Engine {
 
-class DummyLibrary : BaseLibrary {
+class ScummVMLibrary : BaseLibrary {
 public:
-	DummyLibrary() {
+	ScummVMLibrary()
+		: _library(nullptr) {
 	};
 
-	~DummyLibrary() override {
+	~ScummVMLibrary() override {
+		Unload();
 	};
 
-	AGS::Shared::String GetFilenameForLib(AGS::Shared::String libraryName) override {
-		return libraryName;
-	}
+	bool Load(const AGS::Shared::String &libraryName) override {
+		Unload();
 
-	bool Load(AGS::Shared::String libraryName) override {
-		return false;
+		_library = Plugins::pluginOpen(libraryName.GetCStr());
+		AGS::Shared::Debug::Printf("pluginOpen returned: %s", Plugins::pluginError());
+
+		return (_library != nullptr);
 	}
 
 	bool Unload() override {
-		return true;
+		if (_library) {
+			void *lib = _library;
+			_library = nullptr;
+
+			return (Plugins::pluginClose(lib) == 0);
+		} else {
+			return true;
+		}
 	}
 
-	void *GetFunctionAddress(AGS::Shared::String functionName) override {
-		return NULL;
+	void *GetFunctionAddress(const AGS::Shared::String &functionName) override {
+		if (_library) {
+			return Plugins::pluginSym(_library, functionName.GetCStr());
+		} else {
+			return nullptr;
+		}
 	}
+
+private:
+	void *_library;
 };
 
-typedef DummyLibrary Library;
+
+typedef ScummVMLibrary Library;
 
 } // namespace Engine
 } // namespace AGS

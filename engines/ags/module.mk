@@ -288,11 +288,11 @@ MODULE_OBJS = \
 	plugins/agsplugin.o \
 	plugins/dll.o \
 	plugins/global_plugin.o \
-	plugins/library.o \
 	plugins/pluginobjectreader.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_flashlight/ags_flashlight.o \
+	plugins/ags_galaxy_steam/ags_galaxy_steam.o \
 	plugins/ags_pal_render/ags_pal_render.o \
 	plugins/ags_pal_render/raycast.o \
 	plugins/ags_parallax/ags_parallax.o \
@@ -304,8 +304,7 @@ MODULE_OBJS = \
 	plugins/ags_sprite_font/sprite_font.o \
 	plugins/ags_sprite_font/sprite_font_renderer.o \
 	plugins/ags_sprite_font/variable_width_font.o \
-	plugins/ags_sprite_font/variable_width_sprite_font.o \
-	plugins/ags_steam/ags_steam.o
+	plugins/ags_sprite_font/variable_width_sprite_font.o
 
 ifdef ENABLE_AGS_SCANNER
 MODULE_OBJS += \

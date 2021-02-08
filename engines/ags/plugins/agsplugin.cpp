@@ -73,19 +73,9 @@
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/filestream.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/util/library.h"
 #include "ags/engine/globals.h"
-
-#if defined(BUILTIN_PLUGINS)
-#include "ags/shared/../Plugins/AGSflashlight/agsflashlight.h"
-#include "ags/shared/../Plugins/agsblend/agsblend.h"
-#include "ags/shared/../Plugins/ags_snowrain/ags_snowrain.h"
-#include "ags/shared/../Plugins/ags_parallax/ags_parallax.h"
-#include "ags/shared/../Plugins/agspalrender/agspalrender.h"
-#if AGS_PLATFORM_OS_IOS
-#include "ags/shared/../Plugins/agstouch/agstouch.h"
-#endif // AGS_PLATFORM_OS_IOS
-#endif // BUILTIN_PLUGINS
+#include "ags/engine/util/library.h"
+#include "ags/engine/util/library_scummvm.h"
 
 namespace AGS3 {
 
@@ -1028,7 +1018,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 			strcpy(apl->filename, "ags_snowrain");
 		}
 
-		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
+		String expect_filename = apl->filename;
 		if (apl->library.Load(apl->filename)) {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
 

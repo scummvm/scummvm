@@ -25,10 +25,10 @@
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_creditz/ags_creditz.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
+#include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
-#include "ags/plugins/ags_steam/ags_steam.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -36,59 +36,64 @@
 namespace AGS3 {
 namespace Plugins {
 
-void *dlopen(const char *filename) {
+void *pluginOpen(const char *filename) {
 	Common::String fname(filename);
 
 	// Check for if the game specifies a specific plugin version for this game
 	int version = 0;
 	for (const ::AGS::PluginVersion *v = ::AGS::g_vm->getNeededPlugins();
 	        v && v->_plugin; ++v) {
-		if (Common::String::format("lib%s.so", v->_plugin).equalsIgnoreCase(filename)) {
+		if (Common::String(v->_plugin).equalsIgnoreCase(filename)) {
 			version = v->_version;
 			break;
 		}
 	}
 
-	if (fname.equalsIgnoreCase("libAGSBlend.so"))
+	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();
 
-	if (fname.equalsIgnoreCase("libagsCreditz.so")) {
+	if (fname.equalsIgnoreCase("agsCreditz")) {
 		if (version == 20)
 			return new AGSCreditz::AGSCreditz20();
 		else
 			return new AGSCreditz::AGSCreditz11();
 	}
 
-	if (fname.equalsIgnoreCase("libAGSFlashlight.so"))
+	if (fname.equalsIgnoreCase("AGSFlashlight"))
 		return new AGSFlashlight::AGSFlashlight();
 
-	if (fname.equalsIgnoreCase("libAGSPalRender.so"))
+	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
 
-	if (fname.equalsIgnoreCase("libAGSSnowRain.so"))
+	if (fname.equalsIgnoreCase("AGSSnowRain"))
 		return new AGSSnowRain::AGSSnowRain();
 
-	if (fname.equalsIgnoreCase("libAGSSpriteFont.so"))
+	if (fname.equalsIgnoreCase("AGSSpriteFont"))
 		return new AGSSpriteFont::AGSSpriteFont();
 
-	if (fname.equalsIgnoreCase("libagsteam.so"))
-		return new AGSSteam::AGSSteam();
+	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
+			fname.equalsIgnoreCase("agsgalaxy-disjoint"))
+		return new AGSGalaxySteam::AGSGalaxy();
+
+	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
+			fname.equalsIgnoreCase("agsteam-disjoint"))
+		return new AGSGalaxySteam::AGSSteam();
 
 	return nullptr;
 }
 
-int dlclose(void *lib) {
+int pluginClose(void *lib) {
 	DLL *dll = static_cast<DLL *>(lib);
 	delete dll;
 	return 0;
 }
 
-void *dlsym(void *lib, const char *method) {
+void *pluginSym(void *lib, const char *method) {
 	DLL *dll = static_cast<DLL *>(lib);
 	return (*dll)[method];
 }
 
-const char *dlerror() {
+const char *pluginError() {
 	return nullptr;
 }
 

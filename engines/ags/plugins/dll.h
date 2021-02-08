@@ -112,13 +112,13 @@ public:
 	}
 };
 
-extern void *dlopen(const char *filename);
+extern void *pluginOpen(const char *filename);
 
-extern int dlclose(void *lib);
+extern int pluginClose(void *lib);
 
-extern void *dlsym(void *lib, const char *method);
+extern void *pluginSym(void *lib, const char *method);
 
-extern const char *dlerror();
+extern const char *pluginError();
 
 } // namespace Plugins
 } // namespace AGS3
