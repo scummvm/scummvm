@@ -1087,8 +1087,9 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
 		itemAngle[item] += 8;
+		_engine->_interface->setClip(rect);
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
-
+		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) { // has GAS
 			_engine->_text->setFontColor(COLOR_WHITE);
 			Common::String inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
