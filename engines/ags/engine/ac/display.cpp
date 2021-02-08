@@ -54,6 +54,7 @@
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -269,7 +270,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		int countdown = GetTextDisplayTime(todis);
 		int skip_setting = user_to_internal_skip_speech((SkipSpeechStyle)play.skip_display);
 		// Loop until skipped
-		while (true) {
+		for (;;) {
+			if (SHOULD_QUIT)
+				return 0;
+
 			update_audio_system_on_game_loop();
 			render_graphics();
 			int mbut, mwheelz;
