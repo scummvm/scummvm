@@ -1085,7 +1085,7 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	const Common::Rect rect(left, top, right, bottom);
 	_engine->_interface->drawFilledRect(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
 
-	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
+	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
 		itemAngle[item] += 8;
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
 
