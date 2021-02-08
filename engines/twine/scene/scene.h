@@ -60,37 +60,37 @@ struct ZoneStruct {
 	int16 type = 0;
 	union {
 		struct {
-			int16 newSceneIdx;
-			int16 x;
-			int16 y;
-			int16 z;
+			int32 newSceneIdx;
+			int32 x;
+			int32 y;
+			int32 z;
 		} ChangeScene;
 		struct {
-			int16 dummy;
-			int16 x;
-			int16 y;
-			int16 z;
+			int32 dummy;
+			int32 x;
+			int32 y;
+			int32 z;
 		} CameraView;
 		struct {
-			int16 zoneIdx;
+			int32 zoneIdx;
 		} Sceneric;
 		struct {
-			int16 newGrid;
+			int32 newGrid;
 		} CeillingGrid;
 
 		/** show a text (e.g. when reading a sign) */
 		struct {
-			int16 textIdx;   /*!< text index in the current active text bank */
-			int16 textColor; /*!< text color (see @c ActorStruct::talkColor) */
+			int32 textIdx;   /*!< text index in the current active text bank */
+			int32 textColor; /*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
-			int16 info0;
+			int32 info0;
 			BonusParameter typesFlag;
-			int16 amount;
+			int32 amount;
 			/**
 			 * Already used
 			 */
-			int16 used;
+			int32 used;
 		} Bonus;
 		struct {
 			int32 info0;
