@@ -171,7 +171,7 @@ void AGSFlashlight::AGS_EngineStartup(IAGSEngine *engine) {
 void AGSFlashlight::AGS_EngineShutdown() {
 }
 
-int AGSFlashlight::AGS_EngineOnEvent(int event, int data) {
+NumberPtr AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PREGUIDRAW) {
 		Update();
 	} else if (event == AGSE_RESTOREGAME) {

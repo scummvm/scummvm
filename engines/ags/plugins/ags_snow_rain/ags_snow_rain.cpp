@@ -97,7 +97,7 @@ void AGSSnowRain::AGS_EngineShutdown() {
 	delete _snow;
 }
 
-int AGSSnowRain::AGS_EngineOnEvent(int event, int data) {
+NumberPtr AGSSnowRain::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PREGUIDRAW) {
 		if (_rain->IsActive())
 			_rain->Update();

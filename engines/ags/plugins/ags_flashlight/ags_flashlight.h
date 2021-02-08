@@ -67,7 +67,7 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 	static void AGS_EngineShutdown();
-	static int AGS_EngineOnEvent(int event, int data);
+	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
 
 private:
 	/**

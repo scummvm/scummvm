@@ -20,28 +20,26 @@
  *
  */
 
-#ifndef AGS_PLUGINS_AGS_PAL_RENDER_AGS_PAL_RENDER_H
-#define AGS_PLUGINS_AGS_PAL_RENDER_AGS_PAL_RENDER_H
-
-#include "ags/plugins/dll.h"
+#include "ags/lib/allegro.h"
+#include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 
 namespace AGS3 {
 namespace Plugins {
-namespace AGSPalRender {
+namespace AGSTcpIp {
 
-class AGSPalRender : public DLL {
-private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static void AGS_EngineShutdown();
-	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
 
-public:
-	AGSPalRender();
-};
+AGSTcpIp::AGSTcpIp() : DLL() {
+	DLL_METHOD(AGS_GetPluginName);
+	DLL_METHOD(AGS_EngineStartup);
+}
 
-} // namespace AGSPalRender
+const char *AGSTcpIp::AGS_GetPluginName() {
+	return "TCP/IP (a-v-o)";
+}
+
+void AGSTcpIp::AGS_EngineStartup(IAGSEngine *engine) {
+}
+
+} // namespace AGSTcpIp
 } // namespace Plugins
 } // namespace AGS3
-
-#endif

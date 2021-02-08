@@ -72,7 +72,7 @@ void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine->RequestEventHook(AGSE_RESTOREGAME);
 }
 
-int AGSParallax::AGS_EngineOnEvent(int event, int data) {
+NumberPtr AGSParallax::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PREGUIDRAW) {
 		Draw(true);
 	} else if (event == AGSE_PRESCREENDRAW) {

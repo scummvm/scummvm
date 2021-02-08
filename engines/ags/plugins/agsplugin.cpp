@@ -908,83 +908,6 @@ int pl_register_builtin_plugin(InbuiltPluginDetails const &details) {
 	return 0;
 }
 
-bool pl_use_builtin_plugin(EnginePlugin *apl) {
-#if defined(BUILTIN_PLUGINS)
-	if (ags_stricmp(apl->filename, "agsflashlight") == 0) {
-		apl->engineStartup = agsflashlight::AGS_EngineStartup;
-		apl->engineShutdown = agsflashlight::AGS_EngineShutdown;
-		apl->onEvent = agsflashlight::AGS_EngineOnEvent;
-		apl->debugHook = agsflashlight::AGS_EngineDebugHook;
-		apl->initGfxHook = agsflashlight::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	} else if (ags_stricmp(apl->filename, "agsblend") == 0) {
-		apl->engineStartup = agsblend::AGS_EngineStartup;
-		apl->engineShutdown = agsblend::AGS_EngineShutdown;
-		apl->onEvent = agsblend::AGS_EngineOnEvent;
-		apl->debugHook = agsblend::AGS_EngineDebugHook;
-		apl->initGfxHook = agsblend::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	} else if (ags_stricmp(apl->filename, "ags_snowrain") == 0) {
-		apl->engineStartup = ags_snowrain::AGS_EngineStartup;
-		apl->engineShutdown = ags_snowrain::AGS_EngineShutdown;
-		apl->onEvent = ags_snowrain::AGS_EngineOnEvent;
-		apl->debugHook = ags_snowrain::AGS_EngineDebugHook;
-		apl->initGfxHook = ags_snowrain::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	} else if (ags_stricmp(apl->filename, "ags_parallax") == 0) {
-		apl->engineStartup = ags_parallax::AGS_EngineStartup;
-		apl->engineShutdown = ags_parallax::AGS_EngineShutdown;
-		apl->onEvent = ags_parallax::AGS_EngineOnEvent;
-		apl->debugHook = ags_parallax::AGS_EngineDebugHook;
-		apl->initGfxHook = ags_parallax::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	} else if (ags_stricmp(apl->filename, "agspalrender") == 0) {
-		apl->engineStartup = agspalrender::AGS_EngineStartup;
-		apl->engineShutdown = agspalrender::AGS_EngineShutdown;
-		apl->onEvent = agspalrender::AGS_EngineOnEvent;
-		apl->debugHook = agspalrender::AGS_EngineDebugHook;
-		apl->initGfxHook = agspalrender::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	}
-#if AGS_PLATFORM_OS_IOS
-	else if (ags_stricmp(apl->filename, "agstouch") == 0) {
-		apl->engineStartup = agstouch::AGS_EngineStartup;
-		apl->engineShutdown = agstouch::AGS_EngineShutdown;
-		apl->onEvent = agstouch::AGS_EngineOnEvent;
-		apl->debugHook = agstouch::AGS_EngineDebugHook;
-		apl->initGfxHook = agstouch::AGS_EngineInitGfx;
-		apl->available = true;
-		apl->builtin = true;
-		return true;
-	}
-#endif // IOS_VERSION
-#endif // BUILTIN_PLUGINS
-
-	for (std::vector<InbuiltPluginDetails>::iterator it = _registered_builtin_plugins.begin(); it != _registered_builtin_plugins.end(); ++it) {
-		if (ags_stricmp(apl->filename, it->filename) == 0) {
-			apl->engineStartup = it->engineStartup;
-			apl->engineShutdown = it->engineShutdown;
-			apl->onEvent = it->onEvent;
-			apl->debugHook = it->debugHook;
-			apl->initGfxHook = it->initGfxHook;
-			apl->available = true;
-			apl->builtin = true;
-			return true;
-		}
-	}
-	return false;
-}
-
 Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
 	numPlugins = 0;
 	for (size_t inf_index = 0; inf_index < infos.size(); ++inf_index) {
@@ -1037,16 +960,13 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		} else {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s'), trying built-in plugins...",
 				apl->filename, expect_filename.GetCStr());
-			if (pl_use_builtin_plugin(apl)) {
-				AGS::Shared::Debug::Printf(kDbgMsg_Info, "Build-in plugin '%s' found and being used.", apl->filename);
-			} else {
-				// Plugin loading has failed at this point, try using built-in plugin function stubs
-				if (RegisterPluginStubs((const char *)apl->filename))
-					AGS::Shared::Debug::Printf(kDbgMsg_Info, "Placeholder functions for the plugin '%s' found.", apl->filename);
-				else
-					AGS::Shared::Debug::Printf(kDbgMsg_Info, "No placeholder functions for the plugin '%s' found. The game might fail to load!", apl->filename);
-				continue;
-			}
+
+			// Plugin loading has failed at this point, try using built-in plugin function stubs
+			if (RegisterPluginStubs((const char *)apl->filename))
+				AGS::Shared::Debug::Printf(kDbgMsg_Info, "Placeholder functions for the plugin '%s' found.", apl->filename);
+			else
+				AGS::Shared::Debug::Printf(kDbgMsg_Info, "No placeholder functions for the plugin '%s' found. The game might fail to load!", apl->filename);
+			continue;
 		}
 
 		apl->eiface.pluginId = numPlugins - 1;

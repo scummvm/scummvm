@@ -20,59 +20,26 @@
  *
  */
 
-#ifndef AGS_PLUGINS_AGS_PARALLAX_AGS_PARALLAX_H
-#define AGS_PLUGINS_AGS_PARALLAX_AGS_PARALLAX_H
+#ifndef AGS_PLUGINS_AGS_TCP_IP_AGS_TCP_IP_H
+#define AGS_PLUGINS_AGS_TCP_IP_AGS_TCP_IP_H
 
 #include "ags/plugins/dll.h"
-#include "ags/plugins/serializer.h"
+#include "ags/lib/allegro.h"
 
 namespace AGS3 {
 namespace Plugins {
-namespace AGSParallax {
+namespace AGSTcpIp {
 
-struct Sprite {
-	int32 x = 0;
-	int32 y = 0;
-	int slot = -1;
-	int speed = 0;
-
-	void SyncGame(Serializer &s);
-};
-
-#define MAX_SPEED 1000
-#define MAX_SPRITES 100
-
-/**
- * This is not the AGS Parallax plugin by Scorpiorus
- * but a workalike plugin created for the AGS engine ports.
- */
-class AGSParallax : public DLL {
-private:
-	static IAGSEngine *_engine;
-	static int32 _screenWidth;
-	static int32 _screenHeight;
-	static int32 _screenColorDepth;
-
-	static bool _enabled;
-	static Sprite _sprites[MAX_SPRITES];
+class AGSTcpIp : public DLL {
 private:
 	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
-
-	static void pxDrawSprite(int id, int x, int y, int slot, int speed);
-	static void pxDeleteSprite(int id);
-
-private:
-	static void SyncGame(Serializer &s);
-	static void Draw(bool foreground);
-	static void clear();
-
+	static void AGS_EngineStartup(IAGSEngine *engine);
+	
 public:
-	AGSParallax();
+	AGSTcpIp();
 };
 
-} // namespace AGSParallax
+} // namespace AGSTcpIp
 } // namespace Plugins
 } // namespace AGS3
 

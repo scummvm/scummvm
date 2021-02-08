@@ -113,7 +113,7 @@ union NumberPtr {
 
 	NumberPtr(int value) { _ptr = nullptr; _value = value; }
 	NumberPtr(void *ptr) : _ptr(ptr) {}
-	operator bool() const { return _ptr != nullptr; }
+	operator int() const { return _value; }
 };
 
 } // namespace AGS3

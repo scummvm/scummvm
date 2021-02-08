@@ -30,6 +30,7 @@
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
+#include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -49,6 +50,9 @@ void *pluginOpen(const char *filename) {
 			break;
 		}
 	}
+
+	if (fname.equalsIgnoreCase("ags_tcp_ip"))
+		return new AGSTcpIp::AGSTcpIp();
 
 	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();

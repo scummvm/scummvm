@@ -564,34 +564,6 @@ public:
 	AGSIFUNC(IAGSFontRenderer *) ReplaceFontRenderer(int fontNumber, IAGSFontRenderer *newRenderer);
 };
 
-#ifdef THIS_IS_THE_PLUGIN
-
-#ifdef WINDOWS_VERSION
-#define DLLEXPORT extern "C" __declspec(dllexport)
-#else
-// MAC VERSION: compile with -fvisibility=hidden
-// gcc -dynamiclib -std=gnu99 agsplugin.c -fvisibility=hidden -o agsplugin.dylib
-#define DLLEXPORT extern "C" __attribute__((visibility("default")))
-#endif
-
-DLLEXPORT const char *AGS_GetPluginName(void);
-DLLEXPORT int    AGS_EditorStartup(IAGSEditor *);
-DLLEXPORT void   AGS_EditorShutdown(void);
-DLLEXPORT void   AGS_EditorProperties(HWND);
-DLLEXPORT int    AGS_EditorSaveGame(char *, int);
-DLLEXPORT void   AGS_EditorLoadGame(char *, int);
-DLLEXPORT void   AGS_EngineStartup(IAGSEngine *);
-DLLEXPORT void   AGS_EngineShutdown(void);
-DLLEXPORT int    AGS_EngineOnEvent(int, int);
-DLLEXPORT int    AGS_EngineDebugHook(const char *, int, int);
-DLLEXPORT void   AGS_EngineInitGfx(const char *driverID, void *data);
-// We export this to verify that we are an AGS Plugin
-DLLEXPORT int    AGS_PluginV2() {
-	return 1;
-}
-
-#endif // THIS_IS_THE_PLUGIN
-
 } // namespace AGS3
 
 #endif

@@ -1602,7 +1602,7 @@ void AGSPalRender::AGS_EngineShutdown() {
 	//QuitCleanup();
 }
 
-int AGSPalRender::AGS_EngineOnEvent(int event, int data) {
+NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PRESCREENDRAW && clutslot > 0) {
 		if (drawreflections) {
 			int32 sh, sw = 0;
