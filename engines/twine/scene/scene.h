@@ -58,6 +58,7 @@ struct ZoneStruct {
 	ScenePoint bottomLeft;
 	ScenePoint topRight;
 	int16 type = 0;
+	int16 snap = 0;
 	union {
 		struct {
 			int32 newSceneIdx;
@@ -103,7 +104,6 @@ struct ZoneStruct {
 			int32 info7;
 		} generic;
 	} infoData;
-	int16 snap = 0;
 };
 
 enum ZoneType {
