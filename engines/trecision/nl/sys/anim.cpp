@@ -38,6 +38,7 @@
 #include "video/smk_decoder.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -67,9 +68,10 @@ public:
 	}
 
 	void setMute(bool mute) {
-		for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
+		for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); it++) {
 			if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 				((AudioTrack *)*it)->setMute(mute);
+		}
 	}
 };
 
@@ -202,15 +204,13 @@ void RefreshAllAnimations() {
 					RegenSmackAnim
 --------------------------------------------------*/
 void RegenSmackAnim(int num) {
-	extern unsigned char RegenInvStartIcon;
-	int32 a;
 	int pos = 0;
 
 	if ((num == 0) || (num == 620))
 		return;
 
 	if (AnimTab[num].flag & SMKANIM_ICON) {
-		RegenSmackIcon(RegenInvStartIcon, num);
+		RegenSmackIcon(g_vm->_regenInvStartIcon, num);
 		return;
 	}
 
@@ -234,7 +234,7 @@ void RegenSmackAnim(int num) {
 	_curAnimFrame[pos] ++;
 
 	if (SmkAnims[pos]->hasDirtyPalette()) {
-		for (a = 0; a < 256; a++)
+		for (int32 a = 0; a < 256; a++)
 			_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0], SmkAnims[pos]->getPalette()[a * 3 + 1], SmkAnims[pos]->getPalette()[a * 3 + 2]);
 	}
 
@@ -245,7 +245,7 @@ void RegenSmackAnim(int num) {
 	//while( SmackToBufferRect( SmkAnims[pos], SMACKSURFACEFAST ) )
 	{
 		int inters = 0;
-		for (a = 0; a < MAXCHILD; a++) {
+		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (AnimTab[num].flag & (SMKANIM_OFF1 << a)) {
 				// se il rettangolo e' completamente dentro a limite lo leva
 				if ((AnimTab[num].lim[a][0] <= 0 + SmkAnims[pos]->getWidth()) &&
@@ -259,7 +259,7 @@ void RegenSmackAnim(int num) {
 
 		if ((_curAnimFrame[pos] > 0) && (inters == 0)) {
 			if (pos == 0) {
-				for (a = 0; a < SmkAnims[pos]->getHeight(); a++) {
+				for (int32 a = 0; a < SmkAnims[pos]->getHeight(); a++) {
 					/*byte2wordn( Video2+0+(0+a+TOP)*MAXX,
 						SmackBuffer[pos]+0+(0+a)*SmkAnims[pos]->getWidth(),
 						_smackPal[pos],SmkAnims[pos]->getWidth());
@@ -283,7 +283,7 @@ void RegenSmackAnim(int num) {
 
 	// se e' un background
 	if (pos == 0) {
-		for (a = 0; a < MAXCHILD; a++) {
+		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (!(AnimTab[num].flag & (SMKANIM_OFF1 << a))  && (AnimTab[num].lim[a][3] != 0)) {
 				limiti[limitinum][0] = AnimTab[num].lim[a][0];
 				limiti[limitinum][1] = AnimTab[num].lim[a][1] + TOP;
@@ -296,7 +296,7 @@ void RegenSmackAnim(int num) {
 	else if (pos == 1) {
 		if (_curAnimFrame[pos] == 1) {
 			for (int32 b = 0; b < AREA; b++) {
-				for (a = 0; a < MAXX; a++) {
+				for (int32 a = 0; a < MAXX; a++) {
 					if (SmackBuffer[pos][b * MAXX + a]) {
 						_animMinX = (_animMinX > a) ? a : _animMinX;
 						_animMinY = (_animMinY > b) ? b : _animMinY;
@@ -311,7 +311,7 @@ void RegenSmackAnim(int num) {
 			}
 		}
 
-		for (a = 0; a < (_animMaxY - _animMinY); a++) {
+		for (int32 a = 0; a < (_animMaxY - _animMinY); a++) {
 			byte2wordm(Video2 + _animMinX + (_animMinY + a + TOP)*MAXX,
 					   SmackBuffer[pos] + _animMinX + (_animMinY + a)*SmkAnims[pos]->getWidth(),
 					   _smackPal[pos], _animMaxX - _animMinX);
@@ -355,10 +355,7 @@ void RegenSmackAnim(int num) {
 			Aggiorna Icona Smacker
 --------------------------------------------------*/
 void RegenSmackIcon(int StartIcon, int num) {
-	int32 a;
-	int pos, stx;
-
-	pos = MAXSMACK - 1;
+	int pos = MAXSMACK - 1;
 	_curAnimFrame[pos] ++;
 
 	_curSmackBuffer = pos;
@@ -366,9 +363,10 @@ void RegenSmackIcon(int StartIcon, int num) {
 	if (SmkAnims[_curSmackBuffer] == NULL)
 		return;
 
-	stx = ICONMARGSX;
+	int stx = ICONMARGSX;
+	int32 a;
 	for (a = 0; a < ICONSHOWN; a++) {
-		if (_inventory[a + StartIcon] == (num - aiBANCONOTE + 1)) {
+		if (g_vm->_inventory[a + StartIcon] == (num - aiBANCONOTE + 1)) {
 			stx = a * ICONDX + ICONMARGSX + CurScrollPageDx;
 			break;
 		}
@@ -516,7 +514,7 @@ void PaintSmackBuffer(int px, int py, int dx, int dy) {
 			Aggiorna FullMotion
 --------------------------------------------------*/
 void RegenFullMotion() {
-	int32 a, yfact;
+	int32 yfact;
 
 	int pos = 1;
 	_curSmackBuffer = pos;
@@ -526,7 +524,7 @@ void RegenFullMotion() {
 		_curAnimFrame[pos] ++;
 
 		if (SmkAnims[pos]->hasDirtyPalette()) {
-			for (a = 0; a < 256; a++) {
+			for (int32 a = 0; a < 256; a++) {
 				_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0], SmkAnims[pos]->getPalette()[a * 3 + 1], SmkAnims[pos]->getPalette()[a * 3 + 2]);
 
 				_newData[a] = _smackPal[pos][a];
@@ -579,7 +577,7 @@ void RegenFullMotion() {
 
 		//while ( SmackToBufferRect( SmkAnims[pos], SMACKSURFACESLOW ) )
 		{
-			for (a = 0; a < SmkAnims[pos]->getHeight(); a++) {
+			for (int32 a = 0; a < SmkAnims[pos]->getHeight(); a++) {
 				// se non ho gia' copiato la scritta
 				if ((sdt.sign == NULL) ||
 						((0 + a)*yfact < (sdt.y - TOP)) ||

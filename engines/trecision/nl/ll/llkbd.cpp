@@ -135,12 +135,12 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXINVENTORY; ++i) {
-		InvObj[i]._name = dataNl.readUint16LE();
-		InvObj[i]._examine = dataNl.readUint16LE();
-		InvObj[i]._action = dataNl.readUint16LE();
-		InvObj[i]._flag = dataNl.readByte();
+		g_vm->_inventoryObj[i]._name = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._examine = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._action = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		InvObj[i]._anim = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._anim = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXSAMPLE; ++i) {
@@ -234,7 +234,7 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXACTION; ++i)
-		_actionLen[i] = dataNl.readByte();
+		g_vm->_actionLen[i] = dataNl.readByte();
 
 	NumFileRef = dataNl.readSint32LE();
 

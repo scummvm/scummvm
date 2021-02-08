@@ -22,4 +22,4 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
-typedef signed short int LLBOOL; // for backwards compatibility with saves
+typedef int16 LLBOOL; // for backwards compatibility with saves

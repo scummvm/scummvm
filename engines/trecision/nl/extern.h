@@ -27,11 +27,8 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                                  INIT                                   */
 /*-------------------------------------------------------------------------*/
-extern struct SInvObject InvObj[];
 extern struct SSound     GSample[];
 extern struct SAnim      AnimTab[];
-
-extern uint8 _actionLen[];
 
 extern const char *ObjName[];
 extern const char *Sentence[];
@@ -46,7 +43,6 @@ extern message AnimMessage[];
 
 extern message idlemessage;
 extern message quitgamemessage;
-extern message supereventmessage;
 
 extern message *TheMessage;
 
@@ -105,27 +101,6 @@ extern LLBOOL  SemWaitRegen;
 
 extern LLBOOL  SemSaveInventory;
 extern LLBOOL  SemLoadInventory;
-/*-------------------------------------------------------------------------*/
-/*                               Inventory           					   */
-/*-------------------------------------------------------------------------*/
-extern uint8 _inventory[];
-extern uint8 _inventorySize;
-extern uint8 _cyberInventory[];
-extern uint8 _cyberInventorySize;
-extern uint8 TheIconBase;
-extern uint8 _inventoryStatus;
-extern uint8 LightIcon;
-extern uint8 RegenInvStartIcon;
-extern uint8 RegenInvStartLine;
-extern uint16 _lastCurInventory;
-extern uint16 _lastLightIcon;
-extern int16  _inventoryCounter;
-
-/*-------------------------------------------------------------------------*/
-/*                                 USACON           					   */
-/*-------------------------------------------------------------------------*/
-extern uint16 UseWith[];
-extern LLBOOL  UseWithInv[];
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

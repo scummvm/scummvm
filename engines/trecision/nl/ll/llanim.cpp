@@ -274,7 +274,7 @@ void StopSmackAnim(uint16 num) {
 
 	_curSmackAction = SMACKNULL;
 
-	LightIcon = -1;
+	g_vm->_lightIcon = 0xFF;
 }
 
 /* -----------------15/08/97 14.29-------------------
@@ -360,7 +360,7 @@ void StopFullMotion() {
 	SemMouseEnabled = true;
 	SemSomeOneSpeak = false;
 
-	LightIcon = -1;
+	g_vm->_lightIcon = 0xFF;
 	FullStart = 0;
 	FullEnd = 0;
 	if (_curDialog == dFCRED) {

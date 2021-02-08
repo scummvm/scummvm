@@ -65,9 +65,9 @@ int16 TextStackTop = -1;
 /*-------------------------------------------------------------------------*/
 void OneLeftInventory() {
 	extern short RightArrow;
-	if (TheIconBase < _inventorySize - ICONSHOWN)
-		TheIconBase ++;
-	RegenInv(TheIconBase, INVENTORY_SHOW);
+	if (g_vm->_iconBase < g_vm->_inventorySize - ICONSHOWN)
+		g_vm->_iconBase++;
+	RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 	RightArrow = 1;
 }
 
@@ -76,9 +76,9 @@ void OneLeftInventory() {
 /*-------------------------------------------------------------------------*/
 void OneRightInventory() {
 	extern short LeftArrow;
-	if (TheIconBase > 0)
-		TheIconBase --;
-	RegenInv(TheIconBase, INVENTORY_SHOW);
+	if (g_vm->_iconBase > 0)
+		g_vm->_iconBase--;
+	RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 	LeftArrow = 1;
 }
 
@@ -86,12 +86,10 @@ void OneRightInventory() {
 /*                                WHATICON           					   */
 /*-------------------------------------------------------------------------*/
 uint8 WhatIcon(uint16 invmx) {
-	if (invmx < ICONMARGSX)
-		return 0;
-	if (invmx > (SCREENLEN - ICONMARGDX))
+	if (invmx < ICONMARGSX || invmx > SCREENLEN - ICONMARGDX)
 		return 0;
 
-	return _inventory[(TheIconBase + ((invmx - ICONMARGSX) / (ICONDX)))];
+	return g_vm->_inventory[(g_vm->_iconBase + ((invmx - ICONMARGSX) / (ICONDX)))];
 }
 
 /*-------------------------------------------------------------------------*/
@@ -101,7 +99,7 @@ uint8 IconPos(uint8 icon) {
 	uint8 i;
 
 	for (i = 0; i < MAXICON; i++) {
-		if (_inventory[i] == icon)
+		if (g_vm->_inventory[i] == icon)
 			break;
 	}
 
@@ -116,17 +114,17 @@ void KillIcon(uint8 icon) {
 
 	if (pos == MAXICON)
 		return;
-	_inventory[pos] = iNULL;
-	for (; pos < _inventorySize; pos++)
-		_inventory[pos] = _inventory[pos + 1];
-	_inventorySize --;
+	g_vm->_inventory[pos] = iNULL;
+	for (; pos < g_vm->_inventorySize; pos++)
+		g_vm->_inventory[pos] = g_vm->_inventory[pos + 1];
+	g_vm->_inventorySize--;
 
-	if (_inventorySize < ICONSHOWN)
-		TheIconBase = 0;
+	if (g_vm->_inventorySize < ICONSHOWN)
+		g_vm->_iconBase = 0;
 
-	if ((TheIconBase) && (_inventorySize > ICONSHOWN) && (_inventory[TheIconBase + ICONSHOWN] == iNULL))
-//		TheIconBase --;
-		TheIconBase = _inventorySize - ICONSHOWN;
+	if (g_vm->_iconBase && (g_vm->_inventorySize > ICONSHOWN) && (g_vm->_inventory[g_vm->_iconBase + ICONSHOWN] == iNULL))
+		//		_iconBase--;
+		g_vm->_iconBase = g_vm->_inventorySize - ICONSHOWN;
 
 	RepaintString();
 }
@@ -137,13 +135,13 @@ void KillIcon(uint8 icon) {
 void AddIcon(uint8 icon) {
 	if (IconPos(icon) != MAXICON)
 		return;
-	_inventory[_inventorySize++] = icon;
-	if (_inventorySize >= MAXICON)
+	g_vm->_inventory[g_vm->_inventorySize++] = icon;
+	if (g_vm->_inventorySize >= MAXICON)
 		warning("AddIcon overflow");
 
-	if (TheIconBase < _inventorySize - ICONSHOWN)
-//		TheIconBase ++;
-		TheIconBase = _inventorySize - ICONSHOWN;
+	if (g_vm->_iconBase < g_vm->_inventorySize - ICONSHOWN)
+//		_iconBase++;
+		g_vm->_iconBase = g_vm->_inventorySize - ICONSHOWN;
 
 //	To show the icon that enters the inventory
 //	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
@@ -157,15 +155,15 @@ void AddIcon(uint8 icon) {
 void ReplaceIcon(uint8 oldicon, uint8 newicon) {
 	uint8 pos = IconPos(oldicon);
 
-	_inventory[pos] = newicon;
+	g_vm->_inventory[pos] = newicon;
 }
 
 /*-------------------------------------------------------------------------*/
 /*                                 REGENINV            					   */
 /*-------------------------------------------------------------------------*/
 void RegenInv(uint8 StartIcon, uint8 StartLine) {
-	RegenInvStartIcon = StartIcon;
-	RegenInvStartLine = StartLine;
+	g_vm->_regenInvStartIcon = StartIcon;
+	g_vm->_regenInvStartLine = StartLine;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -355,7 +353,7 @@ void DoSys(uint16 TheObj) {
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-//				RegenInventory(RegenInvStartIcon,RegenInvStartLine);
+//				RegenInventory(_regenInvStartIcon,_regenInvStartLine);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
 		g_vm->_curRoom = rSYS;
@@ -365,7 +363,7 @@ void DoSys(uint16 TheObj) {
 		if (!DataLoad()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-//				RegenInventory(RegenInvStartIcon,RegenInvStartLine);
+//				RegenInventory(_regenInvStartIcon,_regenInvStartLine);
 		}
 		break;
 

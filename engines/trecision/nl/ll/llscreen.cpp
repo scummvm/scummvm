@@ -895,14 +895,14 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 		wordset(Video2 + (FIRSTLINE + b)*CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		if ((_inventory[a + StartIcon] >= LASTICON) /*|| ( _inventory[a+StartIcon] == iEMPTYSLOT )*/) {
+		if ((g_vm->_inventory[a + StartIcon] >= LASTICON) /*|| ( _inventory[a+StartIcon] == iEMPTYSLOT )*/) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
 				MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-					  Icone + (_inventory[a + StartIcon] - LASTICON + READICON + 1)*ICONDX * ICONDY + (b + StartLine)*ICONDX, ICONDX);
-		} else if (_inventory[a + StartIcon] != LightIcon) {
+				      Icone + (g_vm->_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
+		} else if (g_vm->_inventory[a + StartIcon] != g_vm->_lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
 				MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-					  Icone + _inventory[a + StartIcon]*ICONDX * ICONDY + (b + StartLine)*ICONDX, ICONDX);
+				      Icone + g_vm->_inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
 		}
 	}
 
@@ -915,7 +915,7 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 		}
 	}
 
-	if ((StartIcon + ICONSHOWN) < _inventorySize) {	// COPIA LA DESTRA
+	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // COPIA LA DESTRA
 		RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
 			MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,

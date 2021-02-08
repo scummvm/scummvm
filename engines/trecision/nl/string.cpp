@@ -124,15 +124,15 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 
 		strcpy(locsent, _sysSent[23]);
-		if (UseWithInv[USED])
-			strcat(locsent, ObjName[InvObj[UseWith[USED]]._name]);
-		else if (g_vm->_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
+		if (g_vm->_useWithInv[USED])
+			strcat(locsent, ObjName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
+		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
 			strcat(locsent, dunno);
 		else
-			strcat(locsent, ObjName[g_vm->_obj[UseWith[USED]]._name]);
+			strcat(locsent, ObjName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
 
 		strcat(locsent, _sysSent[24]);
-		if (obj && (UseWithInv[USED] || (obj != UseWith[USED]))) {
+		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
 			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
@@ -228,22 +228,22 @@ void ShowInvName(uint16 obj, bool showhide) {
 
 		char locsent[256];
 		strcpy(locsent, _sysSent[23]);
-		if (UseWithInv[USED]) {
-			strcat(locsent, ObjName[InvObj[UseWith[USED]]._name]);
+		if (g_vm->_useWithInv[USED]) {
+			strcat(locsent, ObjName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
 			strcat(locsent, _sysSent[24]);
-			if (obj && (InvObj[UseWith[USED]]._name != InvObj[obj]._name))
-				strcat(locsent, ObjName[InvObj[obj]._name]);
+			if (obj && (g_vm->_inventoryObj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
+				strcat(locsent, ObjName[g_vm->_inventoryObj[obj]._name]);
 		} else {
-			if (g_vm->_obj[UseWith[USED]]._mode & OBJMODE_HIDDEN)
+			if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
-				strcat(locsent, ObjName[g_vm->_obj[UseWith[USED]]._name]);
+				strcat(locsent, ObjName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
 			strcat(locsent, _sysSent[24]);
-			if (obj && (g_vm->_obj[UseWith[USED]]._name != InvObj[obj]._name))
-				strcat(locsent, ObjName[InvObj[obj]._name]);
+			if (obj && (g_vm->_obj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
+				strcat(locsent, ObjName[g_vm->_inventoryObj[obj]._name]);
 		}
 		posx = 320;
-		//   	posx = ICONMARGSX+((IconPos(UseWith[USED])-TheIconBase)*(ICONDX))+ICONDX/2;
+		//   	posx = ICONMARGSX+((IconPos(_useWith[USED])-_iconBase)*(ICONDX))+ICONDX/2;
 		posy = MAXY - CARHEI;
 		lastinv = (obj | 0x8000);
 		LenText = TextLength(locsent, 0);
@@ -267,10 +267,10 @@ void ShowInvName(uint16 obj, bool showhide) {
 			lastinv = 0;
 			return;
 		}
-		posx = ICONMARGSX + ((IconPos(g_vm->_curInventory) - TheIconBase) * (ICONDX)) + ICONDX / 2;
+		posx = ICONMARGSX + ((IconPos(g_vm->_curInventory) - g_vm->_iconBase) * (ICONDX)) + ICONDX / 2;
 		posy = MAXY - CARHEI;
 		lastinv = obj;
-		LenText = TextLength(ObjName[InvObj[obj]._name], 0);
+		LenText = TextLength(ObjName[g_vm->_inventoryObj[obj]._name], 0);
 		if (posx - (LenText / 2) < 2)
 			posx = 2;
 		else
@@ -282,8 +282,8 @@ void ShowInvName(uint16 obj, bool showhide) {
 		if (lastinv)
 			ClearText();
 
-		if (InvObj[obj]._name)
-			Text(posx, posy, ObjName[InvObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+		if (g_vm->_inventoryObj[obj]._name)
+			Text(posx, posy, ObjName[g_vm->_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 

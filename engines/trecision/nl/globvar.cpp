@@ -31,11 +31,8 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                                  INIT                                   */
 /*-------------------------------------------------------------------------*/
-struct SInvObject InvObj[MAXINVENTORY];
 struct SSound     GSample[MAXSAMPLE];
 struct SAnim      AnimTab[MAXANIM];
-
-uint8 _actionLen[MAXACTION];
 
 const char *ObjName[MAXOBJNAME];
 const char *Sentence[MAXSENTENCE];
@@ -49,7 +46,6 @@ message AnimMessage[MAXMESSAGE];
 
 message idlemessage  = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
 message quitgamemessage = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
-message supereventmessage;
 
 message *TheMessage;
 
@@ -78,8 +74,8 @@ int8 OldObjStatus[MAXOBJINROOM];
 int8 VideoObjStatus[MAXOBJINROOM];
 
 struct screenrect VideoTop = {  0,  0,   0, TOP - 1};
-struct screenrect VideoCent = {  0, TOP, 639, (TOP + AREA) - 1};
-struct screenrect VideoBott = {  0, (TOP + AREA), 639, 479};
+struct screenrect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
+struct screenrect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
 
 struct SSortTable SortTable[200];
 
@@ -110,28 +106,6 @@ LLBOOL  SemWaitRegen;
 
 LLBOOL  SemSaveInventory;
 LLBOOL  SemLoadInventory;
-
-/*-------------------------------------------------------------------------*/
-/*                               Inventory           					   */
-/*-------------------------------------------------------------------------*/
-uint8 _inventory[MAXICON];
-uint8 _inventorySize;
-uint8 _cyberInventory[MAXICON];
-uint8 _cyberInventorySize;
-uint8 TheIconBase;
-uint8 _inventoryStatus = INV_OFF;
-uint8 LightIcon = 0xFF;
-uint8 RegenInvStartIcon;
-uint8 RegenInvStartLine = INVENTORY_HIDE;
-uint16 _lastCurInventory;
-uint16 _lastLightIcon = 0xFF;
-int16  _inventoryCounter = INVENTORY_HIDE;
-
-/*-------------------------------------------------------------------------*/
-/*                                 USACON           					   */
-/*-------------------------------------------------------------------------*/
-uint16 UseWith[2];
-LLBOOL  UseWithInv[2];
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */
