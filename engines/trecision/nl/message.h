@@ -23,16 +23,10 @@
 #ifndef TRECISION_NL_MESSAGE_H
 #define TRECISION_NL_MESSAGE_H
 
-/*
-
-DEFINIZIONI MESSAGGI
-
-*/
-
 /*************************************************************************
-* PRIORITA'                                                             *
+* PRIORITIES                                                             *
 *************************************************************************/
-#define MP_SYSTEM  255                  /* PRIORITA' ASSOLUTA */
+#define MP_SYSTEM  255                  /* ABSOLUTE PRIORITY */
 
 #define MP_LOW       1
 #define MP_MED      64
@@ -40,14 +34,14 @@ DEFINIZIONI MESSAGGI
 #define MP_DEFAULT  MP_MED
 
 /*************************************************************************
-* CLASSI ED EVENTI                                                      *
+* EVENT CLASSES                                                         *
 *                                                                       *
 * MC Message Classes Notify                                             *
 * ME Message Events  Notify                                             *
 *************************************************************************/
-#define CLASS_GAME  63                  //   0- 63 --> coda GAME
-#define CLASS_ANIM 127                  //  64-127 --> coda ANIM
-#define CLASS_HOMO 255                  // 128-255 --> coda HOMO
+#define CLASS_GAME  63                  //   0- 63 --> code GAME
+#define CLASS_ANIM 127                  //  64-127 --> code ANIM
+#define CLASS_CHAR 255                  // 128-255 --> code CHAR
 
 
 /*************************************************************************
@@ -63,10 +57,7 @@ DEFINIZIONI MESSAGGI
 
 #define ME_MLEFT         0              // (mx,my,...)
 #define ME_MRIGHT        1              // (mx,my,...)
-#define ME_MTOGHETHER    2              // (mx,my,...)
 #define ME_MMOVE         3              // (mx,my,direction,...)
-
-
 
 /*************************************************************************
 * SYSTEM                                                                *
@@ -79,11 +70,7 @@ DEFINIZIONI MESSAGGI
 #define ME_SAVEGAME      2
 #define ME_LOADGAME      3
 #define ME_CHANGEROOM    4              // (room,door,...)
-#define ME_WAITANIMDEL   5
-#define ME_WAITANIMADD   6
 #define ME_REDRAWROOM	 7
-
-
 
 /*************************************************************************
 * Inventory                                                              *
@@ -94,13 +81,11 @@ DEFINIZIONI MESSAGGI
 #define ME_OPEN          0
 #define ME_CLOSE         1
 #define ME_PAINT         2
-#define ME_DEPAINT       3
 #define ME_ONELEFT       4
 #define ME_ONERIGHT      5
 #define ME_OPERATEICON   6              // (mx,my,0,0)
 #define ME_EXAMINEICON   7              // (mx,my,0,0)
 #define ME_SHOWICONNAME  8              // (mx,my,0,0)
-#define ME_INVRESET      9
 
 /*************************************************************************
 * STRINGHE                                                              *
@@ -108,8 +93,8 @@ DEFINIZIONI MESSAGGI
 /* String names */
 #define MC_STRING           4
 
-#define ME_HOMOSPEAK         2          // (...)
-#define ME_HOMOSPEAKING      3          // (someone,)
+#define ME_CHARACTERSPEAK         2          // (...)
+#define ME_CHARACTERSPEAKING      3          // (someone,)
 #define ME_SOMEONESPEAKING   5          // (...)
 #define ME_SOMEONEWAIT2SPEAK 7
 #define ME_SOMEONEWAIT2MUTE  8
@@ -132,22 +117,9 @@ DEFINIZIONI MESSAGGI
 /* Notification of dialog event */
 #define MC_DIALOG        6
 
-#define ME_ENDSCELTA	 0
+#define ME_ENDCHOICE	 0
 #define ME_STARTDIALOG	 1
-/*
-#define ME_RESETARG         0
-#define ME_CLEARARG         1
-#define ME_SHOWARG          2
-#define ME_UPDATEARG        3
-#define ME_STARTNEWDLG      4
-#define ME_CLICKONARG      10
-#define ME_WAITBATTUTA     23
-#define ME_BATTUTA         20           //(battuta,...)
-#define ME_FINEBATTUTA     21
-#define ME_WAITFINEBATTUTA 22
-#define ME_STARTBATTUTA    24
-#define ME_BATTUTA2        25           //(battuta,...)
-*/
+
 /*************************************************************************
 * PORTE                                                              *
 *************************************************************************/
@@ -169,7 +141,7 @@ DEFINIZIONI MESSAGGI
 /*************************************************************************
 * SCRIPT                                                                *
 *************************************************************************/
-#define C_RANIM   0                     // Room
+// #define C_RANIM   0                     // Room
 
 #define C_ONAME   0                     // Object
 #define C_OEXAMINE  1                   // Object
@@ -193,7 +165,7 @@ DEFINIZIONI MESSAGGI
 #define C_DLINKANI  1
 #define C_DSPEAKANI  2
 #define C_DLISTENANI 3
-#define C_DSCELTADISATTIVATO 4
+#define C_DCHOICEDISABLED 4
 
 #define C_DADEFANI  0                   // Dialog Alternativo
 #define C_DALINKANI  1
@@ -202,8 +174,7 @@ DEFINIZIONI MESSAGGI
 
 #define C_SEMDIAG  0                    // Semafori
 
-#define MC_SCRIPT  9
-// (b,w1,w2,l)
+#define MC_SCRIPT  9					// (b,w1,w2,l)
 #define ME_PAUSE  0                     // (0,time,0,0)
 #define ME_SETROOM  1                   // (campo,indice,[bit/indice2c],valore)
 #define ME_SETOBJ  2                    // (campo,indice,[bit/indice2c],valore)
@@ -217,7 +188,7 @@ DEFINIZIONI MESSAGGI
 #define ME_SETADIALOG 10                // (campo, 0, 0, valore)
 #define ME_TORNAORBO 11
 #define ME_SETDIALOG 12                 // (campo, indice, 0, valore)
-#define ME_SETANIMAZIONESPENTA 13       // (0, 0, 0, valore)
+#define ME_SETANIMATIONOFF 13		    // (0, 0, 0, valore)
 #define ME_PLAYSOUND 14                 // (0,indice,0,0)
 #define ME_STOPSOUND 15                 // (0,indice,0,0)
 #define ME_CHARACTERSAY  16                  // (0,0,0,sentence)
@@ -226,35 +197,27 @@ DEFINIZIONI MESSAGGI
 #define ME_KILLICON  19                 // (0,icona,0,0)
 
 /*************************************************************************
-* ANIMAZIONI                                                            *
+* ANIMATIONS                                                            *
 *************************************************************************/
 /* Notification of mouse action */
-#define MC_ANIMATION    64
+#define MC_ANIMATION	64
 
-#define ME_SHOWANIM      0
-#define ME_ADDANIM   1
-#define ME_DELANIM       2
+#define ME_ADDANIM		1
+#define ME_DELANIM		2
 
 /*************************************************************************
-* HOMO                                                                  *
+* CHARACTER                                                             *
 *************************************************************************/
 /* Notification of dialog event */
 #define MC_CHARACTER          128
 
-#define ME_HOMOSHOW        0
-#define ME_HOMORESETMOVE   1
-#define ME_CHARACTERGOTO        2
-#define ME_CHARACTERGOTOACTION  3
-#define ME_CHARACTERGOTOEXAMINE 4
+#define ME_CHARACTERGOTO			2
+#define ME_CHARACTERGOTOACTION		3
+#define ME_CHARACTERGOTOEXAMINE		4
 
-#define ME_HOMOSTOP        5
-#define ME_HOMOTAKE        6
-#define ME_HOMOOPEN        7
-#define ME_HOMOCLEARQUEUE  8
-
-#define ME_CHARACTERACTION          9
-#define ME_CHARACTERCONTINUEACTION 10
-#define ME_HOMOGOTOEXIT       11
-#define ME_HOMODOACTION		  12
+#define ME_CHARACTERACTION			9
+#define ME_CHARACTERCONTINUEACTION	10
+#define ME_CHARACTERGOTOEXIT		11
+#define ME_CHARACTERDOACTION		12
 
 #endif

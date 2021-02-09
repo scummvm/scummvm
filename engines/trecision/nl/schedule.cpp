@@ -123,7 +123,7 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 /*                                SCHEDULER           					   */
 /*-------------------------------------------------------------------------*/
 void Scheduler() {
-	static uint8 token = CLASS_HOMO;
+	static uint8 token = CLASS_CHAR;
 	static uint8 Counter;
 	bool retry = true;
 
@@ -142,12 +142,12 @@ void Scheduler() {
 			break;
 
 		case CLASS_ANIM:
-			token = CLASS_HOMO;
+			token = CLASS_CHAR;
 			if (GetMessage(&g_vm->_animQueue))
 				retry = true;
 			break;
 
-		case CLASS_HOMO:
+		case CLASS_CHAR:
 			token = CLASS_GAME;
 			if ((SemPaintHomo) || (GetMessage(&g_vm->_characterQueue)))
 				retry = true;
