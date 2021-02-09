@@ -24,6 +24,7 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
+#include "trecision/nl/message.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
@@ -72,6 +73,20 @@ public:
 	const char *_objName[MAXOBJNAME];
 	const char *_sentence[MAXSENTENCE];
 	const char *_sysSentence[MAXSYSSENT];
+
+	// Message system
+	Message _gameMsg[MAXMESSAGE];
+	Message _characterMsg[MAXMESSAGE];
+	Message _animMsg[MAXMESSAGE];
+
+	Message _idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
+	Message _quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
+
+	Message *TheMessage;
+
+	MessageQueue _gameQueue;
+	MessageQueue _animQueue;
+	MessageQueue _characterQueue;
 };
 
 extern TrecisionEngine *g_vm;

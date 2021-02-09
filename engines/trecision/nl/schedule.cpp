@@ -29,6 +29,7 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -37,11 +38,11 @@ int maxmesg, maxmesh, maxmesa;
 /*-------------------------------------------------------------------------*/
 /*                               GETMESSAGE           					   */
 /*-------------------------------------------------------------------------*/
-bool GetMessage(pqueue *lq) {
+bool GetMessage(MessageQueue *lq) {
 	if (!(lq->len))
 		return true;
 
-	TheMessage = lq->event[lq->head++];
+	g_vm->TheMessage = lq->event[lq->head++];
 	if (lq->head == MAXMESSAGE)
 		lq->head = 0;
 	lq->len--;
@@ -53,20 +54,20 @@ bool GetMessage(pqueue *lq) {
 /*                            INITMESSAGESYSTEM          				   */
 /*-------------------------------------------------------------------------*/
 void InitMessageSystem() {
-	InitQueue(&_gameQueue);
-	InitQueue(&_animQueue);
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_gameQueue);
+	InitQueue(&g_vm->_animQueue);
+	InitQueue(&g_vm->_characterQueue);
 	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		_gameQueue.event[i] = &_gameMsg[i];
-		_characterQueue.event[i] = &_characterMsg[i];
-		_animQueue.event[i] = &_animMsg[i];
+		g_vm->_gameQueue.event[i] = &g_vm->_gameMsg[i];
+		g_vm->_characterQueue.event[i] = &g_vm->_characterMsg[i];
+		g_vm->_animQueue.event[i] = &g_vm->_animMsg[i];
 	}
 }
 
 /*-------------------------------------------------------------------------*/
 /*                                INITQUEUE           					   */
 /*-------------------------------------------------------------------------*/
-void InitQueue(pqueue *lq) {
+void InitQueue(MessageQueue *lq) {
 	lq->head = 0;
 	lq->tail = 0;
 	lq->len  = 0;
@@ -78,19 +79,19 @@ void InitQueue(pqueue *lq) {
 void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 			 uint16 wparam1, uint16 wparam2,
 			 uint8 bparam, uint32 lparam) {
-	pqueue *lq;
+	MessageQueue *lq;
 
 	if (cls <= CLASS_GAME)
-		lq = &_gameQueue;
+		lq = &g_vm->_gameQueue;
 	else if (cls <= CLASS_ANIM)
-		lq = &_animQueue;
+		lq = &g_vm->_animQueue;
 	else
-		lq = &_characterQueue;
+		lq = &g_vm->_characterQueue;
 
 	if (lq->len >= MAXMESSAGE)
 		return;
 
-	message *lm = lq->event[lq->tail++];
+	Message *lm = lq->event[lq->tail++];
 
 	lm->cls  = cls;
 	lm->event  = event;
@@ -105,13 +106,13 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 		lq->tail = 0;
 	lq->len++;
 
-	if (lq == &_gameQueue)
+	if (lq == &g_vm->_gameQueue)
 		if (lq->len > maxmesg)
 			maxmesg = lq->len;
-	if (lq == &_animQueue)
+	if (lq == &g_vm->_animQueue)
 		if (lq->len > maxmesa)
 			maxmesa = lq->len;
-	if (lq == &_characterQueue)
+	if (lq == &g_vm->_characterQueue)
 		if (lq->len > maxmesh)
 			maxmesh = lq->len;
 
@@ -132,23 +133,23 @@ void Scheduler() {
 		case CLASS_GAME:
 			if (Counter++ <= 30) {
 				token = CLASS_ANIM;
-				if (GetMessage(&_gameQueue))
-					TheMessage = &_idleMsg;
+				if (GetMessage(&g_vm->_gameQueue))
+					g_vm->TheMessage = &g_vm->_idleMsg;
 			} else {
 				Counter = 0;
-				TheMessage = &_idleMsg;
+				g_vm->TheMessage = &g_vm->_idleMsg;
 			}
 			break;
 
 		case CLASS_ANIM:
 			token = CLASS_HOMO;
-			if (GetMessage(&_animQueue))
+			if (GetMessage(&g_vm->_animQueue))
 				retry = true;
 			break;
 
 		case CLASS_HOMO:
 			token = CLASS_GAME;
-			if ((SemPaintHomo) || (GetMessage(&_characterQueue)))
+			if ((SemPaintHomo) || (GetMessage(&g_vm->_characterQueue)))
 				retry = true;
 			break;
 
@@ -160,7 +161,7 @@ void Scheduler() {
 /*                            PROCESSTHEMESSAGE          				   */
 /*-------------------------------------------------------------------------*/
 void ProcessTheMessage() {
-	switch (TheMessage->cls) {
+	switch (g_vm->TheMessage->cls) {
 	case MC_CHARACTER:
 		doCharacter();
 		break;
@@ -208,7 +209,7 @@ void ProcessTheMessage() {
 /*-------------------------------------------------------------------------*/
 /*                               ORDEREVENT           					   */
 /*-------------------------------------------------------------------------*/
-void OrderEvent(pqueue *lq) {
+void OrderEvent(MessageQueue *lq) {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
 	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos))
@@ -222,7 +223,7 @@ void OrderEvent(pqueue *lq) {
 /*-------------------------------------------------------------------------*/
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
-bool TestEmptyQueue(pqueue *lq, uint8 cls) {
+bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
 		if (lq->event[pos]->cls != cls)
 			return false;
@@ -234,7 +235,7 @@ bool TestEmptyQueue(pqueue *lq, uint8 cls) {
 /*-------------------------------------------------------------------------*/
 /*                       TESTEMPTYHOMOQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
-bool TestEmptyHomoQueue4Script(pqueue *lq) {
+bool TestEmptyHomoQueue4Script(MessageQueue *lq) {
 	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
 		/*		if (!(( lq->event[pos]->cls == MC_CHARACTER) &&
 					(( lq->event[pos]->event == ME_CHARACTERACTION) ||
@@ -260,8 +261,8 @@ bool TestEmptyHomoQueue4Script(pqueue *lq) {
 /*-------------------------------------------------------------------------*/
 /*                               SWAPMESSAGE          					   */
 /*-------------------------------------------------------------------------*/
-void SwapMessage(message *m1, message *m2) {
-	message *tmp = m1;
+void SwapMessage(Message *m1, Message *m2) {
+	Message *tmp = m1;
 	m1 = m2;
 	m2 = tmp;
 }

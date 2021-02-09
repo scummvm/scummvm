@@ -436,9 +436,9 @@ bool DataSave() {
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 	ShowScreen(0, TOP + AREA, MAXX, TOP);
 
-	InitQueue(&_gameQueue);
-	InitQueue(&_animQueue);
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_gameQueue);
+	InitQueue(&g_vm->_animQueue);
+	InitQueue(&g_vm->_characterQueue);
 
 	FreeKey();
 
@@ -810,9 +810,9 @@ bool DataLoad() {
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 	ShowScreen(0, TOP + AREA, MAXX, TOP);
 
-	InitQueue(&_gameQueue);
-	InitQueue(&_animQueue);
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_gameQueue);
+	InitQueue(&g_vm->_animQueue);
+	InitQueue(&g_vm->_characterQueue);
 
 	FreeKey();
 

@@ -31,22 +31,6 @@ extern struct SSound     GSample[];
 extern struct SAnim      AnimTab[];
 
 /*-------------------------------------------------------------------------*/
-/*                              MESSY SYSTEM          					   */
-/*-------------------------------------------------------------------------*/
-extern message _gameMsg[];
-extern message _characterMsg[];
-extern message _animMsg[];
-
-extern message _idleMsg;
-extern message _quitMsg;
-
-extern message *TheMessage;
-
-extern pqueue _gameQueue;
-extern pqueue _animQueue;
-extern pqueue _characterQueue;
-
-/*-------------------------------------------------------------------------*/
 /*                                 SCRIPT           					   */
 /*-------------------------------------------------------------------------*/
 extern struct SScriptFrame ScriptFrame[];
@@ -55,7 +39,7 @@ extern struct SScript Script[];
 /*-------------------------------------------------------------------------*/
 /*                            VARIABILI ATTUALI          				   */
 /*-------------------------------------------------------------------------*/
-extern int8 _characterInMovement;
+extern bool _characterInMovement;
 extern int8 _characterGoToPosition;
 
 /*-------------------------------------------------------------------------*/

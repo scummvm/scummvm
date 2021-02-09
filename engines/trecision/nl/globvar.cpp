@@ -35,22 +35,6 @@ struct SSound     GSample[MAXSAMPLE];
 struct SAnim      AnimTab[MAXANIM];
 
 /*-------------------------------------------------------------------------*/
-/*                              MESSY SYSTEM          					   */
-/*-------------------------------------------------------------------------*/
-message _gameMsg[MAXMESSAGE];
-message _characterMsg[MAXMESSAGE];
-message _animMsg[MAXMESSAGE];
-
-message _idleMsg  = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
-message _quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
-
-message *TheMessage;
-
-pqueue _gameQueue;
-pqueue _animQueue;
-pqueue _characterQueue;
-
-/*-------------------------------------------------------------------------*/
 /*                                 SCRIPT           					   */
 /*-------------------------------------------------------------------------*/
 struct SScriptFrame ScriptFrame[MAXSCRIPTFRAME];
@@ -60,8 +44,7 @@ struct SScript Script[MAXSCRIPT];
 /*                            VARIABILI ATTUALI          				   */
 /*-------------------------------------------------------------------------*/
 
-
-int8 _characterInMovement = false;
+bool _characterInMovement = false;
 int8 _characterGoToPosition = -1;
 
 /*-------------------------------------------------------------------------*/
