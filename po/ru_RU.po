@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-08 12:44+0000\n"
+"PO-Revision-Date: 2021-02-09 16:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -7092,40 +7092,39 @@ msgstr "Заменяет шрифты игры на шрифты лучшего 
 
 #: engines/ultima/detection.cpp:82
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Проигрывать звуки шагов"
 
 #: engines/ultima/detection.cpp:83
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Проигрывает звуки шагов во аремя перемещения игрока."
 
 #: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "Разрешить мышь для пользовательского интерфейса"
+msgstr "Разрешить перепрыгивание на позицию мыши"
 
 #: engines/ultima/detection.cpp:92
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "Перепрыгивает на позицию курсора мыши (не во время перемещения целей)."
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Включить пропуск кадров"
 
 #: engines/ultima/detection.cpp:101
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Позволяет игре пропускать кадры анимации, если воспроизведение слишком "
+"медленное."
 
 #: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Включить сглаживание шрифтов"
+msgstr "Включить ограничение кадров в секунду"
 
 #: engines/ultima/detection.cpp:110
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+"Ограничивает скорость игры чтобы избежать слишком быстрого воспроизведения."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
