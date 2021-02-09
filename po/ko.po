@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-08 23:23+0000\n"
+"PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -854,7 +854,7 @@ msgstr "정지"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "녹화 정보 수정"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
@@ -1316,20 +1316,20 @@ msgstr "자동 저장:"
 
 #: gui/options.cpp:2111
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "게임 종료 시 항상 런처로 복귀"
 
 #: gui/options.cpp:2112
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
-msgstr ""
+msgstr "게임 종료 시 ScummVM을 종료하지 않고 항상 런처로 돌아옵니다."
 
 #: gui/options.cpp:2119
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "종료 시 확인"
 
 #: gui/options.cpp:2120
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "ScummVM 또는 게임 종료 시 다시 확인합니다."
 
 #: gui/options.cpp:2126
 msgid "Keys"
@@ -1700,79 +1700,73 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:102
 msgid "#  next"
-msgstr ""
+msgstr "#  다음"
 
 #: gui/predictivedialog.cpp:103
 msgid "add"
-msgstr ""
+msgstr "추가"
 
 #: gui/predictivedialog.cpp:108 gui/predictivedialog.cpp:185
 msgid "Delete char"
-msgstr ""
+msgstr "문자 삭제"
 
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:189
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:115 gui/predictivedialog.cpp:602
 msgid "*  Pre"
-msgstr ""
+msgstr "*  예측"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:605
 msgid "*  Num"
-msgstr ""
+msgstr "*  숫자"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:608
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:62
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "게임플레이 녹화 또는 재생"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
 msgid "Delete"
-msgstr ""
+msgstr "삭제"
 
 #: gui/recorderdialog.cpp:69
-#, fuzzy
 msgid "Record"
-msgstr "녹화..."
+msgstr "녹화"
 
 #: gui/recorderdialog.cpp:70
-#, fuzzy
 msgid "Playback"
-msgstr "플레이"
+msgstr "재생"
 
 #: gui/recorderdialog.cpp:72
 msgid "Edit"
-msgstr ""
+msgstr "수정"
 
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:240
 #: gui/recorderdialog.cpp:250
-#, fuzzy
 msgid "Author: "
-msgstr "작성자:"
+msgstr "작성자: "
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
-#, fuzzy
 msgid "Notes: "
-msgstr "메모:"
+msgstr "메모: "
 
 #: gui/recorderdialog.cpp:154
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "이 세이브 파일을 삭제하겠습니까?"
+msgstr "현재 녹화를 삭제하겠습니까?"
 
 #: gui/recorderdialog.cpp:171
-#, fuzzy
 msgid "Unknown Author"
-msgstr "알 수 없는 에러"
+msgstr "알 수 없는 작성자"
 
 #: gui/remotebrowser.cpp:129
 msgid "ScummVM could not access the directory!"
@@ -1925,7 +1919,9 @@ msgstr ""
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
-msgstr "이 설정은 나중에 옵션 창의 기타 탭에서 변경할 수 있습니다."
+msgstr ""
+"이 설정은 나중에 옵션 창의 기타 탭에서 \n"
+"변경할 수 있습니다."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -2197,9 +2193,8 @@ msgid "Could not apply filtering setting."
 msgstr "필터링 설정을 적용할 수 없습니다."
 
 #: engines/engine.cpp:420
-#, fuzzy
 msgid "Error"
-msgstr "에러 없음"
+msgstr "오류"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -2223,10 +2218,10 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
-"이 게임은 디스크에 오디오 트랙을 포함합니다.\n"
+"이 게임은 디스크의 오디오 트랙을 포함합니다.\n"
 "게임의 음악을 듣기 위해서는 CD 오디오 추출\n"
-"도구를 사용해 오디오 트랙을 리핑해야 합니다.\n"
-"추가 정보는 README 파일을 참조하세요."
+"도구를 사용해 오디오 트랙을 추출해야합니다.\n"
+"README 파일에서 추가정보를 확인해 주세요."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
@@ -2367,7 +2362,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL 셰이더"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2537,19 +2532,20 @@ msgid "Download failed."
 msgstr "다운로드 실패."
 
 #: backends/events/default/default-events.cpp:185
-#, fuzzy
-#| msgid "Do you really want to return to the Launcher?"
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
-msgstr "런처로 돌아가시겠습니까?"
+msgstr ""
+"런처로 돌아가시겠습니까?\n"
+"저장하지 않은 진행사항은 사라지게 됩니다."
 
 #: backends/events/default/default-events.cpp:209
-#, fuzzy
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
-msgstr "정말로 종료하겠습니까?  (Y/N)Y"
+msgstr ""
+"정말로 종료하시겠습니까?\n"
+"저장되지 않은 진행사항은 사라지게 됩니다."
 
 #: backends/events/default/default-events.cpp:209
 #: backends/events/default/default-events.cpp:326
@@ -2585,19 +2581,19 @@ msgstr "디버거 열기"
 #: backends/events/gph/gph-events.cpp:460
 #: backends/events/openpandora/op-events.cpp:157
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr ""
+msgstr "터치스크린 '탭 모드' - 왼쪽 클릭"
 
 #: backends/events/gph/gph-events.cpp:419
 #: backends/events/gph/gph-events.cpp:462
 #: backends/events/openpandora/op-events.cpp:159
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr ""
+msgstr "터치스크린 '탭 모드' - 오른쪽 클릭"
 
 #: backends/events/gph/gph-events.cpp:421
 #: backends/events/gph/gph-events.cpp:464
 #: backends/events/openpandora/op-events.cpp:161
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr ""
+msgstr "터치스크린 '탭 모드' - 호버 (클릭 아님)"
 
 #: backends/events/gph/gph-events.cpp:441
 msgid "Maximum Volume"
@@ -2616,18 +2612,16 @@ msgid "Decreasing Volume"
 msgstr "볼륨 감소"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:101
-#, fuzzy
 msgid "Clicking Enabled"
-msgstr "필터링 활성화"
+msgstr "클릭 활성됨"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:101
-#, fuzzy
 msgid "Clicking Disabled"
-msgstr "필터링 비활성화"
+msgstr "클릭 비활성됨"
 
 #: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr ""
+msgstr "터치스크린 '탭 모드' - 호버 (D패드 클릭)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 msgid "Do you want to quit ?"
@@ -3049,7 +3043,7 @@ msgstr "혹은 디렉토리를 선택 (Chrome에서만 동작):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr ""
+msgstr "인덱스 "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -3076,7 +3070,7 @@ msgstr "ScummVM이 선택한 디렉토리 내용을 표시할 수 없습니다."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr ""
+msgstr "인덱스"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
@@ -3109,7 +3103,7 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "잘못된 요청: 헤더가 너무 길음!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
 msgid "Failed to upload the file!"
@@ -3117,7 +3111,7 @@ msgstr "파일 업로드에 실패했습니다!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "통과한 파일 없음!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
@@ -3301,15 +3295,15 @@ msgstr "돋보기 모드 끔"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
-msgstr ""
+msgstr "크기조절 안함"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
-msgstr ""
+msgstr "하드웨어 크기조절 (빠름, 저화질)"
 
 #: backends/platform/ds/ds-graphics.cpp:221
 msgid "Software scale (good quality, but slower)"
-msgstr ""
+msgstr "소프트웨어 크기조절 (느림, 고화질)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:327
 #: backends/platform/ios7/ios7_osys_events.cpp:455
@@ -3460,172 +3454,160 @@ msgstr "Zone"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Multi Function"
-msgstr ""
+msgstr "기능키"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:50
-#, fuzzy
 msgid "Swap character"
-msgstr "캐릭터 전환:"
+msgstr "캐릭터 전환"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
-#, fuzzy
 msgid "Skip text"
-msgstr "대사 한 줄을 건너뜀"
+msgstr "대사 건너뜀"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
-#, fuzzy
 msgid "Fast mode"
-msgstr "동영상 빠르게 재생"
+msgstr "고속 모드"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:55
-#, fuzzy
 msgid "Debugger"
-msgstr "디버거 열기"
+msgstr "디버거"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
-#, fuzzy
 msgid "Global menu"
-msgstr "전역 메인 메뉴"
+msgstr "전역 메뉴"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:57
-#, fuzzy
 msgid "Virtual keyboard"
-msgstr "키보드 표시"
+msgstr "가상 키보드"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:58
 msgid "Key mapper"
-msgstr ""
+msgstr "키 맵퍼"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
-msgstr ""
+msgstr "비디오"
 
 #: backends/platform/wii/options.cpp:54
-#, fuzzy
 msgid "Current video mode:"
-msgstr "렌더 모드:"
+msgstr "현재 비디오 모드:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "더블 스트라이크"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "수평 언더스캔:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "수직 언더스캔:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
-msgstr ""
+msgstr "입력"
 
 #: backends/platform/wii/options.cpp:74
-#, fuzzy
 msgid "GC Pad sensitivity:"
-msgstr "감도"
+msgstr "GC 패드 감도:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr ""
+msgstr "GC 패드 가속:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
-msgstr ""
+msgstr "상태:"
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
-#, fuzzy
 msgid "Unknown"
-msgstr "알 수 없는 에러"
+msgstr "알 수 없음"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr ""
+msgstr "DVD 마운트"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr ""
+msgstr "DVD 마운트 해제"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
-#, fuzzy
 msgid "Server:"
-msgstr "서버 포트:"
+msgstr "서버:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr ""
+msgstr "공유:"
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
-msgstr ""
+msgstr "비밀번호:"
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr ""
+msgstr "네트워크 초기화"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr ""
+msgstr "SMB 등록"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr ""
+msgstr "SMB 등록해제"
 
 #: backends/platform/wii/options.cpp:143
-#, fuzzy
 msgid "DVD Mounted successfully"
-msgstr "업로드 성공!"
+msgstr "DVD 마운트 성공"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "DVD를 마운트 하는데 오류 발생"
 
 #: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVD 마운트 안됨"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "네트워크 연결, 공유 활성됨"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up"
-msgstr ""
+msgstr "네트워크 연결"
 
 #: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
-msgstr ""
+msgstr ", 공유 활정중 오류"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
-msgstr ""
+msgstr ", 공유 활성안됨"
 
 #: backends/platform/wii/options.cpp:174
 msgid "Network down"
-msgstr ""
+msgstr "네트워크 실패"
 
 #: backends/platform/wii/options.cpp:178
-#, fuzzy
 msgid "Initializing network"
-msgstr "MT-32 에뮬레이터 초기화 중"
+msgstr "네트워크 초기화 중"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "네트워크 초기화 시간 초과"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "네트워크 초기화 안됨 (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
@@ -3849,9 +3831,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "AGOS 2 지원이 컴파일 되지 않음"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -3863,7 +3844,7 @@ msgid ""
 msgstr ""
 "General MIDI 장치를 사용하시는 것으로 보입니다.\n"
 "하지만 이 게임은 Roland MT32 MIDI만 지원합니다.\n"
-"Roland MT32  악기를 General MIDI로 변환하는 경우\n"
+"Roland MT32 악기를 General MIDI로 변환하는 경우\n"
 "일부 음악이 올바르지 않게 들릴 수 있습니다."
 
 #: engines/bladerunner/bladerunner.cpp:363
@@ -3955,7 +3936,7 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 않습니다."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
@@ -3963,9 +3944,8 @@ msgstr ""
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
 #: engines/sci/detection_tables.h:4832
-#, fuzzy
 msgid "Missing game code"
-msgstr "주 게임 조작:"
+msgstr "게임 코드 없음"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -4014,9 +3994,8 @@ msgid "Load anyway"
 msgstr "확인"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "Versailles 1685 지원이 컴파일 되지 않음"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4027,12 +4006,10 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
-"에러: '%s' 파일이 올바르게 추출되지 않았습니다.\n"
-"위키 페이지\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos 를 참조하"
-"여\n"
-"DTSPEECH.XA와 *.STR 파일을 게임 디스크로부터 정확히 추출하는 방법을 확인하세"
-"요."
+"오류: '%s' 파일이 올바르게 추출되지 않았습니다.\n"
+"다음의 위키 페이지\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos 를 참조하여 "
+"DTSPEECH.XA와 *.STR 파일을 게임 디스크에서 추출하는 방법을 확인하십시오."
 
 #: engines/dragons/metaengine.cpp:124
 msgid ""
@@ -4043,15 +4020,19 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"오류 : 게임 데이터 파일이 잘못 추출 된 것 같습니다.\n"
+"\n"
+"특별한 방법을 사용하여 STR 및 XA 파일 만 추출해야합니다. 나머지는 게임 CD에서 정상적으로 복사해야합니다.\n"
+"\n"
+" https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons 참조"
 
 #: engines/dragons/metaengine.cpp:140
-#, fuzzy
 msgid "Action"
-msgstr "활성화"
+msgstr "액션"
 
 #: engines/dragons/metaengine.cpp:146
 msgid "Change Command"
-msgstr ""
+msgstr "변경 명령"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
@@ -4059,9 +4040,8 @@ msgstr ""
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
 #: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:364
 #: engines/zvision/metaengine.cpp:164
-#, fuzzy
 msgid "Inventory"
-msgstr "인벤토리:"
+msgstr "인벤토리"
 
 #: engines/dragons/metaengine.cpp:157 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:89
@@ -4069,14 +4049,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/metaengine.cpp:223
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "그래픽"
+msgstr "그래픽 디버그"
 
 #: engines/dragons/metaengine.cpp:228
-#, fuzzy
 msgid "Quit Game"
-msgstr "게임"
+msgstr "게임 종료"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4120,130 +4098,124 @@ msgstr "TTS로 입력된 텍스트를 읽음"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[아무 키나 누르면 종료]"
 
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
-#, fuzzy
 msgid "Untitled Savegame"
-msgstr "제목 없음"
+msgstr "제목없는 게임저장"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "게임 불러오기:"
+msgstr "게임 불러오는 중...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
-msgstr ""
+msgstr "AdvSys 게임을 시작하지 못함"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:320
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "죄송합니다, 게임저장을 되돌리지 못했습니다"
 
 #: engines/glk/advsys/vm.cpp:315
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "비디오 모드를 변경할 수 없음"
+msgstr "죄송합니다, 게임저장을 생성하지 못했습니다"
 
 #: engines/glk/advsys/vm.cpp:561
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "크게 말해!안들리잖아!\n"
 
 #: engines/glk/advsys/vm.cpp:597
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "\"%s\" 단어는 모르는 단어입니다.\n"
 
 #: engines/glk/advsys/vm.cpp:683
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "이해하지 못했습니다.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "올바른 Alan2 파일로 보기에 너무 짧습니다."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "올바른 Alan2 파일이 아닙니다."
 
 #: engines/glk/comprehend/game.cpp:322
-#, fuzzy
 msgid "Savegame"
-msgstr "게임 저장:"
+msgstr "게임저장"
 
 #: engines/glk/comprehend/game.cpp:862
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "이미지 창 토글\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "올바른 Glulx 파일이기에 너무 짧습니다."
 
 #: engines/glk/glulx/glulx.cpp:87
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "올바른 Glulx 파일이 아닙니다."
 
 #: engines/glk/glulx/glulx.cpp:94
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "Glulx 파일이 구버전이어서 실행할 수 없습니다."
 
 #: engines/glk/glulx/glulx.cpp:98
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "Glulx 파일이 신버전이어서 실행할 수 없습니다."
 
 #: engines/glk/quest/quest.cpp:45
 msgid "Could not start Quest game"
-msgstr ""
+msgstr "Quest 게임을 시작하지 못함"
 
 #: engines/glk/scott/scott.cpp:100
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "명령을 이해하지 못했습니다. "
 
 #: engines/glk/scott/scott.cpp:103
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "아직은 할 수 없습니다. "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Light has run out! "
-msgstr ""
+msgstr "빛이 사라지고 있습니다! "
 
 #: engines/glk/scott/scott.cpp:121
 msgid "Your light has run out. "
-msgstr ""
+msgstr "당신의 빛이 사라져갑니다. "
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid "Light runs out in "
-msgstr "오른쪽 마우스 버튼"
+msgstr "빛이 다 끝나갑니다 "
 
 #: engines/glk/scott/scott.cpp:132
-#, fuzzy
 msgid " turns. "
-msgstr "켜기 (N)"
+msgstr " 켜기 "
 
 #: engines/glk/scott/scott.cpp:135
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "당신의 빛이 어두워지고 있습니다. "
 
 #: engines/glk/scott/scott.cpp:412
 msgid "North"
-msgstr ""
+msgstr "북쪽"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "South"
-msgstr ""
+msgstr "남쪽"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "East"
-msgstr ""
+msgstr "동쪽"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "West"
-msgstr ""
+msgstr "서쪽"
 
 #: engines/glk/scott/scott.cpp:424
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "당신은 볼 수 없습니다. 너무 어두워요!\n"
 
 #: engines/glk/scott/scott.cpp:426
 msgid "I can't see. It is too dark!\n"
@@ -4283,9 +4255,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:551
-#, fuzzy
 msgid "Saved.\n"
-msgstr "저장"
+msgstr "저장됨.\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
@@ -4309,18 +4280,16 @@ msgid "I am dead.\n"
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:821
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "게임 오버 되었습니다.\n"
 
 #: engines/glk/scott/scott.cpp:836
 msgid "You have stored "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:838
-#, fuzzy
 msgid "I've stored "
-msgstr "불러오기"
+msgstr "저는 저장되었습니다 "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -4411,9 +4380,8 @@ msgid "It's beyond my power to do that.\n"
 msgstr ""
 
 #: engines/glk/zcode/zcode.cpp:145
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "게임 실행 에러:"
+msgstr "저장 파일 기록 오류\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
@@ -4442,9 +4410,8 @@ msgstr ""
 "%s"
 
 #: engines/gob/inter_v5.cpp:107
-#, fuzzy
 msgid "Failed to delete file."
-msgstr "파일 읽기에 실패했습니다!"
+msgstr "파일 삭제에 실패했습니다."
 
 #: engines/griffon/metaengine.cpp:84
 msgid "Menu / Skip"
@@ -5170,9 +5137,8 @@ msgstr "새 게임"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "정말로 종료하겠습니까?  (Y/N)Y"
+msgstr "정말로 종료하겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
@@ -5197,9 +5163,8 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/riven.cpp:506
-#, fuzzy
 msgid "You are missing the following required Riven data files:\n"
-msgstr "권장 데이터 파일이 빠져 있습니다:"
+msgstr "다음 필수 Riven 데이터 파일이 부족합니다:\n"
 
 #: engines/mohawk/riven.cpp:868
 #, fuzzy
@@ -5316,14 +5281,13 @@ msgid "Scale the making of videos, so that they use the whole screen"
 msgstr ""
 
 #: engines/parallaction/saveload.cpp:130
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"파일에 저장하는데 실패했습니다:\n"
+"%i 슬롯에 게임을 저장하지 못했습니다\n"
 "\n"
-"%s"
 
 #: engines/parallaction/saveload.cpp:194
 #, fuzzy
@@ -5620,9 +5584,9 @@ msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1409
-#, fuzzy, c-format
+#, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "저장된 게임 버전 : %d, 최대 지원 가능 : %0d"
 
 #: engines/sci/engine/savegame.cpp:1420
 msgid ""
@@ -6602,12 +6566,10 @@ msgid "Unable to locate the text for %s language in engine data file."
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 
 #: engines/supernova/supernova.cpp:470
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
-"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전: %d.%d, 실제 버"
-"전: %d.%d."
+msgstr "'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d"
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
@@ -6655,9 +6617,9 @@ msgid ""
 msgstr ""
 
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
-#, fuzzy, c-format
+#, c-format
 msgid "Cutscene '%s' not found"
-msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
+msgstr "'%s' 컷신을 찾지 못함"
 
 #: engines/sword1/control.cpp:887
 #, fuzzy
@@ -6736,24 +6698,24 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 
 #: engines/toon/toon.cpp:225
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr "세이브 파일"
+msgstr "#%d슬롯에 게임 저장됨 "
 
 #: engines/toon/toon.cpp:229
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "해상도를 '%dx%d'로 변경할 수 없습니다."
+msgstr "#%d 슬롯에 빠른 저장하지 못함"
 
 #: engines/toon/toon.cpp:242
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "게임을 불러오지 않았습니다."
+msgstr "#%d 게임을 불러옴"
 
 #: engines/toon/toon.cpp:246
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "세이브 파일을 불러오겠습니까?"
+msgstr "#%d 게임을 빠른 불러오기 하지 못함"
 
 #: engines/toon/toon.cpp:1528
 #, fuzzy, c-format
@@ -7059,11 +7021,9 @@ msgid "Could not locate engine data %s"
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전: %d.%d, 실제 버"
-"전: %d.%d."
+msgstr "구 엔진 데이터 입니다. 필요한 버전: %d.%d, 실제 버전: %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
@@ -7492,39 +7452,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:758
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "플레이 시간: "
+msgstr "노트 1 연주: A"
 
 #: engines/wintermute/keymapper_tables.h:763
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "플레이 시간: "
+msgstr "노트 2 연주: F#"
 
 #: engines/wintermute/keymapper_tables.h:768
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "플레이 시간: "
+msgstr "노트 3 연주: D#"
 
 #: engines/wintermute/keymapper_tables.h:773
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "플레이 시간: "
+msgstr "노트 4 연주: C#"
 
 #: engines/wintermute/keymapper_tables.h:778
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "플레이 시간: "
+msgstr "노트 5 연주: E"
 
 #: engines/wintermute/keymapper_tables.h:783
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "플레이 시간: "
+msgstr "노트 6 연주: G#"
 
 #: engines/wintermute/keymapper_tables.h:788
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "플레이 시간: "
+msgstr "노트 7 연주: B"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
@@ -7678,9 +7631,8 @@ msgid "Drop"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1594
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "플레이 시간: "
+msgstr "플레이어 1:위"
 
 #: engines/wintermute/keymapper_tables.h:1599
 msgid "Player 1: Left"
@@ -7695,9 +7647,8 @@ msgid "Player 1: Right"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1614
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "플레이 시간: "
+msgstr "플레이어 2: 위"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Player 2: Left"
