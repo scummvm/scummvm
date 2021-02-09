@@ -621,7 +621,7 @@ void RegenFullMotion() {
 
 		if (_curAnimFrame[pos] == FullEnd) {
 			PaintSmackBuffer(0, 0, MAXX, AREA);
-			doEvent(MC_DIALOG, ME_ENDSCELTA, MP_HIGH, _curAnimFrame[pos], 0, 0, 0);
+			doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, _curAnimFrame[pos], 0, 0, 0);
 			CallSmackSoundOnOff(pos, 0);
 		} else {
 			CallSmackNextFrame();

@@ -673,7 +673,7 @@ void PlayScelta(uint16 i) {
  --------------------------------------------------*/
 void doDialog() {
 	switch (g_vm->TheMessage->event) {
-	case ME_ENDSCELTA:
+	case ME_ENDCHOICE:
 		afterChoice(g_vm->TheMessage->wparam1);
 		break;
 

@@ -3356,7 +3356,7 @@ void doScript() {
 		case C_DLISTENANI:
 		_dialog[indice].def_listenani = valore;
 		break;
-		case C_DSCELTADISATTIVATO:
+		case C_DCHOICEDISABLED:
 		_choice[indice].disattivato = valore;
 		break;
 		} */
@@ -3389,7 +3389,7 @@ void doScript() {
 	}
 	break;
 
-	case ME_SETANIMAZIONESPENTA:
+	case ME_SETANIMATIONOFF:
 //			AnimazioneSpenta = (uint16)valore;
 		break;
 

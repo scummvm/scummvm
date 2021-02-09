@@ -424,7 +424,7 @@ void CharacterContinueTalk() {
 
 	CurSubString++;
 
-	doEvent(MC_STRING, ME_HOMOSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -532,11 +532,11 @@ void SomeOneMute() {
 /*-------------------------------------------------------------------------*/
 void doString() {
 	switch (g_vm->TheMessage->event) {
-	case ME_HOMOSPEAK:
+	case ME_CHARACTERSPEAK:
 		CharacterSay(g_vm->TheMessage->wparam1);
 		break;
 
-	case ME_HOMOSPEAKING:
+	case ME_CHARACTERSPEAKING:
 		if (SemCharacterSpeak) {
 			if (Semskiptalk || (TheTime > (TalkTime + CharacterSpeakTime))) {
 				if (substringagain)

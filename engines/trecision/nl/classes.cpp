@@ -647,10 +647,10 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 /*-------------------------------------------------------------------------*/
 void doCharacter() {
 	switch (g_vm->TheMessage->event) {
-	case ME_HOMODOACTION:
+	case ME_CHARACTERDOACTION:
 	case ME_CHARACTERGOTOACTION:
 	case ME_CHARACTERGOTOEXAMINE:
-	case ME_HOMOGOTOEXIT:
+	case ME_CHARACTERGOTOEXIT:
 	case ME_CHARACTERGOTO:
 
 		if (nextStep()) {
@@ -680,10 +680,10 @@ void doCharacter() {
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->TheMessage->lparam);
 			else if (g_vm->TheMessage->event == ME_CHARACTERGOTOEXAMINE)
 				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->TheMessage->lparam);
-			else if (g_vm->TheMessage->event == ME_HOMOGOTOEXIT) {
+			else if (g_vm->TheMessage->event == ME_CHARACTERGOTOEXIT) {
 				SemShowHomo = 0;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
-			} else if (g_vm->TheMessage->event == ME_HOMODOACTION) {
+			} else if (g_vm->TheMessage->event == ME_CHARACTERDOACTION) {
 				extern uint16 lastobj;
 				lastobj = 0;
 				ShowObjName(g_vm->_curObj, true);
