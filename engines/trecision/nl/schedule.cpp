@@ -106,15 +106,12 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 		lq->tail = 0;
 	lq->len++;
 
-	if (lq == &g_vm->_gameQueue)
-		if (lq->len > maxmesg)
-			maxmesg = lq->len;
-	if (lq == &g_vm->_animQueue)
-		if (lq->len > maxmesa)
-			maxmesa = lq->len;
-	if (lq == &g_vm->_characterQueue)
-		if (lq->len > maxmesh)
-			maxmesh = lq->len;
+	if (lq == &g_vm->_gameQueue && lq->len > maxmesg)
+		maxmesg = lq->len;
+	if (lq == &g_vm->_animQueue && lq->len > maxmesa)
+		maxmesa = lq->len;
+	if (lq == &g_vm->_characterQueue && lq->len > maxmesh)
+		maxmesh = lq->len;
 
 	OrderEvent(lq);
 }
@@ -212,12 +209,13 @@ void ProcessTheMessage() {
 void OrderEvent(MessageQueue *lq) {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
-	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos))
+	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos)) {
 		if (lq->event[pos]->priority > lq->event[PredEvent(pos)]->priority) {
 			if (lq->event[pos]->priority < MP_HIGH)
 				lq->event[pos]->priority++;
 			SwapMessage(lq->event[pos], lq->event[PredEvent(pos)]);
 		}
+	}
 }
 
 /*-------------------------------------------------------------------------*/
@@ -233,9 +231,9 @@ bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                       TESTEMPTYHOMOQUEUE4SCRIPT          			   */
+/*                     TESTEMPTYCHARACTERQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
-bool TestEmptyHomoQueue4Script(MessageQueue *lq) {
+bool TestEmptyCharacterQueue4Script(MessageQueue *lq) {
 	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
 		/*		if (!(( lq->event[pos]->cls == MC_CHARACTER) &&
 					(( lq->event[pos]->event == ME_CHARACTERACTION) ||
