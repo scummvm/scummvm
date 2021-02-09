@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-08 13:00+0000\n"
+"POT-Creation-Date: 2021-02-09 01:21+0000\n"
 "PO-Revision-Date: 2021-02-08 12:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -772,7 +772,7 @@ msgstr "Поиск:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Загрузить игру:"
@@ -780,7 +780,7 @@ msgstr "Загрузить игру:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Загрузить"
@@ -2137,7 +2137,7 @@ msgstr "~В~ главное меню"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
@@ -2158,7 +2158,7 @@ msgstr "Сохранить игру:"
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -6646,11 +6646,11 @@ msgstr ""
 "Линейная фильтрация сглаживает фоновые изображения за счёт некоторой потери "
 "детализации."
 
-#: engines/stark/detection.cpp:340
+#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
 msgid "Enable font anti-aliasing"
 msgstr "Включить сглаживание шрифтов"
 
-#: engines/stark/detection.cpp:341
+#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Если сглаживание шрифтов включено, шрифты рисуются без зубцов."
 
@@ -7089,6 +7089,43 @@ msgstr "Включить замену шрифтов"
 #: engines/ultima/detection.cpp:65
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Заменяет шрифты игры на шрифты лучшего качества"
+
+#: engines/ultima/detection.cpp:82
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/detection.cpp:83
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/detection.cpp:91
+#, fuzzy
+#| msgid "Enable the mouse for the UI"
+msgid "Enable jump to mouse position"
+msgstr "Разрешить мышь для пользовательского интерфейса"
+
+#: engines/ultima/detection.cpp:92
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/detection.cpp:100
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/detection.cpp:101
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/detection.cpp:109
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable frame limiting"
+msgstr "Включить сглаживание шрифтов"
+
+#: engines/ultima/detection.cpp:110
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"

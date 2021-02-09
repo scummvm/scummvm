@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-08 13:00+0000\n"
+"POT-Creation-Date: 2021-02-09 01:21+0000\n"
 "PO-Revision-Date: 2021-02-08 23:23+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -764,7 +764,7 @@ msgstr "검색:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "게임 불러오기:"
@@ -772,7 +772,7 @@ msgstr "게임 불러오기:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "불러오기"
@@ -2108,7 +2108,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
@@ -2129,7 +2129,7 @@ msgstr "게임 저장:"
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -6563,11 +6563,11 @@ msgstr ""
 "선형 필터링이 활성화되면 전체 화면에서 백그라운드 그래픽이 더 부드럽게 표시됩"
 "니다. 다만 디테일이 조금 낮아집니다."
 
-#: engines/stark/detection.cpp:340
+#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
 msgid "Enable font anti-aliasing"
 msgstr "폰트 안티 앨리어싱 활성화"
 
-#: engines/stark/detection.cpp:341
+#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 
@@ -7011,6 +7011,42 @@ msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
 
 #: engines/ultima/detection.cpp:65
 msgid "Replaces game fonts with rendered fonts"
+msgstr ""
+
+#: engines/ultima/detection.cpp:82
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/detection.cpp:83
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/detection.cpp:91
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "스토리지 활성화"
+
+#: engines/ultima/detection.cpp:92
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/detection.cpp:100
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/detection.cpp:101
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/detection.cpp:109
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable frame limiting"
+msgstr "폰트 안티 앨리어싱 활성화"
+
+#: engines/ultima/detection.cpp:110
+msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-08 13:00+0000\n"
+"POT-Creation-Date: 2021-02-09 01:21+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -774,7 +774,7 @@ msgstr "Sök:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Ladda spel:"
@@ -782,7 +782,7 @@ msgstr "Ladda spel:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
-#: engines/ultima/ultima8/ultima8.cpp:797 engines/wage/saveload.cpp:742
+#: engines/ultima/ultima8/ultima8.cpp:805 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Ladda"
@@ -2138,7 +2138,7 @@ msgstr "Åte~r~vänd till launcher"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
@@ -2159,7 +2159,7 @@ msgstr "Spara spelet:"
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:788
+#: engines/tsage/scenes.cpp:599 engines/ultima/ultima8/ultima8.cpp:796
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -6623,12 +6623,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:340
+#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "Aktivera censurering"
 
-#: engines/stark/detection.cpp:341
+#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -7082,6 +7082,41 @@ msgstr "Aktivera censurering"
 
 #: engines/ultima/detection.cpp:65
 msgid "Replaces game fonts with rendered fonts"
+msgstr ""
+
+#: engines/ultima/detection.cpp:82
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/detection.cpp:83
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/detection.cpp:91
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "Spelets fullständiga titel"
+
+#: engines/ultima/detection.cpp:92
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/detection.cpp:100
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/detection.cpp:101
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/detection.cpp:109
+#, fuzzy
+msgid "Enable frame limiting"
+msgstr "Aktivera censurering"
+
+#: engines/ultima/detection.cpp:110
+msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
