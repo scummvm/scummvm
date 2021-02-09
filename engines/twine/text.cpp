@@ -637,10 +637,12 @@ bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
 				break;
 			}
 
-			playVoxSimple(currDialTextEntry);
+			if (playVox) {
+				playVoxSimple(currDialTextEntry);
+			}
 		}
 	}
-	while (playVoxSimple(currDialTextEntry)) {
+	while (playVox && playVoxSimple(currDialTextEntry)) {
 		FrameMarker frame;
 		ScopedFPS scopedFps;
 		_engine->readKeys();
