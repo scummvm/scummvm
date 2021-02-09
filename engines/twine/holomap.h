@@ -59,17 +59,24 @@ private:
 		ArmyBoat = 45,
 		HamalayiTransporter = 47
 	};
-
 	struct HolomapSurface {
-		int16 z;
-		uint16 projectedPosIdx;
+		int16 x = 0;
+		int16 y = 0;
+		int16 z = 0;
 	};
 	HolomapSurface _holomapSurface[512];
+
+	struct HolomapSort {
+		int16 z = 0;
+		uint16 projectedPosIdx = 0;
+	};
+	HolomapSort _holomapSort[512];
+
 	struct HolomapProjectedPos {
-		int16 x;
-		int16 y;
-		uint16 unk1;
-		uint16 unk2;
+		int16 x = 0;
+		int16 y = 0;
+		uint16 unk1 = 0;
+		uint16 unk2 = 0;
 	};
 	HolomapProjectedPos _projectedSurfacePositions[2048];
 
@@ -115,6 +122,8 @@ private:
 	void renderHolomapModel(const uint8 *bodyPtr, int32 x, int32 y, int32 zPos);
 
 	void prepareHolomapSurface();
+	void prepareHolomapProjectedPositions();
+	void prepareHolomapPolygons();
 	void renderHolomapSurfacePolygons();
 
 public:

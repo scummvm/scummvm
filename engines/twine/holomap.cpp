@@ -101,6 +101,9 @@ void Holomap::loadHolomapGFX() {
 	}
 
 	holomapPaletteIndex = 0;
+
+	prepareHolomapProjectedPositions();
+	prepareHolomapSurface();
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
@@ -110,22 +113,39 @@ static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
 void Holomap::prepareHolomapSurface() {
 	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int holomapSurfaceArrayIdx = 0;
+	_engine->_renderer->setBaseRotation(0, 0, 0);
+	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+		int rotation = 0;
+		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+			const int32 rotX = stream.readByte();
+			_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
+			const int32 tmpDestY = _engine->_renderer->destZ;
+			_engine->_movements->rotateActor(_engine->_renderer->destX, 0, rotation);
+			_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destX, tmpDestY, _engine->_renderer->destZ);
+			_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destX;
+			_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destY;
+			_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destZ;
+			++holomapSurfaceArrayIdx;
+			rotation += ANGLE_11_25;
+		}
+		const int32 rotX = stream.readByte();
+		_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
+		const int32 tmpDestY = _engine->_renderer->destZ;
+		_engine->_movements->rotateActor(_engine->_renderer->destX, 0, ANGLE_0);
+		_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destX, tmpDestY, _engine->_renderer->destZ);
+		_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destX;
+		_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destY;
+		_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destZ;
+		++holomapSurfaceArrayIdx;
+	}
+}
+
+void Holomap::prepareHolomapProjectedPositions() {
+	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int projectedIndex = 0;
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
 		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
-			const int32 destX = stream.readSint16LE();
-			const int32 destY = stream.readSint16LE();
-			const int32 destZ = stream.readSint16LE();
-			_engine->_renderer->getBaseRotationPosition(destX, destY, destZ);
-			if (angle != ANGLE_90) {
-				_holomapSurface[holomapSurfaceArrayIdx].z = destZ;
-				_holomapSurface[holomapSurfaceArrayIdx].projectedPosIdx = projectedIndex;
-				++holomapSurfaceArrayIdx;
-			}
-			_engine->_renderer->projectPositionOnScreen(destX, destY, destZ);
-			_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
-			_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
 			_projectedSurfacePositions[projectedIndex].unk1 = _engine->_screens->crossDot(0, 0xffff, ANGLE_360 - 1, rotation);
 			if (angle == ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
@@ -135,13 +155,6 @@ void Holomap::prepareHolomapSurface() {
 			rotation += ANGLE_11_25;
 			++projectedIndex;
 		}
-		const int32 destX = stream.readSint16LE();
-		const int32 destY = stream.readSint16LE();
-		const int32 destZ = stream.readSint16LE();
-		_engine->_renderer->getBaseRotationPosition(destX, destY, destZ);
-		_engine->_renderer->projectPositionOnScreen(destX, destY, destZ);
-		_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
-		_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
 		_projectedSurfacePositions[projectedIndex].unk1 = 0xffff;
 		if (angle == ANGLE_90) {
 			_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
@@ -150,16 +163,49 @@ void Holomap::prepareHolomapSurface() {
 		}
 		++projectedIndex;
 	}
+}
+
+void Holomap::prepareHolomapPolygons() {
+	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
+	int holomapSortArrayIdx = 0;
+	int projectedIndex = 0;
+	_engine->_renderer->setBaseRotation(0, 0, 0);
+	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+		int rotation = 0;
+		HolomapSurface* vec;
+		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+			vec = &_holomapSurface[holomapSortArrayIdx];
+			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
+			if (angle != ANGLE_90) {
+				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destZ;
+				_holomapSort[holomapSortArrayIdx].projectedPosIdx = projectedIndex;
+				++holomapSortArrayIdx;
+			}
+			_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
+			_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
+			_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
+			rotation += ANGLE_11_25;
+			++projectedIndex;
+			++holomapSortArrayIdx;
+		}
+		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
+		_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
+		_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
+		_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
+		rotation += ANGLE_11_25;
+		++projectedIndex;
+		++holomapSortArrayIdx;
+	}
 	qsort(_holomapSurface, ARRAYSIZE(_holomapSurface), sizeof(HolomapSurface), sortHolomapSurfaceCoordsByDepth);
 }
 
 void Holomap::renderHolomapSurfacePolygons() {
-	prepareHolomapSurface();
-	for (int32 i = 0; i < ARRAYSIZE(_holomapSurface); ++i) {
-		// const HolomapProjectedPos &pos1 = _projectedSurfacePositions[_holomapSurface[i].projectedPosIdx + 0];
-		// const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSurface[i].projectedPosIdx + 1];
-		// const HolomapProjectedPos &pos3 = _projectedSurfacePositions[_holomapSurface[i].projectedPosIdx + 2];
-		// const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSurface[i].projectedPosIdx + 3];
+	prepareHolomapPolygons();
+	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
+		// const HolomapProjectedPos &pos1 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0];
+		// const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
+		// const HolomapProjectedPos &pos3 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 2];
+		// const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 3];
 		// TODO: build triangles from projected pos with texcoords from holomapimg
 # if 0
 		v2 = _projectedSurfacePositions + 2 * *(_WORD *)(i + _holomapSurface + 2);
@@ -450,9 +496,6 @@ void Holomap::processHolomap() {
 	int currentLocation = _engine->_scene->currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 	_engine->flip();
-
-	// TODO: load RESSHQR_HOLOSURFACE and project the texture to the surface
-	//_engine->_screens->loadImage(RESSHQR_HOLOIMG, RESSHQR_HOLOPAL);
 
 	int32 time = _engine->lbaTime;
 	int32 xRot = 0;
