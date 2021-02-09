@@ -810,7 +810,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Recenter Screen
-		if (_input->isActionActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
+		if (_input->toggleActionIfActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
 			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
 			_grid->newCameraX = currentlyFollowedActor->x / BRICK_SIZE;
 			_grid->newCameraY = currentlyFollowedActor->y / BRICK_HEIGHT;
@@ -819,7 +819,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Draw holomap
-		if (_input->isActionActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
+		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			freezeTime();
 			//TestRestoreModeSVGA(1);
 			_holomap->processHolomap();
