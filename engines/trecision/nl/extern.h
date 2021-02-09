@@ -33,18 +33,18 @@ extern struct SAnim      AnimTab[];
 /*-------------------------------------------------------------------------*/
 /*                              MESSY SYSTEM          					   */
 /*-------------------------------------------------------------------------*/
-extern message GameMessage[];
-extern message HomoMessage[];
-extern message AnimMessage[];
+extern message _gameMsg[];
+extern message _characterMsg[];
+extern message _animMsg[];
 
-extern message idlemessage;
-extern message quitgamemessage;
+extern message _idleMsg;
+extern message _quitMsg;
 
 extern message *TheMessage;
 
-extern pqueue Game;
-extern pqueue Anim;
-extern pqueue Homo;
+extern pqueue _gameQueue;
+extern pqueue _animQueue;
+extern pqueue _characterQueue;
 
 /*-------------------------------------------------------------------------*/
 /*                                 SCRIPT           					   */

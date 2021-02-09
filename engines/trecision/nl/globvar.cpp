@@ -37,18 +37,18 @@ struct SAnim      AnimTab[MAXANIM];
 /*-------------------------------------------------------------------------*/
 /*                              MESSY SYSTEM          					   */
 /*-------------------------------------------------------------------------*/
-message GameMessage[MAXMESSAGE];
-message HomoMessage[MAXMESSAGE];
-message AnimMessage[MAXMESSAGE];
+message _gameMsg[MAXMESSAGE];
+message _characterMsg[MAXMESSAGE];
+message _animMsg[MAXMESSAGE];
 
-message idlemessage  = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
-message quitgamemessage = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
+message _idleMsg  = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
+message _quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
 
 message *TheMessage;
 
-pqueue Game;
-pqueue Anim;
-pqueue Homo;
+pqueue _gameQueue;
+pqueue _animQueue;
+pqueue _characterQueue;
 
 /*-------------------------------------------------------------------------*/
 /*                                 SCRIPT           					   */

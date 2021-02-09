@@ -132,7 +132,7 @@ void PlayDialog(uint16 i) {
 	_curSubTitle = 0;
 	SemShowHomo = false;		        // prima non c'era
 
-	InitQueue(&Homo);
+	InitQueue(&_characterQueue);
 	g_vm->_inventoryStatus = INV_OFF;
 	g_vm->_inventoryCounter = INVENTORY_HIDE;
 	ClearText();

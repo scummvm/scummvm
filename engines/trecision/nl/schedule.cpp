@@ -38,10 +38,12 @@ int maxmesg, maxmesh, maxmesa;
 /*                               GETMESSAGE           					   */
 /*-------------------------------------------------------------------------*/
 bool GetMessage(pqueue *lq) {
-	if (!(lq->len)) return true;
+	if (!(lq->len))
+		return true;
 
 	TheMessage = lq->event[lq->head++];
-	if (lq->head == MAXMESSAGE) lq->head = 0;
+	if (lq->head == MAXMESSAGE)
+		lq->head = 0;
 	lq->len--;
 
 	return false;
@@ -51,13 +53,13 @@ bool GetMessage(pqueue *lq) {
 /*                            INITMESSAGESYSTEM          				   */
 /*-------------------------------------------------------------------------*/
 void InitMessageSystem() {
-	InitQueue(&Game);
-	InitQueue(&Anim);
-	InitQueue(&Homo);
+	InitQueue(&_gameQueue);
+	InitQueue(&_animQueue);
+	InitQueue(&_characterQueue);
 	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		Game.event[i] = &GameMessage[i];
-		Homo.event[i] = &HomoMessage[i];
-		Anim.event[i] = &AnimMessage[i];
+		_gameQueue.event[i] = &_gameMsg[i];
+		_characterQueue.event[i] = &_characterMsg[i];
+		_animQueue.event[i] = &_animMsg[i];
 	}
 }
 
@@ -78,9 +80,12 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 			 uint8 bparam, uint32 lparam) {
 	pqueue *lq;
 
-	if (cls <= CLASS_GAME)   lq = &Game;
-	else if (cls <= CLASS_ANIM) lq = &Anim;
-	else        lq = &Homo;
+	if (cls <= CLASS_GAME)
+		lq = &_gameQueue;
+	else if (cls <= CLASS_ANIM)
+		lq = &_animQueue;
+	else
+		lq = &_characterQueue;
 
 	if (lq->len >= MAXMESSAGE)
 		return;
@@ -96,15 +101,19 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	lm->lparam  = lparam;
 	lm->timestamp = TheTime;
 
-	if (lq->tail == MAXMESSAGE) lq->tail = 0;
+	if (lq->tail == MAXMESSAGE)
+		lq->tail = 0;
 	lq->len++;
 
-	if (lq == &Game)
-		if (lq->len > maxmesg) maxmesg = lq->len;
-	if (lq == &Anim)
-		if (lq->len > maxmesa) maxmesa = lq->len;
-	if (lq == &Homo)
-		if (lq->len > maxmesh) maxmesh = lq->len;
+	if (lq == &_gameQueue)
+		if (lq->len > maxmesg)
+			maxmesg = lq->len;
+	if (lq == &_animQueue)
+		if (lq->len > maxmesa)
+			maxmesa = lq->len;
+	if (lq == &_characterQueue)
+		if (lq->len > maxmesh)
+			maxmesh = lq->len;
 
 	OrderEvent(lq);
 }
@@ -120,25 +129,27 @@ void Scheduler() {
 	while (retry) {
 		retry = false;
 		switch (token) {
-
 		case CLASS_GAME:
 			if (Counter++ <= 30) {
 				token = CLASS_ANIM;
-				if (GetMessage(&Game)) TheMessage = &idlemessage;
+				if (GetMessage(&_gameQueue))
+					TheMessage = &_idleMsg;
 			} else {
 				Counter = 0;
-				TheMessage = &idlemessage;
+				TheMessage = &_idleMsg;
 			}
 			break;
 
 		case CLASS_ANIM:
 			token = CLASS_HOMO;
-			if (GetMessage(&Anim)) retry = true;
+			if (GetMessage(&_animQueue))
+				retry = true;
 			break;
 
 		case CLASS_HOMO:
 			token = CLASS_GAME;
-			if ((SemPaintHomo) || (GetMessage(&Homo))) retry = true;
+			if ((SemPaintHomo) || (GetMessage(&_characterQueue)))
+				retry = true;
 			break;
 
 		}
@@ -149,10 +160,9 @@ void Scheduler() {
 /*                            PROCESSTHEMESSAGE          				   */
 /*-------------------------------------------------------------------------*/
 void ProcessTheMessage() {
-SUPEREVENT:
 	switch (TheMessage->cls) {
 	case MC_CHARACTER:
-		doHomo();
+		doCharacter();
 		break;
 
 	case MC_IDLE:
@@ -199,13 +209,12 @@ SUPEREVENT:
 /*                               ORDEREVENT           					   */
 /*-------------------------------------------------------------------------*/
 void OrderEvent(pqueue *lq) {
-	uint8 pos;
-
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
-	for (pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos))
+	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos))
 		if (lq->event[pos]->priority > lq->event[PredEvent(pos)]->priority) {
-			if (lq->event[pos]->priority < MP_HIGH) lq->event[pos]->priority++;
+			if (lq->event[pos]->priority < MP_HIGH)
+				lq->event[pos]->priority++;
 			SwapMessage(lq->event[pos], lq->event[PredEvent(pos)]);
 		}
 }
@@ -214,10 +223,10 @@ void OrderEvent(pqueue *lq) {
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
 bool TestEmptyQueue(pqueue *lq, uint8 cls) {
-	uint8 pos;
-
-	for (pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1)
-		if (lq->event[pos]->cls != cls) return false;
+	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+		if (lq->event[pos]->cls != cls)
+			return false;
+	}
 
 	return true;
 }
@@ -226,22 +235,20 @@ bool TestEmptyQueue(pqueue *lq, uint8 cls) {
 /*                       TESTEMPTYHOMOQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
 bool TestEmptyHomoQueue4Script(pqueue *lq) {
-	uint8 pos;
-
-	for (pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1)
-
+	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
 		/*		if (!(( lq->event[pos]->cls == MC_CHARACTER) &&
 					(( lq->event[pos]->event == ME_CHARACTERACTION) ||
-			( lq->event[pos]->event == ME_HOMOCONTINUEACTION)) &&
+			( lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)) &&
 			( lq->event[pos]->lparam == false) &&
 			( lq->event[pos]->wparam1 > DEFAULTACTIONS)))
 		*/
 		if (((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERACTION)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTO)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTOACTION)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOGOTOEXAMINE)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_HOMOCONTINUEACTION)))
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTO)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTOACTION)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTOEXAMINE)) ||
+				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)))
 			return false;
+	}
 
 //	true quando:
 //	1) la coda e' vuota

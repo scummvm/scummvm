@@ -217,7 +217,7 @@ DEFINIZIONI MESSAGGI
 #define ME_SETANIMAZIONESPENTA 13       // (0, 0, 0, valore)
 #define ME_PLAYSOUND 14                 // (0,indice,0,0)
 #define ME_STOPSOUND 15                 // (0,indice,0,0)
-#define ME_HOMOSAY  16                  // (0,0,0,sentence)
+#define ME_CHARACTERSAY  16                  // (0,0,0,sentence)
 #define ME_REGENROOM 17
 #define ME_CHANGER  18                  // (0,room,door,0)
 #define ME_KILLICON  19                 // (0,icona,0,0)
@@ -240,9 +240,9 @@ DEFINIZIONI MESSAGGI
 
 #define ME_HOMOSHOW        0
 #define ME_HOMORESETMOVE   1
-#define ME_HOMOGOTO        2
-#define ME_HOMOGOTOACTION  3
-#define ME_HOMOGOTOEXAMINE 4
+#define ME_CHARACTERGOTO        2
+#define ME_CHARACTERGOTOACTION  3
+#define ME_CHARACTERGOTOEXAMINE 4
 
 #define ME_HOMOSTOP        5
 #define ME_HOMOTAKE        6
@@ -250,6 +250,6 @@ DEFINIZIONI MESSAGGI
 #define ME_HOMOCLEARQUEUE  8
 
 #define ME_CHARACTERACTION          9
-#define ME_HOMOCONTINUEACTION 10
+#define ME_CHARACTERCONTINUEACTION 10
 #define ME_HOMOGOTOEXIT       11
 #define ME_HOMODOACTION		  12
