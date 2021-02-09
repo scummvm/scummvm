@@ -3193,7 +3193,8 @@ void doDoing() {
 		TheMessage->event = ME_WAITOPENCLOSE;
 // senza break!
 	case ME_WAITOPENCLOSE:
-		if (TheAnim) switch (TheMessage->bparam) {
+		if (TheAnim)
+			switch (TheMessage->bparam) {
 				/*				case 0:
 									if(AnimObj[TheAnim]._flag & ONOFF)
 									{
@@ -3210,7 +3211,7 @@ void doDoing() {
 									break;
 				*/
 			}
-//			_obj[TheAliasObj]._mode |= OBJMODE_OBJSTATUS;
+		//			_obj[TheAliasObj]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
 			SemMouseEnabled = true;
@@ -3328,7 +3329,7 @@ void doScript() {
 //			_curSubTitle = TheMessage->lparam;
 //			break;
 
-	case ME_HOMOSAY:
+	case ME_CHARACTERSAY:
 		CharacterSay(TheMessage->lparam);
 		break;
 

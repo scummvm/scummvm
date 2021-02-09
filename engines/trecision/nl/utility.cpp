@@ -205,8 +205,8 @@ LOOP:
 /*                               EVALSCRIPT           					   */
 /*-------------------------------------------------------------------------*/
 void EvalScript() {
-	if ((TestEmptyHomoQueue4Script(&Homo) && (TestEmptyQueue(&Game, MC_DIALOG)) && (SemScreenRefreshed))) {
-//if(( Homo.len == 0 ) && (TestEmptyQueue(&Game,MC_DIALOG)) && (SemScreenRefreshed)) {
+	if ((TestEmptyHomoQueue4Script(&_characterQueue) && (TestEmptyQueue(&_gameQueue, MC_DIALOG)) && (SemScreenRefreshed))) {
+//if(( _characterQueue.len == 0 ) && (TestEmptyQueue(&_gameQueue,MC_DIALOG)) && (SemScreenRefreshed)) {
 		g_vm->CurScriptFrame[CurStack]++;
 		SemMouseEnabled = false;
 

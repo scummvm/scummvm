@@ -363,7 +363,7 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 
 	CharacterContinueTalk();
 
-	InitQueue(&Homo);
+	InitQueue(&_characterQueue);
 	actorStop();
 }
 

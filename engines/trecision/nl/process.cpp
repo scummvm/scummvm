@@ -119,14 +119,15 @@ void ProcessMouse() {
 	} else
 		MaskMouse = false;
 
-	if (!(mright || mleft))
-		if (!Semscriptactive)
+	if (!(mright || mleft)) {
+		if (!Semscriptactive) {
 			if ((tmpmx != oldmx) || (my != oldmy)) {
 				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, (uint16)tmpmx, (uint16)my, 0, 0);
 				oldmx = tmpmx;
 				oldmy = my;
 			}
-
+		}
+	}
 }
 
 } // End of namespace Trecision
