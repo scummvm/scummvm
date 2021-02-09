@@ -672,13 +672,13 @@ void PlayScelta(uint16 i) {
 						DoDialog
  --------------------------------------------------*/
 void doDialog() {
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_ENDCHOICE:
-		afterChoice(g_vm->TheMessage->wparam1);
+		afterChoice(g_vm->TheMessage->_wordParam1);
 		break;
 
 	case ME_STARTDIALOG:
-		PlayDialog(g_vm->TheMessage->wparam1);
+		PlayDialog(g_vm->TheMessage->_wordParam1);
 		break;
 	}
 }

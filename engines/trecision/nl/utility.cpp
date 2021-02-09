@@ -38,13 +38,13 @@
 
 namespace Trecision {
 
-#define SendFrame(i) doEvent(ScriptFrame[i].cls, 	\
-							ScriptFrame[i].event,   \
+#define SendFrame(i) doEvent(ScriptFrame[i]._class, 	\
+							ScriptFrame[i]._event,   \
 							MP_DEFAULT,             \
-							ScriptFrame[i].wparam1, \
-							ScriptFrame[i].wparam2, \
-							ScriptFrame[i].bparam , \
-							ScriptFrame[i].lparam)
+							ScriptFrame[i]._wordParam1, \
+							ScriptFrame[i]._wordParam2, \
+							ScriptFrame[i]._byteParam , \
+							ScriptFrame[i]._longParam)
 
 uint8 CurStack = 0;
 
@@ -185,17 +185,17 @@ void PlayScript(uint16 i) {
 	CurStack++;
 	Semscriptactive = true;
 	SemMouseEnabled = false;
-	g_vm->CurScriptFrame[CurStack] = Script[i].firstframe;
+	g_vm->CurScriptFrame[CurStack] = Script[i]._firstFrame;
 
 	// se evento vuoto termina lo scrpt
-	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]].event == 0)) {
+	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]]._event == 0)) {
 		EndScript();
 		return;
 	}
 
 LOOP:
 	SendFrame(g_vm->CurScriptFrame[CurStack]);
-	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].event == 0))) {
+	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._noWait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._event == 0))) {
 		g_vm->CurScriptFrame[CurStack]++;
 		goto LOOP;
 	}
@@ -210,14 +210,14 @@ void EvalScript() {
 		g_vm->CurScriptFrame[CurStack]++;
 		SemMouseEnabled = false;
 
-		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]].event == 0)) {
+		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]]._event == 0)) {
 			EndScript();
 			return;
 		}
 
 LOOP:
 		SendFrame(g_vm->CurScriptFrame[CurStack]);
-		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]].nowait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].cls == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1].event == 0))) {
+		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._noWait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._event == 0))) {
 			g_vm->CurScriptFrame[CurStack]++;
 			goto LOOP;
 		}

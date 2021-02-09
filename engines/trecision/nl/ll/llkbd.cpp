@@ -152,20 +152,20 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
-		ScriptFrame[i].cls = dataNl.readByte();
-		ScriptFrame[i].event = dataNl.readByte();
-		ScriptFrame[i].bparam = dataNl.readByte();
+		ScriptFrame[i]._class = dataNl.readByte();
+		ScriptFrame[i]._event = dataNl.readByte();
+		ScriptFrame[i]._byteParam = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		ScriptFrame[i].wparam1 = dataNl.readUint16LE();
-		ScriptFrame[i].wparam2 = dataNl.readUint16LE();
-		ScriptFrame[i].lparam = dataNl.readUint16LE();
-		ScriptFrame[i].nowait = !(dataNl.readByte() == 0);
+		ScriptFrame[i]._wordParam1 = dataNl.readUint16LE();
+		ScriptFrame[i]._wordParam2 = dataNl.readUint16LE();
+		ScriptFrame[i]._longParam = dataNl.readUint16LE();
+		ScriptFrame[i]._noWait = !(dataNl.readByte() == 0);
 		dataNl.readByte();
 	}
 
 	for (int i = 0; i < MAXSCRIPT; ++i) {
-		Script[i].firstframe = dataNl.readUint16LE();
-		Script[i].flag = !(dataNl.readByte() == 0);
+		Script[i]._firstFrame = dataNl.readUint16LE();
+		Script[i]._flag = !(dataNl.readByte() == 0);
 		dataNl.readByte();
 	}
 

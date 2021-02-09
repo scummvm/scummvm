@@ -61,9 +61,9 @@ int NlVer = 102;
 /*                                DOACTION           					   */
 /*-------------------------------------------------------------------------*/
 void doAction() {
-	if ((g_vm->TheMessage->event == ME_MOUSEOPERATE) || (g_vm->TheMessage->event == ME_MOUSEEXAMINE)) {
+	if ((g_vm->TheMessage->_event == ME_MOUSEOPERATE) || (g_vm->TheMessage->_event == ME_MOUSEEXAMINE)) {
 		//		Azione sulla zona GAME
-		g_vm->_curObj = g_vm->TheMessage->lparam;
+		g_vm->_curObj = g_vm->TheMessage->_longParam;
 		if (g_vm->_curObj == oLASTLEV5)
 			CharacterSay(2003);
 
@@ -95,7 +95,7 @@ void doAction() {
 			return;
 		}
 
-		if ((g_vm->TheMessage->event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
+		if ((g_vm->TheMessage->_event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
 			SemUseWithStarted = true;
 			SemInventoryLocked = true;
 			g_vm->_useWith[USED] = g_vm->_curObj;
@@ -107,7 +107,7 @@ void doAction() {
 		}
 	}
 
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_MOUSEOPERATE:
 		if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 			doRoomIn(g_vm->_curObj);
@@ -160,11 +160,11 @@ void doMouse() {
 	static int8 lastpos;
 	int8 curpos;
 
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_MMOVE:
-		if (GAMEAREA(g_vm->TheMessage->wparam2))
+		if (GAMEAREA(g_vm->TheMessage->_wordParam2))
 			curpos = POSGAME;
-		else if (INVAREA(g_vm->TheMessage->wparam2))
+		else if (INVAREA(g_vm->TheMessage->_wordParam2))
 			curpos = POSINV;
 		else
 			curpos = POSUP;
@@ -173,7 +173,7 @@ void doMouse() {
 		if (curpos == POSGAME) {
 			lastpos = POSGAME;
 			if ((SemSomeOneSpeak) || (SemDialogMenuActive) || (SemDialogActive) || (SemUseWithLocked)) break;
-			CheckMask(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2);
+			CheckMask(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2);
 			//				per la ruota della 2C
 			if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 				ShowObjName((oRUOTA1A2C % 3) + oRUOTAA2C, true);
@@ -223,7 +223,7 @@ void doMouse() {
 			if (g_vm->_inventoryStatus == INV_OFF)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else if (g_vm->_inventoryStatus == INV_INACTION)
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 		}
 //			Zona UP
 		else {
@@ -237,7 +237,7 @@ void doMouse() {
 			lastpos = POSUP;
 
 			if (SemDialogMenuActive)
-				UpdateScelte(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2);
+				UpdateScelte(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2);
 		}
 		break;
 
@@ -254,26 +254,26 @@ void doMouse() {
 			break;
 
 		if ((SemDialogActive) && (SemDialogMenuActive)) {
-			ScegliScelta(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2);
+			ScegliScelta(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2);
 			break;
 		}
 //			per il dislocatore
 		if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
 			if ((g_vm->_obj[g_vm->_curObj]._goRoom == r45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S) &&
-			    (g_vm->_obj[oEXIT41D]._goRoom == r45S) && (g_vm->TheMessage->event == ME_MRIGHT))
+			    (g_vm->_obj[oEXIT41D]._goRoom == r45S) && (g_vm->TheMessage->_event == ME_MRIGHT))
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 			else if ((g_vm->_obj[g_vm->_curObj]._goRoom == r45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S) &&
-			         (g_vm->_obj[oEXIT41D]._goRoom != r45S) && (g_vm->TheMessage->event == ME_MRIGHT)) {
+			         (g_vm->_obj[oEXIT41D]._goRoom != r45S) && (g_vm->TheMessage->_event == ME_MRIGHT)) {
 				g_vm->_obj[oEXIT41D]._goRoom = r45S;
 				g_vm->_inventoryObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 0, g_vm->_curObj);
-			} else if (g_vm->_obj[oEXIT41D]._goRoom != g_vm->_obj[g_vm->_curObj]._goRoom && (g_vm->TheMessage->event == ME_MRIGHT)) {
+			} else if (g_vm->_obj[oEXIT41D]._goRoom != g_vm->_obj[g_vm->_curObj]._goRoom && (g_vm->TheMessage->_event == ME_MRIGHT)) {
 				g_vm->_obj[oEXIT41D]._goRoom = g_vm->_obj[g_vm->_curObj]._goRoom;
 				g_vm->_inventoryObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT41D]._goRoom, 0, 0, g_vm->_curObj);
-			} else if ((g_vm->TheMessage->event == ME_MLEFT) && g_vm->_curObj)
+			} else if ((g_vm->TheMessage->_event == ME_MLEFT) && g_vm->_curObj)
 				doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
-			else if ((g_vm->TheMessage->event == ME_MRIGHT) && g_vm->_curObj)
+			else if ((g_vm->TheMessage->_event == ME_MRIGHT) && g_vm->_curObj)
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 			break;
 		}
@@ -281,7 +281,7 @@ void doMouse() {
 //			serpente scappa 52
 		else if (g_vm->_curRoom == r52) {
 			if (g_vm->_obj[oSERPENTEU52]._mode & OBJMODE_OBJSTATUS)
-				if (GAMEAREA(g_vm->TheMessage->wparam2) && !SemUseWithStarted && (g_vm->_curObj != oSERPENTEU52)) {
+				if (GAMEAREA(g_vm->TheMessage->_wordParam2) && !SemUseWithStarted && (g_vm->_curObj != oSERPENTEU52)) {
 					StartCharacterAction(a526, 0, 1, 0);
 					g_vm->_obj[oSCAVO51]._anim = a516;
 					memcpy(&Serp52, g_vm->TheMessage, sizeof(Serp52));
@@ -291,33 +291,33 @@ void doMouse() {
 //			fine serpente scappa 52
 //			sys
 		else if (g_vm->_curRoom == rSYS) {
-			CheckMask(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2);
+			CheckMask(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2);
 			DoSys(g_vm->_curObj);
 			break;
 		}
 //			fine sys
 
 // 			Se sono in stanze senza omino tipo la mappa o libro
-		if ((SemCharacterExist == false)/* && (GAMEAREA(TheMessage->wparam2))*/) {
-			if ((INVAREA(g_vm->TheMessage->wparam2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
-				if (ICONAREA(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2) && (WhatIcon(g_vm->TheMessage->wparam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+		if ((SemCharacterExist == false)/* && (GAMEAREA(TheMessage->_wordParam2))*/) {
+			if ((INVAREA(g_vm->TheMessage->_wordParam2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
+				if (ICONAREA(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2) && (WhatIcon(g_vm->TheMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
 					g_vm->_lightIcon = 0xFF;
 					RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
-					if (g_vm->TheMessage->event == ME_MRIGHT)
-						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+					if (g_vm->TheMessage->_event == ME_MRIGHT)
+						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 					else if (SemUseWithStarted)
-						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 					else
-						doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+						doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 				}
 				break;
 			}
 
-			if ((g_vm->TheMessage->event == ME_MLEFT) && (g_vm->_curObj))
+			if ((g_vm->TheMessage->_event == ME_MLEFT) && (g_vm->_curObj))
 				doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
-			else if ((g_vm->TheMessage->event == ME_MRIGHT) && (g_vm->_curObj))
+			else if ((g_vm->TheMessage->_event == ME_MRIGHT) && (g_vm->_curObj))
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 
 			break;
@@ -325,12 +325,12 @@ void doMouse() {
 
 //			gestione particolare ruote 2C
 		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
-			if (CheckMask(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2)) {
+			if (CheckMask(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2)) {
 				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 					ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
 				else if (g_vm->_curObj == oPULSANTE2C) {
 					extern uint16 *SmackImagePointer, *ImagePointer;
-					if (g_vm->TheMessage->event == ME_MLEFT) {
+					if (g_vm->TheMessage->_event == ME_MLEFT) {
 						doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 						break;
 					}
@@ -368,9 +368,9 @@ void doMouse() {
 				} else
 					break;
 
-				if (g_vm->TheMessage->event == ME_MLEFT)
+				if (g_vm->TheMessage->_event == ME_MLEFT)
 					ruotepos[ruota] = (ruotepos[ruota] > 10) ? 0 : ruotepos[ruota] + 1;
-				if (g_vm->TheMessage->event == ME_MRIGHT)
+				if (g_vm->TheMessage->_event == ME_MRIGHT)
 					ruotepos[ruota] = (ruotepos[ruota] < 1) ? 11 : ruotepos[ruota] - 1;
 
 				NLPlaySound(wRUOTE2C);
@@ -383,16 +383,16 @@ void doMouse() {
 //			fine gestione particolare
 
 //			Zona GAME
-		if (GAMEAREA(g_vm->TheMessage->wparam2) && (!_playingAnims[1])) {
+		if (GAMEAREA(g_vm->TheMessage->_wordParam2) && (!_playingAnims[1])) {
 			int pmousex, pmousey;
 
 			if (Semscriptactive)
-				g_vm->_curObj = g_vm->TheMessage->lparam;
+				g_vm->_curObj = g_vm->TheMessage->_longParam;
 
-			pmousex = g_vm->TheMessage->wparam1;
-			pmousey = g_vm->TheMessage->wparam2;
+			pmousex = g_vm->TheMessage->_wordParam1;
+			pmousey = g_vm->TheMessage->_wordParam2;
 			if (!(AtMouseClick(g_vm->_curObj))) {
-				if (CheckMask(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2)) {
+				if (CheckMask(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2)) {
 					if ((g_vm->_obj[g_vm->_curObj]._lim[2] - g_vm->_obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
 						pmousex = (g_vm->_obj[g_vm->_curObj]._lim[0] + g_vm->_obj[g_vm->_curObj]._lim[2]) / 2;
 						pmousey = ((g_vm->_obj[g_vm->_curObj]._lim[1] + g_vm->_obj[g_vm->_curObj]._lim[3]) / 2) + TOP;
@@ -403,7 +403,7 @@ void doMouse() {
 			}
 			InitQueue(&g_vm->_characterQueue);
 
-			if (CheckMask(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2) && (!SemDialogActive)) {
+			if (CheckMask(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2) && (!SemDialogActive)) {
 				if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oSCALA1D))
 					g_vm->_curObj = oDONNA1D;
 				else if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oCARTELLO2B) && (g_vm->_curObj != od2BALLA28)) {
@@ -427,7 +427,7 @@ void doMouse() {
 					break;
 				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oFRONTOFFICEC35) || (g_vm->_curObj == oFRONTOFFICEA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
 					g_vm->_curObj = oLASTLEV5;
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->_curObj);
 					if (SemUseWithStarted) {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
@@ -443,17 +443,17 @@ void doMouse() {
 						ClearText();
 					}
 					break;
-				} else if ((g_vm->TheMessage->event == ME_MLEFT) &&
+				} else if ((g_vm->TheMessage->_event == ME_MLEFT) &&
 				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
 				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 					break;
 				}
 
-				if (g_vm->TheMessage->event == ME_MRIGHT) {
+				if (g_vm->TheMessage->_event == ME_MRIGHT) {
 					if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE) && (g_vm->_curObj != 0)) {
 						if (SemUseWithStarted) {
-							doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+							doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 							return;
 						} else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, g_vm->_obj[g_vm->_curObj]._anim, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
@@ -466,37 +466,37 @@ void doMouse() {
 						_characterGoToPosition = -1;
 						actorStop();
 						nextStep();
-						doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->_curObj);
+						doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->_curObj);
 					} else
-						doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->_curObj);
+						doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->_curObj);
 				} else
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->_curObj);
 			} else if ((SemUseWithStarted) && !(g_vm->_useWith[WITH]))
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 			else
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 		}
 //			Zona INVENTORY
-		else if (INVAREA(g_vm->TheMessage->wparam2)) {
+		else if (INVAREA(g_vm->TheMessage->_wordParam2)) {
 			if (_playingAnims[1] || SemDialogActive) break;
 			if (g_vm->_curRoom == rSYS)
 				break;
 
-			if (ICONAREA(g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2) && (WhatIcon(g_vm->TheMessage->wparam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+			if (ICONAREA(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2) && (WhatIcon(g_vm->TheMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 				InitQueue(&g_vm->_characterQueue);
 				actorStop();
 				nextStep();
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 				g_vm->_useWith[WITH] = 0;
 				g_vm->_curObj = 0;
 				g_vm->_lightIcon = 0xFF;
 				RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
-				if (g_vm->TheMessage->event == ME_MRIGHT)
-					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+				if (g_vm->TheMessage->_event == ME_MRIGHT)
+					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 				else if (SemUseWithStarted)
-					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 				else
-					doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, 0);
+					doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, 0);
 			}
 		}
 		break;
@@ -507,7 +507,7 @@ void doMouse() {
 /*                                DOINVENTORY          					   */
 /*-------------------------------------------------------------------------*/
 void doInventory() {
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_OPEN:
 		if ((!SemInventoryLocked) && (g_vm->_inventoryStatus == INV_OFF) && !(SemDialogActive)) {
 			g_vm->_inventoryCounter = INVENTORY_HIDE;
@@ -643,10 +643,10 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                   DOHOMO                  			   */
+/*                                DOCHARACTER                  			   */
 /*-------------------------------------------------------------------------*/
 void doCharacter() {
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_CHARACTERDOACTION:
 	case ME_CHARACTERGOTOACTION:
 	case ME_CHARACTERGOTOEXAMINE:
@@ -676,14 +676,14 @@ void doCharacter() {
 		else {
 			SemMouseEnabled = true;
 
-			if (g_vm->TheMessage->event == ME_CHARACTERGOTOACTION)
-				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->TheMessage->lparam);
-			else if (g_vm->TheMessage->event == ME_CHARACTERGOTOEXAMINE)
-				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, 0, g_vm->TheMessage->lparam);
-			else if (g_vm->TheMessage->event == ME_CHARACTERGOTOEXIT) {
+			if (g_vm->TheMessage->_event == ME_CHARACTERGOTOACTION)
+				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->TheMessage->_longParam);
+			else if (g_vm->TheMessage->_event == ME_CHARACTERGOTOEXAMINE)
+				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, 0, g_vm->TheMessage->_longParam);
+			else if (g_vm->TheMessage->_event == ME_CHARACTERGOTOEXIT) {
 				SemShowHomo = 0;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
-			} else if (g_vm->TheMessage->event == ME_CHARACTERDOACTION) {
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
+			} else if (g_vm->TheMessage->_event == ME_CHARACTERDOACTION) {
 				extern uint16 lastobj;
 				lastobj = 0;
 				ShowObjName(g_vm->_curObj, true);
@@ -699,13 +699,13 @@ void doCharacter() {
 		g_vm->_regenInvStartLine = INVENTORY_HIDE;
 		RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 		g_vm->_inventoryStatus = INV_OFF;
-		if (g_vm->TheMessage->wparam1 > hLAST) {
-			StartSmackAnim(g_vm->TheMessage->wparam1);
-			InitAtFrameHandler(g_vm->TheMessage->wparam1, g_vm->TheMessage->lparam);
+		if (g_vm->TheMessage->_wordParam1 > hLAST) {
+			StartSmackAnim(g_vm->TheMessage->_wordParam1);
+			InitAtFrameHandler(g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_longParam);
 			SemMouseEnabled = false;
-			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
+			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
 		} else
-			actorDoAction(g_vm->TheMessage->wparam1);
+			actorDoAction(g_vm->TheMessage->_wordParam1);
 
 		ClearText();
 		break;
@@ -725,13 +725,13 @@ void doCharacter() {
 			lastobj = 0;
 			ShowObjName(g_vm->_curObj, true);
 			//	If the room changes at the end
-			if (g_vm->TheMessage->wparam2) {
+			if (g_vm->TheMessage->_wordParam2) {
 				SemShowHomo = 0;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->TheMessage->wparam2, 0, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
-			} else if (g_vm->TheMessage->bparam)
-				setPosition(g_vm->TheMessage->bparam);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->TheMessage->_wordParam2, 0, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
+			} else if (g_vm->TheMessage->_byteParam)
+				setPosition(g_vm->TheMessage->_byteParam);
 
-			if (g_vm->TheMessage->wparam1 == g_vm->_obj[oCANCELLATA1B]._anim)
+			if (g_vm->TheMessage->_wordParam1 == g_vm->_obj[oCANCELLATA1B]._anim)
 				if (!(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 					PlayDialog(dF181);
 					SemMouseEnabled = false;
@@ -747,7 +747,7 @@ void doCharacter() {
 /*                                  DOSYSTEM           					   */
 /*-------------------------------------------------------------------------*/
 void doSystem() {
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 	case ME_START:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curRoom, 0, 0, g_vm->_curObj);
 		break;
@@ -765,11 +765,11 @@ void doSystem() {
 		if (SemWaitRegen)
 			REEVENT;
 
-		if ((g_vm->_curRoom == r41D) && (g_vm->_oldRoom != g_vm->TheMessage->wparam1))
+		if ((g_vm->_curRoom == r41D) && (g_vm->_oldRoom != g_vm->TheMessage->_wordParam1))
 			NlDissolve(30);
 
 		g_vm->_oldRoom = g_vm->_curRoom;
-		g_vm->_curRoom = g_vm->TheMessage->wparam1;
+		g_vm->_curRoom = g_vm->TheMessage->_wordParam1;
 		InitQueue(&g_vm->_gameQueue);
 		InitQueue(&g_vm->_animQueue);
 		InitQueue(&g_vm->_characterQueue);
@@ -894,11 +894,11 @@ void doSystem() {
 			read3D("4P2.3d");
 		//			end save/load
 
-		setPosition(g_vm->TheMessage->bparam);
+		setPosition(g_vm->TheMessage->_byteParam);
 		actorStop();
 
-		if (g_vm->TheMessage->wparam2)
-			StartCharacterAction(g_vm->TheMessage->wparam2, 0, 0, 0);
+		if (g_vm->TheMessage->_wordParam2)
+			StartCharacterAction(g_vm->TheMessage->_wordParam2, 0, 0, 0);
 
 		AtEndChangeRoom();
 
