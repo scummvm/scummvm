@@ -217,7 +217,7 @@ void ProcessTheMessage();
 void WaitUntilTheMessage(struct tagMessage *m);
 void OrderEvent(struct MessageQueue *lq);
 bool TestEmptyQueue(struct MessageQueue *lq, uint8 cls);
-bool TestEmptyHomoQueue4Script(struct MessageQueue *lq);
+bool TestEmptyCharacterQueue4Script(struct MessageQueue *lq);
 void SwapMessage(struct tagMessage *m1, struct tagMessage *m2);
 void RepaintString();
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool Homo);
