@@ -3152,13 +3152,13 @@ void doDoing() {
 
 	warning("doDoing");
 
-	if (g_vm->TheMessage->event <= ME_WAITOPENCLOSE) {
-		TheObj = g_vm->TheMessage->wparam1;
-		TheAnim = g_vm->TheMessage->wparam2;
+	if (g_vm->TheMessage->_event <= ME_WAITOPENCLOSE) {
+		TheObj = g_vm->TheMessage->_wordParam1;
+		TheAnim = g_vm->TheMessage->_wordParam2;
 		//		TheAliasObj = _obj[TheObj].alias;
 	}
 
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 
 	case ME_INITOPENCLOSE:
 		if (_actor._curAction == hSTAND)
@@ -3176,7 +3176,7 @@ void doDoing() {
 				break;
 			}
 			if (cont)
-				doEvent(g_vm->TheMessage->cls, ME_OPENCLOSE, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
+				doEvent(g_vm->TheMessage->_class, ME_OPENCLOSE, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
 			else
 				REEVENT;
 		}
@@ -3190,21 +3190,21 @@ void doDoing() {
 //    else
 			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, TheAnim, 0, 0, 0);
 		}
-		g_vm->TheMessage->event = ME_WAITOPENCLOSE;
+		g_vm->TheMessage->_event = ME_WAITOPENCLOSE;
 		// senza break!
 	case ME_WAITOPENCLOSE:
 		if (TheAnim)
-			switch (g_vm->TheMessage->bparam) {
+			switch (g_vm->TheMessage->_byteParam) {
 				/*				case 0:
 									if(AnimObj[TheAnim]._flag & ONOFF)
 									{
-										TheMessage->bparam = 1;
+										TheMessage->_byteParam = 1;
 										ObjOpen(TheObj);
 									}
 									REEVENT;
 									return;
 								case 1:
-									if(!(AnimObj[TheAnim]._flag & ONOFF)) TheMessage->bparam = 2;
+									if(!(AnimObj[TheAnim]._flag & ONOFF)) TheMessage->_byteParam = 2;
 									REEVENT;
 									return;
 								case 2:
@@ -3224,22 +3224,22 @@ void doDoing() {
 /*-------------------------------------------------------------------------*/
 void doScript() {
 	static uint32 me_pausestarttime = 0;
-	uint8 campo = g_vm->TheMessage->bparam;
-	uint16 indice = g_vm->TheMessage->wparam1;
-	uint16 indice2 = g_vm->TheMessage->wparam2;
-	uint32 valore = g_vm->TheMessage->lparam;
+	uint8 campo = g_vm->TheMessage->_byteParam;
+	uint16 indice = g_vm->TheMessage->_wordParam1;
+	uint16 indice2 = g_vm->TheMessage->_wordParam2;
+	uint32 valore = g_vm->TheMessage->_longParam;
 
-	switch (g_vm->TheMessage->event) {
+	switch (g_vm->TheMessage->_event) {
 
 	case ME_PAUSE:
 		if (!me_pausestarttime) {
 			me_pausestarttime = TheTime;
-			doEvent(g_vm->TheMessage->cls, g_vm->TheMessage->event, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
+			doEvent(g_vm->TheMessage->_class, g_vm->TheMessage->_event, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
 		} else {
-			if (TheTime >= (me_pausestarttime + g_vm->TheMessage->wparam1))
+			if (TheTime >= (me_pausestarttime + g_vm->TheMessage->_wordParam1))
 				me_pausestarttime = 0;
 			else
-				doEvent(g_vm->TheMessage->cls, g_vm->TheMessage->event, g_vm->TheMessage->priority, g_vm->TheMessage->wparam1, g_vm->TheMessage->wparam2, g_vm->TheMessage->bparam, g_vm->TheMessage->lparam);
+				doEvent(g_vm->TheMessage->_class, g_vm->TheMessage->_event, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
 		}
 		break;
 
@@ -3325,18 +3325,18 @@ void doScript() {
 		break;
 
 //		case ME_SOMEONETALK:
-//			SomeOneTalk(dBattuta[TheMessage->lparam]+1,TheMessage->wparam1,TheMessage->wparam2,false);
-//			_curSubTitle = TheMessage->lparam;
+//			SomeOneTalk(dBattuta[TheMessage->_longParam]+1,TheMessage->_wordParam1,TheMessage->_wordParam2,false);
+//			_curSubTitle = TheMessage->_longParam;
 //			break;
 
 	case ME_CHARACTERSAY:
-		CharacterSay(g_vm->TheMessage->lparam);
+		CharacterSay(g_vm->TheMessage->_longParam);
 		break;
 
 	case ME_SETSEM:
-		switch (g_vm->TheMessage->wparam1) {
+		switch (g_vm->TheMessage->_wordParam1) {
 		case C_SEMDIAG:
-//F					SemDialogActive = TheMessage->wparam2 == 0 ? 0 : 1;
+//F					SemDialogActive = TheMessage->_wordParam2 == 0 ? 0 : 1;
 			break;
 		}
 		break;
@@ -3978,7 +3978,7 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		break;
 	case fSERPVIA: {
 		extern Message Serp52;
-		doEvent(Serp52.cls,  Serp52.event,  Serp52.priority, Serp52.wparam1, Serp52.wparam2, Serp52.bparam, Serp52.lparam);
+		doEvent(Serp52._class,  Serp52._event,  Serp52._priority, Serp52._wordParam1, Serp52._wordParam2, Serp52._byteParam, Serp52._longParam);
 	}
 	break;
 	case fPIRANHA:

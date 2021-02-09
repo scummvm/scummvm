@@ -127,15 +127,15 @@ typedef struct {
 
 // MESSAGGI PER LO SCHEDULER
 typedef struct tagMessage {
-	uint8 cls    ;                       // message class
-	uint8 event    ;                       // message name
-	uint8 priority ;                       // message priority
+	uint8 _class;                          // message class
+	uint8 _event    ;                       // message name
+	uint8 _priority ;                       // message priority
 
-	uint8 bparam;
-	uint16 wparam1  ;                       // byte parameter 1
-	uint16 wparam2  ;                       // byte parameter 2
-	uint32 lparam   ;                       // int parameter
-	uint32 timestamp;
+	uint8 _byteParam;
+	uint16 _wordParam1  ;                       // byte parameter 1
+	uint16 _wordParam2  ;                       // byte parameter 2
+	uint32 _longParam   ;                       // int parameter
+	uint32 _timestamp;
 } Message;
 
 // RETTANGOLO DI SCHERMO (no erase, please!)
@@ -157,23 +157,23 @@ struct SSortTable {
 };
 
 struct SScriptFrame {
-	uint8 cls;
-	uint8 event;
+	uint8 _class;
+	uint8 _event;
 
-	uint8 bparam;
+	uint8 _byteParam;
 
-	uint16 wparam1;
-	uint16 wparam2;
+	uint16 _wordParam1;
+	uint16 _wordParam2;
 
-	uint16 lparam;
+	uint16 _longParam;
 
-	bool  nowait;
+	bool  _noWait;
 };
 
 struct SScript {
-	uint16 firstframe;
-	uint8 flag;                            // 0 - BREAKABLE - Se si interrompe con la pressione dei tasti del mouse
-};                                      //  1 - DIALOGEXITNOANIM - Se lo script e' lanciato da un dialogo all'ultima battuta esce dal dialogo senza anim di link e di default
+	uint16 _firstFrame;
+	uint8 _flag;         // 0 - BREAKABLE - If it may be stopped by a mouse click
+};                       // 1 - DIALOGEXITNOANIM - If the script is launched from a dialogue at the last choice it exits the dialogue without link anim and by default
 
 struct SSound {
 	char  name[14];

@@ -71,7 +71,7 @@ void NextMessage() {
 	ProcessMouse();
 	Scheduler();
 
-	if ((g_vm->TheMessage->cls == MC_SYSTEM) && (g_vm->TheMessage->event == ME_QUIT))
+	if ((g_vm->TheMessage->_class == MC_SYSTEM) && (g_vm->TheMessage->_event == ME_QUIT))
 		CloseSys(NULL);
 
 	AtFrameHandler(BACKGROUND_ANIM);

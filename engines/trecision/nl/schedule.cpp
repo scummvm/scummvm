@@ -93,14 +93,14 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 
 	Message *lm = lq->event[lq->tail++];
 
-	lm->cls  = cls;
-	lm->event  = event;
-	lm->priority = priority;
-	lm->wparam1  = wparam1;
-	lm->wparam2  = wparam2;
-	lm->bparam  = bparam;
-	lm->lparam  = lparam;
-	lm->timestamp = TheTime;
+	lm->_class  = cls;
+	lm->_event  = event;
+	lm->_priority = priority;
+	lm->_wordParam1  = wparam1;
+	lm->_wordParam2  = wparam2;
+	lm->_byteParam  = bparam;
+	lm->_longParam  = lparam;
+	lm->_timestamp = TheTime;
 
 	if (lq->tail == MAXMESSAGE)
 		lq->tail = 0;
@@ -158,7 +158,7 @@ void Scheduler() {
 /*                            PROCESSTHEMESSAGE          				   */
 /*-------------------------------------------------------------------------*/
 void ProcessTheMessage() {
-	switch (g_vm->TheMessage->cls) {
+	switch (g_vm->TheMessage->_class) {
 	case MC_CHARACTER:
 		doCharacter();
 		break;
@@ -210,9 +210,9 @@ void OrderEvent(MessageQueue *lq) {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
 	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos)) {
-		if (lq->event[pos]->priority > lq->event[PredEvent(pos)]->priority) {
-			if (lq->event[pos]->priority < MP_HIGH)
-				lq->event[pos]->priority++;
+		if (lq->event[pos]->_priority > lq->event[PredEvent(pos)]->_priority) {
+			if (lq->event[pos]->_priority < MP_HIGH)
+				lq->event[pos]->_priority++;
 			SwapMessage(lq->event[pos], lq->event[PredEvent(pos)]);
 		}
 	}
@@ -223,7 +223,7 @@ void OrderEvent(MessageQueue *lq) {
 /*-------------------------------------------------------------------------*/
 bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
-		if (lq->event[pos]->cls != cls)
+		if (lq->event[pos]->_class != cls)
 			return false;
 	}
 
@@ -235,16 +235,16 @@ bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 /*-------------------------------------------------------------------------*/
 bool TestEmptyCharacterQueue4Script(MessageQueue *lq) {
 	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
-		/*		if (!(( lq->event[pos]->cls == MC_CHARACTER) &&
-					(( lq->event[pos]->event == ME_CHARACTERACTION) ||
-			( lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)) &&
-			( lq->event[pos]->lparam == false) &&
-			( lq->event[pos]->wparam1 > DEFAULTACTIONS)))
+		/*		if (!(( lq->_event[pos]->_class == MC_CHARACTER) &&
+					(( lq->_event[pos]->_event == ME_CHARACTERACTION) ||
+			( lq->_event[pos]->_event == ME_CHARACTERCONTINUEACTION)) &&
+			( lq->_event[pos]->_longParam == false) &&
+			( lq->_event[pos]->_wordParam1 > DEFAULTACTIONS)))
 		*/
-		if (lq->event[pos]->cls == MC_CHARACTER) {
-			if (lq->event[pos]->event == ME_CHARACTERACTION || lq->event[pos]->event == ME_CHARACTERGOTO
-				|| lq->event[pos]->event == ME_CHARACTERGOTOACTION || lq->event[pos]->event == ME_CHARACTERGOTOEXAMINE
-				|| lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)
+		if (lq->event[pos]->_class == MC_CHARACTER) {
+			if (lq->event[pos]->_event == ME_CHARACTERACTION || lq->event[pos]->_event == ME_CHARACTERGOTO
+				|| lq->event[pos]->_event == ME_CHARACTERGOTOACTION || lq->event[pos]->_event == ME_CHARACTERGOTOEXAMINE
+				|| lq->event[pos]->_event == ME_CHARACTERCONTINUEACTION)
 			return false;
 		}
 
