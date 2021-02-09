@@ -4008,8 +4008,8 @@ msgid ""
 msgstr ""
 "오류: '%s' 파일이 올바르게 추출되지 않았습니다.\n"
 "다음의 위키 페이지\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos 를 참조하여 "
-"DTSPEECH.XA와 *.STR 파일을 게임 디스크에서 추출하는 방법을 확인하십시오."
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos 를 참조하"
+"여 DTSPEECH.XA와 *.STR 파일을 게임 디스크에서 추출하는 방법을 확인하십시오."
 
 #: engines/dragons/metaengine.cpp:124
 msgid ""
@@ -4022,7 +4022,8 @@ msgid ""
 msgstr ""
 "오류 : 게임 데이터 파일이 잘못 추출 된 것 같습니다.\n"
 "\n"
-"특별한 방법을 사용하여 STR 및 XA 파일 만 추출해야합니다. 나머지는 게임 CD에서 정상적으로 복사해야합니다.\n"
+"특별한 방법을 사용하여 STR 및 XA 파일 만 추출해야합니다. 나머지는 게임 CD에"
+"서 정상적으로 복사해야합니다.\n"
 "\n"
 " https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons 참조"
 
@@ -6569,7 +6570,8 @@ msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr "'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d"
+msgstr ""
+"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d"
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
