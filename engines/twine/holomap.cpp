@@ -300,6 +300,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->_renderer->setCameraAngle(0, 0, 0, data.x, data.y, data.z, 5300);
 
 	renderHolomapSurfacePolygons();
+	_engine->flip();
 
 	const Location &loc = _locations[data.locationIdx];
 	renderHolomapModel(_engine->_resources->holomapPointModelPtr, loc.x, loc.y, 0);
@@ -346,7 +347,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		}
 		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
-		_engine->_renderer->setLightVector(0xffffffc4, 128, 0);
+		_engine->_renderer->setLightVector(-60, 128, 0);
 		const Common::Rect rect(0, 200, 199, 479);
 		_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, newAngle, 0, modelPtr);
@@ -487,19 +488,18 @@ void Holomap::processHolomap() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	loadHolomapGFX();
-	renderHolomapSurfacePolygons();
-	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(COLOR_9);
+	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
 
 	int currentLocation = _engine->_scene->currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 	_engine->flip();
 
 	int32 time = _engine->lbaTime;
-	int32 xRot = 0;
-	int32 yRot = 0;
+	int32 xRot = ClampAngle(_locations[currentLocation].x);
+	int32 yRot = ClampAngle(_locations[currentLocation].y);
 	bool rotate = false;
 	bool redraw = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
@@ -573,8 +573,7 @@ void Holomap::processHolomap() {
 			if (rotate) {
 				_engine->_menu->drawBox(300, 170, 340, 210);
 			}
-			//_engine->copyBlockPhys(rect);
-			_engine->flip();
+			_engine->copyBlockPhys(rect);
 		}
 
 		if (rotate && xRot == _locations[currentLocation].x && yRot == _locations[currentLocation].y) {

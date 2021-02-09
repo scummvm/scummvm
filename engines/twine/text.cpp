@@ -786,7 +786,10 @@ void Text::drawHolomapLocation(int32 index) {
 	textClipSmall();
 	setFontCrossColor(COLOR_WHITE);
 	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);
+	const bool displayText = _engine->cfgfile.FlagDisplayText;
+	_engine->cfgfile.FlagDisplayText = true;
 	drawTextProgressive(index, false, false);
+	_engine->cfgfile.FlagDisplayText = displayText;
 }
 
 } // namespace TwinE
