@@ -297,11 +297,11 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	const Holomap::TrajectoryData &data = loadTrajectoryData(trajectoryIndex);
 	ScopedEngineFreeze timeFreeze(_engine);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
+	_engine->_renderer->setCameraAngle(0, 0, 0, data.x, data.y, data.z, 5300);
 
 	renderHolomapSurfacePolygons();
 
 	const Location &loc = _locations[data.locationIdx];
-	_engine->_renderer->setCameraAngle(0, 0, 0, data.x, data.y, data.z, 5300);
 	renderHolomapModel(_engine->_resources->holomapPointModelPtr, loc.x, loc.y, 0);
 
 	_engine->flip();
