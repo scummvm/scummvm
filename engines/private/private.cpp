@@ -297,8 +297,7 @@ void PrivateEngine::clearAreas() {
 }
 
 void PrivateEngine::startPoliceBust() {
-    Common::String k("kPoliceIndex");
-    int policeIndex = variables.getVal(k)->u.val;
+    int policeIndex = variables.getVal(kPoliceIndex)->u.val;
 
     int r = _rnd->getRandomNumber(0xc);
     if (0x14 < policeIndex) {
@@ -325,21 +324,22 @@ void PrivateEngine::checkPoliceBust() {
     }
 
     if (_numberClicks == _maxNumberClicks+1) {
-        Common::String k("kPoliceIndex");
-        uint kPoliceIndex = variables.getVal(k)->u.val;
+        uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
+        _policeBustSetting = _currentSetting;
 
-        if (kPoliceIndex <= 12) {
-            assert(policeVideoIndex/2 <= 5);
+        if (policeIndex <= 12) {
+            /*assert(policeVideoIndex/2 <= 5);
             char f[30];
             sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[policeVideoIndex/2]);
             policeVideoIndex++;
 
             Common::String *pv = new Common::String(f);
             _nextMovie = pv;
+            */
+            _nextSetting = &kPOGoBustMovie;
+        } else {
+            _nextSetting = &kPoliceBustFromMO;
         }
-
-        _policeBustSetting = _currentSetting;
-        _nextSetting = &kPoliceBustFromMO;
         clearAreas();
         _policeBustEnabled = false;
     }
@@ -667,7 +667,7 @@ void PrivateEngine::restartGame() {
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
     debug("loadGameStream");
-    _nextSetting = &kMainDesktop;
+    _nextSetting = &kStartGame;
     int val;
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
@@ -706,6 +706,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         } else {
             m->page2 = file;
         }
+        _dossiers.push_back(*m);
     }
 
     // Radios

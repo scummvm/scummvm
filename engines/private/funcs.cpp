@@ -171,6 +171,24 @@ void PoliceBust(ArgArray args) {
     debug("WARNING: PoliceBust partially implemented");
 }
 
+void BustMovie(ArgArray args) {
+    // assert types
+    assert (args.size() == 1);
+    debug("BustMovie(%s)", args[0].u.str);
+    uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
+    //assert(policeIndex <= 5);
+    char f[30];
+    sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[policeIndex/2]);
+
+    Common::String *pv = new Common::String(f);
+    g_private->_nextMovie = pv;
+    g_private->_nextSetting = new Common::String(args[0].u.str);
+
+
+}
+
+
+
 void DossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
@@ -731,7 +749,11 @@ static struct FuncTable {
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},
+
+    // PoliceBust
     { PoliceBust,      "PoliceBust"},
+    { BustMovie,       "BustMovie"},
+
     { 0, 0}
 };
 

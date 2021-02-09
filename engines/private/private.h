@@ -50,6 +50,9 @@ static Common::String kPauseMovie("kPauseMovie");
 static Common::String kGoIntro("kGoIntro");
 static Common::String kPoliceBustFromMO("kPoliceBustFromMO");
 static Common::String kMainDesktop("kMainDesktop");
+static Common::String kPoliceIndex("kPoliceIndex");
+static Common::String kPOGoBustMovie("kPOGoBustMovie");
+static Common::String kStartGame("kStartGame");
 
 // structs
 
