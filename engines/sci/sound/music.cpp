@@ -543,40 +543,37 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			// MusicEntry.
 			g_sci->_audio32->restart(ResourceId(kResourceTypeAudio, pSnd->resourceId), true, pSnd->loop != 0 && pSnd->loop != 1, pSnd->volume, pSnd->soundObj, false);
 			return;
-		} else
-#endif
-		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
-			if ((_currentlyPlayingSample) && (_pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud))) {
-				// Another sample is already playing, we have to stop that one
-				// SSCI is only able to play 1 sample at a time
-				// In Space Quest 5 room 250 the player is able to open the air-hatch and kill himself.
-				//  In that situation the scripts are playing 2 samples at the same time and the first sample
-				//  is not supposed to play.
-				// TODO: SSCI actually calls kDoAudio(play) internally, which stops other samples from being played
-				//        but such a change isn't trivial, because we also handle Sound resources in here, that contain samples
-				_pMixer->stopHandle(_currentlyPlayingSample->hCurrentAud);
-				warning("kDoSound: sample already playing, old resource %d, new resource %d", _currentlyPlayingSample->resourceId, pSnd->resourceId);
-			}
-			// Sierra SCI ignores volume set when playing samples via kDoSound
-			//  At least freddy pharkas/CD has a script bug that sets volume to 0
-			//  when playing the "score" sample
-			if (pSnd->loop > 1) {
-				pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
-																pSnd->loop, DisposeAfterUse::NO);
-				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-										pSnd->pLoopStream, -1, _pMixer->kMaxChannelVolume, 0,
-										DisposeAfterUse::NO);
-			} else {
-				// Rewind in case we play the same sample multiple times
-				// (non-looped) like in pharkas right at the start
-				pSnd->pStreamAud->rewind();
-				_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
-										pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
-										DisposeAfterUse::NO);
-			}
-			// Remember the sample, that is now playing
-			_currentlyPlayingSample = pSnd;
 		}
+#endif
+		if (_currentlyPlayingSample && _pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud)) {
+			// Another sample is already playing, we have to stop that one
+			// SSCI is only able to play 1 sample at a time
+			// In Space Quest 5 room 250 the player is able to open the air-hatch and kill himself.
+			//  In that situation the scripts are playing 2 samples at the same time and the first sample
+			//  is not supposed to play.
+			// TODO: SSCI actually calls kDoAudio(play) internally, which stops other samples from being played
+			//        but such a change isn't trivial, because we also handle Sound resources in here, that contain samples
+			_pMixer->stopHandle(_currentlyPlayingSample->hCurrentAud);
+			warning("kDoSound: sample already playing, old resource %d, new resource %d", _currentlyPlayingSample->resourceId, pSnd->resourceId);
+		}
+		// Sierra SCI ignores volume set when playing samples via kDoSound
+		//  At least freddy pharkas/CD has a script bug that sets volume to 0
+		//  when playing the "score" sample
+		if (pSnd->loop > 1) {
+			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,	pSnd->loop, DisposeAfterUse::NO);
+			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+									pSnd->pLoopStream, -1, _pMixer->kMaxChannelVolume, 0,
+									DisposeAfterUse::NO);
+		} else {
+			// Rewind in case we play the same sample multiple times
+			// (non-looped) like in pharkas right at the start
+			pSnd->pStreamAud->rewind();
+			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
+									pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
+									DisposeAfterUse::NO);
+		}
+		// Remember the sample, that is now playing
+		_currentlyPlayingSample = pSnd;
 	} else {
 		if (pSnd->pMidiParser) {
 			Common::StackLock lock(_mutex);
