@@ -322,9 +322,9 @@ void StartFullMotion(const char *name) {
 	ShowScreen(0, AREA + TOP, MAXX, TOP);
 	UnlockVideo();
 
-	InitQueue(&_gameQueue);
-	InitQueue(&_animQueue);
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_gameQueue);
+	InitQueue(&g_vm->_animQueue);
+	InitQueue(&g_vm->_characterQueue);
 	actorStop();
 	SemMouseEnabled = false;
 

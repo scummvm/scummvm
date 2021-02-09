@@ -363,7 +363,7 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 
 	CharacterContinueTalk();
 
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_characterQueue);
 	actorStop();
 }
 
@@ -531,9 +531,9 @@ void SomeOneMute() {
 /*                                    DOSTRING            				   */
 /*-------------------------------------------------------------------------*/
 void doString() {
-	switch (TheMessage->event) {
+	switch (g_vm->TheMessage->event) {
 	case ME_HOMOSPEAK:
-		CharacterSay(TheMessage->wparam1);
+		CharacterSay(g_vm->TheMessage->wparam1);
 		break;
 
 	case ME_HOMOSPEAKING:
@@ -544,21 +544,21 @@ void doString() {
 				else
 					CharacterMute();
 			} else {
-				//					actorDoNextFrame();
+				//	actorDoNextFrame();
 				REEVENT;
 			}
 		}
 		break;
 
 	case ME_SOMEONEWAIT2SPEAK:
-		if ((!TheMessage->wparam1) /*FAB: || (AnimObj[TheMessage->wparam1]._flag & ONOFF)*/)
+		if ((!g_vm->TheMessage->wparam1) /*FAB: || (AnimObj[TheMessage->wparam1]._flag & ONOFF)*/)
 			SomeOneContinueTalk();
 		else
 			REEVENT;
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
-		if ((!TheMessage->wparam1) /*FAB: || (!(AnimObj[TheMessage->wparam1]._flag & ONOFF))*/)
+		if ((!g_vm->TheMessage->wparam1) /*FAB: || (!(AnimObj[TheMessage->wparam1]._flag & ONOFF))*/)
 			SomeOneMute();
 		else
 			REEVENT;

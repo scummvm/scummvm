@@ -132,7 +132,7 @@ void PlayDialog(uint16 i) {
 	_curSubTitle = 0;
 	SemShowHomo = false;		        // prima non c'era
 
-	InitQueue(&_characterQueue);
+	InitQueue(&g_vm->_characterQueue);
 	g_vm->_inventoryStatus = INV_OFF;
 	g_vm->_inventoryCounter = INVENTORY_HIDE;
 	ClearText();
@@ -672,13 +672,13 @@ void PlayScelta(uint16 i) {
 						DoDialog
  --------------------------------------------------*/
 void doDialog() {
-	switch (TheMessage->event) {
+	switch (g_vm->TheMessage->event) {
 	case ME_ENDSCELTA:
-		afterChoice(TheMessage->wparam1);
+		afterChoice(g_vm->TheMessage->wparam1);
 		break;
 
 	case ME_STARTDIALOG:
-		PlayDialog(TheMessage->wparam1);
+		PlayDialog(g_vm->TheMessage->wparam1);
 		break;
 	}
 }

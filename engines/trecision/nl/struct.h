@@ -136,17 +136,17 @@ typedef struct tagMessage {
 	uint16 wparam2  ;                       // byte parameter 2
 	uint32 lparam   ;                       // int parameter
 	uint32 timestamp;
-} message;
+} Message;
 
 // RETTANGOLO DI SCHERMO (no erase, please!)
 struct screenrect {
 	uint16 x0, y0, x1, y1;
 };
 
-typedef struct  queue {
+struct MessageQueue {
 	uint8   head, tail, len;
-	message *event[MAXMESSAGE];
-} pqueue;
+	Message *event[MAXMESSAGE];
+};
 
 struct SSortTable {
 	uint16 index;                           // indice nell' elenco
