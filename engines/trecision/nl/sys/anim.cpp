@@ -103,7 +103,7 @@ extern Graphics::PixelFormat ScreenFormat;
 extern int16 limiti[20][4];
 extern uint16 limitinum;
 extern int Hlim;
-extern const char *_sysSent[];
+extern const char *_sysSentence[];
 
 /*-----------------18/01/97 21.05-------------------
 					CallSmackOpen

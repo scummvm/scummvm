@@ -29,6 +29,7 @@
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
+#include "trecision/trecision.h"
 
 #define FAST_COOKIE 0xFA57F00D
 
@@ -109,11 +110,11 @@ uint32 DecCR(const char *FileName, uint8 *DestArea, uint8 *DecArea) {
 	int isize = FastFileLen(ff);
 
 	if ((isize != FastFileRead(ff, ibuf, isize)))
-		CloseSys(_sysSent[5]);
+		CloseSys(g_vm->_sysSentence[5]);
 	FastFileClose(ff);
 
 	if (*(unsigned *)ibuf != FAST_COOKIE)
-		CloseSys(_sysSent[7]);
+		CloseSys(g_vm->_sysSentence[7]);
 
 	ibuf += sizeof(unsigned);
 	isize -= sizeof(unsigned);

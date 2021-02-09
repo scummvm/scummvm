@@ -50,7 +50,7 @@ extern int8		MouseONOFF;
 extern FILE			*fhi;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
-extern const char 		*_sysSent[];
+extern const char 		*_sysSentence[];
 extern int			ForceQuit;
 extern int			RoomReady;
 extern int			KeybInput;

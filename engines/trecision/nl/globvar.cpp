@@ -34,9 +34,6 @@ namespace Trecision {
 struct SSound     GSample[MAXSAMPLE];
 struct SAnim      AnimTab[MAXANIM];
 
-const char *ObjName[MAXOBJNAME];
-const char *Sentence[MAXSENTENCE];
-
 /*-------------------------------------------------------------------------*/
 /*                              MESSY SYSTEM          					   */
 /*-------------------------------------------------------------------------*/

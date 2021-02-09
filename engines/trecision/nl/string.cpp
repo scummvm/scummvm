@@ -123,20 +123,20 @@ void ShowObjName(uint16 obj, bool showhide) {
 		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
-		strcpy(locsent, _sysSent[23]);
+		strcpy(locsent, g_vm->_sysSentence[23]);
 		if (g_vm->_useWithInv[USED])
-			strcat(locsent, ObjName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
+			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
 		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
 			strcat(locsent, dunno);
 		else
-			strcat(locsent, ObjName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
+			strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
 
-		strcat(locsent, _sysSent[24]);
+		strcat(locsent, g_vm->_sysSentence[24]);
 		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
 			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
-				strcat(locsent, ObjName[g_vm->_obj[obj]._name]);
+				strcat(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
 		}
 
 		posx = 320;
@@ -165,17 +165,17 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
-				strcpy(locsent, _sysSent[25]);
+				strcpy(locsent, g_vm->_sysSentence[25]);
 				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					strcat(locsent, dunno);
 				else
-					strcat(locsent, ObjName[g_vm->_obj[obj]._name]);
+					strcat(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
 			} else
-				strcpy(locsent, _sysSent[26]);
+				strcpy(locsent, g_vm->_sysSentence[26]);
 		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 			strcpy(locsent, dunno);
 		else
-			strcpy(locsent, ObjName[g_vm->_obj[obj]._name]);
+			strcpy(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
 
 		switch (obj) {
 		case oRUOTE2C:
@@ -227,20 +227,20 @@ void ShowInvName(uint16 obj, bool showhide) {
 			return;
 
 		char locsent[256];
-		strcpy(locsent, _sysSent[23]);
+		strcpy(locsent, g_vm->_sysSentence[23]);
 		if (g_vm->_useWithInv[USED]) {
-			strcat(locsent, ObjName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, _sysSent[24]);
+			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
+			strcat(locsent, g_vm->_sysSentence[24]);
 			if (obj && (g_vm->_inventoryObj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
-				strcat(locsent, ObjName[g_vm->_inventoryObj[obj]._name]);
+				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
 		} else {
 			if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
 			else
-				strcat(locsent, ObjName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, _sysSent[24]);
+				strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
+			strcat(locsent, g_vm->_sysSentence[24]);
 			if (obj && (g_vm->_obj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
-				strcat(locsent, ObjName[g_vm->_inventoryObj[obj]._name]);
+				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
 		}
 		posx = 320;
 		//   	posx = ICONMARGSX+((IconPos(_useWith[USED])-_iconBase)*(ICONDX))+ICONDX/2;
@@ -270,7 +270,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 		posx = ICONMARGSX + ((IconPos(g_vm->_curInventory) - g_vm->_iconBase) * (ICONDX)) + ICONDX / 2;
 		posy = MAXY - CARHEI;
 		lastinv = obj;
-		LenText = TextLength(ObjName[g_vm->_inventoryObj[obj]._name], 0);
+		LenText = TextLength(g_vm->_objName[g_vm->_inventoryObj[obj]._name], 0);
 		if (posx - (LenText / 2) < 2)
 			posx = 2;
 		else
@@ -283,7 +283,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 			ClearText();
 
 		if (g_vm->_inventoryObj[obj]._name)
-			Text(posx, posy, ObjName[g_vm->_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			Text(posx, posy, g_vm->_objName[g_vm->_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
@@ -338,10 +338,10 @@ void CharacterSay(uint16 i) {
 	Semskipenable = (i != 99999);
 
 	//	if he took some action
-	if ((Sentence[i][0] == '*') && (_playingAnims[1] == 0))
+	if ((g_vm->_sentence[i][0] == '*') && (_playingAnims[1] == 0))
 		StartCharacterAction(hBOH, 0, 0, 0);
 	else
-		CharacterTalk(Sentence[i], true);
+		CharacterTalk(g_vm->_sentence[i], true);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -371,9 +371,9 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 				CharacterTalkInAction
  --------------------------------------------------*/
 void CharacterTalkInAction(uint16 ss) {
-	const char *s = Sentence[ss];
+	const char *s = g_vm->_sentence[ss];
 
-	if (Sentence[ss][0] == '*')
+	if (g_vm->_sentence[ss][0] == '*')
 		return;
 	CurS = ss;
 
@@ -460,7 +460,7 @@ void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	Semskiptalk = false;
 
 	CurS = s;
-	SuperString = Sentence[s];
+	SuperString = g_vm->_sentence[s];
 	SuperStringLen = strlen(SuperString);
 	SubStringStart = 0;
 	CurSubString = 0;

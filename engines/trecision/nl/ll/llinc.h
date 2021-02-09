@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TRECISION_LLINC_H
+#define TRECISION_LLINC_H
+
 #define DRAWMASK        1
 #define COPYTORAM       2
 #define COPYTOVIDEO     4
@@ -112,8 +115,6 @@ extern uint8 AddObjectMaterial;
 extern uint32 GameBytePointer;
 extern uint32 GameWordPointer;
 extern uint32 TotalMemory;
-// SYS SENT
-extern const char *_sysSent[];
 // VESA
 extern uint8 CVP;
 extern uint16 VesaGranularity;
@@ -145,3 +146,5 @@ extern int NumFileRef;
 } // End of namespace Trecision
 
 #include "trecision/nl/ll/llproto.h"
+
+#endif

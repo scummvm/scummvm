@@ -250,13 +250,13 @@ void LoadAll() {
 	TextPtr = (char *)TextArea;
 
 	for (int a = 0; a < MAXOBJNAME; a++)
-		ObjName[a] = GetNextSent();
+		g_vm->_objName[a] = GetNextSent();
 
 	for (int a = 0; a < MAXSENTENCE; a++)
-		Sentence[a] = GetNextSent();
+		g_vm->_sentence[a] = GetNextSent();
 
 	for (int a = 0; a < MAXSYSSENT; a++)
-		_sysSent[a] = GetNextSent();
+		g_vm->_sysSentence[a] = GetNextSent();
 
 	dataNl.close();
 }

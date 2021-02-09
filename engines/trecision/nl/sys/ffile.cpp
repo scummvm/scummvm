@@ -33,18 +33,6 @@
 
 namespace Trecision {
 
-typedef struct {
-	char name[12];
-	int offset;
-} FILEENTRY, *LPFILEENTRY;
-
-typedef struct SFileHandle {
-	char inuse;
-	int pos;
-	int size;
-	LPFILEENTRY pfe;
-} FILEHANDLE, *LPFILEHANDLE;
-
 #define MAXFHANDLE		10
 #define MAXFILES		500
 
@@ -56,7 +44,6 @@ static FILEHANDLE		lpFH[MAXFHANDLE];
 static int				dwFHCnt;
 static int				lFileEnd;
 
-extern const char *_sysSent[];
 void CheckFileInCD(const char *name);
 void CloseSys(const char *str);
 void FastFileFinish();
@@ -91,7 +78,7 @@ char FastFileInit(const char *fname) {
 		warning("FastFileInit: CreateFile open error %s", fname);
 		hFile = NULL;
 		FastFileFinish();
-		CloseSys(_sysSent[1]);
+		CloseSys(g_vm->_sysSentence[1]);
 		return false;
 	}
 
@@ -158,7 +145,7 @@ LPFILEHANDLE FastFileOpen(const char *name) {
 		warning("FastFileOpen: Out of file handles");
 	} else {
 		warning("FastFileOpen: File %s not found", name);
-		CloseSys(_sysSent[1]);
+		CloseSys(g_vm->_sysSentence[1]);
 	}
 
 	return NULL;
@@ -241,7 +228,7 @@ char AnimFileInit(const char *fname) {
 			warning("AnimFileInit: CreateFile open error %s", fname);
 			aFile[a] = NULL;
 			AnimFileFinish();
-			CloseSys(_sysSent[1]);
+			CloseSys(g_vm->_sysSentence[1]);
 			return false;
 		}
 	}
@@ -290,7 +277,7 @@ int AnimFileOpen(const char *name) {
 	}
 
 	warning("AnimFileOpen: File %s not found", name);
-	CloseSys(_sysSent[1]);
+	CloseSys(g_vm->_sysSentence[1]);
 	return NULL;
 }
 
@@ -314,7 +301,7 @@ int FmvFileOpen(const char *name) {
 		return (int)FmvFile;
 
 	warning("Fmv file %s not found!", name);
-	CloseSys(_sysSent[1]);
+	CloseSys(g_vm->_sysSentence[1]);
 	return -1;
 }
 
@@ -336,7 +323,7 @@ char SpeechFileInit(const char *fname) {
 		warning("SpeechFileInit: CreateFile open error %s", fname);
 		sFile = NULL;
 		SpeechFileFinish();
-		CloseSys(_sysSent[1]);
+		CloseSys(g_vm->_sysSentence[1]);
 		return false;
 	}
 
@@ -375,7 +362,7 @@ int SpeechFileLen(const char *name) {
 		return ((pfe + 1)->offset - pfe->offset);
 
 	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(_sysSent[1]);
+	CloseSys(g_vm->_sysSentence[1]);
 	return NULL;
 }
 
@@ -404,7 +391,7 @@ int SpeechFileRead(const char *name, unsigned char *buf) {
 	}
 
 	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(_sysSent[1]);
+	CloseSys(g_vm->_sysSentence[1]);
 	return NULL;
 }
 

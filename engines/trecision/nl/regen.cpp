@@ -303,8 +303,8 @@ void AddLine(int16 x1, int16 x2, int16 y) {
 	PaintBlock[BlockCount++] = (uint32)((uint32)(y * CurRoomMaxX + x1) & 0xFFFFF) + ((((uint32)(x2 - x1) & 0xFFF) << 20) & 0xFFF00000);
 
 	if (BlockCount >= MAXBLOCK) {
-		warning(_sysSent[19]);
-		CloseSys(_sysSent[19]);
+		warning(g_vm->_sysSentence[19]);
+		CloseSys(g_vm->_sysSentence[19]);
 	}
 }
 

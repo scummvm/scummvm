@@ -24,8 +24,9 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
-#include "nl/sysdef.h"
+#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
+#include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
 
@@ -66,6 +67,11 @@ public:
 	// Use With
 	uint16 _useWith[2];
 	bool _useWithInv[2];
+
+	// Messages
+	const char *_objName[MAXOBJNAME];
+	const char *_sentence[MAXSENTENCE];
+	const char *_sysSentence[MAXSYSSENT];
 };
 
 extern TrecisionEngine *g_vm;

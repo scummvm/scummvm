@@ -33,6 +33,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/3d/3dinc.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -80,7 +81,7 @@ int read3D(const char *c) {
 				_proj[2][2] * _proj[1][0] * _proj[2][1];
 
 	if (det == 0.0)
-		CloseSys(_sysSent[5]);
+		CloseSys(g_vm->_sysSentence[5]);
 
 	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
 	_invP[0][1] = (_proj[0][1] * _proj[2][2] - _proj[0][2] * _proj[2][1]) / (-det);
