@@ -89,7 +89,7 @@ const char *AGSSpriteFont::AGS_GetPluginName() {
 }
 
 void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
-	engine = engine;
+	_engine = engine;
 
 	_engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
 	_fontRenderer = new SpriteFontRenderer(engine);
