@@ -241,12 +241,13 @@ bool TestEmptyCharacterQueue4Script(MessageQueue *lq) {
 			( lq->event[pos]->lparam == false) &&
 			( lq->event[pos]->wparam1 > DEFAULTACTIONS)))
 		*/
-		if (((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERACTION)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTO)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTOACTION)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERGOTOEXAMINE)) ||
-				((lq->event[pos]->cls == MC_CHARACTER) && (lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)))
+		if (lq->event[pos]->cls == MC_CHARACTER) {
+			if (lq->event[pos]->event == ME_CHARACTERACTION || lq->event[pos]->event == ME_CHARACTERGOTO
+				|| lq->event[pos]->event == ME_CHARACTERGOTOACTION || lq->event[pos]->event == ME_CHARACTERGOTOEXAMINE
+				|| lq->event[pos]->event == ME_CHARACTERCONTINUEACTION)
 			return false;
+		}
+
 	}
 
 //	true quando:
