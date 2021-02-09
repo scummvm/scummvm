@@ -149,7 +149,7 @@ public:
 		Close();
 	}
 
-	void Close() {
+	void Close() override {
 		if (_disposeAfterUse == DisposeAfterUse::YES)
 			delete _stream;
 		_stream = nullptr;
