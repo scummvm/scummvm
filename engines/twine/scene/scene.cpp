@@ -173,9 +173,9 @@ bool Scene::loadSceneLBA2() {
 	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	_sceneHeroX = stream.readUint16LE();
-	_sceneHeroY = stream.readUint16LE();
-	_sceneHeroZ = stream.readUint16LE();
+	_sceneHeroX = stream.readSint16LE();
+	_sceneHeroY = stream.readSint16LE();
+	_sceneHeroZ = stream.readSint16LE();
 
 	sceneHero->moveScriptSize = stream.readUint16LE();
 	sceneHero->moveScript = currentScene + stream.pos();
