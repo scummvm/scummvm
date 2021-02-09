@@ -79,7 +79,7 @@ void ReadExtraObj41D();
 void StopTalk();
 
 extern uint8 SoundSystemActive;
-extern const char *_sysSent[];
+extern const char *_sysSentence[];
 int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, unsigned char *buf);
 uint32 ReadTime();

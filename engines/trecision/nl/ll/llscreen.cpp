@@ -122,9 +122,6 @@ short RightArrow;
 FILEENTRY FileRef[MAXFILEREF];
 int NumFileRef;
 
-
-const char *_sysSent[MAXSYSSENT];
-
 // info for Toc BmData
 struct SBmInfo {
 	uint16 px, py, dx, dy;
@@ -308,7 +305,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 
 	ff = FastFileOpen(filename);
 	if (ff == NULL)
-		CloseSys(_sysSent[1]);
+		CloseSys(g_vm->_sysSentence[1]);
 
 	FastFileRead(ff, &ActionNum, 4);
 
@@ -752,7 +749,7 @@ void ReadSounds() {
 
 		ff = FastFileOpen(UStr);
 		if (ff == NULL)
-			CloseSys(_sysSent[1]);
+			CloseSys(g_vm->_sysSentence[1]);
 		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));
 		FastFileClose(ff);
 		if (LoadAudioWav(b, SoundPointer[a], len))
@@ -864,7 +861,7 @@ void DrawObj(struct SDObj d) {
 		}
 
 		if (d.flag & COPYTOVIDEO)
-			CloseSys(_sysSent[5]);
+			CloseSys(g_vm->_sysSentence[5]);
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (b = d.l[1]; b < d.l[3]; b++) {

@@ -25,44 +25,44 @@
 #include "trecision/nl/struct.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
-extern const char *_sysSent[];
 /*-------------------------------------------------------------------------*/
 /*                             INIT OBJ NAMES                              */
 /*-------------------------------------------------------------------------*/
 void initNames() {
-	_sysSent[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom."; // llscreen
-	_sysSent[2] = "Not enough memory!\nYou need %d bytes more.\n";                           // llscreen
-	_sysSent[3] = "Unknown error\n";                                                         // maindos
-	_sysSent[4] = "Please insert CD number %c and press return.";                            // llmouse
-	_sysSent[5] = "Unknown error";                                                           // llscreen
-	_sysSent[6] = "VESA Not Supported.\n";                                                   // maindos
-	_sysSent[7] = "Error reading file.";                                                     // lldec
-	_sysSent[8] = "Mouse not found error!\n";                                                // maindos
-	_sysSent[9] = "SAVE POSITION";                                                           // llmouse ###
-	_sysSent[10] = "EMPTY SLOT";                                                             // llmouse ###
-	_sysSent[11] = "LOAD POSITION";                                                          // llmouse ###
-	_sysSent[12] = "Error reading saved-game";                                               // llmouse
-	_sysSent[13] = "Are you sure that you want to quit (y/n)?";                              // llmouse ###
-	_sysSent[14] = "Unknown error\n";                                                        // soundw95
-	_sysSent[15] = "Sample handle not available\n";                                          // sounddos
-	_sysSent[16] = "Run NL to select an appropriate digital audio driver\n";                 // sounddos
-	_sysSent[17] = "This demo is over.";                                                     // llmouse ###
-	_sysSent[18] = "NightLong";                                                              // win name - mainw95
-	_sysSent[19] = "ERROR!";                                                                 // llmouse
-	_sysSent[20] = "Unsupported pixel format.";                                              // mainw95
-	_sysSent[21] = "DirectX Error";                                                          // mainw95
-	_sysSent[22] = "NightLong Warning";                                                      // mainw95
-	_sysSent[23] = "Use ";                                                                   // string
-	_sysSent[24] = " with ";                                                                 // string
-	_sysSent[25] = "Go to ";                                                                 // string
-	_sysSent[26] = "Go to ... ";                                                             // string
+	g_vm->_sysSentence[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom."; // llscreen
+	g_vm->_sysSentence[2] = "Not enough memory!\nYou need %d bytes more.\n";                           // llscreen
+	g_vm->_sysSentence[3] = "Unknown error\n";                                                         // maindos
+	g_vm->_sysSentence[4] = "Please insert CD number %c and press return.";                            // llmouse
+	g_vm->_sysSentence[5] = "Unknown error";                                                           // llscreen
+	g_vm->_sysSentence[6] = "VESA Not Supported.\n";                                                   // maindos
+	g_vm->_sysSentence[7] = "Error reading file.";                                                     // lldec
+	g_vm->_sysSentence[8] = "Mouse not found error!\n";                                                // maindos
+	g_vm->_sysSentence[9] = "SAVE POSITION";                                                           // llmouse ###
+	g_vm->_sysSentence[10] = "EMPTY SLOT";                                                             // llmouse ###
+	g_vm->_sysSentence[11] = "LOAD POSITION";                                                          // llmouse ###
+	g_vm->_sysSentence[12] = "Error reading saved-game";                                               // llmouse
+	g_vm->_sysSentence[13] = "Are you sure that you want to quit (y/n)?";                              // llmouse ###
+	g_vm->_sysSentence[14] = "Unknown error\n";                                                        // soundw95
+	g_vm->_sysSentence[15] = "Sample handle not available\n";                                          // sounddos
+	g_vm->_sysSentence[16] = "Run NL to select an appropriate digital audio driver\n";                 // sounddos
+	g_vm->_sysSentence[17] = "This demo is over.";                                                     // llmouse ###
+	g_vm->_sysSentence[18] = "NightLong";                                                              // win name - mainw95
+	g_vm->_sysSentence[19] = "ERROR!";                                                                 // llmouse
+	g_vm->_sysSentence[20] = "Unsupported pixel format.";                                              // mainw95
+	g_vm->_sysSentence[21] = "DirectX Error";                                                          // mainw95
+	g_vm->_sysSentence[22] = "NightLong Warning";                                                      // mainw95
+	g_vm->_sysSentence[23] = "Use ";                                                                   // string
+	g_vm->_sysSentence[24] = " with ";                                                                 // string
+	g_vm->_sysSentence[25] = "Go to ";                                                                 // string
+	g_vm->_sysSentence[26] = "Go to ... ";                                                             // string
 	// The following are missing: FastFile, Init, Do, Utility
 
-	Sentence[0] = "          "; // Use it like a buffer !!!!
-	ObjName[0] = " ";
+	g_vm->_sentence[0] = "          "; // Use it like a buffer !!!!
+	g_vm->_objName[0] = " ";
 }
 
 } // End of namespace Trecision

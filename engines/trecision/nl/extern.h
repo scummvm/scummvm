@@ -30,10 +30,6 @@ namespace Trecision {
 extern struct SSound     GSample[];
 extern struct SAnim      AnimTab[];
 
-extern const char *ObjName[];
-extern const char *Sentence[];
-extern const char *_sysSent[];
-
 /*-------------------------------------------------------------------------*/
 /*                              MESSY SYSTEM          					   */
 /*-------------------------------------------------------------------------*/

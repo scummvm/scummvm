@@ -75,7 +75,7 @@ void MostraScelte(uint16 i) {
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			DispScelte[CurDispScelte++] = c;
-			DialogPrint(x, y, HWHITE, Sentence[_choice[c]._sentenceIndex]);
+			DialogPrint(x, y, HWHITE, g_vm->_sentence[_choice[c]._sentenceIndex]);
 			y += CARHEI;
 		}
 	}
@@ -99,9 +99,9 @@ void UpdateScelte(int16 dmx, int16 dmy) {
 		for (int c = 0; c < MAXDISPSCELTE; c++) {
 			if (DispScelte[c] != 0) {
 				if (c == CurPos)
-					DialogPrint(10, 5 + c * CARHEI, HGREEN, Sentence[_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HGREEN, g_vm->_sentence[_choice[DispScelte[c]]._sentenceIndex]);
 				else
-					DialogPrint(10, 5 + c * CARHEI, HWHITE, Sentence[_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[_choice[DispScelte[c]]._sentenceIndex]);
 			}
 		}
 		ShowScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
@@ -628,7 +628,7 @@ void DialogHandler(int numframe) {
 		SemMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
-			BattutaPrint(_subTitles[i]._x, _subTitles[i]._y, _subTitles[i]._color, Sentence[_subTitles[i]._sentence]);
+			BattutaPrint(_subTitles[i]._x, _subTitles[i]._y, _subTitles[i]._color, g_vm->_sentence[_subTitles[i]._sentence]);
 		}
 	}
 }
