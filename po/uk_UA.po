@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-08 12:42+0000\n"
+"PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7087,40 +7087,38 @@ msgstr "Замінює шрифти гри на шрифти поліпшено�
 
 #: engines/ultima/detection.cpp:82
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Відтворювати звуки кроків"
 
 #: engines/ultima/detection.cpp:83
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Відтворює звуки кроків під час руху гравця."
 
 #: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "Ввімкнути мишу для інтерфейса користувача"
+msgstr "Ввімкнути стрибок до позиції миші"
 
 #: engines/ultima/detection.cpp:92
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Стрибати на місце, вказане курсором миші (не під час пересування цілей)."
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Ввімкнути пропуск кадрів"
 
 #: engines/ultima/detection.cpp:101
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Дозволяє грі пропускати кадри анімації якщо комп'ютер занадто повільний."
 
 #: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Ввімкнути згладжування шрифтів"
+msgstr "Ввімкнути лімітування кадрів"
 
 #: engines/ultima/detection.cpp:110
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "Лімітує швідкість гри, щоб уникнути занадто швидкого відтворювання."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
