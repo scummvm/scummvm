@@ -475,7 +475,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	}
 }
 
-void SciMusic::soundPlay(MusicEntry *pSnd) {
+void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 	_mutex.lock();
 
 	if (_soundVersion <= SCI_VERSION_1_EARLY && pSnd->playBed) {
@@ -583,7 +583,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pMidiParser->mainThreadBegin();
 
 			// The track init always needs to be done. Otherwise some sounds will not be properly set up (bug #11476).
-			// It is also safe to do this for paused tracks, since the jumpToTick() command in line 602 will parse through
+			// It is also safe to do this for paused tracks, since the jumpToTick() command further down will parse through
 			// the song from the beginning up to the resume position and ensure that the actual current voice mapping,
 			// instrument and volume settings etc. are correct.
  			pSnd->pMidiParser->initTrack();
@@ -602,9 +602,10 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->loop = 0;
 			pSnd->hold = -1;
 
-			if (pSnd->status == kSoundStopped)
+			bool fastForward = (pSnd->status == kSoundPaused) || (pSnd->status == kSoundPlaying && restoring);
+			if (!fastForward) {
 				pSnd->pMidiParser->jumpToTick(0);
-			else {
+			} else {
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true, true, true);
 			}
