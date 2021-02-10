@@ -977,6 +977,7 @@ void Menu::drawBehaviourMenu(int32 angle) {
 }
 
 void Menu::processBehaviourMenu() {
+	_engine->exitSceneryView();
 	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);

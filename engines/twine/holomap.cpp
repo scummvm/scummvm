@@ -288,6 +288,7 @@ Holomap::TrajectoryData Holomap::loadTrajectoryData(int32 trajectoryIdx) {
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
 
+	_engine->exitSceneryView();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
 	_engine->setPalette(_engine->_screens->paletteRGBA);
@@ -479,6 +480,8 @@ void Holomap::processHolomap() {
 
 	const int32 alphaLightTmp = _engine->_scene->alphaLight;
 	const int32 betaLightTmp = _engine->_scene->betaLight;
+
+	_engine->exitSceneryView();
 
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_sound->stopSamples();

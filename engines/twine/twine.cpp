@@ -587,6 +587,7 @@ void TwinEEngine::processBonusList() {
 
 void TwinEEngine::processInventoryAction() {
 	ScopedEngineFreeze scoped(this);
+	exitSceneryView();
 	_menu->processInventoryMenu();
 
 	switch (loopInventoryItem) {
@@ -674,6 +675,7 @@ void TwinEEngine::processInventoryAction() {
 
 void TwinEEngine::processOptionsMenu() {
 	ScopedEngineFreeze scoped(this);
+	exitSceneryView();
 	_sound->pauseSamples();
 	_menu->inGameOptionsMenu();
 	_scene->playSceneMusic();
@@ -738,6 +740,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
 			freezeTime();
+			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
 			if (giveUp == kQuitEngine) {
 				return 0;
@@ -821,7 +824,6 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			freezeTime();
-			//TestRestoreModeSVGA(1);
 			_holomap->processHolomap();
 			_screens->lockPalette = true;
 			unfreezeTime();

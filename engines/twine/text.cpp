@@ -661,6 +661,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
 }
 
 bool Text::drawTextProgressive(int32 index, bool playVox, bool loop) {
+	_engine->exitSceneryView();
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);

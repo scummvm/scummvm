@@ -162,6 +162,9 @@ public:
 	int _sceneryViewX = 0;
 	int _sceneryViewY = 0;
 
+	/**
+	 * Zooms the area around the scenery view focus positions
+	 */
 	void zoomScreenScale();
 
 	/** Draw list array to grab the necessary */
