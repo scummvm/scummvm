@@ -1336,7 +1336,7 @@
 #define oCARTELLO52             1082
 #define oSERPBKG52              1083
 #define oSERPENTET52            1084
-#define oSERPENTEU52            1085
+#define oSNAKEU52            1085
 #define oSERPENTEA52            1086
 #define oSERPENTEB52            1087
 #define oSERPENTEBF52           1088

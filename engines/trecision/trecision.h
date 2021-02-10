@@ -78,15 +78,17 @@ public:
 	Message _gameMsg[MAXMESSAGE];
 	Message _characterMsg[MAXMESSAGE];
 	Message _animMsg[MAXMESSAGE];
-
 	Message _idleMsg;
-	Message _quitMsg;
+
+	// Snake management
+	Message _snake52;
 
 	Message *_curMessage;
 
 	MessageQueue _gameQueue;
 	MessageQueue _animQueue;
 	MessageQueue _characterQueue;
+	
 };
 
 extern TrecisionEngine *g_vm;

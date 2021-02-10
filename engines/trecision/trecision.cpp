@@ -87,11 +87,10 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	for (int i = 0; i < MAXSYSTEXT; ++i)
 		_sysText[i] = nullptr;
 
-	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
-	_quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
-
 	_curMessage = nullptr;
 
+	// Original values
+	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
 	_curObj = 1;
 	_inventoryStatus = INV_OFF;
 	_lightIcon = 0xFF;
