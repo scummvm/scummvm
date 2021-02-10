@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-09 16:56+0000\n"
+"PO-Revision-Date: 2021-02-10 20:23+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1505,16 +1505,16 @@ msgstr "이 스토리지에 아직 연결되지 않았습니다! 연결하려면
 
 #: gui/options.cpp:2241
 msgid "1. Open this link:"
-msgstr "1. 이 링크를 여세요."
+msgstr "1. 다음 링크를 엽니다:"
 
 #: gui/options.cpp:2244
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr "2. 코드를 얻은 뒤 이 곳에 입력하세요."
+msgstr "2. 코드를 얻은 뒤 이 곳에 입력하세요:"
 
 #: gui/options.cpp:2246
 msgid "2. Get the code and enter it here:"
-msgstr "2. 코드를 얻은 뒤 이 곳에 입력하세요."
+msgstr "2. 코드를 얻은 뒤 이 곳에 입력하세요:"
 
 #: gui/options.cpp:2248
 msgid "Paste"
@@ -2218,9 +2218,10 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
-"이 게임은 디스크의 오디오 트랙을 포함합니다.\n"
-"게임의 음악을 듣기 위해서는 CD 오디오 추출\n"
-"도구를 사용해 오디오 트랙을 추출해야합니다.\n"
+"현재 게임은 디스크의 오디오 트랙을 포함합니다.\n"
+"게임의 음악을 듣기 위해서는 적절한 \n"
+"CD 오디오 추출 도구를 사용해 디스크에서 \n"
+"트랙을 추출해야합니다.\n"
 "README 파일에서 추가정보를 확인해 주세요."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
@@ -4067,11 +4068,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"변환이 필요한 구형 Drascula 세이브 파일을 사용하는 것을 감지했습니다.\n"
-"구형 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 다시 로드 가능"
-"합니다.\n"
-"확인 버튼을 눌러 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작할 때 다"
-"시 이 창이 표시됩니다.\n"
+"변환이 필요한 이전 Drascula 게임 저장 파일을 사용을 감지했습니다.\n"
+"이전 게임 저장 파일은 더 이상 지원되지 않으며 변환 작업을 거쳐야 불러올 수 있습니다\n"
+"\n"
+"확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다시 이 창이 표시됩니다.\n"
 
 #: engines/dreamweb/detection.cpp:54
 msgid "Use bright palette mode"
@@ -4220,40 +4220,45 @@ msgstr "당신은 볼 수 없습니다. 너무 어두워요!\n"
 
 #: engines/glk/scott/scott.cpp:426
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "보이지 않아요. 너무 어두워요!\n"
 
 #: engines/glk/scott/scott.cpp:436
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "당신은 %s 에 있습니다\n"
 
 #: engines/glk/scott/scott.cpp:438
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "나는 %s에 있습니다\n"
 
 #: engines/glk/scott/scott.cpp:443
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"확실한 탈출구: "
 
 #: engines/glk/scott/scott.cpp:456
-#, fuzzy
 msgid "none"
-msgstr "<없음>"
+msgstr "없음"
 
 #: engines/glk/scott/scott.cpp:465
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"또한 이것도 보입니다: "
 
 #: engines/glk/scott/scott.cpp:468
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"이것도 보입니다: "
 
 #: engines/glk/scott/scott.cpp:551
 msgid "Saved.\n"
@@ -4261,24 +4266,24 @@ msgstr "저장됨.\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "당신은 제가 모르는 말을 사용하는 군요! "
 
 #: engines/glk/scott/scott.cpp:774 engines/glk/scott/scott.cpp:1097
 #: engines/glk/scott/scott.cpp:1119
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "너무 많이 들고 있습니다. "
 
 #: engines/glk/scott/scott.cpp:776
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "너무 많이 들고 있어요! "
 
 #: engines/glk/scott/scott.cpp:807
 msgid "You are dead.\n"
-msgstr ""
+msgstr "당신은 죽었습니다.\n"
 
 #: engines/glk/scott/scott.cpp:809
 msgid "I am dead.\n"
-msgstr ""
+msgstr "저는 죽었습니다.\n"
 
 #: engines/glk/scott/scott.cpp:821
 msgid "The game is now over.\n"
@@ -4286,7 +4291,7 @@ msgstr "게임 오버 되었습니다.\n"
 
 #: engines/glk/scott/scott.cpp:836
 msgid "You have stored "
-msgstr ""
+msgstr "당신은 저장 되었습니다 "
 
 #: engines/glk/scott/scott.cpp:838
 msgid "I've stored "
@@ -4294,91 +4299,91 @@ msgstr "저는 저장되었습니다 "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " 보물. 0부터 100이라 치면 저것은 "
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Well done.\n"
-msgstr ""
+msgstr "잘했습니다.\n"
 
 #: engines/glk/scott/scott.cpp:853
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "당신은 다음을 들고있습니다:\n"
 
 #: engines/glk/scott/scott.cpp:855
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "저는 이걸 들고있습니다:\n"
 
 #: engines/glk/scott/scott.cpp:870
 msgid "Nothing"
-msgstr ""
+msgstr "없음"
 
 #: engines/glk/scott/scott.cpp:999
 msgid "Give me a direction too."
-msgstr ""
+msgstr "방향도 지시해 주세요."
 
 #: engines/glk/scott/scott.cpp:1008
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "어두워서 움직이기 위험합니다! "
 
 #: engines/glk/scott/scott.cpp:1016
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "당신은 추락해서 목이 부러졌습니다. "
 
 #: engines/glk/scott/scott.cpp:1018
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "저는 추락해서 목이 부러졌습니다. "
 
 #: engines/glk/scott/scott.cpp:1023
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "그쪽으로는 갈 수 없습니다. "
 
 #: engines/glk/scott/scott.cpp:1025
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "그쪽으로는 갈 수 없습니다. "
 
 #: engines/glk/scott/scott.cpp:1083
 msgid "It is dark.\n"
-msgstr ""
+msgstr "어둡습니다.\n"
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "너무 많아서 들수 없습니다. "
 
 #: engines/glk/scott/scott.cpp:1104 engines/glk/scott/scott.cpp:1152
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": 넵\n"
 
 #: engines/glk/scott/scott.cpp:1110
 msgid "Nothing taken."
-msgstr ""
+msgstr "갖지 않았습니다."
 
 #: engines/glk/scott/scott.cpp:1114 engines/glk/scott/scott.cpp:1162
 msgid "What ? "
-msgstr ""
+msgstr "네 ? "
 
 #: engines/glk/scott/scott.cpp:1127
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "당신이 해결할 수 없는 일입니다. "
 
 #: engines/glk/scott/scott.cpp:1129
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "제가 해결할 수 없는 일입니다. "
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
-msgstr ""
+msgstr "네 "
 
 #: engines/glk/scott/scott.cpp:1158
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "아무것도 나오지 않았습니다.\n"
 
 #: engines/glk/scott/scott.cpp:1168
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "그건 당신이 할 수 없는 일입니다.\n"
 
 #: engines/glk/scott/scott.cpp:1170
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "이건 제가 할 수 없는 일입니다.\n"
 
 #: engines/glk/zcode/zcode.cpp:145
 msgid "Error writing save file\n"
@@ -4386,29 +4391,21 @@ msgstr "저장 파일 기록 오류\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "잘못된 rs 파일."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "다른 버전에서 만들어진 저장 파일입니다."
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:554
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr ""
-"세이브 파일을 불러오는 데 실패했습니다:\n"
-"\n"
-"%s"
+msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:567
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr ""
-"파일에 저장하는데 실패했습니다:\n"
-"\n"
-"%s"
+msgstr "게임을 파일에 저장하는데 실패했습니다."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -4416,11 +4413,11 @@ msgstr "파일 삭제에 실패했습니다."
 
 #: engines/griffon/metaengine.cpp:84
 msgid "Menu / Skip"
-msgstr ""
+msgstr "메뉴 / 건너뛰기"
 
 #: engines/griffon/metaengine.cpp:120
 msgid "Attack"
-msgstr ""
+msgstr "공격"
 
 #: engines/griffon/metaengine.cpp:134
 msgid "Speed Up Cutscene"
@@ -4459,48 +4456,45 @@ msgstr ""
 
 #: engines/grim/grim.cpp:471 engines/grim/grim.cpp:558
 msgid "Run"
-msgstr ""
+msgstr "달리기"
 
 #: engines/grim/grim.cpp:476 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
 msgid "Examine"
-msgstr ""
+msgstr "조사"
 
 #: engines/grim/grim.cpp:481 engines/grim/grim.cpp:573
-#, fuzzy
 msgid "Use/Talk"
-msgstr "대화하기"
+msgstr "사용/대화"
 
 #: engines/grim/grim.cpp:486 engines/grim/grim.cpp:578
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "줍기"
+msgstr "줍기/내려놓기"
 
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:588
-#, fuzzy
 msgid "Skip dialog lines"
 msgstr "대사 건너뛰기"
 
 #: engines/grim/grim.cpp:514 engines/grim/grim.cpp:606
 #: engines/hdb/metaengine.cpp:244
 msgid "Menu"
-msgstr ""
+msgstr "메뉴"
 
 #: engines/grim/grim.cpp:548
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "개체 위로 전환"
 
 #: engines/grim/grim.cpp:553
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "개체 아래로 전환"
 
 #: engines/grim/grim.cpp:563
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "빠른 방 나가기"
 
 #: engines/grim/grim.cpp:568
 msgid "Examine/Look"
-msgstr ""
+msgstr "조사하기/보기"
 
 #: engines/grim/grim.cpp:1333
 #, fuzzy
@@ -4547,9 +4541,8 @@ msgstr ""
 "다음 실행시에는 다시 검사하지 않을 것입니다."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "원숭이섬 탈출 지원이 컴파일 되지 않음"
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4558,9 +4551,10 @@ msgid ""
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "and put it in the game data files directory"
 msgstr ""
-"오리지널 Grim Fandango 패치를 찾을 수 없습니다.\n"
+"원본 Grim Fandango 패치를 찾을 수 없습니다.\n"
+"다음 패치를 다운로드하고 \n"
 "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
-"에서 패치를 다운로드하여, 게임 데이터 디렉토리에 넣어 주세요."
+"게임 데이터 디렉토리에 넣어 주십시오"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4654,7 +4648,7 @@ msgstr "맵핑 지우기"
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
-msgstr ""
+msgstr "디버그"
 
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
@@ -4706,13 +4700,12 @@ msgstr "걸을 때 부드러운 스크롤을 활성화합니다."
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:94
-#, fuzzy
 msgid "Floating cursors"
-msgstr "일반 커서"
+msgstr "이동 커서"
 
 #: engines/kyra/detection.cpp:95
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "이동 커서를 활성합니다"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
@@ -4751,12 +4744,11 @@ msgstr "포함된 기능:"
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
-msgstr ""
+msgstr "EOB II FM-TOWNS는 16비트 컬러모드 지원이 필요한데 현재 ScummVM 빌드에는 활성화되지 않았습니다"
 
 #: engines/kyra/metaengine.cpp:133
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -4809,77 +4801,71 @@ msgstr "인벤토리/캐릭터 화면 전환"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
-msgstr ""
+msgstr "캠프"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Cast Spell"
-msgstr ""
+msgstr "주문 시전"
 
 #: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
-msgstr ""
+msgstr "주문 레벨 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 2"
-msgstr ""
+msgstr "주문 레벨 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 3"
-msgstr ""
+msgstr "주문 레벨 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 4"
-msgstr ""
+msgstr "주문 레벨 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 5"
-msgstr ""
+msgstr "주문 레벨 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 6"
-msgstr ""
+msgstr "주문 레벨 6"
 
 #: engines/kyra/engine/lol.cpp:471
 msgid "Attack 1"
-msgstr ""
+msgstr "공격 1"
 
 #: engines/kyra/engine/lol.cpp:472
 msgid "Attack 2"
-msgstr ""
+msgstr "공격 2"
 
 #: engines/kyra/engine/lol.cpp:473
 msgid "Attack 3"
-msgstr ""
+msgstr "공격 3"
 
 #: engines/kyra/engine/lol.cpp:474
-#, fuzzy
 msgid "Show Map"
-msgstr "모두 보기"
+msgstr "지도 보이기"
 
 #: engines/kyra/engine/lol.cpp:477
-#, fuzzy
 msgid "Slide Left"
-msgstr "왼쪽으로 이동"
+msgstr "왼쪽으로"
 
 #: engines/kyra/engine/lol.cpp:478
-#, fuzzy
 msgid "Slide Right"
-msgstr "오른쪽으로 이동"
+msgstr "오른쪽으로"
 
 #: engines/kyra/engine/lol.cpp:481
-#, fuzzy
 msgid "Rest"
-msgstr "불러오기"
+msgstr "휴식"
 
 #: engines/kyra/engine/lol.cpp:482
-#, fuzzy
 msgid "Options"
-msgstr "옵션(~O~)"
+msgstr "옵션"
 
 #: engines/kyra/engine/lol.cpp:483
-#, fuzzy
 msgid "Choose Spell"
-msgstr "선택"
+msgstr "주문 선택"
 
 #: engines/kyra/gui/saveload_eob.cpp:596
 #, c-format
@@ -4891,6 +4877,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"다음의 원본 게임 저장 파일이 게임 폴더에서 발견되었습니다:\n"
+"\n"
+"%s %s\n"
+"\n"
+"ScummVM에서 게임 저장 파일로 사용하시겠습니까?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:629
 #, c-format
@@ -4898,6 +4890,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"저장된 게임 파일이 지정한 %d슬롯에서 발견되었습니다. 덮어씌우시겠습니까?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:662
 #, c-format
@@ -4908,6 +4902,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d개의 원본 게임 저장 파일을 성공적으로 ScummVM에 가져왔습니다. \n"
+"나중에 원본 게임 저장 파일을 수동으로 가져오려면 ScummVM \n"
+"디버그 콘솔을 열고 'import_savefile'명령을 사용해야합니다.\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:280
 msgid ""
@@ -4922,6 +4920,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"현재 AMIGA 버전에는 다음의 글꼴 파일이 필요합니다:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6 / 6\n"
+"EOBF8.FONT\n"
+"EOBF8 / 8\n"
+"\n"
+"원본 설치 프로그램을 이용해 설치했다면 위 파일들은\n"
+"AmigaDOS 시스템의 'Fonts/' 폴더에 있습니다.\n"
+"해당 파일을 EOB 게임 데이터 디렉토리에 복사하십시오.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:288
 msgid ""
@@ -4944,36 +4952,52 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"현재 AMIGA 버전에는 다음의 글꼴 파일이 필요합니다:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6 / 6\n"
+"EOBF8.FONT\n"
+"EOBF8 / 8\n"
+"\n"
+"이 게임은 EOB II의 번역된(영어가 아닌) 버전으로 게임과 함께 제공된 \n"
+"특정 글꼴파일이 포함된 해당 언어의 문자를 사용합니다.\n"
+"따라서 영문판 또는 다른 EOB I 게임의 글꼴 파일을 사용할 순는 없습니다.\n"
+"\n"
+"게임은 실행 되지만, 특정 언어의 문자는 표지되지 않게 됩니다.\n"
+"올바른 글꼴 파일을 EOB II 게임 데이터 디렉토리에 복사해주세요.\n"
+"\n"
 
 #: engines/lab/engine.cpp:125
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리터를 사용하고 Wyrmkeep에서 시리얼 키를 "
+"구입해야합니다"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
-msgstr ""
+msgstr "평가판이 종료되었습니다. Wyrmkeep의 오리지널 인터프리터를 사용하여 전체 게임을 플레이 할 수 있습니다"
 
 #: engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
-msgstr ""
+msgstr "게임을 저장하거나 불러오시겠습니까?"
 
 #: engines/lab/speciallocks.cpp:149
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
+msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
 #: engines/sherlock/detection.cpp:111
 msgid "TTS Narrator"
-msgstr ""
+msgstr "TTS 나레이터"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:107
 #: engines/sherlock/detection.cpp:112
 msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
+msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/made/detection_tables.h:387
 #, fuzzy
@@ -4982,23 +5006,23 @@ msgstr "이 게임은 지원되지 않습니다."
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "쉬운 마우스 인터페이스"
 
 #: engines/mads/detection.cpp:56
 msgid "Shows object names when hovering the mouse over them"
-msgstr ""
+msgstr "마우스 커서를 올리면 대상의 이름을 표시"
 
 #: engines/mads/detection.cpp:65 engines/mads/detection.cpp:66
 msgid "Animated inventory items"
-msgstr ""
+msgstr "움직이는 인벤토리 아이템"
 
 #: engines/mads/detection.cpp:75 engines/mads/detection.cpp:76
 msgid "Animated game interface"
-msgstr ""
+msgstr "움직이는 게임 인터페이스"
 
 #: engines/mads/detection.cpp:85 engines/mads/detection.cpp:86
 msgid "Naughty game mode"
-msgstr ""
+msgstr "꾸러기 게임 모드"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:321
@@ -5311,7 +5335,6 @@ msgid "Saving game..."
 msgstr "게임 저장:"
 
 #: engines/parallaction/saveload.cpp:269
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -5320,11 +5343,10 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"변환이 필요한 구형 Drascula 세이브 파일을 사용하는 것을 감지했습니다.\n"
-"구형 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 다시 로드 가능"
-"합니다.\n"
-"확인 버튼을 눌러 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작할 때 다"
-"시 이 창이 표시됩니다.\n"
+"변환이 필요한 이전 Nippon Safes 세이브 파일을 사용하는 것을 감지했습니다.\n"
+"이전 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 불러올 수 있습니다.\n"
+"\n"
+"확인 버튼을 눌러 변환을 진행하십시오. 그렇지 않으면 다음 실행시 현재 창이 다시 표시됩니다.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
@@ -6624,7 +6646,6 @@ msgid "Cutscene '%s' not found"
 msgstr "'%s' 컷신을 찾지 못함"
 
 #: engines/sword1/control.cpp:887
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -6634,11 +6655,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"변환이 필요한 구형 Drascula 세이브 파일을 사용하는 것을 감지했습니다.\n"
-"구형 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 다시 로드 가능"
-"합니다.\n"
-"확인 버튼을 눌러 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작할 때 다"
-"시 이 창이 표시됩니다.\n"
+"변환이 필요한 이전 Broken Sword 1 세이브 파일을 사용하는 것을 감지했습니다.\n"
+"이전 세이브 파일은 더 이상 지원되지 않으며, 변환 작업을 거쳐야 불러올 수 있습니다.\n"
+"\n"
+"확인 버튼을 눌러 변환을 진행하십시오. 그렇지 않으면 다음 실행시 현재 창이 다시 표시됩니다.\n"
 
 #: engines/sword1/control.cpp:1261
 #, c-format
@@ -7331,29 +7351,28 @@ msgstr "리스트 아래로 스크롤"
 
 #: engines/wintermute/keymapper_tables.h:473
 msgid "Change shadow type"
-msgstr ""
+msgstr "그림자 형식 변경"
 
 #: engines/wintermute/keymapper_tables.h:483
 #: engines/wintermute/keymapper_tables.h:570
-#, fuzzy
 msgid "Volume max"
-msgstr "볼륨"
+msgstr "볼륨 최대"
 
 #: engines/wintermute/keymapper_tables.h:488
 msgid "Show debug parser"
-msgstr ""
+msgstr "디버그 파서 표시"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
 #: engines/wintermute/keymapper_tables.h:1228
 #: engines/wintermute/keymapper_tables.h:1434
 msgid "Debug print"
-msgstr ""
+msgstr "디버그 프린트"
 
 #: engines/wintermute/keymapper_tables.h:500
 #: engines/wintermute/keymapper_tables.h:1407
 msgid "Exit"
-msgstr ""
+msgstr "종료"
 
 #: engines/wintermute/keymapper_tables.h:505
 #, fuzzy
@@ -7392,66 +7411,61 @@ msgstr "볼륨"
 
 #: engines/wintermute/keymapper_tables.h:591
 msgid "Change font size"
-msgstr ""
+msgstr "폰트 크기 변경"
 
 #: engines/wintermute/keymapper_tables.h:670
-#, fuzzy
 msgid "Save game"
-msgstr "게임 저장:"
+msgstr "게임 저장"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Quick save"
-msgstr ""
+msgstr "빠른 저장"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "걷기 속도: 천천히"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "걷기 속도: 중간"
 
 #: engines/wintermute/keymapper_tables.h:695
 msgid "Walking speed: High"
-msgstr ""
+msgstr "걷기 속도: 빠르게"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Quick load"
-msgstr "클릭 모드"
+msgstr "빠른 불러오기"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
 #: engines/wintermute/keymapper_tables.h:1429
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "다운로드 취소"
+msgstr "대기 최소"
 
 #: engines/wintermute/keymapper_tables.h:715
 msgid "First page"
-msgstr ""
+msgstr "첫 페이지"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Last page"
-msgstr "빠른 리플레이"
+msgstr "마지막 페이지"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "걷기 속도: 울트라 수퍼 메가 빠르게"
 
 #: engines/wintermute/keymapper_tables.h:743
-#, fuzzy
 msgid "Show game credits"
-msgstr "마우스 커서 표시"
+msgstr "게임 크레딧 표시"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Play selected music record"
-msgstr ""
+msgstr "선택된 음악을 재생"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Select next music record"
-msgstr ""
+msgstr "다음 음악을 선택"
 
 #: engines/wintermute/keymapper_tables.h:758
 msgid "Play note 1: A"
@@ -7626,7 +7640,7 @@ msgstr "음악 볼륨:"
 
 #: engines/wintermute/keymapper_tables.h:1561
 msgid "Rotate"
-msgstr ""
+msgstr "회전"
 
 #: engines/wintermute/keymapper_tables.h:1586
 msgid "Drop"
@@ -7638,15 +7652,15 @@ msgstr "플레이어 1:위"
 
 #: engines/wintermute/keymapper_tables.h:1599
 msgid "Player 1: Left"
-msgstr ""
+msgstr "플레이어 1:왼쪽"
 
 #: engines/wintermute/keymapper_tables.h:1604
 msgid "Player 1: Down"
-msgstr ""
+msgstr "플레이어 1:아래"
 
 #: engines/wintermute/keymapper_tables.h:1609
 msgid "Player 1: Right"
-msgstr ""
+msgstr "플레이어 1:오른쪽"
 
 #: engines/wintermute/keymapper_tables.h:1614
 msgid "Player 2: Up"
@@ -7670,7 +7684,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1736
 msgid "Key i"
@@ -7701,11 +7715,11 @@ msgstr "게임 저장 실패"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
-msgstr ""
+msgstr "FPS 확장"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "FPS를 30에서 60으로 증가"
 
 #: engines/zvision/detection_tables.h:70
 #, fuzzy
@@ -7763,12 +7777,11 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:188
 msgid "Extract coin"
-msgstr ""
+msgstr "코인 추출"
 
 #: engines/zvision/metaengine.cpp:209
-#, fuzzy
 msgid "Preferences"
-msgstr "선호하는 장치:"
+msgstr "환경설정"
 
 #: engines/zvision/zvision.cpp:313
 msgid ""
@@ -7781,6 +7794,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"게임을 플레이하기 전에 필요한 글꼴을 ScummVM의 추가 디렉토리 또는 게임 디렉토리에 복사해야합니다. Windows에서는 "
+"Windows 글꼴 디렉토리에있는 Times New Roman, Century Schoolbook, Garamond, Courier "
+"New 및 Arial의 글꼴 파일이 필요합니다. 또는 Liberation Fonts 또는 GNU FreeFont 패키지를 다운로드 할 수 "
+"있습니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: LiberationMono, LiberationSans 및 "
+"LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각각 필요"
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "ScummVM 메인 메뉴"
