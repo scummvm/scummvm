@@ -24,6 +24,7 @@ namespace AGS {
 
 const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ags", "Adventure Game Studio Game" },
+	{ "ags-scan", "AGS Game Scanner" },
 
 	// Pre-2.5 games that aren't supported by the current AGS engine
 	{ "6da", "The 6 Day Assassin" },
@@ -1275,7 +1276,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "whowantstoliveforever", "Who wants to live forever?" },
 	{ "williamsnightmare", "Williams Nightmare" },
 	{ "willowhouse", "Willow House" },
-	{ "winfry", "Winfry" },
 	{ "winnersdontdodrugs", "Winners Dont' Do Drugs" },
 	{ "winterrose", "Winter Rose" },
 	{ "witch", "Witch" },
