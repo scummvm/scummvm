@@ -144,6 +144,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added option to select the default voice for ports that support Text-to-Speech.
    - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit)
    - Major improvements to the keymapper.
+   - Games are now recognised by engineid:gameid combination.
 
  BBVS:
    - Added support for the demo, available from our website.
