@@ -574,7 +574,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	// reached a new line that is about get faded in
 	_dialTextBoxCurrentLine++;
 
-	_dialTextYPos += _lineHeight;
+	_dialTextYPos += lineHeight;
 	_dialTextXPos = _dialTextBox.left + PADDING;
 
 	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
@@ -763,14 +763,14 @@ void Text::textClipFull() {
 	_dialTextBox.right = _engine->width() - margin;
 	_dialTextBox.bottom = _engine->height() - margin;
 
-	_dialTextBoxLines = (int32)(_dialTextBox.height() / _lineHeight) - 1;
+	_dialTextBoxLines = (int32)(_dialTextBox.height() / lineHeight) - 1;
 	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
 void Text::textClipSmall() {
 	const int32 margin = 16;
 	_dialTextBoxLines = 3;
-	const int32 textHeight = _dialTextBoxLines * _lineHeight;
+	const int32 textHeight = _dialTextBoxLines * lineHeight;
 
 	_dialTextBox.left = margin;
 	_dialTextBox.top = _engine->height() - textHeight - margin - PADDING;

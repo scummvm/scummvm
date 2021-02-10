@@ -209,7 +209,6 @@ private:
 	char *_currDialTextPtr = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
-	static const int32 _lineHeight = 38;
 
 	char currMenuTextBuffer[256];
 	int32 currMenuTextBank = TextBankId::None;
@@ -244,6 +243,8 @@ private:
 public:
 	Text(TwinEEngine *engine);
 	~Text();
+
+	static const int32 lineHeight = 38;
 
 	// TODO: refactor all this variables and related functions
 	bool _hasValidTextHandle = false;

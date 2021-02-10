@@ -831,9 +831,17 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
 			freezeTime();
+			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
-			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
-			copyBlockPhys(5, 446, 100, 479);
+			if (_redraw->inSceneryView) {
+				_text->drawText(_redraw->_sceneryViewX + 5, _redraw->_sceneryViewY, PauseString);
+				_redraw->zoomScreenScale();
+			} else {
+				const int width = _text->getTextSize(PauseString);
+				const int bottom = height() - _text->lineHeight;
+				_text->drawText(5, bottom, PauseString);
+				copyBlockPhys(5, bottom, 5 + width, bottom + _text->lineHeight);
+			}
 			do {
 				FrameMarker frameWait;
 				ScopedFPS scopedFps;
