@@ -72,7 +72,7 @@ public:
 	// Messages
 	const char *_objName[MAXOBJNAME];
 	const char *_sentence[MAXSENTENCE];
-	const char *_sysSentence[MAXSYSSENT];
+	const char *_sysText[MAXSYSTEXT];
 
 	// Message system
 	Message _gameMsg[MAXMESSAGE];

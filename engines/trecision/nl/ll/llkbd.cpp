@@ -255,8 +255,8 @@ void LoadAll() {
 	for (int a = 0; a < MAXSENTENCE; a++)
 		g_vm->_sentence[a] = GetNextSent();
 
-	for (int a = 0; a < MAXSYSSENT; a++)
-		g_vm->_sysSentence[a] = GetNextSent();
+	for (int a = 0; a < MAXSYSTEXT; a++)
+		g_vm->_sysText[a] = GetNextSent();
 
 	dataNl.close();
 }
