@@ -48,9 +48,9 @@ extern int8 _characterGoToPosition;
 extern int8 OldObjStatus[];
 extern int8 VideoObjStatus[];
 
-extern struct screenrect VideoTop;
-extern struct screenrect VideoCent;
-extern struct screenrect VideoBott;
+extern struct ScreenRect VideoTop;
+extern struct ScreenRect VideoCent;
+extern struct ScreenRect VideoBott;
 
 extern struct SSortTable SortTable[];
 
@@ -64,8 +64,8 @@ extern LLBOOL  Semskiptalk;
 extern LLBOOL  Semskipenable;
 extern LLBOOL  SemMouseEnabled;
 extern LLBOOL  SemScreenRefreshed;
-extern LLBOOL  SemPaintHomo;
-extern LLBOOL  SemShowHomo;
+extern LLBOOL  SemPaintCharacter;
+extern LLBOOL  SemShowCharacter;
 extern LLBOOL  SemSomeOneSpeak;
 extern LLBOOL  SemCharacterSpeak;
 extern LLBOOL  SemInventoryLocked;

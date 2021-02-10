@@ -166,7 +166,7 @@ Management of cards for Regen
 #define GAMEAREA(my) BETWEEN(VideoCent.y0,my,VideoCent.y1)
 #define INVAREA(my)  (my>=VideoBott.y0)
 #define ICONAREA(mx,my) ((my>=VideoBott.y0) && (my</*=VideoBott.y0+ICONDY*/MAXY) && (mx>=ICONMARGSX) && (mx<=SCREENLEN-ICONMARGDX))
-#define REEVENT doEvent(g_vm->TheMessage->_class, g_vm->TheMessage->_event, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam)
+#define REEVENT doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam)
 
 
 #define  COLOR_ARG     HWHITE

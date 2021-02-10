@@ -311,7 +311,7 @@ void StartFullMotion(const char *name) {
 	_playingAnims[pos] = FULLMOTIONANIM;
 	_curAnimFrame[pos] = 0;
 
-	SemShowHomo = 0;
+	SemShowCharacter = 0;
 	FullStart = 0;
 	FullEnd = 0;
 	TextStatus = TEXT_OFF;
@@ -322,9 +322,9 @@ void StartFullMotion(const char *name) {
 	ShowScreen(0, AREA + TOP, MAXX, TOP);
 	UnlockVideo();
 
-	InitQueue(&g_vm->_gameQueue);
-	InitQueue(&g_vm->_animQueue);
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_gameQueue.initQueue();
+	g_vm->_animQueue.initQueue();
+	g_vm->_characterQueue.initQueue();
 	actorStop();
 	SemMouseEnabled = false;
 
@@ -372,7 +372,7 @@ void StopFullMotion() {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
 				(_curDialog == dF491) || ((_curDialog == dC581) && !(_choice[886]._flag & OBJFLAG_DONE) && (_choice[258]._flag & OBJFLAG_DONE)) ||
 		    ((_curDialog == dC5A1) && (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
-			SemShowHomo = 0;
+			SemShowCharacter = 0;
 		else
 			RedrawRoom();
 
@@ -400,7 +400,7 @@ void RegenAnim(int box) {
 --------------------------------------------------*/
 void RedrawRoom() {
 	if ((_curDialog != dF321) && (_curDialog != dF431) && (_curDialog != dF4C1) && (_curDialog != dASCENSORE12) && (_curDialog != dASCENSORE13) && (_curDialog != dASCENSORE16))
-		SemShowHomo = true;
+		SemShowCharacter = true;
 
 	switch (_curDialog) {
 	case dASCENSORE12:
@@ -445,7 +445,7 @@ void RedrawRoom() {
 	RegenRoom();
 
 	TextStatus = TEXT_OFF;
-	SemPaintHomo = 1;
+	SemPaintCharacter = 1;
 	PaintScreen(1);
 	ShowScreen(0, 0, 640, 480);
 }

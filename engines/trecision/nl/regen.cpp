@@ -65,7 +65,7 @@ void PaintScreen(uint8 flag) {
 
 	PaintRegenRoom();
 
-//	if( ( !SemPaintHomo) && ( _curSortTableNum == 0 ) &&  ( TheString.sign == NULL ) && ( OldString.sign == NULL ) )
+//	if( ( !SemPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( TheString.sign == NULL ) && ( OldString.sign == NULL ) )
 //		return;
 
 	Hlim = 255;
@@ -74,11 +74,11 @@ void PaintScreen(uint8 flag) {
 		VisualRef[a] = 255;
 
 	limitinum = 0;
-	SemPaintHomo = 1;                      // ridisegna sempre l'omino
+	SemPaintCharacter = 1;                      // ridisegna sempre l'omino
 	AddLine(0, 0, 0);
 
 // CANCELLA L'OMINO
-	if (SemShowHomo) {                    // se c'era una scritta
+	if (SemShowCharacter) {                    // se c'era una scritta
 		// cancello omino
 		DObj.x    = 0;
 		DObj.y    = TOP;
@@ -275,7 +275,7 @@ void PaintScreen(uint8 flag) {
 
 	g_vm->_curSortTableNum = 0;
 
-	SemPaintHomo = 0;
+	SemPaintCharacter = 0;
 	SemWaitRegen = false;
 
 	// gestione papaverina ritardata
@@ -467,7 +467,7 @@ void PaintObjAnm(uint16 CurBox) {
 	}
 
 	if ((_actorPos == CurBox) &&
-			((SemShowHomo) && (SemCharacterExist))) {
+			((SemShowCharacter) && (SemCharacterExist))) {
 		drawCharacter(CALCPOINTS);
 
 		// allarga il rettangolo dell'omino
@@ -486,7 +486,7 @@ void PaintObjAnm(uint16 CurBox) {
 		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);
 
-		//SemPaintHomo = 0;
+		//SemPaintCharacter = 0;
 	} else if ((_actorPos == CurBox) && !(SemDialogActive)) {
 		RegenSmackAnim(_playingAnims[1]);
 	}

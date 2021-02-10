@@ -496,7 +496,7 @@ void ReadLoc() {
 
 	RoomReady = 0;
 	if ((g_vm->_curRoom == r11) && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
-		SemShowHomo = 1;
+		SemShowCharacter = 1;
 
 	SoundFadOut();
 
@@ -554,7 +554,7 @@ void TendIn() {
 		return ;
 	}
 
-	SemPaintHomo = 1;
+	SemPaintCharacter = 1;
 	WaitSoundFadEnd();
 	PaintScreen(1);
 

@@ -820,7 +820,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[od2CALLA26]._mode &= ~OBJMODE_OBJSTATUS;
-			SemShowHomo = false;
+			SemShowCharacter = false;
 			ReadExtraObj2C();
 			RegenRoom();
 		} else
@@ -1055,7 +1055,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_obj[oAGENDA49]._action = 1100;
 			SemCharacterExist = true;
 			g_vm->_curObj = oAGENDA49;
-			//SemShowHomo=true;
+			//SemShowCharacter=true;
 			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
 			PlayScript(s49MERIDIANA);
 		}
@@ -1113,7 +1113,7 @@ void doMouseOperate(uint16 TheObj) {
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, TheObj);
 			SemCharacterExist = true;
-			//SemShowHomo=true;
+			//SemShowCharacter=true;
 		} else {
 			for (a = 0; a < 6; a++) {
 				Comb4CT[a] = 0;
@@ -1121,7 +1121,7 @@ void doMouseOperate(uint16 TheObj) {
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, TheObj);
 			SemCharacterExist = true;
-			//SemShowHomo=true;
+			//SemShowCharacter=true;
 		}
 		printsent = false;
 		break;
@@ -3152,13 +3152,13 @@ void doDoing() {
 
 	warning("doDoing");
 
-	if (g_vm->TheMessage->_event <= ME_WAITOPENCLOSE) {
-		TheObj = g_vm->TheMessage->_wordParam1;
-		TheAnim = g_vm->TheMessage->_wordParam2;
+	if (g_vm->_curMessage->_event <= ME_WAITOPENCLOSE) {
+		TheObj = g_vm->_curMessage->_wordParam1;
+		TheAnim = g_vm->_curMessage->_wordParam2;
 		//		TheAliasObj = _obj[TheObj].alias;
 	}
 
-	switch (g_vm->TheMessage->_event) {
+	switch (g_vm->_curMessage->_event) {
 
 	case ME_INITOPENCLOSE:
 		if (_actor._curAction == hSTAND)
@@ -3176,7 +3176,7 @@ void doDoing() {
 				break;
 			}
 			if (cont)
-				doEvent(g_vm->TheMessage->_class, ME_OPENCLOSE, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
+				doEvent(g_vm->_curMessage->_class, ME_OPENCLOSE, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
 			else
 				REEVENT;
 		}
@@ -3190,21 +3190,21 @@ void doDoing() {
 //    else
 			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, TheAnim, 0, 0, 0);
 		}
-		g_vm->TheMessage->_event = ME_WAITOPENCLOSE;
+		g_vm->_curMessage->_event = ME_WAITOPENCLOSE;
 		// senza break!
 	case ME_WAITOPENCLOSE:
 		if (TheAnim)
-			switch (g_vm->TheMessage->_byteParam) {
+			switch (g_vm->_curMessage->_byteParam) {
 				/*				case 0:
 									if(AnimObj[TheAnim]._flag & ONOFF)
 									{
-										TheMessage->_byteParam = 1;
+										_curMessage->_byteParam = 1;
 										ObjOpen(TheObj);
 									}
 									REEVENT;
 									return;
 								case 1:
-									if(!(AnimObj[TheAnim]._flag & ONOFF)) TheMessage->_byteParam = 2;
+									if(!(AnimObj[TheAnim]._flag & ONOFF)) _curMessage->_byteParam = 2;
 									REEVENT;
 									return;
 								case 2:
@@ -3224,22 +3224,22 @@ void doDoing() {
 /*-------------------------------------------------------------------------*/
 void doScript() {
 	static uint32 me_pausestarttime = 0;
-	uint8 campo = g_vm->TheMessage->_byteParam;
-	uint16 indice = g_vm->TheMessage->_wordParam1;
-	uint16 indice2 = g_vm->TheMessage->_wordParam2;
-	uint32 valore = g_vm->TheMessage->_longParam;
+	uint8 campo = g_vm->_curMessage->_byteParam;
+	uint16 indice = g_vm->_curMessage->_wordParam1;
+	uint16 indice2 = g_vm->_curMessage->_wordParam2;
+	uint32 valore = g_vm->_curMessage->_longParam;
 
-	switch (g_vm->TheMessage->_event) {
+	switch (g_vm->_curMessage->_event) {
 
 	case ME_PAUSE:
 		if (!me_pausestarttime) {
 			me_pausestarttime = TheTime;
-			doEvent(g_vm->TheMessage->_class, g_vm->TheMessage->_event, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
+			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
 		} else {
-			if (TheTime >= (me_pausestarttime + g_vm->TheMessage->_wordParam1))
+			if (TheTime >= (me_pausestarttime + g_vm->_curMessage->_wordParam1))
 				me_pausestarttime = 0;
 			else
-				doEvent(g_vm->TheMessage->_class, g_vm->TheMessage->_event, g_vm->TheMessage->_priority, g_vm->TheMessage->_wordParam1, g_vm->TheMessage->_wordParam2, g_vm->TheMessage->_byteParam, g_vm->TheMessage->_longParam);
+				doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
 		}
 		break;
 
@@ -3325,18 +3325,18 @@ void doScript() {
 		break;
 
 //		case ME_SOMEONETALK:
-//			SomeOneTalk(dBattuta[TheMessage->_longParam]+1,TheMessage->_wordParam1,TheMessage->_wordParam2,false);
-//			_curSubTitle = TheMessage->_longParam;
+//			SomeOneTalk(dBattuta[_curMessage->_longParam]+1,_curMessage->_wordParam1,_curMessage->_wordParam2,false);
+//			_curSubTitle = _curMessage->_longParam;
 //			break;
 
 	case ME_CHARACTERSAY:
-		CharacterSay(g_vm->TheMessage->_longParam);
+		CharacterSay(g_vm->_curMessage->_longParam);
 		break;
 
 	case ME_SETSEM:
-		switch (g_vm->TheMessage->_wordParam1) {
+		switch (g_vm->_curMessage->_wordParam1) {
 		case C_SEMDIAG:
-//F					SemDialogActive = TheMessage->_wordParam2 == 0 ? 0 : 1;
+//F					SemDialogActive = _curMessage->_wordParam2 == 0 ? 0 : 1;
 			break;
 		}
 		break;
@@ -3772,17 +3772,17 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (g_vm->_room[r23A]._flag & OBJFLAG_DONE))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE)))
-		SemShowHomo = false;
+		SemShowCharacter = false;
 	else if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) ||
 	         (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) ||
 	         (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) { // Screens without inventory
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		SemCharacterExist = false;
 		SemInventoryLocked = true;
 	} else if ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P)) { // Screens with inventory
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		SemCharacterExist = false;
 	} else if ((g_vm->_curRoom == r2F) && (g_vm->_oldRoom == r31))
 		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
@@ -3844,7 +3844,7 @@ void AtEndChangeRoom() {
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r32) && (g_vm->_room[r32]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF321);
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		WaitSoundFadEnd();
 		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
 	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
@@ -3875,11 +3875,11 @@ void AtEndChangeRoom() {
 		PlayDialog(dC4A1);
 	} else if ((g_vm->_curRoom == r4P) && (g_vm->_oldRoom == r4O) && !(g_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
 		PlayDialog(dF4PI);
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT) /*&& !( _inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA )*/) {
 		PlayDialog(dF4C1);
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		WaitSoundFadEnd();
 	}
 	/*	else if((g_vm->_curRoom==r18) && (_oldRoom==r1B))
@@ -3914,7 +3914,7 @@ void AtEndChangeRoom() {
 	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (CloseUpObj) && (g_vm->_obj[CloseUpObj]._examine))
 		CharacterSay(g_vm->_obj[CloseUpObj]._examine);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE))) {
-		SemShowHomo = true;
+		SemShowCharacter = true;
 		StartCharacterAction(aWALKIN, 0, 0, 361);
 	} else if ((g_vm->_curRoom == r24) && !(g_vm->_room[r24]._flag & OBJFLAG_DONE))
 		CharacterSay(381);

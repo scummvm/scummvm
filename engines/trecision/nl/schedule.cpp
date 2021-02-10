@@ -38,14 +38,14 @@ int maxmesg, maxmesh, maxmesa;
 /*-------------------------------------------------------------------------*/
 /*                               GETMESSAGE           					   */
 /*-------------------------------------------------------------------------*/
-bool GetMessage(MessageQueue *lq) {
-	if (!(lq->_len))
+bool MessageQueue::getMessage() {
+	if (!_len)
 		return true;
 
-	g_vm->TheMessage = lq->_event[lq->_head++];
-	if (lq->_head == MAXMESSAGE)
-		lq->_head = 0;
-	lq->_len--;
+	g_vm->_curMessage = _event[_head++];
+	if (_head == MAXMESSAGE)
+		_head = 0;
+	_len--;
 
 	return false;
 }
@@ -54,9 +54,9 @@ bool GetMessage(MessageQueue *lq) {
 /*                            INITMESSAGESYSTEM          				   */
 /*-------------------------------------------------------------------------*/
 void InitMessageSystem() {
-	InitQueue(&g_vm->_gameQueue);
-	InitQueue(&g_vm->_animQueue);
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_gameQueue.initQueue();
+	g_vm->_animQueue.initQueue();
+	g_vm->_characterQueue.initQueue();
 	for (uint8 i = 0; i < MAXMESSAGE; i++) {
 		g_vm->_gameQueue._event[i] = &g_vm->_gameMsg[i];
 		g_vm->_characterQueue._event[i] = &g_vm->_characterMsg[i];
@@ -67,10 +67,10 @@ void InitMessageSystem() {
 /*-------------------------------------------------------------------------*/
 /*                                INITQUEUE           					   */
 /*-------------------------------------------------------------------------*/
-void InitQueue(MessageQueue *lq) {
-	lq->_head = 0;
-	lq->_tail = 0;
-	lq->_len  = 0;
+void MessageQueue::initQueue() {
+	_head = 0;
+	_tail = 0;
+	_len  = 0;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -113,7 +113,7 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	if (lq == &g_vm->_characterQueue && lq->_len > maxmesh)
 		maxmesh = lq->_len;
 
-	OrderEvent(lq);
+	lq->orderEvents();
 }
 
 /*-------------------------------------------------------------------------*/
@@ -121,32 +121,32 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 /*-------------------------------------------------------------------------*/
 void Scheduler() {
 	static uint8 token = CLASS_CHAR;
-	static uint8 Counter;
+	static uint8 counter;
 	bool retry = true;
 
 	while (retry) {
 		retry = false;
 		switch (token) {
 		case CLASS_GAME:
-			if (Counter++ <= 30) {
+			if (counter++ <= 30) {
 				token = CLASS_ANIM;
-				if (GetMessage(&g_vm->_gameQueue))
-					g_vm->TheMessage = &g_vm->_idleMsg;
+				if (g_vm->_gameQueue.getMessage())
+					g_vm->_curMessage = &g_vm->_idleMsg;
 			} else {
-				Counter = 0;
-				g_vm->TheMessage = &g_vm->_idleMsg;
+				counter = 0;
+				g_vm->_curMessage = &g_vm->_idleMsg;
 			}
 			break;
 
 		case CLASS_ANIM:
 			token = CLASS_CHAR;
-			if (GetMessage(&g_vm->_animQueue))
+			if (g_vm->_animQueue.getMessage())
 				retry = true;
 			break;
 
 		case CLASS_CHAR:
 			token = CLASS_GAME;
-			if ((SemPaintHomo) || (GetMessage(&g_vm->_characterQueue)))
+			if (SemPaintCharacter || g_vm->_characterQueue.getMessage())
 				retry = true;
 			break;
 
@@ -158,7 +158,7 @@ void Scheduler() {
 /*                            PROCESSTHEMESSAGE          				   */
 /*-------------------------------------------------------------------------*/
 void ProcessTheMessage() {
-	switch (g_vm->TheMessage->_class) {
+	switch (g_vm->_curMessage->_class) {
 	case MC_CHARACTER:
 		doCharacter();
 		break;
@@ -206,14 +206,14 @@ void ProcessTheMessage() {
 /*-------------------------------------------------------------------------*/
 /*                               ORDEREVENT           					   */
 /*-------------------------------------------------------------------------*/
-void OrderEvent(MessageQueue *lq) {
+void MessageQueue::orderEvents() {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
-	for (uint8 pos = PredEvent(lq->_tail); pos != lq->_head; pos = PredEvent(pos)) {
-		if (lq->_event[pos]->_priority > lq->_event[PredEvent(pos)]->_priority) {
-			if (lq->_event[pos]->_priority < MP_HIGH)
-				lq->_event[pos]->_priority++;
-			SwapMessage(lq->_event[pos], lq->_event[PredEvent(pos)]);
+	for (uint8 pos = PredEvent(_tail); pos != _head; pos = PredEvent(pos)) {
+		if (_event[pos]->_priority > _event[PredEvent(pos)]->_priority) {
+			if (_event[pos]->_priority < MP_HIGH)
+				_event[pos]->_priority++;
+			SwapMessage(_event[pos], _event[PredEvent(pos)]);
 		}
 	}
 }
@@ -221,9 +221,9 @@ void OrderEvent(MessageQueue *lq) {
 /*-------------------------------------------------------------------------*/
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
-bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
-	for (uint8 pos = lq->_head; pos != lq->_tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
-		if (lq->_event[pos]->_class != cls)
+bool MessageQueue::testEmptyQueue(uint8 cls) {
+	for (uint8 pos = _head; pos != _tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+		if (_event[pos]->_class != cls)
 			return false;
 	}
 
@@ -233,21 +233,15 @@ bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 /*-------------------------------------------------------------------------*/
 /*                     TESTEMPTYCHARACTERQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
-bool TestEmptyCharacterQueue4Script(MessageQueue *lq) {
-	for (uint8 pos = lq->_head; pos != lq->_tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
-		/*		if (!(( lq->_event[pos]->_class == MC_CHARACTER) &&
-					(( lq->_event[pos]->_event == ME_CHARACTERACTION) ||
-			( lq->_event[pos]->_event == ME_CHARACTERCONTINUEACTION)) &&
-			( lq->_event[pos]->_longParam == false) &&
-			( lq->_event[pos]->_wordParam1 > DEFAULTACTIONS)))
-		*/
-		if (lq->_event[pos]->_class == MC_CHARACTER) {
-			if (lq->_event[pos]->_event == ME_CHARACTERACTION || lq->_event[pos]->_event == ME_CHARACTERGOTO
-				|| lq->_event[pos]->_event == ME_CHARACTERGOTOACTION || lq->_event[pos]->_event == ME_CHARACTERGOTOEXAMINE
-				|| lq->_event[pos]->_event == ME_CHARACTERCONTINUEACTION)
-			return false;
-		}
-
+bool MessageQueue::testEmptyCharacterQueue4Script() {
+	for (uint8 pos = _head; pos != _tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+		if (_event[pos]->_class != MC_CHARACTER)
+			continue;
+			
+		if (_event[pos]->_event == ME_CHARACTERACTION || _event[pos]->_event == ME_CHARACTERGOTO
+			|| _event[pos]->_event == ME_CHARACTERGOTOACTION || _event[pos]->_event == ME_CHARACTERGOTOEXAMINE
+			|| _event[pos]->_event == ME_CHARACTERCONTINUEACTION)
+		return false;
 	}
 
 //	true quando:
