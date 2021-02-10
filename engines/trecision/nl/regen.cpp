@@ -53,7 +53,6 @@ int fillviola = 0;
 uint32 DislVar = 0;
 
 void PaintScreen(uint8 flag) {
-	extern FILE *fhi;
 	int a, liv;
 	static int framenum;
 

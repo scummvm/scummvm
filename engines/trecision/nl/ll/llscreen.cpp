@@ -103,8 +103,7 @@ uint8 SoundSystemActive;
 uint8 SpeechTrackEnabled = 0;
 uint8 *SoundStartBuffer;
 // Temporary variables
-FILE  *fhi;
-LPFILEHANDLE ff;
+Common::SeekableReadStream *ff;
 char UStr[140];
 int32  hh;
 // MOUSE
@@ -162,14 +161,11 @@ void OpenVideo() {
 	GameBytePointer = 0;
 	GameWordPointer = 0;
 
-	sprintf(UStr, "%sData\\NlData.cd0", g_vm->_gamePath);
-	//	sprintf( UStr, "Data\\NlData.cd0" );
+	sprintf(UStr, "NlData.cd0");
 	FastFileInit(UStr);
-	sprintf(UStr, "%sData\\NlSpeech.cd0", g_vm->_gamePath);
-	//	sprintf( UStr, "Data\\NlSpeech.cd0" );
+	sprintf(UStr, "NlSpeech.cd0");
 	SpeechFileInit(UStr);
-	sprintf(UStr, "%sData\\NlAnim.cd%c", g_vm->_gamePath, CurCDSet + '0');
-	//	sprintf( UStr, "Data\\NlAnim.cd%c", CurCDSet+'0' );
+	sprintf(UStr, "NlAnim.cd%c", CurCDSet+'0');
 	AnimFileInit(UStr);
 
 	Video2 = (uint16 *)MemoryArea + 2000000L;

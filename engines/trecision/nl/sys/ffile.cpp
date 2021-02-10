@@ -21,34 +21,19 @@
  */
 
 #include <search.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/trecision.h"
+#include "trecision/nl/sys/ffile.h"
 
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "common/file.h"
+#include "common/substream.h"
 
 namespace Trecision {
-
-#define MAXFHANDLE		10
-#define MAXFILES		500
-
-static FILE				*hFile;
-static FILEENTRY		pFE[MAXFILES];
-static char				*pBase;
-static int				dwFECnt;
-static FILEHANDLE		lpFH[MAXFHANDLE];
-static int				dwFHCnt;
-static int				lFileEnd;
-
-void CheckFileInCD(const char *name);
-void CloseSys(const char *str);
-void FastFileFinish();
-void AnimFileFinish();
-void SpeechFileFinish();
 
 /* -----------------19/01/98 17.12-------------------
  * Compare
@@ -60,6 +45,83 @@ int Compare(const void *p1, const void *p2) {
 	return (scumm_stricmp((p1c)->name, (p2c)->name));
 }
 
+FastFile::FastFile() : Common::Archive(), _stream(nullptr) {
+}
+
+FastFile::~FastFile() {
+	close();
+}
+
+const FastFile::FileEntry *FastFile::getEntry(const Common::String &name) const {
+	FileEntry key;
+	strncpy(key.name, name.c_str(), ARRAYSIZE(key.name));
+
+	FileEntry *entry = (FileEntry *)bsearch(&key, &_fileEntries[0], _fileEntries.size(), sizeof(FileEntry), Compare);
+	return entry;
+}
+
+bool FastFile::open(const Common::String &name) {
+	close();
+
+	_stream = SearchMan.createReadStreamForMember(name);
+	if (!_stream)
+		return false;
+
+	int numFiles = _stream->readUint32LE();
+	_fileEntries.resize(numFiles);
+	for (int i = 0; i < numFiles; i++) {
+		FileEntry *entry = &_fileEntries[i];
+		_stream->read(entry->name, ARRAYSIZE(entry->name));
+		entry->offset = _stream->readUint32LE();
+	}
+
+	return true;
+}
+
+void FastFile::close() {
+	delete _stream;
+	_stream = nullptr;
+	_fileEntries.clear();
+}
+
+bool FastFile::hasFile(const Common::String &name) const {
+	const FileEntry *entry = getEntry(name);
+	return entry != nullptr;
+}
+
+int FastFile::listMembers(Common::ArchiveMemberList &list) const {
+	list.clear();
+	for (Common::Array<FileEntry>::const_iterator i = _fileEntries.begin(); i != _fileEntries.end(); i++)
+		list.push_back(getMember(i->name));
+
+	return list.size();
+}
+
+const Common::ArchiveMemberPtr FastFile::getMember(const Common::String &name) const {
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::String &name) const {
+	if (!_stream)
+		return nullptr;
+
+	const FileEntry *entry = getEntry(name);
+	if (entry) {
+		uint32 size = (entry + 1)->offset - entry->offset;
+		return new Common::SeekableSubReadStream(_stream, entry->offset, entry->offset + size);
+	}
+
+	return nullptr;
+}
+
+FastFile dataFile;
+
+void CheckFileInCD(const char *name);
+void CloseSys(const char *str);
+void FastFileFinish();
+void AnimFileFinish();
+void SpeechFileFinish();
+
 /* -----------------19/01/98 17.13-------------------
  * FastFileInit
  *
@@ -69,26 +131,14 @@ int Compare(const void *p1, const void *p2) {
 char FastFileInit(const char *fname) {
 	FastFileFinish();
 
-//	get a file handle array - just do it
-	dwFHCnt = MAXFHANDLE - 1;
-
-	hFile = fopen(fname, "rb");
-
-	if (hFile == NULL) {
-		warning("FastFileInit: CreateFile open error %s", fname);
-		hFile = NULL;
+	if (!dataFile.open(fname)) {
+		warning("FastFileInit: failed to open %s", fname);
 		FastFileFinish();
 		CloseSys(g_vm->_sysText[1]);
 		return false;
 	}
 
-//	get initial data from the memory mapped file
-	fread(&dwFECnt, 4, 1, hFile);
-	fread(pFE, sizeof(FILEENTRY), dwFECnt, hFile);
-	lFileEnd = pFE[dwFECnt - 1].offset;
-
 	return true;
-
 }
 
 /* -----------------19/01/98 17.14-------------------
@@ -97,14 +147,7 @@ char FastFileInit(const char *fname) {
  * Clean up resources
  * --------------------------------------------------*/
 void FastFileFinish(void) {
-	if (hFile != NULL) {
-		fclose(hFile);
-		hFile = NULL;
-	}
-	dwFHCnt = 0;
-	pBase = NULL;
-	dwFECnt = 0;
-
+	dataFile.close();
 }
 
 /* -----------------19/01/98 17.15-------------------
@@ -112,44 +155,27 @@ void FastFileFinish(void) {
  *
  * Search the directory for the file, and return a file handle if found.
  * --------------------------------------------------*/
-LPFILEHANDLE FastFileOpen(const char *name) {
-	FILEENTRY fe;
-	LPFILEENTRY pfe;
-
-	if (pFE == NULL) {
+Common::SeekableReadStream *FastFileOpen(const char *name) {
+	if (!dataFile.isOpen()) {
 		warning("FastFileOpen: not initialized");
-		return NULL;
+		return nullptr;
 	}
-	if (name == NULL || name[0] == 0) {
+	if (name == nullptr || name[0] == 0) {
 		warning("FastFileOpen: invalid name");
-		return NULL;
+		return nullptr;
 	}
 
-	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, pFE, dwFECnt, sizeof(FILEENTRY), Compare);
-	if (pfe == NULL) {
+	Common::SeekableReadStream *stream = dataFile.createReadStreamForMember(name);
+	if (stream == nullptr) {
 		CheckFileInCD(name);
-		pfe = (LPFILEENTRY)bsearch(&fe, pFE, dwFECnt, sizeof(FILEENTRY), Compare);
+		stream = dataFile.createReadStreamForMember(name);
 	}
-	if (pfe != NULL) {
-		for (int i = 0; i < dwFHCnt; i++) {
-			if (!lpFH[i].inuse) {
-				lpFH[i].inuse = true;
-				lpFH[i].pos = pfe->offset;
-				lpFH[i].size = (pfe + 1)->offset - pfe->offset;
-				lpFH[i].pfe = pfe;
-				fseek(hFile, lpFH[i].pos, SEEK_SET);
-				return &lpFH[i];
-			}
-		}
-		warning("FastFileOpen: Out of file handles");
-	} else {
+	if (stream == nullptr) {
 		warning("FastFileOpen: File %s not found", name);
 		CloseSys(g_vm->_sysText[1]);
 	}
 
-	return NULL;
-
+	return stream;
 }
 
 /* -----------------19/01/98 17.16-------------------
@@ -157,14 +183,13 @@ LPFILEHANDLE FastFileOpen(const char *name) {
  *
  * Mark a fast file handle as closed
  * --------------------------------------------------*/
-char FastFileClose(LPFILEHANDLE pfh) {
-	if (pfh == NULL || pfh->inuse != true) {
+bool FastFileClose(Common::SeekableReadStream *stream) {
+	if (stream == nullptr) {
 		warning("FastFileClose: invalid handle");
 		return false;
 	}
-	pfh->inuse = false;
+	delete stream;
 	return true;
-
 }
 
 /* -----------------19/01/98 17.17-------------------
@@ -172,23 +197,20 @@ char FastFileClose(LPFILEHANDLE pfh) {
  *
  * read from a fast file (memcpy!)
  * --------------------------------------------------*/
-int FastFileRead(LPFILEHANDLE pfh, void *ptr, int size) {
-	if (pfh == NULL || pfh->inuse != true) {
+int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
+	if (stream == nullptr) {
 		warning("FastFileRead: invalid handle");
-		return false;
+		return 0;
 	}
 	if (size < 0) {
 		warning("FastFileRead: invalid size");
-		return false;
+		return 0;
 	}
-	if ((pfh->pos + size) > ((pfh->pfe) + 1)->offset) {
+	if (stream->pos() + size > stream->size()) {
 		warning("FastFileRead: read past end of file");
-		return false;
+		return 0;
 	}
-	fread(ptr, 1, size, hFile);
-	pfh->pos += size;
-	return size;
-
+	return stream->read(ptr, size);
 }
 
 /* -----------------19/01/98 17.17-------------------
@@ -196,46 +218,33 @@ int FastFileRead(LPFILEHANDLE pfh, void *ptr, int size) {
  *
  * Get the current length in a fast file
  * --------------------------------------------------*/
-int FastFileLen(LPFILEHANDLE pfh) {
-	LPFILEENTRY pfe;
-
-	if (pfh == NULL || pfh->inuse != true) {
-		warning("FastFileTell: invalid handle");
-		return -1;
+int FastFileLen(Common::SeekableReadStream *stream) {
+	if (stream == nullptr) {
+		warning("FastFileRead: invalid handle");
+		return 0;
 	}
-	pfe = pfh->pfe;
-	return (pfe + 1)->offset - pfe->offset;
-
+	return stream->size();
 }
 
-// BigFile
+// AnimFile
 #define MAXSMACK	3
 extern unsigned char _curSmackBuffer;
-FILE *aFile[MAXSMACK] = {NULL, NULL, NULL}, *FmvFile = NULL;
-FILEENTRY AFE[1000];
-int AFNum;
+FastFile animFile[MAXSMACK];
 
 /* -----------------19/01/98 17.13-------------------
  * AnimFileInit
  * --------------------------------------------------*/
-char AnimFileInit(const char *fname) {
+bool AnimFileInit(const char *fname) {
 	AnimFileFinish();
 
 	for (int a = 0; a < MAXSMACK; a++) {
-		aFile[a] = fopen(fname, "rb");
-
-		if (aFile[a] == NULL) {
-			warning("AnimFileInit: CreateFile open error %s", fname);
-			aFile[a] = NULL;
+		if (!animFile[a].open(fname)) {
+			warning("AnimFileInit: failed to open file %s", fname);
 			AnimFileFinish();
 			CloseSys(g_vm->_sysText[1]);
 			return false;
 		}
 	}
-
-	fread(&AFNum, 4, 1, aFile[0]);
-	fread(AFE, sizeof(FILEENTRY), AFNum, aFile[0]);
-
 	return true;
 }
 
@@ -244,91 +253,73 @@ char AnimFileInit(const char *fname) {
  * --------------------------------------------------*/
 void AnimFileFinish(void) {
 	for (int a = 0; a < MAXSMACK; a++) {
-		if (aFile[a] != NULL) {
-			fclose(aFile[a]);
-			aFile[a] = NULL;
-		}
+		animFile[a].close();
 	}
-	AFNum = 0;
 }
 
 /* -----------------19/01/98 17.15-------------------
  * AnimFileOpen
  * --------------------------------------------------*/
-int AnimFileOpen(const char *name) {
-	FILEENTRY fe;
-	LPFILEENTRY pfe;
-
-	if (name == NULL || name[0] == 0) {
+Common::SeekableReadStream *AnimFileOpen(const char *name) {
+	if (!animFile[_curSmackBuffer].isOpen()) {
+		warning("AnimFileOpen: not initialized");
+		return nullptr;
+	}
+	if (name == nullptr || name[0] == 0) {
 		warning("AnimFileOpen: invalid name");
-		return NULL;
+		return nullptr;
 	}
 
-	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), Compare);
-	if (pfe == NULL) {
+	Common::SeekableReadStream *stream = animFile[_curSmackBuffer].createReadStreamForMember(name);
+	if (stream == nullptr) {
 		CheckFileInCD(name);
-		pfe = (LPFILEENTRY)bsearch(&fe, AFE, AFNum, sizeof(FILEENTRY), Compare);
+		stream = animFile[_curSmackBuffer].createReadStreamForMember(name);
+	}
+	if (stream == nullptr) {
+		warning("AnimFileOpen: File %s not found", name);
+		CloseSys(g_vm->_sysText[1]);
 	}
 
-	if (pfe != NULL) {
-		fseek(aFile[_curSmackBuffer], pfe->offset, SEEK_SET);
-		return (int)aFile[_curSmackBuffer];
-	}
-
-	warning("AnimFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysText[1]);
-	return NULL;
+	return stream;
 }
 
 /* -----------------19/01/98 17.15-------------------
  * FmvFileOpen
  * --------------------------------------------------*/
-int FmvFileOpen(const char *name) {
-	extern char UStr[];
+Common::SeekableReadStream *FmvFileOpen(const char *name) {
+	Common::File *file = new Common::File();
 
-	if (FmvFile != NULL) fclose(FmvFile);
-	FmvFile = NULL;
-
-	if (name == NULL || name[0] == 0) {
+	if (name == nullptr || name[0] == 0) {
 		warning("FmvFileOpen: invalid name");
-		return NULL;
+		delete file;
+		return nullptr;
 	}
 
-	sprintf(UStr, "%sFMV\\%s", g_vm->_gamePath, name);
-	FmvFile = fopen(UStr, "rb");
-	if (FmvFile != NULL)
-		return (int)FmvFile;
+	if (!file->open(name)) {
+		warning("Fmv file %s not found!", name);
+		delete file;
+		CloseSys(g_vm->_sysText[1]);
+		return nullptr;
+	}
 
-	warning("Fmv file %s not found!", name);
-	CloseSys(g_vm->_sysText[1]);
-	return -1;
+	return file;
 }
 
-
 // SpeechFile
-FILE *sFile = NULL;
-FILEENTRY SFE[2000];
-int SFNum;
+FastFile speechFile;
 
 /* -----------------04/08/98 11.33-------------------
  * SpeechFileInit
  * --------------------------------------------------*/
-char SpeechFileInit(const char *fname) {
+bool SpeechFileInit(const char *fname) {
 	SpeechFileFinish();
 
-	sFile = fopen(fname, "rb");
-
-	if (sFile == NULL) {
-		warning("SpeechFileInit: CreateFile open error %s", fname);
-		sFile = NULL;
+	if (!speechFile.open(fname)) {
+		warning("SpeechFileInit: failed to open %s", fname);
 		SpeechFileFinish();
 		CloseSys(g_vm->_sysText[1]);
 		return false;
 	}
-
-	fread(&SFNum, 4, 1, sFile);
-	fread(SFE, sizeof(FILEENTRY), SFNum, sFile);
 
 	return true;
 }
@@ -337,62 +328,52 @@ char SpeechFileInit(const char *fname) {
  * SpeechFileFinish
  * --------------------------------------------------*/
 void SpeechFileFinish(void) {
-	if (sFile != NULL) {
-		fclose(sFile);
-		sFile = NULL;
+	speechFile.close();
+}
+
+Common::SeekableReadStream *SpeechFileOpen(const char *name) {
+	if (!speechFile.isOpen()) {
+		warning("SpeechFileOpen: not initialized");
+		return nullptr;
 	}
-	SFNum = 0;
+	if (name == nullptr || name[0] == 0) {
+		warning("SpeechFileOpen: invalid name");
+		return nullptr;
+	}
+
+	Common::SeekableReadStream *stream = speechFile.createReadStreamForMember(name);
+	if (stream == nullptr) {
+		CheckFileInCD(name);
+		stream = speechFile.createReadStreamForMember(name);
+	}
+	if (stream == nullptr) {
+		warning("SpeechFileOpen: File %s not found", name);
+		CloseSys(g_vm->_sysText[1]);
+	}
+
+	return stream;
 }
 
 /* -----------------04/08/98 11.34-------------------
  * SpeechFileLen
  * --------------------------------------------------*/
 int SpeechFileLen(const char *name) {
-	FILEENTRY fe;
-	LPFILEENTRY pfe;
-
-	if (name == NULL || name[0] == 0) {
-		warning("SpeechFileOpen: invalid name");
-		return NULL;
+	Common::SeekableReadStream *stream = SpeechFileOpen(name);
+	if (stream != nullptr) {
+		return stream->size();
 	}
-
-	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
-	if (pfe != NULL)
-		return ((pfe + 1)->offset - pfe->offset);
-
-	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysText[1]);
-	return NULL;
+	return 0;
 }
 
 /* -----------------04/08/98 11.12-------------------
  * SpeechFileRead
  * --------------------------------------------------*/
 int SpeechFileRead(const char *name, unsigned char *buf) {
-	FILEENTRY fe;
-	LPFILEENTRY pfe;
-
-	if (name == NULL || name[0] == 0 || buf == NULL) {
-		warning("SpeechFileOpen: invalid name");
-		return NULL;
+	Common::SeekableReadStream *stream = SpeechFileOpen(name);
+	if (stream != nullptr) {
+		return stream->read(buf, stream->size());
 	}
-
-	strcpy(fe.name, name);
-	pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
-	if (pfe == NULL) {
-		CheckFileInCD(name);
-		pfe = (LPFILEENTRY)bsearch(&fe, SFE, SFNum, sizeof(FILEENTRY), Compare);
-	}
-
-	if (pfe != NULL) {
-		fseek(sFile, pfe->offset, SEEK_SET);
-		return fread(buf, 1, ((pfe + 1)->offset - pfe->offset), sFile);
-	}
-
-	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysText[1]);
-	return NULL;
+	return 0;
 }
 
 } // End of namespace Trecision

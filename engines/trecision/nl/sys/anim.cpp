@@ -32,7 +32,6 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/ll/llinc.h"
 
-#include "backends/fs/stdiostream.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
@@ -108,10 +107,10 @@ extern const char *_sysSentence[];
 /*-----------------18/01/97 21.05-------------------
 					CallSmackOpen
 --------------------------------------------------*/
-void CallSmackOpen(const char *name) {
+void CallSmackOpen(Common::SeekableReadStream *stream) {
 	SmkAnims[_curSmackBuffer] = new NightlongSmackerDecoder();
 
-	if (!SmkAnims[_curSmackBuffer]->loadStream(new StdioStream((void *)name))) {
+	if (!SmkAnims[_curSmackBuffer]->loadStream(stream)) {
 		warning("Invalid SMK file");
 		CallSmackClose();
 	} else {

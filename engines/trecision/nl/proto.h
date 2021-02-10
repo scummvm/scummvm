@@ -22,15 +22,19 @@
 
 void warning(const char *format, ...);
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Trecision {
 
 struct STexture;
 int Compare(const void *p1, const void *p2);
-char AnimFileInit(const char *fname);
+bool AnimFileInit(const char *fname);
 void AnimFileFinish();
-int AnimFileOpen(const char *name);
-int FmvFileOpen(const char *name);
-char SpeechFileInit(const char *fname);
+Common::SeekableReadStream *AnimFileOpen(const char *name);
+Common::SeekableReadStream *FmvFileOpen(const char *name);
+bool SpeechFileInit(const char *fname);
 void SpeechFileFinish();
 int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, uint8 *buf);
@@ -306,7 +310,7 @@ void WaitCop(uint8 num);
 //void __loadds __far click_handler(int max,int mbx,int mcx,int mdx);
 void Mouse(uint8 opt);
 void CloseSys(const char *str);
-void CallSmackOpen(const char *name, int f1, int f2);
+void CallSmackOpen(Common::SeekableReadStream *stream);
 void CallSmackClose();
 void CallSmackNextFrame();
 void CallSmackVolumePan(int buf, int track, int vol);

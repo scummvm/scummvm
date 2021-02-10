@@ -40,7 +40,7 @@
 
 namespace Trecision {
 
-void CallSmackOpen(const char *name);
+void CallSmackOpen(Common::SeekableReadStream *stream);
 void CallSmackClose();
 void CallSmackNextFrame();
 void CallSmackVolumePan(int buf, int track, int vol);
@@ -194,7 +194,7 @@ void StartSmackAnim(uint16 num) {
 	// sceglie come aprire
 	if (AnimTab[num]._flag & SMKANIM_BKG) {
 		sprintf(UStr, "Bkg\\%s", AnimTab[num]._name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
+		CallSmackOpen(AnimFileOpen(AnimTab[num]._name));
 
 		// spegne quelle che non servono
 		if ((num == aBKG11) && (AnimTab[num]._flag & SMKANIM_OFF1))
@@ -228,13 +228,13 @@ void StartSmackAnim(uint16 num) {
 			CallSmackVolumePan(0, 2, 0);
 	} else if (AnimTab[num]._flag & SMKANIM_ICON) {
 		sprintf(UStr, "Icon\\%s", AnimTab[num]._name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
+		CallSmackOpen(AnimFileOpen(AnimTab[num]._name));
 	} else {
 		extern uint32 NextRefresh;
 		uint32 st = ReadTime();
 
 		sprintf(UStr, "Anim\\%s", AnimTab[num]._name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
+		CallSmackOpen(AnimFileOpen(AnimTab[num]._name));
 		NextRefresh += (ReadTime() - st);    // fixup opening time
 	}
 
@@ -328,7 +328,7 @@ void StartFullMotion(const char *name) {
 	actorStop();
 	SemMouseEnabled = false;
 
-	CallSmackOpen((const char *)FmvFileOpen(name));
+	CallSmackOpen(FmvFileOpen(name));
 
 	_curSmackAction = SMACKNULL;
 }
