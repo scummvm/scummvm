@@ -52,6 +52,46 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	g_vm = this;
 
+	_gamePath[0] = '\0';
+	_curRoom = 0;
+	_oldRoom = 0;
+	_curInventory = 0;
+	_curSortTableNum = 0;
+
+	for (int i = 0; i < 10; ++i)
+		CurScriptFrame[i] = 0;
+
+	// Inventory
+	for (int i = 0; i < MAXICON; ++i) {
+		_inventory[i] = 0;
+		_cyberInventory[i] = 0;
+	}
+
+	_inventorySize = 0;
+	_cyberInventorySize = 0;
+	_iconBase = 0;
+	_regenInvStartIcon = 0;
+	_lastCurInventory = 0;
+
+	// Use With
+	_useWith[0] = _useWith[1] = 0;
+	_useWithInv[0] = _useWithInv[1] = false;
+
+	// Messages
+	for (int i = 0; i < MAXOBJNAME; ++i)
+		_objName[i] = nullptr;
+
+	for (int i = 0; i < MAXSENTENCE; ++i)
+		_sentence[i] = nullptr;
+
+	for (int i = 0; i < MAXSYSTEXT; ++i)
+		_sysText[i] = nullptr;
+
+	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
+	_quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
+
+	_curMessage = nullptr;
+
 	_curObj = 1;
 	_inventoryStatus = INV_OFF;
 	_lightIcon = 0xFF;

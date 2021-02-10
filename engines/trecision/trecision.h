@@ -79,8 +79,8 @@ public:
 	Message _characterMsg[MAXMESSAGE];
 	Message _animMsg[MAXMESSAGE];
 
-	Message _idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
-	Message _quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
+	Message _idleMsg;
+	Message _quitMsg;
 
 	Message *_curMessage;
 
