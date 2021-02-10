@@ -47,7 +47,6 @@ bool _linearMode, _gamePaused = false;
 extern short mx, my, mleft, mright;
 extern uint16		*Video, VideoPitch;
 extern int8		MouseONOFF;
-extern FILE			*fhi;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
@@ -421,9 +420,6 @@ void CloseSys(const char *str) { // close all
 	AnimFileFinish();
 	StopAllSmackAnims();
 	StopSoundSystem();
-
-	if (fhi)
-		fclose(fhi);
 
 	if (str)
 		warning(str);

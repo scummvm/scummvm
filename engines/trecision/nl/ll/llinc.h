@@ -42,6 +42,10 @@
 #define MAXSMACK	3
 #define MAXFILEREF		5000
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Trecision {
 
 // DRAW STRUCT
@@ -138,7 +142,7 @@ extern struct SDText TheString;
 extern struct SDText OldString;
 extern int8   MouseONOFF;
 extern uint8  TextStatus;
-extern LPFILEHANDLE ff;
+extern Common::SeekableReadStream *ff;
 // FILEREF
 extern FILEENTRY FileRef[];
 extern int NumFileRef;

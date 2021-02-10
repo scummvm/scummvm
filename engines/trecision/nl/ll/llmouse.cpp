@@ -1250,11 +1250,11 @@ void CheckFileInCD(const char *name) {
 
 	CurCDSet = ncd;
 
-	sprintf(str, "%sData\\NlData.cd0", g_vm->_gamePath);
+	sprintf(str, "NlData.cd0");
 	FastFileInit(str);
-	sprintf(str, "%sData\\NlSpeech.cd0", g_vm->_gamePath);
+	sprintf(str, "NlSpeech.cd0");
 	SpeechFileInit(str);
-	sprintf(str, "%sData\\NlAnim.cd%c", g_vm->_gamePath, CurCDSet + '0');
+	sprintf(str, "NlAnim.cd%c", CurCDSet + '0');
 	AnimFileInit(str);
 
 	VMouseON();

@@ -20,14 +20,18 @@
  *
  */
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Trecision {
 
 int Compare(const void *p1, const void *p2);
-char AnimFileInit(const char *fname);
+bool AnimFileInit(const char *fname);
 void AnimFileFinish();
-int AnimFileOpen(const char *name);
-int FmvFileOpen(const char *name);
-char SpeechFileInit(const char *fname);
+Common::SeekableReadStream *AnimFileOpen(const char *name);
+Common::SeekableReadStream *FmvFileOpen(const char *name);
+bool SpeechFileInit(const char *fname);
 void SpeechFileFinish();
 int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, uint8 *buf);
@@ -142,12 +146,10 @@ void StopFullMotion();
 void RegenFullMotion();
 char FastFileInit(const char *fname);
 void FastFileFinish();
-struct SFileHandle *FastFileOpen(const char *name);
-char FastFileClose(struct SFileHandle *pfh);
-int FastFileRead(struct SFileHandle *pfh, void *ptr, int size);
-char FastFileSeek(struct SFileHandle *pfh, int off, int how);
-int32 FastFileTell(struct SFileHandle *pfh);
-int32 FastFileLen(struct SFileHandle *pfh);
+Common::SeekableReadStream *FastFileOpen(const char *name);
+bool FastFileClose(Common::SeekableReadStream *stream);
+int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size);
+int32 FastFileLen(Common::SeekableReadStream *stream);
 uint16 PalTo16bit(uint8 r, uint8 g, uint8 b);
 void wordcopy(void *dest, void *src, uint32 len);
 void longcopy(void *dest, void *src, uint32 len);
