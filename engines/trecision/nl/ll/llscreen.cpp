@@ -305,7 +305,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 
 	ff = FastFileOpen(filename);
 	if (ff == NULL)
-		CloseSys(g_vm->_sysSentence[1]);
+		CloseSys(g_vm->_sysText[1]);
 
 	FastFileRead(ff, &ActionNum, 4);
 
@@ -749,7 +749,7 @@ void ReadSounds() {
 
 		ff = FastFileOpen(UStr);
 		if (ff == NULL)
-			CloseSys(g_vm->_sysSentence[1]);
+			CloseSys(g_vm->_sysText[1]);
 		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));
 		FastFileClose(ff);
 		if (LoadAudioWav(b, SoundPointer[a], len))
@@ -861,7 +861,7 @@ void DrawObj(struct SDObj d) {
 		}
 
 		if (d.flag & COPYTOVIDEO)
-			CloseSys(g_vm->_sysSentence[5]);
+			CloseSys(g_vm->_sysText[5]);
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (b = d.l[1]; b < d.l[3]; b++) {

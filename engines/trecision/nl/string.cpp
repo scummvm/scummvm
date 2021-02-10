@@ -123,7 +123,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
-		strcpy(locsent, g_vm->_sysSentence[23]);
+		strcpy(locsent, g_vm->_sysText[23]);
 		if (g_vm->_useWithInv[USED])
 			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
 		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
@@ -131,7 +131,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		else
 			strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
 
-		strcat(locsent, g_vm->_sysSentence[24]);
+		strcat(locsent, g_vm->_sysText[24]);
 		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
 			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				strcat(locsent, dunno);
@@ -165,13 +165,13 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
-				strcpy(locsent, g_vm->_sysSentence[25]);
+				strcpy(locsent, g_vm->_sysText[25]);
 				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					strcat(locsent, dunno);
 				else
 					strcat(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
 			} else
-				strcpy(locsent, g_vm->_sysSentence[26]);
+				strcpy(locsent, g_vm->_sysText[26]);
 		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 			strcpy(locsent, dunno);
 		else
@@ -227,10 +227,10 @@ void ShowInvName(uint16 obj, bool showhide) {
 			return;
 
 		char locsent[256];
-		strcpy(locsent, g_vm->_sysSentence[23]);
+		strcpy(locsent, g_vm->_sysText[23]);
 		if (g_vm->_useWithInv[USED]) {
 			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, g_vm->_sysSentence[24]);
+			strcat(locsent, g_vm->_sysText[24]);
 			if (obj && (g_vm->_inventoryObj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
 				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
 		} else {
@@ -238,7 +238,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 				strcat(locsent, dunno);
 			else
 				strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, g_vm->_sysSentence[24]);
+			strcat(locsent, g_vm->_sysText[24]);
 			if (obj && (g_vm->_obj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
 				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
 		}

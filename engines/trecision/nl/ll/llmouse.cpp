@@ -325,7 +325,7 @@ void DText(struct SDText t) {
 		uint16 Len = strlen(sign);
 
 		if (Len >= MAXCHARS) {
-			strcpy(sign, g_vm->_sysSentence[19]);
+			strcpy(sign, g_vm->_sysText[19]);
 			Len = strlen(sign);
 		}
 
@@ -421,7 +421,7 @@ bool DataSave() {
 	SText.y = TOP - 20;
 	SText.dx = SCREENLEN;
 	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysSentence[9];
+	SText.sign = g_vm->_sysText[9];
 	SText.l[0] = 0;
 	SText.l[1] = 0;
 	SText.l[2] = SCREENLEN;
@@ -474,7 +474,7 @@ insave:
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
-			strcpy(savename[a], g_vm->_sysSentence[10]);
+			strcpy(savename[a], g_vm->_sysText[10]);
 			if (fh)
 				fclose(fh);
 			g_vm->_inventory[a] = iEMPTYSLOT;
@@ -792,7 +792,7 @@ bool DataLoad() {
 	SText.y = TOP - 20;
 	SText.dx = SCREENLEN;
 	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysSentence[11];
+	SText.sign = g_vm->_sysText[11];
 	SText.l[0] = 0;
 	SText.l[1] = 0;
 	SText.l[2] = SCREENLEN;
@@ -846,7 +846,7 @@ bool DataLoad() {
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
-			strcpy(savename[a], g_vm->_sysSentence[10]);
+			strcpy(savename[a], g_vm->_sysText[10]);
 			if (fh) fclose(fh);
 			fh = NULL;
 			g_vm->_inventory[a] = iEMPTYSLOT;
@@ -935,7 +935,7 @@ bool DataLoad() {
 
 	fh = fopen(tempname, "rb");
 	if (!fh) {
-		CloseSys(g_vm->_sysSentence[12]);
+		CloseSys(g_vm->_sysText[12]);
 		return false;
 	}
 
@@ -1090,7 +1090,7 @@ bool QuitGame() {
 	SText.y = TOP - 20;
 	SText.dx = SCREENLEN;
 	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysSentence[13];
+	SText.sign = g_vm->_sysText[13];
 	SText.l[0] = 0;
 	SText.l[1] = 0;
 	SText.l[2] = SCREENLEN;
@@ -1140,7 +1140,7 @@ void DemoOver() {
 	SText.y = TOP - 20;
 	SText.dx = SCREENLEN;
 	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysSentence[17];
+	SText.sign = g_vm->_sysText[17];
 	SText.l[0] = 0;
 	SText.l[1] = 0;
 	SText.l[2] = SCREENLEN;
@@ -1178,7 +1178,7 @@ void CheckFileInCD(const char *name) {
 	strcpy(fe.name, name);
 	LPFILEENTRY pfe = (LPFILEENTRY)bsearch(&fe, FileRef, NumFileRef, sizeof(FILEENTRY), Compare);
 	if (pfe == NULL)
-		CloseSys(g_vm->_sysSentence[5]);
+		CloseSys(g_vm->_sysText[5]);
 
 	char optcd = 1;
 	if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
@@ -1212,7 +1212,7 @@ void CheckFileInCD(const char *name) {
 	FastFileClose(ff);
 	UpdatePixelFormat(Video2, MAXX * TOP);
 
-	sprintf(str, g_vm->_sysSentence[4], ncd + '0');
+	sprintf(str, g_vm->_sysText[4], ncd + '0');
 	SText.x = 0;
 	SText.y = TOP - 20;
 	SText.dx = SCREENLEN;

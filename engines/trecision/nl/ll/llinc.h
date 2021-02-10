@@ -37,7 +37,7 @@
 #define SMKBKGBUFFER    4L
 #define SMKICONBUFFER   2L
 
-#define MAXSYSSENT	30
+#define MAXSYSTEXT	30
 
 #define MAXSMACK	3
 #define MAXFILEREF		5000

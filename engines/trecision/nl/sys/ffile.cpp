@@ -78,7 +78,7 @@ char FastFileInit(const char *fname) {
 		warning("FastFileInit: CreateFile open error %s", fname);
 		hFile = NULL;
 		FastFileFinish();
-		CloseSys(g_vm->_sysSentence[1]);
+		CloseSys(g_vm->_sysText[1]);
 		return false;
 	}
 
@@ -145,7 +145,7 @@ LPFILEHANDLE FastFileOpen(const char *name) {
 		warning("FastFileOpen: Out of file handles");
 	} else {
 		warning("FastFileOpen: File %s not found", name);
-		CloseSys(g_vm->_sysSentence[1]);
+		CloseSys(g_vm->_sysText[1]);
 	}
 
 	return NULL;
@@ -228,7 +228,7 @@ char AnimFileInit(const char *fname) {
 			warning("AnimFileInit: CreateFile open error %s", fname);
 			aFile[a] = NULL;
 			AnimFileFinish();
-			CloseSys(g_vm->_sysSentence[1]);
+			CloseSys(g_vm->_sysText[1]);
 			return false;
 		}
 	}
@@ -277,7 +277,7 @@ int AnimFileOpen(const char *name) {
 	}
 
 	warning("AnimFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysSentence[1]);
+	CloseSys(g_vm->_sysText[1]);
 	return NULL;
 }
 
@@ -301,7 +301,7 @@ int FmvFileOpen(const char *name) {
 		return (int)FmvFile;
 
 	warning("Fmv file %s not found!", name);
-	CloseSys(g_vm->_sysSentence[1]);
+	CloseSys(g_vm->_sysText[1]);
 	return -1;
 }
 
@@ -323,7 +323,7 @@ char SpeechFileInit(const char *fname) {
 		warning("SpeechFileInit: CreateFile open error %s", fname);
 		sFile = NULL;
 		SpeechFileFinish();
-		CloseSys(g_vm->_sysSentence[1]);
+		CloseSys(g_vm->_sysText[1]);
 		return false;
 	}
 
@@ -362,7 +362,7 @@ int SpeechFileLen(const char *name) {
 		return ((pfe + 1)->offset - pfe->offset);
 
 	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysSentence[1]);
+	CloseSys(g_vm->_sysText[1]);
 	return NULL;
 }
 
@@ -391,7 +391,7 @@ int SpeechFileRead(const char *name, unsigned char *buf) {
 	}
 
 	warning("SpeechFileOpen: File %s not found", name);
-	CloseSys(g_vm->_sysSentence[1]);
+	CloseSys(g_vm->_sysText[1]);
 	return NULL;
 }
 

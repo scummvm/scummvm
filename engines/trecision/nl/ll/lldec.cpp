@@ -110,11 +110,11 @@ uint32 DecCR(const char *FileName, uint8 *DestArea, uint8 *DecArea) {
 	int isize = FastFileLen(ff);
 
 	if ((isize != FastFileRead(ff, ibuf, isize)))
-		CloseSys(g_vm->_sysSentence[5]);
+		CloseSys(g_vm->_sysText[5]);
 	FastFileClose(ff);
 
 	if (*(unsigned *)ibuf != FAST_COOKIE)
-		CloseSys(g_vm->_sysSentence[7]);
+		CloseSys(g_vm->_sysText[7]);
 
 	ibuf += sizeof(unsigned);
 	isize -= sizeof(unsigned);
