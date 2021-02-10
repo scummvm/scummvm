@@ -1098,16 +1098,16 @@ static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x39
  */
 static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->zoomScreen = ctx.stream.readByte();
+	int zoomScreen = ctx.stream.readByte();
 
-	if (engine->zoomScreen && !engine->_redraw->drawInGameTransBox && engine->cfgfile.SceZoom) {
+	if (zoomScreen && !engine->_redraw->inSceneryView && engine->cfgfile.SceZoom) {
 		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
-		engine->initMCGA();
+		engine->initSceneryView();
 		engine->_screens->setBackPal();
 		engine->_screens->lockPalette = true;
-	} else if (!engine->zoomScreen && engine->_redraw->drawInGameTransBox) {
+	} else if (!zoomScreen && engine->_redraw->inSceneryView) {
 		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
-		engine->initSVGA();
+		engine->exitSceneryView();
 		engine->_screens->setBackPal();
 		engine->_screens->lockPalette = true;
 		engine->_redraw->reqBgRedraw = true;

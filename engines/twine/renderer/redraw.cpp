@@ -260,6 +260,10 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
+			if (inSceneryView && modelActorPos == _engine->_scene->currentlyFollowedActor) {
+				_sceneryViewX = _engine->_renderer->projPosX;
+				_sceneryViewY = _engine->_renderer->projPosY;
+			}
 		}
 	}
 	return drawListPos;
@@ -732,7 +736,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		_engine->_screens->lockPalette = false;
 	}
 
-	if (_engine->zoomScreen) {
+	if (_engine->_redraw->inSceneryView) {
 		zoomScreenScale();
 	}
 }

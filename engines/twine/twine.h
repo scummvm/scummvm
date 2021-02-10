@@ -264,8 +264,8 @@ public:
 	int height() const;
 	Common::Rect rect() const;
 
-	void initMCGA();
-	void initSVGA();
+	void initSceneryView();
+	void exitSceneryView();
 
 	void queueMovie(const char *filename);
 
@@ -292,8 +292,6 @@ public:
 
 	/** Disable screen recenter */
 	bool disableScreenRecenter = false;
-
-	int32 zoomScreen = 0;
 
 	void freezeTime();
 	void unfreezeTime();

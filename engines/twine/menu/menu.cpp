@@ -118,7 +118,7 @@ static MenuSettings createAdvancedOptionsMenu() {
 	settings.addButton(TextId::kBehaviourAggressiveManual, MenuButtonTypes::kAggressiveMode);
 	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
 	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
-	settings.addButton(TextId::kScenaryZoomOn, MenuButtonTypes::kSceneryZoom);
+	settings.addButton(TextId::kSceneryZoomOn, MenuButtonTypes::kSceneryZoom);
 	return settings;
 }
 
@@ -353,9 +353,9 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 				break;
 			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->cfgfile.SceZoom) {
-					menuSettings->setButtonTextId(i, TextId::kScenaryZoomOn);
+					menuSettings->setButtonTextId(i, TextId::kSceneryZoomOn);
 				} else {
-					menuSettings->setButtonTextId(i, TextId::kNoScenaryZoom);
+					menuSettings->setButtonTextId(i, TextId::kNoSceneryZoom);
 				}
 				break;
 			default:
@@ -592,7 +592,7 @@ int32 Menu::advoptionsMenu() {
 		case TextId::kBehaviourAggressiveManual:
 		case TextId::kDetailsPolygonsHigh:
 		case TextId::kDetailsShadowHigh:
-		case TextId::kScenaryZoomOn:
+		case TextId::kSceneryZoomOn:
 		default:
 			warning("Unknown menu button handled");
 			break;

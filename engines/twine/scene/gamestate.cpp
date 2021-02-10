@@ -457,7 +457,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_redraw->redrawEngineActions(true);
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
-	// TODO: drawInGameTransBox
+	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	uint8 *gameOverPtr = nullptr;

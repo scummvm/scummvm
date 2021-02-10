@@ -106,7 +106,7 @@ public:
 	/** Auxiliar object render position on screen */
 	Common::Rect renderRect { 0, 0, 0, 0 };
 
-	bool drawInGameTransBox = false;
+	bool inSceneryView = false;
 
 	/** Request background redraw */
 	bool reqBgRedraw = false;
@@ -152,14 +152,17 @@ public:
 	/** Draw dialogue sprite image */
 	void drawBubble(int32 actorIdx);
 
-	void zoomScreenScale();
-
 	/**
 	 * Sort drawing list struct ordered as the first objects appear in the top left corner of the screen
 	 * @param list drawing list variable which contains information of the drawing objects
 	 * @param listSize number of drawing objects in the list
 	 */
 	void sortDrawingList(DrawListStruct *list, int32 listSize);
+
+	int _sceneryViewX = 0;
+	int _sceneryViewY = 0;
+
+	void zoomScreenScale();
 
 	/** Draw list array to grab the necessary */
 	DrawListStruct drawList[150];

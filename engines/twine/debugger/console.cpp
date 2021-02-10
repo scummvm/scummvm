@@ -26,6 +26,7 @@
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
 #include "twine/holomap.h"
+#include "twine/renderer/redraw.h"
 #include "twine/resources/hqr.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
@@ -42,6 +43,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("give_kashes", WRAP_METHOD(TwinEConsole, doGiveKashes));
 	registerCmd("play_video", WRAP_METHOD(TwinEConsole, doPlayVideo));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
+	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
@@ -83,6 +85,11 @@ bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 
 bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugScene->showingClips, "clip rendering\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_redraw->inSceneryView, "scenery view\n")
 	return true;
 }
 

@@ -78,7 +78,7 @@ enum _TextId {
 	kVolumeSettings = 30,
 	kDetailsPolygonsHigh = 31,
 	kDetailsShadowHigh = 32,
-	//kScenaryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
+	//kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
 	kCreateNewPlayer = 40,
 	kCreateSaveGame = 41,
 	kEnterYourName = 42,
@@ -93,7 +93,7 @@ enum _TextId {
 	kRemoveProtoPack = 105,
 	kDetailsPolygonsMiddle = 131,
 	kShadowsFigures = 132,
-	kScenaryZoomOn = 133,
+	kSceneryZoomOn = 133,
 	kIntroText1 = 150,
 	kIntroText2 = 151,
 	kIntroText3 = 152,
@@ -101,7 +101,7 @@ enum _TextId {
 	kBonusList = 162,
 	kDetailsPolygonsLow = 231,
 	kShadowsDisabled = 232,
-	kNoScenaryZoom = 233
+	kNoSceneryZoom = 233
 };
 }
 

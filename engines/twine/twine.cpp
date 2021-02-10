@@ -499,12 +499,12 @@ void TwinEEngine::initEngine() {
 	_screens->loadMenuImage();
 }
 
-void TwinEEngine::initMCGA() {
-	_redraw->drawInGameTransBox = true;
+void TwinEEngine::initSceneryView() {
+	_redraw->inSceneryView = true;
 }
 
-void TwinEEngine::initSVGA() {
-	_redraw->drawInGameTransBox = false;
+void TwinEEngine::exitSceneryView() {
+	_redraw->inSceneryView = false;
 }
 
 void TwinEEngine::initAll() {
@@ -520,7 +520,7 @@ void TwinEEngine::initAll() {
 
 	_resources->initResources();
 
-	initSVGA();
+	exitSceneryView();
 }
 
 int TwinEEngine::getRandomNumber(uint max) {
