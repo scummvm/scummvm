@@ -2063,6 +2063,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("lunarlanderprototype", "LunarLanderPrototype.exe", "495d45fb8adfd49690ae3b97921feec6", 3510282),
 	ENGLISH_ENTRY("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
 	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
+    ENGLISH_ENTRY("mage", "Mages_Initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
 	ENGLISH_ENTRY("maggieandmax", "Max.exe", "465f972675db2da6040518221af5b0ba", 5759981),
 	ENGLISH_ENTRY("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
 	ENGLISH_ENTRY("magicalwhatevergirlrocksoutinthestoneage", "mwg.exe", "b2b99b5b3dcaee0fa292343c5a2c429b", 7784104),
