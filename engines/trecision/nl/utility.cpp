@@ -469,6 +469,7 @@ void DoSys(uint16 TheObj) {
 	}
 
 	g_engine->syncSoundSettings();
+	ConfMan.flushToDisk();
 }
 
 /* -----------------09/02/98 15.44-------------------
