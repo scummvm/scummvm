@@ -22,6 +22,7 @@
 
 #include "twine/renderer/redraw.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "twine/audio/sound.h"
@@ -778,24 +779,16 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
-#if 0
-	// TODO: this is broken
-	Graphics::ManagedSurface zoomWorkVideoBuffer;
-	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
-
-	const uint8 *src = (const uint8 *)zoomWorkVideoBuffer.getPixels();
-	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
-	for (int h = 0; h < zoomWorkVideoBuffer.h; h++) {
-		for (int w = 0; w < zoomWorkVideoBuffer.w; w++) {
-			*dest++ = *src;
-			*dest++ = *src++;
-		}
-		//memcpy(dest, dest - _engine->width(), _engine->width());
-		//dest += _engine->width();
-	}
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	zoomWorkVideoBuffer.free();
-#endif
+	Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->workVideoBuffer);
+	const int maxW = zoomWorkVideoBuffer.w;
+	const int maxH = zoomWorkVideoBuffer.h;
+	const int left = CLIP<int>(_sceneryViewX - maxW / 4, 0, maxW / 2);
+	const int top = CLIP<int>(_sceneryViewY - maxH / 4, 0, maxH / 2);
+	const Common::Rect srcRect(left, top, left + maxW / 2, top + maxH / 2);
+	const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
+	zoomWorkVideoBuffer.transBlitFrom(_engine->frontVideoBuffer, srcRect, destRect);
+	g_system->copyRectToScreen(zoomWorkVideoBuffer.getPixels(), zoomWorkVideoBuffer.pitch, 0, 0, zoomWorkVideoBuffer.w, zoomWorkVideoBuffer.h);
+	g_system->updateScreen();
 }
 
 } // namespace TwinE
