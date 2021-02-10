@@ -67,7 +67,7 @@ AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(A
 ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	AGS::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	AGS::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
+	AGS::g_fallbackDesc.desc.platform = Common::kPlatformUnknown;
 	AGS::g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// FIXME: Hack to return match without checking for game data,
