@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-01 19:40+0000\n"
+"PO-Revision-Date: 2021-02-10 20:23+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3349,10 +3349,8 @@ msgid "Magnify Mode Off"
 msgstr "Mode Loupe désactivé"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Upscaler les vidéos"
+msgstr "Sans mise à l'échelle"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
@@ -7167,40 +7165,41 @@ msgstr "Remplace les polices du jeu par des polices de rendu"
 
 #: engines/ultima/detection.cpp:82
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Jouer les bruits de pas"
 
 #: engines/ultima/detection.cpp:83
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Le son est joué lorsque le joueur se déplace."
 
 #: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "Active la souris dans l'interface utilisateur"
+msgstr "Activer le saut sur la position de la souris"
 
 #: engines/ultima/detection.cpp:92
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Permet de sauter instantanément à la position du curseur de la souris sans "
+"se déplacer à l'aide des directions."
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Activer le saut de frames"
 
 #: engines/ultima/detection.cpp:101
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Permet au jeu de sauter des frames d'animation lorsque celui-ci tourne trop "
+"lentement."
 
 #: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Activer l'anti-crénelage des polices"
+msgstr "Activer la limitation des frames"
 
 #: engines/ultima/detection.cpp:110
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+"Limite la vitesse du jeu pour éviter que celui-ci ne tourne trop rapidement."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
