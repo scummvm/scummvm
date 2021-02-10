@@ -180,6 +180,18 @@ public:
 	 */
 	const char *getData() const { return _propData; }
 
+    /**
+     * Set property's code
+     * @param propCode the code value to set
+    */
+    void setPropCode(WagPropertyCode propCode);
+
+    /**
+     * Set property's data and property's size
+     * @param str the string that according to it these are set
+    */
+    void setPropDataSize(Common::String str);
+
 // Member variables
 protected:
 	bool _readOk;                   ///< Was the property read ok from the source stream?
@@ -213,6 +225,15 @@ public:
 	 * Destructor.
 	 */
 	~WagFileParser();
+
+	/**
+	 * Add property to _propList from INI file, if key exist
+	 * @param iniWagFile ini loaded from WAG file stream
+	 * @param section ini section
+	 * @param key ini key
+	 * @param code corresponding WAG code
+	*/
+	void addPropFromIni(Common::INIFile *iniWagFile, Common::String section, Common::String key, Agi::WagProperty::WagPropertyCode code);
 
 	/**
 	 * Loads a *.wag file and parses it.
