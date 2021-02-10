@@ -2370,7 +2370,7 @@ void doInvScrUseWith() {
 		} else if ((g_vm->_useWith[WITH] == oDOORC33) && (g_vm->_useWith[USED] == iSBARRA21)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, g_vm->_useWith[WITH]);
 			printsent = false;
-		} else if ((g_vm->_useWith[WITH] == oSERPENTEU52) && (g_vm->_useWith[USED] == iPINZA)) {
+		} else if ((g_vm->_useWith[WITH] == oSNAKEU52) && (g_vm->_useWith[USED] == iPINZA)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a527, 0, 0, g_vm->_useWith[WITH]);
 			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
@@ -2476,7 +2476,7 @@ void doInvScrUseWith() {
 		if (g_vm->_useWith[WITH] == oFRONTOFFICEC35) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3511APRESPORTELLO, 0, 0, g_vm->_useWith[WITH]);
 			printsent = false;
-		} else if (g_vm->_useWith[WITH] == oSERPENTEU52) {
+		} else if (g_vm->_useWith[WITH] == oSNAKEU52) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a522, 0, 0, g_vm->_useWith[WITH]);
 			g_vm->_obj[oSCAVO51]._anim = a516;
 			printsent = false;
@@ -3976,11 +3976,9 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		else
 			g_vm->_obj[oCREPACCIO2E]._position = 6;
 		break;
-	case fSERPVIA: {
-		extern Message Serp52;
-		doEvent(Serp52._class,  Serp52._event,  Serp52._priority, Serp52._wordParam1, Serp52._wordParam2, Serp52._byteParam, Serp52._longParam);
-	}
-	break;
+	case fSERPVIA:
+		doEvent(g_vm->_snake52._class, g_vm->_snake52._event, g_vm->_snake52._priority, g_vm->_snake52._wordParam1, g_vm->_snake52._wordParam2, g_vm->_snake52._byteParam, g_vm->_snake52._longParam);
+		break;
 	case fPIRANHA:
 		g_vm->_obj[oLUCCHETTO53]._anim = 0;
 		g_vm->_obj[oGRATAC53]._anim = 0;
@@ -3998,16 +3996,14 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 468, 180 + TOP, true, oPORTA58C55);
 		break;
 	case fHELLEN:
-//			SemMouseEnabled = false;
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
 		break;
-	case fVALVOLAON34: {
-		if (!(_choice[616]._flag & OBJFLAG_DONE) &&		// non ho fatto fmv e
-		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // c'e' il tubo tagliato e
-		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // non c'e' il tubo fuori il tubo fuori
+	case fVALVOLAON34:
+		if (!(_choice[616]._flag & OBJFLAG_DONE) &&		// if the fmv is not done
+		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // if there's a cut pipe
+		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // if there's not tube outside
 			CallSmackVolumePan(0, 2, 1);
-	}
-	break;
+		break;
 	case fVALVOLAOFF34:
 		CallSmackVolumePan(0, 2, 0);
 		break;

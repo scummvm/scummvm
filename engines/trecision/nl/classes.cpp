@@ -50,8 +50,6 @@ uint32 ScrollInvTime;
 // gestioni particolari
 uint16 ruota = -1, ruotepos[3];
 
-// gestione serpente via
-Message Serp52;
 int FastWalk = false, FastWalkLocked = false;
 
 int ForceQuit = 0;
@@ -243,7 +241,7 @@ void doMouse() {
 
 	case ME_MRIGHT:
 	case ME_MLEFT:
-//			if(Semskiptalk) break;
+		// if(Semskiptalk) break;
 		if (SemSomeOneSpeak) {
 			Semskiptalk = Semskipenable;
 			break;
@@ -257,7 +255,7 @@ void doMouse() {
 			ScegliScelta(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
 			break;
 		}
-//			per il dislocatore
+		//  for the displacer
 		if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
 			if ((g_vm->_obj[g_vm->_curObj]._goRoom == r45) && (g_vm->_obj[od44ALLA45]._goRoom == r45S) &&
 			    (g_vm->_obj[oEXIT41D]._goRoom == r45S) && (g_vm->_curMessage->_event == ME_MRIGHT))
@@ -277,27 +275,28 @@ void doMouse() {
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 			break;
 		}
-//			fine dislocatore
-//			serpente scappa 52
-		else if (g_vm->_curRoom == r52) {
-			if (g_vm->_obj[oSERPENTEU52]._mode & OBJMODE_OBJSTATUS)
-				if (GAMEAREA(g_vm->_curMessage->_wordParam2) && !SemUseWithStarted && (g_vm->_curObj != oSERPENTEU52)) {
+		// end of displacer
+
+		// snake escape 52
+		if (g_vm->_curRoom == r52) {
+			if (g_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS)
+				if (GAMEAREA(g_vm->_curMessage->_wordParam2) && !SemUseWithStarted && (g_vm->_curObj != oSNAKEU52)) {
 					StartCharacterAction(a526, 0, 1, 0);
 					g_vm->_obj[oSCAVO51]._anim = a516;
-					memcpy(&Serp52, g_vm->_curMessage, sizeof(Serp52));
+					memcpy(&g_vm->_snake52, g_vm->_curMessage, sizeof(g_vm->_snake52));
 					break;
 				}
 		}
-//			fine serpente scappa 52
-//			sys
+		// end snake escape 52
+		// sys
 		else if (g_vm->_curRoom == rSYS) {
 			CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
 			DoSys(g_vm->_curObj);
 			break;
 		}
-//			fine sys
+		// end sys
 
-// 			Se sono in stanze senza omino tipo la mappa o libro
+		// Se sono in stanze senza omino tipo la mappa o libro
 		if ((SemCharacterExist == false)/* && (GAMEAREA(_curMessage->_wordParam2))*/) {
 			if ((INVAREA(g_vm->_curMessage->_wordParam2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
 				if (ICONAREA(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2) && (WhatIcon(g_vm->_curMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
@@ -384,13 +383,11 @@ void doMouse() {
 
 //			Zona GAME
 		if (GAMEAREA(g_vm->_curMessage->_wordParam2) && (!_playingAnims[1])) {
-			int pmousex, pmousey;
-
 			if (Semscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_longParam;
 
-			pmousex = g_vm->_curMessage->_wordParam1;
-			pmousey = g_vm->_curMessage->_wordParam2;
+			int pmousex = g_vm->_curMessage->_wordParam1;
+			int pmousey = g_vm->_curMessage->_wordParam2;
 			if (!(AtMouseClick(g_vm->_curObj))) {
 				if (CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2)) {
 					if ((g_vm->_obj[g_vm->_curObj]._lim[2] - g_vm->_obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
