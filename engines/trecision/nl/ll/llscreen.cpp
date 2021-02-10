@@ -744,7 +744,7 @@ void ReadSounds() {
 
 		SoundPointer[a] = (uint8 *)(Video2 + GameWordPointer);
 
-		sprintf(UStr, "%s", GSample[b].name);
+		sprintf(UStr, "%s", GSample[b]._name);
 		if (!scumm_stricmp(UStr, "RUOTE2C.WAV")) break;
 
 		ff = FastFileOpen(UStr);
@@ -757,9 +757,9 @@ void ReadSounds() {
 
 		GameWordPointer += (len + 1) / 2;
 
-		if (GSample[b].flag & SOUNDFLAG_SBACK)
+		if (GSample[b]._flag & SOUNDFLAG_SBACK)
 			SoundFadIn(b);
-		else if (GSample[b].flag & SOUNDFLAG_SON)
+		else if (GSample[b]._flag & SOUNDFLAG_SON)
 			NLPlaySound(b);
 	}
 }
@@ -789,19 +789,19 @@ void RegenRoom() {
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		if ((OldObjStatus[a]) && (!VideoObjStatus[a])) {
-			SortTable[g_vm->_curSortTableNum].index = g_vm->_room[g_vm->_curRoom]._object[a];
-			SortTable[g_vm->_curSortTableNum].roomindex = a;
-			SortTable[g_vm->_curSortTableNum].togli = false;
-			SortTable[g_vm->_curSortTableNum].framecur = 0;
-			SortTable[g_vm->_curSortTableNum].typology = TYPO_BMP;
+			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
+			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
+			SortTable[g_vm->_curSortTableNum]._remove = false;
+			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
+			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
 			VideoObjStatus[a] = 1;
 			g_vm->_curSortTableNum++;
 		} else if ((!OldObjStatus[a]) && (VideoObjStatus[a])) {
-			SortTable[g_vm->_curSortTableNum].index = g_vm->_room[g_vm->_curRoom]._object[a];
-			SortTable[g_vm->_curSortTableNum].roomindex = a;
-			SortTable[g_vm->_curSortTableNum].togli = true;
-			SortTable[g_vm->_curSortTableNum].framecur = 0;
-			SortTable[g_vm->_curSortTableNum].typology = TYPO_BMP;
+			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
+			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
+			SortTable[g_vm->_curSortTableNum]._remove = true;
+			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
+			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
 			VideoObjStatus[a] = 0;
 			g_vm->_curSortTableNum++;
 		}

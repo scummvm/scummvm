@@ -120,10 +120,10 @@ void soundtimefunct() {
 		if (SoundFadStatus & SFADIN) {
 			SoundFadInVal += FADMULT;
 
-			if (SoundFadInVal < (GSample[playing[StepChannel]].volume * FADMULT))
+			if (SoundFadInVal < (GSample[playing[StepChannel]]._volume * FADMULT))
 				g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
 			else {
-				SoundFadInVal = GSample[playing[StepChannel]].volume * FADMULT;
+				SoundFadInVal = GSample[playing[StepChannel]]._volume * FADMULT;
 				g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
 
 				//SoundFadStatus &= ( ~SFADIN );
@@ -133,8 +133,8 @@ void soundtimefunct() {
 				if (playing[a] != 0) {
 					smpvol[a] += FADMULT;
 
-					if (smpvol[a] > GSample[playing[a]].volume * FADMULT)
-						smpvol[a] = GSample[playing[a]].volume * FADMULT;
+					if (smpvol[a] > GSample[playing[a]]._volume * FADMULT)
+						smpvol[a] = GSample[playing[a]]._volume * FADMULT;
 
 					g_system->getMixer()->setChannelVolume(smp[a], VOLUME(smpvol[a] / FADMULT));
 				}
@@ -173,7 +173,7 @@ short LoadAudioWav(int num, uint8 *wav, int len) {
 
 	if (num != 0xFFFF) {
 		NLSample[num].stream = stream;
-		if (GSample[num].flag & SOUNDFLAG_SBACK)
+		if (GSample[num]._flag & SOUNDFLAG_SBACK)
 			NLSample[num].type = Audio::Mixer::kMusicSoundType;
 		else
 			NLSample[num].type = Audio::Mixer::kSFXSoundType;
@@ -199,15 +199,15 @@ void NLPlaySound(int num) {
 			playing[channel] = 0;
 		}
 
-		int volume = VOLUME(GSample[num].volume);
+		int volume = VOLUME(GSample[num]._volume);
 
-		if (GSample[num].flag & SOUNDFLAG_SON) {
+		if (GSample[num]._flag & SOUNDFLAG_SON) {
 			volume = 0;
 			smpvol[channel] = 0;
 		}
 
 		Audio::AudioStream *stream = NLSample[num].stream;
-		if (GSample[num].flag & SOUNDFLAG_SLOOP)
+		if (GSample[num]._flag & SOUNDFLAG_SLOOP)
 			stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
 
 		g_system->getMixer()->playStream(NLSample[num].type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
@@ -276,18 +276,18 @@ void WaitSoundFadEnd() {
 		return;
 	}
 
-	while ((SoundFadInVal != (GSample[playing[StepChannel]].volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
+	while ((SoundFadInVal != (GSample[playing[StepChannel]]._volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
 		CheckSystem();
 	SoundFadStatus = 0;
 
 	g_system->getMixer()->stopHandle(smp[BackChannel]);
 
-	g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(GSample[playing[StepChannel]].volume));
+	g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(GSample[playing[StepChannel]]._volume));
 	playing[BackChannel] = 0;
 
 	for (uint8 a = 2; a < SpeechChannel; a++)
 		if (playing[a] != 0)
-			g_system->getMixer()->setChannelVolume(smp[a], VOLUME(GSample[playing[a]].volume));
+			g_system->getMixer()->setChannelVolume(smp[a], VOLUME(GSample[playing[a]]._volume));
 
 	SWAP(StepChannel, BackChannel);
 
@@ -353,9 +353,9 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	for (int a = 0; a < MAXSOUNDSINROOM; a++) {
 		b = list[a];
 
-		if ((StepRight) && (GSample[b].flag & SOUNDFLAG_SPDX))
+		if ((StepRight) && (GSample[b]._flag & SOUNDFLAG_SPDX))
 			break;
-		if ((StepLeft) && (GSample[b].flag & SOUNDFLAG_SPSX))
+		if ((StepLeft) && (GSample[b]._flag & SOUNDFLAG_SPSX))
 			break;
 		if (b == 0)
 			return;
@@ -364,7 +364,7 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	if (midz < 0)
 		midz = -midz;
 
-	midz = ((int)(GSample[b].volume) * 1000) / midz;
+	midz = ((int)(GSample[b]._volume) * 1000) / midz;
 
 	if (midz > 255)
 		midz = 255;

@@ -39,13 +39,13 @@ int maxmesg, maxmesh, maxmesa;
 /*                               GETMESSAGE           					   */
 /*-------------------------------------------------------------------------*/
 bool GetMessage(MessageQueue *lq) {
-	if (!(lq->len))
+	if (!(lq->_len))
 		return true;
 
-	g_vm->TheMessage = lq->event[lq->head++];
-	if (lq->head == MAXMESSAGE)
-		lq->head = 0;
-	lq->len--;
+	g_vm->TheMessage = lq->_event[lq->_head++];
+	if (lq->_head == MAXMESSAGE)
+		lq->_head = 0;
+	lq->_len--;
 
 	return false;
 }
@@ -58,9 +58,9 @@ void InitMessageSystem() {
 	InitQueue(&g_vm->_animQueue);
 	InitQueue(&g_vm->_characterQueue);
 	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		g_vm->_gameQueue.event[i] = &g_vm->_gameMsg[i];
-		g_vm->_characterQueue.event[i] = &g_vm->_characterMsg[i];
-		g_vm->_animQueue.event[i] = &g_vm->_animMsg[i];
+		g_vm->_gameQueue._event[i] = &g_vm->_gameMsg[i];
+		g_vm->_characterQueue._event[i] = &g_vm->_characterMsg[i];
+		g_vm->_animQueue._event[i] = &g_vm->_animMsg[i];
 	}
 }
 
@@ -68,9 +68,9 @@ void InitMessageSystem() {
 /*                                INITQUEUE           					   */
 /*-------------------------------------------------------------------------*/
 void InitQueue(MessageQueue *lq) {
-	lq->head = 0;
-	lq->tail = 0;
-	lq->len  = 0;
+	lq->_head = 0;
+	lq->_tail = 0;
+	lq->_len  = 0;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -88,10 +88,10 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	else
 		lq = &g_vm->_characterQueue;
 
-	if (lq->len >= MAXMESSAGE)
+	if (lq->_len >= MAXMESSAGE)
 		return;
 
-	Message *lm = lq->event[lq->tail++];
+	Message *lm = lq->_event[lq->_tail++];
 
 	lm->_class  = cls;
 	lm->_event  = event;
@@ -102,16 +102,16 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	lm->_longParam  = lparam;
 	lm->_timestamp = TheTime;
 
-	if (lq->tail == MAXMESSAGE)
-		lq->tail = 0;
-	lq->len++;
+	if (lq->_tail == MAXMESSAGE)
+		lq->_tail = 0;
+	lq->_len++;
 
-	if (lq == &g_vm->_gameQueue && lq->len > maxmesg)
-		maxmesg = lq->len;
-	if (lq == &g_vm->_animQueue && lq->len > maxmesa)
-		maxmesa = lq->len;
-	if (lq == &g_vm->_characterQueue && lq->len > maxmesh)
-		maxmesh = lq->len;
+	if (lq == &g_vm->_gameQueue && lq->_len > maxmesg)
+		maxmesg = lq->_len;
+	if (lq == &g_vm->_animQueue && lq->_len > maxmesa)
+		maxmesa = lq->_len;
+	if (lq == &g_vm->_characterQueue && lq->_len > maxmesh)
+		maxmesh = lq->_len;
 
 	OrderEvent(lq);
 }
@@ -209,11 +209,11 @@ void ProcessTheMessage() {
 void OrderEvent(MessageQueue *lq) {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
-	for (uint8 pos = PredEvent(lq->tail); pos != lq->head; pos = PredEvent(pos)) {
-		if (lq->event[pos]->_priority > lq->event[PredEvent(pos)]->_priority) {
-			if (lq->event[pos]->_priority < MP_HIGH)
-				lq->event[pos]->_priority++;
-			SwapMessage(lq->event[pos], lq->event[PredEvent(pos)]);
+	for (uint8 pos = PredEvent(lq->_tail); pos != lq->_head; pos = PredEvent(pos)) {
+		if (lq->_event[pos]->_priority > lq->_event[PredEvent(pos)]->_priority) {
+			if (lq->_event[pos]->_priority < MP_HIGH)
+				lq->_event[pos]->_priority++;
+			SwapMessage(lq->_event[pos], lq->_event[PredEvent(pos)]);
 		}
 	}
 }
@@ -222,8 +222,8 @@ void OrderEvent(MessageQueue *lq) {
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
 bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
-	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
-		if (lq->event[pos]->_class != cls)
+	for (uint8 pos = lq->_head; pos != lq->_tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+		if (lq->_event[pos]->_class != cls)
 			return false;
 	}
 
@@ -234,17 +234,17 @@ bool TestEmptyQueue(MessageQueue *lq, uint8 cls) {
 /*                     TESTEMPTYCHARACTERQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
 bool TestEmptyCharacterQueue4Script(MessageQueue *lq) {
-	for (uint8 pos = lq->head; pos != lq->tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+	for (uint8 pos = lq->_head; pos != lq->_tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
 		/*		if (!(( lq->_event[pos]->_class == MC_CHARACTER) &&
 					(( lq->_event[pos]->_event == ME_CHARACTERACTION) ||
 			( lq->_event[pos]->_event == ME_CHARACTERCONTINUEACTION)) &&
 			( lq->_event[pos]->_longParam == false) &&
 			( lq->_event[pos]->_wordParam1 > DEFAULTACTIONS)))
 		*/
-		if (lq->event[pos]->_class == MC_CHARACTER) {
-			if (lq->event[pos]->_event == ME_CHARACTERACTION || lq->event[pos]->_event == ME_CHARACTERGOTO
-				|| lq->event[pos]->_event == ME_CHARACTERGOTOACTION || lq->event[pos]->_event == ME_CHARACTERGOTOEXAMINE
-				|| lq->event[pos]->_event == ME_CHARACTERCONTINUEACTION)
+		if (lq->_event[pos]->_class == MC_CHARACTER) {
+			if (lq->_event[pos]->_event == ME_CHARACTERACTION || lq->_event[pos]->_event == ME_CHARACTERGOTO
+				|| lq->_event[pos]->_event == ME_CHARACTERGOTOACTION || lq->_event[pos]->_event == ME_CHARACTERGOTOEXAMINE
+				|| lq->_event[pos]->_event == ME_CHARACTERCONTINUEACTION)
 			return false;
 		}
 

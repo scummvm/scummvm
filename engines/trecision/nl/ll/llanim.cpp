@@ -167,9 +167,9 @@ void StartSmackAnim(uint16 num) {
 	_curSmackAction = SMACKOPEN;
 
 	// sceglie quale buffer usare
-	if (AnimTab[num].flag & SMKANIM_BKG)
+	if (AnimTab[num]._flag & SMKANIM_BKG)
 		pos = 0;
-	else if (AnimTab[num].flag & SMKANIM_ICON)
+	else if (AnimTab[num]._flag & SMKANIM_ICON)
 		pos = 2;
 	else {
 		pos = 1;
@@ -192,31 +192,31 @@ void StartSmackAnim(uint16 num) {
 	_curAnimFrame[pos] = 0;
 
 	// sceglie come aprire
-	if (AnimTab[num].flag & SMKANIM_BKG) {
-		sprintf(UStr, "Bkg\\%s", AnimTab[num].name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num].name));
+	if (AnimTab[num]._flag & SMKANIM_BKG) {
+		sprintf(UStr, "Bkg\\%s", AnimTab[num]._name);
+		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
 
 		// spegne quelle che non servono
-		if ((num == aBKG11) && (AnimTab[num].flag & SMKANIM_OFF1))
+		if ((num == aBKG11) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG14) && (AnimTab[num].flag & SMKANIM_OFF1))
+		else if ((num == aBKG14) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG1C) && (g_vm->_obj[oFAX17]._flag & OBJFLAG_EXTRA)) {
-			AnimTab[num].flag |= SMKANIM_OFF1;
+			AnimTab[num]._flag |= SMKANIM_OFF1;
 			CallSmackVolumePan(0, 1, 0);
-		} else if ((num == aBKG1D) && (AnimTab[num].flag & SMKANIM_OFF1))
+		} else if ((num == aBKG1D) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG22) && (AnimTab[num].flag & SMKANIM_OFF1))
+		else if ((num == aBKG22) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG48) && (AnimTab[num].flag & SMKANIM_OFF1))
+		else if ((num == aBKG48) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG4P) && (AnimTab[num].flag & SMKANIM_OFF1))
+		else if ((num == aBKG4P) && (AnimTab[num]._flag & SMKANIM_OFF1))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG28) && (AnimTab[num].flag & SMKANIM_OFF4))
+		else if ((num == aBKG28) && (AnimTab[num]._flag & SMKANIM_OFF4))
 			CallSmackVolumePan(0, 1, 0);
 		else if ((num == aBKG37) && (!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA)))
 			CallSmackVolumePan(0, 1, 0);
-		else if ((num == aBKG2E) && (AnimTab[num].flag & SMKANIM_OFF2))
+		else if ((num == aBKG2E) && (AnimTab[num]._flag & SMKANIM_OFF2))
 			CallSmackVolumePan(0, 2, 0);
 		else if ((num == aBKG2G) && (_choice[556]._flag & OBJFLAG_DONE))
 			CallSmackVolumePan(0, 2, 0);
@@ -226,15 +226,15 @@ void StartSmackAnim(uint16 num) {
 		          (g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) || // c'e' il tubo fuori o
 		          (g_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS))) // la valovola e' chiusa
 			CallSmackVolumePan(0, 2, 0);
-	} else if (AnimTab[num].flag & SMKANIM_ICON) {
-		sprintf(UStr, "Icon\\%s", AnimTab[num].name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num].name));
+	} else if (AnimTab[num]._flag & SMKANIM_ICON) {
+		sprintf(UStr, "Icon\\%s", AnimTab[num]._name);
+		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
 	} else {
 		extern uint32 NextRefresh;
 		uint32 st = ReadTime();
 
-		sprintf(UStr, "Anim\\%s", AnimTab[num].name);
-		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num].name));
+		sprintf(UStr, "Anim\\%s", AnimTab[num]._name);
+		CallSmackOpen((const char *)AnimFileOpen(AnimTab[num]._name));
 		NextRefresh += (ReadTime() - st);    // fixup opening time
 	}
 
@@ -258,9 +258,9 @@ void StopSmackAnim(uint16 num) {
 		pos ++;
 
 	if (pos >= MAXSMACK) {
-		if (AnimTab[num].flag & SMKANIM_BKG)
+		if (AnimTab[num]._flag & SMKANIM_BKG)
 			pos = 0;
-		else if (AnimTab[num].flag & SMKANIM_ICON)
+		else if (AnimTab[num]._flag & SMKANIM_ICON)
 			pos = 2;
 		else
 			pos = 1;

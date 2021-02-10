@@ -334,7 +334,7 @@ void doMouse() {
 						doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 						break;
 					}
-					AnimTab[aBKG2C].flag &= ~SMKANIM_OFF1;
+					AnimTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
 					g_vm->_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
@@ -817,7 +817,7 @@ void doSystem() {
 		}
 
 		if ((g_vm->_curRoom == r12) && (g_vm->_oldRoom == r11))
-			AnimTab[aBKG11].flag |= SMKANIM_OFF1;
+			AnimTab[aBKG11]._flag |= SMKANIM_OFF1;
 		else if ((g_vm->_oldRoom == r2BL) || (g_vm->_oldRoom == r36F))
 			g_vm->_oldRoom = g_vm->_curRoom;
 		else if (g_vm->_curRoom == rSYS) {
