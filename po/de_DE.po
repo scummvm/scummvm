@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-07 15:25+0000\n"
+"PO-Revision-Date: 2021-02-10 20:29+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7164,17 +7164,15 @@ msgstr "Ersetzt die Spiel-Schriftarten durch generierte Schriftarten"
 
 #: engines/ultima/detection.cpp:82
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Schrittgeräusche abspielen"
 
 #: engines/ultima/detection.cpp:83
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Spiele Schrittgeräusche ab, wenn sich der Spieler bewegt."
 
 #: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "Aktiviere die Mausunterstützung für die Benutzeroberfläche"
+msgstr "Erlaube, direkt zu einer Maus-Position zu springen"
 
 #: engines/ultima/detection.cpp:92
 msgid ""
@@ -7183,21 +7181,23 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Frameskipping aktivieren"
 
 #: engines/ultima/detection.cpp:101
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Erlaubt dem Spiel, einzelne Bilder zu überspringen, wenn das Spiel zu "
+"langsam läuft."
 
 #: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Anti-Aliasing für Schriften aktivieren"
+msgstr "Bildwiederholrate begrenzen"
 
 #: engines/ultima/detection.cpp:110
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+"Begrenzt die Spielgeschwindigkeit, um zu verhindern, dass das Spiel zu "
+"schnell läuft."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
