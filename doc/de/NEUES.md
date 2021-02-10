@@ -146,6 +146,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Standard-Stimme der Sprachausgabe kann auf unterstützten Plattformen nun angepasst werden.
    - Unterstützung für Discord-Integration auf unterstützten Plattformen (Windows Vista+, macOS 10.9+ 64 Bit) hinzugefügt.
    - Die Unterstützung für Tastenkürzel über den Keymapper wurde erheblich verbessert.
+   - Spiele werden nun im Format engineid:gameid erkannt.
 
  BBVS:
    - Unterstützung für die Demo-Version hinzugefügt. Die Demo-Version ist auf unserer Website verfügbar.
