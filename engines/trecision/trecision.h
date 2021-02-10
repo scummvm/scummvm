@@ -82,7 +82,7 @@ public:
 	Message _idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
 	Message _quitMsg = {MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0, 0};
 
-	Message *TheMessage;
+	Message *_curMessage;
 
 	MessageQueue _gameQueue;
 	MessageQueue _animQueue;

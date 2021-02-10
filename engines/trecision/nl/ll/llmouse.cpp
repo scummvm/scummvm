@@ -436,9 +436,9 @@ bool DataSave() {
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 	ShowScreen(0, TOP + AREA, MAXX, TOP);
 
-	InitQueue(&g_vm->_gameQueue);
-	InitQueue(&g_vm->_animQueue);
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_gameQueue.initQueue();
+	g_vm->_animQueue.initQueue();
+	g_vm->_characterQueue.initQueue();
 
 	FreeKey();
 
@@ -658,7 +658,7 @@ insave:
 	fwrite(&Semskipenable,       sizeof(LLBOOL), 1, fh);
 	fwrite(&SemMouseEnabled,     sizeof(LLBOOL), 1, fh);
 	fwrite(&SemScreenRefreshed,  sizeof(LLBOOL), 1, fh);
-	fwrite(&SemPaintHomo,        sizeof(LLBOOL), 1, fh);
+	fwrite(&SemPaintCharacter,        sizeof(LLBOOL), 1, fh);
 	fwrite(&SemSomeOneSpeak,     sizeof(LLBOOL), 1, fh);
 	fwrite(&SemCharacterSpeak,        sizeof(LLBOOL), 1, fh);
 	fwrite(&SemInventoryLocked,  sizeof(LLBOOL), 1, fh);
@@ -810,9 +810,9 @@ bool DataLoad() {
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 	ShowScreen(0, TOP + AREA, MAXX, TOP);
 
-	InitQueue(&g_vm->_gameQueue);
-	InitQueue(&g_vm->_animQueue);
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_gameQueue.initQueue();
+	g_vm->_animQueue.initQueue();
+	g_vm->_characterQueue.initQueue();
 
 	FreeKey();
 
@@ -952,7 +952,7 @@ bool DataLoad() {
 	fread(&Semskipenable,       sizeof(LLBOOL), 1, fh);
 	fread(&SemMouseEnabled,     sizeof(LLBOOL), 1, fh);
 	fread(&SemScreenRefreshed,  sizeof(LLBOOL), 1, fh);
-	fread(&SemPaintHomo,        sizeof(LLBOOL), 1, fh);
+	fread(&SemPaintCharacter,        sizeof(LLBOOL), 1, fh);
 	fread(&SemSomeOneSpeak,     sizeof(LLBOOL), 1, fh);
 	fread(&SemCharacterSpeak,        sizeof(LLBOOL), 1, fh);
 	fread(&SemInventoryLocked,  sizeof(LLBOOL), 1, fh);

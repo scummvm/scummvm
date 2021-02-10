@@ -124,8 +124,8 @@ typedef struct {
 } Dialog;
 
 
-// MESSAGGI PER LO SCHEDULER
-typedef struct tagMessage {
+// MESSAGES FOR THE SCHEDULER
+struct Message {
 	uint8 _class;							// message class
 	uint8 _event;							// message name
 	uint8 _priority;						// message priority
@@ -135,16 +135,22 @@ typedef struct tagMessage {
 	uint16 _wordParam2;						// byte parameter 2
 	uint32 _longParam;						// int parameter
 	uint32 _timestamp;
-} Message;
+};
 
-// RETTANGOLO DI SCHERMO (no erase, please!)
-struct screenrect {
+// Screen rectangle (don't remove, please!)
+struct ScreenRect {
 	uint16 x0, y0, x1, y1;
 };
 
 struct MessageQueue {
 	uint8   _head, _tail, _len;
 	Message *_event[MAXMESSAGE];
+
+	void orderEvents();
+	bool testEmptyQueue(uint8 cls);
+	bool testEmptyCharacterQueue4Script();
+	bool getMessage();
+	void initQueue();
 };
 
 struct SSortTable {

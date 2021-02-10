@@ -363,7 +363,7 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 
 	CharacterContinueTalk();
 
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_characterQueue.initQueue();
 	actorStop();
 }
 
@@ -531,9 +531,9 @@ void SomeOneMute() {
 /*                                    DOSTRING            				   */
 /*-------------------------------------------------------------------------*/
 void doString() {
-	switch (g_vm->TheMessage->_event) {
+	switch (g_vm->_curMessage->_event) {
 	case ME_CHARACTERSPEAK:
-		CharacterSay(g_vm->TheMessage->_wordParam1);
+		CharacterSay(g_vm->_curMessage->_wordParam1);
 		break;
 
 	case ME_CHARACTERSPEAKING:
@@ -551,14 +551,14 @@ void doString() {
 		break;
 
 	case ME_SOMEONEWAIT2SPEAK:
-		if ((!g_vm->TheMessage->_wordParam1) /*FAB: || (AnimObj[TheMessage->_wordParam1]._flag & ONOFF)*/)
+		if ((!g_vm->_curMessage->_wordParam1) /*FAB: || (AnimObj[_curMessage->_wordParam1]._flag & ONOFF)*/)
 			SomeOneContinueTalk();
 		else
 			REEVENT;
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
-		if ((!g_vm->TheMessage->_wordParam1) /*FAB: || (!(AnimObj[TheMessage->_wordParam1]._flag & ONOFF))*/)
+		if ((!g_vm->_curMessage->_wordParam1) /*FAB: || (!(AnimObj[_curMessage->_wordParam1]._flag & ONOFF))*/)
 			SomeOneMute();
 		else
 			REEVENT;

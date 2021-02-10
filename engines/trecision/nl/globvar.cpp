@@ -53,9 +53,9 @@ int8 _characterGoToPosition = -1;
 int8 OldObjStatus[MAXOBJINROOM];
 int8 VideoObjStatus[MAXOBJINROOM];
 
-struct screenrect VideoTop = {  0,  0,   0, TOP - 1};
-struct screenrect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
-struct screenrect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
+struct ScreenRect VideoTop = {  0,  0,   0, TOP - 1};
+struct ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
+struct ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
 
 struct SSortTable SortTable[200];
 
@@ -69,8 +69,8 @@ LLBOOL  Semskiptalk;
 LLBOOL  Semskipenable;
 LLBOOL  SemMouseEnabled = true;
 LLBOOL  SemScreenRefreshed;
-LLBOOL  SemPaintHomo;
-LLBOOL  SemShowHomo = 1;
+LLBOOL  SemPaintCharacter;
+LLBOOL  SemShowCharacter = 1;
 LLBOOL  SemSomeOneSpeak;
 LLBOOL  SemCharacterSpeak;
 LLBOOL  SemInventoryLocked;

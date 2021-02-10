@@ -130,9 +130,9 @@ void PlayDialog(uint16 i) {
 	SemDialogActive = true;
 	_curChoice = 0;
 	_curSubTitle = 0;
-	SemShowHomo = false;		        // prima non c'era
+	SemShowCharacter = false;		        // prima non c'era
 
-	InitQueue(&g_vm->_characterQueue);
+	g_vm->_characterQueue.initQueue();
 	g_vm->_inventoryStatus = INV_OFF;
 	g_vm->_inventoryCounter = INVENTORY_HIDE;
 	ClearText();
@@ -252,7 +252,7 @@ void afterChoice(int numframe) {
 
 	case dF321:
 		KillIcon(iTORCIA32);
-		SemShowHomo = false;
+		SemShowCharacter = false;
 		break;
 
 	case dF4A3:
@@ -435,7 +435,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF431:
-			SemShowHomo = true;
+			SemShowCharacter = true;
 			StartCharacterAction(aWALKIN, 0, 11, 0);
 			break;
 
@@ -460,7 +460,7 @@ void afterChoice(int numframe) {
 
 		case dC4A1:
 			SemCharacterExist = true;
-			SemShowHomo = true;
+			SemShowCharacter = true;
 			actorStop();
 			nextStep();
 			break;
@@ -672,13 +672,13 @@ void PlayScelta(uint16 i) {
 						DoDialog
  --------------------------------------------------*/
 void doDialog() {
-	switch (g_vm->TheMessage->_event) {
+	switch (g_vm->_curMessage->_event) {
 	case ME_ENDCHOICE:
-		afterChoice(g_vm->TheMessage->_wordParam1);
+		afterChoice(g_vm->_curMessage->_wordParam1);
 		break;
 
 	case ME_STARTDIALOG:
-		PlayDialog(g_vm->TheMessage->_wordParam1);
+		PlayDialog(g_vm->_curMessage->_wordParam1);
 		break;
 	}
 }
