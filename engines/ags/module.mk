@@ -3,6 +3,7 @@ MODULE := engines/ags
 MODULE_OBJS = \
 	ags.o \
 	events.o \
+	game_scanner.o \
 	metaengine.o \
 	music.o \
 	lib/aastr-0.1.1/aarot.o \
@@ -305,11 +306,6 @@ MODULE_OBJS = \
 	plugins/ags_sprite_font/variable_width_font.o \
 	plugins/ags_sprite_font/variable_width_sprite_font.o \
 	plugins/ags_tcp_ip/ags_tcp_ip.o
-
-ifdef ENABLE_AGS_SCANNER
-MODULE_OBJS += \
-	tests/game_scanner.o
-endif
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \

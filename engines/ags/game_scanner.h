@@ -66,7 +66,7 @@ public:
 	/**
 	 * Main execution method
 	 */
-	void scan();
+	void scan(const Common::String &startFolder);
 };
 
 } // namespace AGS3

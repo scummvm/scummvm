@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/tests/game_scanner.h"
 #include "ags/detection.h"
+#include "ags/game_scanner.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/util/multifilelib.h"
@@ -38,10 +38,10 @@ extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
 extern bool engine_try_init_gamedata(AGS::Shared::String gamepak_path);
 extern GameSetupStruct game;
 
-void GameScanner::scan() {
+void GameScanner::scan(const Common::String &startFolder) {
 	detectClashes();
 
-	Common::FSNode folder(".");
+	Common::FSNode folder(startFolder);
 	scanFolder(folder);
 
 	if (!_oldGames.empty()) {
@@ -53,6 +53,7 @@ void GameScanner::scan() {
 		debug("");
 	}
 
+	debug("// 2.5+ games that should be supported");
 	Common::HashMap<Common::String, bool> gameDescs;
 	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
 		if (!gameDescs.contains(it->_id))

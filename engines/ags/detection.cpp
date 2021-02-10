@@ -21,6 +21,7 @@
  */
 
 #include "base/plugins.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "ags/detection.h"
@@ -69,9 +70,19 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 	AGS::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
 	AGS::g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
-	// // Set the defaults for gameid and extra
+	// FIXME: Hack to return match without checking for game data,
+	// so that the command line game scanner will work
+	if (ConfMan.get("gameid") == "ags-scan") {
+		_gameid = "ags-scan";
+		AGS::g_fallbackDesc.desc.gameId = "ags-scan";
+		return ADDetectedGame(&AGS::g_fallbackDesc.desc);
+	}
+
+	// Set the defaults for gameid and extra
 	_gameid = "ags";
 	_extra.clear();
+	AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
+	AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 
 	// Scan for AGS games
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -94,8 +105,6 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			f.seek(0);
 			_md5 = Common::computeStreamMD5AsString(f, 5000);
 
-			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
-			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();

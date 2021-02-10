@@ -23,6 +23,7 @@
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "ags/events.h"
+#include "ags/game_scanner.h"
 #include "ags/music.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -57,9 +58,6 @@
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 
-#ifdef ENABLE_AGS_SCANNER
-#include "ags/tests/game_scanner.h"
-#endif
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"
 #endif
@@ -285,8 +283,9 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
 		_globals(nullptr) {
 	g_vm = this;
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScan, "Scan", "Scan for unrecognised games");
 
 	_events = new EventsManager();
 	_music = new Music(_mixer);
@@ -310,19 +309,21 @@ const PluginVersion *AGSEngine::getNeededPlugins() const {
 }
 
 Common::Error AGSEngine::run() {
-	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
-	const char *ARGV[] = { "scummvm.exe", filename };
-	const int ARGC = 2;
+	if (debugChannelSet(-1, kDebugScan)) {
+		// Scan the given folder and subfolders for unknown games
+		AGS3::GameScanner scanner;
+		scanner.scan(ConfMan.get("path"));
+		return Common::kNoError;
+	}
 
-#if ENABLE_AGS_SCANNER
-	AGS3::GameScanner scanner;
-	scanner.scan();
-	return Common::kNoError;
-#endif
 #ifdef ENABLE_AGS_TESTS
 	AGS3::Test_DoAllTests();
 	return Common::kNoError;
 #endif
+
+	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
+	const char *ARGV[] = { "scummvm.exe", filename };
+	const int ARGC = 2;
 	AGS3::main_init(ARGC, ARGV);
 
 #if AGS_PLATFORM_OS_WINDOWS

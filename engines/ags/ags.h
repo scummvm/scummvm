@@ -47,8 +47,9 @@ namespace AGS {
 #define SCREEN_HEIGHT 200
 
 enum AGSDebugChannels {
-	kDebugPath     = 1 << 0,
-	kDebugGraphics = 1 << 1
+	kDebugGraphics = 1 << 0,
+	kDebugPath     = 1 << 1,
+	kDebugScan     = 1 << 2
 };
 
 struct AGSGameDescription;
