@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-09 01:21+0000\n"
-"PO-Revision-Date: 2021-02-10 07:23+0000\n"
+"PO-Revision-Date: 2021-02-10 14:19+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3288,12 +3288,15 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"Vista Ingrandita disabilitata. Riattivo Modalità Trascinamento.\n"
+"Vista Ingrandita disattivata.\n"
+"Riattivo Modalità Trascinamento.\n"
 "Ritorno all'elenco dei giochi..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr "Vista Ingrandita disattivata. Ritorno all'elenco dei giochi..."
+msgstr ""
+"Vista Ingrandita disattivata.\n"
+"Ritorno all'elenco dei giochi..."
 
 #: backends/platform/3ds/osystem-events.cpp:396
 msgid "Hover Mode"
@@ -3306,19 +3309,21 @@ msgstr "Modalità Trascinamento"
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
-"Impossibile passare alla Modalità Trascinamento quando la Vista Ingrandita è "
-"attivata"
+"Non è possibile passare alla Modalità Trascinamento\n"
+"quando la Vista Ingrandita è attivata"
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode cannot be activated in menus."
-msgstr "La modalità di ingrandimento non può essere attivata nei menu."
+msgstr ""
+"La Vista Ingrandita\n"
+"non può essere attivata nei menu."
 
 #: backends/platform/3ds/osystem-events.cpp:412
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
-"La modalità di ingrandimento può essere attivata\n"
+"La Vista Ingrandita può essere attivata\n"
 " quando entrambi gli schermi sono abilitati."
 
 #: backends/platform/3ds/osystem-events.cpp:414
@@ -3327,7 +3332,9 @@ msgstr "La risoluzione del gioco è troppo piccola per essere ingrandita."
 
 #: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr "Vista Ingrandita attivata. Passo a Modalità Puntatore..."
+msgstr ""
+"Vista Ingrandita attivata.\n"
+"Passo a Modalità Puntatore..."
 
 #: backends/platform/3ds/osystem-events.cpp:422
 msgid "Magnify Mode On"
@@ -3335,17 +3342,17 @@ msgstr "Vista Ingrandita attivata"
 
 #: backends/platform/3ds/osystem-events.cpp:429
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr "Vista Ingrandita disabilitata. Riattivo Modalità Trascinamento..."
+msgstr ""
+"Vista Ingrandita disattivata.\n"
+"Riattivo Modalità Trascinamento..."
 
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
 msgstr "Vista Ingrandita disattivata"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Applica upscale ai video"
+msgstr "Non ridimensionare"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
@@ -4232,8 +4239,7 @@ msgstr "La versione di questo file Glulx è troppo vecchia per essere eseguita."
 
 #: engines/glk/glulx/glulx.cpp:98
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
-"La versione di questo file Glulx è troppo aggiornata per essere eseguita."
+msgstr "La versione di questo file Glulx è troppo recente per essere eseguita."
 
 #: engines/glk/quest/quest.cpp:45
 msgid "Could not start Quest game"
@@ -4999,7 +5005,7 @@ msgstr ""
 "EOBF8.FONT\n"
 "EOBF8/8\n"
 "\n"
-"Se stai utilizzando il programma d'installazione originale questi files\n"
+"Se hai utilizzato il programma di installazione originale questi files\n"
 "dovrebbero trovarsi nella cartella di sistema AmigaDOS 'Fonts/'.\n"
 "Copiale nella cartella dati di gioco di EOB.\n"
 
@@ -5428,8 +5434,8 @@ msgstr ""
 "I vecchi nomi non sono più supportati, quindi non potrai caricare i tuoi "
 "salvataggi senza prima convertirli.\n"
 "\n"
-"Premi OK per convertirli adesso, altrimenti ti verrà richiesto la prossima "
-"volta.\n"
+"Premi OK per convertirli adesso, altrimenti ti verrà richiesto al prossimo "
+"avvio del gioco.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
@@ -5724,9 +5730,8 @@ msgid ""
 "that your game files are valid."
 msgstr ""
 "Sono stati rilevati file mancanti o corrotti. Alcune parti del gioco "
-"potrebbero non funzionare correttamente. Controllare la console per "
-"ulteriori informazioni e verificare che i file di dati del gioco siano "
-"validi."
+"potrebbero non funzionare correttamente. Controlla la console per ulteriori "
+"informazioni e verifica che i file dati del gioco siano validi."
 
 #: engines/sci/sci.cpp:389
 msgid ""
@@ -5893,7 +5898,7 @@ msgstr "Errore nella lettura del disco %c, (%c%d) Premere un pulsante."
 
 #: engines/scumm/dialogs.cpp:168
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Gioco in pausa. Premere SPAZIO per continuare."
+msgstr "Gioco in pausa. Premi SPAZIO per continuare."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
@@ -7151,40 +7156,40 @@ msgstr "Usa font renderizzati in sostituzione dei font normali"
 
 #: engines/ultima/detection.cpp:82
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Rumore dei passi"
 
 #: engines/ultima/detection.cpp:83
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Riproduce un effetto sonoro quando il giocatore si muove."
 
 #: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "Abilita il mouse per l'interfaccia utente"
+msgstr "Salta alla posizione del puntatore"
 
 #: engines/ultima/detection.cpp:92
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Salta (da fermo) verso la locazione puntata del mouse, anzichè considerare "
+"solo la direzione."
 
 #: engines/ultima/detection.cpp:100
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Attiva frame skipping"
 
 #: engines/ultima/detection.cpp:101
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
+"Permette al gioco di saltare dei frame di animazione per mantenere la "
+"fluidità."
 
 #: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Abilita anti-aliasing dei caratteri"
+msgstr "Attiva limitatore di frame"
 
 #: engines/ultima/detection.cpp:110
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "Limita i FPS per evitare che il gioco funzioni troppo velocemente."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
