@@ -209,7 +209,7 @@ void RegenSmackAnim(int num) {
 	if ((num == 0) || (num == 620))
 		return;
 
-	if (AnimTab[num].flag & SMKANIM_ICON) {
+	if (AnimTab[num]._flag & SMKANIM_ICON) {
 		RegenSmackIcon(g_vm->_regenInvStartIcon, num);
 		return;
 	}
@@ -218,9 +218,9 @@ void RegenSmackAnim(int num) {
 		pos++;
 
 	if (pos >= MAXSMACK) {
-		if (AnimTab[num].flag & SMKANIM_BKG)
+		if (AnimTab[num]._flag & SMKANIM_BKG)
 			pos = 0;
-		else if (AnimTab[num].flag & SMKANIM_ICON)
+		else if (AnimTab[num]._flag & SMKANIM_ICON)
 			pos = 2;
 		else
 			pos = 1;
@@ -246,12 +246,12 @@ void RegenSmackAnim(int num) {
 	{
 		int inters = 0;
 		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (AnimTab[num].flag & (SMKANIM_OFF1 << a)) {
+			if (AnimTab[num]._flag & (SMKANIM_OFF1 << a)) {
 				// se il rettangolo e' completamente dentro a limite lo leva
-				if ((AnimTab[num].lim[a][0] <= 0 + SmkAnims[pos]->getWidth()) &&
-						(AnimTab[num].lim[a][1] <= 0 + SmkAnims[pos]->getHeight()) &&
-						(AnimTab[num].lim[a][2] >= 0) &&
-						(AnimTab[num].lim[a][3] >= 0)) {
+				if ((AnimTab[num]._lim[a][0] <= 0 + SmkAnims[pos]->getWidth()) &&
+						(AnimTab[num]._lim[a][1] <= 0 + SmkAnims[pos]->getHeight()) &&
+						(AnimTab[num]._lim[a][2] >= 0) &&
+						(AnimTab[num]._lim[a][3] >= 0)) {
 					inters ++;
 				}
 			}
@@ -284,11 +284,11 @@ void RegenSmackAnim(int num) {
 	// se e' un background
 	if (pos == 0) {
 		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (!(AnimTab[num].flag & (SMKANIM_OFF1 << a))  && (AnimTab[num].lim[a][3] != 0)) {
-				limiti[limitinum][0] = AnimTab[num].lim[a][0];
-				limiti[limitinum][1] = AnimTab[num].lim[a][1] + TOP;
-				limiti[limitinum][2] = AnimTab[num].lim[a][2];
-				limiti[limitinum][3] = AnimTab[num].lim[a][3] + TOP;
+			if (!(AnimTab[num]._flag & (SMKANIM_OFF1 << a))  && (AnimTab[num]._lim[a][3] != 0)) {
+				limiti[limitinum][0] = AnimTab[num]._lim[a][0];
+				limiti[limitinum][1] = AnimTab[num]._lim[a][1] + TOP;
+				limiti[limitinum][2] = AnimTab[num]._lim[a][2];
+				limiti[limitinum][3] = AnimTab[num]._lim[a][3] + TOP;
 				limitinum ++;
 			}
 		}
@@ -328,7 +328,7 @@ void RegenSmackAnim(int num) {
 		limitinum ++;
 	}
 
-	if (!(AnimTab[num].flag & SMKANIM_LOOP) && !(AnimTab[num].flag & SMKANIM_BKG)) {
+	if (!(AnimTab[num]._flag & SMKANIM_LOOP) && !(AnimTab[num]._flag & SMKANIM_BKG)) {
 		if (_curAnimFrame[pos] >= SmkAnims[pos]->getFrameCount()) {
 			StopSmackAnim(num);
 			SemPaintHomo = 1;
@@ -344,7 +344,7 @@ void RegenSmackAnim(int num) {
 		CallSmackNextFrame();
 
 	if ((SmkAnims[pos] != NULL) && (_curAnimFrame[pos] >= SmkAnims[pos]->getFrameCount())) {
-		if ((AnimTab[num].flag & SMKANIM_LOOP) || (AnimTab[num].flag & SMKANIM_BKG))
+		if ((AnimTab[num]._flag & SMKANIM_LOOP) || (AnimTab[num]._flag & SMKANIM_BKG))
 			InitAtFrameHandler(num, 0);
 
 		_curAnimFrame[pos] = 0;

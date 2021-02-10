@@ -790,7 +790,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_obj[oSERBATOIOA2G]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oPANNELLOE2G]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oPANNELLOM2G]._flag |= OBJFLAG_EXTRA;
-			AnimTab[aBKG2G].flag |= SMKANIM_OFF1;
+			AnimTab[aBKG2G]._flag |= SMKANIM_OFF1;
 			printsent = false;
 		} else
 			printsent = true;
@@ -802,7 +802,7 @@ void doMouseOperate(uint16 TheObj) {
 			extern uint16 ruotepos[3];
 
 			StopSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
-			AnimTab[aBKG2C].flag |= SMKANIM_OFF1;
+			AnimTab[aBKG2C]._flag |= SMKANIM_OFF1;
 			g_vm->_obj[oBASERUOTE2C]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[omRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oPULSANTE2C]._mode |= OBJMODE_OBJSTATUS;
@@ -832,7 +832,7 @@ void doMouseOperate(uint16 TheObj) {
 			PlayDialog(dF2E1);
 			g_vm->_obj[oDINOSAURO2E]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCATWALKA2E]._flag |= OBJFLAG_EXTRA;
-			AnimTab[aBKG2E].flag &= ~SMKANIM_OFF2;
+			AnimTab[aBKG2E]._flag &= ~SMKANIM_OFF2;
 			printsent = false;
 		} else if (g_vm->_obj[TheObj]._anim) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
@@ -912,7 +912,7 @@ void doMouseOperate(uint16 TheObj) {
 		g_vm->_obj[oASCENSORE35]._flag |= OBJFLAG_ROOMOUT;
 		g_vm->_obj[oASCENSORE35]._anim = a3514ENTRAASCENSORE;
 
-		AnimTab[aBKG35].flag |= SMKANIM_OFF1;
+		AnimTab[aBKG35]._flag |= SMKANIM_OFF1;
 		PlayDialog(dF351);
 		setPosition(7);
 		break;
@@ -961,8 +961,8 @@ void doMouseOperate(uint16 TheObj) {
 				g_vm->_obj[oPORTAMC36]._anim = a3610APREPORTA;
 				g_vm->_obj[oSCAFFALE36]._anim = a3615APRENDESCAFFALE;
 
-				AnimTab[aBKG36].flag |= SMKANIM_OFF2;
-				AnimTab[aBKG36].flag |= SMKANIM_OFF3;
+				AnimTab[aBKG36]._flag |= SMKANIM_OFF2;
+				AnimTab[aBKG36]._flag |= SMKANIM_OFF3;
 				g_vm->_obj[oSCANNERLA36]._mode &= ~OBJMODE_OBJSTATUS;
 				g_vm->_obj[oSCANNERLS36]._mode |= OBJMODE_OBJSTATUS;
 				g_vm->_obj[oSCANNERMA36]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1358,14 +1358,14 @@ void doMouseTake(uint16 TheObj) {
 	if (del) {
 		if (TheAction) {
 			for (uint16 j = 0; j < MAXATFRAME; j++) {
-				if ((AnimTab[TheAction].atframe[j].type == ATFCLR) && (AnimTab[TheAction].atframe[j].index == TheObj))
+				if ((AnimTab[TheAction]._atFrame[j]._type == ATFCLR) && (AnimTab[TheAction]._atFrame[j]._index == TheObj))
 					break;
 
-				if (AnimTab[TheAction].atframe[j].type == 0) {
-					AnimTab[TheAction].atframe[j].child = 0;
-					AnimTab[TheAction].atframe[j].nframe = 1;
-					AnimTab[TheAction].atframe[j].type = ATFCLR;
-					AnimTab[TheAction].atframe[j].index = TheObj;
+				if (AnimTab[TheAction]._atFrame[j]._type == 0) {
+					AnimTab[TheAction]._atFrame[j]._child = 0;
+					AnimTab[TheAction]._atFrame[j]._numFrame = 1;
+					AnimTab[TheAction]._atFrame[j]._type = ATFCLR;
+					AnimTab[TheAction]._atFrame[j]._index = TheObj;
 					break;
 				}
 			}
@@ -1864,7 +1864,7 @@ void doInvScrUseWith() {
 		if (g_vm->_useWith[WITH] == oBAR11) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, g_vm->_useWith[WITH]);
 			ReplaceIcon(iACIDO15, iFIALAMETA);
-			//AnimTab[a113USAFIALA].atframe[0].index = 1483;
+			//AnimTab[a113USAFIALA]._atFrame[0]._index = 1483;
 			printsent = false;
 		} else if (g_vm->_useWith[WITH] == oPADLOCK1B) {
 			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
@@ -1873,7 +1873,7 @@ void doInvScrUseWith() {
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, g_vm->_useWith[WITH]);
 			g_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			ReplaceIcon(iACIDO15, iFIALAMETA);
-			AnimTab[a113USAFIALA].atframe[0].index = 1483;
+			AnimTab[a113USAFIALA]._atFrame[0]._index = 1483;
 			printsent = false;
 		} else if ((g_vm->_useWith[WITH] == ocGUARD18) || (g_vm->_useWith[WITH] == oMANHOLEC1B)) {
 			printsent = false;
@@ -1883,13 +1883,13 @@ void doInvScrUseWith() {
 
 	case iFIALAMETA:
 		if (g_vm->_useWith[WITH] == oBAR11) {
-			AnimTab[a113USAFIALA].atframe[0].index = 1483;
+			AnimTab[a113USAFIALA]._atFrame[0]._index = 1483;
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, g_vm->_useWith[WITH]);
 			KillIcon(iFIALAMETA);
 			printsent = false;
 		} else if (g_vm->_useWith[WITH] == oPADLOCK1B) {
-			AnimTab[a1B2AVERSAACIDO].atframe[2].index = 1483;
-			AnimTab[a1B2VERSAACIDO].atframe[2].index = 1483;
+			AnimTab[a1B2AVERSAACIDO]._atFrame[2]._index = 1483;
+			AnimTab[a1B2VERSAACIDO]._atFrame[2]._index = 1483;
 			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, g_vm->_useWith[WITH]);
 			else
@@ -2164,7 +2164,7 @@ void doInvScrUseWith() {
 			read3D("1d2.3d");		// dopo pattino
 			g_vm->_obj[oDONNA1D]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
-			AnimTab[aBKG1D].flag |= SMKANIM_OFF1;
+			AnimTab[aBKG1D]._flag |= SMKANIM_OFF1;
 			printsent = false;
 		}
 		break;
@@ -2346,7 +2346,7 @@ void doInvScrUseWith() {
 			PlayDialog(dF2E2);
 			g_vm->_obj[oDINOSAURO2E]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
-			AnimTab[aBKG2E].flag |= SMKANIM_OFF2;
+			AnimTab[aBKG2E]._flag |= SMKANIM_OFF2;
 			printsent = false;
 		}
 		break;
@@ -2666,7 +2666,7 @@ void doInvScrUseWith() {
 			g_vm->_obj[oSANGUE4P]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r4P]._flag |= OBJFLAG_EXTRA;
 			read3D("4p2.3d");		// dopo licantropo
-			AnimTab[aBKG4P].flag |= SMKANIM_OFF1;
+			AnimTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			PlayDialog(dF4P2);
 			printsent = false;
 		} else if (g_vm->_useWith[WITH] == oLICANTROPO4P) {
@@ -2912,7 +2912,7 @@ void doScrScrUseWith() {
 		if (g_vm->_useWith[WITH] == oTUBO21) {
 			PlayDialog(dF211);
 			SetRoom(r21, true);
-			AnimTab[aBKG21].flag &= ~SMKANIM_OFF1;
+			AnimTab[aBKG21]._flag &= ~SMKANIM_OFF1;
 			g_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCATENAT21]._mode |= OBJMODE_OBJSTATUS;
@@ -3661,48 +3661,48 @@ bool AtMouseClick(uint16 TheObj) {
 void AtEndChangeRoom() {
 //	gestione particolare campi magnetici
 	if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG2E].flag |= SMKANIM_OFF1;
+		AnimTab[aBKG2E]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA2E]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS2E]._mode |= OBJMODE_OBJSTATUS;
 	} else if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADA2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG2E].flag &= ~SMKANIM_OFF1;
+		AnimTab[aBKG2E]._flag &= ~SMKANIM_OFF1;
 		g_vm->_obj[oCAMPO2E]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA2E]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS2E]._mode &= ~OBJMODE_OBJSTATUS;
 	}
 	if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACS2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG2C].flag |= SMKANIM_OFF1;
+		AnimTab[aBKG2C]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS2C]._mode |= OBJMODE_OBJSTATUS;
 	} else if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACA2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG2C].flag &= ~SMKANIM_OFF1;
+		AnimTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
 		g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
 	}
 	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG28].flag |= SMKANIM_OFF2;
+		AnimTab[aBKG28]._flag |= SMKANIM_OFF2;
 		g_vm->_obj[oCESPUGLIO28]._anim = a283;
 		g_vm->_obj[oSERPENTETM28]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oSERPENTEAM28]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBA2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG28].flag &= ~SMKANIM_OFF2;
+		AnimTab[aBKG28]._flag &= ~SMKANIM_OFF2;
 		g_vm->_obj[oCESPUGLIO28]._anim = a282;
 		g_vm->_obj[oSERPENTETM28]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 	}
 	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG28].flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
+		AnimTab[aBKG28]._flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
 		g_vm->_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA28]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS28]._mode |= OBJMODE_OBJSTATUS;
 		read3D("282.3d");
 	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABA2D]._mode & OBJMODE_OBJSTATUS)) {
-		AnimTab[aBKG28].flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
+		AnimTab[aBKG28]._flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
 		g_vm->_obj[oCAMPO28]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
@@ -3728,7 +3728,7 @@ void AtEndChangeRoom() {
 		StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
 	else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18) && (g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
 		StartCharacterAction(a1A5ENTRA, 0, 0, 0);
-		AnimTab[aBKG1A].flag |= SMKANIM_OFF1;
+		AnimTab[aBKG1A]._flag |= SMKANIM_OFF1;
 	} else if ((g_vm->_curRoom == r1C) && (g_vm->_oldRoom == r1B))
 		StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
 	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1C))
@@ -3743,7 +3743,7 @@ void AtEndChangeRoom() {
 		_actor._lim[2] = 240;
 	} else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1D))
 		StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r18) && (AnimTab[aBKG1B].flag & SMKANIM_OFF1))
+	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r18) && (AnimTab[aBKG1B]._flag & SMKANIM_OFF1))
 		StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
 	else if ((g_vm->_curRoom == r24) && (g_vm->_oldRoom == r2H))
 		StartCharacterAction(a242, 0, 0, 0);
@@ -4035,41 +4035,41 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		break;
 
 	case fANIMOFF1:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag |= SMKANIM_OFF1;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF1;
 		if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P))
 			CallSmackVolumePan(0, 1, 0);
 		break;
 	case fANIMOFF2:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag |= SMKANIM_OFF2;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF2;
 		if ((g_vm->_curRoom == r2E))
 			CallSmackVolumePan(0, 2, 0);
 		break;
 	case fANIMOFF3:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag |= SMKANIM_OFF3;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF3;
 		break;
 	case fANIMOFF4:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag |= SMKANIM_OFF4;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF4;
 		if (g_vm->_curRoom == r28)
 			CallSmackVolumePan(0, 1, 0);
 		break;
 
 	case fANIMON1:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF1;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF1;
 		if ((g_vm->_curRoom == r14) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P)) {
 			CallSmackVolumePan(0, 1, 1);
 		}
 		break;
 	case fANIMON2:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF2;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF2;
 		if ((g_vm->_curRoom == r2E)) {
 			CallSmackVolumePan(0, 2, 1);
 		}
 		break;
 	case fANIMON3:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF3;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF3;
 		break;
 	case fANIMON4:
-		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag &= ~SMKANIM_OFF4;
+		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF4;
 		break;
 
 	case fENDDEMO:
@@ -4097,7 +4097,7 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 
 	switch (type) {
 	case ATFTEXT:
-		CharacterTalkInAction(h->curanim->atframe[atf].index);
+		CharacterTalkInAction(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFTEXTACT:
 		CharacterTalkInAction(g_vm->_obj[h->object]._action);
@@ -4106,73 +4106,73 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 		CharacterTalkInAction(g_vm->_obj[h->object]._examine);
 		break;
 	case ATFCLR:
-		g_vm->_obj[h->curanim->atframe[atf].index]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFCLRI:
-		KillIcon(h->curanim->atframe[atf].index);
+		KillIcon(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFCEX:
-		g_vm->_obj[h->object]._examine = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._examine = h->curanim->_atFrame[atf]._index;
 		break;
 	case ATFCACT:
-		g_vm->_obj[h->object]._action = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._action = h->curanim->_atFrame[atf]._index;
 		break;
 	case ATFSET:
-		g_vm->_obj[h->curanim->atframe[atf].index]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETI:
-		AddIcon(h->curanim->atframe[atf].index);
+		AddIcon(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFDO:
-		ExecuteATFDO(h, h->curanim->atframe[atf].index, h->object);
+		ExecuteATFDO(h, h->curanim->_atFrame[atf]._index, h->object);
 		break;
 	case ATFROOM:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->curanim->atframe[atf].index, 0, 0, h->object);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->curanim->_atFrame[atf]._index, 0, 0, h->object);
 		break;
 	case ATFSETPOS:
-		setPosition(h->curanim->atframe[atf].index);
+		setPosition(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFDIALOG:
-		PlayDialog(h->curanim->atframe[atf].index);
+		PlayDialog(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFCOBJANIM:
-		g_vm->_obj[h->object]._anim = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._anim = h->curanim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFCOBJBOX:
-		g_vm->_obj[h->object]._nbox = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._nbox = h->curanim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFCOBJPOS:
-		g_vm->_obj[h->object]._position = h->curanim->atframe[atf].index;
+		g_vm->_obj[h->object]._position = h->curanim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFSETFORE:
-		g_vm->_obj[h->curanim->atframe[atf].index]._nbox = FOREGROUND;
+		g_vm->_obj[h->curanim->_atFrame[atf]._index]._nbox = FOREGROUND;
 		RegenRoom();
 		break;
 	case ATFSETBACK:
-		g_vm->_obj[h->curanim->atframe[atf].index]._nbox = BACKGROUND;
+		g_vm->_obj[h->curanim->_atFrame[atf]._index]._nbox = BACKGROUND;
 		RegenRoom();
 		break;
 	case ATFSWITCH:
-		g_vm->_obj[h->curanim->atframe[atf].index]._mode ^= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode ^= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETROOMT:
-		SetRoom(h->curanim->atframe[atf].index, true);
+		SetRoom(h->curanim->_atFrame[atf]._index, true);
 		break;
 	case ATFSETROOMF:
-		SetRoom(h->curanim->atframe[atf].index, false);
+		SetRoom(h->curanim->_atFrame[atf]._index, false);
 		break;
 	case ATFREADBOX:
-		if (h->curanim->atframe[atf].index == 1) {
+		if (h->curanim->_atFrame[atf]._index == 1) {
 			sprintf(UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(UStr);
 			g_vm->_room[g_vm->_curRoom]._flag &= ~OBJFLAG_EXTRA;
-		} else if (h->curanim->atframe[atf].index == 2) {
+		} else if (h->curanim->_atFrame[atf]._index == 2) {
 			sprintf(UStr, "%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(UStr);
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
@@ -4182,7 +4182,7 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 		}
 		break;
 	case ATFONESPEAK:
-		switch (h->curanim->atframe[atf].index) {
+		switch (h->curanim->_atFrame[atf]._index) {
 		case 1:
 			if (g_vm->_room[r1D]._flag & OBJFLAG_EXTRA)
 				break;
@@ -4215,9 +4215,9 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 	struct ATFHandle *handle;
 
 	handle = &AnimType[0];
-	if (anim->flag & SMKANIM_BKG)
+	if (anim->_flag & SMKANIM_BKG)
 		handle = &AnimType[1];
-	if (anim->flag & SMKANIM_ICON)
+	if (anim->_flag & SMKANIM_ICON)
 		handle = &AnimType[2];
 
 	handle->curanim = anim;
@@ -4255,7 +4255,7 @@ void AtFrameEnd(int type) {
 	h = &AnimType[type];
 	anim = h->curanim;
 	h->curframe = 0;
-	/*	if((h->curanim->atframe[0].type==0) && (_obj[h->_object]._action))
+	/*	if((h->curanim->_atFrame[0]._type==0) && (_obj[h->_object]._action))
 		{
 			CharacterTalkInAction(_obj[h->_object]._action);
 			return;
@@ -4269,13 +4269,13 @@ void AtFrameEnd(int type) {
 
 	for (a = 0; a < MAXATFRAME; a++) {
 		// se e' il momento di eseguire questo AtFrame
-		if ((anim->atframe[a].nframe == 0) && (anim->atframe[a].type)) {
-			if ((anim->atframe[a].child == 0) ||
-			    ((anim->atframe[a].child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF1)) ||
-			    ((anim->atframe[a].child == 2) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF2)) ||
-			    ((anim->atframe[a].child == 3) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF3)) ||
-			    ((anim->atframe[a].child == 4) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF4)))
-				ProcessATF(h, anim->atframe[a].type, a);
+		if ((anim->_atFrame[a]._numFrame == 0) && (anim->_atFrame[a]._type)) {
+			if ((anim->_atFrame[a]._child == 0) ||
+			    ((anim->_atFrame[a]._child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
+			    ((anim->_atFrame[a]._child == 2) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF2)) ||
+			    ((anim->_atFrame[a]._child == 3) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF3)) ||
+			    ((anim->_atFrame[a]._child == 4) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF4)))
+				ProcessATF(h, anim->_atFrame[a]._type, a);
 		}
 	}
 
@@ -4300,13 +4300,13 @@ void AtFrameHandler(int type) {
 
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// se e' il momento di eseguire questo AtFrame
-		if ((anim->atframe[a].nframe > h->lastframe) && (anim->atframe[a].nframe <= h->curframe) && (anim->atframe[a].nframe != 0)) {
-			if ((anim->atframe[a].child == 0) ||
-			    ((anim->atframe[a].child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF1)) ||
-			    ((anim->atframe[a].child == 2) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF2)) ||
-			    ((anim->atframe[a].child == 3) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF3)) ||
-			    ((anim->atframe[a].child == 4) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim].flag & SMKANIM_OFF4)))
-				ProcessATF(h, anim->atframe[a].type, a);
+		if ((anim->_atFrame[a]._numFrame > h->lastframe) && (anim->_atFrame[a]._numFrame <= h->curframe) && (anim->_atFrame[a]._numFrame != 0)) {
+			if ((anim->_atFrame[a]._child == 0) ||
+			    ((anim->_atFrame[a]._child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
+			    ((anim->_atFrame[a]._child == 2) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF2)) ||
+			    ((anim->_atFrame[a]._child == 3) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF3)) ||
+			    ((anim->_atFrame[a]._child == 4) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF4)))
+				ProcessATF(h, anim->_atFrame[a]._type, a);
 		}
 	}
 

@@ -145,10 +145,10 @@ void LoadAll() {
 
 	for (int i = 0; i < MAXSAMPLE; ++i) {
 		for (int j = 0; j < 14; ++j)
-			GSample[i].name[j] = dataNl.readByte();
-		GSample[i].volume = dataNl.readByte();
-		GSample[i].flag = dataNl.readByte();
-		GSample[i].panning = dataNl.readSByte();
+			GSample[i]._name[j] = dataNl.readByte();
+		GSample[i]._volume = dataNl.readByte();
+		GSample[i]._flag = dataNl.readByte();
+		GSample[i]._panning = dataNl.readSByte();
 	}
 
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
@@ -171,25 +171,25 @@ void LoadAll() {
 
 	for (int i = 0; i < MAXANIM; ++i) {
 		for (int j = 0; j < 14; ++j)
-			AnimTab[i].name[j] = dataNl.readByte();
+			AnimTab[i]._name[j] = dataNl.readByte();
 
-		AnimTab[i].flag = dataNl.readUint16LE();
+		AnimTab[i]._flag = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXCHILD; ++j) {
-			AnimTab[i].lim[j][0] = dataNl.readUint16LE();
-			AnimTab[i].lim[j][1] = dataNl.readUint16LE();
-			AnimTab[i].lim[j][2] = dataNl.readUint16LE();
-			AnimTab[i].lim[j][3] = dataNl.readUint16LE();
+			AnimTab[i]._lim[j][0] = dataNl.readUint16LE();
+			AnimTab[i]._lim[j][1] = dataNl.readUint16LE();
+			AnimTab[i]._lim[j][2] = dataNl.readUint16LE();
+			AnimTab[i]._lim[j][3] = dataNl.readUint16LE();
 		}
 
-		AnimTab[i].nbox = dataNl.readByte();
+		AnimTab[i]._nbox = dataNl.readByte();
 		dataNl.readByte(); // Padding
 
 		for (int j = 0; j < MAXATFRAME; ++j) {
-			AnimTab[i].atframe[j].type = dataNl.readByte();
-			AnimTab[i].atframe[j].child = dataNl.readByte();
-			AnimTab[i].atframe[j].nframe = dataNl.readUint16LE();
-			AnimTab[i].atframe[j].index = dataNl.readUint16LE();
+			AnimTab[i]._atFrame[j]._type = dataNl.readByte();
+			AnimTab[i]._atFrame[j]._child = dataNl.readByte();
+			AnimTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
+			AnimTab[i]._atFrame[j]._index = dataNl.readUint16LE();
 		}
 	}
 

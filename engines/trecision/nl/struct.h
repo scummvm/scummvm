@@ -84,19 +84,18 @@ struct SInvObject {
 };
 
 struct SAtFrame {
-	uint8 type;	   //ATFTEXT, ATFSND, ATFEVENT
-	uint8 child;	   // 0 1 2 3 4
-	uint16 nframe;
-	uint16 index;
+	uint8 _type;	   //ATFTEXT, ATFSND, ATFEVENT
+	uint8 _child;	   // 0 1 2 3 4
+	uint16 _numFrame;
+	uint16 _index;
 };
 
 struct SAnim {
-	char name[14];
-	uint16 flag;		// 1- se e' background 2- se e' icona
-	// 3- se e' actionomino 4- se e' attiva	 4bits per i figli
-	uint16 lim[MAXCHILD][4];
-	uint8 nbox;
-	struct SAtFrame atframe[MAXATFRAME];
+	char _name[14];
+	uint16 _flag;		// 1- background 2- icon 3- action 4- qctive	  -   4bits per child
+	uint16 _lim[MAXCHILD][4];
+	uint8 _nbox;
+	struct SAtFrame _atFrame[MAXATFRAME];
 };
 
 typedef struct {
@@ -127,14 +126,14 @@ typedef struct {
 
 // MESSAGGI PER LO SCHEDULER
 typedef struct tagMessage {
-	uint8 _class;                          // message class
-	uint8 _event    ;                       // message name
-	uint8 _priority ;                       // message priority
+	uint8 _class;							// message class
+	uint8 _event;							// message name
+	uint8 _priority;						// message priority
 
 	uint8 _byteParam;
-	uint16 _wordParam1  ;                       // byte parameter 1
-	uint16 _wordParam2  ;                       // byte parameter 2
-	uint32 _longParam   ;                       // int parameter
+	uint16 _wordParam1;						// byte parameter 1
+	uint16 _wordParam2;						// byte parameter 2
+	uint32 _longParam;						// int parameter
 	uint32 _timestamp;
 } Message;
 
@@ -144,16 +143,16 @@ struct screenrect {
 };
 
 struct MessageQueue {
-	uint8   head, tail, len;
-	Message *event[MAXMESSAGE];
+	uint8   _head, _tail, _len;
+	Message *_event[MAXMESSAGE];
 };
 
 struct SSortTable {
-	uint16 index;                           // indice nell' elenco
-	uint16 typology;                        // tipo di bitmap
-	bool  togli;                           // se copiare o togliere
-	uint16 roomindex;                       // indice nella room
-	uint16 framecur;                        // frame corrente se animazione
+	uint16 _index;                          // Index in the list
+	uint16 _typology;                       // Bitmap type
+	bool  _remove;                          // Whether to copy or remove
+	uint16 _roomIndex;                       // Room index
+	uint16 _curFrame;                        // Current frame (if animation)
 };
 
 struct SScriptFrame {
@@ -176,10 +175,10 @@ struct SScript {
 };                       // 1 - DIALOGEXITNOANIM - If the script is launched from a dialogue at the last choice it exits the dialogue without link anim and by default
 
 struct SSound {
-	char  name[14];
-	uint8 volume;
-	uint8 flag;
-	int8  panning;
+	char  _name[14];
+	uint8 _volume;
+	uint8 _flag;
+	int8  _panning;
 };
 
 } // End of namespace Trecision

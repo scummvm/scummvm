@@ -708,8 +708,8 @@ insave:
 	for (a = 0; a < MAXANIM; a++)
 		fwrite(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
 	for (a = 0; a < MAXSAMPLE; a++) {
-		fwrite(&GSample[a].volume,  sizeof(uint8), 1, fh);
-		fwrite(&GSample[a].flag,    sizeof(uint8), 1, fh);
+		fwrite(&GSample[a]._volume,  sizeof(uint8), 1, fh);
+		fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
 	}
 	for (a = 0; a < MAXCHOICE; a++)
 		fwrite(&_choice[a],           sizeof(DialogChoice), 1, fh);
@@ -1002,8 +1002,8 @@ bool DataLoad() {
 	for (a = 0; a < MAXANIM; a++)
 		fread(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
 	for (a = 0; a < MAXSAMPLE; a++) {
-		fread(&GSample[a].volume,  sizeof(uint8), 1, fh);
-		fread(&GSample[a].flag,    sizeof(uint8), 1, fh);
+		fread(&GSample[a]._volume,  sizeof(uint8), 1, fh);
+		fread(&GSample[a]._flag,    sizeof(uint8), 1, fh);
 	}
 
 	for (a = 0; a < MAXCHOICE; a++)

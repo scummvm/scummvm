@@ -160,17 +160,17 @@ void PaintScreen(uint8 flag) {
 
 // CANCELLA TUTTI GLI OGGETTI TOGLI
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
-		if (SortTable[a].togli) {
+		if (SortTable[a]._remove) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
 			DObj.dx   = CurRoomMaxX;
 			DObj.dy   = 480;
 
-			if (SortTable[a].typology == TYPO_BMP) {
-				DObj.l[0] = g_vm->_obj[SortTable[a].index]._px;
-				DObj.l[1] = g_vm->_obj[SortTable[a].index]._py;
-				DObj.l[2] = DObj.l[0] + g_vm->_obj[SortTable[a].index]._dx;
-				DObj.l[3] = DObj.l[1] + g_vm->_obj[SortTable[a].index]._dy;
+			if (SortTable[a]._typology == TYPO_BMP) {
+				DObj.l[0] = g_vm->_obj[SortTable[a]._index]._px;
+				DObj.l[1] = g_vm->_obj[SortTable[a]._index]._py;
+				DObj.l[2] = DObj.l[0] + g_vm->_obj[SortTable[a]._index]._dx;
+				DObj.l[3] = DObj.l[1] + g_vm->_obj[SortTable[a]._index]._dy;
 			}
 
 			DObj.buf  = ImagePointer;
@@ -182,8 +182,8 @@ void PaintScreen(uint8 flag) {
 			limiti[limitinum][2] = DObj.l[2];
 			limiti[limitinum][3] = DObj.l[3] + TOP;
 
-			if ((SortTable[a + 1].typology  == SortTable[a].typology) &&
-					(SortTable[a + 1].roomindex == SortTable[a].roomindex))
+			if ((SortTable[a + 1]._typology  == SortTable[a]._typology) &&
+					(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
 				VisualRef[a + 1] = limitinum;
 
 			limitinum ++;
@@ -267,10 +267,10 @@ void PaintScreen(uint8 flag) {
 	framenum ++;
 
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
-		SortTable[a].index = 0;
-		SortTable[a].roomindex = 0;
-		SortTable[a].typology = 0;
-		SortTable[a].framecur = 0;
+		SortTable[a]._index = 0;
+		SortTable[a]._roomIndex = 0;
+		SortTable[a]._typology = 0;
+		SortTable[a]._curFrame = 0;
 	}
 
 	g_vm->_curSortTableNum = 0;
@@ -386,22 +386,22 @@ void PaintObjAnm(uint16 CurBox) {
 
 	// disegna nuove schede appartenenti al box corrente
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
-		if (!SortTable[a].togli) {
-			if (SortTable[a].typology == TYPO_BMP) {
-				if (g_vm->_obj[SortTable[a].index]._nbox == CurBox) {
+		if (!SortTable[a]._remove) {
+			if (SortTable[a]._typology == TYPO_BMP) {
+				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
 					// l'oggetto bitmap Š al livello desiderato
-					DObj.x = g_vm->_obj[SortTable[a].index]._px;
-					DObj.y = g_vm->_obj[SortTable[a].index]._py + TOP;
-					DObj.dx = g_vm->_obj[SortTable[a].index]._dx;
-					DObj.dy = g_vm->_obj[SortTable[a].index]._dy;
+					DObj.x = g_vm->_obj[SortTable[a]._index]._px;
+					DObj.y = g_vm->_obj[SortTable[a]._index]._py + TOP;
+					DObj.dx = g_vm->_obj[SortTable[a]._index]._dx;
+					DObj.dy = g_vm->_obj[SortTable[a]._index]._dy;
 					DObj.l[0] = 0;
 					DObj.l[1] = 0;
 					DObj.l[2] = DObj.dx;
 					DObj.l[3] = DObj.dy;
-					DObj.buf  = ObjPointers[SortTable[a].roomindex];
-					DObj.mask = MaskPointers[SortTable[a].roomindex];
+					DObj.buf  = ObjPointers[SortTable[a]._roomIndex];
+					DObj.mask = MaskPointers[SortTable[a]._roomIndex];
 					DObj.flag = COPYTORAM;
-					if (g_vm->_obj[SortTable[a].index]._mode & OBJMODE_MASK)
+					if (g_vm->_obj[SortTable[a]._index]._mode & OBJMODE_MASK)
 						DObj.flag += DRAWMASK;
 					DrawObj(DObj);
 
