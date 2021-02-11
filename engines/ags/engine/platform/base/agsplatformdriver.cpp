@@ -122,7 +122,7 @@ void AGSPlatformDriver::WriteStdOut(const char *fmt, ...) {
 	Common::String str = Common::String::vformat(fmt, args);
 	va_end(args);
 
-	debug("%s\n", str.c_str());
+	debug("%s", str.c_str());
 }
 
 void AGSPlatformDriver::WriteStdErr(const char *fmt, ...) {
@@ -131,7 +131,7 @@ void AGSPlatformDriver::WriteStdErr(const char *fmt, ...) {
 	Common::String str = Common::String::vformat(fmt, args);
 	va_end(args);
 
-	debug("ERROR: %s\n", str.c_str());
+	debug("ERROR: %s", str.c_str());
 }
 
 void AGSPlatformDriver::YieldCPU() {
