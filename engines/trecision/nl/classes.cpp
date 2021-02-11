@@ -50,8 +50,6 @@ uint32 ScrollInvTime;
 // gestioni particolari
 uint16 ruota = -1, ruotepos[3];
 
-int FastWalk = false, FastWalkLocked = false;
-
 int ForceQuit = 0;
 int NlVer = 102;
 
@@ -657,7 +655,7 @@ void doCharacter() {
 		} else
 			_characterInMovement = true;
 
-		if (FastWalk) {
+		if (g_vm->_fastWalk) {
 			if (nextStep()) {
 				_characterInMovement = false;
 				_characterGoToPosition = -1;

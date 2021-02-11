@@ -62,7 +62,7 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._event = ME_MRIGHT;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam1 = 214;
 	ScriptFrame[f]._wordParam2 = TOP + 140;
 	ScriptFrame[f++]._longParam = ocEVA19;
@@ -76,14 +76,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._event = ME_MLEFT;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam1 = 336;
 	ScriptFrame[f]._wordParam2 = 263 + TOP;
 	ScriptFrame[f++]._longParam = 0;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._event = ME_MLEFT;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam1 = 336;
 	ScriptFrame[f]._wordParam2 = 260 + TOP;
 	ScriptFrame[f++]._longParam = 0;
@@ -99,12 +99,12 @@ void initScript() {
 	ScriptFrame[f]._event = ME_CHANGER;
 	ScriptFrame[f]._wordParam1 = r49;
 	ScriptFrame[f]._wordParam2 = a496;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f++]._longParam = 1;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._event = ME_MLEFT;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam1 = 360;
 	ScriptFrame[f]._wordParam2 = 255 + TOP;
 	ScriptFrame[f++]._longParam = 0;
@@ -113,7 +113,7 @@ void initScript() {
 	ScriptFrame[f]._event = ME_CHANGER;
 	ScriptFrame[f]._wordParam1 = r4A;
 	ScriptFrame[f]._wordParam2 = 0;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f++]._longParam = 1;
 
 	//	Fast change room in double room of level 2
@@ -122,14 +122,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 317;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 166;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oCATENAT21;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 429;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 194;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = od21ALLA22;
@@ -139,14 +139,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 317;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 166;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oCATENAT21;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 204;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 157;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = od21ALLA23;
@@ -155,14 +155,14 @@ void initScript() {
 	Script[s24TO23]._flag = 0;
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 316;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 213;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oPASSAGGIO24;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 120;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 196;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = od24ALLA23;
@@ -172,14 +172,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 316;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 213;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oPASSAGGIO24;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 527;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 187;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = od24ALLA26;
@@ -189,14 +189,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 420;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 238;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oCATWALKA2E;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 66;
-	ScriptFrame[f]._byteParam = true;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 336;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = od2EALLA2C;
@@ -206,14 +206,14 @@ void initScript() {
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 420;
-	ScriptFrame[f]._byteParam = false;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 238;
 	ScriptFrame[f]._event = ME_MRIGHT;
 	ScriptFrame[f++]._longParam = oCATWALKA2E;
 
 	ScriptFrame[f]._class = MC_MOUSE;
 	ScriptFrame[f]._wordParam1 = 213;
-	ScriptFrame[f]._byteParam = false;
+	ScriptFrame[f]._byteParam = 1;
 	ScriptFrame[f]._wordParam2 = 69;
 	ScriptFrame[f]._event = ME_MLEFT;
 	ScriptFrame[f++]._longParam = oENTRANCE2E;

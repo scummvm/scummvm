@@ -65,6 +65,10 @@ public:
 	uint16 _lastLightIcon;
 	int16 _inventoryCounter;
 
+	bool _fastWalk;
+	bool _fastWalkLocked;
+	bool _mouseONOFF;
+
 	// Use With
 	uint16 _useWith[2];
 	bool _useWithInv[2];

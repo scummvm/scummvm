@@ -46,7 +46,6 @@ bool _linearMode, _gamePaused = false;
 
 extern short mx, my, mleft, mright;
 extern uint16		*Video, VideoPitch;
-extern int8		MouseONOFF;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
@@ -80,7 +79,6 @@ void GetColorMask(const Graphics::PixelFormat &format) {
 }
 
 void EventLoop() {
-	extern int FastWalk, FastWalkLocked;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -107,9 +105,9 @@ void EventLoop() {
 
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_CAPSLOCK) {
-				if (!FastWalkLocked)
-					FastWalk ^= true;
-				FastWalkLocked = true;
+				if (!g_vm->_fastWalkLocked)
+					g_vm->_fastWalk ^= true;
+				g_vm->_fastWalkLocked = true;
 			}
 			break;
 
@@ -127,7 +125,7 @@ void EventLoop() {
 				break;
 
 			case Common::KEYCODE_CAPSLOCK:
-				FastWalkLocked = false;
+				g_vm->_fastWalkLocked = false;
 				break;
 			}
 			break;
@@ -362,13 +360,13 @@ void Mouse(uint8 opt) {
 	switch (opt) {
 	// Update mouse
 	case 3: {
-		if ((MouseONOFF) && !(SemMouseEnabled))
+		if (g_vm->_mouseONOFF && !SemMouseEnabled)
 			Mouse(2);
 
-		if (!(MouseONOFF) && (SemMouseEnabled))
+		if (!g_vm->_mouseONOFF && SemMouseEnabled)
 			Mouse(1);
 
-		if (MouseONOFF) {
+		if (g_vm->_mouseONOFF) {
 			mx = wmx & 0xFFFF;
 			my = wmy & 0xFFFF;
 			mleft = wmleft & 0xFFFF;
@@ -383,17 +381,17 @@ void Mouse(uint8 opt) {
 	}
 	// Turn off mouse
 	case 2: {
-		if (!MouseONOFF)
+		if (!g_vm->_mouseONOFF)
 			break;
-		MouseONOFF = 0;
+		g_vm->_mouseONOFF = false;
 		VMouseOFF();
 		break;
 	}
 	// Turn on mouse
 	case 1: {
-		if (MouseONOFF)
+		if (g_vm->_mouseONOFF)
 			break;
-		MouseONOFF = 1;
+		g_vm->_mouseONOFF = true;
 		mx = wmx & 0xFFFF;
 		my = wmy & 0xFFFF;
 		mleft = wmleft & 0xFFFF;

@@ -50,30 +50,15 @@ uint16 CloseUpObj;
 /*-------------------------------------------------------------------------*/
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
-void doRoomIn(uint16 TheObj) {
-	uint16 TheAction, ThePos;
-
+void doRoomIn(uint16 curObj) {
 	SemMouseEnabled = false;
 
-	switch (TheObj) {
-	/*		case oCANCELLATA1B:
-				if( (_obj[oBOTTIGLIA1D]._mode&OBJMODE_OBJSTATUS) && (_obj[oRETE17]._mode&OBJMODE_OBJSTATUS) )
-				{
-					TheAction = _obj[TheObj]._anim;
-					ThePos = _obj[TheObj]._ninv;
-				}
-				else
-					TheAction = 0;
-				break;
-	*/
-	default:
-		TheAction = g_vm->_obj[TheObj]._anim;
-		ThePos = g_vm->_obj[TheObj]._ninv;
-		break;
-	}
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[TheObj]._goRoom, TheAction, ThePos, TheObj);
+	uint16 theAction = g_vm->_obj[curObj]._anim;
+	uint16 thePos = g_vm->_obj[curObj]._ninv;
 
-	g_vm->_obj[TheObj]._flag |= OBJFLAG_DONE;
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[curObj]._goRoom, theAction, thePos, curObj);
+
+	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -114,7 +99,6 @@ void doRoomOut(uint16 TheObj) {
 /*-------------------------------------------------------------------------*/
 void doMouseExamine(uint16 TheObj) {
 	bool printsent = false;
-	int a;
 
 	if (!TheObj)
 		warning("doMouseExamine");
@@ -325,11 +309,6 @@ void doMouseExamine(uint16 TheObj) {
 		printsent = false;
 		break;
 
-	/*		case oFOGLI34:
-				doEvent(MC_CHARACTER,ME_CHARACTERACTION, MP_DEFAULT, a348ESAMINAFOGLI, 0,0,TheObj);
-				printsent = false;
-				break;
-	*/
 	case oGENERATORE34:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a347ESAMINAGENERATORE, 0, 0, TheObj);
 		printsent = false;
@@ -472,7 +451,7 @@ void doMouseExamine(uint16 TheObj) {
 
 	case oEXIT58T:
 		Count58 = 0;
-		for (a = 0; a < 6; a++)
+		for (int a = 0; a < 6; a++)
 			g_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[oEXIT58T]._goRoom, 0, 0, TheObj);
 		break;
@@ -2037,13 +2016,8 @@ void doInvScrUseWith() {
 			CharacterSay(1465);
 			printsent = false;
 		}
-		/*			else
-					{
-						_obj[ocBARBONE17]._action = 211;
-						CharacterSay(_obj[ocBARBONE17]._action);
-						printsent=false;
-					}
-		*/			break;
+
+		break;
 
 	case iLATTINA13:
 		if (g_vm->_useWith[WITH] == ocBARBONE17) {
@@ -2075,19 +2049,12 @@ void doInvScrUseWith() {
 				printsent = false;
 			}
 		}
-		/*			else
-					{
-						_obj[ocBARBONE17]._action = 213;
-						CharacterSay(_obj[ocBARBONE17]._action);
-						printsent=false;
-					}
-		*/			break;
+
+		break;
 
 	case iBOTTIGLIA14:
 		if (g_vm->_useWith[WITH] == ocBARBONE17) {
-			if ((_choice[79]._flag & OBJFLAG_DONE) || (_choice[83]._flag & OBJFLAG_DONE))
-//				if( _choice[83]._flag & OBJFLAG_DONE )
-			{
+			if ((_choice[79]._flag & OBJFLAG_DONE) || (_choice[83]._flag & OBJFLAG_DONE)) {
 				_choice[80]._flag &= ~DLGCHOICE_HIDE;
 				if (_choice[81]._flag & OBJFLAG_DONE) {
 					_choice[81]._flag &= ~DLGCHOICE_HIDE;
@@ -2097,7 +2064,7 @@ void doInvScrUseWith() {
 				updateinv = false;
 				KillIcon(iBOTTIGLIA14);
 				printsent = false;
-			} else { //if( !(_choice[83]._flag & OBJFLAG_DONE) )
+			} else {
 				_choice[83]._flag &= ~DLGCHOICE_HIDE;
 				if (!(_choice[78]._flag & OBJFLAG_DONE)) {
 					_choice[106]._flag &= ~DLGCHOICE_HIDE;
@@ -2115,13 +2082,8 @@ void doInvScrUseWith() {
 				printsent = false;
 			}
 		}
-		/*			else
-					{
-						_obj[ocBARBONE17]._action = 213;
-						CharacterSay(_obj[ocBARBONE17]._action);
-						printsent=false;
-					}
-		*/			break;
+
+		break;
 
 	case iBOTTIGLIA1D:
 		if (g_vm->_useWith[WITH] == ocNEGOZIANTE1A) {
@@ -3013,7 +2975,6 @@ void doInvExamine() {
 /*-------------------------------------------------------------------------*/
 void doInvOperate() {
 	bool printsent = true;
-	int a;
 
 	if (!g_vm->_curInventory)
 		warning("doInvOperate");
@@ -3107,7 +3068,7 @@ void doInvOperate() {
 		break;
 
 	case iDISLOCATORE:
-		for (a = oROOM41; a <= oROOM45B; a++)
+		for (int a = oROOM41; a <= oROOM45B; a++)
 			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, g_vm->_useWith[WITH]);
 		g_vm->_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
@@ -3140,7 +3101,7 @@ void doInvOperate() {
 
 	}
 
-	if ((g_vm->_inventoryObj[g_vm->_curInventory]._action) && (printsent))
+	if (g_vm->_inventoryObj[g_vm->_curInventory]._action && printsent)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_curInventory]._action);
 }
 
@@ -3148,70 +3109,28 @@ void doInvOperate() {
 /*                                 doDoing           					   */
 /*-------------------------------------------------------------------------*/
 void doDoing() {
-	uint16 TheObj, TheAnim;
-
-	warning("doDoing");
-
-	if (g_vm->_curMessage->_event <= ME_WAITOPENCLOSE) {
-		TheObj = g_vm->_curMessage->_wordParam1;
-		TheAnim = g_vm->_curMessage->_wordParam2;
-		//		TheAliasObj = _obj[TheObj].alias;
-	}
-
 	switch (g_vm->_curMessage->_event) {
-
 	case ME_INITOPENCLOSE:
 		if (_actor._curAction == hSTAND)
 			REEVENT;
-		else {
-			uint16 cont = false;
-			switch (TheObj) {
-//     case oFINESTRAAP18:
-//      if(_actor._curFrame == 8) cont = true;
-//      break;
+		else if (_actor._curFrame == 4)
+			doEvent(g_vm->_curMessage->_class, ME_OPENCLOSE, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
+		else
+			REEVENT;
 
-			default:
-				if (_actor._curFrame == 4)
-					cont = true;
-				break;
-			}
-			if (cont)
-				doEvent(g_vm->_curMessage->_class, ME_OPENCLOSE, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
-			else
-				REEVENT;
-		}
 		break;
-
-	case ME_OPENCLOSE:
-		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+	case ME_OPENCLOSE: {
+		uint16 curObj = g_vm->_curMessage->_wordParam1;
+		uint16 curAnim = g_vm->_curMessage->_wordParam2;
+		g_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
-		if (TheAnim) {
-//    if(TheObj == oFRIGO87V) doEvent(MC_ANIMATION,ME_ADDANIM,MP_SYSTEM,TheAnim,0,0,true);
-//    else
-			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, TheAnim, 0, 0, 0);
-		}
+		if (curAnim)
+			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
+
 		g_vm->_curMessage->_event = ME_WAITOPENCLOSE;
-		// senza break!
+		}
+		// no break!
 	case ME_WAITOPENCLOSE:
-		if (TheAnim)
-			switch (g_vm->_curMessage->_byteParam) {
-				/*				case 0:
-									if(AnimObj[TheAnim]._flag & ONOFF)
-									{
-										_curMessage->_byteParam = 1;
-										ObjOpen(TheObj);
-									}
-									REEVENT;
-									return;
-								case 1:
-									if(!(AnimObj[TheAnim]._flag & ONOFF)) _curMessage->_byteParam = 2;
-									REEVENT;
-									return;
-								case 2:
-									break;
-				*/
-			}
-		//			_obj[TheAliasObj]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
 			SemMouseEnabled = true;

@@ -73,6 +73,10 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_regenInvStartIcon = 0;
 	_lastCurInventory = 0;
 
+	_fastWalk = false;
+	_fastWalkLocked = false;
+	_mouseONOFF = true;
+
 	// Use With
 	_useWith[0] = _useWith[1] = 0;
 	_useWithInv[0] = _useWithInv[1] = false;

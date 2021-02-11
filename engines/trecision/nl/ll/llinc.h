@@ -140,7 +140,6 @@ extern uint8 SpeechTrackEnabled;
 // MOUSE
 extern struct SDText TheString;
 extern struct SDText OldString;
-extern int8   MouseONOFF;
 extern uint8  TextStatus;
 extern Common::SeekableReadStream *ff;
 // FILEREF
