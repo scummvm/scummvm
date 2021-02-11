@@ -4576,10 +4576,105 @@ static const uint16 kq4PatchMissingWaterfallView[] = {
 	PATCH_END
 };
 
+// KQ4 1.003.006 draws pics incorrectly when riding the unicorn at night.
+//  The riding scene takes place within room 333 which simulates room changes by
+//  drawing each pic in the sequence. This version of KQ4 introduced overlays
+//  for drawing night instead of using alternate pics, but Sierra forgot to
+//  update this script. Instead of drawing the base pic followed by the night
+//  overlay, this script only draws the overlay as if it were a complete pic.
+//  This paints the screen almost entirely white except for the night sky.
+//
+// There are too many outdated Rm:drawPic calls in script 333 with too many
+//  differences to reasonably patch each with the new logic and additional
+//  Rm:overlay call. Instead we patch Rm:drawPic to detect and handle these
+//  attempts. Rm:drawPic and Rm:overlay do similar work, so we patch Rm:overlay
+//  to handle both and rewrite Rm:drawPic to call Rm:overlay appropriately. When
+//  Rm:drawPic is called with a night overlay (100-129) it now calls Rm:overlay
+//  twice to draw the associated base pic first and then the night overlay.
+//
+// Applies to: PC and Atari ST 1.003.006
+// Responsible methods: Rm:drawPic and Rm:overlay
+static const uint16 kq4SignatureUnicornNightRide[] = {
+	// Rm:drawPic
+	0x87, 0x01,                     // lap 01
+	0x65, 0x22,                     // aTop curPic [ curPic = picNumber ]
+	0x35, 0xff,                     // ldi ff
+	0xa1, 0x39,                     // sag 39 [ global57 = -1 ]
+	0x7a,                           // push2
+	0x8f, 0x01,                     // lsp 01
+	0x8f, 0x00,                     // lsp 00
+	0x35, 0x02,                     // ldi 02
+	0x1a,                           // eq?
+	0x30, SIG_UINT16(0x0005),       // bnt 0005
+	0x87, 0x02,                     // lap 02
+	0x32, SIG_UINT16(0x000f),       // jmp 000f
+	0x67, 0x14,                     // pTos style
+	0x35, 0xff,                     // ldi ff
+	0x1c,                           // ne?
+	0x30, SIG_UINT16(0x0005),       // bnt 0005
+	0x63, 0x14,                     // pToa style
+	0x32, SIG_UINT16(0x0002),       // jmp 0002
+	0x81, 0x11,                     // lag 11
+	0x36,                           // push
+	SIG_MAGICDWORD,
+	0x43, 0x08, 0x04,               // callk DrawPic 04
+	0x48,                           // ret
+	// Rm:overlay
+	SIG_ADDTOOFFSET(+16),
+	0x87, 0x02,                     // lap 02
+	SIG_ADDTOOFFSET(+11),
+	0x63, 0x14,                     // pToa style
+	SIG_ADDTOOFFSET(+3),
+	0x81, 0x11,                     // lag 11
+	0x36,                           // push
+	0x78,                           // push1
+	SIG_END
+};
+
+static const uint16 kq4PatchUnicornNightRide[] = {
+	// Rm:drawPic
+	0x76,                           // push0
+	0xa9, 0x1a,                     // ssg 1a [ global26 = 0, draw pic normally ]
+	0x38, PATCH_SELECTOR16(overlay),// pushi overlay
+	0x8f, 0x01,                     // lsp 01 [ picNumber ]
+	0x35, 0x64,                     // ldi 64
+	0x04,                           // sub
+	0x65, 0x22,                     // aTop curPic [ curPic = picNumber - 100 ]
+	0x39, 0x1e,                     // pushi 1e
+	0x28,                           // uge?   [ 30 >= (picNumber - 100) ]
+	0x31, 0x09,                     // bnt 09 [ jump if this is a correct drawPic call]
+	0x78,                           // push1
+	0x60,                           // pprev
+	0x54, 0x06,                     // self 06 [ self overlay: (picNumber - 100) ]
+	0x78,                           // push1
+	0xa9, 0x1a,                     // ssg 1a [ global26 = 1, draw pic as overlay ]
+	0x33, 0x11,                     // jmp 11 [ self overlay: &rest, ret ]
+	0x76,                           // push0
+	0x59, 0x01,                     // &rest 01
+	0x54, 0x04,                     // self 04 [ self overlay: &rest ]
+	0x87, 0x01,                     // lap 01
+	0x65, 0x22,                     // aTop curPic [ curPic = picNumber ]
+	0x35, 0xff,                     // ldi ff
+	0xa1, 0x39,                     // sag 39 [ global57 = -1 ]
+	0x78,                           // push1
+	0xa9, 0x1a,                     // ssg 1a [ global26 = 1, its original value ]
+	0x48,                           // ret
+	// Rm:overlay
+	PATCH_ADDTOOFFSET(+16),
+	0x8f, 0x02,                     // lsp 02
+	PATCH_ADDTOOFFSET(+11),
+	0x67, 0x14,                     // pTos style
+	PATCH_ADDTOOFFSET(+3),
+	0x89, 0x11,                     // lsg 11
+	0x89, 0x1a,                     // lsg 1a [ always 1 unless cleared in drawPic ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq4Signatures[] = {
 	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
+	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
