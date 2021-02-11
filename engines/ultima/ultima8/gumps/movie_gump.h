@@ -40,7 +40,7 @@ public:
 	MovieGump();
 	MovieGump(int width, int height, Common::SeekableReadStream *rs,
 			  bool introMusicHack = false, const byte *overridePal = nullptr,
-	          uint32 flags = 0, int32 layer = LAYER_MODAL);
+	          uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 	~MovieGump() override;
 
 	void InitGump(Gump *newparent, bool take_focus = true) override;

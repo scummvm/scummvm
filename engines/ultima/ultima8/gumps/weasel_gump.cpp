@@ -100,7 +100,7 @@ static const char *_getRandomMovie(const char **movies, int nmovies) {
 bool WeaselGump::_playedIntroMovie = false;
 
 WeaselGump::WeaselGump(uint16 level)
-	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE), _credits(0),
+	: ModalGump(0, 0, 640, 480), _credits(0),
 	  _level(level), _state(kWeaselStart), _curItem(0), _ammoMode(false),
 	  _curItemCost(1), _curItemShape(0), _ui(nullptr), _movie(nullptr) {
 	Mouse *mouse = Mouse::get_instance();

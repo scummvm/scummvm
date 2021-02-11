@@ -273,11 +273,6 @@ public:
 	void syncSoundSettings() override;
 
 	/**
-	 * Open the ScummVM save/load screens
-	 */
-	bool scummVMSaveLoadDialog(bool isSave);
-
-	/**
 	 * Returns true if a savegame can be loaded
 	 */
 	bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
@@ -310,7 +305,7 @@ public:
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
-	bool saveGame(int slot, const Std::string &desc, bool ignore_modals = false);
+	bool saveGame(int slot, const Std::string &desc);
 
 	//! start a new game
 	//! \return true if succesful.

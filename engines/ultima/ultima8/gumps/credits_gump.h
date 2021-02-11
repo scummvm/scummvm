@@ -40,7 +40,7 @@ public:
 
 	CreditsGump();
 	CreditsGump(const Std::string &text, int parskip = 24,
-	            uint32 flags = 0, int32 layer = LAYER_MODAL);
+	            uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 	~CreditsGump() override;
 
 	// Init the gump, call after construction

@@ -424,17 +424,21 @@ public:
 	// Gump Flags
 	//
 	enum GumpFlags {
-		FLAG_DRAGGABLE      = 0x01,     // When set, the gump can be dragged
-		FLAG_HIDDEN         = 0x02,     // When set, the gump will not be drawn
-		FLAG_CLOSING        = 0x04,     // When set, the gump is closing
-		FLAG_CLOSE_AND_DEL  = 0x08,     // When set, the gump is closing and will be deleted
-		FLAG_ITEM_DEPENDENT = 0x10,     // When set, the gump will be deleted on MapChange
-		FLAG_DONT_SAVE      = 0x20,     // When set, don't save this gump.
-		// Be very careful with this one!
-		FLAG_CORE_GUMP      = 0x40,     // core gump (only children are saved)
-		FLAG_KEEP_VISIBLE   = 0x80      // Keep this gump on-screen.
-		                      // (only for ItemRelativeGumps)
+		FLAG_DRAGGABLE      = 0x0001,     // When set, the gump can be dragged
+		FLAG_HIDDEN         = 0x0002,     // When set, the gump will not be drawn
+		FLAG_CLOSING        = 0x0004,     // When set, the gump is closing
+		FLAG_CLOSE_AND_DEL  = 0x0008,     // When set, the gump is closing and will be deleted
+		FLAG_ITEM_DEPENDENT = 0x0010,     // When set, the gump will be deleted on MapChange
+		FLAG_DONT_SAVE      = 0x0020,     // When set, don't save this gump. Be very careful with this one!
+		FLAG_CORE_GUMP      = 0x0040,     // core gump (only children are saved)
+		FLAG_KEEP_VISIBLE   = 0x0080,     // Keep this gump on-screen. (only for ItemRelativeGumps)
+		FLAG_PREVENT_SAVE	= 0x0100	  // When set, prevent game from saving
 	};
+
+	//! Does this gump have any of the given flags mask set
+	inline bool hasFlags(uint flags) const {
+		return (_flags & flags) != 0;
+	}
 
 	inline bool IsHidden() const {
 		return (_flags & FLAG_HIDDEN) || (_parent && _parent->IsHidden());

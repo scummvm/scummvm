@@ -108,6 +108,8 @@ struct ProcessLoader {
 	}
 };
 
+inline bool HasPreventSaveFlag(const Gump *g) { return g->hasFlags(Gump::FLAG_PREVENT_SAVE); }
+
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(nullptr),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
@@ -787,41 +789,17 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 	_game->writeSaveInfo(ws);
 }
 
-bool Ultima8Engine::scummVMSaveLoadDialog(bool isSave) {
-	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
-	int slot;
-
-	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-
-		slot = dialog->runModalWithCurrentTarget();
-		desc = dialog->getResultString();
-
-		if (desc.empty()) {
-			desc = dialog->createDefaultSaveDescription(slot);
-		}
-	} else {
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-		slot = dialog->runModalWithCurrentTarget();
-	}
-
-	delete dialog;
-
-	if (slot < 0)
-		return false;
-
-	if (isSave) {
-		return saveGameState(slot, desc).getCode() == Common::kNoError;
-	} else {
-		return loadGameState(slot).getCode() == Common::kNoError;
-	}
-}
-
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
-	if (_desktopGump->FindGump<ModalGump>() || _avatarInStasis)
-		// Can't save when a modal gump is open, or avatar in statsis  during cutscenes
+	// Can't save when avatar in stasis during cutscenes
+	if (_avatarInStasis)
 		return false;
+
+	// Check for gumps that prevent saving
+	if (_desktopGump->FindGump(&HasPreventSaveFlag, true))
+	{
+		return false;
+	}
+
 
 	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess()))
 		// Don't save while starting up.
@@ -835,10 +813,10 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	return true;
 }
 
-bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_modals) {
-	// Don't allow saving with Modals open
-	if (!ignore_modals && _desktopGump->FindGump<ModalGump>()) {
-		pout << "Can't save: modal gump open." << Std::endl;
+bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
+	// Check for gumps that prevent saving
+	if ( _desktopGump->FindGump(&HasPreventSaveFlag, true)) {
+		pout << "Can't save: open gump preventing save." << Std::endl;
 		return false;
 	}
 

@@ -271,7 +271,7 @@ bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 
 	if (name.empty()) return false;
 
-	Ultima8Engine::get_instance()->saveGame(saveIndex, name, true);
+	Ultima8Engine::get_instance()->saveGame(saveIndex, name);
 	return true;
 }
 
@@ -314,17 +314,15 @@ void U8SaveGump::loadDescriptions() {
 
 //static
 Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
-	if (save) {
-		// can't save if game over
-		// FIXME: this check should probably be in Game or GUIApp
-		const MainActor *av = getMainActor();
-		if (!av || av->hasActorFlags(Actor::ACT_DEAD))
-			return nullptr;
+	if (!ConfMan.getBool("originalsaveload")) {
+		if (save)
+			Ultima8Engine::get_instance()->saveGameDialog();
+		else
+			Ultima8Engine::get_instance()->loadGameDialog();
+		return nullptr;
 	}
 
-	if (!ConfMan.getBool("originalsaveload")) {
-		// ScummVM save screen
-		Ultima8Engine::get_instance()->scummVMSaveLoadDialog(save);
+	if (save && !Ultima8Engine::get_instance()->canSaveGameStateCurrently(false)) {
 		return nullptr;
 	}
 

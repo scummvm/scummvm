@@ -216,7 +216,7 @@ static void _openScummVmSaveLoad(bool isSave) {
 	delete dialog;
 
 	if (isSave)
-		Ultima8Engine::get_instance()->saveGame(slot, desc, true);
+		Ultima8Engine::get_instance()->saveGame(slot, desc);
 	else
 		Ultima8Engine::get_instance()->loadGameState(slot);
 }
