@@ -98,6 +98,13 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 		addMapFix(301, 1, 13183, 16511, 8);
 	}
 
+	// Upper Catacombs after using the skull (ScummVM bug #12097)
+	// Not a perfect fix (still a few pixels off) but reduces chance
+	// of bug happening
+	if (GAME_IS_U8 && _mapNum == 50) {
+		addMapFix(34, 7, 16127, 6143, 0);
+	}
+
 	// U8 hack for missing ground/wall tiles on map 62. See docs/u8bugs.txt
 	if (GAME_IS_U8 && _mapNum == 62) {
 		addMapFix(301, 1, 16255, 6143, 48);
