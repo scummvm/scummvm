@@ -89,16 +89,19 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 			// Get the next video frame and draw onto the screen
 			const Graphics::Surface *frame = decoder->decodeNextFrame();
 
-			if (stretchVideo && frame->w == scr.w && frame->h == scr.h)
-				// Don't need to stretch video after all
-				stretchVideo = false;
+			if (frame) {
 
-			if (stretchVideo) {
-				scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
-					Common::Rect(0, 0, scr.w, scr.h));
-			} else {
-				scr.blitFrom(*frame, Common::Point((scr.w - frame->w) / 2,
-					(scr.h - frame->h) / 2));
+				if (stretchVideo && frame->w == scr.w && frame->h == scr.h)
+					// Don't need to stretch video after all
+					stretchVideo = false;
+
+				if (stretchVideo) {
+					scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
+						Common::Rect(0, 0, scr.w, scr.h));
+				} else {
+					scr.blitFrom(*frame, Common::Point((scr.w - frame->w) / 2,
+						(scr.h - frame->h) / 2));
+				}
 			}
 
 			scr.update();
