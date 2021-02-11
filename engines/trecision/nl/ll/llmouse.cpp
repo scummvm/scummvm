@@ -110,7 +110,7 @@ void VMouseOFF() {
 					VMouseON
 --------------------------------------------------*/
 void VMouseON() {
-	if (!MouseONOFF)
+	if (!g_vm->_mouseONOFF)
 		return ;
 
 	int32 comx = omx;
@@ -166,7 +166,7 @@ void VMouseON() {
 void VMouseRestore() {
 	int32 c = 0;
 
-	if (!MouseONOFF)
+	if (!g_vm->_mouseONOFF)
 		return ;
 
 	for (int32 i = (omx - 10); i <= (omx + 10); i++)
@@ -183,7 +183,7 @@ void VMouseCopy() {
 	int32 c = 0;
 	uint16 mc = PalTo16bit(255, 255, 255);
 
-	if (!MouseONOFF)
+	if (!g_vm->_mouseONOFF)
 		return ;
 
 	for (int32 i = (omx - 10); i <= (omx + 10); i++)

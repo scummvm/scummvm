@@ -173,7 +173,7 @@ void afterChoice(int numframe);
 void DialogHandler(int numframe);
 void PlayScelta(uint16 i);
 void doDialog();
-void doRoomIn(uint16 TheObj);
+void doRoomIn(uint16 curObj);
 void doRoomOut(uint16 TheObj);
 void doMouseExamine(uint16 TheObj);
 void doMouseOperate(uint16 TheObj);

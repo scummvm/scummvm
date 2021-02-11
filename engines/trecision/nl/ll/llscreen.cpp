@@ -109,7 +109,6 @@ int32  hh;
 // MOUSE
 struct SDText TheString;
 struct SDText OldString;
-int8   MouseONOFF = 1;
 uint8  TextStatus;
 // AOT.CFG
 char  CurCDSet = 1;
