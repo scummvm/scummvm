@@ -3353,10 +3353,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((mright) && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3364,10 +3363,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (mleft) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3375,10 +3373,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (mright) {
 			if (_characterGoToPosition != 9)
 				goToPosition(9);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3386,10 +3383,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (mright) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3397,10 +3393,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iPISTOLA15) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3408,10 +3403,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == oRAMPINO21) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3419,10 +3413,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == oCAVIE23) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3430,10 +3423,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iTELECOMANDO2G) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 9)
 				goToPosition(9);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3442,10 +3434,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == oTUBOT33) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3453,10 +3444,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (mleft) {
 			if (_characterGoToPosition != 7)
 				goToPosition(7);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3464,10 +3454,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (!(SemUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3475,10 +3464,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if (!(SemUseWithStarted) && (mleft)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3486,10 +3474,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iSTETOSCOPIO) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 8)
 				goToPosition(8);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3497,10 +3484,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iCANDELOTTO) && (g_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (g_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 6)
 				goToPosition(6);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3508,10 +3494,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iMARTELLO) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3519,10 +3504,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iMAZZA) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 5)
 				goToPosition(5);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3530,10 +3514,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iLASER35) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3541,10 +3524,9 @@ bool AtMouseClick(uint16 TheObj) {
 		if ((g_vm->_useWith[USED] == iCHIAVI) && (SemUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-		}
+		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
+			goToPosition(g_vm->_obj[TheObj]._position);
+
 		ret = true;
 		break;
 
@@ -3565,11 +3547,9 @@ bool AtMouseClick(uint16 TheObj) {
 			_characterGoToPosition = -1;
 			ret = true;
 		}
-	} else {
-		if ((TheObj == od21ALLA23) || (TheObj == od24ALLA26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
-			_characterGoToPosition = -1;
-			ret = true;
-		}
+	} else if ((TheObj == od21ALLA23) || (TheObj == od24ALLA26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
+		_characterGoToPosition = -1;
+		ret = true;
 	}
 	return ret;
 }
@@ -3578,7 +3558,7 @@ bool AtMouseClick(uint16 TheObj) {
  * 					AtEndChangeRoom
  * --------------------------------------------------*/
 void AtEndChangeRoom() {
-//	gestione particolare campi magnetici
+	//	Specific management of magnetic fields
 	if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
 		AnimTab[aBKG2E]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
@@ -3626,17 +3606,15 @@ void AtEndChangeRoom() {
 		g_vm->_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
 	}
-//	fine gestione particolare campi magnetici
+	// End of specific management for the magnetic fields
 
-//	Azioni
+	// Actions
 	if ((g_vm->_curRoom == r12) && ((g_vm->_oldRoom == r13) || (g_vm->_oldRoom == r16)))
 		StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
 	else if ((g_vm->_curRoom == r16) && ((g_vm->_oldRoom == r13) || (g_vm->_oldRoom == r12)))
 		StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
 	else if ((g_vm->_curRoom == r13) && (g_vm->_oldRoom == r12))
 		StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
-//	else if((g_vm->_curRoom==r16) && (g_vm->_oldRoom==r17))
-// 		StartCharacterAction(a1612ARRIVADALBINARIO,0,0);
 	else if ((g_vm->_curRoom == r13) && (g_vm->_oldRoom == r16))
 		StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
 	else if ((g_vm->_curRoom == r14) && (g_vm->_oldRoom == r13))
@@ -3737,10 +3715,11 @@ void AtEndChangeRoom() {
 		StartCharacterAction(a5411, 0, 11, 0);
 		g_vm->_inventoryObj[iLASER35]._examine = 1599;
 	} else if ((g_vm->_oldRoom == r41D) && (g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
-		setPosition(30);/*StartCharacterAction(hLAST,0,30,0);*/drawCharacter(CALCPOINTS);
+		setPosition(30);
+		drawCharacter(CALCPOINTS);
 	}
 
-//	FullMotion
+	// FullMotion
 	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r16)) {
 		PlayDialog(dF171);
 		WaitSoundFadEnd();
@@ -3796,20 +3775,11 @@ void AtEndChangeRoom() {
 		PlayDialog(dF4PI);
 		SemShowCharacter = false;
 		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT) /*&& !( _inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA )*/) {
+	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT)) {
 		PlayDialog(dF4C1);
 		SemShowCharacter = false;
 		WaitSoundFadEnd();
-	}
-	/*	else if((g_vm->_curRoom==r18) && (_oldRoom==r1B))
-		{
-			if( !(_obj[oBOTTIGLIA1D]._mode&OBJMODE_OBJSTATUS) && !(_obj[oRETE17]._mode&OBJMODE_OBJSTATUS) )
-			{	PlayDialog(dF181);WaitSoundFadEnd();setPosition(_obj[oCANCELLATA1B]._ninv); }
-			else
-			{	StartCharacterAction(_obj[oCANCELLATA1B]._anim,0,0,0);setPosition(_obj[oCANCELLATA1B]._ninv); }
-		}
-	*/
-	else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18)) {
+	} else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18)) {
 		if (!(g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dF1A1);
 			WaitSoundFadEnd();
@@ -3867,11 +3837,8 @@ static struct ATFHandle {
 	uint16 object;
 	uint16 status;
 	struct SAnim *curanim;
-}            // 0->homo 1->background 2->icon
+}            // 0->character 1->background 2->icon
 AnimType[3] = {	{true}, {true}, {true}	};
-
-//static uint16 atfnotvalid=true,atfrm=0,toframe=0,curframe;
-//static struct SAnim *curanim=NULL;
 
 /* -----------------11/07/97 11.43-------------------
 					ExecuteATFDO
@@ -3927,19 +3894,19 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		CallSmackVolumePan(0, 2, 0);
 		break;
 
-	case fHOMOOFF:
+	case fCHARACTEROFF:
 		SemCharacterExist = false;
 		break;
-	case fHOMOON:
+	case fCHARACTERON:
 		SemCharacterExist = true;
 		break;
-	case fHOMOFORE:
+	case fCHARACTERFOREGROUND:
 		_forcedActorPos = FOREGROUND;
 		break;
-	case fHOMOBACK:
+	case fCHARACTERBACKGROUND:
 		_forcedActorPos = BACKGROUND;
 		break;
-	case fHOMONORM:
+	case fCHARACTERNORM:
 		_forcedActorPos = 0;
 		break;
 	case fSETEXTRA:
@@ -3986,19 +3953,16 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 	case fANIMON4:
 		AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF4;
 		break;
-
 	case fENDDEMO:
-		//if( QuitGame() )
 		DemoOver();
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 	case fSTOP2TXT:
 		h->status |= ATF_WAITTEXT;
-//setta un _flag che viene sempre cancellato
-// quando si finisce di parlare
-// se il _flag e' attivato la anim non playia piu'
-// ( da fare nel player smacker )
-// anche i contatori in AtFrameNext si fermano
+		// Sets a flag that is always cleared when you finish speaking
+		// if the flag is cleared the anim no longer plays
+		// (to be done in the smacker player)
+		// also the counters in AtFrameNext stops
 		break;
 	}
 }
@@ -4113,7 +4077,6 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 		}
 		break;
 	case ATFEND:
-		//if( QuitGame() )
 		DemoOver();
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
@@ -4126,10 +4089,9 @@ void ProcessATF(struct ATFHandle *h, int type, int atf) {
 					InitAtFrameHandler
  --------------------------------------------------*/
 void InitAtFrameHandler(uint16 an, uint16 obj) {
-	struct SAnim *anim = &AnimTab[an];
-	struct ATFHandle *handle;
+	SAnim *anim = &AnimTab[an];
 
-	handle = &AnimType[0];
+	ATFHandle *handle = &AnimType[0];
 	if (anim->_flag & SMKANIM_BKG)
 		handle = &AnimType[1];
 	if (anim->_flag & SMKANIM_ICON)
@@ -4149,8 +4111,6 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 					AtFrameNext
  --------------------------------------------------*/
 void AtFrameNext() {
-//	extern uint16 _curAnimFrame[];
-
 	if (!((AnimType[0].status & ATF_WAITTEXT) && SemCharacterSpeak))
 		AnimType[0].curframe++;
 	if (!((AnimType[1].status & ATF_WAITTEXT) && SemCharacterSpeak))
@@ -4163,27 +4123,18 @@ void AtFrameNext() {
 					AtFrameEnd
  --------------------------------------------------*/
 void AtFrameEnd(int type) {
-	struct ATFHandle *h;
-	struct SAnim *anim;
-	int32 a;
-
-	h = &AnimType[type];
-	anim = h->curanim;
+	ATFHandle *h = &AnimType[type];
+	SAnim *anim = h->curanim;
 	h->curframe = 0;
-	/*	if((h->curanim->_atFrame[0]._type==0) && (_obj[h->_object]._action))
-		{
-			CharacterTalkInAction(_obj[h->_object]._action);
-			return;
-		}
-	*/
-	// se ho gia' fatto questo atframe
+
+	// if this ATFrame has already been handled
 	if (h->curframe == h->lastframe)
 		return ;
 
 	h->lastframe = h->curframe;
 
-	for (a = 0; a < MAXATFRAME; a++) {
-		// se e' il momento di eseguire questo AtFrame
+	for (int32 a = 0; a < MAXATFRAME; a++) {
+		// if it's time to run this AtFrame
 		if ((anim->_atFrame[a]._numFrame == 0) && (anim->_atFrame[a]._type)) {
 			if ((anim->_atFrame[a]._child == 0) ||
 			    ((anim->_atFrame[a]._child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
@@ -4194,27 +4145,26 @@ void AtFrameEnd(int type) {
 		}
 	}
 
-	h->curanim = NULL;
+	h->curanim = nullptr;
 }
 
 /* -----------------11/07/97 11.44-------------------
 					AtFrameHandler
  --------------------------------------------------*/
 void AtFrameHandler(int type) {
-
 	struct ATFHandle *h = &AnimType[type];
 	struct SAnim *anim = h->curanim;
-	if (anim == NULL)
+	if (anim == nullptr)
 		return ;
 
 	if (h->curframe == 0)
 		h->curframe++;
-	// se ho gia' fatto questo atframe
+	// if this ATFrame has already been applied
 	if (h->curframe <= h->lastframe)
 		return ;
 
 	for (int32 a = 0; a < MAXATFRAME; a++) {
-		// se e' il momento di eseguire questo AtFrame
+		// if it's time to run this AtFrame
 		if ((anim->_atFrame[a]._numFrame > h->lastframe) && (anim->_atFrame[a]._numFrame <= h->curframe) && (anim->_atFrame[a]._numFrame != 0)) {
 			if ((anim->_atFrame[a]._child == 0) ||
 			    ((anim->_atFrame[a]._child == 1) && !(AnimTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
@@ -4225,7 +4175,7 @@ void AtFrameHandler(int type) {
 		}
 	}
 
-	// setta lastframe
+	// set lastframe
 	h->lastframe = h->curframe;
 }
 
