@@ -32,6 +32,10 @@
 #include "common/hashmap.h"
 #include "common/md5.h"
 
+#ifdef DYNAMIC_MODULES
+#include "ags/detection_tables.h"
+#endif
+
 namespace AGS3 {
 
 extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
