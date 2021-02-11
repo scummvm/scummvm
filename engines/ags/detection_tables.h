@@ -461,6 +461,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "easy3d", "Easy3D" },
 	{ "edmund", "Edmund" },
 	{ "educatingadventuresofgirlandrabbit", "Educating Adventures of Girl and Rabbit" },
+	{ "einsteinmachine", "Einstein Machine" },
 	{ "eerieblue", "Eerie Blue" },
 	{ "electrctgui", "electrctGUI" },
 	{ "elevator", "Elevator" },
@@ -488,6 +489,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "esper", "ESPER" },
 	{ "eternallyus", "Eternally Us" },
 	{ "eventtimer", "Event Timer" },
+	{ "evildead4", "Evil Dead 4" },
 	{ "exclamation", "!" },
 	{ "exit", "Exit" },
 	{ "fadingshades", "Fading Shades" },
@@ -554,6 +556,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "gnrblexags", "Gnrblex_AGS" },
 	{ "goldenwake", "A Golden Wake" },
 	{ "goneboatfishin", "Gone Boat Fishin'" },
+	{ "goodman", "Good Man" },
 	{ "goodmorningmrgingerbread", "Good Morning, Mr. Gingerbread!" },
 	{ "goodsantabadsanta", "Good Santa, Bad Santa" },
 	{ "gotalight", "Got a Light?" },
@@ -916,6 +919,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "princessmarianxmagichat", "Princess Marian X: Magic Hat" },
 	{ "principlesofevil", "Principles of Evil" },
 	{ "principlesofevil2", "Principles of Evil II" },
+	{ "prisonersofice", "Prisoners of Ice" },
 	{ "prodigal", "Prodigal" },
 	{ "profneely", "Prof. Neely" },
 	{ "projectevilspy2", "Project Evilspy II" },
@@ -1049,6 +1053,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "snakesofavalon", "Snakes of Avalon" },
 	{ "snakesonaplane", "Snakes on a plane!" },
 	{ "sniperandspotterservingthemotherland", "Sniper and spotter serving the motherland" },
+	{ "snowyadventures", "Snowy Adventures" },
 	{ "sonicandfriendsinclubhouse", "Sonic and friends in: Club house" },
 	{ "sosk", "Sosk" },
 	{ "sovietunterzoegersdorf2", "Soviet Unterzoegersdorf: Sector II" },
@@ -1112,6 +1117,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tao", "Tao" },
 	{ "tarthenia", "Tarthenia" },
 	{ "teamwork", "Teamwork" },
+	{ "tbdiy", "The BAD day in year" },
 	{ "templeofspheres", "Temple of Spheres" },
 	{ "tenhumstombpart1", "Tenhum's Tomb Part 1" },
 	{ "terrorofthevampire", "Terror of the Vampire!" },
@@ -1305,6 +1311,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ 0, 0 }
 };
 
+#define UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
+	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::RU_RUS, \
+	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }
+
 #define UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
 	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }
@@ -1316,6 +1326,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE)
 #define ENGLISH_DEMO(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_DEMO(ID, FILENAME, MD5, SIZE)
+
+#define RUSSIAN_ENTRY(ID, FILENAME, MD5, SIZE) \
+	UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, Common::RU_RUS)
 
 #define ENGLISH_PLUGIN(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
@@ -2658,6 +2671,22 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("zombiefish", "FZombie.exe", "3128b9f90e2f954ba704414ae854d10b", 4220305),
 	ENGLISH_ENTRY("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	ENGLISH_ENTRY("zugzwang", "Zugzwang.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 17209702),
+
+	//////////
+	// RuCOMM
+	//////////
+
+	// RuCOMM #1. The Best Man
+	ENGLISH_DEMO("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251),  // Demo
+	RUSSIAN_ENTRY("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578),
+	ENGLISH_ENTRY("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432),
+
+	// RuCOMM #2. Laboratory / Hotel between worlds
+	ENGLISH_ENTRY("einsteinmachine", "em.exe", "bb59de174d70797d774dec76a171352d", 76169675),
+
+	// RuCOMM #3. Santa Claus Summit on Canaries
+	ENGLISH_ENTRY("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231),
+	ENGLISH_DEMO("snowyadventures", "snowyadventures.exe", "27343924ddad3be0b97bdcaa71858b1b", 86439776),
 
 	{ AD_TABLE_END_MARKER, nullptr }
 };
