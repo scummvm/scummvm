@@ -135,8 +135,9 @@ KeyMap ConfigFileManager::listKeyValues(const istring &category, const istring &
 	Std::vector<ConfigFile*>::const_iterator i;
 
 	for (i = _configFiles.begin(); i != _configFiles.end(); ++i) {
-		if ((*i)->_category == category) {
-			Common::INIFile::SectionKeyList keys = (*i)->_iniFile.getKeys(section);
+		const ConfigFile *c = *i;
+		if (c->_category == category && c->_iniFile.hasSection(section)) {
+			Common::INIFile::SectionKeyList keys = c->_iniFile.getKeys(section);
 			Common::INIFile::SectionKeyList::const_iterator j;
 			for (j = keys.begin(); j != keys.end(); ++j) {
 				values[j->key] = j->value;
