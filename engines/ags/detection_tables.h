@@ -686,7 +686,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lallaveyfabianshones", "LA LLAVE Y FABIAN SHONES" },
 	{ "laodiseadelfracaso2", "La Odisea del Fracaso II" },
 	{ "laportenoire", "La porte noire" },
-	{ "larrylotter", "Larry Lotter and the Test of Time" },
+	{ "larrylotter", "Larry Lotter and the Test of Time" }, // aka Warthogs
 	{ "lastnfurious", "Last'n'Furious" },
 	{ "laundryday", "Laundry Day" },
 	{ "lavablava", "Lava Blava" },
@@ -1264,7 +1264,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "waitingfortheloop", "Waiting For the Loop" },
 	{ "wallyweasel", "The Wacky World of Wally Weasel" },
 	{ "waltersasteroid", "Walters-Asteroid" },
-	{ "warthogs", "Warthogs" },
 	{ "washedashore", "Washed Ashore" },
 	{ "washedashoredeluxe", "Washed Ashore Deluxe" },
 	{ "wasted", "Wasted" },
@@ -1837,6 +1836,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("erictheanteater", "eric.exe", "e750ecac380dca709028fc0744b9f7f6", 3865602),
 	ENGLISH_ENTRY("erkadventuresinstoneagerealestate", "AISRE.exe", "41e8fa920589300ed8b4aec09a658c90", 5958575),
 	ENGLISH_ENTRY("errand", "Errand.exe", "8212e96af620f6e02a37fdf583f79751", 4421187),
+	ENGLISH_ENTRY("errand", "errand.exe", "2e6b104176f310e7fb507183c443edfe", 4404813), // v1.2
 	ENGLISH_ENTRY("escape", "Escape.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 962798),
 	ENGLISH_ENTRY("escapefromasmallroom", "game1.exe", "0b7529a76f38283d6e850b8d56526fc1", 803029),
 	ENGLISH_ENTRY("escapefromevergreenforest", "EFEF.exe", "2e58934bbe98335f33c20a23a6c6135a", 23855632),
@@ -2039,6 +2039,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("lamplightcity", "Lamplight City.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	ENGLISH_ENTRY("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622),
 	ENGLISH_ENTRY("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
+	ENGLISH_ENTRY("larrylotter", "Warthogs.exe", "9c49b6fa0460f36d6e7558281f142683", 12448793),
+	ENGLISH_ENTRY("larrylotter", "warthogs.exe", "cbe62572ed082a3063a49d594612ac0b", 12397280), // v1.7
 	ENGLISH_ENTRY("larrylotter", "larry lotter.ags", "2802b69370de199a1f8d47889a197c14", 47202232), // Steam
 	ENGLISH_ENTRY("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17696093),
 	ENGLISH_ENTRY("laundryday", "Laundry Day.exe", "06a03fe35791b0578068ab1873455463", 2456888),
@@ -2297,6 +2299,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("questforthebluecup", "Quest for the Cup.exe", "9cb3c8dc7a8ab9c44815955696be2677", 8760015),
 	ENGLISH_ENTRY("questforyeti", "Quest For Yeti.exe", "90413e9ae57e222f8913b09d2bc847bc", 2635580),
 	ENGLISH_ENTRY("questforyrolg", "Quest for Yrolg.exe", "c4f5b7b29be90ba0f8128298afb917de", 9388101),
+	ENGLISH_ENTRY("questforyrolg", "quest for yrolg.exe", "89df481678b2ddc40ecc9f83caa76b89", 9709051), // v1.8
 	ENGLISH_ENTRY("questforyrolg", "quest for yrolg.ags", "51527ed37f001db741e68b767259c81e", 8214789), // Steam
 	ENGLISH_ENTRY("quieromorir", "ElMito.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944),
 	ENGLISH_ENTRY("quimbyquestanewdope", "QQuest.exe", "615e806856b7730afadf1fea9a756b70", 8801878),
@@ -2441,6 +2444,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("stargateadv", "StarGA.exe", "0710e2ec71042617f565c01824f0cf3c", 45738298),
 	ENGLISH_ENTRY("starshipcaramba", "karamba.exe", "465f972675db2da6040518221af5b0ba", 21540340),
 	ENGLISH_ENTRY("starshipposeidon", "Starship Poseidon.exe", "5a9abb3094d0b3f4bc09c0c77fbb8024", 4163873),
+	ENGLISH_ENTRY("starshipquasar", "quasar.exe", "8d1c6698abc66509df3dbe57a0a4144b", 11959826), // v1.1
 	ENGLISH_ENTRY("starshipquasar", "starship quasar.ags", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415956), // Steam
 	ENGLISH_ENTRY("start", "CC1.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 18627665),
 	ENGLISH_ENTRY("startreknewton", "Anomaly.exe", "721e8a1dce90fc3ee31cade9a50d9e75", 8750111),
@@ -2619,7 +2623,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("vpxt2", "VPET!2!.exe", "0b7529a76f38283d6e850b8d56526fc1", 12933096),
 	ENGLISH_ENTRY("waitingfortheloop", "WaitingForTheLoop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	ENGLISH_ENTRY("waltersasteroid", "HDGame.exe", "465f972675db2da6040518221af5b0ba", 8390872),
-	ENGLISH_ENTRY("warthogs", "Warthogs.exe", "9c49b6fa0460f36d6e7558281f142683", 12448793),
 	ENGLISH_ENTRY("washedashore", "Achtung!.exe", "06a03fe35791b0578068ab1873455463", 7926840),
 	ENGLISH_ENTRY("washedashoredeluxe", "Washed.exe", "06a03fe35791b0578068ab1873455463", 2771873),
 	ENGLISH_ENTRY("wasted", "Wasted.exe", "f120690b506dd63cd7d1112ea6af2f77", 27870661),
