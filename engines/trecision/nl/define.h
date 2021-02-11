@@ -131,8 +131,8 @@
 #define fONETIME 			12
 #define fENDDEMO			13
 #define fCREPACCIO			14
-#define fHOMOOFF			15
-#define fHOMOON				16
+#define fCHARACTEROFF			15
+#define fCHARACTERON				16
 #define fSETEXTRA			17
 #define fCLREXTRA			18
 #define fSERPVIA			19
@@ -140,9 +140,9 @@
 #define fMOREAU				21
 #define fPORTA58			22
 #define fHELLEN				23
-#define fHOMOFORE			24
-#define fHOMOBACK			25
-#define fHOMONORM			26
+#define fCHARACTERFOREGROUND			24
+#define fCHARACTERBACKGROUND			25
+#define fCHARACTERNORM			26
 #define fVALVOLAON34		27
 #define fVALVOLAOFF34		28
 
