@@ -450,6 +450,11 @@ void _putpixel32(BITMAP *bmp, int x, int y, int color) {
 
 int getpixel(BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
+
+	// Allegro returns -1 if the pixel lies outside the bitmap
+	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
+		return -1;
+
 	void *p = surf.getBasePtr(x, y);
 
 	switch (surf.format.bytesPerPixel) {
@@ -468,6 +473,8 @@ int getpixel(BITMAP *bmp, int x, int y) {
 
 int _getpixel(BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
+		return -1;
 	void *p = surf.getBasePtr(x, y);
 	return *((uint8 *)p);
 }
@@ -478,6 +485,8 @@ int _getpixel15(BITMAP *bmp, int x, int y) {
 
 int _getpixel16(BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
+		return -1;
 	void *p = surf.getBasePtr(x, y);
 	return *((uint16 *)p);
 }
@@ -488,6 +497,8 @@ int _getpixel24(BITMAP *bmp, int x, int y) {
 
 int _getpixel32(BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
+		return -1;
 	void *p = surf.getBasePtr(x, y);
 	return *((uint32 *)p);
 }
