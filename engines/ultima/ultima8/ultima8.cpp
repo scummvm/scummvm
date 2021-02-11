@@ -1295,6 +1295,11 @@ void Ultima8Engine::save(Common::WriteStream *ws) {
 	uint8 s = (_avatarInStasis ? 1 : 0);
 	ws->writeByte(s);
 
+	if (GAME_IS_CRUSADER) {
+		uint8 f = (_unkCrusaderFlag ? 1 : 0);
+		ws->writeByte(f);
+	}
+
 	int32 absoluteTime = Kernel::get_instance()->getFrameNum() + _timeOffset;
 	ws->writeUint32LE(static_cast<uint32>(absoluteTime));
 	ws->writeUint16LE(_avatarMoverProcess->getPid());
@@ -1313,6 +1318,10 @@ void Ultima8Engine::save(Common::WriteStream *ws) {
 
 bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	_avatarInStasis = (rs->readByte() != 0);
+
+	if (GAME_IS_CRUSADER) {
+		_unkCrusaderFlag  = (rs->readByte() != 0);
+	}
 
 	// no gump should be moused over after load
 	_mouse->resetMouseOverGump();
