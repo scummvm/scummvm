@@ -398,9 +398,7 @@ void GameData::setupJPOverrides() {
 		}
 	}
 
-	bool overridefonts = ConfMan.getBool("font_override");
-	if (overridefonts)
-		setupTTFOverrides("language", true);
+	setupTTFOverrides("language", true);
 }
 
 void GameData::setupTTFOverrides(const char *category, bool SJIS) {
