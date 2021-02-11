@@ -69,6 +69,7 @@ namespace Video {
 #define ID_DISP MKTAG('D','I','S','P')
 #define ID_PRMI MKTAG('P','R','M','I')
 #define ID_STRN MKTAG('s','t','r','n')
+#define ID_INDX MKTAG('i','n','d','x')
 
 // Stream Types
 enum {
@@ -210,6 +211,7 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_ISFT: // Metadata, safe to ignore
 	case ID_DISP: // Metadata, should be safe to ignore
 	case ID_DMLH: // OpenDML extension, contains an extra total frames field, safe to ignore
+	case ID_INDX: // OpenDML extension, contains another type of index
 		skipChunk(size);
 		break;
 	case ID_STRN: // Metadata, safe to ignore
