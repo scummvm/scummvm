@@ -323,7 +323,7 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum)) {
-		perr << "MainActor::teleport(): switchMap() failed!" << Std::endl;
+		perr << "MainActor::teleport(): switchMap(" << mapNum << ") failed!" << Std::endl;
 		return;
 	}
 

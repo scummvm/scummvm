@@ -186,7 +186,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		// No lerping when going from a container to somewhere else
 		no_lerping = true;
 	}
-	// Item needs to be removed if it in the map, and it is moving to a
+	// Item needs to be removed if in the map, and it is moving to a
 	// different chunk
 	else if ((_extendedFlags & EXT_INCURMAP) &&
 	         ((_x / mapChunkSize != X / mapChunkSize) ||
@@ -204,7 +204,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	_y = Y;
 	_z = Z;
 
-	// Add it to the map if needed
+	// Add it back to the map if needed
 	if (!(_extendedFlags & EXT_INCURMAP)) {
 		// Disposable fast only items get put at the end
 		// While normal items get put at start
