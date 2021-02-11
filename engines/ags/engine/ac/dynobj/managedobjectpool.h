@@ -39,6 +39,13 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
+struct Pointer_Hash {
+	uint operator()(const char *v) const {
+		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
+		return x + (x >> 3);
+	}
+};
+
 struct ManagedObjectPool final {
 private:
 	// TODO: find out if we can make handle size_t
@@ -68,7 +75,7 @@ private:
 	int32_t nextHandle{}; // TODO: manage nextHandle's going over INT32_MAX !
 	std::queue<int32_t> available_ids;
 	std::vector<ManagedObject> objects;
-	std::unordered_map<const char *, int32_t> handleByAddress;
+	std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
 
 	void Init(int32_t theHandle, const char *theAddress, ICCDynamicObject *theCallback, ScriptValueType objType);
 	int Remove(ManagedObject &o, bool force = false);
