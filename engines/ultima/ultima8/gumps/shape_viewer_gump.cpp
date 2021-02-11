@@ -141,7 +141,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 				uint8 px_g = shape->getPalette()->_palette[rawpx * 3 + 1];
 				uint8 px_b = shape->getPalette()->_palette[rawpx * 3 + 2];
 
-				sprintf(buf2, "px: (%d/%d, %d/%d): %d (%d, %d, %d)", relx, frame->_xoff, rely, frame->_yoff, rawpx, px_r, px_g, px_b);
+				sprintf(buf2, "px: (%d, %d)(%d, %d): %d (%d, %d, %d)", relx, rely, frame->_xoff, frame->_yoff, rawpx, px_r, px_g, px_b);
 				rendtext = font->renderText(buf2, remaining);
 				rendtext->draw(surf, 20, 25);
 				delete rendtext;
