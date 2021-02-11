@@ -37,6 +37,10 @@
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
 
+// Uncomment to check that a single object doesn't appear in multiple chunks
+// during updates
+//#define VALIDATE_CHUNKS 1
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -233,6 +237,20 @@ void CurrentMap::addItem(Item *item) {
 	int32 cx = ix / _mapChunkSize;
 	int32 cy = iy / _mapChunkSize;
 
+#ifdef VALIDATE_CHUNKS
+	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
+		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
+			item_list::const_iterator iter;
+			for (iter = _items[ccx][ccy].begin();
+					iter != _items[ccx][ccy].end(); ++iter) {
+				if (*iter == item) {
+					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
+				}
+			}
+		}
+	}
+#endif
+
 	_items[cx][cy].push_front(item);
 	item->setExtFlag(Item::EXT_INCURMAP);
 
@@ -258,6 +276,20 @@ void CurrentMap::addItemToEnd(Item *item) {
 
 	int32 cx = ix / _mapChunkSize;
 	int32 cy = iy / _mapChunkSize;
+
+#ifdef VALIDATE_CHUNKS
+	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
+		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
+			item_list::const_iterator iter;
+			for (iter = _items[ccx][ccy].begin();
+					iter != _items[ccx][ccy].end(); ++iter) {
+				if (*iter == item) {
+					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
+				}
+			}
+		}
+	}
+#endif
 
 	_items[cx][cy].push_back(item);
 	item->setExtFlag(Item::EXT_INCURMAP);
@@ -495,6 +527,14 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	while (iter != _items[cx][cy].end()) {
 		Item *item = *iter;
 		++iter;
+#if VALIDATE_CHUNKS
+		int32 x, y, z;
+		item->getLocation(x, y, z);
+		if (x / _mapChunkSize != cx || y / _mapChunkSize != cy) {
+			warning("Item leaving fast area in chunk (%d, %d), should be (%d, %d)",
+					cx, cy, x / _mapChunkSize, y / _mapChunkSize);
+		}
+#endif
 		item->leaveFastArea();  // Can destroy the item
 	}
 }
