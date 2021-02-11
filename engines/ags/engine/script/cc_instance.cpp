@@ -252,15 +252,13 @@ ccInstance *ccInstance::Fork() {
 }
 
 void ccInstance::Abort() {
-	if ((this != nullptr) && (pc != 0))
+	if (pc != 0)
 		flags |= INSTF_ABORTED;
 }
 
 void ccInstance::AbortAndDestroy() {
-	if (this != nullptr) {
-		Abort();
-		flags |= INSTF_FREE;
-	}
+	Abort();
+	flags |= INSTF_FREE;
 }
 
 #define ASSERT_STACK_SPACE_AVAILABLE(N) \

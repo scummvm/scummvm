@@ -620,7 +620,7 @@ unsigned char GetColor565(unsigned char r, unsigned char g, unsigned char b) {
 	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
 	//unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
 	int i = ((r << 11) | (g << 5) | b);
-	unsigned char (*clutp) = clut;
+	unsigned char *clutp = clut;
 	unsigned char result = *(clutp + i);
 	result = cycle_remap [result]; //Once again, to make sure that the palette slot used is the right one.
 	//engine->ReleaseBitmapSurface (clutspr);

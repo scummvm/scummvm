@@ -86,7 +86,7 @@ public:
 		//out_g = (out_g + 1 + (out_g >> 6)) >> 6;
 		//out_b = (out_b + 1 + (out_b >> 6)) >> 6;
 		i = ((out_r << 11) | (out_g << 5) | out_b);
-		unsigned char(*clutp) = clut;
+		unsigned char *clutp = clut;
 		//unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
 		return cycle_remap[*(clutp + i)]; //Once again, to make sure that the palette slot used is the right one.
 		//engine->ReleaseBitmapSurface (clutspr);
@@ -102,7 +102,7 @@ public:
 		int dark_b = (((objectivepal[rfg].b >> 1) * (intensity)) >> 8);
 		int dark_g = (((objectivepal[rfg].g)    * (intensity)) >> 8);
 		i = ((dark_r << 11) | (dark_g << 5) | dark_b);
-		unsigned char (*clutp) = clut;
+		unsigned char *clutp = clut;
 		return cycle_remap [*(clutp + i)]; //Once again, to make sure that the palette slot used is the right one.
 	}
 
@@ -140,7 +140,7 @@ public:
 			out_b = MIN(31, (objectivepal [bg].b >> 1) + add_b);
 		}
 		i = ((out_r << 11) | (out_g << 5) | out_b);
-		unsigned char (*clutp) = clut;
+		unsigned char *clutp = clut;
 		unsigned char result = cycle_remap [*(clutp + i)]; //Once again, to make sure that the palette slot used is the right one.
 		//unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
 		//engine->ReleaseBitmapSurface (clutspr);
@@ -171,7 +171,7 @@ public:
 			out_b = ((objectivepal[rbg].b >> 1) * (63 - (alpha / 4)) + (mul_b * (alpha / 4))) / 63;
 		}
 		i = ((out_r << 11) | (out_g << 5) | out_b);
-		unsigned char (*clutp) = clut;
+		unsigned char *clutp = clut;
 		unsigned char result = cycle_remap [*(clutp + i)]; //Once again, to make sure that the palette slot used is the right one.
 		//unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
 		//engine->ReleaseBitmapSurface (clutspr);

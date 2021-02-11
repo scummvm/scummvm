@@ -51,10 +51,10 @@ void GameScanner::scan(const Common::String &startFolder) {
 	if (!_oldGames.empty()) {
 		debug("// Pre 2.5 games that aren't supported");
 		for (EntryArray::iterator it = _oldGames.begin(); it != _oldGames.end(); ++it) {
-			debug("UNSUPPORTED_ENTRY(\"\", \"%s\", \"%s\", %u),",
+			debug("UNSUPPORTED_ENTRY(\"\", \"%s\", \"%s\", %lu),",
 				it->_filename.c_str(), it->_md5.c_str(), it->_filesize);
 		}
-		debug("");
+		debugN("\n");
 	}
 
 	debug("// 2.5+ games that should be supported");
@@ -64,14 +64,14 @@ void GameScanner::scan(const Common::String &startFolder) {
 			debug("{ \"%s\", \"%s\" },", it->_id.c_str(), it->_gameName.c_str());
 		gameDescs[it->_id] = true;
 	}
-	debug("");
+	debugN("\n");
 
 	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
-		debug("ENGLISH_ENTRY(\"%s\", \"%s\", \"%s\", %u),",
+		debug("ENGLISH_ENTRY(\"%s\", \"%s\", \"%s\", %lu),",
 			it->_id.c_str(), it->_filename.c_str(),
 			it->_md5.c_str(), it->_filesize);
 	}
-	debug("");
+	debugN("\n");
 }
 
 void GameScanner::scanFolder(const Common::FSNode &folder) {
