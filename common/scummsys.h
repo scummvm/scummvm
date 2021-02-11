@@ -373,13 +373,15 @@
 #ifndef NORETURN_PRE
 	#if defined(_MSC_VER)
 		#define NORETURN_PRE __declspec(noreturn)
+	#elif defined(__GNUC__)
+		#define NORETURN_PRE __attribute__((__noreturn__))
 	#else
 		#define NORETURN_PRE
 	#endif
 #endif
 
 #ifndef NORETURN_POST
-	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+	#if defined(__INTEL_COMPILER)
 		#define NORETURN_POST __attribute__((__noreturn__))
 	#else
 		#define NORETURN_POST
