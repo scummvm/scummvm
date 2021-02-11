@@ -362,8 +362,12 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 											nullptr, nullptr, &blocker)) {
 				avatar->setLocation(x, y, z);
 				res = avatar->tryAnim(action, direction);
-				if (res == Animation::SUCCESS)
+				if (res == Animation::SUCCESS) {
+					// move to starting point for real (trigger fast area updates etc)
+					avatar->setLocation(origpt.x, origpt.y, origpt.z);
+					avatar->move(x, y, z);
 					break;
+				}
 			}
 		}
 
@@ -388,7 +392,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 	if (checkTurn(direction, moving))
 		return;
 
-	debug(6, "Cru avatar step: picked action %d dir %d (test result %d)", action, direction, res);
+	//debug(6, "Cru avatar step: picked action %d dir %d (test result %d)", action, direction, res);
 	waitFor(avatar->doAnim(action, direction));
 }
 
