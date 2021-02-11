@@ -638,7 +638,7 @@ int32 Menu::volumeMenu() {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kSaveSettings:
-			// TODO: implement setting persisting
+			ConfMan.flushToDisk();
 			break;
 		case kQuitEngine:
 			return kQuitEngine;

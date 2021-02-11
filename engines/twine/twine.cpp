@@ -168,6 +168,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 }
 
 TwinEEngine::~TwinEEngine() {
+	ConfMan.flushToDisk();
 	delete _actor;
 	delete _animations;
 	delete _collision;
@@ -295,9 +296,9 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
-	ConfMan.setInt("combatauto", _actor->autoAggressive ? 1 : 0);
+	ConfMan.setBool("combatauto", _actor->autoAggressive);
 	ConfMan.setInt("shadow", cfgfile.ShadowMode);
-	ConfMan.setInt("scezoom", cfgfile.SceZoom ? 1 : 0);
+	ConfMan.setBool("scezoom", cfgfile.SceZoom);
 	ConfMan.setInt("polygondetails", cfgfile.PolygonDetails);
 
 	_sound->stopSamples();
