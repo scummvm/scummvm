@@ -110,14 +110,14 @@ void MyListBox::draw(Bitmap *ds) {
 }
 
 int MyListBox::pressedon(int mousex, int mousey) {
-	if (_G(mousex) > x + wid - ARROWWIDTH) {
-		if ((_G(mousey) - y < hit / 2) & (topitem > 0))
+	if (mousex > x + wid - ARROWWIDTH) {
+		if ((mousey - y < hit / 2) & (topitem > 0))
 			topitem--;
-		else if ((_G(mousey) - y > hit / 2) &(topitem + numonscreen < items))
+		else if ((mousey - y > hit / 2) &(topitem + numonscreen < items))
 			topitem++;
 
 	} else {
-		selected = ((_G(mousey) - y) - 2) / TEXT_HT + topitem;
+		selected = ((mousey - y) - 2) / TEXT_HT + topitem;
 		if (selected >= items)
 			selected = items - 1;
 
