@@ -132,6 +132,7 @@ void CombatController::init() {
 
 void CombatController::setActive() {
 	MetaEngine::setKeybindingMode(KBMODE_COMBAT);
+	g_context->_horseSpeed = 0;
 }
 
 // Accessor Methods
