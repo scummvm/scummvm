@@ -4207,6 +4207,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 49:
+		mapping = NoirMapping{"DECTALKFONT", DECTALKFONT, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -4618,7 +4623,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case DECTALKFONT:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		_vm->_font->SetTalkFontHandle(pp[0]);
 		return -1;
 
