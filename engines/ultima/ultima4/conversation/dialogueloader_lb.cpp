@@ -39,7 +39,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
  * game executable.  The  "help" response is a special case that changes
  * based on the current party status.
  */
-Dialogue *U4LBDialogueLoader::load(void *source) {
+Dialogue *U4LBDialogueLoader::load(Common::SeekableReadStream *source) {
 	Std::vector<Common::String> lbKeywords = u4read_stringtable("lb_keywords");
 	Std::vector<Common::String> lbText = u4read_stringtable("lb_text");
 

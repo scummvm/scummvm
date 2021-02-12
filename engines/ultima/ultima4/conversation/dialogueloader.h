@@ -25,6 +25,7 @@
 
 #include "common/hashmap.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -44,7 +45,7 @@ class DialogueLoader {
 public:
 	virtual ~DialogueLoader() {}
 
-	virtual Dialogue *load(void *source) = 0;
+	virtual Dialogue *load(Common::SeekableReadStream *source) = 0;
 };
 
 class DialogueLoaders {

@@ -31,9 +31,7 @@ namespace Ultima4 {
 /**
  * A dialogue loader for standard u4dos .tlk files.
  */
-Dialogue *U4TlkDialogueLoader::load(void *source) {
-	Common::ReadStream *file = static_cast<Common::ReadStream *>(source);
-
+Dialogue *U4TlkDialogueLoader::load(Common::SeekableReadStream *source) {
 	enum QTrigger {
 		NONE = 0,
 		JOB = 3,
@@ -44,7 +42,7 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 
 	/* there's no dialogues left in the file */
 	char tlk_buffer[288];
-	if (file->read(tlk_buffer, sizeof(tlk_buffer)) != sizeof(tlk_buffer))
+	if (source->read(tlk_buffer, sizeof(tlk_buffer)) != sizeof(tlk_buffer))
 		return nullptr;
 
 	char *ptr = &tlk_buffer[3];

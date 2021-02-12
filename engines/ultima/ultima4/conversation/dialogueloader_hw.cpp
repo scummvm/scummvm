@@ -52,7 +52,7 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp);
 /**
  * A special case dialogue loader for Hawkwind.
  */
-Dialogue *U4HWDialogueLoader::load(void *source) {
+Dialogue *U4HWDialogueLoader::load(Common::SeekableReadStream *source) {
 	Std::vector<Common::String> &hawkwindText = g_ultima->_hawkwindText;
 	hawkwindText = u4read_stringtable("hawkwind");
 

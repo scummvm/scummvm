@@ -33,7 +33,7 @@ namespace Ultima4 {
  */
 class U4LBDialogueLoader : public DialogueLoader {
 public:
-	Dialogue *load(void *source) override;
+	Dialogue *load(Common::SeekableReadStream *source) override;
 };
 
 } // End of namespace Ultima4
