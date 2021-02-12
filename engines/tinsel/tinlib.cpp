@@ -4167,6 +4167,32 @@ int WhichInventory() {
 }
 
 
+struct NoirMapping {
+	const char *name;
+	int libCode;
+	int numArgs;
+};
+
+NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
+	// This function allows us to both log the called library functions, as well
+	// as to stub the ones we haven't yet implemented. Eventually this might
+	// get rolled up into a lookup table similar to DW1 and DW2, but for now
+	// this is convenient for debug.
+	NoirMapping mapping;
+	switch (libCode) {
+	case 153:
+		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	default:
+		error("Unmapped libCode %d", libCode);
+	}
+
+	return mapping;
+}
+
+
 /**
  * Subtract one less that the number of parameters from pp
  * pp then points to the first parameter.
@@ -4186,7 +4212,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	else if (!TinselV2) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else if (TinselV3) {
-		error("TODO: Implement library routines for Discworld Noir");
+		NoirMapping mapping = translateNoirLibCode(operand, pp);
+		libCode = mapping.libCode;
+		if (libCode == ZZZZZZ) {
+			debug(7, "%08X CallLibraryRoutine op %d (escOn %d, myEscape %d)", pic->hCode, operand, pic->escOn, pic->myEscape);
+			return -mapping.numArgs;
+		}
 	}
 	else libCode = DW2_CODES[operand];
 
@@ -5190,7 +5221,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -2;
 
 	case SETSYSTEMVAR:
-		// DW1 only
+		// DW1 & Noir
 		pp -= 1;				// 2 parameters
 		SetSystemVar(pp[0], pp[1]);
 		return -2;
