@@ -4192,6 +4192,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 46:
+		mapping = NoirMapping{"DECLEAD", DECLEAD, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -4574,7 +4579,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -3;
 
 	case DECLEAD:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		if (TinselV2) {
 			DecLead(pp[0]);
 			return -1;
