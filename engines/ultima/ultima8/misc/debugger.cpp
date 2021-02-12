@@ -313,7 +313,7 @@ bool Debugger::cmdToggleShowTouchingItems(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->toggleShowTouchingItems();
 	debugPrintf("ShowTouchingItems = %s\n", strBool(g->isShowTouchingItems()));
-	return true;
+	return false;
 }
 
 bool Debugger::cmdCloseItemGumps(int argc, const char **argv) {
