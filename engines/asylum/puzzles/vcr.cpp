@@ -357,8 +357,8 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 		// setupPalette();
 		getScreen()->setupPalette(NULL, 0, 0);
 
-		warning("[PuzzleVCR::updateScreen] Missing palette changes");
-		// TODO more stuff needed here (palette change, scene screen update, etc.)
+		getScreen()->setPalette(MAKE_RESOURCE(kResourcePackTowerCells, 28));
+		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackTowerCells, 28));
 	} else {
 		getScreen()->drawGraphicsInQueue();
 	}
