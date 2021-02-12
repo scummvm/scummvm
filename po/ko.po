@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-11 19:08+0000\n"
-"PO-Revision-Date: 2021-02-10 20:23+0000\n"
+"PO-Revision-Date: 2021-02-12 15:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5030,7 +5030,7 @@ msgstr "꾸러기 게임 모드"
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:321
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "Zip 모드 활성화됨(~Z~)"
 
 #: engines/mohawk/dialogs.cpp:115
 msgid "~T~ransitions Enabled"
@@ -5054,34 +5054,32 @@ msgid "Show ~M~ap"
 msgstr ""
 
 #: engines/mohawk/dialogs.cpp:136
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "전역 메인 메뉴"
+msgstr "메인 메뉴(~U~)"
 
 #: engines/mohawk/dialogs.cpp:250
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "새로운 언어 설정은 게임 재시작 후 적용됩니다."
 
 #: engines/mohawk/dialogs.cpp:322
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "물결효과 활성화됨(~W~)"
 
 #: engines/mohawk/dialogs.cpp:324
 msgid "Transitions:"
-msgstr ""
+msgstr "전환효과:"
 
 #: engines/mohawk/dialogs.cpp:329
-#, fuzzy
 msgid "Fastest"
-msgstr "붙여넣기"
+msgstr "빠르게"
 
 #: engines/mohawk/dialogs.cpp:330
 msgid "Normal"
-msgstr ""
+msgstr "보통"
 
 #: engines/mohawk/dialogs.cpp:331
 msgid "Best"
-msgstr ""
+msgstr "고품질"
 
 #: engines/mohawk/metaengine.cpp:271
 #, fuzzy
