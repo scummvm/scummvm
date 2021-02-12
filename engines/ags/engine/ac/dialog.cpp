@@ -64,6 +64,7 @@
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
 #include "ags/engine/globals.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -613,7 +614,8 @@ void DialogOptions::Show() {
 	update_polled_stuff_if_runtime();
 
 	Redraw();
-	while (Run());
+	while (Run() && !SHOULD_QUIT) {
+	}
 
 	if (!play.mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);
@@ -1105,6 +1107,8 @@ void do_conversation(int dlgnum) {
 		}
 
 		int chose = show_dialog_options(dlgnum, SAYCHOSEN_USEFLAG, (game.options[OPT_RUNGAMEDLGOPTS] != 0));
+		if (SHOULD_QUIT)
+			return;
 
 		if (chose == CHOSE_TEXTPARSER) {
 			said_speech_line = 0;
