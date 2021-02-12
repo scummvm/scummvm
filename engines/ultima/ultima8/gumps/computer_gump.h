@@ -57,6 +57,8 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 private:
+	void nextText();
+
 	/*
 	TODO: Implement stepping through the text
 	int _charOff;
