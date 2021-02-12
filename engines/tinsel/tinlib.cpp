@@ -152,7 +152,7 @@ enum MASTER_LIB_CODES {
 	THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
-	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ,
+	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D,
 	HIGHEST_LIBCODE
 };
 
@@ -4197,6 +4197,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
+	case 47:
+		mapping = NoirMapping{"DEC3D", DEC3D, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -4526,6 +4531,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case CUTSCENE:
 		// DW1 only
 		error("cutscene isn't a real function");
+
+	case DEC3D:
+		// Noir only
+		warning("TODO: Implement DEC3D");
+		return -3;
 
 	case DECCONVW:
 		// Common to both DW1 & DW2
