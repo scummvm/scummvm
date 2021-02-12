@@ -298,11 +298,6 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 
 		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
-		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << Std::endl;
-			break;
-		}
-
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
@@ -310,8 +305,11 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
-			// call the 'look' event
-			item->callUsecodeEvent_look();
+			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+				pout << "Can't look: avatarInStasis" << Std::endl;
+			} else {
+				item->callUsecodeEvent_look();
+			}
 		}
 		break;
 	}
@@ -366,11 +364,6 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 
 		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
-		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << Std::endl;
-			break;
-		}
-
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
@@ -381,6 +374,11 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 			int range = 128; // CONSTANT!
 			if (GAME_IS_CRUSADER) {
 				range = 512;
+			}
+
+			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+				pout << "Can't use: avatarInStasis" << Std::endl;
+				break;
 			}
 
 			if (dynamic_cast<Actor *>(item) ||
