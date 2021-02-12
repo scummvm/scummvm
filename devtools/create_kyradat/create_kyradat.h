@@ -756,6 +756,11 @@ enum kExtractID {
 	kEoB2IntroAnimData42,
 	kEoB2IntroAnimData43,
 
+	kEoB2IntroAnimData44,
+	kEoB2IntroAnimData45,
+	kEoB2IntroAnimData46,
+	kEoB2IntroAnimData47,
+
 	kEoB2IntroShapes00,
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,
@@ -1052,7 +1057,8 @@ enum kExtractID {
 
 	kEoB2UtilMenuStrings,
 	kEoB2Config2431Strings,
-	kEoB2FontDmpSearchTbl,
+	kEoB2FontLookupTbl,
+	kEoB2FontConvertTbl,
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
 	kEoB2PcmSoundEffectsIngame,

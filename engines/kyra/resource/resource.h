@@ -843,6 +843,12 @@ enum KyraResources {
 	kEoB2IntroAnimData42,
 	kEoB2IntroAnimData43,
 
+	// extra entries for PC-98
+	kEoB2IntroAnimData44,
+	kEoB2IntroAnimData45,
+	kEoB2IntroAnimData46,
+	kEoB2IntroAnimData47,
+
 	kEoB2IntroShapes00,
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,

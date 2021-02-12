@@ -1328,6 +1328,9 @@ void EoBCoreEngine::npcSequence(int npcIndex) {
 		drawNpcScene(npcIndex);
 
 		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+		if (!s)
+			s = _res->createReadStream("JTEXT.DAT");
+
 		if (s) {
 			_screen->loadFileDataToPage(s, 5, 32000);
 		} else {
@@ -1587,6 +1590,9 @@ void EoBCoreEngine::initDialogueSequence() {
 		snd_stopSound();
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+	if (!s)
+		s = _res->createReadStream("JTEXT.DAT");
+
 	if (s) {
 		_screen->loadFileDataToPage(s, 5, 32000);
 	} else {
@@ -1832,6 +1838,9 @@ void EoBCoreEngine::displayParchment(int id) {
 	if (id >= 0) {
 		// display text
 		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
+		if (!s)
+			s = _res->createReadStream("JTEXT.DAT");
+
 		if (s) {
 			_screen->loadFileDataToPage(s, 5, 32000);
 		} else {

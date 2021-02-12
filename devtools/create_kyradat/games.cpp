@@ -143,7 +143,7 @@ const Game eob2Games[] = {
 	{ kEoB2, kPlatformAmiga, kNoSpecial, EN_ANY },
 	{ kEoB2, kPlatformAmiga, kNoSpecial, DE_DEU },
 
-	//{ kEoB2, kPlatformPC98, kNoSpecial, JA_JPN },
+	{ kEoB2, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	{ kEoB2, kPlatformFMTowns, kNoSpecial, JA_JPN },
 
@@ -3676,7 +3676,7 @@ const int eob2AmigaNeed[] = {
 
 	-1
 };
-/*
+
 const int eob2PC98Need[] = {
 	kEoBBaseChargenStrings1,
 	kEoBBaseChargenStrings2,
@@ -3844,9 +3844,6 @@ const int eob2PC98Need[] = {
 	kEoBBaseDscTelptrShpCoords,
 
 	kEoBBasePortalSeqData,
-	kEoBBaseManDef,
-	kEoBBaseManWord,
-	kEoBBaseManPrompt,
 
 	kEoBBaseDscMonsterFrmOffsTbl1,
 	kEoBBaseDscMonsterFrmOffsTbl2,
@@ -3919,14 +3916,18 @@ const int eob2PC98Need[] = {
 	kEoB2IntroAnimData41,
 	kEoB2IntroAnimData42,
 	kEoB2IntroAnimData43,
+	kEoB2IntroAnimData44,
+	kEoB2IntroAnimData45,
+	kEoB2IntroAnimData46,
+	kEoB2IntroAnimData47,
 
 	kEoB2IntroShapes00,
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,
 	kEoB2IntroShapes07,
+	kEoB2IntroShapes13,
 
 	kEoB2FinaleStrings,
-	kEoB2CreditsData,
 	kEoB2FinaleCPSFiles,
 	kEoB2FinaleAnimData00,
 	kEoB2FinaleAnimData01,
@@ -3999,11 +4000,15 @@ const int eob2PC98Need[] = {
 	kRpgCommonDscDimMap,
 	kRpgCommonDscBlockIndex,
 
+	kEoB2Ascii2SjisTables,
+	kEoB2Ascii2SjisTables2,
+	kEoB2FontConvertTbl,
+
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesFinale,
 
 	-1
-};*/
+};
 
 const int eob2FMTownsNeed[] = {
 	kEoBBaseChargenStrings1,
@@ -4557,7 +4562,7 @@ const int eob2FMTownsNeed[] = {
 	kEoB2Config2431Strings,
 	kEoBBaseTextInputCharacterLines,
 	kEoBBaseTextInputSelectStrings,
-	kEoB2FontDmpSearchTbl,
+	kEoB2FontLookupTbl,
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
 	kEoBBaseSaveNamePatterns,
@@ -4630,7 +4635,7 @@ const GameNeed gameNeedTable[] = {
 	{ kEoB2, kPlatformDOS, kNoSpecial, eob2FloppyNeed },
 	{ kEoB2, kPlatformDOS, kTalkieVersion, eob2FloppyNeed },
 	{ kEoB2, kPlatformAmiga, kNoSpecial, eob2AmigaNeed },
-	//{ kEoB2, kPlatformPC98, kNoSpecial, eob2PC98Need },
+	{ kEoB2, kPlatformPC98, kNoSpecial, eob2PC98Need },
 	{ kEoB2, kPlatformFMTowns, kNoSpecial, eob2FMTownsNeed },
 
 	{ -1, -1, -1, nullptr }

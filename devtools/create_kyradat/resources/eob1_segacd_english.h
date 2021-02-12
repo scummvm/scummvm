@@ -1173,7 +1173,7 @@ static const char *const kEoB1TextInputSelectStringsSegaCDEnglish[5] = {
 static const StringListProvider kEoB1TextInputSelectStringsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1TextInputSelectStringsSegaCDEnglish), kEoB1TextInputSelectStringsSegaCDEnglish };
 
 static const char *const kEoB1SaveNamePatternsSegaCDEnglish[1] = {
-	"%s\r FLOOR % -2u % u: % 02u"
+	"%s\r FLOOR %-2u %u:%02u"
 };
 
 static const StringListProvider kEoB1SaveNamePatternsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1SaveNamePatternsSegaCDEnglish), kEoB1SaveNamePatternsSegaCDEnglish };

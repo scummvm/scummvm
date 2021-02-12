@@ -38,7 +38,7 @@
 
 
 enum {
-	kKyraDatVersion = 120
+	kKyraDatVersion = 121
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -601,6 +601,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2IntroAnimData41, kEoB2SequenceData, false },
 	{ kEoB2IntroAnimData42, kEoB2SequenceData, false },
 	{ kEoB2IntroAnimData43, kEoB2SequenceData, false },
+	{ kEoB2IntroAnimData44, kEoB2SequenceData, false },
+	{ kEoB2IntroAnimData45, kEoB2SequenceData, false },
+	{ kEoB2IntroAnimData46, kEoB2SequenceData, false },
+	{ kEoB2IntroAnimData47, kEoB2SequenceData, false },
 	{ kEoB2IntroShapes00, kEoB2ShapeData, false },
 	{ kEoB2IntroShapes01, kEoB2ShapeData, false },
 	{ kEoB2IntroShapes04, kEoB2ShapeData, false },
@@ -1049,7 +1053,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2Config2431Strings, kStringList, true },
 	{ kEoBBaseTextInputCharacterLines, kStringList, true },
 	{ kEoBBaseTextInputSelectStrings, kStringList, true },
-	{ kEoB2FontDmpSearchTbl, kRawDataBe16, false },
+	{ kEoB2FontLookupTbl, kRawDataBe16, false },
+	{ kEoB2FontConvertTbl, kRawData, false },
 	{ kEoB2Ascii2SjisTables, kStringList, false },
 	{ kEoB2Ascii2SjisTables2, kStringList, false },
 	{ kEoBBaseSaveNamePatterns, kStringList, true },

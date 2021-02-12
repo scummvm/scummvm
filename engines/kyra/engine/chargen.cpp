@@ -479,6 +479,8 @@ void CharacterGenerator::checkForCompleteParty() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
 	int x = (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168;
+	int y1 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 80 : 16;
+	int y2 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 112 : 61;
 	int cs = 0;
 
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -487,7 +489,7 @@ void CharacterGenerator::checkForCompleteParty() {
 		cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleNone : Font::kStyleFullWidth);
 		_vm->_txt->printShadedText(_chargenStrings1[8], 0, 0, -1, 0x99);
 	} else {
-		_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenStrings1[8], x, y1, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	}
 	_screen->setCurPage(cp);
@@ -503,7 +505,7 @@ void CharacterGenerator::checkForCompleteParty() {
 			_vm->_txt->printShadedText(_chargenStrings1[0], 0, 60, -1, 0x99);
 		} else {
 			_screen->setCurPage(2);
-			_screen->printShadedText(_chargenStrings1[0], x, 61, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_chargenStrings1[0], x, y2, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			_screen->setCurPage(0);
 			_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
 		}
@@ -1511,7 +1513,18 @@ void CharacterGenerator::finish() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	if (_chargenEnterGameStrings) {
 		int cp = _screen->setCurPage(2);
-		_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		int tx = 168;
+		int ty = 32;
+
+		if (_vm->game() == GI_EOB2) {
+			if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+				tx = 184;
+				ty = 96;
+			} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+				tx = 184;
+			}
+		}
+		_screen->printShadedText(_chargenEnterGameStrings[0], tx, ty, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->setCurPage(cp);
 	}
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);

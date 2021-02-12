@@ -253,6 +253,10 @@ void DarkMoonEngine::seq_playIntro() {
 
 	uint8 textColor1 = 16;
 	uint8 textColor2 = 15;
+	int songCurPos = 0;
+
+	if (_flags.platform == Common::kPlatformPC98)
+		sq.loadScene(13, 2);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		textColor1 = textColor2 = 31;
@@ -265,6 +269,8 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(0, 2);
 	sq.delay(1);
+
+	// PC-98 --- SFX 0
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSong(12);
@@ -284,29 +290,40 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(6, 18);
 	sq.animCommand(0);
 
-	sq.waitForSongNotifier(1);
+	sq.waitForSongNotifier(++songCurPos);
 
-	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 12 : 11);
+	sq.animCommand(_flags.platform == Common::kPlatformPC98 ? (_configRenderMode == Common::kRenderEGA ? 43 : 42) : (_configRenderMode == Common::kRenderEGA ? 12 : 11));
 	sq.animCommand(7, 6);
 	sq.animCommand(2, 6);
 
-	sq.waitForSongNotifier(2);
+	sq.waitForSongNotifier(++songCurPos);
 
-	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 37 : (_configRenderMode == Common::kRenderEGA ? 39 : 38));
+	if (_flags.platform == Common::kPlatformPC98) {
+		sq.animCommand(_configRenderMode == Common::kRenderEGA ? 37 : 36);
+		sq.animCommand(7, 6);
+		sq.animCommand(2, 6);
+		sq.waitForSongNotifier(++songCurPos);
+		sq.animCommand(_configRenderMode == Common::kRenderEGA ? 45 : 44);
+		sq.animCommand(7, 6);
+		sq.animCommand(2, 6);
+		sq.waitForSongNotifier(++songCurPos);
+	}
+
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 37 : (_flags.platform == Common::kPlatformPC98 ? (_configRenderMode == Common::kRenderEGA ? 47 : 46) : (_configRenderMode == Common::kRenderEGA ? 39 : 38)));
 	sq.animCommand(3);
 	sq.animCommand(8);
 	sq.animCommand(1, 10);
 	sq.animCommand(0, 6);
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(3);
+	sq.waitForSongNotifier(++songCurPos);
 
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(2);
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(0);
 
-	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 38 : (_configRenderMode == Common::kRenderEGA ? 41 : 40));
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 38 : (_flags.platform == Common::kPlatformPC98 ? (_configRenderMode == Common::kRenderEGA ? 39 : 38) : (_configRenderMode == Common::kRenderEGA ? 41 : 40)));
 	sq.animCommand(7, 18);
 
 	if (_flags.platform == Common::kPlatformAmiga)
@@ -329,8 +346,10 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.printText(3, textColor1);    // The message was urgent.
 
+	// PC-98 --- SFX 1
+
 	sq.loadScene(1, 2);
-	sq.waitForSongNotifier(4);
+	sq.waitForSongNotifier(++songCurPos);
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
@@ -341,7 +360,7 @@ void DarkMoonEngine::seq_playIntro() {
 				_screen->copyRegion(i << 3, 0, 304, 8, 8, 128, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
 				if (i == 12)
-					sq.animCommand(42);
+					sq.animCommand(_flags.platform == Common::kPlatformPC98 ? 40 : 42);
 				else if (i == 25)
 					snd_playSoundEffect(11);
 				delayUntil(endtime);
@@ -356,7 +375,7 @@ void DarkMoonEngine::seq_playIntro() {
 					if (i == 4 || i == 24 || i == 36)
 						sq.animCommand(39);
 				} else if (i == 96) {
-					sq.animCommand(42);
+					sq.animCommand(_flags.platform == Common::kPlatformPC98 ? 40 : 42);
 				}
 				delayUntil(endtime);
 			}
@@ -377,7 +396,7 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(3, 2);
 	sq.delay(54);
-	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 12 : 13);
+	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 12 : (_flags.platform == Common::kPlatformPC98 ? 11 : 13));
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
 
@@ -398,6 +417,8 @@ void DarkMoonEngine::seq_playIntro() {
 
 	if (_flags.platform == Common::kPlatformAmiga)
 		sq.setPlatformAnimIndexOffset(-1);
+	else if (_flags.platform == Common::kPlatformPC98)
+		sq.setPlatformAnimIndexOffset(-2);
 
 	sq.animCommand(14);
 
@@ -414,7 +435,7 @@ void DarkMoonEngine::seq_playIntro() {
 			sq.fadeText();
 			snd_playSong(14);
 		} else {
-			sq.waitForSongNotifier(5);
+			sq.waitForSongNotifier(++songCurPos);
 			sq.fadeText();
 			_screen->clearCurPage();
 			_screen->updateScreen();
@@ -438,6 +459,9 @@ void DarkMoonEngine::seq_playIntro() {
 		snd_playSong(15);
 
 	sq.animCommand(16);
+
+	// PC-98 --- SFX 2
+
 	sq.printText(7, textColor2);    // Thank you for coming so quickly
 	sq.animCommand(16);
 	sq.animCommand(17);
@@ -473,7 +497,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.loadScene(9, 2);
 
-	sq.waitForSongNotifier(6);
+	sq.waitForSongNotifier(++songCurPos);
 
 	sq.update(2);
 	sq.animCommand(34);
@@ -581,15 +605,18 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(18);
+
+	// PC-98 --- SFX 3
+
 	sq.fadeText();
 	sq.animCommand(29);
 
-	sq.waitForSongNotifier(7);
+	sq.waitForSongNotifier(++songCurPos);
 
 	sq.animCommand(30);
 	sq.animCommand(31);
 
-	sq.waitForSongNotifier(8, true);
+	sq.waitForSongNotifier(++songCurPos, true);
 
 	if (_flags.platform == Common::kPlatformAmiga && !skipFlag() && !shouldQuit()) {
 		static const uint8 magicHandsCol[] = { 0x15, 0x1D, 0x3A, 0x32, 0x32, 0x3F };
@@ -948,12 +975,21 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : 1);
 
 	int temp = 0;
-	const uint8 *creditsData = (_flags.platform != Common::kPlatformDOS) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
+
+	static const char *const tryFiles[2] = {
+		"CREDITS.TXT",
+		"CREDITS4.CPS"
+	};
+
+	const uint8 *creditsFileData = 0;
+	for (int i = 0; i < ARRAYSIZE(tryFiles) && !creditsFileData; ++i)
+		creditsFileData = _res->fileData(tryFiles[i], 0);
+
+	const uint8 *creditsData = creditsFileData ? creditsFileData : _staticres->loadRawData(kEoB2CreditsData, temp);
 
 	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
 
-	if (_flags.platform != Common::kPlatformDOS)
-		delete[] creditsData;
+	delete[] creditsFileData;
 
 	sq.delay(90);
 
@@ -1533,7 +1569,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 			new const uint8*[16],
 			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
 			new const DarkMoonShapeDef*[16],
-			new const DarkMoonAnimCommand *[44],
+			new const DarkMoonAnimCommand*[48],
 			false,
 			false,
 			true,
@@ -1544,7 +1580,8 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 			2
 		);
 
-		for (int i = 0; i < 44; i++)
+
+		for (int i = 0; i < 48; i++)
 			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
 
 		for (int i = 0; i < 16; i++)
