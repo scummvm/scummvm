@@ -4180,6 +4180,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 	// this is convenient for debug.
 	NoirMapping mapping;
 	switch (libCode) {
+	case 28:
+		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
 		pp -= mapping.numArgs - 1;
@@ -4422,7 +4427,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case CDCHANGESCENE:
-		// DW2 only
+		// DW2 / Noir
 		CdChangeScene(pp[0]);
 		return -1;
 
