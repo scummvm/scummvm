@@ -10,8 +10,8 @@ public:
     Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-    *engine = new Private::PrivateEngine(syst);
+Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+    *engine = new Private::PrivateEngine(syst, gd);
     return Common::kNoError;
 }
 

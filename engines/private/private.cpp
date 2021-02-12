@@ -32,8 +32,8 @@ PrivateEngine *g_private = NULL;
 
 extern int parse(char*);
 
-PrivateEngine::PrivateEngine(OSystem *syst)
-    : Engine(syst) {
+PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
+    : Engine(syst), _gameDescription(gd) {
     // Put your engine in a sane state, but do nothing big yet;
     // in particular, do not load data from files; rather, if you
     // need to do such things, do them from run().
@@ -81,10 +81,11 @@ PrivateEngine::PrivateEngine(OSystem *syst)
     _sirenSound = new Common::String("po/audio/posfx002.wav");
 
 
-    // Genral sounds
-    _paperShuffleSound = new Common::String("global/audio/glsfx0");
-    _takeSound = new Common::String("global/audio/took");
-    _leaveSound = new Common::String("global/audio/left");
+    // General sounds
+    _globalAudioPath = new Common::String("global/audio/");
+    //_paperShuffleSound = new Common::String("global/audio/glsfx0");
+    //_takeSound = new Common::String("global/audio/took");
+    //_leaveSound = new Common::String("global/audio/left");
     _noStopSounds = false;
 
     // Radios and phone
@@ -128,20 +129,22 @@ Common::Error PrivateEngine::run() {
     Common::SeekableReadStream *file = NULL;
 
     // if the full game is used
-    if (_installerArchive.hasFile("GAME.DAT"))
+    if (!isDemo()) {
+        assert(_installerArchive.hasFile("GAME.DAT"));
         file = _installerArchive.createReadStreamForMember("GAME.DAT");
+    } else {
+        // if the demo from archive.org is used
+        if (_installerArchive.hasFile("GAME.TXT"))
+            file = _installerArchive.createReadStreamForMember("GAME.TXT");
 
-    // if the demo from archive.org is used
-    else if (_installerArchive.hasFile("GAME.TXT"))
-        file = _installerArchive.createReadStreamForMember("GAME.TXT");
-
-    // if the demo from the full retail CDROM is used
-    else if (_installerArchive.hasFile("DEMOGAME.DAT"))
-        file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+        // if the demo from the full retail CDROM is used
+        else if (_installerArchive.hasFile("DEMOGAME.DAT"))
+            file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+    }
 
     assert(file != NULL);
-    void *buf = malloc(191000);
-    file->read(buf, 191000);
+    void *buf = malloc(file->size()+1);
+    file->read(buf, file->size()+1);
 
     // Initialize stuff
     initInsts();
@@ -149,6 +152,7 @@ Common::Error PrivateEngine::run() {
     initCursors();
 
     parse((char *) buf);
+    free(buf);
     assert(constants.size() > 0);
 
     // Initialize graphics using following:
@@ -426,11 +430,6 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
     if (_mode == 1) {
         Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
-        //debug("%d, %d", mousePos.x, mousePos.y);
-        //debug("%d, %d", window.top, window.left);
-        //debug("%d, %d", window.bottom, window.right);
-
-        //debug("%d, %d", window.y2, window.y2);
         if (!window.contains(mousePos)) {
             if ( _pausedSetting == NULL) {
                 _pausedSetting = _currentSetting;
@@ -846,13 +845,6 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     return Common::kNoError;
 }
 
-void PrivateEngine::syncGameStream(Common::Serializer &s) {
-    debug("syncGameStream");
-    // Use methods of Serializer to save/load fields
-    //int dummy = 0;
-    //s.syncString(*_currentSetting);
-}
-
 Common::String PrivateEngine::convertPath(Common::String name) {
     Common::String path(name);
     Common::String s1("\\");
@@ -1031,44 +1023,43 @@ bool PrivateEngine::getRandomBool(uint p) {
 }
 
 Common::String *PrivateEngine::getPaperShuffleSound() {
-    uint r = 32 + _rnd->getRandomNumber(7);
 
-    // there is no global/audio/glsfx038.wav,
-    // so we should avoid that number
-    if ( r == 38)
-        r = 39;
-
-    char f[7];
-    sprintf(f, "%d.wav", r);
-    return (new Common::String(*_paperShuffleSound + f));
+    uint r = 1 + _rnd->getRandomNumber(6);
+    char f[32];
+    sprintf(f, "glsfx0%d.wav", kPaperShuffleSound[r]);
+    return (new Common::String(*_globalAudioPath + f));
 }
 
 Common::String *PrivateEngine::getTakeSound() {
-    // TODO: refactor for demo support
+    if (isDemo())
+        return (new Common::String(*_globalAudioPath + "mvo007.wav"));    
+
     uint r = 1 + _rnd->getRandomNumber(4);
 
-    char f[6];
-    sprintf(f, "%d.wav", r);
-    return (new Common::String(*_takeSound + f));
+    char f[32];
+    sprintf(f, "left%d.wav", r);
+    return (new Common::String(*_globalAudioPath + f));
 }
 
 Common::String *PrivateEngine::getTakeLeaveSound() {
-    // TODO: refactor for demo support
     uint r = _rnd->getRandomNumber(1);
     if (r == 0) {
-        return (new Common::String("global/audio/mvo001.wav"));
+        return (new Common::String(*_globalAudioPath + "mvo001.wav"));
     } else {
-        return (new Common::String("global/audio/mvo006.wav"));
+        return (new Common::String(*_globalAudioPath + "mvo006.wav"));
     }
 }
 
 Common::String *PrivateEngine::getLeaveSound() {
     // TODO: refactor for demo support
+    if (isDemo())
+        return (new Common::String(*_globalAudioPath + "mvo008.wav"));
+
     uint r = 1 + _rnd->getRandomNumber(4);
 
-    char f[6];
-    sprintf(f, "%d.wav", r);
-    return (new Common::String(*_leaveSound + f));
+    char f[32];
+    sprintf(f, "took%d.wav", r);
+    return (new Common::String(*_globalAudioPath + f));
 }
 
 

@@ -287,7 +287,7 @@ void Inventory(ArgArray args) {
     assert(i.type == STRING);
 
     Common::String *bmp = new Common::String(i.u.str);
-    assert(strcmp(bmp->c_str(), "\"\"") != 0);
+    assert(g_private->isDemo() || strcmp(bmp->c_str(), "\"\"") != 0);
 
 
     if (v1.type == STRING)
