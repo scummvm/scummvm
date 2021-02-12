@@ -89,13 +89,10 @@ void StartCrusaderProcess::run() {
 		Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
 		smiley->moveToContainer(avatar);
 
-		if (GAME_IS_REMORSE) {
-			// TODO: The game actually teleports to egg 0x1e (30) which has another
-			// egg to teleport to egg 99.  Is there any purpose to that?
-			Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 99));
-		} else if (GAME_IS_REGRET) {
-			Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 0x1e));
-		}
+		avatar->teleport(1, 0x1e);
+		// The first level 0x1e teleporter in No Remorse goes straight to another
+		// teleport, so undo the flag that normally stops that.
+		avatar->setJustTeleported(false);
 
 		Process *fader = new PaletteFaderProcess(0x003F3F3F, true, 0x7FFF, 60, false);
 		Kernel::get_instance()->addProcess(fader);
