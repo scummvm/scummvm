@@ -760,6 +760,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "maniacmansionmania02", "Maniac Mansion Mania 02" },
 	{ "mardsrevengebytk", "Mard's Revenge by TK" },
 	{ "martyausdemall", "Marty aus dem All" },
+	{ "mash", "M*A*S*H*: The Point n' Click Adventure" },
 	{ "mastersofsound", "Masters of Sound" },
 	{ "matttothefuture", "Matt to the Future" },
 	{ "medicaltheoriesofdrkur", "Medical Theories of Dr Kur" },
@@ -1527,6 +1528,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_DEMO("kinkyisland", "KINKY.exe", "f120690b506dd63cd7d1112ea6af2f77", 10628479),
 	ENGLISH_DEMO("lazytownthenewkid", "newkiddemo1.2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 15515508),
 	ENGLISH_DEMO("litnunforgettablememories", "litn_umtechdemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 3507831),
+	ENGLISH_DEMO("mash", "MASH Demo.ags", "af4276d98c9f71dba02658fe95e49b75", 2565641),
+	ENGLISH_DEMO("mash", "MASH Demo.exe", "7825fa980fcd058caadaf6d3377b1f78", 5601309),
 	ENGLISH_DEMO("mi5thereturnoflechuck", "Demo.exe", "0500aacb6c176d47ac0f8158f055db83", 6235270),
 	ENGLISH_DEMO("neofeud", "Neofeud Demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
 	ENGLISH_DEMO("pubmastersquest", "Pub Master Quest [Demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
@@ -1677,7 +1680,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("benjaminjordan", "BJ1.exe", "4b1378721f4f066f75102f3dca809224", 5678910),
 	ENGLISH_ENTRY("benjordancase1", "BJ1Deluxe.exe", "8275249f4ffbc28c1f10ad09a2786814", 8293704),
 	ENGLISH_ENTRY("bentheredanthat", "BTDT.exe", "90413e9ae57e222f8913b09d2bc847bc", 46342499),
-	ENGLISH_ENTRY("bentheredanthat", "btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 89521873), // Steam
+	{{ "bentheredanthat", "Special Edition", AD_ENTRY1s("btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 89521873), Common::EN_ANY, \
+	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }, // Steam
 	ENGLISH_ENTRY("bernardsroom", "BernardsRoom.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8767774),
 	ENGLISH_ENTRY("besieged", "besieged.exe", "615e806856b7730afadf1fea9a756b70", 11679795),
 	ENGLISH_ENTRY("bestowersofeternity", "Eternity.exe", "0b66a68c2c8aabe78c80e30b8b82acef", 16187539),
@@ -2142,6 +2146,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("maniacmansionmania02", "MMM02.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5830457),
 	ENGLISH_ENTRY("mardsrevengebytk", "MPLR.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1771793),
 	ENGLISH_ENTRY("martyausdemall", "test3.exe", "0710e2ec71042617f565c01824f0cf3c", 4352013),
+	ENGLISH_ENTRY("mash", "MASH.ags", "8fe67d5a066d4ab203db0cce102ed86c", 12536184),
+	ENGLISH_ENTRY("mash", "MASH.exe", "7825fa980fcd058caadaf6d3377b1f78", 15571852),
 	ENGLISH_ENTRY("mastersofsound", "MOS.exe", "bb59de174d70797d774dec76a171352d", 20298343),
 	ENGLISH_ENTRY("matttothefuture", "MTTF.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 5560975),
 	ENGLISH_ENTRY("medicaltheoriesofdrkur", "dfg.exe", "465f972675db2da6040518221af5b0ba", 3140527),
