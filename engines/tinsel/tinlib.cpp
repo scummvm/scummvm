@@ -2695,6 +2695,13 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
 }
 
 /**
+ * Set system reel
+ */
+static void SetSystemReel(int index, SCNHANDLE reel) {
+	warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
+}
+
+/**
  * SetSystemString
  */
 
@@ -4185,6 +4192,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 151:
+		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
 		pp -= mapping.numArgs - 1;
@@ -5217,6 +5229,16 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		} else {
 			SetPalette(pp[0], pic->escOn, pic->myEscape);
 			return -1;
+		}
+
+	case SETSYSTEMREEL:
+		// Noir only
+		if (TinselV3) {
+			pp -= 1;
+			SetSystemReel(pp[0], pp[1]);
+			return -2;
+		} else {
+			error("SETSYSTEMREEL is only used in Noir");
 		}
 
 	case SETSYSTEMSTRING:
