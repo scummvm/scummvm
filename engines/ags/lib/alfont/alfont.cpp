@@ -60,7 +60,7 @@ size_t alfont_text_height(ALFONT_FONT *font) {
 
 void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
 	Graphics::ManagedSurface &surf = **bmp;
-	font->getFont()->drawString(&surf, Common::U32String(text), x, y, bmp->w - x, color);
+	font->getFont()->drawString(&surf, Common::String(text), x, y, bmp->w - x, color);
 }
 
 void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
