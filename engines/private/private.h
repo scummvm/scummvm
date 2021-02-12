@@ -3,6 +3,7 @@
 
 #include "common/random.h"
 #include "common/serializer.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
@@ -23,6 +24,8 @@ namespace Graphics {
 struct ManagedSurface;
 }
 
+struct ADGameDescription;
+
 namespace Private {
 
 class Console;
@@ -34,6 +37,10 @@ enum {
                             // next new channel must be 1 << 2 (4)
                             // the current limitation is 32 debug channels (1 << 31 is the last one)
 };
+
+// sounds
+
+const int kPaperShuffleSound[6] = {33, 34, 35, 36, 37, 39};
 
 // police
 
@@ -110,8 +117,15 @@ private:
     int _screenW, _screenH;
 
 public:
-    PrivateEngine(OSystem *syst);
+    PrivateEngine(OSystem *syst, const ADGameDescription *gd);
     ~PrivateEngine();
+
+    const ADGameDescription *_gameDescription;
+
+    bool isDemo() const {
+        return (bool)(_gameDescription->flags & ADGF_DEMO);
+    }
+
 
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;
@@ -230,13 +244,14 @@ public:
     bool _noStopSounds;
 
     Common::String *getPaperShuffleSound();
-    Common::String *_paperShuffleSound;
+    Common::String *_globalAudioPath;
+    //Common::String *_paperShuffleSound;
 
     Common::String *getTakeSound();
     Common::String *getTakeLeaveSound();
     Common::String *getLeaveSound();
-    Common::String *_takeSound;
-    Common::String *_leaveSound;
+    //Common::String *_takeSound;
+    //Common::String *_leaveSound;
     Common::String *_sirenSound;
 
     // Radios
