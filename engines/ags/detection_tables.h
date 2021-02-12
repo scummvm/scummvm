@@ -137,9 +137,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	// AGDI games. They get their own grouping because they're just that awesome
 	{ "kq1agdi", "King's Quest I: Quest for the Crown Remake" },
 	{ "kq2agdi", "King's Quest II: Romancing The Stones" },
-	{ "kq3agdi", "King's Quest III Redux: To Heir is Human" },
+	{ "kq3agdi", "King's Quest III: To Heir is Human" },
 	{ "qfg2agdi", "Quest for Glory II: Trial By Fire" },
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
+
+	// Infamous Adventures games. Likewise
+	{ "sq2fg", "Space Quest For Glory" },
+	{ "sq2vga", "Space Quest II VGA" },
+	{ "kq3redux", "King's Quest III Redux" },
 
 	// Commercial games
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
@@ -1062,11 +1067,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "spacelynxes", "Space Lynxes" },
 	{ "spacepirates", "Space Pirates" },
 	{ "spacepoolalpha", "Space Pool Alpha" },
-	{ "spacequest2vga", "Space Quest II VGA" },
 	{ "spacequest3vga", "Space Quest III VGA Preview" },
 	{ "spacequest45", "Space Quest 4.5" },
 	{ "spacequest55", "Space Quest 5.5" },
-	{ "spacequestforglory", "Space Quest For Glory" },
 	{ "spacerangers", "Space Rangers" },
 	{ "spacerangersep52", "Space Rangers Ep 52" },
 	{ "spacewar", "Space war" },
@@ -1461,12 +1464,18 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
 	ENGLISH_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12574643),  // 3.1c
 	ENGLISH_ENTRY("kq3agdi", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0
-	ENGLISH_ENTRY("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
-	ENGLISH_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20470902),
 	ENGLISH_ENTRY("qfg2agdi", "qfg2vga.exe", "582e26533cf784011c7565e89905d3c4", 18224373),
 	ENGLISH_ENTRY("qfg2agdi", "Game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5408433),
+
+	// Infamous Adventures games. Likewise
+	ENGLISH_ENTRY("kq3redux", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
+	ENGLISH_ENTRY("kq3redux", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
+	ENGLISH_ENTRY("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
+	ENGLISH_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
+	ENGLISH_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
+	ENGLISH_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
 
 	// Commercial games
 	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
@@ -2440,11 +2449,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("spacelynxes", "SpaceLynxes.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6593042),
 	ENGLISH_ENTRY("spacepirates", "Space Pirates.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3006210),
 	ENGLISH_ENTRY("spacepoolalpha", "SpacePool.exe", "ef1d6fdc83c91a1a8de9eaf2630737b7", 3055777),
-	ENGLISH_ENTRY("spacequest2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
-	ENGLISH_ENTRY("spacequest2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
-	ENGLISH_ENTRY("spacequest2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
 	ENGLISH_ENTRY("spacequest45", "SQ4,5.exe", "5cd8db602cedc8f04cd3ca290a4a2693", 6886082),
-	ENGLISH_ENTRY("spacequestforglory", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
 	ENGLISH_ENTRY("spacerangers", "SpaceRangersEp46.exe", "4f6c7ec127e8b0ce077abb357903612f", 41103057),
 	ENGLISH_ENTRY("spacerangersep52", "SpaceRangers52Grisli.exe", "4f6c7ec127e8b0ce077abb357903612f", 208346458),
 	ENGLISH_ENTRY("spacewar", "Spacewar.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2270669),
