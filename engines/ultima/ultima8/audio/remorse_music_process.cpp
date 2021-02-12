@@ -124,9 +124,9 @@ void RemorseMusicProcess::saveTrackState() {
 }
 
 void RemorseMusicProcess::restoreTrackState() {
-	_currentTrack = _savedTrack;
+	int saved = _savedTrack;
 	_savedTrack = 0;
-	playMusic_internal(_currentTrack);
+	playMusic_internal(saved);
 }
 
 void RemorseMusicProcess::playMusic_internal(int track) {
