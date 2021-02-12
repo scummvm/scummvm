@@ -124,13 +124,13 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		container[4] = 96;
 
 		// We take a const ref now to ensure that the map
-		// is not modified by getVal.
+		// is not modified by getValOrDefault.
 		const Common::HashMap<int, int> &containerRef = container;
 
-		TS_ASSERT_EQUALS(containerRef.getVal(0), 17);
-		TS_ASSERT_EQUALS(containerRef.getVal(17), 0);
-		TS_ASSERT_EQUALS(containerRef.getVal(0, -10), 17);
-		TS_ASSERT_EQUALS(containerRef.getVal(17, -10), -10);
+		TS_ASSERT_EQUALS(containerRef.getValOrDefault(0), 17);
+		TS_ASSERT_EQUALS(containerRef.getValOrDefault(17), 0);
+		TS_ASSERT_EQUALS(containerRef.getValOrDefault(0, -10), 17);
+		TS_ASSERT_EQUALS(containerRef.getValOrDefault(17, -10), -10);
 	}
 
 	void test_iterator_begin_end() {
