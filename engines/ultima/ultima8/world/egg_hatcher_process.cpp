@@ -80,9 +80,11 @@ void EggHatcherProcess::run() {
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
 		        z - 48 < az && az <= z + 48) { // CONSTANTS!
-			if (tegg && tegg->isTeleporter()) nearteleporter = true;
+			if (tegg && tegg->isTeleporter())
+				nearteleporter = true;
 
-			if (tegg && av->hasJustTeleported()) continue;
+			if (tegg && av->hasJustTeleported())
+				continue;
 
 			egg->hatch();
 		} else {
@@ -90,7 +92,8 @@ void EggHatcherProcess::run() {
 		}
 	}
 
-	if (!nearteleporter) av->setJustTeleported(false); // clear flag
+	if (!nearteleporter)
+		av->setJustTeleported(false); // clear flag
 }
 
 void EggHatcherProcess::saveData(Common::WriteStream *ws) {

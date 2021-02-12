@@ -350,7 +350,7 @@ bool Container::loadData(Common::ReadStream *rs, uint32 version) {
 
 	uint32 contentcount = rs->readUint32LE();
 
-	// read _contents
+	// read contents
 	for (unsigned int i = 0; i < contentcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = dynamic_cast<Item *>(obj);

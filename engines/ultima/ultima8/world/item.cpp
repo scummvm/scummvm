@@ -1788,6 +1788,9 @@ void Item::enterFastArea() {
 				actor->setActivity(lastactivity);
 			}
 
+			// TODO: For eggs, Crusader also resets the NPC info if a
+			// certain global is set.  For now just skip that.
+
 			//
 			// TODO: Check this. The original games only call usecode for actors or
 			// NOISY types.  Calling for all types like this shouldn't cause any issues
