@@ -866,7 +866,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdarayofhope", "OSD: A Ray of Hope" },
 	{ "osdocd", "OSD:OCD" },
 	{ "osdthelostworldep2", "OSD.The lost world ep 2" },
-	{ "osher", "Osher" },
+	{ "osher", "Boundless Osher - אושר בלי גבולות" },
 	{ "otakurivals", "Otaku Rivals" },
 	{ "otherworlds", "Other Worlds" },
 	{ "otisbuildsafire", "Otis Builds a Fire" },
@@ -1318,7 +1318,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 };
 
 #define UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
-	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::RU_RUS, \
+	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
 	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }
 
 #define UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE) \
@@ -1332,6 +1332,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE)
 #define ENGLISH_DEMO(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_DEMO(ID, FILENAME, MD5, SIZE)
+
+#define HEBREW_ENTRY(ID, FILENAME, MD5, SIZE) \
+	UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, Common::HE_ISR)
 
 #define RUSSIAN_ENTRY(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, Common::RU_RUS)
@@ -2254,7 +2257,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
 	ENGLISH_ENTRY("osdocd", "OSD-OCD.exe", "9dbf699a0e41550bb080813a233e73a8", 47758168),
 	ENGLISH_ENTRY("osdthelostworldep2", "OSD.TLW2.exe", "a80ae4d0aea21508f1df9d18f2839bcb", 22076715),
-	ENGLISH_ENTRY("osher", "Osher.exe", "18b284c22010850f79bc5c20054a70c4", 389177994),
+	HEBREW_ENTRY("osher", "Osher.exe", "18b284c22010850f79bc5c20054a70c4", 389177994),
 	ENGLISH_ENTRY("otakurivals", "Kintaro.exe", "465f972675db2da6040518221af5b0ba", 4045893),
 	ENGLISH_ENTRY("otherworlds", "Other Worlds.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 10669659),
 	ENGLISH_ENTRY("otisbuildsafire", "obaf.exe", "c8d330b58da0a00a136c52ed3a20ae23", 4260705),
