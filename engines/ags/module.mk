@@ -295,6 +295,7 @@ MODULE_OBJS = \
 	plugins/ags_galaxy_steam/ags_blackwell_steam.o \
 	plugins/ags_galaxy_steam/ags_galaxy_steam.o \
 	plugins/ags_joy/ags_joy.o \
+	plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.o \
 	plugins/ags_pal_render/ags_pal_render.o \
 	plugins/ags_pal_render/raycast.o \
 	plugins/ags_parallax/ags_parallax.o \

@@ -29,6 +29,7 @@
 #include "ags/plugins/ags_galaxy_steam/ags_blackwell_steam.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_joy/ags_joy.h"
+#include "ags/plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
@@ -88,6 +89,9 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
 			fname.equalsIgnoreCase("agsgalaxy-disjoint"))
 		return new AGSGalaxySteam::AGSGalaxy();
+
+	if (fname.equalsIgnoreCase("ags_Nickenstien_GFX"))
+		return new AGSNickenstienGFX::AGSNickenstienGFX();
 
 	if (fname.equalsIgnoreCase("agsteam") && version == ::AGS::kBlackwell)
 		return new AGSGalaxySteam::AGSBlackwellSteam();
