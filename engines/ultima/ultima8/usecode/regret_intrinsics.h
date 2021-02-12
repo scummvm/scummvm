@@ -210,7 +210,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_getQHi, // Intrinsic0A6()
 	Actor::I_getLastAnimSet, // Intrinsic0A7()
 	Item::I_getCY, // Intrinsic0A8()
-	0, // Intrinsic0A9()
+	CurrentMap::I_canExistAt, // Intrinsic0A9()
 	Item::I_isOn, // Intrinsic0AA()
 	Actor::I_isDead, // Intrinsic0AB()
 	Item::I_hurl, // Intrinsic0AC()
@@ -263,7 +263,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_getDefaultActivity1, // Intrinsic0D8()
 	Actor::I_getDefaultActivity2, // Intrinsic0D9()
 	Actor::I_getLastAnimSet, // Intrinsic0DA()
-	0, // Actor::GetFlag0x77Field1()
+	0, // Actor::I_isFalling()
 	Item::I_getQLo, // Intrinsic0DC()
 	Item::I_getQHi, // Intrinsic0DD()
 	Actor::I_getNpcNum, // Intrinsic0DE()
@@ -369,7 +369,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_getCY, // Intrinsic13C()
 	Item::I_getCZ, // Intrinsic13D()
 	Item::I_setFrame, // Intrinsic13E()
-	AudioProcess::I_playAmbientSFX, // Intrinsic13F()
+	AudioProcess::I_playSFX, // Intrinsic13F()
 	// 0140
 	AudioProcess::I_isSFXPlaying, // Intrinsic140()
 	0, // TODO: World::I_clrAlertActive, but not the same as remorse
