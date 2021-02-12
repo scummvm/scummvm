@@ -4202,6 +4202,21 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 210: // STUBBED
+		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
+	case 212: // STUBBED
+		mapping = NoirMapping{"OP212", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
+	case 213: // STUBBED
+		mapping = NoirMapping{"OP213", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
 	default:
 		error("Unmapped libCode %d", libCode);
 	}
