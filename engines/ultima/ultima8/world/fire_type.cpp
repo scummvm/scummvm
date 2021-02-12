@@ -202,6 +202,9 @@ void FireType::applySplashDamageAround(const Point3 &pt, int damage, const Item 
 			if (splashrange)
 				splashitemdamage /= splashrange;
 		}
+		if (!splashitemdamage)
+			continue;
+
 		Direction splashdir = src->getDirToItemCentre(pt);
 		splashitem->receiveHit(0, splashdir, splashitemdamage, _typeNo);
 	}
