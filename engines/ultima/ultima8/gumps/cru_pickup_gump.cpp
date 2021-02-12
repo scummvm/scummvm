@@ -123,8 +123,10 @@ void CruPickupGump::updateForNewItem(const Item *item) {
 	assert(item);
 	assert(item->getShape() == _itemShapeNo);
 	TextWidget *oldtext = dynamic_cast<TextWidget *>(FindGump(&FindByIndex<COUNT_TEXT_INDEX>));
-	if (oldtext)
+	if (oldtext) {
+		RemoveChild(oldtext);
 		oldtext->Close();
+	}
 	// TODO: should we add current q? + currentq;
 	// It seems like the items are hacked to give the right "q" for
 	// this gump from the last item, which is why the add process
