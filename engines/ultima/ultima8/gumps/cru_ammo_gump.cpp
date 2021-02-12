@@ -84,6 +84,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	const Std::string bulletstr = Std::string::format("%d", bullets);
 	if (!bulletstr.equals(_bulletsText->getText())) {
 		RemoveChild(_bulletsText);
+		_bulletsText->Close();
 		_bulletsText = new TextWidget(22, _dims.height() / 2 - 3, bulletstr, true, 15);
 		_bulletsText->InitGump(this, false);
 	}
@@ -100,6 +101,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	const Std::string clipstr = Std::string::format("%d", clips);
 	if (!clipstr.equals(_clipsText->getText())) {
 		RemoveChild(_clipsText);
+		_clipsText->Close();
 		_clipsText = new TextWidget(_dims.width() / 2 + 22, _dims.height() / 2 - 3, clipstr, true, 15);
 		_clipsText->InitGump(this, false);
 	}
