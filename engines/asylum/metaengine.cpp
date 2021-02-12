@@ -28,7 +28,7 @@
 
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Asylum";
 	}
 
@@ -36,11 +36,11 @@ public:
 		return "Sanitarium (c) ASC Games";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -58,11 +58,11 @@ bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Asylum::AsylumEngine(syst, desc);
 	}
-	return desc != 0;
+	return desc ? Common::kNoError : Common::kUnsupportedGameidError;
 }
 
 SaveStateList AsylumMetaEngine::listSaves(const char * /*target*/) const {
