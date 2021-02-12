@@ -190,45 +190,16 @@ void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-static void _openScummVmSaveLoad(bool isSave) {
-	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
-	int slot;
-
-	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-
-		slot = dialog->runModalWithCurrentTarget();
-		desc = dialog->getResultString();
-
-		if (desc.empty()) {
-			// create our own description for the saved game, the user didnt enter it
-			desc = dialog->createDefaultSaveDescription(slot);
-		}
-
-		if (desc.size() > 28)
-			desc = Common::String(desc.c_str(), 28);
-	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-		slot = dialog->runModalWithCurrentTarget();
-	}
-
-	delete dialog;
-
-	if (isSave)
-		Ultima8Engine::get_instance()->saveGame(slot, desc);
-	else
-		Ultima8Engine::get_instance()->loadGameState(slot);
-}
-
 void RemorseMenuGump::selectEntry(int entry) {
 	switch (entry) {
 	case 1: // New Game
 		Game::get_instance()->playIntroMovie(true);
 		break;
 	case 2:
+		Ultima8Engine::get_instance()->loadGameDialog();
+		break;
 	case 3: // Load/Save Game
-		_openScummVmSaveLoad(entry == 3);
+		Ultima8Engine::get_instance()->saveGameDialog();
 		break;
 	case 4: {
 		// Options - show the ScummVM options dialog
