@@ -33,7 +33,7 @@ namespace Plugins {
 namespace AGSGalaxySteam {
 
 class AGS2Client : public DLL {
-private:
+protected:
 	static int IsAchievementAchieved(const ScriptMethodParams &params);
 	static int SetAchievementAchieved(const ScriptMethodParams &params);
 	static int ResetAchievement(const ScriptMethodParams &params);
@@ -96,6 +96,8 @@ public:
 class AGSSteam : public AGS2Client {
 private:
 	static const char *AGS_GetPluginName();
+
+protected:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
 	static int IsAchievementAchieved(const ScriptMethodParams &params);

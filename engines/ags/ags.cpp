@@ -308,6 +308,10 @@ const PluginVersion *AGSEngine::getNeededPlugins() const {
 	return _gameDescription->_plugins;
 }
 
+Common::String AGSEngine::getGameId() const {
+	return _gameDescription->desc.gameId;
+}
+
 Common::Error AGSEngine::run() {
 	if (debugChannelSet(-1, kDebugScan)) {
 		// Scan the given folder and subfolders for unknown games

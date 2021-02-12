@@ -26,6 +26,7 @@
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
+#include "ags/plugins/ags_galaxy_steam/ags_blackwell_steam.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
@@ -78,6 +79,9 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
 			fname.equalsIgnoreCase("agsgalaxy-disjoint"))
 		return new AGSGalaxySteam::AGSGalaxy();
+
+	if (fname.equalsIgnoreCase("agsteam") && ::AGS::g_vm->getGameId() == "blackwell5")
+		return new AGSGalaxySteam::AGSBlackwellSteam();
 
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
 			fname.equalsIgnoreCase("agsteam-disjoint"))

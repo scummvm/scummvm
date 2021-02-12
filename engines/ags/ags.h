@@ -88,6 +88,11 @@ public:
 	const PluginVersion *getNeededPlugins() const;
 
 	/**
+	 * Returns the game Id
+	 */
+	Common::String getGameId() const;
+
+	/**
 	 * Returns the current list of savegames
 	 */
 	SaveStateList listSaves() const;
