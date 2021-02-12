@@ -81,8 +81,7 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 	// Set the defaults for gameid and extra
 	_gameid = "ags";
 	_extra.clear();
-	AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
-	AGS::g_fallbackDesc.desc.extra = _extra.c_str();
+	bool hasUnknownFiles = true;
 
 	// Scan for AGS games
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -105,6 +104,19 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			f.seek(0);
 			_md5 = Common::computeStreamMD5AsString(f, 5000);
 
+			// Check whether the game is in the detection list with a different filename
+			for (const ::AGS::AGSGameDescription *gameP = ::AGS::GAME_DESCRIPTIONS;
+				gameP->desc.gameId; ++gameP) {
+				if (_md5 == gameP->desc.filesDescriptions[0].md5 &&
+					f.size() == gameP->desc.filesDescriptions[0].fileSize) {
+					hasUnknownFiles = false;
+					_gameid = gameP->desc.gameId;
+					break;
+				}
+			}
+
+			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
+			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
@@ -113,7 +125,7 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			game.matchedFiles[_filename].md5 = _md5;
 			game.matchedFiles[_filename].size = f.size();
 
-			game.hasUnknownFiles = true;
+			game.hasUnknownFiles = hasUnknownFiles;
 			return game;
 		}
 	}
