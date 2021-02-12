@@ -510,11 +510,19 @@ void line(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 
 void rect(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
 	surf.frameRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
 void rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
 	surf.fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
