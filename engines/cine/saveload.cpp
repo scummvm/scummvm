@@ -1030,7 +1030,7 @@ void CineEngine::makeSave(const Common::String &saveFileName, uint32 playtime,
 		renderer->popSavedBackBuffer(BEFORE_OPENING_MENU);
 	}
 
-	MetaEngine::appendExtendedSave(fHandle.get(), playtime, desc, isAutosave);
+	getMetaEngine().appendExtendedSave(fHandle.get(), playtime, desc, isAutosave);
 
 	renderer->restoreSavedBackBuffer(BEFORE_TAKING_THUMBNAIL);
 

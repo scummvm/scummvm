@@ -200,11 +200,13 @@ public:
  * the engine, while a MetaEngine will always build into the executable to be able to detect code.
  */
 class MetaEngine : public PluginObject {
-private:
+protected:
 	/**
-	 * Convert the current screen contents to a thumbnail and save it.
+	 * Convert the current screen contents to a thumbnail. Can be overriden by individual
+	 * engine meta engines to provide their own thumb, such as hiding any on-screen save
+	 * dialog so that it won't appear in the thumbnail.
 	 */
-	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
+	virtual void getSavegameThumbnail(Graphics::Surface &thumb);
 public:
 	virtual ~MetaEngine() {}
 
@@ -488,7 +490,8 @@ public:
 	/**
 	 * Write the extended savegame header to the given savegame file.
 	 */
-	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
+	void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
+
 	/**
 	 * Parse the extended savegame header to retrieve the SaveStateDescriptor information.
 	 */

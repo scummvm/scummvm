@@ -165,21 +165,19 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 	saveFile->writeString(desc);
 	saveFile->writeByte(isAutosave);
 
-	saveScreenThumbnail(saveFile);
+	// Write out the thumbnail
+	Graphics::Surface thumb;
+	getSavegameThumbnail(thumb);
+	Graphics::saveThumbnail(*saveFile, thumb);
+	thumb.free();
 
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 
 	saveFile->finalize();
 }
 
-void MetaEngine::saveScreenThumbnail(Common::OutSaveFile *saveFile) {
-	// Create a thumbnail surface from the screen
-	Graphics::Surface thumb;
+void MetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	::createThumbnailFromScreen(&thumb);
-
-	// Write out the thumbnail
-	Graphics::saveThumbnail(*saveFile, thumb);
-	thumb.free();
 }
 
 void MetaEngine::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc) {
