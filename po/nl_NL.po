@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
+"POT-Creation-Date: 2021-02-13 03:22+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7239,15 +7239,15 @@ msgstr "Ultima VIII Cheats"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Foutopsporen"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr "[corrupt]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr "[verouderd]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
 msgstr "[te modern]"
 

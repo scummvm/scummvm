@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
+"POT-Creation-Date: 2021-02-13 03:22+0000\n"
 "PO-Revision-Date: 2021-02-09 09:23+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7139,15 +7139,15 @@ msgstr "Ultima VIII Csalások"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Debug"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr "[elrontott]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr "[elavult]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
 msgstr "[túl modern]"
 

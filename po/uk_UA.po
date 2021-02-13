@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
+"POT-Creation-Date: 2021-02-13 03:22+0000\n"
 "PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7166,15 +7166,15 @@ msgstr "Ultima VIII Чіти"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Відладка"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr "[пошкоджений]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr "[застарілий]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
 msgstr "[надто новий]"
 

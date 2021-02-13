@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
+"POT-Creation-Date: 2021-02-13 03:22+0000\n"
 "PO-Revision-Date: 2021-02-10 20:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7310,15 +7310,15 @@ msgstr "Ultima VIII Κόλπα"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Αποσφαλμάτωση"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr "[κατεστραμμένο]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr "[ξεπερασμένο]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
 msgstr "[πολύ καινούργιο]"
 
