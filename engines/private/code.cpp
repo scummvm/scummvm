@@ -132,8 +132,7 @@ int constpush()	{
     return 0;
 }
 
-int strpush()	/* push constant onto stack */
-{
+int strpush() { /* push constant onto stack */
     Datum d;
     d.type = STRING;
     Symbol *s = (Symbol *)*pc++;
@@ -144,8 +143,7 @@ int strpush()	/* push constant onto stack */
 }
 
 
-int varpush()	/* push variable onto stack */
-{
+int varpush() {	/* push variable onto stack */
     Datum d;
     d.type = NAME;
     d.u.sym = (Symbol *)(*pc++);
@@ -154,8 +152,7 @@ int varpush()	/* push variable onto stack */
     return 0;
 }
 
-int funcpush() //(char *name, int nargs)
-{
+int funcpush() {
     Datum s, n, arg;
     s = pop();
     n = pop();
@@ -366,15 +363,11 @@ int ne() {
     d2 = pop();
     d1 = pop();
     if (d1.type == NAME) {
-        //char *name =  d1.u.sym->name->c_str();
-        //debug("eval %s to %d",
         d1.u.val = d1.u.sym->u.val;
         d1.type = NUM;
     }
 
     if (d2.type == NAME) {
-        //char *name =  d1.u.sym->name->c_str();
-        //debug("eval %s to %d",
         d2.u.val = d2.u.sym->u.val;
         d2.type = NUM;
     }
