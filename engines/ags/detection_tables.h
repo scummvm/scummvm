@@ -148,6 +148,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 	// Commercial games
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
+	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
 	{ "blackwell3", "The Blackwell Convergence" },
@@ -1492,12 +1493,21 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Commercial games
 	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
+	ENGLISH_ENTRY("alemmo", "Al_Emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
+	ENGLISH_ENTRY("alemmoanozira", "Postcards from Anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597), // Steam
+	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071),
+	ENGLISH_ENTRY("blackwell1", "ac2game.dat", "605e124cb7e0b56841c471e2d641c224", 68665467), // Android
+	ENGLISH_ENTRY("blackwell1", "ac2game.dat", "4668e05ef2a94267b0d571e715413302", 64200367), // Humble Bundle (Linux)
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128), // Steam
+	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14469500),
+	ENGLISH_ENTRY("blackwell2", "ac2game.dat", "5c3a940514d91431e8e1c372018851ca", 69452991), // Android
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803), // Steam
+	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 171969680),
+	ENGLISH_ENTRY("blackwell3", "ac2game.dat", "2260c1a21aba7ac00baf0100d4ca54f1", 173301005), // Android
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138), // Steam
@@ -1507,7 +1517,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("danewguys2", "Jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
+	ENGLISH_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
+	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814364), // Humble Bundle
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
@@ -1517,13 +1529,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
 	ENGLISH_ENTRY("shardlight", "Shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	ENGLISH_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
+	ENGLISH_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32339699), // Android
 	ENGLISH_ENTRY("superjazzman", "SJM.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
+	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
 	ENGLISH_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	ENGLISH_DEMO("alemmo", "al-emmo.exe", "9661b29821fdc7f93d286f25c195fc22", 8932837), // Steam
+	ENGLISH_DEMO("alemmo", "Emmo_Demo.exe", "2fb17c4382f2f54ef6d040b6493fec4b", 8943213), // Official website
 	ENGLISH_DEMO("alquest1", "AlQuest.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 20154310),
 	ENGLISH_DEMO("bananaman", "Banana Man Demo.exe", "615e806856b7730afadf1fea9a756b70", 53524952),
 	ENGLISH_DEMO("blackwell1", "Blackwell Demo.exe", "2eeca6bae968dc61b5ed36561efc0fca", 53342880),
@@ -1580,6 +1595,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("5daysastranger", "5days.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4440143),
 	ENGLISH_ENTRY("5oclocklock", "DadGame.exe", "3018c5443291aec823bc63342ce4c58b", 6073887),
 	ENGLISH_ENTRY("6daysasacrifice", "6das.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7993899),
+	ENGLISH_ENTRY("6daysasacrifice", "6das se.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8173314),
 	ENGLISH_ENTRY("6mornings", "project2.exe", "e7dac058b9bc0b42d489e474c2ddec84", 11595240),
 	ENGLISH_ENTRY("7daysaskeptic", "7days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4863356),
 	ENGLISH_ENTRY("7daysaskeptic", "7days.exe", "465f972675db2da6040518221af5b0ba", 4693374),
@@ -2648,7 +2664,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("trevordaisoninouterspace", "TrevorDaison.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 22641402),
 	ENGLISH_ENTRY("trexandmusclesambigtroubleinspf", "Trex and Muscle Sam.exe", "91696f9333f36bdba272220c644c72e7", 120822652),
 	ENGLISH_ENTRY("trilbysnotes", "notes.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5736960),
+	ENGLISH_ENTRY("trilbysnotes", "notes se.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5880445),
 	ENGLISH_ENTRY("trilbytheartoftheft", "artoftheft.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8940823),
+	ENGLISH_ENTRY("trilbytheartoftheft", "artoftheft.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8940666), // v1.3.4
 	ENGLISH_ENTRY("trivialpassyouit", "Trivial Pass You It.exe", "01823d511cc00f4de6fd920eb543c6e7", 2737077),
 	ENGLISH_ENTRY("tuberainbow", "Tube Rainbow.exe", "03c8c45bd00daca1a9d75d1133df5640", 5669127),
 	ENGLISH_ENTRY("tvbrder", "TvaBroder.exe", "7a669a96e488653db661d285bbc12783", 17875297),
