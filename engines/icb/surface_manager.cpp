@@ -34,6 +34,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "engines/util.h"
 
@@ -162,7 +163,7 @@ uint32 _surface_manager::Init_direct_draw() {
 	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, nullptr);
 
 	screenSurface = new Graphics::Surface();
-	screenSurface->create(SCREEN_WIDTH, SCREEN_DEPTH, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
+	screenSurface->create(SCREEN_WIDTH, SCREEN_DEPTH, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 	if (!screenSurface->getBasePtr(0, 0)) {
 		Fatal_error("Initialise Graphics::Surface::create failed");
 	}
@@ -174,6 +175,7 @@ uint32 _surface_manager::Init_direct_draw() {
 	m_Surfaces[0]->m_height = SCREEN_DEPTH;
 	m_Surfaces[0]->m_name = "backbuffer";
 	m_Surfaces[0]->m_dds = screenSurface;
+	m_Surfaces[0]->m_colorKeyEnable = false;
 
 	working_buffer_id = 0;
 
@@ -272,7 +274,8 @@ uint32 _surface_manager::Create_new_surface(const char *name, uint32 width, uint
 	m_Surfaces[slot]->m_height = height;
 	m_Surfaces[slot]->m_name = name;
 	m_Surfaces[slot]->m_dds = new Graphics::Surface;
-	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
+	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+	m_Surfaces[slot]->m_colorKeyEnable = false;
 
 	if (m_Surfaces[slot]->m_dds)
 		return slot;
@@ -333,6 +336,47 @@ void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
 	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->h, m_Surfaces[s_id]->m_dds->w), rgb_value);
 }
 
+static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPitch, int dstPitch, int width, int height,
+                                bool8 colorKeyEnable, uint32 colorKey) {
+	assert(srcBuffer);
+	assert(dstBuffer);
+
+	if (colorKeyEnable) {
+		const uint32 *src = (const uint32 *)srcBuffer;
+		uint32 *dst = (uint32 *)dstBuffer;
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				if (src[w] != colorKey && src[w] != 0)
+					dst[w] = src[w];
+			}
+			src += (srcPitch >> 2);
+			dst += (dstPitch >> 2);
+		}
+	} else {
+		const byte *src = (const byte *)srcBuffer;
+		byte *dst = (byte *)dstBuffer;
+		for (int h = 0; h < height; h++) {
+			memcpy(dst, src, width * 4);
+			src += srcPitch;
+			dst += dstPitch;
+		}
+	}
+}
+
+static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
+                              int destX, int destY, const Common::Rect subRect,
+                              bool8 colorKeyEnable, uint32 colorKey) {
+	assert(srcSurface->format == dstSurface->format);
+	assert(srcSurface->format.bytesPerPixel == 4);
+	assert(destX >= 0 && destX < dstSurface->w);
+	assert(destY >= 0 && destY < dstSurface->h);
+	assert(subRect.height() > 0 && destY + subRect.height() <= dstSurface->h);
+	assert(subRect.width() > 0 && destX + subRect.width() <= dstSurface->w);
+
+	copyRectToSurface(dstSurface->getBasePtr(destX, destY), const_cast<void *>(srcSurface->getBasePtr(subRect.left, subRect.top)),
+	                  srcSurface->pitch, dstSurface->pitch, subRect.width(), subRect.height(), colorKeyEnable, colorKey);
+}
+
 void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRECT *pSrcRect, LRECT *pDestRect, uint32 dwFlags) {
 	Common::Rect srcRect, dstRect;
 	if (pSrcRect) {
@@ -353,26 +397,29 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 		dstRect.bottom = pDestRect->bottom;
 	}
 
-	Graphics::Surface *destSurface = m_Surfaces[to_id]->m_dds;
+	Graphics::Surface *dstSurface = m_Surfaces[to_id]->m_dds;
 	Graphics::Surface *srcSurface = m_Surfaces[from_id]->m_dds;
 
 	if (dwFlags == 0) {
-		//SDL_SetColorKey(m_Surfaces[from_id]->m_dds, SDL_FALSE, 0);
-		//printf("------------ Blit_surface_to_surface: dwFlags is 0 --------!!!!!!\n");
+		m_Surfaces[from_id]->m_colorKeyEnable = false;
 	}
 
 	// TODO: Check that the sizes match.
 	if (pDestRect) {
 		if (pSrcRect) {
-			destSurface->copyRectToSurface(*srcSurface, dstRect.left, dstRect.top, srcRect);
+			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, srcRect,
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		} else {
-			destSurface->copyRectToSurface(*srcSurface, dstRect.left, dstRect.top, Common::Rect(0, 0, srcSurface->w, srcSurface->h));
+			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		}
 	} else {
 		if (pSrcRect) {
-			destSurface->copyRectToSurface(*srcSurface, 0, 0, srcRect);
+			copyRectToSurface(dstSurface, srcSurface, 0, 0, srcRect,
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		} else {
-			destSurface->copyRectToSurface(*srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h));
+			copyRectToSurface(dstSurface, srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		}
 	}
 	//SDL_BlitSurface(srcSurface, pSrcRect ? &srcRect : NULL, destSurface, pDestRect ? &dstRect : NULL);
@@ -395,8 +442,8 @@ void _surface_manager::Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col) {
 }
 
 void _surface_manager::Set_transparent_colour_key(uint32 nSurfaceID, uint32 nKey) {
-	warning("TODO: Handle color-key");
-	//SDL_SetColorKey(m_Surfaces[nSurfaceID]->m_dds, SDL_TRUE, nKey);
+	m_Surfaces[nSurfaceID]->m_colorKeyEnable = true;
+	m_Surfaces[nSurfaceID]->m_colorKey = nKey;
 }
 
 void _surface_manager::DrawEffects(uint32 surface_id) {
