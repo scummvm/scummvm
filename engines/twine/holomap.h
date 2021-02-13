@@ -79,7 +79,7 @@ private:
 		int16 y = 0;
 		int16 z = 0;
 	};
-	HolomapSurface _holomapSurface[512];
+	HolomapSurface _holomapSurface[561];
 
 	struct HolomapSort {
 		int16 z = 0;

@@ -168,13 +168,13 @@ void Holomap::prepareHolomapProjectedPositions() {
 void Holomap::prepareHolomapPolygons() {
 	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int holomapSortArrayIdx = 0;
+	int holomapSurfaceArrayIdx = 0;
 	uint16 projectedIndex = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
-		HolomapSurface* vec;
 		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
-			vec = &_holomapSurface[holomapSortArrayIdx];
+			HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destZ;
@@ -186,17 +186,19 @@ void Holomap::prepareHolomapPolygons() {
 			_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
 			rotation += ANGLE_11_25;
 			++projectedIndex;
-			++holomapSortArrayIdx;
 		}
+		HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 		_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
 		_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
 		_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
 		rotation += ANGLE_11_25;
 		++projectedIndex;
-		++holomapSortArrayIdx;
 	}
-	qsort(_holomapSurface, ARRAYSIZE(_holomapSurface), sizeof(HolomapSurface), sortHolomapSurfaceCoordsByDepth);
+	assert(holomapSortArrayIdx <= ARRAYSIZE(_holomapSort));
+	assert(holomapSurfaceArrayIdx <= ARRAYSIZE(_holomapSurface));
+	assert(projectedIndex <= ARRAYSIZE(_projectedSurfacePositions));
+	qsort(_holomapSort, ARRAYSIZE(_holomapSort), sizeof(HolomapSort), sortHolomapSurfaceCoordsByDepth);
 }
 
 bool Holomap::vertices_FUN_00423ebb(const Vertex *vertices) const {
@@ -208,7 +210,7 @@ bool Holomap::vertices_FUN_00423ebb(const Vertex *vertices) const {
 	const int16 sVar2 = sVar6 - sVar5;
 	const bool bVal7 = sVar6 < sVar5;
 	const bool bVal8 = sVar2 < uVar1;
-	if ((bVal7 != bVal8) != (int16)(sVar2 - uVar1) < 0) {
+	if ((bVal7 != bVal8) != ((int16)(sVar2 - uVar1) < 0)) {
 		return true;
 	}
 	return false;
