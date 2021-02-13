@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/remorse_music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
