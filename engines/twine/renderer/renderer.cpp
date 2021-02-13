@@ -1531,7 +1531,7 @@ void Renderer::vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int
 #endif
 }
 
-void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
+void Renderer::vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
 	clip_or_depth_DAT_00433444 = 32000;
 	y_DAT_00433448 = -32000;
 	uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
@@ -1545,10 +1545,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&polyTab2*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&polyTab2*/);
 	}
 	y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
 	y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
@@ -1561,10 +1561,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&DAT_0043278e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
 	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
 	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
@@ -1577,10 +1577,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*polyTab2*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*polyTab2*/);
 	}
 	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
 	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
@@ -1593,10 +1593,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*(int16 *)&DAT_0043278e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
 	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
 	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
@@ -1609,10 +1609,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*polyTab2*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*polyTab2*/);
 	}
 	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
 	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
@@ -1625,10 +1625,10 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
 		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*(int16 *)&DAT_0043278e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
 	holomap_surface_load_FUN_0042194d(vertexCoordinates, clip_or_depth_DAT_00433444,(int16)y_DAT_00433448, _engine->_resources->holomapImagePtr);
 }

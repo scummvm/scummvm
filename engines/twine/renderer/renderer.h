@@ -385,6 +385,10 @@ private:
 	void baseMatrixTranspose();
 
 	void holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr);
+	void vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int16 *vertexCoordinatePtr);
+
+	int16 clip_or_depth_DAT_00433444 = 0;
+	uint32 y_DAT_00433448 = 0;
 
 public:
 	Renderer(TwinEEngine *engine);
@@ -433,17 +437,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
 
-	int16 clip_or_depth_DAT_00433444 = 0;
-	uint32 y_DAT_00433448 = 0;
-	uint16 tex_coords_maybe_DAT_0043336a = 0;
-	uint16 tex_coords_maybe_DAT_0043336c = 0;
-	uint16 tex_coords_maybe_DAT_00433370 = 0;
-	uint16 tex_coords_maybe_DAT_00433372 = 0;
-	uint16 tex_coords_maybe_DAT_00433376 = 0;
-	uint16 tex_coords_maybe_DAT_00433378 = 0;
-
-	void vertices_FUN_00421010(Vertex *vertexCoordinates);
-	void vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int16 *vertexCoordinatePtr);
+	void vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]);
 };
 
 } // namespace TwinE

@@ -225,38 +225,52 @@ void Holomap::renderHolomapSurfacePolygons() {
 		Vertex vertexCoordinates[3];
 		vertexCoordinates[0].x = pos1.x;
 		vertexCoordinates[0].y = pos1.y;
+		vertexCoordinates[0].colorIndex = 0;
 		vertexCoordinates[1].x = pos2.x;
 		vertexCoordinates[1].y = pos2.y;
+		vertexCoordinates[1].colorIndex = 0;
 		vertexCoordinates[2].x = pos3.x;
 		vertexCoordinates[2].y = pos3.y;
+		vertexCoordinates[2].colorIndex = 0;
 		bool iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
-			_engine->_renderer->tex_coords_maybe_DAT_0043336a = pos1.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_0043336c = pos1.unk2;
-			_engine->_renderer->tex_coords_maybe_DAT_00433370 = pos2.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_00433372 = pos2.unk2;
-			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos3.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos3.unk2;
-			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
+			Vertex vertexCoordinates2[3];
+			vertexCoordinates2[0].x = pos1.unk1;
+			vertexCoordinates2[0].y = pos1.unk2;
+			vertexCoordinates2[0].colorIndex = 0;
+			vertexCoordinates2[1].x = pos2.unk1;
+			vertexCoordinates2[1].y = pos2.unk2;
+			vertexCoordinates2[1].colorIndex = 0;
+			vertexCoordinates2[2].x = pos3.unk1;
+			vertexCoordinates2[2].y = pos3.unk2;
+			vertexCoordinates2[2].colorIndex = 0;
+			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates, vertexCoordinates2);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
 		const HolomapProjectedPos &pos6 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
 		vertexCoordinates[0].x = pos4.x;
 		vertexCoordinates[0].y = pos4.y;
+		vertexCoordinates[0].colorIndex = 0;
 		vertexCoordinates[1].x = pos5.x;
 		vertexCoordinates[1].y = pos5.y;
+		vertexCoordinates[1].colorIndex = 0;
 		vertexCoordinates[2].x = pos6.x;
 		vertexCoordinates[2].y = pos6.y;
+		vertexCoordinates[2].colorIndex = 0;
 		iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
-			_engine->_renderer->tex_coords_maybe_DAT_0043336a = pos4.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_0043336c = pos4.unk2;
-			_engine->_renderer->tex_coords_maybe_DAT_00433370 = pos5.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_00433372 = pos5.unk2;
-			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos6.unk1;
-			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos6.unk2;
-			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
+			Vertex vertexCoordinates2[3];
+			vertexCoordinates2[0].x = pos4.unk1;
+			vertexCoordinates2[0].y = pos4.unk2;
+			vertexCoordinates2[0].colorIndex = 0;
+			vertexCoordinates2[1].x = pos5.unk1;
+			vertexCoordinates2[1].y = pos5.unk2;
+			vertexCoordinates2[1].colorIndex = 0;
+			vertexCoordinates2[2].x = pos6.unk1;
+			vertexCoordinates2[2].y = pos6.unk2;
+			vertexCoordinates2[2].colorIndex = 0;
+			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates, vertexCoordinates2);
 		}
 	}
 }
