@@ -386,6 +386,7 @@ private:
 
 	void renderHolomapPolygons(int32 top, int16 bottom);
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
+	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, uint32 &top, uint32 &bottom);
 
 public:
 	Renderer(TwinEEngine *engine);

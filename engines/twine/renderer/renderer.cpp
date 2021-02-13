@@ -1537,107 +1537,46 @@ static const int hmPolyOffset4 = 180;  /* 0x00b4 */
 static const int hmPolyOffset5 = 240;  /* 0x00f0 */
 static const int hmPolyOffset6 = 300;  /* 0x012c */
 
-void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
-	int16 top = 32000;
-	uint32 bottom = (uint32)-32000;
+void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, uint32 &top, uint32 &bottom) {
+	const uint32 y_uVar1 = (uint32)(uint16)vertex1.y;
+	const uint32 y_uVar2 = (uint32)(uint16)vertex2.y;
+	if (y_uVar1 < y_uVar2) {
+		if ((int32)y_uVar1 <= (int32)top) {
+			top = y_uVar1;
+		}
+		if ((int32)bottom <= (int32)y_uVar2) {
+			bottom = y_uVar2;
+		}
+		computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertex2.x, y_uVar1,
+							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset1);
+		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
+							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset3);
+		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.y,
+							  (uint32)(uint16)vertex1.y, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
+	}
+	if (y_uVar2 < y_uVar1) {
+		if ((int32)y_uVar2 <= (int32)top) {
+			top = y_uVar2;
+		}
+		if ((int32)bottom <= (int32)y_uVar1) {
+			bottom = y_uVar1;
+		}
+		computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertex2.x, y_uVar1,
+							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset2);
+		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
+							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset5);
+		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.y,
+							  (uint32)(uint16)vertex1.y, (uint32)vertex3.y, _polyTab + hmPolyOffset6);
+	}
+}
 
-	{
-		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
-		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
-		if (y_uVar1 < y_uVar2) {
-			if ((int32)y_uVar1 <= (int32)top) {
-				top = y_uVar1;
-			}
-			if ((int32)bottom <= (int32)y_uVar2) {
-				bottom = y_uVar2;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[0].x, _polyTab + hmPolyOffset1);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
-								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, _polyTab + hmPolyOffset3);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
-								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, _polyTab + hmPolyOffset4);
-		}
-		if (y_uVar2 < y_uVar1) {
-			if ((int32)y_uVar2 <= (int32)top) {
-				top = y_uVar2;
-			}
-			if ((int32)bottom <= (int32)y_uVar1) {
-				bottom = y_uVar1;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[0].x, _polyTab + hmPolyOffset2);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
-								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, _polyTab + hmPolyOffset5);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
-								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, _polyTab + hmPolyOffset6);
-		}
-	}
-	{
-		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
-		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
-		if (y_uVar1 < y_uVar2) {
-			if ((int32)y_uVar1 <= (int32)top) {
-				top = y_uVar1;
-			}
-			if ((int32)bottom <= (int32)y_uVar2) {
-				bottom = y_uVar2;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[1].x, _polyTab + hmPolyOffset1);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
-								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, _polyTab + hmPolyOffset3);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
-								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, _polyTab + hmPolyOffset4);
-		}
-		if (y_uVar2 < y_uVar1) {
-			if ((int32)y_uVar2 <= (int32)top) {
-				top = y_uVar2;
-			}
-			if ((int32)bottom <= (int32)y_uVar1) {
-				bottom = y_uVar1;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[1].x, _polyTab + hmPolyOffset2);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
-								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, _polyTab + hmPolyOffset5);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
-								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, _polyTab + hmPolyOffset6);
-		}
-	}
-	{
-		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
-		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
-		if (y_uVar1 < y_uVar2) {
-			if ((int32)y_uVar1 <= (int32)top) {
-				top = y_uVar1;
-			}
-			if ((int32)bottom <= (int32)y_uVar2) {
-				bottom = y_uVar2;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[2].x, _polyTab + hmPolyOffset1);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
-								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, _polyTab + hmPolyOffset3);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
-								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, _polyTab + hmPolyOffset4);
-		}
-		if (y_uVar2 < y_uVar1) {
-			if ((int32)y_uVar2 <= (int32)top) {
-				top = y_uVar2;
-			}
-			if ((int32)bottom <= (int32)y_uVar1) {
-				bottom = y_uVar1;
-			}
-			computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-								(uint32)(uint16)vertexCoordinates[2].x, _polyTab + hmPolyOffset2);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
-								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, _polyTab + hmPolyOffset5);
-			computeHolomapPolygon((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
-								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, _polyTab + hmPolyOffset6);
-		}
-	}
-	renderHolomapPolygons(top, (int16)bottom);
+void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
+	uint32 top = 32000;
+	uint32 bottom = (uint32)-32000;
+	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
+	renderHolomapPolygons(top, bottom);
 }
 
 void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
