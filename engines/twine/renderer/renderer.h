@@ -375,7 +375,7 @@ private:
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
 	void computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const;
-	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
+	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);

@@ -389,12 +389,7 @@ void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vlef
 	}
 }
 
-void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
-	if (numVertices <= 0) {
-		return;
-	}
-	computeBoundingBox(vertices, numVertices, vleft, vright, vtop, vbottom);
-
+void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
@@ -933,7 +928,11 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices)
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
-	computePolygons(polygon.renderType, vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
+
+	if (polygon.numVertices > 0) {
+		computeBoundingBox(vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
+	}
+	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int32 vsize = vbottom - vtop + 1;
