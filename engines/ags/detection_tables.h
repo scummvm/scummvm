@@ -155,6 +155,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
 	{ "geminirue", "Gemini Rue" },
+	{ "goldenwake", "A Golden Wake" },
 	{ "lamplightcity", "Lamplight City" },
 	{ "primordia", "Primordia" },
 	{ "resonance", "Resonance" },
@@ -163,6 +164,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shivah", "Shivah" },
 	{ "superjazzman", "Super Jazz Man" },
 	{ "technobabylon", "Technobabylon" },
+	{ "theadventuresoffatman", "The Adventures of Fatman" },
 	{ "thecatlady", "The Cat Lady" },
 	{ "unavowed", "Unavowed" },
 	{ "whispersofamachine", "Whispers of a Machine" },
@@ -564,7 +566,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "glitchquestnofun", "Glitch Quest (nofun)" },
 	{ "gnomeshomebrewingadventure", "Gnome's Homebrewing Adventure" },
 	{ "gnrblexags", "Gnrblex_AGS" },
-	{ "goldenwake", "A Golden Wake" },
 	{ "goneboatfishin", "Gone Boat Fishin'" },
 	{ "goodman", "Good Man" },
 	{ "goodmorningmrgingerbread", "Good Morning, Mr. Gingerbread!" },
@@ -1138,7 +1139,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "the30minutewar", "The 30 Minute War" },
 	{ "the7thsense", "The 7th Sense" },
 	{ "theadventureofthehero", "The Adventure of the Hero" },
-	{ "theadventuresoffatman", "The Adventures of Fatman" },
 	{ "theadventuresofturquoisem", "The Adventures of Turquoise M" },
 	{ "theassassin", "The Assassin" },
 	{ "theawakening", "The Awakening" },
@@ -1505,6 +1505,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("charnelhousetrilogy", "CHT.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
+	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
@@ -1961,7 +1962,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("glitchquestnofun", "GQnofun.exe", "465f972675db2da6040518221af5b0ba", 3181931),
 	ENGLISH_ENTRY("gnomeshomebrewingadventure", "gnomebrew.exe", "abb3aee32ae97a8475626cceefb0664e", 50307521),
 	ENGLISH_ENTRY("gnrblexags", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85038656),
-	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
 	ENGLISH_ENTRY("goneboatfishin", "Gone Boat Fishin'.exe", "bdd1df0484e296faa348ffcb03e16273", 72936045),
 	ENGLISH_ENTRY("goodmorningmrgingerbread", "mister_gingerbread.exe", "b42f80733b6bd1ded5e29be2c683afa8", 7084332),
 	ENGLISH_ENTRY("goodsantabadsanta", "x-mags.exe", "71ca0d6c1c699595f28a2125948d4a84", 1966547),
