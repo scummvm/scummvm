@@ -23,6 +23,7 @@
 #include "common/translation.h"
 #include "gui/saveload.h"
 #include "image/png.h"
+#include "engines/dialogs.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
 #include "ultima/ultima8/conf/config_file_manager.h"
@@ -1154,6 +1155,21 @@ void Ultima8Engine::syncSoundSettings() {
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+}
+
+void Ultima8Engine::applyGameSettings() {
+	UltimaEngine::applyGameSettings();
+
+	// TODO: handle dynamic option changes when implemented
+}
+
+void Ultima8Engine::openConfigDialog() {
+	GUI::ConfigDialog dlg;
+	dlg.runModal();
+
+	g_system->applyBackendSettings();
+	applyGameSettings();
+	syncSoundSettings();
 }
 
 Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) {

@@ -287,6 +287,16 @@ public:
 	void syncSoundSettings() override;
 
 	/**
+	* Notifies the engine that the game settings may have changed
+	*/
+	void applyGameSettings() override;
+
+	/**
+	* Opens the config dialog and apply setting after close
+	*/
+	void openConfigDialog();
+
+	/**
 	 * Returns true if a savegame can be loaded
 	 */
 	bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
