@@ -22,7 +22,7 @@
 
 
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/item_factory.h"

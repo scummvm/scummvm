@@ -22,7 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

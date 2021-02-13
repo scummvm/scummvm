@@ -29,7 +29,8 @@
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/detection.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -52,11 +53,26 @@ class Mouse;
 class AvatarMoverProcess;
 class Texture;
 class AudioMixer;
+class FileSystem;
+class ConfigFileManager;
+struct GameInfo;
 
-class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
+#define GAME_IS_U8 (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
+#define GAME_IS_REMORSE (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
+#define GAME_IS_REGRET (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
+#define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
+
+class Ultima8Engine : public Shared::UltimaEngine {
 	friend class Debugger;
 private:
 	bool _isRunning;
+	GameInfo *_gameInfo;
+
+	// minimal system
+	FileSystem *_fileSystem;
+	ConfigFileManager *_configFileMan;
+
+	static Ultima8Engine *_instance;
 
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
 	bool _ttfOverrides;
@@ -140,6 +156,13 @@ private:
 	void GraphicSysInit(); // starts/restarts the graphics subsystem
 
 	void handleDelayedEvents();
+
+	//! Fill a GameInfo struct for the give game name
+	//! \param game The id of the game to check (from pentagram.cfg)
+	//! \param gameinfo The GameInfo struct to fill
+	//! \return true if detected all the fields, false if detection failed
+	bool getGameInfo(const istring &game, GameInfo *gameinfo);
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -156,7 +179,7 @@ public:
 	~Ultima8Engine() override;
 
 	static Ultima8Engine *get_instance() {
-		return dynamic_cast<Ultima8Engine *>(_application);
+		return _instance;
 	}
 
 	bool hasFeature(EngineFeature f) const override;
@@ -164,10 +187,16 @@ public:
 	bool startup();
 	void shutdown();
 
+	bool setupGame();
 	bool startupGame();
 	void shutdownGame(bool reloading = true);
 
 	void changeVideoMode(int width, int height);
+
+	//! Get current GameInfo struct
+	const GameInfo *getGameInfo() const {
+		return _gameInfo;
+	}
 
 	RenderSurface *getRenderScreen() {
 		return _screen;

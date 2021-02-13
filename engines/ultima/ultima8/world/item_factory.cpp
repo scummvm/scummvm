@@ -29,7 +29,7 @@
 #include "ultima/ultima8/world/glob_egg.h"
 #include "ultima/ultima8/world/monster_egg.h"
 #include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

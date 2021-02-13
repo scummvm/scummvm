@@ -219,7 +219,7 @@ void MetaEngine::setGameMenuActive(bool isActive) {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->cleanupGameKeymaps();
 
-	const Common::String gameId = CoreApp::get_instance()->getGameInfo()->_name;
+	const Common::String gameId = Ultima8Engine::get_instance()->getGameInfo()->_name;
 
 	Common::KeymapArray arr = initKeymaps(gameId, isActive);
 

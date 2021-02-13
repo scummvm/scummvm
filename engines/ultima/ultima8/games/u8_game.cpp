@@ -156,7 +156,7 @@ bool U8Game::startInitialUsecode(int saveSlot) {
 
 
 ProcId U8Game::playIntroMovie(bool fade) {
-	const GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
+	const GameInfo *gameinfo = Ultima8Engine::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "U8Game::playIntro: Unknown language." << Std::endl;
@@ -190,7 +190,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 }
 
 void U8Game::playCredits() {
-	const GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
+	const GameInfo *gameinfo = Ultima8Engine::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "U8Game::playCredits: Unknown language." << Std::endl;
