@@ -174,4 +174,4 @@ Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, Symbo
     return sp;
 }
 
-}
+} // End of namespace Private

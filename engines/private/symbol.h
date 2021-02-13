@@ -64,6 +64,6 @@ extern Symbol  *constant(int, int, char *);
 extern void     installAll(char *);
 extern Symbol  *lookup(Common::String, SymbolMap);
 
-}
+} // End of namespace Private
 
 #endif

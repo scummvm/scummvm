@@ -34,6 +34,6 @@ namespace Private {
 typedef Common::HashMap<Common::String, const byte*> CursorDataMap;
 typedef Common::HashMap<Common::String, Common::Point*> CursorPointMap;
 
-}
+} // End of namespace Private
 
 #endif

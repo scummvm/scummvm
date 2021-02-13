@@ -821,4 +821,4 @@ void call(char *name, ArgArray args) {
 
 }
 
-}
+} // End of namespace Private

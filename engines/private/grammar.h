@@ -125,6 +125,6 @@ extern void loadSetting(Common::String *);
 
 extern void execute(Inst *);
 
-}
+} // End of namespace Private
 
 #endif
