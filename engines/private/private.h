@@ -192,6 +192,7 @@ public:
     void drawMask(Graphics::ManagedSurface *);
     bool inMask(Graphics::ManagedSurface*, Common::Point);
     uint32 _transparentColor;
+    Common::Rect *screenRect;
     void drawScreen();
 
     // global state
