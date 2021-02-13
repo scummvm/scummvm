@@ -36,7 +36,7 @@ void ChgMode(ArgArray args) {
         setSymbol(args[2].u.sym, true);
 
     // This is the only place where this should be used
-    if (g_private->_noStopSounds) { 
+    if (g_private->_noStopSounds) {
         g_private->_noStopSounds = false;
     } else {
         g_private->stopSound(true);
@@ -104,8 +104,8 @@ void SyncSound(ArgArray args) {
         g_private->playSound(*s, 1, true, false);
         //assert(0);
     } //else {
-      //  g_private->stopSound(true);
-      //}
+    //  g_private->stopSound(true);
+    //}
 }
 
 void Quit(ArgArray args) {

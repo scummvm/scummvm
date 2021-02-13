@@ -295,7 +295,7 @@ void PrivateEngine::startPoliceBust() {
     _sirenWarning = 3 + _rnd->getRandomNumber(0x7);
     _numberClicks = 0;
     if(_sirenWarning >= _maxNumberClicks);
-        _sirenWarning = _maxNumberClicks - 1;
+    _sirenWarning = _maxNumberClicks - 1;
 }
 
 void PrivateEngine::checkPoliceBust() {
@@ -1031,7 +1031,7 @@ Common::String *PrivateEngine::getPaperShuffleSound() {
 
 Common::String *PrivateEngine::getTakeSound() {
     if (isDemo())
-        return (new Common::String(*_globalAudioPath + "mvo007.wav"));    
+        return (new Common::String(*_globalAudioPath + "mvo007.wav"));
 
     uint r = 1 + _rnd->getRandomNumber(4);
 
