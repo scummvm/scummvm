@@ -47,11 +47,9 @@ void ChgMode(ArgArray args) {
 
     if (g_private->_mode == 0) {
         g_private->_origin = &kPrivateOriginZero;
-    }
-    else if (g_private->_mode == 1) {
+    } else if (g_private->_mode == 1) {
         g_private->_origin = &kPrivateOriginOne;
-    }
-    else
+    } else
         assert(0);
 
     if (args.size() == 3)
@@ -125,9 +123,7 @@ void SyncSound(ArgArray args) {
         Common::String *s = new Common::String(args[0].u.str);
         g_private->playSound(*s, 1, true, false);
         //assert(0);
-    } //else {
-    //  g_private->stopSound(true);
-    //}
+    }
 }
 
 void Quit(ArgArray args) {
@@ -179,9 +175,8 @@ void PoliceBust(ArgArray args) {
 
     if (args.size() == 2) {
         if (args[1].u.val == 2) {
-            // ????
-        }
-        else if (args[1].u.val == 3) {
+            // Unclear what it means
+        } else if (args[1].u.val == 3) {
             g_private->_nextSetting = &kMainDesktop;
             g_private->_mode = 0;
             g_private->_origin = &kPrivateOriginZero;
@@ -373,7 +368,7 @@ void Inventory(ArgArray args) {
                 v1.u.sym->u.val = 1;
                 g_private->inventory.push_back(*bmp);
             }
-        } else  {
+        } else {
             g_private->inventory.push_back(*bmp);
         }
 
@@ -644,11 +639,9 @@ void PhoneClip(ArgArray args) {
     if (i == j)
         AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
     else {
-
         assert(i < j);
         char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
         AddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
-
     }
 
 }

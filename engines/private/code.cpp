@@ -184,8 +184,7 @@ int eval() {
         d.u.rect = d.u.sym->u.rect;
     } else if (d.u.sym->type == NAME) {
         // No evaluation until is absolutely needed
-    }
-    else
+    } else
         assert(0);
 
     push(d);
@@ -224,11 +223,9 @@ int negate() {
         //debug("negating %s", d.u.sym->name->c_str());
         v = d.u.sym->u.val;
         d.type = NUM;
-    }
-    else if (d.type == NUM) {
+    } else if (d.type == NUM) {
         v = d.u.val;
-    }
-    else
+    } else
         assert(0);
 
     d.u.val = !v;
@@ -402,8 +399,7 @@ int ifcode() {
     if (d.u.val) {
         debug("ifcode: true branch");
         execute(*((Inst **)(savepc)));
-    }
-    else if (*((Inst **)(savepc+1))) { /* else part? */
+    } else if (*((Inst **)(savepc+1))) { /* else part? */
         debug("ifcode: false branch");
         execute(*((Inst **)(savepc+1)));
     }

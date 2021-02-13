@@ -935,8 +935,7 @@ void PrivateEngine::stopSound(bool all) {
     if (all) {
         _mixer->stopHandle(_fgSoundHandle);
         _mixer->stopHandle(_bgSoundHandle);
-    }
-    else {
+    } else {
         _mixer->stopHandle(_fgSoundHandle);
     }
 }
