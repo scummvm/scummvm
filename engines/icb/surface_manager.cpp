@@ -42,22 +42,6 @@
 
 namespace ICB {
 
-#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
-PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
-PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffers;
-PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
-PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatus;
-PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
-PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffers;
-PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffers;
-PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
-PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbuffer;
-PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
-
-GLuint g_RGBFrameBuffer;
-
-#endif
-
 #define FIRST_CLIENT_SURFACE 2
 
 uint32 working_buffer_id;
@@ -172,18 +156,6 @@ _surface_manager::~_surface_manager() {
 	//sdl_screen->free();
 	//delete sdl_screen;
 
-#ifndef ENABLE_OPENGL
-#ifdef USE_SDL_DIRECTLY
-	if (sdl_screen_texture)
-		SDL_DestroyTexture(sdl_screen_texture);
-	if (sdl_renderer)
-		SDL_DestroyRenderer(sdl_renderer);
-#endif
-#else
-	glDeleteFramebuffers(1, &RGBFrameBufferTexture);
-	glDeleteTextures(1, &RGBFrameBufferTexture);
-	glDeleteTextures(1, &sdlTextureId);
-#endif
 	// Finished
 	Zdebug("*SURFACE_MANAGER* Surface Manager Destroyed");
 }
@@ -204,71 +176,6 @@ uint32 _surface_manager::Init_direct_draw() {
 	if (!sdl_screen->getBasePtr(0, 0)) {
 		Fatal_error("Initialise Graphics::Surface::create failed");
 	}
-
-#ifndef ENABLE_OPENGL
-#ifdef USE_SDL_DIRECTLY
-	sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
-	if (!sdl_renderer) {
-		SDL_Quit();
-		Fatal_error("Initialise SDL_CreateRenderer failed");
-	}
-
-	sdl_screen_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, 640, 480);
-	if (!sdl_screen_texture) {
-		SDL_Quit();
-		Fatal_error("Initialise SDL_CreateTexture failed");
-	}
-#endif
-#else
-	if (!SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object")) {
-		SDL_Quit();
-		Fatal_error("GL_EXT_framebuffer_object not supported!");
-	}
-	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSEXTPROC)SDL_GL_GetProcAddress("glGenFramebuffers");
-	glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSEXTPROC)SDL_GL_GetProcAddress("glDeleteFramebuffers");
-	glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)SDL_GL_GetProcAddress("glBindFramebuffer");
-	glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)SDL_GL_GetProcAddress("glCheckFramebufferStatus");
-	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)SDL_GL_GetProcAddress("glFramebufferTexture2D");
-	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSEXTPROC)SDL_GL_GetProcAddress("glGenRenderbuffers");
-	glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSEXTPROC)SDL_GL_GetProcAddress("glDeleteRenderbuffers");
-	glBindRenderbuffer = (PFNGLBINDRENDERBUFFEREXTPROC)SDL_GL_GetProcAddress("glBindRenderbuffer");
-	glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)SDL_GL_GetProcAddress("glFramebufferRenderbuffer");
-	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)SDL_GL_GetProcAddress("glRenderbufferStorage");
-
-	glGenTextures(1, &RGBFrameBufferTexture);
-	glBindTexture(GL_TEXTURE_2D, RGBFrameBufferTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 640, 480, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	glGenFramebuffers(1, &RGBFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, RGBFrameBuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RGBFrameBufferTexture, 0);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		SDL_Quit();
-		Fatal_error("glCheckFramebufferStatus: status is not complete!");
-	}
-	glGenRenderbuffers(1, &renderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBuffer);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	g_RGBFrameBuffer = RGBFrameBuffer;
-
-	glGenTextures(1, &sdlTextureId);
-	glBindTexture(GL_TEXTURE_2D, sdlTextureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, sdl_screen->w, sdl_screen->h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, sdl_screen->getBasePtr(0, 0));
-
-#endif
 
 	// Make our back buffer type affair
 	m_Surfaces[0] = new _surface;
@@ -343,70 +250,6 @@ void _surface_manager::Flip() {
 
 	flipTime = GetMicroTimer();
 
-#ifdef ENABLE_OPENGL
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 1.0, 1.0, 0, 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	glDepthMask(GL_FALSE);
-
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sdlTextureId);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, sdl_screen->w, sdl_screen->h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, sdl_screen->getBasePtr(0, 0));
-
-	glBegin(GL_QUADS);
-	glTexCoord2i(0, 0);
-	glVertex2i(0, 0);
-
-	glTexCoord2i(sdl_screen->w - 1, 0);
-	glVertex2i(sdl_screen->w - 1, 0);
-
-	glTexCoord2i(sdl_screen->w - 1, sdl_screen->h - 1);
-	glVertex2i(sdl_screen->w - 1, sdl_screen->h - 1);
-
-	glTexCoord2i(0, sdl_screen->h - 1);
-	glVertex2i(0, sdl_screen->h - 1);
-	glEnd();
-
-	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_2D);
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-
-	SDL_GL_SwapWindow(sdl_window);
-#else
-#ifdef USE_SDL_DIRECTLY
-	void *pixels;
-	int pitch;
-	if (SDL_LockTexture(sdl_screen_texture, NULL, &pixels, &pitch) < 0) {
-		Fatal_error("_surface_manager::Flip() Failed Lock texture");
-	}
-	memcpy(pixels, sdl_screen->pixels, pitch * sdl_screen->h);
-
-	SDL_UnlockTexture(sdl_screen_texture);
-	SDL_RenderCopy(sdl_renderer, sdl_screen_texture, NULL, NULL);
-	SDL_RenderPresent(sdl_renderer);
-#else
 	Graphics::BlitImage *blitImage = Graphics::tglGenBlitImage();
 	Graphics::tglUploadBlitImage(blitImage, *sdl_screen, 0, false);
 	Graphics::tglBlitFast(blitImage, 0, 0);
@@ -415,8 +258,7 @@ void _surface_manager::Flip() {
 	                           0, 0, _zb->xsize, _zb->ysize);
 	g_system->updateScreen();
 	Graphics::tglDeleteBlitImage(blitImage);
-#endif
-#endif
+
 	flipTime = GetMicroTimer() - flipTime;
 
 	PrintDebugLabel(NULL, 0x00000000);
