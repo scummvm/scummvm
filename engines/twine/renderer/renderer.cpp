@@ -1479,4 +1479,187 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 }
 
+
+void Renderer::vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int16 *vertexCoordinatePtr) {
+#if 0
+	int32 minY = y2;
+	int32 minX = x1;
+	if (y1 < y2) {
+		minY = y1;
+		y1 = y2;
+		minX = x2;
+		x2 = x1;
+	}
+	uint32 deltaY = y1 - minY;
+	int16 *lVertexCoordPointer = (int16 *)(vertexCoordinatePtr + minY * 2);
+	if (x2 <= minX) {
+		uint32 deltaX = (uint32)(uint16)((int16)minX - (int16)x2) << 0x10;
+		uint32 deltaRatio = deltaX / deltaY;
+		minY = deltaY + 1;
+		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
+		bool bVar5 = false;
+		deltaY = (x2 & 0xffffU) |
+		         (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
+		do {
+			*lVertexCoordPointer = (int16)deltaY;
+			deltaX = (uint32)bVar5;
+			uint32 uVar1 = deltaY + deltaRatio;
+			// CARRY4: Return true if there is an arithmetic overflow when adding 'x' and 'y' as unsigned integers.
+			bVar5 = CARRY4(deltaY, deltaRatio) || CARRY4(uVar1, deltaX);
+			deltaY = uVar1 + deltaX;
+			minY = minY + -1;
+			lVertexCoordPointer = lVertexCoordPointer + 1;
+		} while (minY != 0);
+	} else {
+		uint32 deltaX = (uint32)(uint16)((int16)x2 - (int16)minX) << 0x10;
+		uint32 deltaRatio = deltaX / deltaY;
+		minY = deltaY + 1;
+		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
+		bool bVar5 = false;
+		deltaY = (x2 & 0xffffU) | (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
+		do {
+			*lVertexCoordPointer = (int16)deltaY;
+			deltaX = (uint32)bVar5;
+			uint32 uVar1 = deltaY - deltaRatio;
+			bVar5 = deltaY < deltaRatio || uVar1 < deltaX;
+			deltaY = uVar1 - deltaX;
+			minY = minY + -1;
+			lVertexCoordPointer = lVertexCoordPointer + 1;
+		} while (minY != 0);
+	}
+#endif
+}
+
+void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
+	clip_or_depth_DAT_00433444 = 32000;
+	y_DAT_00433448 = 0xffff8300;
+	uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
+	uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
+	if (y_uVar1 < y_uVar2) {
+		if (y_uVar1 <= 32000) {
+			clip_or_depth_DAT_00433444 = y_uVar1;
+		}
+		if (-32001 < (int32)y_uVar2) {
+			y_DAT_00433448 = y_uVar2;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_004314ce*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&polyTab2*/);
+	}
+	y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
+	y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
+	if (y_uVar2 < y_uVar1) {
+		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+			clip_or_depth_DAT_00433444 = y_uVar2;
+		}
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+			y_DAT_00433448 = y_uVar1;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_0043188e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
+		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&DAT_0043278e*/);
+	}
+	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
+	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
+	if (y_uVar1 < y_uVar2) {
+		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
+			clip_or_depth_DAT_00433444 = y_uVar1;
+		}
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
+			y_DAT_00433448 = y_uVar2;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_004314ce*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*polyTab2*/);
+	}
+	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
+	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
+	if (y_uVar2 < y_uVar1) {
+		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+			clip_or_depth_DAT_00433444 = y_uVar2;
+		}
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+			y_DAT_00433448 = y_uVar1;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_0043188e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
+		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*(int16 *)&DAT_0043278e*/);
+	}
+	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
+	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
+	if (y_uVar1 < y_uVar2) {
+		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
+			clip_or_depth_DAT_00433444 = y_uVar1;
+		}
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
+			y_DAT_00433448 = y_uVar2;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_004314ce*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*(int16 *)&DAT_00431c4e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*polyTab2*/);
+	}
+	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
+	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
+	if (y_uVar2 < y_uVar1) {
+		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+			clip_or_depth_DAT_00433444 = y_uVar2;
+		}
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+			y_DAT_00433448 = y_uVar1;
+		}
+		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
+		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_0043188e*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*polyTab2 + 0x1e0*/);
+		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
+		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*(int16 *)&DAT_0043278e*/);
+	}
+}
+
+void Renderer::holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
+	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, y_1);
+	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
+	int16 height = (int16)(param_2 - (int16)y_1) + 1;
+	byte* holomap_offset_X_DAT_00433440 = (byte*)&vertexCoordinates[64].x + y_1;
+	for (int16 y = 0; y < height; ++y) {
+		uint8* holomapSurfaceOutPos = holomapSurfaceOutPtr;
+		int32 iVar1 = (int32)*holomap_offset_X_DAT_00433440;
+		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + iVar1);
+		int32 iVar3 = holomap_offset_X_DAT_00433440[480] - iVar1;
+		if (iVar3 != 0 && iVar1 <= holomap_offset_X_DAT_00433440[480]) {
+			iVar1 = (int32)(1 - ((uint32)(uint16)holomap_offset_X_DAT_00433440[1440] -
+			                   (uint32)(uint16)holomap_offset_X_DAT_00433440[2400])) /
+			        iVar3;
+			uint32 uVar5 = (uint32)(uint16)holomap_offset_X_DAT_00433440[960];
+			int32 iVar2 = (int32)(((uint16)holomap_offset_X_DAT_00433440[1920] - uVar5) + 1) / iVar3;
+			uint16 uVar4 = holomap_offset_X_DAT_00433440[1440];
+			// int16 holomap_maybe_DAT_00433430 = iVar2;
+			// int16 holomap_maybe_DAT_00433434 = iVar1;
+			for (int32 i = 0; i < iVar3; ++i) {
+				*puVar6 = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + holomapSurfaceOutPos);
+				puVar6 = puVar6 + 1;
+				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
+				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)iVar1;
+			}
+		}
+		holomapsurfaceBufferOffsetPosX += _engine->frontVideoBuffer.w;
+		holomap_offset_X_DAT_00433440 = holomap_offset_X_DAT_00433440 + 1;
+	}
+}
+
 } // namespace TwinE

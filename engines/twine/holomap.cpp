@@ -216,188 +216,6 @@ bool Holomap::isTriangleVisible(const Vertex *vertices) const {
 	return false;
 }
 
-void Holomap::vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int16 *vertexCoordinatePtr) {
-#if 0
-	int32 minY = y2;
-	int32 minX = x1;
-	if (y1 < y2) {
-		minY = y1;
-		y1 = y2;
-		minX = x2;
-		x2 = x1;
-	}
-	uint32 deltaY = y1 - minY;
-	int16 *lVertexCoordPointer = (int16 *)(vertexCoordinatePtr + minY * 2);
-	if (x2 <= minX) {
-		uint32 deltaX = (uint32)(uint16)((int16)minX - (int16)x2) << 0x10;
-		uint32 deltaRatio = deltaX / deltaY;
-		minY = deltaY + 1;
-		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
-		bool bVar5 = false;
-		deltaY = (x2 & 0xffffU) |
-		         (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
-		do {
-			*lVertexCoordPointer = (int16)deltaY;
-			deltaX = (uint32)bVar5;
-			uint32 uVar1 = deltaY + deltaRatio;
-			// CARRY4: Return true if there is an arithmetic overflow when adding 'x' and 'y' as unsigned integers.
-			bVar5 = CARRY4(deltaY, deltaRatio) || CARRY4(uVar1, deltaX);
-			deltaY = uVar1 + deltaX;
-			minY = minY + -1;
-			lVertexCoordPointer = lVertexCoordPointer + 1;
-		} while (minY != 0);
-	} else {
-		uint32 deltaX = (uint32)(uint16)((int16)x2 - (int16)minX) << 0x10;
-		uint32 deltaRatio = deltaX / deltaY;
-		minY = deltaY + 1;
-		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
-		bool bVar5 = false;
-		deltaY = (x2 & 0xffffU) | (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
-		do {
-			*lVertexCoordPointer = (int16)deltaY;
-			deltaX = (uint32)bVar5;
-			uint32 uVar1 = deltaY - deltaRatio;
-			bVar5 = deltaY < deltaRatio || uVar1 < deltaX;
-			deltaY = uVar1 - deltaX;
-			minY = minY + -1;
-			lVertexCoordPointer = lVertexCoordPointer + 1;
-		} while (minY != 0);
-	}
-#endif
-}
-
-void Holomap::vertices_FUN_00421010(Vertex *vertexCoordinates) {
-	clip_or_depth_DAT_00433444 = 32000;
-	y_DAT_00433448 = 0xffff8300;
-	uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
-	uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
-	if (y_uVar1 < y_uVar2) {
-		if (y_uVar1 <= 32000) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
-		}
-		if (-32001 < (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&polyTab2*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c, nullptr /*(int16 *)&DAT_0043278e*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*polyTab2*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433370, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)tex_coords_maybe_DAT_00433372, nullptr /*(int16 *)&DAT_0043278e*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*polyTab2*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336a,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433376, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*(int16 *)&DAT_0043278e*/);
-	}
-}
-
-void Holomap::holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
-	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, y_1);
-	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
-	int16 height = (int16)(param_2 - (int16)y_1) + 1;
-	byte* holomap_offset_X_DAT_00433440 = (byte*)&vertexCoordinates[64].x + y_1;
-	for (int16 y = 0; y < height; ++y) {
-		uint8* holomapSurfaceOutPos = holomapSurfaceOutPtr;
-		int32 iVar1 = (int32)*holomap_offset_X_DAT_00433440;
-		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + iVar1);
-		int32 iVar3 = holomap_offset_X_DAT_00433440[480] - iVar1;
-		if (iVar3 != 0 && iVar1 <= holomap_offset_X_DAT_00433440[480]) {
-			iVar1 = (int32)(1 - ((uint32)(uint16)holomap_offset_X_DAT_00433440[1440] -
-			                   (uint32)(uint16)holomap_offset_X_DAT_00433440[2400])) /
-			        iVar3;
-			uint32 uVar5 = (uint32)(uint16)holomap_offset_X_DAT_00433440[960];
-			int32 iVar2 = (int32)(((uint16)holomap_offset_X_DAT_00433440[1920] - uVar5) + 1) / iVar3;
-			uint16 uVar4 = holomap_offset_X_DAT_00433440[1440];
-			// int16 holomap_maybe_DAT_00433430 = iVar2;
-			// int16 holomap_maybe_DAT_00433434 = iVar1;
-			for (int32 i = 0; i < iVar3; ++i) {
-				*puVar6 = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + holomapSurfaceOutPos);
-				puVar6 = puVar6 + 1;
-				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
-				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)iVar1;
-			}
-		}
-		holomapsurfaceBufferOffsetPosX += _engine->frontVideoBuffer.w;
-		holomap_offset_X_DAT_00433440 = holomap_offset_X_DAT_00433440 + 1;
-	}
-}
-
 void Holomap::renderHolomapSurfacePolygons() {
 	prepareHolomapPolygons();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
@@ -413,14 +231,14 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[2].y = pos3.y;
 		bool iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
-			tex_coords_maybe_DAT_0043336a = pos1.unk1;
-			tex_coords_maybe_DAT_0043336c = pos1.unk2;
-			tex_coords_maybe_DAT_00433370 = pos2.unk1;
-			tex_coords_maybe_DAT_00433372 = pos2.unk2;
-			tex_coords_maybe_DAT_00433376 = pos3.unk1;
-			tex_coords_maybe_DAT_00433378 = pos3.unk2;
-			vertices_FUN_00421010(vertexCoordinates);
-			holomap_surface_load_FUN_0042194d(vertexCoordinates, clip_or_depth_DAT_00433444,(int16)y_DAT_00433448,_engine->_resources->holomapImagePtr);
+			_engine->_renderer->tex_coords_maybe_DAT_0043336a = pos1.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_0043336c = pos1.unk2;
+			_engine->_renderer->tex_coords_maybe_DAT_00433370 = pos2.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_00433372 = pos2.unk2;
+			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos3.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos3.unk2;
+			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
+			_engine->_renderer->holomap_surface_load_FUN_0042194d(vertexCoordinates, _engine->_renderer->clip_or_depth_DAT_00433444,(int16)_engine->_renderer->y_DAT_00433448,_engine->_resources->holomapImagePtr);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
@@ -433,14 +251,14 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[2].y = pos6.y;
 		iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
-			tex_coords_maybe_DAT_0043336a = pos4.unk1;
-			tex_coords_maybe_DAT_0043336c = pos4.unk2;
-			tex_coords_maybe_DAT_00433370 = pos5.unk1;
-			tex_coords_maybe_DAT_00433372 = pos5.unk2;
-			tex_coords_maybe_DAT_00433376 = pos6.unk1;
-			tex_coords_maybe_DAT_00433378 = pos6.unk2;
-			vertices_FUN_00421010(vertexCoordinates);
-			holomap_surface_load_FUN_0042194d(vertexCoordinates, clip_or_depth_DAT_00433444,(int16)y_DAT_00433448,_engine->_resources->holomapImagePtr);
+			_engine->_renderer->tex_coords_maybe_DAT_0043336a = pos4.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_0043336c = pos4.unk2;
+			_engine->_renderer->tex_coords_maybe_DAT_00433370 = pos5.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_00433372 = pos5.unk2;
+			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos6.unk1;
+			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos6.unk2;
+			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
+			_engine->_renderer->holomap_surface_load_FUN_0042194d(vertexCoordinates, _engine->_renderer->clip_or_depth_DAT_00433444,(int16)_engine->_renderer->y_DAT_00433448,_engine->_resources->holomapImagePtr);
 		}
 	}
 }
