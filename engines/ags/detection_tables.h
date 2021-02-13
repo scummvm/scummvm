@@ -147,28 +147,71 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kq3redux", "King's Quest III Redux" },
 
 	// Commercial games
+	{ "3geeks", "3 GEEKS" },
+	{ "adateinthepark", "A Date in the Park" },
+	{ "agoldenwake", "A Golden Wake" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
+	{ "alum", "Alum" },
+	{ "ataleoftwokingdoms", "A Tale of Two Kingdoms" },
+	{ "beer", "Beer!" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
 	{ "blackwell3", "The Blackwell Convergence" },
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
+	{ "captaindisaster", "Captain Disaster" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
+	{ "chronicleofinnsmouth", "Chronicle of Innsmouth" },
+	{ "crystalshardadventurebundle", "Crystal Shard Adventure Bundle" },
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
+	{ "detectivegallo", "Detective Gallo" },
+	{ "docapocalypse", "Doc Apocalypse" },
+	{ "downfall2016", "Downfall (2016)" },
+	{ "dustbowl", "Dustbowl" },
+	{ "falconcity", "Falcon City" },
+	{ "feriadarles", "Feria d'Arles" },
+	{ "footballgame", "Football Game" },
 	{ "geminirue", "Gemini Rue" },
+	{ "ghostdream", "Ghostdream" },
 	{ "goldenwake", "A Golden Wake" },
+	{ "guardduty", "Guard Duty" },
+	{ "herdiscoming", "Herd Is Coming" },
+	{ "justignorethem", "Just Ignore Them" },
+	{ "justignorethemremake", "Just Ignore Them (Remake)" },
+	{ "killyourself", "Kill Yourself" },
 	{ "lamplightcity", "Lamplight City" },
+	{ "lamplightcity", "Lamplight City" },
+	{ "legendofhand", "Legend of Hand" },
+	{ "metaldead", "Metal Dead" },
+	{ "neofeud", "Neofeud" },
+	{ "newgame", "New game" },
+	{ "orderofthethornethekingschallenge", "Order of the Thorne - The King's Challenge" },
 	{ "primordia", "Primordia" },
 	{ "resonance", "Resonance" },
+	{ "richardalice", "Richard & Alice" },
 	{ "richardandalice", "Richard & Alice" },
+	{ "roguestate", "Rogue State" },
+	{ "shardlight", "Shardlight" },
 	{ "shardlight", "Shardlight" },
 	{ "shivah", "Shivah" },
+	{ "shivah", "Shivah" },
+	{ "sumatrafateofyandi", "Sumatra: Fate of Yandi" },
 	{ "superjazzman", "Super Jazz Man" },
 	{ "technobabylon", "Technobabylon" },
 	{ "theadventuresoffatman", "The Adventures of Fatman" },
+	{ "theadventuresoffatman", "The Adventures of Fatman" },
+	{ "theapotheosisproject", "The Apotheosis Project" },
+	{ "thebeardinthemirror", "The Beard in the Mirror" },
+	{ "thecastle", "The castle" },
 	{ "thecatlady", "The Cat Lady" },
+	{ "thecharnelhousetrilogy", "The Charnel House Trilogy" },
+	{ "theterribleoldman", "The Terrible Old Man" },
 	{ "unavowed", "Unavowed" },
+	{ "untilihaveyou", "Until I Have You" },
+	{ "waitingfortheloop", "Waiting for the Loop" },
+	{ "welcometosunnymunarvagir", "Welcome to Sunny Munarvagir" },
 	{ "whispersofamachine", "Whispers of a Machine" },
+	{ "zniwadventure", "Zniw Adventure" },
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	{ "10waysfromsunday", "10 Ways from Sunday" },
@@ -1491,36 +1534,83 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
 
 	// Commercial games
+	ENGLISH_ENTRY("3geeks", "3geeks-adventure.exe", "7ddb9e776648faed5a51170d087074e9", 597467679), // Steam
+	ENGLISH_ENTRY("adateinthepark", "a date in the park.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 47324098), // Steam
+	ENGLISH_ENTRY("agoldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774), // Steam
 	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
+	ENGLISH_ENTRY("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Steam
+	ENGLISH_ENTRY("ataleoftwokingdoms", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
+	ENGLISH_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597), // Steam
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128), // Steam
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803), // Steam
-	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // GOG
+	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138), // Steam
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // GOG
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724), // Steam
+	ENGLISH_ENTRY("captaindisaster", "cd-dhamsb-1-0-1.exe", "e2d290f8f21c6a83a9e8c5f3a0425b5e", 150665897), // Steam
 	ENGLISH_ENTRY("charnelhousetrilogy", "CHT.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
+	ENGLISH_ENTRY("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692), // Steam
+	ENGLISH_ENTRY("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713), // Steam
 	ENGLISH_ENTRY("danewguys2", "Jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
+	ENGLISH_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554), // Steam
+	ENGLISH_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989), // Steam
+	ENGLISH_ENTRY("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590), // Steam
+	ENGLISH_ENTRY("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026), // Steam
+	ENGLISH_ENTRY("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058), // Steam
+	ENGLISH_ENTRY("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
+	ENGLISH_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
+	ENGLISH_ENTRY("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 480856325), // Steam
 	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
+	ENGLISH_ENTRY("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335), // Steam
+	ENGLISH_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 5664594), // Steam
+	ENGLISH_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217), // Steam
+	ENGLISH_ENTRY("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926), // Steam
+	ENGLISH_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam
+	ENGLISH_ENTRY("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658), // Steam
+	ENGLISH_ENTRY("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239), // Steam
+	ENGLISH_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285), // Steam
+	ENGLISH_ENTRY("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877), // Steam
+	ENGLISH_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517), // Steam
+	ENGLISH_ENTRY("newgame", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // Steam
+	ENGLISH_ENTRY("orderofthethornethekingschallenge", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467844896), // Steam
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
-	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
+	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664), // Steam
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
+	ENGLISH_ENTRY("richardalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256), // Steam
 	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
+	ENGLISH_ENTRY("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573), // Steam
 	ENGLISH_ENTRY("shardlight", "Shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
+	ENGLISH_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
+	ENGLISH_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
+	ENGLISH_ENTRY("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32727114), // Steam
+	ENGLISH_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
 	ENGLISH_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
+	ENGLISH_ENTRY("sumatrafateofyandi", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886), // Steam
 	ENGLISH_ENTRY("superjazzman", "SJM.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
+	ENGLISH_ENTRY("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205), // Steam
+	ENGLISH_ENTRY("theapotheosisproject", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), // Steam
+	ENGLISH_ENTRY("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501), // Steam
+	ENGLISH_ENTRY("thecastle", "maniac.exe", "3b96c2143d927f005715be73344e456c", 22362337), // Steam
 	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
+	ENGLISH_ENTRY("thecharnelhousetrilogy", "cht.exe", "29c49db0805500ec14964eb897fc7b02", 341425110), // Steam
+	ENGLISH_ENTRY("theterribleoldman", "the terrible oid man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
+	ENGLISH_ENTRY("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030), // Steam
+	ENGLISH_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
+	ENGLISH_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537), // Steam
+	ENGLISH_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263), // Steam
 	ENGLISH_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
+	ENGLISH_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	ENGLISH_DEMO("alemmo", "al-emmo.exe", "9661b29821fdc7f93d286f25c195fc22", 8932837), // Steam
