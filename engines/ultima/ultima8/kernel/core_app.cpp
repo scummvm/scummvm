@@ -34,8 +34,8 @@ using Std::string;
 CoreApp *CoreApp::_application = nullptr;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
-		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(nullptr), _fileSystem(nullptr),
-		_configFileMan(nullptr){
+		: _gameDesc(gameDesc), _gameInfo(nullptr), _fileSystem(nullptr),
+		_configFileMan(nullptr) {
 	_application = this;
 }
 

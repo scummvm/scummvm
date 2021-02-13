@@ -69,6 +69,8 @@ class AudioMixer;
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 	friend class Debugger;
 private:
+	bool _isRunning;
+
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
 	bool _ttfOverrides;
 	// Audio Mixer
@@ -186,10 +188,10 @@ public:
 
 	Graphics::Screen *getScreen() const override;
 
-	bool runGame() override;
+	bool runGame();
 	virtual void handleEvent(const Common::Event &event);
 
-	void paint() override;
+	void paint();
 
 	static const int U8_DEFAULT_SCREEN_WIDTH = 320;
 	static const int U8_DEFAULT_SCREEN_HEIGHT = 200;

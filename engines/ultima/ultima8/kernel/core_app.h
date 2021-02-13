@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class Console;
 class FileSystem;
 class ConfigFileManager;
 struct GameInfo;
@@ -50,9 +49,6 @@ public:
 		return _application;
 	};
 
-	virtual bool runGame() = 0;
-	virtual void paint() = 0; // probably shouldn't exist
-
 	//! Startup the application. This will prepare the application for run().
 	//! Should call parent class' startup().
 	void startup();
@@ -63,7 +59,6 @@ public:
 	}
 
 protected:
-	bool _isRunning;
 	GameInfo *_gameInfo;
 
 	// minimal system

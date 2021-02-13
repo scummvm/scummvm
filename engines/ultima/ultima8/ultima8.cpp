@@ -111,7 +111,8 @@ struct ProcessLoader {
 inline bool HasPreventSaveFlag(const Gump *g) { return g->hasFlags(Gump::FLAG_PREVENT_SAVE); }
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(nullptr),
+		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc),
+	    _isRunning(false), _saveCount(0), _game(nullptr),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
