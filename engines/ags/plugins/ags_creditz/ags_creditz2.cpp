@@ -710,7 +710,8 @@ int AGSCreditz2::drawCredit(int sequence, int credit) {
 }
 
 void AGSCreditz2::doCredits() {
-	int current_line, increment, dum;
+	int current_line;
+	int32 increment, dum;
 
 	current_line = 1;
 	_state->_sequenceHeight = 0;
@@ -782,8 +783,8 @@ void AGSCreditz2::specialEffect(int sequence, int credit, const Common::String &
 	int font, int color, int32 x_pos) {
 	Common::String creditt[3];
 	Common::String credit_text, dots;
-	int32 scrn_width, dum, rightside_width, leftside_width;
-	int space, dotwidth, dotcount, dotpos;
+	int32 scrn_width, dum, rightside_width, leftside_width, dotwidth;
+	int space, dotcount, dotpos;
 
 	_engine->GetScreenDimensions(&scrn_width, &dum, &dum);
 
