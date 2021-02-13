@@ -1643,23 +1643,23 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 	uint8* pixelBuf = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
 	int16 height = (int16)(bottom - (int16)top) + 1;
-	int16* polyTabPtr = (int16*)&_polyTab[top * 2];
+	const int16* polyTabPtr = &_polyTab[top];
 	for (int16 y = 0; y < height; ++y) {
 		int32 polyTabVal = (int32)*polyTabPtr;
 		uint8 *pixel = (uint8 *)(pixelBuf + polyTabVal);
-		int32 yHeight = polyTabPtr[hmPolyOffset2] - polyTabVal;
+		const int32 yHeight = polyTabPtr[hmPolyOffset2] - polyTabVal;
 		if (yHeight != 0 && polyTabVal <= polyTabPtr[hmPolyOffset2]) {
 			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[hmPolyOffset4] -
-			                   (uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
-			        yHeight;
+									  (uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
+						 yHeight;
 			uint32 uVar3 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
-			int32 iVar1 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar3) + 1) / yHeight;
-			uint16 uVar2 = polyTabPtr[hmPolyOffset4];
+			const int32 iVar1 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar3) + 1) / yHeight;
+			uint16 uVar2 = *(const uint16*)&polyTabPtr[hmPolyOffset4];
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
 			for (int32 i = 0; i < yHeight; ++i) {
-				*pixel = *(uint8 *)(((uVar2 & 0xffffff00) | uVar3 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
-				++pixel;
+				const uint32 idx = ((uVar2 & 0xffffff00) | uVar3 >> 8);
+				*pixel++ = _engine->_resources->holomapImagePtr[idx];
 				uVar3 = (uint32)(uint16)((int16)uVar3 + (int16)iVar1);
 				uVar2 = ((uint16)(uVar2 & 0xffffff00) | (uVar2 & 0xff)) + (int16)polyTabVal;
 			}
