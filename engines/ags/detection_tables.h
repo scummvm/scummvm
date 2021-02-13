@@ -1320,6 +1320,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 #define UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
 	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }
+#define UNSUPPORTED_DEMO_LANG(ID, FILENAME, MD5, SIZE, LANG) \
+	{{ ID, "Demo", AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
+	Common::kPlatformUnknown, ADGF_UNSTABLE | ADGF_DEMO, GUIO0() }, nullptr }
 
 #define UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
@@ -1338,6 +1341,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 #define RUSSIAN_ENTRY(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_ENTRY_LANG(ID, FILENAME, MD5, SIZE, Common::RU_RUS)
+#define RUSSIAN_DEMO(ID, FILENAME, MD5, SIZE) \
+	UNSUPPORTED_DEMO_LANG(ID, FILENAME, MD5, SIZE, Common::RU_RUS)
 
 #define ENGLISH_PLUGIN(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
@@ -2706,16 +2711,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	//////////
 
 	// RuCOMM #1. The Best Man
-	ENGLISH_DEMO("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251),  // Demo
+	RUSSIAN_DEMO("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251),  // Demo
 	RUSSIAN_ENTRY("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578),
-	ENGLISH_ENTRY("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432),
+	RUSSIAN_ENTRY("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432),
 
 	// RuCOMM #2. Laboratory / Hotel between worlds
-	ENGLISH_ENTRY("einsteinmachine", "em.exe", "bb59de174d70797d774dec76a171352d", 76169675),
+	RUSSIAN_ENTRY("einsteinmachine", "em.exe", "bb59de174d70797d774dec76a171352d", 76169675),
 
 	// RuCOMM #3. Santa Claus Summit on Canaries
-	ENGLISH_ENTRY("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231),
-	ENGLISH_DEMO("snowyadventures", "snowyadventures.exe", "27343924ddad3be0b97bdcaa71858b1b", 86439776),
+	RUSSIAN_ENTRY("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231),
+	RUSSIAN_DEMO("snowyadventures", "snowyadventures.exe", "27343924ddad3be0b97bdcaa71858b1b", 86439776),
 
 	{ AD_TABLE_END_MARKER, nullptr }
 };
