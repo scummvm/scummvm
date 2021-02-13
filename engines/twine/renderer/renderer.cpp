@@ -1506,7 +1506,8 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 			deltaX = (uint32)bVar5;
 			uint32 uVar1 = deltaY + deltaRatio;
 			// CARRY4: Return true if there is an arithmetic overflow when adding 'x' and 'y' as unsigned integers.
-			bVar5 = CARRY4(deltaY, deltaRatio) || CARRY4(uVar1, deltaX);
+			// bVar5 = CARRY4(deltaY, deltaRatio) || CARRY4(uVar1, deltaX);
+			bVar5 = deltaY > deltaRatio || uVar1 > deltaX;
 			deltaY = uVar1 + deltaX;
 			minY = minY + -1;
 			lVertexCoordPointer = lVertexCoordPointer + 1;
