@@ -15,6 +15,14 @@ Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, 
     return Common::kNoError;
 }
 
+namespace Private {
+
+bool PrivateEngine::isDemo() const {
+        return (bool)(_gameDescription->flags & ADGF_DEMO);
+}
+
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(PRIVATE)
 REGISTER_PLUGIN_DYNAMIC(PRIVATE, PLUGIN_TYPE_ENGINE, PrivateMetaEngine);
 #else

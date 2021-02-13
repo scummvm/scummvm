@@ -35,10 +35,11 @@ void ChgMode(ArgArray args) {
     if (args.size() == 3)
         setSymbol(args[2].u.sym, true);
 
-    if (!g_private->_noStopSounds) {
-        // This is the only place where this should be used
-        g_private->stopSound(true);
+    // This is the only place where this should be used
+    if (g_private->_noStopSounds) { 
         g_private->_noStopSounds = false;
+    } else {
+        g_private->stopSound(true);
     }
 }
 
@@ -102,9 +103,9 @@ void SyncSound(ArgArray args) {
         Common::String *s = new Common::String(args[0].u.str);
         g_private->playSound(*s, 1, true, false);
         //assert(0);
-    } else {
-        g_private->stopSound(true);
-    }
+    } //else {
+      //  g_private->stopSound(true);
+      //}
 }
 
 void Quit(ArgArray args) {
@@ -156,10 +157,7 @@ void PoliceBust(ArgArray args) {
 
     if (args.size() == 2) {
         if (args[1].u.val == 2) {
-            Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
-            g_private->playSound(*s, 1, false, false);
-            assert(0);
-
+            // ????
         }
         else if (args[1].u.val == 3) {
             g_private->_nextSetting = &kMainDesktop;
@@ -176,9 +174,18 @@ void BustMovie(ArgArray args) {
     assert (args.size() == 1);
     debug("BustMovie(%s)", args[0].u.str);
     uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
-    //assert(policeIndex <= 5);
-    char f[30];
-    sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[policeIndex/2]);
+    int videoIndex = policeIndex/2 - 1;
+    if (videoIndex < 0)
+        videoIndex = 0;
+    assert(videoIndex <= 5);
+
+    char f[32];
+    sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[videoIndex]);
+
+    if (kPoliceBustVideos[videoIndex] == 2) {
+        Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
+        g_private->playSound(*s, 1, false, false);
+    }
 
     Common::String *pv = new Common::String(f);
     g_private->_nextMovie = pv;
@@ -262,10 +269,14 @@ void DossierNextSuspect(ArgArray args) {
 }
 
 void NoStopSounds(ArgArray args) {
-    // assert types
     assert(args.size() == 0);
     debug("NoStopSounds()");
     g_private->_noStopSounds = true;
+}
+
+void LoseInventory(ArgArray args) {
+    assert(args.size() == 0);
+    g_private->inventory.clear();
 }
 
 void Inventory(ArgArray args) {
@@ -665,6 +676,11 @@ void SoundArea(ArgArray args) {
     }
 }
 
+void SafeDigit(ArgArray args) {
+    // This is not needed, since scummvm will take care of this
+    debug("WARNING: SafeDigit is partially implemented");
+}
+
 void AskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debug("WARNING: AskSave is partially implemented");
@@ -746,6 +762,7 @@ static struct FuncTable {
     { DossierPrevSuspect, "DossierPrevSuspect"},
     { DossierNextSuspect, "DossierNextSuspect"},
 
+    { LoseInventory,   "LoseInventory"},
     { Inventory,       "Inventory"},
     { CRect,           "CRect"},
     { RestartGame,     "RestartGame"},
@@ -753,6 +770,10 @@ static struct FuncTable {
     // PoliceBust
     { PoliceBust,      "PoliceBust"},
     { BustMovie,       "BustMovie"},
+
+    // Others
+
+    { SafeDigit,       "SafeDigit"},
 
     { 0, 0}
 };

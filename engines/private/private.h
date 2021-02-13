@@ -40,7 +40,7 @@ enum {
 
 // sounds
 
-const int kPaperShuffleSound[6] = {33, 34, 35, 36, 37, 39};
+const int kPaperShuffleSound[7] = {32, 33, 34, 35, 36, 37, 39};
 
 // police
 
@@ -122,10 +122,7 @@ public:
 
     const ADGameDescription *_gameDescription;
 
-    bool isDemo() const {
-        return (bool)(_gameDescription->flags & ADGF_DEMO);
-    }
-
+    bool isDemo() const;
 
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;
@@ -245,24 +242,22 @@ public:
 
     Common::String *getPaperShuffleSound();
     Common::String *_globalAudioPath;
-    //Common::String *_paperShuffleSound;
 
     Common::String *getTakeSound();
     Common::String *getTakeLeaveSound();
     Common::String *getLeaveSound();
-    //Common::String *_takeSound;
-    //Common::String *_leaveSound;
     Common::String *_sirenSound;
 
     // Radios
 
-    Common::String *_radioSound;
+    //Common::String *_radioSound;
+    Common::String *_infaceRadioPath;
 
     MaskInfo *_AMRadioArea;
-    Common::String *_AMRadioPrefix;
+    //Common::String *_AMRadioPrefix;
 
     MaskInfo *_policeRadioArea;
-    Common::String *_policeRadioPrefix;
+    //Common::String *_policeRadioPrefix;
 
     MaskInfo *_phoneArea;
     Common::String *_phonePrefix;
@@ -287,13 +282,11 @@ public:
 
     bool installTimer(uint32, Common::String *);
     void removeTimer();
-    //static void timerCallback(void *);
 
 };
 
 extern PrivateEngine *g_private;
 
-// Example console class
 class Console : public GUI::Debugger {
 public:
     Console(PrivateEngine *vm) {

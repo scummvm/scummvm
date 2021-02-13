@@ -43,13 +43,7 @@ void setSymbol(Symbol *s, int v) {
 
 /* find s in symbol table symlist */
 Symbol *lookup(Common::String s, SymbolMap symlist)	 {
-    //debug("looking up %s", s.c_str());
     Symbol *r = symlist.getVal(s);
-    /*if (strcmp(s.c_str(), "m_640x480") == 0) {
-        showSymbol(r);
-    assert(0);
-    }*/
-
     return r;
 }
 

@@ -34,21 +34,6 @@ extern int parse(char*);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     : Engine(syst), _gameDescription(gd) {
-    // Put your engine in a sane state, but do nothing big yet;
-    // in particular, do not load data from files; rather, if you
-    // need to do such things, do them from run().
-
-    // Do not initialize graphics here
-    // Do not initialize audio devices here
-
-    // However this is the place to specify all default directories
-    //SearchMan.addSubDirectoryMatching(gameDataDir, "global", 0, 10, false);
-
-    // Here is the right place to set up the engine specific debug channels
-    //DebugMan.addDebugChannel(kPrivateDebugExample, "example", "this is just an example for a engine specific debug channel");
-    //DebugMan.addDebugChannel(kPrivateDebugExample2, "example2", "also an example");
-
-    // Don't forget to register your random source
     _rnd = new Common::RandomSource("private");
 
     g_private = this;
@@ -83,9 +68,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
     // General sounds
     _globalAudioPath = new Common::String("global/audio/");
-    //_paperShuffleSound = new Common::String("global/audio/glsfx0");
-    //_takeSound = new Common::String("global/audio/took");
-    //_leaveSound = new Common::String("global/audio/left");
     _noStopSounds = false;
 
     // Radios and phone
@@ -94,9 +76,10 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _phoneArea = NULL;
 
     // TODO: use this as a default sound for radio
-    _radioSound = new Common::String("inface/radio/radio.wav");
-    _AMRadioPrefix = new Common::String("inface/radio/comm_/");
-    _policeRadioPrefix = new Common::String("inface/radio/police/");
+    _infaceRadioPath = new Common::String("inface/radio/");
+    //_radioSound = new Common::String("inface/radio/radio.wav");
+    //_AMRadioPrefix = new Common::String("inface/radio/comm_/");
+    //_policeRadioPrefix = new Common::String("inface/radio/police/");
     _phonePrefix = new Common::String("inface/telephon/");
     _phoneCallSound = new Common::String("phone.wav");
 
@@ -153,6 +136,7 @@ Common::Error PrivateEngine::run() {
 
     parse((char *) buf);
     free(buf);
+    delete file;
     assert(constants.size() > 0);
 
     // Initialize graphics using following:
@@ -310,7 +294,8 @@ void PrivateEngine::startPoliceBust() {
     _maxNumberClicks = r + 0x10 + (policeIndex * 0xe) / -0x15;
     _sirenWarning = 3 + _rnd->getRandomNumber(0x7);
     _numberClicks = 0;
-    assert(_sirenWarning < _maxNumberClicks);
+    if(_sirenWarning >= _maxNumberClicks);
+        _sirenWarning = _maxNumberClicks - 1;
 }
 
 void PrivateEngine::checkPoliceBust() {
@@ -331,15 +316,7 @@ void PrivateEngine::checkPoliceBust() {
         uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
 
-        if (policeIndex <= 12) {
-            /*assert(policeVideoIndex/2 <= 5);
-            char f[30];
-            sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[policeVideoIndex/2]);
-            policeVideoIndex++;
-
-            Common::String *pv = new Common::String(f);
-            _nextMovie = pv;
-            */
+        if (policeIndex <= 13) {
             _nextSetting = &kPOGoBustMovie;
         } else {
             _nextSetting = &kPoliceBustFromMO;
@@ -522,7 +499,7 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 
     debug("AMRadio");
     if (inMask(_AMRadioArea->surf, mousePos)) {
-        Common::String sound = *_AMRadioPrefix + _AMRadio.back() + ".wav";
+        Common::String sound = *_infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
         playSound(sound.c_str(), 1, false, false);
         _AMRadio.pop_back();
     }
@@ -538,7 +515,7 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 
     debug("PoliceRadio");
     if (inMask(_policeRadioArea->surf, mousePos)) {
-        Common::String sound = *_policeRadioPrefix + _policeRadio.back() + ".wav";
+        Common::String sound = *_infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
         playSound(sound.c_str(), 1, false, false);
         _policeRadio.pop_back();
     }
@@ -660,7 +637,29 @@ void PrivateEngine::restartGame() {
         if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
             sym->u.val = 0;
     }
-    // FIXME: reset movies/sound lists
+
+    // Diary
+
+    for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
+        Private::Symbol *sym = locations.getVal(*it);
+        sym->u.val = 0;
+    }
+
+    inventory.clear();
+    _dossiers.clear();
+
+    // Sounds
+
+    _AMRadio.clear();
+    _policeRadio.clear();
+    _phone.clear();
+    _playedPhoneClips.clear();
+
+    // Movies
+
+    _repeatedMovieExit = NULL;
+    _playedMovies.clear();
+
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -1024,7 +1023,7 @@ bool PrivateEngine::getRandomBool(uint p) {
 
 Common::String *PrivateEngine::getPaperShuffleSound() {
 
-    uint r = 1 + _rnd->getRandomNumber(6);
+    uint r = _rnd->getRandomNumber(6);
     char f[32];
     sprintf(f, "glsfx0%d.wav", kPaperShuffleSound[r]);
     return (new Common::String(*_globalAudioPath + f));
