@@ -1639,21 +1639,19 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, _polyTab + hmPolyOffset6);
 		}
 	}
-	renderHolomapPolygons(top,(int16)bottom, _engine->_resources->holomapImagePtr);
+	renderHolomapPolygons(top, (int16)bottom);
 }
 
-void Renderer::renderHolomapPolygons(int32 top, int16 bottom, uint8* holomapSurfaceImgOutPtr) {
+void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
-	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
 	int16 height = (int16)(bottom - (int16)top) + 1;
 	byte* polyTabPtr = (byte*)&_polyTab[top * 2];
 	for (int16 y = 0; y < height; ++y) {
-		uint8* holomapSurfaceOutPos = holomapSurfaceOutPtr;
-		int32 iVar1 = (int32)*polyTabPtr;
-		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + iVar1);
-		int32 iVar3 = polyTabPtr[480] - iVar1;
-		if (iVar3 != 0 && iVar1 <= polyTabPtr[480]) {
-			iVar1 = (int32)(1 - ((uint32)(uint16)polyTabPtr[1440] -
+		int32 polyTabVal = (int32)*polyTabPtr;
+		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + polyTabVal);
+		int32 iVar3 = polyTabPtr[480] - polyTabVal;
+		if (iVar3 != 0 && polyTabVal <= polyTabPtr[480]) {
+			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[1440] -
 			                   (uint32)(uint16)polyTabPtr[2400])) /
 			        iVar3;
 			uint32 uVar5 = (uint32)(uint16)polyTabPtr[960];
@@ -1662,14 +1660,14 @@ void Renderer::renderHolomapPolygons(int32 top, int16 bottom, uint8* holomapSurf
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
 			for (int32 i = 0; i < iVar3; ++i) {
-				*puVar6 = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + holomapSurfaceOutPos);
+				*puVar6 = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
 				puVar6 = puVar6 + 1;
 				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
-				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)iVar1;
+				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)polyTabVal;
 			}
 		}
 		holomapsurfaceBufferOffsetPosX += _engine->frontVideoBuffer.w;
-		polyTabPtr = polyTabPtr + 1;
+		++polyTabPtr;
 	}
 }
 

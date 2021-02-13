@@ -384,7 +384,7 @@ private:
 
 	void baseMatrixTranspose();
 
-	void renderHolomapPolygons(int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr);
+	void renderHolomapPolygons(int32 top, int16 bottom);
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
 
 public:
