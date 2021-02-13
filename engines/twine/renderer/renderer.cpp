@@ -1534,7 +1534,7 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 
 static const int hmPolyOffset1 = 0;    /* 0x0000 */
 static const int hmPolyOffset2 = 60;   /* 0x003c */
-static const int hmPolyOffset3 = 120;  /* 0x0070 */
+static const int hmPolyOffset3 = 120;  /* 0x0078 */
 static const int hmPolyOffset4 = 180;  /* 0x00b4 */
 static const int hmPolyOffset5 = 240;  /* 0x00f0 */
 static const int hmPolyOffset6 = 300;  /* 0x012c */
@@ -1649,21 +1649,21 @@ void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 	for (int16 y = 0; y < height; ++y) {
 		int32 polyTabVal = (int32)*polyTabPtr;
 		uint8 *pixel = (uint8 *)(pixelBuf + polyTabVal);
-		int32 iVar3 = polyTabPtr[480] - polyTabVal;
-		if (iVar3 != 0 && polyTabVal <= polyTabPtr[480]) {
-			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[1440] -
-			                   (uint32)(uint16)polyTabPtr[2400])) /
-			        iVar3;
-			uint32 uVar5 = (uint32)(uint16)polyTabPtr[960];
-			int32 iVar2 = (int32)(((uint16)polyTabPtr[1920] - uVar5) + 1) / iVar3;
-			uint16 uVar4 = polyTabPtr[1440];
+		int32 yHeight = polyTabPtr[hmPolyOffset2] - polyTabVal;
+		if (yHeight != 0 && polyTabVal <= polyTabPtr[hmPolyOffset2]) {
+			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[hmPolyOffset4] -
+			                   (uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
+			        yHeight;
+			uint32 uVar5 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
+			int32 iVar2 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar5) + 1) / yHeight;
+			uint16 uVar2 = polyTabPtr[hmPolyOffset4];
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
-			for (int32 i = 0; i < iVar3; ++i) {
-				*pixel = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
+			for (int32 i = 0; i < yHeight; ++i) {
+				*pixel = *(uint8 *)(((uVar2 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
 				++pixel;
 				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
-				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)polyTabVal;
+				uVar2 = ((uint16)(uVar2 & 0xffffff00) | (uVar2 & 0xff)) + (int16)polyTabVal;
 			}
 		}
 		pixelBuf += _engine->frontVideoBuffer.w;
