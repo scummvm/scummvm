@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 03:22+0000\n"
+"POT-Creation-Date: 2021-02-13 17:56+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4803,14 +4803,14 @@ msgstr "Funktioner kompilerade i:"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:148
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "Vänsterklick"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:143
+#: engines/ultima/ultima8/meta_engine.cpp:154
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "Högerklick"
@@ -7151,19 +7151,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "Byt karaktär"
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:194
+#: engines/ultima/ultima8/meta_engine.cpp:205
 msgid "Ultima VIII Debug"
 msgstr ""
 

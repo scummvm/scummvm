@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 03:22+0000\n"
+"POT-Creation-Date: 2021-02-13 17:56+0000\n"
 "PO-Revision-Date: 2021-02-13 18:41+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3754,7 +3754,9 @@ msgstr "コマンド入力時に一時停止"
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr "リアルタイムプロンプトに代わり、SCIのようにコマンドプロンプトを表示しゲームを一時停止します。"
+msgstr ""
+"リアルタイムプロンプトに代わり、SCIのようにコマンドプロンプトを表示しゲームを"
+"一時停止します。"
 
 #: engines/agi/detection.cpp:122
 msgid "Add speed menu"
@@ -3770,8 +3772,10 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
-"高解像度のHerculesフォントファイル'hgc_font'を、開くかまたは使用できませんでした。\n"
-"他のAGI(Sierra)ゲームにそのファイルが存在する場合、ゲームディレクトリーにコピーできます"
+"高解像度のHerculesフォントファイル'hgc_font'を、開くかまたは使用できませんで"
+"した。\n"
+"他のAGI(Sierra)ゲームにそのファイルが存在する場合、ゲームディレクトリーにコ"
+"ピーできます"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -3808,7 +3812,8 @@ msgstr "復元"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr "このロケーションでは、セーブまたはクイックロードはサポートされていません"
+msgstr ""
+"このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2505
 #, c-format
@@ -4755,14 +4760,14 @@ msgstr "含まれた機能："
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:148
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "左クリック"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:143
+#: engines/ultima/ultima8/meta_engine.cpp:154
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "右クリック"
@@ -7035,20 +7040,20 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Ultima VIII"
 msgstr "ウルティマ VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:188
 #, fuzzy
 msgid "Ultima VIII Cheats"
 msgstr "ウルティマ VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:194
+#: engines/ultima/ultima8/meta_engine.cpp:205
 #, fuzzy
 msgid "Ultima VIII Debug"
 msgstr "ウルティマ VIII"

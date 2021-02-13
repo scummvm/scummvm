@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 03:22+0000\n"
+"POT-Creation-Date: 2021-02-13 17:56+0000\n"
 "PO-Revision-Date: 2021-02-12 15:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4753,13 +4753,13 @@ msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:143
+#: engines/ultima/ultima8/meta_engine.cpp:154
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
@@ -7070,19 +7070,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:194
+#: engines/ultima/ultima8/meta_engine.cpp:205
 msgid "Ultima VIII Debug"
 msgstr ""
 
