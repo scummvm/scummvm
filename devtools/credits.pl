@@ -596,7 +596,7 @@ begin_credits("Credits");
 				add_person("Tom Vandepoele", "", "AGS");
 				add_person("Tzach Shabtay", "", "AGS");
 				add_person("", "rofl0r", "AGS");
-				add_person("", "AGA", "AgsCreditz");
+				add_person("Berian Williams", "AGA", "AgsCreditz");
 			end_section();
 
 
