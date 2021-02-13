@@ -774,7 +774,7 @@ Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool i
 
 	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
-		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
+		getMetaEngine().appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc, isAutosave);
 
 		saveFile->finalize();
 	}
