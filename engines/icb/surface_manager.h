@@ -73,8 +73,7 @@ public:
 class _surface_manager {
 
 private:
-	Graphics::Surface *sdl_screen;
-	TinyGL::FrameBuffer *_zb;
+	Graphics::Surface *screenSurface;
 	LRECT m_screen_rect; // The screen rectangle
 public:
 	rcAutoPtrArray<_surface> m_Surfaces; // List of client surface

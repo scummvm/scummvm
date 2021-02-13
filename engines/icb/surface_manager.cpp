@@ -52,10 +52,6 @@ uint32 flipTime;
 _surface::~_surface() {
 	// Is the surface there
 	if (m_dds) {
-		// Make sure it's unlocked
-		if (m_locked) {
-			//SDL_UnlockSurface(m_dds);
-		}
 		m_dds->free();
 		delete m_dds;
 	}
@@ -116,7 +112,7 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
 
 _surface_manager::_surface_manager() {
 	// Setup uninitialized pointers
-	sdl_screen = NULL;
+	screenSurface = NULL;
 
 	// set these up only once
 	full_rect.left = 0;
@@ -153,8 +149,6 @@ _surface_manager::~_surface_manager() {
 
 	// Release the surfaces ( the Reset call calls the destructor for each non null surface )
 	m_Surfaces.Reset();
-	//sdl_screen->free();
-	//delete sdl_screen;
 
 	// Finished
 	Zdebug("*SURFACE_MANAGER* Surface Manager Destroyed");
@@ -165,15 +159,11 @@ uint32 _surface_manager::Init_direct_draw() {
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
 	g_system->setWindowCaption(Common::U32String("In Cold Blood (C)2000 Revolution Software Ltd"));
-	initGraphics(640, 480, nullptr);
+	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, nullptr);
 
-	_zb = new TinyGL::FrameBuffer(640, 480, g_system->getScreenFormat()); // TODO: delete
-	TinyGL::glInit(_zb, 256);
-
-	sdl_screen = new Graphics::Surface();
-	sdl_screen->create(640, 480, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
-
-	if (!sdl_screen->getBasePtr(0, 0)) {
+	screenSurface = new Graphics::Surface();
+	screenSurface->create(SCREEN_WIDTH, SCREEN_DEPTH, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
+	if (!screenSurface->getBasePtr(0, 0)) {
 		Fatal_error("Initialise Graphics::Surface::create failed");
 	}
 
@@ -183,7 +173,7 @@ uint32 _surface_manager::Init_direct_draw() {
 	m_Surfaces[0]->m_width = SCREEN_WIDTH;
 	m_Surfaces[0]->m_height = SCREEN_DEPTH;
 	m_Surfaces[0]->m_name = "backbuffer";
-	m_Surfaces[0]->m_dds = sdl_screen;
+	m_Surfaces[0]->m_dds = screenSurface;
 
 	working_buffer_id = 0;
 
@@ -250,14 +240,15 @@ void _surface_manager::Flip() {
 
 	flipTime = GetMicroTimer();
 
-	Graphics::BlitImage *blitImage = Graphics::tglGenBlitImage();
-	Graphics::tglUploadBlitImage(blitImage, *sdl_screen, 0, false);
-	Graphics::tglBlitFast(blitImage, 0, 0);
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_zb->getPixelBuffer(), _zb->linesize,
-	                           0, 0, _zb->xsize, _zb->ysize);
+	Graphics::PixelBuffer srcBuf;
+	srcBuf.set(screenSurface->format, (byte *)screenSurface->getPixels());
+	Graphics::PixelBuffer dstBuf;
+	dstBuf.create(g_system->getScreenFormat(), screenSurface->w * screenSurface->h, DisposeAfterUse::YES);
+	dstBuf.copyBuffer(0, screenSurface->w * screenSurface->h, srcBuf);
+
+	g_system->copyRectToScreen(dstBuf.getRawBuffer(), screenSurface->pitch,
+	                           0, 0, screenSurface->w, screenSurface->h);
 	g_system->updateScreen();
-	Graphics::tglDeleteBlitImage(blitImage);
 
 	flipTime = GetMicroTimer() - flipTime;
 
@@ -311,11 +302,6 @@ uint8 *_surface_manager::Lock_surface(uint32 s_id) {
 		error("Should exit with error-code -1");
 	}
 
-	// lock the surface
-	/*	if (SDL_LockSurface(pSurface->m_dds) < 0) {
-	                Fatal_error("_surface_manager::Lock_surface( %s ) - SDL_LockSurface failed", (const char *)pSurface->m_name);
-	                exit(-1);
-	        }*/
 	pSurface->m_locked = TRUE8;
 
 	return ((uint8 *)pSurface->m_dds->getBasePtr(0, 0));
@@ -340,7 +326,6 @@ void _surface_manager::Unlock_surface(uint32 s_id) {
 		Fatal_error("**Unlock_surface %s - surface is null :O", (const char *)m_Surfaces[s_id]->m_name);
 		error("Should exit with error-code -1");
 	}
-	// SDL_UnlockSurface(pSurface->m_dds);
 	m_Surfaces[s_id]->m_locked = FALSE8;
 }
 
