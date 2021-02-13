@@ -873,7 +873,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdarayofhope", "OSD: A Ray of Hope" },
 	{ "osdocd", "OSD:OCD" },
 	{ "osdthelostworldep2", "OSD.The lost world ep 2" },
-	{ "osher", "Boundless Osher - אושר בלי גבולות" },
+	{ "osher", "Boundless Osher - Osher Bli Gvulot" }, // Hebrew title: אושר בלי גבולות
 	{ "otakurivals", "Otaku Rivals" },
 	{ "otherworlds", "Other Worlds" },
 	{ "otisbuildsafire", "Otis Builds a Fire" },
