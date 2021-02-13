@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-13 03:22+0000\n"
-"PO-Revision-Date: 2021-02-11 22:24+0000\n"
+"PO-Revision-Date: 2021-02-13 18:41+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3744,25 +3744,25 @@ msgstr "Herculesの緑"
 
 #: engines/agi/detection.cpp:103
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "高解像度のHerculesフォントが利用可能な場合、それを使用します。"
 
 #: engines/agi/detection.cpp:112
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "コマンド入力時に一時停止"
 
 #: engines/agi/detection.cpp:113
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr ""
+msgstr "リアルタイムプロンプトに代わり、SCIのようにコマンドプロンプトを表示しゲームを一時停止します。"
 
 #: engines/agi/detection.cpp:122
 msgid "Add speed menu"
-msgstr ""
+msgstr "スピードメニューを追加"
 
 #: engines/agi/detection.cpp:123
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "ゲームスピードメニューを追加(PC版と同様)"
 
 #: engines/agi/font.cpp:1298
 msgid ""
@@ -3770,6 +3770,8 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"高解像度のHerculesフォントファイル'hgc_font'を、開くかまたは使用できませんでした。\n"
+"他のAGI(Sierra)ゲームにそのファイルが存在する場合、ゲームディレクトリーにコピーできます"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -3806,7 +3808,7 @@ msgstr "復元"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2505
 #, c-format
@@ -3815,6 +3817,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"セーブファイルをロードできませんでした：\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2495
 #, c-format
@@ -3823,6 +3828,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"ファイルにセーブできませんでした：\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2518
 #, c-format
@@ -3831,6 +3839,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"ファイルにセーブしました：\n"
+"\n"
+"%s"
 
 #: engines/agos/animation.cpp:558
 #, c-format
