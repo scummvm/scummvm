@@ -233,7 +233,7 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 		}
 	}
 	const Common::Rect prect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT);
-	_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, prect, rect);
+	_engine->frontVideoBuffer.blitFrom(_engine->imageBuffer, prect, rect);
 }
 
 void Menu::drawBox(const Common::Rect &rect) {
