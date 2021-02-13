@@ -29,6 +29,7 @@
 #include "twine/menu/menu.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/shadeangletab.h"
+#include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/movements.h"
 #include "twine/scene/grid.h"
@@ -1629,6 +1630,7 @@ void Renderer::vertices_FUN_00421010(Vertex *vertexCoordinates) {
 		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)tex_coords_maybe_DAT_0043336c,
 		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)tex_coords_maybe_DAT_00433378, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
+	holomap_surface_load_FUN_0042194d(vertexCoordinates, clip_or_depth_DAT_00433444,(int16)y_DAT_00433448, _engine->_resources->holomapImagePtr);
 }
 
 void Renderer::holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {

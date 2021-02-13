@@ -238,7 +238,6 @@ void Holomap::renderHolomapSurfacePolygons() {
 			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos3.unk1;
 			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos3.unk2;
 			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
-			_engine->_renderer->holomap_surface_load_FUN_0042194d(vertexCoordinates, _engine->_renderer->clip_or_depth_DAT_00433444,(int16)_engine->_renderer->y_DAT_00433448,_engine->_resources->holomapImagePtr);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
@@ -258,7 +257,6 @@ void Holomap::renderHolomapSurfacePolygons() {
 			_engine->_renderer->tex_coords_maybe_DAT_00433376 = pos6.unk1;
 			_engine->_renderer->tex_coords_maybe_DAT_00433378 = pos6.unk2;
 			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates);
-			_engine->_renderer->holomap_surface_load_FUN_0042194d(vertexCoordinates, _engine->_renderer->clip_or_depth_DAT_00433444,(int16)_engine->_renderer->y_DAT_00433448,_engine->_resources->holomapImagePtr);
 		}
 	}
 }
