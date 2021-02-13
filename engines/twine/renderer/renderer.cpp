@@ -1643,12 +1643,12 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 }
 
 void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
-	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
+	uint8* pixelBuf = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
 	int16 height = (int16)(bottom - (int16)top) + 1;
 	byte* polyTabPtr = (byte*)&_polyTab[top * 2];
 	for (int16 y = 0; y < height; ++y) {
 		int32 polyTabVal = (int32)*polyTabPtr;
-		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + polyTabVal);
+		uint8 *pixel = (uint8 *)(pixelBuf + polyTabVal);
 		int32 iVar3 = polyTabPtr[480] - polyTabVal;
 		if (iVar3 != 0 && polyTabVal <= polyTabPtr[480]) {
 			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[1440] -
@@ -1660,13 +1660,13 @@ void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
 			for (int32 i = 0; i < iVar3; ++i) {
-				*puVar6 = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
-				puVar6 = puVar6 + 1;
+				*pixel = *(uint8 *)(((uVar4 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
+				++pixel;
 				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
 				uVar4 = ((uint16)(uVar4 & 0xffffff00) | (uVar4 & 0xff)) + (int16)polyTabVal;
 			}
 		}
-		holomapsurfaceBufferOffsetPosX += _engine->frontVideoBuffer.w;
+		pixelBuf += _engine->frontVideoBuffer.w;
 		++polyTabPtr;
 	}
 }
