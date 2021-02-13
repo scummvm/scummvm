@@ -30,13 +30,7 @@ namespace Private {
 
 class Console;
 
-// our engine debug channels
-enum {
-    kPrivateDebugExample = 1 << 0,
-    kPrivateDebugExample2 = 1 << 1
-                            // next new channel must be 1 << 2 (4)
-                            // the current limitation is 32 debug channels (1 << 31 is the last one)
-};
+const uint kPrivateDebug = 1;
 
 // sounds
 
@@ -107,7 +101,6 @@ typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 
 class PrivateEngine : public Engine {
 private:
-    // We need random numbers
     Common::RandomSource *_rnd;
 
     Graphics::PixelFormat _pixelFormat;

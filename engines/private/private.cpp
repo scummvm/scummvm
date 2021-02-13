@@ -77,9 +77,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
     // TODO: use this as a default sound for radio
     _infaceRadioPath = new Common::String("inface/radio/");
-    //_radioSound = new Common::String("inface/radio/radio.wav");
-    //_AMRadioPrefix = new Common::String("inface/radio/comm_/");
-    //_policeRadioPrefix = new Common::String("inface/radio/police/");
     _phonePrefix = new Common::String("inface/telephon/");
     _phoneCallSound = new Common::String("phone.wav");
 
@@ -863,7 +860,7 @@ Common::String PrivateEngine::convertPath(Common::String name) {
 }
 
 void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers, bool background) {
-    debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
 
     Common::File *file = new Common::File();
     Common::String path = convertPath(name);
@@ -911,7 +908,7 @@ void PrivateEngine::skipVideo() {
 }
 
 void PrivateEngine::stopSound(bool all) {
-    debugC(3, kPrivateDebugExample, "%s", __FUNCTION__);
+    debugC(3, kPrivateDebug, "%s", __FUNCTION__);
 
     if (all) {
         _mixer->stopHandle(_fgSoundHandle);
@@ -923,7 +920,7 @@ void PrivateEngine::stopSound(bool all) {
 }
 
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
-    debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
     Common::File file;
     Common::String path = convertPath(name);
     if (!file.open(path))
@@ -952,7 +949,7 @@ void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
 
 
 Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
-    debugC(1, kPrivateDebugExample, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
     Common::File file;
     Common::String path = convertPath(name);
     if (!file.open(path))
@@ -1025,7 +1022,7 @@ Common::String *PrivateEngine::getPaperShuffleSound() {
 
     uint r = _rnd->getRandomNumber(6);
     char f[32];
-    sprintf(f, "glsfx0%d.wav", kPaperShuffleSound[r]);
+    snprintf(f, 32, "glsfx0%d.wav", kPaperShuffleSound[r]);
     return (new Common::String(*_globalAudioPath + f));
 }
 
@@ -1036,7 +1033,7 @@ Common::String *PrivateEngine::getTakeSound() {
     uint r = 1 + _rnd->getRandomNumber(4);
 
     char f[32];
-    sprintf(f, "left%d.wav", r);
+    snprintf(f, 32, "took%d.wav", r);
     return (new Common::String(*_globalAudioPath + f));
 }
 
@@ -1050,14 +1047,13 @@ Common::String *PrivateEngine::getTakeLeaveSound() {
 }
 
 Common::String *PrivateEngine::getLeaveSound() {
-    // TODO: refactor for demo support
     if (isDemo())
         return (new Common::String(*_globalAudioPath + "mvo008.wav"));
 
     uint r = 1 + _rnd->getRandomNumber(4);
 
     char f[32];
-    sprintf(f, "took%d.wav", r);
+    snprintf(f, 32, "left%d.wav", r);
     return (new Common::String(*_globalAudioPath + f));
 }
 
@@ -1066,7 +1062,7 @@ char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
 
     char *f = (char*) malloc((strlen(clip)+3)*sizeof(char));
-    sprintf(f, "%s%02d", clip, r);
+    snprintf(f, 32, "%s%02d", clip, r);
     return f;
 }
 
@@ -1095,8 +1091,8 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
         i++;
         if (sym->u.val) {
             offset = offset + 22;
-            char *f = (char*) malloc(13*sizeof(char));
-            sprintf(f, "dryloc%d.bmp", i);
+            char *f = (char*) malloc(32*sizeof(char));
+            snprintf(f, 32, "dryloc%d.bmp", i);
             debug("%s, %d, %d", f, i, offset);
             Common::String s(*_diaryLocPrefix + f);
             //debug("%hd %hd", rect->left, rect->top + offset);
