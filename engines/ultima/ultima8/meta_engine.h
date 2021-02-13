@@ -24,6 +24,7 @@
 #define ULTIMA_ULTIMA8_META_ENGINE
 
 #include "backends/keymapper/keymapper.h"
+#include "engines/metaengine.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -65,6 +66,11 @@ public:
 	 * Initialize keymaps
 	 */
 	static Common::KeymapArray initKeymaps(const Common::String &gameId, bool isMenuActive = false);
+
+	/**
+	* Return the extra GUI options used by the target.
+	*/
+	static const ExtraGuiOptions getExtraGuiOptions(const Common::String& target);
 
 	/**
 	 * Execute an engine keymap press action

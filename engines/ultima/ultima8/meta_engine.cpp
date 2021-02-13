@@ -122,6 +122,17 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 };
 #endif
 
+static const ExtraGuiOption COMMON_OPTIONS[] = {
+	{ nullptr, nullptr, nullptr, false }
+};
+
+static const ExtraGuiOption U8_OPTIONS[] = {
+	{ nullptr, nullptr, nullptr, false }
+};
+
+static const ExtraGuiOption CRUSADER_OPTIONS[] = {
+	{ nullptr, nullptr, nullptr, false }
+};
 
 Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool isMenuActive) {
 	Common::KeymapArray keymapArray;
@@ -208,6 +219,22 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool i
 #endif
 
 	return keymapArray;
+}
+
+const ExtraGuiOptions MetaEngine::getExtraGuiOptions(const Common::String& target) {
+	ExtraGuiOptions options;
+
+	for (const ExtraGuiOption *o = COMMON_OPTIONS; o->configOption; ++o) {
+		options.push_back(*o);
+	}
+
+	// Game specific keymaps
+	const ExtraGuiOption *game_options = (target.equals("ultima8") ? U8_OPTIONS : CRUSADER_OPTIONS);
+	for (const ExtraGuiOption *o = game_options; o->configOption; ++o) {
+		options.push_back(*o);
+	}
+
+	return options;
 }
 
 void MetaEngine::setTextInputActive(bool isActive) {

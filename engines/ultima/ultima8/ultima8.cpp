@@ -185,7 +185,8 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions) ||
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime);
 }
 
 bool Ultima8Engine::startup() {
