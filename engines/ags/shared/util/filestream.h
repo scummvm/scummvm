@@ -61,9 +61,9 @@ public:
 	bool    CanSeek() const override;
 
 	size_t  Read(void *buffer, size_t size) override;
-	int32_t ReadByte() override;
+	int ReadByte() override;
 	size_t  Write(const void *buffer, size_t size) override;
-	int32_t WriteByte(uint8_t b) override;
+	int WriteByte(uint8 b) override;
 
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 

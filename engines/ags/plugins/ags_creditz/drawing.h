@@ -31,13 +31,13 @@ namespace AGSCreditz {
 
 class Drawing {
 public:
-	static void drawPixel(unsigned char **Row, int32 x, int32 y,
-		uint col, int32 wid, int32 hei, int32 coldepth) {
+	static void drawPixel(unsigned char **Row, int x, int y,
+		uint col, int wid, int hei, int coldepth) {
 		// TODO
 	}
 
-	static uint getPixelColor(unsigned char **Row, int32 x, int32 y,
-		int32 wid, int32 hei, int32 coldepth) {
+	static uint getPixelColor(unsigned char **Row, int x, int y,
+		int wid, int hei, int coldepth) {
 		// TODO
 		return 0;
 	}

@@ -81,10 +81,10 @@ struct RestoredData {
 	std::vector<ScriptData> ScriptModules;
 	// Room data (has to be be preserved until room is loaded)
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
-	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
-	int32_t                 RoomTintLevels[MAX_ROOM_REGIONS];
-	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS + 1];
-	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS + 1];
+	int16                 RoomLightLevels[MAX_ROOM_REGIONS];
+	int                 RoomTintLevels[MAX_ROOM_REGIONS];
+	int16                 RoomZoomLevels1[MAX_WALK_AREAS + 1];
+	int16                 RoomZoomLevels2[MAX_WALK_AREAS + 1];
 	RoomVolumeMod           RoomVolume;
 	// Mouse cursor parameters
 	int                     CursorID;
@@ -130,7 +130,7 @@ struct RestoredData {
 	};
 	std::vector<ViewportData> Viewports;
 	std::vector<CameraData> Cameras;
-	int32_t Camera0_Flags = 0; // flags for primary camera, when data is read in legacy order
+	int Camera0_Flags = 0; // flags for primary camera, when data is read in legacy order
 
 	RestoredData();
 };

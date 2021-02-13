@@ -71,7 +71,7 @@ int WFNFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 
 	for (; *text; ++text) {
 		const WFNChar &wfn_char = font->GetChar(GetCharCode(*text, font));
-		const uint16_t height = wfn_char.Height;
+		const uint16 height = wfn_char.Height;
 		if (height > max_height)
 			max_height = height;
 	}

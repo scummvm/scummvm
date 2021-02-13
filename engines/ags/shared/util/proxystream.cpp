@@ -81,19 +81,19 @@ size_t ProxyStream::Read(void *buffer, size_t size) {
 	return _stream ? _stream->Read(buffer, size) : 0;
 }
 
-int32_t ProxyStream::ReadByte() {
+int ProxyStream::ReadByte() {
 	return _stream ? _stream->ReadByte() : 0;
 }
 
-int16_t ProxyStream::ReadInt16() {
+int16 ProxyStream::ReadInt16() {
 	return _stream ? _stream->ReadInt16() : 0;
 }
 
-int32_t ProxyStream::ReadInt32() {
+int ProxyStream::ReadInt32() {
 	return _stream ? _stream->ReadInt32() : 0;
 }
 
-int64_t ProxyStream::ReadInt64() {
+int64 ProxyStream::ReadInt64() {
 	return _stream ? _stream->ReadInt64() : 0;
 }
 
@@ -101,15 +101,15 @@ size_t ProxyStream::ReadArray(void *buffer, size_t elem_size, size_t count) {
 	return _stream ? _stream->ReadArray(buffer, elem_size, count) : 0;
 }
 
-size_t ProxyStream::ReadArrayOfInt16(int16_t *buffer, size_t count) {
+size_t ProxyStream::ReadArrayOfInt16(int16 *buffer, size_t count) {
 	return _stream ? _stream->ReadArrayOfInt16(buffer, count) : 0;
 }
 
-size_t ProxyStream::ReadArrayOfInt32(int32_t *buffer, size_t count) {
+size_t ProxyStream::ReadArrayOfInt32(int *buffer, size_t count) {
 	return _stream ? _stream->ReadArrayOfInt32(buffer, count) : 0;
 }
 
-size_t ProxyStream::ReadArrayOfInt64(int64_t *buffer, size_t count) {
+size_t ProxyStream::ReadArrayOfInt64(int64 *buffer, size_t count) {
 	return _stream ? _stream->ReadArrayOfInt64(buffer, count) : 0;
 }
 
@@ -117,19 +117,19 @@ size_t ProxyStream::Write(const void *buffer, size_t size) {
 	return _stream ? _stream->Write(buffer, size) : 0;
 }
 
-int32_t ProxyStream::WriteByte(uint8_t b) {
+int ProxyStream::WriteByte(uint8 b) {
 	return _stream ? _stream->WriteByte(b) : 0;
 }
 
-size_t ProxyStream::WriteInt16(int16_t val) {
+size_t ProxyStream::WriteInt16(int16 val) {
 	return _stream ? _stream->WriteInt16(val) : 0;
 }
 
-size_t ProxyStream::WriteInt32(int32_t val) {
+size_t ProxyStream::WriteInt32(int val) {
 	return _stream ? _stream->WriteInt32(val) : 0;
 }
 
-size_t ProxyStream::WriteInt64(int64_t val) {
+size_t ProxyStream::WriteInt64(int64 val) {
 	return _stream ? _stream->WriteInt64(val) : 0;
 }
 
@@ -137,15 +137,15 @@ size_t ProxyStream::WriteArray(const void *buffer, size_t elem_size, size_t coun
 	return _stream ? _stream->WriteArray(buffer, elem_size, count) : 0;
 }
 
-size_t ProxyStream::WriteArrayOfInt16(const int16_t *buffer, size_t count) {
+size_t ProxyStream::WriteArrayOfInt16(const int16 *buffer, size_t count) {
 	return _stream ? _stream->WriteArrayOfInt16(buffer, count) : 0;
 }
 
-size_t ProxyStream::WriteArrayOfInt32(const int32_t *buffer, size_t count) {
+size_t ProxyStream::WriteArrayOfInt32(const int *buffer, size_t count) {
 	return _stream ? _stream->WriteArrayOfInt32(buffer, count) : 0;
 }
 
-size_t ProxyStream::WriteArrayOfInt64(const int64_t *buffer, size_t count) {
+size_t ProxyStream::WriteArrayOfInt64(const int64 *buffer, size_t count) {
 	return _stream ? _stream->WriteArrayOfInt64(buffer, count) : 0;
 }
 

@@ -62,7 +62,7 @@ int ManagedObjectPool::Remove(ManagedObject &o, bool force) {
 	return 1;
 }
 
-int32_t ManagedObjectPool::AddRef(int32_t handle) {
+int ManagedObjectPool::AddRef(int handle) {
 	if (handle < 0 || (size_t)handle >= objects.size()) {
 		return 0;
 	}
@@ -76,7 +76,7 @@ int32_t ManagedObjectPool::AddRef(int32_t handle) {
 	return o.refCount;
 }
 
-int ManagedObjectPool::CheckDispose(int32_t handle) {
+int ManagedObjectPool::CheckDispose(int handle) {
 	if (handle < 0 || (size_t)handle >= objects.size()) {
 		return 1;
 	}
@@ -90,7 +90,7 @@ int ManagedObjectPool::CheckDispose(int32_t handle) {
 	return Remove(o);
 }
 
-int32_t ManagedObjectPool::SubRef(int32_t handle) {
+int ManagedObjectPool::SubRef(int handle) {
 	if (handle < 0 || (size_t)handle >= objects.size()) {
 		return 0;
 	}
@@ -110,7 +110,7 @@ int32_t ManagedObjectPool::SubRef(int32_t handle) {
 	return newRefCount;
 }
 
-int32_t ManagedObjectPool::AddressToHandle(const char *addr) {
+int ManagedObjectPool::AddressToHandle(const char *addr) {
 	if (addr == nullptr) {
 		return 0;
 	}
@@ -122,7 +122,7 @@ int32_t ManagedObjectPool::AddressToHandle(const char *addr) {
 }
 
 // this function is called often (whenever a pointer is used)
-const char *ManagedObjectPool::HandleToAddress(int32_t handle) {
+const char *ManagedObjectPool::HandleToAddress(int handle) {
 	if (handle < 0 || (size_t)handle >= objects.size()) {
 		return nullptr;
 	}
@@ -134,7 +134,7 @@ const char *ManagedObjectPool::HandleToAddress(int32_t handle) {
 }
 
 // this function is called often (whenever a pointer is used)
-ScriptValueType ManagedObjectPool::HandleToAddressAndManager(int32_t handle, void *&object, ICCDynamicObject *&manager) {
+ScriptValueType ManagedObjectPool::HandleToAddressAndManager(int handle, void *&object, ICCDynamicObject *&manager) {
 	if (handle < 0 || (size_t)handle >= objects.size()) {
 		return kScValUndefined;
 	}
@@ -183,7 +183,7 @@ void ManagedObjectPool::RunGarbageCollection() {
 }
 
 int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback, bool plugin_object) {
-	int32_t handle;
+	int handle;
 
 	if (!available_ids.empty()) {
 		handle = available_ids.front();

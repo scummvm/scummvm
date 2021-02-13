@@ -72,34 +72,34 @@ void StaticArray::Read(const char *address, intptr_t offset, void *dest, int siz
 	memcpy(dest, el_ptr + offset % _elemLegacySize, size);
 }
 
-uint8_t StaticArray::ReadInt8(const char *address, intptr_t offset) {
+uint8 StaticArray::ReadInt8(const char *address, intptr_t offset) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->ReadInt8(el_ptr, offset % _elemLegacySize);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->ReadInt8(el_ptr, offset % _elemLegacySize);
 	}
-	return *(const uint8_t *)(el_ptr + offset % _elemLegacySize);
+	return *(const uint8 *)(el_ptr + offset % _elemLegacySize);
 }
 
-int16_t StaticArray::ReadInt16(const char *address, intptr_t offset) {
+int16 StaticArray::ReadInt16(const char *address, intptr_t offset) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->ReadInt16(el_ptr, offset % _elemLegacySize);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->ReadInt16(el_ptr, offset % _elemLegacySize);
 	}
-	return *(const uint16_t *)(el_ptr + offset % _elemLegacySize);
+	return *(const uint16 *)(el_ptr + offset % _elemLegacySize);
 }
 
-int32_t StaticArray::ReadInt32(const char *address, intptr_t offset) {
+int StaticArray::ReadInt32(const char *address, intptr_t offset) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->ReadInt32(el_ptr, offset % _elemLegacySize);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->ReadInt32(el_ptr, offset % _elemLegacySize);
 	}
-	return *(const uint32_t *)(el_ptr + offset % _elemLegacySize);
+	return *(const uint32 *)(el_ptr + offset % _elemLegacySize);
 }
 
 float StaticArray::ReadFloat(const char *address, intptr_t offset) {
@@ -123,36 +123,36 @@ void StaticArray::Write(const char *address, intptr_t offset, void *src, int siz
 	}
 }
 
-void StaticArray::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
+void StaticArray::WriteInt8(const char *address, intptr_t offset, uint8 val) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->WriteInt8(el_ptr, offset % _elemLegacySize, val);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->WriteInt8(el_ptr, offset % _elemLegacySize, val);
 	} else {
-		*(uint8_t *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
+		*(uint8 *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
 	}
 }
 
-void StaticArray::WriteInt16(const char *address, intptr_t offset, int16_t val) {
+void StaticArray::WriteInt16(const char *address, intptr_t offset, int16 val) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->WriteInt16(el_ptr, offset % _elemLegacySize, val);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->WriteInt16(el_ptr, offset % _elemLegacySize, val);
 	} else {
-		*(uint16_t *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
+		*(uint16 *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
 	}
 }
 
-void StaticArray::WriteInt32(const char *address, intptr_t offset, int32_t val) {
+void StaticArray::WriteInt32(const char *address, intptr_t offset, int val) {
 	const char *el_ptr = GetElementPtr(address, offset);
 	if (_staticMgr) {
 		return _staticMgr->WriteInt32(el_ptr, offset % _elemLegacySize, val);
 	} else if (_dynamicMgr) {
 		return _dynamicMgr->WriteInt32(el_ptr, offset % _elemLegacySize, val);
 	} else {
-		*(uint32_t *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
+		*(uint32 *)(const_cast<char *>(el_ptr) + offset % _elemLegacySize) = val;
 	}
 }
 

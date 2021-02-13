@@ -34,20 +34,20 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
+int FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
 // NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
-int32_t FileOpenCMode(const char *fnmm, const char *cmode);
-void  FileClose(int32_t handle);
-void  FileWrite(int32_t handle, const char *towrite);
-void  FileWriteRawLine(int32_t handle, const char *towrite);
-void  FileRead(int32_t handle, char *toread);
-int   FileIsEOF(int32_t handle);
-int   FileIsError(int32_t handle);
-void  FileWriteInt(int32_t handle, int into);
-int   FileReadInt(int32_t handle);
-char  FileReadRawChar(int32_t handle);
-int   FileReadRawInt(int32_t handle);
-void  FileWriteRawChar(int32_t handle, int chartoWrite);
+int FileOpenCMode(const char *fnmm, const char *cmode);
+void  FileClose(int handle);
+void  FileWrite(int handle, const char *towrite);
+void  FileWriteRawLine(int handle, const char *towrite);
+void  FileRead(int handle, char *toread);
+int   FileIsEOF(int handle);
+int   FileIsError(int handle);
+void  FileWriteInt(int handle, int into);
+int   FileReadInt(int handle);
+char  FileReadRawChar(int handle);
+int   FileReadRawInt(int handle);
+void  FileWriteRawChar(int handle, int chartoWrite);
 
 } // namespace AGS3
 

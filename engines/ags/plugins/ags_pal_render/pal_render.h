@@ -31,10 +31,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-#define SCRIPT_FLOAT(x) int32 __script_float##x
+#define SCRIPT_FLOAT(x) int __script_float##x
 #define INIT_SCRIPT_FLOAT(x) float x; memcpy(&x, &__script_float##x, sizeof(float))
-#define FLOAT_RETURN_TYPE int32
-#define RETURN_FLOAT(x) int32 __ret##x; memcpy(&__ret##x, &x, sizeof(float)); return __ret##x
+#define FLOAT_RETURN_TYPE int
+#define RETURN_FLOAT(x) int __ret##x; memcpy(&__ret##x, &x, sizeof(float)); return __ret##x
 
 struct PALSTRUCT {
 	int r;

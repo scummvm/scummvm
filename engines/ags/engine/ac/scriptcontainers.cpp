@@ -71,15 +71,15 @@ ScriptDictBase *Dict_Create(bool sorted, bool case_sensitive) {
 
 // TODO: we need memory streams
 ScriptDictBase *Dict_Unserialize(int index, const char *serializedData, int dataSize) {
-	if (dataSize < (int)sizeof(int32_t) * 2)
+	if (dataSize < (int)sizeof(int) * 2)
 		quit("Dict_Unserialize: not enough data.");
 	const char *ptr = serializedData;
 	const int sorted = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+	ptr += sizeof(int);
 	const int cs = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+	ptr += sizeof(int);
 	ScriptDictBase *dic = Dict_CreateImpl(sorted != 0, cs != 0);
-	dic->Unserialize(index, ptr, dataSize -= sizeof(int32_t) * 2);
+	dic->Unserialize(index, ptr, dataSize -= sizeof(int) * 2);
 	return dic;
 }
 
@@ -134,47 +134,47 @@ void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
 	return arr.second;
 }
 
-RuntimeScriptValue Sc_Dict_Create(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Create(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJAUTO_PBOOL2(ScriptDictBase, Dict_Create);
 }
 
-RuntimeScriptValue Sc_Dict_Clear(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Clear(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(ScriptDictBase, Dict_Clear);
 }
 
-RuntimeScriptValue Sc_Dict_Contains(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Contains(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ(ScriptDictBase, Dict_Contains, const char);
 }
 
-RuntimeScriptValue Sc_Dict_Get(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Get(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ_POBJ(ScriptDictBase, const char, myScriptStringImpl, Dict_Get, const char);
 }
 
-RuntimeScriptValue Sc_Dict_Remove(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Remove(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ(ScriptDictBase, Dict_Remove, const char);
 }
 
-RuntimeScriptValue Sc_Dict_Set(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_Set(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ2(ScriptDictBase, Dict_Set, const char, const char);
 }
 
-RuntimeScriptValue Sc_Dict_GetCompareStyle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_GetCompareStyle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDictBase, Dict_GetCompareStyle);
 }
 
-RuntimeScriptValue Sc_Dict_GetSortStyle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_GetSortStyle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDictBase, Dict_GetSortStyle);
 }
 
-RuntimeScriptValue Sc_Dict_GetItemCount(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_GetItemCount(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDictBase, Dict_GetItemCount);
 }
 
-RuntimeScriptValue Sc_Dict_GetKeysAsArray(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_GetKeysAsArray(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJ(ScriptDictBase, void, globalDynamicArray, Dict_GetKeysAsArray);
 }
 
-RuntimeScriptValue Sc_Dict_GetValuesAsArray(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dict_GetValuesAsArray(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJ(ScriptDictBase, void, globalDynamicArray, Dict_GetValuesAsArray);
 }
 
@@ -208,15 +208,15 @@ ScriptSetBase *Set_Create(bool sorted, bool case_sensitive) {
 
 // TODO: we need memory streams
 ScriptSetBase *Set_Unserialize(int index, const char *serializedData, int dataSize) {
-	if (dataSize < (int)sizeof(int32_t) * 2)
+	if (dataSize < (int)sizeof(int) * 2)
 		quit("Set_Unserialize: not enough data.");
 	const char *ptr = serializedData;
 	const int sorted = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+	ptr += sizeof(int);
 	const int cs = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+	ptr += sizeof(int);
 	ScriptSetBase *set = Set_CreateImpl(sorted != 0, cs != 0);
-	set->Unserialize(index, ptr, dataSize -= sizeof(int32_t) * 2);
+	set->Unserialize(index, ptr, dataSize -= sizeof(int) * 2);
 	return set;
 }
 
@@ -257,39 +257,39 @@ void *Set_GetItemsAsArray(ScriptSetBase *set) {
 	return arr.second;
 }
 
-RuntimeScriptValue Sc_Set_Create(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_Create(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJAUTO_PBOOL2(ScriptSetBase, Set_Create);
 }
 
-RuntimeScriptValue Sc_Set_Add(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_Add(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ(ScriptSetBase, Set_Add, const char);
 }
 
-RuntimeScriptValue Sc_Set_Clear(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_Clear(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(ScriptSetBase, Set_Clear);
 }
 
-RuntimeScriptValue Sc_Set_Contains(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_Contains(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ(ScriptSetBase, Set_Contains, const char);
 }
 
-RuntimeScriptValue Sc_Set_Remove(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_Remove(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ(ScriptSetBase, Set_Remove, const char);
 }
 
-RuntimeScriptValue Sc_Set_GetCompareStyle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_GetCompareStyle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptSetBase, Set_GetCompareStyle);
 }
 
-RuntimeScriptValue Sc_Set_GetSortStyle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_GetSortStyle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptSetBase, Set_GetSortStyle);
 }
 
-RuntimeScriptValue Sc_Set_GetItemCount(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_GetItemCount(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptSetBase, Set_GetItemCount);
 }
 
-RuntimeScriptValue Sc_Set_GetItemAsArray(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Set_GetItemAsArray(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJ(ScriptSetBase, void, globalDynamicArray, Set_GetItemsAsArray);
 }
 

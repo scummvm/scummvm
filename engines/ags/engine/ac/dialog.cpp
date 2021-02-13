@@ -1032,7 +1032,7 @@ int show_dialog_options(int _dlgnum, int sayChosenOption, bool _runGameLoopsInBa
 	int dialog_choice = DlgOpt.chose;
 	if (dialog_choice != CHOSE_TEXTPARSER) {
 		DialogTopic *dialog_topic = DlgOpt.dtop;
-		int32_t &option_flags = dialog_topic->optionflags[dialog_choice];
+		int &option_flags = dialog_topic->optionflags[dialog_choice];
 		const char *option_name = DlgOpt.dtop->optionnames[dialog_choice];
 
 		option_flags |= DFLG_HASBEENCHOSEN;
@@ -1160,51 +1160,51 @@ void do_conversation(int dlgnum) {
 extern ScriptString myScriptStringImpl;
 
 // int (ScriptDialog *sd)
-RuntimeScriptValue Sc_Dialog_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDialog, Dialog_GetID);
 }
 
 // int (ScriptDialog *sd)
-RuntimeScriptValue Sc_Dialog_GetOptionCount(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_GetOptionCount(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDialog, Dialog_GetOptionCount);
 }
 
 // int (ScriptDialog *sd)
-RuntimeScriptValue Sc_Dialog_GetShowTextParser(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_GetShowTextParser(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDialog, Dialog_GetShowTextParser);
 }
 
 // int (ScriptDialog *sd, int sayChosenOption)
-RuntimeScriptValue Sc_Dialog_DisplayOptions(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_DisplayOptions(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT(ScriptDialog, Dialog_DisplayOptions);
 }
 
 // int (ScriptDialog *sd, int option)
-RuntimeScriptValue Sc_Dialog_GetOptionState(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_GetOptionState(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT(ScriptDialog, Dialog_GetOptionState);
 }
 
 // const char* (ScriptDialog *sd, int option)
-RuntimeScriptValue Sc_Dialog_GetOptionText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_GetOptionText(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ_PINT(ScriptDialog, const char, myScriptStringImpl, Dialog_GetOptionText);
 }
 
 // int (ScriptDialog *sd, int option)
-RuntimeScriptValue Sc_Dialog_HasOptionBeenChosen(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_HasOptionBeenChosen(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT(ScriptDialog, Dialog_HasOptionBeenChosen);
 }
 
-RuntimeScriptValue Sc_Dialog_SetHasOptionBeenChosen(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_SetHasOptionBeenChosen(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT_PBOOL(ScriptDialog, Dialog_SetHasOptionBeenChosen);
 }
 
 // void (ScriptDialog *sd, int option, int newState)
-RuntimeScriptValue Sc_Dialog_SetOptionState(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_SetOptionState(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(ScriptDialog, Dialog_SetOptionState);
 }
 
 // void (ScriptDialog *sd)
-RuntimeScriptValue Sc_Dialog_Start(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Dialog_Start(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(ScriptDialog, Dialog_Start);
 }
 

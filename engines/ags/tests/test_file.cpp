@@ -45,14 +45,14 @@ struct TTrickyAlignedData {
 	short   l;
 	short   m;
 	int     n;
-	int64_t i64a;
+	int64 i64a;
 	char    o;
-	int64_t i64b;
+	int64 i64b;
 	short   p;
-	int64_t i64c;
+	int64 i64c;
 	short   q;
 	short   r;
-	int64_t i64d;
+	int64 i64d;
 	char    final;
 };
 
@@ -141,8 +141,8 @@ void Test_File() {
 
 	Stream *in = File::OpenFile("test.tmp", AGS::Shared::kFile_Open, AGS::Shared::kFile_Read);
 
-	int16_t int16val = in->ReadInt16();
-	int64_t int64val = in->ReadInt64();
+	int16 int16val = in->ReadInt16();
+	int64 int64val = in->ReadInt64();
 	String str1 = String::FromStream(in);
 	String str2 = String::FromStream(in);
 
@@ -175,7 +175,7 @@ void Test_File() {
 		tricky_data_in.final = as.ReadInt8();
 	}
 
-	int32_t int32val = in->ReadInt32();
+	int int32val = in->ReadInt32();
 
 	delete in;
 

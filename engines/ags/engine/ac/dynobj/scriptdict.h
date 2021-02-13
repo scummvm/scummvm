@@ -141,10 +141,10 @@ private:
 	}
 
 	size_t CalcSerializeSize() override {
-		size_t total_sz = sizeof(int32_t);
+		size_t total_sz = sizeof(int);
 		for (auto it = _dic.begin(); it != _dic.end(); ++it) {
-			total_sz += sizeof(int32_t) + it->_key.GetLength();
-			total_sz += sizeof(int32_t) + it->_value.GetLength();
+			total_sz += sizeof(int) + it->_key.GetLength();
+			total_sz += sizeof(int) + it->_value.GetLength();
 		}
 		return total_sz;
 	}

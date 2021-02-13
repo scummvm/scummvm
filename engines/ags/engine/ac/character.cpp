@@ -103,7 +103,7 @@ extern CCInventory ccDynamicInv;
 
 CharacterExtras *charextra;
 CharacterInfo *playerchar;
-int32_t _sc_PlayerCharPtr = 0;
+int _sc_PlayerCharPtr = 0;
 int char_lowest_yp;
 
 // Sierra-style speech settings
@@ -1856,7 +1856,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 	return 0;
 }
 
-int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int step) {
+int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
 	int ex, ey, nearest = 99999, thisis, nearx = 0, neary = 0;
 	int startx = 0, starty = 14;
 	int roomWidthLowRes = room_to_mask_coord(thisroom.Width);
@@ -1914,7 +1914,7 @@ int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int s
 	return 0;
 }
 
-void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
+void find_nearest_walkable_area(int *xx, int *yy) {
 
 	int pixValue = thisroom.WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
 	// only fix this code if the game was built with 2.61 or above
@@ -2856,697 +2856,697 @@ PViewport FindNearestViewport(int charid) {
 extern ScriptString myScriptStringImpl;
 
 // void | CharacterInfo *chaa, ScriptInvItem *invi, int addIndex
-RuntimeScriptValue Sc_Character_AddInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_AddInventory(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ_PINT(CharacterInfo, Character_AddInventory, ScriptInvItem);
 }
 
 // void | CharacterInfo *chaa, int x, int y
-RuntimeScriptValue Sc_Character_AddWaypoint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_AddWaypoint(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_AddWaypoint);
 }
 
 // void | CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction
-RuntimeScriptValue Sc_Character_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Animate(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5(CharacterInfo, Character_Animate);
 }
 
-RuntimeScriptValue Sc_Character_AnimateFrom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_AnimateFrom(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT6(CharacterInfo, Character_AnimateFrom);
 }
 
 // void | CharacterInfo *chaa, int room, int x, int y
-RuntimeScriptValue Sc_Character_ChangeRoom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_ChangeRoom(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_ChangeRoom);
 }
 
-RuntimeScriptValue Sc_Character_ChangeRoomSetLoop(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_ChangeRoomSetLoop(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_ChangeRoomSetLoop);
 }
 
 // void | CharacterInfo *chaa, int room, int newPos
-RuntimeScriptValue Sc_Character_ChangeRoomAutoPosition(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_ChangeRoomAutoPosition(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_ChangeRoomAutoPosition);
 }
 
 // void | CharacterInfo *chap, int vii
-RuntimeScriptValue Sc_Character_ChangeView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_ChangeView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_ChangeView);
 }
 
 // void | CharacterInfo *char1, CharacterInfo *char2, int blockingStyle
-RuntimeScriptValue Sc_Character_FaceCharacter(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_FaceCharacter(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ_PINT(CharacterInfo, Character_FaceCharacter, CharacterInfo);
 }
 
 // void | CharacterInfo *char1, int direction, int blockingStyle
-RuntimeScriptValue Sc_Character_FaceDirection(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_FaceDirection(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_FaceDirection);
 }
 
 // void | CharacterInfo *char1, int xx, int yy, int blockingStyle
-RuntimeScriptValue Sc_Character_FaceLocation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_FaceLocation(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_FaceLocation);
 }
 
 // void | CharacterInfo *char1, ScriptObject *obj, int blockingStyle
-RuntimeScriptValue Sc_Character_FaceObject(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_FaceObject(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ_PINT(CharacterInfo, Character_FaceObject, ScriptObject);
 }
 
 // void | CharacterInfo *chaa, CharacterInfo *tofollow, int distaway, int eagerness
-RuntimeScriptValue Sc_Character_FollowCharacter(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_FollowCharacter(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ_PINT2(CharacterInfo, Character_FollowCharacter, CharacterInfo);
 }
 
 // int (CharacterInfo *chaa, const char *property)
-RuntimeScriptValue Sc_Character_GetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_POBJ(CharacterInfo, Character_GetProperty, const char);
 }
 
 // void (CharacterInfo *chaa, const char *property, char *bufer)
-RuntimeScriptValue Sc_Character_GetPropertyText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetPropertyText(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ2(CharacterInfo, Character_GetPropertyText, const char, char);
 }
 
 // const char* (CharacterInfo *chaa, const char *property)
-RuntimeScriptValue Sc_Character_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ_POBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetTextProperty, const char);
 }
 
-RuntimeScriptValue Sc_Character_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ_PINT(CharacterInfo, Character_SetProperty, const char);
 }
 
-RuntimeScriptValue Sc_Character_SetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ2(CharacterInfo, Character_SetTextProperty, const char, const char);
 }
 
 // int (CharacterInfo *chaa, ScriptInvItem *invi)
-RuntimeScriptValue Sc_Character_HasInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_HasInventory(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_POBJ(CharacterInfo, Character_HasInventory, ScriptInvItem);
 }
 
 // int (CharacterInfo *char1, CharacterInfo *char2)
-RuntimeScriptValue Sc_Character_IsCollidingWithChar(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_IsCollidingWithChar(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_POBJ(CharacterInfo, Character_IsCollidingWithChar, CharacterInfo);
 }
 
 // int (CharacterInfo *chin, ScriptObject *objid)
-RuntimeScriptValue Sc_Character_IsCollidingWithObject(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_IsCollidingWithObject(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_POBJ(CharacterInfo, Character_IsCollidingWithObject, ScriptObject);
 }
 
-RuntimeScriptValue Sc_Character_IsInteractionAvailable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_IsInteractionAvailable(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_PINT(CharacterInfo, Character_IsInteractionAvailable);
 }
 
 // void (CharacterInfo *chap, int vii)
-RuntimeScriptValue Sc_Character_LockView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_LockView);
 }
 
 // void (CharacterInfo *chap, int vii, int stopMoving)
-RuntimeScriptValue Sc_Character_LockViewEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewEx(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_LockViewEx);
 }
 
 // void (CharacterInfo *chap, int vii, int loop, int align)
-RuntimeScriptValue Sc_Character_LockViewAligned_Old(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewAligned_Old(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_LockViewAligned_Old);
 }
 
 // void (CharacterInfo *chap, int vii, int loop, int align, int stopMoving)
-RuntimeScriptValue Sc_Character_LockViewAlignedEx_Old(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewAlignedEx_Old(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_LockViewAlignedEx_Old);
 }
 
-RuntimeScriptValue Sc_Character_LockViewAligned(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewAligned(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_LockViewAligned);
 }
 
-RuntimeScriptValue Sc_Character_LockViewAlignedEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewAlignedEx(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_LockViewAlignedEx);
 }
 
 // void (CharacterInfo *chaa, int view, int loop, int frame)
-RuntimeScriptValue Sc_Character_LockViewFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewFrame(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_LockViewFrame);
 }
 
 // void (CharacterInfo *chaa, int view, int loop, int frame, int stopMoving)
-RuntimeScriptValue Sc_Character_LockViewFrameEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewFrameEx(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_LockViewFrameEx);
 }
 
 // void (CharacterInfo *chap, int vii, int xoffs, int yoffs)
-RuntimeScriptValue Sc_Character_LockViewOffset(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewOffset(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_LockViewOffset);
 }
 
 // void (CharacterInfo *chap, int vii, int xoffs, int yoffs, int stopMoving)
-RuntimeScriptValue Sc_Character_LockViewOffsetEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LockViewOffsetEx(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_LockViewOffsetEx);
 }
 
 // void (CharacterInfo *chap, ScriptInvItem *invi)
-RuntimeScriptValue Sc_Character_LoseInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_LoseInventory(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(CharacterInfo, Character_LoseInventory, ScriptInvItem);
 }
 
 // void (CharacterInfo *chaa, int x, int y, int blocking, int direct)
-RuntimeScriptValue Sc_Character_Move(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Move(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_Move);
 }
 
 // void (CharacterInfo *chap)
-RuntimeScriptValue Sc_Character_PlaceOnWalkableArea(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_PlaceOnWalkableArea(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(CharacterInfo, Character_PlaceOnWalkableArea);
 }
 
 // void (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_RemoveTint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_RemoveTint(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(CharacterInfo, Character_RemoveTint);
 }
 
 // void (CharacterInfo *chaa, int mood)
-RuntimeScriptValue Sc_Character_RunInteraction(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_RunInteraction(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_RunInteraction);
 }
 
 // void (CharacterInfo *chaa, const char *texx, ...)
-RuntimeScriptValue Sc_Character_Say(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Say(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_SCRIPT_SPRINTF(Character_Say, 1);
 	Character_Say((CharacterInfo *)self, scsf_buffer);
-	return RuntimeScriptValue((int32_t)0);
+	return RuntimeScriptValue((int)0);
 }
 
 // void (CharacterInfo *chaa, int x, int y, int width, const char *texx)
-RuntimeScriptValue Sc_Character_SayAt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SayAt(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3_POBJ(CharacterInfo, Character_SayAt, const char);
 }
 
 // ScriptOverlay* (CharacterInfo *chaa, const char *texx)
-RuntimeScriptValue Sc_Character_SayBackground(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SayBackground(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJAUTO_POBJ(CharacterInfo, ScriptOverlay, Character_SayBackground, const char);
 }
 
 // void (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_SetAsPlayer(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetAsPlayer(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(CharacterInfo, Character_SetAsPlayer);
 }
 
 // void (CharacterInfo *chaa, int iview, int itime)
-RuntimeScriptValue Sc_Character_SetIdleView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetIdleView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_SetIdleView);
 }
 
-RuntimeScriptValue Sc_Character_HasExplicitLight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_HasExplicitLight(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL(CharacterInfo, Character_GetHasExplicitLight);
 }
 
-RuntimeScriptValue Sc_Character_GetLightLevel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetLightLevel(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetLightLevel);
 }
 
-RuntimeScriptValue Sc_Character_SetLightLevel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetLightLevel(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetLightLevel);
 }
 
-RuntimeScriptValue Sc_Character_GetTintBlue(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTintBlue(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTintBlue);
 }
 
-RuntimeScriptValue Sc_Character_GetTintGreen(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTintGreen(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTintGreen);
 }
 
-RuntimeScriptValue Sc_Character_GetTintRed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTintRed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTintRed);
 }
 
-RuntimeScriptValue Sc_Character_GetTintSaturation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTintSaturation(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTintSaturation);
 }
 
-RuntimeScriptValue Sc_Character_GetTintLuminance(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTintLuminance(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTintLuminance);
 }
 
 /*
-RuntimeScriptValue Sc_Character_SetOption(void *self, const RuntimeScriptValue *params, int32_t param_count)
+RuntimeScriptValue Sc_Character_SetOption(void *self, const RuntimeScriptValue *params, int param_count)
 {
 }
 */
 
 // void (CharacterInfo *chaa, int xspeed, int yspeed)
-RuntimeScriptValue Sc_Character_SetSpeed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetSpeed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_SetSpeed);
 }
 
 // void (CharacterInfo *charp)
-RuntimeScriptValue Sc_Character_StopMoving(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_StopMoving(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(CharacterInfo, Character_StopMoving);
 }
 
 // void (CharacterInfo *chaa, const char *texx, ...)
-RuntimeScriptValue Sc_Character_Think(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Think(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_SCRIPT_SPRINTF(Character_Think, 1);
 	Character_Think((CharacterInfo *)self, scsf_buffer);
-	return RuntimeScriptValue((int32_t)0);
+	return RuntimeScriptValue((int)0);
 }
 
 //void (CharacterInfo *chaa, int red, int green, int blue, int opacity, int luminance)
-RuntimeScriptValue Sc_Character_Tint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Tint(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5(CharacterInfo, Character_Tint);
 }
 
 // void (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_UnlockView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_UnlockView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(CharacterInfo, Character_UnlockView);
 }
 
 // void (CharacterInfo *chaa, int stopMoving)
-RuntimeScriptValue Sc_Character_UnlockViewEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_UnlockViewEx(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_UnlockViewEx);
 }
 
 // void (CharacterInfo *chaa, int x, int y, int blocking, int direct)
-RuntimeScriptValue Sc_Character_Walk(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Walk(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(CharacterInfo, Character_Walk);
 }
 
 // void (CharacterInfo *chaa, int xx, int yy, int blocking)
-RuntimeScriptValue Sc_Character_WalkStraight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_WalkStraight(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(CharacterInfo, Character_WalkStraight);
 }
 
-RuntimeScriptValue Sc_GetCharacterAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_GetCharacterAtRoom(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJ_PINT2(CharacterInfo, ccDynamicCharacter, GetCharacterAtRoom);
 }
 
 // CharacterInfo *(int xx, int yy)
-RuntimeScriptValue Sc_GetCharacterAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_GetCharacterAtScreen(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJ_PINT2(CharacterInfo, ccDynamicCharacter, GetCharacterAtScreen);
 }
 
 // ScriptInvItem* (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetActiveInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetActiveInventory(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJ(CharacterInfo, ScriptInvItem, ccDynamicInv, Character_GetActiveInventory);
 }
 
 // void (CharacterInfo *chaa, ScriptInvItem* iit)
-RuntimeScriptValue Sc_Character_SetActiveInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetActiveInventory(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(CharacterInfo, Character_SetActiveInventory, ScriptInvItem);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetAnimating(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetAnimating(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetAnimating);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetAnimationSpeed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetAnimationSpeed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetAnimationSpeed);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetAnimationSpeed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetAnimationSpeed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetAnimationSpeed);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBaseline(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBaseline(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBaseline);
 }
 
 // void (CharacterInfo *chaa, int basel)
-RuntimeScriptValue Sc_Character_SetBaseline(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBaseline(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBaseline);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBlinkInterval(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBlinkInterval(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBlinkInterval);
 }
 
 // void (CharacterInfo *chaa, int interval)
-RuntimeScriptValue Sc_Character_SetBlinkInterval(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBlinkInterval(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBlinkInterval);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBlinkView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBlinkView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBlinkView);
 }
 
 // void (CharacterInfo *chaa, int vii)
-RuntimeScriptValue Sc_Character_SetBlinkView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBlinkView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBlinkView);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBlinkWhileThinking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBlinkWhileThinking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBlinkWhileThinking);
 }
 
 // void (CharacterInfo *chaa, int yesOrNo)
-RuntimeScriptValue Sc_Character_SetBlinkWhileThinking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBlinkWhileThinking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBlinkWhileThinking);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBlockingHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBlockingHeight(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBlockingHeight);
 }
 
 // void (CharacterInfo *chaa, int hit)
-RuntimeScriptValue Sc_Character_SetBlockingHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBlockingHeight(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBlockingHeight);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetBlockingWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetBlockingWidth(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetBlockingWidth);
 }
 
 // void (CharacterInfo *chaa, int wid)
-RuntimeScriptValue Sc_Character_SetBlockingWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetBlockingWidth(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetBlockingWidth);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetClickable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetClickable(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetClickable);
 }
 
 // void (CharacterInfo *chaa, int clik)
-RuntimeScriptValue Sc_Character_SetClickable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetClickable(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetClickable);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetDiagonalWalking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetDiagonalWalking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetDiagonalWalking);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetDiagonalWalking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetDiagonalWalking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetDiagonalWalking);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetFrame(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetFrame);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetFrame(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetFrame);
 }
 
-RuntimeScriptValue Sc_Character_GetHasExplicitTint_Old(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetHasExplicitTint_Old(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetHasExplicitTint_Old);
 }
 
-RuntimeScriptValue Sc_Character_GetHasExplicitTint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetHasExplicitTint(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetHasExplicitTint);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetID);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetIdleView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetIdleView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetIdleView);
 }
 
 // int (CharacterInfo *chaa, int index)
-RuntimeScriptValue Sc_Character_GetIInventoryQuantity(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetIInventoryQuantity(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT(CharacterInfo, Character_GetIInventoryQuantity);
 }
 
 // void (CharacterInfo *chaa, int index, int quant)
-RuntimeScriptValue Sc_Character_SetIInventoryQuantity(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetIInventoryQuantity(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(CharacterInfo, Character_SetIInventoryQuantity);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetIgnoreLighting(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetIgnoreLighting(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetIgnoreLighting);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetIgnoreLighting(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetIgnoreLighting(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetIgnoreLighting);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetIgnoreScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetIgnoreScaling(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetIgnoreScaling);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetIgnoreScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetIgnoreScaling(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetIgnoreScaling);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetIgnoreWalkbehinds(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetIgnoreWalkbehinds(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetIgnoreWalkbehinds);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetIgnoreWalkbehinds(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetIgnoreWalkbehinds(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetIgnoreWalkbehinds);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetLoop(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetLoop(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetLoop);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetLoop(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetLoop(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetLoop);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetManualScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetManualScaling(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetManualScaling);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetMovementLinkedToAnimation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetMovementLinkedToAnimation(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetMovementLinkedToAnimation);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetMovementLinkedToAnimation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetMovementLinkedToAnimation(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetMovementLinkedToAnimation);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetMoving(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetMoving(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetMoving);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetDestinationX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetDestinationX(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetDestinationX);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetDestinationY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetDestinationY(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetDestinationY);
 }
 
 // const char* (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetName(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetName);
 }
 
 // void (CharacterInfo *chaa, const char *newName)
-RuntimeScriptValue Sc_Character_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetName(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(CharacterInfo, Character_SetName, const char);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetNormalView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetNormalView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetNormalView);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetPreviousRoom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetPreviousRoom(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetPreviousRoom);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetRoom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetRoom(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetRoom);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetScaleMoveSpeed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetScaleMoveSpeed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetScaleMoveSpeed);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetScaleMoveSpeed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetScaleMoveSpeed(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetScaleMoveSpeed);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetScaleVolume(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetScaleVolume(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetScaleVolume);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetScaleVolume(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetScaleVolume(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetScaleVolume);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetScaling(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetScaling);
 }
 
 // void (CharacterInfo *chaa, int zoomlevel)
-RuntimeScriptValue Sc_Character_SetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetScaling(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetScaling);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetSolid(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetSolid(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetSolid);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetSolid(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetSolid(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetSolid);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetSpeaking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetSpeaking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetSpeaking);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetSpeakingFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetSpeakingFrame(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetSpeakingFrame);
 }
 
 // int (CharacterInfo *cha)
-RuntimeScriptValue Sc_GetCharacterSpeechAnimationDelay(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_GetCharacterSpeechAnimationDelay(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, GetCharacterSpeechAnimationDelay);
 }
 
 // void (CharacterInfo *chaa, int newDelay)
-RuntimeScriptValue Sc_Character_SetSpeechAnimationDelay(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetSpeechAnimationDelay(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetSpeechAnimationDelay);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetSpeechColor(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetSpeechColor(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetSpeechColor);
 }
 
 // void (CharacterInfo *chaa, int ncol)
-RuntimeScriptValue Sc_Character_SetSpeechColor(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetSpeechColor(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetSpeechColor);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetSpeechView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetSpeechView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetSpeechView);
 }
 
 // void (CharacterInfo *chaa, int vii)
-RuntimeScriptValue Sc_Character_SetSpeechView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetSpeechView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetSpeechView);
 }
 
-RuntimeScriptValue Sc_Character_GetThinking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetThinking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL(CharacterInfo, Character_GetThinking);
 }
 
-RuntimeScriptValue Sc_Character_GetThinkingFrame(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetThinkingFrame(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetThinkingFrame);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetThinkView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetThinkView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetThinkView);
 }
 
 // void (CharacterInfo *chaa, int vii)
-RuntimeScriptValue Sc_Character_SetThinkView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetThinkView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetThinkView);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTransparency(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTransparency);
 }
 
 // void (CharacterInfo *chaa, int trans)
-RuntimeScriptValue Sc_Character_SetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetTransparency(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetTransparency);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetTurnBeforeWalking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetTurnBeforeWalking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetTurnBeforeWalking);
 }
 
 // void (CharacterInfo *chaa, int yesorno)
-RuntimeScriptValue Sc_Character_SetTurnBeforeWalking(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetTurnBeforeWalking(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetTurnBeforeWalking);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetView(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetView(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetView);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetWalkSpeedX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetWalkSpeedX(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetWalkSpeedX);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetWalkSpeedY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetWalkSpeedY(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetWalkSpeedY);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetX(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetX);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetX(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetX);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetY(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetY);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetY(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetY);
 }
 
 // int (CharacterInfo *chaa)
-RuntimeScriptValue Sc_Character_GetZ(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_GetZ(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(CharacterInfo, Character_GetZ);
 }
 
 // void (CharacterInfo *chaa, int newval)
-RuntimeScriptValue Sc_Character_SetZ(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_SetZ(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(CharacterInfo, Character_SetZ);
 }
 

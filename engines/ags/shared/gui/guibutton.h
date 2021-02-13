@@ -84,18 +84,18 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	int32_t     Image;
-	int32_t     MouseOverImage;
-	int32_t     PushedImage;
-	int32_t     CurrentImage;
-	int32_t     Font;
+	int     Image;
+	int     MouseOverImage;
+	int     PushedImage;
+	int     CurrentImage;
+	int     Font;
 	color_t     TextColor;
 	FrameAlignment TextAlignment;
 	// Click actions for left and right mouse buttons
 	// NOTE: only left click is currently in use
 	static const int ClickCount = kMouseRight + 1;
 	GUIClickAction ClickAction[ClickCount];
-	int32_t        ClickData[ClickCount];
+	int        ClickData[ClickCount];
 
 	bool        IsPushed;
 	bool        IsMouseOver;

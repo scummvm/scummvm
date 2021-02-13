@@ -50,8 +50,8 @@ void CCCharacter::Unserialize(int index, const char *serializedData, int dataSiz
 	ccRegisterUnserializedObject(index, &game.chars[num], this);
 }
 
-void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(const_cast<char *>(address) + offset) = val;
+void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16 val) {
+	*(int16 *)(const_cast<char *>(address) + offset) = val;
 
 	// Detect when a game directly modifies the inventory, which causes the displayed
 	// and actual inventory to diverge since 2.70. Force an update of the displayed

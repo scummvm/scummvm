@@ -248,7 +248,7 @@ FLOAT_RETURN_TYPE AGSFastCos(SCRIPT_FLOAT(x)) {
 
 
 void DrawLens(int ox, int oy) {
-	int32 sh, sw = 0;
+	int sh, sw = 0;
 	engine->GetScreenDimensions(&sw, &sh, nullptr);
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	if (!virtsc) engine->AbortGame("DrawLens: Cannot get virtual screen.");
@@ -341,7 +341,7 @@ void SetLensLevel(int level) {
 }
 
 void LensInitialize(int width, int zoom, int lensx, int lensy, int level, int clamp = -1) {
-	int32 sw, sh, radius;
+	int sw, sh, radius;
 	if (width < 1) engine->AbortGame("Invalid lens dimension!");
 	radius = width >> 1;
 	lens = new LensDistort [width * width]();
@@ -434,7 +434,7 @@ void ResetPlasmaSettings() {
 void DrawPlasma(int slot, int palstart, int palend) {
 	BITMAP *plasmaspr = engine->GetSpriteGraphic(slot);
 	if (!plasmaspr) engine->AbortGame("Plasma: Not a sprite I can load.");
-	int32 w, h, basecol, range = 0;
+	int w, h, basecol, range = 0;
 	if (palend > palstart) {
 		range = palend - palstart;
 		basecol = palstart;
@@ -482,7 +482,7 @@ void DoFire(int spriteId, int masksprite, int palstart, int palend, int strength
 	BITMAP *firespr = engine->GetSpriteGraphic(masksprite);
 	BITMAP *firecolorspr = engine->GetSpriteGraphic(spriteId);
 	BITMAP *seedspr;
-	int32 w, h = 0;
+	int w, h = 0;
 	int range, basecol, dir = 0;
 	if (palend > palstart) {
 		range = palend - palstart;
@@ -692,7 +692,7 @@ void SetStarsOriginPoint(int x, int y) {
 	Starfield.originy = y;
 }
 void InitializeStars(int slot, int maxstars) {
-	int32 sw, sh = 0;
+	int sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
 	engine->GetBitmapDimensions(canvas, &sw, &sh, nullptr);
 	Starfield.maxstars = maxstars;
@@ -839,7 +839,7 @@ void SetStarSpriteRange(int start, int end, int slot) {
 }
 
 void DrawStars(int slot, int maskslot) {
-	int32 sw, sh = 0;
+	int sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
 	if (!canvas) engine->AbortGame("DrawStars: Can't load sprite slot.");
 	BITMAP *maskcanvas = engine->GetSpriteGraphic(maskslot);
@@ -875,7 +875,7 @@ void DrawStars(int slot, int maskslot) {
 				if (scale != 100)
 				{
 				unsigned char** orig = engine->GetRawBitmapSurface (origspr);
-				int32 h1,h2,w1,w2=0;
+				int h1,h2,w1,w2=0;
 				double fw2,fh2;
 				engine->GetBitmapDimensions (origspr,&w1,&h1,NULL);
 				fh2 = h1 * (scale / 100.0);
@@ -901,7 +901,7 @@ void DrawStars(int slot, int maskslot) {
 				engine->ReleaseBitmapSurface (resizspr);
 				}
 				//resizspr = origspr;
-				int32 w,h=0;
+				int w,h=0;
 				engine->GetBitmapDimensions (resizspr,&w,&h,NULL);
 				unsigned char **imagemap = engine->GetRawBitmapSurface (resizspr);
 				int ox = px - (w>>1);
@@ -925,7 +925,7 @@ void DrawStars(int slot, int maskslot) {
 				*/
 
 				unsigned char **orig = engine->GetRawBitmapSurface(origspr);
-				int32 h1, h2, w1, w2 = 0;
+				int h1, h2, w1, w2 = 0;
 				double fw2, fh2;
 				engine->GetBitmapDimensions(origspr, &w1, &h1, nullptr);
 				fh2 = h1 * (scale / 100.0);
@@ -1113,8 +1113,8 @@ void SetObjectReflectionIgnoreScaling(int id, int wb) {
 }
 
 int DrawReflections(int id, int charobj = 0) {
-	int32 screenw, screenh;
-	int32 bgw, bgh;
+	int screenw, screenh;
+	int bgw, bgh;
 	engine->GetScreenDimensions(&screenw, &screenh, nullptr);
 	BITMAP *bgmask = engine->GetBackgroundScene(1);
 	if (bgmask == nullptr) return 1;
@@ -1161,7 +1161,7 @@ int DrawReflections(int id, int charobj = 0) {
 		coz = 0;
 	}
 	bool scaled = false;
-	int32 w, h;
+	int w, h;
 	engine->GetBitmapDimensions(charsprite, &w, &h, nullptr);
 	if (scale != 100) {
 		unsigned char **orig = engine->GetRawBitmapSurface(charsprite);
@@ -1197,9 +1197,9 @@ int DrawReflections(int id, int charobj = 0) {
 	unsigned char **charbuffer = engine->GetRawBitmapSurface(rcolormap);
 	unsigned char **alphaarray = engine->GetRawBitmapSurface(ralphamap);
 	int i = h - 1, j = 0;
-	int32 ox = cox;
+	int ox = cox;
 	if (charobj == 0) ox = ox - (w / 2);
-	int32 oy = coy + coz - 1;
+	int oy = coy + coz - 1;
 	engine->RoomToViewport(&ox, &oy);
 	int yoffset = 0;
 	int translevel = 7;
@@ -1230,7 +1230,7 @@ int DrawReflections(int id, int charobj = 0) {
 			int xoffset;
 			if (flipped == 1) xoffset = w - j - 1;
 			else xoffset = j;
-			int32 rx = ox + xoffset, ry = oy + yoffset;
+			int rx = ox + xoffset, ry = oy + yoffset;
 			int wbb = 0;
 			engine->ViewportToRoom(&rx, &ry);
 			if (ry > 0 && ry < bgh && rx > 0 && rx < bgw) {
@@ -1288,8 +1288,8 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 	//if (!clutspr) engine->AbortGame ("Can't load CLUT spriteId into memory.");
 	if (!spritespr) engine->AbortGame("DrawTransSprite: Can't load overlay spriteId into memory.");
 	// Get its surface
-	int32 sprw, sprh, coldepth;
-	int32 bgw, bgh;
+	int sprw, sprh, coldepth;
+	int bgw, bgh;
 	engine->GetBitmapDimensions(bgspr, &bgw, &bgh, &coldepth);
 	engine->GetBitmapDimensions(spritespr, &sprw, &sprh, &coldepth);
 
@@ -1338,8 +1338,8 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 	//if (!clutspr) engine->AbortGame ("Can't load CLUT spriteId into memory.");
 	if (!spritespr) engine->AbortGame("DrawTranslucentOverlay: Can't load overlay spriteId into memory.");
 	// Get its surface
-	int32 sprw, sprh, coldepth;
-	int32 screenw, screenh;
+	int sprw, sprh, coldepth;
+	int screenw, screenh;
 	engine->GetScreenDimensions(&screenw, &screenh, &coldepth);
 	engine->GetBitmapDimensions(spritespr, &sprw, &sprh, &coldepth);
 	unsigned char **charbuffer = engine->GetRawBitmapSurface(virtsc);
@@ -1605,7 +1605,7 @@ void AGSPalRender::AGS_EngineShutdown() {
 NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PRESCREENDRAW && clutslot > 0) {
 		if (drawreflections) {
-			int32 sh, sw = 0;
+			int sh, sw = 0;
 			engine->GetScreenDimensions(&sw, &sh, nullptr);
 			reflectionmap = new long[sw * sh]();
 			rcolormap = engine->CreateBlankBitmap(sw, sh, 8);
@@ -1614,15 +1614,15 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 				if (Reflection.Characters[i].reflect == 0) continue;
 				AGSCharacter *tempchar = engine->GetCharacter(i);
 				if (tempchar->room != engine->GetCurrentRoom()) continue;  //if character isn't even in the room, go to next iteration.
-				int32 vx = tempchar->x;
-				int32 vy = tempchar->y;
+				int vx = tempchar->x;
+				int vy = tempchar->y;
 				engine->RoomToViewport(&vx, &vy);
 				AGSViewFrame *vf = engine->GetViewFrame(tempchar->view + 1, tempchar->loop, tempchar->frame);
 				int w = engine->GetSpriteWidth(vf->pic);
 				int h = engine->GetSpriteHeight(vf->pic);
 				vx = vx - (w / 2);
-				int32 vxmax = vx + w;
-				int32 vymax = vy + h;
+				int vxmax = vx + w;
+				int vymax = vy + h;
 				if (vxmax < 0 || vy > sh || vx > sw || vymax < 0) continue; //if all of the sprite is off screen in any direction, go to next iteration
 				DrawReflections(i, 0);
 			}
@@ -1630,13 +1630,13 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 				if (Reflection.Objects[i].reflect == 0) continue;
 				AGSObject *tempobj = engine->GetObject(i);
 				if (!tempobj->on) continue;
-				int32 vx = tempobj->x;
-				int32 vy = tempobj->baseline - tempobj->y;
+				int vx = tempobj->x;
+				int vy = tempobj->baseline - tempobj->y;
 				engine->RoomToViewport(&vx, &vy);
-				int32 w = engine->GetSpriteWidth(tempobj->num);
-				int32 h = engine->GetSpriteHeight(tempobj->num);
-				int32 vxmax = vx + w;
-				int32 vymax = vy + h;
+				int w = engine->GetSpriteWidth(tempobj->num);
+				int h = engine->GetSpriteHeight(tempobj->num);
+				int vxmax = vx + w;
+				int vymax = vy + h;
 				if (vxmax < 0 || vy > sh || vx > sw || vymax < 0) continue; //if all of the sprite is off screen in any direction, go to next iteration
 				DrawReflections(i, 1);
 			}

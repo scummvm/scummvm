@@ -80,13 +80,13 @@ struct PolyPoints {
 // Just a list of cut out data
 struct DeprecatedRoomStruct {
 	// Full-room animations
-	int16_t       numanims;
+	int16       numanims;
 	FullAnimation anims[MAXANIMS];
 	// Polygonal walkable areas (unknown version)
-	int32_t       numwalkareas;
+	int       numwalkareas;
 	PolyPoints    wallpoints[MAX_WALK_AREAS];
 	// Unknown flags
-	int16_t       flagstates[MAX_FLAGS];
+	int16       flagstates[MAX_FLAGS];
 };
 
 

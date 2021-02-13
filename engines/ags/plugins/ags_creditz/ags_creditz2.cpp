@@ -297,7 +297,7 @@ int AGSCreditz2::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 }
 
 void AGSCreditz2::calculateSequenceHeight(int sequence) {
-	int32 height, creditHeight, dum;
+	int height, creditHeight, dum;
 	height = 0;
 
 	for (uint currentCredit = 0; currentCredit < _state->_credits[sequence].size();
@@ -325,7 +325,7 @@ void AGSCreditz2::calculateSequenceHeight(int sequence) {
 }
 
 int AGSCreditz2::VGACheck(int value) {
-	int32 screenX, dum;
+	int screenX, dum;
 	_engine->GetScreenDimensions(&screenX, &dum, &dum);
 
 	if (screenX == 640)
@@ -441,8 +441,8 @@ void AGSCreditz2::draw() {
 }
 
 void AGSCreditz2::makeMask(int sequence) {
-	int32 wid, hei, cold;
-	int32 x, y;
+	int wid, hei, cold;
+	int x, y;
 	unsigned char **Bitmap, **Bitmap2, **Bitmap3;
 
 	_engine->GetBitmapDimensions(_state->_maskScreen, &wid, &hei, &cold);
@@ -499,7 +499,7 @@ void AGSCreditz2::makeMask(int sequence) {
 }
 
 void AGSCreditz2::drawMask(int sequence, int getput) {
-	int32 wid, hei, col;
+	int wid, hei, col;
 
 	if (getput == 0) {
 		_engine->GetScreenDimensions(&wid, &hei, &col);
@@ -518,8 +518,8 @@ void AGSCreditz2::drawMask(int sequence, int getput) {
 
 int AGSCreditz2::drawCredit(int sequence, int credit) {
 	int font, color;
-	int32 x_pos, leveys, korkeus = 0;
-	int32 scrn_width, scrn_height, coldepth, y_posit;
+	int x_pos, leveys, korkeus = 0;
+	int scrn_width, scrn_height, coldepth, y_posit;
 	int slot, sprite_height, sprite_width, linecount, line, others;
 	Common::String text;
 	Common::String teksti;
@@ -711,7 +711,7 @@ int AGSCreditz2::drawCredit(int sequence, int credit) {
 
 void AGSCreditz2::doCredits() {
 	int current_line;
-	int32 increment, dum;
+	int increment, dum;
 
 	current_line = 1;
 	_state->_sequenceHeight = 0;
@@ -780,10 +780,10 @@ Common::String AGSCreditz2::extractParameter(Common::String &line, const Common:
 }
 
 void AGSCreditz2::specialEffect(int sequence, int credit, const Common::String &text,
-	int font, int color, int32 x_pos) {
+	int font, int color, int x_pos) {
 	Common::String creditt[3];
 	Common::String credit_text, dots;
-	int32 scrn_width, dum, rightside_width, leftside_width, dotwidth;
+	int scrn_width, dum, rightside_width, leftside_width, dotwidth;
 	int space, dotcount, dotpos;
 
 	_engine->GetScreenDimensions(&scrn_width, &dum, &dum);
@@ -897,7 +897,7 @@ void AGSCreditz2::drawStEffects(int sequence, int id, int style) {
 	int thischar;
 	Common::String text;
 	int font, color, set1, set2;
-	int32 x_pos, y_posit, scrn_width, leveys, scrn_height, korkeus, coldepth;
+	int x_pos, y_posit, scrn_width, leveys, scrn_height, korkeus, coldepth;
 
 	teksti = _state->_stCredits[sequence][id].credit;
 	font = _state->_stCredits[sequence][id].font;

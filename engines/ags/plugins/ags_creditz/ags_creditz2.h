@@ -65,7 +65,7 @@ private:
 	static int countLines(const Common::String &text);
 	static Common::String extractParameter(Common::String &line, const Common::String &separator);
 	static void specialEffect(int sequence, int credit, const Common::String &text,
-		int font, int color, int32 x_pos);
+		int font, int color, int x_pos);
 	static void drawStEffects(int sequence, int id, int style);
 	static void speeder(int sequence);
 private:

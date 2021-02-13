@@ -39,13 +39,13 @@ namespace Shared {
 
 struct DebugMessage {
 	String       Text;
-	uint32_t     GroupID;
+	uint32     GroupID;
 	String       GroupName;
 	MessageType  MT;
 
-	DebugMessage() : GroupID((uint32_t)kDbgGroup_None), MT(kDbgMsg_None) {
+	DebugMessage() : GroupID((uint32)kDbgGroup_None), MT(kDbgMsg_None) {
 	}
-	DebugMessage(const String &text, uint32_t group_id, const String &group_name, MessageType mt)
+	DebugMessage(const String &text, uint32 group_id, const String &group_name, MessageType mt)
 		: Text(text)
 		, GroupID(group_id)
 		, GroupName(group_name)

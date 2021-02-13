@@ -141,7 +141,7 @@ bool graphics_mode_set_filter_any(const GfxFilterSetup &setup) {
 
 bool find_nearest_supported_mode(const IGfxModeList &modes, const Size &wanted_size, const int color_depth,
 	const Size *ratio_reference, const Size *upper_bound, DisplayMode &dm, int *mode_index) {
-	uint32_t wanted_ratio = 0;
+	uint32 wanted_ratio = 0;
 	if (ratio_reference && !ratio_reference->IsNull()) {
 		wanted_ratio = (ratio_reference->Height << kShift) / ratio_reference->Width;
 	}
@@ -162,7 +162,7 @@ bool find_nearest_supported_mode(const IGfxModeList &modes, const Size &wanted_s
 			continue;
 		}
 		if (wanted_ratio > 0) {
-			uint32_t mode_ratio = (mode.Height << kShift) / mode.Width;
+			uint32 mode_ratio = (mode.Height << kShift) / mode.Width;
 			if (mode_ratio != wanted_ratio) {
 				continue;
 			}

@@ -60,7 +60,7 @@ class AlignedStream : public ProxyStream {
 public:
 	AlignedStream(Stream *stream, AlignedStreamMode mode,
 		ObjectOwnershipPolicy stream_ownership_policy = kReleaseAfterUse,
-		size_t base_alignment = sizeof(int16_t));
+		size_t base_alignment = sizeof(int16));
 	~AlignedStream() override;
 
 	// Read/Write cumulated padding and reset block counter
@@ -73,24 +73,24 @@ public:
 	bool    CanSeek() const override;
 
 	size_t  Read(void *buffer, size_t size) override;
-	int32_t ReadByte() override;
-	int16_t ReadInt16() override;
-	int32_t ReadInt32() override;
-	int64_t ReadInt64() override;
+	int ReadByte() override;
+	int16 ReadInt16() override;
+	int ReadInt32() override;
+	int64 ReadInt64() override;
 	size_t  ReadArray(void *buffer, size_t elem_size, size_t count) override;
-	size_t  ReadArrayOfInt16(int16_t *buffer, size_t count) override;
-	size_t  ReadArrayOfInt32(int32_t *buffer, size_t count) override;
-	size_t  ReadArrayOfInt64(int64_t *buffer, size_t count) override;
+	size_t  ReadArrayOfInt16(int16 *buffer, size_t count) override;
+	size_t  ReadArrayOfInt32(int *buffer, size_t count) override;
+	size_t  ReadArrayOfInt64(int64 *buffer, size_t count) override;
 
 	size_t  Write(const void *buffer, size_t size) override;
-	int32_t WriteByte(uint8_t b) override;
-	size_t  WriteInt16(int16_t val) override;
-	size_t  WriteInt32(int32_t val) override;
-	size_t  WriteInt64(int64_t val) override;
+	int WriteByte(uint8 b) override;
+	size_t  WriteInt16(int16 val) override;
+	size_t  WriteInt32(int val) override;
+	size_t  WriteInt64(int64 val) override;
 	size_t  WriteArray(const void *buffer, size_t elem_size, size_t count) override;
-	size_t  WriteArrayOfInt16(const int16_t *buffer, size_t count) override;
-	size_t  WriteArrayOfInt32(const int32_t *buffer, size_t count) override;
-	size_t  WriteArrayOfInt64(const int64_t *buffer, size_t count) override;
+	size_t  WriteArrayOfInt16(const int16 *buffer, size_t count) override;
+	size_t  WriteArrayOfInt32(const int *buffer, size_t count) override;
+	size_t  WriteArrayOfInt64(const int64 *buffer, size_t count) override;
 
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
@@ -100,12 +100,12 @@ protected:
 	void            FinalizeBlock();
 
 private:
-	static const size_t LargestPossibleType = sizeof(int64_t);
+	static const size_t LargestPossibleType = sizeof(int64);
 
 	AlignedStreamMode   _mode;
 	size_t              _baseAlignment;
 	size_t              _maxAlignment;
-	int64_t             _block;
+	int64             _block;
 };
 
 } // namespace Shared

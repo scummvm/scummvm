@@ -31,20 +31,20 @@
 namespace AGS3 {
 namespace FNV {
 
-const uint32_t PRIME_NUMBER = 2166136261U;
-const uint32_t SECONDARY_NUMBER = 16777619U;
+const uint32 PRIME_NUMBER = 2166136261U;
+const uint32 SECONDARY_NUMBER = 16777619U;
 
 inline size_t Hash(const char *data, const size_t len) {
-	uint32_t hash = PRIME_NUMBER;
+	uint32 hash = PRIME_NUMBER;
 	for (size_t i = 0; i < len; ++i)
-		hash = (SECONDARY_NUMBER * hash) ^ (uint8_t)(data[i]);
+		hash = (SECONDARY_NUMBER * hash) ^ (uint8)(data[i]);
 	return hash;
 }
 
 inline size_t Hash_LowerCase(const char *data, const size_t len) {
-	uint32_t hash = PRIME_NUMBER;
+	uint32 hash = PRIME_NUMBER;
 	for (size_t i = 0; i < len; ++i)
-		hash = (SECONDARY_NUMBER * hash) ^ (uint8_t)(tolower(data[i]));
+		hash = (SECONDARY_NUMBER * hash) ^ (uint8)(tolower(data[i]));
 	return hash;
 }
 

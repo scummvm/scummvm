@@ -27,9 +27,9 @@ namespace Plugins {
 namespace AGSSnowRain {
 
 IAGSEngine *_engine;
-int32 _screenWidth;
-int32 _screenHeight;
-int32 _screenColorDepth;
+int _screenWidth;
+int _screenHeight;
+int _screenColorDepth;
 
 Weather *AGSSnowRain::_rain;
 Weather *AGSSnowRain::_snow;

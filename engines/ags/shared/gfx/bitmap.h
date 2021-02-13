@@ -84,7 +84,7 @@ void    CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bo
 // source matches bitmap format and has enough data.
 // Pitch is given in bytes and defines the length of the source scan line.
 // Offset is optional and defines horizontal offset, in pixels.
-void    ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t src_pitch, const size_t src_px_offset = 0);
+void    ReadPixelsFromMemory(Bitmap *dst, const uint8 *src_buffer, const size_t src_pitch, const size_t src_px_offset = 0);
 } // namespace BitmapHelper
 
 } // namespace Shared

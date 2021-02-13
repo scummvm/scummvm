@@ -460,123 +460,123 @@ int find_previous_enabled_cursor(int startwith) {
 //=============================================================================
 
 // void  (int curs, int newslot)
-RuntimeScriptValue Sc_ChangeCursorGraphic(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_ChangeCursorGraphic(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT2(ChangeCursorGraphic);
 }
 
 // void  (int curs, int x, int y)
-RuntimeScriptValue Sc_ChangeCursorHotspot(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_ChangeCursorHotspot(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT3(ChangeCursorHotspot);
 }
 
 // void (int curs, int newview)
-RuntimeScriptValue Sc_Mouse_ChangeModeView(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_ChangeModeView(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT2(Mouse_ChangeModeView);
 }
 
 // void (int modd)
-RuntimeScriptValue Sc_disable_cursor_mode(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_disable_cursor_mode(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(disable_cursor_mode);
 }
 
 // void (int modd)
-RuntimeScriptValue Sc_enable_cursor_mode(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_enable_cursor_mode(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(enable_cursor_mode);
 }
 
 // int (int curs)
-RuntimeScriptValue Sc_Mouse_GetModeGraphic(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_GetModeGraphic(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT_PINT(Mouse_GetModeGraphic);
 }
 
 // int (int which)
-RuntimeScriptValue Sc_IsButtonDown(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_IsButtonDown(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT_PINT(IsButtonDown);
 }
 
 // int (int which)
-RuntimeScriptValue Sc_IsModeEnabled(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_IsModeEnabled(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT_PINT(IsModeEnabled);
 }
 
 // void ();
-RuntimeScriptValue Sc_SaveCursorForLocationChange(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_SaveCursorForLocationChange(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID(SaveCursorForLocationChange);
 }
 
 // void  ()
-RuntimeScriptValue Sc_SetNextCursor(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_SetNextCursor(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID(SetNextCursor);
 }
 
 // void  ()
-RuntimeScriptValue Sc_SetPreviousCursor(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_SetPreviousCursor(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID(SetPreviousCursor);
 }
 
 // void  (int x1, int y1, int x2, int y2)
-RuntimeScriptValue Sc_SetMouseBounds(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_SetMouseBounds(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT4(SetMouseBounds);
 }
 
 // void  (int newx, int newy)
-RuntimeScriptValue Sc_SetMousePosition(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_SetMousePosition(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT2(SetMousePosition);
 }
 
 // void ()
-RuntimeScriptValue Sc_RefreshMouse(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_RefreshMouse(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID(RefreshMouse);
 }
 
 // void ()
-RuntimeScriptValue Sc_set_default_cursor(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_set_default_cursor(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID(set_default_cursor);
 }
 
 // void (int newcurs)
-RuntimeScriptValue Sc_set_mouse_cursor(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_set_mouse_cursor(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(set_mouse_cursor);
 }
 
 // int ()
-RuntimeScriptValue Sc_GetCursorMode(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_GetCursorMode(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT(GetCursorMode);
 }
 
 // void (int newmode)
-RuntimeScriptValue Sc_set_cursor_mode(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_set_cursor_mode(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(set_cursor_mode);
 }
 
 // int ()
-RuntimeScriptValue Sc_Mouse_GetVisible(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_GetVisible(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT(Mouse_GetVisible);
 }
 
 // void (int isOn)
-RuntimeScriptValue Sc_Mouse_SetVisible(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_SetVisible(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(Mouse_SetVisible);
 }
 
-RuntimeScriptValue Sc_Mouse_Click(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_Click(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PINT(PluginSimulateMouseClick);
 }
 
-RuntimeScriptValue Sc_Mouse_GetControlEnabled(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_GetControlEnabled(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_BOOL(Mouse::IsControlEnabled);
 }
 
-RuntimeScriptValue Sc_Mouse_SetControlEnabled(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_SetControlEnabled(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_VOID_PBOOL(Mouse_EnableControl);
 }
 
 
-RuntimeScriptValue Sc_Mouse_GetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_GetSpeed(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_FLOAT(Mouse::GetSpeed);
 }
 
-RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int param_count) {
 	ASSERT_VARIABLE_VALUE("Mouse::Speed");
 	Mouse::SetSpeed(params[0].FValue);
 	return RuntimeScriptValue();

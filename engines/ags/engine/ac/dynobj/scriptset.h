@@ -120,9 +120,9 @@ private:
 	}
 
 	size_t CalcSerializeSize() override {
-		size_t total_sz = sizeof(int32_t);
+		size_t total_sz = sizeof(int);
 		for (auto it = _set.begin(); it != _set.end(); ++it)
-			total_sz += sizeof(int32_t) + it->GetLength();
+			total_sz += sizeof(int) + it->GetLength();
 		return total_sz;
 	}
 

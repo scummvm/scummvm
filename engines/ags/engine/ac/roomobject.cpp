@@ -158,7 +158,7 @@ void RoomObject::ReadFromFile(Stream *in) {
 	transparent = in->ReadInt32();
 
 	in->ReadArrayOfInt16(&tint_r, 15);
-	in->ReadArrayOfInt8((int8_t *)&cycling, 4);
+	in->ReadArrayOfInt8((int8 *)&cycling, 4);
 	in->ReadArrayOfInt16(&blocking_width, 2);
 }
 
@@ -168,7 +168,7 @@ void RoomObject::WriteToFile(Stream *out) const {
 	out->WriteInt32(transparent);
 
 	out->WriteArrayOfInt16(&tint_r, 15);
-	out->WriteArrayOfInt8((const int8_t *)&cycling, 4);
+	out->WriteArrayOfInt8((const int8 *)&cycling, 4);
 	out->WriteArrayOfInt16(&blocking_width, 2);
 }
 

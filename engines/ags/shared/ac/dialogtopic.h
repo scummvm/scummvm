@@ -64,7 +64,7 @@ using namespace AGS; // FIXME later
 #define DCHAR_PLAYER    998
 struct DialogTopic {
 	char          optionnames[MAXTOPICOPTIONS][150];
-	int32_t       optionflags[MAXTOPICOPTIONS];
+	int       optionflags[MAXTOPICOPTIONS];
 	unsigned char *optionscripts;
 	short         entrypoints[MAXTOPICOPTIONS];
 	short         startupentrypoint;

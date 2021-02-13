@@ -184,17 +184,17 @@ String make_scaling_option(const GameFrameSetup &frame_setup) {
 	return make_scaling_option(frame_setup.ScaleDef, frame_setup.ScaleFactor);
 }
 
-uint32_t convert_scaling_to_fp(int scale_factor) {
+uint32 convert_scaling_to_fp(int scale_factor) {
 	if (scale_factor >= 0)
 		return scale_factor <<= kShift;
 	else
 		return kUnit / abs(scale_factor);
 }
 
-int convert_fp_to_scaling(uint32_t scaling) {
+int convert_fp_to_scaling(uint32 scaling) {
 	if (scaling == 0)
 		return 0;
-	return scaling >= kUnit ? (scaling >> kShift) : -kUnit / (int32_t)scaling;
+	return scaling >= kUnit ? (scaling >> kShift) : -kUnit / (int)scaling;
 }
 
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup) {

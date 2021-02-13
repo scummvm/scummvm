@@ -290,7 +290,7 @@ void ReadViewportState(RestoredData &r_data, Stream *in) {
 	r_data.Viewports.push_back(view);
 }
 
-HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadGameState(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	GameStateSvgVersion svg_ver = (GameStateSvgVersion)cmp_ver;
 	// Game base
@@ -394,7 +394,7 @@ HSaveError WriteAudio(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadAudio(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 
 	// Game content assertion
@@ -499,7 +499,7 @@ HSaveError WriteCharacters(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadCharacters(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), game.numcharacters, "Characters"))
 		return err;
@@ -525,7 +525,7 @@ HSaveError WriteDialogs(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadDialogs(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadDialogs(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), game.numdialog, "Dialogs"))
 		return err;
@@ -580,7 +580,7 @@ HSaveError WriteGUI(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadGUI(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadGUI(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	const GuiSvgVersion svg_ver = (GuiSvgVersion)cmp_ver;
 	// GUI state
@@ -656,7 +656,7 @@ HSaveError WriteInventory(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadInventory(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadInventory(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), game.numinvitems, "Inventory Items"))
 		return err;
@@ -677,7 +677,7 @@ HSaveError WriteMouseCursors(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadMouseCursors(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadMouseCursors(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), game.numcursors, "Mouse Cursors"))
 		return err;
@@ -702,7 +702,7 @@ HSaveError WriteViews(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadViews(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadViews(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertGameContent(err, in->ReadInt32(), game.numviews, "Views"))
 		return err;
@@ -746,7 +746,7 @@ HSaveError WriteDynamicSprites(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadDynamicSprites(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadDynamicSprites(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	const int spr_count = in->ReadInt32();
 	// ensure the sprite set is at least large enough
@@ -771,7 +771,7 @@ HSaveError WriteOverlays(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadOverlays(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadOverlays(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	size_t over_count = in->ReadInt32();
 	for (size_t i = 0; i < over_count; ++i) {
@@ -797,7 +797,7 @@ HSaveError WriteDynamicSurfaces(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadDynamicSurfaces(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadDynamicSurfaces(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	if (!AssertCompatLimit(err, in->ReadInt32(), MAX_DYNAMIC_SURFACES, "Drawing Surfaces"))
 		return err;
@@ -829,7 +829,7 @@ HSaveError WriteScriptModules(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadScriptModules(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadScriptModules(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	// read the global script data segment
 	int data_len = in->ReadInt32();
@@ -872,7 +872,7 @@ HSaveError WriteRoomStates(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadRoomStates(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadRoomStates(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	int roomstat_count = in->ReadInt32();
 	for (; roomstat_count > 0; --roomstat_count) {
@@ -935,7 +935,7 @@ HSaveError WriteThisRoom(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadThisRoom(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
 	displayed_room = in->ReadInt32();
 	if (displayed_room < 0)
@@ -987,7 +987,7 @@ HSaveError WriteManagedPool(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadManagedPool(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadManagedPool(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	if (ccUnserializeAllObjects(in.get(), &ccUnserializer)) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
 		                         String::FromFormat("Managed pool deserialization failed: %s", ccErrorString.GetCStr()));
@@ -1003,7 +1003,7 @@ HSaveError WritePluginData(PStream out) {
 	return HSaveError::None();
 }
 
-HSaveError ReadPluginData(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
+HSaveError ReadPluginData(PStream in, int cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	auto pluginFileHandle = AGSE_RESTOREGAME;
 	pl_set_file_handle(pluginFileHandle, in.get());
 	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
@@ -1015,10 +1015,10 @@ HSaveError ReadPluginData(PStream in, int32_t cmp_ver, const PreservedParams &pp
 // Description of a supported game state serialization component
 struct ComponentHandler {
 	String             Name;    // internal component's ID
-	int32_t            Version; // current version to write and the highest supported version
-	int32_t            LowestVersion; // lowest supported version that the engine can read
+	int            Version; // current version to write and the highest supported version
+	int            LowestVersion; // lowest supported version that the engine can read
 	HSaveError(*Serialize)(PStream);
-	HSaveError(*Unserialize)(PStream, int32_t cmp_ver, const PreservedParams &, RestoredData &);
+	HSaveError(*Unserialize)(PStream, int cmp_ver, const PreservedParams &, RestoredData &);
 };
 
 // Array of supported components
@@ -1165,7 +1165,7 @@ struct SvgCmpReadHelper {
 // The basic information about deserialized component, used for debugging purposes
 struct ComponentInfo {
 	String  Name;       // internal component's ID
-	int32_t Version;    // data format version
+	int Version;    // data format version
 	soff_t  Offset;     // offset at which an opening tag is located
 	soff_t  DataOffset; // offset at which component data begins
 	soff_t  DataSize;   // expected size of component data
@@ -1240,7 +1240,7 @@ HSaveError WriteComponent(PStream out, ComponentHandler &hdlr) {
 	HSaveError err = hdlr.Serialize(out);
 	soff_t end_pos = out->GetPosition();
 	out->Seek(ref_pos, kSeekBegin);
-	out->WriteInt64(end_pos - ref_pos - sizeof(int64_t)); // size of serialized component data
+	out->WriteInt64(end_pos - ref_pos - sizeof(int64)); // size of serialized component data
 	out->Seek(end_pos, kSeekBegin);
 	if (err)
 		WriteFormatTag(out, hdlr.Name, false);

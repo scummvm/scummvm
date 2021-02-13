@@ -109,7 +109,7 @@ struct State {
 
 	// Version 1.1 specific
 	bool _resolutionFlag = false;
-	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
+	int _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
 };
 
 class AGSCreditz : public DLL {

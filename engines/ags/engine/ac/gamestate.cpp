@@ -234,14 +234,14 @@ PViewport GameState::CreateRoomViewport() {
 	viewport->SetRect(_mainViewport.GetRect());
 	ScriptViewport *scv = new ScriptViewport(index);
 	_roomViewports.push_back(viewport);
-	_scViewportRefs.push_back(std::make_pair(scv, (int32_t)0));
+	_scViewportRefs.push_back(std::make_pair(scv, (int)0));
 	_roomViewportsSorted.push_back(viewport);
 	_roomViewportZOrderChanged = true;
 	on_roomviewport_created(index);
 	return viewport;
 }
 
-ScriptViewport *GameState::RegisterRoomViewport(int index, int32_t handle) {
+ScriptViewport *GameState::RegisterRoomViewport(int index, int handle) {
 	if (index < 0 || (size_t)index >= _roomViewports.size())
 		return nullptr;
 	auto &scobj = _scViewportRefs[index];
@@ -291,12 +291,12 @@ PCamera GameState::CreateRoomCamera() {
 	camera->SetAt(0, 0);
 	camera->SetSize(_mainViewport.GetRect().GetSize());
 	ScriptCamera *scam = new ScriptCamera(index);
-	_scCameraRefs.push_back(std::make_pair(scam, (int32_t)0));
+	_scCameraRefs.push_back(std::make_pair(scam, (int)0));
 	_roomCameras.push_back(camera);
 	return camera;
 }
 
-ScriptCamera *GameState::RegisterRoomCamera(int index, int32_t handle) {
+ScriptCamera *GameState::RegisterRoomCamera(int index, int handle) {
 	if (index < 0 || (size_t)index >= _roomCameras.size())
 		return nullptr;
 	auto &scobj = _scCameraRefs[index];
@@ -848,7 +848,7 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align) {
 // Reads legacy alignment type from the value set in script depending on the
 // current Script API level. This is made to make it possible to change
 // Alignment constants in the Script API and still support old version.
-HorAlignment ReadScriptAlignment(int32_t align) {
+HorAlignment ReadScriptAlignment(int align) {
 	return game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v350 ?
 		ConvertLegacyScriptAlignment((LegacyScriptAlignment)align) :
 		(HorAlignment)align;

@@ -44,7 +44,7 @@ int Room_GetMusicOnLoad();
 const char *Room_GetTextProperty(const char *property);
 int Room_GetProperty(const char *property);
 const char *Room_GetMessages(int index);
-RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count);
+RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int param_count);
 
 //=============================================================================
 

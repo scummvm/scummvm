@@ -37,9 +37,9 @@ namespace AGSFlashlight {
 class AGSFlashlight : public DLL {
 private:
 	static IAGSEngine *_engine;
-	static int32 screen_width;
-	static int32 screen_height;
-	static int32 screen_color_depth;
+	static int screen_width;
+	static int screen_height;
+	static int screen_color_depth;
 	static bool g_BitmapMustBeUpdated;
 	static int g_RedTint;
 	static int g_GreenTint;
@@ -49,10 +49,10 @@ private:
 	static int g_DarknessSize;
 	static int g_DarknessDiameter;
 	static int g_BrightnessSize;
-	static int32 g_FlashlightX;
-	static int32 g_FlashlightY;
-	static int32 g_FlashlightDrawAtX;
-	static int32 g_FlashlightDrawAtY;
+	static int g_FlashlightX;
+	static int g_FlashlightY;
+	static int g_FlashlightDrawAtX;
+	static int g_FlashlightDrawAtY;
 	static bool g_FlashlightFollowMouse;
 	static int g_FollowCharacterId;
 	static int g_FollowCharacterDx;
