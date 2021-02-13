@@ -358,7 +358,7 @@ public:
 	// get the virtual screen
 	AGSIFUNC(BITMAP *) GetVirtualScreen();
 	// write text to the screen in the specified font and colour
-	AGSIFUNC(void) DrawText(int32 x, int32 y, int32 font, int32 color, char *text);
+	AGSIFUNC(void) DrawText(int32 x, int32 y, int32 font, int32 color, const char *text);
 	// get screen dimensions
 	AGSIFUNC(void) GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth);
 	// get screen surface to draw on

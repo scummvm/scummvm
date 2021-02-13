@@ -240,7 +240,7 @@ int IAGSEngine::GetSavedData(char *buffer, int32 bufsize) {
 	return savedatasize;
 }
 
-void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, char *text) {
+void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, const char *text) {
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
 	if (!ds)
 		return;
