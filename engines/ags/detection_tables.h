@@ -160,6 +160,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "resonance", "Resonance" },
 	{ "richardandalice", "Richard & Alice" },
 	{ "shardlight", "Shardlight" },
+	{ "shivah", "Shivah" },
+	{ "superjazzman", "Super Jazz Man" },
 	{ "technobabylon", "Technobabylon" },
 	{ "thecatlady", "The Cat Lady" },
 	{ "unavowed", "Unavowed" },
@@ -1035,7 +1037,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shem", "Shem" },
 	{ "sherlock", "Sherlock" },
 	{ "shiftersboxoutsidein", "Shifter's Box - Outside In" },
-	{ "shivah", "Shivah" },
 	{ "shoot", "Shoot" },
 	{ "shootmyvalentine", "Shoot my Valentine" },
 	{ "shortcut", "ShortCut" },
@@ -1113,7 +1114,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "strangerthings", "Stranger Things" },
 	{ "supaevil", "Supa-EviL" },
 	{ "supergirl", "Supergirl" },
-	{ "superjazzman", "Super Jazz Man" },
 	{ "superracing", "Super Racing" },
 	{ "surreality", "Surreality" },
 	{ "sweed", "Sweed" },
@@ -1513,6 +1513,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
 	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
 	ENGLISH_ENTRY("shardlight", "Shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
+	ENGLISH_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
+	ENGLISH_ENTRY("superjazzman", "SJM.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
 	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
 	ENGLISH_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
