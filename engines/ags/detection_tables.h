@@ -154,6 +154,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
+	{ "danewguys2", "Da New Guys: Day of the Jackass" },
 	{ "geminirue", "Gemini Rue" },
 	{ "goldenwake", "A Golden Wake" },
 	{ "lamplightcity", "Lamplight City" },
@@ -1503,6 +1504,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // GOG
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724), // Steam
 	ENGLISH_ENTRY("charnelhousetrilogy", "CHT.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
+	ENGLISH_ENTRY("danewguys2", "Jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
 	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
@@ -1528,6 +1530,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_DEMO("blackwell2", "Unbound_Demo.exe", "6ee842f73649ced615c44d4eb303687c", 30057537),
 	ENGLISH_DEMO("blackwell3", "Convergence.exe", "856a6e0e22d2cb4a45d5bbc7245ce5e8", 29935120),
 	ENGLISH_DEMO("bytheswordconspiracy", "bts.exe", "7dc7f61f79ba7a77d4ef8168bfd3d173", 60246329),
+	ENGLISH_DEMO("danewguys2", "DNG2 Demo.exe", "0d2e8dc76f9ac381d204a3ac763b0bac", 5235302),
 	ENGLISH_DEMO("diamondsintherough", "Diamonds Demo.exe", "14c995189266969d538b31d1df451d3f", 2439365),
 	ENGLISH_DEMO("dumbassdrivers", "dumbass.exe", "f120690b506dd63cd7d1112ea6af2f77", 40580988),
 	ENGLISH_DEMO("earlbobbyislookingforaloo", "Demo.exe", "0e32c4b3380e286dc0cea8550f1c045e", 4221725),
