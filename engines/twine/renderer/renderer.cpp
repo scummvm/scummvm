@@ -1532,15 +1532,16 @@ void Renderer::vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int
 }
 
 void Renderer::vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
-	clip_or_depth_DAT_00433444 = 32000;
-	y_DAT_00433448 = -32000;
+	int16 clip_or_depth_DAT_00433444 = 32000;
+	uint32 y_DAT_00433448 = (uint32)-32000;
+
 	uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
 	uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
 	if (y_uVar1 < y_uVar2) {
-		if (y_uVar1 <= 32000) {
+		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
 			clip_or_depth_DAT_00433444 = y_uVar1;
 		}
-		if (-32001 < (int32)y_uVar2) {
+		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
 			y_DAT_00433448 = y_uVar2;
 		}
 		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
