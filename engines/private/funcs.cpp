@@ -180,7 +180,7 @@ void BustMovie(ArgArray args) {
     assert(videoIndex <= 5);
 
     char f[32];
-    sprintf(f, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[videoIndex]);
+    snprintf(f, 32, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[videoIndex]);
 
     if (kPoliceBustVideos[videoIndex] == 2) {
         Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
