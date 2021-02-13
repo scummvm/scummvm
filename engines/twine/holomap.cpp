@@ -201,7 +201,7 @@ void Holomap::prepareHolomapPolygons() {
 	qsort(_holomapSort, ARRAYSIZE(_holomapSort), sizeof(HolomapSort), sortHolomapSurfaceCoordsByDepth);
 }
 
-bool Holomap::vertices_FUN_00423ebb(const Vertex *vertices) const {
+bool Holomap::isTriangleVisible(const Vertex *vertices) const {
 	const int32 iVar3 = (int32)(vertices[0].y - vertices[2].y) * (int32)(vertices[1].x - vertices->x);
 	const int16 sVar5 = (int16)((uint32)iVar3 >> 0x10);
 	const int32 iVar4 = (int32)(vertices[0].x - vertices[2].x) * (int32)(vertices[1].y - vertices->y);
@@ -411,7 +411,7 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[1].y = pos2.y;
 		vertexCoordinates[2].x = pos3.x;
 		vertexCoordinates[2].y = pos3.y;
-		bool iVar1 = vertices_FUN_00423ebb(vertexCoordinates);
+		bool iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
 			tex_coords_maybe_DAT_0043336a = pos1.unk1;
 			tex_coords_maybe_DAT_0043336c = pos1.unk2;
@@ -431,7 +431,7 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[1].y = pos5.y;
 		vertexCoordinates[2].x = pos6.x;
 		vertexCoordinates[2].y = pos6.y;
-		iVar1 = vertices_FUN_00423ebb(vertexCoordinates);
+		iVar1 = isTriangleVisible(vertexCoordinates);
 		if (iVar1) {
 			tex_coords_maybe_DAT_0043336a = pos4.unk1;
 			tex_coords_maybe_DAT_0043336c = pos4.unk2;
