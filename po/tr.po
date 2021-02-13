@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-13 03:22+0000\n"
-"PO-Revision-Date: 2021-02-13 13:52+0000\n"
+"PO-Revision-Date: 2021-02-13 18:41+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -1835,116 +1835,110 @@ msgid "No playtime saved"
 msgstr "Oynama süresi kaydedilmemiş"
 
 #: gui/saveload-dialog.cpp:464
-#, fuzzy
 msgid "Do you really want to delete this saved game?"
-msgstr "Dosyanın üzerine yazmayı gerçekten istiyor musun?"
+msgstr "Bu kayıtlı oyunu silmeyi gerçekten istiyor musun?"
 
 #: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
 msgid "Date: "
-msgstr ""
+msgstr "Tarih: "
 
 #: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
 msgid "Time: "
-msgstr ""
+msgstr "Saat: "
 
 #: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
 msgid "Playtime: "
-msgstr ""
+msgstr "Oynama süresi: "
 
 #: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Kaydedilmiş oyunu yüklemek istiyor musunuz?"
+msgstr "Kaydedilmiş oyunun adı yok"
 
 #: gui/saveload-dialog.cpp:770
 msgid "Next"
-msgstr ""
+msgstr "Sonraki"
 
 #: gui/saveload-dialog.cpp:773
 msgid "Prev"
-msgstr ""
+msgstr "Önceki"
 
 #: gui/saveload-dialog.cpp:980
 msgid "New Save"
-msgstr ""
+msgstr "Yeni Kayıt"
 
 #: gui/saveload-dialog.cpp:980
 msgid "Create a new saved game"
-msgstr ""
+msgstr "Yeni oyun kaydı yaratma"
 
 #: gui/saveload-dialog.cpp:1109
 #, fuzzy
 msgid "Name: "
-msgstr "İsim:"
+msgstr "İsim: "
 
 #: gui/saveload-dialog.cpp:1185
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "%d slotu için bir tanımlayıcı giriniz:"
 
 #: gui/themebrowser.cpp:45
-#, fuzzy
 msgid "Select a Theme"
-msgstr "Seçilen oyunu başlatın"
+msgstr "Tema seç"
 
 #: gui/ThemeEngine.cpp:278
-#, fuzzy
 msgid "Disabled GFX"
-msgstr "Pasifleşmiş"
+msgstr "Pasifleşmiş GFX"
 
 #: gui/ThemeEngine.cpp:278
-#, fuzzy
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "Pasifleşmiş"
+msgstr "Pasifleşmiş GFX"
 
 #: gui/ThemeEngine.cpp:279
 msgid "Standard renderer"
-msgstr ""
+msgstr "Standart çizici"
 
 #: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
 #: gui/ThemeEngine.cpp:281
 msgid "Antialiased renderer"
-msgstr ""
+msgstr "Aynalama yokedici çizici"
 
 #: gui/ThemeEngine.cpp:281
-#, fuzzy
 msgid "Antialiased"
-msgstr "3B Anti merdiven efekti:"
+msgstr "Anti merdiven"
 
 #: gui/unknown-game-dialog.cpp:49
 msgid "Add anyway"
-msgstr ""
+msgstr "Her şekilde ekle"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Panoya kopyala"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
-msgstr ""
+msgstr "Oyunu raporla"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "Panoya gerekli oyun bilgisini kopyalamak için alttaki butonu kullanın."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Hata takip sistemine oyunu direkman raporlayabilirsiniz."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Oyununuz ile ilgili bütün bilgiler panoya kopyalandı"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Oyunun bilgilerinin panoya kopyalanması başarılamadı!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -1952,154 +1946,157 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"İnternete erişim gerektiren otomatik güncellemelerin kontrolünü \n"
+"şimdi ScummVM destekliyor. Bu özelliği \n"
+"aktive etmek ister misiniz?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Seçenekler pencersindeki\n"
+"Diğer tabından bu ayarı daha sonra değiştirebilirsiniz."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
-msgstr ""
+msgstr "İlerle"
 
 #: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
 msgid "Clear value"
-msgstr ""
+msgstr "Değeri sil"
 
 #: base/main.cpp:621
 msgid "Error running game:"
-msgstr ""
+msgstr "Çalıştırılan oyunda hata:"
 
 #: base/main.cpp:668
-#, fuzzy
 msgid "Could not find any engine capable of running the selected game"
-msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı!"
+msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı"
 
 #: common/achievements.cpp:93
-#, fuzzy
 msgid "Achievement unlocked!"
-msgstr "Kilidi çözülen başarımlar: %d/%d"
+msgstr "Kilidi çözülen başarımlar!"
 
 #: common/error.cpp:38
 msgid "No error"
-msgstr ""
+msgstr "Hata yok"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr ""
+msgstr "Oyun dosyaları bulunamadı"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr ""
+msgstr "Oyun ID si desteklenmiyor"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "Desteklenmeyen renk modu"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Ses cihazı başlatımı başarılamadı"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
-msgstr ""
+msgstr "Okuma izni reddedildi"
 
 #: common/error.cpp:51
 msgid "Write permission denied"
-msgstr ""
+msgstr "Yazma izni reddedildi"
 
 #: common/error.cpp:54
 msgid "Path does not exist"
-msgstr ""
+msgstr "Klasör bulunamadı"
 
 #: common/error.cpp:56
 msgid "Path not a directory"
-msgstr ""
+msgstr "Yol bir klasör değil"
 
 #: common/error.cpp:58
 msgid "Path not a file"
-msgstr ""
+msgstr "Yol bir dosya değil"
 
 #: common/error.cpp:61
 msgid "Cannot create file"
-msgstr ""
+msgstr "Dosya yaratılamadı"
 
 #: common/error.cpp:63
 msgid "Reading data failed"
-msgstr ""
+msgstr "Veri okuma başarılamadı"
 
 #: common/error.cpp:65
 msgid "Writing data failed"
-msgstr ""
+msgstr "Veri yazma başarılamadı"
 
 #: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "Uygun motor eklentisi bulunamadı"
 
 #: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
-msgstr ""
+msgstr "Motor eklentisi kayıtlı oyunları desteklemiyor"
 
 #: common/error.cpp:73
 msgid "User canceled"
-msgstr ""
+msgstr "Kullanıcı iptal etti"
 
 #: common/error.cpp:77
-#, fuzzy
 msgid "Unknown error"
-msgstr "Bilinmeyen varyant"
+msgstr "Bilinmeyen hata"
 
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Yeşil"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber renk"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Renk)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 Renk)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Yeşil"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber renk"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Günlük"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Haftalık"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Aylık"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
-msgstr ""
+msgstr "<Kötü değer>"
 
 #: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Kanuni olmayan oyun kopyası fark edildiç Bu durumlarda destek veremiyoruz"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
-msgstr ""
+msgstr "~D~evam"
 
 #: engines/dialogs.cpp:75
 #, fuzzy
@@ -2108,7 +2105,7 @@ msgstr "~Y~ükle..."
 
 #: engines/dialogs.cpp:79 backends/platform/3ds/options-dialog.cpp:46
 msgid "~S~ave"
-msgstr ""
+msgstr "~K~aydet"
 
 #: engines/dialogs.cpp:83
 #, fuzzy
@@ -2117,20 +2114,20 @@ msgstr "A~y~arlar..."
 
 #: engines/dialogs.cpp:88
 msgid "~H~elp"
-msgstr ""
+msgstr "~Y~ardım"
 
 #: engines/dialogs.cpp:90
 msgid "~A~bout"
-msgstr ""
+msgstr "~H~akkında"
 
 #: engines/dialogs.cpp:93 engines/dialogs.cpp:169
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~B~aşlatıcıya Dön"
 
 #: engines/dialogs.cpp:95 engines/dialogs.cpp:171
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~B~aşlatıcıya Dön"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
@@ -2146,9 +2143,8 @@ msgstr ""
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
-#, fuzzy
 msgid "Save game:"
-msgstr "Oyun yükle:"
+msgstr "Oyun kaydet:"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:831
 #: backends/platform/symbian/src/SymbianActions.cpp:46
@@ -2169,7 +2165,7 @@ msgstr "Oyun yükle:"
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 #: engines/zvision/metaengine.cpp:194
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: engines/dialogs.cpp:133
 msgid ""
@@ -2177,61 +2173,63 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Özür dileriz, bu motor daha oyun içi yardımı desteklemiyor. Lütfen temel "
+"bilgi için README dosyasını inceleyin."
 
 #: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
-msgstr ""
+msgstr "Oyun kaydedilemedi (%s)! Lütfen README dosyasına bakınız."
 
 #: engines/dialogs.cpp:359
+#, fuzzy
 msgid "~O~K"
-msgstr ""
+msgstr "~O~K"
 
 #: engines/dialogs.cpp:360
-#, fuzzy
 msgid "~C~ancel"
 msgstr "İptal"
 
 #: engines/dialogs.cpp:363
 msgid "~K~eys"
-msgstr ""
+msgstr "~T~uşlar"
 
 #: engines/engine.cpp:319
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr ""
+msgstr "'%dx%d' çözünürlüğüne geçilemedi."
 
 #: engines/engine.cpp:328
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "Renk formatı başlatılmadı."
 
 #: engines/engine.cpp:337
 #, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr ""
+msgstr "'%s' görüntü moduna geçilemedi."
 
 #: engines/engine.cpp:345
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr ""
+msgstr "'%s' çekiştirme moduna geçilemedi."
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
-msgstr ""
+msgstr "Görüntü en-boy oranı uygulanamadı."
 
 #: engines/engine.cpp:357
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Tam ekran ayarı uygulanamadı."
 
 #: engines/engine.cpp:362
 msgid "Could not apply filtering setting."
-msgstr ""
+msgstr "Filtreleme ayarı uygulanamadı."
 
 #: engines/engine.cpp:420
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -2241,6 +2239,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"Oyunu direk olarak CD den oynuyor gibisiniz.\n"
+"Bu durum hatalara yol açabilir. \n"
+"Oyun dosyalarını lütfen hard diske kopyalayıp\n"
+" oynamayı deneyin. \n"
+"Detaylar için README dosyasına bakın."
 
 #: engines/engine.cpp:518
 msgid ""
@@ -2250,16 +2253,21 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"Bu oyunun Cdsinde ses kayıtları bulunmaktadır.\n"
+"Bu kayıtların Cd den rip edilmesi gerekmektedir.\n"
+"Aksi takdirde müzikleri duyamazsınız.\n"
+"Detaylar için\n"
+"README dosyasına bakın."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
-msgstr ""
+msgstr "Otokayıt"
 
 #: engines/engine.cpp:550
 msgid "Error occurred making autosave"
-msgstr ""
+msgstr "Otokayıt yaparken hata oluştu"
 
 #: engines/engine.cpp:629
 #, c-format
