@@ -1642,23 +1642,23 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 	renderHolomapPolygons(top,(int16)bottom, _engine->_resources->holomapImagePtr);
 }
 
-void Renderer::renderHolomapPolygons(int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
-	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, y_1);
+void Renderer::renderHolomapPolygons(int32 top, int16 bottom, uint8* holomapSurfaceImgOutPtr) {
+	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
 	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
-	int16 height = (int16)(param_2 - (int16)y_1) + 1;
-	byte* holomap_offset_X_DAT_00433440 = (byte*)&_polyTab[y_1 * 2];
+	int16 height = (int16)(bottom - (int16)top) + 1;
+	byte* polyTabPtr = (byte*)&_polyTab[top * 2];
 	for (int16 y = 0; y < height; ++y) {
 		uint8* holomapSurfaceOutPos = holomapSurfaceOutPtr;
-		int32 iVar1 = (int32)*holomap_offset_X_DAT_00433440;
+		int32 iVar1 = (int32)*polyTabPtr;
 		uint8 *puVar6 = (uint8 *)(holomapsurfaceBufferOffsetPosX + iVar1);
-		int32 iVar3 = holomap_offset_X_DAT_00433440[480] - iVar1;
-		if (iVar3 != 0 && iVar1 <= holomap_offset_X_DAT_00433440[480]) {
-			iVar1 = (int32)(1 - ((uint32)(uint16)holomap_offset_X_DAT_00433440[1440] -
-			                   (uint32)(uint16)holomap_offset_X_DAT_00433440[2400])) /
+		int32 iVar3 = polyTabPtr[480] - iVar1;
+		if (iVar3 != 0 && iVar1 <= polyTabPtr[480]) {
+			iVar1 = (int32)(1 - ((uint32)(uint16)polyTabPtr[1440] -
+			                   (uint32)(uint16)polyTabPtr[2400])) /
 			        iVar3;
-			uint32 uVar5 = (uint32)(uint16)holomap_offset_X_DAT_00433440[960];
-			int32 iVar2 = (int32)(((uint16)holomap_offset_X_DAT_00433440[1920] - uVar5) + 1) / iVar3;
-			uint16 uVar4 = holomap_offset_X_DAT_00433440[1440];
+			uint32 uVar5 = (uint32)(uint16)polyTabPtr[960];
+			int32 iVar2 = (int32)(((uint16)polyTabPtr[1920] - uVar5) + 1) / iVar3;
+			uint16 uVar4 = polyTabPtr[1440];
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
 			for (int32 i = 0; i < iVar3; ++i) {
@@ -1669,7 +1669,7 @@ void Renderer::renderHolomapPolygons(int32 y_1, int16 param_2, uint8* holomapSur
 			}
 		}
 		holomapsurfaceBufferOffsetPosX += _engine->frontVideoBuffer.w;
-		holomap_offset_X_DAT_00433440 = holomap_offset_X_DAT_00433440 + 1;
+		polyTabPtr = polyTabPtr + 1;
 	}
 }
 
