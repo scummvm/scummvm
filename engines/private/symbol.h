@@ -33,12 +33,12 @@
 
 namespace Private {
 
-typedef struct Symbol {	/* symbol table entry */
+typedef struct Symbol {     /* symbol table entry */
     Common::String *name;
-    short	type;	/* NAME, NUM, STRING or RECT  */
+    short  type;            /* NAME, NUM, STRING or RECT  */
     union {
-        int	val;	    /* NAME or NUM */
-        char	*str;	    /* STRING */
+        int val;            /* NAME or NUM */
+        char *str;          /* STRING */
         Common::Rect *rect; /* RECT */
     } u;
 } Symbol;

@@ -56,7 +56,7 @@ void setSymbol(Symbol *s, int v) {
 }
 
 /* find s in symbol table symlist */
-Symbol *lookup(Common::String s, SymbolMap symlist)	 {
+Symbol *lookup(Common::String s, SymbolMap symlist) {
     Symbol *r = symlist.getVal(s);
     return r;
 }
