@@ -1535,101 +1535,101 @@ void Renderer::vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexC
 	int16 clip_or_depth_DAT_00433444 = 32000;
 	uint32 y_DAT_00433448 = (uint32)-32000;
 
-	uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
-	uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
+	{
+		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
+		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
+		if (y_uVar1 < y_uVar2) {
+			if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar1;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
+				y_DAT_00433448 = y_uVar2;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_004314ce*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
+								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
+								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&polyTab2*/);
 		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
+		if (y_uVar2 < y_uVar1) {
+			if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar2;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+				y_DAT_00433448 = y_uVar1;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_0043188e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
+								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*polyTab2 + 0x1e0*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
+								(uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&DAT_0043278e*/);
 		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&polyTab2*/);
 	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[0].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[1].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
+	{
+		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
+		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
+		if (y_uVar1 < y_uVar2) {
+			if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar1;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
+				y_DAT_00433448 = y_uVar2;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_004314ce*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
+								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
+								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*polyTab2*/);
 		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
+		if (y_uVar2 < y_uVar1) {
+			if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar2;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+				y_DAT_00433448 = y_uVar1;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_0043188e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
+								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*polyTab2 + 0x1e0*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
+								(uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*(int16 *)&DAT_0043278e*/);
 		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[1].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[0].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y,
-		                      (uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
+	{
+		const uint32 y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
+		const uint32 y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
+		if (y_uVar1 < y_uVar2) {
+			if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar1;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
+				y_DAT_00433448 = y_uVar2;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_004314ce*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
+								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*(int16 *)&DAT_00431c4e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
+								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*polyTab2*/);
 		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
+		if (y_uVar2 < y_uVar1) {
+			if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
+				clip_or_depth_DAT_00433444 = y_uVar2;
+			}
+			if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
+				y_DAT_00433448 = y_uVar1;
+			}
+			vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
+								(uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_0043188e*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
+								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*polyTab2 + 0x1e0*/);
+			vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
+								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*(int16 *)&DAT_0043278e*/);
 		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*polyTab2*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[1].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[2].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[2].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[1].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].x, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y,
-		                      (uint32)(uint16)vertexCoordinates[1].y, (uint32)vertexCoordinates2[1].y, nullptr /*(int16 *)&DAT_0043278e*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar1;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar2) {
-			y_DAT_00433448 = y_uVar2;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_004314ce*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*(int16 *)&DAT_00431c4e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*polyTab2*/);
-	}
-	y_uVar1 = (uint32)(uint16)vertexCoordinates[2].y;
-	y_uVar2 = (uint32)(uint16)vertexCoordinates[0].y;
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)clip_or_depth_DAT_00433444) {
-			clip_or_depth_DAT_00433444 = y_uVar2;
-		}
-		if ((int32)y_DAT_00433448 <= (int32)y_uVar1) {
-			y_DAT_00433448 = y_uVar1;
-		}
-		vertices_FUN_00420fad(y_uVar2, (uint32)(uint16)vertexCoordinates[0].x, y_uVar1,
-		                      (uint32)(uint16)vertexCoordinates[2].x, nullptr /*(int16 *)&DAT_0043188e*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].x,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].x, nullptr /*polyTab2 + 0x1e0*/);
-		vertices_FUN_00420fad((uint32)(uint16)vertexCoordinates[0].y, (uint32)vertexCoordinates2[0].y,
-		                      (uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, nullptr /*(int16 *)&DAT_0043278e*/);
 	}
 	holomap_surface_load_FUN_0042194d(vertexCoordinates, clip_or_depth_DAT_00433444,(int16)y_DAT_00433448, _engine->_resources->holomapImagePtr);
 }
