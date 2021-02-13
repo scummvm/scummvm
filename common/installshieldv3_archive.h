@@ -33,10 +33,10 @@
 
 namespace Common {
 
-class InstallerArchive : public Common::Archive {
+class InstallShieldV3 : public Common::Archive {
 public:
-	InstallerArchive();
-	~InstallerArchive() override;
+	InstallShieldV3();
+	~InstallShieldV3() override;
 
 	bool open(const Common::String &filename);
 	void close();

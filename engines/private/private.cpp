@@ -47,7 +47,6 @@
 #include "private/grammar.tab.h"
 #include "private/grammar.h"
 
-
 namespace Private {
 
 PrivateEngine *g_private = NULL;
@@ -714,7 +713,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     for (uint32 i = 0; i < size; ++i) {
         file = new Common::String(stream->readString());
 
-        DossierInfo *m = (DossierInfo*) malloc(sizeof(DossierInfo));
+        DossierInfo *m = (DossierInfo*)malloc(sizeof(DossierInfo));
         m->page1 = file;
 
         file = new Common::String(stream->readString());
@@ -753,7 +752,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     _phone.clear();
 
     for (uint32 j = 0; j < size; ++j) {
-        PhoneInfo *i = (PhoneInfo*) malloc(sizeof(PhoneInfo));
+        PhoneInfo *i = (PhoneInfo*)malloc(sizeof(PhoneInfo));
 
         i->sound = new Common::String(stream->readString());
         i->flag  = variables.getVal(stream->readString());
@@ -1083,7 +1082,7 @@ Common::String *PrivateEngine::getLeaveSound() {
 char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
 
-    char *f = (char*) malloc((strlen(clip)+3)*sizeof(char));
+    char *f = (char*)malloc((strlen(clip)+3)*sizeof(char));
     snprintf(f, 32, "%s%02d", clip, r);
     return f;
 }
@@ -1113,7 +1112,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
         i++;
         if (sym->u.val) {
             offset = offset + 22;
-            char *f = (char*) malloc(32*sizeof(char));
+            char *f = (char*)malloc(32*sizeof(char));
             snprintf(f, 32, "dryloc%d.bmp", i);
             debug("%s, %d, %d", f, i, offset);
             Common::String s(*_diaryLocPrefix + f);

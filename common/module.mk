@@ -17,7 +17,7 @@ MODULE_OBJS := \
 	iff_container.o \
 	ini-file.o \
 	installshield_cab.o \
-	installer_archive.o \
+	installshieldv3_archive.o \
 	json.o \
 	language.o \
 	localization.o \

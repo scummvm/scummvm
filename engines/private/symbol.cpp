@@ -21,8 +21,8 @@
  */
 
 #include "common/debug.h"
-#include "grammar.h"
-#include "grammar.tab.h"
+#include "private/grammar.h"
+#include "private/grammar.tab.h"
 
 namespace Private {
 
@@ -43,7 +43,7 @@ void defineSymbol(char *n, Common::Rect *r) {
 char *emalloc(unsigned n) {
     char *p;
 
-    p = (char*) malloc(n);
+    p = (char*)malloc(n);
     assert(p != NULL);
     return p;
 }
@@ -145,7 +145,7 @@ Symbol *constant(int t, int d, char *s) {
     Symbol *sp;
     Common::String *n = new Common::String("<constant>");
 
-    sp = (Symbol *) emalloc(sizeof(Symbol));
+    sp = (Symbol *)emalloc(sizeof(Symbol));
     sp->name = n;
     sp->type = t;
     if (t == NUM || t == NAME)
@@ -165,7 +165,7 @@ Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, Symbo
 
     Symbol *sp;
 
-    sp = (Symbol *) emalloc(sizeof(Symbol));
+    sp = (Symbol *)emalloc(sizeof(Symbol));
     sp->name = name;
     sp->type = t;
     if (t == NUM || t == NAME)

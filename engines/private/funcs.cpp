@@ -25,9 +25,9 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "grammar.h"
-#include "grammar.tab.h"
-#include "private.h"
+#include "private/grammar.h"
+#include "private/grammar.tab.h"
+#include "private/private.h"
 
 namespace Private {
 
@@ -139,7 +139,7 @@ void LoadGame(ArgArray args) {
     // assert types
     debug("LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
-    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[2].u.sym->name;
     m->nextSetting = NULL;
@@ -153,7 +153,7 @@ void SaveGame(ArgArray args) {
     // assert types
     debug("SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
-    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
     m->cursor = args[1].u.sym->name;
     m->nextSetting = NULL;
@@ -222,7 +222,7 @@ void DossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
     Common::String *s1 = new Common::String(args[0].u.str);
-    DossierInfo *m = (DossierInfo*) malloc(sizeof(DossierInfo));
+    DossierInfo *m = (DossierInfo*)malloc(sizeof(DossierInfo));
     m->page1 = s1;
 
     if (strcmp(args[1].u.str, "\"\"") != 0) {
@@ -256,7 +256,7 @@ void DossierChgSheet(ArgArray args) {
 void DossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String *s = new Common::String(args[0].u.str);
-    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
 
     int x = args[1].u.val;
     int y = args[2].u.val;
@@ -275,7 +275,7 @@ void DossierPrevSuspect(ArgArray args) {
 void DossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String *s = new Common::String(args[0].u.str);
-    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
 
     int x = args[1].u.val;
     int y = args[2].u.val;
@@ -330,7 +330,7 @@ void Inventory(ArgArray args) {
 
     if (strcmp(b1.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(b1.u.str);
-        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
 
         if (e.type == NUM)
@@ -393,7 +393,7 @@ void Exit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
     debug("Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
-    ExitInfo *e = (ExitInfo*) malloc(sizeof(ExitInfo));
+    ExitInfo *e = (ExitInfo*)malloc(sizeof(ExitInfo));
 
     if (args[0].type == NUM && args[0].u.val == 0)
         e->nextSetting = NULL;
@@ -579,7 +579,7 @@ void _Mask(ArgArray args, bool drawn) {
     //if (drawed)
     //    g_private->loadImage(*s, x, y);
 
-    MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+    MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, x, y, drawn);
     m->nextSetting = new Common::String(e);
     m->cursor = c;
@@ -614,7 +614,7 @@ void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
             return;
 
         g_private->_playedPhoneClips.setVal(*sound, true);
-        PhoneInfo *p = (PhoneInfo*) malloc(sizeof(PhoneInfo));
+        PhoneInfo *p = (PhoneInfo*)malloc(sizeof(PhoneInfo));
         p->sound = sound;
         p->flag = flag;
         p->val = val;
@@ -667,7 +667,7 @@ void SoundArea(ArgArray args) {
     debug("SoundArea(%s, %s)", args[0].u.str, n);
     if (strcmp(n, "kAMRadio") == 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
@@ -677,7 +677,7 @@ void SoundArea(ArgArray args) {
         g_private->_masks.push_front(*m);
     } else if (strcmp(n, "kPoliceRadio") == 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
@@ -687,7 +687,7 @@ void SoundArea(ArgArray args) {
         g_private->_masks.push_front(*m);
     } else if (strcmp(n, "kPhone") == 0) {
         Common::String *s = new Common::String(args[0].u.str);
-        MaskInfo *m = (MaskInfo*) malloc(sizeof(MaskInfo));
+        MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;

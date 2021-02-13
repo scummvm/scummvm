@@ -20,22 +20,22 @@
  *
  */
 
-#include "common/installer_archive.h"
+#include "common/installshieldv3_archive.h"
 
 #include "common/dcl.h"
 #include "common/debug.h"
 
 namespace Common {
 
-InstallerArchive::InstallerArchive() : Common::Archive() {
+InstallShieldV3::InstallShieldV3() : Common::Archive() {
 	_stream = nullptr;
 }
 
-InstallerArchive::~InstallerArchive() {
+InstallShieldV3::~InstallShieldV3() {
 	close();
 }
 
-bool InstallerArchive::open(const Common::String &filename) {
+bool InstallShieldV3::open(const Common::String &filename) {
 	close();
 
 	_stream = SearchMan.createReadStreamForMember(filename);
@@ -102,27 +102,27 @@ bool InstallerArchive::open(const Common::String &filename) {
 	return true;
 }
 
-void InstallerArchive::close() {
+void InstallShieldV3::close() {
 	delete _stream; _stream = nullptr;
 	_map.clear();
 }
 
-bool InstallerArchive::hasFile(const Common::String &name) const {
+bool InstallShieldV3::hasFile(const Common::String &name) const {
 	return _map.contains(name);
 }
 
-int InstallerArchive::listMembers(Common::ArchiveMemberList &list) const {
+int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
 		list.push_back(getMember(it->_key));
 
 	return _map.size();
 }
 
-const Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *InstallerArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::String &name) const {
 	if (!_stream || !_map.contains(name))
 		return nullptr;
 
