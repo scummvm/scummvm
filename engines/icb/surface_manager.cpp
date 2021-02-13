@@ -35,6 +35,9 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/file.h"
+
+#include "image/bmp.h"
 
 #include "engines/util.h"
 
@@ -824,11 +827,14 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 }
 
 void _surface_manager::RecordFrame(const char *path) {
-	warning("TODO: Implement RecordFrame");
-#if 0
-	if (SDL_SaveBMP(sdl_screen, path) < 0)
+	Common::DumpFile dumpFile;
+	bool result = dumpFile.open(path);
+	if (result) {
+		result = Image::writeBMP(dumpFile, *screenSurface);
+	}
+	if (!result) {
 		Fatal_error("_surface_manager::RecordSurface( \"%s\" ) - Failed to create the output file", path);
-#endif
+	}
 }
 
 } // End of namespace ICB
