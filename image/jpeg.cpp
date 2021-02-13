@@ -172,7 +172,7 @@ void errorExit(j_common_ptr cinfo) {
 	(*cinfo->err->format_message)(cinfo, buffer);
 	// This function is not allowed to return to the caller, thus we simply
 	// error out with our error handling here.
-	error("%s", buffer);
+	error("libjpeg: %s", buffer);
 }
 
 void outputMessage(j_common_ptr cinfo) {
