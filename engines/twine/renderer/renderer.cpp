@@ -1639,14 +1639,14 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, _polyTab + hmPolyOffset6);
 		}
 	}
-	renderHolomapPolygons(vertexCoordinates, top,(int16)bottom, _engine->_resources->holomapImagePtr);
+	renderHolomapPolygons(top,(int16)bottom, _engine->_resources->holomapImagePtr);
 }
 
-void Renderer::renderHolomapPolygons(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
+void Renderer::renderHolomapPolygons(int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
 	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, y_1);
 	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
 	int16 height = (int16)(param_2 - (int16)y_1) + 1;
-	byte* holomap_offset_X_DAT_00433440 = (byte*)&vertexCoordinates[64].x + y_1;
+	byte* holomap_offset_X_DAT_00433440 = (byte*)&_polyTab[y_1 * 2];
 	for (int16 y = 0; y < height; ++y) {
 		uint8* holomapSurfaceOutPos = holomapSurfaceOutPtr;
 		int32 iVar1 = (int32)*holomap_offset_X_DAT_00433440;
