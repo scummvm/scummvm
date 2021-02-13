@@ -24,25 +24,12 @@
 #ifndef ULTIMA8_ULTIMA8
 #define ULTIMA8_ULTIMA8
 
-#include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/system.h"
-#include "common/archive.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/hash-str.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/surface.h"
-#include "gui/debugger.h"
-#include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "common/events.h"
 
 namespace Ultima {
 namespace Ultima8 {
