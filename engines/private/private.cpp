@@ -164,6 +164,7 @@ Common::Error PrivateEngine::run() {
     _pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
     _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
+    screenRect = new Common::Rect(0, 0, _screenW, _screenH);
     changeCursor("default");
 
     _origin = new Common::Point(0, 0);
@@ -978,11 +979,8 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 
     _image->loadStream(file);
     Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
-    Graphics::Surface *screen = g_system->lockScreen();
-
     surf->create(_screenW, _screenH, _pixelFormat);
-    surf->transBlitFrom(*screen);
-    g_system->unlockScreen();
+    surf->fillRect(*screenRect, _transparentColor);
     Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
     surf->transBlitFrom(*csurf, Common::Point(x,y));
     csurf->free();
