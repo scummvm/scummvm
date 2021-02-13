@@ -24,9 +24,9 @@
 #include "common/debug.h"
 #include "common/hash-ptr.h"
 
-#include "grammar.h"
-#include "grammar.tab.h"
-#include "private.h"
+#include "private/grammar.h"
+#include "private/grammar.tab.h"
+#include "private/private.h"
 
 namespace Private {
 
@@ -68,19 +68,19 @@ void initInsts() {
 
 /* initialize for code generation */
 void initSetting() {
-    setting = (Setting*) malloc(sizeof(Setting));
-    memset((void *) setting, 0, sizeof(Setting));
+    setting = (Setting*)malloc(sizeof(Setting));
+    memset((void *)setting, 0, sizeof(Setting));
 
-    prog = (Inst *) &setting->prog;
-    stack = (Datum *) &setting->stack;
+    prog = (Inst *)&setting->prog;
+    stack = (Datum *)&setting->stack;
 
     stackp = stack;
     progp = prog;
 }
 
 void saveSetting(char *name) {
-    Common::String s(name);
-    settingMap.setVal(s, setting);
+    //Common::String s(name);
+    settingMap.setVal(name, setting);
 }
 
 void loadSetting(Common::String *name) {
@@ -89,8 +89,8 @@ void loadSetting(Common::String *name) {
 
     debug("loading setting %s", name->c_str());
 
-    prog = (Inst *) &setting->prog;
-    stack = (Datum *) &setting->stack;
+    prog = (Inst *)&setting->prog;
+    stack = (Datum *)&setting->stack;
 
     stackp = stack;
     progp = prog;

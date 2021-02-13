@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-#include "common/installer_archive.h"
+#include "common/installshieldv3_archive.h"
 
 #include "audio/mixer.h"
 #include "video/smk_decoder.h"
@@ -142,7 +142,7 @@ public:
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;
     Video::SmackerDecoder *_videoDecoder;
-    Common::InstallerArchive _installerArchive;
+    Common::InstallShieldV3 _installerArchive;
 
     Common::Error run() override;
     void restartGame();
