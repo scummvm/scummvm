@@ -166,12 +166,6 @@ uint32 SequenceManager::DrawFrame(uint32 surface_id) {
 		Kill();
 		return FINISHED;
 	}
-	// And also the joystick pause button cos I'm lazy
-	if (Read_Joystick_once(pause_button) && !m_loop) {
-		// Release Bink object and file
-		Kill();
-		return FINISHED;
-	}
 
 	// Don't do bink, fade the screen
 	if (m_fadeCounter < (255 / m_fadeRate)) {
