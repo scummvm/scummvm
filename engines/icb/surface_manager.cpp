@@ -199,10 +199,9 @@ uint32 _surface_manager::Init_direct_draw() {
 	TinyGL::glInit(_zb, 256);
 
 	sdl_screen = new Graphics::Surface();
-	sdl_screen->create(640, 480, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+	sdl_screen->create(640, 480, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 
 	if (!sdl_screen->getBasePtr(0, 0)) {
-		//		SDL_Quit();
 		Fatal_error("Initialise Graphics::Surface::create failed");
 	}
 
@@ -440,7 +439,7 @@ uint32 _surface_manager::Create_new_surface(const char *name, uint32 width, uint
 	m_Surfaces[slot]->m_height = height;
 	m_Surfaces[slot]->m_name = name;
 	m_Surfaces[slot]->m_dds = new Graphics::Surface;
-	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 
 	if (m_Surfaces[slot]->m_dds)
 		return slot;

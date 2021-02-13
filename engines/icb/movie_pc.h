@@ -102,7 +102,7 @@ class MovieManager {
 public:
 	MovieManager() : _x(0), _y(0) {
 		_binkDecoder = new Video::BinkDecoder();
-		_binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		_binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 	};
 	~MovieManager() { delete _binkDecoder; };
 
