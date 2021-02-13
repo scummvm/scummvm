@@ -33,12 +33,12 @@ namespace Private {
 Setting *setting;
 SettingMap settingMap;
 
-Datum	*stack       = NULL;	/* the stack */
-Datum	*stackp      = NULL;	/* next free spot on stack */
+Datum *stack  = NULL; /* the stack */
+Datum *stackp = NULL; /* next free spot on stack */
 
-Inst	*prog        = NULL;	/* the machine */
-Inst	*progp       = NULL;	/* next free spot for code generation */
-Inst	*pc          = NULL;	/* program counter during execution */
+Inst *prog    = NULL; /* the machine */
+Inst *progp   = NULL; /* next free spot for code generation */
+Inst *pc      = NULL; /* program counter during execution */
 
 
 static struct InstDescr {
@@ -47,13 +47,13 @@ static struct InstDescr {
 } instDescr[] = {
     { 0,        "STOP",     },
     { constpush,"constpush" },
-    { strpush,  "strpush",	},
-    { varpush,  "varpush",	},
-    { funcpush, "funcpush",	},
-    { eval,	    "eval",     },
-    { ifcode,   "ifcode",	},
+    { strpush,  "strpush",  },
+    { varpush,  "varpush",  },
+    { funcpush, "funcpush", },
+    { eval,     "eval",     },
+    { ifcode,   "ifcode",   },
     { add,      "add",      },
-    { negate,	"negate",	},
+    { negate,   "negate",   },
 
     { 0, 0}
 };
@@ -115,13 +115,13 @@ int push(Datum d) {
 }
 
 /* pop and return top elem from stack */
-Datum pop()	{
+Datum pop() {
     assert (!(stackp <= stack));
     return *--stackp;
 }
 
 /* push constant onto stack */
-int constpush()	{
+int constpush() {
     Datum d;
     Symbol *s = (Symbol *)*pc++;
     d.type = NUM;
@@ -143,7 +143,7 @@ int strpush() { /* push constant onto stack */
 }
 
 
-int varpush() {	/* push variable onto stack */
+int varpush() { /* push variable onto stack */
     Datum d;
     d.type = NAME;
     d.u.sym = (Symbol *)(*pc++);
@@ -172,9 +172,6 @@ int funcpush() {
 int eval() {
     Datum d;
     d = pop();
-    //debug("eval %s", d.u.sym->name->c_str());
-    //if (d.sym->type == UNDEF)
-    //	execerror("undefined variable", d.sym->name);
     if (d.u.sym->type == NUM) {
         d.type = NUM;
         d.u.val = d.u.sym->u.val;
@@ -389,10 +386,10 @@ Inst *code(Inst f) {
 
 int ifcode() {
     Datum d;
-    Inst *savepc = pc;	/* then part */
+    Inst *savepc = pc;  /* then part */
     debug("ifcode: evaluating condition");
 
-    execute(savepc+3);	/* condition */
+    execute(savepc+3);  /* condition */
     d = pop();
 
     debug("ifcode: selecting branch");
@@ -411,7 +408,7 @@ int ifcode() {
         execute(*((Inst **)(savepc+1)));
     }
     debug("ifcode finished");
-    pc = *((Inst **)(savepc+2));	 /* next stmt */
+    pc = *((Inst **)(savepc+2)); /* next stmt */
     return 0;
 }
 

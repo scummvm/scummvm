@@ -741,7 +741,7 @@ static struct FuncTable {
     { Goto,            "goto"},
     { SetFlag,         "SetFlag"},
     { SetModifiedFlag, "SetModifiedFlag"},
-    { Timer,	       "Timer"},
+    { Timer,           "Timer"},
 
     // Sounds
     { Sound,           "Sound"},
@@ -767,9 +767,9 @@ static struct FuncTable {
     { Movie,           "Movie"},
 
     // Diary
-    {DiaryLocList,     "DiaryLocList"},
-    {DiaryInvList,     "DiaryInvList"},
-    {DiaryGoLoc,       "DiaryGoLoc"},
+    { DiaryLocList,    "DiaryLocList"},
+    { DiaryInvList,    "DiaryInvList"},
+    { DiaryGoLoc,      "DiaryGoLoc"},
 
     { Exit,            "Exit"},
     { Quit,            "Quit"},

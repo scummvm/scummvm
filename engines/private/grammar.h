@@ -32,18 +32,18 @@
 #ifndef PRIVATE_GRAMMAR_H
 #define PRIVATE_GRAMMAR_H
 
-#define	NSTACK	256
-#define	NPROG	10000
+#define NSTACK 256
+#define NPROG  10000
 
 
 namespace Private {
 
-typedef struct Datum {	/* interpreter stack type */
+typedef struct Datum {  /* interpreter stack type */
     short type;
     union {
-        int	 val;
+        int  val;
         char    *str;
-        Symbol	*sym;
+        Symbol  *sym;
         Common::Rect *rect;
     } u;
 } Datum;
@@ -54,8 +54,8 @@ typedef struct Arg {
     int (**inst)();
 } Arg;
 
-typedef int (*Inst)();	/* machine instruction */
-#define	STOP	(Inst) 0
+typedef int (*Inst)();  /* machine instruction */
+#define STOP    (Inst) 0
 
 typedef Common::HashMap<void *, Common::String *> PtrToName;
 typedef Common::HashMap<Common::String, void *> NameToPtr;
@@ -66,12 +66,12 @@ extern void initFuncs();
 
 typedef struct Setting {
 
-    Datum	stack[NSTACK];	/* the stack */
-    Datum	*stackp;	/* next free spot on stack */
+    Datum stack[NSTACK]; /* the stack */
+    Datum *stackp;       /* next free spot on stack */
 
-    Inst	prog[NPROG];	/* the machine */
-    Inst	*progp;		/* next free spot for code generation */
-    Inst	*pc;		/* program counter during execution */
+    Inst  prog[NPROG];   /* the machine */
+    Inst  *progp;        /* next free spot for code generation */
+    Inst  *pc;           /* program counter during execution */
 
 } Setting;
 
@@ -90,17 +90,17 @@ extern void call(char *, ArgArray);
 
 // Code Generation
 
-extern	Datum pop();
+extern  Datum pop();
 extern  int push(Datum);
-extern  Inst	*progp;
+extern  Inst *progp;
 
 extern  Inst *code(Inst);
-extern	Inst *prog;
-extern	int eval();
+extern  Inst *prog;
+extern  int eval();
 extern  int add();
 extern  int negate();
 extern  int power();
-extern	int assign();
+extern  int assign();
 extern  int bltin();
 extern  int varpush();
 extern  int constpush();
