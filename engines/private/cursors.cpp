@@ -349,14 +349,19 @@ void PrivateEngine::initCursors() {
 void PrivateEngine::changeCursor(Common::String cursor) {
     assert(_cursorData.contains(cursor));
     Common::Point p = *_cursorPoints.getVal(cursor);
-    Common::Point s;
-    if (strcmp(cursor.c_str(), "default") == 0)
-        s = Common::Point(11, 16);
-    else
-        s = Common::Point(32, 32);
 
-    CursorMan.replaceCursor(_cursorData.getVal(cursor), s.x, s.y, p.x, p.y, 0, false);
+    int x, y;
+    if (strcmp(cursor.c_str(), "default") == 0) {
+        x = 11;
+        y = 16;
+    }
+    else {
+        x = 32;
+        y = 32;
+    }
+
+    CursorMan.replaceCursor(_cursorData.getVal(cursor), x, y, p.x, p.y, 0, false);
     CursorMan.showMouse(true);
 }
 
-}
+} // End of namespace Private

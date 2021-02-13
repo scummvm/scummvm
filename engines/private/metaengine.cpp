@@ -43,7 +43,7 @@ bool PrivateEngine::isDemo() const {
     return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
-}
+} // End of namespace Private
 
 #if PLUGIN_ENABLED_DYNAMIC(PRIVATE)
 REGISTER_PLUGIN_DYNAMIC(PRIVATE, PLUGIN_TYPE_ENGINE, PrivateMetaEngine);
