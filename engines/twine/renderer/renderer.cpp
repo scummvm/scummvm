@@ -1539,7 +1539,7 @@ static const int hmPolyOffset4 = 180;  /* 0x00b4 */
 static const int hmPolyOffset5 = 240;  /* 0x00f0 */
 static const int hmPolyOffset6 = 300;  /* 0x012c */
 
-void Renderer::vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
+void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
 	int16 top = 32000;
 	uint32 bottom = (uint32)-32000;
 
@@ -1639,10 +1639,10 @@ void Renderer::vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexC
 								(uint32)(uint16)vertexCoordinates[2].y, (uint32)vertexCoordinates2[2].y, _polyTab + hmPolyOffset6);
 		}
 	}
-	holomap_surface_load_FUN_0042194d(vertexCoordinates, top,(int16)bottom, _engine->_resources->holomapImagePtr);
+	renderHolomapPolygons(vertexCoordinates, top,(int16)bottom, _engine->_resources->holomapImagePtr);
 }
 
-void Renderer::holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
+void Renderer::renderHolomapPolygons(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr) {
 	uint8* holomapsurfaceBufferOffsetPosX = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, y_1);
 	uint8* holomapSurfaceOutPtr = holomapSurfaceImgOutPtr;
 	int16 height = (int16)(param_2 - (int16)y_1) + 1;

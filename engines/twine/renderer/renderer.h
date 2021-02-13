@@ -384,7 +384,7 @@ private:
 
 	void baseMatrixTranspose();
 
-	void holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr);
+	void renderHolomapPolygons(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr);
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
 
 public:
@@ -434,7 +434,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
 
-	void vertices_FUN_00421010(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]);
+	void renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]);
 };
 
 } // namespace TwinE

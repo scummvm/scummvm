@@ -244,7 +244,7 @@ void Holomap::renderHolomapSurfacePolygons() {
 			vertexCoordinates2[2].x = pos3.unk1;
 			vertexCoordinates2[2].y = pos3.unk2;
 			vertexCoordinates2[2].colorIndex = 0;
-			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates, vertexCoordinates2);
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
@@ -270,7 +270,7 @@ void Holomap::renderHolomapSurfacePolygons() {
 			vertexCoordinates2[2].x = pos6.unk1;
 			vertexCoordinates2[2].y = pos6.unk2;
 			vertexCoordinates2[2].colorIndex = 0;
-			_engine->_renderer->vertices_FUN_00421010(vertexCoordinates, vertexCoordinates2);
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
 		}
 	}
 }
