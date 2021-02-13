@@ -1482,7 +1482,6 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 
 
 void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr) {
-#if 0
 	int32 minY = y2;
 	int32 minX = x1;
 	if (y1 < y2) {
@@ -1529,7 +1528,6 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 			lVertexCoordPointer = lVertexCoordPointer + 1;
 		} while (minY != 0);
 	}
-#endif
 }
 
 static const int hmPolyOffset1 = 0;    /* 0x0000 */
@@ -1645,7 +1643,7 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 	uint8* pixelBuf = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
 	int16 height = (int16)(bottom - (int16)top) + 1;
-	byte* polyTabPtr = (byte*)&_polyTab[top * 2];
+	int16* polyTabPtr = (int16*)&_polyTab[top * 2];
 	for (int16 y = 0; y < height; ++y) {
 		int32 polyTabVal = (int32)*polyTabPtr;
 		uint8 *pixel = (uint8 *)(pixelBuf + polyTabVal);
@@ -1654,15 +1652,15 @@ void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
 			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[hmPolyOffset4] -
 			                   (uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
 			        yHeight;
-			uint32 uVar5 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
-			int32 iVar2 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar5) + 1) / yHeight;
+			uint32 uVar3 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
+			int32 iVar1 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar3) + 1) / yHeight;
 			uint16 uVar2 = polyTabPtr[hmPolyOffset4];
 			// int16 holomap_maybe_DAT_00433430 = iVar2;
 			// int16 holomap_maybe_DAT_00433434 = iVar1;
 			for (int32 i = 0; i < yHeight; ++i) {
-				*pixel = *(uint8 *)(((uVar2 & 0xffffff00) | uVar5 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
+				*pixel = *(uint8 *)(((uVar2 & 0xffffff00) | uVar3 >> 8) + (uint8*)_engine->_resources->holomapImagePtr);
 				++pixel;
-				uVar5 = (uint32)(uint16)((int16)uVar5 + (int16)iVar2);
+				uVar3 = (uint32)(uint16)((int16)uVar3 + (int16)iVar1);
 				uVar2 = ((uint16)(uVar2 & 0xffffff00) | (uVar2 & 0xff)) + (int16)polyTabVal;
 			}
 		}
