@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_KERNEL_COREAPP_H
 #define ULTIMA8_KERNEL_COREAPP_H
 
-#include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/detection.h"
 
@@ -53,9 +52,6 @@ public:
 
 	virtual bool runGame() = 0;
 	virtual void paint() = 0; // probably shouldn't exist
-	virtual bool isPainting() {
-		return false;
-	}
 
 	//! Startup the application. This will prepare the application for run().
 	//! Should call parent class' startup().
@@ -74,15 +70,10 @@ protected:
 	FileSystem *_fileSystem;
 	ConfigFileManager *_configFileMan;
 
-	Args _parameters;
-
 	static CoreApp *_application;
 
 private:
 	const Ultima::UltimaGameDescription *_gameDesc;
-
-	//! parse commandline arguments
-	void ParseArgs(int argc, const char *const  *argv);
 
 	//! Fill a GameInfo struct for the give game name
 	//! \param game The id of the game to check (from pentagram.cfg)

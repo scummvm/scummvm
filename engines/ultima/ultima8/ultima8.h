@@ -39,7 +39,7 @@
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/args.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "common/events.h"
@@ -110,7 +110,6 @@ private:
 	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
 	//!< nor can Avatar start more usecode
 	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-	bool _painting;          //!< Set true when painting
 	bool _showTouching;          //!< If true, highlight items touching Avatar
 	int32 _timeOffset;
 	bool _hasCheated;
@@ -191,9 +190,6 @@ public:
 	virtual void handleEvent(const Common::Event &event);
 
 	void paint() override;
-	bool isPainting() override {
-		return _painting;
-	}
 
 	static const int U8_DEFAULT_SCREEN_WIDTH = 320;
 	static const int U8_DEFAULT_SCREEN_HEIGHT = 200;

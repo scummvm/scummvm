@@ -116,7 +116,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
-		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
+		_avatarInStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_ttfOverrides(false), _audioMixer(0), _inverterGump(nullptr), _lerpFactor(256),
 		_inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
@@ -521,7 +521,6 @@ void Ultima8Engine::paint() {
 	++t;
 
 	// Begin _painting
-	_painting = true;
 	_screen->BeginPainting();
 
 	tpaint -= g_system->getMillis();
@@ -541,7 +540,6 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
-	_painting = false;
 }
 
 void Ultima8Engine::GraphicSysInit() {

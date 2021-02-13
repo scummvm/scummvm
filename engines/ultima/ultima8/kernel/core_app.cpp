@@ -139,10 +139,5 @@ bool CoreApp::getGameInfo(const istring &game, GameInfo *ginfo) {
 	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
-
-void CoreApp::ParseArgs(const int argc, const char *const *const argv) {
-	_parameters.process(argc, argv);
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

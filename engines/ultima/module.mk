@@ -499,7 +499,6 @@ MODULE_OBJS := \
 	ultima8/kernel/object.o \
 	ultima8/kernel/object_manager.o \
 	ultima8/kernel/process.o \
-	ultima8/misc/args.o \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \
