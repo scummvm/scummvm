@@ -40,14 +40,6 @@ void defineSymbol(char *n, Common::Rect *r) {
     rectToDefine.push(r);
 }
 
-char *emalloc(unsigned n) {
-    char *p;
-
-    p = (char*)malloc(n);
-    assert(p != NULL);
-    return p;
-}
-
 void showSymbol(Symbol *s) {
     if (s->type == NUM)
         debug("%s %d",s->name->c_str(), s->u.val);
@@ -145,7 +137,7 @@ Symbol *constant(int t, int d, char *s) {
     Symbol *sp;
     Common::String *n = new Common::String("<constant>");
 
-    sp = (Symbol *)emalloc(sizeof(Symbol));
+    sp = (Symbol *)malloc(sizeof(Symbol));
     sp->name = n;
     sp->type = t;
     if (t == NUM || t == NAME)
@@ -165,7 +157,7 @@ Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, Symbo
 
     Symbol *sp;
 
-    sp = (Symbol *)emalloc(sizeof(Symbol));
+    sp = (Symbol *)malloc(sizeof(Symbol));
     sp->name = name;
     sp->type = t;
     if (t == NUM || t == NAME)
