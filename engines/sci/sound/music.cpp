@@ -134,7 +134,7 @@ void SciMusic::init() {
 	case MT_TOWNS:
 		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
 		break;
-	case MT_PC98:		
+	case MT_PC98:
 		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
@@ -214,7 +214,16 @@ void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
 }
 
 void SciMusic::putMidiCommandInQueue(uint32 midi) {
-	_queuedCommands.push_back(midi);
+	_queuedCommands.push_back(MidiCommand(MidiCommand::kTypeMidiMessage, midi));
+}
+
+void SciMusic::putTrackInitCommandInQueue(MusicEntry *psnd) {
+	_queuedCommands.push_back(MidiCommand(MidiCommand::kTypeTrackInit, psnd));
+}
+
+void SciMusic::removeTrackInitCommandsFromQueue(MusicEntry *psnd) {
+	for (MidiCommandQueue::iterator i = _queuedCommands.begin(); i != _queuedCommands.end(); )
+		i = (i->_type ==  MidiCommand::kTypeTrackInit && i->_dataPtr == (void*)psnd) ? _queuedCommands.erase(i) : i + 1;
 }
 
 // This sends the stored commands from queue to driver (is supposed to get
@@ -226,7 +235,15 @@ void SciMusic::sendMidiCommandsFromQueue() {
 	uint commandCount = _queuedCommands.size();
 
 	while (curCommand < commandCount) {
-		_pMidiDrv->send(_queuedCommands[curCommand]);
+		if (_queuedCommands[curCommand]._type == MidiCommand::kTypeTrackInit) {
+			if (_queuedCommands[curCommand]._dataPtr) {
+				MusicList::iterator psnd = Common::find(_playList.begin(), _playList.end(), static_cast<MusicEntry*>(_queuedCommands[curCommand]._dataPtr));
+				if (psnd != _playList.end() && (*psnd)->pMidiParser)
+					(*psnd)->pMidiParser->initTrack();
+			}
+		} else {
+			_pMidiDrv->send(_queuedCommands[curCommand]._dataVal);
+		}
 		curCommand++;
 	}
 	_queuedCommands.clear();
@@ -592,7 +609,11 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			// It is also safe to do this for paused tracks, since the jumpToTick() command further down will parse through
 			// the song from the beginning up to the resume position and ensure that the actual current voice mapping,
 			// instrument and volume settings etc. are correct.
- 			pSnd->pMidiParser->initTrack();
+			// First glance at disasm might suggest that it has to be called only once per sound. But the truth is that
+			// when calling the sound driver opcode for sound restoring (opcode no. 9, we don't have that) it will
+			// internally also call initTrack(). And it wouldn't make sense otherwise, since without that the channel setup
+			// from the last sound would still be active.
+			pSnd->pMidiParser->initTrack();
 
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();

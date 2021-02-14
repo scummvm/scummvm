@@ -399,12 +399,16 @@ void MidiParser_SCI::resetStateTracking() {
 }
 
 void MidiParser_SCI::initTrack() {
-	if (_soundVersion > SCI_VERSION_0_LATE)
+	if (_soundVersion > SCI_VERSION_0_LATE || !_pSnd || !_track || !_track->header.byteSize())
 		return;
 	// Send header data to SCI0 sound drivers. The driver function which parses the header (opcode 3)
 	// seems to be implemented at least in all SCI0_LATE drivers. The things that the individual drivers
 	// do in that init function varies.
-	if (_track->header.byteSize())
+	// Unlike the original (which doesn't need that due to the way it is implemented) we need to have a
+	// thread safe way to call this to avoid glitches (like permanently hanging notes in some situations).
+	if (_mainThreadCalled)
+		_music->putTrackInitCommandInQueue(_pSnd);
+	else
 		static_cast<MidiPlayer*>(_driver)->initTrack(_track->header);
 }
 
@@ -440,8 +444,13 @@ void MidiParser_SCI::unloadMusic() {
 	if (_pSnd) {
 		resetTracking();
 		allNotesOff();
+		// Pending track init commands have to be removed from the queue,
+		// since the sound thread will otherwise continue to try executing these.
+		_music->removeTrackInitCommandsFromQueue(_pSnd);
 	}
 	_numTracks = 0;
+	_pSnd = 0;
+	_track = 0;
 	_activeTrack = 255;
 	_resetOnPause = false;
 	_mixedData.clear();

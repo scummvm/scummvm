@@ -160,8 +160,21 @@ struct ChannelRemapping {
 	int lowestPrio() const;
 };
 
+struct MidiCommand {
+	enum CmdType {
+		kTypeMidiMessage = 0,
+		kTypeTrackInit
+	};
+	// Keeping this very simple, due to the very limited purpose of it.
+	MidiCommand(CmdType type, uint32 val) : _type(type), _dataPtr(0), _dataVal(val) {}
+	MidiCommand(CmdType type, void *ptr) : _type(type), _dataPtr(ptr), _dataVal(0) {}
+	CmdType _type;
+	void *_dataPtr;
+	uint32 _dataVal;
+};
+
 typedef Common::Array<MusicEntry *> MusicList;
-typedef Common::Array<uint32> MidiCommandQueue;
+typedef Common::Array<MidiCommand> MidiCommandQueue;
 
 class SciMusic : public Common::Serializable {
 
@@ -174,6 +187,8 @@ public:
 	void onTimer();
 	void putMidiCommandInQueue(byte status, byte firstOp, byte secondOp);
 	void putMidiCommandInQueue(uint32 midi);
+	void putTrackInitCommandInQueue(MusicEntry *psnd);
+	void removeTrackInitCommandsFromQueue(MusicEntry *psnd);
 private:
 	static void miditimerCallback(void *p);
 	void sendMidiCommandsFromQueue();
