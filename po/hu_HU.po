@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 17:56+0000\n"
+"POT-Creation-Date: 2021-02-14 01:16+0000\n"
 "PO-Revision-Date: 2021-02-09 09:23+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3697,7 +3697,8 @@ msgstr "Ne emulálja az NTSC torzítást a szöveghez"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Eredeti ment/tölt képernyõk használata"
 
@@ -3705,7 +3706,8 @@ msgstr "Eredeti ment/tölt képernyõk használata"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:162
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Használd az eredeti mentés/betöltés képernyõt a ScummVM féle helyett"
 
@@ -4772,13 +4774,13 @@ msgstr "Eye of Beholder támogatás nincs lefordítva"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:196
 msgid "Interact via Left Click"
 msgstr "Interakció bal kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:202
 msgid "Interact via Right Click"
 msgstr "Interakció jobb kattintással"
 
@@ -6614,10 +6616,12 @@ msgstr ""
 "képernyős módban, egyes részletek árán."
 
 #: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
+#: engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Font anti-aliasing engedélyezése"
 
 #: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
+#: engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Ha a font anti-aliasing engedélyezve van, a szöveg simább."
 
@@ -7050,44 +7054,44 @@ msgstr "Előző hely"
 msgid "Next location"
 msgstr "Következő hely"
 
-#: engines/ultima/detection.cpp:64
+#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Enable font replacement"
 msgstr "Betűcsere engedélyezése"
 
-#: engines/ultima/detection.cpp:65
+#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
 msgid "Replaces game fonts with rendered fonts"
 msgstr "A játék betűtípusait renderelt betűtípusokra cseréli"
 
-#: engines/ultima/detection.cpp:82
+#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
 msgid "Play foot step sounds"
 msgstr "Játssz lépés hangokat"
 
-#: engines/ultima/detection.cpp:83
+#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Plays sound when the player moves."
 msgstr "Hallható amikor a játékos mozog."
 
-#: engines/ultima/detection.cpp:91
+#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
 msgid "Enable jump to mouse position"
 msgstr "Engedélyezi az egér helyzetre ugrást"
 
-#: engines/ultima/detection.cpp:92
+#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr "Ugrás mozgás közben nem az irányt, hanem az egér kurzort célozza meg."
 
-#: engines/ultima/detection.cpp:100
+#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
 msgid "Enable frame skipping"
 msgstr "Képkocka kihagyás engedélyezése"
 
-#: engines/ultima/detection.cpp:101
+#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "A játék kihagyhat képkockákat ha az animáció túl lassan fut le."
 
-#: engines/ultima/detection.cpp:109
+#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
 msgid "Enable frame limiting"
 msgstr "Képkocka limitálás engedélyezése"
 
-#: engines/ultima/detection.cpp:110
+#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Korlátozza a játék sebességét, hogy megakadályozza a túl gyors futást."
 
@@ -7123,19 +7127,29 @@ msgstr "Eredeti mentés"
 msgid "Transfer Character"
 msgstr "Karakter átadása"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:155
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Enable cheats"
+msgstr "Csaló mód engedélyezés"
+
+#: engines/ultima/ultima8/meta_engine.cpp:156
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Crusader"
 msgstr "Keresztes lovag"
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:236
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Csalások"
 
-#: engines/ultima/ultima8/meta_engine.cpp:205
+#: engines/ultima/ultima8/meta_engine.cpp:253
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Debug"
 

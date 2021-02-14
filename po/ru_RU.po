@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 17:56+0000\n"
+"POT-Creation-Date: 2021-02-14 01:16+0000\n"
 "PO-Revision-Date: 2021-02-09 16:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3715,7 +3715,8 @@ msgstr "Не эмулируйте артефакты NTSC для текста"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Использовать оригинальные экраны записи/чтения игры"
 
@@ -3723,7 +3724,8 @@ msgstr "Использовать оригинальные экраны запи�
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:162
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Использовать оригинальные экраны чтения и сохранения игры вместо сделанных в "
@@ -4791,13 +4793,13 @@ msgstr "Поддержка для Eye of Beholder не скомпилирова�
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:196
 msgid "Interact via Left Click"
 msgstr "Управление через левый щелчок"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:202
 msgid "Interact via Right Click"
 msgstr "Взаимодействовать через правый щелчок"
 
@@ -6644,10 +6646,12 @@ msgstr ""
 "детализации."
 
 #: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
+#: engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Включить сглаживание шрифтов"
 
 #: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
+#: engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Если сглаживание шрифтов включено, шрифты рисуются без зубцов."
 
@@ -7079,46 +7083,46 @@ msgstr "Предыдущая локация"
 msgid "Next location"
 msgstr "Следующая локация"
 
-#: engines/ultima/detection.cpp:64
+#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Enable font replacement"
 msgstr "Включить замену шрифтов"
 
-#: engines/ultima/detection.cpp:65
+#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Заменяет шрифты игры на шрифты лучшего качества"
 
-#: engines/ultima/detection.cpp:82
+#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
 msgid "Play foot step sounds"
 msgstr "Проигрывать звуки шагов"
 
-#: engines/ultima/detection.cpp:83
+#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Plays sound when the player moves."
 msgstr "Проигрывает звуки шагов во аремя перемещения игрока."
 
-#: engines/ultima/detection.cpp:91
+#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
 msgid "Enable jump to mouse position"
 msgstr "Разрешить перепрыгивание на позицию мыши"
 
-#: engines/ultima/detection.cpp:92
+#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr "Перепрыгивает на позицию курсора мыши (не во время перемещения целей)."
 
-#: engines/ultima/detection.cpp:100
+#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
 msgid "Enable frame skipping"
 msgstr "Включить пропуск кадров"
 
-#: engines/ultima/detection.cpp:101
+#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 "Позволяет игре пропускать кадры анимации, если воспроизведение слишком "
 "медленное."
 
-#: engines/ultima/detection.cpp:109
+#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
 msgid "Enable frame limiting"
 msgstr "Включить ограничение кадров в секунду"
 
-#: engines/ultima/detection.cpp:110
+#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Ограничивает скорость игры чтобы избежать слишком быстрого воспроизведения."
@@ -7155,19 +7159,29 @@ msgstr "Оригинальное сохранение"
 msgid "Transfer Character"
 msgstr "Перенести героя"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:155
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Enable cheats"
+msgstr "Включить чит-режим"
+
+#: engines/ultima/ultima8/meta_engine.cpp:156
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:236
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:205
+#: engines/ultima/ultima8/meta_engine.cpp:253
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Отладка"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 17:56+0000\n"
+"POT-Creation-Date: 2021-02-14 01:16+0000\n"
 "PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -3736,7 +3736,8 @@ msgstr "No emular artefactos de NTSC para el texto"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Usar pantallas de guardado/carga originales"
 
@@ -3744,7 +3745,8 @@ msgstr "Usar pantallas de guardado/carga originales"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:162
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Usa los menús originales para guardar/cargar en vez de los de ScummVM"
 
@@ -4823,13 +4825,13 @@ msgstr "No se ha incluido el soporte para Eye of Beholder."
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:196
 msgid "Interact via Left Click"
 msgstr "Interactuar con clic izquierdo"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:202
 msgid "Interact via Right Click"
 msgstr "Interactuar con clic derecho"
 
@@ -6687,10 +6689,12 @@ msgstr ""
 "suaves a pantalla completa, pero se perderán algunos detalles."
 
 #: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
+#: engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Suavizar bordes de fuentes"
 
 #: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
+#: engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Al activar esta opción, los textos se mostrarán más suavizados."
 
@@ -7128,47 +7132,47 @@ msgstr "Lugar anterior"
 msgid "Next location"
 msgstr "Siguiente lugar"
 
-#: engines/ultima/detection.cpp:64
+#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Enable font replacement"
 msgstr "Activar sustitución de fuentes"
 
-#: engines/ultima/detection.cpp:65
+#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Sustituye las fuentes del juego por fuentes renderizadas"
 
-#: engines/ultima/detection.cpp:82
+#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
 msgid "Play foot step sounds"
 msgstr "Reproducir efectos de pisadas"
 
-#: engines/ultima/detection.cpp:83
+#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Plays sound when the player moves."
 msgstr "Reproduce sonidos cuando se desplace el jugador."
 
-#: engines/ultima/detection.cpp:91
+#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
 msgid "Enable jump to mouse position"
 msgstr "Saltar hacia la posición del ratón"
 
-#: engines/ultima/detection.cpp:92
+#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Al saltar estando parado, el personaje se desplazará hacia el cursor del "
 "ratón y no hacia solo la dirección."
 
-#: engines/ultima/detection.cpp:100
+#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
 msgid "Enable frame skipping"
 msgstr "Activar omisión de fotogramas"
 
-#: engines/ultima/detection.cpp:101
+#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 "Permite al juego omitir fotogramas de animación cuando se ejecute lentamente."
 
-#: engines/ultima/detection.cpp:109
+#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
 msgid "Enable frame limiting"
 msgstr "Activar limitación de fotogramas"
 
-#: engines/ultima/detection.cpp:110
+#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Limita la velocidad del juego para evitar que se ejecute demasiado rápido."
@@ -7205,19 +7209,29 @@ msgstr "Guardado original"
 msgid "Transfer Character"
 msgstr "Transferir personaje"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:155
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Enable cheats"
+msgstr "Activar trucos"
+
+#: engines/ultima/ultima8/meta_engine.cpp:156
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:236
 msgid "Ultima VIII Cheats"
 msgstr "Trucos de Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:205
+#: engines/ultima/ultima8/meta_engine.cpp:253
 msgid "Ultima VIII Debug"
 msgstr "Depuración de Ultima VIII"
 
