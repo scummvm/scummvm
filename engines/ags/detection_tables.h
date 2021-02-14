@@ -886,7 +886,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ouja", "Ouja" },
 	{ "outbreakbyabhijitkamat", "Outbreak by Abhijit Kamat" },
 	{ "outofgas", "Out of Gas" },
-	{ "overtheedge", "Over the Edge" },
+	{ "overtheedge", "The Journey Down: Over the Edge" },
 	{ "owlsquest", "Owl's Quest" },
 	{ "palettequest2", "Palette Quest 2" },
 	{ "pandainspace", "Panda In Space" },
