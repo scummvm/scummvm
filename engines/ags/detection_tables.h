@@ -160,6 +160,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "downfall", "Downfall" },
 	{ "downfallredux", "Downfall (Redux)" },
 	{ "dustbowl", "Dustbowl" },
+	{ "feriadarles", "Feria d'Arles" },
 	{ "footballgame" , "Football Game" },
 	{ "geminirue", "Gemini Rue" },
 	{ "goldenwake", "A Golden Wake" },
@@ -1542,6 +1543,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("downfall", "Downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // v1.4
 	ENGLISH_ENTRY("downfallredux", "Downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750), // GOG
 	ENGLISH_ENTRY("dustbowl", "Dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026), // Steam
+	ENGLISH_ENTRY("feriadarles", "Feria d'Arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
 	ENGLISH_ENTRY("footballgame", "Football Game", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
