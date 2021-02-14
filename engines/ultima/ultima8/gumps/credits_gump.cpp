@@ -70,14 +70,16 @@ CreditsGump::~CreditsGump() {
 void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	_scroll[0] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	_scroll[1] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	_scroll[2] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	_scroll[3] = RenderSurface::CreateSecondaryRenderSurface(256, 200);
-	_scroll[0]->Fill32(0xFF000000, 0, 0, 256, 200); // black background
-	_scroll[1]->Fill32(0xFF000000, 0, 0, 256, 200);
-	_scroll[2]->Fill32(0xFF000000, 0, 0, 256, 200);
-	_scroll[3]->Fill32(0xFF000000, 0, 0, 256, 200);
+	uint32 width = 256;
+	uint32 height = 280;
+	_scroll[0] = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	_scroll[1] = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	_scroll[2] = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	_scroll[3] = RenderSurface::CreateSecondaryRenderSurface(width, height);
+	_scroll[0]->Fill32(0xFF000000, 0, 0, width, height); // black background
+	_scroll[1]->Fill32(0xFF000000, 0, 0, width, height);
+	_scroll[2]->Fill32(0xFF000000, 0, 0, width, height);
+	_scroll[3]->Fill32(0xFF000000, 0, 0, width, height);
 	_scrollHeight[0] = 156;
 	_scrollHeight[1] = 0;
 	_scrollHeight[2] = 0;
@@ -169,8 +171,10 @@ void CreditsGump::run() {
 
 	if (_state == CS_PLAYING && available <= 160) {
 		// time to render next block
-		_scroll[nextblock]->Fill32(0xFF000000, 0, 0, 256, 200);
-		// _scroll[nextblock]->Fill32(0xFFFFFFFF,0,0,256,5); // block marker
+		Rect bounds;
+		_scroll[nextblock]->GetSurfaceDims(bounds);
+		_scroll[nextblock]->Fill32(0xFF000000, 0, 0, bounds.width(), bounds.height());
+		//_scroll[nextblock]->Fill32(0xFFFFFFFF, 0, 0, bounds.width(), 2); // block marker
 		_scrollHeight[nextblock] = 0;
 
 		Font *redfont, *yellowfont;
@@ -263,7 +267,7 @@ void CreditsGump::run() {
 					if (outline.hasPrefix("&")) {
 						// horizontal line
 
-						if (_scrollHeight[nextblock] + height + 7 > 200) {
+						if (_scrollHeight[nextblock] + height + 7 > bounds.height()) {
 							done = true;
 							break;
 						}
@@ -280,12 +284,12 @@ void CreditsGump::run() {
 					}
 
 					RenderedText *rt = font->renderText(outline, remaining,
-					                                    256 - indent, 0,
+					                                    bounds.width() - indent, 0,
 					                                    align);
 					int xd, yd;
 					rt->getSize(xd, yd);
 
-					if (_scrollHeight[nextblock] + height + yd > 200) {
+					if (_scrollHeight[nextblock] + height + yd > bounds.height()) {
 						delete rt;
 						done = true;
 						break;
@@ -303,9 +307,9 @@ void CreditsGump::run() {
 				if (_state == CS_PLAYING)
 					height += _parSkip;
 
-				if (_scrollHeight[nextblock] + height > 200) {
+				if (_scrollHeight[nextblock] + height > bounds.height()) {
 					if (firstline) {
-						height = 200 - _scrollHeight[nextblock];
+						height = bounds.height() - _scrollHeight[nextblock];
 						assert(height >= 0);
 					} else {
 						done = true;
@@ -350,8 +354,10 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	int h = _scrollHeight[_currentSurface] - _currentY;
 	if (h > 156) h = 156;
-	if (h > 0)
-		surf->Blit(_scroll[_currentSurface]->getRawSurface(), 0, _currentY, 256, h, 32, 44);
+	if (h > 0) {
+		Graphics::ManagedSurface* ms = _scroll[_currentSurface]->getRawSurface();
+		surf->Blit(ms, 0, _currentY, ms->getBounds().width(), h, 32, 44);
+	}
 
 	int y = h;
 	for (int i = 1; i < 4; i++) {
@@ -360,8 +366,10 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		int s = (_currentSurface + i) % 4;
 		h = _scrollHeight[s];
 		if (h > 156 - y) h = 156 - y;
-		if (h > 0)
-			surf->Blit(_scroll[s]->getRawSurface(), 0, 0, 256, h, 32, 44 + y);
+		if (h > 0) {
+			Graphics::ManagedSurface* ms = _scroll[s]->getRawSurface();
+			surf->Blit(ms, 0, 0, ms->getBounds().width(), h, 32, 44 + y);
+		}
 		y += h;
 	}
 }
