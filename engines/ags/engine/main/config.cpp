@@ -44,6 +44,7 @@
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/globals.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -336,6 +337,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 	INIwriteint(cfg, "misc", "antialias", _G(psp_gfx_smooth_sprites) != 0);
 	INIwritestring(cfg, "language", "translation", _G(psp_translation));
+	
 }
 
 void apply_config(const ConfigTree &cfg) {
@@ -385,7 +387,11 @@ void apply_config(const ConfigTree &cfg) {
 		usetup.user_data_dir = INIreadstring(cfg, "misc", "user_data_dir");
 		usetup.shared_data_dir = INIreadstring(cfg, "misc", "shared_data_dir");
 
-		usetup.translation = INIreadstring(cfg, "language", "translation");
+		Common::String translation;
+		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
+			usetup.translation = translation;
+		else
+			usetup.translation = INIreadstring(cfg, "language", "translation");
 
 		int cache_size_kb = INIreadint(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
@@ -489,6 +495,14 @@ void save_config_file() {
 	cfg["mouse"]["control_enabled"] = String::FromFormat("%d", usetup.mouse_ctrl_enabled ? 1 : 0);
 	cfg["mouse"]["speed"] = String::FromFormat("%f", Mouse::GetSpeed());
 	cfg["language"]["translation"] = usetup.translation;
+
+	if (usetup.translation.empty()) {
+		if (ConfMan.getActiveDomain()->contains("translation"))
+			ConfMan.getActiveDomain()->erase("translation");
+	} else
+		ConfMan.getActiveDomain()->setVal("translation", usetup.translation);
+	
+	ConfMan.flushToDisk();
 
 	String cfg_file = find_user_cfg_file();
 	if (!cfg_file.IsEmpty())

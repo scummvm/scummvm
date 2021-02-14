@@ -181,7 +181,11 @@ void WinConfig::Load(const ConfigTree &cfg) {
 		MouseSpeed = 1.f;
 
 	SpriteCacheSize = INIreadint(cfg, "misc", "cachemax", SpriteCacheSize);
-	Language = INIreadstring(cfg, "language", "translation", Language);
+	
+	if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
+		Language = translation;
+	else
+		Language = INIreadstring(cfg, "language", "translation", Language);
 	DefaultLanguageName = INIreadstring(cfg, "language", "default_translation_name", DefaultLanguageName);
 
 	Title = INIreadstring(cfg, "misc", "titletext", Title);
@@ -211,6 +215,14 @@ void WinConfig::Save(ConfigTree &cfg) {
 
 	INIwriteint(cfg, "misc", "cachemax", SpriteCacheSize);
 	INIwritestring(cfg, "language", "translation", Language);
+
+	if (Language.empty()) {
+		if (ConfMan.getActiveDomain()->contains("translation"))
+			ConfMan.getActiveDomain()->erase("translation");
+	} else
+		ConfMan.getActiveDomain()->setVal("translation", Language);
+	
+	ConfMan.flushToDisk();
 }
 
 
