@@ -386,7 +386,11 @@ SaveStateList AGSEngine::listSaves() const {
 }
 
 void AGSEngine::setGraphicsMode(size_t w, size_t h) {
+#ifdef USE_OPENGL
+	Graphics::PixelFormat FORMAT(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
 	Graphics::PixelFormat FORMAT(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#endif
 	initGraphics(w, h, &FORMAT);
 
 	_rawScreen = new Graphics::Screen();

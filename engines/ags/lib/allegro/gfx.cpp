@@ -147,7 +147,11 @@ BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
 		format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;
 	case 32:
+#ifdef USE_OPENGL
+		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
 		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#endif
 		break;
 	default:
 		error("Invalid color depth");
