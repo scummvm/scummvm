@@ -95,7 +95,6 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ ACTION_CHEAT_MODE, "CHEAT_MODE", "Toggle Cheat Mode", "Cheat::toggle", nullptr, "BACKQUOTE", nullptr, 0 },
 	{ ACTION_CLIPPING, "CLIPPING", "Toggle Clipping", "QuickAvatarMoverProcess::toggleClipping", nullptr, "INSERT", nullptr, 0 },
 	{ ACTION_DEC_SORT_ORDER, "DEC_SORT_ORDER", "Decrement Map Sort Order", "GameMapGump::decrementSortOrder", nullptr, "LEFTBRACKET", nullptr, 0 },
 	{ ACTION_INC_SORT_ORDER, "INC_SORT_ORDER", "Increment Map Sort Order", "GameMapGump::incrementSortOrder", nullptr, "RIGHTBRACKET", nullptr, 0 },
@@ -135,6 +134,12 @@ static const ExtraGuiOption COMMON_OPTIONS[] = {
 		"frameLimit",
 		true
 	},
+	{
+		_s("Enable cheats"),
+		_s("Allow cheats by commands and a menu when player is clicked."),
+		"cheat",
+		false
+	},
 	{ nullptr, nullptr, nullptr, false }
 };
 
@@ -150,12 +155,6 @@ static const ExtraGuiOption U8_OPTIONS[] = {
 		_s("Jumping while not moving targets the mouse cursor rather than direction only."),
 		"targetedjump",
 		true
-	},
-	{
-		_s("Enable cheats"),
-		_s("Allow cheats by commands and a menu when player is clicked."),
-		"cheat",
-		false
 	},
 	{
 		_s("Use original save/load screens"),
