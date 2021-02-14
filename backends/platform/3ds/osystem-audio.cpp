@@ -23,7 +23,7 @@
 #include "backends/platform/3ds/osystem.h"
 #include "audio/mixer.h"
 
-namespace _3DS {
+namespace N3DS {
 
 static bool hasAudio = false;
 
@@ -105,4 +105,4 @@ Audio::Mixer *OSystem_3DS::getMixer() {
 	return _mixer;
 }
 
-} // namespace _3DS
+} // namespace N3DS

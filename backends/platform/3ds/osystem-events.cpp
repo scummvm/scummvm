@@ -37,7 +37,7 @@
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 
-namespace _3DS {
+namespace N3DS {
 
 static Common::Mutex *eventMutex;
 static InputMode inputMode = MODE_DRAG;
@@ -482,4 +482,4 @@ void OSystem_3DS::runOptionsDialog() {
 	optionsDialogRunning = false;
 }
 
-} // namespace _3DS
+} // namespace N3DS

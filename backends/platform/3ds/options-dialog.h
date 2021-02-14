@@ -32,7 +32,7 @@
 #include "gui/widgets/tab.h"
 #include "scumm/dialogs.h"
 
-namespace _3DS {
+namespace N3DS {
 
 enum {
 	kSave = 0x10000000,
@@ -71,6 +71,6 @@ protected:
 	GUI::RadiobuttonWidget *_screenBothRadioWidget;
 };
 
-} // namespace _3DS
+} // namespace N3DS
 
 #endif // OPTIONS_DIALOG_3DS_H
