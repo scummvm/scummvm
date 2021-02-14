@@ -177,7 +177,7 @@ int cunpackbitl(uint8 *line, int size, Stream *in) {
 		if (in->HasErrors())
 			break;
 
-		char cx = ix;
+		int8 cx = ix;
 		if (cx == -128)
 			cx = 0;
 
@@ -214,7 +214,7 @@ int cunpackbitl16(uint16 *line, int size, Stream *in) {
 		if (in->HasErrors())
 			break;
 
-		char cx = ix;
+		int8 cx = ix;
 		if (cx == -128)
 			cx = 0;
 
@@ -251,7 +251,7 @@ int cunpackbitl32(uint32 *line, int size, Stream *in) {
 		if (in->HasErrors())
 			break;
 
-		char cx = ix;
+		int8 cx = ix;
 		if (cx == -128)
 			cx = 0;
 
