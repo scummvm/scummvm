@@ -139,7 +139,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kq2agdi", "King's Quest II: Romancing The Stones" },
 	{ "kq3agdi", "King's Quest III: To Heir is Human" },
 	{ "qfg2agdi", "Quest for Glory II: Trial By Fire" },
-	{ "mage", "Mage's Initiation: Reign of the Elements" },
 
 	// Infamous Adventures games. Likewise
 	{ "sq2fg", "Space Quest For Glory" },
@@ -168,6 +167,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "guardduty", "Guard Duty" },
 	{ "lamplightcity", "Lamplight City" },
 	{ "legendofhand", "Legend of Hand" },
+	{ "mage", "Mage's Initiation: Reign of the Elements" },
 	{ "neofeud", "Neofeud" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
 	{ "primordia", "Primordia" },
@@ -1552,6 +1552,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("guardduty", "GuardDuty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335), // Steam
 	ENGLISH_ENTRY("guardduty", "GuardDuty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743), // GOG
 	ENGLISH_ENTRY("legendofhand", "Legend of Hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285),
+	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
+	ENGLISH_ENTRY("mage", "Mages_Initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
+	ENGLISH_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
 	ENGLISH_ENTRY("neofeud", "Neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517), // Steam
 	ENGLISH_ENTRY("oott", "OotT-TKC.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
 	ENGLISH_ENTRY("oott", "OotT-TKC.exe", "11c2421258465cba4bd773c49d918ee3", 467845009), // GOG
@@ -2206,9 +2209,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("lukesexistentialnightmare", "Lukeexit.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 653834),
 	ENGLISH_ENTRY("lunarlanderprototype", "LunarLanderPrototype.exe", "495d45fb8adfd49690ae3b97921feec6", 3510282),
 	ENGLISH_ENTRY("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
-	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
-	ENGLISH_ENTRY("mage", "Mages_Initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
-	ENGLISH_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
 	ENGLISH_ENTRY("maggieandmax", "Max.exe", "465f972675db2da6040518221af5b0ba", 5759981),
 	ENGLISH_ENTRY("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
 	ENGLISH_ENTRY("magicalwhatevergirlrocksoutinthestoneage", "mwg.exe", "b2b99b5b3dcaee0fa292343c5a2c429b", 7784104),
