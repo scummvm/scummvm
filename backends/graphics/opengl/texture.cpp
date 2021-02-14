@@ -530,6 +530,46 @@ void TextureRGBA8888Swap::updateGLTexture() {
 	// Do generic handling of updating the texture.
 	Texture::updateGLTexture();
 }
+
+TextureARGB8888::TextureARGB8888()
+    : FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888
+{
+}
+
+Graphics::PixelFormat TextureARGB8888::getFormat() const {
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24); // ARGB8888
+}
+
+void TextureARGB8888::updateGLTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	uint32 *dst = (uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint dstAdd = outSurf->pitch - 4 * dirtyArea.width();
+
+	const uint32 *src = (const uint32 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint srcAdd = _rgbData.pitch - 4 * dirtyArea.width();
+
+	for (int height = dirtyArea.height(); height > 0; --height) {
+		for (int width = dirtyArea.width(); width > 0; --width) {
+			const uint32 color = *src++;
+
+			*dst++ = (color & 0xFF00FF00) | ((color >> 16) & 0x000000FF) | ((color << 16) & 0x00FF0000);
+		}
+
+		src = (const uint32 *)((const byte *)src + srcAdd);
+		dst = (uint32 *)((byte *)dst + dstAdd);
+	}
+
+	// Do generic handling of updating the texture.
+	Texture::updateGLTexture();
+}
 #endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES

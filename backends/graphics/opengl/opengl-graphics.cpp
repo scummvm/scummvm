@@ -226,6 +226,9 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 #ifdef SCUMM_LITTLE_ENDIAN
 	// RGBA8888
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+
+	// ARGB8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 #else
 	// ABGR8888
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
@@ -1128,6 +1131,10 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
 #endif
 		return new TextureRGBA8888Swap();
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (isGLESContext() && format == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
+		return new TextureARGB8888();
+#endif
 #endif // !USE_FORCED_GL
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
@@ -1174,6 +1181,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_INT_8_8_8_8;
+		return true;
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
+		glIntFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		glType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		return true;
 #endif
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555

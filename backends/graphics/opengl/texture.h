@@ -353,6 +353,16 @@ public:
 
 	virtual void updateGLTexture();
 };
+
+class TextureARGB8888 : public FakeTexture {
+public:
+	TextureARGB8888();
+	virtual ~TextureARGB8888() {};
+
+	virtual Graphics::PixelFormat getFormat() const;
+
+	virtual void updateGLTexture();
+};
 #endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES
