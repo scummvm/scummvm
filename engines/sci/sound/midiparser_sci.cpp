@@ -840,7 +840,6 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				return true;
 
 			} else {
-				_pSnd->status = kSoundStopped;
 				_pSnd->setSignal(SIGNAL_OFFSET);
 
 				debugC(4, kDebugLevelSound, "signal EOT");

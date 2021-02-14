@@ -306,6 +306,9 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 	musicSlot->dataInc = 0;
 	musicSlot->signal = SIGNAL_OFFSET;
 	_music->soundStop(musicSlot);
+
+	if (_soundVersion <= SCI_VERSION_0_LATE && (musicSlot = _music->getFirstSlotWithStatus(kSoundPlaying)))
+		writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
 }
 
 reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
@@ -318,16 +321,16 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		// SCI0 games give us 0/1 for either resuming or pausing the current music
 		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
 		uint16 value = argv[0].toUint16();
-		MusicEntry *musicSlot = _music->getActiveSci0MusicSlot();
+		MusicEntry *musicSlot = _music->getFirstSlotWithStatus(kSoundPlaying);
 		switch (value) {
 		case 1:
-			if ((musicSlot) && (musicSlot->status == kSoundPlaying)) {
+			if (musicSlot) {
 				_music->soundPause(musicSlot);
 				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
 			}
 			return make_reg(0, 0);
 		case 0:
-			if ((musicSlot) && (musicSlot->status == kSoundPaused)) {
+			if (!musicSlot && (musicSlot = _music->getFirstSlotWithStatus(kSoundPaused))) {
 				_music->soundResume(musicSlot);
 				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
 				return make_reg(0, 1);
@@ -848,33 +851,9 @@ reg_t SoundCommandParser::kDoSoundSuspend(EngineState *s, int argc, reg_t *argv)
 }
 
 void SoundCommandParser::updateSci0Cues() {
-	bool noOnePlaying = true;
-	MusicEntry *pWaitingForPlay = NULL;
-
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		// Is the sound stopped, and the sound object updated too? If yes, skip
-		// this sound, as SCI0 only allows one active song.
-		if  ((*i)->isQueued) {
-			if (!pWaitingForPlay || pWaitingForPlay->priority < (*i)->priority)		// fix #9907
-				pWaitingForPlay = (*i);
-			// FIXME(?): In iceman 2 songs are queued when playing the door
-			// sound - if we use the first song for resuming then it's the wrong
-			// one. Both songs have same priority. Maybe the new sound function
-			// in sci0 is somehow responsible.
-			continue;
-		}
-		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
-			continue;
-
-		processUpdateCues((*i)->soundObj);
-		noOnePlaying = false;
-	}
-
-	if (noOnePlaying && pWaitingForPlay) {
-		// If there is a queued entry, play it now - check SciMusic::soundPlay()
-		pWaitingForPlay->isQueued = false;
-		_music->soundPlay(pWaitingForPlay);
+	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i) {
+		if ((*i)->status == kSoundPlaying || (*i)->signal)
+			processUpdateCues((*i)->soundObj);
 	}
 }
 
