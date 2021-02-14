@@ -146,7 +146,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kq3redux", "King's Quest III Redux" },
 
 	// Commercial games
-	{ "adateinthepark", "A Date in the Park" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "apotheosis", "The Apotheosis Project" },
@@ -212,6 +211,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "achristmasblunder", "A Christmas Blunder" },
 	{ "aciddd", "ACIDDD" },
 	{ "acureforthecommoncold", "A Cure for the Common Cold" },
+	{ "adateinthepark", "A Date in the Park" },
 	{ "adaywithmichael", "A Day with Michael" },
 	{ "adventurequest", "Adventure Quest" },
 	{ "adventurequest2", "Adventure Quest 2" },
@@ -1511,7 +1511,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
 
 	// Commercial games
-	ENGLISH_ENTRY("adateinthepark", "A Date in the Park.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 47324098), // itch.io, Steam
 	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
 	ENGLISH_ENTRY("alemmo", "Al_Emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
 	ENGLISH_ENTRY("alemmoanozira", "Postcards from Anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
@@ -1659,6 +1658,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("achristmasblunder", "Blunder.exe", "35c11dc3b5f73b290489503b0a7c89e5", 1974915),
 	ENGLISH_ENTRY("aciddd", "acidddd.exe", "06a03fe35791b0578068ab1873455463", 1858394),
 	ENGLISH_ENTRY("acureforthecommoncold", "Game.exe", "06a03fe35791b0578068ab1873455463", 5247960),
+	ENGLISH_ENTRY("adateinthepark", "A Date in the Park.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 47324098), // itch.io, Steam
 	ENGLISH_ENTRY("adaywithmichael", "ADWM.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 65283966),
 	ENGLISH_ENTRY("adventurequest", "Begin.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1584015),
 	ENGLISH_ENTRY("adventurequest2", "adventure.exe", "f120690b506dd63cd7d1112ea6af2f77", 4603131),
