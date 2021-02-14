@@ -30,7 +30,6 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/trecision.h"
 
 #include "common/config-manager.h"
@@ -38,13 +37,9 @@
 
 namespace Trecision {
 
-#define SendFrame(i) doEvent(ScriptFrame[i]._class, 	\
-							ScriptFrame[i]._event,   \
-							MP_DEFAULT,             \
-							ScriptFrame[i]._wordParam1, \
-							ScriptFrame[i]._wordParam2, \
-							ScriptFrame[i]._byteParam , \
-							ScriptFrame[i]._longParam)
+void SScriptFrame::SendFrame() {
+	doEvent(_class, _event, MP_DEFAULT, _wordParam1, _wordParam2, _byteParam, _longParam);
+}
 
 uint8 CurStack = 0;
 
@@ -56,6 +51,8 @@ struct StackText {
 	uint16 tcol, scol;
 	char  sign[256];
 	LLBOOL  Clear;
+
+	void DoText();
 } TextStack[MAXTEXTSTACK];
 
 int16 TextStackTop = -1;
@@ -140,7 +137,6 @@ void AddIcon(uint8 icon) {
 		warning("AddIcon overflow");
 
 	if (g_vm->_iconBase < g_vm->_inventorySize - ICONSHOWN)
-//		_iconBase++;
 		g_vm->_iconBase = g_vm->_inventorySize - ICONSHOWN;
 
 //	To show the icon that enters the inventory
@@ -187,17 +183,23 @@ void PlayScript(uint16 i) {
 	SemMouseEnabled = false;
 	g_vm->CurScriptFrame[CurStack] = Script[i]._firstFrame;
 
-	// se evento vuoto termina lo scrpt
-	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]]._event == 0)) {
+	SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+	// If the event is empty, terminate the script
+	if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 		EndScript();
 		return;
 	}
 
-LOOP:
-	SendFrame(g_vm->CurScriptFrame[CurStack]);
-	if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._noWait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._event == 0))) {
-		g_vm->CurScriptFrame[CurStack]++;
-		goto LOOP;
+	bool loop = true;
+	while (loop) {
+		loop = false;
+		curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+		SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
+		curFrame->SendFrame();
+		if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
+			g_vm->CurScriptFrame[CurStack]++;
+			loop = true;
+		}
 	}
 }
 
@@ -209,16 +211,22 @@ void EvalScript() {
 		g_vm->CurScriptFrame[CurStack]++;
 		SemMouseEnabled = false;
 
-		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack]]._event == 0)) {
+		SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 			EndScript();
 			return;
 		}
 
-LOOP:
-		SendFrame(g_vm->CurScriptFrame[CurStack]);
-		if ((ScriptFrame[g_vm->CurScriptFrame[CurStack]]._noWait) && !((ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._class == 0) && (ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1]._event == 0))) {
-			g_vm->CurScriptFrame[CurStack]++;
-			goto LOOP;
+		bool loop = true;
+		while (loop) {
+			loop = false;
+			curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+			SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
+			curFrame->SendFrame();
+			if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
+				g_vm->CurScriptFrame[CurStack]++;
+				loop = true;
+			}
 		}
 	}
 }
@@ -246,12 +254,12 @@ void Text(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
  --------------------------------------------------*/
 void ClearText() {
 	if (TextStackTop >= 0) {
-//		lo stack non e' vuoto
+	// The stack isn't empty
 		if (! TextStack[TextStackTop].Clear)
-//			il precedente e' una stringa da scrivere, torno indietro
+		// The previous is a string to write, return
 			TextStackTop--;
 	} else {
-//		lo stack e' vuoto
+	// the stack is empty
 		TextStackTop = 0;
 		TextStack[TextStackTop].Clear = true;
 	}
@@ -262,33 +270,33 @@ void ClearText() {
  --------------------------------------------------*/
 void PaintString() {
 	for (int16 i = 0; i <= TextStackTop; i++) {
-		if (TextStack[i].Clear) {
+		if (TextStack[i].Clear)
 			DoClearText();
-		} else {
-			DoText(TextStack[i].x, TextStack[i].y,
-				   TextStack[i].sign,
-				   TextStack[i].tcol, TextStack[i].scol);
-		}
+		else
+			TextStack[i].DoText();
 	}
 }
 
 /* -----------------08/07/97 22.15-------------------
 						DoText
  --------------------------------------------------*/
-void DoText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
-	uint16 hstring;
-
+void StackText::DoText() {
 	TheString.x = x;
 	TheString.y = y;
 	TheString.dx = TextLength(sign, 0);
-	if ((y == (MAXY - CARHEI)) && (TheString.dx > 600)) TheString.dx = TheString.dx * 3 / 5;
-	else if ((y != (MAXY - CARHEI)) && (TheString.dx > 960)) TheString.dx = TheString.dx * 2 / 5;
-	else if ((y != (MAXY - CARHEI)) && (TheString.dx > 320)) TheString.dx = TheString.dx * 3 / 5;
+	if ((y == MAXY - CARHEI) && (TheString.dx > 600))
+		TheString.dx = TheString.dx * 3 / 5;
+	else if ((y != MAXY - CARHEI) && (TheString.dx > 960))
+		TheString.dx = TheString.dx * 2 / 5;
+	else if ((y != MAXY - CARHEI) && (TheString.dx > 320))
+		TheString.dx = TheString.dx * 3 / 5;
+
 	TheString.sign = sign;
 	TheString.l[0] = 0;
 	TheString.l[1] = 0;
 	TheString.l[2] = TheString.dx;
-	TheString.l[3] = (hstring = CheckDText(TheString));
+	uint16 hstring = CheckDText(TheString);
+	TheString.l[3] = hstring;
 	TheString.dy   = hstring;
 	TheString.tcol = tcol;
 	TheString.scol = scol;
@@ -299,7 +307,7 @@ void DoText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
 		TheString.y -= hstring;
 
 	if (TheString.y <= VIDEOTOP)
-		TheString.y  = VIDEOTOP + 1;
+		TheString.y = VIDEOTOP + 1;
 
 
 	TextStatus |= TEXT_DRAW;
@@ -310,7 +318,7 @@ void DoText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
 					DoClearString
  --------------------------------------------------*/
 void DoClearText() {
-	if ((OldString.sign == NULL) && (TheString.sign)) {
+	if ((OldString.sign == nullptr) && (TheString.sign)) {
 		OldString.x = TheString.x;
 		OldString.y = TheString.y;
 		OldString.dx = TheString.dx;
@@ -322,7 +330,7 @@ void DoClearText() {
 		OldString.l[3] = TheString.l[3];
 		OldString.tcol = TheString.tcol;
 		OldString.scol = TheString.scol;
-		TheString.sign = NULL;
+		TheString.sign = nullptr;
 
 		TextStatus |= TEXT_DEL;
 	}
@@ -331,8 +339,8 @@ void DoClearText() {
 /* -----------------21/01/98 10.22-------------------
  * 				DoSys
  * --------------------------------------------------*/
-void DoSys(uint16 TheObj) {
-	switch (TheObj) {
+void DoSys(uint16 curObj) {
+	switch (curObj) {
 	case o00QUIT:
 		if (QuitGame())
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
@@ -352,7 +360,6 @@ void DoSys(uint16 TheObj) {
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-//				RegenInventory(_regenInvStartIcon,_regenInvStartLine);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
 		g_vm->_curRoom = rSYS;
@@ -362,7 +369,6 @@ void DoSys(uint16 TheObj) {
 		if (!DataLoad()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-//				RegenInventory(_regenInvStartIcon,_regenInvStartLine);
 		}
 		break;
 
@@ -424,18 +430,18 @@ void DoSys(uint16 TheObj) {
 	case o00SOUND4D:
 	case o00SOUND5D:
 	case o00SOUND6D:
-		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
-		if ((TheObj != o00SPEECH6D) && (TheObj != o00MUSIC6D) && (TheObj != o00SOUND6D))
-			g_vm->_obj[TheObj + 1]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[TheObj - 1]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[TheObj - 2]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+		if ((curObj != o00SPEECH6D) && (curObj != o00MUSIC6D) && (curObj != o00SOUND6D))
+			g_vm->_obj[curObj + 1]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj - 1]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj - 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
-		if (TheObj < o00MUSIC1D)
-			ConfMan.setInt("speech_volume", ((TheObj - 2 - o00SPEECH1D) / 2) * 51);
-		else if (TheObj > o00MUSIC6D)
-			ConfMan.setInt("sfx_volume", ((TheObj - 2 - o00SOUND1D) / 2) * 51);
+		if (curObj < o00MUSIC1D)
+			ConfMan.setInt("speech_volume", ((curObj - 2 - o00SPEECH1D) / 2) * 51);
+		else if (curObj > o00MUSIC6D)
+			ConfMan.setInt("sfx_volume", ((curObj - 2 - o00SOUND1D) / 2) * 51);
 		else
-			ConfMan.setInt("music_volume", ((TheObj - 2 - o00MUSIC1D) / 2) * 51);
+			ConfMan.setInt("music_volume", ((curObj - 2 - o00MUSIC1D) / 2) * 51);
 		break;
 
 	case o00SPEECH1U:
@@ -453,18 +459,18 @@ void DoSys(uint16 TheObj) {
 	case o00SOUND3U:
 	case o00SOUND4U:
 	case o00SOUND5U:
-		g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[TheObj - 1]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[TheObj + 1]._mode |= OBJMODE_OBJSTATUS;
-		if ((TheObj != o00SPEECH5U) && (TheObj != o00MUSIC5U) && (TheObj != o00SOUND5U))
-			g_vm->_obj[TheObj + 2]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj - 1]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[curObj + 1]._mode |= OBJMODE_OBJSTATUS;
+		if ((curObj != o00SPEECH5U) && (curObj != o00MUSIC5U) && (curObj != o00SOUND5U))
+			g_vm->_obj[curObj + 2]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
-		if (TheObj < o00MUSIC1D)
-			ConfMan.setInt("speech_volume", ((TheObj + 1 - o00SPEECH1D) / 2) * 51);
-		else if (TheObj > o00MUSIC6D)
-			ConfMan.setInt("sfx_volume", ((TheObj + 1 - o00SOUND1D) / 2) * 51);
+		if (curObj < o00MUSIC1D)
+			ConfMan.setInt("speech_volume", ((curObj + 1 - o00SPEECH1D) / 2) * 51);
+		else if (curObj > o00MUSIC6D)
+			ConfMan.setInt("sfx_volume", ((curObj + 1 - o00SOUND1D) / 2) * 51);
 		else
-			ConfMan.setInt("music_volume", ((TheObj + 1 - o00MUSIC1D) / 2) * 51);
+			ConfMan.setInt("music_volume", ((curObj + 1 - o00MUSIC1D) / 2) * 51);
 		break;
 	}
 
@@ -485,7 +491,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[oCATENAT21]._position = 5;
 			g_vm->_obj[oUSCITA21]._position = 11;
 
-			// se so come andare di la'
+			// if we can go beyond
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
 				g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
@@ -517,7 +523,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[od21ALLA23]._anim = aWALKOUT;
 			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
-			// se so come andare di la'
+			// If we can go beyond
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
 				g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
