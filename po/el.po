@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-14 01:16+0000\n"
+"POT-Creation-Date: 2021-02-14 02:27+0000\n"
 "PO-Revision-Date: 2021-02-10 20:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6764,13 +6764,11 @@ msgstr ""
 "ομαλά σε λειτουργία πλήρους οθόνης, με αντίτιμο την απώλεια κάποιας "
 "λεπτομέρειας."
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
-#: engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Ενεργοποίηση εξομάλυνσης γραμματοσειράς"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
-#: engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
@@ -7217,53 +7215,6 @@ msgstr "Προηγούμενο μέρος"
 msgid "Next location"
 msgstr "Επόμενο μέρος"
 
-#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
-msgid "Enable font replacement"
-msgstr "Ενεργοποίηση αντικατάστασης γραμματοσειράς"
-
-#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
-msgid "Replaces game fonts with rendered fonts"
-msgstr "Αντικαθιστά γραμματοσειρές του παιχνιδιού με rendered γραμματοσειρές"
-
-#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
-msgid "Play foot step sounds"
-msgstr "Να έχουν ήχο οι πατημασιές"
-
-#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
-msgid "Plays sound when the player moves."
-msgstr "Αναπαραγωγή ήχου όταν κινείται ο παίκτης."
-
-#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
-msgid "Enable jump to mouse position"
-msgstr "Ενεργοποίηση άλματος στο σημείο του ποντικιού"
-
-#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-"Τα άλματα χωρίς φορά (χωρίς πρότερη κίνηση) γίνονται προς το σημείο του "
-"κέρσορα ποντικιού αντί απλά την γενική κατεύθυνση."
-
-#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
-msgid "Enable frame skipping"
-msgstr "Ενεργοποίηση παράλειψης καρέ"
-
-#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-"Επιτρέπει στο παιχνίδι να παραλείψει κάποια καρέ animation αν οι επιδόσεις "
-"είναι πολύ χαμηλές."
-
-#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
-msgid "Enable frame limiting"
-msgstr "Ενεργοποίηση περιορισμού καρέ"
-
-#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-"Περιορίζει την ταχύτητα του παιχνιδιού αποτρέποντας το να \"τρέχει\" "
-"υπερβολικά γρήγορα."
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Αδυναμία εύρεσης του σωστού αρχείου ultima.dat"
@@ -7298,6 +7249,45 @@ msgstr "Αρχική Αποθήκευση"
 msgid "Transfer Character"
 msgstr "Μεταφορά Χαρακτήρα"
 
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Enable frame skipping"
+msgstr "Ενεργοποίηση παράλειψης καρέ"
+
+#: engines/ultima/ultima8/meta_engine.cpp:128
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+"Επιτρέπει στο παιχνίδι να παραλείψει κάποια καρέ animation αν οι επιδόσεις "
+"είναι πολύ χαμηλές."
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+msgid "Enable frame limiting"
+msgstr "Ενεργοποίηση περιορισμού καρέ"
+
+#: engines/ultima/ultima8/meta_engine.cpp:134
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+"Περιορίζει την ταχύτητα του παιχνιδιού αποτρέποντας το να \"τρέχει\" "
+"υπερβολικά γρήγορα."
+
+#: engines/ultima/ultima8/meta_engine.cpp:143
+msgid "Play foot step sounds"
+msgstr "Να έχουν ήχο οι πατημασιές"
+
+#: engines/ultima/ultima8/meta_engine.cpp:144
+msgid "Plays sound when the player moves."
+msgstr "Αναπαραγωγή ήχου όταν κινείται ο παίκτης."
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+msgid "Enable jump to mouse position"
+msgstr "Ενεργοποίηση άλματος στο σημείο του ποντικιού"
+
+#: engines/ultima/ultima8/meta_engine.cpp:150
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+"Τα άλματα χωρίς φορά (χωρίς πρότερη κίνηση) γίνονται προς το σημείο του "
+"κέρσορα ποντικιού αντί απλά την γενική κατεύθυνση."
+
 #: engines/ultima/ultima8/meta_engine.cpp:155
 #, fuzzy
 #| msgid "Enable cheat mode"
@@ -7307,6 +7297,14 @@ msgstr "Ενεργοποίηση cheat"
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+msgid "Enable font replacement"
+msgstr "Ενεργοποίηση αντικατάστασης γραμματοσειράς"
+
+#: engines/ultima/ultima8/meta_engine.cpp:168
+msgid "Replaces game fonts with rendered fonts"
+msgstr "Αντικαθιστά γραμματοσειρές του παιχνιδιού με rendered γραμματοσειρές"
 
 #: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-14 01:16+0000\n"
+"POT-Creation-Date: 2021-02-14 02:27+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -6622,14 +6622,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
-#: engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "Aktivera censurering"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
-#: engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -7076,50 +7074,6 @@ msgstr "~F~öregående"
 msgid "Next location"
 msgstr "~F~öregående"
 
-#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
-#, fuzzy
-msgid "Enable font replacement"
-msgstr "Aktivera censurering"
-
-#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
-msgid "Replaces game fonts with rendered fonts"
-msgstr ""
-
-#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
-msgid "Play foot step sounds"
-msgstr ""
-
-#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
-msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
-#, fuzzy
-msgid "Enable jump to mouse position"
-msgstr "Spelets fullständiga titel"
-
-#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-
-#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
-msgid "Enable frame skipping"
-msgstr ""
-
-#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-
-#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
-#, fuzzy
-msgid "Enable frame limiting"
-msgstr "Aktivera censurering"
-
-#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
@@ -7155,6 +7109,41 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "Byt karaktär"
 
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:128
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+#, fuzzy
+msgid "Enable frame limiting"
+msgstr "Aktivera censurering"
+
+#: engines/ultima/ultima8/meta_engine.cpp:134
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:143
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:144
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "Spelets fullständiga titel"
+
+#: engines/ultima/ultima8/meta_engine.cpp:150
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
 #: engines/ultima/ultima8/meta_engine.cpp:155
 #, fuzzy
 msgid "Enable cheats"
@@ -7162,6 +7151,15 @@ msgstr "Aktivera heliumläge"
 
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+#, fuzzy
+msgid "Enable font replacement"
+msgstr "Aktivera censurering"
+
+#: engines/ultima/ultima8/meta_engine.cpp:168
+msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:189

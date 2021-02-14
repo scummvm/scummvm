@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-14 01:16+0000\n"
+"POT-Creation-Date: 2021-02-14 02:27+0000\n"
 "PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6628,13 +6628,11 @@ msgstr ""
 "Kun lineaarinen suodatus on päällä, taustakuvat ovat pehmeämpiä "
 "kokoruututilassa, mutta menettävät hieman yksityiskohtia."
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
-#: engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Fonttien antialiasointi"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
-#: engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Kirjaimet näyttävät sileämmiltä kun antialiasointi on päällä."
 
@@ -7069,48 +7067,6 @@ msgstr "Edellinen lokaatio"
 msgid "Next location"
 msgstr "Seuraava lokaatio"
 
-#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
-msgid "Enable font replacement"
-msgstr "Mahdollista fonttien korvaaminen"
-
-#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
-msgid "Replaces game fonts with rendered fonts"
-msgstr "Korvaa pelin fontit renderöidyillä fonteilla"
-
-#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
-msgid "Play foot step sounds"
-msgstr "Soita askeläänet"
-
-#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
-msgid "Plays sound when the player moves."
-msgstr "Pelaajan liikkumisesta kuuluu ääni."
-
-#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
-msgid "Enable jump to mouse position"
-msgstr "Hiiren sijaintiin hyppääminen"
-
-#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-"Paikaltaan hyppääminen kohdistaa hypyn hiiren sijaintiin eikä vain suuntaan."
-
-#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
-msgid "Enable frame skipping"
-msgstr "Salli harvempi ruudunpäivitys"
-
-#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr "Salli pelin päivittää ruutua harvemmin jos se pyörii liian hitaasti."
-
-#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
-msgid "Enable frame limiting"
-msgstr "Rajoita ruudun päivitystä"
-
-#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr "Rajoitaa pelin nopeutta jottei se olisi liian nopea."
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Oikeanlaista ultima.dat datatiedostoa ei löydetty"
@@ -7145,6 +7101,40 @@ msgstr "Alkuperäinen tallennus"
 msgid "Transfer Character"
 msgstr "Siirrä hahmo"
 
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Enable frame skipping"
+msgstr "Salli harvempi ruudunpäivitys"
+
+#: engines/ultima/ultima8/meta_engine.cpp:128
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr "Salli pelin päivittää ruutua harvemmin jos se pyörii liian hitaasti."
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+msgid "Enable frame limiting"
+msgstr "Rajoita ruudun päivitystä"
+
+#: engines/ultima/ultima8/meta_engine.cpp:134
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr "Rajoitaa pelin nopeutta jottei se olisi liian nopea."
+
+#: engines/ultima/ultima8/meta_engine.cpp:143
+msgid "Play foot step sounds"
+msgstr "Soita askeläänet"
+
+#: engines/ultima/ultima8/meta_engine.cpp:144
+msgid "Plays sound when the player moves."
+msgstr "Pelaajan liikkumisesta kuuluu ääni."
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+msgid "Enable jump to mouse position"
+msgstr "Hiiren sijaintiin hyppääminen"
+
+#: engines/ultima/ultima8/meta_engine.cpp:150
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+"Paikaltaan hyppääminen kohdistaa hypyn hiiren sijaintiin eikä vain suuntaan."
+
 #: engines/ultima/ultima8/meta_engine.cpp:155
 #, fuzzy
 #| msgid "Enable cheat mode"
@@ -7154,6 +7144,14 @@ msgstr "Salli huijaustila"
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+msgid "Enable font replacement"
+msgstr "Mahdollista fonttien korvaaminen"
+
+#: engines/ultima/ultima8/meta_engine.cpp:168
+msgid "Replaces game fonts with rendered fonts"
+msgstr "Korvaa pelin fontit renderöidyillä fonteilla"
 
 #: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"

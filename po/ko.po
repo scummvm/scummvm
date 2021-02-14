@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-14 01:16+0000\n"
+"POT-Creation-Date: 2021-02-14 02:27+0000\n"
 "PO-Revision-Date: 2021-02-12 15:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6555,13 +6555,11 @@ msgstr ""
 "선형 필터링이 활성화되면 전체 화면에서 백그라운드 그래픽이 더 부드럽게 표시됩"
 "니다. 다만 디테일이 조금 낮아집니다."
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
-#: engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "폰트 안티 앨리어싱 활성화"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
-#: engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 
@@ -6996,52 +6994,6 @@ msgstr "이전(~P~)"
 msgid "Next location"
 msgstr ""
 
-#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
-msgid "Enable font replacement"
-msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
-
-#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
-msgid "Replaces game fonts with rendered fonts"
-msgstr ""
-
-#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
-msgid "Play foot step sounds"
-msgstr ""
-
-#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
-msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
-#, fuzzy
-msgid "Enable jump to mouse position"
-msgstr "스토리지 활성화"
-
-#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-
-#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
-msgid "Enable frame skipping"
-msgstr ""
-
-#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-
-#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
-msgid "Enable frame limiting"
-msgstr "폰트 안티 앨리어싱 활성화"
-
-#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
@@ -7074,6 +7026,42 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:128
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable frame limiting"
+msgstr "폰트 안티 앨리어싱 활성화"
+
+#: engines/ultima/ultima8/meta_engine.cpp:134
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:143
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:144
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "스토리지 활성화"
+
+#: engines/ultima/ultima8/meta_engine.cpp:150
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
 #: engines/ultima/ultima8/meta_engine.cpp:155
 #, fuzzy
 #| msgid "Enable cheat mode"
@@ -7082,6 +7070,16 @@ msgstr "치트 모드 활성화"
 
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+#, fuzzy
+#| msgid "Enable loading of external replacement assets."
+msgid "Enable font replacement"
+msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
+
+#: engines/ultima/ultima8/meta_engine.cpp:168
+msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:189

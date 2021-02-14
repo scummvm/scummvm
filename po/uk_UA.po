@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-14 01:16+0000\n"
+"POT-Creation-Date: 2021-02-14 02:27+0000\n"
 "PO-Revision-Date: 2021-02-09 16:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6641,13 +6641,11 @@ msgstr ""
 "Лінійна фільтрація згладжує фонові зображення у повноекранному режимі за "
 "рахунок втрати деяких деталей."
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
-#: engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Ввімкнути згладжування шрифтів"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
-#: engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Якщо згладжування увімкнено, текст стає гладкішим."
 
@@ -7078,49 +7076,6 @@ msgstr "Попередня локація"
 msgid "Next location"
 msgstr "Наступна локація"
 
-#: engines/ultima/detection.cpp:64 engines/ultima/ultima8/meta_engine.cpp:167
-msgid "Enable font replacement"
-msgstr "Ввімкнути заміну шрифтів"
-
-#: engines/ultima/detection.cpp:65 engines/ultima/ultima8/meta_engine.cpp:168
-msgid "Replaces game fonts with rendered fonts"
-msgstr "Замінює шрифти гри на шрифти поліпшеної якості"
-
-#: engines/ultima/detection.cpp:82 engines/ultima/ultima8/meta_engine.cpp:143
-msgid "Play foot step sounds"
-msgstr "Відтворювати звуки кроків"
-
-#: engines/ultima/detection.cpp:83 engines/ultima/ultima8/meta_engine.cpp:144
-msgid "Plays sound when the player moves."
-msgstr "Відтворює звуки кроків під час руху гравця."
-
-#: engines/ultima/detection.cpp:91 engines/ultima/ultima8/meta_engine.cpp:149
-msgid "Enable jump to mouse position"
-msgstr "Ввімкнути стрибок до позиції миші"
-
-#: engines/ultima/detection.cpp:92 engines/ultima/ultima8/meta_engine.cpp:150
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-"Стрибати на місце, вказане курсором миші (не під час пересування цілей)."
-
-#: engines/ultima/detection.cpp:100 engines/ultima/ultima8/meta_engine.cpp:127
-msgid "Enable frame skipping"
-msgstr "Ввімкнути пропуск кадрів"
-
-#: engines/ultima/detection.cpp:101 engines/ultima/ultima8/meta_engine.cpp:128
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-"Дозволяє грі пропускати кадри анімації якщо комп'ютер занадто повільний."
-
-#: engines/ultima/detection.cpp:109 engines/ultima/ultima8/meta_engine.cpp:133
-msgid "Enable frame limiting"
-msgstr "Ввімкнути лімітування кадрів"
-
-#: engines/ultima/detection.cpp:110 engines/ultima/ultima8/meta_engine.cpp:134
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr "Лімітує швідкість гри, щоб уникнути занадто швидкого відтворювання."
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Не можу знайти коректний файл ultima.dat"
@@ -7154,6 +7109,41 @@ msgstr "Оригінальне збереження"
 msgid "Transfer Character"
 msgstr "Перенести героя"
 
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Enable frame skipping"
+msgstr "Ввімкнути пропуск кадрів"
+
+#: engines/ultima/ultima8/meta_engine.cpp:128
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+"Дозволяє грі пропускати кадри анімації якщо комп'ютер занадто повільний."
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+msgid "Enable frame limiting"
+msgstr "Ввімкнути лімітування кадрів"
+
+#: engines/ultima/ultima8/meta_engine.cpp:134
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr "Лімітує швідкість гри, щоб уникнути занадто швидкого відтворювання."
+
+#: engines/ultima/ultima8/meta_engine.cpp:143
+msgid "Play foot step sounds"
+msgstr "Відтворювати звуки кроків"
+
+#: engines/ultima/ultima8/meta_engine.cpp:144
+msgid "Plays sound when the player moves."
+msgstr "Відтворює звуки кроків під час руху гравця."
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+msgid "Enable jump to mouse position"
+msgstr "Ввімкнути стрибок до позиції миші"
+
+#: engines/ultima/ultima8/meta_engine.cpp:150
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+"Стрибати на місце, вказане курсором миші (не під час пересування цілей)."
+
 #: engines/ultima/ultima8/meta_engine.cpp:155
 #, fuzzy
 #| msgid "Enable cheat mode"
@@ -7163,6 +7153,14 @@ msgstr "Ввімкнути режим чітера"
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+msgid "Enable font replacement"
+msgstr "Ввімкнути заміну шрифтів"
+
+#: engines/ultima/ultima8/meta_engine.cpp:168
+msgid "Replaces game fonts with rendered fonts"
+msgstr "Замінює шрифти гри на шрифти поліпшеної якості"
 
 #: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
