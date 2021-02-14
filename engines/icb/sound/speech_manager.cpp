@@ -48,8 +48,9 @@ SpeechManager::SpeechManager() {
 
 	m_paused = FALSE8;
 	m_lengthInCycles = 0;
-	_audioStream = NULL;
 	m_speechVol = 0;
+
+	_audioStream = NULL;
 }
 
 SpeechManager::~SpeechManager() { KillBuffer(); }
@@ -91,10 +92,9 @@ bool8 SpeechManager::StartSpeech(const char *fileName, uint32 byteOffsetToWav, i
 		return FALSE8;
 	}
 
-	// Record & Set the volume
-	SetVolume(vol);
-
-	g_icb->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_handle, _audioStream);
+	float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+	g_icb->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_handle, _audioStream,
+	                          -1, vol * volumeConversion, 0, DisposeAfterUse::YES);
 
 	return TRUE8;
 }
@@ -126,7 +126,9 @@ void SpeechManager::PauseSpeech() {
 	if (m_paused || !IsPlaying())
 		return;
 
-	g_icb->_mixer->pauseHandle(_handle, true);
+	if (g_icb->_mixer->isSoundHandleActive(_handle))
+		g_icb->_mixer->pauseHandle(_handle, true);
+
 	m_paused = TRUE8;
 }
 
@@ -136,7 +138,9 @@ void SpeechManager::ResumeSpeech() {
 
 	if (m_paused) {
 		m_paused = FALSE8;
-		g_icb->_mixer->pauseHandle(_handle, false);
+		if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+			g_icb->_mixer->pauseHandle(_handle, false);
+		}
 	}
 }
 
@@ -148,8 +152,10 @@ void SpeechManager::SetSpeechVolume(int volume) {
 }
 
 void SpeechManager::SetVolume(int volume) {
-	float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
-	g_icb->_mixer->setChannelVolume(_handle, volume * volumeConversion);
+	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+		float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+		g_icb->_mixer->setChannelVolume(_handle, volume * volumeConversion);
+	}
 }
 
 bool8 SpeechManager::OpenSpeech(Common::SeekableReadStream *stream) {
@@ -157,6 +163,7 @@ bool8 SpeechManager::OpenSpeech(Common::SeekableReadStream *stream) {
 
 	// Get the length etc.
 	if (openWav(stream, header, m_wavDataSize, m_wavByteOffsetInCluster, m_lengthInCycles) != TRUE8) {
+		delete stream;
 		return FALSE8;
 	}
 

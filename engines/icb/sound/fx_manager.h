@@ -53,7 +53,7 @@ typedef struct Effect {
 	int rate;      // Original buffer sample rate
 	FxFlags flags; // Status of sample
 	int length;    // Length of sample in millisecs at base rate...
-	Audio::RewindableAudioStream *_stream;
+	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 } Effect;
 

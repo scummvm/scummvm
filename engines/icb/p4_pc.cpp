@@ -414,14 +414,6 @@ bool mainLoopIteration() {
 			mousey = event.mouse.y;
 			break;
 
-		// TODO: Fix sound
-		/*case SDL_USEREVENT:
-			if (g_TimerOn) {
-				UpdateSounds10Hz();
-				Poll_Sound_Engine();
-			}
-			break;*/
-
 		case Common::EVENT_QUIT:
 			Zdebug("\nap closed");
 			Zdebug("Be Vigilant!\n");

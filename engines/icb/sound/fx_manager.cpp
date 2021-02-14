@@ -74,23 +74,18 @@ bool8 FxManager::Poll() {
 		switch (m_effects[id].flags) {
 		// If it's playing check it hasn't finished
 		case Effect::PLAYING:
-#ifdef ENABLE_OPENAL // TODO:
 			// Apply current settings
-			alSourcef(m_effects[id].alStream.source, AL_GAIN, ((float)m_effects[id].volume) / 128.f);
-			// FIXME: correct pan value
-			alSource3f(m_effects[id].alStream.source, AL_POSITION, ((float)m_effects[id].pan) / 128.f, 0, 0);
-			frequency = (m_effects[id].pitch * stub.cycle_speed) / 100;
-			// FIXME correct pitch control
-			//				m_effects[id].buffer->SetFrequency( frequency ) ;
-			alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
+			if (g_icb->_mixer->isSoundHandleActive(m_effects[id]._handle)) {
+				float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+				g_icb->_mixer->setChannelVolume(m_effects[id]._handle, m_effects[id].volume * volumeConversion);
+				g_icb->_mixer->setChannelBalance(m_effects[id]._handle, m_effects[id].pan);
 
-			ALint state;
-			alGetSourcei(m_effects[id].alStream.source, AL_SOURCE_STATE, &state);
-			if (state != AL_PLAYING && state != AL_LOOPING && state != AL_PAUSED) {
-				// Finished playing so ready to go again
-				m_effects[id].flags = Effect::READY;
+				frequency = (m_effects[id].pitch * stub.cycle_speed) / 100;
+				// FIXME correct pitch control
+				//m_effects[id].buffer->SetFrequency( frequency ) ;
+				//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
 			}
-#endif
+
 			if (!g_icb->_mixer->isSoundHandleActive(m_effects[id]._handle)) {
 				// Finished playing so ready to go again
 				m_effects[id].flags = Effect::READY;
@@ -105,35 +100,21 @@ bool8 FxManager::Poll() {
 				break;
 
 		// It's waiting to play
-		case Effect::QUEUED:
+		case Effect::QUEUED: {
 
 			// Apply current settings
-			// TODO: Fix gain
-			// alSourcef(m_effects[id].alStream.source, AL_GAIN, ((float)m_effects[id].volume) / 128.f);
-			// FIXME: correct pan value
-			// alSource3f(m_effects[id].alStream.source, AL_POSITION, ((float)m_effects[id].pan) / 128.f, 0, 0);
 			frequency = (m_effects[id].pitch * stub.cycle_speed) / 100;
 			// FIXME corrent pitch control
-			//				m_effects[id].buffer->SetFrequency( frequency ) ;
-			//			alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
+			//m_effects[id].buffer->SetFrequency( frequency ) ;
+			//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
 
 			// So play it
-			warning("TODO: Sound FX: Gain, Pan, Pitch, Loop");
-			// TODO: Loop-handling
-			/*
-			                        if (m_effects[id].looped != 0)
-			                                alSourcei(m_effects[id].alStream.source, AL_LOOPING, AL_TRUE);
-			                        else
-			                                alSourcei(m_effects[id].alStream.source, AL_LOOPING, AL_FALSE);
-			*/
-			if (g_icb->_mixer->isSoundHandleActive(m_effects[id]._handle)) {
-				warning("Already active");
-			}
-			g_icb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &m_effects[id]._handle, m_effects[id]._stream, -1, Audio::Mixer::kMaxChannelVolume, 0,
-			                          DisposeAfterUse::NO);
-
+			float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+			g_icb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &m_effects[id]._handle,
+			                          makeLoopingAudioStream(m_effects[id]._stream, (m_effects[id].looped != 0) ? 0 : 1),
+			                          -1, m_effects[id].pan * volumeConversion, m_effects[id].pan, DisposeAfterUse::NO);
 			m_effects[id].flags = Effect::PLAYING;
-
+			}
 			break;
 		default:
 			break;
@@ -294,7 +275,7 @@ int FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetInCl
 	return (header.samplesPerSec);
 }
 
-bool8 FxManager::Load(int id, const char * /*name*/, uint32 byteOffsetInCluster) { // TODO: Verify that we are not leaking
+bool8 FxManager::Load(int id, const char * /*name*/, uint32 byteOffsetInCluster) {
 	_wavHeader header;
 	uint32 length;
 	int lengthInCycles;
@@ -321,8 +302,6 @@ bool8 FxManager::Load(int id, const char * /*name*/, uint32 byteOffsetInCluster)
 	m_effects[id].rate = header.samplesPerSec;
 	m_effects[id]._stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
-	// FIXME: (header.samplesPerSec * stub.cycle_speed)/100;
-	// length of sample is (length of file)/2 samples (16-bit), = 500*length of file / sample rate
 	if (m_effects[id].rate != 0)
 		m_effects[id].length = 500 * length / m_effects[id].rate;
 	else

@@ -38,7 +38,6 @@ namespace ICB {
 bool8 openWav(Common::SeekableReadStream *stream, _wavHeader &header, uint32 &length, uint32 &byteOffsetInCluster, int &lengthInCycles) {
 
 	int pos = stream->pos();
-	// TODO: fopen must happen before
 	int bytesRead;
 	char buff[1024];
 	bool bMore = true;
@@ -48,7 +47,7 @@ bool8 openWav(Common::SeekableReadStream *stream, _wavHeader &header, uint32 &le
 		return FALSE8;
 
 	if (header.formatTag != 1) {
-		warning("DirectSound only supports PCM uncompressed wav files");
+		warning("Only supports PCM uncompressed wav files");
 		return FALSE8;
 	}
 
