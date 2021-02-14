@@ -377,11 +377,11 @@ bool Ultima8Engine::startupGame() {
 	ConfMan.registerDefault("interpolate", true);
 	ConfMan.registerDefault("cheat", false);
 
-	applyGameSettings();
-
 	bool loaded = _game->loadFiles();
 	if (!loaded)
 		return false;
+
+	applyGameSettings();
 
 	// Create Midi Driver for Ultima 8
 	if (getGameInfo()->_type == GameInfo::GAME_U8)
