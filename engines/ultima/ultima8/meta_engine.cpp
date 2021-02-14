@@ -123,10 +123,58 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 #endif
 
 static const ExtraGuiOption COMMON_OPTIONS[] = {
+	{
+		_s("Enable frame skipping"),
+		_s("Allow the game to skip animation frames when running too slow."),
+		"frameSkip",
+		false
+	},
+	{
+		_s("Enable frame limiting"),
+		_s("Limits the speed of the game to prevent running too fast."),
+		"frameLimit",
+		true
+	},
 	{ nullptr, nullptr, nullptr, false }
 };
 
 static const ExtraGuiOption U8_OPTIONS[] = {
+	{
+		_s("Play foot step sounds"),
+		_s("Plays sound when the player moves."),
+		"footsteps",
+		true
+	},
+	{
+		_s("Enable jump to mouse position"),
+		_s("Jumping while not moving targets the mouse cursor rather than direction only."),
+		"targetedjump",
+		true
+	},
+	{
+		_s("Enable cheats"),
+		_s("Allow cheats by commands and a menu when player is clicked."),
+		"cheat",
+		false
+	},
+	{
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens instead of the ScummVM ones"),
+		"originalsaveload",
+		false
+	},
+	{
+		_s("Enable font replacement"),
+		_s("Replaces game fonts with rendered fonts"),
+		"font_override",
+		false
+	},
+	{
+		_s("Enable font anti-aliasing"),
+		_s("When font anti-aliasing is enabled, the text is smoother."),
+		"font_antialiasing",
+		false
+	},
 	{ nullptr, nullptr, nullptr, false }
 };
 
@@ -234,6 +282,11 @@ const ExtraGuiOptions MetaEngine::getExtraGuiOptions(const Common::String& targe
 		options.push_back(*o);
 	}
 
+	// TODO - Limited how many options are allowed, need fix
+	if (options.size() > 7) {
+		warning("More extra game options registered than currently allowed.");
+		options.resize(7);
+	}
 	return options;
 }
 
