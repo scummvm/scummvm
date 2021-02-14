@@ -94,17 +94,6 @@ void loadSetting(Common::String *name) {
 
     stackp = stack;
     progp = prog;
-
-    /*for (Inst *pc_ = progp; pc_-progp < 100; pc_++) {
-        if (_functions.contains((void *) *pc_))
-            debug("%p: %s", (void*) pc_, _functions.getVal((void*) *pc_)->c_str());
-        else if ( (Inst *) *pc_ >= progp && (Inst *) *pc_ <= (progp + NPROG))
-            debug("%p: %p", (void*) pc_, (void*) *pc_);
-        else {
-            debugN("%p:", (void*) pc_);
-            showSymbol((Symbol *) *pc_);
-        }
-    }*/
 }
 
 /* push d onto stack */

@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "private/private.h"
 #include "private/grammar.h"
 #include "private/grammar.tab.h"
 
@@ -42,13 +43,13 @@ void defineSymbol(char *n, Common::Rect *r) {
 
 void showSymbol(Symbol *s) {
     if (s->type == NUM)
-        debug("%s %d",s->name->c_str(), s->u.val);
+        debugC(1, kPrivateDebugCode, "%s %d",s->name->c_str(), s->u.val);
     else if (s->type == STRING)
-        debug("%s %s", s->name->c_str(), s->u.str);
+        debugC(1, kPrivateDebugCode, "%s %s", s->name->c_str(), s->u.str);
     else if (s->type == NAME)
-        debug("%s %d",s->name->c_str(), s->type);
+        debugC(1, kPrivateDebugCode, "%s %d",s->name->c_str(), s->type);
     else
-        debug("%s %d", s->name->c_str(), s->type);
+        debugC(1, kPrivateDebugCode, "%s %d", s->name->c_str(), s->type);
 }
 
 void setSymbol(Symbol *s, int v) {
@@ -82,7 +83,7 @@ Symbol *lookupName(char *n) {
         return lookup(*s, rects);
 
     else {
-        debug("WARNING: %s not defined", s->c_str());
+        debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s->c_str());
         return constant(STRING, 0, (char*) s->c_str());
     }
 
