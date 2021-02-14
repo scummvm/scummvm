@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-09 16:55+0000\n"
+"PO-Revision-Date: 2021-02-14 23:58+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -7133,14 +7133,12 @@ msgstr ""
 "Ограничивает скорость игры чтобы избежать слишком быстрого воспроизведения."
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
 msgstr "Включить чит-режим"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "Включает читы через команды и меню во время клика на игрока."
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
