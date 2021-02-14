@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 %option noyywrap
 %option noinput
 %option never-interactive
@@ -7,10 +29,8 @@
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <stdio.h>
-#include <string.h>
-#include "grammar.h"
-#include "grammar.tab.h"
+#include "private/grammar.h"
+#include "private/grammar.tab.h"
 
 %}
 
@@ -33,31 +53,23 @@ NULL                    return NULLTOK;
 Random                  return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  yylval.s = strdup(yytext); return NAME;
 [\-]?[0-9]+             yylval.sym = Private::constant(NUM, atoi(yytext), NULL); return NUM;
-\"[^\"\r\n]*\"          yylval.sym = Private::constant(STRING, 0, strdup(yytext)); return STRING;
+\"[^\"\r\n]*\"          yylval.sym = Private::constant(STRING, 0, scumm_strdup(yytext)); return STRING;
 [\r|\n]+                /* ignore return */;
 [ \t]+                  /* ignore whitespace */;
 .                       return *yytext;
 %%
 
-extern int yydebug;
-
 namespace Private {
 
 int parse(char *code) {
-	
-	initSetting();
-
-	YY_BUFFER_STATE bp;
-
-	yydebug = 1;
-	yy_delete_buffer(YY_CURRENT_BUFFER);
-
-	bp = yy_scan_string(code);
-	yy_switch_to_buffer(bp);
-	yyparse();
-	yy_delete_buffer(bp);
-
-	return 0;
+    initSetting();
+    YY_BUFFER_STATE bp;
+    yy_delete_buffer(YY_CURRENT_BUFFER);
+    bp = yy_scan_string(code);
+    yy_switch_to_buffer(bp);
+    yyparse();
+    yy_delete_buffer(bp);
+    return 0;
 }
 
 } // End of namespace Private
