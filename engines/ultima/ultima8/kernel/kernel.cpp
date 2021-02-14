@@ -181,7 +181,7 @@ void Kernel::runProcesses() {
 		}
 		if (!(p->is_terminated() || p->is_suspended()) &&
 		        (!_paused || (p->_flags & Process::PROC_RUNPAUSED)) &&
-				(_tickNum % p->getTicksPerRun() == 0)) {
+				(_paused || _tickNum % p->getTicksPerRun() == 0)) {
 			_runningProcess = p;
 			p->run();
 
