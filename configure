@@ -158,6 +158,7 @@ _gif=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
+_fluidlite=auto
 _glew=auto
 _opengl_mode=auto
 _opengl_game=auto
@@ -961,6 +962,10 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
+  --with-fluidlite-prefix=DIR prefix where libfluidlite is
+                           installed (optional)
+  --disable-fluidlite      disable fluidlite MIDI driver [autodetect]
+
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
 
@@ -1123,6 +1128,9 @@ for ac_option in $@; do
 	--disable-faad)               _faad=no               ;;
 	--enable-faad)                _faad=yes              ;;
 	--disable-fluidsynth)         _fluidsynth=no         ;;
+	--enable-fluidsynth)          _fluidsynth=yes        ;;
+	--disable-fluidlite)          _fluidlite=no          ;;
+	--enable-fluidlite)           _fluidlite=yes         ;;
 	--enable-readline)            _readline=yes          ;;
 	--disable-readline)           _readline=no           ;;
 	--enable-freetype2)           _freetype2=yes         ;;
@@ -1181,6 +1189,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
 		FLUIDSYNTH_LIBS="-L$arg/lib"
+		;;
+	--with-fluidlite-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLUIDLITE_CFLAGS="-I$arg/include"
+		FLUIDLITE_LIBS="-L$arg/lib"
 		;;
 	--with-mpeg2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -4965,6 +4978,38 @@ if test "$_fluidsynth" = yes; then
 fi
 define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
 echo "$_fluidsynth"
+
+#
+# Check for FluidLite
+#
+echocheck "FluidLite"
+
+append_var FLUIDLITE_LIBS "-lfluidlite"
+if test "$_fluidlite" = auto; then
+	_fluidlite=no
+	cat > $TMPC << EOF
+#include <fluidlite.h>
+int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
+EOF
+	cc_check_no_clean $FLUIDLITE_CFLAGS $FLUIDLITE_LIBS && _fluidlite=yes
+	if test "$_fluidlite" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists fluidlite; then
+		FLUIDLITE_LIBS="`$_pkgconfig --static --libs fluidlite`"
+		cc_check_no_clean $FLUIDLITE_CFLAGS $FLUIDLITE_LIBS && _fluidlite=yes
+	fi
+	cc_check_clean
+fi
+if test "$_fluidlite" = yes && test "$_fluidsynth" = no; then
+	define_in_config_if_yes "$_fluidlite" 'USE_FLUIDLITE'
+	define_in_config_if_yes "$_fluidlite" 'USE_FLUIDSYNTH'
+	append_var LIBS "$FLUIDLITE_LIBS"
+	append_var INCLUDES "$FLUIDLITE_CFLAGS"
+else
+	if test "$_fluidsynth" = yes; then
+		_fluidlite="no (FluidSynth/FluidLite support is mutually exclusive)"
+	fi
+	add_line_to_config_h '#undef USE_FLUIDLITE'
+fi
+echo "$_fluidlite"
 
 #
 # Check for readline if text_console is enabled
