@@ -35,25 +35,33 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_ENGINES_PRIVATE_TOKENS_H_INCLUDED
-# define YY_YY_ENGINES_PRIVATE_TOKENS_H_INCLUDED
+#ifndef YY_PRIVATE_ENGINES_PRIVATE_TOKENS_H_INCLUDED
+# define YY_PRIVATE_ENGINES_PRIVATE_TOKENS_H_INCLUDED
 /* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
+#ifndef PRIVATE_DEBUG
+# if defined YYDEBUG
 #if YYDEBUG
-extern int yydebug;
+#   define PRIVATE_DEBUG 1
+#  else
+#   define PRIVATE_DEBUG 0
+#  endif
+# else /* ! defined YYDEBUG */
+#  define PRIVATE_DEBUG 0
+# endif /* ! defined YYDEBUG */
+#endif  /* ! defined PRIVATE_DEBUG */
+#if PRIVATE_DEBUG
+extern int PRIVATE_debug;
 #endif
 
 /* Token kinds.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
+#ifndef PRIVATE_TOKENTYPE
+# define PRIVATE_TOKENTYPE
+  enum PRIVATE_tokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
+    PRIVATE_EMPTY = -2,
+    PRIVATE_EOF = 0,               /* "end of file"  */
+    PRIVATE_error = 256,           /* error  */
+    PRIVATE_UNDEF = 257,           /* "invalid token"  */
     NAME = 258,                    /* NAME  */
     STRING = 259,                  /* STRING  */
     NUM = 260,                     /* NUM  */
@@ -73,14 +81,14 @@ extern int yydebug;
     SETTINGTOK = 274,              /* SETTINGTOK  */
     RANDOMTOK = 275                /* RANDOMTOK  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  typedef enum PRIVATE_tokentype PRIVATE_token_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#if ! defined PRIVATE_STYPE && ! defined PRIVATE_STYPE_IS_DECLARED
+union PRIVATE_STYPE
 {
-#line 51 "engines/private/grammar.y"
+#line 52 "engines/private/grammar.y"
 
         Private::Symbol *sym; /* symbol table pointer */
         int (**inst)();       /* machine instruction */
@@ -88,17 +96,17 @@ union YYSTYPE
         int *i;               /* integer value */
         int narg;             /* auxiliary value to count function arguments */
 
-#line 92 "engines/private/tokens.h"
+#line 100 "engines/private/tokens.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+typedef union PRIVATE_STYPE PRIVATE_STYPE;
+# define PRIVATE_STYPE_IS_TRIVIAL 1
+# define PRIVATE_STYPE_IS_DECLARED 1
 #endif
 
 
-extern YYSTYPE yylval;
+extern PRIVATE_STYPE PRIVATE_lval;
 
-int yyparse (void);
+int PRIVATE_parse (void);
 
-#endif /* !YY_YY_ENGINES_PRIVATE_TOKENS_H_INCLUDED  */
+#endif /* !YY_PRIVATE_ENGINES_PRIVATE_TOKENS_H_INCLUDED  */
