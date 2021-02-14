@@ -34,7 +34,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",  // US release
         0,
-        AD_ENTRY1s("ASSETS.Z", "3a7532349cda8126e96dd5e49884af3a", 40232),
+        AD_ENTRY1s("PVTEYE.Z", "b682118cda6a42fa89833cae2b8824bd", 271895),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_NO_FLAGS,
@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",  // EU release
         0,
-        AD_ENTRY1s("ASSETS.Z", "73874f969026d6fd21a4e9834ce4a1a7", 17695),
+        AD_ENTRY1s("PVTEYE.Z", "", 0),
         Common::EN_GRB,
         Common::kPlatformWindows,
         ADGF_UNSUPPORTED,
@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye", // Demo from archive.org
         "Demo",
-        AD_ENTRY1s("ASSETS.Z", "854e141bb67535359620a1833fcc1566", 5955),
+        AD_ENTRY1s("PVTEYE.Z", "8ef908e212bb9c1e10f5e3c81f56682c", 263893),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
@@ -64,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye", // Demo from the US release
         "Demo",
-        AD_ENTRY1s("ASSETS.Z", "045766e39f44d6ee3bf92f0d4521587c", 5961),
+        AD_ENTRY1s("PVTEYE.Z", "af383c813157810e89d8d6d595895ff7", 271214),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye", // Demo from the EU release
         "Demo",
-        AD_ENTRY1s("ASSETS.Z", "15e10e8fbb1e9aac4d32c5d8215e7c86", 2299),
+        AD_ENTRY1s("PVTEYE.Z", "", 0),
         Common::EN_GRB,
         Common::kPlatformWindows,
         ADGF_DEMO | ADGF_UNSUPPORTED,
