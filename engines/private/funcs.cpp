@@ -405,7 +405,7 @@ void Exit(ArgArray args) {
 void SetModifiedFlag(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SetModifiedFlag(%d)", args[0].u.val);
-    g_private->_modified = (bool) args[0].u.val;
+    g_private->_modified = args[0].u.val != 0;
 }
 
 void PaperShuffleSound(ArgArray args) {
@@ -431,8 +431,8 @@ void Sound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Sound(%s)", args[0].u.str);
     if (args.size() == 4) {
-        bool b1 = args[1].u.val;
-        bool b2 = args[2].u.val;
+        bool b1 = args[1].u.val != 0;
+        bool b2 = args[2].u.val != 0;
         int c = args[3].u.val;
 
         if (!b1 && !b2 && c == 1) {
