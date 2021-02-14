@@ -34,7 +34,7 @@
 #include "common/translation.h"
 #include "common/ustr.h"
 
-namespace _3DS {
+namespace N3DS {
 
 bool optionMenuOpened = false;
 
@@ -107,4 +107,4 @@ void OptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32
 	}
 }
 
-} // namespace _3DS
+} // namespace N3DS

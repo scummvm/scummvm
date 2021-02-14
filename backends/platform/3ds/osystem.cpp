@@ -41,7 +41,7 @@
 #include <unistd.h>
 #include <time.h>
 
-namespace _3DS {
+namespace N3DS {
 
 OSystem_3DS::OSystem_3DS():
 	_focusDirty(true),
@@ -224,4 +224,4 @@ void OSystem_3DS::logMessage(LogMessageType::Type type, const char *message) {
 	printf("%s", message);
 }
 
-} // namespace _3DS
+} // namespace N3DS

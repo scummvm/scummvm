@@ -39,7 +39,7 @@
 
 #define TICKS_PER_MSEC 268123
 
-namespace _3DS {
+namespace N3DS {
 
 enum MagnifyMode {
 	MODE_MAGON,
@@ -292,6 +292,6 @@ public:
 	PauseToken _sleepPauseToken;
 };
 
-} // namespace _3DS
+} // namespace N3DS
 
 #endif

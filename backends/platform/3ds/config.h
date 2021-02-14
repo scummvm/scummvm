@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-namespace _3DS {
+namespace N3DS {
 
 struct Config {
 	bool showCursor;
@@ -39,6 +39,6 @@ extern Config config;
 void loadConfig();
 void saveConfig();
 
-} // namespace _3DS
+} // namespace N3DS
 
 #endif // CONFIG_3DS_H

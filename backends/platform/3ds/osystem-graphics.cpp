@@ -41,7 +41,7 @@
          GX_TRANSFER_OUT_FORMAT(fmt) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define DEFAULT_MODE _modeRGBA8
 
-namespace _3DS {
+namespace N3DS {
 /* Group the various enums, values, etc. needed for
  * each graphics mode into instaces of GfxMode3DS */
 static const GfxMode3DS _modeRGBA8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
@@ -835,4 +835,4 @@ void OSystem_3DS::flushCursor() {
 	}
 }
 
-} // namespace _3DS
+} // namespace N3DS
