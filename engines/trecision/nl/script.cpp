@@ -46,8 +46,8 @@ void initScript() {
 	ScriptFrame[f]._event = ME_MOUSEOPERATE;
 	ScriptFrame[f++]._longParam = oTICKETOFFICE16;
 
-	Script[s16MONETA]._firstFrame = ++f;
-	Script[s16MONETA]._flag = 0;
+	Script[S16MONEY]._firstFrame = ++f;
+	Script[S16MONEY]._flag = 0;
 
 	ScriptFrame[f]._class = MC_CHARACTER;
 	ScriptFrame[f]._event = ME_CHARACTERACTION;
@@ -92,8 +92,8 @@ void initScript() {
 	ScriptFrame[f]._event = ME_STARTDIALOG;
 	ScriptFrame[f++]._wordParam1 = dF4A3;
 
-	Script[s49MERIDIANA]._firstFrame = ++f;
-	Script[s49MERIDIANA]._flag = 0;
+	Script[s49SUNDIAL]._firstFrame = ++f;
+	Script[s49SUNDIAL]._flag = 0;
 
 	ScriptFrame[f]._class = MC_SCRIPT;
 	ScriptFrame[f]._event = ME_CHANGER;

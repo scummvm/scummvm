@@ -37,7 +37,7 @@
 
 namespace Trecision {
 
-void SScriptFrame::SendFrame() {
+void SScriptFrame::sendFrame() {
 	doEvent(_class, _event, MP_DEFAULT, _wordParam1, _wordParam2, _byteParam, _longParam);
 }
 
@@ -195,7 +195,7 @@ void PlayScript(uint16 i) {
 		loop = false;
 		curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
 		SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
-		curFrame->SendFrame();
+		curFrame->sendFrame();
 		if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
 			g_vm->CurScriptFrame[CurStack]++;
 			loop = true;
@@ -222,7 +222,7 @@ void EvalScript() {
 			loop = false;
 			curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
 			SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
-			curFrame->SendFrame();
+			curFrame->sendFrame();
 			if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
 				g_vm->CurScriptFrame[CurStack]++;
 				loop = true;

@@ -1036,7 +1036,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_curObj = oAGENDA49;
 			//SemShowCharacter=true;
 			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
-			PlayScript(s49MERIDIANA);
+			PlayScript(s49SUNDIAL);
 		}
 		printsent = false;
 		break;
@@ -1957,7 +1957,7 @@ void doInvScrUseWith() {
 			_choice[47]._flag |= DLGCHOICE_HIDE;
 			_choice[48]._flag |= DLGCHOICE_HIDE;
 			_choice[50]._flag &= ~DLGCHOICE_HIDE;
-			PlayScript(s16MONETA);
+			PlayScript(S16MONEY);
 //				doMouseTalk( _useWith[WITH] );
 			printsent = false;
 			KillIcon(iMONETA13);

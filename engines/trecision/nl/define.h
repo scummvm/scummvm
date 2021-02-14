@@ -3130,11 +3130,11 @@
 /*                                SCRIPT        						  */
 /*------------------------------------------------------------------------*/
 #define s16CARD				1
-#define s16MONETA			2
+#define S16MONEY			2
 #define s19EVA				3
-#define s34PANNELLO			4
+#define s34PANEL			4
 #define s4AHELLEN			5
-#define s49MERIDIANA		6
+#define s49SUNDIAL			6
 
 #define s21TO22				7
 #define s21TO23				8
