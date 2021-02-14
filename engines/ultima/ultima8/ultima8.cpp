@@ -196,6 +196,7 @@ bool Ultima8Engine::startup() {
 	_gameInfo = nullptr;
 	_fileSystem = new FileSystem;
 	_configFileMan = new ConfigFileManager();
+	_fontManager = new FontManager();
 	_kernel = new Kernel();
 
 	//!! move this elsewhere
@@ -1147,16 +1148,12 @@ void Ultima8Engine::applyGameSettings() {
 	bool fontOverride = ConfMan.getBool("font_override");
 	bool fontAntialiasing = ConfMan.getBool("font_antialiasing");
 
-	if (!_fontManager || _fontOverride != fontOverride || _fontAntialiasing != fontAntialiasing) {
+	if (_fontOverride != fontOverride || _fontAntialiasing != fontAntialiasing) {
 		_fontOverride = fontOverride;
 		_fontAntialiasing = fontAntialiasing;
 
-		// TODO - update font manager to just need reset here.
-		if (_fontManager) {
-			FORGET_OBJECT(_fontManager);
-		}
+		_fontManager->resetGameFonts();
 
-		_fontManager = new FontManager(_fontAntialiasing);
 		// TODO: assign names to these fontnumbers somehow
 		_fontManager->loadTTFont(0, "Vera.ttf", 18, 0xFFFFFF, 0);
 		_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);

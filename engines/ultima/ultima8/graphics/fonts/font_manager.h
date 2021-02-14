@@ -64,11 +64,10 @@ private:
 
 	typedef Std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
 	TTFFonts _ttfFonts;
-	bool _ttfAntialiasing;
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
 	//! loading it if necessary.
-	Graphics::Font *getTTF_Font(const Std::string &filename, int pointsize);
+	Graphics::Font *getTTF_Font(const Std::string &filename, int pointsize, bool antialiasing);
 
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Font *newFont);
@@ -79,7 +78,7 @@ private:
 
 	static FontManager *_fontManager;
 public:
-	FontManager(bool ttf_antialiasing);
+	FontManager();
 	~FontManager();
 
 	static FontManager *get_instance() {
