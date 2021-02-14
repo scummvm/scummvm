@@ -80,42 +80,42 @@ int DateTime_GetRawTime(ScriptDateTime *sdt) {
 //=============================================================================
 
 // ScriptDateTime* ()
-RuntimeScriptValue Sc_DateTime_Now(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_Now(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJAUTO(ScriptDateTime, DateTime_Now);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetYear(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetYear(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetYear);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetMonth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetMonth(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetMonth);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetDayOfMonth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetDayOfMonth(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetDayOfMonth);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetHour(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetHour(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetHour);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetMinute(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetMinute(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetMinute);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetSecond(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetSecond(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetSecond);
 }
 
 // int (ScriptDateTime *sdt)
-RuntimeScriptValue Sc_DateTime_GetRawTime(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DateTime_GetRawTime(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDateTime, DateTime_GetRawTime);
 }
 

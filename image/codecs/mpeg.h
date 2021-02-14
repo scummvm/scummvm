@@ -25,13 +25,11 @@
 #ifndef IMAGE_CODECS_MPEG_H
 #define IMAGE_CODECS_MPEG_H
 
-#include "common/inttypes.h"
 #include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
 
-extern "C" {
-	#include <mpeg2dec/mpeg2.h>
-}
+typedef struct mpeg2dec_s mpeg2dec_t;
+typedef struct mpeg2_info_s mpeg2_info_t;
 
 namespace Common {
 class SeekableReadStream;

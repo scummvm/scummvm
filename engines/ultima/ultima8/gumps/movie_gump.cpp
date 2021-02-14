@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/get_object.h"

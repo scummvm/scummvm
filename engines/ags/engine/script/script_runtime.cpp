@@ -172,7 +172,7 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 
 	// AN IMPORTANT NOTE ON PARAMS
 	// The original AGS interpreter did a bunch of dodgy function pointers with
-	// varying numbers of parameters, which were all int64_t. To simply matters
+	// varying numbers of parameters, which were all int64. To simply matters
 	// now that we only supported plugins implemented in code, and not DLLs,
 	// we use a simplified Common::Array containing the parameters
 

@@ -31,9 +31,9 @@ namespace Plugins {
 namespace AGSSnowRain {
 
 extern IAGSEngine *_engine;
-extern int32 _screenWidth;
-extern int32 _screenHeight;
-extern int32 _screenColorDepth;
+extern int _screenWidth;
+extern int _screenHeight;
+extern int _screenColorDepth;
 
 /**
  * This is not the original AGS SnowRain plugin, but a workalike

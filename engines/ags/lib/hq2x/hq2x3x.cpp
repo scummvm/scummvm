@@ -148,7 +148,7 @@ inline bool Diff(unsigned int w1, unsigned int w2) {
 	        (abs((YUV1 & Vmask) - (YUV2 & Vmask)) > trV));
 }
 
-#define INPUT_IMAGE_PIXEL_SIZE uint32_t
+#define INPUT_IMAGE_PIXEL_SIZE uint32
 #define INPUT_IMAGE_PIXEL_SIZE_IN_BYTES sizeof(INPUT_IMAGE_PIXEL_SIZE)
 
 void hq2x_32(unsigned char *pIn, unsigned char *pOut, int Xres, int Yres, int BpL) {

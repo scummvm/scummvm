@@ -432,10 +432,10 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 				_stream->ReadArray(&image->GetScanLineForWriting(hh)[0], coldep, wdd);
 		} else if (coldep == 2) {
 			for (hh = 0; hh < htt; hh++)
-				_stream->ReadArrayOfInt16((int16_t *)&image->GetScanLineForWriting(hh)[0], wdd);
+				_stream->ReadArrayOfInt16((int16 *)&image->GetScanLineForWriting(hh)[0], wdd);
 		} else {
 			for (hh = 0; hh < htt; hh++)
-				_stream->ReadArrayOfInt32((int32_t *)&image->GetScanLineForWriting(hh)[0], wdd);
+				_stream->ReadArrayOfInt32((int *)&image->GetScanLineForWriting(hh)[0], wdd);
 		}
 	}
 
@@ -489,10 +489,10 @@ void SpriteCache::CompressSprite(Bitmap *sprite, Stream *out) {
 			cpackbitl(&sprite->GetScanLineForWriting(y)[0], sprite->GetWidth(), out);
 	} else if (depth == 2) {
 		for (int y = 0; y < sprite->GetHeight(); y++)
-			cpackbitl16((const uint16_t *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
+			cpackbitl16((const uint16 *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
 	} else {
 		for (int y = 0; y < sprite->GetHeight(); y++)
-			cpackbitl32((const uint32_t *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
+			cpackbitl32((const uint32 *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
 	}
 }
 
@@ -506,7 +506,7 @@ void SpriteCache::UnCompressSprite(Bitmap *sprite, Stream *in) {
 			cunpackbitl16((uint16 *)&sprite->GetScanLineForWriting(y)[0], sprite->GetWidth(), in);
 	} else {
 		for (int y = 0; y < sprite->GetHeight(); y++)
-			cunpackbitl32((uint32_t *)&sprite->GetScanLineForWriting(y)[0], sprite->GetWidth(), in);
+			cunpackbitl32((uint32 *)&sprite->GetScanLineForWriting(y)[0], sprite->GetWidth(), in);
 	}
 }
 
@@ -538,7 +538,7 @@ int SpriteCache::SaveToFile(const char *filename, bool compressOutput, SpriteFil
 
 	// allocate buffers to store the indexing info
 	sprkey_t numsprits = lastslot + 1;
-	std::vector<int16_t> spritewidths, spriteheights;
+	std::vector<int16> spritewidths, spriteheights;
 	std::vector<soff_t> spriteoffs;
 	spritewidths.resize(numsprits);
 	spriteheights.resize(numsprits);

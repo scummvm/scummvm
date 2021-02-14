@@ -25,7 +25,7 @@
 #include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

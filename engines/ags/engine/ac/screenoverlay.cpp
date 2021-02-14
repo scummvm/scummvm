@@ -27,7 +27,7 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
+void ScreenOverlay::ReadFromFile(Stream *in, int cmp_ver) {
 	// Skipping bmp and pic pointer values
 	// TODO: find out if it's safe to just drop these pointers!! replace with unique_ptr?
 	bmp = nullptr;

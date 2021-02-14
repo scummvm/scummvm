@@ -24,25 +24,13 @@
 #ifndef ULTIMA8_ULTIMA8
 #define ULTIMA8_ULTIMA8
 
-#include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/system.h"
-#include "common/archive.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/hash-str.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/surface.h"
-#include "gui/debugger.h"
-#include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/args.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "common/events.h"
+#include "ultima/ultima8/misc/common_types.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/detection.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -65,12 +53,30 @@ class Mouse;
 class AvatarMoverProcess;
 class Texture;
 class AudioMixer;
+class FileSystem;
+class ConfigFileManager;
+struct GameInfo;
 
-class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
+#define GAME_IS_U8 (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
+#define GAME_IS_REMORSE (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
+#define GAME_IS_REGRET (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
+#define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
+
+class Ultima8Engine : public Shared::UltimaEngine {
 	friend class Debugger;
 private:
+	bool _isRunning;
+	GameInfo *_gameInfo;
+
+	// minimal system
+	FileSystem *_fileSystem;
+	ConfigFileManager *_configFileMan;
+
+	static Ultima8Engine *_instance;
+
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
-	bool _ttfOverrides;
+	bool _fontOverride;
+	bool _fontAntialiasing;
 	// Audio Mixer
 	AudioMixer *_audioMixer;
 	uint32 _saveCount;
@@ -110,7 +116,6 @@ private:
 	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
 	//!< nor can Avatar start more usecode
 	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-	bool _painting;          //!< Set true when painting
 	bool _showTouching;          //!< If true, highlight items touching Avatar
 	int32 _timeOffset;
 	bool _hasCheated;
@@ -152,6 +157,13 @@ private:
 	void GraphicSysInit(); // starts/restarts the graphics subsystem
 
 	void handleDelayedEvents();
+
+	//! Fill a GameInfo struct for the give game name
+	//! \param game The id of the game to check (from pentagram.cfg)
+	//! \param gameinfo The GameInfo struct to fill
+	//! \return true if detected all the fields, false if detection failed
+	bool getGameInfo(const istring &game, GameInfo *gameinfo);
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -168,7 +180,7 @@ public:
 	~Ultima8Engine() override;
 
 	static Ultima8Engine *get_instance() {
-		return dynamic_cast<Ultima8Engine *>(_application);
+		return _instance;
 	}
 
 	bool hasFeature(EngineFeature f) const override;
@@ -176,10 +188,16 @@ public:
 	bool startup();
 	void shutdown();
 
+	bool setupGame();
 	bool startupGame();
 	void shutdownGame(bool reloading = true);
 
 	void changeVideoMode(int width, int height);
+
+	//! Get current GameInfo struct
+	const GameInfo *getGameInfo() const {
+		return _gameInfo;
+	}
 
 	RenderSurface *getRenderScreen() {
 		return _screen;
@@ -187,13 +205,10 @@ public:
 
 	Graphics::Screen *getScreen() const override;
 
-	bool runGame() override;
+	bool runGame();
 	virtual void handleEvent(const Common::Event &event);
 
-	void paint() override;
-	bool isPainting() override {
-		return _painting;
-	}
+	void paint();
 
 	static const int U8_DEFAULT_SCREEN_WIDTH = 320;
 	static const int U8_DEFAULT_SCREEN_HEIGHT = 200;
@@ -271,6 +286,16 @@ public:
 	 * Notifies the engine that the sound settings may have changed
 	 */
 	void syncSoundSettings() override;
+
+	/**
+	* Notifies the engine that the game settings may have changed
+	*/
+	void applyGameSettings() override;
+
+	/**
+	* Opens the config dialog and apply setting after close
+	*/
+	void openConfigDialog();
 
 	/**
 	 * Returns true if a savegame can be loaded

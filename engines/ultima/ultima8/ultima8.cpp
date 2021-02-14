@@ -23,8 +23,10 @@
 #include "common/translation.h"
 #include "gui/saveload.h"
 #include "image/png.h"
+#include "engines/dialogs.h"
 
  // TODO: !! a lot of these includes are just for some hacks... clean up sometime
+#include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/games/start_u8_process.h"
@@ -110,17 +112,21 @@ struct ProcessLoader {
 
 inline bool HasPreventSaveFlag(const Gump *g) { return g->hasFlags(Gump::FLAG_PREVENT_SAVE); }
 
+Ultima8Engine *Ultima8Engine::_instance = nullptr;
+
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(nullptr),
+		Shared::UltimaEngine(syst, gameDesc),
+		_isRunning(false),  _gameInfo(nullptr), _fileSystem(nullptr),
+		_configFileMan(nullptr), _saveCount(0), _game(nullptr),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
-		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
+		_avatarInStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_ttfOverrides(false), _audioMixer(0), _inverterGump(nullptr), _lerpFactor(256),
-		_inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
-	_application = this;
+		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
+	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
+	_instance = this;
 }
 
 Ultima8Engine::~Ultima8Engine() {
@@ -136,6 +142,11 @@ Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(_ucMachine);
 	FORGET_OBJECT(_fontManager);
 	FORGET_OBJECT(_screen);
+	FORGET_OBJECT(_fileSystem);
+	FORGET_OBJECT(_configFileMan);
+	FORGET_OBJECT(_gameInfo);
+
+	_instance = nullptr;
 }
 
 Common::Error Ultima8Engine::run() {
@@ -174,16 +185,17 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions) ||
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime);
 }
 
 bool Ultima8Engine::startup() {
 	setDebugger(new Debugger());
 	pout << "-- Initializing Pentagram -- " << Std::endl;
 
-	// parent's startup first
-	CoreApp::startup();
-
+	_gameInfo = nullptr;
+	_fileSystem = new FileSystem;
+	_configFileMan = new ConfigFileManager();
 	_kernel = new Kernel();
 
 	//!! move this elsewhere
@@ -304,6 +316,34 @@ bool Ultima8Engine::startup() {
 	return true;
 }
 
+bool Ultima8Engine::setupGame() {
+	istring gamename = _gameDescription->desc.gameId;
+	GameInfo *info = new GameInfo;
+	bool detected = getGameInfo(gamename, info);
+
+	// output detected game info
+	debugN(MM_INFO, "%s: ", gamename.c_str());
+	if (detected) {
+		// add game to games map
+		Std::string details = info->getPrintDetails();
+		debugN(MM_INFO, "%s", details.c_str());
+	} else {
+		debugN(MM_INFO, "unknown, skipping");
+		return false;
+	}
+
+	_gameInfo = info;
+
+	pout << "Selected game: " << info->_name << Std::endl;
+	pout << info->getPrintDetails() << Std::endl;
+
+	// load main game data path - it needs to be empty
+	//Std::string gpath = ConfMan.get("path");
+	_fileSystem->AddVirtualPath("@game", "");
+
+	return true;
+}
+
 bool Ultima8Engine::startupGame() {
 	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
 
@@ -331,24 +371,17 @@ bool Ultima8Engine::startupGame() {
 	_game = Game::createGame(getGameInfo());
 
 	ConfMan.registerDefault("font_override", false);
-	_ttfOverrides = ConfMan.getBool("font_override");
-
+	ConfMan.registerDefault("font_antialiasing", true);
 	ConfMan.registerDefault("frameSkip", false);
-	_frameSkip = ConfMan.getBool("frameSkip");
-
 	ConfMan.registerDefault("frameLimit", true);
-	_frameLimit = ConfMan.getBool("frameLimit");
-
 	ConfMan.registerDefault("interpolate", true);
-	_interpolate = ConfMan.getBool("interpolate");
-
 	ConfMan.registerDefault("cheat", false);
-	_cheatsEnabled = ConfMan.getBool("cheat");
 
 	bool loaded = _game->loadFiles();
 	if (!loaded)
 		return false;
-	_gameData->setupFontOverrides();
+
+	applyGameSettings();
 
 	// Create Midi Driver for Ultima 8
 	if (getGameInfo()->_type == GameInfo::GAME_U8)
@@ -403,8 +436,15 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	_saveCount = 0;
 	_hasCheated = false;
 
-	// Kill Game
-	CoreApp::killGame();
+	_fileSystem->RemoveVirtualPath("@game");
+
+	_configFileMan->clearRoot("bindings");
+	_configFileMan->clearRoot("language");
+	_configFileMan->clearRoot("weapons");
+	_configFileMan->clearRoot("armour");
+	_configFileMan->clearRoot("monsters");
+	_configFileMan->clearRoot("game");
+	_gameInfo = nullptr;
 
 	pout << "-- Game Shutdown -- " << Std::endl;
 
@@ -521,7 +561,6 @@ void Ultima8Engine::paint() {
 	++t;
 
 	// Begin _painting
-	_painting = true;
 	_screen->BeginPainting();
 
 	tpaint -= g_system->getMillis();
@@ -541,7 +580,6 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
-	_painting = false;
 }
 
 void Ultima8Engine::GraphicSysInit() {
@@ -613,17 +651,7 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	ConfMan.registerDefault("font_antialiasing", true);
-	bool font_antialiasing = ConfMan.getBool("font_antialiasing");
-
-	_fontManager = new FontManager(font_antialiasing);
 	_paletteManager = new PaletteManager(new_screen);
-
-	// TODO: assign names to these fontnumbers somehow
-	_fontManager->loadTTFont(0, "Vera.ttf", 18, 0xFFFFFF, 0);
-	_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);
-	// GameWidget's version number information:
-	_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
 
 	ConfMan.registerDefault("fadedModal", true);
 	bool faded_modal = ConfMan.getBool("fadedModal");
@@ -767,6 +795,48 @@ void Ultima8Engine::handleDelayedEvents() {
 	//uint32 now = g_system->getMillis();
 
 	_mouse->handleDelayedEvents();
+}
+
+bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
+	// first try getting the information from the config file
+	// if that fails, try to autodetect it
+
+	ginfo->_name = game;
+	ginfo->_type = GameInfo::GAME_UNKNOWN;
+	ginfo->version = 0;
+	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
+
+	assert(game == "ultima8" || game == "remorse" || game == "regret");
+
+	if (game == "ultima8")
+		ginfo->_type = GameInfo::GAME_U8;
+	else if (game == "remorse")
+		ginfo->_type = GameInfo::GAME_REMORSE;
+	else if (game == "regret")
+		ginfo->_type = GameInfo::GAME_REGRET;
+
+	switch (_gameDescription->desc.language) {
+	case Common::EN_ANY:
+		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
+		break;
+	case Common::FR_FRA:
+		ginfo->_language = GameInfo::GAMELANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		ginfo->_language = GameInfo::GAMELANG_GERMAN;
+		break;
+	case Common::ES_ESP:
+		ginfo->_language = GameInfo::GAMELANG_SPANISH;
+		break;
+	case Common::JA_JPN:
+		ginfo->_language = GameInfo::GAMELANG_JAPANESE;
+		break;
+	default:
+		error("Unknown language");
+		break;
+	}
+
+	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
 void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
@@ -1071,6 +1141,47 @@ void Ultima8Engine::syncSoundSettings() {
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
+void Ultima8Engine::applyGameSettings() {
+	UltimaEngine::applyGameSettings();
+
+	bool fontOverride = ConfMan.getBool("font_override");
+	bool fontAntialiasing = ConfMan.getBool("font_antialiasing");
+
+	if (!_fontManager || _fontOverride != fontOverride || _fontAntialiasing != fontAntialiasing) {
+		_fontOverride = fontOverride;
+		_fontAntialiasing = fontAntialiasing;
+
+		// TODO - update font manager to just need reset here.
+		if (_fontManager) {
+			FORGET_OBJECT(_fontManager);
+		}
+
+		_fontManager = new FontManager(_fontAntialiasing);
+		// TODO: assign names to these fontnumbers somehow
+		_fontManager->loadTTFont(0, "Vera.ttf", 18, 0xFFFFFF, 0);
+		_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);
+		// GameWidget's version number information:
+		_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
+
+		_gameData->setupFontOverrides();
+	}
+
+	_frameSkip = ConfMan.getBool("frameSkip");
+	_frameLimit = ConfMan.getBool("frameLimit");
+	_interpolate = ConfMan.getBool("interpolate");
+	_cheatsEnabled = ConfMan.getBool("cheat");
+
+}
+
+void Ultima8Engine::openConfigDialog() {
+	GUI::ConfigDialog dlg;
+	dlg.runModal();
+
+	g_system->applyBackendSettings();
+	applyGameSettings();
+	syncSoundSettings();
+}
+
 Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	SavegameReader *sg = new SavegameReader(stream);
 	SavegameReader::State state = sg->isValid();
@@ -1238,7 +1349,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 
 	if (dynamic_cast<ShapeViewerGump *>(gump) || dynamic_cast<MiniMapGump *>(gump) ||
 		dynamic_cast<MessageBoxGump *>(gump)// ||
-		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
+		//(_fontOverrides && (dynamic_cast<BarkGump *>(gump) ||
 		//                dynamic_cast<AskGump *>(gump)))
 		) {
 		_desktopGump->AddChild(gump);

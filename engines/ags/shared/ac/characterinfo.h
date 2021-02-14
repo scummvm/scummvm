@@ -70,7 +70,7 @@ struct CharacterInfo {
 	int   talkview;
 	int   view;
 	int   room, prevroom;
-	int32_t x, y, wait;
+	int x, y, wait;
 	int   flags;
 	short following;
 	short followinfo;

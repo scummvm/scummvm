@@ -32,120 +32,120 @@ DataStream::DataStream(DataEndianess stream_endianess)
 
 DataStream::~DataStream() {}
 
-int16_t DataStream::ReadInt16() {
-	int16_t val = 0;
-	Read(&val, sizeof(int16_t));
+int16 DataStream::ReadInt16() {
+	int16 val = 0;
+	Read(&val, sizeof(int16));
 	ConvertInt16(val);
 	return val;
 }
 
-int32_t DataStream::ReadInt32() {
-	int32_t val = 0;
-	Read(&val, sizeof(int32_t));
+int DataStream::ReadInt32() {
+	int val = 0;
+	Read(&val, sizeof(int));
 	ConvertInt32(val);
 	return val;
 }
 
-int64_t DataStream::ReadInt64() {
-	int64_t val = 0;
-	Read(&val, sizeof(int64_t));
+int64 DataStream::ReadInt64() {
+	int64 val = 0;
+	Read(&val, sizeof(int64));
 	ConvertInt64(val);
 	return val;
 }
 
-size_t DataStream::WriteInt16(int16_t val) {
+size_t DataStream::WriteInt16(int16 val) {
 	ConvertInt16(val);
-	return Write(&val, sizeof(int16_t));
+	return Write(&val, sizeof(int16));
 }
 
-size_t DataStream::WriteInt32(int32_t val) {
+size_t DataStream::WriteInt32(int val) {
 	ConvertInt32(val);
-	return Write(&val, sizeof(int32_t));
+	return Write(&val, sizeof(int));
 }
 
-size_t DataStream::WriteInt64(int64_t val) {
+size_t DataStream::WriteInt64(int64 val) {
 	ConvertInt64(val);
-	return Write(&val, sizeof(int64_t));
+	return Write(&val, sizeof(int64));
 }
 
-size_t DataStream::ReadAndConvertArrayOfInt16(int16_t *buffer, size_t count) {
+size_t DataStream::ReadAndConvertArrayOfInt16(int16 *buffer, size_t count) {
 	if (!CanRead() || !buffer) {
 		return 0;
 	}
 
-	count = ReadArray(buffer, sizeof(int16_t), count);
+	count = ReadArray(buffer, sizeof(int16), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt16(*buffer);
 	}
 	return count;
 }
 
-size_t DataStream::ReadAndConvertArrayOfInt32(int32_t *buffer, size_t count) {
+size_t DataStream::ReadAndConvertArrayOfInt32(int *buffer, size_t count) {
 	if (!CanRead() || !buffer) {
 		return 0;
 	}
 
-	count = ReadArray(buffer, sizeof(int32_t), count);
+	count = ReadArray(buffer, sizeof(int), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt32(*buffer);
 	}
 	return count;
 }
 
-size_t DataStream::ReadAndConvertArrayOfInt64(int64_t *buffer, size_t count) {
+size_t DataStream::ReadAndConvertArrayOfInt64(int64 *buffer, size_t count) {
 	if (!CanRead() || !buffer) {
 		return 0;
 	}
 
-	count = ReadArray(buffer, sizeof(int64_t), count);
+	count = ReadArray(buffer, sizeof(int64), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt64(*buffer);
 	}
 	return count;
 }
 
-size_t DataStream::WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t count) {
+size_t DataStream::WriteAndConvertArrayOfInt16(const int16 *buffer, size_t count) {
 	if (!CanWrite() || !buffer) {
 		return 0;
 	}
 
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
-		int16_t val = *buffer;
+		int16 val = *buffer;
 		ConvertInt16(val);
-		if (Write(&val, sizeof(int16_t)) < sizeof(int16_t)) {
+		if (Write(&val, sizeof(int16)) < sizeof(int16)) {
 			break;
 		}
 	}
 	return elem;
 }
 
-size_t DataStream::WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t count) {
+size_t DataStream::WriteAndConvertArrayOfInt32(const int *buffer, size_t count) {
 	if (!CanWrite() || !buffer) {
 		return 0;
 	}
 
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
-		int32_t val = *buffer;
+		int val = *buffer;
 		ConvertInt32(val);
-		if (Write(&val, sizeof(int32_t)) < sizeof(int32_t)) {
+		if (Write(&val, sizeof(int)) < sizeof(int)) {
 			break;
 		}
 	}
 	return elem;
 }
 
-size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t count) {
+size_t DataStream::WriteAndConvertArrayOfInt64(const int64 *buffer, size_t count) {
 	if (!CanWrite() || !buffer) {
 		return 0;
 	}
 
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
-		int64_t val = *buffer;
+		int64 val = *buffer;
 		ConvertInt64(val);
-		if (Write(&val, sizeof(int64_t)) < sizeof(int64_t)) {
+		if (Write(&val, sizeof(int64)) < sizeof(int64)) {
 			break;
 		}
 	}

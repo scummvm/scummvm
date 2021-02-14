@@ -219,7 +219,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Item::getQHi(void)",
 	"Actor::I_getLastAnimSet()",
 	"Item::getCY(void)",
-	"Intrinsic00A9()",
+	"Intrinsic00A9()", // Equivalent to Intrinsic00BB() in Remorse
 	"Item::isOn(uint16)",
 	"Actor::isDead(void)",
 	"Item::hurl(sint16,sint16,sint16,sint16)",
@@ -272,7 +272,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Actor::I_getDefaultActivity1()",
 	"Actor::I_getDefaultActivity2()",
 	"Actor::I_getLastAnimSet()",
-	"Actor::I_isInCombat()",
+	"Actor::I_isFalling()",
 	"Item::getQLo(void)",
 	"Item::getQHi(void)",
 	"Item::getNpcNum(void)",

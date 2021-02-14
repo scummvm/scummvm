@@ -29,7 +29,7 @@
 namespace AGS3 {
 
 extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(
-	int32_t handle, void *&object, ICCDynamicObject *&manager);
+	int handle, void *&object, ICCDynamicObject *&manager);
 
 } // namespace AGS3
 

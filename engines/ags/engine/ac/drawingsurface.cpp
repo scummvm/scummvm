@@ -453,123 +453,123 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 //=============================================================================
 
 // void (ScriptDrawingSurface *sds, int colour)
-RuntimeScriptValue Sc_DrawingSurface_Clear(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_Clear(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptDrawingSurface, DrawingSurface_Clear);
 }
 
 // ScriptDrawingSurface* (ScriptDrawingSurface *sds)
-RuntimeScriptValue Sc_DrawingSurface_CreateCopy(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_CreateCopy(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_OBJAUTO(ScriptDrawingSurface, ScriptDrawingSurface, DrawingSurface_CreateCopy);
 }
 
 // void (ScriptDrawingSurface *sds, int x, int y, int radius)
-RuntimeScriptValue Sc_DrawingSurface_DrawCircle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawCircle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT3(ScriptDrawingSurface, DrawingSurface_DrawCircle);
 }
 
 // void (ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height)
-RuntimeScriptValue Sc_DrawingSurface_DrawImage_6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawImage_6(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT6(ScriptDrawingSurface, DrawingSurface_DrawImage);
 }
 
-RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
 	DrawingSurface_DrawImageEx((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
 		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
-	return RuntimeScriptValue((int32_t)0);
+	return RuntimeScriptValue((int)0);
 }
 
 // void (ScriptDrawingSurface *sds, int fromx, int fromy, int tox, int toy, int thickness)
-RuntimeScriptValue Sc_DrawingSurface_DrawLine(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawLine(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5(ScriptDrawingSurface, DrawingSurface_DrawLine);
 }
 
 // void (ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int msgm)
-RuntimeScriptValue Sc_DrawingSurface_DrawMessageWrapped(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawMessageWrapped(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5(ScriptDrawingSurface, DrawingSurface_DrawMessageWrapped);
 }
 
 // void (ScriptDrawingSurface *sds, int x, int y)
-RuntimeScriptValue Sc_DrawingSurface_DrawPixel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawPixel(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT2(ScriptDrawingSurface, DrawingSurface_DrawPixel);
 }
 
 // void (ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2)
-RuntimeScriptValue Sc_DrawingSurface_DrawRectangle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawRectangle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT4(ScriptDrawingSurface, DrawingSurface_DrawRectangle);
 }
 
 // void (ScriptDrawingSurface *sds, int xx, int yy, int font, const char* texx, ...)
-RuntimeScriptValue Sc_DrawingSurface_DrawString(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawString(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_SCRIPT_SPRINTF(DrawingSurface_DrawString, 4);
 	DrawingSurface_DrawString((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, scsf_buffer);
-	return RuntimeScriptValue((int32_t)0);
+	return RuntimeScriptValue((int)0);
 }
 
 // void (ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int alignment, const char *msg)
-RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped_Old(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped_Old(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5_POBJ(ScriptDrawingSurface, DrawingSurface_DrawStringWrapped_Old, const char);
 }
 
-RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT5_POBJ(ScriptDrawingSurface, DrawingSurface_DrawStringWrapped, const char);
 }
 
 // void (ScriptDrawingSurface* target, ScriptDrawingSurface* source, int translev)
-RuntimeScriptValue Sc_DrawingSurface_DrawSurface_2(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawSurface_2(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ_PINT(ScriptDrawingSurface, DrawingSurface_DrawSurface, ScriptDrawingSurface);
 }
 
-RuntimeScriptValue Sc_DrawingSurface_DrawSurface(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawSurface(void *self, const RuntimeScriptValue *params, int param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
 	DrawingSurface_DrawSurfaceEx((ScriptDrawingSurface *)self, (ScriptDrawingSurface *)params[0].Ptr,
 		params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
 		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
-	return RuntimeScriptValue((int32_t)0);
+	return RuntimeScriptValue((int)0);
 }
 
 // void (ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2, int x3, int y3)
-RuntimeScriptValue Sc_DrawingSurface_DrawTriangle(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawTriangle(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT6(ScriptDrawingSurface, DrawingSurface_DrawTriangle);
 }
 
 // int (ScriptDrawingSurface *sds, int x, int y)
-RuntimeScriptValue Sc_DrawingSurface_GetPixel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_GetPixel(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT2(ScriptDrawingSurface, DrawingSurface_GetPixel);
 }
 
 // void (ScriptDrawingSurface* sds)
-RuntimeScriptValue Sc_DrawingSurface_Release(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_Release(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(ScriptDrawingSurface, DrawingSurface_Release);
 }
 
 // int (ScriptDrawingSurface *sds)
-RuntimeScriptValue Sc_DrawingSurface_GetDrawingColor(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_GetDrawingColor(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDrawingSurface, DrawingSurface_GetDrawingColor);
 }
 
 // void (ScriptDrawingSurface *sds, int newColour)
-RuntimeScriptValue Sc_DrawingSurface_SetDrawingColor(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_SetDrawingColor(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptDrawingSurface, DrawingSurface_SetDrawingColor);
 }
 
 // int (ScriptDrawingSurface *sds)
-RuntimeScriptValue Sc_DrawingSurface_GetHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_GetHeight(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDrawingSurface, DrawingSurface_GetHeight);
 }
 
 // int (ScriptDrawingSurface *sds)
-RuntimeScriptValue Sc_DrawingSurface_GetUseHighResCoordinates(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_GetUseHighResCoordinates(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDrawingSurface, DrawingSurface_GetUseHighResCoordinates);
 }
 
 // void (ScriptDrawingSurface *sds, int highRes)
-RuntimeScriptValue Sc_DrawingSurface_SetUseHighResCoordinates(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_SetUseHighResCoordinates(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptDrawingSurface, DrawingSurface_SetUseHighResCoordinates);
 }
 
 // int (ScriptDrawingSurface *sds)
-RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptDrawingSurface, DrawingSurface_GetWidth);
 }
 

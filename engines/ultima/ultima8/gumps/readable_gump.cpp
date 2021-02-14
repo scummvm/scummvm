@@ -28,7 +28,7 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -58,7 +58,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 
 	UpdateDimsFromShape();
 
-	if (CoreApp::get_instance()->getGameInfo()->_language ==
+	if (Ultima8Engine::get_instance()->getGameInfo()->_language ==
 	        GameInfo::GAMELANG_JAPANESE) {
 		// Japanese subtitles
 		Std::string::size_type pos;

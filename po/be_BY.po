@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
+"POT-Creation-Date: 2021-02-13 17:56+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4773,13 +4773,13 @@ msgstr "Уключаныя ў зборку опцыі:"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Left Click"
 msgstr "Узаемадзеянне праз левую пстрычку"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:143
+#: engines/ultima/ultima8/meta_engine.cpp:154
 msgid "Interact via Right Click"
 msgstr "Узаемадзеянне праз правую пстрычку"
 
@@ -7157,31 +7157,31 @@ msgstr "Арыгінальнае захаванне"
 msgid "Transfer Character"
 msgstr "Перанесці героя"
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII Cheats"
 msgstr "Чыты Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:194
+#: engines/ultima/ultima8/meta_engine.cpp:205
 msgid "Ultima VIII Debug"
 msgstr "Адладка Ultima VIII"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr "[пашкоджанае]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr "[састарэлае]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
 msgstr "[занадта новае]"
 

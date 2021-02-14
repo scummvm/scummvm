@@ -137,10 +137,10 @@ void ReadRoomObject(RoomObjectInfo &obj, Stream *in) {
 
 void WriteRoomObject(const RoomObjectInfo &obj, Stream *out) {
 	// TODO: expand serialization into 32-bit values at least for the sprite index!!
-	out->WriteInt16((int16_t)obj.Sprite);
-	out->WriteInt16((int16_t)obj.X);
-	out->WriteInt16((int16_t)obj.Y);
-	out->WriteInt16((int16_t)obj.Room);
+	out->WriteInt16((int16)obj.Sprite);
+	out->WriteInt16((int16)obj.X);
+	out->WriteInt16((int16)obj.Y);
+	out->WriteInt16((int16)obj.Room);
 	out->WriteInt16(obj.IsOn ? 1 : 0);
 }
 
@@ -716,7 +716,7 @@ void WriteBlock(const RoomStruct *room, RoomFileBlock block, PfnWriteBlock write
 
 	// Now calculate the block's size...
 	soff_t end_at = out->GetPosition();
-	soff_t block_size = (end_at - sz_at) - sizeof(int64_t);
+	soff_t block_size = (end_at - sz_at) - sizeof(int64);
 	// ...return back and write block's size in the placeholder
 	out->Seek(sz_at, Shared::kSeekBegin);
 	out->WriteInt64(block_size);
@@ -732,7 +732,7 @@ void WriteInteractionScripts(const InteractionScripts *interactions, Stream *out
 
 void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	out->WriteInt32(room->BackgroundBPP);
-	out->WriteInt16((int16_t)room->WalkBehindCount);
+	out->WriteInt16((int16)room->WalkBehindCount);
 	for (size_t i = 0; i < room->WalkBehindCount; ++i)
 		out->WriteInt16(room->WalkBehinds[i].Baseline);
 
@@ -753,7 +753,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	out->WriteInt16(room->Edges.Left);
 	out->WriteInt16(room->Edges.Right);
 
-	out->WriteInt16((int16_t)room->ObjectCount);
+	out->WriteInt16((int16)room->ObjectCount);
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		WriteRoomObject(room->Objects[i], out);
 	}
@@ -796,7 +796,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	out->WriteInt8(room->Options.PlayerView);
 	out->WriteInt8(room->Options.MusicVolume);
 	out->WriteByteCount(0, ROOM_LEGACY_OPTIONS_SIZE - 5);
-	out->WriteInt16((int16_t)room->MessageCount);
+	out->WriteInt16((int16)room->MessageCount);
 	out->WriteInt32(room->GameID);
 	for (size_t i = 0; i < room->MessageCount; ++i) {
 		out->WriteInt8(room->MessageInfos[i].DisplayAs);
@@ -826,19 +826,19 @@ void WriteCompSc3Block(const RoomStruct *room, Stream *out) {
 }
 
 void WriteObjNamesBlock(const RoomStruct *room, Stream *out) {
-	out->WriteByte((int8_t)room->ObjectCount);
+	out->WriteByte((int8)room->ObjectCount);
 	for (size_t i = 0; i < room->ObjectCount; ++i)
 		Shared::StrUtil::WriteString(room->Objects[i].Name, out);
 }
 
 void WriteObjScNamesBlock(const RoomStruct *room, Stream *out) {
-	out->WriteByte((int8_t)room->ObjectCount);
+	out->WriteByte((int8)room->ObjectCount);
 	for (size_t i = 0; i < room->ObjectCount; ++i)
 		Shared::StrUtil::WriteString(room->Objects[i].ScriptName, out);
 }
 
 void WriteAnimBgBlock(const RoomStruct *room, Stream *out) {
-	out->WriteByte((int8_t)room->BgFrameCount);
+	out->WriteByte((int8)room->BgFrameCount);
 	out->WriteByte(room->BgAnimSpeed);
 
 	for (size_t i = 0; i < room->BgFrameCount; ++i)

@@ -291,6 +291,7 @@ MODULE_OBJS = \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \
+	plugins/ags_creditz/drawing.o \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_galaxy_steam/ags_blackwell_steam.o \
 	plugins/ags_galaxy_steam/ags_galaxy_steam.o \

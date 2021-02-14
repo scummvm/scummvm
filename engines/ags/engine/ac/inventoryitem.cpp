@@ -134,80 +134,80 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 extern ScriptString myScriptStringImpl;
 
 // ScriptInvItem *(int xx, int yy)
-RuntimeScriptValue Sc_GetInvAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_GetInvAtLocation(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJ_PINT2(ScriptInvItem, ccDynamicInv, GetInvAtLocation);
 }
 
 // int (ScriptInvItem *iitem, int mood)
-RuntimeScriptValue Sc_InventoryItem_CheckInteractionAvailable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_CheckInteractionAvailable(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT(ScriptInvItem, InventoryItem_CheckInteractionAvailable);
 }
 
 // void (ScriptInvItem *iitem, char *buff)
-RuntimeScriptValue Sc_InventoryItem_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetName(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(ScriptInvItem, InventoryItem_GetName, char);
 }
 
 // int (ScriptInvItem *scii, const char *property)
-RuntimeScriptValue Sc_InventoryItem_GetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_POBJ(ScriptInvItem, InventoryItem_GetProperty, const char);
 }
 
 // void (ScriptInvItem *scii, const char *property, char *bufer)
-RuntimeScriptValue Sc_InventoryItem_GetPropertyText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetPropertyText(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ2(ScriptInvItem, InventoryItem_GetPropertyText, const char, char);
 }
 
 // const char* (ScriptInvItem *scii, const char *property)
-RuntimeScriptValue Sc_InventoryItem_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, myScriptStringImpl, InventoryItem_GetTextProperty, const char);
 }
 
-RuntimeScriptValue Sc_InventoryItem_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_SetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ_PINT(ScriptInvItem, InventoryItem_SetProperty, const char);
 }
 
-RuntimeScriptValue Sc_InventoryItem_SetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_SetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_BOOL_POBJ2(ScriptInvItem, InventoryItem_SetTextProperty, const char, const char);
 }
 
 // void (ScriptInvItem *iitem, int mood)
-RuntimeScriptValue Sc_InventoryItem_RunInteraction(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_RunInteraction(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptInvItem, InventoryItem_RunInteraction);
 }
 
 // void (ScriptInvItem *scii, const char *newname)
-RuntimeScriptValue Sc_InventoryItem_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_SetName(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(ScriptInvItem, InventoryItem_SetName, const char);
 }
 
 // int (ScriptInvItem *iitem)
-RuntimeScriptValue Sc_InventoryItem_GetCursorGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetCursorGraphic(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptInvItem, InventoryItem_GetCursorGraphic);
 }
 
 // void (ScriptInvItem *iitem, int newSprite)
-RuntimeScriptValue Sc_InventoryItem_SetCursorGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_SetCursorGraphic(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptInvItem, InventoryItem_SetCursorGraphic);
 }
 
 // int (ScriptInvItem *iitem)
-RuntimeScriptValue Sc_InventoryItem_GetGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetGraphic(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptInvItem, InventoryItem_GetGraphic);
 }
 
 // void (ScriptInvItem *iitem, int piccy)
-RuntimeScriptValue Sc_InventoryItem_SetGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_SetGraphic(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(ScriptInvItem, InventoryItem_SetGraphic);
 }
 
 // int (ScriptInvItem *scii)
-RuntimeScriptValue Sc_InventoryItem_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(ScriptInvItem, InventoryItem_GetID);
 }
 
 // const char* (ScriptInvItem *invitem)
-RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ(ScriptInvItem, const char, myScriptStringImpl, InventoryItem_GetName_New);
 }
 

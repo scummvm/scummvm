@@ -97,7 +97,7 @@ void _stub::Process_stub() {
 	// menu is reachable regardless of the players state (ie in conversation)
 	if (mode[stub] == __mission_and_console) {
 		{
-			if ((Read_DI_once_keys(pause_key)) || (Read_Joystick_once(pause_button))) {
+			if (Read_DI_once_keys(pause_key)) {
 				if (!g_theOptionsManager->HasControl())
 					g_theOptionsManager->StartInGameOptions();
 				return;
@@ -227,16 +227,7 @@ void _stub::Update_screen() {
 	if (Read_DI_keys(Common::KEYCODE_LCTRL) || Read_DI_keys(Common::KEYCODE_RCTRL)) {
 		if (Read_DI_keys(Common::KEYCODE_s)) {
 			// Take a screen grab
-			if (!checkFileExists(pxVString("ScreenShots"))) // TODO: Had amode = 0
-				error("ICB wants to create folder ScreenShots");
-			/*
-#ifdef _WIN32
-				mkdir(pxVString("ScreenShots"));
-#else
-				mkdir(pxVString("ScreenShots"), 0755);
-#endif
-			*/
-			surface_manager->RecordFrame(pxVString("ScreenShots\\%08d.bmp", g_system->getMillis()));
+			surface_manager->RecordFrame(pxVString("ScreenShot_%08d.bmp", g_system->getMillis()));
 		}
 	}
 

@@ -53,7 +53,7 @@ public:
 	// TODO: these members are currently public; hide them later
 public:
 	String  Text;
-	int32_t Font;
+	int Font;
 	color_t TextColor;
 	HorAlignment TextAlignment;
 

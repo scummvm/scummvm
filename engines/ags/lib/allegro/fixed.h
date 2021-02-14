@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 
-typedef int32_t fixed;
+typedef int fixed;
 
 extern fixed fixtorad_r;
 extern fixed radtofix_r;

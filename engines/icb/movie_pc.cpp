@@ -166,12 +166,6 @@ uint32 SequenceManager::DrawFrame(uint32 surface_id) {
 		Kill();
 		return FINISHED;
 	}
-	// And also the joystick pause button cos I'm lazy
-	if (Read_Joystick_once(pause_button) && !m_loop) {
-		// Release Bink object and file
-		Kill();
-		return FINISHED;
-	}
 
 	// Don't do bink, fade the screen
 	if (m_fadeCounter < (255 / m_fadeRate)) {
@@ -412,12 +406,20 @@ uint32 MovieManager::drawFrame(uint32 surface_id) {
 	pitch = surface_manager->Get_pitch(surface_id);
 	uint32 height = surface_manager->Get_height(surface_id);
 
+	for (int i = 0; i < _y; i++) {
+		memset(surface_address + i * pitch, 0, MIN(surface->pitch, pitch));
+	}
+
 	for (int i = 0; i < surface->h; i++) {
 		if (i + _y >= height) {
 			warning("Movie out of bounds");
 			break;
 		}
 		memcpy(surface_address + (i + _y) * pitch, surface->getBasePtr(0, i), MIN(surface->pitch, pitch));
+	}
+
+	for (int i = _y + surface->h; i < height; i++) {
+		memset(surface_address + i * pitch, 0, MIN(surface->pitch, pitch));
 	}
 
 	// Unlock the buffer

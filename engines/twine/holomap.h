@@ -23,6 +23,7 @@
 #ifndef TWINE_HOLOMAP_H
 #define TWINE_HOLOMAP_H
 
+#include "twine/renderer/renderer.h"
 #include "common/scummsys.h"
 #include "twine/twine.h"
 
@@ -40,6 +41,20 @@ class TwinEEngine;
 class Holomap {
 private:
 	TwinEEngine *_engine;
+
+	int16 clip_or_depth_DAT_00433444 = 0;
+	uint32 y_DAT_00433448 = 0;
+	uint16 tex_coords_maybe_DAT_0043336a = 0;
+	uint16 tex_coords_maybe_DAT_0043336c = 0;
+	uint16 tex_coords_maybe_DAT_00433370 = 0;
+	uint16 tex_coords_maybe_DAT_00433372 = 0;
+	uint16 tex_coords_maybe_DAT_00433376 = 0;
+	uint16 tex_coords_maybe_DAT_00433378 = 0;
+
+	void holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int y_1, short param_2, uint8* holomapSurfaceImgOutPtr);
+	bool vertices_FUN_00423ebb(const Vertex *vertices) const;
+	void vertices_FUN_00421010(Vertex *vertexCoordinates);
+	void vertices_FUN_00420fad(int y1, int x1, int y2, int x2);
 
 	struct Location {
 		uint16 x = 0;

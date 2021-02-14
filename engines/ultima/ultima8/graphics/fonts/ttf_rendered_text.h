@@ -36,7 +36,7 @@ class Texture;
 class TTFRenderedText : public RenderedText {
 public:
 	TTFRenderedText(Graphics::ManagedSurface *texture, int width, int height, int vlead,
-	                TTFont *font);
+	                int baseline, bool antiAliased);
 	~TTFRenderedText() override;
 
 	void draw(RenderSurface *surface, int x, int y,
@@ -46,7 +46,8 @@ public:
 
 protected:
 	Graphics::ManagedSurface *_texture;
-	TTFont *_font;
+	int _baseline;
+	bool _antiAliased;
 };
 
 } // End of namespace Ultima8

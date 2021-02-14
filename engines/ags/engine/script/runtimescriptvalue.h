@@ -72,7 +72,7 @@ public:
 		Size = 0;
 	}
 
-	RuntimeScriptValue(int32_t val) {
+	RuntimeScriptValue(int val) {
 		Type = kScValInteger;
 		IValue = val;
 		Ptr = nullptr;
@@ -84,7 +84,7 @@ public:
 	// The 32-bit value used for integer/float math and for storing
 	// variable/element offset relative to object (and array) address
 	union {
-		int32_t     IValue; // access Value as int32 type
+		int     IValue; // access Value as int type
 		float       FValue; // access Value as float type
 	};
 	// Pointer is used for storing... pointers - to objects, arrays,
@@ -134,7 +134,7 @@ public:
 		Size = 0;
 		return *this;
 	}
-	inline RuntimeScriptValue &SetUInt8(uint8_t val) {
+	inline RuntimeScriptValue &SetUInt8(uint8 val) {
 		Type = kScValInteger;
 		IValue = val;
 		Ptr = nullptr;
@@ -142,7 +142,7 @@ public:
 		Size = 1;
 		return *this;
 	}
-	inline RuntimeScriptValue &SetInt16(int16_t val) {
+	inline RuntimeScriptValue &SetInt16(int16 val) {
 		Type = kScValInteger;
 		IValue = val;
 		Ptr = nullptr;
@@ -150,7 +150,7 @@ public:
 		Size = 2;
 		return *this;
 	}
-	inline RuntimeScriptValue &SetInt32(int32_t val) {
+	inline RuntimeScriptValue &SetInt32(int val) {
 		Type = kScValInteger;
 		IValue = val;
 		Ptr = nullptr;
@@ -172,7 +172,7 @@ public:
 	inline RuntimeScriptValue &SetFloatAsBool(bool val) {
 		return SetFloat(val ? 1.0F : 0.0F);
 	}
-	inline RuntimeScriptValue &SetPluginArgument(int32_t val) {
+	inline RuntimeScriptValue &SetPluginArgument(int val) {
 		Type = kScValPluginArg;
 		IValue = val;
 		Ptr = nullptr;
@@ -298,7 +298,7 @@ public:
 		case kScValStackPtr:
 		{
 			if (RValue->Type == kScValData) {
-				rval.SetInt32(*(int32_t *)(RValue->GetPtrWithOffset() + this->IValue));
+				rval.SetInt32(*(int *)(RValue->GetPtrWithOffset() + this->IValue));
 			} else {
 				rval = *RValue;
 			}
@@ -327,7 +327,7 @@ public:
 		default:
 		{
 			// 64 bit: Memory reads are still 32 bit
-			rval.SetInt32(*(int32_t *)this->GetPtrWithOffset());
+			rval.SetInt32(*(int *)this->GetPtrWithOffset());
 		}
 		}
 		return rval;
@@ -337,12 +337,12 @@ public:
 	// Helper functions for reading or writing values from/to
 	// object, referenced by this Runtime Value.
 	// Copy implementation depends on value type.
-	uint8_t     ReadByte();
-	int16_t     ReadInt16();
-	int32_t     ReadInt32();
-	bool        WriteByte(uint8_t val);
-	bool        WriteInt16(int16_t val);
-	bool        WriteInt32(int32_t val);
+	uint8     ReadByte();
+	int16     ReadInt16();
+	int     ReadInt32();
+	bool        WriteByte(uint8 val);
+	bool        WriteInt16(int16 val);
+	bool        WriteInt32(int val);
 	bool        WriteValue(const RuntimeScriptValue &rval);
 
 	// Convert to most simple pointer type by resolving RValue ptrs and applying offsets;

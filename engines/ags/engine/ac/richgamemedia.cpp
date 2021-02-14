@@ -35,10 +35,10 @@ void RICH_GAME_MEDIA_HEADER::ReadFromFile(Stream *in) {
 	dwThumbnailOffsetHigherDword = in->ReadInt32();
 	dwThumbnailSize = in->ReadInt32();
 	in->Read(guidGameId, 16);
-	in->ReadArrayOfInt16((int16_t *)szGameName, RM_MAXLENGTH);
-	in->ReadArrayOfInt16((int16_t *)szSaveName, RM_MAXLENGTH);
-	in->ReadArrayOfInt16((int16_t *)szLevelName, RM_MAXLENGTH);
-	in->ReadArrayOfInt16((int16_t *)szComments, RM_MAXLENGTH);
+	in->ReadArrayOfInt16((int16 *)szGameName, RM_MAXLENGTH);
+	in->ReadArrayOfInt16((int16 *)szSaveName, RM_MAXLENGTH);
+	in->ReadArrayOfInt16((int16 *)szLevelName, RM_MAXLENGTH);
+	in->ReadArrayOfInt16((int16 *)szComments, RM_MAXLENGTH);
 }
 
 void RICH_GAME_MEDIA_HEADER::WriteToFile(Stream *out) {
@@ -49,10 +49,10 @@ void RICH_GAME_MEDIA_HEADER::WriteToFile(Stream *out) {
 	out->WriteInt32(dwThumbnailOffsetHigherDword);
 	out->WriteInt32(dwThumbnailSize);
 	out->Write(guidGameId, 16);
-	out->WriteArrayOfInt16((int16_t *)szGameName, RM_MAXLENGTH);
-	out->WriteArrayOfInt16((int16_t *)szSaveName, RM_MAXLENGTH);
-	out->WriteArrayOfInt16((int16_t *)szLevelName, RM_MAXLENGTH);
-	out->WriteArrayOfInt16((int16_t *)szComments, RM_MAXLENGTH);
+	out->WriteArrayOfInt16((int16 *)szGameName, RM_MAXLENGTH);
+	out->WriteArrayOfInt16((int16 *)szSaveName, RM_MAXLENGTH);
+	out->WriteArrayOfInt16((int16 *)szLevelName, RM_MAXLENGTH);
+	out->WriteArrayOfInt16((int16 *)szComments, RM_MAXLENGTH);
 }
 
 void RICH_GAME_MEDIA_HEADER::setSaveName(const Common::String &saveName) {

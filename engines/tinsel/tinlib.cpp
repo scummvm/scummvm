@@ -152,7 +152,7 @@ enum MASTER_LIB_CODES {
 	THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
-	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ,
+	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D,
 	HIGHEST_LIBCODE
 };
 
@@ -2695,6 +2695,13 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
 }
 
 /**
+ * Set system reel
+ */
+static void SetSystemReel(int index, SCNHANDLE reel) {
+	warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
+}
+
+/**
  * SetSystemString
  */
 
@@ -4167,6 +4174,87 @@ int WhichInventory() {
 }
 
 
+struct NoirMapping {
+	const char *name;
+	int libCode;
+	int numArgs;
+};
+
+NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
+	// This function allows us to both log the called library functions, as well
+	// as to stub the ones we haven't yet implemented. Eventually this might
+	// get rolled up into a lookup table similar to DW1 and DW2, but for now
+	// this is convenient for debug.
+	NoirMapping mapping;
+	switch (libCode) {
+	case 5:
+		mapping = NoirMapping{"ACTORRGB", ACTORRGB, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	case 28:
+		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
+	case 45:
+		mapping = NoirMapping{"DECLARELANGUAGE", DECLARELANGUAGE, 3};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2]);
+		break;
+	case 46:
+		mapping = NoirMapping{"DECLEAD", DECLEAD, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
+	case 47:
+		mapping = NoirMapping{"DEC3D", DEC3D, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
+	case 48:
+		mapping = NoirMapping{"DECTAGFONT", DECTAGFONT, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
+	case 49:
+		mapping = NoirMapping{"DECTALKFONT", DECTALKFONT, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
+	case 151:
+		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	case 153:
+		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	case 210: // STUBBED
+		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
+	case 212: // STUBBED
+		mapping = NoirMapping{"OP212", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
+	case 213: // STUBBED
+		mapping = NoirMapping{"OP213", ZZZZZZ, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
+	default:
+		error("Unmapped libCode %d", libCode);
+	}
+
+	return mapping;
+}
+
+
 /**
  * Subtract one less that the number of parameters from pp
  * pp then points to the first parameter.
@@ -4186,7 +4274,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	else if (!TinselV2) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else if (TinselV3) {
-		error("TODO: Implement library routines for Discworld Noir");
+		NoirMapping mapping = translateNoirLibCode(operand, pp);
+		libCode = mapping.libCode;
+		if (libCode == ZZZZZZ) {
+			debug(7, "%08X CallLibraryRoutine op %d (escOn %d, myEscape %d)", pic->hCode, operand, pic->escOn, pic->myEscape);
+			return -mapping.numArgs;
+		}
 	}
 	else libCode = DW2_CODES[operand];
 
@@ -4228,7 +4321,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case ACTORRGB:
-		// DW2 only
+		// Common to DW2 / Noir
 		pp -= 1;			// 2 parameters
 		ActorRGB(pp[0], pp[1]);
 		return -2;
@@ -4391,7 +4484,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case CDCHANGESCENE:
-		// DW2 only
+		// DW2 / Noir
 		CdChangeScene(pp[0]);
 		return -1;
 
@@ -4459,6 +4552,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// DW1 only
 		error("cutscene isn't a real function");
 
+	case DEC3D:
+		// Noir only
+		warning("TODO: Implement DEC3D");
+		return -3;
+
 	case DECCONVW:
 		// Common to both DW1 & DW2
 		pp -= 7;			// 8 parameters
@@ -4505,13 +4603,13 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case DECLARELANGUAGE:
-		// DW2 only
+		// Common to DW2 & Noir
 		pp -= 2;			// 3 parameters
 		DeclareLanguage(pp[0], pp[1], pp[2]);
 		return -3;
 
 	case DECLEAD:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		if (TinselV2) {
 			DecLead(pp[0]);
 			return -1;
@@ -4530,12 +4628,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -14;
 
 	case DECTAGFONT:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		_vm->_font->SetTagFontHandle(pp[0]);
 		return -1;
 
 	case DECTALKFONT:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		_vm->_font->SetTalkFontHandle(pp[0]);
 		return -1;
 
@@ -5183,6 +5281,16 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			return -1;
 		}
 
+	case SETSYSTEMREEL:
+		// Noir only
+		if (TinselV3) {
+			pp -= 1;
+			SetSystemReel(pp[0], pp[1]);
+			return -2;
+		} else {
+			error("SETSYSTEMREEL is only used in Noir");
+		}
+
 	case SETSYSTEMSTRING:
 		// DW2 only
 		pp -= 1;				// 2 parameters
@@ -5190,7 +5298,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -2;
 
 	case SETSYSTEMVAR:
-		// DW1 only
+		// DW1 & Noir
 		pp -= 1;				// 2 parameters
 		SetSystemVar(pp[0], pp[1]);
 		return -2;

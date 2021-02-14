@@ -29,6 +29,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
@@ -40,7 +41,6 @@
 #include "ultima/ultima8/gumps/u8_save_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/meta_engine.h"
-#include "engines/dialogs.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -232,9 +232,7 @@ void MenuGump::selectEntry(int entry) {
 		U8SaveGump::showLoadSaveGump(this, entry == 3);
 		break;
 	case 4: {
-		// Options - show the ScummVM options dialog
-		GUI::ConfigDialog dlg;
-		dlg.runModal();
+		Ultima8Engine::get_instance()->openConfigDialog();
 	}
 	break;
 	case 5: // Credits

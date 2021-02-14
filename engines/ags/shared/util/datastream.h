@@ -43,9 +43,9 @@ public:
 	DataStream(DataEndianess stream_endianess = kLittleEndian);
 	~DataStream() override;
 
-	int16_t ReadInt16() override;
-	int32_t ReadInt32() override;
-	int64_t ReadInt64() override;
+	int16 ReadInt16() override;
+	int ReadInt32() override;
+	int64 ReadInt64() override;
 
 	//
 	// Read- and WriteArray methods return number of full elements (NOT bytes)
@@ -58,42 +58,42 @@ public:
 		return Read(buffer, elem_size * count) / elem_size;
 	}
 
-	inline size_t ReadArrayOfInt16(int16_t *buffer, size_t count) override {
+	inline size_t ReadArrayOfInt16(int16 *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			ReadAndConvertArrayOfInt16(buffer, count) : ReadArray(buffer, sizeof(int16_t), count);
+			ReadAndConvertArrayOfInt16(buffer, count) : ReadArray(buffer, sizeof(int16), count);
 	}
 
-	inline size_t ReadArrayOfInt32(int32_t *buffer, size_t count) override {
+	inline size_t ReadArrayOfInt32(int *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			ReadAndConvertArrayOfInt32(buffer, count) : ReadArray(buffer, sizeof(int32_t), count);
+			ReadAndConvertArrayOfInt32(buffer, count) : ReadArray(buffer, sizeof(int), count);
 	}
 
-	inline size_t ReadArrayOfInt64(int64_t *buffer, size_t count) override {
+	inline size_t ReadArrayOfInt64(int64 *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			ReadAndConvertArrayOfInt64(buffer, count) : ReadArray(buffer, sizeof(int64_t), count);
+			ReadAndConvertArrayOfInt64(buffer, count) : ReadArray(buffer, sizeof(int64), count);
 	}
 
-	size_t  WriteInt16(int16_t val) override;
-	size_t  WriteInt32(int32_t val) override;
-	size_t  WriteInt64(int64_t val) override;
+	size_t  WriteInt16(int16 val) override;
+	size_t  WriteInt32(int val) override;
+	size_t  WriteInt64(int64 val) override;
 
 	inline size_t WriteArray(const void *buffer, size_t elem_size, size_t count) override {
 		return Write(buffer, elem_size * count) / elem_size;
 	}
 
-	inline size_t WriteArrayOfInt16(const int16_t *buffer, size_t count) override {
+	inline size_t WriteArrayOfInt16(const int16 *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			WriteAndConvertArrayOfInt16(buffer, count) : WriteArray(buffer, sizeof(int16_t), count);
+			WriteAndConvertArrayOfInt16(buffer, count) : WriteArray(buffer, sizeof(int16), count);
 	}
 
-	inline size_t WriteArrayOfInt32(const int32_t *buffer, size_t count) override {
+	inline size_t WriteArrayOfInt32(const int *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			WriteAndConvertArrayOfInt32(buffer, count) : WriteArray(buffer, sizeof(int32_t), count);
+			WriteAndConvertArrayOfInt32(buffer, count) : WriteArray(buffer, sizeof(int), count);
 	}
 
-	inline size_t WriteArrayOfInt64(const int64_t *buffer, size_t count) override {
+	inline size_t WriteArrayOfInt64(const int64 *buffer, size_t count) override {
 		return MustSwapBytes() ?
-			WriteAndConvertArrayOfInt64(buffer, count) : WriteArray(buffer, sizeof(int64_t), count);
+			WriteAndConvertArrayOfInt64(buffer, count) : WriteArray(buffer, sizeof(int64), count);
 	}
 
 protected:
@@ -101,24 +101,24 @@ protected:
 
 	// Helper methods for reading/writing arrays of basic types and
 	// converting their elements to opposite endianess (swapping bytes).
-	size_t  ReadAndConvertArrayOfInt16(int16_t *buffer, size_t count);
-	size_t  ReadAndConvertArrayOfInt32(int32_t *buffer, size_t count);
-	size_t  ReadAndConvertArrayOfInt64(int64_t *buffer, size_t count);
-	size_t  WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t count);
-	size_t  WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t count);
-	size_t  WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t count);
+	size_t  ReadAndConvertArrayOfInt16(int16 *buffer, size_t count);
+	size_t  ReadAndConvertArrayOfInt32(int *buffer, size_t count);
+	size_t  ReadAndConvertArrayOfInt64(int64 *buffer, size_t count);
+	size_t  WriteAndConvertArrayOfInt16(const int16 *buffer, size_t count);
+	size_t  WriteAndConvertArrayOfInt32(const int *buffer, size_t count);
+	size_t  WriteAndConvertArrayOfInt64(const int64 *buffer, size_t count);
 
 	inline bool MustSwapBytes() {
 		return kDefaultSystemEndianess != _streamEndianess;
 	}
 
-	inline void ConvertInt16(int16_t &val) {
+	inline void ConvertInt16(int16 &val) {
 		if (MustSwapBytes()) val = BBOp::SwapBytesInt16(val);
 	}
-	inline void ConvertInt32(int32_t &val) {
+	inline void ConvertInt32(int &val) {
 		if (MustSwapBytes()) val = BBOp::SwapBytesInt32(val);
 	}
-	inline void ConvertInt64(int64_t &val) {
+	inline void ConvertInt64(int64 &val) {
 		if (MustSwapBytes()) val = BBOp::SwapBytesInt64(val);
 	}
 };

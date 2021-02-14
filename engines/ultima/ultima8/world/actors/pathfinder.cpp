@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"

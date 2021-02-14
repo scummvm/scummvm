@@ -33,9 +33,9 @@ const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 
 IAGSEngine *AGSParallax::_engine;
-int32 AGSParallax::_screenWidth;
-int32 AGSParallax::_screenHeight;
-int32 AGSParallax::_screenColorDepth;
+int AGSParallax::_screenWidth;
+int AGSParallax::_screenHeight;
+int AGSParallax::_screenColorDepth;
 bool AGSParallax::_enabled;
 Sprite AGSParallax::_sprites[MAX_SPRITES];
 
@@ -124,8 +124,8 @@ void AGSParallax::Draw(bool foreground) {
 	BITMAP *bmp;
 	int i;
 
-	int32 offsetX = 0;
-	int32 offsetY = 0;
+	int offsetX = 0;
+	int offsetY = 0;
 	_engine->ViewportToRoom(&offsetX, &offsetY);
 
 	for (i = 0; i < MAX_SPRITES; i++) {

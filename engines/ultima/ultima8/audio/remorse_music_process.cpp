@@ -20,10 +20,14 @@
  *
  */
 
+#include "common/system.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/remorse_music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "audio/mods/mod_xm_s3m.h"
+
+#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/current_map.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -83,6 +87,11 @@ static const char *TRACK_FILE_NAMES_REGRET[] = {
 	"xmas" // for demo
 };
 
+static const int REGRET_MAP_TRACKS[] = {
+	 0,  1, 10,  2,  0,  3, 11,  4,
+	16,  5, 20,  6,  0,  7, 13,  8,
+	15,  9, 12, 10, 19, 14, 21,  0};
+
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
@@ -99,6 +108,22 @@ RemorseMusicProcess::~RemorseMusicProcess() {
 }
 
 void RemorseMusicProcess::playMusic(int track) {
+	if (GAME_IS_REGRET && track == 0x45) {
+		// Play the default track for the current map
+		uint32 curmap = World::get_instance()->getCurrentMap()->getNum();
+		if (curmap < ARRAYSIZE(REGRET_MAP_TRACKS)) {
+			track = REGRET_MAP_TRACKS[curmap];
+		} else {
+			track = 0;
+		}
+
+		// Regret has a Christmas music easter egg.
+		TimeDate t;
+		g_system->getTimeAndDate(t);
+		if (t.tm_mon == 11 && t.tm_mday >= 24) {
+			track = 22;
+		}
+	}
 	playMusic_internal(track);
 }
 
@@ -131,6 +156,7 @@ void RemorseMusicProcess::restoreTrackState() {
 
 void RemorseMusicProcess::playMusic_internal(int track) {
 	if (track < 0 || track > _maxTrack) {
+		warning("Not playing track %d (max is %d)", track, _maxTrack);
 		playMusic_internal(0);
 		return;
 	}

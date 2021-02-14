@@ -87,25 +87,25 @@ Bitmap *AdjustBitmapSize(Bitmap *src, int width, int height) {
 template <class TPx, size_t BPP_>
 struct PixelTransCpy {
 	static const size_t BPP = BPP_;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
+	inline void operator()(uint8 *dst, const uint8 *src, color_t mask_color, bool use_alpha) const {
 		if (*(const TPx *)src == mask_color)
 			*(TPx *)dst = mask_color;
 	}
 };
 
 struct PixelNoSkip {
-	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
+	inline bool operator()(uint8 *data, color_t mask_color, bool use_alpha) const {
 		return false;
 	}
 };
 
-typedef PixelTransCpy<uint8_t, 1> PixelTransCpy8;
-typedef PixelTransCpy<uint16_t, 2> PixelTransCpy16;
+typedef PixelTransCpy<uint8, 1> PixelTransCpy8;
+typedef PixelTransCpy<uint16, 2> PixelTransCpy16;
 
 struct PixelTransCpy24 {
 	static const size_t BPP = 3;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
-		const uint8_t *mcol_ptr = (const uint8_t *)&mask_color;
+	inline void operator()(uint8 *dst, const uint8 *src, color_t mask_color, bool use_alpha) const {
+		const uint8 *mcol_ptr = (const uint8 *)&mask_color;
 		if (src[0] == mcol_ptr[0] && src[1] == mcol_ptr[1] && src[2] == mcol_ptr[2]) {
 			dst[0] = mcol_ptr[0];
 			dst[1] = mcol_ptr[1];
@@ -116,9 +116,9 @@ struct PixelTransCpy24 {
 
 struct PixelTransCpy32 {
 	static const size_t BPP = 4;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
-		if (*(const uint32_t *)src == (uint32_t)mask_color)
-			*(uint32_t *)dst = mask_color;
+	inline void operator()(uint8 *dst, const uint8 *src, color_t mask_color, bool use_alpha) const {
+		if (*(const uint32 *)src == (uint32)mask_color)
+			*(uint32 *)dst = mask_color;
 		else if (use_alpha)
 			dst[3] = src[3]; // copy alpha channel
 		else
@@ -127,13 +127,13 @@ struct PixelTransCpy32 {
 };
 
 struct PixelTransSkip32 {
-	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
-		return *(uint32_t *)data == (uint32_t)mask_color || (use_alpha && data[3] == 0);
+	inline bool operator()(uint8 *data, color_t mask_color, bool use_alpha) const {
+		return *(uint32 *)data == (uint32)mask_color || (use_alpha && data[3] == 0);
 	}
 };
 
 template <class FnPxProc, class FnSkip>
-void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, FnPxProc proc, FnSkip skip, color_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
+void ApplyMask(uint8 *dst, const uint8 *src, size_t pitch, size_t height, FnPxProc proc, FnSkip skip, color_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
 	for (size_t y = 0; y < height; ++y) {
 		for (size_t x = 0; x < pitch; x += FnPxProc::BPP, src += FnPxProc::BPP, dst += FnPxProc::BPP) {
 			if (!skip(dst, mask_color, dst_has_alpha))
@@ -144,8 +144,8 @@ void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, Fn
 
 void CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bool mask_has_alpha) {
 	color_t mask_color = mask->GetMaskColor();
-	uint8_t *dst_ptr = dst->GetDataForWriting();
-	const uint8_t *src_ptr = mask->GetData();
+	uint8 *dst_ptr = dst->GetDataForWriting();
+	const uint8 *src_ptr = mask->GetData();
 	const size_t bpp = mask->GetBPP();
 	const size_t pitch = mask->GetLineLength();
 	const size_t height = mask->GetHeight();
@@ -160,7 +160,7 @@ void CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bool 
 		ApplyMask(dst_ptr, src_ptr, pitch, height, PixelTransCpy32(), PixelTransSkip32(), mask_color, dst_has_alpha, mask_has_alpha);
 }
 
-void ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t src_pitch, const size_t src_px_offset) {
+void ReadPixelsFromMemory(Bitmap *dst, const uint8 *src_buffer, const size_t src_pitch, const size_t src_px_offset) {
 	const size_t bpp = dst->GetBPP();
 	const size_t src_px_pitch = src_pitch / bpp;
 	if (src_px_offset >= src_px_pitch)

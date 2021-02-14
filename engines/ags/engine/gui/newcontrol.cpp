@@ -56,7 +56,7 @@ int NewControl::mouseisinarea(int mousex, int mousey) {
 	if (topwindowhandle != wlevel)
 		return 0;
 
-	if ((_G(mousex) > x) &(_G(mousex) < x + wid) &(_G(mousey) > y) &(_G(mousey) < y + hit))
+	if ((mousex > x) && (mousex < x + wid) && (mousey > y) && (mousey < y + hit))
 		return 1;
 
 	return 0;

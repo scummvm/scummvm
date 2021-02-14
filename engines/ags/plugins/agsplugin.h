@@ -92,40 +92,40 @@ struct AGSColor {
 };
 
 struct AGSGameOptions {
-	int32 score;      // player's current score
-	int32 usedmode;   // set by ProcessClick to last cursor mode used
-	int32 disabled_user_interface;  // >0 while in cutscene/etc
-	int32 gscript_timer;    // obsolete
-	int32 debug_mode;       // whether we're in debug mode
-	int32 globalvars[50];   // obsolete
-	int32 messagetime;      // time left for auto-remove messages
-	int32 usedinv;          // inventory item last used
-	int32 inv_top, inv_numdisp, inv_numorder, inv_numinline;
-	int32 text_speed;       // how quickly text is removed
-	int32 sierra_inv_color; // background used to paint defualt inv window
-	int32 talkanim_speed;   // animation speed of talking anims
-	int32 inv_item_wid, inv_item_hit; // set by SetInvDimensions
-	int32 speech_text_shadow;         // colour of outline fonts (default black)
-	int32 swap_portrait_side;         // sierra-style speech swap sides
-	int32 speech_textwindow_gui;      // textwindow used for sierra-style speech
-	int32 follow_change_room_timer;   // delay before moving following characters into new room
-	int32 totalscore;           // maximum possible score
-	int32 skip_display;         // how the user can skip normal Display windows
-	int32 no_multiloop_repeat;  // for backwards compatibility
-	int32 roomscript_finished;  // on_call finished in room
-	int32 used_inv_on;          // inv item they clicked on
-	int32 no_textbg_when_voice; // no textwindow bgrnd when voice speech is used
-	int32 max_dialogoption_width; // max width of dialog options text window
-	int32 no_hicolor_fadein;      // fade out but instant in for hi-color
-	int32 bgspeech_game_speed;    // is background speech relative to game speed
-	int32 bgspeech_stay_on_display; // whether to remove bg speech when DisplaySpeech is used
-	int32 unfactor_speech_from_textlength; // remove "&10" when calculating time for text to stay
-	int32 mp3_loop_before_end;    // loop this time before end of track (ms)
-	int32 speech_music_drop;      // how much to drop music volume by when speech is played
-	int32 in_cutscene;            // we are between a StartCutscene and EndCutscene
-	int32 fast_forward;           // player has elected to skip cutscene
-	int32 room_width;             // width of current room
-	int32 room_height;            // height of current room
+	int score;      // player's current score
+	int usedmode;   // set by ProcessClick to last cursor mode used
+	int disabled_user_interface;  // >0 while in cutscene/etc
+	int gscript_timer;    // obsolete
+	int debug_mode;       // whether we're in debug mode
+	int globalvars[50];   // obsolete
+	int messagetime;      // time left for auto-remove messages
+	int usedinv;          // inventory item last used
+	int inv_top, inv_numdisp, inv_numorder, inv_numinline;
+	int text_speed;       // how quickly text is removed
+	int sierra_inv_color; // background used to paint defualt inv window
+	int talkanim_speed;   // animation speed of talking anims
+	int inv_item_wid, inv_item_hit; // set by SetInvDimensions
+	int speech_text_shadow;         // colour of outline fonts (default black)
+	int swap_portrait_side;         // sierra-style speech swap sides
+	int speech_textwindow_gui;      // textwindow used for sierra-style speech
+	int follow_change_room_timer;   // delay before moving following characters into new room
+	int totalscore;           // maximum possible score
+	int skip_display;         // how the user can skip normal Display windows
+	int no_multiloop_repeat;  // for backwards compatibility
+	int roomscript_finished;  // on_call finished in room
+	int used_inv_on;          // inv item they clicked on
+	int no_textbg_when_voice; // no textwindow bgrnd when voice speech is used
+	int max_dialogoption_width; // max width of dialog options text window
+	int no_hicolor_fadein;      // fade out but instant in for hi-color
+	int bgspeech_game_speed;    // is background speech relative to game speed
+	int bgspeech_stay_on_display; // whether to remove bg speech when DisplaySpeech is used
+	int unfactor_speech_from_textlength; // remove "&10" when calculating time for text to stay
+	int mp3_loop_before_end;    // loop this time before end of track (ms)
+	int speech_music_drop;      // how much to drop music volume by when speech is played
+	int in_cutscene;            // we are between a StartCutscene and EndCutscene
+	int fast_forward;           // player has elected to skip cutscene
+	int room_width;             // width of current room
+	int room_height;            // height of current room
 };
 
 // AGSCharacter.flags
@@ -139,25 +139,25 @@ struct AGSGameOptions {
 #define CHF_NOWALKBEHINDS   0x80
 
 struct AGSCharacter {
-	int32 defview;
-	int32 talkview;
-	int32 view;
-	int32 room, prevroom;
-	int32 x, y, wait;
-	int32 flags;
+	int defview;
+	int talkview;
+	int view;
+	int room, prevroom;
+	int x, y, wait;
+	int flags;
 	short following;
 	short followinfo;
-	int32 idleview;           // the loop will be randomly picked
+	int idleview;           // the loop will be randomly picked
 	short idletime, idleleft; // num seconds idle before playing anim
 	short transparency;       // if character is transparent
 	short baseline;
-	int32 activeinv;
-	int32 talkcolor;
-	int32 thinkview;
-	int32 reserved[2];
+	int activeinv;
+	int talkcolor;
+	int thinkview;
+	int reserved[2];
 	short walkspeed_y, pic_yoffs;
-	int32 z;
-	int32 reserved2[5];
+	int z;
+	int reserved2[5];
 	short loop, frame;
 	short walking, animating;
 	short walkspeed, animspeed;
@@ -173,9 +173,9 @@ struct AGSCharacter {
 #define OBJF_NOWALKBEHINDS 2  // ignore walk-behinds
 
 struct AGSObject {
-	int32 x, y;
-	int32 transparent;    // current transparency setting
-	int32 reserved[4];
+	int x, y;
+	int transparent;    // current transparency setting
+	int reserved[4];
 	short num;            // sprite slot number
 	short baseline;       // <=0 to use Y co-ordinate; >0 for specific baseline
 	short view, loop, frame; // only used to track animation - 'num' holds the current sprite
@@ -190,12 +190,12 @@ struct AGSObject {
 #define FRAF_MIRRORED  1  // flipped left to right
 
 struct AGSViewFrame {
-	int32 pic;            // sprite slot number
+	int pic;            // sprite slot number
 	short xoffs, yoffs;
 	short speed;
-	int32 flags;
-	int32 sound;          // play sound when this frame comes round
-	int32 reserved_for_future[2];
+	int flags;
+	int sound;          // play sound when this frame comes round
+	int reserved_for_future[2];
 };
 
 // AGSMouseCursor.flags
@@ -205,7 +205,7 @@ struct AGSViewFrame {
 #define MCF_ONLYANIMOVERHOTSPOT 8
 
 struct AGSMouseCursor {
-	int32 pic;            // sprite slot number
+	int pic;            // sprite slot number
 	short hotx, hoty;     // x,y hotspot co-ordinates
 	short view;           // view (for animating cursors) or -1
 	char  name[10];       // name of cursor mode
@@ -215,8 +215,8 @@ struct AGSMouseCursor {
 // The editor-to-plugin interface
 class IAGSEditor {
 public:
-	int32 version;
-	int32 pluginId;   // used internally, do not touch this
+	int version;
+	int pluginId;   // used internally, do not touch this
 
 public:
 	virtual ~IAGSEditor() {}
@@ -325,8 +325,8 @@ protected:
 // The plugin-to-engine interface
 class IAGSEngine {
 public:
-	int32 version;
-	int32 pluginId;   // used internally, do not touch
+	int version;
+	int pluginId;   // used internally, do not touch
 
 public:
 	virtual ~IAGSEngine() {}
@@ -350,23 +350,23 @@ public:
 
 	// *** BELOW ARE INTERFACE VERSION 2 AND ABOVE ONLY
 	// ask the engine to call back when a certain event happens
-	AGSIFUNC(void) RequestEventHook(int32 event);
+	AGSIFUNC(void) RequestEventHook(int event);
 	// get the options data saved in the editor
-	AGSIFUNC(int)  GetSavedData(char *buffer, int32 bufsize);
+	AGSIFUNC(int)  GetSavedData(char *buffer, int bufsize);
 
 	// *** BELOW ARE INTERFACE VERSION 3 AND ABOVE ONLY
 	// get the virtual screen
 	AGSIFUNC(BITMAP *) GetVirtualScreen();
 	// write text to the screen in the specified font and colour
-	AGSIFUNC(void) DrawText(int32 x, int32 y, int32 font, int32 color, char *text);
+	AGSIFUNC(void) DrawText(int x, int y, int font, int color, const char *text);
 	// get screen dimensions
-	AGSIFUNC(void) GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth);
+	AGSIFUNC(void) GetScreenDimensions(int *width, int *height, int *coldepth);
 	// get screen surface to draw on
 	AGSIFUNC(unsigned char **) GetRawBitmapSurface(BITMAP *);
 	// release the surface
 	AGSIFUNC(void) ReleaseBitmapSurface(BITMAP *);
 	// get the current mouse co-ordinates
-	AGSIFUNC(void) GetMousePosition(int32 *x, int32 *y);
+	AGSIFUNC(void) GetMousePosition(int *x, int *y);
 
 	// *** BELOW ARE INTERFACE VERSION 4 AND ABOVE ONLY
 	// get the current room number
@@ -376,23 +376,23 @@ public:
 	// get the current background frame
 	AGSIFUNC(int)  GetCurrentBackground();
 	// get a background scene bitmap
-	AGSIFUNC(BITMAP *) GetBackgroundScene(int32);
+	AGSIFUNC(BITMAP *) GetBackgroundScene(int);
 	// get dimensions of a bitmap
-	AGSIFUNC(void) GetBitmapDimensions(BITMAP *bmp, int32 *width, int32 *height, int32 *coldepth);
+	AGSIFUNC(void) GetBitmapDimensions(BITMAP *bmp, int *width, int *height, int *coldepth);
 
 	// *** BELOW ARE INTERFACE VERSION 5 AND ABOVE ONLY
 	// similar to fwrite - buffer, size, filehandle
-	AGSIFUNC(int)  FWrite(void *, int32, int32);
+	AGSIFUNC(int)  FWrite(void *, int, int);
 	// similar to fread - buffer, size, filehandle
-	AGSIFUNC(int)  FRead(void *, int32, int32);
+	AGSIFUNC(int)  FRead(void *, int, int);
 	// print text, wrapping as usual
-	AGSIFUNC(void) DrawTextWrapped(int32 x, int32 y, int32 width, int32 font, int32 color, const char *text);
+	AGSIFUNC(void) DrawTextWrapped(int x, int y, int width, int font, int color, const char *text);
 	// set the current active 'screen'
 	AGSIFUNC(void) SetVirtualScreen(BITMAP *);
 	// look up a word in the parser dictionary
 	AGSIFUNC(int)  LookupParserWord(const char *word);
 	// draw a bitmap to the active screen
-	AGSIFUNC(void) BlitBitmap(int32 x, int32 y, BITMAP *, int32 masked);
+	AGSIFUNC(void) BlitBitmap(int x, int y, BITMAP *, int masked);
 	// update the mouse and music
 	AGSIFUNC(void) PollSystem();
 
@@ -400,92 +400,92 @@ public:
 	// get number of characters in game
 	AGSIFUNC(int)  GetNumCharacters();
 	// get reference to specified character struct
-	AGSIFUNC(AGSCharacter *) GetCharacter(int32);
+	AGSIFUNC(AGSCharacter *) GetCharacter(int);
 	// get reference to game struct
 	AGSIFUNC(AGSGameOptions *) GetGameOptions();
 	// get reference to current palette
 	AGSIFUNC(AGSColor *) GetPalette();
 	// update palette
-	AGSIFUNC(void) SetPalette(int32 start, int32 finish, AGSColor *);
+	AGSIFUNC(void) SetPalette(int start, int finish, AGSColor *);
 
 	// *** BELOW ARE INTERFACE VERSION 7 AND ABOVE ONLY
 	// get the current player character
 	AGSIFUNC(int)  GetPlayerCharacter();
 	// adjust to main viewport co-ordinates
-	AGSIFUNC(void) RoomToViewport(int32 *x, int32 *y);
+	AGSIFUNC(void) RoomToViewport(int *x, int *y);
 	// adjust from main viewport co-ordinates (ignores viewport bounds)
-	AGSIFUNC(void) ViewportToRoom(int32 *x, int32 *y);
+	AGSIFUNC(void) ViewportToRoom(int *x, int *y);
 	// number of objects in current room
 	AGSIFUNC(int)  GetNumObjects();
 	// get reference to specified object
-	AGSIFUNC(AGSObject *) GetObject(int32);
+	AGSIFUNC(AGSObject *) GetObject(int);
 	// get sprite graphic
-	AGSIFUNC(BITMAP *) GetSpriteGraphic(int32);
+	AGSIFUNC(BITMAP *) GetSpriteGraphic(int);
 	// create a new blank bitmap
-	AGSIFUNC(BITMAP *) CreateBlankBitmap(int32 width, int32 height, int32 coldep);
+	AGSIFUNC(BITMAP *) CreateBlankBitmap(int width, int height, int coldep);
 	// free a created bitamp
 	AGSIFUNC(void) FreeBitmap(BITMAP *);
 
 	// *** BELOW ARE INTERFACE VERSION 8 AND ABOVE ONLY
 	// get one of the room area masks
-	AGSIFUNC(BITMAP *) GetRoomMask(int32);
+	AGSIFUNC(BITMAP *) GetRoomMask(int);
 
 	// *** BELOW ARE INTERFACE VERSION 9 AND ABOVE ONLY
 	// get a particular view frame
-	AGSIFUNC(AGSViewFrame *) GetViewFrame(int32 view, int32 loop, int32 frame);
+	AGSIFUNC(AGSViewFrame *) GetViewFrame(int view, int loop, int frame);
 	// get the walk-behind baseline of a specific WB area
-	AGSIFUNC(int)    GetWalkbehindBaseline(int32 walkbehind);
+	AGSIFUNC(int)    GetWalkbehindBaseline(int walkbehind);
 	// get the address of a script function
 	AGSIFUNC(void *) GetScriptFunctionAddress(const char *funcName);
 	// get the transparent colour of a bitmap
 	AGSIFUNC(int)    GetBitmapTransparentColor(BITMAP *);
 	// get the character scaling level at a particular point
-	AGSIFUNC(int)    GetAreaScaling(int32 x, int32 y);
+	AGSIFUNC(int)    GetAreaScaling(int x, int y);
 	// equivalent to the text script function
 	AGSIFUNC(int)    IsGamePaused();
 
 	// *** BELOW ARE INTERFACE VERSION 10 AND ABOVE ONLY
 	// get the raw pixel value to use for the specified AGS colour
-	AGSIFUNC(int)    GetRawPixelColor(int32 color);
+	AGSIFUNC(int)    GetRawPixelColor(int color);
 
 	// *** BELOW ARE INTERFACE VERSION 11 AND ABOVE ONLY
 	// get the width / height of the specified sprite
-	AGSIFUNC(int)    GetSpriteWidth(int32);
-	AGSIFUNC(int)    GetSpriteHeight(int32);
+	AGSIFUNC(int)    GetSpriteWidth(int);
+	AGSIFUNC(int)    GetSpriteHeight(int);
 	// get the dimensions of the specified string in the specified font
-	AGSIFUNC(void)   GetTextExtent(int32 font, const char *text, int32 *width, int32 *height);
+	AGSIFUNC(void)   GetTextExtent(int font, const char *text, int *width, int *height);
 	// print a message to the debug console
 	AGSIFUNC(void)   PrintDebugConsole(const char *text);
 	// play a sound on the specified channel
-	AGSIFUNC(void)   PlaySoundChannel(int32 channel, int32 soundType, int32 volume, int32 loop, const char *filename);
+	AGSIFUNC(void)   PlaySoundChannel(int channel, int soundType, int volume, int loop, const char *filename);
 	// same as text script function
-	AGSIFUNC(int)    IsChannelPlaying(int32 channel);
+	AGSIFUNC(int)    IsChannelPlaying(int channel);
 
 	// *** BELOW ARE INTERFACE VERSION 12 AND ABOVE ONLY
 	// invalidate a region of the virtual screen
-	AGSIFUNC(void)   MarkRegionDirty(int32 left, int32 top, int32 right, int32 bottom);
+	AGSIFUNC(void)   MarkRegionDirty(int left, int top, int right, int bottom);
 	// get mouse cursor details
-	AGSIFUNC(AGSMouseCursor *) GetMouseCursor(int32 cursor);
+	AGSIFUNC(AGSMouseCursor *) GetMouseCursor(int cursor);
 	// get the various components of a pixel
-	AGSIFUNC(void)   GetRawColorComponents(int32 coldepth, int32 color, int32 *red, int32 *green, int32 *blue, int32 *alpha);
+	AGSIFUNC(void)   GetRawColorComponents(int coldepth, int color, int *red, int *green, int *blue, int *alpha);
 	// make a pixel colour from the supplied components
-	AGSIFUNC(int)    MakeRawColorPixel(int32 coldepth, int32 red, int32 green, int32 blue, int32 alpha);
+	AGSIFUNC(int)    MakeRawColorPixel(int coldepth, int red, int green, int blue, int alpha);
 	// get whether the font is TTF or SCI
-	AGSIFUNC(int)    GetFontType(int32 fontNum);
+	AGSIFUNC(int)    GetFontType(int fontNum);
 	// create a new dynamic sprite slot
-	AGSIFUNC(int)    CreateDynamicSprite(int32 coldepth, int32 width, int32 height);
+	AGSIFUNC(int)    CreateDynamicSprite(int coldepth, int width, int height);
 	// free a created dynamic sprite
-	AGSIFUNC(void)   DeleteDynamicSprite(int32 slot);
+	AGSIFUNC(void)   DeleteDynamicSprite(int slot);
 	// check if a sprite has an alpha channel
-	AGSIFUNC(int)    IsSpriteAlphaBlended(int32 slot);
+	AGSIFUNC(int)    IsSpriteAlphaBlended(int slot);
 
 	// *** BELOW ARE INTERFACE VERSION 13 AND ABOVE ONLY
 	// un-request an event, requested earlier with RequestEventHook
-	AGSIFUNC(void)   UnrequestEventHook(int32 event);
+	AGSIFUNC(void)   UnrequestEventHook(int event);
 	// draw a translucent bitmap to the active screen
-	AGSIFUNC(void)   BlitSpriteTranslucent(int32 x, int32 y, BITMAP *, int32 trans);
+	AGSIFUNC(void)   BlitSpriteTranslucent(int x, int y, BITMAP *, int trans);
 	// draw a sprite to the screen, but rotated around its centre
-	AGSIFUNC(void)   BlitSpriteRotated(int32 x, int32 y, BITMAP *, int32 angle);
+	AGSIFUNC(void)   BlitSpriteRotated(int x, int y, BITMAP *, int angle);
 
 	// *** BELOW ARE INTERFACE VERSION 14 AND ABOVE ONLY
 #ifdef WINDOWS_VERSION
@@ -497,15 +497,15 @@ public:
 	// check whether a script function can be run now
 	AGSIFUNC(int)    CanRunScriptFunctionNow();
 	// call a user-defined script function
-	AGSIFUNC(int)    CallGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1 = 0, long arg2 = 0, long arg3 = 0);
+	AGSIFUNC(int)    CallGameScriptFunction(const char *name, int globalScript, int numArgs, long arg1 = 0, long arg2 = 0, long arg3 = 0);
 
 	// *** BELOW ARE INTERFACE VERSION 15 AND ABOVE ONLY
 	// force any sprites on-screen using the slot to be updated
-	AGSIFUNC(void)   NotifySpriteUpdated(int32 slot);
+	AGSIFUNC(void)   NotifySpriteUpdated(int slot);
 	// change whether the specified sprite is a 32-bit alpha blended image
-	AGSIFUNC(void)   SetSpriteAlphaBlended(int32 slot, int32 isAlphaBlended);
+	AGSIFUNC(void)   SetSpriteAlphaBlended(int slot, int isAlphaBlended);
 	// run the specified script function whenever script engine is available
-	AGSIFUNC(void)   QueueGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1 = 0, long arg2 = 0);
+	AGSIFUNC(void)   QueueGameScriptFunction(const char *name, int globalScript, int numArgs, long arg1 = 0, long arg2 = 0);
 	// register a new dynamic managed script object
 	AGSIFUNC(int)    RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback);
 	// add an object reader for the specified object type
@@ -529,17 +529,17 @@ public:
 	// decrement reference count
 	AGSIFUNC(int)    DecrementManagedObjectRefCount(const char *address);
 	// set mouse position
-	AGSIFUNC(void)   SetMousePosition(int32 x, int32 y);
+	AGSIFUNC(void)   SetMousePosition(int x, int y);
 	// simulate the mouse being clicked
-	AGSIFUNC(void)   SimulateMouseClick(int32 button);
+	AGSIFUNC(void)   SimulateMouseClick(int button);
 	// get number of waypoints on this movement path
-	AGSIFUNC(int)    GetMovementPathWaypointCount(int32 pathId);
+	AGSIFUNC(int)    GetMovementPathWaypointCount(int pathId);
 	// get the last waypoint that the char/obj passed
-	AGSIFUNC(int)    GetMovementPathLastWaypoint(int32 pathId);
+	AGSIFUNC(int)    GetMovementPathLastWaypoint(int pathId);
 	// get the co-ordinates of the specified waypoint
-	AGSIFUNC(void)   GetMovementPathWaypointLocation(int32 pathId, int32 waypoint, int32 *x, int32 *y);
+	AGSIFUNC(void)   GetMovementPathWaypointLocation(int pathId, int waypoint, int *x, int *y);
 	// get the speeds of the specified waypoint
-	AGSIFUNC(void)   GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int32 *xSpeed, int32 *ySpeed);
+	AGSIFUNC(void)   GetMovementPathWaypointSpeed(int pathId, int waypoint, int *xSpeed, int *ySpeed);
 
 	// *** BELOW ARE INTERFACE VERSION 19 AND ABOVE ONLY
 	// get the current graphics driver ID

@@ -587,7 +587,7 @@ ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *op
 	return nullptr;
 }
 
-ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *operation_name) {
+ScriptFileHandle *check_valid_file_handle_int32(int handle, const char *operation_name) {
 	if (handle > 0) {
 		for (int i = 0; i < num_open_script_files; ++i) {
 			if (handle == valid_handles[i].handle) {
@@ -601,7 +601,7 @@ ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *oper
 	return nullptr;
 }
 
-Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_name) {
+Stream *get_valid_file_stream_from_handle(int handle, const char *operation_name) {
 	ScriptFileHandle *sc_handle = check_valid_file_handle_int32(handle, operation_name);
 	return sc_handle ? sc_handle->stream : nullptr;
 }
@@ -615,95 +615,95 @@ Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_
 extern ScriptString myScriptStringImpl;
 
 // int (const char *fnmm)
-RuntimeScriptValue Sc_File_Delete(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_Delete(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT_POBJ(File_Delete, const char);
 }
 
 // int (const char *fnmm)
-RuntimeScriptValue Sc_File_Exists(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_Exists(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_INT_POBJ(File_Exists, const char);
 }
 
 // void *(const char *fnmm, int mode)
-RuntimeScriptValue Sc_sc_OpenFile(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_sc_OpenFile(const RuntimeScriptValue *params, int param_count) {
 	API_SCALL_OBJAUTO_POBJ_PINT(sc_File, sc_OpenFile, const char);
 }
 
 // void (sc_File *fil)
-RuntimeScriptValue Sc_File_Close(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_Close(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID(sc_File, File_Close);
 }
 
 // int (sc_File *fil)
-RuntimeScriptValue Sc_File_ReadInt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadInt(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_ReadInt);
 }
 
 // int (sc_File *fil)
-RuntimeScriptValue Sc_File_ReadRawChar(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadRawChar(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_ReadRawChar);
 }
 
 // int (sc_File *fil)
-RuntimeScriptValue Sc_File_ReadRawInt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadRawInt(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_ReadRawInt);
 }
 
 // void (sc_File *fil, char* buffer)
-RuntimeScriptValue Sc_File_ReadRawLine(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadRawLine(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(sc_File, File_ReadRawLine, char);
 }
 
 // const char* (sc_File *fil)
-RuntimeScriptValue Sc_File_ReadRawLineBack(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadRawLineBack(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ(sc_File, const char, myScriptStringImpl, File_ReadRawLineBack);
 }
 
 // void (sc_File *fil, char *toread)
-RuntimeScriptValue Sc_File_ReadString(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadString(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(sc_File, File_ReadString, char);
 }
 
 // const char* (sc_File *fil)
-RuntimeScriptValue Sc_File_ReadStringBack(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_ReadStringBack(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_CONST_OBJCALL_OBJ(sc_File, const char, myScriptStringImpl, File_ReadStringBack);
 }
 
 // void (sc_File *fil, int towrite)
-RuntimeScriptValue Sc_File_WriteInt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_WriteInt(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(sc_File, File_WriteInt);
 }
 
 // void (sc_File *fil, int towrite)
-RuntimeScriptValue Sc_File_WriteRawChar(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_WriteRawChar(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_PINT(sc_File, File_WriteRawChar);
 }
 
 // void (sc_File *fil, const char *towrite)
-RuntimeScriptValue Sc_File_WriteRawLine(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_WriteRawLine(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(sc_File, File_WriteRawLine, const char);
 }
 
 // void (sc_File *fil, const char *towrite)
-RuntimeScriptValue Sc_File_WriteString(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_WriteString(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_VOID_POBJ(sc_File, File_WriteString, const char);
 }
 
-RuntimeScriptValue Sc_File_Seek(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_Seek(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT_PINT2(sc_File, File_Seek);
 }
 
 // int (sc_File *fil)
-RuntimeScriptValue Sc_File_GetEOF(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_GetEOF(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_GetEOF);
 }
 
 // int (sc_File *fil)
-RuntimeScriptValue Sc_File_GetError(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_GetError(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_GetError);
 }
 
-RuntimeScriptValue Sc_File_GetPosition(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_File_GetPosition(void *self, const RuntimeScriptValue *params, int param_count) {
 	API_OBJCALL_INT(sc_File, File_GetPosition);
 }
 

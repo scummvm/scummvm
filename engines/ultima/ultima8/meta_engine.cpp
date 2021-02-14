@@ -122,6 +122,65 @@ static const KeybindingRecord DEBUG_KEYS[] = {
 };
 #endif
 
+static const ExtraGuiOption COMMON_OPTIONS[] = {
+	{
+		_s("Enable frame skipping"),
+		_s("Allow the game to skip animation frames when running too slow."),
+		"frameSkip",
+		false
+	},
+	{
+		_s("Enable frame limiting"),
+		_s("Limits the speed of the game to prevent running too fast."),
+		"frameLimit",
+		true
+	},
+	{ nullptr, nullptr, nullptr, false }
+};
+
+static const ExtraGuiOption U8_OPTIONS[] = {
+	{
+		_s("Play foot step sounds"),
+		_s("Plays sound when the player moves."),
+		"footsteps",
+		true
+	},
+	{
+		_s("Enable jump to mouse position"),
+		_s("Jumping while not moving targets the mouse cursor rather than direction only."),
+		"targetedjump",
+		true
+	},
+	{
+		_s("Enable cheats"),
+		_s("Allow cheats by commands and a menu when player is clicked."),
+		"cheat",
+		false
+	},
+	{
+		_s("Use original save/load screens"),
+		_s("Use the original save/load screens instead of the ScummVM ones"),
+		"originalsaveload",
+		false
+	},
+	{
+		_s("Enable font replacement"),
+		_s("Replaces game fonts with rendered fonts"),
+		"font_override",
+		false
+	},
+	{
+		_s("Enable font anti-aliasing"),
+		_s("When font anti-aliasing is enabled, the text is smoother."),
+		"font_antialiasing",
+		false
+	},
+	{ nullptr, nullptr, nullptr, false }
+};
+
+static const ExtraGuiOption CRUSADER_OPTIONS[] = {
+	{ nullptr, nullptr, nullptr, false }
+};
 
 Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool isMenuActive) {
 	Common::KeymapArray keymapArray;
@@ -210,6 +269,27 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool i
 	return keymapArray;
 }
 
+const ExtraGuiOptions MetaEngine::getExtraGuiOptions(const Common::String& target) {
+	ExtraGuiOptions options;
+
+	for (const ExtraGuiOption *o = COMMON_OPTIONS; o->configOption; ++o) {
+		options.push_back(*o);
+	}
+
+	// Game specific keymaps
+	const ExtraGuiOption *game_options = (target.equals("ultima8") ? U8_OPTIONS : CRUSADER_OPTIONS);
+	for (const ExtraGuiOption *o = game_options; o->configOption; ++o) {
+		options.push_back(*o);
+	}
+
+	// TODO - Limited how many options are allowed, need fix
+	if (options.size() > 7) {
+		warning("More extra game options registered than currently allowed.");
+		options.resize(7);
+	}
+	return options;
+}
+
 void MetaEngine::setTextInputActive(bool isActive) {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->setEnabled(!isActive);
@@ -219,7 +299,7 @@ void MetaEngine::setGameMenuActive(bool isActive) {
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->cleanupGameKeymaps();
 
-	const Common::String gameId = CoreApp::get_instance()->getGameInfo()->_name;
+	const Common::String gameId = Ultima8Engine::get_instance()->getGameInfo()->_name;
 
 	Common::KeymapArray arr = initKeymaps(gameId, isActive);
 

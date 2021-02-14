@@ -38,16 +38,16 @@ void AGSStaticObject::Read(const char *address, intptr_t offset, void *dest, int
 	memcpy(dest, address + offset, size);
 }
 
-uint8_t AGSStaticObject::ReadInt8(const char *address, intptr_t offset) {
-	return *(const uint8_t *)(address + offset);
+uint8 AGSStaticObject::ReadInt8(const char *address, intptr_t offset) {
+	return *(const uint8 *)(address + offset);
 }
 
-int16_t AGSStaticObject::ReadInt16(const char *address, intptr_t offset) {
-	return *(const int16_t *)(address + offset);
+int16 AGSStaticObject::ReadInt16(const char *address, intptr_t offset) {
+	return *(const int16 *)(address + offset);
 }
 
-int32_t AGSStaticObject::ReadInt32(const char *address, intptr_t offset) {
-	return *(const int32_t *)(address + offset);
+int AGSStaticObject::ReadInt32(const char *address, intptr_t offset) {
+	return *(const int *)(address + offset);
 }
 
 float AGSStaticObject::ReadFloat(const char *address, intptr_t offset) {
@@ -58,16 +58,16 @@ void AGSStaticObject::Write(const char *address, intptr_t offset, void *src, int
 	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
 }
 
-void AGSStaticObject::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
+void AGSStaticObject::WriteInt8(const char *address, intptr_t offset, uint8 val) {
+	*(uint8 *)(const_cast<char *>(address) + offset) = val;
 }
 
-void AGSStaticObject::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(const_cast<char *>(address) + offset) = val;
+void AGSStaticObject::WriteInt16(const char *address, intptr_t offset, int16 val) {
+	*(int16 *)(const_cast<char *>(address) + offset) = val;
 }
 
-void AGSStaticObject::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	*(int32_t *)(const_cast<char *>(address) + offset) = val;
+void AGSStaticObject::WriteInt32(const char *address, intptr_t offset, int val) {
+	*(int *)(const_cast<char *>(address) + offset) = val;
 }
 
 void AGSStaticObject::WriteFloat(const char *address, intptr_t offset, float val) {
@@ -75,15 +75,15 @@ void AGSStaticObject::WriteFloat(const char *address, intptr_t offset, float val
 }
 
 
-void StaticGame::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	if (offset == 4 * sizeof(int32_t)) {
+void StaticGame::WriteInt32(const char *address, intptr_t offset, int val) {
+	if (offset == 4 * sizeof(int)) {
 		// game.debug_mode
 		set_debug_mode(val != 0);
-	} else if (offset == 99 * sizeof(int32_t) || offset == 112 * sizeof(int32_t)) {
+	} else if (offset == 99 * sizeof(int) || offset == 112 * sizeof(int)) {
 		// game.text_align, game.speech_text_align
-		*(int32_t *)(const_cast<char *>(address) + offset) = ReadScriptAlignment(val);
+		*(int *)(const_cast<char *>(address) + offset) = ReadScriptAlignment(val);
 	} else {
-		*(int32_t *)(const_cast<char *>(address) + offset) = val;
+		*(int *)(const_cast<char *>(address) + offset) = val;
 	}
 }
 

@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * of the License, or(at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,23 +20,31 @@
  *
  */
 
-#include "ags/shared/util/stream.h"
+#ifndef AGS_PLUGINS_AGSCREDITZ_DRAWING_H
+#define AGS_PLUGINS_AGSCREDITZ_DRAWING_H
+
+#include "common/scummsys.h"
 
 namespace AGS3 {
-namespace AGS {
-namespace Shared {
+namespace Plugins {
+namespace AGSCreditz {
 
-size_t Stream::WriteByteCount(uint8 b, size_t count) {
-	if (!CanWrite())
-		return 0;
-	size_t size = 0;
-	for (; count > 0; --count, ++size) {
-		if (WriteByte(b) < 0)
-			break;
+class Drawing {
+public:
+	static void drawPixel(unsigned char **Row, int x, int y,
+		uint col, int wid, int hei, int coldepth) {
+		// TODO
 	}
-	return size;
-}
 
-} // namespace Shared
-} // namespace AGS
+	static uint getPixelColor(unsigned char **Row, int x, int y,
+		int wid, int hei, int coldepth) {
+		// TODO
+		return 0;
+	}
+};
+
+} // namespace AGSCreditz
+} // namespace Plugins
 } // namespace AGS3
+
+#endif

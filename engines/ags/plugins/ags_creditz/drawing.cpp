@@ -20,35 +20,13 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_GLOBAL_FILE_H
-#define AGS_ENGINE_AC_GLOBAL_FILE_H
-
-#include "ags/shared/util/file.h"
+#include "ags/plugins/ags_creditz/drawing.h"
 
 namespace AGS3 {
-namespace AGS {
-namespace Shared {
-class Stream;
-} // namespace Shared
-} // namespace AGS
+namespace Plugins {
+namespace AGSCreditz {
 
-using namespace AGS; // FIXME later
 
-int FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
-// NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
-int FileOpenCMode(const char *fnmm, const char *cmode);
-void  FileClose(int handle);
-void  FileWrite(int handle, const char *towrite);
-void  FileWriteRawLine(int handle, const char *towrite);
-void  FileRead(int handle, char *toread);
-int   FileIsEOF(int handle);
-int   FileIsError(int handle);
-void  FileWriteInt(int handle, int into);
-int   FileReadInt(int handle);
-char  FileReadRawChar(int handle);
-int   FileReadRawInt(int handle);
-void  FileWriteRawChar(int handle, int chartoWrite);
-
+} // namespace AGSCreditz
+} // namespace Plugins
 } // namespace AGS3
-
-#endif

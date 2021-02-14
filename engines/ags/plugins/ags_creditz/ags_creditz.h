@@ -103,13 +103,13 @@ struct State {
 	SequenceSettings _seqSettings[10];
 	StSequenceSettings _stSeqSettings[10];
 	SingleStatic _singleStatic;
-	void *_maskScreen = nullptr;
-	void *_maski = nullptr;
-	void *_creditScreen = nullptr;
+	BITMAP *_maskScreen = nullptr;
+	BITMAP *_maski = nullptr;
+	BITMAP *_creditScreen = nullptr;
 
 	// Version 1.1 specific
 	bool _resolutionFlag = false;
-	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
+	int _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
 };
 
 class AGSCreditz : public DLL {

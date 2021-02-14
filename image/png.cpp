@@ -34,6 +34,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "common/debug.h"
 #include "common/array.h"
 #include "common/stream.h"
 
@@ -73,11 +74,11 @@ Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat() const {
 #ifdef USE_PNG
 // libpng-error-handling:
 void pngError(png_structp pngptr, png_const_charp errorMsg) {
-	error("%s", errorMsg);
+	error("libpng: %s", errorMsg);
 }
 
 void pngWarning(png_structp pngptr, png_const_charp warningMsg) {
-	warning("%s", warningMsg);
+	debug(3, "libpng: %s", warningMsg);
 }
 
 // libpng-I/O-helpers:

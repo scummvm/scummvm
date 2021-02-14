@@ -676,7 +676,7 @@ int ResourceManager::addAppropriateSources() {
 		if (mapFiles.empty() || files.empty())
 			return 0;
 
-		if (Common::File::exists("ressci.001")) {
+		if (Common::File::exists("ressci.001") && !Common::File::exists("resource.aud")) {
 			_multiDiscAudio = true;
 		}
 

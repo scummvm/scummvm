@@ -55,14 +55,14 @@ public:
 	// Support for reading and writing object values by their relative offset
 	const char *GetFieldPtr(const char *address, intptr_t offset) override;
 	void    Read(const char *address, intptr_t offset, void *dest, int size) override;
-	uint8_t ReadInt8(const char *address, intptr_t offset) override;
-	int16_t ReadInt16(const char *address, intptr_t offset) override;
-	int32_t ReadInt32(const char *address, intptr_t offset) override;
+	uint8 ReadInt8(const char *address, intptr_t offset) override;
+	int16 ReadInt16(const char *address, intptr_t offset) override;
+	int ReadInt32(const char *address, intptr_t offset) override;
 	float   ReadFloat(const char *address, intptr_t offset) override;
 	void    Write(const char *address, intptr_t offset, void *src, int size) override;
-	void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
-	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
-	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
+	void    WriteInt8(const char *address, intptr_t offset, uint8 val) override;
+	void    WriteInt16(const char *address, intptr_t offset, int16 val) override;
+	void    WriteInt32(const char *address, intptr_t offset, int val) override;
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 
 private:
@@ -72,7 +72,7 @@ private:
 	// enough. Since this interface is also a part of Plugin API, we would
 	// need more significant change to program before we could use different
 	// approach.
-	int32_t  _size;
+	int  _size;
 	char *_data;
 };
 

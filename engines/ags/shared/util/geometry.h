@@ -144,15 +144,15 @@ inline Line VLine(int x, int y1, int y2) {
 }
 
 struct Size {
-	int32_t Width;
-	int32_t Height;
+	int Width;
+	int Height;
 
 	Size() {
 		Width = 0;
 		Height = 0;
 	}
 
-	Size(int32_t width, int32_t height) {
+	Size(int width, int height) {
 		Width = width;
 		Height = height;
 	}

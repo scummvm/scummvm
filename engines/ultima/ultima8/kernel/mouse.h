@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {

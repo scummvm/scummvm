@@ -99,19 +99,19 @@ public:
 	// mouse cursor is at certain position on screen.
 	bool        IsVisible() const;
 
-	int32_t FindControlUnderMouse() const;
+	int FindControlUnderMouse() const;
 	// this version allows some extra leeway in the Editor so that
 	// the user can grab tiny controls
-	int32_t FindControlUnderMouse(int leeway) const;
-	int32_t FindControlUnderMouse(int leeway, bool must_be_clickable) const;
+	int FindControlUnderMouse(int leeway) const;
+	int FindControlUnderMouse(int leeway, bool must_be_clickable) const;
 	// Gets the number of the GUI child controls
-	int32_t GetControlCount() const;
+	int GetControlCount() const;
 	// Gets control by its child's index
 	GUIObject *GetControl(int index) const;
 	// Gets child control's type, looks up with child's index
 	GUIControlType GetControlType(int index) const;
 	// Gets child control's global ID, looks up with child's index
-	int32_t GetControlID(int index) const;
+	int GetControlID(int index) const;
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
@@ -158,33 +158,33 @@ private:
 
 	// TODO: all members are currently public; hide them later
 public:
-	int32_t ID;             // GUI identifier
+	int ID;             // GUI identifier
 	String  Name;           // the name of the GUI
 
-	int32_t X;
-	int32_t Y;
-	int32_t Width;
-	int32_t Height;
+	int X;
+	int Y;
+	int Width;
+	int Height;
 	color_t BgColor;        // background color
-	int32_t BgImage;        // background sprite index
+	int BgImage;        // background sprite index
 	color_t FgColor;        // foreground color (used as border color in normal GUIs,
 	// and text color in text windows)
-	int32_t Padding;        // padding surrounding a GUI text window
+	int Padding;        // padding surrounding a GUI text window
 	GUIPopupStyle PopupStyle; // GUI popup behavior
-	int32_t PopupAtMouseY;  // popup when _G(mousey) < this
-	int32_t Transparency;   // "incorrect" alpha (in legacy 255-range units)
-	int32_t ZOrder;
+	int PopupAtMouseY;  // popup when _G(mousey) < this
+	int Transparency;   // "incorrect" alpha (in legacy 255-range units)
+	int ZOrder;
 
-	int32_t FocusCtrl;      // which control has the focus
-	int32_t HighlightCtrl;  // which control has the bounding selection rect
-	int32_t MouseOverCtrl;  // which control has the mouse cursor over it
-	int32_t MouseDownCtrl;  // which control has the mouse button pressed on it
+	int FocusCtrl;      // which control has the focus
+	int HighlightCtrl;  // which control has the bounding selection rect
+	int MouseOverCtrl;  // which control has the mouse cursor over it
+	int MouseDownCtrl;  // which control has the mouse button pressed on it
 	Point   MouseWasAt;     // last mouse cursor position
 
 	String  OnClickHandler; // script function name
 
 private:
-	int32_t _flags;          // style and behavior flags
+	int _flags;          // style and behavior flags
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
@@ -193,7 +193,7 @@ private:
 	// Array of child control references (not exclusively owned!)
 	std::vector<GUIObject *> _controls;
 	// Sorted array of controls in z-order.
-	std::vector<int32_t>    _ctrlDrawOrder;
+	std::vector<int>    _ctrlDrawOrder;
 };
 
 
@@ -238,7 +238,7 @@ extern AGS_INLINE int get_fixed_pixel_size(int pixels);
 // Those function have distinct implementations in Engine and Editor
 extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
-extern void check_font(int32_t *fontnum);
+extern void check_font(int *fontnum);
 
 extern void set_our_eip(int eip);
 #define SET_EIP(x) set_our_eip(x);

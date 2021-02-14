@@ -183,7 +183,7 @@ void GameSetupStructBase::ReadFromFile(Stream *in) {
 	default_lipsync_frame = in->ReadInt32();
 	invhotdotsprite = in->ReadInt32();
 	in->ReadArrayOfInt32(reserved, NUM_INTS_RESERVED);
-	load_messages = new int32_t[MAXGLOBALMES];
+	load_messages = new int[MAXGLOBALMES];
 	in->ReadArrayOfInt32(load_messages, MAXGLOBALMES);
 
 	// - GameSetupStruct::read_words_dictionary() checks load_dictionary

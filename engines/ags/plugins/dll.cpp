@@ -80,7 +80,7 @@ void *pluginOpen(const char *filename) {
 			fname.equalsIgnoreCase("agsgalaxy-disjoint"))
 		return new AGSGalaxySteam::AGSGalaxy();
 
-	if (fname.equalsIgnoreCase("agsteam") && ::AGS::g_vm->getGameId() == "blackwell5")
+	if (fname.equalsIgnoreCase("agsteam") && version == ::AGS::kBlackwell)
 		return new AGSGalaxySteam::AGSBlackwellSteam();
 
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||

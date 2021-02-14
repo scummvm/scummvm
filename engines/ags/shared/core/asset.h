@@ -40,7 +40,7 @@ namespace Shared {
 struct AssetInfo {
 	// A pair of filename and libuid is assumed to be unique in game scope
 	String      FileName;   // filename associated with asset
-	int32_t     LibUid;     // uid of library, containing this asset
+	int     LibUid;     // uid of library, containing this asset
 	soff_t      Offset;     // asset's position in library file (in bytes)
 	soff_t      Size;       // asset's size (in bytes)
 

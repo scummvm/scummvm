@@ -492,14 +492,12 @@ MODULE_OBJS := \
 	ultima8/gumps/widgets/edit_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \
 	ultima8/gumps/widgets/text_widget.o \
-	ultima8/kernel/core_app.o \
 	ultima8/kernel/delay_process.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/mouse.o \
 	ultima8/kernel/object.o \
 	ultima8/kernel/object_manager.o \
 	ultima8/kernel/process.o \
-	ultima8/misc/args.o \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \

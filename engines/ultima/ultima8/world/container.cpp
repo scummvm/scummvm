@@ -28,7 +28,7 @@
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/ultima8.h"
 
 
 namespace Ultima {

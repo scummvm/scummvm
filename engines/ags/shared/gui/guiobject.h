@@ -102,24 +102,24 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	int32_t  Id;         // GUI object's identifier
-	int32_t  ParentId;   // id of parent GUI
+	int  Id;         // GUI object's identifier
+	int  ParentId;   // id of parent GUI
 	String   Name;       // script name
 
-	int32_t  X;
-	int32_t  Y;
-	int32_t  Width;
-	int32_t  Height;
-	int32_t  ZOrder;
+	int  X;
+	int  Y;
+	int  Width;
+	int  Height;
+	int  ZOrder;
 	bool     IsActivated; // signals user interaction
 
 	String   EventHandlers[MAX_GUIOBJ_EVENTS]; // script function names
 
 protected:
-	uint32_t Flags;      // generic style and behavior flags
+	uint32 Flags;      // generic style and behavior flags
 
 	// TODO: explicit event names & handlers for every event
-	int32_t  _scEventCount;                    // number of supported script events
+	int  _scEventCount;                    // number of supported script events
 	String   _scEventNames[MAX_GUIOBJ_EVENTS]; // script event names
 	String   _scEventArgs[MAX_GUIOBJ_EVENTS];  // script handler params
 };

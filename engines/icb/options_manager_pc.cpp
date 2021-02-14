@@ -2725,27 +2725,10 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 
 		switch (m_CONTROL_selected) {
 		case DEVICE:
-			if (currentJoystick == NO_JOYSTICK) {
-				SetDefaultJoystick();
-				currentJoystick = attachedJoystick;
-			} else {
-				SetDefaultKeys();
-				currentJoystick = NO_JOYSTICK;
-				// Ensure we move to actor relative for the keyboard
-				g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
-			}
 			break;
 
 		case METHOD: // Force actor relative if we're using the keyboard
-			if (currentJoystick == NO_JOYSTICK) {
-				g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
-			} else {
-				if (g_icb_session->player.Get_control_mode() == SCREEN_RELATIVE) {
-					g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
-				} else {
-					g_icb_session->player.Set_control_mode(SCREEN_RELATIVE);
-				}
-			}
+			g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
 			break;
 
 		default:
@@ -3449,10 +3432,7 @@ void OptionsManager::DoChoice() {
 			break;
 
 		case DEFAULTS:
-			if (currentJoystick == NO_JOYSTICK)
-				SetDefaultKeys();
-			else
-				SetDefaultJoystick();
+			SetDefaultKeys();
 			break;
 
 		case DONE:
@@ -3745,65 +3725,7 @@ void OptionsManager::EditSlotLabel() {
 	static int flash = 0;
 	char buff[128];
 
-	if (!Read_Joystick(0))
-		m_letJoystickQuitEdit = TRUE8;
-
 	int id = m_slotOffset + m_GAMESLOT_selected;
-
-	// Quit on joystick too
-	if ((Read_Joystick(0)) && m_letJoystickQuitEdit) {
-		// Not allowed an empty name 'cos thats daft
-		if (!VerifyLabel())
-			return;
-
-		// Construct full filename
-		MakeFullSaveFilename(id, buff);
-
-		// Now check to see if the file exists (overwrite used slot)
-		if (checkFileExists(buff)) { // amode 0
-			// Slot is in use so do confirm prompt screen
-			m_activeMenu = INGAME_SAVECONFIRM;
-			m_SAVECONFIRM_selected = NAY;
-			m_editing = FALSE8;
-			ForceInGameScreenRefresh();
-			return;
-		}
-
-		// Slot empty so just save without prompting
-
-		// Remove cursor from the end of the buffer
-		m_editBuffer[m_cursorPos] = '\0';
-
-		// Then set the label to equal the buffer
-		strcpy(m_slots[id]->label, m_editBuffer);
-
-		// Now actually save the game
-		g_mission->Save_game_position(buff, m_slots[id]->label, m_slots[id]->secondsPlayed);
-		// Aint32 with a thumbnail
-		SaveThumbnail(id);
-		LoadVisibleThumbnails();
-
-		memset(m_editBuffer, '\0', MAX_LABEL_LENGTH);
-		m_editing = FALSE8;
-		m_GAMESLOT_selected = RETURN;
-		m_choiceLimiter = TRUE8;
-	}
-
-	// User cancallation
-	if (Read_DI_once_keys(Common::KEYCODE_ESCAPE)) {
-		if (m_emptySlotFlag == 0) {
-			// Slot was previously empty so delete on cancellation
-			delete m_slots[id];
-			m_slots[id] = NULL;
-		} else {
-			// Just need to restore time played to cancel
-			m_slots[id]->secondsPlayed = m_emptySlotFlag;
-		}
-
-		memset(m_editBuffer, '\0', MAX_LABEL_LENGTH);
-		m_editing = FALSE8;
-		m_choiceLimiter = FALSE8;
-	}
 
 	if (KeyWaiting()) {
 		ReadKey(&c);
@@ -4977,8 +4899,6 @@ void OptionsManager::DrawPageIndicator(uint32 x, uint32 y, bool8 up, bool8 selec
 
 void OptionsManager::GetKeyAssignment() {
 	uint32 keypressed = Get_DI_key_press();
-	uint8 joystickpressed = GetJoystickButtonPress();
-	uint8 joystickAxisPressed = GetJoystickAxisPress();
 
 	// Change selected function using the enter key (so ensure this doesn't get immediately assigned)
 	if ((keypressed == Common::KEYCODE_RETURN) && m_configLimiter) {
@@ -4987,226 +4907,12 @@ void OptionsManager::GetKeyAssignment() {
 		return;
 	}
 
-	if ((joystickpressed == 0) && m_configLimiter) {
+	if (m_configLimiter) {
 		// Now allowed to assign a button
 		m_configLimiter = FALSE8;
 		// Hacky fuck fuck!
 		g_system->delayMillis(200);
 		return;
-	}
-
-	if (currentJoystick != NO_JOYSTICK) {
-		// Are we assigning directional control on the joystick
-
-		if (joystickAxisPressed != 0xFF) {
-			if ((m_CONTROL_selected == UP_CROUCH || m_CONTROL_selected == DOWN_INTERACT || m_CONTROL_selected == LEFT_ARM || m_CONTROL_selected == RIGHT_ATTACK) &&
-			    m_controlPage1) {
-				// Check reassignment
-				if (left_joy == joystickAxisPressed)
-					left_joy = 0xFF;
-				else if (right_joy == joystickAxisPressed)
-					right_joy = 0xFF;
-				else if (up_joy == joystickAxisPressed)
-					up_joy = 0xFF;
-				else if (down_joy == joystickAxisPressed)
-					down_joy = 0xFF;
-
-				switch (m_CONTROL_selected) {
-				case UP_CROUCH:
-					up_joy = joystickAxisPressed;
-					break;
-				case DOWN_INTERACT:
-					down_joy = joystickAxisPressed;
-					break;
-				case LEFT_ARM:
-					left_joy = joystickAxisPressed;
-					break;
-				case RIGHT_ATTACK:
-					right_joy = joystickAxisPressed;
-					break;
-
-				// Only assign axes to directional control
-				default:
-					return;
-				}
-
-				// Done my shit thanks
-				m_awaitingKeyPress = FALSE8;
-				m_editing = FALSE8;
-				m_configLimiter = TRUE8;
-
-				g_system->delayMillis(200);
-				return;
-			}
-
-			// Chances are sliders will always return some value so ignore and continue
-		}
-
-		// Check for button with priority when we have a joystick
-
-		if (joystickpressed != 0xFF) {
-			// Can't assign buttons to directional controls
-			if ((m_CONTROL_selected == UP_CROUCH || m_CONTROL_selected == DOWN_INTERACT || m_CONTROL_selected == LEFT_ARM || m_CONTROL_selected == RIGHT_ATTACK) &&
-			    m_controlPage1)
-				return;
-
-			if (GetButtonName(joystickpressed) == NULL)
-				return;
-
-			// Check reassignment
-			if (sidestep_button == joystickpressed)
-				sidestep_button = 0xFF;
-			else if (run_button == joystickpressed)
-				run_button = 0xFF;
-			else if (crouch_button == joystickpressed)
-				crouch_button = 0xFF;
-			else if (interact_button == joystickpressed)
-				interact_button = 0xFF;
-			else if (arm_button == joystickpressed)
-				arm_button = 0xFF;
-			else if (fire_button == joystickpressed)
-				fire_button = 0xFF;
-			else if (inventory_button == joystickpressed)
-				inventory_button = 0xFF;
-			else if (remora_button == joystickpressed)
-				remora_button = 0xFF;
-			else if (pause_button == joystickpressed)
-				pause_button = 0xFF;
-
-			switch (m_CONTROL_selected) {
-			case UP_CROUCH:
-				crouch_button = joystickpressed;
-				break;
-			case DOWN_INTERACT:
-				interact_button = joystickpressed;
-				break;
-			case LEFT_ARM:
-				arm_button = joystickpressed;
-				break;
-			case RIGHT_ATTACK:
-				fire_button = joystickpressed;
-				break;
-			case RUN_INVENTORY:
-				if (m_controlPage1)
-					run_button = joystickpressed;
-				else
-					inventory_button = joystickpressed;
-				break;
-			case SIDESTEP_REMORA:
-				if (m_controlPage1)
-					sidestep_button = joystickpressed;
-				else
-					remora_button = joystickpressed;
-				break;
-			case PAUSE:
-				pause_button = joystickpressed;
-				break;
-
-			default:
-				return;
-			}
-
-			// Done my shit thanks
-			m_awaitingKeyPress = FALSE8;
-			m_editing = FALSE8;
-			m_configLimiter = TRUE8;
-
-			g_system->delayMillis(200);
-			return;
-		}
-	}
-
-	if (keypressed != 0) {
-		// Joystick control is selected so don't assign keys to directional control
-		if ((m_CONTROL_selected == UP_CROUCH || m_CONTROL_selected == DOWN_INTERACT || m_CONTROL_selected == LEFT_ARM || m_CONTROL_selected == RIGHT_ATTACK) &&
-		    m_controlPage1) {
-			if (currentJoystick != NO_JOYSTICK)
-				return;
-		}
-
-		// Ban the use of keys with no names
-		if (GetKeyName(keypressed) == NULL)
-			return;
-
-		// Check the assignment hasn't already been used
-		if (up_key == keypressed)
-			up_key = 0;
-		else if (down_key == keypressed)
-			down_key = 0;
-		else if (left_key == keypressed)
-			left_key = 0;
-		else if (right_key == keypressed)
-			right_key = 0;
-		else if (sidestep_key == keypressed)
-			sidestep_key = 0;
-		else if (run_key == keypressed)
-			run_key = 0;
-		else if (crouch_key == keypressed)
-			crouch_key = 0;
-		else if (interact_key == keypressed)
-			interact_key = 0;
-		else if (arm_key == keypressed)
-			arm_key = 0;
-		else if (fire_key == keypressed)
-			fire_key = 0;
-		else if (inventory_key == keypressed)
-			inventory_key = 0;
-		else if (remora_key == keypressed)
-			remora_key = 0;
-		else if (pause_key == keypressed)
-			return;
-
-		switch (m_CONTROL_selected) {
-		case UP_CROUCH:
-			if (m_controlPage1)
-				up_key = keypressed;
-			else
-				crouch_key = keypressed;
-			break;
-		case DOWN_INTERACT:
-			if (m_controlPage1)
-				down_key = keypressed;
-			else
-				interact_key = keypressed;
-			break;
-		case LEFT_ARM:
-			if (m_controlPage1)
-				left_key = keypressed;
-			else
-				arm_key = keypressed;
-			break;
-		case RIGHT_ATTACK:
-			if (m_controlPage1)
-				right_key = keypressed;
-			else
-				fire_key = keypressed;
-			break;
-		case RUN_INVENTORY:
-			if (m_controlPage1)
-				run_key = keypressed;
-			else
-				inventory_key = keypressed;
-			break;
-		case SIDESTEP_REMORA:
-			if (m_controlPage1)
-				sidestep_key = keypressed;
-			else
-				remora_key = keypressed;
-			break;
-		case PAUSE:
-			pause_key = keypressed;
-			break;
-
-		default:
-			return;
-		}
-
-		// Done my shit thanks
-		m_awaitingKeyPress = FALSE8;
-		m_editing = FALSE8;
-		m_configLimiter = TRUE8;
-
-		g_system->delayMillis(200);
 	}
 
 	m_assignFlash++;
@@ -5315,17 +5021,7 @@ void OptionsManager::DrawControllerConfiguration() {
 	msg = GetTextFromReference(HashString("opt_device"));
 	temp = CalculateStringWidth(msg);
 	DisplayText(ad, pitch, msg, m_margin - temp, 130, (m_CONTROL_selected == DEVICE) ? SELECTEDFONT : NORMALFONT, FALSE8);
-	if (currentJoystick == NO_JOYSTICK)
-		msg = GetTextFromReference(HashString("opt_keyboard"));
-	else {
-		// Change this to use DirectX device names later (for joysticks only)
-		msg = GetJoystickName();
-
-		// This returns NULL if there's no joystick so we can force keyboard
-		if (msg == NULL) {
-			msg = GetTextFromReference(HashString("opt_keyboard"));
-		}
-	}
+	msg = GetTextFromReference(HashString("opt_keyboard"));
 	DisplayText(ad, pitch, msg, m_margin + 5, 130, NORMALFONT, FALSE8);
 
 	msg = GetTextFromReference(HashString("opt_controlmethod"));
@@ -5532,20 +5228,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = screenRelative ? GetTextFromReference(HashString("opt_up")) : GetTextFromReference(HashString("opt_forwards"));
 		temp = CalculateStringWidth(msg);
 
-		if (currentJoystick != NO_JOYSTICK)
-			msg2 = GetAxisName(up_joy);
-		else
-			msg2 = GetKeyName(up_key);
+		msg2 = GetKeyName(up_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_crouch"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (crouch_button != 0xFF))
-			msg2 = GetButtonName(crouch_button);
-		else
-			msg2 = GetKeyName(crouch_key);
+		msg2 = GetKeyName(crouch_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5559,20 +5249,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = screenRelative ? GetTextFromReference(HashString("opt_down")) : GetTextFromReference(HashString("opt_backwards"));
 		temp = CalculateStringWidth(msg);
 
-		if (currentJoystick != NO_JOYSTICK)
-			msg2 = GetAxisName(down_joy);
-		else
-			msg2 = GetKeyName(down_key);
+		msg2 = GetKeyName(down_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_interact"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (interact_button != 0xFF))
-			msg2 = GetButtonName(interact_button);
-		else
-			msg2 = GetKeyName(interact_key);
+		msg2 = GetKeyName(interact_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5586,20 +5270,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = screenRelative ? GetTextFromReference(HashString("opt_left")) : GetTextFromReference(HashString("opt_turnleft"));
 		temp = CalculateStringWidth(msg);
 
-		if (currentJoystick != NO_JOYSTICK)
-			msg2 = GetAxisName(left_joy);
-		else
-			msg2 = GetKeyName(left_key);
+		msg2 = GetKeyName(left_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_arm"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (arm_button != 0xFF))
-			msg2 = GetButtonName(arm_button);
-		else
-			msg2 = GetKeyName(arm_key);
+		msg2 = GetKeyName(arm_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5613,20 +5291,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = screenRelative ? GetTextFromReference(HashString("opt_right")) : GetTextFromReference(HashString("opt_turnright"));
 		temp = CalculateStringWidth(msg);
 
-		if (currentJoystick != NO_JOYSTICK)
-			msg2 = GetAxisName(right_joy);
-		else
-			msg2 = GetKeyName(right_key);
+		msg2 = GetKeyName(right_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_attack"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (fire_button != 0xFF))
-			msg2 = GetButtonName(fire_button);
-		else
-			msg2 = GetKeyName(fire_key);
+		msg2 = GetKeyName(fire_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5640,20 +5312,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = GetTextFromReference(HashString("opt_run"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (run_button != 0xFF))
-			msg2 = GetButtonName(run_button);
-		else
-			msg2 = GetKeyName(run_key);
+		msg2 = GetKeyName(run_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_inventory"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (inventory_button != 0xFF))
-			msg2 = GetButtonName(inventory_button);
-		else
-			msg2 = GetKeyName(inventory_key);
+		msg2 = GetKeyName(inventory_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5667,20 +5333,14 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = GetTextFromReference(HashString("opt_sidestep"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (sidestep_button != 0xFF))
-			msg2 = GetButtonName(sidestep_button);
-		else
-			msg2 = GetKeyName(sidestep_key);
+		msg2 = GetKeyName(sidestep_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	} else {
 		msg = GetTextFromReference(HashString("opt_remora"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (remora_button != 0xFF))
-			msg2 = GetButtonName(remora_button);
-		else
-			msg2 = GetKeyName(remora_key);
+		msg2 = GetKeyName(remora_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 	}
@@ -5694,10 +5354,7 @@ void OptionsManager::DrawControls(uint32 surface_id) {
 		msg = GetTextFromReference(HashString("opt_pause"));
 		temp = CalculateStringWidth(msg);
 
-		if ((currentJoystick != NO_JOYSTICK) && (pause_button != 0xFF))
-			msg2 = GetButtonName(pause_button);
-		else
-			msg2 = GetKeyName(pause_key);
+		msg2 = GetKeyName(pause_key);
 		if (msg2 == NULL)
 			msg2 = "???";
 
@@ -6908,25 +6565,25 @@ void OptionsManager::PollInput() {
 		}
 
 		// Selection (up down input)
-		if (Read_DI_keys(Common::KEYCODE_DOWN) || Read_DI_keys(down_key) || Read_Joystick(Y_AXIS) > 100) {
+		if (Read_DI_keys(Common::KEYCODE_DOWN) || Read_DI_keys(down_key)) {
 			MoveSelected(TRUE8);
-		} else if (Read_DI_keys(Common::KEYCODE_UP) || Read_DI_keys(up_key) || Read_Joystick(Y_AXIS) < -100) {
+		} else if (Read_DI_keys(Common::KEYCODE_UP) || Read_DI_keys(up_key)) {
 			MoveSelected(FALSE8);
 		} else {
 			m_moveLimiter = FALSE8;
 		}
 
 		// Choose command
-		if (Read_DI_keys(Common::KEYCODE_RETURN) || Read_DI_keys(fire_key) || Read_DI_keys(interact_key) || Read_Joystick(0)) {
+		if (Read_DI_keys(Common::KEYCODE_RETURN) || Read_DI_keys(fire_key) || Read_DI_keys(interact_key)) {
 			DoChoice();
 		} else {
 			m_choiceLimiter = FALSE8;
 		}
 
 		// Alter current selection (left right input)
-		if (Read_DI_keys(Common::KEYCODE_LEFT) || Read_DI_keys(left_key) || Read_Joystick(X_AXIS) < -100) {
+		if (Read_DI_keys(Common::KEYCODE_LEFT) || Read_DI_keys(left_key)) {
 			AlterSelected(FALSE8);
-		} else if (Read_DI_keys(Common::KEYCODE_RIGHT) || Read_DI_keys(right_key) || Read_Joystick(X_AXIS) > 100) {
+		} else if (Read_DI_keys(Common::KEYCODE_RIGHT) || Read_DI_keys(right_key)) {
 			AlterSelected(TRUE8);
 		} else {
 			m_alterLimiter = FALSE8;
@@ -7152,7 +6809,7 @@ void OptionsManager::DrawSlideShow() {
 	char slideFile[128];
 
 	// Quit
-	if (Read_DI_once_keys(Common::KEYCODE_ESCAPE) || Read_Joystick_once(pause_button)) {
+	if (Read_DI_once_keys(Common::KEYCODE_ESCAPE)) {
 		m_slideshowActive = FALSE8;
 		DrawWidescreenBorders();
 		return;
@@ -7210,14 +6867,14 @@ void OptionsManager::DrawSlideShow() {
 		// Could do an effect on the working buffer here
 	} else {
 		// Alter current visible slide (on left right input)
-		if (Read_DI_keys(Common::KEYCODE_LEFT) || Read_DI_keys(left_key) || Read_Joystick(X_AXIS) < -100) {
+		if (Read_DI_keys(Common::KEYCODE_LEFT) || Read_DI_keys(left_key)) {
 			if (!m_slideLimiter) {
 				m_slideLimiter = TRUE8;
 
 				// Caught by the swap slide routine above
 				m_slideWadger = -WADGE_INCREMENTS;
 			}
-		} else if (Read_DI_keys(Common::KEYCODE_RIGHT) || Read_DI_keys(right_key) || Read_Joystick(X_AXIS) > 100) {
+		} else if (Read_DI_keys(Common::KEYCODE_RIGHT) || Read_DI_keys(right_key)) {
 			if (!m_slideLimiter) {
 				m_slideLimiter = TRUE8;
 
@@ -7513,7 +7170,7 @@ int32 Crediter::DoScreen() {
 	bool8 onlastMovieFrame = FALSE8;
 
 	// Are we done
-	if (m_endOfCredits == 0 || Read_DI_keys(Common::KEYCODE_ESCAPE) || Read_Joystick_once(pause_button)) {
+	if (m_endOfCredits == 0 || Read_DI_keys(Common::KEYCODE_ESCAPE)) {
 		if (m_logoAttached)
 			surface_manager->Kill_surface(m_logoSurfaceID);
 		if (m_movieBackdrop)

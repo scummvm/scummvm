@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-11 19:08+0000\n"
-"PO-Revision-Date: 2021-02-10 20:23+0000\n"
+"POT-Creation-Date: 2021-02-13 17:56+0000\n"
+"PO-Revision-Date: 2021-02-12 15:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -4753,13 +4753,13 @@ msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:143
+#: engines/ultima/ultima8/meta_engine.cpp:154
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
@@ -5030,7 +5030,7 @@ msgstr "꾸러기 게임 모드"
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:321
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "Zip 모드 활성화됨(~Z~)"
 
 #: engines/mohawk/dialogs.cpp:115
 msgid "~T~ransitions Enabled"
@@ -5054,34 +5054,32 @@ msgid "Show ~M~ap"
 msgstr ""
 
 #: engines/mohawk/dialogs.cpp:136
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "전역 메인 메뉴"
+msgstr "메인 메뉴(~U~)"
 
 #: engines/mohawk/dialogs.cpp:250
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "새로운 언어 설정은 게임 재시작 후 적용됩니다."
 
 #: engines/mohawk/dialogs.cpp:322
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "물결효과 활성화됨(~W~)"
 
 #: engines/mohawk/dialogs.cpp:324
 msgid "Transitions:"
-msgstr ""
+msgstr "전환효과:"
 
 #: engines/mohawk/dialogs.cpp:329
-#, fuzzy
 msgid "Fastest"
-msgstr "붙여넣기"
+msgstr "빠르게"
 
 #: engines/mohawk/dialogs.cpp:330
 msgid "Normal"
-msgstr ""
+msgstr "보통"
 
 #: engines/mohawk/dialogs.cpp:331
 msgid "Best"
-msgstr ""
+msgstr "고품질"
 
 #: engines/mohawk/metaengine.cpp:271
 #, fuzzy
@@ -7072,31 +7070,31 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:130
+#: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:177
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:194
+#: engines/ultima/ultima8/meta_engine.cpp:205
 msgid "Ultima VIII Debug"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:296
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 #, fuzzy
 msgid "[too modern]"
 msgstr "시트콤 모드"

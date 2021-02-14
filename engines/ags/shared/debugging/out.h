@@ -129,22 +129,22 @@ enum CommonDebugGroup {
 
 // Debug group identifier defining either numeric or string id, or both
 struct DebugGroupID {
-	uint32_t    ID;
+	uint32    ID;
 	String      SID;
 
-	DebugGroupID() : ID((uint32_t)kDbgGroup_None) {
+	DebugGroupID() : ID((uint32)kDbgGroup_None) {
 	}
-	DebugGroupID(uint32_t id, const String &sid = "") : ID(id), SID(sid) {
+	DebugGroupID(uint32 id, const String &sid = "") : ID(id), SID(sid) {
 	}
-	DebugGroupID(const String &sid) : ID((uint32_t)kDbgGroup_None), SID(sid) {
+	DebugGroupID(const String &sid) : ID((uint32)kDbgGroup_None), SID(sid) {
 	}
 	// Tells if any of the id components is valid
 	bool IsValid() const {
-		return ID != (uint32_t)kDbgGroup_None || !SID.IsEmpty();
+		return ID != (uint32)kDbgGroup_None || !SID.IsEmpty();
 	}
 	// Tells if both id components are properly set
 	bool IsComplete() const {
-		return ID != (uint32_t)kDbgGroup_None && !SID.IsEmpty();
+		return ID != (uint32)kDbgGroup_None && !SID.IsEmpty();
 	}
 };
 

@@ -34,6 +34,10 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/system.h"
+#include "common/util.h"
+#include "common/file.h"
+
+#include "image/bmp.h"
 
 #include "engines/util.h"
 
@@ -41,22 +45,6 @@
 #include "graphics/tinygl/zblit.h"
 
 namespace ICB {
-
-#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
-PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
-PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffers;
-PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
-PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatus;
-PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
-PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffers;
-PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffers;
-PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
-PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbuffer;
-PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
-
-GLuint g_RGBFrameBuffer;
-
-#endif
 
 #define FIRST_CLIENT_SURFACE 2
 
@@ -68,10 +56,6 @@ uint32 flipTime;
 _surface::~_surface() {
 	// Is the surface there
 	if (m_dds) {
-		// Make sure it's unlocked
-		if (m_locked) {
-			//SDL_UnlockSurface(m_dds);
-		}
 		m_dds->free();
 		delete m_dds;
 	}
@@ -132,7 +116,7 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
 
 _surface_manager::_surface_manager() {
 	// Setup uninitialized pointers
-	sdl_screen = NULL;
+	screenSurface = NULL;
 
 	// set these up only once
 	full_rect.left = 0;
@@ -169,21 +153,7 @@ _surface_manager::~_surface_manager() {
 
 	// Release the surfaces ( the Reset call calls the destructor for each non null surface )
 	m_Surfaces.Reset();
-	//sdl_screen->free();
-	//delete sdl_screen;
 
-#ifndef ENABLE_OPENGL
-#ifdef USE_SDL_DIRECTLY
-	if (sdl_screen_texture)
-		SDL_DestroyTexture(sdl_screen_texture);
-	if (sdl_renderer)
-		SDL_DestroyRenderer(sdl_renderer);
-#endif
-#else
-	glDeleteFramebuffers(1, &RGBFrameBufferTexture);
-	glDeleteTextures(1, &RGBFrameBufferTexture);
-	glDeleteTextures(1, &sdlTextureId);
-#endif
 	// Finished
 	Zdebug("*SURFACE_MANAGER* Surface Manager Destroyed");
 }
@@ -193,83 +163,13 @@ uint32 _surface_manager::Init_direct_draw() {
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
 	g_system->setWindowCaption(Common::U32String("In Cold Blood (C)2000 Revolution Software Ltd"));
-	initGraphics(640, 480, nullptr);
+	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, nullptr);
 
-	_zb = new TinyGL::FrameBuffer(640, 480, g_system->getScreenFormat()); // TODO: delete
-	TinyGL::glInit(_zb, 256);
-
-	sdl_screen = new Graphics::Surface();
-	sdl_screen->create(640, 480, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
-
-	if (!sdl_screen->getBasePtr(0, 0)) {
-		//		SDL_Quit();
+	screenSurface = new Graphics::Surface();
+	screenSurface->create(SCREEN_WIDTH, SCREEN_DEPTH, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+	if (!screenSurface->getBasePtr(0, 0)) {
 		Fatal_error("Initialise Graphics::Surface::create failed");
 	}
-
-#ifndef ENABLE_OPENGL
-#ifdef USE_SDL_DIRECTLY
-	sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
-	if (!sdl_renderer) {
-		SDL_Quit();
-		Fatal_error("Initialise SDL_CreateRenderer failed");
-	}
-
-	sdl_screen_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, 640, 480);
-	if (!sdl_screen_texture) {
-		SDL_Quit();
-		Fatal_error("Initialise SDL_CreateTexture failed");
-	}
-#endif
-#else
-	if (!SDL_GL_ExtensionSupported("GL_EXT_framebuffer_object")) {
-		SDL_Quit();
-		Fatal_error("GL_EXT_framebuffer_object not supported!");
-	}
-	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSEXTPROC)SDL_GL_GetProcAddress("glGenFramebuffers");
-	glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSEXTPROC)SDL_GL_GetProcAddress("glDeleteFramebuffers");
-	glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)SDL_GL_GetProcAddress("glBindFramebuffer");
-	glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)SDL_GL_GetProcAddress("glCheckFramebufferStatus");
-	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)SDL_GL_GetProcAddress("glFramebufferTexture2D");
-	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSEXTPROC)SDL_GL_GetProcAddress("glGenRenderbuffers");
-	glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSEXTPROC)SDL_GL_GetProcAddress("glDeleteRenderbuffers");
-	glBindRenderbuffer = (PFNGLBINDRENDERBUFFEREXTPROC)SDL_GL_GetProcAddress("glBindRenderbuffer");
-	glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)SDL_GL_GetProcAddress("glFramebufferRenderbuffer");
-	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)SDL_GL_GetProcAddress("glRenderbufferStorage");
-
-	glGenTextures(1, &RGBFrameBufferTexture);
-	glBindTexture(GL_TEXTURE_2D, RGBFrameBufferTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 640, 480, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	glGenFramebuffers(1, &RGBFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, RGBFrameBuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RGBFrameBufferTexture, 0);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		SDL_Quit();
-		Fatal_error("glCheckFramebufferStatus: status is not complete!");
-	}
-	glGenRenderbuffers(1, &renderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBuffer);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	g_RGBFrameBuffer = RGBFrameBuffer;
-
-	glGenTextures(1, &sdlTextureId);
-	glBindTexture(GL_TEXTURE_2D, sdlTextureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, sdl_screen->w, sdl_screen->h, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, sdl_screen->getBasePtr(0, 0));
-
-#endif
 
 	// Make our back buffer type affair
 	m_Surfaces[0] = new _surface;
@@ -277,7 +177,8 @@ uint32 _surface_manager::Init_direct_draw() {
 	m_Surfaces[0]->m_width = SCREEN_WIDTH;
 	m_Surfaces[0]->m_height = SCREEN_DEPTH;
 	m_Surfaces[0]->m_name = "backbuffer";
-	m_Surfaces[0]->m_dds = sdl_screen;
+	m_Surfaces[0]->m_dds = screenSurface;
+	m_Surfaces[0]->m_colorKeyEnable = false;
 
 	working_buffer_id = 0;
 
@@ -344,80 +245,16 @@ void _surface_manager::Flip() {
 
 	flipTime = GetMicroTimer();
 
-#ifdef ENABLE_OPENGL
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 1.0, 1.0, 0, 0, 1);
+	Graphics::PixelBuffer srcBuf;
+	srcBuf.set(screenSurface->format, (byte *)screenSurface->getPixels());
+	Graphics::PixelBuffer dstBuf;
+	dstBuf.create(g_system->getScreenFormat(), screenSurface->w * screenSurface->h, DisposeAfterUse::YES);
+	dstBuf.copyBuffer(0, screenSurface->w * screenSurface->h, srcBuf);
 
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	glDepthMask(GL_FALSE);
-
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sdlTextureId);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, sdl_screen->w, sdl_screen->h, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, sdl_screen->getBasePtr(0, 0));
-
-	glBegin(GL_QUADS);
-	glTexCoord2i(0, 0);
-	glVertex2i(0, 0);
-
-	glTexCoord2i(sdl_screen->w - 1, 0);
-	glVertex2i(sdl_screen->w - 1, 0);
-
-	glTexCoord2i(sdl_screen->w - 1, sdl_screen->h - 1);
-	glVertex2i(sdl_screen->w - 1, sdl_screen->h - 1);
-
-	glTexCoord2i(0, sdl_screen->h - 1);
-	glVertex2i(0, sdl_screen->h - 1);
-	glEnd();
-
-	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_2D);
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-
-	SDL_GL_SwapWindow(sdl_window);
-#else
-#ifdef USE_SDL_DIRECTLY
-	void *pixels;
-	int pitch;
-	if (SDL_LockTexture(sdl_screen_texture, NULL, &pixels, &pitch) < 0) {
-		Fatal_error("_surface_manager::Flip() Failed Lock texture");
-	}
-	memcpy(pixels, sdl_screen->pixels, pitch * sdl_screen->h);
-
-	SDL_UnlockTexture(sdl_screen_texture);
-	SDL_RenderCopy(sdl_renderer, sdl_screen_texture, NULL, NULL);
-	SDL_RenderPresent(sdl_renderer);
-#else
-	Graphics::BlitImage *blitImage = Graphics::tglGenBlitImage();
-	Graphics::tglUploadBlitImage(blitImage, *sdl_screen, 0, false);
-	Graphics::tglBlitFast(blitImage, 0, 0);
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_zb->getPixelBuffer(), _zb->linesize,
-	                           0, 0, _zb->xsize, _zb->ysize);
+	g_system->copyRectToScreen(dstBuf.getRawBuffer(), screenSurface->pitch,
+	                           0, 0, screenSurface->w, screenSurface->h);
 	g_system->updateScreen();
-	Graphics::tglDeleteBlitImage(blitImage);
-#endif
-#endif
+
 	flipTime = GetMicroTimer() - flipTime;
 
 	PrintDebugLabel(NULL, 0x00000000);
@@ -440,7 +277,8 @@ uint32 _surface_manager::Create_new_surface(const char *name, uint32 width, uint
 	m_Surfaces[slot]->m_height = height;
 	m_Surfaces[slot]->m_name = name;
 	m_Surfaces[slot]->m_dds = new Graphics::Surface;
-	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+	m_Surfaces[slot]->m_colorKeyEnable = false;
 
 	if (m_Surfaces[slot]->m_dds)
 		return slot;
@@ -470,11 +308,6 @@ uint8 *_surface_manager::Lock_surface(uint32 s_id) {
 		error("Should exit with error-code -1");
 	}
 
-	// lock the surface
-	/*	if (SDL_LockSurface(pSurface->m_dds) < 0) {
-	                Fatal_error("_surface_manager::Lock_surface( %s ) - SDL_LockSurface failed", (const char *)pSurface->m_name);
-	                exit(-1);
-	        }*/
 	pSurface->m_locked = TRUE8;
 
 	return ((uint8 *)pSurface->m_dds->getBasePtr(0, 0));
@@ -499,12 +332,52 @@ void _surface_manager::Unlock_surface(uint32 s_id) {
 		Fatal_error("**Unlock_surface %s - surface is null :O", (const char *)m_Surfaces[s_id]->m_name);
 		error("Should exit with error-code -1");
 	}
-	// SDL_UnlockSurface(pSurface->m_dds);
 	m_Surfaces[s_id]->m_locked = FALSE8;
 }
 
 void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
 	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->h, m_Surfaces[s_id]->m_dds->w), rgb_value);
+}
+
+static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPitch, int dstPitch, int width, int height,
+                                bool8 colorKeyEnable, uint32 colorKey) {
+	assert(srcBuffer);
+	assert(dstBuffer);
+
+	if (colorKeyEnable) {
+		const uint32 *src = (const uint32 *)srcBuffer;
+		uint32 *dst = (uint32 *)dstBuffer;
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				if (src[w] != colorKey && src[w] != 0)
+					dst[w] = src[w];
+			}
+			src += (srcPitch >> 2);
+			dst += (dstPitch >> 2);
+		}
+	} else {
+		const byte *src = (const byte *)srcBuffer;
+		byte *dst = (byte *)dstBuffer;
+		for (int h = 0; h < height; h++) {
+			memcpy(dst, src, width * 4);
+			src += srcPitch;
+			dst += dstPitch;
+		}
+	}
+}
+
+static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
+                              int destX, int destY, const Common::Rect subRect,
+                              bool8 colorKeyEnable, uint32 colorKey) {
+	assert(srcSurface->format == dstSurface->format);
+	assert(srcSurface->format.bytesPerPixel == 4);
+	assert(destX >= 0 && destX < dstSurface->w);
+	assert(destY >= 0 && destY < dstSurface->h);
+	assert(subRect.height() > 0 && destY + subRect.height() <= dstSurface->h);
+	assert(subRect.width() > 0 && destX + subRect.width() <= dstSurface->w);
+
+	copyRectToSurface(dstSurface->getBasePtr(destX, destY), const_cast<void *>(srcSurface->getBasePtr(subRect.left, subRect.top)),
+	                  srcSurface->pitch, dstSurface->pitch, subRect.width(), subRect.height(), colorKeyEnable, colorKey);
 }
 
 void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRECT *pSrcRect, LRECT *pDestRect, uint32 dwFlags) {
@@ -527,26 +400,29 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 		dstRect.bottom = pDestRect->bottom;
 	}
 
-	Graphics::Surface *destSurface = m_Surfaces[to_id]->m_dds;
+	Graphics::Surface *dstSurface = m_Surfaces[to_id]->m_dds;
 	Graphics::Surface *srcSurface = m_Surfaces[from_id]->m_dds;
 
 	if (dwFlags == 0) {
-		//SDL_SetColorKey(m_Surfaces[from_id]->m_dds, SDL_FALSE, 0);
-		//printf("------------ Blit_surface_to_surface: dwFlags is 0 --------!!!!!!\n");
+		m_Surfaces[from_id]->m_colorKeyEnable = false;
 	}
 
 	// TODO: Check that the sizes match.
 	if (pDestRect) {
 		if (pSrcRect) {
-			destSurface->copyRectToSurface(*srcSurface, dstRect.left, dstRect.top, srcRect);
+			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, srcRect,
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		} else {
-			destSurface->copyRectToSurface(*srcSurface, dstRect.left, dstRect.top, Common::Rect(0, 0, srcSurface->w, srcSurface->h));
+			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		}
 	} else {
 		if (pSrcRect) {
-			destSurface->copyRectToSurface(*srcSurface, 0, 0, srcRect);
+			copyRectToSurface(dstSurface, srcSurface, 0, 0, srcRect,
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		} else {
-			destSurface->copyRectToSurface(*srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h));
+			copyRectToSurface(dstSurface, srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
+			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		}
 	}
 	//SDL_BlitSurface(srcSurface, pSrcRect ? &srcRect : NULL, destSurface, pDestRect ? &dstRect : NULL);
@@ -569,8 +445,8 @@ void _surface_manager::Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col) {
 }
 
 void _surface_manager::Set_transparent_colour_key(uint32 nSurfaceID, uint32 nKey) {
-	warning("TODO: Handle color-key");
-	//SDL_SetColorKey(m_Surfaces[nSurfaceID]->m_dds, SDL_TRUE, nKey);
+	m_Surfaces[nSurfaceID]->m_colorKeyEnable = true;
+	m_Surfaces[nSurfaceID]->m_colorKey = nKey;
 }
 
 void _surface_manager::DrawEffects(uint32 surface_id) {
@@ -951,11 +827,14 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 }
 
 void _surface_manager::RecordFrame(const char *path) {
-	warning("TODO: Implement RecordFrame");
-#if 0
-	if (SDL_SaveBMP(sdl_screen, path) < 0)
+	Common::DumpFile dumpFile;
+	bool result = dumpFile.open(path);
+	if (result) {
+		result = Image::writeBMP(dumpFile, *screenSurface);
+	}
+	if (!result) {
 		Fatal_error("_surface_manager::RecordSurface( \"%s\" ) - Failed to create the output file", path);
-#endif
+	}
 }
 
 } // End of namespace ICB

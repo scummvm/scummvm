@@ -45,26 +45,26 @@ using namespace AGS; // FIXME later
 struct ccScript {
 public:
 	char *globaldata;
-	int32_t globaldatasize;
-	int32_t *code;                // executable byte-code, 32-bit per op or arg
-	int32_t codesize; // TODO: find out if we can make it size_t
+	int globaldatasize;
+	int *code;                // executable byte-code, 32-bit per op or arg
+	int codesize; // TODO: find out if we can make it size_t
 	char *strings;
-	int32_t stringssize;
+	int stringssize;
 	char *fixuptypes;             // global data/string area/ etc
-	int32_t *fixups;              // code array index to fixup (in ints)
+	int *fixups;              // code array index to fixup (in ints)
 	int numfixups;
 	int importsCapacity;
 	char **imports;
 	int numimports;
 	int exportsCapacity;
 	char **exports;   // names of exports
-	int32_t *export_addr; // high byte is type; low 24-bits are offset
+	int *export_addr; // high byte is type; low 24-bits are offset
 	int numexports;
 	int instances;
 	// 'sections' allow the interpreter to find out which bit
 	// of the code came from header files, and which from the main file
 	char **sectionNames;
-	int32_t *sectionOffsets;
+	int *sectionOffsets;
 	int numSections;
 	int capacitySections;
 
@@ -78,7 +78,7 @@ public:
 	void        Write(Shared::Stream *out);
 	// read back a script written with Write
 	bool        Read(Shared::Stream *in);
-	const char *GetSectionName(int32_t offset);
+	const char *GetSectionName(int offset);
 
 protected:
 	// free the memory occupied by the script - do NOT attempt to run the

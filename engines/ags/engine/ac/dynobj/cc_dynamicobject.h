@@ -44,7 +44,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 // A pair of managed handle and abstract object pointer
-typedef std::pair<int32_t, void *> DynObjectRef;
+typedef std::pair<int, void *> DynObjectRef;
 
 
 // OBJECT-BASED SCRIPTING RUNTIME FUNCTIONS
@@ -80,14 +80,14 @@ struct ICCDynamicObject {
 	// offset 0 means getting pointer to whole object or a pointer to its first field.
 	virtual const char *GetFieldPtr(const char *address, intptr_t offset) = 0;
 	virtual void    Read(const char *address, intptr_t offset, void *dest, int size) = 0;
-	virtual uint8_t ReadInt8(const char *address, intptr_t offset) = 0;
-	virtual int16_t ReadInt16(const char *address, intptr_t offset) = 0;
-	virtual int32_t ReadInt32(const char *address, intptr_t offset) = 0;
+	virtual uint8 ReadInt8(const char *address, intptr_t offset) = 0;
+	virtual int16 ReadInt16(const char *address, intptr_t offset) = 0;
+	virtual int ReadInt32(const char *address, intptr_t offset) = 0;
 	virtual float   ReadFloat(const char *address, intptr_t offset) = 0;
 	virtual void    Write(const char *address, intptr_t offset, void *src, int size) = 0;
-	virtual void    WriteInt8(const char *address, intptr_t offset, uint8_t val) = 0;
-	virtual void    WriteInt16(const char *address, intptr_t offset, int16_t val) = 0;
-	virtual void    WriteInt32(const char *address, intptr_t offset, int32_t val) = 0;
+	virtual void    WriteInt8(const char *address, intptr_t offset, uint8 val) = 0;
+	virtual void    WriteInt16(const char *address, intptr_t offset, int16 val) = 0;
+	virtual void    WriteInt32(const char *address, intptr_t offset, int val) = 0;
 	virtual void    WriteFloat(const char *address, intptr_t offset, float val) = 0;
 
 protected:
@@ -109,9 +109,9 @@ struct ICCStringClass {
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *, bool plugin_object = false);
+extern int ccRegisterManagedObject(const void *object, ICCDynamicObject *, bool plugin_object = false);
 // register a de-serialized object
-extern int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *, bool plugin_object = false);
+extern int ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *, bool plugin_object = false);
 // unregister a particular object
 extern int   ccUnRegisterManagedObject(const void *object);
 // remove all registered objects
@@ -121,15 +121,15 @@ extern void  ccSerializeAllObjects(Shared::Stream *out);
 // un-serialise all objects (will remove all currently registered ones)
 extern int   ccUnserializeAllObjects(Shared::Stream *in, ICCObjectReader *callback);
 // dispose the object if RefCount==0
-extern void  ccAttemptDisposeObject(int32_t handle);
+extern void  ccAttemptDisposeObject(int handle);
 // translate between object handles and memory addresses
-extern int32_t ccGetObjectHandleFromAddress(const char *address);
+extern int ccGetObjectHandleFromAddress(const char *address);
 // TODO: not sure if it makes any sense whatsoever to use "const char*"
 // in these functions, might as well change to char* or just void*.
-extern const char *ccGetObjectAddressFromHandle(int32_t handle);
+extern const char *ccGetObjectAddressFromHandle(int handle);
 
-extern int ccAddObjectReference(int32_t handle);
-extern int ccReleaseObjectReference(int32_t handle);
+extern int ccAddObjectReference(int handle);
+extern int ccReleaseObjectReference(int handle);
 
 extern ICCStringClass *stringClassImpl;
 
