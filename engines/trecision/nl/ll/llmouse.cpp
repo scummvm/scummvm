@@ -25,7 +25,6 @@
 #include <string.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
@@ -72,7 +71,7 @@ uint16 vr(int16 x, int16 y) {
 					VPix
 --------------------------------------------------*/
 void VPix(int16 x, int16 y, uint16 col) {
-	if (Video == NULL)
+	if (Video == nullptr)
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
@@ -206,7 +205,7 @@ void VMouseCopy() {
  TextLength - calcola lunghezza str dal car 0 a num
 --------------------------------------------------*/
 uint16 TextLength(const char *sign, uint16 num) {
-	if (sign == NULL)
+	if (sign == nullptr)
 		return 0;
 
 	uint16 Len;
@@ -217,7 +216,7 @@ uint16 TextLength(const char *sign, uint16 num) {
 
 	uint16 b = 0;
 	for (uint16 c = 0; c < Len; c++)
-		b += (Font[(uint8)sign[c] * 3 + 2]);
+		b += Font[(uint8)sign[c] * 3 + 2];
 
 	return b;
 }
@@ -231,8 +230,8 @@ uint16 CheckDText(struct SDText t) {
 	uint16 dx = t.dx;
 	const char *sign = t.sign;
 
-	if (sign == NULL)
-		return (0);
+	if (sign == nullptr)
+		return 0;
 
 	uint16 a = 0;
 	uint16 dy = 0;
@@ -242,7 +241,7 @@ uint16 CheckDText(struct SDText t) {
 
 	if (TextLength(sign, 0) <= dx) {
 		strcpy((char *)DTextLines[CurLine], sign);
-		return (CARHEI);
+		return CARHEI;
 	}
 
 	while (a < strlen(sign)) {
@@ -262,7 +261,7 @@ uint16 CheckDText(struct SDText t) {
 				dy += CARHEI;
 				a = CurInit;
 			} else
-				return (0);
+				return 0;
 		} else if (sign[a] == '\0') {
 			if (TextLength(sign + CurInit, a - CurInit) <= dx) {
 				for (b = CurInit; b < a; b++)
@@ -271,8 +270,10 @@ uint16 CheckDText(struct SDText t) {
 
 				dy += CARHEI;
 
-				return (dy);
-			} else if (TextLength(sign + CurInit, LastSpace - CurInit) <= dx) {
+				return dy;
+			}
+
+			if (TextLength(sign + CurInit, LastSpace - CurInit) <= dx) {
 				for (b = CurInit; b < LastSpace; b++)
 					DTextLines[CurLine][b - CurInit] = sign[b];
 
@@ -290,12 +291,12 @@ uint16 CheckDText(struct SDText t) {
 
 					dy += CARHEI;
 				}
-				return (dy);
-			} else
-				return (0);
+				return dy;
+			}
+			return 0;
 		}
 	}
-	return (0);
+	return 0;
 }
 
 /*-----------------10/12/95 15.43-------------------

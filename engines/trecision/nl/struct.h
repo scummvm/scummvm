@@ -173,6 +173,8 @@ struct SScriptFrame {
 	uint16 _longParam;
 
 	bool  _noWait;
+
+	void SendFrame();
 };
 
 struct SScript {
