@@ -288,7 +288,6 @@ void Room::demon1Timer1Expired() {
 			strcpy(_roomVar.demon.d6, "klg1fk");
 			break;
 		default:
-			// TODO
 			return;
 		}
 	} else if (!_roomVar.demon.klingonShot[1]) {
@@ -308,7 +307,6 @@ void Room::demon1Timer1Expired() {
 			strcpy(_roomVar.demon.d6, "klg2fk");
 			break;
 		default:
-			// TODO
 			return;
 		}
 	} else {
@@ -328,7 +326,6 @@ void Room::demon1Timer1Expired() {
 			strcpy(_roomVar.demon.d6, "klg3fk");
 			break;
 		default:
-			// TODO
 			return;
 		}
 	}
