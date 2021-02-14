@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-13 18:41+0000\n"
+"PO-Revision-Date: 2021-02-14 23:58+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3868,6 +3868,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
+"汎用MIDIデバイスを使用していますが\n"
+"ゲームはRoland MT32 MIDIのみサポートしています。\n"
+"使用中のデバイスをRolandデバイスとして\n"
+"マッピングを試みます。\n"
+"一部のトラックは正しく聞こえない事があります。"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -3875,7 +3880,7 @@ msgstr "リソースの初期化に失敗しました"
 
 #: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "必要なゲームリソースが見つかりませんでした"
 
 #: engines/bladerunner/bladerunner.cpp:2271
 msgid ""
@@ -3883,6 +3888,8 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"警告：このゲームはディレクターズカットモードで保存されましたが、現在はオリジナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカットモー"
+"ドとして調整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
@@ -3890,6 +3897,8 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"警告：このゲームはオリジナルモードで保存されましたが、現在はディレクターズカットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとして調"
+"整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
@@ -3902,7 +3911,7 @@ msgstr "拡大モード："
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "ゲームは、俳優のセリフやナレーションの後ろに笑いを追加します"
 
 #: engines/bladerunner/detection.cpp:57
 #, fuzzy
@@ -3911,7 +3920,7 @@ msgstr "拡大モード："
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "ゲームは俳優のサイズを縮め、声のピッチを上げます"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
