@@ -117,8 +117,7 @@ struct ExtendedSavegameHeader {
  *
  * Every engine "plugin" provides a hook to get an instance of a MetaEngineDetection
  * subclass for that "engine plugin". For example, SCUMM provides ScummMetaEngineDetection.
- * This is then in turn used by the frontend code to detect games,
- * and other useful functionality. 
+ * This is then in turn used by the frontend code to detect games, and other useful functionality.
  *
  * To instantiate actual Engine objects, see the class @ref MetaEngine.
  */
@@ -189,8 +188,7 @@ public:
 };
 
 /**
- * A MetaEngine is another factory for Engine instances, and is very
- * similar to meta engines.
+ * A MetaEngine is another factory for Engine instances, and is very similar to MetaEngineDetection.
  *
  * This class, however, is made of of bridged functionalities that can be used to connect
  * an actual Engine with a MetaEngine. Every engine "plugin" provides a hook to get an instance
@@ -213,12 +211,12 @@ public:
 	/**
 	 * Name of the engine plugin.
 	 *
-	 * Classes inheriting a MetaEngineConnect must provide an engineID here,
+	 * Classes inheriting a MetaEngine must provide an engineID here,
 	 * which can then be used to match an Engine with MetaEngine.
 	 *
-	 * For example, ScummMetaEngine inherits MetaEngine and provides a engineID of "Scumm".
-	 * ScummMetaEngineConnect inherits MetaEngineConnect and provides the name "Scumm".
-	 * This way, an Engine can be easily matched with a MetaEngine.
+	 * For example, ScummMetaEngineDetection inherits MetaEngineDetection and provides a
+	 * engineID of "scumm". ScummMetaEngine inherits MetaEngine and provides the name
+	 * "Scumm". This way, an Engine can be easily matched with a MetaEngine.
 	 */
 	virtual const char *getName() const = 0;
 
@@ -356,8 +354,8 @@ public:
 	 * Engines can build custom option dialogs from here, but by default a simple widget
 	 * allowing to configure the extra GUI options is used.
 	 *
-	 * The engine that builds the Engines tab in the Edit Game dialog uses a MetaEngine.
-	 * The engine that specifies a custom dialog when a game is running uses a MetaEngineConnect.
+	 * The engine that builds the Engines tab in the Edit Game dialog uses a MetaEngineDetection.
+	 * The engine that specifies a custom dialog when a game is running uses a MetaEngine.
 	 *
 	 * Engines are not supposed to have an Engine tab in the Edit Game dialog
 	 * can return nullptr.

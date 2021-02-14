@@ -181,17 +181,17 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		err = Common::kPathNotDirectory;
 	}
 
-	// Create the game's MetaEngine.
-	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+	// Create the game's MetaEngineDetection.
+	const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
 	if (err.getCode() == Common::kNoError) {
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
-		metaEngine.registerDefaultSettings(target);
+		metaEngineDetection.registerDefaultSettings(target);
 	}
 
-	// Right now we have a MetaEngine plugin. We must find the matching engine plugin to
-	// call createInstance and other connecting functions.
+	// Right now we have a MetaEngineDetection plugin. We must find the matching
+	// engine plugin to call createInstance and other connecting functions.
 	Plugin *enginePluginToLaunchGame = PluginMan.getEngineFromMetaEngine(plugin);
 
 	if (!enginePluginToLaunchGame) {
@@ -199,9 +199,9 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		return err;
 	}
 
-	// Create the game's MetaEngineConnect.
-	const MetaEngine &metaEngineConnect = enginePluginToLaunchGame->get<MetaEngine>();
-	err = metaEngineConnect.createInstance(&system, &engine);
+	// Create the game's MetaEngine.
+	const MetaEngine &metaEngine = enginePluginToLaunchGame->get<MetaEngine>();
+	err = metaEngine.createInstance(&system, &engine);
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -229,7 +229,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
-		PlainGameDescriptor game = metaEngine.findGame(ConfMan.get("gameid").c_str());
+		PlainGameDescriptor game = metaEngineDetection.findGame(ConfMan.get("gameid").c_str());
 		if (game.description) {
 			caption = game.description;
 		}
@@ -292,7 +292,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #endif // USE_TRANSLATION
 
 	// Initialize any game-specific keymaps
-	Common::KeymapArray gameKeymaps = metaEngineConnect.initKeymaps(target.c_str());
+	Common::KeymapArray gameKeymaps = metaEngine.initKeymaps(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
 	for (uint i = 0; i < gameKeymaps.size(); i++) {
 		keymapper->addGameKeymap(gameKeymaps[i]);
