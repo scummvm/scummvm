@@ -58,60 +58,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-    {
-		GAMEOPTION_FONT_OVERRIDE,
-		{
-			_s("Enable font replacement"),
-			_s("Replaces game fonts with rendered fonts"),
-			"font_override",
-			false
-		}
-	},
-	{
-		GAMEOPTION_FONT_ANTIALIASING,
-		{
-			_s("Enable font anti-aliasing"),
-			_s("When font anti-aliasing is enabled, the text is smoother."),
-			"font_antialiasing",
-			false
-		}
-	},
-	{
-		GAMEOPTION_FOOTSTEPS,
-		{
-			_s("Play foot step sounds"),
-			_s("Plays sound when the player moves."),
-			"footsteps",
-			true
-		}
-	},
-	{
-		GAMEOPTION_TARGETED_JUMP,
-		{
-			_s("Enable jump to mouse position"),
-			_s("Jumping while not moving targets the mouse cursor rather than direction only."),
-			"targetedjump",
-			true
-		}
-	},
-	{
-		GAMEOPTION_FRAMESKIP,
-		{
-			_s("Enable frame skipping"),
-			_s("Allow the game to skip animation frames when running too slow."),
-			"frameSkip",
-			false
-		}
-	},
-	{
-		GAMEOPTION_FRAMELIMIT,
-		{
-			_s("Enable frame limiting"),
-			_s("Limits the speed of the game to prevent running too fast."),
-			"frameLimit",
-			true
-		}
-	},
     AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
