@@ -755,6 +755,17 @@ void SoundCommandParser::reconstructPlayList() {
 			processPlaySound(entry->soundObj, entry->playBed, true);
 		}
 	}
+
+	// Emulate the original SCI0 behavior: If no sound with status kSoundPlaying was found we
+	// look for the first sound with status kSoundPaused and start that. It relies on a correctly
+	// sorted playlist, but we have that...
+	if (_soundVersion <= SCI_VERSION_0_LATE && !_music->getFirstSlotWithStatus(kSoundPlaying)) {
+		if (MusicEntry *pSnd = _music->getFirstSlotWithStatus(kSoundPaused)) {
+			writeSelectorValue(_segMan, pSnd->soundObj, SELECTOR(loop), pSnd->loop);
+			writeSelectorValue(_segMan, pSnd->soundObj, SELECTOR(priority), pSnd->priority);
+			processPlaySound(pSnd->soundObj, pSnd->playBed, true);
+		}
+	}
 }
 
 #ifdef ENABLE_SCI32

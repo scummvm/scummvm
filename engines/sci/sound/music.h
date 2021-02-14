@@ -84,8 +84,6 @@ public:
 
 	int time; // "tim"estamp to indicate in which order songs have been added
 
-	bool isQueued; // for SCI0 only!
-
 	uint16 dataInc;
 	uint16 ticker;
 	uint16 signal;
@@ -229,11 +227,13 @@ public:
 	}
 
 	MusicEntry *getSlot(reg_t obj);
-	MusicEntry *getActiveSci0MusicSlot();
+	MusicEntry *getFirstSlotWithStatus(SoundStatus status);
 
 	void pushBackSlot(MusicEntry *slotEntry) {
 		Common::StackLock lock(_mutex);
 		_playList.push_back(slotEntry);
+		if (_soundVersion <= SCI_VERSION_0_LATE) // I limit this to SCI0, since it always inserts the nodes at the correct position, but no idea about >=SCI1
+			sortPlayList();
 	}
 
 	void printPlayList(Console *con);
