@@ -404,6 +404,9 @@ ifdef USE_OGG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
+ifdef USE_FLUIDLITE
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfluidlite.a
+else
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += -liconv \
                 -framework CoreMIDI -framework CoreAudio\
@@ -414,6 +417,7 @@ OSX_STATIC_LIBS += -liconv \
 ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
 OSX_STATIC_LIBS += -lreadline -framework AudioUnit
+endif
 endif
 endif
 endif

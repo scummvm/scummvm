@@ -29,7 +29,11 @@
 // Fluidsynth v2.1+ uses printf in one of it's headers,
 // include/fluidsynth/log.h around line 82 so need to include this
 // prior scummsys.h inclusion and thus forbidden.h
+#ifdef USE_FLUIDLITE
+#include <fluidlite.h>
+#else
 #include <fluidsynth.h>
+#endif
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
