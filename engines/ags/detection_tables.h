@@ -159,8 +159,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
 	{ "geminirue", "Gemini Rue" },
 	{ "goldenwake", "A Golden Wake" },
+	{ "guardduty", "Guard Duty" },
 	{ "lamplightcity", "Lamplight City" },
 	{ "primordia", "Primordia" },
+	{ "qfi", "Quest for Infamy" },
 	{ "resonance", "Resonance" },
 	{ "richardandalice", "Richard & Alice" },
 	{ "samaritan", "The Samaritan Paradox" },
@@ -952,7 +954,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "purityofthesurf", "Purity of the Surf" },
 	{ "puzzlebots", "Puzzle Bots" },
 	{ "pxenophobe", "PXenophobe" },
-	{ "qfi", "Quest for Infamy" },
 	{ "quantumnauts", "QUANTUMNAUTS" },
 	{ "questfighter", "Quest Fighter" },
 	{ "questfighter2", "Quest Fighter II" },
@@ -1531,10 +1532,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
 	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814364), // Humble Bundle
+	ENGLISH_ENTRY("guardduty", "GuardDuty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335), // Steam
+	ENGLISH_ENTRY("guardduty", "GuardDuty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
 	ENGLISH_ENTRY("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664), // Steam
+	ENGLISH_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
+	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096), // GOG
+	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
 	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
@@ -1546,6 +1552,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("superjazzman", "SJM.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
+	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702), // GOG
 	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
 	ENGLISH_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
 
@@ -1583,6 +1590,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_DEMO("pubmastersquest", "Pub Master Quest [Demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	ENGLISH_DEMO("puzzlebots", "Puzzlebots_Demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
 	ENGLISH_DEMO("quantumnauts", "QNDEMO.exe", "aeb2dd29e5ff839cb3ee86cf3e87e3ca", 134237367),
+	ENGLISH_DEMO("qfi", "QFI_DEMO2.exe", "9e7eb04bb1652e188e6f2633eed89408", 82314927),
 	ENGLISH_DEMO("searchforsanity", "sfs.exe", "308d35bc34e9df29d8acce615593e3e7", 9097147),
 	ENGLISH_DEMO("shadowsoftheempire", "sote_td.exe", "b8cd640b45c5a79c33c7a8a8fe32ebe2", 63299246),
 	ENGLISH_DEMO("shardlight", "Shardlight Demo.exe", "ee801fba52d252249677a9170bd2db96", 642405010), // Steam
@@ -2380,8 +2388,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("purgatorio", "Purgatorio 0.1.exe", "18b284c22010850f79bc5c20054a70c4", 194293367),
 	ENGLISH_ENTRY("purityofthesurf", "Surf.exe", "71ca0d6c1c699595f28a2125948d4a84", 11315703),
 	ENGLISH_ENTRY("pxenophobe", "ProjXeno.exe", "465f972675db2da6040518221af5b0ba", 79053486),
-	ENGLISH_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
-	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
 	ENGLISH_ENTRY("questfighter", "Quest Fighter.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2914128),
 	ENGLISH_ENTRY("questfighter2", "Quest Fighter 2.exe", "4d7d2addcde045dae6e0363a43f9acad", 5219511),
 	ENGLISH_ENTRY("questforcinema", "Questforcinema.exe", "465f972675db2da6040518221af5b0ba", 2670632),
