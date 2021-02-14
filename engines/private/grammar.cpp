@@ -63,11 +63,19 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-
-
+/* Substitute the type names.  */
+#define YYSTYPE         PRIVATE_STYPE
+/* Substitute the variable and function names.  */
+#define yyparse         PRIVATE_parse
+#define yylex           PRIVATE_lex
+#define yyerror         PRIVATE_xerror
+#define yydebug         PRIVATE_debug
+#define yynerrs         PRIVATE_nerrs
+#define yylval          PRIVATE_lval
+#define yychar          PRIVATE_char
 
 /* First part of user prologue.  */
-#line 27 "engines/private/grammar.y"
+#line 29 "engines/private/grammar.y"
 
 
 #include "grammar.h"
@@ -78,20 +86,19 @@
 
 using namespace Private;
 
-extern int yylex();
-extern int yyparse();
+extern int PRIVATE_lex();
+extern int PRIVATE_parse();
 
-void yyerror(const char *str) {
+void PRIVATE_xerror(const char *str) {
 }
 
-
-int yywrap() {
+int PRIVATE_wrap() {
     return 1;
 }
 
 
 
-#line 95 "engines/private/grammar.cpp"
+#line 102 "engines/private/grammar.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -415,7 +422,7 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined PRIVATE_STYPE_IS_TRIVIAL && PRIVATE_STYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
@@ -532,23 +539,23 @@ static const yytype_int8 yytranslate[] =
       15,    16,    17,    18,    19,    20
 };
 
-#if YYDEBUG
+#if PRIVATE_DEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    67,    67,    68,    71,    72,    73,    76,    77,    80,
-      81,    84,    91,    92,    97,   105,   106,   109,   112,   115,
-     118,   119,   124,   128,   129,   132,   140,   141,   149,   152,
-     153,   154,   155,   156,   159,   160,   161,   162,   163,   164,
-     167,   168,   169,   170,   171,   172,   173,   174,   175,   176,
-     177
+       0,    68,    68,    69,    72,    73,    74,    77,    78,    81,
+      82,    85,    92,    93,    98,   106,   107,   110,   113,   116,
+     119,   120,   125,   129,   130,   133,   141,   142,   150,   153,
+     154,   155,   156,   157,   160,   161,   162,   163,   164,   165,
+     168,   169,   170,   171,   172,   173,   174,   175,   176,   177,
+     178
 };
 #endif
 
 /** Accessing symbol of state STATE.  */
 #define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
 
-#if YYDEBUG || 0
+#if PRIVATE_DEBUG || 0
 /* The user-facing name of the symbol whose (internal) number is
    YYSYMBOL.  No bounds checking.  */
 static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
@@ -727,7 +734,7 @@ static const yytype_int8 yyr2[] =
 enum { YYENOMEM = -2 };
 
 #define yyerrok         (yyerrstatus = 0)
-#define yyclearin       (yychar = YYEMPTY)
+#define yyclearin       (yychar = PRIVATE_EMPTY)
 
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
@@ -738,7 +745,7 @@ enum { YYENOMEM = -2 };
 
 #define YYBACKUP(Token, Value)                                    \
   do                                                              \
-    if (yychar == YYEMPTY)                                        \
+    if (yychar == PRIVATE_EMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
         yylval = (Value);                                         \
@@ -754,12 +761,12 @@ enum { YYENOMEM = -2 };
   while (0)
 
 /* Backward compatibility with an undocumented macro.
-   Use YYerror or YYUNDEF. */
-#define YYERRCODE YYUNDEF
+   Use PRIVATE_error or PRIVATE_UNDEF. */
+#define YYERRCODE PRIVATE_UNDEF
 
 
 /* Enable debugging if requested.  */
-#if YYDEBUG
+#if PRIVATE_DEBUG
 
 # ifndef YYFPRINTF
 #  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
@@ -884,12 +891,12 @@ do {                                    \
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
 int yydebug;
-#else /* !YYDEBUG */
+#else /* !PRIVATE_DEBUG */
 # define YYDPRINTF(Args) ((void) 0)
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
 # define YY_REDUCE_PRINT(Rule)
-#endif /* !YYDEBUG */
+#endif /* !PRIVATE_DEBUG */
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
@@ -989,7 +996,7 @@ yyparse (void)
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yychar = YYEMPTY; /* Cause a token to be read.  */
+  yychar = PRIVATE_EMPTY; /* Cause a token to be read.  */
   goto yysetstate;
 
 
@@ -1097,25 +1104,25 @@ yybackup:
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
-  if (yychar == YYEMPTY)
+  if (yychar == PRIVATE_EMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex ();
     }
 
-  if (yychar <= YYEOF)
+  if (yychar <= PRIVATE_EOF)
     {
-      yychar = YYEOF;
+      yychar = PRIVATE_EOF;
       yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
-  else if (yychar == YYerror)
+  else if (yychar == PRIVATE_error)
     {
       /* The scanner already issued an error message, process directly
          to error recovery.  But do not keep the error token as
          lookahead, it is too special and may lead us to an endless
          loop in error recovery. */
-      yychar = YYUNDEF;
+      yychar = PRIVATE_UNDEF;
       yytoken = YYSYMBOL_YYerror;
       goto yyerrlab1;
     }
@@ -1152,7 +1159,7 @@ yybackup:
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 
   /* Discard the shifted token.  */
-  yychar = YYEMPTY;
+  yychar = PRIVATE_EMPTY;
   goto yynewstate;
 
 
@@ -1188,31 +1195,31 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* line: DEBUGTOK '{' debug '}'  */
-#line 71 "engines/private/grammar.y"
+#line 72 "engines/private/grammar.y"
                                              { /* Not used in the game */ }
-#line 1194 "engines/private/grammar.cpp"
+#line 1201 "engines/private/grammar.cpp"
     break;
 
   case 5: /* line: DEFINETOK NAME '{' define '}'  */
-#line 72 "engines/private/grammar.y"
+#line 73 "engines/private/grammar.y"
                                              { installAll((yyvsp[-3].s)); }
-#line 1200 "engines/private/grammar.cpp"
+#line 1207 "engines/private/grammar.cpp"
     break;
 
   case 6: /* line: SETTINGTOK NAME '{' statements '}'  */
-#line 73 "engines/private/grammar.y"
+#line 74 "engines/private/grammar.y"
                                              { saveSetting((yyvsp[-3].s)); initSetting(); }
-#line 1206 "engines/private/grammar.cpp"
+#line 1213 "engines/private/grammar.cpp"
     break;
 
   case 9: /* statements: %empty  */
-#line 80 "engines/private/grammar.y"
+#line 81 "engines/private/grammar.y"
                                { (yyval.inst) = progp; }
-#line 1212 "engines/private/grammar.cpp"
+#line 1219 "engines/private/grammar.cpp"
     break;
 
   case 11: /* statement: GOTOTOK NAME ';'  */
-#line 84 "engines/private/grammar.y"
+#line 85 "engines/private/grammar.y"
                             {
         (yyval.inst) = progp;
         code2(strpush, (Private::Inst) Private::constant(STRING, 0, (yyvsp[-1].s)));
@@ -1220,99 +1227,99 @@ yyreduce:
         code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
-#line 1224 "engines/private/grammar.cpp"
+#line 1231 "engines/private/grammar.cpp"
     break;
 
   case 12: /* statement: fcall ';'  */
-#line 91 "engines/private/grammar.y"
+#line 92 "engines/private/grammar.y"
                             { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1230 "engines/private/grammar.cpp"
+#line 1237 "engines/private/grammar.cpp"
     break;
 
   case 13: /* statement: if cond body end  */
-#line 92 "engines/private/grammar.y"
+#line 93 "engines/private/grammar.y"
                            {
                 /* else-less if */
                 ((yyvsp[-3].inst))[1] = (Inst)(yyvsp[-1].inst);     /* thenpart */
                 ((yyvsp[-3].inst))[3] = (Inst)(yyvsp[0].inst); 
                 }
-#line 1240 "engines/private/grammar.cpp"
+#line 1247 "engines/private/grammar.cpp"
     break;
 
   case 14: /* statement: if cond body end ELSETOK body end  */
-#line 97 "engines/private/grammar.y"
+#line 98 "engines/private/grammar.y"
                                             { 
                 /* if with else */
                 ((yyvsp[-6].inst))[1] = (Inst)(yyvsp[-4].inst);     /* thenpart */
                 ((yyvsp[-6].inst))[2] = (Inst)(yyvsp[-1].inst);     /* elsepart */
                 ((yyvsp[-6].inst))[3] = (Inst)(yyvsp[0].inst); 
                 }
-#line 1251 "engines/private/grammar.cpp"
+#line 1258 "engines/private/grammar.cpp"
     break;
 
   case 15: /* body: statement  */
-#line 105 "engines/private/grammar.y"
+#line 106 "engines/private/grammar.y"
                              { (yyval.inst) = (yyvsp[0].inst); }
-#line 1257 "engines/private/grammar.cpp"
+#line 1264 "engines/private/grammar.cpp"
     break;
 
   case 16: /* body: '{' statements '}'  */
-#line 106 "engines/private/grammar.y"
+#line 107 "engines/private/grammar.y"
                              { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1263 "engines/private/grammar.cpp"
+#line 1270 "engines/private/grammar.cpp"
     break;
 
   case 17: /* end: %empty  */
-#line 109 "engines/private/grammar.y"
+#line 110 "engines/private/grammar.y"
                              { code(STOP); (yyval.inst) = progp; }
-#line 1269 "engines/private/grammar.cpp"
+#line 1276 "engines/private/grammar.cpp"
     break;
 
   case 18: /* if: IFTOK  */
-#line 112 "engines/private/grammar.y"
+#line 113 "engines/private/grammar.y"
           { (yyval.inst) = code(ifcode); code3(STOP, STOP, STOP); }
-#line 1275 "engines/private/grammar.cpp"
+#line 1282 "engines/private/grammar.cpp"
     break;
 
   case 19: /* cond: '(' expr ')'  */
-#line 115 "engines/private/grammar.y"
+#line 116 "engines/private/grammar.y"
                         { code(STOP); (yyval.inst) = (yyvsp[-1].inst); }
-#line 1281 "engines/private/grammar.cpp"
+#line 1288 "engines/private/grammar.cpp"
     break;
 
   case 21: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  */
-#line 119 "engines/private/grammar.y"
+#line 120 "engines/private/grammar.y"
                                                                         { 
           Common::Rect *r = new Common::Rect((yyvsp[-9].sym)->u.val, (yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val);
           assert(r->isValidRect()); 
           defineSymbol((yyvsp[-13].s), r); 
           }
-#line 1291 "engines/private/grammar.cpp"
+#line 1298 "engines/private/grammar.cpp"
     break;
 
   case 22: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 124 "engines/private/grammar.y"
+#line 125 "engines/private/grammar.y"
                                                             {
           Common::Rect *r = new Common::Rect((yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val, (yyvsp[-1].sym)->u.val);  
           defineSymbol((yyvsp[-11].s), r); 
           }
-#line 1300 "engines/private/grammar.cpp"
+#line 1307 "engines/private/grammar.cpp"
     break;
 
   case 23: /* define: NAME ',' define  */
-#line 128 "engines/private/grammar.y"
+#line 129 "engines/private/grammar.y"
                           { defineSymbol((yyvsp[-2].s), NULL); }
-#line 1306 "engines/private/grammar.cpp"
+#line 1313 "engines/private/grammar.cpp"
     break;
 
   case 24: /* define: NAME  */
-#line 129 "engines/private/grammar.y"
+#line 130 "engines/private/grammar.y"
                           { defineSymbol((yyvsp[0].s), NULL); }
-#line 1312 "engines/private/grammar.cpp"
+#line 1319 "engines/private/grammar.cpp"
     break;
 
   case 25: /* fcall: GOTOTOK '(' NAME ')'  */
-#line 132 "engines/private/grammar.y"
+#line 133 "engines/private/grammar.y"
                                {
                                (yyval.inst) = progp;
                                code2(strpush, (Private::Inst) Private::constant(STRING, 0, (yyvsp[-1].s)));
@@ -1320,166 +1327,166 @@ yyreduce:
                                code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
                                code1(funcpush);
                                }
-#line 1324 "engines/private/grammar.cpp"
+#line 1331 "engines/private/grammar.cpp"
     break;
 
   case 26: /* fcall: RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 140 "engines/private/grammar.y"
+#line 141 "engines/private/grammar.y"
                                                    { (yyval.inst) = progp; }
-#line 1330 "engines/private/grammar.cpp"
+#line 1337 "engines/private/grammar.cpp"
     break;
 
   case 27: /* fcall: NAME '(' startp params ')'  */
-#line 141 "engines/private/grammar.y"
+#line 142 "engines/private/grammar.y"
                                       {
                                (yyval.inst) = (yyvsp[-2].inst);
                                code2(constpush, (Private::Inst) constant(NUM, (yyvsp[-1].narg), NULL));
                                code2(strpush, (Private::Inst) constant(STRING, 0, (yyvsp[-4].s))); 
                                code1(funcpush);
                                }
-#line 1341 "engines/private/grammar.cpp"
+#line 1348 "engines/private/grammar.cpp"
     break;
 
   case 28: /* startp: %empty  */
-#line 149 "engines/private/grammar.y"
+#line 150 "engines/private/grammar.y"
                     { (yyval.inst) = progp; }
-#line 1347 "engines/private/grammar.cpp"
+#line 1354 "engines/private/grammar.cpp"
     break;
 
   case 29: /* params: %empty  */
-#line 152 "engines/private/grammar.y"
+#line 153 "engines/private/grammar.y"
                             { (yyval.narg) = 0; }
-#line 1353 "engines/private/grammar.cpp"
+#line 1360 "engines/private/grammar.cpp"
     break;
 
   case 30: /* params: fcall ',' params  */
-#line 153 "engines/private/grammar.y"
+#line 154 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1359 "engines/private/grammar.cpp"
+#line 1366 "engines/private/grammar.cpp"
     break;
 
   case 31: /* params: expr ',' params  */
-#line 154 "engines/private/grammar.y"
+#line 155 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1365 "engines/private/grammar.cpp"
+#line 1372 "engines/private/grammar.cpp"
     break;
 
   case 32: /* params: expr  */
-#line 155 "engines/private/grammar.y"
+#line 156 "engines/private/grammar.y"
                       { (yyval.narg) = 1; }
-#line 1371 "engines/private/grammar.cpp"
+#line 1378 "engines/private/grammar.cpp"
     break;
 
   case 33: /* params: fcall  */
-#line 156 "engines/private/grammar.y"
+#line 157 "engines/private/grammar.y"
                       { (yyval.narg) = 1; }
-#line 1377 "engines/private/grammar.cpp"
+#line 1384 "engines/private/grammar.cpp"
     break;
 
   case 34: /* value: NULLTOK  */
-#line 159 "engines/private/grammar.y"
+#line 160 "engines/private/grammar.y"
                    { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-#line 1383 "engines/private/grammar.cpp"
+#line 1390 "engines/private/grammar.cpp"
     break;
 
   case 35: /* value: FALSETOK  */
-#line 160 "engines/private/grammar.y"
+#line 161 "engines/private/grammar.y"
                    { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-#line 1389 "engines/private/grammar.cpp"
+#line 1396 "engines/private/grammar.cpp"
     break;
 
   case 36: /* value: TRUETOK  */
-#line 161 "engines/private/grammar.y"
+#line 162 "engines/private/grammar.y"
                    { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 1, NULL)); }
-#line 1395 "engines/private/grammar.cpp"
+#line 1402 "engines/private/grammar.cpp"
     break;
 
   case 37: /* value: NUM  */
-#line 162 "engines/private/grammar.y"
+#line 163 "engines/private/grammar.y"
                    { code2(Private::constpush, (Private::Inst)(yyvsp[0].sym)); }
-#line 1401 "engines/private/grammar.cpp"
+#line 1408 "engines/private/grammar.cpp"
     break;
 
   case 38: /* value: STRING  */
-#line 163 "engines/private/grammar.y"
+#line 164 "engines/private/grammar.y"
                    { code2(Private::strpush, (Private::Inst)(yyvsp[0].sym)); }
-#line 1407 "engines/private/grammar.cpp"
+#line 1414 "engines/private/grammar.cpp"
     break;
 
   case 39: /* value: NAME  */
-#line 164 "engines/private/grammar.y"
+#line 165 "engines/private/grammar.y"
                    { code1(Private::varpush); code1((Private::Inst) lookupName((yyvsp[0].s))); code1(Private::eval); }
-#line 1413 "engines/private/grammar.cpp"
+#line 1420 "engines/private/grammar.cpp"
     break;
 
   case 40: /* expr: value  */
-#line 167 "engines/private/grammar.y"
+#line 168 "engines/private/grammar.y"
                           { (yyval.inst) = (yyvsp[0].inst); }
-#line 1419 "engines/private/grammar.cpp"
+#line 1426 "engines/private/grammar.cpp"
     break;
 
   case 41: /* expr: '!' value  */
-#line 168 "engines/private/grammar.y"
+#line 169 "engines/private/grammar.y"
                           { code1(Private::negate); (yyval.inst) = (yyvsp[0].inst); }
-#line 1425 "engines/private/grammar.cpp"
+#line 1432 "engines/private/grammar.cpp"
     break;
 
   case 42: /* expr: value EQ value  */
-#line 169 "engines/private/grammar.y"
+#line 170 "engines/private/grammar.y"
                           { code1(Private::eq); }
-#line 1431 "engines/private/grammar.cpp"
+#line 1438 "engines/private/grammar.cpp"
     break;
 
   case 43: /* expr: value NEQ value  */
-#line 170 "engines/private/grammar.y"
+#line 171 "engines/private/grammar.y"
                           { code1(Private::ne); }
-#line 1437 "engines/private/grammar.cpp"
+#line 1444 "engines/private/grammar.cpp"
     break;
 
   case 44: /* expr: value '+' value  */
-#line 171 "engines/private/grammar.y"
+#line 172 "engines/private/grammar.y"
                           { code1(Private::add); }
-#line 1443 "engines/private/grammar.cpp"
+#line 1450 "engines/private/grammar.cpp"
     break;
 
   case 45: /* expr: value '<' value  */
-#line 172 "engines/private/grammar.y"
+#line 173 "engines/private/grammar.y"
                           { code1(Private::lt); }
-#line 1449 "engines/private/grammar.cpp"
+#line 1456 "engines/private/grammar.cpp"
     break;
 
   case 46: /* expr: value '>' value  */
-#line 173 "engines/private/grammar.y"
+#line 174 "engines/private/grammar.y"
                           { code1(Private::gt); }
-#line 1455 "engines/private/grammar.cpp"
+#line 1462 "engines/private/grammar.cpp"
     break;
 
   case 47: /* expr: value LTE value  */
-#line 174 "engines/private/grammar.y"
+#line 175 "engines/private/grammar.y"
                           { code1(Private::le); }
-#line 1461 "engines/private/grammar.cpp"
+#line 1468 "engines/private/grammar.cpp"
     break;
 
   case 48: /* expr: value GTE value  */
-#line 175 "engines/private/grammar.y"
+#line 176 "engines/private/grammar.y"
                           { code1(Private::ge); }
-#line 1467 "engines/private/grammar.cpp"
+#line 1474 "engines/private/grammar.cpp"
     break;
 
   case 49: /* expr: value '+'  */
-#line 176 "engines/private/grammar.y"
+#line 177 "engines/private/grammar.y"
                           { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1473 "engines/private/grammar.cpp"
+#line 1480 "engines/private/grammar.cpp"
     break;
 
   case 50: /* expr: RANDOMTOK '(' NUM '%' ')'  */
-#line 177 "engines/private/grammar.y"
+#line 178 "engines/private/grammar.y"
                                     { code3(Private::constpush, (Private::Inst)(yyvsp[-2].sym), randbool); }
-#line 1479 "engines/private/grammar.cpp"
+#line 1486 "engines/private/grammar.cpp"
     break;
 
 
-#line 1483 "engines/private/grammar.cpp"
+#line 1490 "engines/private/grammar.cpp"
 
       default: break;
     }
@@ -1521,7 +1528,7 @@ yyreduce:
 yyerrlab:
   /* Make sure we have latest lookahead translation.  See comments at
      user semantic actions for why this is necessary.  */
-  yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
+  yytoken = yychar == PRIVATE_EMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
@@ -1534,17 +1541,17 @@ yyerrlab:
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= YYEOF)
+      if (yychar <= PRIVATE_EOF)
         {
           /* Return failure if at end of input.  */
-          if (yychar == YYEOF)
+          if (yychar == PRIVATE_EOF)
             YYABORT;
         }
       else
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval);
-          yychar = YYEMPTY;
+          yychar = PRIVATE_EMPTY;
         }
     }
 
@@ -1647,7 +1654,7 @@ yyexhaustedlab:
 | yyreturn -- parsing is finished, clean up and return.  |
 `-------------------------------------------------------*/
 yyreturn:
-  if (yychar != YYEMPTY)
+  if (yychar != PRIVATE_EMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */

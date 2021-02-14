@@ -23,6 +23,8 @@
 %require "3.6"
 %defines "engines/private/tokens.h"
 %output "engines/private/grammar.cpp"
+%define api.prefix {PRIVATE_}
+
 
 %{
 
@@ -34,14 +36,13 @@
 
 using namespace Private;
 
-extern int yylex();
-extern int yyparse();
+extern int PRIVATE_lex();
+extern int PRIVATE_parse();
 
-void yyerror(const char *str) {
+void PRIVATE_xerror(const char *str) {
 }
 
-
-int yywrap() {
+int PRIVATE_wrap() {
     return 1;
 }
 

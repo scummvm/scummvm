@@ -25,6 +25,7 @@
 %option never-interactive
 
 %option outfile="engines/private/lexer.cpp"
+%option prefix="PRIVATE_"
 
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -51,9 +52,9 @@ FALSE                   return FALSETOK;
 TRUE                    return TRUETOK;
 NULL                    return NULLTOK;
 Random                  return RANDOMTOK;
-[A-Za-z_][A-Za-z_0-9]*  yylval.s = strdup(yytext); return NAME;
-[\-]?[0-9]+             yylval.sym = Private::constant(NUM, atoi(yytext), NULL); return NUM;
-\"[^\"\r\n]*\"          yylval.sym = Private::constant(STRING, 0, scumm_strdup(yytext)); return STRING;
+[A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = strdup(PRIVATE_text); return NAME;
+[\-]?[0-9]+             PRIVATE_lval.sym = Private::constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
+\"[^\"\r\n]*\"          PRIVATE_lval.sym = Private::constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
 [\r|\n]+                /* ignore return */;
 [ \t]+                  /* ignore whitespace */;
 .                       return *yytext;
@@ -67,7 +68,7 @@ int parse(char *code) {
     yy_delete_buffer(YY_CURRENT_BUFFER);
     bp = yy_scan_string(code);
     yy_switch_to_buffer(bp);
-    yyparse();
+    PRIVATE_parse();
     yy_delete_buffer(bp);
     return 0;
 }
