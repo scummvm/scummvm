@@ -69,7 +69,7 @@ void ConfigFile::readFile(const Common::String &filename) {
 		// Section start
 		if (start == 0 && start != std::string::npos && end != std::string::npos) {
 			currentSection = line.substr(1, end - 1);
-			std::cout << "Section: " << currentSection << std::endl;
+			//std::cout << "Section: " << currentSection << std::endl;
 			continue;
 		}
 		size_t split = line.find_first_of("=");
@@ -78,7 +78,7 @@ void ConfigFile::readFile(const Common::String &filename) {
 		} else {
 			std::string key = line.substr(0, split);
 			std::string value = line.substr(split + 1);
-			std::cout << "Key: " << key << " Value: " << value << std::endl;
+			//std::cout << "Key: " << key << " Value: " << value << std::endl;
 			writeSetting(currentSection.c_str(), key.c_str(), value.c_str());
 		}
 	}
