@@ -69,6 +69,8 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	
+	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 #endif
