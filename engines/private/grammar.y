@@ -1,46 +1,59 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 %require "3.6"
-%defines "engines/private/grammar.tab.h"
-%output "engines/private/grammar.tab.cpp"
+%defines "engines/private/tokens.h"
+%output "engines/private/grammar.cpp"
 
 %{
 
 #include "grammar.h"
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#define	code1(c1)	Private::code(c1);
-#define	code2(c1,c2)	Private::code(c1); Private::code(c2)
-#define	code3(c1,c2,c3)	Private::code(c1); Private::code(c2); Private::code(c3)
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-int yydebug=1;
+#define code1(c1)       Private::code(c1);
+#define code2(c1,c2)    Private::code(c1); Private::code(c2)
+#define code3(c1,c2,c3) Private::code(c1); Private::code(c2); Private::code(c3)
 
 using namespace Private;
 
 extern int yylex();
 extern int yyparse();
 
-void yyerror(const char *str)
-{
-	//fprintf(stderr,"error: %s\n",str);
+void yyerror(const char *str) {
 }
 
-int yywrap()
-{
-	return 1;
+
+int yywrap() {
+    return 1;
 }
+
 
 %}
 
 %union {
-	Private::Symbol	*sym;	/* symbol table pointer */
-        int (**inst)();	/* machine instruction */
-        char *s;
-        int *i;
-        int narg;
+        Private::Symbol *sym; /* symbol table pointer */
+        int (**inst)();       /* machine instruction */
+        char *s;              /* string value */
+        int *i;               /* integer value */
+        int narg;             /* auxiliary value to count function arguments */
 }
 
 %token<s> NAME
@@ -70,36 +83,36 @@ statements:  /* nothing */     { $$ = progp; }
 
 statement: GOTOTOK NAME ';' {
         $$ = progp;
-	code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
+        code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
         code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
         code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
         | fcall ';'         { $$ = $1; }   
         | if cond body end {
-         	/* else-less if */
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[3] = (Inst)$4; 
-                }	/* end, if cond fails */
+                /* else-less if */
+                ($1)[1] = (Inst)$3;     /* thenpart */
+                ($1)[3] = (Inst)$4; 
+                }                       /* end, if cond fails */
         | if cond body end ELSETOK body end { 
                 /* if with else */
-		($1)[1] = (Inst)$3;	/* thenpart */
-		($1)[2] = (Inst)$6;	/* elsepart */
-		($1)[3] = (Inst)$7; 
-                }	/* end, if cond fails */
+                ($1)[1] = (Inst)$3;     /* thenpart */
+                ($1)[2] = (Inst)$6;     /* elsepart */
+                ($1)[3] = (Inst)$7; 
+                }                       /* end, if cond fails */
         ;
 
 body:         statement      { $$ = $1; }
         | '{' statements '}' { $$ = $2; }
         ;
 
-end:	  /* nothing */		{ code(STOP); $$ = progp; }
-	;
+end:      /* nothing */      { code(STOP); $$ = progp; }
+        ;
 
 if: IFTOK { $$ = code(ifcode); code3(STOP, STOP, STOP); }
         ;
 
-cond: '(' expr ')'	{ code(STOP); $$ = $2; }
+cond: '(' expr ')'      { code(STOP); $$ = $2; }
         ;
 
 define:  /* nothing */
@@ -146,7 +159,7 @@ params:   /* nothing */     { $$ = 0; }
 value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
         | FALSETOK { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
         | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 1, NULL)); }
-        |  NUM     { code2(Private::constpush, (Private::Inst)$NUM); }
+        | NUM      { code2(Private::constpush, (Private::Inst)$NUM); }
         | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
         | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }
         ;

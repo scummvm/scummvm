@@ -24,13 +24,13 @@
 %option noinput
 %option never-interactive
 
-%option outfile="engines/private/lex.yy.cpp"
+%option outfile="engines/private/lexer.cpp"
 
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "private/grammar.h"
-#include "private/grammar.tab.h"
+#include "private/tokens.h"
 
 %}
 

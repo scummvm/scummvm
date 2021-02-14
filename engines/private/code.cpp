@@ -25,7 +25,7 @@
 #include "common/hash-ptr.h"
 
 #include "private/grammar.h"
-#include "private/grammar.tab.h"
+#include "private/tokens.h"
 #include "private/private.h"
 
 namespace Private {

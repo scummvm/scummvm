@@ -44,7 +44,7 @@
 
 #include "private/cursors.h"
 #include "private/private.h"
-#include "private/grammar.tab.h"
+#include "private/tokens.h"
 #include "private/grammar.h"
 
 namespace Private {

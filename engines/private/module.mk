@@ -6,8 +6,8 @@ MODULE_OBJS := \
 	cursors.o \
 	symbol.o \
 	funcs.o \
-    grammar.tab.o \
-	lex.yy.o \
+    grammar.o \
+	lexer.o \
 	private.o
  
 MODULE_DIRS += \
