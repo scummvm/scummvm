@@ -87,7 +87,7 @@ void loadSetting(Common::String *name) {
     assert(settingMap.contains(*name));
     setting = settingMap.getVal(*name);
 
-    debug("loading setting %s", name->c_str());
+    debugC(1, kPrivateDebugCode, "loading setting %s", name->c_str());
 
     prog = (Inst *)&setting->prog;
     stack = (Datum *)&setting->stack;
@@ -127,7 +127,7 @@ int constpush() {
     d.type = NUM;
     d.u.val = s->u.val;
 
-    debug("pushing const %d with name %s", d.u.val, s->name->c_str());
+    debugC(1, kPrivateDebugCode, "pushing const %d with name %s", d.u.val, s->name->c_str());
     push(d);
     return 0;
 }
@@ -137,7 +137,8 @@ int strpush() { /* push constant onto stack */
     d.type = STRING;
     Symbol *s = (Symbol *)*pc++;
     d.u.str = s->u.str;
-    debug("pushing const %s with name %s", d.u.str, s->name->c_str());
+    debugC(1, kPrivateDebugCode, "pushing const %s with name %s", d.u.str, s->name->c_str());
+
     push(d);
     return 0;
 }
@@ -147,7 +148,7 @@ int varpush() { /* push variable onto stack */
     Datum d;
     d.type = NAME;
     d.u.sym = (Symbol *)(*pc++);
-    debug("var pushing %s", d.u.sym->name->c_str());
+    debugC(1, kPrivateDebugCode, "var pushing %s", d.u.sym->name->c_str());
     push(d);
     return 0;
 }
@@ -158,7 +159,7 @@ int funcpush() {
     n = pop();
     ArgArray args;
 
-    //debug("executing %s with %d params", s.u.str, n.u.val);
+    debugC(1, kPrivateDebugCode, "executing %s with %d params", s.u.str, n.u.val);
     for (int i = 0; i < n.u.val; i++) {
         arg = pop();
         args.insert(args.begin(), arg) ;
@@ -178,7 +179,7 @@ int eval() {
     } else if (d.u.sym->type == STRING) {
         d.type = STRING;
         d.u.str = d.u.sym->u.str;
-        debug("eval returned %s", d.u.str );
+        debugC(1, kPrivateDebugCode, "eval returned %s", d.u.str );
     } else if (d.u.sym->type == RECT) {
         d.type = RECT;
         d.u.rect = d.u.sym->u.rect;
@@ -209,7 +210,7 @@ int add() {
     assert(d1.type == NUM);
     assert(d2.type == NUM);
 
-    //printf("adding %d %d\n",d1.val, d2.val);
+    debugC(1, kPrivateDebugCode, "adding %d %d\n", d1.u.val, d2.u.val);
     d1.u.val += d2.u.val;
     push(d1);
     return 0;
@@ -374,7 +375,7 @@ int ne() {
 
 /* install one instruction or operand */
 Inst *code(Inst f) {
-    //debug("pushing code at %d", progp);
+    debugC(1, kPrivateDebugCode, "pushing code at %x", progp);
     Inst *oprogp = progp;
     assert (!(progp >= &prog[NPROG]));
     *progp++ = f;
@@ -384,26 +385,26 @@ Inst *code(Inst f) {
 int ifcode() {
     Datum d;
     Inst *savepc = pc;  /* then part */
-    debug("ifcode: evaluating condition");
+    debugC(1, kPrivateDebugCode, "ifcode: evaluating condition");
 
     execute(savepc+3);  /* condition */
     d = pop();
 
-    debug("ifcode: selecting branch");
+    debugC(1, kPrivateDebugCode, "ifcode: selecting branch");
 
     if (d.type == NAME) {
-        debug("name %s", d.u.sym->name->c_str()); //, d.sym->u.val);
+        debugC(1, kPrivateDebugCode, "name %s", d.u.sym->name->c_str());
         d.u.val = d.u.sym->u.val;
     }
 
     if (d.u.val) {
-        debug("ifcode: true branch");
+        debugC(1, kPrivateDebugCode, "ifcode: true branch");
         execute(*((Inst **)(savepc)));
     } else if (*((Inst **)(savepc+1))) { /* else part? */
-        debug("ifcode: false branch");
+        debugC(1, kPrivateDebugCode, "ifcode: false branch");
         execute(*((Inst **)(savepc+1)));
     }
-    debug("ifcode finished");
+    debugC(1, kPrivateDebugCode, "ifcode finished");
     pc = *((Inst **)(savepc+2)); /* next stmt */
     return 0;
 }

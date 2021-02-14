@@ -52,7 +52,12 @@ namespace Private {
 
 class Console;
 
-const uint kPrivateDebug = 1;
+// debug channels
+enum {
+    kPrivateDebugFunction = 1 << 0,
+    kPrivateDebugCode = 1 << 1,
+    kPrivateDebugScript = 1 << 2
+};
 
 // sounds
 

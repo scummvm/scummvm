@@ -57,6 +57,10 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     : Engine(syst), _gameDescription(gd) {
     _rnd = new Common::RandomSource("private");
 
+    DebugMan.addDebugChannel(kPrivateDebugFunction, "functions", "Function execution debug channel");
+    DebugMan.addDebugChannel(kPrivateDebugCode, "code", "Code execution debug channel");
+    DebugMan.addDebugChannel(kPrivateDebugScript, "script", "Script execution debug channel");
+
     g_private = this;
 
     _saveGameMask = NULL;
@@ -111,8 +115,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 PrivateEngine::~PrivateEngine() {
-    debug("PrivateEngine::~PrivateEngine");
-
     // Dispose your resources here
     delete _rnd;
 
@@ -144,7 +146,7 @@ Common::Error PrivateEngine::run() {
     }
 
     assert(file != NULL);
-    void *buf = malloc(file->size()+1);
+    char *buf = (char *)malloc(file->size()+1);
     file->read(buf, file->size()+1);
 
     // Initialize stuff
@@ -152,7 +154,7 @@ Common::Error PrivateEngine::run() {
     initFuncs();
     initCursors();
 
-    parse((char *) buf);
+    parse(buf);
     free(buf);
     delete file;
     assert(constants.size() > 0);
@@ -173,14 +175,11 @@ Common::Error PrivateEngine::run() {
     _compositeSurface->create(_screenW, _screenH, _pixelFormat);
     _compositeSurface->setTransparentColor(_transparentColor);
 
-    // Create debugger console. It requires GFX to be initialized
+    // Debugger console
     Console *console = new Console(this);
     setDebugger(console);
 
-    // Additional setup.
-    debug("PrivateEngine::init");
-
-    // Simple main event loop
+    // Main event loop
     Common::Event event;
     Common::Point mousePos;
     _videoDecoder = nullptr; //new Video::SmackerDecoder();
@@ -260,7 +259,8 @@ Common::Error PrivateEngine::run() {
 
         if (_videoDecoder) {
 
-            stopSound(true);
+            if (_videoDecoder->getCurFrame() == 0)
+                stopSound(true);
             if (_videoDecoder->endOfVideo()) {
                 _videoDecoder->close();
                 delete _videoDecoder;
@@ -274,7 +274,7 @@ Common::Error PrivateEngine::run() {
         if (_nextSetting != NULL) {
 
             removeTimer();
-            debug("Executing %s", _nextSetting->c_str());
+            debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
             clearAreas();
             _currentSetting = _nextSetting;
             loadSetting(_nextSetting);
@@ -346,7 +346,6 @@ void PrivateEngine::checkPoliceBust() {
 }
 
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     mousePos = mousePos - *_origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
@@ -393,17 +392,14 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
 
 
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     MaskInfo m;
     bool inside = false;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
 
         if (inMask(m.surf, mousePos)) {
-            //debug("Inside!");
             if (m.cursor != NULL) { // TODO: check this
                 inside = true;
-                //debug("Rendering cursor mask %s", m.cursor->c_str());
                 changeCursor(*m.cursor);
                 break;
             }
@@ -437,7 +433,6 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
-    //debug("Mousepos %d %d", mousePos.x, mousePos.y);
     mousePos = mousePos - *_origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return;
@@ -516,7 +511,6 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
     if (_AMRadio.empty())
         return;
 
-    debug("AMRadio");
     if (inMask(_AMRadioArea->surf, mousePos)) {
         Common::String sound = *_infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
         playSound(sound.c_str(), 1, false, false);
@@ -532,7 +526,6 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
     if (_policeRadio.empty())
         return;
 
-    debug("PoliceRadio");
     if (inMask(_policeRadioArea->surf, mousePos)) {
         Common::String sound = *_infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
         playSound(sound.c_str(), 1, false, false);
@@ -560,7 +553,6 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
     if (_phone.empty())
         return;
 
-    debug("Phone");
     if (inMask(_phoneArea->surf, mousePos)) {
         PhoneInfo i = _phone.back();
         Common::String sound(*i.sound);
@@ -649,7 +641,7 @@ bool PrivateEngine::hasFeature(EngineFeature f) const {
 }
 
 void PrivateEngine::restartGame() {
-    debug("restartGame");
+    debugC(1, kPrivateDebugFunction, "restartGame");
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
         Private::Symbol *sym = variables.getVal(*it);
@@ -683,7 +675,7 @@ void PrivateEngine::restartGame() {
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
-    debug("loadGameStream");
+    debugC(1, kPrivateDebugFunction, "loadGameStream");
     _nextSetting = &kStartGame;
     int val;
 
@@ -730,22 +722,18 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     Common::String *sound;
     size = stream->readUint32LE();
-    debug("AMRadio size %d", size);
     _AMRadio.clear();
 
     for (uint32 i = 0; i < size; ++i) {
         sound = new Common::String(stream->readString());
-        debug("sound: %s", sound->c_str());
         _AMRadio.push_back(*sound);
     }
 
     size = stream->readUint32LE();
-    debug("policeRadio size %d", size);
     _policeRadio.clear();
 
     for (uint32 i = 0; i < size; ++i) {
         sound = new Common::String(stream->readString());
-        debug("sound: %s", sound->c_str());
         _policeRadio.push_back(*sound);
     }
 
@@ -781,12 +769,11 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         _playedPhoneClips.setVal(*phone, true);
     }
 
-    //syncGameStream(s);
     return Common::kNoError;
 }
 
 Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-    debug("saveGameStream %d", isAutosave);
+    debugC(1, kPrivateDebugFunction, "saveGameStream(%d)", isAutosave);
     if (isAutosave)
         return Common::kNoError;
 
@@ -882,7 +869,7 @@ Common::String PrivateEngine::convertPath(Common::String name) {
 }
 
 void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers, bool background) {
-    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), loops, stopOthers, background);
 
     Common::File *file = new Common::File();
     Common::String path = convertPath(name);
@@ -909,8 +896,8 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
-    debug("%s : %s", __FUNCTION__, name.c_str());
-    stopSound(true);
+    debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
+    //stopSound(true);
     Common::File *file = new Common::File();
     Common::String path = convertPath(name);
 
@@ -930,7 +917,7 @@ void PrivateEngine::skipVideo() {
 }
 
 void PrivateEngine::stopSound(bool all) {
-    debugC(3, kPrivateDebug, "%s", __FUNCTION__);
+    debugC(1, kPrivateDebugFunction, "%s(%d)", __FUNCTION__, all);
 
     if (all) {
         _mixer->stopHandle(_fgSoundHandle);
@@ -941,7 +928,7 @@ void PrivateEngine::stopSound(bool all) {
 }
 
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
-    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
     Common::File file;
     Common::String path = convertPath(name);
     if (!file.open(path))
@@ -970,7 +957,7 @@ void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
 
 
 Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
-    debugC(1, kPrivateDebug, "%s : %s", __FUNCTION__, name.c_str());
+    debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
     Common::File file;
     Common::String path = convertPath(name);
     if (!file.open(path))
@@ -1111,7 +1098,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
             offset = offset + 22;
             char *f = (char*)malloc(32*sizeof(char));
             snprintf(f, 32, "dryloc%d.bmp", i);
-            debug("%s, %d, %d", f, i, offset);
+            //debug("%s, %d, %d", f, i, offset);
             Common::String s(*_diaryLocPrefix + f);
             //debug("%hd %hd", rect->left, rect->top + offset);
             loadMask(s, rect->left + 120, rect->top + offset, true);

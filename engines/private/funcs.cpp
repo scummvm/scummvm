@@ -35,9 +35,9 @@ void ChgMode(ArgArray args) {
     // assert types
     assert (args.size() == 2 || args.size() == 3);
     if (args.size() == 2)
-        debug("ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
+        debugC(1, kPrivateDebugScript, "ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
     else if (args.size() == 3)
-        debug("ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
+        debugC(1, kPrivateDebugScript, "ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
     else
         assert(0);
 
@@ -65,7 +65,7 @@ void ChgMode(ArgArray args) {
 
 void VSPicture(ArgArray args) {
     // assert types
-    debug("VSPicture(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "VSPicture(%s)", args[0].u.str);
     g_private->_nextVS = new Common::String(args[0].u.str);
 }
 
@@ -73,7 +73,7 @@ void VSPicture(ArgArray args) {
 void DiaryLocList(ArgArray args) {
     int x1, y1, x2, y2;
 
-    debug("DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
+    debugC(1, kPrivateDebugScript, "DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
 
     x2 = args[0].u.val;
     y2 = args[1].u.val;
@@ -82,32 +82,28 @@ void DiaryLocList(ArgArray args) {
     y1 = args[3].u.val;
 
     Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
-    rect->debugPrint();
     g_private->loadLocations(rect);
 
 }
 
 void DiaryGoLoc(ArgArray args) {
-    debug("WARNING: DiaryGoLoc not implemented");
+    debugC(1, kPrivateDebugScript, "WARNING: DiaryGoLoc not implemented");
 }
 
 void DiaryInvList(ArgArray args) {
     Common::Rect *r1, *r2;
 
-    debug("DiaryInvList(%d, ..)", args[0].u.val);
+    debugC(1, kPrivateDebugScript, "DiaryInvList(%d, ..)", args[0].u.val);
 
     r1 = args[1].u.rect;
     r2 = args[2].u.rect;
-
-    r1->debugPrint();
-    r2->debugPrint();
 
     g_private->loadInventory(args[0].u.val, r1, r2);
 }
 
 void Goto(ArgArray args) { // should be goto, but this is a reserved word
     // assert types
-    debug("goto(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
     Common::String *s = new Common::String(args[0].u.str);
     g_private->_nextSetting = s;
 }
@@ -115,7 +111,7 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
 
 void SyncSound(ArgArray args) {
     // assert types
-    debug("SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
+    debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
     g_private->_nextSetting = nextSetting;
 
@@ -127,13 +123,13 @@ void SyncSound(ArgArray args) {
 }
 
 void Quit(ArgArray args) {
-    debug("Quit()");
+    debugC(1, kPrivateDebugScript, "Quit()");
     g_private->quitGame();
 }
 
 void LoadGame(ArgArray args) {
     // assert types
-    debug("LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
+    debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
     MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
@@ -147,7 +143,7 @@ void LoadGame(ArgArray args) {
 
 void SaveGame(ArgArray args) {
     // assert types
-    debug("SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
+    debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
     MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, 0, 0, true);
@@ -183,13 +179,14 @@ void PoliceBust(ArgArray args) {
         } else
             assert(0);
     }
-    debug("WARNING: PoliceBust partially implemented");
+    debugC(1, kPrivateDebugScript, "PoliceBust(%d, ..)", args[0].u.val);
+    debugC(1, kPrivateDebugScript, "WARNING: PoliceBust partially implemented");
 }
 
 void BustMovie(ArgArray args) {
     // assert types
     assert (args.size() == 1);
-    debug("BustMovie(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.str);
     uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
     int videoIndex = policeIndex/2 - 1;
     if (videoIndex < 0)
@@ -207,11 +204,7 @@ void BustMovie(ArgArray args) {
     Common::String *pv = new Common::String(f);
     g_private->_nextMovie = pv;
     g_private->_nextSetting = new Common::String(args[0].u.str);
-
-
 }
-
-
 
 void DossierAdd(ArgArray args) {
 
@@ -245,7 +238,7 @@ void DossierBitmap(ArgArray args) {
 }
 
 void DossierChgSheet(ArgArray args) {
-    debug("WARNING: DossierChgSheet is not implemented");
+    debugC(1, kPrivateDebugScript, "WARNING: DossierChgSheet is not implemented");
 }
 
 void DossierPrevSuspect(ArgArray args) {
@@ -263,8 +256,6 @@ void DossierPrevSuspect(ArgArray args) {
     m->flag2 = NULL;
     g_private->_dossierPrevSuspectMask = m;
     g_private->_masks.push_front(*m);
-    debug("origin: %d, %d, %d", g_private->_origin->x, g_private->_origin->y, g_private->_mode);
-    //debug("WARNING: DossierPrevSuspect is not implemented");
 }
 
 void DossierNextSuspect(ArgArray args) {
@@ -282,17 +273,17 @@ void DossierNextSuspect(ArgArray args) {
     m->flag2 = NULL;
     g_private->_dossierNextSuspectMask = m;
     g_private->_masks.push_front(*m);
-    //debug("WARNING: DossierNextSuspect is not implemented");
 }
 
 void NoStopSounds(ArgArray args) {
     assert(args.size() == 0);
-    debug("NoStopSounds()");
+    debugC(1, kPrivateDebugScript, "NoStopSounds()");
     g_private->_noStopSounds = true;
 }
 
 void LoseInventory(ArgArray args) {
     assert(args.size() == 0);
+    debugC(1, kPrivateDebugScript, "LoveInventory()");
     g_private->inventory.clear();
 }
 
@@ -321,7 +312,7 @@ void Inventory(ArgArray args) {
     if (v1.type == STRING)
         assert(strcmp(v1.u.str, "\"\"") == 0);
 
-    debug("Inventory(...)");
+    debugC(1, kPrivateDebugScript, "Inventory(...)");
 
     if (strcmp(b1.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(b1.u.str);
@@ -379,15 +370,16 @@ void Inventory(ArgArray args) {
 }
 
 void SetFlag(ArgArray args) {
-    // assert types
-    debug("SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
+    assert(args.size() == 2);
+    assert(args[0].type == NAME && args[1].type == NUM);
+    debugC(1, kPrivateDebugScript, "SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
     args[0].u.sym->u.val = args[1].u.val;
 }
 
 void Exit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
-    debug("Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
+    debugC(1, kPrivateDebugScript, "Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
     ExitInfo *e = (ExitInfo*)malloc(sizeof(ExitInfo));
 
     if (args[0].type == NUM && args[0].u.val == 0)
@@ -406,26 +398,26 @@ void Exit(ArgArray args) {
     }
 
     e->rect = args[2].u.rect;
-    debug("Rect %d %d %d %d", args[2].u.rect->top, args[2].u.rect->left, args[2].u.rect->bottom, args[2].u.rect->right);
+    //debug("Rect %d %d %d %d", args[2].u.rect->top, args[2].u.rect->left, args[2].u.rect->bottom, args[2].u.rect->right);
     g_private->_exits.push_front(*e);
 }
 
 void SetModifiedFlag(ArgArray args) {
     // assert types
-    debug("SetModifiedFlag(%d)", args[0].u.val);
+    debugC(1, kPrivateDebugScript, "SetModifiedFlag(%d)", args[0].u.val);
     g_private->_modified = (bool) args[0].u.val;
 }
 
 void PaperShuffleSound(ArgArray args) {
-    // assert types
-    debug("PaperShuffleSound()");
+    assert(args.size() == 0);
+    debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
     Common::String *s = g_private->getPaperShuffleSound();
     g_private->playSound(*s, 1, false, false);
 }
 
 void SoundEffect(ArgArray args) {
     // assert types
-    debug("SoundEffect(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
         g_private->playSound(*s, 1, false, false);
@@ -437,7 +429,7 @@ void SoundEffect(ArgArray args) {
 
 void Sound(ArgArray args) {
     // assert types
-    debug("Sound(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "Sound(%s)", args[0].u.str);
     if (args.size() == 4) {
         bool b1 = args[1].u.val;
         bool b2 = args[2].u.val;
@@ -463,7 +455,7 @@ void Sound(ArgArray args) {
 void LoopedSound(ArgArray args) {
     // assert types
     assert(args.size() == 1);
-    debug("LoopedSound(%s)", args[0].u.str);
+    debugC(1, kPrivateDebugScript, "LoopedSound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
         g_private->playSound(*s, 0, true, true);
@@ -476,19 +468,19 @@ void LoopedSound(ArgArray args) {
 
 void ViewScreen(ArgArray args) {
     // assert types
-    debug("WARNING: ViewScreen not implemented!");
+    debugC(1, kPrivateDebugScript, "WARNING: ViewScreen not implemented!");
 }
 
 void Transition(ArgArray args) {
     // assert types
-    debug("Transition(%s, %s)", args[0].u.str, args[1].u.str);
+    debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
     g_private->_nextMovie = new Common::String(args[0].u.str);
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
 void Resume(ArgArray args) {
     // assert types
-    debug("Resume(%d)", args[0].u.val); // this value is always 1
+    debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
     g_private->_nextSetting = g_private->_pausedSetting;
     g_private->_pausedSetting = NULL;
     g_private->_mode = 1;
@@ -497,7 +489,7 @@ void Resume(ArgArray args) {
 
 void Movie(ArgArray args) {
     // assert types
-    debug("Movie(%s, %s)", args[0].u.str, args[1].u.str);
+    debugC(1, kPrivateDebugScript, "Movie(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *movie = new Common::String(args[0].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
     bool isEmptyString = strcmp(args[0].u.str, "\"\"") == 0;
@@ -509,9 +501,9 @@ void Movie(ArgArray args) {
 
     } else if (isEmptyString) {
         g_private->_repeatedMovieExit = nextSetting;
-        debug("repeated movie exit is %s", nextSetting->c_str());
+        debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting->c_str());
     } else {
-        debug("movie %s already played", movie->c_str());
+        debugC(1, kPrivateDebugScript, "movie %s already played", movie->c_str());
         g_private->_nextSetting = g_private->_repeatedMovieExit;
     }
     //g_private->_nextSetting = new Common::String(args[1].u.str);
@@ -521,7 +513,7 @@ void CRect(ArgArray args) {
     // assert types
     int x1, y1, x2, y2;
 
-    debug("CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
+    debugC(1, kPrivateDebugScript, "CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
 
     x1 = args[0].u.val;
     y1 = args[1].u.val;
@@ -549,7 +541,7 @@ void Bitmap(ArgArray args) {
         y = args[2].u.val;
     }
 
-    debug("Bitmap(%s, %d, %d)", f, x, y);
+    debugC(1, kPrivateDebugScript, "Bitmap(%s, %d, %d)", f, x, y);
     Common::String *s = new Common::String(args[0].u.str);
     g_private->loadImage(*s, x, y);
 }
@@ -569,7 +561,7 @@ void _Mask(ArgArray args, bool drawn) {
         y = args[4].u.val;
     }
 
-    debug("Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
+    debugC(1, kPrivateDebugScript, "Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
     const Common::String *s = new Common::String(f);
     //if (drawed)
     //    g_private->loadImage(*s, x, y);
@@ -617,7 +609,7 @@ void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
     }
 
     else
-        debug("error: invalid sound type %s", t);
+        error("error: invalid sound type %s", t);
 }
 
 void AMRadioClip(ArgArray args) {
@@ -630,7 +622,7 @@ void PoliceClip(ArgArray args) {
 }
 void PhoneClip(ArgArray args) {
     if (args.size() == 2) {
-        debug("Unimplemented PhoneClip special case");
+        debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
         return;
     }
     int i = args[2].u.val;
@@ -657,7 +649,7 @@ void SoundArea(ArgArray args) {
     else
         assert(0);
 
-    debug("SoundArea(%s, %s)", args[0].u.str, n);
+    debugC(1, kPrivateDebugScript, "SoundArea(%s, %s)", args[0].u.str, n);
     if (strcmp(n, "kAMRadio") == 0) {
         Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo*)malloc(sizeof(MaskInfo));
@@ -693,12 +685,12 @@ void SoundArea(ArgArray args) {
 
 void SafeDigit(ArgArray args) {
     // This is not needed, since scummvm will take care of this
-    debug("WARNING: SafeDigit is partially implemented");
+    debugC(1, kPrivateDebugScript, "WARNING: SafeDigit is not implemented");
 }
 
 void AskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
-    debug("WARNING: AskSave is partially implemented");
+    debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
     Common::String *s = new Common::String(args[0].u.str);
     g_private->_nextSetting = s;
 }
@@ -707,9 +699,9 @@ void Timer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
 
     if (args.size() == 3)
-        debug("Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
+        debugC(1, kPrivateDebugScript, "Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
     else
-        debug("Timer(%d, %s)", args[0].u.val, args[1].u.str);
+        debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
     //g_system->delayMillis(1000 * args[0].u.val);
     int32 delay = 1000000 * args[0].u.val;
@@ -805,8 +797,7 @@ void initFuncs() {
 void call(char *name, ArgArray args) {
     Common::String n(name);
     if (!_functions.contains(n)) {
-        debug("I don't know how to execute %s", name);
-        assert(0);
+        error("I don't know how to execute %s", name);
     }
 
     void (*func)(ArgArray) = (void (*)(ArgArray)) _functions.getVal(n);
