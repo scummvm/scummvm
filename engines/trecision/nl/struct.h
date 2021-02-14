@@ -174,7 +174,7 @@ struct SScriptFrame {
 
 	bool  _noWait;
 
-	void SendFrame();
+	void sendFrame();
 };
 
 struct SScript {
