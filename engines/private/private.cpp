@@ -141,8 +141,10 @@ Common::Error PrivateEngine::run() {
             file = _installerArchive.createReadStreamForMember("GAME.TXT");
 
         // if the demo from the full retail CDROM is used
-        else if (_installerArchive.hasFile("DEMOGAME.DAT"))
-            file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+        else {
+            if (_installerArchive.hasFile("DEMOGAME.DAT"))
+                file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+        }
     }
 
     assert(file != NULL);
