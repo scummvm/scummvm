@@ -4202,6 +4202,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
+	case 44: // Changed in Noir
+		mapping = NoirMapping{"DECINV2", DECINV2, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
 	case 45:
 		mapping = NoirMapping{"DECLARELANGUAGE", DECLARELANGUAGE, 3};
 		pp -= mapping.numArgs - 1;
@@ -4606,7 +4611,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -8;
 
 	case DECINV2:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp -= 7;			// 8 parameters
 		DecInv2(pp[0], pp[1], pp[2], pp[3],
 			 pp[4], pp[5], pp[6], pp[7]);
