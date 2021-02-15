@@ -263,6 +263,9 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 
 	} else {
 		// Genuine new scene
+		if (TinselV3) {
+			error("TODO: Implement scene loading for Noir");
+		}
 
 		// Initialize all the polygons for this scene
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), false);
