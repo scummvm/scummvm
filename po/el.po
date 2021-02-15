@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-10 20:23+0000\n"
+"PO-Revision-Date: 2021-02-15 23:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2255,7 +2255,8 @@ msgstr "Αδυναμία αλλαγής σε λειτουργία επέκτασ
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
-msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης διόρθωσης αναλογίας διαστάσεων."
+msgstr ""
+"Δεν ήταν δυνατή η εφαρμογή ρύθμισης διόρθωσης αναλογίας διαστάσεων εικόνας."
 
 #: engines/engine.cpp:357
 msgid "Could not apply fullscreen setting."
@@ -7270,14 +7271,14 @@ msgstr ""
 "υπερβολικά γρήγορα."
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
-msgstr "Ενεργοποίηση cheat"
+msgstr "Ενεργοποίηση cheats"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+"Να επιτρέπονται τα cheats με εντολές και ένα μενού όταν γίνεται κλικ πάνω "
+"στον παίκτη."
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
