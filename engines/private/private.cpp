@@ -51,7 +51,7 @@ namespace Private {
 
 PrivateEngine *g_private = NULL;
 
-extern int parse(char*);
+extern int parse(char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     : Engine(syst), _gameDescription(gd) {
@@ -387,7 +387,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
     if (mousePos.x > surf->w || mousePos.y > surf->h)
         return false;
 
-    return ( *((uint32*)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
+    return ( *((uint32 *)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
 }
 
 
@@ -706,7 +706,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     for (uint32 i = 0; i < size; ++i) {
         file = new Common::String(stream->readString());
 
-        DossierInfo *m = (DossierInfo*)malloc(sizeof(DossierInfo));
+        DossierInfo *m = (DossierInfo *)malloc(sizeof(DossierInfo));
         m->page1 = file;
 
         file = new Common::String(stream->readString());
@@ -741,7 +741,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     _phone.clear();
 
     for (uint32 j = 0; j < size; ++j) {
-        PhoneInfo *i = (PhoneInfo*)malloc(sizeof(PhoneInfo));
+        PhoneInfo *i = (PhoneInfo *)malloc(sizeof(PhoneInfo));
 
         i->sound = new Common::String(stream->readString());
         i->flag  = variables.getVal(stream->readString());
@@ -1066,7 +1066,7 @@ Common::String *PrivateEngine::getLeaveSound() {
 char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
 
-    char *f = (char*)malloc((strlen(clip)+3)*sizeof(char));
+    char *f = (char *)malloc((strlen(clip)+3)*sizeof(char));
     snprintf(f, 32, "%s%02d", clip, r);
     return f;
 }
@@ -1075,11 +1075,11 @@ char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
 
 void timerCallback(void *refCon) {
     g_private->removeTimer();
-    g_private->_nextSetting = (Common::String*)refCon;
+    g_private->_nextSetting = (Common::String *)refCon;
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-    return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void*)ns, "timerCallback");
+    return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void *)ns, "timerCallback");
 }
 
 void PrivateEngine::removeTimer() {
@@ -1096,7 +1096,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
         i++;
         if (sym->u.val) {
             offset = offset + 22;
-            char *f = (char*)malloc(32*sizeof(char));
+            char *f = (char *)malloc(32*sizeof(char));
             snprintf(f, 32, "dryloc%d.bmp", i);
             //debug("%s, %d, %d", f, i, offset);
             Common::String s(*_diaryLocPrefix + f);
