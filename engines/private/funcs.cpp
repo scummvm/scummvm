@@ -31,7 +31,7 @@
 
 namespace Private {
 
-void ChgMode(ArgArray args) {
+void fChgMode(ArgArray args) {
     // assert types
     assert (args.size() == 2 || args.size() == 3);
     if (args.size() == 2)
@@ -63,14 +63,14 @@ void ChgMode(ArgArray args) {
     }
 }
 
-void VSPicture(ArgArray args) {
+void fVSPicture(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "VSPicture(%s)", args[0].u.str);
     g_private->_nextVS = new Common::String(args[0].u.str);
 }
 
 
-void DiaryLocList(ArgArray args) {
+void fDiaryLocList(ArgArray args) {
     int x1, y1, x2, y2;
 
     debugC(1, kPrivateDebugScript, "DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
@@ -86,11 +86,11 @@ void DiaryLocList(ArgArray args) {
 
 }
 
-void DiaryGoLoc(ArgArray args) {
+void fDiaryGoLoc(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: DiaryGoLoc not implemented");
 }
 
-void DiaryInvList(ArgArray args) {
+void fDiaryInvList(ArgArray args) {
     Common::Rect *r1, *r2;
 
     debugC(1, kPrivateDebugScript, "DiaryInvList(%d, ..)", args[0].u.val);
@@ -101,7 +101,7 @@ void DiaryInvList(ArgArray args) {
     g_private->loadInventory(args[0].u.val, r1, r2);
 }
 
-void Goto(ArgArray args) { // should be goto, but this is a reserved word
+void fgoto(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
     Common::String *s = new Common::String(args[0].u.str);
@@ -109,7 +109,7 @@ void Goto(ArgArray args) { // should be goto, but this is a reserved word
 }
 
 
-void SyncSound(ArgArray args) {
+void fSyncSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
@@ -122,12 +122,12 @@ void SyncSound(ArgArray args) {
     }
 }
 
-void Quit(ArgArray args) {
+void fQuit(ArgArray args) {
     debugC(1, kPrivateDebugScript, "Quit()");
     g_private->quitGame();
 }
 
-void LoadGame(ArgArray args) {
+void fLoadGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
@@ -141,7 +141,7 @@ void LoadGame(ArgArray args) {
     g_private->_masks.push_front(*m);
 }
 
-void SaveGame(ArgArray args) {
+void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
     Common::String *s = new Common::String(args[0].u.str);
@@ -155,12 +155,12 @@ void SaveGame(ArgArray args) {
     g_private->_masks.push_front(*m);
 }
 
-void RestartGame(ArgArray args) {
+void fRestartGame(ArgArray args) {
     assert(args.size() == 0);
     g_private->restartGame();
 }
 
-void PoliceBust(ArgArray args) {
+void fPoliceBust(ArgArray args) {
     // assert types
     assert (args.size() == 1 || args.size() == 2);
     g_private->_policeBustEnabled = args[0].u.val;
@@ -183,7 +183,7 @@ void PoliceBust(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: PoliceBust partially implemented");
 }
 
-void BustMovie(ArgArray args) {
+void fBustMovie(ArgArray args) {
     // assert types
     assert (args.size() == 1);
     debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.str);
@@ -206,7 +206,7 @@ void BustMovie(ArgArray args) {
     g_private->_nextSetting = new Common::String(args[0].u.str);
 }
 
-void DossierAdd(ArgArray args) {
+void fDossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
     Common::String *s1 = new Common::String(args[0].u.str);
@@ -224,7 +224,7 @@ void DossierAdd(ArgArray args) {
     g_private->_dossiers.push_back(*m);
 }
 
-void DossierBitmap(ArgArray args) {
+void fDossierBitmap(ArgArray args) {
 
     assert (args.size() == 2);
 
@@ -237,11 +237,11 @@ void DossierBitmap(ArgArray args) {
 
 }
 
-void DossierChgSheet(ArgArray args) {
+void fDossierChgSheet(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: DossierChgSheet is not implemented");
 }
 
-void DossierPrevSuspect(ArgArray args) {
+void fDossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String *s = new Common::String(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
@@ -258,7 +258,7 @@ void DossierPrevSuspect(ArgArray args) {
     g_private->_masks.push_front(*m);
 }
 
-void DossierNextSuspect(ArgArray args) {
+void fDossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String *s = new Common::String(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
@@ -275,19 +275,19 @@ void DossierNextSuspect(ArgArray args) {
     g_private->_masks.push_front(*m);
 }
 
-void NoStopSounds(ArgArray args) {
+void fNoStopSounds(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "NoStopSounds()");
     g_private->_noStopSounds = true;
 }
 
-void LoseInventory(ArgArray args) {
+void fLoseInventory(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "LoveInventory()");
     g_private->inventory.clear();
 }
 
-void Inventory(ArgArray args) {
+void fInventory(ArgArray args) {
 
     // assert types
     Datum b1 = args[0];
@@ -369,14 +369,14 @@ void Inventory(ArgArray args) {
 
 }
 
-void SetFlag(ArgArray args) {
+void fSetFlag(ArgArray args) {
     assert(args.size() == 2);
     assert(args[0].type == NAME && args[1].type == NUM);
     debugC(1, kPrivateDebugScript, "SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
     args[0].u.sym->u.val = args[1].u.val;
 }
 
-void Exit(ArgArray args) {
+void fExit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
     debugC(1, kPrivateDebugScript, "Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
@@ -402,20 +402,20 @@ void Exit(ArgArray args) {
     g_private->_exits.push_front(*e);
 }
 
-void SetModifiedFlag(ArgArray args) {
+void fSetModifiedFlag(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SetModifiedFlag(%d)", args[0].u.val);
     g_private->_modified = args[0].u.val != 0;
 }
 
-void PaperShuffleSound(ArgArray args) {
+void fPaperShuffleSound(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
     Common::String *s = g_private->getPaperShuffleSound();
     g_private->playSound(*s, 1, false, false);
 }
 
-void SoundEffect(ArgArray args) {
+void fSoundEffect(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
@@ -427,7 +427,7 @@ void SoundEffect(ArgArray args) {
     }
 }
 
-void Sound(ArgArray args) {
+void fSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Sound(%s)", args[0].u.str);
     if (args.size() == 4) {
@@ -452,7 +452,7 @@ void Sound(ArgArray args) {
     }
 }
 
-void LoopedSound(ArgArray args) {
+void fLoopedSound(ArgArray args) {
     // assert types
     assert(args.size() == 1);
     debugC(1, kPrivateDebugScript, "LoopedSound(%s)", args[0].u.str);
@@ -466,19 +466,19 @@ void LoopedSound(ArgArray args) {
 }
 
 
-void ViewScreen(ArgArray args) {
+void fViewScreen(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "WARNING: ViewScreen not implemented!");
 }
 
-void Transition(ArgArray args) {
+void fTransition(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
     g_private->_nextMovie = new Common::String(args[0].u.str);
     g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
-void Resume(ArgArray args) {
+void fResume(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
     g_private->_nextSetting = g_private->_pausedSetting;
@@ -487,7 +487,7 @@ void Resume(ArgArray args) {
     g_private->_origin = &kPrivateOriginOne;
 }
 
-void Movie(ArgArray args) {
+void fMovie(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Movie(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *movie = new Common::String(args[0].u.str);
@@ -509,7 +509,7 @@ void Movie(ArgArray args) {
     //g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
-void CRect(ArgArray args) {
+void fCRect(ArgArray args) {
     // assert types
     int x1, y1, x2, y2;
 
@@ -529,7 +529,7 @@ void CRect(ArgArray args) {
     push(*d);
 }
 
-void Bitmap(ArgArray args) {
+void fBitmap(ArgArray args) {
     assert(args.size() == 1 || args.size() == 3);
 
     int x = 0;
@@ -546,7 +546,7 @@ void Bitmap(ArgArray args) {
     g_private->loadImage(*s, x, y);
 }
 
-void _Mask(ArgArray args, bool drawn) {
+void _fMask(ArgArray args, bool drawn) {
     assert(args.size() == 3 || args.size() == 5);
 
     int x = 0;
@@ -577,14 +577,14 @@ void _Mask(ArgArray args, bool drawn) {
 
 }
 
-void Mask(ArgArray args) {
-    _Mask(args, false);
+void fMask(ArgArray args) {
+    _fMask(args, false);
 }
-void MaskDrawn(ArgArray args) {
-    _Mask(args, true);
+void fMaskDrawn(ArgArray args) {
+    _fMask(args, true);
 }
 
-void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
+void fAddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
     if (strcmp(s, "\"\"") == 0)
         return;
 
@@ -612,15 +612,15 @@ void AddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
         error("error: invalid sound type %s", t);
 }
 
-void AMRadioClip(ArgArray args) {
+void fAMRadioClip(ArgArray args) {
     assert(args.size() <= 4);
-    AddSound(args[0].u.str, "AMRadioClip");
+    fAddSound(args[0].u.str, "AMRadioClip");
 }
-void PoliceClip(ArgArray args) {
+void fPoliceClip(ArgArray args) {
     assert(args.size() <= 4);
-    AddSound(args[0].u.str, "PoliceClip");
+    fAddSound(args[0].u.str, "PoliceClip");
 }
-void PhoneClip(ArgArray args) {
+void fPhoneClip(ArgArray args) {
     if (args.size() == 2) {
         debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
         return;
@@ -629,16 +629,16 @@ void PhoneClip(ArgArray args) {
     int j = args[3].u.val;
 
     if (i == j)
-        AddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
+        fAddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
     else {
         assert(i < j);
         char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
-        AddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
+        fAddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
     }
 
 }
 
-void SoundArea(ArgArray args) {
+void fSoundArea(ArgArray args) {
     // assert types
     char *n;
 
@@ -683,19 +683,18 @@ void SoundArea(ArgArray args) {
     }
 }
 
-void SafeDigit(ArgArray args) {
-    // This is not needed, since scummvm will take care of this
+void fSafeDigit(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: SafeDigit is not implemented");
 }
 
-void AskSave(ArgArray args) {
+void fAskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
     Common::String *s = new Common::String(args[0].u.str);
     g_private->_nextSetting = s;
 }
 
-void Timer(ArgArray args) {
+void fTimer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
 
     if (args.size() == 3)
@@ -703,7 +702,6 @@ void Timer(ArgArray args) {
     else
         debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
-    //g_system->delayMillis(1000 * args[0].u.val);
     int32 delay = 1000000 * args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
     if (delay > 0) {
@@ -721,66 +719,66 @@ static struct FuncTable {
     const char *name;
 } funcTable[] = {
 
-    { ChgMode,         "ChgMode"},
-    { Resume,          "Resume"},
-    { Goto,            "goto"},
-    { SetFlag,         "SetFlag"},
-    { SetModifiedFlag, "SetModifiedFlag"},
-    { Timer,           "Timer"},
+    { fChgMode,         "ChgMode"},
+    { fResume,          "Resume"},
+    { fgoto,            "goto"},
+    { fSetFlag,         "SetFlag"},
+    { fSetModifiedFlag, "SetModifiedFlag"},
+    { fTimer,           "Timer"},
 
     // Sounds
-    { Sound,           "Sound"},
-    { SoundEffect,     "SoundEffect"},
-    { LoopedSound,     "LoopedSound"},
-    { NoStopSounds,    "NoStopSounds"},
-    { SyncSound,       "SyncSound"},
-    { AMRadioClip,     "AMRadioClip"},
-    { PoliceClip,      "PoliceClip"},
-    { PhoneClip,       "PhoneClip"},
-    { SoundArea,       "SoundArea"},
-    { PaperShuffleSound, "PaperShuffleSound"},
+    { fSound,           "Sound"},
+    { fSoundEffect,     "SoundEffect"},
+    { fLoopedSound,     "LoopedSound"},
+    { fNoStopSounds,    "NoStopSounds"},
+    { fSyncSound,       "SyncSound"},
+    { fAMRadioClip,     "AMRadioClip"},
+    { fPoliceClip,      "PoliceClip"},
+    { fPhoneClip,       "PhoneClip"},
+    { fSoundArea,       "SoundArea"},
+    { fPaperShuffleSound, "PaperShuffleSound"},
 
     // Images
-    { Bitmap,          "Bitmap"},
-    { Mask,            "Mask"},
-    { MaskDrawn,       "MaskDrawn"},
-    { VSPicture,       "VSPicture"},
-    { ViewScreen,      "ViewScreen"},
+    { fBitmap,          "Bitmap"},
+    { fMask,            "Mask"},
+    { fMaskDrawn,       "MaskDrawn"},
+    { fVSPicture,       "VSPicture"},
+    { fViewScreen,      "ViewScreen"},
 
     // Video
-    { Transition,      "Transition"},
-    { Movie,           "Movie"},
+    { fTransition,      "Transition"},
+    { fMovie,           "Movie"},
 
     // Diary
-    { DiaryLocList,    "DiaryLocList"},
-    { DiaryInvList,    "DiaryInvList"},
-    { DiaryGoLoc,      "DiaryGoLoc"},
+    { fDiaryLocList,    "DiaryLocList"},
+    { fDiaryInvList,    "DiaryInvList"},
+    { fDiaryGoLoc,      "DiaryGoLoc"},
 
-    { Exit,            "Exit"},
-    { Quit,            "Quit"},
-    { LoadGame,        "LoadGame"},
-    { SaveGame,        "SaveGame"},
-    { AskSave,         "AskSave"},
+    { fExit,            "Exit"},
+    { fQuit,            "Quit"},
+    { fLoadGame,        "LoadGame"},
+    { fSaveGame,        "SaveGame"},
+    { fAskSave,         "AskSave"},
 
     // Dossiers
-    { DossierAdd,      "DossierAdd"},
-    { DossierChgSheet, "DossierChgSheet"},
-    { DossierBitmap,   "DossierBitmap"},
-    { DossierPrevSuspect, "DossierPrevSuspect"},
-    { DossierNextSuspect, "DossierNextSuspect"},
+    { fDossierAdd,      "DossierAdd"},
+    { fDossierChgSheet, "DossierChgSheet"},
+    { fDossierBitmap,   "DossierBitmap"},
+    { fDossierPrevSuspect, "DossierPrevSuspect"},
+    { fDossierNextSuspect, "DossierNextSuspect"},
 
-    { LoseInventory,   "LoseInventory"},
-    { Inventory,       "Inventory"},
-    { CRect,           "CRect"},
-    { RestartGame,     "RestartGame"},
+    { fLoseInventory,   "LoseInventory"},
+    { fInventory,       "Inventory"},
+    { fCRect,           "CRect"},
+    { fRestartGame,     "RestartGame"},
 
     // PoliceBust
-    { PoliceBust,      "PoliceBust"},
-    { BustMovie,       "BustMovie"},
+    { fPoliceBust,      "PoliceBust"},
+    { fBustMovie,       "BustMovie"},
 
     // Others
 
-    { SafeDigit,       "SafeDigit"},
+    { fSafeDigit,       "SafeDigit"},
 
     { 0, 0}
 };
