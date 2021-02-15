@@ -389,7 +389,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
     if (mousePos.x > surf->w || mousePos.y > surf->h)
         return false;
 
-    return ( *((uint32 *)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
+    return (*((uint32 *)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
 }
 
 
