@@ -49,6 +49,7 @@ int _rgb_a_shift_32 = 0;
 
 RGB_MAP *rgb_map;
 COLOR_MAP *color_map;
+int trans_blend_alpha = -1;
 
 void color::readFromFile(AGS::Shared::Stream *file) {
 	r = file->ReadByte();
@@ -273,7 +274,7 @@ void set_blender_mode_ex(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, B
 }
 
 void set_alpha_blender(void) {
-	// TODO: set_alpha_blender
+	trans_blend_alpha = -1;
 }
 
 void set_write_alpha_blender(void) {
@@ -281,7 +282,8 @@ void set_write_alpha_blender(void) {
 }
 
 void set_trans_blender(int r, int g, int b, int a) {
-	// TODO: set_trans_blender
+	assert(r == 0 && g == 0 && b == 0);
+	trans_blend_alpha = a;
 }
 
 void set_add_blender(int r, int g, int b, int a) {

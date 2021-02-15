@@ -177,7 +177,7 @@ class BITMAP {
 private:
 	Graphics::ManagedSurface *_owner;
 public:
-	uint16 &w, &h;
+	uint16 &w, &h, &pitch;
 	Graphics::PixelFormat &format;
 	bool clip;
 	int ct, cb, cl, cr;

@@ -21,6 +21,7 @@
  */
 
 #include "ags/lib/allegro/gfx.h"
+#include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
 #include "common/textconsole.h"
@@ -35,10 +36,13 @@ int color_conversion;
 #define TRANSPARENT_COLOR(BITMAP) ((BITMAP).format.bytesPerPixel == 1 ? 0 : \
 	(BITMAP).format.RGBToColor(255, 0, 255))
 
+// Arbitrary RGBA tuplet that should never be encountered
+#define NO_TRANSPARENT_COLOR 0x88888888
+
 /*-------------------------------------------------------------------*/
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
-		w(owner->w), h(owner->h), format(owner->format),
+		w(owner->w), h(owner->h), pitch(owner->pitch), format(owner->format),
 		clip(false), ct(0), cl(0), cr(owner->w), cb(owner->h) {
 	line.resize(h);
 	for (uint y = 0; y < h; ++y)
@@ -303,7 +307,28 @@ void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int 
 }
 
 void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	bmp->getSurface().blitFrom(sprite->getSurface(), Common::Point(x, y));
+	assert(sprite->format.bytesPerPixel == 4);
+
+	if (trans_blend_alpha == -1) {
+		bmp->getSurface().blitFrom(sprite->getSurface(), Common::Point(x, y));
+
+	} else {
+		// Create a temporary ManagedSurface with a pointer to the sprite's pixels,
+		// and a pixel format that matches the sprite, but has no alpha.
+		// This will prevent it being applied from the sprite in transBlitFrom
+		Graphics::ManagedSurface spr;
+		spr.format = sprite->format;
+		spr.format.aLoss = 8;
+		spr.format.aShift = 0;
+		spr.setPixels(sprite->getPixels());
+		spr.w = sprite->w;
+		spr.h = sprite->h;
+		spr.pitch = sprite->pitch;
+
+		bmp->getSurface().transBlitFrom(spr, Common::Rect(0, 0, spr.w, spr.h),
+			Common::Rect(x, y, x + spr.w, y + spr.h), NO_TRANSPARENT_COLOR,
+			false, 0, trans_blend_alpha);
+	}
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
