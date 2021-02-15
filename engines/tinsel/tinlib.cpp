@@ -152,7 +152,7 @@ enum MASTER_LIB_CODES {
 	THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
-	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D,
+	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
 	HIGHEST_LIBCODE
 };
 
@@ -4197,6 +4197,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 43:
+		mapping = NoirMapping{"DECINVMAIN", DECINVMAIN, 8};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
+		break;
 	case 45:
 		mapping = NoirMapping{"DECLARELANGUAGE", DECLARELANGUAGE, 3};
 		pp -= mapping.numArgs - 1;
@@ -4605,6 +4610,10 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		pp -= 7;			// 8 parameters
 		DecInv2(pp[0], pp[1], pp[2], pp[3],
 			 pp[4], pp[5], pp[6], pp[7]);
+		return -8;
+
+	case DECINVMAIN:
+		warning("TODO: Implement DECINVMAIN");
 		return -8;
 
 	case DECINVW:
