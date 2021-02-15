@@ -4201,10 +4201,12 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"ADDCONV", ADDCONV, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 12:
 		mapping = NoirMapping{"ADDINV1", ADDINV1, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 16:
 		mapping = NoirMapping{"ADDINV3", ADDINV3, 1};
 		pp -= mapping.numArgs - 1;
