@@ -315,17 +315,17 @@ static struct CursorDataTable {
 
 static struct CursorPointTable {
     const char *name;
-    const Common::Point *point;
+    const int coord[2];
 } cursorPointTable[] = {
-    { "kExit",         new Common::Point(9, 0)},
-    { "kInventory",    new Common::Point(15, 3)},
-    { "kTurnLeft",     new Common::Point(29, 16)},
-    { "kTurnRight",    new Common::Point(1, 15)},
-    { "kZoomIn",       new Common::Point(10, 8)},
-    { "kZoomOut",      new Common::Point(13, 31)},
-    { "kPhone",        new Common::Point(17, 19)},
-    { "default",       new Common::Point(0, 0)},
-    { 0, 0}
+    { "kExit",      {9,   0} },
+    { "kInventory", {15,  3} },
+    { "kTurnLeft",  {29, 16} },
+    { "kTurnRight", {1,  15} },
+    { "kZoomIn",    {10,  8} },
+    { "kZoomOut",   {13, 31} },
+    { "kPhone",     {17, 19} },
+    { "default",    {0,   0} },
+    { 0,            {0,   0} }
 };
 
 CursorDataMap _cursorData;
@@ -336,10 +336,10 @@ void PrivateEngine::initCursors() {
         Common::String *name = new Common::String(cur->name);
         _cursorData.setVal(*name, cur->cursor);
     }
-
+    
     for (Private::CursorPointTable *cur = Private::cursorPointTable; cur->name; cur++) {
         Common::String *name = new Common::String(cur->name);
-        Common::Point *point = new Common::Point(*cur->point);
+        Common::Point *point = new Common::Point(cur->coord[0], cur->coord[1]);
         _cursorPoints.setVal(*name, point);
     }
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
