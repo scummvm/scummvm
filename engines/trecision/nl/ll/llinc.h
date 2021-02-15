@@ -55,8 +55,13 @@ struct SDText {
 	uint16 dx;
 	uint16 dy;
 	uint16 l[4];
-	uint16 tcol, scol;
+	uint16 tcol;
+	uint16 scol;
 	const char *sign;
+
+	void clear();
+	void DText();
+	uint16 checkDText();
 };
 
 
@@ -138,8 +143,8 @@ extern uint8 *SoundStartBuffer;
 extern uint8 SoundSystemActive;
 extern uint8 SpeechTrackEnabled;
 // MOUSE
-extern struct SDText TheString;
-extern struct SDText OldString;
+extern struct SDText curString;
+extern struct SDText oldString;
 extern uint8  TextStatus;
 extern Common::SeekableReadStream *ff;
 // FILEREF

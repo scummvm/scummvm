@@ -221,77 +221,88 @@ uint16 TextLength(const char *sign, uint16 num) {
 	return b;
 }
 
-/*-----------------14/05/95 12.12-------------------
-   CheckDText - ritorna la _dy di una certa DText
---------------------------------------------------*/
-uint16 CheckDText(SDText t) {
-	uint16 b;
-
-	uint16 dx = t.dx;
-	const char *sign = t.sign;
-
+void SDText::clear() {
+	x = 0;
+	y = 0;
+	dx = 0;
+	dy = 0;
+	l[0] = 0;
+	l[1] = 0;
+	l[2] = 0;
+	l[3] = 0;
+	tcol = 0;
+	scol = 0;
+	sign = nullptr;
+}
+/*-------------------------------------------------------------
+   checkDText - Computes and returns the dy of the given DText
+--------------------------------------------------------------*/
+uint16 SDText::checkDText() {
 	if (sign == nullptr)
 		return 0;
 
-	uint16 a = 0;
-	uint16 dy = 0;
-	uint16 LastSpace = 0;
-	uint16 CurInit = 0;
-	uint8 CurLine = 0;
-
+	uint8 curLine = 0;
 	if (TextLength(sign, 0) <= dx) {
-		strcpy((char *)DTextLines[CurLine], sign);
+		strcpy((char *)DTextLines[curLine], sign);
 		return CARHEI;
 	}
+
+	uint16 a = 0;
+	uint16 tmpDy = 0;
+	uint16 lastSpace = 0;
+	uint16 curInit = 0;
 
 	while (a < strlen(sign)) {
 		a++;
 		if (sign[a] == ' ') {
-			if (TextLength(sign + CurInit, a - CurInit) <= dx)
-				LastSpace = a;
-			else if (TextLength(sign + CurInit, LastSpace - CurInit) <= dx) {
-				for (b = CurInit; b < LastSpace; b++)
-					DTextLines[CurLine][b - CurInit] = sign[b];
+			if (TextLength(sign + curInit, a - curInit) <= dx)
+				lastSpace = a;
+			else if (TextLength(sign + curInit, lastSpace - curInit) <= dx) {
+				uint16 b;
+				for (b = curInit; b < lastSpace; b++)
+					DTextLines[curLine][b - curInit] = sign[b];
 
-				DTextLines[CurLine][b - CurInit] = '\0';
-				CurLine++;
+				DTextLines[curLine][b - curInit] = '\0';
+				curLine++;
 
-				CurInit = LastSpace + 1;
+				curInit = lastSpace + 1;
 
-				dy += CARHEI;
-				a = CurInit;
+				tmpDy += CARHEI;
+				a = curInit;
 			} else
 				return 0;
 		} else if (sign[a] == '\0') {
-			if (TextLength(sign + CurInit, a - CurInit) <= dx) {
-				for (b = CurInit; b < a; b++)
-					DTextLines[CurLine][b - CurInit] = sign[b];
-				DTextLines[CurLine][b - CurInit] = '\0';
+			if (TextLength(sign + curInit, a - curInit) <= dx) {
+				uint16 b;
+				for (b = curInit; b < a; b++)
+					DTextLines[curLine][b - curInit] = sign[b];
+				DTextLines[curLine][b - curInit] = '\0';
 
-				dy += CARHEI;
+				tmpDy += CARHEI;
 
-				return dy;
+				return tmpDy;
 			}
 
-			if (TextLength(sign + CurInit, LastSpace - CurInit) <= dx) {
-				for (b = CurInit; b < LastSpace; b++)
-					DTextLines[CurLine][b - CurInit] = sign[b];
+			if (TextLength(sign + curInit, lastSpace - curInit) <= dx) {
+				uint16 b;
+				for (b = curInit; b < lastSpace; b++)
+					DTextLines[curLine][b - curInit] = sign[b];
 
-				DTextLines[CurLine][b - CurInit] = '\0';
-				CurLine++;
+				DTextLines[curLine][b - curInit] = '\0';
+				curLine++;
 
-				CurInit = LastSpace + 1;
-				dy += CARHEI;
+				curInit = lastSpace + 1;
+				tmpDy += CARHEI;
 
-				if (CurInit < strlen(sign)) {
-					for (b = CurInit; b < strlen(sign); b++)
-						DTextLines[CurLine][b - CurInit] = sign[b];
+				if (curInit < strlen(sign)) {
+					for (b = curInit; b < strlen(sign); b++)
+						DTextLines[curLine][b - curInit] = sign[b];
 
-					DTextLines[CurLine][b - CurInit] = '\0';
+					DTextLines[curLine][b - curInit] = '\0';
 
-					dy += CARHEI;
+					tmpDy += CARHEI;
 				}
-				return dy;
+				return tmpDy;
 			}
 			return 0;
 		}
@@ -302,81 +313,73 @@ uint16 CheckDText(SDText t) {
 /*-----------------10/12/95 15.43-------------------
 						DText
 --------------------------------------------------*/
-void DText(SDText t) {
-	uint16 tcol = t.tcol;
-	uint16 scol = t.scol;
-	UpdatePixelFormat(&tcol, 1);
-	if (t.scol != MASKCOL)
-		UpdatePixelFormat(&scol, 1);
+void SDText::DText() {
+	uint16 tmpTCol = tcol;
+	uint16 tmpSCol = scol;
+	UpdatePixelFormat(&tmpTCol, 1);
+	if (scol != MASKCOL)
+		UpdatePixelFormat(&tmpSCol, 1);
 
-	uint16 dx = t.dx;
-	uint16 x = t.x;
-	uint16 y = t.y;
-
-	if (t.sign == NULL)
+	if (sign == nullptr)
 		return;
 
-	uint16 dy = CheckDText(t);
+	uint16 curDy = checkDText();
 
-	for (uint16 b = 0; b < (dy / CARHEI); b++) {
+	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
 		char *sign = (char *)DTextLines[b];
 
-		uint16 Inc = (dx - TextLength(sign, 0)) / 2;
+		uint16 inc = (dx - TextLength(sign, 0)) / 2;
 
-		uint16 Len = strlen(sign);
+		uint16 len = strlen(sign);
 
-		if (Len >= MAXCHARS) {
+		if (len >= MAXCHARS) {
 			strcpy(sign, g_vm->_sysText[19]);
-			Len = strlen(sign);
+			len = strlen(sign);
 		}
 
-		for (uint16 c = 0; c < Len; c++) {
-			uint8 CurCar = sign[c];             /* legge prima parte del font */
+		for (uint16 c = 0; c < len; c++) {
+			uint8 curCar = sign[c];             /* legge prima parte del font */
 
-			uint16 CarSco = (uint16)(Font[CurCar * 3]) + (uint16)(Font[CurCar * 3 + 1] << 8);
+			uint16 carSco = (uint16)(Font[curCar * 3]) + (uint16)(Font[curCar * 3 + 1] << 8);
 			uint16 DataSco = 768;                       /* Scostamento */
-			uint16 CarWid = Font[CurCar * 3 + 2];        /* Larghezza   */
+			uint16 CarWid = Font[curCar * 3 + 2];        /* Larghezza   */
 
-			if ((c == (Len - 1)) && (BlinkLastDTextChar != MASKCOL))
-				tcol = BlinkLastDTextChar;
+			if ((c == (len - 1)) && (BlinkLastDTextChar != MASKCOL))
+				tmpTCol = BlinkLastDTextChar;
 
 			for (uint16 a = (b * CARHEI); a < ((b + 1)*CARHEI); a++) {
 				uint16 CarCounter = 0;
-				uint16 CurColor = scol;
+				uint16 CurColor = tmpSCol;
 
 				while (CarCounter <= (CarWid - 1)) {
-					if ((a >= t.l[1]) && (a < t.l[3])) {
-						if ((CurColor != MASKCOL) && (Font[CarSco + DataSco])) {
-							uint16 FirstLim = Inc + CarCounter;
-							uint16 EndLim = FirstLim + Font[CarSco + DataSco];
+					if ((a >= l[1]) && (a < l[3])) {
+						if ((CurColor != MASKCOL) && (Font[carSco + DataSco])) {
+							uint16 FirstLim = inc + CarCounter;
+							uint16 EndLim = FirstLim + Font[carSco + DataSco];
 
-							if ((FirstLim >= t.l[0]) && (EndLim < t.l[2]))
-								wordset(Video2 + (x + FirstLim) + (y + a)*CurRoomMaxX,
-										CurColor, EndLim - FirstLim);
-							else if ((FirstLim < t.l[0]) && (EndLim < t.l[2]) && (EndLim > t.l[0]))
-								wordset(Video2 + (x + t.l[0]) + (y + a)*CurRoomMaxX,
-										CurColor, EndLim - t.l[0]);
-							else if ((FirstLim >= t.l[0]) && (EndLim >= t.l[2]) && (t.l[2] > FirstLim))
-								wordset(Video2 + (x + FirstLim) + (y + a)*CurRoomMaxX,
-										CurColor, t.l[2] - FirstLim);
-							else if ((FirstLim < t.l[0]) && (EndLim >= t.l[2]) && (t.l[2] > FirstLim))
-								wordset(Video2 + (x + t.l[0]) + (y + a)*CurRoomMaxX,
-										CurColor, t.l[2] - t.l[0]);
+							if ((FirstLim >= l[0]) && (EndLim < l[2]))
+								wordset(Video2 + (x + FirstLim) + (y + a)*CurRoomMaxX, CurColor, EndLim - FirstLim);
+							else if ((FirstLim < l[0]) && (EndLim < l[2]) && (EndLim > l[0]))
+								wordset(Video2 + (x + l[0]) + (y + a)*CurRoomMaxX, CurColor, EndLim - l[0]);
+							else if ((FirstLim >= l[0]) && (EndLim >= l[2]) && (l[2] > FirstLim))
+								wordset(Video2 + (x + FirstLim) + (y + a)*CurRoomMaxX, CurColor, l[2] - FirstLim);
+							else if ((FirstLim < l[0]) && (EndLim >= l[2]) && (l[2] > FirstLim))
+								wordset(Video2 + (x + l[0]) + (y + a)*CurRoomMaxX, CurColor, l[2] - l[0]);
 						}
 					}
 
-					CarCounter += Font[CarSco + DataSco];
+					CarCounter += Font[carSco + DataSco];
 					DataSco++;
 
-					if (CurColor == scol)
+					if (CurColor == tmpSCol)
 						CurColor = 0;
 					else if (CurColor == 0)
-						CurColor = tcol;
-					else if (CurColor == tcol)
-						CurColor = scol;
+						CurColor = tmpTCol;
+					else if (CurColor == tmpTCol)
+						CurColor = tmpSCol;
 				}
 			}
-			Inc += CarWid;
+			inc += CarWid;
 		}
 	}
 }
@@ -401,7 +404,6 @@ void IconSnapShot() {
  --------------------------------------------------*/
 bool DataSave() {
 	FILE *fh;
-	int a;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char tempname[20], ch, strcount;
 	int8 CurPos, OldPos;
@@ -412,26 +414,15 @@ bool DataSave() {
 	actorStop();
 	nextStep();
 
-	for (a = 0; a < TOP; a++)
+	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	SDText SText;
-	SText.x = CurScrollPageDx;
-	SText.y = TOP - 20;
-	SText.dx = SCREENLEN;
-	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysText[9];
-	SText.l[0] = 0;
-	SText.l[1] = 0;
-	SText.l[2] = SCREENLEN;
-	SText.l[3] = CARHEI;
-	SText.tcol = 0x7FFF;
-	SText.scol = MASKCOL;
-	DText(SText);
+	SDText SText = {CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[9]};
+	SText.DText();
 
 	ShowScreen(0, 0, MAXX, TOP);
 
-	for (a = TOP + AREA; a < AREA + 2 * TOP; a++)
+	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 	ShowScreen(0, TOP + AREA, MAXX, TOP);
 
@@ -460,7 +451,7 @@ insave:
 	CurPos = -1;
 	OldPos = -1;
 
-	for (a = 0; a < g_vm->_inventorySize; a++) {
+	for (int a = 0; a < g_vm->_inventorySize; a++) {
 		strcpy(tempname, "SaveGame._X_");
 		tempname[10] = 'A' + a;
 
@@ -498,7 +489,7 @@ insave:
 			CurPos = ((mx - ICONMARGSX) / ICONDX);
 
 			if (OldPos != CurPos) {
-				for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 					wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
@@ -510,18 +501,8 @@ insave:
 				if ((posx + LenText) > SCREENLEN - 2)
 					posx = SCREENLEN - 2 - LenText;
 
-				SText.x = posx;
-				SText.y = FIRSTLINE + ICONDY + 10;
-				SText.dx = LenText;
-				SText.dy   = CARHEI;
-				SText.sign = savename[CurPos];
-				SText.l[0] = 0;
-				SText.l[1] = 0;
-				SText.l[2] = LenText;
-				SText.l[3] = CARHEI;
-				SText.tcol = 0x7FFF;
-				SText.scol = MASKCOL;
-				DText(SText);
+				SText = {posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]};
+				SText.DText();
 
 				ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -530,7 +511,7 @@ insave:
 				break;
 		} else {
 			if (OldPos != -1) {
-				for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 					wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 				ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -553,7 +534,7 @@ insave:
 			strcount = 0;
 			savename[CurPos][0] = '\0';
 
-			for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 				wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 			ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -570,13 +551,15 @@ insave:
 
 			if (ch == 0x1B) {
 				ch = 0;
-				for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 					wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 				ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
 				goto insave;
-			} else if (ch == 0x08) {
+			}
+
+			if (ch == 0x08) {
 				if (strcount > 0)
 					savename[CurPos][--strcount] = '\0';
 				ch = 0;
@@ -589,12 +572,12 @@ insave:
 			} else
 				ch = 0;
 
-			for (a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 				wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-			a = strlen(savename[CurPos]);
-			savename[CurPos][a] = '_';
-			savename[CurPos][a + 1] = '\0';
+			int endStr = strlen(savename[CurPos]);
+			savename[CurPos][endStr] = '_';
+			savename[CurPos][endStr + 1] = '\0';
 
 			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2 ;
 			LenText  = TextLength(savename[CurPos], 0);
@@ -605,30 +588,21 @@ insave:
 			if ((posx + LenText) > SCREENLEN - 2)
 				posx = SCREENLEN - 2 - LenText;
 
-			SText.x = posx;
-			SText.y = FIRSTLINE + ICONDY + 10;
-			SText.dx = LenText;
-			SText.dy   = CARHEI;
-			SText.sign = savename[CurPos];
-			SText.l[0] = 0;
-			SText.l[1] = 0;
-			SText.l[2] = LenText;
-			SText.l[3] = CARHEI;
-			SText.tcol = 0x7FFF;
-			SText.scol = MASKCOL;
+			SText = {posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]};
 
 			if ((ReadTime() / 8) & 1)
 				BlinkLastDTextChar = 0x0000;
-			DText(SText);
+
+			SText.DText();
 			BlinkLastDTextChar = MASKCOL;
 
-			a = strlen(savename[CurPos]);
-			savename[CurPos][a - 1] = '\0';
+			endStr = strlen(savename[CurPos]);
+			savename[CurPos][endStr - 1] = '\0';
 
 			ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
-		for (a = FIRSTLINE; a < MAXY; a++)
+		for (int a = FIRSTLINE; a < MAXY; a++)
 			wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 		strcpy(tempname, "SaveGame._X_");
@@ -672,13 +646,13 @@ insave:
 		fwrite(&_curPanel,            sizeof(int),   1, fh);
 		fwrite(&_oldPanel,            sizeof(int),   1, fh);
 
-		for (a = 0; a < MAXROOMS; a++) {
+		for (int a = 0; a < MAXROOMS; a++) {
 			fwrite(g_vm->_room[a]._baseName, sizeof(char), 4, fh);
 			fwrite(g_vm->_room[a]._actions, sizeof(uint16), MAXACTIONINROOM, fh);
 			fwrite(&g_vm->_room[a]._flag, sizeof(uint8), 1, fh);
 			fwrite(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
 		}
-		for (a = 0; a < MAXOBJ; a++) {
+		for (int a = 0; a < MAXOBJ; a++) {
 			fwrite(&g_vm->_obj[a]._lim, sizeof(uint16), 4, fh);
 			fwrite(&g_vm->_obj[a]._name, sizeof(uint16), 1, fh);
 			fwrite(&g_vm->_obj[a]._examine, sizeof(uint16), 1, fh);
@@ -691,23 +665,23 @@ insave:
 			fwrite(&g_vm->_obj[a]._ninv, sizeof(uint8), 1, fh);
 			fwrite(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
 		}
-		for (a = 0; a < MAXINVENTORY; a++) {
+		for (int a = 0; a < MAXINVENTORY; a++) {
 			fwrite(&g_vm->_inventoryObj[a]._name, sizeof(uint16), 1, fh);
 			fwrite(&g_vm->_inventoryObj[a]._examine, sizeof(uint16), 1, fh);
 			fwrite(&g_vm->_inventoryObj[a]._action, sizeof(uint16), 1, fh);
 			fwrite(&g_vm->_inventoryObj[a]._anim, sizeof(uint16), 1, fh);
 			fwrite(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 		}
-		for (a = 0; a < MAXANIM; a++)
+		for (int a = 0; a < MAXANIM; a++)
 			fwrite(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
-		for (a = 0; a < MAXSAMPLE; a++) {
+		for (int a = 0; a < MAXSAMPLE; a++) {
 			fwrite(&GSample[a]._volume,  sizeof(uint8), 1, fh);
 			fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
 		}
-		for (a = 0; a < MAXCHOICE; a++)
+		for (int a = 0; a < MAXCHOICE; a++)
 			fwrite(&_choice[a],           sizeof(DialogChoice), 1, fh);
 
-		for (a = 0; a < MAXDIALOG; a++)
+		for (int a = 0; a < MAXDIALOG; a++)
 			fwrite(&_dialog[a],          sizeof(Dialog), 1, fh);
 
 		fwrite(&Comb35,      sizeof(uint16), 7, fh);
@@ -723,12 +697,12 @@ insave:
 		fclose(fh);
 	}
 
-	for (a = FIRSTLINE; a < MAXY; a++)
+	for (int a = FIRSTLINE; a < MAXY; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	ShowScreen(0, FIRSTLINE, MAXX, TOP);
 
-	for (a = TOP - 20; a < TOP - 20 + CARHEI; a++)
+	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
 	ShowScreen(0, 0, MAXX, TOP);
@@ -769,19 +743,8 @@ bool DataLoad() {
 		Mouse(1);
 	}
 
-	SDText SText;
-	SText.x = CurScrollPageDx;
-	SText.y = TOP - 20;
-	SText.dx = SCREENLEN;
-	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysText[11];
-	SText.l[0] = 0;
-	SText.l[1] = 0;
-	SText.l[2] = SCREENLEN;
-	SText.l[3] = CARHEI;
-	SText.tcol = 0x7FFF;
-	SText.scol = MASKCOL;
-	DText(SText);
+	SDText SText = {CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[11]};
+	SText.DText();
 
 	ShowScreen(0, 0, MAXX, TOP);
 
@@ -862,18 +825,8 @@ bool DataLoad() {
 				if ((posX + lenText) > SCREENLEN - 2)
 					posX = SCREENLEN - 2 - lenText;
 
-				SText.x = posX;
-				SText.y = FIRSTLINE + ICONDY + 10;
-				SText.dx = lenText;
-				SText.dy   = CARHEI;
-				SText.sign = savename[CurPos];
-				SText.l[0] = 0;
-				SText.l[1] = 0;
-				SText.l[2] = lenText;
-				SText.l[3] = CARHEI;
-				SText.tcol = 0x7FFF;
-				SText.scol = MASKCOL;
-				DText(SText);
+				SText = {posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]};
+				SText.DText();
 
 				ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -1057,19 +1010,9 @@ bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	SDText SText;
-	SText.x = CurScrollPageDx;
-	SText.y = TOP - 20;
-	SText.dx = SCREENLEN;
-	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysText[13];
-	SText.l[0] = 0;
-	SText.l[1] = 0;
-	SText.l[2] = SCREENLEN;
-	SText.l[3] = CARHEI;
-	SText.tcol = 0x7FFF;
-	SText.scol = MASKCOL;
-	DText(SText);
+	SDText SText = {
+		CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[13]};
+	SText.DText();
 
 	for (int a = 0; a < TOP; a++)
 		VCopy(a * VirtualPageLen + VideoScrollPageDx, Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
@@ -1105,19 +1048,8 @@ void DemoOver() {
 	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	SDText SText;
-	SText.x = CurScrollPageDx;
-	SText.y = TOP - 20;
-	SText.dx = SCREENLEN;
-	SText.dy   = CARHEI;
-	SText.sign = g_vm->_sysText[17];
-	SText.l[0] = 0;
-	SText.l[1] = 0;
-	SText.l[2] = SCREENLEN;
-	SText.l[3] = CARHEI;
-	SText.tcol = 0x7FFF;
-	SText.scol = MASKCOL;
-	DText(SText);
+	SDText SText = {CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[17]};
+	SText.DText();
 
 	for (int a = 0; a < TOP; a++)
 		VCopy(a * VirtualPageLen + VideoScrollPageDx, Video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
@@ -1182,19 +1114,8 @@ void CheckFileInCD(const char *name) {
 	UpdatePixelFormat(Video2, MAXX * TOP);
 
 	sprintf(str, g_vm->_sysText[4], ncd + '0');
-	SDText SText;
-	SText.x = 0;
-	SText.y = TOP - 20;
-	SText.dx = SCREENLEN;
-	SText.dy   = CARHEI;
-	SText.sign = str;
-	SText.l[0] = 0;
-	SText.l[1] = 0;
-	SText.l[2] = SCREENLEN;
-	SText.l[3] = CARHEI;
-	SText.tcol = PalTo16bit(255, 255, 255);
-	SText.scol = MASKCOL;
-	DText(SText);
+	SDText SText = {0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, PalTo16bit(255, 255, 255), MASKCOL, str};
+	SText.DText();
 
 	for (int a = 0; a < TOP; a++)
 		VCopy(a * MAXX, Video2 + a * MAXX, MAXX);
