@@ -86,14 +86,14 @@ void Background::InitBackground() {
  * @param newYpos		New y position
  */
 
-void Background::PlayfieldSetPos(int which, int newXpos, int newYpos) {
+void Background::PlayfieldSetPos(unsigned int which, int newXpos, int newYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
+	assert(which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
 	pPlayfield = &_pCurBgnd->fieldArray[which];
@@ -113,14 +113,14 @@ void Background::PlayfieldSetPos(int which, int newXpos, int newYpos) {
  * @param pYpos			Returns current y position
  */
 
-void Background::PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
+void Background::PlayfieldGetPos(unsigned int which, int *pXpos, int *pYpos) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
+	assert(which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
 	pPlayfield = &_pCurBgnd->fieldArray[which];
@@ -135,14 +135,14 @@ void Background::PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
  * @param which			Which playfield
  */
 
-int Background::PlayfieldGetCenterX(int which) {
+int Background::PlayfieldGetCenterX(unsigned int which) {
 	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
+	assert(which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
 	pPlayfield = &_pCurBgnd->fieldArray[which];
@@ -156,14 +156,14 @@ int Background::PlayfieldGetCenterX(int which) {
  * @param which			Which playfield
  */
 
-OBJECT **Background::GetPlayfieldList(int which) {
+OBJECT **Background::GetPlayfieldList(unsigned int which) {
 	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
 
 	// make sure the playfield number is in range
-	assert(which >= 0 && which < _pCurBgnd->fieldArray.size());
+	assert(which < _pCurBgnd->fieldArray.size());
 
 	// get playfield pointer
 	pPlayfield = &_pCurBgnd->fieldArray[which];
@@ -179,7 +179,6 @@ OBJECT **Background::GetPlayfieldList(int which) {
  */
 
 void Background::DrawBackgnd() {
-	int i;			// playfield counter
 	PLAYFIELD *pPlay;	// playfield pointer
 	int prevX, prevY;	// save interger part of position
 	Common::Point ptWin;	// window top left
@@ -188,7 +187,7 @@ void Background::DrawBackgnd() {
 		return;		// no current background
 
 	// scroll each background playfield
-	for (i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
+	for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 		// get pointer to correct playfield
 		pPlay = &_pCurBgnd->fieldArray[i];
 
@@ -227,7 +226,7 @@ void Background::DrawBackgnd() {
 	for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {
 		// clear the clip rectangle on the virtual screen
 		// for each background playfield
-		for (i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
+		for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 			Common::Rect rcPlayClip;	// clip rect for this playfield
 
 			// get pointer to correct playfield

@@ -1661,7 +1661,7 @@ enum { I_NOTIN,
 	   I_ENDCHANGE
 };
 
-#define EXTRA 1 // This was introduced when we decided to increase \
+#define EXTRA 1 // This was introduced when we decided to increase
 	            // the active area of the borders for re-sizing.
 
 /*---------------------------------*/

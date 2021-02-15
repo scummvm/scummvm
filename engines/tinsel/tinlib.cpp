@@ -331,7 +331,7 @@ void ResetVarsTinlib() {
 }
 
 /**
- * For Scroll() and Offset(), work out top left for a
+ * For ScrollScreen() and Offset(), work out top left for a
  * given screen position.
  */
 static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
@@ -884,9 +884,9 @@ static void ConvTopic(int icon) {
 }
 
 /**
- * Cursor(on/off)
+ * ToggleCursor(on/off)
  */
-void Cursor(int onoff) {
+void ToggleCursor(int onoff) {
 	if (onoff) {
 		// Re-instate cursor
 		_vm->_cursor->UnHideCursor();
@@ -2514,7 +2514,7 @@ static int ScanIcon() {
 /**
  * Scroll the screen to target co-ordinates.
  */
-static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int yIter, bool bComp, bool escOn, int myEscape) {
+static void ScrollScreen(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int yIter, bool bComp, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
 		int	thisScroll;
 		int x, y;
@@ -4535,7 +4535,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CURSOR:
 		// DW2 only
-		Cursor(pp[0]);
+		ToggleCursor(pp[0]);
 		return -1;
 
 	case CURSORXPOS:
@@ -5200,11 +5200,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to both DW1 & DW2
 		if (TinselV2) {
 			pp -= 5;			// 6 parameters
-			Scroll(coroParam, (EXTREME)pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pic->escOn, pic->myEscape);
+			ScrollScreen(coroParam, (EXTREME)pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pic->escOn, pic->myEscape);
 			return -6;
 		} else {
 			pp -= 3;			// 4 parameters
-			Scroll(coroParam, EX_USEXY, pp[0], pp[1], pp[2], pp[2], pp[3], pic->escOn, pic->myEscape);
+			ScrollScreen(coroParam, EX_USEXY, pp[0], pp[1], pp[2], pp[2], pp[3], pic->escOn, pic->myEscape);
 			return -4;
 		}
 
