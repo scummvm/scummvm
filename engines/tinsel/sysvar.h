@@ -121,6 +121,12 @@ typedef enum {
 	SS_CONTROLS_HEADING,
 	SS_LANGUAGE_SELECT,
 
+	// Noir only:
+	SS_NOIR1,
+	SS_NOIR2,
+	SS_NOIR3,
+	SS_NOIR4,
+
 	SS_MAX_VALID
 } BOLLOX;
 

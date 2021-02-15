@@ -4232,6 +4232,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 152:
+		mapping = NoirMapping{"SETSYSTEMSTRING", SETSYSTEMSTRING, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, %08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
 		pp -= mapping.numArgs - 1;
@@ -5297,7 +5302,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		}
 
 	case SETSYSTEMSTRING:
-		// DW2 only
+		// DW2 & Noir
 		pp -= 1;				// 2 parameters
 		SetSystemString(pp[0], pp[1]);
 		return -2;
