@@ -57,39 +57,40 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     : Engine(syst), _gameDescription(gd) {
     _rnd = new Common::RandomSource("private");
 
+    // Debug channels
     DebugMan.addDebugChannel(kPrivateDebugFunction, "functions", "Function execution debug channel");
     DebugMan.addDebugChannel(kPrivateDebugCode, "code", "Code execution debug channel");
     DebugMan.addDebugChannel(kPrivateDebugScript, "script", "Script execution debug channel");
 
+    // Global object for external reference
     g_private = this;
 
-    _saveGameMask = NULL;
-    _loadGameMask = NULL;
-
-    _dossierNextSuspectMask = NULL;
-    _dossierPrevSuspectMask = NULL;
-
+    // Setting execution
     _nextSetting = NULL;
     _currentSetting = NULL;
-    _nextMovie = NULL;
-    _nextVS = NULL;
+    _pausedSetting = NULL;
     _modified = false;
     _mode = -1;
     _toTake = false;
-    _repeatedMovieExit = new Common::String("");
-    _pausedSetting = NULL;
 
+    // Movies
+    _nextMovie = NULL;
+    _nextVS = NULL;
+    _repeatedMovieExit = new Common::String("");
+
+    // Save and load
+    _saveGameMask = NULL;
+    _loadGameMask = NULL;
 
     // Interface
     _frame = new Common::String("inface/general/inface2.bmp");
 
-    // Policebust
+    // Police
     _policeBustEnabled = false;
     _policeBustSetting = NULL;
     _numberClicks = 0;
     policeVideoIndex = 0;
     _sirenSound = new Common::String("po/audio/posfx002.wav");
-
 
     // General sounds
     _globalAudioPath = new Common::String("global/audio/");
@@ -99,7 +100,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _policeRadioArea = NULL;
     _AMRadioArea = NULL;
     _phoneArea = NULL;
-
     // TODO: use this as a default sound for radio
     _infaceRadioPath = new Common::String("inface/radio/");
     _phonePrefix = new Common::String("inface/telephon/");
@@ -108,17 +108,18 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     // Dossiers
     _dossierPage = 0;
     _dossierSuspect = 0;
+    _dossierNextSuspectMask = NULL;
+    _dossierPrevSuspectMask = NULL;
 
     // Diary
     _diaryLocPrefix = new Common::String("inface/diary/loclist/");
-
 }
 
 PrivateEngine::~PrivateEngine() {
     // Dispose your resources here
     delete _rnd;
 
-    // Remove all of our debug levels here
+    // Remove all of our debug levels
     DebugMan.clearAllDebugChannels();
 }
 
@@ -130,7 +131,6 @@ Common::Error PrivateEngine::run() {
 
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
     Common::SeekableReadStream *file = NULL;
-
     // if the full game is used
     if (!isDemo()) {
         assert(_installerArchive.hasFile("GAME.DAT"));
@@ -147,6 +147,7 @@ Common::Error PrivateEngine::run() {
         }
     }
 
+    // Read assets file
     assert(file != NULL);
     char *buf = (char *)malloc(file->size()+1);
     file->read(buf, file->size()+1);
@@ -155,13 +156,12 @@ Common::Error PrivateEngine::run() {
     initInsts();
     initFuncs();
     initCursors();
-
     parse(buf);
     free(buf);
     delete file;
     assert(constants.size() > 0);
 
-    // Initialize graphics using following:
+    // Initialize graphics
     _screenW = 640;
     _screenH = 480;
     //_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -170,7 +170,6 @@ Common::Error PrivateEngine::run() {
     initGraphics(_screenW, _screenH, &_pixelFormat);
     screenRect = new Common::Rect(0, 0, _screenW, _screenH);
     changeCursor("default");
-
     _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
     _compositeSurface = new Graphics::ManagedSurface();
@@ -184,7 +183,7 @@ Common::Error PrivateEngine::run() {
     // Main event loop
     Common::Event event;
     Common::Point mousePos;
-    _videoDecoder = nullptr; //new Video::SmackerDecoder();
+    _videoDecoder = nullptr;
 
     int saveSlot = ConfMan.getInt("save_slot");
     if (saveSlot >= 0) { // load the savegame
@@ -239,7 +238,6 @@ Common::Error PrivateEngine::run() {
 
             default:
             {}
-
             }
         }
 
@@ -252,7 +250,6 @@ Common::Error PrivateEngine::run() {
             playVideo(*_nextMovie);
             _nextMovie = NULL;
             continue;
-
         }
 
         if (_nextVS != NULL && _currentSetting->c_str() == kMainDesktop) {
@@ -260,7 +257,6 @@ Common::Error PrivateEngine::run() {
         }
 
         if (_videoDecoder) {
-
             if (_videoDecoder->getCurFrame() == 0)
                 stopSound(true);
             if (_videoDecoder->endOfVideo()) {
@@ -274,7 +270,6 @@ Common::Error PrivateEngine::run() {
         }
 
         if (_nextSetting != NULL) {
-
             removeTimer();
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
             clearAreas();
@@ -288,7 +283,6 @@ Common::Error PrivateEngine::run() {
         g_system->updateScreen();
         g_system->delayMillis(10);
     }
-
     return Common::kNoError;
 }
 
@@ -302,12 +296,10 @@ void PrivateEngine::clearAreas() {
     _phoneArea = NULL;
     _dossierNextSuspectMask = NULL;
     _dossierPrevSuspectMask = NULL;
-
 }
 
 void PrivateEngine::startPoliceBust() {
     int policeIndex = variables.getVal(kPoliceIndex)->u.val;
-
     int r = _rnd->getRandomNumber(0xc);
     if (0x14 < policeIndex) {
         policeIndex = 0x15;
@@ -336,7 +328,6 @@ void PrivateEngine::checkPoliceBust() {
     if (_numberClicks == _maxNumberClicks+1) {
         uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
-
         if (policeIndex <= 13) {
             _nextSetting = &kPOGoBustMovie;
         } else {
@@ -366,7 +357,6 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
                 rs = cs;
                 cursor = e.cursor;
             }
-
         }
     }
 
@@ -405,7 +395,6 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
                 changeCursor(*m.cursor);
                 break;
             }
-
         }
     }
     return inside;
@@ -460,7 +449,6 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
                 rs = cs;
                 ns = e.nextSetting;
             }
-
         }
     }
     if (ns != NULL) {
@@ -474,7 +462,6 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
-
         //debug("Testing mask %s", m.nextSetting->c_str());
         if (inMask(m.surf, mousePos)) {
             //debug("Inside!");
@@ -495,9 +482,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
             if (m.flag2 != NULL) {
                 setSymbol(m.flag2, 1);
             }
-
             break;
-
         }
     }
     if (ns != NULL) {
@@ -518,7 +503,6 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
         playSound(sound.c_str(), 1, false, false);
         _AMRadio.pop_back();
     }
-
 }
 
 void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
@@ -533,7 +517,6 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
         playSound(sound.c_str(), 1, false, false);
         _policeRadio.pop_back();
     }
-
 }
 
 void PrivateEngine::checkPhoneCall() {
@@ -545,7 +528,6 @@ void PrivateEngine::checkPhoneCall() {
 
     if (!_mixer->isSoundHandleActive(_fgSoundHandle))
         playSound(*_phonePrefix + *_phoneCallSound, 1, false, false);
-
 }
 
 void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
@@ -563,7 +545,6 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
         playSound(sound.c_str(), 1, true, false);
         _phone.pop_back();
     }
-
 }
 
 void PrivateEngine::loadDossier() {
@@ -581,7 +562,6 @@ void PrivateEngine::loadDossier() {
     } else
         assert(0);
 }
-
 
 bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
     if (_dossierNextSuspectMask == NULL)
@@ -615,7 +595,6 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
         return true;
     }
     return false;
-
 }
 
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
@@ -638,8 +617,7 @@ void PrivateEngine::selectSaveGame(Common::Point mousePos) {
 }
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
-    return
-        (f == kSupportsReturnToLauncher);
+    return (f == kSupportsReturnToLauncher);
 }
 
 void PrivateEngine::restartGame() {
@@ -652,24 +630,20 @@ void PrivateEngine::restartGame() {
     }
 
     // Diary
-
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
         Private::Symbol *sym = locations.getVal(*it);
         sym->u.val = 0;
     }
-
     inventory.clear();
     _dossiers.clear();
 
     // Sounds
-
     _AMRadio.clear();
     _policeRadio.clear();
     _phone.clear();
     _playedPhoneClips.clear();
 
     // Movies
-
     _repeatedMovieExit = NULL;
     _playedMovies.clear();
 
@@ -688,13 +662,11 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     }
 
     // Diary
-
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
         s.syncAsUint32LE(val);
         Private::Symbol *sym = locations.getVal(*it);
         sym->u.val = val;
     }
-
     uint32 size = 0;
     size = stream->readUint32LE();
     Common::String *file = NULL;
@@ -721,7 +693,6 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     }
 
     // Radios
-
     Common::String *sound;
     size = stream->readUint32LE();
     _AMRadio.clear();
@@ -751,12 +722,11 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         _phone.push_back(*i);
     }
 
+    // Played media
     *_repeatedMovieExit = stream->readString();
-
     _playedMovies.clear();
     size = stream->readUint32LE();
     Common::String *movie;
-
     for (uint32 i = 0; i < size; ++i) {
         movie = new Common::String(stream->readString());
         _playedMovies.setVal(*movie, true);
@@ -765,7 +735,6 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     _playedPhoneClips.clear();
     size = stream->readUint32LE();
     Common::String *phone;
-
     for (uint32 i = 0; i < size; ++i) {
         phone = new Common::String(stream->readString());
         _playedPhoneClips.setVal(*phone, true);
@@ -786,7 +755,6 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     }
 
     // Diary
-
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
         Private::Symbol *sym = locations.getVal(*it);
         stream->writeUint32LE(sym->u.val);
@@ -799,7 +767,6 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     }
 
     // Dossiers
-
     stream->writeUint32LE(_dossiers.size());
     for (DossierArray::iterator it = _dossiers.begin(); it != _dossiers.end(); ++it) {
         stream->writeString(it->page1->c_str());
@@ -816,7 +783,6 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
         stream->writeString(*it);
         stream->writeByte(0);
     }
-
     stream->writeUint32LE(_policeRadio.size());
     for (SoundList::iterator it = _policeRadio.begin(); it != _policeRadio.end(); ++it) {
         stream->writeString(*it);
@@ -825,7 +791,6 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 
     stream->writeUint32LE(_phone.size());
     for (PhoneList::iterator it = _phone.begin(); it != _phone.end(); ++it) {
-        //PhoneInfo *i = *it;
         stream->writeString(*it->sound);
         stream->writeByte(0);
         stream->writeString(*it->flag->name);
@@ -909,7 +874,6 @@ void PrivateEngine::playVideo(const Common::String &name) {
     if (!_videoDecoder->loadStream(file))
         error("unable to load video %s", path.c_str());
     _videoDecoder->start();
-
 }
 
 void PrivateEngine::skipVideo() {
@@ -1026,7 +990,6 @@ bool PrivateEngine::getRandomBool(uint p) {
 }
 
 Common::String *PrivateEngine::getPaperShuffleSound() {
-
     uint r = _rnd->getRandomNumber(6);
     char f[32];
     snprintf(f, 32, "glsfx0%d.wav", kPaperShuffleSound[r]);
@@ -1074,7 +1037,6 @@ char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
 }
 
 // Timers
-
 void timerCallback(void *refCon) {
     g_private->removeTimer();
     g_private->_nextSetting = (Common::String *)refCon;
@@ -1105,9 +1067,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
             //debug("%hd %hd", rect->left, rect->top + offset);
             loadMask(s, rect->left + 120, rect->top + offset, true);
         }
-
     }
-
 }
 
 void PrivateEngine::loadInventory(uint32 x, Common::Rect *r1, Common::Rect *r2) {
@@ -1117,7 +1077,6 @@ void PrivateEngine::loadInventory(uint32 x, Common::Rect *r1, Common::Rect *r2) 
         //debug("%hd %hd", rect->left, rect->top + offset);
         loadMask(*it, r1->left, r1->top + offset, true);
     }
-
 }
 
 } // End of namespace Private
