@@ -910,13 +910,13 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
     drawScreen();
 }
 
-void PrivateEngine::drawScreenFrame(Graphics::Surface *screen) {
+void PrivateEngine::drawScreenFrame(Graphics::Surface *surf) {
     Common::String path = convertPath(*_frame);
     Common::File file;
     assert(file.open(path));
     _image->loadStream(file);
     Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
-    screen->copyRectToSurface(*csurf, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+    surf->copyRectToSurface(*csurf, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
     csurf->free();
     delete csurf;
     _image->destroy();
@@ -953,10 +953,7 @@ void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
 }
 
 void PrivateEngine::drawScreen() {
-    Graphics::Surface *screen = g_system->lockScreen();
     Graphics::ManagedSurface *surface = _compositeSurface;
-    int w = surface->w;
-    int h = surface->h;
 
     if (_videoDecoder) {
         const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
@@ -971,8 +968,7 @@ void PrivateEngine::drawScreen() {
         delete cframe;
     }
 
-    assert(w == _screenW && h == _screenH);
-
+    Graphics::Surface *screen = g_system->lockScreen();
     if (_mode == 1) {
         drawScreenFrame(screen);
     }
