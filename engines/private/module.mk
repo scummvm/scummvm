@@ -1,17 +1,17 @@
 MODULE := engines/private
  
 MODULE_OBJS := \
-	metaengine.o \
     code.o \
-	cursors.o \
-	symbol.o \
-	funcs.o \
+    cursors.o \
+    funcs.o \
     grammar.o \
 	lexer.o \
-	private.o
+	metaengine.o \
+    private.o \
+	symbol.o
  
 MODULE_DIRS += \
-	engines/private
+    engines/private
  
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRIVATE), DYNAMIC_PLUGIN)
