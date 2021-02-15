@@ -185,7 +185,7 @@ public:
 
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);
-	void soundPlay(MusicEntry *pSnd);
+	void soundPlay(MusicEntry *pSnd, bool restoring = false);
 	void soundStop(MusicEntry *pSnd);
 	void soundKill(MusicEntry *pSnd);
 	void soundPause(MusicEntry *pSnd);

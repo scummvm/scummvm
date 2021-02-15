@@ -51,18 +51,12 @@ MusicManager::MusicManager() {
 
 	m_fading = 0;
 	m_adjustFadeVol = 0;
-#ifdef ENABLE_OPENAL
-	alGenBuffers(1, &alStream.buffer);
-	alGenSources(1, &alStream.source);
-#endif
+
+	_audioStream = NULL;
 }
 
 MusicManager::~MusicManager() {
 	KillBuffer();
-#ifdef ENABLE_OPENAL
-	alDeleteSources(1, &alStream.source);
-	alDeleteBuffers(1, &alStream.buffer);
-#endif
 }
 
 bool8 MusicManager::UpdateMusic() {
@@ -77,11 +71,8 @@ bool8 MusicManager::UpdateMusic() {
 		if (m_adjustFadeVol != 0) {
 			// Have we faded down
 			if (m_fading == 0) {
-#ifdef ENABLE_OPENAL
-				// Stop playback and reset cursor to start
-				alSourceStop(alStream.source);
-				alSourceRewind(alStream.source);
-#endif
+				if (g_icb->_mixer->isSoundHandleActive(_handle))
+					g_icb->_mixer->stopHandle(_handle);
 				m_adjustFadeVol = 0;
 			} else {
 				AdjustVolume(m_adjustFadeVol * -1);
@@ -137,6 +128,7 @@ bool8 MusicManager::LoadMusic(const char *clusterName, uint32 byteOffsetToWav, i
 }
 
 bool8 MusicManager::StartMusic(const char *clusterName, uint32 byteOffsetToWav, int32 vol) {
+	warning("MusicManager::StartMusic");
 	if (LoadMusic(clusterName, byteOffsetToWav, vol) == TRUE8) {
 		// Regular playback
 		m_adjustFadeVol = 0;
@@ -156,8 +148,9 @@ bool8 MusicManager::PlayMusic() {
 	m_adjustFadeVol = 0;
 
 	// Play the sound buffer
-	g_icb->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, _audioStream);
-	// Autofreed for now
+	float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+	g_icb->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle, _audioStream,
+	                          -1, m_musicVol * volumeConversion, 0, DisposeAfterUse::YES);
 
 	return TRUE8;
 }
@@ -186,7 +179,8 @@ void MusicManager::SetMusicPausedStatus(bool8 p) {
 			return;
 
 		// Stop playback leaving cursors alone
-		g_icb->_mixer->pauseHandle(_handle, true);
+		if (g_icb->_mixer->isSoundHandleActive(_handle))
+			g_icb->_mixer->pauseHandle(_handle, true);
 
 		m_paused = TRUE8;
 	} else {
@@ -194,7 +188,8 @@ void MusicManager::SetMusicPausedStatus(bool8 p) {
 			m_paused = FALSE8;
 
 			// Play from where we left off
-			g_icb->_mixer->pauseHandle(_handle, false);
+			if (g_icb->_mixer->isSoundHandleActive(_handle))
+				g_icb->_mixer->pauseHandle(_handle, false);
 		}
 	}
 }
@@ -210,9 +205,8 @@ bool8 MusicManager::IsPlaying() {
 	if (noSoundEngine)
 		return FALSE8;
 
-	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+	if (g_icb->_mixer->isSoundHandleActive(_handle))
 		return TRUE8;
-	}
 
 	return FALSE8;
 }
@@ -220,28 +214,35 @@ bool8 MusicManager::IsPlaying() {
 void MusicManager::SetVolume(int volume) {
 	// Store and set correct volume
 	m_musicVol = volume;
-#ifdef ENABLE_OPENAL
-	alSourcef(alStream.source, AL_GAIN, ((float)volume) / 128.f);
-#endif
+
+	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+		float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+		g_icb->_mixer->setChannelVolume(_handle, volume * volumeConversion);
+	}
 }
 
 void MusicManager::AdjustVolume(int amount) {
-	// FIXME: proper calculations
-#ifdef ENABLE_OPENAL
-	alSourcef(alStream.source, AL_GAIN, ((float)amount) / 128.f);
-#endif
+	int musicVol = m_musicVol;
+	musicVol += amount;
+	if (musicVol > 127)
+		musicVol = 127;
+	if (musicVol < 0)
+		musicVol = 0;
+	m_musicVol = musicVol;
+	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+		float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
+		g_icb->_mixer->setChannelVolume(_handle, musicVol * volumeConversion);
+	}
 }
 
 bool8 MusicManager::OpenMusic(Common::SeekableReadStream *stream) {
 	_wavHeader header;
 
 	if (openWav(stream, header, m_wavDataSize, m_wavByteOffsetInCluster, m_lengthInCycles) == FALSE8) {
+		delete stream;
 		return FALSE8;
 	}
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-#ifdef ENABLE_OPENAL
-	// FIXME: (header.samplesPerSec * stub.cycle_speed)/100;
-#endif
 	return TRUE8;
 }
 
@@ -249,9 +250,8 @@ void MusicManager::KillBuffer() {
 	if (noSoundEngine)
 		return;
 
-	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
+	if (g_icb->_mixer->isSoundHandleActive(_handle))
 		g_icb->_mixer->stopHandle(_handle);
-	}
 
 	m_identifier = 0;
 }

@@ -288,9 +288,6 @@ void InitEngine(const char *lpCmdLine) {
 	// Set the character root directory to be the same as the normal root directory
 	camera_hack = false; // defaults to off
 
-#ifdef USE_SDL_DIRECTLY
-	sdl_window = SDL_CreateWindow("In Cold Blood (C)2000 Revolution Software Ltd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, sdl_flags);
-#endif
 	// create the surface manaager
 	surface_manager = new _surface_manager;
 
@@ -376,14 +373,6 @@ bool mainLoopIteration() {
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		/*
-		case SDL_TEXTINPUT:
-			if (event.text.text[0] && event.text.text[1] == 0) {
-				uint8 key = event.text.text[0];
-					WriteKey(key);
-			}
-			break;
-		*/
 		case Common::EVENT_KEYDOWN: {
 			// Pass ENTER and BACKSPACE KEYDOWN events to WriteKey() so the save menu in options_manager_pc.cpp can see them.
 			if (event.kbd.keycode == Common::KEYCODE_RETURN) {
@@ -394,7 +383,8 @@ bool mainLoopIteration() {
 				WriteKey(event.kbd.keycode);
 			}
 			setKeyState(event.kbd.keycode, true);
-		} break;
+			break;
+		}
 		case Common::EVENT_KEYUP: {
 			setKeyState(event.kbd.keycode, false);
 			break;
@@ -423,33 +413,6 @@ bool mainLoopIteration() {
 			mousex = event.mouse.x;
 			mousey = event.mouse.y;
 			break;
-		/*case SDL_WINDOWEVENT:
-			switch (event.window.event) {
-			case SDL_WINDOWEVENT_FOCUS_GAINED:
-				SDL_ShowCursor(SDL_FALSE);
-				gRegainedFocus = TRUE8;
-				gotTheFocus = TRUE8;
-				break;
-			case SDL_WINDOWEVENT_FOCUS_LOST:
-				SDL_ShowCursor(SDL_TRUE);
-				gRegainedFocus = FALSE8;
-				gotTheFocus = FALSE8;
-				break;
-			case SDL_WINDOWEVENT_EXPOSED:
-				stub.Process_stub();
-				break;
-			case SDL_WINDOWEVENT_CLOSE:
-				break;
-			}
-			break;*/
-
-		// TODO: Fix sound
-		/*case SDL_USEREVENT:
-			if (g_TimerOn) {
-				UpdateSounds10Hz();
-				Poll_Sound_Engine();
-			}
-			break;*/
 
 		case Common::EVENT_QUIT:
 			Zdebug("\nap closed");

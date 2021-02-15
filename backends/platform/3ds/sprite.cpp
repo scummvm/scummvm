@@ -25,7 +25,7 @@
 #include "common/algorithm.h"
 #include "common/util.h"
 
-namespace _3DS {
+namespace N3DS {
 
 Sprite::Sprite()
 	: textureTransferFlags(0)
@@ -153,4 +153,4 @@ void Sprite::setFilteringMode(bool enableLinearFiltering) {
 	C3D_TexSetFilter(&texture, filteringMode, filteringMode);
 }
 
-} // namespace _3DS
+} // namespace N3DS

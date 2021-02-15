@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 17:56+0000\n"
+"POT-Creation-Date: 2021-02-14 20:48+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3724,7 +3724,8 @@ msgstr "Emuleer geen NTSC artefacten voor tekst"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:160
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Gebruik originele opslaan/laad schermen"
 
@@ -3732,7 +3733,8 @@ msgstr "Gebruik originele opslaan/laad schermen"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Gebruik de originele opslaan/laden schermen in plaats van die van ScummVM"
@@ -4811,13 +4813,13 @@ msgstr "Eye of the Beholder ondersteuning is niet mee gecompileerd"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:195
 msgid "Interact via Left Click"
 msgstr "Bestuur met Linker Klik"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:201
 msgid "Interact via Right Click"
 msgstr "Bestuur met Rechter Klik"
 
@@ -6678,11 +6680,11 @@ msgstr ""
 "Wanneer lineair filteren is ingeschakeld, de achtergrond afbeeldingen worden "
 "gladder in volledig scherm modus, ten koste van sommige details."
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
 msgid "Enable font anti-aliasing"
 msgstr "Schakel font anti-aliasing in"
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Wanneer font anti-aliasing is ingeschakeld, ziet de tekst er gladder uit."
@@ -7145,52 +7147,6 @@ msgstr "Vorige actie"
 msgid "Next location"
 msgstr "Volgende actie"
 
-#: engines/ultima/detection.cpp:64
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
-msgid "Enable font replacement"
-msgstr "Zet het laden van externe vervangende spelbestanden aan."
-
-#: engines/ultima/detection.cpp:65
-msgid "Replaces game fonts with rendered fonts"
-msgstr ""
-
-#: engines/ultima/detection.cpp:82
-msgid "Play foot step sounds"
-msgstr ""
-
-#: engines/ultima/detection.cpp:83
-msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/detection.cpp:91
-#, fuzzy
-msgid "Enable jump to mouse position"
-msgstr "Volledige titel van het spel"
-
-#: engines/ultima/detection.cpp:92
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-
-#: engines/ultima/detection.cpp:100
-msgid "Enable frame skipping"
-msgstr ""
-
-#: engines/ultima/detection.cpp:101
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-
-#: engines/ultima/detection.cpp:109
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
-msgid "Enable frame limiting"
-msgstr "Schakel font anti-aliasing in"
-
-#: engines/ultima/detection.cpp:110
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Kon niet de juiste ultima.dat spelbestand vinden"
@@ -7223,19 +7179,75 @@ msgstr "Origineel opgeslagen spel"
 msgid "Transfer Character"
 msgstr "Zet personage over"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:126
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:132
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable frame limiting"
+msgstr "Schakel font anti-aliasing in"
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:138
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Enable cheats"
+msgstr "Valsspeel modus aangezet"
+
+#: engines/ultima/ultima8/meta_engine.cpp:139
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:148
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:154
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "Volledige titel van het spel"
+
+#: engines/ultima/ultima8/meta_engine.cpp:155
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:166
+#, fuzzy
+#| msgid "Enable loading of external replacement assets."
+msgid "Enable font replacement"
+msgstr "Zet het laden van externe vervangende spelbestanden aan."
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+msgid "Replaces game fonts with rendered fonts"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
+#: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:235
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:205
+#: engines/ultima/ultima8/meta_engine.cpp:252
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Foutopsporen"
 

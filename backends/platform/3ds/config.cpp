@@ -27,7 +27,7 @@
 #include "backends/platform/3ds/options-dialog.h"
 #include "common/config-manager.h"
 
-namespace _3DS {
+namespace N3DS {
 
 Config config;
 static Common::String prefix = "3ds_";
@@ -86,4 +86,4 @@ void saveConfig() {
 	ConfMan.flushToDisk();
 }
 
-} // namespace _3DS
+} // namespace N3DS

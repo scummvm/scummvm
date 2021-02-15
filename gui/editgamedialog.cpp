@@ -185,9 +185,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	if (metaEnginePlugin) {
 		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		const MetaEngineDetection &metaEngine = metaEnginePlugin->get<MetaEngineDetection>();
-		metaEngine.registerDefaultSettings(_domain);
-		_engineOptions = metaEngine.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
+		const MetaEngineDetection &metaEngineDetection = metaEnginePlugin->get<MetaEngineDetection>();
+		metaEngineDetection.registerDefaultSettings(_domain);
+		_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);
@@ -354,8 +354,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 9) The Achievements tab
 	//
 	if (enginePlugin) {
-		const MetaEngine &metaEngineConnect = enginePlugin->get<MetaEngine>();
-		Common::AchievementsInfo achievementsInfo = metaEngineConnect.getAchievementsInfo(domain);
+		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
+		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
 		if (achievementsInfo.descriptions.size() > 0) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);

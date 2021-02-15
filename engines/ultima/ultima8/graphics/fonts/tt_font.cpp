@@ -267,7 +267,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	}
 
 	return new TTFRenderedText(texture, resultWidth, resultHeight,
-		getBaselineSkip() - getHeight(), this);
+		getBaselineSkip() - getHeight(), getBaseline(), isAntialiased());
 }
 
 } // End of namespace Ultima8

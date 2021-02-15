@@ -116,16 +116,16 @@ Ultima8Engine *Ultima8Engine::_instance = nullptr;
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc),
-	    _isRunning(false),  _gameInfo(nullptr), _fileSystem(nullptr),
-	    _configFileMan(nullptr), _saveCount(0), _game(nullptr),
+		_isRunning(false),  _gameInfo(nullptr), _fileSystem(nullptr),
+		_configFileMan(nullptr), _saveCount(0), _game(nullptr),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_ttfOverrides(false), _audioMixer(0), _inverterGump(nullptr), _lerpFactor(256),
-		_inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
+		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
+	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
 	_instance = this;
 }
 
@@ -196,6 +196,7 @@ bool Ultima8Engine::startup() {
 	_gameInfo = nullptr;
 	_fileSystem = new FileSystem;
 	_configFileMan = new ConfigFileManager();
+	_fontManager = new FontManager();
 	_kernel = new Kernel();
 
 	//!! move this elsewhere
@@ -371,24 +372,17 @@ bool Ultima8Engine::startupGame() {
 	_game = Game::createGame(getGameInfo());
 
 	ConfMan.registerDefault("font_override", false);
-	_ttfOverrides = ConfMan.getBool("font_override");
-
+	ConfMan.registerDefault("font_antialiasing", true);
 	ConfMan.registerDefault("frameSkip", false);
-	_frameSkip = ConfMan.getBool("frameSkip");
-
 	ConfMan.registerDefault("frameLimit", true);
-	_frameLimit = ConfMan.getBool("frameLimit");
-
 	ConfMan.registerDefault("interpolate", true);
-	_interpolate = ConfMan.getBool("interpolate");
-
 	ConfMan.registerDefault("cheat", false);
-	_cheatsEnabled = ConfMan.getBool("cheat");
 
 	bool loaded = _game->loadFiles();
 	if (!loaded)
 		return false;
-	_gameData->setupFontOverrides();
+
+	applyGameSettings();
 
 	// Create Midi Driver for Ultima 8
 	if (getGameInfo()->_type == GameInfo::GAME_U8)
@@ -658,17 +652,7 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	ConfMan.registerDefault("font_antialiasing", true);
-	bool font_antialiasing = ConfMan.getBool("font_antialiasing");
-
-	_fontManager = new FontManager(font_antialiasing);
 	_paletteManager = new PaletteManager(new_screen);
-
-	// TODO: assign names to these fontnumbers somehow
-	_fontManager->loadTTFont(0, "Vera.ttf", 18, 0xFFFFFF, 0);
-	_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);
-	// GameWidget's version number information:
-	_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
 
 	ConfMan.registerDefault("fadedModal", true);
 	bool faded_modal = ConfMan.getBool("fadedModal");
@@ -1161,7 +1145,29 @@ void Ultima8Engine::syncSoundSettings() {
 void Ultima8Engine::applyGameSettings() {
 	UltimaEngine::applyGameSettings();
 
-	// TODO: handle dynamic option changes when implemented
+	bool fontOverride = ConfMan.getBool("font_override");
+	bool fontAntialiasing = ConfMan.getBool("font_antialiasing");
+
+	if (_fontOverride != fontOverride || _fontAntialiasing != fontAntialiasing) {
+		_fontOverride = fontOverride;
+		_fontAntialiasing = fontAntialiasing;
+
+		_fontManager->resetGameFonts();
+
+		// TODO: assign names to these fontnumbers somehow
+		_fontManager->loadTTFont(0, "Vera.ttf", 18, 0xFFFFFF, 0);
+		_fontManager->loadTTFont(1, "VeraBd.ttf", 12, 0xFFFFFF, 0);
+		// GameWidget's version number information:
+		_fontManager->loadTTFont(2, "Vera.ttf", 8, 0xA0A0A0, 0);
+
+		_gameData->setupFontOverrides();
+	}
+
+	_frameSkip = ConfMan.getBool("frameSkip");
+	_frameLimit = ConfMan.getBool("frameLimit");
+	_interpolate = ConfMan.getBool("interpolate");
+	_cheatsEnabled = ConfMan.getBool("cheat");
+
 }
 
 void Ultima8Engine::openConfigDialog() {
@@ -1340,7 +1346,7 @@ void Ultima8Engine::addGump(Gump *gump) {
 
 	if (dynamic_cast<ShapeViewerGump *>(gump) || dynamic_cast<MiniMapGump *>(gump) ||
 		dynamic_cast<MessageBoxGump *>(gump)// ||
-		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
+		//(_fontOverrides && (dynamic_cast<BarkGump *>(gump) ||
 		//                dynamic_cast<AskGump *>(gump)))
 		) {
 		_desktopGump->AddChild(gump);

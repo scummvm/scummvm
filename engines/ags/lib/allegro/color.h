@@ -77,6 +77,7 @@ AL_VAR(PALETTE, default_palette);
 
 AL_VAR(RGB_MAP *, rgb_map);
 AL_VAR(COLOR_MAP *, color_map);
+extern int trans_blend_alpha;
 
 AL_VAR(PALETTE, _current_palette);
 

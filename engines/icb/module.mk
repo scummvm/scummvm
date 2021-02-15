@@ -124,7 +124,6 @@ MODULE_OBJS := \
 	common/px_string.o \
 	gfx/gfxstub.o \
 	gfx/gfxstub_dutch.o \
-	gfx/gfxstub_ogl.o \
 	gfx/gfxstub_rev.o \
 	gfx/psx_camera.o \
 	gfx/psx_pcgpu.o \

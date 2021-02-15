@@ -39,9 +39,7 @@ namespace ICB {
 #define TEMP_TEXTURE_HEIGHT 256
 #define BYTES_PER_COLOUR 4
 
-#ifndef ENABLE_OPENGL
 u_char pcRGBA[TEMP_TEXTURE_WIDTH * TEMP_TEXTURE_HEIGHT * BYTES_PER_COLOUR];
-#endif
 
 int bpp = 0;
 
@@ -78,26 +76,9 @@ int SimpleReject(vertex2D *vertices) {
 
 int ClipPolygon(vertex2D *inverts, int inNverts, vertex2D *outverts, int *outNverts);
 
-#ifndef ENABLE_OPENGL
-
 void startDrawing() {}
 
 void endDrawing() {
-#if 0
-	SDL_Surface *s;
-
-	s = SDL_CreateRGBSurfaceFrom(pRGB, RGBWidth, RGBHeight, 32,
-	                             RGBPitch, 0xFF0000, 0xFF00, 0xFF, 0x00);
-	if (SDL_SaveBMP(s, "renderbuffer_soft.bmp") < 0)
-		printf("Failed to create the output file");
-	SDL_FreeSurface(s);
-
-	s = SDL_CreateRGBSurfaceFrom(pZ, RGBWidth, RGBHeight, 16,
-	                             RGBWidth * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00);
-	if (SDL_SaveBMP(s, "zbuffer_soft.bmp") < 0)
-		printf("Failed to create the output file");
-	SDL_FreeSurface(s);
-#endif
 	ClearProcessorState();
 }
 
@@ -1194,7 +1175,6 @@ int DrawGouraudQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int 
 		delete pthan;
 	return ret;
 }
-#endif
 
 inline void Intersection(vertex2D *out, vertex2D v0, vertex2D v1, int p) {
 

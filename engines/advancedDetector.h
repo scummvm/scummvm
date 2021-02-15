@@ -455,7 +455,7 @@ public:
 	 *
 	 * The the engineID must match the one from MetaEngine.
 	 *
-	 * @see MetaEngineConnect::getName().
+	 * @see MetaEngine::getName().
 	 */
 	virtual const char *getName() const override = 0;
 
@@ -471,9 +471,9 @@ public:
 	 
 	 * @note This is only meant to be used if fallback detection heavily depends on engine resources.
 	 *
-	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngineConnect class.
+	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngine class.
 	 * Then, override the method "fallbackDetect" inside your MetaEngine class.
-	 * Finally, provide a "hook" to fetch the relevant MetaEngineConnect class and then use the original detection
+	 * Finally, provide a "hook" to fetch the relevant MetaEngine class and then use the original detection
 	 * method.
 	 *
 	 * An example of how this is implemented can be found in the Wintermute Engine.

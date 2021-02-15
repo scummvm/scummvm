@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-13 17:56+0000\n"
-"PO-Revision-Date: 2021-02-13 18:41+0000\n"
+"POT-Creation-Date: 2021-02-14 20:48+0000\n"
+"PO-Revision-Date: 2021-02-14 23:58+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3705,7 +3705,8 @@ msgstr "テキストをNTSCコンポジットでエミュレートしない"
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:160
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "オリジナルのセーブ/ロード画面を使用する"
 
@@ -3713,7 +3714,8 @@ msgstr "オリジナルのセーブ/ロード画面を使用する"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVMの代わりに、オリジナルのセーブ/ロード画面を使用する"
 
@@ -3866,6 +3868,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
+"汎用MIDIデバイスを使用していますが\n"
+"ゲームはRoland MT32 MIDIのみサポートしています。\n"
+"使用中のデバイスをRolandデバイスとして\n"
+"マッピングを試みます。\n"
+"一部のトラックは正しく聞こえない事があります。"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -3873,7 +3880,7 @@ msgstr "リソースの初期化に失敗しました"
 
 #: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "必要なゲームリソースが見つかりませんでした"
 
 #: engines/bladerunner/bladerunner.cpp:2271
 msgid ""
@@ -3881,6 +3888,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"警告：このゲームはディレクターズカットモードで保存されましたが、現在はオリジ"
+"ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
+"モードとして調整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
@@ -3888,6 +3898,9 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"警告：このゲームはオリジナルモードで保存されましたが、現在はディレクターズ"
+"カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
+"て調整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
@@ -3900,7 +3913,7 @@ msgstr "拡大モード："
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "ゲームは、俳優のセリフやナレーションの後ろに笑いを追加します"
 
 #: engines/bladerunner/detection.cpp:57
 #, fuzzy
@@ -3909,7 +3922,7 @@ msgstr "拡大モード："
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "ゲームは俳優のサイズを縮め、声のピッチを上げます"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
@@ -4760,14 +4773,14 @@ msgstr "含まれた機能："
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:195
 #, fuzzy
 msgid "Interact via Left Click"
 msgstr "左クリック"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:201
 #, fuzzy
 msgid "Interact via Right Click"
 msgstr "右クリック"
@@ -6525,12 +6538,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:340 engines/ultima/detection.cpp:73
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "3Dアンチエイリアス："
 
-#: engines/stark/detection.cpp:341 engines/ultima/detection.cpp:74
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "フォントにアンチエイリアスが有効である場合、テキストはより滑らかに表示されま"
@@ -6963,51 +6976,6 @@ msgstr "前の行動"
 msgid "Next location"
 msgstr "次の行動"
 
-#: engines/ultima/detection.cpp:64
-#, fuzzy
-msgid "Enable font replacement"
-msgstr "3Dアンチエイリアス："
-
-#: engines/ultima/detection.cpp:65
-msgid "Replaces game fonts with rendered fonts"
-msgstr ""
-
-#: engines/ultima/detection.cpp:82
-msgid "Play foot step sounds"
-msgstr ""
-
-#: engines/ultima/detection.cpp:83
-msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/detection.cpp:91
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
-msgid "Enable jump to mouse position"
-msgstr "マウスでのUI操作を有効にする"
-
-#: engines/ultima/detection.cpp:92
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-
-#: engines/ultima/detection.cpp:100
-msgid "Enable frame skipping"
-msgstr ""
-
-#: engines/ultima/detection.cpp:101
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-
-#: engines/ultima/detection.cpp:109
-#, fuzzy
-msgid "Enable frame limiting"
-msgstr "3Dアンチエイリアス："
-
-#: engines/ultima/detection.cpp:110
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
@@ -7040,20 +7008,74 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
-msgid "Ultima VIII"
-msgstr "ウルティマ VIII"
+#: engines/ultima/ultima8/meta_engine.cpp:126
+msgid "Enable frame skipping"
+msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:141
-msgid "Crusader"
+#: engines/ultima/ultima8/meta_engine.cpp:127
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:132
+#, fuzzy
+msgid "Enable frame limiting"
+msgstr "3Dアンチエイリアス："
+
+#: engines/ultima/ultima8/meta_engine.cpp:133
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:138
+#, fuzzy
+msgid "Enable cheats"
+msgstr "マウス操作を有効にする"
+
+#: engines/ultima/ultima8/meta_engine.cpp:139
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:148
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:149
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:154
+#, fuzzy
+#| msgid "Enable the mouse for the UI"
+msgid "Enable jump to mouse position"
+msgstr "マウスでのUI操作を有効にする"
+
+#: engines/ultima/ultima8/meta_engine.cpp:155
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:166
+#, fuzzy
+msgid "Enable font replacement"
+msgstr "3Dアンチエイリアス："
+
+#: engines/ultima/ultima8/meta_engine.cpp:167
+msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:188
+msgid "Ultima VIII"
+msgstr "ウルティマ VIII"
+
+#: engines/ultima/ultima8/meta_engine.cpp:188
+msgid "Crusader"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:235
 #, fuzzy
 msgid "Ultima VIII Cheats"
 msgstr "ウルティマ VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:205
+#: engines/ultima/ultima8/meta_engine.cpp:252
 #, fuzzy
 msgid "Ultima VIII Debug"
 msgstr "ウルティマ VIII"

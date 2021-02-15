@@ -31,8 +31,6 @@
 
 namespace ICB {
 
-#ifndef ENABLE_OPENGL
-
 typedef struct {
 	int x0, x1;
 	int count;
@@ -1021,7 +1019,5 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	}
 	return 1;
 }
-
-#endif
 
 } // End of namespace ICB

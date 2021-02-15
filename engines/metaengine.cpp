@@ -261,7 +261,7 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 
 
 //////////////////////////////////////////////
-// MetaEngineConnect default implementations
+// MetaEngine default implementations
 //////////////////////////////////////////////
 
 SaveStateList MetaEngine::listSaves(const char *target) const {

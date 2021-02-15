@@ -495,9 +495,9 @@ void LauncherDialog::loadGame(int item) {
 	}
 
 	if (enginePlugin) {
-		const MetaEngine &metaEngineConnect = enginePlugin->get<MetaEngine>();
-		if (metaEngineConnect.hasFeature(MetaEngine::kSupportsListSaves) &&
-			metaEngineConnect.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
+		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
+		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
+			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
 			int slot = _loadDialog->runModalWithPluginAndTarget(enginePlugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);

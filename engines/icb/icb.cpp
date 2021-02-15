@@ -60,24 +60,18 @@ bool mainLoopIteration();
 
 Common::Error IcbEngine::run() {
 	initGfx(false, false);
-	warning("Gfx initialized");
 	InitEngine("");
-	warning("Init engine initialized");
 	mainLoop();
 	return Common::kNoError;
 }
 
 // TODO: This should be refactored
 void IcbEngine::initGfx(bool hwAccel, bool fullscreen) {
-	// g_system->setWindowCaption("In Cold Blood (C)2000 Revolution Software Ltd");
-	// g_system->setupScreen(640, 480, false, false);
 }
 
 void IcbEngine::mainLoop() {
-	warning("Starting main loop");
 	while (mainLoopIteration()) {
 	}
-	warning("Ending main loop");
 }
 
 } // End of namespace ICB

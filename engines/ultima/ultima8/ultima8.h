@@ -75,7 +75,8 @@ private:
 	static Ultima8Engine *_instance;
 
 	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
-	bool _ttfOverrides;
+	bool _fontOverride;
+	bool _fontAntialiasing;
 	// Audio Mixer
 	AudioMixer *_audioMixer;
 	uint32 _saveCount;

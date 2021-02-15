@@ -1,6 +1,6 @@
 {
     BasedOnStyle: LLVM,
-    UseTab: ForIndentation,
+    UseTab: ForContinuationAndIndentation,
     IndentWidth: 4,
     TabWidth: 4,
     BreakBeforeBraces: Attach,

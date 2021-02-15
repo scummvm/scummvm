@@ -25,17 +25,17 @@
  *
  */
 
-#if defined (SDL_BACKEND)
-#include <SDL.h>
-#endif
-
 #include "engines/icb/sound/direct_sound.h"
 #include "engines/icb/sound/music_manager.h"
 #include "engines/icb/sound/speech_manager.h"
 #include "engines/icb/sound/fx_manager.h"
+#include "engines/icb/sound.h"
 #include "engines/icb/icb.h"
 
 #include "audio/mixer.h"
+
+#include "common/system.h"
+#include "common/timer.h"
 
 namespace ICB {
 
@@ -44,33 +44,18 @@ SpeechManager *g_theSpeechManager = NULL;
 FxManager *g_theFxManager = NULL;
 bool8 g_TimerOn = TRUE8;
 
-#if defined (SDL_BACKEND)
-SDL_TimerID g_timer_id = 0;
+Common::TimerManager::TimerProc g_timer_id;
 
-Uint32 SoundEngineTimer(Uint32 interval, void *) {
-	SDL_Event event;
-	SDL_UserEvent ue;
-
-	ue.type = SDL_USEREVENT;
-	ue.code = 0;
-	ue.data1 = NULL;
-	ue.data2 = NULL;
-
-	event.type = SDL_USEREVENT;
-	event.user = ue;
-
-	SDL_PushEvent(&event);
-
-	return interval;
+void SoundEngineTimer(void *ignored) {
+	if (g_TimerOn) {
+		UpdateSounds10Hz();
+		Poll_Sound_Engine();
+	}
 }
-#endif
 
 bool8 Init_Sound_Engine() {
-	// DO THIS FIRST INCASE REST OF INIT FAILS
 	// Create a timer to poll the sound engine at 100 millisecond intervals
-#if defined (SDL_BACKEND)
-	g_timer_id = SDL_AddTimer(100, SoundEngineTimer, NULL);
-#endif
+	g_system->getTimerManager()->installTimerProc(SoundEngineTimer, 100 * 1000, nullptr, "SoundEngineTimer");
 
 	// Initalize the other sections (ie music, fx and speech)
 	g_theMusicManager = new MusicManager();
@@ -81,10 +66,8 @@ bool8 Init_Sound_Engine() {
 }
 
 bool8 Close_Sound_Engine() {
-#if defined (SDL_BACKEND)
 	// Kill the sound engine timer
-	SDL_RemoveTimer(g_timer_id);
-#endif
+	g_system->getTimerManager()->removeTimerProc(g_timer_id);
 
 	// Destroy the fx manager
 	if (g_theFxManager) {

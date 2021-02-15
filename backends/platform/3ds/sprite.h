@@ -29,7 +29,7 @@
 #include <3ds.h>
 #include <citro3d.h>
 
-namespace _3DS {
+namespace N3DS {
 
 typedef struct {
 	float position[3];
@@ -79,6 +79,6 @@ private:
 	float scaleY;
 };
 
-} // namespace _3DS
+} // namespace N3DS
 
 #endif

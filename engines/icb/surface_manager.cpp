@@ -425,7 +425,6 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
 		}
 	}
-	//SDL_BlitSurface(srcSurface, pSrcRect ? &srcRect : NULL, destSurface, pDestRect ? &dstRect : NULL);
 }
 
 void _surface_manager::Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col) {

@@ -30,10 +30,6 @@
 
 #include "engines/icb/gfx/gfxstub_dutch.h"
 
-#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
-#include <SDL_opengl.h>
-#endif
-
 namespace ICB {
 
 class TextureHandle {
@@ -43,9 +39,6 @@ public:
 	int w;
 	int h;
 	int bpp;
-#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
-	GLuint textureId;
-#endif
 };
 
 RevTexture *MakeRevTexture(u_int w, u_int h, u_int *palette, u_char *img);

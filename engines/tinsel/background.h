@@ -101,20 +101,20 @@ public:
 	void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
 
 	void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
-		int which,		// which playfield
+		unsigned int which,		// which playfield
 		int newXpos,		// new x position
 		int newYpos);		// new y position
 
 	void PlayfieldGetPos(		// Returns the xy position of the specified playfield in the current background
-		int which,		// which playfield
+		unsigned int which,		// which playfield
 		int* pXpos,		// returns current x position
 		int* pYpos);		// returns current y position
 
 	int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
-		int which);		// which playfield
+		unsigned int which);		// which playfield
 
 	OBJECT** GetPlayfieldList(	// Returns the display list for the specified playfield
-		int which);		// which playfield
+		unsigned int which);		// which playfield
 
 	OBJECT* GetBgObject() { return _pBG[0]; }
 

@@ -51,10 +51,10 @@ private:
 	uint16 tex_coords_maybe_DAT_00433376 = 0;
 	uint16 tex_coords_maybe_DAT_00433378 = 0;
 
-	void holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int y_1, short param_2, uint8* holomapSurfaceImgOutPtr);
+	void holomap_surface_load_FUN_0042194d(Vertex *vertexCoordinates, int32 y_1, int16 param_2, uint8* holomapSurfaceImgOutPtr);
 	bool vertices_FUN_00423ebb(const Vertex *vertices) const;
 	void vertices_FUN_00421010(Vertex *vertexCoordinates);
-	void vertices_FUN_00420fad(int y1, int x1, int y2, int x2);
+	void vertices_FUN_00420fad(int32 y1, int32 x1, int32 y2, int32 x2, int16 *vertexCoordinatePtr);
 
 	struct Location {
 		uint16 x = 0;

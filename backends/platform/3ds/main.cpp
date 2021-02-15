@@ -38,7 +38,7 @@ struct CommandLine {
 };
 
 static void mainThreadFunc(void *threadParams) {
-	g_system = new _3DS::OSystem_3DS();
+	g_system = new N3DS::OSystem_3DS();
 	assert(g_system);
 
 #ifdef DYNAMIC_MODULES
