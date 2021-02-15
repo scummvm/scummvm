@@ -34,7 +34,8 @@ enum WaveCompressionType {
 	kWaveFormatMP3         = 0x0055,
 	kWaveFormatDK3         = 0x0062, // rogue format number
 	kWaveFormatMSIMAADPCM2 = 0x0069,
-	kWaveFormatWMAv2       = 0x0161
+	kWaveFormatWMAv2       = 0x0161,
+	kWaveFormatXanDPCM     = 0x594a  // 'JY', Crusader: No Regret videos
 };
 
 } // End of namespace Audio

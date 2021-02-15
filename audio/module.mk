@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	decoders/wave.o \
 	decoders/wma.o \
 	decoders/xa.o \
+	decoders/xan_dpcm.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \
 	mods/mod_xm_s3m.o \
