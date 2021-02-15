@@ -139,7 +139,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kq2agdi", "King's Quest II: Romancing The Stones" },
 	{ "kq3agdi", "King's Quest III: To Heir is Human" },
 	{ "qfg2agdi", "Quest for Glory II: Trial By Fire" },
-	{ "mage", "Mage's Initiation: Reign of the Elements" },
 
 	// Infamous Adventures games. Likewise
 	{ "sq2fg", "Space Quest For Glory" },
@@ -151,6 +150,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "adateinthepark", "A Date in the Park" },
 	{ "agoldenwake", "A Golden Wake" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
+	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
 	{ "ataleoftwokingdoms", "A Tale of Two Kingdoms" },
 	{ "beer", "Beer!" },
@@ -160,51 +160,54 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "captaindisaster", "Captain Disaster" },
-	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
 	{ "chronicleofinnsmouth", "Chronicle of Innsmouth" },
 	{ "crystalshardadventurebundle", "Crystal Shard Adventure Bundle" },
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
 	{ "detectivegallo", "Detective Gallo" },
 	{ "docapocalypse", "Doc Apocalypse" },
+	{ "downfall2009", "Downfall (2009)" },
 	{ "downfall2016", "Downfall (2016)" },
+	{ "downfalldemo", "Downfall DEMO" },
 	{ "dustbowl", "Dustbowl" },
 	{ "falconcity", "Falcon City" },
 	{ "feriadarles", "Feria d'Arles" },
 	{ "footballgame", "Football Game" },
 	{ "geminirue", "Gemini Rue" },
 	{ "ghostdream", "Ghostdream" },
-	{ "goldenwake", "A Golden Wake" },
 	{ "guardduty", "Guard Duty" },
-	{ "herdiscoming", "Herd Is Coming" },
+	{ "herdiscoming", "Herd is Coming" },
+	{ "herdiscomingdemo", "Herd is Coming DEMO" },
 	{ "justignorethem", "Just Ignore Them" },
 	{ "justignorethemremake", "Just Ignore Them (Remake)" },
 	{ "killyourself", "Kill Yourself" },
 	{ "lamplightcity", "Lamplight City" },
-	{ "lamplightcity", "Lamplight City" },
 	{ "legendofhand", "Legend of Hand" },
+	{ "mage", "Mage's Initiation: Reign of the Elements" },
 	{ "metaldead", "Metal Dead" },
 	{ "neofeud", "Neofeud" },
-	{ "newgame", "New game" },
 	{ "orderofthethornethekingschallenge", "Order of the Thorne - The King's Challenge" },
+	{ "orderofthethornethekingschallengedemo", "Order of the Thorne - The King's Challenge DEMO" },
 	{ "primordia", "Primordia" },
+	{ "qfi", "Quest for Infamy" },
 	{ "resonance", "Resonance" },
-	{ "richardalice", "Richard & Alice" },
 	{ "richardandalice", "Richard & Alice" },
 	{ "roguestate", "Rogue State" },
 	{ "shardlight", "Shardlight" },
-	{ "shardlight", "Shardlight" },
-	{ "shivah", "Shivah" },
 	{ "shivah", "Shivah" },
 	{ "sumatrafateofyandi", "Sumatra: Fate of Yandi" },
 	{ "superjazzman", "Super Jazz Man" },
+	{ "tales", "Tales" },
+	{ "talesdemo", "Tales DEMO" },
 	{ "technobabylon", "Technobabylon" },
-	{ "theadventuresoffatman", "The Adventures of Fatman" },
 	{ "theadventuresoffatman", "The Adventures of Fatman" },
 	{ "theapotheosisproject", "The Apotheosis Project" },
 	{ "thebeardinthemirror", "The Beard in the Mirror" },
-	{ "thecastle", "The castle" },
+	{ "thecastle", "The Castle" },
 	{ "thecatlady", "The Cat Lady" },
 	{ "thecharnelhousetrilogy", "The Charnel House Trilogy" },
+	{ "thecharnelhousetrilogydemo", "The Charnel House Trilogy DEMO" },
+	{ "thesamaritanparadox", "The Samaritan Paradox" },
+	{ "thesecretsofjesus", "The Secrets of Jesus" },
 	{ "theterribleoldman", "The Terrible Old Man" },
 	{ "unavowed", "Unavowed" },
 	{ "untilihaveyou", "Until I Have You" },
@@ -237,6 +240,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "achristmasblunder", "A Christmas Blunder" },
 	{ "aciddd", "ACIDDD" },
 	{ "acureforthecommoncold", "A Cure for the Common Cold" },
+	{ "adateinthepark", "A Date in the Park" },
 	{ "adaywithmichael", "A Day with Michael" },
 	{ "adventurequest", "Adventure Quest" },
 	{ "adventurequest2", "Adventure Quest 2" },
@@ -476,7 +480,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "demogame", "Demo Game" },
 	{ "demonday", "Demon Day" },
 	{ "derverschwundenehusky", "Der verschwundene Husky" },
-	{ "detectivegallo", "Detective Gallo" },
 	{ "detention", "Detention" },
 	{ "devochkaquest", "DevochkaQuest" },
 	{ "dgsearchofthebatterie", "DG: search of the batterie" },
@@ -491,7 +494,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "donthedweebdancedilemma", "Don the Dweeb: Dance Dilemma" },
 	{ "dontworryillbringthebeer", "Don't Worry, I'll Bring The Beer!" },
 	{ "dovadulasburn", "DoVaDuLa'S BuRn" },
-	{ "downfall", "Downfall" },
 	{ "dragonorb", "Dragon Orb" },
 	{ "dragontales", "DragonTales" },
 	{ "dreadmacfarlane", "Dread Mac Farlane" },
@@ -679,7 +681,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "inferno", "Inferno" },
 	{ "infinitemonkeys", "Infinite Monkeys" },
 	{ "insidemonkeyisland", "Inside Monkey Island" },
-	{ "insidemonkeyisland2cap", "Inside Monkey Island 2? cap." },
+	{ "insidemonkeyisland2", "Inside Monkey Island: 2nd chapter" },
 	{ "inspectorgismoe", "Inspector Gismoe" },
 	{ "integerbattleship", "Integer Battleship" },
 	{ "intergalacticspacepancake", "Intergalactic Space Pancake!" },
@@ -703,7 +705,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "jimmythetroublemaker", "Jimmy The Troublemaker" },
 	{ "joeshorriblehell", "Joe's Horrible Hell" },
 	{ "joesmiserablelife", "Joe's Miserable Life" },
-	{ "johnharrissafrakincse", "John Harris ?s a f?ra? kincse" },
+	{ "johnharris", "John Harris and the Treasure of the Pharaoh" },
 	{ "johnjebediahgunelisoladisepheret", "John Jebediah Gun e l'Isola di Sepheret" },
 	{ "johnlosthiskey", "John Lost his key" },
 	{ "johnnyrocket", "Johnny_Rocket" },
@@ -728,7 +730,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "knightquestforgoldenring", "Knight Quest for Golden Ring" },
 	{ "knightsquest3", "Knight's Quest III" },
 	{ "knightsquest4", "Knight's Quest IV" },
-	{ "koddurova", "??? ??????" },
+	{ "koddurova", "Kod Durova" },
 	{ "koffeekrisis", "Koffee Krisis" },
 	{ "koscheitheimmortal", "Koschei The Immortal" },
 	{ "kristmaskrisis", "Kristmas Krisis" },
@@ -844,11 +846,11 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "missingsincemidnight", "Missing since Midnight" },
 	{ "mistdelaescueladearte", "Mist. de la Escuela de Arte" },
 	{ "mixertest", "Mixer Test" },
-	{ "mmm15ortmaschine", "MMM 15: Ortmaschine" },
-	{ "mmm4mimikryderemotionen", "MMM 4 - Mimikry der Emotionen" },
-	{ "mmmderklausschlgtzurck", "MMM-Der Klaus schl?gt zur?ck" },
-	{ "mmmepisode8", "MMM - Episode 8" },
-	{ "mmmradioaktiv", "MMM - Radioaktiv" },
+	{ "mmm15", "MMM 15: Ortmaschine" },
+	{ "mmm4", "MMM 4 - Mimikry der Emotionen" },
+	{ "mmm53", "MMM-Der Klaus schlagt zuruck" },
+	{ "mmm8", "MMM - Episode 8" },
+	{ "mmm9", "MMM - Radioaktiv" },
 	{ "moncul", "Mon Cul!" },
 	{ "monkeystothemoon", "Monkeys to the Moon" },
 	{ "monkeywrench", "monkeywrench" },
@@ -877,7 +879,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "nekusnewtrip", "Neku's new trip" },
 	{ "nellycootalot", "Nelly Cootalot: Spoonbeaks Ahoy!" },
 	{ "nellycootalot-hd", "Nelly Cootalot: Spoonbeaks Ahoy! HD" },
-	{ "neofeud", "Neofeud" },
 	{ "nesquest", "NES Quest" },
 	{ "news", "N.E.W.S." },
 	{ "nickitandrun", "Nick it and Run!!!" },
@@ -907,7 +908,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "oneweekoneroom", "One Week One Room" },
 	{ "onleavingthebuilding", "On Leaving The Building" },
 	{ "onlythegooddieyoungenglishversion", "Only The Good Die Young - english version" },
-	{ "oott", "Order of the Thorne: The King's Challenge" },
 	{ "openquest", "OpenQuest!" },
 	{ "operationnovi", "Operation Novi" },
 	{ "operationsavebluecup", "Operation Save Blue Cup" },
@@ -916,14 +916,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdarayofhope", "OSD: A Ray of Hope" },
 	{ "osdocd", "OSD:OCD" },
 	{ "osdthelostworldep2", "OSD.The lost world ep 2" },
-	{ "osher", "Boundless Osher - אושר בלי גבולות" },
+	{ "osher", "Boundless Osher - Osher Bli Gvulot" }, // Hebrew title: אושר בלי גבולות
 	{ "otakurivals", "Otaku Rivals" },
 	{ "otherworlds", "Other Worlds" },
 	{ "otisbuildsafire", "Otis Builds a Fire" },
 	{ "ouja", "Ouja" },
 	{ "outbreakbyabhijitkamat", "Outbreak by Abhijit Kamat" },
 	{ "outofgas", "Out of Gas" },
-	{ "overtheedge", "Over the Edge" },
+	{ "overtheedge", "The Journey Down: Over the Edge" },
 	{ "owlsquest", "Owl's Quest" },
 	{ "palettequest2", "Palette Quest 2" },
 	{ "pandainspace", "Panda In Space" },
@@ -991,7 +991,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "purityofthesurf", "Purity of the Surf" },
 	{ "puzzlebots", "Puzzle Bots" },
 	{ "pxenophobe", "PXenophobe" },
-	{ "qfi", "Quest for Infamy" },
 	{ "quantumnauts", "QUANTUMNAUTS" },
 	{ "questfighter", "Quest Fighter" },
 	{ "questfighter2", "Quest Fighter II" },
@@ -1077,7 +1076,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sevendoors", "Seven Doors" },
 	{ "shadesofgreye", "Shades of Greye" },
 	{ "shadowsoftheempire", "Shadows of the Empire" },
-	{ "shailadusithlenqute", "Shai-la du Sith : l'Enqu?te" },
+	{ "shailadusithlenquete", "Shai-la du Sith : l'Enquete" },
 	{ "shailaofthesith", "Shai-la of the Sith" },
 	{ "shem", "Shem" },
 	{ "sherlock", "Sherlock" },
@@ -1280,7 +1279,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "timequest2", "Time Quest 2" },
 	{ "timesinkofchronos", "Timesink of Chronos" },
 	{ "timothylande", "Timothy Lande" },
-	{ "tmateundescanso", "T?mate un descanso" },
+	{ "tomateundescanso", "Tomate un descanso" },
 	{ "tmntturtlesintime", "TMNT: Turtles in Time" },
 	{ "tomhanksaway", "Tom Hanks Away" },
 	{ "toomanykittens", "Too Many Kittens" },
@@ -1294,7 +1293,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "trivialpassyouit", "Trivial Pass You It" },
 	{ "tuberainbow", "Tube Rainbow" },
 	{ "tvbrder", "Tv? Br?der" },
-	{ "twelvethirteen", "Twelve Thirteen" },
+	{ "twelvethirteense", "Twelve Thirteen Special Edition" },
+	{ "twelvethirteen", "Twelve Thirteen, episode 1" },
 	{ "twelvethirteenepisode2", "Twelve Thirteen, episode 2" },
 	{ "twelvethirteenepisode3", "Twelve Thirteen, episode 3" },
 	{ "twentiesflappersvsthemummy", "Twenties Flappers vs The Mummy" },
@@ -1395,6 +1395,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::EN_ANY, \
 	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, PLUGIN_ARR }
 
+static const PluginVersion AGSTEAM_BLACKWELL[] = { { "agsteam", kBlackwell }, { nullptr, 0 } };
+
 const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Pre-2.5 games that aren't supported by the current AGS engine
 	UNSUPPORTED_DEMO("achristmastale", "tale.exe", "094135f05cf14fc3903e0d3697911a4e", 1484122),
@@ -1467,7 +1469,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_ENTRY("murder", "murder.exe", "221637e5d62e2ca3cc146846ab0b2e49", 935799),
 	UNSUPPORTED_ENTRY("nightoftheplumber", "night of the plumber.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 1703896),
 	UNSUPPORTED_ENTRY("novomestro", "novo.exe", "07f9921784124d9e09f39bb831e06131", 1122507),
-	UNSUPPORTED_ENTRY("odysseus", "odysseus.exe", "426e34f40e0dc5285af3fb5fc32a220e", 2799113),
+	UNSUPPORTED_ENTRY("odysseus", "odysseus.exe", "426e34f40e0dc5285af3fb5fc32a220e", 2799113), // Windows
+	UNSUPPORTED_ENTRY("odysseus", "odysseus.exe", "00dce98d598e9b7ad3c6674bfd4880d9", 2570368), // DOS
 	UNSUPPORTED_ENTRY("permanentdaylight", "daylight.exe", "07f9921784124d9e09f39bb831e06131", 1799958),
 	UNSUPPORTED_ENTRY("perpetrator", "ac2game.dat", "56ef979be112e122e24d0cc8caea4ea4", 994303),
 	UNSUPPORTED_ENTRY("pizzaquest", "pqwin.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 2500089),
@@ -1482,8 +1485,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_ENTRY("rickylonghurst", "bleach.exe", "9027912819f3a319ed9de0fd855310c3", 1174829),
 	UNSUPPORTED_ENTRY("ripp", "ripp.exe", "426e34f40e0dc5285af3fb5fc32a220e", 10489586),
 	UNSUPPORTED_ENTRY("robblanc1", "ac2game.dat", "29c2ced2f2e6ad764e4249b4e4c45bba", 920415),
+	UNSUPPORTED_ENTRY("robblanc1", "rb.exe", "426e34f40e0dc5285af3fb5fc32a220e", 1804361), // v1.2
 	UNSUPPORTED_ENTRY("robblanc2", "ac2game.dat", "dd6c52e5a6e9b70efef4654769f11c69", 2056386),
+	UNSUPPORTED_ENTRY("robblanc2", "rb2.exe", "426e34f40e0dc5285af3fb5fc32a220e", 2973290), // v1.2
 	UNSUPPORTED_ENTRY("robblanc3", "ac2game.dat", "8f8264de3c1bd91e26b84fe37fb5e53e", 2828959),
+	UNSUPPORTED_ENTRY("robblanc3", "rb3.exe", "426e34f40e0dc5285af3fb5fc32a220e", 3783355), // v1.2
 	UNSUPPORTED_ENTRY("rodekill", "rodekill.exe", "72f3c950b4d9d14580a11db885a63310", 11995954),
 	UNSUPPORTED_ENTRY("rodequest", "rodequest1.exe", "72f3c950b4d9d14580a11db885a63310", 1196458),
 	UNSUPPORTED_ENTRY("rollinfoy", "rollinfoy.exe", "19f4045333d9c823a5439d0447d55985", 3454107),
@@ -1533,92 +1539,140 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
 	ENGLISH_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
 
-	// Commercial games
-	ENGLISH_ENTRY("3geeks", "3geeks-adventure.exe", "7ddb9e776648faed5a51170d087074e9", 597467679), // Steam
+	// Commercial games	ENGLISH_ENTRY("3geeks", "3geeks-adventure.exe", "7ddb9e776648faed5a51170d087074e9", 597467679), // Steam
 	ENGLISH_ENTRY("adateinthepark", "a date in the park.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 47324098), // Steam
+	ENGLISH_ENTRY("agoldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
 	ENGLISH_ENTRY("agoldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774), // Steam
+	ENGLISH_ENTRY("agoldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814364), // Humble Bundle
+	ENGLISH_ENTRY("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1", Desura
 	ENGLISH_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
+	ENGLISH_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0", Desura
 	ENGLISH_ENTRY("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Steam
 	ENGLISH_ENTRY("ataleoftwokingdoms", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
 	ENGLISH_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
+	ENGLISH_ENTRY("blackwell1", "ac2game.dat", "4668e05ef2a94267b0d571e715413302", 64200367), // Humble Bundle (Linux)
+	ENGLISH_ENTRY("blackwell1", "ac2game.dat", "605e124cb7e0b56841c471e2d641c224", 68665467), // Android
 	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
-	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597), // Steam
+	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824247), // Humble Bundle (Windows)
+	ENGLISH_PLUGIN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597", AGSTEAM_BLACKWELL), // Steam
+	ENGLISH_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071), // Steam
+	ENGLISH_ENTRY("blackwell2", "ac2game.dat", "5c3a940514d91431e8e1c372018851ca", 69452991), // Android
+	ENGLISH_ENTRY("blackwell2", "ac2game.dat", "e28670a676a3e4e78eef76b9573e490a", 57670660), // Humble Bunde (Linux)
+	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14469500), // Steam
 	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14493753), // GOG
-	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128), // Steam
+	ENGLISH_ENTRY("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14495742), // Humble Bunde (Windows)
+	ENGLISH_PLUGIN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128", AGSTEAM_BLACKWELL), // Steam
+	ENGLISH_ENTRY("blackwell3", "ac2game.dat", "2260c1a21aba7ac00baf0100d4ca54f1", 173301005), // Android
+	ENGLISH_ENTRY("blackwell3", "ac2game.dat", "c894f6005f479ba8f12e87223920aa6a", 170700456), // Humble Bundle (Linux)
+	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 171969680), // Steam
 	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172575801), // GOG
-	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803), // Steam
+	ENGLISH_ENTRY("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578032), // Humble Bundle (Windows", v1.1)
+	ENGLISH_PLUGIN("blackwell3", "convergence.exe", "2260c1a21aba7ac00baf0100d4ca54f1", 172578803", AGSTEAM_BLACKWELL), // Steam
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "1c0bf79d9720d0a81219e8778fb7e231", 304040703), // GOG
 	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 303459336), // GOG
-	ENGLISH_ENTRY("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138), // Steam
+	ENGLISH_PLUGIN("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 304076138", AGSTEAM_BLACKWELL), // Steam
 	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897), // GOG
-	ENGLISH_ENTRY("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724), // Steam
+	ENGLISH_PLUGIN("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724", AGSTEAM_BLACKWELL), // Steam
 	ENGLISH_ENTRY("captaindisaster", "cd-dhamsb-1-0-1.exe", "e2d290f8f21c6a83a9e8c5f3a0425b5e", 150665897), // Steam
-	ENGLISH_ENTRY("charnelhousetrilogy", "CHT.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
 	ENGLISH_ENTRY("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692), // Steam
 	ENGLISH_ENTRY("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713), // Steam
-	ENGLISH_ENTRY("danewguys2", "Jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
+	ENGLISH_ENTRY("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
 	ENGLISH_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554), // Steam
+	ENGLISH_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772), //GOG
+	ENGLISH_ENTRY("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165), // Steam
 	ENGLISH_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989), // Steam
+	ENGLISH_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927), // Steam
+	ENGLISH_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // Steam
+	ENGLISH_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // v1.4
+	ENGLISH_ENTRY("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750), // GOG
 	ENGLISH_ENTRY("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590), // Steam
+	ENGLISH_ENTRY("downfalldemo", "downfall_demo.exe", "7c87b99ce309a46085e40ac1a2b20e75", 97968746), // Steam
 	ENGLISH_ENTRY("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026), // Steam
 	ENGLISH_ENTRY("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058), // Steam
 	ENGLISH_ENTRY("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
-	ENGLISH_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
+	ENGLISH_ENTRY("footballgame", "football game", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
+	ENGLISH_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859),
+	ENGLISH_ENTRY("geminirue", "ac2game.dat", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72836785), // MacOS", Humble Bundle
+	ENGLISH_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	ENGLISH_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
+	ENGLISH_ENTRY("geminirue", "gemini_rue_pc.exe", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72860463), // Humble Bundle
 	ENGLISH_ENTRY("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 480856325), // Steam
-	ENGLISH_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
 	ENGLISH_ENTRY("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335), // Steam
-	ENGLISH_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 5664594), // Steam
+	ENGLISH_ENTRY("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743), // GOG
 	ENGLISH_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217), // Steam
+	ENGLISH_ENTRY("herdiscomingdemo", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 5664594), // Steam
 	ENGLISH_ENTRY("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926), // Steam
 	ENGLISH_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam
 	ENGLISH_ENTRY("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658), // Steam
 	ENGLISH_ENTRY("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239), // Steam
 	ENGLISH_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285), // Steam
+	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG", Mac
+	ENGLISH_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
+	ENGLISH_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG", Windows
 	ENGLISH_ENTRY("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877), // Steam
 	ENGLISH_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517), // Steam
-	ENGLISH_ENTRY("newgame", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // Steam
+	ENGLISH_ENTRY("orderofthethornethekingschallenge", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
 	ENGLISH_ENTRY("orderofthethornethekingschallenge", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467844896), // Steam
+	ENGLISH_ENTRY("orderofthethornethekingschallenge", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009), // GOG
+	ENGLISH_ENTRY("orderofthethornethekingschallengedemo", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
 	ENGLISH_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
 	ENGLISH_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
 	ENGLISH_ENTRY("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664), // Steam
+	ENGLISH_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
+	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096), // GOG
+	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	ENGLISH_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
-	ENGLISH_ENTRY("richardalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256), // Steam
 	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
+	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura
+	ENGLISH_ENTRY("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256), // Steam
 	ENGLISH_ENTRY("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573), // Steam
-	ENGLISH_ENTRY("shardlight", "Shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	ENGLISH_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	ENGLISH_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
+	ENGLISH_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32339699), // Android
 	ENGLISH_ENTRY("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32727114), // Steam
 	ENGLISH_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
 	ENGLISH_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
 	ENGLISH_ENTRY("sumatrafateofyandi", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886), // Steam
-	ENGLISH_ENTRY("superjazzman", "SJM.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
+	ENGLISH_ENTRY("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
+	ENGLISH_ENTRY("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855), // Steam
+	ENGLISH_ENTRY("talesdemo", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930689), // Steam
+	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701), // Humble Bundle
 	ENGLISH_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
 	ENGLISH_ENTRY("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205), // Steam
 	ENGLISH_ENTRY("theapotheosisproject", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), // Steam
+	ENGLISH_ENTRY("theapotheosisproject", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	ENGLISH_ENTRY("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501), // Steam
 	ENGLISH_ENTRY("thecastle", "maniac.exe", "3b96c2143d927f005715be73344e456c", 22362337), // Steam
+	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702), // GOG
 	ENGLISH_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
+	ENGLISH_ENTRY("thecharnelhousetrilogy", "cht.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
 	ENGLISH_ENTRY("thecharnelhousetrilogy", "cht.exe", "29c49db0805500ec14964eb897fc7b02", 341425110), // Steam
+	ENGLISH_ENTRY("thecharnelhousetrilogydemo", "sepulchredemo.exe", "9ba3d9fbb098a26d7293ad3161c0f270", 139434513), // Steam
+	ENGLISH_ENTRY("thesamaritanparadox", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952), // Steam
+	ENGLISH_ENTRY("thesamaritanparadox", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees", v1.1
+	ENGLISH_ENTRY("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692), // Steam
 	ENGLISH_ENTRY("theterribleoldman", "the terrible oid man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
 	ENGLISH_ENTRY("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030), // Steam
+	ENGLISH_ENTRY("theterribleoldman", "the terrible old man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
 	ENGLISH_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	ENGLISH_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537), // Steam
-	ENGLISH_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263), // Steam
+	ENGLISH_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
 	ENGLISH_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
 	ENGLISH_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	ENGLISH_DEMO("alemmo", "al-emmo.exe", "9661b29821fdc7f93d286f25c195fc22", 8932837), // Steam
+	ENGLISH_DEMO("alemmo", "Emmo_Demo.exe", "2fb17c4382f2f54ef6d040b6493fec4b", 8943213), // Official website
 	ENGLISH_DEMO("alquest1", "AlQuest.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 20154310),
 	ENGLISH_DEMO("bananaman", "Banana Man Demo.exe", "615e806856b7730afadf1fea9a756b70", 53524952),
 	ENGLISH_DEMO("blackwell1", "Blackwell Demo.exe", "2eeca6bae968dc61b5ed36561efc0fca", 53342880),
 	ENGLISH_DEMO("blackwell2", "Unbound_Demo.exe", "6ee842f73649ced615c44d4eb303687c", 30057537),
 	ENGLISH_DEMO("blackwell3", "Convergence.exe", "856a6e0e22d2cb4a45d5bbc7245ce5e8", 29935120),
+	ENGLISH_DEMO("blackwell4", "deception.exe", "b3b192cf20a2f7666ddea3410dbd87cc", 260533048),
+	ENGLISH_DEMO("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 283994688),
 	ENGLISH_DEMO("bytheswordconspiracy", "bts.exe", "7dc7f61f79ba7a77d4ef8168bfd3d173", 60246329),
 	ENGLISH_DEMO("danewguys2", "DNG2 Demo.exe", "0d2e8dc76f9ac381d204a3ac763b0bac", 5235302),
 	ENGLISH_DEMO("diamondsintherough", "Diamonds Demo.exe", "14c995189266969d538b31d1df451d3f", 2439365),
@@ -1629,6 +1683,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_DEMO("forcemajeureiithezone", "TheZoneDemo.exe", "b63d26c17bf292017f9a708ae9dc38ca", 18414473),
 	ENGLISH_DEMO("fountainofyouth", "foydemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 14372003),
 	ENGLISH_DEMO("gassesuittollis3", "Gst3_demo.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4270243),
+	ENGLISH_DEMO("geminirue", "gemini rue demo.exe", "978eab85a41b8fc089b719af47dfbb79", 61839853),
 	ENGLISH_DEMO("gesundheit", "gesundheit.exe", "5554b9e0df6241d25c9a070708e54478", 49666357),
 	ENGLISH_DEMO("hiliaderoleagainsthell", "Dark Trial demo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 36442694),
 	ENGLISH_DEMO("indycositalianver", "CoSdemo2.1-it.exe", "f120690b506dd63cd7d1112ea6af2f77", 5772985),
@@ -1642,18 +1697,24 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_DEMO("mash", "MASH Demo.exe", "7825fa980fcd058caadaf6d3377b1f78", 5601309),
 	ENGLISH_DEMO("mi5thereturnoflechuck", "Demo.exe", "0500aacb6c176d47ac0f8158f055db83", 6235270),
 	ENGLISH_DEMO("neofeud", "Neofeud Demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
+	ENGLISH_DEMO("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	ENGLISH_DEMO("pubmastersquest", "Pub Master Quest [Demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	ENGLISH_DEMO("puzzlebots", "Puzzlebots_Demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
 	ENGLISH_DEMO("quantumnauts", "QNDEMO.exe", "aeb2dd29e5ff839cb3ee86cf3e87e3ca", 134237367),
+	ENGLISH_DEMO("qfi", "QFI_DEMO2.exe", "9e7eb04bb1652e188e6f2633eed89408", 82314927),
+	ENGLISH_DEMO("resonance", "resonance_demo.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 473386791),
 	ENGLISH_DEMO("searchforsanity", "sfs.exe", "308d35bc34e9df29d8acce615593e3e7", 9097147),
 	ENGLISH_DEMO("shadowsoftheempire", "sote_td.exe", "b8cd640b45c5a79c33c7a8a8fe32ebe2", 63299246),
 	ENGLISH_DEMO("shardlight", "Shardlight Demo.exe", "ee801fba52d252249677a9170bd2db96", 642405010), // Steam
+	ENGLISH_DEMO("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642366257),
 	ENGLISH_DEMO("shivah", "shivahDemo.exe", "6e3d6225dee662ff6450a3bfa942773b", 20897850),
+	ENGLISH_DEMO("shivah", "shivah-demo.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 23987292),
 	ENGLISH_DEMO("simonthesorcerer3", "Simon3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8189928),
 	ENGLISH_DEMO("spacequest3vga", "SQ3VGADEMO.exe", "64fcaf7da0b257ea831f89c54be0ad72", 3630019),
 	ENGLISH_DEMO("spacequest55", "SQ5.5.exe", "465f972675db2da6040518221af5b0ba", 16342443),
 	ENGLISH_DEMO("sram2", "SRAM2.exe", "e3a33d139d90f2e695292a618753b8a5", 296499943),
 	ENGLISH_DEMO("superjazzman", "SJMdemo.exe", "0710e2ec71042617f565c01824f0cf3c", 5214882),
+	ENGLISH_DEMO("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 595787927),
 	ENGLISH_DEMO("theloneloser", "DEMO (English).exe", "0500aacb6c176d47ac0f8158f055db83", 6082095),
 	ENGLISH_DEMO("timegentlemenplease", "TGP.exe", "86a5359bac7c88f0dfa060478800dd61", 29686006),
 	ENGLISH_DEMO("wallyweasel", "WallyDemo.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 12579444),
@@ -1666,10 +1727,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("3piggiesalpha", "Three Little Pigs and a Wolf.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 14180634),
 	ENGLISH_ENTRY("46memorylane", "diyu.exe", "e3962995a70923a8d5a8f1cf8f932eee", 66686277),
 	ENGLISH_ENTRY("4ofclubs", "4ofClubs.exe", "06a03fe35791b0578068ab1873455463", 5909169),
-	ENGLISH_ENTRY("5daysastranger", "5days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4614351),
-	ENGLISH_ENTRY("5daysastranger", "5days.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4440143),
+	ENGLISH_ENTRY("5daysastranger", "5days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4614351), // Special Edition
+	ENGLISH_ENTRY("5daysastranger", "5days.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4440143), // v1.3
 	ENGLISH_ENTRY("5oclocklock", "DadGame.exe", "3018c5443291aec823bc63342ce4c58b", 6073887),
 	ENGLISH_ENTRY("6daysasacrifice", "6das.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7993899),
+	ENGLISH_ENTRY("6daysasacrifice", "6das se.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8173314),
 	ENGLISH_ENTRY("6mornings", "project2.exe", "e7dac058b9bc0b42d489e474c2ddec84", 11595240),
 	ENGLISH_ENTRY("7daysaskeptic", "7days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4863356),
 	ENGLISH_ENTRY("7daysaskeptic", "7days.exe", "465f972675db2da6040518221af5b0ba", 4693374),
@@ -1684,6 +1746,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("achristmasblunder", "Blunder.exe", "35c11dc3b5f73b290489503b0a7c89e5", 1974915),
 	ENGLISH_ENTRY("aciddd", "acidddd.exe", "06a03fe35791b0578068ab1873455463", 1858394),
 	ENGLISH_ENTRY("acureforthecommoncold", "Game.exe", "06a03fe35791b0578068ab1873455463", 5247960),
+	ENGLISH_ENTRY("adateinthepark", "A Date in the Park.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 47324098), // itch.io, Steam
 	ENGLISH_ENTRY("adaywithmichael", "ADWM.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 65283966),
 	ENGLISH_ENTRY("adventurequest", "Begin.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1584015),
 	ENGLISH_ENTRY("adventurequest2", "adventure.exe", "f120690b506dd63cd7d1112ea6af2f77", 4603131),
@@ -1929,7 +1992,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("demogame", "Demo Game.exe", "f120690b506dd63cd7d1112ea6af2f77", 3296215),
 	ENGLISH_ENTRY("demonday", "Testgame.exe", "0b7529a76f38283d6e850b8d56526fc1", 6749329),
 	ENGLISH_ENTRY("derverschwundenehusky", "Husky.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 51932091),
-	ENGLISH_ENTRY("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165),
 	ENGLISH_ENTRY("detention", "little.exe", "c16204dc8aa338e3199b2c62da0b33f4", 2362176),
 	ENGLISH_ENTRY("devochkaquest", "DevochkaQuest.exe", "84faea68bf7277610c2229be7b3e74af", 32769660),
 	ENGLISH_ENTRY("dgsearchofthebatterie", "dgsfb.exe", "88cf59aad15ca331ab0f854e16c84df3", 1664209),
@@ -1943,7 +2005,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("donthedweebdancedilemma", "Don the Dweeb.exe", "f120690b506dd63cd7d1112ea6af2f77", 2278453),
 	ENGLISH_ENTRY("dontworryillbringthebeer", "Don't Worry, I'll Bring The Beer.exe", "495d45fb8adfd49690ae3b97921feec6", 4446095),
 	ENGLISH_ENTRY("dovadulasburn", "FILES.exe", "9cb3c8dc7a8ab9c44815955696be2677", 26489645),
-	ENGLISH_ENTRY("downfall", "Downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927),
 	ENGLISH_ENTRY("dragonorb", "DragonOrb.exe", "2bc8f994a7d1e05ed45f35abf2128231", 269836732),
 	ENGLISH_ENTRY("dragontales", "dragont.exe", "465f972675db2da6040518221af5b0ba", 9240132),
 	ENGLISH_ENTRY("dreadmacfarlane", "Dread.exe", "615e806856b7730afadf1fea9a756b70", 11157310),
@@ -2123,7 +2184,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
 	ENGLISH_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "4d7d2addcde045dae6e0363a43f9acad", 4841557),
 	ENGLISH_ENTRY("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5186306),
-	ENGLISH_ENTRY("insidemonkeyisland2cap", "MIIM2.exe", "06a03fe35791b0578068ab1873455463", 5885525),
+	ENGLISH_ENTRY("insidemonkeyisland2", "MIIM2.exe", "06a03fe35791b0578068ab1873455463", 5885525),
 	ENGLISH_ENTRY("inspectorgismoe", "police.exe", "465f972675db2da6040518221af5b0ba", 2899579),
 	ENGLISH_ENTRY("integerbattleship", "intbattl.exe", "0500aacb6c176d47ac0f8158f055db83", 4158273),
 	ENGLISH_ENTRY("intergalacticspacepancake", "space.exe", "97d700529f5cc826f230c27acf81adfd", 1797309),
@@ -2146,7 +2207,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("jimmythetroublemaker", "Jimmy The Troublemaker.exe", "25976a689b0f4d73eac69b1728377ecb", 200843118),
 	ENGLISH_ENTRY("joeshorriblehell", "Joe's Horrible Hell.exe", "cdcc787023c51c6fc9ffc17118f6adff", 61061393),
 	ENGLISH_ENTRY("joesmiserablelife", "Joe's Miserable Life.exe", "1b9f13d430bb15bf30d0fd044358db68", 36705304),
-	ENGLISH_ENTRY("johnharrissafrakincse", "totp.exe", "74dc062c5f68f3d70da911f2db5737b6", 36463878),
+	ENGLISH_ENTRY("johnharris", "totp.exe", "74dc062c5f68f3d70da911f2db5737b6", 36463878),
 	ENGLISH_ENTRY("johnjebediahgunelisoladisepheret", "JJG.exe", "a28cb95e1769ba1bfa48f850390746c2", 88957123),
 	ENGLISH_ENTRY("johnlosthiskey", "Newgame.exe", "0b7529a76f38283d6e850b8d56526fc1", 1453831),
 	ENGLISH_ENTRY("johnnyrocket", "Rocket.exe", "a524cbb1c51589903c4043b98917f1d9", 10366294),
@@ -2169,7 +2230,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("knightquestforgoldenring", "KQuestGoldRing.exe", "f120690b506dd63cd7d1112ea6af2f77", 2582542),
 	ENGLISH_ENTRY("knightsquest3", "KQ3TOM.exe", "0710e2ec71042617f565c01824f0cf3c", 8408641),
 	ENGLISH_ENTRY("knightsquest4", "MAGSQuest.exe", "0500aacb6c176d47ac0f8158f055db83", 4074151),
-	ENGLISH_ENTRY("koddurova", "Kod Durova.exe", "615e73fc1874e92d60a1996c2330ea36", 498427333),
+	RUSSIAN_ENTRY("koddurova", "Kod Durova.exe", "615e73fc1874e92d60a1996c2330ea36", 498427333),
 	ENGLISH_ENTRY("koffeekrisis", "Koffee Krisis.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 2423111),
 	ENGLISH_ENTRY("koscheitheimmortal", "Koschei.exe", "465f972675db2da6040518221af5b0ba", 2771442),
 	ENGLISH_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),
@@ -2184,6 +2245,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("lagrancastanya", "PROJECT1.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 39298012),
 	ENGLISH_ENTRY("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527),
 	ENGLISH_ENTRY("lamplightcity", "Lamplight City.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
+	ENGLISH_ENTRY("lamplightcity", "Lamplight City.ags", "70a52d0ba7e5975df40aef460142f770", 979393622), // Linux, GOG
 	ENGLISH_ENTRY("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622),
 	ENGLISH_ENTRY("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
 	ENGLISH_ENTRY("larrylotter", "Warthogs.exe", "9c49b6fa0460f36d6e7558281f142683", 12448793),
@@ -2236,9 +2298,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("lukesexistentialnightmare", "Lukeexit.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 653834),
 	ENGLISH_ENTRY("lunarlanderprototype", "LunarLanderPrototype.exe", "495d45fb8adfd49690ae3b97921feec6", 3510282),
 	ENGLISH_ENTRY("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
-	ENGLISH_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
-	ENGLISH_ENTRY("mage", "Mages_Initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
-	ENGLISH_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
 	ENGLISH_ENTRY("maggieandmax", "Max.exe", "465f972675db2da6040518221af5b0ba", 5759981),
 	ENGLISH_ENTRY("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
 	ENGLISH_ENTRY("magicalwhatevergirlrocksoutinthestoneage", "mwg.exe", "b2b99b5b3dcaee0fa292343c5a2c429b", 7784104),
@@ -2291,11 +2350,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("missingsincemidnight", "msm.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7989479),
 	ENGLISH_ENTRY("mistdelaescueladearte", "EA.exe", "465f972675db2da6040518221af5b0ba", 6732362),
 	ENGLISH_ENTRY("mixertest", "mixertest.exe", "0b7529a76f38283d6e850b8d56526fc1", 798369),
-	ENGLISH_ENTRY("mmm15ortmaschine", "MMM15.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8957215),
-	ENGLISH_ENTRY("mmm4mimikryderemotionen", "mmm.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8368739),
-	ENGLISH_ENTRY("mmmderklausschlgtzurck", "MMM-dksz.exe", "c1df737ef943e6e3cc09d36fcd4b1ed0", 8689677),
-	ENGLISH_ENTRY("mmmepisode8", "MMM - E8.exe", "45ab4f29031b50c8d01d10a269f77ff5", 5095385),
-	ENGLISH_ENTRY("mmmradioaktiv", "mmm_radioactive.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7665414),
+	ENGLISH_ENTRY("mmm15", "MMM15.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8957215),
+	ENGLISH_ENTRY("mmm4", "mmm.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8368739),
+	ENGLISH_ENTRY("mmm53", "MMM-dksz.exe", "c1df737ef943e6e3cc09d36fcd4b1ed0", 8689677),
+	ENGLISH_ENTRY("mmm8", "MMM - E8.exe", "45ab4f29031b50c8d01d10a269f77ff5", 5095385),
+	ENGLISH_ENTRY("mmm9", "mmm_radioactive.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7665414),
 	ENGLISH_ENTRY("moncul", "moncul.exe", "0710e2ec71042617f565c01824f0cf3c", 1493822),
 	ENGLISH_ENTRY("monkeystothemoon", "Monkeys to the Moon.exe", "77d91b65ff03c1f3a8381e39c7f693cb", 8720439),
 	ENGLISH_ENTRY("monkeywrench", "monkeywrench.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 27454116),
@@ -2325,6 +2384,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("nekusnewtrip", "nnt.exe", "c0c1865c3c8369e034095a725ca1ddbf", 35012412),
 	ENGLISH_ENTRY("nekusnewtrip", "square enix.exe", "a524cbb1c51589903c4043b98917f1d9", 10630694),
 	ENGLISH_ENTRY("nellycootalot", "Nelly Cootalot.exe", "18b284c22010850f79bc5c20054a70c4", 108256323),
+	ENGLISH_ENTRY("nellycootalot", "Nelly.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 198349190),
 	ENGLISH_ENTRY("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524), // Steam
 	ENGLISH_ENTRY("nesquest", "NES Quest.exe", "8b72036706da98095057df615d07460b", 20881972),
 	ENGLISH_ENTRY("news", "WI-AA.exe", "06a03fe35791b0578068ab1873455463", 29631312),
@@ -2355,7 +2415,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("oneweekoneroom", "1 week 1 room.exe", "06a03fe35791b0578068ab1873455463", 4275934),
 	ENGLISH_ENTRY("onleavingthebuilding", "On Leaving The Building.exe", "fd68fced8b89792d2e90be87b33d4b19", 64776995),
 	ENGLISH_ENTRY("onlythegooddieyoungenglishversion", "OtGDY_En.exe", "87ccd318a469128530699388f916b86f", 153980124),
-	ENGLISH_ENTRY("oott", "OotT-TKC.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
 	ENGLISH_ENTRY("openquest", "OpenQuest.exe", "90413e9ae57e222f8913b09d2bc847bc", 3407165),
 	ENGLISH_ENTRY("operationnovi", "Operation Novi.exe", "465f972675db2da6040518221af5b0ba", 24583968),
 	ENGLISH_ENTRY("operationsavebluecup", "OSBC.exe", "f120690b506dd63cd7d1112ea6af2f77", 3040865),
@@ -2438,8 +2497,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("purgatorio", "Purgatorio 0.1.exe", "18b284c22010850f79bc5c20054a70c4", 194293367),
 	ENGLISH_ENTRY("purityofthesurf", "Surf.exe", "71ca0d6c1c699595f28a2125948d4a84", 11315703),
 	ENGLISH_ENTRY("pxenophobe", "ProjXeno.exe", "465f972675db2da6040518221af5b0ba", 79053486),
-	ENGLISH_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
-	ENGLISH_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
 	ENGLISH_ENTRY("questfighter", "Quest Fighter.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2914128),
 	ENGLISH_ENTRY("questfighter2", "Quest Fighter 2.exe", "4d7d2addcde045dae6e0363a43f9acad", 5219511),
 	ENGLISH_ENTRY("questforcinema", "Questforcinema.exe", "465f972675db2da6040518221af5b0ba", 2670632),
@@ -2528,7 +2585,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("seegame15", "housesitting_18.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1746919),
 	ENGLISH_ENTRY("sevendoors", "7DOORS.exe", "18b284c22010850f79bc5c20054a70c4", 113716886),
 	ENGLISH_ENTRY("shadesofgreye", "Shades of Greye.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 16125855),
-	ENGLISH_ENTRY("shailadusithlenqute", "Shai-la Enquete.exe", "a524cbb1c51589903c4043b98917f1d9", 7489302),
+	ENGLISH_ENTRY("shailadusithlenquete", "Shai-la Enquete.exe", "a524cbb1c51589903c4043b98917f1d9", 7489302),
 	ENGLISH_ENTRY("shailaofthesith", "Shaila_of_the_Sith.exe", "a524cbb1c51589903c4043b98917f1d9", 76170347),
 	ENGLISH_ENTRY("shem", "Shem.exe", "0710e2ec71042617f565c01824f0cf3c", 8866401),
 	ENGLISH_ENTRY("sherlock", "Sherlock.exe", "615e73fc1874e92d60a1996c2330ea36", 19108029),
@@ -2728,7 +2785,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("timequest2", "TimeQ2.exe", "465f972675db2da6040518221af5b0ba", 5838823),
 	ENGLISH_ENTRY("timesinkofchronos", "Timesink.exe", "2bc8f994a7d1e05ed45f35abf2128231", 127528679),
 	ENGLISH_ENTRY("timothylande", "Timothy Lande.exe", "0500aacb6c176d47ac0f8158f055db83", 13874628),
-	ENGLISH_ENTRY("tmateundescanso", "tomate.exe", "3128b9f90e2f954ba704414ae854d10b", 8865274),
+	ENGLISH_ENTRY("tomateundescanso", "tomate.exe", "3128b9f90e2f954ba704414ae854d10b", 8865274),
 	ENGLISH_ENTRY("tmntturtlesintime", "Turtles.exe", "465f972675db2da6040518221af5b0ba", 2309552),
 	ENGLISH_ENTRY("tomhanksaway", "Tom Hanks Away.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1589035),
 	ENGLISH_ENTRY("toomanykittens", "Too Many Kittens.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 3926440),
@@ -2738,13 +2795,19 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	ENGLISH_ENTRY("trevordaisoninouterspace", "TrevorDaison.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 22641402),
 	ENGLISH_ENTRY("trexandmusclesambigtroubleinspf", "Trex and Muscle Sam.exe", "91696f9333f36bdba272220c644c72e7", 120822652),
 	ENGLISH_ENTRY("trilbysnotes", "notes.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5736960),
+	ENGLISH_ENTRY("trilbysnotes", "notes se.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5880445),
 	ENGLISH_ENTRY("trilbytheartoftheft", "artoftheft.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8940823),
+	ENGLISH_ENTRY("trilbytheartoftheft", "artoftheft.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8940666), // v1.3.4
 	ENGLISH_ENTRY("trivialpassyouit", "Trivial Pass You It.exe", "01823d511cc00f4de6fd920eb543c6e7", 2737077),
 	ENGLISH_ENTRY("tuberainbow", "Tube Rainbow.exe", "03c8c45bd00daca1a9d75d1133df5640", 5669127),
 	ENGLISH_ENTRY("tvbrder", "TvaBroder.exe", "7a669a96e488653db661d285bbc12783", 17875297),
+	ENGLISH_ENTRY("twelvethirteense", "1213 SE.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 644458),
 	ENGLISH_ENTRY("twelvethirteen", "1213.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2942386),
+	ENGLISH_ENTRY("twelvethirteen", "1213_ep1.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3283696), // From SE
 	ENGLISH_ENTRY("twelvethirteenepisode2", "1213_ep2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3602361),
+	ENGLISH_ENTRY("twelvethirteenepisode2", "1213_ep2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3656275), // From SE
 	ENGLISH_ENTRY("twelvethirteenepisode3", "1213_ep3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3205606),
+	ENGLISH_ENTRY("twelvethirteenepisode3", "1213_ep3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3246117), // From SE
 	ENGLISH_ENTRY("twentiesflappersvsthemummy", "Twenties Flappers vs The Mummy.exe", "a524cbb1c51589903c4043b98917f1d9", 15042196),
 	ENGLISH_ENTRY("twoofakind", "toak.exe", "465f972675db2da6040518221af5b0ba", 24644765),
 	ENGLISH_ENTRY("uglyfiles", "ugly.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 4169486),
