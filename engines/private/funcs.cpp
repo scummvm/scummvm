@@ -643,7 +643,7 @@ void SoundArea(ArgArray args) {
     char *n;
 
     if (args[1].type == NAME)
-        n = (char *) args[1].u.sym->name->c_str();
+        n = (char *)args[1].u.sym->name->c_str();
     else if (args[1].type == STRING)
         n = args[1].u.str;
     else

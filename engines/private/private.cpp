@@ -387,7 +387,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
     if (mousePos.x > surf->w || mousePos.y > surf->h)
         return false;
 
-    return ( *((uint32*) surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
+    return ( *((uint32*)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
 }
 
 
@@ -1075,11 +1075,11 @@ char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
 
 void timerCallback(void *refCon) {
     g_private->removeTimer();
-    g_private->_nextSetting = (Common::String*) refCon;
+    g_private->_nextSetting = (Common::String*)refCon;
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-    return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void*) ns, "timerCallback");
+    return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void*)ns, "timerCallback");
 }
 
 void PrivateEngine::removeTimer() {
