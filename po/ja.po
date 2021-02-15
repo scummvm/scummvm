@@ -3888,8 +3888,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
-"警告：このゲームはディレクターズカットモードで保存されましたが、現在はオリジナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカットモー"
-"ドとして調整されます。"
+"警告：このゲームはディレクターズカットモードで保存されましたが、現在はオリジ"
+"ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
+"モードとして調整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2273
 msgid ""
@@ -3897,8 +3898,9 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
-"警告：このゲームはオリジナルモードで保存されましたが、現在はディレクターズカットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとして調"
-"整されます。"
+"警告：このゲームはオリジナルモードで保存されましたが、現在はディレクターズ"
+"カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
+"て調整されます。"
 
 #: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
