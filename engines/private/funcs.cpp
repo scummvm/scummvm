@@ -118,7 +118,6 @@ void fSyncSound(ArgArray args) {
     if (strcmp("\"\"", args[0].u.str) != 0) {
         Common::String *s = new Common::String(args[0].u.str);
         g_private->playSound(*s, 1, true, false);
-        //assert(0);
     }
 }
 
@@ -225,16 +224,11 @@ void fDossierAdd(ArgArray args) {
 }
 
 void fDossierBitmap(ArgArray args) {
-
     assert (args.size() == 2);
-
     int x = args[0].u.val;
     int y = args[1].u.val;
-
     assert(x == 40 && y == 30);
-
     g_private->loadDossier();
-
 }
 
 void fDossierChgSheet(ArgArray args) {
@@ -288,7 +282,6 @@ void fLoseInventory(ArgArray args) {
 }
 
 void fInventory(ArgArray args) {
-
     // assert types
     Datum b1 = args[0];
     Datum v1 = args[1];
@@ -296,7 +289,6 @@ void fInventory(ArgArray args) {
     Datum e = args[3];
     Datum i = args[4];
     Datum c = args[5];
-
     Datum snd = args[8];
 
     assert(v1.type == STRING || v1.type == NAME);
@@ -308,12 +300,10 @@ void fInventory(ArgArray args) {
     Common::String *bmp = new Common::String(i.u.str);
     assert(g_private->isDemo() || strcmp(bmp->c_str(), "\"\"") != 0);
 
-
     if (v1.type == STRING)
         assert(strcmp(v1.u.str, "\"\"") == 0);
 
     debugC(1, kPrivateDebugScript, "Inventory(...)");
-
     if (strcmp(b1.u.str, "\"\"") != 0) {
         Common::String *s = new Common::String(b1.u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
@@ -332,7 +322,6 @@ void fInventory(ArgArray args) {
         else
             m->flag1 = NULL;
 
-
         if (v2.type == NAME)
             m->flag2 = v2.u.sym;
         else
@@ -342,7 +331,6 @@ void fInventory(ArgArray args) {
         g_private->_toTake = true;
 
         Common::String *f;
-
         if (strcmp(snd.u.str, "\"\"") != 0) {
             f = new Common::String(snd.u.str);
         } else {
@@ -362,11 +350,9 @@ void fInventory(ArgArray args) {
         } else {
             g_private->inventory.push_back(*bmp);
         }
-
         if (v2.type == NAME)
             v2.u.sym->u.val = 1;
     }
-
 }
 
 void fSetFlag(ArgArray args) {
@@ -398,7 +384,6 @@ void fExit(ArgArray args) {
     }
 
     e->rect = args[2].u.rect;
-    //debug("Rect %d %d %d %d", args[2].u.rect->top, args[2].u.rect->left, args[2].u.rect->bottom, args[2].u.rect->right);
     g_private->_exits.push_front(*e);
 }
 
@@ -465,7 +450,6 @@ void fLoopedSound(ArgArray args) {
     }
 }
 
-
 void fViewScreen(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "WARNING: ViewScreen not implemented!");
@@ -506,24 +490,19 @@ void fMovie(ArgArray args) {
         debugC(1, kPrivateDebugScript, "movie %s already played", movie->c_str());
         g_private->_nextSetting = g_private->_repeatedMovieExit;
     }
-    //g_private->_nextSetting = new Common::String(args[1].u.str);
 }
 
 void fCRect(ArgArray args) {
     // assert types
-    int x1, y1, x2, y2;
-
     debugC(1, kPrivateDebugScript, "CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
-
+    int x1, y1, x2, y2;
     x1 = args[0].u.val;
     y1 = args[1].u.val;
-
     x2 = args[2].u.val;
     y2 = args[3].u.val;
 
     Datum *d = new Datum();
     Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
-
     d->type = RECT;
     d->u.rect = rect;
     push(*d);
@@ -551,7 +530,6 @@ void _fMask(ArgArray args, bool drawn) {
 
     int x = 0;
     int y = 0;
-
     char *f = args[0].u.str;
     char *e = args[1].u.str;
     Common::String *c = args[2].u.sym->name;
@@ -563,8 +541,6 @@ void _fMask(ArgArray args, bool drawn) {
 
     debugC(1, kPrivateDebugScript, "Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
     const Common::String *s = new Common::String(f);
-    //if (drawed)
-    //    g_private->loadImage(*s, x, y);
 
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
     m->surf = g_private->loadMask(*s, x, y, drawn);
@@ -616,10 +592,12 @@ void fAMRadioClip(ArgArray args) {
     assert(args.size() <= 4);
     fAddSound(args[0].u.str, "AMRadioClip");
 }
+
 void fPoliceClip(ArgArray args) {
     assert(args.size() <= 4);
     fAddSound(args[0].u.str, "PoliceClip");
 }
+
 void fPhoneClip(ArgArray args) {
     if (args.size() == 2) {
         debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
@@ -635,13 +613,11 @@ void fPhoneClip(ArgArray args) {
         char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
         fAddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
     }
-
 }
 
 void fSoundArea(ArgArray args) {
     // assert types
     char *n;
-
     if (args[1].type == NAME)
         n = (char *)args[1].u.sym->name->c_str();
     else if (args[1].type == STRING)
@@ -711,7 +687,6 @@ void fTimer(ArgArray args) {
     } else {
         assert(0);
     }
-
 }
 
 static struct FuncTable {
@@ -719,13 +694,16 @@ static struct FuncTable {
     const char *name;
 } funcTable[] = {
 
+    // Control flow
     { fChgMode,         "ChgMode"},
     { fResume,          "Resume"},
     { fgoto,            "goto"},
-    { fSetFlag,         "SetFlag"},
-    { fSetModifiedFlag, "SetModifiedFlag"},
     { fTimer,           "Timer"},
 
+    // Variables
+    { fSetFlag,         "SetFlag"},
+    { fSetModifiedFlag, "SetModifiedFlag"},
+ 
     // Sounds
     { fSound,           "Sound"},
     { fSoundEffect,     "SoundEffect"},
@@ -744,6 +722,7 @@ static struct FuncTable {
     { fMaskDrawn,       "MaskDrawn"},
     { fVSPicture,       "VSPicture"},
     { fViewScreen,      "ViewScreen"},
+    { fExit,            "Exit"},
 
     // Video
     { fTransition,      "Transition"},
@@ -754,11 +733,12 @@ static struct FuncTable {
     { fDiaryInvList,    "DiaryInvList"},
     { fDiaryGoLoc,      "DiaryGoLoc"},
 
-    { fExit,            "Exit"},
+    // Main menu
     { fQuit,            "Quit"},
     { fLoadGame,        "LoadGame"},
     { fSaveGame,        "SaveGame"},
     { fAskSave,         "AskSave"},
+    { fRestartGame,     "RestartGame"},
 
     // Dossiers
     { fDossierAdd,      "DossierAdd"},
@@ -767,18 +747,17 @@ static struct FuncTable {
     { fDossierPrevSuspect, "DossierPrevSuspect"},
     { fDossierNextSuspect, "DossierNextSuspect"},
 
+    // Inventory
     { fLoseInventory,   "LoseInventory"},
     { fInventory,       "Inventory"},
-    { fCRect,           "CRect"},
-    { fRestartGame,     "RestartGame"},
 
     // PoliceBust
     { fPoliceBust,      "PoliceBust"},
     { fBustMovie,       "BustMovie"},
 
     // Others
-
     { fSafeDigit,       "SafeDigit"},
+    { fCRect,           "CRect"},
 
     { 0, 0}
 };
@@ -800,7 +779,6 @@ void call(char *name, ArgArray args) {
 
     void (*func)(ArgArray) = (void (*)(ArgArray)) _functions.getVal(n);
     func(args);
-
 }
 
 } // End of namespace Private
