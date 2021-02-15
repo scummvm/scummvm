@@ -63,17 +63,32 @@ Common::FSNode getFSNode(const char *path) {
 	if (filePath.hasPrefix("./"))
 		filePath = Common::String(filePath.c_str() + 2);
 
+	// Use FSDirectory for case-insensitive search
+	Common::SharedPtr<Common::FSDirectory> dir(new Common::FSDirectory(node));
+
 	// Iterate through any further subfolders or filename
 	size_t separator;
 	while ((separator = filePath.find('/')) != Common::String::npos) {
-		node = node.getChild(filePath.substr(0, separator));
+		dir.reset(dir->getSubDirectory(filePath.substr(0, separator)));
+		if (!dir)
+			return Common::FSNode();
 		filePath = Common::String(filePath.c_str() + separator + 1);
 	}
 
-	if (!filePath.empty())
-		node = node.getChild(filePath);
+	if (filePath.empty())
+		return dir->getFSNode();
 
-	return node;
+	if (dir->hasFile(filePath)) {
+		Common::ArchiveMemberPtr file = dir->getMember(filePath);
+		if (file)
+			return dir->getFSNode().getChild(file->getName());
+	}
+
+	dir.reset(dir->getSubDirectory(filePath));
+	if (dir)
+		return dir->getFSNode();
+
+	return Common::FSNode();
 }
 
 int  ags_file_exists(const char *path) {
