@@ -77,24 +77,6 @@ void Background::InitBackground() {
 
 	// init background sky color
 	SetBgndColor(_pCurBgnd->rgbSkyColor);
-
-	// for each background playfield
-	for (int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
-		PLAYFIELD cur = _pCurBgnd->fieldArray[i];
-		// init playfield pos
-		cur.fieldX = intToFrac(_pCurBgnd->ptInitWorld.x);
-		cur.fieldY = intToFrac(_pCurBgnd->ptInitWorld.y);
-
-		// no scrolling
-		cur.fieldXvel = intToFrac(0);
-		cur.fieldYvel = intToFrac(0);
-
-		// clear playfield display list
-		cur.pDispList = nullptr;
-
-		// clear playfield moved flag
-		cur.bMoved = false;
-	}
 }
 
 /**
