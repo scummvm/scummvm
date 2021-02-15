@@ -4222,6 +4222,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 86:
+		mapping = NoirMapping{"OP86", ZZZZZZ, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
