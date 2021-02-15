@@ -4201,6 +4201,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"ADDCONV", ADDCONV, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+	case 12:
+		mapping = NoirMapping{"ADDINV1", ADDINV1, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 	case 16:
 		mapping = NoirMapping{"ADDINV3", ADDINV3, 1};
 		pp -= mapping.numArgs - 1;
@@ -4397,7 +4401,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case ADDINV1:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		AddInv(INV_1, pp[0]);
 		return -1;
 
