@@ -58,8 +58,6 @@ void VMouseON();
 void VMouseRestore();
 void VMouseCopy();
 uint16 TextLength(const char *sign, uint16 num);
-uint16 CheckDText(struct SDText);
-void DText(struct SDText);
 void IntroText(int16 x, int16 y, const char *sign, uint8 *buf);
 void IconSnapShot();
 bool DataSave();

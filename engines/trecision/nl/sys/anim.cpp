@@ -459,29 +459,26 @@ void PlayFullMotion(int start, int end) {
 			SmkAnims[pos]->seekToFrame(start);
 
 		_curAnimFrame[pos] = start - 1 ;
-	} else {
-		if ((end - start) > 2) {
-			CallSmackSoundOnOff(pos, 1);
-		}
-	}
+	} else if ((end - start) > 2)
+		CallSmackSoundOnOff(pos, 1);
 
 	FullStart = start;
 	FullEnd = end;
 
-	memset(&sdt, 0, sizeof(sdt));
-	memset(&osdt, 0, sizeof(osdt));
+	sdt.clear();
+	osdt.clear();
 }
 
 /*-----------------07/02/97 17.31-------------------
 					BattutaPrint
 --------------------------------------------------*/
 void BattutaPrint(int x, int y, int c, const char *txt) {
-	memcpy(&osdt, &sdt, sizeof(struct SDText));
+	osdt = {sdt.x, sdt.y, sdt.dx, sdt.dy, sdt.l[0], sdt.l[1], sdt.l[2], sdt.l[3], sdt.tcol, sdt.scol, sdt.sign};
 
-	sdt.sign = txt;
 	sdt.x = x;
 	sdt.y = y;
 	sdt.tcol = c;
+	sdt.sign = txt;
 }
 
 /* -----------------29/07/97 22.09-------------------
@@ -533,17 +530,13 @@ void RegenFullMotion() {
 
 		DialogHandler(_curAnimFrame[pos]);
 
-		//SmackDoFrame( SmkAnims[pos] );
-		//SmackToBuffer( SmkAnims[pos], 0, 0,
-		//			   SmkAnims[pos]->getWidth(), SmkAnims[pos]->getHeight(), SmackBuffer[pos], 0 );
-
 		sdt.dx = TextLength(sdt.sign, 0);
 
 		sdt.x = 20;
 		sdt.y = 380;
 		sdt.dx = MAXX - 40;
 
-		sdt.dy = CheckDText(sdt);
+		sdt.dy = sdt.checkDText();
 		sdt.l[0] = 0;
 		sdt.l[1] = 0;
 		sdt.l[2] = MAXX;
@@ -551,22 +544,22 @@ void RegenFullMotion() {
 		sdt.scol = MASKCOL;
 
 		// se c'era una scritta la cancella
-		if (osdt.sign != NULL) {
-			if ((osdt.y < sdt.y) || (osdt.y + osdt.dy > sdt.y + sdt.dy) || (sdt.sign == NULL)) {
+		if (osdt.sign != nullptr) {
+			if ((osdt.y < sdt.y) || (osdt.y + osdt.dy > sdt.y + sdt.dy) || (sdt.sign == nullptr)) {
 				PaintSmackBuffer(0, osdt.y - TOP, MAXX, osdt.dy);
 				ShowScreen(0, osdt.y, MAXX,  osdt.dy);
 			}
-			osdt.sign = NULL;
+			osdt.sign = nullptr;
 		}
 		// se c'e' una scritta
-		if (sdt.sign != NULL) {
+		if (sdt.sign != nullptr) {
 			PaintSmackBuffer(0, sdt.y - TOP, MAXX, sdt.dy);
 			// scrive stringa
 			if (ConfMan.getBool("subtitles"))
-				DText(sdt);
+				sdt.DText();
 			// e la fa vedere
 			//ShowScreen( 0, sdt._y, MAXX,  sdt._dy );
-			osdt.sign = NULL;
+			osdt.sign = nullptr;
 		}
 
 		if (SmkAnims[pos]->getHeight() > MAXY / 2)
@@ -578,7 +571,7 @@ void RegenFullMotion() {
 		{
 			for (int32 a = 0; a < SmkAnims[pos]->getHeight(); a++) {
 				// se non ho gia' copiato la scritta
-				if ((sdt.sign == NULL) ||
+				if ((sdt.sign == nullptr) ||
 						((0 + a)*yfact < (sdt.y - TOP)) ||
 						((0 + a)*yfact >= (sdt.y + sdt.dy - TOP))) {
 					// sceglie se raddoppiare o no
@@ -614,7 +607,7 @@ void RegenFullMotion() {
 				}
 			}
 		}
-		if (sdt.sign != NULL)
+		if (sdt.sign != nullptr)
 			ShowScreen(0, sdt.y, MAXX,  sdt.dy);
 		UnlockVideo();
 

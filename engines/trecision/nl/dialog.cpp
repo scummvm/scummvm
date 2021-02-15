@@ -40,20 +40,8 @@ int16 CurPos, LastPos;
 					DialogPrint
 --------------------------------------------------*/
 void DialogPrint(int x, int y, int c, const char *txt) {
-	struct SDText theChoice;
-
-	theChoice.x = x;
-	theChoice.y = y;
-	theChoice.dx = TextLength(txt, 0);
-	theChoice.sign = txt;
-	theChoice.l[0] = 0;
-	theChoice.l[1] = 0;
-	theChoice.l[2] = MAXX;
-	theChoice.l[3] = MAXY;
-	theChoice.tcol = c;
-	theChoice.scol = MASKCOL;
-
-	DText(theChoice);
+	SDText curChoice = {x, y, TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt};
+	curChoice.DText();
 }
 
 /* -----------------28/07/97 22.11-------------------

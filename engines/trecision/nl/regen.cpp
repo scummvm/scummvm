@@ -64,7 +64,7 @@ void PaintScreen(uint8 flag) {
 
 	PaintRegenRoom();
 
-//	if( ( !SemPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( TheString.sign == NULL ) && ( OldString.sign == NULL ) )
+//	if( ( !SemPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
 	Hlim = 255;
@@ -127,12 +127,12 @@ void PaintScreen(uint8 flag) {
 		DObj.y    = TOP;
 		DObj.dx   = CurRoomMaxX;
 		DObj.dy   = 480;
-		DObj.l[0] = OldString.x;
-		DObj.l[1] = OldString.y - TOP;
-		DObj.l[2] = DObj.l[0] + OldString.dx;
-		DObj.l[3] = DObj.l[1] + OldString.dy;
+		DObj.l[0] = oldString.x;
+		DObj.l[1] = oldString.y - TOP;
+		DObj.l[2] = DObj.l[0] + oldString.dx;
+		DObj.l[3] = DObj.l[1] + oldString.dy;
 
-		if ((OldString.y >= TOP) && ((OldString.y + OldString.dy) < (AREA + TOP))) {
+		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
 			DObj.buf  = ImagePointer;
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
@@ -140,7 +140,7 @@ void PaintScreen(uint8 flag) {
 			for (a = (DObj.l[1] + TOP); a < (DObj.l[3] + TOP); a++)
 				wordset(Video2 + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]));
 		}
-		OldString.sign = NULL;
+		oldString.sign = NULL;
 
 		limiti[limitinum][0] = DObj.l[0];     // aggiunge rettangolo scritta
 		limiti[limitinum][1] = DObj.l[1] + TOP;
@@ -154,7 +154,7 @@ void PaintScreen(uint8 flag) {
 			TextStatus = TEXT_OFF;               // non aggiorna piu' scritta
 	}
 
-//	if( ( TextStatus & TEXT_DRAW ) && ( ( TheString.sign == NULL ) || ( TheString.sign[0] == '\0' ) ) )
+//	if( ( TextStatus & TEXT_DRAW ) && ( ( curString.sign == NULL ) || ( curString.sign[0] == '\0' ) ) )
 //		TextStatus = TEXT_OFF;
 
 // CANCELLA TUTTI GLI OGGETTI TOGLI
@@ -214,24 +214,24 @@ void PaintScreen(uint8 flag) {
 		for (a = 0; a < limitinum; a++) {
 			if (IntersecateRect(limiti[a][0], limiti[a][1],
 								limiti[a][2], limiti[a][3],
-								TheString.x, TheString.y,
-								TheString.x + TheString.dx,
-								TheString.y + TheString.dy)) {
-				TheString.l[0] = xr1;
-				TheString.l[1] = yr1;
-				TheString.l[2] = xr2;
-				TheString.l[3] = yr2;
+								curString.x, curString.y,
+								curString.x + curString.dx,
+								curString.y + curString.dy)) {
+				curString.l[0] = xr1;
+				curString.l[1] = yr1;
+				curString.l[2] = xr2;
+				curString.l[3] = yr2;
 
-				DText(TheString);
+				curString.DText();
 			}
 		}
 
 	} else if (TextStatus & TEXT_DRAW) {
-		DText(TheString);
-		limiti[limitinum][0] = TheString.x;   // aggiunge rettangolo
-		limiti[limitinum][1] = TheString.y;
-		limiti[limitinum][2] = TheString.x + TheString.dx;
-		limiti[limitinum][3] = TheString.y + TheString.dy;
+		curString.DText();
+		limiti[limitinum][0] = curString.x;   // aggiunge rettangolo
+		limiti[limitinum][1] = curString.y;
+		limiti[limitinum][2] = curString.x + curString.dx;
+		limiti[limitinum][3] = curString.y + curString.dy;
 
 		Tlim = limitinum;
 		limitinum ++;

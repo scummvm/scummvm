@@ -107,8 +107,8 @@ Common::SeekableReadStream *ff;
 char UStr[140];
 int32  hh;
 // MOUSE
-struct SDText TheString;
-struct SDText OldString;
+SDText curString;
+SDText oldString;
 uint8  TextStatus;
 // AOT.CFG
 char  CurCDSet = 1;

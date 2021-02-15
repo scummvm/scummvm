@@ -281,33 +281,33 @@ void PaintString() {
 						DoText
  --------------------------------------------------*/
 void StackText::DoText() {
-	TheString.x = x;
-	TheString.y = y;
-	TheString.dx = TextLength(sign, 0);
-	if ((y == MAXY - CARHEI) && (TheString.dx > 600))
-		TheString.dx = TheString.dx * 3 / 5;
-	else if ((y != MAXY - CARHEI) && (TheString.dx > 960))
-		TheString.dx = TheString.dx * 2 / 5;
-	else if ((y != MAXY - CARHEI) && (TheString.dx > 320))
-		TheString.dx = TheString.dx * 3 / 5;
+	curString.x = x;
+	curString.y = y;
+	curString.dx = TextLength(sign, 0);
+	if ((y == MAXY - CARHEI) && (curString.dx > 600))
+		curString.dx = curString.dx * 3 / 5;
+	else if ((y != MAXY - CARHEI) && (curString.dx > 960))
+		curString.dx = curString.dx * 2 / 5;
+	else if ((y != MAXY - CARHEI) && (curString.dx > 320))
+		curString.dx = curString.dx * 3 / 5;
 
-	TheString.sign = sign;
-	TheString.l[0] = 0;
-	TheString.l[1] = 0;
-	TheString.l[2] = TheString.dx;
-	uint16 hstring = CheckDText(TheString);
-	TheString.l[3] = hstring;
-	TheString.dy   = hstring;
-	TheString.tcol = tcol;
-	TheString.scol = scol;
+	curString.sign = sign;
+	curString.l[0] = 0;
+	curString.l[1] = 0;
+	curString.l[2] = curString.dx;
+	uint16 hstring = curString.checkDText();
+	curString.l[3] = hstring;
+	curString.dy   = hstring;
+	curString.tcol = tcol;
+	curString.scol = scol;
 
-	if (TheString.y <= hstring)
-		TheString.y += hstring;
+	if (curString.y <= hstring)
+		curString.y += hstring;
 	else
-		TheString.y -= hstring;
+		curString.y -= hstring;
 
-	if (TheString.y <= VIDEOTOP)
-		TheString.y = VIDEOTOP + 1;
+	if (curString.y <= VIDEOTOP)
+		curString.y = VIDEOTOP + 1;
 
 
 	TextStatus |= TEXT_DRAW;
@@ -318,19 +318,19 @@ void StackText::DoText() {
 					DoClearString
  --------------------------------------------------*/
 void DoClearText() {
-	if ((OldString.sign == nullptr) && (TheString.sign)) {
-		OldString.x = TheString.x;
-		OldString.y = TheString.y;
-		OldString.dx = TheString.dx;
-		OldString.dy = TheString.dy;
-		OldString.sign = TheString.sign;
-		OldString.l[0] = TheString.l[0];
-		OldString.l[1] = TheString.l[1];
-		OldString.l[2] = TheString.l[2];
-		OldString.l[3] = TheString.l[3];
-		OldString.tcol = TheString.tcol;
-		OldString.scol = TheString.scol;
-		TheString.sign = nullptr;
+	if ((oldString.sign == nullptr) && (curString.sign)) {
+		oldString.x = curString.x;
+		oldString.y = curString.y;
+		oldString.dx = curString.dx;
+		oldString.dy = curString.dy;
+		oldString.sign = curString.sign;
+		oldString.l[0] = curString.l[0];
+		oldString.l[1] = curString.l[1];
+		oldString.l[2] = curString.l[2];
+		oldString.l[3] = curString.l[3];
+		oldString.tcol = curString.tcol;
+		oldString.scol = curString.scol;
+		curString.sign = nullptr;
 
 		TextStatus |= TEXT_DEL;
 	}
