@@ -310,7 +310,8 @@ void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	assert(sprite->format.bytesPerPixel == 4);
 
 	if (trans_blend_alpha == -1) {
-		bmp->getSurface().blitFrom(sprite->getSurface(), Common::Point(x, y));
+		bmp->getSurface().transBlitFrom(sprite->getSurface(), Common::Point(x, y),
+			TRANSPARENT_COLOR(*sprite));
 
 	} else {
 		// Create a temporary ManagedSurface with a pointer to the sprite's pixels,
@@ -326,7 +327,7 @@ void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 		spr.pitch = sprite->pitch;
 
 		bmp->getSurface().transBlitFrom(spr, Common::Rect(0, 0, spr.w, spr.h),
-			Common::Rect(x, y, x + spr.w, y + spr.h), NO_TRANSPARENT_COLOR,
+			Common::Rect(x, y, x + spr.w, y + spr.h), TRANSPARENT_COLOR(*sprite),
 			false, 0, trans_blend_alpha);
 	}
 }
