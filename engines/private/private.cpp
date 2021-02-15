@@ -83,7 +83,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _loadGameMask = NULL;
 
     // Interface
-    _frame = new Common::String("inface/general/inface2.bmp");
+    _framePath = new Common::String("inface/general/inface2.bmp");
 
     // Police
     _policeBustEnabled = false;
@@ -175,6 +175,12 @@ Common::Error PrivateEngine::run() {
     _compositeSurface = new Graphics::ManagedSurface();
     _compositeSurface->create(_screenW, _screenH, _pixelFormat);
     _compositeSurface->setTransparentColor(_transparentColor);
+
+    // Load the game frame once
+    Common::File frameFile;
+    assert(frameFile.open(convertPath(*_framePath)));
+    _image->loadStream(frameFile);
+    _frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 
     // Debugger console
     Console *console = new Console(this);
@@ -278,6 +284,7 @@ Common::Error PrivateEngine::run() {
             _nextSetting = NULL;
             execute(prog);
             changeCursor("default");
+            drawScreen();
         }
 
         g_system->updateScreen();
@@ -907,19 +914,11 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
     surf->free();
     delete surf;
     _image->destroy();
-    drawScreen();
+    //drawScreen();
 }
 
 void PrivateEngine::drawScreenFrame(Graphics::Surface *surf) {
-    Common::String path = convertPath(*_frame);
-    Common::File file;
-    assert(file.open(path));
-    _image->loadStream(file);
-    Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
-    surf->copyRectToSurface(*csurf, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
-    csurf->free();
-    delete csurf;
-    _image->destroy();
+    surf->copyRectToSurface(*_frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 }
 
 
@@ -949,7 +948,7 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 
 void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
     _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin, _transparentColor);
-    drawScreen();
+    //drawScreen();
 }
 
 void PrivateEngine::drawScreen() {

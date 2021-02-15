@@ -132,8 +132,6 @@ private:
 
     Graphics::PixelFormat _pixelFormat;
     Image::ImageDecoder *_image;
-    Graphics::ManagedSurface *_compositeSurface;
-
     int _screenW, _screenH;
 
 public:
@@ -141,7 +139,6 @@ public:
     ~PrivateEngine();
 
     const ADGameDescription *_gameDescription;
-
     bool isDemo() const;
 
     Audio::SoundHandle _fgSoundHandle;
@@ -155,7 +152,6 @@ public:
     void initializePath(const Common::FSNode &gamePath) override;
 
     // User input
-
     void selectPauseMovie(Common::Point);
     void selectMask(Common::Point);
     void selectExit(Common::Point);
@@ -163,7 +159,6 @@ public:
     void selectSaveGame(Common::Point);
 
     // Cursors
-
     bool cursorPauseMovie(Common::Point);
     bool cursorExit(Common::Point);
     bool cursorMask(Common::Point);
@@ -193,23 +188,25 @@ public:
     void changeCursor(Common::String);
     void initCursors();
 
+    // Rendering
+    Graphics::ManagedSurface *_compositeSurface;
     Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
     void drawMask(Graphics::ManagedSurface *);
     bool inMask(Graphics::ManagedSurface *, Common::Point);
     uint32 _transparentColor;
     Common::Rect *screenRect;
+    Common::String *_framePath;
+    Graphics::Surface *_frame;
+    Common::String *_nextVS;
     void drawScreen();
 
     // global state
     const Common::Point *_origin;
     Common::String *_nextSetting;
     Common::String *_currentSetting;
-    Common::String *_nextVS;
-    Common::String *_frame;
     bool            _toTake;
 
     // Dossiers
-
     DossierArray _dossiers;
     unsigned int _dossierSuspect;
     unsigned int _dossierPage;
@@ -220,7 +217,6 @@ public:
     void loadDossier();
 
     // Police Bust
-
     int policeVideoIndex;
     void policeBust();
     bool _policeBustEnabled;
@@ -232,7 +228,6 @@ public:
     Common::String *_policeBustSetting;
 
     // Diary
-
     InvList inventory;
     Common::String *_diaryLocPrefix;
     void loadLocations(Common::Rect *);
@@ -251,12 +246,10 @@ public:
     Common::String *_pausedSetting;
 
     // Masks/Exits
-
     ExitList _exits;
     MaskList _masks;
 
     // Sounds
-
     void playSound(const Common::String &, uint, bool, bool);
     void stopSound(bool);
     bool _noStopSounds;
@@ -270,37 +263,26 @@ public:
     Common::String *_sirenSound;
 
     // Radios
-
-    //Common::String *_radioSound;
     Common::String *_infaceRadioPath;
-
     MaskInfo *_AMRadioArea;
-    //Common::String *_AMRadioPrefix;
-
     MaskInfo *_policeRadioArea;
-    //Common::String *_policeRadioPrefix;
-
     MaskInfo *_phoneArea;
     Common::String *_phonePrefix;
     Common::String *_phoneCallSound;
-
     SoundList _AMRadio;
     SoundList _policeRadio;
     PhoneList _phone;
 
     char *getRandomPhoneClip(char *, int, int);
-
     void selectAMRadioArea(Common::Point);
     void selectPoliceRadioArea(Common::Point);
     void selectPhoneArea(Common::Point);
     void checkPhoneCall();
 
     // Random values
-
     bool getRandomBool(uint);
 
     // Timers
-
     bool installTimer(uint32, Common::String *);
     void removeTimer();
 
