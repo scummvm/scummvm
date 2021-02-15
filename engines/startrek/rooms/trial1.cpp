@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_ENTITY 8
@@ -169,18 +168,125 @@ extern const RoomAction trial1ActionList[] = {
 };
 
 enum trial1TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_UHURA, TX_SPEAKER_BENNIE,
+	TX_SPEAKER_ENTITY,
+	TX_TRI1_002, TX_TRI1_003, TX_TRI1_004, TX_TRI1_005, TX_TRI1_006,
+	TX_TRI1_007, TX_TRI1_008, TX_TRI1_009, TX_TRI1_010, TX_TRI1_011,
+	TX_TRI1_012, TX_TRI1_013, TX_TRI1_014, TX_TRI1_015, TX_TRI1_016,
+	TX_TRI1_017, TX_TRI1_018, TX_TRI1_019, TX_TRI1_020, TX_TRI1_021,
+	TX_TRI1_022, TX_TRI1_023, TX_TRI1_024, TX_TRI1_025, TX_TRI1_026,
+	TX_TRI1_027, TX_TRI1_029, TX_TRI1_030, TX_TRI1_031, TX_TRI1_032,
+	TX_TRI1_033, TX_TRI1_034, TX_TRI1_035, TX_TRI1_036, TX_TRI1_037,
+	TX_TRI1_038, TX_TRI1_039, TX_TRI1_040, TX_TRI1_041, TX_TRI1_042,
+	TX_TRI1_043, TX_TRI1_044, TX_TRI1_045, TX_TRI1_046, TX_TRI1_047,
+	TX_TRI1_048, TX_TRI1_049, TX_TRI1_050, TX_TRI1_051, TX_TRI1_052,
+	TX_TRI1_053, TX_TRI1_054, TX_TRI1_055, TX_TRI1_056, TX_TRI1_057,
+	TX_TRI1_J00, TX_TRI1N000, TX_TRI1N001, TX_TRI1N002, TX_TRI1N003,
+	TX_TRI1N004, TX_TRI1N005, TX_TRI1N006, TX_TRI1N007, TX_TRI1N008,
+	TX_TRI1N009, TX_TRI1N011, TX_TRI1N012, TX_TRI1N013, TX_TRI1N014,
+	TX_TRI1N015, TX_TRI1N016, TX_TRI1N017, TX_TRI1U068, TX_TRI1U079,
+	TX_TRI1U080, TX_TRI1U086, TX_TRI1U090, TX_TRI1U095, TX_TRI1U098,
+	TX_TRI1U101, TX_TRI1U102, TX_TRI1U106, TX_TRI1C001, TX_TRI1C002
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets trial1TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 1064, 0 },
-	//{ TX_SPEAKER_MCCOY, 1075, 0 },
-	//{ TX_SPEAKER_SPOCK, 1085, 0 },
+	{ TX_SPEAKER_KIRK, 275, 0 },
+	{ TX_SPEAKER_MCCOY, 286, 0 },
+	{ TX_SPEAKER_SPOCK, 296, 0 },
+	{ TX_SPEAKER_UHURA, 320, 0 },
+	{ TX_SPEAKER_BENNIE, 306, 0 },
+	{ TX_SPEAKER_ENTITY, 330, 0 },
+	{ TX_TRI1_002, 7154, 0 },
+	{ TX_TRI1_003, 7575, 0 },
+	{ TX_TRI1_004, 6149, 0 },
+	{ TX_TRI1_005, 6076, 0 },
+	{ TX_TRI1_006, 7100, 0 },
+	{ TX_TRI1_007, 936, 0 },
+	{ TX_TRI1_008, 7619, 0 },
+	{ TX_TRI1_009, 6209, 0 },
+	{ TX_TRI1_010, 1276, 0 },
+	{ TX_TRI1_011, 6761, 0 },
+	{ TX_TRI1_012, 5106, 0 },
+	{ TX_TRI1_013, 5610, 0 },
+	{ TX_TRI1_014, 5737, 0 },
+	{ TX_TRI1_015, 10856, 0 },
+	{ TX_TRI1_016, 7808, 0 },
+	{ TX_TRI1_017, 4855, 0 },
+	{ TX_TRI1_018, 7936, 0 },
+	{ TX_TRI1_019, 3040, 0 },
+	{ TX_TRI1_020, 8025, 0 },
+	{ TX_TRI1_021, 4261, 0 },
+	{ TX_TRI1_022, 4596, 0 },
+	{ TX_TRI1_023, 4723, 0 },
+	{ TX_TRI1_024, 4387, 0 },
+	{ TX_TRI1_025, 4457, 0 },
+	{ TX_TRI1_026, 11067, 0 },
+	{ TX_TRI1_027, 9814, 0 },
+	{ TX_TRI1_029, 8075, 0 },
+	{ TX_TRI1_030, 8140, 0 },
+	{ TX_TRI1_031, 8211, 0 },
+	{ TX_TRI1_032, 865, 0 },
+	{ TX_TRI1_033, 10751, 0 },
+	{ TX_TRI1_034, 2991, 0 },
+	{ TX_TRI1_035, 9017, 0 },
+	{ TX_TRI1_036, 8488, 0 },
+	{ TX_TRI1_037, 9853, 0 },
+	{ TX_TRI1_038, 8412, 0 },
+	{ TX_TRI1_039, 8292, 0 },
+	{ TX_TRI1_040, 4132, 0 },
+	{ TX_TRI1_041, 5347, 0 },
+	{ TX_TRI1_042, 5488, 0 },
+	{ TX_TRI1_043, 4978, 0 },
+	{ TX_TRI1_044, 8651, 0 },
+	{ TX_TRI1_045, 10642, 0 },
+	{ TX_TRI1_046, 2905, 0 },
+	{ TX_TRI1_047, 695, 0 },
+	{ TX_TRI1_048, 3398, 0 },
+	{ TX_TRI1_049, 9712, 0 },
+	{ TX_TRI1_050, 9100, 0 },
+	{ TX_TRI1_051, 9218, 0 },
+	{ TX_TRI1_052, 9892, 0 },
+	{ TX_TRI1_053, 3193, 0 },
+	{ TX_TRI1_054, 9318, 0 },
+	{ TX_TRI1_055, 1502, 0 },
+	{ TX_TRI1_056, 648, 0 },
+	{ TX_TRI1_057, 1140, 0 },
+	{ TX_TRI1_J00, 2812, 0 },
+	{ TX_TRI1N000, 2606, 0 },
+	{ TX_TRI1N001, 2431, 0 },
+	{ TX_TRI1N002, 2527, 0 },
+	{ TX_TRI1N003, 1870, 0 },
+	{ TX_TRI1N004, 10811, 0 },
+	//{ TX_TRI1N004, 3577, 0 },		// ignore duplicate line
+	{ TX_TRI1N005, 10082, 0 },
+	{ TX_TRI1N006, 2249, 0 },
+	{ TX_TRI1N007, 2714, 0 },
+	{ TX_TRI1N008, 3629, 0 },
+	{ TX_TRI1N009, 2340, 0 },
+	{ TX_TRI1N011, 2154, 0 },
+	{ TX_TRI1N012, 4065, 0 },
+	{ TX_TRI1N013, 10207, 0 },
+	{ TX_TRI1N014, 3932, 0 },
+	{ TX_TRI1N015, 2076, 0 },
+	{ TX_TRI1N016, 2004, 0 },
+	{ TX_TRI1N017, 1938, 0 },
+	{ TX_TRI1U068, 6299, 0 },
+	{ TX_TRI1U079, 7248, 0 },
+	{ TX_TRI1U080, 5936, 0 },
+	{ TX_TRI1U086, 6358, 0 },
+	{ TX_TRI1U090, 6011, 0 },
+	{ TX_TRI1U095, 7738, 0 },
+	{ TX_TRI1U098, 6613, 0 },
+	{ TX_TRI1U101, 6947, 0 },
+	{ TX_TRI1U102, 7379, 0 },
+	{ TX_TRI1U106, 6444, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText trial1Texts[] = {
+	{ TX_TRI1C001, Common::EN_ANY, "Zzzt! Sptttz! Zzzt! Tttt!" },
+	{ TX_TRI1C002, Common::EN_ANY, "Clunk." },
     { -1, Common::UNK_LANG, "" }
 };
 
@@ -199,13 +305,13 @@ void Room::trial1Tick50() {
 	if (!_awayMission->trial.doorOpen)
 		_awayMission->disableInput = false;
 	if (!_awayMission->trial.entityDefeated) {
-		showText(TX_SPEAKER_BENNIE, 56);
-		showText(TX_SPEAKER_SPOCK,  47);
-		showText(TX_SPEAKER_MCCOY,  32);
-		showText(TX_SPEAKER_KIRK,   7);
-		showText(TX_SPEAKER_BENNIE, 57);
-		showText(TX_SPEAKER_KIRK,   10);
-		showText(TX_SPEAKER_BENNIE, 55);
+		showText(TX_SPEAKER_BENNIE, TX_TRI1_056);
+		showText(TX_SPEAKER_SPOCK,  TX_TRI1_047);
+		showText(TX_SPEAKER_MCCOY,  TX_TRI1_032);
+		showText(TX_SPEAKER_KIRK,   TX_TRI1_007);
+		showText(TX_SPEAKER_BENNIE, TX_TRI1_057);
+		showText(TX_SPEAKER_KIRK,   TX_TRI1_010);
+		showText(TX_SPEAKER_BENNIE, TX_TRI1_055);
 	}
 }
 
@@ -253,47 +359,47 @@ void Room::trial1PickedUpRod() {
 }
 
 void Room::trial1LookAtKirk() {
-	showDescription(3);
+	showDescription(TX_TRI1N003);
 }
 
 void Room::trial1LookAtSpock() {
-	showDescription(17);
+	showDescription(TX_TRI1N017);
 }
 
 void Room::trial1LookAtMccoy() {
-	showDescription(16);
+	showDescription(TX_TRI1N016);
 }
 
 void Room::trial1LookAtRedshirt() {
-	showDescription(15);
+	showDescription(TX_TRI1N015);
 }
 
 void Room::trial1LookAtWall() {
-	showDescription(11);
+	showDescription(TX_TRI1N011);
 }
 
 void Room::trial1LookAtFloor() {
-	showDescription(6);
+	showDescription(TX_TRI1N006);
 }
 
 void Room::trial1LookAtRods() {
-	showDescription(9);
+	showDescription(TX_TRI1N009);
 }
 
 void Room::trial1LookAtDoor() {
-	showDescription(1);
+	showDescription(TX_TRI1N001);
 }
 
 void Room::trial1LookAtLock() {
-	showDescription(2);
+	showDescription(TX_TRI1N002);
 }
 
 void Room::trial1LookAtEntity() {
-	showDescription(0);
+	showDescription(TX_TRI1N000);
 }
 
 void Room::trial1LookAtMoltenRock() {
-	showDescription(7);
+	showDescription(TX_TRI1N007);
 }
 
 void Room::trial1TalkToKirk() {
@@ -301,16 +407,16 @@ void Room::trial1TalkToKirk() {
 }
 
 void Room::trial1TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 46);
-	showText(TX_SPEAKER_MCCOY, 34);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_046);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_034);
 }
 
 void Room::trial1TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 19);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_019);
 }
 
 void Room::trial1TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, 53);
+	showText(TX_SPEAKER_BENNIE, TX_TRI1_053);
 }
 
 void Room::trial1TalkToEntity() {
@@ -318,15 +424,15 @@ void Room::trial1TalkToEntity() {
 }
 
 void Room::trial1UsePhaserOnCrewman() {
-	showText(TX_SPEAKER_BENNIE, 48);
+	showText(TX_SPEAKER_BENNIE, TX_TRI1_048);
 }
 
 void Room::trial1UsePhaserOnEntity() {
-	showDescription(4);
+	showDescription(TX_TRI1N004);
 }
 
 void Room::trial1UsePhaserOnWall() {
-	showDescription(8);
+	showDescription(TX_TRI1N008);
 }
 
 
@@ -360,7 +466,7 @@ void Room::trial1ReachedFloorToUseKillPhaser() {
 }
 
 void Room::trial1DoneShootingFloorWithKillPhaser() {
-	showDescription(14);
+	showDescription(TX_TRI1N014);
 	loadActorAnim2(OBJECT_MOLTEN_ROCK, "t1mltd", 0xca, 0xbc);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
@@ -372,66 +478,66 @@ void Room::trial1DoneShootingFloorWithKillPhaser() {
 }
 
 void Room::trial1UsePhaserOnRod() {
-	showDescription(12);
+	showDescription(TX_TRI1N012);
 }
 
 void Room::trial1UsePhaserOnDoor() {
-	showText(TX_SPEAKER_SPOCK, 40);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_040);
 }
 
 void Room::trial1UsePhaserOnLock() {
-	showText(TX_SPEAKER_MCCOY, 21);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_021);
 }
 
 void Room::trial1UseMTricorderOnKirk() {
-	mccoyScan(DIR_S, 24, false);
+	mccoyScan(DIR_S, TX_TRI1_024, true);
 }
 
 void Room::trial1UseMTricorderOnSpock() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_S, 25, false);
+	mccoyScan(DIR_S, TX_TRI1_025, true);
 }
 
 void Room::trial1UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, 22, false);
+	mccoyScan(DIR_S, TX_TRI1_022, true);
 }
 
 void Room::trial1UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, 23, false);
+	mccoyScan(DIR_S, TX_TRI1_023, true);
 }
 
 void Room::trial1UseMTricorderOnEntity() {
-	mccoyScan(DIR_S, 17, false);
+	mccoyScan(DIR_S, TX_TRI1_017, true);
 }
 
 void Room::trial1UseSTricorderOnWall() {
-	spockScan(DIR_S, 43, false);
+	spockScan(DIR_S, TX_TRI1_043, true);
 }
 
 void Room::trial1UseSTricorderOnEntity() {
-	spockScan(DIR_S, 12, false);
+	spockScan(DIR_S, TX_TRI1_012, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnRods() {
-	spockScan(DIR_S, 41, false);
+	spockScan(DIR_S, TX_TRI1_041, true);
 }
 
 void Room::trial1UseSTricorderOnFloor() {
-	spockScan(DIR_S, 42, false);
+	spockScan(DIR_S, TX_TRI1_042, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnDoor() {
-	spockScan(DIR_S, 13, false);
+	spockScan(DIR_S, TX_TRI1_013, true);
 }
 
 void Room::trial1UseSTricorderOnLock() {
-	spockScan(DIR_S, 14, false);
+	spockScan(DIR_S, TX_TRI1_014, true);
 
 	if (!_awayMission->trial.scannedLock) {
 		_awayMission->trial.scannedLock = true;
@@ -442,12 +548,12 @@ void Room::trial1UseSTricorderOnLock() {
 
 void Room::trial1UseCommunicator() {
 	if (_awayMission->trial.forceFieldDown) {
-		showText(TX_SPEAKER_UHURA_GLOBAL, 90);
+		showText(TX_SPEAKER_UHURA, TX_TRI1U090);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			5, 4, 9,
-			TX_BLANK
+			TX_TRI1_005, TX_TRI1_004, TX_TRI1_009,
+			TX_END
 		};
 		int choice = showMultipleTexts(choices);
 
@@ -455,51 +561,51 @@ void Room::trial1UseCommunicator() {
 			_awayMission->trial.missionEndMethod = 1;
 			endMission(1, 1, 1);
 		} else if (choice == 1) { // "Beam us to Vlict's position"
-			showText(TX_SPEAKER_UHURA_GLOBAL, 80);
+			showText(TX_SPEAKER_UHURA, TX_TRI1U080);
 			_awayMission->disableInput = true;
 			loadRoomIndex(4, 4);
 		} // Else don't transport anywhere
 	} else { // Force field still up
 		if (_awayMission->trial.uhuraAnalyzedCode)
-			showText(TX_SPEAKER_UHURA_GLOBAL, 68);
+			showText(TX_SPEAKER_UHURA, TX_TRI1U068);
 		else {
-			showText(TX_SPEAKER_UHURA_GLOBAL, 86);
-			showText(TX_SPEAKER_UHURA_GLOBAL, 106);
-			showText(TX_SPEAKER_UHURA_GLOBAL, 98);
+			showText(TX_SPEAKER_UHURA, TX_TRI1U086);
+			showText(TX_SPEAKER_UHURA, TX_TRI1U106);
+			showText(TX_SPEAKER_UHURA, TX_TRI1U098);
 
 			if (_awayMission->trial.scannedLock) {
-				showText(TX_SPEAKER_KIRK,  11);
-				showText(TX_SPEAKER_UHURA_GLOBAL, 101);
+				showText(TX_SPEAKER_KIRK,  TX_TRI1_011);
+				showText(TX_SPEAKER_UHURA, TX_TRI1U101);
 
 				const TextRef choices[] = {
 					TX_SPEAKER_KIRK,
-					6, 2,
-					TX_BLANK
+					TX_TRI1_006, TX_TRI1_002,
+					TX_END
 				};
 				int choice = showMultipleTexts(choices);
 
 				if (choice == 0) { // Don't analyze the anomolous program
-					showText(TX_SPEAKER_UHURA_GLOBAL, 79);
+					showText(TX_SPEAKER_UHURA, TX_TRI1U079);
 					_awayMission->trial.doorCodeBehaviour = 2;
 					_awayMission->trial.uhuraAnalyzedCode = true;
 					_awayMission->trial.missionScore += 1;
 				} else { // Analyze the anomolous program
-					showText(TX_SPEAKER_UHURA_GLOBAL, 102);
+					showText(TX_SPEAKER_UHURA, TX_TRI1U102);
 
 					const TextRef choices2[] = {
 						TX_SPEAKER_KIRK,
-						3, 8,
-						TX_BLANK
+						TX_TRI1_003, TX_TRI1_008,
+						TX_END
 					};
 					choice = showMultipleTexts(choices2);
 
 					if (choice == 0) { // Activate the program
-						showText(TX_SPEAKER_UHURA_GLOBAL, 95);
+						showText(TX_SPEAKER_UHURA, TX_TRI1U095);
 						_awayMission->trial.doorCodeBehaviour = 5;
 						_awayMission->trial.uhuraAnalyzedCode = true;
 						_awayMission->trial.missionScore += 3;
 					} else { // Don't activate, only open the door
-						showText(TX_SPEAKER_UHURA_GLOBAL, 79);
+						showText(TX_SPEAKER_UHURA, TX_TRI1U079);
 						_awayMission->trial.doorCodeBehaviour = 2;
 						_awayMission->trial.uhuraAnalyzedCode = true;
 						_awayMission->trial.missionScore += 1;
@@ -511,34 +617,34 @@ void Room::trial1UseCommunicator() {
 }
 
 void Room::trial1UseMccoyOnEntity() {
-	showText(TX_SPEAKER_MCCOY, 16);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_016);
 }
 
 void Room::trial1UseMccoyOnLock() {
 	if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_MCCOY, 18);
+		showText(TX_SPEAKER_MCCOY, TX_TRI1_018);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_MCCOY, 20);
+		showText(TX_SPEAKER_MCCOY, TX_TRI1_020);
 	else
-		showText(TX_SPEAKER_MCCOY, 29);
+		showText(TX_SPEAKER_MCCOY, TX_TRI1_029);
 }
 
 void Room::trial1UseMccoyOnFloor() {
-	showText(TX_SPEAKER_MCCOY, 31);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_031);
 }
 
 void Room::trial1UseSpockOnEntity() {
-	showText(TX_SPEAKER_SPOCK, 39);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_039);
 }
 
 
 void Room::trial1UseSpockOnLock() {
 	if (_awayMission->trial.doorOpen)
-		showText(TX_SPEAKER_SPOCK, 38);
+		showText(TX_SPEAKER_SPOCK, TX_TRI1_038);
 	else if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_SPOCK, 36);
+		showText(TX_SPEAKER_SPOCK, TX_TRI1_036);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_SPOCK, 44);
+		showText(TX_SPEAKER_SPOCK, TX_TRI1_044);
 	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_SPOCK, 0x1f, 0xb8, &Room::trial1SpockReachedKeypad);
 	else
@@ -573,11 +679,11 @@ void Room::trial1SpockUsedKeypadWithExtraProgram() {
 
 
 void Room::trial1UseSpockOnFloor() {
-	showText(TX_SPEAKER_SPOCK, 35);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_035);
 }
 
 void Room::trial1UseRedshirtOnEntity() {
-	showText(TX_SPEAKER_BENNIE, 50);
+	showText(TX_SPEAKER_BENNIE, TX_TRI1_050);
 }
 
 
@@ -585,9 +691,9 @@ void Room::trial1UseRedshirtOnLock() {
 	if (_awayMission->trial.doorOpen)
 		return;
 	else if (!_awayMission->trial.entityDefeated)
-		showText(TX_SPEAKER_BENNIE, 51);
+		showText(TX_SPEAKER_BENNIE, TX_TRI1_051);
 	else if (_awayMission->trial.doorCodeBehaviour == 0)
-		showText(TX_SPEAKER_BENNIE, 54);
+		showText(TX_SPEAKER_BENNIE, TX_TRI1_054);
 	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_REDSHIRT, 0x1f, 0xb8, &Room::trial1RedshirtReachedKeypad);
 	else
@@ -622,21 +728,21 @@ void Room::trial1RedshirtUsedKeypadWithExtraProgram() {
 
 
 void Room::trial1UseRedshirtOnFloor() {
-	showText(TX_SPEAKER_BENNIE, 49);
+	showText(TX_SPEAKER_BENNIE, TX_TRI1_049);
 }
 
 void Room::trial1UseRodOnMccoy() {
 	// ENHANCEMENT: This was originally only voiced with the wooden rod, not the iron rod.
 	// (This applies to the Spock and Redshirt functions below, too.)
-	showText(TX_SPEAKER_MCCOY, 27);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_027);
 }
 
 void Room::trial1UseRodOnSpock() {
-	showText(TX_SPEAKER_SPOCK, 37);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_037);
 }
 
 void Room::trial1UseRodOnRedshirt() {
-	showText(TX_SPEAKER_BENNIE, 52);
+	showText(TX_SPEAKER_BENNIE, TX_TRI1_052);
 }
 
 void Room::trial1UseRodOnFloorOrWall() {
@@ -660,7 +766,7 @@ void Room::trial1DoneThrowingWoodRod() {
 
 
 void Room::trial1UseWoodRodOnLock() {
-	showDescription(5);
+	showDescription(TX_TRI1N005);
 }
 
 
@@ -675,7 +781,7 @@ void Room::trial1ReachedMoltenRock() {
 
 void Room::trial1DoneCoatingWoodRod() {
 	_awayMission->disableInput = false;
-	showDescription(13);
+	showDescription(TX_TRI1N013);
 	loseItem(OBJECT_IWROD);
 	giveItem(OBJECT_IIROD);
 
@@ -706,19 +812,19 @@ void Room::trial1DoneThrowingIronRod() {
 
 	_awayMission->disableInput = false;
 	stopAllVocSounds();
-	showText(TX_SPEAKER_SPOCK, 45);
-	showText(TX_SPEAKER_MCCOY, 33);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_045);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_033);
 
 	_awayMission->trial.missionScore += 1;
 }
 
 
 void Room::trial1UseIronRodOnLock() {
-	showDescription(4);
+	showDescription(TX_TRI1N004);
 }
 
 void Room::trial1GetThrownIronRod() {
-	showText(TX_SPEAKER_SPOCK, 15);
+	showText(TX_SPEAKER_SPOCK, TX_TRI1_015);
 }
 
 void Room::trial1WalkToDoor() {
@@ -727,8 +833,7 @@ void Room::trial1WalkToDoor() {
 }
 
 void Room::trial1UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, 26);
+	showText(TX_SPEAKER_MCCOY, TX_TRI1_026);
 }
 
 }
-#endif

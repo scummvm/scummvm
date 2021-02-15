@@ -48,9 +48,9 @@ extern const RoomTextOffsets loveTextOffsets[];
 
 extern const RoomAction mudd0ActionList[], mudd1ActionList[], mudd2ActionList[], mudd3ActionList[];
 extern const RoomAction mudd4ActionList[], mudd5ActionList[];
-extern const RoomTextOffsets mudd0TextOffsets[];//, mudd1TextOffsets[], mudd2TextOffsets[], mudd3TextOffsets[];
+extern const RoomTextOffsets mudd0TextOffsets[], mudd1TextOffsets[], mudd2TextOffsets[];//, mudd3TextOffsets[];
 //extern const RoomTextOffsets mudd4TextOffsets[], mudd5TextOffsets[];
-extern const RoomText mudd0Texts[];//, mudd1Texts[], mudd2Texts[], mudd3Texts[];
+extern const RoomText mudd0Texts[], mudd1Texts[], mudd2Texts[];//, mudd3Texts[];
 //extern const RoomText mudd4Texts[], mudd5Texts[];
 extern const RoomTextOffsets muddTextOffsets[];
 
@@ -63,9 +63,9 @@ extern const RoomText feather4Texts[], feather5Texts[], feather6Texts[], feather
 
 extern const RoomAction trial0ActionList[], trial1ActionList[], trial2ActionList[], trial3ActionList[];
 extern const RoomAction trial4ActionList[], trial5ActionList[];
-extern const RoomTextOffsets trial0TextOffsets[];//, trial1TextOffsets[], trial2TextOffsets[], trial3TextOffsets[];
+extern const RoomTextOffsets trial0TextOffsets[], trial1TextOffsets[];//, trial2TextOffsets[], trial3TextOffsets[];
 //extern const RoomTextOffsets trial4TextOffsets[], trial5TextOffsets[];
-extern const RoomText trial0Texts[];//, trial1Texts[], trial2Texts[], trial3Texts[];
+extern const RoomText trial0Texts[], trial1Texts[];//, trial2Texts[], trial3Texts[];
 //extern const RoomText trial4Texts[], trial5Texts[];
 extern const RoomTextOffsets trialTextOffsets[];
 

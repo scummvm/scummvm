@@ -123,7 +123,7 @@ enum love5TextIds {
 	TX_LOV5N003, TX_LOV5N004, TX_LOV5N005, TX_LOV5N006, TX_LOV5N007,
 	TX_LOV5N008, TX_LOV5N009, TX_LOV5N010, TX_LOV5N011, TX_LOV5N012,
 	TX_LOV5N013, TX_LOV5N014, TX_LOV5N016, TX_LOV5N017, TX_LOV5N018,
-	TX_LOV5C001, TX_G_024, TX_DIALOG_ERROR
+	/*TX_LOV5C001,*/ TX_DEM0N009, TX_G_024, TX_DIALOG_ERROR
 };
 
 // TODO: Finish floppy offsets
@@ -247,13 +247,14 @@ extern const RoomTextOffsets love5TextOffsets[] = {
 	{ TX_LOV5N016, 9311, 0 },
 	{ TX_LOV5N017, 4320, 0 },
 	{ TX_LOV5N018, 3805, 0 },
-	{ TX_LOV5C001, 1598, 0 },
+	//{ TX_LOV5C001, 1598, 0 },
 	{ TX_DIALOG_ERROR, 11927, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText love5Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ TX_DEM0N009, Common::EN_ANY, "#DEM0\\DEM0N009#Spock raises an eyebrow" },
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::love5Tick1() {
@@ -400,8 +401,9 @@ void Room::love5TalkToPreax() {
 				showText(TX_SPEAKER_PREAX, TX_LOV5_061);
 				showText(TX_SPEAKER_KIRK, TX_LOV5_010);
 
-				// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
-				showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
+				// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
+				// This changes it to a narration to make it flow better.
+				showText(TX_SPEAKER_SPOCK, TX_DEM0N009);
 
 				showText(TX_SPEAKER_MCCOY, TX_LOV5_032);
 
@@ -437,8 +439,9 @@ void Room::love5MccoyCuredSpock() {
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_030);
 	showText(TX_SPEAKER_SPOCK, TX_LOV5_038);
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_027);
-	// NOTE: This just says "(Spock raises an eyebrow)". No audio associated.
-	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
+	// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
+	// This changes it to a narration to make it flow better.
+	showText(TX_SPEAKER_SPOCK, TX_DEM0N009);
 	love5EndMission();
 }
 
