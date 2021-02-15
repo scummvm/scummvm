@@ -153,7 +153,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -4197,6 +4197,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 16:
+		mapping = NoirMapping{"ADDINV3", ADDINV3, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%08X)", mapping.name, pp[0]);
+		break;
 	case 28:
 		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
 		pp -= mapping.numArgs - 1;
@@ -4390,6 +4395,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case ADDINV2:
 		// Common to both DW1 & DW2
 		AddInv(INV_2, pp[0]);
+		return -1;
+
+	case ADDINV3:
+		// Noir only
+		warning("TODO: Implement ADDINV3");
 		return -1;
 
 	case ADDNOTEBOOK:
