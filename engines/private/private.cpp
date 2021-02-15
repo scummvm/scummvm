@@ -127,6 +127,11 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
     SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
+void PrivateEngine::setOrigin(const int point[2]) {
+    delete _origin;
+    _origin = new Common::Point(point[0], point[1]);;
+}
+
 Common::Error PrivateEngine::run() {
 
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));

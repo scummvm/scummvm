@@ -46,9 +46,9 @@ void fChgMode(ArgArray args) {
     g_private->_nextSetting = s;
 
     if (g_private->_mode == 0) {
-        g_private->_origin = &kPrivateOriginZero;
+        g_private->setOrigin(kOriginZero);
     } else if (g_private->_mode == 1) {
-        g_private->_origin = &kPrivateOriginOne;
+        g_private->setOrigin(kOriginOne);
     } else
         assert(0);
 
@@ -174,7 +174,7 @@ void fPoliceBust(ArgArray args) {
         } else if (args[1].u.val == 3) {
             g_private->_nextSetting = &kMainDesktop;
             g_private->_mode = 0;
-            g_private->_origin = &kPrivateOriginZero;
+            g_private->setOrigin(kOriginZero);
         } else
             assert(0);
     }
@@ -468,7 +468,7 @@ void fResume(ArgArray args) {
     g_private->_nextSetting = g_private->_pausedSetting;
     g_private->_pausedSetting = NULL;
     g_private->_mode = 1;
-    g_private->_origin = &kPrivateOriginOne;
+    g_private->setOrigin(kOriginOne);
 }
 
 void fMovie(ArgArray args) {

@@ -69,8 +69,8 @@ const int kPoliceBustVideos[6] = {1, 2, 4, 5, 7, 8};
 
 // points
 
-const Common::Point kPrivateOriginZero(0, 0);
-const Common::Point kPrivateOriginOne(64, 48);
+const int kOriginZero[2] = {0,   0};
+const int kOriginOne[2]  = {64, 48};
 
 // settings
 
@@ -202,6 +202,7 @@ public:
 
     // global state
     const Common::Point *_origin;
+    void setOrigin(const int [2]);
     Common::String *_nextSetting;
     Common::String *_currentSetting;
     bool            _toTake;
