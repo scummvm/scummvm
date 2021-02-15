@@ -195,7 +195,7 @@ public:
 
     Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
     void drawMask(Graphics::ManagedSurface *);
-    bool inMask(Graphics::ManagedSurface*, Common::Point);
+    bool inMask(Graphics::ManagedSurface *, Common::Point);
     uint32 _transparentColor;
     Common::Rect *screenRect;
     void drawScreen();

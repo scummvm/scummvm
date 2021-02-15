@@ -51,10 +51,10 @@ typedef struct Datum {  /* interpreter stack type */
 
 typedef struct Arg {
     int n;
-    int (**inst)();
+    int (** inst)();
 } Arg;
 
-typedef int (*Inst)();  /* machine instruction */
+typedef int (* Inst)();  /* machine instruction */
 #define STOP    (Inst) 0
 
 typedef Common::HashMap<void *, Common::String *> PtrToName;
@@ -79,9 +79,9 @@ typedef struct Setting {
 
 extern Setting *psetting;
 
-typedef Common::HashMap<Common::String, Setting*> SettingMap;
+typedef Common::HashMap<Common::String, Setting *> SettingMap;
 typedef Common::Queue<Common::String> StringQueue;
-typedef Common::Queue<Common::Rect*> RectQueue;
+typedef Common::Queue<Common::Rect *> RectQueue;
 
 // Funtions
 

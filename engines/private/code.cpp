@@ -68,7 +68,7 @@ void initInsts() {
 
 /* initialize for code generation */
 void initSetting() {
-    setting = (Setting*)malloc(sizeof(Setting));
+    setting = (Setting *)malloc(sizeof(Setting));
     memset((void *)setting, 0, sizeof(Setting));
 
     prog = (Inst *)&setting->prog;
