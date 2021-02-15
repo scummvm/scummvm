@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-10 14:19+0000\n"
+"PO-Revision-Date: 2021-02-15 11:47+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7198,14 +7198,14 @@ msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Limita i FPS per evitare che il gioco funzioni troppo velocemente."
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
-msgstr "Attiva modalità cheat"
+msgstr "Abilita cheat"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+"Permette di attivare i cheat, usando i comandi da tastiera o dal menù che "
+"verrà visualizzato cliccando sul personaggio."
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
@@ -7244,7 +7244,7 @@ msgstr "Crusader"
 
 #: engines/ultima/ultima8/meta_engine.cpp:235
 msgid "Ultima VIII Cheats"
-msgstr "Trucchi per Ultima VIII"
+msgstr "Cheat per Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:252
 msgid "Ultima VIII Debug"
