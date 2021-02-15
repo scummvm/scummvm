@@ -84,7 +84,7 @@ Symbol *lookupName(char *n) {
 
     else {
         debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s->c_str());
-        return constant(STRING, 0, (char*)s->c_str());
+        return constant(STRING, 0, (char *)s->c_str());
     }
 
 }
@@ -103,7 +103,7 @@ void installAll(char *n) {
         //debug("name %s", s->c_str());
         if (strcmp(n, "settings") == 0) {
             assert(r == NULL);
-            install(s, STRING, 0, (char*)s->c_str(), r, &settings);
+            install(s, STRING, 0, (char *)s->c_str(), r, &settings);
         }
 
         else if (strcmp(n, "variables") == 0) {
