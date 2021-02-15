@@ -299,16 +299,17 @@ void PrivateEngine::clearAreas() {
 }
 
 void PrivateEngine::startPoliceBust() {
+    // This logic was extracted from the binary
     int policeIndex = variables.getVal(kPoliceIndex)->u.val;
     int r = _rnd->getRandomNumber(0xc);
-    if (0x14 < policeIndex) {
+    if (policeIndex > 0x14) {
         policeIndex = 0x15;
     }
     _maxNumberClicks = r + 0x10 + (policeIndex * 0xe) / -0x15;
-    _sirenWarning = 3 + _rnd->getRandomNumber(0x7);
+    _sirenWarning = _rnd->getRandomNumber(0x7) + 3;
     _numberClicks = 0;
-    if(_sirenWarning >= _maxNumberClicks);
-    _sirenWarning = _maxNumberClicks - 1;
+    if(_sirenWarning >= _maxNumberClicks)
+        _sirenWarning = _maxNumberClicks - 1;
 }
 
 void PrivateEngine::checkPoliceBust() {
@@ -1000,8 +1001,7 @@ Common::String *PrivateEngine::getTakeSound() {
     if (isDemo())
         return (new Common::String(*_globalAudioPath + "mvo007.wav"));
 
-    uint r = 1 + _rnd->getRandomNumber(4);
-
+    uint r = _rnd->getRandomNumber(4) + 1;
     char f[32];
     snprintf(f, 32, "took%d.wav", r);
     return (new Common::String(*_globalAudioPath + f));
@@ -1020,13 +1020,12 @@ Common::String *PrivateEngine::getLeaveSound() {
     if (isDemo())
         return (new Common::String(*_globalAudioPath + "mvo008.wav"));
 
-    uint r = 1 + _rnd->getRandomNumber(4);
+    uint r = _rnd->getRandomNumber(4) + 1;
 
     char f[32];
     snprintf(f, 32, "left%d.wav", r);
     return (new Common::String(*_globalAudioPath + f));
 }
-
 
 char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
