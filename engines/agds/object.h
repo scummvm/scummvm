@@ -190,7 +190,7 @@ public:
 	}
 
 	uint getUseHandler(const Common::String &name) const {
-		return _useHandlers.getVal(name, 0); //use handler can never be 0
+		return _useHandlers.getValOrDefault(name, 0); //use handler can never be 0
 	}
 
 	void setUserUseHandler(uint ip) {
