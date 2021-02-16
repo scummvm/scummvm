@@ -4295,6 +4295,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 197:
+		mapping = NoirMapping{"WAITTIME", WAITTIME, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, %d)", mapping.name, pp[0], pp[1]);
+		break;
 	case 210: // STUBBED
 		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
 		pp -= mapping.numArgs - 1;
@@ -5714,7 +5719,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case WAITTIME:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp -= 1;			// 2 parameters
 		WaitTime(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
 		if (!coroParam && (pic->hCode == 0x3007540) && (pic->resumeState == RES_2))
