@@ -127,6 +127,7 @@ Common::Error AsylumEngine::run() {
 
 	// Create debugger. It requires GFX to be initialized
 	_console   = new Console(this);
+	setDebugger(_console);
 
 	// Create resource manager
 	_resource  = new ResourceManager();
