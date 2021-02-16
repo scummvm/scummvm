@@ -84,11 +84,15 @@ Common::FSNode getFSNode(const char *path) {
 			return dir->getFSNode().getChild(file->getName());
 	}
 
-	dir.reset(dir->getSubDirectory(filePath));
-	if (dir)
+	Common::FSDirectory *subDir = dir->getSubDirectory(filePath);
+	if (subDir) {
+		dir.reset(subDir);
 		return dir->getFSNode();
+	}
 
-	return Common::FSNode();
+	// The files does not exist, but create the FSNode anyway so that
+	// the code using this can report the correct error rather than assert.
+	return dir->getFSNode().getChild(filePath);
 }
 
 int  ags_file_exists(const char *path) {
