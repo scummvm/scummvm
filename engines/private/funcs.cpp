@@ -582,9 +582,7 @@ void fAddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
         p->flag = flag;
         p->val = val;
         g_private->_phone.push_back(*p);
-    }
-
-    else
+    } else
         error("error: invalid sound type %s", t);
 }
 

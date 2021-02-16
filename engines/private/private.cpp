@@ -248,7 +248,7 @@ Common::Error PrivateEngine::run() {
                 break;
 
             default:
-            {}
+            break;
             }
         }
 

@@ -104,34 +104,23 @@ void installAll(char *n) {
         if (strcmp(n, "settings") == 0) {
             assert(r == NULL);
             install(s, STRING, 0, (char *)s->c_str(), r, &settings);
-        }
-
-        else if (strcmp(n, "variables") == 0) {
+        } else if (strcmp(n, "variables") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &variables);
             variableList.push_front(*s);
-        }
-
-        else if (strcmp(n, "cursors") == 0) {
+        } else if (strcmp(n, "cursors") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &cursors);
-        }
-
-        else if (strcmp(n, "locations") == 0) {
+        } else if (strcmp(n, "locations") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &locations);
             locationList.push_front(*s);
-        }
-
-        else if (strcmp(n, "rects") == 0) {
+        } else if (strcmp(n, "rects") == 0) {
             assert(r != NULL);
             install(s, RECT, 0, NULL, r, &rects);
-        }
-        else
-            assert(0);
-
+        } else
+            error("invalid symbol type");
     }
-
 }
 
 Symbol *constant(int t, int d, char *s) {
