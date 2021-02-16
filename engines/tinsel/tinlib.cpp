@@ -4252,6 +4252,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 61:
+		mapping = NoirMapping{"EVENT", EVENT, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 86:
 		mapping = NoirMapping{"OP86", ZZZZZZ, 2};
 		pp -= mapping.numArgs - 1;
@@ -4759,8 +4763,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		error("Escape isn't a real function");
 
 	case EVENT:
-		// Common to both DW1 & DW2
-		if (TinselVersion == TINSEL_V2)
+		// Common to DW1 / DW2 / Noir
+		if (TinselVersion == TINSEL_V2 || TinselVersion == TINSEL_V3)
 			pp[0] = pic->event;
 		else
 			pp[0] = TINSEL1_EVENT_MAP[pic->event];
