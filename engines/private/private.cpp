@@ -259,7 +259,7 @@ Common::Error PrivateEngine::run() {
             continue;
         }
 
-        if (_nextVS != NULL && _currentSetting->c_str() == kMainDesktop) {
+        if (_nextVS != NULL && *_currentSetting == kMainDesktop) {
             loadImage(*_nextVS, 160, 120);
         }
 

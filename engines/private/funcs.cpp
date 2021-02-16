@@ -143,9 +143,9 @@ void fLoadGame(ArgArray args) {
 void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
-    Common::String *s = new Common::String(args[0].u.str);
+    Common::String s(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(*s, 0, 0, true);
+    m->surf = g_private->loadMask(s, 0, 0, true);
     m->cursor = args[1].u.sym->name;
     m->nextSetting = NULL;
     m->flag1 = NULL;
@@ -235,13 +235,13 @@ void fDossierChgSheet(ArgArray args) {
 
 void fDossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
-    Common::String *s = new Common::String(args[0].u.str);
+    Common::String s(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
 
     int x = args[1].u.val;
     int y = args[2].u.val;
 
-    m->surf = g_private->loadMask(*s, x, y, true);
+    m->surf = g_private->loadMask(s, x, y, true);
     m->cursor = new Common::String("kExit");
     m->nextSetting = NULL;
     m->flag1 = NULL;
@@ -252,13 +252,13 @@ void fDossierPrevSuspect(ArgArray args) {
 
 void fDossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
-    Common::String *s = new Common::String(args[0].u.str);
+    Common::String s(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
 
     int x = args[1].u.val;
     int y = args[2].u.val;
 
-    m->surf = g_private->loadMask(*s, x, y, true);
+    m->surf = g_private->loadMask(s, x, y, true);
     m->cursor = new Common::String("kExit");
     m->nextSetting = NULL;
     m->flag1 = NULL;
@@ -515,8 +515,8 @@ void fBitmap(ArgArray args) {
     }
 
     debugC(1, kPrivateDebugScript, "Bitmap(%s, %d, %d)", f, x, y);
-    Common::String *s = new Common::String(args[0].u.str);
-    g_private->loadImage(*s, x, y);
+    Common::String s(args[0].u.str);
+    g_private->loadImage(s, x, y);
 }
 
 void _fMask(ArgArray args, bool drawn) {
@@ -534,10 +534,10 @@ void _fMask(ArgArray args, bool drawn) {
     }
 
     debugC(1, kPrivateDebugScript, "Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
-    const Common::String *s = new Common::String(f);
+    const Common::String s(f);
 
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(*s, x, y, drawn);
+    m->surf = g_private->loadMask(s, x, y, drawn);
     m->nextSetting = new Common::String(e);
     m->cursor = c;
     m->flag1 = NULL;
