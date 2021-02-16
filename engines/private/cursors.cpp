@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/rect.h"
 #include "graphics/cursorman.h"
 
 #include "private/cursors.h"

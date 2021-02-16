@@ -22,7 +22,6 @@
 
 #include "common/str.h"
 #include "common/timer.h"
-#include "common/debug.h"
 #include "common/system.h"
 
 #include "private/grammar.h"
