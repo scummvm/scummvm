@@ -2702,7 +2702,14 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
  * Set system reel
  */
 static void SetSystemReel(int index, SCNHANDLE reel) {
-	warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
+	switch (index) {
+		case 11:
+			DecCursor(reel);
+			break;
+		default:
+			warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
+			break;
+	}
 }
 
 /**

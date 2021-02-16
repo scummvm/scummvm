@@ -632,6 +632,15 @@ void CursorStoppedCheck(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
+bool CanInitializeCursor() {
+	if (!_vm->_cursor->HasReelData()) {
+		return false;
+	} else if (TinselVersion != TINSEL_V3) {
+		return (_vm->_bg->BgPal() != 0);
+	}
+	return true;
+}
+
 /**
  * The main cursor process.
  */
@@ -642,7 +651,7 @@ void CursorProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	while (!_vm->_cursor->HasReelData() || !_vm->_bg->BgPal())
+	while (!CanInitializeCursor())
 		CORO_SLEEP(1);
 
 	_vm->_cursor->InitCurObj();
