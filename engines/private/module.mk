@@ -12,7 +12,14 @@ MODULE_OBJS := \
  
 MODULE_DIRS += \
     engines/private
- 
+
+# HACK: Skip this when including the file for detection objects.
+ifeq "$(USE_RULES)" "1"
+private-grammar:
+	flex engines/private/lexer.l
+	bison engines/private/grammar.y
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRIVATE), DYNAMIC_PLUGIN)
 PLUGIN := 1
