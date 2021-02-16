@@ -48,6 +48,7 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/token.h"
 
+#include "common/memstream.h"
 #include "common/textconsole.h"
 
 namespace Tinsel {
@@ -128,9 +129,36 @@ void ResetVarsScene() {
 	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
 }
 
+SCENE_STRUC* parseV3Scene(const byte *pStruc) {
+	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
+	Common::MemoryReadStream stream(pStruc, 84);
+	g_tempStruc.defRefer = stream.readUint32LE();
+	g_tempStruc.hSceneScript = stream.readUint32LE();
+	g_tempStruc.hSceneDesc = stream.readUint32LE();
+	g_tempStruc.numEntrance = stream.readUint32LE();
+	g_tempStruc.hEntrance = stream.readUint32LE();
+	stream.readUint32LE();
+	stream.readUint32LE();
+	stream.readUint32LE();
+	stream.readUint32LE();
+	g_tempStruc.numPoly = stream.readUint32LE();
+	g_tempStruc.hPoly = stream.readUint32LE();
+	g_tempStruc.numTaggedActor = stream.readUint32LE();
+	g_tempStruc.hTaggedActor = stream.readUint32LE();
+	g_tempStruc.numProcess = stream.readUint32LE();
+	g_tempStruc.hProcess = stream.readUint32LE();
+	g_tempStruc.hMusicScript = stream.readUint32LE();
+	g_tempStruc.hMusicSegment = stream.readUint32LE();
+	warning("TODO: Complete scene loading logic for Noir");
+
+	return &g_tempStruc;
+}
+
 const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 	if (TinselVersion == TINSEL_V2)
 		return (const SCENE_STRUC *)pStruc;
+	else if (TinselVersion == TINSEL_V3)
+		return parseV3Scene(pStruc);
 
 	// Copy appropriate fields into tempStruc, and return a pointer to it
 	const byte *p = pStruc;
@@ -263,9 +291,6 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 
 	} else {
 		// Genuine new scene
-		if (TinselV3) {
-			error("TODO: Implement scene loading for Noir");
-		}
 
 		// Initialize all the polygons for this scene
 		InitPolygons(FROM_32(ss->hPoly), FROM_32(ss->numPoly), false);

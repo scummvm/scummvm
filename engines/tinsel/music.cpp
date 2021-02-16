@@ -804,6 +804,11 @@ void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
 void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 		SCNHANDLE hSegment, const char *fileName) {
 
+	if (TinselV3) {
+		warning("TODO: Implement music handling for Noir");
+		return;
+	}
+
 	Common::StackLock lock(_mutex);
 
 	stop();

@@ -243,6 +243,11 @@ void Poly::nextPoly() {
 		xoff = nextLong(_pData);
 		yoff = nextLong(_pData);
 		id = nextLong(_pData);
+		if (TinselV3) {
+			warning("TODO: Complete implementation of Polygon loading for Noir");
+			nextLong(_pData);
+			nextLong(_pData);
+		}
 		reftype = nextLong(_pData);
 	}
 
