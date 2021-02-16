@@ -559,14 +559,12 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 void PrivateEngine::loadDossier() {
     int x = 40;
     int y = 30;
-    int i = _dossierSuspect;
-    int j = _dossierPage;
 
-    DossierInfo m = _dossiers[i];
+    DossierInfo m = _dossiers[_dossierSuspect];
 
-    if (j == 0) {
+    if (_dossierPage == 0) {
         loadImage(*m.page1, x, y);
-    } else if (j == 1) {
+    } else if (_dossierPage == 1) {
         loadImage(*m.page2, x, y);
     } else
         assert(0);
