@@ -33,13 +33,14 @@ static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",  // US release
         0,
-        AD_ENTRY1s("PVTEYE.Z", "b682118cda6a42fa89833cae2b8824bd", 271895),
+        AD_ENTRY2s("pvteye.z", "b682118cda6a42fa89833cae2b8824bd", 271895,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_NO_FLAGS,
         GUIO1(GUIO_NOMIDI)
     },
-
+    /*
     {
         "private-eye",  // EU release
         0,
@@ -49,28 +50,28 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_UNSUPPORTED,
         GUIO1(GUIO_NOMIDI)
     },
-
+    */
     {
         "private-eye", // Demo from archive.org
         "Demo",
-        AD_ENTRY1s("PVTEYE.Z", "8ef908e212bb9c1e10f5e3c81f56682c", 263893),
+        AD_ENTRY2s("pvteye.z", "8ef908e212bb9c1e10f5e3c81f56682c", 263893,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)
     },
-
     {
         "private-eye", // Demo from the US release
         "Demo",
-        AD_ENTRY1s("PVTEYE.Z", "af383c813157810e89d8d6d595895ff7", 271214),
+        AD_ENTRY2s("pvteye.z", "af383c813157810e89d8d6d595895ff7", 263893,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
         GUIO1(GUIO_NOMIDI)
     },
-
-
+    /*
     {
         "private-eye", // Demo from the EU release
         "Demo",
@@ -80,13 +81,14 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_DEMO | ADGF_UNSUPPORTED,
         GUIO1(GUIO_NOMIDI)
     },
-
+    */
     AD_TABLE_END_MARKER
 };
 } // End of namespace Private
 
 static const char *const directoryGlobs[] = {
-    "SUPPORT",
+    "support",
+    "intro",
     0
 };
 
