@@ -330,13 +330,12 @@ void fInventory(ArgArray args) {
         g_private->_masks.push_front(*m);
         g_private->_toTake = true;
 
-        Common::String *f;
         if (strcmp(snd.u.str, "\"\"") != 0) {
-            f = new Common::String(snd.u.str);
+            g_private->playSound(Common::String(snd.u.str), 1, false, false);
         } else {
-            f = g_private->getTakeLeaveSound();
+            g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
         }
-        g_private->playSound(*f, 1, false, false);
+
         g_private->inventory.push_back(*bmp);
     } else {
         if (v1.type == NAME) {
@@ -396,8 +395,7 @@ void fSetModifiedFlag(ArgArray args) {
 void fPaperShuffleSound(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
-    Common::String *s = g_private->getPaperShuffleSound();
-    g_private->playSound(*s, 1, false, false);
+    g_private->playSound(g_private->getPaperShuffleSound(), 1, false, false);
 }
 
 void fSoundEffect(ArgArray args) {

@@ -255,12 +255,12 @@ public:
     void stopSound(bool);
     bool _noStopSounds;
 
-    Common::String *getPaperShuffleSound();
+    Common::String getPaperShuffleSound();
     Common::String *_globalAudioPath;
 
-    Common::String *getTakeSound();
-    Common::String *getTakeLeaveSound();
-    Common::String *getLeaveSound();
+    Common::String getTakeSound();
+    Common::String getTakeLeaveSound();
+    Common::String getLeaveSound();
     Common::String *_sirenSound;
 
     // Radios

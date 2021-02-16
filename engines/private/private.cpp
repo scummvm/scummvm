@@ -454,7 +454,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
             if (cs < rs && e.nextSetting != NULL) { // TODO: check this
                 // an item was not taken
                 if (_toTake) {
-                    playSound(* getLeaveSound(), 1, false, false);
+                    playSound(getLeaveSound(), 1, false, false);
                     _toTake = false;
                 }
 
@@ -487,7 +487,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
                 setSymbol(m.flag1, 1);
                 // an item was taken
                 if (_toTake) {
-                    playSound(*getTakeSound(), 1, false, false);
+                    playSound(getTakeSound(), 1, false, false);
                     _toTake = false;
                 }
             }
@@ -981,47 +981,40 @@ bool PrivateEngine::getRandomBool(uint p) {
     return (r <= p);
 }
 
-Common::String *PrivateEngine::getPaperShuffleSound() {
+Common::String PrivateEngine::getPaperShuffleSound() {
     uint r = _rnd->getRandomNumber(6);
-    char f[32];
-    snprintf(f, 32, "glsfx0%d.wav", kPaperShuffleSound[r]);
-    return (new Common::String(*_globalAudioPath + f));
+    return Common::String::format("%sglsfx0%d.wav", _globalAudioPath->c_str(), kPaperShuffleSound[r]);
 }
 
-Common::String *PrivateEngine::getTakeSound() {
+Common::String PrivateEngine::getTakeSound() {
     if (isDemo())
-        return (new Common::String(*_globalAudioPath + "mvo007.wav"));
+        return (Common::String(*_globalAudioPath + "mvo007.wav"));
 
     uint r = _rnd->getRandomNumber(4) + 1;
-    char f[32];
-    snprintf(f, 32, "took%d.wav", r);
-    return (new Common::String(*_globalAudioPath + f));
+    return Common::String::format("%stook%d.wav", _globalAudioPath->c_str(), r);
 }
 
-Common::String *PrivateEngine::getTakeLeaveSound() {
+Common::String PrivateEngine::getTakeLeaveSound() {
     uint r = _rnd->getRandomNumber(1);
     if (r == 0) {
-        return (new Common::String(*_globalAudioPath + "mvo001.wav"));
+        return (Common::String(*_globalAudioPath + "mvo001.wav"));
     } else {
-        return (new Common::String(*_globalAudioPath + "mvo006.wav"));
+        return (Common::String(*_globalAudioPath + "mvo006.wav"));
     }
 }
 
-Common::String *PrivateEngine::getLeaveSound() {
+Common::String PrivateEngine::getLeaveSound() {
     if (isDemo())
-        return (new Common::String(*_globalAudioPath + "mvo008.wav"));
+        return (Common::String(*_globalAudioPath + "mvo008.wav"));
 
     uint r = _rnd->getRandomNumber(4) + 1;
-
-    char f[32];
-    snprintf(f, 32, "left%d.wav", r);
-    return (new Common::String(*_globalAudioPath + f));
+    return Common::String::format("%sleft%d.wav", _globalAudioPath->c_str(), r);
 }
 
 char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
 
-    char *f = (char *)malloc((strlen(clip)+3)*sizeof(char));
+    char *f = (char *)malloc((strlen(clip) + 3) * sizeof(char));
     snprintf(f, 32, "%s%02d", clip, r);
     return f;
 }
