@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PRIVATE_SYMBOL_H
+#define PRIVATE_SYMBOL_H
+
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/hash-ptr.h"
@@ -27,9 +30,6 @@
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
-
-#ifndef PRIVATE_SYMBOL_H
-#define PRIVATE_SYMBOL_H
 
 namespace Private {
 

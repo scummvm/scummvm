@@ -20,8 +20,9 @@
  *
  */
 
-#include "private/private.h"
 #include "engines/advancedDetector.h"
+
+#include "private/private.h"
 
 class PrivateMetaEngine : public AdvancedMetaEngine {
 public:

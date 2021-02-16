@@ -23,17 +23,12 @@
 #ifndef PRIVATE_H
 #define PRIVATE_H
 
+#include "common/installshieldv3_archive.h"
 #include "common/random.h"
 #include "common/serializer.h"
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
-
-#include "common/installshieldv3_archive.h"
-
-#include "audio/mixer.h"
-#include "video/smk_decoder.h"
-#include "graphics/palette.h"
 #include "graphics/managed_surface.h"
+#include "video/smk_decoder.h"
 
 #include "private/grammar.h"
 

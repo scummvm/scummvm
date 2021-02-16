@@ -20,9 +20,8 @@
  *
  */
 
-#include "common/debug.h"
-#include "private/private.h"
 #include "private/grammar.h"
+#include "private/private.h"
 #include "private/tokens.h"
 
 namespace Private {
@@ -88,7 +87,6 @@ Symbol *lookupName(char *n) {
     }
 
 }
-
 
 void installAll(char *n) {
     Common::String *s;

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef PRIVATE_GRAMMAR_H
+#define PRIVATE_GRAMMAR_H
+
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/hash-ptr.h"
@@ -27,14 +30,11 @@
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "private/symbol.h"
 
-#ifndef PRIVATE_GRAMMAR_H
-#define PRIVATE_GRAMMAR_H
+#include "private/symbol.h"
 
 #define NSTACK 256
 #define NPROG  10000
-
 
 namespace Private {
 
