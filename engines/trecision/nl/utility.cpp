@@ -319,17 +319,7 @@ void StackText::DoText() {
  --------------------------------------------------*/
 void DoClearText() {
 	if ((oldString.sign == nullptr) && (curString.sign)) {
-		oldString.x = curString.x;
-		oldString.y = curString.y;
-		oldString.dx = curString.dx;
-		oldString.dy = curString.dy;
-		oldString.sign = curString.sign;
-		oldString.l[0] = curString.l[0];
-		oldString.l[1] = curString.l[1];
-		oldString.l[2] = curString.l[2];
-		oldString.l[3] = curString.l[3];
-		oldString.tcol = curString.tcol;
-		oldString.scol = curString.scol;
+		oldString.set(curString);
 		curString.sign = nullptr;
 
 		TextStatus |= TEXT_DEL;
