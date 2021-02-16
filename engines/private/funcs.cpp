@@ -172,7 +172,7 @@ void fPoliceBust(ArgArray args) {
         if (args[1].u.val == 2) {
             // Unclear what it means
         } else if (args[1].u.val == 3) {
-            g_private->_nextSetting = &kMainDesktop;
+            g_private->_nextSetting = new Common::String(kMainDesktop);
             g_private->_mode = 0;
             g_private->setOrigin(kOriginZero);
         } else

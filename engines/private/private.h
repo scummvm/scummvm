@@ -71,13 +71,13 @@ const int kOriginOne[2]  = {64, 48};
 
 // settings
 
-static Common::String kPauseMovie("kPauseMovie");
-static Common::String kGoIntro("kGoIntro");
-static Common::String kPoliceBustFromMO("kPoliceBustFromMO");
-static Common::String kMainDesktop("kMainDesktop");
-static Common::String kPoliceIndex("kPoliceIndex");
-static Common::String kPOGoBustMovie("kPOGoBustMovie");
-static Common::String kStartGame("kStartGame");
+static const char *kPauseMovie = "kPauseMovie";
+static const char *kGoIntro = "kGoIntro";
+static const char *kPoliceBustFromMO = "kPoliceBustFromMO";
+static const char *kMainDesktop = "kMainDesktop";
+static const char *kPoliceIndex = "kPoliceIndex";
+static const char *kPOGoBustMovie = "kPOGoBustMovie";
+static const char *kStartGame = "kStartGame";
 
 // structs
 

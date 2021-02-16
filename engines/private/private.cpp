@@ -196,7 +196,7 @@ Common::Error PrivateEngine::run() {
     if (saveSlot >= 0) { // load the savegame
         loadGameState(saveSlot);
     } else {
-        _nextSetting = &kGoIntro;
+        _nextSetting = new Common::String(kGoIntro);
     }
 
     while (!shouldQuit()) {
@@ -338,9 +338,9 @@ void PrivateEngine::checkPoliceBust() {
         uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
         if (policeIndex <= 13) {
-            _nextSetting = &kPOGoBustMovie;
+            _nextSetting = new Common::String(kPOGoBustMovie);
         } else {
-            _nextSetting = &kPoliceBustFromMO;
+            _nextSetting = new Common::String(kPoliceBustFromMO);
         }
         clearAreas();
         _policeBustEnabled = false;
@@ -425,7 +425,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
         if (!window.contains(mousePos)) {
             if ( _pausedSetting == NULL) {
                 _pausedSetting = _currentSetting;
-                _nextSetting = &kPauseMovie;
+                _nextSetting = new Common::String(kPauseMovie);
             }
         }
     }
@@ -659,7 +659,7 @@ void PrivateEngine::restartGame() {
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
     debugC(1, kPrivateDebugFunction, "loadGameStream");
-    _nextSetting = &kStartGame;
+    _nextSetting = new Common::String(kStartGame);
     int val;
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
