@@ -632,7 +632,7 @@ void PrivateEngine::restartGame() {
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
         Private::Symbol *sym = variables.getVal(*it);
-        if (strcmp("kAlternateGame", sym->name->c_str()) != 0)
+        if (*(sym->name) != "kAlternateGame")
             sym->u.val = 0;
     }
 

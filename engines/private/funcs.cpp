@@ -609,16 +609,17 @@ void fPhoneClip(ArgArray args) {
 
 void fSoundArea(ArgArray args) {
     // assert types
-    char *n;
+    //char *n;
+    Common::String n;
     if (args[1].type == NAME)
-        n = (char *)args[1].u.sym->name->c_str();
+        n = *(args[1].u.sym->name);
     else if (args[1].type == STRING)
-        n = args[1].u.str;
+        n = Common::String(args[1].u.str);
     else
-        assert(0);
+        error("Invalid input for SoundArea");
 
-    debugC(1, kPrivateDebugScript, "SoundArea(%s, %s)", args[0].u.str, n);
-    if (strcmp(n, "kAMRadio") == 0) {
+    debugC(1, kPrivateDebugScript, "SoundArea(%s, %s, ..)", args[0].u.str, n.c_str());
+    if (n == "kAMRadio") {
         Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
@@ -628,7 +629,7 @@ void fSoundArea(ArgArray args) {
         m->flag2 = NULL;
         g_private->_AMRadioArea = m;
         g_private->_masks.push_front(*m);
-    } else if (strcmp(n, "kPoliceRadio") == 0) {
+    } else if (n == "kPoliceRadio") {
         Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
@@ -638,7 +639,7 @@ void fSoundArea(ArgArray args) {
         m->flag2 = NULL;
         g_private->_policeRadioArea = m;
         g_private->_masks.push_front(*m);
-    } else if (strcmp(n, "kPhone") == 0) {
+    } else if (n == "kPhone") {
         Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
         m->surf = g_private->loadMask(*s, 0, 0, true);
