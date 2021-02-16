@@ -191,17 +191,16 @@ void fBustMovie(ArgArray args) {
     if (videoIndex < 0)
         videoIndex = 0;
     assert(videoIndex <= 5);
-
-    char f[32];
-    snprintf(f, 32, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[videoIndex]);
+    Common::String pv =
+      Common::String::format("po/animatio/spoc%02dxs.smk", 
+        kPoliceBustVideos[videoIndex]);
 
     if (kPoliceBustVideos[videoIndex] == 2) {
         Common::String s("global/transiti/audio/spoc02VO.wav");
         g_private->playSound(s, 1, false, false);
     }
 
-    Common::String *pv = new Common::String(f);
-    g_private->_nextMovie = pv;
+    g_private->_nextMovie = new Common::String(pv);
     g_private->_nextSetting = new Common::String(args[0].u.str);
 }
 

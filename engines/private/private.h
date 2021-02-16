@@ -256,20 +256,20 @@ public:
     bool _noStopSounds;
 
     Common::String getPaperShuffleSound();
-    Common::String *_globalAudioPath;
+    Common::String _globalAudioPath;
 
     Common::String getTakeSound();
     Common::String getTakeLeaveSound();
     Common::String getLeaveSound();
-    Common::String *_sirenSound;
+    Common::String _sirenSound;
 
     // Radios
-    Common::String *_infaceRadioPath;
+    Common::String _infaceRadioPath;
     MaskInfo *_AMRadioArea;
     MaskInfo *_policeRadioArea;
     MaskInfo *_phoneArea;
-    Common::String *_phonePrefix;
-    Common::String *_phoneCallSound;
+    Common::String _phonePrefix;
+    Common::String _phoneCallSound;
     SoundList _AMRadio;
     SoundList _policeRadio;
     PhoneList _phone;

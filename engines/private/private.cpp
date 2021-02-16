@@ -90,10 +90,10 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _policeBustSetting = NULL;
     _numberClicks = 0;
     policeVideoIndex = 0;
-    _sirenSound = new Common::String("po/audio/posfx002.wav");
+    _sirenSound = Common::String("po/audio/posfx002.wav");
 
     // General sounds
-    _globalAudioPath = new Common::String("global/audio/");
+    _globalAudioPath = Common::String("global/audio/");
     _noStopSounds = false;
 
     // Radios and phone
@@ -101,9 +101,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _AMRadioArea = NULL;
     _phoneArea = NULL;
     // TODO: use this as a default sound for radio
-    _infaceRadioPath = new Common::String("inface/radio/");
-    _phonePrefix = new Common::String("inface/telephon/");
-    _phoneCallSound = new Common::String("phone.wav");
+    _infaceRadioPath = Common::String("inface/radio/");
+    _phonePrefix = Common::String("inface/telephon/");
+    _phoneCallSound = Common::String("phone.wav");
 
     // Dossiers
     _dossierPage = 0;
@@ -333,7 +333,7 @@ void PrivateEngine::checkPoliceBust() {
 
     if (_numberClicks == _sirenWarning) {
         stopSound(true);
-        playSound(*_sirenSound, 0, false, false);
+        playSound(_sirenSound, 0, false, false);
         _numberClicks++; // Won't execute again
         return;
     }
@@ -512,8 +512,8 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
         return;
 
     if (inMask(_AMRadioArea->surf, mousePos)) {
-        Common::String sound = *_infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
-        playSound(sound.c_str(), 1, false, false);
+        Common::String sound = _infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
+        playSound(sound, 1, false, false);
         _AMRadio.pop_back();
     }
 }
@@ -526,8 +526,8 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
         return;
 
     if (inMask(_policeRadioArea->surf, mousePos)) {
-        Common::String sound = *_infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
-        playSound(sound.c_str(), 1, false, false);
+        Common::String sound = _infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
+        playSound(sound, 1, false, false);
         _policeRadio.pop_back();
     }
 }
@@ -540,7 +540,7 @@ void PrivateEngine::checkPhoneCall() {
         return;
 
     if (!_mixer->isSoundHandleActive(_fgSoundHandle))
-        playSound(*_phonePrefix + *_phoneCallSound, 1, false, false);
+        playSound(_phonePrefix + _phoneCallSound, 1, false, false);
 }
 
 void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
@@ -554,8 +554,8 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
         PhoneInfo i = _phone.back();
         Common::String sound(*i.sound);
         setSymbol(i.flag, i.val);
-        sound = *_phonePrefix + sound + ".wav";
-        playSound(sound.c_str(), 1, true, false);
+        sound = _phonePrefix + sound + ".wav";
+        playSound(sound, 1, true, false);
         _phone.pop_back();
     }
 }
@@ -983,32 +983,32 @@ bool PrivateEngine::getRandomBool(uint p) {
 
 Common::String PrivateEngine::getPaperShuffleSound() {
     uint r = _rnd->getRandomNumber(6);
-    return Common::String::format("%sglsfx0%d.wav", _globalAudioPath->c_str(), kPaperShuffleSound[r]);
+    return Common::String::format("%sglsfx0%d.wav", _globalAudioPath.c_str(), kPaperShuffleSound[r]);
 }
 
 Common::String PrivateEngine::getTakeSound() {
     if (isDemo())
-        return (Common::String(*_globalAudioPath + "mvo007.wav"));
+        return (Common::String(_globalAudioPath + "mvo007.wav"));
 
     uint r = _rnd->getRandomNumber(4) + 1;
-    return Common::String::format("%stook%d.wav", _globalAudioPath->c_str(), r);
+    return Common::String::format("%stook%d.wav", _globalAudioPath.c_str(), r);
 }
 
 Common::String PrivateEngine::getTakeLeaveSound() {
     uint r = _rnd->getRandomNumber(1);
     if (r == 0) {
-        return (Common::String(*_globalAudioPath + "mvo001.wav"));
+        return (Common::String(_globalAudioPath + "mvo001.wav"));
     } else {
-        return (Common::String(*_globalAudioPath + "mvo006.wav"));
+        return (Common::String(_globalAudioPath + "mvo006.wav"));
     }
 }
 
 Common::String PrivateEngine::getLeaveSound() {
     if (isDemo())
-        return (Common::String(*_globalAudioPath + "mvo008.wav"));
+        return (Common::String(_globalAudioPath + "mvo008.wav"));
 
     uint r = _rnd->getRandomNumber(4) + 1;
-    return Common::String::format("%sleft%d.wav", _globalAudioPath->c_str(), r);
+    return Common::String::format("%sleft%d.wav", _globalAudioPath.c_str(), r);
 }
 
 char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
