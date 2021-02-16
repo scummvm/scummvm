@@ -351,7 +351,7 @@ void PrivateEngine::changeCursor(Common::String cursor) {
     Common::Point p = *_cursorPoints.getVal(cursor);
 
     int x, y;
-    if (strcmp(cursor.c_str(), "default") == 0) {
+    if (cursor == "default") {
         x = 11;
         y = 16;
     }
