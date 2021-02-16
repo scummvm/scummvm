@@ -187,10 +187,6 @@ Common::Error PrivateEngine::run() {
     _image->loadStream(frameFile);
     _frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 
-    // Debugger console
-    Console *console = new Console(this);
-    setDebugger(console);
-
     // Main event loop
     Common::Event event;
     Common::Point mousePos;

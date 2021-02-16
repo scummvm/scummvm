@@ -27,7 +27,6 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
 
 #include "common/installshieldv3_archive.h"
 
@@ -49,8 +48,6 @@ struct ManagedSurface;
 struct ADGameDescription;
 
 namespace Private {
-
-class Console;
 
 // debug channels
 enum {
@@ -290,14 +287,6 @@ public:
 };
 
 extern PrivateEngine *g_private;
-
-class Console : public GUI::Debugger {
-public:
-    Console(PrivateEngine *vm) {
-    }
-    virtual ~Console(void) {
-    }
-};
 
 } // End of namespace Private
 
