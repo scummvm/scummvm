@@ -680,16 +680,14 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         Private::Symbol *sym = locations.getVal(*it);
         sym->u.val = val;
     }
-    uint32 size = 0;
-    size = stream->readUint32LE();
-    Common::String *file = NULL;
+    uint32 size = stream->readUint32LE();
     for (uint32 i = 0; i < size; ++i) {
-        file = new Common::String(stream->readString());
-        inventory.push_back(*file);
+        inventory.push_back(stream->readString());
     }
 
     // Dossiers
     size = stream->readUint32LE();
+    Common::String *file = NULL;
     for (uint32 i = 0; i < size; ++i) {
         file = new Common::String(stream->readString());
 
@@ -706,21 +704,18 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     }
 
     // Radios
-    Common::String *sound;
     size = stream->readUint32LE();
     _AMRadio.clear();
 
     for (uint32 i = 0; i < size; ++i) {
-        sound = new Common::String(stream->readString());
-        _AMRadio.push_back(*sound);
+        _AMRadio.push_back(stream->readString());
     }
 
     size = stream->readUint32LE();
     _policeRadio.clear();
 
     for (uint32 i = 0; i < size; ++i) {
-        sound = new Common::String(stream->readString());
-        _policeRadio.push_back(*sound);
+        _policeRadio.push_back(stream->readString());
     }
 
     size = stream->readUint32LE();
@@ -739,18 +734,14 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     *_repeatedMovieExit = stream->readString();
     _playedMovies.clear();
     size = stream->readUint32LE();
-    Common::String *movie;
     for (uint32 i = 0; i < size; ++i) {
-        movie = new Common::String(stream->readString());
-        _playedMovies.setVal(*movie, true);
+        _playedMovies.setVal(stream->readString(), true);
     }
 
     _playedPhoneClips.clear();
     size = stream->readUint32LE();
-    Common::String *phone;
     for (uint32 i = 0; i < size; ++i) {
-        phone = new Common::String(stream->readString());
-        _playedPhoneClips.setVal(*phone, true);
+        _playedPhoneClips.setVal(stream->readString(), true);
     }
 
     return Common::kNoError;
