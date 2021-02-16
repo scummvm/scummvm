@@ -74,7 +74,7 @@ public:
 	}
 };
 
-struct SDText sdt, osdt;
+SDText sdt, osdt;
 
 // locals
 #define SMACKNULL	0
@@ -473,7 +473,7 @@ void PlayFullMotion(int start, int end) {
 					BattutaPrint
 --------------------------------------------------*/
 void BattutaPrint(int x, int y, int c, const char *txt) {
-	osdt = {sdt.x, sdt.y, sdt.dx, sdt.dy, sdt.l[0], sdt.l[1], sdt.l[2], sdt.l[3], sdt.tcol, sdt.scol, sdt.sign};
+	osdt.set(sdt);
 
 	sdt.x = x;
 	sdt.y = y;
@@ -535,7 +535,6 @@ void RegenFullMotion() {
 		sdt.x = 20;
 		sdt.y = 380;
 		sdt.dx = MAXX - 40;
-
 		sdt.dy = sdt.checkDText();
 		sdt.l[0] = 0;
 		sdt.l[1] = 0;
