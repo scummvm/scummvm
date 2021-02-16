@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-12 15:24+0000\n"
+"PO-Revision-Date: 2021-02-16 11:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5036,15 +5036,15 @@ msgstr "Zip 모드 활성화됨(~Z~)"
 
 #: engines/mohawk/dialogs.cpp:115
 msgid "~T~ransitions Enabled"
-msgstr ""
+msgstr "번역 사용함(~T~)"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "영화보기로 Myst를 실행"
 
 #: engines/mohawk/dialogs.cpp:119
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Myst 영화보기는 원본 게임 엔진으로 실행되지 않습니다."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:127
