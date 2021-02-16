@@ -25,7 +25,6 @@
 %output "engines/private/grammar.cpp"
 %define api.prefix {PRIVATE_}
 
-
 %{
 
 #include "private/grammar.h"

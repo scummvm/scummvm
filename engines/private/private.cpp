@@ -20,11 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-
 #include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
-
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -33,12 +30,12 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/str.h"
-#include "common/savefile.h"
 #include "common/timer.h"
 #include "engines/util.h"
-
 #include "image/bmp.h"
 #include "graphics/cursorman.h"
 

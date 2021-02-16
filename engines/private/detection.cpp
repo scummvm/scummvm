@@ -29,7 +29,6 @@ static const PlainGameDescriptor privateGames[] = {
     { 0, 0 }
 };
 
-
 static const ADGameDescription gameDescriptions[] = {
     {
         "private-eye",  // US release
