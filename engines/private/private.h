@@ -227,7 +227,7 @@ public:
 
     // Diary
     InvList inventory;
-    Common::String *_diaryLocPrefix;
+    Common::String _diaryLocPrefix;
     void loadLocations(Common::Rect *);
     void loadInventory(uint32, Common::Rect *, Common::Rect *);
 

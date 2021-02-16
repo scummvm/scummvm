@@ -112,7 +112,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _dossierPrevSuspectMask = NULL;
 
     // Diary
-    _diaryLocPrefix = new Common::String("inface/diary/loclist/");
+    _diaryLocPrefix = Common::String("inface/diary/loclist/");
 }
 
 PrivateEngine::~PrivateEngine() {
@@ -1037,11 +1037,9 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
         i++;
         if (sym->u.val) {
             offset = offset + 22;
-            char *f = (char *)malloc(32*sizeof(char));
-            snprintf(f, 32, "dryloc%d.bmp", i);
-            //debug("%s, %d, %d", f, i, offset);
-            Common::String s(*_diaryLocPrefix + f);
-            //debug("%hd %hd", rect->left, rect->top + offset);
+            Common::String s =
+              Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
+
             loadMask(s, rect->left + 120, rect->top + offset, true);
         }
     }
