@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/util.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "trecision/nl/lib/addtype.h"
@@ -33,9 +34,9 @@
 
 namespace Trecision {
 
-uint16 CurSortTableIndex = 0;
-int16  limiti[50][4];
-uint16 limitinum;
+uint16 _curSortTableIndex = 0;
+int16  _limits[50][4];
+uint16 _limitsNum;
 
 #define MAXBLOCK 5000
 uint32 PaintBlock[MAXBLOCK];
@@ -72,7 +73,7 @@ void PaintScreen(uint8 flag) {
 	for (a = 0; a < 20; a++)
 		VisualRef[a] = 255;
 
-	limitinum = 0;
+	_limitsNum = 0;
 	SemPaintCharacter = 1;                      // ridisegna sempre l'omino
 	AddLine(0, 0, 0);
 
@@ -91,13 +92,13 @@ void PaintScreen(uint8 flag) {
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		limiti[limitinum][0] = DObj.l[0];     // aggiunge rettangolo omino
-		limiti[limitinum][1] = DObj.l[1] + TOP;
-		limiti[limitinum][2] = DObj.l[2];
-		limiti[limitinum][3] = DObj.l[3] + TOP;
+		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo omino
+		_limits[_limitsNum][1] = DObj.l[1] + TOP;
+		_limits[_limitsNum][2] = DObj.l[2];
+		_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
-		Hlim = limitinum;
-		limitinum ++;
+		Hlim = _limitsNum;
+		_limitsNum ++;
 	} else if (_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
@@ -111,13 +112,13 @@ void PaintScreen(uint8 flag) {
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		limiti[limitinum][0] = DObj.l[0];     // aggiunge rettangolo omino
-		limiti[limitinum][1] = DObj.l[1] + TOP;
-		limiti[limitinum][2] = DObj.l[2];
-		limiti[limitinum][3] = DObj.l[3] + TOP;
+		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo omino
+		_limits[_limitsNum][1] = DObj.l[1] + TOP;
+		_limits[_limitsNum][2] = DObj.l[2];
+		_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
-		Hlim = limitinum;
-		limitinum ++;
+		Hlim = _limitsNum;
+		_limitsNum ++;
 	}
 
 // CANCELLO LA SCRITTA
@@ -142,13 +143,13 @@ void PaintScreen(uint8 flag) {
 		}
 		oldString.sign = NULL;
 
-		limiti[limitinum][0] = DObj.l[0];     // aggiunge rettangolo scritta
-		limiti[limitinum][1] = DObj.l[1] + TOP;
-		limiti[limitinum][2] = DObj.l[2];
-		limiti[limitinum][3] = DObj.l[3] + TOP;
+		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo scritta
+		_limits[_limitsNum][1] = DObj.l[1] + TOP;
+		_limits[_limitsNum][2] = DObj.l[2];
+		_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
-		Tlim = limitinum;
-		limitinum ++;
+		Tlim = _limitsNum;
+		_limitsNum ++;
 
 		if (!(TextStatus & TEXT_DRAW))        // se non c'e' nuova scritta
 			TextStatus = TEXT_OFF;               // non aggiorna piu' scritta
@@ -176,16 +177,16 @@ void PaintScreen(uint8 flag) {
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 
-			limiti[limitinum][0] = DObj.l[0];    // aggiunge rettangolo
-			limiti[limitinum][1] = DObj.l[1] + TOP;
-			limiti[limitinum][2] = DObj.l[2];
-			limiti[limitinum][3] = DObj.l[3] + TOP;
+			_limits[_limitsNum][0] = DObj.l[0];    // aggiunge rettangolo
+			_limits[_limitsNum][1] = DObj.l[1] + TOP;
+			_limits[_limitsNum][2] = DObj.l[2];
+			_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
 			if ((SortTable[a + 1]._typology  == SortTable[a]._typology) &&
 					(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
-				VisualRef[a + 1] = limitinum;
+				VisualRef[a + 1] = _limitsNum;
 
-			limitinum ++;
+			_limitsNum ++;
 		}
 	}
 
@@ -211,9 +212,9 @@ void PaintScreen(uint8 flag) {
 	//PaintObjAnm( FOREGROUND );
 
 	if (TextStatus == TEXT_ON) {
-		for (a = 0; a < limitinum; a++) {
-			if (IntersecateRect(limiti[a][0], limiti[a][1],
-								limiti[a][2], limiti[a][3],
+		for (a = 0; a < _limitsNum; a++) {
+			if (IntersecateRect(_limits[a][0], _limits[a][1],
+								_limits[a][2], _limits[a][3],
 								curString.x, curString.y,
 								curString.x + curString.dx,
 								curString.y + curString.dy)) {
@@ -228,22 +229,22 @@ void PaintScreen(uint8 flag) {
 
 	} else if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		limiti[limitinum][0] = curString.x;   // aggiunge rettangolo
-		limiti[limitinum][1] = curString.y;
-		limiti[limitinum][2] = curString.x + curString.dx;
-		limiti[limitinum][3] = curString.y + curString.dy;
+		_limits[_limitsNum][0] = curString.x;   // aggiunge rettangolo
+		_limits[_limitsNum][1] = curString.y;
+		_limits[_limitsNum][2] = curString.x + curString.dx;
+		_limits[_limitsNum][3] = curString.y + curString.dy;
 
-		Tlim = limitinum;
-		limitinum ++;
+		Tlim = _limitsNum;
+		_limitsNum ++;
 
 		TextStatus = TEXT_DRAW;                 // attiva aggiornamento scritta
 	}
 
 	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
-	for (liv = 0; liv < limitinum; liv++) {
-		for (int b = limiti[liv][1]; b < limiti[liv][3]; b++) {
-			AddLine(limiti[liv][0], limiti[liv][2], b);
+	for (liv = 0; liv < _limitsNum; liv++) {
+		for (int b = _limits[liv][1]; b < _limits[liv][3]; b++) {
+			AddLine(_limits[liv][0], _limits[liv][2], b);
 		}
 	}
 
@@ -377,14 +378,12 @@ void SortBlock() {
  appartenenti a curbox
  --------------------------------------------------*/
 void PaintObjAnm(uint16 CurBox) {
-	int a, b;
-	uint16 TheObject;
 	extern uint16 _playingAnims[];
 
 	RegenAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
-	for (a = 0; a < g_vm->_curSortTableNum; a++) {
+	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (!SortTable[a]._remove) {
 			if (SortTable[a]._typology == TYPO_BMP) {
 				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
@@ -405,48 +404,48 @@ void PaintObjAnm(uint16 CurBox) {
 					DrawObj(DObj);
 
 					if (VisualRef[a] == 255) {
-						limiti[limitinum][0] = DObj.x;    // aggiunge rettangolo
-						limiti[limitinum][1] = DObj.y;
-						limiti[limitinum][2] = DObj.x + DObj.dx;
-						limiti[limitinum][3] = DObj.y + DObj.dy;
-						limitinum ++;
+						_limits[_limitsNum][0] = DObj.x;    // aggiunge rettangolo
+						_limits[_limitsNum][1] = DObj.y;
+						_limits[_limitsNum][2] = DObj.x + DObj.dx;
+						_limits[_limitsNum][3] = DObj.y + DObj.dy;
+						_limitsNum ++;
 					} else {
-						if (limiti[VisualRef[a]][0] > DObj.x)
-							limiti[VisualRef[a]][0] = DObj.x;
+						if (_limits[VisualRef[a]][0] > DObj.x)
+							_limits[VisualRef[a]][0] = DObj.x;
 
-						if (limiti[VisualRef[a]][1] > DObj.y)
-							limiti[VisualRef[a]][1] = DObj.y;
+						if (_limits[VisualRef[a]][1] > DObj.y)
+							_limits[VisualRef[a]][1] = DObj.y;
 
-						if (limiti[VisualRef[a]][2] < (DObj.x + DObj.dx))
-							limiti[VisualRef[a]][2] = DObj.x + DObj.dx;
+						if (_limits[VisualRef[a]][2] < (DObj.x + DObj.dx))
+							_limits[VisualRef[a]][2] = DObj.x + DObj.dx;
 
-						if (limiti[VisualRef[a]][3] < (DObj.y + DObj.dy))
-							limiti[VisualRef[a]][3] = DObj.y + DObj.dy;
+						if (_limits[VisualRef[a]][3] < (DObj.y + DObj.dy))
+							_limits[VisualRef[a]][3] = DObj.y + DObj.dy;
 					}
 				}
 			}
 		}
 	}
-	for (a = 0; a < limitinum; a++) {
-		for (b = 0; b < MAXOBJINROOM; b++) {
-			TheObject = g_vm->_room[g_vm->_curRoom]._object[b];
+	for (int a = 0; a < _limitsNum; a++) {
+		for (int b = 0; b < MAXOBJINROOM; b++) {
+			uint16 curObject = g_vm->_room[g_vm->_curRoom]._object[b];
 
-			if (!TheObject)
+			if (!curObject)
 				break;
 
-			if ((g_vm->_obj[TheObject]._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
-			    (g_vm->_obj[TheObject]._mode & OBJMODE_OBJSTATUS) &&
-			    (g_vm->_obj[TheObject]._nbox == CurBox)) {
+			if ((g_vm->_obj[curObject]._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
+			    (g_vm->_obj[curObject]._mode & OBJMODE_OBJSTATUS) &&
+			    (g_vm->_obj[curObject]._nbox == CurBox)) {
 
-				if (IntersecateRect(limiti[a][0], limiti[a][1],
-									limiti[a][2], limiti[a][3],
-				                    g_vm->_obj[TheObject]._px, g_vm->_obj[TheObject]._py + TOP,
-				                    g_vm->_obj[TheObject]._px + g_vm->_obj[TheObject]._dx,
-				                    g_vm->_obj[TheObject]._py + g_vm->_obj[TheObject]._dy + TOP)) {
-					DObj.x = g_vm->_obj[TheObject]._px;
-					DObj.y = g_vm->_obj[TheObject]._py + TOP;
-					DObj.dx = g_vm->_obj[TheObject]._dx;
-					DObj.dy = g_vm->_obj[TheObject]._dy;
+				if (IntersecateRect(_limits[a][0], _limits[a][1],
+									_limits[a][2], _limits[a][3],
+				                    g_vm->_obj[curObject]._px, g_vm->_obj[curObject]._py + TOP,
+				                    g_vm->_obj[curObject]._px + g_vm->_obj[curObject]._dx,
+				                    g_vm->_obj[curObject]._py + g_vm->_obj[curObject]._dy + TOP)) {
+					DObj.x = g_vm->_obj[curObject]._px;
+					DObj.y = g_vm->_obj[curObject]._py + TOP;
+					DObj.dx = g_vm->_obj[curObject]._dx;
+					DObj.dy = g_vm->_obj[curObject]._dy;
 					DObj.l[0] = xr1;
 					DObj.l[1] = yr1;
 					DObj.l[2] = xr2;
@@ -456,7 +455,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.mask = MaskPointers[b];
 					DObj.flag = COPYTORAM;
 
-					if (g_vm->_obj[TheObject]._mode & OBJMODE_MASK)
+					if (g_vm->_obj[curObject]._mode & OBJMODE_MASK)
 						DObj.flag = COPYTORAM + DRAWMASK;
 
 					DrawObj(DObj);
@@ -469,49 +468,35 @@ void PaintObjAnm(uint16 CurBox) {
 			((SemShowCharacter) && (SemCharacterExist))) {
 		drawCharacter(CALCPOINTS);
 
-		// allarga il rettangolo dell'omino
-		if (limiti[Hlim][0] > _actor._lim[0])
-			limiti[Hlim][0] = _actor._lim[0];
+		// enlarge the rectangle of the character
+		if (_limits[Hlim][0] > _actor._lim[0])
+			_limits[Hlim][0] = _actor._lim[0];
 
-		if (limiti[Hlim][1] > _actor._lim[2])
-			limiti[Hlim][1] = _actor._lim[2];
+		if (_limits[Hlim][1] > _actor._lim[2])
+			_limits[Hlim][1] = _actor._lim[2];
 
-		if (limiti[Hlim][2] < _actor._lim[1])
-			limiti[Hlim][2] = _actor._lim[1];
+		if (_limits[Hlim][2] < _actor._lim[1])
+			_limits[Hlim][2] = _actor._lim[1];
 
-		if (limiti[Hlim][3] < _actor._lim[3])
-			limiti[Hlim][3] = _actor._lim[3];
+		if (_limits[Hlim][3] < _actor._lim[3])
+			_limits[Hlim][3] = _actor._lim[3];
 
 		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);
 
 		//SemPaintCharacter = 0;
-	} else if ((_actorPos == CurBox) && !(SemDialogActive)) {
+	} else if ((_actorPos == CurBox) && !SemDialogActive) {
 		RegenSmackAnim(_playingAnims[1]);
 	}
 }
 
 int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
 	if ((x1 <= x4) && (x2 >= x3) && (y1 <= y4) && (y2 >= y3)) {
-		if (x3 > x1)
-			xr1 = 0;                             // 0
-		else
-			xr1 = x1 - x3;
+		xr1 = (x3 > x1) ? 0 : x1 - x3;
+		xr2 = MIN(x2, x4) - x3;
 
-		if (x2 < x4)
-			xr2 = x2 - x3;
-		else
-			xr2 = x4 - x3;                       // _dx
-
-		if (y3 > y1)
-			yr1 = 0;                             // 0
-		else
-			yr1 = y1 - y3;
-
-		if (y2 < y4)
-			yr2 = y2 - y3;
-		else
-			yr2 = y4 - y3;                       // _dy
+		yr1 = (y3 > y1) ? 0 : y1 - y3;
+		yr2 = MIN(y2, y4) - y3;
 
 		return true;
 	}

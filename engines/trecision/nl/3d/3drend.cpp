@@ -221,22 +221,12 @@ float sinCosAngle(float sinus, float cosinus) {
 	cosinus /= t;
 	sinus /= t;
 
-	if ((sinus == cosinus) && (cosinus == 0))
+	if (sinus == 0 && cosinus == 0)
 		return 0;
 
-	if (sinus * cosinus >= 0) {
-		// 1e3 quad
-		if (sinus >= 0)
-			// 1 quad
-			return (float)acos(cosinus);
-
-		// 3 quad
-		return (float)PI2 - (float)acos(cosinus);
-	}
-
-	// 2e4 quad
+	// 1e3 & 2e4 quad
 	if (sinus >= 0)
-		// 2 quad
+		// 1 & 2 quad
 		return (float)acos(cosinus);
 
 	// 3 quad

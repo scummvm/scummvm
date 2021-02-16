@@ -65,12 +65,12 @@ void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	extern bool _linearMode;
 	uint32 CopyNow;
 
-	LockVideo();
-	if ((Video == NULL) || (Len == 0))
+	lockVideo();
+	if ((_video == NULL) || (Len == 0))
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
-		byte2word(Video + Sco, Src, _newData, Len);
+		byte2word(_video + Sco, Src, _newData, Len);
 		return ;
 	}
 
@@ -88,20 +88,20 @@ void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	else
 		CopyNow = Len;
 
-	byte2word(Video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData, CopyNow);
+	byte2word(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData, CopyNow);
 	SrcSco += CopyNow;
 	Len -= CopyNow;
 
 	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
 		CopyNow = SCREENLEN;
-		byte2word(Video + i * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
+		byte2word(_video + i * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
 		SrcSco += CopyNow;
 		Len -= CopyNow;
 	}
 
 	if (Len > 0) {
 		CopyNow = Len;
-		byte2word(Video + y2 * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
+		byte2word(_video + y2 * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
 		// Useless assignations, removed
 		// SrcSco += CopyNow;
 		// Len -= CopyNow;
@@ -113,12 +113,12 @@ void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	extern bool _linearMode;
 
-	LockVideo();
-	if ((Video == NULL) || (Len == 0))
+	lockVideo();
+	if ((_video == NULL) || (Len == 0))
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
-		byte2long(Video + Sco, Src, _newData2, Len / 2);
+		byte2long(_video + Sco, Src, _newData2, Len / 2);
 		return ;
 	}
 
@@ -137,20 +137,20 @@ void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	else
 		CopyNow = Len;
 
-	byte2long(Video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData2, CopyNow / 2);
+	byte2long(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData2, CopyNow / 2);
 	SrcSco += CopyNow;
 	Len -= CopyNow;
 
 	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
 		CopyNow = SCREENLEN;
-		byte2long(Video + i * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
+		byte2long(_video + i * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
 		SrcSco += CopyNow;
 		Len -= CopyNow;
 	}
 
 	if (Len > 0) {
 		CopyNow = Len;
-		byte2long(Video + y2 * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
+		byte2long(_video + y2 * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
 		// Useless assignment, removed
 		// SrcSco += CopyNow;
 		// Len -= CopyNow;
