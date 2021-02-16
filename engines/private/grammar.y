@@ -28,7 +28,7 @@
 
 %{
 
-#include "grammar.h"
+#include "private/grammar.h"
 
 #define code1(c1)       Private::code(c1);
 #define code2(c1,c2)    Private::code(c1); Private::code(c2)
