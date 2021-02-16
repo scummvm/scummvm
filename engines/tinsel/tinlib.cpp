@@ -4315,6 +4315,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, %d)", mapping.name, pp[0], pp[1]);
 		break;
+	case 208:
+		mapping = NoirMapping{"WHICHINVENTORY", WHICHINVENTORY, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 210: // STUBBED
 		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
 		pp -= mapping.numArgs - 1;
@@ -5814,7 +5818,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case WHICHINVENTORY:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp[0] = WhichInventory();
 		return 0;
 
