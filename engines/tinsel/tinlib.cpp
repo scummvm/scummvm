@@ -4270,6 +4270,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 96:
+		mapping = NoirMapping{"MOVECURSOR", MOVECURSOR, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, %d)", mapping.name, pp[0], pp[1]);
+		break;
 	case 99:
 		mapping = NoirMapping{"NEWSCENE", NEWSCENE, 3};
 		pp -= mapping.numArgs - 1;
@@ -5004,7 +5009,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		error("LocalVar isn't a real function");
 
 	case MOVECURSOR:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp -= 1;			// 2 parameters
 		MoveCursor(pp[0], pp[1]);
 		return -2;
