@@ -1661,6 +1661,10 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
  * Play some music
  */
 static void PlayMusic(int tune) {
+	if (TinselV3) {
+		warning("TODO: Implement PLAYMUSIC(%d) for Noir", tune);
+		return;
+	}
 	_vm->_pcmMusic->startPlay(tune);
 }
 
@@ -4266,6 +4270,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2]);
 		break;
+	case 112:
+		mapping = NoirMapping{"PLAYMUSIC", PLAYMUSIC, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -5083,7 +5092,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case PLAYMUSIC:
-		// DW2 only
+		// DW2 / Noir only
 		PlayMusic(pp[0]);
 		return -1;
 
