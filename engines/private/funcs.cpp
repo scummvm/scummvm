@@ -116,8 +116,8 @@ void fSyncSound(ArgArray args) {
     g_private->_nextSetting = nextSetting;
 
     if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, true, false);
+        Common::String s(args[0].u.str);
+        g_private->playSound(s, 1, true, false);
     }
 }
 
@@ -196,8 +196,8 @@ void fBustMovie(ArgArray args) {
     snprintf(f, 32, "po/animatio/spoc%02dxs.smk", kPoliceBustVideos[videoIndex]);
 
     if (kPoliceBustVideos[videoIndex] == 2) {
-        Common::String *s = new Common::String("global/transiti/audio/spoc02VO.wav");
-        g_private->playSound(*s, 1, false, false);
+        Common::String s("global/transiti/audio/spoc02VO.wav");
+        g_private->playSound(s, 1, false, false);
     }
 
     Common::String *pv = new Common::String(f);
@@ -402,8 +402,8 @@ void fSoundEffect(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, false, false);
+        Common::String s(args[0].u.str);
+        g_private->playSound(s, 1, false, false);
         //assert(0);
     } else {
         g_private->stopSound(true);
@@ -427,8 +427,8 @@ void fSound(ArgArray args) {
     }
 
     if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 1, false, false);
+        Common::String s(args[0].u.str);
+        g_private->playSound(s, 1, false, false);
         //assert(0);
     } else {
         g_private->stopSound(true);
@@ -440,8 +440,8 @@ void fLoopedSound(ArgArray args) {
     assert(args.size() == 1);
     debugC(1, kPrivateDebugScript, "LoopedSound(%s)", args[0].u.str);
     if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String *s = new Common::String(args[0].u.str);
-        g_private->playSound(*s, 0, true, true);
+        Common::String s(args[0].u.str);
+        g_private->playSound(s, 0, true, true);
         //assert(0);
     } else {
         g_private->stopSound(true);
