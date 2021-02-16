@@ -4238,6 +4238,14 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 41:
+		mapping = NoirMapping{"CURSORXPOS", CURSORXPOS, 0};
+		debug(7, "%s()", mapping.name);
+		break;
+	case 42:
+		mapping = NoirMapping{"CURSORYPOS", CURSORYPOS, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 43:
 		mapping = NoirMapping{"DECINVMAIN", DECINVMAIN, 8};
 		pp -= mapping.numArgs - 1;
@@ -4653,12 +4661,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case CURSORXPOS:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp[0] = CursorPos(CURSORXPOS);
 		return 0;
 
 	case CURSORYPOS:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp[0] = CursorPos(CURSORYPOS);
 		return 0;
 
