@@ -114,9 +114,9 @@ void fSyncSound(ArgArray args) {
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
     g_private->_nextSetting = nextSetting;
+    Common::String s(args[0].u.str);
 
-    if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String s(args[0].u.str);
+    if (s != "\"\"") {
         g_private->playSound(s, 1, true, false);
     }
 }
@@ -208,13 +208,12 @@ void fDossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
     Common::String *s1 = new Common::String(args[0].u.str);
+    Common::String *s2 = new Common::String(args[1].u.str);
     DossierInfo *m = (DossierInfo *)malloc(sizeof(DossierInfo));
     m->page1 = s1;
 
-    if (strcmp(args[1].u.str, "\"\"") != 0) {
-        Common::String *s2 = new Common::String(args[1].u.str);
+    if (*s2 != "\"\"") {
         m->page2 = s2;
-
     } else {
         m->page2 = NULL;
     }
@@ -296,17 +295,17 @@ void fInventory(ArgArray args) {
     assert(snd.type == STRING);
     assert(i.type == STRING);
 
-    Common::String *bmp = new Common::String(i.u.str);
-    assert(g_private->isDemo() || strcmp(bmp->c_str(), "\"\"") != 0);
+    Common::String bmp(i.u.str);
+    assert(g_private->isDemo() || bmp != "\"\"");
 
     if (v1.type == STRING)
         assert(strcmp(v1.u.str, "\"\"") == 0);
 
     debugC(1, kPrivateDebugScript, "Inventory(...)");
-    if (strcmp(b1.u.str, "\"\"") != 0) {
-        Common::String *s = new Common::String(b1.u.str);
+    Common::String mask(b1.u.str);
+    if (mask != "\"\"") {
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->surf = g_private->loadMask(mask, 0, 0, true);
 
         if (e.type == NUM)
             m->nextSetting = NULL;
@@ -328,25 +327,26 @@ void fInventory(ArgArray args) {
 
         g_private->_masks.push_front(*m);
         g_private->_toTake = true;
+        Common::String sound(snd.u.str);
 
-        if (strcmp(snd.u.str, "\"\"") != 0) {
-            g_private->playSound(Common::String(snd.u.str), 1, false, false);
+        if (sound != "\"\"") {
+            g_private->playSound(sound, 1, false, false);
         } else {
             g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
         }
 
-        g_private->inventory.push_back(*bmp);
+        g_private->inventory.push_back(bmp);
     } else {
         if (v1.type == NAME) {
             if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
                 v1.u.sym->u.val = 0;
-                g_private->inventory.remove(*bmp);
+                g_private->inventory.remove(bmp);
             } else {
                 v1.u.sym->u.val = 1;
-                g_private->inventory.push_back(*bmp);
+                g_private->inventory.push_back(bmp);
             }
         } else {
-            g_private->inventory.push_back(*bmp);
+            g_private->inventory.push_back(bmp);
         }
         if (v2.type == NAME)
             v2.u.sym->u.val = 1;
@@ -400,10 +400,9 @@ void fPaperShuffleSound(ArgArray args) {
 void fSoundEffect(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
-    if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String s(args[0].u.str);
+    Common::String s(args[0].u.str);
+    if (s != "\"\"") {
         g_private->playSound(s, 1, false, false);
-        //assert(0);
     } else {
         g_private->stopSound(true);
     }
@@ -425,10 +424,9 @@ void fSound(ArgArray args) {
             assert(0);
     }
 
-    if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String s(args[0].u.str);
+    Common::String s(args[0].u.str);
+    if (s != "\"\"") {
         g_private->playSound(s, 1, false, false);
-        //assert(0);
     } else {
         g_private->stopSound(true);
     }
@@ -438,10 +436,10 @@ void fLoopedSound(ArgArray args) {
     // assert types
     assert(args.size() == 1);
     debugC(1, kPrivateDebugScript, "LoopedSound(%s)", args[0].u.str);
-    if (strcmp("\"\"", args[0].u.str) != 0) {
-        Common::String s(args[0].u.str);
+    Common::String s(args[0].u.str);
+
+    if (s != "\"\"") {
         g_private->playSound(s, 0, true, true);
-        //assert(0);
     } else {
         g_private->stopSound(true);
     }
@@ -473,14 +471,13 @@ void fMovie(ArgArray args) {
     debugC(1, kPrivateDebugScript, "Movie(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *movie = new Common::String(args[0].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
-    bool isEmptyString = strcmp(args[0].u.str, "\"\"") == 0;
 
-    if (!g_private->_playedMovies.contains(*movie) && !isEmptyString) {
+    if (!g_private->_playedMovies.contains(*movie) && *movie != "\"\"") {
         g_private->_nextMovie = movie;
         g_private->_playedMovies.setVal(*movie, true);
         g_private->_nextSetting = nextSetting;
 
-    } else if (isEmptyString) {
+    } else if (*movie == "\"\"") {
         g_private->_repeatedMovieExit = nextSetting;
         debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting->c_str());
     } else {
