@@ -34,6 +34,7 @@ private:
 	uint32 *_log_to_vis_index; // from fribidi conversion
 	uint32 *_vis_to_log_index; // from fribidi conversion
 	void initWithU32String(const Common::U32String &str);
+	Common::String bidiByLine(Common::String line, va_list args);
 public:
 	const Common::U32String logical; // original string, ordered logically
 	Common::U32String visual; // from fribidi conversion, ordered visually
@@ -56,6 +57,9 @@ public:
 UnicodeBiDiText convertBiDiU32String(const U32String &input);
 String convertBiDiString(const String &input, const Common::Language lang);
 String convertBiDiString(const String &input, const Common::CodePage page);
+
+// calls convertBiDiString for each line in isolation
+String convertBiDiStringByLines(const String &input, const Common::CodePage page);
 
 } // End of namespace Common
 

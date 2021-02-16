@@ -99,6 +99,15 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 
 }
 
+Common::String bidiByLineHelper(Common::String line, va_list args) {
+	Common::CodePage page = va_arg(args, Common::CodePage);
+	return Common::convertBiDiString(line, page);
+}
+
+String convertBiDiStringByLines(const String &input, const Common::CodePage page) {
+	return input.forEachLine(bidiByLineHelper, page);
+}
+
 String convertBiDiString(const String &input, const Common::Language lang) {
 	if (lang != Common::HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
