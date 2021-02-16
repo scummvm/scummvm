@@ -4300,6 +4300,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2]);
 		break;
+	case 110:
+		mapping = NoirMapping{"PLAY", PLAY, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 112:
 		mapping = NoirMapping{"PLAYMUSIC", PLAYMUSIC, 1};
 		pp -= mapping.numArgs - 1;
@@ -5107,8 +5112,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case PLAY:
-		// Common to both DW1 & DW2
-		if (TinselV2) {
+		// Common to DW1 / DW2 / Noir
+		if (TinselV3) {
+			warning("TODO: Implement PLAY");
+			return -2;
+		} if (TinselV2) {
 			pp -= 3;			// 4 parameters
 			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
