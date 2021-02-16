@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-14 23:58+0000\n"
+"PO-Revision-Date: 2021-02-16 22:24+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3947,7 +3947,7 @@ msgstr "このモードでは最大120fpsで動作します。無効にすると
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "McCoyのクイックスタミナドレインを無効にする"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
