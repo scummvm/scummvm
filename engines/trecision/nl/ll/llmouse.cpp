@@ -48,7 +48,7 @@ uint16 BlinkLastDTextChar = MASKCOL;
 uint16 MouseBuf[50];
 int	KeybInput;
 extern bool _linearMode;
-extern bool VideoLocked;
+extern bool videoLocked;
 extern int NlVer;
 
 // joint management
@@ -71,18 +71,18 @@ uint16 vr(int16 x, int16 y) {
 					VPix
 --------------------------------------------------*/
 void VPix(int16 x, int16 y, uint16 col) {
-	if (Video == nullptr)
+	if (_video == nullptr)
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
 		uint32 a = ((uint32)x + MAXX * (uint32)y);
 		if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-			Video[a] = col;
+			_video[a] = col;
 		return ;
 	}
 
 	if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-		Video[x + y * (VideoPitch / 2)] = col;
+		_video[x + y * (VideoPitch / 2)] = col;
 }
 
 /*-----------------10/12/95 15.27-------------------
@@ -91,9 +91,9 @@ void VPix(int16 x, int16 y, uint16 col) {
 void VMouseOFF() {
 	int32 comx = omx;
 
-	bool vl = VideoLocked;
+	bool vl = videoLocked;
 	if (!vl)
-		LockVideo();
+		lockVideo();
 
 	for (int32 i = (comx - 10); i <= (comx + 10); i++)
 		VPix(i, omy, vr(i, omy));
@@ -116,9 +116,9 @@ void VMouseON() {
 	int32 cmx = mx;
 	uint16 mc = PalTo16bit(255, 255, 255);
 
-	bool vl = VideoLocked;
+	bool vl = videoLocked;
 	if (!vl)
-		LockVideo();
+		lockVideo();
 
 	for (int32 i = (comx - 10); i <= (comx + 10); i++) {
 		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (omy == my))))

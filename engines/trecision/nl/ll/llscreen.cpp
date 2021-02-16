@@ -49,7 +49,7 @@ int VertexNum, FaceNum, MatNum, LightNum;
 
 int MaxMemory = 0;
 // VIDEO
-uint16 *Video, VideoPitch;
+uint16 *_video, VideoPitch;
 uint16 *Video2;
 // GAME POINTER
 uint16 *ImagePointer;

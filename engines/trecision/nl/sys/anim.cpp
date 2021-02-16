@@ -96,11 +96,11 @@ extern uint32 _newData2[260];
 
 NightlongSmackerDecoder *SmkAnims[MAXSMACK];
 extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
-extern Graphics::PixelFormat ScreenFormat;
+extern Graphics::PixelFormat _screenFormat;
 
 // from regen.c
-extern int16 limiti[20][4];
-extern uint16 limitinum;
+extern int16 _limits[20][4];
+extern uint16 _limitsNum;
 extern int Hlim;
 extern const char *_sysSentence[];
 
@@ -182,7 +182,7 @@ void CallSmackSoundOnOff(int pos, int on) {
 					PalTo16bit
  --------------------------------------------------*/
 uint16 PalTo16bit(uint8 r, uint8 g, uint8 b) {
-	return (uint16)ScreenFormat.RGBToColor(r, g, b);
+	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
 /* -----------------09/09/97 18.02-------------------
@@ -284,11 +284,11 @@ void RegenSmackAnim(int num) {
 	if (pos == 0) {
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (!(AnimTab[num]._flag & (SMKANIM_OFF1 << a))  && (AnimTab[num]._lim[a][3] != 0)) {
-				limiti[limitinum][0] = AnimTab[num]._lim[a][0];
-				limiti[limitinum][1] = AnimTab[num]._lim[a][1] + TOP;
-				limiti[limitinum][2] = AnimTab[num]._lim[a][2];
-				limiti[limitinum][3] = AnimTab[num]._lim[a][3] + TOP;
-				limitinum ++;
+				_limits[_limitsNum][0] = AnimTab[num]._lim[a][0];
+				_limits[_limitsNum][1] = AnimTab[num]._lim[a][1] + TOP;
+				_limits[_limitsNum][2] = AnimTab[num]._lim[a][2];
+				_limits[_limitsNum][3] = AnimTab[num]._lim[a][3] + TOP;
+				_limitsNum ++;
 			}
 		}
 	}	// solo per l'omino
@@ -318,13 +318,13 @@ void RegenSmackAnim(int num) {
 			AddLine(_animMinX, _animMaxX, _animMinY + a + TOP);
 		}
 
-		limiti[limitinum][0] = _animMinX;
-		limiti[limitinum][1] = _animMinY + TOP;
-		limiti[limitinum][2] = _animMaxX;
-		limiti[limitinum][3] = _animMaxY + TOP;
+		_limits[_limitsNum][0] = _animMinX;
+		_limits[_limitsNum][1] = _animMinY + TOP;
+		_limits[_limitsNum][2] = _animMaxX;
+		_limits[_limitsNum][3] = _animMaxY + TOP;
 
-		Hlim = limitinum;
-		limitinum ++;
+		Hlim = _limitsNum;
+		_limitsNum ++;
 	}
 
 	if (!(AnimTab[num]._flag & SMKANIM_LOOP) && !(AnimTab[num]._flag & SMKANIM_BKG)) {

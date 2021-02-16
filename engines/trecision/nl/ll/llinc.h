@@ -99,7 +99,7 @@ typedef struct SFileHandle {
 // FUNCTIONS
 
 // VIDEO
-extern uint16 *Video, VideoPitch;
+extern uint16 *_video, VideoPitch;
 extern uint16 *Video2;
 // GAME POINTER
 extern uint16 *ImagePointer;

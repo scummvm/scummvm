@@ -40,12 +40,12 @@ namespace Trecision {
 
 int CurKey, CurAscii;
 short wmx = 0, wmy = 0, wmleft = 0, wmright = 0, omx = 0, omy = 0;
-bool VideoLocked = false;
-Graphics::PixelFormat ScreenFormat;
+bool videoLocked = false;
+Graphics::PixelFormat _screenFormat;
 bool _linearMode, _gamePaused = false;
 
 extern short mx, my, mleft, mright;
-extern uint16		*Video, VideoPitch;
+extern uint16		*_video, VideoPitch;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
@@ -64,7 +64,7 @@ void AnimFileFinish();
 void SpeechFileFinish();
 void VMouseON();
 void VMouseOFF();
-void ClearScreen();
+void clearScreen();
 void UnlockVideo();
 char waitKey();
 void ShowScreen(int px, int py, int dx, int dy);
@@ -139,10 +139,10 @@ void EventLoop() {
 }
 
 void NlInit() {
-	ClearScreen();
+	clearScreen();
 
-	ScreenFormat = g_system->getScreenFormat();
-	GetColorMask(ScreenFormat);
+	_screenFormat = g_system->getScreenFormat();
+	GetColorMask(_screenFormat);
 
 	_linearMode = true;
 	initMain();
@@ -165,15 +165,15 @@ void CheckSystem() {
 }
 
 /*-----------------16/01/97 16.21-------------------
-					LockVideo
+					lockVideo
 --------------------------------------------------*/
-void LockVideo() {
-	if (!VideoLocked) {
+void lockVideo() {
+	if (!videoLocked) {
 		Graphics::Surface *surface = g_system->lockScreen();
-		Video = (uint16 *)surface->getPixels();
+		_video = (uint16 *)surface->getPixels();
 		VideoPitch = surface->pitch;
 
-		VideoLocked = true;
+		videoLocked = true;
 	}
 }
 
@@ -181,11 +181,11 @@ void LockVideo() {
 					UnlockVideo
 --------------------------------------------------*/
 void UnlockVideo() {
-	if (VideoLocked) {
+	if (videoLocked) {
 		g_system->unlockScreen();
-		VideoLocked = false;
+		videoLocked = false;
 		VideoPitch = 0;
-		Video = nullptr;
+		_video = nullptr;
 	}
 }
 
@@ -242,16 +242,16 @@ void FreeKey() {
 }
 
 /*-----------------10/12/95 15.52-------------------
-					ClearScreen
+					clearScreen
 --------------------------------------------------*/
-void ClearScreen() {
-	LockVideo();
-	if (Video == NULL)
+void clearScreen() {
+	lockVideo();
+	if (_video == nullptr)
 		return ;
 	if ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))
-		longset(Video, 0x00000000, 320 * 480);
+		longset(_video, 0x00000000, 320 * 480);
 	else
-		longset(Video, 0x00000000, (VideoPitch / 4) * 480);
+		longset(_video, 0x00000000, (VideoPitch / 4) * 480);
 	UnlockVideo();
 }
 
@@ -342,7 +342,7 @@ void NlDissolve(int val) {
 		ShowScreen(0, 0, MAXX, MAXY);
 	}
 
-	ClearScreen();
+	clearScreen();
 }
 
 /*-----------------10/12/95 15.25-------------------

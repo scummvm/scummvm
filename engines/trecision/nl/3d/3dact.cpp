@@ -149,9 +149,9 @@ void actorStop() {
 				Set Light Position
 --------------------------------------------------*/
 void setPosition(int num) {
-	extern struct SLight *_light;
+	extern SLight *_light;
 
-	_light = (struct SLight *)_actor._light;
+	_light = _actor._light;
 
 	for (int a = 0; a < _actor._lightNum; a++) {
 		// If it's off
