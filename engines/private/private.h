@@ -202,7 +202,7 @@ public:
 
     // global state
     const Common::Point *_origin;
-    void setOrigin(const int [2]);
+    void setOrigin(const int[2]);
     Common::String *_nextSetting;
     Common::String *_currentSetting;
     bool            _toTake;
