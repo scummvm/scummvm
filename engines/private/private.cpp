@@ -1005,7 +1005,7 @@ Common::String PrivateEngine::getLeaveSound() {
     return Common::String::format("%sleft%d.wav", _globalAudioPath.c_str(), r);
 }
 
-char *PrivateEngine::getRandomPhoneClip(char *clip, int i, int j) {
+char *PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
 
     char *f = (char *)malloc((strlen(clip) + 3) * sizeof(char));

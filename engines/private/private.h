@@ -271,7 +271,7 @@ public:
     SoundList _policeRadio;
     PhoneList _phone;
 
-    char *getRandomPhoneClip(char *, int, int);
+    char *getRandomPhoneClip(const char *, int, int);
     void selectAMRadioArea(Common::Point);
     void selectPoliceRadioArea(Common::Point);
     void selectPhoneArea(Common::Point);
