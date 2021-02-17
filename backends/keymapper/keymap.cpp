@@ -217,7 +217,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 		if (event.joystick.position != 0) {
 			bool positiveHalf = event.joystick.position >= 0;
 			HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, U32String());
-			actions.push_back(_hwActionMap[hardwareInput]);
+			actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		} else {
 			// Axis position zero is part of both half axes, and triggers actions bound to both
 			HardwareInput hardwareInputPos = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, true, U32String());
