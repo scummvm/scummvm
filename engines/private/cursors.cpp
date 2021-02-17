@@ -344,19 +344,17 @@ void PrivateEngine::initCursors() {
         _cursorPoints.setVal(*name, point);
     }
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-
 }
 
 void PrivateEngine::changeCursor(Common::String cursor) {
     assert(_cursorData.contains(cursor));
     Common::Point p = *_cursorPoints.getVal(cursor);
-
     int x, y;
+
     if (cursor == "default") {
         x = 11;
         y = 16;
-    }
-    else {
+    } else {
         x = 32;
         y = 32;
     }
