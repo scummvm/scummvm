@@ -75,9 +75,19 @@ typedef struct Setting {
 
 // Settings
 
-extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
+
+class SettingMaps {
+    public:
+    Setting *psetting;
+    Setting *setting;
+    SettingMap map;
+
+    void init();
+    void save(char *);
+    void load(Common::String *);
+};
 
 // Funtions
 
@@ -115,9 +125,6 @@ int randbool();
 
 // Code Execution
 
-void initSetting();
-void saveSetting(char *);
-void loadSetting(Common::String *);
 
 void execute(Inst *);
 

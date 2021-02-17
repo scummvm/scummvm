@@ -277,7 +277,7 @@ Common::Error PrivateEngine::run() {
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
             clearAreas();
             _currentSetting = _nextSetting;
-            loadSetting(_nextSetting);
+            settings.load(_nextSetting);
             _nextSetting = NULL;
             execute(prog);
             changeCursor("default");

@@ -53,9 +53,6 @@
 
 namespace Private {
 
-Setting *setting;
-SettingMap settingMap;
-
 Datum *stack  = NULL; /* the stack */
 Datum *stackp = NULL; /* next free spot on stack */
 
@@ -89,8 +86,8 @@ void initInsts() {
     }
 }
 
-/* initialize for code generation */
-void initSetting() {
+/* initialize setting for code generation */
+void SettingMaps::init() {
     setting = (Setting *)malloc(sizeof(Setting));
     memset((void *)setting, 0, sizeof(Setting));
 
@@ -101,14 +98,13 @@ void initSetting() {
     progp = prog;
 }
 
-void saveSetting(char *name) {
-    //Common::String s(name);
-    settingMap.setVal(name, setting);
+void SettingMaps::save(char *name) {
+    map.setVal(name, setting);
 }
 
-void loadSetting(Common::String *name) {
-    assert(settingMap.contains(*name));
-    setting = settingMap.getVal(*name);
+void SettingMaps::load(Common::String *name) {
+    assert(map.contains(*name));
+    setting = map.getVal(*name);
 
     debugC(1, kPrivateDebugCode, "loading setting %s", name->c_str());
 
@@ -154,7 +150,6 @@ int strpush() { /* push constant onto stack */
     push(d);
     return 0;
 }
-
 
 int varpush() { /* push variable onto stack */
     Datum d;
@@ -287,7 +282,6 @@ int lt() {
         d2.type = NUM;
     }
 
-
     d1.u.val = (int)(d1.u.val < d2.u.val);
     push(d1);
     return 0;
@@ -310,7 +304,6 @@ int ge() {
         d2.u.val = d2.u.sym->u.val;
         d2.type = NUM;
     }
-
 
     d1.u.val = (int)(d1.u.val >= d2.u.val);
     push(d1);
@@ -335,7 +328,6 @@ int le() {
         d2.type = NUM;
     }
 
-
     d1.u.val = (int)(d1.u.val <= d2.u.val);
     push(d1);
     return 0;
@@ -359,7 +351,6 @@ int eq() {
         d2.type = NUM;
     }
 
-
     d1.u.val = (int)(d1.u.val == d2.u.val);
     push(d1);
     return 0;
@@ -378,7 +369,6 @@ int ne() {
         d2.u.val = d2.u.sym->u.val;
         d2.type = NUM;
     }
-
 
     d1.u.val = (int)(d1.u.val != d2.u.val);
     push(d1);
