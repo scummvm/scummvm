@@ -221,6 +221,7 @@ protected:
 		bool hasDirtyPalette() const;
 		void setCurFrame(int frame) { _curFrame = frame; }
 		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
+		void loadPaletteFromChunkRaw(Common::SeekableReadStream *chunk, int firstEntry, int numEntries);
 		void useInitialPalette();
 		bool canDither() const;
 		void setDither(const byte *palette);
@@ -338,6 +339,7 @@ protected:
 	void handleList(uint32 listSize);
 	void handleStreamHeader(uint32 size);
 	void readStreamName(uint32 size);
+	void readPalette8(uint32 size);
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
 	static byte getStreamIndex(uint32 tag);
 	void checkTruemotion1();
