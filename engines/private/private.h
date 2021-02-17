@@ -210,7 +210,6 @@ public:
     void loadDossier();
 
     // Police Bust
-    int policeVideoIndex;
     void policeBust();
     bool _policeBustEnabled;
     void startPoliceBust();
