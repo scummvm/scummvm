@@ -253,7 +253,7 @@ void VideoMemoryGraphicsDriver::DestroyFxPool() {
 #define algetb8(c)  getb8(c)
 
 
-__inline void get_pixel_if_not_transparent8(const unsigned char *pixel, unsigned char *red, unsigned char *green, unsigned char *blue, unsigned char *divisor) {
+__inline void get_pixel_if_not_transparent8(const uint8 *pixel, uint8 *red, uint8 *green, uint8 *blue, uint8 *divisor) {
 	if (pixel[0] != MASK_COLOR_8) {
 		*red += algetr8(pixel[0]);
 		*green += algetg8(pixel[0]);
@@ -262,7 +262,7 @@ __inline void get_pixel_if_not_transparent8(const unsigned char *pixel, unsigned
 	}
 }
 
-__inline void get_pixel_if_not_transparent16(const unsigned short *pixel, unsigned short *red, unsigned short *green, unsigned short *blue, unsigned short *divisor) {
+__inline void get_pixel_if_not_transparent16(const uint16 *pixel, uint16 *red, uint16 *green, uint16 *blue, uint16 *divisor) {
 	if (pixel[0] != MASK_COLOR_16) {
 		*red += algetr16(pixel[0]);
 		*green += algetg16(pixel[0]);
@@ -271,7 +271,7 @@ __inline void get_pixel_if_not_transparent16(const unsigned short *pixel, unsign
 	}
 }
 
-__inline void get_pixel_if_not_transparent32(const unsigned int *pixel, unsigned int *red, unsigned int *green, unsigned int *blue, unsigned int *divisor) {
+__inline void get_pixel_if_not_transparent32(const uint32 *pixel, uint32 *red, uint32 *green, uint32 *blue, uint32 *divisor) {
 	if (pixel[0] != MASK_COLOR_32) {
 		*red += algetr32(pixel[0]);
 		*green += algetg32(pixel[0]);
@@ -294,26 +294,26 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 		const uint8_t *scanline_before = bitmap->GetScanLine(y + tile->y - 1);
 		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
 		const uint8_t *scanline_after = bitmap->GetScanLine(y + tile->y + 1);
-		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+		uint32 *memPtrLong = (uint32 *)dst_ptr;
 
 		for (int x = 0; x < tile->width; x++) {
 			if (src_depth == 8) {
-				const unsigned char *srcData = (const unsigned char *)&scanline_at[(x + tile->x) * sizeof(char)];
+				const uint8 *srcData = (const uint8 *)&scanline_at[(x + tile->x) * sizeof(uint8)];
 				if (*srcData == MASK_COLOR_8) {
 					if (!usingLinearFiltering)
 						memPtrLong[x] = 0;
 					// set to transparent, but use the colour from the neighbouring
 					// pixel to stop the linear filter doing black outlines
 					else {
-						unsigned char red = 0, green = 0, blue = 0, divisor = 0;
+						uint8 red = 0, green = 0, blue = 0, divisor = 0;
 						if (x > 0)
 							get_pixel_if_not_transparent8(&srcData[-1], &red, &green, &blue, &divisor);
 						if (x < tile->width - 1)
 							get_pixel_if_not_transparent8(&srcData[1], &red, &green, &blue, &divisor);
 						if (y > 0)
-							get_pixel_if_not_transparent8((const unsigned char *)&scanline_before[(x + tile->x) * sizeof(char)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent8((const uint8 *)&scanline_before[(x + tile->x) * sizeof(uint8)], &red, &green, &blue, &divisor);
 						if (y < tile->height - 1)
-							get_pixel_if_not_transparent8((const unsigned char *)&scanline_after[(x + tile->x) * sizeof(char)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent8((const uint8 *)&scanline_after[(x + tile->x) * sizeof(uint8)], &red, &green, &blue, &divisor);
 						if (divisor > 0)
 							memPtrLong[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
 						else
@@ -330,22 +330,22 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 					}
 				}
 			} else if (src_depth == 16) {
-				const unsigned short *srcData = (const unsigned short *)&scanline_at[(x + tile->x) * sizeof(short)];
+				const uint16 *srcData = (const uint16 *)&scanline_at[(x + tile->x) * sizeof(uint16)];
 				if (*srcData == MASK_COLOR_16) {
 					if (!usingLinearFiltering)
 						memPtrLong[x] = 0;
 					// set to transparent, but use the colour from the neighbouring
 					// pixel to stop the linear filter doing black outlines
 					else {
-						unsigned short red = 0, green = 0, blue = 0, divisor = 0;
+						uint16 red = 0, green = 0, blue = 0, divisor = 0;
 						if (x > 0)
 							get_pixel_if_not_transparent16(&srcData[-1], &red, &green, &blue, &divisor);
 						if (x < tile->width - 1)
 							get_pixel_if_not_transparent16(&srcData[1], &red, &green, &blue, &divisor);
 						if (y > 0)
-							get_pixel_if_not_transparent16((const unsigned short *)&scanline_before[(x + tile->x) * sizeof(short)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent16((const uint16 *)&scanline_before[(x + tile->x) * sizeof(uint16)], &red, &green, &blue, &divisor);
 						if (y < tile->height - 1)
-							get_pixel_if_not_transparent16((const unsigned short *)&scanline_after[(x + tile->x) * sizeof(short)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent16((const uint16 *)&scanline_after[(x + tile->x) * sizeof(uint16)], &red, &green, &blue, &divisor);
 						if (divisor > 0)
 							memPtrLong[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
 						else
@@ -362,15 +362,14 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 					}
 				}
 			} else if (src_depth == 32) {
-				unsigned int *ptrLong = (unsigned int *)dst_ptr;
-				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(unsigned int)];
+				const uint32 *srcData = (const uint32 *)&scanline_at[(x + tile->x) * sizeof(unsigned int)];
 				if (*srcData == MASK_COLOR_32) {
 					if (!usingLinearFiltering)
-						ptrLong[x] = 0;
+						memPtrLong[x] = 0;
 					// set to transparent, but use the colour from the neighbouring
 					// pixel to stop the linear filter doing black outlines
 					else {
-						unsigned int red = 0, green = 0, blue = 0, divisor = 0;
+						uint32 red = 0, green = 0, blue = 0, divisor = 0;
 						if (x > 0)
 							get_pixel_if_not_transparent32(&srcData[-1], &red, &green, &blue, &divisor);
 						if (x < tile->width - 1)
@@ -380,19 +379,19 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 						if (y < tile->height - 1)
 							get_pixel_if_not_transparent32((const uint32 *)&scanline_after[(x + tile->x) * sizeof(uint32)], &red, &green, &blue, &divisor);
 						if (divisor > 0)
-							ptrLong[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
+							memPtrLong[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
 						else
-							ptrLong[x] = 0;
+							memPtrLong[x] = 0;
 					}
 					lastPixelWasTransparent = true;
 				} else if (has_alpha) {
-					ptrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), algeta32(*srcData));
+					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), algeta32(*srcData));
 				} else {
-					ptrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), 0xFF);
+					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), 0xFF);
 					if (lastPixelWasTransparent) {
 						// update the colour of the previous tranparent pixel, to
 						// stop black outlines when linear filtering
-						ptrLong[x - 1] = ptrLong[x] & 0x00FFFFFF;
+						memPtrLong[x - 1] = memPtrLong[x] & 0x00FFFFFF;
 						lastPixelWasTransparent = false;
 					}
 				}
