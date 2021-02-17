@@ -477,11 +477,11 @@ void fMovie(ArgArray args) {
         g_private->_nextSetting = nextSetting;
 
     } else if (*movie == "\"\"") {
-        g_private->_repeatedMovieExit = nextSetting;
+        g_private->_repeatedMovieExit = *nextSetting;
         debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting->c_str());
     } else {
         debugC(1, kPrivateDebugScript, "movie %s already played", movie->c_str());
-        g_private->_nextSetting = g_private->_repeatedMovieExit;
+        g_private->_nextSetting = &(g_private->_repeatedMovieExit);
     }
 }
 
