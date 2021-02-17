@@ -83,7 +83,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _policeBustEnabled = false;
     _policeBustSetting = NULL;
     _numberClicks = 0;
-    policeVideoIndex = 0;
     _sirenSound = Common::String("po/audio/posfx002.wav");
 
     // General sounds
