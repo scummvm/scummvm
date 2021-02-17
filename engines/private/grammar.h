@@ -48,7 +48,6 @@ typedef struct Datum {  /* interpreter stack type */
     } u;
 } Datum;
 
-
 typedef struct Arg {
     int n;
     int (** inst)();
@@ -60,9 +59,8 @@ typedef int (* Inst)();  /* machine instruction */
 typedef Common::HashMap<void *, Common::String *> PtrToName;
 typedef Common::HashMap<Common::String, void *> NameToPtr;
 
-extern void initInsts();
-extern void initFuncs();
-
+void initInsts();
+void initFuncs();
 
 typedef struct Setting {
 
@@ -80,7 +78,6 @@ typedef struct Setting {
 extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
-
 
 // Funtions
 
@@ -118,11 +115,11 @@ int randbool();
 
 // Code Execution
 
-extern void initSetting();
-extern void saveSetting(char *);
-extern void loadSetting(Common::String *);
+void initSetting();
+void saveSetting(char *);
+void loadSetting(Common::String *);
 
-extern void execute(Inst *);
+void execute(Inst *);
 
 } // End of namespace Private
 
