@@ -435,7 +435,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
 
-	void renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]);
+	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]);
 };
 
 } // namespace TwinE

@@ -1490,7 +1490,7 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 		x2 = x1;
 	}
 	uint32 deltaY = y1 - minY;
-	int16 *lVertexCoordPointer = (int16 *)(polygonTabPtr + minY * 2);
+	int16 *currentPolygonTabEntry = &polygonTabPtr[minY];
 	if (x2 <= minX) {
 		uint32 deltaX = (uint32)(uint16)((int16)minX - (int16)x2) << 0x10;
 		uint32 deltaRatio = deltaX / deltaY;
@@ -1499,17 +1499,18 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 		bool bVar5 = false;
 		deltaY = (x2 & 0xffffU) |
 				 (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
-		do {
-			*lVertexCoordPointer = (int16)deltaY;
+		for (int32 y = 0; y < minY; ++y) {
+			if (currentPolygonTabEntry >= _polyTab + _polyTabSize) {
+				break;
+			}
+			*currentPolygonTabEntry++ = (int16)deltaY;
 			deltaX = (uint32)bVar5;
 			uint32 uVar1 = deltaY + deltaRatio;
 			// CARRY4: Return true if there is an arithmetic overflow when adding 'x' and 'y' as unsigned integers.
 			// bVar5 = CARRY4(deltaY, deltaRatio) || CARRY4(uVar1, deltaX);
 			bVar5 = deltaY > deltaRatio || uVar1 > deltaX;
 			deltaY = uVar1 + deltaX;
-			minY = minY + -1;
-			lVertexCoordPointer = lVertexCoordPointer + 1;
-		} while (minY != 0);
+		}
 	} else {
 		uint32 deltaX = (uint32)(uint16)((int16)x2 - (int16)minX) << 0x10;
 		uint32 deltaRatio = deltaX / deltaY;
@@ -1517,15 +1518,16 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
 		bool bVar5 = false;
 		deltaY = (x2 & 0xffffU) | (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
-		do {
-			*lVertexCoordPointer = (int16)deltaY;
+		for (int32 y = 0; y < minY; ++y) {
+			if (currentPolygonTabEntry >= _polyTab + _polyTabSize) {
+				break;
+			}
+			*currentPolygonTabEntry++ = (int16)deltaY;
 			deltaX = (uint32)bVar5;
 			uint32 uVar1 = deltaY - deltaRatio;
 			bVar5 = deltaY < deltaRatio || uVar1 < deltaX;
 			deltaY = uVar1 - deltaX;
-			minY = minY + -1;
-			lVertexCoordPointer = lVertexCoordPointer + 1;
-		} while (minY != 0);
+		}
 	}
 }
 
@@ -1548,12 +1550,11 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		}
 		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
 							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset1);
-		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
-							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset3);
-		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.y,
-							  (uint32)(uint16)vertex1.y, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
-	}
-	if (yTop < yBottom) {
+		computeHolomapPolygon(yTop, (uint32)vertex4.x,
+							  yBottom, (uint32)vertex3.x, _polyTab + hmPolyOffset3);
+		computeHolomapPolygon(yTop, (uint32)vertex4.y,
+							  yBottom, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
+	} else if (yTop < yBottom) {
 		if ((int32)yTop <= (int32)top) {
 			top = yTop;
 		}
@@ -1562,14 +1563,14 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		}
 		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
 							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset2);
-		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
-							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset5);
-		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.y,
-							  (uint32)(uint16)vertex1.y, (uint32)vertex3.y, _polyTab + hmPolyOffset6);
+		computeHolomapPolygon(yTop, (uint32)vertex4.x,
+							  yBottom, (uint32)vertex3.x, _polyTab + hmPolyOffset5);
+		computeHolomapPolygon(yTop, (uint32)vertex4.y,
+							  yBottom, (uint32)vertex3.y, _polyTab + hmPolyOffset6);
 	}
 }
 
-void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexCoordinates2[3]) {
+void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]) {
 	uint32 top = 32000;
 	uint32 bottom = (uint32)-32000;
 	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
