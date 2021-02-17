@@ -1538,14 +1538,14 @@ static const int hmPolyOffset4 = 180; /* 0x00b4 */
 static const int hmPolyOffset5 = 240; /* 0x00f0 */
 static const int hmPolyOffset6 = 300; /* 0x012c */
 
-void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, uint32 &top, uint32 &bottom) {
-	const uint32 yBottom = (uint32)(uint16)vertex1.y;
-	const uint32 yTop = (uint32)(uint16)vertex2.y;
+void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, int32 &top, int32 &bottom) {
+	const int32 yBottom = (int32)(uint16)vertex1.y;
+	const int32 yTop = (int32)(uint16)vertex2.y;
 	if (yBottom < yTop) {
-		if ((int32)yBottom <= (int32)top) {
+		if (yBottom <= top) {
 			top = yBottom;
 		}
-		if ((int32)bottom <= (int32)yTop) {
+		if (bottom <= yTop) {
 			bottom = yTop;
 		}
 		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
@@ -1555,10 +1555,10 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		computeHolomapPolygon(yTop, (uint32)vertex4.y,
 							  yBottom, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
 	} else if (yTop < yBottom) {
-		if ((int32)yTop <= (int32)top) {
+		if (yTop <= top) {
 			top = yTop;
 		}
-		if ((int32)bottom <= (int32)yBottom) {
+		if (bottom <= yBottom) {
 			bottom = yBottom;
 		}
 		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
@@ -1571,17 +1571,17 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 }
 
 void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]) {
-	uint32 top = 32000;
-	uint32 bottom = (uint32)-32000;
+	int32 top = 32000;
+	int32 bottom = -32000;
 	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
 	renderHolomapPolygons(top, bottom);
 }
 
-void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
+void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, top);
-	int16 vsize = (int16)(bottom - (int16)top) + 1;
+	int32 vsize = bottom - top + 1;
 	const int16 *polyTabPtr = &_polyTab[top];
 	int32 currentLine = top;
 	const void* pixelBegin = _engine->frontVideoBuffer.getBasePtr(0, 0);
