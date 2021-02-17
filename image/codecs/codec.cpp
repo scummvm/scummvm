@@ -43,6 +43,7 @@
 #include "image/codecs/smc.h"
 #include "image/codecs/svq1.h"
 #include "image/codecs/truemotion1.h"
+#include "image/codecs/xan.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -224,6 +225,8 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 		return new Indeo4Decoder(width, height, bitsPerPixel);
 	case MKTAG('I', 'V', '5', '0'):
 		return new Indeo5Decoder(width, height, bitsPerPixel);
+	case MKTAG('X', 'x', 'a', 'n'):
+		return new XanDecoder(width, height, bitsPerPixel);
 #ifdef IMAGE_CODECS_TRUEMOTION1_H
 	case MKTAG('D','U','C','K'):
 	case MKTAG('d','u','c','k'):
