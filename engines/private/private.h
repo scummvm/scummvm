@@ -186,8 +186,8 @@ public:
     void drawMask(Graphics::ManagedSurface *);
     bool inMask(Graphics::ManagedSurface *, Common::Point);
     uint32 _transparentColor;
-    Common::Rect *screenRect;
-    Common::String *_framePath;
+    Common::Rect screenRect;
+    Common::String _framePath;
     Graphics::Surface *_frame;
     Common::String *_nextVS;
     void drawScreen();
@@ -234,7 +234,7 @@ public:
     Common::String *_nextMovie;
     PlayedMediaTable _playedMovies;
     PlayedMediaTable _playedPhoneClips;
-    Common::String *_repeatedMovieExit;
+    Common::String _repeatedMovieExit;
     Common::String *_pausedSetting;
 
     // Masks/Exits

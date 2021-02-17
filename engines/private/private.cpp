@@ -70,23 +70,23 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     // Movies
     _nextMovie = NULL;
     _nextVS = NULL;
-    _repeatedMovieExit = new Common::String("");
+    _repeatedMovieExit = "";
 
     // Save and load
     _saveGameMask = NULL;
     _loadGameMask = NULL;
 
     // Interface
-    _framePath = new Common::String("inface/general/inface2.bmp");
+    _framePath = "inface/general/inface2.bmp";
 
     // Police
     _policeBustEnabled = false;
     _policeBustSetting = NULL;
     _numberClicks = 0;
-    _sirenSound = Common::String("po/audio/posfx002.wav");
+    _sirenSound = "po/audio/posfx002.wav";
 
     // General sounds
-    _globalAudioPath = Common::String("global/audio/");
+    _globalAudioPath = "global/audio/";
     _noStopSounds = false;
 
     // Radios and phone
@@ -94,9 +94,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _AMRadioArea = NULL;
     _phoneArea = NULL;
     // TODO: use this as a default sound for radio
-    _infaceRadioPath = Common::String("inface/radio/");
-    _phonePrefix = Common::String("inface/telephon/");
-    _phoneCallSound = Common::String("phone.wav");
+    _infaceRadioPath = "inface/radio/";
+    _phonePrefix = "inface/telephon/";
+    _phoneCallSound = "phone.wav";
 
     // Dossiers
     _dossierPage = 0;
@@ -105,11 +105,12 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _dossierPrevSuspectMask = NULL;
 
     // Diary
-    _diaryLocPrefix = Common::String("inface/diary/loclist/");
+    _diaryLocPrefix = "inface/diary/loclist/";
 }
 
 PrivateEngine::~PrivateEngine() {
     // Dispose your resources here
+    delete _frame;
     delete _rnd;
 
     // Remove all of our debug levels
@@ -166,7 +167,7 @@ Common::Error PrivateEngine::run() {
     _pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
     _transparentColor = _pixelFormat.RGBToColor(0,255,0);
     initGraphics(_screenW, _screenH, &_pixelFormat);
-    screenRect = new Common::Rect(0, 0, _screenW, _screenH);
+    screenRect = Common::Rect(0, 0, _screenW, _screenH);
     changeCursor("default");
     _origin = new Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
@@ -176,7 +177,7 @@ Common::Error PrivateEngine::run() {
 
     // Load the game frame once
     Common::File frameFile;
-    assert(frameFile.open(convertPath(*_framePath)));
+    assert(frameFile.open(convertPath(_framePath)));
     _image->loadStream(frameFile);
     _frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 
@@ -644,7 +645,7 @@ void PrivateEngine::restartGame() {
     _playedPhoneClips.clear();
 
     // Movies
-    _repeatedMovieExit = NULL;
+    _repeatedMovieExit = "";
     _playedMovies.clear();
 
 }
@@ -718,7 +719,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     }
 
     // Played media
-    *_repeatedMovieExit = stream->readString();
+    _repeatedMovieExit = stream->readString();
     _playedMovies.clear();
     size = stream->readUint32LE();
     for (uint32 i = 0; i < size; ++i) {
@@ -790,7 +791,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     }
 
     // Played media
-    stream->writeString(*_repeatedMovieExit);
+    stream->writeString(_repeatedMovieExit);
     stream->writeByte(0);
 
     stream->writeUint32LE(_playedMovies.size());
@@ -915,7 +916,7 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
     _image->loadStream(file);
     Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
     surf->create(_screenW, _screenH, _pixelFormat);
-    surf->fillRect(*screenRect, _transparentColor);
+    surf->fillRect(screenRect, _transparentColor);
     Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
     surf->transBlitFrom(*csurf, Common::Point(x,y));
     csurf->free();
