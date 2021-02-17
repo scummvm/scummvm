@@ -21,7 +21,7 @@
  */
 
 #include "ags/lib/allegro.h"
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
@@ -91,14 +91,14 @@ void *pluginOpen(const char *filename) {
 }
 
 int pluginClose(void *lib) {
-	DLL *dll = static_cast<DLL *>(lib);
-	delete dll;
+	PluginBase *plugin = static_cast<PluginBase *>(lib);
+	delete plugin;
 	return 0;
 }
 
 void *pluginSym(void *lib, const char *method) {
-	DLL *dll = static_cast<DLL *>(lib);
-	return (*dll)[method];
+	PluginBase *plugin = static_cast<PluginBase *>(lib);
+	return (*plugin)[method];
 }
 
 const char *pluginError() {
@@ -107,7 +107,7 @@ const char *pluginError() {
 
 /*------------------------------------------------------------------*/
 
-DLL::DLL() {
+PluginBase::PluginBase() {
 	DLL_METHOD(AGS_PluginV2);
 	DLL_METHOD(AGS_EditorStartup);
 	DLL_METHOD(AGS_EditorShutdown);
@@ -121,38 +121,38 @@ DLL::DLL() {
 	DLL_METHOD(AGS_EngineInitGfx);
 }
 
-int DLL::AGS_EditorStartup(IAGSEditor *) {
+int PluginBase::AGS_EditorStartup(IAGSEditor *) {
 	return 0;
 }
 
-void DLL::AGS_EditorShutdown() {
+void PluginBase::AGS_EditorShutdown() {
 }
 
-void DLL::AGS_EditorProperties(HWND) {
+void PluginBase::AGS_EditorProperties(HWND) {
 }
 
-int DLL::AGS_EditorSaveGame(char *, int) {
+int PluginBase::AGS_EditorSaveGame(char *, int) {
 	return 0;
 }
 
-void DLL::AGS_EditorLoadGame(char *, int) {
+void PluginBase::AGS_EditorLoadGame(char *, int) {
 }
 
-void DLL::AGS_EngineStartup(IAGSEngine *) {
+void PluginBase::AGS_EngineStartup(IAGSEngine *) {
 }
 
-void DLL::AGS_EngineShutdown() {
+void PluginBase::AGS_EngineShutdown() {
 }
 
-NumberPtr DLL::AGS_EngineOnEvent(int, NumberPtr) {
+NumberPtr PluginBase::AGS_EngineOnEvent(int, NumberPtr) {
 	return 0;
 }
 
-int DLL::AGS_EngineDebugHook(const char *, int, int) {
+int PluginBase::AGS_EngineDebugHook(const char *, int, int) {
 	return 0;
 }
 
-void DLL::AGS_EngineInitGfx(const char *driverID, void *data) {
+void PluginBase::AGS_EngineInitGfx(const char *driverID, void *data) {
 	assert(!strcmp(driverID, "Software"));
 }
 

@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_SNOW_RAIN_AGS_SNOW_RAIN_H
 #define AGS_PLUGINS_AGS_SNOW_RAIN_AGS_SNOW_RAIN_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/plugins/ags_snow_rain/weather.h"
 
 namespace AGS3 {
@@ -39,7 +39,7 @@ extern int32 _screenColorDepth;
  * This is not the original AGS SnowRain plugin, but a workalike
  * plugin created for the AGS engine PSP port.
  */
-class AGSSnowRain : public DLL {
+class AGSSnowRain : public PluginBase {
 private:
 	static Weather *_rain;
 	static Weather *_snow;

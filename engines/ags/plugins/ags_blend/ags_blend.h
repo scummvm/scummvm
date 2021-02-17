@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_BLEND_AGS_BLEND_H
 #define AGS_PLUGINS_AGS_BLEND_AGS_BLEND_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -33,7 +33,7 @@ namespace AGSBlend {
  * Author: Steven Poulton
  * Description: An AGS Plugin to allow true Alpha Blending
  */
-class AGSBlend : public DLL {
+class AGSBlend : public PluginBase {
 private:
 	static IAGSEngine *_engine;
 private:

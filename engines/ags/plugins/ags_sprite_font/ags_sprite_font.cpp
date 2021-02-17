@@ -76,7 +76,7 @@ VariableWidthSpriteFontRenderer *AGSSpriteFont::_vWidthRenderer;
 #define STRINGIFY(s) STRINGIFY_X(s)
 #define STRINGIFY_X(s) #s
 
-AGSSpriteFont::AGSSpriteFont() : DLL() {
+AGSSpriteFont::AGSSpriteFont() : PluginBase() {
 	_engine = nullptr;
 
 	DLL_METHOD(AGS_GetPluginName);

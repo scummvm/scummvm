@@ -34,7 +34,7 @@ int32 _screenColorDepth;
 Weather *AGSSnowRain::_rain;
 Weather *AGSSnowRain::_snow;
 
-AGSSnowRain::AGSSnowRain() : DLL() {
+AGSSnowRain::AGSSnowRain() : PluginBase() {
 	_engine = nullptr;
 	_screenWidth = 320;
 	_screenHeight  = 200;

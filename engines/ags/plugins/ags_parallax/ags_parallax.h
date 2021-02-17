@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_PARALLAX_AGS_PARALLAX_H
 #define AGS_PLUGINS_AGS_PARALLAX_AGS_PARALLAX_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/plugins/serializer.h"
 
 namespace AGS3 {
@@ -46,7 +46,7 @@ struct Sprite {
  * This is not the AGS Parallax plugin by Scorpiorus
  * but a workalike plugin created for the AGS engine ports.
  */
-class AGSParallax : public DLL {
+class AGSParallax : public PluginBase {
 private:
 	static IAGSEngine *_engine;
 	static int32 _screenWidth;

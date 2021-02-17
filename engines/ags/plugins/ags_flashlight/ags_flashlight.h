@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGSFLASHLIGHT_AGSFLASHLIGHT_H
 #define AGS_PLUGINS_AGSFLASHLIGHT_AGSFLASHLIGHT_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/lib/allegro.h"
 
 namespace AGS3 {
@@ -34,7 +34,7 @@ namespace AGSFlashlight {
  * This is not the AGS Flashlight plugin,
  * but a workalike plugin originally created for the AGS engine PSP port.
  */
-class AGSFlashlight : public DLL {
+class AGSFlashlight : public PluginBase {
 private:
 	static IAGSEngine *_engine;
 	static int32 screen_width;

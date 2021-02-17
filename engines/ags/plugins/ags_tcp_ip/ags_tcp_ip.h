@@ -23,14 +23,14 @@
 #ifndef AGS_PLUGINS_AGS_TCP_IP_AGS_TCP_IP_H
 #define AGS_PLUGINS_AGS_TCP_IP_AGS_TCP_IP_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/lib/allegro.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSTcpIp {
 
-class AGSTcpIp : public DLL {
+class AGSTcpIp : public PluginBase {
 private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);

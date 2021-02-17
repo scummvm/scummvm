@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGSCREDITZ_AGSCREDITZ_H
 #define AGS_PLUGINS_AGSCREDITZ_AGSCREDITZ_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -112,7 +112,7 @@ struct State {
 	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
 };
 
-class AGSCreditz : public DLL {
+class AGSCreditz : public PluginBase {
 protected:
 	enum Version {
 		VERSION_11 = 11, VERSION_20 = 20

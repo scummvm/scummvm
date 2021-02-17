@@ -79,7 +79,7 @@ namespace AGSBlend {
 
 IAGSEngine *AGSBlend::_engine;
 
-AGSBlend::AGSBlend() : DLL() {
+AGSBlend::AGSBlend() : PluginBase() {
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
 }

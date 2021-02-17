@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_PLUGINS_DLL_H
-#define AGS_PLUGINS_DLL_H
+#ifndef AGS_PLUGINS_PLUGIN_BASE_H
+#define AGS_PLUGINS_PLUGIN_BASE_H
 
 #include "ags/shared/util/string.h"
 #include "ags/plugins/agsplugin.h"
@@ -85,9 +85,9 @@ using string = const char *;
 typedef uint32 HWND;
 
 /**
- * Base class for the implementation of AGS plugin DLLs
+ * Base class for the implementation of AGS plugins
  */
-class DLL {
+class PluginBase {
 protected:
 	Common::HashMap<Common::String, void *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methods;
 
@@ -105,7 +105,7 @@ protected:
 	static int    AGS_EngineDebugHook(const char *, int, int);
 	static void   AGS_EngineInitGfx(const char *driverID, void *data);
 public:
-	DLL();
+	PluginBase();
 
 	void *operator[](const Common::String &methodName) const {
 		return _methods[methodName];

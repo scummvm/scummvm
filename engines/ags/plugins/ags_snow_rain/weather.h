@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_SNOW_RAIN_WEATHER_H
 #define AGS_PLUGINS_AGS_SNOW_RAIN_WEATHER_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/plugins/serializer.h"
 
 namespace AGS3 {

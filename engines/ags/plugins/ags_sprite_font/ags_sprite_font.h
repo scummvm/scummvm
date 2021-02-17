@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
 #define AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/plugins/serializer.h"
 #include "ags/plugins/ags_sprite_font/sprite_font_renderer.h"
 #include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
@@ -32,7 +32,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class AGSSpriteFont : public DLL {
+class AGSSpriteFont : public PluginBase {
 private:
 	static IAGSEngine *_engine;
 	static SpriteFontRenderer *_fontRenderer;

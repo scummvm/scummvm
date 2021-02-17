@@ -28,7 +28,7 @@ namespace Plugins {
 namespace AGSTcpIp {
 
 
-AGSTcpIp::AGSTcpIp() : DLL() {
+AGSTcpIp::AGSTcpIp() : PluginBase() {
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
 }

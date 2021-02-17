@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_GALAXY_STEAM_AGS_GALAXY_STEAM_H
 #define AGS_PLUGINS_AGS_GALAXY_STEAM_AGS_GALAXY_STEAM_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -32,7 +32,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSGalaxySteam {
 
-class AGS2Client : public DLL {
+class AGS2Client : public PluginBase {
 protected:
 	static int IsAchievementAchieved(const ScriptMethodParams &params);
 	static int SetAchievementAchieved(const ScriptMethodParams &params);

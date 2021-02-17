@@ -23,13 +23,13 @@
 #ifndef AGS_PLUGINS_AGS_PAL_RENDER_AGS_PAL_RENDER_H
 #define AGS_PLUGINS_AGS_PAL_RENDER_AGS_PAL_RENDER_H
 
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-class AGSPalRender : public DLL {
+class AGSPalRender : public PluginBase {
 private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);

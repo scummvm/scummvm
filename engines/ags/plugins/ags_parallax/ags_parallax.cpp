@@ -40,7 +40,7 @@ bool AGSParallax::_enabled;
 Sprite AGSParallax::_sprites[MAX_SPRITES];
 
 
-AGSParallax::AGSParallax() : DLL() {
+AGSParallax::AGSParallax() : PluginBase() {
 	_engine = nullptr;
 	_screenWidth = 320;
 	_screenHeight = 200;

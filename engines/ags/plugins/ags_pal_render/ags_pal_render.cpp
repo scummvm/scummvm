@@ -1391,7 +1391,7 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 
 /*------------------------------------------------------------------*/
 
-AGSPalRender::AGSPalRender() : DLL() {
+AGSPalRender::AGSPalRender() : PluginBase() {
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
 	DLL_METHOD(AGS_EngineShutdown);

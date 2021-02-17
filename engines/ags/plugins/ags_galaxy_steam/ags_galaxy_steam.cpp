@@ -26,7 +26,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSGalaxySteam {
 
-AGS2Client::AGS2Client() : DLL() {
+AGS2Client::AGS2Client() : PluginBase() {
 	DLL_METHOD(AGS_EngineStartup);
 }
 

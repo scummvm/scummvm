@@ -26,7 +26,7 @@
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/plugins/dll.h"
+#include "ags/plugins/plugin_base.h"
 #include "ags/engine/globals.h"
 
 namespace AGS3 {
