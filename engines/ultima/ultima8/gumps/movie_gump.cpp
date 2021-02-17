@@ -46,13 +46,13 @@ MovieGump::MovieGump() : ModalGump(), _player(nullptr) {
 }
 
 MovieGump::MovieGump(int width, int height, Common::SeekableReadStream *rs,
-                     bool introMusicHack, const byte *overridePal,
+                     bool introMusicHack, bool noScale, const byte *overridePal,
 					 uint32 flags, int32 layer)
 		: ModalGump(50, 50, width, height, 0, flags, layer) {
 	uint32 stream_id = rs->readUint32BE();
 	rs->seek(-4, SEEK_CUR);
 	if (stream_id == 0x52494646) {// 'RIFF' - crusader AVIs
-		_player = new AVIPlayer(rs, width, height, overridePal);
+		_player = new AVIPlayer(rs, width, height, overridePal, noScale);
 	} else {
 		_player = new SKFPlayer(rs, width, height, introMusicHack);
 	}
@@ -116,12 +116,12 @@ bool MovieGump::OnKeyDown(int key, int mod) {
 }
 
 //static
-ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack) {
+ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack, bool noScale) {
 	ModalGump *gump;
 	if (GAME_IS_U8)
-		gump = new MovieGump(320, 200, rs, introMusicHack);
+		gump = new MovieGump(320, 200, rs, introMusicHack, noScale);
 	else
-		gump = new MovieGump(640, 480, rs, introMusicHack);
+		gump = new MovieGump(640, 480, rs, introMusicHack, noScale);
 
 	if (fade) {
 		FadeToModalProcess *p = new FadeToModalProcess(gump);
@@ -203,7 +203,7 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 
 		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x, y, rs, false, pal->_palette);
+			Gump *gump = new MovieGump(x, y, rs, false, false, pal->_palette);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
 		}
@@ -221,7 +221,7 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	if (item) {
 		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
+			Gump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
 		}
@@ -241,7 +241,7 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	if (item) {
 		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
+			Gump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
 		}

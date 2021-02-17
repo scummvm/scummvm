@@ -28,14 +28,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
-AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal)
+AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal, bool noScale)
 	: MoviePlayer(), _playing(false), _width(width), _height(height),
 	  _doubleSize(false), _pausedMusic(false), _overridePal(overridePal) {
 	_decoder = new Video::AVIDecoder();
 	_decoder->loadStream(rs);
 	uint32 vidWidth = _decoder->getWidth();
 	uint32 vidHeight = _decoder->getHeight();
-	if (vidWidth <= _width / 2 && vidHeight <= _height / 2) {
+	if (vidWidth <= _width / 2 && vidHeight <= _height / 2 && !noScale) {
 		_doubleSize = true;
 		vidHeight *= 2;
 		vidWidth *= 2;
@@ -95,14 +95,18 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 			_currentFrame.setPalette(pal, 0, 256);
 		}
 		if (_doubleSize) {
+			// TODO: Add support for multiple bytes per pixel
 			assert(_currentFrame.w == frame->w * 2 && _currentFrame.h == frame->h * 2);
+			const int bpp = frame->format.bytesPerPixel;
 			for (int y = 0; y < frame->h; y++) {
 				const uint8 *srcPixel = static_cast<const uint8 *>(frame->getPixels()) + frame->pitch * y;
 				uint8 *dstPixels = static_cast<uint8 *>(_currentFrame.getPixels()) + _currentFrame.pitch * y * 2;
 				for (int x = 0; x < frame->w; x++) {
-					dstPixels[x * 2] = *srcPixel;
-					dstPixels[x * 2 + 1] = *srcPixel;
-					srcPixel++;
+					for (int i = 0; i < bpp; i++) {
+						dstPixels[x * 2 * bpp + i] = *srcPixel;
+						dstPixels[x * 2 * bpp + i + bpp] = *srcPixel;
+						srcPixel++;
+					}
 				}
 			}
 		} else {

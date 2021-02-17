@@ -1759,7 +1759,7 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	MovieGump::U8MovieViewer(skf, false);
+	MovieGump::U8MovieViewer(skf, false, false, true);
 	return false;
 }
 

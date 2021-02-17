@@ -206,7 +206,7 @@ Gump *WeaselGump::playMovie(const Std::string &filename) {
 		warning("Couldn't load flic %s", filename.c_str());
 		return nullptr;
 	}
-	Gump *gump = new MovieGump(600, 450, rs, false);
+	Gump *gump = new MovieGump(600, 450, rs, false, false);
 	gump->InitGump(this, true);
 	gump->setRelativePosition(CENTER);
 	gump->CreateNotifier();

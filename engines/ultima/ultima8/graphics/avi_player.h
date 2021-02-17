@@ -35,7 +35,13 @@ namespace Ultima8 {
 
 class AVIPlayer : public MoviePlayer {
 public:
-	AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal);
+	//!
+	//! Create a new player for the given stream at the given size.  Playback is
+	//! automatically scaled up using the line-skip style from Crusader, unless
+	//! noScale flag is set.
+	//! If overridePal is set, use that as the palette instead of the AVI's one.
+	//!
+	AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal, bool noScale);
 	~AVIPlayer();
 
 	void run() override;
