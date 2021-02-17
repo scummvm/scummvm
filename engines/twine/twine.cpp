@@ -1167,4 +1167,27 @@ void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
 	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft);
 }
 
+const char *TwinEEngine::getGameId() const {
+	if (isLBA1()) {
+		return "lba";
+	}
+	assert(isLBA2());
+	return "lba2";
+}
+
+bool TwinEEngine::unlockAchievement(const Common::String &id) {
+	const MetaEngine &meta = getMetaEngine();
+	const Common::AchievementsInfo &achievementsInfo = meta.getAchievementsInfo(getGameId());
+
+	Common::String msg = id;
+	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
+		if (id == achievementsInfo.descriptions[i].id) {
+			msg = achievementsInfo.descriptions[i].title;
+			break;
+		}
+	}
+
+	return AchMan.setAchievement(id, msg);
+}
+
 } // namespace TwinE

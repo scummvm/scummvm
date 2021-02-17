@@ -652,6 +652,9 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
 	engine->_scene->talkingActor = ctx.actorIdx;
 	engine->_text->drawTextProgressive(textIdx);
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->talkingActor == 8)/* && (*(short *)lifeScriptPosition == 0xe2 [226])*/ {
+		engine->unlockAchievement("LBA_ACH_008");
+	}
 	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
@@ -1242,6 +1245,9 @@ static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
 	if (engine->_gameState->inventoryNumLeafsBox < 10) {
 		engine->_gameState->inventoryNumLeafsBox++;
+		if (engine->_gameState->inventoryNumLeafsBox == 5) {
+			engine->unlockAchievement("LBA_ACH_003");
+		}
 	}
 	return 0;
 }

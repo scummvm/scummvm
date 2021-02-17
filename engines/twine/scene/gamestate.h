@@ -146,10 +146,7 @@ public:
 		return _gameStateFlags[index];
 	}
 
-	inline void setGameFlag(uint8 index, uint8 value) {
-		debug(2, "Set gameStateFlags[%u]=%u", index, value);
-		_gameStateFlags[index] = value;
-	}
+	void setGameFlag(uint8 index, uint8 value);
 
 	/**
 	 * LBA engine chapter

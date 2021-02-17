@@ -284,6 +284,27 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	return true;
 }
 
+void GameState::setGameFlag(uint8 index, uint8 value) {
+	debug(2, "Set gameStateFlags[%u]=%u", index, value);
+	_gameStateFlags[index] = value;
+
+	// all 4 slap videos
+	if ((index == 200 || index == 201 || index == 202 || index == 215) &&
+		_gameStateFlags[200] != 0 && _gameStateFlags[201] != 0 && _gameStateFlags[202] != 0 && _gameStateFlags[215] != 0) {
+		_engine->unlockAchievement("LBA_ACH_012");
+	}
+	// second video of ferry trip
+	if (index == 209) {
+		_engine->unlockAchievement("LBA_ACH_010");
+	}
+	if (index == (int)InventoryItems::kiUseSabre) {
+		_engine->unlockAchievement("LBA_ACH_002");
+	}
+	if (index == (int)InventoryItems::kBottleOfSyrup) {
+		_engine->unlockAchievement("LBA_ACH_007");
+	}
+}
+
 void GameState::processFoundItem(int32 item) {
 	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + BRICK_HEIGHT) / BRICK_HEIGHT;

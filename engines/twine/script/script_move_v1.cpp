@@ -211,6 +211,10 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->labelIdx = ctx.stream.readByte();
 	ctx.actor->currentLabelPtr = ctx.stream.pos() - 2;
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 2 &&
+		(ctx.actor->labelIdx == 0 || ctx.actor->labelIdx == 1)) {
+		engine->unlockAchievement("LBA_ACH_004");
+	}
 	return 0;
 }
 
@@ -438,6 +442,9 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+		engine->unlockAchievement("LBA_ACH_009");
+	}
 	return 0;
 }
 
@@ -453,6 +460,9 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
+	}
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
 }
@@ -470,6 +480,9 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+		engine->unlockAchievement("LBA_ACH_009");
+	}
 	return 0;
 }
 
@@ -485,6 +498,9 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
+	}
+	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
 }

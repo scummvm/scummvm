@@ -195,6 +195,7 @@ public:
 	bool isAttackAnimationActive() const;
 	bool isJumpAnimationActive() const;
 
+	int16 actorIdx = 0; // own actor index
 	int32 x = 0;
 	int32 y = 0;
 	int32 z = 0;

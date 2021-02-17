@@ -465,6 +465,14 @@ void Scene::changeScene() {
 	previousSceneIdx = currentSceneIdx;
 	currentSceneIdx = needChangeScene;
 
+	if (needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
+		_engine->unlockAchievement("LBA_ACH_001");
+		// TODO: if you finish in under 4 hours - unlock the achievement - see version 4 savegames
+		// _engine->unlockAchievment("LBA_ACH_005");
+	} else if (needChangeScene == LBA1SceneId::Brundle_Island_Secret_room) {
+		_engine->unlockAchievement("LBA_ACH_006");
+	}
+
 	_engine->_sound->stopSamples();
 
 	resetScene();

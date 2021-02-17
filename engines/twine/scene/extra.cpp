@@ -883,6 +883,9 @@ void Extra::processExtras() {
 					if (_engine->_gameState->inventoryNumKashes > 999) {
 						_engine->_gameState->inventoryNumKashes = 999;
 					}
+					if (_engine->_gameState->inventoryNumKashes >= 500) {
+						_engine->unlockAchievement("LBA_ACH_011");
+					}
 				} else if (extra->info0 == SPRITEHQR_LIFEPOINTS) {
 					_engine->_scene->sceneHero->life += extra->info1;
 					if (_engine->_scene->sceneHero->life > 50) {

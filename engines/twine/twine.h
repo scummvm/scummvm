@@ -228,6 +228,9 @@ public:
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
+	const char *getGameId() const;
+
+	bool unlockAchievement(const Common::String &id);
 
 	Actor *_actor;
 	Animations *_animations;

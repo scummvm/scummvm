@@ -29,7 +29,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "twine/detection.h"
-
+#include "twine/achievements_tables.h"
 #include "twine/input.h"
 #include "twine/twine.h"
 
@@ -60,6 +60,8 @@ public:
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+
+	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override;
 };
 
 static const ExtraGuiOption OptWallCollision = {
@@ -163,6 +165,30 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 	options.push_back(OptText);
 	options.push_back(OptDebug);
 	return options;
+}
+
+const Common::AchievementsInfo TwinEMetaEngine::getAchievementsInfo(const Common::String &target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	Common::AchievementsPlatform platform = Common::UNK_ACHIEVEMENTS;
+	Common::String extra = ConfMan.get("extra", target);
+	if (extra.contains("Steam")) {
+		platform = Common::STEAM_ACHIEVEMENTS;
+	}
+
+	// "(gameId, platform) -> result" search
+	Common::AchievementsInfo result;
+	for (const TwinE::AchievementDescriptionList *i = TwinE::achievementDescriptionList; i->gameId; ++i) {
+		if (i->gameId == gameId && i->platform == platform) {
+			result.platform = i->platform;
+			result.appId = i->appId;
+			for (const Common::AchievementDescription *it = i->descriptions; it->id; ++it) {
+				result.descriptions.push_back(*it);
+			}
+			break;
+		}
+	}
+	return result;
 }
 
 //

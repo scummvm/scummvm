@@ -350,6 +350,7 @@ void Actor::initActor(int16 actorIdx) {
 void Actor::resetActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
+	actor->actorIdx = actorIdx;
 	actor->body = BodyType::btNormal;
 	actor->anim = AnimationTypes::kStanding;
 	actor->x = 0;
