@@ -376,12 +376,36 @@ void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmpS.transBlitFrom(spriteS, Common::Point(x, y), (uint)-1, true);
 }
 
+static void verticallyFlip(Graphics::ManagedSurface &dest, const Graphics::ManagedSurface &src) {
+	dest.create(src.w, src.h, src.format);
+
+	for (int y = 0; y < src.h; ++y) {
+		const byte *srcP = (const byte *)src.getBasePtr(0, src.h - y - 1);
+		byte *destP = (byte *)dest.getBasePtr(0, y);
+		Common::copy(srcP, srcP + src.pitch, destP);
+	}
+}
+
 void draw_sprite_v_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	error("TODO: draw_sprite_v_flip");
+	Graphics::ManagedSurface &bmpS = **bmp;
+	Graphics::ManagedSurface &spriteS = **sprite;
+	Graphics::ManagedSurface temp;
+
+	verticallyFlip(temp, spriteS);
+	add_palette_if_needed(spriteS);
+
+	bmpS.transBlitFrom(temp, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
 }
 
 void draw_sprite_vh_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	error("TODO: draw_sprite_vh_flip");
+	Graphics::ManagedSurface &bmpS = **bmp;
+	Graphics::ManagedSurface &spriteS = **sprite;
+	Graphics::ManagedSurface temp;
+
+	verticallyFlip(temp, spriteS);
+	add_palette_if_needed(spriteS);
+
+	bmpS.transBlitFrom(temp, Common::Point(x, y), TRANSPARENT_COLOR(spriteS), true);
 }
 
 void rotate_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, fixed angle) {
