@@ -75,9 +75,10 @@
 #define yychar          PRIVATE_char
 
 /* First part of user prologue.  */
-#line 29 "engines/private/grammar.y"
+#line 51 "engines/private/grammar.y"
 
 
+#include "private/private.h"
 #include "private/grammar.h"
 
 #define code1(c1)       Private::code(c1);
@@ -98,7 +99,7 @@ int PRIVATE_wrap() {
 
 
 
-#line 102 "engines/private/grammar.cpp"
+#line 103 "engines/private/grammar.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -543,12 +544,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    68,    68,    69,    72,    73,    74,    77,    78,    81,
-      82,    85,    92,    93,    98,   106,   107,   110,   113,   116,
-     119,   120,   125,   129,   130,   133,   141,   142,   150,   153,
-     154,   155,   156,   157,   160,   161,   162,   163,   164,   165,
-     168,   169,   170,   171,   172,   173,   174,   175,   176,   177,
-     178
+       0,    91,    91,    92,    95,    96,    97,   100,   101,   104,
+     105,   108,   115,   116,   121,   129,   130,   133,   136,   139,
+     142,   143,   148,   152,   153,   156,   164,   165,   173,   176,
+     177,   178,   179,   180,   183,   184,   185,   186,   187,   188,
+     191,   192,   193,   194,   195,   196,   197,   198,   199,   200,
+     201
 };
 #endif
 
@@ -1195,298 +1196,298 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* line: DEBUGTOK '{' debug '}'  */
-#line 72 "engines/private/grammar.y"
+#line 95 "engines/private/grammar.y"
                                              { /* Not used in the game */ }
-#line 1201 "engines/private/grammar.cpp"
+#line 1202 "engines/private/grammar.cpp"
     break;
 
   case 5: /* line: DEFINETOK NAME '{' define '}'  */
-#line 73 "engines/private/grammar.y"
-                                             { installAll((yyvsp[-3].s)); }
-#line 1207 "engines/private/grammar.cpp"
+#line 96 "engines/private/grammar.y"
+                                             { g_private->maps.installAll((yyvsp[-3].s)); }
+#line 1208 "engines/private/grammar.cpp"
     break;
 
   case 6: /* line: SETTINGTOK NAME '{' statements '}'  */
-#line 74 "engines/private/grammar.y"
+#line 97 "engines/private/grammar.y"
                                              { saveSetting((yyvsp[-3].s)); initSetting(); }
-#line 1213 "engines/private/grammar.cpp"
+#line 1214 "engines/private/grammar.cpp"
     break;
 
   case 9: /* statements: %empty  */
-#line 81 "engines/private/grammar.y"
+#line 104 "engines/private/grammar.y"
                                { (yyval.inst) = progp; }
-#line 1219 "engines/private/grammar.cpp"
+#line 1220 "engines/private/grammar.cpp"
     break;
 
   case 11: /* statement: GOTOTOK NAME ';'  */
-#line 85 "engines/private/grammar.y"
+#line 108 "engines/private/grammar.y"
                             {
         (yyval.inst) = progp;
-        code2(strpush, (Private::Inst) Private::constant(STRING, 0, (yyvsp[-1].s)));
-        code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
-        code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
+        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
+        code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
+        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
-#line 1231 "engines/private/grammar.cpp"
+#line 1232 "engines/private/grammar.cpp"
     break;
 
   case 12: /* statement: fcall ';'  */
-#line 92 "engines/private/grammar.y"
+#line 115 "engines/private/grammar.y"
                             { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1237 "engines/private/grammar.cpp"
+#line 1238 "engines/private/grammar.cpp"
     break;
 
   case 13: /* statement: if cond body end  */
-#line 93 "engines/private/grammar.y"
+#line 116 "engines/private/grammar.y"
                            {
                 /* else-less if */
                 ((yyvsp[-3].inst))[1] = (Inst)(yyvsp[-1].inst);     /* thenpart */
                 ((yyvsp[-3].inst))[3] = (Inst)(yyvsp[0].inst); 
                 }
-#line 1247 "engines/private/grammar.cpp"
+#line 1248 "engines/private/grammar.cpp"
     break;
 
   case 14: /* statement: if cond body end ELSETOK body end  */
-#line 98 "engines/private/grammar.y"
+#line 121 "engines/private/grammar.y"
                                             { 
                 /* if with else */
                 ((yyvsp[-6].inst))[1] = (Inst)(yyvsp[-4].inst);     /* thenpart */
                 ((yyvsp[-6].inst))[2] = (Inst)(yyvsp[-1].inst);     /* elsepart */
                 ((yyvsp[-6].inst))[3] = (Inst)(yyvsp[0].inst); 
                 }
-#line 1258 "engines/private/grammar.cpp"
+#line 1259 "engines/private/grammar.cpp"
     break;
 
   case 15: /* body: statement  */
-#line 106 "engines/private/grammar.y"
+#line 129 "engines/private/grammar.y"
                              { (yyval.inst) = (yyvsp[0].inst); }
-#line 1264 "engines/private/grammar.cpp"
+#line 1265 "engines/private/grammar.cpp"
     break;
 
   case 16: /* body: '{' statements '}'  */
-#line 107 "engines/private/grammar.y"
+#line 130 "engines/private/grammar.y"
                              { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1270 "engines/private/grammar.cpp"
+#line 1271 "engines/private/grammar.cpp"
     break;
 
   case 17: /* end: %empty  */
-#line 110 "engines/private/grammar.y"
+#line 133 "engines/private/grammar.y"
                              { code(STOP); (yyval.inst) = progp; }
-#line 1276 "engines/private/grammar.cpp"
+#line 1277 "engines/private/grammar.cpp"
     break;
 
   case 18: /* if: IFTOK  */
-#line 113 "engines/private/grammar.y"
+#line 136 "engines/private/grammar.y"
           { (yyval.inst) = code(ifcode); code3(STOP, STOP, STOP); }
-#line 1282 "engines/private/grammar.cpp"
+#line 1283 "engines/private/grammar.cpp"
     break;
 
   case 19: /* cond: '(' expr ')'  */
-#line 116 "engines/private/grammar.y"
+#line 139 "engines/private/grammar.y"
                         { code(STOP); (yyval.inst) = (yyvsp[-1].inst); }
-#line 1288 "engines/private/grammar.cpp"
+#line 1289 "engines/private/grammar.cpp"
     break;
 
   case 21: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  */
-#line 120 "engines/private/grammar.y"
+#line 143 "engines/private/grammar.y"
                                                                         { 
           Common::Rect *r = new Common::Rect((yyvsp[-9].sym)->u.val, (yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val);
           assert(r->isValidRect()); 
           defineSymbol((yyvsp[-13].s), r); 
           }
-#line 1298 "engines/private/grammar.cpp"
+#line 1299 "engines/private/grammar.cpp"
     break;
 
   case 22: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 125 "engines/private/grammar.y"
+#line 148 "engines/private/grammar.y"
                                                             {
           Common::Rect *r = new Common::Rect((yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val, (yyvsp[-1].sym)->u.val);  
           defineSymbol((yyvsp[-11].s), r); 
           }
-#line 1307 "engines/private/grammar.cpp"
+#line 1308 "engines/private/grammar.cpp"
     break;
 
   case 23: /* define: NAME ',' define  */
-#line 129 "engines/private/grammar.y"
+#line 152 "engines/private/grammar.y"
                           { defineSymbol((yyvsp[-2].s), NULL); }
-#line 1313 "engines/private/grammar.cpp"
+#line 1314 "engines/private/grammar.cpp"
     break;
 
   case 24: /* define: NAME  */
-#line 130 "engines/private/grammar.y"
+#line 153 "engines/private/grammar.y"
                           { defineSymbol((yyvsp[0].s), NULL); }
-#line 1319 "engines/private/grammar.cpp"
+#line 1320 "engines/private/grammar.cpp"
     break;
 
   case 25: /* fcall: GOTOTOK '(' NAME ')'  */
-#line 133 "engines/private/grammar.y"
+#line 156 "engines/private/grammar.y"
                                {
                                (yyval.inst) = progp;
-                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, (yyvsp[-1].s)));
-                               code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
-                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
+                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
                                code1(funcpush);
                                }
-#line 1331 "engines/private/grammar.cpp"
+#line 1332 "engines/private/grammar.cpp"
     break;
 
   case 26: /* fcall: RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 141 "engines/private/grammar.y"
+#line 164 "engines/private/grammar.y"
                                                    { (yyval.inst) = progp; }
-#line 1337 "engines/private/grammar.cpp"
+#line 1338 "engines/private/grammar.cpp"
     break;
 
   case 27: /* fcall: NAME '(' startp params ')'  */
-#line 142 "engines/private/grammar.y"
+#line 165 "engines/private/grammar.y"
                                       {
                                (yyval.inst) = (yyvsp[-2].inst);
-                               code2(constpush, (Private::Inst) constant(NUM, (yyvsp[-1].narg), NULL));
-                               code2(strpush, (Private::Inst) constant(STRING, 0, (yyvsp[-4].s))); 
+                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, (yyvsp[-1].narg), NULL));
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, (yyvsp[-4].s))); 
                                code1(funcpush);
                                }
-#line 1348 "engines/private/grammar.cpp"
+#line 1349 "engines/private/grammar.cpp"
     break;
 
   case 28: /* startp: %empty  */
-#line 150 "engines/private/grammar.y"
+#line 173 "engines/private/grammar.y"
                     { (yyval.inst) = progp; }
-#line 1354 "engines/private/grammar.cpp"
+#line 1355 "engines/private/grammar.cpp"
     break;
 
   case 29: /* params: %empty  */
-#line 153 "engines/private/grammar.y"
+#line 176 "engines/private/grammar.y"
                             { (yyval.narg) = 0; }
-#line 1360 "engines/private/grammar.cpp"
+#line 1361 "engines/private/grammar.cpp"
     break;
 
   case 30: /* params: fcall ',' params  */
-#line 154 "engines/private/grammar.y"
+#line 177 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1366 "engines/private/grammar.cpp"
+#line 1367 "engines/private/grammar.cpp"
     break;
 
   case 31: /* params: expr ',' params  */
-#line 155 "engines/private/grammar.y"
+#line 178 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1372 "engines/private/grammar.cpp"
+#line 1373 "engines/private/grammar.cpp"
     break;
 
   case 32: /* params: expr  */
-#line 156 "engines/private/grammar.y"
+#line 179 "engines/private/grammar.y"
                       { (yyval.narg) = 1; }
-#line 1378 "engines/private/grammar.cpp"
+#line 1379 "engines/private/grammar.cpp"
     break;
 
   case 33: /* params: fcall  */
-#line 157 "engines/private/grammar.y"
+#line 180 "engines/private/grammar.y"
                       { (yyval.narg) = 1; }
-#line 1384 "engines/private/grammar.cpp"
+#line 1385 "engines/private/grammar.cpp"
     break;
 
   case 34: /* value: NULLTOK  */
-#line 160 "engines/private/grammar.y"
-                   { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-#line 1390 "engines/private/grammar.cpp"
+#line 183 "engines/private/grammar.y"
+                   { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
+#line 1391 "engines/private/grammar.cpp"
     break;
 
   case 35: /* value: FALSETOK  */
-#line 161 "engines/private/grammar.y"
-                   { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-#line 1396 "engines/private/grammar.cpp"
+#line 184 "engines/private/grammar.y"
+                   { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
+#line 1397 "engines/private/grammar.cpp"
     break;
 
   case 36: /* value: TRUETOK  */
-#line 162 "engines/private/grammar.y"
-                   { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 1, NULL)); }
-#line 1402 "engines/private/grammar.cpp"
+#line 185 "engines/private/grammar.y"
+                   { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL)); }
+#line 1403 "engines/private/grammar.cpp"
     break;
 
   case 37: /* value: NUM  */
-#line 163 "engines/private/grammar.y"
+#line 186 "engines/private/grammar.y"
                    { code2(Private::constpush, (Private::Inst)(yyvsp[0].sym)); }
-#line 1408 "engines/private/grammar.cpp"
+#line 1409 "engines/private/grammar.cpp"
     break;
 
   case 38: /* value: STRING  */
-#line 164 "engines/private/grammar.y"
+#line 187 "engines/private/grammar.y"
                    { code2(Private::strpush, (Private::Inst)(yyvsp[0].sym)); }
-#line 1414 "engines/private/grammar.cpp"
+#line 1415 "engines/private/grammar.cpp"
     break;
 
   case 39: /* value: NAME  */
-#line 165 "engines/private/grammar.y"
-                   { code1(Private::varpush); code1((Private::Inst) lookupName((yyvsp[0].s))); code1(Private::eval); }
-#line 1420 "engines/private/grammar.cpp"
+#line 188 "engines/private/grammar.y"
+                   { code1(Private::varpush); code1((Private::Inst) g_private->maps.lookupName((yyvsp[0].s))); code1(Private::eval); }
+#line 1421 "engines/private/grammar.cpp"
     break;
 
   case 40: /* expr: value  */
-#line 168 "engines/private/grammar.y"
+#line 191 "engines/private/grammar.y"
                           { (yyval.inst) = (yyvsp[0].inst); }
-#line 1426 "engines/private/grammar.cpp"
+#line 1427 "engines/private/grammar.cpp"
     break;
 
   case 41: /* expr: '!' value  */
-#line 169 "engines/private/grammar.y"
+#line 192 "engines/private/grammar.y"
                           { code1(Private::negate); (yyval.inst) = (yyvsp[0].inst); }
-#line 1432 "engines/private/grammar.cpp"
+#line 1433 "engines/private/grammar.cpp"
     break;
 
   case 42: /* expr: value EQ value  */
-#line 170 "engines/private/grammar.y"
+#line 193 "engines/private/grammar.y"
                           { code1(Private::eq); }
-#line 1438 "engines/private/grammar.cpp"
+#line 1439 "engines/private/grammar.cpp"
     break;
 
   case 43: /* expr: value NEQ value  */
-#line 171 "engines/private/grammar.y"
+#line 194 "engines/private/grammar.y"
                           { code1(Private::ne); }
-#line 1444 "engines/private/grammar.cpp"
+#line 1445 "engines/private/grammar.cpp"
     break;
 
   case 44: /* expr: value '+' value  */
-#line 172 "engines/private/grammar.y"
+#line 195 "engines/private/grammar.y"
                           { code1(Private::add); }
-#line 1450 "engines/private/grammar.cpp"
+#line 1451 "engines/private/grammar.cpp"
     break;
 
   case 45: /* expr: value '<' value  */
-#line 173 "engines/private/grammar.y"
+#line 196 "engines/private/grammar.y"
                           { code1(Private::lt); }
-#line 1456 "engines/private/grammar.cpp"
+#line 1457 "engines/private/grammar.cpp"
     break;
 
   case 46: /* expr: value '>' value  */
-#line 174 "engines/private/grammar.y"
+#line 197 "engines/private/grammar.y"
                           { code1(Private::gt); }
-#line 1462 "engines/private/grammar.cpp"
+#line 1463 "engines/private/grammar.cpp"
     break;
 
   case 47: /* expr: value LTE value  */
-#line 175 "engines/private/grammar.y"
+#line 198 "engines/private/grammar.y"
                           { code1(Private::le); }
-#line 1468 "engines/private/grammar.cpp"
+#line 1469 "engines/private/grammar.cpp"
     break;
 
   case 48: /* expr: value GTE value  */
-#line 176 "engines/private/grammar.y"
+#line 199 "engines/private/grammar.y"
                           { code1(Private::ge); }
-#line 1474 "engines/private/grammar.cpp"
+#line 1475 "engines/private/grammar.cpp"
     break;
 
   case 49: /* expr: value '+'  */
-#line 177 "engines/private/grammar.y"
+#line 200 "engines/private/grammar.y"
                           { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1480 "engines/private/grammar.cpp"
+#line 1481 "engines/private/grammar.cpp"
     break;
 
   case 50: /* expr: RANDOMTOK '(' NUM '%' ')'  */
-#line 178 "engines/private/grammar.y"
+#line 201 "engines/private/grammar.y"
                                     { code3(Private::constpush, (Private::Inst)(yyvsp[-2].sym), randbool); }
-#line 1486 "engines/private/grammar.cpp"
+#line 1487 "engines/private/grammar.cpp"
     break;
 
 
-#line 1490 "engines/private/grammar.cpp"
+#line 1491 "engines/private/grammar.cpp"
 
       default: break;
     }

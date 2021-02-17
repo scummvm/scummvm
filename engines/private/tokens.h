@@ -88,7 +88,7 @@ extern int PRIVATE_debug;
 #if ! defined PRIVATE_STYPE && ! defined PRIVATE_STYPE_IS_DECLARED
 union PRIVATE_STYPE
 {
-#line 52 "engines/private/grammar.y"
+#line 75 "engines/private/grammar.y"
 
         Private::Symbol *sym; /* symbol table pointer */
         int (**inst)();       /* machine instruction */

@@ -30,6 +30,7 @@
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "private/private.h"
 #include "private/grammar.h"
 #include "private/tokens.h"
 
@@ -52,9 +53,9 @@ FALSE                   return FALSETOK;
 TRUE                    return TRUETOK;
 NULL                    return NULLTOK;
 Random                  return RANDOMTOK;
-[A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = strdup(PRIVATE_text); return NAME;
-[\-]?[0-9]+             PRIVATE_lval.sym = Private::constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
-\"[^\"\r\n]*\"          PRIVATE_lval.sym = Private::constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+[A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
+[\-]?[0-9]+             PRIVATE_lval.sym = Private::g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
+\"[^\"\r\n]*\"          PRIVATE_lval.sym = Private::g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
 [\r|\n]+                /* ignore return */;
 [ \t]+                  /* ignore whitespace */;
 .                       return *yytext;

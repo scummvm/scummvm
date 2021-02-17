@@ -50,7 +50,6 @@
 
 namespace Private {
 
-SymbolMap settings, variables, cursors, locations, rects;
 ConstantList constants;
 NameList variableList;
 NameList locationList;
@@ -86,7 +85,7 @@ Symbol *lookup(Common::String s, SymbolMap symlist) {
 }
 
 /* lookup some name in some symbol table */
-Symbol *lookupName(char *n) {
+Symbol *SymbolMaps::lookupName(char *n) {
     //debug("looking up %s", n);
     Common::String *s = new Common::String(n);
 
@@ -109,10 +108,9 @@ Symbol *lookupName(char *n) {
         debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s->c_str());
         return constant(STRING, 0, (char *)s->c_str());
     }
-
 }
 
-void installAll(char *n) {
+void SymbolMaps::installAll(char *n) {
     Common::String *s;
     Common::Rect *r;
 
@@ -145,7 +143,7 @@ void installAll(char *n) {
     }
 }
 
-Symbol *constant(int t, int d, char *s) {
+Symbol *SymbolMaps::constant(int t, int d, char *s) {
     Symbol *sp;
     Common::String *n = new Common::String("<constant>");
 
