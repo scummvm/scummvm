@@ -45,7 +45,6 @@ typedef struct Symbol {     /* symbol table entry */
 
 // Symbols
 
-//extern void showSymbol(Symbol *);
 void setSymbol(Symbol *, int);
 
 typedef Common::HashMap<Common::String, Symbol *> SymbolMap;
