@@ -158,7 +158,7 @@ Common::Error PrivateEngine::run() {
     parse(buf);
     free(buf);
     delete file;
-    assert(constants.size() > 0);
+    assert(maps.constants.size() > 0);
 
     // Initialize graphics
     _screenW = 640;
@@ -626,14 +626,14 @@ bool PrivateEngine::hasFeature(EngineFeature f) const {
 void PrivateEngine::restartGame() {
     debugC(1, kPrivateDebugFunction, "restartGame");
 
-    for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+    for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
         Private::Symbol *sym = maps.variables.getVal(*it);
         if (*(sym->name) != "kAlternateGame")
             sym->u.val = 0;
     }
 
     // Diary
-    for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
+    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
         Private::Symbol *sym = maps.locations.getVal(*it);
         sym->u.val = 0;
     }
@@ -658,14 +658,14 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     _nextSetting = new Common::String(kStartGame);
     int val;
 
-    for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+    for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
         s.syncAsUint32LE(val);
         Private::Symbol *sym = maps.variables.getVal(*it);
         sym->u.val = val;
     }
 
     // Diary
-    for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
+    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
         s.syncAsUint32LE(val);
         Private::Symbol *sym = maps.locations.getVal(*it);
         sym->u.val = val;
@@ -743,13 +743,13 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
         return Common::kNoError;
 
     // Variables
-    for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
+    for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
         Private::Symbol *sym = maps.variables.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
 
     // Diary
-    for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
+    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
         Private::Symbol *sym = maps.locations.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
@@ -1028,7 +1028,7 @@ void PrivateEngine::removeTimer() {
 void PrivateEngine::loadLocations(Common::Rect *rect) {
     uint32 i = 0;
     int16 offset = 44;
-    for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
+    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
         Private::Symbol *sym = maps.locations.getVal(*it);
         i++;
         if (sym->u.val) {

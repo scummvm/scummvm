@@ -143,14 +143,14 @@ define:  /* nothing */
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  { 
           Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);
           assert(r->isValidRect()); 
-          defineSymbol($NAME, r); 
+          g_private->maps.defineSymbol($NAME, r); 
           }
         | NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' {
           Common::Rect *r = new Common::Rect($5->u.val, $7->u.val, $9->u.val, $11->u.val);  
-          defineSymbol($NAME, r); 
+          g_private->maps.defineSymbol($NAME, r); 
           }
-        | NAME ',' define { defineSymbol($NAME, NULL); }
-        | NAME            { defineSymbol($NAME, NULL); }  
+        | NAME ',' define { g_private->maps.defineSymbol($NAME, NULL); }
+        | NAME            { g_private->maps.defineSymbol($NAME, NULL); }  
         ;
 
 fcall:    GOTOTOK '(' NAME ')' {

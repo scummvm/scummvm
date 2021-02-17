@@ -1293,7 +1293,7 @@ yyreduce:
                                                                         { 
           Common::Rect *r = new Common::Rect((yyvsp[-9].sym)->u.val, (yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val);
           assert(r->isValidRect()); 
-          defineSymbol((yyvsp[-13].s), r); 
+          g_private->maps.defineSymbol((yyvsp[-13].s), r); 
           }
 #line 1299 "engines/private/grammar.cpp"
     break;
@@ -1302,20 +1302,20 @@ yyreduce:
 #line 148 "engines/private/grammar.y"
                                                             {
           Common::Rect *r = new Common::Rect((yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val, (yyvsp[-1].sym)->u.val);  
-          defineSymbol((yyvsp[-11].s), r); 
+          g_private->maps.defineSymbol((yyvsp[-11].s), r); 
           }
 #line 1308 "engines/private/grammar.cpp"
     break;
 
   case 23: /* define: NAME ',' define  */
 #line 152 "engines/private/grammar.y"
-                          { defineSymbol((yyvsp[-2].s), NULL); }
+                          { g_private->maps.defineSymbol((yyvsp[-2].s), NULL); }
 #line 1314 "engines/private/grammar.cpp"
     break;
 
   case 24: /* define: NAME  */
 #line 153 "engines/private/grammar.y"
-                          { defineSymbol((yyvsp[0].s), NULL); }
+                          { g_private->maps.defineSymbol((yyvsp[0].s), NULL); }
 #line 1320 "engines/private/grammar.cpp"
     break;
 
