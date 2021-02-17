@@ -134,6 +134,7 @@ public:
     bool isDemo() const;
 
     SymbolMaps maps;
+    SettingMaps settings;
 
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;

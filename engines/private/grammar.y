@@ -53,6 +53,9 @@
 #include "private/private.h"
 #include "private/grammar.h"
 
+#undef yyerror
+#define yyerror         PRIVATE_xerror
+
 #define code1(c1)       Private::code(c1);
 #define code2(c1,c2)    Private::code(c1); Private::code(c2)
 #define code3(c1,c2,c3) Private::code(c1); Private::code(c2); Private::code(c3)
@@ -94,7 +97,8 @@ lines:   line lines
 
 line:     DEBUGTOK '{' debug '}'             { /* Not used in the game */ }
         | DEFINETOK NAME '{' define '}'      { g_private->maps.installAll($NAME); }
-        | SETTINGTOK NAME '{' statements '}' { saveSetting($NAME); initSetting(); }
+        | SETTINGTOK NAME '{' statements '}' { g_private->settings.save($NAME); 
+                                               g_private->settings.init(); }
         ;
 
 debug: /* nothing */
