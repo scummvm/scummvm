@@ -230,11 +230,13 @@ Common::Error PrivateEngine::run() {
                 break;
 
             case Common::EVENT_MOUSEMOVE:
+                // Reset cursor to default
                 changeCursor("default");
+                // The following functions will return true
+                // if the cursor is changed
                 if      (cursorPauseMovie(mousePos)) {}
                 else if (cursorMask(mousePos))       {}
-                else if (cursorExit(mousePos))       {}
-                //
+                else     cursorExit(mousePos);
                 break;
 
             default:
