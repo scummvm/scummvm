@@ -1548,12 +1548,9 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		if (bottom <= yTop) {
 			bottom = yTop;
 		}
-		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
-							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset1);
-		computeHolomapPolygon(yTop, (uint32)vertex4.x,
-							  yBottom, (uint32)vertex3.x, _polyTab + hmPolyOffset3);
-		computeHolomapPolygon(yTop, (uint32)vertex4.y,
-							  yBottom, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
+		computeHolomapPolygon(yTop, (uint16)vertex2.x, yBottom, (uint16)vertex1.x, _polyTab + hmPolyOffset1);
+		computeHolomapPolygon(yTop, (uint16)vertex4.x, yBottom, (uint16)vertex3.x, _polyTab + hmPolyOffset3);
+		computeHolomapPolygon(yTop, (uint16)vertex4.y, yBottom, (uint16)vertex3.y, _polyTab + hmPolyOffset4);
 	} else if (yTop < yBottom) {
 		if (yTop <= top) {
 			top = yTop;
@@ -1561,12 +1558,9 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 		if (bottom <= yBottom) {
 			bottom = yBottom;
 		}
-		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
-							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset2);
-		computeHolomapPolygon(yTop, (uint32)vertex4.x,
-							  yBottom, (uint32)vertex3.x, _polyTab + hmPolyOffset5);
-		computeHolomapPolygon(yTop, (uint32)vertex4.y,
-							  yBottom, (uint32)vertex3.y, _polyTab + hmPolyOffset6);
+		computeHolomapPolygon(yTop, (uint16)vertex2.x, yBottom, (uint16)vertex1.x, _polyTab + hmPolyOffset2);
+		computeHolomapPolygon(yTop, (uint16)vertex4.x, yBottom, (uint16)vertex3.x, _polyTab + hmPolyOffset5);
+		computeHolomapPolygon(yTop, (uint16)vertex4.y, yBottom, (uint16)vertex3.y, _polyTab + hmPolyOffset6);
 	}
 }
 
