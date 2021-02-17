@@ -100,6 +100,7 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 		for (uint32 i = 0; i < _achievementsInfo.descriptions.size(); i++) {
 			if (strcmp(_achievementsInfo.descriptions[i].id, id) == 0) {
 				msg = _achievementsInfo.descriptions[i].title;
+				break;
 			}
 		}
 
