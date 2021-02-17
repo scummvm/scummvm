@@ -1480,7 +1480,6 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 }
 
-
 void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr) {
 	int32 minY = y2;
 	int32 minX = x1;
@@ -1499,7 +1498,7 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 		deltaRatio = deltaRatio << 0x10 | deltaRatio >> 0x10;
 		bool bVar5 = false;
 		deltaY = (x2 & 0xffffU) |
-		         (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
+				 (uint32)(uint16)(((uint16)(deltaX % deltaY >> 1) & 0x7fff) + 0x7fff) << 0x10;
 		do {
 			*lVertexCoordPointer = (int16)deltaY;
 			deltaX = (uint32)bVar5;
@@ -1530,38 +1529,38 @@ void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int
 	}
 }
 
-static const int hmPolyOffset1 = 0;    /* 0x0000 */
-static const int hmPolyOffset2 = 60;   /* 0x003c */
-static const int hmPolyOffset3 = 120;  /* 0x0078 */
-static const int hmPolyOffset4 = 180;  /* 0x00b4 */
-static const int hmPolyOffset5 = 240;  /* 0x00f0 */
-static const int hmPolyOffset6 = 300;  /* 0x012c */
+static const int hmPolyOffset1 = 0;   /* 0x0000 */
+static const int hmPolyOffset2 = 60;  /* 0x003c */
+static const int hmPolyOffset3 = 120; /* 0x0078 */
+static const int hmPolyOffset4 = 180; /* 0x00b4 */
+static const int hmPolyOffset5 = 240; /* 0x00f0 */
+static const int hmPolyOffset6 = 300; /* 0x012c */
 
 void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, uint32 &top, uint32 &bottom) {
-	const uint32 y_uVar1 = (uint32)(uint16)vertex1.y;
-	const uint32 y_uVar2 = (uint32)(uint16)vertex2.y;
-	if (y_uVar1 < y_uVar2) {
-		if ((int32)y_uVar1 <= (int32)top) {
-			top = y_uVar1;
+	const uint32 yBottom = (uint32)(uint16)vertex1.y;
+	const uint32 yTop = (uint32)(uint16)vertex2.y;
+	if (yBottom < yTop) {
+		if ((int32)yBottom <= (int32)top) {
+			top = yBottom;
 		}
-		if ((int32)bottom <= (int32)y_uVar2) {
-			bottom = y_uVar2;
+		if ((int32)bottom <= (int32)yTop) {
+			bottom = yTop;
 		}
-		computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertex2.x, y_uVar1,
+		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
 							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset1);
 		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
 							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset3);
 		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.y,
 							  (uint32)(uint16)vertex1.y, (uint32)vertex3.y, _polyTab + hmPolyOffset4);
 	}
-	if (y_uVar2 < y_uVar1) {
-		if ((int32)y_uVar2 <= (int32)top) {
-			top = y_uVar2;
+	if (yTop < yBottom) {
+		if ((int32)yTop <= (int32)top) {
+			top = yTop;
 		}
-		if ((int32)bottom <= (int32)y_uVar1) {
-			bottom = y_uVar1;
+		if ((int32)bottom <= (int32)yBottom) {
+			bottom = yBottom;
 		}
-		computeHolomapPolygon(y_uVar2, (uint32)(uint16)vertex2.x, y_uVar1,
+		computeHolomapPolygon(yTop, (uint32)(uint16)vertex2.x, yBottom,
 							  (uint32)(uint16)vertex1.x, _polyTab + hmPolyOffset2);
 		computeHolomapPolygon((uint32)(uint16)vertex2.y, (uint32)vertex4.x,
 							  (uint32)(uint16)vertex1.y, (uint32)vertex3.x, _polyTab + hmPolyOffset5);
@@ -1580,32 +1579,44 @@ void Renderer::renderHolomapVertices(Vertex vertexCoordinates[3], Vertex vertexC
 }
 
 void Renderer::renderHolomapPolygons(int32 top, int16 bottom) {
-	uint8* pixelBuf = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
-	int16 height = (int16)(bottom - (int16)top) + 1;
-	const int16* polyTabPtr = &_polyTab[top];
-	for (int16 y = 0; y < height; ++y) {
-		int32 polyTabVal = (int32)*polyTabPtr;
-		uint8 *pixel = (uint8 *)(pixelBuf + polyTabVal);
-		const int32 yHeight = polyTabPtr[hmPolyOffset2] - polyTabVal;
-		if (yHeight != 0 && polyTabVal <= polyTabPtr[hmPolyOffset2]) {
-			polyTabVal = (int32)(1 - ((uint32)(uint16)polyTabPtr[hmPolyOffset4] -
-									  (uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
-						 yHeight;
-			uint32 uVar3 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
-			const int32 iVar1 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar3) + 1) / yHeight;
-			uint16 uVar2 = *(const uint16*)&polyTabPtr[hmPolyOffset4];
-			// int16 holomap_maybe_DAT_00433430 = iVar2;
-			// int16 holomap_maybe_DAT_00433434 = iVar1;
-			for (int32 i = 0; i < yHeight; ++i) {
-				const uint32 idx = ((uVar2 & 0xffffff00) | uVar3 >> 8);
-				*pixel++ = _engine->_resources->holomapImagePtr[idx];
-				uVar3 = (uint32)(uint16)((int16)uVar3 + (int16)iVar1);
-				uVar2 = ((uint16)(uVar2 & 0xffffff00) | (uVar2 & 0xff)) + (int16)polyTabVal;
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, top);
+	int16 vsize = (int16)(bottom - (int16)top) + 1;
+	const int16 *polyTabPtr = &_polyTab[top];
+	int32 currentLine = top;
+	const void* pixelBegin = _engine->frontVideoBuffer.getBasePtr(0, 0);
+	const void* pixelEnd = _engine->frontVideoBuffer.getBasePtr(_engine->frontVideoBuffer.w - 1, _engine->frontVideoBuffer.h - 1);
+	do {
+		if (currentLine >= 0 && currentLine < _engine->height()) {
+			const int32 polyTabVal = (int32)*polyTabPtr;
+			uint8 *pixel = (uint8 *)(out + polyTabVal);
+			const int32 yHeight = polyTabPtr[hmPolyOffset2] - polyTabVal;
+			if (yHeight != 0 && polyTabVal <= polyTabPtr[hmPolyOffset2]) {
+				const int32 polyTabVal2 = (int32)(1 - ((uint32)(uint16)polyTabPtr[hmPolyOffset4] -
+													(uint32)(uint16)polyTabPtr[hmPolyOffset6])) /
+										yHeight;
+				uint32 uVar3 = (uint32)(uint16)polyTabPtr[hmPolyOffset3];
+				const int32 iVar1 = (int32)(((uint16)polyTabPtr[hmPolyOffset5] - uVar3) + 1) / yHeight;
+				uint16 uVar2 = *(const uint16 *)&polyTabPtr[hmPolyOffset4];
+				// int16 holomap_maybe_DAT_00433430 = iVar2;
+				// int16 holomap_maybe_DAT_00433434 = iVar1;
+				for (int32 i = 0; i < yHeight; ++i) {
+					const uint32 idx = ((uVar2 & 0xffffff00) | uVar3 >> 8);
+					if (pixel < pixelBegin || pixel >= pixelEnd) {
+						break;
+					}
+					if (idx >= _engine->_resources->holomapImageSize) {
+						continue;
+					}
+					*pixel++ = _engine->_resources->holomapImagePtr[idx];
+					uVar3 = (uint32)(uint16)((int16)uVar3 + (int16)iVar1);
+					uVar2 = ((uint16)(uVar2 & 0xffffff00) | (uVar2 & 0xff)) + (int16)polyTabVal2;
+				}
 			}
 		}
-		pixelBuf += _engine->frontVideoBuffer.w;
+		out += _engine->frontVideoBuffer.w;
 		++polyTabPtr;
-	}
+		++currentLine;
+	} while (--vsize);
 }
 
 } // namespace TwinE
