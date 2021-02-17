@@ -304,7 +304,7 @@ void PrivateEngine::clearAreas() {
 
 void PrivateEngine::startPoliceBust() {
     // This logic was extracted from the binary
-    int policeIndex = variables.getVal(kPoliceIndex)->u.val;
+    int policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
     int r = _rnd->getRandomNumber(0xc);
     if (policeIndex > 0x14) {
         policeIndex = 0x15;
@@ -331,7 +331,7 @@ void PrivateEngine::checkPoliceBust() {
     }
 
     if (_numberClicks == _maxNumberClicks+1) {
-        uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
+        uint policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
         if (policeIndex <= 13) {
             _nextSetting = new Common::String(kPOGoBustMovie);
@@ -627,14 +627,14 @@ void PrivateEngine::restartGame() {
     debugC(1, kPrivateDebugFunction, "restartGame");
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
-        Private::Symbol *sym = variables.getVal(*it);
+        Private::Symbol *sym = maps.variables.getVal(*it);
         if (*(sym->name) != "kAlternateGame")
             sym->u.val = 0;
     }
 
     // Diary
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
-        Private::Symbol *sym = locations.getVal(*it);
+        Private::Symbol *sym = maps.locations.getVal(*it);
         sym->u.val = 0;
     }
     inventory.clear();
@@ -660,14 +660,14 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
         s.syncAsUint32LE(val);
-        Private::Symbol *sym = variables.getVal(*it);
+        Private::Symbol *sym = maps.variables.getVal(*it);
         sym->u.val = val;
     }
 
     // Diary
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
         s.syncAsUint32LE(val);
-        Private::Symbol *sym = locations.getVal(*it);
+        Private::Symbol *sym = maps.locations.getVal(*it);
         sym->u.val = val;
     }
     uint32 size = stream->readUint32LE();
@@ -715,7 +715,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
         PhoneInfo *i = (PhoneInfo *)malloc(sizeof(PhoneInfo));
 
         i->sound = new Common::String(stream->readString());
-        i->flag  = variables.getVal(stream->readString());
+        i->flag  = maps.variables.getVal(stream->readString());
         i->val   = stream->readUint32LE();
         _phone.push_back(*i);
     }
@@ -744,13 +744,13 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 
     // Variables
     for (NameList::iterator it = variableList.begin(); it != variableList.end(); ++it) {
-        Private::Symbol *sym = variables.getVal(*it);
+        Private::Symbol *sym = maps.variables.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
 
     // Diary
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
-        Private::Symbol *sym = locations.getVal(*it);
+        Private::Symbol *sym = maps.locations.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
 
@@ -1029,7 +1029,7 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
     uint32 i = 0;
     int16 offset = 44;
     for (NameList::iterator it = locationList.begin(); it != locationList.end(); ++it) {
-        Private::Symbol *sym = locations.getVal(*it);
+        Private::Symbol *sym = maps.locations.getVal(*it);
         i++;
         if (sym->u.val) {
             offset = offset + 22;

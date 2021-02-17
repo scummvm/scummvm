@@ -133,6 +133,8 @@ public:
     const ADGameDescription *_gameDescription;
     bool isDemo() const;
 
+    SymbolMaps maps;
+
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;
     Video::SmackerDecoder *_videoDecoder;

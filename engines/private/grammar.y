@@ -50,6 +50,7 @@
 
 %{
 
+#include "private/private.h"
 #include "private/grammar.h"
 
 #define code1(c1)       Private::code(c1);
@@ -92,7 +93,7 @@ lines:   line lines
        ;
 
 line:     DEBUGTOK '{' debug '}'             { /* Not used in the game */ }
-        | DEFINETOK NAME '{' define '}'      { installAll($NAME); }
+        | DEFINETOK NAME '{' define '}'      { g_private->maps.installAll($NAME); }
         | SETTINGTOK NAME '{' statements '}' { saveSetting($NAME); initSetting(); }
         ;
 
@@ -106,9 +107,9 @@ statements:  /* nothing */     { $$ = progp; }
 
 statement: GOTOTOK NAME ';' {
         $$ = progp;
-        code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
-        code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
-        code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
+        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME));
+        code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
+        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
         | fcall ';'         { $$ = $1; }   
@@ -154,17 +155,17 @@ define:  /* nothing */
 
 fcall:    GOTOTOK '(' NAME ')' {
                                $$ = progp;
-                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, $NAME));
-                               code2(constpush, (Private::Inst) Private::constant(NUM, 1, NULL));
-                               code2(strpush, (Private::Inst) Private::constant(STRING, 0, "goto")); 
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME));
+                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
                                code1(funcpush);
                                }
 
         | RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
         | NAME '(' startp params ')'  {
                                $$ = $startp;
-                               code2(constpush, (Private::Inst) constant(NUM, $params, NULL));
-                               code2(strpush, (Private::Inst) constant(STRING, 0, $NAME)); 
+                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, $params, NULL));
+                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME)); 
                                code1(funcpush);
                                }
         ;
@@ -179,12 +180,12 @@ params:   /* nothing */     { $$ = 0; }
         | fcall       { $$ = 1; }
         ;
 
-value:    NULLTOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-        | FALSETOK { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 0, NULL)); }
-        | TRUETOK  { code2(Private::constpush, (Private::Inst) Private::constant(NUM, 1, NULL)); }
+value:    NULLTOK  { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
+        | FALSETOK { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
+        | TRUETOK  { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL)); }
         | NUM      { code2(Private::constpush, (Private::Inst)$NUM); }
         | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
-        | NAME     { code1(Private::varpush); code1((Private::Inst) lookupName($NAME)); code1(Private::eval); }
+        | NAME     { code1(Private::varpush); code1((Private::Inst) g_private->maps.lookupName($NAME)); code1(Private::eval); }
         ;
 
 expr:     value           { $$ = $1; } 

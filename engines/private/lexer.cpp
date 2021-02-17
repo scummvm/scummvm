@@ -779,11 +779,12 @@ char *yytext;
 #line 31 "engines/private/lexer.l"
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "private/private.h"
 #include "private/grammar.h"
 #include "private/tokens.h"
 
-#line 785 "engines/private/lexer.cpp"
 #line 786 "engines/private/lexer.cpp"
+#line 787 "engines/private/lexer.cpp"
 
 #define INITIAL 0
 
@@ -1000,9 +1001,9 @@ YY_DECL
 		}
 
 	{
-#line 38 "engines/private/lexer.l"
+#line 39 "engines/private/lexer.l"
 
-#line 1005 "engines/private/lexer.cpp"
+#line 1006 "engines/private/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1057,121 +1058,121 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 39 "engines/private/lexer.l"
+#line 40 "engines/private/lexer.l"
 /* ignoring the comment */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 40 "engines/private/lexer.l"
+#line 41 "engines/private/lexer.l"
 return LTE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 41 "engines/private/lexer.l"
+#line 42 "engines/private/lexer.l"
 return GTE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 42 "engines/private/lexer.l"
+#line 43 "engines/private/lexer.l"
 return NEQ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 43 "engines/private/lexer.l"
+#line 44 "engines/private/lexer.l"
 return EQ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 44 "engines/private/lexer.l"
+#line 45 "engines/private/lexer.l"
 return DEBUGTOK;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 45 "engines/private/lexer.l"
+#line 46 "engines/private/lexer.l"
 return DEFINETOK;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 46 "engines/private/lexer.l"
+#line 47 "engines/private/lexer.l"
 return SETTINGTOK;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 47 "engines/private/lexer.l"
+#line 48 "engines/private/lexer.l"
 return IFTOK;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 48 "engines/private/lexer.l"
+#line 49 "engines/private/lexer.l"
 return ELSETOK;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 49 "engines/private/lexer.l"
+#line 50 "engines/private/lexer.l"
 return GOTOTOK;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 50 "engines/private/lexer.l"
+#line 51 "engines/private/lexer.l"
 return RECT;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 51 "engines/private/lexer.l"
+#line 52 "engines/private/lexer.l"
 return FALSETOK;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 52 "engines/private/lexer.l"
+#line 53 "engines/private/lexer.l"
 return TRUETOK;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 53 "engines/private/lexer.l"
+#line 54 "engines/private/lexer.l"
 return NULLTOK;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 54 "engines/private/lexer.l"
+#line 55 "engines/private/lexer.l"
 return RANDOMTOK;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 55 "engines/private/lexer.l"
-PRIVATE_lval.s = strdup(PRIVATE_text); return NAME;
+#line 56 "engines/private/lexer.l"
+PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 56 "engines/private/lexer.l"
-PRIVATE_lval.sym = Private::constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
+#line 57 "engines/private/lexer.l"
+PRIVATE_lval.sym = Private::g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 57 "engines/private/lexer.l"
-PRIVATE_lval.sym = Private::constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+#line 58 "engines/private/lexer.l"
+PRIVATE_lval.sym = Private::g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 58 "engines/private/lexer.l"
+#line 59 "engines/private/lexer.l"
 /* ignore return */;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 59 "engines/private/lexer.l"
+#line 60 "engines/private/lexer.l"
 /* ignore whitespace */;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 60 "engines/private/lexer.l"
+#line 61 "engines/private/lexer.l"
 return *yytext;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 61 "engines/private/lexer.l"
+#line 62 "engines/private/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1174 "engines/private/lexer.cpp"
+#line 1175 "engines/private/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2177,7 +2178,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 61 "engines/private/lexer.l"
+#line 62 "engines/private/lexer.l"
 
 
 namespace Private {

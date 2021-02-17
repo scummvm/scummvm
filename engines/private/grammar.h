@@ -90,32 +90,32 @@ extern void call(char *, ArgArray);
 
 // Code Generation
 
-extern  Datum pop();
-extern  int push(Datum);
+Datum pop();
+int push(Datum);
 extern  Inst *progp;
 
 extern  Inst *code(Inst);
 extern  Inst *prog;
-extern  int eval();
-extern  int add();
-extern  int negate();
-extern  int power();
-extern  int assign();
-extern  int bltin();
-extern  int varpush();
-extern  int constpush();
-extern  int strpush();
-extern  int funcpush();
-extern  int print();
-extern  int ifcode();
-extern  int fail();
-extern  int lt();
-extern  int gt();
-extern  int le();
-extern  int ge();
-extern  int eq();
-extern  int ne();
-extern  int randbool();
+int eval();
+int add();
+int negate();
+int power();
+int assign();
+int bltin();
+int varpush();
+int constpush();
+int strpush();
+int funcpush();
+int print();
+int ifcode();
+int fail();
+int lt();
+int gt();
+int le();
+int ge();
+int eq();
+int ne();
+int randbool();
 
 // Code Execution
 

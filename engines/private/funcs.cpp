@@ -185,7 +185,7 @@ void fBustMovie(ArgArray args) {
     // assert types
     assert (args.size() == 1);
     debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.str);
-    uint policeIndex = variables.getVal(kPoliceIndex)->u.val;
+    uint policeIndex = g_private->maps.variables.getVal(kPoliceIndex)->u.val;
     int videoIndex = policeIndex/2 - 1;
     if (videoIndex < 0)
         videoIndex = 0;
