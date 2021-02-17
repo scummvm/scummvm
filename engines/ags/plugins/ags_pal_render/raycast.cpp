@@ -38,12 +38,12 @@ double dirX = -1.0, dirY = 0.0; //initial direction vector
 double planeX = 0.0, planeY = 0.77; //the 2d raycaster version of camera plane
 double moveSpeed = (1.0 / 60.0) * 3.0; //the constant value is in squares/second
 double rotSpeed = (1.0 / 60.0) * 2.0; //the constant value is in radians/second
-unsigned char worldMap[MAP_WIDTH][MAP_HEIGHT];
-unsigned char lightMap[MAP_WIDTH][MAP_HEIGHT];
+byte worldMap[MAP_WIDTH][MAP_HEIGHT];
+byte lightMap[MAP_WIDTH][MAP_HEIGHT];
 int ceilingMap[MAP_WIDTH][MAP_HEIGHT];
 int floorMap[MAP_WIDTH][MAP_HEIGHT];
 int heightMap[MAP_WIDTH][MAP_HEIGHT];
-unsigned char seenMap[MAP_WIDTH][MAP_HEIGHT];
+byte seenMap[MAP_WIDTH][MAP_HEIGHT];
 int textureSlot;
 int ambientlight;
 int ambientweight = 0;

@@ -60,11 +60,32 @@ public:
 			_engine->FWrite(&value, 1, _file);
 	}
 
+	void syncAsInt8(int8 &value) {
+		if (_isLoading)
+			_engine->FRead(&value, 1, _file);
+		else
+			_engine->FWrite(&value, 1, _file);
+	}
+
+	void syncAsByte(byte &value) {
+		if (_isLoading)
+			_engine->FRead(&value, 1, _file);
+		else
+			_engine->FWrite(&value, 1, _file);
+	}
+
 	void syncAsFloat(float &value) {
 		if (_isLoading)
 			_engine->FRead(&value, sizeof(float), _file);
 		else
 			_engine->FWrite(&value, sizeof(float), _file);
+	}
+
+	void syncAsDouble(double &value) {
+		if (_isLoading)
+			_engine->FRead(&value, sizeof(double), _file);
+		else
+			_engine->FWrite(&value, sizeof(double), _file);
 	}
 };
 

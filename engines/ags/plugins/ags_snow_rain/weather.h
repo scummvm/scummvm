@@ -36,7 +36,7 @@ struct View {
 	bool is_default = false;
 	BITMAP *bitmap = nullptr;
 
-	void SyncGame(Serializer &s);
+	void syncGame(Serializer &s);
 };
 
 struct Drop {
@@ -95,7 +95,7 @@ public:
 	void Initialize();
 	void InitializeParticles();
 
-	void SyncGame(Serializer &s);
+	void syncGame(Serializer &s);
 	bool ReinitializeViews();
 
 	bool IsActive();

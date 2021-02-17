@@ -36,13 +36,13 @@ struct Sprite {
 	double x;
 	double y;
 	int texture;
-	unsigned char alpha;
+	byte alpha;
 	int blendmode;
 	double uDivW;
 	double uDivH;
 	double vMove;
 	double hMove;
-	char objectinteract;
+	int8 objectinteract;
 	int view;
 	int frame;
 	int angle;
@@ -55,7 +55,7 @@ struct wallType {
 	int alpha[4];
 	int blendtype[4];
 	int mask[4];
-	unsigned char hotspotinteract;
+	byte hotspotinteract;
 };
 
 

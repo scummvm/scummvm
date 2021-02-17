@@ -63,7 +63,7 @@ struct transoverlaytype {
 
 int clutslot;
 int drawreflections;
-unsigned char cycle_remap [256];
+byte cycle_remap[256];
 
 struct starstype {
 	float x;
@@ -1687,154 +1687,12 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 		if (LensOption.draw == 1 && LensOption.level == 4) DrawLens(LensOption.x, LensOption.y);
 	}
 	if (event == AGSE_SAVEGAME) {
-		for (int i = 0; i < MAX_OVERLAYS; ++i) {
-			engine->FWrite(&overlay[i].sprite, sizeof(int32), data);
-			engine->FWrite(&overlay[i].spritemask, sizeof(int32), data);
-			engine->FWrite(&overlay[i].x, sizeof(int32), data);
-			engine->FWrite(&overlay[i].y, sizeof(int32), data);
-			engine->FWrite(&overlay[i].level, sizeof(int32), data);
-			engine->FWrite(&overlay[i].trans, sizeof(int32), data);
-			engine->FWrite(&overlay[i].blendtype, sizeof(int32), data);
-			engine->FWrite(&overlay[i].enabled, sizeof(bool), data);
-		}
-		engine->FWrite(&clutslot, sizeof(int32), data);
-		engine->FWrite(&drawreflections, sizeof(int32), data);
-		for (int j = 0; j < 256; ++j) {
-			engine->FWrite(&cycle_remap[j], sizeof(unsigned char), data);
-		}
-		for (int j = 0; j < 256; ++j) {
-			engine->FWrite(&objectivepal[j].r, sizeof(unsigned char), data);
-			engine->FWrite(&objectivepal[j].b, sizeof(unsigned char), data);
-			engine->FWrite(&objectivepal[j].g, sizeof(unsigned char), data);
-		}
-		for (int j = 0; j < 256; ++j) {
-			engine->FWrite(&sprite[j].x, sizeof(double), data);
-			engine->FWrite(&sprite[j].y, sizeof(double), data);
-			engine->FWrite(&sprite[j].texture, sizeof(int32), data);
-			engine->FWrite(&sprite[j].alpha, sizeof(unsigned char), data);
-			engine->FWrite(&sprite[j].uDivW, sizeof(double), data);
-			engine->FWrite(&sprite[j].uDivH, sizeof(double), data);
-			engine->FWrite(&sprite[j].vMove, sizeof(double), data);
-			engine->FWrite(&sprite[j].hMove, sizeof(double), data);
-			engine->FWrite(&sprite[j].objectinteract, sizeof(char), data);
-			engine->FWrite(&sprite[j].view, sizeof(int32), data);
-			engine->FWrite(&sprite[j].frame, sizeof(int32), data);
-			engine->FWrite(&sprite[j].angle, sizeof(int32), data);
-		}
-		for (int j = 0; j < 256; ++j) {
-			for (int k = 0; k < 4; ++k) {
-				engine->FWrite(&wallData[j].texture[k], sizeof(int32), data);
-				engine->FWrite(&wallData[j].solid[k], sizeof(int32), data);
-				engine->FWrite(&wallData[j].ignorelighting[k], sizeof(int32), data);
-				engine->FWrite(&wallData[j].alpha[k], sizeof(int32), data);
-				engine->FWrite(&wallData[j].blendtype[k], sizeof(int32), data);
-				engine->FWrite(&wallData[j].mask[k], sizeof(int32), data);
-			}
-			engine->FWrite(&wallData[j].hotspotinteract, sizeof(char), data);
-		}
-		engine->FWrite(&raycastOn, sizeof(bool), data);
-		engine->FWrite(&heightmapOn, sizeof(bool), data);
-		engine->FWrite(&posX, sizeof(double), data);
-		engine->FWrite(&posY, sizeof(double), data);
-		engine->FWrite(&dirX, sizeof(double), data);
-		engine->FWrite(&dirY, sizeof(double), data);
-		engine->FWrite(&planeX, sizeof(double), data);
-		engine->FWrite(&planeY, sizeof(double), data);
-		engine->FWrite(&moveSpeed, sizeof(double), data);
-		engine->FWrite(&rotSpeed, sizeof(double), data);
-		if (raycastOn) { //If the raycaster is active, we have additional data to save.
-			for (int i = 0; i < MAP_WIDTH; ++i)
-				for (int j = 0; j < MAP_HEIGHT; ++j) {
-					engine->FWrite(&worldMap [i][j], sizeof(unsigned char), data);
-					engine->FWrite(&lightMap [i][j], sizeof(unsigned char), data);
-					engine->FWrite(&ceilingMap [i][j], sizeof(int32), data);
-					engine->FWrite(&floorMap [i][j], sizeof(int32), data);
-					engine->FWrite(&heightMap [i][j], sizeof(int32), data);
-				}
-		}
-		engine->FWrite(&textureSlot, sizeof(int32), data);
-		engine->FWrite(&skybox, sizeof(int32), data);
-		engine->FWrite(&ambientlight, sizeof(int32), data);
+		Serializer s(engine, data, false);
+		syncGame(s);
 	}
 	if (event == AGSE_RESTOREGAME) {
-
-
-		for (int i = 0; i < MAX_OVERLAYS; ++i) {
-			engine->FRead(&overlay[i].sprite, sizeof(int32), data);
-			engine->FRead(&overlay[i].spritemask, sizeof(int32), data);
-			engine->FRead(&overlay[i].x, sizeof(int32), data);
-			engine->FRead(&overlay[i].y, sizeof(int32), data);
-			engine->FRead(&overlay[i].level, sizeof(int32), data);
-			engine->FRead(&overlay[i].trans, sizeof(int32), data);
-			engine->FRead(&overlay[i].blendtype, sizeof(int32), data);
-			engine->FRead(&overlay[i].enabled, sizeof(bool), data);
-		}
-		engine->FRead(&clutslot, sizeof(int32), data);
-		engine->FRead(&drawreflections, sizeof(int32), data);
-		for (int j = 0; j < 256; ++j) {
-			engine->FRead(&cycle_remap[j], sizeof(unsigned char), data);
-		}
-		for (int j = 0; j < 256; ++j) { //Save Objective Palette, for palette mixing.
-			engine->FRead(&objectivepal[j].r, sizeof(unsigned char), data);
-			engine->FRead(&objectivepal[j].b, sizeof(unsigned char), data);
-			engine->FRead(&objectivepal[j].g, sizeof(unsigned char), data);
-		}
-		for (int j = 0; j < 256; ++j) { //Save Raycaster Sprite struct, 256 instances.
-			engine->FRead(&sprite[j].x, sizeof(double), data);
-			engine->FRead(&sprite[j].y, sizeof(double), data);
-			engine->FRead(&sprite[j].texture, sizeof(int32), data);
-			engine->FRead(&sprite[j].alpha, sizeof(unsigned char), data);
-			engine->FRead(&sprite[j].uDivW, sizeof(double), data);
-			engine->FRead(&sprite[j].uDivH, sizeof(double), data);
-			engine->FRead(&sprite[j].vMove, sizeof(double), data);
-			engine->FRead(&sprite[j].hMove, sizeof(double), data);
-			engine->FRead(&sprite[j].objectinteract, sizeof(char), data);
-			engine->FRead(&sprite[j].view, sizeof(int32), data);
-			engine->FRead(&sprite[j].frame, sizeof(int32), data);
-			engine->FRead(&sprite[j].angle, sizeof(int32), data);
-		}
-		for (int j = 0; j < 256; ++j) { //Save Raycaster wall type data.
-			for (int k = 0; k < 4; ++k) {
-				engine->FRead(&wallData[j].texture[k], sizeof(int32), data);
-				engine->FRead(&wallData[j].solid[k], sizeof(int32), data);
-				engine->FRead(&wallData[j].ignorelighting[k], sizeof(int32), data);
-				engine->FRead(&wallData[j].alpha[k], sizeof(int32), data);
-				engine->FRead(&wallData[j].blendtype[k], sizeof(int32), data);
-				engine->FRead(&wallData[j].mask[k], sizeof(int32), data);
-			}
-			engine->FRead(&wallData[j].hotspotinteract, sizeof(char), data);
-		}
-		//Delete worldmap data if it exists.
-		engine->FRead(&raycastOn, sizeof(bool), data);
-		engine->FRead(&heightmapOn, sizeof(bool), data);
-		engine->FRead(&posX, sizeof(double), data);
-		engine->FRead(&posY, sizeof(double), data);
-		engine->FRead(&dirX, sizeof(double), data);
-		engine->FRead(&dirY, sizeof(double), data);
-		engine->FRead(&planeX, sizeof(double), data);
-		engine->FRead(&planeY, sizeof(double), data);
-		engine->FRead(&moveSpeed, sizeof(double), data);
-		engine->FRead(&rotSpeed, sizeof(double), data);
-		if (raycastOn) { //If the raycaster is currently running, we have additional data to load.
-			for (int i = 0; i < MAP_WIDTH; ++i) {
-				for (int j = 0; j < MAP_HEIGHT; ++j) {
-					engine->FRead(&worldMap [i][j], sizeof(unsigned char), data);
-					engine->FRead(&lightMap [i][j], sizeof(unsigned char), data);
-					engine->FRead(&ceilingMap [i][j], sizeof(int32), data);
-					engine->FRead(&floorMap [i][j], sizeof(int32), data);
-					engine->FRead(&heightMap [i][j], sizeof(int32), data);
-					seenMap [i][j] = 0;
-				}
-			}
-
-			//Reinitialize all the buffers and stuff.
-
-		}
-		engine->FRead(&textureSlot, sizeof(int32), data);
-		if (textureSlot) MakeTextures(textureSlot);
-		engine->FRead(&skybox, sizeof(int32), data);
-		engine->FRead(&ambientlight, sizeof(int32), data);
-		LoadCLUT(clutslot);
+		Serializer s(engine, data, true);
+		syncGame(s);
 	}
 	if (event == AGSE_ENTERROOM) {
 		ResetRemapping();
@@ -1842,6 +1700,90 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 		Reflection.Objects = new objrefopt [engine->GetNumObjects()]();
 	}
 	return 0;
+}
+
+void AGSPalRender::syncGame(Serializer &s) {
+	for (int i = 0; i < MAX_OVERLAYS; ++i) {
+		s.syncAsInt(overlay[i].sprite);
+		s.syncAsInt(overlay[i].spritemask);
+		s.syncAsInt(overlay[i].x);
+		s.syncAsInt(overlay[i].y);
+		s.syncAsInt(overlay[i].level);
+		s.syncAsInt(overlay[i].trans);
+		s.syncAsInt(overlay[i].blendtype);
+		s.syncAsBool(overlay[i].enabled);
+	}
+	s.syncAsInt(clutslot);
+	s.syncAsInt(drawreflections);
+
+	for (int j = 0; j < 256; ++j)
+		s.syncAsByte(cycle_remap[j]);
+
+	for (int j = 0; j < 256; ++j) {
+		s.syncAsByte(objectivepal[j].r);
+		s.syncAsByte(objectivepal[j].b);
+		s.syncAsByte(objectivepal[j].g);
+	}
+
+	for (int j = 0; j < 256; ++j) {
+		s.syncAsDouble(sprite[j].x);
+		s.syncAsDouble(sprite[j].y);
+		s.syncAsInt(sprite[j].texture);
+		s.syncAsByte(sprite[j].alpha);
+		s.syncAsDouble(sprite[j].uDivW);
+		s.syncAsDouble(sprite[j].uDivH);
+		s.syncAsDouble(sprite[j].vMove);
+		s.syncAsDouble(sprite[j].hMove);
+		s.syncAsInt8(sprite[j].objectinteract);
+		s.syncAsInt(sprite[j].view);
+		s.syncAsInt(sprite[j].frame);
+		s.syncAsInt(sprite[j].angle);
+	}
+
+	for (int j = 0; j < 256; ++j) {
+		for (int k = 0; k < 4; ++k) {
+			s.syncAsInt(wallData[j].texture[k]);
+			s.syncAsInt(wallData[j].solid[k]);
+			s.syncAsInt(wallData[j].ignorelighting[k]);
+			s.syncAsInt(wallData[j].alpha[k]);
+			s.syncAsInt(wallData[j].blendtype[k]);
+			s.syncAsInt(wallData[j].mask[k]);
+		}
+
+		s.syncAsByte(wallData[j].hotspotinteract);
+	}
+
+	s.syncAsBool(raycastOn);
+	s.syncAsBool(heightmapOn);
+	s.syncAsDouble(posX);
+	s.syncAsDouble(posY);
+	s.syncAsDouble(dirX);
+	s.syncAsDouble(dirY);
+	s.syncAsDouble(planeX);
+	s.syncAsDouble(planeY);
+	s.syncAsDouble(moveSpeed);
+	s.syncAsDouble(rotSpeed);
+
+	if (raycastOn) { //If the raycaster is active, we have additional data to save.
+		for (int i = 0; i < MAP_WIDTH; ++i)
+			for (int j = 0; j < MAP_HEIGHT; ++j) {
+				s.syncAsByte(worldMap[i][j]);
+				s.syncAsByte(lightMap[i][j]);
+				s.syncAsInt(ceilingMap[i][j]);
+				s.syncAsInt(floorMap[i][j]);
+				s.syncAsInt(heightMap[i][j]);
+			}
+	}
+
+	s.syncAsInt(textureSlot);
+	if (s.isLoading() && textureSlot)
+		MakeTextures(textureSlot);
+
+	s.syncAsInt(skybox);
+	s.syncAsInt(ambientlight);
+
+	if (s.isLoading())
+		LoadCLUT(clutslot);
 }
 
 } // namespace AGSPalRender

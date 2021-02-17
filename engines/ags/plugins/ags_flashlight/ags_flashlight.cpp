@@ -175,9 +175,11 @@ NumberPtr AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PREGUIDRAW) {
 		Update();
 	} else if (event == AGSE_RESTOREGAME) {
-		RestoreGame(data);
+		Serializer s(_engine, data, true);
+		syncGame(s);
 	} else if (event == AGSE_SAVEGAME) {
-		SaveGame(data);
+		Serializer s(_engine, data, false);
+		syncGame(s);
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here.
 		_engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
@@ -527,77 +529,41 @@ void AGSFlashlight::Update() {
 	_engine->MarkRegionDirty(0, 0, screen_width, screen_height);
 }
 
-size_t AGSFlashlight::engineFileRead(void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FRead(ptr, size * count, fileHandle);
-	return totalBytes / size;
-}
+void AGSFlashlight::syncGame(Serializer &s) {
+	unsigned int SaveVersion = SaveMagic;
+	s.syncAsInt(SaveVersion);
 
-size_t AGSFlashlight::engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle) {
-	auto totalBytes = _engine->FWrite(const_cast<void *>(ptr), size * count, fileHandle);
-	return totalBytes / size;
-}
-
-void AGSFlashlight::RestoreGame(long file) {
-	unsigned int SaveVersion = 0;
-	engineFileRead(&SaveVersion, sizeof(SaveVersion), 1, file);
-
-	if (SaveVersion != SaveMagic) {
+	if (s.isLoading() && SaveVersion != SaveMagic)
 		_engine->AbortGame("agsflashlight: bad save.");
+
+	s.syncAsInt(g_RedTint);
+	s.syncAsInt(g_GreenTint);
+	s.syncAsInt(g_BlueTint);
+
+	s.syncAsInt(g_DarknessLightLevel);
+	s.syncAsInt(g_BrightnessLightLevel);
+	s.syncAsInt(g_DarknessSize);
+	s.syncAsInt(g_DarknessDiameter);
+	s.syncAsInt(g_BrightnessSize);
+
+	s.syncAsInt(g_FlashlightX);
+	s.syncAsInt(g_FlashlightY);
+
+	s.syncAsInt(g_FlashlightFollowMouse);
+
+	s.syncAsInt(g_FollowCharacterId);
+	s.syncAsInt(g_FollowCharacterDx);
+	s.syncAsInt(g_FollowCharacterDy);
+	s.syncAsInt(g_FollowCharacterHorz);
+	s.syncAsInt(g_FollowCharacterVert);
+
+	if (s.isLoading()) {
+		if (g_FollowCharacterId != 0)
+			g_FollowCharacter = _engine->GetCharacter(g_FollowCharacterId);
+
+		g_BitmapMustBeUpdated = true;
 	}
-
-	// Current version
-	engineFileRead(&g_RedTint, 4, 1, file);
-	engineFileRead(&g_GreenTint, 4, 1, file);
-	engineFileRead(&g_BlueTint, 4, 1, file);
-
-	engineFileRead(&g_DarknessLightLevel, 4, 1, file);
-	engineFileRead(&g_BrightnessLightLevel, 4, 1, file);
-	engineFileRead(&g_DarknessSize, 4, 1, file);
-	engineFileRead(&g_DarknessDiameter, 4, 1, file);
-	engineFileRead(&g_BrightnessSize, 4, 1, file);
-
-	engineFileRead(&g_FlashlightX, 4, 1, file);
-	engineFileRead(&g_FlashlightY, 4, 1, file);
-
-	engineFileRead(&g_FlashlightFollowMouse, 4, 1, file);
-
-	engineFileRead(&g_FollowCharacterId, 4, 1, file);
-	engineFileRead(&g_FollowCharacterDx, 4, 1, file);
-	engineFileRead(&g_FollowCharacterDy, 4, 1, file);
-	engineFileRead(&g_FollowCharacterHorz, 4, 1, file);
-	engineFileRead(&g_FollowCharacterVert, 4, 1, file);
-
-	if (g_FollowCharacterId != 0)
-		g_FollowCharacter = _engine->GetCharacter(g_FollowCharacterId);
-
-	g_BitmapMustBeUpdated = true;
 }
-
-void AGSFlashlight::SaveGame(long file) {
-	engineFileWrite(&SaveMagic, sizeof(SaveMagic), 1, file);
-
-	engineFileWrite(&g_RedTint, 4, 1, file);
-	engineFileWrite(&g_GreenTint, 4, 1, file);
-	engineFileWrite(&g_BlueTint, 4, 1, file);
-
-	engineFileWrite(&g_DarknessLightLevel, 4, 1, file);
-	engineFileWrite(&g_BrightnessLightLevel, 4, 1, file);
-	engineFileWrite(&g_DarknessSize, 4, 1, file);
-	engineFileWrite(&g_DarknessDiameter, 4, 1, file);
-	engineFileWrite(&g_BrightnessSize, 4, 1, file);
-
-	engineFileWrite(&g_FlashlightX, 4, 1, file);
-	engineFileWrite(&g_FlashlightY, 4, 1, file);
-
-	engineFileWrite(&g_FlashlightFollowMouse, 4, 1, file);
-
-	engineFileWrite(&g_FollowCharacterId, 4, 1, file);
-	engineFileWrite(&g_FollowCharacterDx, 4, 1, file);
-	engineFileWrite(&g_FollowCharacterDy, 4, 1, file);
-	engineFileWrite(&g_FollowCharacterHorz, 4, 1, file);
-	engineFileWrite(&g_FollowCharacterVert, 4, 1, file);
-}
-
 
 // ********************************************
 // ************  AGS Interface  ***************

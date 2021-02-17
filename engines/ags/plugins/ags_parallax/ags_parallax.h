@@ -36,7 +36,7 @@ struct Sprite {
 	int slot = -1;
 	int speed = 0;
 
-	void SyncGame(Serializer &s);
+	void syncGame(Serializer &s);
 };
 
 #define MAX_SPEED 1000
@@ -64,7 +64,7 @@ private:
 	static void pxDeleteSprite(int id);
 
 private:
-	static void SyncGame(Serializer &s);
+	static void syncGame(Serializer &s);
 	static void Draw(bool foreground);
 	static void clear();
 

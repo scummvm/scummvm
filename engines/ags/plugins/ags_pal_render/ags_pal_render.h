@@ -24,6 +24,7 @@
 #define AGS_PLUGINS_AGS_PAL_RENDER_AGS_PAL_RENDER_H
 
 #include "ags/plugins/plugin_base.h"
+#include "ags/plugins/serializer.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -35,7 +36,7 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
 	static void AGS_EngineShutdown();
 	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
-
+	static void syncGame(Serializer &s);
 public:
 	AGSPalRender();
 };

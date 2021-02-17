@@ -37,7 +37,7 @@ const unsigned int SaveMagic = Magic + Version;
 const float PI = 3.14159265f;
 
 
-void View::SyncGame(Serializer &s) {
+void View::syncGame(Serializer &s) {
 	s.syncAsInt(view);
 	s.syncAsInt(loop);
 	s.syncAsBool(is_default);
@@ -133,7 +133,7 @@ void Weather::UpdateWithDrift() {
 	_engine->MarkRegionDirty(0, 0, _screenWidth, _screenHeight);
 }
 
-void Weather::SyncGame(Serializer &s) {
+void Weather::syncGame(Serializer &s) {
 	int saveVersion = SaveMagic;
 	s.syncAsInt(saveVersion);
 
@@ -165,7 +165,7 @@ void Weather::SyncGame(Serializer &s) {
 	s.syncAsInt(_mDeltaFallSpeed);
 
 	for (int i = 0; i < 5; ++i)
-		_mViews[i].SyncGame(s);
+		_mViews[i].syncGame(s);
 
 	if (s.isLoading())
 		InitializeParticles();

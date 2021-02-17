@@ -109,12 +109,12 @@ NumberPtr AGSSnowRain::AGS_EngineOnEvent(int event, NumberPtr data) {
 		_snow->EnterRoom();
 	} else if (event == AGSE_RESTOREGAME) {
 		Serializer s(_engine, data, true);
-		_rain->SyncGame(s);
-		_snow->SyncGame(s);
+		_rain->syncGame(s);
+		_snow->syncGame(s);
 	} else if (event == AGSE_SAVEGAME) {
 		Serializer s(_engine, data, false);
-		_rain->SyncGame(s);
-		_snow->SyncGame(s);
+		_rain->syncGame(s);
+		_snow->syncGame(s);
 	} else if (event == AGSE_PRESCREENDRAW) {
 		// Get screen size once here
 		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight , &_screenColorDepth);

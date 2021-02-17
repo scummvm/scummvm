@@ -37,9 +37,9 @@ namespace AGSPalRender {
 #define RETURN_FLOAT(x) int32 __ret##x; memcpy(&__ret##x, &x, sizeof(float)); return __ret##x
 
 struct PALSTRUCT {
-	int r;
-	int b;
-	int g;
+	byte r;
+	byte b;
+	byte g;
 };
 
 extern IAGSEngine *engine;

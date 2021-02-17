@@ -86,10 +86,10 @@ NumberPtr AGSParallax::AGS_EngineOnEvent(int event, NumberPtr data) {
 		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	} else if (event == AGSE_RESTOREGAME) {
 		Serializer s(_engine, data, true);
-		SyncGame(s);
+		syncGame(s);
 	} else if (event == AGSE_SAVEGAME) {
 		Serializer s(_engine, data, false);
-		SyncGame(s);
+		syncGame(s);
 	}
 
 	return 0;
@@ -104,7 +104,7 @@ void AGSParallax::clear() {
 	_enabled = false;
 }
 
-void AGSParallax::SyncGame(Serializer &s) {
+void AGSParallax::syncGame(Serializer &s) {
 	int saveVersion = SaveMagic;
 	s.syncAsInt(saveVersion);
 	if ((uint)saveVersion != SaveMagic) {
@@ -113,7 +113,7 @@ void AGSParallax::SyncGame(Serializer &s) {
 	}
 
 	for (int i = 0; i < MAX_SPRITES; ++i)
-		_sprites[i].SyncGame(s);
+		_sprites[i].syncGame(s);
 	s.syncAsBool(_enabled);
 }
 
@@ -186,7 +186,7 @@ void AGSParallax::pxDeleteSprite(int id) {
 
 /*------------------------------------------------------------------*/
 
-void Sprite::SyncGame(Serializer &s) {
+void Sprite::syncGame(Serializer &s) {
 	s.syncAsInt(x);
 	s.syncAsInt(y);
 	s.syncAsInt(slot);

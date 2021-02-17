@@ -24,7 +24,6 @@
 #define AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
 
 #include "ags/plugins/plugin_base.h"
-#include "ags/plugins/serializer.h"
 #include "ags/plugins/ags_sprite_font/sprite_font_renderer.h"
 #include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
 

@@ -24,6 +24,7 @@
 #define AGS_PLUGINS_AGSFLASHLIGHT_AGSFLASHLIGHT_H
 
 #include "ags/plugins/plugin_base.h"
+#include "ags/plugins/serializer.h"
 #include "ags/lib/allegro.h"
 
 namespace AGS3 {
@@ -85,10 +86,7 @@ private:
 	static void DrawDarkness();
 	static void CreateLightBitmap();
 	static void Update();
-	static size_t engineFileRead(void *ptr, size_t size, size_t count, long fileHandle);
-	static size_t engineFileWrite(const void *ptr, size_t size, size_t count, long fileHandle);
-	static void RestoreGame(long file);
-	static void SaveGame(long file);
+	static void syncGame(Serializer &s);
 	static void SetFlashlightTint(int RedTint, int GreenTint, int BlueTint);
 	static int GetFlashlightTintRed();
 	static int GetFlashlightTintGreen();
