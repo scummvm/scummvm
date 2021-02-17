@@ -29,8 +29,8 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-#define mapWidth 64
-#define mapHeight 64
+#define MAP_WIDTH 64
+#define MAP_HEIGHT 64
 
 struct Sprite {
 	double x;
@@ -68,14 +68,12 @@ extern double planeX;
 extern double planeY; //the 2d raycaster version of camera plane
 extern double moveSpeed; //the constant value is in squares/second
 extern double rotSpeed; //the constant value is in radians/second
-extern unsigned char worldMap[64][64];
-extern unsigned char lightMap[64][64];
-extern int ceilingMap[64][64];
-extern int floorMap[64][64];
-extern int heightMap[64][64];
-extern unsigned char seenMap[64][64];
-//extern int mapWidth;
-//extern int mapHeight;
+extern unsigned char worldMap[MAP_WIDTH][MAP_HEIGHT];
+extern unsigned char lightMap[MAP_WIDTH][MAP_HEIGHT];
+extern int ceilingMap[MAP_WIDTH][MAP_HEIGHT];
+extern int floorMap[MAP_WIDTH][MAP_HEIGHT];
+extern int heightMap[MAP_WIDTH][MAP_HEIGHT];
+extern unsigned char seenMap[MAP_WIDTH][MAP_HEIGHT];
 extern int textureSlot;
 extern int ambientlight;
 

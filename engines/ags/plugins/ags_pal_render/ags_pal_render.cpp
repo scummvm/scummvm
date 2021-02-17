@@ -1743,8 +1743,8 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 		engine->FWrite(&moveSpeed, sizeof(double), data);
 		engine->FWrite(&rotSpeed, sizeof(double), data);
 		if (raycastOn) { //If the raycaster is active, we have additional data to save.
-			for (int i = 0; i < mapWidth; ++i)
-				for (int j = 0; j < mapHeight; ++j) {
+			for (int i = 0; i < MAP_WIDTH; ++i)
+				for (int j = 0; j < MAP_HEIGHT; ++j) {
 					engine->FWrite(&worldMap [i][j], sizeof(unsigned char), data);
 					engine->FWrite(&lightMap [i][j], sizeof(unsigned char), data);
 					engine->FWrite(&ceilingMap [i][j], sizeof(int), data);
@@ -1816,8 +1816,8 @@ NumberPtr AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 		engine->FRead(&moveSpeed, sizeof(double), data);
 		engine->FRead(&rotSpeed, sizeof(double), data);
 		if (raycastOn) { //If the raycaster is currently running, we have additional data to load.
-			for (int i = 0; i < mapWidth; ++i) {
-				for (int j = 0; j < mapHeight; ++j) {
+			for (int i = 0; i < MAP_WIDTH; ++i) {
+				for (int j = 0; j < MAP_HEIGHT; ++j) {
 					engine->FRead(&worldMap [i][j], sizeof(unsigned char), data);
 					engine->FRead(&lightMap [i][j], sizeof(unsigned char), data);
 					engine->FRead(&ceilingMap [i][j], sizeof(int), data);

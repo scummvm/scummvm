@@ -28,24 +28,22 @@ namespace Plugins {
 namespace AGSPalRender {
 
 #define PI         (3.1415926535f)
+#define S_WIDTH 320
+#define S_HEIGHT 160
 
-//Variable Declaration
+// Variable Declaration
 bool raycastOn;
 double posX = 22.0, posY = 11.5; //x and y start position
 double dirX = -1.0, dirY = 0.0; //initial direction vector
 double planeX = 0.0, planeY = 0.77; //the 2d raycaster version of camera plane
 double moveSpeed = (1.0 / 60.0) * 3.0; //the constant value is in squares/second
 double rotSpeed = (1.0 / 60.0) * 2.0; //the constant value is in radians/second
-unsigned char worldMap[64][64];
-unsigned char lightMap[64][64];
-int ceilingMap[64][64];
-int floorMap[64][64];
-int heightMap[64][64];
-unsigned char seenMap[64][64];
-//int mapWidth;
-//int mapHeight;
-#define mapWidth 64
-#define mapHeight 64
+unsigned char worldMap[MAP_WIDTH][MAP_HEIGHT];
+unsigned char lightMap[MAP_WIDTH][MAP_HEIGHT];
+int ceilingMap[MAP_WIDTH][MAP_HEIGHT];
+int floorMap[MAP_WIDTH][MAP_HEIGHT];
+int heightMap[MAP_WIDTH][MAP_HEIGHT];
+unsigned char seenMap[MAP_WIDTH][MAP_HEIGHT];
 int textureSlot;
 int ambientlight;
 int ambientweight = 0;
@@ -53,12 +51,7 @@ int ambientcolor = 0;
 int ambientcolorAmount = 0;
 
 Sprite sprite[numSprites] = {};
-
-
-#define sWidth 320
-#define sHeight 160
-
-int editorMap [sWidth][sHeight] = {};
+int editorMap [S_WIDTH][S_HEIGHT] = {};
 
 unsigned char texture[MAX_TEXTURES][texWidth * texHeight];
 
@@ -87,8 +80,8 @@ int selectedY;
 unsigned char selectedColor;
 
 void Ray_SelectTile(int x, int y, unsigned char color) {
-	if (x < 0 || x > mapWidth) selectedX = -1;
-	else if (y < 0 || y > mapWidth) selectedY = -1;
+	if (x < 0 || x >= MAP_WIDTH) selectedX = -1;
+	else if (y < 0 || y >= MAP_HEIGHT) selectedY = -1;
 	else {
 		selectedX = x;
 		selectedY = y;
@@ -97,8 +90,8 @@ void Ray_SelectTile(int x, int y, unsigned char color) {
 }
 
 int Ray_HasSeenTile(int x, int y) {
-	if (x < 0 || x > mapWidth) return -1;
-	else if (y < 0 || y > mapWidth) return -1;
+	if (x < 0 || x >= MAP_WIDTH) return -1;
+	else if (y < 0 || y >= MAP_HEIGHT) return -1;
 	return seenMap [x][y];
 }
 
@@ -113,40 +106,40 @@ int Ray_GetNoClip() {
 void Ray_DrawTile(int spr, int tile) {
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
-	for (int y = 0; y < 64; ++y)
-		for (int x = 0; x < 64; ++x)
-			sprarray [y][x] = texture [tile][(texWidth * y) + x];
+	for (int y = 0; y < MAP_HEIGHT; ++y)
+		for (int x = 0; x < MAP_WIDTH; ++x)
+			sprarray[y][x] = texture [tile][(texWidth * y) + x];
 	engine->ReleaseBitmapSurface(img);
 }
 
 void Ray_DrawOntoTile(int spr, int tile) {
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
-	for (int y = 0; y < 64; ++y)
-		for (int x = 0; x < 64; ++x)
+	for (int y = 0; y < MAP_HEIGHT; ++y)
+		for (int x = 0; x < MAP_WIDTH; ++x)
 			texture [tile][(texWidth * y) + x] = sprarray [y][x];
 	engine->ReleaseBitmapSurface(img);
 }
 
 int Ray_GetTileX_At(int x, int y) {
-	if (x < 0 || x > 319  || y < 0 || y > 159) return -1;
+	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) return -1;
 	else return editorMap [x][y] >> 16;
 }
 
 int Ray_GetTileY_At(int x, int y) {
-	if (x < 0 || x > 319  || y < 0 || y > 159) return -1;
+	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) return -1;
 	else return editorMap [x][y] & 0x0000FFFF;
 }
 
 void Ray_SetWallAt(int x, int y, int id) {
-	if (x < 0 || x >= mapWidth) return;
-	if (y < 0 || y >= mapHeight) return;
+	if (x < 0 || x >= MAP_WIDTH) return;
+	if (y < 0 || y >= MAP_HEIGHT) return;
 	worldMap [x][y] = id;
 }
 
 int Ray_GetWallAt(int x, int y) {
-	if (x < 0 || x >= mapWidth) return -1;
-	if (y < 0 || y >= mapHeight) return -1;
+	if (x < 0 || x >= MAP_WIDTH) return -1;
+	if (y < 0 || y >= MAP_HEIGHT) return -1;
 	return worldMap [x][y];
 }
 
@@ -334,7 +327,7 @@ void Ray_SetPlayerAngle(int angle) {
 void LoadHeightMap(int heightmapSlot) {
 	int tempw = engine->GetSpriteWidth(heightmapSlot);
 	int temph = engine->GetSpriteHeight(heightmapSlot);
-	if (tempw != mapWidth || temph != mapHeight) engine->AbortGame("LoadHeightMap: Map sizes are mismatched!");
+	if (tempw != MAP_WIDTH || temph != MAP_HEIGHT) engine->AbortGame("LoadHeightMap: Map sizes are mismatched!");
 	BITMAP *heightmapBm = engine->GetSpriteGraphic(heightmapSlot);
 	if (!heightmapBm) engine->AbortGame("LoadHeightMap: Cannot load sprite into memory.");
 	unsigned char **hmArray = engine->GetRawBitmapSurface(heightmapBm);
@@ -571,29 +564,29 @@ void MakeTextures(int slot) {
 //double ZBuffer[screenWidth][screenHeight];
 
 void Ray_SetFloorAt(int x, int y, int tex) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight || tex > 511) return;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else floorMap[x][y] = tex;
 }
 
 void Ray_SetCeilingAt(int x, int y, int tex) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight || tex > 511) return;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else ceilingMap[x][y] = tex;
 }
 
 int Ray_GetCeilingAt(int x, int y) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) return -1;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
 	else return ceilingMap [x][y];
 }
 
 
 int Ray_GetFloorAt(int x, int y) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) return -1;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
 	else return floorMap [x][y];
 }
 
 
 int Ray_GetLightingAt(int x, int y) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) return -1;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
 	else {
 		int lighting = 0;
 		if (ceilingMap[x][y] == 0) {
@@ -605,7 +598,7 @@ int Ray_GetLightingAt(int x, int y) {
 }
 
 void Ray_SetLightingAt(int x, int y, unsigned char lighting) {
-	if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) return;
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return;
 	else {
 		lightMap [x][y] = lighting;
 	}
@@ -624,21 +617,21 @@ int Ray_GetSkyBox(int slot) {
 
 int Ray_GetHotspotAt(int x, int y) {
 	if (!interactionmap) return -1;
-	else if (x > sWidth || x < 0 || y > sHeight || y < 0) return -1;
-	else return interactionmap [x * sWidth + y] & 0x00FF;
+	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) return -1;
+	else return interactionmap [x * S_WIDTH + y] & 0x00FF;
 }
 
 int Ray_GetObjectAt(int x, int y) {
 	if (!interactionmap) return -1;
-	else if (x > sWidth || x < 0 || y > sHeight || y < 0) return -1;
-	else return interactionmap [x * sWidth + y] >> 8;
+	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) return -1;
+	else return interactionmap [x * S_WIDTH + y] >> 8;
 }
 
 FLOAT_RETURN_TYPE Ray_GetDistanceAt(int x, int y) {
 	float falsereturn = -1.0f;
 	if (!ZBuffer) {
 		RETURN_FLOAT(falsereturn);
-	} else if (x > sWidth || x < 0 || y > sHeight || y < 0) {
+	} else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) {
 		RETURN_FLOAT(falsereturn);
 	} else {
 
@@ -651,22 +644,22 @@ void Init_Raycaster() {
 	if (ZBuffer)
 		return;
 	//if (!worldMap) return;
-	transcolorbuffer = new unsigned char *[sWidth];
-	transalphabuffer = new unsigned char *[sWidth];
-	transslicedrawn = new bool[sWidth]();
-	transzbuffer = new double*[sWidth];
-	transwallblendmode = new int [mapWidth]();
-	ZBuffer = new double*[sWidth];
-	distTable = new double[sHeight + (sHeight >> 1)];
-	interactionmap = new short[sWidth * sHeight]();
-	for (int y = 0; y < sHeight + (sHeight >> 1); y++) {
-		distTable [y] = sHeight / (2.0 * y - sHeight);
+	transcolorbuffer = new unsigned char *[S_WIDTH];
+	transalphabuffer = new unsigned char *[S_WIDTH];
+	transslicedrawn = new bool[S_WIDTH]();
+	transzbuffer = new double*[S_WIDTH];
+	transwallblendmode = new int [MAP_WIDTH]();
+	ZBuffer = new double*[S_WIDTH];
+	distTable = new double[S_HEIGHT + (S_HEIGHT >> 1)];
+	interactionmap = new short[S_WIDTH * S_HEIGHT]();
+	for (int y = 0; y < S_HEIGHT + (S_HEIGHT >> 1); y++) {
+		distTable [y] = S_HEIGHT / (2.0 * y - S_HEIGHT);
 	}
-	for (int x = 0; x < sWidth; x++) {
-		transcolorbuffer[x] = new unsigned char [sHeight * (mapWidth)]();
-		transalphabuffer[x] = new unsigned char [sHeight * (mapWidth)]();
-		transzbuffer[x] = new double [sHeight * (mapWidth)]();
-		ZBuffer[x] = new double [sHeight]();
+	for (int x = 0; x < S_WIDTH; x++) {
+		transcolorbuffer[x] = new unsigned char [S_HEIGHT * (MAP_WIDTH)]();
+		transalphabuffer[x] = new unsigned char [S_HEIGHT * (MAP_WIDTH)]();
+		transzbuffer[x] = new double [S_HEIGHT * (MAP_WIDTH)]();
+		ZBuffer[x] = new double [S_HEIGHT]();
 		transslicedrawn [x] = false;
 	}
 }
@@ -677,7 +670,7 @@ void Raycast_Render(int slot) {
 	raycastOn = true;
 	double playerrad = atan2(dirY, dirX) + (2.0 * PI);
 	rendering = true;
-	int w = sWidth, h = sHeight;
+	int w = S_WIDTH, h = S_HEIGHT;
 	BITMAP *screen = engine->GetSpriteGraphic(slot);
 	if (!screen) engine->AbortGame("Raycast_Render: No valid sprite to draw on.");
 	engine->GetBitmapDimensions(screen, &w, &h, nullptr);
@@ -704,7 +697,7 @@ void Raycast_Render(int slot) {
 		}
 	}
 	//int multiplier = mapWidth;
-	memset(interactionmap, 0, sizeof(short) * (sHeight * sWidth));
+	memset(interactionmap, 0, sizeof(short) * (S_HEIGHT * S_WIDTH));
 	//start the main loop
 	for (int x = 0; x < w; x++) {
 		transwallcount = 0;
@@ -769,7 +762,7 @@ void Raycast_Render(int slot) {
 			} else if (sideDistX < sideDistY) { // jump to next map square, OR in x-direction, OR in y-direction
 				sideDistX += deltaDistX;
 				mapX += stepX;
-				mapX = abs(mapX) % mapHeight;
+				mapX = abs(mapX) % MAP_HEIGHT;
 				side = 0;
 				if (oppositedrawn && worldMap[mapX][mapY] > 8) {
 					opposite = true;
@@ -787,7 +780,7 @@ void Raycast_Render(int slot) {
 			} else {
 				sideDistY += deltaDistY;
 				mapY += stepY;
-				mapY = abs(mapY) % mapHeight;
+				mapY = abs(mapY) % MAP_HEIGHT;
 				side = 1;
 				if (oppositedrawn && worldMap[mapX][mapY] > 8) {
 					opposite = true;
@@ -848,25 +841,25 @@ void Raycast_Render(int slot) {
 				bool do_ambient = false;
 				if (!opposite) {
 					if (rayDirX > 0 && side == 0) {
-						wall_light = lightMap [(int)mapX - 1 % mapWidth][(int)mapY] << 5;
-						if (ceilingMap [(int)mapX - 1 % mapWidth][(int)mapY] <= 1) do_ambient = true;
-						else if (texture[ceilingMap [(int)mapX - 1 % mapWidth][(int)mapY] - 1][(texWidth * (63 - texX)) + 63] == 0) do_ambient = true;
+						wall_light = lightMap [(int)mapX - 1 % MAP_WIDTH][(int)mapY] << 5;
+						if (ceilingMap [(int)mapX - 1 % MAP_WIDTH][(int)mapY] <= 1) do_ambient = true;
+						else if (texture[ceilingMap [(int)mapX - 1 % MAP_WIDTH][(int)mapY] - 1][(texWidth * (63 - texX)) + 63] == 0) do_ambient = true;
 					}
 					if (rayDirX < 0 && side == 0) {
-						wall_light = lightMap [(int)mapX + 1 % mapWidth][(int)mapY] << 5;
-						if (ceilingMap [(int)mapX + 1 % mapWidth][(int)mapY] <= 1) do_ambient = true;
-						else if (texture[ceilingMap [(int)mapX + 1 % mapWidth][(int)mapY] - 1][(texWidth * texX) + 0] == 0) do_ambient = true;
+						wall_light = lightMap [(int)mapX + 1 % MAP_WIDTH][(int)mapY] << 5;
+						if (ceilingMap [(int)mapX + 1 % MAP_WIDTH][(int)mapY] <= 1) do_ambient = true;
+						else if (texture[ceilingMap [(int)mapX + 1 % MAP_WIDTH][(int)mapY] - 1][(texWidth * texX) + 0] == 0) do_ambient = true;
 
 					}
 					if (rayDirY > 0 && side == 1) {
-						wall_light = lightMap [(int)mapX][(int)mapY - 1 % mapHeight] << 5;
-						if (ceilingMap [(int)mapX][(int)mapY - 1 % mapHeight] <= 1) do_ambient = true;
-						else if (texture[ceilingMap [(int)mapX][(int)mapY - 1 % mapHeight] - 1][(texWidth * 63) + texX] == 0) do_ambient = true;
+						wall_light = lightMap [(int)mapX][(int)mapY - 1 % MAP_HEIGHT] << 5;
+						if (ceilingMap [(int)mapX][(int)mapY - 1 % MAP_HEIGHT] <= 1) do_ambient = true;
+						else if (texture[ceilingMap [(int)mapX][(int)mapY - 1 % MAP_HEIGHT] - 1][(texWidth * 63) + texX] == 0) do_ambient = true;
 					}
 					if (rayDirY < 0 && side == 1) {
-						wall_light = lightMap [(int)mapX][(int)mapY + 1 % mapHeight] << 5;
-						if (ceilingMap [(int)mapX][(int)mapY + 1 % mapHeight] <= 1) do_ambient = true;
-						else if (texture[ceilingMap [(int)mapX][(int)mapY + 1 % mapHeight] - 1][(texWidth * 0) + 63 - texX] == 0) do_ambient = true;
+						wall_light = lightMap [(int)mapX][(int)mapY + 1 % MAP_HEIGHT] << 5;
+						if (ceilingMap [(int)mapX][(int)mapY + 1 % MAP_HEIGHT] <= 1) do_ambient = true;
+						else if (texture[ceilingMap [(int)mapX][(int)mapY + 1 % MAP_HEIGHT] - 1][(texWidth * 0) + 63 - texX] == 0) do_ambient = true;
 					}
 				} else if (opposite) {
 					wall_light = lightMap [(int)mapX][(int)mapY] << 5;
@@ -903,12 +896,12 @@ void Raycast_Render(int slot) {
 								if (ambientpixels) ambientweight++;
 								//SET THE ZBUFFER FOR THE SPRITE CASTING
 								ZBuffer[x][y] = perpWallDist; //perpendicular distance is used
-								interactionmap [x * sWidth + y] = wallData[worldMap[mapX][mapY]].hotspotinteract;
+								interactionmap [x * S_WIDTH + y] = wallData[worldMap[mapX][mapY]].hotspotinteract;
 								editorMap [x][y] = ((short)mapX) << 16 | ((short)mapY);
 							} else {
 								if (transslicedrawn[x] == false) {
-									memset(transcolorbuffer[x], 0, sizeof(unsigned char) * (sHeight * mapWidth));
-									memset(transalphabuffer[x], 0, sizeof(unsigned char) * (sHeight * mapWidth));
+									memset(transcolorbuffer[x], 0, sizeof(unsigned char) * (S_HEIGHT * MAP_WIDTH));
+									memset(transalphabuffer[x], 0, sizeof(unsigned char) * (S_HEIGHT * MAP_WIDTH));
 									//memset (transzbuffer[x],0,sizeof(double)*(sHeight*mapWidth));
 									transslicedrawn[x] = true;
 								}
@@ -940,13 +933,13 @@ void Raycast_Render(int slot) {
 					}
 				}
 				if (alphastripe) {
-					if (transwallcount < mapWidth) {
+					if (transwallcount < MAP_WIDTH) {
 						transwallcount++;
 					}
 					alphastripe = false;
 				}
 				if (opposite) {
-					if (mapX == 0 || mapX == mapWidth || mapY == 0 || mapY == mapHeight) {
+					if (mapX == 0 || mapX == MAP_WIDTH || mapY == 0 || mapY == MAP_HEIGHT) {
 						deeper = false;
 						hit = 0;
 					}
@@ -1024,10 +1017,10 @@ void Raycast_Render(int slot) {
 
 				int floorTexX, floorTexY;
 				int cmapX = (int)currentFloorX;
-				if (cmapX > mapWidth - 1) cmapX = mapWidth - 1;
+				if (cmapX > MAP_WIDTH - 1) cmapX = MAP_WIDTH - 1;
 				if (cmapX < 0) cmapX = 0;
 				int cmapY = (int)currentFloorY;
-				if (cmapY > mapHeight - 1) cmapY = mapHeight - 1;
+				if (cmapY > MAP_HEIGHT - 1) cmapY = MAP_HEIGHT - 1;
 				if (cmapY < 0) cmapY = 0;
 				if (heightMap[cmapX][cmapY] - 1 < 1) continue;
 				int lighting = lightMap [cmapX][cmapY] << 5;
@@ -1060,7 +1053,7 @@ void Raycast_Render(int slot) {
 							if (ny < h && (ZBuffer[x][ny] > currentDist || ZBuffer[x][ny] == 0)) {
 								ZBuffer[x][ny] = currentDist; //perpendicular distance is used
 								buffer[ny][x] = floorcolor;
-								interactionmap [x * sWidth + ny] = 0;
+								interactionmap [x * S_WIDTH + ny] = 0;
 								editorMap [x][ny] = ((short)mapX) << 16 | ((short)mapY);
 							}
 						}
@@ -1074,9 +1067,9 @@ void Raycast_Render(int slot) {
 				double currentFloorY = weight * floorYWall + (1.0 - weight) * posY;
 
 				int floorTexX, floorTexY;
-				int cmapX = (int)currentFloorX % mapWidth;
+				int cmapX = (int)currentFloorX % MAP_WIDTH;
 				if (cmapX < 0) cmapX = 0;
-				int cmapY = (int)currentFloorY % mapHeight;
+				int cmapY = (int)currentFloorY % MAP_HEIGHT;
 				if (cmapY < 0) cmapY = 0;
 				int lighting = lightMap [cmapX][cmapY] << 5;
 				lighting = MIN(255, MAX(0, lighting));
@@ -1108,7 +1101,7 @@ void Raycast_Render(int slot) {
 							if (ZBuffer[x][ny] > currentDist || ZBuffer[x][ny] == 0) {
 								ZBuffer[x][ny] = currentDist; //perpendicular distance is used
 								buffer[ny][x] = floorcolor;
-								interactionmap [x * sWidth + ny] = 0;
+								interactionmap [x * S_WIDTH + ny] = 0;
 								editorMap [x][ny] = ((short)cmapX) << 16 | ((short)cmapY);
 							}
 						}
@@ -1130,8 +1123,8 @@ void Raycast_Render(int slot) {
 					} else ZBuffer[x][h - y] = 999999999999.0;
 					editorMap [x][h - y] = ((short)cmapX) << 16 | ((short)cmapY);
 				}
-				interactionmap [x * sWidth + y] = 0;
-				interactionmap [x * sWidth + (h - y)] = 0;
+				interactionmap [x * S_WIDTH + y] = 0;
+				interactionmap [x * S_WIDTH + (h - y)] = 0;
 				if ((int)cmapX == selectedX && (int)cmapY == selectedY) {
 					if (floorTexX == 0 || floorTexX == 63 || floorTexY == 0 || floorTexY == 63) {
 						buffer[y][x] = selectedColor;
@@ -1295,7 +1288,7 @@ void Raycast_Render(int slot) {
 								buffer[y][stripe] = color; //paint pixel if it isn't black, black is the invisible color
 								ZBuffer[stripe][y] = spriteTransformY[i]; //put the sprite on the zbuffer so we can draw around it.
 							}
-							interactionmap [stripe * sWidth + y] = sprite[spriteOrder[i]].objectinteract << 8;
+							interactionmap [stripe * S_WIDTH + y] = sprite[spriteOrder[i]].objectinteract << 8;
 						}
 					}
 				}
@@ -1310,7 +1303,7 @@ void Raycast_Render(int slot) {
 
 void QuitCleanup() {
 	if (!rendering) {
-		for (int i = 0; i < sWidth; ++i) {
+		for (int i = 0; i < S_WIDTH; ++i) {
 			if (transcolorbuffer[i])delete [] transcolorbuffer[i];
 			if (transalphabuffer[i])delete [] transalphabuffer[i];
 			if (transzbuffer[i])delete [] transzbuffer[i];
@@ -1369,14 +1362,14 @@ void MoveForward() {
 	}
 
 	if (!noclip && !inside) {
-		if (wallData[worldMap[int(newposx)][int(posY)]].solid[texsidex] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidex] == false && int(newposx) > -1 && int(newposx) < mapWidth) posX += dirX * moveSpeed;
-		if (wallData[worldMap[int(posX)][int(newposy)]].solid[texsidey] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidey] == false && int(newposy) > -1 && int(newposy) < mapHeight) posY += dirY * moveSpeed;
+		if (wallData[worldMap[int(newposx)][int(posY)]].solid[texsidex] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidex] == false && int(newposx) > -1 && int(newposx) < MAP_WIDTH) posX += dirX * moveSpeed;
+		if (wallData[worldMap[int(posX)][int(newposy)]].solid[texsidey] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidey] == false && int(newposy) > -1 && int(newposy) < MAP_HEIGHT) posY += dirY * moveSpeed;
 	} else if (!noclip && inside) {
 		posX += dirX * moveSpeed;
 		posY += dirY * moveSpeed;
 	} else {
-		if (int(newposx) > -1 && int(newposx) < mapWidth) posX += dirX * moveSpeed;
-		if (int(newposy) > -1 && int(newposy) < mapHeight) posY += dirY * moveSpeed;
+		if (int(newposx) > -1 && int(newposx) < MAP_WIDTH) posX += dirX * moveSpeed;
+		if (int(newposy) > -1 && int(newposy) < MAP_HEIGHT) posY += dirY * moveSpeed;
 	}
 }
 
@@ -1425,14 +1418,14 @@ void MoveBackward() {
 
 	if ((int)posX == (int)newposy && (int)posY == (int)newposy) inside = true;
 	if (!noclip && !inside) {
-		if (wallData[worldMap[int(newposx)][int(posY)]].solid[texsidex] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidex] == false && int(newposx) > -1 && int(newposx) < mapWidth) posX -= dirX * moveSpeed;
-		if (wallData[worldMap[int(posX)][int(newposy)]].solid[texsidey] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidey] == false && int(newposy) > -1 && int(newposy) < mapHeight) posY -= dirY * moveSpeed;
+		if (wallData[worldMap[int(newposx)][int(posY)]].solid[texsidex] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidex] == false && int(newposx) > -1 && int(newposx) < MAP_WIDTH) posX -= dirX * moveSpeed;
+		if (wallData[worldMap[int(posX)][int(newposy)]].solid[texsidey] == false && wallData[worldMap[int(posX)][int(posY)]].solid[inside_texsidey] == false && int(newposy) > -1 && int(newposy) < MAP_HEIGHT) posY -= dirY * moveSpeed;
 	} else if (!noclip && inside) {
 		posX -= dirX * moveSpeed;
 		posY -= dirY * moveSpeed;
 	} else {
-		if (int(newposx) > -1 && int(newposx) < mapWidth) posX -= dirX * moveSpeed;
-		if (int(newposy) > -1 && int(newposy) < mapHeight) posY -= dirY * moveSpeed;
+		if (int(newposx) > -1 && int(newposx) < MAP_WIDTH) posX -= dirX * moveSpeed;
+		if (int(newposy) > -1 && int(newposy) < MAP_HEIGHT) posY -= dirY * moveSpeed;
 	}
 }
 
