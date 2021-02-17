@@ -148,7 +148,7 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 }
 
 
-static ProcId playMovie(const char *movieID, bool fade) {
+static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
 	const Std::string filename = Std::string::format("flics/%s.avi", movieID);
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
@@ -157,20 +157,21 @@ static ProcId playMovie(const char *movieID, bool fade) {
 		return 0;
 	}
 	// TODO: Add support for subtitles (.txt file).  The format is very simple.
-	return MovieGump::U8MovieViewer(rs, fade);
+	return MovieGump::U8MovieViewer(rs, fade, false, noScale);
 }
 
 ProcId RemorseGame::playIntroMovie(bool fade) {
-	return playMovie("T01", fade);
+	const char *name = (GAME_IS_REMORSE ? "T01" : "origin");
+	return playMovie(name, fade, true);
 }
 
 ProcId RemorseGame::playIntroMovie2(bool fade) {
-	return playMovie("T02", fade);
+	const char *name = (GAME_IS_REMORSE ? "T02" : "ANIM01");
+	return playMovie(name, fade, false);
 }
 
-
 ProcId RemorseGame::playEndgameMovie(bool fade) {
-	return playMovie("O01", fade);
+	return playMovie("O01", fade, false);
 }
 
 void RemorseGame::playCredits() {
@@ -178,44 +179,6 @@ void RemorseGame::playCredits() {
 }
 
 void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {
-#if 0
-	MainActor *av = getMainActor();
-	int32 x, y, z;
-
-	const Std::string &avname = av->getName();
-	uint8 namelength = static_cast<uint8>(avname.size());
-	ws->writeByte(namelength);
-	for (unsigned int i = 0; i < namelength; ++i)
-		ws->writeByte(static_cast<uint8>(avname[i]));
-
-	av->getLocation(x, y, z);
-	ws->writeUint16LE(av->getMapNum());
-	ws->writeUint32LE(static_cast<uint32>(x));
-	ws->writeUint32LE(static_cast<uint32>(y));
-	ws->writeUint32LE(static_cast<uint32>(z));
-
-	ws->writeUint16LE(av->getStr());
-	ws->writeUint16LE(av->getInt());
-	ws->writeUint16LE(av->getDex());
-	ws->writeUint16LE(av->getHP());
-	ws->writeUint16LE(av->getMaxHP());
-	ws->writeUint16LE(av->getMana());
-	ws->writeUint16LE(av->getMaxMana());
-	ws->writeUint16LE(av->getArmourClass());
-	ws->writeUint16LE(av->getTotalWeight());
-
-	for (unsigned int i = 1; i <= 6; i++) {
-		const uint16 objid = av->getEquip(i);
-		const Item *item = getItem(objid);
-		if (item) {
-			ws->writeUint32LE(item->getShape());
-			ws->writeUint32LE(item->getFrame());
-		} else {
-			ws->writeUint32LE(0);
-			ws->writeUint32LE(0);
-		}
-	}
-#endif
 }
 
 } // End of namespace Ultima8

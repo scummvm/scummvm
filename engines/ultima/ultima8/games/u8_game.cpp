@@ -174,7 +174,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 		return 0;
 	}
 
-	return MovieGump::U8MovieViewer(skf, fade, true);
+	return MovieGump::U8MovieViewer(skf, fade, true, true);
 }
 
 ProcId U8Game::playEndgameMovie(bool fade) {
@@ -186,7 +186,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 		return 0;
 	}
 
-	return MovieGump::U8MovieViewer(skf, fade);
+	return MovieGump::U8MovieViewer(skf, fade, false, true);
 }
 
 void U8Game::playCredits() {
