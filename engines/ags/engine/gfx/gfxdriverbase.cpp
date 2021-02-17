@@ -363,7 +363,7 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 				}
 			} else if (src_depth == 32) {
 				unsigned int *ptrLong = (unsigned int *)dst_ptr;
-				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
+				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(unsigned int)];
 				if (*srcData == MASK_COLOR_32) {
 					if (!usingLinearFiltering)
 						ptrLong[x] = 0;
@@ -376,9 +376,9 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 						if (x < tile->width - 1)
 							get_pixel_if_not_transparent32(&srcData[1], &red, &green, &blue, &divisor);
 						if (y > 0)
-							get_pixel_if_not_transparent32((const unsigned int *)&scanline_before[(x + tile->x) * sizeof(int)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent32((const uint32 *)&scanline_before[(x + tile->x) * sizeof(uint32)], &red, &green, &blue, &divisor);
 						if (y < tile->height - 1)
-							get_pixel_if_not_transparent32((const unsigned int *)&scanline_after[(x + tile->x) * sizeof(int)], &red, &green, &blue, &divisor);
+							get_pixel_if_not_transparent32((const uint32 *)&scanline_after[(x + tile->x) * sizeof(uint32)], &red, &green, &blue, &divisor);
 						if (divisor > 0)
 							ptrLong[x] = VMEMCOLOR_RGBA(red / divisor, green / divisor, blue / divisor, 0);
 						else
@@ -419,7 +419,7 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, con
 				memPtrLong[x] = VMEMCOLOR_RGBA(algetr16(*srcData), algetg16(*srcData), algetb16(*srcData), 0xFF);
 			} else if (src_depth == 32) {
 				//unsigned int *memPtrLong = (unsigned int *)dst_ptr;
-				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
+				const uint32 *srcData = (const uint32 *)&scanline_at[(x + tile->x) * sizeof(uint32)];
 				if (has_alpha)
 					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), algeta32(*srcData));
 				else

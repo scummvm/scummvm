@@ -796,7 +796,7 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 
 	if (pathbackstage >= 0) {
 		int nearestpos = 0, nearestindx;
-		int reallyneed[MAXNEEDSTAGES], numstages = 0;
+		int32_t reallyneed[MAXNEEDSTAGES], numstages = 0;
 		reallyneed[numstages] = MAKE_INTCOORD(srcx, srcy);
 		numstages++;
 		nearestindx = -1;
@@ -859,7 +859,7 @@ stage_again:
 #endif
 		int mlist = movlst;
 		mls[mlist].numstage = numstages;
-		memcpy(&mls[mlist].pos[0], &reallyneed[0], sizeof(int) * numstages);
+		memcpy(&mls[mlist].pos[0], &reallyneed[0], sizeof(int32_t) * numstages);
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif

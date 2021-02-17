@@ -54,7 +54,7 @@ namespace RouteFinder {
 #define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
 
 static const int MAXNAVPOINTS = MAXNEEDSTAGES;
-static int navpoints[MAXNAVPOINTS];
+static int32_t navpoints[MAXNAVPOINTS];
 static int num_navpoints;
 static fixed move_speed_x, move_speed_y;
 static Navigation nav;
@@ -245,7 +245,7 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 
 	int mlist = movlst;
 	mls[mlist].numstage = num_navpoints;
-	memcpy(&mls[mlist].pos[0], &navpoints[0], sizeof(int) * num_navpoints);
+	memcpy(&mls[mlist].pos[0], &navpoints[0], sizeof(int32_t) * num_navpoints);
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", num_navpoints);
 #endif

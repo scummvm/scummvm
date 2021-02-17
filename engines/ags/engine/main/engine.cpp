@@ -879,8 +879,8 @@ void engine_init_game_settings() {
 	play.shake_screen_yoff = 0;
 
 	memset(&play.walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
-	memset(&play.script_timers[0], 0, MAX_TIMERS * sizeof(int));
-	memset(&play.default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int));
+	memset(&play.script_timers[0], 0, MAX_TIMERS * sizeof(int32_t));
+	memset(&play.default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int32_t));
 
 	// reset graphical script vars (they're still used by some games)
 	for (ee = 0; ee < MAXGLOBALVARS; ee++)
