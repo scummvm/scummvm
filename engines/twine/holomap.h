@@ -82,6 +82,7 @@ private:
 		uint16 unk2 = 0;
 	};
 	HolomapProjectedPos _projectedSurfacePositions[2048];
+	int _projectedSurfaceIndex = 0;
 
 	struct TrajectoryData {
 		int16 locationIdx;

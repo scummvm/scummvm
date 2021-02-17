@@ -169,7 +169,7 @@ void Holomap::prepareHolomapPolygons() {
 	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
-	uint16 projectedIndex = 0;
+	_projectedSurfaceIndex = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
@@ -178,26 +178,26 @@ void Holomap::prepareHolomapPolygons() {
 			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destZ;
-				_holomapSort[holomapSortArrayIdx].projectedPosIdx = projectedIndex;
+				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
 			_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
-			_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
-			_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
+			_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPosX;
+			_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPosY;
 			rotation += ANGLE_11_25;
-			++projectedIndex;
+			++_projectedSurfaceIndex;
 		}
 		HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 		_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
-		_projectedSurfacePositions[projectedIndex].x = _engine->_renderer->projPosX;
-		_projectedSurfacePositions[projectedIndex].y = _engine->_renderer->projPosY;
+		_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPosX;
+		_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPosY;
 		rotation += ANGLE_11_25;
-		++projectedIndex;
+		++_projectedSurfaceIndex;
 	}
 	assert(holomapSortArrayIdx <= ARRAYSIZE(_holomapSort));
 	assert(holomapSurfaceArrayIdx <= ARRAYSIZE(_holomapSurface));
-	assert(projectedIndex <= ARRAYSIZE(_projectedSurfacePositions));
+	assert(_projectedSurfaceIndex <= ARRAYSIZE(_projectedSurfacePositions));
 	qsort(_holomapSort, ARRAYSIZE(_holomapSort), sizeof(HolomapSort), sortHolomapSurfaceCoordsByDepth);
 }
 
@@ -219,6 +219,7 @@ bool Holomap::isTriangleVisible(const Vertex *vertices) const {
 void Holomap::renderHolomapSurfacePolygons() {
 	prepareHolomapPolygons();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
+		assert(_holomapSort[i].projectedPosIdx + 34 < _projectedSurfaceIndex);
 		const HolomapProjectedPos &pos1 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0];
 		const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos3 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
