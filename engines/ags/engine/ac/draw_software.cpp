@@ -375,8 +375,8 @@ void update_invalid_region(Bitmap *ds, Bitmap *src, const DirtyRects &rects, boo
 			const int bypp = src->GetBPP();
 			// do the fast memory copy
 			for (int i = 0; i < surf_height; i++) {
-				const uint8 *src_scanline = src->GetScanLine(i + src_y);
-				uint8 *dst_scanline = ds->GetScanLineForWriting(i + dst_y);
+				const uint8_t *src_scanline = src->GetScanLine(i + src_y);
+				uint8_t *dst_scanline = ds->GetScanLineForWriting(i + dst_y);
 				const IRRow &dirty_row = dirtyRow[i];
 				for (int k = 0; k < dirty_row.numSpans; k++) {
 					int tx1 = dirty_row.span[k].x1;

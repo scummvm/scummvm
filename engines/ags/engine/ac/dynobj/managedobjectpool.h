@@ -51,7 +51,7 @@ private:
 	// TODO: find out if we can make handle size_t
 	struct ManagedObject {
 		ScriptValueType obj_type;
-		int handle;
+		int32_t handle;
 		// TODO: this makes no sense having this as "const char*",
 		// void* will be proper (and in all related functions)
 		const char *addr;
@@ -65,31 +65,31 @@ private:
 		ManagedObject()
 			: obj_type(kScValUndefined), handle(0), addr(nullptr), callback(nullptr), refCount(0) {
 		}
-		ManagedObject(ScriptValueType obj_type_, int handle_, const char *addr_, ICCDynamicObject *callback_)
+		ManagedObject(ScriptValueType obj_type_, int32_t handle_, const char *addr_, ICCDynamicObject *callback_)
 			: obj_type(obj_type_), handle(handle_), addr(addr_), callback(callback_), refCount(0) {
 		}
 	};
 
 	int objectCreationCounter;  // used to do garbage collection every so often
 
-	int nextHandle{}; // TODO: manage nextHandle's going over INT32_MAX !
-	std::queue<int> available_ids;
+	int32_t nextHandle{}; // TODO: manage nextHandle's going over INT32_MAX !
+	std::queue<int32_t> available_ids;
 	std::vector<ManagedObject> objects;
-	std::unordered_map<const char *, int, Pointer_Hash> handleByAddress;
+	std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
 
-	void Init(int theHandle, const char *theAddress, ICCDynamicObject *theCallback, ScriptValueType objType);
+	void Init(int32_t theHandle, const char *theAddress, ICCDynamicObject *theCallback, ScriptValueType objType);
 	int Remove(ManagedObject &o, bool force = false);
 
 	void RunGarbageCollection();
 
 public:
 
-	int AddRef(int handle);
-	int CheckDispose(int handle);
-	int SubRef(int handle);
-	int AddressToHandle(const char *addr);
-	const char *HandleToAddress(int handle);
-	ScriptValueType HandleToAddressAndManager(int handle, void *&object, ICCDynamicObject *&manager);
+	int32_t AddRef(int32_t handle);
+	int CheckDispose(int32_t handle);
+	int32_t SubRef(int32_t handle);
+	int32_t AddressToHandle(const char *addr);
+	const char *HandleToAddress(int32_t handle);
+	ScriptValueType HandleToAddressAndManager(int32_t handle, void *&object, ICCDynamicObject *&manager);
 	int RemoveObject(const char *address);
 	void RunGarbageCollectionIfAppropriate();
 	int AddObject(const char *address, ICCDynamicObject *callback, bool plugin_object);

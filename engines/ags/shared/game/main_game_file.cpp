@@ -310,13 +310,13 @@ void ReadDialogs(DialogTopic *&dialog,
 	} else {
 		// Encrypted text on > 2.60
 		while (1) {
-			uint32 newlen = (uint32)in->ReadInt32();
+			uint32_t newlen = (uint32_t)in->ReadInt32();
 			if (newlen == 0xCAFEBEEF) { // GUI magic
 				in->Seek(-4);
 				break;
 			}
 
-			newlen = Math::Min(newlen, (uint32)sizeof(buffer) - 1);
+			newlen = Math::Min(newlen, (uint32_t)sizeof(buffer) - 1);
 			in->Read(buffer, newlen);
 			buffer[newlen] = 0;
 			decrypt_text(buffer);
@@ -627,14 +627,14 @@ void FixupSaveDirectory(GameSetupStruct &game) {
 }
 
 HGameFileError ReadSpriteFlags(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
-	uint32 sprcount;
+	uint32_t sprcount;
 	if (data_ver < kGameVersion_256)
 		sprcount = LEGACY_MAX_SPRITES_V25;
 	else
 		sprcount = in->ReadInt32();
-	if (sprcount > (uint32)SpriteCache::MAX_SPRITE_INDEX + 1)
+	if (sprcount > (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1)
 		return new MainGameFileError(kMGFErr_TooManySprites, String::FromFormat("Count: %u, max: %u",
-			sprcount, (uint32)SpriteCache::MAX_SPRITE_INDEX + 1));
+			sprcount, (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1));
 
 	ents.SpriteCount = sprcount;
 	ents.SpriteFlags.clear();

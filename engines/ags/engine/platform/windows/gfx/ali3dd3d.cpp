@@ -1010,7 +1010,7 @@ bool D3DGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_n
 			error("IDirect3DSurface9::LockRect failed");
 		}
 
-		BitmapHelper::ReadPixelsFromMemory(destination, (uint8 *)lockedRect.pBits, lockedRect.Pitch);
+		BitmapHelper::ReadPixelsFromMemory(destination, (uint8_t *)lockedRect.pBits, lockedRect.Pitch);
 
 		surface->UnlockRect();
 		surface->Release();

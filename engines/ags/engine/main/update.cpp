@@ -74,7 +74,7 @@ extern int numLipLines, curLipLine, curLipLinePhoneme;
 extern int is_text_overlay;
 extern IGraphicsDriver *gfxDriver;
 
-int do_movelist_move(int16 *mlnum, int *xx, int *yy) {
+int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 	int need_to_fix_sprite = 0;
 	if (mlnum[0] < 1) quit("movelist_move: attempted to move on a non-exist movelist");
 	MoveList *cmls;

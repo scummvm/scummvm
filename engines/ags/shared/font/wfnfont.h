@@ -65,9 +65,9 @@ enum WFNError {
 };
 
 struct WFNChar {
-	uint16       Width;
-	uint16       Height;
-	const uint8 *Data;
+	uint16_t       Width;
+	uint16_t       Height;
+	const uint8_t *Data;
 
 	WFNChar();
 
@@ -86,12 +86,12 @@ struct WFNChar {
 
 class WFNFont {
 public:
-	inline uint16 GetCharCount() const {
-		return static_cast<uint16>(_refs.size());
+	inline uint16_t GetCharCount() const {
+		return static_cast<uint16_t>(_refs.size());
 	}
 
 	// Get WFN character for the given code; if the character is missing, returns empty character
-	inline const WFNChar &GetChar(uint8 code) const {
+	inline const WFNChar &GetChar(uint8_t code) const {
 		return code < _refs.size() ? *_refs[code] : _emptyChar;
 	}
 
@@ -103,7 +103,7 @@ public:
 protected:
 	std::vector<const WFNChar *> _refs;     // reference array, contains pointers to elements of _items
 	std::vector<WFNChar>        _items;     // actual character items
-	std::vector<uint8>        _pixelData; // pixel data array
+	std::vector<uint8_t>        _pixelData; // pixel data array
 
 	static const WFNChar        _emptyChar; // a dummy character to substitute bad symbols
 };

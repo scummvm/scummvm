@@ -135,84 +135,84 @@ int get_hotspot_at(int xpp, int ypp) {
 
 extern ScriptString myScriptStringImpl;
 
-RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptHotspot, ccDynamicHotspot, GetHotspotAtRoom);
 }
 
 // ScriptHotspot *(int xx, int yy)
-RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptHotspot, ccDynamicHotspot, GetHotspotAtScreen);
 }
 
-RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaHotspot);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
 // void (ScriptHotspot *hss, char *buffer)
-RuntimeScriptValue Sc_Hotspot_GetName(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_POBJ(ScriptHotspot, Hotspot_GetName, char);
 }
 
 // int  (ScriptHotspot *hss, const char *property)
-RuntimeScriptValue Sc_Hotspot_GetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT_POBJ(ScriptHotspot, Hotspot_GetProperty, const char);
 }
 
 // void  (ScriptHotspot *hss, const char *property, char *bufer)
-RuntimeScriptValue Sc_Hotspot_GetPropertyText(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetPropertyText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_POBJ2(ScriptHotspot, Hotspot_GetPropertyText, const char, char);
 }
 
 // const char* (ScriptHotspot *hss, const char *property)
-RuntimeScriptValue Sc_Hotspot_GetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, myScriptStringImpl, Hotspot_GetTextProperty, const char);
 }
 
-RuntimeScriptValue Sc_Hotspot_SetProperty(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL_POBJ_PINT(ScriptHotspot, Hotspot_SetProperty, const char);
 }
 
-RuntimeScriptValue Sc_Hotspot_SetTextProperty(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_SetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL_POBJ2(ScriptHotspot, Hotspot_SetTextProperty, const char, const char);
 }
 
-RuntimeScriptValue Sc_Hotspot_IsInteractionAvailable(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_IsInteractionAvailable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL_PINT(ScriptHotspot, Hotspot_IsInteractionAvailable);
 }
 
 // void  (ScriptHotspot *hss, int mood)
-RuntimeScriptValue Sc_Hotspot_RunInteraction(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_RunInteraction(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(ScriptHotspot, Hotspot_RunInteraction);
 }
 
 // int (ScriptHotspot *hss)
-RuntimeScriptValue Sc_Hotspot_GetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetEnabled);
 }
 
 // void (ScriptHotspot *hss, int newval)
-RuntimeScriptValue Sc_Hotspot_SetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_SetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(ScriptHotspot, Hotspot_SetEnabled);
 }
 
 // int (ScriptHotspot *hss)
-RuntimeScriptValue Sc_Hotspot_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetID);
 }
 
 // const char* (ScriptHotspot *hss)
-RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, myScriptStringImpl, Hotspot_GetName_New);
 }
 
 // int (ScriptHotspot *hss)
-RuntimeScriptValue Sc_Hotspot_GetWalkToX(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetWalkToX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetWalkToX);
 }
 
 // int (ScriptHotspot *hss)
-RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetWalkToY);
 }
 

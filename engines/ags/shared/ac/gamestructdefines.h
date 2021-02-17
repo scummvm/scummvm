@@ -202,7 +202,7 @@ enum GameGuiAlphaRenderingStyle {
 
 // General information about sprite (properties, size)
 struct SpriteInfo {
-	uint32 Flags;
+	uint32_t Flags;
 	int      Width;
 	int      Height;
 
@@ -235,7 +235,7 @@ struct FontInfo {
 	};
 
 	// General font's loading and rendering flags
-	uint32      Flags;
+	uint32_t      Flags;
 	// Font size, in points (basically means pixels in AGS)
 	int           SizePt;
 	// Factor to multiply base font size by

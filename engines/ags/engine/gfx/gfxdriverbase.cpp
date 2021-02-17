@@ -291,9 +291,9 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 	bool lastPixelWasTransparent = false;
 	for (int y = 0; y < tile->height; y++) {
 		lastPixelWasTransparent = false;
-		const uint8 *scanline_before = bitmap->GetScanLine(y + tile->y - 1);
-		const uint8 *scanline_at = bitmap->GetScanLine(y + tile->y);
-		const uint8 *scanline_after = bitmap->GetScanLine(y + tile->y + 1);
+		const uint8_t *scanline_before = bitmap->GetScanLine(y + tile->y - 1);
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+		const uint8_t *scanline_after = bitmap->GetScanLine(y + tile->y + 1);
 		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
 		for (int x = 0; x < tile->width; x++) {
@@ -407,7 +407,7 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, con
 	char *dst_ptr, const int dst_pitch) {
 	const int src_depth = bitmap->GetColorDepth();
 	for (int y = 0; y < tile->height; y++) {
-		const uint8 *scanline_at = bitmap->GetScanLine(y + tile->y);
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
 		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
 		for (int x = 0; x < tile->width; x++) {

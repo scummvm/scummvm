@@ -73,7 +73,7 @@ struct GameState {
 	int  disabled_user_interface;  // >0 while in cutscene/etc
 	int  gscript_timer;    // obsolete
 	int  debug_mode;       // whether we're in debug mode
-	int globalvars[MAXGLOBALVARS];  // obsolete
+	int32_t globalvars[MAXGLOBALVARS];  // obsolete
 	int  messagetime;      // time left for auto-remove messages
 	int  usedinv;          // inventory item last used
 	int  inv_top, inv_numdisp, obsolete_inv_numorder, inv_numinline;
@@ -147,7 +147,7 @@ struct GameState {
 	int  speech_display_post_time_ms; // keep speech text/portrait on screen after text/voice has finished playing;
 	// no speech animation is supposed to be played at this time
 	int  dialog_options_highlight_color; // The colour used for highlighted (hovered over) text in dialog options
-	int reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
+	int32_t reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
 	// ** up to here is referenced in the script "game." object
 	long  randseed;    // random seed
 	int   player_on_region;    // player's current region
@@ -161,7 +161,7 @@ struct GameState {
 	short mboundx1, mboundx2, mboundy1, mboundy2;
 	int   fade_effect;
 	int   bg_frame_locked;
-	int globalscriptvars[MAXGSVALUES];
+	int32_t globalscriptvars[MAXGSVALUES];
 	int   cur_music_number, music_repeat;
 	int   music_master_volume;
 	int   digital_master_volume;
@@ -170,7 +170,7 @@ struct GameState {
 	int   entered_at_x, entered_at_y, entered_edge;
 	int   want_speech;
 	int   cant_skip_speech;
-	int script_timers[MAX_TIMERS];
+	int32_t script_timers[MAX_TIMERS];
 	int   sound_volume, speech_volume;
 	int   normal_font, speech_font;
 	char  key_skip_wait;
@@ -183,7 +183,7 @@ struct GameState {
 	short parsed_words[MAX_PARSED_WORDS];
 	char  bad_parsed_word[100];
 	int   raw_color;
-	int raw_modified[MAX_ROOM_BGFRAMES];
+	int32_t raw_modified[MAX_ROOM_BGFRAMES];
 	Shared::PBitmap raw_drawing_surface;
 	short filenumbers[MAXSAVEGAMES];
 	int   room_changes;
@@ -222,11 +222,11 @@ struct GameState {
 	int   gamma_adjustment;
 	short temporarily_turned_off_character;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility;
-	int *gui_draw_order;
+	int32_t *gui_draw_order;
 	std::vector<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms;
 	int   ignore_user_input_after_text_timeout_ms;
-	int   default_audio_type_volumes[MAX_AUDIO_TYPES];
+	int32_t   default_audio_type_volumes[MAX_AUDIO_TYPES];
 
 	// Dynamic custom property values for characters and items
 	std::vector<AGS::Shared::StringIMap> charProps;
@@ -308,7 +308,7 @@ struct GameState {
 	// Creates new room viewport
 	PViewport CreateRoomViewport();
 	// Register camera in the managed system; optionally links to existing handle
-	ScriptViewport *RegisterRoomViewport(int index, int handle = 0);
+	ScriptViewport *RegisterRoomViewport(int index, int32_t handle = 0);
 	// Deletes existing room viewport
 	void DeleteRoomViewport(int index);
 	// Get number of room viewports
@@ -316,7 +316,7 @@ struct GameState {
 	// Creates new room camera
 	PCamera CreateRoomCamera();
 	// Register camera in the managed system; optionally links to existing handle
-	ScriptCamera *RegisterRoomCamera(int index, int handle = 0);
+	ScriptCamera *RegisterRoomCamera(int index, int32_t handle = 0);
 	// Deletes existing room camera
 	void DeleteRoomCamera(int index);
 	// Get number of room cameras
@@ -382,8 +382,8 @@ private:
 	// Script viewports and cameras are references to real data export to
 	// user script. They became invalidated as the actual object gets
 	// destroyed, but are kept in memory to prevent script errors.
-	std::vector<std::pair<ScriptViewport *, int>> _scViewportRefs;
-	std::vector<std::pair<ScriptCamera *, int>> _scCameraRefs;
+	std::vector<std::pair<ScriptViewport *, int32_t>> _scViewportRefs;
+	std::vector<std::pair<ScriptCamera *, int32_t>> _scCameraRefs;
 
 	// Tells that the main viewport's position has changed since last game update
 	bool  _mainViewportHasChanged;
@@ -398,7 +398,7 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align);
 // Reads legacy alignment type from the value set in script depending on the
 // current Script API level. This is made to make it possible to change
 // Alignment constants in the Script API and still support old version.
-HorAlignment ReadScriptAlignment(int align);
+HorAlignment ReadScriptAlignment(int32_t align);
 
 extern GameState play;
 

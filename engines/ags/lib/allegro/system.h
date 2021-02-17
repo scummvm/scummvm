@@ -145,7 +145,7 @@ extern _DRIVER_INFO _system_driver_list[];
 
 extern void set_color_depth(int depth);
 extern int get_color_depth();
-extern int get_desktop_resolution(int *width, int *height);
+extern int get_desktop_resolution(int32_t *width, int32_t *height);
 extern void request_refresh_rate(int rate);
 extern void set_close_button_callback(void(*proc)());
 

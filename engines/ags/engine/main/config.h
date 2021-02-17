@@ -54,8 +54,8 @@ void parse_scaling_option(const String &scaling_option, FrameScaleDefinition &sc
 void parse_scaling_option(const String &scaling_option, GameFrameSetup &frame_setup);
 String make_scaling_option(FrameScaleDefinition scale_def, int scale_factor = 0);
 String make_scaling_option(const GameFrameSetup &frame_setup);
-uint32 convert_scaling_to_fp(int scale_factor);
-int convert_fp_to_scaling(uint32 scaling);
+uint32_t convert_scaling_to_fp(int scale_factor);
+int convert_fp_to_scaling(uint32_t scaling);
 // Fill in setup structs with default settings for the given mode (windowed or fullscreen)
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup);
 

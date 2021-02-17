@@ -38,7 +38,7 @@ struct CCCharacter final : AGSCCDynamicObject {
 
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
-	void WriteInt16(const char *address, intptr_t offset, int16 val) override;
+	void WriteInt16(const char *address, intptr_t offset, int16_t val) override;
 };
 
 } // namespace AGS3

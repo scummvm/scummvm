@@ -58,14 +58,14 @@ int     File_GetPosition(sc_File *fil);
 
 struct ScriptFileHandle {
 	Stream *stream;
-	int  handle;
+	int32_t  handle;
 };
 extern ScriptFileHandle valid_handles[MAX_OPEN_SCRIPT_FILES + 1];
 extern int num_open_script_files;
 
 ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *operation_name);
-ScriptFileHandle *check_valid_file_handle_int32(int handle, const char *operation_name);
-Stream *get_valid_file_stream_from_handle(int handle, const char *operation_name);
+ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *operation_name);
+Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_name);
 
 } // namespace AGS3
 

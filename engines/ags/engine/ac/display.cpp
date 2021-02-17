@@ -451,9 +451,9 @@ void wouttextxy_AutoOutline_Semitransparent2Opaque(Bitmap *map) {
 	size_t const height = map->GetHeight();
 
 	for (size_t y = 0; y < height; y++) {
-		int *sc_line = reinterpret_cast<int *>(map->GetScanLineForWriting(y));
+		int32 *sc_line = reinterpret_cast<int32 *>(map->GetScanLineForWriting(y));
 		for (size_t x = 0; x < width; x++) {
-			int &px = sc_line[x];
+			int32 &px = sc_line[x];
 			int const transparency = geta(px);
 			if (0 < transparency && transparency < 255)
 				px = makeacol32(
@@ -467,7 +467,7 @@ void wouttextxy_AutoOutline_Semitransparent2Opaque(Bitmap *map) {
 #endif
 
 // Draw outline that is calculated from the text font, not derived from an outline font
-void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int color, const char *texx, int &xxp, int &yyp) {
+void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *texx, int &xxp, int &yyp) {
 	int const thickness = game.fonts.at(font).AutoOutlineThickness;
 	auto const style = game.fonts.at(font).AutoOutlineStyle;
 	if (thickness <= 0)

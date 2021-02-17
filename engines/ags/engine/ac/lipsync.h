@@ -29,7 +29,7 @@ namespace AGS3 {
 
 struct SpeechLipSyncLine {
 	char  filename[14];
-	int *endtimeoffs;
+	int32_t *endtimeoffs;
 	short *frame;
 	short numPhonemes;
 };

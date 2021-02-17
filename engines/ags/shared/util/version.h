@@ -38,10 +38,10 @@ namespace Shared {
 using Shared::String;
 
 struct Version {
-	int Major;
-	int Minor;
-	int Release;
-	int Revision;
+	int32_t Major;
+	int32_t Minor;
+	int32_t Release;
+	int32_t Revision;
 	String  Special;
 	String  BuildInfo;
 
@@ -53,21 +53,21 @@ struct Version {
 	static const Version LastOldFormatVersion;
 
 	Version();
-	Version(int major, int minor, int release);
-	Version(int major, int minor, int release, int revision);
-	Version(int major, int minor, int release, int revision, const String &special);
-	Version(int major, int minor, int release, int revision, const String &special, const String &build_info);
+	Version(int32_t major, int32_t minor, int32_t release);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special, const String &build_info);
 	Version(const String &version_string);
 
-	inline int AsNumber() const {
+	inline int32_t AsNumber() const {
 		return Major * 10000 + Minor * 100 + Release;
 	}
 
-	inline int64 AsLongNumber() const {
-		return (int64)Major * 100000000L + (int64)Minor * 1000000L + (int64)Release * 10000L + Revision;
+	inline int64_t AsLongNumber() const {
+		return (int64_t)Major * 100000000L + (int64_t)Minor * 1000000L + (int64_t)Release * 10000L + Revision;
 	}
 
-	inline int AsSmallNumber() const {
+	inline int32_t AsSmallNumber() const {
 		return Major * 100 + Minor;
 	}
 

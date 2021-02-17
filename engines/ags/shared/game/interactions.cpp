@@ -242,8 +242,8 @@ Interaction *Interaction::CreateFromStream(Stream *in) {
 	if (evt_count > MAX_NEWINTERACTION_EVENTS)
 		quit("Can't deserialize interaction: too many events");
 
-	int types[MAX_NEWINTERACTION_EVENTS];
-	int load_response[MAX_NEWINTERACTION_EVENTS];
+	int32_t types[MAX_NEWINTERACTION_EVENTS];
+	int32_t load_response[MAX_NEWINTERACTION_EVENTS];
 	in->ReadArrayOfInt32(types, evt_count);
 	in->ReadArrayOfInt32(load_response, evt_count);
 
@@ -305,11 +305,11 @@ void Interaction::WriteToSavedgame_v321(Stream *out) const {
 	for (size_t i = 0; i < evt_count; ++i) {
 		out->WriteInt32(Events[i].Type);
 	}
-	out->WriteByteCount(0, (MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int));
+	out->WriteByteCount(0, (MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int32_t));
 	WriteTimesRunToSave_v321(out);
 
 	// Array of dummy 32-bit pointers
-	out->WriteByteCount(0, MAX_NEWINTERACTION_EVENTS * sizeof(int));
+	out->WriteByteCount(0, MAX_NEWINTERACTION_EVENTS * sizeof(int32_t));
 }
 
 void Interaction::ReadTimesRunFromSave_v321(Stream *in) {
@@ -327,7 +327,7 @@ void Interaction::WriteTimesRunToSave_v321(Stream *out) const {
 	for (size_t i = 0; i < Events.size(); ++i) {
 		out->WriteInt32(Events[i].TimesRun);
 	}
-	out->WriteByteCount(0, (MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int));
+	out->WriteByteCount(0, (MAX_NEWINTERACTION_EVENTS - evt_count) * sizeof(int32_t));
 }
 
 //-----------------------------------------------------------------------------

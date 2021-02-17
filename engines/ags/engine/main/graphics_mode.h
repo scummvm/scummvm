@@ -33,7 +33,7 @@ using AGS::Shared::String;
 using AGS::Engine::DisplayMode;
 
 Size get_desktop_size();
-String make_scaling_factor_string(uint32 scaling);
+String make_scaling_factor_string(uint32_t scaling);
 
 namespace AGS {
 namespace Engine {

@@ -54,12 +54,12 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	int MinValue;
-	int MaxValue;
-	int Value;
-	int BgImage;
-	int HandleImage;
-	int HandleOffset;
+	int32_t MinValue;
+	int32_t MaxValue;
+	int32_t Value;
+	int32_t BgImage;
+	int32_t HandleImage;
+	int32_t HandleOffset;
 	bool    IsMousePressed;
 
 private:

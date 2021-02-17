@@ -80,7 +80,7 @@ DynObjectRef CCDynamicArray::Create(int numElements, int elementSize, bool isMan
 	if (isManagedType)
 		sizePtr[0] |= ARRAY_MANAGED_TYPE_FLAG;
 	void *obj_ptr = &newArray[8];
-	int handle = ccRegisterManagedObject(obj_ptr, this);
+	int32_t handle = ccRegisterManagedObject(obj_ptr, this);
 	if (handle == 0) {
 		delete[] newArray;
 		return DynObjectRef(0, nullptr);
@@ -97,16 +97,16 @@ void CCDynamicArray::Read(const char *address, intptr_t offset, void *dest, int 
 	memcpy(dest, address + offset, size);
 }
 
-uint8 CCDynamicArray::ReadInt8(const char *address, intptr_t offset) {
-	return *(const uint8 *)(address + offset);
+uint8_t CCDynamicArray::ReadInt8(const char *address, intptr_t offset) {
+	return *(const uint8_t *)(address + offset);
 }
 
-int16 CCDynamicArray::ReadInt16(const char *address, intptr_t offset) {
-	return *(const int16 *)(address + offset);
+int16_t CCDynamicArray::ReadInt16(const char *address, intptr_t offset) {
+	return *(const int16_t *)(address + offset);
 }
 
-int CCDynamicArray::ReadInt32(const char *address, intptr_t offset) {
-	return *(const int *)(address + offset);
+int32_t CCDynamicArray::ReadInt32(const char *address, intptr_t offset) {
+	return *(const int32_t *)(address + offset);
 }
 
 float CCDynamicArray::ReadFloat(const char *address, intptr_t offset) {
@@ -117,16 +117,16 @@ void CCDynamicArray::Write(const char *address, intptr_t offset, void *src, int 
 	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
 }
 
-void CCDynamicArray::WriteInt8(const char *address, intptr_t offset, uint8 val) {
-	*(uint8 *)(const_cast<char *>(address) + offset) = val;
+void CCDynamicArray::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
+	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
 }
 
-void CCDynamicArray::WriteInt16(const char *address, intptr_t offset, int16 val) {
-	*(int16 *)(const_cast<char *>(address) + offset) = val;
+void CCDynamicArray::WriteInt16(const char *address, intptr_t offset, int16_t val) {
+	*(int16_t *)(const_cast<char *>(address) + offset) = val;
 }
 
-void CCDynamicArray::WriteInt32(const char *address, intptr_t offset, int val) {
-	*(int *)(const_cast<char *>(address) + offset) = val;
+void CCDynamicArray::WriteInt32(const char *address, intptr_t offset, int32_t val) {
+	*(int32_t *)(const_cast<char *>(address) + offset) = val;
 }
 
 void CCDynamicArray::WriteFloat(const char *address, intptr_t offset, float val) {
@@ -138,11 +138,11 @@ CCDynamicArray globalDynamicArray;
 
 DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char *> items) {
 	// NOTE: we need element size of "handle" for array of managed pointers
-	DynObjectRef arr = globalDynamicArray.Create(items.size(), sizeof(int), true);
+	DynObjectRef arr = globalDynamicArray.Create(items.size(), sizeof(int32_t), true);
 	if (!arr.second)
 		return arr;
 	// Create script strings and put handles into array
-	int *slots = static_cast<int *>(arr.second);
+	int32_t *slots = static_cast<int32_t *>(arr.second);
 	for (auto s : items) {
 		DynObjectRef str = stringClassImpl->CreateString(s);
 		*(slots++) = str.first;

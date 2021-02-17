@@ -52,39 +52,39 @@ enum DataEndianess {
 };
 
 namespace BitByteOperations {
-inline int16 SwapBytesInt16(const int16 val) {
-	return (int16)SWAP_CONSTANT_16(val);
+inline int16_t SwapBytesInt16(const int16_t val) {
+	return (int16_t)SWAP_CONSTANT_16(val);
 }
 
-inline int SwapBytesInt32(const int val) {
-	return (int)SWAP_CONSTANT_32(val);
+inline int32_t SwapBytesInt32(const int32_t val) {
+	return (int32_t)SWAP_CONSTANT_32(val);
 }
 
-inline int64 SwapBytesInt64(const int64 val) {
-	return (int64)SWAP_CONSTANT_64(val);
+inline int64_t SwapBytesInt64(const int64_t val) {
+	return (int64_t)SWAP_CONSTANT_64(val);
 }
 
 inline float SwapBytesFloat(const float val) {
 	// (c) SDL2
 	union {
 		float f;
-		uint32 ui32;
+		uint32_t ui32;
 	} swapper;
 	swapper.f = val;
 	swapper.ui32 = SwapBytesInt32(swapper.ui32);
 	return swapper.f;
 }
 
-inline int16 Int16FromLE(const int16 val) {
-	return (int16)FROM_LE_16(val);
+inline int16_t Int16FromLE(const int16_t val) {
+	return (int16_t)FROM_LE_16(val);
 }
 
-inline int Int32FromLE(const int val) {
-	return (int)FROM_LE_32(val);
+inline int32_t Int32FromLE(const int32_t val) {
+	return (int32_t)FROM_LE_32(val);
 }
 
-inline int64 Int64FromLE(const int64 val) {
-	return (int64)FROM_LE_64(val);
+inline int64_t Int64FromLE(const int64_t val) {
+	return (int64_t)FROM_LE_64(val);
 }
 
 inline float FloatFromLE(const float val) {
@@ -95,16 +95,16 @@ inline float FloatFromLE(const float val) {
 #endif
 }
 
-inline int16 Int16FromBE(const int16 val) {
-	return (int16)FROM_BE_16(val);
+inline int16_t Int16FromBE(const int16_t val) {
+	return (int16_t)FROM_BE_16(val);
 }
 
-inline int Int32FromBE(const int val) {
-	return (int)FROM_BE_32(val);
+inline int32_t Int32FromBE(const int32_t val) {
+	return (int32_t)FROM_BE_32(val);
 }
 
-inline int64 Int64FromBE(const int64 val) {
-	return (int64)FROM_BE_64(val);
+inline int64_t Int64FromBE(const int64_t val) {
+	return (int64_t)FROM_BE_64(val);
 }
 
 inline float FloatFromBE(const float val) {

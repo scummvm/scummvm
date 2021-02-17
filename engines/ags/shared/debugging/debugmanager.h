@@ -155,8 +155,8 @@ private:
 	void RegisterGroup(const DebugGroup &id);
 	void SendMessage(OutputSlot &out, const DebugMessage &msg);
 
-	uint32            _firstFreeGroupID;
-	uint32            _lastGroupID;
+	uint32_t            _firstFreeGroupID;
+	uint32_t            _lastGroupID;
 	GroupVector         _groups;
 	GroupByStringMap    _groupByStrLookup;
 	OutMap              _outputs;

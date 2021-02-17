@@ -46,19 +46,19 @@ void PluginSimulateMouseClick(int pluginButtonID) {
 //
 //=============================================================================
 
-RuntimeScriptValue Sc_PluginStub_Void(const RuntimeScriptValue *params, int param_count) {
-	return RuntimeScriptValue((int)0);
+RuntimeScriptValue Sc_PluginStub_Void(const RuntimeScriptValue *params, int32_t param_count) {
+	return RuntimeScriptValue((int32_t)0);
 }
 
-RuntimeScriptValue Sc_PluginStub_Int0(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_PluginStub_Int0(const RuntimeScriptValue *params, int32_t param_count) {
 	return RuntimeScriptValue().SetInt32(0);
 }
 
-RuntimeScriptValue Sc_PluginStub_IntNeg1(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_PluginStub_IntNeg1(const RuntimeScriptValue *params, int32_t param_count) {
 	return RuntimeScriptValue().SetInt32(-1);
 }
 
-RuntimeScriptValue Sc_PluginStub_NullStr(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_PluginStub_NullStr(const RuntimeScriptValue *params, int32_t param_count) {
 	return RuntimeScriptValue().SetStringLiteral(NULL);
 }
 

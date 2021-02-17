@@ -73,7 +73,7 @@ inline const char *GetArgPtr(const RuntimeScriptValue *sc_args, va_list *varg_pt
 // snprintf but formatting values ourselves, or by using some library method
 // that supports customizing, such as getting arguments in a custom way.
 const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
-	const RuntimeScriptValue *sc_args, int sc_argc, va_list *varg_ptr) {
+	const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr) {
 	if (!buffer || buf_length == 0) {
 		cc_error("Internal error in ScriptSprintf: buffer is null");
 		return "";
@@ -108,7 +108,7 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 	// save 1 character for null terminator
 	const char *out_endptr = buffer + buf_length - 1;
 	const char *fmt_ptr = format;
-	int    arg_idx = 0;
+	int32_t    arg_idx = 0;
 
 	ptrdiff_t  avail_outbuf;
 	int        snprintf_res;

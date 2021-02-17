@@ -66,25 +66,25 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	int               Font;
+	int32_t               Font;
 	color_t               TextColor;
 	HorAlignment          TextAlignment;
 	color_t               SelectedBgColor;
 	color_t               SelectedTextColor;
-	int               RowHeight;
-	int               VisibleItemCount;
+	int32_t               RowHeight;
+	int32_t               VisibleItemCount;
 
 	std::vector<String>   Items;
-	std::vector<int16>  SavedGameIndex;
-	int               SelectedItem;
-	int               TopItem;
+	std::vector<int16_t>  SavedGameIndex;
+	int32_t               SelectedItem;
+	int32_t               TopItem;
 	Point                 MousePos;
 
 	// TODO: remove these later
-	int               ItemCount;
+	int32_t               ItemCount;
 
 private:
-	int               ListBoxFlags;
+	int32_t               ListBoxFlags;
 
 	// A temporary solution for special drawing in the Editor
 	void DrawItemsFix();

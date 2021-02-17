@@ -37,7 +37,7 @@ Version::Version()
 	MakeString();
 }
 
-Version::Version(int major, int minor, int release)
+Version::Version(int32_t major, int32_t minor, int32_t release)
 	: Major(major)
 	, Minor(minor)
 	, Release(release)
@@ -45,7 +45,7 @@ Version::Version(int major, int minor, int release)
 	MakeString();
 }
 
-Version::Version(int major, int minor, int release, int revision)
+Version::Version(int32_t major, int32_t minor, int32_t release, int32_t revision)
 	: Major(major)
 	, Minor(minor)
 	, Release(release)
@@ -53,7 +53,7 @@ Version::Version(int major, int minor, int release, int revision)
 	MakeString();
 }
 
-Version::Version(int major, int minor, int release, int revision, const String &special)
+Version::Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special)
 	: Major(major)
 	, Minor(minor)
 	, Release(release)
@@ -62,7 +62,7 @@ Version::Version(int major, int minor, int release, int revision, const String &
 	MakeString();
 }
 
-Version::Version(int major, int minor, int release, int revision, const String &special, const String &build_info)
+Version::Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special, const String &build_info)
 	: Major(major)
 	, Minor(minor)
 	, Release(release)

@@ -52,12 +52,12 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	int Font;
+	int32_t Font;
 	String  Text;
 	color_t TextColor;
 
 private:
-	int TextBoxFlags;
+	int32_t TextBoxFlags;
 
 	void DrawTextBoxContents(Bitmap *ds, color_t text_color);
 };

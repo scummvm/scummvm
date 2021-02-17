@@ -106,8 +106,8 @@ ccScript::ccScript(const ccScript &src) {
 
 	codesize = src.codesize;
 	if (codesize > 0) {
-		code = (int *)malloc(codesize * sizeof(int));
-		memcpy(code, src.code, sizeof(int) * codesize);
+		code = (int32_t *)malloc(codesize * sizeof(int32_t));
+		memcpy(code, src.code, sizeof(int32_t) * codesize);
 	} else {
 		code = nullptr;
 	}
@@ -123,9 +123,9 @@ ccScript::ccScript(const ccScript &src) {
 	numfixups = src.numfixups;
 	if (numfixups > 0) {
 		fixuptypes = (char *)malloc(numfixups);
-		fixups = (int *)malloc(numfixups * sizeof(int));
+		fixups = (int32_t *)malloc(numfixups * sizeof(int32_t));
 		memcpy(fixuptypes, src.fixuptypes, numfixups);
-		memcpy(fixups, src.fixups, numfixups * sizeof(int));
+		memcpy(fixups, src.fixups, numfixups * sizeof(int32_t));
 	} else {
 		fixups = nullptr;
 		fixuptypes = nullptr;
@@ -145,7 +145,7 @@ ccScript::ccScript(const ccScript &src) {
 	numexports = src.numexports;
 	if (numexports > 0) {
 		exports = (char **)malloc(sizeof(char *) * numexports);
-		export_addr = (int *)malloc(sizeof(int) * numexports);
+		export_addr = (int32_t *)malloc(sizeof(int32_t) * numexports);
 		for (int i = 0; i < numexports; ++i) {
 			exports[i] = ags_strdup(src.exports[i]);
 			export_addr[i] = src.export_addr[i];
@@ -159,7 +159,7 @@ ccScript::ccScript(const ccScript &src) {
 	numSections = src.numSections;
 	if (numSections > 0) {
 		sectionNames = (char **)malloc(numSections * sizeof(char *));
-		sectionOffsets = (int *)malloc(numSections * sizeof(int));
+		sectionOffsets = (int32_t *)malloc(numSections * sizeof(int32_t));
 		for (int i = 0; i < numSections; ++i) {
 			sectionNames[i] = ags_strdup(src.sectionNames[i]);
 			sectionOffsets[i] = src.sectionOffsets[i];
@@ -239,7 +239,7 @@ bool ccScript::Read(Shared::Stream *in) {
 		globaldata = nullptr;
 
 	if (codesize > 0) {
-		code = (int *)malloc(codesize * sizeof(int));
+		code = (int32_t *)malloc(codesize * sizeof(int32_t));
 		// MACPORT FIX: swap
 
 		// 64 bit: Read code into 8 byte array, necessary for being able to perform
@@ -258,7 +258,7 @@ bool ccScript::Read(Shared::Stream *in) {
 	numfixups = in->ReadInt32();
 	if (numfixups > 0) {
 		fixuptypes = (char *)malloc(numfixups);
-		fixups = (int *)malloc(numfixups * sizeof(int));
+		fixups = (int32_t *)malloc(numfixups * sizeof(int32_t));
 		// MACPORT FIX: swap 'size' and 'nmemb'
 		in->Read(fixuptypes, numfixups);
 		in->ReadArrayOfInt32(fixups, numfixups);
@@ -275,7 +275,7 @@ bool ccScript::Read(Shared::Stream *in) {
 
 	numexports = in->ReadInt32();
 	exports = (char **)malloc(sizeof(char *) * numexports);
-	export_addr = (int *)malloc(sizeof(int) * numexports);
+	export_addr = (int32_t *)malloc(sizeof(int32_t) * numexports);
 	for (n = 0; n < numexports; n++) {
 		freadstring(&exports[n], in);
 		export_addr[n] = in->ReadInt32();
@@ -285,7 +285,7 @@ bool ccScript::Read(Shared::Stream *in) {
 		// read in the Sections
 		numSections = in->ReadInt32();
 		sectionNames = (char **)malloc(numSections * sizeof(char *));
-		sectionOffsets = (int *)malloc(numSections * sizeof(int));
+		sectionOffsets = (int32_t *)malloc(numSections * sizeof(int32_t));
 		for (n = 0; n < numSections; n++) {
 			freadstring(&sectionNames[n], in);
 			sectionOffsets[n] = in->ReadInt32();
@@ -296,7 +296,7 @@ bool ccScript::Read(Shared::Stream *in) {
 		sectionOffsets = nullptr;
 	}
 
-	if (in->ReadInt32() != (int)ENDFILESIG) {
+	if (in->ReadInt32() != (int32)ENDFILESIG) {
 		cc_error("internal error rebuilding script");
 		return false;
 	}
@@ -357,7 +357,7 @@ void ccScript::Free() {
 	numSections = 0;
 }
 
-const char *ccScript::GetSectionName(int offs) {
+const char *ccScript::GetSectionName(int32_t offs) {
 
 	int i;
 	for (i = 0; i < numSections; i++) {

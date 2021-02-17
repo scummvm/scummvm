@@ -118,11 +118,11 @@ size_t FileStream::Read(void *buffer, size_t size) {
 	return 0;
 }
 
-int FileStream::ReadByte() {
+int32_t FileStream::ReadByte() {
 	Common::ReadStream *rs = dynamic_cast<Common::ReadStream *>(_file);
 
 	if (rs) {
-		return rs->eos() ? -1 : (int)rs->readByte();
+		return rs->eos() ? -1 : (int32_t)rs->readByte();
 	}
 
 	return -1;
@@ -138,7 +138,7 @@ size_t FileStream::Write(const void *buffer, size_t size) {
 	return 0;
 }
 
-int FileStream::WriteByte(uint8 val) {
+int32_t FileStream::WriteByte(uint8_t val) {
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_file);
 
 	if (ws) {

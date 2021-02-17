@@ -41,14 +41,14 @@ struct ICCStaticObject {
 	// Legacy support for reading and writing object values by their relative offset
 	virtual const char *GetFieldPtr(const char *address, intptr_t offset) = 0;
 	virtual void    Read(const char *address, intptr_t offset, void *dest, int size) = 0;
-	virtual uint8 ReadInt8(const char *address, intptr_t offset) = 0;
-	virtual int16 ReadInt16(const char *address, intptr_t offset) = 0;
-	virtual int ReadInt32(const char *address, intptr_t offset) = 0;
+	virtual uint8_t ReadInt8(const char *address, intptr_t offset) = 0;
+	virtual int16_t ReadInt16(const char *address, intptr_t offset) = 0;
+	virtual int32_t ReadInt32(const char *address, intptr_t offset) = 0;
 	virtual float   ReadFloat(const char *address, intptr_t offset) = 0;
 	virtual void    Write(const char *address, intptr_t offset, void *src, int size) = 0;
-	virtual void    WriteInt8(const char *address, intptr_t offset, uint8 val) = 0;
-	virtual void    WriteInt16(const char *address, intptr_t offset, int16 val) = 0;
-	virtual void    WriteInt32(const char *address, intptr_t offset, int val) = 0;
+	virtual void    WriteInt8(const char *address, intptr_t offset, uint8_t val) = 0;
+	virtual void    WriteInt16(const char *address, intptr_t offset, int16_t val) = 0;
+	virtual void    WriteInt32(const char *address, intptr_t offset, int32_t val) = 0;
 	virtual void    WriteFloat(const char *address, intptr_t offset, float val) = 0;
 };
 

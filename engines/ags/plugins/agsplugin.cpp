@@ -193,7 +193,7 @@ BITMAP *IAGSEngine::GetVirtualScreen() {
 	return stage ? (BITMAP *)stage->GetAllegroBitmap() : nullptr;
 }
 
-void IAGSEngine::RequestEventHook(int event) {
+void IAGSEngine::RequestEventHook(int32 event) {
 	if (event >= AGSE_TOOHIGH)
 		quit("!IAGSEngine::RequestEventHook: invalid event requested");
 
@@ -214,7 +214,7 @@ void IAGSEngine::RequestEventHook(int event) {
 	plugins[this->pluginId].wantHook |= event;
 }
 
-void IAGSEngine::UnrequestEventHook(int event) {
+void IAGSEngine::UnrequestEventHook(int32 event) {
 	if (event >= AGSE_TOOHIGH)
 		quit("!IAGSEngine::UnrequestEventHook: invalid event requested");
 
@@ -228,7 +228,7 @@ void IAGSEngine::UnrequestEventHook(int event) {
 	plugins[this->pluginId].wantHook &= ~event;
 }
 
-int IAGSEngine::GetSavedData(char *buffer, int bufsize) {
+int IAGSEngine::GetSavedData(char *buffer, int32 bufsize) {
 	int savedatasize = plugins[this->pluginId].savedatasize;
 
 	if (bufsize < savedatasize)
@@ -240,7 +240,7 @@ int IAGSEngine::GetSavedData(char *buffer, int bufsize) {
 	return savedatasize;
 }
 
-void IAGSEngine::DrawText(int x, int y, int font, int color, const char *text) {
+void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, const char *text) {
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
 	if (!ds)
 		return;
@@ -248,7 +248,7 @@ void IAGSEngine::DrawText(int x, int y, int font, int color, const char *text) {
 	draw_and_invalidate_text(ds, x, y, font, text_color, text);
 }
 
-void IAGSEngine::GetScreenDimensions(int *width, int *height, int *coldepth) {
+void IAGSEngine::GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth) {
 	if (width != nullptr)
 		width[0] = play.GetMainViewport().GetWidth();
 	if (height != nullptr)
@@ -281,7 +281,7 @@ void IAGSEngine::ReleaseBitmapSurface(BITMAP *bmp) {
 	}
 }
 
-void IAGSEngine::GetMousePosition(int *x, int *y) {
+void IAGSEngine::GetMousePosition(int32 *x, int32 *y) {
 	if (x) x[0] = _G(mousex);
 	if (y) y[0] = _G(mousey);
 }
@@ -294,10 +294,10 @@ int IAGSEngine::GetNumBackgrounds() {
 int IAGSEngine::GetCurrentBackground() {
 	return play.bg_frame;
 }
-BITMAP *IAGSEngine::GetBackgroundScene(int index) {
+BITMAP *IAGSEngine::GetBackgroundScene(int32 index) {
 	return (BITMAP *)thisroom.BgFrames[index].Graphic->GetAllegroBitmap();
 }
-void IAGSEngine::GetBitmapDimensions(BITMAP *bmp, int *width, int *height, int *coldepth) {
+void IAGSEngine::GetBitmapDimensions(BITMAP *bmp, int32 *width, int32 *height, int32 *coldepth) {
 	if (bmp == nullptr)
 		return;
 
@@ -325,7 +325,7 @@ void pl_clear_file_handle() {
 	pl_file_stream = nullptr;
 }
 
-int IAGSEngine::FRead(void *buffer, int len, int handle) {
+int IAGSEngine::FRead(void *buffer, int32 len, int32 handle) {
 	if (handle != pl_file_handle) {
 		quitprintf("IAGSEngine::FRead: invalid file handle: %d", handle);
 	}
@@ -335,7 +335,7 @@ int IAGSEngine::FRead(void *buffer, int len, int handle) {
 	return pl_file_stream->Read(buffer, len);
 }
 
-int IAGSEngine::FWrite(void *buffer, int len, int handle) {
+int IAGSEngine::FWrite(void *buffer, int32 len, int32 handle) {
 	if (handle != pl_file_handle) {
 		quitprintf("IAGSEngine::FWrite: invalid file handle: %d", handle);
 	}
@@ -345,7 +345,7 @@ int IAGSEngine::FWrite(void *buffer, int len, int handle) {
 	return pl_file_stream->Write(buffer, len);
 }
 
-void IAGSEngine::DrawTextWrapped(int xx, int yy, int wid, int font, int color, const char *text) {
+void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int32 color, const char *text) {
 	// TODO: use generic function from the engine instead of having copy&pasted code here
 	int linespacing = getfontspacing_outlined(font);
 
@@ -381,7 +381,7 @@ int IAGSEngine::LookupParserWord(const char *word) {
 	return find_word_in_dictionary((const char *)word);
 }
 
-void IAGSEngine::BlitBitmap(int x, int y, BITMAP *bmp, int masked) {
+void IAGSEngine::BlitBitmap(int32 x, int32 y, BITMAP *bmp, int32 masked) {
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
 	if (!ds)
 		return;
@@ -389,7 +389,7 @@ void IAGSEngine::BlitBitmap(int x, int y, BITMAP *bmp, int masked) {
 	invalidate_rect(x, y, x + bmp->w, y + bmp->h, false);
 }
 
-void IAGSEngine::BlitSpriteTranslucent(int x, int y, BITMAP *bmp, int trans) {
+void IAGSEngine::BlitSpriteTranslucent(int32 x, int32 y, BITMAP *bmp, int32 trans) {
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
 	if (!ds)
 		return;
@@ -400,7 +400,7 @@ void IAGSEngine::BlitSpriteTranslucent(int x, int y, BITMAP *bmp, int trans) {
 		GfxUtil::DrawSpriteBlend(ds, Point(x, y), &wrap, kBlendMode_Alpha, true, false, trans);
 }
 
-void IAGSEngine::BlitSpriteRotated(int x, int y, BITMAP *bmp, int angle) {
+void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
 	if (!ds)
 		return;
@@ -423,7 +423,7 @@ void IAGSEngine::PollSystem() {
 	}
 
 }
-AGSCharacter *IAGSEngine::GetCharacter(int charnum) {
+AGSCharacter *IAGSEngine::GetCharacter(int32 charnum) {
 	if (charnum >= game.numcharacters)
 		quit("!AGSEngine::GetCharacter: invalid character request");
 
@@ -435,7 +435,7 @@ AGSGameOptions *IAGSEngine::GetGameOptions() {
 AGSColor *IAGSEngine::GetPalette() {
 	return (AGSColor *)&palette[0];
 }
-void IAGSEngine::SetPalette(int start, int finish, AGSColor *cpl) {
+void IAGSEngine::SetPalette(int32 start, int32 finish, AGSColor *cpl) {
 	set_palette_range((color *)cpl, start, finish, 0);
 }
 int IAGSEngine::GetNumCharacters() {
@@ -444,14 +444,14 @@ int IAGSEngine::GetNumCharacters() {
 int IAGSEngine::GetPlayerCharacter() {
 	return game.playercharacter;
 }
-void IAGSEngine::RoomToViewport(int *x, int *y) {
+void IAGSEngine::RoomToViewport(int32 *x, int32 *y) {
 	Point scrp = play.RoomToScreen(x ? data_to_game_coord(*x) : 0, y ? data_to_game_coord(*y) : 0);
 	if (x)
 		*x = scrp.X;
 	if (y)
 		*y = scrp.Y;
 }
-void IAGSEngine::ViewportToRoom(int *x, int *y) {
+void IAGSEngine::ViewportToRoom(int32 *x, int32 *y) {
 	// NOTE: This is an old function that did not account for custom/multiple viewports
 	// and does not expect to fail, therefore we always use primary viewport here.
 	// (Not sure if it's good though)
@@ -464,13 +464,13 @@ void IAGSEngine::ViewportToRoom(int *x, int *y) {
 int IAGSEngine::GetNumObjects() {
 	return croom->numobj;
 }
-AGSObject *IAGSEngine::GetObject(int num) {
+AGSObject *IAGSEngine::GetObject(int32 num) {
 	if (num >= croom->numobj)
 		quit("!IAGSEngine::GetObject: invalid object");
 
 	return (AGSObject *)&croom->obj[num];
 }
-BITMAP *IAGSEngine::CreateBlankBitmap(int width, int height, int coldep) {
+BITMAP *IAGSEngine::CreateBlankBitmap(int32 width, int32 height, int32 coldep) {
 	// [IKM] We should not create Bitmap object here, because
 	// a) we are returning raw allegro bitmap and therefore loosing control over it
 	// b) plugin won't use Bitmap anyway
@@ -482,10 +482,10 @@ void IAGSEngine::FreeBitmap(BITMAP *tofree) {
 	if (tofree)
 		destroy_bitmap(tofree);
 }
-BITMAP *IAGSEngine::GetSpriteGraphic(int num) {
+BITMAP *IAGSEngine::GetSpriteGraphic(int32 num) {
 	return (BITMAP *)spriteset[num]->GetAllegroBitmap();
 }
-BITMAP *IAGSEngine::GetRoomMask(int index) {
+BITMAP *IAGSEngine::GetRoomMask(int32 index) {
 	if (index == MASK_WALKABLE)
 		return (BITMAP *)thisroom.WalkAreaMask->GetAllegroBitmap();
 	else if (index == MASK_WALKBEHIND)
@@ -498,7 +498,7 @@ BITMAP *IAGSEngine::GetRoomMask(int index) {
 		quit("!IAGSEngine::GetRoomMask: invalid mask requested");
 	return nullptr;
 }
-AGSViewFrame *IAGSEngine::GetViewFrame(int view, int loop, int frame) {
+AGSViewFrame *IAGSEngine::GetViewFrame(int32 view, int32 loop, int32 frame) {
 	view--;
 	if ((view < 0) || (view >= game.numviews))
 		quit("!IAGSEngine::GetViewFrame: invalid view");
@@ -510,7 +510,7 @@ AGSViewFrame *IAGSEngine::GetViewFrame(int view, int loop, int frame) {
 	return (AGSViewFrame *)&views[view].loops[loop].frames[frame];
 }
 
-int IAGSEngine::GetRawPixelColor(int color) {
+int IAGSEngine::GetRawPixelColor(int32 color) {
 	// Convert the standardized colour to the local gfx mode color
 	// NOTE: it is unclear whether this has to be game colour depth or display color depth.
 	// there was no difference in the original engine, but there is now.
@@ -519,7 +519,7 @@ int IAGSEngine::GetRawPixelColor(int color) {
 	return result;
 }
 
-int IAGSEngine::GetWalkbehindBaseline(int wa) {
+int IAGSEngine::GetWalkbehindBaseline(int32 wa) {
 	if ((wa < 1) || (wa >= MAX_WALK_BEHINDS))
 		quit("!IAGSEngine::GetWalkBehindBase: invalid walk-behind area specified");
 	return croom->walkbehind_base[wa];
@@ -531,19 +531,19 @@ int IAGSEngine::GetBitmapTransparentColor(BITMAP *bmp) {
 	return bitmap_mask_color(bmp);
 }
 // get the character scaling level at a particular point
-int IAGSEngine::GetAreaScaling(int x, int y) {
+int IAGSEngine::GetAreaScaling(int32 x, int32 y) {
 	return GetScalingAt(x, y);
 }
 int IAGSEngine::IsGamePaused() {
 	return game_paused;
 }
-int IAGSEngine::GetSpriteWidth(int slot) {
+int IAGSEngine::GetSpriteWidth(int32 slot) {
 	return game.SpriteInfos[slot].Width;
 }
-int IAGSEngine::GetSpriteHeight(int slot) {
+int IAGSEngine::GetSpriteHeight(int32 slot) {
 	return game.SpriteInfos[slot].Height;
 }
-void IAGSEngine::GetTextExtent(int font, const char *text, int *width, int *height) {
+void IAGSEngine::GetTextExtent(int32 font, const char *text, int32 *width, int32 *height) {
 	if ((font < 0) || (font >= game.numfonts)) {
 		if (width != nullptr) width[0] = 0;
 		if (height != nullptr) height[0] = 0;
@@ -559,10 +559,10 @@ void IAGSEngine::PrintDebugConsole(const char *text) {
 	debug_script_log("[PLUGIN] %s", text);
 	platform->WriteStdOut("[PLUGIN] %s", text);
 }
-int IAGSEngine::IsChannelPlaying(int channel) {
+int IAGSEngine::IsChannelPlaying(int32 channel) {
 	return AGS3::IsChannelPlaying(channel);
 }
-void IAGSEngine::PlaySoundChannel(int channel, int soundType, int volume, int loop, const char *filename) {
+void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, int32 loop, const char *filename) {
 	stop_and_destroy_channel(channel);
 	// Not sure if it's right to let it play on *any* channel, but this is plugin so let it go...
 	// we must correctly stop background voice speech if it takes over speech chan
@@ -602,17 +602,17 @@ void IAGSEngine::PlaySoundChannel(int channel, int soundType, int volume, int lo
 	set_clip_to_channel(channel, newcha);
 }
 // Engine interface 12 and above are below
-void IAGSEngine::MarkRegionDirty(int left, int top, int right, int bottom) {
+void IAGSEngine::MarkRegionDirty(int32 left, int32 top, int32 right, int32 bottom) {
 	invalidate_rect(left, top, right, bottom, false);
 	plugins[this->pluginId].invalidatedRegion++;
 }
-AGSMouseCursor *IAGSEngine::GetMouseCursor(int cursor) {
+AGSMouseCursor *IAGSEngine::GetMouseCursor(int32 cursor) {
 	if ((cursor < 0) || (cursor >= game.numcursors))
 		return nullptr;
 
 	return (AGSMouseCursor *)&game.mcurs[cursor];
 }
-void IAGSEngine::GetRawColorComponents(int coldepth, int color, int *red, int *green, int *blue, int *alpha) {
+void IAGSEngine::GetRawColorComponents(int32 coldepth, int32 color, int32 *red, int32 *green, int32 *blue, int32 *alpha) {
 	if (red)
 		*red = getr_depth(coldepth, color);
 	if (green)
@@ -622,10 +622,10 @@ void IAGSEngine::GetRawColorComponents(int coldepth, int color, int *red, int *g
 	if (alpha)
 		*alpha = geta_depth(coldepth, color);
 }
-int IAGSEngine::MakeRawColorPixel(int coldepth, int red, int green, int blue, int alpha) {
+int IAGSEngine::MakeRawColorPixel(int32 coldepth, int32 red, int32 green, int32 blue, int32 alpha) {
 	return makeacol_depth(coldepth, red, green, blue, alpha);
 }
-int IAGSEngine::GetFontType(int fontNum) {
+int IAGSEngine::GetFontType(int32 fontNum) {
 	if ((fontNum < 0) || (fontNum >= game.numfonts))
 		return FNT_INVALID;
 
@@ -634,7 +634,7 @@ int IAGSEngine::GetFontType(int fontNum) {
 
 	return FNT_SCI;
 }
-int IAGSEngine::CreateDynamicSprite(int coldepth, int width, int height) {
+int IAGSEngine::CreateDynamicSprite(int32 coldepth, int32 width, int32 height) {
 
 	// TODO: why is this implemented right here, should not an existing
 	// script handling implementation be called instead?
@@ -655,10 +655,10 @@ int IAGSEngine::CreateDynamicSprite(int coldepth, int width, int height) {
 	add_dynamic_sprite(gotSlot, newPic);
 	return gotSlot;
 }
-void IAGSEngine::DeleteDynamicSprite(int slot) {
+void IAGSEngine::DeleteDynamicSprite(int32 slot) {
 	free_dynamic_sprite(slot);
 }
-int IAGSEngine::IsSpriteAlphaBlended(int slot) {
+int IAGSEngine::IsSpriteAlphaBlended(int32 slot) {
 	if (game.SpriteInfos[slot].Flags & SPF_ALPHACHANNEL)
 		return 1;
 	return 0;
@@ -674,7 +674,7 @@ int IAGSEngine::CanRunScriptFunctionNow() {
 		return 0;
 	return 1;
 }
-int IAGSEngine::CallGameScriptFunction(const char *name, int globalScript, int numArgs, long arg1, long arg2, long arg3) {
+int IAGSEngine::CallGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1, long arg2, long arg3) {
 	if (inside_script)
 		return -300;
 
@@ -688,7 +688,7 @@ int IAGSEngine::CallGameScriptFunction(const char *name, int globalScript, int n
 	return toret;
 }
 
-void IAGSEngine::NotifySpriteUpdated(int slot) {
+void IAGSEngine::NotifySpriteUpdated(int32 slot) {
 	int ff;
 	// wipe the character cache when we change rooms
 	for (ff = 0; ff < game.numcharacters; ff++) {
@@ -708,7 +708,7 @@ void IAGSEngine::NotifySpriteUpdated(int slot) {
 	}
 }
 
-void IAGSEngine::SetSpriteAlphaBlended(int slot, int isAlphaBlended) {
+void IAGSEngine::SetSpriteAlphaBlended(int32 slot, int32 isAlphaBlended) {
 
 	game.SpriteInfos[slot].Flags &= ~SPF_ALPHACHANNEL;
 
@@ -716,7 +716,7 @@ void IAGSEngine::SetSpriteAlphaBlended(int slot, int isAlphaBlended) {
 		game.SpriteInfos[slot].Flags |= SPF_ALPHACHANNEL;
 }
 
-void IAGSEngine::QueueGameScriptFunction(const char *name, int globalScript, int numArgs, long arg1, long arg2) {
+void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1, long arg2) {
 	if (!inside_script) {
 		this->CallGameScriptFunction(name, globalScript, numArgs, arg1, arg2, 0);
 		return;
@@ -790,29 +790,29 @@ int IAGSEngine::DecrementManagedObjectRefCount(const char *address) {
 	return ccReleaseObjectReference(GetManagedObjectKeyByAddress(address));
 }
 
-void IAGSEngine::SetMousePosition(int x, int y) {
+void IAGSEngine::SetMousePosition(int32 x, int32 y) {
 	Mouse::SetPosition(Point(x, y));
 	RefreshMouse();
 }
 
-void IAGSEngine::SimulateMouseClick(int button) {
+void IAGSEngine::SimulateMouseClick(int32 button) {
 	PluginSimulateMouseClick(button);
 }
 
-int IAGSEngine::GetMovementPathWaypointCount(int pathId) {
+int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {
 	return mls[pathId % TURNING_AROUND].numstage;
 }
 
-int IAGSEngine::GetMovementPathLastWaypoint(int pathId) {
+int IAGSEngine::GetMovementPathLastWaypoint(int32 pathId) {
 	return mls[pathId % TURNING_AROUND].onstage;
 }
 
-void IAGSEngine::GetMovementPathWaypointLocation(int pathId, int waypoint, int *x, int *y) {
+void IAGSEngine::GetMovementPathWaypointLocation(int32 pathId, int32 waypoint, int32 *x, int32 *y) {
 	*x = (mls[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
 	*y = (mls[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
 }
 
-void IAGSEngine::GetMovementPathWaypointSpeed(int pathId, int waypoint, int *xSpeed, int *ySpeed) {
+void IAGSEngine::GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int32 *xSpeed, int32 *ySpeed) {
 	*xSpeed = mls[pathId % TURNING_AROUND].xpermove[waypoint];
 	*ySpeed = mls[pathId % TURNING_AROUND].ypermove[waypoint];
 }

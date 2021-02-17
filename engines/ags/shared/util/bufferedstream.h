@@ -48,9 +48,9 @@ public:
 	soff_t  GetPosition() const override; ///< Current position (if known)
 
 	size_t  Read(void *buffer, size_t size) override;
-	int ReadByte() override;
+	int32_t ReadByte() override;
 	size_t  Write(const void *buffer, size_t size) override;
-	int WriteByte(uint8 b) override;
+	int32_t WriteByte(uint8_t b) override;
 
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 

@@ -917,10 +917,10 @@ void serialize_bitmap(const Shared::Bitmap *thispic, Stream *out) {
 				out->WriteArray(&thispic->GetScanLine(cc)[0], thispic->GetWidth(), 1);
 				break;
 			case 16:
-				out->WriteArrayOfInt16((const int16 *)&thispic->GetScanLine(cc)[0], thispic->GetWidth());
+				out->WriteArrayOfInt16((const int16_t *)&thispic->GetScanLine(cc)[0], thispic->GetWidth());
 				break;
 			case 32:
-				out->WriteArrayOfInt32((const int *)&thispic->GetScanLine(cc)[0], thispic->GetWidth());
+				out->WriteArrayOfInt32((const int32_t *)&thispic->GetScanLine(cc)[0], thispic->GetWidth());
 				break;
 			}
 		}
@@ -977,10 +977,10 @@ Bitmap *read_serialized_bitmap(Stream *in) {
 			in->ReadArray(thispic->GetScanLineForWriting(vv), picwid, 1);
 			break;
 		case 16:
-			in->ReadArrayOfInt16((int16 *)thispic->GetScanLineForWriting(vv), picwid);
+			in->ReadArrayOfInt16((int16_t *)thispic->GetScanLineForWriting(vv), picwid);
 			break;
 		case 32:
-			in->ReadArrayOfInt32((int *)thispic->GetScanLineForWriting(vv), picwid);
+			in->ReadArrayOfInt32((int32_t *)thispic->GetScanLineForWriting(vv), picwid);
 			break;
 		}
 	}
@@ -1191,7 +1191,7 @@ void restore_game_play(Stream *in, RestoredData &r_data) {
 	int screenfadedout_was = play.screen_is_faded_out;
 	int roomchanges_was = play.room_changes;
 	// make sure the pointer is preserved
-	int *gui_draw_order_was = play.gui_draw_order;
+	int32_t *gui_draw_order_was = play.gui_draw_order;
 
 	ReadGameState_Aligned(in, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;
@@ -1502,7 +1502,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	if (!err)
 		return err;
 
-	if (in->ReadInt32() != (int)(MAGICNUMBER + 1)) {
+	if (in->ReadInt32() != (int32)(MAGICNUMBER + 1)) {
 		return new SavegameError(kSvgErr_InconsistentFormat, "MAGICNUMBER not found before Audio Clips.");
 	}
 
@@ -1514,7 +1514,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	pl_set_file_handle(pluginFileHandle, in);
 	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
 	pl_clear_file_handle();
-	if (in->ReadInt32() != (int)MAGICNUMBER)
+	if (in->ReadInt32() != (int32)MAGICNUMBER)
 		return new SavegameError(kSvgErr_InconsistentPlugin);
 
 	// save the new room music vol for later use
@@ -1947,264 +1947,264 @@ bool unserialize_audio_script_object(int index, const char *objectType, const ch
 //=============================================================================
 
 // int  (int audioType);
-RuntimeScriptValue Sc_Game_IsAudioPlaying(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_IsAudioPlaying(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(Game_IsAudioPlaying);
 }
 
 // void (int audioType, int volumeDrop)
-RuntimeScriptValue Sc_Game_SetAudioTypeSpeechVolumeDrop(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetAudioTypeSpeechVolumeDrop(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT2(Game_SetAudioTypeSpeechVolumeDrop);
 }
 
 // void (int audioType, int volume, int changeType)
-RuntimeScriptValue Sc_Game_SetAudioTypeVolume(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetAudioTypeVolume(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT3(Game_SetAudioTypeVolume);
 }
 
 // void (int audioType)
-RuntimeScriptValue Sc_Game_StopAudio(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_StopAudio(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(Game_StopAudio);
 }
 
 // int (const char *newFilename)
-RuntimeScriptValue Sc_Game_ChangeTranslation(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_ChangeTranslation(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Game_ChangeTranslation, const char);
 }
 
 // int (const char *token)
-RuntimeScriptValue Sc_Game_DoOnceOnly(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_DoOnceOnly(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Game_DoOnceOnly, const char);
 }
 
 // int (int red, int grn, int blu)
-RuntimeScriptValue Sc_Game_GetColorFromRGB(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetColorFromRGB(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT3(Game_GetColorFromRGB);
 }
 
 // int (int viewNumber, int loopNumber)
-RuntimeScriptValue Sc_Game_GetFrameCountForLoop(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetFrameCountForLoop(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT2(Game_GetFrameCountForLoop);
 }
 
 // const char* (int x, int y)
-RuntimeScriptValue Sc_Game_GetLocationName(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetLocationName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_PINT2(const char, myScriptStringImpl, Game_GetLocationName);
 }
 
 // int (int viewNumber)
-RuntimeScriptValue Sc_Game_GetLoopCountForView(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetLoopCountForView(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(Game_GetLoopCountForView);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetMODPattern(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetMODPattern(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetMODPattern);
 }
 
 // int (int viewNumber, int loopNumber)
-RuntimeScriptValue Sc_Game_GetRunNextSettingForLoop(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetRunNextSettingForLoop(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT2(Game_GetRunNextSettingForLoop);
 }
 
 // const char* (int slnum)
-RuntimeScriptValue Sc_Game_GetSaveSlotDescription(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetSaveSlotDescription(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetSaveSlotDescription);
 }
 
 // ScriptViewFrame* (int viewNumber, int loopNumber, int frame)
-RuntimeScriptValue Sc_Game_GetViewFrame(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetViewFrame(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJAUTO_PINT3(ScriptViewFrame, Game_GetViewFrame);
 }
 
 // const char* (const char *msg)
-RuntimeScriptValue Sc_Game_InputBox(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_InputBox(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_POBJ(const char, myScriptStringImpl, Game_InputBox, const char);
 }
 
 // int (const char *newFolder)
-RuntimeScriptValue Sc_Game_SetSaveGameDirectory(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetSaveGameDirectory(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Game_SetSaveGameDirectory, const char);
 }
 
 // void (int evenAmbient);
-RuntimeScriptValue Sc_StopAllSounds(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_StopAllSounds(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(StopAllSounds);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetCharacterCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetCharacterCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetCharacterCount);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetDialogCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetDialogCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetDialogCount);
 }
 
 // const char *()
-RuntimeScriptValue Sc_Game_GetFileName(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetFileName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetFileName);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetFontCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetFontCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetFontCount);
 }
 
 // const char* (int index)
-RuntimeScriptValue Sc_Game_GetGlobalMessages(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetGlobalMessages(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetGlobalMessages);
 }
 
 // const char* (int index)
-RuntimeScriptValue Sc_Game_GetGlobalStrings(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetGlobalStrings(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetGlobalStrings);
 }
 
 // void  (int index, char *newval);
-RuntimeScriptValue Sc_SetGlobalString(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_SetGlobalString(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT_POBJ(SetGlobalString, const char);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetGUICount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetGUICount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetGUICount);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetIgnoreUserInputAfterTextTimeoutMs(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetIgnoreUserInputAfterTextTimeoutMs(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetIgnoreUserInputAfterTextTimeoutMs);
 }
 
 // void (int newValueMs)
-RuntimeScriptValue Sc_Game_SetIgnoreUserInputAfterTextTimeoutMs(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetIgnoreUserInputAfterTextTimeoutMs(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(Game_SetIgnoreUserInputAfterTextTimeoutMs);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetInSkippableCutscene(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetInSkippableCutscene(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetInSkippableCutscene);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetInventoryItemCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetInventoryItemCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetInventoryItemCount);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetMinimumTextDisplayTimeMs(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetMinimumTextDisplayTimeMs(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetMinimumTextDisplayTimeMs);
 }
 
 // void (int newTextMinTime)
-RuntimeScriptValue Sc_Game_SetMinimumTextDisplayTimeMs(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetMinimumTextDisplayTimeMs(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(Game_SetMinimumTextDisplayTimeMs);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetMouseCursorCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetMouseCursorCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetMouseCursorCount);
 }
 
 // const char *()
-RuntimeScriptValue Sc_Game_GetName(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetName);
 }
 
 // void (const char *newName)
-RuntimeScriptValue Sc_Game_SetName(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_POBJ(Game_SetName, const char);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetNormalFont(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetNormalFont(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetNormalFont);
 }
 
 // void  (int fontnum);
-RuntimeScriptValue Sc_SetNormalFont(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_SetNormalFont(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(SetNormalFont);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetSkippingCutscene(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetSkippingCutscene(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetSkippingCutscene);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetSpeechFont(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetSpeechFont(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetSpeechFont);
 }
 
 // void  (int fontnum);
-RuntimeScriptValue Sc_SetSpeechFont(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_SetSpeechFont(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(SetSpeechFont);
 }
 
 // int (int spriteNum)
-RuntimeScriptValue Sc_Game_GetSpriteWidth(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetSpriteWidth(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(Game_GetSpriteWidth);
 }
 
 // int (int spriteNum)
-RuntimeScriptValue Sc_Game_GetSpriteHeight(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetSpriteHeight(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(Game_GetSpriteHeight);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetTextReadingSpeed(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetTextReadingSpeed(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetTextReadingSpeed);
 }
 
 // void (int newTextSpeed)
-RuntimeScriptValue Sc_Game_SetTextReadingSpeed(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SetTextReadingSpeed(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(Game_SetTextReadingSpeed);
 }
 
 // const char* ()
-RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetTranslationFilename);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetUseNativeCoordinates(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetUseNativeCoordinates(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetUseNativeCoordinates);
 }
 
 // int ()
-RuntimeScriptValue Sc_Game_GetViewCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetViewCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetViewCount);
 }
 
-RuntimeScriptValue Sc_Game_GetAudioClipCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetAudioClipCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_VARGET_INT(game.audioClips.size());
 }
 
-RuntimeScriptValue Sc_Game_GetAudioClip(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetAudioClip(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT(ScriptAudioClip, ccDynamicAudioClip, Game_GetAudioClip);
 }
 
-RuntimeScriptValue Sc_Game_IsPluginLoaded(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_IsPluginLoaded(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_BOOL_OBJ(pl_is_plugin_loaded, const char);
 }
 
-RuntimeScriptValue Sc_Game_PlayVoiceClip(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_PlayVoiceClip(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_POBJ_PINT_PBOOL(ScriptAudioChannel, ccDynamicAudio, PlayVoiceClip, CharacterInfo);
 }
 
-RuntimeScriptValue Sc_Game_GetCamera(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetCamera(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJAUTO(ScriptCamera, Game_GetCamera);
 }
 
-RuntimeScriptValue Sc_Game_GetCameraCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetCameraCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetCameraCount);
 }
 
-RuntimeScriptValue Sc_Game_GetAnyCamera(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_GetAnyCamera(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJAUTO_PINT(ScriptCamera, Game_GetAnyCamera);
 }
 
-RuntimeScriptValue Sc_Game_SimulateKeyPress(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Game_SimulateKeyPress(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(Game_SimulateKeyPress);
 }
 

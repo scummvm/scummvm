@@ -146,10 +146,10 @@ struct RoomBgFrame {
 
 // Describes room edges (coordinates of four edges)
 struct RoomEdges {
-	int Left;
-	int Right;
-	int Top;
-	int Bottom;
+	int32_t Left;
+	int32_t Right;
+	int32_t Top;
+	int32_t Bottom;
 
 	RoomEdges();
 	RoomEdges(int l, int r, int t, int b);
@@ -172,14 +172,14 @@ struct RoomHotspot {
 
 // Room object description
 struct RoomObjectInfo {
-	int         Room;
-	int         X;
-	int         Y;
-	int         Sprite;
+	int32_t         Room;
+	int32_t         X;
+	int32_t         Y;
+	int32_t         Sprite;
 	bool            IsOn;
 	// Object's z-order in the room, or -1 (use Y)
-	int         Baseline;
-	int         Flags;
+	int32_t         Baseline;
+	int32_t         Flags;
 	String          Name;
 	String          ScriptName;
 	// Custom properties
@@ -195,9 +195,9 @@ struct RoomObjectInfo {
 // Room region description
 struct RoomRegion {
 	// Light level (-100 -> +100) or Tint luminance (0 - 255)
-	int         Light;
+	int32_t         Light;
 	// Tint setting (R-B-G-S)
-	int         Tint;
+	int32_t         Tint;
 	// Custom properties
 	StringIMap      Properties;
 	// Old-style interactions
@@ -211,17 +211,17 @@ struct RoomRegion {
 // Walkable area description
 struct WalkArea {
 	// Apply player character's normal view on this area
-	int     CharacterView;
+	int32_t     CharacterView;
 	// Character's scaling (-100 -> +100 %)
 	// General scaling, or scaling at the farthest point
-	int     ScalingFar;
+	int32_t     ScalingFar;
 	// Scaling at the nearest point, or NOT_VECTOR_SCALED for uniform scaling
-	int     ScalingNear;
+	int32_t     ScalingNear;
 	// Light level (-100 -> +100)
-	int     Light;
+	int32_t     Light;
 	// Top and bottom Y of the area
-	int     Top;
-	int     Bottom;
+	int32_t     Top;
+	int32_t     Bottom;
 
 	WalkArea();
 };
@@ -229,7 +229,7 @@ struct WalkArea {
 // Walk-behind description
 struct WalkBehind {
 	// Object's z-order in the room
-	int Baseline;
+	int32_t Baseline;
 
 	WalkBehind();
 };
@@ -310,17 +310,17 @@ public:
 	// If this field has a valid value and does not match actual game's id,
 	// then engine will refuse to start this room.
 	// May be set to NO_GAME_ID_IN_ROOM_FILE to let it run within any game.
-	int                 GameID;
+	int32_t                 GameID;
 	// Loaded room file's data version. This value may be used to know when
 	// the room must have behavior specific to certain version of AGS.
-	int                 DataVersion;
+	int32_t                 DataVersion;
 
 	// Room region masks resolution. Defines the relation between room and mask units.
 	// Mask point is calculated as roompt / MaskResolution. Must be >= 1.
-	int                 MaskResolution;
+	int32_t                 MaskResolution;
 	// Size of the room, in logical coordinates (= pixels)
-	int                 Width;
-	int                 Height;
+	int32_t                 Width;
+	int32_t                 Height;
 	// Primary room palette (8-bit games)
 	color                   Palette[256];
 
@@ -328,11 +328,11 @@ public:
 	RoomOptions             Options;
 
 	// Background frames
-	int                 BackgroundBPP; // bytes per pixel
+	int32_t                 BackgroundBPP; // bytes per pixel
 	size_t                  BgFrameCount;
 	RoomBgFrame             BgFrames[MAX_ROOM_BGFRAMES];
 	// Speed at which background frames are changing, 0 - no auto animation
-	int                 BgAnimSpeed;
+	int32_t                 BgAnimSpeed;
 	// Edges
 	RoomEdges               Edges;
 	// Region masks

@@ -86,8 +86,8 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 		intrRegion[i].ReadFromSavedgame_v321(in);
 	}
 	intrRoom.ReadFromSavedgame_v321(in);
-	in->ReadArrayOfInt8((int8 *)hotspot_enabled, MAX_ROOM_HOTSPOTS);
-	in->ReadArrayOfInt8((int8 *)region_enabled, MAX_ROOM_REGIONS);
+	in->ReadArrayOfInt8((int8_t *)hotspot_enabled, MAX_ROOM_HOTSPOTS);
+	in->ReadArrayOfInt8((int8_t *)region_enabled, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt16(walkbehind_base, MAX_WALK_BEHINDS);
 	in->ReadArrayOfInt32(interactionVariableValues, MAX_GLOBAL_VARIABLES);
 

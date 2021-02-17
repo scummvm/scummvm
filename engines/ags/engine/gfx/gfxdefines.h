@@ -39,9 +39,9 @@ enum GlobalFlipType {
 
 // GraphicResolution struct determines image size and color depth
 struct GraphicResolution {
-	int Width;
-	int Height;
-	int ColorDepth;
+	int32_t Width;
+	int32_t Height;
+	int32_t ColorDepth;
 
 	GraphicResolution()
 		: Width(0)
@@ -49,7 +49,7 @@ struct GraphicResolution {
 		, ColorDepth(0) {
 	}
 
-	GraphicResolution(int width, int height, int color_depth) {
+	GraphicResolution(int32_t width, int32_t height, int32_t color_depth) {
 		Width = width;
 		Height = height;
 		ColorDepth = color_depth;
@@ -62,7 +62,7 @@ struct GraphicResolution {
 
 // DisplayMode struct provides extended description of display mode
 struct DisplayMode : public GraphicResolution {
-	int RefreshRate;
+	int32_t RefreshRate;
 	bool    Vsync;
 	bool    Windowed;
 
@@ -72,7 +72,7 @@ struct DisplayMode : public GraphicResolution {
 		, Windowed(false) {
 	}
 
-	DisplayMode(const GraphicResolution &res, bool windowed = false, int refresh = 0, bool vsync = false)
+	DisplayMode(const GraphicResolution &res, bool windowed = false, int32_t refresh = 0, bool vsync = false)
 		: GraphicResolution(res)
 		, RefreshRate(refresh)
 		, Vsync(vsync)

@@ -186,7 +186,7 @@ int AGSBlend::xytolocale(int x, int y, int width) {
 
 int AGSBlend::HighPass(int sprite, int threshold) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
-	int srcWidth, srcHeight;
+	int32 srcWidth, srcHeight;
 
 	_engine->GetBitmapDimensions(src, &srcWidth, &srcHeight, nullptr);
 
@@ -218,7 +218,7 @@ int AGSBlend::HighPass(int sprite, int threshold) {
 int AGSBlend::Blur(int sprite, int radius) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 
-	int srcWidth, srcHeight;
+	int32 srcWidth, srcHeight;
 	_engine->GetBitmapDimensions(src, &srcWidth, &srcHeight, nullptr);
 
 	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
@@ -358,7 +358,7 @@ int AGSBlend::Blur(int sprite, int radius) {
 
 int AGSBlend::DrawSprite(int destination, int sprite, int x, int y, int DrawMode, int trans) {
 	trans = 100 - trans;
-	int srcWidth, srcHeight, destWidth, destHeight;
+	int32 srcWidth, srcHeight, destWidth, destHeight;
 
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	BITMAP *dest = _engine->GetSpriteGraphic(destination);
@@ -578,7 +578,7 @@ int AGSBlend::DrawSprite(int destination, int sprite, int x, int y, int DrawMode
 }
 
 int AGSBlend::DrawAdd(int destination, int sprite, int x, int y, float scale) {
-	int srcWidth, srcHeight, destWidth, destHeight;
+	int32 srcWidth, srcHeight, destWidth, destHeight;
 
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	BITMAP *dest = _engine->GetSpriteGraphic(destination);
@@ -653,7 +653,7 @@ int AGSBlend::DrawAdd(int destination, int sprite, int x, int y, float scale) {
 int AGSBlend::DrawAlpha(int destination, int sprite, int x, int y, int trans) {
 	trans = 100 - trans;
 
-	int srcWidth, srcHeight, destWidth, destHeight;
+	int32 srcWidth, srcHeight, destWidth, destHeight;
 
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	BITMAP *dest = _engine->GetSpriteGraphic(destination);

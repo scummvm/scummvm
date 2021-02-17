@@ -91,7 +91,7 @@ void GUIMain::InitDefaults() {
 	_ctrlDrawOrder.clear();
 }
 
-int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
+int32_t GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 	if (loaded_game_file_version <= kGameVersion_262) {
 		// Ignore draw order On 2.6.2 and lower
 		for (size_t i = 0; i < _controls.size(); ++i) {
@@ -116,16 +116,16 @@ int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 	return -1;
 }
 
-int GUIMain::FindControlUnderMouse() const {
+int32_t GUIMain::FindControlUnderMouse() const {
 	return FindControlUnderMouse(0, true);
 }
 
-int GUIMain::FindControlUnderMouse(int leeway) const {
+int32_t GUIMain::FindControlUnderMouse(int leeway) const {
 	return FindControlUnderMouse(leeway, true);
 }
 
-int GUIMain::GetControlCount() const {
-	return (int)_controls.size();
+int32_t GUIMain::GetControlCount() const {
+	return (int32_t)_controls.size();
 }
 
 GUIObject *GUIMain::GetControl(int index) const {
@@ -140,7 +140,7 @@ GUIControlType GUIMain::GetControlType(int index) const {
 	return _ctrlRefs[index].first;
 }
 
-int GUIMain::GetControlID(int index) const {
+int32_t GUIMain::GetControlID(int index) const {
 	if (index < 0 || (size_t)index >= _ctrlRefs.size())
 		return -1;
 	return _ctrlRefs[index].second;
@@ -320,7 +320,7 @@ void GUIMain::Poll() {
 
 HError GUIMain::RebuildArray() {
 	GUIControlType thistype;
-	int thisnum;
+	int32_t thisnum;
 
 	_controls.resize(_ctrlRefs.size());
 	for (size_t i = 0; i < _controls.size(); ++i) {
@@ -511,7 +511,7 @@ void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
 	ID = in->ReadInt32();
 	Padding = in->ReadInt32();
 	if (gui_version < kGuiVersion_350)
-		in->Seek(sizeof(int) * GUIMAIN_LEGACY_RESERVED_INTS);
+		in->Seek(sizeof(int32_t) * GUIMAIN_LEGACY_RESERVED_INTS);
 
 	if (gui_version < kGuiVersion_350) {
 		if (tw_flags[0] == kGUIMain_LegacyTextWindow)
@@ -524,18 +524,18 @@ void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
 	// pre-3.4.0 games contained array of 32-bit pointers; these values are unused
 	// TODO: error if ctrl_count > LEGACY_MAX_OBJS_ON_GUI
 	if (gui_version < kGuiVersion_340)
-		in->Seek(LEGACY_MAX_OBJS_ON_GUI * sizeof(int));
+		in->Seek(LEGACY_MAX_OBJS_ON_GUI * sizeof(int32_t));
 	if (ctrl_count > 0) {
 		_ctrlRefs.resize(ctrl_count);
 		for (size_t i = 0; i < ctrl_count; ++i) {
-			const int ref_packed = in->ReadInt32();
+			const int32_t ref_packed = in->ReadInt32();
 			_ctrlRefs[i].first = (GUIControlType)((ref_packed >> 16) & 0xFFFF);
 			_ctrlRefs[i].second = ref_packed & 0xFFFF;
 		}
 	}
 	// Skip unused control slots in pre-3.4.0 games
 	if (gui_version < kGuiVersion_340 && ctrl_count < LEGACY_MAX_OBJS_ON_GUI)
-		in->Seek((LEGACY_MAX_OBJS_ON_GUI - ctrl_count) * sizeof(int));
+		in->Seek((LEGACY_MAX_OBJS_ON_GUI - ctrl_count) * sizeof(int32_t));
 }
 
 void GUIMain::WriteToFile(Stream *out) const {
@@ -557,7 +557,7 @@ void GUIMain::WriteToFile(Stream *out) const {
 	out->WriteInt32(ID);
 	out->WriteInt32(Padding);
 	for (size_t i = 0; i < _ctrlRefs.size(); ++i) {
-		int ref_packed = ((_ctrlRefs[i].first & 0xFFFF) << 16) | (_ctrlRefs[i].second & 0xFFFF);
+		int32_t ref_packed = ((_ctrlRefs[i].first & 0xFFFF) << 16) | (_ctrlRefs[i].second & 0xFFFF);
 		out->WriteInt32(ref_packed);
 	}
 }

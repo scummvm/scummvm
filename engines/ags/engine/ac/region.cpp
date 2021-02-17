@@ -141,84 +141,84 @@ void generate_light_table() {
 //=============================================================================
 
 // ScriptRegion *(int xx, int yy)
-RuntimeScriptValue Sc_GetRegionAtRoom(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GetRegionAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptRegion, ccDynamicRegion, GetRegionAtRoom);
 }
 
-RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptRegion, ccDynamicRegion, GetRegionAtScreen);
 }
 
-RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaRegion);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
-RuntimeScriptValue Sc_Region_Tint(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_Tint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT5(ScriptRegion, Region_Tint);
 }
 
 // void (ScriptRegion *srr, int red, int green, int blue, int amount)
-RuntimeScriptValue Sc_Region_TintNoLum(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_TintNoLum(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT4(ScriptRegion, Region_TintNoLum);
 }
 
 // void (ScriptRegion *ssr, int mood)
-RuntimeScriptValue Sc_Region_RunInteraction(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_RunInteraction(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(ScriptRegion, Region_RunInteraction);
 }
 
 // int (ScriptRegion *ssr)
-RuntimeScriptValue Sc_Region_GetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetEnabled);
 }
 
 // void (ScriptRegion *ssr, int enable)
-RuntimeScriptValue Sc_Region_SetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_SetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(ScriptRegion, Region_SetEnabled);
 }
 
 // int (ScriptRegion *ssr)
-RuntimeScriptValue Sc_Region_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetID);
 }
 
 // int (ScriptRegion *ssr)
-RuntimeScriptValue Sc_Region_GetLightLevel(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetLightLevel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetLightLevel);
 }
 
 // void (ScriptRegion *ssr, int brightness)
-RuntimeScriptValue Sc_Region_SetLightLevel(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_SetLightLevel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(ScriptRegion, Region_SetLightLevel);
 }
 
 // int (ScriptRegion *srr)
-RuntimeScriptValue Sc_Region_GetTintEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintEnabled);
 }
 
 // int (ScriptRegion *srr)
-RuntimeScriptValue Sc_Region_GetTintBlue(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintBlue(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintBlue);
 }
 
 // int (ScriptRegion *srr)
-RuntimeScriptValue Sc_Region_GetTintGreen(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintGreen(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintGreen);
 }
 
 // int (ScriptRegion *srr)
-RuntimeScriptValue Sc_Region_GetTintRed(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintRed(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintRed);
 }
 
 // int (ScriptRegion *srr)
-RuntimeScriptValue Sc_Region_GetTintSaturation(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintSaturation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintSaturation);
 }
 
-RuntimeScriptValue Sc_Region_GetTintLuminance(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Region_GetTintLuminance(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptRegion, Region_GetTintLuminance);
 }
 

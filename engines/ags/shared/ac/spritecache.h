@@ -97,15 +97,15 @@ enum SpriteIndexFileVersion {
 };
 
 
-typedef int sprkey_t;
+typedef int32_t sprkey_t;
 
 // SpriteFileIndex contains sprite file's table of contents
 struct SpriteFileIndex {
 	int SpriteFileIDCheck = 0; // tag matching sprite file and index file
 	sprkey_t LastSlot = -1;
 	sprkey_t SpriteCount = 0;
-	std::vector<int16> Widths;
-	std::vector<int16> Heights;
+	std::vector<int16_t> Widths;
+	std::vector<int16_t> Heights;
 	std::vector<soff_t>  Offsets;
 };
 
@@ -196,7 +196,7 @@ private:
 	struct SpriteData {
 		soff_t          Offset; // data offset
 		soff_t          Size;   // cache size of element, in bytes
-		uint32        Flags;
+		uint32_t        Flags;
 		// TODO: investigate if we may safely use unique_ptr here
 		// (some of these bitmaps may be assigned from outside of the cache)
 		Shared::Bitmap *Image; // actual bitmap

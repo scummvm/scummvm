@@ -57,7 +57,7 @@ void redo_walkable_areas() {
 
 	int hh, ww;
 	for (hh = 0; hh < walkareabackup->GetHeight(); hh++) {
-		uint8 *walls_scanline = thisroom.WalkAreaMask->GetScanLineForWriting(hh);
+		uint8_t *walls_scanline = thisroom.WalkAreaMask->GetScanLineForWriting(hh);
 		for (ww = 0; ww < walkareabackup->GetWidth(); ww++) {
 			//      if (play.walkable_areas_on[_getpixel(thisroom.WalkAreaMask,ww,hh)]==0)
 			if (play.walkable_areas_on[walls_scanline[ww]] == 0)

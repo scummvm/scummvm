@@ -1084,8 +1084,8 @@ void convert_move_path_to_room_resolution(MoveList *ml) {
 	ml->lasty = mask_to_room_coord(ml->lasty);
 
 	for (int i = 0; i < ml->numstage; i++) {
-		uint16 lowPart = mask_to_room_coord(ml->pos[i] & 0x0000ffff);
-		uint16 highPart = mask_to_room_coord((ml->pos[i] >> 16) & 0x0000ffff);
+		uint16_t lowPart = mask_to_room_coord(ml->pos[i] & 0x0000ffff);
+		uint16_t highPart = mask_to_room_coord((ml->pos[i] >> 16) & 0x0000ffff);
 		ml->pos[i] = ((int)highPart << 16) | (lowPart & 0x0000ffff);
 	}
 
@@ -1107,81 +1107,81 @@ void convert_move_path_to_room_resolution(MoveList *ml) {
 extern ScriptString myScriptStringImpl;
 
 // ScriptDrawingSurface* (int backgroundNumber)
-RuntimeScriptValue Sc_Room_GetDrawingSurfaceForBackground(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetDrawingSurfaceForBackground(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJAUTO_PINT(ScriptDrawingSurface, Room_GetDrawingSurfaceForBackground);
 }
 
 // int (const char *property)
-RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Room_GetProperty, const char);
 }
 
 // const char* (const char *property)
-RuntimeScriptValue Sc_Room_GetTextProperty(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetTextProperty(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_POBJ(const char, myScriptStringImpl, Room_GetTextProperty, const char);
 }
 
-RuntimeScriptValue Sc_Room_SetProperty(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_SetProperty(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_BOOL_POBJ_PINT(Room_SetProperty, const char);
 }
 
 // const char* (const char *property)
-RuntimeScriptValue Sc_Room_SetTextProperty(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_SetTextProperty(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_BOOL_POBJ2(Room_SetTextProperty, const char, const char);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetBottomEdge(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetBottomEdge(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetBottomEdge);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetColorDepth(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetColorDepth(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetColorDepth);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetHeight(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetHeight(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetHeight);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetLeftEdge(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetLeftEdge(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetLeftEdge);
 }
 
 // const char* (int index)
-RuntimeScriptValue Sc_Room_GetMessages(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetMessages(const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Room_GetMessages);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetMusicOnLoad(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetMusicOnLoad(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetMusicOnLoad);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetObjectCount(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetObjectCount(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetObjectCount);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetRightEdge(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetRightEdge(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetRightEdge);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetTopEdge(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetTopEdge(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetTopEdge);
 }
 
 // int ()
-RuntimeScriptValue Sc_Room_GetWidth(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_Room_GetWidth(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Room_GetWidth);
 }
 
 // void (int xx,int yy,int mood)
-RuntimeScriptValue Sc_RoomProcessClick(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_RoomProcessClick(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT3(RoomProcessClick);
 }
 

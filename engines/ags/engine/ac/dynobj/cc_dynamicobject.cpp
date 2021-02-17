@@ -58,8 +58,8 @@ void ccSetStringClassImpl(ICCStringClass *theClass) {
 
 // register a memory handle for the object and allow script
 // pointers to point to it
-int ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, bool plugin_object) {
-	int handl = pool.AddObject((const char *)object, callback, plugin_object);
+int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, bool plugin_object) {
+	int32_t handl = pool.AddObject((const char *)object, callback, plugin_object);
 
 	ManagedObjectLog("Register managed object type '%s' handle=%d addr=%08X",
 		((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
@@ -68,7 +68,7 @@ int ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, bool
 }
 
 // register a de-serialized object
-int ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback, bool plugin_object) {
+int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback, bool plugin_object) {
 	return pool.AddUnserializedObject((const char *)object, callback, plugin_object, index);
 }
 
@@ -93,17 +93,17 @@ int ccUnserializeAllObjects(Stream *in, ICCObjectReader *callback) {
 }
 
 // dispose the object if RefCount==0
-void ccAttemptDisposeObject(int handle) {
+void ccAttemptDisposeObject(int32_t handle) {
 	pool.CheckDispose(handle);
 }
 
 // translate between object handles and memory addresses
-int ccGetObjectHandleFromAddress(const char *address) {
+int32_t ccGetObjectHandleFromAddress(const char *address) {
 	// set to null
 	if (address == nullptr)
 		return 0;
 
-	int handl = pool.AddressToHandle(address);
+	int32_t handl = pool.AddressToHandle(address);
 
 	ManagedObjectLog("Line %d WritePtr: %08X to %d", currentline, address, handl);
 
@@ -114,7 +114,7 @@ int ccGetObjectHandleFromAddress(const char *address) {
 	return handl;
 }
 
-const char *ccGetObjectAddressFromHandle(int handle) {
+const char *ccGetObjectAddressFromHandle(int32_t handle) {
 	if (handle == 0) {
 		return nullptr;
 	}
@@ -129,7 +129,7 @@ const char *ccGetObjectAddressFromHandle(int handle) {
 	return addr;
 }
 
-ScriptValueType ccGetObjectAddressAndManagerFromHandle(int handle, void *&object, ICCDynamicObject *&manager) {
+ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager) {
 	if (handle == 0) {
 		object = nullptr;
 		manager = nullptr;
@@ -142,14 +142,14 @@ ScriptValueType ccGetObjectAddressAndManagerFromHandle(int handle, void *&object
 	return obj_type;
 }
 
-int ccAddObjectReference(int handle) {
+int ccAddObjectReference(int32_t handle) {
 	if (handle == 0)
 		return 0;
 
 	return pool.AddRef(handle);
 }
 
-int ccReleaseObjectReference(int handle) {
+int ccReleaseObjectReference(int32_t handle) {
 	if (handle == 0)
 		return 0;
 

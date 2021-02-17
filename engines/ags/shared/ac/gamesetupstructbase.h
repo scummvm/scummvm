@@ -50,7 +50,7 @@ struct GameSetupStructBase {
 	static const int  NUM_INTS_RESERVED = 17;
 
 	char              gamename[GAME_NAME_LENGTH];
-	int           options[MAX_OPTIONS];
+	int32_t           options[MAX_OPTIONS];
 	unsigned char     paluses[256];
 	color             defpal[256];
 	int               numviews;
@@ -69,14 +69,14 @@ struct GameSetupStructBase {
 	int               numcursors;
 	int               default_lipsync_frame; // used for unknown chars
 	int               invhotdotsprite;
-	int           reserved[NUM_INTS_RESERVED];
+	int32_t           reserved[NUM_INTS_RESERVED];
 	char *messages[MAXGLOBALMES];
 	WordsDictionary *dict;
 	char *globalscript;
 	CharacterInfo *chars;
 	ccScript *compiled_script;
 
-	int *load_messages;
+	int32_t *load_messages;
 	bool             load_dictionary;
 	bool             load_compiled_script;
 	// [IKM] 2013-03-30

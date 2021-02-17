@@ -82,8 +82,8 @@ size_t BufferedStream::Read(void *toBuffer, size_t toSize) {
 	return to - (char *)toBuffer;
 }
 
-int BufferedStream::ReadByte() {
-	uint8 ch;
+int32_t BufferedStream::ReadByte() {
+	uint8_t ch;
 	auto bytesRead = Read(&ch, 1);
 	if (bytesRead != 1) {
 		return EOF;
@@ -100,7 +100,7 @@ size_t BufferedStream::Write(const void *buffer, size_t size) {
 	return sz;
 }
 
-int BufferedStream::WriteByte(uint8 val) {
+int32_t BufferedStream::WriteByte(uint8_t val) {
 	auto sz = Write(&val, 1);
 	if (sz != 1) {
 		return -1;

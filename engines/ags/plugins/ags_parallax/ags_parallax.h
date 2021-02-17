@@ -31,8 +31,8 @@ namespace Plugins {
 namespace AGSParallax {
 
 struct Sprite {
-	int x = 0;
-	int y = 0;
+	int32 x = 0;
+	int32 y = 0;
 	int slot = -1;
 	int speed = 0;
 
@@ -49,9 +49,9 @@ struct Sprite {
 class AGSParallax : public DLL {
 private:
 	static IAGSEngine *_engine;
-	static int _screenWidth;
-	static int _screenHeight;
-	static int _screenColorDepth;
+	static int32 _screenWidth;
+	static int32 _screenHeight;
+	static int32 _screenColorDepth;
 
 	static bool _enabled;
 	static Sprite _sprites[MAX_SPRITES];

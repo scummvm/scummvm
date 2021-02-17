@@ -63,31 +63,31 @@ public:
 	virtual bool        CanSeek() const = 0;
 
 	virtual size_t      Read(void *buffer, size_t size) = 0;
-	virtual int     ReadByte() = 0;
+	virtual int32_t     ReadByte() = 0;
 	virtual size_t      Write(const void *buffer, size_t size) = 0;
-	virtual int     WriteByte(uint8 b) = 0;
+	virtual int32_t     WriteByte(uint8_t b) = 0;
 
-	virtual int8      ReadInt8() = 0;
-	virtual int16     ReadInt16() = 0;
-	virtual int     ReadInt32() = 0;
-	virtual int64     ReadInt64() = 0;
+	virtual int8_t      ReadInt8() = 0;
+	virtual int16_t     ReadInt16() = 0;
+	virtual int32_t     ReadInt32() = 0;
+	virtual int64_t     ReadInt64() = 0;
 	virtual bool        ReadBool() = 0;
 	virtual size_t      ReadArray(void *buffer, size_t elem_size, size_t count) = 0;
-	virtual size_t      ReadArrayOfInt8(int8 *buffer, size_t count) = 0;
-	virtual size_t      ReadArrayOfInt16(int16 *buffer, size_t count) = 0;
-	virtual size_t      ReadArrayOfInt32(int *buffer, size_t count) = 0;
-	virtual size_t      ReadArrayOfInt64(int64 *buffer, size_t count) = 0;
+	virtual size_t      ReadArrayOfInt8(int8_t *buffer, size_t count) = 0;
+	virtual size_t      ReadArrayOfInt16(int16_t *buffer, size_t count) = 0;
+	virtual size_t      ReadArrayOfInt32(int32_t *buffer, size_t count) = 0;
+	virtual size_t      ReadArrayOfInt64(int64_t *buffer, size_t count) = 0;
 
-	virtual size_t      WriteInt8(int8 val) = 0;
-	virtual size_t      WriteInt16(int16 val) = 0;
-	virtual size_t      WriteInt32(int val) = 0;
-	virtual size_t      WriteInt64(int64 val) = 0;
+	virtual size_t      WriteInt8(int8_t val) = 0;
+	virtual size_t      WriteInt16(int16_t val) = 0;
+	virtual size_t      WriteInt32(int32_t val) = 0;
+	virtual size_t      WriteInt64(int64_t val) = 0;
 	virtual size_t      WriteBool(bool val) = 0;
 	virtual size_t      WriteArray(const void *buffer, size_t elem_size, size_t count) = 0;
-	virtual size_t      WriteArrayOfInt8(const int8 *buffer, size_t count) = 0;
-	virtual size_t      WriteArrayOfInt16(const int16 *buffer, size_t count) = 0;
-	virtual size_t      WriteArrayOfInt32(const int *buffer, size_t count) = 0;
-	virtual size_t      WriteArrayOfInt64(const int64 *buffer, size_t count) = 0;
+	virtual size_t      WriteArrayOfInt8(const int8_t *buffer, size_t count) = 0;
+	virtual size_t      WriteArrayOfInt16(const int16_t *buffer, size_t count) = 0;
+	virtual size_t      WriteArrayOfInt32(const int32_t *buffer, size_t count) = 0;
+	virtual size_t      WriteArrayOfInt64(const int64_t *buffer, size_t count) = 0;
 
 	virtual bool        Seek(soff_t offset, StreamSeek origin = kSeekCurrent) = 0;
 };

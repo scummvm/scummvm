@@ -59,11 +59,19 @@ namespace AGS3 {
 #endif
 #endif
 
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t;
+typedef int8 int8_t;
+typedef int16 int16_t;
+typedef int32 int32_t;
+typedef int64 int64_t;
+
 typedef int64 soff_t;		// Stream offset type
 typedef int64 intptr_t;
 
 // fixed point type
-#define fixed_t int
+#define fixed_t int32_t
 #define color_t int
 
 #undef INT16_MIN
@@ -100,7 +108,7 @@ enum {
  * on 64-bit systems
  */
 union NumberPtr {
-	int _value;
+	int32 _value;
 	void *_ptr;
 
 	NumberPtr(int value) { _ptr = nullptr; _value = value; }

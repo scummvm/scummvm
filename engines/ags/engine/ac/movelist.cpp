@@ -44,7 +44,7 @@ void MoveList::ReadFromFile_Legacy(Stream *in) {
 	direct = in->ReadInt8();
 }
 
-HSaveError MoveList::ReadFromFile(Stream *in, int cmp_ver) {
+HSaveError MoveList::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	if (cmp_ver < 1) {
 		ReadFromFile_Legacy(in);
 		return HSaveError::None();

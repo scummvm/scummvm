@@ -87,16 +87,16 @@ void ScriptUserObject::Read(const char *address, intptr_t offset, void *dest, in
 	memcpy(dest, _data + offset, size);
 }
 
-uint8 ScriptUserObject::ReadInt8(const char *address, intptr_t offset) {
-	return *(uint8 *)(_data + offset);
+uint8_t ScriptUserObject::ReadInt8(const char *address, intptr_t offset) {
+	return *(uint8_t *)(_data + offset);
 }
 
-int16 ScriptUserObject::ReadInt16(const char *address, intptr_t offset) {
-	return *(int16 *)(_data + offset);
+int16_t ScriptUserObject::ReadInt16(const char *address, intptr_t offset) {
+	return *(int16_t *)(_data + offset);
 }
 
-int ScriptUserObject::ReadInt32(const char *address, intptr_t offset) {
-	return *(int *)(_data + offset);
+int32_t ScriptUserObject::ReadInt32(const char *address, intptr_t offset) {
+	return *(int32_t *)(_data + offset);
 }
 
 float ScriptUserObject::ReadFloat(const char *address, intptr_t offset) {
@@ -107,16 +107,16 @@ void ScriptUserObject::Write(const char *address, intptr_t offset, void *src, in
 	memcpy((void *)(_data + offset), src, size);
 }
 
-void ScriptUserObject::WriteInt8(const char *address, intptr_t offset, uint8 val) {
-	*(uint8 *)(_data + offset) = val;
+void ScriptUserObject::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
+	*(uint8_t *)(_data + offset) = val;
 }
 
-void ScriptUserObject::WriteInt16(const char *address, intptr_t offset, int16 val) {
-	*(int16 *)(_data + offset) = val;
+void ScriptUserObject::WriteInt16(const char *address, intptr_t offset, int16_t val) {
+	*(int16_t *)(_data + offset) = val;
 }
 
-void ScriptUserObject::WriteInt32(const char *address, intptr_t offset, int val) {
-	*(int *)(_data + offset) = val;
+void ScriptUserObject::WriteInt32(const char *address, intptr_t offset, int32_t val) {
+	*(int32_t *)(_data + offset) = val;
 }
 
 void ScriptUserObject::WriteFloat(const char *address, intptr_t offset, float val) {
@@ -126,9 +126,9 @@ void ScriptUserObject::WriteFloat(const char *address, intptr_t offset, float va
 
 // Allocates managed struct containing two ints: X and Y
 ScriptUserObject *ScriptStructHelpers::CreatePoint(int x, int y) {
-	ScriptUserObject *suo = ScriptUserObject::CreateManaged(sizeof(int) * 2);
+	ScriptUserObject *suo = ScriptUserObject::CreateManaged(sizeof(int32_t) * 2);
 	suo->WriteInt32((const char *)suo, 0, x);
-	suo->WriteInt32((const char *)suo, sizeof(int), y);
+	suo->WriteInt32((const char *)suo, sizeof(int32_t), y);
 	return suo;
 }
 

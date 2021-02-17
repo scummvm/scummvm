@@ -58,8 +58,8 @@ void     WriteV30(const AssetLibInfo &lib, MFLVersion lib_version, Stream *out);
 int      GetNextPseudoRand(int &rand_val);
 void     DecryptText(char *text);
 void     ReadEncArray(void *data, size_t size, size_t count, Stream *in, int &rand_val);
-int8   ReadEncInt8(Stream *in, int &rand_val);
-int  ReadEncInt32(Stream *in, int &rand_val);
+int8_t   ReadEncInt8(Stream *in, int &rand_val);
+int32_t  ReadEncInt32(Stream *in, int &rand_val);
 void     ReadEncString(char *buffer, size_t max_len, Stream *in, int &rand_val);
 
 } // namespace  MFLUtil
@@ -123,9 +123,9 @@ MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_vers
 		// it's an appended-to-end-of-exe thing;
 		// now we need to read multifile lib offset value, but we do not know
 		// if its 32-bit or 64-bit yet, so we'll have to test both
-		in->Seek(-(soff_t)TailSig.GetLength() - sizeof(int64), kSeekEnd);
+		in->Seek(-(soff_t)TailSig.GetLength() - sizeof(int64_t), kSeekEnd);
 		abs_offset = in->ReadInt64();
-		in->Seek(-(soff_t)sizeof(int), kSeekCurrent);
+		in->Seek(-(soff_t)sizeof(int32_t), kSeekCurrent);
 		soff_t abs_offset_32 = in->ReadInt32();
 
 		// test for header signature again, with 64-bit and 32-bit offsets if necessary
@@ -361,7 +361,7 @@ void MFLUtil::WriteV30(const AssetLibInfo &lib, MFLVersion lib_version, Stream *
 
 void MFLUtil::WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out) {
 	if (lib_index < kMFLVersion_MultiV30)
-		out->WriteInt32((int)lib_offset);
+		out->WriteInt32((int32_t)lib_offset);
 	else
 		out->WriteInt64(lib_offset);
 	out->Write(TailSig, TailSig.GetLength());
@@ -389,20 +389,20 @@ int MFLUtil::GetNextPseudoRand(int &rand_val) {
 
 void MFLUtil::ReadEncArray(void *data, size_t size, size_t count, Stream *in, int &rand_val) {
 	in->ReadArray(data, size, count);
-	uint8 *ch = (uint8 *)data;
+	uint8_t *ch = (uint8_t *)data;
 	const size_t len = size * count;
 	for (size_t i = 0; i < len; ++i) {
 		ch[i] -= GetNextPseudoRand(rand_val);
 	}
 }
 
-int8 MFLUtil::ReadEncInt8(Stream *in, int &rand_val) {
+int8_t MFLUtil::ReadEncInt8(Stream *in, int &rand_val) {
 	return in->ReadByte() - GetNextPseudoRand(rand_val);
 }
 
-int MFLUtil::ReadEncInt32(Stream *in, int &rand_val) {
+int32_t MFLUtil::ReadEncInt32(Stream *in, int &rand_val) {
 	int val;
-	ReadEncArray(&val, sizeof(int), 1, in, rand_val);
+	ReadEncArray(&val, sizeof(int32_t), 1, in, rand_val);
 #if AGS_PLATFORM_ENDIAN_BIG
 	AGS::Shared::BitByteOperations::SwapBytesInt32(val);
 #endif

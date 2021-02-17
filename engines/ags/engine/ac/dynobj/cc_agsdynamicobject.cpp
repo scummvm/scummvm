@@ -92,16 +92,16 @@ void AGSCCDynamicObject::Read(const char *address, intptr_t offset, void *dest, 
 	memcpy(dest, address + offset, size);
 }
 
-uint8 AGSCCDynamicObject::ReadInt8(const char *address, intptr_t offset) {
-	return *(const uint8 *)(address + offset);
+uint8_t AGSCCDynamicObject::ReadInt8(const char *address, intptr_t offset) {
+	return *(const uint8_t *)(address + offset);
 }
 
-int16 AGSCCDynamicObject::ReadInt16(const char *address, intptr_t offset) {
-	return *(const int16 *)(address + offset);
+int16_t AGSCCDynamicObject::ReadInt16(const char *address, intptr_t offset) {
+	return *(const int16_t *)(address + offset);
 }
 
-int AGSCCDynamicObject::ReadInt32(const char *address, intptr_t offset) {
-	return *(const int *)(address + offset);
+int32_t AGSCCDynamicObject::ReadInt32(const char *address, intptr_t offset) {
+	return *(const int32_t *)(address + offset);
 }
 
 float AGSCCDynamicObject::ReadFloat(const char *address, intptr_t offset) {
@@ -112,16 +112,16 @@ void AGSCCDynamicObject::Write(const char *address, intptr_t offset, void *src, 
 	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
 }
 
-void AGSCCDynamicObject::WriteInt8(const char *address, intptr_t offset, uint8 val) {
-	*(uint8 *)(const_cast<char *>(address) + offset) = val;
+void AGSCCDynamicObject::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
+	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
 }
 
-void AGSCCDynamicObject::WriteInt16(const char *address, intptr_t offset, int16 val) {
-	*(int16 *)(const_cast<char *>(address) + offset) = val;
+void AGSCCDynamicObject::WriteInt16(const char *address, intptr_t offset, int16_t val) {
+	*(int16_t *)(const_cast<char *>(address) + offset) = val;
 }
 
-void AGSCCDynamicObject::WriteInt32(const char *address, intptr_t offset, int val) {
-	*(int *)(const_cast<char *>(address) + offset) = val;
+void AGSCCDynamicObject::WriteInt32(const char *address, intptr_t offset, int32_t val) {
+	*(int32_t *)(const_cast<char *>(address) + offset) = val;
 }
 
 void AGSCCDynamicObject::WriteFloat(const char *address, intptr_t offset, float val) {

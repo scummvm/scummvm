@@ -39,13 +39,13 @@ using namespace AGS; // FIXME later
 
 void csavecompressed(Shared::Stream *out, const unsigned char *tobesaved, const color pala[256]);
 // RLE compression
-void cpackbitl(const uint8 *line, int size, Shared::Stream *out);
-void cpackbitl16(const uint16 *line, int size, Shared::Stream *out);
-void cpackbitl32(const uint32 *line, int size, Shared::Stream *out);
+void cpackbitl(const uint8_t *line, int size, Shared::Stream *out);
+void cpackbitl16(const uint16_t *line, int size, Shared::Stream *out);
+void cpackbitl32(const uint32_t *line, int size, Shared::Stream *out);
 // RLE decompression
-int  cunpackbitl(uint8 *line, int size, Shared::Stream *in);
-int  cunpackbitl16(uint16 *line, int size, Shared::Stream *in);
-int  cunpackbitl32(uint32 *line, int size, Shared::Stream *in);
+int  cunpackbitl(uint8_t *line, int size, Shared::Stream *in);
+int  cunpackbitl16(uint16_t *line, int size, Shared::Stream *in);
+int  cunpackbitl32(uint32_t *line, int size, Shared::Stream *in);
 
 //=============================================================================
 

@@ -35,7 +35,7 @@ using namespace AGS; // FIXME later
 #define scFileAppend 3
 
 struct sc_File final : ICCDynamicObject {
-	int             handle;
+	int32_t             handle;
 
 	static const Shared::FileOpenMode fopenModes[];
 	static const Shared::FileWorkMode fworkModes[];
@@ -54,14 +54,14 @@ struct sc_File final : ICCDynamicObject {
 	// Legacy support for reading and writing object values by their relative offset
 	const char *GetFieldPtr(const char *address, intptr_t offset) override;
 	void    Read(const char *address, intptr_t offset, void *dest, int size) override;
-	uint8 ReadInt8(const char *address, intptr_t offset) override;
-	int16 ReadInt16(const char *address, intptr_t offset) override;
-	int ReadInt32(const char *address, intptr_t offset) override;
+	uint8_t ReadInt8(const char *address, intptr_t offset) override;
+	int16_t ReadInt16(const char *address, intptr_t offset) override;
+	int32_t ReadInt32(const char *address, intptr_t offset) override;
 	float   ReadFloat(const char *address, intptr_t offset) override;
 	void    Write(const char *address, intptr_t offset, void *src, int size) override;
-	void    WriteInt8(const char *address, intptr_t offset, uint8 val) override;
-	void    WriteInt16(const char *address, intptr_t offset, int16 val) override;
-	void    WriteInt32(const char *address, intptr_t offset, int val) override;
+	void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
+	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
+	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 };
 

@@ -139,8 +139,8 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 			color_t mask_color = hctemp.GetMaskColor();
 			for (int scan_y = 0; scan_y < hctemp.GetHeight(); ++scan_y) {
 				// we know this must be 1 bpp source and 2 bpp pixel destination
-				const uint8 *src_scanline = sprite->GetScanLine(scan_y);
-				uint16 *dst_scanline = (uint16 *)hctemp.GetScanLineForWriting(scan_y);
+				const uint8_t *src_scanline = sprite->GetScanLine(scan_y);
+				uint16_t *dst_scanline = (uint16_t *)hctemp.GetScanLineForWriting(scan_y);
 				for (int scan_x = 0; scan_x < hctemp.GetWidth(); ++scan_x) {
 					if (src_scanline[scan_x] == 0) {
 						dst_scanline[scan_x] = mask_color;

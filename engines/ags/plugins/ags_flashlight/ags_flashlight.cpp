@@ -34,9 +34,9 @@ const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 const float PI = 3.14159265f;
 
-int AGSFlashlight::AGSFlashlight::screen_width = 320;
-int AGSFlashlight::screen_height = 200;
-int AGSFlashlight::screen_color_depth = 16;
+int32 AGSFlashlight::AGSFlashlight::screen_width = 320;
+int32 AGSFlashlight::screen_height = 200;
+int32 AGSFlashlight::screen_color_depth = 16;
 
 bool AGSFlashlight::g_BitmapMustBeUpdated = true;
 
@@ -50,10 +50,10 @@ int AGSFlashlight::g_DarknessSize = 0;
 int AGSFlashlight::g_DarknessDiameter = 0;
 int AGSFlashlight::g_BrightnessSize = 0;
 
-int AGSFlashlight::g_FlashlightX = 0;
-int AGSFlashlight::g_FlashlightY = 0;
-int AGSFlashlight::g_FlashlightDrawAtX = 0;
-int AGSFlashlight::g_FlashlightDrawAtY = 0;
+int32 AGSFlashlight::g_FlashlightX = 0;
+int32 AGSFlashlight::g_FlashlightY = 0;
+int32 AGSFlashlight::g_FlashlightDrawAtX = 0;
+int32 AGSFlashlight::g_FlashlightDrawAtY = 0;
 
 bool AGSFlashlight::g_FlashlightFollowMouse = false;
 
@@ -304,7 +304,7 @@ void AGSFlashlight::DrawTint() {
 	BITMAP *screen = _engine->GetVirtualScreen();
 	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(screen);
 
-	int red, blue, green, alpha;
+	int32 red, blue, green, alpha;
 
 	for (y = 0; y < screen_height; y++) {
 		for (x = 0; x < screen_width; x++) {

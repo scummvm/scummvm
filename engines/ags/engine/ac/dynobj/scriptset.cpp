@@ -35,7 +35,7 @@ const char *ScriptSetBase::GetType() {
 }
 
 int ScriptSetBase::Serialize(const char *address, char *buffer, int bufsize) {
-	size_t total_sz = CalcSerializeSize() + sizeof(int) * 2;
+	size_t total_sz = CalcSerializeSize() + sizeof(int32_t) * 2;
 	if (bufsize < 0 || total_sz >(size_t)bufsize) {
 		// buffer not big enough, ask for a bigger one
 		return -((int)total_sz);

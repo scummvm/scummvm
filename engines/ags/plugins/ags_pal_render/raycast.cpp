@@ -670,7 +670,7 @@ void Raycast_Render(int slot) {
 	raycastOn = true;
 	double playerrad = atan2(dirY, dirX) + (2.0 * PI);
 	rendering = true;
-	int w = S_WIDTH, h = S_HEIGHT;
+	int32 w = S_WIDTH, h = S_HEIGHT;
 	BITMAP *screen = engine->GetSpriteGraphic(slot);
 	if (!screen) engine->AbortGame("Raycast_Render: No valid sprite to draw on.");
 	engine->GetBitmapDimensions(screen, &w, &h, nullptr);

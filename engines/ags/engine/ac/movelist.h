@@ -41,7 +41,7 @@ using namespace AGS; // FIXME later
 #define MAXNEEDSTAGES_LEGACY 40
 
 struct MoveList {
-	int pos[MAXNEEDSTAGES];
+	int32_t pos[MAXNEEDSTAGES];
 	int   numstage;
 	fixed xpermove[MAXNEEDSTAGES], ypermove[MAXNEEDSTAGES];
 	int   fromx, fromy;
@@ -51,7 +51,7 @@ struct MoveList {
 	char  direct;  // MoveCharDirect was used or not
 
 	void ReadFromFile_Legacy(Shared::Stream *in);
-	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int cmp_ver);
+	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
 	void WriteToFile(Shared::Stream *out);
 };
 

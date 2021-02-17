@@ -56,54 +56,54 @@ public:
 		return _scale == kUnit;
 	}
 
-	void Init(const int src_length, const int dst_length, const int src_offset = 0, const int dst_offset = 0) {
+	void Init(const int32_t src_length, const int32_t dst_length, const int32_t src_offset = 0, const int32_t dst_offset = 0) {
 		_scale = kUnit;
 		_unscale = kUnit;
 		_srcOffset = src_offset;
 		_dstOffset = dst_offset;
 
 		if (src_length != 0) {
-			int scale = (dst_length << kShift) / src_length;
+			int32_t scale = (dst_length << kShift) / src_length;
 			if (scale != 0) {
 				_scale = scale;
 				_unscale = scale;
-				int scaled_val = ScaleDistance(src_length);
+				int32_t scaled_val = ScaleDistance(src_length);
 				if (scaled_val < dst_length)
 					_scale++;
 			}
 		}
 	}
 
-	void SetSrcOffset(int x) {
+	void SetSrcOffset(int32_t x) {
 		_srcOffset = x;
 	}
 
-	void SetDstOffset(int x) {
+	void SetDstOffset(int32_t x) {
 		_dstOffset = x;
 	}
 
-	inline int GetSrcOffset() const {
+	inline int32_t GetSrcOffset() const {
 		return _srcOffset;
 	}
 
-	inline int ScalePt(int x) const {
+	inline int32_t ScalePt(int32_t x) const {
 		return (((x - _srcOffset) * _scale) >> kShift) + _dstOffset;
 	}
-	inline int ScaleDistance(int x) const {
+	inline int32_t ScaleDistance(int32_t x) const {
 		return ((x * _scale) >> kShift);
 	}
-	inline int UnScalePt(int x) const {
+	inline int32_t UnScalePt(int32_t x) const {
 		return ((x - _dstOffset) << kShift) / _unscale + _srcOffset;
 	}
-	inline int UnScaleDistance(int x) const {
+	inline int32_t UnScaleDistance(int32_t x) const {
 		return (x << kShift) / _unscale;
 	}
 
 private:
-	int _scale;
-	int _unscale;
-	int _srcOffset;
-	int _dstOffset;
+	int32_t _scale;
+	int32_t _unscale;
+	int32_t _srcOffset;
+	int32_t _dstOffset;
 };
 
 struct PlaneScaling {

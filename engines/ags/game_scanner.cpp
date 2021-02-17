@@ -99,7 +99,7 @@ void GameScanner::scanFile(const Common::String &filename) {
 	if (!f.open(fsNode))
 		return;
 
-	int size = f.size();
+	int32 size = f.size();
 	Common::String md5 = Common::computeStreamMD5AsString(f, 5000);
 
 	// Check if it's an already known game

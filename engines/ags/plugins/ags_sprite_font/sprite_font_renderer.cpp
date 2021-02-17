@@ -113,7 +113,7 @@ void SpriteFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *de
 
 void SpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height) {
 
-	int srcWidth, srcHeight, destWidth, destHeight, srcColDepth, destColDepth;
+	int32 srcWidth, srcHeight, destWidth, destHeight, srcColDepth, destColDepth;
 
 	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);  //8bit
 	unsigned short **srcshortbuffer = (unsigned short **)srccharbuffer; //16bit;

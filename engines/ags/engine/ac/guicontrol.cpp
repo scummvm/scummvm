@@ -242,145 +242,145 @@ void GUIControl_BringToFront(GUIObject *guio) {
 //=============================================================================
 
 // void (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_BringToFront(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_BringToFront(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID(GUIObject, GUIControl_BringToFront);
 }
 
 // GUIObject *(int xx, int yy)
-RuntimeScriptValue Sc_GetGUIControlAtLocation(const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GetGUIControlAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(GUIObject, ccDynamicGUIObject, GetGUIControlAtLocation);
 }
 
 // void (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_SendToBack(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SendToBack(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID(GUIObject, GUIControl_SendToBack);
 }
 
 // void (GUIObject *guio, int xx, int yy)
-RuntimeScriptValue Sc_GUIControl_SetPosition(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetPosition(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT2(GUIObject, GUIControl_SetPosition);
 }
 
 // void (GUIObject *guio, int newwid, int newhit)
-RuntimeScriptValue Sc_GUIControl_SetSize(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetSize(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT2(GUIObject, GUIControl_SetSize);
 }
 
 // GUIButton* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsButton(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsButton(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUIButton, ccDynamicGUI, GUIControl_GetAsButton);
 }
 
 // GUIInvWindow* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsInvWindow(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsInvWindow(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUIInvWindow, ccDynamicGUI, GUIControl_GetAsInvWindow);
 }
 
 // GUILabel* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsLabel(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsLabel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUILabel, ccDynamicGUI, GUIControl_GetAsLabel);
 }
 
 // GUIListBox* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsListBox(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsListBox(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUIListBox, ccDynamicGUI, GUIControl_GetAsListBox);
 }
 
 // GUISlider* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsSlider(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsSlider(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUISlider, ccDynamicGUI, GUIControl_GetAsSlider);
 }
 
 // GUITextBox* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetAsTextBox(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetAsTextBox(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, GUITextBox, ccDynamicGUI, GUIControl_GetAsTextBox);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetClickable(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetClickable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetClickable);
 }
 
 // void (GUIObject *guio, int enabled)
-RuntimeScriptValue Sc_GUIControl_SetClickable(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetClickable(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetClickable);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetEnabled);
 }
 
 // void (GUIObject *guio, int enabled)
-RuntimeScriptValue Sc_GUIControl_SetEnabled(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetEnabled(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetEnabled);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetHeight(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetHeight);
 }
 
 // void (GUIObject *guio, int newhit)
-RuntimeScriptValue Sc_GUIControl_SetHeight(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetHeight);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetID(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetID);
 }
 
 // ScriptGUI* (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetOwningGUI(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetOwningGUI(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_OBJ(GUIObject, ScriptGUI, ccDynamicGUI, GUIControl_GetOwningGUI);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetVisible(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetVisible(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetVisible);
 }
 
 // void (GUIObject *guio, int visible)
-RuntimeScriptValue Sc_GUIControl_SetVisible(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetVisible(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetVisible);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetWidth(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetWidth);
 }
 
 // void (GUIObject *guio, int newwid)
-RuntimeScriptValue Sc_GUIControl_SetWidth(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetWidth);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetX(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetX);
 }
 
 // void (GUIObject *guio, int xx)
-RuntimeScriptValue Sc_GUIControl_SetX(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetX);
 }
 
 // int (GUIObject *guio)
-RuntimeScriptValue Sc_GUIControl_GetY(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetY);
 }
 
 // void (GUIObject *guio, int yy)
-RuntimeScriptValue Sc_GUIControl_SetY(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetY);
 }
 
-RuntimeScriptValue Sc_GUIControl_GetZOrder(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_GetZOrder(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(GUIObject, GUIControl_GetZOrder);
 }
 
-RuntimeScriptValue Sc_GUIControl_SetZOrder(void *self, const RuntimeScriptValue *params, int param_count) {
+RuntimeScriptValue Sc_GUIControl_SetZOrder(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetZOrder);
 }
 

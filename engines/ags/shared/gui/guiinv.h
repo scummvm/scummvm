@@ -56,12 +56,12 @@ public:
 	// TODO: these members are currently public; hide them later
 public:
 	bool    IsMouseOver;
-	int CharId; // whose inventory (-1 = current player)
-	int ItemWidth;
-	int ItemHeight;
-	int ColCount;
-	int RowCount;
-	int TopItem;
+	int32_t CharId; // whose inventory (-1 = current player)
+	int32_t ItemWidth;
+	int32_t ItemHeight;
+	int32_t ColCount;
+	int32_t RowCount;
+	int32_t TopItem;
 
 private:
 	void CalculateNumCells();

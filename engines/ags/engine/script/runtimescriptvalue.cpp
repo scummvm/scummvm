@@ -41,10 +41,10 @@ using namespace AGS::Shared;
 
 // TODO: use endian-agnostic method to access global vars
 
-uint8 RuntimeScriptValue::ReadByte() {
+uint8_t RuntimeScriptValue::ReadByte() {
 	if (this->Type == kScValStackPtr || this->Type == kScValGlobalVar) {
 		if (RValue->Type == kScValData) {
-			return *(uint8 *)(RValue->GetPtrWithOffset() + this->IValue);
+			return *(uint8_t *)(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
 			return RValue->IValue; // get RValue as int
 		}
@@ -53,13 +53,13 @@ uint8 RuntimeScriptValue::ReadByte() {
 	} else if (this->Type == kScValDynamicObject) {
 		return this->DynMgr->ReadInt8(this->Ptr, this->IValue);
 	}
-	return *((uint8 *)this->GetPtrWithOffset());
+	return *((uint8_t *)this->GetPtrWithOffset());
 }
 
-int16 RuntimeScriptValue::ReadInt16() {
+int16_t RuntimeScriptValue::ReadInt16() {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
-			return *(int16 *)(RValue->GetPtrWithOffset() + this->IValue);
+			return *(int16_t *)(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
 			return RValue->IValue; // get RValue as int
 		}
@@ -74,13 +74,13 @@ int16 RuntimeScriptValue::ReadInt16() {
 	} else if (this->Type == kScValDynamicObject) {
 		return this->DynMgr->ReadInt16(this->Ptr, this->IValue);
 	}
-	return *((int16 *)this->GetPtrWithOffset());
+	return *((int16_t *)this->GetPtrWithOffset());
 }
 
-int RuntimeScriptValue::ReadInt32() {
+int32_t RuntimeScriptValue::ReadInt32() {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
-			return *(int *)(RValue->GetPtrWithOffset() + this->IValue);
+			return *(int32_t *)(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
 			return RValue->IValue; // get RValue as int
 		}
@@ -95,13 +95,13 @@ int RuntimeScriptValue::ReadInt32() {
 	} else if (this->Type == kScValDynamicObject) {
 		return this->DynMgr->ReadInt32(this->Ptr, this->IValue);
 	}
-	return *((int *)this->GetPtrWithOffset());
+	return *((int32_t *)this->GetPtrWithOffset());
 }
 
-bool RuntimeScriptValue::WriteByte(uint8 val) {
+bool RuntimeScriptValue::WriteByte(uint8_t val) {
 	if (this->Type == kScValStackPtr || this->Type == kScValGlobalVar) {
 		if (RValue->Type == kScValData) {
-			*(uint8 *)(RValue->GetPtrWithOffset() + this->IValue) = val;
+			*(uint8_t *)(RValue->GetPtrWithOffset() + this->IValue) = val;
 		} else {
 			RValue->SetUInt8(val); // set RValue as int
 		}
@@ -110,15 +110,15 @@ bool RuntimeScriptValue::WriteByte(uint8 val) {
 	} else if (this->Type == kScValDynamicObject) {
 		this->DynMgr->WriteInt8(this->Ptr, this->IValue, val);
 	} else {
-		*((uint8 *)this->GetPtrWithOffset()) = val;
+		*((uint8_t *)this->GetPtrWithOffset()) = val;
 	}
 	return true;
 }
 
-bool RuntimeScriptValue::WriteInt16(int16 val) {
+bool RuntimeScriptValue::WriteInt16(int16_t val) {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
-			*(int16 *)(RValue->GetPtrWithOffset() + this->IValue) = val;
+			*(int16_t *)(RValue->GetPtrWithOffset() + this->IValue) = val;
 		} else {
 			RValue->SetInt16(val); // set RValue as int
 		}
@@ -133,15 +133,15 @@ bool RuntimeScriptValue::WriteInt16(int16 val) {
 	} else if (this->Type == kScValDynamicObject) {
 		this->DynMgr->WriteInt16(this->Ptr, this->IValue, val);
 	} else {
-		*((int16 *)this->GetPtrWithOffset()) = val;
+		*((int16_t *)this->GetPtrWithOffset()) = val;
 	}
 	return true;
 }
 
-bool RuntimeScriptValue::WriteInt32(int val) {
+bool RuntimeScriptValue::WriteInt32(int32_t val) {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
-			*(int *)(RValue->GetPtrWithOffset() + this->IValue) = val;
+			*(int32_t *)(RValue->GetPtrWithOffset() + this->IValue) = val;
 		} else {
 			RValue->SetInt32(val); // set RValue as int
 		}
@@ -156,7 +156,7 @@ bool RuntimeScriptValue::WriteInt32(int val) {
 	} else if (this->Type == kScValDynamicObject) {
 		this->DynMgr->WriteInt32(this->Ptr, this->IValue, val);
 	} else {
-		*((int *)this->GetPtrWithOffset()) = val;
+		*((int32_t *)this->GetPtrWithOffset()) = val;
 	}
 	return true;
 }
@@ -168,14 +168,14 @@ bool RuntimeScriptValue::WriteInt32(int val) {
 bool RuntimeScriptValue::WriteValue(const RuntimeScriptValue &rval) {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
-			*(int *)(RValue->GetPtrWithOffset() + this->IValue) = rval.IValue;
+			*(int32_t *)(RValue->GetPtrWithOffset() + this->IValue) = rval.IValue;
 		} else {
 			// NOTE: we cannot just WriteValue here because when an integer
 			// is pushed to the stack, script assumes that it is always 4
 			// bytes and uses that size when calculating offsets to local
 			// variables;
 			// Therefore if pushed value is of integer type, we should rather
-			// act as WriteInt32 (for int8, int16 and int).
+			// act as WriteInt32 (for int8, int16 and int32).
 			if (rval.Type == kScValInteger) {
 				RValue->SetInt32(rval.IValue);
 			} else {
@@ -193,7 +193,7 @@ bool RuntimeScriptValue::WriteValue(const RuntimeScriptValue &rval) {
 	} else if (this->Type == kScValDynamicObject) {
 		this->DynMgr->WriteInt32(this->Ptr, this->IValue, rval.IValue);
 	} else {
-		*((int *)this->GetPtrWithOffset()) = rval.IValue;
+		*((int32_t *)this->GetPtrWithOffset()) = rval.IValue;
 	}
 	return true;
 }

@@ -105,7 +105,7 @@ int get_color_depth() {
 	return _color_depth;
 }
 
-int get_desktop_resolution(int *width, int *height) {
+int get_desktop_resolution(int32_t *width, int32_t *height) {
 	// TODO: ScummVM has a hardcoded dummy desktop resolution. See if there's any
 	// need to change the values, given we're hardcoded for pretend full-screen
 	if (width)

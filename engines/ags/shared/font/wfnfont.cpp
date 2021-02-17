@@ -32,7 +32,7 @@ using namespace AGS::Shared;
 
 static const char *WFN_FILE_SIGNATURE = "WGT Font File  ";
 static const size_t  WFN_FILE_SIG_LENGTH = 15;
-static const size_t  MinCharDataSize = sizeof(uint16) * 2;
+static const size_t  MinCharDataSize = sizeof(uint16_t) * 2;
 
 WFNChar::WFNChar()
 	: Width(0)
@@ -42,7 +42,7 @@ WFNChar::WFNChar()
 
 void WFNChar::RestrictToBytes(size_t bytes) {
 	if (bytes < GetRequiredPixelSize())
-		Height = static_cast<uint16>(bytes / GetRowByteCount());
+		Height = static_cast<uint16_t>(bytes / GetRowByteCount());
 }
 
 const WFNChar WFNFont::_emptyChar;
@@ -66,16 +66,16 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		return kWFNErr_BadSignature; // bad format
 	}
 
-	const soff_t table_addr = static_cast<uint16>(in->ReadInt16()); // offset table relative address
-	if (table_addr < (int)(WFN_FILE_SIG_LENGTH + sizeof(uint16)) || table_addr >= used_data_size) {
-		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %lld (%d - %d)", table_addr, WFN_FILE_SIG_LENGTH + sizeof(uint16), used_data_size);
+	const soff_t table_addr = static_cast<uint16_t>(in->ReadInt16()); // offset table relative address
+	if (table_addr < (int)(WFN_FILE_SIG_LENGTH + sizeof(uint16_t)) || table_addr >= used_data_size) {
+		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %lld (%d - %d)", table_addr, WFN_FILE_SIG_LENGTH + sizeof(uint16_t), used_data_size);
 		return kWFNErr_BadTableAddress; // bad table address
 	}
 
 	const soff_t offset_table_size = used_data_size - table_addr;
-	const soff_t raw_data_offset = WFN_FILE_SIG_LENGTH + sizeof(uint16);
+	const soff_t raw_data_offset = WFN_FILE_SIG_LENGTH + sizeof(uint16_t);
 	const size_t total_char_data = static_cast<size_t>(table_addr - raw_data_offset);
-	const size_t char_count = static_cast<size_t>(offset_table_size / sizeof(uint16));
+	const size_t char_count = static_cast<size_t>(offset_table_size / sizeof(uint16_t));
 
 	// We process character data in three steps:
 	// 1. For every character store offset of character item, excluding
@@ -87,18 +87,18 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	WFNError err = kWFNErr_NoError;
 
 	// Read character data array
-	uint8 *raw_data = new uint8[total_char_data];
+	uint8_t *raw_data = new uint8_t[total_char_data];
 	in->Read(raw_data, total_char_data);
 
 	// Read offset table
-	uint16 *offset_table = new uint16[char_count];
-	in->ReadArrayOfInt16((int16 *)offset_table, char_count);
+	uint16_t *offset_table = new uint16_t[char_count];
+	in->ReadArrayOfInt16((int16_t *)offset_table, char_count);
 
 	// Read all referenced offsets in an unsorted vector
-	std::vector<uint16> offs;
+	std::vector<uint16_t> offs;
 	offs.reserve(char_count); // reserve max possible offsets
 	for (size_t i = 0; i < char_count; ++i) {
-		const uint16 off = offset_table[i];
+		const uint16_t off = offset_table[i];
 		if (off < raw_data_offset || (int)(off + MinCharDataSize) > table_addr) {
 			Debug::Printf("\tWFN: character %d -- bad item offset: %d (%d - %d, +%d)",
 				i, off, raw_data_offset, table_addr, MinCharDataSize);
@@ -113,7 +113,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	// TODO: See if this works correctly
 	std::unique(offs.begin(), offs.end());
 #else
-	std::vector<uint16>(offs.begin(), std::unique(offs.begin(), offs.end())).swap(offs);
+	std::vector<uint16_t>(offs.begin(), std::unique(offs.begin(), offs.end())).swap(offs);
 #endif
 
 	// Now that we know number of valid character items, parse and store character data
@@ -121,9 +121,9 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	_items.resize(offs.size());
 	size_t total_pixel_size = 0;
 	for (size_t i = 0; i < _items.size(); ++i) {
-		const uint8 *p_data = raw_data + offs[i] - raw_data_offset;
+		const uint8_t *p_data = raw_data + offs[i] - raw_data_offset;
 		init_ch.Width = Memory::ReadInt16LE(p_data);
-		init_ch.Height = Memory::ReadInt16LE(p_data + sizeof(uint16));
+		init_ch.Height = Memory::ReadInt16LE(p_data + sizeof(uint16_t));
 		total_pixel_size += init_ch.GetRequiredPixelSize();
 		_items[i] = init_ch;
 	}
@@ -132,7 +132,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	// since the items are sorted, the pixel data will be stored sequentially as well.
 	// At this point offs and _items have related elements in the same order.
 	_pixelData.resize(total_pixel_size);
-	std::vector<uint8>::iterator pixel_it = _pixelData.begin(); // write ptr
+	std::vector<uint8_t>::iterator pixel_it = _pixelData.begin(); // write ptr
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const size_t pixel_data_size = _items[i].GetRequiredPixelSize();
 		if (pixel_data_size == 0) {
@@ -140,7 +140,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 			err = kWFNErr_HasBadCharacters;
 			continue; // just an empty character
 		}
-		const uint16 raw_off = offs[i] - raw_data_offset + MinCharDataSize; // offset in raw array
+		const uint16_t raw_off = offs[i] - raw_data_offset + MinCharDataSize; // offset in raw array
 		size_t src_size = pixel_data_size;
 		if (i + 1 != _items.size() && (int)(raw_off + src_size) > (offs[i + 1] - raw_data_offset)) {
 			// character pixel data overlaps next character
@@ -168,7 +168,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	// Create final reference array
 	_refs.resize(char_count);
 	for (size_t i = 0; i < char_count; ++i) {
-		const uint16 off = offset_table[i];
+		const uint16_t off = offset_table[i];
 		// if bad character offset - reference empty character
 		if (off < raw_data_offset || (int)(off + MinCharDataSize) > table_addr) {
 			_refs[i] = &_emptyChar;
@@ -178,7 +178,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 				_refs[i] = &_items[i];
 			else {
 				// we know beforehand that such item must exist
-				std::vector<uint16>::const_iterator at = std::lower_bound(offs.begin(), offs.end(), off);
+				std::vector<uint16_t>::const_iterator at = std::lower_bound(offs.begin(), offs.end(), off);
 				assert(at != offs.end() && *at == off && // should not normally fail
 					at - offs.begin() >= 0 && static_cast<size_t>(at - offs.begin()) < _items.size());
 				_refs[i] = &_items[at - offs.begin()]; // set up reference to item
