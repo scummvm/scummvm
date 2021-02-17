@@ -50,14 +50,7 @@
 
 namespace Private {
 
-ConstantList constants;
-NameList variableList;
-NameList locationList;
-
-StringQueue stringToDefine;
-RectQueue rectToDefine;
-
-void defineSymbol(char *n, Common::Rect *r) {
+void SymbolMaps::defineSymbol(char *n, Common::Rect *r) {
     Common::String *s = new Common::String(n);
     stringToDefine.push(*s);
     rectToDefine.push(r);
@@ -82,6 +75,29 @@ void setSymbol(Symbol *s, int v) {
 Symbol *lookup(Common::String s, SymbolMap symlist) {
     Symbol *r = symlist.getVal(s);
     return r;
+}
+
+/* install some symbol s in a symbol table */
+Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist) {
+    Common::String *name = new Common::String(*n);
+
+    Symbol *sp;
+
+    sp = (Symbol *)malloc(sizeof(Symbol));
+    sp->name = name;
+    sp->type = t;
+    if (t == NUM || t == NAME)
+        sp->u.val = d;
+    else if (t == STRING)
+        sp->u.str = s;
+    else if (t == RECT)
+        sp->u.rect = r;
+    else
+        assert(0);
+
+    symlist->setVal(*n, sp);
+    assert(symlist->size() > 0);
+    return sp;
 }
 
 /* lookup some name in some symbol table */
@@ -158,29 +174,6 @@ Symbol *SymbolMaps::constant(int t, int d, char *s) {
         assert(0);
 
     constants.push_front(sp);
-    return sp;
-}
-
-/* install some symbol s in a symbol table */
-Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist) {
-    Common::String *name = new Common::String(*n);
-
-    Symbol *sp;
-
-    sp = (Symbol *)malloc(sizeof(Symbol));
-    sp->name = name;
-    sp->type = t;
-    if (t == NUM || t == NAME)
-        sp->u.val = d;
-    else if (t == STRING)
-        sp->u.str = s;
-    else if (t == RECT)
-        sp->u.rect = r;
-    else
-        assert(0);
-
-    symlist->setVal(*n, sp);
-    assert(symlist->size() > 0);
     return sp;
 }
 

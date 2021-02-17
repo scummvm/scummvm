@@ -46,32 +46,36 @@ typedef struct Symbol {     /* symbol table entry */
 // Symbols
 
 //extern void showSymbol(Symbol *);
-extern void setSymbol(Symbol *, int);
+void setSymbol(Symbol *, int);
 
 typedef Common::HashMap<Common::String, Symbol *> SymbolMap;
 typedef Common::List<Common::String> NameList;
 typedef Common::List<Symbol *> ConstantList;
 
+typedef Common::Queue<Common::String> StringQueue;
+typedef Common::Queue<Common::Rect *> RectQueue;
+
 class SymbolMaps {
+    private:
+    StringQueue stringToDefine;
+    RectQueue rectToDefine;
+
     public:
     SymbolMap settings; 
     SymbolMap variables;
     SymbolMap cursors;
     SymbolMap locations;
     SymbolMap rects;
+    ConstantList constants;
+    
+    NameList variableList;
+    NameList locationList;
 
     Symbol *constant(int t, int d, char *s);
     Symbol *lookupName(char *n);
     void installAll(char *n);
+    void defineSymbol(char *, Common::Rect *);
 };
-
-//extern SymbolMap settings, variables, cursors, locations, rects;
-extern ConstantList constants;
-extern NameList variableList;
-extern NameList locationList;
-
-extern void     defineSymbol(char *, Common::Rect *);
-extern Symbol  *install(Common::String *, int, int, char *, Common::Rect *, SymbolMap *);
 
 } // End of namespace Private
 

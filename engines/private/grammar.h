@@ -80,8 +80,7 @@ typedef struct Setting {
 extern Setting *psetting;
 
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
-typedef Common::Queue<Common::String> StringQueue;
-typedef Common::Queue<Common::Rect *> RectQueue;
+
 
 // Funtions
 
