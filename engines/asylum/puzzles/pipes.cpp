@@ -386,7 +386,6 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 		}
 	}
 
-	// TODO: turn the fountain on
 	if (filled == 4) {
 		if (_levelFlags[0])
 			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], 0, Common::Point(233, 416), kDrawFlagNone, 0, 1);
@@ -435,7 +434,9 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 	getScreen()->copyBackBufferToScreen();
 	updateCursor();
 
-	if (_isLeverReady && !_levelFlags[4]) {
+	if (_isLeverReady) {
+		if (!_levelFlags[4])
+			_vm->setGameFlag((GameFlag)(96 + checkFlags()));
 		getScreen()->clear();
 		getSound()->stop(getWorld()->graphicResourceIds[41]);
 		getSound()->setMusicVolume(_previousMusicVolume);
