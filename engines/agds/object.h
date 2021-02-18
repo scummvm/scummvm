@@ -76,6 +76,8 @@ private:
 	uint							_clickHandler;
 	uint							_examineHandler;
 	uint							_userUseHandler;
+	uint							_throwHandler;
+	uint							_useOnHandler;
 	int								_alpha;
 	int								_scale;
 	bool							_inScene;
@@ -197,6 +199,15 @@ public:
 		debug("OBJECT %s USER USE %04x", _name.c_str(), ip);
 		_userUseHandler = ip;
 	}
+
+	void setThrowHandler(uint ip) {
+		_throwHandler = ip;
+	}
+
+	void setUseOnHandler(uint ip) {
+		_useOnHandler = ip;
+	}
+
 	uint getUserUseHandler() const {
 		return _userUseHandler;
 	}
@@ -244,6 +255,14 @@ public:
 	uint getKeyHandler(const Common::String &name) const {
 		KeyHandlersType::const_iterator i = _keyHandlers.find(name);
 		return i != _keyHandlers.end()? i->_value: 0;
+	}
+
+	uint throwHandler() const {
+		return _throwHandler;
+	}
+
+	uint useOnHandler() const {
+		return _useOnHandler;
 	}
 
 	bool inScene() const

@@ -38,8 +38,8 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _picture(), _region(),
                                                                                  _animation(), _mouseCursor(),
                                                                                  _pos(), _z(10),
-                                                                                 _clickHandler(0), _examineHandler(0),
-																				 _userUseHandler(0),
+                                                                                 _clickHandler(0), _examineHandler(0), _userUseHandler(0),
+																				 _throwHandler(0), _useOnHandler(0),
                                                                                  _alpha(255), _inScene(false),
 																				 _persistent(true), _allowCalls(true) {
 	uint16 id = stream->readUint16LE();
