@@ -38,26 +38,32 @@ namespace Asylum {
 
 const Common::Point connectorPoints[] = {
 	Common::Point(158,  59),
-	Common::Point(202,  59),
-	Common::Point(271,  60),
-	Common::Point(380,  72),
-	Common::Point(205, 132),
-	Common::Point(272, 131),
-	Common::Point(469, 119),
 	Common::Point(163, 172),
-	Common::Point(206, 172),
-	Common::Point(318, 169),
-	Common::Point(360, 171),
-	Common::Point(428, 172),
-	Common::Point(466, 171),
-	Common::Point(319, 206),
-	Common::Point(360, 206),
 	Common::Point(168, 272),
+
+	Common::Point(202,  59),
+	Common::Point(205, 132),
+	Common::Point(206, 172),
+
+	Common::Point(271,  60),
+	Common::Point(272, 131),
 	Common::Point(273, 262),
+
+	Common::Point(318, 169),
+	Common::Point(319, 206),
 	Common::Point(318, 261),
+
+	Common::Point(380,  72),
+	Common::Point(360, 171),
+	Common::Point(360, 206),
+
+	Common::Point(428, 172),
 	Common::Point(401, 242),
 	Common::Point(399, 295),
-	Common::Point(460, 294)
+
+	Common::Point(469, 119),
+	Common::Point(466, 171),
+	Common::Point(460, 294),
 };
 
 const Common::Point peepholePoints[] = {
@@ -519,30 +525,30 @@ void PuzzlePipes::setup() {
 	}
 
 	_connectors[ 0].init(           NULL,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, kBinNum0110);
-	_connectors[ 1].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, kBinNum0110);
-	_connectors[ 2].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, kBinNum0110);
-	_connectors[ 3].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, kBinNum0011);
-	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, kBinNum0011,  _connectors + 8, kDirectionSh);
-	_connectors[ 5].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, kBinNum0111);
-	_connectors[ 6].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, kBinNum1100);
-	_connectors[ 7].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, kBinNum0110);
-	_connectors[ 8].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, kBinNum0111,  _connectors + 4, kDirectionNh);
+	_connectors[ 1].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, kBinNum0110);
+	_connectors[ 2].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, kBinNum0011);
+	_connectors[ 3].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, kBinNum0110);
+	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, kBinNum0011,  _connectors + 5, kDirectionSh);
+	_connectors[ 5].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, kBinNum0111,  _connectors + 4, kDirectionNh);
+	_connectors[ 6].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, kBinNum0110);
+	_connectors[ 7].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, kBinNum0111);
+	_connectors[ 8].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, kBinNum1011);
 	_connectors[ 9].init(_peepholes +  9, _peepholes + 16, _peepholes + 19, _peepholes + 12, kBinNum1110);
-	_connectors[10].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, kBinNum0111, _connectors + 14, kDirectionSh);
-	_connectors[11].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, kBinNum0101, _connectors + 12, kDirectionEt);
-	_connectors[12].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, kBinNum1001, _connectors + 11, kDirectionWt);
-	_connectors[13].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, kBinNum0011);
-	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, kBinNum1110, _connectors + 10, kDirectionNh);
-	_connectors[15].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, kBinNum0011);
-	_connectors[16].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, kBinNum1011);
-	_connectors[17].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, kBinNum1011);
-	_connectors[18].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, kBinNum1011);
-	_connectors[19].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, kBinNum0011);
+	_connectors[10].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, kBinNum0011);
+	_connectors[11].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, kBinNum1011);
+	_connectors[12].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, kBinNum0011);
+	_connectors[13].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, kBinNum0111, _connectors + 14, kDirectionSh);
+	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, kBinNum1110, _connectors + 13, kDirectionNh);
+	_connectors[15].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, kBinNum0101, _connectors + 19, kDirectionEt);
+	_connectors[16].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, kBinNum1011);
+	_connectors[17].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, kBinNum0011);
+	_connectors[18].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, kBinNum1100);
+	_connectors[19].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, kBinNum1001, _connectors + 15, kDirectionWt);
 	_connectors[20].init(_peepholes + 28,            NULL, _peepholes + 36, _peepholes + 32, kBinNum1001);
 
 	_connectors[ 4].initGroup();
-	_connectors[10].initGroup();
-	_connectors[11].initGroup();
+	_connectors[13].initGroup();
+	_connectors[17].initGroup();
 
 	uint32 i = rnd(kBinNum0111);
 	if (i & kBinNum0001)
