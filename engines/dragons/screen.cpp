@@ -162,7 +162,7 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 					dst[j * 2] = src[srcIdx * 2];
 					dst[j * 2 + 1] = src[srcIdx * 2 + 1];
 				} else {
-					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), 128));
+					WRITE_SCREEN(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), 128));
 					// semi-transparent pixels.
 				}
 			}
@@ -190,10 +190,10 @@ void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int 
 			if (c != 0) {
 				if (!(c & 0x8000) || alpha == NONE) {
 					// only copy opaque pixels
-					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+					WRITE_SCREEN(&dst[j * 2], c & ~0x8000);
 				} else {
 					// semi-transparent pixels.
-					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL
+					WRITE_SCREEN(&dst[j * 2], alpha == NORMAL
 						? alphaBlendRGB555(c & 0x7fff, READ_LE_INT16(&dst[j * 2]) & 0x7fff, 128)
 						: alphaBlendAdditiveRGB555(c & 0x7fff, READ_LE_INT16(&dst[j * 2]) & 0x7fff));
 				}
@@ -247,9 +247,9 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 				if (c != 0) {
 					if (!(c & 0x8000u) || alpha == NONE) {
 						// only copy opaque pixels
-						WRITE_LE_UINT16(wdst, c & ~0x8000);
+						WRITE_SCREEN(wdst, c & ~0x8000);
 					} else {
-						WRITE_LE_UINT16(wdst, alphaBlendRGB555(c & 0x7fffu, READ_LE_UINT16(wdst) & 0x7fffu, 128));
+						WRITE_SCREEN(wdst, alphaBlendRGB555(c & 0x7fffu, READ_LE_UINT16(wdst) & 0x7fffu, 128));
 						// semi-transparent pixels.
 					}
 				}
@@ -357,7 +357,7 @@ void Screen::loadPalette(uint16 paletteNum, const byte *palette) {
 		uint16 c = READ_LE_INT16(&_palettes[paletteNum][i * 2]);
 		if ((c & ~0x8000) == 0) {
 			if (!isTransPalette) {
-				WRITE_LE_UINT16(&_palettes[paletteNum][i * 2], 0x8000);
+				WRITE_SCREEN(&_palettes[paletteNum][i * 2], 0x8000);
 			}
 		} else {
 			//TODO is this needed? see load_palette_into_frame_buffer()
@@ -365,13 +365,13 @@ void Screen::loadPalette(uint16 paletteNum, const byte *palette) {
 //					(c & 0x3e0) | (c & 0x8000);
 		}
 	}
-	WRITE_LE_UINT16(&_palettes[paletteNum][0], 0);
+	WRITE_SCREEN(&_palettes[paletteNum][0], 0);
 }
 
 void Screen::setPaletteRecord(uint16 paletteNum, uint16 offset, uint16 newValue) {
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
 	assert(offset < 256);
-	WRITE_LE_UINT16(&_palettes[paletteNum][offset * 2], newValue);
+	WRITE_SCREEN(&_palettes[paletteNum][offset * 2], newValue);
 }
 
 byte *Screen::getPalette(uint16 paletteNum) {
@@ -408,7 +408,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 		for (int j = 0; j < DRAGONS_SCREEN_WIDTH; j++) {
 			uint16 c = READ_LE_UINT16(&palette[src[j] * 2]);
 			if (c != 0) {
-					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+				WRITE_SCREEN(&dst[j * 2], c & ~0x8000);
 			}
 		}
 		dst += _backSurface->pitch;
@@ -430,9 +430,9 @@ void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, 
 			if (c != 0) {
 				if (!(c & 0x8000) || alpha == NONE) {
 					// only copy opaque pixels
-					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+					WRITE_SCREEN(&dst[j * 2], c & ~0x8000);
 				} else {
-					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL ? alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), 128) : alphaBlendAdditiveRGB555(c, READ_LE_INT16(&dst[j * 2])));
+					WRITE_SCREEN(&dst[j * 2], alpha == NORMAL ? alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), 128) : alphaBlendAdditiveRGB555(c, READ_LE_INT16(&dst[j * 2])));
 					// semi-transparent pixels.
 				}
 			}

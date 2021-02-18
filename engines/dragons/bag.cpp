@@ -71,7 +71,7 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 		} else {
 			//c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) | c & 0x3e0;
 		}
-		WRITE_LE_UINT16(&pal[i * 2], c);
+		WRITE_SCREEN(&pal[i * 2], c);
 	}
 
 	stream.seek(0x308);
