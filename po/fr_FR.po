@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-14 20:48+0000\n"
-"PO-Revision-Date: 2021-02-10 20:23+0000\n"
+"PO-Revision-Date: 2021-02-18 19:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7208,14 +7208,14 @@ msgstr ""
 "Limite la vitesse du jeu pour éviter que celui-ci ne tourne trop rapidement."
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
-msgstr "Activer le mode Triche"
+msgstr "Activer les tricheries"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+"Autorise les tricheries via des commandes et un menu lorsque l'on clique sur "
+"le joueur."
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
