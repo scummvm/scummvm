@@ -152,7 +152,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	}
 
 	debug(2, "Load game");
-	if (file->readByte() != 0x03) {
+	const byte saveFileVersion = file->readByte();
+	// 4 is dotemu enhanced version of lba1
+	if (saveFileVersion != 3 && saveFileVersion != 4) {
 		warning("Could not load savegame - wrong magic byte");
 		return false;
 	}
@@ -215,6 +217,12 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 
 	inventoryNumLeafs = file->readByte();
 	usingSabre = file->readByte();
+
+	if (saveFileVersion == 4) {
+		// the time the game was played
+		file->readUint32LE();
+		file->readUint32LE();
+	}
 
 	_engine->_scene->currentSceneIdx = -1;
 	_engine->_scene->heroPositionType = ScenePositionType::kReborn;
