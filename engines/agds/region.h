@@ -45,6 +45,10 @@ struct Region {
 	Common::String toString() const;
 	void move(Common::Point rel);
 	Common::Point topLeft() const;
+
+	bool empty() const {
+		return regions.empty();
+	}
 };
 
 
