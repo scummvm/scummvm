@@ -214,7 +214,7 @@ enum Opcode {
 	kSamplePaused					= 194,
 	kGetObjectPictureWidth			= 195,
 	kGetObjectPictureHeight			= 196,
-	kStub197						= 197,
+	kSetRotation					= 197,
 	kLoadPicture					= 198,
 	kStub199						= 199,
 	kSetTileIndex					= 200,
@@ -432,7 +432,7 @@ enum Opcode {
 	OP(kGetObjectPictureWidth, getObjectPictureWidth) \
 	OP(kGetObjectPictureHeight, getObjectPictureHeight) \
 	OP(kLoadPicture, loadPicture) \
-	OP(kStub197, stub197) \
+	OP(kSetRotation, setRotation) \
 	OP(kStub199, stub199) \
 	OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan) \
 	OP(kAddSampleToSoundGroup, addSampleToSoundGroup) \
