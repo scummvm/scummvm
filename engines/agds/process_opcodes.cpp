@@ -876,10 +876,10 @@ void Process::samplePaused() {
 	_samplePaused = true;
 }
 
-void Process::stub197() {
-	int flag = pop();
+void Process::setRotation() {
+	int rotate = pop();
 	auto objectName = popString();
-	debug("stub197: %s %d", objectName.c_str(), flag);
+	debug("setRotation: object: %s %d", objectName.c_str(), rotate);
 }
 
 void Process::stub199() {
