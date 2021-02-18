@@ -22,6 +22,7 @@
 
 #include "ags/metaengine.h"
 #include "ags/detection.h"
+#include "ags/achievements_tables.h"
 #include "ags/ags.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/filestream.h"
@@ -29,6 +30,8 @@
 #include "ags/engine/game/savegame.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/achievements.h"
+#include "common/config-manager.h"
 #include "image/bmp.h"
 
 const char *AGSMetaEngine::getName() const {
@@ -145,6 +148,32 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 	}
 
 	return SaveStateDescriptor();
+}
+
+const Common::AchievementsInfo AGSMetaEngine::getAchievementsInfo(const Common::String &target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	Common::AchievementsPlatform platform = Common::UNK_ACHIEVEMENTS;
+	Common::String extra = ConfMan.get("extra", target);
+	if (extra.contains("GOG")) {
+		platform = Common::GALAXY_ACHIEVEMENTS;
+	} else if(extra.contains("Steam")) {
+		platform = Common::STEAM_ACHIEVEMENTS;
+	}
+
+	// "(gameId, platform) -> result" search
+	Common::AchievementsInfo result;
+	for (const AGS::AchievementDescriptionList *i = AGS::achievementDescriptionList; i->gameId; i++) {
+		if (i->gameId == gameId && i->platform == platform) {
+			result.platform = i->platform;
+			result.appId = i->appId;
+			for (const Common::AchievementDescription *it = i->descriptions; it->id; it++) {
+				result.descriptions.push_back(*it);
+			}
+			break;
+		}
+	}
+	return result;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGS)

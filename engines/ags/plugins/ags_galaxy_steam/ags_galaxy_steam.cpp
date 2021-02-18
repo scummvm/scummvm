@@ -20,6 +20,8 @@
  *
  */
 
+#include "ags/metaengine.h"
+#include "ags/ags.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 
 namespace AGS3 {
@@ -54,16 +56,16 @@ void AGS2Client::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGS2Client::Initialize^2, Initialize);
 }
 
-int AGS2Client::IsAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGS2Client::IsAchievementAchieved(const ScriptMethodParams &params) {
+	return false;
 }
 
-int AGS2Client::SetAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGS2Client::SetAchievementAchieved(const ScriptMethodParams &params) {
+	return false;
 }
 
-int AGS2Client::ResetAchievement(const ScriptMethodParams &params) {
-	return 0;
+bool AGS2Client::ResetAchievement(const ScriptMethodParams &params) {
+	return false;
 }
 
 int AGS2Client::GetIntStat(const ScriptMethodParams &params) {
@@ -165,18 +167,42 @@ void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSGalaxy::GetUserName^0, GetUserName);
 	SCRIPT_METHOD_EXT(AGSGalaxy::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSGalaxy::Initialize^2, Initialize);
+
+	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const Common::String target = achievementsInfo.appId;
+	if (!target.empty()) {
+		AchMan.setActiveDomain(Common::GALAXY_ACHIEVEMENTS, target);
+	} else {
+		warning("Unknown game accessing SteamAPI. All achievements will be ignored.");
+		AchMan.unsetActiveDomain();
+	}
 }
 
-int AGSGalaxy::IsAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGSGalaxy::IsAchievementAchieved(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+	return AchMan.isAchieved(id);
 }
 
-int AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+
+	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+
+	Common::String msg = id;
+	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
+		if (strcmp(achievementsInfo.descriptions[i].id, id) == 0) {
+			msg = achievementsInfo.descriptions[i].title;
+		}
+	}
+
+	return AchMan.setAchievement(id, msg);
 }
 
-int AGSGalaxy::ResetAchievement(const ScriptMethodParams &params) {
-	return 0;
+bool AGSGalaxy::ResetAchievement(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+	return AchMan.clearAchievement(id);
 }
 
 int AGSGalaxy::GetIntStat(const ScriptMethodParams &params) {
@@ -204,6 +230,8 @@ int AGSGalaxy::UpdateAverageRateStat(const ScriptMethodParams &params) {
 }
 
 void AGSGalaxy::ResetStatsAndAchievements(const ScriptMethodParams &params) {
+	AchMan.resetAllAchievements();
+	AchMan.resetAllStats();
 }
 
 int AGSGalaxy::get_Initialized(const ScriptMethodParams &params) {
@@ -275,18 +303,42 @@ void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSteam::GetUserName^0, GetUserName);
 	SCRIPT_METHOD_EXT(AGSteam::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSteam::FindLeaderboard^1, FindLeaderboard);
+
+	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+	const Common::String target = achievementsInfo.appId;
+	if (!target.empty()) {
+		AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, target);
+	} else {
+		warning("Unknown game accessing SteamAPI. All achievements will be ignored.");
+		AchMan.unsetActiveDomain();
+	}
 }
 
-int AGSSteam::IsAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGSSteam::IsAchievementAchieved(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+	return AchMan.isAchieved(id);
 }
 
-int AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
-	return 0;
+bool AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+
+	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
+	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
+
+	Common::String msg = id;
+	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
+		if (strcmp(achievementsInfo.descriptions[i].id, id) == 0) {
+			msg = achievementsInfo.descriptions[i].title;
+		}
+	}
+
+	return AchMan.setAchievement(id, msg);
 }
 
-int AGSSteam::ResetAchievement(const ScriptMethodParams &params) {
-	return 0;
+bool AGSSteam::ResetAchievement(const ScriptMethodParams &params) {
+	PARAMS1(char*, id);
+	return AchMan.clearAchievement(id);
 }
 
 int AGSSteam::GetIntStat(const ScriptMethodParams &params) {
@@ -314,6 +366,8 @@ int AGSSteam::UpdateAverageRateStat(const ScriptMethodParams &params) {
 }
 
 void AGSSteam::ResetStatsAndAchievements(const ScriptMethodParams &params) {
+	AchMan.resetAllAchievements();
+	AchMan.resetAllStats();
 }
 
 int AGSSteam::get_Initialized(const ScriptMethodParams &params) {
