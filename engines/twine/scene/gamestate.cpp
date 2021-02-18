@@ -297,10 +297,10 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 	if (index == 209) {
 		_engine->unlockAchievement("LBA_ACH_010");
 	}
-	if (index == (int)InventoryItems::kiUseSabre) {
+	if (index == (uint8)InventoryItems::kiUseSabre) {
 		_engine->unlockAchievement("LBA_ACH_002");
 	}
-	if (index == (int)InventoryItems::kBottleOfSyrup) {
+	if (index == (uint8)InventoryItems::kBottleOfSyrup) {
 		_engine->unlockAchievement("LBA_ACH_007");
 	}
 }
