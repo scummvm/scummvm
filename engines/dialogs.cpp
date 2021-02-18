@@ -406,19 +406,20 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 }
 #endif
 
-ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), false, domain),
-		_options(options) {
+static const int MAX_EXTRA_GUI_OPTIONS = 12;
 
-	// Note: up to 7 engine options can currently fit on screen (the most that
-	// can fit in a 320x200 screen with the classic theme).
-	// TODO: Increase this number by including the checkboxes inside a scroll
-	// widget. The appropriate number of checkboxes will need to be added to
-	// the theme files.
+ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
+		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), true, domain),
+		_options(options) {
 
 	uint i = 1;
 	ExtraGuiOptions::const_iterator iter;
 	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
+		if (i > MAX_EXTRA_GUI_OPTIONS) {
+			warning("More extra gui options registered than supported by themes.");
+			break;
+		}
+
 		Common::String id = Common::String::format("%d", i);
 		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
 			_dialogLayout + ".customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
@@ -438,7 +439,7 @@ Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain)
 
 void ExtraGuiOptionsWidget::load() {
 	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _options.size(); ++j) {
+	for (uint j = 0; j < _options.size() && j < _checkboxes.size(); ++j) {
 		// The default values for engine-specific checkboxes are not set when
 		// ScummVM starts, as this would require us to load and poll all of the
 		// engine plugins on startup. Thus, we set the state of each custom
@@ -454,7 +455,7 @@ void ExtraGuiOptionsWidget::load() {
 
 bool ExtraGuiOptionsWidget::save() {
 	// Set the state of engine-specific checkboxes
-	for (uint i = 0; i < _options.size(); i++) {
+	for (uint i = 0; i < _options.size() && i < _checkboxes.size(); i++) {
 		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
 	}
 

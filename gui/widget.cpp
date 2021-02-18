@@ -941,7 +941,7 @@ OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::St
 		_scrollContainer(nullptr) {
 
 	if (scrollable) {
-		_scrollContainer = new ScrollContainerWidget(this, 0, 0, 0, 0, kReflowCmd);
+		_scrollContainer = new ScrollContainerWidget(this, name, _dialogLayout, kReflowCmd);
 		_scrollContainer->setTarget(this);
 		_scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
 	}
@@ -958,7 +958,9 @@ void OptionsContainerWidget::reflowLayout() {
 			defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
 		}
 
-		g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
+		if (!_scrollContainer) {
+			g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
+		}
 	}
 
 	if (_scrollContainer) {

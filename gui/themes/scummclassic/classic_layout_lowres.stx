@@ -1217,6 +1217,21 @@
 			<widget name = 'customOption7Checkbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'customOption8Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption9Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption10Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption11Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'customOption12Checkbox'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 
