@@ -894,12 +894,14 @@ void Process::setTileIndex() {
 }
 
 void Process::stub201(uint16 size) {
-	debug("stub201, [handler] %u instructions", size);
+	debug("setThrowHandler, [handler] %u instructions", size);
+	_object->setThrowHandler(_ip);
 	_ip += size;
 }
 
 void Process::stub202(uint16 size) {
-	debug("stub202, [handler] %u instructions", size);
+	debug("setUseOnHandler %u instructions", size);
+	_object->setUseOnHandler(_ip);
 	_ip += size;
 }
 
