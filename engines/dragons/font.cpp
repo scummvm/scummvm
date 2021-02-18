@@ -160,7 +160,7 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
 	newValue = (uint16)(((uint16)newValue & 0x1f) << 10) | (uint16)(((uint16)newValue & 0x7c00) >> 10) |
 			(newValue & 0x3e0) | (newValue & 0x8000);
-	WRITE_LE_INT16(pal + index, newValue);
+	WRITE_SCREEN(pal + index, newValue);
 }
 
 void FontManager::updatePalette() {
