@@ -311,8 +311,10 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 	_isLeverReady = false;
 	memset(&_sinks, 0, sizeof(_sinks));
 	memset(&_sources, 0, sizeof(_sources));
-
 	_frameIndexSpider = NULL;
+
+	initResources();
+	setup();
 }
 
 PuzzlePipes::~PuzzlePipes() {
@@ -341,9 +343,6 @@ bool PuzzlePipes::init(const AsylumEvent &) {
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[0]);
 
 	_rectIndex = -2;
-
-	initResources();
-	setup();
 
 	return true;
 }
