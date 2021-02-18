@@ -20,8 +20,8 @@
  *
  */
 
+#include <common/util.h>
 #include <stdlib.h>
-#include <math.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/3d/3dinc.h"
 
@@ -217,12 +217,12 @@ unsigned short _bitMask[3] = { 0x7C00, 0x3E0, 0x1F };
 Return the angle in rad based on sinus and cosinus
 --------------------------------------------------*/
 float sinCosAngle(float sinus, float cosinus) {
+	if (sinus == 0 && cosinus == 0)
+		return 0;
+
 	float t = (float)sqrt((double)(sinus * sinus) + (double)(cosinus * cosinus));
 	cosinus /= t;
 	sinus /= t;
-
-	if (sinus == 0 && cosinus == 0)
-		return 0;
 
 	// 1e3 & 2e4 quad
 	if (sinus >= 0)
@@ -646,12 +646,6 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 	Draw the character
 --------------------------------------------------*/
 void drawCharacter(uint8 flag) {
-	int a, b;
-
-	// NEW CHARACTER
-	int CurVertexNum;
-	int FaceNum;
-
 	extern uint8 *_characterArea;
 
 	// Compute pointer to frame
@@ -675,21 +669,21 @@ void drawCharacter(uint8 flag) {
 			extern uint8 *_actionPointer[];
 			extern uint16 _actionPosition[];
 
-			_actor._vertex = (struct SVertex *)(_actionPointer[_actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
+			_actor._vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
 
 			if (_actor._vertex == NULL)
 				return ;
 		}
 	}
 
-	_camera  = (struct SCamera *)_actor._camera;
-	_light   = (struct SLight *)_actor._light;
-	_texture = (struct STexture *)_actor._texture;
-	_vertex  = (struct SVertex *)_actor._vertex;
-	_face    = (struct SFace *)_actor._face;
+	_camera = _actor._camera;
+	_light = _actor._light;
+	_texture = _actor._texture;
+	_vertex = _actor._vertex;
+	_face = _actor._face;
 
-	CurVertexNum = _actor._vertexNum;
-	FaceNum      = _actor._faceNum;
+	int CurVertexNum = _actor._vertexNum;
+	int FaceNum = _actor._faceNum;
 
 	if (flag & CALCPOINTS) {
 		_shadowLightNum = 0;
@@ -723,13 +717,16 @@ void drawCharacter(uint8 flag) {
 		float sint = sin(t);
 
 		// Put all vertices in dark color
-		for (a = 0; a < CurVertexNum; a++)
+		for (int a = 0; a < CurVertexNum; a++)
 			_vVertex[a]._angle = 180;
 
 		float dist;
-		float tx, ty, tz, pa0, pa1, pa2;
+		float tx = 0;
+		float ty = 0;
+		float tz = 0;
+		float pa0, pa1, pa2;
 
-		for (b = 0; b < _actor._lightNum; b++) {
+		for (int b = 0; b < _actor._lightNum; b++) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
@@ -795,10 +792,10 @@ void drawCharacter(uint8 flag) {
 			}
 
 			if ((_light->_inten & 0x80) && lint) {    // if it's shadowed and still on
-				_vertex = (struct SVertex *)(_actor._vertex);
+				_vertex = _actor._vertex;
 
 				// casts shadow vertices
-				for (a = 0; a < _shadowVertsNum; a++) {
+				for (int a = 0; a < _shadowVertsNum; a++) {
 					pa0 = _vertex[_shadowVerts[a]]._x;
 					pa1 = _vertex[_shadowVerts[a]]._y;
 					pa2 = _vertex[_shadowVerts[a]]._z;
@@ -823,7 +820,7 @@ void drawCharacter(uint8 flag) {
 				l2 = (l2 * t);
 
 				_vertex = (struct SVertex *)(_actor._vertex);
-				for (a = 0; a < CurVertexNum; a++) {
+				for (int a = 0; a < CurVertexNum; a++) {
 					pa0 = _vertex->_nx;
 					pa1 = _vertex->_ny;
 					pa2 = _vertex->_nz;
@@ -841,13 +838,8 @@ void drawCharacter(uint8 flag) {
 		}
 
 		// rearranged light values so they can be viewed
-		for (a = 0; a < CurVertexNum; a++) {
-			if (_vVertex[a]._angle > 180)
-				_vVertex[a]._angle = 180;
-
-			if (_vVertex[a]._angle < 0)
-				_vVertex[a]._angle = 0;
-		}
+		for (int a = 0; a < CurVertexNum; a++)
+			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
 		_vertex = (struct SVertex *)(_actor._vertex);
 
@@ -858,7 +850,7 @@ void drawCharacter(uint8 flag) {
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
-		for (a = 0; a < CurVertexNum + _totalShadowVerts; a++) {
+		for (int a = 0; a < CurVertexNum + _totalShadowVerts; a++) {
 			if (a < CurVertexNum) {
 				l0 = _vertex->_x;
 				l1 = _vertex->_z;
@@ -915,8 +907,8 @@ void drawCharacter(uint8 flag) {
 		if (_actor._curAction == hLAST)
 			setClipping(0, _actor._lim[2], MAXX, _actor._lim[3]);
 
-		for (b = 0; b < _shadowLightNum; b++) {
-			for (a = 0; a < _shadowFacesNum; a++) {
+		for (int b = 0; b < _shadowLightNum; b++) {
+			for (int a = 0; a < _shadowFacesNum; a++) {
 				p0 = _shadowFaces[a][0] + CurVertexNum + b * _shadowVertsNum;
 				p1 = _shadowFaces[a][1] + CurVertexNum + b * _shadowVertsNum;
 				p2 = _shadowFaces[a][2] + CurVertexNum + b * _shadowVertsNum;
@@ -932,7 +924,7 @@ void drawCharacter(uint8 flag) {
 			}
 		}
 
-		for (a = 0; a < FaceNum; a++) {
+		for (int a = 0; a < FaceNum; a++) {
 			p0 = _face->_a;
 			p1 = _face->_b;
 			p2 = _face->_c;
@@ -945,21 +937,22 @@ void drawCharacter(uint8 flag) {
 			py2 = _vVertex[p2]._y;
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-				b = _face->_mat;
-				if (_texture[b]._flag & TEXTUREACTIVE)
+				int b = _face->_mat;
+				if (_texture[b]._flag & TEXTUREACTIVE) {
 					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, _textureCoord[a][0][0], _textureCoord[a][0][1],
 									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, _textureCoord[a][1][0], _textureCoord[a][1][1],
 									px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, _textureCoord[a][2][0], _textureCoord[a][2][1],
 									&_texture[b]);
+				}
 			}
 
 			_face++;
 		}
 
 		p0 = 0;
-		for (b = _zBufStartY; b < _actor._lim[3]; b++) {
+		for (int b = _zBufStartY; b < _actor._lim[3]; b++) {
 			px0 = b * _screenMaxX + _zBufStartX;
-			for (a = 1; a < _zBufWid; a++) {
+			for (int a = 1; a < _zBufWid; a++) {
 				py1 = (_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
 				py2 = (_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
 
