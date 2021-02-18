@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/achievements.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -34,9 +35,9 @@ namespace AGSGalaxySteam {
 
 class AGS2Client : public PluginBase {
 protected:
-	static int IsAchievementAchieved(const ScriptMethodParams &params);
-	static int SetAchievementAchieved(const ScriptMethodParams &params);
-	static int ResetAchievement(const ScriptMethodParams &params);
+	static bool IsAchievementAchieved(const ScriptMethodParams &params);
+	static bool SetAchievementAchieved(const ScriptMethodParams &params);
+	static bool ResetAchievement(const ScriptMethodParams &params);
 	static int GetIntStat(const ScriptMethodParams &params);
 	static int GetFloatStat(const ScriptMethodParams &params);
 	static int GetAverageRateStat(const ScriptMethodParams &params);
@@ -68,9 +69,9 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static int IsAchievementAchieved(const ScriptMethodParams &params);
-	static int SetAchievementAchieved(const ScriptMethodParams &params);
-	static int ResetAchievement(const ScriptMethodParams &params);
+	static bool IsAchievementAchieved(const ScriptMethodParams &params);
+	static bool SetAchievementAchieved(const ScriptMethodParams &params);
+	static bool ResetAchievement(const ScriptMethodParams &params);
 	static int GetIntStat(const ScriptMethodParams &params);
 	static int GetFloatStat(const ScriptMethodParams &params);
 	static int GetAverageRateStat(const ScriptMethodParams &params);
@@ -100,9 +101,9 @@ private:
 protected:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static int IsAchievementAchieved(const ScriptMethodParams &params);
-	static int SetAchievementAchieved(const ScriptMethodParams &params);
-	static int ResetAchievement(const ScriptMethodParams &params);
+	static bool IsAchievementAchieved(const ScriptMethodParams &params);
+	static bool SetAchievementAchieved(const ScriptMethodParams &params);
+	static bool ResetAchievement(const ScriptMethodParams &params);
 	static int GetIntStat(const ScriptMethodParams &params);
 	static int GetFloatStat(const ScriptMethodParams &params);
 	static int GetAverageRateStat(const ScriptMethodParams &params);

@@ -66,6 +66,17 @@ public:
 	 * @param slot    Slot number of the save state.
 	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	/**
+	 * Return a list of achievement descriptions for the specified target.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target  Name of a config manager target.
+	 *
+	 * @return A list of achievement descriptions for an engine plugin and target.
+	 */
+	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override;
 };
 
 #endif
