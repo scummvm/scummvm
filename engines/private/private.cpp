@@ -673,6 +673,9 @@ void PrivateEngine::restartGame() {
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
+    // We don't want to continue with any sound from a previous game
+    stopSound(true);
+
     Common::Serializer s(stream, nullptr);
     debugC(1, kPrivateDebugFunction, "loadGameStream");
     setNextSetting(new Common::String(kStartGame));
