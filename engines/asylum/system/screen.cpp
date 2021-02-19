@@ -490,11 +490,6 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 		if (_fadeStop)
 			break;
 
-		// Poll events (this ensure we don't freeze the screen)
-		Common::Event ev;
-		do {
-		} while (_vm->getEventManager()->pollEvent(ev));
-
 		// Refresh the screen
 		g_system->updateScreen();
 	}
