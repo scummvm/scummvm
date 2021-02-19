@@ -92,6 +92,12 @@ protected:
 	virtual void addDirtyRect(const Common::Rect &r);
 
 	/**
+	 * Adds a full solid alpha to the passed color for surfaces that have
+	 * an alpha channel
+	 */
+	uint32 addAlphaToColor(uint32 color);
+
+	/**
 	 * Inner method for blitting.
 	 */
 	void blitFromInner(const Surface &src, const Common::Rect &srcRect,
@@ -507,7 +513,7 @@ public:
 	 * Draw a line.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-		_innerSurface.drawLine(x0, y0, x1, y1, color);
+		_innerSurface.drawLine(x0, y0, x1, y1, addAlphaToColor(color));
 		addDirtyRect(Common::Rect(MIN(x0, x1), MIN(y0, y1), MAX(x0, x1), MAX(y0, y1)));
 	}
 
@@ -515,7 +521,7 @@ public:
 	 * Draw a thick line.
 	 */
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
-		_innerSurface.drawThickLine(x0, y0, x1, y1, penX, penY, color);
+		_innerSurface.drawThickLine(x0, y0, x1, y1, penX, penY, addAlphaToColor(color));
 		addDirtyRect(Common::Rect(MIN(x0, x1 + penX), MIN(y0, y1 + penY), MAX(x0, x1 + penX), MAX(y0, y1 + penY)));
 	}
 
@@ -523,7 +529,7 @@ public:
 	 * Draw a horizontal line.
 	 */
 	void hLine(int x, int y, int x2, uint32 color) {
-		_innerSurface.hLine(x, y, x2, color);
+		_innerSurface.hLine(x, y, x2, addAlphaToColor(color));
 		addDirtyRect(Common::Rect(x, y, x2 + 1, y + 1));
 	}
 
@@ -531,7 +537,7 @@ public:
 	 * Draw a vertical line.
 	 */
 	void vLine(int x, int y, int y2, uint32 color) {
-		_innerSurface.vLine(x, y, y2, color);
+		_innerSurface.vLine(x, y, y2, addAlphaToColor(color));
 		addDirtyRect(Common::Rect(x, y, x + 1, y2 + 1));
 	}
 
@@ -539,7 +545,7 @@ public:
 	 * Fill a rect with a given color.
 	 */
 	void fillRect(Common::Rect r, uint32 color) {
-		_innerSurface.fillRect(r, color);
+		_innerSurface.fillRect(r, addAlphaToColor(color));
 		addDirtyRect(r);
 	}
 
@@ -547,7 +553,7 @@ public:
 	 * Draw a frame around a specified rect.
 	 */
 	void frameRect(const Common::Rect &r, uint32 color) {
-		_innerSurface.frameRect(r, color);
+		_innerSurface.frameRect(r, addAlphaToColor(color));
 		addDirtyRect(r);
 	}
 
