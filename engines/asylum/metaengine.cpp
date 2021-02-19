@@ -29,7 +29,7 @@
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
 	virtual const char *getName() const override {
-		return "Asylum";
+		return "Sanitairum";
 	}
 
 	virtual const char *getOriginalCopyright() const {
