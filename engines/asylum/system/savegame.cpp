@@ -51,7 +51,7 @@ namespace Asylum {
 
 #define SAVEGAME_MOVIES "asylum.movies"
 
-const Common::String savegame_version = "v1.01 FINAL";
+static const Common::String savegame_version = "v1.01 FINAL";
 
 Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false) {
 	memset(&_moviesViewed, 0, sizeof(_moviesViewed));

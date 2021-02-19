@@ -268,7 +268,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts
 	enum EncounterOpcode {
-		kOpcodeReturn                           = 0,
+		kOpcodeEncounterReturn                  = 0,
 		kOpcodeSetScriptVariable                = 1,
 		kOpcodeSetCounterFromVars               = 2,
 		kOpcodeSetOffset                        = 3,

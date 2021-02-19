@@ -36,7 +36,7 @@
 namespace Asylum {
 
 SceneTitle::SceneTitle(AsylumEngine *engine): _vm(engine),
-	_start(0), _ticks(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _spinnerFrameCount(0), _showMouseState(false) {
+	_start(0), _done(false), _spinnerFrameIndex(0), _spinnerProgress(0), _spinnerFrameCount(0) {
 }
 
 SceneTitle::~SceneTitle() {

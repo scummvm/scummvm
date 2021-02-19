@@ -61,7 +61,7 @@ void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 f
 	_cursorRes = new GraphicResource(_vm, resourceId);
 
 	// Set next update
-	_nextTick = _vm->getTick() + 100;
+	_nextTick = _vm->getTick() + CURSOR_UPDATE_TICKS;
 
 	// Get frame count
 	if (frames >= 0)
@@ -168,7 +168,7 @@ void Cursor::animate() {
 		}
 	}
 
-	_nextTick = _vm->getTick() + 100;
+	_nextTick = _vm->getTick() + CURSOR_UPDATE_TICKS;
 
 	if (notifyHandler)
 		_vm->notify(EVENT_ASYLUM_CURSOR);

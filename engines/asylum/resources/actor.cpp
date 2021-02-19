@@ -1246,7 +1246,7 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point.y == sum.y) {
-		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionW;
+		ActorDirection actorDir = (!a3 || a3 != 3) ? kDirectionE : kDirectionW;
 
 		if (canMove(&sum, actorDir, (uint32)abs(delta.x), true)) {
 			_data.points[0] = point;
