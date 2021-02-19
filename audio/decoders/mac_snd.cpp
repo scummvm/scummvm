@@ -29,6 +29,7 @@
 
 #include "common/textconsole.h"
 #include "common/stream.h"
+#include "common/substream.h"
 
 #include "audio/decoders/mac_snd.h"
 #include "audio/decoders/raw.h"
@@ -98,15 +99,10 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 
 	stream->skip(soundDataOffset);
 
-	byte *data = (byte *)malloc(size);
-	assert(data);
-	stream->read(data, size);
-
-	if (disposeAfterUse == DisposeAfterUse::YES)
-		delete stream;
+	Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
 	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
-	return makeRawStream(data, size, rate, Audio::FLAG_UNSIGNED);
+	return makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
 }
 
 } // End of namespace Audio

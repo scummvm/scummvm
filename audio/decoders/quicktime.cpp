@@ -638,11 +638,7 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 			flags |= FLAG_STEREO;
 		if (_bitsPerSample == 16)
 			flags |= FLAG_16BITS;
-		uint32 dataSize = stream->size();
-		byte *data = (byte *)malloc(dataSize);
-		stream->read(data, dataSize);
-		delete stream;
-		return makeRawStream(data, dataSize, _sampleRate, flags);
+		return makeRawStream(stream, _sampleRate, flags);
 	} else if (_codecTag == MKTAG('i', 'm', 'a', '4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, _sampleRate, _channels, 34);
