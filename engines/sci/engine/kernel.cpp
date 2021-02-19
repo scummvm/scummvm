@@ -920,7 +920,7 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	}
 
 	int _index = index;
-	while (index--)
+	while (index-- && textlen)
 		while (textlen-- && *seeker++)
 			;
 
