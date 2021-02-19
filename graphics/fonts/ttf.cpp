@@ -599,20 +599,16 @@ static void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, 
 				uint8 dA, dR, dG, dB;
 				dstFormat.colorToARGB(*rDst, dA, dR, dG, dB);
 
-				if (dA == 0) {
-					*rDst = dstFormat.ARGBToColor(sA, sR, sG, sB);
-				} else {
-					double alpha = (double)sA / 255.0;
-					dR = static_cast<uint8>((sR * alpha) + (dR * (1.0 - alpha)));
-					dG = static_cast<uint8>((sG * alpha) + (dG * (1.0 - alpha)));
-					dB = static_cast<uint8>((sB * alpha) + (dB * (1.0 - alpha)));
+				double sAn = (double)sA / 255.0;
+				double dAn = (double)dA / 255.0;
+				double oAn = sAn + dAn * (1.0 - sAn);
 
-					if (sA > dA) {
-						dA = static_cast<uint8>((sA * alpha) + (dA * (1.0 - alpha)));
-					}
+				dR = static_cast<uint8>(sR * sAn + dR * dAn * (1.0 - sAn) / oAn);
+				dG = static_cast<uint8>(sG * sAn + dG * dAn * (1.0 - sAn) / oAn);
+				dB = static_cast<uint8>(sB * sAn + dB * dAn * (1.0 - sAn) / oAn);
+				dA = static_cast<uint8>(oAn * 255.0);
 
-					*rDst = dstFormat.ARGBToColor(dA, dR, dG, dB);
-				}
+				*rDst = dstFormat.ARGBToColor(dA, dR, dG, dB);
 			}
 
 			++rDst;
