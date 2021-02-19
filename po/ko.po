@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-18 22:54+0000\n"
-"PO-Revision-Date: 2021-02-16 11:24+0000\n"
+"PO-Revision-Date: 2021-02-19 22:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -966,7 +966,7 @@ msgstr "HW 셰이더:"
 
 #: gui/options.cpp:1263 gui/options.cpp:1265
 msgid "Different hardware shaders give different visual effects"
-msgstr "하드웨어 셰이더로 여러가지 시각 효과를 줄 수 있습니다."
+msgstr "하드웨어 셰이더로 여러가지 시각 효과를 줄 수 있습니다"
 
 #: gui/options.cpp:1265
 msgctxt "lowres"
@@ -975,7 +975,7 @@ msgstr "HW 셰이더:"
 
 #: gui/options.cpp:1266
 msgid "Different shaders give different visual effects"
-msgstr "셰이더로 여러 시각 효과를 줄 수 있습니다."
+msgstr "셰이더로 여러 시각 효과를 줄 수 있습니다"
 
 #: gui/options.cpp:1286
 msgid "Graphics mode:"
@@ -1003,7 +1003,7 @@ msgstr "3D 게임에서 수직 동기화 사용"
 
 #: gui/options.cpp:1326
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr "3D 렌더러에서 화면을 갱신할 때 수직 동기화를 기다립니다."
+msgstr "3D 렌더러에서 화면을 갱신할 때 수직 동기화를 기다립니다"
 
 #: gui/options.cpp:1328
 msgid "Game 3D Renderer:"
@@ -1043,11 +1043,11 @@ msgstr "음악 장치:"
 
 #: gui/options.cpp:1364 gui/options.cpp:1366
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "선호하는 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다."
+msgstr "선호하는 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
 
 #: gui/options.cpp:1364 gui/options.cpp:1366 gui/options.cpp:1367
 msgid "Specifies output sound device or sound card emulator"
-msgstr "소리를 출력할 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다."
+msgstr "소리를 출력할 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
 
 #: gui/options.cpp:1366
 msgctxt "lowres"
@@ -1065,7 +1065,7 @@ msgstr "AdLib 에뮬레이터:"
 
 #: gui/options.cpp:1393 gui/options.cpp:1394
 msgid "AdLib is used for music in many games"
-msgstr "AdLib은 많은 게임에서 음악 재생에 사용합니다."
+msgstr "AdLib은 많은 게임에서 음악 재생에 사용됩니다"
 
 #: gui/options.cpp:1407
 msgid "GM device:"
@@ -1073,7 +1073,7 @@ msgstr "GM 장치:"
 
 #: gui/options.cpp:1407
 msgid "Specifies default sound device for General MIDI output"
-msgstr "General MIDI 출력에 사용할 기본 사운드 장치를 지정합니다."
+msgstr "General MIDI 출력에 사용할 기본 사운드 장치를 지정합니다"
 
 #: gui/options.cpp:1418
 msgid "Don't use General MIDI music"
@@ -1089,7 +1089,7 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:1441 gui/options.cpp:1443 gui/options.cpp:1444
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr "SoundFont는 일부 사운드 카드, FluidSynth, Timidity에서 지원됩니다."
+msgstr "SoundFont는 일부 사운드 카드, FluidSynth, Timidity에서 지원됩니다"
 
 #: gui/options.cpp:1443
 msgctxt "lowres"
@@ -1549,7 +1549,7 @@ msgstr "/root/ 경로:"
 
 #: gui/options.cpp:2263 gui/options.cpp:2265 gui/options.cpp:2266
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "파일 매니저에서 어떤 디렉토리를 /root/ 으로 표시할지 선택합니다."
+msgstr "파일 매니저에서 어떤 디렉토리를 /root/ 으로 표시할지 선택합니다"
 
 #: gui/options.cpp:2265
 msgid "/root/ Path:"
@@ -1673,7 +1673,7 @@ msgstr "서버 정지"
 
 #: gui/options.cpp:3063
 msgid "Stop local webserver"
-msgstr "로컬 웹서버를 정지합니다."
+msgstr "내부 웹서버를 정지합니다"
 
 #: gui/options.cpp:3115
 msgid "Storage connected."
@@ -1897,7 +1897,7 @@ msgstr "버그 트래커로 직접 제보할 수도 있습니다."
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr "게임에 대한 모든 필수 정보가 클립보드로 복사되었습니다."
+msgstr "게임에 대한 모든 필수 정보가 클립보드로 복사되었습니다"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
@@ -1935,7 +1935,7 @@ msgstr "게임 실행 에러:"
 
 #: base/main.cpp:668
 msgid "Could not find any engine capable of running the selected game"
-msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다."
+msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다"
 
 #: common/achievements.cpp:93
 msgid "Achievement unlocked!"
@@ -1947,11 +1947,11 @@ msgstr "에러 없음"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "게임 데이터를 찾을 수 없습니다."
+msgstr "게임 데이터를 찾을 수 없습니다"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "게임 ID가 지원되지 않습니다."
+msgstr "게임 ID가 지원되지 않습니다"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
@@ -2054,8 +2054,7 @@ msgstr "<잘못된 값>"
 
 #: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
-"불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다."
+msgstr "불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2268,11 +2267,11 @@ msgstr ""
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
-msgstr "현재는 게임을 불러올 수 없습니다."
+msgstr "현재는 게임을 불러올 수 없습니다"
 
 #: engines/engine.cpp:827
 msgid "Saving game is currently unavailable"
-msgstr "현재는 게임을 저장할 수 없습니다."
+msgstr "현재는 게임을 저장할 수 없습니다"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2282,10 +2281,9 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"'%s'에 있는 게임은 아직 알려지지 않은 변종으로 보입니다.\n"
+"'%s'안에 있는 게임은 아직 알려지지 않은 변형된 게임으로 보입니다.\n"
 "\n"
-"아래의 데이터와, '%s'에서 추가하려는 게임의 이름, 버전, 언어 등 정보를 "
-"ScummVM 팀으로 알려주세요."
+"게임 이름, 버전, 언어 등의 정보와 함께 ScummVM 팀 '%s' 에게 다음의 데이터를 알려주십시오:"
 
 #: engines/game.cpp:175
 #, c-format
@@ -2433,7 +2431,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:454
 msgid "Starting MIDI dump"
-msgstr "MIDI 덤프를 시작합니다."
+msgstr "MIDI 덤프를 시작합니다"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -3257,7 +3255,7 @@ msgstr "드래그 모드"
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr "돋보기 모드가 켜진 동안에는 드래그 모드로 전환할 수 없습니다."
+msgstr "돋보기 모드가 켜진 동안에는 드래그 모드로 전환할 수 없습니다"
 
 #: backends/platform/3ds/osystem-events.cpp:409
 msgid "Magnify Mode cannot be activated in menus."
@@ -3650,7 +3648,7 @@ msgstr "TV 에뮬레이션"
 
 #: engines/adl/detection.cpp:49
 msgid "Emulate composite output to an NTSC TV"
-msgstr "NTSC TV의 컴포지트 출력을 에뮬레이트합니다."
+msgstr "NTSC TV로의 컴포지트 출력을 에뮬레이트합니다"
 
 #: engines/adl/detection.cpp:58 engines/adl/detection.cpp:68
 msgid "Color graphics"
@@ -3666,7 +3664,7 @@ msgstr "스캔라인 표시"
 
 #: engines/adl/detection.cpp:79
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr "두 줄에 한 번씩 어두운 스캔라인을 그려 CRT 스타일을 모방합니다."
+msgstr "두 줄에 한 번씩 어두운 스캔라인을 그려 CRT 스타일을 모방합니다"
 
 #: engines/adl/detection.cpp:88
 msgid "Always use sharp monochrome text"
@@ -3674,7 +3672,7 @@ msgstr "항상 또렷한 흑백 텍스트를 사용"
 
 #: engines/adl/detection.cpp:89
 msgid "Do not emulate NTSC artifacts for text"
-msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다."
+msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다"
 
 #: engines/agi/detection.cpp:72 engines/cine/detection.cpp:43
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
@@ -3692,7 +3690,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:161
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
-msgstr "ScummVM의 화면 대신 원래의 저장/불러오기 화면을 사용합니다."
+msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용합니다"
 
 #: engines/agi/detection.cpp:82
 msgid "Use an alternative palette"
@@ -3702,9 +3700,7 @@ msgstr "대체 팔레트 사용"
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
-msgstr ""
-"아미가 게임에서 자주 쓰인 대체 팔레트를 사용합니다. 이것이 예전 동작이었습니"
-"다."
+msgstr "아미가 게임에서 자주 쓰인 대체 팔레트를 사용합니다. 이전의 동작 방식입니다"
 
 #: engines/agi/detection.cpp:92
 msgid "Mouse support"
@@ -3733,9 +3729,7 @@ msgstr "커맨드 입력시 일시 정지"
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr ""
-"실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다. (SCI와 유"
-"사)"
+msgstr "실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유사)"
 
 #: engines/agi/detection.cpp:122
 msgid "Add speed menu"
@@ -3752,8 +3746,7 @@ msgid ""
 "game directory"
 msgstr ""
 "Hercules 고해상도 폰트에 필요한 'hgc_font' 파일을 사용할 수 없습니다.\n"
-"다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하"
-"세요."
+"다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하십시오"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -3790,7 +3783,7 @@ msgstr "불러오기"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
-msgstr "빠른 저장과 불러오기는 여기서는 지원되지 않습니다."
+msgstr "빠른 저장과 불러오기는 여기서는 지원되지 않습니다"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2505
 #, c-format
@@ -3832,7 +3825,7 @@ msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:104
 msgid "AGOS 2 support is not compiled in"
-msgstr "AGOS 2 지원이 컴파일 되지 않음"
+msgstr "AGOS 2 지원은 컴파일 되지 않음"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -3885,7 +3878,7 @@ msgstr "시트콤 모드"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
-msgstr "배우의 대사 혹은 나레이션 후에 웃음소리가 추가됩니다."
+msgstr "배우의 대사 혹은 나레이션 후에 웃음소리가 추가됩니다"
 
 #: engines/bladerunner/detection.cpp:57
 msgid "Shorty mode"
@@ -3893,7 +3886,7 @@ msgstr "Shorty 모드"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr "배우를 작게 줄이고 음성 피치를 높게 만듭니다."
+msgstr "배우를 작게 줄이고 음성 피치를 높게 만듭니다"
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
@@ -3914,9 +3907,7 @@ msgstr "최대 초당 프레임 제한"
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr ""
-"이 모드는 최대 120 fps를 타겟합니다. 이 옵션이 비활성화되면 60 fps를 타겟합니"
-"다."
+msgstr "이 모드는 최대 120 fps를 목표로합니다. 옵션이 비활성화되면 60 fps를 목표로하게됩니다"
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
@@ -3926,9 +3917,7 @@ msgstr "McCoy의 빠른 스태미나 감소를 비활성화"
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr ""
-"달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 "
-"합니다."
+msgstr "달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 합니다"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -3953,7 +3942,7 @@ msgstr "색맹 모드"
 
 #: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
-msgstr "색맹 모드를 기본으로 활성화합니다."
+msgstr "색맹 모드를 기본으로 활성화합니다"
 
 #: engines/cine/detection.cpp:52
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -3963,9 +3952,7 @@ msgstr "16색 화면에서 투명한 대사 창을 사용"
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
-msgstr ""
-"16색 화면에서도 투명한 대사 창을 활성화합니다. 이 기능은 원작에서는 지원하지 "
-"않았습니다."
+msgstr "16색 화면에서도 투명한 대사 창을 활성화합니다. 이 기능은 원작에서는 지원하지 않았습니다"
 
 #: engines/cine/metaengine.cpp:136
 msgid "Unnamed autosave"
@@ -4568,7 +4555,7 @@ msgstr ""
 "오리지널 Grim Fandango 패치를 찾을 수 없습니다.\n"
 "https://scummvm.org/frs/extras/patches/\n"
 "에서 패치를 다운로드하여, 게임 데이터 디렉토리에 넣어 주세요.\n"
-"게임의 언어와 맞는 정확한 버전을 다운로드해야 합니다."
+"게임의 언어와 맞는 정확한 버전을 다운로드해야 합니다"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4581,14 +4568,14 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
-"에러: 음악 트랙이 부족합니다!\n"
+"오류: 음악 트랙이 부족합니다!\n"
 "Escape from Monkey Island에는 두 가지 버전의 FullMonkeyMap.imt가 있습니다.\n"
 "두 버전의 파일을 모두 Textures/에 복사한 뒤\n"
 "아래와 같이 이름을 변경해야 음악이 지원됩니다: \n"
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"혹은, Steam이나 GOG 버전의 통합된 FullMonkeyMap.imt을 사용해도 됩니다."
+"혹은, Steam이나 GOG 버전의 통합된 FullMonkeyMap.imt을 사용해도 됩니다"
 
 #: engines/groovie/detection.cpp:297
 msgid "Fast movie speed"
@@ -4596,12 +4583,11 @@ msgstr "동영상 빠르게 재생"
 
 #: engines/groovie/detection.cpp:298
 msgid "Play movies at an increased speed"
-msgstr "동영상을 빠른 속도로 재생합니다."
+msgstr "동영상을 빠른 속도로 재생합니다"
 
 #: engines/groovie/metaengine.cpp:52
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "GroovieV2 지원이 컴파일 되지 않음"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4613,7 +4599,7 @@ msgstr "치트 모드 활성화"
 
 #: engines/hdb/detection.cpp:125
 msgid "Debug info and level selection becomes available"
-msgstr "디버그 정보와 레벨 선택이 가능해집니다."
+msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
 #: engines/hdb/metaengine.cpp:193
 msgid "Move up"
@@ -4737,9 +4723,8 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "왼쪽 버튼으로 공격, 오른쪽 버튼으로 아이템 습득"
 
 #: engines/kyra/metaengine.cpp:117
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "Lands of Lore 지원은 컴파일 되지 않음"
 
 #: engines/kyra/metaengine.cpp:127
 msgid ""
@@ -5049,11 +5034,11 @@ msgstr "Myst 영화보기는 원본 게임 엔진으로 실행되지 않습니�
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:127
 msgid "~D~rop Page"
-msgstr ""
+msgstr "페이지 되돌리기(~D~)"
 
 #: engines/mohawk/dialogs.cpp:131
 msgid "Show ~M~ap"
-msgstr ""
+msgstr "지도표시(~M~)"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Main Men~u~"
@@ -5084,24 +5069,20 @@ msgid "Best"
 msgstr "고품질"
 
 #: engines/mohawk/metaengine.cpp:271
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "포함된 기능:"
+msgstr "Myst ME 지원이 컴파일 되지 않음"
 
 #: engines/mohawk/metaengine.cpp:276
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "포함된 기능:"
+msgstr "Myst 지원이 컴파일 되지 않음"
 
 #: engines/mohawk/metaengine.cpp:283
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "포함된 기능:"
+msgstr "Riven 지원이 컴파일 되지 않음"
 
 #: engines/mohawk/metaengine.cpp:297
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "포함된 기능:"
+msgstr "CSTime 지원이 컴파일 되지 않음"
 
 #: engines/mohawk/mohawk.cpp:52
 #, fuzzy
@@ -5110,12 +5091,11 @@ msgstr "게임이 일시 중지되었습니다. SPACE를 눌러 다시 시작합
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
-msgstr ""
+msgstr "메인 메뉴 열기"
 
 #: engines/mohawk/myst.cpp:576 engines/mohawk/riven.cpp:846
-#, fuzzy
 msgid "Load game state"
-msgstr "게임 불러오기:"
+msgstr "게임 상태저장 불러오기"
 
 #: engines/mohawk/myst.cpp:581 engines/mohawk/riven.cpp:851
 #, fuzzy
@@ -5124,39 +5104,37 @@ msgstr "세이브 파일"
 
 #: engines/mohawk/myst.cpp:586 engines/mohawk/riven.cpp:856
 msgid "Show options menu"
-msgstr ""
+msgstr "옵션 메뉴 보이기"
 
 #: engines/mohawk/myst.cpp:598
 msgid "Drop page"
-msgstr ""
+msgstr "페이지 되돌리기"
 
 #: engines/mohawk/myst.cpp:604 engines/wintermute/keymapper_tables.h:1176
 #: engines/wintermute/keymapper_tables.h:1318
 #: engines/wintermute/keymapper_tables.h:1367
 #: engines/wintermute/keymapper_tables.h:1390
-#, fuzzy
 msgid "Show map"
-msgstr "모두 보기"
+msgstr "지도 보이기"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr ""
+msgstr "저장된 게임을 불러오시겠습니까? 저장되지 않은 진행사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Load game"
-msgstr "게임 불러오기:"
+msgstr "게임 불러오기"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
+msgstr "새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5170,25 +5148,25 @@ msgstr "정말로 종료하겠습니까? 저장되지 않은 진행 사항은 �
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "데모에서는 도서관을 벗어날 수 없습니다."
 
 #: engines/mohawk/riven.cpp:159
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr ""
+msgstr "Riven 실행파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 'rivendmo.exe'입니다. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr ""
+msgstr "'arcriven.z' 설치 파일도 사용가능합니다. 추가로 맥용 'Riven'실행 파일도 사용가능합니다."
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr ""
+msgstr "'extras.mhk' 파일을 찾을 수 없습니다. 'arcriven.z' 설치 파일로도 사용 가능합니다."
 
 #: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
@@ -5242,7 +5220,7 @@ msgstr "아래로 이동"
 
 #: engines/mohawk/riven.cpp:911
 msgid "Play intro videos"
-msgstr ""
+msgstr "인트로 영상 재생"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
@@ -5323,19 +5301,16 @@ msgid "Load file"
 msgstr "파일 업로드"
 
 #: engines/parallaction/saveload.cpp:201
-#, fuzzy
 msgid "Loading game..."
-msgstr "게임 불러오기:"
+msgstr "게임 불러오는 중..."
 
 #: engines/parallaction/saveload.cpp:209
-#, fuzzy
 msgid "Save file"
-msgstr "게임 저장:"
+msgstr "저장 파일"
 
 #: engines/parallaction/saveload.cpp:216
-#, fuzzy
 msgid "Saving game..."
-msgstr "게임 저장:"
+msgstr "게임 저장 중..."
 
 #: engines/parallaction/saveload.cpp:269
 msgid ""
@@ -5415,14 +5390,12 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "게임 저장:"
+msgstr "게임 저장"
 
 #: engines/pegasus/pegasus.cpp:2583
-#, fuzzy
 msgid "Load Game"
-msgstr "게임 불러오기:"
+msgstr "게임 불러오기"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
@@ -5438,14 +5411,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "플로피 버전의 인트로를 사용합니다 (CD 버전에서만)"
 
 #: engines/saga/metaengine.cpp:114
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "포함된 기능:"
+msgstr "I Have No Mouth 지원이 컴파일되지 않음"
 
 #: engines/saga/metaengine.cpp:120
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "포함된 기능:"
+msgstr "SAGA2 지원이 컴파일 되지 않음"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -5629,9 +5600,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "포함된 기능:"
+msgstr "SCI32 지원이 컴파일 되지 않음"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -6395,14 +6365,12 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:422
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "HE v71+ 지원이 컴파일 되지 않음"
 
 #: engines/scumm/metaengine.cpp:446
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
 
 #: engines/scumm/scumm.cpp:1934
 #, c-format
@@ -7129,19 +7097,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:65
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "FoxTail 지원이 컴파일 되지 않음"
 
 #: engines/wintermute/metaengine.cpp:71
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "Hero Craft 지원이 컴파일 되지 않음"
 
 #: engines/wintermute/metaengine.cpp:77
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "포함된 기능:"
+msgstr "Wintermute3D 지원이 컴파일 되지 않음"
 
 #: engines/wintermute/wintermute.cpp:176
 #, fuzzy
@@ -7232,9 +7197,8 @@ msgstr "숨겨진 파일 표시"
 #: engines/wintermute/keymapper_tables.h:1324
 #: engines/wintermute/keymapper_tables.h:1333
 #: engines/wintermute/keymapper_tables.h:1504
-#, fuzzy
 msgid "Show inventory"
-msgstr "인벤토리:"
+msgstr "인벤토리 보이기"
 
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
@@ -7651,9 +7615,8 @@ msgid "Droid action"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1517
-#, fuzzy
 msgid "Music menu"
-msgstr "음악 볼륨:"
+msgstr "음악 메뉴"
 
 #: engines/wintermute/keymapper_tables.h:1561
 msgid "Rotate"
