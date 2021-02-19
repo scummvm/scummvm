@@ -63,10 +63,10 @@ extern const RoomText feather4Texts[], feather5Texts[], feather6Texts[], feather
 
 extern const RoomAction trial0ActionList[], trial1ActionList[], trial2ActionList[], trial3ActionList[];
 extern const RoomAction trial4ActionList[], trial5ActionList[];
-extern const RoomTextOffsets trial0TextOffsets[], trial1TextOffsets[];//, trial2TextOffsets[], trial3TextOffsets[];
-//extern const RoomTextOffsets trial4TextOffsets[], trial5TextOffsets[];
-extern const RoomText trial0Texts[], trial1Texts[];//, trial2Texts[], trial3Texts[];
-//extern const RoomText trial4Texts[], trial5Texts[];
+extern const RoomTextOffsets trial0TextOffsets[], trial1TextOffsets[], trial2TextOffsets[], trial3TextOffsets[];
+extern const RoomTextOffsets trial4TextOffsets[], trial5TextOffsets[];
+extern const RoomText trial0Texts[], trial1Texts[], trial2Texts[], trial3Texts[];
+extern const RoomText trial4Texts[], trial5Texts[];
 extern const RoomTextOffsets trialTextOffsets[];
 
 extern const RoomAction sins0ActionList[], sins1ActionList[], sins2ActionList[], sins3ActionList[];

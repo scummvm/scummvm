@@ -18,6 +18,7 @@ Common::String patchRoomMessage(const char *text) {
 		{ "They are in no condition to talk right now", "#LOV4\\LOV4N007#They are in no condition to talk right now." },	// LOV4N007: add missing audio
 		{ "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" }, // FEA3_030: Wrong voice actor when McCoy says "He's dead, Jim"
 		{ "#FEA4\\TX_FEA4N008", "#FEA4\\FEA4_005" },	// FEA4N008: Fix wrong audio
+		{ "#TRI3\\TRI3U080", "#TRI1\\TRI1U080" },	// Fix audio with missing filter
 	    { "spock", "Spock" },	// LOVA_F08
 	    { "sysnthesize", "synthesize" },	// LOVA_F55
 	    { "gullability", "gullibility" },	// MUD0_023

@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_KLINGON_1 8
@@ -94,14 +93,72 @@ extern const RoomAction trial3ActionList[] = {
 };
 
 enum trial3TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_UHURA, TX_SPEAKER_BENNIE,
+	TX_TRI3_001, TX_TRI3_002, TX_TRI3_003, TX_TRI3_004, TX_TRI3_005,
+	TX_TRI3_006, TX_TRI3_007, TX_TRI3_008, TX_TRI3_009, TX_TRI3_010,
+	TX_TRI3_011, TX_TRI3_012, TX_TRI3_013, TX_TRI3_014, TX_TRI3_015,
+	TX_TRI3_016, TX_TRI3_017, TX_TRI3_018, TX_TRI3_019, TX_TRI3_020,
+	TX_TRI3_021, TX_TRI3_022, TX_TRI3_023, TX_TRI3_024, TX_TRI3_025,
+	TX_TRI3_026, TX_TRI3_027, TX_TRI3_028, TX_TRI3_029, TX_TRI3_030,
+	TX_TRI3_103, TX_TRI3_104, TX_TRI3_107, TX_TRI3N000, TX_TRI3N001,
+	TX_TRI3N002, TX_TRI3N003, TX_TRI3N004, TX_TRI3N005, TX_TRI3N006,
+	TX_TRI3N007, TX_TRI3U067, TX_TRI3U080, TX_TRI3U084, TX_TRI3U089,
+	TX_TRI3U099
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets trial3TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 1064, 0 },
-	//{ TX_SPEAKER_MCCOY, 1075, 0 },
-	//{ TX_SPEAKER_SPOCK, 1085, 0 },
+	{ TX_SPEAKER_KIRK, 275, 0 },
+	{ TX_SPEAKER_MCCOY, 286, 0 },
+	{ TX_SPEAKER_SPOCK, 296, 0 },
+	{ TX_SPEAKER_UHURA, 320, 0 },
+	{ TX_SPEAKER_BENNIE, 306, 0 },
+	{ TX_TRI3_001, 3318, 0 },
+	{ TX_TRI3_002, 2137, 0 },
+	{ TX_TRI3_003, 2204, 0 },
+	{ TX_TRI3_004, 1005, 0 },
+	{ TX_TRI3_005, 621, 0 },
+	{ TX_TRI3_006, 2056, 0 },
+	{ TX_TRI3_007, 1920, 0 },
+	{ TX_TRI3_008, 6462, 0 },
+	{ TX_TRI3_009, 4980, 0 },
+	{ TX_TRI3_010, 6219, 0 },
+	{ TX_TRI3_011, 5545, 0 },
+	{ TX_TRI3_012, 6306, 0 },
+	{ TX_TRI3_013, 4775, 0 },
+	{ TX_TRI3_014, 4855, 0 },
+	{ TX_TRI3_015, 4516, 0 },
+	{ TX_TRI3_016, 4636, 0 },
+	{ TX_TRI3_017, 6798, 0 },
+	{ TX_TRI3_018, 3449, 0 },
+	{ TX_TRI3_019, 683, 0 },
+	{ TX_TRI3_020, 892, 0 },
+	{ TX_TRI3_021, 6379, 0 },
+	{ TX_TRI3_022, 3386, 0 },
+	{ TX_TRI3_023, 5295, 0 },
+	{ TX_TRI3_024, 5155, 0 },
+	{ TX_TRI3_025, 742, 0 },
+	{ TX_TRI3_026, 6690, 0 },
+	{ TX_TRI3_027, 6590, 0 },
+	{ TX_TRI3_028, 5689, 0 },
+	{ TX_TRI3_029, 3537, 0 },
+	{ TX_TRI3_030, 545, 0 },
+	{ TX_TRI3_103, 6001, 0 },
+	{ TX_TRI3_104, 6074, 0 },
+	{ TX_TRI3_107, 6134, 0 },
+	{ TX_TRI3N000, 2819, 0 },
+	{ TX_TRI3N001, 2989, 0 },
+	{ TX_TRI3N002, 3074, 0 },
+	{ TX_TRI3N003, 4395, 0 },
+	{ TX_TRI3N004, 2898, 0 },
+	{ TX_TRI3N005, 3178, 0 },
+	{ TX_TRI3N006, 3664, 0 },
+	{ TX_TRI3N007, 3258, 0 },
+	{ TX_TRI3U067, 5795, 0 },
+	{ TX_TRI3U080, 2345, 0 },
+	{ TX_TRI3U084, 1801, 0 },
+	{ TX_TRI3U089, 5936, 0 },
+	{ TX_TRI3U099, 1970, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -124,12 +181,12 @@ void Room::trial3Tick30() {
 		_awayMission->disableInput = false;
 		_awayMission->trial.enteredTrial3FirstTime = true;
 
-		showText(TX_SPEAKER_BENNIE, 30);
-		showText(TX_SPEAKER_KIRK,    5);
-		showText(TX_SPEAKER_MCCOY,  19);
-		showText(TX_SPEAKER_SPOCK,  25);
-		showText(TX_SPEAKER_MCCOY,  20);
-		showText(TX_SPEAKER_KIRK,    4);
+		showText(TX_SPEAKER_BENNIE, TX_TRI3_030);
+		showText(TX_SPEAKER_KIRK,   TX_TRI3_005);
+		showText(TX_SPEAKER_MCCOY,  TX_TRI3_019);
+		showText(TX_SPEAKER_SPOCK,  TX_TRI3_025);
+		showText(TX_SPEAKER_MCCOY,  TX_TRI3_020);
+		showText(TX_SPEAKER_KIRK,   TX_TRI3_004);
 	}
 }
 
@@ -224,16 +281,16 @@ void Room::trial3CheckShowUhuraText() {
 		_awayMission->disableWalking = false;
 		loadActorStandAnim(OBJECT_KIRK);
 
-		showText(TX_SPEAKER_UHURA_GLOBAL, 84);
-		showText(TX_SPEAKER_KIRK,   7);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 99);
+		showText(TX_SPEAKER_UHURA, TX_TRI3U084);
+		showText(TX_SPEAKER_KIRK,  TX_TRI3_007);
+		showText(TX_SPEAKER_UHURA, TX_TRI3U099);
 
 		_awayMission->trial.forceFieldDown = true;
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			6, 2, 3,
-			TX_BLANK
+			TX_TRI3_006, TX_TRI3_002, TX_TRI3_003,
+			TX_END
 		};
 		int choice = showMultipleTexts(choices);
 
@@ -274,47 +331,47 @@ void Room::trial3KirkExploded() {
 }
 
 void Room::trial3LookAtKirk() {
-	showDescription(0);
+	showDescription(TX_TRI3N000);
 }
 
 void Room::trial3LookAtSpock() {
-	showDescription(4);
+	showDescription(TX_TRI3N004);
 }
 
 void Room::trial3LookAtMccoy() {
-	showDescription(1);
+	showDescription(TX_TRI3N001);
 }
 
 void Room::trial3LookAtRedshirt() {
-	showDescription(2);
+	showDescription(TX_TRI3N002);
 }
 
 void Room::trial3LookAtExit() {
-	showDescription(5);
+	showDescription(TX_TRI3N005);
 }
 
 void Room::trial3LookAtWall() {
-	showDescription(7);
+	showDescription(TX_TRI3N007);
 }
 
 void Room::trial3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1);
+	showText(TX_SPEAKER_KIRK, TX_TRI3_001);
 }
 
 void Room::trial3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 22);
+	showText(TX_SPEAKER_SPOCK, TX_TRI3_022);
 }
 
 void Room::trial3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 18);
+	showText(TX_SPEAKER_MCCOY, TX_TRI3_018);
 }
 
 void Room::trial3TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, 29);
+	showText(TX_SPEAKER_BENNIE, TX_TRI3_029);
 }
 
 void Room::trial3UsePhaserOnWall() {
-	showDescription(6);
+	showDescription(TX_TRI3N006);
 }
 
 void Room::trial3UseStunPhaserOnKlingon1() {
@@ -360,54 +417,54 @@ void Room::trial3ReadyToShootKlingon1OnKill() {
 }
 
 void Room::trial3UsePhaserAnywhere() {
-	showDescription(3);
+	showDescription(TX_TRI3N003);
 }
 
 void Room::trial3UseMTricorderOnKirk() {
 	// BUGFIX: Original animated Spock instead of Mccoy (same for below mccoy-scan functions)
-	mccoyScan(DIR_S, 15, true);
+	mccoyScan(DIR_S, TX_TRI3_015, true);
 }
 
 void Room::trial3UseMTricorderOnSpock() {
-	mccoyScan(DIR_S, 16, true);
+	mccoyScan(DIR_S, TX_TRI3_016, true);
 }
 
 void Room::trial3UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, 13, true);
+	mccoyScan(DIR_S, TX_TRI3_013, true);
 }
 
 void Room::trial3UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, 14, true);
+	mccoyScan(DIR_S, TX_TRI3_014, true);
 }
 
 void Room::trial3UseMTricorderOnExit() {
-	mccoyScan(DIR_S, 9, true);
+	mccoyScan(DIR_S, TX_TRI3_009, true);
 }
 
 void Room::trial3UseSTricorderOnWall() {
-	spockScan(DIR_S, 24, true);
+	spockScan(DIR_S, TX_TRI3_024, true);
 }
 
 void Room::trial3UseSTricorderOnExit() {
-	spockScan(DIR_S, 23, true);
+	spockScan(DIR_S, TX_TRI3_023, true);
 }
 
 void Room::trial3UseMTricorderOnKlingon() {
 	if (_awayMission->trial.shotKlingonState == 22) { // Unconscious
-		mccoyScan(DIR_S, 11, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI3_011);
 		if (!_awayMission->redshirtDead) // BUGFIX: Check if redshirt is dead
-			showText(TX_SPEAKER_BENNIE, 28);
+			showText(TX_SPEAKER_BENNIE, TX_TRI3_028);
 	}
 }
 
 void Room::trial3UseCommunicator() {
 	if (_awayMission->trial.forceFieldDown) {
-		showText(TX_SPEAKER_UHURA_GLOBAL, 89);
+		showText(TX_SPEAKER_UHURA, TX_TRI3U089);
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
-			103, 104, 107,
-			TX_BLANK
+			TX_TRI3_103, TX_TRI3_104, TX_TRI3_107,
+			TX_END
 		};
 		int choice = showMultipleTexts(choices);
 
@@ -418,15 +475,12 @@ void Room::trial3UseCommunicator() {
 			trial3BeamToVlict();
 		} // Else don't transport anywhere
 	} else { // Force field still up
-		showText(TX_SPEAKER_UHURA_GLOBAL, 67);
+		showText(TX_SPEAKER_UHURA, TX_TRI3U067);
 	}
 }
 
 void Room::trial3BeamToVlict() {
-	// ENHANCEMENT: The audio that should play here (TX_TRI3U080) doesn't seem to have the
-	// normal "filter" applied over it, making it sound jarring. So, use the equivalent
-	// text from TRIAL1 instead.
-	showText(TX_SPEAKER_UHURA_GLOBAL, TX_TRI1U080);
+	showText(TX_SPEAKER_UHURA, TX_TRI3U080);
 
 	_awayMission->disableInput = true;
 	playSoundEffectIndex(kSfxTransporterDematerialize);
@@ -439,27 +493,27 @@ void Room::trial3BeamToVlict() {
 }
 
 void Room::trial3UseMccoyOnWall() {
-	showText(TX_SPEAKER_MCCOY, 10);
+	showText(TX_SPEAKER_MCCOY, TX_TRI3_010);
 }
 
 void Room::trial3UseMccoyOnExit() {
-	showText(TX_SPEAKER_MCCOY, 12);
+	showText(TX_SPEAKER_MCCOY, TX_TRI3_012);
 }
 
 void Room::trial3UseSpockOnWall() {
-	showText(TX_SPEAKER_SPOCK, 21);
+	showText(TX_SPEAKER_SPOCK, TX_TRI3_021);
 }
 
 void Room::trial3UseSpockOnExit() {
-	showText(TX_SPEAKER_SPOCK, 8);
+	showText(TX_SPEAKER_SPOCK, TX_TRI3_008);
 }
 
 void Room::trial3UseRedshirtOnExit() {
-	showText(TX_SPEAKER_BENNIE, 27);
+	showText(TX_SPEAKER_BENNIE, TX_TRI3_027);
 }
 
 void Room::trial3UseRedshirtOnWall() {
-	showText(TX_SPEAKER_BENNIE, 26);
+	showText(TX_SPEAKER_BENNIE, TX_TRI3_026);
 }
 
 void Room::trial3WalkToExit() {
@@ -467,8 +521,7 @@ void Room::trial3WalkToExit() {
 }
 
 void Room::trial3UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, 17);
+	showText(TX_SPEAKER_MCCOY, TX_TRI3_017);
 }
 
 }
-#endif

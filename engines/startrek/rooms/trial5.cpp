@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_8 8
@@ -163,14 +162,111 @@ extern const RoomAction trial5ActionList[] = {
 };
 
 enum trial5TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_BENNIE, TX_SPEAKER_UHURA,
+	TX_SPEAKER_BIALBI, TX_SPEAKER_VLICT, TX_SPEAKER_VOICE, TX_SPEAKER_LIGHT_OF_WAR,
+	TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_SPEAKER_LIGHT_OF_TRAVEL,
+	TX_TRI5_001, TX_TRI5_002, TX_TRI5_003, TX_TRI5_004, TX_TRI5_005,
+	TX_TRI5_006, TX_TRI5_007, TX_TRI5_008, TX_TRI5_009, TX_TRI5_010,
+	TX_TRI5_011, TX_TRI5_012, TX_TRI5_013, TX_TRI5_014, TX_TRI5_015,
+	TX_TRI5_016, TX_TRI5_017, TX_TRI5_018, TX_TRI5_019, TX_TRI5_020,
+	TX_TRI5_021, TX_TRI5_022, TX_TRI5_023, TX_TRI5_024, TX_TRI5_025,
+	TX_TRI5_026, TX_TRI5_027, TX_TRI5_028, TX_TRI5_029, TX_TRI5_030,
+	TX_TRI5_031, TX_TRI5_032, TX_TRI5_033, TX_TRI5_034, TX_TRI5_035,
+	TX_TRI5_036, TX_TRI5_037, TX_TRI5_038, TX_TRI5_039, TX_TRI5_040,
+	TX_TRI5_041, TX_TRI5_042, TX_TRI5_043, TX_TRI5_044, TX_TRI5_045,
+	TX_TRI5_046, TX_TRI5_047, TX_TRI5_048, TX_TRI5_049, TX_TRI5_050,
+	TX_TRI5_051, TX_TRI5_052, TX_TRI5N002, TX_TRI5N004, TX_TRI5N005,
+	TX_TRI5N006, TX_TRI5N007, TX_TRI5N008, TX_TRI5N009, TX_TRI5N010,
+	TX_TRI5N011, TX_TRI5N012, TX_TRI5N013, TX_TRI5N014, TX_TRI5N015,
+	TX_TRI5N016, TX_TRI5N017, TX_TRI5N018, TX_TRI5N019, TX_TRI5N020,
+	TX_TRI5N021
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets trial5TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 1064, 0 },
-	//{ TX_SPEAKER_MCCOY, 1075, 0 },
-	//{ TX_SPEAKER_SPOCK, 1085, 0 },
+	{ TX_SPEAKER_KIRK, 275, 0 },
+	{ TX_SPEAKER_MCCOY, 286, 0 },
+	{ TX_SPEAKER_SPOCK, 296, 0 },
+	{ TX_SPEAKER_BENNIE, 306, 0 },
+	{ TX_SPEAKER_UHURA, 320, 0 },
+	{ TX_SPEAKER_BIALBI, 393, 0 },
+	{ TX_SPEAKER_VLICT, 400, 0 },
+	{ TX_SPEAKER_VOICE, 378, 0 },
+	{ TX_SPEAKER_LIGHT_OF_WAR, 330, 0 },
+	{ TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 343, 0 },
+	{ TX_SPEAKER_LIGHT_OF_TRAVEL, 362, 0 },
+	{ TX_TRI5_001, 7210, 0 },
+	{ TX_TRI5_002, 1082, 0 },
+	{ TX_TRI5_003, 1947, 0 },
+	{ TX_TRI5_004, 3104, 0 },
+	{ TX_TRI5_005, 3664, 0 },
+	{ TX_TRI5_006, 2153, 0 },
+	{ TX_TRI5_007, 2591, 0 },
+	{ TX_TRI5_008, 2043, 0 },
+	{ TX_TRI5_009, 2488, 0 },
+	{ TX_TRI5_010, 5768, 0 },
+	{ TX_TRI5_011, 5944, 0 },
+	{ TX_TRI5_012, 14859, 0 },
+	{ TX_TRI5_013, 7481, 0 },
+	{ TX_TRI5_014, 1010, 0 },
+	{ TX_TRI5_015, 2409, 0 },
+	{ TX_TRI5_016, 7317, 0 },
+	{ TX_TRI5_017, 943, 0 },
+	{ TX_TRI5_018, 1917, 0 },
+	{ TX_TRI5_019, 2950, 0 },
+	{ TX_TRI5_020, 1447, 0 },
+	{ TX_TRI5_021, 3487, 0 },
+	{ TX_TRI5_022, 1699, 0 },
+	{ TX_TRI5_023, 2313, 0 },
+	{ TX_TRI5_024, 4276, 0 },
+	{ TX_TRI5_025, 3004, 0 },
+	{ TX_TRI5_026, 3285, 0 },
+	{ TX_TRI5_027, 1251, 0 },
+	{ TX_TRI5_028, 3554, 0 },
+	{ TX_TRI5_029, 1755, 0 },
+	{ TX_TRI5_030, 3179, 0 },
+	{ TX_TRI5_031, 1500, 0 },
+	{ TX_TRI5_032, 4001, 0 },
+	{ TX_TRI5_033, 3830, 0 },
+	{ TX_TRI5_034, 2752, 0 },
+	{ TX_TRI5_035, 4215, 0 },
+	{ TX_TRI5_036, 13018, 0 },
+	{ TX_TRI5_037, 13608, 0 },
+	{ TX_TRI5_038, 13684, 0 },
+	{ TX_TRI5_039, 13969, 0 },
+	//{ TX_TRI5_039, 12698, 0 },	// Ignore duplicate line
+	{ TX_TRI5_040, 13379, 0 },
+	{ TX_TRI5_041, 13860, 0 },
+	{ TX_TRI5_042, 14630, 0 },
+	{ TX_TRI5_043, 14770, 0 },
+	{ TX_TRI5_044, 14223, 0 },
+	{ TX_TRI5_045, 14131, 0 },
+	{ TX_TRI5_046, 14343, 0 },
+	{ TX_TRI5_047, 13301, 0 },
+	{ TX_TRI5_048, 13150, 0 },
+	{ TX_TRI5_049, 13071, 0 },
+	{ TX_TRI5_050, 12880, 0 },
+	{ TX_TRI5_051, 7549, 0 },
+	{ TX_TRI5_052, 897, 0 },
+	{ TX_TRI5N002, 5594, 0 },
+	{ TX_TRI5N004, 5661, 0 },
+	{ TX_TRI5N005, 5313, 0 },
+	{ TX_TRI5N006, 7119, 0 },
+	{ TX_TRI5N007, 7905, 0 },
+	{ TX_TRI5N008, 5447, 0 },
+	{ TX_TRI5N009, 5381, 0 },
+	{ TX_TRI5N010, 5519, 0 },
+	{ TX_TRI5N011, 7659, 0 },
+	{ TX_TRI5N012, 7778, 0 },
+	{ TX_TRI5N013, 6041, 0 },
+	{ TX_TRI5N014, 6157, 0 },
+	{ TX_TRI5N015, 6273, 0 },
+	{ TX_TRI5N016, 6746, 0 },
+	{ TX_TRI5N017, 6865, 0 },
+	{ TX_TRI5N018, 6984, 0 },
+	{ TX_TRI5N019, 6389, 0 },
+	{ TX_TRI5N020, 6508, 0 },
+	{ TX_TRI5N021, 6627, 0 },	
 	{          -1, 0,    0 }
 };
 
@@ -194,35 +290,35 @@ void Room::trial5Tick1() {
 }
 
 void Room::trial5Tick60() {
-	showText(TX_SPEAKER_BENNIE, 52);
-	showText(TX_SPEAKER_SPOCK,  17);
-	showText(TX_SPEAKER_MCCOY,  14);
-	showText(TX_SPEAKER_KIRK,    2);
+	showText(TX_SPEAKER_BENNIE, TX_TRI5_052);
+	showText(TX_SPEAKER_SPOCK,  TX_TRI5_017);
+	showText(TX_SPEAKER_MCCOY,  TX_TRI5_014);
+	showText(TX_SPEAKER_KIRK,   TX_TRI5_002);
 }
 
 void Room::trial5VlictAppeared() {
-	showText(TX_SPEAKER_BIALBI, 27);
-	showText(TX_SPEAKER_VLICT,  20);
-	showText(TX_SPEAKER_BIALBI, 31);
-	showText(TX_SPEAKER_VLICT,  22);
-	showText(TX_SPEAKER_BIALBI, 29);
-	showText(TX_SPEAKER_VLICT,  18);
+	showText(TX_SPEAKER_BIALBI, TX_TRI5_027);
+	showText(TX_SPEAKER_VLICT,  TX_TRI5_020);
+	showText(TX_SPEAKER_BIALBI, TX_TRI5_031);
+	showText(TX_SPEAKER_VLICT,  TX_TRI5_022);
+	showText(TX_SPEAKER_BIALBI, TX_TRI5_029);
+	showText(TX_SPEAKER_VLICT,  TX_TRI5_018);
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		3, 8, 6,
-		TX_BLANK
+		TX_TRI5_003, TX_TRI5_008, TX_TRI5_006,
+		TX_END
 	};
 	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // "Do you want me to help you?"
-		showText(TX_SPEAKER_VLICT, 23);
-		showText(TX_SPEAKER_MCCOY, 15);
+		showText(TX_SPEAKER_VLICT, TX_TRI5_023);
+		showText(TX_SPEAKER_MCCOY, TX_TRI5_015);
 
 		const TextRef choices2[] = {
 			TX_SPEAKER_KIRK,
-			9, 7,
-			TX_BLANK
+			TX_TRI5_009, TX_TRI5_007,
+			TX_END
 		};
 		choice = showMultipleTexts(choices2);
 
@@ -233,24 +329,24 @@ void Room::trial5VlictAppeared() {
 	}
 
 	if (choice == 1) { // "Now you can rot as you deserve"
-		showText(TX_SPEAKER_BIALBI, 34);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_034);
 
 		_awayMission->trial.missionEndMethod = 4;
 		endMission(_awayMission->trial.missionScore, 1, 4);
 	} else if (choice == 2) { // "I'll intervene if Quetzecoatl goes free"
-		showText(TX_SPEAKER_VLICT, 19);
+		showText(TX_SPEAKER_VLICT, TX_TRI5_019);
 		playMidiMusicTracks(MIDITRACK_28, -1);
 
-		showText(TX_SPEAKER_BIALBI, 25);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_025);
 		_awayMission->trial.missionScore += 4;
-		showText(TX_SPEAKER_KIRK,    4);
-		showText(TX_SPEAKER_BIALBI, 30);
-		showText(TX_SPEAKER_BIALBI, 26);
-		showText(TX_SPEAKER_VLICT,  21);
-		showText(TX_SPEAKER_BIALBI, 28);
-		showText(TX_SPEAKER_KIRK,    5);
-		showText(TX_SPEAKER_BIALBI, 33);
-		showText(TX_SPEAKER_BIALBI, 32);
+		showText(TX_SPEAKER_KIRK,   TX_TRI5_004);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_030);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_026);
+		showText(TX_SPEAKER_VLICT,  TX_TRI5_021);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_028);
+		showText(TX_SPEAKER_KIRK,   TX_TRI5_005);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_033);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_032);
 
 		_awayMission->trial.missionEndMethod = 3;
 		endMission(1, 1, 3); // FIXME: Are these parameters correct?
@@ -263,9 +359,9 @@ void Room::trial5WalkToInterface() {
 
 void Room::trial5ReachedInterface() {
 	if (!_awayMission->trial.neuralInterfaceActive)
-		showText(TX_SPEAKER_VOICE, 35);
+		showText(TX_SPEAKER_VOICE, TX_TRI5_035);
 	else {
-		showText(TX_SPEAKER_BIALBI, 24);
+		showText(TX_SPEAKER_BIALBI, TX_TRI5_024);
 		loadActorAnimC(OBJECT_VLICT, "vlict1", 0xbe, 0x91, &Room::trial5VlictAppeared);
 		_awayMission->trial.missionScore += 5;
 		playMidiMusicTracks(MIDITRACK_1, -1);
@@ -347,110 +443,110 @@ void Room::trial5GetBlueGem3() {
 }
 
 void Room::trial5LookAtKirk() {
-	showDescription(5);
+	showDescription(TX_TRI5N005);
 }
 
 void Room::trial5LookAtSpock() {
-	showDescription(9);
+	showDescription(TX_TRI5N009);
 }
 
 void Room::trial5LookAtMccoy() {
-	showDescription(8);
+	showDescription(TX_TRI5N008);
 }
 
 void Room::trial5LookAtRedshirt() {
-	showDescription(10);
+	showDescription(TX_TRI5N010);
 }
 
 void Room::trial5LookAtBeam() {
-	showDescription(2);
+	showDescription(TX_TRI5N002);
 }
 
 void Room::trial5LookAtInterface() {
-	showDescription(4);
+	showDescription(TX_TRI5N004);
 }
 
 void Room::trial5UseSTricorderOnInterface() {
-	spockScan(DIR_E, 10, true);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_TRI5_010, true);
 }
 
 void Room::trial5UseMTricorderOnInterface() {
-	mccoyScan(DIR_E, 11, true);
+	mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_TRI5_011, true);
 }
 
 void Room::trial5LookAtRedGem1() {
-	showDescription(13);
+	showDescription(TX_TRI5N013);
 }
 
 void Room::trial5LookAtRedGem2() {
-	showDescription(14);
+	showDescription(TX_TRI5N014);
 }
 
 void Room::trial5LookAtRedGem3() {
-	showDescription(15);
+	showDescription(TX_TRI5N015);
 }
 
 void Room::trial5LookAtGreenGem1() {
-	showDescription(19);
+	showDescription(TX_TRI5N019);
 }
 
 void Room::trial5LookAtGreenGem2() {
-	showDescription(20);
+	showDescription(TX_TRI5N020);
 }
 
 void Room::trial5LookAtGreenGem3() {
-	showDescription(21);
+	showDescription(TX_TRI5N021);
 }
 
 void Room::trial5LookAtBlueGem1() {
-	showDescription(16);
+	showDescription(TX_TRI5N016);
 }
 
 void Room::trial5LookAtBlueGem2() {
-	showDescription(17);
+	showDescription(TX_TRI5N017);
 }
 
 void Room::trial5LookAtBlueGem3() {
-	showDescription(18);
+	showDescription(TX_TRI5N018);
 }
 
 void Room::trial5LookAtHole() {
-	showDescription(6);
+	showDescription(TX_TRI5N006);
 }
 
 void Room::trial5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 1);
+	showText(TX_SPEAKER_KIRK, TX_TRI5_001);
 }
 
 void Room::trial5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 16);
+	showText(TX_SPEAKER_SPOCK, TX_TRI5_016);
 }
 
 void Room::trial5TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 13);
+	showText(TX_SPEAKER_MCCOY, TX_TRI5_013);
 }
 
 void Room::trial5TalkToRedshirt() {
-	showText(TX_SPEAKER_BENNIE, 51);
+	showText(TX_SPEAKER_BENNIE, TX_TRI5_051);
 }
 
 void Room::trial5UsePhaser() {
-	showDescription(11);
+	showDescription(TX_TRI5N011);
 }
 
 void Room::trial5UseMTricorderAnywhere() {
 	// BUGFIX: Original had Spock doing the animation, not Mccoy
-	mccoyScan(DIR_S, -1, true);
-	showDescription(12);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, - 1, true);
+	showDescription(TX_TRI5N012);
 }
 
 void Room::trial5UseSTricorderAnywhere() {
-	spockScan(DIR_S, -1, true);
-	showDescription(12);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, - 1, true);
+	showDescription(TX_TRI5N012);
 }
 
 void Room::trial5UseCommunicator() {
-	showDescription(7);
+	showDescription(TX_TRI5N007);
 }
 
 void Room::trial5UseGemOnHole(int16 item, int16 object, int16 hole) {
@@ -517,7 +613,7 @@ void Room::trial5ReachedHoleToPutGem() {
 		if COMBO(RED, RED, RED) {
 			trial5ActivateLightOfWar();
 			playMidiMusicTracks(MIDITRACK_1, -1);
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 50); // All ships in orbit destroyed
+			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_050); // All ships in orbit destroyed
 			showGameOverMenu();
 		} else if COMBO(RED, RED, GREEN) {
 			trial5RestrictedCombination1();
@@ -527,20 +623,20 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, GREEN, GREEN) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 36);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_036);
 		} else if COMBO(RED, GREEN, BLUE) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 48);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_048);
 		} else if COMBO(RED, BLUE, RED) {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, BLUE, GREEN) {
 			trial5RestrictedCombination1();
 		} else if COMBO(RED, BLUE, BLUE) {
 			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, 49);
+			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_049);
 		} else if COMBO(GREEN, RED, RED) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 47);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_047);
 		} else if COMBO(GREEN, RED, GREEN) {
 			trial5RestrictedCombination2();
 		} else if COMBO(GREEN, RED, BLUE) {
@@ -550,8 +646,8 @@ void Room::trial5ReachedHoleToPutGem() {
 		} else if COMBO(GREEN, GREEN, GREEN) {
 			trial5ActivateLightOfKnowledge();
 			playVoc("EFX12B");
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 40);
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 37);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_040);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_037);
 			_awayMission->trial.neuralInterfaceActive = true;
 
 			if (!_awayMission->trial.gotPointsForActivatingInterface) {
@@ -562,25 +658,25 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(GREEN, BLUE, RED) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 41);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_041);
 		} else if COMBO(GREEN, BLUE, GREEN) {
 			trial5RestrictedCombination2();
 		} else if COMBO(GREEN, BLUE, BLUE) {
 			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 38);
+			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_038);
 		} else if COMBO(BLUE, RED, RED) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 45);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_045);
 		} else if COMBO(BLUE, RED, GREEN) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, RED, BLUE) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, GREEN, RED) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 42);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_042);
 		} else if COMBO(BLUE, GREEN, GREEN) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 44);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_044);
 		} else if COMBO(BLUE, GREEN, BLUE) {
 			trial5DestinationNoLongerExists();
 		} else if COMBO(BLUE, BLUE, RED) {
@@ -589,7 +685,7 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5RestrictedCombination1();
 		} else if COMBO(BLUE, BLUE, BLUE) {
 			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 46);
+			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_046);
 
 			_awayMission->disableInput = true;
 			playSoundEffectIndex(kSfxTransporterDematerialize);
@@ -627,17 +723,17 @@ void Room::trial5RestrictedCombination1() {
 	// knowledge.
 	// It's inconsistent, but I guess we can chalk it up to the aliens being mysterious...
 	playSoundEffectIndex(kSfxTransporterEnergize);
-	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39);
+	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_039);
 }
 
 void Room::trial5RestrictedCombination2() {
 	trial5ActivateLightOfKnowledge();
-	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, 39);
+	showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_039);
 }
 
 void Room::trial5DestinationNoLongerExists() {
 	trial5ActivateLightOfTravel();
-	showText(TX_SPEAKER_LIGHT_OF_TRAVEL, 43);
+	showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_043);
 }
 
 void Room::trial5CrewmanBeamedOut() {
@@ -761,8 +857,7 @@ void Room::trial5UseBlueGem3OnHole3() {
 
 
 void Room::trial5UseMedkitAnywhere() {
-	showText(TX_SPEAKER_MCCOY, 12);
+	showText(TX_SPEAKER_MCCOY, TX_TRI5_012);
 }
 
 }
-#endif
