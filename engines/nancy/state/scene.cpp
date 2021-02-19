@@ -86,6 +86,7 @@ void Scene::popScene() {
 }
 
 void Scene::addItemToInventory(uint16 id) {
+    _flags.items[id] = kTrue;
     if (_flags.heldItem == id) {
         setHeldItem(-1);
     }
