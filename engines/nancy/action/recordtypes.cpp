@@ -21,26 +21,22 @@
  */
 
 #include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionmanager.h"
+
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/scene.h"
-#include "engines/nancy/logic.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/audio.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/util.h"
 
 #include "common/str.h"
 
 namespace Nancy {
-
-// Simple helper function to read rectangles
-static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
-    inRect.left = stream.readUint32LE();
-    inRect.top = stream.readUint32LE();
-    inRect.right = stream.readUint32LE();
-    inRect.bottom = stream.readUint32LE();
-}
+namespace Action {
 
 void HotspotDesc::readData(Common::SeekableReadStream &stream) {
     frameID = stream.readUint16LE();
@@ -53,25 +49,16 @@ void BitmapDesc::readData(Common::SeekableReadStream &stream) {
     readRect(stream, dest);
 }
 
-void SecondaryVideoDesc::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, srcRect);
-    readRect(stream, destRect);
-    stream.skip(0x20);
-}
-
 void EventFlagsDesc::readData(Common::SeekableReadStream &stream) {
     for (uint i = 0; i < 10; ++i) {
         descs[i].label = stream.readSint16LE();
-        descs[i].flag = (PlayState::Flag)stream.readUint16LE();
+        descs[i].flag = (NancyFlag)stream.readUint16LE();
     }
 }
 
 void EventFlagsDesc::execute(NancyEngine *engine) {
     for (uint i = 0; i < 10; ++i) {
-        if (descs[i].label != -1) {
-            engine->playState.eventFlags[descs[i].label] = descs[i].flag;
-        }
+        engine->scene->setEventFlag(descs[i].label, descs[i].flag);
     }
 }
 
@@ -88,7 +75,7 @@ uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
 }
 
 void SceneChange::execute(NancyEngine *engine) {
-    engine->sceneManager->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
+    engine->scene->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
     isDone = true;
 }
 
@@ -114,7 +101,7 @@ void HotMultiframeSceneChange::execute(NancyEngine *engine) {
         case kRun:
             hasHotspot = false;
             for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
                     hasHotspot = true;
                     hotspot = hotspots[i].coords;
                 }
@@ -139,7 +126,7 @@ void Hot1FrSceneChange::execute(NancyEngine *engine) {
             state = kRun;
             // fall through
         case kRun:
-            if (hotspotDesc.frameID == engine->playState.currentViewFrame) {
+            if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
                 hasHotspot = true;
             } else {
                 hasHotspot = false;
@@ -168,196 +155,6 @@ uint16 StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-    stream.read(buf, 10);
-    filename = Common::String(buf);
-    stream.skip(0x14);
-    loopFirstFrame = stream.readUint16LE();
-    loopLastFrame = stream.readUint16LE();
-    onHoverFirstFrame = stream.readUint16LE();
-    onHoverLastFrame = stream.readUint16LE();
-    onHoverEndFirstFrame = stream.readUint16LE();
-    onHoverEndLastFrame = stream.readUint16LE();
-    SceneChange::readData(stream);
-    stream.skip(1);
-
-    uint16 numVideoDescs = stream.readUint16LE();
-    for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDesc());
-        videoDescs[i].readData(stream);
-    }
-
-    return 0x35 + (numVideoDescs * 0x42);
-}
-
-void PlaySecondaryVideo::execute(NancyEngine *engine) {
-    switch (state) {
-        case kBegin:
-            engine->graphics->loadSecondaryVideo(channelID(), filename, this);
-            engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
-            state = kRun;
-            // fall through
-        case kRun: {
-            ZRenderStruct &zr = engine->graphics->getZRenderStruct("SEC VIDEO 0");
-            zr.isActive = false;
-            hasHotspot = false;
-
-            int activeFrame = -1;
-
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if (videoDescs[i].frameID == engine->playState.currentViewFrame) {
-                    activeFrame = i;
-                }
-            }
-
-            if (activeFrame != -1) {
-                // Activate the ZRenderStruct
-                zr.sourceRect = videoDescs[activeFrame].srcRect;
-                zr.destRect = videoDescs[activeFrame].destRect;
-                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.top -= engine->playState.verticalScroll;
-                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.bottom -= engine->playState.verticalScroll;
-                zr.isActive = true;
-
-                // Activate the hotspot
-                hotspot = videoDescs[activeFrame].destRect;
-                hasHotspot = true;
-
-                // check if we're hovered this frame
-                bool isHovered = engine->logic->getActionRecord(engine->input->hoveredElementID) == this;
-
-                switch (hoverState) {
-                    case kEndHoverDone:
-                        hoverState = kNoHover;
-                        engine->graphics->setupSecondaryVideo(channelID(), loopFirstFrame, loopLastFrame, true);
-                        break;
-                    case kNoHover:
-                        if (isHovered) {
-                            // Player has just hovered over, play the hover animation once
-                            hoverState = kHover;
-                            engine->graphics->setupSecondaryVideo(channelID(), onHoverFirstFrame, onHoverLastFrame, false);
-                        }
-                        break;
-                    case kHover:
-                        if (!isHovered) {
-                            // Player has just stopped hovering, reverse the playback and go back to frame 0
-                            hoverState = kEndHover;
-                            engine->graphics->setupSecondaryVideo(channelID(), onHoverEndLastFrame, onHoverEndFirstFrame, false);
-                        }
-                        break;
-                    case kEndHover:
-                        break;
-                }
-
-                engine->graphics->playSecondaryVideo(channelID());
-            } else {
-                engine->graphics->stopSecondaryVideo(channelID());
-            }
-
-            break;
-        }
-        case kActionTrigger:
-            engine->sceneManager->pushScene();
-            SceneChange::execute(engine);
-            break;
-    }
-}
-
-uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
-    char name[10];
-    stream.read(name, 10);
-    videoName = Common::String(name);
-
-    stream.skip(0x1C);
-    for (uint i = 0; i < 15; ++i) {
-        frameFlags[i].frameID = stream.readSint16LE();
-        frameFlags[i].flagDesc.label = stream.readSint16LE();
-        frameFlags[i].flagDesc.flag = (PlayState::Flag)stream.readUint16LE();
-    }
-
-    triggerFlags.readData(stream);
-    stream.read(name, 10);
-    soundName = Common::String(name);
-    soundChannel = stream.readUint16LE();
-    stream.skip(0xE);
-    soundVolume = stream.readUint16LE();
-    
-    stream.skip(6);
-    SceneChange::readData(stream);
-
-    uint16 numVideoDescs = stream.readUint16LE();
-    for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDesc());
-        videoDescs[i].readData(stream);
-    }
-
-    return 0xD4 + numVideoDescs * 0x42; // TODO
-}
-
-void PlaySecondaryMovie::execute(NancyEngine *engine) {
-    ZRenderStruct &zr = engine->graphics->getZRenderStruct("SEC MOVIE");
-
-    switch (state) {
-        case kBegin:
-            engine->graphics->loadSecondaryMovie(videoName);
-            if (soundName != "NO SOUND") {
-                engine->sound->loadSound(soundName, soundChannel, 1, soundVolume);
-            }
-            state = kRun;
-            // fall through
-        case kRun: {
-            zr.isActive = false;
-            engine->graphics->getZRenderStruct("CUR IMAGE CURSOR").isActive = false;
-            
-            int activeFrame = -1;
-
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if (videoDescs[i].frameID == engine->playState.currentViewFrame) {
-                    activeFrame = i;
-                }
-            }
-
-            if (activeFrame != -1) {
-                // Activate the ZRenderStruct
-                zr.sourceRect = videoDescs[activeFrame].srcRect;
-                zr.destRect = videoDescs[activeFrame].destRect;
-                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.top -= engine->playState.verticalScroll;
-                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.bottom -= engine->playState.verticalScroll;
-                zr.isActive = true;
-
-                // Start sound if any
-                if (soundName != "NO SOUND") {
-                    engine->sound->pauseSound(soundChannel, false);
-                }
-            }
-
-            uint16 frame = 0;
-            if (!engine->graphics->playSecondaryMovie(frame)) {
-                // No new frame, check for flags
-                for (uint i = 0; i < 16; ++i) {
-                    if (frameFlags[i].frameID == frame) {
-                        engine->playState.eventFlags[frameFlags[i].flagDesc.label] = frameFlags[i].flagDesc.flag;
-                    }
-                }
-            }
-
-            break;
-        }
-        case kActionTrigger:
-            triggerFlags.execute(engine);
-            SceneChange::execute(engine);
-            break;
-    }
-}
-
 uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     // TODO
     uint16 bytesRead = stream.pos();
@@ -381,134 +178,6 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     return bytesRead;
 }
 
-uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-    uint beginOffset = stream.pos();
-    char name[10];
-    stream.read(name, 10);
-    imageName = Common::String(name);
-
-    stream.skip(0xA);
-    firstFrame = stream.readUint16LE();
-    stream.skip(2);
-    lastFrame = stream.readUint16LE();
-    frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
-    stream.skip(2);
-    soundFlagDesc.label = stream.readSint16LE();
-    soundFlagDesc.flag = (PlayState::Flag)stream.readUint16LE();
-
-    SceneChange::readData(stream);
-
-    triggerFlags.readData(stream);
-
-    stream.read(name, 10);
-    soundName = Common::String(name);
-    channelID = stream.readUint16LE();
-
-    stream.seek(beginOffset + 0x74, SEEK_SET);
-    uint numFrames = stream.readUint16LE();
-
-    for (uint i = firstFrame; i <= lastFrame; ++i) {
-        frameRects.push_back(Common::Rect());
-        readRect(stream, frameRects[i]);
-    }
-
-    for (uint i = 0; i < numFrames; ++i) {
-        bitmaps.push_back(BitmapDesc());
-        BitmapDesc &rects = bitmaps[i];
-        rects.frameID = stream.readUint16LE();
-        readRect(stream, rects.src);
-        readRect(stream, rects.dest);
-    }
-
-    return 0x76 + numFrames * 0x22 + (lastFrame - firstFrame + 1) * 16;
-}
-
-void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
-    // TODO handle sound, event flags
-    ZRenderStruct &zr = engine->graphics->getZRenderStruct("STATIC BITMAP ANIMATION");
-    uint32 currentFrameTime = engine->getTotalPlayTime();
-    switch (state) {
-        case kBegin:
-
-            // find the correct source and destination for the current viewport frame
-            lastViewFrame = engine->playState.currentViewFrame;
-            for (uint i = 0; i < bitmaps.size(); ++i) {
-                if (lastViewFrame == bitmaps[i].frameID) {
-                    currentViewFrameID = i;
-                    break;
-                }
-            }
-
-            currentFrame = firstFrame;
-            nextFrameTime = currentFrameTime + frameTime;
-
-            // Load the image directly into the generic surface
-            // instead of inside the record; this also means we skip
-            // using the source rect in srcDestRect.
-            // This _may_ lead to problems (but probably won't)
-            zr.sourceSurface->free();
-            engine->_res->loadImage("ciftree", imageName, *zr.sourceSurface);
-
-            // Set up the ZRenderStruct and its surface
-            zr.sourceRect = frameRects[currentFrame - firstFrame];
-            if (currentViewFrameID != -1) {
-                zr.isActive = true;
-                zr.destRect = bitmaps[currentViewFrameID].dest;
-                zr.destRect.left += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.top += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.top -= engine->playState.verticalScroll;
-                zr.destRect.right += engine->graphics->viewportDesc.destination.left;
-                zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
-                zr.destRect.bottom -= engine->playState.verticalScroll;
-            }
-
-            if (soundName != "NO SOUND") {
-                warning("PlayIntStaticBitmapAnimation has a sound, please implement it!");
-            }
-            state = kRun;
-            // fall through
-        case kRun:
-            // Check if we've moved the viewport
-            if (lastViewFrame != engine->playState.currentViewFrame) {
-                lastViewFrame = engine->playState.currentViewFrame;
-                currentViewFrameID = -1;
-                for (uint i = 0; i < bitmaps.size(); ++i) {
-                    if (lastViewFrame == bitmaps[i].frameID) {
-                        currentViewFrameID = i;
-                        zr.isActive = true;
-                        zr.destRect = bitmaps[currentViewFrameID].dest;
-                        zr.destRect.left += engine->graphics->viewportDesc.destination.left;
-                        zr.destRect.top += engine->graphics->viewportDesc.destination.top;
-                        zr.destRect.top -= engine->playState.verticalScroll;
-                        zr.destRect.right += engine->graphics->viewportDesc.destination.left;
-                        zr.destRect.bottom += engine->graphics->viewportDesc.destination.top;
-                        zr.destRect.bottom -= engine->playState.verticalScroll;
-                        break;
-                    }
-                }
-            }
-
-            if (currentViewFrameID == -1) {
-                break;
-            }
-
-            // Check the timer to see if we need to draw the next animation frame
-            if (nextFrameTime <= currentFrameTime) {
-                nextFrameTime = currentFrameTime + frameTime;
-
-                currentFrame = ++currentFrame > lastFrame ? firstFrame : currentFrame;
-
-                zr.sourceRect = frameRects[currentFrame - firstFrame];
-            }
-            break;
-        case kActionTrigger:
-            triggerFlags.execute(engine);
-
-            SceneChange::execute(engine);
-            break;
-    }
-}
-
 uint16 MapCall::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
     return 1;
@@ -516,7 +185,7 @@ uint16 MapCall::readData(Common::SeekableReadStream &stream) {
 
 void MapCall::execute(NancyEngine *engine) {
     execType = 2;
-    engine->sceneManager->stateChangeRequests |= SceneManager::kMap;
+    engine->scene->requestStateChange(NancyEngine::kMap);
     // call base, depends on execType
     state = kBegin;
 }
@@ -533,7 +202,7 @@ void MapCallHot1Fr::execute(NancyEngine *engine) {
             state = kRun;
             // fall through
         case kRun:
-            if (engine->playState.currentViewFrame == hotspotDesc.frameID) {
+            if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
                 hasHotspot = true;
             }
             break;
@@ -561,7 +230,7 @@ void MapCallHotMultiframe::execute(NancyEngine *engine) {
         case kRun:
             hasHotspot = false;
             for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
                     hasHotspot = true;
                     hotspot = hotspots[i].coords;
                 }
@@ -631,8 +300,7 @@ uint16 ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 }
 
 void ResetAndStartTimer::execute(NancyEngine *engine) {
-    engine->playState.timerIsActive = true;
-    engine->playState.timerTime = 0;
+    engine->scene->resetAndStartTimer();
     isDone = true;
 }
 
@@ -642,8 +310,7 @@ uint16 StopTimer::readData(Common::SeekableReadStream &stream) {
 }
 
 void StopTimer::execute(NancyEngine *engine) {
-    engine->playState.timerIsActive = false;
-    engine->playState.timerTime = 0;
+    engine->scene->stopTimer();
     isDone = true;
 }
 
@@ -679,7 +346,7 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
         case kRun:
             hasHotspot = false;
             for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->playState.currentViewFrame) {
+                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
                     hasHotspot = true;
                     hotspot = hotspots[i].coords;
                 }
@@ -723,11 +390,12 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 Telephone::readData(Common::SeekableReadStream &stream) {
-    rawData = new byte[0x2016];
+    byte *rawData = new byte[0x2016];
     stream.read(rawData, 0x48C);
 
     int32 sizeNext = (int16)(rawData[0x48A]) * 235;
     stream.read(rawData + 0x48C, sizeNext);
+    delete[] rawData;
     return sizeNext + 0x48C;
 }
 
@@ -749,21 +417,30 @@ uint16 RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 
 uint16 DifficultyLevel::readData(Common::SeekableReadStream &stream) {
     difficulty = stream.readUint16LE();
-    flagLabel = stream.readSint16LE();
-    flagCondition = stream.readUint16LE();
+    flag.label = stream.readSint16LE();
+    flag.flag = (NancyFlag)stream.readUint16LE();
     return 6;
 }
 
 void DifficultyLevel::execute(NancyEngine *engine) {
-    engine->playState.difficulty = difficulty;
-    if (flagLabel != -1) {
-        engine->playState.eventFlags[flagLabel] = (PlayState::Flag)flagCondition;
-    }
+    engine->scene->setDifficulty(difficulty);
+    engine->scene->setEventFlag(flag.label, flag.flag);
     isDone = true;
 }
 
 uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x2A4); // TODO
+}
+
+void ShowInventoryItem::init() {
+    Graphics::Surface srcSurf;
+    _engine->_res->loadImage("ciftree", imageName, srcSurf);
+    _fullSurface.create(srcSurf.w, srcSurf.h, srcSurf.format);
+    _fullSurface.blitFrom(srcSurf);
+
+    _drawSurface.create(_fullSurface, bitmaps[0].src);
+
+    RenderObject::init();
 }
 
 uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
@@ -783,39 +460,45 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 }
 
 void ShowInventoryItem::execute(NancyEngine *engine) {
-    ZRenderStruct &zr = engine->graphics->getZRenderStruct("INV BITMAP");
     switch (state) {
         case kBegin:
-            zr.sourceSurface->free();
-            engine->_res->loadImage("ciftree", imageName, *zr.sourceSurface);
+            init();
+            registerGraphics();
             state = kRun;
             // fall through
-        case kRun:
-            zr.isActive = false;
-            hasHotspot = false;
+        case kRun: {
+            int newFrame = -1;
 
             for (uint i = 0; i < bitmaps.size(); ++i) {
-                if (bitmaps[i].frameID == engine->playState.currentViewFrame) {
-                    hasHotspot = true;
-                    hotspot = bitmaps[i].dest;
-                    
-                    zr.isActive = true;
-                    zr.sourceRect = bitmaps[i].src;
-                    zr.destRect = bitmaps[i].dest;
-                    View &viewport = engine->graphics->viewportDesc;
-                    zr.destRect.left += viewport.destination.left;
-                    zr.destRect.right += viewport.destination.left;
-                    zr.destRect.top += viewport.destination.top - engine->playState.verticalScroll;
-                    zr.destRect.bottom += viewport.destination.top - engine->playState.verticalScroll;
+                if (bitmaps[i].frameID == engine->scene->getSceneInfo().frameID) {
+                    newFrame = i;
+                    break;
                 }
             }
+
+            if (newFrame != drawnFrameID) {
+                drawnFrameID = newFrame;
+                if (newFrame != -1) {
+                    hasHotspot = true;
+                    hotspot = bitmaps[newFrame].dest;
+                    _drawSurface.create(_fullSurface, bitmaps[newFrame].src);
+                    _screenPosition = bitmaps[newFrame].dest;
+                    setVisible(true);
+                } else {
+                    hasHotspot = false;
+                    setVisible(false);
+                }
+            }
+                   
             break;
+        }
         case kActionTrigger:
             // TODO play sound
-            engine->sceneManager->addObjectToInventory(objectID);
-            zr.isActive = false;
+            engine->scene->addItemToInventory(objectID);
+            setVisible(false);
             hasHotspot = false;
             isDone = true;
+            break;
     }
 }
 
@@ -869,4 +552,5 @@ uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x23); // TODO
 }
 
+}
 } // End of namespace Nancy

@@ -88,11 +88,6 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 	_depth = stream->readByte();
 	_frameTime = stream->readUint32LE();
 
-	// TODO hack(?)
-	// Nancy1 consistently adds 12 ms between every frame (for secondary videos). I'm not sure
-	// where exactly it happens, so for now just manually add them to the frame time
-	_frameTime += 12;
-
 	byte comp = stream->readByte();
 
 	if (comp != 2)

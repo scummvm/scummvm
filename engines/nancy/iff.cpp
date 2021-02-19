@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/iff_container.h"
 #include "common/debug.h"
+#include "common/endian.h"
 
 namespace Nancy {
 

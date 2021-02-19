@@ -20,17 +20,18 @@
  *
  */
 
+#include "engines/nancy/state/logo.h"
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/audio.h"
-#include "engines/nancy/logic.h"
-#include "engines/nancy/logo.h"
-#include "engines/nancy/scene.h"
-#include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/audio.h"
-#include "engines/nancy/map.h"
+#include "engines/nancy/state/map.h"
+#include "engines/nancy/graphics.h"
+#include "engines/nancy/cursor.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -75,13 +76,13 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_rnd = new Common::RandomSource("Nancy");
 	_rnd->setSeed(_rnd->getSeed());
 
-	_logoSequence = new LogoSequence(this);
-	logic = new Logic(this);
-	sceneManager = new SceneManager(this);
-	map = new Map(this);
-	graphics = new GraphicsManager(this);
+	logo = new State::Logo(this);
+	scene = new State::Scene(this);
+	map = new State::Map(this);
 	input = new InputManager(this);
 	sound = new SoundManager(this);
+	graphicsManager = new GraphicsManager(this);
+	cursorManager = new CursorManager(this);
 
 	launchConsole = false;
 }
@@ -92,10 +93,9 @@ NancyEngine::~NancyEngine() {
 	delete _console;
 	delete _rnd;
 	
-	delete logic;
-	delete sceneManager;
+	delete scene;
 	delete map;
-	delete graphics;
+	delete graphicsManager;
 	delete input;
 	delete sound;
 }
@@ -142,7 +142,6 @@ Common::Error NancyEngine::run() {
 	if (cab)
 		SearchMan.add("data1.hdr", cab);
 
-//	_mouse = new MouseHandler(this);
 	_res = new ResourceManager(this);
 	_res->initialize();
 
@@ -152,25 +151,23 @@ Common::Error NancyEngine::run() {
 	_gameFlow.minGameState = kBoot;
 
 	while (!shouldQuit()) {
+		cursorManager->setCursorType(CursorManager::kNormalArrow);
 		input->processEvents();
-		if (_gameFlow.minGameState != _gameFlow.previousGameState) {
-			input->clearInput();
-		}
-
 		switch (_gameFlow.minGameState) {
 		case kBoot:
 			bootGameEngine();
-			graphics->init();
-			_gameFlow.minGameState = kLogo;
+			graphicsManager->init();
+			cursorManager->init();
+			setGameState(kLogo);
 			break;
 		case kLogo:
-			_logoSequence->process();
+			logo->process();
 			break;
 		case kMainMenu:
 			// TODO
 			break;
 		case kScene:
-			sceneManager->process();
+			scene->process();
 			break;
 		case kMap:
 			map->process();
@@ -180,6 +177,13 @@ Common::Error NancyEngine::run() {
 			break;
 		}
 
+		graphicsManager->draw();
+
+		if (_gameFlow.justChanged) {
+			_gameFlow.justChanged = false;
+		} else {
+			_gameFlow.previousGameState = _gameFlow.minGameState;
+		}
 
 		if (launchConsole) {
 			_console->attach();
@@ -217,8 +221,6 @@ void NancyEngine::bootGameEngine() {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
-	input->cursorsData.read(*getBootChunkStream("CURS"));
-
 	// The FR, LG and OB chunks get added here	
 
 	Common::SeekableReadStream *font = getBootChunkStream("FONT");
@@ -227,9 +229,6 @@ void NancyEngine::bootGameEngine() {
 	}
 	
 	// TODO reset some vars
-
-	graphics->clearZRenderStructs();
-
 	// TODO reset some more vars
 
 	delete boot;
@@ -330,6 +329,16 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 	}
 }
 
+void NancyEngine::setGameState(GameState state) {
+	_gameFlow.previousGameState = _gameFlow.minGameState;
+	_gameFlow.minGameState = state;
+	_gameFlow.justChanged = true;
+
+	// Do not erase the frame if we're switching to the map
+	// This makes the labels not crash the game
+	graphicsManager->clearObjects();
+}
+
 class NancyEngine_v0 : public NancyEngine {
 public:
 	NancyEngine_v0(OSystem *syst, const NancyGameDescription *gd) : NancyEngine(syst, gd) { }
@@ -342,7 +351,9 @@ private:
 void NancyEngine_v0::readBootSummary(const IFF &boot) {
 	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
 	bsum->seek(0xa3);
-	_firstSceneID = bsum->readUint16LE();
+	firstSceneID = bsum->readUint16LE();
+	bsum->skip(4);
+	startTimeHours = bsum->readUint16LE(); // this is a whole Time struct but we just take the hours for now
 	bsum->seek(0x151);
 	readImageList(boot, "FR", _frames);
 	readImageList(boot, "LG", _logos);
@@ -350,7 +361,13 @@ void NancyEngine_v0::readBootSummary(const IFF &boot) {
 	bsum->seek(0x1D1);
 	_fontSize = bsum->readSint32LE() * 1346;
 	bsum->seek(0x1ED);
-	sceneManager->playerTimeMinuteLength = bsum->readSint16LE();
+	scene->playerTimeMinuteLength = bsum->readSint16LE();
+	bsum->seek(0x1F1);
+    overrideMovementTimeDeltas = bsum->readByte();
+    if (overrideMovementTimeDeltas) {
+        slowMovementTimeDelta = bsum->readUint16LE();
+        fastMovementTimeDelta = bsum->readUint16LE();
+    }
 }
 
 class NancyEngine_v1 : public NancyEngine_v0 {
@@ -364,7 +381,7 @@ private:
 void NancyEngine_v1::readBootSummary(const IFF &boot) {
 	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
 	bsum->seek(0xa3);
-	_firstSceneID = bsum->readUint16LE();
+	firstSceneID = bsum->readUint16LE();
 	bsum->seek(0x14b);
 	readImageList(boot, "FR", _frames);
 	readImageList(boot, "LG", _logos);

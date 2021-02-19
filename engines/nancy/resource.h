@@ -81,8 +81,6 @@ private:
 	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
 	const CifTree *findCifTree(const Common::String &name) const;
 
-	void colorCorrect(byte *buf, uint size);
-
 	Common::Array<const CifTree *> _cifTrees;
 };
 

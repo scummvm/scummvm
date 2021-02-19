@@ -24,6 +24,14 @@
 #include "common/array.h"
 
 namespace Nancy {
+namespace Action {
+
+// For whatever reason the games don't use the conditional dialogue code
+// inside primary video, and instead have a bunch of functions that manually
+// check hardcoded event flag IDs and extract strings embedded inside the exe.
+// These tables contain the extracted data and offsets for the string data, but if
+// there happen to be many versions of the same game it might be a better idea to just
+// directly copy the dialogue strings in here.
 
 struct ConditionalResponseDesc {
     byte characterID; // 0: Daryl, 1: Connie, 2: Hal, 3: Hulk
@@ -40,7 +48,7 @@ struct GoodbyeDesc {
 
 static const uint nancy1ResponseBaseFileOffset = 0xB1FE0; // TODO there could be more than one version of the exe
 
-#define EMPTY_DESC {-1, PlayState::kFalse }
+#define EMPTY_DESC {-1, kFalse }
 
 static const GoodbyeDesc nancy1Goodbyes[] = {
     // Daryl
@@ -79,8 +87,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x840,
         0x7C,
         {
-            { 0x1D, PlayState::kTrue },
-            { 0x39, PlayState::kFalse },
+            { 0x1D, kTrue },
+            { 0x39, kFalse },
             EMPTY_DESC
         }
     },
@@ -90,8 +98,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x804,
         0x7F,
         {
-            { 0x13, PlayState::kTrue },
-            { 0x37, PlayState::kFalse },
+            { 0x13, kTrue },
+            { 0x37, kFalse },
             EMPTY_DESC
         }
     },
@@ -101,8 +109,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x7BC,
         0x81,
         {
-            { 0xB, PlayState::kTrue },
-            { 0x38, PlayState::kFalse },
+            { 0xB, kTrue },
+            { 0x38, kFalse },
             EMPTY_DESC
         }
     },
@@ -112,9 +120,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x750,
         0x83,
         {
-            { 0, PlayState::kTrue },
-            { 1, PlayState::kFalse },
-            { 0x6B, PlayState::kFalse },
+            { 0, kTrue },
+            { 1, kFalse },
+            { 0x6B, kFalse },
             EMPTY_DESC
         }
     },
@@ -124,11 +132,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x6F4,
         0x84,
         {
-            { 0x64, PlayState::kTrue },
-            { 0x1E, PlayState::kFalse },
-            { 0x14, PlayState::kFalse },
-            { 0xC, PlayState::kFalse },
-            { 0x6C, PlayState::kFalse },
+            { 0x64, kTrue },
+            { 0x1E, kFalse },
+            { 0x14, kFalse },
+            { 0xC, kFalse },
+            { 0x6C, kFalse },
             EMPTY_DESC
         }
     },
@@ -138,13 +146,13 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x5EC,
         0x86,
         {
-            { 0x6D, PlayState::kFalse },
-            { 0x6, PlayState::kTrue },
-            { 0x8, PlayState::kTrue },
-            { 0x5E, PlayState::kTrue },
-            { 0x17, PlayState::kTrue },
-            { 0x24, PlayState::kTrue },
-            { 0x9, PlayState::kTrue }
+            { 0x6D, kFalse },
+            { 0x6, kTrue },
+            { 0x8, kTrue },
+            { 0x5E, kTrue },
+            { 0x17, kTrue },
+            { 0x24, kTrue },
+            { 0x9, kTrue }
         }
     },
 
@@ -153,11 +161,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x554,
         0x8B,
         {
-            { 0x6E, PlayState::kFalse },
-            { 0x24, PlayState::kTrue },
-            { 0x9, PlayState::kTrue },
-            { 0x5E, PlayState::kFalse },
-            { 0x8, PlayState::kFalse },
+            { 0x6E, kFalse },
+            { 0x24, kTrue },
+            { 0x9, kTrue },
+            { 0x5E, kFalse },
+            { 0x8, kFalse },
             EMPTY_DESC
         }
     },
@@ -167,11 +175,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x4F0,
         0x8D,
         {
-            { 0x6F, PlayState::kFalse },
-            { 0x5E, PlayState::kTrue },
-            { 0x24, PlayState::kTrue },
-            { 0x9, PlayState::kTrue },
-            { 0x8, PlayState::kFalse },
+            { 0x6F, kFalse },
+            { 0x5E, kTrue },
+            { 0x24, kTrue },
+            { 0x9, kTrue },
+            { 0x8, kFalse },
             EMPTY_DESC
         }
     },
@@ -181,12 +189,12 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x458,
         0x8F,
         {
-            { 0x70, PlayState::kFalse },
-            { 0x24, PlayState::kTrue },
-            { 0x9, PlayState::kTrue },
-            { 0x6, PlayState::kTrue },
-            { 0x8, PlayState::kTrue },
-            { 0x5E, PlayState::kFalse },
+            { 0x70, kFalse },
+            { 0x24, kTrue },
+            { 0x9, kTrue },
+            { 0x6, kTrue },
+            { 0x8, kTrue },
+            { 0x5E, kFalse },
             EMPTY_DESC
         }
     },
@@ -196,10 +204,10 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x3BC,
         0x90,
         {
-            { 0x71, PlayState::kFalse },
-            { 0x5E, PlayState::kTrue },
-            { 0x24, PlayState::kFalse },
-            { 0x8, PlayState::kFalse },
+            { 0x71, kFalse },
+            { 0x5E, kTrue },
+            { 0x24, kFalse },
+            { 0x8, kFalse },
             EMPTY_DESC
         }
     },
@@ -209,11 +217,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x320,
         0x91,
         {
-            { 0x72, PlayState::kFalse },
-            { 0x5E, PlayState::kTrue },
-            { 0x8, PlayState::kTrue },
-            { 0x6, PlayState::kTrue },
-            { 0x24, PlayState::kFalse },
+            { 0x72, kFalse },
+            { 0x5E, kTrue },
+            { 0x8, kTrue },
+            { 0x6, kTrue },
+            { 0x24, kFalse },
             EMPTY_DESC
         }
     },
@@ -223,11 +231,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x2AC,
         0x92,
         {
-            { 0x73, PlayState::kFalse },
-            { 0x8, PlayState::kTrue },
-            { 0x6, PlayState::kTrue },
-            { 0x5E, PlayState::kFalse },
-            { 0x24, PlayState::kFalse },
+            { 0x73, kFalse },
+            { 0x8, kTrue },
+            { 0x6, kTrue },
+            { 0x5E, kFalse },
+            { 0x24, kFalse },
             EMPTY_DESC
         }
     },
@@ -237,13 +245,13 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x1F0,
         0x96,
         {
-            { 0x74, PlayState::kFalse },
-            { 0x1D, PlayState::kTrue },
-            { 0x13, PlayState::kTrue },
-            { 0xB, PlayState::kTrue },
-            { 0x5E, PlayState::kFalse },
-            { 0x24, PlayState::kFalse },
-            { 0x8, PlayState::kFalse }
+            { 0x74, kFalse },
+            { 0x1D, kTrue },
+            { 0x13, kTrue },
+            { 0xB, kTrue },
+            { 0x5E, kFalse },
+            { 0x24, kFalse },
+            { 0x8, kFalse }
         }
     },
 
@@ -252,8 +260,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x190,
         0x97,
         {
-            { 0x27, PlayState::kFalse },
-            { 0x5, PlayState::kTrue },
+            { 0x27, kFalse },
+            { 0x5, kTrue },
             EMPTY_DESC
         }
     },
@@ -263,8 +271,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xF0,
         0x9C,
         {
-            { 0x28, PlayState::kTrue },
-            { 0x75, PlayState::kFalse },
+            { 0x28, kTrue },
+            { 0x75, kFalse },
             EMPTY_DESC
         }
     },
@@ -274,9 +282,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x94,
         0x93,
         {
-            { 0xC, PlayState::kFalse },
-            { 0x6, PlayState::kTrue },
-            { 0x76, PlayState::kFalse },
+            { 0xC, kFalse },
+            { 0x6, kTrue },
+            { 0x76, kFalse },
             EMPTY_DESC
         }
     },
@@ -286,9 +294,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x58,
         0x94,
         {
-            { 0x14, PlayState::kFalse },
-            { 0x4, PlayState::kTrue },
-            { 0x77, PlayState::kFalse },
+            { 0x14, kFalse },
+            { 0x4, kTrue },
+            { 0x77, kFalse },
             EMPTY_DESC
         }
     },
@@ -298,9 +306,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0,
         0x95,
         {
-            { 0x1E, PlayState::kFalse },
-            { 0x63, PlayState::kTrue },
-            { 0x78, PlayState::kFalse },
+            { 0x1E, kFalse },
+            { 0x63, kTrue },
+            { 0x78, kFalse },
             EMPTY_DESC
         }
     },
@@ -311,8 +319,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xBE4,
         0xE9,
         {
-            { 0x1D, PlayState::kTrue },
-            { 0x18, PlayState::kFalse },
+            { 0x1D, kTrue },
+            { 0x18, kFalse },
             EMPTY_DESC
         }
     },
@@ -322,8 +330,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xB8C,
         0xEA,
         {
-            { 0x1F, PlayState::kTrue },
-            { 0x19, PlayState::kFalse },
+            { 0x1F, kTrue },
+            { 0x19, kFalse },
             EMPTY_DESC
         }
     },
@@ -333,8 +341,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xB54,
         0xEB,
         {
-            { 0xB, PlayState::kTrue },
-            { 0x1A, PlayState::kFalse },
+            { 0xB, kTrue },
+            { 0x1A, kFalse },
             EMPTY_DESC
         }
     },
@@ -344,8 +352,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xB14,
         0xEC,
         {
-            { 0x26, PlayState::kTrue },
-            { 0x1C, PlayState::kFalse },
+            { 0x26, kTrue },
+            { 0x1C, kFalse },
             EMPTY_DESC
         }
     },
@@ -355,9 +363,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xABC,
         0xED,
         {
-            { 0, PlayState::kTrue },
-            { 1, PlayState::kFalse },
-            { 0x79, PlayState::kFalse },
+            { 0, kTrue },
+            { 1, kFalse },
+            { 0x79, kFalse },
             EMPTY_DESC
         }
     },
@@ -367,9 +375,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xA00,
         0xEE,
         {
-            { 2, PlayState::kTrue },
-            { 3, PlayState::kTrue },
-            { 0x17, PlayState::kFalse },
+            { 2, kTrue },
+            { 3, kTrue },
+            { 0x17, kFalse },
             EMPTY_DESC
         }
     },
@@ -379,8 +387,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x6F4,
         0xEF,
         {
-            { 0x64, PlayState::kTrue },
-            { 0x16, PlayState::kFalse },
+            { 0x64, kTrue },
+            { 0x16, kFalse },
             EMPTY_DESC
         }
     },
@@ -390,8 +398,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x968,
         0xF0,
         {
-            { 0x5, PlayState::kTrue },
-            { 0x14, PlayState::kFalse },
+            { 0x5, kTrue },
+            { 0x14, kFalse },
             EMPTY_DESC
         }
     },
@@ -401,7 +409,7 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x8C8,
         0xF5,
         {
-            { 0x28, PlayState::kTrue },
+            { 0x28, kTrue },
             EMPTY_DESC
         }
     },
@@ -411,8 +419,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x884,
         0xE7,
         {
-            { 0xD, PlayState::kTrue },
-            { 0x5E, PlayState::kFalse },
+            { 0xD, kTrue },
+            { 0x5E, kFalse },
             EMPTY_DESC
         }
     },
@@ -423,8 +431,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xED0,
         0x1B3,
         {
-            { 0x1D, PlayState::kTrue },
-            { 0x11, PlayState::kFalse },
+            { 0x1D, kTrue },
+            { 0x11, kFalse },
             EMPTY_DESC
         }
     },
@@ -434,8 +442,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x804,
         0x1B5,
         {
-            { 0x13, PlayState::kTrue },
-            { 0xE, PlayState::kFalse },
+            { 0x13, kTrue },
+            { 0xE, kFalse },
             EMPTY_DESC
         }
     },
@@ -445,8 +453,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xE74,
         0x1B6,
         {
-            { 0x1B, PlayState::kTrue },
-            { 0xF, PlayState::kFalse },
+            { 0x1B, kTrue },
+            { 0xF, kFalse },
             EMPTY_DESC
         }
     },
@@ -456,8 +464,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xE2C,
         0x1B7,
         {
-            { 0x26, PlayState::kTrue },
-            { 0x10, PlayState::kFalse },
+            { 0x26, kTrue },
+            { 0x10, kFalse },
             EMPTY_DESC
         }
     },
@@ -467,9 +475,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xDD4,
         0x1B9,
         {
-            { 0, PlayState::kTrue },
-            { 1, PlayState::kFalse },
-            { 0x68, PlayState::kFalse },
+            { 0, kTrue },
+            { 1, kFalse },
+            { 0x68, kFalse },
             EMPTY_DESC
         }
     },
@@ -479,10 +487,10 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xD48,
         0x1BA,
         {
-            { 0, PlayState::kTrue },
-            { 1, PlayState::kFalse },
-            { 0x20, PlayState::kTrue },
-            { 0x69, PlayState::kFalse },
+            { 0, kTrue },
+            { 1, kFalse },
+            { 0x20, kTrue },
+            { 0x69, kFalse },
             EMPTY_DESC
         }
     },
@@ -492,9 +500,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x6F4,
         0x1BB,
         {
-            { 0x6A, PlayState::kFalse },
-            { 0x64, PlayState::kTrue },
-            { 0x5, PlayState::kFalse },
+            { 0x6A, kFalse },
+            { 0x64, kTrue },
+            { 0x5, kFalse },
             EMPTY_DESC
         }
     },
@@ -504,9 +512,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xCC8,
         0x1BC,
         {
-            { 0x8, PlayState::kTrue },
-            { 0x6, PlayState::kTrue },
-            { 0xC, PlayState::kFalse },
+            { 0x8, kTrue },
+            { 0x6, kTrue },
+            { 0xC, kFalse },
             EMPTY_DESC
         }
     },
@@ -516,7 +524,7 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xC2C,
         0x1BE,
         {
-            { 0x28, PlayState::kTrue },
+            { 0x28, kTrue },
             EMPTY_DESC
         }
     },
@@ -527,8 +535,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x1164,
         0x14D,
         {
-            { 0x13, PlayState::kTrue },
-            { 0x3A, PlayState::kFalse },
+            { 0x13, kTrue },
+            { 0x3A, kFalse },
             EMPTY_DESC
         }
     },
@@ -538,8 +546,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xB54,
         0x150,
         {
-            { 0xB, PlayState::kTrue },
-            { 0x25, PlayState::kFalse },
+            { 0xB, kTrue },
+            { 0x25, kFalse },
             EMPTY_DESC
         }
     },
@@ -549,8 +557,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x10D8,
         0x153,
         {
-            { 0x12, PlayState::kTrue },
-            { 0x21, PlayState::kFalse },
+            { 0x12, kTrue },
+            { 0x21, kFalse },
             EMPTY_DESC
         }
     },
@@ -561,8 +569,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xE2C,
         0x154,
         {
-            { 0x26, PlayState::kTrue },
-            { 0x22, PlayState::kFalse },
+            { 0x26, kTrue },
+            { 0x22, kFalse },
             EMPTY_DESC
         }
     },
@@ -572,9 +580,9 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x108C,
         0x155,
         {
-            { 0, PlayState::kTrue },
-            { 1, PlayState::kFalse },
-            { 0x66, PlayState::kFalse },
+            { 0, kTrue },
+            { 1, kFalse },
+            { 0x66, kFalse },
             EMPTY_DESC
         }
     },
@@ -584,8 +592,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x6F4,
         0x156,
         {
-            { 0x67, PlayState::kFalse },
-            { 0x64, PlayState::kTrue },
+            { 0x67, kFalse },
+            { 0x64, kTrue },
             EMPTY_DESC
         }
     },
@@ -595,8 +603,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x1028,
         0x157,
         {
-            { 0x63, PlayState::kTrue },
-            { 0x24, PlayState::kFalse },
+            { 0x63, kTrue },
+            { 0x24, kFalse },
             EMPTY_DESC
         }
     },
@@ -606,8 +614,8 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xFB0,
         0x158,
         {
-            { 0x5, PlayState::kTrue },
-            { 0x1E, PlayState::kFalse },
+            { 0x5, kTrue },
+            { 0x1E, kFalse },
             EMPTY_DESC
         }
     },
@@ -617,10 +625,11 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0xF10,
         0x159,
         {
-            { 0x28, PlayState::kTrue },
+            { 0x28, kTrue },
             EMPTY_DESC
         }
     }
 };
 
-} // End of namespace Nancy
+}// End of namespace Action
+} // End of namespace Nancy::Action

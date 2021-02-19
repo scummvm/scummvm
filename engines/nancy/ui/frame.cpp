@@ -8,37 +8,40 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef NANCY_DETECTION_H
-#define NANCY_DETECTION_H
+#include "engines/nancy/ui/frame.h"
 
-#include "engines/advancedDetector.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/graphics.h"
 
 namespace Nancy {
+namespace UI {
 
-enum GameType {
-	kGameTypeNone = 0,
-	kGameTypeNancy1,
-	kGameTypeNancy2,
-	kGameTypeNancy3
-};
+void Frame::init() {
+    // TODO
+    Graphics::Surface surf;
+    _engine->_res->loadImage("ciftree", "FRAME", surf);
 
-struct NancyGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
-};
+    Common::Rect srcBounds = Common::Rect(0,0, surf.w, surf.h);
+    _screenPosition = srcBounds;
+    
+    _drawSurface.create(surf.w, surf.h, surf.format);
+    _drawSurface.blitFrom(surf, Common::Point(0, 0));
 
+    RenderObject::init();
+}
+
+} // End of namespace UI
 } // End of namespace Nancy
-
-#endif // NANCY_DETECTION_H

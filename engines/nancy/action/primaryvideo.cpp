@@ -23,25 +23,49 @@
 #include "engines/nancy/action/primaryvideo.h"
 
 #include "engines/nancy/action/responses.cpp"
+#include "engines/nancy/action/actionmanager.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/scene.h"
-#include "engines/nancy/logic.h"
+#include "engines/nancy/state/scene.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/graphics.h"
 #include "engines/nancy/audio.h"
+#include "engines/nancy/util.h"
 
 #include "common/file.h"
 #include "common/random.h"
 
 namespace Nancy {
+namespace Action {
 
-// Simple helper function to read rectangles
-static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
-    inRect.left = stream.readUint32LE();
-    inRect.top = stream.readUint32LE();
-    inRect.right = stream.readUint32LE();
-    inRect.bottom = stream.readUint32LE();
+bool PlayPrimaryVideoChan0::isExitingScene = false;
+
+PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
+    _decoder.close();
+    _engine->scene->getTextbox().setVisible(false);
+}
+
+void PlayPrimaryVideoChan0::init() {
+    _decoder.loadFile(videoName + ".avf");
+    _drawSurface.create(src.width(), src.height(), _decoder.getPixelFormat());
+
+    RenderObject::init();
+}
+
+void PlayPrimaryVideoChan0::updateGraphics() {
+    if (!_decoder.isVideoLoaded()) {
+        return;
+    }
+
+    if (!_decoder.isPlaying()) {
+        _decoder.start();
+    }
+
+    if (_decoder.needsUpdate()) {
+        _drawSurface.blitFrom(*_decoder.decodeNextFrame(), src, Common::Point());
+        _needsRedraw = true;
+    }
+
+    RenderObject::updateGraphics();
 }
 
 uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
@@ -54,11 +78,11 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     stream.skip(0x13);
 
     readRect(stream, src);
-    readRect(stream, dest);
+    readRect(stream, _screenPosition);
 
     char *rawText = new char[1500]();
     stream.read(rawText, 1500);
-    assembleText(rawText, text, 1500);
+    UI::Textbox::assembleTextLine(rawText, text, 1500);
     delete[] rawText;
 
     stream.read(name, 10);
@@ -98,7 +122,7 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
             }
             rawText = new char[400];
             stream.read(rawText, 400);
-            assembleText(rawText, response.text, 400);
+            UI::Textbox::assembleTextLine(rawText, response.text, 400);
             delete[] rawText;
 
             stream.read(name, 10);
@@ -106,7 +130,7 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
             stream.skip(1);
             response.sceneChange.readData(stream);
             response.flagDesc.label = stream.readSint16LE();
-            response.flagDesc.flag = (PlayState::Flag)stream.readByte();
+            response.flagDesc.flag = (NancyFlag)stream.readByte();
 
             stream.skip(0x32);
         }
@@ -137,31 +161,25 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 
             flagsStruct.type = (FlagsStruct::ConditionType)stream.readByte();
             flagsStruct.label = stream.readSint16LE();
-            flagsStruct.flag = (PlayState::Flag)stream.readByte();
+            flagsStruct.flag = (NancyFlag)stream.readByte();
         }
     }
+
+    isExitingScene = false;
 
     bytesRead = stream.pos() - bytesRead;
     return bytesRead;
 }
 
 void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
-    ZRenderStruct &zr = engine->graphics->getZRenderStruct("PRIMARY VIDEO");
-    AVFDecoder &decoder = engine->graphics->_primaryVideoDecoder;
-    View &viewportDesc = engine->graphics->viewportDesc;
+    if (isExitingScene) {
+        return;
+    }
+
     switch (state) {
         case kBegin:
-            zr.sourceRect = src;
-            zr.destRect = dest;
-            zr.destRect.left += viewportDesc.destination.left;
-            zr.destRect.top += viewportDesc.destination.top;
-            zr.destRect.right += viewportDesc.destination.left;
-            zr.destRect.bottom += viewportDesc.destination.top;
-            zr.isActive = true;
-            if (decoder.isVideoLoaded()) {
-                decoder.close();
-            }
-            decoder.loadFile(videoName + ".avf");
+            init();
+            registerGraphics();
             engine->sound->loadSound(soundName, soundChannelID, numRepeats, volume);
             engine->sound->pauseSound(soundChannelID, false);
             state = kRun;
@@ -169,8 +187,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
         case kRun:
             if (!hasDrawnTextbox) {
                 hasDrawnTextbox = true;
-                engine->graphics->_textbox.clear();
-                engine->graphics->_textbox.processTextLine(text, 1);
+                engine->scene->getTextbox().clear();
+                engine->scene->getTextbox().addTextLine(text);
 
                 // Add responses when conditions have been satisfied
                 if (conditionalResponseCharacterID != 10) {
@@ -183,25 +201,25 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
 
                 for (uint i = 0; i < responses.size(); ++i) {
                     auto &res = responses[i];
-                    engine->graphics->_textbox.processResponse(res.text, 1, i, res.soundName);
+                    engine->scene->getTextbox().addTextLine(res.text);
                 }
-
-                ZRenderStruct &fr = engine->graphics->getZRenderStruct("FRAME TB SURF");
-                fr.isActive = true;
-                fr.sourceRect = Common::Rect(fr.destRect.width(), fr.destRect.height());
             }
+
             if (!engine->sound->isSoundPlaying(soundChannelID)) {
                 if (responses.size() == 0) {
+                    // NPC has finished talking with no responses available, auto-advance to next scene
                     state = kActionTrigger;
                 } else {
+                    // NPC has finished talking, we have responses
                     for (uint i = 0; i < 30; ++i) {
-                        if (engine->playState.logicConditions[i] == PlayState::kTrue) {
+                        if (engine->scene->getLogicCondition(i, kTrue)) {
                             pickedResponse = i;
                             break;
                         }
                     }
 
                     if (pickedResponse != -1) {
+                        // Player has picked response, play sound file and change state
                         sceneChange = responses[pickedResponse].sceneChange;
                         engine->sound->loadSound(responses[pickedResponse].soundName, soundChannelID, numRepeats, volume);
                         engine->sound->pauseSound(soundChannelID, false);
@@ -214,21 +232,20 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             // process flags structs
             for (auto flags : flagsStructs) {
                 bool conditionsSatisfied = true;
-                for (auto cond : flags.conditionFlags) {
-                    // TODO
-                    error("Condition flags not evaluated");
+                if (flags.conditionFlags.size()) {
+                    error("Condition flags not evaluated, please fix");
                 }
 
                 if (conditionsSatisfied) {
                     switch (flags.type) {
                         case FlagsStruct::kEventFlags:
-                            engine->playState.eventFlags[flags.label] = flags.flag;
+                            engine->scene->setEventFlag(flags.label, flags.flag);
                             break;
                         case FlagsStruct::kInventory:
-                            if (flags.flag == PlayState::kTrue) {
-                                engine->sceneManager->addObjectToInventory(flags.label);
+                            if (flags.flag == kTrue) {
+                                engine->scene->addItemToInventory(flags.label);
                             } else {
-                                engine->sceneManager->removeObjectFromInventory(flags.label);
+                                engine->scene->removeItemFromInventory(flags.label);
                             }
                             break;
                         default:
@@ -236,24 +253,22 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     }
                 }
             }
-
+            
             if (pickedResponse != -1) {
-                int16 label = responses[pickedResponse].flagDesc.label;
-                if (label != -1) {
-                    engine->playState.eventFlags[label] = responses[pickedResponse].flagDesc.flag;
-                }
+                // Set response's event flag, if any
+                engine->scene->setEventFlag(responses[pickedResponse].flagDesc.label, responses[pickedResponse].flagDesc.flag);
             }
 
             if (!engine->sound->isSoundPlaying(soundChannelID)) {
                 if (shouldPopScene) {
-                    engine->sceneManager->popScene();
+                    // Exit dialogue
+                    engine->scene->popScene();
                 } else {
+                    // Continue to next dialogue scene
                     SceneChange::execute(engine);
                 }
+                isExitingScene = true;
             }
-
-            // awful hack
-            engine->logic->ignorePrimaryVideo = true;
 
             break;
     }
@@ -268,7 +283,7 @@ void PlayPrimaryVideoChan0::addConditionalResponses(NancyEngine *engine) {
                     break;
                 }
 
-                if (engine->playState.eventFlags[cond.label] != cond.flag) {
+                if (!engine->scene->getEventFlag(cond.label, cond.flag)) {
                     isSatisfied = false;
                     break;
                 }
@@ -317,16 +332,5 @@ void PlayPrimaryVideoChan0::addGoodbye(NancyEngine *engine) {
     }
 }
 
-void PlayPrimaryVideoChan0::assembleText(char *rawCaption, Common::String &output, uint size) {
-    for (uint i = 0; i < size; ++i) {
-        // A single line can be broken up into bits, look for them and
-        // concatenate them when we're done
-        if (rawCaption[i] != 0) {
-            Common::String newBit(rawCaption + i);
-            output += newBit;
-            i += newBit.size();
-        }
-    }
-}
-
+} // End of namespace Action
 } // End of namespace Nancy

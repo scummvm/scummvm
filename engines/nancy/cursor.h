@@ -20,52 +20,54 @@
  *
  */
 
-#ifndef NANCY_GRAPHICS_H
-#define NANCY_GRAPHICS_H
+#ifndef NANCY_CURSOR_H
+#define NANCY_CURSOR_H
 
-#include "engines/nancy/renderobject.h"
-#include "engines/nancy/font.h"
-
-#include "common/array.h"
-
-#include "graphics/screen.h"
+#include "graphics/cursorman.h"
+#include "graphics/managed_surface.h"
 
 namespace Nancy {
 
 class NancyEngine;
 
-// Graphics class that handles multilayered surface rendering with minimal redraw
-class GraphicsManager {
+class CursorManager {
 public:
-    GraphicsManager(NancyEngine *engine) : _engine(engine), _objects(objectComparator) {}
+    enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kNormalArrow, kHotspotArrow, kExitArrow };
+
+    CursorManager(NancyEngine *engine) :
+        _engine(engine),
+        _isInitialized(false),
+        _curItemID(-1),
+        _curCursorType(kNormal) {}
 
     void init();
-    void draw();
 
-    void addObject(RenderObject *object);
-    void removeObject(RenderObject *object);
-    void clearObjects();
-
-    Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
-
-    Graphics::ManagedSurface object0;
-    
-    static const Graphics::PixelFormat pixelFormat;
-    static const uint transColor;
+    void setCursor(CursorType type, int16 itemID);
+    void setCursorType(CursorType type);
+    void setCursorItemID(int16 itemID);
+    void showCursor(bool shouldShow);
 
 private:
-    void loadFonts();
-    void blitToScreen(const RenderObject &src, Common::Rect dest);
-
-    static int objectComparator(const void *a, const void *b);
+    struct Cursor {
+        Common::Rect bounds;
+        Common::Point hotspot;
+    };
 
     NancyEngine *_engine;
-    Common::SortedArray<RenderObject *> _objects;
 
-    Graphics::Screen _screen;
-    Common::Array<Font> _fonts;
+    // CURS data
+    Common::Array<Cursor> _cursors;
+
+    Common::Rect _primaryVideoInactiveZone;
+    Common::Point _primaryVideoInitialPos;
+
+    Graphics::ManagedSurface _invCursorsSurface;
+
+    CursorType _curCursorType;
+    int16 _curItemID;
+    bool _isInitialized;
 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_GRAPHICS_H
+#endif // NANCY_CURSOR_H

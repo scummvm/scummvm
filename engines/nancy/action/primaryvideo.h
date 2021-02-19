@@ -24,12 +24,21 @@
 #define NANCY_ACTION_PRIMARYVIDEO_H
 
 #include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/renderobject.h"
+
+#include "engines/nancy/video.h"
+
+#include "common/str.h"
+#include "common/array.h"
 
 namespace Nancy {
 
 class NancyEngine;
 
-class PlayPrimaryVideoChan0 : public SceneChange {
+namespace Action {
+
+// ActionRecord subclass that handles all NPC dialog and nancy1's intro video
+class PlayPrimaryVideoChan0 : public SceneChange, public RenderObject {
 
 struct ConditionFlags {
     byte unknown[5];
@@ -49,10 +58,16 @@ struct FlagsStruct {
 
     ConditionType type;
     int16 label;
-    PlayState::Flag flag;
+    NancyFlag flag;
 };
 
 public:
+    PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+    virtual ~PlayPrimaryVideoChan0();
+
+    virtual void init()override;
+    virtual void updateGraphics() override;
+
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
     
@@ -62,7 +77,7 @@ public:
 
     Common::String videoName; // 0x00
     Common::Rect src; // 0x1D
-    Common::Rect dest; // 0x2D
+    // _screenPosition 0x2D
     Common::String text; // 0x3D
 
     Common::String soundName; // 0x619, TODO make a proper soundDesc struct
@@ -79,14 +94,21 @@ public:
     Common::Array<ResponseStruct> responses;
     Common::Array<FlagsStruct> flagsStructs;
 
+    AVFDecoder _decoder;
+
     bool hasDrawnTextbox = false;
     int16 pickedResponse = -1;
 
-private:
-    void assembleText(char *rawCaption, Common::String &output, uint size);
+    // Used to avoid showing first frame of unrelated primary video between scenes
+    static bool isExitingScene;
 
+protected:
+    virtual uint16 getZOrder() const override { return 8; }
+    virtual BlitType getBlitType() const override { return kNoTrans; }
+    virtual bool isViewportRelative() const override { return true; }
 };
 
-}
+} // End of namespace Action
+} // End of namespace Nancy
 
 #endif // NANCY_ACTION_PRIMARYVIDEO_H

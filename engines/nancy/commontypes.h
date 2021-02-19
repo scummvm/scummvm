@@ -20,56 +20,16 @@
  *
  */
 
-#ifndef NANCY_LOGO_H
-#define NANCY_LOGO_H
+#ifndef NANCY_COMMONYPES_H
+#define NANCY_COMMONYPES_H
 
 #include "common/scummsys.h"
 
-namespace Graphics {
-	struct Surface;
-}
-
 namespace Nancy {
 
-class NancyEngine;
-
-class LogoSequence {
-public:
-	LogoSequence(NancyEngine *engine) :
-		_engine(engine),
-		_state(kInit),
-		_runState(kBlit),
-		_startTicks(0),
-		_surf(nullptr) { }
-		
-	void process();
-
-private:
-	void init();
-	void startSound();
-	void run();
-	void stop();
-
-	enum State {
-		kInit,
-		kStartSound,
-		kRun,
-		kStop
-	};
-
-	enum RunState {
-		// First four states are related to testing mode
-		kBlit = 4,
-		kWait
-	};
-
-	NancyEngine *_engine;
-	State _state;
-	RunState _runState;
-	uint _startTicks;
-	Graphics::Surface *_surf;
-};
+enum NancyFlag { kFalse = 1, kTrue = 2 };
+enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_LOGO_H
+#endif // NANCY_COMMONYPES_H

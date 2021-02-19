@@ -20,15 +20,22 @@
  *
  */
 
-#include "engines/nancy/logic.h"
+#include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/recordtypes.h"
 #include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/action/primaryvideo.h"
+#include "engines/nancy/action/secondaryvideo.h"
+#include "engines/nancy/action/staticbitmapanim.h"
+
+#include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/nancy.h"
 
 namespace Nancy {
+namespace Action {
 
 // TODO put this function in a subclass
-ActionRecord *Logic::createActionRecord(uint16 type) {
+ActionRecord *ActionManager::createActionRecord(uint16 type) {
     type -= 0xA;
     switch (type) {
         case 0x00:
@@ -40,7 +47,7 @@ ActionRecord *Logic::createActionRecord(uint16 type) {
         case 0x03:
             return new HotMultiframeMultisceneChange();
         case 0x04:
-            return new Hot1FrSceneChange();
+            return new Hot1FrExitSceneChange();
         case 0x0C:
             return new StartFrameNextScene();
         case 0x14:
@@ -48,17 +55,17 @@ ActionRecord *Logic::createActionRecord(uint16 type) {
         case 0x15:
             return new StartStopPlayerScrolling(); // TODO
         case 0x28:
-            return new PlayPrimaryVideoChan0();
+            return new PlayPrimaryVideoChan0(_engine->scene->getViewport());
         case 0x29:
-            return new PlaySecondaryVideoChan0();
+            return new PlaySecondaryVideo(_engine->scene->getViewport());
         case 0x2A:
-            return new PlaySecondaryVideoChan1();
+            return new PlaySecondaryVideo(_engine->scene->getViewport());
         case 0x2B:
-            return new PlaySecondaryMovie();
+            return new PlaySecondaryMovie(_engine->scene->getViewport());
         case 0x2C:
             return new PlayStaticBitmapAnimation();
         case 0x2D:
-            return new PlayIntStaticBitmapAnimation();
+            return new PlayIntStaticBitmapAnimation(_engine->scene->getViewport());
         case 0x32:
             return new MapCall();
         case 0x33:
@@ -120,7 +127,7 @@ ActionRecord *Logic::createActionRecord(uint16 type) {
         case 0x6F:
             return new RemoveInventoryNoHS();
         case 0x70:
-            return new ShowInventoryItem();
+            return new ShowInventoryItem(_engine->scene->getViewport());
         case 0x8C:
             return new PlayDigiSoundAndDie(); // TODO
         case 0x8D:
@@ -137,4 +144,5 @@ ActionRecord *Logic::createActionRecord(uint16 type) {
     }
 }
 
+} // End of namespace Action
 } // End of namespace Nancy
