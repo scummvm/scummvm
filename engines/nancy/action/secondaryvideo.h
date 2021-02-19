@@ -93,7 +93,7 @@ public:
     PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
     virtual ~PlaySecondaryMovie() { _decoder.close(); }
 
-    virtual void init()override;
+    virtual void init() override;
     virtual void updateGraphics() override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -117,6 +117,7 @@ protected:
     virtual bool isViewportRelative() const override { return true; }
 
     AVFDecoder _decoder;
+    int _curViewportFrame = -1;
 };
 
 } // End of namespace Action
