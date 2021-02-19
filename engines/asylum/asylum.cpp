@@ -294,15 +294,28 @@ void AsylumEngine::playIntro() {
 			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
 			_sound->playSound(introSpeech);
 
+            int8 skip = 0;
 			do {
 				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
-				_eventMan->pollEvent(ev);
+                while(_eventMan->pollEvent(ev)) {
+                    switch (ev.type) {
+                        case Common::EVENT_LBUTTONDOWN:
+                        case Common::EVENT_KEYDOWN:
+                            skip = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
 				_system->delayMillis(100);
 
-			} while (_sound->isPlaying(introSpeech));
-
+			} while (_sound->isPlaying(introSpeech) && !skip);
+            
+            if (_sound->isPlaying(introSpeech)) {
+                _sound->stop(introSpeech);
+            }
 		}
 		_cursor->setForceHide(false);
 		_introPlayed = true;
