@@ -44,12 +44,10 @@ private:
 	AsylumEngine *_vm;
 
 	int32  _start;
-	int32  _ticks;
 	bool   _done;
 	uint32 _spinnerFrameIndex;
 	int32  _spinnerProgress;
 	uint32 _spinnerFrameCount;
-	bool   _showMouseState;
 };
 
 } // End of namespace Asylum
