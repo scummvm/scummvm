@@ -329,7 +329,7 @@ void PrivateEngine::startPoliceBust() {
     _maxNumberClicks = r + 0x10 + (policeIndex * 0xe) / -0x15;
     _sirenWarning = _rnd->getRandomNumber(0x7) + 3;
     _numberClicks = 0;
-    if(_sirenWarning >= _maxNumberClicks)
+    if (_sirenWarning >= _maxNumberClicks)
         _sirenWarning = _maxNumberClicks - 1;
 }
 
