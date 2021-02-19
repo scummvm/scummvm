@@ -20,42 +20,49 @@
  *
  */
 
-#ifndef NANCY_LOGIC_H
-#define NANCY_LOGIC_H
+#ifndef NANCY_UI_SCROLLBAR_H
+#define NANCY_UI_SCROLLBAR_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/renderobject.h"
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/array.h"
-#include "common/func.h"
+#include "common/rect.h"
 
 namespace Nancy {
 
-class NancyEngine;
-class SceneManager;
+struct NancyInput;
 
-class Logic {
-    friend class SceneManager;
+namespace UI {
 
+class Scrollbar : public RenderObject {
 public:
-    Logic(NancyEngine* engine): _engine(engine), ignorePrimaryVideo(false) {}
-    virtual ~Logic() {}
+    Scrollbar(RenderObject &redrawFrom) :
+        RenderObject(redrawFrom),
+        _isClicked(false),
+        _currentPosition(0),
+        _maxDist(0) {}
+    virtual ~Scrollbar() =default;
 
-    bool addNewActionRecord(Common::SeekableReadStream &inputData);
-    void processActionRecords();
-    Common::Array<ActionRecord *> &getActionRecords() { return _records; }
-    ActionRecord * getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
-    void clearActionRecords();
+    void handleInput(NancyInput &input);
 
-    bool ignorePrimaryVideo; // hack
+    void resetPosition();
+    float getPos() const { return _currentPosition; }
 
 protected:
-    virtual ActionRecord *createActionRecord(uint16 type);
-    NancyEngine *_engine;
-    Common::Array<ActionRecord *> _records;
+    virtual uint16 getZOrder() const override { return 9; }
+    virtual BlitType getBlitType() const override { return kTrans; }
+
+    void calculatePosition();
+
+    Common::Point _startPosition;
+    uint _maxDist;
+
+    float _currentPosition;
+
+    bool _isClicked;
+    Common::Point _mousePosOnClick;
 };
 
+} // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_LOGIC_H
+#endif // NANCY_UI_SCROLLBAR_H

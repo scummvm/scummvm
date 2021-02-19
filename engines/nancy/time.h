@@ -31,7 +31,7 @@ namespace Nancy {
 struct Time {
 public:
     Time() { _milliseconds = 0; }
-    Time(uint32 &t) { _milliseconds = t; }
+    Time(const uint32 &t) { _milliseconds = t; }
     Time(const Time &t) =default;
     ~Time() =default;
     Time &operator=(const Time &t)                          { if (this != &t) _milliseconds = t._milliseconds; return *this; }
@@ -67,11 +67,11 @@ public:
     friend bool operator>= (const Time &l, const uint32 &r) { return !(l < r); }
     friend bool operator>= (const uint32 &l, const Time &r) { return !(l < r); }
 
-    uint16 getSeconds()     { return (_milliseconds / 1000) % 60; }
-    uint16 getMinutes()     { return (_milliseconds / 60000) % 60; }
-    uint16 getHours()       { return _milliseconds / 3600000; }
-    // Used for player time
-    uint16 getHours_alt()   { return (_milliseconds / 3600000) % 24; }
+    uint16 getSecondsOnly()     { return (_milliseconds / 1000) % 60; }
+    uint16 getMinutesOnly()     { return (_milliseconds / 60000) % 60; }
+    uint16 getHoursOnly()       { return _milliseconds / 3600000; }
+    
+    uint16 getHours()   { return (_milliseconds / 3600000) % 24; } // Used for player time
     uint16 getDays()        { return _milliseconds / 86400000; } // up to 49.7 days
 
 private:

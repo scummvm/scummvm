@@ -21,12 +21,8 @@
  */
 
 #include "engines/nancy/input.h"
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/scene.h"
-#include "engines/nancy/graphics.h"
 
-#include "common/events.h"
-#include "common/keyboard.h"
+#include "engines/nancy/nancy.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -34,177 +30,95 @@
 
 namespace Nancy {
 
-const int16 InputManager::mapButtonID               = 10000;
-const int16 InputManager::textBoxID                 = 10002;
-const int16 InputManager::textBoxScrollbarID        = 10003;
-const int16 InputManager::helpButtonID              = 10004;
-const int16 InputManager::menuButtonID              = 10005;
-const int16 InputManager::inventoryScrollbarID      = 10006;
-const int16 InputManager::inventoryItemTakeID       = 10007;
-const int16 InputManager::inventoryItemReturnID     = 10008;
-const int16 InputManager::orderingPuzzleID          = 10009;
-const int16 InputManager::orderingPuzzleEndID       = 10010;
-const int16 InputManager::rotatingLockPuzzleUpID    = 10011;
-const int16 InputManager::rotatingLockPuzzleDownID  = 10012;
-const int16 InputManager::rotatingLockPuzzleEndID   = 10013;
-const int16 InputManager::leverPuzzleID             = 10014; // not sure abt the lever ones
-const int16 InputManager::leverPuzzleEndID          = 10015;
-const int16 InputManager::telephoneID               = 10016;
-const int16 InputManager::telephoneEndID            = 10017;
-const int16 InputManager::sliderPuzzleID            = 10018;
-const int16 InputManager::sliderPuzzleEndID         = 10019;
-const int16 InputManager::passwordPuzzleEndID       = 10020;
-
 void InputManager::processEvents() {
     using namespace Common;
-
-    _inputs &= ~(kLeftMouseButtonUp | kRightMouseButtonUp);
-
     Common::Event event;
 
-    // TODO consider adding a keymapper
-    // TODO add debug key combos
+    _inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp);
+
     while (_engine->getEventManager()->pollEvent(event)) {
         switch (event.type) {
+            case EVENT_KEYDOWN:
+                if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
+                    // Launch debug console
+                    _engine->launchConsole = true;
+                } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
+                    // Quit
+                    _engine->quitGame();
+                }
+                break;
             case EVENT_CUSTOM_ENGINE_ACTION_START:
-                // TODO add debug shortcuts
                 switch (event.customType) {
-                    case kNancyActionMoveUp:
-                        _inputs |= kMoveUp;
-                        _engine->sceneManager->movementDirection |= SceneManager::kUp;
-                        break;
-                    case kNancyActionMoveDown:
-                        _inputs |= kMoveDown;
-                        _engine->sceneManager->movementDirection |= SceneManager::kDown;
-                        break;
-                    case kNancyActionMoveLeft:
-                        _inputs |= kMoveLeft;
-                        _engine->sceneManager->movementDirection |= SceneManager::kLeft;
-                        break;
-                    case kNancyActionMoveRight:
-                        _inputs |= kMoveRight;
-                        _engine->sceneManager->movementDirection |= SceneManager::kRight;
-                        break;
-                    case kNancyActionMoveFast:
-                        _inputs |= kMoveFastModifier;
-                        break;
                     case kNancyActionLeftClick:
-                        _inputs |= kLeftMouseButtonDown;
+                        _inputs |= NancyInput::kLeftMouseButtonDown;
+                        _inputs |= NancyInput::kLeftMouseButtonHeld;
                         break;
                     case kNancyActionRightClick:
-                        _inputs |= kRightMouseButtonDown;
+                        _inputs |= NancyInput::kRightMouseButtonDown;
+                        _inputs |= NancyInput::kRightMouseButtonHeld;
+                        break;
+                    case kNancyActionMoveUp:
+                        _inputs |= NancyInput::kMoveUp;
+                        break;
+                    case kNancyActionMoveDown:
+                        _inputs |= NancyInput::kMoveDown;
+                        break;
+                    case kNancyActionMoveLeft:
+                        _inputs |= NancyInput::kMoveLeft;
+                        break;
+                    case kNancyActionMoveRight:
+                        _inputs |= NancyInput::kMoveRight;
+                        break;
+                    case kNancyActionMoveFast:
+                        _inputs |= NancyInput::kMoveFastModifier;
                         break;
                     default:
+                        // TODO handle debug key combos
                         break;
                 }
+
                 break;
             case EVENT_CUSTOM_ENGINE_ACTION_END:
                 switch (event.customType) {
-                    case kNancyActionMoveUp:
-                        _inputs &= ~kMoveUp;
-                        break;
-                    case kNancyActionMoveDown:
-                        _inputs &= ~kMoveDown;
-                        break;
-                    case kNancyActionMoveLeft:
-                        _inputs &= ~kMoveLeft;
-                        break;
-                    case kNancyActionMoveRight:
-                        _inputs &= ~kMoveRight;
-                        break;
-                    case kNancyActionMoveFast:
-                        _inputs &= ~kMoveFastModifier;
-                        break;
                     case kNancyActionLeftClick:
-                        _inputs &= ~kLeftMouseButtonDown;
-                        _inputs |= kLeftMouseButtonUp;
+                        _inputs |= NancyInput::kLeftMouseButtonUp;
+                        _inputs &= ~NancyInput::kLeftMouseButtonHeld;
                         break;
                     case kNancyActionRightClick:
-                        _inputs &= ~kRightMouseButtonDown;
-                        _inputs |= kRightMouseButtonUp;
+                        _inputs |= NancyInput::kRightMouseButtonUp;
+                        _inputs &= ~NancyInput::kRightMouseButtonHeld;
+                        break;
+                    case kNancyActionMoveUp:
+                        _inputs &= ~NancyInput::kMoveUp;
+                        break;
+                    case kNancyActionMoveDown:
+                        _inputs &= ~NancyInput::kMoveDown;
+                        break;
+                    case kNancyActionMoveLeft:
+                        _inputs &= ~NancyInput::kMoveLeft;
+                        break;
+                    case kNancyActionMoveRight:
+                        _inputs &= ~NancyInput::kMoveRight;
+                        break;
+                    case kNancyActionMoveFast:
+                        _inputs &= ~NancyInput::kMoveFastModifier;
                         break;
                     default:
                         break;
                 }
-                break;
-            case EVENT_KEYDOWN: 
-                switch (event.kbd.keycode) {
-                    // Launch debug console
-                    case KEYCODE_d:
-                        if (event.kbd.flags & Common::KBD_CTRL) 
-                            _engine->launchConsole = true;
-                        break;
-                    // Quit
-                    case KEYCODE_q:
-                        if (event.kbd.flags & Common::KBD_CTRL) {
-                            _engine->quitGame();
-                            break;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case EVENT_MOUSEMOVE:
-                // TODO add frameMousePos
+
                 break;
             default:
                 break;
         }
     }
-
-    // Discard conflicting directions
-    byte dir = _engine->sceneManager->movementDirection;
-    if ((dir & SceneManager::kUp) && (dir & SceneManager::kDown)) {
-        _engine->sceneManager->movementDirection &= !(SceneManager::kUp | SceneManager::kDown);
-    }
-    if ((dir & SceneManager::kLeft) && (dir & SceneManager::kRight)) {
-        _engine->sceneManager->movementDirection &= !(SceneManager::kLeft | SceneManager::kRight);
-    }
 }
 
-bool InputManager::getInput(InputManager::InputType type) {
-    return _inputs & type;
-}
-
-void InputManager::clearInput() {
-    _inputs = 0;
-    hoveredElementID = -1;
-}
-
-Common::Point InputManager::getMousePosition() {
-    return _engine->getEventManager()->getMousePos();
-}
-
-void InputManager::setMousePosition(const Common::Point &newPos) {
-    // Hopefully having two mouse move events in the queue won't break my handling code
-    Common::Event newEvent;
-    newEvent.mouse = newPos;
-    newEvent.type = Common::EventType::EVENT_MOUSEMOVE;
-    _engine->getEventManager()->pushEvent(newEvent);
-}
-
-// Passing -1 means keeping the previous value
-// Style 0 is regular, 1 is red highlight, 2 is blue highlight, 4 is red highlight again
-void InputManager::setPointerBitmap(int16 id, int16 style, int16 isHoldingItem) {
-    ZRenderStruct &zr = _engine->graphics->getZRenderStruct("CUR IMAGE CURSOR");
-    
-    if (id != -1)
-        pointerId = id;
-    
-    if (style != -1)
-        pointerStyle = style;
-
-    if (isHoldingItem != -1)
-        itemHeld = (bool)isHoldingItem;
-
-    if (itemHeld) {
-        zr.sourceSurface = &_engine->graphics->_inventoryCursorsSurface;
-    } else {
-        zr.sourceSurface = &_engine->graphics->_object0Surface;
-    }
-
-    zr.sourceRect = cursorsData.rects[pointerId * 4 + pointerStyle];
+NancyInput InputManager::getInput() const {
+    NancyInput ret;
+    ret.mousePos = _engine->getEventManager()->getMousePos();
+    ret.input = _inputs;
+    return ret;
 }
 
 void InputManager::initKeymaps(Common::KeymapArray &keymaps) {

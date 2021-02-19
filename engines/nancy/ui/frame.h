@@ -20,32 +20,27 @@
  *
  */
 
-#include "engines/nancy/menu.h"
-#include "engines/nancy/nancy.h"
+#ifndef NANCY_UI_FRAME_H
+#define NANCY_UI_FRAME_H
 
-#include "graphics/surface.h"
+#include "engines/nancy/renderobject.h"
 
 namespace Nancy {
+namespace UI {
 
-void MainMenu::process() {
-    switch(_state) {
-    case kInit:
-        init();
-        break;
-    case kStartSound:
-        startSound();
-        break;
-    case kRun:
-        run();
-        break;
-    }
-}
+class Frame : public RenderObject {
+public:
+    Frame(NancyEngine *engine) : RenderObject(engine) {}
+    virtual ~Frame() =default;
 
-void MainMenu::init() {
-    _surf = new Graphics::Surface;
-    _menuImage = new Graphics::Surface;
-    _cursor = new Graphics::Surface;
-    
-}
+    virtual void init() override;
 
+protected:
+    virtual uint16 getZOrder() const override { return 0; }
+    virtual BlitType getBlitType() const override { return kNoTrans; }
+};
+
+} // End of namespace UI
 } // End of namespace Nancy
+
+#endif // NANCY_UI_FRAME_H

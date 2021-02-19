@@ -17,28 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef NANCY_DETECTION_H
-#define NANCY_DETECTION_H
+#ifndef NANCY_UTIL_H
+#define NANCY_UTIL_H
 
-#include "engines/advancedDetector.h"
+#include "common/rect.h"
+#include "common/stream.h"
 
 namespace Nancy {
 
-enum GameType {
-	kGameTypeNone = 0,
-	kGameTypeNancy1,
-	kGameTypeNancy2,
-	kGameTypeNancy3
-};
-
-struct NancyGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
-};
+static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
+    inRect.left = stream.readUint32LE();
+    inRect.top = stream.readUint32LE();
+    inRect.right = stream.readUint32LE();
+    inRect.bottom = stream.readUint32LE();
+}
 
 } // End of namespace Nancy
 
-#endif // NANCY_DETECTION_H
+#endif // NANCY_UTIL_H

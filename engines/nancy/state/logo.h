@@ -20,43 +20,59 @@
  *
  */
 
-#ifndef NANCY_MENU_H
-#define NANCY_MENU_H
+#ifndef NANCY_STATE_LOGO_H
+#define NANCY_STATE_LOGO_H
+
+#include "common/scummsys.h"
 
 namespace Graphics {
-struct Surface;
+	struct Surface;
 }
 
 namespace Nancy {
 
 class NancyEngine;
 
-class MainMenu {
-public:
-    MainMenu(NancyEngine *engine) :
-        _engine(engine),
-        _state(kInit),
-        _surf(nullptr) {}
+namespace State {
 
-    void process();
+class Logo {
+public:
+	Logo(NancyEngine *engine) :
+		_engine(engine),
+		_state(kInit),
+		_runState(kBlit),
+		_startTicks(0),
+		_surf(nullptr) { }
+		
+	void process();
 
 private:
-    void init();
-    void startSound();
-    void run();
+	void init();
+	void startSound();
+	void run();
+	void stop();
 
-    enum State {
-        kInit,
-        kStartSound,
-        kRun
-    };
+	enum State {
+		kInit,
+		kStartSound,
+		kRun,
+		kStop
+	};
 
-    NancyEngine *_engine;
-    State _state;
-    Graphics::Surface *_surf;
-    Graphics::Surface *_menuImage;
-    Graphics::Surface *_cursor;
+	enum RunState {
+		// First four states are related to testing mode
+		kBlit = 4,
+		kWait
+	};
+
+	NancyEngine *_engine;
+	State _state;
+	RunState _runState;
+	uint _startTicks;
+	Graphics::Surface *_surf;
 };
+
+} // end of namespace State
 } // End of namespace Nancy
 
-#endif // NANCY_MENU_H
+#endif // NANCY_STATE_LOGO_H

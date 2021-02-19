@@ -20,59 +20,52 @@
  *
  */
 
-#ifndef NANCY_MAP_H
-#define NANCY_MAP_H
+#ifndef NANCY_ACTION_ACTIONMANAGER_H
+#define NANCY_ACTION_ACTIONMANAGER_H
 
-#include "engines/nancy/video.h"
+#include "engines/nancy/action/actionrecord.h"
 
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/array.h"
-#include "common/rect.h"
-
-#include "graphics/surface.h"
+#include "common/func.h"
 
 namespace Nancy {
 
 class NancyEngine;
+struct NancyInput;
 
-class Map {
+namespace State {
+class Scene;
+}
+
+namespace Action {
+
+// The class that handles ActionRecords and their execution
+class ActionManager {
+    friend class Nancy::State::Scene;
+
 public:
-    enum State { kInit, kRun };
-    Map(NancyEngine *engine) : _engine(engine), _state(kInit), _mapID(0) {}
+    ActionManager(Nancy::NancyEngine* engine) :
+        _engine(engine) {}
+    virtual ~ActionManager() {}
 
-    void process();
+    void handleInput(NancyInput &input);
 
-private:
-    struct Location {
-        struct SceneChange {
-            uint16 sceneID = 0;
-            uint16 frameID = 0;
-            uint16 verticalOffset = 0;
-        };
+    void processActionRecords();
+    bool addNewActionRecord(Common::SeekableReadStream &inputData);
+    Common::Array<ActionRecord *> &getActionRecords() { return _records; }
+    ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
+    void clearActionRecords();
 
-        bool isActive = false;
-        Common::Rect hotspot;
-        Common::Array<SceneChange> scenes;
+protected:
+    virtual ActionRecord *createActionRecord(uint16 type);
 
-        Common::Rect labelSrc;
-        Common::Rect labelDest;
-    };
-
-    void init();
-    void run();
-
-    void handleMouse();
-
-    NancyEngine *_engine;
-    State _state;
-    uint16 _mapID;
-    AVFDecoder _decoder;
-    Graphics::Surface _mapImage;
-    Common::Array<Location> _locations;
-
-    Common::Array<Common::String> _ZRenderFilter;
+    Nancy::NancyEngine *_engine;
+    Common::Array<ActionRecord *> _records;
 };
 
+} // End of namespace Action
 } // End of namespace Nancy
 
-#endif
+#endif // NANCY_ACTION_ACTIONMANAGER_H

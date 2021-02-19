@@ -20,10 +20,12 @@
  *
  */
 
-#ifndef NANCY_TEXTBOX_H
-#define NANCY_TEXTBOX_H
+#ifndef NANCY_UI_TEXTBOX_H
+#define NANCY_UI_TEXTBOX_H
 
-#include "engines/nancy/datatypes.h"
+#include "engines/nancy/renderobject.h"
+
+#include "engines/nancy/ui/scrollbar.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -33,54 +35,77 @@
 namespace Nancy {
 
 class NancyEngine;
+class Scene;
+struct NancyInput;
 
-class Textbox {
-    friend class GraphicsManager;
-    friend class SceneManager;
+namespace UI {
 
+class Textbox : public Nancy::RenderObject {
 public:
-    Textbox(NancyEngine *engine) :
-        _engine(engine),
-        _needsUpdate(false),
-        lineNr(0),
+    Textbox(RenderObject &redrawFrom) :
+        RenderObject(redrawFrom),
         _firstLineOffset(0),
         _lineHeight(0),
-        _borderWidth(0) {}
+        _borderWidth(0),
+        _needsTextRedraw(false),
+        _scrollbar(redrawFrom, this),
+        _scrollbarPos(0) {}
+
+    virtual ~Textbox() { _fullSurface.free(); }
     
-    void init();
+    virtual void init() override;
+    virtual void registerGraphics() override;
+    virtual void updateGraphics() override;
+    void handleInput(NancyInput &input);
+
+    void drawTextbox();
     void clear();
 
-    Common::Rect processTextLine(const Common::String &text, uint16 fontID);
-    void processResponse(const Common::String &text, uint16 fontID, uint16 id, Common::String soundName);
+    void addTextLine(const Common::String &text);
+    void onScrollbarPositionChanged(float data);
 
-    int16 getHovered(Common::Point mousePos);
-    void setPosition(float pos);
+    static void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 
-    const Graphics::Surface *getSurface();
+protected:
+    virtual uint16 getZOrder() const override { return 6; }
+    virtual BlitType getBlitType() const override { return kNoTrans; }
 
 private:
     uint16 getInnerHeight();
-    Common::Rect getCharacterSourceRect(char c, uint16 fontID);
-    uint16 getCharacterWidth(char c, uint16 fontID);
-    void drawText(const Common::String &text, uint16 fontID, uint16 left, uint16 bottom, bool color = false);
-    
-private:
+    void onScrollbarMove();
+
     struct Response {
-        Common::String soundName;
+        Common::String text;
         Common::Rect hotspot;
     };
-    
-    NancyEngine *_engine;
-    Common::String _formattedText;
-    bool _needsUpdate;
-    Common::Array<Font> _fonts;
-    Graphics::ManagedSurface _surface;
-    uint16 lineNr;
+
+    class TextboxScrollbar : public Scrollbar {
+    public:
+        TextboxScrollbar(RenderObject &redrawFrom, Textbox *parent) :
+            Scrollbar(redrawFrom),
+            _parent(parent) {}
+        ~TextboxScrollbar() =default;
+
+        virtual void init() override;
+        Textbox *_parent;
+    };
+
+    Graphics::ManagedSurface _fullSurface;
+
+    TextboxScrollbar _scrollbar;
+
+    Common::String _mainString;
     Common::Array<Response> _responses;
-    
+
+    Common::Rect _scrollbarSourceBounds;
+    Common::Point _scrollbarDefaultDest;
     uint16 _firstLineOffset;
     uint16 _lineHeight;
     uint16 _borderWidth;
+    uint16 _numLines;
+
+    bool _needsTextRedraw;
+    float _scrollbarPos;
 
     static const Common::String beginToken;
     static const Common::String endToken;
@@ -91,6 +116,7 @@ private:
 
 };
 
+} // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_TEXTBOX_H
+#endif // NANCY_UI_TEXTBOX_H

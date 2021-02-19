@@ -1,24 +1,32 @@
 MODULE := engines/nancy
 
 MODULE_OBJS = \
-  action/recordtypes.o \
+  action/actionmanager.o \
   action/arfactory_v1.o \
   action/primaryvideo.o \
+  action/recordtypes.o \
+  action/secondaryvideo.o \
+  action/staticbitmapanim.o \
+  ui/frame.o \
+  ui/inventorybox.o \
+  ui/scrollbar.o \
+  ui/textbox.o \
+  ui/viewport.o \
+  state/logo.o \
+  state/map.o \
+  state/scene.o\
   audio.o \
   console.o \
-  datatypes.o \
+  cursor.o \
   decompress.o \
+  font.o \
   graphics.o \
   iff.o \
   input.o \
-  logic.o \
-  logo.o \
-  map.o \
   metaengine.o \
   nancy.o \
+  renderobject.o \
   resource.o \
-  scene.o \
-  textbox.o \
   video.o
 
 # This module can be built as a plugin

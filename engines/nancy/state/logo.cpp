@@ -20,7 +20,8 @@
  *
  */
 
-#include "engines/nancy/logo.h"
+#include "engines/nancy/state/logo.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/audio.h"
@@ -29,6 +30,7 @@
 #include "common/error.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/str.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -36,8 +38,9 @@
 #include "graphics/surface.h"
 
 namespace Nancy {
+namespace State {
 
-void LogoSequence::process() {
+void Logo::process() {
 	switch (_state) {
 	case kInit:
 		init();
@@ -53,17 +56,16 @@ void LogoSequence::process() {
 	}
 }
 
-void LogoSequence::init() {
+void Logo::init() {
 	_surf = new Graphics::Surface;
 
 	if (!_engine->_res->loadImage("ciftree", _engine->_logos[0].name, *_surf))
 		error("Failed to load %s", _engine->_logos[0].name.c_str());
 
 	_state = kStartSound;
-	_engine->_gameFlow.previousGameState = NancyEngine::kLogo;
 }
 
-void LogoSequence::startSound() {
+void Logo::startSound() {
 	Common::SeekableReadStream *msnd = _engine->getBootChunkStream("MSND");
 	char name[10];
 	msnd->seek(0);
@@ -76,19 +78,19 @@ void LogoSequence::startSound() {
 	_state = kRun;
 }
 
-void LogoSequence::run() {
+void Logo::run() {
 	switch (_runState) {
 	case kBlit:
 		_engine->_system->copyRectToScreen(_surf->getPixels(), _surf->pitch, 0, 0, _surf->w, _surf->h);
 		_runState = kWait;
 		break;
 	case kWait:
-		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput(InputManager::kLeftMouseButtonDown)))
+		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput().input & NancyInput::kLeftMouseButtonDown))
 			_state = kStop;
 	}
 }
 
-void LogoSequence::stop() {
+void Logo::stop() {
 	_surf->free();
 	delete _surf;
 
@@ -96,8 +98,9 @@ void LogoSequence::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	_engine->_gameFlow.minGameState = NancyEngine::kScene;
+	_engine->setGameState(NancyEngine::kScene);
 	_engine->_system->fillScreen(0);
 }
 
+} // End of namespace State
 } // End of namespace Nancy

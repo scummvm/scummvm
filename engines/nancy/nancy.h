@@ -25,10 +25,11 @@
 
 #include "nancy/console.h"
 #include "nancy/detection.h"
-#include "nancy/playstate.h"
+#include "nancy/time.h"
 
 #include "engines/engine.h"
 #include "common/file.h"
+#include "common/str.h"
 
 namespace Common {
 class RandomSource;
@@ -64,33 +65,47 @@ struct NancyGameDescription;
 
 class ResourceManager;
 class IFF;
-class LogoSequence;
-class SceneManager;
-class Map;
-class Logic;
-class GraphicsManager;
 class InputManager;
 class SoundManager;
+class GraphicsManager;
+class CursorManager;
+
+namespace State {
+class Logo;
+class Scene;
+class Map;
+}
 
 class NancyEngine : public Engine {
 public:
-	friend class Logic;
-	friend class LogoSequence;
-	friend class SceneManager;
 	friend class NancyConsole;
-	friend class Map;
+	friend class State::Logo; // TODO
+
+	enum GameState {
+		kBoot,
+		kPartnerLogo,
+		kLogo,
+		kCredits,
+		kMap,
+		kMainMenu,
+		kLoadSave,
+		kSetup,
+		// unknown/invalid
+		kHelp,
+		kScene,
+		// CD change
+		kCheat,
+		kQuit,
+		// regain focus
+		kIdle,
+		kReloadSave
+	};
 
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
 
-	OSystem *_system;
-
 	GUI::Debugger *getDebugger();
 
-	Common::RandomSource *_rnd;
-
-
-	const NancyGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 
@@ -107,22 +122,36 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
-	bool launchConsole;
-	
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
+	
+	void setGameState(GameState state);
+	GameState getGameState() const { return _gameFlow.minGameState; }
+	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
 
 	// Managers
 	ResourceManager *_res;
-	Logic *logic;
-	SceneManager *sceneManager;
-	Map *map;
-	GraphicsManager *graphics;
+	GraphicsManager *graphicsManager;
+	CursorManager *cursorManager;
 	InputManager *input;
 	SoundManager *sound;
+
+	// States
+	State::Logo *logo;
+	State::Scene *scene;
+	State::Map *map;
 	
-	// Contains all player data
-    PlayState playState;
+	OSystem *_system;
+	Common::RandomSource *_rnd;
+	const NancyGameDescription *_gameDescription;
+	bool launchConsole;
+	
+	uint16 firstSceneID;
+	uint16 startTimeHours;
+
+	bool overrideMovementTimeDeltas;
+	Time slowMovementTimeDelta;
+	Time fastMovementTimeDelta;
 
 protected:
 	// Engine APIs
@@ -143,28 +172,11 @@ protected:
 		uint16 height;
 	};
 
-	enum GameState {
-		kBoot,
-		kPartnerLogo, // v2 only
-		kLogo,
-		kCredits,
-		kMap, // v0, v1 only
-		kMainMenu,
-		kLoadSave,
-		kSetup,
-		// unknown/invalid
-		kHelp,
-		kScene,
-		// CD change
-		kCheat,
-		kQuit,
-		// regain focus
-		kIdle
-	};
 
 	struct GameFlow {
 		GameState minGameState;
 		GameState previousGameState;
+		bool justChanged = false;
 	};
 
 	typedef Common::Array<Image> ImageList;
@@ -172,9 +184,7 @@ protected:
 	ImageList _logos;
 	ImageList _frames;
 	ImageList _objects;
-	uint16 _firstSceneID;
 	int32 _fontSize;
-	GameFlow _gameFlow;
 
 	void preloadCals(const IFF &boot);
 	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
@@ -183,14 +193,16 @@ protected:
 	virtual uint getFilenameLen() const = 0;
 	virtual void readBootSummary(const IFF &boot) = 0;
 
+
 private:
 	static NancyEngine *s_Engine;
+
+	GameFlow _gameFlow;
 
 	NancyConsole *_console;
 	GameType _gameType;
 	Common::Platform _platform;
 
-	LogoSequence *_logoSequence;
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 };
 

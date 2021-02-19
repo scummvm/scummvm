@@ -719,9 +719,6 @@ bool ResourceManager::loadImage(const Common::String &treeName, const Common::St
 	surf.w = info.width;
 	surf.h = info.height;
 	surf.pitch = info.pitch;
-	// Surface's conversion functions do not work the exact way as this
-	//use after fixing pixel format
-	//colorCorrect(buf, info.size);
 	surf.setPixels(buf);
 	surf.format = GraphicsManager::pixelFormat;
 	return true;
@@ -756,16 +753,6 @@ Common::String ResourceManager::getCifDescription(const Common::String &treeName
 	desc += Common::String::format("Height: %i\n", info.height);
 	desc += Common::String::format("Bit depth: %i\n", info.depth);
 	return desc;
-}
-
-void ResourceManager::colorCorrect(byte *buf, uint size) {
-	byte *last = buf + size;
-	for (byte *cur = buf; cur < last; cur += 2) {
-		uint16 pre = *cur | (*(cur+1) << 8);
-		uint16 post = ((pre & 0xFFE0) << 1) | (pre & 0x1F);
-		*cur = post & 0xFF;
-		*(cur+1) = post >> 8;
-	}
 }
 
 } // End of namespace Nancy

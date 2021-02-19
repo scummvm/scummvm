@@ -23,7 +23,10 @@
 #ifndef NANCY_ACTION_ACTIONRECORD_H
 #define NANCY_ACTION_ACTIONRECORD_H
 
+#include "engines/nancy/input.h"
+
 #include "engines/nancy/time.h"
+#include "engines/nancy/cursor.h"
 
 #include "common/str.h"
 #include "common/stream.h"
@@ -32,6 +35,8 @@
 namespace Nancy {
 
 class NancyEngine;
+
+namespace Action {
     
 enum DependencyType : byte {
     kNone               = 0,
@@ -51,6 +56,8 @@ enum DependencyType : byte {
     kDifficultyLevel    = 15
 };
 
+// Describes a condition that needs to be fulfilled before the
+// action record can be executed
 struct DependencyRecord {
     DependencyType type;    // 0x00
     byte label;             // 0x01
@@ -60,58 +67,64 @@ struct DependencyRecord {
     int16 minutes;          // 0x06
     int16 seconds;          // 0x08
     int16 milliseconds;     // 0x0A
+
+    bool satisfied;
+    Time timeData;
 };
 
+// Describes a single action that will be performed on every update.
+// Supports conditional execution (via dependencies) and can have
+// clickable hotspots on screen.
+// Does _not_ support drawing to screen, records that need this functionality
+// will have to also subclass RenderObject.
 class ActionRecord {
+    friend class ActionManager;
 public:
     enum ExecutionState { kBegin, kRun, kActionTrigger };
     ActionRecord() :
         type(0),
         execType(0),
-        dependencies(nullptr),
-        numDependencies(0),
         isActive(0),
-        satisfiedDependencies(nullptr),
-        timers(nullptr),
-        orFlags(nullptr),
         isDone(false),
         hasHotspot(false),
         state(ExecutionState::kBegin),
         days(-1),
         itemRequired(-1) {}
-    virtual ~ActionRecord() { delete[] dependencies; delete rawData; delete[] satisfiedDependencies; delete[] timers; delete orFlags; }
+    virtual ~ActionRecord() {}
 
     virtual uint16 readData(Common::SeekableReadStream &stream) =0;
     virtual void execute(NancyEngine *engine) {};
 
+    virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
+    virtual void handleInput(NancyInput &input) {}
+
 protected:
-    // TODO these are temporary until every data class is figured out
+    // TODO this is temporary until every record type is figured out
     uint16 readRaw(Common::SeekableReadStream &stream, uint16 bytes) {
-        rawData = new byte[bytes];
-        stream.read(rawData, bytes);
+        stream.skip(bytes);
         return bytes;
     }
-    byte *rawData = nullptr;
 
 public:
-    Common::String description;     // 0x00
-    byte type;                      // 0x30
-    byte execType;                  // 0x31
+    Common::String description;                     // 0x00
+    byte type;                                      // 0x30
+    byte execType;                                  // 0x31
     // 0x32 data
-    DependencyRecord *dependencies; // 0x36
-    byte numDependencies;           // 0x3A
-    bool isActive;                  // 0x3B
-    bool *satisfiedDependencies;    // 0x3C
-    Time *timers;                   // 0x48
-    bool *orFlags;                  // 0x78
-    bool isDone;                    // 0x84
-    bool hasHotspot;                // 0x85
-    Common::Rect hotspot;           // 0x89
-    ExecutionState state;           // 0x91
-    int16 days;                     // 0x95
-    int8 itemRequired;              // 0x97
+    Common::Array<DependencyRecord> dependencies;   // 0x36
+    // 0x3A numDependencies
+    bool isActive;                                  // 0x3B
+    // 0x3C satisfiedDependencies[] 
+    // 0x48 timers[]
+    // 0x78 orFlags[]
+    bool isDone;                                    // 0x84
+    bool hasHotspot;                                // 0x85
+    Common::Rect hotspot;                           // 0x89
+    ExecutionState state;                           // 0x91
+    int16 days;                                     // 0x95
+    int8 itemRequired;                              // 0x97
 };
 
+} // End of namespace Action
 } // End of namespace Nancy
 
 #endif // NANCY_ACTION_ACTIONRECORD_H

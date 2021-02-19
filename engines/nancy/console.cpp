@@ -26,7 +26,7 @@
 #include "engines/nancy/video.h"
 #include "engines/nancy/audio.h"
 #include "engines/nancy/iff.h"
-#include "engines/nancy/scene.h"
+#include "engines/nancy/state/scene.h"
 
 #include "common/system.h"
 #include "common/events.h"
@@ -301,11 +301,8 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->sceneManager->_sceneID = (uint16)atoi(argv[1]);
-	_vm->playState.queuedViewFrame = 0;
-	_vm->playState.queuedMaxVerticalScroll = 0;
-	_vm->sceneManager->doNotStartSound = false;
-	_vm->sceneManager->_state = SceneManager::kLoadNew;
+	_vm->scene->changeScene((uint16)atoi(argv[1]), 0, 0, false);
+	_vm->scene->_state = State::Scene::kLoadNew;
 	return cmdExit(0, 0);
 }
 
@@ -315,7 +312,7 @@ bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Scene: %u, Frame: %i \n", _vm->sceneManager->_sceneID, _vm->playState.currentViewFrame);
+	debugPrintf("Scene: %u, Frame: %i \n", _vm->scene->getSceneInfo().sceneID, _vm->scene->getSceneInfo().frameID);
 	return true;
 }
 

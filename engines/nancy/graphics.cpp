@@ -21,509 +21,123 @@
  */
 
 #include "engines/nancy/graphics.h"
+
+#include "engines/nancy/renderobject.h"
 #include "engines/nancy/resource.h"
-#include "engines/nancy/action/recordtypes.h"
-#include "engines/nancy/scene.h"
-
-#include "common/error.h"
-#include "common/system.h"
-
-#include "graphics/managed_surface.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/viewport.h"
 
 namespace Nancy {
 
-// TODO the original engine uses a sixth byte for the green; 
-// so this should be Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)
-// and transColor should be 0x7C0
-// so the colors are gonna be slightly wrong for now
-//const Graphics::PixelFormat GraphicsManager::pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-//const uint GraphicsManager::transColor = 0x7C0;
 const Graphics::PixelFormat GraphicsManager::pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 const uint GraphicsManager::transColor = 0x3E0;
 
-
-GraphicsManager::GraphicsManager(NancyEngine *engine) :
-        _engine(engine),
-        _textbox(engine) {
+void GraphicsManager::init() {
     _screen.create(640, 480, pixelFormat);
-}
+    _screen.setTransparentColor(transColor); 
 
-void GraphicsManager::init() {  
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("VIEW");
-    viewportDesc.read(*chunk);
-    uint32 width = viewportDesc.destination.right - viewportDesc.destination.left;
-    uint32 height = viewportDesc.destination.bottom - viewportDesc.destination.top;
-    _background.create(width, height, pixelFormat);
+    Graphics::Surface surf;
+    _engine->_res->loadImage("ciftree", "OBJECT0", surf);
+    object0.create(surf.w, surf.h, surf.format);
+    object0.blitFrom(surf, Common::Point(0, 0));
 
-    _textbox.init();
-}
-
-GraphicsManager::~GraphicsManager() {
-    _background.free();
-    _screen.free();
-    _primaryFrameSurface.free();
-    _object0Surface.free();
-    _inventoryBoxIconsSurface.free();
-    _inventoryCursorsSurface.free();
-    _inventoryBitmapSurface.free();
-    _object0Surface.free();
-    _genericSurface.free();
-
-    _secMovieSurface.free();
-    _primaryVideoSurface.free();
-
-
-    for (auto st : _ZRender) {
-        delete st._value.renderFunction;
+    Common::SeekableReadStream *fontChunk = _engine->getBootChunkStream("FONT");
+    while(fontChunk->pos() != fontChunk->size()) {
+        _fonts.push_back(Font());
+        _fonts.back().read(*fontChunk, _engine);
     }
 }
 
-void GraphicsManager::clearZRenderStruct(Common::String name) {
-    _ZRender.erase(name);
-}
-
-void GraphicsManager::clearZRenderStructs() {
-    _ZRender.clear();
-}
-
-ZRenderStruct &GraphicsManager::getZRenderStruct(Common::String name) {
-    // Creates a new struct if one didn't exist before
-    return _ZRender[name];
-}
-
-Common::String &GraphicsManager::initZRenderStruct(char const *name,
-                                        uint32 z,
-                                        bool isActive,
-                                        ZRenderStruct::BltType bltType,
-                                        Graphics::Surface *surface,
-                                        RenderFunction *func,
-                                        Common::Rect *sourceRect,
-                                        Common::Rect *destRect ) {
-    clearZRenderStruct(name);
-    ZRenderStruct &st = getZRenderStruct(name);
-    st.name = name;
-    st.z = z;
-    st.isActive = isActive;
-    st.isInitialized = true;
-    st.bltType = bltType;
-    st.sourceSurface = surface;
-    if (sourceRect)
-        st.sourceRect = *sourceRect;
-    else st.sourceRect = Common::Rect();
-    if (destRect)
-        st.destRect = *destRect;
-    else st.destRect = Common::Rect();
-    st.renderFunction = func;
-
-    return st.name;
-}
-
-#define READ_RECT(where, x) chunk->seek(x); \
-                            where->left = chunk->readUint32LE(); \
-                            where->top = chunk->readUint32LE(); \
-                            where->right = chunk->readUint32LE(); \
-                            where->bottom = chunk->readUint32LE();
-
-// TODO nancy1 only, move to subclass whenever we support multiple games
-// TODO most of these are wrong and/or incomplete
-// The original engine uses dirty rectangles for optimization and marks
-// their location with zrender structs whose names start with RES.
-// I'm using a more naive implementation where everything is redrawn every frame
-// for code simplicity, but that can be changed in the future if needed
-void GraphicsManager::initSceneZRenderStructs(Common::Array<Common::String> &outNames) {
-    Common::Rect *source = new Common::Rect();
-    Common::Rect *dest = new Common::Rect();
-    Common::SeekableReadStream *chunk = nullptr;
-    
-
-    chunk = _engine->getBootChunkStream("MENU");
-    READ_RECT(source, 16)
-    // Skip the custom rendering function since we're not doing dirty rectangles
-    outNames.push_back(initZRenderStruct(  "FRAME", 1, true, ZRenderStruct::kNoTrans, &_primaryFrameSurface,
-                        nullptr, source, source));
-    outNames.push_back(initZRenderStruct(  "CUR IMAGE CURSOR", 11, true, ZRenderStruct::kTrans, &_object0Surface));
-
-    chunk = _engine->getBootChunkStream("TBOX");
-    READ_RECT(source, 0)
-    outNames.push_back(initZRenderStruct(  "CUR TB BAT SLIDER", 9, true, ZRenderStruct::kTrans,
-                        &_object0Surface, nullptr, source, nullptr));
-
-    chunk = _engine->getBootChunkStream("BSUM");
-    READ_RECT(dest, 356)
-    outNames.push_back(initZRenderStruct(  "FRAME TB SURF", 6, false, ZRenderStruct::kNoTrans,
-                        nullptr, nullptr, nullptr, dest));
-    getZRenderStruct("FRAME TB SURF").managedSource = &_textbox._surface;
-
-    READ_RECT(source, 388)
-    READ_RECT(dest, 420)
-    outNames.push_back(initZRenderStruct(  "MENU BUT DN", 5, false, ZRenderStruct::kTrans,
-                        &_object0Surface, nullptr, source, dest));
-
-    READ_RECT(source, 404)
-    READ_RECT(dest, 436)
-    outNames.push_back(initZRenderStruct(  "HELP BUT DN", 5, false, ZRenderStruct::kTrans,
-                        &_object0Surface, nullptr, source, dest));
-
-    chunk = _engine->getBootChunkStream("INV");
-    READ_RECT(source, 0)
-    outNames.push_back(initZRenderStruct(  "CUR INV SLIDER", 9, true, ZRenderStruct::kTrans,
-                         &_object0Surface, nullptr, source, nullptr));
-
-    outNames.push_back(initZRenderStruct(  "FRAME INV BOX", 6, true, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderFrameInvBox)));
-    
-    outNames.push_back(initZRenderStruct(  "INV BITMAP", 9, false, ZRenderStruct::kNoTrans, &_inventoryBitmapSurface));
-    outNames.push_back(initZRenderStruct(  "PRIMARY VIDEO", 8, false, ZRenderStruct::kNoTrans, &_primaryVideoSurface,
-                        new RenderFunction(this, &GraphicsManager::renderPrimaryVideo)));
-    outNames.push_back(initZRenderStruct(  "SEC VIDEO 0", 8, false, ZRenderStruct::kTrans, &channels[0].surf));
-    outNames.push_back(initZRenderStruct(  "SEC VIDEO 1", 8, false, ZRenderStruct::kTrans, &channels[1].surf));
-    outNames.push_back(initZRenderStruct(  "SEC MOVIE", 8, false, ZRenderStruct::kNoTrans, &_secMovieSurface));
-    outNames.push_back(initZRenderStruct(  "ORDERING PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderOrderingPuzzle)));
-    outNames.push_back(initZRenderStruct(  "ROTATING LOCK PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderRotatingLockPuzzle)));
-    outNames.push_back(initZRenderStruct(  "LEVER PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderLeverPuzzle)));
-    outNames.push_back(initZRenderStruct(  "TELEPHONE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderTelephone)));
-    outNames.push_back(initZRenderStruct(  "SLIDER PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderSliderPuzzle)));
-    outNames.push_back(initZRenderStruct(  "PASSWORD PUZZLE", 7, false, ZRenderStruct::kNoTrans, nullptr,
-                        new RenderFunction(this, &GraphicsManager::renderPasswordPuzzle)));
-
-    // Moved here from SceneManager::load(), should be ok
-    outNames.push_back(initZRenderStruct(  "VIEWPORT AVF", 6, true, ZRenderStruct::kNoTrans,
-                        &_background, nullptr, &viewportDesc.source, &viewportDesc.destination));
-
-    // Moved from PlayIntStaticBitmap
-    outNames.push_back(initZRenderStruct(  "STATIC BITMAP ANIMATION", 7, false, ZRenderStruct::kNoTrans,
-                        &_genericSurface));
-
-
-    delete source;
-    delete dest;
-}
-
-void GraphicsManager::initMapRenderStructs(Common::Array<Common::String> &outNames) {
-    Common::Rect *src = new Common::Rect();
-    Common::Rect *dest = new Common::Rect();
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
-
-    outNames.push_back("FRAME");
-    outNames.push_back("VIEWPORT AVF"); // Replaces MAP AVF
-    outNames.push_back("CUR IMAGE CURSOR"); // Replaces CUR MAP CURSOR
-    outNames.push_back("CUR TB BAT SLIDER");
-    outNames.push_back("CUR INV SLIDER");
-    outNames.push_back(initZRenderStruct("MAP LABELS", 7, true, ZRenderStruct::kTrans, &_object0Surface));
-    READ_RECT(src, 0x7A);
-    READ_RECT(dest, 0x8A);
-    outNames.push_back(initZRenderStruct("MAP ANIM", 9, true, ZRenderStruct::kNoTrans, &_object0Surface,
-                        nullptr, src, dest));
-
-    READ_RECT(src, 0x58)
-    getZRenderStruct("VIEWPORT AVF").sourceRect = *src;
-
-    delete src;
-    delete dest;
-}   
-
-#undef READ_RECT
-
-void GraphicsManager::renderDisplay() {
-    // Construct a list containing every struct and pass it along
-    Common::Array<Common::String> array;
-    for (auto i : _ZRender) {
-        array.push_back(i._key);
+void GraphicsManager::draw() {
+    // First go through all objects and update them
+    // Then add dirty rects to layers below if transparent
+    for (auto it : _objects) {
+        RenderObject &current = *it;
+        current.updateGraphics();
     }
 
-    renderDisplay(array);
-}
+    Common::Array<Common::Rect> drawn;
 
-void GraphicsManager::renderDisplay(Common::Array<Common::String> ids) {
-    for (uint currentZ = _startingZ; currentZ < 12; ++currentZ) {
-        for (uint i = 0; i < ids.size(); ++i) {
-            ZRenderStruct &current = getZRenderStruct(ids[i]);
-            if (current.isActive && current.isInitialized && current.z == currentZ) {
-                if (current.renderFunction && current.renderFunction->isValid()) {
-                    current.renderFunction->operator()();
-                }
-                else {
-                    switch (current.bltType) {
-                        // making some assumptions here
-                        case ZRenderStruct::kNoTrans: {
-                            Common::Point dest(current.destRect.left, current.destRect.top);
-                            if (current.sourceSurface) {
-                                _screen.blitFrom(*current.sourceSurface, current.sourceRect, dest);
-                            } else {
-                                _screen.blitFrom(*current.managedSource, current.sourceRect, dest);
-                            }
-                            break;
-                        }
-                        case ZRenderStruct::kTrans: {
-                            Common::Point dest(current.destRect.left, current.destRect.top);
-                            if (current.sourceSurface) {
-                                _screen.transBlitFrom(*current.sourceSurface, current.sourceRect, dest, transColor);
-                            } else {
-                                _screen.transBlitFrom(*current.managedSource, current.sourceRect, dest, transColor);
-                            }
-                            break;
-                        }
-                        default:
-                            error("Bad ZRender Blt type!");
-                    }
+    for (auto it : _objects) {
+        RenderObject &current = *it;
+
+        if (current._isVisible && current._needsRedraw) {
+            // object is visible and updated
+
+            if (current._redrawFrom) {
+                if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
+                    // Redraw previous location if moved
+                    blitToScreen(*current._redrawFrom, current.getPreviousScreenPosition());
                 }
 
-                // Current struct has been rendered, remove from list
-                ids.remove_at(i);
-                --i;
+                if (current.getBlitType() == RenderObject::kTrans) {
+                    // Redraw below if transparent
+                    blitToScreen(*current._redrawFrom, current.getScreenPosition());
+                }
             }
+
+            // Draw the object itself
+            blitToScreen(current, current.getScreenPosition());
+        } else if (!current._isVisible && current._needsRedraw && current._redrawFrom && !current.getPreviousScreenPosition().isEmpty()) {
+            // Object just turned invisible, redraw below
+            blitToScreen(*current._redrawFrom, current.getPreviousScreenPosition());
         }
+
+        current._needsRedraw = false;
+        current._previousScreenPosition = current._screenPosition;
     }
+
+    // Draw the screen
     _screen.update();
 }
 
-void GraphicsManager::loadBackgroundVideo(const Common::String &filename) {
-    if (_videoDecoder.isVideoLoaded()) {
-        _videoDecoder.close();
-    }
-    _videoDecoder.loadFile(filename + ".avf");
+void GraphicsManager::addObject(RenderObject *object) {
+    _objects.insert(object);
 }
 
-const Graphics::Surface *GraphicsManager::getBackgroundFrame(uint16 frameId)  {
-    if (!_videoDecoder.isVideoLoaded()) {
-        error("No video loaded");
-        return nullptr;
+void GraphicsManager::removeObject(RenderObject *object) {
+    for (auto &r : _objects) {
+        if (r == object) {
+            _objects.erase(&r);
+        }
     }
-    return _videoDecoder.decodeFrame(frameId);
 }
 
-uint32 GraphicsManager::getBackgroundFrameCount() {
-    return _videoDecoder.getFrameCount();
+void GraphicsManager::clearObjects() {
+    _objects.clear();
 }
 
-uint32 GraphicsManager::getBackgroundWidth() {
-    return _videoDecoder.getWidth();
-}
-
-uint32 GraphicsManager::getBackgroundHeight() {
-    return _videoDecoder.getHeight();
-}
-
-void GraphicsManager::loadSecondaryVideo(uint channel, Common::String &filename, PlaySecondaryVideo *record) {
-    AVFDecoder &decoder = channels[channel].decoder;
-    if (decoder.isVideoLoaded()) {
-        decoder.close();
-    }
-    decoder.loadFile(filename + ".avf");
-    channels[channel].record = record;
-}
-
-void GraphicsManager::setupSecondaryVideo(uint channel, uint16 begin, uint16 end, bool loop) {
-    channels[channel].beginFrame = begin;
-    channels[channel].endFrame = end;
-    channels[channel].loop = loop;
-    channels[channel].decoder.seekToFrame(begin);
-}
-
-void GraphicsManager::playSecondaryVideo(uint channel) {
-    AVFDecoder &decoder = channels[channel].decoder;
-    VideoChannel &chan = channels[channel];
-    if (!decoder.isVideoLoaded()) {
-        return;
-    }
-
-    // toggle between normal and reverse playback if needed
-    bool isReversed = chan.endFrame < chan.beginFrame;
-    bool wasReversed = decoder.getRate() < 0;
-    if (isReversed != wasReversed) {
-        decoder.setRate(-decoder.getRate());
-    }
-
-    if (!decoder.isPlaying()) {
-        decoder.start();
-        decoder.seekToFrame(chan.beginFrame);
-        
-        chan.surf.w = decoder.getWidth();
-        chan.surf.h = decoder.getHeight();
-        chan.surf.format = decoder.getPixelFormat();
-    }
-
-
-    if (decoder.needsUpdate()) {
-        chan.surf = *decoder.decodeNextFrame();
-    }
+void GraphicsManager::loadFonts() {
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("FONT");
     
-    // TODO loop is choppy and repeats a frame
-    if (decoder.getCurFrame() == chan.endFrame || decoder.endOfVideo()) {
-        if (chan.record->hoverState == PlaySecondaryVideo::kEndHover) {
-            chan.record->hoverState = PlaySecondaryVideo::kEndHoverDone;
-        }
-
-        if (chan.loop) {
-            decoder.seekToFrame(chan.beginFrame);
-        }
+    chunk->seek(0);
+    while (chunk->pos() < chunk->size() - 1) {
+        _fonts.push_back(Font());
+        _fonts.back().read(*chunk, _engine);
     }
 }
 
-void GraphicsManager::stopSecondaryVideo(uint channel) {
-    channels[channel].decoder.stop();
-}
-
-void GraphicsManager::loadSecondaryMovie(Common::String &filename) {
-    if (_secMovieDecoder.isVideoLoaded()) {
-        _secMovieDecoder.close();
-    }
-    _secMovieDecoder.loadFile(filename + ".avf");
-}
-
-bool GraphicsManager::playSecondaryMovie(uint16 &outFrameNr) {
-    if (!_secMovieDecoder.isPlaying()) {
-        _secMovieDecoder.start();
-        
-        _secMovieSurface.w = _secMovieDecoder.getWidth();
-        _secMovieSurface.h = _secMovieDecoder.getHeight();
-        _secMovieSurface.format = _secMovieDecoder.getPixelFormat();
-    }
-
-    outFrameNr = _secMovieDecoder.getCurFrame();
-    if (_secMovieDecoder.needsUpdate()) {
-        _secMovieSurface = *_secMovieDecoder.decodeNextFrame();
-        return true;
-    }
-
-    return false;
-}
-
-// Called when the order has changed
-void GraphicsManager::updateInvBox() {
-    Inventory &inventoryDesc = _engine->sceneManager->inventoryDesc;
-    for (uint i = 0; i < 4; ++i) {
-        if (i < inventoryBoxDesc.itemsOrder.size()) {
-            uint oi = inventoryBoxDesc.itemsOrder.size() - i - 1;
-            inventoryBoxDesc.onScreenItems[i].itemId = inventoryBoxDesc.itemsOrder[oi];
-            inventoryBoxDesc.onScreenItems[i].source = inventoryDesc.items[inventoryBoxDesc.itemsOrder[oi]].sourceRect;
-        } else {
-            inventoryBoxDesc.onScreenItems[i].itemId = -1;
-        }
-    }
-
-    // If size is 0 or 1, trigger the blinds closing/opening animation
-    if (inventoryBoxDesc.itemsOrder.size() < 2) {
-        inventoryBoxDesc.nextFrameTime = _engine->getTotalPlayTime() + inventoryDesc.shadesFrameTime;
+// Draw a given screen-space rectangle to the screen
+void GraphicsManager::blitToScreen(const RenderObject &src, Common::Rect screenRect) {
+    Common::Point pointDest(screenRect.left, screenRect.top);
+    if (src.getBlitType() == RenderObject::kNoTrans) {
+        _screen.blitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest);
+    } else if (src.getBlitType() == RenderObject::kTrans) {
+        _screen.transBlitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest, transColor);
     }
 }
 
-void GraphicsManager::renderFrame() {
-    ZRenderStruct &zr = getZRenderStruct("FRAME");
-    Common::Point dest(zr.destRect.left, zr.destRect.top);
-    _screen.blitFrom(*zr.sourceSurface, zr.sourceRect, dest);
-
-    // not sure why we do this
-    _numTimesRenderedFrame += 1;
-    if (_numTimesRenderedFrame > 1) {
-        _startingZ = 2;
-        _numTimesRenderedFrame = 0;
+int GraphicsManager::objectComparator(const void *a, const void *b) {
+	if (((const RenderObject*)a)->getZOrder() < ((const RenderObject*)b)->getZOrder()) {
+        return -1;
+    } else if (((const RenderObject*)a)->getZOrder() > ((const RenderObject*)b)->getZOrder()) {
+        return 1;
     } else {
-        _startingZ = 1;
+        return 0;
     }
-}
-
-void GraphicsManager::renderFrameInvBox() {
-    Inventory &inv = _engine->sceneManager->inventoryDesc;
-
-    // Draw the current four visible items if any
-    for (uint i = 0; i < 4; ++i) {
-        if (inventoryBoxDesc.onScreenItems[i].itemId != -1) {
-            Common::Point dest(inventoryBoxDesc.onScreenItems[i].dest.left, inventoryBoxDesc.onScreenItems[i].dest.top);
-            _screen.blitFrom(_inventoryBoxIconsSurface, inventoryBoxDesc.onScreenItems[i].source, dest);
-        }
-    }
-
-    // Check if we need to draw the next frame
-    if (inventoryBoxDesc.nextFrameTime != 0 &&
-        inventoryBoxDesc.nextFrameTime < _engine->getTotalPlayTime()) {
-            bool isInventoryEmpty = true;
-            for (uint i = 0; i < 11; ++i) {
-                if (_engine->playState.inventory.items[i] == PlayState::kTrue) {
-                    isInventoryEmpty = false;
-                    break;
-                }
-            }
-
-            inventoryBoxDesc.blindsAnimFrame += isInventoryEmpty ? 1 : -1;
-            if (inventoryBoxDesc.blindsAnimFrame < 0 || inventoryBoxDesc.blindsAnimFrame > 6) {
-                inventoryBoxDesc.blindsAnimFrame = CLIP<int16>(inventoryBoxDesc.blindsAnimFrame, 0, 6);
-                inventoryBoxDesc.nextFrameTime = 0;
-            } else {
-                inventoryBoxDesc.nextFrameTime = _engine->getTotalPlayTime() + _engine->sceneManager->inventoryDesc.shadesFrameTime;
-            }
-        }
-
-    // Draw the shades
-    if (inventoryBoxDesc.blindsAnimFrame < 7 &&
-        inventoryBoxDesc.blindsAnimFrame > 0) {
-        // Draw left shade
-        Common::Point dest(inv.shadesDst.left, inv.shadesDst.top);
-        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2], dest);
-
-        // Draw right shade
-        dest.x = inv.shadesDst.right - inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2 + 1].width();
-        _screen.blitFrom(_object0Surface, inv.shadesSrc[(6 - inventoryBoxDesc.blindsAnimFrame) * 2 + 1], dest);
-    }
-}
-
-void GraphicsManager::renderPrimaryVideo() {
-    ZRenderStruct &zr = getZRenderStruct("PRIMARY VIDEO");
-    if (!_primaryVideoDecoder.isPlaying()) {
-        _primaryVideoDecoder.start();
-        
-        _primaryVideoSurface.w = _secMovieDecoder.getWidth();
-        _primaryVideoSurface.h = _secMovieDecoder.getHeight();
-        _primaryVideoSurface.format = _secMovieDecoder.getPixelFormat();
-    }
-
-    if (_primaryVideoDecoder.needsUpdate()) {
-        _primaryVideoSurface = *_primaryVideoDecoder.decodeNextFrame();
-    }
-
-    Common::Point dest(zr.destRect.left, zr.destRect.top);
-     _screen.blitFrom(_primaryVideoSurface, zr.sourceRect, dest);
-}
-
-void GraphicsManager::renderSecVideo0() {
-    // TODO
-}
-
-void GraphicsManager::renderSecVideo1() {
-    // TODO
-}
-
-void GraphicsManager::renderSecMovie() {
-    // TODO
-}
-
-void GraphicsManager::renderOrderingPuzzle() {
-    // TODO
-}
-
-void GraphicsManager::renderRotatingLockPuzzle() {
-    // TODO
-}
-
-void GraphicsManager::renderLeverPuzzle() {
-    // TODO
-}
-
-void GraphicsManager::renderTelephone() {
-    // TODO
-}
-
-void GraphicsManager::renderSliderPuzzle() {
-    // TODO
-}
-
-void GraphicsManager::renderPasswordPuzzle() {
-    // TODO
 }
 
 } // End of namespace Nancy
