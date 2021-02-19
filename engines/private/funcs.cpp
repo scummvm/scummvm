@@ -42,7 +42,7 @@ void fChgMode(ArgArray args) {
 
     g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
-    g_private->_nextSetting = s;
+    g_private->setNextSetting(s);
 
     if (g_private->_mode == 0) {
         g_private->setOrigin(kOriginZero);
@@ -104,7 +104,7 @@ void fgoto(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
     Common::String *s = new Common::String(args[0].u.str);
-    g_private->_nextSetting = s;
+    g_private->setNextSetting(s);
 }
 
 
@@ -112,7 +112,7 @@ void fSyncSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
-    g_private->_nextSetting = nextSetting;
+    g_private->setNextSetting(nextSetting);
     Common::String s(args[0].u.str);
 
     if (s != "\"\"") {
@@ -135,6 +135,7 @@ void fLoadGame(ArgArray args) {
     m->nextSetting = NULL;
     m->flag1 = NULL;
     m->flag2 = NULL;
+    free(g_private->_loadGameMask);
     g_private->_loadGameMask = m;
     g_private->_masks.push_front(*m);
 }
@@ -149,6 +150,7 @@ void fSaveGame(ArgArray args) {
     m->nextSetting = NULL;
     m->flag1 = NULL;
     m->flag2 = NULL;
+    free(g_private->_saveGameMask);
     g_private->_saveGameMask = m;
     g_private->_masks.push_front(*m);
 }
@@ -171,7 +173,7 @@ void fPoliceBust(ArgArray args) {
         if (args[1].u.val == 2) {
             // Unclear what it means
         } else if (args[1].u.val == 3) {
-            g_private->_nextSetting = new Common::String(kMainDesktop);
+            g_private->setNextSetting(new Common::String(kMainDesktop));
             g_private->_mode = 0;
             g_private->setOrigin(kOriginZero);
         } else
@@ -199,8 +201,9 @@ void fBustMovie(ArgArray args) {
         g_private->playSound(s, 1, false, false);
     }
 
+    delete g_private->_nextMovie; 
     g_private->_nextMovie = new Common::String(pv);
-    g_private->_nextSetting = new Common::String(args[0].u.str);
+    g_private->setNextSetting(new Common::String(args[0].u.str));
 }
 
 void fDossierAdd(ArgArray args) {
@@ -452,14 +455,15 @@ void fViewScreen(ArgArray args) {
 void fTransition(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
+    delete g_private->_nextMovie;
     g_private->_nextMovie = new Common::String(args[0].u.str);
-    g_private->_nextSetting = new Common::String(args[1].u.str);
+    g_private->setNextSetting(new Common::String(args[1].u.str));
 }
 
 void fResume(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
-    g_private->_nextSetting = g_private->_pausedSetting;
+    g_private->setNextSetting(g_private->_pausedSetting);
     g_private->_pausedSetting = NULL;
     g_private->_mode = 1;
     g_private->setOrigin(kOriginOne);
@@ -472,16 +476,17 @@ void fMovie(ArgArray args) {
     Common::String *nextSetting = new Common::String(args[1].u.str);
 
     if (!g_private->_playedMovies.contains(*movie) && *movie != "\"\"") {
+        delete g_private->_nextMovie;
         g_private->_nextMovie = movie;
         g_private->_playedMovies.setVal(*movie, true);
-        g_private->_nextSetting = nextSetting;
+        g_private->setNextSetting(nextSetting);
 
     } else if (*movie == "\"\"") {
         g_private->_repeatedMovieExit = *nextSetting;
         debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting->c_str());
     } else {
         debugC(1, kPrivateDebugScript, "movie %s already played", movie->c_str());
-        g_private->_nextSetting = &(g_private->_repeatedMovieExit);
+        g_private->setNextSetting(new Common::String(g_private->_repeatedMovieExit));
     }
 }
 
@@ -626,6 +631,7 @@ void fSoundArea(ArgArray args) {
         m->nextSetting = NULL;
         m->flag1 = NULL;
         m->flag2 = NULL;
+        free(g_private->_AMRadioArea);
         g_private->_AMRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (n == "kPoliceRadio") {
@@ -636,6 +642,7 @@ void fSoundArea(ArgArray args) {
         m->nextSetting = NULL;
         m->flag1 = NULL;
         m->flag2 = NULL;
+        free(g_private->_policeRadioArea);
         g_private->_policeRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (n == "kPhone") {
@@ -646,6 +653,7 @@ void fSoundArea(ArgArray args) {
         m->nextSetting = NULL;
         m->flag1 = NULL;
         m->flag2 = NULL;
+        free(g_private->_phoneArea);
         g_private->_phoneArea = m;
         g_private->_masks.push_front(*m);
     }
@@ -659,7 +667,7 @@ void fAskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
     Common::String *s = new Common::String(args[0].u.str);
-    g_private->_nextSetting = s;
+    g_private->setNextSetting(s);
 }
 
 void fTimer(ArgArray args) {
@@ -675,7 +683,7 @@ void fTimer(ArgArray args) {
     if (delay > 0) {
         assert(g_private->installTimer(delay, s));
     } else if (delay == 0) {
-        g_private->_nextSetting = s;
+        g_private->setNextSetting(s);
     } else {
         assert(0);
     }

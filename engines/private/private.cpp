@@ -121,6 +121,13 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
     SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
+void PrivateEngine::setNextSetting(Common::String *_ns) {
+    if (_ns)
+      debug("deleting %s", _ns->c_str());
+    delete _nextSetting;
+    _nextSetting = _ns;
+}
+
 void PrivateEngine::setOrigin(const int point[2]) {
     delete _origin;
     _origin = new Common::Point(point[0], point[1]);;
@@ -190,7 +197,7 @@ Common::Error PrivateEngine::run() {
     if (saveSlot >= 0) { // load the savegame
         loadGameState(saveSlot);
     } else {
-        _nextSetting = new Common::String(kGoIntro);
+        setNextSetting(new Common::String(kGoIntro));
     }
 
     while (!shouldQuit()) {
@@ -251,12 +258,14 @@ Common::Error PrivateEngine::run() {
             removeTimer();
             _videoDecoder = new Video::SmackerDecoder();
             playVideo(*_nextMovie);
+            delete(_nextMovie);
             _nextMovie = NULL;
             continue;
         }
 
         if (_nextVS != NULL && *_currentSetting == kMainDesktop) {
             loadImage(*_nextVS, 160, 120);
+            drawScreen();
         }
 
         if (_videoDecoder) {
@@ -276,9 +285,10 @@ Common::Error PrivateEngine::run() {
             removeTimer();
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
             clearAreas();
-            _currentSetting = _nextSetting;
+            // This pointer will be free after load
+            _currentSetting = new Common::String(*_nextSetting);
             settings.load(_nextSetting);
-            _nextSetting = NULL;
+            setNextSetting(NULL);
             execute(prog);
             changeCursor("default");
             drawScreen();
@@ -293,12 +303,20 @@ Common::Error PrivateEngine::run() {
 void PrivateEngine::clearAreas() {
     _exits.clear();
     _masks.clear();
+
+    free(_loadGameMask);
     _loadGameMask = NULL;
+    free(_saveGameMask);
     _saveGameMask = NULL;
+    free(_policeRadioArea); 
     _policeRadioArea = NULL;
+    free(_AMRadioArea);
     _AMRadioArea = NULL;
+    free(_phoneArea);
     _phoneArea = NULL;
+    free(_dossierNextSuspectMask);
     _dossierNextSuspectMask = NULL;
+    free(_dossierPrevSuspectMask);
     _dossierPrevSuspectMask = NULL;
 }
 
@@ -334,9 +352,9 @@ void PrivateEngine::checkPoliceBust() {
         uint policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
         if (policeIndex <= 13) {
-            _nextSetting = new Common::String(kPOGoBustMovie);
+            setNextSetting(new Common::String(kPOGoBustMovie));
         } else {
-            _nextSetting = new Common::String(kPoliceBustFromMO);
+            setNextSetting(new Common::String(kPoliceBustFromMO));
         }
         clearAreas();
         _policeBustEnabled = false;
@@ -421,7 +439,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
         if (!window.contains(mousePos)) {
             if ( _pausedSetting == NULL) {
                 _pausedSetting = _currentSetting;
-                _nextSetting = new Common::String(kPauseMovie);
+                setNextSetting(new Common::String(kPauseMovie));
             }
         }
     }
@@ -458,7 +476,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     }
     if (ns != NULL) {
         //debug("Exit selected %s", ns->c_str());
-        _nextSetting = ns;
+        setNextSetting(new Common::String(*ns));
     }
 }
 
@@ -492,7 +510,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     }
     if (ns != NULL) {
         //debug("Mask selected %s", ns->c_str());
-        _nextSetting = ns;
+        setNextSetting(new Common::String(*ns));
     }
 }
 
@@ -577,6 +595,7 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
             loadDossier();
             drawMask(_dossierNextSuspectMask->surf);
             drawMask(_dossierPrevSuspectMask->surf);
+            drawScreen();
         }
         return true;
     }
@@ -594,6 +613,7 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
             loadDossier();
             drawMask(_dossierNextSuspectMask->surf);
             drawMask(_dossierPrevSuspectMask->surf);
+            drawScreen();
         }
         return true;
     }
@@ -655,7 +675,7 @@ void PrivateEngine::restartGame() {
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
     Common::Serializer s(stream, nullptr);
     debugC(1, kPrivateDebugFunction, "loadGameStream");
-    _nextSetting = new Common::String(kStartGame);
+    setNextSetting(new Common::String(kStartGame));
     int val;
 
     for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
@@ -1012,7 +1032,7 @@ char *PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
 // Timers
 void timerCallback(void *refCon) {
     g_private->removeTimer();
-    g_private->_nextSetting = (Common::String *)refCon;
+    g_private->setNextSetting((Common::String *)refCon);
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
