@@ -179,11 +179,11 @@ void Scene::load() {
 
     _viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.nextScene.frameID, _sceneState.nextScene.verticalOffset);
 
+    // TODO TEMPORARY
+    _viewport.setEdgesSize(25, 25, 25, 25);
+
     if (_viewport.getFrameCount() <= 1) {
-        _viewport.setEdges(-1, -1, 0, 0);
-    } else {
-        // TODO TEMPORARY
-        _viewport.setEdges(-1, -1, 25, 25);
+        _viewport.disableEdges(kLeft | kRight);
     }
 
     if (!hasLoadedFromSavefile) {
@@ -205,10 +205,7 @@ void Scene::load() {
             // TODO not sure this ever gets hit
         } else if (_sceneState.summary.videoFormat == 2) {
             if (_viewport.getMaxScroll() == 0) {
-                _viewport.setEdges(0, 0, -1, -1);
-            } else {
-                // TODO TEMPORARY
-                _viewport.setEdges(25, 25, -1, -1);
+                _viewport.disableEdges(kUp | kDown);
             }
         }
     }
