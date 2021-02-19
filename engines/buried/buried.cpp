@@ -91,13 +91,13 @@ Common::Error BuriedEngine::run() {
 		// Can't play 24bpp version without support
 		return Common::kUnsupportedColorMode;
 #else
-		initGraphics(640, 480, true, 0);
+		initGraphics(640, 480, 0);
 
 		if (_system->getScreenFormat().bytesPerPixel == 1)
 			return Common::kUnsupportedColorMode;
 #endif
 	} else {
-		initGraphics(640, 480, true);
+		initGraphics(640, 480);
 	}
 
 	if (isWin95()) {
@@ -465,7 +465,7 @@ uint32 BuriedEngine::computeNavDBResourceID(int timeZone, int environment) {
 }
 
 uint32 BuriedEngine::computeAnimDBResourceID(int timeZone, int environment) {
-	return RESID_ANIMDB_BASE + RESOFFSET_ANIMDB_TIMEZONE * timeZone + environment; 
+	return RESID_ANIMDB_BASE + RESOFFSET_ANIMDB_TIMEZONE * timeZone + environment;
 }
 
 uint32 BuriedEngine::computeAIDBResourceID(int timeZone, int environment) {

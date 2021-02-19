@@ -24,13 +24,12 @@
 #define BURIED_DATABASE_H
 
 namespace Common {
-class NEResources;
-class PEResources;
+class WinResources;
 class String;
 }
 
 namespace Graphics {
-class WinCursorGroup;
+struct WinCursorGroup;
 }
 
 namespace Buried {
@@ -72,7 +71,7 @@ public:
 	uint32 getVersion();
 
 protected:
-	Common::NEResources *_exe;
+	Common::WinResources *_exe;
 };
 
 /**
@@ -98,7 +97,7 @@ public:
 	uint32 getVersion();
 
 private:
-	Common::PEResources *_exe;
+	Common::WinResources *_exe;
 };
 
 } // End of namespace Buried

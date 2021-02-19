@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/winexe.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
 #include "graphics/wincursor.h"
@@ -77,7 +78,7 @@ Common::String DatabaseNE::loadString(uint32 stringID) {
 }
 
 Common::SeekableReadStream *DatabaseNE::getBitmapStream(uint32 bitmapID) {
-	return _exe->getResource(Common::kNEBitmap, bitmapID);
+	return _exe->getResource(Common::kWinBitmap, bitmapID);
 }
 
 Graphics::WinCursorGroup *DatabaseNE::getCursorGroup(uint32 cursorGroupID) {
@@ -142,7 +143,7 @@ Common::String DatabasePE::loadString(uint32 stringID) {
 }
 
 Common::SeekableReadStream *DatabasePE::getBitmapStream(uint32 bitmapID) {
-	return _exe->getResource(Common::kPEBitmap, bitmapID);
+	return _exe->getResource(Common::kWinBitmap, bitmapID);
 }
 
 Graphics::WinCursorGroup *DatabasePE::getCursorGroup(uint32 cursorGroupID) {
