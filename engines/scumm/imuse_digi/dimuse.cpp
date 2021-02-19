@@ -184,16 +184,16 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 
 			if (_vm->_game.id == GID_CMI) {
 				if (track->soundId / 1000 == 1) { // State
-					for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
-						if ((_comiStateMusicTable[l].soundId == track->soundId)) {
-							track->loopShiftType = _comiStateMusicTable[l].shiftLoop;
+					for (int ll = 0; _comiStateMusicTable[ll].soundId != -1; ll++) {
+						if ((_comiStateMusicTable[ll].soundId == track->soundId)) {
+							track->loopShiftType = _comiStateMusicTable[ll].shiftLoop;
 							break;
 						}
 					}
 				} else if (track->soundId / 1000 == 2) { // Sequence
-					for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
-						if ((_comiSeqMusicTable[l].soundId == track->soundId)) {
-							track->loopShiftType = _comiSeqMusicTable[l].shiftLoop;
+					for (int ll = 0; _comiSeqMusicTable[ll].soundId != -1; ll++) {
+						if ((_comiSeqMusicTable[ll].soundId == track->soundId)) {
+							track->loopShiftType = _comiSeqMusicTable[ll].shiftLoop;
 							break; 
 						}
 					}
