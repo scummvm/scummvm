@@ -121,7 +121,7 @@ typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 class PrivateEngine : public Engine {
 private:
     Common::RandomSource *_rnd;
-
+    Common::String *_nextSetting;
     Graphics::PixelFormat _pixelFormat;
     Image::ImageDecoder *_image;
     int _screenW, _screenH;
@@ -198,7 +198,9 @@ public:
     // global state
     const Common::Point *_origin;
     void setOrigin(const int[2]);
-    Common::String *_nextSetting;
+
+    void setNextSetting(Common::String *);
+    
     Common::String *_currentSetting;
     bool            _toTake;
 

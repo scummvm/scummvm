@@ -75,7 +75,6 @@ typedef struct Setting {
 
 // Settings
 
-
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
