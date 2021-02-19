@@ -18871,6 +18871,28 @@ static const uint16 sq4CdPatchUnstableOrdnance[] = {
 	PATCH_END
 };
 
+// When entering the software store, there's a 1/3 chance that the clerk's
+//  second message isn't displayed in some floppy versions. The script calls
+//  kRandom(0,2) to pick which text to print but it tests the result against
+//  three instead of two. When kRandom returns two, zero gets passed to kDisplay
+//  instead of a string address and an out of bounds read occurs. We fix the
+//  test so that the message is displayed.
+//
+// Applies to: English PC VGA Floppy
+// Responsible method: clerkScript:changeState(1)
+static const uint16 sq4FloppySignatureSoftwareClerkMessage[] = {
+	0x35, SIG_MAGICDWORD, 0x03,         // ldi 03
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0003),           // bnt 0003
+	0x72,                               // lofsa "If you're here to return something..."
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchSoftwareClerkMessage[] = {
+	0x35, 0x02,                         // ldi 02
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -18901,6 +18923,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   390, "CD: hz so good sequel police cycler fix",        1, sq4CdSignatureHzSoGoodSequelPoliceCycler,      sq4CdPatchHzSoGoodSequelPoliceCycler },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
+	{  true,   397, "Floppy: software clerk message fix",             1, sq4FloppySignatureSoftwareClerkMessage,        sq4FloppyPatchSoftwareClerkMessage },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
