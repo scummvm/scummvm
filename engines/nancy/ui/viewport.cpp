@@ -64,16 +64,57 @@ void Viewport::handleInput(NancyInput &input) {
         _engine->cursorManager->setCursorType(CursorManager::kNormal);
     }
 
-    if (_upHotspot.contains(input.mousePos)) {
-        direction |= kUp;
-    } else if (_downHotspot.contains(input.mousePos)) {
-        direction |= kDown;
+    // Do not handle hotspots marked as incative and ignore diagonals if intersecting hotspots are not active
+    if (_upHotspot.contains(input.mousePos) && (_edgesMask & kUp) == 0) {
+        if (_upHotspot.findIntersectingRect(_leftHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kLeft) == 0) {
+                direction |= kUp;
+            }
+        } else if (_upHotspot.findIntersectingRect(_rightHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kRight) == 0) {
+                direction |= kUp;
+            }
+        } else {
+            direction |= kUp;
+        }
+    } else if (_downHotspot.contains(input.mousePos) && (_edgesMask & kDown) == 0) {
+        if (_downHotspot.findIntersectingRect(_leftHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kLeft) == 0) {
+                direction |= kDown;
+            }
+        } else if (_downHotspot.findIntersectingRect(_rightHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kRight) == 0) {
+                direction |= kDown;
+            }
+        } else {
+            direction |= kDown;
+        }
     }
 
-    if (_leftHotspot.contains(input.mousePos)) {
-        direction |= kLeft;
-    } else if (_rightHotspot.contains(input.mousePos)) {
-        direction |= kRight;
+    if (_leftHotspot.contains(input.mousePos) && (_edgesMask & kLeft) == 0) {
+        if (_leftHotspot.findIntersectingRect(_upHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kUp) == 0) {
+                direction |= kLeft;
+            }
+        } else if (_leftHotspot.findIntersectingRect(_downHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kDown) == 0) {
+                direction |= kLeft;
+            }
+        } else {
+            direction |= kLeft;
+        }
+    } else if (_rightHotspot.contains(input.mousePos) && (_edgesMask & kRight) == 0) {
+        if (_rightHotspot.findIntersectingRect(_upHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kUp) == 0) {
+                direction |= kRight;
+            }
+        } else if (_rightHotspot.findIntersectingRect(_downHotspot).contains(input.mousePos)) {
+            if ((_edgesMask & kDown) == 0) {
+                direction |= kRight;
+            }
+        } else {
+            direction |= kRight;
+        }
     }
 
     if (direction) {
@@ -145,6 +186,8 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
     }
     _decoder.loadFile(filename + ".avf");
     
+    enableEdges(kUp | kDown | kLeft | kRight);
+    
     setFrame(frameNr);
     setVerticalScroll(verticalScroll); 
 }
@@ -180,6 +223,16 @@ void Viewport::setVerticalScroll(uint scroll) {
     sourceBounds.moveTo(0, scroll + 1);
     _drawSurface.create(_fullFrame, sourceBounds);
     _needsRedraw = true;
+
+    if (scroll == getMaxScroll()) {
+        disableEdges(kDown);
+        enableEdges(kUp);
+    } else if (scroll == 0) {
+        disableEdges(kUp);
+        enableEdges(kDown);
+    } else {
+        enableEdges(kUp | kDown);
+    }
     
     _engine->scene->getSceneInfo().verticalOffset = scroll;
 }
@@ -216,26 +269,25 @@ Common::Rect Viewport::convertScreenToViewport(const Common::Rect &viewportRect)
     return ret;
 }
 
-void Viewport::setEdges(int16 upSize, int16 downSize, int16 leftSize, int16 rightSize) {
-    if (upSize > -1) {
-        _upHotspot.setHeight(upSize);
-    }
+void Viewport::setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize) {
+    _upHotspot.setHeight(upSize);
+    _leftHotspot.setWidth(leftSize);
 
-    if (leftSize > -1) {
-        _leftHotspot.setWidth(leftSize);
-    }
+    _downHotspot.top = _screenPosition.bottom;
+    _downHotspot.setHeight(downSize);
+    _downHotspot.translate(0, -downSize);
+    
+    _rightHotspot.left = _screenPosition.right;
+    _rightHotspot.setWidth(rightSize);
+    _rightHotspot.translate(-rightSize, 0);
+}
 
-    if (downSize > -1) {
-        _downHotspot.top = _screenPosition.bottom;
-        _downHotspot.setHeight(downSize);
-        _downHotspot.translate(0, -downSize);
-    }
+void Viewport::disableEdges(byte edges) {
+    _edgesMask |= edges;
+}
 
-    if (rightSize > -1) {
-        _rightHotspot.left = _screenPosition.right;
-        _rightHotspot.setWidth(rightSize);
-        _rightHotspot.translate(-rightSize, 0);
-    }
+void Viewport::enableEdges(byte edges) {
+    _edgesMask &= ~edges;
 }
 
 } // End of namespace UI

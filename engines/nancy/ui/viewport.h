@@ -42,7 +42,8 @@ class Viewport : public Nancy::RenderObject {
 public:
     Viewport(NancyEngine *engine) :
         RenderObject(engine),
-        _movementLastFrame(0)  {}
+        _movementLastFrame(0),
+        _edgesMask(0)  {}
     virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
     virtual void init() override;
@@ -71,7 +72,9 @@ public:
     Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
 
     // 0 is inactive, -1 is keep unchanged
-    void setEdges(int16 upSize, int16 downSize, int16 leftSize, int16 rightSize);
+    void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
+    void disableEdges(byte edges);
+    void enableEdges(byte edges);
 
 protected:
     virtual uint16 getZOrder() const override { return 6; }
@@ -81,6 +84,8 @@ protected:
     Common::Rect _downHotspot;
     Common::Rect _leftHotspot;
     Common::Rect _rightHotspot;
+
+    byte _edgesMask;
     
     byte _movementLastFrame;
     Time _nextMovementTime;

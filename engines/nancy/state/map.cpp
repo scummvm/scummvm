@@ -69,7 +69,7 @@ void Map::init() {
     Common::String n(name);
 
     _viewport.loadVideo(n, 0, 0);
-    _viewport.setEdges(0, 0, 0, 0);
+    _viewport.setEdgesSize(0, 0, 0, 0);
 
     // Load the audio
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
