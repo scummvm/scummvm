@@ -201,8 +201,7 @@ void fBustMovie(ArgArray args) {
         g_private->playSound(s, 1, false, false);
     }
 
-    delete g_private->_nextMovie; 
-    g_private->_nextMovie = new Common::String(pv);
+    g_private->setNextMovie(new Common::String(pv));
     g_private->setNextSetting(new Common::String(args[0].u.str));
 }
 
@@ -455,8 +454,7 @@ void fViewScreen(ArgArray args) {
 void fTransition(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
-    delete g_private->_nextMovie;
-    g_private->_nextMovie = new Common::String(args[0].u.str);
+    g_private->setNextMovie(new Common::String(args[0].u.str));
     g_private->setNextSetting(new Common::String(args[1].u.str));
 }
 
@@ -476,8 +474,7 @@ void fMovie(ArgArray args) {
     Common::String *nextSetting = new Common::String(args[1].u.str);
 
     if (!g_private->_playedMovies.contains(*movie) && *movie != "\"\"") {
-        delete g_private->_nextMovie;
-        g_private->_nextMovie = movie;
+        g_private->setNextMovie(movie);
         g_private->_playedMovies.setVal(*movie, true);
         g_private->setNextSetting(nextSetting);
 
@@ -689,10 +686,7 @@ void fTimer(ArgArray args) {
     }
 }
 
-static struct FuncTable {
-    void (*func)(Private::ArgArray);
-    const char *name;
-} funcTable[] = {
+FuncTable funcTable[] = {
 
     // Control flow
     { fChgMode,         "ChgMode"},
@@ -762,22 +756,13 @@ static struct FuncTable {
     { 0, 0}
 };
 
-NameToPtr _functions;
-
-void initFuncs() {
-    for (Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
-        Common::String *name = new Common::String(fnc->name);
-        _functions.setVal(*name, (void *)fnc->func);
-    }
-}
-
 void call(char *name, ArgArray args) {
     Common::String n(name);
-    if (!_functions.contains(n)) {
+    if (!g_private->_functions.contains(n)) {
         error("I don't know how to execute %s", name);
     }
 
-    void (*func)(ArgArray) = (void (*)(ArgArray)) _functions.getVal(n);
+    void (*func)(ArgArray) = (void (*)(ArgArray)) g_private->_functions.getVal(n);
     func(args);
 }
 

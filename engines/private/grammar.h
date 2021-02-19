@@ -57,7 +57,6 @@ typedef int (* Inst)();  /* machine instruction */
 #define STOP    (Inst) 0
 
 typedef Common::HashMap<void *, Common::String *> PtrToName;
-typedef Common::HashMap<Common::String, void *> NameToPtr;
 
 void initInsts();
 void initFuncs();
@@ -99,7 +98,7 @@ Datum pop();
 int push(Datum);
 extern  Inst *progp;
 
-extern  Inst *code(Inst);
+Inst *code(Inst);
 extern  Inst *prog;
 int eval();
 int add();
@@ -123,7 +122,6 @@ int ne();
 int randbool();
 
 // Code Execution
-
 
 void execute(Inst *);
 

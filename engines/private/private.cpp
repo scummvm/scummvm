@@ -126,6 +126,11 @@ void PrivateEngine::setNextSetting(Common::String *_ns) {
     _nextSetting = _ns;
 }
 
+void PrivateEngine::setNextMovie(Common::String *_nm) {
+    delete _nextMovie;
+    _nextMovie = _nm;
+}
+
 void PrivateEngine::setOrigin(const int point[2]) {
     delete _origin;
     _origin = new Common::Point(point[0], point[1]);;
@@ -157,7 +162,6 @@ Common::Error PrivateEngine::run() {
     file->read(buf, file->size()+1);
 
     // Initialize stuff
-    initInsts();
     initFuncs();
     initCursors();
     parse(buf);
@@ -256,8 +260,7 @@ Common::Error PrivateEngine::run() {
             removeTimer();
             _videoDecoder = new Video::SmackerDecoder();
             playVideo(*_nextMovie);
-            delete(_nextMovie);
-            _nextMovie = NULL;
+            setNextMovie(NULL);
             continue;
         }
 
@@ -297,6 +300,13 @@ Common::Error PrivateEngine::run() {
         g_system->delayMillis(10);
     }
     return Common::kNoError;
+}
+
+void PrivateEngine::initFuncs() {
+    for (Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
+        Common::String *name = new Common::String(fnc->name);
+        _functions.setVal(*name, (void *)fnc->func);
+    }
 }
 
 void PrivateEngine::clearAreas() {

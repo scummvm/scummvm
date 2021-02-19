@@ -60,32 +60,6 @@ Inst *prog    = NULL; /* the machine */
 Inst *progp   = NULL; /* next free spot for code generation */
 Inst *pc      = NULL; /* program counter during execution */
 
-
-static struct InstDescr {
-    const Inst func;
-    const char *name;
-} instDescr[] = {
-    { 0,        "STOP",     },
-    { constpush,"constpush" },
-    { strpush,  "strpush",  },
-    { varpush,  "varpush",  },
-    { funcpush, "funcpush", },
-    { eval,     "eval",     },
-    { ifcode,   "ifcode",   },
-    { add,      "add",      },
-    { negate,   "negate",   },
-
-    { 0, 0}
-};
-
-PtrToName _insts;
-
-void initInsts() {
-    for (InstDescr *fnc = instDescr; fnc->name; fnc++) {
-        _insts[(void *)fnc->func] = new Common::String(fnc->name);
-    }
-}
-
 /* initialize setting for code generation */
 void SettingMaps::init() {
     setting = (Setting *)malloc(sizeof(Setting));

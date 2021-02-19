@@ -102,6 +102,16 @@ typedef struct DossierInfo {
     Common::String *page2;
 } DossierInfo;
 
+// funcs
+
+typedef struct FuncTable {
+    void (*func)(Private::ArgArray);
+    const char *name;
+} FunctTable;
+
+typedef Common::HashMap<Common::String, void *> NameToPtr;
+extern FuncTable funcTable[];
+
 // lists
 
 typedef Common::List<ExitInfo> ExitList;
@@ -122,6 +132,7 @@ class PrivateEngine : public Engine {
 private:
     Common::RandomSource *_rnd;
     Common::String *_nextSetting;
+    Common::String *_nextMovie;
     Graphics::PixelFormat _pixelFormat;
     Image::ImageDecoder *_image;
     int _screenW, _screenH;
@@ -145,6 +156,11 @@ public:
     void restartGame();
     void clearAreas();
     void initializePath(const Common::FSNode &gamePath) override;
+
+    // Functions
+
+    NameToPtr _functions;
+    void initFuncs();
 
     // User input
     void selectPauseMovie(Common::Point);
@@ -200,6 +216,7 @@ public:
     void setOrigin(const int[2]);
 
     void setNextSetting(Common::String *);
+    void setNextMovie(Common::String *);
     
     Common::String *_currentSetting;
     bool            _toTake;
@@ -236,7 +253,7 @@ public:
 
     int _mode;
     bool _modified;
-    Common::String *_nextMovie;
+
     PlayedMediaTable _playedMovies;
     PlayedMediaTable _playedPhoneClips;
     Common::String _repeatedMovieExit;
