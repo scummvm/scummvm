@@ -122,8 +122,6 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 void PrivateEngine::setNextSetting(Common::String *_ns) {
-    if (_ns)
-      debug("deleting %s", _ns->c_str());
     delete _nextSetting;
     _nextSetting = _ns;
 }
@@ -285,6 +283,7 @@ Common::Error PrivateEngine::run() {
             removeTimer();
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
             clearAreas();
+            delete _currentSetting;
             // This pointer will be free after load
             _currentSetting = new Common::String(*_nextSetting);
             settings.load(_nextSetting);
@@ -438,7 +437,8 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
         Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
         if (!window.contains(mousePos)) {
             if ( _pausedSetting == NULL) {
-                _pausedSetting = _currentSetting;
+                delete _pausedSetting;
+                _pausedSetting = new Common::String(*_currentSetting);
                 setNextSetting(new Common::String(kPauseMovie));
             }
         }
