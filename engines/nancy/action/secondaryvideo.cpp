@@ -234,7 +234,9 @@ void PlaySecondaryMovie::init() {
     if(_decoder.isVideoLoaded()) {
         _decoder.close();
     }
-    _drawSurface.create(_decoder.getWidth(), _decoder.getHeight());
+    _decoder.loadFile(videoName + ".avf");
+    _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::pixelFormat);
+    _screenPosition = _drawSurface.getBounds();
 
     RenderObject::init();
 }
@@ -244,19 +246,18 @@ void PlaySecondaryMovie::updateGraphics() {
         return;
     }
 
-    if (!_decoder.isPlaying()) {
+    if (!_decoder.isPlaying() && _isVisible) {
         _decoder.start();
     }
 
-    if (_decoder.needsUpdate() && !_screenPosition.isEmpty()) {
-        const Graphics::Surface *surf = _decoder.decodeNextFrame();
-        int descID = -1;
+    if (_decoder.needsUpdate()) {
+        uint descID = 0;
         for (uint i = 0; i < videoDescs.size(); ++i) {
-            if (videoDescs[i].frameID == _decoder.getCurFrame()) {
+            if (videoDescs[i].frameID == _curViewportFrame) {
                 descID = i;
             }
         }
-        _drawSurface.blitFrom(*surf, videoDescs[descID].srcRect, Common::Point());
+        _drawSurface.blitFrom(*_decoder.decodeNextFrame(), videoDescs[descID].srcRect, Common::Point());
         _needsRedraw = true;
     } else {
         // Set flag if not drawing new frame
@@ -274,6 +275,7 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
             init();
+            registerGraphics();
             if (soundName != "NO SOUND") {
                 engine->sound->loadSound(soundName, soundChannel, 1, soundVolume);
             }
@@ -282,24 +284,30 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         case kRun: {
             engine->cursorManager->showCursor(false);
             
-            int activeFrame = -1;
+            int newFrame = _engine->scene->getSceneInfo().frameID;
 
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if (_engine->scene->getSceneInfo().frameID == videoDescs[i].frameID) {
-                    activeFrame = i;
+            if (newFrame != _curViewportFrame) {
+                _curViewportFrame = newFrame;
+                int activeFrame = -1;
+                for (uint i = 0; i < videoDescs.size(); ++i) {
+                    if (newFrame == videoDescs[i].frameID) {
+                        activeFrame = i;
+                        break;
+                    }
                 }
-            }
 
-            if (activeFrame != -1) {
-                _screenPosition = videoDescs[activeFrame].destRect;
+                if (activeFrame != -1) {
+                    _screenPosition = videoDescs[activeFrame].destRect;
 
-                // Start sound if any
-                if (soundName != "NO SOUND") {
-                    engine->sound->pauseSound(soundChannel, false);
+                    // Start sound if any
+                    if (soundName != "NO SOUND") {
+                        engine->sound->pauseSound(soundChannel, false);
+                    }
+
+                    setVisible(true);
+                } else {
+                    setVisible(false);
                 }
-            } else {
-                _screenPosition = Common::Rect();
-                _needsRedraw = true;
             }
 
             break;
