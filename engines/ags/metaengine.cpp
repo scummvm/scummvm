@@ -157,7 +157,7 @@ const Common::AchievementsInfo AGSMetaEngine::getAchievementsInfo(const Common::
 	Common::String extra = ConfMan.get("extra", target);
 	if (extra.contains("GOG")) {
 		platform = Common::GALAXY_ACHIEVEMENTS;
-	} else if(extra.contains("Steam")) {
+	} else if (extra.contains("Steam")) {
 		platform = Common::STEAM_ACHIEVEMENTS;
 	}
 

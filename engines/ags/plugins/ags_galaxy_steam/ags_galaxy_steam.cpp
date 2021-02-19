@@ -180,12 +180,12 @@ void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 }
 
 bool AGSGalaxy::IsAchievementAchieved(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 	return AchMan.isAchieved(id);
 }
 
 bool AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 
 	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
 	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
@@ -201,7 +201,7 @@ bool AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
 }
 
 bool AGSGalaxy::ResetAchievement(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 	return AchMan.clearAchievement(id);
 }
 
@@ -316,12 +316,12 @@ void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 }
 
 bool AGSSteam::IsAchievementAchieved(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 	return AchMan.isAchieved(id);
 }
 
 bool AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 
 	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
 	Common::AchievementsInfo achievementsInfo = meta.getAchievementsInfo(::AGS::g_vm->getGameId());
@@ -337,7 +337,7 @@ bool AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
 }
 
 bool AGSSteam::ResetAchievement(const ScriptMethodParams &params) {
-	PARAMS1(char*, id);
+	PARAMS1(char *, id);
 	return AchMan.clearAchievement(id);
 }
 
