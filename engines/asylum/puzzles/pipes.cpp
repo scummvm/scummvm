@@ -548,7 +548,7 @@ void PuzzlePipes::setup() {
 
 	_connectors[ 4].initGroup();
 	_connectors[13].initGroup();
-	_connectors[17].initGroup();
+	_connectors[15].initGroup();
 
 	uint32 i = rnd(kBinNum0111);
 	if (i & kBinNum0001)
