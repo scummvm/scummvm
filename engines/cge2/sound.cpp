@@ -56,6 +56,7 @@ Sound::~Sound() {
 
 void Sound::close() {
 	_vm->_midiPlayer->killMidi();
+	_vm->_mixer->stopAll();
 }
 
 void Sound::open() {
