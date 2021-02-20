@@ -545,29 +545,32 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 col
 
 void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
-	int32 currentLine = vtop;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 start = ptr1[0];
+		int16 stop = ptr1[screenHeight];
+		ptr1++;
+		int32 hsize = stop - start;
 
-	do {
-		if (currentLine >= 0 && currentLine < screenHeight) {
-			int16 start = ptr1[0];
-			int16 stop = ptr1[screenHeight];
-			ptr1++;
-			int32 hsize = stop - start;
-
-			if (hsize >= 0) {
-				hsize++;
-				for (int32 j = start; j < hsize + start; j++) {
-					if (j >= 0 && j < screenWidth) {
-						out[j] = color;
-					}
+		if (hsize >= 0) {
+			hsize++;
+			for (int32 j = start; j < hsize + start; j++) {
+				if (j >= 0 && j < screenWidth) {
+					out[j] = color;
 				}
 			}
 		}
 		out += screenWidth;
-		currentLine++;
-	} while (--vsize);
+	}
 }
 
 void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
