@@ -36,9 +36,6 @@ int color_conversion;
 #define TRANSPARENT_COLOR(BITMAP) ((BITMAP).format.bytesPerPixel == 1 ? 0 : \
 	(BITMAP).format.RGBToColor(255, 0, 255))
 
-// Arbitrary RGBA tuplet that should never be encountered
-#define NO_TRANSPARENT_COLOR 0x88888888
-
 /*-------------------------------------------------------------------*/
 
 void set_color_conversion(int mode) {
@@ -104,224 +101,80 @@ int bitmap_mask_color(BITMAP *bmp) {
 	return TRANSPARENT_COLOR(*bmp);
 }
 
-void add_palette_if_needed(Graphics::ManagedSurface &surf) {
-	if (surf.format.bytesPerPixel == 1) {
-		byte pal[PALETTE_SIZE];
-		palette_to_rgb8(_current_palette, pal);
-
-		// Set transparent color for index 0
-		pal[0] = 0xff;
-		pal[1] = 0;
-		pal[2] = 0xff;
-
-		surf.setPalette(pal, 0, PALETTE_COUNT);
-	}
-}
-
-void stripAlpha(Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) {
-	dest.format = src.format;
-	dest.format.aLoss = 8;
-	dest.format.aShift = 0;
-	dest.w = src.w;
-	dest.h = src.h;
-	dest.pitch = src.pitch;
-	dest.setPixels(src.getPixels());
-
-	if (src.hasTransparentColor()) {
-		byte r, g, b;
-		src.format.colorToRGB(src.getTransparentColor(), r, g, b);
-		dest.setTransparentColor(dest.format.RGBToColor(r, g, b));
-	}
-}
-
 void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height) {
-	Graphics::ManagedSurface &srcS = **src;
-	Graphics::ManagedSurface &destS = **dest;
-
-	add_palette_if_needed(srcS);
-
-	if (srcS.format.aBits() == 0) {
-		destS.rawBlitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height),
-			Common::Point(dst_x, dst_y), srcS.getPalette());
-	} else {
-		Graphics::ManagedSurface temp;
-		stripAlpha(srcS, temp);
-
-		destS.rawBlitFrom(temp, Common::Rect(src_x, src_y, src_x + width, src_y + height),
-			Common::Point(dst_x, dst_y), nullptr);
-	}
+	dest->draw(src, Common::Rect(src_x, src_y, src_x + width, src_y + height),
+		Common::Rect(dst_x, dst_y, dst_x + width, dst_y + height),
+		false, false, false, -1);
 }
 
-void stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
+void stretch_blit(const BITMAP *src, BITMAP *dest,
+		int source_x, int source_y, int source_width, int source_height,
 		int dest_x, int dest_y, int dest_width, int dest_height) {
-	Graphics::ManagedSurface &srcS = **src;
-	Graphics::ManagedSurface &destS = **dest;
-
-	add_palette_if_needed(srcS);
-
-	destS.transBlitFrom(srcS, Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
-		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height));
+	dest->draw(src,
+		Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
+		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
+		false, false, false, -1);
 }
 
 void masked_blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height) {
-	Graphics::ManagedSurface &srcS = **src;
-	Graphics::ManagedSurface &destS = **dest;
+	assert(src->format == dest->format);
 
-	add_palette_if_needed(srcS);
-
-	destS.blitFrom(srcS, Common::Rect(src_x, src_y, src_x + width, src_y + height), Common::Point(dst_x, dst_y));
+	dest->draw(src, Common::Rect(src_x, src_y, src_x + width, src_y + height),
+		Common::Rect(dst_x, dst_y, dst_x + width, dst_y + height),
+		false, false, true, -1);
 }
 
-void masked_stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
-	int dest_x, int dest_y, int dest_width, int dest_height) {
-	Graphics::ManagedSurface &srcS = **src;
-	Graphics::ManagedSurface &destS = **dest;
-
-	add_palette_if_needed(srcS);
-
-	destS.transBlitFrom(srcS, Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
-		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height));
+void masked_stretch_blit(const BITMAP *src, BITMAP *dest,
+		int source_x, int source_y, int source_width, int source_height,
+		int dest_x, int dest_y, int dest_width, int dest_height) {
+	dest->draw(src,
+		Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
+		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
+		false, false, true, -1);
 }
 
 void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	Graphics::ManagedSurface &bmpS = **bmp;
-	Graphics::ManagedSurface &spriteS = **sprite;
-
-	add_palette_if_needed(spriteS);
-
-	if (spriteS.format.aBits() == 0) {
-		bmpS.transBlitFrom(spriteS, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
-	} else {
-		// Create a temporary ManagedSurface with a pointer to the sprite's pixels,
-		// and a pixel format that matches the sprite, but has no alpha.
-		// This will prevent it being applied from the sprite in transBlitFrom
-		assert(spriteS.format.bytesPerPixel == 4);
-		Graphics::ManagedSurface temp;
-		stripAlpha(spriteS, temp);
-
-		bmpS.transBlitFrom(temp, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
-	}
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		false, false, true, -1);
 }
 
 void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h) {
-	Graphics::ManagedSurface &bmpS = **bmp;
-	Graphics::ManagedSurface &spriteS = **sprite;
-
-	add_palette_if_needed(spriteS);
-
-	if (spriteS.format.aBits() == 0) {
-		bmpS.transBlitFrom(spriteS, Common::Rect(0, 0, sprite->w, sprite->h),
-			Common::Rect(x, y, x + w, y + h));
-	} else {
-		// Create a temporary ManagedSurface with a pointer to the sprite's pixels,
-		// and a pixel format that matches the sprite, but has no alpha.
-		// This will prevent it being applied from the sprite in transBlitFrom
-		assert(spriteS.format.bytesPerPixel == 4);
-		Graphics::ManagedSurface temp;
-		stripAlpha(spriteS, temp);
-
-		bmpS.transBlitFrom(temp, Common::Rect(0, 0, sprite->w, sprite->h),
-			Common::Rect(x, y, x + w, y + h));
-	}
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + w, y + h),
+		false, false, true, -1);
 }
 
 void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	assert(sprite->format.bytesPerPixel == 4);
 
-	if (trans_blend_alpha == -1) {
-		bmp->getSurface().transBlitFrom(sprite->getSurface(), Common::Point(x, y),
-			TRANSPARENT_COLOR(*sprite));
-
-	} else {
-		// Create a temporary ManagedSurface with a pointer to the sprite's pixels,
-		// and a pixel format that matches the sprite, but has no alpha.
-		// This will prevent it being applied from the sprite in transBlitFrom
-		Graphics::ManagedSurface &src = **sprite;
-		assert(src.format.bytesPerPixel == 4);
-
-		Graphics::ManagedSurface temp;
-		stripAlpha(src, temp);
-
-		bmp->getSurface().transBlitFrom(temp, Common::Rect(0, 0, temp.w, temp.h),
-			Common::Rect(x, y, x + temp.w, y + temp.h), TRANSPARENT_COLOR(*sprite),
-			false, 0, trans_blend_alpha);
-	}
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		false, false, true, trans_blend_alpha);
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
-	assert(sprite->format.bytesPerPixel == 4 && bmp->format.bytesPerPixel == 4);
-	assert(color >= 0 && color <= 255);
-
-	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest, gDest, bDest;
-	double alpha = (double)color / 255.0;
-
-	for (int yCtr = 0, yp = y; yCtr < sprite->h && yp < bmp->h; ++yCtr, ++yp) {
-		if (yp < 0)
-			continue;
-
-		const uint32 *srcP = (const uint32 *)sprite->getBasePtr(0, yCtr);
-		uint32 *destP = (uint32 *)bmp->getBasePtr(x, yp);
-
-		for (int xCtr = 0, xp = x; xCtr < sprite->w && xp < bmp->w; ++xCtr, ++xp, ++destP, ++srcP) {
-			if (x < 0 || x >= bmp->w)
-				continue;
-
-			// Get the source pixels
-			sprite->format.colorToARGB(*srcP, aSrc, rSrc, gSrc, bSrc);
-
-			if (rSrc == 255 && gSrc == 0 && bSrc == 255)
-				// Skip transparent pixels
-				continue;
-
-			// Blend the two
-			rDest = static_cast<byte>((rSrc * alpha) + (trans_blend_red * (1.0 - alpha)));
-			gDest = static_cast<byte>((gSrc * alpha) + (trans_blend_green * (1.0 - alpha)));
-			bDest = static_cast<byte>((bSrc * alpha) + (trans_blend_blue * (1.0 - alpha)));
-
-			*destP = bmp->format.RGBToColor(rDest, gDest, bDest);
-		}
-	}
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		false, false, true, color);
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	Graphics::ManagedSurface &bmpS = **bmp;
-	Graphics::ManagedSurface &spriteS = **sprite;
-
-	add_palette_if_needed(spriteS);
-	bmpS.transBlitFrom(spriteS, Common::Point(x, y), (uint)-1, true);
-}
-
-static void verticallyFlip(Graphics::ManagedSurface &dest, const Graphics::ManagedSurface &src) {
-	dest.create(src.w, src.h, src.format);
-
-	for (int y = 0; y < src.h; ++y) {
-		const byte *srcP = (const byte *)src.getBasePtr(0, src.h - y - 1);
-		byte *destP = (byte *)dest.getBasePtr(0, y);
-		Common::copy(srcP, srcP + src.pitch, destP);
-	}
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		true, false, true, -1);
 }
 
 void draw_sprite_v_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	Graphics::ManagedSurface &bmpS = **bmp;
-	Graphics::ManagedSurface &spriteS = **sprite;
-	Graphics::ManagedSurface temp;
-
-	verticallyFlip(temp, spriteS);
-	add_palette_if_needed(spriteS);
-
-	bmpS.transBlitFrom(temp, Common::Point(x, y), TRANSPARENT_COLOR(spriteS));
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		false, true, true, -1);
 }
 
 void draw_sprite_vh_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
-	Graphics::ManagedSurface &bmpS = **bmp;
-	Graphics::ManagedSurface &spriteS = **sprite;
-	Graphics::ManagedSurface temp;
-
-	verticallyFlip(temp, spriteS);
-	add_palette_if_needed(spriteS);
-
-	bmpS.transBlitFrom(temp, Common::Point(x, y), TRANSPARENT_COLOR(spriteS), true);
+	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
+		Common::Rect(x, y, x + sprite->w, y + sprite->h),
+		true, true, true, -1);
 }
 
 void rotate_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, fixed angle) {

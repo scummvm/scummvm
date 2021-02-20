@@ -94,6 +94,13 @@ public:
 	void vLine(int x, int y, int y2, uint32 color) {
 		_owner->vLine(x, y, y2, color);
 	}
+
+	/**
+	 * Draws the passed surface onto this one
+	 */
+	void draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
+		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
+		bool skipTrans, int srcAlpha);
 };
 
 /**
