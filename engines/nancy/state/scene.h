@@ -63,6 +63,7 @@ class Scene {
     friend class Nancy::Action::ActionRecord;
     friend class Nancy::Action::ActionManager;
     friend class Nancy::NancyConsole;
+    friend class Nancy::NancyEngine;
 public:
     struct SceneSummary { // SSUM
         Common::String description;             // 0x00
@@ -140,7 +141,7 @@ private:
 
     void readSceneSummary(Common::SeekableReadStream &stream);
 
-    bool changeGameState();
+    bool changeGameState(bool keepGraphics = false);
 
     void clearSceneData();
 

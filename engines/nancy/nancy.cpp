@@ -258,6 +258,23 @@ void NancyEngine::stopAndUnloadSpecificSounds() {
 	}
 }
 
+void NancyEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		if (getGameState() == kScene) {
+			scene->requestStateChange(kPause);
+			scene->changeGameState(true);
+		} else {
+			setGameState(kPause, true);
+		}
+	} else {
+		setGameState(getPreviousGameState(), true);
+	}
+
+	graphicsManager->onPause(pause);
+
+	Engine::pauseEngineIntern(pause);
+}
+
 void NancyEngine::clearBootChunks() {
 	for (auto const& i : _bootChunks) {
 		delete i._value;
@@ -339,14 +356,14 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 	}
 }
 
-void NancyEngine::setGameState(GameState state) {
+void NancyEngine::setGameState(GameState state, bool keepGraphics) {
 	_gameFlow.previousGameState = _gameFlow.minGameState;
 	_gameFlow.minGameState = state;
 	_gameFlow.justChanged = true;
 
-	// Do not erase the frame if we're switching to the map
-	// This makes the labels not crash the game
-	graphicsManager->clearObjects();
+	if (!keepGraphics) {
+		graphicsManager->clearObjects();
+	}
 }
 
 class NancyEngine_v0 : public NancyEngine {

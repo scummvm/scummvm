@@ -68,6 +68,10 @@ void PlayPrimaryVideoChan0::updateGraphics() {
     RenderObject::updateGraphics();
 }
 
+void PlayPrimaryVideoChan0::onPause(bool pause) {
+    _decoder.pauseVideo(pause);
+}
+
 uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     uint16 bytesRead = stream.pos();
 

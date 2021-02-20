@@ -59,7 +59,8 @@ public:
 
     virtual void init(); // Does _not_ get called automatically
     virtual void registerGraphics();
-    virtual void updateGraphics() {};
+    virtual void updateGraphics() {}
+    virtual void onPause(bool pause) {}
 
     void moveTo(Common::Point position);
     void setVisible(bool visible);

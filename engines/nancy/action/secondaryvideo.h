@@ -54,6 +54,7 @@ public:
 
     virtual void init() override;
     virtual void updateGraphics() override;
+    virtual void onPause(bool pause) override;
     virtual void handleInput(NancyInput &input) override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -95,6 +96,7 @@ public:
 
     virtual void init() override;
     virtual void updateGraphics() override;
+    virtual void onPause(bool pause) override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
