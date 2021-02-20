@@ -121,11 +121,6 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
     SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-void PrivateEngine::setOrigin(const int point[2]) {
-    delete _origin;
-    _origin = new Common::Point(point[0], point[1]);;
-}
-
 Common::Error PrivateEngine::run() {
 
     assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
@@ -168,7 +163,7 @@ Common::Error PrivateEngine::run() {
     initGraphics(_screenW, _screenH, &_pixelFormat);
     screenRect = Common::Rect(0, 0, _screenW, _screenH);
     changeCursor("default");
-    _origin = new Common::Point(0, 0);
+    _origin = Common::Point(0, 0);
     _image = new Image::BitmapDecoder();
     _compositeSurface = new Graphics::ManagedSurface();
     _compositeSurface->create(_screenW, _screenH, _pixelFormat);
@@ -380,7 +375,7 @@ void PrivateEngine::checkPoliceBust() {
 }
 
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
-    mousePos = mousePos - *_origin;
+    mousePos = mousePos - _origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
 
@@ -413,7 +408,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
     if (surf == NULL)
         return false;
 
-    mousePos = mousePos - *_origin;
+    mousePos = mousePos - _origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return false;
 
@@ -443,7 +438,7 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
 
 bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
     if (_mode == 1) {
-        Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+        Common::Rect window(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
         if (!window.contains(mousePos)) {
             return true;
         }
@@ -453,7 +448,7 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
     if (_mode == 1) {
-        Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+        Common::Rect window(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
         if (!window.contains(mousePos)) {
             if (!_pausedSetting.empty()) {
                 _pausedSetting = _currentSetting;
@@ -464,7 +459,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
-    mousePos = mousePos - *_origin;
+    mousePos = mousePos - _origin;
     if (mousePos.x < 0 || mousePos.y < 0)
         return;
 
@@ -922,7 +917,7 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 
     _image->loadStream(file);
     Graphics::Surface *surf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
-    _compositeSurface->transBlitFrom(*surf, *_origin + Common::Point(x,y), _transparentColor);
+    _compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x,y), _transparentColor);
     surf->free();
     delete surf;
     _image->destroy();
@@ -960,7 +955,7 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 }
 
 void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
-    _compositeSurface->transBlitFrom(surf->rawSurface(), *_origin, _transparentColor);
+    _compositeSurface->transBlitFrom(surf->rawSurface(), _origin, _transparentColor);
     //drawScreen();
 }
 
@@ -984,9 +979,9 @@ void PrivateEngine::drawScreen() {
         drawScreenFrame();
     }
 
-    Common::Rect w(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+    Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
     Graphics::Surface sa = surface->getSubArea(w);
-    g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin->x, _origin->y, sa.w, sa.h);
+    g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
     //if (_image->getPalette() != nullptr)
     //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
     g_system->updateScreen();
