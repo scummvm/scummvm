@@ -407,21 +407,13 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 #endif
 
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), false, domain),
+		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), true, domain),
 		_options(options) {
 
-	// Note: up to 7 engine options can currently fit on screen (the most that
-	// can fit in a 320x200 screen with the classic theme).
-	// TODO: Increase this number by including the checkboxes inside a scroll
-	// widget. The appropriate number of checkboxes will need to be added to
-	// the theme files.
-
-	uint i = 1;
-	ExtraGuiOptions::const_iterator iter;
-	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
-		Common::String id = Common::String::format("%d", i);
+	for (uint i = 0; i < _options.size(); i++) {
+		Common::String id = Common::String::format("%d", i + 1);
 		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
-			_dialogLayout + ".customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
+			_dialogLayout + ".customOption" + id + "Checkbox", _(_options[i].label), _(_options[i].tooltip)));
 	}
 }
 
@@ -438,7 +430,7 @@ Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain)
 
 void ExtraGuiOptionsWidget::load() {
 	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _options.size(); ++j) {
+	for (uint j = 0; j < _options.size() && j < _checkboxes.size(); ++j) {
 		// The default values for engine-specific checkboxes are not set when
 		// ScummVM starts, as this would require us to load and poll all of the
 		// engine plugins on startup. Thus, we set the state of each custom
@@ -454,11 +446,23 @@ void ExtraGuiOptionsWidget::load() {
 
 bool ExtraGuiOptionsWidget::save() {
 	// Set the state of engine-specific checkboxes
-	for (uint i = 0; i < _options.size(); i++) {
+	for (uint i = 0; i < _options.size() && i < _checkboxes.size(); i++) {
 		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
 	}
 
 	return true;
+}
+
+void ExtraGuiOptionsWidget::defineLayout(ThemeEval& layouts, const Common::String& layoutName, const Common::String& overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(8, 8, 8, 8);
+
+	for (uint i = 0; i < _options.size(); i++) {
+		Common::String id = Common::String::format("%d", i + 1);
+		layouts.addWidget("customOption" + id + "Checkbox", "Checkbox");
+	}
+
+	layouts.closeLayout().closeDialog();
 }
 
 } // End of namespace GUI

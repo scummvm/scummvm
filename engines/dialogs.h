@@ -110,6 +110,9 @@ public:
 	void load() override;
 	bool save() override;
 
+protected:
+	void defineLayout(ThemeEval& layouts, const Common::String& layoutName, const Common::String& overlayedLayout) const override;
+
 private:
 	typedef Common::Array<CheckboxWidget *> CheckboxWidgetList;
 
