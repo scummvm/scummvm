@@ -561,9 +561,8 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 
     if (inMask(_phoneArea->surf, mousePos)) {
         PhoneInfo i = _phone.back();
-        Common::String sound(*i.sound);
         setSymbol(i.flag, i.val);
-        sound = _phonePrefix + sound + ".wav";
+        Common::String sound = _phonePrefix + i.sound + ".wav";
         playSound(sound, 1, true, false);
         _phone.pop_back();
     }
@@ -576,9 +575,9 @@ void PrivateEngine::loadDossier() {
     DossierInfo m = _dossiers[_dossierSuspect];
 
     if (_dossierPage == 0) {
-        loadImage(*m.page1, x, y);
+        loadImage(m.page1, x, y);
     } else if (_dossierPage == 1) {
-        loadImage(*m.page2, x, y);
+        loadImage(m.page2, x, y);
     } else
         assert(0);
 }
@@ -700,19 +699,11 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
     // Dossiers
     size = stream->readUint32LE();
     Common::String *file = NULL;
+    DossierInfo m = {};
     for (uint32 i = 0; i < size; ++i) {
-        file = new Common::String(stream->readString());
-
-        DossierInfo *m = (DossierInfo *)malloc(sizeof(DossierInfo));
-        m->page1 = file;
-
-        file = new Common::String(stream->readString());
-        if (file->size() == 0) {
-            m->page2 = NULL;
-        } else {
-            m->page2 = file;
-        }
-        _dossiers.push_back(*m);
+        m.page1 = stream->readString();
+        m.page2 = stream->readString();
+        _dossiers.push_back(m);
     }
 
     // Radios
@@ -732,14 +723,12 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     size = stream->readUint32LE();
     _phone.clear();
-
+    PhoneInfo p = {};
     for (uint32 j = 0; j < size; ++j) {
-        PhoneInfo *i = (PhoneInfo *)malloc(sizeof(PhoneInfo));
-
-        i->sound = new Common::String(stream->readString());
-        i->flag  = maps.variables.getVal(stream->readString());
-        i->val   = stream->readUint32LE();
-        _phone.push_back(*i);
+        p.sound = stream->readString();
+        p.flag  = maps.variables.getVal(stream->readString());
+        p.val   = stream->readUint32LE();
+        _phone.push_back(p);
     }
 
     // Played media
@@ -785,11 +774,11 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     // Dossiers
     stream->writeUint32LE(_dossiers.size());
     for (DossierArray::iterator it = _dossiers.begin(); it != _dossiers.end(); ++it) {
-        stream->writeString(it->page1->c_str());
+        stream->writeString(it->page1.c_str());
         stream->writeByte(0);
 
-        if (it->page2 != NULL)
-            stream->writeString(it->page2->c_str());
+        if (!it->page2.empty())
+            stream->writeString(it->page2.c_str());
         stream->writeByte(0);
     }
 
@@ -807,7 +796,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 
     stream->writeUint32LE(_phone.size());
     for (PhoneList::iterator it = _phone.begin(); it != _phone.end(); ++it) {
-        stream->writeString(*it->sound);
+        stream->writeString(it->sound);
         stream->writeByte(0);
         stream->writeString(*it->flag->name);
         stream->writeByte(0);

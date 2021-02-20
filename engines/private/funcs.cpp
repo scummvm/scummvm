@@ -203,18 +203,18 @@ void fBustMovie(ArgArray args) {
 void fDossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
-    Common::String *s1 = new Common::String(args[0].u.str);
-    Common::String *s2 = new Common::String(args[1].u.str);
-    DossierInfo *m = (DossierInfo *)malloc(sizeof(DossierInfo));
-    m->page1 = s1;
+    Common::String s1 = args[0].u.str;
+    Common::String s2 = args[1].u.str; 
+    DossierInfo m = {};
+    m.page1 = s1;
 
-    if (*s2 != "\"\"") {
-        m->page2 = s2;
+    if (s2 != "\"\"") {
+        m.page2 = s2;
     } else {
-        m->page2 = NULL;
+        m.page2 = "";
     }
 
-    g_private->_dossiers.push_back(*m);
+    g_private->_dossiers.push_back(m);
 }
 
 void fDossierBitmap(ArgArray args) {
@@ -553,24 +553,24 @@ void fAddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
     if (strcmp(s, "\"\"") == 0)
         return;
 
-    Common::String *sound = new Common::String(s);
+    Common::String sound(s);
     if (strcmp(t, "AMRadioClip") == 0)
-        g_private->_AMRadio.push_back(*sound);
+        g_private->_AMRadio.push_back(sound);
     else if (strcmp(t, "PoliceClip") == 0)
-        g_private->_policeRadio.push_back(*sound);
+        g_private->_policeRadio.push_back(sound);
     else if (strcmp(t, "PhoneClip") == 0) {
         // This condition will avoid adding the same phone call twice,
         // it is unclear why this could be useful, but it looks like a bug
         // in the original scripts
-        if (g_private->_playedPhoneClips.contains(*sound))
+        if (g_private->_playedPhoneClips.contains(sound))
             return;
 
-        g_private->_playedPhoneClips.setVal(*sound, true);
-        PhoneInfo *p = (PhoneInfo *)malloc(sizeof(PhoneInfo));
-        p->sound = sound;
-        p->flag = flag;
-        p->val = val;
-        g_private->_phone.push_back(*p);
+        g_private->_playedPhoneClips.setVal(sound, true);
+        PhoneInfo p = {};
+        p.sound = sound;
+        p.flag = flag;
+        p.val = val;
+        g_private->_phone.push_back(p);
     } else
         error("error: invalid sound type %s", t);
 }

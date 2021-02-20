@@ -92,14 +92,14 @@ typedef struct MaskInfo {
 } MaskInfo;
 
 typedef struct PhoneInfo {
-    Common::String *sound;
+    Common::String sound;
     Symbol *flag;
     int val;
 } PhoneInfo;
 
 typedef struct DossierInfo {
-    Common::String *page1;
-    Common::String *page2;
+    Common::String page1;
+    Common::String page2;
 } DossierInfo;
 
 // funcs
