@@ -125,29 +125,33 @@ void fQuit(ArgArray args) {
 void fLoadGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
-    MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(args[0].u.str, 0, 0, true);
-    m->cursor = args[2].u.sym->name;
-    m->nextSetting = NULL;
-    m->flag1 = NULL;
-    m->flag2 = NULL;
-    free(g_private->_loadGameMask);
+    MaskInfo m = {};
+    m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
+    m.cursor = *args[2].u.sym->name;
+    m.nextSetting = "";
+    m.flag1 = NULL;
+    m.flag2 = NULL;
+    if (g_private->_loadGameMask.surf)
+        g_private->_loadGameMask.surf->free();
+    delete g_private->_loadGameMask.surf;
     g_private->_loadGameMask = m;
-    g_private->_masks.push_front(*m);
+    g_private->_masks.push_front(m);
 }
 
 void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
-    MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(args[0].u.str, 0, 0, true);
-    m->cursor = args[1].u.sym->name;
-    m->nextSetting = NULL;
-    m->flag1 = NULL;
-    m->flag2 = NULL;
-    free(g_private->_saveGameMask);
+    MaskInfo m = {};
+    m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
+    m.cursor = *args[1].u.sym->name;
+    m.nextSetting = "";
+    m.flag1 = NULL;
+    m.flag2 = NULL;
+    if (g_private->_saveGameMask.surf)
+        g_private->_saveGameMask.surf->free();
+    delete g_private->_saveGameMask.surf;
     g_private->_saveGameMask = m;
-    g_private->_masks.push_front(*m);
+    g_private->_masks.push_front(m);
 }
 
 void fRestartGame(ArgArray args) {
@@ -232,35 +236,35 @@ void fDossierChgSheet(ArgArray args) {
 void fDossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
-    MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
+    MaskInfo m = {};
 
     int x = args[1].u.val;
     int y = args[2].u.val;
 
-    m->surf = g_private->loadMask(s, x, y, true);
-    m->cursor = new Common::String("kExit");
-    m->nextSetting = NULL;
-    m->flag1 = NULL;
-    m->flag2 = NULL;
+    m.surf = g_private->loadMask(s, x, y, true);
+    m.cursor = "kExit";
+    m.nextSetting = "";
+    m.flag1 = NULL;
+    m.flag2 = NULL;
     g_private->_dossierPrevSuspectMask = m;
-    g_private->_masks.push_front(*m);
+    g_private->_masks.push_front(m);
 }
 
 void fDossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
-    MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
+    MaskInfo m = {};
 
     int x = args[1].u.val;
     int y = args[2].u.val;
 
-    m->surf = g_private->loadMask(s, x, y, true);
-    m->cursor = new Common::String("kExit");
-    m->nextSetting = NULL;
-    m->flag1 = NULL;
-    m->flag2 = NULL;
+    m.surf = g_private->loadMask(s, x, y, true);
+    m.cursor = "kExit";
+    m.nextSetting = "";
+    m.flag1 = NULL;
+    m.flag2 = NULL;
     g_private->_dossierNextSuspectMask = m;
-    g_private->_masks.push_front(*m);
+    g_private->_masks.push_front(m);
 }
 
 void fNoStopSounds(ArgArray args) {
@@ -300,28 +304,28 @@ void fInventory(ArgArray args) {
     debugC(1, kPrivateDebugScript, "Inventory(...)");
     Common::String mask(b1.u.str);
     if (mask != "\"\"") {
-        MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(mask, 0, 0, true);
+        MaskInfo m = {};
+        m.surf = g_private->loadMask(mask, 0, 0, true);
 
         if (e.type == NUM)
-            m->nextSetting = NULL;
+            m.nextSetting = "";
         else
-            m->nextSetting = new Common::String(e.u.str);
+            m.nextSetting = *e.u.str;
 
-        m->cursor = new Common::String("kInventory");
-        m->point = new Common::Point(0,0);
+        m.cursor = "kInventory";
+        m.point = Common::Point(0,0);
 
         if (v1.type == NAME)
-            m->flag1 = v1.u.sym;
+            m.flag1 = v1.u.sym;
         else
-            m->flag1 = NULL;
+            m.flag1 = NULL;
 
         if (v2.type == NAME)
-            m->flag2 = v2.u.sym;
+            m.flag2 = v2.u.sym;
         else
-            m->flag2 = NULL;
+            m.flag2 = NULL;
 
-        g_private->_masks.push_front(*m);
+        g_private->_masks.push_front(m);
         g_private->_toTake = true;
         Common::String sound(snd.u.str);
 
@@ -531,14 +535,14 @@ void _fMask(ArgArray args, bool drawn) {
     debugC(1, kPrivateDebugScript, "Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
     const Common::String s(f);
 
-    MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(s, x, y, drawn);
-    m->nextSetting = new Common::String(e);
-    m->cursor = c;
-    m->flag1 = NULL;
-    m->flag2 = NULL;
-    m->point = new Common::Point(x,y);
-    g_private->_masks.push_front(*m);
+    MaskInfo m = {};
+    m.surf = g_private->loadMask(s, x, y, drawn);
+    m.nextSetting = e;
+    m.cursor = *c;
+    m.flag1 = NULL;
+    m.flag2 = NULL;
+    m.point = Common::Point(x,y);
+    g_private->_masks.push_front(m);
 
 }
 
@@ -615,37 +619,40 @@ void fSoundArea(ArgArray args) {
 
     debugC(1, kPrivateDebugScript, "SoundArea(%s, %s, ..)", args[0].u.str, n.c_str());
     Common::String s = args[0].u.str;
-
+    MaskInfo m = {};
     if (n == "kAMRadio") {
-        MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(s, 0, 0, true);
-        m->cursor = args[2].u.sym->name;
-        m->nextSetting = NULL;
-        m->flag1 = NULL;
-        m->flag2 = NULL;
-        free(g_private->_AMRadioArea);
+        m.surf = g_private->loadMask(s, 0, 0, true);
+        m.cursor = *args[2].u.sym->name;
+        m.nextSetting = "";
+        m.flag1 = NULL;
+        m.flag2 = NULL;
+        if (g_private->_AMRadioArea.surf)
+            g_private->_AMRadioArea.surf->free();
+        delete g_private->_AMRadioArea.surf;
         g_private->_AMRadioArea = m;
-        g_private->_masks.push_front(*m);
+        g_private->_masks.push_front(m);
     } else if (n == "kPoliceRadio") {
-        MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(s, 0, 0, true);
-        m->cursor = args[2].u.sym->name;
-        m->nextSetting = NULL;
-        m->flag1 = NULL;
-        m->flag2 = NULL;
-        free(g_private->_policeRadioArea);
+        m.surf = g_private->loadMask(s, 0, 0, true);
+        m.cursor = *args[2].u.sym->name;
+        m.nextSetting = "";
+        m.flag1 = NULL;
+        m.flag2 = NULL;
+        if (g_private->_policeRadioArea.surf)
+            g_private->_policeRadioArea.surf->free();
+        delete g_private->_policeRadioArea.surf;
         g_private->_policeRadioArea = m;
-        g_private->_masks.push_front(*m);
+        g_private->_masks.push_front(m);
     } else if (n == "kPhone") {
-        MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(s, 0, 0, true);
-        m->cursor = args[2].u.sym->name;
-        m->nextSetting = NULL;
-        m->flag1 = NULL;
-        m->flag2 = NULL;
-        free(g_private->_phoneArea);
+        m.surf = g_private->loadMask(s, 0, 0, true);
+        m.cursor = *args[2].u.sym->name;
+        m.nextSetting = "";
+        m.flag1 = NULL;
+        m.flag2 = NULL;
+        if (g_private->_phoneArea.surf)
+            g_private->_phoneArea.surf->free();
+        delete g_private->_phoneArea.surf;
         g_private->_phoneArea = m;
-        g_private->_masks.push_front(*m);
+        g_private->_masks.push_front(m);
     }
 }
 
