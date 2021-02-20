@@ -105,6 +105,7 @@ void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(SetVariableSpriteFont);
 	SCRIPT_METHOD(SetGlyph);
 	SCRIPT_METHOD(SetSpacing);
+	SCRIPT_METHOD(SetLineHeightAdjust);
 }
 
 void AGSSpriteFont::AGS_EngineShutdown() {
@@ -133,6 +134,11 @@ void AGSSpriteFont::SetSpacing(int fontNum, int spacing) {
 	_engine->PrintDebugConsole("AGSSpriteFont: SetSpacing");
 	_vWidthRenderer->SetSpacing(fontNum, spacing);
 }
+
+void AGSSpriteFont::SetLineHeightAdjust(int v1, int v2, int v3, int v4) {
+	// TODO
+}
+
 
 } // namespace AGSSpriteFont
 } // namespace Plugins

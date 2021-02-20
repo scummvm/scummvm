@@ -1657,7 +1657,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("jamesperis2", "James2.exe", "06a03fe35791b0578068ab1873455463", 35766505),
 	DEMO_ENTRY("jorry", "JORRY DEMO.exe", "fe5f7dc7785b335aec72a2a834629bad", 124667001),
 	DEMO_ENTRY("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487685), // Steam
-	DEMO_ENTRY("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245), // GOG 1.04
 	DEMO_ENTRY("kinkyisland", "KINKY.exe", "f120690b506dd63cd7d1112ea6af2f77", 10628479),
 	DEMO_ENTRY("lazytownthenewkid", "newkiddemo1.2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 15515508),
 	DEMO_ENTRY("litnunforgettablememories", "litn_umtechdemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 3507831),
@@ -2197,6 +2196,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("kanjigakusei", "KanjiGakusei.exe", "c1bce0ccfa858f0f5d2fe19997d89b05", 17604764),
 	GAME_ENTRY("kartquest", "Kart.exe", "465f972675db2da6040518221af5b0ba", 77317312),
 	GAME_ENTRY("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159), // Steam
+	GAME_ENTRY("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245), // GOG 1.04
+	GAME_ENTRY("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719), // GOG
 	GAME_ENTRY("keptoshi", "Keptosh.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2904848),
 	GAME_ENTRY("keys", "Keys.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 85582285),
 	GAME_ENTRY("killereye", "killereye.exe", "0710e2ec71042617f565c01824f0cf3c", 1009042),

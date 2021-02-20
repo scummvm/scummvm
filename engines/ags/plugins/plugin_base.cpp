@@ -73,7 +73,7 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSSnowRain") || fname.equalsIgnoreCase("ags_snowrain"))
 		return new AGSSnowRain::AGSSnowRain();
 
-	if (fname.equalsIgnoreCase("AGSSpriteFont"))
+	if (fname.equalsIgnoreCase("AGSSpriteFont") || fname.equalsIgnoreCase("agsplugin.spritefont"))
 		return new AGSSpriteFont::AGSSpriteFont();
 
 	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
