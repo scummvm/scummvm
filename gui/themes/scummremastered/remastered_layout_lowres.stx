@@ -1193,47 +1193,6 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Engine_Container' overlays = 'GameOptions_Engine.Container'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
-			<widget name = 'customOption1Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption2Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption3Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption4Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption5Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption6Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption7Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption8Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption9Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption10Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption11Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'customOption12Checkbox'
-					type = 'Checkbox'
-			/>
-		</layout>
-	</dialog>
-
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '4, 4, 4, 4' align = 'center' spacing='2'>
 			<widget name = 'Title'
@@ -1305,12 +1264,6 @@
 	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalConfig_Engine_Container' overlays = 'Dialog.GlobalConfig_Engine.Container'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
-			<import layout = 'Dialog.GameOptions_Engine_Container' />
 		</layout>
 	</dialog>
 

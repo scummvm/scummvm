@@ -406,23 +406,14 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 }
 #endif
 
-static const int MAX_EXTRA_GUI_OPTIONS = 12;
-
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
 		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), true, domain),
 		_options(options) {
 
-	uint i = 1;
-	ExtraGuiOptions::const_iterator iter;
-	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
-		if (i > MAX_EXTRA_GUI_OPTIONS) {
-			warning("More extra gui options registered than supported by themes.");
-			break;
-		}
-
-		Common::String id = Common::String::format("%d", i);
+	for (uint i = 0; i < _options.size(); i++) {
+		Common::String id = Common::String::format("%d", i + 1);
 		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
-			_dialogLayout + ".customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
+			_dialogLayout + ".customOption" + id + "Checkbox", _(_options[i].label), _(_options[i].tooltip)));
 	}
 }
 
@@ -460,6 +451,18 @@ bool ExtraGuiOptionsWidget::save() {
 	}
 
 	return true;
+}
+
+void ExtraGuiOptionsWidget::defineLayout(ThemeEval& layouts, const Common::String& layoutName, const Common::String& overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(8, 8, 8, 8);
+
+	for (uint i = 0; i < _options.size(); i++) {
+		Common::String id = Common::String::format("%d", i + 1);
+		layouts.addWidget("customOption" + id + "Checkbox", "Checkbox");
+	}
+
+	layouts.closeLayout().closeDialog();
 }
 
 } // End of namespace GUI
