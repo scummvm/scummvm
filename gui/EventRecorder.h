@@ -77,7 +77,7 @@ public:
 		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, interal state when user pauses the playback */
 	};
 
-	void init(Common::String recordFileName, RecordMode mode);
+	void init(const Common::String &recordFileName, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
 	uint32 getRandomSeed(const Common::String &name);

@@ -259,7 +259,7 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 }
 
 
-void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
+void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullMixerManager();
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
