@@ -178,6 +178,9 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
     registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
+    registerCmd("grab",           WRAP_METHOD(Console, cmdAddToInventory));
+    registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
+
     registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
     registerCmd("draw",           WRAP_METHOD(Console, cmdDrawResource));
 
@@ -233,6 +236,9 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" show_script - Show script commands\n");
     debugPrintf(" encounter   - run an encounter\n");
     debugPrintf(" puzzle      - run an puzzle\n");
+    debugPrintf("\n");
+    debugPrintf(" grab        - add an item to inventory\n");
+    debugPrintf(" throw       - remove an item from inventory\n");
     debugPrintf("\n");
     debugPrintf(" palette     - set the screen palette\n");
     debugPrintf(" draw        - draw a resource\n");
@@ -659,6 +665,52 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 	_vm->switchEventHandler(puzzle);
 
 	return false;
+}
+
+bool Console::cmdAddToInventory(int32 argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Syntax: %s <item index> (<count>)\n", argv[0]);
+		return true;
+	}
+
+	uint32 index = atoi(argv[1]), count = argc == 3 ? atoi(argv[2]) : 0, maxIndex;
+
+	for (maxIndex = 0; maxIndex < 16; maxIndex++) {
+		if (!getWorld()->cursorResourcesAlternate[maxIndex])
+			break;
+	}
+
+	if (index > maxIndex || !index) {
+		debugPrintf("[Error] index should be between 1 and %d\n", maxIndex);
+		return true;
+	}
+
+	getScene()->getActor()->addReactionHive(index, count);
+
+	return true;
+}
+
+bool Console::cmdRemoveFromInventory(int32 argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Syntax: %s <item index> (<count>)\n", argv[0]);
+		return true;
+	}
+
+	uint32 index = atoi(argv[1]), count = argc == 3 ? atoi(argv[2]) : 0, maxIndex;
+
+	for (maxIndex = 0; maxIndex < 16; maxIndex++) {
+		if (!getWorld()->cursorResourcesAlternate[maxIndex])
+			break;
+	}
+
+	if (index > maxIndex || !index) {
+		debugPrintf("[Error] index should be between 1 and %d\n", maxIndex);
+		return true;
+	}
+
+	getScene()->getActor()->removeReactionHive(index, count);
+
+	return true;
 }
 
 bool Console::cmdSetPalette(int32 argc, const char **argv) {
