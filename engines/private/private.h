@@ -84,11 +84,11 @@ typedef struct ExitInfo {
 
 typedef struct MaskInfo {
     Graphics::ManagedSurface *surf;
-    Common::String *nextSetting;
-    Common::Point *point;
+    Common::String nextSetting;
+    Common::Point point;
     Symbol *flag1;
     Symbol *flag2;
-    Common::String *cursor;
+    Common::String cursor;
 } MaskInfo;
 
 typedef struct PhoneInfo {
@@ -228,8 +228,8 @@ public:
     DossierArray _dossiers;
     unsigned int _dossierSuspect;
     unsigned int _dossierPage;
-    MaskInfo *_dossierNextSuspectMask;
-    MaskInfo *_dossierPrevSuspectMask;
+    MaskInfo _dossierNextSuspectMask;
+    MaskInfo _dossierPrevSuspectMask;
     bool selectDossierNextSuspect(Common::Point);
     bool selectDossierPrevSuspect(Common::Point);
     void loadDossier();
@@ -251,8 +251,8 @@ public:
     void loadInventory(uint32, Common::Rect *, Common::Rect *);
 
     // Save/Load games
-    MaskInfo *_saveGameMask;
-    MaskInfo *_loadGameMask;
+    MaskInfo _saveGameMask;
+    MaskInfo _loadGameMask;
 
     int _mode;
     bool _modified;
@@ -280,9 +280,9 @@ public:
 
     // Radios
     Common::String _infaceRadioPath;
-    MaskInfo *_AMRadioArea;
-    MaskInfo *_policeRadioArea;
-    MaskInfo *_phoneArea;
+    MaskInfo _AMRadioArea;
+    MaskInfo _policeRadioArea;
+    MaskInfo _phoneArea;
     Common::String _phonePrefix;
     Common::String _phoneCallSound;
     SoundList _AMRadio;

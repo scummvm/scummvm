@@ -73,8 +73,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _repeatedMovieExit = "";
 
     // Save and load
-    _saveGameMask = NULL;
-    _loadGameMask = NULL;
+    _saveGameMask = {};
+    _loadGameMask = {};
 
     // Interface
     _framePath = "inface/general/inface2.bmp";
@@ -90,9 +90,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _noStopSounds = false;
 
     // Radios and phone
-    _policeRadioArea = NULL;
-    _AMRadioArea = NULL;
-    _phoneArea = NULL;
+    _policeRadioArea = {};
+    _AMRadioArea = {};
+    _phoneArea = {};
     // TODO: use this as a default sound for radio
     _infaceRadioPath = "inface/radio/";
     _phonePrefix = "inface/telephon/";
@@ -101,8 +101,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     // Dossiers
     _dossierPage = 0;
     _dossierSuspect = 0;
-    _dossierNextSuspectMask = NULL;
-    _dossierPrevSuspectMask = NULL;
+    _dossierNextSuspectMask = {};
+    _dossierPrevSuspectMask = {};
 
     // Diary
     _diaryLocPrefix = "inface/diary/loclist/";
@@ -302,20 +302,40 @@ void PrivateEngine::clearAreas() {
     _exits.clear();
     _masks.clear();
 
-    free(_loadGameMask);
-    _loadGameMask = NULL;
-    free(_saveGameMask);
-    _saveGameMask = NULL;
-    free(_policeRadioArea); 
-    _policeRadioArea = NULL;
-    free(_AMRadioArea);
-    _AMRadioArea = NULL;
-    free(_phoneArea);
-    _phoneArea = NULL;
-    free(_dossierNextSuspectMask);
-    _dossierNextSuspectMask = NULL;
-    free(_dossierPrevSuspectMask);
-    _dossierPrevSuspectMask = NULL;
+    if (_loadGameMask.surf) 
+        _loadGameMask.surf->free();
+    delete _loadGameMask.surf;
+    _loadGameMask = {};
+
+    if (_saveGameMask.surf)
+        _saveGameMask.surf->free();
+    delete _saveGameMask.surf;
+    _saveGameMask = {};
+
+    if (_policeRadioArea.surf)
+        _policeRadioArea.surf->free();
+    delete _policeRadioArea.surf; 
+    _policeRadioArea = {};
+
+    if (_AMRadioArea.surf)
+        _AMRadioArea.surf->free();
+    delete _AMRadioArea.surf;
+    _AMRadioArea = {};
+
+    if (_phoneArea.surf)
+        _phoneArea.surf->free();
+    delete _phoneArea.surf;
+    _phoneArea = {};
+
+    if (_dossierNextSuspectMask.surf)
+        _dossierNextSuspectMask.surf->free();
+    delete _dossierNextSuspectMask.surf;
+    _dossierNextSuspectMask = {};
+
+    if (_dossierPrevSuspectMask.surf)
+        _dossierPrevSuspectMask.surf->free();
+    delete _dossierPrevSuspectMask.surf;
+    _dossierPrevSuspectMask = {};
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -411,9 +431,9 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
         m = *it;
 
         if (inMask(m.surf, mousePos)) {
-            if (m.cursor != NULL) { // TODO: check this
+            if (!m.cursor.empty()) { // TODO: check this
                 inside = true;
-                changeCursor(*m.cursor);
+                changeCursor(m.cursor);
                 break;
             }
         }
@@ -478,14 +498,14 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectMask(Common::Point mousePos) {
-    Common::String *ns = NULL;
+    Common::String ns = "";
     MaskInfo m;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
         m = *it;
         //debug("Testing mask %s", m.nextSetting->c_str());
         if (inMask(m.surf, mousePos)) {
             //debug("Inside!");
-            if (m.nextSetting != NULL) { // TODO: check this
+            if (!m.nextSetting.empty()) { // TODO: check this
                 //debug("Found Mask %s", m.nextSetting->c_str());
                 ns = m.nextSetting;
             }
@@ -505,21 +525,20 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
             break;
         }
     }
-    if (ns != NULL) {
+    if (!ns.empty()) {
         //debug("Mask selected %s", ns->c_str());
-        _nextSetting = *ns;
-        //setNextSetting(new Common::String(*ns));
+        _nextSetting = ns;
     }
 }
 
 void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
-    if (_AMRadioArea == NULL)
+    if (_AMRadioArea.surf == NULL)
         return;
 
     if (_AMRadio.empty())
         return;
 
-    if (inMask(_AMRadioArea->surf, mousePos)) {
+    if (inMask(_AMRadioArea.surf, mousePos)) {
         Common::String sound = _infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
         playSound(sound, 1, false, false);
         _AMRadio.pop_back();
@@ -527,13 +546,13 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
-    if (_policeRadioArea == NULL)
+    if (_policeRadioArea.surf == NULL)
         return;
 
     if (_policeRadio.empty())
         return;
 
-    if (inMask(_policeRadioArea->surf, mousePos)) {
+    if (inMask(_policeRadioArea.surf, mousePos)) {
         Common::String sound = _infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
         playSound(sound, 1, false, false);
         _policeRadio.pop_back();
@@ -541,7 +560,7 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 }
 
 void PrivateEngine::checkPhoneCall() {
-    if (_phoneArea == NULL)
+    if (_phoneArea.surf == NULL)
         return;
 
     if (_phone.empty())
@@ -552,13 +571,13 @@ void PrivateEngine::checkPhoneCall() {
 }
 
 void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
-    if (_phoneArea == NULL)
+    if (_phoneArea.surf == NULL)
         return;
 
     if (_phone.empty())
         return;
 
-    if (inMask(_phoneArea->surf, mousePos)) {
+    if (inMask(_phoneArea.surf, mousePos)) {
         PhoneInfo i = _phone.back();
         setSymbol(i.flag, i.val);
         Common::String sound = _phonePrefix + i.sound + ".wav";
@@ -582,16 +601,16 @@ void PrivateEngine::loadDossier() {
 }
 
 bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
-    if (_dossierNextSuspectMask == NULL)
+    if (_dossierNextSuspectMask.surf == NULL)
         return false;
 
-    if (inMask(_dossierNextSuspectMask->surf, mousePos)) {
+    if (inMask(_dossierNextSuspectMask.surf, mousePos)) {
         if ((_dossierSuspect + 1) < _dossiers.size()) {
             _dossierSuspect++;
             _dossierPage = 0;
             loadDossier();
-            drawMask(_dossierNextSuspectMask->surf);
-            drawMask(_dossierPrevSuspectMask->surf);
+            drawMask(_dossierNextSuspectMask.surf);
+            drawMask(_dossierPrevSuspectMask.surf);
             drawScreen();
         }
         return true;
@@ -600,16 +619,16 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 }
 
 bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
-    if (_dossierPrevSuspectMask == NULL)
+    if (_dossierPrevSuspectMask.surf == NULL)
         return false;
 
-    if (inMask(_dossierPrevSuspectMask->surf, mousePos)) {
+    if (inMask(_dossierPrevSuspectMask.surf, mousePos)) {
         if (_dossierSuspect > 0) {
             _dossierSuspect--;
             _dossierPage = 0;
             loadDossier();
-            drawMask(_dossierNextSuspectMask->surf);
-            drawMask(_dossierPrevSuspectMask->surf);
+            drawMask(_dossierNextSuspectMask.surf);
+            drawMask(_dossierPrevSuspectMask.surf);
             drawScreen();
         }
         return true;
@@ -618,22 +637,21 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
-    if (_loadGameMask == NULL)
+    if (_loadGameMask.surf == NULL)
         return;
 
-    if (inMask(_loadGameMask->surf, mousePos)) {
+    if (inMask(_loadGameMask.surf, mousePos)) {
         loadGameDialog();
     }
 }
 
 void PrivateEngine::selectSaveGame(Common::Point mousePos) {
-    if (_saveGameMask == NULL)
+    if (_saveGameMask.surf == NULL)
         return;
 
-    if (inMask(_saveGameMask->surf, mousePos)) {
+    if (inMask(_saveGameMask.surf, mousePos)) {
         saveGameDialog();
     }
-
 }
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
