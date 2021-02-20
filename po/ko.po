@@ -2054,7 +2054,8 @@ msgstr "<잘못된 값>"
 
 #: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr "불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다"
+msgstr ""
+"불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2283,7 +2284,8 @@ msgid ""
 msgstr ""
 "'%s'안에 있는 게임은 아직 알려지지 않은 변형된 게임으로 보입니다.\n"
 "\n"
-"게임 이름, 버전, 언어 등의 정보와 함께 ScummVM 팀 '%s' 에게 다음의 데이터를 알려주십시오:"
+"게임 이름, 버전, 언어 등의 정보와 함께 ScummVM 팀 '%s' 에게 다음의 데이터를 "
+"알려주십시오:"
 
 #: engines/game.cpp:175
 #, c-format
@@ -3700,7 +3702,8 @@ msgstr "대체 팔레트 사용"
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
-msgstr "아미가 게임에서 자주 쓰인 대체 팔레트를 사용합니다. 이전의 동작 방식입니다"
+msgstr ""
+"아미가 게임에서 자주 쓰인 대체 팔레트를 사용합니다. 이전의 동작 방식입니다"
 
 #: engines/agi/detection.cpp:92
 msgid "Mouse support"
@@ -3729,7 +3732,9 @@ msgstr "커맨드 입력시 일시 정지"
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr "실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유사)"
+msgstr ""
+"실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유"
+"사)"
 
 #: engines/agi/detection.cpp:122
 msgid "Add speed menu"
@@ -3746,7 +3751,8 @@ msgid ""
 "game directory"
 msgstr ""
 "Hercules 고해상도 폰트에 필요한 'hgc_font' 파일을 사용할 수 없습니다.\n"
-"다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하십시오"
+"다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하"
+"십시오"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -3907,7 +3913,9 @@ msgstr "최대 초당 프레임 제한"
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr "이 모드는 최대 120 fps를 목표로합니다. 옵션이 비활성화되면 60 fps를 목표로하게됩니다"
+msgstr ""
+"이 모드는 최대 120 fps를 목표로합니다. 옵션이 비활성화되면 60 fps를 목표로하"
+"게됩니다"
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
@@ -3917,7 +3925,9 @@ msgstr "McCoy의 빠른 스태미나 감소를 비활성화"
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr "달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 합니다"
+msgstr ""
+"달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 "
+"합니다"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -3952,7 +3962,9 @@ msgstr "16색 화면에서 투명한 대사 창을 사용"
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
-msgstr "16색 화면에서도 투명한 대사 창을 활성화합니다. 이 기능은 원작에서는 지원하지 않았습니다"
+msgstr ""
+"16색 화면에서도 투명한 대사 창을 활성화합니다. 이 기능은 원작에서는 지원하지 "
+"않았습니다"
 
 #: engines/cine/metaengine.cpp:136
 msgid "Unnamed autosave"
@@ -5122,7 +5134,8 @@ msgstr "지도 보이기"
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr "저장된 게임을 불러오시겠습니까? 저장되지 않은 진행사항은 사라지게 됩니다."
+msgstr ""
+"저장된 게임을 불러오시겠습니까? 저장되지 않은 진행사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -5134,7 +5147,8 @@ msgstr "게임 불러오기"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr "새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게됩니다."
+msgstr ""
+"새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5154,19 +5168,25 @@ msgstr "데모에서는 도서관을 벗어날 수 없습니다."
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr "Riven 실행파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 'rivendmo.exe'입니다. "
+msgstr ""
+"Riven 실행파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 "
+"'rivendmo.exe'입니다. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr "'arcriven.z' 설치 파일도 사용가능합니다. 추가로 맥용 'Riven'실행 파일도 사용가능합니다."
+msgstr ""
+"'arcriven.z' 설치 파일도 사용가능합니다. 추가로 맥용 'Riven'실행 파일도 사용"
+"가능합니다."
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr "'extras.mhk' 파일을 찾을 수 없습니다. 'arcriven.z' 설치 파일로도 사용 가능합니다."
+msgstr ""
+"'extras.mhk' 파일을 찾을 수 없습니다. 'arcriven.z' 설치 파일로도 사용 가능합"
+"니다."
 
 #: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
