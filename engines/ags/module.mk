@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	lib/allegro/keyboard.o \
 	lib/allegro/math.o \
 	lib/allegro/mouse.o \
+	lib/allegro/surface.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
 	lib/hq2x/hq2x3x.o \

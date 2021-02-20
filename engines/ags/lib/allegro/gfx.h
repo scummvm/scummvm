@@ -26,6 +26,7 @@
 #include "graphics/managed_surface.h"
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/fixed.h"
+#include "ags/lib/allegro/surface.h"
 #include "common/array.h"
 
 namespace AGS3 {
@@ -173,111 +174,10 @@ namespace AGS3 {
                                              COLORCONV_32A_TO_16 |       \
                                              COLORCONV_32A_TO_24))
 
-class BITMAP {
-private:
-	Graphics::ManagedSurface *_owner;
-public:
-	uint16 &w, &h, &pitch;
-	Graphics::PixelFormat &format;
-	bool clip;
-	int ct, cb, cl, cr;
-	Common::Array<byte *> line;
-public:
-	BITMAP(Graphics::ManagedSurface *owner);
-	virtual ~BITMAP() {
-	}
-
-	Graphics::ManagedSurface &operator*() const {
-		return *_owner;
-	}
-	Graphics::ManagedSurface &getSurface() {
-		return *_owner;
-	}
-	const Graphics::ManagedSurface &getSurface() const {
-		return *_owner;
-	}
-
-	unsigned char *getPixels() const {
-		return (unsigned char *)_owner->getPixels();
-	}
-
-	unsigned char *getBasePtr(uint16 x, uint16 y) const {
-		return (unsigned char *)_owner->getBasePtr(x, y);
-	}
-
-	uint getTransparentColor() const {
-		return format.RGBToColor(255, 0, 255);
-	}
-
-	int getpixel(int x, int y) const;
-
-	void clear() {
-		_owner->clear();
-	}
-
-	/**
-	 * Draws a solid filled in circle
-	 */
-	void circlefill(int x, int y, int radius, int color);
-
-	/**
-	 * Fills an enclosed area starting at a given point
-	 */
-	void floodfill(int x, int y, int color);
-
-	/**
-	 * Draw a horizontal line
-	 */
-	void hLine(int x, int y, int x2, uint32 color) {
-		_owner->hLine(x, y, x2, color);
-	}
-
-	/**
-	 * Draw a vertical line.
-	 */
-	void vLine(int x, int y, int y2, uint32 color) {
-		_owner->vLine(x, y, y2, color);
-	}
-};
-
-/**
- * Derived surface class
- */
-class Surface : public Graphics::ManagedSurface, public BITMAP {
-public:
-	Surface() : Graphics::ManagedSurface(), BITMAP(this) {
-	}
-	Surface(const Graphics::ManagedSurface &surf) : Graphics::ManagedSurface(surf), BITMAP(this) {
-	}
-	Surface(int width, int height) : Graphics::ManagedSurface(width, height), BITMAP(this) {
-	}
-	Surface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
-			Graphics::ManagedSurface(width, height, pixelFormat), BITMAP(this) {
-		// Allegro uses 255, 0, 255 RGB as the transparent color
-		if (pixelFormat.bytesPerPixel == 4)
-			setTransparentColor(pixelFormat.RGBToColor(255, 0, 255));
-	}
-	Surface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) :
-			Graphics::ManagedSurface(surf, bounds), BITMAP(this) {
-		// Allegro uses 255, 0, 255 RGB as the transparent color
-		if (surf.format.bytesPerPixel == 4)
-			setTransparentColor(surf.format.RGBToColor(255, 0, 255));
-	}
-	~Surface() override {
-	}
-};
-
-
 AL_FUNC(void, set_color_conversion, (int mode));
 AL_FUNC(int, get_color_conversion, ());
 AL_FUNC(int, set_gfx_mode, (int card, int w, int h, int v_w, int v_h));
-AL_FUNC(BITMAP *, create_bitmap, (int width, int height));
-AL_FUNC(BITMAP *, create_bitmap_ex, (int color_depth, int width, int height));
-AL_FUNC(BITMAP *, create_sub_bitmap, (BITMAP *parent, int x, int y, int width, int height));
-AL_FUNC(BITMAP *, create_video_bitmap, (int width, int height));
-AL_FUNC(BITMAP *, create_system_bitmap, (int width, int height));
 
-AL_FUNC(void, destroy_bitmap, (BITMAP *bitmap));
 AL_FUNC(void, set_clip_rect, (BITMAP *bitmap, int x1, int y1, int x2, int y2));
 AL_FUNC(void, add_clip_rect, (BITMAP *bitmap, int x1, int y1, int x2, int y2));
 AL_FUNC(void, get_clip_rect, (BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2));
