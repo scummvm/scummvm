@@ -715,7 +715,6 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     // Dossiers
     size = stream->readUint32LE();
-    Common::String *file = NULL;
     DossierInfo m = {};
     for (uint32 i = 0; i < size; ++i) {
         m.page1 = stream->readString();
@@ -1006,7 +1005,7 @@ Common::String PrivateEngine::getPaperShuffleSound() {
 
 Common::String PrivateEngine::getTakeSound() {
     if (isDemo())
-        return (Common::String(_globalAudioPath + "mvo007.wav"));
+        return (_globalAudioPath + "mvo007.wav");
 
     uint r = _rnd->getRandomNumber(4) + 1;
     return Common::String::format("%stook%d.wav", _globalAudioPath.c_str(), r);
@@ -1015,15 +1014,15 @@ Common::String PrivateEngine::getTakeSound() {
 Common::String PrivateEngine::getTakeLeaveSound() {
     uint r = _rnd->getRandomNumber(1);
     if (r == 0) {
-        return (Common::String(_globalAudioPath + "mvo001.wav"));
+        return (_globalAudioPath + "mvo001.wav");
     } else {
-        return (Common::String(_globalAudioPath + "mvo006.wav"));
+        return (_globalAudioPath + "mvo006.wav");
     }
 }
 
 Common::String PrivateEngine::getLeaveSound() {
     if (isDemo())
-        return (Common::String(_globalAudioPath + "mvo008.wav"));
+        return (_globalAudioPath + "mvo008.wav");
 
     uint r = _rnd->getRandomNumber(4) + 1;
     return Common::String::format("%sleft%d.wav", _globalAudioPath.c_str(), r);
