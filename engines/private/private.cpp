@@ -69,7 +69,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
     // Movies
     _nextMovie = "";
-    _nextVS = NULL;
+    _nextVS = "";
     _repeatedMovieExit = "";
 
     // Save and load
@@ -255,8 +255,8 @@ Common::Error PrivateEngine::run() {
             continue;
         }
 
-        if (_nextVS != NULL && _currentSetting == kMainDesktop) {
-            loadImage(*_nextVS, 160, 120);
+        if (!_nextVS.empty() && _currentSetting == kMainDesktop) {
+            loadImage(_nextVS, 160, 120);
             drawScreen();
         }
 
@@ -277,7 +277,6 @@ Common::Error PrivateEngine::run() {
             removeTimer();
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
             clearAreas();
-            // This pointer will be free after load
             _currentSetting = _nextSetting;
             settings.load(_nextSetting);
             _nextSetting = "";

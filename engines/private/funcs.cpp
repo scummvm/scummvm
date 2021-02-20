@@ -41,8 +41,7 @@ void fChgMode(ArgArray args) {
         assert(0);
 
     g_private->_mode = args[0].u.val;
-    Common::String *s = new Common::String(args[1].u.str);
-    g_private->_nextSetting = *s;
+    g_private->_nextSetting = args[1].u.str;
 
     if (g_private->_mode == 0) {
         g_private->setOrigin(kOriginZero);
@@ -65,7 +64,7 @@ void fChgMode(ArgArray args) {
 void fVSPicture(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "VSPicture(%s)", args[0].u.str);
-    g_private->_nextVS = new Common::String(args[0].u.str);
+    g_private->_nextVS = args[0].u.str;
 }
 
 
@@ -103,17 +102,15 @@ void fDiaryInvList(ArgArray args) {
 void fgoto(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
-    Common::String *s = new Common::String(args[0].u.str);
-    g_private->_nextSetting = *s;
+    g_private->_nextSetting = args[0].u.str;
 }
 
 
 void fSyncSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
-    Common::String *nextSetting = new Common::String(args[1].u.str);
-    g_private->_nextSetting = *nextSetting;
-    Common::String s(args[0].u.str);
+    g_private->_nextSetting = args[1].u.str;
+    Common::String s = args[0].u.str;
 
     if (s != "\"\"") {
         g_private->playSound(s, 1, true, false);
@@ -128,9 +125,8 @@ void fQuit(ArgArray args) {
 void fLoadGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
-    Common::String *s = new Common::String(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(*s, 0, 0, true);
+    m->surf = g_private->loadMask(args[0].u.str, 0, 0, true);
     m->cursor = args[2].u.sym->name;
     m->nextSetting = NULL;
     m->flag1 = NULL;
@@ -143,9 +139,8 @@ void fLoadGame(ArgArray args) {
 void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
-    Common::String s(args[0].u.str);
     MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-    m->surf = g_private->loadMask(s, 0, 0, true);
+    m->surf = g_private->loadMask(args[0].u.str, 0, 0, true);
     m->cursor = args[1].u.sym->name;
     m->nextSetting = NULL;
     m->flag1 = NULL;
@@ -619,10 +614,11 @@ void fSoundArea(ArgArray args) {
         error("Invalid input for SoundArea");
 
     debugC(1, kPrivateDebugScript, "SoundArea(%s, %s, ..)", args[0].u.str, n.c_str());
+    Common::String s = args[0].u.str;
+
     if (n == "kAMRadio") {
-        Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->surf = g_private->loadMask(s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
         m->flag1 = NULL;
@@ -631,9 +627,8 @@ void fSoundArea(ArgArray args) {
         g_private->_AMRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (n == "kPoliceRadio") {
-        Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->surf = g_private->loadMask(s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
         m->flag1 = NULL;
@@ -642,9 +637,8 @@ void fSoundArea(ArgArray args) {
         g_private->_policeRadioArea = m;
         g_private->_masks.push_front(*m);
     } else if (n == "kPhone") {
-        Common::String *s = new Common::String(args[0].u.str);
         MaskInfo *m = (MaskInfo *)malloc(sizeof(MaskInfo));
-        m->surf = g_private->loadMask(*s, 0, 0, true);
+        m->surf = g_private->loadMask(s, 0, 0, true);
         m->cursor = args[2].u.sym->name;
         m->nextSetting = NULL;
         m->flag1 = NULL;
@@ -662,8 +656,7 @@ void fSafeDigit(ArgArray args) {
 void fAskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
-    Common::String *s = new Common::String(args[0].u.str);
-    g_private->_nextSetting = *s;
+    g_private->_nextSetting = args[0].u.str;
 }
 
 void fTimer(ArgArray args) {
@@ -675,6 +668,7 @@ void fTimer(ArgArray args) {
         debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
     int32 delay = 1000000 * args[0].u.val;
+    // This pointer is necessary since installTimer needs one
     Common::String *s = new Common::String(args[1].u.str);
     if (delay > 0) {
         assert(g_private->installTimer(delay, s));

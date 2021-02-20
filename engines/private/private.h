@@ -206,7 +206,7 @@ public:
     Common::Rect screenRect;
     Common::String _framePath;
     Graphics::Surface *_frame;
-    Common::String *_nextVS;
+    Common::String _nextVS;
     void drawScreen();
 
     // settings
