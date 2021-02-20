@@ -33,7 +33,7 @@ NullMixerManager::NullMixerManager() : MixerManager() {
 }
 
 NullMixerManager::~NullMixerManager() {
-	delete _samplesBuf;
+	delete[] _samplesBuf;
 }
 
 void NullMixerManager::init() {
