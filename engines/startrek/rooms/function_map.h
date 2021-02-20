@@ -48,10 +48,10 @@ extern const RoomTextOffsets loveTextOffsets[];
 
 extern const RoomAction mudd0ActionList[], mudd1ActionList[], mudd2ActionList[], mudd3ActionList[];
 extern const RoomAction mudd4ActionList[], mudd5ActionList[];
-extern const RoomTextOffsets mudd0TextOffsets[], mudd1TextOffsets[], mudd2TextOffsets[];//, mudd3TextOffsets[];
-//extern const RoomTextOffsets mudd4TextOffsets[], mudd5TextOffsets[];
-extern const RoomText mudd0Texts[], mudd1Texts[], mudd2Texts[];//, mudd3Texts[];
-//extern const RoomText mudd4Texts[], mudd5Texts[];
+extern const RoomTextOffsets mudd0TextOffsets[], mudd1TextOffsets[], mudd2TextOffsets[], mudd3TextOffsets[];
+extern const RoomTextOffsets /*mudd4TextOffsets[],*/ mudd5TextOffsets[];
+extern const RoomText mudd0Texts[], mudd1Texts[], mudd2Texts[], mudd3Texts[];
+extern const RoomText /*mudd4Texts[],*/ mudd5Texts[];
 extern const RoomTextOffsets muddTextOffsets[];
 
 extern const RoomAction feather0ActionList[], feather1ActionList[], feather2ActionList[], feather3ActionList[];

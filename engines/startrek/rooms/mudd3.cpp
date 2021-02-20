@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_MUDD 8
@@ -87,20 +86,129 @@ extern const RoomAction mudd3ActionList[] = {
 };
 
 enum mudd3TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_UHURA,
+	TX_SPEAKER_BUCHERT, TX_SPEAKER_MUDD,
+	TX_MUD3_002, TX_MUD3_003, TX_MUD3_005, TX_MUD3_006, TX_MUD3_007,
+	TX_MUD3_008, TX_MUD3_009, TX_MUD3_010, TX_MUD3_011, TX_MUD3_012,
+	TX_MUD3_013, TX_MUD3_014, TX_MUD3_015, TX_MUD3_016, TX_MUD3_017,
+	TX_MUD3_018, TX_MUD3_019, TX_MUD3_020, TX_MUD3_021, TX_MUD3_022,
+	TX_MUD3_023, TX_MUD3_024, TX_MUD3_025, TX_MUD3_026, TX_MUD3_027,
+	TX_MUD3_028, TX_MUD3_029, TX_MUD3_030, TX_MUD3_031,	TX_MUD3_032,
+	TX_MUD3_033, TX_MUD3_034, TX_MUD3_035, TX_MUD3_037, TX_MUD3_038,
+	TX_MUD3_039, TX_MUD3_040, TX_MUD3_041, TX_MUD3_042, TX_MUD3_043,
+	TX_MUD3_044, TX_MUD3_046, TX_MUD3_047, TX_MUD3_048, TX_MUD3_049,
+	TX_MUD3_050, TX_MUD3_051, TX_MUD3_052, TX_MUD3_053, TX_MUD3_054,
+	TX_MUD3_055, TX_MUD3_056, TX_MUD3_057, TX_MUD3_058, TX_MUD3_059,
+	TX_MUD3_060, TX_MUD3_061, TX_MUD3_062, TX_MUD3_063,	TX_MUD3_064,
+	TX_MUD3_065, TX_MUD3_066, TX_MUD3_067, TX_MUD3_068, TX_MUD3_069,
+	TX_MUD3_070, TX_MUD3_071, TX_MUD3N000, TX_MUD3N002, TX_MUD3N003,
+	TX_MUD3N004, TX_MUD3N005, TX_MUD3N006, TX_MUD3N007, TX_MUD3N008,
+	TX_MUD3N009, TX_MUD3N010, TX_MUD3N011, TX_MUD3N012, TX_MUD3N013,
+	TX_MUD3N014, TX_MUD3N015, TX_MUD3N017, TX_MUD3N018, TX_MUD3N019,
+	TX_MUD3N020, TX_DEM0N009, TX_STATICU1
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets mudd3TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 3778, 0 },
+	{ TX_SPEAKER_MCCOY, 3789, 0 },
+	{ TX_SPEAKER_SPOCK, 3799, 0 },
+	{ TX_SPEAKER_UHURA, 524, 0 },
+	{ TX_SPEAKER_BUCHERT, 3809, 0 },
+	{ TX_SPEAKER_MUDD, 3821, 0 },
+	{ TX_MUD3_002, 12100, 0 },
+	{ TX_MUD3_003, 487, 0 },
+	{ TX_MUD3_005, 13314, 0 },
+	{ TX_MUD3_006, 9361, 0 },
+	{ TX_MUD3_007, 7734, 0 },
+	{ TX_MUD3_008, 9718, 0 },
+	{ TX_MUD3_009, 8704, 0 },
+	{ TX_MUD3_010, 8569, 0 },
+	{ TX_MUD3_011, 11631, 0 },
+	{ TX_MUD3_012, 9147, 0 },
+	{ TX_MUD3_013, 12946, 0 },
+	{ TX_MUD3_014, 11167, 0 },	
+	{ TX_MUD3_015, 5526, 0 },
+	{ TX_MUD3_016, 11915, 0 },
+	{ TX_MUD3_017, 4507, 0 },
+	{ TX_MUD3_018, 6344, 0 },
+	{ TX_MUD3_019, 12146, 0 },
+	{ TX_MUD3_020, 3473, 0 },
+	{ TX_MUD3_021, 6291, 0 },
+	{ TX_MUD3_022, 5312, 0 },
+	{ TX_MUD3_023, 11763, 0 },
+	{ TX_MUD3_024, 9282, 0 },
+	{ TX_MUD3_025, 11373, 0 },
+	{ TX_MUD3_026, 8287, 0 },
+	{ TX_MUD3_027, 7770, 0 },
+	{ TX_MUD3_028, 8134, 0 },
+	{ TX_MUD3_029, 12593, 0 },
+	{ TX_MUD3_030, 12257, 0 },
+	{ TX_MUD3_031, 8858, 0 },
+	{ TX_MUD3_032, 7050, 0 },
+	{ TX_MUD3_033, 11586, 0 },
+	{ TX_MUD3_034, 4190, 0 },
+	{ TX_MUD3_035, 3833, 0 },
+	{ TX_MUD3_037, 4647, 0 },
+	{ TX_MUD3_038, 4388, 0 },
+	{ TX_MUD3_039, 3907, 0 },
+	{ TX_MUD3_040, 4049, 0 },
+	{ TX_MUD3_041, 6156, 0 },
+	{ TX_MUD3_042, 5896, 0 },
+	{ TX_MUD3_043, 5086, 0 },
+	{ TX_MUD3_044, 4851, 0 },
+	{ TX_MUD3_046, 7649, 0 },
+	{ TX_MUD3_047, 5629, 0 },
+	{ TX_MUD3_048, 9448, 0 },
+	{ TX_MUD3_049, 7393, 0 },
+	{ TX_MUD3_050, 7152, 0 },
+	{ TX_MUD3_051, 9784, 0 },
+	{ TX_MUD3_052, 9015, 0 },
+	{ TX_MUD3_053, 7890, 0 },
+	{ TX_MUD3_054, 6745, 0 },
+	{ TX_MUD3_055, 11459, 0 },
+	{ TX_MUD3_056, 5448, 0 },
+	{ TX_MUD3_057, 11261, 0 },
+	{ TX_MUD3_058, 13030, 0 },
+	{ TX_MUD3_059, 13225, 0 },
+	{ TX_MUD3_060, 12512, 0 },
+	{ TX_MUD3_061, 12832, 0 },
+	{ TX_MUD3_062, 12375, 0 },
+	{ TX_MUD3_063, 8836, 0 },
+	{ TX_MUD3_064, 8794, 0 },
+	{ TX_MUD3_065, 8447, 0 },
+	{ TX_MUD3_066, 8633, 0 },
+	{ TX_MUD3_067, 12427, 0 },
+	{ TX_MUD3_069, 13141, 0 },
+	{ TX_MUD3_070, 11823, 0 },
+	{ TX_MUD3_071, 11966, 0 },
+	{ TX_MUD3N000, 8982, 0 },
+	{ TX_MUD3N002, 10865, 0 },
+	{ TX_MUD3N003, 11075, 0 },
+	{ TX_MUD3N004, 10800, 0 },
+	{ TX_MUD3N005, 10481, 0 },
+	{ TX_MUD3N006, 10993, 0 },
+	{ TX_MUD3N007, 10692, 0 },
+	{ TX_MUD3N008, 2490, 0 },
+	{ TX_MUD3N009, 10937, 0 },
+	{ TX_MUD3N010, 10640, 0 },
+	{ TX_MUD3N011, 4615, 0 },
+	{ TX_MUD3N012, 10570, 0 },
+	{ TX_MUD3N013, 2698, 0 },
+	{ TX_MUD3N014, 9939, 0 },
+	{ TX_MUD3N015, 4749, 0 },
+	{ TX_MUD3N017, 4331, 0 },
+	{ TX_MUD3N018, 10144, 0 },
+	{ TX_MUD3N019, 10095, 0 },
+	{ TX_MUD3N020, 10005, 0 },
+	{ TX_STATICU1, 534, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText mudd3Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	{ TX_MUD3_068, Common::EN_ANY, "#MUD3\\MUD3_068#Not my area of expertise, I'm afraid." },	// Same as MUD3_021, spoken by Buchert
+	{ TX_DEM0N009, Common::EN_ANY, "#DEM0\\DEM0N009#Spock raises an eyebrow" },
+	{ -1, Common::UNK_LANG, "" }
 };
 
 // BUG-ish: trying to scan the sphere while someone is behind it causes it to scan that
@@ -131,31 +239,31 @@ void Room::mudd3Tick1() {
 }
 
 void Room::mudd3UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  3);
-	showText(TX_SPEAKER_UHURA_GLOBAL, TX_STATICU1);
+	showText(TX_SPEAKER_KIRK,  TX_MUD3_003);
+	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
 void Room::mudd3LookAtScreen() {
 	// BUGFIX: the condition was flipped in the original; the more "vague" description
 	// should be shown before the alien language is understood.
 	if (_awayMission->mudd.translatedAlienLanguage)
-		showText(TX_SPEAKER_SPOCK, 38);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_038);
 	else
-		showDescription(17);
+		showDescription(TX_MUD3N017);
 }
 
 void Room::mudd3UseSTricorderOnScreen() {
 	if (_roomVar.mudd.tricordersUnavailable)
-		showText(TX_SPEAKER_SPOCK, 39);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_039);
 	else
-		spockScan(DIR_S, 17, false);
+		spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_MUD3_017, false);
 }
 
 // BUGFIX: Event was actually "use screen on kirk", which makes no sense.
 void Room::mudd3UseKirkOnScreen() {
 	if (!_awayMission->mudd.translatedAlienLanguage) {
-		showDescription(11);
-		showText(TX_SPEAKER_SPOCK, 37);
+		showDescription(TX_MUD3N011);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_037);
 	}
 }
 
@@ -165,27 +273,27 @@ void Room::mudd3UseSpockOnSphere() {
 
 	if (_awayMission->mudd.computerDataErasedOrDestroyed) {
 		if (!_awayMission->mudd.databaseDestroyed) {
-			showDescription(0);
-			showText(TX_SPEAKER_SPOCK, 52);
-			showText(TX_SPEAKER_KIRK,  12);
-			showText(TX_SPEAKER_MCCOY, 24);
+			showDescription(TX_MUD3N000);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_052);
+			showText(TX_SPEAKER_KIRK,  TX_MUD3_012);
+			showText(TX_SPEAKER_MCCOY, TX_MUD3_024);
 		}
-		showText(TX_SPEAKER_KIRK,   6);
-		showText(TX_SPEAKER_SPOCK, 48);
-		showText(TX_SPEAKER_KIRK,   8);
-		showText(TX_SPEAKER_SPOCK, 51);
+		showText(TX_SPEAKER_KIRK,  TX_MUD3_006);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_048);
+		showText(TX_SPEAKER_KIRK,  TX_MUD3_008);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_051);
 	} else if (_awayMission->mudd.translatedAlienLanguage) {
 		if (_awayMission->mudd.accessedAlienDatabase)
-			showText(TX_SPEAKER_SPOCK, 35);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_035);
 		else {
 			_awayMission->mudd.accessedAlienDatabase = true;
 
-			showText(TX_SPEAKER_SPOCK, 54);
-			showText(TX_SPEAKER_MCCOY, 32);
-			showText(TX_SPEAKER_SPOCK, 50);
-			showText(TX_SPEAKER_SPOCK, 49);
-			showText(TX_SPEAKER_SPOCK, 46);
-			showText(TX_SPEAKER_KIRK,   7);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_054);
+			showText(TX_SPEAKER_MCCOY, TX_MUD3_032);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_050);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_049);
+			showText(TX_SPEAKER_SPOCK, TX_MUD3_046);
+			showText(TX_SPEAKER_KIRK,  TX_MUD3_007);
 
 			_awayMission->mudd.missionScore++;
 			playVoc("LSHAIANS");
@@ -204,14 +312,14 @@ void Room::mudd3UseSpockOnSphere() {
 			_awayMission->timers[3] = 40;
 		}
 	} else if (_awayMission->mudd.discoveredBase3System) {
-		showText(TX_SPEAKER_SPOCK, 43);
-		showText(TX_SPEAKER_MCCOY, 22);
-		showText(TX_SPEAKER_SPOCK, 56);
-		showText(TX_SPEAKER_KIRK,  15);
-		showText(TX_SPEAKER_SPOCK, 47);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_043);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_022);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_056);
+		showText(TX_SPEAKER_KIRK,  TX_MUD3_015);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_047);
 		_roomVar.mudd.suggestedUsingTricorders = true;
 	} else {
-		showText(TX_SPEAKER_SPOCK, 44);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_044);
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 		walkCrewman(OBJECT_SPOCK, 0xcd, 0x87);
 	}
@@ -221,10 +329,10 @@ void Room::mudd3UseSpockOnSphere() {
 void Room::mudd3Timer3Expired() {
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_MCCOY, 27);
-	showText(TX_SPEAKER_SPOCK, 53);
-	showText(TX_SPEAKER_MCCOY, 28);
-	showText(TX_SPEAKER_MCCOY, 26);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_027);
+	showText(TX_SPEAKER_SPOCK, TX_MUD3_053);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_028);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_026);
 }
 
 void Room::mudd3UseMccoyOnSphere() {
@@ -232,7 +340,7 @@ void Room::mudd3UseMccoyOnSphere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	loadActorStandAnim(OBJECT_MCCOY);
 
-	showText(TX_SPEAKER_MCCOY, 21);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_021);
 	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_W;
 	walkCrewman(OBJECT_MCCOY, 0xec, 0x84);
 }
@@ -242,14 +350,14 @@ void Room::mudd3UseRedshirtOnSphere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
 	loadActorStandAnim(OBJECT_REDSHIRT);
 
-	showText(TX_SPEAKER_BUCHERT, 68); // BUGFIX: original played McCoy's audio by mistake
+	showText(TX_SPEAKER_BUCHERT, TX_MUD3_068); // BUGFIX: original played McCoy's audio by mistake
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
 	walkCrewman(OBJECT_REDSHIRT, 0xec, 0x84);
 }
 
 void Room::mudd3UseMTricorderOnSphere() {
 	if (_roomVar.mudd.tricordersUnavailable)
-		showText(TX_SPEAKER_SPOCK, 39); // BUGFIX: speaker is Spock
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_039); // BUGFIX: speaker is Spock
 	else {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 		loadActorStandAnim(OBJECT_MCCOY);
@@ -261,7 +369,7 @@ void Room::mudd3UseMTricorderOnSphere() {
 			_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 			walkCrewmanC(OBJECT_SPOCK, 0xa5, 0x8c, &Room::mudd3ReadyToHookUpTricorders);
 		} else {
-			showText(TX_SPEAKER_MCCOY, 21);
+			showText(TX_SPEAKER_MCCOY, TX_MUD3_021);
 			_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_W;
 			walkCrewman(OBJECT_MCCOY, 0xec, 0x84);
 		}
@@ -273,9 +381,9 @@ void Room::mudd3UseSTricorderOnSphere() {
 	loadActorStandAnim(OBJECT_SPOCK);
 
 	if (_roomVar.mudd.tricordersUnavailable)
-		showText(TX_SPEAKER_SPOCK, 39); // BUGFIX: speaker is Spock
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_039); // BUGFIX: speaker is Spock
 	else if (_awayMission->mudd.translatedAlienLanguage || (_awayMission->mudd.discoveredBase3System && !_roomVar.mudd.suggestedUsingTricorders)) {
-		showText(TX_SPEAKER_SPOCK, 41);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_041);
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 		walkCrewman(OBJECT_SPOCK, 0xcd, 0x87);
 	} else if (_awayMission->mudd.discoveredBase3System && _roomVar.mudd.suggestedUsingTricorders) { // Hooking up tricorders
@@ -283,13 +391,13 @@ void Room::mudd3UseSTricorderOnSphere() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 		walkCrewmanC(OBJECT_MCCOY, 0xca, 0x88, &Room::mudd3ReadyToHookUpTricorders);
 	} else { // No idea how to access it
-		showText(TX_SPEAKER_SPOCK, 42);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_042);
 		walkCrewman(OBJECT_SPOCK, 0xcd, 0x87);
 	}
 }
 
 void Room::mudd3ReadyToHookUpTricorders() {
-	showText(TX_SPEAKER_SPOCK, 18);
+	showText(TX_SPEAKER_SPOCK, TX_MUD3_018);
 
 	_roomVar.mudd.tricordersUnavailable = true;
 	_awayMission->timers[1] = 50;
@@ -299,8 +407,8 @@ void Room::mudd3ReadyToHookUpTricorders() {
 }
 
 void Room::mudd3Timer1Expired() { // Tricorders ready for use again
-	showText(TX_SPEAKER_SPOCK, 40);
-	showText(TX_SPEAKER_SPOCK, 34);
+	showText(TX_SPEAKER_SPOCK, TX_MUD3_040);
+	showText(TX_SPEAKER_SPOCK, TX_MUD3_034);
 
 	_awayMission->disableInput = false;
 	_roomVar.mudd.tricordersUnavailable = false;
@@ -318,29 +426,29 @@ void Room::mudd3Timer1Expired() { // Tricorders ready for use again
 void Room::mudd3Timer2Expired() {
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
-		10,
-		9,
-		TX_BLANK
+		TX_MUD3_010,
+		TX_MUD3_009,
+		TX_END
 	};
 
 	_awayMission->mudd.computerDataErasedOrDestroyed = true;
 
-	showText(TX_SPEAKER_MUDD, 65);
+	showText(TX_SPEAKER_MUDD, TX_MUD3_065);
 	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // Allow him to access the database (he ends up erasing it)
-		showText(TX_SPEAKER_MUDD, 66);
+		showText(TX_SPEAKER_MUDD, TX_MUD3_066);
 		_awayMission->mudd.muddErasedDatabase = true;
 
 		// ENHANCEMENT: Add a few lines to make it clear that Mudd erased the databanks.
 		// Otherwise, the end of the mission when you confront Mudd doesn't make sense
 		// unless the player happened to try accessing the database again. Also, if you
 		// talk to the crew, they berate him for no apparent reason if this isn't clear.
-		showDescription(0);
-		showText(TX_SPEAKER_MCCOY, 31);
+		showDescription(TX_MUD3N000);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_031);
 
 	} else { // Don't allow it (he destroys it by accident)
-		showText(TX_SPEAKER_MUDD, 64);
+		showText(TX_SPEAKER_MUDD, TX_MUD3_064);
 		_awayMission->timers[4] = 98;
 		_awayMission->disableInput = 2;
 		playMidiMusicTracks(26);
@@ -351,8 +459,8 @@ void Room::mudd3Timer2Expired() {
 void Room::mudd3Timer4Expired() {
 	_awayMission->mudd.databaseDestroyed = true;
 
-	showText(TX_SPEAKER_MUDD, 63);
-	showText(TX_SPEAKER_MCCOY, 31);
+	showText(TX_SPEAKER_MUDD, TX_MUD3_063);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_031);
 
 	_awayMission->disableInput = false;
 }
@@ -363,21 +471,21 @@ void Room::mudd3UseMemoryDiskOnSphere() {
 	loadActorStandAnim(OBJECT_KIRK);
 
 	if (_awayMission->mudd.databaseDestroyed)
-		showDescription(14);
+		showDescription(TX_MUD3N014);
 	else if (_awayMission->mudd.translatedAlienLanguage && !_awayMission->mudd.muddErasedDatabase) {
-		showDescription(20);
+		showDescription(TX_MUD3N020);
 		if (!_awayMission->mudd.gotPointsForDownloadingData) {
 			_awayMission->mudd.missionScore += 3;
 			_awayMission->mudd.gotPointsForDownloadingData = true;
 		}
 	} else
-		showDescription(19);
+		showDescription(TX_MUD3N019);
 }
 
 
 void Room::mudd3GetRepairTool() {
 	if (_awayMission->mudd.tookRepairTool)
-		showDescription(18); // NOTE: unused, since the object disappears, can't be selected again
+		showDescription(TX_MUD3N018); // NOTE: unused, since the object disappears, can't be selected again
 	else {
 		_awayMission->disableInput = true;
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -403,7 +511,7 @@ void Room::mudd3LookAtSphere() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	showDescription(15);
+	showDescription(TX_MUD3N015);
 }
 
 void Room::mudd3WalkToNorthDoor() {
@@ -433,91 +541,90 @@ void Room::mudd3TouchedHotspot1() {
 
 void Room::mudd3LookAtKirk() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showDescription(5);
+		showDescription(TX_MUD3N005);
 	else
-		showDescription(4);
+		showDescription(TX_MUD3N004);
 }
 
 void Room::mudd3LookAtSpock() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showDescription(12);
+		showDescription(TX_MUD3N012);
 	else
-		showDescription( 2);
+		showDescription(TX_MUD3N002);
 }
 
 void Room::mudd3LookAtMccoy() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showDescription(10);
+		showDescription(TX_MUD3N010);
 	else
-		showDescription( 9);
+		showDescription(TX_MUD3N009);
 }
 
 void Room::mudd3LookAtRedshirt() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showDescription(7);
+		showDescription(TX_MUD3N007);
 	else
-		showDescription(6);
+		showDescription(TX_MUD3N006);
 }
 
 void Room::mudd3LookAtMudd() {
-	showDescription(3);
+	showDescription(TX_MUD3N003);
 }
 
 void Room::mudd3TalkToKirk() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
-		showText(TX_SPEAKER_KIRK,  14);
-		showText(TX_SPEAKER_SPOCK, 57);
-		showText(TX_SPEAKER_MCCOY, 25);
+		showText(TX_SPEAKER_KIRK,  TX_MUD3_014);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_057);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_025);
 	} else
-		showText(TX_SPEAKER_KIRK,  2);
+		showText(TX_SPEAKER_KIRK, TX_MUD3_002);
 }
 
 void Room::mudd3TalkToSpock() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
-		showText(TX_SPEAKER_SPOCK, 55);
-		showText(TX_SPEAKER_MCCOY, 33);
-		showText(TX_SPEAKER_KIRK,  11);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_055);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_033);
+		showText(TX_SPEAKER_KIRK,  TX_MUD3_011);
 	} else
-		showText(TX_SPEAKER_SPOCK, 19);
+		showText(TX_SPEAKER_SPOCK, TX_MUD3_019);
 }
 
 void Room::mudd3TalkToMccoy() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
-		showText(TX_SPEAKER_MCCOY, 23);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_023);
 	else {
-		showText(TX_SPEAKER_MCCOY, 30);
-		showText(TX_SPEAKER_MUDD,  62);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_030);
+		showText(TX_SPEAKER_MUDD,  TX_MUD3_062);
 	}
 }
 
 void Room::mudd3TalkToRedshirt() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
-		showText(TX_SPEAKER_BUCHERT, 70);
-		showText(TX_SPEAKER_KIRK,    16);
-		showText(TX_SPEAKER_BUCHERT, 71);
+		showText(TX_SPEAKER_BUCHERT, TX_MUD3_070);
+		showText(TX_SPEAKER_KIRK,    TX_MUD3_016);
+		showText(TX_SPEAKER_BUCHERT, TX_MUD3_071);
 	} else
-		showText(TX_SPEAKER_BUCHERT, 67);
+		showText(TX_SPEAKER_BUCHERT, TX_MUD3_067);
 }
 
 void Room::mudd3TalkToMudd() {
 	// ENHANCEMENT: the 2nd part of the if condition is new; whether he physically
 	// destroys the database or does through software, he should give this reaction.
 	if (_awayMission->mudd.databaseDestroyed || _awayMission->mudd.muddErasedDatabase) {
-		showText(TX_SPEAKER_MUDD,    60);
-		showText(TX_SPEAKER_MCCOY,   29);
-		showText(TX_SPEAKER_MUDD,    61);
-		showText(TX_SPEAKER_KIRK,    13);
-		showText(TX_SPEAKER_MUDD,    58);
-		//showText(TX_SPEAKER_SPOCK,   TX_DEM0N009);
-		showText(TX_SPEAKER_BUCHERT, 69);
-		showText(TX_SPEAKER_MUDD,    59);
-		showText(TX_SPEAKER_KIRK,     5);
+		showText(TX_SPEAKER_MUDD,    TX_MUD3_060);
+		showText(TX_SPEAKER_MCCOY,   TX_MUD3_029);
+		showText(TX_SPEAKER_MUDD,    TX_MUD3_061);
+		showText(TX_SPEAKER_KIRK,    TX_MUD3_013);
+		showText(TX_SPEAKER_MUDD,    TX_MUD3_058);
+		showText(TX_SPEAKER_SPOCK,   TX_DEM0N009); // ENHANCEMENT: Original text was just "(Raises eyebrow)" without any audio.
+		showText(TX_SPEAKER_BUCHERT, TX_MUD3_069);
+		showText(TX_SPEAKER_MUDD,    TX_MUD3_059);
+		showText(TX_SPEAKER_KIRK,    TX_MUD3_005);
 	}
 }
 
 void Room::mudd3UseMedkit() {
-	showText(TX_SPEAKER_MCCOY, 20);
+	showText(TX_SPEAKER_MCCOY, TX_MUD3_020);
 }
 
 }
-#endif
