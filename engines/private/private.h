@@ -289,7 +289,7 @@ public:
     SoundList _policeRadio;
     PhoneList _phone;
 
-    char *getRandomPhoneClip(const char *, int, int);
+    Common::String getRandomPhoneClip(const char *, int, int);
     void selectAMRadioArea(Common::Point);
     void selectPoliceRadioArea(Common::Point);
     void selectPhoneArea(Common::Point);
