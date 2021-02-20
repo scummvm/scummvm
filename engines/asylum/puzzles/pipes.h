@@ -57,6 +57,12 @@ enum BinNum {
 	kBinNum1111
 };
 
+enum ConnectorType {
+	kConnectorTypeI = kBinNum0101,
+	kConnectorTypeL = kBinNum0110,
+	kConnectorTypeT = kBinNum0111
+};
+
 enum Direction {
 	kDirectionNowhere = kBinNum0000,
 	kDirectionNh = kBinNum0001,
@@ -97,15 +103,19 @@ public:
 
 	uint32 getId() { return _id; }
 	void setId(uint32 id) { _id = id; }
+	void setPos(uint32 *pos) { _position = pos; }
 	BinNum getState() { return _state; }
+	ConnectorType getType() { return _type; }
 
-	void init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, BinNum state, Connector *nextConnector = NULL, Direction nextConnectorPosition = kDirectionNowhere);
+	void init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, uint32 pos, ConnectorType type, Connector *nextConnector = NULL, Direction nextConnectorPosition = kDirectionNowhere);
 	void initGroup();
-	void turn();
+	void turn(bool updpos = true);
 
 private:
 	uint32 _id;
 	BinNum _state;
+	ConnectorType _type;
+	uint32 *_position;
 	Peephole *_nodes[4];
 	Common::List<Peephole *> _connectedNodes;
 
@@ -166,6 +176,7 @@ private:
 	bool _isLeverReady;
 	Common::HashMap<uint32, uint32> _connectorResources;
 	Connector _connectors[connectorsCount];
+	uint32  _positions[connectorsCount];
 	Peephole _peepholes[peepholesCount];
 	Peephole *_sinks[4], *_sources[4];
 	Common::Array<Spider *> _spiders;
@@ -188,6 +199,7 @@ private:
 	int32 findRect();
 	uint32 checkFlags();
 	void startUpWater();
+	void checkConnections();
 };
 
 } // End of namespace Asylum

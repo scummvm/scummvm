@@ -107,7 +107,12 @@ const Common::Point peepholePoints[] = {
 };
 
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
-                                    15, 32, 32, 15, 15, 15, 15,15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
+                                    15, 32, 32, 15, 15, 15, 15, 15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
+
+static BinNum calcStateFromPos(uint32 ind, ConnectorType type, uint32 position) {
+	uint32 shift = (uint32)Common::intLog2(position);
+	return BinNum((type >> shift | type << (4 - shift)) & 0xF);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Peephole
@@ -138,13 +143,16 @@ void Peephole::startUpWater(bool flag) {
 //////////////////////////////////////////////////////////////////////////
 // Connector
 //////////////////////////////////////////////////////////////////////////
-void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, BinNum state, Connector *nextConnector, Direction nextConnectorPosition) {
+void Connector::init(Peephole *n, Peephole *e, Peephole *s, Peephole *w, uint32 pos, ConnectorType type, Connector *nextConnector, Direction nextConnectorPosition) {
 	_nodes[0] = n;
 	_nodes[1] = e;
 	_nodes[2] = s;
 	_nodes[3] = w;
 
-	_state = state;
+	*_position = pos;
+	_type = type;
+	_state = calcStateFromPos(_id, _type, *_position);
+
 	_nextConnector = nextConnector;
 	_nextConnectorPosition = nextConnectorPosition;
 	_isConnected = false;
@@ -162,7 +170,9 @@ void Connector::initGroup() {
 		connect(_nextConnector);
 }
 
-void Connector::turn() {
+void Connector::turn(bool updpos) {
+	if (updpos)
+		*_position = (*_position == 8) ? 1 : *_position << 1;
 	BinNum newState = BinNum(_state >> 1 | (_state & 1) << 3);
 
 	uint32 delta = _state ^ newState;
@@ -331,8 +341,11 @@ PuzzlePipes::~PuzzlePipes() {
 }
 
 void PuzzlePipes::saveLoadWithSerializer(Common::Serializer &s) {
-	warning("[PuzzlePipes::saveLoadWithSerializer] Not implemented");
-	s.skip(116);
+	s.skip(16);
+	for (uint32 i = 0; i < connectorsCount; i++) {
+		s.syncAsUint32LE(_positions[i]);
+	}
+	s.skip(16);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -349,6 +362,10 @@ bool PuzzlePipes::init(const AsylumEvent &) {
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[0]);
 
 	_rectIndex = -2;
+
+	checkConnections();
+	startUpWater();
+	(void)checkFlags();
 
 	return true;
 }
@@ -514,8 +531,10 @@ void PuzzlePipes::setup() {
 	for (uint32 i = 0; i < peepholesCount; ++i)
 		_peepholes[i].setId(i);
 
-	for (uint32 i = 0; i < connectorsCount; ++i)
+	for (uint32 i = 0; i < connectorsCount; ++i) {
 		_connectors[i].setId(i);
+		_connectors[i].setPos(&_positions[i]);
+	}
 
 	for (uint32 i = 0; i < 4; ++i) {
 		_sinks[i] = &_peepholes[(peepholesCount - 4) + i];
@@ -524,27 +543,27 @@ void PuzzlePipes::setup() {
 		_sources[i]->_flowValues[i] = 1;
 	}
 
-	_connectors[ 0].init(           NULL,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, kBinNum0110);
-	_connectors[ 1].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, kBinNum0110);
-	_connectors[ 2].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, kBinNum0011);
-	_connectors[ 3].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, kBinNum0110);
-	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, kBinNum0011,  _connectors + 5, kDirectionSh);
-	_connectors[ 5].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, kBinNum0111,  _connectors + 4, kDirectionNh);
-	_connectors[ 6].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, kBinNum0110);
-	_connectors[ 7].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, kBinNum0111);
-	_connectors[ 8].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, kBinNum1011);
-	_connectors[ 9].init(_peepholes +  9, _peepholes + 16, _peepholes + 19, _peepholes + 12, kBinNum1110);
-	_connectors[10].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, kBinNum0011);
-	_connectors[11].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, kBinNum1011);
-	_connectors[12].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, kBinNum0011);
-	_connectors[13].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, kBinNum0111, _connectors + 14, kDirectionSh);
-	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, kBinNum1110, _connectors + 13, kDirectionNh);
-	_connectors[15].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, kBinNum0101, _connectors + 19, kDirectionEt);
-	_connectors[16].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, kBinNum1011);
-	_connectors[17].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, kBinNum0011);
-	_connectors[18].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, kBinNum1100);
-	_connectors[19].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, kBinNum1001, _connectors + 15, kDirectionWt);
-	_connectors[20].init(_peepholes + 28,            NULL, _peepholes + 36, _peepholes + 32, kBinNum1001);
+	_connectors[ 0].init(           NULL,  _peepholes + 4,  _peepholes + 6,  _peepholes + 0, 1, kConnectorTypeL);
+	_connectors[ 1].init(_peepholes +  6, _peepholes + 15, _peepholes + 23,            NULL, 1, kConnectorTypeL);
+	_connectors[ 2].init(_peepholes + 23, _peepholes + 24, _peepholes + 33,            NULL, 2, kConnectorTypeL);
+	_connectors[ 3].init(           NULL,  _peepholes + 5,  _peepholes + 7,  _peepholes + 4, 1, kConnectorTypeL);
+	_connectors[ 4].init(_peepholes +  7, _peepholes + 11,            NULL,            NULL, 2, kConnectorTypeL,  _connectors + 5, kDirectionSh);
+	_connectors[ 5].init(           NULL, _peepholes + 18, _peepholes + 24, _peepholes + 15, 1, kConnectorTypeT,  _connectors + 4, kDirectionNh);
+	_connectors[ 6].init(           NULL,  _peepholes + 1,  _peepholes + 8,  _peepholes + 5, 1, kConnectorTypeL);
+	_connectors[ 7].init(_peepholes +  8, _peepholes + 12, _peepholes + 25, _peepholes + 11, 1, kConnectorTypeT);
+	_connectors[ 8].init(_peepholes + 25, _peepholes + 29, _peepholes + 34, _peepholes + 18, 2, kConnectorTypeT);
+	_connectors[ 9].init(_peepholes +  9, _peepholes + 16, _peepholes + 19, _peepholes + 12, 8, kConnectorTypeT);
+	_connectors[10].init(_peepholes + 19, _peepholes + 20, _peepholes + 26,            NULL, 2, kConnectorTypeL);
+	_connectors[11].init(_peepholes + 26, _peepholes + 31, _peepholes + 35, _peepholes + 29, 2, kConnectorTypeT);
+	_connectors[12].init(_peepholes +  2, _peepholes + 10,            NULL,  _peepholes + 9, 2, kConnectorTypeL);
+	_connectors[13].init(_peepholes + 13, _peepholes + 17,            NULL, _peepholes + 16, 1, kConnectorTypeT, _connectors + 14, kDirectionSh);
+	_connectors[14].init(           NULL, _peepholes + 21, _peepholes + 27, _peepholes + 20, 8, kConnectorTypeT, _connectors + 13, kDirectionNh);
+	_connectors[15].init(_peepholes + 10,            NULL, _peepholes + 22, _peepholes + 17, 1, kConnectorTypeI, _connectors + 19, kDirectionEt);
+	_connectors[16].init(_peepholes + 21, _peepholes + 22, _peepholes + 30, _peepholes + 27, 2, kConnectorTypeT);
+	_connectors[17].init(_peepholes + 30, _peepholes + 32,            NULL, _peepholes + 31, 2, kConnectorTypeL);
+	_connectors[18].init(_peepholes +  3,            NULL, _peepholes + 14, _peepholes + 13, 8, kConnectorTypeL);
+	_connectors[19].init(_peepholes + 14,            NULL, _peepholes + 28,            NULL, 4, kConnectorTypeL, _connectors + 15, kDirectionWt);
+	_connectors[20].init(_peepholes + 28,            NULL, _peepholes + 36, _peepholes + 32, 4, kConnectorTypeL);
 
 	_connectors[ 4].initGroup();
 	_connectors[13].initGroup();
@@ -562,8 +581,6 @@ void PuzzlePipes::setup() {
 		_frameIndexSpider = new uint32[_spiders.size()];
 		memset(_frameIndexSpider, 0, _spiders.size()*sizeof(uint32));
 	}
-
-	startUpWater();
 }
 
 void PuzzlePipes::updateCursor() {
@@ -608,6 +625,18 @@ uint32 PuzzlePipes::checkFlags() {
 		memset(_levelValues, 0, sizeof(_levelValues));
 
 	return val;
+}
+
+void PuzzlePipes::checkConnections() {
+	for (uint32 i = 0; i < connectorsCount; i++) {
+		uint32 oldState = _connectors[i].getState(),
+			newState = calcStateFromPos(i, _connectors[i].getType(), _positions[i]);
+		if (oldState != newState) {
+			do {
+				_connectors[i].turn(false);
+			} while (_connectors[i].getState() != newState);
+		}
+	}
 }
 
 void PuzzlePipes::startUpWater() {
