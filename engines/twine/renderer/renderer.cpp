@@ -377,8 +377,8 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const {
 	vleft = vtop = SCENE_SIZE_MAX;
 	vright = vbottom = SCENE_SIZE_MIN;
-	const int maxWidth = _engine->width() - 1;
-	const int maxHeight = _engine->height() - 1;
+	const int16 maxWidth = _engine->width() - 1;
+	const int16 maxHeight = _engine->height() - 1;
 
 	for (int32 i = 0; i < numVertices; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, maxWidth);
