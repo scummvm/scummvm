@@ -124,6 +124,9 @@ public:
 
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
+
+	// Used for state switching
+	void stopAndUnloadSpecificSounds();
 	
 	void setGameState(GameState state);
 	GameState getGameState() const { return _gameFlow.minGameState; }

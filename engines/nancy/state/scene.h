@@ -33,6 +33,7 @@
 #include "engines/nancy/time.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/sound.h"
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -64,19 +65,18 @@ class Scene {
     friend class Nancy::NancyConsole;
 public:
     struct SceneSummary { // SSUM
-        Common::String description; // 0x00
-        Common::String videoFile;   // 0x32
+        Common::String description;             // 0x00
+        Common::String videoFile;               // 0x32
         //
-        uint16 videoFormat;         // 0x3E, value is 1 or 2
-        Common::String audioFile;   // 0x40
-        int16 audioID;              // 0x4A
-        uint16 audioVolume;         // 0x5A
+        uint16 videoFormat;                     // 0x3E, value is 1 or 2
+        Common::String audioFile;               
+        SoundManager::SoundDescription sound;   // 0x40
         //
-        uint16 verticalScrollDelta; // 0x72
-        uint16 horizontalEdgeSize;  // 0x74
-        uint16 verticalEdgeSize;    // 0x76
-        Time slowMoveTimeDelta;   // 0x78
-        Time fastMoveTimeDelta;   // 0x7A
+        uint16 verticalScrollDelta;             // 0x72
+        uint16 horizontalEdgeSize;              // 0x74
+        uint16 verticalEdgeSize;                // 0x76
+        Time slowMoveTimeDelta;                 // 0x78
+        Time fastMoveTimeDelta;                 // 0x7A
         // byte unknown7C enum with 4 values
         //
     };
@@ -96,6 +96,9 @@ public:
     void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
     void pushScene();
     void popScene();
+
+    void pauseSceneSpecificSounds();
+    void unpauseSceneSpecificSounds();
 
     void addItemToInventory(uint16 id);
     void removeItemFromInventory(uint16 id, bool pickUp = true);

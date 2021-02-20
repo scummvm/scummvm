@@ -89,6 +89,7 @@ private:
 
     void init();
     void run();
+    void stopSound();
 
     void registerGraphics();
 

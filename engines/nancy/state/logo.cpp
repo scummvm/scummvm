@@ -24,7 +24,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 
 #include "common/error.h"
@@ -66,13 +66,24 @@ void Logo::init() {
 }
 
 void Logo::startSound() {
-	Common::SeekableReadStream *msnd = _engine->getBootChunkStream("MSND");
-	char name[10];
-	msnd->seek(0);
-	msnd->read(name, 10);
-	Common::String sname(name);
-	_engine->sound->loadSound(sname, 0);
-	_engine->sound->pauseSound(0, false);
+	SoundManager::SoundDescription desc;
+	desc.read(*_engine->getBootChunkStream("MSND"), SoundManager::SoundDescription::kMenu);
+	_engine->sound->loadSound(desc);
+	MSNDchannelID = desc.channelID;
+	desc.read(*_engine->getBootChunkStream("BUOK"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+	desc.read(*_engine->getBootChunkStream("BUDE"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+	desc.read(*_engine->getBootChunkStream("BULS"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+	desc.read(*_engine->getBootChunkStream("GLOB"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+	desc.read(*_engine->getBootChunkStream("CURT"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+	desc.read(*_engine->getBootChunkStream("CANT"), SoundManager::SoundDescription::kNormal);
+	_engine->sound->loadSound(desc);
+
+	_engine->sound->playSound(MSNDchannelID);
 
 	_startTicks = _engine->_system->getMillis();
 	_state = kRun;

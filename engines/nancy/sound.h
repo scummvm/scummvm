@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NANCY_AUDIO_H
-#define NANCY_AUDIO_H
+#ifndef NANCY_SOUND_H
+#define NANCY_SOUND_H
 
 #include "common/types.h"
 #include "common/str.h"
@@ -40,28 +40,53 @@ namespace Nancy {
 
 class NancyEngine;
 
-Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-
 class SoundManager {
 public:
-    enum SoundLoopType { kLoop = 0, kOneShot = 1 };
-    SoundManager(NancyEngine *engine);
-    ~SoundManager() =default;
+    // Combines four different structs in one
+    struct SoundDescription {
+        enum Type { kNormal, kMenu, kDIGI, kScene };
 
-    void loadSound(Common::String &name, int16 id, uint16 numLoops = 0, uint16 volume = 60);
-    void pauseSound(int16 id, bool pause);
-    void stopSound(int16 id);
-    bool isSoundPlaying(int16 id);
+        Common::String name;
+        uint16 channelID;
+        uint16 numLoops;
+        uint16 volume;
+
+        void read(Common::SeekableReadStream &stream, Type type);
+    };
+
+    SoundManager(NancyEngine *engine);
+    ~SoundManager();
+
+    // Load a sound into a channel without starting it
+    uint16 loadSound(const SoundDescription &description);
+
+    void playSound(uint16 channelID);
+    void pauseSound(uint16 channelID, bool pause);
+    bool isSoundPlaying(uint16 channelID);
+
+    // Stop playing a sound and unload it from the channel
+    void stopSound(uint16 channelID);
     void stopAllSounds();
 
-private:
+    static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+
+protected:
+    struct Channel {
+        Common::String name;
+        Audio::Mixer::SoundType type;
+        uint16 numLoops = 0;
+        uint volume = 0;
+        Audio::SeekableAudioStream *stream = nullptr;
+        Audio::SoundHandle handle;
+    };
+
+    void initSoundChannels();
     NancyEngine *_engine;
     Audio::Mixer *_mixer;
 
-    Audio::SoundHandle handles[20];
-    Common::String names[20];
+    Channel _channels[32];
 };
 
 } // End of namespace Nancy
 
-#endif // NANCY_AUDIO_H
+#endif // NANCY_SOUND_H
