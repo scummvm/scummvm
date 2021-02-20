@@ -469,42 +469,46 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 
 void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
-	int32 currentLine = vtop;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
-	do {
-		if (currentLine >= 0 && currentLine < screenHeight) {
-			int16 start = ptr1[0];
-			int16 stop = ptr1[screenHeight];
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 start = ptr1[0];
+		int16 stop = ptr1[screenHeight];
 
-			ptr1++;
-			int32 hsize = stop - start;
+		ptr1++;
+		int32 hsize = stop - start;
 
-			if (hsize >= 0) {
-				uint16 mask = 0x43DB;
+		if (hsize >= 0) {
+			uint16 mask = 0x43DB;
 
-				uint16 dx = (uint8)color;
-				dx |= 0x300;
+			uint16 dx = (uint8)color;
+			dx |= 0x300;
 
-				hsize++;
-				const int32 startCopy = start;
+			hsize++;
+			const int32 startCopy = start;
 
-				for (int32 j = startCopy; j < hsize + startCopy; j++) {
-					start += mask;
-					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
-					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-					if (j >= 0 && j < screenWidth) {
-						out[j] = start & 0xFF;
-					}
-					mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
-					mask++;
+			for (int32 j = startCopy; j < hsize + startCopy; j++) {
+				start += mask;
+				start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
+				start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
+				if (j >= 0 && j < screenWidth) {
+					out[j] = start & 0xFF;
 				}
+				mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
+				mask++;
 			}
 		}
 		out += screenWidth;
-		currentLine++;
-	} while (--vsize);
+	}
 }
 
 void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
