@@ -72,19 +72,19 @@ bool RemorseGame::loadFiles() {
 	// Load palette
 	pout << "Load Palettes" << Std::endl;
 
-	if (!loadPalette("@game/static/gamepal.pal", PaletteManager::Pal_Game))
+	if (!loadPalette("static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
 	if (GAME_IS_REGRET) {
-		if (!loadPalette("@game/static/cred.pal", PaletteManager::Pal_Cred))
+		if (!loadPalette("static/cred.pal", PaletteManager::Pal_Cred))
 			return false;
 	}
-	if (!loadPalette("@game/static/diff.pal", PaletteManager::Pal_Diff))
+	if (!loadPalette("static/diff.pal", PaletteManager::Pal_Diff))
 		return false;
-	if (!loadPalette("@game/static/misc.pal", PaletteManager::Pal_Misc))
+	if (!loadPalette("static/misc.pal", PaletteManager::Pal_Misc))
 		return false;
-	if (!loadPalette("@game/static/misc2.pal", PaletteManager::Pal_Misc2))
+	if (!loadPalette("static/misc2.pal", PaletteManager::Pal_Misc2))
 		return false;
-	if (!loadPalette("@game/static/star.pal", PaletteManager::Pal_Star))
+	if (!loadPalette("static/star.pal", PaletteManager::Pal_Star))
 		return false;
 
 	pout << "Load GameData" << Std::endl;
@@ -149,7 +149,7 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 
 
 static ProcId playMovie(const char *movieID, bool fade) {
-	const Std::string filename = Std::string::format("@game/flics/%s.avi", movieID);
+	const Std::string filename = Std::string::format("flics/%s.avi", movieID);
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
 	if (!rs) {

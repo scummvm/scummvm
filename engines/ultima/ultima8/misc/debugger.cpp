@@ -1751,7 +1751,7 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	Std::string filename = Common::String::format("@game/static/%s.skf", argv[1]);
+	Std::string filename = Common::String::format("static/%s.skf", argv[1]);
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {

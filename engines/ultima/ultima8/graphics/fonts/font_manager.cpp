@@ -99,9 +99,9 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 		return iter->_value;
 
 	Common::SeekableReadStream *fontids;
-	fontids = FileSystem::get_instance()->ReadFile("@data/" + filename);
+	fontids = FileSystem::get_instance()->ReadFile("data/" + filename);
 	if (!fontids) {
-		perr << "Failed to open TTF: @data/" << filename << Std::endl;
+		perr << "Failed to open TTF: data/" << filename << Std::endl;
 		return nullptr;
 	}
 

@@ -338,10 +338,6 @@ bool Ultima8Engine::setupGame() {
 	pout << "Selected game: " << info->_name << Std::endl;
 	pout << info->getPrintDetails() << Std::endl;
 
-	// load main game data path - it needs to be empty
-	//Std::string gpath = ConfMan.get("path");
-	_fileSystem->AddVirtualPath("@game", "");
-
 	return true;
 }
 
@@ -436,8 +432,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
 	_saveCount = 0;
 	_hasCheated = false;
-
-	_fileSystem->RemoveVirtualPath("@game");
 
 	_configFileMan->clearRoot("bindings");
 	_configFileMan->clearRoot("language");

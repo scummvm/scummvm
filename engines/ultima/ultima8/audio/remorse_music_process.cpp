@@ -180,7 +180,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
-		const Std::string fname = Std::string::format("@game/sound/%s.amf", _trackNames[track]);
+		const Std::string fname = Std::string::format("sound/%s.amf", _trackNames[track]);
 		FileSystem *filesystem = FileSystem::get_instance();
 		assert(filesystem);
 		Common::SeekableReadStream *rs = filesystem->ReadFile(fname);

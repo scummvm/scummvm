@@ -308,7 +308,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	_flex.second = gamedata->getFonts();
 	_flexes.push_back(_flex);
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *eintro = filesys->ReadFile("@game/static/eintro.skf");
+	Common::SeekableReadStream *eintro = filesys->ReadFile("static/eintro.skf");
 	if (eintro) {
 		ShapeArchive *eintroshapes = new ShapeArchive(eintro, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
@@ -319,7 +319,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 		// !! memory leak
 	}
 
-	Common::SeekableReadStream *endgame = filesys->ReadFile("@game/static/endgame.skf");
+	Common::SeekableReadStream *endgame = filesys->ReadFile("static/endgame.skf");
 	if (endgame) {
 		ShapeArchive *endgameshapes = new ShapeArchive(endgame, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),

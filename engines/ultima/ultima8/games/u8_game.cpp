@@ -71,7 +71,7 @@ U8Game::~U8Game() {
 bool U8Game::loadFiles() {
 	// Load palette
 	pout << "Load Palette" << Std::endl;
-	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
+	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("static/u8pal.pal");
 	if (!pf) {
 		perr << "Unable to load static/u8pal.pal." << Std::endl;
 		return false;
@@ -102,7 +102,7 @@ bool U8Game::startGame() {
 	// reserve ObjId 666 for the Guardian Bark hack
 	objman->reserveObjId(666);
 
-	Common::SeekableReadStream *savers = FileSystem::get_instance()->ReadFile("@game/savegame/u8save.000");
+	Common::SeekableReadStream *savers = FileSystem::get_instance()->ReadFile("savegame/u8save.000");
 	if (!savers) {
 		perr << "Unable to load savegame/u8save.000." << Std::endl;
 		return false;
@@ -163,7 +163,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 		return 0;
 	}
 
-	Std::string filename = "@game/static/";
+	Std::string filename = "static/";
 	filename += langletter;
 	filename += "intro.skf";
 
@@ -178,7 +178,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 }
 
 ProcId U8Game::playEndgameMovie(bool fade) {
-	static const Std::string filename = "@game/static/endgame.skf";
+	static const Std::string filename = "static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
@@ -196,7 +196,7 @@ void U8Game::playCredits() {
 		perr << "U8Game::playCredits: Unknown language." << Std::endl;
 		return;
 	}
-	Std::string filename = "@game/static/";
+	Std::string filename = "static/";
 	filename += langletter;
 	filename += "credits.dat";
 
@@ -219,7 +219,7 @@ void U8Game::playCredits() {
 }
 
 void U8Game::playQuotes() {
-	static const Std::string filename = "@game/static/quotes.dat";
+	static const Std::string filename = "static/quotes.dat";
 
 	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
 	if (!rs) {

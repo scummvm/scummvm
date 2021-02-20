@@ -31,12 +31,10 @@ using Std::string;
 
 FileSystem *FileSystem::_fileSystem = nullptr;
 
-FileSystem::FileSystem(bool noforced)
-	: _noForcedVPaths(noforced) {
+FileSystem::FileSystem() {
 	debugN(MM_INFO, "Creating FileSystem...\n");
 
 	_fileSystem = this;
-	AddVirtualPath("@home", "");
 }
 
 FileSystem::~FileSystem() {
@@ -70,24 +68,6 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	string name = fname;
 	Common::File *f;
 
-	// Handle reading files from the ultima.dat data
-	if (name.hasPrefix("@data/")) {
-		// It's a file specifically from the ultima.dat file
-		f = new Common::File();
-		if (f->open(Common::String::format("data/%s", name.substr(6).c_str()))) {
-			in = f;
-			return true;
-		}
-
-		f->close();
-		delete f;
-	}
-
-	if (!rewrite_virtual_path(name))
-		return false;
-
-	switch_slashes(name);
-
 	int uppercasecount = 0;
 	f = new Common::File();
 	do {
@@ -105,33 +85,8 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 
 bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 	string name = fname;
-	switch_slashes(name);
 
 	return false;
-
-#if 0
-	if (!rewrite_virtual_path(name)) {
-		warning("Illegal file access");
-		return false;
-	}
-
-	int uppercasecount = 0;
-	do {
-		if (out.open(name))
-			return true;
-
-	} while (base_to_uppercase(name, ++uppercasecount));
-
-	// file not found
-	return false;
-#endif
-}
-
-void FileSystem::switch_slashes(string &name) {
-	for (string::iterator X = name.begin(); X != name.end(); ++X) {
-		if (*X == '\\')
-			*X =  '/';
-	}
 }
 
 /*
@@ -159,97 +114,6 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 
 	// false if it didn't reach 'count' parts
 	return (todo <= 0);
-}
-
-bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, const bool create) {
-	string vp = vpath, rp = realpath;
-
-	// remove trailing slash
-	if (vp.size() && vp.rfind('/') == vp.size() - 1)
-		vp.erase(vp.rfind('/'));
-
-	if (rp.size() && rp.rfind('/') == rp.size() - 1)
-		rp.erase(rp.rfind('/'));
-
-	if (rp.find("..") != string::npos) {
-		warning("Error mounting virtual path \"%s\": \"..\" not allowed", vp.c_str());
-		return false;
-	}
-
-	// Finding Reserved Virtual Path Names
-	// memory path is reserved
-	if (vp == "@memory" || vp.substr(0, 8) == "@memory/") {
-		warning("Error mounting virtual path \"%s\": \"@memory\" is a reserved virtual path name",
-			vp.c_str());
-		return false;
-	}
-
-	string fullpath = rp;
-	rewrite_virtual_path(fullpath);
-	// When mounting a memory file, it wont exist, so don't attempt to create the dir
-#ifdef DEBUG
-	debugN(MM_INFO, "virtual path \"%s\": %s\n", vp.c_str(), fullpath.c_str());
-#endif
-	if (!(fullpath.substr(0, 8) == "@memory/") && rp.length()) {
-		if (!IsDir(fullpath)) {
-			if (!create) {
-#ifdef DEBUG
-				warning("Problem mounting virtual path \"%s\": directory not found: %s",
-					vp.c_str(), fullpath.c_str());
-#endif
-				return false;
-			} else {
-				MkDir(fullpath);
-			}
-		}
-	}
-
-	_virtualPaths[vp] = rp;
-	return true;
-}
-
-bool FileSystem::RemoveVirtualPath(const string &vpath) {
-	string vp = vpath;
-
-	// remove trailing slash
-	if (vp.size() && vp.rfind('/') == vp.size() - 1)
-		vp.erase(vp.rfind('/'));
-
-	Std::map<Common::String, string>::iterator i = _virtualPaths.find(vp);
-
-	if (i == _virtualPaths.end()) {
-		return false;
-	} else {
-		_virtualPaths.erase(vp);
-		return true;
-	}
-}
-
-bool FileSystem::rewrite_virtual_path(string &vfn) const {
-	bool ret = false;
-	string::size_type pos = vfn.size();
-
-	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
-//		perr << vfn << ", '" << vfn.substr(0, pos) << "', " << pos << Std::endl;
-		Std::map<Common::String, string>::const_iterator p = _virtualPaths.find(
-		            vfn.substr(0, pos));
-
-		if (p != _virtualPaths.end()) {
-			ret = true;
-			// rewrite first part of path
-			vfn = p->_value + vfn.substr(pos + 1);
-			pos = string::npos;
-		} else {
-			if (pos == 0)
-				break;
-			--pos;
-		}
-	}
-
-	// We will allow all paths to work
-	if (_noForcedVPaths) ret = true;
-
-	return ret;
 }
 
 

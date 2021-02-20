@@ -199,7 +199,7 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 Gump *WeaselGump::playMovie(const Std::string &filename) {
-	const Std::string path = Std::string::format("@game/flics/%s.avi", filename.c_str());
+	const Std::string path = Std::string::format("flics/%s.avi", filename.c_str());
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(path);
 	Gump *gump = new MovieGump(600, 450, rs, false);

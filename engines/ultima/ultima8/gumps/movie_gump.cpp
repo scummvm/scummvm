@@ -169,12 +169,12 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 }
 
 static Common::SeekableReadStream *_tryLoadCruMovie(const Std::string &filename) {
-	const Std::string path = Std::string::format("@game/flics/%s.avi", filename.c_str());
+	const Std::string path = Std::string::format("flics/%s.avi", filename.c_str());
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(path);
 	if (!rs) {
 		// Try with a "0" in the name
-		const Std::string adjustedfn = Std::string::format("@game/flics/0%s.avi", filename.c_str());
+		const Std::string adjustedfn = Std::string::format("flics/0%s.avi", filename.c_str());
 		rs = filesys->ReadFile(adjustedfn);
 		if (!rs) {
 			warning("movie %s not found", filename.c_str());

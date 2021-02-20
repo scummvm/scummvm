@@ -33,8 +33,7 @@ namespace Ultima8 {
 
 class FileSystem {
 public:
-	//! \param noforcedvpaths if false, all file operations must use vpaths
-	FileSystem(bool noforcedvpaths = false);
+	FileSystem();
 	~FileSystem();
 
 	static FileSystem *get_instance() {
@@ -53,25 +52,12 @@ public:
 	//! \return a new writestream, or nullptr on failure
 	Common::WriteStream *WriteFile(const Std::string &vfn, bool is_text = false);
 
-	//! Mount a virtual path
-	//! \param vpath the name of the vpath (should start with '@')
-	//! \param realpath the name of the path to mount (note that this can
-	//!                 be a virtual path itself)
-	//! \param create create realpath directory if it doesn't exist?
-	//! \return true if succesful
-	bool AddVirtualPath(const Std::string &vpath, const Std::string &realpath,
-	                    bool create = false);
-
-	//! Unmount a virtual path
-	bool RemoveVirtualPath(const Std::string &vpath);
-
 	//! Create a directory
 	//! \param path the directory to create. (Can be virtual)
 	//! \return true if successful; otherwise, false.
 	bool MkDir(const Std::string &path); // can handle both paths and vpaths
 
 private:
-	static void switch_slashes(Std::string &name);
 	static bool base_to_uppercase(Std::string &str, int count);
 
 	static bool IsDir(const Std::string &path);
@@ -89,16 +75,6 @@ private:
 	 *	Output: false if couldn't open.
 	 */
 	bool rawOpen(Common::WriteStream *&out, const Std::string &fname);
-
-	// This will disable the usage of forced virtual paths.
-	// It's useful for 'tools'
-	bool    _noForcedVPaths;
-
-	// rewrite virtual path in-place (i.e., fvn is replaced)
-	// returns false if no rewriting was done
-	bool rewrite_virtual_path(Std::string &vfn) const;
-
-	Std::map<Common::String, Std::string> _virtualPaths;
 };
 
 } // End of namespace Ultima8
