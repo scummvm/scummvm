@@ -56,24 +56,24 @@ typedef Common::Queue<Common::Rect *> RectQueue;
 
 class SymbolMaps {
     private:
-    StringQueue stringToDefine;
-    RectQueue rectToDefine;
+        StringQueue stringToDefine;
+        RectQueue rectToDefine;
 
     public:
-    SymbolMap settings; 
-    SymbolMap variables;
-    SymbolMap cursors;
-    SymbolMap locations;
-    SymbolMap rects;
-    ConstantList constants;
+        SymbolMap settings; 
+        SymbolMap variables;
+        SymbolMap cursors;
+        SymbolMap locations;
+        SymbolMap rects;
+        ConstantList constants;
     
-    NameList variableList;
-    NameList locationList;
+        NameList variableList;
+        NameList locationList;
 
-    Symbol *constant(int t, int d, char *s);
-    Symbol *lookupName(char *n);
-    void installAll(char *n);
-    void defineSymbol(char *, Common::Rect *);
+        Symbol *constant(int t, int d, char *s);
+        Symbol *lookupName(char *n);
+        void installAll(char *n);
+        void defineSymbol(char *, Common::Rect *);
 };
 
 } // End of namespace Private
