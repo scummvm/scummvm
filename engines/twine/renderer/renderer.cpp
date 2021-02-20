@@ -819,128 +819,133 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
-	int32 renderLoop = vsize;
-	int32 currentLine = vtop;
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
-	do {
-		if (currentLine >= 0 && currentLine < screenHeight) {
-			int16 stop = ptr1[screenHeight]; // stop
-			int16 start = ptr1[0];            // start
-			ptr1++;
-			int32 hsize = stop - start;
 
-			if (hsize >= 0) {
-				uint16 startColor = ptr2[0];
-				uint16 stopColor = ptr2[screenHeight];
-				int32 currentXPos = start;
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 stop = ptr1[screenHeight];  // stop
+		int16 start = ptr1[0];            // start
+		ptr1++;
+		int32 hsize = stop - start;
+		if (hsize < 0) {
+			out += screenWidth;
+			continue;
+		}
+		uint16 startColor = ptr2[0];
+		uint16 stopColor = ptr2[screenHeight];
+		int32 currentXPos = start;
 
-				uint8 *out2 = start + out;
-				ptr2++;
+		uint8 *out2 = start + out;
+		ptr2++;
 
-				if (hsize == 0) {
-					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = (uint8)(((startColor + stopColor) / 2) / 256);
-					}
-				} else {
-					int16 colorSize = stopColor - startColor;
-					if (hsize == 1) {
-						uint16 currentColor = startColor;
-						hsize++;
-						hsize /= 2;
+		if (hsize == 0) {
+			if (currentXPos >= 0 && currentXPos < screenWidth) {
+				*(out2) = (uint8)(((startColor + stopColor) / 2) / 256);
+			}
+		} else {
+			int16 colorSize = stopColor - startColor;
+			if (hsize == 1) {
+				uint16 currentColor = startColor;
+				hsize++;
+				hsize /= 2;
 
-						currentColor &= 0xFF;
-						currentColor += startColor;
-						if (currentXPos >= 0 && currentXPos < screenWidth) {
-							*(out2) = currentColor / 256;
-						}
-
-						currentColor &= 0xFF;
-						startColor += colorSize;
-						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-						currentColor += startColor;
-
-						currentXPos++;
-						if (currentXPos >= 0 && currentXPos < screenWidth) {
-							*(out2 + 1) = currentColor / 256;
-						}
-					} else if (hsize == 2) {
-						uint16 currentColor = startColor;
-						hsize++;
-						hsize /= 2;
-
-						currentColor &= 0xFF;
-						colorSize /= 2;
-						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-						currentColor += startColor;
-						if (currentXPos >= 0 && currentXPos < screenWidth) {
-							*(out2) = currentColor / 256;
-						}
-
-						out2++;
-						currentXPos++;
-						startColor += colorSize;
-
-						currentColor &= 0xFF;
-						currentColor += startColor;
-
-						if (currentXPos >= 0 && currentXPos < screenWidth) {
-							*(out2) = currentColor / 256;
-						}
-
-						currentColor &= 0xFF;
-						startColor += colorSize;
-						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-						currentColor += startColor;
-
-						currentXPos++;
-						if (currentXPos >= 0 && currentXPos < screenWidth) {
-							*(out2 + 1) = currentColor / 256;
-						}
-					} else {
-						uint16 currentColor = startColor;
-						colorSize /= hsize;
-						hsize++;
-
-						if (hsize % 2) {
-							hsize /= 2;
-							currentColor &= 0xFF;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < screenWidth) {
-								*(out2) = currentColor / 256;
-							}
-							out2++;
-							currentXPos++;
-						} else {
-							hsize /= 2;
-						}
-
-						do {
-							currentColor &= 0xFF;
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < screenWidth) {
-								*(out2) = currentColor / 256;
-							}
-							currentXPos++;
-							currentColor &= 0xFF;
-							startColor += colorSize;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < screenWidth) {
-								*(out2 + 1) = currentColor / 256;
-							}
-							currentXPos++;
-							out2 += 2;
-							startColor += colorSize;
-						} while (--hsize);
-					}
+				currentColor &= 0xFF;
+				currentColor += startColor;
+				if (currentXPos >= 0 && currentXPos < screenWidth) {
+					*(out2) = currentColor / 256;
 				}
+
+				currentColor &= 0xFF;
+				startColor += colorSize;
+				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+				currentColor += startColor;
+
+				currentXPos++;
+				if (currentXPos >= 0 && currentXPos < screenWidth) {
+					*(out2 + 1) = currentColor / 256;
+				}
+			} else if (hsize == 2) {
+				uint16 currentColor = startColor;
+				hsize++;
+				hsize /= 2;
+
+				currentColor &= 0xFF;
+				colorSize /= 2;
+				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+				currentColor += startColor;
+				if (currentXPos >= 0 && currentXPos < screenWidth) {
+					*(out2) = currentColor / 256;
+				}
+
+				out2++;
+				currentXPos++;
+				startColor += colorSize;
+
+				currentColor &= 0xFF;
+				currentColor += startColor;
+
+				if (currentXPos >= 0 && currentXPos < screenWidth) {
+					*(out2) = currentColor / 256;
+				}
+
+				currentColor &= 0xFF;
+				startColor += colorSize;
+				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+				currentColor += startColor;
+
+				currentXPos++;
+				if (currentXPos >= 0 && currentXPos < screenWidth) {
+					*(out2 + 1) = currentColor / 256;
+				}
+			} else {
+				uint16 currentColor = startColor;
+				colorSize /= hsize;
+				hsize++;
+
+				if (hsize % 2) {
+					hsize /= 2;
+					currentColor &= 0xFF;
+					currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+					currentColor += startColor;
+					if (currentXPos >= 0 && currentXPos < screenWidth) {
+						*(out2) = currentColor / 256;
+					}
+					out2++;
+					currentXPos++;
+				} else {
+					hsize /= 2;
+				}
+
+				do {
+					currentColor &= 0xFF;
+					currentColor += startColor;
+					if (currentXPos >= 0 && currentXPos < screenWidth) {
+						*(out2) = currentColor / 256;
+					}
+					currentXPos++;
+					currentColor &= 0xFF;
+					startColor += colorSize;
+					currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+					currentColor += startColor;
+					if (currentXPos >= 0 && currentXPos < screenWidth) {
+						*(out2 + 1) = currentColor / 256;
+					}
+					currentXPos++;
+					out2 += 2;
+					startColor += colorSize;
+				} while (--hsize);
 			}
 		}
 		out += screenWidth;
-		currentLine++;
-	} while (--renderLoop);
+	}
 }
 
 void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
