@@ -77,9 +77,9 @@ static const char *kStartGame = "kStartGame";
 // structs
 
 typedef struct ExitInfo {
-    Common::String *nextSetting;
-    Common::Rect   *rect;
-    Common::String *cursor;
+    Common::String nextSetting;
+    Common::Rect   rect;
+    Common::String cursor;
 } ExitInfo;
 
 typedef struct MaskInfo {
