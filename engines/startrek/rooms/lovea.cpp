@@ -29,9 +29,14 @@ namespace StarTrek {
 
 enum loveTextIds {
 	TX_COMMON_IDS_OFFSET_START = 5000,	// needed to distinguish common IDs
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_UHURA,
-	TX_LOV0_025, TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104,
-	TX_LOV0_105, TX_LOV0_106, TX_LOV0_107, TX_LOV5_015, TX_LOV5_019,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_UHURA, TX_SPEAKER_FERRIS,
+	TX_LOV0_011, TX_LOV0_012, TX_LOV0_013, TX_LOV0_014, TX_LOV0_015,
+	TX_LOV0_016, TX_LOV0_017, TX_LOV0_019, TX_LOV0_020, TX_LOV0_021,
+	TX_LOV0_022, TX_LOV0_025, TX_LOV0_026, TX_LOV0_029, TX_LOV0_033,
+	TX_LOV0_039, TX_LOV0_040, TX_LOV0_041, TX_LOV0_042, TX_LOV0_043,
+	TX_LOV0_045, TX_LOV0_046, TX_LOV0_047, TX_LOV0_048, TX_LOV0_050,
+	TX_LOV0_101, TX_LOV0_102, TX_LOV0_103, TX_LOV0_104, TX_LOV0_105,
+	TX_LOV0_106, TX_LOV0_107, TX_LOV0_124, TX_LOV5_015, TX_LOV5_019,
 	TX_LOV5_027, TX_LOV5_030, TX_LOV5_038, TX_LOVA_100, TX_LOVA_F01,
 	TX_LOVA_F02, TX_LOVA_F03, TX_LOVA_F04, TX_LOVA_F07, TX_LOVA_F08,
 	TX_LOVA_F10, TX_LOVA_F54, TX_LOVA_F55, TX_TUG2_010, TX_MUD2_040,
@@ -45,7 +50,32 @@ extern const RoomTextOffsets loveTextOffsets[] = {
 	{ TX_SPEAKER_MCCOY, 5926, 0 },
 	{ TX_SPEAKER_SPOCK, 5936, 0 },
 	{ TX_SPEAKER_UHURA, 4990, 0 },
+	{ TX_SPEAKER_FERRIS, 5946, 0 },
+	{ TX_LOV0_011, 10498, 0 },
+	{ TX_LOV0_012, 10625, 0 },
+	{ TX_LOV0_013, 10921, 0 },
+	{ TX_LOV0_014, 10685, 0 },
+	{ TX_LOV0_015, 10789, 0 },
+	{ TX_LOV0_016, 10592, 0 },
+	{ TX_LOV0_017, 11055, 0 },
+	{ TX_LOV0_019, 10975, 0 },
+	{ TX_LOV0_020, 10532, 0 },
+	{ TX_LOV0_021, 10843, 0 },
+	{ TX_LOV0_022, 10733, 0 },
 	{ TX_LOV0_025, 11981, 0 },
+	{ TX_LOV0_026, 11854, 0 },
+	{ TX_LOV0_029, 11734, 0 },
+	{ TX_LOV0_033, 11794, 0 },
+	{ TX_LOV0_039, 11116, 0 },
+	{ TX_LOV0_040, 11243, 0 },
+	{ TX_LOV0_041, 11539, 0 },
+	{ TX_LOV0_042, 11303, 0 },
+	{ TX_LOV0_043, 11407, 0 },
+	{ TX_LOV0_045, 11210, 0 },
+	{ TX_LOV0_046, 11673, 0 },
+	{ TX_LOV0_047, 11593, 0 },
+	{ TX_LOV0_048, 11150, 0 },
+	{ TX_LOV0_050, 11351, 0 },
 	{ TX_LOV0_101, 12062, 0 },
 	{ TX_LOV0_102, 12126, 0 },
 	{ TX_LOV0_103, 12196, 0 },
@@ -53,6 +83,7 @@ extern const RoomTextOffsets loveTextOffsets[] = {
 	{ TX_LOV0_105, 12303, 0 },
 	{ TX_LOV0_106, 12415, 0 },
 	{ TX_LOV0_107, 12483, 0 },
+	{ TX_LOV0_124, 11931, 0 },
     { TX_LOV5_015,  3009, 0 },
 	{ TX_LOV5_019,  2931, 0 },
 	{ TX_LOV5_027,  3444, 0 },
@@ -82,8 +113,6 @@ extern const RoomTextOffsets loveTextOffsets[] = {
 
 // Mccoy or Ferris say something under effects of laughing gas
 void Room::loveaTimer0Expired() {
-// TODO
-#if 0
 	const TextRef ferrisText[] = {
 		TX_LOV0_039,
 		TX_LOV0_048,
@@ -145,7 +174,6 @@ void Room::loveaTimer0Expired() {
 		// reduce "spamming" of text?
 		_awayMission->timers[0] = getRandomWordInRange(200, 400);
 	}
-#endif
 }
 
 // Spock says something under effects of laughing gas
