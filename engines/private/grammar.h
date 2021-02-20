@@ -90,7 +90,7 @@ class SettingMaps {
 // Funtions
 
 typedef Common::Array<Datum> ArgArray;
-extern void call(char *, ArgArray);
+void call(char *, ArgArray);
 
 // Code Generation
 

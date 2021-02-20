@@ -310,7 +310,7 @@ void fInventory(ArgArray args) {
         if (e.type == NUM)
             m.nextSetting = "";
         else
-            m.nextSetting = *e.u.str;
+            m.nextSetting = e.u.str;
 
         m.cursor = "kInventory";
         m.point = Common::Point(0,0);
