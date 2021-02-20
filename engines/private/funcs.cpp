@@ -360,25 +360,25 @@ void fExit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
     debugC(1, kPrivateDebugScript, "Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
-    ExitInfo *e = (ExitInfo *)malloc(sizeof(ExitInfo));
+    ExitInfo e = {};
 
     if (args[0].type == NUM && args[0].u.val == 0)
-        e->nextSetting = NULL;
+        e.nextSetting = "";
     else
-        e->nextSetting = new Common::String(args[0].u.str);
+        e.nextSetting = args[0].u.str;
 
     if (args[1].type == NUM && args[1].u.val == 0)
-        e->cursor = NULL;
+        e.cursor = "";
     else
-        e->cursor = args[1].u.sym->name;
+        e.cursor = *args[1].u.sym->name;
 
     if (args[2].type == NAME) {
         assert(args[2].u.sym->type == RECT);
         args[2].u.rect = args[2].u.sym->u.rect;
     }
 
-    e->rect = args[2].u.rect;
-    g_private->_exits.push_front(*e);
+    e.rect = *args[2].u.rect;
+    g_private->_exits.push_front(e);
 }
 
 void fSetModifiedFlag(ArgArray args) {

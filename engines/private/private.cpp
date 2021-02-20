@@ -367,22 +367,22 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
     int rs = 100000000;
     int cs = 0;
     ExitInfo e;
-    Common::String *cursor = NULL;
+    Common::String cursor = "";
 
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
-        cs = e.rect->width()*e.rect->height();
+        cs = e.rect.width()*e.rect.height();
 
-        if (e.rect->contains(mousePos)) {
-            if (cs < rs && e.cursor != NULL) {
+        if (e.rect.contains(mousePos)) {
+            if (cs < rs && !e.cursor.empty()) {
                 rs = cs;
                 cursor = e.cursor;
             }
         }
     }
 
-    if (cursor != NULL) {
-        changeCursor(*cursor);
+    if (!cursor.empty()) {
+        changeCursor(cursor);
         return true;
     }
 
@@ -449,17 +449,17 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     if (mousePos.x < 0 || mousePos.y < 0)
         return;
 
-    Common::String *ns = NULL;
+    Common::String ns = "";
     int rs = 100000000;
     int cs = 0;
     ExitInfo e;
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
         e = *it;
-        cs = e.rect->width()*e.rect->height();
+        cs = e.rect.width()*e.rect.height();
         //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
-        if (e.rect->contains(mousePos)) {
+        if (e.rect.contains(mousePos)) {
             //debug("Inside! %d %d", cs, rs);
-            if (cs < rs && e.nextSetting != NULL) { // TODO: check this
+            if (cs < rs && !e.nextSetting.empty()) { // TODO: check this
                 // an item was not taken
                 if (_toTake) {
                     playSound(getLeaveSound(), 1, false, false);
@@ -472,9 +472,8 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
             }
         }
     }
-    if (ns != NULL) {
-        _nextSetting = *ns;
-        //setNextSetting(new Common::String(*ns));
+    if (!ns.empty()) {
+        _nextSetting = ns;
     }
 }
 
