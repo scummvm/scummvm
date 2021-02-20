@@ -212,17 +212,11 @@ public:
     // settings
     Common::String _nextSetting;
     Common::String _pausedSetting;
-    Common::String  _currentSetting;
+    Common::String _currentSetting;
 
     Common::String _nextMovie;
-    const Common::Point *_origin;
-    void setOrigin(const int[2]);
-
-    //void setNextSetting(Common::String *);
-    //void setNextMovie(Common::String *);
-    
-
-    bool            _toTake;
+    Common::Point  _origin;
+    bool           _toTake;
 
     // Dossiers
     DossierArray _dossiers;
