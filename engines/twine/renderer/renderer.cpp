@@ -698,38 +698,42 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
-	int32 currentLine = vtop;
-	do {
-		if (currentLine >= 0 && currentLine < screenHeight) {
-			int16 start = ptr1[0];
-			int16 stop = ptr1[screenHeight];
-			ptr1++;
-			int32 hsize = stop - start;
+	int32 renderLoop = vsize;
+	if (vtop < 0) {
+		out += screenWidth * ABS(vtop);
+		renderLoop -= ABS(vtop);
+	}
+	if (renderLoop > screenHeight) {
+		renderLoop = screenHeight;
+	}
+	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
+		int16 start = ptr1[0];
+		int16 stop = ptr1[screenHeight];
+		ptr1++;
+		int32 hsize = stop - start;
 
-			if (hsize >= 0) {
-				hsize++;
-				uint8 *out2 = start + out;
+		if (hsize >= 0) {
+			hsize++;
+			uint8 *out2 = start + out;
 
-				hsize /= 2;
-				if (hsize > 1) {
-					uint16 ax;
-					bh ^= 1;
-					ax = (uint16)(*out2);
-					ax &= 1;
-					if (ax ^ bh) {
-						out2++;
-					}
+			hsize /= 2;
+			if (hsize > 1) {
+				uint16 ax;
+				bh ^= 1;
+				ax = (uint16)(*out2);
+				ax &= 1;
+				if (ax ^ bh) {
+					out2++;
+				}
 
-					for (int32 j = 0; j < hsize; j++) {
-						*(out2) = (uint8)color;
-						out2 += 2;
-					}
+				for (int32 j = 0; j < hsize; j++) {
+					*(out2) = (uint8)color;
+					out2 += 2;
 				}
 			}
 		}
 		out += screenWidth;
-		currentLine++;
-	} while (--vsize);
+	}
 }
 
 void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
