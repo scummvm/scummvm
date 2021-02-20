@@ -283,9 +283,7 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	}
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	AnimData animData;
-	animData.loadFromBuffer(animPtr, 100000);
+bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 	const int32 keyFrameLength = keyFrame->length;
 
@@ -306,7 +304,6 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, A
 
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);
-		;
 		animTimerDataPtr->time = _engine->lbaTime;
 		return true;
 	}
@@ -622,11 +619,12 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
+			const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
 			const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
 			bool keyFramePassed = false;
 			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
-				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, &actor->animTimerData);
+				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animData, animPtr, &actor->animTimerData);
 			}
 
 			if (processRotationByAnim) {
@@ -661,11 +659,11 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				processAnimActions(actorIdx);
 
 				int16 numKeyframe = actor->animPosition;
-				if (numKeyframe == getNumKeyframes(animPtr)) {
+				if (numKeyframe == (int16)animData.getNumKeyframes()) {
 					actor->dynamicFlags.bIsHitting = 0;
 
 					if (actor->animType == kAnimationTypeLoop) {
-						actor->animPosition = getStartKeyframe(animPtr);
+						actor->animPosition = animData.getLoopFrame();
 					} else {
 						actor->anim = (AnimationTypes)actor->animExtra;
 						actor->previousAnimIdx = getBodyAnimIndex(actor->anim, actorIdx);

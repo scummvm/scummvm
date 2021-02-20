@@ -170,6 +170,7 @@ public:
 	uint8 *animTable[NUM_ANIMS]{nullptr};
 	/** Table with all loaded animations sizes */
 	uint32 animSizeTable[NUM_ANIMS]{0};
+	AnimData animData[NUM_ANIMS];
 
 	/** Table with all loaded samples */
 	uint8 *samplesTable[NUM_SAMPLES]{nullptr};

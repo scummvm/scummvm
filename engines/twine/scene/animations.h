@@ -41,10 +41,11 @@ private:
 	/**
 	 * Verify animation at keyframe
 	 * @param keyframeIdx Animation key frame index
+	 * @param animData Animation data
 	 * @param animPtr Animation pointer
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	uint8 *const animBuffer;
 	uint8 *animBufferPos = nullptr;

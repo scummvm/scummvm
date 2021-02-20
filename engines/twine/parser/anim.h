@@ -61,9 +61,14 @@ public:
 
 	const KeyFrame* getKeyframe(uint index) const;
 	const Common::Array<KeyFrame>& getKeyframes() const;
+	uint getNumKeyframes() const;
 	uint16 getLoopFrame() const;
 	uint16 getNumBoneframes() const;
 };
+
+inline uint AnimData::getNumKeyframes() const {
+	return getKeyframes().size();
+}
 
 } // End of namespace TwinE
 
