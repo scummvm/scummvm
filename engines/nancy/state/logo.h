@@ -46,6 +46,8 @@ public:
 		
 	void process();
 
+	uint MSNDchannelID; // This definitely shouldn't be here
+
 private:
 	void init();
 	void startSound();

@@ -28,7 +28,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
@@ -493,7 +493,7 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
             break;
         }
         case kActionTrigger:
-            // TODO play sound
+            engine->sound->playSound(24); // Hardcoded by original engine
             engine->scene->addItemToInventory(objectID);
             setVisible(false);
             hasHotspot = false;
@@ -503,15 +503,7 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
 }
 
 uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
-    char str[10];
-    stream.read(str, 10);
-    filename = Common::String(str);
-    id = stream.readSint16LE();
-    stream.skip(4);
-    numLoops = stream.readUint16LE();
-    stream.skip(4);
-    volume = stream.readUint16LE();
-    stream.skip(6);
+    sound.read(stream, SoundManager::SoundDescription::kDIGI);
     SceneChange::readData(stream);
     return 0x2B;
 }
@@ -519,12 +511,12 @@ uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
-            engine->sound->loadSound(filename, id, numLoops, volume);
-            engine->sound->pauseSound(id, false);
+            engine->sound->loadSound(sound);
+            engine->sound->playSound(sound.channelID);
             state = kRun;
             break;
         case kRun:
-            if (!engine->sound->isSoundPlaying(id)) {
+            if (!engine->sound->isSoundPlaying(sound.channelID)) {
                 state = kActionTrigger;
             }
             break;

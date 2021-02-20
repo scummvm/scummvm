@@ -25,7 +25,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/resource.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
@@ -73,13 +73,10 @@ void Map::init() {
 
     // Load the audio
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
-    chunk->read(name, 10);
-    n = Common::String(name);
-    uint16 channel = chunk->readUint16LE();
-    chunk->skip(0xA);
-    uint16 volume = chunk->readUint16LE();
-    _engine->sound->loadSound(n, channel, 0, volume);
-    _engine->sound->pauseSound(channel, false);
+    SoundManager::SoundDescription sound;
+    sound.read(*chunk, SoundManager::SoundDescription::kMenu);
+    _engine->sound->loadSound(sound);
+    _engine->sound->playSound(sound.channelID);
 
     for (uint i = 0; i < 4; ++i) {
         chunk->seek(0x162 + i * 16, SEEK_SET);
@@ -133,6 +130,7 @@ void Map::run() {
             // TODO handle map button as well
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
+                stopSound();
                 _engine->setGameState(NancyEngine::kScene);
                 _engine->scene->changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
                 _state = kInit;
@@ -140,6 +138,14 @@ void Map::run() {
             return;
         }
     }
+}
+
+void Map::stopSound() {
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+    SoundManager::SoundDescription sound;
+    chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
+    sound.read(*chunk, SoundManager::SoundDescription::kMenu);
+    _engine->sound->stopSound(sound.channelID);
 }
 
 void Map::registerGraphics() {

@@ -66,6 +66,10 @@ void ActionManager::handleInput(NancyInput &input) {
                             shouldTrigger = true;
                         }
                     }
+
+                    if (!shouldTrigger) {
+                        _engine->sound->playSound(17); // Hardcoded by original engine
+                    }
                 } else {
                     shouldTrigger = true;
                 }

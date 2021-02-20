@@ -26,9 +26,9 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
@@ -246,6 +246,16 @@ Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String
 		return _bootChunks[name];
 	}
 	else return nullptr;
+}
+
+void NancyEngine::stopAndUnloadSpecificSounds() {
+	// TODO missing if
+	
+	sound->stopSound(logo->MSNDchannelID);
+
+	for (uint i = 0; i < 10; ++i) {
+		sound->stopSound(i);
+	}
 }
 
 void NancyEngine::clearBootChunks() {

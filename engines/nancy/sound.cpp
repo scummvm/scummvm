@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/nancy.h"
 
 #include "common/system.h"
@@ -122,7 +122,7 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	return true;
 }
 
-Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	char buf[22];
 
 	stream->read(buf, 22);
@@ -176,52 +176,159 @@ Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, Di
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
+void SoundManager::SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
+	char buf[10];
+
+	stream.read(buf, 10);
+	name = buf;
+	if (type == SoundDescription::kScene) {
+		stream.skip(4);
+	}
+	channelID = stream.readUint16LE();
+
+	// The difference between these is a couple members found at the same position
+	// whose purpose I don't understand, so for now just skip them
+	switch (type) {
+		case kNormal:
+			stream.skip(8);
+			break;
+		case kMenu:
+			stream.skip(6);	
+			break;
+		case kScene:
+			// fall through
+		case kDIGI:
+			stream.skip(4);
+			break;
+	}
+
+	numLoops = stream.readUint16LE();
+	if (stream.readUint16LE() != 0) { // loop indefinitely
+		numLoops = 0;
+	}
+	stream.skip(2);
+	volume = stream.readUint16LE();
+	stream.skip(6);
+}
+
 SoundManager::SoundManager(NancyEngine *engine) :
 		_engine(engine) {
 	_mixer = _engine->_system->getMixer();
+
+	initSoundChannels();
 }
 
-
-void SoundManager::loadSound(Common::String &name, int16 id, uint16 numLoops, uint16 volume) {
-	if (_mixer->isSoundHandleActive(handles[id])) {
-		_mixer->stopHandle(handles[id]);
-	}
-	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(name + ".his");
-	if (mSnd) {
-		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
-		if (aStr) {
-			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, numLoops);
-			_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handles[id], aStrLoop, -1, volume * 255 / 100);
-			_engine->_system->getMixer()->pauseHandle(handles[id], true);
-			names[id] = name;
-		}
-	}
+SoundManager::~SoundManager() {
+	stopAllSounds();
 }
 
-void SoundManager::pauseSound(int16 id, bool pause) {
-	if (id < 0 || id > 20)
+uint16 SoundManager::loadSound(const SoundDescription &description) {
+	if (_mixer->isSoundHandleActive(_channels[description.channelID].handle)) {
+		_mixer->stopHandle(_channels[description.channelID].handle);
+	}
+
+	delete _channels[description.channelID].stream;
+	_channels[description.channelID].stream = nullptr;
+
+	_channels[description.channelID].name = description.name;
+	_channels[description.channelID].numLoops = description.numLoops;
+	_channels[description.channelID].volume = description.volume;
+
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + ".his");
+	if (file) {
+		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES);
+	}
+
+	return description.channelID;
+}
+
+void SoundManager::playSound(uint16 channelID) {
+	if (channelID > 32 || _channels[channelID].stream == 0)
 		return;
 
-	_engine->_system->getMixer()->pauseHandle(handles[id], pause);
+	_channels[channelID].stream->seek(0);
+
+	_mixer->playStream(	_channels[channelID].type,
+						&_channels[channelID].handle,
+						Audio::makeLoopingAudioStream(_channels[channelID].stream, _channels[channelID].numLoops),
+						channelID,
+						_channels[channelID].volume * 255 / 100,
+						0, DisposeAfterUse::NO);
 }
 
-void SoundManager::stopSound(int16 id) {
-	if (isSoundPlaying(id)) {
-		_mixer->stopHandle(handles[id]);
+void SoundManager::pauseSound(uint16 channelID, bool pause) {
+	if (channelID > 32)
+		return;
+
+	if (isSoundPlaying(channelID)) {
+		_engine->_system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
 	}
-	names[id] = Common::String();
 }
 
-bool SoundManager::isSoundPlaying(int16 id) {
-	if (id >= 0 && id < 20) {
-		return _mixer->isSoundHandleActive(handles[id]);
+void SoundManager::stopSound(uint16 channelID) {
+	if (channelID > 32)
+		return;
+
+	if (isSoundPlaying(channelID)) {
+		_mixer->stopHandle(_channels[channelID].handle);
 	}
-	return false;
+	_channels[channelID].name = Common::String();
+	delete _channels[channelID].stream;
+	_channels[channelID].stream = nullptr;
+}
+
+bool SoundManager::isSoundPlaying(uint16 channelID) {
+	if (channelID > 32)
+		return false;
+	
+	return _mixer->isSoundHandleActive(_channels[channelID].handle);
 }
 
 // Returns whether the exception was skipped
 void SoundManager::stopAllSounds() {
-	_mixer->stopAll();
+	for (uint i = 0; i < 32; ++i) {
+		stopSound(i);
+	}
+}
+
+void SoundManager::initSoundChannels() {
+	// Original engine hardcoded these and so do we
+	_channels[7].type = Audio::Mixer::kSpeechSoundType;
+	_channels[8].type = Audio::Mixer::kSpeechSoundType;
+	_channels[30].type = Audio::Mixer::kSpeechSoundType;
+	
+	_channels[0].type = Audio::Mixer::kMusicSoundType;
+	_channels[1].type = Audio::Mixer::kMusicSoundType;
+	_channels[2].type = Audio::Mixer::kMusicSoundType;
+	_channels[27].type = Audio::Mixer::kMusicSoundType;
+	_channels[28].type = Audio::Mixer::kMusicSoundType;
+	_channels[29].type = Audio::Mixer::kMusicSoundType;
+	_channels[19].type = Audio::Mixer::kMusicSoundType;
+	
+	_channels[3].type = Audio::Mixer::kSFXSoundType;
+	_channels[4].type = Audio::Mixer::kSFXSoundType;
+	_channels[5].type = Audio::Mixer::kSFXSoundType;
+	_channels[6].type = Audio::Mixer::kSFXSoundType;
+	_channels[20].type = Audio::Mixer::kSFXSoundType;
+	_channels[21].type = Audio::Mixer::kSFXSoundType;
+	_channels[25].type = Audio::Mixer::kSFXSoundType;
+	_channels[26].type = Audio::Mixer::kSFXSoundType;
+	_channels[24].type = Audio::Mixer::kSFXSoundType;
+	_channels[23].type = Audio::Mixer::kSFXSoundType;
+	_channels[22].type = Audio::Mixer::kSFXSoundType;
+	_channels[31].type = Audio::Mixer::kSFXSoundType;
+	_channels[18].type = Audio::Mixer::kSFXSoundType;
+	_channels[17].type = Audio::Mixer::kSFXSoundType;
+	
+	_channels[9].type = Audio::Mixer::kPlainSoundType;
+	_channels[10].type = Audio::Mixer::kPlainSoundType;
+	_channels[11].type = Audio::Mixer::kPlainSoundType;
+	_channels[12].type = Audio::Mixer::kPlainSoundType;
+	_channels[13].type = Audio::Mixer::kPlainSoundType;
+	_channels[14].type = Audio::Mixer::kPlainSoundType;
+	_channels[15].type = Audio::Mixer::kPlainSoundType;
+	_channels[16].type = Audio::Mixer::kPlainSoundType;
+	
 }
 
 } // End of namespace Nancy

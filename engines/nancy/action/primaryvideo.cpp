@@ -28,7 +28,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
 #include "common/file.h"
@@ -85,19 +85,9 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     UI::Textbox::assembleTextLine(rawText, text, 1500);
     delete[] rawText;
 
-    stream.read(name, 10);
-    soundName = Common::String(name);
-    soundChannelID = stream.readUint16LE();
+    sound.read(stream, SoundManager::SoundDescription::kNormal);
 
-    stream.skip(8);
-
-    numRepeats = stream.readUint16LE();
-
-    stream.skip(4);
-
-    volume = stream.readUint16LE();
-
-    stream.skip(0x29);
+    stream.skip(0x23);
     conditionalResponseCharacterID = stream.readByte();
     goodbyeResponseCharacterID = stream.readByte();
     numSceneChanges = stream.readByte();
@@ -180,8 +170,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
         case kBegin:
             init();
             registerGraphics();
-            engine->sound->loadSound(soundName, soundChannelID, numRepeats, volume);
-            engine->sound->pauseSound(soundChannelID, false);
+            engine->sound->loadSound(sound);
+            engine->sound->playSound(sound.channelID);
             state = kRun;
             // fall through
         case kRun:
@@ -205,7 +195,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 }
             }
 
-            if (!engine->sound->isSoundPlaying(soundChannelID)) {
+            if (!engine->sound->isSoundPlaying(sound.channelID)) {
                 if (responses.size() == 0) {
                     // NPC has finished talking with no responses available, auto-advance to next scene
                     state = kActionTrigger;
@@ -221,8 +211,11 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     if (pickedResponse != -1) {
                         // Player has picked response, play sound file and change state
                         sceneChange = responses[pickedResponse].sceneChange;
-                        engine->sound->loadSound(responses[pickedResponse].soundName, soundChannelID, numRepeats, volume);
-                        engine->sound->pauseSound(soundChannelID, false);
+                        SoundManager::SoundDescription responseSound = sound;
+                        responseSound.name = responses[pickedResponse].soundName;
+                        // TODO this is probably not correct
+                        engine->sound->loadSound(responseSound);
+                        engine->sound->playSound(responseSound.channelID);
                         state = kActionTrigger;
                     }
                 }
@@ -259,7 +252,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 engine->scene->setEventFlag(responses[pickedResponse].flagDesc.label, responses[pickedResponse].flagDesc.flag);
             }
 
-            if (!engine->sound->isSoundPlaying(soundChannelID)) {
+            if (!engine->sound->isSoundPlaying(sound.channelID)) {
                 if (shouldPopScene) {
                     // Exit dialogue
                     engine->scene->popScene();
@@ -326,6 +319,7 @@ void PlayPrimaryVideoChan0::addGoodbye(NancyEngine *engine) {
             newResponse.text = file.readString();
             // response is picked randomly
             newResponse.sceneChange.sceneID = res.sceneIDs[engine->_rnd->getRandomNumber(3)];
+            newResponse.sceneChange.doNotStartSound = true;
 
             file.close();
         }

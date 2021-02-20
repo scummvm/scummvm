@@ -28,7 +28,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/graphics.h"
@@ -212,13 +212,7 @@ uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
     }
 
     triggerFlags.readData(stream);
-    stream.read(name, 10);
-    soundName = Common::String(name);
-    soundChannel = stream.readUint16LE();
-    stream.skip(0xE);
-    soundVolume = stream.readUint16LE();
-    
-    stream.skip(6);
+    sound.read(stream, SoundManager::SoundDescription::kNormal);
     SceneChange::readData(stream);
 
     uint16 numVideoDescs = stream.readUint16LE();
@@ -276,8 +270,8 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         case kBegin:
             init();
             registerGraphics();
-            if (soundName != "NO SOUND") {
-                engine->sound->loadSound(soundName, soundChannel, 1, soundVolume);
+            if (sound.name != "NO SOUND") {
+                engine->sound->loadSound(sound);
             }
             state = kRun;
             // fall through
@@ -300,8 +294,8 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
                     _screenPosition = videoDescs[activeFrame].destRect;
 
                     // Start sound if any
-                    if (soundName != "NO SOUND") {
-                        engine->sound->pauseSound(soundChannel, false);
+                    if (sound.name != "NO SOUND") {
+                        engine->sound->playSound(sound.channelID);
                     }
 
                     setVisible(true);

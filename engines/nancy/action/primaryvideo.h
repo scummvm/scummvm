@@ -65,7 +65,7 @@ public:
     PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
     virtual ~PlayPrimaryVideoChan0();
 
-    virtual void init()override;
+    virtual void init() override;
     virtual void updateGraphics() override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -80,10 +80,7 @@ public:
     // _screenPosition 0x2D
     Common::String text; // 0x3D
 
-    Common::String soundName; // 0x619, TODO make a proper soundDesc struct
-    uint16 soundChannelID; // 0x623
-    uint16 numRepeats; // 0x62D
-    uint16 volume; // 0x633
+    SoundManager::SoundDescription sound; // 0x619
 
     byte conditionalResponseCharacterID; // 0x65E
     byte goodbyeResponseCharacterID; // 0x65F

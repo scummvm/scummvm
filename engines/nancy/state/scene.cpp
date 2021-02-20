@@ -26,7 +26,7 @@
 #include "engines/nancy/iff.h"
 #include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/time.h"
@@ -55,9 +55,9 @@ void Scene::process() {
     case kStartSound:
         _state = kRun;
         if (!_sceneState._doNotStartSound) {
-            _engine->sound->stopAllSounds();
-            _engine->sound->loadSound(_sceneState.summary.audioFile, _sceneState.summary.audioID, 0, _sceneState.summary.audioVolume);
-            _engine->sound->pauseSound(_sceneState.summary.audioID, false);
+            _engine->stopAndUnloadSpecificSounds();
+            _engine->sound->loadSound(_sceneState.summary.sound);
+            _engine->sound->playSound(_sceneState.summary.sound.channelID);
         }
         // fall through
     case kRun:
@@ -83,6 +83,20 @@ void Scene::pushScene() {
 void Scene::popScene() {
     changeScene(_sceneState.pushedScene.sceneID, _sceneState.pushedScene.frameID, _sceneState.pushedScene.verticalOffset, true);
     _sceneState.isScenePushed = false;
+}
+
+void Scene::pauseSceneSpecificSounds() {
+    // TODO missing if, same condition as the one in NancyEngine::stopAndUnloadSpecificSounds
+
+    for (uint i = 0; i < 10; ++i) {
+		_engine->sound->pauseSound(i, true);
+	}
+}
+
+void Scene::unpauseSceneSpecificSounds() {
+    for (uint i = 0; i < 10; ++i) {
+		_engine->sound->pauseSound(i, false);
+	}
 }
 
 void Scene::addItemToInventory(uint16 id) {
@@ -245,6 +259,7 @@ void Scene::run() {
         }
 
         registerGraphics();
+        unpauseSceneSpecificSounds();
 
         return;
     }
@@ -305,12 +320,7 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
     stream.seek(3, SEEK_CUR);
     _sceneState.summary.videoFormat = stream.readUint16LE();
 
-    stream.read(buf, 10);
-    buf[9] = 0;
-    _sceneState.summary.audioFile = Common::String(buf);
-    _sceneState.summary.audioID = stream.readSint16LE();
-    stream.skip(0xE);
-    _sceneState.summary.audioVolume = stream.readUint16LE();
+    _sceneState.summary.sound.read(stream, SoundManager::SoundDescription::kScene);
 
     stream.seek(0x72);
     _sceneState.summary.verticalScrollDelta = stream.readUint16LE();
@@ -332,6 +342,7 @@ bool Scene::changeGameState() {
         _timers.pushedPlayTime = _engine->getTotalPlayTime();
         _engine->setGameState(_gameStateRequested);
         _gameStateRequested = NancyEngine::kScene;
+        pauseSceneSpecificSounds();
 
         return true;
     }

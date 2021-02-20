@@ -24,7 +24,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/video.h"
-#include "engines/nancy/audio.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/state/scene.h"
 
@@ -270,7 +270,7 @@ bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
 		return true;
 	}
 
-	Audio::AudioStream *stream = makeHISStream(f, DisposeAfterUse::YES);
+	Audio::AudioStream *stream = SoundManager::makeHISStream(f, DisposeAfterUse::YES);
 
 	if (!stream) {
 		debugPrintf("Failed to load '%s.his'\n", argv[1]);

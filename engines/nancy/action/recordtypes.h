@@ -27,6 +27,8 @@
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
+#include "engines/nancy/sound.h"
+
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/str.h"
@@ -349,10 +351,7 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
     // TODO subclass into Play and Stop (?)
 
-    Common::String filename;
-    int16 id = -1; // 0xA
-    uint16 numLoops = 0; // 0x10
-    uint16 volume = 0; // 0x16, maximum is 65?
+    SoundManager::SoundDescription sound;
     // ...
     // SceneChange elements at 0x1E
 };

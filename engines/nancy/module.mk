@@ -14,8 +14,7 @@ MODULE_OBJS = \
   ui/viewport.o \
   state/logo.o \
   state/map.o \
-  state/scene.o\
-  audio.o \
+  state/scene.o \
   console.o \
   cursor.o \
   decompress.o \
@@ -27,6 +26,7 @@ MODULE_OBJS = \
   nancy.o \
   renderobject.o \
   resource.o \
+  sound.o \
   video.o
 
 # This module can be built as a plugin

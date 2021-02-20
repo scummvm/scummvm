@@ -104,9 +104,7 @@ public:
     FlagAtFrame frameFlags[15]; // 0x26
     EventFlagsDesc triggerFlags; // 0x80
 
-    Common::String soundName; // 0xA8
-    uint16 soundChannel = 0; // 0xB2
-    uint16 soundVolume = 0; // 0xC2
+    SoundManager::SoundDescription sound; // 0xA8
 
     // SceneChange data at 0xCA
     Common::Array<SecondaryVideoDesc> videoDescs; // 0xD4
