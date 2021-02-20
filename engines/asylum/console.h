@@ -76,6 +76,9 @@ private:
 	bool cmdRunEncounter(int32 argc, const char **argv);
 	bool cmdRunPuzzle(int32 argc, const char **argv);
 
+	bool cmdAddToInventory(int32 argc, const char **argv);
+	bool cmdRemoveFromInventory(int32 argc, const char **argv);
+
 	bool cmdSetPalette(int32 argc, const char **argv);
 	bool cmdDrawResource(int32 argc, const char **argv);
 
