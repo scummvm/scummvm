@@ -131,8 +131,6 @@ typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 class PrivateEngine : public Engine {
 private:
     Common::RandomSource *_rnd;
-    Common::String *_nextSetting;
-    Common::String *_nextMovie;
     Graphics::PixelFormat _pixelFormat;
     Image::ImageDecoder *_image;
     int _screenW, _screenH;
@@ -211,14 +209,19 @@ public:
     Common::String *_nextVS;
     void drawScreen();
 
-    // global state
+    // settings
+    Common::String _nextSetting;
+    Common::String _pausedSetting;
+    Common::String  _currentSetting;
+
+    Common::String _nextMovie;
     const Common::Point *_origin;
     void setOrigin(const int[2]);
 
-    void setNextSetting(Common::String *);
-    void setNextMovie(Common::String *);
+    //void setNextSetting(Common::String *);
+    //void setNextMovie(Common::String *);
     
-    Common::String *_currentSetting;
+
     bool            _toTake;
 
     // Dossiers
@@ -239,7 +242,7 @@ public:
     int _numberClicks;
     int _maxNumberClicks;
     int _sirenWarning;
-    Common::String *_policeBustSetting;
+    Common::String _policeBustSetting;
 
     // Diary
     InvList inventory;
@@ -257,7 +260,6 @@ public:
     PlayedMediaTable _playedMovies;
     PlayedMediaTable _playedPhoneClips;
     Common::String _repeatedMovieExit;
-    Common::String *_pausedSetting;
 
     // Masks/Exits
     ExitList _exits;

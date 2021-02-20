@@ -84,7 +84,7 @@ class SettingMaps {
 
     void init();
     void save(char *);
-    void load(Common::String *);
+    void load(Common::String &);
 };
 
 // Funtions

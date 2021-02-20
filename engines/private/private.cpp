@@ -60,15 +60,15 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     g_private = this;
 
     // Setting execution
-    _nextSetting = NULL;
-    _currentSetting = NULL;
-    _pausedSetting = NULL;
+    _nextSetting = "";
+    _currentSetting = "";
+    _pausedSetting = "";
     _modified = false;
     _mode = -1;
     _toTake = false;
 
     // Movies
-    _nextMovie = NULL;
+    _nextMovie = "";
     _nextVS = NULL;
     _repeatedMovieExit = "";
 
@@ -81,7 +81,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
     // Police
     _policeBustEnabled = false;
-    _policeBustSetting = NULL;
+    _policeBustSetting = "";
     _numberClicks = 0;
     _sirenSound = "po/audio/posfx002.wav";
 
@@ -119,16 +119,6 @@ PrivateEngine::~PrivateEngine() {
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
     SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
-}
-
-void PrivateEngine::setNextSetting(Common::String *_ns) {
-    delete _nextSetting;
-    _nextSetting = _ns;
-}
-
-void PrivateEngine::setNextMovie(Common::String *_nm) {
-    delete _nextMovie;
-    _nextMovie = _nm;
 }
 
 void PrivateEngine::setOrigin(const int point[2]) {
@@ -199,7 +189,8 @@ Common::Error PrivateEngine::run() {
     if (saveSlot >= 0) { // load the savegame
         loadGameState(saveSlot);
     } else {
-        setNextSetting(new Common::String(kGoIntro));
+        _nextSetting = kGoIntro;
+        //setNextSetting(new Common::String(kGoIntro));
     }
 
     while (!shouldQuit()) {
@@ -232,9 +223,9 @@ Common::Error PrivateEngine::run() {
                 selectAMRadioArea(mousePos);
                 selectLoadGame(mousePos);
                 selectSaveGame(mousePos);
-                if (!_nextSetting)
+                if (_nextSetting.empty())
                     selectMask(mousePos);
-                if (!_nextSetting)
+                if (_nextSetting.empty())
                     selectExit(mousePos);
                 break;
 
@@ -256,15 +247,15 @@ Common::Error PrivateEngine::run() {
         checkPoliceBust();
 
         // Movies
-        if (_nextMovie != NULL) {
+        if (!_nextMovie.empty()) {
             removeTimer();
             _videoDecoder = new Video::SmackerDecoder();
-            playVideo(*_nextMovie);
-            setNextMovie(NULL);
+            playVideo(_nextMovie);
+            _nextMovie = "";
             continue;
         }
 
-        if (_nextVS != NULL && *_currentSetting == kMainDesktop) {
+        if (_nextVS != NULL && _currentSetting == kMainDesktop) {
             loadImage(*_nextVS, 160, 120);
             drawScreen();
         }
@@ -282,15 +273,14 @@ Common::Error PrivateEngine::run() {
             continue;
         }
 
-        if (_nextSetting != NULL) {
+        if (!_nextSetting.empty()) {
             removeTimer();
-            debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting->c_str());
+            debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
             clearAreas();
-            delete _currentSetting;
             // This pointer will be free after load
-            _currentSetting = new Common::String(*_nextSetting);
+            _currentSetting = _nextSetting;
             settings.load(_nextSetting);
-            setNextSetting(NULL);
+            _nextSetting = "";
             execute(prog);
             changeCursor("default");
             drawScreen();
@@ -361,9 +351,9 @@ void PrivateEngine::checkPoliceBust() {
         uint policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
         _policeBustSetting = _currentSetting;
         if (policeIndex <= 13) {
-            setNextSetting(new Common::String(kPOGoBustMovie));
+            _nextSetting = kPOGoBustMovie;
         } else {
-            setNextSetting(new Common::String(kPoliceBustFromMO));
+            _nextSetting = kPoliceBustFromMO;
         }
         clearAreas();
         _policeBustEnabled = false;
@@ -446,10 +436,9 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
     if (_mode == 1) {
         Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
         if (!window.contains(mousePos)) {
-            if ( _pausedSetting == NULL) {
-                delete _pausedSetting;
-                _pausedSetting = new Common::String(*_currentSetting);
-                setNextSetting(new Common::String(kPauseMovie));
+            if (!_pausedSetting.empty()) {
+                _pausedSetting = _currentSetting;
+                _nextSetting = kPauseMovie;
             }
         }
     }
@@ -485,8 +474,8 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
         }
     }
     if (ns != NULL) {
-        //debug("Exit selected %s", ns->c_str());
-        setNextSetting(new Common::String(*ns));
+        _nextSetting = *ns;
+        //setNextSetting(new Common::String(*ns));
     }
 }
 
@@ -520,7 +509,8 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
     }
     if (ns != NULL) {
         //debug("Mask selected %s", ns->c_str());
-        setNextSetting(new Common::String(*ns));
+        _nextSetting = *ns;
+        //setNextSetting(new Common::String(*ns));
     }
 }
 
@@ -688,7 +678,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     Common::Serializer s(stream, nullptr);
     debugC(1, kPrivateDebugFunction, "loadGameStream");
-    setNextSetting(new Common::String(kStartGame));
+    _nextSetting = kStartGame;
     int val;
 
     for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
@@ -1045,7 +1035,7 @@ char *PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
 // Timers
 void timerCallback(void *refCon) {
     g_private->removeTimer();
-    g_private->setNextSetting((Common::String *)refCon);
+    g_private->_nextSetting = *(Common::String *)refCon;
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {

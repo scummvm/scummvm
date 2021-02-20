@@ -76,11 +76,11 @@ void SettingMaps::save(char *name) {
     map.setVal(name, setting);
 }
 
-void SettingMaps::load(Common::String *name) {
-    assert(map.contains(*name));
-    setting = map.getVal(*name);
+void SettingMaps::load(Common::String &name) {
+    assert(map.contains(name));
+    setting = map.getVal(name);
 
-    debugC(1, kPrivateDebugCode, "loading setting %s", name->c_str());
+    debugC(1, kPrivateDebugCode, "loading setting %s", name.c_str());
 
     prog = (Inst *)&setting->prog;
     stack = (Datum *)&setting->stack;

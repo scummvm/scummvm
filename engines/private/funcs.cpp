@@ -42,7 +42,7 @@ void fChgMode(ArgArray args) {
 
     g_private->_mode = args[0].u.val;
     Common::String *s = new Common::String(args[1].u.str);
-    g_private->setNextSetting(s);
+    g_private->_nextSetting = *s;
 
     if (g_private->_mode == 0) {
         g_private->setOrigin(kOriginZero);
@@ -104,7 +104,7 @@ void fgoto(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
     Common::String *s = new Common::String(args[0].u.str);
-    g_private->setNextSetting(s);
+    g_private->_nextSetting = *s;
 }
 
 
@@ -112,7 +112,7 @@ void fSyncSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String *nextSetting = new Common::String(args[1].u.str);
-    g_private->setNextSetting(nextSetting);
+    g_private->_nextSetting = *nextSetting;
     Common::String s(args[0].u.str);
 
     if (s != "\"\"") {
@@ -173,7 +173,7 @@ void fPoliceBust(ArgArray args) {
         if (args[1].u.val == 2) {
             // Unclear what it means
         } else if (args[1].u.val == 3) {
-            g_private->setNextSetting(new Common::String(kMainDesktop));
+            g_private->_nextSetting = kMainDesktop;
             g_private->_mode = 0;
             g_private->setOrigin(kOriginZero);
         } else
@@ -201,8 +201,8 @@ void fBustMovie(ArgArray args) {
         g_private->playSound(s, 1, false, false);
     }
 
-    g_private->setNextMovie(new Common::String(pv));
-    g_private->setNextSetting(new Common::String(args[0].u.str));
+    g_private->_nextMovie = pv;
+    g_private->_nextSetting = args[0].u.str;
 }
 
 void fDossierAdd(ArgArray args) {
@@ -454,15 +454,15 @@ void fViewScreen(ArgArray args) {
 void fTransition(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
-    g_private->setNextMovie(new Common::String(args[0].u.str));
-    g_private->setNextSetting(new Common::String(args[1].u.str));
+    g_private->_nextMovie = args[0].u.str;
+    g_private->_nextSetting = args[1].u.str;
 }
 
 void fResume(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
-    g_private->setNextSetting(g_private->_pausedSetting);
-    g_private->_pausedSetting = NULL;
+    g_private->_nextSetting = g_private->_pausedSetting;
+    g_private->_pausedSetting = "";
     g_private->_mode = 1;
     g_private->setOrigin(kOriginOne);
 }
@@ -470,20 +470,19 @@ void fResume(ArgArray args) {
 void fMovie(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Movie(%s, %s)", args[0].u.str, args[1].u.str);
-    Common::String *movie = new Common::String(args[0].u.str);
-    Common::String *nextSetting = new Common::String(args[1].u.str);
+    Common::String movie = args[0].u.str;
+    Common::String nextSetting = args[1].u.str;
 
-    if (!g_private->_playedMovies.contains(*movie) && *movie != "\"\"") {
-        g_private->setNextMovie(movie);
-        g_private->_playedMovies.setVal(*movie, true);
-        g_private->setNextSetting(nextSetting);
-
-    } else if (*movie == "\"\"") {
-        g_private->_repeatedMovieExit = *nextSetting;
-        debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting->c_str());
+    if (!g_private->_playedMovies.contains(movie) && movie != "\"\"") {
+        g_private->_nextMovie = movie;
+        g_private->_playedMovies.setVal(movie, true);
+        g_private->_nextSetting = nextSetting;
+    } else if (movie == "\"\"") {
+        g_private->_repeatedMovieExit = nextSetting;
+        debugC(1, kPrivateDebugScript, "repeated movie exit is %s", nextSetting.c_str());
     } else {
-        debugC(1, kPrivateDebugScript, "movie %s already played", movie->c_str());
-        g_private->setNextSetting(new Common::String(g_private->_repeatedMovieExit));
+        debugC(1, kPrivateDebugScript, "movie %s already played", movie.c_str());
+        g_private->_nextSetting = g_private->_repeatedMovieExit;
     }
 }
 
@@ -664,7 +663,7 @@ void fAskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
     Common::String *s = new Common::String(args[0].u.str);
-    g_private->setNextSetting(s);
+    g_private->_nextSetting = *s;
 }
 
 void fTimer(ArgArray args) {
@@ -680,7 +679,7 @@ void fTimer(ArgArray args) {
     if (delay > 0) {
         assert(g_private->installTimer(delay, s));
     } else if (delay == 0) {
-        g_private->setNextSetting(s);
+        g_private->_nextSetting = *s;
     } else {
         assert(0);
     }
