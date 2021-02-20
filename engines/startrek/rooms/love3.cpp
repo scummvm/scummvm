@@ -470,9 +470,9 @@ void Room::love3TalkToRedshirt() {
 
 void Room::love3UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, TX_LOV3_005, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV3_005, false);
 	else
-		mccoyScan(DIR_S, TX_LOV3_006, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV3_006, false);
 }
 
 void Room::love3UseSTricorderOnTurbines() {

@@ -490,54 +490,54 @@ void Room::trial1UsePhaserOnLock() {
 }
 
 void Room::trial1UseMTricorderOnKirk() {
-	mccoyScan(DIR_S, TX_TRI1_024, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI1_024, true);
 }
 
 void Room::trial1UseMTricorderOnSpock() {
 	// ENHANCEMENT: Original didn't play tricorder sound, etc
-	mccoyScan(DIR_S, TX_TRI1_025, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI1_025, true);
 }
 
 void Room::trial1UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI1_022, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI1_022, true);
 }
 
 void Room::trial1UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI1_023, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI1_023, true);
 }
 
 void Room::trial1UseMTricorderOnEntity() {
-	mccoyScan(DIR_S, TX_TRI1_017, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI1_017, true);
 }
 
 void Room::trial1UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI1_043, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_043, true);
 }
 
 void Room::trial1UseSTricorderOnEntity() {
-	spockScan(DIR_S, TX_TRI1_012, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_012, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnRods() {
-	spockScan(DIR_S, TX_TRI1_041, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_041, true);
 }
 
 void Room::trial1UseSTricorderOnFloor() {
-	spockScan(DIR_S, TX_TRI1_042, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_042, true);
 
 	// BUG: infinite score mechanism
 	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnDoor() {
-	spockScan(DIR_S, TX_TRI1_013, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_013, true);
 }
 
 void Room::trial1UseSTricorderOnLock() {
-	spockScan(DIR_S, TX_TRI1_014, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI1_014, true);
 
 	if (!_awayMission->trial.scannedLock) {
 		_awayMission->trial.scannedLock = true;

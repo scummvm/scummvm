@@ -261,7 +261,7 @@ void Room::mudd2Timer1Expired() {
 }
 
 void Room::mudd2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_MUD2_037, false);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_MUD2_037, false);
 }
 
 void Room::mudd2UseSpockOnCapsules() {
@@ -299,7 +299,7 @@ void Room::mudd2LookAtCapsules() {
 }
 
 void Room::mudd2UseMTricorderOnCapsules() {
-	mccoyScan(DIR_W, TX_MUD2_030, false);
+	mccoyScan(DIR_W, TX_SPEAKER_MCCOY, TX_MUD2_030, false);
 	showText(TX_SPEAKER_KIRK,  TX_MUD2_004);
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_019);
 }
@@ -448,7 +448,7 @@ void Room::mudd2RedshirtPushedAway() {
 // The function itself was also modified (ie. condition for showing text was inverted).
 void Room::mudd2UseMTricorderOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious)
-		mccoyScan(DIR_W, TX_MUD2_013, false);
+		mccoyScan(DIR_W, TX_SPEAKER_MCCOY, TX_MUD2_013, false);
 }
 
 

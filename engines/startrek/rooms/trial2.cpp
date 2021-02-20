@@ -428,23 +428,23 @@ void Room::trial2UseKillPhaserOnSplitGlob2() {
 }
 
 void Room::trial2UseMTricorderOnKirk() {
-	mccoyScan(DIR_S, TX_TRI2_016, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI2_016, true);
 }
 
 void Room::trial2UseMTricorderOnSpock() {
-	mccoyScan(DIR_S, TX_TRI2_017, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI2_017, true);
 }
 
 void Room::trial2UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI2_014, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI2_014, true);
 }
 
 void Room::trial2UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI2_015, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI2_015, true);
 }
 
 void Room::trial2UseMTricorderOnGlob() {
-	mccoyScan(DIR_S, TX_TRI2_011, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI2_011, true);
 
 	if (!_awayMission->trial.gotPointsForScanningGlob) {
 		_awayMission->trial.gotPointsForScanningGlob = true;
@@ -453,15 +453,15 @@ void Room::trial2UseMTricorderOnGlob() {
 }
 
 void Room::trial2UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI2_029, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI2_029, true);
 }
 
 void Room::trial2UseSTricorderAnywhere() {
-	spockScan(DIR_S, TX_TRI2_027, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI2_027, true);
 }
 
 void Room::trial2UseSTricorderOnGlob() {
-	spockScan(DIR_S, TX_TRI2_026, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI2_026, true);
 
 	if (!_awayMission->trial.gotPointsForScanningGlob) {
 		_awayMission->trial.gotPointsForScanningGlob = true;

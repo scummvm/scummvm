@@ -409,18 +409,18 @@ void Room::love4TalkToRomulan() {
 
 void Room::love4UseMTricorderOnRomulan() {
 	if (_awayMission->love.romulansCured)
-		mccoyScan(DIR_S, TX_LOV4_018, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV4_018, false);
 	else
-		mccoyScan(DIR_S, TX_LOV4_015, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV4_015, false);
 }
 
 void Room::love4UseMTricorderAnywhere() {
 	if (_awayMission->love.romulansCured)
-		mccoyScan(DIR_S, TX_LOV4_019, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV4_019, false);
 	else if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-		mccoyScan(DIR_S, TX_LOV4_020, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV4_020, false);
 	else
-		mccoyScan(DIR_S, TX_LOV4_021, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV4_021, false);
 }
 
 void Room::love4UseSTricorderAnywhere() {

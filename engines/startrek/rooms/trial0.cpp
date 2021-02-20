@@ -400,24 +400,24 @@ void Room::trial0UseSnakeOnGuard() {
 }
 
 void Room::trial0UseMTricorderOnQuetzecoatl() {
-	mccoyScan(DIR_S, TX_TRI0_029, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI0_029, true);
 }
 
 void Room::trial0UseMTricorderOnVlict() {
-	mccoyScan(DIR_S, TX_TRI0_030, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI0_030, true);
 }
 
 void Room::trial0UseMTricorderAnywhere() {
-	mccoyScan(DIR_S, TX_TRI0_035, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI0_035, true);
 }
 
 void Room::trial0UseSTricorderOnWindow() {
-	spockScan(DIR_S, TX_TRI0_037, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI0_037, true);
 }
 
 void Room::trial0UseSTricorderAnywhere() {
 	// ENHANCEMENT: Originally didn't play tricorder sound, etc
-	spockScan(DIR_S, TX_TRI0_038, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI0_038, true);
 }
 
 void Room::trial0UseCommunicator() {

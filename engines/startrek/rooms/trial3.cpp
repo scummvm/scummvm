@@ -426,27 +426,27 @@ void Room::trial3UseMTricorderOnKirk() {
 }
 
 void Room::trial3UseMTricorderOnSpock() {
-	mccoyScan(DIR_S, TX_TRI3_016, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI3_016, true);
 }
 
 void Room::trial3UseMTricorderOnMccoy() {
-	mccoyScan(DIR_S, TX_TRI3_013, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI3_013, true);
 }
 
 void Room::trial3UseMTricorderOnRedshirt() {
-	mccoyScan(DIR_S, TX_TRI3_014, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI3_014, true);
 }
 
 void Room::trial3UseMTricorderOnExit() {
-	mccoyScan(DIR_S, TX_TRI3_009, true);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_TRI3_009, true);
 }
 
 void Room::trial3UseSTricorderOnWall() {
-	spockScan(DIR_S, TX_TRI3_024, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI3_024, true);
 }
 
 void Room::trial3UseSTricorderOnExit() {
-	spockScan(DIR_S, TX_TRI3_023, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_TRI3_023, true);
 }
 
 void Room::trial3UseMTricorderOnKlingon() {

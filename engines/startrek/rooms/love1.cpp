@@ -542,15 +542,15 @@ void Room::love1TalkToRedshirt() {
 }
 
 void Room::love1UseMTricorderOnDishes() {
-	mccoyScan(DIR_W, TX_LOV1_017, false);
+	mccoyScan(DIR_W, TX_SPEAKER_MCCOY, TX_LOV1_017, false);
 	// TODO: only works in this room, despite being inventory item?
 }
 
 void Room::love1UseMTricorderAnywhere() {
 	if (_awayMission->love.knowAboutVirus)
-		mccoyScan(DIR_S, TX_LOV1_009, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV1_009, false);
 	else
-		mccoyScan(DIR_S, TX_LOV1_010, false);
+		mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_LOV1_010, false);
 }
 
 void Room::love1UseSTricorderOnReplicator() {

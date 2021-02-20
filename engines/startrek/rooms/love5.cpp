@@ -528,9 +528,9 @@ void Room::love5UseMTricorderOnMarcusOrCheever() {
 void Room::love5UseMTricorderOnPreax() {
 	if (!_awayMission->love.preaxCured) {
 		if (_awayMission->love.romulansUnconsciousFromLaughingGas)
-			mccoyScan(DIR_E, TX_LOV5_024, false);
+			mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_LOV5_024, false);
 		else
-			mccoyScan(DIR_E, TX_LOV5_016, false);
+			mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_LOV5_016, false);
 	}
 }
 

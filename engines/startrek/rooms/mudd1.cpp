@@ -322,7 +322,7 @@ void Room::mudd1GetTorpedo() {
 }
 
 void Room::mudd1UseSTricorderOnTorpedo() {
-	spockScan(DIR_W, TX_MUD1_025, false);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_MUD1_025, false);
 	showText(TX_SPEAKER_BUCHERT, TX_MUD1_027);
 	showText(TX_SPEAKER_SPOCK,   TX_MUD1_020);
 	showText(TX_SPEAKER_BUCHERT, TX_MUD1_028);
@@ -330,17 +330,17 @@ void Room::mudd1UseSTricorderOnTorpedo() {
 }
 
 void Room::mudd1UseSTricorderOnTorpedoLauncher() {
-	spockScan(DIR_W, TX_MUD1_010, false);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_MUD1_010, false);
 }
 
 void Room::mudd1UseSTricorderOnButton() {
 	// ENHANCEMENT: Do the whole "spockScan" thing, don't just show the text
-	spockScan(DIR_W, TX_MUD1_015, false);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_MUD1_015, false);
 }
 
 void Room::mudd1UseSTricorderOnCrane() {
 	// ENHANCEMENT: See above
-	spockScan(DIR_N, TX_MUD1_014, false);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_MUD1_014, false);
 }
 
 void Room::mudd1UseMedkitAnywhere() {

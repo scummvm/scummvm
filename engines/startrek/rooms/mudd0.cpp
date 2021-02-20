@@ -297,9 +297,9 @@ void Room::mudd0UseSTricorderOnDegrimerBox() {
 
 void Room::mudd0UseMTricorderOnLense() {
 	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction)
-		mccoyScan(DIR_E, TX_MUD0_012, true);
+		mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_MUD0_012, true);
 	else
-		mccoyScan(DIR_E, TX_MUD0_013, true);
+		mccoyScan(DIR_E, TX_SPEAKER_MCCOY, TX_MUD0_013, true);
 }
 
 void Room::mudd0GetLense() {
