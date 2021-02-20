@@ -394,6 +394,11 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
+	const int16 *polyTabBegin = _polyTab;
+	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
+	const int16 *polyTab2Begin = _polyTab2;
+	const int16 *polyTab2End = &_polyTab2[_polyTabSize - 1];
+	const int screenHeight = _engine->height();
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
 		const int16 oldVertexY = currentVertexY;
@@ -433,17 +438,15 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 			cvalue = (oldVertexParam * 256) + ((vertexParam2 - oldVertexParam) * 256) % vsize;
 			cdelta = ((vertexParam2 - oldVertexParam) * 256) / vsize;
 		}
-		const int32 polyTabIndex = ypos + (up ? _engine->height() : 0);
+		const int32 polyTabIndex = ypos + (up ? screenHeight : 0);
 		int16 *outPtr = &_polyTab[polyTabIndex]; // outPtr is the output ptr in the renderTab
 
 		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
-		for (int32 i = 0; i < vsize + 2; i++) {
-			if (outPtr - _polyTab < _polyTabSize) {
-				if (outPtr - _polyTab > 0) {
-					*outPtr = xpos;
-				}
+		for (int16 i = 0; i < vsize + 2; i++) {
+			if (outPtr >= polyTabBegin && outPtr <= polyTabEnd) {
+				*outPtr = xpos;
 			}
 			outPtr += direction;
 			xpos += slope;
@@ -452,11 +455,9 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
 			int16 *outPtr2 = &_polyTab2[polyTabIndex];
 
-			for (int32 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 - _polyTab2 < _polyTabSize) {
-					if (outPtr2 - _polyTab2 > 0) {
-						*outPtr2 = cvalue;
-					}
+			for (int16 i = 0; i < vsize + 2; i++) {
+				if (outPtr2 >= polyTab2Begin && outPtr2 <= polyTab2End) {
+					*outPtr2 = cvalue;
 				}
 				outPtr2 += direction;
 				cvalue += cdelta;
@@ -468,10 +469,13 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
 	do {
-		if (currentLine >= 0 && currentLine < _engine->height()) {
+		if (currentLine >= 0 && currentLine < screenHeight) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[_engine->height()];
+			int16 stop = ptr1[screenHeight];
 
 			ptr1++;
 			int32 hsize = stop - start;
@@ -489,7 +493,7 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 					start += mask;
 					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
 					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-					if (j >= 0 && j < _engine->width()) {
+					if (j >= 0 && j < screenWidth) {
 						out[j] = start & 0xFF;
 					}
 					mask = (mask * 4) | (mask / SCENE_SIZE_HALF);
@@ -497,7 +501,7 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 				}
 			}
 		}
-		out += _engine->width();
+		out += screenWidth;
 		currentLine++;
 	} while (--vsize);
 }
@@ -505,25 +509,28 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
 	do {
-		if (currentLine >= 0 && currentLine < _engine->height()) {
+		if (currentLine >= 0 && currentLine < screenHeight) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[_engine->height()];
+			int16 stop = ptr1[screenHeight];
 			ptr1++;
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				hsize++;
 				for (int32 j = start; j < hsize + start; j++) {
-					if ((start + (vtop % 1)) & 1) {
-						if (j >= 0 && j < _engine->width()) {
+					if (start & 1) {
+						if (j >= 0 && j < screenWidth) {
 							out[j] = color;
 						}
 					}
 				}
 			}
 		}
-		out += _engine->width();
+		out += screenWidth;
 		currentLine++;
 	} while (--vsize);
 }
@@ -531,23 +538,26 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 col
 void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	int32 currentLine = vtop;
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
 	do {
-		if (currentLine >= 0 && currentLine < _engine->height()) {
+		if (currentLine >= 0 && currentLine < screenHeight) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[_engine->height()];
+			int16 stop = ptr1[screenHeight];
 			ptr1++;
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				hsize++;
 				for (int32 j = start; j < hsize + start; j++) {
-					if (j >= 0 && j < _engine->width()) {
+					if (j >= 0 && j < screenWidth) {
 						out[j] = color;
 					}
 				}
 			}
 		}
-		out += _engine->width();
+		out += screenWidth;
 		currentLine++;
 	} while (--vsize);
 }
@@ -555,6 +565,9 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color
 void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
 	int32 renderLoop = vsize;
 	do {
 		int16 start;
@@ -562,7 +575,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 		int32 hsize;
 		while (1) {
 			start = ptr1[0];
-			stop = ptr1[_engine->height()];
+			stop = ptr1[screenHeight];
 			ptr1++;
 			hsize = stop - start;
 
@@ -575,7 +588,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 
 			color = *(out2 + 1);
 
-			out += _engine->width();
+			out += screenWidth;
 
 			--renderLoop;
 			if (!renderLoop) {
@@ -626,7 +639,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			}
 		}
 
-		out += _engine->width();
+		out += screenWidth;
 		--renderLoop;
 
 	} while (renderLoop);
@@ -635,11 +648,14 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 // FIXME: buggy
 void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
+
 	do {
 		unsigned short int bx;
 
 		int16 start = ptr1[0];
-		int16 stop = ptr1[_engine->height()];
+		int16 stop = ptr1[screenHeight];
 
 		ptr1++;
 		int32 hsize = stop - start;
@@ -660,7 +676,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 				out2++;
 			}
 		}
-		out += _engine->width();
+		out += screenWidth;
 	} while (--vsize);
 }
 
@@ -668,12 +684,14 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
+	const int screenWidth = _engine->width();
+	const int screenHeight = _engine->height();
 
 	int32 currentLine = vtop;
 	do {
-		if (currentLine >= 0 && currentLine < _engine->height()) {
+		if (currentLine >= 0 && currentLine < screenHeight) {
 			int16 start = ptr1[0];
-			int16 stop = ptr1[_engine->height()];
+			int16 stop = ptr1[screenHeight];
 			ptr1++;
 			int32 hsize = stop - start;
 
@@ -698,7 +716,7 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 				}
 			}
 		}
-		out += _engine->width();
+		out += screenWidth;
 		currentLine++;
 	} while (--vsize);
 }
