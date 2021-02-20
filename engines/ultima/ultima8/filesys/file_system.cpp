@@ -116,20 +116,5 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 	return (todo <= 0);
 }
 
-
-bool FileSystem::IsDir(const string &path) {
-	Common::FSNode node(path);
-	return node.isDirectory();
-}
-
-/*
- *  Create a directory
- */
-
-bool FileSystem::MkDir(const string &path) {
-	Common::FSNode newDir(path);
-	return newDir.createDirectory();
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

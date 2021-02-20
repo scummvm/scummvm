@@ -52,15 +52,8 @@ public:
 	//! \return a new writestream, or nullptr on failure
 	Common::WriteStream *WriteFile(const Std::string &vfn, bool is_text = false);
 
-	//! Create a directory
-	//! \param path the directory to create. (Can be virtual)
-	//! \return true if successful; otherwise, false.
-	bool MkDir(const Std::string &path); // can handle both paths and vpaths
-
 private:
 	static bool base_to_uppercase(Std::string &str, int count);
-
-	static bool IsDir(const Std::string &path);
 
 	static FileSystem *_fileSystem;
 
