@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-18 22:54+0000\n"
-"PO-Revision-Date: 2021-02-16 22:24+0000\n"
+"PO-Revision-Date: 2021-02-20 23:24+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3953,7 +3953,7 @@ msgstr "McCoyのクイックスタミナドレインを無効にする"
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr ""
+msgstr "実行中、プレイヤーがクリックを止めてもMcCoyが減速しないようにする"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -3961,7 +3961,7 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を望んでいません。"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
@@ -3970,7 +3970,7 @@ msgstr ""
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
 #: engines/sci/detection_tables.h:4832
 msgid "Missing game code"
-msgstr ""
+msgstr "ゲームコードがありません"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -3983,13 +3983,13 @@ msgstr "色覚特性モード"
 
 #: engines/cine/detection.cpp:52
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "16色シーンで透明なダイアログボックスを使用する"
 
 #: engines/cine/detection.cpp:53
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
-msgstr ""
+msgstr "オリジナル版でサポートされていない場合でも、16色シーンで透明なダイアログボックスを使用する"
 
 #: engines/cine/metaengine.cpp:136
 #, fuzzy
@@ -4012,6 +4012,8 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"警告：ロードしたセーブは、一時的に壊れたフォーマットを使用しています。セーブ自体も壊れるおそれがあります。新しいセーブからOperation "
+"Stealthを開始する事も検討してください。"
 
 #: engines/cine/saveload.cpp:864
 #, fuzzy
