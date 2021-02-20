@@ -799,10 +799,12 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 				colorSize /= hsize;
 				hsize++;
 
+				const uint8 startColorByte = startColor / 256;
+
 				if (hsize % 2) {
 					hsize /= 2;
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = startColor / 256;
+						*(out2) = startColorByte;
 					}
 					out2++;
 					currentXPos++;
@@ -813,14 +815,14 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 
 				do {
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = startColor / 256;
+						*(out2) = startColorByte;
 					}
 
 					currentXPos++;
 					startColor += colorSize;
 
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2 + 1) = startColor / 256;
+						*(out2 + 1) = startColorByte;
 					}
 
 					currentXPos++;
