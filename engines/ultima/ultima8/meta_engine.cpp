@@ -281,11 +281,6 @@ const ExtraGuiOptions MetaEngine::getExtraGuiOptions(const Common::String& targe
 		options.push_back(*o);
 	}
 
-	// TODO - Limited how many options are allowed, need fix
-	if (options.size() > 7) {
-		warning("More extra game options registered than currently allowed.");
-		options.resize(7);
-	}
 	return options;
 }
 
