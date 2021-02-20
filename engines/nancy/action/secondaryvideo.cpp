@@ -123,6 +123,10 @@ void PlaySecondaryVideo::updateGraphics() {
     RenderObject::updateGraphics();
 }
 
+void PlaySecondaryVideo::onPause(bool pause) {
+    _decoder.pauseVideo(pause);
+}
+
 void PlaySecondaryVideo::handleInput(NancyInput &input) {
     if (hasHotspot && _engine->scene->getViewport().convertViewportToScreen(hotspot).contains(input.mousePos)) {
         _isHovered = true;
@@ -263,6 +267,10 @@ void PlaySecondaryMovie::updateGraphics() {
     }
 
     RenderObject::updateGraphics();
+}
+
+void PlaySecondaryMovie::onPause(bool pause) {
+    _decoder.pauseVideo(pause);
 }
 
 void PlaySecondaryMovie::execute(NancyEngine *engine) {

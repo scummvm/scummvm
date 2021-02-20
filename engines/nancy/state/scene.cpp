@@ -250,15 +250,15 @@ void Scene::run() {
     if (_engine->getGameState() != _engine->getPreviousGameState()) {
         if (hasLoadedFromSavefile) {
             if (playTime > _timers.pushedPlayTime) {
-                playTime -= _timers.pushedPlayTime;
-                _timers.totalTime -= playTime;
-                _timers.sceneTime -= playTime;
-                if (_timers.timerIsActive)
-                    _timers.timerTime -= playTime;
+                _engine->setTotalPlayTime((uint32)_timers.pushedPlayTime);
+                playTime = _timers.pushedPlayTime;
             }
         }
 
-        registerGraphics();
+        // If the GMM was on we shouldn't reregister graphics
+        if (_engine->getPreviousGameState() != Nancy::NancyEngine::kPause) {
+            registerGraphics();
+        }
         unpauseSceneSpecificSounds();
 
         return;
@@ -337,10 +337,10 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
     delete[] buf;
 }
 
-bool Scene::changeGameState() {
+bool Scene::changeGameState(bool keepGraphics) {
     if (_gameStateRequested != NancyEngine::kScene) {
         _timers.pushedPlayTime = _engine->getTotalPlayTime();
-        _engine->setGameState(_gameStateRequested);
+        _engine->setGameState(_gameStateRequested, keepGraphics);
         _gameStateRequested = NancyEngine::kScene;
         pauseSceneSpecificSounds();
 

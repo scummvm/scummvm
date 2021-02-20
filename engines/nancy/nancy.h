@@ -98,6 +98,7 @@ public:
 		kQuit,
 		// regain focus
 		kIdle,
+		kPause, // only used when the GMM is on screen
 		kReloadSave
 	};
 
@@ -128,9 +129,11 @@ public:
 	// Used for state switching
 	void stopAndUnloadSpecificSounds();
 	
-	void setGameState(GameState state);
+	void setGameState(GameState state, bool keepGraphics = false);
 	GameState getGameState() const { return _gameFlow.minGameState; }
 	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
+
+	virtual void pauseEngineIntern(bool pause) override;
 
 	// Managers
 	ResourceManager *_res;

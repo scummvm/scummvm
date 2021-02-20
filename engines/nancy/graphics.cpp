@@ -94,6 +94,12 @@ void GraphicsManager::draw() {
     _screen.update();
 }
 
+void GraphicsManager::onPause(bool pause) {
+    for (auto &object : _objects) {
+        object->onPause(pause);
+    }
+}
+
 void GraphicsManager::addObject(RenderObject *object) {
     _objects.insert(object);
 }

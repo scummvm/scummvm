@@ -42,6 +42,8 @@ public:
     void init();
     void draw();
 
+    void onPause(bool pause);
+
     void addObject(RenderObject *object);
     void removeObject(RenderObject *object);
     void clearObjects();
