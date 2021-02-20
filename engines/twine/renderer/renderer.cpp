@@ -634,16 +634,9 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 				ax = 0; // not sure about this
 			}
 
-			int32 j = hsize >> 1;
-
-			while (1) {
+			for (int32 j = hsize >> 1; j > 0; --j) {
 				*(out2++) = ax & 0x0F;
 				ax += dx;
-
-				--j;
-				if (!j) {
-					break;
-				}
 
 				*(out2++) = ax & 0x0F;
 				ax += dx;
