@@ -929,8 +929,9 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
     //drawScreen();
 }
 
-void PrivateEngine::drawScreenFrame(Graphics::Surface *surf) {
-    surf->copyRectToSurface(*_frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
+void PrivateEngine::drawScreenFrame() {
+    g_system->copyRectToScreen(_frame->getPixels(), _frame->pitch, 0, 0, _screenW, _screenH);
+    //surf->copyRectToSurface(*_frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 }
 
 
@@ -979,13 +980,13 @@ void PrivateEngine::drawScreen() {
         delete cframe;
     }
 
-    Graphics::Surface *screen = g_system->lockScreen();
     if (_mode == 1) {
-        drawScreenFrame(screen);
+        drawScreenFrame();
     }
-    Common::Rect window(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
-    screen->copyRectToSurface(*surface, _origin->x, _origin->y, window);
-    g_system->unlockScreen();
+
+    Common::Rect w(_origin->x, _origin->y, _screenW - _origin->x, _screenH - _origin->y);
+    Graphics::Surface sa = surface->getSubArea(w);
+    g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin->x, _origin->y, sa.w, sa.h);
     //if (_image->getPalette() != nullptr)
     //    g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
     g_system->updateScreen();
