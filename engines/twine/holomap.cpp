@@ -27,6 +27,7 @@
 #include "common/types.h"
 #include "twine/audio/sound.h"
 #include "twine/menu/interface.h"
+#include "twine/parser/anim.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -338,9 +339,11 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 	_engine->flip();
 	ActorMoveStruct move;
-	AnimTimerDataStruct animData;
+	AnimTimerDataStruct animTimerData;
 	uint8 *animPtr = nullptr;
-	HQR::getAllocEntry(&animPtr, Resources::HQR_RESS_FILE, data.getAnimation());
+	const int32 animSize = HQR::getAllocEntry(&animPtr, Resources::HQR_RESS_FILE, data.getAnimation());
+	AnimData animData;
+	animData.loadFromBuffer(animPtr, animSize);
 	uint8 *modelPtr = nullptr;
 	HQR::getAllocEntry(&modelPtr, Resources::HQR_RESS_FILE, data.getModel());
 	Renderer::prepareIsoModel(modelPtr);
@@ -370,7 +373,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
 		}
 
-		if (_engine->_animations->setModelAnimation(frameNumber, animPtr, modelPtr, &animData)) {
+		if (_engine->_animations->setModelAnimation(frameNumber, animData, animPtr, modelPtr, &animTimerData)) {
 			frameNumber++;
 			if (frameNumber >= _engine->_animations->getNumKeyframes(animPtr)) {
 				frameNumber = _engine->_animations->getStartKeyframe(animPtr);

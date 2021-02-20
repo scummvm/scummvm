@@ -127,12 +127,10 @@ int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr) {
 	return opcode;
 }
 
-bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
-	AnimData animData;
-	animData.loadFromBuffer(animPtr, 100000);
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 
 	currentStepX = keyFrame->x;

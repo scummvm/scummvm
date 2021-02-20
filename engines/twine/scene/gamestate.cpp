@@ -358,7 +358,8 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initVoxToPlay(item);
 
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
-	uint8 *currentAnim = _engine->_resources->animTable[bodyAnimIdx];
+	const uint8 *currentAnim = _engine->_resources->animTable[bodyAnimIdx];
+	const AnimData &currentAnimData = _engine->_resources->animData[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
@@ -388,7 +389,7 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
-		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnim, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData)) {
+		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData)) {
 			currentAnimState++; // keyframe
 			if (currentAnimState >= _engine->_animations->getNumKeyframes(currentAnim)) {
 				currentAnimState = _engine->_animations->getStartKeyframe(currentAnim);

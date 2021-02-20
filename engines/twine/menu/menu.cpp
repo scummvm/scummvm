@@ -893,10 +893,13 @@ bool Menu::isBehaviourHovered(HeroBehaviourType behaviour) const {
 void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
 	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
 
-	const uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
+	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
+	const uint8 *currentAnim = _engine->_resources->animTable[animIdx];
+	const AnimData &currentAnimData = _engine->_resources->animData[animIdx];
+
 	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
 
-	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnim, behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
+	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
 		currentAnimState++; // keyframe
 		if (currentAnimState >= _engine->_animations->getNumKeyframes(currentAnim)) {
 			currentAnimState = _engine->_animations->getStartKeyframe(currentAnim);
