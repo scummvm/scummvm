@@ -100,6 +100,8 @@ private:
 	int8 **_playCount;
 	Channel *_channels;
 	int _dataLeft;
+	int _initialDataLength;
+	bool _finished;
 
 	// mix buffer to keep a partially consumed decoded tick.
 	int *_mixBuffer;
@@ -194,8 +196,9 @@ ModXmS3mStream::ModXmS3mStream(Common::SeekableReadStream *stream, int rate, int
 	_interpolation = interpolation;
 	_rampBuf = new int[128];
 	_channels = new Channel[_module.numChannels];
-	_dataLeft = calculateDuration() * 4; // stereo and uint16
+	_initialDataLength = _dataLeft = calculateDuration() * 4; // stereo and uint16
 	_mixBuffer = nullptr;
+	_finished = false;
 }
 
 ModXmS3mStream::~ModXmS3mStream() {
@@ -991,13 +994,18 @@ void ModXmS3mStream::updateRow() {
 		_nextRow = 0;
 	}
 	if (_breakPos >= 0) {
+		_finished = false;
 		if (_breakPos >= _module.sequenceLen) {
+			// Hit the end.
 			_breakPos = _nextRow = 0;
+			_finished = true;
 		}
 		while (_module.sequence[_breakPos] >= _module.numPatterns) {
 			_breakPos++;
 			if (_breakPos >= _module.sequenceLen) {
+				// Hit the end.
 				_breakPos = _nextRow = 0;
+				_finished = true;
 			}
 		}
 		_seqPos = _breakPos;
@@ -1141,6 +1149,7 @@ int ModXmS3mStream::calculateAmpl(const Envelope &envelope, int currentTick) {
 int ModXmS3mStream::calculateDuration() {
 	int count = 0, duration = 0;
 	setSequencePos(0);
+	// Count the length of sequences until we hit a bit we've played before (or the end).
 	while (count < 1) {
 		duration += calculateTickLength();
 		count = tick();
@@ -1285,7 +1294,7 @@ int ModXmS3mStream::getAudio(int *mixBuf) {
 
 int ModXmS3mStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samplesRead = 0;
-	while (samplesRead < numSamples && _dataLeft >= 0) {
+	while (samplesRead < numSamples && _dataLeft > 0) {
 		int *mixBuf = new int[calculateMixBufLength()];
 		int samples = getAudio(mixBuf);
 		if (samplesRead + samples > numSamples) {
@@ -1305,9 +1314,21 @@ int ModXmS3mStream::readBuffer(int16 *buffer, const int numSamples) {
 			*buffer++ = ampl;
 		}
 		samplesRead += samples;
+
+		_dataLeft -= samples * 2;
+
 		delete []mixBuf; // free
 	}
-	_dataLeft -= samplesRead * 2;
+
+	if (_dataLeft <= 0 && !_finished) {
+		//
+		// The original data length calculation was used up but didn't hit
+		// the end, so this mod loops.
+		// From here can just reset data left to some sensible value, but
+		// it's actually infinite and we'll come back here.
+		//
+		_dataLeft = _initialDataLength;
+	}
 
 	return samplesRead;
 }
@@ -1358,7 +1379,7 @@ AudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, DisposeAfter
 		return nullptr;
 	}
 
-	return (AudioStream *)soundStream;
+	return soundStream;
 }
 
 } // End of namespace Audio

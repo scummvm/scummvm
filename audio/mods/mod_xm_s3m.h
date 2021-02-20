@@ -78,6 +78,8 @@ class AudioStream;
  * to the 'stream' object is kept, so you can safely delete it after
  * invoking this factory.
  *
+ * This stream may be infinitely long if the mod contains a loop.
+ *
  * @param stream			the ReadStream from which to read the tracker sound data
  * @param disposeAfterUse	whether to delete the stream after use
  * @param rate				sample rate
