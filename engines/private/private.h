@@ -192,7 +192,7 @@ public:
     void skipVideo();
 
     void loadImage(const Common::String &file, int x, int y);
-    void drawScreenFrame(Graphics::Surface *);
+    void drawScreenFrame();
 
     void changeCursor(Common::String);
     void initCursors();
