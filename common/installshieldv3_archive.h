@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef COMMON_INSTALLER_ARCHIVE_H
+#define COMMON_INSTALLER_ARCHIVE_H
+
 #include "common/archive.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
@@ -27,9 +30,6 @@
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/str.h"
-
-#ifndef COMMON_INSTALLER_ARCHIVE_H
-#define COMMON_INSTALLER_ARCHIVE_H
 
 namespace Common {
 
