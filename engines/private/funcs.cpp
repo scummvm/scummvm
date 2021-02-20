@@ -553,11 +553,10 @@ void fMaskDrawn(ArgArray args) {
     _fMask(args, true);
 }
 
-void fAddSound(char *s, char *t, Symbol *flag = NULL, int val = 0) {
-    if (strcmp(s, "\"\"") == 0)
+void fAddSound(Common::String sound, char *t, Symbol *flag = NULL, int val = 0) {
+    if (sound == "\"\"")
         return;
 
-    Common::String sound(s);
     if (strcmp(t, "AMRadioClip") == 0)
         g_private->_AMRadio.push_back(sound);
     else if (strcmp(t, "PoliceClip") == 0)
@@ -601,8 +600,8 @@ void fPhoneClip(ArgArray args) {
         fAddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
     else {
         assert(i < j);
-        char *clip = g_private->getRandomPhoneClip(args[0].u.str, i, j);
-        fAddSound(clip, "PhoneClip", args[4].u.sym, args[5].u.val);
+        Common::String sound = g_private->getRandomPhoneClip(args[0].u.str, i, j);
+        fAddSound(sound, "PhoneClip", args[4].u.sym, args[5].u.val);
     }
 }
 

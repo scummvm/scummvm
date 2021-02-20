@@ -461,7 +461,6 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
             }
         }
     }
-
 }
 
 void PrivateEngine::selectExit(Common::Point mousePos) {
@@ -1028,12 +1027,9 @@ Common::String PrivateEngine::getLeaveSound() {
     return Common::String::format("%sleft%d.wav", _globalAudioPath.c_str(), r);
 }
 
-char *PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
+Common::String PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
     uint r = i + _rnd->getRandomNumber(j - i);
-
-    char *f = (char *)malloc((strlen(clip) + 3) * sizeof(char));
-    snprintf(f, 32, "%s%02d", clip, r);
-    return f;
+    return Common::String::format("%s%02d", clip, r);
 }
 
 // Timers
