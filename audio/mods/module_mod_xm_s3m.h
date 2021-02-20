@@ -84,7 +84,7 @@ struct Pattern {
 	int numChannels, numRows;
 	Note *notes;
 
-	Note getNote(int row, int chan) {
+	Note getNote(int row, int chan) const {
 		Note res;
 		if (row >= 0 && chan >= 0 && row < numRows && chan < numChannels)
 			res = notes[row * numChannels + chan];

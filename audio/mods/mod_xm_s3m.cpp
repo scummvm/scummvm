@@ -111,8 +111,8 @@ private:
 	static const int16 sinetable[];
 
 	int calculateDuration();
-	int calculateTickLength() { return (_sampleRate * 5) / (_tempo * 2); }
-	int calculateMixBufLength() { return (calculateTickLength() + 65) * 4; }
+	int calculateTickLength() const { return (_sampleRate * 5) / (_tempo * 2); }
+	int calculateMixBufLength() const { return (calculateTickLength() + 65) * 4; }
 
 	int initPlayCount(int8 **playCount);
 	void setSequencePos(int pos);
@@ -122,7 +122,7 @@ private:
 
 	// Sample
 	void downsample(int *buf, int count);
-	void resample(Channel &channel, int *mixBuf, int offset, int count, int sampleRate);
+	void resample(const Channel &channel, int *mixBuf, int offset, int count, int sampleRate);
 	void updateSampleIdx(Channel &channel, int count, int sampleRate);
 
 	// Channel
@@ -147,8 +147,8 @@ private:
 
 	// Envelopes
 	void updateEnvelopes(Channel &channel);
-	int envelopeNextTick(Envelope &envelope, int tick, int keyOn);
-	int calculateAmpl(Envelope &envelope, int tick);
+	int envelopeNextTick(const Envelope &envelope, int tick, int keyOn);
+	int calculateAmpl(const Envelope &envelope, int tick);
 
 	// Read stream
 	int getAudio(int *mixBuf);
@@ -159,10 +159,10 @@ public:
 	bool loadSuccess() const { return _loadSuccess; }
 
 	// Implement virtual functions
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return true; }
-	virtual int getRate() const { return _sampleRate; }
-	virtual bool endOfData() const { return _dataLeft <= 0; }
+	virtual int readBuffer(int16 *buffer, const int numSamples) override;
+	virtual bool isStereo() const override { return true; }
+	virtual int getRate() const override { return _sampleRate; }
+	virtual bool endOfData() const override { return _dataLeft <= 0; }
 
 	ModXmS3mStream(Common::SeekableReadStream *stream, int rate, int interpolation);
 	~ModXmS3mStream();
@@ -1006,7 +1006,7 @@ void ModXmS3mStream::updateRow() {
 		}
 		_breakPos = -1;
 	}
-	Pattern &pattern = _module.patterns[_module.sequence[_seqPos]];
+	const Pattern &pattern = _module.patterns[_module.sequence[_seqPos]];
 	_row = _nextRow;
 	if (_row >= pattern.numRows) {
 		_row = 0;
@@ -1109,7 +1109,7 @@ void ModXmS3mStream::updateRow() {
 	}
 }
 
-int ModXmS3mStream::envelopeNextTick(Envelope &envelope, int currentTick, int keyOn) {
+int ModXmS3mStream::envelopeNextTick(const Envelope &envelope, int currentTick, int keyOn) {
 	int nextTick = currentTick + 1;
 	if (envelope.looped && nextTick >= envelope.loopEndTick) {
 		nextTick = envelope.loopStartTick;
@@ -1120,7 +1120,7 @@ int ModXmS3mStream::envelopeNextTick(Envelope &envelope, int currentTick, int ke
 	return nextTick;
 }
 
-int ModXmS3mStream::calculateAmpl(Envelope &envelope, int currentTick) {
+int ModXmS3mStream::calculateAmpl(const Envelope &envelope, int currentTick) {
 	int idx, point, dt, da;
 	int ampl = envelope.pointsAmpl[envelope.numPoints - 1];
 	if (currentTick < envelope.pointsTick[envelope.numPoints - 1]) {
@@ -1166,7 +1166,7 @@ int ModXmS3mStream::seek(int samplePos) {
 	return currentPos;
 }
 
-void ModXmS3mStream::resample(Channel &channel, int *mixBuf, int offset, int count, int sampleRate) {
+void ModXmS3mStream::resample(const Channel &channel, int *mixBuf, int offset, int count, int sampleRate) {
 	Sample *sample = channel.sample;
 	int lGain = 0, rGain = 0, samIdx = 0, samFra = 0, step = 0;
 	int loopLen = 0, loopEnd = 0, outIdx = 0, outEnd = 0, y = 0, m = 0, c = 0;
