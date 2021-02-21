@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-15 23:24+0000\n"
+"PO-Revision-Date: 2021-02-21 19:36+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3906,16 +3906,13 @@ msgstr ""
 "de las pistas no suenen correctamente."
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "Idioma de interfaz:"
+msgstr "Idioma del juego:"
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib se utiliza para reproducir la música en muchos juegos"
+msgstr ""
+"Selecciona el idioma a utilizar en los juegos que contengan varios idiomas"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
