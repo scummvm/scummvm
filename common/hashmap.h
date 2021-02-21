@@ -326,6 +326,10 @@ void NORETURN_PRE unknownKeyError(long signed key) NORETURN_POST;
 template<>
 void NORETURN_PRE unknownKeyError(long unsigned key) NORETURN_POST;
 template<>
+void NORETURN_PRE unknownKeyError(signed int key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(unsigned int key) NORETURN_POST;
+template<>
 void NORETURN_PRE unknownKeyError(long long signed key) NORETURN_POST;
 template<>
 void NORETURN_PRE unknownKeyError(long long unsigned key) NORETURN_POST;

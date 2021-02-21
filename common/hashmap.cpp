@@ -81,6 +81,16 @@ template<> void unknownKeyError(long unsigned key) {
 	error("Unknown key \"%lu\"", key);
 }
 
+template<>
+void unknownKeyError(signed int key) {
+	error("Unknown key \"%i\"", key);
+}
+
+template<>
+void unknownKeyError(unsigned int key) {
+	error("Unknown key \"%u\"", key);
+}
+
 template<> void unknownKeyError(long long signed key) {
 	error("Unknown key \"%lli\"", key);
 }
