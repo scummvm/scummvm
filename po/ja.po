@@ -3989,7 +3989,9 @@ msgstr "16色シーンで透明なダイアログボックスを使用する"
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
-msgstr "オリジナル版でサポートされていない場合でも、16色シーンで透明なダイアログボックスを使用する"
+msgstr ""
+"オリジナル版でサポートされていない場合でも、16色シーンで透明なダイアログボッ"
+"クスを使用する"
 
 #: engines/cine/metaengine.cpp:136
 #, fuzzy
@@ -4012,8 +4014,9 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
-"警告：ロードしたセーブは、一時的に壊れたフォーマットを使用しています。セーブ自体も壊れるおそれがあります。新しいセーブからOperation "
-"Stealthを開始する事も検討してください。"
+"警告：ロードしたセーブは、一時的に壊れたフォーマットを使用しています。セーブ"
+"自体も壊れるおそれがあります。新しいセーブからOperation Stealthを開始する事も"
+"検討してください。"
 
 #: engines/cine/saveload.cpp:864
 #, fuzzy
