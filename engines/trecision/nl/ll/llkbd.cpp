@@ -98,8 +98,7 @@ void LoadAll() {
 		error("LoadAll : Couldn't open DATA.NL");
 
 	for (int i = 0; i < MAXROOMS; ++i) {
-		for (int j = 0; j < 4; ++j)
-			g_vm->_room[i]._baseName[j] = dataNl.readSByte();
+		dataNl.read(&g_vm->_room[i]._baseName, ARRAYSIZE(g_vm->_room[i]._baseName));
 		g_vm->_room[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
 		g_vm->_room[i]._bkgAnim = dataNl.readUint16LE();
@@ -144,8 +143,7 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXSAMPLE; ++i) {
-		for (int j = 0; j < 14; ++j)
-			GSample[i]._name[j] = dataNl.readByte();
+		dataNl.read(&GSample[i]._name, ARRAYSIZE(GSample[i]._name));
 		GSample[i]._volume = dataNl.readByte();
 		GSample[i]._flag = dataNl.readByte();
 		GSample[i]._panning = dataNl.readSByte();
@@ -159,19 +157,17 @@ void LoadAll() {
 		ScriptFrame[i]._wordParam1 = dataNl.readUint16LE();
 		ScriptFrame[i]._wordParam2 = dataNl.readUint16LE();
 		ScriptFrame[i]._longParam = dataNl.readUint16LE();
-		ScriptFrame[i]._noWait = !(dataNl.readByte() == 0);
-		dataNl.readByte();
+		ScriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
 	}
 
 	for (int i = 0; i < MAXSCRIPT; ++i) {
 		Script[i]._firstFrame = dataNl.readUint16LE();
-		Script[i]._flag = !(dataNl.readByte() == 0);
-		dataNl.readByte();
+		Script[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
 	}
 
 	for (int i = 0; i < MAXANIM; ++i) {
-		for (int j = 0; j < 14; ++j)
-			AnimTab[i]._name[j] = dataNl.readByte();
+		dataNl.read(&AnimTab[i]._name, ARRAYSIZE(AnimTab[i]._name));
 
 		AnimTab[i]._flag = dataNl.readUint16LE();
 
@@ -197,8 +193,7 @@ void LoadAll() {
 		_dialog[i]._flag = dataNl.readUint16LE();
 		_dialog[i]._interlocutor = dataNl.readUint16LE();
 
-		for (int j = 0; j < 14; ++j)
-			_dialog[i]._startAnim[j] = dataNl.readByte();
+		dataNl.read(&_dialog[i]._startAnim, ARRAYSIZE(_dialog[i]._startAnim));
 
 		_dialog[i]._startLen = dataNl.readUint16LE();
 		_dialog[i]._firstChoice = dataNl.readUint16LE();
@@ -239,9 +234,7 @@ void LoadAll() {
 	NumFileRef = dataNl.readSint32LE();
 
 	for (int i = 0; i < NumFileRef; ++i) {
-		for (int j = 0; j < 12; ++j)
-			FileRef[i].name[j] = dataNl.readByte();
-
+		dataNl.read(&FileRef[i].name, ARRAYSIZE(FileRef[i].name));
 		FileRef[i].offset = dataNl.readSint32LE();
 	}
 
