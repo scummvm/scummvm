@@ -287,6 +287,8 @@ private:
 	int8 _channelRemap[16];
 	int8 _globalReverb;
 	bool _needsRemap;
+	int _globalPause;
+	bool _needsResume;
 
 	DeviceChannelUsage _channelMap[16];
 

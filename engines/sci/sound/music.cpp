@@ -40,7 +40,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX), _needsResume(soundVersion > SCI_VERSION_0_LATE), _globalPause(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -262,6 +262,10 @@ void SciMusic::clearPlayList() {
 
 void SciMusic::pauseAll(bool pause) {
 	const MusicList::iterator end = _playList.end();
+	if (pause)
+		_globalPause++;
+	else
+		_globalPause = MAX<int>(_globalPause - 1, 0);
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 #ifdef ENABLE_SCI32
 		// The entire DAC will have been paused by the caller;
@@ -768,6 +772,7 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	pSnd->pauseCounter++;
 	if (pSnd->status != kSoundPlaying)
 		return;
+	_needsResume = true;
 	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
@@ -787,8 +792,9 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		pSnd->pauseCounter--;
 	if (pSnd->pauseCounter != 0)
 		return;
-	if (pSnd->status != kSoundPaused)
+	if (pSnd->status != kSoundPaused || (_globalPause && !_needsResume))
 		return;
+	_needsResume = (_soundVersion > SCI_VERSION_0_LATE);
 	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, false);
 		pSnd->status = kSoundPlaying;
