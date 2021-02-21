@@ -263,7 +263,7 @@ void Room::veng3ReachedPositionToShootDebris() {
 
 void Room::veng3DrewPhaserToShootDebris() {
 	loadActorAnimC(OBJECT_DEBRIS, "s7r3ph", 0x9c, 0x83, &Room::veng3DebrisVaporized);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::veng3DebrisVaporized() {

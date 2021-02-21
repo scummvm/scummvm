@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_NORTH_DOOR 8
@@ -95,15 +94,81 @@ extern const RoomAction sins4ActionList[] = {
 };
 
 enum sins4TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_MOSHER,
+	TX_SPEAKER_UHURA,
+	TX_SIN4_001, TX_SIN4_002, TX_SIN4_003, TX_SIN4_004, TX_SIN4_005,
+	TX_SIN4_006, TX_SIN4_007, TX_SIN4_008, TX_SIN4_009, TX_SIN4_010,
+	TX_SIN4_011, TX_SIN4_012, TX_SIN4_013, TX_SIN4_014, TX_SIN4_015,
+	TX_SIN4_016, TX_SIN4_017, TX_SIN4_018, TX_SIN4_019, TX_SIN4_020,
+	TX_SIN4_021, TX_SIN4_022, TX_SIN4_023, TX_SIN4_024, TX_SIN4_025,
+	TX_SIN4_026, TX_SIN4_027, TX_SIN4_028, TX_SIN4_029, TX_SIN4_030,
+	TX_SIN4_031, TX_SIN4_032, TX_SIN4U073, TX_SIN4U088, TX_SIN4U100,
+	TX_SIN4U103, TX_SIN4U105, TX_SIN4U107, TX_SIN4U83B, TX_SIN4N000,
+	TX_SIN4N001, TX_SIN4N002, TX_SIN4N003, TX_SIN4N004, TX_SIN4N005,
+	TX_SIN4N006, TX_SIN4N007, TX_SIN4N008, TX_SIN4N009, TX_SIN4N010,
+	TX_SIN4N011, TX_SIN4N012, TX_SIN4N013
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets sins4TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 289, 0 },
+	{ TX_SPEAKER_MCCOY, 300, 0 },
+	{ TX_SPEAKER_SPOCK, 310, 0 },
+	{ TX_SPEAKER_MOSHER, 320, 0 },
+	{ TX_SPEAKER_UHURA, 334, 0 },
+	{ TX_SIN4_001, 4229, 0 },
+	{ TX_SIN4_002, 5752, 0 },
+	{ TX_SIN4_003, 2846, 0 },
+	{ TX_SIN4_004, 4391, 0 },
+	{ TX_SIN4_005, 3275, 0 },
+	{ TX_SIN4_006, 5595, 0 },
+	{ TX_SIN4_007, 2628, 0 },
+	{ TX_SIN4_008, 1209, 0 },
+	{ TX_SIN4_009, 1086, 0 },
+	{ TX_SIN4_010, 2310, 0 },
+	{ TX_SIN4_011, 5410, 0 },
+	{ TX_SIN4_012, 6602, 0 },
+	{ TX_SIN4_013, 6150, 0 },
+	{ TX_SIN4_014, 6469, 0 },
+	{ TX_SIN4_015, 4545, 0 },
+	{ TX_SIN4_016, 5900, 0 },
+	{ TX_SIN4_017, 4727, 0 },
+	{ TX_SIN4_018, 998, 0 },
+	{ TX_SIN4_019, 4471, 0 },
+	{ TX_SIN4_020, 753, 0 },
+	{ TX_SIN4_021, 2206, 0 },
+	{ TX_SIN4_022, 1670, 0 },
+	{ TX_SIN4_023, 6070, 0 },
+	{ TX_SIN4_024, 4650, 0 },
+	{ TX_SIN4_025, 2795, 0 },
+	{ TX_SIN4_026, 5234, 0 },
+	{ TX_SIN4_027, 4999, 0 },
+	{ TX_SIN4_028, 4288, 0 },
+	{ TX_SIN4_029, 5974, 0 },
+	{ TX_SIN4_030, 6209, 0 },
+	{ TX_SIN4_031, 4812, 0 },
+	{ TX_SIN4_032, 5154, 0 },
+	{ TX_SIN4U073, 5836, 0 },
+	{ TX_SIN4U088, 2554, 0 },
+	{ TX_SIN4U100, 5521, 0 },
+	{ TX_SIN4U103, 2672, 0 },
+	{ TX_SIN4U105, 3134, 0 },
+	{ TX_SIN4U107, 2982, 0 },
+	{ TX_SIN4U83B, 5690, 0 },
+	{ TX_SIN4N000, 3857, 0 },
+	{ TX_SIN4N001, 3665, 0 },
+	{ TX_SIN4N002, 3389, 0 },
+	{ TX_SIN4N003, 3566, 0 },
+	{ TX_SIN4N004, 3480, 0 },
+	{ TX_SIN4N005, 3972, 0 },
+	{ TX_SIN4N006, 1354, 0 },
+	{ TX_SIN4N007, 4160, 0 },
+	{ TX_SIN4N008, 4091, 0 },
+	{ TX_SIN4N009, 1836, 0 },
+	{ TX_SIN4N010, 1927, 0 },
+	{ TX_SIN4N011, 2105, 0 },
+	{ TX_SIN4N012, 1619, 0 },
+	{ TX_SIN4N013, 2011, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -124,32 +189,32 @@ void Room::sins4Tick1() {
 }
 
 void Room::sins4UseSTricorderOnPanel() {
-	spockScan(DIR_N, 20, false);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_SIN4_020);
 	_awayMission->sins.scannedKeycardLock = true;
 	_awayMission->sins.gatheredClues |= 4;
 
 	if (_awayMission->sins.gatheredClues == 7) {
-		showText(TX_SPEAKER_SPOCK, 10);
+		showText(TX_SPEAKER_SPOCK, TX_SIN4_010);
 		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
 void Room::sins4UseSpockOnPanel() {
-	// NOTE: two implementations of this function (index 18 and 21), one unused
-	showText(TX_SPEAKER_SPOCK, 18);
+	// NOTE: two implementations of this function, one unused
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_018);
 }
 
 void Room::sins4UsePhaserOnNorthDoor() {
-	showText(TX_SPEAKER_SPOCK, 9);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_009);
 }
 
 void Room::sins4UsePhaserOnPanel() {
-	showText(TX_SPEAKER_SPOCK, 8);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_008);
 }
 
 void Room::sins4UseIDCardOnPanel() {
 	if (_awayMission->sins.unlockedIDCardDoor)
-		showDescription(6);
+		showDescription(TX_SIN4N006);
 	else
 		walkCrewmanC(OBJECT_KIRK, 0xb8, 0x86, &Room::sins4KirkReachedPanel);
 }
@@ -177,106 +242,106 @@ void Room::sins4KirkReachedPanelWithRock() {
 }
 
 void Room::sins4KirkUsedRockOnPanel() {
-	showDescription(12);
-	showText(TX_SPEAKER_SPOCK, 22);
+	showDescription(TX_SIN4N012);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_022);
 
 	if (_awayMission->sins.gatheredClues == 7) {
-		showText(TX_SPEAKER_SPOCK, 10);
+		showText(TX_SPEAKER_SPOCK, TX_SIN4_010);
 		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
 void Room::sins4LookAtWestDoor() {
-	showDescription(9);
+	showDescription(TX_SIN4N009);
 }
 
 void Room::sins4LookAtEastDoor() {
-	showDescription(10);
+	showDescription(TX_SIN4N010);
 }
 
 void Room::sins4LookAnywhere() {
-	showDescription(13);
+	showDescription(TX_SIN4N013);
 }
 
 void Room::sins4LookAtPanel() {
-	showDescription(11);
+	showDescription(TX_SIN4N011);
 }
 
 void Room::sins4Tick40() {
 	if (!_awayMission->sins.enteredRoom4FirstTime) {
 		_awayMission->disableInput = false;
-		showText(TX_SPEAKER_UHURA_GLOBAL, 88);
-		showText(TX_SPEAKER_KIRK,  7);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 103);
-		showText(TX_SPEAKER_SPOCK, 25);
-		showText(TX_SPEAKER_KIRK,  3);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 107);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 105);
-		showText(TX_SPEAKER_KIRK,  5);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U088);
+		showText(TX_SPEAKER_KIRK,  TX_SIN4_007);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U103);
+		showText(TX_SPEAKER_SPOCK, TX_SIN4_025);
+		showText(TX_SPEAKER_KIRK,  TX_SIN4_003);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U107);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U105);
+		showText(TX_SPEAKER_KIRK,  TX_SIN4_005);
 		_awayMission->sins.enteredRoom4FirstTime = true;
 	}
 }
 
 void Room::sins4LookAtKirk() {
-	showDescription(2);
+	showDescription(TX_SIN4N002);
 }
 
 void Room::sins4LookAtSpock() {
-	showDescription(4);
+	showDescription(TX_SIN4N004);
 }
 
 void Room::sins4LookAtMccoy() {
-	showDescription(3);
+	showDescription(TX_SIN4N003);
 }
 
 void Room::sins4LookAtRedshirt() {
-	showDescription(1);
+	showDescription(TX_SIN4N001);
 }
 
 void Room::sins4LookAtLight() {
-	showDescription(0);
+	showDescription(TX_SIN4N000);
 }
 
 void Room::sins4LookAtBeam() {
-	showDescription(5);
+	showDescription(TX_SIN4N005);
 }
 
 void Room::sins4LookAtOpenNorthDoor() {
-	showDescription(8);
+	showDescription(TX_SIN4N008);
 }
 
 void Room::sins4LookAtClosedNorthDoor() {
-	showDescription(7);
+	showDescription(TX_SIN4N007);
 }
 
 void Room::sins4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  1);
-	showText(TX_SPEAKER_SPOCK, 28);
-	showText(TX_SPEAKER_KIRK,  4);
+	showText(TX_SPEAKER_KIRK,  TX_SIN4_001);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_028);
+	showText(TX_SPEAKER_KIRK,  TX_SIN4_004);
 }
 
 void Room::sins4TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 19);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_019);
 }
 
 void Room::sins4TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 15);
-	showText(TX_SPEAKER_SPOCK, 24);
-	showText(TX_SPEAKER_MCCOY, 17);
+	showText(TX_SPEAKER_MCCOY, TX_SIN4_015);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_024);
+	showText(TX_SPEAKER_MCCOY, TX_SIN4_017);
 }
 
 void Room::sins4TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 31);
+	showText(TX_SPEAKER_MOSHER, TX_SIN4_031);
 }
 
 void Room::sins4UseSTricorderOnNorthDoor() {
-	spockScan(DIR_N, 27, false);
-	showText(TX_SPEAKER_MOSHER, 32);
-	showText(TX_SPEAKER_SPOCK,  26);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_SIN4_027);
+	showText(TX_SPEAKER_MOSHER, TX_SIN4_032);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN4_026);
 }
 
 void Room::sins4UseSTricorderAnywhere() {
-	spockScan(DIR_S, 11, false);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_SIN4_011);
 
 	if (!_awayMission->sins.gotPointsForScanningRoom4) {
 		_awayMission->sins.missionScore += 1;
@@ -286,32 +351,32 @@ void Room::sins4UseSTricorderAnywhere() {
 
 void Room::sins4UseCommunicator() {
 	if (!_awayMission->sins.enteredRoom3FirstTime) {
-		showText(TX_SPEAKER_UHURA_GLOBAL, 100);
-		showText(TX_SPEAKER_KIRK,  6);
-		showText(TX_SPEAKER_UHURA_GLOBAL, TX_SIN4U83B);
-		showText(TX_SPEAKER_KIRK,  2);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U100);
+		showText(TX_SPEAKER_KIRK,  TX_SIN4_006);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U83B);
+		showText(TX_SPEAKER_KIRK,  TX_SIN4_002);
 	} else
-		showText(TX_SPEAKER_UHURA_GLOBAL, 73);
+		showText(TX_SPEAKER_UHURA, TX_SIN4U073);
 }
 
 void Room::sins4UseMccoyOnNorthDoor() {
-	showText(TX_SPEAKER_MCCOY, 16);
+	showText(TX_SPEAKER_MCCOY, TX_SIN4_016);
 }
 
 void Room::sins4UseRedshirtOnNorthDoor() {
-	showText(TX_SPEAKER_MOSHER, 29);
+	showText(TX_SPEAKER_MOSHER, TX_SIN4_029);
 }
 
 void Room::sins4UseSpockOnNorthDoor() {
-	showText(TX_SPEAKER_SPOCK, 23);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_023);
 }
 
 void Room::sins4UseMccoyOnPanel() {
-	showText(TX_SPEAKER_MCCOY, 13);
+	showText(TX_SPEAKER_MCCOY, TX_SIN4_013);
 }
 
 void Room::sins4UseRedshirtOnPanel() {
-	showText(TX_SPEAKER_MOSHER, 30);
+	showText(TX_SPEAKER_MOSHER, TX_SIN4_030);
 }
 
 void Room::sins4WalkToNorthDoor() {
@@ -328,12 +393,11 @@ void Room::sins4WalkToEastDoor() {
 }
 
 void Room::sins4UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 14);
+	showText(TX_SPEAKER_MCCOY, TX_SIN4_014);
 }
 
 void Room::sins4UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, 12, false);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_SIN4_012);
 }
 
 }
-#endif

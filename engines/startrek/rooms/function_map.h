@@ -71,10 +71,10 @@ extern const RoomTextOffsets trialTextOffsets[];
 
 extern const RoomAction sins0ActionList[], sins1ActionList[], sins2ActionList[], sins3ActionList[];
 extern const RoomAction sins4ActionList[], sins5ActionList[];
-extern const RoomTextOffsets sins0TextOffsets[];//, sins1TextOffsets[], sins2TextOffsets[], sins3TextOffsets[];
-//extern const RoomTextOffsets sins4TextOffsets[], sins5TextOffsets[];
-extern const RoomText sins0Texts[];//, sins1Texts[], sins2Texts[], sins3Texts[];
-//extern const RoomText sins4Texts[], sins5Texts[];
+extern const RoomTextOffsets sins0TextOffsets[], sins1TextOffsets[], sins2TextOffsets[], sins3TextOffsets[];
+extern const RoomTextOffsets sins4TextOffsets[], sins5TextOffsets[];
+extern const RoomText sins0Texts[], sins1Texts[], sins2Texts[], sins3Texts[];
+extern const RoomText sins4Texts[], sins5Texts[];
 
 extern const RoomAction veng0ActionList[], veng1ActionList[], veng2ActionList[], veng3ActionList[];
 extern const RoomAction veng4ActionList[], veng5ActionList[], veng6ActionList[], veng7ActionList[];

@@ -204,7 +204,7 @@ void Room::veng5ReachedPositionToShootDebris() {
 
 void Room::veng5DrewPhaser() {
 	loadActorAnimC(OBJECT_POWER_PACK, "s7r5p1", 0xb1, 0x89, &Room::veng5VaporizedDebris);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorStandAnim(OBJECT_DEBRIS);
 }
 

@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_DOOR 8
@@ -87,15 +86,96 @@ extern const RoomAction sins2ActionList[] = {
 };
 
 enum sins2TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_MOSHER,
+	TX_SPEAKER_SCOTT, TX_SPEAKER_UHURA,
+	TX_SIN2_001, TX_SIN2_002, TX_SIN2_003, TX_SIN2_004, TX_SIN2_005,
+	TX_SIN2_006, TX_SIN2_007, TX_SIN2_008, TX_SIN2_009, TX_SIN2_010,
+	TX_SIN2_012, TX_SIN2_013, TX_SIN2_014, TX_SIN2_015, TX_SIN2_016,
+	TX_SIN2_017, TX_SIN2_019, TX_SIN2_020, TX_SIN2_021, TX_SIN2_022,
+	TX_SIN2_023, TX_SIN2_024, TX_SIN2_025, TX_SIN2_026, TX_SIN2_027,
+	TX_SIN2_028, TX_SIN2_029, TX_SIN2_030, TX_SIN2_031, TX_SIN2_032,
+	TX_SIN2_033, TX_SIN2_034, TX_SIN2_035, TX_SIN2_037, TX_SIN2_038,
+	TX_SIN2_039, TX_SIN2_040, TX_SIN2_041, TX_SIN2_042, TX_SIN2_043,
+	TX_SIN2_044, TX_SIN2_045, TX_SIN2_046, TX_SIN2_047, TX_SIN2_048,
+	TX_SIN2_049, TX_SIN2_050, TX_SIN2_F12, TX_SIN2_F26, TX_SIN2_S05,
+	TX_SIN2_S16, TX_SIN3_008, TX_SIN1U070, TX_SIN2N000, TX_SIN2N001,
+	TX_SIN2N002, TX_SIN2N003, TX_SIN2N004, TX_SIN2N005, TX_SIN2N006,
+	TX_SIN2N007, TX_SIN2N008, TX_SIN2U085, TX_SIN2U096, TX_SIN2U097
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets sins2TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 301, 0 },
+	{ TX_SPEAKER_MCCOY, 312, 0 },
+	{ TX_SPEAKER_SPOCK, 322, 0 },
+	{ TX_SPEAKER_MOSHER, 332, 0 },
+	{ TX_SPEAKER_SCOTT, 356, 0 },
+	{ TX_SPEAKER_UHURA, 346, 0 },
+	{ TX_SIN2_001, 4324, 0 },
+	{ TX_SIN2_002, 892, 0 },
+	{ TX_SIN2_003, 6723, 0 },
+	{ TX_SIN2_004, 5869, 0 },
+	{ TX_SIN2_005, 5052, 0 },
+	{ TX_SIN2_006, 8116, 0 },
+	{ TX_SIN2_007, 3070, 0 },
+	{ TX_SIN2_008, 5400, 0 },
+	{ TX_SIN2_009, 3770, 0 },
+	{ TX_SIN2_010, 4811, 0 },
+	{ TX_SIN2_012, 3514, 0 },
+	{ TX_SIN2_013, 8717, 0 },
+	{ TX_SIN2_014, 8458, 0 },
+	{ TX_SIN2_015, 1353, 0 },
+	{ TX_SIN2_016, 6980, 0 },
+	{ TX_SIN2_017, 8296, 0 },
+	{ TX_SIN2_019, 5806, 0 },
+	{ TX_SIN2_020, 2835, 0 },
+	{ TX_SIN2_021, 2303, 0 },
+	{ TX_SIN2_022, 3268, 0 },
+	{ TX_SIN2_023, 7064, 0 },
+	{ TX_SIN2_024, 4683, 0 },
+	{ TX_SIN2_025, 670, 0 },
+	{ TX_SIN2_026, 789, 0 },
+	{ TX_SIN2_027, 4101, 0 },
+	{ TX_SIN2_028, 3933, 0 },
+	{ TX_SIN2_029, 3302, 0 },
+	{ TX_SIN2_030, 7914, 0 },
+	{ TX_SIN2_031, 2586, 0 },
+	{ TX_SIN2_032, 1436, 0 },
+	{ TX_SIN2_033, 2936, 0 },
+	{ TX_SIN2_034, 2372, 0 },
+	{ TX_SIN2_035, 8953, 0 },
+	{ TX_SIN2_037, 3219, 0 },
+	{ TX_SIN2_038, 2687, 0 },
+	{ TX_SIN2_039, 6813, 0 },
+	{ TX_SIN2_040, 2170, 0 },
+	{ TX_SIN2_041, 1974, 0 },
+	{ TX_SIN2_042, 1064, 0 },
+	{ TX_SIN2_043, 1770, 0 },
+	{ TX_SIN2_044, 1127, 0 },
+	{ TX_SIN2_045, 3615, 0 },
+	{ TX_SIN2_046, 8820, 0 },
+	{ TX_SIN2_047, 7328, 0 },
+	{ TX_SIN2_048, 7795, 0 },
+	{ TX_SIN2_049, 7155, 0 },
+	{ TX_SIN2_050, 1639, 0 },
+	{ TX_SIN2_F12, 7608, 0 },
+	{ TX_SIN2_F26, 5591, 0 },
+	{ TX_SIN2_S05, 5116, 0 },
+	{ TX_SIN2_S16, 8179, 0 },
+	{ TX_SIN3_008, 8591, 0 },
+	{ TX_SIN1U070, 8370, 0 },
+	{ TX_SIN2N000, 6119, 0 },
+	{ TX_SIN2N001, 6301, 0 },
+	{ TX_SIN2N002, 6620, 0 },
+	{ TX_SIN2N003, 6359, 0 },
+	{ TX_SIN2N004, 6536, 0 },
+	{ TX_SIN2N005, 6451, 0 },
+	{ TX_SIN2N006, 5948, 0 },
+	{ TX_SIN2N007, 6060, 0 },
+	{ TX_SIN2N008, 7524, 0 },
+	{ TX_SIN2U085, 5252, 0 },
+	{ TX_SIN2U096, 5671, 0 },
+	{ TX_SIN2U097, 5445, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -120,15 +200,15 @@ void Room::sins2Tick1() {
 }
 
 void Room::sins2UsePhaserOnDoor() {
-	showText(TX_SPEAKER_SPOCK, 25);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_025);
 }
 
 void Room::sins2UseSTricorderAnywhere() {
-	spockScan(DIR_S, 26, true);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_SIN2_026);
 }
 
 void Room::sins2UseKirkOnTerminal() {
-	showText(TX_SPEAKER_KIRK, 2);
+	showText(TX_SPEAKER_KIRK, TX_SIN2_002);
 	sins2UseSpockOnTerminal();
 }
 
@@ -143,56 +223,56 @@ void Room::sins2SpockReachedTerminal() {
 }
 
 void Room::sins2SpockUsedTerminal() {
-	showText(TX_SPEAKER_SPOCK, 42);
-	showText(TX_SPEAKER_SPOCK, 44);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_042);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_044);
 
 	if (!_awayMission->sins.gotPointsForAccessingTerminal) {
 		_awayMission->sins.missionScore += 2;
 		_awayMission->sins.gotPointsForAccessingTerminal = true;
 	}
 
-	showText(TX_SPEAKER_MCCOY,  15);
-	showText(TX_SPEAKER_SPOCK,  32);
-	showText(TX_SPEAKER_MOSHER, 50);
-	showText(TX_SPEAKER_SPOCK,  35);
-	showText(TX_SPEAKER_SPOCK,  43);
-	showText(TX_SPEAKER_SPOCK,  41);
-	showText(TX_SPEAKER_SPOCK,  40);
-	showText(TX_SPEAKER_MCCOY,  21);
-	showText(TX_SPEAKER_SPOCK,  34);
-	showText(TX_SPEAKER_SPOCK,  31);
-	showText(TX_SPEAKER_SPOCK,  38);
-	showText(TX_SPEAKER_MCCOY,  20);
-	showText(TX_SPEAKER_SPOCK,  33);
-	showText(TX_SPEAKER_KIRK,    7);
-	showText(TX_SPEAKER_SPOCK,  37);
-	showText(TX_SPEAKER_MCCOY,  22);
-	showText(TX_SPEAKER_SPOCK,  29);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN2_015);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_032);
+	showText(TX_SPEAKER_MOSHER, TX_SIN2_050);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_035);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_043);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_041);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_040);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN2_021);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_034);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_031);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_038);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN2_020);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_033);
+	showText(TX_SPEAKER_KIRK,   TX_SIN2_007);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_037);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN2_022);
+	showText(TX_SPEAKER_SPOCK,  TX_SIN2_029);
 }
 
 void Room::sins2UseMccoyOnTerminal() {
-	showText(TX_SPEAKER_MCCOY, 12);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_012);
 }
 
 void Room::sins2UseRedshirtOnTerminal() {
-	showText(TX_SPEAKER_MOSHER, 45);
+	showText(TX_SPEAKER_MOSHER, TX_SIN2_045);
 }
 
 void Room::sins2UseSTricorderOnTerminal() {
-	spockScan(DIR_W, 9, false);
+	spockScan(DIR_W, TX_SPEAKER_SPOCK, TX_SIN2_009);
 }
 
 void Room::sins2UseSTricorderOnKeypad() {
-	spockScan(DIR_N, 28, false);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_SIN2_028);
 }
 
 void Room::sins2UseSTricorderOnDoor() {
-	spockScan(DIR_N, 27, false);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_SIN2_027);
 }
 
 void Room::sins2UseKirkOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_KIRK, 01);
+		showText(TX_SPEAKER_KIRK, TX_SIN2_001);
 		sins2UseSpockOnKeypad();
 	}
 }
@@ -228,125 +308,123 @@ void Room::sins2EnteredCorrectCode() {
 }
 
 void Room::sins2EnteredIncorrectCode() {
-	showText(TX_SPEAKER_SPOCK, 24); // BUGFIX: Speaker is spock, not "none"
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_024); // BUGFIX: Speaker is spock, not "none"
 }
 
 void Room::sins2DoorFinishedOpening() {
-	showText(TX_SPEAKER_SPOCK, 10);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_010);
 }
 
 void Room::sins2Tick40() {
 	if (!_awayMission->sins.enteredRoom2FirstTime) {
 		_awayMission->disableInput = false;
 
-		showText(TX_SPEAKER_KIRK,   5);
-		showText(TX_SPEAKER_SCOTT_GLOBAL,  5 + SCOTTY_MESSAGE_OFFSET);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 85);
-		showText(TX_SPEAKER_KIRK,   8);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 97);
-		showText(TX_SPEAKER_MCCOY, 26 + FOLLOWUP_MESSAGE_OFFSET);
-		showText(TX_SPEAKER_UHURA_GLOBAL, 96);
-		showText(TX_SPEAKER_MCCOY, 19);
-		showText(TX_SPEAKER_KIRK,   4);
+		showText(TX_SPEAKER_KIRK,  TX_SIN2_005);
+		showText(TX_SPEAKER_SCOTT, TX_SIN2_S05);
+		showText(TX_SPEAKER_UHURA, TX_SIN2U085);
+		showText(TX_SPEAKER_KIRK,  TX_SIN2_008);
+		showText(TX_SPEAKER_UHURA, TX_SIN2U097);
+		showText(TX_SPEAKER_MCCOY, TX_SIN2_F26);
+		showText(TX_SPEAKER_UHURA, TX_SIN2U096);
+		showText(TX_SPEAKER_MCCOY, TX_SIN2_019);
+		showText(TX_SPEAKER_KIRK,  TX_SIN2_004);
 
 		_awayMission->sins.enteredRoom2FirstTime = true;
 	}
 }
 
 void Room::sins2LookAnywhere() {
-	showDescription(6);
+	showDescription(TX_SIN2N006);
 }
 
 void Room::sins2LookAtOpenDoor() {
-	showDescription(7);
+	showDescription(TX_SIN2N007);
 }
 
 void Room::sins2LookAtTerminal() {
-	showDescription(0);
+	showDescription(TX_SIN2N000);
 }
 
 void Room::sins2LookAtKeypad() {
-	showDescription(1);
+	showDescription(TX_SIN2N001);
 }
 
 void Room::sins2LookAtKirk() {
-	showDescription(3);
+	showDescription(TX_SIN2N003);
 }
 
 void Room::sins2LookAtSpock() {
-	showDescription(5);
+	showDescription(TX_SIN2N005);
 }
 
 void Room::sins2LookAtMccoy() {
-	showDescription(4);
+	showDescription(TX_SIN2N004);
 }
 
 void Room::sins2LookAtRedshirt() {
-	showDescription(2);
+	showDescription(TX_SIN2N002);
 }
 
 void Room::sins2TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 3);
+	showText(TX_SPEAKER_KIRK, TX_SIN2_003);
 }
 
 void Room::sins2TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 39);
-	showText(TX_SPEAKER_MCCOY, 16);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_039);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_016);
 }
 
 void Room::sins2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY,  23);
-	showText(TX_SPEAKER_MOSHER, 49);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN2_023);
+	showText(TX_SPEAKER_MOSHER, TX_SIN2_049);
 }
 
 void Room::sins2TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 47);
+	showText(TX_SPEAKER_MOSHER, TX_SIN2_047);
 }
 
 void Room::sins2LookAtDoor() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showDescription(8);
+		showDescription(TX_SIN2N008);
 }
 
 void Room::sins2UseSpockOnDoor() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_SPOCK,  12 + FOLLOWUP_MESSAGE_OFFSET);
-		showText(TX_SPEAKER_MOSHER, 48);
-		showText(TX_SPEAKER_SPOCK,  30);
+		showText(TX_SPEAKER_SPOCK,  TX_SIN2_F12);
+		showText(TX_SPEAKER_MOSHER, TX_SIN2_048);
+		showText(TX_SPEAKER_SPOCK,  TX_SIN2_030);
 	}
 }
 
 void Room::sins2UseCommunicator() {
 	if (!_awayMission->sins.enteredRoom4FirstTime) {
-		showText(TX_SPEAKER_KIRK,  6);
-		showText(TX_SPEAKER_SCOTT_GLOBAL, 16 + SCOTTY_MESSAGE_OFFSET);
-		showText(TX_SPEAKER_MCCOY, 17);
+		showText(TX_SPEAKER_KIRK,  TX_SIN2_006);
+		showText(TX_SPEAKER_SCOTT, TX_SIN2_S16);
+		showText(TX_SPEAKER_MCCOY, TX_SIN2_017);
 	} else
-		showText(TX_SPEAKER_UHURA_GLOBAL, 70);
+		showText(TX_SPEAKER_UHURA, TX_SIN1U070);
 }
 
 void Room::sins2UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 14);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_014);
 }
 
 void Room::sins2UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, TX_SIN3_008); // BUGFIX: original game had wrong audio file path
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_SIN3_008); // BUGFIX: original game had wrong audio file path
 }
 
 void Room::sins2UseMccoyOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showText(TX_SPEAKER_MCCOY, 13);
+		showText(TX_SPEAKER_MCCOY, TX_SIN2_013);
 }
 
 void Room::sins2UseRedshirtOnKeypad() {
 	if (!_awayMission->sins.openedInnerDoor)
-		showText(TX_SPEAKER_MOSHER, 46);
+		showText(TX_SPEAKER_MOSHER, TX_SIN2_046);
 }
 
 void Room::sins2WalkToDoor() {
 	if (_awayMission->sins.openedInnerDoor)
 		walkCrewman(OBJECT_KIRK, 0x9c, 0x8b);
 }
-
 }
-#endif

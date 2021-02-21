@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_ITEM 8 // The item being "operated" on by the drill
@@ -125,15 +124,74 @@ extern const RoomAction sins3ActionList[] = {
 };
 
 enum sins3TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_MOSHER,
+	TX_SPEAKER_UHURA,
+	TX_SIN3_001, TX_SIN3_002, TX_SIN3_003, TX_SIN3_004, TX_SIN3_005,
+	TX_SIN3_006, TX_SIN3_007, TX_SIN3_008, TX_SIN3_009, TX_SIN3_010,
+	TX_SIN3_011, TX_SIN3_012, TX_SIN3_013, TX_SIN3_014, TX_SIN3_015,
+	TX_SIN3_016, TX_SIN3_017, TX_SIN3_018, TX_SIN3_019, TX_SIN3_020,
+	TX_SIN3_021, TX_SIN3_022, TX_SIN3_023, TX_SIN3_024, TX_SIN3_025,
+	TX_SIN3_026, TX_SIN3_027, TX_SIN3N000, TX_SIN3N001, TX_SIN3N002,
+	TX_SIN3N003, TX_SIN3N004, TX_SIN3N005, TX_SIN3N006, TX_SIN3N007,
+	TX_SIN3N008, TX_SIN3N009, TX_SIN3N010, TX_SIN3N011, TX_SIN3N012,
+	TX_SIN3N013, TX_SIN3N014, TX_SIN3U072,  TX_SIN3_LASERSETTING001,
+	TX_SIN3_LASERSETTING010, TX_SIN3_LASERSETTING100, TX_SIN3_LASERCANCEL
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets sins3TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 289, 0 },
+	{ TX_SPEAKER_MCCOY, 300, 0 },
+	{ TX_SPEAKER_SPOCK, 310, 0 },
+	{ TX_SPEAKER_MOSHER, 320, 0 },
+	{ TX_SPEAKER_UHURA, 334, 0 },
+	{ TX_SIN3_001, 3479, 0 },
+	{ TX_SIN3_002, 5966, 0 },
+	{ TX_SIN3_003, 870, 0 },
+	{ TX_SIN3_004, 6675, 0 },
+	{ TX_SIN3_005, 3812, 0 },
+	{ TX_SIN3_006, 4217, 0 },
+	{ TX_SIN3_007, 7257, 0 },
+	{ TX_SIN3_008, 7154, 0 },
+	{ TX_SIN3_009, 6769, 0 },
+	{ TX_SIN3_010, 7021, 0 },
+	{ TX_SIN3_011, 6146, 0 },
+	{ TX_SIN3_012, 3244, 0 },
+	{ TX_SIN3_013, 3392, 0 },
+	{ TX_SIN3_014, 6325, 0 },
+	{ TX_SIN3_015, 1632, 0 },
+	{ TX_SIN3_016, 1346, 0 },
+	{ TX_SIN3_017, 1158, 0 },
+	{ TX_SIN3_018, 1019, 0 },
+	{ TX_SIN3_019, 1518, 0 },
+	{ TX_SIN3_020, 6029, 0 },
+	{ TX_SIN3_021, 4924, 0 },
+	{ TX_SIN3_022, 6477, 0 },
+	{ TX_SIN3_023, 2190, 0 },
+	{ TX_SIN3_024, 3298, 0 },
+	{ TX_SIN3_025, 6885, 0 },
+	{ TX_SIN3_026, 6257, 0 },
+	{ TX_SIN3_027, 6389, 0 },
+	{ TX_SIN3U072, 6611, 0 },
+	{ TX_SIN3N000, 2293, 0 },
+	{ TX_SIN3N001, 5755, 0 },
+	{ TX_SIN3N002, 5836, 0 },
+	{ TX_SIN3N003, 5572, 0 },
+	{ TX_SIN3N004, 5651, 0 },
+	{ TX_SIN3N005, 2434, 0 },
+	{ TX_SIN3N006, 5307, 0 },
+	{ TX_SIN3N007, 1959, 0 },
+	{ TX_SIN3N008, 2358, 0 },
+	{ TX_SIN3N009, 5022, 0 },
+	{ TX_SIN3N010, 5480, 0 },
+	{ TX_SIN3N011, 1881, 0 },
+	{ TX_SIN3N012, 1816, 0 },
+	{ TX_SIN3N013, 2038, 0 },
+	{ TX_SIN3N014, 5404, 0 },
+	{ TX_SIN3_LASERSETTING001, 3605, 0 },
+	{ TX_SIN3_LASERSETTING100, 3675, 0 },
+	{ TX_SIN3_LASERSETTING010, 3640, 0 },
+	{ TX_SIN3_LASERCANCEL, 3710, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -164,57 +222,57 @@ void Room::sins3Tick1() {
 }
 
 void Room::sins3UseSTricorderOnBox() {
-	spockScan(DIR_S, 3, false);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_SIN3_003);
 }
 
 void Room::sins3UseSTricorderOnMonitor() {
-	spockScan(DIR_N, 18, false);
+	spockScan(DIR_N, TX_SPEAKER_SPOCK, TX_SIN3_018);
 }
 
 void Room::sins3UseSTricorderAnywhere() {
-	spockScan(DIR_S, 17, false);
+	spockScan(DIR_S, TX_SPEAKER_SPOCK, TX_SIN3_017);
 }
 
 void Room::sins3UseSTricorderOnDrill() {
-	spockScan(DIR_E, 16, false);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_SIN3_016);
 }
 
 void Room::sins3UseSTricorderOnPanel() {
 	if (_awayMission->sins.scannedKeycardLock) {
-		spockScan(DIR_E, 15, false);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_SIN3_015);
 		_awayMission->sins.laserPattern = 1;
 	} else
-		spockScan(DIR_E, 19, false);
+		spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_SIN3_019);
 }
 
 void Room::sins3LookAtDrill() {
-	showDescription(12);
+	showDescription(TX_SIN3N012);
 }
 
 void Room::sins3LookAtPanel() {
-	showDescription(11);
+	showDescription(TX_SIN3N011);
 }
 
 void Room::sins3LookAtMonitor() {
-	showDescription(7);
+	showDescription(TX_SIN3N007);
 }
 
 void Room::sins3LookAnywhere() {
-	showDescription(13);
+	showDescription(TX_SIN3N013);
 }
 
 void Room::sins3UseSTricorderOnWall() {
 	// NOTE: this event has two implementations (index 23 and 22), one unused.
-	spockScan(DIR_E, 23, false);
+	spockScan(DIR_E, TX_SPEAKER_SPOCK, TX_SIN3_023);
 }
 
 void Room::sins3LookAtBox() {
 	if (_awayMission->sins.boxState == 0)
-		showDescription(0);
+		showDescription(TX_SIN3N000);
 	else if (_awayMission->sins.boxState == 1)
-		showDescription(8);
+		showDescription(TX_SIN3N008);
 	else if (_awayMission->sins.boxState == 2)
-		showDescription(5);
+		showDescription(TX_SIN3N005);
 }
 
 void Room::sins3UseKirkOnBox() {
@@ -307,9 +365,9 @@ void Room::sins3KirkGotBoxContents() {
 
 void Room::sins3Tick30() {
 	if (!_awayMission->sins.enteredRoom3FirstTime) {
-		showText(TX_SPEAKER_MCCOY, 12);
-		showText(TX_SPEAKER_SPOCK, 24);
-		showText(TX_SPEAKER_MCCOY, 13);
+		showText(TX_SPEAKER_MCCOY, TX_SIN3_012);
+		showText(TX_SPEAKER_SPOCK, TX_SIN3_024);
+		showText(TX_SPEAKER_MCCOY, TX_SIN3_013);
 		_awayMission->sins.enteredRoom3FirstTime = true;
 		_awayMission->disableInput = false;
 	}
@@ -317,13 +375,13 @@ void Room::sins3Tick30() {
 
 void Room::sins3Tick60() {
 	if (_awayMission->sins.gatheredClues == 7) {
-		showText(TX_SPEAKER_SPOCK, 7);
+		showText(TX_SPEAKER_SPOCK, TX_SIN3_007);
 		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
 void Room::sins3UseKirkOnPanel() {
-	showText(TX_SPEAKER_KIRK, 1);
+	showText(TX_SPEAKER_KIRK, TX_SIN3_001);
 	sins3UseSpockOnPanel();
 }
 
@@ -335,7 +393,7 @@ void Room::sins3SpockReachedPanel() {
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_SIN3_LASERSETTING001, TX_SIN3_LASERSETTING010, TX_SIN3_LASERSETTING100, TX_SIN3_LASERCANCEL,
-		TX_BLANK
+		TX_END
 	};
 
 	int choice = showMultipleTexts(choices);
@@ -348,7 +406,7 @@ void Room::sins3SpockReachedPanel() {
 		if (_awayMission->sins.laserPattern == 0 && _awayMission->sins.laserSetting == 3)
 			// High setting can't be used until the template pattern has been uploaded to
 			// the machine
-			showText(TX_SPEAKER_SPOCK, 5);
+			showText(TX_SPEAKER_SPOCK, TX_SIN3_005);
 		else if (_awayMission->sins.moldState != -1) {
 			if (_awayMission->sins.moldState == 0) { // Mold not yet created
 				loadActorAnim2(OBJECT_SPOCK, "susemn");
@@ -387,7 +445,7 @@ void Room::sins3SpockReachedPanel() {
 				}
 			} else { // moldState == 2 or 4 (mold created; either keycard is in it, or nothing)
 				// "Template would be damaged from direct fire"
-				showText(TX_SPEAKER_SPOCK, 6);
+				showText(TX_SPEAKER_SPOCK, TX_SIN3_006);
 			}
 		}
 	}
@@ -435,12 +493,12 @@ void Room::sins3RockTurnedIntoIDCard() {
 }
 
 void Room::sins3RockVaporized() {
-	showText(TX_SPEAKER_SPOCK, 21);
+	showText(TX_SPEAKER_SPOCK, TX_SIN3_021);
 }
 
 void Room::sins3UseDrillAnywhere() {
 	// It isn't possible to "use" a hotspot on something else, so this is never called?
-	showDescription(9);
+	showDescription(TX_SIN3N009);
 }
 
 void Room::sins3GetIDCard() {
@@ -464,61 +522,61 @@ void Room::sins3PickedUpIDCard() {
 
 void Room::sins3LookAtItemBeingDrilled() {
 	if (_awayMission->sins.moldState == 2)
-		showDescription(6);
+		showDescription(TX_SIN3N006);
 	else if (_awayMission->sins.moldState == 3)
-		showDescription(14);
+		showDescription(TX_SIN3N014);
 	else if (_awayMission->sins.moldState == 4)
-		showDescription(10);
+		showDescription(TX_SIN3N010);
 }
 
 void Room::sins3LookAtKirk() {
-	showDescription(3);
+	showDescription(TX_SIN3N003);
 }
 
 void Room::sins3LookAtSpock() {
-	showDescription(4);
+	showDescription(TX_SIN3N004);
 }
 
 void Room::sins3LookAtMccoy() {
-	showDescription(1); // BUGFIX: Speaker is "nobody", not Dr. McCoy
+	showDescription(TX_SIN3N001); // BUGFIX: Speaker is "nobody", not Dr. McCoy
 }
 
 void Room::sins3LookAtRedshirt() {
-	showDescription(2);
+	showDescription(TX_SIN3N002);
 }
 
 void Room::sins3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK, 2);
+	showText(TX_SPEAKER_KIRK, TX_SIN3_002);
 }
 
 void Room::sins3TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK, 20);
+	showText(TX_SPEAKER_SPOCK, TX_SIN3_020);
 }
 
 void Room::sins3TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY, 11);
+	showText(TX_SPEAKER_MCCOY, TX_SIN3_011);
 }
 
 void Room::sins3TalkToRedshirt() {
-	showText(TX_SPEAKER_MOSHER, 26);
-	showText(TX_SPEAKER_MCCOY,  14);
-	showText(TX_SPEAKER_MOSHER, 27);
+	showText(TX_SPEAKER_MOSHER, TX_SIN3_026);
+	showText(TX_SPEAKER_MCCOY,  TX_SIN3_014);
+	showText(TX_SPEAKER_MOSHER, TX_SIN3_027);
 }
 
 void Room::sins3UseCommunicator() {
-	showText(TX_SPEAKER_UHURA_GLOBAL, 72);
+	showText(TX_SPEAKER_UHURA, TX_SIN3U072);
 }
 
 void Room::sins3UseSpockOnDrill() {
-	showText(TX_SPEAKER_SPOCK, 4);
+	showText(TX_SPEAKER_SPOCK, TX_SIN3_004);
 }
 
 void Room::sins3UseMccoyOnDrill() {
-	showText(TX_SPEAKER_MCCOY, 9);
+	showText(TX_SPEAKER_MCCOY, TX_SIN3_009);
 }
 
 void Room::sins3UseRedshirtOnDrill() {
-	showText(TX_SPEAKER_MOSHER, 25);
+	showText(TX_SPEAKER_MOSHER, TX_SIN3_025);
 }
 
 void Room::sins3WalkToDoor() {
@@ -526,12 +584,11 @@ void Room::sins3WalkToDoor() {
 }
 
 void Room::sins3UseMedkitOnCrewman() {
-	showText(TX_SPEAKER_MCCOY, 10);
+	showText(TX_SPEAKER_MCCOY, TX_SIN3_010);
 }
 
 void Room::sins3UseMTricorderOnCrewman() {
-	mccoyScan(DIR_S, 8, false);
+	mccoyScan(DIR_S, TX_SPEAKER_MCCOY, TX_SIN3_008);
 }
 
 }
-#endif
