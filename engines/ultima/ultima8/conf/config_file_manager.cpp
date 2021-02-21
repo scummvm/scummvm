@@ -45,7 +45,7 @@ ConfigFileManager::~ConfigFileManager() {
 }
 
 bool ConfigFileManager::readConfigFile(string fname, const istring &category) {
-	IDataSource *f = FileSystem::get_instance()->ReadFile(fname, true);
+	Common::SeekableReadStream *f = FileSystem::get_instance()->ReadFile(fname, true);
 	if (!f) return false;
 
 	ConfigFile *configFile = new ConfigFile();

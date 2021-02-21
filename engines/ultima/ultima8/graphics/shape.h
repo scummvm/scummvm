@@ -42,7 +42,7 @@ public:
 	// If format is not specified it will be autodetected
 	Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
 	      const uint16 flexId, const uint32 shapenum);
-	Shape(IDataSource *src, const ConvertShapeFormat *format);
+	Shape(Common::SeekableReadStream *src, const ConvertShapeFormat *format);
 	virtual ~Shape();
 	void setPalette(const Palette *pal) {
 		_palette = pal;

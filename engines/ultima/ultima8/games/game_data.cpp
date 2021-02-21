@@ -326,7 +326,7 @@ void GameData::loadU8Data() {
 	_fonts->setHVLeads();
 
 	// Load \mouse
-	IDataSource *msds = filesystem->ReadFile("static/u8mouse.shp");
+	Common::SeekableReadStream *msds = filesystem->ReadFile("static/u8mouse.shp");
 	if (!msds)
 		error("Unable to load static/u8mouse.shp");
 
@@ -606,7 +606,7 @@ void GameData::loadRemorseData() {
 	_fonts->setHVLeads();
 
 	// Load mouse
-	IDataSource *msds = filesystem->ReadFile("static/mouse.shp");
+	Common::SeekableReadStream *msds = filesystem->ReadFile("static/mouse.shp");
 	if (!msds)
 		error("Unable to load static/mouse.shp");
 

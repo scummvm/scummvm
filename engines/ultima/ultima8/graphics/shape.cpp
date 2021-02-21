@@ -43,7 +43,7 @@ Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
 	delete[] const_cast<uint8 *>(data);
 }
 
-Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
+Shape::Shape(Common::SeekableReadStream *src, const ConvertShapeFormat *format)
 	: _flexId(0), _shapeNum(0), _palette(nullptr) {
 	// NB: U8 style!
 	uint32 size = src->size();

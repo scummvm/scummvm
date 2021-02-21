@@ -44,7 +44,7 @@ public:
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
 	//! \return nullptr on failure
-	IDataSource *ReadFile(const Std::string &vfn, bool is_text = false);
+	Common::SeekableReadStream *ReadFile(const Std::string &vfn, bool is_text = false);
 
 	//! Open a file as writable. Streamed.
 	//! \param vfn the (virtual) filename

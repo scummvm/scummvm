@@ -45,12 +45,12 @@ FileSystem::~FileSystem() {
 
 
 // Open a streaming file as readable. Streamed (0 on failure)
-IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
+Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, vfn))
 		return nullptr;
 
-	return new IFileDataSource(readStream);
+	return readStream;
 }
 
 // Open a streaming file as writeable. Streamed (0 on failure)
