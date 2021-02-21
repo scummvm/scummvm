@@ -85,18 +85,22 @@ private:
 	int _projectedSurfaceIndex = 0;
 
 	struct TrajectoryData {
-		int16 locationIdx;
-		int16 trajLocationIdx;
-		int16 vehicleIdx;
-		int16 x;
-		int16 y;
-		int16 z;
-		int16 numAnimFrames;
+		int16 locationIdx = -1;
+		int16 trajLocationIdx = -1;
+		int16 vehicleIdx = -1;
+		int16 x = 0;
+		int16 y = 0;
+		int16 z = 0;
+		int16 numAnimFrames = 0;
 		struct TrajectoryPos {
-			int16 x;
-			int16 y;
+			int16 x = 0;
+			int16 y = 0;
 		};
 		TrajectoryPos positions[512];
+
+		bool isValid() const {
+			return locationIdx != -1;
+		}
 
 		/**
 		 * The HQR index of the vehicle model for the holomap

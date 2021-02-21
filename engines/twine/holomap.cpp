@@ -293,13 +293,16 @@ void Holomap::renderHolomapModel(const uint8 *bodyPtr, int32 x, int32 y, int32 z
 }
 
 Holomap::TrajectoryData Holomap::loadTrajectoryData(int32 trajectoryIdx) {
-	TrajectoryData data;
 	Common::MemoryReadStream stream(_engine->_resources->holomapPointAnimPtr, _engine->_resources->holomapPointAnimSize);
 	for (int32 trajIdx = 0; trajIdx < trajectoryIdx; ++trajIdx) {
+		if (stream.eos() || stream.err()) {
+			return TrajectoryData();
+		}
 		stream.skip(12);
 		const int16 animVal = stream.readSint16LE();
 		stream.skip(4 * animVal);
 	}
+	TrajectoryData data;
 	data.locationIdx = stream.readSint16LE();
 	data.trajLocationIdx = stream.readSint16LE();
 	data.vehicleIdx = stream.readSint16LE();
@@ -318,14 +321,18 @@ Holomap::TrajectoryData Holomap::loadTrajectoryData(int32 trajectoryIdx) {
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
 
+	const Holomap::TrajectoryData &data = loadTrajectoryData(trajectoryIndex);
+	if (!data.isValid()) {
+		warning("Failed to load trajectory data for index %i", trajectoryIndex);
+		return;
+	}
+
 	_engine->exitSceneryView();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	loadHolomapGFX();
-
-	const Holomap::TrajectoryData &data = loadTrajectoryData(trajectoryIndex);
 	ScopedEngineFreeze timeFreeze(_engine);
 	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 	_engine->_renderer->setCameraAngle(0, 0, 0, data.x, data.y, data.z, 5300);
