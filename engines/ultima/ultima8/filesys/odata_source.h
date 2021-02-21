@@ -47,10 +47,6 @@ public:
 		else if (num_bytes == 3) writeUint24LE(val);
 		else writeUint32LE(val);
 	}
-
-	virtual void skip(int32 delta) {
-		seek(delta, SEEK_CUR);
-	};
 };
 
 } // End of namespace Ultima8
