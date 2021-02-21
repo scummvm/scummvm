@@ -108,6 +108,9 @@ extern const char *_sysSentence[];
 					CallSmackOpen
 --------------------------------------------------*/
 void CallSmackOpen(Common::SeekableReadStream *stream) {
+	if (stream == nullptr)
+		return;
+
 	SmkAnims[_curSmackBuffer] = new NightlongSmackerDecoder();
 
 	if (!SmkAnims[_curSmackBuffer]->loadStream(stream)) {
@@ -123,11 +126,8 @@ void CallSmackOpen(Common::SeekableReadStream *stream) {
 					CallSmackClose
 --------------------------------------------------*/
 void CallSmackClose() {
-	if (SmkAnims[_curSmackBuffer] == NULL)
-		return;
-
 	delete SmkAnims[_curSmackBuffer];
-	SmkAnims[_curSmackBuffer] = NULL;
+	SmkAnims[_curSmackBuffer] = nullptr;
 }
 
 /*-----------------18/01/97 21.05-------------------

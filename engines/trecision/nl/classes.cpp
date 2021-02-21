@@ -23,10 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
@@ -450,7 +448,8 @@ void doMouse() {
 						if (SemUseWithStarted) {
 							doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
 							return;
-						} else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+						}
+						if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
 							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, g_vm->_obj[g_vm->_curObj]._anim, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
 						else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
 							doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[g_vm->_curObj]._goRoom, 0, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
@@ -471,10 +470,9 @@ void doMouse() {
 			else
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
 		}
-//			Zona INVENTORY
+		// Inventory Zone
 		else if (INVAREA(g_vm->_curMessage->_wordParam2)) {
-			if (_playingAnims[1] || SemDialogActive) break;
-			if (g_vm->_curRoom == rSYS)
+			if (_playingAnims[1] || SemDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
 			if (ICONAREA(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2) && (WhatIcon(g_vm->_curMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
@@ -726,12 +724,13 @@ void doCharacter() {
 			} else if (g_vm->_curMessage->_byteParam)
 				setPosition(g_vm->_curMessage->_byteParam);
 
-			if (g_vm->_curMessage->_wordParam1 == g_vm->_obj[oCANCELLATA1B]._anim)
-				if (!(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
-					PlayDialog(dF181);
-					SemMouseEnabled = false;
-					setPosition(1);
-				}
+			if ((g_vm->_curMessage->_wordParam1 == g_vm->_obj[oCANCELLATA1B]._anim)
+			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
+			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
+				PlayDialog(dF181);
+				SemMouseEnabled = false;
+				setPosition(1);
+			}
 		} else
 			REEVENT;
 		break;
@@ -752,11 +751,10 @@ void doSystem() {
 		break;
 
 	case ME_CHANGEROOM:
-		// se oggetto e' sbagliato
-		if (/*( _curObj == 0 ) ||*/ (g_vm->_curRoom == 0)) {
+		if (g_vm->_curRoom == 0)
 			return ;
-		}
-		// se deve ancora fare regen
+
+		// if regen still have to occur
 		if (SemWaitRegen)
 			REEVENT;
 
@@ -792,7 +790,7 @@ void doSystem() {
 		actorStop();
 		nextStep();
 
-//			Gestione exit veloci in stanze doppie livello 2
+		// Handle exit velocity in dual rooms level 2
 		if (g_vm->_room[g_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
 			if (g_vm->_curObj == od2EALLA2C)
 				SetRoom(r2E, false);
@@ -897,7 +895,7 @@ void doSystem() {
 
 		AtEndChangeRoom();
 
-		g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // visitata
+		g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // Visited
 		drawCharacter(CALCPOINTS);			// for right _actorPos entrance
 
 		break;
@@ -1032,10 +1030,8 @@ void doIdle() {
 		break;
 	}
 
-	if (GAMEAREA(my)) {
-		if ((g_vm->_inventoryStatus == INV_ON) || (g_vm->_inventoryStatus == INV_INACTION))
-			doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
-	}
+	if (GAMEAREA(my) && ((g_vm->_inventoryStatus == INV_ON) || (g_vm->_inventoryStatus == INV_INACTION)))
+		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
 	if (ScrollInvTime > TheTime)
 		ScrollInvTime = TheTime;

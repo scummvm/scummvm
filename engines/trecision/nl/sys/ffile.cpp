@@ -287,14 +287,12 @@ Common::SeekableReadStream *AnimFileOpen(const char *name) {
  * FmvFileOpen
  * --------------------------------------------------*/
 Common::SeekableReadStream *FmvFileOpen(const char *name) {
-	Common::File *file = new Common::File();
-
 	if (name == nullptr || name[0] == 0) {
 		warning("FmvFileOpen: invalid name");
-		delete file;
 		return nullptr;
 	}
 
+	Common::File *file = new Common::File();
 	if (!file->open(name)) {
 		warning("Fmv file %s not found!", name);
 		delete file;
