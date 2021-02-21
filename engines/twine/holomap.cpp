@@ -101,10 +101,9 @@ void Holomap::loadHolomapGFX() {
 		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
 	}
 
-	holomapPaletteIndex = 0;
-
 	prepareHolomapProjectedPositions();
 	prepareHolomapSurface();
+	holomapPaletteIndex = 0;
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
@@ -351,8 +350,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	int32 frameTime = _engine->lbaTime;
 	int16 trajAnimFrameIdx = 0;
 
-	int32 local18 = 0;
-	bool fadeInPalette = true;
+	//int32 local18 = 0;
+	//bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
 		ScopedFPS scopedFps;
@@ -361,13 +360,20 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			break;
 		}
 
+#if 0
 		if (!fadeInPalette && local18 < _engine->lbaTime) {
-			// TODO: setPalette2(576 / 3, 96 / 3, (int)&paletteHolomap[3 * holomapPaletteIndex++]);
-			if (holomapPaletteIndex == 96 / 3) {
+			const Common::Rect rect(170, 50, 470, 330);
+			_engine->_interface->setClip(rect);
+			_engine->setPalette(192, 32, &paletteHolomap[3 * holomapPaletteIndex++]);
+			_engine->copyBlockPhys(rect);
+			_engine->_interface->resetClip();
+			if (holomapPaletteIndex == 32) {
 				holomapPaletteIndex = 0;
 			}
 			local18 = _engine->lbaTime + 3;
 		}
+#endif
+
 		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
@@ -406,14 +412,15 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			renderHolomapModel(_engine->_resources->holomapPointModelPtr, modelX, modelY, 0);
 			trajAnimFrameIdx = trajAnimFrameIdx + 1;
 		}
+#if 0
 		if (fadeInPalette) {
 			fadeInPalette = false;
 			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
 		}
+#endif
 	}
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
-	//_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
@@ -538,6 +545,8 @@ void Holomap::processHolomap() {
 	int32 yRot = ClampAngle(_locations[currentLocation].y);
 	bool rotate = false;
 	bool redraw = true;
+	// int local18 = 0;
+	// bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
 		FrameMarker frame;
@@ -592,6 +601,20 @@ void Holomap::processHolomap() {
 			redraw = true;
 		}
 
+#if 0
+		if (!fadeInPalette && local18 < _engine->lbaTime) {
+			const Common::Rect rect(170, 50, 470, 330);
+			_engine->_interface->setClip(rect);
+			_engine->setPalette(192, 32, &paletteHolomap[3 * holomapPaletteIndex++]);
+			_engine->copyBlockPhys(rect);
+			_engine->_interface->resetClip();
+			if (holomapPaletteIndex == 32) {
+				holomapPaletteIndex = 0;
+			}
+			local18 = _engine->lbaTime + 3;
+		}
+#endif
+
 		if (redraw) {
 			redraw = false;
 			const Common::Rect rect(170, 0, 470, 330);
@@ -623,10 +646,17 @@ void Holomap::processHolomap() {
 
 		//_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 		//_engine->flip();
+#if 0
+		if (fadeInPalette) {
+			fadeInPalette = false;
+			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+		}
+#endif
 	}
 
 	_engine->_text->drawTextBoxBackground = true;
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
+	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;
 

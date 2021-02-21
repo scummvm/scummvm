@@ -1087,6 +1087,11 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 	flip();
 }
 
+void TwinEEngine::setPalette(uint8 startColor, uint8 numColors, const byte *palette) {
+	g_system->getPaletteManager()->setPalette(palette, startColor, numColors);
+	flip();
+}
+
 void TwinEEngine::flip() {
 	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, 0, 0, frontVideoBuffer.w, frontVideoBuffer.h);
 	g_system->updateScreen();

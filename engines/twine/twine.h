@@ -317,9 +317,17 @@ public:
 
 	/**
 	 * Set a new palette in the SDL screen buffer
-	 * @param palette palette to set
+	 * @param palette palette to set in RGBA
 	 */
 	void setPalette(const uint32 *palette);
+	/**
+	 * @brief Set the Palette object
+	 *
+	 * @param startColor the first palette entry to be updated
+	 * @param numColors the number of palette entries to be updated
+	 * @param palette palette to set in RGB
+	 */
+	void setPalette(uint8 startColor, uint8 numColors, const byte *palette);
 
 	/** Blit surface in the screen */
 	void flip();
