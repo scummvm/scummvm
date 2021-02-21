@@ -20,12 +20,9 @@
  *
  */
 
-#include <stdio.h>
 #include "trecision/nl/lib/addtype.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
-#include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
@@ -82,38 +79,31 @@ void ProcessTime() {
 /*-------------------------------------------------------------------------*/
 void ProcessMouse() {
 	static bool MaskMouse;
-	static uint16 oldmx, oldmy;
+	static uint16 oldmx;
+	static uint16 oldmy;
 	static bool LastMouseON = true;
-	uint16 tmpmx;
 
 	if ((LastMouseON == true) && (SemMouseEnabled == false)) {
-		oldmx = 0;    // SPEGNI
+		oldmx = 0;    // Switch off
 		oldmy = 0;
 		Mouse(2);
 	} else if ((LastMouseON == false) && (SemMouseEnabled == true)) {
-		oldmx = 0;    // ACCENDI
+		oldmx = 0;    // Switch on
 		oldmy = 0;
 		Mouse(1);
 	}
 
 	LastMouseON = SemMouseEnabled;
-
 	Mouse(3);
 
-	if (/*(!Semscriptactive) && */(!SemMouseEnabled))
+	if (!SemMouseEnabled)
 		return;
 
-	if ((my >= VideoCent.y0) && (my <= VideoCent.y1))
-		tmpmx = mx;
-	else
-		tmpmx = mx;
+	uint16 tmpMx = mx;
 
-	if ((mright || mleft)) {
+	if (mright || mleft) {
 		if (!MaskMouse) {
-			if (mright)
-				doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, (uint16)tmpmx, (uint16)my, 0, 0);
-			else
-				doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, (uint16)tmpmx, (uint16)my, 0, 0);
+			doEvent(MC_MOUSE, mright ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, tmpMx, my, 0, 0);
 			MaskMouse = true;
 		}
 	} else
@@ -121,9 +111,9 @@ void ProcessMouse() {
 
 	if (!(mright || mleft)) {
 		if (!Semscriptactive) {
-			if ((tmpmx != oldmx) || (my != oldmy)) {
-				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, (uint16)tmpmx, (uint16)my, 0, 0);
-				oldmx = tmpmx;
+			if ((tmpMx != oldmx) || (my != oldmy)) {
+				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, tmpMx, my, 0, 0);
+				oldmx = tmpMx;
 				oldmy = my;
 			}
 		}

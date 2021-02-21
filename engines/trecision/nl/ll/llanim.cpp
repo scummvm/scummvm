@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/util.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,10 +64,9 @@ uint32 _newData2[260];
 --------------------------------------------------*/
 void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	extern bool _linearMode;
-	uint32 CopyNow;
 
 	lockVideo();
-	if ((_video == NULL) || (Len == 0))
+	if ((_video == nullptr) || (Len == 0))
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
@@ -83,10 +83,7 @@ void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 
 	uint32 SrcSco = 0;
 
-	if (Len > SCREENLEN - x1)
-		CopyNow = SCREENLEN - x1;
-	else
-		CopyNow = Len;
+	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
 
 	byte2word(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData, CopyNow);
 	SrcSco += CopyNow;
@@ -114,7 +111,7 @@ void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	extern bool _linearMode;
 
 	lockVideo();
-	if ((_video == NULL) || (Len == 0))
+	if ((_video == nullptr) || (Len == 0))
 		return ;
 
 	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
@@ -131,11 +128,7 @@ void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 
 	uint32 SrcSco = 0;
 
-	uint32 CopyNow;
-	if (Len > SCREENLEN - x1)
-		CopyNow = SCREENLEN - x1;
-	else
-		CopyNow = Len;
+	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
 
 	byte2long(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData2, CopyNow / 2);
 	SrcSco += CopyNow;
@@ -166,7 +159,7 @@ void StartSmackAnim(uint16 num) {
 
 	_curSmackAction = SMACKOPEN;
 
-	// sceglie quale buffer usare
+	// choose the buffer to use
 	if (AnimTab[num]._flag & SMKANIM_BKG)
 		pos = 0;
 	else if (AnimTab[num]._flag & SMKANIM_ICON)
