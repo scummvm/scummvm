@@ -252,13 +252,36 @@ void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color)
 	assert(sprite->format.bytesPerPixel == 4 && bmp->format.bytesPerPixel == 4);
 	assert(color >= 0 && color <= 255);
 
-	Graphics::ManagedSurface temp;
-	Graphics::ManagedSurface &src = **sprite;
-	stripAlpha(src, temp);
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest, gDest, bDest;
+	double alpha = (double)color / 255.0;
 
-	bmp->getSurface().transBlitFrom(temp, Common::Rect(0, 0, temp.w, temp.h),
-		Common::Rect(x, y, x + temp.w, y + temp.h), TRANSPARENT_COLOR(*sprite),
-		false, 0, color);
+	for (int yCtr = 0, yp = y; yCtr < sprite->h && yp < bmp->h; ++yCtr, ++yp) {
+		if (yp < 0)
+			continue;
+
+		const uint32 *srcP = (const uint32 *)sprite->getBasePtr(0, yCtr);
+		uint32 *destP = (uint32 *)bmp->getBasePtr(x, yp);
+
+		for (int xCtr = 0, xp = x; xCtr < sprite->w && xp < bmp->w; ++xCtr, ++xp, ++destP, ++srcP) {
+			if (x < 0 || x >= bmp->w)
+				continue;
+
+			// Get the source pixels
+			sprite->format.colorToARGB(*srcP, aSrc, rSrc, gSrc, bSrc);
+
+			if (rSrc == 255 && gSrc == 0 && bSrc == 255)
+				// Skip transparent pixels
+				continue;
+
+			// Blend the two
+			rDest = static_cast<byte>((rSrc * alpha) + (trans_blend_red * (1.0 - alpha)));
+			gDest = static_cast<byte>((gSrc * alpha) + (trans_blend_green * (1.0 - alpha)));
+			bDest = static_cast<byte>((bSrc * alpha) + (trans_blend_blue * (1.0 - alpha)));
+
+			*destP = bmp->format.RGBToColor(rDest, gDest, bDest);
+		}
+	}
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
