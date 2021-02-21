@@ -331,6 +331,8 @@ template<>
 void NORETURN_PRE unknownKeyError(long long unsigned key) NORETURN_POST;
 template<>
 void NORETURN_PRE unknownKeyError(void *key) NORETURN_POST;
+template<>
+void NORETURN_PRE unknownKeyError(const char *key) NORETURN_POST;
 
 //-------------------------------------------------------
 // HashMap functions

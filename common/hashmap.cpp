@@ -93,6 +93,10 @@ template<> void unknownKeyError(void *key) {
 	error("Unknown key \"%p\"", key);
 }
 
+template<> void unknownKeyError(const char *key) {
+	error("Unknown key \"%s\"", key);
+}
+
 #ifdef DEBUG_HASH_COLLISIONS
 static double
 	g_collisions = 0,
