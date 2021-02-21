@@ -1577,6 +1577,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772), //GOG
 	GAME_ENTRY("downfall", "Downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927),
 	GAME_ENTRY("downfall", "Downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // v1.4
+	GAME_ENTRY_LANG("downfall", "Downfall.exe", "10212624b951711c4b44f5cb9eecbf0a", 143360, Common::RU_RUS), // GOG
 	GAME_ENTRY("downfallredux", "Downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750), // GOG
 	GAME_ENTRY("dustbowl", "Dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026), // Steam
 	GAME_ENTRY("feriadarles", "Feria d'Arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
@@ -1629,6 +1630,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("thesecretsofjesus", "The secrets of Jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692), // Steam
 	GAME_ENTRY("theterribleoldman", "The Terrible Old Man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
 	GAME_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
+	GAME_ENTRY("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573), // GOG
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	DEMO_ENTRY("alemmo", "al-emmo.exe", "9661b29821fdc7f93d286f25c195fc22", 8932837), // Steam
