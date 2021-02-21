@@ -295,9 +295,7 @@ void PaintScreen(uint8 flag) {
  --------------------------------------------------*/
 void AddLine(int16 x1, int16 x2, int16 y) {
 	if (x1 > x2) {
-		int16 t = x1;
-		x1 = x2;
-		x2 = t;
+		SWAP(x1, x2);
 	}
 
 	PaintBlock[BlockCount++] = (uint32)((uint32)(y * CurRoomMaxX + x1) & 0xFFFFF) + ((((uint32)(x2 - x1) & 0xFFF) << 20) & 0xFFF00000);

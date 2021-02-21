@@ -30,7 +30,7 @@
 namespace Trecision {
 
 struct SRoom {
-	int8  _baseName[4];                     // Room name
+	char  _baseName[4];                     // Room name
 	uint8 _flag;							// Room visited or not
 	uint16 _bkgAnim;						    // Background animation
 	uint16 _object[MAXOBJINROOM];            // Objects in the room
@@ -116,7 +116,7 @@ typedef struct {
 typedef struct {
 	uint16	_flag;				// DONT_SKIP .. and more
 	uint16 	_interlocutor;		// Person I'm talking to... Maybe it's not needed
-	int8	_startAnim[14];		// aANIMATION or text table index by filename.
+	char	_startAnim[14];		// aANIMATION or text table index by filename.
 	uint16	_startLen;
 	uint16 	_firstChoice;
 	uint16	_choiceNumb;
