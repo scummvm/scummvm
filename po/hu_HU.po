@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-14 11:24+0000\n"
+"PO-Revision-Date: 2021-02-21 19:36+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3867,16 +3867,12 @@ msgstr ""
 "néhány hangsáv helytelenül hangzik."
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "GUI nyelv:"
+msgstr "Játék nyelve:"
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib meghajtót sok játék használja zenéhez"
+msgstr "A többnyelvű játékokhoz használt nyelv"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
