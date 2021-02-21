@@ -72,40 +72,6 @@ public:
 	}
 };
 
-
-class IFileDataSource: public IDataSource {
-private:
-	Common::SeekableReadStream *_in;
-
-public:
-	IFileDataSource(Common::SeekableReadStream *data_stream) : _in(data_stream) {
-	}
-
-	~IFileDataSource() override {
-		delete _in;
-	}
-
-	uint32 read(void *b, uint32 len) override {
-		return _in->read(b, len);
-	}
-
-	bool seek(int32 position, int whence = SEEK_SET) override {
-		return _in->seek(position, whence);
-	}
-
-	int32 size() const override {
-		return _in->size();
-	}
-
-	int32 pos() const override {
-		return _in->pos();
-	}
-
-	bool eos() const override {
-		return _in->eos();
-	}
-};
-
 class IBufferDataSource : public IDataSource {
 protected:
 	const uint8 *_buf;
