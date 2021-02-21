@@ -169,7 +169,7 @@ short LoadAudioWav(int num, uint8 *wav, int len) {
 	if (!SoundSystemActive)
 		return 0;
 
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::YES);
 
 	if (num != 0xFFFF) {
 		NLSample[num].stream = stream;
@@ -258,7 +258,11 @@ void SoundFadIn(int num) {
 	if (!SoundSystemActive || SoundSystemActive != SOUND_ON)
 		return;
 
-	g_system->getMixer()->playStream(NLSample[num].type, &smp[StepChannel], NLSample[num].stream, -1, 0, 0, DisposeAfterUse::NO);
+	Audio::AudioStream *stream = NLSample[num].stream;
+	if (GSample[num]._flag & SOUNDFLAG_SLOOP)
+		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
+
+	g_system->getMixer()->playStream(NLSample[num].type, &smp[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
 
 	playing[StepChannel] = num;
 
