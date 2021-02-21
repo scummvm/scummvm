@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-18 22:54+0000\n"
-"PO-Revision-Date: 2021-02-10 20:29+0000\n"
+"PO-Revision-Date: 2021-02-21 08:27+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7206,14 +7206,13 @@ msgstr ""
 "schnell läuft."
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
-msgstr "Cheat-Modus aktivieren"
+msgstr "Cheats aktivieren"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
+"Erlaube Cheats über Befehle und ein Menü, wenn der Spieler angeklickt wird."
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
