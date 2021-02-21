@@ -335,11 +335,11 @@ void Text::initText(int32 index) {
 }
 
 void Text::initProgressiveTextBuffer() {
-	Common::fill(&_progressiveTextBuffer[0], &_progressiveTextBuffer[256], ' ');
+	Common::fill(&_progressiveTextBuffer[0], &_progressiveTextBuffer[sizeof(_progressiveTextBuffer)], ' ');
 	// the end of the buffer defines how fast the next page is shown - as the
 	// whitespaces are handled in the fade in process, too. But we need at least 32 chars,
 	// to completly fade in the last characters of a full page (see TEXT_MAX_FADE_IN_CHR)
-	_progressiveTextBuffer[255] = '\0';
+	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1] = '\0';
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 	_dialTextBoxCurrentLine = 0;
 }
