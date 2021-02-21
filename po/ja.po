@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-21 08:36+0000\n"
+"PO-Revision-Date: 2021-02-21 19:36+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4122,11 +4122,11 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:54
 msgid "Use bright palette mode"
-msgstr ""
+msgstr "明るいパレットモードを使用する"
 
 #: engines/dreamweb/detection.cpp:55
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "ゲームの明るいパレットモードを使用してグラフィックを表示する"
 
 #: engines/glk/detection.cpp:225
 msgid "Enable Text to Speech"
@@ -4148,7 +4148,7 @@ msgstr "音声合成で文章を読み上げる"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ 何かキーを押すと終了します ]"
 
 #: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
 #, fuzzy
@@ -4161,7 +4161,7 @@ msgstr "ロード中...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 msgid "Could not start AdvSys game"
-msgstr ""
+msgstr "AdvSysゲームを開始できませんでした"
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:320
 msgid "Sorry, the savegame couldn't be restored"
@@ -4198,7 +4198,7 @@ msgstr "セーブ"
 
 #: engines/glk/comprehend/game.cpp:862
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "画像ウィンドウが切り替わりました\n"
 
 #: engines/glk/glulx/glulx.cpp:82
 msgid "This is too short to be a valid Glulx file."
@@ -4242,7 +4242,7 @@ msgstr "燃料が足りません "
 
 #: engines/glk/scott/scott.cpp:132
 msgid " turns. "
-msgstr ""
+msgstr " ターンします。 "
 
 #: engines/glk/scott/scott.cpp:135
 msgid "Your light is growing dim. "
@@ -4350,7 +4350,7 @@ msgstr "私は保存しました "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " お宝です。  スケールを0～100で表すと、これは "
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Well done.\n"
@@ -4526,7 +4526,7 @@ msgstr "拾う／片付ける"
 
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:588
 msgid "Skip dialog lines"
-msgstr ""
+msgstr "ダイアログを行単位でスキップする"
 
 #: engines/grim/grim.cpp:514 engines/grim/grim.cpp:606
 #: engines/hdb/metaengine.cpp:244
@@ -4535,15 +4535,15 @@ msgstr "メニュー"
 
 #: engines/grim/grim.cpp:548
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "オブジェクトをサイクルアップする"
 
 #: engines/grim/grim.cpp:553
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "オブジェクトをサイクルダウンする"
 
 #: engines/grim/grim.cpp:563
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "クイックルームを終了する"
 
 #: engines/grim/grim.cpp:568
 #, fuzzy
@@ -4563,6 +4563,10 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"データファイル%sが壊れている可能性があります。\n"
+"確信が持てない場合は、ScummVMチームに以下のコードをファイル名・言語・バージョン(DVDボックスまたはジュエルケースなど)とともに提供してください："
+"\n"
+"%s"
 
 #: engines/grim/md5check.cpp:567
 #, c-format
@@ -4641,11 +4645,11 @@ msgstr ""
 
 #: engines/groovie/detection.cpp:297
 msgid "Fast movie speed"
-msgstr ""
+msgstr "高速なムービー再生"
 
 #: engines/groovie/detection.cpp:298
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "速度を上げてムービーを再生"
 
 #: engines/groovie/metaengine.cpp:52
 #, fuzzy
@@ -4693,7 +4697,7 @@ msgstr "使用"
 
 #: engines/hdb/metaengine.cpp:224
 msgid "Clear waypoints"
-msgstr ""
+msgstr "ウェイポイントをクリアー"
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
@@ -4701,17 +4705,17 @@ msgstr "デバッグ"
 
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
-msgstr ""
+msgstr "ゴアモード"
 
 #: engines/hopkins/detection.cpp:41 engines/hopkins/detection.cpp:51
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "利用可能ならゴアモードを有効にする"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:45
 msgid "Studio audience"
-msgstr ""
+msgstr "スタジオのオーディエンス"
 
 #: engines/kyra/detection.cpp:46
 #, fuzzy
@@ -4721,11 +4725,11 @@ msgstr "有効にする"
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:56
 msgid "Skip support"
-msgstr ""
+msgstr "スキップ機能をサポート"
 
 #: engines/kyra/detection.cpp:57
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "テキストとムービーのスキップを許可する"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:67
