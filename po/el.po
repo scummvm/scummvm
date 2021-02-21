@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-18 22:54+0000\n"
+"POT-Creation-Date: 2021-02-21 00:21+0000\n"
 "PO-Revision-Date: 2021-02-15 23:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -249,7 +249,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
-#: gui/options.cpp:2307 audio/null.cpp:41
+#: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
 msgstr "<προκαθορισμένη>"
 
@@ -3943,6 +3943,18 @@ msgstr ""
 "Προσπαθούμε να χαρτογραφήσουμε τα όργανα της\n"
 "Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "Γλώσσα GUI:"
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "Η Adlib χρησιμοποιείται για μουσική σε πολλά παιχνίδια"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"

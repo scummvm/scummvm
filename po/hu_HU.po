@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-18 22:54+0000\n"
+"POT-Creation-Date: 2021-02-21 00:21+0000\n"
 "PO-Revision-Date: 2021-02-14 11:24+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -247,7 +247,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
-#: gui/options.cpp:2307 audio/null.cpp:41
+#: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
 msgstr "<alapértelmezett>"
 
@@ -3865,6 +3865,18 @@ msgstr ""
 "Megpróbáljuk lecserélni a Roland MT32 hangszereket\n"
 "General MIDIre. Továbbra is lehetséges hogy\n"
 "néhány hangsáv helytelenül hangzik."
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "GUI nyelv:"
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib meghajtót sok játék használja zenéhez"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"

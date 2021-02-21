@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-18 22:54+0000\n"
+"POT-Creation-Date: 2021-02-21 00:21+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -234,7 +234,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
-#: gui/options.cpp:2307 audio/null.cpp:41
+#: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
 msgstr ""
 
@@ -3729,6 +3729,14 @@ msgid ""
 "We try to map the Roland MT32 instruments to\n"
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
+msgstr ""
+
+#: engines/ags/detection.cpp:86
+msgid "Game language:"
+msgstr ""
+
+#: engines/ags/detection.cpp:86
+msgid "Language to use for multilingual games"
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363

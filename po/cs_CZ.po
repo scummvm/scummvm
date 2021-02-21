@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-02-18 22:54+0000\n"
+"POT-Creation-Date: 2021-02-21 00:21+0000\n"
 "PO-Revision-Date: 2020-12-03 23:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -249,7 +249,7 @@ msgstr "Jazyk hry. Toto z vaší Španělské verze neudělá Anglickou"
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
-#: gui/options.cpp:2307 audio/null.cpp:41
+#: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
 msgstr "<výchozí>"
 
@@ -3921,6 +3921,18 @@ msgstr ""
 "Snažíme se mapovat nástroje Roland MT32 na\n"
 "ty od General MIDI. Je stále možné, že\n"
 "některé stopy nebudou znít správně."
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "GUI language:"
+msgid "Game language:"
+msgstr "Jazyk GUI:"
+
+#: engines/ags/detection.cpp:86
+#, fuzzy
+#| msgid "AdLib is used for music in many games"
+msgid "Language to use for multilingual games"
+msgstr "AdLib se používá pro hudbu v mnoha hrách"
 
 #: engines/bladerunner/bladerunner.cpp:363
 #, fuzzy
