@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-18 22:54+0000\n"
-"PO-Revision-Date: 2021-02-20 23:24+0000\n"
+"PO-Revision-Date: 2021-02-21 08:36+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4037,6 +4037,10 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"エラー：ファイル%sが正しく抽出されていません。\n"
+"Wikiの該当ページを参照してください。\n"
+"ゲームディスクからDTSPEECH.XAと* .STRを適切に抽出する方法については、https://wiki.scummvm.org/index."
+"php?title=HOWTO-PlayStation_Videosを参照してください。"
 
 #: engines/dragons/metaengine.cpp:124
 msgid ""
@@ -4047,6 +4051,12 @@ msgid ""
 "\n"
 " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
 msgstr ""
+"エラー：データファイルが正しく抽出されていないようです。\n"
+"\n"
+"STRファイルとXAファイルは、特別な方法で抽出する必要があります。それ以外は通常、ゲームディスクからコピーします。\n"
+"\n"
+"詳細はhttps://wiki.scummvm.org/index."
+"php?title=Datafiles#Blazing_Dragonsを参照してください"
 
 #: engines/dragons/metaengine.cpp:140
 #, fuzzy
@@ -4055,7 +4065,7 @@ msgstr "自発的"
 
 #: engines/dragons/metaengine.cpp:146
 msgid "Change Command"
-msgstr ""
+msgstr "コマンドを変更"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
@@ -4091,6 +4101,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"古いフォーマットのDrascula用セーブデータを発見しました。\n"
+"この形式はサポートされなくなったため、変換しなければ使用できません。\n"
+"\n"
+"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねられます。\n"
 
 #: engines/dreamweb/detection.cpp:54
 msgid "Use bright palette mode"
@@ -5327,6 +5341,10 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"古い名称のNippon Safes用セーブデータを発見しました。\n"
+"この名称はサポートされなくなったため、変換しなければ使用できません。\n"
+"\n"
+"OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねられます。\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
