@@ -115,6 +115,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
    - Unterstützung für die Cloud-Anbindung hinzugefügt.
    - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
+   - Unterstützung für den CAMD MIDI-Treiber hinzugefügt.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
