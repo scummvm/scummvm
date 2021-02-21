@@ -270,7 +270,7 @@ void SKFPlayer::run() {
 	_curFrame++;
 
 	PaletteManager *palman = PaletteManager::get_instance();
-	IDataSource *object;
+	Common::SeekableReadStream *object;
 
 	uint16 objecttype = 0;
 	do {

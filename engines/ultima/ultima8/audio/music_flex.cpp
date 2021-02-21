@@ -109,12 +109,12 @@ void MusicFlex::loadSongInfo() {
 	if (!buf || !size) {
 		error("Unable to load song info from sound/music.flx");
 	}
-	IBufferDataSource ds(buf, size);
+	Common::MemoryReadStream ds(buf, size);
 	Std::string line;
 
 	// Read first section till we hit a #
 	for (;;) {
-		ds.readline(line);
+		line = ds.readLine();
 
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
@@ -158,7 +158,7 @@ void MusicFlex::loadSongInfo() {
 	// Read 'Section2', or more like skip it, since it's only trans.xmi
 	// Read first section till we hit a #
 	for (;;) {
-		ds.readline(line);
+		line = ds.readLine();
 
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
@@ -166,7 +166,7 @@ void MusicFlex::loadSongInfo() {
 
 	// Skip 'Section3'
 	for (;;) {
-		ds.readline(line);
+		line = ds.readLine();
 
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
@@ -174,7 +174,7 @@ void MusicFlex::loadSongInfo() {
 
 	// Read 'Section4' (trans _info)
 	for (;;) {
-		ds.readline(line);
+		line = ds.readLine();
 
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;

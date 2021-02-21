@@ -58,18 +58,6 @@ public:
 		else if (num_bytes == 3) return (((static_cast<int32>(readUint24LE())) << 8) >> 8);
 		else return static_cast<int32>(readUint32LE());
 	}
-
-	void readline(Std::string &str) {
-		str.clear();
-		while (!eos()) {
-			char character =  static_cast<char>(readByte());
-
-			if (character == '\r') continue;    // Skip cr
-			else if (character == '\n') break;  // break on line feed
-
-			str += character;
-		}
-	}
 };
 
 class IBufferDataSource : public IDataSource {
@@ -85,20 +73,6 @@ public:
 		assert(!is_text);
 		assert(data != nullptr || len == 0);
 		_buf = _bufPtr = static_cast<const uint8 *>(data);
-	}
-
-	virtual void load(const void *data, unsigned int len, bool is_text = false,
-	                  bool delete_data = false) {
-		assert(!is_text);
-		if (_freeBuffer && _buf)
-			delete[] const_cast<uint8 *>(_buf);
-		_freeBuffer = false;
-		_buf = _bufPtr = nullptr;
-
-		assert(data != nullptr || len == 0);
-		_buf = _bufPtr = static_cast<const uint8 *>(data);
-		_size = len;
-		_freeBuffer = delete_data;
 	}
 
 	~IBufferDataSource() override {

@@ -52,9 +52,9 @@ public:
 	//! get size of object
 	virtual uint32 get_size(uint32 index);
 
-	//! return object as IDataSource. Delete the IDataSource afterwards,
+	//! return object as SeekableReadStream. Delete the SeekableReadStream afterwards,
 	//! but DON'T delete/modify the buffer it points to.
-	virtual IDataSource *get_datasource(uint32 index);
+	virtual Common::SeekableReadStream *get_datasource(uint32 index);
 
 protected:
 	Std::vector<uint8 *> _objects;

@@ -1192,7 +1192,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	_mouse->paint();
 	_screen->EndPainting();
 
-	IDataSource *ds;
+	Common::SeekableReadStream *ds;
 	GameInfo saveinfo;
 	ds = sg->getDataSource("GAME");
 	uint32 version = sg->getVersion();

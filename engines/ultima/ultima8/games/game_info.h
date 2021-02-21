@@ -72,7 +72,7 @@ struct GameInfo {
 	bool match(GameInfo &other, bool ignoreMD5 = false) const;
 
 	void save(Common::WriteStream *ws);
-	bool load(IDataSource *ids, uint32 /* version */);
+	bool load(Common::SeekableReadStream *rs, uint32 /* version */);
 };
 
 } // End of namespace Ultima8

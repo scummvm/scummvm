@@ -73,7 +73,7 @@ SavegameReader::State SavegameReader::isValid() const {
 		return SAVE_VALID;
 }
 
-IDataSource *SavegameReader::getDataSource(const Std::string &name) {
+Common::SeekableReadStream *SavegameReader::getDataSource(const Std::string &name) {
 	assert(_index.contains(name));
 
 	const FileEntry &fe = _index[name];
@@ -81,7 +81,7 @@ IDataSource *SavegameReader::getDataSource(const Std::string &name) {
 	_file->seek(fe._offset);
 	_file->read(data, fe._size);
 
-	return new IBufferDataSource(data, fe._size, false, true);
+	return new Common::MemoryReadStream(data, fe._size, DisposeAfterUse::YES);
 }
 
 
