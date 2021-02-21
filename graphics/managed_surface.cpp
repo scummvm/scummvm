@@ -251,8 +251,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 	uint destPixel;
 	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest = 0, gDest = 0, bDest = 0;
-	double alpha;
+	byte aDest = 0, rDest = 0, gDest = 0, bDest = 0;
 
 	if (!srcRect.isValidRect())
 		return;
@@ -272,68 +271,82 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		const byte *srcP = (const byte *)src.getBasePtr(srcRect.left, scaleYCtr / SCALE_THRESHOLD + srcRect.top);
 		byte *destP = (byte *)getBasePtr(destRect.left, destY);
 
-		if (src.format == format && noScale) {
-			// Matching surface formats, so we can do a straight copy
+		// For paletted format, assume the palette is the same and there is no transparency.
+		// We can thus do a straight copy of the pixels.
+		if (format.bytesPerPixel == 1 && noScale) {
 			Common::copy(srcP, srcP + srcRect.width() * format.bytesPerPixel, destP);
-		} else {
-			// Loop through drawing the pixels of the row
-			for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; destX < destRect.right; ++destX, ++xCtr, scaleXCtr += scaleX) {
-				if (destX < 0 || destX >= w)
-					continue;
+			continue;
+		}
 
-				const byte *srcVal = &srcP[scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel];
-				byte *destVal = &destP[xCtr * format.bytesPerPixel];
-				if (src.format == format) {
-					if (format.bytesPerPixel == 1)
-						*destVal = *srcVal;
-					else if (format.bytesPerPixel == 2)
-						*(uint16 *)destVal = *(const uint16*)srcVal;
-					else
-						*(uint32 *)destVal = *(const uint32*)srcVal;
-					continue;
-				}
+		// Loop through drawing the pixels of the row
+		for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; destX < destRect.right; ++destX, ++xCtr, scaleXCtr += scaleX) {
+			if (destX < 0 || destX >= w)
+				continue;
 
-				if (src.format.bytesPerPixel == 1) {
-					assert(srcPalette != nullptr);	// Catch the cases when palette is missing
-					// Get the palette color
-					const uint32 col = srcPalette[*srcVal];
-					rSrc = col & 0xff;
-					gSrc = (col >> 8) & 0xff;
-					bSrc = (col >> 16) & 0xff;
-					aSrc = (col >> 24) & 0xff;
+			const byte *srcVal = &srcP[scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel];
+			byte *destVal = &destP[xCtr * format.bytesPerPixel];
+			if (format.bytesPerPixel == 1) {
+				*destVal = *srcVal;
+				continue;
+			}
+
+			if (src.format.bytesPerPixel == 1) {
+				assert(srcPalette != nullptr);	// Catch the cases when palette is missing
+				// Get the palette color
+				const uint32 col = srcPalette[*srcVal];
+				rSrc = col & 0xff;
+				gSrc = (col >> 8) & 0xff;
+				bSrc = (col >> 16) & 0xff;
+				aSrc = (col >> 24) & 0xff;
+			} else {
+				// Use the src's pixel format to split up the source pixel
+				src.format.colorToARGB(src.format.bytesPerPixel == 2
+					? *(const uint16 *)srcVal : *(const uint32 *)srcVal,
+					aSrc, rSrc, gSrc, bSrc);
+			}
+
+			if (aSrc == 0) {
+				// Completely transparent, so skip
+				continue;
+			} else if (aSrc == 0xff) {
+				// Completely opaque, so copy RGB values over
+				aDest = aSrc;
+				rDest = rSrc;
+				gDest = gSrc;
+				bDest = bSrc;
+			} else {
+				// Partially transparent, so calculate new pixel colors
+				if (format.bytesPerPixel == 2) {
+					uint32 destColor = *(uint16 *)destVal;
+					format.colorToARGB(destColor, aDest, rDest, gDest, bDest);
+				} else if (format.bytesPerPixel == 4) {
+					uint32 destColor = *(uint32 *)destVal;
+					format.colorToARGB(destColor, aDest, rDest, gDest, bDest);
 				} else {
-					// Use the src's pixel format to split up the source pixel
-					src.format.colorToARGB(src.format.bytesPerPixel == 2
-						? *(const uint16 *)srcVal : *(const uint32 *)srcVal,
-						aSrc, rSrc, gSrc, bSrc);
+					aDest = 0xFF;
+					rDest = destVal[0];
+					gDest = destVal[1];
+					bDest = destVal[2];
 				}
 
-				if (aSrc == 0) {
-					// Completely transparent, so skip
-					continue;
-				} else if (aSrc == 0xff) {
-					// Completely opaque, so copy RGB values over
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-				} else {
-					// Partially transparent, so calculate new pixel colors
-					alpha = (double)aSrc / 255.0;
-					rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
-					gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
-					bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
-				}
+				double sAlpha = (double)aSrc / 255.0;
+				double dAlpha = (double)aDest / 255.0;
+				dAlpha *= (1.0 - sAlpha);
+				rDest = static_cast<uint8>((rSrc * sAlpha + rDest * dAlpha) / (sAlpha + dAlpha));
+				gDest = static_cast<uint8>((gSrc * sAlpha + gDest * dAlpha) / (sAlpha + dAlpha));
+				bDest = static_cast<uint8>((bSrc * sAlpha + bDest * dAlpha) / (sAlpha + dAlpha));
+				aDest = static_cast<uint8>(255. * (sAlpha + dAlpha));
+			}
 
-				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
-				if (format.bytesPerPixel == 2)
-					*(uint16 *)destVal = destPixel;
-				else if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = destPixel;
-				else {
-					destVal[0] = rDest;
-					destVal[1] = gDest;
-					destVal[2] = bDest;
-				}
+			destPixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			if (format.bytesPerPixel == 2)
+				*(uint16 *)destVal = destPixel;
+			else if (format.bytesPerPixel == 4)
+				*(uint32 *)destVal = destPixel;
+			else {
+				destVal[0] = rDest;
+				destVal[1] = gDest;
+				destVal[2] = bDest;
 			}
 		}
 	}
@@ -471,13 +484,11 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 		srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
 	}
 
-	byte rDest, gDest, bDest;
-	destFormat.colorToRGB(destVal, rDest, gDest, bDest);
-
 	if (srcAlpha != 0xff) {
 		aSrc = aSrc * srcAlpha / 255;
 	}
 
+	byte aDest, rDest, gDest, bDest;
 	if (aSrc == 0) {
 		// Completely transparent, so skip
 		return;
@@ -486,15 +497,20 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 		rDest = rSrc;
 		gDest = gSrc;
 		bDest = bSrc;
+		aDest = 0xff;
 	} else {
 		// Partially transparent, so calculate new pixel colors
-		double alpha = (double)aSrc / 255.0;
-		rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
-		gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
-		bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
+		destFormat.colorToARGB(destVal, aDest, rDest, gDest, bDest);
+		double sAlpha = (double)aSrc / 255.0;
+		double dAlpha = (double)aDest / 255.0;
+		dAlpha *= (1.0 - sAlpha);
+		rDest = static_cast<uint8>((rSrc * sAlpha + rDest * dAlpha) / (sAlpha + dAlpha));
+		gDest = static_cast<uint8>((gSrc * sAlpha + gDest * dAlpha) / (sAlpha + dAlpha));
+		bDest = static_cast<uint8>((bSrc * sAlpha + bDest * dAlpha) / (sAlpha + dAlpha));
+		aDest = static_cast<uint8>(255. * (sAlpha + dAlpha));
 	}
 
-	destVal = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
+	destVal = destFormat.ARGBToColor(aDest, rDest, gDest, bDest);
 }
 
 template<>
@@ -642,18 +658,9 @@ void ManagedSurface::addDirtyRect(const Common::Rect &r) {
 	}
 }
 
-uint32 ManagedSurface::addAlphaToColor(uint32 color) {
-	if (format.aBits() == 0)
-		return color;
-
-	byte r, g, b;
-	format.colorToRGB(color, r, g, b);
-	return format.ARGBToColor(0xff, r, g, b);
-}
-
 void ManagedSurface::clear(uint color) {
 	if (!empty())
-		fillRect(getBounds(), addAlphaToColor(color));
+		fillRect(getBounds(), color);
 }
 
 void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
