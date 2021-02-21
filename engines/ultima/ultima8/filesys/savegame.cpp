@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -128,8 +127,8 @@ bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint3
 	return true;
 }
 
-bool SavegameWriter::writeFile(const Std::string &name, OAutoBufferDataSource *ods) {
-	return writeFile(name, ods->getData(), ods->size());
+bool SavegameWriter::writeFile(const Std::string &name, Common::MemoryWriteStreamDynamic *buf) {
+	return writeFile(name, buf->getData(), buf->pos());
 }
 
 } // End of namespace Ultima8

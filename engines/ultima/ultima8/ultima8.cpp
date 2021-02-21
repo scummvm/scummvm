@@ -941,53 +941,51 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	_saveCount++;
 
 	SavegameWriter *sgw = new SavegameWriter(stream);
-
-	// We'll make it 2KB initially
-	OAutoBufferDataSource buf(2048);
+	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
 
 	_gameInfo->save(&buf);
 	sgw->writeFile("GAME", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	writeSaveInfo(&buf);
 	sgw->writeFile("INFO", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_kernel->save(&buf);
 	sgw->writeFile("KERNEL", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_objectManager->save(&buf);
 	sgw->writeFile("OBJECTS", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_world->save(&buf);
 	sgw->writeFile("WORLD", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_world->saveMaps(&buf);
 	sgw->writeFile("MAPS", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_world->getCurrentMap()->save(&buf);
 	sgw->writeFile("CURRENTMAP", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_ucMachine->saveStrings(&buf);
 	sgw->writeFile("UCSTRINGS", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_ucMachine->saveGlobals(&buf);
 	sgw->writeFile("UCGLOBALS", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	_ucMachine->saveLists(&buf);
 	sgw->writeFile("UCLISTS", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	save(&buf);
 	sgw->writeFile("APP", &buf);
-	buf.clear();
+	buf.seek(0);
 
 	sgw->finish();
 

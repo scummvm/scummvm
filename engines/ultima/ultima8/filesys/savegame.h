@@ -26,6 +26,7 @@
 #include "ultima/shared/std/string.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "engines/metaengine.h"
 
 namespace Ultima {
@@ -33,7 +34,6 @@ namespace Ultima8 {
 
 class ZipFile;
 class IDataSource;
-class OAutoBufferDataSource;
 
 class SavegameReader {
 	struct FileEntry {
@@ -82,10 +82,10 @@ public:
 	//! \param size (in bytes) of data
 	bool writeFile(const Std::string &name, const uint8 *data, uint32 size);
 
-	//! write a file to the savegame from an OAutoBufferDataSource
+	//! write a file to the savegame from an memory stream
 	//! \param name name of the file
-	//! \param buf the OBufferDataSource to save
-	bool writeFile(const Std::string &name, OAutoBufferDataSource *buf);
+	//! \param buf the MemoryWriteStreamDynamic to save
+	bool writeFile(const Std::string &name, Common::MemoryWriteStreamDynamic *buf);
 
 	//! finish savegame
 	bool finish();

@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "ultima/ultima8/convert/convert_shape.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
@@ -220,7 +221,7 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 }
 
 void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeFormat *csf, const uint8 special[256], ConvertShapeFrame *prev) {
-	static OAutoBufferDataSource *rlebuf = nullptr;
+	Common::MemoryWriteStreamDynamic rlebuf(DisposeAfterUse::YES);
 	uint8 outbuf[512];
 
 	// Read unknown
@@ -235,11 +236,8 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 
 	_line_offsets = new uint32 [_height];
 
-	if (!rlebuf) rlebuf = new OAutoBufferDataSource(1024);
-	rlebuf->clear();
-
 	for(int32 y = 0; y < _height; ++y) {
-		_line_offsets[y] = rlebuf->pos();
+		_line_offsets[y] = rlebuf.pos();
 
 		int32 xpos = 0;
 
@@ -252,7 +250,7 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 				skip = _width-(xpos-skip);
 			}
 
-			rlebuf->writeByte(skip);
+			rlebuf.writeByte(skip);
 
 			if (xpos >= _width) break;
 
@@ -262,8 +260,8 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 			// Is this required???? It seems hacky and pointless
 			if (dlen == 0 || dlen == 1) {
 				source->seek(-1, SEEK_CUR);
-				rlebuf->seek(-1, SEEK_CUR);
-				rlebuf->writeByte(skip + (_width - xpos));
+				rlebuf.seek(-1, SEEK_CUR);
+				rlebuf.writeByte(skip + (_width - xpos));
 				break;
 			}
 
@@ -305,20 +303,20 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 					perr << "Error! Corrupt Frame. RLE dlen too large" << Std::endl;
 				}
 
-				rlebuf->writeByte((dlen+extra) << _compression);
-				rlebuf->write(outbuf,dlen+extra);
+				rlebuf.writeByte((dlen+extra) << _compression);
+				rlebuf.write(outbuf,dlen+extra);
 			} else {
-				rlebuf->writeByte((dlen << 1) | 1);
-				rlebuf->writeByte(source->readByte());
+				rlebuf.writeByte((dlen << 1) | 1);
+				rlebuf.writeByte(source->readByte());
 				xpos+=dlen;
 			}
 
 		} while (xpos < _width);
 	}
 
-	_bytes_rle = rlebuf->pos();
+	_bytes_rle = rlebuf.pos();
 	_rle_data = new uint8[_bytes_rle];
-	memcpy (_rle_data, rlebuf->getData(), _bytes_rle);
+	memcpy (_rle_data, rlebuf.getData(), _bytes_rle);
 }
 
 void ConvertShapeFrame::GetPixels(uint8 *buf, int32 count, int32 x, int32 y) {
