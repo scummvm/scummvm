@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-15 11:47+0000\n"
+"PO-Revision-Date: 2021-02-21 12:29+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3912,16 +3912,12 @@ msgstr ""
 "potrebbero avere un suono non corretto."
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "Lingua interfaccia:"
+msgstr "Lingua gioco:"
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib è utilizzato per la musica in molti giochi"
+msgstr "Lingua da utilizzare nei giochi multilingua"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
