@@ -156,9 +156,6 @@ bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName,
 
 		_archiveList.push_front(new ArchiveEntry(folderArchive, mountPosition));
 
-		_extractedFiles = true;
-		_directoryName = directoryName;
-
 		return true;
 	}
 }

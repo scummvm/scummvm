@@ -109,7 +109,9 @@ Common::Error Sword25Engine::appStart() {
 	// Load packages
 	PackageManager *packageManagerPtr = Kernel::getInstance()->getPackage();
 	if (getGameFlags() & GF_EXTRACTED) {
-		if (!packageManagerPtr->loadDirectoryAsPackage(ConfMan.get("path"), "/"))
+		Common::String gameDirectory = ConfMan.get("path");
+		packageManagerPtr->setRunWithExtractedFiles(gameDirectory);
+		if (!packageManagerPtr->loadDirectoryAsPackage(gameDirectory, "/"))
 			return Common::kUnknownError;
 	} else {
 		if (!loadPackages())

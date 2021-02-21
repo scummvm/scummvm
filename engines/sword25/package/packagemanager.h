@@ -105,6 +105,15 @@ public:
 	};
 
 	/**
+	 *
+	 * Set the PackageManager to run on extracted game files.s
+	 */
+	void setRunWithExtractedFiles(const Common::String &directoryName) {
+		_extractedFiles = true;
+		_directoryName = directoryName;
+	}
+
+	/**
 	 * Mounts the contents of a package in the directory specified in the directory tree.
 	 * @param FileName      The filename of the package to mount
 	 * @param MountPosition The directory name under which the package should be mounted
