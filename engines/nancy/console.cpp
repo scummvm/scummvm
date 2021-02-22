@@ -27,6 +27,8 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/input.h"
+#include "engines/nancy/graphics.h"
 
 #include "common/system.h"
 #include "common/events.h"
@@ -67,8 +69,9 @@ void NancyConsole::postEnter() {
 			while (!_vm->shouldQuit() && !dec->endOfVideo()) {
 				Common::Event event;
 				if (ev->pollEvent(event)) {
-					if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
+					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == Nancy::InputManager::kNancyActionLeftClick) {
 						break;
+					}
 				}
 
 				if (dec->needsUpdate()) {
@@ -78,13 +81,48 @@ void NancyConsole::postEnter() {
 						_vm->_system->updateScreen();
 					}
 				}
+
 				_vm->_system->delayMillis(10);
 			}
-		} else
+
+			_vm->graphicsManager->redrawAll();
+		} else {
 			debugPrintf("Failed to load '%s'\n", _videoFile.c_str());
+		}
 
 		_videoFile.clear();
 		delete dec;
+	}
+
+	if (!_imageFile.empty()) {
+		Graphics::Surface surf;
+		if (_vm->_res->loadImage(_imageCifTree, _imageFile, surf)) {
+			_vm->_system->fillScreen(0);
+			_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
+			_vm->_system->updateScreen();
+			surf.free();
+
+			Common::EventManager *ev = g_system->getEventManager();
+			while (!_vm->shouldQuit()) {
+				Common::Event event;
+				if (ev->pollEvent(event)) {
+					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == Nancy::InputManager::kNancyActionLeftClick) {
+						break;
+					}
+
+					_vm->_system->updateScreen();
+				}
+
+				_vm->_system->delayMillis(10);
+			}
+			
+			_vm->graphicsManager->redrawAll();
+		} else {
+			debugPrintf("Failed to load image '%s'\n", _imageFile.c_str());
+		}
+		
+		_imageFile.clear();
+		_imageCifTree.clear();
 	}
 }
 
@@ -220,17 +258,9 @@ bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
 		return true;
 	}
 
-	Graphics::Surface surf;
-	if (_vm->_res->loadImage((argc == 2 ? "ciftree" : argv[2]), argv[1], surf)) {
-		_vm->_system->fillScreen(0);
-		_vm->_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
-		surf.free();
-		_vm->_gameFlow.minGameState = NancyEngine::kIdle;
-		return cmdExit(0, 0);
-	} else {
-		debugPrintf("Failed to load image\n");
-		return true;
-	}
+	_imageFile = argv[1];
+	_imageCifTree = argc == 2 ? "ciftree" : argv[2];
+	return cmdExit(0, 0);
 }
 
 bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {

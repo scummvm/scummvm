@@ -117,6 +117,12 @@ void GraphicsManager::clearObjects() {
     _objects.clear();
 }
 
+void GraphicsManager::redrawAll() {
+    for (auto &obj : _objects) {
+        obj->_needsRedraw = true;
+    }
+}
+
 void GraphicsManager::loadFonts() {
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("FONT");
     
