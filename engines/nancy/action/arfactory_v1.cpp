@@ -27,6 +27,7 @@
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/staticbitmapanim.h"
 #include "engines/nancy/action/orderingpuzzle.h"
+#include "engines/nancy/action/rotatinglockpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -114,7 +115,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x67:
             return new DifficultyLevel();
         case 0x68:
-            return new RotatingLockPuzzle();
+            return new RotatingLockPuzzle(_engine->scene->getViewport());
         case 0x69:
             return new LeverPuzzle();
         case 0x6A:

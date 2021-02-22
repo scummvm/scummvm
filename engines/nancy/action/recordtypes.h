@@ -312,11 +312,6 @@ public:
     FlagDesc flag;
 };
 
-class RotatingLockPuzzle : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class ShowInventoryItem : public ActionRecord, public RenderObject {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;

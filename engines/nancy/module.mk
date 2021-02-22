@@ -6,6 +6,7 @@ MODULE_OBJS = \
   action/orderingpuzzle.o \
   action/primaryvideo.o \
   action/recordtypes.o \
+  action/rotatinglockpuzzle.o \
   action/secondaryvideo.o \
   action/staticbitmapanim.o \
   ui/frame.o \

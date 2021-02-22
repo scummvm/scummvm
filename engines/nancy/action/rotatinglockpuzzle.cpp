@@ -20,73 +20,74 @@
  *
  */
 
-#include "engines/nancy/action/orderingpuzzle.h"
+#include "engines/nancy/action/rotatinglockpuzzle.h"
 
 #include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/state/scene.h"
-#include "engines/nancy/ui/viewport.h"
-#include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
-#include "engines/nancy/input.h"
-#include "engines/nancy/cursor.h"
+#include "engines/nancy/graphics.h"
+#include "engines/nancy/state/scene.h"
 
-#include "graphics/surface.h"
+#include "common/random.h"
 
 namespace Nancy {
 namespace Action {
 
-void OrderingPuzzle::init() {
-    // Screen position is initialized in readData and fits exactly the bounds of all elements on screen.
-    // This is a hacky way to make this particular action record work with this implementation's graphics manager
+void RotatingLockPuzzle::init() {
     _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
-    clearAllElements();
+    _drawSurface.clear(GraphicsManager::transColor);
 
     Graphics::Surface surf;
     _engine->_res->loadImage("ciftree", imageName, surf);
     image.create(surf.w, surf.h, surf.format);
     image.blitFrom(surf);
     surf.free();
-
-    setVisible(false);
-
-    RenderObject::init();
 }
 
-uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
+uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
-
     stream.read(buf, 10);
     imageName = buf;
-    uint16 numElements = stream.readUint16LE();
 
-    for (uint i = 0; i < numElements; ++i) {
+    uint numDials = stream.readUint16LE();
+
+    for (uint i = 0; i < 10; ++i) {
         srcRects.push_back(Common::Rect());
         readRect(stream, srcRects.back());
     }
-    
-    stream.skip(16 * (15 - numElements));
 
-    for (uint i = 0; i < numElements; ++i) {
+    for (uint i = 0; i < numDials; ++i) {
         destRects.push_back(Common::Rect());
         readRect(stream, destRects.back());
 
         if (i == 0) {
-            _screenPosition = destRects[i];
+            _screenPosition = destRects.back();
         } else {
-            _screenPosition.extend(destRects[i]);
+            _screenPosition.extend(destRects.back());
         }
-
-        drawnElements.push_back(false);
     }
 
-    stream.skip(16 * (15 - numElements));
+    stream.skip((8 - numDials) * 16);
 
-    sequenceLength = stream.readUint16LE();
+    for (uint i = 0; i < numDials; ++i) {
+        upHotspots.push_back(Common::Rect());
+        readRect(stream, upHotspots.back());
+    }
 
-    for (uint i = 0; i < 15; ++i) {
+    stream.skip((8 - numDials) * 16);
+
+    for (uint i = 0; i < numDials; ++i) {
+        downHotspots.push_back(Common::Rect());
+        readRect(stream, downHotspots.back());
+    }
+
+    stream.skip((8 - numDials) * 16);
+
+    for (uint i = 0; i < numDials; ++i) {
         correctSequence.push_back(stream.readByte());
     }
+
+    stream.skip(8 - numDials);
 
     clickSound.read(stream, SoundManager::SoundDescription::kNormal);
     solveExitScene.readData(stream);
@@ -101,14 +102,20 @@ uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
 
-    return 0x26D;
+    return 0x2A4;
 }
 
-void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
+void RotatingLockPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
         case kBegin:
             init();
             registerGraphics();
+
+            for (uint i = 0; i < correctSequence.size(); ++i) {
+                currentSequence.push_back(_engine->_rnd->getRandomNumber(9));
+                drawDial(i);
+            }
+
             _engine->sound->loadSound(clickSound);
             _engine->sound->loadSound(solveSound);
             state = kRun;
@@ -116,12 +123,8 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
         case kRun:
             switch (solveState) {
                 case kNotSolved:
-                    if (clickedSequence.size() != sequenceLength) {
-                        return;
-                    }
-
-                    for (uint i = 0; i < sequenceLength; ++i) {
-                        if (clickedSequence[i] != (int16)correctSequence[i]) {
+                    for (uint i = 0; i < correctSequence.size(); ++i) {
+                        if (currentSequence[i] != (int16)correctSequence[i]) {
                             return;
                         }
                     }
@@ -165,7 +168,7 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
     }
 }
 
-void OrderingPuzzle::handleInput(NancyInput &input) {
+void RotatingLockPuzzle::handleInput(NancyInput &input) {
     if (solveState != kNotSolved) {
         return;
     }
@@ -179,57 +182,42 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
         return;
     }
 
-    for (int i = 0; i < (int)destRects.size(); ++i) {
-        if (_engine->scene->getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
+    for (uint i = 0; i < upHotspots.size(); ++i) {
+        if (_engine->scene->getViewport().convertViewportToScreen(upHotspots[i]).contains(input.mousePos)) {
             _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 _engine->sound->playSound(clickSound.channelID);
                 
-                for (uint j = 0; j < clickedSequence.size(); ++j) {
-                    if (clickedSequence[j] == i && drawnElements[i] == true) {
-                        undrawElement(i);
-                        if (clickedSequence.back() == i) {
-                            clickedSequence.pop_back();
-                        }
-                        return;
-                    }
-                }
+                currentSequence[i] = ++currentSequence[i] > 9 ? 0 : currentSequence[i];
+                drawDial(i);
+            }
+            return;
+        }
+    }
 
-                clickedSequence.push_back(i);
+    for (uint i = 0; i < downHotspots.size(); ++i) {
+        if (_engine->scene->getViewport().convertViewportToScreen(downHotspots[i]).contains(input.mousePos)) {
+            _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
-                if (clickedSequence.size() > (uint)sequenceLength + 1) {
-                    clearAllElements();
-                } else {
-                    drawElement(i);
-                }
+            if (input.input & NancyInput::kLeftMouseButtonUp) {
+                _engine->sound->playSound(clickSound.channelID);
+
+                int8 n = currentSequence[i];
+                n = --n < 0 ? 9 : n;
+                currentSequence[i] = n;
+                drawDial(i);
             }
             return;
         }
     }
 }
 
-void OrderingPuzzle::drawElement(uint id) {
-    drawnElements[id] = true;
+void RotatingLockPuzzle::drawDial(uint id) {
     Common::Point destPoint(destRects[id].left - _screenPosition.left, destRects[id].top - _screenPosition.top);
-    _drawSurface.blitFrom(image, srcRects[id], destPoint);
-    setVisible(true);
-}
+    _drawSurface.blitFrom(image, srcRects[currentSequence[id]], destPoint);
 
-void OrderingPuzzle::undrawElement(uint id) {
-    drawnElements[id] = false;
-    Common::Rect bounds = destRects[id];
-    bounds.translate(-_screenPosition.left, -_screenPosition.top);
-
-    _drawSurface.fillRect(bounds, GraphicsManager::transColor);
     _needsRedraw = true;
-}
-
-void OrderingPuzzle::clearAllElements() {
-    _drawSurface.clear(_engine->graphicsManager->transColor);
-    setVisible(false);
-    clickedSequence.clear();
-    return;
 }
 
 } // End of namespace Action
