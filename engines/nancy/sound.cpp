@@ -181,6 +181,7 @@ void SoundManager::SoundDescription::read(Common::SeekableReadStream &stream, Ty
 
 	stream.read(buf, 10);
 	name = buf;
+
 	if (type == SoundDescription::kScene) {
 		stream.skip(4);
 	}
@@ -222,7 +223,7 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
-uint16 SoundManager::loadSound(const SoundDescription &description) {
+void SoundManager::loadSound(const SoundDescription &description) {
 	if (_mixer->isSoundHandleActive(_channels[description.channelID].handle)) {
 		_mixer->stopHandle(_channels[description.channelID].handle);
 	}
@@ -234,16 +235,18 @@ uint16 SoundManager::loadSound(const SoundDescription &description) {
 	_channels[description.channelID].numLoops = description.numLoops;
 	_channels[description.channelID].volume = description.volume;
 
+	if (description.name == "NO SOUND") {
+		return;
+	}
+
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + ".his");
 	if (file) {
 		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES);
 	}
-
-	return description.channelID;
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID > 32 || _channels[channelID].stream == 0)
+	if (channelID > 32 || _channels[channelID].stream == 0 || _channels->name == "NO SOUND")
 		return;
 
 	_channels[channelID].stream->seek(0);

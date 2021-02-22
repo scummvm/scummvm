@@ -58,7 +58,7 @@ public:
     ~SoundManager();
 
     // Load a sound into a channel without starting it
-    uint16 loadSound(const SoundDescription &description);
+    void loadSound(const SoundDescription &description);
 
     void playSound(uint16 channelID);
     void pauseSound(uint16 channelID, bool pause);

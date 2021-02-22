@@ -278,9 +278,7 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         case kBegin:
             init();
             registerGraphics();
-            if (sound.name != "NO SOUND") {
-                engine->sound->loadSound(sound);
-            }
+            engine->sound->loadSound(sound);
             state = kRun;
             // fall through
         case kRun: {
@@ -300,12 +298,7 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
 
                 if (activeFrame != -1) {
                     _screenPosition = videoDescs[activeFrame].destRect;
-
-                    // Start sound if any
-                    if (sound.name != "NO SOUND") {
-                        engine->sound->playSound(sound.channelID);
-                    }
-
+                    engine->sound->playSound(sound.channelID);
                     setVisible(true);
                 } else {
                     setVisible(false);
