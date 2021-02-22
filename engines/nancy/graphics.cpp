@@ -43,6 +43,7 @@ void GraphicsManager::init() {
     _engine->_res->loadImage("ciftree", "OBJECT0", surf);
     object0.create(surf.w, surf.h, surf.format);
     object0.blitFrom(surf, Common::Point(0, 0));
+    surf.free();
 
     Common::SeekableReadStream *fontChunk = _engine->getBootChunkStream("FONT");
     while(fontChunk->pos() != fontChunk->size()) {
