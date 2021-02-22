@@ -772,8 +772,7 @@ void drawCharacter(uint8 flag) {
 					pa2 /= t;
 
 					tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / PI2;
-					tz = (tz > 180) ? 180 : tz;
-					tz = (tz < 0) ? 0 : tz;
+					tz = CLIP(tz, 0.f, 180.f);
 
 					// tx falloff
 					// ty hospot
@@ -826,8 +825,7 @@ void drawCharacter(uint8 flag) {
 					pa2 = _vertex->_nz;
 
 					lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
-					lint = (lint > 180) ? 180 : lint;
-					lint = (lint < 0) ? 0 : lint;
+					lint = CLIP(lint, 0, 180);
 
 					_vVertex[a]._angle -= (180 - lint);
 					_vertex++;
@@ -875,13 +873,13 @@ void drawCharacter(uint8 flag) {
 			_vVertex[a]._y = (short)_y2d;
 			_vVertex[a]._z = (short)((dist - l2) * 128.0);
 
-			_actor._lim[0] = (_x2d < _actor._lim[0]) ? _x2d : _actor._lim[0];
-			_actor._lim[1] = (_x2d > _actor._lim[1]) ? _x2d : _actor._lim[1];
-			_actor._lim[2] = (_y2d < _actor._lim[2]) ? _y2d : _actor._lim[2];
-			_actor._lim[3] = (_y2d > _actor._lim[3]) ? _y2d : _actor._lim[3];
+			_actor._lim[0] = MIN(_x2d, _actor._lim[0]);
+			_actor._lim[1] = MAX(_x2d, _actor._lim[1]);
+			_actor._lim[2] = MIN(_y2d, _actor._lim[2]);
+			_actor._lim[3] = MAX(_y2d, _actor._lim[3]);
 
-			_actor._lim[4] = (_vVertex[a]._z < _actor._lim[4]) ? _vVertex[a]._z : _actor._lim[4];
-			_actor._lim[5] = (_vVertex[a]._z > _actor._lim[5]) ? _vVertex[a]._z : _actor._lim[5];
+			_actor._lim[4] = MIN(_vVertex[a]._z, _actor._lim[4]);
+			_actor._lim[5] = MAX(_vVertex[a]._z, _actor._lim[5]);
 
 			_vertex++;
 		}

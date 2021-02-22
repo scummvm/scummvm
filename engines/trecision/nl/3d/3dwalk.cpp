@@ -1605,10 +1605,10 @@ int intersectLinePanel(struct SPan *p, float x, float y, float z) {
 		_y3d = y1 + dy * t;
 		_z3d = z1 + dz * t;
 
-		float minx = (p->_x1 < p->_x2) ? p->_x1 - 1.5 : p->_x2 - 1.5;
-		float maxx = (p->_x1 > p->_x2) ? p->_x1 + 1.5 : p->_x2 + 1.5;
-		float minz = (p->_z1 < p->_z2) ? p->_z1 - 1.5 : p->_z2 - 1.5;
-		float maxz = (p->_z1 > p->_z2) ? p->_z1 + 1.5 : p->_z2 + 1.5;
+		float minx = MIN(p->_x1, p->_x2) - 1.5;
+		float maxx = MAX(p->_x1, p->_x2) + 1.5;
+		float minz = MIN(p->_z1, p->_z2) - 1.5;
+		float maxz = MAX(p->_z1, p->_z2) + 1.5;
 
 		// check if it fits inside the panel
 		if ((_x3d >= minx) && (_x3d <= maxx) && (_y3d >= 0.0) && (_y3d <= p->_h) && (_z3d >= minz) && (_z3d <= maxz))
