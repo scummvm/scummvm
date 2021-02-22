@@ -115,7 +115,7 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
         setHeldItem(id);
     }
 
-    _inventoryBox.removeItem(id, pickUp);
+    _inventoryBox.removeItem(id);
 }
 
 void Scene::registerGraphics() {

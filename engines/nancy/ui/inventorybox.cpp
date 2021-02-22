@@ -89,6 +89,14 @@ void InventoryBox::init() {
     _shades.init();
 }
 
+void InventoryBox::updateGraphics() {
+    if (_scrollbarPos != _scrollbar.getPos()) {
+        _scrollbarPos = _scrollbar.getPos();
+
+        onScrollbarMove();
+    }
+}
+
 void InventoryBox::registerGraphics() {
     RenderObject::registerGraphics();
     _scrollbar.registerGraphics();
@@ -96,7 +104,9 @@ void InventoryBox::registerGraphics() {
 }
 
 void InventoryBox::handleInput(NancyInput &input) {
-    _scrollbar.handleInput(input);
+    if (_order.size()) {
+        _scrollbar.handleInput(input);
+    }
     
     for (uint i = 0; i < 4; ++i) {
         if (_itemHotspots[i].hotspot.contains(input.mousePos)) {
@@ -129,7 +139,7 @@ void InventoryBox::addItem(uint itemID) {
     onReorder();
 }
 
-void InventoryBox::removeItem(uint itemID, bool hold) {
+void InventoryBox::removeItem(uint itemID) {
     for (auto &i : _order) {
         if (i == itemID) {
             if (_order.size() == 1) {
@@ -144,6 +154,8 @@ void InventoryBox::removeItem(uint itemID, bool hold) {
 }
 
 void InventoryBox::onReorder() {
+    onScrollbarMove();
+
     _fullInventorySurface.clear();
     for (uint i = 0; i < _order.size(); ++i) {
         Common::Rect dest;
@@ -154,15 +166,7 @@ void InventoryBox::onReorder() {
 
         _fullInventorySurface.blitFrom(_iconsSurface, _itemDescriptions[_order[i]].sourceRect, destPoint);
     }
-    
-    // Scroll one page up if current on becomes empty
-    uint curPage = _drawSurface.getOffsetFromOwner().y / _screenPosition.height();
-    if (_order.size() < curPage * 4) {
-        --curPage;
-        onScrollbarMove();
-    }
 
-    setHotspots(curPage);
 
     _needsRedraw = true;
 }
@@ -180,9 +184,9 @@ void InventoryBox::setHotspots(uint pageNr) {
 void InventoryBox::onScrollbarMove() {
     float scrollPos = _scrollbar.getPos();
 
-    uint numPages = _order.size() / 4 + 1;
+    float numPages = (_order.size() - 1) / 4 + 1;
     float pageFrac = 1 / numPages;
-    uint curPage = scrollPos / pageFrac;
+    uint curPage = MIN<uint>(scrollPos / pageFrac, numPages - 1);
 
     Common::Rect sourceRect = _screenPosition;
     sourceRect.moveTo(0, curPage * sourceRect.height());
