@@ -1574,22 +1574,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex);
 	}
 
-	if (setup.tests) {
-		// Create the main project file.
-		in.clear();
-		ex.clear();
-		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex);
-
-		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
-	} else if (!setup.devTools) {
+	if (!setup.devTools) {
 		// Last but not least create the main project file.
 		in.clear();
 		ex.clear();
@@ -1606,21 +1591,27 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex);
+		if (setup.tests) {
+			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex);
+		} else {
+			// Resource files
+			addResourceFiles(setup, in, ex);
 
-		// Resource files
-		addResourceFiles(setup, in, ex);
-
-		// Various text files
-		in.push_back(setup.srcDir + "/AUTHORS");
-		in.push_back(setup.srcDir + "/COPYING");
-		in.push_back(setup.srcDir + "/COPYING.LGPL");
-		in.push_back(setup.srcDir + "/COPYING.BSD");
-		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
-		in.push_back(setup.srcDir + "/COPYING.OFL");
-		in.push_back(setup.srcDir + "/COPYRIGHT");
-		in.push_back(setup.srcDir + "/NEWS");
-		in.push_back(setup.srcDir + "/README");
-		in.push_back(setup.srcDir + "/TODO");
+			// Various text files
+			in.push_back(setup.srcDir + "/AUTHORS");
+			in.push_back(setup.srcDir + "/COPYING");
+			in.push_back(setup.srcDir + "/COPYING.BSD");
+			in.push_back(setup.srcDir + "/COPYING.FREEFONT");
+			in.push_back(setup.srcDir + "/COPYING.ISC");
+			in.push_back(setup.srcDir + "/COPYING.LGPL");
+			in.push_back(setup.srcDir + "/COPYING.LUA");
+			in.push_back(setup.srcDir + "/COPYING.MIT");
+			in.push_back(setup.srcDir + "/COPYING.OFL");
+			in.push_back(setup.srcDir + "/COPYING.TINYGL");
+			in.push_back(setup.srcDir + "/COPYRIGHT");
+			in.push_back(setup.srcDir + "/NEWS.md");
+			in.push_back(setup.srcDir + "/README.md");
+		}
 
 		// Create the main project file.
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
