@@ -297,11 +297,14 @@ int main(int argc, char *argv[]) {
 
 	// When building tests, disable some features
 	if (setup.tests) {
+		setup.useStaticDetection = false;
 		setFeatureBuildState("mt32emu", setup.features, false);
 		setFeatureBuildState("eventrecorder", setup.features, false);
 
 		for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 			j->enable = false;
+	} else if (setup.devTools) {
+		setup.useStaticDetection = false;
 	}
 
 	// HACK: Vorbis and Tremor can not be enabled simultaneously
