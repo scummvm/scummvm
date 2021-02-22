@@ -1100,7 +1100,7 @@ int findAttachedPanel(int srcP, int destP) {
 	Guarda se un pto e' all'interno di un pannello
 --------------------------------------------------*/
 bool pointInside(int pan, double x, double z) {
-	bool inside_flag;
+	int inside_flag;
 	double pgon[4][2], ox, oz, s;
 
 	if (pan < 0)
@@ -1154,28 +1154,18 @@ bool pointInside(int pan, double x, double z) {
 	{
 		register double *vtx0 = pgon[3];
 		// get test bit for above/below X axis
-		register int yflag0 = (vtx0[1] >= z);
+		register bool yflag0 = (vtx0[1] >= z);
 		register double *vtx1 = pgon[0];
 
 		inside_flag = 0;
 		for (register int j = 5; --j ;) {
-			register int yflag1 = (vtx1[1] >= z);
+			register bool yflag1 = (vtx1[1] >= z);
 			if (yflag0 != yflag1) {
-				register int xflag0 = (vtx0[0] >= x);
+				register bool xflag0 = (vtx0[0] >= x);
 				if ((xflag0 == (vtx1[0] >= x)) && (xflag0))
 					inside_flag += (yflag0 ? -1 : 1);
 				else if ((vtx1[0] - (vtx1[1] - z) * (vtx0[0] - vtx1[0]) / (vtx0[1] - vtx1[1])) >= x)
 					inside_flag += (yflag0 ? -1 : 1);
-
-				// no winding
-				//if( ( xflag0 == ( vtx1[0] >= _x ) ) && ( xflag0 ) )
-				//	inside_flag = !inside_flag ;
-				//else if( (vtx1[0] - (vtx1[1]-z)*( vtx0[0]-vtx1[0])/(vtx0[1]-vtx1[1])) >= _x )
-				//	inside_flag = !inside_flag ;
-
-				// multiply
-				//if ( ((vtx1[1]-z) * (vtx0[0]-vtx1[0]) >= (vtx1[0]-_x) * (vtx0[1]-vtx1[1])) == flag1 )  // mc
-				//		inside_flag = !inside_flag ;
 			}
 
 			// Move to the next pair of vertices, retaining info as possible.
@@ -1184,7 +1174,7 @@ bool pointInside(int pan, double x, double z) {
 			vtx1 += 2 ;
 		}
 	}
-	return (inside_flag) ;
+	return (inside_flag != 0) ;
 }
 
 /*------------------------------------------------

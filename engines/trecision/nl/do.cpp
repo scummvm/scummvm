@@ -3162,12 +3162,6 @@ void doScript() {
 		}
 		break;
 
-	case ME_SETROOM:
-		switch (campo) {
-//				case C_RANIM: _room[indice]._anim[indice2] = (uint8)valore; break;
-		}
-		break;
-
 	case ME_SETOBJ:
 		switch (campo) {
 		case C_ONAME:
@@ -3219,18 +3213,6 @@ void doScript() {
 		}
 		break;
 
-	case ME_SETANIM:
-		switch (campo) {
-		case C_AFLAG:
-//					if(valore)  AnimObj[indice]._flag |= (uint8)indice2;
-//					else  AnimObj[indice]._flag &= ~(uint8)indice2;
-			break;
-		case C_ADELAY:
-//					AnimObj[indice].delay = valore;
-			break;
-		}
-		break;
-
 	case ME_ADDICON:
 		AddIcon(indice);
 		break;
@@ -3243,73 +3225,8 @@ void doScript() {
 		PlayDialog(indice);
 		break;
 
-//		case ME_SOMEONETALK:
-//			SomeOneTalk(dBattuta[_curMessage->_longParam]+1,_curMessage->_wordParam1,_curMessage->_wordParam2,false);
-//			_curSubTitle = _curMessage->_longParam;
-//			break;
-
 	case ME_CHARACTERSAY:
 		CharacterSay(g_vm->_curMessage->_longParam);
-		break;
-
-	case ME_SETSEM:
-		switch (g_vm->_curMessage->_wordParam1) {
-		case C_SEMDIAG:
-//F					FlagDialogActive = _curMessage->_wordParam2 == 0 ? 0 : 1;
-			break;
-		}
-		break;
-
-	case ME_SETDIALOG:
-		/* switch(campo)
-		{
-		case C_DDEFANI:
-		_dialog[indice].def_anim = valore;
-		break;
-		case C_DLINKANI:
-		_dialog[indice].def_linkani = valore;
-		break;
-		case C_DSPEAKANI:
-		_dialog[indice].def_speakani = valore;
-		break;
-		case C_DLISTENANI:
-		_dialog[indice].def_listenani = valore;
-		break;
-		case C_DCHOICEDISABLED:
-		_choice[indice].disattivato = valore;
-		break;
-		} */
-		break;
-
-	case ME_SETADIALOG: {
-		/*   extern struct
-		{
-		uint16 _interlocutor;
-		uint16 def_anim;
-		uint16 def_speakani;
-		uint16 def_listenani;
-		uint16 def_linkani;
-		} OtherDialogo;
-		switch(campo)
-		{
-		case C_DADEFANI:
-		OtherDialogo.def_anim = valore;
-		break;
-		case C_DALINKANI:
-		OtherDialogo.def_linkani = valore;
-		break;
-		case C_DASPEAKANI:
-		OtherDialogo.def_speakani = valore;
-		break;
-		case C_DALISTENANI:
-		OtherDialogo.def_listenani = valore;
-		break;
-		}  */
-	}
-	break;
-
-	case ME_SETANIMATIONOFF:
-//			AnimazioneSpenta = (uint16)valore;
 		break;
 
 	case ME_PLAYSOUND:
