@@ -21,7 +21,7 @@
  */
 
 #include <stdio.h>
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/SysDef.h"
 #include "trecision/nl/Struct.h"
@@ -30,7 +30,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 
-#include <common/file.h>
+#include "common/file.h"
 
 #define KEY_BUFFER          0x60
 #define KEY_CONTROL         0x61

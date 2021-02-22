@@ -20,7 +20,7 @@
  *
  */
 
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/extern.h"

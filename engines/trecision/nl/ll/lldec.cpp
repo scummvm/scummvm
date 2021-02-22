@@ -20,11 +20,11 @@
  *
  */
 
-#include <common/array.h>
+#include "common/array.h"
 #include <stdlib.h>
 #include <string.h>
 
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"

@@ -20,10 +20,11 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL // TODO: remove file operations
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
@@ -32,12 +33,8 @@
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
 
-#include <common/file.h>
-#include <common/str.h>
-
-namespace Common {
-class File;
-}
+#include "common/file.h"
+#include "common/str.h"
 
 namespace Trecision {
 
