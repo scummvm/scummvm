@@ -329,7 +329,7 @@ void RegenSmackAnim(int num) {
 	if (!(AnimTab[num]._flag & SMKANIM_LOOP) && !(AnimTab[num]._flag & SMKANIM_BKG)) {
 		if (_curAnimFrame[pos] >= SmkAnims[pos]->getFrameCount()) {
 			StopSmackAnim(num);
-			SemPaintCharacter = 1;
+			FlagPaintCharacter = true;
 
 			_animMaxX = 0;
 			_animMinX = MAXX;

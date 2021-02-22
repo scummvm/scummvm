@@ -57,30 +57,30 @@ extern struct SSortTable SortTable[];
 /*-------------------------------------------------------------------------*/
 /*                             FLAGS DI STATO          					   */
 /*-------------------------------------------------------------------------*/
-extern LLBOOL  Semscriptactive;
-extern LLBOOL  SemDialogActive;
-extern LLBOOL  SemDialogMenuActive;
-extern LLBOOL  Semskiptalk;
-extern LLBOOL  Semskipenable;
-extern LLBOOL  SemMouseEnabled;
-extern LLBOOL  SemScreenRefreshed;
-extern LLBOOL  SemPaintCharacter;
-extern LLBOOL  SemShowCharacter;
-extern LLBOOL  SemSomeOneSpeak;
-extern LLBOOL  SemCharacterSpeak;
-extern LLBOOL  SemInventoryLocked;
-extern LLBOOL  SemUseWithStarted;
-extern LLBOOL  SemUseWithLocked;
-extern LLBOOL  SemMousePolling;
-extern LLBOOL  SemDialogSolitaire;
-extern LLBOOL  SemCharacterExist;
-extern LLBOOL  SemWalkNoInterrupt;
-extern LLBOOL  SemNoPaintScreen;
-extern LLBOOL  SemForceRegenInventory;
-extern LLBOOL  SemWaitRegen;
+extern bool  Flagscriptactive;
+extern bool  FlagDialogActive;
+extern bool  FlagDialogMenuActive;
+extern bool  Flagskiptalk;
+extern bool  Flagskipenable;
+extern bool  FlagMouseEnabled;
+extern bool  FlagScreenRefreshed;
+extern bool  FlagPaintCharacter;
+extern bool  FlagShowCharacter;
+extern bool  FlagSomeOneSpeak;
+extern bool  FlagCharacterSpeak;
+extern bool  FlagInventoryLocked;
+extern bool  FlagUseWithStarted;
+extern bool  FlagUseWithLocked;
+extern bool  FlagMousePolling;
+extern bool  FlagDialogSolitaire;
+extern bool  FlagCharacterExist;
+extern bool  FlagWalkNoInterrupt;
+extern bool  FlagNoPaintScreen;
+extern bool  FlagForceRegenInventory;
+extern bool  FlagWaitRegen;
 
-extern LLBOOL  SemSaveInventory;
-extern LLBOOL  SemLoadInventory;
+extern bool  FlagSaveInventory;
+extern bool  FlagLoadInventory;
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

@@ -58,7 +58,7 @@ const char *dunno = "?";
 /*                                 REPAINTSTRING         				   */
 /*-------------------------------------------------------------------------*/
 void RepaintString() {
-	if (!SemDialogActive && !SemDialogMenuActive && !SemSomeOneSpeak && !Semscriptactive && SemMouseEnabled) {
+	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !Flagscriptactive && FlagMouseEnabled) {
 		if (INVAREA(my))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
@@ -106,14 +106,14 @@ void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posy;
 	char locsent[256];
 
-	if (SemSomeOneSpeak)
+	if (FlagSomeOneSpeak)
 		return;
 	if (lastinv) {
 		ClearText();
 		lastinv = 0;
 	}
 
-	if (SemUseWithStarted && !SemUseWithLocked) {
+	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
 			ClearText();
 			lastobj = obj;
@@ -209,7 +209,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 		|| (g_vm->_curRoom == r13CU))
 		return;
 
-	if (SemSomeOneSpeak)
+	if (FlagSomeOneSpeak)
 		return;
 
 	if (lastobj) {
@@ -217,7 +217,7 @@ void ShowInvName(uint16 obj, bool showhide) {
 		lastobj = 0;
 	}
 
-	if (SemUseWithStarted && !SemUseWithLocked) {
+	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (/*(!obj) ||*/ (!showhide)) {
 			ClearText();
 			lastinv = 0;
@@ -335,7 +335,7 @@ void CharacterSay(uint16 i) {
 	CurS = i;
 
 	//	TODO: Use a define...  ************************
-	Semskipenable = (i != 99999);
+	Flagskipenable = (i != 99999);
 
 	//	if he took some action
 	if ((g_vm->_sentence[i][0] == '*') && (_playingAnims[1] == 0))
@@ -348,9 +348,9 @@ void CharacterSay(uint16 i) {
 /*                                CharacterTalk            				   */
 /*-------------------------------------------------------------------------*/
 void CharacterTalk(const char *s, bool FromCharacterSay) {
-	SemSomeOneSpeak = true;
-	SemCharacterSpeak = true;
-	Semskiptalk = false;
+	FlagSomeOneSpeak = true;
+	FlagCharacterSpeak = true;
+	Flagskiptalk = false;
 
 	SuperString = s;
 	SuperStringLen = strlen(SuperString);
@@ -359,7 +359,7 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 	FormattingSuperString();
 
 	if (!FromCharacterSay)
-		Semskipenable = true;
+		Flagskipenable = true;
 
 	CharacterContinueTalk();
 
@@ -377,10 +377,10 @@ void CharacterTalkInAction(uint16 ss) {
 		return;
 	CurS = ss;
 
-	SemSomeOneSpeak = true;
-	SemCharacterSpeak = true;
-	Semskiptalk = false;
-	Semskipenable = true;
+	FlagSomeOneSpeak = true;
+	FlagCharacterSpeak = true;
+	Flagskiptalk = false;
+	Flagskipenable = true;
 
 	SuperString = s;
 	SuperStringLen = strlen(SuperString);
@@ -397,12 +397,12 @@ void CharacterTalkInAction(uint16 ss) {
 void CharacterContinueTalk() {
 	uint16 posx, posy;
 
-	Semskiptalk = false;
+	Flagskiptalk = false;
 	CharacterSpeakTime = TheTime;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
-	if (SemCharacterExist)
+	if (FlagCharacterExist)
 		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
 	else
 		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
@@ -411,7 +411,7 @@ void CharacterContinueTalk() {
 	if (ConfMan.getBool("subtitles"))
 		Text(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
 
-	if (!SemDialogActive) {
+	if (!FlagDialogActive) {
 		if (CurSubString)
 			sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
 		else
@@ -431,9 +431,9 @@ void CharacterContinueTalk() {
 /*                                CharacterMute            				   */
 /*-------------------------------------------------------------------------*/
 void CharacterMute() {
-	SemSomeOneSpeak = false;
-	SemCharacterSpeak = false;
-	Semskiptalk = false;
+	FlagSomeOneSpeak = false;
+	FlagCharacterSpeak = false;
+	Flagskiptalk = false;
 	CharacterSpeakTime = 0L;
 
 	ClearText();
@@ -447,7 +447,7 @@ void CharacterMute() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
 
 	//	actorStop();
-	//	if(SemDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
+	//	if(FlagDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -456,8 +456,8 @@ void CharacterMute() {
 void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
-	SemSomeOneSpeak = true;
-	Semskiptalk = false;
+	FlagSomeOneSpeak = true;
+	Flagskiptalk = false;
 
 	CurS = s;
 	SuperString = g_vm->_sentence[s];
@@ -466,7 +466,7 @@ void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	CurSubString = 0;
 
 	if (!FromSomeOneSay)
-		Semskipenable = true;
+		Flagskipenable = true;
 
 	FormattingSuperString();
 
@@ -482,7 +482,7 @@ void SomeOneContinueTalk() {
 	uint16 posx, posy;
 
 	SomeOneSpeakTime = TheTime;
-	Semskiptalk = false;
+	Flagskiptalk = false;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
@@ -512,9 +512,9 @@ void SomeOneContinueTalk() {
 /*                                SOMEONEMUTE                 			   */
 /*-------------------------------------------------------------------------*/
 void SomeOneMute() {
-	SemCharacterSpeak = false;
-	Semskiptalk = false;
-	SemSomeOneSpeak = false;
+	FlagCharacterSpeak = false;
+	Flagskiptalk = false;
+	FlagSomeOneSpeak = false;
 	SomeOneSpeakTime = 0L;
 
 	ClearText();
@@ -524,7 +524,7 @@ void SomeOneMute() {
 	RepaintString();
 	StopTalk();
 
-	//F	if(SemDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
+	//F	if(FlagDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -537,8 +537,8 @@ void doString() {
 		break;
 
 	case ME_CHARACTERSPEAKING:
-		if (SemCharacterSpeak) {
-			if (Semskiptalk || (TheTime > (TalkTime + CharacterSpeakTime))) {
+		if (FlagCharacterSpeak) {
+			if (Flagskiptalk || (TheTime > (TalkTime + CharacterSpeakTime))) {
 				if (substringagain)
 					CharacterContinueTalk();
 				else
@@ -565,8 +565,8 @@ void doString() {
 		break;
 
 	case ME_SOMEONESPEAKING:
-		if (SemSomeOneSpeak) {
-			if (Semskiptalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
+		if (FlagSomeOneSpeak) {
+			if (Flagskiptalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
 				if (substringagain)
 					SomeOneContinueTalk();
 				else {

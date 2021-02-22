@@ -65,7 +65,7 @@ void PaintScreen(uint8 flag) {
 
 	PaintRegenRoom();
 
-//	if( ( !SemPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
+//	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
 	Hlim = 255;
@@ -74,11 +74,11 @@ void PaintScreen(uint8 flag) {
 		VisualRef[a] = 255;
 
 	_limitsNum = 0;
-	SemPaintCharacter = 1;                      // ridisegna sempre l'omino
+	FlagPaintCharacter = true;                      // ridisegna sempre l'omino
 	AddLine(0, 0, 0);
 
 // CANCELLA L'OMINO
-	if (SemShowCharacter) {                    // se c'era una scritta
+	if (FlagShowCharacter) {                    // se c'era una scritta
 		// cancello omino
 		DObj.x    = 0;
 		DObj.y    = TOP;
@@ -248,7 +248,7 @@ void PaintScreen(uint8 flag) {
 		}
 	}
 
-	if (!flag && !SemDialogActive) {
+	if (!flag && !FlagDialogActive) {
 		// sorta i blocchi da copiare ed elimina quelli inutili
 		SortBlock();
 		VMouseCopy();
@@ -275,8 +275,8 @@ void PaintScreen(uint8 flag) {
 
 	g_vm->_curSortTableNum = 0;
 
-	SemPaintCharacter = 0;
-	SemWaitRegen = false;
+	FlagPaintCharacter = false;
+	FlagWaitRegen = false;
 
 	// gestione papaverina ritardata
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
@@ -463,7 +463,7 @@ void PaintObjAnm(uint16 CurBox) {
 	}
 
 	if ((_actorPos == CurBox) &&
-			((SemShowCharacter) && (SemCharacterExist))) {
+			((FlagShowCharacter) && (FlagCharacterExist))) {
 		drawCharacter(CALCPOINTS);
 
 		// enlarge the rectangle of the character
@@ -482,8 +482,8 @@ void PaintObjAnm(uint16 CurBox) {
 		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);
 
-		//SemPaintCharacter = 0;
-	} else if ((_actorPos == CurBox) && !SemDialogActive) {
+		//FlagPaintCharacter = false;
+	} else if ((_actorPos == CurBox) && !FlagDialogActive) {
 		RegenSmackAnim(_playingAnims[1]);
 	}
 }

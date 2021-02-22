@@ -304,7 +304,7 @@ void StartFullMotion(const char *name) {
 	_playingAnims[pos] = FULLMOTIONANIM;
 	_curAnimFrame[pos] = 0;
 
-	SemShowCharacter = 0;
+	FlagShowCharacter = false;
 	FullStart = 0;
 	FullEnd = 0;
 	TextStatus = TEXT_OFF;
@@ -319,7 +319,7 @@ void StartFullMotion(const char *name) {
 	g_vm->_animQueue.initQueue();
 	g_vm->_characterQueue.initQueue();
 	actorStop();
-	SemMouseEnabled = false;
+	FlagMouseEnabled = false;
 
 	CallSmackOpen(FmvFileOpen(name));
 
@@ -348,10 +348,10 @@ void StopFullMotion() {
 
 	_curSmackAction = SMACKNULL;
 
-	SemDialogActive = false;
-	SemDialogMenuActive = false;
-	SemMouseEnabled = true;
-	SemSomeOneSpeak = false;
+	FlagDialogActive = false;
+	FlagDialogMenuActive = false;
+	FlagMouseEnabled = true;
+	FlagSomeOneSpeak = false;
 
 	g_vm->_lightIcon = 0xFF;
 	FullStart = 0;
@@ -365,7 +365,7 @@ void StopFullMotion() {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
 				(_curDialog == dF491) || ((_curDialog == dC581) && !(_choice[886]._flag & OBJFLAG_DONE) && (_choice[258]._flag & OBJFLAG_DONE)) ||
 		    ((_curDialog == dC5A1) && (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
-			SemShowCharacter = 0;
+			FlagShowCharacter = false;
 		else
 			RedrawRoom();
 
@@ -393,7 +393,7 @@ void RegenAnim(int box) {
 --------------------------------------------------*/
 void RedrawRoom() {
 	if ((_curDialog != dF321) && (_curDialog != dF431) && (_curDialog != dF4C1) && (_curDialog != dASCENSORE12) && (_curDialog != dASCENSORE13) && (_curDialog != dASCENSORE16))
-		SemShowCharacter = true;
+		FlagShowCharacter = true;
 
 	switch (_curDialog) {
 	case dASCENSORE12:
@@ -438,7 +438,7 @@ void RedrawRoom() {
 	RegenRoom();
 
 	TextStatus = TEXT_OFF;
-	SemPaintCharacter = 1;
+	FlagPaintCharacter = true;
 	PaintScreen(1);
 	ShowScreen(0, 0, 640, 480);
 }

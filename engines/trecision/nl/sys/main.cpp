@@ -353,17 +353,17 @@ void NlDissolve(int val) {
 					Mouse
 --------------------------------------------------*/
 void Mouse(uint8 opt) {
-	extern short SemMouseEnabled;
+	extern bool FlagMouseEnabled;
 
 	CheckSystem();
 
 	switch (opt) {
 	// Update mouse
 	case 3: {
-		if (g_vm->_mouseONOFF && !SemMouseEnabled)
+		if (g_vm->_mouseONOFF && !FlagMouseEnabled)
 			Mouse(2);
 
-		if (!g_vm->_mouseONOFF && SemMouseEnabled)
+		if (!g_vm->_mouseONOFF && FlagMouseEnabled)
 			Mouse(1);
 
 		if (g_vm->_mouseONOFF) {

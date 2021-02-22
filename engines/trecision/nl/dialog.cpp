@@ -71,8 +71,8 @@ void MostraScelte(uint16 i) {
 
 	ShowScreen(0, 0, MAXX, TOP);
 
-	SemDialogMenuActive = true;
-	SemMouseEnabled = true;
+	FlagDialogMenuActive = true;
+	FlagMouseEnabled = true;
 }
 
 /* -----------------28/07/97 22.12-------------------
@@ -105,7 +105,7 @@ void ScegliScelta(int16 dmx, int16 dmy) {
 	UpdateScelte(dmx, dmy);
 
 	if (CurPos != -1) {
-		SemDialogMenuActive = false;
+		FlagDialogMenuActive = false;
 
 		PlayScelta(DispScelte[CurPos]);
 	}
@@ -116,10 +116,10 @@ void ScegliScelta(int16 dmx, int16 dmy) {
 --------------------------------------------------*/
 void PlayDialog(uint16 i) {
 	_curDialog = i;
-	SemDialogActive = true;
+	FlagDialogActive = true;
 	_curChoice = 0;
 	_curSubTitle = 0;
-	SemShowCharacter = false;		        // prima non c'era
+	FlagShowCharacter = false;		        // prima non c'era
 
 	g_vm->_characterQueue.initQueue();
 	g_vm->_inventoryStatus = INV_OFF;
@@ -241,7 +241,7 @@ void afterChoice(int numframe) {
 
 	case dF321:
 		KillIcon(iTORCIA32);
-		SemShowCharacter = false;
+		FlagShowCharacter = false;
 		break;
 
 	case dF4A3:
@@ -424,7 +424,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF431:
-			SemShowCharacter = true;
+			FlagShowCharacter = true;
 			StartCharacterAction(aWALKIN, 0, 11, 0);
 			break;
 
@@ -448,8 +448,8 @@ void afterChoice(int numframe) {
 			break;
 
 		case dC4A1:
-			SemCharacterExist = true;
-			SemShowCharacter = true;
+			FlagCharacterExist = true;
+			FlagShowCharacter = true;
 			actorStop();
 			nextStep();
 			break;
@@ -547,7 +547,7 @@ void afterChoice(int numframe) {
 		extern int FullStart, FullEnd;
 
 		_curDialog = _choice[_curChoice]._nextDialog;
-		SemDialogActive = true;
+		FlagDialogActive = true;
 		_curChoice = 0;
 
 		d = &_dialog[_curDialog];
@@ -613,8 +613,8 @@ void afterChoice(int numframe) {
 					DialogHandler
 --------------------------------------------------*/
 void DialogHandler(int numframe) {
-	if ((SemDialogActive) && (!(SemDialogMenuActive))) {
-		SemMouseEnabled = false;
+	if ((FlagDialogActive) && (!(FlagDialogMenuActive))) {
+		FlagMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
 			BattutaPrint(_subTitles[i]._x, _subTitles[i]._y, _subTitles[i]._color, g_vm->_sentence[_subTitles[i]._sentence]);
@@ -634,7 +634,7 @@ void PlayScelta(uint16 i) {
 	_curChoice = i;
 	_curSubTitle = ss->_firstSubTitle;
 	EndBattuta = (ss->_firstSubTitle + ss->_subTitleNumb);
-	SemDialogMenuActive = false;
+	FlagDialogMenuActive = false;
 
 	ss->_flag |= OBJFLAG_DONE;
 
@@ -653,7 +653,7 @@ void PlayScelta(uint16 i) {
 	for (int c = _curSubTitle; c < EndBattuta; c++)
 		lens += _subTitles[c]._length;
 
-	SemMouseEnabled = false;
+	FlagMouseEnabled = false;
 	PlayFullMotion(ss->_startFrame, ss->_startFrame + lens - 1);
 }
 

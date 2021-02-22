@@ -51,7 +51,7 @@ uint16 CloseUpObj;
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
-	SemMouseEnabled = false;
+	FlagMouseEnabled = false;
 
 	uint16 theAction = g_vm->_obj[curObj]._anim;
 	uint16 thePos = g_vm->_obj[curObj]._ninv;
@@ -67,13 +67,13 @@ void doRoomIn(uint16 curObj) {
 void doRoomOut(uint16 TheObj) {
 	uint16 TheAction, ThePos;
 
-	SemMouseEnabled = false;
+	FlagMouseEnabled = false;
 
 	switch (TheObj) {
 	case oSCALA32:
 		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(g_vm->_obj[TheObj]._action);
-			SemMouseEnabled = true;
+			FlagMouseEnabled = true;
 			TheAction = 0;
 			ThePos = 0;
 		} else {
@@ -799,7 +799,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[od2CALLA26]._mode &= ~OBJMODE_OBJSTATUS;
-			SemShowCharacter = false;
+			FlagShowCharacter = false;
 			ReadExtraObj2C();
 			RegenRoom();
 		} else
@@ -1032,9 +1032,9 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_obj[oMERIDIANA49]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oAGENDA49]._examine = 1099;
 			g_vm->_obj[oAGENDA49]._action = 1100;
-			SemCharacterExist = true;
+			FlagCharacterExist = true;
 			g_vm->_curObj = oAGENDA49;
-			//SemShowCharacter=true;
+			//FlagShowCharacter=true;
 			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
 			PlayScript(s49SUNDIAL);
 		}
@@ -1091,16 +1091,16 @@ void doMouseOperate(uint16 TheObj) {
 				g_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, TheObj);
-			SemCharacterExist = true;
-			//SemShowCharacter=true;
+			FlagCharacterExist = true;
+			//FlagShowCharacter=true;
 		} else {
 			for (a = 0; a < 6; a++) {
 				Comb4CT[a] = 0;
 				g_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, TheObj);
-			SemCharacterExist = true;
-			//SemShowCharacter=true;
+			FlagCharacterExist = true;
+			//FlagShowCharacter=true;
 		}
 		printsent = false;
 		break;
@@ -1298,7 +1298,7 @@ void doMouseTake(uint16 TheObj) {
 	if (!TheObj)
 		warning("doMouseTake");
 
-// SemMouseEnabled = false;
+// FlagMouseEnabled = false;
 	switch (TheObj) {
 	case oTINFOIL11:
 		del = false;
@@ -1433,7 +1433,7 @@ void doUseWith() {
 	g_vm->_useWith[WITH] = 0;
 	g_vm->_useWithInv[USED] = false;
 	g_vm->_useWithInv[WITH] = false;
-	SemUseWithStarted = false;
+	FlagUseWithStarted = false;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3133,7 +3133,7 @@ void doDoing() {
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
-			SemMouseEnabled = true;
+			FlagMouseEnabled = true;
 		break;
 	}
 }
@@ -3255,7 +3255,7 @@ void doScript() {
 	case ME_SETSEM:
 		switch (g_vm->_curMessage->_wordParam1) {
 		case C_SEMDIAG:
-//F					SemDialogActive = _curMessage->_wordParam2 == 0 ? 0 : 1;
+//F					FlagDialogActive = _curMessage->_wordParam2 == 0 ? 0 : 1;
 			break;
 		}
 		break;
@@ -3390,7 +3390,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oDOORC21:
-		if ((g_vm->_useWith[USED] == iPISTOLA15) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iPISTOLA15) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3400,7 +3400,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oTUBO21:
-		if ((g_vm->_useWith[USED] == oRAMPINO21) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == oRAMPINO21) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3410,7 +3410,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oCAMPO23:
-		if ((g_vm->_useWith[USED] == oCAVIE23) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == oCAVIE23) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3420,7 +3420,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oTASTO2F:
-		if ((g_vm->_useWith[USED] == iTELECOMANDO2G) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iTELECOMANDO2G) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 9)
 				goToPosition(9);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3431,7 +3431,7 @@ bool AtMouseClick(uint16 TheObj) {
 
 	case oSAMA33:
 	case oSERRATURA33:
-		if ((g_vm->_useWith[USED] == oTUBOT33) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == oTUBOT33) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3451,7 +3451,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oPRESA35:
-		if (!(SemUseWithStarted)) {
+		if (!(FlagUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3461,7 +3461,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oTRIPLA35:
-		if (!(SemUseWithStarted) && (mleft)) {
+		if (!(FlagUseWithStarted) && (mleft)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3471,7 +3471,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oPORTALC36:
-		if ((g_vm->_useWith[USED] == iSTETOSCOPIO) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iSTETOSCOPIO) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 8)
 				goToPosition(8);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3481,7 +3481,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oSERBATOIOA2G:
-		if ((g_vm->_useWith[USED] == iCANDELOTTO) && (g_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (g_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iCANDELOTTO) && (g_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (g_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 6)
 				goToPosition(6);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3491,7 +3491,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oRAGNO41:
-		if ((g_vm->_useWith[USED] == iMARTELLO) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iMARTELLO) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 1)
 				goToPosition(1);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3501,7 +3501,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oTAMBURO43:
-		if ((g_vm->_useWith[USED] == iMAZZA) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iMAZZA) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 5)
 				goToPosition(5);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3511,7 +3511,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oLUCCHETTO53:
-		if ((g_vm->_useWith[USED] == iLASER35) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iLASER35) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3521,7 +3521,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oPORTA58C55:
-		if ((g_vm->_useWith[USED] == iCHIAVI) && (SemUseWithStarted)) {
+		if ((g_vm->_useWith[USED] == iCHIAVI) && (FlagUseWithStarted)) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3669,18 +3669,18 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (g_vm->_room[r23A]._flag & OBJFLAG_DONE))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE)))
-		SemShowCharacter = false;
+		FlagShowCharacter = false;
 	else if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) ||
 	         (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) ||
 	         (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) { // Screens without inventory
-		SemShowCharacter = false;
-		SemCharacterExist = false;
-		SemInventoryLocked = true;
+		FlagShowCharacter = false;
+		FlagCharacterExist = false;
+		FlagInventoryLocked = true;
 	} else if ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P)) { // Screens with inventory
-		SemShowCharacter = false;
-		SemCharacterExist = false;
+		FlagShowCharacter = false;
+		FlagCharacterExist = false;
 	} else if ((g_vm->_curRoom == r2F) && (g_vm->_oldRoom == r31))
 		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
 	else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r2F))
@@ -3742,12 +3742,12 @@ void AtEndChangeRoom() {
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r32) && (g_vm->_room[r32]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF321);
-		SemShowCharacter = false;
+		FlagShowCharacter = false;
 		WaitSoundFadEnd();
 		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
 	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
 		PlayScript(s19EVA);
-		SemNoPaintScreen = false;
+		FlagNoPaintScreen = false;
 		ClearText();
 		RepaintString();
 		WaitSoundFadEnd();
@@ -3756,7 +3756,7 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r21) && (/*!( _room[g_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (g_vm->_oldRoom == r1C))) {
 		setPosition(10);
 		TendIn();
-		SemNoPaintScreen = false;
+		FlagNoPaintScreen = false;
 		ClearText();
 		RepaintString();
 	} else if ((g_vm->_curRoom == r46) && (g_vm->_oldRoom == r43) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
@@ -3773,11 +3773,11 @@ void AtEndChangeRoom() {
 		PlayDialog(dC4A1);
 	} else if ((g_vm->_curRoom == r4P) && (g_vm->_oldRoom == r4O) && !(g_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
 		PlayDialog(dF4PI);
-		SemShowCharacter = false;
+		FlagShowCharacter = false;
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT)) {
 		PlayDialog(dF4C1);
-		SemShowCharacter = false;
+		FlagShowCharacter = false;
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18)) {
 		if (!(g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
@@ -3787,12 +3787,12 @@ void AtEndChangeRoom() {
 			g_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
 		} else {
 			TendIn();
-			SemNoPaintScreen = false;
+			FlagNoPaintScreen = false;
 			RepaintString();
 		}
 	} else {
 		TendIn();
-		SemNoPaintScreen = false;
+		FlagNoPaintScreen = false;
 		ClearText();
 		RepaintString();
 	}
@@ -3803,7 +3803,7 @@ void AtEndChangeRoom() {
 	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (CloseUpObj) && (g_vm->_obj[CloseUpObj]._examine))
 		CharacterSay(g_vm->_obj[CloseUpObj]._examine);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE))) {
-		SemShowCharacter = true;
+		FlagShowCharacter = true;
 		StartCharacterAction(aWALKIN, 0, 0, 361);
 	} else if ((g_vm->_curRoom == r24) && !(g_vm->_room[r24]._flag & OBJFLAG_DONE))
 		CharacterSay(381);
@@ -3895,10 +3895,10 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 		break;
 
 	case fCHARACTEROFF:
-		SemCharacterExist = false;
+		FlagCharacterExist = false;
 		break;
 	case fCHARACTERON:
-		SemCharacterExist = true;
+		FlagCharacterExist = true;
 		break;
 	case fCHARACTERFOREGROUND:
 		_forcedActorPos = FOREGROUND;
@@ -4111,11 +4111,11 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 					AtFrameNext
  --------------------------------------------------*/
 void AtFrameNext() {
-	if (!((AnimType[0].status & ATF_WAITTEXT) && SemCharacterSpeak))
+	if (!((AnimType[0].status & ATF_WAITTEXT) && FlagCharacterSpeak))
 		AnimType[0].curframe++;
-	if (!((AnimType[1].status & ATF_WAITTEXT) && SemCharacterSpeak))
+	if (!((AnimType[1].status & ATF_WAITTEXT) && FlagCharacterSpeak))
 		AnimType[1].curframe++;
-	if (!((AnimType[2].status & ATF_WAITTEXT) && SemCharacterSpeak))
+	if (!((AnimType[2].status & ATF_WAITTEXT) && FlagCharacterSpeak))
 		AnimType[2].curframe++;
 }
 
