@@ -78,6 +78,7 @@ SDText sdt, osdt;
 
 // locals
 #define MAXSMACK	3
+#define FULLMOTIONANIM 620
 
 extern uint8 *SmackBuffer[MAXSMACK];
 
@@ -133,6 +134,10 @@ void CallSmackClose() {
 void CallSmackNextFrame() {
 	if (SmkAnims[_curSmackBuffer] == NULL)
 		return;
+
+	if (SmkAnims[_curSmackBuffer]->endOfVideo()) {
+		SmkAnims[_curSmackBuffer]->rewind();
+	}
 
 	if (SmkAnims[_curSmackBuffer]->needsUpdate()) {
 		const Graphics::Surface *surface = SmkAnims[_curSmackBuffer]->decodeNextFrame();
@@ -202,7 +207,7 @@ void RefreshAllAnimations() {
 void RegenSmackAnim(int num) {
 	int pos = 0;
 
-	if ((num == 0) || (num == 620))
+	if ((num == 0) || (num == FULLMOTIONANIM))
 		return;
 
 	if (AnimTab[num]._flag & SMKANIM_ICON) {
