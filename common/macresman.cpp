@@ -115,10 +115,6 @@ String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-bool MacResManager::open(const String &fileName) {
-	return open(fileName, SearchMan);
-}
-
 bool MacResManager::open(const String &fileName, Archive &archive) {
 	close();
 
@@ -303,7 +299,6 @@ bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 
 bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
-	int resForkOffset = -1;
 
 	if (stream.read(infoHeader, MBI_INFOHDR) != MBI_INFOHDR)
 		return false;
@@ -320,15 +315,10 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 		//uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
 
 		// Length check
-		if (MBI_INFOHDR + dataSizePad + rsrcSize <= (uint32)stream.size()) {
-			resForkOffset = MBI_INFOHDR + dataSizePad;
-		}
+		if (MBI_INFOHDR + dataSizePad + rsrcSize == (uint32)stream.size())
+			return true;
 	}
-
-	if (resForkOffset < 0)
-		return false;
-
-	return true;
+	return false;
 }
 
 bool MacResManager::isRawFork(SeekableReadStream &stream) {
@@ -357,10 +347,10 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
 
 		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
 		// Files produced by ISOBuster are not padded, thus, compare with the actual size
-		//uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
+		uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
 
 		// Length check
-		if (MBI_INFOHDR + dataSizePad + rsrcSize <= (uint32)stream.size()) {
+		if (MBI_INFOHDR + dataSizePad + rsrcSizePad <= (uint32)stream.size()) {
 			_resForkOffset = MBI_INFOHDR + dataSizePad;
 			_resForkSize = rsrcSize;
 		}
