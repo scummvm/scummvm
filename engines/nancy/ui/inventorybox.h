@@ -53,17 +53,19 @@ public:
     InventoryBox(RenderObject &redrawFrom) :
         RenderObject(redrawFrom),
         _scrollbar(redrawFrom, this),
-        _shades(*this, this) {}
+        _shades(*this, this),
+        _scrollbarPos(0) {}
 
     virtual ~InventoryBox() { _fullInventorySurface.free(); _iconsSurface.free(); }
 
     virtual void init() override;
+    virtual void updateGraphics() override;
     virtual void registerGraphics() override;
     void handleInput(NancyInput &input);
 
     // To be called from Scene
     void addItem(uint itemID);
-    void removeItem(uint itemID, bool hold = true);
+    void removeItem(uint itemID);
 
     ItemDescription getItemDescription(uint id) { return _itemDescriptions[id]; }
 
@@ -125,6 +127,8 @@ private:
 
     InventoryScrollbar _scrollbar;
     Shades _shades;
+
+    float _scrollbarPos;
 
     Common::Array<uint> _order;
     ItemHotspot _itemHotspots[4]; 
