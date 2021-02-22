@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/sys/ffile.h"
 

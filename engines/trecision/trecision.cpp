@@ -29,9 +29,9 @@
 
 #include "trecision/trecision.h"
 
-#include <common/archive.h>
-#include <common/config-manager.h>
-#include <common/fs.h>
+#include "common/archive.h"
+#include "common/config-manager.h"
+#include "common/fs.h"
 
 #include "trecision/nl/sysdef.h"
 

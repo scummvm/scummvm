@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "trecision/nl/lib/addtype.h"
+#include "common/scummsys.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/sysdef.h"
@@ -33,8 +33,8 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 
-#include <common/file.h>
-#include <common/str.h>
+#include "common/file.h"
+#include "common/str.h"
 
 namespace Trecision {
 
