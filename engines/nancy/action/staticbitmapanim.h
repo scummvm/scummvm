@@ -26,6 +26,8 @@
 #include "engines/nancy/action/recordtypes.h"
 #include "engines/nancy/renderobject.h"
 
+#include "engines/nancy/sound.h"
+
 #include "common/str.h"
 #include "common/array.h"
 
@@ -51,9 +53,7 @@ public:
     EventFlagsDesc triggerFlags;
     Time frameTime;
 
-    // Todo
-    Common::String soundName;
-    uint16 channelID;
+    Nancy::SoundManager::SoundDescription sound;
 
     // Describes a single frame in this animation
     Common::Array<Common::Rect> srcRects;

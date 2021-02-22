@@ -39,13 +39,13 @@ void PlayIntStaticBitmapAnimation::init() {
 
     _fullSurface.create(surf.w, surf.h, surf.format);
     _fullSurface.blitFrom(surf);
+    surf.free();
     setFrame(0);
 
     RenderObject::init();
 }
 
 uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-    uint beginOffset = stream.pos();
     char name[10];
     stream.read(name, 10);
     imageName = Common::String(name);
@@ -58,16 +58,9 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     stream.skip(2);
     soundFlagDesc.label = stream.readSint16LE();
     soundFlagDesc.flag = (NancyFlag)stream.readUint16LE();
-
     SceneChange::readData(stream);
-
     triggerFlags.readData(stream);
-
-    stream.read(name, 10);
-    soundName = name;
-    channelID = stream.readUint16LE();
-
-    stream.seek(beginOffset + 0x74, SEEK_SET);
+    sound.read(stream, SoundManager::SoundDescription::kNormal);
     uint numFrames = stream.readUint16LE();
 
     for (uint i = firstFrame; i <= lastFrame; ++i) {
@@ -93,11 +86,8 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
         case kBegin:
             init();
             registerGraphics();
-
-            if (soundName != "NO SOUND") {
-                warning("PlayIntStaticBitmapAnimation has a sound, please implement it!");
-            }
-
+            _engine->sound->loadSound(sound);
+            _engine->sound->playSound(sound.channelID);
             state = kRun;
             // fall through
         case kRun: {
@@ -125,8 +115,8 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
         }
         case kActionTrigger:
             triggerFlags.execute(engine);
-
             SceneChange::execute(engine);
+            _engine->sound->stopSound(sound.channelID);
             break;
     }
 }
