@@ -61,23 +61,23 @@ void actorDoAction(int whatAction) {
 	float ox = cos(t);
 	float oz = sin(t);
 
-	struct SVertex *v = (struct SVertex *)_characterArea;
+	SVertex *v = (SVertex *)_characterArea;
 	float firstFrame = FRAMECENTER(v);
 
 	if (whatAction > hLAST) {
-		v = (struct SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
+		v = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
 		len = g_vm->_actionLen[whatAction];
 	} else {
 		int cfp = 0;
 		int cur = 0;
 		while (cur < whatAction)
 			cfp += _defActionLen[cur++];
-		v = (struct SVertex *)_characterArea + cfp * _actor._vertexNum;
+		v = (SVertex *)_characterArea + cfp * _actor._vertexNum;
 
 		if (whatAction == hWALKOUT)
-			v = (struct SVertex *)_characterArea + _actor._vertexNum;
+			v = (SVertex *)_characterArea + _actor._vertexNum;
 		else if (whatAction == hLAST)
-			v = (struct SVertex *)_characterArea;
+			v = (SVertex *)_characterArea;
 
 		len = _defActionLen[whatAction];
 	}
@@ -99,9 +99,9 @@ void actorDoAction(int whatAction) {
 		v += _actor._vertexNum;
 
 		if (whatAction > hLAST)
-			v = (struct SVertex *)((uint8 *)v + 4);
+			v = (SVertex *)((uint8 *)v + 4);
 		else if (whatAction == hLAST)
-			v = (struct SVertex *)_characterArea;
+			v = (SVertex *)_characterArea;
 	}
 
 	_step[b]._px = px;
@@ -210,10 +210,10 @@ void setPosition(int num) {
 				Go To Light Position
 --------------------------------------------------*/
 void goToPosition(int num) {
-	extern struct SLight *_light;
+	extern SLight *_light;
 	extern float _lookX, _lookZ;
 
-	_light = (struct SLight *)_actor._light;
+	_light = (SLight *)_actor._light;
 
 	for (int a = 0; a < _actor._lightNum; a++) {
 		// If it's off and if it's a position
@@ -261,8 +261,8 @@ void lookAt(float x, float z) {
 
 	// If the light is null
 	if ((ox == 0.0) && (oz == 0.0)) {
-		memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(struct SStep));
-		memcpy(&_step[_lastStep + 2], &_step[_lastStep + 1], sizeof(struct SStep));
+		memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
+		memcpy(&_step[_lastStep + 2], &_step[_lastStep + 1], sizeof(SStep));
 		_lastStep += 2;
 
 		return ;
@@ -294,18 +294,18 @@ void lookAt(float x, float z) {
 	_step[_lastStep]._theta = (_step[_lastStep]._theta > 360.0) ? _step[_lastStep]._theta - 360.0 : (_step[_lastStep]._theta < 0.0) ? _step[_lastStep]._theta + 360.0 : _step[_lastStep]._theta;
 
 	// Penultimate 2/3
-	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(struct SStep));
+	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
 	_lastStep++;
 	_step[_lastStep]._theta += approx;
 	_step[_lastStep]._theta = (_step[_lastStep]._theta > 360.0) ? _step[_lastStep]._theta - 360.0 : (_step[_lastStep]._theta < 0.0) ? _step[_lastStep]._theta + 360.0 : _step[_lastStep]._theta;
 
 	// Last right step
-	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(struct SStep));
+	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
 	_lastStep++;
 	_step[_lastStep]._theta = theta;
 
 	//	????
-	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(struct SStep));
+	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
 	_lastStep++;
 	_step[_lastStep]._theta = theta;
 }

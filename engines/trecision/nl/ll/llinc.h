@@ -83,17 +83,17 @@ struct SDObj {
 };
 
 // fastfile
-typedef struct {
+struct SFileEntry {
 	char name[12];
 	int offset;
-} FILEENTRY, *LPFILEENTRY;
+};
 
-typedef struct SFileHandle {
+struct SFileHandle {
 	char inuse;
 	int pos;
 	int size;
-	LPFILEENTRY pfe;
-} FILEHANDLE, *LPFILEHANDLE;
+	SFileEntry *pfe;
+};
 
 
 // FUNCTIONS
@@ -146,12 +146,12 @@ extern uint8 *SoundStartBuffer;
 extern uint8 SoundSystemActive;
 extern uint8 SpeechTrackEnabled;
 // MOUSE
-extern struct SDText curString;
-extern struct SDText oldString;
+extern SDText curString;
+extern SDText oldString;
 extern uint8  TextStatus;
 extern Common::SeekableReadStream *ff;
 // FILEREF
-extern FILEENTRY FileRef[];
+extern SFileEntry FileRef[];
 extern int NumFileRef;
 
 } // End of namespace Trecision

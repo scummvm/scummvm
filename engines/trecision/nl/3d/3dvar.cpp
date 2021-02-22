@@ -49,12 +49,12 @@
 
 namespace Trecision {
 
-struct SPan      _panel[MAXPANELSINROOM];
-struct SSortPan  _sortPan[32];
-struct SPathNode _pathNode[MAXPATHNODES];
+SPan      _panel[MAXPANELSINROOM];
+SSortPan  _sortPan[32];
+SPathNode _pathNode[MAXPATHNODES];
 
-struct SStep     _step[MAXSTEP];
-struct SActor    _actor;
+SStep     _step[MAXSTEP];
+SActor    _actor;
 
 float  _proj[3][3];
 float  _invP[3][3];

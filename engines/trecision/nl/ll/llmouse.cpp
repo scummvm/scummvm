@@ -679,7 +679,7 @@ insave:
 			fwrite(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 		}
 		for (int a = 0; a < MAXANIM; a++)
-			fwrite(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
+			fwrite(&AnimTab[a],        sizeof(SAnim), 1, fh);
 		for (int a = 0; a < MAXSAMPLE; a++) {
 			fwrite(&GSample[a]._volume,  sizeof(uint8), 1, fh);
 			fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
@@ -935,7 +935,7 @@ bool DataLoad() {
 			fread(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 		}
 		for (int a = 0; a < MAXANIM; a++)
-			fread(&AnimTab[a],        sizeof(struct SAnim), 1, fh);
+			fread(&AnimTab[a],        sizeof(SAnim), 1, fh);
 		for (int a = 0; a < MAXSAMPLE; a++) {
 			fread(&GSample[a]._volume,  sizeof(uint8), 1, fh);
 			fread(&GSample[a]._flag,    sizeof(uint8), 1, fh);
@@ -1083,10 +1083,10 @@ void DemoOver() {
 void CheckFileInCD(const char *name) {
 	extern char CurCDSet;
 	char str[200];
-	FILEENTRY fe;
+	SFileEntry fe;
 
 	strcpy(fe.name, name);
-	LPFILEENTRY pfe = (LPFILEENTRY)bsearch(&fe, FileRef, NumFileRef, sizeof(FILEENTRY), Compare);
+	SFileEntry *pfe = (SFileEntry *)bsearch(&fe, FileRef, NumFileRef, sizeof(SFileEntry), Compare);
 	if (pfe == NULL)
 		CloseSys(g_vm->_sysText[5]);
 

@@ -29,14 +29,14 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                                  INIT                                   */
 /*-------------------------------------------------------------------------*/
-struct SSound     GSample[MAXSAMPLE];
-struct SAnim      AnimTab[MAXANIM];
+SSound GSample[MAXSAMPLE];
+SAnim AnimTab[MAXANIM];
 
 /*-------------------------------------------------------------------------*/
 /*                                 SCRIPT           					   */
 /*-------------------------------------------------------------------------*/
-struct SScriptFrame ScriptFrame[MAXSCRIPTFRAME];
-struct SScript Script[MAXSCRIPT];
+SScriptFrame ScriptFrame[MAXSCRIPTFRAME];
+SScript Script[MAXSCRIPT];
 
 /*-------------------------------------------------------------------------*/
 /*                            VARIABILI ATTUALI          				   */
@@ -51,11 +51,11 @@ int8 _characterGoToPosition = -1;
 int8 OldObjStatus[MAXOBJINROOM];
 int8 VideoObjStatus[MAXOBJINROOM];
 
-struct ScreenRect VideoTop = {  0,  0,   0, TOP - 1};
-struct ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
-struct ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
+ScreenRect VideoTop = {  0,  0,   0, TOP - 1};
+ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
+ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
 
-struct SSortTable SortTable[200];
+SSortTable SortTable[200];
 
 /*-------------------------------------------------------------------------*/
 /*                             FLAGS DI STATO          					   */

@@ -3753,14 +3753,14 @@ static struct ATFHandle {
 	int16 curframe, lastframe;
 	uint16 object;
 	uint16 status;
-	struct SAnim *curanim;
+	SAnim *curanim;
 }            // 0->character 1->background 2->icon
 AnimType[3] = {	{true}, {true}, {true}	};
 
 /* -----------------11/07/97 11.43-------------------
 					ExecuteATFDO
  --------------------------------------------------*/
-void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
+void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
 	switch (doit) {
 	case fCLROBJSTATUS:
 		g_vm->_obj[obj]._mode &= ~OBJMODE_OBJSTATUS;
@@ -3887,7 +3887,7 @@ void ExecuteATFDO(struct ATFHandle *h, int doit, int obj) {
 /* -----------------11/07/97 11.42-------------------
 					ProcessATF
  --------------------------------------------------*/
-void ProcessATF(struct ATFHandle *h, int type, int atf) {
+void ProcessATF(ATFHandle *h, int type, int atf) {
 	static int dc = 0;
 	extern char UStr[];
 
@@ -4069,8 +4069,8 @@ void AtFrameEnd(int type) {
 					AtFrameHandler
  --------------------------------------------------*/
 void AtFrameHandler(int type) {
-	struct ATFHandle *h = &AnimType[type];
-	struct SAnim *anim = h->curanim;
+	ATFHandle *h = &AnimType[type];
+	SAnim *anim = h->curanim;
 	if (anim == nullptr)
 		return ;
 

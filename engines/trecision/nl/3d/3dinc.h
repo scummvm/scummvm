@@ -116,11 +116,11 @@ struct SStep {
 };
 
 struct SActor {
-	struct SVertex  *_vertex;
-	struct SFace    *_face;
-	struct SLight   *_light;
-	struct SCamera  *_camera;
-	struct STexture *_texture;
+	SVertex  *_vertex;
+	SFace    *_face;
+	SLight   *_light;
+	SCamera  *_camera;
+	STexture *_texture;
 
 	int _vertexNum;
 	int _faceNum;
@@ -137,11 +137,11 @@ struct SActor {
 };
 
 
-extern struct SPan      _panel[];
-extern struct SSortPan  _sortPan[];
-extern struct SPathNode _pathNode[];
-extern struct SStep     _step[];
-extern struct SActor    _actor;
+extern SPan      _panel[];
+extern SSortPan  _sortPan[];
+extern SPathNode _pathNode[];
+extern SStep     _step[];
+extern SActor    _actor;
 
 extern float  _proj[3][3];
 extern float  _invP[3][3];
