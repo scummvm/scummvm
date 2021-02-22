@@ -57,7 +57,7 @@ int NlVer = 102;
 void doAction() {
 	if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) || (g_vm->_curMessage->_event == ME_MOUSEEXAMINE)) {
 		//		Azione sulla zona GAME
-		g_vm->_curObj = g_vm->_curMessage->_longParam;
+		g_vm->_curObj = g_vm->_curMessage->_u32Param;
 		if (g_vm->_curObj == oLASTLEV5)
 			CharacterSay(2003);
 
@@ -156,9 +156,9 @@ void doMouse() {
 
 	switch (g_vm->_curMessage->_event) {
 	case ME_MMOVE:
-		if (GAMEAREA(g_vm->_curMessage->_wordParam2))
+		if (GAMEAREA(g_vm->_curMessage->_u16Param2))
 			curpos = POSGAME;
-		else if (INVAREA(g_vm->_curMessage->_wordParam2))
+		else if (INVAREA(g_vm->_curMessage->_u16Param2))
 			curpos = POSINV;
 		else
 			curpos = POSUP;
@@ -167,7 +167,7 @@ void doMouse() {
 		if (curpos == POSGAME) {
 			lastpos = POSGAME;
 			if ((FlagSomeOneSpeak) || (FlagDialogMenuActive) || (FlagDialogActive) || (FlagUseWithLocked)) break;
-			CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
+			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			//				per la ruota della 2C
 			if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 				ShowObjName((oRUOTA1A2C % 3) + oRUOTAA2C, true);
@@ -217,7 +217,7 @@ void doMouse() {
 			if (g_vm->_inventoryStatus == INV_OFF)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else if (g_vm->_inventoryStatus == INV_INACTION)
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		}
 //			Zona UP
 		else {
@@ -231,7 +231,7 @@ void doMouse() {
 			lastpos = POSUP;
 
 			if (FlagDialogMenuActive)
-				UpdateScelte(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
+				UpdateScelte(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 		}
 		break;
 
@@ -248,7 +248,7 @@ void doMouse() {
 			break;
 
 		if ((FlagDialogActive) && (FlagDialogMenuActive)) {
-			ScegliScelta(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
+			ScegliScelta(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
 		//  for the displacer
@@ -276,7 +276,7 @@ void doMouse() {
 		// snake escape 52
 		if (g_vm->_curRoom == r52) {
 			if (g_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS)
-				if (GAMEAREA(g_vm->_curMessage->_wordParam2) && !FlagUseWithStarted && (g_vm->_curObj != oSNAKEU52)) {
+				if (GAMEAREA(g_vm->_curMessage->_u16Param2) && !FlagUseWithStarted && (g_vm->_curObj != oSNAKEU52)) {
 					StartCharacterAction(a526, 0, 1, 0);
 					g_vm->_obj[oSCAVO51]._anim = a516;
 					memcpy(&g_vm->_snake52, g_vm->_curMessage, sizeof(g_vm->_snake52));
@@ -286,26 +286,26 @@ void doMouse() {
 		// end snake escape 52
 		// sys
 		else if (g_vm->_curRoom == rSYS) {
-			CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2);
+			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			DoSys(g_vm->_curObj);
 			break;
 		}
 		// end sys
 
 		// Se sono in stanze senza omino tipo la mappa o libro
-		if ((FlagCharacterExist == false)/* && (GAMEAREA(_curMessage->_wordParam2))*/) {
-			if ((INVAREA(g_vm->_curMessage->_wordParam2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
-				if (ICONAREA(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2) && (WhatIcon(g_vm->_curMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+		if ((FlagCharacterExist == false)/* && (GAMEAREA(_curMessage->_u16Param2))*/) {
+			if ((INVAREA(g_vm->_curMessage->_u16Param2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
+				if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
 					g_vm->_lightIcon = 0xFF;
 					RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 					if (g_vm->_curMessage->_event == ME_MRIGHT)
-						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 					else if (FlagUseWithStarted)
-						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 					else
-						doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+						doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				}
 				break;
 			}
@@ -320,7 +320,7 @@ void doMouse() {
 
 //			gestione particolare ruote 2C
 		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
-			if (CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2)) {
+			if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
 				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 					ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
 				else if (g_vm->_curObj == oPULSANTE2C) {
@@ -378,14 +378,14 @@ void doMouse() {
 //			fine gestione particolare
 
 //			Zona GAME
-		if (GAMEAREA(g_vm->_curMessage->_wordParam2) && (!_playingAnims[1])) {
+		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!_playingAnims[1])) {
 			if (Flagscriptactive)
-				g_vm->_curObj = g_vm->_curMessage->_longParam;
+				g_vm->_curObj = g_vm->_curMessage->_u32Param;
 
-			int pmousex = g_vm->_curMessage->_wordParam1;
-			int pmousey = g_vm->_curMessage->_wordParam2;
+			int pmousex = g_vm->_curMessage->_u16Param1;
+			int pmousey = g_vm->_curMessage->_u16Param2;
 			if (!(AtMouseClick(g_vm->_curObj))) {
-				if (CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2)) {
+				if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
 					if ((g_vm->_obj[g_vm->_curObj]._lim[2] - g_vm->_obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
 						pmousex = (g_vm->_obj[g_vm->_curObj]._lim[0] + g_vm->_obj[g_vm->_curObj]._lim[2]) / 2;
 						pmousey = ((g_vm->_obj[g_vm->_curObj]._lim[1] + g_vm->_obj[g_vm->_curObj]._lim[3]) / 2) + TOP;
@@ -396,7 +396,7 @@ void doMouse() {
 			}
 			g_vm->_characterQueue.initQueue();
 
-			if (CheckMask(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2) && (!FlagDialogActive)) {
+			if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (!FlagDialogActive)) {
 				if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oSCALA1D))
 					g_vm->_curObj = oDONNA1D;
 				else if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oCARTELLO2B) && (g_vm->_curObj != od2BALLA28)) {
@@ -420,7 +420,7 @@ void doMouse() {
 					break;
 				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oFRONTOFFICEC35) || (g_vm->_curObj == oFRONTOFFICEA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
 					g_vm->_curObj = oLASTLEV5;
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 					if (FlagUseWithStarted) {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
@@ -439,14 +439,14 @@ void doMouse() {
 				} else if ((g_vm->_curMessage->_event == ME_MLEFT) &&
 				           ((!(g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oENTRANCE2E) || (g_vm->_curObj == od24ALLA26) || (g_vm->_curObj == od21ALLA23 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)))) ||
 				            ((g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == od2EALLA2C) || (g_vm->_curObj == od24ALLA23) || (g_vm->_curObj == od21ALLA22 && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)) || (g_vm->_curObj == od2GVALLA26))))) {
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 					break;
 				}
 
 				if (g_vm->_curMessage->_event == ME_MRIGHT) {
 					if (!(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE) && (g_vm->_curObj != 0)) {
 						if (FlagUseWithStarted) {
-							doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+							doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 							return;
 						}
 						if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
@@ -460,36 +460,36 @@ void doMouse() {
 						_characterGoToPosition = -1;
 						actorStop();
 						nextStep();
-						doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curObj);
+						doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 					} else
-						doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curObj);
+						doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 				} else
-					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curObj);
+					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 			} else if ((FlagUseWithStarted) && !(g_vm->_useWith[WITH]))
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 			else
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		}
 		// Inventory Zone
-		else if (INVAREA(g_vm->_curMessage->_wordParam2)) {
+		else if (INVAREA(g_vm->_curMessage->_u16Param2)) {
 			if (_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
-			if (ICONAREA(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2) && (WhatIcon(g_vm->_curMessage->_wordParam1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 				g_vm->_characterQueue.initQueue();
 				actorStop();
 				nextStep();
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+				doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				g_vm->_useWith[WITH] = 0;
 				g_vm->_curObj = 0;
 				g_vm->_lightIcon = 0xFF;
 				RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 				if (g_vm->_curMessage->_event == ME_MRIGHT)
-					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				else if (FlagUseWithStarted)
-					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				else
-					doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, 0);
+					doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 			}
 		}
 		break;
@@ -670,12 +670,12 @@ void doCharacter() {
 			FlagMouseEnabled = true;
 
 			if (g_vm->_curMessage->_event == ME_CHARACTERGOTOACTION)
-				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curMessage->_longParam);
+				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u32Param);
 			else if (g_vm->_curMessage->_event == ME_CHARACTERGOTOEXAMINE)
-				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, 0, g_vm->_curMessage->_longParam);
+				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u32Param);
 			else if (g_vm->_curMessage->_event == ME_CHARACTERGOTOEXIT) {
 				FlagShowCharacter = false;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 			} else if (g_vm->_curMessage->_event == ME_CHARACTERDOACTION) {
 				extern uint16 lastobj;
 				lastobj = 0;
@@ -692,13 +692,13 @@ void doCharacter() {
 		g_vm->_regenInvStartLine = INVENTORY_HIDE;
 		RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 		g_vm->_inventoryStatus = INV_OFF;
-		if (g_vm->_curMessage->_wordParam1 > hLAST) {
-			StartSmackAnim(g_vm->_curMessage->_wordParam1);
-			InitAtFrameHandler(g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_longParam);
+		if (g_vm->_curMessage->_u16Param1 > hLAST) {
+			StartSmackAnim(g_vm->_curMessage->_u16Param1);
+			InitAtFrameHandler(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u32Param);
 			FlagMouseEnabled = false;
-			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->_curMessage->_priority, g_vm->_curMessage->_wordParam1, g_vm->_curMessage->_wordParam2, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
+			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		} else
-			actorDoAction(g_vm->_curMessage->_wordParam1);
+			actorDoAction(g_vm->_curMessage->_u16Param1);
 
 		ClearText();
 		break;
@@ -718,13 +718,13 @@ void doCharacter() {
 			lastobj = 0;
 			ShowObjName(g_vm->_curObj, true);
 			//	If the room changes at the end
-			if (g_vm->_curMessage->_wordParam2) {
+			if (g_vm->_curMessage->_u16Param2) {
 				FlagShowCharacter = false;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curMessage->_wordParam2, 0, g_vm->_curMessage->_byteParam, g_vm->_curMessage->_longParam);
-			} else if (g_vm->_curMessage->_byteParam)
-				setPosition(g_vm->_curMessage->_byteParam);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
+			} else if (g_vm->_curMessage->_u8Param)
+				setPosition(g_vm->_curMessage->_u8Param);
 
-			if ((g_vm->_curMessage->_wordParam1 == g_vm->_obj[oCANCELLATA1B]._anim)
+			if ((g_vm->_curMessage->_u16Param1 == g_vm->_obj[oCANCELLATA1B]._anim)
 			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
 			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 				PlayDialog(dF181);
@@ -758,11 +758,11 @@ void doSystem() {
 		if (FlagWaitRegen)
 			REEVENT;
 
-		if ((g_vm->_curRoom == r41D) && (g_vm->_oldRoom != g_vm->_curMessage->_wordParam1))
+		if ((g_vm->_curRoom == r41D) && (g_vm->_oldRoom != g_vm->_curMessage->_u16Param1))
 			NlDissolve(30);
 
 		g_vm->_oldRoom = g_vm->_curRoom;
-		g_vm->_curRoom = g_vm->_curMessage->_wordParam1;
+		g_vm->_curRoom = g_vm->_curMessage->_u16Param1;
 		g_vm->_gameQueue.initQueue();
 		g_vm->_animQueue.initQueue();
 		g_vm->_characterQueue.initQueue();
@@ -887,11 +887,11 @@ void doSystem() {
 			read3D("4P2.3d");
 		//			end save/load
 
-		setPosition(g_vm->_curMessage->_byteParam);
+		setPosition(g_vm->_curMessage->_u8Param);
 		actorStop();
 
-		if (g_vm->_curMessage->_wordParam2)
-			StartCharacterAction(g_vm->_curMessage->_wordParam2, 0, 0, 0);
+		if (g_vm->_curMessage->_u16Param2)
+			StartCharacterAction(g_vm->_curMessage->_u16Param2, 0, 0, 0);
 
 		AtEndChangeRoom();
 

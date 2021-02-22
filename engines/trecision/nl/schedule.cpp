@@ -77,8 +77,8 @@ void MessageQueue::initQueue() {
 /*                                  EVENT           					   */
 /*-------------------------------------------------------------------------*/
 void doEvent(uint8 cls,  uint8 event,  uint8 priority,
-			 uint16 wparam1, uint16 wparam2,
-			 uint8 bparam, uint32 lparam) {
+			 uint16 u16Param1, uint16 u16Param2,
+			 uint8 u8Param, uint32 u32Param) {
 	MessageQueue *lq;
 
 	if (cls <= CLASS_GAME)
@@ -96,10 +96,10 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	lm->_class  = cls;
 	lm->_event  = event;
 	lm->_priority = priority;
-	lm->_wordParam1  = wparam1;
-	lm->_wordParam2  = wparam2;
-	lm->_byteParam  = bparam;
-	lm->_longParam  = lparam;
+	lm->_u16Param1  = u16Param1;
+	lm->_u16Param2  = u16Param2;
+	lm->_u8Param  = u8Param;
+	lm->_u32Param  = u32Param;
 	lm->_timestamp = TheTime;
 
 	if (lq->_tail == MAXMESSAGE)

@@ -663,11 +663,11 @@ void PlayScelta(uint16 i) {
 void doDialog() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_ENDCHOICE:
-		afterChoice(g_vm->_curMessage->_wordParam1);
+		afterChoice(g_vm->_curMessage->_u16Param1);
 		break;
 
 	case ME_STARTDIALOG:
-		PlayDialog(g_vm->_curMessage->_wordParam1);
+		PlayDialog(g_vm->_curMessage->_u16Param1);
 		break;
 	}
 }

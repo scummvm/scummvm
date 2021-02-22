@@ -38,7 +38,7 @@
 namespace Trecision {
 
 void SScriptFrame::sendFrame() {
-	doEvent(_class, _event, MP_DEFAULT, _wordParam1, _wordParam2, _byteParam, _longParam);
+	doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
 }
 
 uint8 CurStack = 0;

@@ -533,7 +533,7 @@ void SomeOneMute() {
 void doString() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_CHARACTERSPEAK:
-		CharacterSay(g_vm->_curMessage->_wordParam1);
+		CharacterSay(g_vm->_curMessage->_u16Param1);
 		break;
 
 	case ME_CHARACTERSPEAKING:
@@ -551,14 +551,14 @@ void doString() {
 		break;
 
 	case ME_SOMEONEWAIT2SPEAK:
-		if ((!g_vm->_curMessage->_wordParam1) /*FAB: || (AnimObj[_curMessage->_wordParam1]._flag & ONOFF)*/)
+		if ((!g_vm->_curMessage->_u16Param1) /*FAB: || (AnimObj[_curMessage->_u16Param1]._flag & ONOFF)*/)
 			SomeOneContinueTalk();
 		else
 			REEVENT;
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
-		if ((!g_vm->_curMessage->_wordParam1) /*FAB: || (!(AnimObj[_curMessage->_wordParam1]._flag & ONOFF))*/)
+		if ((!g_vm->_curMessage->_u16Param1) /*FAB: || (!(AnimObj[_curMessage->_u16Param1]._flag & ONOFF))*/)
 			SomeOneMute();
 		else
 			REEVENT;
