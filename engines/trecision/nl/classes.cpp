@@ -465,9 +465,7 @@ void doMouse() {
 						doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 				} else
 					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
-			} else if ((FlagUseWithStarted) && !(g_vm->_useWith[WITH]))
-				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-			else
+			} else
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		}
 		// Inventory Zone

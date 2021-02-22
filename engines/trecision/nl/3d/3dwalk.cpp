@@ -642,8 +642,8 @@ float evalPath(int a, float destX, float destZ, int nearP) {
 void buildFramelist() {
 	int a, b, c, CurA, CurF, cfp;
 	float ox, oz, cx, cz;
-	float startpos, approx, theta, oldtheta, firstframe;
-	struct SVertex *v;
+	float startpos, approx, theta = 0.0, oldtheta, firstframe;
+	SVertex *v;
 
 	// controlla che in nessun caso attraversi o sfiori un pannello stretto
 	for (a = 1; a < _numPathNodes; a++) {
@@ -681,7 +681,7 @@ void buildFramelist() {
 
 	a = 0;
 	// calcola offset
-	v = (struct SVertex *)_characterArea;
+	v = (SVertex *)_characterArea;
 	firstframe = FRAMECENTER(v);
 	startpos = 0.0;
 
@@ -752,13 +752,13 @@ void buildFramelist() {
 				// frame fine camminata
 				ox = FRAMECENTER(v) - firstframe;
 
-				v = (struct SVertex *)_characterArea;
+				v = (SVertex *)_characterArea;
 				v += cfp * _actor._vertexNum;
 				ox -= FRAMECENTER(v);
 
 			}
 
-			v = (struct SVertex *)_characterArea;
+			v = (SVertex *)_characterArea;
 			v += cfp * _actor._vertexNum;
 
 			// solo se non finisce
@@ -788,7 +788,7 @@ void buildFramelist() {
 	while (b != CurA)
 		cfp += _defActionLen[b++];
 
-	v = (struct SVertex *)_characterArea;
+	v = (SVertex *)_characterArea;
 	v += cfp * _actor._vertexNum;
 
 	for (b = 0; b < _defActionLen[CurA]; b++) {
@@ -1232,8 +1232,8 @@ void putPix(int x, int y, uint16 c) {
 	}
 }
 
-/*-----------------07/10/96 11.15-------------------
-	Trova punto 3D corrispondente a punto 2D
+/*------------------------------------------------
+  Find the 3D point corresponding to the 2D point
 --------------------------------------------------*/
 void whereIs(int px, int py) {
 	float inters = 32000.0;
@@ -1248,16 +1248,15 @@ void whereIs(int px, int py) {
 	float x = _x3d;
 	float y = _y3d;
 	float z = _z3d;
-	//cross3D( _x, y, z, 0x001F );
 
-	// prova ad intersecare col pavimento
+	// Try to intersect with the floor
 	if (intersectLineFloor(x, y, z)) {
 		_curPanel = -1;
 		_curX = _x3d;
 		_curZ = _z3d;
 	}
 
-	// prova con tutti i pannelli e sceglie il piu' vicino
+	// try all the panels and choose the closest one
 	for (int b = 0; b < _panelNum; b++) {
 		if (intersectLinePanel(&_panel[b], x, y, z)) {
 			float temp = dist3D(_actor._camera->_ex, _actor._camera->_ey, _actor._camera->_ez, _x3d, _y3d, _z3d);
@@ -1398,10 +1397,6 @@ void pointOut() {
 	Draw 2D line
 --------------------------------------------------*/
 void putLine(int x1, int y1, int x2, int y2, uint16 color) {
-	int delta_constant, d;
-	int x_inc, y_inc;
-	int n_cicli, cicli;
-
 	int deltax = x2 - x1;
 	if (deltax < 0)
 		deltax = -deltax;
@@ -1413,55 +1408,41 @@ void putLine(int x1, int y1, int x2, int y2, uint16 color) {
 	int x = x1;
 	int y = y1;
 
+	int incX = (x1 < x2) ? 1 : -1;
+	int incY = (y1 < y2) ? 1 : -1;
+
 	if (deltax < deltay) {
-		d = (deltax << 1) - deltay;
-		delta_constant = (deltax - deltay) << 1;
-		n_cicli = deltay + 1;
-		if (x1 < x2)
-			x_inc = 1;
-		else
-			x_inc = -1;
+		int d = (deltax << 1) - deltay;
+		int delta_constant = (deltax - deltay) << 1;
+		int numCycles = deltay + 1;
 
-		if (y1 < y2)
-			y_inc = 1;
-		else
-			y_inc = -1;
-
-		for (cicli = 0; cicli < n_cicli; cicli++) {
+		for (int cycle = 0; cycle < numCycles; cycle++) {
 			if ((x >= 0) && (x < MAXX) && (y >= 0) && (y < MAXY))
 				putPix(x, y, color);
+			
 			if (d < 0)
 				d += (deltax << 1);
 			else {
 				d += delta_constant;
-				x += x_inc;
+				x += incX;
 			}
-			y += y_inc;
+			y += incY;
 		}
 	} else {
-		d = (deltay << 1) - deltax;
-		delta_constant = (deltay - deltax) << 1;
-		n_cicli = deltax + 1;
-		if (x1 < x2)
-			x_inc = 1;
-		else
-			x_inc = -1;
+		int d = (deltay << 1) - deltax;
+		int delta_constant = (deltay - deltax) << 1;
+		int numCycles = deltax + 1;
 
-		if (y1 < y2)
-			y_inc = 1;
-		else
-			y_inc = -1;
-
-		for (cicli = 0; cicli < n_cicli; cicli++) {
+		for (int cycle = 0; cycle < numCycles; cycle++) {
 			if ((x >= 0) && (x < MAXX) && (y >= 0) && (y < MAXY))
 				putPix(x, y, color);
 			if (d < 0)
 				d += (deltay << 1);
 			else {
 				d += delta_constant;
-				y += y_inc;
+				y += incY;
 			}
-			x += x_inc;
+			x += incX;
 		}
 	}
 }
@@ -1543,8 +1524,8 @@ void pointProject(float x, float y, float z) {
 		Projects 2D point in a 3D world
 --------------------------------------------------*/
 void invPointProject(int x, int y) {
-	float px = (float)(x - _cx) / (float)(_actor._camera->_fovX);
-	float py = (float)(y - _cy) / (float)(_actor._camera->_fovY);
+	float px = (float)(x - _cx) / _actor._camera->_fovX;
+	float py = (float)(y - _cy) / _actor._camera->_fovY;
 
 	_x3d = (float)(px * _invP[0][0] + py * _invP[0][1] + _invP[0][2]);
 	_y3d = (float)(px * _invP[1][0] + py * _invP[1][1] + _invP[1][2]);
@@ -1558,7 +1539,7 @@ void invPointProject(int x, int y) {
 /*------------------------------------------------
 		Intersects a 3D line with the panel
 --------------------------------------------------*/
-int intersectLinePanel(struct SPan *p, float x, float y, float z) {
+int intersectLinePanel(SPan *p, float x, float y, float z) {
 	// If it's an enlarged panel
 	if (p->_flags & 0x80000000)
 		return false;
