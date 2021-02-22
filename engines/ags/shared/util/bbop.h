@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_BBOP_H
 #define AGS_SHARED_UTIL_BBOP_H
 
-#include <common/endian.h>
+#include "common/endian.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
 

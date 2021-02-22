@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <audio/soundfont/rawfile.h>
-#include <audio/soundfont/vab/vab.h>
-#include <audio/soundfont/vgmcoll.h>
+#include "audio/soundfont/rawfile.h"
+#include "audio/soundfont/vab/vab.h"
+#include "audio/soundfont/vgmcoll.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"

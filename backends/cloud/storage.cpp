@@ -27,7 +27,7 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include <common/translation.h>
+#include "common/translation.h"
 #include "common/osd_message_queue.h"
 
 namespace Cloud {

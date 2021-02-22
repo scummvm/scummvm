@@ -25,9 +25,9 @@
 
 #include "gui/dialog.h"
 #include "common/fs.h"
-#include <backends/cloud/storagefile.h>
-#include <backends/networking/curl/request.h>
-#include <backends/cloud/storage.h>
+#include "backends/cloud/storagefile.h"
+#include "backends/networking/curl/request.h"
+#include "backends/cloud/storage.h"
 
 namespace GUI {
 

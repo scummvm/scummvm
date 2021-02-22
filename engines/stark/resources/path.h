@@ -23,8 +23,8 @@
 #ifndef STARK_RESOURCES_PATH_H
 #define STARK_RESOURCES_PATH_H
 
-#include <common/rect.h>
-#include <math/vector3d.h>
+#include "common/rect.h"
+#include "math/vector3d.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
