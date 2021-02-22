@@ -64,6 +64,10 @@ const int kPoliceBustVideos[6] = {1, 2, 4, 5, 7, 8};
 const int kOriginZero[2] = {0,   0};
 const int kOriginOne[2]  = {64, 48};
 
+// vm
+
+extern Gen::VM *Gen::g_vm;
+
 // settings
 
 static const char *kPauseMovie = "kPauseMovie";
@@ -143,7 +147,6 @@ public:
     bool isDemo() const;
 
     SymbolMaps maps;
-    SettingMaps settings;
 
     Audio::SoundHandle _fgSoundHandle;
     Audio::SoundHandle _bgSoundHandle;
