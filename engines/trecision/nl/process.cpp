@@ -53,24 +53,24 @@ void ProcessTime() {
 			RollInventory(g_vm->_inventoryStatus);
 
 		if ((g_vm->_inventoryStatus != INV_OFF)
-			&& ((OldRegInvSI != g_vm->_regenInvStartIcon) || (OldRegInvSL != g_vm->_regenInvStartLine) || (OldLightIcon != g_vm->_lightIcon) || (SemForceRegenInventory))) {
+			&& ((OldRegInvSI != g_vm->_regenInvStartIcon) || (OldRegInvSL != g_vm->_regenInvStartLine) || (OldLightIcon != g_vm->_lightIcon) || (FlagForceRegenInventory))) {
 			RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
 			OldRegInvSI = g_vm->_regenInvStartIcon;
 			OldRegInvSL = g_vm->_regenInvStartLine;
 			OldLightIcon = g_vm->_lightIcon;
-			SemForceRegenInventory = false;
+			FlagForceRegenInventory = false;
 		}
 
 		PaintScreen(0);
 		TextStackTop = -1;
 
-		SemScreenRefreshed = true;
+		FlagScreenRefreshed = true;
 		uint32 PaintTime = ReadTime();
 		if ((PaintTime - TheTime) >= 5)
 			NextRefresh = PaintTime + 1;
 		else
 			NextRefresh = TheTime + 5;
-		SemMousePolling = true;
+		FlagMousePolling = true;
 	}
 }
 
@@ -83,20 +83,20 @@ void ProcessMouse() {
 	static uint16 oldmy;
 	static bool LastMouseON = true;
 
-	if ((LastMouseON == true) && (SemMouseEnabled == false)) {
+	if ((LastMouseON == true) && (FlagMouseEnabled == false)) {
 		oldmx = 0;    // Switch off
 		oldmy = 0;
 		Mouse(2);
-	} else if ((LastMouseON == false) && (SemMouseEnabled == true)) {
+	} else if ((LastMouseON == false) && (FlagMouseEnabled == true)) {
 		oldmx = 0;    // Switch on
 		oldmy = 0;
 		Mouse(1);
 	}
 
-	LastMouseON = SemMouseEnabled;
+	LastMouseON = FlagMouseEnabled;
 	Mouse(3);
 
-	if (!SemMouseEnabled)
+	if (!FlagMouseEnabled)
 		return;
 
 	uint16 tmpMx = mx;
@@ -110,7 +110,7 @@ void ProcessMouse() {
 		MaskMouse = false;
 
 	if (!(mright || mleft)) {
-		if (!Semscriptactive) {
+		if (!Flagscriptactive) {
 			if ((tmpMx != oldmx) || (my != oldmy)) {
 				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, tmpMx, my, 0, 0);
 				oldmx = tmpMx;

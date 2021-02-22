@@ -630,18 +630,18 @@ insave:
 		fwrite(&OldInvLen,           sizeof(uint8), 1, fh);
 		fwrite(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
 		fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
-		fwrite(&Semskiptalk,         sizeof(LLBOOL), 1, fh);
-		fwrite(&Semskipenable,       sizeof(LLBOOL), 1, fh);
-		fwrite(&SemMouseEnabled,     sizeof(LLBOOL), 1, fh);
-		fwrite(&SemScreenRefreshed,  sizeof(LLBOOL), 1, fh);
-		fwrite(&SemPaintCharacter,        sizeof(LLBOOL), 1, fh);
-		fwrite(&SemSomeOneSpeak,     sizeof(LLBOOL), 1, fh);
-		fwrite(&SemCharacterSpeak,        sizeof(LLBOOL), 1, fh);
-		fwrite(&SemInventoryLocked,  sizeof(LLBOOL), 1, fh);
-		fwrite(&SemUseWithStarted,   sizeof(LLBOOL), 1, fh);
-		fwrite(&SemMousePolling,     sizeof(LLBOOL), 1, fh);
-		fwrite(&SemDialogSolitaire,  sizeof(LLBOOL), 1, fh);
-		fwrite(&SemCharacterExist,        sizeof(LLBOOL), 1, fh);
+		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
+		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
+		fwrite(&FlagMouseEnabled,     sizeof(int16), 1, fh);
+		fwrite(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
+		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
+		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
+		fwrite(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
+		fwrite(&FlagInventoryLocked,  sizeof(int16), 1, fh);
+		fwrite(&FlagUseWithStarted,   sizeof(int16), 1, fh);
+		fwrite(&FlagMousePolling,     sizeof(int16), 1, fh);
+		fwrite(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
+		fwrite(&FlagCharacterExist,        sizeof(int16), 1, fh);
 
 		fwrite(&OldInv[0],           sizeof(uint8), MAXICON, fh);
 		fwrite(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
@@ -747,8 +747,8 @@ bool DataLoad() {
 	for (int a = 0; a < TOP; a++)
 		wordset(Video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	if (!SemMouseEnabled) {
-		SemMouseEnabled = true;
+	if (!FlagMouseEnabled) {
+		FlagMouseEnabled = true;
 		Mouse(1);
 	}
 
@@ -886,18 +886,18 @@ bool DataLoad() {
 		fread(&OldInvLen,           sizeof(uint8), 1, fh);
 		fread(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
 		fread(&OldIconBase,         sizeof(uint8), 1, fh);
-		fread(&Semskiptalk,         sizeof(LLBOOL), 1, fh);
-		fread(&Semskipenable,       sizeof(LLBOOL), 1, fh);
-		fread(&SemMouseEnabled,     sizeof(LLBOOL), 1, fh);
-		fread(&SemScreenRefreshed,  sizeof(LLBOOL), 1, fh);
-		fread(&SemPaintCharacter,        sizeof(LLBOOL), 1, fh);
-		fread(&SemSomeOneSpeak,     sizeof(LLBOOL), 1, fh);
-		fread(&SemCharacterSpeak,        sizeof(LLBOOL), 1, fh);
-		fread(&SemInventoryLocked,  sizeof(LLBOOL), 1, fh);
-		fread(&SemUseWithStarted,   sizeof(LLBOOL), 1, fh);
-		fread(&SemMousePolling,     sizeof(LLBOOL), 1, fh);
-		fread(&SemDialogSolitaire,  sizeof(LLBOOL), 1, fh);
-		fread(&SemCharacterExist,        sizeof(LLBOOL), 1, fh);
+		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
+		fread(&Flagskipenable,       sizeof(int16), 1, fh);
+		fread(&FlagMouseEnabled,     sizeof(int16), 1, fh);
+		fread(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
+		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
+		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
+		fread(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
+		fread(&FlagInventoryLocked,  sizeof(int16), 1, fh);
+		fread(&FlagUseWithStarted,   sizeof(int16), 1, fh);
+		fread(&FlagMousePolling,     sizeof(int16), 1, fh);
+		fread(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
+		fread(&FlagCharacterExist,        sizeof(int16), 1, fh);
 
 		fread(&OldInv[0],           sizeof(uint8), MAXICON, fh);
 		fread(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
@@ -962,9 +962,9 @@ bool DataLoad() {
 
 		fclose(fh);
 
-		SemNoPaintScreen = true;
+		FlagNoPaintScreen = true;
 		CurStack = 0;
-		Semscriptactive = false;
+		Flagscriptactive = false;
 
 		g_vm->_oldRoom = g_vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curRoom, 0, 0, 0);
@@ -1003,8 +1003,8 @@ bool DataLoad() {
 	while (mleft || mright)
 		Mouse(3);
 
-	if (Semscriptactive) {
-		SemMouseEnabled = false;
+	if (Flagscriptactive) {
+		FlagMouseEnabled = false;
 		Mouse(2);
 	}
 

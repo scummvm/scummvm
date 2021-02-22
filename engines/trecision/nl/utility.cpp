@@ -50,7 +50,7 @@ struct StackText {
 	uint16 y;
 	uint16 tcol, scol;
 	char  sign[256];
-	LLBOOL  Clear;
+	bool  Clear;
 
 	void DoText();
 } TextStack[MAXTEXTSTACK];
@@ -141,7 +141,7 @@ void AddIcon(uint8 icon) {
 
 //	To show the icon that enters the inventory
 //	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
-//	SemForceRegenInventory = true;
+//	FlagForceRegenInventory = true;
 	RepaintString();
 }
 
@@ -168,8 +168,8 @@ void RegenInv(uint8 StartIcon, uint8 StartLine) {
 void EndScript() {
 	CurStack--;
 	if (CurStack == 0) {
-		Semscriptactive = false;
-		SemMouseEnabled = true;
+		Flagscriptactive = false;
+		FlagMouseEnabled = true;
 		RepaintString();
 	}
 }
@@ -179,8 +179,8 @@ void EndScript() {
 /*-------------------------------------------------------------------------*/
 void PlayScript(uint16 i) {
 	CurStack++;
-	Semscriptactive = true;
-	SemMouseEnabled = false;
+	Flagscriptactive = true;
+	FlagMouseEnabled = false;
 	g_vm->CurScriptFrame[CurStack] = Script[i]._firstFrame;
 
 	SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
@@ -207,9 +207,9 @@ void PlayScript(uint16 i) {
 /*                               EVALSCRIPT           					   */
 /*-------------------------------------------------------------------------*/
 void EvalScript() {
-	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && SemScreenRefreshed) {
+	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && FlagScreenRefreshed) {
 		g_vm->CurScriptFrame[CurStack]++;
-		SemMouseEnabled = false;
+		FlagMouseEnabled = false;
 
 		SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
@@ -346,7 +346,7 @@ void DoSys(uint16 curObj) {
 		if (g_vm->_oldRoom == rSYS)
 			break;
 		g_vm->_curRoom = g_vm->_obj[o00EXIT]._goRoom;
-		SemSaveInventory = true;
+		FlagSaveInventory = true;
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);

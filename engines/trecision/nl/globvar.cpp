@@ -60,30 +60,30 @@ struct SSortTable SortTable[200];
 /*-------------------------------------------------------------------------*/
 /*                             FLAGS DI STATO          					   */
 /*-------------------------------------------------------------------------*/
-LLBOOL  Semscriptactive;
-LLBOOL  SemDialogActive;
-LLBOOL  SemDialogMenuActive;
-LLBOOL  Semskiptalk;
-LLBOOL  Semskipenable;
-LLBOOL  SemMouseEnabled = true;
-LLBOOL  SemScreenRefreshed;
-LLBOOL  SemPaintCharacter;
-LLBOOL  SemShowCharacter = 1;
-LLBOOL  SemSomeOneSpeak;
-LLBOOL  SemCharacterSpeak;
-LLBOOL  SemInventoryLocked;
-LLBOOL  SemUseWithStarted;
-LLBOOL  SemUseWithLocked;
-LLBOOL  SemMousePolling;
-LLBOOL  SemDialogSolitaire;
-LLBOOL  SemCharacterExist = true;
-LLBOOL  SemWalkNoInterrupt;
-LLBOOL  SemNoPaintScreen;
-LLBOOL  SemForceRegenInventory;
-LLBOOL  SemWaitRegen;
+bool  Flagscriptactive;
+bool  FlagDialogActive;
+bool  FlagDialogMenuActive;
+bool  Flagskiptalk;
+bool  Flagskipenable;
+bool  FlagMouseEnabled = true;
+bool  FlagScreenRefreshed;
+bool  FlagPaintCharacter;
+bool  FlagShowCharacter = true;
+bool  FlagSomeOneSpeak;
+bool  FlagCharacterSpeak;
+bool  FlagInventoryLocked;
+bool  FlagUseWithStarted;
+bool  FlagUseWithLocked;
+bool  FlagMousePolling;
+bool  FlagDialogSolitaire;
+bool  FlagCharacterExist = true;
+bool  FlagWalkNoInterrupt;
+bool  FlagNoPaintScreen;
+bool  FlagForceRegenInventory;
+bool  FlagWaitRegen;
 
-LLBOOL  SemSaveInventory;
-LLBOOL  SemLoadInventory;
+bool  FlagSaveInventory;
+bool  FlagLoadInventory;
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

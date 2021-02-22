@@ -277,7 +277,7 @@ void OpenVideo() {
 
 	Video2 = (uint16 *)(MemoryArea + GameBytePointer);
 
-	if (!SemMouseEnabled)
+	if (!FlagMouseEnabled)
 		Mouse(2); // SPEGNI
 
 	wordset(Video2, 0, 1280L * 480L);
@@ -491,7 +491,7 @@ void ReadLoc() {
 
 	RoomReady = 0;
 	if ((g_vm->_curRoom == r11) && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
-		SemShowCharacter = 1;
+		FlagShowCharacter = true;
 
 	SoundFadOut();
 
@@ -549,7 +549,7 @@ void TendIn() {
 		return ;
 	}
 
-	SemPaintCharacter = 1;
+	FlagPaintCharacter = true;
 	WaitSoundFadEnd();
 	PaintScreen(1);
 

@@ -65,7 +65,7 @@ void initMain() {
 					NextMessage
  --------------------------------------------------*/
 void NextMessage() {
-	if (!SemNoPaintScreen)
+	if (!FlagNoPaintScreen)
 		ProcessTime();
 
 	ProcessMouse();
@@ -78,7 +78,7 @@ void NextMessage() {
 
 	ProcessTheMessage();
 
-	if (Semscriptactive)
+	if (Flagscriptactive)
 		EvalScript();
 }
 
