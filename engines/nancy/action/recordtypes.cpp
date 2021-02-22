@@ -424,10 +424,6 @@ void DifficultyLevel::execute(NancyEngine *engine) {
     isDone = true;
 }
 
-uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x2A4); // TODO
-}
-
 void ShowInventoryItem::init() {
     Graphics::Surface srcSurf;
     _engine->_res->loadImage("ciftree", imageName, srcSurf);
