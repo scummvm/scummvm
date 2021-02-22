@@ -47,8 +47,8 @@ struct PluginInfo {
 	std::shared_ptr<char> Data;
 	size_t      DataLen;
 
-	PluginInfo() : DataLen(0) {
-	}
+	PluginInfo() : DataLen(0) {}
+	PluginInfo(const String &name) : Name(name), DataLen(0) {}
 };
 
 } // namespace Shared

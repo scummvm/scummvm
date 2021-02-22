@@ -77,6 +77,7 @@
 #include "ags/engine/util/library.h"
 #include "ags/engine/util/library_scummvm.h"
 #include "ags/ags.h"
+#include "ags/detection.h"
 #include "ags/music.h"
 
 namespace AGS3 {
@@ -904,9 +905,29 @@ int pl_register_builtin_plugin(InbuiltPluginDetails const &details) {
 }
 
 Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
+	// WORKAROUND: Zak2 uses AGSFlashlight, but doesn't list it as a requirement.
+	// So allow ScummVM plugins specified to be added to the list
+	std::vector<Shared::PluginInfo> neededPlugins;
+	neededPlugins = infos;
+
+	for (const ::AGS::PluginVersion *v = ::AGS::g_vm->getNeededPlugins();
+			v && v->_plugin; ++v) {
+		bool exists = false;
+		for (uint i = 0; i < neededPlugins.size() && !exists; ++i) {
+			Common::String pluginName = neededPlugins[i].Name;
+			while (pluginName.contains('.'))
+				pluginName.deleteLastChar();
+
+			exists = pluginName.equalsIgnoreCase(v->_plugin);
+		}
+
+		if (!exists)
+			neededPlugins.push_back(PluginInfo(Common::String::format("%s.dll", v->_plugin)));
+	}
+
 	numPlugins = 0;
-	for (size_t inf_index = 0; inf_index < infos.size(); ++inf_index) {
-		const Shared::PluginInfo &info = infos[inf_index];
+	for (size_t inf_index = 0; inf_index < neededPlugins.size(); ++inf_index) {
+		const Shared::PluginInfo &info = neededPlugins[inf_index];
 		String name = info.Name;
 		if (name.GetLast() == '!')
 			continue; // editor-only plugin, ignore it
