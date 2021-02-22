@@ -69,14 +69,14 @@ goto done
 echo.
 echo Creating tools project files
 echo.
-create_project ..\.. --tools --msvc
+create_project ..\.. --tools --use-canonical-lib-names --msvc
 goto done
 
 :tests
 echo.
 echo Creating tests project files
 echo.
-create_project ..\.. --tests --msvc
+create_project ..\.. --tests --use-canonical-lib-names --msvc
 goto done
 
 :clean_check
