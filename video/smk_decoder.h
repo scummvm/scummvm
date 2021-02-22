@@ -23,8 +23,10 @@
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "common/bitarray.h"
 #include "common/bitstream.h"
 #include "common/rational.h"
+#include "common/rect.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -69,6 +71,8 @@ public:
 
 	Common::Rational getFrameRate() const;
 
+	const Common::Rect *getNextDirtyRect();
+
 protected:
 	void readNextPacket();
 	bool supportsAudioTrackSwitching() const { return true; }
@@ -100,6 +104,8 @@ protected:
 
 		Common::Rational getFrameRate() const { return _frameRate; }
 
+		const Common::Rect *getNextDirtyRect();
+
 	protected:
 		Graphics::Surface *_surface;
 
@@ -117,6 +123,9 @@ protected:
 		BigHuffmanTree *_MClrTree;
 		BigHuffmanTree *_FullTree;
 		BigHuffmanTree *_TypeTree;
+
+		Common::BitArray _dirtyBlocks;
+		Common::Rect _lastDirtyRect;
 
 		// Possible runs of blocks
 		static uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
