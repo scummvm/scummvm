@@ -888,6 +888,10 @@ void SoundCommandParser::stopAllSounds() {
 	_music->stopAll();
 }
 
+void SoundCommandParser::stopAllSamples() {
+	_music->stopAllSamples();
+}
+
 void SoundCommandParser::startNewSound(int number) {
 	// NB: This is only used by the debugging console.
 

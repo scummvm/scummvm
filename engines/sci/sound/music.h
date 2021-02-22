@@ -182,6 +182,7 @@ public:
 	void clearPlayList();
 	void pauseAll(bool pause);
 	void stopAll();
+	void stopAllSamples();
 
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);

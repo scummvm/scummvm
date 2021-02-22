@@ -63,6 +63,7 @@ public:
 	// Debug console functions
 	void startNewSound(int number);
 	void stopAllSounds();
+	void stopAllSamples();
 	void printPlayList(Console *con);
 	void printSongInfo(reg_t obj, Console *con);
 
