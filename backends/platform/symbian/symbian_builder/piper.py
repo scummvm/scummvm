@@ -1,5 +1,5 @@
 # ScummVM - Graphic Adventure Engine
-# Copyright (C) 2020 Stryzhniou Fiodar
+# Copyright (C) 2020 - 2021 Stryzhniou Fiodar
 
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -61,10 +61,15 @@ def tread_func(q):
       SafeWriteFile(build_err, err + err1, mode = 'a')
 
 
-def build_mmp():
+def build_mmp(try_fix = False):
    q = Queue.Queue()
    fileNames = os.listdir(mmps)
    fileNames = [x for x in fileNames if ".mmp" in x]
+   if try_fix:
+      with open(os.path.join(mmps, whitelist)) as ff:
+         fileNames = ff.readlines()
+   else:
+      SafeWriteFile(os.path.join(mmps, whitelist), fileNames)
 
    for fileName in fileNames:
       q.put(fileName)

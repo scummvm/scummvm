@@ -19,11 +19,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from datetime import datetime
+
 mmps = "mmp"
 pipe = "pipe"
 
-build_log = "build.log"
-build_err = "build.err"
+timestamp = datetime.now().strftime('_%H_%M_%d_%m_%Y')
+
+build_log = "ScummVM_build%s.log" %timestamp
+build_err = "ScummVM_build%s.err" %timestamp
+
+whitelist = 'whitelist.txt'
 
 build = 'full'
 # build = 'release'
@@ -37,6 +43,14 @@ def get_UIDs(build):
       return uids_tests
    return uids
 
+active_config = ("DISABLE_NUKED_OPL", "USE_A52", "USE_MPEG2",  "USE_BINK", "USE_THEORADEC", "USE_TINYGL",
+"ENABLE_VKEYBD")
+#activate USE_SCALERS USE_ARM_SCALER_ASM USE_TTS USE_SPEECH_DISPATCHER USE_CLOUD USE_LIBCURL
+# USE_SDL_NET USE_DISCORD USE_UPDATES USE_LUA
+disabled_config = ("USE_ALSA", "USE_ARM_SOUND_ASM", "ENABLE_OPL2LPT", "USE_SCALERS", "USE_ARM_SCALER_ASM", 
+"USE_HQ_SCALERS", "USE_NASM", "USE_ELF_LOADER", "USE_SDL2", "USE_FLUIDSYNTH", "USE_TTS", "USE_SPEECH_DISPATCHER",
+"USE_CLOUD", "USE_LIBCURL", "USE_SDL_NET", "USE_OPENGL", "USE_DISCORD", "USE_LINUXCD", "ENABLE_EVENTRECORDER",
+"USE_UPDATES", "USE_LUA")
 
 if __name__ == "__main__":
    print "This script holds together data used multiple modules."
