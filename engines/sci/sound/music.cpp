@@ -264,6 +264,15 @@ void SciMusic::stopAll() {
 	}
 }
 
+void SciMusic::stopAllSamples() {
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		if ((*i)->isSample) {
+			soundStop(*i);
+		}
+	}
+}
+
 void SciMusic::soundSetSoundOn(bool soundOnFlag) {
 	Common::StackLock lock(_mutex);
 

@@ -178,6 +178,9 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		uint32 number;
 
 		g_sci->_audio->stopAudio();
+		// In SSCI, kDoAudio handles all samples, even if started by kDoSound.
+		// We manage samples started by kDoSound in SoundCommandParser. 
+		g_sci->_soundCmd->stopAllSamples();
 
 		if (argc == 2) {
 			module = 65535;
@@ -204,6 +207,9 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioStop:
 		debugC(kDebugLevelSound, "kDoAudio: stop");
 		g_sci->_audio->stopAudio();
+		// In SSCI, kDoAudio handles all samples, even if started by kDoSound.
+		// We manage samples started by kDoSound in SoundCommandParser. 
+		g_sci->_soundCmd->stopAllSamples();
 		break;
 	case kSciAudioPause:
 		debugC(kDebugLevelSound, "kDoAudio: pause");
