@@ -1932,9 +1932,6 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				// Scan all files in the include folder
 				FileList files = listDirectory(folder);
 
-				if (files.empty())
-					continue;
-
 				// Add to list of test folders
 				testDirs.push_back(folder);
 
