@@ -152,11 +152,11 @@ void LoadAll() {
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
 		ScriptFrame[i]._class = dataNl.readByte();
 		ScriptFrame[i]._event = dataNl.readByte();
-		ScriptFrame[i]._byteParam = dataNl.readByte();
+		ScriptFrame[i]._u8Param = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		ScriptFrame[i]._wordParam1 = dataNl.readUint16LE();
-		ScriptFrame[i]._wordParam2 = dataNl.readUint16LE();
-		ScriptFrame[i]._longParam = dataNl.readUint16LE();
+		ScriptFrame[i]._u16Param1 = dataNl.readUint16LE();
+		ScriptFrame[i]._u16Param2 = dataNl.readUint16LE();
+		ScriptFrame[i]._u32Param = dataNl.readUint16LE();
 		ScriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
 	}
 

@@ -385,7 +385,7 @@ void PaintObjAnm(uint16 CurBox) {
 		if (!SortTable[a]._remove) {
 			if (SortTable[a]._typology == TYPO_BMP) {
 				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
-					// l'oggetto bitmap Š al livello desiderato
+					// l'oggetto bitmap al livello desiderato
 					DObj.x = g_vm->_obj[SortTable[a]._index]._px;
 					DObj.y = g_vm->_obj[SortTable[a]._index]._py + TOP;
 					DObj.dx = g_vm->_obj[SortTable[a]._index]._dx;

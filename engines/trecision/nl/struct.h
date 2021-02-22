@@ -130,10 +130,10 @@ struct Message {
 	uint8 _event;							// message name
 	uint8 _priority;						// message priority
 
-	uint8 _byteParam;
-	uint16 _wordParam1;						// byte parameter 1
-	uint16 _wordParam2;						// byte parameter 2
-	uint32 _longParam;						// int parameter
+	uint8 _u8Param;
+	uint16 _u16Param1;						// byte parameter 1
+	uint16 _u16Param2;						// byte parameter 2
+	uint32 _u32Param;						// int parameter
 	uint32 _timestamp;
 };
 
@@ -165,12 +165,12 @@ struct SScriptFrame {
 	uint8 _class;
 	uint8 _event;
 
-	uint8 _byteParam;
+	uint8 _u8Param;
 
-	uint16 _wordParam1;
-	uint16 _wordParam2;
+	uint16 _u16Param1;
+	uint16 _u16Param2;
 
-	uint16 _longParam;
+	uint16 _u32Param;
 
 	bool  _noWait;
 
