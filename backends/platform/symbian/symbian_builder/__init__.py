@@ -26,23 +26,31 @@ from build_apps import build_apps
 from create_installers import create_installers
 from datetime import datetime
 from piper import build_mmp
+from parse_codecs import parse_codecs
+from parse_base import parse_base
 from common_names import *
 
+def minimal_whitelist(engine):
+   data = "#ifdef SCUMMVM_PT_1\nscummvm_base.mmp\nscummvm_codecs.mmp\n%s\n#endif // SCUMMVM_PT_%s\n" %engine
+   SafeWriteFile(os.path.join(mmps, whitelist), data)
 
-def run(build, pkgs):
+def run(build, pkgs, only_begotten_engine = None):
    log = "Build started at: %s\n" %datetime.now()
    SafeWriteFile(build_log, log)
    SafeWriteFile(build_err, '')
    create_mmps(build, pkgs)
    create_engine_mmps(build)
-   
+   parse_codecs()
+   parse_base()
+
    log = "Build engines started at: %s\n" %datetime.now()
    SafeWriteFile(build_log, log, 'a')
-   build_mmp()
+   if only_begotten_engine:
+      minimal_whitelist(build_log)
+   build_mmp(only_begotten_engine)
    log = "Build engines ended at: %s\n" %datetime.now()
    SafeWriteFile(build_log, log, 'a')
-   
+
    build_apps(pkgs)
    create_installers(pkgs)
 
-   
