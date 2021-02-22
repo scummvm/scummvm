@@ -1892,8 +1892,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("benjaminjordan", "bj1.exe", "4b1378721f4f066f75102f3dca809224", 5678910),
 	GAME_ENTRY("benjordancase1", "bj1deluxe.exe", "8275249f4ffbc28c1f10ad09a2786814", 8293704),
 	GAME_ENTRY("bentheredanthat", "btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 46342499),
-	{{ "bentheredanthat", "Special Edition", AD_ENTRY1s("btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 89521873), Common::EN_ANY, \
-	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO0() }, nullptr }, // Steam
+	GAME_ENTRY_PLATFORM("bentheredanthat", "btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 89521873, "Special Edition"), // Steam
 	GAME_ENTRY("bernardsroom", "bernardsRoom.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8767774),
 	GAME_ENTRY("besieged", "besieged.exe", "615e806856b7730afadf1fea9a756b70", 11679795),
 	GAME_ENTRY("bestowersofeternity", "eternity.exe", "0b66a68c2c8aabe78c80e30b8b82acef", 16187539),
