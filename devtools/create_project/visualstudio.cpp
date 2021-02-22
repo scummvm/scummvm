@@ -232,7 +232,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	           << "\t<Tool\n"
 	           << "\t\tName=\"VCLinkerTool\"\n"
 	           << "\t\tIgnoreDefaultLibraryNames=\"\"\n";
-	if (setup.featureEnabled("text-console")) {
+	if (setup.featureEnabled("text-console") || setup.devTools || setup.tests) {
 		properties << "\t\tSubSystem=\"1\"\n";
 	} else {
 		properties << "\t\tSubSystem=\"2\"\n";
