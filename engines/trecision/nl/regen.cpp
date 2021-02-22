@@ -46,7 +46,7 @@ int xr1, xr2, yr1, yr2;
 int Hlim, Tlim;
 int VisualRef[50];
 
-struct SDObj DObj;
+SDObj DObj;
 int sflag;
 extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 int fillviola = 0;

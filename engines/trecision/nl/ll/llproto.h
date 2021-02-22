@@ -88,7 +88,7 @@ void ReadAnims();
 void ReadSounds();
 void RegenRoom();
 void PaintRegenRoom();
-void DrawObj(struct SDObj d);
+void DrawObj(SDObj d);
 void VisualFrame(uint16 CurAnim);
 void KillFrame(uint16 CurAnim);
 void RegenInventory(uint8 StartIcon, uint8 StartLine);

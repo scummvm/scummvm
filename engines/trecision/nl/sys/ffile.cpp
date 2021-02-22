@@ -41,7 +41,7 @@ namespace Trecision {
  * bsearch comparison routine
  * --------------------------------------------------*/
 int Compare(const void *p1, const void *p2) {
-	LPFILEENTRY p1c = (LPFILEENTRY)p1, p2c = (LPFILEENTRY)p2;
+	SFileEntry *p1c = (SFileEntry *)p1, *p2c = (SFileEntry*)p2;
 	return (scumm_stricmp((p1c)->name, (p2c)->name));
 }
 

@@ -176,11 +176,11 @@ struct SVVertex {
 	int32 _angle;
 } _vVertex[MAXVERTEX];
 
-struct SVertex  *_vertex, _shVertex[MAXVERTEX];
-struct SFace    *_face;
-struct SLight   *_light;
-struct SCamera  *_camera;
-struct STexture *_texture;
+SVertex  *_vertex, _shVertex[MAXVERTEX];
+SFace    *_face;
+SLight   *_light;
+SCamera  *_camera;
+STexture *_texture;
 
 uint32 _materials[21][181];
 uint16 _textureMat[256][91];
@@ -268,7 +268,7 @@ uint16 aliasing(uint32 val1, uint32 val2, uint8 num) {
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
 					 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
 					 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
-					 struct STexture *t) {
+					 STexture *t) {
 	int32 cl; 	// color of left edge of horizontal scanline
 	int32 zl; 	// zbuffer of left edge of horizontal scanline
 	int32 olx; 	// texture x of left edge of horizontal scanline
@@ -664,7 +664,7 @@ void drawCharacter(uint8 flag) {
 			if (_actor._curAction == hLAST)
 				cfp = 0;
 
-			_actor._vertex = (struct SVertex *)_characterArea + cfp * _actor._vertexNum;
+			_actor._vertex = (SVertex *)_characterArea + cfp * _actor._vertexNum;
 		} else {
 			extern uint8 *_actionPointer[];
 			extern uint16 _actionPosition[];
@@ -818,7 +818,7 @@ void drawCharacter(uint8 flag) {
 				l1 = (l1 * t);
 				l2 = (l2 * t);
 
-				_vertex = (struct SVertex *)(_actor._vertex);
+				_vertex = (SVertex *)(_actor._vertex);
 				for (int a = 0; a < CurVertexNum; a++) {
 					pa0 = _vertex->_nx;
 					pa1 = _vertex->_ny;
@@ -839,7 +839,7 @@ void drawCharacter(uint8 flag) {
 		for (int a = 0; a < CurVertexNum; a++)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
-		_vertex = (struct SVertex *)(_actor._vertex);
+		_vertex = (SVertex *)(_actor._vertex);
 
 		// Calculate the distance of the character from the room
 		tx = _camera->_ex - _actor._px;

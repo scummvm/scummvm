@@ -92,9 +92,9 @@ int32 VirtualPageLen = 640L;
 int32 CurScrollPageDx = 0L;
 int32 VideoScrollPageDx = 0L;
 // 3D
-struct SLight  VLight[MAXLIGHT];
-struct SCamera FCamera;
-struct STexture FTexture[MAXMAT];
+SLight  VLight[MAXLIGHT];
+SCamera FCamera;
+STexture FTexture[MAXMAT];
 // ANIMATION
 uint8 *MemoryArea;
 uint32 CurBufferSize;
@@ -117,7 +117,7 @@ int   ScrollBottle;
 short LeftArrow;
 short RightArrow;
 // FILEREF
-FILEENTRY FileRef[MAXFILEREF];
+SFileEntry FileRef[MAXFILEREF];
 int NumFileRef;
 
 // info for Toc BmData
@@ -234,10 +234,10 @@ void OpenVideo() {
 
 	_actor._vertexNum = VertexNum;
 	_actor._faceNum = FaceNum;
-	_actor._light = (struct SLight *)&VLight;
+	_actor._light = (SLight *)&VLight;
 	_actor._lightNum = LightNum;
-	_actor._camera = (struct SCamera *)&FCamera;
-	_actor._texture = (struct STexture *)&FTexture[0];
+	_actor._camera = (SCamera *)&FCamera;
+	_actor._texture = (STexture *)&FTexture[0];
 
 	TextArea = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += MAXTEXTAREA;
@@ -307,24 +307,24 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	FastFileRead(ff, &VertexNum, 4);
 	_actor._vertexNum = VertexNum;
 
-	_actor._vertex = (struct SVertex *)(Area);
+	_actor._vertex = (SVertex *)(Area);
 	_characterArea = Area;
 
-	int32 Read = FastFileRead(ff, _actor._vertex, sizeof(struct SVertex) * VertexNum * ActionNum);
+	int32 Read = FastFileRead(ff, _actor._vertex, sizeof(SVertex) * VertexNum * ActionNum);
 
 	FastFileRead(ff, &FaceNum, 4);
 	_actor._faceNum = FaceNum;
 
 	Area += Read;
-	_actor._face = (struct SFace *)(Area);
-	Read += FastFileRead(ff, _actor._face, sizeof(struct SFace) * FaceNum);
+	_actor._face = (SFace *)(Area);
+	Read += FastFileRead(ff, _actor._face, sizeof(SFace) * FaceNum);
 	FastFileClose(ff);
 
 	ff = FastFileOpen("mat.tex");
 	FastFileRead(ff, _textureMat, 2 * 91 * 256);
 	UpdatePixelFormat((uint16 *)_textureMat, 91 * 256);
 	FastFileRead(ff, _textureCoord, 2 * MAXFACE * 3 * 2);
-	FastFileRead(ff, _actor._face, sizeof(struct SFace)*FaceNum);
+	FastFileRead(ff, _actor._face, sizeof(SFace)*FaceNum);
 	FastFileClose(ff);
 
 	_actor._curFrame  = 0;
@@ -377,7 +377,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 		m1[0][2] = v1[2];
 
 		for (int b = 0; b < ActionNum; b++) {
-			struct SVertex *sv = (struct SVertex *)(_actor._vertex + b * VertexNum);
+			SVertex *sv = (SVertex *)(_actor._vertex + b * VertexNum);
 
 			v1[0] = sv[P2]._x - sv[P1]._x;
 			v1[1] = sv[P2]._y - sv[P1]._y;
@@ -503,7 +503,7 @@ void ReadLoc() {
 	ImagePointer = (uint16 *)Video2 + GameWordPointer - 4;
 
 	GameWordPointer += (DecCR(UStr, (uint8 *)ImagePointer, (uint8 *)Video2) + 1) / 2;
-	memcpy(&BmInfo, (struct SBmInfo *)ImagePointer, sizeof(struct SBmInfo));
+	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
 	ImagePointer += 4;
 	UpdatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
@@ -807,9 +807,7 @@ void PaintRegenRoom() {
 /*-----------------16/05/95 11.03-------------------
                               DrawObj
 --------------------------------------------------*/
-void DrawObj(struct SDObj d) {
-	uint16 b;
-
+void DrawObj(SDObj d) {
 	for (uint16 a = 0; a < 4; a++) {
 		if (d.l[a] > (CurRoomMaxX)) {
 			//printf("%u %u %u %u\n",d.l[0],d.l[1],d.l[2],d.l[3]);
@@ -822,7 +820,7 @@ void DrawObj(struct SDObj d) {
 		uint8 *mask = d.mask;
 
 		if (d.flag & COPYTORAM) {
-			for (b = d.y; b < (d.y + d.dy); b++) {
+			for (uint16 b = d.y; b < (d.y + d.dy); b++) {
 				uint16 Sco = 0;
 				uint16 c = 0;
 				while (Sco < d.dx) {
@@ -859,14 +857,14 @@ void DrawObj(struct SDObj d) {
 			CloseSys(g_vm->_sysText[5]);
 	} else {
 		if (d.flag & COPYTORAM) {
-			for (b = d.l[1]; b < d.l[3]; b++) {
+			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
 				MCopy(Video2 + (d.y + b)*CurRoomMaxX + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]));
 			}
 		}
 
 		if (d.flag & COPYTOVIDEO) {
-			for (b = d.l[1]; b < d.l[3]; b++) {
+			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
 				VCopy((d.y + b)*VirtualPageLen + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], d.l[2] - d.l[0]);
 			}

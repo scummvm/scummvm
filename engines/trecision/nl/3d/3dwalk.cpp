@@ -49,16 +49,16 @@ int read3D(const char *c) {
 		CloseSys("Can't open 3D file!\n");
 
 	// read rooms and lights
-	FastFileRead(ff, _actor._camera, sizeof(struct SCamera));
+	FastFileRead(ff, _actor._camera, sizeof(SCamera));
 	FastFileRead(ff, &_actor._lightNum, 4);
-	FastFileRead(ff, _actor._light, sizeof(struct SLight) * _actor._lightNum);
+	FastFileRead(ff, _actor._light, sizeof(SLight) * _actor._lightNum);
 
 	if (_actor._lightNum > 40)
 		CloseSys("Too many lights");
 
 	// read panels
 	FastFileRead(ff, &_panelNum, 4);
-	FastFileRead(ff, _panel, sizeof(struct SPan) * _panelNum);
+	FastFileRead(ff, _panel, sizeof(SPan) * _panelNum);
 	FastFileClose(ff);
 
 	// projection matrix
@@ -348,7 +348,7 @@ void findPath() {
   Look for the shorter route avoiding obstacle
 --------------------------------------------------*/
 void findShortPath() {
-	struct SPathNode TempPath[MAXPATHNODES];
+	SPathNode TempPath[MAXPATHNODES];
 	float  len1, len2;
 	int    curp, nearp, oldp;
 	float  destx, destz;
@@ -366,7 +366,7 @@ void findShortPath() {
 	// for every obstacle, try to go around it by the right and the left
 	// then take the sorter path
 	for (a = 0; a < _numPathNodes - 1; a++) {
-		memcpy(&TempPath[count], &_pathNode[a], sizeof(struct SPathNode));
+		memcpy(&TempPath[count], &_pathNode[a], sizeof(SPathNode));
 		count++;
 		if (count >= MAXPATHNODES - 2)
 			count = MAXPATHNODES - 2;
@@ -413,7 +413,7 @@ void findShortPath() {
 
 				// if it reaches the point, exit the loop
 				if (curp == _pathNode[a + 1]._curp) {
-					memcpy(&TempPath[count], &_pathNode[a + 1], sizeof(struct SPathNode));
+					memcpy(&TempPath[count], &_pathNode[a + 1], sizeof(SPathNode));
 					count++;
 					if (count >= MAXPATHNODES - 2)
 						count = MAXPATHNODES - 2;
@@ -484,7 +484,7 @@ void findShortPath() {
 
 		a = b;
 
-		memcpy(&_pathNode[_numPathNodes], &TempPath[a], sizeof(struct SPathNode));
+		memcpy(&_pathNode[_numPathNodes], &TempPath[a], sizeof(SPathNode));
 		_numPathNodes++;
 
 		for (b = count - 1; b > a + 1; b--) {
@@ -1181,8 +1181,8 @@ bool pointInside(int pan, double x, double z) {
 		Compare route distance (qsort)
 --------------------------------------------------*/
 int pathCompare(const void *arg1, const void *arg2) {
-	struct SPathNode *p1 = (struct SPathNode *)arg1;
-	struct SPathNode *p2 = (struct SPathNode *)arg2;
+	SPathNode *p1 = (SPathNode *)arg1;
+	SPathNode *p2 = (SPathNode *)arg2;
 
 	if (p1->_dist < p2->_dist)
 		return -1;
@@ -1197,7 +1197,7 @@ int pathCompare(const void *arg1, const void *arg2) {
 		Sorta i nodi del percorso trovato
 --------------------------------------------------*/
 void sortPath() {
-	qsort(&_pathNode[0], _numPathNodes, sizeof(struct SPathNode), pathCompare);
+	qsort(&_pathNode[0], _numPathNodes, sizeof(SPathNode), pathCompare);
 }
 
 /*------------------------------------------------
@@ -1450,7 +1450,7 @@ void putLine(int x1, int y1, int x2, int y2, uint16 color) {
 /*------------------------------------------------
 				View Panel
 --------------------------------------------------*/
-void viewPanel(struct SPan *p) {
+void viewPanel(SPan *p) {
 	int projVerts[4][2];
 
 	uint16 col = (p->_flags & 0x80000000) ? 0x3C0 : 0x3FF;
@@ -1700,8 +1700,8 @@ void initSortPan() {
 		Compare panel distance (qsort)
 --------------------------------------------------*/
 int panCompare(const void *arg1, const void *arg2) {
-	struct SSortPan *p1 = (struct SSortPan *)arg1;
-	struct SSortPan *p2 = (struct SSortPan *)arg2;
+	SSortPan *p1 = (SSortPan *)arg1;
+	SSortPan *p2 = (SSortPan *)arg2;
 
 	if (p1->_min > p2->_min)
 		return 1;
@@ -1716,7 +1716,7 @@ int panCompare(const void *arg1, const void *arg2) {
 				Sort the panels
 --------------------------------------------------*/
 void sortPanel() {
-	qsort(&_sortPan[0], _numSortPan, sizeof(struct SSortPan), panCompare);
+	qsort(&_sortPan[0], _numSortPan, sizeof(SSortPan), panCompare);
 }
 
 /*------------------------------------------------
