@@ -222,7 +222,7 @@ void MessageQueue::orderEvents() {
 /*                               TESTEMPTYQUEUE          				   */
 /*-------------------------------------------------------------------------*/
 bool MessageQueue::testEmptyQueue(uint8 cls) {
-	for (uint8 pos = _head; pos != _tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != cls)
 			return false;
 	}
@@ -234,7 +234,7 @@ bool MessageQueue::testEmptyQueue(uint8 cls) {
 /*                     TESTEMPTYCHARACTERQUEUE4SCRIPT          			   */
 /*-------------------------------------------------------------------------*/
 bool MessageQueue::testEmptyCharacterQueue4Script() {
-	for (uint8 pos = _head; pos != _tail; pos = (pos == MAXMESSAGE - 1) ? 0 : pos + 1) {
+	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != MC_CHARACTER)
 			continue;
 			
