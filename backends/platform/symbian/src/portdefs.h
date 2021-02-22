@@ -37,7 +37,9 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #endif
 #include <e32def.h>
-#include <e32std.h>
+#if !defined(__IGNORE__E32STD_H__) // TKey type from system header 
+#include <e32std.h> // doesn't meets with lua ones.
+#endif
 #if (__GNUC__ && __cplusplus)
 #pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
@@ -86,11 +88,13 @@ namespace std
 #undef remove
 #endif
 
-// TODO: Replace this with the keymapper
-#define GUI_ENABLE_KEYSDIALOG
-
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
+#define USE_TINYGL
+
+#ifndef SYMBIAN_DYMANIC_PLUGIN
+#define DETECTION_STATIC
+#endif //DETECTION_STATIC
 
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
@@ -168,11 +172,6 @@ namespace std
 	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
 
-extern "C" float roundf (float x); // ultima engine
-extern "C" double nearbyint(double x); // ultima engine
-extern "C" double round(double x); // ultima engine
-extern "C" double fmax (double x, double y);
-
 
 #ifndef signbit
 #define signbit(x)     \
@@ -181,18 +180,38 @@ extern "C" double fmax (double x, double y);
     : __signbitl(x))
 #endif 
 
-extern "C" int __signbit(double);
-extern "C" int __signbitf(float);
-extern "C" int __signbitl(long double);
-extern "C" float truncf(float);
-extern "C"  float fminf (float x, float y);
-extern "C" float fmaxf (float x, float y);
+// Functions from openlibm not declared in Symbian math.h
+extern "C"{
+	float roundf (float x);
+	double nearbyint(double x);
+	double round(double x);
+	int __signbit(double);
+	int __signbitf(float);
+	int __signbitl(long double);
+	float truncf(float);
+	float fminf(float x, float y);
+	float fmaxf(float x, float y);
+	double fmax (double x, double y);
+}
+
 
 #ifndef __WINS__
+// yuv2rgb functions from theorarm
+extern "C"{
+#ifdef COMMON_INTTYPES_H // That header has own inttypes declaration.
+#define HAVE_INTTYPES_H  // So we switch off it to avoid conflict declarations.
+#endif
+#include <theora/yuv2rgb.h>
+
+#ifndef COMMON_INTTYPES_H // No conflict.
+#define COMMON_INTTYPES_H
+#endif
+}
+#define USE_ARM_YUV2RGB_ASM
 #define USE_ARM_GFX_ASM
 #define USE_ARM_SMUSH_ASM
 #define USE_ARM_COSTUME_ASM
-#define USE_ARM_SOUND_ASM
+//#define USE_ARM_SOUND_ASM //it broken now
 #endif
 
 // Symbian bsearch implementation is flawed
