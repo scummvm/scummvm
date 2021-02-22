@@ -41,7 +41,7 @@ static uint32 *_end_buf;
 #ifdef _WIN32
 static __int64 safeMM0 = 0;
 #else
-static __int64_t safeMM0 = 0;
+static int64 safeMM0 = 0;
 #endif
 
 const int JpegMaxHuffmanTables = 4;

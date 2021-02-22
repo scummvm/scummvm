@@ -28,8 +28,6 @@
 #ifndef ICB_PX_STRING_H
 #define ICB_PX_STRING_H
 
-#include <cstring>
-
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"
 
