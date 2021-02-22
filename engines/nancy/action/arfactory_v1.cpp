@@ -26,6 +26,7 @@
 #include "engines/nancy/action/primaryvideo.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/staticbitmapanim.h"
+#include "engines/nancy/action/orderingpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -101,7 +102,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x61:
             return new EventFlags();
         case 0x62:
-            return new OrderingPuzzle();
+            return new OrderingPuzzle(_engine->scene->getViewport());
         case 0x63:
             return new LoseGame();
         case 0x64:

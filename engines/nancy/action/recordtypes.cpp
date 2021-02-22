@@ -361,10 +361,6 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
     }
 }
 
-uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x26D); // TODO
-}
-
 uint16 LoseGame::readData(Common::SeekableReadStream &stream) {
     loseData = stream.readByte();
     return 1;
@@ -437,6 +433,7 @@ void ShowInventoryItem::init() {
     _engine->_res->loadImage("ciftree", imageName, srcSurf);
     _fullSurface.create(srcSurf.w, srcSurf.h, srcSurf.format);
     _fullSurface.blitFrom(srcSurf);
+    srcSurf.free();
 
     _drawSurface.create(_fullSurface, bitmaps[0].src);
 
