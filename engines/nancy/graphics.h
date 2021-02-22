@@ -48,6 +48,8 @@ public:
     void removeObject(RenderObject *object);
     void clearObjects();
 
+    void redrawAll();
+
     Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
     Graphics::ManagedSurface object0;

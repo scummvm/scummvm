@@ -65,6 +65,7 @@ struct NancyInput {
 // This class handles collecting events and translating them to a NancyInput object,
 // which can then be pulled by interested classes through getInput()
 class InputManager {
+    friend class NancyConsole;
 enum NancyAction {
     kNancyActionMoveUp,
     kNancyActionMoveDown,

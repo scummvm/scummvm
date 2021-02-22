@@ -54,6 +54,8 @@ private:
 	bool Cmd_sceneID(int argc, const char **argv);
 
 	Common::String _videoFile;
+	Common::String _imageFile;
+	Common::String _imageCifTree;
 };
 
 } // End of namespace Nancy
