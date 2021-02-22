@@ -30,18 +30,22 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifndef RELEASE_BUILD
 	{ "ultima1", "Ultima I - The First Age of Darkness" },
 #endif
+#ifndef __SYMBIAN32__
 	{ "ultima4", "Ultima IV - Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV - Quest of the Avatar - Enhanced" },
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
+#endif
 	{ "ultima8", "Ultima VIII - Pagan" },
 	{ "remorse", "Crusader: No Remorse" },
 	{ "regret", "Crusader: No Regret" },
 
+#ifndef __SYMBIAN32__
 	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
 	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
 	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
 	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
+#endif
 	{ 0, 0 }
 };
 

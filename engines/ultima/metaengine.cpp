@@ -28,10 +28,12 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "ultima/shared/early/ultima_early.h"
+#ifndef __SYMBIAN32__
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/meta_engine.h"
 #include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
+#endif // __SYMBIAN32__
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/meta_engine.h"
 
@@ -49,6 +51,7 @@ Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
 		break;
 #endif
+#ifndef __SYMBIAN32__
 	case Ultima::GAME_ULTIMA4:
 		*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
 		break;
@@ -57,6 +60,7 @@ Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	case Ultima::GAME_SAVAGE_EMPIRE:
 		*engine = new Ultima::Nuvie::NuvieEngine(syst, gd);
 		break;
+#endif // __SYMBIAN32__
 	case Ultima::GAME_ULTIMA8:
 	case Ultima::GAME_CRUSADER_REG:
 	case Ultima::GAME_CRUSADER_REM:
@@ -76,17 +80,21 @@ int UltimaMetaEngine::getMaximumSaveSlot() const {
 SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
 
+#ifndef __SYMBIAN32__
 	Common::String gameId = getGameId(target);
 	if (gameId == "ultima6" || gameId == "ultima6_enh")
 		Ultima::Nuvie::MetaEngine::listSaves(saveList);
+#endif // __SYMBIAN32__
 
 	return saveList;
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	const Common::String gameId = getGameId(target);
+#ifndef __SYMBIAN32__
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
+#endif // __SYMBIAN32__
 	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
 		return Ultima::Ultima8::MetaEngine::initKeymaps(gameId);
 

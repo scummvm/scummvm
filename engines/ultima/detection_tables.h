@@ -76,6 +76,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 #endif
 
+#ifndef __SYMBIAN32__
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -238,6 +239,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
 	},
+#endif // __SYMBIAN32__
 
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
@@ -493,6 +495,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+#ifndef  __SYMBIAN32__
 	// GOG Martian Dreams
 	{
 		{
@@ -553,6 +556,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
+#endif // __SYMBIAN32__
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };
