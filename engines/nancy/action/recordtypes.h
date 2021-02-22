@@ -245,11 +245,6 @@ public:
     Common::Array<HotspotDesc> hotspots;
 };
 
-class OrderingPuzzle : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class LoseGame : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
