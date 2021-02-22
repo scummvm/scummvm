@@ -56,6 +56,8 @@ void CursorManager::init() {
     _invCursorsSurface.create(surf.w, surf.h, surf.format);
     _invCursorsSurface.blitFrom(surf);
 
+    surf.free();
+
     setCursor(kNormalArrow, -1);
     showCursor(false);
 

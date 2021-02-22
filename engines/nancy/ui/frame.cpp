@@ -39,6 +39,7 @@ void Frame::init() {
     
     _drawSurface.create(surf.w, surf.h, surf.format);
     _drawSurface.blitFrom(surf, Common::Point(0, 0));
+    surf.free();
 
     RenderObject::init();
 }
