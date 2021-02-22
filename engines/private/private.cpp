@@ -273,9 +273,9 @@ Common::Error PrivateEngine::run() {
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
             clearAreas();
             _currentSetting = _nextSetting;
-            settings.load(_nextSetting);
+            g_setts->load(_nextSetting);
             _nextSetting = "";
-            execute(prog);
+            Gen::g_vm->run();
             changeCursor("default");
             drawScreen();
         }

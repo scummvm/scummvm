@@ -53,59 +53,63 @@
 
 namespace Private {
 
-Datum *stack  = NULL; /* the stack */
-Datum *stackp = NULL; /* next free spot on stack */
+using namespace Gen;
 
-Inst *prog    = NULL; /* the machine */
-Inst *progp   = NULL; /* next free spot for code generation */
-Inst *pc      = NULL; /* program counter during execution */
+VM *Gen::g_vm = new VM();
+SettingMaps *g_setts = new SettingMaps();
+
+void Gen::VM::run() {
+    execute(g_vm->_prog);
+}
 
 /* initialize setting for code generation */
-void SettingMaps::init() {
-    setting = (Setting *)malloc(sizeof(Setting));
-    memset((void *)setting, 0, sizeof(Setting));
+void SettingMaps::init() { 
+    _setting = (Setting *)malloc(sizeof(Setting));
+    memset((void *)_setting, 0, sizeof(Setting));
 
-    prog = (Inst *)&setting->prog;
-    stack = (Datum *)&setting->stack;
+    Gen::g_vm->_prog = (Inst *)&_setting->prog;
+    Gen::g_vm->_stack = (Datum *)&_setting->stack;
 
-    stackp = stack;
-    progp = prog;
+    Gen::g_vm->_progp = Gen::g_vm->_prog;
+    Gen::g_vm->_stackp = Gen::g_vm->_stack;
 }
 
 void SettingMaps::save(char *name) {
-    map.setVal(name, setting);
+    _map.setVal(name, _setting);
 }
 
 void SettingMaps::load(Common::String &name) {
-    assert(map.contains(name));
-    setting = map.getVal(name);
+    assert(_map.contains(name));
+    _setting = _map.getVal(name);
 
     debugC(1, kPrivateDebugCode, "loading setting %s", name.c_str());
 
-    prog = (Inst *)&setting->prog;
-    stack = (Datum *)&setting->stack;
+    Gen::g_vm->_prog = (Inst *)&_setting->prog;
+    Gen::g_vm->_stack = (Datum *)&_setting->stack;
 
-    stackp = stack;
-    progp = prog;
+    Gen::g_vm->_stackp = Gen::g_vm->_stack;
+    Gen::g_vm->_progp = Gen::g_vm->_prog;
+}
+
+namespace Gen {
+
+/* pop and return top elem from stack */
+Datum pop() {
+    assert (!(g_vm->_stackp <= g_vm->_stack));
+    return *--g_vm->_stackp;
 }
 
 /* push d onto stack */
 int push(Datum d) {
-    assert (!(stackp >= &stack[NSTACK]));
-    *stackp++ = d;
+    assert (!(g_vm->_stackp >= &g_vm->_stack[NSTACK]));
+    *g_vm->_stackp++ = d;
     return 0;
-}
-
-/* pop and return top elem from stack */
-Datum pop() {
-    assert (!(stackp <= stack));
-    return *--stackp;
 }
 
 /* push constant onto stack */
 int constpush() {
     Datum d;
-    Symbol *s = (Symbol *)*pc++;
+    Symbol *s = (Symbol *)*g_vm->_pc++;
     d.type = NUM;
     d.u.val = s->u.val;
 
@@ -117,7 +121,7 @@ int constpush() {
 int strpush() { /* push constant onto stack */
     Datum d;
     d.type = STRING;
-    Symbol *s = (Symbol *)*pc++;
+    Symbol *s = (Symbol *)*g_vm->_pc++;
     d.u.str = s->u.str;
     debugC(1, kPrivateDebugCode, "pushing const %s with name %s", d.u.str, s->name->c_str());
 
@@ -128,7 +132,7 @@ int strpush() { /* push constant onto stack */
 int varpush() { /* push variable onto stack */
     Datum d;
     d.type = NAME;
-    d.u.sym = (Symbol *)(*pc++);
+    d.u.sym = (Symbol *)(*g_vm->_pc++);
     debugC(1, kPrivateDebugCode, "var pushing %s", d.u.sym->name->c_str());
     push(d);
     return 0;
@@ -351,16 +355,16 @@ int ne() {
 
 /* install one instruction or operand */
 Inst *code(Inst f) {
-    debugC(1, kPrivateDebugCode, "pushing code at %x", progp);
-    Inst *oprogp = progp;
-    assert (!(progp >= &prog[NPROG]));
-    *progp++ = f;
+    //debugC(1, kPrivateDebugCode, "pushing code at %x", progp);
+    Inst *oprogp = g_vm->_progp;
+    assert (!(g_vm->_progp >= &g_vm->_prog[NPROG]));
+    *g_vm->_progp++ = f;
     return oprogp;
 }
 
 int ifcode() {
     Datum d;
-    Inst *savepc = pc;  /* then part */
+    Inst *savepc = g_vm->_pc;  /* then part */
     debugC(1, kPrivateDebugCode, "ifcode: evaluating condition");
 
     execute(savepc+3);  /* condition */
@@ -381,7 +385,7 @@ int ifcode() {
         execute(*((Inst **)(savepc+1)));
     }
     debugC(1, kPrivateDebugCode, "ifcode finished");
-    pc = *((Inst **)(savepc+2)); /* next stmt */
+    g_vm->_pc = *((Inst **)(savepc+2)); /* next stmt */
     return 0;
 }
 
@@ -403,9 +407,11 @@ int fail() {
 
 /* run the machine */
 void execute(Inst *p) {
-    for (pc = p; *pc != STOP; ) {
-        (*(*pc++))();
+    for (g_vm->_pc = p; *(g_vm->_pc) != STOP; ) {
+        (*(*(g_vm->_pc++)))();
     }
 }
+
+} // End of namespace Gen
 
 } // End of namespace Private

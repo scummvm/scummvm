@@ -498,7 +498,7 @@ void fCRect(ArgArray args) {
     Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
     d->type = RECT;
     d->u.rect = rect;
-    push(*d);
+    Gen::push(*d);
 }
 
 void fBitmap(ArgArray args) {

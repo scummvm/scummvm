@@ -56,11 +56,12 @@
 #undef yyerror
 #define yyerror         PRIVATE_xerror
 
-#define code1(c1)       Private::code(c1);
-#define code2(c1,c2)    Private::code(c1); Private::code(c2)
-#define code3(c1,c2,c3) Private::code(c1); Private::code(c2); Private::code(c3)
+#define code1(c1)       code(c1);
+#define code2(c1,c2)    code(c1); code(c2)
+#define code3(c1,c2,c3) code(c1); code(c2); code(c3)
 
 using namespace Private;
+using namespace Gen;
 
 extern int PRIVATE_lex();
 extern int PRIVATE_parse();
@@ -97,23 +98,23 @@ lines:   line lines
 
 line:     DEBUGTOK '{' debug '}'             { /* Not used in the game */ }
         | DEFINETOK NAME '{' define '}'      { g_private->maps.installAll($NAME); }
-        | SETTINGTOK NAME '{' statements '}' { g_private->settings.save($NAME); 
-                                               g_private->settings.init(); }
+        | SETTINGTOK NAME '{' statements '}' { g_setts->save($NAME); 
+                                               g_setts->init(); }
         ;
 
 debug: /* nothing */
         | NAME ',' debug
         ;
 
-statements:  /* nothing */     { $$ = progp; }
+statements:  /* nothing */     { $$ = g_vm->_progp; }
         | statement statements
 
 
 statement: GOTOTOK NAME ';' {
-        $$ = progp;
-        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME));
-        code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
-        code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
+        $$ = g_vm->_progp;
+        code2(strpush, (Inst) g_private->maps.constant(STRING, 0, $NAME));
+        code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL));
+        code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto")); 
         code1(funcpush);
         }
         | fcall ';'         { $$ = $1; }   
@@ -134,13 +135,13 @@ body:         statement      { $$ = $1; }
         | '{' statements '}' { $$ = $2; }
         ;
 
-end:      /* nothing */      { code(STOP); $$ = progp; }
+end:      /* nothing */      { code1(STOP); $$ = g_vm->_progp; }
         ;
 
-if: IFTOK { $$ = code(ifcode); code3(STOP, STOP, STOP); }
+if: IFTOK { $$ = code1(ifcode); code3(STOP, STOP, STOP); }
         ;
 
-cond: '(' expr ')'      { code(STOP); $$ = $2; }
+cond: '(' expr ')'      { code1(STOP); $$ = $2; }
         ;
 
 define:  /* nothing */
@@ -158,23 +159,23 @@ define:  /* nothing */
         ;
 
 fcall:    GOTOTOK '(' NAME ')' {
-                               $$ = progp;
-                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME));
-                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL));
-                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, "goto")); 
+                               $$ = g_vm->_progp;
+                               code2(strpush, (Inst) g_private->maps.constant(STRING, 0, $NAME));
+                               code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL));
+                               code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto")); 
                                code1(funcpush);
                                }
 
-        | RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = progp; }
+        | RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' { $$ = g_vm->_progp; }
         | NAME '(' startp params ')'  {
                                $$ = $startp;
-                               code2(constpush, (Private::Inst) g_private->maps.constant(NUM, $params, NULL));
-                               code2(strpush, (Private::Inst) g_private->maps.constant(STRING, 0, $NAME)); 
+                               code2(constpush, (Inst) g_private->maps.constant(NUM, $params, NULL));
+                               code2(strpush, (Inst) g_private->maps.constant(STRING, 0, $NAME)); 
                                code1(funcpush);
                                }
         ;
 
-startp: /*nothing*/ { $$ = progp; }
+startp: /*nothing*/ { $$ = g_vm->_progp; }
         ;
 
 params:   /* nothing */     { $$ = 0; }
@@ -184,23 +185,23 @@ params:   /* nothing */     { $$ = 0; }
         | fcall       { $$ = 1; }
         ;
 
-value:    NULLTOK  { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
-        | FALSETOK { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 0, NULL)); }
-        | TRUETOK  { code2(Private::constpush, (Private::Inst) g_private->maps.constant(NUM, 1, NULL)); }
-        | NUM      { code2(Private::constpush, (Private::Inst)$NUM); }
-        | STRING   { code2(Private::strpush, (Private::Inst)$STRING); }
-        | NAME     { code1(Private::varpush); code1((Private::Inst) g_private->maps.lookupName($NAME)); code1(Private::eval); }
+value:    NULLTOK  { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
+        | FALSETOK { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
+        | TRUETOK  { code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL)); }
+        | NUM      { code2(constpush, (Inst)$NUM); }
+        | STRING   { code2(strpush, (Inst)$STRING); }
+        | NAME     { code1(varpush); code1((Inst) g_private->maps.lookupName($NAME)); code1(eval); }
         ;
 
 expr:     value           { $$ = $1; } 
-        | '!' value       { code1(Private::negate); $$ = $2; }
-        | value EQ value  { code1(Private::eq); }
-        | value NEQ value { code1(Private::ne); }
-        | value '+' value { code1(Private::add); }
-        | value '<' value { code1(Private::lt); }
-        | value '>' value { code1(Private::gt); }
-        | value LTE value { code1(Private::le); }
-        | value GTE value { code1(Private::ge); }
+        | '!' value       { code1(negate); $$ = $2; }
+        | value EQ value  { code1(eq); }
+        | value NEQ value { code1(ne); }
+        | value '+' value { code1(add); }
+        | value '<' value { code1(lt); }
+        | value '>' value { code1(gt); }
+        | value LTE value { code1(le); }
+        | value GTE value { code1(ge); }
         | value '+'       { $$ = $1; } // unclear what it should do 
-        | RANDOMTOK '(' NUM '%' ')' { code3(Private::constpush, (Private::Inst)$NUM, randbool); }
+        | RANDOMTOK '(' NUM '%' ')' { code3(constpush, (Inst)$NUM, randbool); }
         ;

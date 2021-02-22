@@ -62,14 +62,8 @@ void initInsts();
 void initFuncs();
 
 typedef struct Setting {
-
     Datum stack[NSTACK]; /* the stack */
-    Datum *stackp;       /* next free spot on stack */
-
     Inst  prog[NPROG];   /* the machine */
-    Inst  *progp;        /* next free spot for code generation */
-    Inst  *pc;           /* program counter during execution */
-
 } Setting;
 
 // Settings
@@ -78,14 +72,16 @@ typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
     public:
-    Setting *psetting;
-    Setting *setting;
-    SettingMap map;
+    //Setting *_psetting;
+    Setting *_setting;
+    SettingMap _map;
 
     void init();
     void save(char *);
     void load(Common::String &);
 };
+
+extern SettingMaps *g_setts;
 
 // Funtions
 
@@ -94,12 +90,28 @@ void call(char *, ArgArray);
 
 // Code Generation
 
+//extern  Inst *progp;
+//extern  Inst *prog;
+
+namespace Gen {
+
+class VM {
+    public:
+        Datum *_stack;  /* the stack */
+        Datum *_stackp; /* next free spot on stack */
+
+        Inst  *_progp;  /* next free spot for code generation */
+        Inst  *_prog;   /* the machine */
+        Inst  *_pc;     /* program counter during execution */
+        void run();     /* run the virtual machine */
+};
+
+extern VM *g_vm;
+
 Datum pop();
 int push(Datum);
-extern  Inst *progp;
 
 Inst *code(Inst);
-extern  Inst *prog;
 int eval();
 int add();
 int negate();
@@ -124,6 +136,8 @@ int randbool();
 // Code Execution
 
 void execute(Inst *);
+
+}
 
 } // End of namespace Private
 
