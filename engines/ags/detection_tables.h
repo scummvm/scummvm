@@ -151,7 +151,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
 	{ "apotheosis", "The Apotheosis Project" },
-	{ "ataleoftwokingdomsdeluxe", "A Tale of Two Kingdoms: Deluxe Edition" },
+	{ "atotkdeluxe", "A Tale of Two Kingdoms: Deluxe Edition" },
 	{ "beer", "Beer!" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
@@ -308,7 +308,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "astron", "Astron" },
 	{ "aswinpath", "Aswin path" },
 	{ "ataleofbetrayal", "A Tale Of Betrayal" },
-	{ "ataleoftwokingdoms", "A Tale of Two Kingdoms" },
 	{ "atapi", "Atapi" },
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "atotkjukebox", "ATOTK jukebox" },
@@ -1561,7 +1560,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Steam
-	GAME_ENTRY("ataleoftwokingdomsdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
+	GAME_ENTRY("atotkdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), //Steam
 	GAME_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
@@ -1858,8 +1857,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("astron", "astron.exe", "a0fd918609b9d139e4076fa7a0052ae1", 71101771),
 	GAME_ENTRY("aswinpath", "agsgame.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14384181),
 	GAME_ENTRY("ataleofbetrayal", "mags.exe", "465f972675db2da6040518221af5b0ba", 11071496),
-	GAME_ENTRY("ataleoftwokingdoms", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42785860),
 	GAME_ENTRY("atapi", "atapi.exe", "dd8586ebefd5c457e29b6b9845a576ea", 34114381),
+	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42785860),
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42740200),
 	GAME_ENTRY("atotk", "atotk.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 42872046),
 	GAME_ENTRY("atotkjukebox", "jukebox.exe", "37cf2d4d07842d45b59c6dd9387c1ee7", 1631992),
