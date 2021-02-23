@@ -560,8 +560,14 @@ Common::Error AGDSEngine::run() {
 							if (_currentInventoryObject) {
 								debug("trying use handler for object %s", _currentInventoryObject->getName().c_str());
 								ip = object->getUseHandler(_currentInventoryObject->getName());
-							} else
+								if (!ip)
+									ip = object->useOnHandler();
+							} else {
 								ip = object->getClickHandler();
+								if (ip == 0) {
+									ip = object->useOnHandler();
+								}
+							}
 						} else
 							ip = object->getExamineHandler();
 
