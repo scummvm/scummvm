@@ -952,11 +952,8 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 	if (!_numVerbs)
 		return 0;
 
-	VerbSlot *vs;
-	int i = _numVerbs - 1;
-
-	vs = &_verbs[i];
-	do {
+	for (int i = 1; i < _numVerbs; ++i) {
+		VerbSlot *vs = &_verbs[i];
 		if (vs->curmode != 1 || !vs->verbid || vs->saveid || y < vs->curRect.top || y >= vs->curRect.bottom)
 			continue;
 		if (vs->center) {
@@ -968,7 +965,7 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 		}
 
 		return i;
-	} while (--vs, --i);
+	}
 
 	return 0;
 }
