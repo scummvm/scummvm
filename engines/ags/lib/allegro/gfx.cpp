@@ -156,7 +156,7 @@ void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
 		Common::Rect(x, y, x + sprite->w, y + sprite->h),
-		false, false, true, color);
+		false, false, true, color, trans_blend_red, trans_blend_green, trans_blend_blue);
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {

@@ -100,7 +100,8 @@ public:
 	 */
 	void draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
-		bool skipTrans, int srcAlpha);
+		bool skipTrans, int srcAlpha, int tintRed = -1, int tintGreen = -1,
+		int tintBlue = -1);
 };
 
 /**

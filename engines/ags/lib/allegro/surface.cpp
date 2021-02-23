@@ -96,7 +96,8 @@ const int SCALE_THRESHOLD = 0x100;
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
-		bool skipTrans, int srcAlpha) {
+		bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
+		int tintBlue) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
@@ -107,6 +108,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 	const int xDir = horizFlip ? -1 : 1;
 	bool isScreenDest = dynamic_cast<Graphics::Screen *>(_owner);
+	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
 
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -164,18 +166,25 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 				aSrc = 0xff;
 
 			if (aSrc != 0xff) {
-				// Get the pixel at the destination, to check if it's transparent.
-				// Transparent pixels can be considered to be 0 alph
-				format.colorToARGB(format.bytesPerPixel == 2 ?
-					*(uint16 *)destVal : *(uint32 *)destVal, aDest, rDest, gDest, bDest);
-				if (IS_TRANSPARENT(rDest, gDest, bDest))
-					aDest = 0;
+				if (useTint) {
+					aDest = 0xff;
+					rDest = static_cast<uint8>(tintRed);
+					gDest = static_cast<uint8>(tintGreen);
+					bDest = static_cast<uint8>(tintBlue);
+				} else {
+					// Get the pixel at the destination, to check if it's transparent.
+					// Transparent pixels can be considered to be 0 alpha
+					format.colorToARGB(format.bytesPerPixel == 2 ?
+						*(uint16 *)destVal : *(uint32 *)destVal, aDest, rDest, gDest, bDest);
+					if (IS_TRANSPARENT(rDest, gDest, bDest))
+						aDest = 0;
+				}
 			} else {
 				// Source is opaque, so just treat destination as transparent
 				aDest = 0;
 			}
 
-			if (aDest != 0 && (aSrc != 0xff || srcAlpha != -1)) {
+			if (aDest != 0 && aSrc != 0xff) {
 				// Alpha blender
 				double sAlpha = (double)aSrc / 255.0;
 				double dAlpha = (double)aDest / 255.0;
