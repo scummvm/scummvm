@@ -86,7 +86,8 @@ extern bool  FlagLoadInventory;
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 extern uint32 TheTime;
-extern int16  mx, my, mleft, mright;
+extern int16 mx, my;
+extern bool mleft, mright;
 extern uint32 OldTime;
 extern uint32 CharacterSpeakTime;
 extern uint32 SomeOneSpeakTime;
