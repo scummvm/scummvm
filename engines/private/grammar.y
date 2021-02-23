@@ -62,6 +62,7 @@
 
 using namespace Private;
 using namespace Gen;
+using namespace Settings;
 
 extern int PRIVATE_lex();
 extern int PRIVATE_parse();
