@@ -34,6 +34,10 @@
 #include "private/grammar.h"
 #include "private/tokens.h"
 
+using namespace Private;
+using namespace Gen;
+using namespace Settings;
+
 %}
 
 %%
@@ -54,8 +58,8 @@ TRUE                    return TRUETOK;
 NULL                    return NULLTOK;
 Random                  return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
-[\-]?[0-9]+             PRIVATE_lval.sym = Private::g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
-\"[^\"\r\n]*\"          PRIVATE_lval.sym = Private::g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+[\-]?[0-9]+             PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
+\"[^\"\r\n]*\"          PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
 [\r|\n]+                /* ignore return */;
 [ \t]+                  /* ignore whitespace */;
 .                       return *yytext;

@@ -56,11 +56,14 @@ namespace Private {
 using namespace Gen;
 
 VM *Gen::g_vm = new VM();
-SettingMaps *g_setts = new SettingMaps();
 
-void Gen::VM::run() {
+void VM::run() {
     execute(g_vm->_prog);
 }
+
+namespace Settings {
+
+SettingMaps *g_setts = new SettingMaps();
 
 /* initialize setting for code generation */
 void SettingMaps::init() { 
@@ -90,6 +93,8 @@ void SettingMaps::load(Common::String &name) {
     Gen::g_vm->_stackp = Gen::g_vm->_stack;
     Gen::g_vm->_progp = Gen::g_vm->_prog;
 }
+
+} // end of namespace Settings
 
 namespace Gen {
 

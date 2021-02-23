@@ -61,18 +61,17 @@ typedef Common::HashMap<void *, Common::String *> PtrToName;
 void initInsts();
 void initFuncs();
 
+namespace Settings {
+
 typedef struct Setting {
     Datum stack[NSTACK]; /* the stack */
     Inst  prog[NPROG];   /* the machine */
 } Setting;
 
-// Settings
-
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
     public:
-    //Setting *_psetting;
     Setting *_setting;
     SettingMap _map;
 
@@ -83,15 +82,14 @@ class SettingMaps {
 
 extern SettingMaps *g_setts;
 
+}
+
 // Funtions
 
 typedef Common::Array<Datum> ArgArray;
 void call(char *, ArgArray);
 
-// Code Generation
-
-//extern  Inst *progp;
-//extern  Inst *prog;
+// Code Generation and Execution
 
 namespace Gen {
 

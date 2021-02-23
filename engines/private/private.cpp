@@ -273,7 +273,7 @@ Common::Error PrivateEngine::run() {
             debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
             clearAreas();
             _currentSetting = _nextSetting;
-            g_setts->load(_nextSetting);
+            Settings::g_setts->load(_nextSetting);
             _nextSetting = "";
             Gen::g_vm->run();
             changeCursor("default");
