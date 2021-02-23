@@ -530,7 +530,11 @@ void Process::checkScreenPatch() {
 
 void Process::loadMouseCursorFromObject() {
 	Common::String name = popText();
-	debug("loadMouseCursorFromObject %s", name.c_str());
+	debug("loadMouseCursorFromObject %s", !name.empty()? name.c_str(): "<remove>");
+	if (name.empty()) {
+		debug("loadMouseCursorFromObject: stub: should remove picture/animation from object here (if not current inventory)");
+		return;
+	}
 	Animation *cursor = _engine->loadMouseCursor(name);
 	_object->setMouseCursor(cursor); //overlay cursor
 }
