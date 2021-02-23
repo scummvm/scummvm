@@ -218,8 +218,8 @@ enum Opcode {
 	kLoadPicture					= 198,
 	kStub199						= 199,
 	kSetTileIndex					= 200,
-	kStub201Handler					= 201,
-	kStub202ScreenHandler			= 202,
+	kSetThrowHandler				= 201,
+	kSetUseOnHandler				= 202,
 	kPlayFilm						= 203,
 	kStub204						= 204,
 	kAddMouseArea					= 205,
@@ -447,8 +447,8 @@ enum Opcode {
 	OP(kPauseAnimation, pauseAnimation) \
 	OP(kFadeObject, fadeObject) \
 	OP(kLoadFont, loadFont) \
-	OP_U(kStub201Handler, stub201) \
-	OP_U(kStub202ScreenHandler, stub202) \
+	OP_U(kSetThrowHandler, setThrowHandler) \
+	OP_U(kSetUseOnHandler, setUseOnHandler) \
 	OP(kPlayFilm, playFilm) \
 	OP(kAddMouseArea, addMouseArea) \
 	OP(kSetRain, setRain) \

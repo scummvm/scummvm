@@ -893,13 +893,13 @@ void Process::setTileIndex() {
 	debug("setTileIndex: index: %d, resource id: %d ", _tileIndex, _tileResource);
 }
 
-void Process::stub201(uint16 size) {
+void Process::setThrowHandler(uint16 size) {
 	debug("setThrowHandler, [handler] %u instructions", size);
 	_object->setThrowHandler(_ip);
 	_ip += size;
 }
 
-void Process::stub202(uint16 size) {
+void Process::setUseOnHandler(uint16 size) {
 	debug("setUseOnHandler %u instructions", size);
 	_object->setUseOnHandler(_ip);
 	_ip += size;
