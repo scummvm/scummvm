@@ -112,14 +112,14 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, mode, 0, false);
 
 	if (!font) {
-		perr << "Failed to open TTF: @data/" << filename << Std::endl;
+		perr << "Failed to open TTF: data/" << filename << Std::endl;
 		return nullptr;
 	}
 
 	_ttfFonts[id] = font;
 
 #ifdef DEBUG
-	pout << "Opened TTF: @data/" << filename << "." << Std::endl;
+	pout << "Opened TTF: data/" << filename << "." << Std::endl;
 #endif
 
 	return font;
