@@ -37,6 +37,7 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) : _engine(en
 																					   _samplePeriodic(false), _samplePaused(false),
 																					   _filmSubtitlesResource(-1)
                                                                                        {
+	updateWithCurrentMousePosition();
 }
 
 void Process::debug(const char *str, ...) {
