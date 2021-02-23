@@ -106,6 +106,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	const int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 	const int xDir = horizFlip ? -1 : 1;
+	bool isScreenDest = dynamic_cast<Graphics::Screen *>(_owner);
 
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
@@ -190,8 +191,13 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 				aDest = aSrc;
 			}
 
-			if (!(IS_TRANSPARENT(rSrc, gSrc, bSrc) && skipTrans)) {
+			// FIXME: I had at least one case in Black Cauldron Remake when a screen
+			// clear was all the pink transparent color because blit was called,
+			// and in Allegro, blit doesn't skip transparent pixels. So for now,
+			// I hacked in an extra check to still skip them if blitting to screen
+			if (!IS_TRANSPARENT(rDest, gDest, bDest) || (!skipTrans && !isScreenDest)) {
 				uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+
 				if (format.bytesPerPixel == 4)
 					*(uint32 *)destVal = pixel;
 				else
