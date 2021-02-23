@@ -193,10 +193,11 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 											texBuf[ty * resultWidth + tx] = borderColor;
 										}
 										else if (sqrDist < sqrEdge) {
-											// Blend border color with destination
+											// Blend border color at source intensity with destination
 											uint8 dA, dR, dG, dB;
 											PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
 
+											double bAlpha = (double)bA / 255.0;
 											double sAlpha = (double)sA / 255.0;
 											double dAlpha = (double)dA / 255.0;
 											dAlpha *= (1.0 - sAlpha);
@@ -204,7 +205,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 											dR = static_cast<uint8>((bR * sAlpha + dR * dAlpha) / (sAlpha + dAlpha));
 											dG = static_cast<uint8>((bG * sAlpha + dG * dAlpha) / (sAlpha + dAlpha));
 											dB = static_cast<uint8>((bB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
-											dA = static_cast<uint8>(255. * (sAlpha + dAlpha));
+											dA = static_cast<uint8>(255. * bAlpha * (sAlpha + dAlpha));
 
 											texBuf[ty * resultWidth + tx] = PF_RGBA.ARGBToColor(dA, dR, dG, dB);
 										}
@@ -243,14 +244,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					uint8 sR, sG, sB, sA;
 					PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
 
-					if (sA == 0x00)
-						continue;
-
-					switch (sA) {
-					case 0xFF:
+					if (sA == 0xFF) {
 						texBuf[ty * resultWidth + tx] = sColor;
-						break;
-					default:
+					}
+					else if (sA != 0x00) {
 						// Blend color with destination
 						int32 dColor = texBuf[ty * resultWidth + tx];
 						uint8 dA, dR, dG, dB;
@@ -266,7 +263,6 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						dA = static_cast<uint8>(255. * (sAlpha + dAlpha));
 							
 						texBuf[ty * resultWidth + tx] = PF_RGBA.ARGBToColor(dA, dR, dG, dB);
-						break;
 					}
 				}
 				else if (surfrow[x] == 1) {
