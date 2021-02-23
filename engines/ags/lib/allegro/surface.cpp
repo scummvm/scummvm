@@ -92,6 +92,7 @@ void BITMAP::floodfill(int x, int y, int color) {
 
 const int SCALE_THRESHOLD = 0x100;
 #define IS_TRANSPARENT(R, G, B) ((R) == 255 && (G) == 0 && (B) == 255)
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
@@ -107,13 +108,15 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	const int xDir = horizFlip ? -1 : 1;
 
 	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest, gDest, bDest, aDest;
+	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 	uint32 pal[PALETTE_COUNT];
 
 	if (src.format.bytesPerPixel == 1) {
 		for (int i = 0; i < PALETTE_COUNT; ++i)
-			pal[i] = format.RGBToColor(_current_palette[i].r,
-				_current_palette[i].g, _current_palette[i].b);
+			pal[i] = format.RGBToColor(
+				VGA_COLOR_TRANS(_current_palette[i].r),
+				VGA_COLOR_TRANS(_current_palette[i].g),
+				VGA_COLOR_TRANS(_current_palette[i].b));
 		pal[0] = format.RGBToColor(0xff, 0, 0xff);
 	}
 
