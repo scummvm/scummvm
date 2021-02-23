@@ -1366,6 +1366,8 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,   16,   7,   0,   3,  1, { MSG_WORKAROUND_FAKE,      16,   7,   0,   3,  1,  7,   0,   0, "" } },
 	// Missing message when clicking talk in room 520 - bug #10915
 	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  99,   0,   3,  1, { MSG_WORKAROUND_REMAP,    500,  99,   0,   3,  1,  0,   0,   0, NULL } },
+	// Missing message when looking at hole in room 740
+	{ GID_SQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  740,   3,   1,   8,  1, { MSG_WORKAROUND_REMAP,    740,   3,  88,   8,  1, 99,   0,   0, NULL } },
 	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR
 };
 
