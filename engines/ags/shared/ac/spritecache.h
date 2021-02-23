@@ -117,8 +117,8 @@ public:
 	static const size_t   MAX_SPRITE_SLOTS = INT32_MAX;
 
 	// Standart sprite file and sprite index names
-	static const Shared::String DefaultSpriteFileName;
-	static const Shared::String DefaultSpriteIndexName;
+	static const char *DefaultSpriteFileName;
+	static const char *DefaultSpriteIndexName;
 
 	SpriteCache(std::vector<SpriteInfo> &sprInfos);
 	~SpriteCache();

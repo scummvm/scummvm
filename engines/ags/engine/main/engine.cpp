@@ -643,7 +643,7 @@ int engine_init_sprites() {
 		allegro_exit();
 		proper_exit = 1;
 		platform->DisplayAlert("Could not load sprite set file %s\n%s",
-		                       SpriteCache::DefaultSpriteFileName.GetCStr(),
+		                       SpriteCache::DefaultSpriteFileName,
 		                       err->FullMessage().GetCStr());
 		return EXIT_ERROR;
 	}

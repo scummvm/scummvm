@@ -149,10 +149,10 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 				format.colorToARGB(pal[*srcVal], aSrc, rSrc, gSrc, bSrc);
 				break;
 			case 2:
-				src.format.colorToARGB(*(uint16 *)srcVal, aSrc, rSrc, gSrc, bSrc);
+				src.format.colorToARGB(*(const uint16 *)srcVal, aSrc, rSrc, gSrc, bSrc);
 				break;
 			case 4:
-				src.format.colorToARGB(*(uint32 *)srcVal, aSrc, rSrc, gSrc, bSrc);
+				src.format.colorToARGB(*(const uint32 *)srcVal, aSrc, rSrc, gSrc, bSrc);
 				break;
 			default:
 				error("Unknown format");
