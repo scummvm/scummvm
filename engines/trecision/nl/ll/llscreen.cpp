@@ -278,7 +278,7 @@ void OpenVideo() {
 	Video2 = (uint16 *)(MemoryArea + GameBytePointer);
 
 	if (!FlagMouseEnabled)
-		Mouse(2); // SPEGNI
+		Mouse(2); // Turn off
 
 	wordset(Video2, 0, 1280L * 480L);
 	ShowScreen(0, 0, 640, 480);

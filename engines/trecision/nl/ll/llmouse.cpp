@@ -61,7 +61,7 @@ extern uint16 Try41;
 --------------------------------------------------*/
 uint16 vr(int16 x, int16 y) {
 	uint32 b = (uint32)((uint32)(x) + (uint32)(CurRoomMaxX * (uint32)(y)));
-	return ((uint16)(Video2[b]));
+	return Video2[b];
 }
 
 /*-----------------10/12/95 15.26-------------------
@@ -86,16 +86,16 @@ void VPix(int16 x, int16 y, uint16 col) {
 					VMouseOFF
 --------------------------------------------------*/
 void VMouseOFF() {
-	int32 comx = omx;
+	int16 comx = omx;
 
 	bool vl = videoLocked;
 	if (!vl)
 		lockVideo();
 
-	for (int32 i = (comx - 10); i <= (comx + 10); i++)
+	for (int16 i = (comx - 10); i <= (comx + 10); i++)
 		VPix(i, omy, vr(i, omy));
 
-	for (int32 i = (omy - 10); i <= (omy + 10); i++)
+	for (int16 i = (omy - 10); i <= (omy + 10); i++)
 		VPix(comx, i, vr(comx, i));
 
 	if (!vl)
@@ -109,40 +109,40 @@ void VMouseON() {
 	if (!g_vm->_mouseONOFF)
 		return ;
 
-	int32 comx = omx;
-	int32 cmx = mx;
+	int16 comx = omx;
+	int16 cmx = mx;
 	uint16 mc = PalTo16bit(255, 255, 255);
 
 	bool vl = videoLocked;
 	if (!vl)
 		lockVideo();
 
-	for (int32 i = (comx - 10); i <= (comx + 10); i++) {
+	for (int16 i = (comx - 10); i <= (comx + 10); i++) {
 		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (omy == my))))
 			VPix(i, omy, vr(i, omy));
 	}
 
-	for (int32 i = (omy - 10); i <= (omy + 10); i++) {
+	for (int16 i = (omy - 10); i <= (omy + 10); i++) {
 		if ((!(((i >= (my - 10)) && (i <= (my + 10))) && (comx == cmx))))
 			VPix(comx, i, vr(comx, i));
 	}
 
-	for (int32 i = (cmx - 10); i <= (cmx - 3); i++)
+	for (int16 i = (cmx - 10); i <= (cmx - 3); i++)
 		VPix(i, my, mc);
-	for (int32 i = (cmx + 3); i <= (cmx + 10); i++)
+	for (int16 i = (cmx + 3); i <= (cmx + 10); i++)
 		VPix(i, my, mc);
 
-	for (int32 i = (my - 10); i <= (my - 3); i++)
+	for (int16 i = (my - 10); i <= (my - 3); i++)
 		VPix(cmx, i, mc);
-	for (int32 i = (my + 3); i <= (my + 10); i++)
+	for (int16 i = (my + 3); i <= (my + 10); i++)
 		VPix(cmx, i, mc);
 
-	for (int32 i = (cmx - 2); i <= (cmx + 2); i++) {
+	for (int16 i = (cmx - 2); i <= (cmx + 2); i++) {
 		if (cmx == i)
 			i++;
 		VPix(i, my, vr(i, my));
 	}
-	for (int32 i = (my - 2); i <= (my + 2); i++) {
+	for (int16 i = (my - 2); i <= (my + 2); i++) {
 		if (i == my)
 			i++;
 		VPix(cmx, i, vr(cmx, i));
@@ -438,7 +438,7 @@ bool DataSave() {
 
 	FreeKey();
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);
@@ -721,7 +721,7 @@ insave:
 
 	UnlockVideo();
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);
@@ -765,7 +765,7 @@ bool DataLoad() {
 
 	FreeKey();
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);
@@ -798,7 +798,7 @@ bool DataLoad() {
 			strcpy(savename[a], g_vm->_sysText[10]);
 			if (fh)
 				fclose(fh);
-			fh = NULL;
+			fh = nullptr;
 			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
 	}
@@ -839,7 +839,7 @@ bool DataLoad() {
 				ShowScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if ((mleft) && (g_vm->_inventory[CurPos] != iEMPTYSLOT))
+			if (mleft && (g_vm->_inventory[CurPos] != iEMPTYSLOT))
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -852,7 +852,7 @@ bool DataLoad() {
 			OldPos = -1;
 			CurPos = -1;
 
-			if ((mleft) || (mright)) {
+			if (mleft || mright) {
 				retval = false;
 				skipLoad = true;
 				break;
@@ -995,7 +995,7 @@ bool DataLoad() {
 	g_vm->_iconBase = OldIconBase;
 	g_vm->_inventorySize = OldInvLen;
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);
@@ -1029,7 +1029,7 @@ bool QuitGame() {
 
 	FreeKey();
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);
@@ -1067,7 +1067,7 @@ void DemoOver() {
 
 	FreeKey();
 
-	mleft = mright = 0;
+	mleft = mright = false;
 	Mouse(3);
 	while (mleft || mright)
 		Mouse(3);

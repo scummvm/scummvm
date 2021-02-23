@@ -39,12 +39,16 @@
 namespace Trecision {
 
 int CurKey, CurAscii;
-short wmx = 0, wmy = 0, wmleft = 0, wmright = 0, omx = 0, omy = 0;
+int16 wmx = 0, wmy = 0;
+bool wmleft = false, wmright = false;
+int16 omx = 0, omy = 0;
+
 bool videoLocked = false;
 Graphics::PixelFormat _screenFormat;
 bool _linearMode, _gamePaused = false;
 
-extern short mx, my, mleft, mright;
+extern int16 mx, my;
+extern bool mleft, mright;
 extern uint16		*_video, VideoPitch;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
@@ -88,19 +92,19 @@ void EventLoop() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			wmleft = 1;
+			wmleft = true;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
-			wmleft = 0;
+			wmleft = false;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
-			wmright = 1;
+			wmright = true;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
-			wmright = 0;
+			wmright = false;
 			break;
 
 		case Common::EVENT_KEYDOWN:
@@ -367,13 +371,11 @@ void Mouse(uint8 opt) {
 			Mouse(1);
 
 		if (g_vm->_mouseONOFF) {
-			mx = wmx & 0xFFFF;
-			my = wmy & 0xFFFF;
-			mleft = wmleft & 0xFFFF;
-			mright = wmright & 0xFFFF;
+			mleft = wmleft;
+			mright = wmright;
 
-			mx = CLIP<int16>(mx, 10, MAXX - 11);
-			my = CLIP<int16>(my, 10, MAXY - 11);
+			mx = CLIP<int16>(wmx, 10, MAXX - 11);
+			my = CLIP<int16>(wmy, 10, MAXY - 11);
 
 			VMouseON();
 		}
@@ -392,13 +394,12 @@ void Mouse(uint8 opt) {
 		if (g_vm->_mouseONOFF)
 			break;
 		g_vm->_mouseONOFF = true;
-		mx = wmx & 0xFFFF;
-		my = wmy & 0xFFFF;
-		mleft = wmleft & 0xFFFF;
-		mright = wmright & 0xFFFF;
 
-		mx = CLIP<int16>(mx, 10, MAXX - 11);
-		my = CLIP<int16>(my, 10, MAXY - 11);
+		mleft = wmleft;
+		mright = wmright;
+
+		mx = CLIP<int16>(wmx, 10, MAXX - 11);
+		my = CLIP<int16>(wmy, 10, MAXY - 11);
 
 		VMouseON();
 		break;

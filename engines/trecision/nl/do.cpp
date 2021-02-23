@@ -3267,7 +3267,7 @@ bool AtMouseClick(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oPORTAA13:
-		if ((mright) && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
+		if (mright && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
 			if (_characterGoToPosition != 4)
 				goToPosition(4);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
@@ -3378,7 +3378,7 @@ bool AtMouseClick(uint16 TheObj) {
 		break;
 
 	case oTRIPLA35:
-		if (!(FlagUseWithStarted) && (mleft)) {
+		if (!FlagUseWithStarted && mleft) {
 			if (_characterGoToPosition != 2)
 				goToPosition(2);
 		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
