@@ -23,7 +23,7 @@
 #ifndef ULTIMA8_KERNEL_OBJECT_H
 #define ULTIMA8_KERNEL_OBJECT_H
 
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
@@ -36,7 +36,6 @@ public:
 	Object() : _objId(0xFFFF) {}
 	virtual ~Object();
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 	//! get this Object's objID

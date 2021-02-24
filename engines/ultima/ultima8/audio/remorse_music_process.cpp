@@ -93,7 +93,6 @@ static const int REGRET_MAP_TRACKS[] = {
 	15,  9, 12, 10, 19, 14, 21,  0};
 
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
 
 RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0), _combatMusicActive(false) {

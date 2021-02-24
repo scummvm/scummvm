@@ -35,7 +35,6 @@ public:
 	LoiterProcess();
 	LoiterProcess(Actor *actor, int32 count = -1);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

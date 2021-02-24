@@ -41,7 +41,6 @@ public:
 	          int thissize = 0, const uint8 *args = 0, int argsize = 0);
 	~UCProcess() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

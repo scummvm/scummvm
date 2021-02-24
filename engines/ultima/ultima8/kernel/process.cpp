@@ -27,7 +27,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(Process)
 
 Process::Process(ObjId it, uint16 ty)

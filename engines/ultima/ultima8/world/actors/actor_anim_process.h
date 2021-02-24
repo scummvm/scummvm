@@ -42,7 +42,6 @@ public:
 	ActorAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                 uint32 steps = 0);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	static const uint16 ACTOR_ANIM_PROC_TYPE = 0x00F0;

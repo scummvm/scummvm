@@ -63,7 +63,6 @@ namespace Ultima8 {
 static const uint32 SNAP_EGG_SHAPE = 0x4fe;
 static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(Item)
 
 Item::Item()

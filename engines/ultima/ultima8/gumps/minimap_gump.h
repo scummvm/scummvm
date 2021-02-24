@@ -25,7 +25,7 @@
 
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {

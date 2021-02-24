@@ -35,7 +35,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CrosshairProcess)
 
 static const uint32 CROSSHAIR_SHAPE = 0x4CC;

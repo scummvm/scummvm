@@ -25,7 +25,7 @@
 
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 #include "audio/mididrv.h"
 
 namespace Ultima {
@@ -48,7 +48,6 @@ public:
 	MusicProcess();
 	~MusicProcess() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Get the current instance of the Music Processes

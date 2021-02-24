@@ -24,7 +24,7 @@
 #define ULTIMA8_FILESYS_NAMEDARCHIVEFILE_H
 
 #include "ultima/ultima8/filesys/archive_file.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {

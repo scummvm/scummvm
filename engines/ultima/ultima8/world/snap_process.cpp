@@ -31,7 +31,6 @@ namespace Ultima8 {
 
 SnapProcess *SnapProcess::_instance = nullptr;
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(SnapProcess)
 
 SnapProcess::SnapProcess() : Process(), _currentSnapEgg() {

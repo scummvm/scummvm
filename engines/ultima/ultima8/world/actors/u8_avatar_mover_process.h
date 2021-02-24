@@ -39,7 +39,6 @@ public:
 	U8AvatarMoverProcess();
 	~U8AvatarMoverProcess();
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

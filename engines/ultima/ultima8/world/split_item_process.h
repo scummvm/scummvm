@@ -35,7 +35,6 @@ public:
 	SplitItemProcess();
 	SplitItemProcess(Item *original, Item *target);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

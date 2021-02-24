@@ -24,7 +24,7 @@
 #define ULTIMA8_KERNEL_USECODE_PROCESS_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
@@ -41,7 +41,6 @@ public:
 	Process(ObjId _itemNum = 0, uint16 type = 0);
 	virtual ~Process() { }
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 	uint32 getProcessFlags() const {

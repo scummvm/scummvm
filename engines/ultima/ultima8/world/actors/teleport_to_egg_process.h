@@ -24,7 +24,7 @@
 #define WORLD_ACTORS_TELEPORTTOEGGPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +34,6 @@ public:
 	TeleportToEggProcess();
 	TeleportToEggProcess(int mapnum, int teleportId, int arrivalAnim = 0);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

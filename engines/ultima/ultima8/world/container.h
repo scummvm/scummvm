@@ -27,7 +27,7 @@
 #include "ultima/shared/std/containers.h"
 
 #include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -42,7 +42,6 @@ public:
 	Container();
 	~Container() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Check if an item can be added to the container

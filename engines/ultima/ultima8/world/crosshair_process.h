@@ -24,7 +24,7 @@
 #define ULTIMA8_WORLD_CROSSHAIRPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,7 +38,6 @@ class CrosshairProcess : public Process {
 public:
 	CrosshairProcess();
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

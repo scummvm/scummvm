@@ -24,7 +24,7 @@
 #define ULTIMA8_GUMPS_ASKGUMP_H
 
 #include "ultima/ultima8/gumps/item_relative_gump.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {

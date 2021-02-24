@@ -25,7 +25,7 @@
 
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/frame_id.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {

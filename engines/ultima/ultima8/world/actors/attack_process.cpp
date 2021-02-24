@@ -42,7 +42,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(AttackProcess)
 
 static const int16 ATTACK_SFX_1[] = {0x15, 0x78, 0x80, 0x83, 0xDC, 0xDD};

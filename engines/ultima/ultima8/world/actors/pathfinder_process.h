@@ -39,7 +39,6 @@ public:
 	PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z);
 	~PathfinderProcess() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

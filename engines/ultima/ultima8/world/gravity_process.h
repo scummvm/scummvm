@@ -42,7 +42,6 @@ public:
 
 	void init();
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

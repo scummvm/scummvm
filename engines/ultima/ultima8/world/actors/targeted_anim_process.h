@@ -25,7 +25,7 @@
 
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,7 +37,6 @@ public:
 	TargetedAnimProcess(Actor *actor, Animation::Sequence action, Direction dir,
 	                    int32 coords[3]);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

@@ -24,7 +24,7 @@
 #define ULTIMA8_GAMES_STARTCRUSADERPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,7 +47,6 @@ protected:
 public:
 	StartCrusaderProcess(int saveSlot = -1);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

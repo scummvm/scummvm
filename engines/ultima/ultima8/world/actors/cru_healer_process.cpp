@@ -37,7 +37,6 @@ namespace Ultima8 {
 static const uint16 HEAL_START_SFX = 0xdb;
 static const uint16 HEAL_GOING_SFX = 0xba;
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealerProcess)
 
 CruHealerProcess::CruHealerProcess() : Process() {

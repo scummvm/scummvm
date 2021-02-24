@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess)
 
 SchedulerProcess::SchedulerProcess() : Process() {

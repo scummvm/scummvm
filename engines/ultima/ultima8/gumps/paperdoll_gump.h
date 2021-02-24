@@ -24,7 +24,7 @@
 #define ULTIMA8_GUMPS_PAPERDOLLGUMP_H
 
 #include "ultima/ultima8/gumps/container_gump.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {

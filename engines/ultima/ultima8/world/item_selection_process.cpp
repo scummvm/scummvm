@@ -41,7 +41,6 @@ static const uint32 SELECTOR_SHAPE = 0x5a3;
 static const uint16 SELECT_FAILED_SFX_REMORSE = 0xb0;
 static const uint16 SELECT_FAILED_SFX_REGRET = 0x1a7;
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ItemSelectionProcess)
 
 ItemSelectionProcess::ItemSelectionProcess() : Process(), _selectedItem(0),

@@ -30,7 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(SurrenderProcess)
 
 static const uint16 SUIT_SUR_SNDS[] = {0xe9, 0xe0, 0xeb, 0xe1, 0xea};

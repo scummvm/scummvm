@@ -36,7 +36,6 @@ public:
 	GlobEgg();
 	~GlobEgg() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! The item has entered the fast area

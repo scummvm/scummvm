@@ -26,7 +26,7 @@
 #include "ultima/ultima8/gumps/modal_gump.h"
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {

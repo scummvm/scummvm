@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_MISC_P_DYNAMIC_CAST_H
-#define ULTIMA8_MISC_P_DYNAMIC_CAST_H
+#ifndef ULTIMA8_MISC_CLASSTYPE_H
+#define ULTIMA8_MISC_CLASSTYPE_H
 
 namespace Ultima {
 namespace Ultima8 {

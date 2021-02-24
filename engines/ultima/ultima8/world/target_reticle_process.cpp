@@ -36,7 +36,6 @@ namespace Ultima8 {
 
 TargetReticleProcess *TargetReticleProcess::_instance = nullptr;
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),

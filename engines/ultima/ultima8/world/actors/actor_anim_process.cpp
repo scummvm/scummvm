@@ -50,7 +50,6 @@ namespace Ultima8 {
 static const int watchactor = WATCHACTOR;
 #endif
 
-// p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess)
 
 ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),

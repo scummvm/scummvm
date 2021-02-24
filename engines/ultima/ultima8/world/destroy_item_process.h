@@ -24,7 +24,7 @@
 #define ULTIMA8_WORLD_DESTROYITEMPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,7 +39,6 @@ public:
 	//! \param item The item to destroy. If 0, use process result as ObjId.
 	DestroyItemProcess(Item *item);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

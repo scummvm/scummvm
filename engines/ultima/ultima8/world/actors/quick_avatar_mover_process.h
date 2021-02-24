@@ -35,7 +35,6 @@ public:
 	QuickAvatarMoverProcess(int x, int y, int z, int _dir);
 	~QuickAvatarMoverProcess() override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;

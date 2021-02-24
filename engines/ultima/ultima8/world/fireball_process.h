@@ -36,7 +36,6 @@ public:
 	FireballProcess();
 	FireballProcess(Item *item, Item *target);
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	void run() override;
