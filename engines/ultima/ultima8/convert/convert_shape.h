@@ -24,12 +24,11 @@
 #define ULTIMA8_CONVERT_CONVERTSHAPE_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
 
 // Convert shape C
 
@@ -81,9 +80,9 @@ struct ConvertShapeFrame {
 
 	void Free();
 
-	void Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 frame_length);
+	void Read(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, uint32 frame_length);
 
-	void ReadCmpFrame(IDataSource *source, const ConvertShapeFormat *csf, const uint8 special[256], ConvertShapeFrame *prev);
+	void ReadCmpFrame(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, const uint8 special[256], ConvertShapeFrame *prev);
 
 	void GetPixels(uint8 *buf, int32 count, int32 x, int32 y);
 };
@@ -107,18 +106,18 @@ public:
 
 	void Free();
 
-	void Read(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len);
-	void Write(ODataSource *source, const ConvertShapeFormat *csf, uint32 &write_len);
+	void Read(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, uint32 real_len);
+	void Write(Common::SeekableWriteStream &source, const ConvertShapeFormat *csf, uint32 &write_len);
 
 	// This will check to see if a Shape is of a certain type. Return true if ok, false if bad
-	static bool Check(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len);
+	static bool Check(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, uint32 real_len);
 
 	// This will also check to see if a shape is of a certain type. However it won't check
 	// the rle data, it only checks headers. Return true if ok, false if bad
-	static bool CheckUnsafe(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len);
+	static bool CheckUnsafe(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, uint32 real_len);
 
 	// Algorithmically calculate the number of frames
-	static int CalcNumFrames(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len, uint32 start_pos);
+	static int CalcNumFrames(Common::SeekableReadStream &source, const ConvertShapeFormat *csf, uint32 real_len, uint32 start_pos);
 };
 
 // Shape format configuration for Pentagram format

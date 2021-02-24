@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "common/memstream.h"
 
 namespace Ultima {

@@ -24,7 +24,6 @@
 
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/world/actors/weapon_overlay.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/games/game_data.h"

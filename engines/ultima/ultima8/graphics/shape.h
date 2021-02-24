@@ -33,7 +33,6 @@ class RawShapeFrame;
 struct Palette;
 struct Rect;
 struct ConvertShapeFormat;
-class IDataSource;
 
 class Shape {
 public:
@@ -66,7 +65,7 @@ public:
 
 	// This will detect the format of a shape
 	static const ConvertShapeFormat *DetectShapeFormat(const uint8 *data, uint32 size);
-	static const ConvertShapeFormat *DetectShapeFormat(IDataSource *ds, uint32 size);
+	static const ConvertShapeFormat *DetectShapeFormat(Common::SeekableReadStream &ds, uint32 size);
 
 private:
 	void loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat *format);

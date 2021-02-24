@@ -24,8 +24,6 @@
 #define ULTIMA8_FILESYS_FILESYSTEM_H
 
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "common/file.h"
 
 namespace Ultima {

@@ -27,7 +27,7 @@
 #include "ultima/ultima8/graphics/raw_shape_frame.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
-#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/stream_util.h"
 
 #include "common/memstream.h"
 
@@ -143,7 +143,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	uint32 framecount;
 	uint32 frameoffset;
 	uint32 framesize;
-	IBufferDataSource ds(data, size);
+	Common::MemoryReadStream ds(data, size);
 
 	Common::Array<RawShapeFrame *> frames;
 
@@ -169,7 +169,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	// Skip unknown
 	if (format->_bytes_header_unk && format != &Crusader2DShapeFormat) {
 		//uint32 val =
-		ds.readX(format->_bytes_header_unk);
+		readX(ds, format->_bytes_header_unk);
 		//uint16 lowval = val & 0xff;
 		//uint16 highval = (val >> 16) & 0xff;
 		//uint32 dummy = 0 + lowval + highval + val;
@@ -180,24 +180,24 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	}
 
 	// Read framecount, default 1 if no
-	if (format->_bytes_num_frames) framecount = ds.readX(format->_bytes_num_frames);
+	if (format->_bytes_num_frames) framecount = readX(ds, format->_bytes_num_frames);
 	else framecount = 1;
-	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size, 0);
+	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(ds, format, size, 0);
 
 	frames.reserve(framecount);
 
 	for (uint i = 0; i < framecount; ++i) {
 		// Read the offset
-		if (format->_bytes_frame_offset) frameoffset = ds.readX(format->_bytes_frame_offset) + format->_bytes_special;
+		if (format->_bytes_frame_offset) frameoffset = readX(ds, format->_bytes_frame_offset) + format->_bytes_special;
 		else frameoffset = format->_len_header + (format->_len_frameheader * i);
 
 		// Skip the unknown
 		if (format->_bytes_frameheader_unk) {
-			ds.readX(format->_bytes_frameheader_unk);
+			readX(ds, format->_bytes_frameheader_unk);
 		}
 
 		// Read frame_length
-		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
+		if (format->_bytes_frame_length) framesize = readX(ds, format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
 		else framesize = size - frameoffset;
 
 		if (framesize > size) {
@@ -220,11 +220,11 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 
 // This will detect the format of a shape
 const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data, uint32 size) {
-	IBufferDataSource ds(data, size);
-	return Shape::DetectShapeFormat(&ds, size);
+	Common::MemoryReadStream ds(data, size);
+	return Shape::DetectShapeFormat(ds, size);
 }
 
-const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size) {
+const ConvertShapeFormat *Shape::DetectShapeFormat(Common::SeekableReadStream &ds, uint32 size) {
 	const ConvertShapeFormat *ret = nullptr;
 
 	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size))

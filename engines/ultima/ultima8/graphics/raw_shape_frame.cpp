@@ -24,7 +24,7 @@
 
 #include "ultima/ultima8/graphics/raw_shape_frame.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
-#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/stream_util.h"
 
 #include "common/memstream.h"
 
@@ -101,13 +101,13 @@ void RawShapeFrame::loadPentagramFormat(const uint8 *data, uint32 size) {
 
 // This will load any sort of shape via a ConvertShapeFormat struct
 void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format) {
-	IBufferDataSource ds(data + format->_bytes_frame_unknown, size);
+	Common::MemoryReadStream ds(data + format->_bytes_frame_unknown, size);
 
-	_compressed = ds.readX(format->_bytes_frame_compression);
-	_width = ds.readXS(format->_bytes_frame_width);
-	_height = ds.readXS(format->_bytes_frame_height);
-	_xoff = ds.readXS(format->_bytes_frame_xoff);
-	_yoff = ds.readXS(format->_bytes_frame_yoff);
+	_compressed = readX(ds, format->_bytes_frame_compression);
+	_width = readXS(ds, format->_bytes_frame_width);
+	_height = readXS(ds, format->_bytes_frame_height);
+	_xoff = readXS(ds, format->_bytes_frame_xoff);
+	_yoff = readXS(ds, format->_bytes_frame_yoff);
 
 	if (_height == 0)
 		return;
@@ -123,13 +123,13 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 
 	for (int32 i = 0; i < _height; i++) {
 		if (format->_line_offset_absolute) {
-			_line_offsets[i] = ds.readX(format->_bytes_line_offset);
+			_line_offsets[i] = readX(ds, format->_bytes_line_offset);
 		} else {
 			if (ds.size() - ds.pos() < (int32)format->_bytes_line_offset) {
 				warning("going off end of %d buffer at %d reading %d",
 						ds.size(), ds.pos(), format->_bytes_line_offset);
 			}
-			_line_offsets[i] = ds.readX(format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
+			_line_offsets[i] = readX(ds, format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
 		}
 	}
 
@@ -138,11 +138,11 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 
 // This will load an U8-compressed shape
 void RawShapeFrame::loadU8CMPFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format, const uint8 special[256], ConvertShapeFrame *prev) {
-	IBufferDataSource ds(data, size);
+	Common::MemoryReadStream ds(data, size);
 
 	ConvertShapeFrame f;
 
-	f.ReadCmpFrame(&ds, format, special, prev);
+	f.ReadCmpFrame(ds, format, special, prev);
 
 	uint32 to_alloc = f._height + (f._bytes_rle + 3) / 4;
 	_line_offsets = new uint32[to_alloc];

@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/filesys/savegame.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {

@@ -30,7 +30,6 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
