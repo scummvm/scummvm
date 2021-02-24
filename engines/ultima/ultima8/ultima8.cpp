@@ -903,6 +903,8 @@ Common::Error Ultima8Engine::loadGameState(int slot) {
 	else
 		ConfMan.set("lastSave", "");
 
+	ConfMan.flushToDisk();
+
 	return result;
 }
 
@@ -915,6 +917,8 @@ Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc,
 		else
 			ConfMan.set("lastSave", "");
 	}
+
+	ConfMan.flushToDisk();
 
 	return result;
 }

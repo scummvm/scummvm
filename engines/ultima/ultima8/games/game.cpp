@@ -61,6 +61,8 @@ Game *Game::createGame(const GameInfo *info) {
 
 uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
 	ConfMan.setBool("endgame", true);
+	ConfMan.setBool("quotes", true);
+	ConfMan.flushToDisk();
 
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->untransformPalette(PaletteManager::Pal_Game);

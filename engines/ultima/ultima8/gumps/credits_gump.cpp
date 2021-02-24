@@ -164,6 +164,7 @@ void CreditsGump::run() {
 
 		if (!_configKey.empty()) {
 			ConfMan.setBool(_configKey, true);
+			ConfMan.flushToDisk();
 		}
 
 		return;
