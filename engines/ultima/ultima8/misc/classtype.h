@@ -35,18 +35,16 @@ struct RunTimeClassType {
 	}
 };
 
-#define ENABLE_RUNTIME_CLASSTYPE()                                              \
-	static const RunTimeClassType   ClassType;                                  \
+#define ENABLE_RUNTIME_CLASSTYPE() \
+	static const RunTimeClassType ClassType; \
 	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
 
-#define ENABLE_RUNTIME_CLASSTYPE_BASE()                                         \
-	static const RunTimeClassType   ClassType;                                  \
+#define ENABLE_RUNTIME_CLASSTYPE_BASE() \
+	static const RunTimeClassType ClassType; \
 	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
 
-#define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname)    \
-	const RunTimeClassType Classname::ClassType = {                     \
-	                                                                    #Classname                                                      \
-	                                              };
+#define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname) \
+	const RunTimeClassType Classname::ClassType = { #Classname };
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
