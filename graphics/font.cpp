@@ -94,8 +94,8 @@ int getStringWidthImpl(const Font &font, const StringType &str) {
 	return space;
 }
 
-template<class StringType>
-void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
+template<class SurfaceType, class StringType>
+void drawStringImpl(const Font &font, SurfaceType *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
 	// The logic in getBoundingImpl is the same as we use here. In case we
 	// ever change something here we will need to change it there too.
 	assert(dst != 0);
@@ -443,7 +443,7 @@ int Font::getStringWidth(const Common::U32String &str) const {
 }
 
 void Font::drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
-	drawChar(&dst->_innerSurface, chr, x, y, color);
+	drawChar(dst->surfacePtr(), chr, x, y, color);
 
 	Common::Rect charBox = getBoundingBox(chr);
 	charBox.translate(x, y);
@@ -461,14 +461,18 @@ void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, 
 }
 
 void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
-	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax, useEllipsis);
+	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
+
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, deltax, useEllipsis));
 	}
 }
 
 void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
-	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax, useEllipsis);
+	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
+
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, useEllipsis));
 	}

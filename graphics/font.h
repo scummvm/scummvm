@@ -180,8 +180,9 @@ public:
 	 * @param color The color of the character.
 	 */
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
+	virtual void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
+
 	/** @overload */
-	void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 	/**
 	 * Draw the given @p str string to the given @p dst surface.
@@ -238,7 +239,6 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 	/** @overload */
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
-
 };
 /** @} */
 } // End of namespace Graphics

@@ -64,12 +64,6 @@ protected:
 	 * Returns the union of two dirty area rectangles
 	 */
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
-
-	/**
-	 * Adds a rectangle to the list of modified areas of the screen during the
-	 * current frame
-	 */
-	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Screen();
 	Screen(int width, int height);
@@ -90,6 +84,12 @@ public:
 	 * Clear the current dirty rects list
 	 */
 	virtual void clearDirtyRects() { _dirtyRects.clear(); }
+
+	/**
+	 * Adds a rectangle to the list of modified areas of the screen during the
+	 * current frame
+	 */
+	virtual void addDirtyRect(const Common::Rect &r);
 
 	/**
 	 * Updates the screen by copying any affected areas to the system
