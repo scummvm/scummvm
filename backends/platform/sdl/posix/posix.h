@@ -31,8 +31,6 @@ public:
 
 	virtual bool displayLogFile() override;
 
-	virtual bool openUrl(const Common::String &url) override;
-
 	virtual void init() override;
 	virtual void initBackend() override;
 
@@ -48,7 +46,13 @@ protected:
 
 	virtual AudioCDManager *createAudioCDManager() override;
 
+#ifdef HAS_POSIX_SPAWN
+public:
+	virtual bool openUrl(const Common::String &url) override;
+
+protected:
 	bool launchBrowser(const Common::String& client, const Common::String &url);
+#endif
 };
 
 #endif

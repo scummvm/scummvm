@@ -75,6 +75,10 @@ public:
 	virtual bool setTextInClipboard(const Common::U32String &text) override;
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 14)
+	virtual bool openUrl(const Common::String &url) override;
+#endif
+
 	virtual void setWindowCaption(const Common::U32String &caption) override;
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	virtual uint32 getMillis(bool skipRecord = false) override;

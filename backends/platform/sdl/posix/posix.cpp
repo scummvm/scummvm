@@ -357,8 +357,8 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
-bool OSystem_POSIX::openUrl(const Common::String &url) {
 #ifdef HAS_POSIX_SPAWN
+bool OSystem_POSIX::openUrl(const Common::String &url) {
 	// inspired by Qt's "qdesktopservices_x11.cpp"
 
 	// try "standards"
@@ -393,13 +393,9 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 
 	warning("openUrl() (POSIX) failed to open URL");
 	return false;
-#else
-	return false;
-#endif
 }
 
 bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
-#ifdef HAS_POSIX_SPAWN
 	pid_t pid;
 	const char *argv[] = {
 		client.c_str(),
@@ -415,10 +411,8 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 		return false;
 	}
 	return (waitpid(pid, NULL, WNOHANG) != -1);
-#else
-	return false;
-#endif
 }
+#endif
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
 #ifdef USE_LINUXCD
