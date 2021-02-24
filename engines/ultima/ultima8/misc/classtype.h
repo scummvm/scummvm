@@ -26,7 +26,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// This is just a 'type' used to differentiate each class.
+// This is 'type' used to differentiate each class.
+// The class name is used primarily to define entities in game saves
 struct RunTimeClassType {
 	const char *_className;
 	inline bool operator == (const RunTimeClassType &other) const {
