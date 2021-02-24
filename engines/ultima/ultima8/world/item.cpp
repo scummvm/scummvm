@@ -2366,15 +2366,17 @@ bool Item::canMergeWith(Item *other) {
 	// 		ex.hood: frame 10-12
 	// 		blackmoor: frame 14-15
 	// 		dead man's elbow: frame 16-20
-	// sorcery reagents (shape 398).
-	// Disabled because the usecode doesn't support saying how many there are.
+	// sorcery reagents (shape 398)
 	//		volcanic ash: frame 0-1
 	//		pumice: frame 2-5
 	//		obsidian: 6-9
 	//		iron: 10-13
 	//		brimstone: 14-17
 	// 		daemon bones: 18-20
-	// 3. ether reagents (shape 399) (also not supported in usecode)
+	// ether reagents (shape 399)
+	//      only one frame per type, no special case needed
+	// Note: necromancy reagents are special-cased to be plural in their look()
+	// function, but the sorcery ones aren't, but the original game is the same.
 	//
 	if (GAME_IS_U8) {
 		if (getShape() == 395) {
@@ -2389,7 +2391,7 @@ bool Item::canMergeWith(Item *other) {
 			if (bothInRange(frame1, frame2, 16, 20))
 				return true;
 		}
-		/*if (getShape() == 398) {
+		if (getShape() == 398) {
 			if (bothInRange(frame1, frame2, 0, 1))
 				return true;
 			if (bothInRange(frame1, frame2, 2, 5))
@@ -2402,7 +2404,7 @@ bool Item::canMergeWith(Item *other) {
 				return true;
 			if (bothInRange(frame1, frame2, 18, 20))
 				return true;
-		}*/
+		}
 	}
 	return false;
 }
