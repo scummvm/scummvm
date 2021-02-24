@@ -1822,34 +1822,6 @@ static const uint16 freddypharkasPatchIntroScaling[] = {
 	PATCH_END
 };
 
-// PointsSound::check waits for a signal. If no signal is received, it'll call
-//   kDoSound(0x0d) which is a dummy in sierra sci. ScummVM and will use acc
-//   (which is not set by the dummy) to trigger sound disposal. This somewhat
-//   worked in sierra sci because the sample was already playing in the sound
-//   driver. In our case, that would also stop the sample from playing, so we
-//   patch it out. The "score" code is already buggy and sets volume to 0 when
-//   playing.
-// Applies to at least: English PC-CD
-// Responsible method: PointsSound::check in script 0
-// Fixes bug: #5059
-static const uint16 freddypharkasSignatureScoreDisposal[] = {
-	0x67, 0x32,                      // pTos 32 (selector theAudCount)
-	0x78,                            // push1
-	SIG_MAGICDWORD,
-	0x39, 0x0d,                      // pushi 0d
-	0x43, 0x75, 0x02,                // callk DoAudio
-	0x1c,                            // ne?
-	0x31,                            // bnt [skip disposal]
-	SIG_END
-};
-
-static const uint16 freddypharkasPatchScoreDisposal[] = {
-	0x34, PATCH_UINT16(0x0000),      // ldi 0000
-	0x34, PATCH_UINT16(0x0000),      // ldi 0000
-	0x34, PATCH_UINT16(0x0000),      // ldi 0000
-	PATCH_END
-};
-
 // In script 235, rm235::init and sEnterFrom500 disable icon 7+8 of iconbar (CD
 //  only). When picking up the canister after placing it down, the scripts will
 //  disable all the other icons. This results in IconBar::disable doing endless
@@ -2111,7 +2083,6 @@ static const uint16 freddypharkasPatchDeskLetter[] = {
 
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
 	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
 	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
