@@ -51,6 +51,9 @@ bool ConfigFileManager::readConfigFile(string fname, const istring &category) {
 	ConfigFile *configFile = new ConfigFile();
 	configFile->_category = category;
 
+	// We need various characters as the inis are used for translations.
+	configFile->_iniFile.allowNonEnglishCharacters();
+
 	if (!configFile->_iniFile.loadFromStream(*f)) {
 		delete configFile;
 		return false;
