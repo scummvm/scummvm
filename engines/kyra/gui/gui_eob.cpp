@@ -943,7 +943,7 @@ int EoBCoreEngine::clickedSceneDropPickupItem(Button *button) {
 		if (!d)
 			return 1;
 
-		if (_items[d].nameUnid == 97) {
+		if (_flags.gameID == GI_EOB1 && _items[d].nameUnid == 97) {
 			_items[d].block = -1;
 			addLevelMap(_items[d].value);
 			snd_playSoundEffect(0x101C);
