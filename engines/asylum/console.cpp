@@ -33,6 +33,7 @@
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
 #include "asylum/system/screen.h"
+#include "asylum/system/text.h"
 
 #include "asylum/views/scene.h"
 #include "asylum/views/video.h"
@@ -155,6 +156,19 @@ static const struct EncounterData {
 	}
 };
 
+static const int32 itemIndices[][16] = {
+	{61, 69},
+	{107, 134, 104, 113, 110, 112, 117, 109, 108, 111, 106},
+	{170, 182, 181, 172, 171, 169},
+	{61, 64, 66, 67, 68, 69, 70, 78, 77},
+	{197},
+	{59, 81, 60, 84, 88, 54, 74, 139, 97, 121},
+	{239, 234, 249, 250, 251, 263, 237, 253},
+	{58, 59, 60, 111, 75, 76, 77, 78},
+	{284, 285, 286, 329, 330, 331, 332, 322, 465},
+	{91, 92, 93, 94, 95},
+	{69, 70, 78}
+};
 
 Console::Console(AsylumEngine *engine) : _vm(engine) {
     // Commands
@@ -178,6 +192,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
     registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
+    registerCmd("items",          WRAP_METHOD(Console, cmdListItems));
     registerCmd("grab",           WRAP_METHOD(Console, cmdAddToInventory));
     registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
 
@@ -237,6 +252,7 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" encounter   - run an encounter\n");
     debugPrintf(" puzzle      - run an puzzle\n");
     debugPrintf("\n");
+    debugPrintf(" items       - list all grabbable objects\n");
     debugPrintf(" grab        - add an item to inventory\n");
     debugPrintf(" throw       - remove an item from inventory\n");
     debugPrintf("\n");
@@ -665,6 +681,35 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 	_vm->switchEventHandler(puzzle);
 
 	return false;
+}
+
+bool Console::cmdListItems(int32 argc, const char **argv) {
+	ChapterIndex chapter = getWorld()->chapter;
+	uint32 maxIndex;
+	for (maxIndex = 0; maxIndex < 16; maxIndex++) {
+		if (!itemIndices[chapter - 1][maxIndex])
+			break;
+	}
+
+	int32 offset, actorType = getWorld()->actorType;
+	if (actorType == kActorMax)
+		offset = 83;
+	else if (actorType == kActorSarah)
+		offset = 586;
+	else if (actorType == kActorCyclops)
+		offset = 743;
+	else if (actorType == kActorAztec)
+		offset = 893;
+	else
+		return true;
+
+	for (uint32 i = 0; i < maxIndex; i++) {
+		char *text = getText()->get(MAKE_RESOURCE(kResourcePackText, offset + itemIndices[chapter - 1][i]));
+		text += 4;
+		debugPrintf("%02d: %s\n", i + 1, text);
+	}
+
+	return true;
 }
 
 bool Console::cmdAddToInventory(int32 argc, const char **argv) {
