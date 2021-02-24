@@ -77,6 +77,9 @@ public:
 
 	void stopAllAudio();
 
+	void incrementPlayCounter();
+	uint16 getPlayCounter();
+
 private:
 	ResourceManager *_resMan;
 	uint16 _audioRate;
@@ -85,6 +88,7 @@ private:
 	uint32 _audioCdStart;
 	bool _wPlayFlag;
 	bool _initCD;
+	uint16 _playCounter;
 };
 
 } // End of namespace Sci

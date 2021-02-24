@@ -44,7 +44,7 @@
 namespace Sci {
 
 AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
-		_audioCdStart(0), _initCD(false) {
+		_audioCdStart(0), _initCD(false), _playCounter(0) {
 
 	_mixer = g_system->getMixer();
 	_wPlayFlag = false;
@@ -565,6 +565,14 @@ int AudioPlayer::audioCdPosition() {
 
 	// Return the position otherwise (in ticks).
 	return (g_system->getMillis() - _audioCdStart) * 60 / 1000;
+}
+
+void AudioPlayer::incrementPlayCounter() {
+	_playCounter++;
+}
+
+uint16 AudioPlayer::getPlayCounter() {
+	return _playCounter;
 }
 
 } // End of namespace Sci

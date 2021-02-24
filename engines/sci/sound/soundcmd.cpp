@@ -240,6 +240,12 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 
 	_music->soundPlay(musicSlot, restoring);
 
+	// Increment the sample play counter used by Pharkas CD.
+	// SSCI calls kDoAudio(Play) which did this. See kDoAudio(13).
+	if (musicSlot->isSample) {
+		_audio->incrementPlayCounter();
+	}
+
 	// Reset any left-over signals
 	musicSlot->signal = 0;
 	musicSlot->fadeStep = 0;

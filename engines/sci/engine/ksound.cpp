@@ -196,6 +196,10 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
+		if (argv[0].toUint16() == kSciAudioPlay) {
+			g_sci->_audio->incrementPlayCounter();
+		}
+
 		debugC(kDebugLevelSound, "kDoAudio: play sample %d, module %d", number, module);
 
 		// return sample length in ticks
@@ -287,19 +291,23 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 
 		return make_reg(0, 1);
 	case 13:
-		// SSCI returns a serial number for the played audio
-		// here, used in the PointsSound class. The reason is severalfold:
-
-		// 1. SSCI does not support multiple wave effects at once
-		// 2. FPFP may disable its icon bar during the points sound.
-		// 3. Each new sound preempts any sound already playing.
-		// 4. If the points sound is interrupted before completion,
-		// the icon bar could remain disabled.
-
-		// Since points (1) and (3) do not apply to us, we can simply
-		// return a constant here. This is equivalent to the
-		// old behavior, as above.
-		return make_reg(0, 1);
+		// SSCI returns a counter that increments each time a sample
+		//  is played. This is used by the PointsSound and Narrator
+		//  classes to detect if their sound was interrupted by
+		//  another sample playing, since only one can play at a time.
+		//  The counter is incremented on each kDoAudio(Play) and on
+		//  each kDoSound(Play) when the sound is a sample, since SSCI
+		//  just passes those on to kDoAudio.
+		//
+		// When awarding points, the icon bar is often disabled, and
+		//  PointsSound:check polls its signal to detect when the
+		//  sound is completed so that it can re-enable the icon bar.
+		//  If the sound is interrupted by another sample then the icon
+		//  bar could remain permanently disabled, so the play counter
+		//  is stored before playing and PointsSound:check polls for
+		//  a change. The Narrator class also does this to detect
+		//  if speech was interrupted so that the game can continue.
+		return make_reg(0, g_sci->_audio->getPlayCounter());
 	case 17:
 		// Seems to be some sort of audio sync, used in SQ6. Silenced the
 		// warning due to the high level of spam it produces. (takes no params)
