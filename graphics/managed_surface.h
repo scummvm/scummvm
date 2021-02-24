@@ -39,15 +39,11 @@ namespace Graphics {
  * @{
  */
 
-class Font;
-
 /**
  * A derived graphics surface, which supports automatically managing the allocated
  * surface data block and introduces several new blitting methods.
  */
 class ManagedSurface {
-	/** See @ref Font. */
-	friend class Font;
 private:
 	/**
 	 * The Graphics::Surface that the managed surface encapsulates.
@@ -85,12 +81,6 @@ private:
 	uint32 _palette[256];
 	bool _paletteSet;
 protected:
-	/**
-	 * Base method that descendant classes can override for recording the affected
-	 * dirty areas of the surface.
-	 */
-	virtual void addDirtyRect(const Common::Rect &r);
-
 	/**
 	 * Inner method for blitting.
 	 */
@@ -156,14 +146,16 @@ public:
 	 * directly to it, since it would bypass dirty rect handling.
 	 */
 	operator const Surface &() const { return _innerSurface; }
+
 	/**
-	 * Automatically convert to a Graphics::Surface by
-	 * simply returning the inner surface.
+	 * Return the underyling Graphics::Surface
 	 *
-	 * This must be const, because changes are not supposed to be done
-	 * directly to it, since it would bypass dirty rect handling.
+	 * If a caller uses the non-const surfacePtr version and changes
+	 * the surface, they'll be responsible for calling addDirtyRect
+	 * for any affected area
 	 */
 	const Surface &rawSurface() const { return _innerSurface; }
+	Surface *surfacePtr() { return &_innerSurface; }
 
 	/**
 	 * Reassign one managed surface to another one.
@@ -250,6 +242,12 @@ public:
 	 * Clear any pending dirty rectangles that have been generated for the surface.
 	 */
 	virtual void clearDirtyRects() {}
+
+	/**
+	 * Base method that descendant classes can override for recording the affected
+	 * dirty areas of the surface.
+	 */
+	virtual void addDirtyRect(const Common::Rect &r);
 
 	/**
 	 * When the managed surface is a subsection of a parent surface, return the
