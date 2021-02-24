@@ -31,7 +31,7 @@ namespace std {
 
 template <class T>
 void reverse(T *First, T *Last) {
-	for (; First < Last; ++First, --Last) {
+	for (--Last; First < Last; ++First, --Last) {
 		SWAP(*First, *Last);
 	}
 }
