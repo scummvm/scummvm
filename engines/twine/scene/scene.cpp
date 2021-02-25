@@ -719,8 +719,8 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
-					_engine->_renderer->destX += _engine->_movements->processActorX;
-					_engine->_renderer->destZ += _engine->_movements->processActorZ;
+					_engine->_renderer->destX += _engine->_movements->processActor.x;
+					_engine->_renderer->destZ += _engine->_movements->processActor.z;
 
 					if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
 						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->pos.y + ANGLE_90, _engine->_renderer->destZ) != ShapeType::kNone) {

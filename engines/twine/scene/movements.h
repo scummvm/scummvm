@@ -135,29 +135,21 @@ public:
 	/** Hero moved */
 	bool heroMoved = false; // twinsenMove
 
-	/** Process actor.x coordinate */
-	int16 processActorX = 0;
-	/** Process actor.y coordinate */
-	int16 processActorY = 0;
-	/** Process actor.z coordinate */
-	int16 processActorZ = 0;
+	/** Process actor coordinate */
+	Vec3 processActor;
 
-	/** Previous process actor.x coordinate */
-	int16 previousActorX = 0; // processActorVar2
-	/** Previous process actor.y coordinate */
-	int16 previousActorY = 0; // processActorVar3
-	/** Previous process actor.z coordinate */
-	int16 previousActorZ = 0; // processActorVar4
+	/** Previous process actor coordinate */
+	Vec3 previousActor;
 
 	int32 targetActorDistance = 0; // DoTrackVar1
 
 	/**
 	 * Get shadow position
-	 * @param X Shadow X coordinate
-	 * @param Y Shadow Y coordinate
-	 * @param Z Shadow Z coordinate
+	 * @param x Shadow X coordinate
+	 * @param y Shadow Y coordinate
+	 * @param z Shadow Z coordinate
 	 */
-	void getShadowPosition(int32 X, int32 Y, int32 Z);
+	void getShadowPosition(int32 x, int32 y, int32 z);
 
 	/**
 	 * Set actor safe angle

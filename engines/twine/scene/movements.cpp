@@ -38,9 +38,9 @@ namespace TwinE {
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
 void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(x, y, z, processActorY);
-	processActorX = x;
-	processActorZ = z;
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(x, y, z, processActor.y);
+	processActor.x = x;
+	processActor.z = z;
 
 	if (*ptr) {
 		const uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
@@ -51,9 +51,7 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 	}
 	_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
 
-	_engine->_actor->shadowCoord.x = processActorX;
-	_engine->_actor->shadowCoord.y = processActorY;
-	_engine->_actor->shadowCoord.z = processActorZ;
+	_engine->_actor->shadowCoord = processActor;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {

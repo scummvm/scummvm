@@ -194,7 +194,7 @@ public:
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
-	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground);
+	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int32 &ground);
 
 	/** New grid camera x, y and z coordinates */
 	Vec3 newCamera;

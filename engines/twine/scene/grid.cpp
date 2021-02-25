@@ -594,7 +594,7 @@ uint8 *Grid::getBlockBuffer(int32 x, int32 y, int32 z) {
 	return blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
 }
 
-const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) {
+const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int32 &ground) {
 	updateCollisionCoordinates(x, y, z);
 	const int32 tempX = _engine->_collision->collisionX;
 	int32 tempY = _engine->_collision->collisionY;
