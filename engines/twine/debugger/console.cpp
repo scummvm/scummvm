@@ -54,6 +54,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
 	registerCmd("hero_pos", WRAP_METHOD(TwinEConsole, doSetHeroPosition));
+	registerCmd("set_life", WRAP_METHOD(TwinEConsole, doSetLife));
 	registerCmd("set_game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
 	registerCmd("show_game_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 	registerCmd("set_inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
@@ -420,6 +421,18 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 		state->inventoryMagicPoints = state->magicLevelIdx * 20;
 	}
 
+	return true;
+}
+
+bool TwinEConsole::doSetLife(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get the life points as parameter\n");
+		return true;
+	}
+	_engine->_scene->sceneHero->life = atoi(argv[1]);
+	if (_engine->_scene->sceneHero->life > 50) {
+		_engine->_scene->sceneHero->life = 50;
+	}
 	return true;
 }
 

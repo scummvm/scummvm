@@ -41,6 +41,7 @@ private:
 	bool doPrintHolomapFlag(int argc, const char **argv);
 	bool doSetHeroPosition(int argc, const char **argv);
 	bool doGiveItem(int argc, const char **argv);
+	bool doSetLife(int argc, const char **argv);
 	bool doGiveAllItems(int argc, const char **argv);
 	bool doChangeScene(int argc, const char **argv);
 	bool doListMenuText(int argc, const char **argv);
