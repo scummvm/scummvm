@@ -119,6 +119,7 @@ enum _TextId {
 #define COLOR_BRIGHT_BLUE2 69
 #define COLOR_WHITE 15
 #define COLOR_GOLD 155
+#define COLOR_158 158
 
 enum class ProgressiveTextState {
 	End = 0,				/**< Text has reached its end and we are waiting for user input */
