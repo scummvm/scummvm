@@ -170,10 +170,10 @@ private:
 	Common::Rect calcBehaviourRect(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	bool isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	void drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect);
-	void drawInventoryItems();
+	void drawInventoryItems(int32 left, int32 top);
 	void prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect);
 	void drawBehaviourMenu(int32 left, int32 top, int32 angle);
-	void drawItem(int32 item, Common::Rect &dirtyRect);
+	void drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect);
 
 	MenuSettings giveUpMenuWithSaveState;
 	MenuSettings volumeMenuState;
