@@ -262,8 +262,8 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 										actorTest->lastPos.x = 192;
 									}
 								} else {
-									actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionX;
-									actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionZ;
+									actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionPos.x;
+									actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionPos.z;
 								}
 							}
 
@@ -314,8 +314,8 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 								actorTest->lastPos.x = 192;
 							}
 						} else {
-							actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionX;
-							actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionZ;
+							actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionPos.x;
+							actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionPos.z;
 						}
 					}
 

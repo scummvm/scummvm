@@ -214,9 +214,7 @@ public:
 	int32 armor = 0; // field_14
 	int32 life = 0;
 
-	int32 collisionX = 0; // field_20
-	int32 collisionY = 0; // field_22
-	int32 collisionZ = 0; // field_24
+	Vec3 collisionPos;
 
 	int32 positionInMoveScript = 0;
 	uint8 *moveScript = nullptr;

@@ -869,9 +869,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		_movements->processActorMovements(a);
 
-		actor->collisionX = actor->pos.x;
-		actor->collisionY = actor->pos.y;
-		actor->collisionZ = actor->pos.z;
+		actor->collisionPos = actor->pos;
 
 		if (actor->positionInMoveScript != -1) {
 			_scriptMove->processMoveScript(a);

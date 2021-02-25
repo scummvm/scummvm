@@ -516,9 +516,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		return;
 	}
 
-	_engine->_movements->previousActorX = actor->collisionX;
-	_engine->_movements->previousActorY = actor->collisionY;
-	_engine->_movements->previousActorZ = actor->collisionZ;
+	_engine->_movements->previousActorX = actor->collisionPos.x;
+	_engine->_movements->previousActorY = actor->collisionPos.y;
+	_engine->_movements->previousActorZ = actor->collisionPos.z;
 
 	if (actor->staticFlags.bIsSpriteActor) { // is sprite actor
 		if (actor->strengthOfHit) {
@@ -695,9 +695,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	// actor standing on another actor
 	if (actor->standOn != -1) {
 		const ActorStruct *standOnActor = _engine->_scene->getActor(actor->standOn);
-		_engine->_movements->processActorX -= standOnActor->collisionX;
-		_engine->_movements->processActorY -= standOnActor->collisionY;
-		_engine->_movements->processActorZ -= standOnActor->collisionZ;
+		_engine->_movements->processActorX -= standOnActor->collisionPos.x;
+		_engine->_movements->processActorY -= standOnActor->collisionPos.y;
+		_engine->_movements->processActorZ -= standOnActor->collisionPos.z;
 
 		_engine->_movements->processActorX += standOnActor->pos.x;
 		_engine->_movements->processActorY += standOnActor->pos.y;
