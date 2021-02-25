@@ -147,6 +147,14 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	}
 }
 
+void Object::inScene(bool value)
+{
+	_inScene = value;
+	if (!_inScene)
+		_region.reset();
+}
+
+
 void Object::region(RegionPtr region) {
 	_region = region;
 }
