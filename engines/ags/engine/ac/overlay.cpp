@@ -37,24 +37,21 @@
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/script/runtimescriptvalue.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
 extern int displayed_room;
 extern int face_talking;
 extern ViewStruct *views;
 extern CharacterExtras *charextra;
 extern IGraphicsDriver *gfxDriver;
-
-
 
 std::vector<ScreenOverlay> screenover;
 int is_complete_overlay = 0, is_text_overlay = 0;
@@ -241,11 +238,11 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 		int charid = over.y;
 
 		auto view = FindNearestViewport(charid);
-		const int charpic = views[game.chars[charid].view].loops[game.chars[charid].loop].frames[0].pic;
-		const int height = (charextra[charid].height < 1) ? game.SpriteInfos[charpic].Height : charextra[charid].height;
+		const int charpic = views[_GP(game).chars[charid].view].loops[_GP(game).chars[charid].loop].frames[0].pic;
+		const int height = (charextra[charid].height < 1) ? _GP(game).SpriteInfos[charpic].Height : charextra[charid].height;
 		Point screenpt = view->RoomToScreen(
-			data_to_game_coord(game.chars[charid].x),
-			data_to_game_coord(game.chars[charid].get_effective_y()) - height).first;
+			data_to_game_coord(_GP(game).chars[charid].x),
+			data_to_game_coord(_GP(game).chars[charid].get_effective_y()) - height).first;
 		tdxp = screenpt.X - over.pic->GetWidth() / 2;
 		if (tdxp < 0) tdxp = 0;
 		tdyp = screenpt.Y - get_fixed_pixel_size(5);
@@ -254,7 +251,7 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 
 		if ((tdxp + over.pic->GetWidth()) >= ui_view.GetWidth())
 			tdxp = (ui_view.GetWidth() - over.pic->GetWidth()) - 1;
-		if (game.chars[charid].room != displayed_room) {
+		if (_GP(game).chars[charid].room != displayed_room) {
 			tdxp = ui_view.GetWidth() / 2 - over.pic->GetWidth() / 2;
 			tdyp = ui_view.GetHeight() / 2 - over.pic->GetHeight() / 2;
 		}

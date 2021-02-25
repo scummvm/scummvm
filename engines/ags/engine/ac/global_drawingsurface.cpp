@@ -36,6 +36,7 @@
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/gfx_util.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -45,8 +46,8 @@ using namespace AGS::Engine;
 extern Bitmap *raw_saved_screen;
 extern RoomStruct thisroom;
 extern GameState play;
-extern SpriteCache spriteset;
-extern GameSetupStruct game;
+
+
 
 // Raw screen writing routines - similar to old CapturedStuff
 #define RAW_START() play.raw_drawing_surface = thisroom.BgFrames[play.bg_frame].Graphic; play.raw_modified[play.bg_frame] = 1
@@ -175,12 +176,12 @@ void RawPrintMessageWrapped(int xx, int yy, int wid, int font, int msgm) {
 }
 
 void RawDrawImageCore(int xx, int yy, int slot, int alpha) {
-	if ((slot < 0) || (spriteset[slot] == nullptr))
+	if ((slot < 0) || (_GP(spriteset)[slot] == nullptr))
 		quit("!RawDrawImage: invalid sprite slot number specified");
 	RAW_START();
 
-	if (spriteset[slot]->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
-		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, spriteset[slot]->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
+	if (_GP(spriteset)[slot]->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
+		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, _GP(spriteset)[slot]->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
 	}
 
 	draw_sprite_slot_support_alpha(RAW_SURFACE(), false, xx, yy, slot, kBlendMode_Alpha, alpha);
@@ -233,7 +234,7 @@ void RawDrawImageTransparent(int xx, int yy, int slot, int legacy_transparency) 
 	update_polled_stuff_if_runtime();  // this operation can be slow so stop music skipping
 }
 void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
-	if ((gotSlot < 0) || (spriteset[gotSlot] == nullptr))
+	if ((gotSlot < 0) || (_GP(spriteset)[gotSlot] == nullptr))
 		quit("!RawDrawImageResized: invalid sprite slot number specified");
 	// very small, don't draw it
 	if ((width < 1) || (height < 1))
@@ -243,9 +244,9 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	data_to_game_coords(&width, &height);
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(spriteset[gotSlot],
-		RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
+	newPic->StretchBlt(_GP(spriteset)[gotSlot],
+		RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
 		RectWH(0, 0, width, height));
 
 	RAW_START();

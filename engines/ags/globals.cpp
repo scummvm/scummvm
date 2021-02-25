@@ -20,7 +20,9 @@
  *
  */
 
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/spritecache.h"
 
 namespace AGS3 {
 
@@ -30,10 +32,15 @@ Globals::Globals() {
 	g_globals = this;
 
 	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
+
+	_game = new GameSetupStruct();
+	_spriteset = new SpriteCache(_game->SpriteInfos);
 }
 
 Globals::~Globals() {
 	g_globals = nullptr;
+	delete _game;
+	delete _spriteset;
 }
 
 } // namespace AGS3

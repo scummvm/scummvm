@@ -26,15 +26,14 @@
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameSetupStruct game;
 extern ViewStruct *views;
 
-
 void SetFrameSound(int vii, int loop, int frame, int sound) {
-	if ((vii < 1) || (vii > game.numviews))
+	if ((vii < 1) || (vii > _GP(game).numviews))
 		quit("!SetFrameSound: invalid view number");
 	vii--;
 
@@ -47,11 +46,11 @@ void SetFrameSound(int vii, int loop, int frame, int sound) {
 	if (sound < 1) {
 		views[vii].loops[loop].frames[frame].sound = -1;
 	} else {
-		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, sound);
+		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, sound);
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", sound);
 
-		views[vii].loops[loop].frames[frame].sound = clip->id + (game.IsLegacyAudioSystem() ? 0x10000000 : 0);
+		views[vii].loops[loop].frames[frame].sound = clip->id + (_GP(game).IsLegacyAudioSystem() ? 0x10000000 : 0);
 	}
 }
 

@@ -61,7 +61,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -69,10 +69,10 @@ namespace AGS3 {
 using namespace Shared;
 using namespace Engine;
 
-// function is currently implemented in game.cpp
+// function is currently implemented in _GP(game).cpp
 HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
 
-extern GameSetupStruct game;
+
 extern Bitmap **guibg;
 extern AGS::Engine::IDriverDependantBitmap **guibgbmp;
 extern AGS::Engine::IGraphicsDriver *gfxDriver;
@@ -132,7 +132,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_IncompatibleEngine:
 		return "Save was written by incompatible engine, or file is corrupted.";
 	case kSvgErr_GameGuidMismatch:
-		return "Game GUID does not match, saved by a different game.";
+		return "Game GUID does not match, saved by a different _GP(game).";
 	case kSvgErr_ComponentListOpeningTagFormat:
 		return "Failed to parse opening tag of the components list.";
 	case kSvgErr_ComponentListClosingTagMissing:
@@ -154,7 +154,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_UnsupportedComponentVersion:
 		return "Component data version not supported.";
 	case kSvgErr_GameContentAssertion:
-		return "Saved content does not match current game.";
+		return "Saved content does not match current _GP(game).";
 	case kSvgErr_InconsistentData:
 		return "Inconsistent save data, or file is corrupted.";
 	case kSvgErr_InconsistentPlugin:
@@ -337,8 +337,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// cleanup dynamic sprites
 	// NOTE: sprite 0 is a special constant sprite that cannot be dynamic
-	for (int i = 1; i < spriteset.GetSpriteSlotCount(); ++i) {
-		if (game.SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
+	for (int i = 1; i < _GP(spriteset).GetSpriteSlotCount(); ++i) {
+		if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
 			// do this early, so that it changing guibuts doesn't
 			// affect the restored data
 			free_dynamic_sprite(i);
@@ -346,7 +346,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	}
 
 	// cleanup GUI backgrounds
-	for (int i = 0; i < game.numgui; ++i) {
+	for (int i = 0; i < _GP(game).numgui; ++i) {
 		delete guibg[i];
 		guibg[i] = nullptr;
 
@@ -387,7 +387,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// unregister gui controls from API exports
 	// TODO: find out why are we doing this here? is this really necessary?
-	for (int i = 0; i < game.numgui; ++i) {
+	for (int i = 0; i < _GP(game).numgui; ++i) {
 		unexport_gui_controls(i);
 	}
 	// Clear the managed object pool
@@ -457,7 +457,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		dynamicallyCreatedSurfaces[i] = r_data.DynamicSurfaces[i];
 	}
 
-	for (int i = 0; i < game.numgui; ++i)
+	for (int i = 0; i < _GP(game).numgui; ++i)
 		export_gui_controls(i);
 	update_gui_zorder();
 
@@ -478,7 +478,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 				Math::Min((size_t)moduleInst[i]->globaldatasize, r_data.ScriptModules[i].Len));
 	}
 
-	setup_player_character(game.playercharacter);
+	setup_player_character(_GP(game).playercharacter);
 
 	// Save some parameters to restore them after room load
 	int gstimer = play.gscript_timer;
@@ -509,7 +509,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	if (r_data.CursorMode == MODE_USE)
 		SetActiveInventory(playerchar->activeinv);
 	// ensure that the current cursor is locked
-	spriteset.Precache(game.mcurs[r_data.CursorID].pic);
+	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
 	::AGS::g_vm->set_window_title(play.game_name);
 
@@ -538,7 +538,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		on_background_frame_change();
 	}
 
-	gui_disabled_style = convert_gui_disabled_style(game.options[OPT_DISABLEOFF]);
+	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 
 	// restore the queue now that the music is playing
 	play.music_queue_size = queuedMusicSize;
@@ -560,11 +560,11 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 			const RestoredData::ChannelInfo &chan_info = r_data.AudioChans[i];
 			if (chan_info.ClipID < 0)
 				continue;
-			if ((size_t)chan_info.ClipID >= game.audioClips.size()) {
+			if ((size_t)chan_info.ClipID >= _GP(game).audioClips.size()) {
 				return new SavegameError(kSvgErr_GameObjectInitFailed,
-					String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, game.audioClips.size()));
+					String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, _GP(game).audioClips.size()));
 			}
-			play_audio_clip_on_channel(i, &game.audioClips[chan_info.ClipID],
+			play_audio_clip_on_channel(i, &_GP(game).audioClips[chan_info.ClipID],
 				chan_info.Priority, chan_info.Repeat, chan_info.Pos);
 
 			auto *ch = lock.GetChannel(i);
@@ -602,8 +602,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	}
 	update_directional_sound_vol();
 
-	for (int i = 0; i < game.numgui; ++i) {
-		guibg[i] = BitmapHelper::CreateBitmap(guis[i].Width, guis[i].Height, game.GetColorDepth());
+	for (int i = 0; i < _GP(game).numgui; ++i) {
+		guibg[i] = BitmapHelper::CreateBitmap(guis[i].Width, guis[i].Height, _GP(game).GetColorDepth());
 		guibg[i] = ReplaceBitmapWithSupportedFormat(guibg[i]);
 	}
 
@@ -674,11 +674,11 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	// Enviroment information
 	StrUtil::WriteString("Adventure Game Studio run-time engine", out);
 	StrUtil::WriteString(_G(EngineVersion).LongString, out);
-	StrUtil::WriteString(game.guid, out);
-	StrUtil::WriteString(game.gamename, out);
+	StrUtil::WriteString(_GP(game).guid, out);
+	StrUtil::WriteString(_GP(game).gamename, out);
 	StrUtil::WriteString(ResPaths.GamePak.Name, out);
 	out->WriteInt32(loaded_game_file_version);
-	out->WriteInt32(game.GetColorDepth());
+	out->WriteInt32(_GP(game).GetColorDepth());
 	// User description
 	StrUtil::WriteString(user_text, out);
 	WriteSaveImage(out, user_image);
@@ -698,12 +698,12 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	vistaHeader.dwThumbnailOffsetHigherDword = 0;
 	vistaHeader.dwThumbnailOffsetLowerDword = 0;
 	vistaHeader.dwThumbnailSize = 0;
-	convert_guid_from_text_to_binary(game.guid, &vistaHeader.guidGameId[0]);
+	convert_guid_from_text_to_binary(_GP(game).guid, &vistaHeader.guidGameId[0]);
 
 #if 1
 	vistaHeader.setSaveName(user_text);
 #else
-	uconvert(game.gamename, U_ASCII, (char *)&vistaHeader.szGameName[0], U_UNICODE, RM_MAXLENGTH);
+	uconvert(_GP(game).gamename, U_ASCII, (char *)&vistaHeader.szGameName[0], U_UNICODE, RM_MAXLENGTH);
 	uconvert(user_text, U_ASCII, (char *)&vistaHeader.szSaveName[0], U_UNICODE, RM_MAXLENGTH);
 #endif
 

@@ -44,6 +44,7 @@
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -54,12 +55,12 @@ using namespace AGS::Shared;
 extern RoomStatus *croom;
 extern RoomObject *objs;
 extern ViewStruct *views;
-extern GameSetupStruct game;
+
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
 extern RoomStruct thisroom;
 extern CharacterInfo *playerchar;
 extern int displayed_room;
-extern SpriteCache spriteset;
+
 extern int actSpsCount;
 extern Bitmap **actsps;
 extern IDriverDependantBitmap **actspsbmp;
@@ -142,8 +143,8 @@ void RemoveObjectTint(int obj) {
 void SetObjectView(int obn, int vii) {
 	if (!is_valid_object(obn)) quit("!SetObjectView: invalid object number specified");
 	debug_script_log("Object %d set to view %d", obn, vii);
-	if ((vii < 1) || (vii > game.numviews)) {
-		quitprintf("!SetObjectView: invalid view number (You said %d, max is %d)", vii, game.numviews);
+	if ((vii < 1) || (vii > _GP(game).numviews)) {
+		quitprintf("!SetObjectView: invalid view number (You said %d, max is %d)", vii, _GP(game).numviews);
 	}
 	vii--;
 
@@ -158,7 +159,7 @@ void SetObjectView(int obn, int vii) {
 void SetObjectFrame(int obn, int viw, int lop, int fra) {
 	if (!is_valid_object(obn)) quit("!SetObjectFrame: invalid object number specified");
 	viw--;
-	if (viw < 0 || viw >= game.numviews) quitprintf("!SetObjectFrame: invalid view number used (%d, range is 0 - %d)", viw, game.numviews - 1);
+	if (viw < 0 || viw >= _GP(game).numviews) quitprintf("!SetObjectFrame: invalid view number used (%d, range is 0 - %d)", viw, _GP(game).numviews - 1);
 	if (lop < 0 || lop >= views[viw].numLoops) quitprintf("!SetObjectFrame: invalid loop number used (%d, range is 0 - %d)", lop, views[viw].numLoops - 1);
 	// AGS < 3.5.1 let user to pass literally any positive invalid frame value by silently reassigning it to zero...
 	if (loaded_game_file_version < kGameVersion_351) {
@@ -274,7 +275,7 @@ void MergeObject(int obn) {
 	int xpos = data_to_game_coord(objs[obn].x);
 	int ypos = (data_to_game_coord(objs[obn].y) - theHeight);
 
-	draw_sprite_support_alpha(bg_frame.get(), false, xpos, ypos, actsps[obn], (game.SpriteInfos[objs[obn].num].Flags & SPF_ALPHACHANNEL) != 0);
+	draw_sprite_support_alpha(bg_frame.get(), false, xpos, ypos, actsps[obn], (_GP(game).SpriteInfos[objs[obn].num].Flags & SPF_ALPHACHANNEL) != 0);
 	invalidate_screen();
 	mark_current_background_dirty();
 
@@ -392,7 +393,7 @@ void SetObjectClickable(int cha, int clik) {
 void SetObjectIgnoreWalkbehinds(int cha, int clik) {
 	if (!is_valid_object(cha))
 		quit("!SetObjectIgnoreWalkbehinds: Invalid object specified");
-	if (game.options[OPT_BASESCRIPTAPI] >= kScriptAPI_v350)
+	if (_GP(game).options[OPT_BASESCRIPTAPI] >= kScriptAPI_v350)
 		debug_script_warn("IgnoreWalkbehinds is not recommended for use, consider other solutions");
 	objs[cha].flags &= ~OBJF_NOWALKBEHINDS;
 	if (clik)
@@ -443,14 +444,14 @@ int AreObjectsColliding(int obj1, int obj2) {
 
 int GetThingRect(int thing, _Rect *rect) {
 	if (is_valid_character(thing)) {
-		if (game.chars[thing].room != displayed_room)
+		if (_GP(game).chars[thing].room != displayed_room)
 			return 0;
 
 		int charwid = game_to_data_coord(GetCharacterWidth(thing));
-		rect->x1 = game.chars[thing].x - (charwid / 2);
+		rect->x1 = _GP(game).chars[thing].x - (charwid / 2);
 		rect->x2 = rect->x1 + charwid;
-		rect->y1 = game.chars[thing].get_effective_y() - game_to_data_coord(GetCharacterHeight(thing));
-		rect->y2 = game.chars[thing].get_effective_y();
+		rect->y1 = _GP(game).chars[thing].get_effective_y() - game_to_data_coord(GetCharacterHeight(thing));
+		rect->y2 = _GP(game).chars[thing].get_effective_y();
 	} else if (is_valid_object(thing - OVERLAPPING_OBJECT)) {
 		int objid = thing - OVERLAPPING_OBJECT;
 		if (objs[objid].on != 1)
@@ -515,7 +516,7 @@ Bitmap *GetObjectImage(int obj, int *isFlipped) {
 			return actsps[obj];
 		}
 	}
-	return spriteset[objs[obj].num];
+	return _GP(spriteset)[objs[obj].num];
 }
 
 } // namespace AGS3

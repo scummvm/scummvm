@@ -37,22 +37,21 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameSetupStruct game;
 extern ScriptInvItem scrInv[MAX_INV];
 extern int cur_cursor;
 extern CharacterInfo *playerchar;
 extern CCInventory ccDynamicInv;
-
 
 void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) {
 	set_inv_item_cursorpic(iitem->id, newSprite);
 }
 
 int InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
-	return game.invinfo[iitem->id].cursorPic;
+	return _GP(game).invinfo[iitem->id].cursorPic;
 }
 
 void InventoryItem_SetGraphic(ScriptInvItem *iitem, int piccy) {
@@ -79,11 +78,11 @@ void InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
 }
 
 const char *InventoryItem_GetName_New(ScriptInvItem *invitem) {
-	return CreateNewScriptString(get_translation(game.invinfo[invitem->id].name));
+	return CreateNewScriptString(get_translation(_GP(game).invinfo[invitem->id].name));
 }
 
 int InventoryItem_GetGraphic(ScriptInvItem *iitem) {
-	return game.invinfo[iitem->id].pic;
+	return _GP(game).invinfo[iitem->id].pic;
 }
 
 void InventoryItem_RunInteraction(ScriptInvItem *iitem, int mood) {
@@ -95,15 +94,15 @@ int InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem, int mood) {
 }
 
 int InventoryItem_GetProperty(ScriptInvItem *scii, const char *property) {
-	return get_int_property(game.invProps[scii->id], play.invProps[scii->id], property);
+	return get_int_property(_GP(game).invProps[scii->id], play.invProps[scii->id], property);
 }
 
 void InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer) {
-	get_text_property(game.invProps[scii->id], play.invProps[scii->id], property, bufer);
+	get_text_property(_GP(game).invProps[scii->id], play.invProps[scii->id], property, bufer);
 }
 
 const char *InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property) {
-	return get_text_property_dynamic_string(game.invProps[scii->id], play.invProps[scii->id], property);
+	return get_text_property_dynamic_string(_GP(game).invProps[scii->id], play.invProps[scii->id], property);
 }
 
 bool InventoryItem_SetProperty(ScriptInvItem *scii, const char *property, int value) {
@@ -117,7 +116,7 @@ bool InventoryItem_SetTextProperty(ScriptInvItem *scii, const char *property, co
 //=============================================================================
 
 void set_inv_item_cursorpic(int invItemId, int piccy) {
-	game.invinfo[invItemId].cursorPic = piccy;
+	_GP(game).invinfo[invItemId].cursorPic = piccy;
 
 	if ((cur_cursor == MODE_USE) && (playerchar->activeinv == invItemId)) {
 		update_inv_cursor(invItemId);

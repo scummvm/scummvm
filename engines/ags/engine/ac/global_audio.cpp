@@ -35,6 +35,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -42,7 +43,7 @@ using namespace AGS::Shared;
 
 extern GameSetup usetup;
 extern GameState play;
-extern GameSetupStruct game;
+
 extern RoomStruct thisroom;
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
@@ -65,7 +66,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 	if ((vol < 1) || (vol > 255))
 		quit("!PlayAmbientSound: volume must be 1 to 255");
 
-	ScriptAudioClip *aclip = GetAudioClipForOldStyleNumber(game, false, sndnum);
+	ScriptAudioClip *aclip = GetAudioClipForOldStyleNumber(_GP(game), false, sndnum);
 	if (aclip && !is_audiotype_allowed_to_play((AudioFileType)aclip->fileType))
 		return;
 
@@ -132,7 +133,7 @@ int PlaySoundEx(int val1, int channel) {
 	if (debug_flags & DBG_NOSFX)
 		return -1;
 
-	ScriptAudioClip *aclip = GetAudioClipForOldStyleNumber(game, false, val1);
+	ScriptAudioClip *aclip = GetAudioClipForOldStyleNumber(_GP(game), false, val1);
 	if (aclip && !is_audiotype_allowed_to_play((AudioFileType)aclip->fileType))
 		return -1; // if sound is off, ignore it
 
@@ -517,10 +518,10 @@ String get_cue_filename(int charid, int sndid) {
 	String script_name;
 	if (charid >= 0) {
 		// append the first 4 characters of the script name to the filename
-		if (game.chars[charid].scrname[0] == 'c')
-			script_name.SetString(&game.chars[charid].scrname[1], 4);
+		if (_GP(game).chars[charid].scrname[0] == 'c')
+			script_name.SetString(&_GP(game).chars[charid].scrname[1], 4);
 		else
-			script_name.SetString(game.chars[charid].scrname, 4);
+			script_name.SetString(_GP(game).chars[charid].scrname, 4);
 	} else {
 		script_name = "NARR";
 	}
@@ -618,12 +619,12 @@ bool play_voice_speech(int charid, int sndid) {
 	// if the lip-sync is being used for voice sync, disable
 	// the text-related lipsync
 	if (numLipLines > 0)
-		game.options[OPT_LIPSYNCTEXT] = 0;
+		_GP(game).options[OPT_LIPSYNCTEXT] = 0;
 
 	// change Sierra w/bgrnd  to Sierra without background when voice
 	// is available (for Tierra)
-	if ((game.options[OPT_SPEECHTYPE] == 2) && (play.no_textbg_when_voice > 0)) {
-		game.options[OPT_SPEECHTYPE] = 1;
+	if ((_GP(game).options[OPT_SPEECHTYPE] == 2) && (play.no_textbg_when_voice > 0)) {
+		_GP(game).options[OPT_SPEECHTYPE] = 1;
 		play.no_textbg_when_voice = 2;
 	}
 	return true;
@@ -652,7 +653,7 @@ void stop_voice_speech() {
 	// Set back to Sierra w/bgrnd
 	if (play.no_textbg_when_voice == 2) {
 		play.no_textbg_when_voice = 1;
-		game.options[OPT_SPEECHTYPE] = 2;
+		_GP(game).options[OPT_SPEECHTYPE] = 2;
 	}
 	play.speech_has_voice = false;
 	play.speech_voice_blocking = false;

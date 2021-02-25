@@ -32,7 +32,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

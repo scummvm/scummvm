@@ -36,16 +36,17 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
+#include "ags/ags.h"
 #include "common/fs.h"
 #include "common/savefile.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
 extern GameState play;
-extern GameSetupStruct game;
+
 
 // *** LIST BOX FUNCTIONS
 
@@ -215,7 +216,7 @@ int ListBox_GetFont(GUIListBox *listbox) {
 
 void ListBox_SetFont(GUIListBox *listbox, int newfont) {
 
-	if ((newfont < 0) || (newfont >= game.numfonts))
+	if ((newfont < 0) || (newfont >= _GP(game).numfonts))
 		quit("!ListBox.Font: invalid font number.");
 
 	if (newfont != listbox->Font) {
@@ -365,7 +366,7 @@ void ListBox_ScrollUp(GUIListBox *listbox) {
 
 
 GUIListBox *is_valid_listbox(int guin, int objn) {
-	if ((guin < 0) | (guin >= game.numgui)) quit("!ListBox: invalid GUI number");
+	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!ListBox: invalid GUI number");
 	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!ListBox: invalid object number");
 	if (guis[guin].GetControlType(objn) != kGUIListBox)
 		quit("!ListBox: specified control is not a list box");

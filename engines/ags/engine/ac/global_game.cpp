@@ -69,7 +69,7 @@
 #include "ags/engine/main/game_file.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -81,12 +81,12 @@ extern GameState play;
 extern ExecutingScript *curscript;
 extern int displayed_room;
 extern int game_paused;
-extern SpriteCache spriteset;
+
 extern char gamefilenamebuf[200];
 extern GameSetup usetup;
 extern unsigned int load_new_game;
 extern int load_new_game_restore;
-extern GameSetupStruct game;
+
 extern ViewStruct *views;
 extern RoomStatus *croom;
 extern int gui_disabled_style;
@@ -185,13 +185,13 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	if (gotSlot == 0)
 		return 0;
 
-	if ((game.SpriteInfos[gotSlot].Width == width) && (game.SpriteInfos[gotSlot].Height == height))
+	if ((_GP(game).SpriteInfos[gotSlot].Width == width) && (_GP(game).SpriteInfos[gotSlot].Height == height))
 		return gotSlot;
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(spriteset[gotSlot],
-		RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
+	newPic->StretchBlt(_GP(spriteset)[gotSlot],
+		RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
 		RectWH(0, 0, width, height));
 
 	update_polled_stuff_if_runtime();
@@ -287,8 +287,8 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	if (!err)
 		quitprintf("!RunAGSGame: error loading new game file:\n%s", err->FullMessage().GetCStr());
 
-	spriteset.Reset();
-	err = spriteset.InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
+	_GP(spriteset).Reset();
+	err = _GP(spriteset).InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
 	if (!err)
 		quitprintf("!RunAGSGame: error loading new sprites:\n%s", err->FullMessage().GetCStr());
 
@@ -325,7 +325,7 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_FRAMESOUND:
 	case GP_ISFRAMEFLIPPED:
 	{
-		if ((data1 < 1) || (data1 > game.numviews)) {
+		if ((data1 < 1) || (data1 > _GP(game).numviews)) {
 			quitprintf("!GetGameParameter: invalid view specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
 		if ((data2 < 0) || (data2 >= views[data1 - 1].numLoops)) {
@@ -352,13 +352,13 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_ISRUNNEXTLOOP:
 		return Game_GetRunNextSettingForLoop(data1, data2);
 	case GP_NUMGUIS:
-		return game.numgui;
+		return _GP(game).numgui;
 	case GP_NUMOBJECTS:
 		return croom->numobj;
 	case GP_NUMCHARACTERS:
-		return game.numcharacters;
+		return _GP(game).numcharacters;
 	case GP_NUMINVITEMS:
-		return game.numinvitems;
+		return _GP(game).numinvitems;
 	default:
 		quit("!GetGameParameter: unknown parameter specified");
 	}
@@ -402,27 +402,27 @@ int SetGameOption(int opt, int setting) {
 		quit("!SetGameOption: invalid option specified");
 
 	if (opt == OPT_ANTIGLIDE) {
-		for (int i = 0; i < game.numcharacters; i++) {
+		for (int i = 0; i < _GP(game).numcharacters; i++) {
 			if (setting)
-				game.chars[i].flags |= CHF_ANTIGLIDE;
+				_GP(game).chars[i].flags |= CHF_ANTIGLIDE;
 			else
-				game.chars[i].flags &= ~CHF_ANTIGLIDE;
+				_GP(game).chars[i].flags &= ~CHF_ANTIGLIDE;
 		}
 	}
 
-	if ((opt == OPT_CROSSFADEMUSIC) && (game.audioClipTypes.size() > AUDIOTYPE_LEGACY_MUSIC)) {
+	if ((opt == OPT_CROSSFADEMUSIC) && (_GP(game).audioClipTypes.size() > AUDIOTYPE_LEGACY_MUSIC)) {
 		// legacy compatibility -- changing crossfade speed here also
 		// updates the new audio clip type style
-		game.audioClipTypes[AUDIOTYPE_LEGACY_MUSIC].crossfadeSpeed = setting;
+		_GP(game).audioClipTypes[AUDIOTYPE_LEGACY_MUSIC].crossfadeSpeed = setting;
 	}
 
-	int oldval = game.options[opt];
-	game.options[opt] = setting;
+	int oldval = _GP(game).options[opt];
+	_GP(game).options[opt] = setting;
 
 	if (opt == OPT_DUPLICATEINV)
 		update_invorder();
 	else if (opt == OPT_DISABLEOFF)
-		gui_disabled_style = convert_gui_disabled_style(game.options[OPT_DISABLEOFF]);
+		gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
 			play.swap_portrait_side = 0;
@@ -435,17 +435,17 @@ int GetGameOption(int opt) {
 	if (((opt < 1) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT))
 		quit("!GetGameOption: invalid option specified");
 
-	return game.options[opt];
+	return _GP(game).options[opt];
 }
 
 void SkipUntilCharacterStops(int cc) {
 	if (!is_valid_character(cc))
 		quit("!SkipUntilCharacterStops: invalid character specified");
-	if (game.chars[cc].room != displayed_room)
+	if (_GP(game).chars[cc].room != displayed_room)
 		quit("!SkipUntilCharacterStops: specified character not in current room");
 
 	// if they are not currently moving, do nothing
-	if (!game.chars[cc].walking)
+	if (!_GP(game).chars[cc].walking)
 		return;
 
 	if (is_in_cutscene())
@@ -546,7 +546,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			if (play.get_loc_name_last_time != 1000 + mover)
 				guis_need_update = 1;
 			play.get_loc_name_last_time = 1000 + mover;
-			strcpy(tempo, get_translation(game.invinfo[mover].name));
+			strcpy(tempo, get_translation(_GP(game).invinfo[mover].name));
 		} else if ((play.get_loc_name_last_time > 1000) && (play.get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
 			guis_need_update = 1;
@@ -576,7 +576,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	// on character
 	if (loctype == LOCTYPE_CHAR) {
 		onhs = getloctype_index;
-		strcpy(tempo, get_translation(game.chars[onhs].name));
+		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
 		if (play.get_loc_name_last_time != 2000 + onhs)
 			guis_need_update = 1;
 		play.get_loc_name_last_time = 2000 + onhs;
@@ -897,7 +897,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 	xx = vpt.first.X;
 	yy = vpt.first.Y;
 
-	if ((mood == MODE_WALK) && (game.options[OPT_NOWALKMODE] == 0)) {
+	if ((mood == MODE_WALK) && (_GP(game).options[OPT_NOWALKMODE] == 0)) {
 		int hsnum = get_hotspot_at(xx, yy);
 		if (hsnum < 1);
 		else if (thisroom.Hotspots[hsnum].WalkTo.X < 1);
@@ -907,7 +907,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 			yy = thisroom.Hotspots[hsnum].WalkTo.Y;
 			debug_script_log("Move to walk-to point hotspot %d", hsnum);
 		}
-		walk_character(game.playercharacter, xx, yy, 0, true);
+		walk_character(_GP(game).playercharacter, xx, yy, 0, true);
 		return;
 	}
 	play.usedmode = mood;
@@ -936,7 +936,7 @@ int IsInteractionAvailable(int xx, int yy, int mood) {
 	yy = vpt.first.Y;
 
 	// You can always walk places
-	if ((mood == MODE_WALK) && (game.options[OPT_NOWALKMODE] == 0))
+	if ((mood == MODE_WALK) && (_GP(game).options[OPT_NOWALKMODE] == 0))
 		return 1;
 
 	play.check_interaction_only = 1;
@@ -969,13 +969,13 @@ void GetMessageText(int msg, char *buffer) {
 }
 
 void SetSpeechFont(int fontnum) {
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!SetSpeechFont: invalid font number.");
 	play.speech_font = fontnum;
 }
 
 void SetNormalFont(int fontnum) {
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!SetNormalFont: invalid font number.");
 	play.normal_font = fontnum;
 }
@@ -1011,7 +1011,7 @@ int WaitImpl(int skip_type, int nloops) {
 
 	GameLoopUntilValueIsZero(&play.wait_counter);
 
-	if (game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
 		// < 3.5.1 return 1 is skipped by user input, otherwise 0
 		return (play.wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
 	}

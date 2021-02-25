@@ -63,19 +63,19 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
+
 extern GameState play;
 extern ccInstance *dialogScriptsInst;
 extern int in_new_room;
 extern CharacterInfo *playerchar;
-extern SpriteCache spriteset;
+
 extern AGSPlatformDriver *platform;
 extern int cur_mode, cur_cursor;
 extern IGraphicsDriver *gfxDriver;
@@ -109,7 +109,7 @@ int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) {
 	if ((sayChosenOption < 1) || (sayChosenOption > 3))
 		quit("!Dialog.DisplayOptions: invalid parameter passed");
 
-	int chose = show_dialog_options(sd->id, sayChosenOption, (game.options[OPT_RUNGAMEDLGOPTS] != 0));
+	int chose = show_dialog_options(sd->id, sayChosenOption, (_GP(game).options[OPT_RUNGAMEDLGOPTS] != 0));
 	if (chose != CHOSE_TEXTPARSER) {
 		chose++;
 	}
@@ -215,7 +215,7 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 				get_dialog_script_parameters(script, &param1, &param2);
 
 				if (param1 == DCHAR_PLAYER)
-					param1 = game.playercharacter;
+					param1 = _GP(game).playercharacter;
 
 				if (param1 == DCHAR_NARRATOR)
 					Display(get_translation(old_speech_lines[param2]));
@@ -355,14 +355,14 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 
 		break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[ww]]), Lines, areawid - (2 * padding + 2 + bullet_wid), usingfont);
 		dispyp[ww] = curyp;
-		if (game.dialog_bullet > 0) {
-			draw_gui_sprite_v330(ds, game.dialog_bullet, dlgxp, curyp, ds_has_alpha);
+		if (_GP(game).dialog_bullet > 0) {
+			draw_gui_sprite_v330(ds, _GP(game).dialog_bullet, dlgxp, curyp, ds_has_alpha);
 		}
-		if (game.options[OPT_DIALOGNUMBERED] == kDlgOptNumbering) {
+		if (_GP(game).options[OPT_DIALOGNUMBERED] == kDlgOptNumbering) {
 			char tempbfr[20];
 			int actualpicwid = 0;
-			if (game.dialog_bullet > 0)
-				actualpicwid = game.SpriteInfos[game.dialog_bullet].Width + 3;
+			if (_GP(game).dialog_bullet > 0)
+				actualpicwid = _GP(game).SpriteInfos[_GP(game).dialog_bullet].Width + 3;
 
 			sprintf(tempbfr, "%d.", ww + 1);
 			wouttext_outline(ds, dlgxp + actualpicwid, curyp, usingfont, text_color, tempbfr);
@@ -372,7 +372,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			curyp += linespacing;
 		}
 		if (ww < numdisp - 1)
-			curyp += data_to_game_coord(game.options[OPT_DIALOGGAP]);
+			curyp += data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);
 	}
 	return curyp;
 }
@@ -383,9 +383,9 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 		needheight = 0;\
 		for (int i = 0; i < numdisp; ++i) {\
 			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid-(2*padding+2+bullet_wid), usingfont);\
-			needheight += getheightoflines(usingfont, Lines.Count()) + data_to_game_coord(game.options[OPT_DIALOGGAP]);\
+			needheight += getheightoflines(usingfont, Lines.Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 		}\
-		if (parserInput) needheight += parserInput->Height + data_to_game_coord(game.options[OPT_DIALOGGAP]);\
+		if (parserInput) needheight += parserInput->Height + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 	}
 
 
@@ -395,7 +395,7 @@ void draw_gui_for_dialog_options(Bitmap *ds, GUIMain *guib, int dlgxp, int dlgyp
 		ds->FillRect(Rect(dlgxp, dlgyp, dlgxp + guib->Width, dlgyp + guib->Height), draw_color);
 	}
 	if (guib->BgImage > 0)
-		GfxUtil::DrawSpriteWithTransparency(ds, spriteset[guib->BgImage], dlgxp, dlgyp);
+		GfxUtil::DrawSpriteWithTransparency(ds, _GP(spriteset)[guib->BgImage], dlgxp, dlgyp);
 }
 
 bool get_custom_dialog_options_dimensions(int dlgnum) {
@@ -482,7 +482,7 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 	parserInput = nullptr;
 	dtop = nullptr;
 
-	if ((dlgnum < 0) || (dlgnum >= game.numdialog))
+	if ((dlgnum < 0) || (dlgnum >= _GP(game).numdialog))
 		quit("!RunDialog: invalid dialog number specified");
 
 	can_run_delayed_command();
@@ -491,11 +491,11 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 
 	update_polled_stuff_if_runtime();
 
-	if (game.dialog_bullet > 0)
-		bullet_wid = game.SpriteInfos[game.dialog_bullet].Width + 3;
+	if (_GP(game).dialog_bullet > 0)
+		bullet_wid = _GP(game).SpriteInfos[_GP(game).dialog_bullet].Width + 3;
 
 	// numbered options, leave space for the numbers
-	if (game.options[OPT_DIALOGNUMBERED] == kDlgOptNumbering)
+	if (_GP(game).options[OPT_DIALOGNUMBERED] == kDlgOptNumbering)
 		bullet_wid += wgettextwidth_compensate("9. ", usingfont);
 
 	said_text = 0;
@@ -503,7 +503,7 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 	update_polled_stuff_if_runtime();
 
 	const Rect &ui_view = play.GetUIViewport();
-	tempScrn = BitmapHelper::CreateBitmap(ui_view.GetWidth(), ui_view.GetHeight(), game.GetColorDepth());
+	tempScrn = BitmapHelper::CreateBitmap(ui_view.GetWidth(), ui_view.GetHeight(), _GP(game).GetColorDepth());
 
 	set_mouse_cursor(CURS_ARROW);
 
@@ -559,8 +559,8 @@ void DialogOptions::Show() {
 		dirtywidth = data_to_game_coord(ccDialogOptionsRendering.width);
 		dirtyheight = data_to_game_coord(ccDialogOptionsRendering.height);
 		dialog_abs_x = dirtyx;
-	} else if (game.options[OPT_DIALOGIFACE] > 0) {
-		GUIMain *guib = &guis[game.options[OPT_DIALOGIFACE]];
+	} else if (_GP(game).options[OPT_DIALOGIFACE] > 0) {
+		GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
 		if (guib->IsTextWindow()) {
 			// text-window, so do the QFG4-style speech options
 			is_textwindow = 1;
@@ -580,7 +580,7 @@ void DialogOptions::Show() {
 
 			GET_OPTIONS_HEIGHT
 
-			if (game.options[OPT_DIALOGUPWARDS]) {
+			if (_GP(game).options[OPT_DIALOGUPWARDS]) {
 				// They want the options upwards from the bottom
 				dlgyp = (guib->Y + guib->Height) - needheight;
 			}
@@ -625,7 +625,7 @@ void DialogOptions::Redraw() {
 	wantRefresh = true;
 
 	if (usingCustomRendering) {
-		tempScrn = recycle_bitmap(tempScrn, game.GetColorDepth(),
+		tempScrn = recycle_bitmap(tempScrn, _GP(game).GetColorDepth(),
 		                          data_to_game_coord(ccDialogOptionsRendering.width),
 		                          data_to_game_coord(ccDialogOptionsRendering.height));
 	}
@@ -664,7 +664,7 @@ void DialogOptions::Redraw() {
 		// text window behind the options
 		areawid = data_to_game_coord(play.max_dialogoption_width);
 		int biggest = 0;
-		padding = guis[game.options[OPT_DIALOGIFACE]].Padding;
+		padding = guis[_GP(game).options[OPT_DIALOGIFACE]].Padding;
 		for (int i = 0; i < numdisp; ++i) {
 			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid - ((2 * padding + 2) + bullet_wid), usingfont);
 			if (longestline > biggest)
@@ -676,7 +676,7 @@ void DialogOptions::Redraw() {
 		if (areawid < data_to_game_coord(play.min_dialogoption_width)) {
 			areawid = data_to_game_coord(play.min_dialogoption_width);
 			if (play.min_dialogoption_width > play.max_dialogoption_width)
-				quit("!game.min_dialogoption_width is larger than game.max_dialogoption_width");
+				quit("!_GP(game).min_dialogoption_width is larger than _GP(game).max_dialogoption_width");
 		}
 
 		GET_OPTIONS_HEIGHT
@@ -685,13 +685,13 @@ void DialogOptions::Redraw() {
 		int txoffs = 0, tyoffs = 0, yspos = ui_view.GetHeight() / 2 - (2 * padding + needheight) / 2;
 		int xspos = ui_view.GetWidth() / 2 - areawid / 2;
 		// shift window to the right if QG4-style full-screen pic
-		if ((game.options[OPT_SPEECHTYPE] == 3) && (said_text > 0))
+		if ((_GP(game).options[OPT_SPEECHTYPE] == 3) && (said_text > 0))
 			xspos = (ui_view.GetWidth() - areawid) - get_fixed_pixel_size(10);
 
 		// needs to draw the right text window, not the default
 		Bitmap *text_window_ds = nullptr;
-		draw_text_window(&text_window_ds, false, &txoffs, &tyoffs, &xspos, &yspos, &areawid, nullptr, needheight, game.options[OPT_DIALOGIFACE]);
-		options_surface_has_alpha = guis[game.options[OPT_DIALOGIFACE]].HasAlphaChannel();
+		draw_text_window(&text_window_ds, false, &txoffs, &tyoffs, &xspos, &yspos, &areawid, nullptr, needheight, _GP(game).options[OPT_DIALOGIFACE]);
+		options_surface_has_alpha = guis[_GP(game).options[OPT_DIALOGIFACE]].HasAlphaChannel();
 		// since draw_text_window incrases the width, restore it
 		areawid = savedwid;
 
@@ -718,11 +718,11 @@ void DialogOptions::Redraw() {
 		if (wantRefresh) {
 			// redraw the black background so that anti-alias
 			// fonts don't re-alias themselves
-			if (game.options[OPT_DIALOGIFACE] == 0) {
+			if (_GP(game).options[OPT_DIALOGIFACE] == 0) {
 				color_t draw_color = ds->GetCompatibleColor(16);
 				ds->FillRect(Rect(0, dlgyp - 1, ui_view.GetWidth() - 1, ui_view.GetHeight() - 1), draw_color);
 			} else {
-				GUIMain *guib = &guis[game.options[OPT_DIALOGIFACE]];
+				GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
 				if (!guib->IsTextWindow())
 					draw_gui_for_dialog_options(ds, guib, dlgxp, dlgyp);
 			}
@@ -731,10 +731,10 @@ void DialogOptions::Redraw() {
 		dirtyx = 0;
 		dirtywidth = ui_view.GetWidth();
 
-		if (game.options[OPT_DIALOGIFACE] > 0) {
+		if (_GP(game).options[OPT_DIALOGIFACE] > 0) {
 			// the whole GUI area should be marked dirty in order
 			// to ensure it gets drawn
-			GUIMain *guib = &guis[game.options[OPT_DIALOGIFACE]];
+			GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
 			dirtyheight = guib->Height;
 			dirtyy = dlgyp;
 			options_surface_has_alpha = guib->HasAlphaChannel();
@@ -767,14 +767,14 @@ void DialogOptions::Redraw() {
 
 	if (parserInput) {
 		// Set up the text box, if present
-		parserInput->Y = curyp + data_to_game_coord(game.options[OPT_DIALOGGAP]);
+		parserInput->Y = curyp + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);
 		parserInput->Width = areawid - get_fixed_pixel_size(10);
 		parserInput->TextColor = playerchar->talkcolor;
 		if (mouseison == DLG_OPTION_PARSER)
 			parserInput->TextColor = forecol;
 
-		if (game.dialog_bullet) { // the parser X will get moved in a second
-			draw_gui_sprite_v330(ds, game.dialog_bullet, parserInput->X, parserInput->Y, options_surface_has_alpha);
+		if (_GP(game).dialog_bullet) { // the parser X will get moved in a second
+			draw_gui_sprite_v330(ds, _GP(game).dialog_bullet, parserInput->X, parserInput->Y, options_surface_has_alpha);
 		}
 
 		parserInput->Width -= bullet_wid;
@@ -818,7 +818,7 @@ void DialogOptions::Redraw() {
 }
 
 bool DialogOptions::Run() {
-	const bool new_custom_render = usingCustomRendering && game.options[OPT_DIALOGOPTIONSAPI] >= 0;
+	const bool new_custom_render = usingCustomRendering && _GP(game).options[OPT_DIALOGOPTIONSAPI] >= 0;
 
 	if (runGameLoopsInBackground) {
 		play.disabled_user_interface++;
@@ -861,7 +861,7 @@ bool DialogOptions::Run() {
 			run_function_on_non_blocking_thread(&runDialogOptionKeyPressHandlerFunc);
 		}
 		// Allow selection of options by keyboard shortcuts
-		else if (game.options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
+		else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
 		         gkey >= '1' && gkey <= '9') {
 			gkey -= '1';
 			if (gkey < numdisp) {
@@ -1044,7 +1044,7 @@ int show_dialog_options(int _dlgnum, int sayChosenOption, bool _runGameLoopsInBa
 		}
 
 		if (sayTheOption)
-			DisplaySpeech(get_translation(option_name), game.playercharacter);
+			DisplaySpeech(get_translation(option_name), _GP(game).playercharacter);
 	}
 
 	return dialog_choice;
@@ -1074,7 +1074,7 @@ void do_conversation(int dlgnum) {
 		dlgnum = tocar;
 
 	while (dlgnum >= 0) {
-		if (dlgnum >= game.numdialog)
+		if (dlgnum >= _GP(game).numdialog)
 			quit("!RunDialog: invalid dialog number specified");
 
 		dtop = &dialog[dlgnum];
@@ -1106,7 +1106,7 @@ void do_conversation(int dlgnum) {
 			}
 		}
 
-		int chose = show_dialog_options(dlgnum, SAYCHOSEN_USEFLAG, (game.options[OPT_RUNGAMEDLGOPTS] != 0));
+		int chose = show_dialog_options(dlgnum, SAYCHOSEN_USEFLAG, (_GP(game).options[OPT_RUNGAMEDLGOPTS] != 0));
 		if (SHOULD_QUIT)
 			return;
 

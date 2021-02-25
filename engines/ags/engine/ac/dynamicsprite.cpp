@@ -20,7 +20,6 @@
  *
  */
 
-//include <math.h>
 #include "ags/engine/ac/dynamicsprite.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/charactercache.h"
@@ -40,18 +39,18 @@
 #include "ags/shared/ac/spritecache.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/engine/script/runtimescriptvalue.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace Shared;
 using namespace Engine;
 
-extern GameSetupStruct game;
-extern SpriteCache spriteset;
+
+
 extern RoomStruct thisroom;
 extern RoomObject *objs;
 extern RoomStatus *croom;
@@ -76,7 +75,7 @@ ScriptDrawingSurface *DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss) 
 	ScriptDrawingSurface *surface = new ScriptDrawingSurface();
 	surface->dynamicSpriteNumber = dss->slot;
 
-	if ((game.SpriteInfos[dss->slot].Flags & SPF_ALPHACHANNEL) != 0)
+	if ((_GP(game).SpriteInfos[dss->slot].Flags & SPF_ALPHACHANNEL) != 0)
 		surface->hasAlphaChannel = true;
 
 	ccRegisterManagedObject(surface, surface);
@@ -90,15 +89,15 @@ int DynamicSprite_GetGraphic(ScriptDynamicSprite *sds) {
 }
 
 int DynamicSprite_GetWidth(ScriptDynamicSprite *sds) {
-	return game_to_data_coord(game.SpriteInfos[sds->slot].Width);
+	return game_to_data_coord(_GP(game).SpriteInfos[sds->slot].Width);
 }
 
 int DynamicSprite_GetHeight(ScriptDynamicSprite *sds) {
-	return game_to_data_coord(game.SpriteInfos[sds->slot].Height);
+	return game_to_data_coord(_GP(game).SpriteInfos[sds->slot].Height);
 }
 
 int DynamicSprite_GetColorDepth(ScriptDynamicSprite *sds) {
-	int depth = spriteset[sds->slot]->GetColorDepth();
+	int depth = _GP(spriteset)[sds->slot]->GetColorDepth();
 	if (depth == 15)
 		depth = 16;
 	if (depth == 24)
@@ -118,15 +117,15 @@ void DynamicSprite_Resize(ScriptDynamicSprite *sds, int width, int height) {
 		quitprintf("!DynamicSprite.Resize: new size is too large: %d x %d", width, height);
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[sds->slot]->GetColorDepth());
-	newPic->StretchBlt(spriteset[sds->slot],
-		RectWH(0, 0, game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height),
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[sds->slot]->GetColorDepth());
+	newPic->StretchBlt(_GP(spriteset)[sds->slot],
+		RectWH(0, 0, _GP(game).SpriteInfos[sds->slot].Width, _GP(game).SpriteInfos[sds->slot].Height),
 		RectWH(0, 0, width, height));
 
-	delete spriteset[sds->slot];
+	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
@@ -136,43 +135,43 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
 		quit("!DynamicSprite.Flip: sprite has been deleted");
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height, spriteset[sds->slot]->GetColorDepth());
+	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[sds->slot].Width, _GP(game).SpriteInfos[sds->slot].Height, _GP(spriteset)[sds->slot]->GetColorDepth());
 
 	if (direction == 1)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_HFlip);
+		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_HFlip);
 	else if (direction == 2)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_VFlip);
+		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_VFlip);
 	else if (direction == 3)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_HVFlip);
+		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_HVFlip);
 
-	delete spriteset[sds->slot];
+	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSprite) {
 	if (sds->slot == 0)
 		quit("!DynamicSprite.CopyTransparencyMask: sprite has been deleted");
 
-	if ((game.SpriteInfos[sds->slot].Width != game.SpriteInfos[sourceSprite].Width) ||
-		(game.SpriteInfos[sds->slot].Height != game.SpriteInfos[sourceSprite].Height)) {
+	if ((_GP(game).SpriteInfos[sds->slot].Width != _GP(game).SpriteInfos[sourceSprite].Width) ||
+		(_GP(game).SpriteInfos[sds->slot].Height != _GP(game).SpriteInfos[sourceSprite].Height)) {
 		quit("!DynamicSprite.CopyTransparencyMask: sprites are not the same size");
 	}
 
-	Bitmap *target = spriteset[sds->slot];
-	Bitmap *source = spriteset[sourceSprite];
+	Bitmap *target = _GP(spriteset)[sds->slot];
+	Bitmap *source = _GP(spriteset)[sourceSprite];
 
 	if (target->GetColorDepth() != source->GetColorDepth()) {
 		quit("!DynamicSprite.CopyTransparencyMask: sprites are not the same colour depth");
 	}
 
 	// set the target's alpha channel depending on the source
-	bool dst_has_alpha = (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0;
-	bool src_has_alpha = (game.SpriteInfos[sourceSprite].Flags & SPF_ALPHACHANNEL) != 0;
-	game.SpriteInfos[sds->slot].Flags &= ~SPF_ALPHACHANNEL;
+	bool dst_has_alpha = (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0;
+	bool src_has_alpha = (_GP(game).SpriteInfos[sourceSprite].Flags & SPF_ALPHACHANNEL) != 0;
+	_GP(game).SpriteInfos[sds->slot].Flags &= ~SPF_ALPHACHANNEL;
 	if (src_has_alpha) {
-		game.SpriteInfos[sds->slot].Flags |= SPF_ALPHACHANNEL;
+		_GP(game).SpriteInfos[sds->slot].Flags |= SPF_ALPHACHANNEL;
 	}
 
 	BitmapHelper::CopyTransparency(target, source, dst_has_alpha, src_has_alpha);
@@ -187,14 +186,14 @@ void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int hei
 	data_to_game_coords(&x, &y);
 	data_to_game_coords(&width, &height);
 
-	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, spriteset[sds->slot]->GetColorDepth());
+	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, _GP(spriteset)[sds->slot]->GetColorDepth());
 	// blit it into the enlarged image
-	newPic->Blit(spriteset[sds->slot], 0, 0, x, y, game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height);
+	newPic->Blit(_GP(spriteset)[sds->slot], 0, 0, x, y, _GP(game).SpriteInfos[sds->slot].Width, _GP(game).SpriteInfos[sds->slot].Height);
 
-	delete spriteset[sds->slot];
+	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int height) {
@@ -206,17 +205,17 @@ void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int
 	data_to_game_coords(&x1, &y1);
 	data_to_game_coords(&width, &height);
 
-	if ((width > game.SpriteInfos[sds->slot].Width) || (height > game.SpriteInfos[sds->slot].Height))
+	if ((width > _GP(game).SpriteInfos[sds->slot].Width) || (height > _GP(game).SpriteInfos[sds->slot].Height))
 		quit("!DynamicSprite.Crop: requested to crop an area larger than the source");
 
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[sds->slot]->GetColorDepth());
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[sds->slot]->GetColorDepth());
 	// blit it cropped
-	newPic->Blit(spriteset[sds->slot], x1, y1, 0, 0, newPic->GetWidth(), newPic->GetHeight());
+	newPic->Blit(_GP(spriteset)[sds->slot], x1, y1, 0, 0, newPic->GetWidth(), newPic->GetHeight());
 
-	delete spriteset[sds->slot];
+	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int height) {
@@ -237,8 +236,8 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
 		double sinVal = sin(angleInRadians);
 		double cosVal = cos(angleInRadians);
 
-		width = (cosVal * (double)game.SpriteInfos[sds->slot].Width + sinVal * (double)game.SpriteInfos[sds->slot].Height);
-		height = (sinVal * (double)game.SpriteInfos[sds->slot].Width + cosVal * (double)game.SpriteInfos[sds->slot].Height);
+		width = (cosVal * (double)_GP(game).SpriteInfos[sds->slot].Width + sinVal * (double)_GP(game).SpriteInfos[sds->slot].Height);
+		height = (sinVal * (double)_GP(game).SpriteInfos[sds->slot].Width + cosVal * (double)_GP(game).SpriteInfos[sds->slot].Height);
 	} else {
 		data_to_game_coords(&width, &height);
 	}
@@ -247,28 +246,28 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
 	angle = (angle * 256) / 360;
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, spriteset[sds->slot]->GetColorDepth());
+	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, _GP(spriteset)[sds->slot]->GetColorDepth());
 
 	// rotate the sprite about its centre
 	// (+ width%2 fixes one pixel offset problem)
-	newPic->RotateBlt(spriteset[sds->slot], width / 2 + width % 2, height / 2,
-		game.SpriteInfos[sds->slot].Width / 2, game.SpriteInfos[sds->slot].Height / 2, itofix(angle));
+	newPic->RotateBlt(_GP(spriteset)[sds->slot], width / 2 + width % 2, height / 2,
+		_GP(game).SpriteInfos[sds->slot].Width / 2, _GP(game).SpriteInfos[sds->slot].Height / 2, itofix(angle));
 
-	delete spriteset[sds->slot];
+	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, int saturation, int luminance) {
-	Bitmap *source = spriteset[sds->slot];
+	Bitmap *source = _GP(spriteset)[sds->slot];
 	Bitmap *newPic = BitmapHelper::CreateBitmap(source->GetWidth(), source->GetHeight(), source->GetColorDepth());
 
 	tint_image(newPic, source, red, green, blue, saturation, (luminance * 25) / 10);
 
 	delete source;
 	// replace the bitmap in the sprite set
-	add_dynamic_sprite(sds->slot, newPic, (game.SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
+	add_dynamic_sprite(sds->slot, newPic, (_GP(game).SpriteInfos[sds->slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char *namm) {
@@ -282,7 +281,7 @@ int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char *namm) {
 	ResolvedPath rp;
 	if (!ResolveWritePathAndCreateDirs(filename, rp))
 		return 0;
-	return spriteset[sds->slot]->SaveToFile(rp.FullPath, palette) ? 1 : 0;
+	return _GP(spriteset)[sds->slot]->SaveToFile(rp.FullPath, palette) ? 1 : 0;
 }
 
 ScriptDynamicSprite *DynamicSprite_CreateFromSaveGame(int sgslot, int width, int height) {
@@ -307,7 +306,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 
 	// TODO: refactor and merge with create_savegame_screenshot()
 
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return nullptr;
 
@@ -334,19 +333,19 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 
 ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite(int slot, int preserveAlphaChannel) {
 
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return nullptr;
 
-	if (!spriteset.DoesSpriteExist(slot))
+	if (!_GP(spriteset).DoesSpriteExist(slot))
 		quitprintf("DynamicSprite.CreateFromExistingSprite: sprite %d does not exist", slot);
 
 	// create a new sprite as a copy of the existing one
-	Bitmap *newPic = BitmapHelper::CreateBitmapCopy(spriteset[slot]);
+	Bitmap *newPic = BitmapHelper::CreateBitmapCopy(_GP(spriteset)[slot]);
 	if (newPic == nullptr)
 		return nullptr;
 
-	bool hasAlpha = (preserveAlphaChannel) && ((game.SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
+	bool hasAlpha = (preserveAlphaChannel) && ((_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
 
 	// replace the bitmap in the sprite set
 	add_dynamic_sprite(gotSlot, newPic, hasAlpha);
@@ -355,7 +354,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite(int slot, int preser
 }
 
 ScriptDynamicSprite *DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface *sds, int x, int y, int width, int height) {
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return nullptr;
 
@@ -386,15 +385,15 @@ ScriptDynamicSprite *DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
 ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChannel) {
 	data_to_game_coords(&width, &height);
 
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return nullptr;
 
-	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, game.GetColorDepth());
+	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(width, height, _GP(game).GetColorDepth());
 	if (newPic == nullptr)
 		return nullptr;
 
-	if ((alphaChannel) && (game.GetColorDepth() < 32))
+	if ((alphaChannel) && (_GP(game).GetColorDepth() < 32))
 		alphaChannel = false;
 
 	add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(newPic), alphaChannel != 0);
@@ -425,7 +424,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y
 	data_to_game_coords(&x1, &y1);
 	data_to_game_coords(&width, &height);
 
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return nullptr;
 
@@ -446,35 +445,35 @@ ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y
 
 void add_dynamic_sprite(int gotSlot, Bitmap *redin, bool hasAlpha) {
 
-	spriteset.SetSprite(gotSlot, redin);
+	_GP(spriteset).SetSprite(gotSlot, redin);
 
-	game.SpriteInfos[gotSlot].Flags = SPF_DYNAMICALLOC;
+	_GP(game).SpriteInfos[gotSlot].Flags = SPF_DYNAMICALLOC;
 
 	if (redin->GetColorDepth() > 8)
-		game.SpriteInfos[gotSlot].Flags |= SPF_HICOLOR;
+		_GP(game).SpriteInfos[gotSlot].Flags |= SPF_HICOLOR;
 	if (redin->GetColorDepth() > 16)
-		game.SpriteInfos[gotSlot].Flags |= SPF_TRUECOLOR;
+		_GP(game).SpriteInfos[gotSlot].Flags |= SPF_TRUECOLOR;
 	if (hasAlpha)
-		game.SpriteInfos[gotSlot].Flags |= SPF_ALPHACHANNEL;
+		_GP(game).SpriteInfos[gotSlot].Flags |= SPF_ALPHACHANNEL;
 
-	game.SpriteInfos[gotSlot].Width = redin->GetWidth();
-	game.SpriteInfos[gotSlot].Height = redin->GetHeight();
+	_GP(game).SpriteInfos[gotSlot].Width = redin->GetWidth();
+	_GP(game).SpriteInfos[gotSlot].Height = redin->GetHeight();
 }
 
 void free_dynamic_sprite(int gotSlot) {
 	int tt;
 
-	if ((gotSlot < 0) || (gotSlot >= spriteset.GetSpriteSlotCount()))
+	if ((gotSlot < 0) || (gotSlot >= _GP(spriteset).GetSpriteSlotCount()))
 		quit("!FreeDynamicSprite: invalid slot number");
 
-	if ((game.SpriteInfos[gotSlot].Flags & SPF_DYNAMICALLOC) == 0)
+	if ((_GP(game).SpriteInfos[gotSlot].Flags & SPF_DYNAMICALLOC) == 0)
 		quitprintf("!DeleteSprite: Attempted to free static sprite %d that was not loaded by the script", gotSlot);
 
-	spriteset.RemoveSprite(gotSlot, true);
+	_GP(spriteset).RemoveSprite(gotSlot, true);
 
-	game.SpriteInfos[gotSlot].Flags = 0;
-	game.SpriteInfos[gotSlot].Width = 0;
-	game.SpriteInfos[gotSlot].Height = 0;
+	_GP(game).SpriteInfos[gotSlot].Flags = 0;
+	_GP(game).SpriteInfos[gotSlot].Width = 0;
+	_GP(game).SpriteInfos[gotSlot].Height = 0;
 
 	// ensure it isn't still on any GUI buttons
 	for (tt = 0; tt < numguibuts; tt++) {

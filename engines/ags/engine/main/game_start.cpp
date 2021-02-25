@@ -44,7 +44,7 @@
 #include "ags/engine/script/script.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -53,7 +53,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int our_eip, displayed_room;
-extern GameSetupStruct game;
+
 extern GameState play;
 extern std::vector<ccInstance *> moduleInst;
 extern int numScriptModules;
@@ -89,7 +89,7 @@ void start_game() {
 
 	our_eip = -42;
 
-	// skip ticks to account for initialisation or a restored game.
+	// skip ticks to account for initialisation or a restored _GP(game).
 	skipMissedTicks();
 
 	for (int kk = 0; kk < numScriptModules; kk++)
@@ -127,11 +127,11 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveOnStart
 		if (convert_16bit_bgr) {
 			// Disable text as speech while displaying the warning message
 			// This happens if the user's graphics card does BGR order 16-bit colour
-			int oldalways = game.options[OPT_ALWAYSSPCH];
-			game.options[OPT_ALWAYSSPCH] = 0;
+			int oldalways = _GP(game).options[OPT_ALWAYSSPCH];
+			_GP(game).options[OPT_ALWAYSSPCH] = 0;
 			// PSP: This is normal. Don't show a warning.
-			//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this game. You may experience colour problems during the game. Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
-			game.options[OPT_ALWAYSSPCH] = oldalways;
+			//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this _GP(game). You may experience colour problems during the _GP(game). Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
+			_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
 		}
 
 		::AGS::g_vm->setRandomNumberSeed(play.randseed);

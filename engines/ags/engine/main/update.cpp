@@ -24,7 +24,6 @@
 // Game update procedure
 //
 
-//include <math.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/characterextras.h"
@@ -48,6 +47,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/ac/movelist.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -56,7 +56,7 @@ using namespace AGS::Engine;
 
 extern MoveList *mls;
 extern RoomStatus *croom;
-extern GameSetupStruct game;
+
 extern GameState play;
 extern RoomStruct thisroom;
 extern RoomObject *objs;
@@ -210,7 +210,7 @@ void update_cycling_views() {
 
 void update_shadow_areas() {
 	// shadow areas
-	int onwalkarea = get_walkable_area_at_character(game.playercharacter);
+	int onwalkarea = get_walkable_area_at_character(_GP(game).playercharacter);
 	if (onwalkarea < 0);
 	else if (playerchar->flags & CHF_FIXVIEW);
 	else {
@@ -223,10 +223,10 @@ void update_shadow_areas() {
 
 void update_character_move_and_anim(int &numSheep, int *followingAsSheep) {
 	// move & animate characters
-	for (int aa = 0; aa < game.numcharacters; aa++) {
-		if (game.chars[aa].on != 1) continue;
+	for (int aa = 0; aa < _GP(game).numcharacters; aa++) {
+		if (_GP(game).chars[aa].on != 1) continue;
 
-		CharacterInfo *chi = &game.chars[aa];
+		CharacterInfo *chi = &_GP(game).chars[aa];
 		CharacterExtras *chex = &charextra[aa];
 
 		chi->UpdateMoveAndAnim(aa, chex, numSheep, followingAsSheep);
@@ -236,7 +236,7 @@ void update_character_move_and_anim(int &numSheep, int *followingAsSheep) {
 void update_following_exactly_characters(int &numSheep, int *followingAsSheep) {
 	// update location of all following_exactly characters
 	for (int aa = 0; aa < numSheep; aa++) {
-		CharacterInfo *chi = &game.chars[followingAsSheep[aa]];
+		CharacterInfo *chi = &_GP(game).chars[followingAsSheep[aa]];
 
 		chi->UpdateFollowingExactlyCharacter();
 	}
@@ -340,7 +340,7 @@ void update_sierra_speech() {
 					((curLipLinePhoneme < 0) || (voice_pos_ms >= splipsync[curLipLine].endtimeoffs[curLipLinePhoneme]))) {
 					curLipLinePhoneme++;
 					if (curLipLinePhoneme >= splipsync[curLipLine].numPhonemes)
-						facetalkframe = game.default_lipsync_frame;
+						facetalkframe = _GP(game).default_lipsync_frame;
 					else
 						facetalkframe = splipsync[curLipLine].frame[curLipLinePhoneme];
 
@@ -367,7 +367,7 @@ void update_sierra_speech() {
 					(play.close_mouth_speech_time > 0))) {
 				facetalkframe = 0;
 				facetalkwait = play.messagetime;
-			} else if ((game.options[OPT_LIPSYNCTEXT]) && (facetalkrepeat > 0)) {
+			} else if ((_GP(game).options[OPT_LIPSYNCTEXT]) && (facetalkrepeat > 0)) {
 				// lip-sync speech (and not a thought)
 				facetalkwait = update_lip_sync(facetalkview, facetalkloop, &facetalkframe);
 				// It is actually displayed for facetalkwait+1 loops
@@ -407,7 +407,7 @@ void update_sierra_speech() {
 			int view_frame_x = 0;
 			int view_frame_y = 0;
 
-			if (game.options[OPT_SPEECHTYPE] == 3) {
+			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (facetalk_qfg4_override_placement_x) {
 					view_frame_x = play.speech_portrait_x;
@@ -415,7 +415,7 @@ void update_sierra_speech() {
 				if (facetalk_qfg4_override_placement_y) {
 					view_frame_y = play.speech_portrait_y;
 				} else {
-					view_frame_y = (screenover[face_talking].pic->GetHeight() / 2) - (game.SpriteInfos[thisPic].Height / 2);
+					view_frame_y = (screenover[face_talking].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
 				}
 				screenover[face_talking].pic->Clear(0);
 			} else {
@@ -424,12 +424,12 @@ void update_sierra_speech() {
 
 			Bitmap *frame_pic = screenover[face_talking].pic;
 			const ViewFrame *face_vf = &views[facetalkview].loops[facetalkloop].frames[facetalkframe];
-			bool face_has_alpha = (game.SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
+			bool face_has_alpha = (_GP(game).SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 			DrawViewFrame(frame_pic, face_vf, view_frame_x, view_frame_y);
 
 			if ((facetalkchar->blinkview > 0) && (facetalkchar->blinktimer < 0)) {
 				ViewFrame *blink_vf = &views[facetalkchar->blinkview].loops[facetalkBlinkLoop].frames[facetalkchar->blinkframe];
-				face_has_alpha |= (game.SpriteInfos[blink_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
+				face_has_alpha |= (_GP(game).SpriteInfos[blink_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 				// draw the blinking sprite on top
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}

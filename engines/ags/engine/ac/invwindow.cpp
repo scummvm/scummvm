@@ -47,18 +47,18 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
+
 extern GameState play;
 extern CharacterExtras *charextra;
 extern ScriptInvItem scrInv[MAX_INV];
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
-extern SpriteCache spriteset;
+
 extern int evblocknum;
 extern CharacterInfo *playerchar;
 extern AGSPlatformDriver *platform;
@@ -84,7 +84,7 @@ CharacterInfo *InvWindow_GetCharacterToUse(GUIInvWindow *guii) {
 	if (guii->CharId < 0)
 		return nullptr;
 
-	return &game.chars[guii->CharId];
+	return &_GP(game).chars[guii->CharId];
 }
 
 void InvWindow_SetItemWidth(GUIInvWindow *guii, int newwidth) {
@@ -237,11 +237,11 @@ void InventoryScreen::Prepare() {
 	// Fun fact: this fallback does not seem to be intentional, and was a
 	// coincidental result of SpriteCache incorrectly remembering "last seeked
 	// sprite" as 2041/2042/2043 while in fact stream was after sprite 0.
-	if (spriteset[2041] == nullptr || spriteset[2042] == nullptr || spriteset[2043] == nullptr)
+	if (_GP(spriteset)[2041] == nullptr || _GP(spriteset)[2042] == nullptr || _GP(spriteset)[2043] == nullptr)
 		debug_script_warn("InventoryScreen: one or more of the inventory screen graphics (sprites 2041, 2042, 2043) does not exist, fallback to sprites 0, 1, 2 instead");
-	btn_look_sprite = spriteset[2041] != nullptr ? 2041 : 0;
-	btn_select_sprite = spriteset[2042] != nullptr ? 2042 : (spriteset[1] != nullptr ? 1 : 0);
-	btn_ok_sprite = spriteset[2043] != nullptr ? 2043 : (spriteset[2] != nullptr ? 2 : 0);
+	btn_look_sprite = _GP(spriteset)[2041] != nullptr ? 2041 : 0;
+	btn_select_sprite = _GP(spriteset)[2042] != nullptr ? 2042 : (_GP(spriteset)[1] != nullptr ? 1 : 0);
+	btn_ok_sprite = _GP(spriteset)[2043] != nullptr ? 2043 : (_GP(spriteset)[2] != nullptr ? 2 : 0);
 
 	break_code = 0;
 }
@@ -250,9 +250,9 @@ int InventoryScreen::Redraw() {
 	numitems = 0;
 	widest = 0;
 	highest = 0;
-	if (charextra[game.playercharacter].invorder_count < 0)
+	if (charextra[_GP(game).playercharacter].invorder_count < 0)
 		update_invorder();
-	if (charextra[game.playercharacter].invorder_count == 0) {
+	if (charextra[_GP(game).playercharacter].invorder_count == 0) {
 		DisplayMessage(996);
 		in_inv_screen--;
 		return -1;
@@ -264,17 +264,17 @@ int InventoryScreen::Redraw() {
 		return -1;
 	}
 
-	for (int i = 0; i < charextra[game.playercharacter].invorder_count; ++i) {
-		if (game.invinfo[charextra[game.playercharacter].invorder[i]].name[0] != 0) {
-			dii[numitems].num = charextra[game.playercharacter].invorder[i];
-			dii[numitems].sprnum = game.invinfo[charextra[game.playercharacter].invorder[i]].pic;
+	for (int i = 0; i < charextra[_GP(game).playercharacter].invorder_count; ++i) {
+		if (_GP(game).invinfo[charextra[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
+			dii[numitems].num = charextra[_GP(game).playercharacter].invorder[i];
+			dii[numitems].sprnum = _GP(game).invinfo[charextra[_GP(game).playercharacter].invorder[i]].pic;
 			int snn = dii[numitems].sprnum;
-			if (game.SpriteInfos[snn].Width > widest) widest = game.SpriteInfos[snn].Width;
-			if (game.SpriteInfos[snn].Height > highest) highest = game.SpriteInfos[snn].Height;
+			if (_GP(game).SpriteInfos[snn].Width > widest) widest = _GP(game).SpriteInfos[snn].Width;
+			if (_GP(game).SpriteInfos[snn].Height > highest) highest = _GP(game).SpriteInfos[snn].Height;
 			numitems++;
 		}
 	}
-	if (numitems != charextra[game.playercharacter].invorder_count)
+	if (numitems != charextra[_GP(game).playercharacter].invorder_count)
 		quit("inconsistent inventory calculations");
 
 	widest += get_fixed_pixel_size(4);
@@ -312,15 +312,15 @@ void InventoryScreen::Draw(Bitmap *ds) {
 	for (int i = top_item; i < numitems; ++i) {
 		if (i >= top_item + num_visible_items)
 			break;
-		Bitmap *spof = spriteset[dii[i].sprnum];
+		Bitmap *spof = _GP(spriteset)[dii[i].sprnum];
 		wputblock(ds, barxp + 1 + ((i - top_item) % 4) * widest + widest / 2 - spof->GetWidth() / 2,
 			bartop + 1 + ((i - top_item) / 4) * highest + highest / 2 - spof->GetHeight() / 2, spof, 1);
 	}
-#define BUTTONWID Math::Max(1, game.SpriteInfos[btn_select_sprite].Width)
+#define BUTTONWID Math::Max(1, _GP(game).SpriteInfos[btn_select_sprite].Width)
 	// Draw select, look and OK buttons
-	wputblock(ds, 2, buttonyp + get_fixed_pixel_size(2), spriteset[btn_look_sprite], 1);
-	wputblock(ds, 3 + BUTTONWID, buttonyp + get_fixed_pixel_size(2), spriteset[btn_select_sprite], 1);
-	wputblock(ds, 4 + BUTTONWID * 2, buttonyp + get_fixed_pixel_size(2), spriteset[btn_ok_sprite], 1);
+	wputblock(ds, 2, buttonyp + get_fixed_pixel_size(2), _GP(spriteset)[btn_look_sprite], 1);
+	wputblock(ds, 3 + BUTTONWID, buttonyp + get_fixed_pixel_size(2), _GP(spriteset)[btn_select_sprite], 1);
+	wputblock(ds, 4 + BUTTONWID * 2, buttonyp + get_fixed_pixel_size(2), _GP(spriteset)[btn_ok_sprite], 1);
 
 	// Draw Up and Down buttons if required
 	Bitmap *arrowblock = BitmapHelper::CreateTransparentBitmap(ARROWBUTTONWID, ARROWBUTTONWID);

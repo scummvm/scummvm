@@ -24,6 +24,7 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guislider.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -145,7 +146,7 @@ void GUISlider::Draw(Bitmap *ds) {
 	if (HandleImage > 0) {
 		// an image for the slider handle
 		// TODO: react to sprites initialization/deletion instead!
-		if (spriteset[HandleImage] == nullptr)
+		if (_GP(spriteset)[HandleImage] == nullptr)
 			HandleImage = 0;
 
 		handle.Left -= get_adjusted_spritewidth(HandleImage) / 2;

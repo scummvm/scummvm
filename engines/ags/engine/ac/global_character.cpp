@@ -46,13 +46,14 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
 
-extern GameSetupStruct game;
+
 extern ViewStruct *views;
 extern RoomObject *objs;
 extern RoomStruct thisroom;
@@ -69,28 +70,28 @@ extern CharacterInfo *playerchar;
 
 void StopMoving(int chaa) {
 
-	Character_StopMoving(&game.chars[chaa]);
+	Character_StopMoving(&_GP(game).chars[chaa]);
 }
 
 void ReleaseCharacterView(int chat) {
 	if (!is_valid_character(chat))
 		quit("!ReleaseCahracterView: invalid character supplied");
 
-	Character_UnlockView(&game.chars[chat]);
+	Character_UnlockView(&_GP(game).chars[chat]);
 }
 
 void MoveToWalkableArea(int charid) {
 	if (!is_valid_character(charid))
 		quit("!MoveToWalkableArea: invalid character specified");
 
-	Character_PlaceOnWalkableArea(&game.chars[charid]);
+	Character_PlaceOnWalkableArea(&_GP(game).chars[charid]);
 }
 
 void FaceLocation(int cha, int xx, int yy) {
 	if (!is_valid_character(cha))
 		quit("!FaceLocation: Invalid character specified");
 
-	Character_FaceLocation(&game.chars[cha], xx, yy, BLOCKING);
+	Character_FaceLocation(&_GP(game).chars[cha], xx, yy, BLOCKING);
 }
 
 void FaceCharacter(int cha, int toface) {
@@ -99,7 +100,7 @@ void FaceCharacter(int cha, int toface) {
 	if (!is_valid_character(toface))
 		quit("!FaceCharacter: invalid character specified");
 
-	Character_FaceCharacter(&game.chars[cha], &game.chars[toface], BLOCKING);
+	Character_FaceCharacter(&_GP(game).chars[cha], &_GP(game).chars[toface], BLOCKING);
 }
 
 
@@ -107,13 +108,13 @@ void SetCharacterIdle(int who, int iview, int itime) {
 	if (!is_valid_character(who))
 		quit("!SetCharacterIdle: Invalid character specified");
 
-	Character_SetIdleView(&game.chars[who], iview, itime);
+	Character_SetIdleView(&_GP(game).chars[who], iview, itime);
 }
 
 
 
 int GetCharacterWidth(int ww) {
-	CharacterInfo *char1 = &game.chars[ww];
+	CharacterInfo *char1 = &_GP(game).chars[ww];
 
 	if (charextra[ww].width < 1) {
 		if ((char1->view < 0) ||
@@ -123,13 +124,13 @@ int GetCharacterWidth(int ww) {
 			return data_to_game_coord(4);
 		}
 
-		return game.SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Width;
+		return _GP(game).SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Width;
 	} else
 		return charextra[ww].width;
 }
 
 int GetCharacterHeight(int charid) {
-	CharacterInfo *char1 = &game.chars[charid];
+	CharacterInfo *char1 = &_GP(game).chars[charid];
 
 	if (charextra[charid].height < 1) {
 		if ((char1->view < 0) ||
@@ -139,7 +140,7 @@ int GetCharacterHeight(int charid) {
 			return data_to_game_coord(2);
 		}
 
-		return game.SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Height;
+		return _GP(game).SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Height;
 	} else
 		return charextra[charid].height;
 }
@@ -149,7 +150,7 @@ int GetCharacterHeight(int charid) {
 void SetCharacterBaseline(int obn, int basel) {
 	if (!is_valid_character(obn)) quit("!SetCharacterBaseline: invalid object number specified");
 
-	Character_SetBaseline(&game.chars[obn], basel);
+	Character_SetBaseline(&_GP(game).chars[obn], basel);
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
@@ -157,14 +158,14 @@ void SetCharacterTransparency(int obn, int trans) {
 	if (!is_valid_character(obn))
 		quit("!SetCharTransparent: invalid character number specified");
 
-	Character_SetTransparency(&game.chars[obn], trans);
+	Character_SetTransparency(&_GP(game).chars[obn], trans);
 }
 
 void scAnimateCharacter(int chh, int loopn, int sppd, int rept) {
 	if (!is_valid_character(chh))
 		quit("AnimateCharacter: invalid character");
 
-	animate_character(&game.chars[chh], loopn, sppd, rept);
+	animate_character(&_GP(game).chars[chh], loopn, sppd, rept);
 }
 
 void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
@@ -183,7 +184,7 @@ void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, i
 	else
 		blocking = IN_BACKGROUND;
 
-	Character_Animate(&game.chars[chh], loopn, sppd, rept, blocking, direction);
+	Character_Animate(&_GP(game).chars[chh], loopn, sppd, rept, blocking, direction);
 
 }
 
@@ -192,7 +193,7 @@ void SetPlayerCharacter(int newchar) {
 	if (!is_valid_character(newchar))
 		quit("!SetPlayerCharacter: Invalid character specified");
 
-	Character_SetAsPlayer(&game.chars[newchar]);
+	Character_SetAsPlayer(&_GP(game).chars[newchar]);
 }
 
 void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness) {
@@ -203,10 +204,10 @@ void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness) {
 		if (!is_valid_character(tofollow))
 			quit("!FollowCharacterEx: invalid character to follow");
 		else
-			chtofollow = &game.chars[tofollow];
+			chtofollow = &_GP(game).chars[tofollow];
 	}
 
-	Character_FollowCharacter(&game.chars[who], chtofollow, distaway, eagerness);
+	Character_FollowCharacter(&_GP(game).chars[who], chtofollow, distaway, eagerness);
 }
 
 void FollowCharacter(int who, int tofollow) {
@@ -217,7 +218,7 @@ void SetCharacterIgnoreLight(int who, int yesorno) {
 	if (!is_valid_character(who))
 		quit("!SetCharacterIgnoreLight: Invalid character specified");
 
-	Character_SetIgnoreLighting(&game.chars[who], yesorno);
+	Character_SetIgnoreLighting(&_GP(game).chars[who], yesorno);
 }
 
 
@@ -233,7 +234,7 @@ void MoveCharacterStraight(int cc, int xx, int yy) {
 	if (!is_valid_character(cc))
 		quit("!MoveCharacterStraight: invalid character specified");
 
-	Character_WalkStraight(&game.chars[cc], xx, yy, IN_BACKGROUND);
+	Character_WalkStraight(&_GP(game).chars[cc], xx, yy, IN_BACKGROUND);
 }
 
 // Append to character path
@@ -241,19 +242,19 @@ void MoveCharacterPath(int chac, int tox, int toy) {
 	if (!is_valid_character(chac))
 		quit("!MoveCharacterPath: invalid character specified");
 
-	Character_AddWaypoint(&game.chars[chac], tox, toy);
+	Character_AddWaypoint(&_GP(game).chars[chac], tox, toy);
 }
 
 
 int GetPlayerCharacter() {
-	return game.playercharacter;
+	return _GP(game).playercharacter;
 }
 
 void SetCharacterSpeedEx(int chaa, int xspeed, int yspeed) {
 	if (!is_valid_character(chaa))
 		quit("!SetCharacterSpeedEx: invalid character");
 
-	Character_SetSpeed(&game.chars[chaa], xspeed, yspeed);
+	Character_SetSpeed(&_GP(game).chars[chaa], xspeed, yspeed);
 
 }
 
@@ -264,45 +265,45 @@ void SetCharacterSpeed(int chaa, int nspeed) {
 void SetTalkingColor(int chaa, int ncol) {
 	if (!is_valid_character(chaa)) quit("!SetTalkingColor: invalid character");
 
-	Character_SetSpeechColor(&game.chars[chaa], ncol);
+	Character_SetSpeechColor(&_GP(game).chars[chaa], ncol);
 }
 
 void SetCharacterSpeechView(int chaa, int vii) {
 	if (!is_valid_character(chaa))
 		quit("!SetCharacterSpeechView: invalid character specified");
 
-	Character_SetSpeechView(&game.chars[chaa], vii);
+	Character_SetSpeechView(&_GP(game).chars[chaa], vii);
 }
 
 void SetCharacterBlinkView(int chaa, int vii, int intrv) {
 	if (!is_valid_character(chaa))
 		quit("!SetCharacterBlinkView: invalid character specified");
 
-	Character_SetBlinkView(&game.chars[chaa], vii);
-	Character_SetBlinkInterval(&game.chars[chaa], intrv);
+	Character_SetBlinkView(&_GP(game).chars[chaa], vii);
+	Character_SetBlinkInterval(&_GP(game).chars[chaa], intrv);
 }
 
 void SetCharacterView(int chaa, int vii) {
 	if (!is_valid_character(chaa))
 		quit("!SetCharacterView: invalid character specified");
 
-	Character_LockView(&game.chars[chaa], vii);
+	Character_LockView(&_GP(game).chars[chaa], vii);
 }
 
 void SetCharacterFrame(int chaa, int view, int loop, int frame) {
 
-	Character_LockViewFrame(&game.chars[chaa], view, loop, frame);
+	Character_LockViewFrame(&_GP(game).chars[chaa], view, loop, frame);
 }
 
 // similar to SetCharView, but aligns the frame to make it line up
 void SetCharacterViewEx(int chaa, int vii, int loop, int align) {
 
-	Character_LockViewAligned(&game.chars[chaa], vii, loop, align);
+	Character_LockViewAligned(&_GP(game).chars[chaa], vii, loop, align);
 }
 
 void SetCharacterViewOffset(int chaa, int vii, int xoffs, int yoffs) {
 
-	Character_LockViewOffset(&game.chars[chaa], vii, xoffs, yoffs);
+	Character_LockViewOffset(&_GP(game).chars[chaa], vii, xoffs, yoffs);
 }
 
 
@@ -310,24 +311,24 @@ void ChangeCharacterView(int chaa, int vii) {
 	if (!is_valid_character(chaa))
 		quit("!ChangeCharacterView: invalid character specified");
 
-	Character_ChangeView(&game.chars[chaa], vii);
+	Character_ChangeView(&_GP(game).chars[chaa], vii);
 }
 
 void SetCharacterClickable(int cha, int clik) {
 	if (!is_valid_character(cha))
 		quit("!SetCharacterClickable: Invalid character specified");
 	// make the character clicklabe (reset "No interaction" bit)
-	game.chars[cha].flags &= ~CHF_NOINTERACT;
+	_GP(game).chars[cha].flags &= ~CHF_NOINTERACT;
 	// if they don't want it clickable, set the relevant bit
 	if (clik == 0)
-		game.chars[cha].flags |= CHF_NOINTERACT;
+		_GP(game).chars[cha].flags |= CHF_NOINTERACT;
 }
 
 void SetCharacterIgnoreWalkbehinds(int cha, int clik) {
 	if (!is_valid_character(cha))
 		quit("!SetCharacterIgnoreWalkbehinds: Invalid character specified");
 
-	Character_SetIgnoreWalkbehinds(&game.chars[cha], clik);
+	Character_SetIgnoreWalkbehinds(&_GP(game).chars[cha], clik);
 }
 
 
@@ -339,7 +340,7 @@ void MoveCharacterToObject(int chaa, int obbj) {
 
 	walk_character(chaa, objs[obbj].x + 5, objs[obbj].y + 6, 0, true);
 
-	GameLoopUntilNotMoving(&game.chars[chaa].walking);
+	GameLoopUntilNotMoving(&_GP(game).chars[chaa].walking);
 }
 
 void MoveCharacterToHotspot(int chaa, int hotsp) {
@@ -348,7 +349,7 @@ void MoveCharacterToHotspot(int chaa, int hotsp) {
 	if (thisroom.Hotspots[hotsp].WalkTo.X < 1) return;
 	walk_character(chaa, thisroom.Hotspots[hotsp].WalkTo.X, thisroom.Hotspots[hotsp].WalkTo.Y, 0, true);
 
-	GameLoopUntilNotMoving(&game.chars[chaa].walking);
+	GameLoopUntilNotMoving(&_GP(game).chars[chaa].walking);
 }
 
 void MoveCharacterBlocking(int chaa, int xx, int yy, int direct) {
@@ -357,7 +358,7 @@ void MoveCharacterBlocking(int chaa, int xx, int yy, int direct) {
 
 	// check if they try to move the player when Hide Player Char is
 	// ticked -- otherwise this will hang the game
-	if (game.chars[chaa].on != 1) {
+	if (_GP(game).chars[chaa].on != 1) {
 		debug_script_warn("MoveCharacterBlocking: character is turned off (is Hide Player Character selected?) and cannot be moved");
 		return;
 	}
@@ -367,15 +368,15 @@ void MoveCharacterBlocking(int chaa, int xx, int yy, int direct) {
 	else
 		MoveCharacter(chaa, xx, yy);
 
-	GameLoopUntilNotMoving(&game.chars[chaa].walking);
+	GameLoopUntilNotMoving(&_GP(game).chars[chaa].walking);
 }
 
 int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
-	if ((loaded_game_file_version < kGameVersion_312) && (game.options[OPT_SPEECHTYPE] != 0)) {
+	if ((loaded_game_file_version < kGameVersion_312) && (_GP(game).options[OPT_SPEECHTYPE] != 0)) {
 		// legacy versions of AGS assigned a fixed delay to Sierra-style speech only
 		return 5;
 	}
-	if (game.options[OPT_GLOBALTALKANIMSPD] != 0)
+	if (_GP(game).options[OPT_GLOBALTALKANIMSPD] != 0)
 		return play.talkanim_speed;
 	else
 		return cha->speech_anim_speed;
@@ -401,12 +402,12 @@ void RunCharacterInteraction(int cc, int mood) {
 	evblocknum = cc;
 	if (loaded_game_file_version > kGameVersion_272) {
 		if (passon >= 0)
-			run_interaction_script(game.charScripts[cc].get(), passon, 4, (passon == 3));
-		run_interaction_script(game.charScripts[cc].get(), 4);  // any click on char
+			run_interaction_script(_GP(game).charScripts[cc].get(), passon, 4, (passon == 3));
+		run_interaction_script(_GP(game).charScripts[cc].get(), 4);  // any click on char
 	} else {
 		if (passon >= 0)
-			run_interaction_event(game.intrChar[cc].get(), passon, 4, (passon == 3));
-		run_interaction_event(game.intrChar[cc].get(), 4); // any click on char
+			run_interaction_event(_GP(game).intrChar[cc].get(), passon, 4, (passon == 3));
+		run_interaction_event(_GP(game).intrChar[cc].get(), 4); // any click on char
 	}
 }
 
@@ -416,7 +417,7 @@ int AreCharObjColliding(int charid, int objid) {
 	if (!is_valid_object(objid))
 		quit("!AreCharObjColliding: invalid object number");
 
-	return Character_IsCollidingWithObject(&game.chars[charid], &scrObj[objid]);
+	return Character_IsCollidingWithObject(&_GP(game).chars[charid], &scrObj[objid]);
 }
 
 int AreCharactersColliding(int cchar1, int cchar2) {
@@ -425,24 +426,24 @@ int AreCharactersColliding(int cchar1, int cchar2) {
 	if (!is_valid_character(cchar2))
 		quit("!AreCharactersColliding: invalid char2");
 
-	return Character_IsCollidingWithChar(&game.chars[cchar1], &game.chars[cchar2]);
+	return Character_IsCollidingWithChar(&_GP(game).chars[cchar1], &_GP(game).chars[cchar2]);
 }
 
 int GetCharacterProperty(int cha, const char *property) {
 	if (!is_valid_character(cha))
 		quit("!GetCharacterProperty: invalid character");
-	return get_int_property(game.charProps[cha], play.charProps[cha], property);
+	return get_int_property(_GP(game).charProps[cha], play.charProps[cha], property);
 }
 
 void SetCharacterProperty(int who, int flag, int yesorno) {
 	if (!is_valid_character(who))
 		quit("!SetCharacterProperty: Invalid character specified");
 
-	Character_SetOption(&game.chars[who], flag, yesorno);
+	Character_SetOption(&_GP(game).chars[who], flag, yesorno);
 }
 
 void GetCharacterPropertyText(int item, const char *property, char *bufer) {
-	get_text_property(game.charProps[item], play.charProps[item], property, bufer);
+	get_text_property(_GP(game).charProps[item], play.charProps[item], property, bufer);
 }
 
 int GetCharIDAtScreen(int xx, int yy) {
@@ -455,7 +456,7 @@ int GetCharIDAtScreen(int xx, int yy) {
 void SetActiveInventory(int iit) {
 
 	ScriptInvItem *tosend = nullptr;
-	if ((iit > 0) && (iit < game.numinvitems))
+	if ((iit > 0) && (iit < _GP(game).numinvitems))
 		tosend = &scrInv[iit];
 	else if (iit != -1)
 		quitprintf("!SetActiveInventory: invalid inventory number %d", iit);
@@ -464,14 +465,14 @@ void SetActiveInventory(int iit) {
 }
 
 void update_invorder() {
-	for (int cc = 0; cc < game.numcharacters; cc++) {
+	for (int cc = 0; cc < _GP(game).numcharacters; cc++) {
 		charextra[cc].invorder_count = 0;
 		int ff, howmany;
 		// Iterate through all inv items, adding them once (or multiple
 		// times if requested) to the list.
-		for (ff = 0; ff < game.numinvitems; ff++) {
-			howmany = game.chars[cc].inv[ff];
-			if ((game.options[OPT_DUPLICATEINV] == 0) && (howmany > 1))
+		for (ff = 0; ff < _GP(game).numinvitems; ff++) {
+			howmany = _GP(game).chars[cc].inv[ff];
+			if ((_GP(game).options[OPT_DUPLICATEINV] == 0) && (howmany > 1))
 				howmany = 1;
 
 			for (int ts = 0; ts < howmany; ts++) {
@@ -484,7 +485,7 @@ void update_invorder() {
 		}
 	}
 	// backwards compatibility
-	play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 
 	guis_need_update = 1;
 }
@@ -495,7 +496,7 @@ void add_inventory(int inum) {
 
 	Character_AddInventory(playerchar, &scrInv[inum], SCR_NO_VALUE);
 
-	play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
 
 void lose_inventory(int inum) {
@@ -504,36 +505,36 @@ void lose_inventory(int inum) {
 
 	Character_LoseInventory(playerchar, &scrInv[inum]);
 
-	play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
 
 void AddInventoryToCharacter(int charid, int inum) {
 	if (!is_valid_character(charid))
 		quit("!AddInventoryToCharacter: invalid character specified");
-	if ((inum < 1) || (inum >= game.numinvitems))
+	if ((inum < 1) || (inum >= _GP(game).numinvitems))
 		quit("!AddInventory: invalid inv item specified");
 
-	Character_AddInventory(&game.chars[charid], &scrInv[inum], SCR_NO_VALUE);
+	Character_AddInventory(&_GP(game).chars[charid], &scrInv[inum], SCR_NO_VALUE);
 }
 
 void LoseInventoryFromCharacter(int charid, int inum) {
 	if (!is_valid_character(charid))
 		quit("!LoseInventoryFromCharacter: invalid character specified");
-	if ((inum < 1) || (inum >= game.numinvitems))
+	if ((inum < 1) || (inum >= _GP(game).numinvitems))
 		quit("!AddInventory: invalid inv item specified");
 
-	Character_LoseInventory(&game.chars[charid], &scrInv[inum]);
+	Character_LoseInventory(&_GP(game).chars[charid], &scrInv[inum]);
 }
 
 void DisplayThought(int chid, const char *text) {
-	if ((chid < 0) || (chid >= game.numcharacters))
+	if ((chid < 0) || (chid >= _GP(game).numcharacters))
 		quit("!DisplayThought: invalid character specified");
 
 	_DisplayThoughtCore(chid, text);
 }
 
 void __sc_displayspeech(int chid, const char *text) {
-	if ((chid < 0) || (chid >= game.numcharacters))
+	if ((chid < 0) || (chid >= _GP(game).numcharacters))
 		quit("!DisplaySpeech: invalid character specified");
 
 	_DisplaySpeechCore(chid, text);
@@ -557,7 +558,7 @@ int DisplaySpeechBackground(int charid, const char *speel) {
 	}
 
 	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, play.GetUIViewport().GetWidth() / 2, FONT_SPEECH,
-		-game.chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
+		-_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
 	int scid = find_overlay_of_type(ovrl);
 	screenover[scid].bgSpeechForChar = charid;

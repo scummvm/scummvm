@@ -29,13 +29,14 @@
 #include "ags/engine/ac/runtime_defines.h" //MAX_PATH
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern SpriteCache spriteset;
+
 extern IGraphicsDriver *gfxDriver;
 
 int LoadImageFile(const char *filename) {
@@ -49,7 +50,7 @@ int LoadImageFile(const char *filename) {
 	if (!loadedFile)
 		return 0;
 
-	int gotSlot = spriteset.GetFreeIndex();
+	int gotSlot = _GP(spriteset).GetFreeIndex();
 	if (gotSlot <= 0)
 		return 0;
 

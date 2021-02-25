@@ -33,15 +33,14 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_compat.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/math.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameSetupStruct game;
 extern GameState play;
 extern int longestline;
 extern ScriptString myScriptStringImpl;
@@ -255,7 +254,7 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 
 	// Right-to-left just means reverse the text then
 	// write it as normal
-	if (game.options[OPT_RIGHTLEFTWRITE])
+	if (_GP(game).options[OPT_RIGHTLEFTWRITE])
 		for (size_t rr = 0; rr < lines.Count(); rr++) {
 			lines[rr].Reverse();
 			line_length = wgettextwidth_compensate(lines[rr], fonnt);
@@ -273,8 +272,8 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 int MAXSTRLEN = MAX_MAXSTRLEN;
 void check_strlen(char *ptt) {
 	MAXSTRLEN = MAX_MAXSTRLEN;
-	const byte *charstart = (const byte *)&game.chars[0];
-	const byte *charend = charstart + sizeof(CharacterInfo) * game.numcharacters;
+	const byte *charstart = (const byte *)&_GP(game).chars[0];
+	const byte *charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
 	if (((const byte *)&ptt[0] >= charstart) && ((const byte *)&ptt[0] <= charend))
 		MAXSTRLEN = 30;
 }

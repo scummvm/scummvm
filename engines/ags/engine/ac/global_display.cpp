@@ -20,8 +20,6 @@
  *
  */
 
-//include <cstdio>
-//include <stdarg.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/display.h"
@@ -40,6 +38,7 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/main/game_run.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -49,7 +48,7 @@ extern TopBarSettings topBar;
 extern GameState play;
 extern RoomStruct thisroom;
 extern int display_message_aschar;
-extern GameSetupStruct game;
+
 
 void Display(const char *texx, ...) {
 	char displbuf[STD_BUFFER_SIZE];
@@ -169,8 +168,8 @@ void DisplayAtY(int ypos, const char *texx) {
 	if (ypos > 0)
 		ypos = data_to_game_coord(ypos);
 
-	if (game.options[OPT_ALWAYSSPCH])
-		DisplaySpeechAt(-1, (ypos > 0) ? game_to_data_coord(ypos) : ypos, -1, game.playercharacter, texx);
+	if (_GP(game).options[OPT_ALWAYSSPCH])
+		DisplaySpeechAt(-1, (ypos > 0) ? game_to_data_coord(ypos) : ypos, -1, _GP(game).playercharacter, texx);
 	else {
 		// Normal "Display" in text box
 
@@ -189,7 +188,7 @@ void DisplayAtY(int ypos, const char *texx) {
 void SetSpeechStyle(int newstyle) {
 	if ((newstyle < 0) || (newstyle > 3))
 		quit("!SetSpeechStyle: must use a SPEECH_* constant as parameter");
-	game.options[OPT_SPEECHTYPE] = newstyle;
+	_GP(game).options[OPT_SPEECHTYPE] = newstyle;
 }
 
 void SetSkipSpeech(SkipSpeechStyle newval) {

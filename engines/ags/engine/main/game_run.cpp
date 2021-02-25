@@ -66,7 +66,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/ac/keycode.h"
 #include "ags/lib/allegro/keyboard.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/events.h"
 
 namespace AGS3 {
@@ -80,7 +80,7 @@ extern int ifacepopped;
 extern int is_text_overlay;
 extern int proper_exit, our_eip;
 extern int displayed_room, starting_room, in_new_room, new_room_was;
-extern GameSetupStruct game;
+
 extern RoomStruct thisroom;
 extern int game_paused;
 extern int getloctype_index;
@@ -96,7 +96,7 @@ extern RoomObject *objs;
 extern char noWalkBehindsAtAll;
 extern RoomStatus *croom;
 extern CharacterExtras *charextra;
-extern SpriteCache spriteset;
+
 extern int cur_mode, cur_cursor;
 
 // Checks if user interface should remain disabled for now
@@ -435,18 +435,18 @@ static void check_keyboard_controls() {
 			sprintf(&infobuf[strlen(infobuf)],
 				"[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
 				ff, objs[ff].x, objs[ff].y,
-				(spriteset[objs[ff].num] != nullptr) ? game.SpriteInfos[objs[ff].num].Width : 0,
-				(spriteset[objs[ff].num] != nullptr) ? game.SpriteInfos[objs[ff].num].Height : 0,
+				(_GP(spriteset)[objs[ff].num] != nullptr) ? _GP(game).SpriteInfos[objs[ff].num].Width : 0,
+				(_GP(spriteset)[objs[ff].num] != nullptr) ? _GP(game).SpriteInfos[objs[ff].num].Height : 0,
 				objs[ff].on,
 				(objs[ff].moving > 0) ? "yes" : "no", objs[ff].cycling,
 				objs[ff].num, objs[ff].transparent,
 				((objs[ff].flags & OBJF_NOINTERACT) != 0) ? 0 : 1);
 		}
 		Display(infobuf);
-		int chd = game.playercharacter;
+		int chd = _GP(game).playercharacter;
 		char bigbuffer[STD_BUFFER_SIZE] = "CHARACTERS IN THIS ROOM:[";
-		for (ff = 0; ff < game.numcharacters; ff++) {
-			if (game.chars[ff].room != displayed_room) continue;
+		for (ff = 0; ff < _GP(game).numcharacters; ff++) {
+			if (_GP(game).chars[ff].room != displayed_room) continue;
 			if (strlen(bigbuffer) > 430) {
 				strcat(bigbuffer, "and more...");
 				Display(bigbuffer);
@@ -455,11 +455,11 @@ static void check_keyboard_controls() {
 			chd = ff;
 			sprintf(&bigbuffer[strlen(bigbuffer)],
 				"%s (view/loop/frm:%d,%d,%d  x/y/z:%d,%d,%d  idleview:%d,time:%d,left:%d walk:%d anim:%d follow:%d flags:%X wait:%d zoom:%d)[",
-				game.chars[chd].scrname, game.chars[chd].view + 1, game.chars[chd].loop, game.chars[chd].frame,
-				game.chars[chd].x, game.chars[chd].y, game.chars[chd].z,
-				game.chars[chd].idleview, game.chars[chd].idletime, game.chars[chd].idleleft,
-				game.chars[chd].walking, game.chars[chd].animating, game.chars[chd].following,
-				game.chars[chd].flags, game.chars[chd].wait, charextra[chd].zoom);
+				_GP(game).chars[chd].scrname, _GP(game).chars[chd].view + 1, _GP(game).chars[chd].loop, _GP(game).chars[chd].frame,
+				_GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
+				_GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
+				_GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
+				_GP(game).chars[chd].flags, _GP(game).chars[chd].wait, charextra[chd].zoom);
 		}
 		Display(bigbuffer);
 
@@ -498,7 +498,7 @@ static void check_keyboard_controls() {
 	// extended keys (eg. up/down arrow; 256+)
 	if ((((kgn >= 32) && (kgn <= 255) && (kgn != '[')) || (kgn == eAGSKeyCodeReturn) || (kgn == eAGSKeyCodeBackspace))
 		&& !all_buttons_disabled) {
-		for (int guiIndex = 0; guiIndex < game.numgui; guiIndex++) {
+		for (int guiIndex = 0; guiIndex < _GP(game).numgui; guiIndex++) {
 			auto &gui = guis[guiIndex];
 
 			if (!gui.IsDisplayed()) continue;
@@ -745,7 +745,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	game_loop_check_problems_at_start();
 
 	// if we're not fading in, don't count the fadeouts
-	if ((play.no_hicolor_fadein) && (game.options[OPT_FADETYPE] == FADE_NORMAL))
+	if ((play.no_hicolor_fadein) && (_GP(game).options[OPT_FADETYPE] == FADE_NORMAL))
 		play.screen_is_faded_out = 0;
 
 	our_eip = 1014;
@@ -987,7 +987,7 @@ void GameLoopUntilNoOverlay() {
 
 extern unsigned int load_new_game;
 void RunGameUntilAborted() {
-	// skip ticks to account for time spent starting game.
+	// skip ticks to account for time spent starting _GP(game).
 	skipMissedTicks();
 
 	while (!_G(abort_engine)) {

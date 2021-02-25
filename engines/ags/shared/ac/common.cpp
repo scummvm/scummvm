@@ -22,7 +22,7 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/string.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {

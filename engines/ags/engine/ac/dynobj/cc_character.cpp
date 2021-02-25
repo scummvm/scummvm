@@ -25,10 +25,9 @@
 #include "ags/engine/ac/global_character.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/game_version.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern GameSetupStruct game;
 
 // return the type name of the object
 const char *CCCharacter::GetType() {
@@ -47,7 +46,7 @@ int CCCharacter::Serialize(const char *address, char *buffer, int bufsize) {
 void CCCharacter::Unserialize(int index, const char *serializedData, int dataSize) {
 	StartUnserialize(serializedData, dataSize);
 	int num = UnserializeInt();
-	ccRegisterUnserializedObject(index, &game.chars[num], this);
+	ccRegisterUnserializedObject(index, &_GP(game).chars[num], this);
 }
 
 void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) {

@@ -41,13 +41,14 @@
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
+
 extern RoomStruct thisroom;
 extern RoomStatus *croom;
 extern int displayed_room;
@@ -124,9 +125,9 @@ void run_room_event(int id) {
 void run_event_block_inv(int invNum, int event_) {
 	evblockbasename = "inventory%d";
 	if (loaded_game_file_version > kGameVersion_272) {
-		run_interaction_script(game.invScripts[invNum].get(), event_);
+		run_interaction_script(_GP(game).invScripts[invNum].get(), event_);
 	} else {
-		run_interaction_event(game.intrInv[invNum].get(), event_);
+		run_interaction_event(_GP(game).intrInv[invNum].get(), event_);
 	}
 
 }
@@ -137,7 +138,7 @@ void setevent(int evtyp, int ev1, int ev2, int ev3) {
 	event[numevents].data1 = ev1;
 	event[numevents].data2 = ev2;
 	event[numevents].data3 = ev3;
-	event[numevents].player = game.playercharacter;
+	event[numevents].player = _GP(game).playercharacter;
 	numevents++;
 	if (numevents >= MAXEVENTS) quit("too many events posted");
 }
@@ -238,7 +239,7 @@ void process_event(EventHappened *evp) {
 		}
 
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
-		//const Size &data_res = game.GetDataRes();
+		//const Size &data_res = _GP(game).GetDataRes();
 		const Rect &viewport = play.GetMainViewport();
 
 		if ((theTransition == FADE_INSTANT) || ignore_transition)
@@ -282,7 +283,7 @@ void process_event(EventHappened *evp) {
 			}
 			play.screen_is_faded_out = 0;
 		} else if (theTransition == FADE_CROSSFADE) {
-			if (game.color_depth == 1)
+			if (_GP(game).color_depth == 1)
 				quit("!Cannot use crossfade screen transition in 256-colour games");
 
 			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
@@ -320,7 +321,7 @@ void process_event(EventHappened *evp) {
 			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
 			for (aa = 0; aa < 16; aa++) {
 				// merge the palette while dithering
-				if (game.color_depth == 1) {
+				if (_GP(game).color_depth == 1) {
 					fade_interpolate(old_palette, palette, interpal, aa * 4, 0, 255);
 					set_palette_range(interpal, 0, 255, 0);
 				}
@@ -358,7 +359,7 @@ void runevent_now(int evtyp, int ev1, int ev2, int ev3) {
 	evh.data1 = ev1;
 	evh.data2 = ev2;
 	evh.data3 = ev3;
-	evh.player = game.playercharacter;
+	evh.player = _GP(game).playercharacter;
 	process_event(&evh);
 }
 

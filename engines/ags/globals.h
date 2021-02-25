@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_GLOBALS_H
-#define AGS_ENGINE_GLOBALS_H
+#ifndef AGS_GLOBALS_H
+#define AGS_GLOBALS_H
 
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
@@ -41,6 +41,8 @@ class Bitmap;
 } // namespace AGS
 
 struct IAGSEditorDebugger;
+struct GameSetupStruct;
+class SpriteCache;
 
 class Globals {
 public:
@@ -68,6 +70,16 @@ public:
 	volatile int _game_paused_in_debugger = 0;
 
 	/**@}*/
+
+	/**
+	 * \defgroup game globals
+	 * @{
+	 */
+
+	GameSetupStruct *_game = nullptr;
+	SpriteCache *_spriteset;
+
+	 /**@}*/
 
 	/**
 	 * \defgroup main globals

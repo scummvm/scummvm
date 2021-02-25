@@ -42,7 +42,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

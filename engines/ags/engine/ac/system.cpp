@@ -44,7 +44,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/events.h"
 
 namespace AGS3 {
@@ -52,7 +52,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
+
 extern GameSetup usetup;
 extern GameState play;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
@@ -95,11 +95,11 @@ int System_GetOS() {
 // compatibility.
 //
 int System_GetScreenWidth() {
-	return game.GetGameRes().Width;
+	return _GP(game).GetGameRes().Width;
 }
 
 int System_GetScreenHeight() {
-	return game.GetGameRes().Height;
+	return _GP(game).GetGameRes().Height;
 }
 
 int System_GetViewportHeight() {

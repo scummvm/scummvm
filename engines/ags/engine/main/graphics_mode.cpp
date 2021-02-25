@@ -38,7 +38,7 @@
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/main/main_allegro.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

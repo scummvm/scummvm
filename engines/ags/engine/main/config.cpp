@@ -43,7 +43,7 @@
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "common/config-manager.h"
 
 namespace AGS3 {
@@ -51,9 +51,9 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
+
 extern GameSetup usetup;
-extern SpriteCache spriteset;
+
 extern GameState play;
 
 // Filename of the default config file, the one found in the game installation
@@ -201,7 +201,7 @@ int convert_fp_to_scaling(uint32_t scaling) {
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup) {
 	scsz_setup.Size = Size();
 	if (windowed) {
-		// For the windowed we define mode by the scaled game.
+		// For the windowed we define mode by the scaled _GP(game).
 		scsz_setup.SizeDef = kScreenDef_ByGameScaling;
 		scsz_setup.MatchDeviceRatio = false;
 		frame_setup = usetup.Screen.WinGameFrame;
@@ -395,7 +395,7 @@ void apply_config(const ConfigTree &cfg) {
 
 		int cache_size_kb = INIreadint(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
-			spriteset.SetMaxCacheSize((size_t)cache_size_kb * 1024);
+			_GP(spriteset).SetMaxCacheSize((size_t)cache_size_kb * 1024);
 
 		usetup.mouse_auto_lock = INIreadint(cfg, "mouse", "auto_lock") > 0;
 
@@ -490,7 +490,7 @@ void save_config_file() {
 	}
 
 	// Other game options that could be changed at runtime
-	if (game.options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_UserDefined)
+	if (_GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_UserDefined)
 		cfg["graphics"]["render_at_screenres"] = String::FromFormat("%d", usetup.RenderAtScreenRes ? 1 : 0);
 	cfg["mouse"]["control_enabled"] = String::FromFormat("%d", usetup.mouse_ctrl_enabled ? 1 : 0);
 	cfg["mouse"]["speed"] = String::FromFormat("%f", Mouse::GetSpeed());

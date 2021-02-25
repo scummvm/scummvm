@@ -23,7 +23,7 @@
 #include "ags/engine/gui/newcontrol.h"
 #include "ags/engine/gui/guidialog.h"
 #include "ags/engine/gui/guidialoginternaldefs.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

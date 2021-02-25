@@ -20,20 +20,18 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/gui/guidialog.h"
-
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/engine/gui/cscidialog.h"
-//include <cctype> //isdigit()
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "engines/savestate.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -43,7 +41,7 @@ using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
 extern GameSetup usetup;
-extern GameSetupStruct game;
+
 
 namespace {
 
@@ -84,7 +82,7 @@ Bitmap *prepare_gui_screen(int x, int y, int width, int height, bool opaque) {
 	if (windowBuffer) {
 		windowBuffer = recycle_bitmap(windowBuffer, windowBuffer->GetColorDepth(), windowPosWidth, windowPosHeight, !opaque);
 	} else {
-		windowBuffer = BitmapHelper::CreateBitmap(windowPosWidth, windowPosHeight, game.GetColorDepth());
+		windowBuffer = BitmapHelper::CreateBitmap(windowPosWidth, windowPosHeight, _GP(game).GetColorDepth());
 		windowBuffer = ReplaceBitmapWithSupportedFormat(windowBuffer);
 	}
 	dialogDDB = recycle_ddb_bitmap(dialogDDB, windowBuffer, false, opaque);

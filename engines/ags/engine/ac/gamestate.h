@@ -148,7 +148,7 @@ struct GameState {
 	// no speech animation is supposed to be played at this time
 	int  dialog_options_highlight_color; // The colour used for highlighted (hovered over) text in dialog options
 	int32_t reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
-	// ** up to here is referenced in the script "game." object
+	// ** up to here is referenced in the script "_GP(game)." object
 	long  randseed;    // random seed
 	int   player_on_region;    // player's current region
 	int   screen_is_faded_out; // the screen is currently black

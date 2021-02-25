@@ -43,7 +43,7 @@
 #include "ags/engine/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

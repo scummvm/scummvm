@@ -27,7 +27,7 @@
 #include "ags/engine/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 #include "common/memstream.h"
 

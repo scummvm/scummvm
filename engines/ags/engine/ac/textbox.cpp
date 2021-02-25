@@ -20,21 +20,17 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/ac/textbox.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/engine/ac/string.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern GameSetupStruct game;
-
 
 // ** TEXT BOX FUNCTIONS
 
@@ -69,7 +65,7 @@ int TextBox_GetFont(GUITextBox *guit) {
 }
 
 void TextBox_SetFont(GUITextBox *guit, int fontnum) {
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!SetTextBoxFont: invalid font number.");
 
 	if (guit->Font != fontnum) {

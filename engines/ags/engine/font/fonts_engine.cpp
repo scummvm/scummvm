@@ -32,7 +32,7 @@
 namespace AGS3 {
 
 extern int our_eip;
-extern GameSetupStruct game;
+
 
 //=============================================================================
 // Engine-specific implementation split out of acfonts.cpp

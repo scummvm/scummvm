@@ -38,7 +38,7 @@
 #include "ags/lib/std/set.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/room.h"

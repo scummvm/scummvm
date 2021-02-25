@@ -57,7 +57,7 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -70,7 +70,7 @@ extern RoomStruct thisroom;
 extern int cur_mode, cur_cursor;
 extern ccInstance *gameinst;
 extern ScriptGUI *scrGui;
-extern GameSetupStruct game;
+
 extern CCGUIObject ccDynamicGUIObject;
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
@@ -443,7 +443,7 @@ void update_gui_zorder() {
 	int numdone = 0, b;
 
 	// for each GUI
-	for (int a = 0; a < game.numgui; a++) {
+	for (int a = 0; a < _GP(game).numgui; a++) {
 		// find the right place in the draw order array
 		int insertAt = numdone;
 		for (b = 0; b < numdone; b++) {
@@ -511,7 +511,7 @@ void update_gui_disabled_status() {
 
 	if (all_buttons_was != all_buttons_disabled) {
 		// GUIs might have been removed/added
-		for (int aa = 0; aa < game.numgui; aa++) {
+		for (int aa = 0; aa < _GP(game).numgui; aa++) {
 			guis[aa].OnControlPositionChanged();
 		}
 		guis_need_update = 1;
@@ -521,10 +521,10 @@ void update_gui_disabled_status() {
 
 
 int adjust_x_for_guis(int xx, int yy) {
-	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
 		return xx;
 	// If it's covered by a GUI, move it right a bit
-	for (int aa = 0; aa < game.numgui; aa++) {
+	for (int aa = 0; aa < _GP(game).numgui; aa++) {
 		if (!guis[aa].IsDisplayed())
 			continue;
 		if ((guis[aa].X > xx) || (guis[aa].Y > yy) || (guis[aa].Y + guis[aa].Height < yy))
@@ -544,10 +544,10 @@ int adjust_x_for_guis(int xx, int yy) {
 }
 
 int adjust_y_for_guis(int yy) {
-	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
 		return yy;
 	// If it's covered by a GUI, move it down a bit
-	for (int aa = 0; aa < game.numgui; aa++) {
+	for (int aa = 0; aa < _GP(game).numgui; aa++) {
 		if (!guis[aa].IsDisplayed())
 			continue;
 		if (guis[aa].Y > yy)
@@ -569,7 +569,7 @@ int adjust_y_for_guis(int yy) {
 void recreate_guibg_image(GUIMain *tehgui) {
 	int ifn = tehgui->ID;
 	delete guibg[ifn];
-	guibg[ifn] = BitmapHelper::CreateBitmap(tehgui->Width, tehgui->Height, game.GetColorDepth());
+	guibg[ifn] = BitmapHelper::CreateBitmap(tehgui->Width, tehgui->Height, _GP(game).GetColorDepth());
 	if (guibg[ifn] == nullptr)
 		quit("SetGUISize: internal error: unable to reallocate gui cache");
 	guibg[ifn] = ReplaceBitmapWithSupportedFormat(guibg[ifn]);
@@ -583,7 +583,7 @@ void recreate_guibg_image(GUIMain *tehgui) {
 extern int is_complete_overlay;
 
 int gui_get_interactable(int x, int y) {
-	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
 		return -1;
 	return GetGUIAt(x, y);
 }
@@ -591,12 +591,12 @@ int gui_get_interactable(int x, int y) {
 int gui_on_mouse_move() {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
-	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0));
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0));
 	else {
 		// Scan for mouse-y-pos GUIs, and pop one up if appropriate
 		// Also work out the mouse-over GUI while we're at it
 		int ll;
-		for (ll = 0; ll < game.numgui; ll++) {
+		for (ll = 0; ll < _GP(game).numgui; ll++) {
 			const int guin = play.gui_draw_order[ll];
 			if (guis[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
 
@@ -652,7 +652,7 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 			if (iit >= 0) {
 				evblocknum = iit;
 				play.used_inv_on = iit;
-				if (game.options[OPT_HANDLEINVCLICKS]) {
+				if (_GP(game).options[OPT_HANDLEINVCLICKS]) {
 					// Let the script handle the click
 					// LEFTINV is 5, RIGHTINV is 6
 					force_event(EV_TEXTSCRIPT, TS_MCLICK, wasbutdown + 4);

@@ -22,7 +22,7 @@
 
 #include "ags/music.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "audio/midiparser.h"
 
 namespace AGS {

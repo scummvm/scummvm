@@ -27,6 +27,7 @@
 #include "ags/shared/ac/dynobj/scriptaudioclip.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/alignedstream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -97,9 +98,9 @@ ScriptAudioClip *GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_mu
 	else
 		clip_name.Format("aSound%d", num);
 
-	for (size_t i = 0; i < game.audioClips.size(); ++i) {
-		if (clip_name.CompareNoCase(game.audioClips[i].scriptName) == 0)
-			return &game.audioClips[i];
+	for (size_t i = 0; i < _GP(game).audioClips.size(); ++i) {
+		if (clip_name.CompareNoCase(_GP(game).audioClips[i].scriptName) == 0)
+			return &_GP(game).audioClips[i];
 	}
 	return nullptr;
 }

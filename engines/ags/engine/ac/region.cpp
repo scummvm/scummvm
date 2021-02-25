@@ -31,10 +31,10 @@
 #include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/script/runtimescriptvalue.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -43,7 +43,7 @@ using namespace AGS::Shared;
 extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
 extern RoomStruct thisroom;
 extern RoomStatus *croom;
-extern GameSetupStruct game;
+
 extern COLOR_MAP maincoltable;
 extern color palette[256];
 extern CCRegion ccDynamicRegion;
@@ -128,7 +128,7 @@ void Region_RunInteraction(ScriptRegion *ssr, int mood) {
 //=============================================================================
 
 void generate_light_table() {
-	if (game.color_depth == 1 && color_map == nullptr) {
+	if (_GP(game).color_depth == 1 && color_map == nullptr) {
 		create_light_table(&maincoltable, palette, 0, 0, 0, nullptr);
 		color_map = &maincoltable;
 	}

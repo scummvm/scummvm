@@ -36,6 +36,7 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -44,7 +45,7 @@ using namespace AGS::Shared;
 extern RoomStruct thisroom;
 extern RoomStatus *croom;
 extern CharacterInfo *playerchar;
-extern GameSetupStruct game;
+
 
 
 void DisableHotspot(int hsnum) {
@@ -111,10 +112,10 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 		play.usedinv = cdata;
 	}
 
-	if ((game.options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK));
+	if ((_GP(game).options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK));
 	else if (play.auto_use_walkto_points == 0);
 	else if ((mood != MODE_WALK) && (play.check_interaction_only == 0))
-		MoveCharacterToHotspot(game.playercharacter, hotspothere);
+		MoveCharacterToHotspot(_GP(game).playercharacter, hotspothere);
 
 	// can't use the setevent functions because this ProcessClick is only
 	// executed once in a eventlist

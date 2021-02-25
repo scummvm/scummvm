@@ -28,14 +28,13 @@
 #include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameSetupStruct game;
 extern int gui_disabled_style;
 extern GameState play;
 extern CharacterExtras *charextra;
-extern SpriteCache spriteset;
 
 
 namespace AGS {
@@ -43,7 +42,7 @@ namespace Shared {
 
 int GUIInvWindow::GetCharacterId() const {
 	if (CharId < 0)
-		return game.playercharacter;
+		return _GP(game).playercharacter;
 
 	return CharId;
 }
@@ -56,7 +55,7 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	// backwards compatibility
 	play.inv_numinline = ColCount;
 	play.inv_numdisp = RowCount * ColCount;
-	play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 	// if the user changes top_inv_item, switch into backwards
 	// compatibiltiy mode
 	if (play.inv_top)
@@ -74,7 +73,7 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 
 	for (int item = TopItem; item < lastItem; ++item) {
 		// draw inv graphic
-		draw_gui_sprite(ds, game.invinfo[charextra[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
+		draw_gui_sprite(ds, _GP(game).invinfo[charextra[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
 		at_x += data_to_game_coord(ItemWidth);
 
 		// go to next row when appropriate

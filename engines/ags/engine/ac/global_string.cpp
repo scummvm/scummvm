@@ -52,7 +52,7 @@ void _sc_strcat(char *s1, const char *s2) {
 	VALIDATE_STRING(s2);
 	check_strlen(s1);
 	int mosttocopy = (MAXSTRLEN - strlen(s1)) - 1;
-	//  int numbf=game.iface[4].numbuttons;
+	//  int numbf=_GP(game).iface[4].numbuttons;
 	my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
 }
 

@@ -56,7 +56,7 @@
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/math.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #if AGS_SIMULATE_RIGHT_CLICK
 #include "ags/shared/ac/sys_events.h" // j for ags_iskeypressed
 #endif

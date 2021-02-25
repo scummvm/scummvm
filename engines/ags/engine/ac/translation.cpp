@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/gamesetup.h"
@@ -35,13 +34,14 @@
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/assetmanager.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
 extern GameSetup usetup;
-extern GameSetupStruct game;
+
 extern GameState play;
 extern char transFileName[MAX_PATH];
 
@@ -136,8 +136,8 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 			char wasgamename[100];
 			uidfrom = language_file->ReadInt32();
 			read_string_decrypt(language_file, wasgamename, sizeof(wasgamename));
-			if ((uidfrom != game.uniqueid) || (strcmp(wasgamename, game.gamename) != 0)) {
-				parse_error.Format("The translation file is not compatible with this game. The translation is designed for '%s'.",
+			if ((uidfrom != _GP(game).uniqueid) || (strcmp(wasgamename, _GP(game).gamename) != 0)) {
+				parse_error.Format("The translation file is not compatible with this _GP(game). The translation is designed for '%s'.",
 					wasgamename);
 				return false;
 			}
@@ -155,10 +155,10 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 			// text direction
 			if (temp == 1) {
 				play.text_align = kHAlignLeft;
-				game.options[OPT_RIGHTLEFTWRITE] = 0;
+				_GP(game).options[OPT_RIGHTLEFTWRITE] = 0;
 			} else if (temp == 2) {
 				play.text_align = kHAlignRight;
-				game.options[OPT_RIGHTLEFTWRITE] = 1;
+				_GP(game).options[OPT_RIGHTLEFTWRITE] = 1;
 			}
 		} else {
 			parse_error.Format("Unknown block type in translation file (%d).", blockType);

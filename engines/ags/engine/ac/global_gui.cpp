@@ -35,16 +35,17 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
+
 extern ScriptGUI *scrGui;
 
 int IsGUIOn(int guinum) {
-	if ((guinum < 0) || (guinum >= game.numgui))
+	if ((guinum < 0) || (guinum >= _GP(game).numgui))
 		quit("!IsGUIOn: invalid GUI number specified");
 	return (guis[guinum].IsDisplayed()) ? 1 : 0;
 }
@@ -52,7 +53,7 @@ int IsGUIOn(int guinum) {
 // This is an internal script function, and is undocumented.
 // It is used by the editor's automatic macro generation.
 int FindGUIID(const char *GUIName) {
-	for (int ii = 0; ii < game.numgui; ii++) {
+	for (int ii = 0; ii < _GP(game).numgui; ii++) {
 		if (guis[ii].Name.IsEmpty())
 			continue;
 		if (strcmp(guis[ii].Name, GUIName) == 0)
@@ -65,7 +66,7 @@ int FindGUIID(const char *GUIName) {
 }
 
 void InterfaceOn(int ifn) {
-	if ((ifn < 0) | (ifn >= game.numgui))
+	if ((ifn < 0) | (ifn >= _GP(game).numgui))
 		quit("!GUIOn: invalid GUI specified");
 
 	EndSkippingUntilCharStops();
@@ -85,7 +86,7 @@ void InterfaceOn(int ifn) {
 }
 
 void InterfaceOff(int ifn) {
-	if ((ifn < 0) | (ifn >= game.numgui)) quit("!GUIOff: invalid GUI specified");
+	if ((ifn < 0) | (ifn >= _GP(game).numgui)) quit("!GUIOff: invalid GUI specified");
 	if (!guis[ifn].IsVisible()) {
 		debug_script_log("GUIOff(%d) ignored (already off)", ifn);
 		return;
@@ -104,7 +105,7 @@ void InterfaceOff(int ifn) {
 }
 
 void SetGUIObjectEnabled(int guin, int objn, int enabled) {
-	if ((guin < 0) || (guin >= game.numgui))
+	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIObjectEnabled: invalid GUI number");
 	if ((objn < 0) || (objn >= guis[guin].GetControlCount()))
 		quit("!SetGUIObjectEnabled: invalid object number");
@@ -113,7 +114,7 @@ void SetGUIObjectEnabled(int guin, int objn, int enabled) {
 }
 
 void SetGUIObjectPosition(int guin, int objn, int xx, int yy) {
-	if ((guin < 0) || (guin >= game.numgui))
+	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIObjectPosition: invalid GUI number");
 	if ((objn < 0) || (objn >= guis[guin].GetControlCount()))
 		quit("!SetGUIObjectPosition: invalid object number");
@@ -122,14 +123,14 @@ void SetGUIObjectPosition(int guin, int objn, int xx, int yy) {
 }
 
 void SetGUIPosition(int ifn, int xx, int yy) {
-	if ((ifn < 0) || (ifn >= game.numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUIPosition: invalid GUI number");
 
 	GUI_SetPosition(&scrGui[ifn], xx, yy);
 }
 
 void SetGUIObjectSize(int ifn, int objn, int newwid, int newhit) {
-	if ((ifn < 0) || (ifn >= game.numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUIObjectSize: invalid GUI number");
 
 	if ((objn < 0) || (objn >= guis[ifn].GetControlCount()))
@@ -139,21 +140,21 @@ void SetGUIObjectSize(int ifn, int objn, int newwid, int newhit) {
 }
 
 void SetGUISize(int ifn, int widd, int hitt) {
-	if ((ifn < 0) || (ifn >= game.numgui))
+	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUISize: invalid GUI number");
 
 	GUI_SetSize(&scrGui[ifn], widd, hitt);
 }
 
 void SetGUIZOrder(int guin, int z) {
-	if ((guin < 0) || (guin >= game.numgui))
+	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIZOrder: invalid GUI number");
 
 	GUI_SetZOrder(&scrGui[guin], z);
 }
 
 void SetGUIClickable(int guin, int clickable) {
-	if ((guin < 0) || (guin >= game.numgui))
+	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIClickable: invalid GUI number");
 
 	GUI_SetClickable(&scrGui[guin], clickable);
@@ -161,14 +162,14 @@ void SetGUIClickable(int guin, int clickable) {
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
 void SetGUITransparency(int ifn, int trans) {
-	if ((ifn < 0) | (ifn >= game.numgui))
+	if ((ifn < 0) | (ifn >= _GP(game).numgui))
 		quit("!SetGUITransparency: invalid GUI number");
 
 	GUI_SetTransparency(&scrGui[ifn], trans);
 }
 
 void CentreGUI(int ifn) {
-	if ((ifn < 0) | (ifn >= game.numgui))
+	if ((ifn < 0) | (ifn >= _GP(game).numgui))
 		quit("!CentreGUI: invalid GUI number");
 
 	GUI_Centre(&scrGui[ifn]);
@@ -176,7 +177,7 @@ void CentreGUI(int ifn) {
 
 int GetTextWidth(const char *text, int fontnum) {
 	VALIDATE_STRING(text);
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetTextWidth: invalid font number.");
 
 	return game_to_data_coord(wgettextwidth_compensate(text, fontnum));
@@ -184,7 +185,7 @@ int GetTextWidth(const char *text, int fontnum) {
 
 int GetTextHeight(const char *text, int fontnum, int width) {
 	VALIDATE_STRING(text);
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetTextHeight: invalid font number.");
 
 	if (break_up_text_into_lines(text, Lines, data_to_game_coord(width), fontnum) == 0)
@@ -193,19 +194,19 @@ int GetTextHeight(const char *text, int fontnum, int width) {
 }
 
 int GetFontHeight(int fontnum) {
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetFontHeight: invalid font number.");
 	return game_to_data_coord(getfontheight_outlined(fontnum));
 }
 
 int GetFontLineSpacing(int fontnum) {
-	if ((fontnum < 0) || (fontnum >= game.numfonts))
+	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetFontLineSpacing: invalid font number.");
 	return game_to_data_coord(getfontspacing_outlined(fontnum));
 }
 
 void SetGUIBackgroundPic(int guin, int slotn) {
-	if ((guin < 0) | (guin >= game.numgui))
+	if ((guin < 0) | (guin >= _GP(game).numgui))
 		quit("!SetGUIBackgroundPic: invalid GUI number");
 
 	GUI_SetBackgroundGraphic(&scrGui[guin], slotn);
@@ -242,7 +243,7 @@ int GetGUIAt(int xx, int yy) {
 	data_to_game_coords(&xx, &yy);
 
 	int aa, ll;
-	for (ll = game.numgui - 1; ll >= 0; ll--) {
+	for (ll = _GP(game).numgui - 1; ll >= 0; ll--) {
 		aa = play.gui_draw_order[ll];
 		if (guis[aa].IsInteractableAt(xx, yy))
 			return aa;
@@ -251,16 +252,16 @@ int GetGUIAt(int xx, int yy) {
 }
 
 void SetTextWindowGUI(int guinum) {
-	if ((guinum < -1) | (guinum >= game.numgui))
+	if ((guinum < -1) | (guinum >= _GP(game).numgui))
 		quit("!SetTextWindowGUI: invalid GUI number");
 
 	if (guinum < 0);  // disable it
 	else if (!guis[guinum].IsTextWindow())
 		quit("!SetTextWindowGUI: specified GUI is not a text window");
 
-	if (play.speech_textwindow_gui == game.options[OPT_TWCUSTOM])
+	if (play.speech_textwindow_gui == _GP(game).options[OPT_TWCUSTOM])
 		play.speech_textwindow_gui = guinum;
-	game.options[OPT_TWCUSTOM] = guinum;
+	_GP(game).options[OPT_TWCUSTOM] = guinum;
 }
 
 } // namespace AGS3

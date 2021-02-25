@@ -79,7 +79,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -87,7 +87,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetup usetup;
-extern GameSetupStruct game;
+
 extern GameState play;
 extern RoomStatus *croom;
 extern RoomStatus troom;    // used for non-saveable rooms, eg. intro
@@ -103,7 +103,7 @@ extern int done_es_error;
 extern int our_eip;
 extern Bitmap *walkareabackup, *walkable_areas_temp;
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
-extern SpriteCache spriteset;
+
 extern int in_new_room, new_room_was;  // 1 in new room, 2 first time in new room, 3 loading saved game
 extern ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
 extern int in_leaves_screen;
@@ -226,9 +226,9 @@ const char *Room_GetMessages(int index) {
 
 // Makes sure that room background and walk-behind mask are matching room size
 // in game resolution coordinates; in other words makes graphics appropriate
-// for display in the game.
+// for display in the _GP(game).
 void convert_room_background_to_game_res() {
-	if (!game.AllowRelativeRes() || !thisroom.IsRelativeRes())
+	if (!_GP(game).AllowRelativeRes() || !thisroom.IsRelativeRes())
 		return;
 
 	int bkg_width = thisroom.Width;
@@ -304,7 +304,7 @@ void unload_old_room() {
 		croom->interactionVariableValues[i] = thisroom.LocalVariables[i].Value;
 
 	// wipe the character cache when we change rooms
-	for (ff = 0; ff < game.numcharacters; ff++) {
+	for (ff = 0; ff < _GP(game).numcharacters; ff++) {
 		if (charcache[ff].inUse) {
 			delete charcache[ff].image;
 			charcache[ff].image = nullptr;
@@ -342,7 +342,7 @@ void unload_old_room() {
 	// clear the actsps buffers to save memory, since the
 	// objects/characters involved probably aren't on the
 	// new screen. this also ensures all cached data is flushed
-	for (ff = 0; ff < MAX_ROOM_OBJECTS + game.numcharacters; ff++) {
+	for (ff = 0; ff < MAX_ROOM_OBJECTS + _GP(game).numcharacters; ff++) {
 		delete actsps[ff];
 		actsps[ff] = nullptr;
 
@@ -362,7 +362,7 @@ void unload_old_room() {
 
 	// if Hide Player Character was ticked, restore it to visible
 	if (play.temporarily_turned_off_character >= 0) {
-		game.chars[play.temporarily_turned_off_character].on = 1;
+		_GP(game).chars[play.temporarily_turned_off_character].on = 1;
 		play.temporarily_turned_off_character = -1;
 	}
 
@@ -371,10 +371,10 @@ void unload_old_room() {
 // Convert all room objects to the data resolution (only if it's different from game resolution).
 // TODO: merge this into UpdateRoomData? or this is required for engine only?
 void convert_room_coordinates_to_data_res(RoomStruct *rstruc) {
-	if (game.GetDataUpscaleMult() == 1)
+	if (_GP(game).GetDataUpscaleMult() == 1)
 		return;
 
-	const int mul = game.GetDataUpscaleMult();
+	const int mul = _GP(game).GetDataUpscaleMult();
 	for (size_t i = 0; i < rstruc->ObjectCount; ++i) {
 		rstruc->Objects[i].X /= mul;
 		rstruc->Objects[i].Y /= mul;
@@ -404,16 +404,16 @@ extern int convert_16bit_bgr;
 
 void update_letterbox_mode() {
 	const Size real_room_sz = Size(data_to_game_coord(thisroom.Width), data_to_game_coord(thisroom.Height));
-	const Rect game_frame = RectWH(game.GetGameRes());
+	const Rect game_frame = RectWH(_GP(game).GetGameRes());
 	Rect new_main_view = game_frame;
 	// In the original engine the letterbox feature only allowed viewports of
 	// either 200 or 240 (400 and 480) pixels, if the room height was equal or greater than 200 (400).
 	// Also, the UI viewport should be matching room viewport in that case.
 	// NOTE: if "OPT_LETTERBOX" is false, altsize.Height = size.Height always.
 	const int viewport_height =
-	    real_room_sz.Height < game.GetLetterboxSize().Height ? real_room_sz.Height :
-	    (real_room_sz.Height >= game.GetLetterboxSize().Height && real_room_sz.Height < game.GetGameRes().Height) ? game.GetLetterboxSize().Height :
-	    game.GetGameRes().Height;
+	    real_room_sz.Height < _GP(game).GetLetterboxSize().Height ? real_room_sz.Height :
+	    (real_room_sz.Height >= _GP(game).GetLetterboxSize().Height && real_room_sz.Height < _GP(game).GetGameRes().Height) ? _GP(game).GetLetterboxSize().Height :
+	    _GP(game).GetGameRes().Height;
 	new_main_view.SetHeight(viewport_height);
 
 	play.SetMainViewport(CenterInRect(game_frame, new_main_view));
@@ -477,11 +477,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// load the room from disk
 	our_eip = 200;
 	thisroom.GameID = NO_GAME_ID_IN_ROOM_FILE;
-	load_room(room_filename, &thisroom, game.IsLegacyHiRes(), game.SpriteInfos);
+	load_room(room_filename, &thisroom, _GP(game).IsLegacyHiRes(), _GP(game).SpriteInfos);
 
 	if ((thisroom.GameID != NO_GAME_ID_IN_ROOM_FILE) &&
-	        (thisroom.GameID != game.uniqueid)) {
-		quitprintf("!Unable to load '%s'. This room file is assigned to a different game.", room_filename.GetCStr());
+	        (thisroom.GameID != _GP(game).uniqueid)) {
+		quitprintf("!Unable to load '%s'. This room file is assigned to a different _GP(game).", room_filename.GetCStr());
 	}
 
 	convert_room_coordinates_to_data_res(&thisroom);
@@ -501,7 +501,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	// do the palette
 	for (cc = 0; cc < 256; cc++) {
-		if (game.paluses[cc] == PAL_BACKGROUND)
+		if (_GP(game).paluses[cc] == PAL_BACKGROUND)
 			palette[cc] = thisroom.Palette[cc];
 		else {
 			// copy the gamewide colours into the room palette
@@ -519,7 +519,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	our_eip = 202;
 	// Update game viewports
-	if (game.IsLegacyLetterbox())
+	if (_GP(game).IsLegacyLetterbox())
 		update_letterbox_mode();
 	SetMouseBounds(0, 0, 0, 0);
 
@@ -542,7 +542,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	redo_walkable_areas();
 	update_polled_stuff_if_runtime();
 
-	set_color_depth(game.GetColorDepth());
+	set_color_depth(_GP(game).GetColorDepth());
 	convert_room_background_to_game_res();
 	recache_walk_behinds();
 	update_polled_stuff_if_runtime();
@@ -702,22 +702,22 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 		// if a following character is still waiting to come into the
 		// previous room, force it out so that the timer resets
-		for (int ff = 0; ff < game.numcharacters; ff++) {
-			if ((game.chars[ff].following >= 0) && (game.chars[ff].room < 0)) {
-				if ((game.chars[ff].following == game.playercharacter) &&
+		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
+			if ((_GP(game).chars[ff].following >= 0) && (_GP(game).chars[ff].room < 0)) {
+				if ((_GP(game).chars[ff].following == _GP(game).playercharacter) &&
 				        (forchar->prevroom == newnum))
 					// the player went back to the previous room, so make sure
 					// the following character is still there
-					game.chars[ff].room = newnum;
+					_GP(game).chars[ff].room = newnum;
 				else
-					game.chars[ff].room = game.chars[game.chars[ff].following].room;
+					_GP(game).chars[ff].room = _GP(game).chars[_GP(game).chars[ff].following].room;
 			}
 		}
 
 		forchar->prevroom = forchar->room;
 		forchar->room = newnum;
 		// only stop moving if it's a new room, not a restore game
-		for (cc = 0; cc < game.numcharacters; cc++)
+		for (cc = 0; cc < _GP(game).numcharacters; cc++)
 			StopMoving(cc);
 
 	}
@@ -865,7 +865,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			// remember which character we turned off, in case they
 			// use SetPlyaerChracter within this room (so we re-enable
 			// the correct character when leaving the room)
-			play.temporarily_turned_off_character = game.playercharacter;
+			play.temporarily_turned_off_character = _GP(game).playercharacter;
 		}
 		if (forchar->flags & CHF_FIXVIEW) ;
 		else if (thisroom.Options.PlayerView == 0) forchar->view = forchar->defview;
@@ -901,7 +901,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// trash any input which they might have done while it was loading
 	ags_clear_input_buffer();
 	// no fade in, so set the palette immediately in case of 256-col sprites
-	if (game.color_depth > 1)
+	if (_GP(game).color_depth > 1)
 		setpal();
 
 	our_eip = 220;
@@ -909,7 +909,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	debug_script_log("Now in room %d", displayed_room);
 	guis_need_update = 1;
 	pl_run_plugin_hooks(AGSE_ENTERROOM, displayed_room);
-	//  MoveToWalkableArea(game.playercharacter);
+	//  MoveToWalkableArea(_GP(game).playercharacter);
 	//  MSS_CHECK_ALL_BLOCKS;
 }
 
@@ -936,7 +936,7 @@ void new_room(int newnum, CharacterInfo *forchar) {
 	in_leaves_screen = -1;
 
 	if ((playerchar->following >= 0) &&
-	        (game.chars[playerchar->following].room != newnum)) {
+	        (_GP(game).chars[playerchar->following].room != newnum)) {
 		// the player character is following another character,
 		// who is not in the new room. therefore, abort the follow
 		playerchar->following = -1;
@@ -948,10 +948,10 @@ void new_room(int newnum, CharacterInfo *forchar) {
 
 	if (_G(psp_clear_cache_on_room_change)) {
 		// Delete all cached sprites
-		spriteset.DisposeAll();
+		_GP(spriteset).DisposeAll();
 
 		// Delete all gui background images
-		for (int i = 0; i < game.numgui; i++) {
+		for (int i = 0; i < _GP(game).numgui; i++) {
 			delete guibg[i];
 			guibg[i] = nullptr;
 
@@ -992,7 +992,7 @@ void check_new_room() {
 		evh.data1 = EVB_ROOM;
 		evh.data2 = 0;
 		evh.data3 = 5;
-		evh.player = game.playercharacter;
+		evh.player = _GP(game).playercharacter;
 		// make sure that any script calls don't re-call enters screen
 		int newroom_was = in_new_room;
 		in_new_room = 0;
@@ -1035,7 +1035,7 @@ void on_background_frame_change() {
 
 	// hi-colour, update the palette. It won't have an immediate effect
 	// but will be drawn properly when the screen fades in
-	if (game.color_depth > 1)
+	if (_GP(game).color_depth > 1)
 		setpal();
 
 	if (in_enters_screen)
@@ -1047,7 +1047,7 @@ void on_background_frame_change() {
 
 	// 256-colours, tell it to update the palette (will actually be done as
 	// close as possible to the screen update to prevent flicker problem)
-	if (game.color_depth == 1)
+	if (_GP(game).color_depth == 1)
 		bg_just_changed = 1;
 }
 
@@ -1058,24 +1058,24 @@ void croom_ptr_clear() {
 
 
 AGS_INLINE int room_to_mask_coord(int coord) {
-	return coord * game.GetDataUpscaleMult() / thisroom.MaskResolution;
+	return coord * _GP(game).GetDataUpscaleMult() / thisroom.MaskResolution;
 }
 
 AGS_INLINE int mask_to_room_coord(int coord) {
-	return coord * thisroom.MaskResolution / game.GetDataUpscaleMult();
+	return coord * thisroom.MaskResolution / _GP(game).GetDataUpscaleMult();
 }
 
 void convert_move_path_to_room_resolution(MoveList *ml) {
-	if ((game.options[OPT_WALKSPEEDABSOLUTE] != 0) && game.GetDataUpscaleMult() > 1) {
+	if ((_GP(game).options[OPT_WALKSPEEDABSOLUTE] != 0) && _GP(game).GetDataUpscaleMult() > 1) {
 		// Speeds are independent from MaskResolution
 		for (int i = 0; i < ml->numstage; i++) {
 			// ...so they are not multiplied by MaskResolution factor when converted to room coords
-			ml->xpermove[i] = ml->xpermove[i] / game.GetDataUpscaleMult();
-			ml->ypermove[i] = ml->ypermove[i] / game.GetDataUpscaleMult();
+			ml->xpermove[i] = ml->xpermove[i] / _GP(game).GetDataUpscaleMult();
+			ml->ypermove[i] = ml->ypermove[i] / _GP(game).GetDataUpscaleMult();
 		}
 	}
 
-	if (thisroom.MaskResolution == game.GetDataUpscaleMult())
+	if (thisroom.MaskResolution == _GP(game).GetDataUpscaleMult())
 		return;
 
 	ml->fromx = mask_to_room_coord(ml->fromx);
@@ -1089,7 +1089,7 @@ void convert_move_path_to_room_resolution(MoveList *ml) {
 		ml->pos[i] = ((int)highPart << 16) | (lowPart & 0x0000ffff);
 	}
 
-	if (game.options[OPT_WALKSPEEDABSOLUTE] == 0) {
+	if (_GP(game).options[OPT_WALKSPEEDABSOLUTE] == 0) {
 		// Speeds are scaling with MaskResolution
 		for (int i = 0; i < ml->numstage; i++) {
 			ml->xpermove[i] = mask_to_room_coord(ml->xpermove[i]);

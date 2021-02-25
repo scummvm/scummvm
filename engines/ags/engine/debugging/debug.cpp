@@ -44,7 +44,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/textstreamwriter.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/events.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
@@ -60,7 +60,7 @@ extern char check_dynamic_sprites_at_exit;
 extern int displayed_room;
 extern RoomStruct thisroom;
 extern char pexbuf[STD_BUFFER_SIZE];
-extern GameSetupStruct game;
+
 
 #if AGS_PLATFORM_OS_WINDOWS
 
@@ -245,7 +245,7 @@ void apply_debug_config(const ConfigTree &cfg) {
 		});
 
 	// Init game console if the game was compiled in Debug mode
-	if (game.options[OPT_DEBUGMODE] != 0) {
+	if (_GP(game).options[OPT_DEBUGMODE] != 0) {
 		apply_log_config(cfg, OutputGameConsoleID,
 			/* defaults */
 			true, {
@@ -258,7 +258,7 @@ void apply_debug_config(const ConfigTree &cfg) {
 
 	// If the game was compiled in Debug mode *and* there's no regular file log,
 	// then open "warnings.log" for printing script warnings.
-	if (game.options[OPT_DEBUGMODE] != 0 && !DebugLogFile) {
+	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !DebugLogFile) {
 		auto dbgout = create_log_output(OutputFileID, "warnings.log", LogFile::kLogFile_OverwriteAtFirstMessage);
 		if (dbgout) {
 			dbgout->SetGroupFilter(kDbgGroup_Game, kDbgMsg_Warn);

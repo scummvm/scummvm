@@ -38,6 +38,7 @@
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/font/fonts.h"
+#include "ags/globals.h"
 #include "common/fs.h"
 
 namespace AGS3 {
@@ -77,7 +78,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err) {
 	case kMGFErr_InvalidPropertyValues:
 		return "Errors encountered when reading custom properties.";
 	case kMGFErr_NoGlobalScript:
-		return "No global script in game.";
+		return "No global script in _GP(game).";
 	case kMGFErr_CreateGlobalScriptFailed:
 		return "Failed to load global script.";
 	case kMGFErr_CreateDialogScriptFailed:
@@ -214,10 +215,10 @@ void ReadViewStruct272_Aligned(std::vector<ViewStruct272> &oldv, Stream *in, siz
 }
 
 void ReadViews(GameSetupStruct &game, ViewStruct *&views, Stream *in, GameDataVersion data_ver) {
-	int count = game.numviews;
+	int count = _GP(game).numviews;
 	views = (ViewStruct *)calloc(sizeof(ViewStruct) * count, 1);
 	if (data_ver > kGameVersion_272) { // 3.x views
-		for (int i = 0; i < game.numviews; ++i) {
+		for (int i = 0; i < _GP(game).numviews; ++i) {
 			views[i].ReadFromFile(in);
 		}
 	} else { // 2.x views
@@ -271,7 +272,7 @@ void ReadDialogs(DialogTopic *&dialog,
 	// TODO: investigate this: these strings were read much simplier in the editor, see code:
 	/*
 		char stringbuffer[1000];
-		for (bb=0;bb<thisgame.numdlgmessage;bb++) {
+		for (bb=0;bb<this_GP(game).numdlgmessage;bb++) {
 			if ((filever >= 26) && (encrypted))
 				read_string_decrypt(iii, stringbuffer);
 			else
@@ -405,16 +406,16 @@ void BuildAudioClipArray(const std::vector<String> &assets, std::vector<ScriptAu
 
 void ApplySpriteData(GameSetupStruct &game, const LoadedGameEntities &ents, GameDataVersion data_ver) {
 	// Apply sprite flags read from original format (sequential array)
-	spriteset.EnlargeTo(ents.SpriteCount - 1);
+	_GP(spriteset).EnlargeTo(ents.SpriteCount - 1);
 	for (size_t i = 0; i < ents.SpriteCount; ++i) {
-		game.SpriteInfos[i].Flags = ents.SpriteFlags[i];
+		_GP(game).SpriteInfos[i].Flags = ents.SpriteFlags[i];
 	}
 
 	// Promote sprite resolutions and mark legacy resolution setting
 	if (data_ver < kGameVersion_350) {
 		for (size_t i = 0; i < ents.SpriteCount; ++i) {
-			SpriteInfo &info = game.SpriteInfos[i];
-			if (game.IsLegacyHiRes() == info.IsLegacyHiRes())
+			SpriteInfo &info = _GP(game).SpriteInfos[i];
+			if (_GP(game).IsLegacyHiRes() == info.IsLegacyHiRes())
 				info.Flags &= ~(SPF_HIRES | SPF_VAR_RESOLUTION);
 			else
 				info.Flags |= SPF_VAR_RESOLUTION;
@@ -424,10 +425,10 @@ void ApplySpriteData(GameSetupStruct &game, const LoadedGameEntities &ents, Game
 
 void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 	if (data_ver < kGameVersion_350) {
-		for (int i = 0; i < game.numfonts; ++i) {
-			FontInfo &finfo = game.fonts[i];
+		for (int i = 0; i < _GP(game).numfonts; ++i) {
+			FontInfo &finfo = _GP(game).fonts[i];
 			// If the game is hi-res but font is designed for low-res, then scale it up
-			if (game.IsLegacyHiRes() && game.options[OPT_HIRES_FONTS] == 0) {
+			if (_GP(game).IsLegacyHiRes() && _GP(game).options[OPT_HIRES_FONTS] == 0) {
 				finfo.SizeMultiplier = HIRES_COORD_MULTIPLIER;
 			} else {
 				finfo.SizeMultiplier = 1;
@@ -435,8 +436,8 @@ void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 		}
 	}
 	if (data_ver < kGameVersion_351) {
-		for (size_t font = 0; font < (size_t)game.numfonts; font++) {
-			FontInfo &finfo = game.fonts[font];
+		for (size_t font = 0; font < (size_t)_GP(game).numfonts; font++) {
+			FontInfo &finfo = _GP(game).fonts[font];
 			// Thickness that corresponds to 1 game pixel
 			finfo.AutoOutlineThickness =
 				// if it's a scaled up bitmap font, move the outline out more
@@ -514,19 +515,19 @@ void UpgradeAudio(GameSetupStruct &game, GameDataVersion data_ver) {
 	BuildAudioClipArray(assets, audioclips);
 
 	// Copy gathered data over to game
-	game.audioClipTypes = audiocliptypes;
-	game.audioClips = audioclips;
+	_GP(game).audioClipTypes = audiocliptypes;
+	_GP(game).audioClips = audioclips;
 
 	// Setup sound clip played on score event
-	game.scoreClipID = -1;
+	_GP(game).scoreClipID = -1;
 }
 
 // Convert character data to the current version
 void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 	// TODO: this was done to simplify code transition; ideally we should be
 	// working with GameSetupStruct's getters and setters here
-	CharacterInfo *&chars = game.chars;
-	const int numcharacters = game.numcharacters;
+	CharacterInfo *&chars = _GP(game).chars;
+	const int numcharacters = _GP(game).numcharacters;
 
 	// Fixup charakter script names for 2.x (EGO -> cEgo)
 	if (data_ver <= kGameVersion_272) {
@@ -542,7 +543,7 @@ void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 	// Fix character walk speed for < 3.1.1
 	if (data_ver <= kGameVersion_310) {
 		for (int i = 0; i < numcharacters; i++) {
-			if (game.options[OPT_ANTIGLIDE])
+			if (_GP(game).options[OPT_ANTIGLIDE])
 				chars[i].flags |= CHF_ANTIGLIDE;
 		}
 	}
@@ -558,9 +559,9 @@ void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 void UpgradeMouseCursors(GameSetupStruct &game, GameDataVersion data_ver) {
 	if (data_ver <= kGameVersion_272) {
 		// Change cursor.view from 0 to -1 for non-animating cursors.
-		for (int i = 0; i < game.numcursors; ++i) {
-			if (game.mcurs[i].view == 0)
-				game.mcurs[i].view = -1;
+		for (int i = 0; i < _GP(game).numcursors; ++i) {
+			if (_GP(game).mcurs[i].view == 0)
+				_GP(game).mcurs[i].view = -1;
 		}
 	}
 }
@@ -568,13 +569,13 @@ void UpgradeMouseCursors(GameSetupStruct &game, GameDataVersion data_ver) {
 // Adjusts score clip id, depending on game data version
 void AdjustScoreSound(GameSetupStruct &game, GameDataVersion data_ver) {
 	if (data_ver < kGameVersion_320) {
-		game.scoreClipID = -1;
-		if (game.options[OPT_SCORESOUND] > 0) {
-			ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, game.options[OPT_SCORESOUND]);
+		_GP(game).scoreClipID = -1;
+		if (_GP(game).options[OPT_SCORESOUND] > 0) {
+			ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, _GP(game).options[OPT_SCORESOUND]);
 			if (clip)
-				game.scoreClipID = clip->id;
+				_GP(game).scoreClipID = clip->id;
 			else
-				game.scoreClipID = -1;
+				_GP(game).scoreClipID = -1;
 		}
 	}
 }
@@ -584,8 +585,8 @@ void SetDefaultGlmsg(GameSetupStruct &game, int msgnum, const char *val) {
 	// TODO: find out why the index should be lowered by 500
 	// (or rather if we may pass correct index right away)
 	msgnum -= 500;
-	if (game.messages[msgnum] == nullptr)
-		game.messages[msgnum] = ags_strdup(val);
+	if (_GP(game).messages[msgnum] == nullptr)
+		_GP(game).messages[msgnum] = ags_strdup(val);
 }
 
 // Sets up default global messages (these are used mainly in older games)
@@ -610,19 +611,19 @@ void FixupSaveDirectory(GameSetupStruct &game) {
 #ifdef DEPRECATED
 	// If the save game folder was not specified by game author, create one of
 	// the game name, game GUID, or uniqueid, as a last resort
-	if (!game.saveGameFolderName[0]) {
-		if (game.gamename[0])
-			snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", game.gamename);
-		else if (game.guid[0])
-			snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", game.guid);
+	if (!_GP(game).saveGameFolderName[0]) {
+		if (_GP(game).gamename[0])
+			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", _GP(game).gamename);
+		else if (_GP(game).guid[0])
+			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", _GP(game).guid);
 		else
-			snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "AGS-Game-%d", game.uniqueid);
+			snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "AGS-Game-%d", _GP(game).uniqueid);
 	}
 	// Lastly, fixup folder name by removing any illegal characters
-	String s = Path::FixupSharedFilename(game.saveGameFolderName);
-	snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", s.GetCStr());
+	String s = Path::FixupSharedFilename(_GP(game).saveGameFolderName);
+	snprintf(_GP(game).saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", s.GetCStr());
 #else
-	strcpy(game.saveGameFolderName, SAVE_FOLDER_PREFIX);
+	strcpy(_GP(game).saveGameFolderName, SAVE_FOLDER_PREFIX);
 #endif
 }
 
@@ -649,25 +650,25 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 
 	{
 		AlignedStream align_s(in, Shared::kAligned_Read);
-		game.GameSetupStructBase::ReadFromFile(&align_s);
+		_GP(game).GameSetupStructBase::ReadFromFile(&align_s);
 	}
 
-	if (game.GetGameRes().IsNull())
+	if (_GP(game).GetGameRes().IsNull())
 		return new MainGameFileError(kMGFErr_InvalidNativeResolution);
 
-	game.read_savegame_info(in, data_ver);
-	game.read_font_infos(in, data_ver);
+	_GP(game).read_savegame_info(in, data_ver);
+	_GP(game).read_font_infos(in, data_ver);
 	HGameFileError err = ReadSpriteFlags(ents, in, data_ver);
 	if (!err)
 		return err;
-	game.ReadInvInfo_Aligned(in);
-	err = game.read_cursors(in, data_ver);
+	_GP(game).ReadInvInfo_Aligned(in);
+	err = _GP(game).read_cursors(in, data_ver);
 	if (!err)
 		return err;
-	game.read_interaction_scripts(in, data_ver);
-	game.read_words_dictionary(in);
+	_GP(game).read_interaction_scripts(in, data_ver);
+	_GP(game).read_words_dictionary(in);
 
-	if (!game.load_compiled_script)
+	if (!_GP(game).load_compiled_script)
 		return new MainGameFileError(kMGFErr_NoGlobalScript);
 	ents.GlobalScript.reset(ccScript::CreateFromStream(in));
 	if (!ents.GlobalScript)
@@ -687,16 +688,16 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 		in->Seek(count * 0x204);
 	}
 
-	game.read_characters(in, data_ver);
-	game.read_lipsync(in, data_ver);
-	game.read_messages(in, data_ver);
+	_GP(game).read_characters(in, data_ver);
+	_GP(game).read_lipsync(in, data_ver);
+	_GP(game).read_messages(in, data_ver);
 
 	ReadDialogs(ents.Dialogs, ents.OldDialogScripts, ents.OldDialogSources, ents.OldSpeechLines,
-		in, data_ver, game.numdialog);
+		in, data_ver, _GP(game).numdialog);
 	HError err2 = GUI::ReadGUI(guis, in);
 	if (!err2)
 		return new MainGameFileError(kMGFErr_GameEntityFailed, err2);
-	game.numgui = guis.size();
+	_GP(game).numgui = guis.size();
 
 	if (data_ver >= kGameVersion_260) {
 		err = ReadPlugins(ents.PluginInfos, in);
@@ -704,13 +705,13 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 			return err;
 	}
 
-	err = game.read_customprops(in, data_ver);
+	err = _GP(game).read_customprops(in, data_ver);
 	if (!err)
 		return err;
-	err = game.read_audio(in, data_ver);
+	err = _GP(game).read_audio(in, data_ver);
 	if (!err)
 		return err;
-	game.read_room_names(in, data_ver);
+	_GP(game).read_room_names(in, data_ver);
 	return err;
 }
 
@@ -726,18 +727,18 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 	// Global talking animation speed
 	if (data_ver < kGameVersion_312) {
 		// Fix animation speed for old formats
-		game.options[OPT_GLOBALTALKANIMSPD] = 5;
+		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 5;
 	} else if (data_ver < kGameVersion_330) {
 		// Convert game option for 3.1.2 - 3.2 games
-		game.options[OPT_GLOBALTALKANIMSPD] = game.options[OPT_GLOBALTALKANIMSPD] != 0 ? 5 : (-5 - 1);
+		_GP(game).options[OPT_GLOBALTALKANIMSPD] = _GP(game).options[OPT_GLOBALTALKANIMSPD] != 0 ? 5 : (-5 - 1);
 	}
 	// Old dialog options API for pre-3.4.0.2 games
 	if (data_ver < kGameVersion_340_2) {
-		game.options[OPT_DIALOGOPTIONSAPI] = -1;
+		_GP(game).options[OPT_DIALOGOPTIONSAPI] = -1;
 	}
 	// Relative asset resolution in pre-3.5.0.8 (always enabled)
 	if (data_ver < kGameVersion_350) {
-		game.options[OPT_RELATIVEASSETRES] = 1;
+		_GP(game).options[OPT_RELATIVEASSETRES] = 1;
 	}
 	FixupSaveDirectory(game);
 	return HGameFileError::None();

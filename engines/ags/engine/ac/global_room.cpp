@@ -38,13 +38,14 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/util/math.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace Shared;
 
 extern GameState play;
-extern GameSetupStruct game;
+
 extern RoomStatus *croom;
 extern CharacterInfo *playerchar;
 extern int displayed_room;
@@ -130,7 +131,7 @@ void NewRoom(int nrnum) {
 			// nasty hack - make sure it doesn't move the character
 			// to a walkable area
 			mls[playerchar->walking].direct = 1;
-			StopMoving(game.playercharacter);
+			StopMoving(_GP(game).playercharacter);
 		}
 	} else if (in_graph_script)
 		gs_to_newroom = nrnum;
@@ -144,10 +145,10 @@ void NewRoomEx(int nrnum, int newx, int newy) {
 void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
 	if (!is_valid_character(charid))
 		quit("!NewRoomNPC: invalid character");
-	if (charid == game.playercharacter)
+	if (charid == _GP(game).playercharacter)
 		quit("!NewRoomNPC: use NewRoomEx with the player character");
 
-	Character_ChangeRoom(&game.chars[charid], nrnum, newx, newy);
+	Character_ChangeRoom(&_GP(game).chars[charid], nrnum, newx, newy);
 }
 
 void ResetRoom(int nrnum) {

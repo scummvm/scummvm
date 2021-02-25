@@ -22,7 +22,7 @@
 
 #include "ags/events.h"
 #include "common/system.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 extern char check_dynamic_sprites_at_exit;

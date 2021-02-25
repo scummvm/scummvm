@@ -25,13 +25,7 @@
 //
 
 #include "ags/shared/core/platform.h"
-#include "ags/engine/globals.h"
-
-//include <errno.h>
-#if AGS_PLATFORM_OS_WINDOWS
-//include <process.h>  // _spawnl
-#endif
-
+#include "ags/globals.h"
 #include "ags/engine/main/mainheader.h"
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
@@ -80,6 +74,7 @@
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/path.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 #include "common/fs.h"
 
@@ -91,13 +86,11 @@ using namespace AGS::Engine;
 extern char check_dynamic_sprites_at_exit;
 extern int our_eip;
 extern GameSetup usetup;
-extern GameSetupStruct game;
 extern int proper_exit;
 extern char pexbuf[STD_BUFFER_SIZE];
-extern SpriteCache spriteset;
+
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
-extern ViewStruct *views;
 extern int displayed_room;
 extern int eip_guinum;
 extern int eip_guiobj;
@@ -111,7 +104,7 @@ extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
-
+extern ViewStruct *views;
 ResourcePaths ResPaths;
 
 t_engine_pre_init_callback engine_pre_init_callback = nullptr;
@@ -367,7 +360,7 @@ void engine_locate_speech_pak() {
 
 void engine_locate_audio_pak() {
 	play.separate_music_lib = 0;
-	String music_file = game.GetAudioVOXName();
+	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (AssetManager::SetDataFile(music_filepath) == kAssetNoError) {
@@ -490,8 +483,8 @@ int engine_check_register_game() {
 
 void engine_init_title() {
 	our_eip = -91;
-	::AGS::g_vm->set_window_title(game.gamename);
-	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename);
+	::AGS::g_vm->set_window_title(_GP(game).gamename);
+	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", _GP(game).gamename);
 }
 
 void engine_init_directories() {
@@ -530,7 +523,7 @@ void engine_init_directories() {
 	// if there is no custom path, or if custom path failed, use default system path
 	if (!res) {
 		char newDirBuffer[MAX_PATH];
-		sprintf(newDirBuffer, "%s/%s", UserSavedgamesRootToken, game.saveGameFolderName);
+		sprintf(newDirBuffer, "%s/%s", UserSavedgamesRootToken, _GP(game).saveGameFolderName);
 		SetSaveGameDirectoryPath(newDirBuffer);
 	}
 }
@@ -595,7 +588,7 @@ int engine_check_disk_space() {
 
 int engine_check_font_was_loaded() {
 	if (!font_first_renderer_loaded()) {
-		platform->DisplayAlert("No game fonts found. At least one font is required to run the game.");
+		platform->DisplayAlert("No game fonts found. At least one font is required to run the _GP(game).");
 		proper_exit = 1;
 		return EXIT_ERROR;
 	}
@@ -615,7 +608,7 @@ void show_preload() {
 			gfxDriver->GetMemoryBackBuffer()->Clear();
 
 		const Rect &view = play.GetMainViewport();
-		Bitmap *tsc = BitmapHelper::CreateBitmapCopy(splashsc, game.GetColorDepth());
+		Bitmap *tsc = BitmapHelper::CreateBitmapCopy(splashsc, _GP(game).GetColorDepth());
 		if (!gfxDriver->HasAcceleratedTransform() && view.GetSize() != tsc->GetSize()) {
 			Bitmap *stretched = new Bitmap(view.GetWidth(), view.GetHeight(), tsc->GetColorDepth());
 			stretched->StretchBlt(tsc, RectWH(0, 0, view.GetWidth(), view.GetHeight()));
@@ -637,7 +630,7 @@ void show_preload() {
 int engine_init_sprites() {
 	Debug::Printf(kDbgMsg_Info, "Initialize sprites");
 
-	HError err = spriteset.InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
+	HError err = _GP(spriteset).InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
 	if (!err) {
 		platform->FinishedUsingGraphicsMode();
 		allegro_exit();
@@ -657,26 +650,26 @@ void engine_init_game_settings() {
 
 	int ee;
 
-	for (ee = 0; ee < MAX_ROOM_OBJECTS + game.numcharacters; ee++)
+	for (ee = 0; ee < MAX_ROOM_OBJECTS + _GP(game).numcharacters; ee++)
 		actsps[ee] = nullptr;
 
 	for (ee = 0; ee < 256; ee++) {
-		if (game.paluses[ee] != PAL_BACKGROUND)
-			palette[ee] = game.defpal[ee];
+		if (_GP(game).paluses[ee] != PAL_BACKGROUND)
+			palette[ee] = _GP(game).defpal[ee];
 	}
 
-	for (ee = 0; ee < game.numcursors; ee++) {
+	for (ee = 0; ee < _GP(game).numcursors; ee++) {
 		// The cursor graphics are assigned to _G(mousecurs)[] and so cannot
 		// be removed from memory
-		if (game.mcurs[ee].pic >= 0)
-			spriteset.Precache(game.mcurs[ee].pic);
+		if (_GP(game).mcurs[ee].pic >= 0)
+			_GP(spriteset).Precache(_GP(game).mcurs[ee].pic);
 
 		// just in case they typed an invalid view number in the editor
-		if (game.mcurs[ee].view >= game.numviews)
-			game.mcurs[ee].view = -1;
+		if (_GP(game).mcurs[ee].view >= _GP(game).numviews)
+			_GP(game).mcurs[ee].view = -1;
 
-		if (game.mcurs[ee].view >= 0)
-			precache_view(game.mcurs[ee].view);
+		if (_GP(game).mcurs[ee].view >= 0)
+			precache_view(_GP(game).mcurs[ee].view);
 	}
 	// may as well preload the character gfx
 	if (playerchar->view >= 0)
@@ -690,8 +683,8 @@ void engine_init_game_settings() {
 	dummyguicontrol.objn = -1;*/
 
 	our_eip = -6;
-	//  game.chars[0].talkview=4;
-	//init_language_text(game.langcodes[0]);
+	//  _GP(game).chars[0].talkview=4;
+	//init_language_text(_GP(game).langcodes[0]);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++) {
 		scrObj[ee].id = ee;
@@ -699,25 +692,25 @@ void engine_init_game_settings() {
 		// scrObj[ee].obj = NULL;
 	}
 
-	for (ee = 0; ee < game.numcharacters; ee++) {
-		memset(&game.chars[ee].inv[0], 0, MAX_INV * sizeof(short));
-		game.chars[ee].activeinv = -1;
-		game.chars[ee].following = -1;
-		game.chars[ee].followinfo = 97 | (10 << 8);
-		game.chars[ee].idletime = 20; // can be overridden later with SetIdle or summink
-		game.chars[ee].idleleft = game.chars[ee].idletime;
-		game.chars[ee].transparency = 0;
-		game.chars[ee].baseline = -1;
-		game.chars[ee].walkwaitcounter = 0;
-		game.chars[ee].z = 0;
+	for (ee = 0; ee < _GP(game).numcharacters; ee++) {
+		memset(&_GP(game).chars[ee].inv[0], 0, MAX_INV * sizeof(short));
+		_GP(game).chars[ee].activeinv = -1;
+		_GP(game).chars[ee].following = -1;
+		_GP(game).chars[ee].followinfo = 97 | (10 << 8);
+		_GP(game).chars[ee].idletime = 20; // can be overridden later with SetIdle or summink
+		_GP(game).chars[ee].idleleft = _GP(game).chars[ee].idletime;
+		_GP(game).chars[ee].transparency = 0;
+		_GP(game).chars[ee].baseline = -1;
+		_GP(game).chars[ee].walkwaitcounter = 0;
+		_GP(game).chars[ee].z = 0;
 		charextra[ee].xwas = INVALID_X;
 		charextra[ee].zoom = 100;
-		if (game.chars[ee].view >= 0) {
+		if (_GP(game).chars[ee].view >= 0) {
 			// set initial loop to 0
-			game.chars[ee].loop = 0;
+			_GP(game).chars[ee].loop = 0;
 			// or to 1 if they don't have up/down frames
-			if (views[game.chars[ee].view].loops[0].numFrames < 1)
-				game.chars[ee].loop = 1;
+			if (views[_GP(game).chars[ee].view].loops[0].numFrames < 1)
+				_GP(game).chars[ee].loop = 1;
 		}
 		charextra[ee].process_idle_this_time = 0;
 		charextra[ee].invorder_count = 0;
@@ -725,34 +718,34 @@ void engine_init_game_settings() {
 		charextra[ee].animwait = 0;
 	}
 	// multiply up gui positions
-	guibg = (Bitmap **)malloc(sizeof(Bitmap *) * game.numgui);
-	guibgbmp = (IDriverDependantBitmap **)malloc(sizeof(IDriverDependantBitmap *) * game.numgui);
-	for (ee = 0; ee < game.numgui; ee++) {
+	guibg = (Bitmap **)malloc(sizeof(Bitmap *) * _GP(game).numgui);
+	guibgbmp = (IDriverDependantBitmap **)malloc(sizeof(IDriverDependantBitmap *) * _GP(game).numgui);
+	for (ee = 0; ee < _GP(game).numgui; ee++) {
 		guibg[ee] = nullptr;
 		guibgbmp[ee] = nullptr;
 	}
 
 	our_eip = -5;
-	for (ee = 0; ee < game.numinvitems; ee++) {
-		if (game.invinfo[ee].flags & IFLG_STARTWITH) playerchar->inv[ee] = 1;
+	for (ee = 0; ee < _GP(game).numinvitems; ee++) {
+		if (_GP(game).invinfo[ee].flags & IFLG_STARTWITH) playerchar->inv[ee] = 1;
 		else playerchar->inv[ee] = 0;
 	}
 	play.score = 0;
 	play.sierra_inv_color = 7;
 	// copy the value set by the editor
-	if (game.options[OPT_GLOBALTALKANIMSPD] >= 0) {
-		play.talkanim_speed = game.options[OPT_GLOBALTALKANIMSPD];
-		game.options[OPT_GLOBALTALKANIMSPD] = 1;
+	if (_GP(game).options[OPT_GLOBALTALKANIMSPD] >= 0) {
+		play.talkanim_speed = _GP(game).options[OPT_GLOBALTALKANIMSPD];
+		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 1;
 	} else {
-		play.talkanim_speed = -game.options[OPT_GLOBALTALKANIMSPD] - 1;
-		game.options[OPT_GLOBALTALKANIMSPD] = 0;
+		play.talkanim_speed = -_GP(game).options[OPT_GLOBALTALKANIMSPD] - 1;
+		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 0;
 	}
 	play.inv_item_wid = 40;
 	play.inv_item_hit = 22;
 	play.messagetime = -1;
 	play.disabled_user_interface = 0;
 	play.gscript_timer = -1;
-	play.debug_mode = game.options[OPT_DEBUGMODE];
+	play.debug_mode = _GP(game).options[OPT_DEBUGMODE];
 	play.inv_top = 0;
 	play.inv_numdisp = 0;
 	play.obsolete_inv_numorder = 0;
@@ -769,7 +762,7 @@ void engine_init_game_settings() {
 	play.text_speed_modifier = 0;
 	play.text_align = kHAlignLeft;
 	// Make the default alignment to the right with right-to-left text
-	if (game.options[OPT_RIGHTLEFTWRITE])
+	if (_GP(game).options[OPT_RIGHTLEFTWRITE])
 		play.text_align = kHAlignRight;
 
 	play.speech_bubble_width = get_fixed_pixel_size(100);
@@ -799,7 +792,7 @@ void engine_init_game_settings() {
 	play.music_master_volume = 100 + LegacyMusicMasterVolumeAdjustment;
 	play.digital_master_volume = 100;
 	play.screen_flipped = 0;
-	play.cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)game.options[OPT_NOSKIPTEXT]);
+	play.cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)_GP(game).options[OPT_NOSKIPTEXT]);
 	play.sound_volume = 255;
 	play.speech_volume = 255;
 	play.normal_font = 0;
@@ -815,7 +808,7 @@ void engine_init_game_settings() {
 	play.no_multiloop_repeat = 0;
 	play.in_cutscene = 0;
 	play.fast_forward = 0;
-	play.totalscore = game.totalscore;
+	play.totalscore = _GP(game).totalscore;
 	play.roomscript_finished = 0;
 	play.no_textbg_when_voice = 0;
 	play.max_dialogoption_width = get_fixed_pixel_size(180);
@@ -862,12 +855,12 @@ void engine_init_game_settings() {
 	play.speech_has_voice = false;
 	play.speech_voice_blocking = false;
 	play.speech_in_post_state = false;
-	play.narrator_speech = game.playercharacter;
+	play.narrator_speech = _GP(game).playercharacter;
 	play.crossfading_out_channel = 0;
-	play.speech_textwindow_gui = game.options[OPT_TWCUSTOM];
+	play.speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
 	if (play.speech_textwindow_gui == 0)
 		play.speech_textwindow_gui = -1;
-	strcpy(play.game_name, game.gamename);
+	strcpy(play.game_name, _GP(game).gamename);
 	play.lastParserEntry[0] = 0;
 	play.follow_change_room_timer = 150;
 	for (ee = 0; ee < MAX_ROOM_BGFRAMES; ee++)
@@ -875,7 +868,7 @@ void engine_init_game_settings() {
 	play.game_speed_modifier = 0;
 	if (debug_flags & DBG_DEBUGMODE)
 		play.debug_mode = 1;
-	gui_disabled_style = convert_gui_disabled_style(game.options[OPT_DISABLEOFF]);
+	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	play.shake_screen_yoff = 0;
 
 	memset(&play.walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
@@ -902,8 +895,8 @@ void engine_init_game_settings() {
 	// We use same variable to read config and be used at runtime for now,
 	// so update it here with regards to game design option
 	usetup.RenderAtScreenRes =
-	    (game.options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_UserDefined && usetup.RenderAtScreenRes) ||
-	    game.options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled;
+	    (_GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_UserDefined && usetup.RenderAtScreenRes) ||
+	    _GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled;
 }
 
 void engine_setup_scsystem_auxiliary() {
@@ -1071,14 +1064,14 @@ void engine_prepare_config(ConfigTree &cfg, const String &exe_path, const Config
 
 	// Add "meta" config settings to let setup application(s)
 	// display correct properties to the user
-	INIwriteint(cfg, "misc", "defaultres", game.GetResolutionType());
-	INIwriteint(cfg, "misc", "letterbox", game.options[OPT_LETTERBOX]);
-	INIwriteint(cfg, "misc", "game_width", game.GetDefaultRes().Width);
-	INIwriteint(cfg, "misc", "game_height", game.GetDefaultRes().Height);
-	INIwriteint(cfg, "misc", "gamecolordepth", game.color_depth * 8);
-	if (game.options[OPT_RENDERATSCREENRES] != kRenderAtScreenRes_UserDefined) {
+	INIwriteint(cfg, "misc", "defaultres", _GP(game).GetResolutionType());
+	INIwriteint(cfg, "misc", "letterbox", _GP(game).options[OPT_LETTERBOX]);
+	INIwriteint(cfg, "misc", "game_width", _GP(game).GetDefaultRes().Width);
+	INIwriteint(cfg, "misc", "game_height", _GP(game).GetDefaultRes().Height);
+	INIwriteint(cfg, "misc", "gamecolordepth", _GP(game).color_depth * 8);
+	if (_GP(game).options[OPT_RENDERATSCREENRES] != kRenderAtScreenRes_UserDefined) {
 		// force enabled/disabled
-		INIwriteint(cfg, "graphics", "render_at_screenres", game.options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled);
+		INIwriteint(cfg, "graphics", "render_at_screenres", _GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled);
 		INIwriteint(cfg, "disabled", "render_at_screenres", 1);
 	}
 }
@@ -1129,9 +1122,9 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 		}
 	}
 	if (all || keys.count("data") > 0) {
-		data["data"]["gamename"] = game.gamename;
+		data["data"]["gamename"] = _GP(game).gamename;
 		data["data"]["version"] = String::FromFormat("%d", loaded_game_file_version);
-		data["data"]["compiledwith"] = game.compiled_with;
+		data["data"]["compiledwith"] = _GP(game).compiled_with;
 		data["data"]["basepack"] = usetup.main_data_filepath;
 	}
 	String full;
@@ -1275,7 +1268,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	our_eip = -179;
 
-	engine_init_resolution_settings(game.GetGameRes());
+	engine_init_resolution_settings(_GP(game).GetGameRes());
 
 	// Attempt to initialize graphics mode
 	if (!engine_try_set_gfxmode_any(usetup.Screen))
@@ -1308,7 +1301,7 @@ bool engine_try_set_gfxmode_any(const ScreenSetup &setup) {
 	engine_shutdown_gfxmode();
 
 	const Size init_desktop = get_desktop_size();
-	if (!graphics_mode_init_any(game.GetGameRes(), setup, ColorDepthOption(game.GetColorDepth())))
+	if (!graphics_mode_init_any(_GP(game).GetGameRes(), setup, ColorDepthOption(_GP(game).GetColorDepth())))
 		return false;
 
 	engine_post_gfxmode_setup(init_desktop);
@@ -1342,7 +1335,7 @@ bool engine_try_switch_windowed_gfxmode() {
 		DisplayModeSetup dm_setup = usetup.Screen.DisplayMode;
 		dm_setup.Windowed = !old_dm.Windowed;
 		graphics_mode_get_defaults(dm_setup.Windowed, dm_setup.ScreenSize, use_frame_setup);
-		res = graphics_mode_set_dm_any(game.GetGameRes(), dm_setup, old_dm.ColorDepth, use_frame_setup);
+		res = graphics_mode_set_dm_any(_GP(game).GetGameRes(), dm_setup, old_dm.ColorDepth, use_frame_setup);
 	}
 
 	// Apply corresponding frame render method

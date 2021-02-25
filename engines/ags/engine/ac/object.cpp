@@ -45,16 +45,15 @@
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/movelist.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
-
 
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
 extern RoomStatus *croom;
@@ -63,7 +62,7 @@ extern ViewStruct *views;
 extern RoomStruct thisroom;
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
 extern MoveList *mls;
-extern GameSetupStruct game;
+
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
 extern CCObject ccDynamicObject;
@@ -101,13 +100,13 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
-	if (game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
 		// Previous version of SetView had negative loop and frame mean "use latest values"
 		auto &obj = objs[objj->id];
 		if (loop < 0) loop = obj.loop;
 		if (frame < 0) frame = obj.frame;
 		const int vidx = view - 1;
-		if (vidx < 0 || vidx >= game.numviews) quit("!Object_SetView: invalid view number used");
+		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
 		loop = Math::Clamp(loop, 0, (int)views[vidx].numLoops - 1);
 		frame = Math::Clamp(frame, 0, (int)views[vidx].loops[loop].numFrames - 1);
 	}
@@ -440,7 +439,7 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 	set_route_move_speed(spee, spee);
 	set_color_depth(8);
 	int mslot = find_route(objX, objY, tox, toy, prepare_walkable_areas(-1), objj + 1, 1, ignwal);
-	set_color_depth(game.GetColorDepth());
+	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
 		objs[objj].moving = mslot;
 		mls[mslot].direct = ignwal;
@@ -521,7 +520,7 @@ int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, 
 	if (isposinbox(xx, yy, arx, ary, arx + spww, ary + sphh) == FALSE)
 		return FALSE;
 
-	if (game.options[OPT_PIXPERFECT]) {
+	if (_GP(game).options[OPT_PIXPERFECT]) {
 		// if it's transparent, or off the edge of the sprite, ignore
 		int xpos = data_to_game_coord(xx - arx);
 		int ypos = data_to_game_coord(yy - ary);

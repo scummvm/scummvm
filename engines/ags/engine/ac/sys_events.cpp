@@ -30,6 +30,7 @@
 #include "ags/engine/device/mousew32.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 #include "ags/events.h"
 
@@ -38,7 +39,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
+
 extern GameState play;
 
 extern volatile unsigned long globalTimerCounter;
@@ -89,7 +90,7 @@ void ags_domouse(int what) {
 
 int ags_check_mouse_wheel() {
 	int result = 0;
-	if ((mouse_z != mouse_z_was) && (game.options[OPT_MOUSEWHEEL] != 0)) {
+	if ((mouse_z != mouse_z_was) && (_GP(game).options[OPT_MOUSEWHEEL] != 0)) {
 		if (mouse_z > mouse_z_was)
 			result = 1;
 		else

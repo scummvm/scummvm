@@ -34,6 +34,7 @@
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -42,7 +43,7 @@ using namespace AGS::Engine;
 
 extern GameSetup usetup;
 extern GameState play;
-extern GameSetupStruct game;
+
 extern RoomStruct thisroom;
 extern IGraphicsDriver *gfxDriver;
 extern AGSPlatformDriver *platform;
@@ -142,7 +143,7 @@ void my_fade_out(int spdd) {
 	if (play.screen_is_faded_out == 0)
 		gfxDriver->FadeOut(spdd, play.fade_to_red, play.fade_to_green, play.fade_to_blue);
 
-	if (game.color_depth > 1)
+	if (_GP(game).color_depth > 1)
 		play.screen_is_faded_out = 1;
 }
 

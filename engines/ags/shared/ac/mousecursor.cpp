@@ -22,7 +22,7 @@
 
 #include "ags/shared/ac/mousecursor.h"
 #include "ags/shared/util/stream.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

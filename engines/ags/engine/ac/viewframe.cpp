@@ -34,15 +34,16 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 using AGS::Shared::Graphics;
 
-extern GameSetupStruct game;
+
 extern ViewStruct *views;
-extern SpriteCache spriteset;
+
 extern CCAudioClip ccDynamicAudioClip;
 
 
@@ -65,7 +66,7 @@ ScriptAudioClip *ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) {
 	if (soundIndex < 0)
 		return nullptr;
 
-	return &game.audioClips[soundIndex];
+	return &_GP(game).audioClips[soundIndex];
 }
 
 void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip *clip) {
@@ -86,11 +87,11 @@ void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
 		views[svf->view].loops[svf->loop].frames[svf->frame].sound = -1;
 	} else {
 		// convert sound number to audio clip
-		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, newSound);
+		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, newSound);
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", newSound);
 
-		views[svf->view].loops[svf->loop].frames[svf->frame].sound = clip->id + (game.IsLegacyAudioSystem() ? 0x10000000 : 0);
+		views[svf->view].loops[svf->loop].frames[svf->frame].sound = clip->id + (_GP(game).IsLegacyAudioSystem() ? 0x10000000 : 0);
 	}
 }
 
@@ -118,7 +119,7 @@ void precache_view(int view) {
 
 	for (int i = 0; i < views[view].numLoops; i++) {
 		for (int j = 0; j < views[view].loops[i].numFrames; j++)
-			spriteset.Precache(views[view].loops[i].frames[j].pic);
+			_GP(spriteset).Precache(views[view].loops[i].frames[j].pic);
 	}
 }
 
@@ -126,10 +127,10 @@ void precache_view(int view) {
 // to play a sound or whatever
 void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 	ScriptAudioChannel *channel = nullptr;
-	if (game.IsLegacyAudioSystem()) {
+	if (_GP(game).IsLegacyAudioSystem()) {
 		if (views[view].loops[loop].frames[frame].sound > 0) {
 			if (views[view].loops[loop].frames[frame].sound < 0x10000000) {
-				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, views[view].loops[loop].frames[frame].sound);
+				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, views[view].loops[loop].frames[frame].sound);
 				if (clip)
 					views[view].loops[loop].frames[frame].sound = clip->id + 0x10000000;
 				else {
@@ -158,21 +159,21 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend) {
 	// NOTE: DrawViewFrame supports alpha blending only since OPT_SPRITEALPHA;
 	// this is why there's no sense in blending if it's not set (will do no good anyway).
-	if (alpha_blend && game.options[OPT_SPRITEALPHA] == kSpriteAlphaRender_Proper) {
-		Bitmap *vf_bmp = spriteset[vframe->pic];
+	if (alpha_blend && _GP(game).options[OPT_SPRITEALPHA] == kSpriteAlphaRender_Proper) {
+		Bitmap *vf_bmp = _GP(spriteset)[vframe->pic];
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
 			src->FlipBlt(vf_bmp, 0, 0, Shared::kBitmap_HFlip);
 		}
-		draw_sprite_support_alpha(ds, true, x, y, src, (game.SpriteInfos[vframe->pic].Flags & SPF_ALPHACHANNEL) != 0);
+		draw_sprite_support_alpha(ds, true, x, y, src, (_GP(game).SpriteInfos[vframe->pic].Flags & SPF_ALPHACHANNEL) != 0);
 		if (src != vf_bmp)
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(spriteset[vframe->pic], x, y, Shared::kBitmap_HFlip);
+			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_HFlip);
 		else
-			ds->Blit(spriteset[vframe->pic], x, y, Shared::kBitmap_Transparency);
+			ds->Blit(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_Transparency);
 	}
 }
 

@@ -29,6 +29,7 @@
 #include "ags/engine/ac/viewframe.h"
 #include "ags/engine/main/update.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -36,7 +37,7 @@ using AGS::Shared::Stream;
 
 extern ViewStruct *views;
 extern GameState play;
-extern GameSetupStruct game;
+
 
 RoomObject::RoomObject() {
 	x = y = 0;
@@ -59,12 +60,12 @@ RoomObject::RoomObject() {
 
 int RoomObject::get_width() {
 	if (last_width == 0)
-		return game.SpriteInfos[num].Width;
+		return _GP(game).SpriteInfos[num].Width;
 	return last_width;
 }
 int RoomObject::get_height() {
 	if (last_height == 0)
-		return game.SpriteInfos[num].Height;
+		return _GP(game).SpriteInfos[num].Height;
 	return last_height;
 }
 int RoomObject::get_baseline() {

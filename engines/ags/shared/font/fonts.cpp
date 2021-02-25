@@ -227,9 +227,9 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 	// It's hard to tell how cruicial it is for the game looks, so research may be needed.
 	// TODO: IMHO this should rely not on game format, but script API level, because it
 	// defines necessary adjustments to game scripts. If you want to fix this, find a way to
-	// pass this flag here all the way from game.options[OPT_BASESCRIPTAPI] (or game format).
+	// pass this flag here all the way from _GP(game).options[OPT_BASESCRIPTAPI] (or game format).
 	//
-	// if (game.options[OPT_BASESCRIPTAPI] < $Your current version$)
+	// if (_GP(game).options[OPT_BASESCRIPTAPI] < $Your current version$)
 	wii -= 1;
 
 	lines.Reset();

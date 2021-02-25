@@ -35,19 +35,19 @@
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
 extern GameState play;
 extern IGraphicsDriver *gfxDriver;
 extern AGSPlatformDriver *platform;
 
 void my_fade_in(PALETTE p, int speed) {
-	if (game.color_depth > 1) {
+	if (_GP(game).color_depth > 1) {
 		set_palette(p);
 
 		play.screen_is_faded_out = 0;
@@ -116,11 +116,11 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 //=============================================================================
 
 int Screen_GetScreenWidth() {
-	return game.GetGameRes().Width;
+	return _GP(game).GetGameRes().Width;
 }
 
 int Screen_GetScreenHeight() {
-	return game.GetGameRes().Height;
+	return _GP(game).GetGameRes().Height;
 }
 
 bool Screen_GetAutoSizeViewport() {

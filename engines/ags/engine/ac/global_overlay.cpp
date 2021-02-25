@@ -34,14 +34,12 @@
 #include "ags/shared/ac/spritecache.h"
 #include "ags/engine/ac/system.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace Shared;
 using namespace Engine;
-
-extern SpriteCache spriteset;
-extern GameSetupStruct game;
 
 
 
@@ -53,9 +51,9 @@ void RemoveOverlay(int ovrid) {
 int CreateGraphicOverlay(int xx, int yy, int slott, int trans) {
 	data_to_game_coords(&xx, &yy);
 
-	Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(game.SpriteInfos[slott].Width, game.SpriteInfos[slott].Height, game.GetColorDepth());
-	wputblock(screeno, 0, 0, spriteset[slott], trans);
-	bool hasAlpha = (game.SpriteInfos[slott].Flags & SPF_ALPHACHANNEL) != 0;
+	Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[slott].Width, _GP(game).SpriteInfos[slott].Height, _GP(game).GetColorDepth());
+	wputblock(screeno, 0, 0, _GP(spriteset)[slott], trans);
+	bool hasAlpha = (_GP(game).SpriteInfos[slott].Flags & SPF_ALPHACHANNEL) != 0;
 	int nse = add_screen_overlay(xx, yy, OVER_CUSTOM, screeno, hasAlpha);
 	return screenover[nse].type;
 }

@@ -46,7 +46,7 @@
 #include "ags/shared/core/assetmanager.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/globals.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -54,8 +54,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
-extern SpriteCache spriteset;
+
+
 extern RoomStruct thisroom;
 extern RoomStatus troom;    // used for non-saveable rooms, eg. intro
 extern int our_eip;
@@ -91,11 +91,11 @@ void quit_shutdown_scripts() {
 
 void quit_check_dynamic_sprites(QuitReason qreason) {
 	if ((qreason & kQuitKind_NormalExit) && (check_dynamic_sprites_at_exit) &&
-		(game.options[OPT_DEBUGMODE] != 0)) {
+		(_GP(game).options[OPT_DEBUGMODE] != 0)) {
 		// game exiting normally -- make sure the dynamic sprites
 		// have been deleted
-		for (int i = 1; i < spriteset.GetSpriteSlotCount(); i++) {
-			if (game.SpriteInfos[i].Flags & SPF_DYNAMICALLOC)
+		for (int i = 1; i < _GP(spriteset).GetSpriteSlotCount(); i++) {
+			if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC)
 				debug_script_warn("Dynamic sprite %d was never deleted", i);
 		}
 	}
@@ -120,7 +120,7 @@ void quit_shutdown_platform(QuitReason qreason) {
 
 void quit_shutdown_audio() {
 	our_eip = 9917;
-	game.options[OPT_CROSSFADEMUSIC] = 0;
+	_GP(game).options[OPT_CROSSFADEMUSIC] = 0;
 	shutdown_sound();
 }
 
@@ -259,7 +259,7 @@ void quit_free() {
 	shutdown_font_renderer();
 	our_eip = 9902;
 
-	spriteset.Reset();
+	_GP(spriteset).Reset();
 
 	our_eip = 9907;
 

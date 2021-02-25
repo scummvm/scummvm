@@ -20,8 +20,6 @@
  *
  */
 
-//include <math.h>
-
 #include "ags/engine/ac/display.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/font/agsfontrenderer.h"
@@ -54,6 +52,7 @@
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -62,11 +61,11 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::BitmapHelper;
 
 extern GameState play;
-extern GameSetupStruct game;
+
 extern int longestline;
 extern AGSPlatformDriver *platform;
 extern int loops_per_character;
-extern SpriteCache spriteset;
+
 
 int display_message_aschar = 0;
 
@@ -82,8 +81,8 @@ struct DisplayVars {
 // allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
 // pass blocking=2 to create permanent overlay
 int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed) {
-	const bool use_speech_textwindow = (asspch < 0) && (game.options[OPT_SPEECHTYPE] >= 2);
-	const bool use_thought_gui = (isThought) && (game.options[OPT_THOUGHTGUI] > 0);
+	const bool use_speech_textwindow = (asspch < 0) && (_GP(game).options[OPT_SPEECHTYPE] >= 2);
+	const bool use_thought_gui = (isThought) && (_GP(game).options[OPT_THOUGHTGUI] > 0);
 
 	bool alphaChannel = false;
 	char todis[STD_BUFFER_SIZE];
@@ -92,7 +91,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (use_speech_textwindow)
 		usingGui = play.speech_textwindow_gui;
 	else if (use_thought_gui)
-		usingGui = game.options[OPT_THOUGHTGUI];
+		usingGui = _GP(game).options[OPT_THOUGHTGUI];
 
 	int padding = get_textwindow_padding(usingGui);
 	int paddingScaled = get_fixed_pixel_size(padding);
@@ -176,7 +175,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
 		remove_screen_overlay(OVER_TEXTMSG); // remove any previous blocking texts
 
-	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap((wii > 0) ? wii : 2, disp.fulltxtheight + extraHeight, game.GetColorDepth());
+	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap((wii > 0) ? wii : 2, disp.fulltxtheight + extraHeight, _GP(game).GetColorDepth());
 
 	// inform draw_text_window to free the old bitmap
 	const bool wantFreeScreenop = true;
@@ -208,7 +207,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			if (usingGui > 0) {
 				alphaChannel = guis[usingGui].HasAlphaChannel();
 			}
-		} else if ((ShouldAntiAliasText()) && (game.GetColorDepth() >= 24))
+		} else if ((ShouldAntiAliasText()) && (_GP(game).GetColorDepth() >= 24))
 			alphaChannel = true;
 
 		for (size_t ee = 0; ee < Lines.Count(); ee++) {
@@ -218,7 +217,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			// centre the text
 			if (asspch < 0) {
 				if ((usingGui >= 0) &&
-					((game.options[OPT_SPEECHTYPE] >= 2) || (isThought)))
+					((_GP(game).options[OPT_SPEECHTYPE] >= 2) || (isThought)))
 					text_color = text_window_ds->GetCompatibleColor(guis[usingGui].FgColor);
 				else
 					text_color = text_window_ds->GetCompatibleColor(-asspch);
@@ -233,8 +232,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		int xoffs, yoffs, oriwid = wii - padding * 2;
 		draw_text_window_and_bar(&text_window_ds, wantFreeScreenop, &xoffs, &yoffs, &xx, &yy, &wii, &text_color);
 
-		if (game.options[OPT_TWCUSTOM] > 0) {
-			alphaChannel = guis[game.options[OPT_TWCUSTOM]].HasAlphaChannel();
+		if (_GP(game).options[OPT_TWCUSTOM] > 0) {
+			alphaChannel = guis[_GP(game).options[OPT_TWCUSTOM]].HasAlphaChannel();
 		}
 
 		adjust_y_coordinate_for_text(&yoffs, usingfont);
@@ -422,7 +421,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 		return 0;
 
 	if (play.text_speed + play.text_speed_modifier <= 0)
-		quit("!Text speed is zero; unable to display text. Check your game.text_speed settings.");
+		quit("!Text speed is zero; unable to display text. Check your _GP(game).text_speed settings.");
 
 	// Store how many game loops per character of text
 	// This is calculated using a hard-coded 15 for the text speed,
@@ -438,7 +437,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 }
 
 bool ShouldAntiAliasText() {
-	return (game.options[OPT_ANTIALIASFONTS] != 0);
+	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0);
 }
 
 #if defined (AGS_FONTOUTLINE_MOREOPAQUE)
@@ -468,14 +467,14 @@ void wouttextxy_AutoOutline_Semitransparent2Opaque(Bitmap *map) {
 
 // Draw outline that is calculated from the text font, not derived from an outline font
 void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *texx, int &xxp, int &yyp) {
-	int const thickness = game.fonts.at(font).AutoOutlineThickness;
-	auto const style = game.fonts.at(font).AutoOutlineStyle;
+	int const thickness = _GP(game).fonts.at(font).AutoOutlineThickness;
+	auto const style = _GP(game).fonts.at(font).AutoOutlineStyle;
 	if (thickness <= 0)
 		return;
 
 	// 16-bit games should use 32-bit stencils to keep anti-aliasing working
 	int const  ds_cd = ds->GetColorDepth();
-	bool const antialias = ds_cd >= 16 && game.options[OPT_ANTIALIASFONTS] != 0 && !is_bitmap_font(font);
+	bool const antialias = ds_cd >= 16 && _GP(game).options[OPT_ANTIALIASFONTS] != 0 && !is_bitmap_font(font);
 	int const  stencil_cd = antialias ? 32 : ds_cd;
 	if (antialias) // This is to make sure TTFs render proper alpha channel in 16-bit games too
 		color |= makeacol32(0, 0, 0, 0xff);
@@ -592,12 +591,12 @@ int wgettextwidth_compensate(const char *tex, int font) {
 
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 	if (sprn < 0) return;
-	if (spriteset[sprn] == nullptr) {
+	if (_GP(spriteset)[sprn] == nullptr) {
 		sprn = 0;
 	}
 
-	x = x + offx * game.SpriteInfos[sprn].Width;
-	y = y + offy * game.SpriteInfos[sprn].Height;
+	x = x + offx * _GP(game).SpriteInfos[sprn].Width;
+	y = y + offy * _GP(game).SpriteInfos[sprn].Height;
 	draw_gui_sprite_v330(ds, sprn, x, y);
 }
 
@@ -631,13 +630,13 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		if (iep->BgColor > 0)
 			ds->FillRect(Rect(xx1, yy1, xx2, yy2), draw_color);
 
-		int leftRightWidth = game.SpriteInfos[get_but_pic(iep, 4)].Width;
-		int topBottomHeight = game.SpriteInfos[get_but_pic(iep, 6)].Height;
+		int leftRightWidth = _GP(game).SpriteInfos[get_but_pic(iep, 4)].Width;
+		int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
 		if (iep->BgImage > 0) {
 			if ((loaded_game_file_version <= kGameVersion_272) // 2.xx
-				&& (spriteset[iep->BgImage]->GetWidth() == 1)
-				&& (spriteset[iep->BgImage]->GetHeight() == 1)
-				&& (*((const unsigned int *)spriteset[iep->BgImage]->GetData()) == 0x00FF00FF)) {
+				&& (_GP(spriteset)[iep->BgImage]->GetWidth() == 1)
+				&& (_GP(spriteset)[iep->BgImage]->GetHeight() == 1)
+				&& (*((const unsigned int *)_GP(spriteset)[iep->BgImage]->GetData()) == 0x00FF00FF)) {
 				// Don't draw fully transparent dummy GUI backgrounds
 			} else {
 				// offset the background image and clip it so that it is drawn
@@ -653,20 +652,20 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 					bgoffsy = bgoffsyStart;
 					while (bgoffsy <= bgfinishy) {
 						draw_gui_sprite_v330(ds, iep->BgImage, bgoffsx, bgoffsy);
-						bgoffsy += game.SpriteInfos[iep->BgImage].Height;
+						bgoffsy += _GP(game).SpriteInfos[iep->BgImage].Height;
 					}
-					bgoffsx += game.SpriteInfos[iep->BgImage].Width;
+					bgoffsx += _GP(game).SpriteInfos[iep->BgImage].Width;
 				}
 				// return to normal clipping rectangle
 				ds->SetClip(Rect(0, 0, ds->GetWidth() - 1, ds->GetHeight() - 1));
 			}
 		}
 		int uu;
-		for (uu = yy1; uu <= yy2; uu += game.SpriteInfos[get_but_pic(iep, 4)].Height) {
+		for (uu = yy1; uu <= yy2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 4)].Height) {
 			do_corner(ds, get_but_pic(iep, 4), xx1, uu, -1, 0); // left side
 			do_corner(ds, get_but_pic(iep, 5), xx2 + 1, uu, 0, 0); // right side
 		}
-		for (uu = xx1; uu <= xx2; uu += game.SpriteInfos[get_but_pic(iep, 6)].Width) {
+		for (uu = xx1; uu <= xx2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 6)].Width) {
 			do_corner(ds, get_but_pic(iep, 6), uu, yy1, 0, -1); // top side
 			do_corner(ds, get_but_pic(iep, 7), uu, yy2 + 1, 0, 0); // bottom side
 		}
@@ -686,8 +685,8 @@ int get_textwindow_border_width(int twgui) {
 	if (!guis[twgui].IsTextWindow())
 		quit("!GUI set as text window but is not actually a text window GUI");
 
-	int borwid = game.SpriteInfos[get_but_pic(&guis[twgui], 4)].Width +
-		game.SpriteInfos[get_but_pic(&guis[twgui], 5)].Width;
+	int borwid = _GP(game).SpriteInfos[get_but_pic(&guis[twgui], 4)].Width +
+		_GP(game).SpriteInfos[get_but_pic(&guis[twgui], 5)].Width;
 
 	return borwid;
 }
@@ -700,7 +699,7 @@ int get_textwindow_top_border_height(int twgui) {
 	if (!guis[twgui].IsTextWindow())
 		quit("!GUI set as text window but is not actually a text window GUI");
 
-	return game.SpriteInfos[get_but_pic(&guis[twgui], 6)].Height;
+	return _GP(game).SpriteInfos[get_but_pic(&guis[twgui], 6)].Height;
 }
 
 // Get the padding for a text window
@@ -709,8 +708,8 @@ int get_textwindow_padding(int ifnum) {
 	int result;
 
 	if (ifnum < 0)
-		ifnum = game.options[OPT_TWCUSTOM];
-	if (ifnum > 0 && ifnum < game.numgui)
+		ifnum = _GP(game).options[OPT_TWCUSTOM];
+	if (ifnum > 0 && ifnum < _GP(game).numgui)
 		result = guis[ifnum].Padding;
 	else
 		result = TEXTWINDOW_PADDING_DEFAULT;
@@ -723,7 +722,7 @@ void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
 
 	Bitmap *ds = *text_window_ds;
 	if (ifnum < 0)
-		ifnum = game.options[OPT_TWCUSTOM];
+		ifnum = _GP(game).options[OPT_TWCUSTOM];
 
 	if (ifnum <= 0) {
 		if (ovrheight)
@@ -734,25 +733,25 @@ void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
 		xins[0] = 3;
 		yins[0] = 3;
 	} else {
-		if (ifnum >= game.numgui)
-			quitprintf("!Invalid GUI %d specified as text window (total GUIs: %d)", ifnum, game.numgui);
+		if (ifnum >= _GP(game).numgui)
+			quitprintf("!Invalid GUI %d specified as text window (total GUIs: %d)", ifnum, _GP(game).numgui);
 		if (!guis[ifnum].IsTextWindow())
 			quit("!GUI set as text window but is not actually a text window GUI");
 
 		int tbnum = get_but_pic(&guis[ifnum], 0);
 
 		wii[0] += get_textwindow_border_width(ifnum);
-		xx[0] -= game.SpriteInfos[tbnum].Width;
-		yy[0] -= game.SpriteInfos[tbnum].Height;
+		xx[0] -= _GP(game).SpriteInfos[tbnum].Width;
+		yy[0] -= _GP(game).SpriteInfos[tbnum].Height;
 		if (ovrheight == 0)
 			ovrheight = disp.fulltxtheight;
 
 		if (should_free_ds)
 			delete *text_window_ds;
 		int padding = get_textwindow_padding(ifnum);
-		*text_window_ds = BitmapHelper::CreateTransparentBitmap(wii[0], ovrheight + (padding * 2) + game.SpriteInfos[tbnum].Height * 2, game.GetColorDepth());
+		*text_window_ds = BitmapHelper::CreateTransparentBitmap(wii[0], ovrheight + (padding * 2) + _GP(game).SpriteInfos[tbnum].Height * 2, _GP(game).GetColorDepth());
 		ds = *text_window_ds;
-		int xoffs = game.SpriteInfos[tbnum].Width, yoffs = game.SpriteInfos[tbnum].Height;
+		int xoffs = _GP(game).SpriteInfos[tbnum].Width, yoffs = _GP(game).SpriteInfos[tbnum].Height;
 		draw_button_background(ds, xoffs, yoffs, (ds->GetWidth() - xoffs) - 1, (ds->GetHeight() - yoffs) - 1, &guis[ifnum]);
 		if (set_text_color)
 			*set_text_color = ds->GetCompatibleColor(guis[ifnum].FgColor);
@@ -770,7 +769,7 @@ void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
 		// top bar on the dialog window with character's name
 		// create an enlarged window, then free the old one
 		Bitmap *ds = *text_window_ds;
-		Bitmap *newScreenop = BitmapHelper::CreateBitmap(ds->GetWidth(), ds->GetHeight() + topBar.height, game.GetColorDepth());
+		Bitmap *newScreenop = BitmapHelper::CreateBitmap(ds->GetWidth(), ds->GetHeight() + topBar.height, _GP(game).GetColorDepth());
 		newScreenop->Blit(ds, 0, 0, 0, topBar.height, ds->GetWidth(), ds->GetHeight());
 		delete *text_window_ds;
 		*text_window_ds = newScreenop;

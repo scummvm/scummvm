@@ -25,6 +25,7 @@
 #include "ags/shared/gui/guimain.h" // TODO: extract helper functions
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -263,7 +264,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 	// NOTE: the CLIP flag only clips the image, not the text
 	if (IsClippingImage())
 		ds->SetClip(Rect(X, Y, X + Width - 1, Y + Height - 1));
-	if (spriteset[CurrentImage] != nullptr)
+	if (_GP(spriteset)[CurrentImage] != nullptr)
 		draw_gui_sprite(ds, CurrentImage, X, Y, true);
 
 	// Draw active inventory item
@@ -279,7 +280,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		}
 
 		if (place == kButtonPlace_InvItemStretch) {
-			ds->StretchBlt(spriteset[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
+			ds->StretchBlt(_GP(spriteset)[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
 		} else if (place == kButtonPlace_InvItemCenter) {
 			draw_gui_sprite(ds, gui_inv_pic,
 				X + Width / 2 - get_adjusted_spritewidth(gui_inv_pic) / 2,
@@ -291,8 +292,8 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 	if ((draw_disabled) && (gui_disabled_style == GUIDIS_GREYOUT)) {
 		// darken the button when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y,
-			spriteset[CurrentImage]->GetWidth(),
-			spriteset[CurrentImage]->GetHeight()));
+			_GP(spriteset)[CurrentImage]->GetWidth(),
+			_GP(spriteset)[CurrentImage]->GetHeight()));
 	}
 	ds->SetClip(Rect(0, 0, ds->GetWidth() - 1, ds->GetHeight() - 1));
 

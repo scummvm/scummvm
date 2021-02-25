@@ -38,13 +38,13 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
 extern RoomStruct thisroom;
 extern CharacterInfo *playerchar;
 extern ScriptSystem scsystem;
@@ -203,13 +203,13 @@ VpPoint GameState::ScreenToRoomImpl(int scrx, int scry, int view_index, bool cli
 }
 
 VpPoint GameState::ScreenToRoom(int scrx, int scry) {
-	if (game.options[OPT_BASESCRIPTAPI] >= kScriptAPI_v3507)
+	if (_GP(game).options[OPT_BASESCRIPTAPI] >= kScriptAPI_v3507)
 		return ScreenToRoomImpl(scrx, scry, -1, true, false);
 	return ScreenToRoomImpl(scrx, scry, 0, false, false);
 }
 
 VpPoint GameState::ScreenToRoomDivDown(int scrx, int scry) {
-	if (game.options[OPT_BASESCRIPTAPI] >= kScriptAPI_v3507)
+	if (_GP(game).options[OPT_BASESCRIPTAPI] >= kScriptAPI_v3507)
 		return ScreenToRoomImpl(scrx, scry, -1, true, true);
 	return ScreenToRoomImpl(scrx, scry, 0, false, true);
 }
@@ -462,7 +462,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	dialog_options_highlight_color = in->ReadInt32();
 	if (old_save)
 		in->ReadArrayOfInt32(reserved, GAME_STATE_RESERVED_INTS);
-	// ** up to here is referenced in the script "game." object
+	// ** up to here is referenced in the script "_GP(game)." object
 	if (old_save) {
 		in->ReadInt32(); // recording
 		in->ReadInt32(); // playback
@@ -678,7 +678,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(speech_portrait_y);
 	out->WriteInt32(speech_display_post_time_ms);
 	out->WriteInt32(dialog_options_highlight_color);
-	// ** up to here is referenced in the script "game." object
+	// ** up to here is referenced in the script "_GP(game)." object
 	out->WriteInt32(randseed);    // random seed
 	out->WriteInt32(player_on_region);     // player's current region
 	out->WriteInt32(check_interaction_only);
@@ -813,9 +813,9 @@ void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
 		// because we do not keep defaults in the saved game, and also in case
 		// this save is made by an older game version which had different
 		// properties.
-		for (int i = 0; i < game.numcharacters; ++i)
+		for (int i = 0; i < _GP(game).numcharacters; ++i)
 			Properties::ReadValues(charProps[i], in);
-		for (int i = 0; i < game.numinvitems; ++i)
+		for (int i = 0; i < _GP(game).numinvitems; ++i)
 			Properties::ReadValues(invProps[i], in);
 	}
 }
@@ -825,9 +825,9 @@ void GameState::WriteCustomProperties_v340(Shared::Stream *out) const {
 		// We temporarily remove properties that kept default values
 		// just for the saving data time to avoid getting lots of
 		// redundant data into saved games
-		for (int i = 0; i < game.numcharacters; ++i)
+		for (int i = 0; i < _GP(game).numcharacters; ++i)
 			Properties::WriteValues(charProps[i], out);
-		for (int i = 0; i < game.numinvitems; ++i)
+		for (int i = 0; i < _GP(game).numinvitems; ++i)
 			Properties::WriteValues(invProps[i], out);
 	}
 }
@@ -849,7 +849,7 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align) {
 // current Script API level. This is made to make it possible to change
 // Alignment constants in the Script API and still support old version.
 HorAlignment ReadScriptAlignment(int32_t align) {
-	return game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v350 ?
+	return _GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v350 ?
 		ConvertLegacyScriptAlignment((LegacyScriptAlignment)align) :
 		(HorAlignment)align;
 }

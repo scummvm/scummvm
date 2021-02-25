@@ -42,23 +42,23 @@
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/gfx_util.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
+
 extern GameState play;
 extern RoomStatus *croom;
 extern RoomObject *objs;
 extern CharacterCache *charcache;
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
-extern SpriteCache spriteset;
+
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 
 // ** SCRIPT DRAWINGSURFACE OBJECT
@@ -91,11 +91,11 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 						objcache[tt].sppic = -31999;
 				}
 			}
-			for (tt = 0; tt < game.numcharacters; tt++) {
+			for (tt = 0; tt < _GP(game).numcharacters; tt++) {
 				if (charcache[tt].sppic == sds->dynamicSpriteNumber)
 					charcache[tt].sppic = -31999;
 			}
-			for (tt = 0; tt < game.numgui; tt++) {
+			for (tt = 0; tt < _GP(game).numgui; tt++) {
 				if ((guis[tt].BgImage == sds->dynamicSpriteNumber) &&
 					(guis[tt].IsDisplayed())) {
 					guis_need_update = 1;
@@ -236,10 +236,10 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int ds
 
 void DrawingSurface_DrawImageEx(ScriptDrawingSurface *sds, int dst_x, int dst_y, int slot, int trans, int dst_width, int dst_height,
 	int src_x, int src_y, int src_width, int src_height) {
-	if ((slot < 0) || (spriteset[slot] == nullptr))
+	if ((slot < 0) || (_GP(spriteset)[slot] == nullptr))
 		quit("!DrawingSurface.DrawImage: invalid sprite slot number specified");
-	DrawingSurface_DrawImageImpl(sds, spriteset[slot], dst_x, dst_y, trans, dst_width, dst_height,
-		src_x, src_y, src_width, src_height, slot, (game.SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
+	DrawingSurface_DrawImageImpl(sds, _GP(spriteset)[slot], dst_x, dst_y, trans, dst_width, dst_height,
+		src_x, src_y, src_width, src_height, slot, (_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
@@ -275,7 +275,7 @@ int DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
 }
 
 void DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds, int highRes) {
-	if (game.AllowRelativeRes())
+	if (_GP(game).AllowRelativeRes())
 		sds->highResCoordinates = (highRes) ? 1 : 0;
 }
 

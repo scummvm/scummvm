@@ -52,6 +52,7 @@
 #include "ags/engine/game/game_init.h"
 #include "ags/plugins/agsplugin.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -60,7 +61,7 @@ using namespace AGS::Engine;
 
 extern int ifacepopped;
 
-extern GameSetupStruct game;
+
 extern ViewStruct *views;
 extern DialogTopic *dialog;
 
@@ -117,11 +118,11 @@ HGameFileError game_file_first_open(MainGameSource &src) {
 
 void PreReadSaveFileInfo(Stream *in, GameDataVersion data_ver) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	game.ReadFromFile(&align_s);
+	_GP(game).ReadFromFile(&align_s);
 	// Discard game messages we do not need here
-	delete[] game.load_messages;
-	game.load_messages = nullptr;
-	game.read_savegame_info(in, data_ver);
+	delete[] _GP(game).load_messages;
+	_GP(game).load_messages = nullptr;
+	_GP(game).read_savegame_info(in, data_ver);
 }
 
 HError preload_game_data() {
@@ -131,14 +132,14 @@ HError preload_game_data() {
 		return (HError)err;
 	// Read only the particular data we need for preliminary game analysis
 	PreReadSaveFileInfo(src.InputStream.get(), src.DataVersion);
-	game.compiled_with = src.CompiledWith;
-	FixupSaveDirectory(game);
+	_GP(game).compiled_with = src.CompiledWith;
+	FixupSaveDirectory(_GP(game));
 	return HError::None();
 }
 
 HError load_game_file() {
 	MainGameSource src;
-	LoadedGameEntities ents(game, dialog, views);
+	LoadedGameEntities ents(_GP(game), dialog, views);
 	HGameFileError load_err = OpenMainGameFileFromDefaultAsset(src);
 	if (load_err) {
 		load_err = ReadGameData(ents, src.InputStream.get(), src.DataVersion);

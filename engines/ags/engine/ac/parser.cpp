@@ -20,8 +20,6 @@
  *
  */
 
-//include <cctype> //isalnum()
-//include <cstdio>
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/engine/ac/gamestate.h"
@@ -31,17 +29,17 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_compat.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
+
 extern GameState play;
 
 int Parser_FindWordID(const char *wordToFind) {
@@ -71,12 +69,12 @@ int Said(const char *checkwords) {
 
 int find_word_in_dictionary(const char *lookfor) {
 	int j;
-	if (game.dict == nullptr)
+	if (_GP(game).dict == nullptr)
 		return -1;
 
-	for (j = 0; j < game.dict->num_words; j++) {
-		if (ags_stricmp(lookfor, game.dict->word[j]) == 0) {
-			return game.dict->wordnum[j];
+	for (j = 0; j < _GP(game).dict->num_words; j++) {
+		if (ags_stricmp(lookfor, _GP(game).dict->word[j]) == 0) {
+			return _GP(game).dict->wordnum[j];
 		}
 	}
 	if (lookfor[0] != 0) {

@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/script/script.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
@@ -51,10 +50,11 @@
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameSetupStruct game;
+
 extern GameState play;
 extern int gameHasBeenRestored, displayed_room;
 extern unsigned int load_new_game;
@@ -762,7 +762,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		case 20: // If Inventory Item was used
 			if (play.usedinv == IPARAM1) {
-				if (game.options[OPT_NOLOSEINV] == 0)
+				if (_GP(game).options[OPT_NOLOSEINV] == 0)
 					lose_inventory(play.usedinv);
 				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
@@ -775,7 +775,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 					return -1;
 			break;
 		case 22: // if a character is moving
-			if (game.chars[IPARAM1].walking)
+			if (_GP(game).chars[IPARAM1].walking)
 				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;
@@ -793,7 +793,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		case 26: // Move NPC to different room
 			if (!is_valid_character(IPARAM1))
 				quit("!Move NPC to different room: invalid character specified");
-			game.chars[IPARAM1].room = IPARAM2;
+			_GP(game).chars[IPARAM1].room = IPARAM2;
 			break;
 		case 27: // Set character view
 			SetCharacterView(IPARAM1, IPARAM2);
@@ -818,12 +818,12 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		case 34: // Run animation
 			scAnimateCharacter(IPARAM1, IPARAM2, IPARAM3, 0);
-			GameLoopUntilValueIsZero(&game.chars[IPARAM1].animating);
+			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			break;
 		case 35: // Quick animation
 			SetCharacterView(IPARAM1, IPARAM2);
 			scAnimateCharacter(IPARAM1, IPARAM3, IPARAM4, 0);
-			GameLoopUntilValueIsZero(&game.chars[IPARAM1].animating);
+			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			ReleaseCharacterView(IPARAM1);
 			break;
 		case 36: // Set idle animation

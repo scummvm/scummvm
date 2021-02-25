@@ -27,19 +27,19 @@
 #include "ags/engine/ac/dynobj/scriptstring.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
 extern ScriptString myScriptStringImpl;
 
 // begin custom property functions
 
 bool get_property_desc(PropertyDesc &desc, const char *property, PropertyType want_type) {
-	PropertySchema::const_iterator sch_it = game.propSchema.find(property);
-	if (sch_it == game.propSchema.end())
+	PropertySchema::const_iterator sch_it = _GP(game).propSchema.find(property);
+	if (sch_it == _GP(game).propSchema.end())
 		quit("!GetProperty: no such property found in schema. Make sure you are using the property's name, and not its description, when calling this command.");
 
 	desc = sch_it->_value;

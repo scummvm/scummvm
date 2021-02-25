@@ -31,17 +31,16 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/gui/animatingguibutton.h"
 #include "ags/shared/gui/guimain.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetupStruct game;
 extern ViewStruct *views;
 
 // *** BUTTON FUNCTIONS
@@ -53,7 +52,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
-	if ((view < 1) || (view > game.numviews))
+	if ((view < 1) || (view > _GP(game).numviews))
 		quit("!AnimateButton: invalid view specified");
 	view--;
 
@@ -106,7 +105,7 @@ void Button_SetText(GUIButton *butt, const char *newtx) {
 }
 
 void Button_SetFont(GUIButton *butt, int newFont) {
-	if ((newFont < 0) || (newFont >= game.numfonts))
+	if ((newFont < 0) || (newFont >= _GP(game).numfonts))
 		quit("!Button.Font: invalid font number.");
 
 	if (butt->Font != newFont) {
@@ -163,8 +162,8 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 		guil->CurrentImage = slotn;
 	guil->Image = slotn;
 	// update the clickable area to the same size as the graphic
-	guil->Width = game.SpriteInfos[slotn].Width;
-	guil->Height = game.SpriteInfos[slotn].Height;
+	guil->Width = _GP(game).SpriteInfos[slotn].Width;
+	guil->Height = _GP(game).SpriteInfos[slotn].Height;
 
 	guis_need_update = 1;
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);

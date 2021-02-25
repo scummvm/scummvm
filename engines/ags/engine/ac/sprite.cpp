@@ -31,14 +31,14 @@
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetupStruct game;
-extern SpriteCache spriteset;
+
 extern int our_eip, eip_guinum, eip_guiobj;
 extern color palette[256];
 extern IGraphicsDriver *gfxDriver;
@@ -47,8 +47,8 @@ extern AGSPlatformDriver *platform;
 void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit) {
 	newwid = ww;
 	newhit = hh;
-	const SpriteInfo &spinfo = game.SpriteInfos[ee];
-	if (!game.AllowRelativeRes() || !spinfo.IsRelativeRes())
+	const SpriteInfo &spinfo = _GP(game).SpriteInfos[ee];
+	if (!_GP(game).AllowRelativeRes() || !spinfo.IsRelativeRes())
 		return;
 	ctx_data_to_game_size(newwid, newhit, spinfo.IsLegacyHiRes());
 }
@@ -70,7 +70,7 @@ void set_rgb_mask_using_alpha_channel(Bitmap *image) {
 
 // from is a 32-bit RGBA image, to is a 15/16/24-bit destination image
 Bitmap *remove_alpha_channel(Bitmap *from) {
-	const int game_cd = game.GetColorDepth();
+	const int game_cd = _GP(game).GetColorDepth();
 	Bitmap *to = BitmapHelper::CreateBitmap(from->GetWidth(), from->GetHeight(), game_cd);
 	const int maskcol = to->GetMaskColor();
 	int y, x;
@@ -126,27 +126,27 @@ Bitmap *tmpdbl, *curspr;
 int newwid, newhit;
 void initialize_sprite(int ee) {
 
-	if ((ee < 0) || (ee > spriteset.GetSpriteSlotCount()))
+	if ((ee < 0) || (ee > _GP(spriteset).GetSpriteSlotCount()))
 		quit("initialize_sprite: invalid sprite number");
 
-	if ((spriteset[ee] == nullptr) && (ee > 0)) {
+	if ((_GP(spriteset)[ee] == nullptr) && (ee > 0)) {
 		// replace empty sprites with blue cups, to avoid crashes
-		spriteset.RemapSpriteToSprite0(ee);
-	} else if (spriteset[ee] == nullptr) {
-		game.SpriteInfos[ee].Width = 0;
-		game.SpriteInfos[ee].Height = 0;
+		_GP(spriteset).RemapSpriteToSprite0(ee);
+	} else if (_GP(spriteset)[ee] == nullptr) {
+		_GP(game).SpriteInfos[ee].Width = 0;
+		_GP(game).SpriteInfos[ee].Height = 0;
 	} else {
 		// stretch sprites to correct resolution
 		int oldeip = our_eip;
 		our_eip = 4300;
 
-		if (game.SpriteInfos[ee].Flags & SPF_HADALPHACHANNEL) {
+		if (_GP(game).SpriteInfos[ee].Flags & SPF_HADALPHACHANNEL) {
 			// we stripped the alpha channel out last time, put
 			// it back so that we can remove it properly again
-			game.SpriteInfos[ee].Flags |= SPF_ALPHACHANNEL;
+			_GP(game).SpriteInfos[ee].Flags |= SPF_ALPHACHANNEL;
 		}
 
-		curspr = spriteset[ee];
+		curspr = _GP(spriteset)[ee];
 		get_new_size_for_sprite(ee, curspr->GetWidth(), curspr->GetHeight(), newwid, newhit);
 
 		eip_guinum = ee;
@@ -162,19 +162,19 @@ void initialize_sprite(int ee) {
 			curspr->Release();
 			tmpdbl->Release();
 			delete curspr;
-			spriteset.SubstituteBitmap(ee, tmpdbl);
+			_GP(spriteset).SubstituteBitmap(ee, tmpdbl);
 		}
 
-		game.SpriteInfos[ee].Width = spriteset[ee]->GetWidth();
-		game.SpriteInfos[ee].Height = spriteset[ee]->GetHeight();
+		_GP(game).SpriteInfos[ee].Width = _GP(spriteset)[ee]->GetWidth();
+		_GP(game).SpriteInfos[ee].Height = _GP(spriteset)[ee]->GetHeight();
 
-		spriteset.SubstituteBitmap(ee, PrepareSpriteForUse(spriteset[ee], (game.SpriteInfos[ee].Flags & SPF_ALPHACHANNEL) != 0));
+		_GP(spriteset).SubstituteBitmap(ee, PrepareSpriteForUse(_GP(spriteset)[ee], (_GP(game).SpriteInfos[ee].Flags & SPF_ALPHACHANNEL) != 0));
 
-		if (game.GetColorDepth() < 32) {
-			game.SpriteInfos[ee].Flags &= ~SPF_ALPHACHANNEL;
+		if (_GP(game).GetColorDepth() < 32) {
+			_GP(game).SpriteInfos[ee].Flags &= ~SPF_ALPHACHANNEL;
 			// save the fact that it had one for the next time this
 			// is re-loaded from disk
-			game.SpriteInfos[ee].Flags |= SPF_HADALPHACHANNEL;
+			_GP(game).SpriteInfos[ee].Flags |= SPF_HADALPHACHANNEL;
 		}
 
 		pl_run_plugin_hooks(AGSE_SPRITELOAD, ee);
