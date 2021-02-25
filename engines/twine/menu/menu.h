@@ -34,6 +34,8 @@ namespace TwinE {
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
+class SpriteData;
+
 class MenuSettings {
 private:
 	enum MenuSettingsType {
@@ -189,6 +191,8 @@ private:
 	MenuSettings advOptionsMenuState;
 	MenuSettings optionsMenuState;
 
+	void drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color = COLOR_GOLD);
+
 public:
 	Menu(TwinEEngine *engine);
 	~Menu();
@@ -206,6 +210,12 @@ public:
 	 * @param color plasma effect start color
 	 */
 	void processPlasmaEffect(const Common::Rect &rect, int32 color);
+
+	void drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight);
+	void drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top);
+	void drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight);
+	void drawCoins(int32 left, int32 top);
+	void drawKeys(int32 left, int32 top);
 
 	/**
 	 * Draw the entire button box

@@ -808,52 +808,16 @@ int32 Menu::giveupMenu() {
 	return 0;
 }
 
-void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
-	_engine->_interface->resetClip();
-	const int16 height = 80;
-	const Common::Rect rect(left, top, left + width, top + height);
-	drawBox(rect);
-	Common::Rect splittedBoxRect(rect);
-	splittedBoxRect.grow(-1);
-	_engine->_interface->drawFilledRect(splittedBoxRect, COLOR_BLACK);
+void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
+	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->spriteData[SPRITEHQR_LIFEPOINTS]);
+	const int32 barLeft = left + barLeftPadding;
+	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->sceneHero->life);
+	const int32 barBottom = top + barHeight;
+	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
+	drawBox(Common::Rect(barLeft, top, right, barBottom));
+}
 
-	const int32 newBoxLeft2 = left + 9;
-
-	_engine->_grid->drawSprite(newBoxLeft2, top + 13, _engine->_resources->spriteData[SPRITEHQR_LIFEPOINTS]);
-
-	const int32 boxRight = left + 325;
-	const int32 newBoxLeft = left + 25;
-	int32 boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
-
-	const int32 boxTop = top + 10;
-	const int32 boxBottom = top + 25;
-	_engine->_interface->drawFilledRect(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), COLOR_91);
-	drawBox(newBoxLeft, boxTop, left + 324, boxTop + 14);
-
-	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
-		_engine->_grid->drawSprite(newBoxLeft2, top + 36, _engine->_resources->spriteData[SPRITEHQR_MAGICPOINTS]);
-		if (_engine->_gameState->magicLevelIdx > 0) {
-			const int32 pointBoxRight = _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints);
-			const Common::Rect pointsRect(newBoxLeft, top + 35, pointBoxRight, top + 50);
-			_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
-			drawBox(newBoxLeft, top + 35, newBoxLeft + _engine->_gameState->magicLevelIdx * 80, top + 35 + 15);
-		}
-	}
-
-	boxLeft = left + 340;
-
-	/** draw coin sprite */
-	_engine->_grid->drawSprite(boxLeft, top + 15, _engine->_resources->spriteData[SPRITEHQR_KASHES]);
-	_engine->_text->setFontColor(COLOR_GOLD);
-	Common::String inventoryNumKashes = Common::String::format("%d", _engine->_gameState->inventoryNumKashes);
-	_engine->_text->drawText(left + 370, top + 5, inventoryNumKashes.c_str());
-
-	/** draw key sprite */
-	_engine->_grid->drawSprite(boxLeft, top + 55, _engine->_resources->spriteData[SPRITEHQR_KEY]);
-	_engine->_text->setFontColor(COLOR_GOLD);
-	Common::String inventoryNumKeys = Common::String::format("%d", _engine->_gameState->inventoryNumKeys);
-	_engine->_text->drawText(left + 370, top + 40, inventoryNumKeys.c_str());
-
+void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
 	// prevent
 	if (_engine->_gameState->inventoryNumLeafs > _engine->_gameState->inventoryNumLeafsBox) {
 		_engine->_gameState->inventoryNumLeafs = _engine->_gameState->inventoryNumLeafsBox;
@@ -861,13 +825,73 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 
 	// Clover leaf boxes
 	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
-		_engine->_grid->drawSprite(_engine->_screens->crossDot(left + 25, left + 325, 10, i), top + 58, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAFBOX]);
+		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
+		_engine->_grid->drawSprite(leftSpritePos, top + 58, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
 	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
-		_engine->_grid->drawSprite(_engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAF]);
+		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
+		_engine->_grid->drawSprite(leftSpritePos + 2, top + 60, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAF]);
 	}
+}
+
+void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
+	if (_engine->_gameState->inventoryDisabled()) {
+		return;
+	}
+	if (!_engine->_gameState->hasItem(InventoryItems::kiTunic)) {
+		return;
+	}
+	_engine->_grid->drawSprite(left, top + 1, _engine->_resources->spriteData[SPRITEHQR_MAGICPOINTS]);
+	if (_engine->_gameState->magicLevelIdx <= 0) {
+		return;
+	}
+	const int32 barLeft = left + barLeftPadding;
+	const int32 barBottom = top + barHeight;
+	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->inventoryMagicPoints);
+	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
+	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
+	drawBox(barLeft, top, barLeft + _engine->_gameState->magicLevelIdx * 80, barBottom);
+}
+
+void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color) {
+	_engine->_grid->drawSprite(left, top + 15, spriteData);
+	_engine->_text->setFontColor(color);
+	_engine->_text->drawText(left + 30, top + 5, str.c_str());
+}
+
+void Menu::drawCoins(int32 left, int32 top) {
+	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->inventoryNumKashes);
+	drawSpriteAndString(left, top, _engine->_resources->spriteData[SPRITEHQR_KASHES], inventoryNumKashes);
+}
+
+void Menu::drawKeys(int32 left, int32 top) {
+	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->inventoryNumKeys);
+	drawSpriteAndString(left, top, _engine->_resources->spriteData[SPRITEHQR_KEY], inventoryNumKeys);
+}
+
+void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
+	_engine->_interface->resetClip();
+	const int16 height = 80;
+	const Common::Rect rect(left, top, left + width, top + height);
+	drawBox(rect);
+	Common::Rect filledRect(rect);
+	filledRect.grow(-1);
+	_engine->_interface->drawFilledRect(filledRect, COLOR_BLACK);
+
+	const int32 boxLeft = left + 9;
+	const int32 boxRight = left + 325;
+	const int32 barPadding = 25;
+	const int32 boxTop = top + 10;
+	const int32 barHeight = 14;
+	drawHealthBar(boxLeft, boxRight, boxTop, barPadding, barHeight);
+	drawMagicPointsBar(boxLeft, boxRight, boxTop + 25, barPadding, barHeight);
+
+	const int32 posLeft = left + 340;
+	drawCoins(posLeft, top);
+	drawKeys(posLeft, top + 35);
+	drawCloverLeafs(left + barPadding, boxRight, top);
 
 	_engine->copyBlockPhys(left, top, left + width, top + 135);
 }
