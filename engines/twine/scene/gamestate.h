@@ -32,9 +32,6 @@
 
 namespace TwinE {
 
-#define NUM_GAME_FLAGS 255
-#define NUM_INVENTORY_ITEMS 28
-
 /**
  * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
  */

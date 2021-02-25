@@ -25,6 +25,9 @@
 
 #include "common/scummsys.h"
 
+#define NUM_GAME_FLAGS 255
+#define NUM_INVENTORY_ITEMS 28
+
 namespace TwinE {
 
 struct Vec3 {
