@@ -73,26 +73,6 @@ void Navigation::IncFrameId() {
 	}
 }
 
-inline int Navigation::PackSquare(int x, int y) {
-	return (y << 16) + x;
-}
-
-inline void Navigation::UnpackSquare(int sq, int &x, int &y) {
-	y = sq >> 16;
-	x = sq & ((1 << 16) - 1);
-}
-
-inline bool Navigation::Outside(int x, int y) const {
-	return
-		(unsigned)x >= (unsigned)mapWidth ||
-		(unsigned)y >= (unsigned)mapHeight;
-}
-
-inline bool Navigation::Walkable(int x, int y) const {
-	// invert condition because of AGS
-	return map[y][x] != 0;
-}
-
 bool Navigation::Passable(int x, int y) const {
 	return !Outside(x, y) && Walkable(x, y);
 }

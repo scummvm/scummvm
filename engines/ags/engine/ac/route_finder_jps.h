@@ -67,8 +67,8 @@ public:
 		map[y] = row;
 	}
 
-	inline static int PackSquare(int x, int y);
-	inline static void UnpackSquare(int sq, int &x, int &y);
+	static int PackSquare(int x, int y);
+	static void UnpackSquare(int sq, int &x, int &y);
 
 private:
 	// priority queue entry
@@ -171,5 +171,25 @@ private:
 		//return iabs(dx) + iabs(dy);
 	}
 };
+
+inline int Navigation::PackSquare(int x, int y) {
+	return (y << 16) + x;
+}
+
+inline void Navigation::UnpackSquare(int sq, int &x, int &y) {
+	y = sq >> 16;
+	x = sq & ((1 << 16) - 1);
+}
+
+inline bool Navigation::Outside(int x, int y) const {
+	return
+		(unsigned)x >= (unsigned)mapWidth ||
+		(unsigned)y >= (unsigned)mapHeight;
+}
+
+inline bool Navigation::Walkable(int x, int y) const {
+	// invert condition because of AGS
+	return map[y][x] != 0;
+}
 
 } // namespace AGS3
