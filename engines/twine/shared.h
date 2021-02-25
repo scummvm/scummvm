@@ -208,6 +208,7 @@ enum class ExtraSpecialType {
 #define ANGLE_22_5 64
 #define ANGLE_17 50
 #define ANGLE_11_25 32
+#define ANGLE_2 8 // 1.67
 #define ANGLE_1 5 // 1.75
 #define ANGLE_0 0
 

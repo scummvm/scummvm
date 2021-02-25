@@ -47,6 +47,7 @@
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -1114,11 +1115,11 @@ void Menu::drawItem(int32 left2, int32 top2, int32 item, Common::Rect &dirtyRect
 	_engine->_interface->drawFilledRect(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
-		itemAngle[item] += 8;
+		itemAngle[item] += ANGLE_2;
 		_engine->_interface->setClip(rect);
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
 		_engine->_interface->resetClip();
-		if (item == InventoryItems::kGasItem) { // has GAS
+		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
 			Common::String inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
 			_engine->_text->drawText(left + 3, top + 32, inventoryNumGas.c_str());
