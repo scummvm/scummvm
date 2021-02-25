@@ -634,7 +634,7 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 		return;
 	}
 
-	getBrickPos(x - newCameraX, y - newCameraY, z - newCameraZ);
+	getBrickPos(x - newCamera.x, y - newCamera.y, z - newCamera.z);
 
 	if (brickPixelPosX < -24) {
 		return;
@@ -676,11 +676,11 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 void Grid::redrawGrid() {
 	blockMap *map = (blockMap *)blockBuffer;
 
-	cameraX = newCameraX * BRICK_SIZE;
-	cameraY = newCameraY * BRICK_HEIGHT;
-	cameraZ = newCameraZ * BRICK_SIZE;
+	camera.x = newCamera.x * BRICK_SIZE;
+	camera.y = newCamera.y * BRICK_HEIGHT;
+	camera.z = newCamera.z * BRICK_SIZE;
 
-	_engine->_renderer->projectPositionOnScreen(-cameraX, -cameraY, -cameraZ);
+	_engine->_renderer->projectPositionOnScreen(-camera.x, -camera.y, -camera.z);
 
 	_engine->_renderer->projPosXScreen = _engine->_renderer->projPosX;
 	_engine->_renderer->projPosYScreen = _engine->_renderer->projPosY;
@@ -856,9 +856,9 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	newCameraX = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
-	newCameraY = (actor->y + BRICK_HEIGHT) / BRICK_HEIGHT;
-	newCameraZ = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
+	newCamera.x = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
+	newCamera.y = (actor->y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	newCamera.z = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_redraw->reqBgRedraw = true;
 }
 

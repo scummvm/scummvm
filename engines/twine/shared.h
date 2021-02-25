@@ -31,9 +31,11 @@
 namespace TwinE {
 
 struct Vec3 {
-	int32 x = 0;
-	int32 y = 0;
-	int32 z = 0;
+	Vec3() : x(0), y(0), z(0) {}
+	Vec3(int32 _x, int32 _y, int32 _z) : x(_x), y(_y), z(_z) {}
+	int32 x;
+	int32 y;
+	int32 z;
 };
 
 struct BoundingBox {

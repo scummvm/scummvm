@@ -137,37 +137,37 @@ void DebugScene::displayZones() {
 
 		// compute the points in 3D
 
-		frontBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-		frontBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-		frontBottomLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+		frontBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->camera.x;
+		frontBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->camera.y;
+		frontBottomLeftPoint.z = zonePtr->topRight.z - _engine->_grid->camera.z;
 
-		frontBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-		frontBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-		frontBottomRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+		frontBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->camera.x;
+		frontBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->camera.y;
+		frontBottomRightPoint.z = zonePtr->topRight.z - _engine->_grid->camera.z;
 
-		frontTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-		frontTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-		frontTopLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+		frontTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->camera.x;
+		frontTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->camera.y;
+		frontTopLeftPoint.z = zonePtr->topRight.z - _engine->_grid->camera.z;
 
-		frontTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-		frontTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-		frontTopRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+		frontTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->camera.x;
+		frontTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->camera.y;
+		frontTopRightPoint.z = zonePtr->topRight.z - _engine->_grid->camera.z;
 
-		backBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-		backBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-		backBottomLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+		backBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->camera.x;
+		backBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->camera.y;
+		backBottomLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->camera.z;
 
-		backBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-		backBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-		backBottomRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+		backBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->camera.x;
+		backBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->camera.y;
+		backBottomRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->camera.z;
 
-		backTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-		backTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-		backTopLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+		backTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->camera.x;
+		backTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->camera.y;
+		backTopLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->camera.z;
 
-		backTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-		backTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-		backTopRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+		backTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->camera.x;
+		backTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->camera.y;
+		backTopRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->camera.z;
 
 		// project all points
 

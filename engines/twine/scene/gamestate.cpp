@@ -317,9 +317,9 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	const int32 itemCameraX = _engine->_grid->newCameraX * BRICK_SIZE;
-	const int32 itemCameraY = _engine->_grid->newCameraY * BRICK_HEIGHT;
-	const int32 itemCameraZ = _engine->_grid->newCameraZ * BRICK_SIZE;
+	const int32 itemCameraX = _engine->_grid->newCamera.x * BRICK_SIZE;
+	const int32 itemCameraY = _engine->_grid->newCamera.y * BRICK_HEIGHT;
+	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
 
 	uint8 *bodyPtr = _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity];
 	const int32 bodyX = _engine->_scene->sceneHero->x - itemCameraX;

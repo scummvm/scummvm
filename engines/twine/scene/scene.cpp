@@ -674,10 +674,10 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kCamera:
 				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->useFreeCamera) {
 					_engine->disableScreenRecenter = true;
-					if (_engine->_grid->newCameraX != zone->infoData.CameraView.x || _engine->_grid->newCameraY != zone->infoData.CameraView.y || _engine->_grid->newCameraZ != zone->infoData.CameraView.z) {
-						_engine->_grid->newCameraX = zone->infoData.CameraView.x;
-						_engine->_grid->newCameraY = zone->infoData.CameraView.y;
-						_engine->_grid->newCameraZ = zone->infoData.CameraView.z;
+					if (_engine->_grid->newCamera.x != zone->infoData.CameraView.x || _engine->_grid->newCamera.y != zone->infoData.CameraView.y || _engine->_grid->newCamera.z != zone->infoData.CameraView.z) {
+						_engine->_grid->newCamera.x = zone->infoData.CameraView.x;
+						_engine->_grid->newCamera.y = zone->infoData.CameraView.y;
+						_engine->_grid->newCamera.z = zone->infoData.CameraView.z;
 						_engine->_redraw->reqBgRedraw = true;
 					}
 				}

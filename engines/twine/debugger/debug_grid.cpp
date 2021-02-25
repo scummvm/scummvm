@@ -40,17 +40,17 @@ void DebugGrid::changeGridCamera() {
 	}
 
 	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
-		_engine->_grid->newCameraZ--;
+		_engine->_grid->newCamera.z--;
 		_engine->_redraw->reqBgRedraw = true;
 	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
-		_engine->_grid->newCameraZ++;
+		_engine->_grid->newCamera.z++;
 		_engine->_redraw->reqBgRedraw = true;
 	}
 	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
-		_engine->_grid->newCameraX--;
+		_engine->_grid->newCamera.x--;
 		_engine->_redraw->reqBgRedraw = true;
 	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
-		_engine->_grid->newCameraX++;
+		_engine->_grid->newCamera.x++;
 		_engine->_redraw->reqBgRedraw = true;
 	}
 }

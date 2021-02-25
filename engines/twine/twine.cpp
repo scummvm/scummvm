@@ -693,20 +693,20 @@ void TwinEEngine::centerScreenOnActor() {
 	}
 
 	ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
-	_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX * BRICK_SIZE),
-	                                   actor->y - (_grid->newCameraY * BRICK_HEIGHT),
-	                                   actor->z - (_grid->newCameraZ * BRICK_SIZE));
+	_renderer->projectPositionOnScreen(actor->x - (_grid->newCamera.x * BRICK_SIZE),
+	                                   actor->y - (_grid->newCamera.y * BRICK_HEIGHT),
+	                                   actor->z - (_grid->newCamera.z * BRICK_SIZE));
 	if (_renderer->projPosX < 80 || _renderer->projPosX >= width() - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= height() - 50) {
-		_grid->newCameraX = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraX) / 2;
-		_grid->newCameraY = actor->y / BRICK_HEIGHT;
-		_grid->newCameraZ = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraZ) / 2;
+		_grid->newCamera.x = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCamera.x) / 2;
+		_grid->newCamera.y = actor->y / BRICK_HEIGHT;
+		_grid->newCamera.z = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCamera.z) / 2;
 
-		if (_grid->newCameraX >= GRID_SIZE_X) {
-			_grid->newCameraX = GRID_SIZE_X - 1;
+		if (_grid->newCamera.x >= GRID_SIZE_X) {
+			_grid->newCamera.x = GRID_SIZE_X - 1;
 		}
 
-		if (_grid->newCameraZ >= GRID_SIZE_Z) {
-			_grid->newCameraZ = GRID_SIZE_Z - 1;
+		if (_grid->newCamera.z >= GRID_SIZE_Z) {
+			_grid->newCamera.z = GRID_SIZE_Z - 1;
 		}
 
 		_redraw->reqBgRedraw = true;
@@ -932,10 +932,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
 							if (!_actor->cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, kAnimationType_4, AnimationTypes::kStanding, 0);
-								_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
+								_renderer->projectPositionOnScreen(actor->x - _grid->camera.x, actor->y - _grid->camera.y, actor->z - _grid->camera.z);
 								_actor->cropBottomScreen = _renderer->projPosY;
 							}
-							_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
+							_renderer->projectPositionOnScreen(actor->x - _grid->camera.x, actor->y - _grid->camera.y, actor->z - _grid->camera.z);
 							actor->controlMode = ControlMode::kNoMove;
 							actor->life = -1;
 							_actor->cropBottomScreen = _renderer->projPosY;
