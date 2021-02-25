@@ -169,10 +169,19 @@ void Object::generateRegion() {
 		return;
 	}
 
-	Common::Rect rect = _picture->getRect();
-	rect.moveTo(_pos.x, _pos.y);
+	auto rect = getRect();
 	_region = RegionPtr(new Region(rect));
 	debug("%s: generated region: %s", _name.c_str(), _region->toString().c_str());
+}
+
+Common::Rect Object::getRect() const {
+	if (!_picture) {
+		warning("getRect called on null picture");
+		return Common::Rect();
+	}
+	Common::Rect rect = _picture->getRect();
+	rect.moveTo(_pos.x, _pos.y);
+	return rect;
 }
 
 bool Object::pointIn(Common::Point pos) {
