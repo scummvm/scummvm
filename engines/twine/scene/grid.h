@@ -232,6 +232,8 @@ public:
 	 */
 	void getSpriteSize(int32 offset, int32 *width, int32 *height, const uint8 *spritePtr);
 
+	/** recenter screen on followed actor automatically */
+	void centerScreenOnActor();
 	void centerOnActor(const ActorStruct* actor);
 
 	/**

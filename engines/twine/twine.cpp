@@ -684,35 +684,6 @@ void TwinEEngine::processOptionsMenu() {
 	_redraw->redrawEngineActions(true);
 }
 
-void TwinEEngine::centerScreenOnActor() {
-	if (disableScreenRecenter) {
-		return;
-	}
-	if (_debugGrid->useFreeCamera) {
-		return;
-	}
-
-	ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
-	_renderer->projectPositionOnScreen(actor->x - (_grid->newCamera.x * BRICK_SIZE),
-	                                   actor->y - (_grid->newCamera.y * BRICK_HEIGHT),
-	                                   actor->z - (_grid->newCamera.z * BRICK_SIZE));
-	if (_renderer->projPosX < 80 || _renderer->projPosX >= width() - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= height() - 50) {
-		_grid->newCamera.x = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCamera.x) / 2;
-		_grid->newCamera.y = actor->y / BRICK_HEIGHT;
-		_grid->newCamera.z = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCamera.z) / 2;
-
-		if (_grid->newCamera.x >= GRID_SIZE_X) {
-			_grid->newCamera.x = GRID_SIZE_X - 1;
-		}
-
-		if (_grid->newCamera.z >= GRID_SIZE_Z) {
-			_grid->newCamera.z = GRID_SIZE_Z - 1;
-		}
-
-		_redraw->reqBgRedraw = true;
-	}
-}
-
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	FrameMarker frame;
 	_input->enableKeyMap(mainKeyMapId);
@@ -1009,7 +980,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	centerScreenOnActor();
+	_grid->centerScreenOnActor();
 
 	_redraw->redrawEngineActions(_redraw->reqBgRedraw);
 

@@ -24,6 +24,7 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "twine/debugger/debug_grid.h"
 #include "twine/menu/interface.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
@@ -862,5 +863,33 @@ void Grid::centerOnActor(const ActorStruct* actor) {
 	_engine->_redraw->reqBgRedraw = true;
 }
 
+void Grid::centerScreenOnActor() {
+	if (_engine->disableScreenRecenter) {
+		return;
+	}
+	if (_engine->_debugGrid->useFreeCamera) {
+		return;
+	}
+
+	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->currentlyFollowedActor);
+	_engine->_renderer->projectPositionOnScreen(actor->x - (newCamera.x * BRICK_SIZE),
+	                                   actor->y - (newCamera.y * BRICK_HEIGHT),
+	                                   actor->z - (newCamera.z * BRICK_SIZE));
+	if (_engine->_renderer->projPosX < 80 || _engine->_renderer->projPosX >= _engine->width() - 60 || _engine->_renderer->projPosY < 80 || _engine->_renderer->projPosY >= _engine->height() - 50) {
+		newCamera.x = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
+		newCamera.y = actor->y / BRICK_HEIGHT;
+		newCamera.z = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.z) / 2;
+
+		if (newCamera.x >= GRID_SIZE_X) {
+			newCamera.x = GRID_SIZE_X - 1;
+		}
+
+		if (newCamera.z >= GRID_SIZE_Z) {
+			newCamera.z = GRID_SIZE_Z - 1;
+		}
+
+		_engine->_redraw->reqBgRedraw = true;
+	}
+}
 
 } // namespace TwinE

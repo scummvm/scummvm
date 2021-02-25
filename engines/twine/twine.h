@@ -193,8 +193,6 @@ private:
 	void processBonusList();
 	void processInventoryAction();
 	void processOptionsMenu();
-	/** recenter screen on followed actor automatically */
-	void centerScreenOnActor();
 
 	void initConfigurations();
 	/** Initialize all needed stuffs at first time running engine */
