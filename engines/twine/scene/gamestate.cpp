@@ -307,9 +307,7 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 
 void GameState::processFoundItem(int32 item) {
 	ScopedEngineFreeze freeze(_engine);
-	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
-	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + BRICK_HEIGHT) / BRICK_HEIGHT;
-	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + BRICK_HEIGHT) / BRICK_SIZE;
+	_engine->_grid->centerOnActor(_engine->_scene->sceneHero);
 
 	_engine->exitSceneryView();
 	// Hide hero in scene

@@ -194,7 +194,7 @@ public:
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
-	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
+	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground);
 
 	/** New grid camera X coordinates */
 	int32 newCameraX = 0;
@@ -239,6 +239,8 @@ public:
 	 * @param spritePtr sprite buffer pointer
 	 */
 	void getSpriteSize(int32 offset, int32 *width, int32 *height, const uint8 *spritePtr);
+
+	void centerOnActor(const ActorStruct* actor);
 
 	/**
 	 * Draw brick sprite in the screen

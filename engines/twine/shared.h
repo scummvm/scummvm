@@ -194,6 +194,9 @@ enum class ExtraSpecialType {
 	kExplodeCloud = 1
 };
 
+// lba2 does from 0 to 0x1000
+// lba1 angles
+// TODO: wrap in a class to be able to handle lba1 and lba2
 #define ANGLE_360 1024
 #define ANGLE_351 1000
 #define ANGLE_334 950

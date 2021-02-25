@@ -816,10 +816,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Recenter Screen
 		if (_input->toggleActionIfActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
 			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
-			_grid->newCameraX = currentlyFollowedActor->x / BRICK_SIZE;
-			_grid->newCameraY = currentlyFollowedActor->y / BRICK_HEIGHT;
-			_grid->newCameraZ = currentlyFollowedActor->z / BRICK_SIZE;
-			_redraw->reqBgRedraw = true;
+			_grid->centerOnActor(currentlyFollowedActor);
 		}
 
 		// Draw holomap
@@ -968,9 +965,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_scene->needChangeScene = _scene->currentSceneIdx;
 						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
 
-						_grid->newCameraX = (_scene->sceneHero->x / BRICK_SIZE);
-						_grid->newCameraY = (_scene->sceneHero->y / BRICK_HEIGHT);
-						_grid->newCameraZ = (_scene->sceneHero->z / BRICK_SIZE);
+						_grid->centerOnActor(_scene->sceneHero);
 
 						_scene->heroPositionType = ScenePositionType::kReborn;
 

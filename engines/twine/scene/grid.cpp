@@ -593,8 +593,8 @@ uint8 *Grid::getBlockBuffer(int32 x, int32 y, int32 z) {
 	return blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
 }
 
-const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const {
-	_engine->_grid->updateCollisionCoordinates(x, y, z);
+const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) {
+	updateCollisionCoordinates(x, y, z);
 	const int32 tempX = _engine->_collision->collisionX;
 	int32 tempY = _engine->_collision->collisionY;
 	const int32 tempZ = _engine->_collision->collisionZ;
@@ -854,5 +854,13 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 
 	return 240;
 }
+
+void Grid::centerOnActor(const ActorStruct* actor) {
+	newCameraX = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
+	newCameraY = (actor->y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	newCameraZ = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
+	_engine->_redraw->reqBgRedraw = true;
+}
+
 
 } // namespace TwinE

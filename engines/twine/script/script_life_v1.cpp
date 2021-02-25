@@ -712,12 +712,8 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	if (engine->_scene->currentlyFollowedActor != followedActorIdx) {
 		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
-		engine->_grid->newCameraX = followedActor->x / BRICK_SIZE;
-		engine->_grid->newCameraY = followedActor->y / BRICK_HEIGHT;
-		engine->_grid->newCameraZ = followedActor->z / BRICK_SIZE;
-
+		engine->_grid->centerOnActor(followedActor);
 		engine->_scene->currentlyFollowedActor = followedActorIdx;
-		engine->_redraw->reqBgRedraw = true;
 	}
 
 	return 0;
