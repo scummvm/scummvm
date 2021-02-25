@@ -248,6 +248,8 @@ public:
 		return _offset;
 	}
 
+	Common::Rect getRect() const;
+
 	void setKeyHandler(const Common::String &name, uint ip) {
 		_keyHandlers[name] = ip;
 	}
