@@ -771,9 +771,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 
 	_engine->_interface->setClip(renderRect);
 
-	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
-	// TODO: shouldn't we check for renderRect here?
-	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
+	if (_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr)) {
 		_engine->copyBlockPhys(renderRect, true);
 	}
 

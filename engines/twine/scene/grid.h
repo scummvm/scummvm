@@ -246,7 +246,7 @@ public:
 	 * @param posX brick X position to draw
 	 * @param posY brick Y position to draw
 	 */
-	void drawBrick(int32 index, int32 posX, int32 posY);
+	bool drawBrick(int32 index, int32 posX, int32 posY);
 
 	/**
 	 * Draw sprite in the screen
@@ -255,8 +255,8 @@ public:
 	 * @param posY sprite Y position to draw
 	 * @param ptr sprite buffer pointer to draw
 	 */
-	void drawSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr);
-	void drawSprite(int32 posX, int32 posY, const SpriteData &ptr);
+	bool drawSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr);
+	bool drawSprite(int32 posX, int32 posY, const SpriteData &ptr);
 
 	/**
 	 * Draw sprite or bricks in the screen according with the type
@@ -266,7 +266,7 @@ public:
 	 * @param ptr sprite buffer pointer to draw
 	 * @param isSprite allows to identify if the sprite to display is brick or a single sprite
 	 */
-	void drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr, bool isSprite);
+	bool drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr, bool isSprite);
 
 	/**
 	 * Get block library

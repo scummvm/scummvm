@@ -292,18 +292,18 @@ void Grid::loadGridBricks() {
 
 	// for all bits under the 32bytes (256bits)
 	for (uint32 i = 1; i < 256; i++) {
-		uint8 currentBitByte = *(ptrToBllBits + (i / 8));
-		uint8 currentBitMask = 1 << (7 - (i & 7));
+		const uint8 currentBitByte = *(ptrToBllBits + (i / 8));
+		const uint8 currentBitMask = 1 << (7 - (i & 7));
 
 		if (currentBitByte & currentBitMask) {
 			uint32 currentBllOffset = READ_LE_UINT32(currentBll + currentBllEntryIdx);
 			const uint8 *currentBllPtr = currentBll + currentBllOffset;
 
-			uint32 bllSizeX = *currentBllPtr++;
-			uint32 bllSizeY = *currentBllPtr++;
-			uint32 bllSizeZ = *currentBllPtr++;
+			const uint32 bllSizeX = *currentBllPtr++;
+			const uint32 bllSizeY = *currentBllPtr++;
+			const uint32 bllSizeZ = *currentBllPtr++;
 
-			uint32 bllSize = bllSizeX * bllSizeY * bllSizeZ;
+			const uint32 bllSize = bllSizeX * bllSizeY * bllSizeZ;
 
 			for (uint32 j = 0; j < bllSize; j++) {
 				/* const uint8 type = * */currentBllPtr++;
@@ -476,53 +476,54 @@ bool Grid::initCellingGrid(int32 index) {
 	return true;
 }
 
-void Grid::drawBrick(int32 index, int32 posX, int32 posY) {
-	drawBrickSprite(index, posX, posY, brickTable[index], false);
+bool Grid::drawBrick(int32 index, int32 posX, int32 posY) {
+	return drawBrickSprite(index, posX, posY, brickTable[index], false);
 }
 
-void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
+bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 	ptr = ptr + READ_LE_INT32(ptr + index * 4);
-	drawBrickSprite(index, posX, posY, ptr, true);
+	return drawBrickSprite(index, posX, posY, ptr, true);
 }
 
-void Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
+bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 	const int32 left = posX + ptr.offsetX();
 	if (left > _engine->_interface->textWindow.right) {
-		return;
+		return false;
 	}
 	const int32 right = ptr.surface().w + left;
 	if (right < _engine->_interface->textWindow.left) {
-		return;
+		return false;
 	}
 	const int32 top = posY + ptr.offsetY();
 	if (top > _engine->_interface->textWindow.bottom) {
-		return;
+		return false;
 	}
 	const int32 bottom = ptr.surface().h + top;
 	if (bottom < _engine->_interface->textWindow.top) {
-		return;
+		return false;
 	}
 
 	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), Common::Point(left, top));
+	return true;
 }
 
 // WARNING: Rewrite this function to have better performance
-void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
+bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	const int32 left = posX + *(ptr + 2);
 	if (left > _engine->_interface->textWindow.right) {
-		return;
+		return false;
 	}
 	const int32 right = *ptr + left;
 	if (right < _engine->_interface->textWindow.left) {
-		return;
+		return false;
 	}
 	const int32 top = posY + *(ptr + 3);
 	if (top > _engine->_interface->textWindow.bottom) {
-		return;
+		return false;
 	}
 	const int32 bottom = (int32)*(ptr + 1) + top;
 	if (bottom < _engine->_interface->textWindow.top) {
-		return;
+		return false;
 	}
 	const int32 maxY = MIN(bottom, (int32)_engine->_interface->textWindow.bottom);
 
@@ -578,6 +579,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 			x = left;
 		}
 	}
+	return true;
 }
 
 uint8 *Grid::getBlockBuffer(int32 x, int32 y, int32 z) {
