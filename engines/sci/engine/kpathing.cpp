@@ -1064,7 +1064,7 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 					// We shouldn't get here twice.
 					// Happens in LB2CD, inside the speakeasy when walking from the
 					// speakeasy (room 310) into the bathroom (room 320), after having
-					// consulted the notebook (bug #3036299).
+					// consulted the notebook (bug #5029).
 					// We need to break in this case, otherwise we'll end in an infinite
 					// loop.
 					warning("AvoidPath: end point is contained in multiple polygons");
@@ -1169,7 +1169,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	SegmentRef pointList = segMan->dereference(points);
 	// Check if the target polygon is still valid. It may have been released
 	// in the meantime (e.g. in LSL6, room 700, when using the elevator).
-	// Refer to bug #3034501.
+	// Refer to bug #4946.
 	if (!pointList.isValid() || pointList.skipByte) {
 		warning("convert_polygon: Polygon data pointer is invalid, skipping polygon");
 		return NULL;
@@ -1254,7 +1254,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 		while (node) {
 			// The node value might be null, in which case there's no polygon to parse.
-			// Happens in LB2 floppy - refer to bug #3041232
+			// Happens in LB2 floppy - refer to bug #5195
 			polygon = !node->value.isNull() ? convert_polygon(s, node->value) : NULL;
 
 			if (polygon) {

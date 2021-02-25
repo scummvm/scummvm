@@ -378,7 +378,7 @@ end:
 	*outData++ = 0x00;
 
 	// This occurs in the music tracks of LB1 Amiga, when using the MT-32
-	// driver (bug #3297881)
+	// driver (bug #5692)
 	if (!containsMidiData)
 		warning("MIDI parser: the requested SCI0 sound has no MIDI note data for the currently selected sound driver");
 }
@@ -686,7 +686,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				// SCI1 and newer games. Signalling is done differently in SCI0
 				// though, so ignoring these signals in SCI0 games will result
 				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
-				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				// #5693). Refer to MusicEntry::setSignal() in sound/music.cpp.
 				// FIXME: SSCI doesn't start playing at the very beginning
 				// of the stream, but at a fixed location a few commands later.
 				// That is probably why this signal isn't triggered
@@ -823,7 +823,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
 			// but sometimes there's no hold marker in the associated songs
 			// (e.g. song 110, during the intro). The original interpreter
-			// treats this case as an infinite loop (bug #3311911).
+			// treats this case as an infinite loop (bug #5744).
 			if (_pSnd->loop || _pSnd->hold > 0) {
 				jumpToTick(_loopTick);
 
@@ -897,7 +897,7 @@ void MidiParser_SCI::allNotesOff() {
 	for (i = 0; i < 16; ++i) {
 		if (_channelRemap[i] != -1) {
 			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
-			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #5524)
 		}
 	}
 

@@ -214,7 +214,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				// HACK: Fix Ego's odd displacement in the QFG3 demo, scene 740.
 				// For some reason, ego jumps above the rope, so we fix his rope
 				// hanging view by displacing it down by 40 pixels. Fixes bug
-				// #3035693.
+				// #5009.
 				// FIXME: Remove this once we figure out why Ego jumps so high.
 				// Likely culprits include kInitBresen, kDoBresen and kCantBeHere.
 				// The scripts have the y offset that hero reaches (11) hardcoded,
@@ -584,7 +584,7 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 			runLength = curByte & 0x3F;
 
 			switch (curByte & 0xC0) {
-			case 0x40: // copy bytes as is (In copy case, runLength can go up to 127 i.e. pixel & 0x40). Fixes bug #3135872.
+			case 0x40: // copy bytes as is (In copy case, runLength can go up to 127 i.e. pixel & 0x40). Fixes bug #5551.
 				runLength += 64;
 				// fall through
 			case 0x00: // copy bytes as-is

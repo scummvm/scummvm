@@ -2004,7 +2004,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			} else {
 				// If the resource is already present in a volume, change it to
 				// the new content (but only in a volume, so as not to overwrite
-				// external patches - refer to bug #3366295).
+				// external patches - refer to bug #5796).
 				// This is needed at least for the German version of Pharkas.
 				// That version contains several duplicate resources INSIDE the
 				// resource data files like fonts, views, scripts, etc. Thus,

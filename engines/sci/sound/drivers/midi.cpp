@@ -703,7 +703,7 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	// Skip reverb SysEx message
 	stream.seek(11, SEEK_CUR);
 
-	// Read reverb data (stored vertically - patch #3117434)
+	// Read reverb data (stored vertically - trac #9261)
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < kReverbConfigNr; i++) {
 			_reverbConfig[i][j] = stream.readByte();
@@ -871,7 +871,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			// Skip reverb SysEx message
 			f.skip(11);
 
-			// Read reverb data (stored vertically - patch #3117434)
+			// Read reverb data (stored vertically - trac #9261)
 			for (int j = 0; j < 3; ++j) {
 				for (int i = 0; i < kReverbConfigNr; i++) {
 					_reverbConfig[i][j] = f.readByte();

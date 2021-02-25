@@ -144,7 +144,7 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	const SciSpan<const byte> headerPtr = inbuffer.subspan(headerPos);
 	const SciSpan<const byte> rlePtr = inbuffer.subspan(rlePos);
 	// displaceX, displaceY fields are ignored, and may contain garbage
-	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #3614914)
+	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #6388)
 	//int16 displaceX, displaceY;
 	byte priority = _priority;
 	byte clearColor;

@@ -292,7 +292,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	// This is taken from the patch by NewRisingSun(NRS) / Belzorash. Global 3
 	// is used for timing during the intro, and in the problematic version it's
 	// initialized to 0, whereas it's 6 in other versions. Thus, we assign it
-	// to 6 here, fixing the speed of the introduction. Refer to bug #3102071.
+	// to 6 here, fixing the speed of the introduction. Refer to bug #5496.
 	if (g_sci->getGameId() == GID_PQ2 && script == 200 &&
 		s->variables[VAR_GLOBAL][kGlobalVarSpeed].isNull()) {
 		s->variables[VAR_GLOBAL][kGlobalVarSpeed] = make_reg(0, 6);

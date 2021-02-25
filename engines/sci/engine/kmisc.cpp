@@ -81,7 +81,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		// low it is in the animate list. This worked somewhat in older PCs, but
 		// not in modern computers. We throttle the scene in order to allow the
 		// stones to display, otherwise the game scripts reset them too soon.
-		// Fixes bug #3127824.
+		// Fixes bug #5543.
 		if (s->currentRoomNumber() == 100) {
 			s->_throttleTrigger = true;
 			neededSleep = 60;
@@ -118,7 +118,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	case GID_SQ4:
 		// In SQ4 (floppy and CD) the sequel police appear way too quickly in
 		// the Skate-o-rama rooms, resulting in all sorts of timer issues, like
-		// #3109139 (which occurs because a police officer instantly teleports
+		// #5514 (which occurs because a police officer instantly teleports
 		// just before Roger exits and shoots him). We throttle these scenes a
 		// bit more, in order to prevent timer bugs related to the sequel police.
 		if (s->currentRoomNumber() == 405 || s->currentRoomNumber() == 406 ||
@@ -315,7 +315,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		//     fit of course.
 		//  - lsl5 (multilingual) room 280
 		//     allocates memory according to a previous kStrLen for the name of
-		//     the airport ladies (bug #3093818), which isn't enough
+		//     the airport ladies (bug #5478), which isn't enough
 		byteCount += 2 + (byteCount & 1);
 
 		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {

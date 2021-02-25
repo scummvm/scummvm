@@ -278,10 +278,10 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 
 		if (_variables.size() != originalVarCount) {
 			// These objects are probably broken.
-			// An example is 'witchCage' in script 200 in KQ5 (#3034714),
+			// An example is 'witchCage' in script 200 in KQ5 (#4964),
 			// but also 'girl' in script 216 and 'door' in script 22.
 			// In LSL3 a number of sound objects trigger this right away.
-			// SQ4-floppy's bug #3037938 also seems related.
+			// SQ4-floppy's bug #5093 also seems related.
 
 			// The effect is that a number of its method selectors may be
 			// treated as variable selectors, causing unpredictable effects.

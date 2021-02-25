@@ -50,7 +50,7 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		// to smallest). An example can be found in Longbow, room 710, where a
 		// random number is requested from 119 to 83. In this case, we're
 		// supposed to return toNumber (determined by the KQ5CD disasm).
-		// Fixes bug #3413020.
+		// Fixes bug #5846.
 		if (fromNumber > toNumber)
 			return make_reg(0, toNumber);
 

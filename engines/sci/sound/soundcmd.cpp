@@ -70,7 +70,7 @@ int SoundCommandParser::getSoundResourceId(reg_t obj) {
 	if (g_sci && g_sci->_features->useAltWinGMSound()) {
 		// Check if the alternate MIDI song actually exists...
 		// There are cases where it just doesn't exist (e.g. SQ4, room 530 -
-		// bug #3392767). In these cases, use the DOS tracks instead.
+		// bug #5829). In these cases, use the DOS tracks instead.
 		if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId + 1000)))
 			resourceId += 1000;
 	}
@@ -181,7 +181,7 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
 		// The sound hasn't been initialized for some reason, so initialize it
 		// here. Happens in KQ6, room 460, when giving the creature (child) to
-		// the bookworm. Fixes bugs #3413301 and #3421098.
+		// the bookworm. Fixes bugs #5849 and #5868.
 		processInitSound(obj);
 		musicSlot = _music->getSlot(obj);
 		if (!musicSlot)
@@ -229,7 +229,7 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 	}
 
 	// Reset hold when starting a new song. kDoSoundSetHold is always called after
-	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
+	// kDoSoundPlay to set it properly, if needed. Fixes bug #5851.
 	musicSlot->hold = -1;
 	musicSlot->playBed = playBed;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
@@ -414,7 +414,7 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	// The object can be null in several SCI0 games (e.g. Camelot, KQ1, KQ4, MUMG).
-	// Check bugs #3035149, #3036942 and #3578335.
+	// Check bugs #4984, #5045 and #6163.
 	// In this case, we just ignore the call.
 	if (obj.isNull() && argc == 1)
 		return s->r_acc;
@@ -602,7 +602,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// We need signal for sci0 at least in iceman as well (room 14,
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
-		// receptionist (bug #3192166).
+		// receptionist (bug #5601).
 		// TODO: More thorougly check the different SCI version:
 		// * SCI1late sets signal to 0xFE here. (With signal 0xFF
 		//       duplicate music plays in LauraBow2CD - bug #6462)
@@ -644,7 +644,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv) {
 	// The 4 parameter variant of this call is used in at least LSL1VGA, room
 	// 110 (Lefty's bar), to distort the music when Larry is drunk and stands
-	// up - bug #3614447.
+	// up - bug #6349.
 	reg_t obj = argv[0];
 	byte channel = argv[1].toUint16() & 0xf;
 	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0;	// 0xB0: controller

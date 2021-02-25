@@ -304,7 +304,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	// KQ1sci, KQ4, iceman, QfG2 always add windows to the back of the list.
 	// KQ5CD checks style.
-	// Hoyle3-demo also always adds to the back (#3036763).
+	// Hoyle3-demo also always adds to the back (#5040).
 	bool forceToBack = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ||
 	                   (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
 
@@ -394,7 +394,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// invasive changes than this one, thus it's not really worth the effort
 	// for a feature that was not present in the original game, and its
 	// implementation is buggy in the first place.
-	// Adjusting the restore rect properly fixes bug #3575276.
+	// Adjusting the restore rect properly fixes bug #6154.
 
 	if (wmprect.top > pwnd->dims.top) {
 		pwnd->dims.moveTo(pwnd->dims.left, wmprect.top);

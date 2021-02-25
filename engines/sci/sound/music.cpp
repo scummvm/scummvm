@@ -602,7 +602,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			// otherwise the song may keep looping forever when it ends in jumpToTick.
 			// This is needed when loading saved games, or when a game
 			// stops the same sound twice (e.g. LSL3 Amiga, going left from
-			// room 210 to talk with Kalalau). Fixes bugs #3083151 and #3106107.
+			// room 210 to talk with Kalalau). Fixes bugs #5404 and #5503.
 			uint16 prevLoop = pSnd->loop;
 			int16 prevHold = pSnd->hold;
 			pSnd->loop = 0;
@@ -742,7 +742,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 void SciMusic::soundPause(MusicEntry *pSnd) {
 	// SCI seems not to be pausing samples played back by kDoSound at all
 	//  It only stops looping samples (actually doesn't loop them again before they are unpaused)
-	//  Examples: Space Quest 1 death by acid drops (pause is called even specifically for the sample, see bug #3038048)
+	//  Examples: Space Quest 1 death by acid drops (pause is called even specifically for the sample, see bug #5097)
 	//             Eco Quest 1 during the intro when going to the abort-menu
 	//             In both cases sierra sci keeps playing
 	//            Leisure Suit Larry 1 doll scene - it seems that pausing here actually just stops
@@ -1001,7 +1001,7 @@ void MusicEntry::setSignal(int newSignal) {
 	// For SCI0, we cache the signals to set, as some songs might
 	// update their signal faster than kGetEvent is called (which is where
 	// we manually invoke kDoSoundUpdateCues for SCI0 games). SCI01 and
-	// newer handle signalling inside kDoSoundUpdateCues. Refer to bug #3042981
+	// newer handle signalling inside kDoSoundUpdateCues. Refer to bug #5218
 	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
 		if (!signal) {
 			signal = newSignal;
@@ -1011,7 +1011,7 @@ void MusicEntry::setSignal(int newSignal) {
 		}
 	} else {
 		// Set the signal directly for newer games, otherwise the sound
-		// object might be deleted already later on (refer to bug #3045913)
+		// object might be deleted already later on (refer to bug #5243)
 		signal = newSignal;
 	}
 }

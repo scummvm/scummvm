@@ -46,7 +46,7 @@ const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
 // Enable the define below to have the VM abort on cases where a conditional
 // statement is followed by an unconditional jump (which will most likely lead
-// to an infinite loop). Aids in detecting script bugs such as #3040722.
+// to an infinite loop). Aids in detecting script bugs such as #5172.
 //#define ABORT_ON_INFINITE_LOOP
 
 // validation functionality
@@ -531,7 +531,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 		// heuristic fail and leads to endless loops and crashes. Our
 		// interpretation of this seems correct, as other SCI tools, like for
 		// example SCI Viewer, have issues with these scripts (e.g. script 999
-		// in Circus Quest). Fixes bug #3038686.
+		// in Circus Quest). Fixes bug #5113.
 		if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
 			// op_pushSelf: no adjustment necessary
 		} else {
@@ -1285,7 +1285,7 @@ void run_vm(EngineState *s) {
 			// heuristic fail and leads to endless loops and crashes. Our
 			// interpretation of this seems correct, as other SCI tools, like for
 			// example SCI Viewer, have issues with these scripts (e.g. script 999
-			// in Circus Quest). Fixes bug #3038686.
+			// in Circus Quest). Fixes bug #5113.
 			if (!(extOpcode & 1) || g_sci->getGameId() == GID_FANMADE) {
 				PUSH32(s->xs->objp);
 			} else {

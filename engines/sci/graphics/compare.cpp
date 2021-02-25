@@ -87,7 +87,7 @@ reg_t GfxCompare::canBeHereCheckRectList(const reg_t checkObject, const Common::
 				// This behavior is slightly odd, but it's how the original SCI
 				// engine did it: a rect cannot be contained within itself
 				// (there is no equality). Do NOT change this to contains(), as
-				// it breaks KQ4 early (bug #3315639).
+				// it breaks KQ4 early (bug #5755).
 				if (curRect.right > checkRect.left &&
 					curRect.left < checkRect.right &&
 					curRect.bottom > checkRect.top &&

@@ -516,7 +516,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	// never triggers the offending script code that corrupts the object.
 	// This only affects the jar of cabbage - any other object, including
 	// the empty jar has a different noun, thus it's unaffected.
-	// Fixes bug #3601090.
+	// Fixes bug #6232.
 	// NOTE: To fix a corrupted jar object, type "send Glass_Jar message 52"
 	// in the debugger.
 	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 &&
