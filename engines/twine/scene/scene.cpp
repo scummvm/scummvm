@@ -499,20 +499,20 @@ void Scene::changeScene() {
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
-		newHeroX = _zoneHeroX;
-		newHeroY = _zoneHeroY;
-		newHeroZ = _zoneHeroZ;
+		newHeroPos.x = _zoneHeroX;
+		newHeroPos.y = _zoneHeroY;
+		newHeroPos.z = _zoneHeroZ;
 	}
 
 	if (heroPositionType == ScenePositionType::kScene || heroPositionType == ScenePositionType::kNoPosition) {
-		newHeroX = _sceneHeroX;
-		newHeroY = _sceneHeroY;
-		newHeroZ = _sceneHeroZ;
+		newHeroPos.x = _sceneHeroX;
+		newHeroPos.y = _sceneHeroY;
+		newHeroPos.z = _sceneHeroZ;
 	}
 
-	sceneHero->pos.x = newHeroX;
-	sceneHero->pos.y = heroYBeforeFall = newHeroY;
-	sceneHero->pos.z = newHeroZ;
+	sceneHero->pos.x = newHeroPos.x;
+	sceneHero->pos.y = heroYBeforeFall = newHeroPos.y;
+	sceneHero->pos.z = newHeroPos.z;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 

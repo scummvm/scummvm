@@ -327,9 +327,7 @@ public:
 	int32 alphaLight = ANGLE_0;
 	int32 betaLight = ANGLE_0;
 
-	int16 newHeroX = 0; // newTwinsenX
-	int16 newHeroY = 0; // newTwinsenY
-	int16 newHeroZ = 0; // newTwinsenZ
+	Vec3 newHeroPos;
 
 	/** Hero Y coordinate before fall */
 	int16 heroYBeforeFall = 0;

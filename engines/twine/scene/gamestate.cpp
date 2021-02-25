@@ -114,9 +114,9 @@ void GameState::initEngineVars() {
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->newHeroX = 0x2000;
-	_engine->_scene->newHeroY = 0x1800;
-	_engine->_scene->newHeroZ = 0x2000;
+	_engine->_scene->newHeroPos.x = 0x2000;
+	_engine->_scene->newHeroPos.y = 0x1800;
+	_engine->_scene->newHeroPos.z = 0x2000;
 
 	_engine->_scene->currentSceneIdx = -1;
 	_engine->_scene->needChangeScene = LBA1SceneId::Citadel_Island_Prison;
@@ -192,9 +192,9 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	magicLevelIdx = file->readByte();
 	inventoryMagicPoints = file->readByte();
 	inventoryNumLeafsBox = file->readByte();
-	_engine->_scene->newHeroX = file->readSint16LE();
-	_engine->_scene->newHeroY = file->readSint16LE();
-	_engine->_scene->newHeroZ = file->readSint16LE();
+	_engine->_scene->newHeroPos.x = file->readSint16LE();
+	_engine->_scene->newHeroPos.y = file->readSint16LE();
+	_engine->_scene->newHeroPos.z = file->readSint16LE();
 	_engine->_scene->sceneHero->angle = ToAngle(file->readSint16LE());
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
 	_engine->_scene->sceneHero->body = (BodyType)file->readByte();
@@ -239,7 +239,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	if (sceneIdx == Polar_Island_end_scene || sceneIdx == Citadel_Island_end_sequence_1 || sceneIdx == Citadel_Island_end_sequence_2 || sceneIdx == Credits_List_Sequence) {
 		/* inventoryMagicPoints = 0x50 */
 		/* herobehaviour = 0 */
-		/* newherox = 0xffff */
+		/* newheropos.x = 0xffff */
 		sceneIdx = Polar_Island_Final_Battle;
 	}
 
@@ -260,9 +260,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(inventoryNumLeafsBox);
 	// we don't save the whole scene state - so we have to make sure that the hero is
 	// respawned at the start of the scene - and not at its current position
-	file->writeSint16LE(_engine->_scene->newHeroX);
-	file->writeSint16LE(_engine->_scene->newHeroY);
-	file->writeSint16LE(_engine->_scene->newHeroZ);
+	file->writeSint16LE(_engine->_scene->newHeroPos.x);
+	file->writeSint16LE(_engine->_scene->newHeroPos.y);
+	file->writeSint16LE(_engine->_scene->newHeroPos.z);
 	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
 	file->writeByte((uint8)_engine->_scene->sceneHero->body);
 

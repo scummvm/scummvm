@@ -263,7 +263,7 @@ Common::Error TwinEEngine::run() {
 		}
 		case EngineState::LoadedGame:
 			debug("Loaded game");
-			if (_scene->newHeroX == -1) {
+			if (_scene->newHeroPos.x == -1) {
 				_scene->heroPositionType = ScenePositionType::kNoPosition;
 			}
 			_text->renderTextTriangle = false;
@@ -927,9 +927,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (IS_HERO(a)) {
 				if (actor->dynamicFlags.bAnimEnded) {
 					if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
-						_scene->sceneHero->pos.x = _scene->newHeroX;
-						_scene->sceneHero->pos.y = _scene->newHeroY;
-						_scene->sceneHero->pos.z = _scene->newHeroZ;
+						_scene->sceneHero->pos.x = _scene->newHeroPos.x;
+						_scene->sceneHero->pos.y = _scene->newHeroPos.y;
+						_scene->sceneHero->pos.z = _scene->newHeroPos.z;
 
 						_scene->needChangeScene = _scene->currentSceneIdx;
 						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
@@ -952,9 +952,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						actor->life = 50;
 
 						if (_scene->previousSceneIdx != _scene->currentSceneIdx) {
-							_scene->newHeroX = -1;
-							_scene->newHeroY = -1;
-							_scene->newHeroZ = -1;
+							_scene->newHeroPos.x = -1;
+							_scene->newHeroPos.y = -1;
+							_scene->newHeroPos.z = -1;
 							_scene->currentSceneIdx = _scene->previousSceneIdx;
 							_scene->stopRunningGame();
 						}

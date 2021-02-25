@@ -1666,7 +1666,7 @@ static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->inventoryMagicPoints = 80;
 	engine->_scene->currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->heroBehaviour = engine->_actor->previousHeroBehaviour;
-	engine->_scene->newHeroX = -1;
+	engine->_scene->newHeroPos.x = -1;
 	engine->_scene->sceneHero->angle = engine->_actor->previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
