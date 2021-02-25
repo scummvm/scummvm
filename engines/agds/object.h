@@ -268,8 +268,7 @@ public:
 	bool inScene() const
 	{ return _inScene; }
 
-	void inScene(bool value)
-	{ _inScene = value; }
+	void inScene(bool value);
 
 	bool pointIn(Common::Point pos);
 };
