@@ -501,7 +501,6 @@ MODULE_OBJS := \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \
-	ultima8/misc/istring.o \
 	ultima8/misc/util.o \
 	ultima8/usecode/bit_set.o \
 	ultima8/usecode/byte_set.o \

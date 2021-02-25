@@ -24,7 +24,6 @@
 #define ULTIMA8_MISC_ISTRING_H
 
 #include "ultima/shared/std/string.h"
-#include "common/array.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,8 +42,6 @@ public:
 	int Compare(const string &s) const override {
 		return compareToIgnoreCase(s);
 	}
-
-	void split(Common::Array<istring> &arr) const;
 };
 
 } // End of namespace Ultima8
