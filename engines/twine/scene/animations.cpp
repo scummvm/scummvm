@@ -516,18 +516,14 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		return;
 	}
 
-	_engine->_movements->previousActor.x = actor->collisionPos.x;
-	_engine->_movements->previousActor.y = actor->collisionPos.y;
-	_engine->_movements->previousActor.z = actor->collisionPos.z;
+	_engine->_movements->previousActor = actor->collisionPos;
 
 	if (actor->staticFlags.bIsSpriteActor) { // is sprite actor
 		if (actor->strengthOfHit) {
 			actor->dynamicFlags.bIsHitting = 1;
 		}
 
-		_engine->_movements->processActor.x = actor->pos.x;
-		_engine->_movements->processActor.y = actor->pos.y;
-		_engine->_movements->processActor.z = actor->pos.z;
+		_engine->_movements->processActor = actor->pos;
 
 		if (!actor->dynamicFlags.bIsFalling) {
 			if (actor->speed) {
@@ -589,9 +585,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						}
 
 						if (updatePos) {
-							_engine->_movements->processActor.x = actor->lastPos.x;
-							_engine->_movements->processActor.y = actor->lastPos.y;
-							_engine->_movements->processActor.z = actor->lastPos.z;
+							_engine->_movements->processActor = actor->lastPos;
 
 							actor->dynamicFlags.bIsSpriteMoving = 0;
 							actor->speed = 0;
@@ -601,9 +595,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			}
 
 			if (actor->staticFlags.bCanBePushed) {
-				_engine->_movements->processActor.x += actor->lastPos.x;
-				_engine->_movements->processActor.y += actor->lastPos.y;
-				_engine->_movements->processActor.z += actor->lastPos.z;
+				_engine->_movements->processActor += actor->lastPos;
 
 				if (actor->staticFlags.bUseMiniZv) {
 					_engine->_movements->processActor.x = ((_engine->_movements->processActor.x / 128) * 128);
@@ -863,17 +855,15 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		_engine->_movements->processActor.z = 0;
 	}
 
-	if (_engine->_movements->processActor.x > 0x7E00) {
+	if (_engine->_movements->processActor.x > 0x7E00) { // SCENE_SIZE_MAX
 		_engine->_movements->processActor.x = 0x7E00;
 	}
 
-	if (_engine->_movements->processActor.z > 0x7E00) {
+	if (_engine->_movements->processActor.z > 0x7E00) { // SCENE_SIZE_MAX
 		_engine->_movements->processActor.z = 0x7E00;
 	}
 
-	actor->pos.x = _engine->_movements->processActor.x;
-	actor->pos.y = _engine->_movements->processActor.y;
-	actor->pos.z = _engine->_movements->processActor.z;
+	actor->pos = _engine->_movements->processActor;
 }
 
 } // namespace TwinE
