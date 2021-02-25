@@ -896,26 +896,26 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	_engine->copyBlockPhys(left, top, left + width, top + 135);
 }
 
-Common::Rect Menu::calcBehaviourRect(HeroBehaviourType behaviour) const {
-	const int border = 110;
+Common::Rect Menu::calcBehaviourRect(int32 left, int32 top, HeroBehaviourType behaviour) const {
+	const int border = 10;
 	const int32 padding = 11;
 	const int32 width = 99;
 	const int height = 119;
 
-	const int32 boxLeft = (int32)behaviour * (width + padding) + border;
+	const int32 boxLeft = (int32)behaviour * (width + padding) + left + border;
 	const int32 boxRight = boxLeft + width;
-	const int32 boxTop = border;
+	const int32 boxTop = top + border;
 	const int32 boxBottom = boxTop + height;
 	return Common::Rect(boxLeft, boxTop, boxRight, boxBottom);
 }
 
-bool Menu::isBehaviourHovered(HeroBehaviourType behaviour) const {
-	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
+bool Menu::isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const {
+	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 	return _engine->_input->isMouseHovering(boxRect);
 }
 
-void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
-	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
+void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
+	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 
 	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
 	const uint8 *currentAnim = _engine->_resources->animTable[animIdx];
@@ -943,7 +943,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	if (behaviour == _engine->_actor->heroBehaviour) {
 		const int titleOffset = 10;
 		const int titleHeight = 40;
-		const int32 titleBoxLeft = 110;
+		const int32 titleBoxLeft = left + 10;
 		const int32 titleBoxWidth = 430;
 		const int32 titleBoxCenter = titleBoxLeft + titleBoxWidth / 2;
 		const int32 titleBoxRight = titleBoxLeft + titleBoxWidth;
@@ -979,13 +979,18 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	_engine->_interface->loadClip();
 }
 
-void Menu::prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
+void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
 	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]], behaviourEntity, &behaviourAnimData[(byte)behaviour]);
-	drawBehaviour(behaviour, angle, false, dirtyRect);
+	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
 }
 
-void Menu::drawBehaviourMenu(int32 angle) {
-	const Common::Rect titleRect(100, 100, 550, 290);
+void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
+	const int32 width = 450;
+	const int32 height = 190;
+	const int32 right = left + width;
+	const int32 bottom = top + height;
+
+	const Common::Rect titleRect(left, top, right, bottom);
 	drawBox(titleRect);
 
 	Common::Rect boxRect(titleRect);
@@ -993,10 +998,10 @@ void Menu::drawBehaviourMenu(int32 angle) {
 	_engine->_interface->drawTransparentBox(boxRect, 2);
 
 	Common::Rect ignoreRect;
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kNormal, ignoreRect);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAthletic, ignoreRect);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAggressive, ignoreRect);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kDiscrete, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAggressive, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kDiscrete, ignoreRect);
 
 	_engine->copyBlockPhys(titleRect);
 
@@ -1026,7 +1031,9 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
-	drawBehaviourMenu(_engine->_scene->sceneHero->angle);
+	const int32 left = _engine->width() / 2 - 220;
+	const int32 top = _engine->height() / 2 - 140;
+	drawBehaviourMenu(left, top, _engine->_scene->sceneHero->angle);
 
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
@@ -1072,13 +1079,13 @@ void Menu::processBehaviourMenu() {
 
 		Common::Rect dirtyRect;
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
+			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
 			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
 
-		drawBehaviour(_engine->_actor->heroBehaviour, -1, true, dirtyRect);
+		drawBehaviour(left, top, _engine->_actor->heroBehaviour, -1, true, dirtyRect);
 		if (!dirtyRect.isEmpty()) {
 			_engine->copyBlockPhys(dirtyRect);
 		}

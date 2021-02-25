@@ -167,12 +167,12 @@ private:
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
 	void drawInfoMenu(int16 left, int16 top, int16 width);
-	Common::Rect calcBehaviourRect(HeroBehaviourType behaviour) const;
-	bool isBehaviourHovered(HeroBehaviourType behaviour) const;
-	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect);
+	Common::Rect calcBehaviourRect(int32 left, int32 top, HeroBehaviourType behaviour) const;
+	bool isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const;
+	void drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect);
 	void drawInventoryItems();
-	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect);
-	void drawBehaviourMenu(int32 angle);
+	void prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect);
+	void drawBehaviourMenu(int32 left, int32 top, int32 angle);
 	void drawItem(int32 item, Common::Rect &dirtyRect);
 
 	MenuSettings giveUpMenuWithSaveState;
