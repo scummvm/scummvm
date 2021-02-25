@@ -1519,16 +1519,16 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32
 	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
 }
 
-void Renderer::computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr) {
-	int32 minY = y2;
+void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2, int16 *polygonTabPtr) {
+	int32 minY = bottom;
 	int32 minX = x1;
-	if (y1 < y2) {
-		minY = y1;
-		y1 = y2;
+	if (top < bottom) {
+		minY = top;
+		top = bottom;
 		minX = x2;
 		x2 = x1;
 	}
-	uint32 deltaY = y1 - minY;
+	uint32 deltaY = top - minY;
 	int16 *currentPolygonTabEntry = &polygonTabPtr[minY];
 	if (x2 <= minX) {
 		uint32 deltaX = (uint32)(uint16)((int16)minX - (int16)x2) << 0x10;
