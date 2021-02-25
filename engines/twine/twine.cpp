@@ -901,10 +901,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
 							if (!_actor->cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, kAnimationType_4, AnimationTypes::kStanding, 0);
-								_renderer->projectPositionOnScreen(actor->pos.x - _grid->camera.x, actor->pos.y - _grid->camera.y, actor->pos.z - _grid->camera.z);
+								_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
 								_actor->cropBottomScreen = _renderer->projPosY;
 							}
-							_renderer->projectPositionOnScreen(actor->pos.x - _grid->camera.x, actor->pos.y - _grid->camera.y, actor->pos.z - _grid->camera.z);
+							_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
 							actor->controlMode = ControlMode::kNoMove;
 							actor->life = -1;
 							_actor->cropBottomScreen = _renderer->projPosY;

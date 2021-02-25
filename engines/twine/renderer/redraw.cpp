@@ -200,7 +200,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 		// no redraw required
 		if (actor->staticFlags.bIsBackgrounded && !bgRedraw) {
 			// get actor position on screen
-			_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
+			_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
 
 			// check if actor is visible on screen, otherwise don't display it
 			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100) {
@@ -213,7 +213,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 			continue;
 		}
 		// get actor position on screen
-		_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
+		_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
 
 		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < _engine->width() + 112 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < _engine->height() + 171) ||
 		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100)) {
@@ -406,7 +406,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const uint8 *spritePtr = _engine->_resources->spriteTable[actor->entity];
 
 	// get actor position on screen
-	_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
+	_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
 
 	const int32 spriteWidth = spriteData.surface().w;
 	const int32 spriteHeight = spriteData.surface().h;

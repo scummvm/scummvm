@@ -52,6 +52,14 @@ struct Vec3 {
 	}
 };
 
+inline Vec3 operator+(const Vec3 &lhs, const Vec3 &rhs) {
+	return Vec3{lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
+}
+
+inline Vec3 operator-(const Vec3 &lhs, const Vec3 &rhs) {
+	return Vec3{lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+}
+
 struct BoundingBox {
 	Vec3 mins;
 	Vec3 maxs;
