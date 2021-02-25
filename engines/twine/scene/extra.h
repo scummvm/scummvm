@@ -51,19 +51,12 @@ enum ExtraType {
 
 struct ExtraListStruct {
 	int16 info0 = 0; /**< a value of -1 indicates that this instance is free to use */
-	int16 x = 0;
-	int16 y = 0;
-	int16 z = 0;
-
-	int16 lastX = 0; // field_8
-	int16 lastY = 0; // field_A
-	int16 lastZ = 0; // field_C
+	Vec3 pos;
+	Vec3 lastPos;
+	Vec3 destPos;
 
 	ActorMoveStruct trackActorMove;
 
-	int16 destX = 0; // field_E
-	int16 destY = 0; // field_10
-	int16 destZ = 0; // field_12
 	uint16 type = 0; /**< ExtraType bitmask */
 	int16 angle = 0; // field_16
 	int32 spawnTime = 0;

@@ -274,7 +274,8 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 
 bool Movements::processAttackExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_gameState->usingSabre) { // Use Magic Ball
+	if (!_engine->_gameState->usingSabre) {
+		// Use Magic Ball
 		if (_engine->_gameState->hasItem(InventoryItems::kiMagicBall)) {
 			if (_engine->_gameState->magicBallIdx == -1) {
 				_engine->_animations->initAnim(AnimationTypes::kThrowBall, kAnimationType_1, AnimationTypes::kStanding, actorIdx);

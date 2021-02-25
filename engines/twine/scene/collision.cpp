@@ -464,12 +464,12 @@ void Collision::stopFalling() { // ReceptionObj()
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
 	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
-	const int32 xLeft = bbox->mins.x + extra->x;
-	const int32 xRight = bbox->maxs.x + extra->x;
-	const int32 yLeft = bbox->mins.y + extra->y;
-	const int32 yRight = bbox->maxs.y + extra->y;
-	const int32 zLeft = bbox->mins.z + extra->z;
-	const int32 zRight = bbox->maxs.z + extra->z;
+	const int32 xLeft = bbox->mins.x + extra->pos.x;
+	const int32 xRight = bbox->maxs.x + extra->pos.x;
+	const int32 yLeft = bbox->mins.y + extra->pos.y;
+	const int32 yRight = bbox->maxs.y + extra->pos.y;
+	const int32 zLeft = bbox->mins.z + extra->pos.z;
+	const int32 zRight = bbox->maxs.z + extra->pos.z;
 
 	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
@@ -522,24 +522,24 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 o
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const {
 	int32 index = extra->info0;
 	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(index);
-	const int32 xLeft = bbox->mins.x + extra->x;
-	const int32 xRight = bbox->maxs.x + extra->x;
-	const int32 yLeft = bbox->mins.y + extra->y;
-	const int32 yRight = bbox->maxs.y + extra->y;
-	const int32 zLeft = bbox->mins.z + extra->z;
-	const int32 zRight = bbox->maxs.z + extra->z;
+	const int32 xLeft = bbox->mins.x + extra->pos.x;
+	const int32 xRight = bbox->maxs.x + extra->pos.x;
+	const int32 yLeft = bbox->mins.y + extra->pos.y;
+	const int32 yRight = bbox->maxs.y + extra->pos.y;
+	const int32 zLeft = bbox->mins.z + extra->pos.z;
+	const int32 zRight = bbox->maxs.z + extra->pos.z;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
 			// TODO: shouldn't this be extraTest->info0 as index?
 			const BoundingBox *testbbox = _engine->_resources->spriteBoundingBox.bbox(++index);
-			const int32 xLeftTest = testbbox->mins.x + extraTest->x;
-			const int32 xRightTest = testbbox->maxs.x + extraTest->x;
-			const int32 yLeftTest = testbbox->mins.y + extraTest->y;
-			const int32 yRightTest = testbbox->maxs.y + extraTest->y;
-			const int32 zLeftTest = testbbox->mins.z + extraTest->z;
-			const int32 zRightTest = testbbox->maxs.z + extraTest->z;
+			const int32 xLeftTest = testbbox->mins.x + extraTest->pos.x;
+			const int32 xRightTest = testbbox->maxs.x + extraTest->pos.x;
+			const int32 yLeftTest = testbbox->mins.y + extraTest->pos.y;
+			const int32 yRightTest = testbbox->maxs.y + extraTest->pos.y;
+			const int32 zLeftTest = testbbox->mins.z + extraTest->pos.z;
+			const int32 zRightTest = testbbox->maxs.z + extraTest->pos.z;
 
 			if (xLeft < xLeftTest) {
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
