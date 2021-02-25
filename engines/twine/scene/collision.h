@@ -36,19 +36,11 @@ private:
 
 public:
 	Collision(TwinEEngine *engine);
-	/** Actor collition X coordinate */
-	int32 collisionX = 0; // getPosVar1
-	/** Actor collition Y coordinate */
-	int32 collisionY = 0; // getPosVar2
-	/** Actor collition Z coordinate */
-	int32 collisionZ = 0; // getPosVar3
+	/** Actor collision coordinate */
+	Vec3 collision;
 
-	/** Actor collition X coordinate */
-	int32 processCollisionX = 0; // processActorVar11
-	/** Actor collition Y coordinate */
-	int32 processCollisionY = 0; // processActorVar12
-	/** Actor collition Z coordinate */
-	int32 processCollisionZ = 0; // processActorVar13
+	/** Actor collision coordinate */
+	Vec3 processCollision;
 
 	/** Cause damage in current processed actor */
 	int32 causeActorDamage = 0; //fieldCauseDamage

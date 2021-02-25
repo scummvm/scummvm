@@ -695,13 +695,8 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	// actor standing on another actor
 	if (actor->standOn != -1) {
 		const ActorStruct *standOnActor = _engine->_scene->getActor(actor->standOn);
-		_engine->_movements->processActor.x -= standOnActor->collisionPos.x;
-		_engine->_movements->processActor.y -= standOnActor->collisionPos.y;
-		_engine->_movements->processActor.z -= standOnActor->collisionPos.z;
-
-		_engine->_movements->processActor.x += standOnActor->pos.x;
-		_engine->_movements->processActor.y += standOnActor->pos.y;
-		_engine->_movements->processActor.z += standOnActor->pos.z;
+		_engine->_movements->processActor -= standOnActor->collisionPos;
+		_engine->_movements->processActor += standOnActor->pos;
 
 		if (!_engine->_collision->standingOnActor(actorIdx, actor->standOn)) {
 			actor->standOn = -1; // no longer standing on other actor
@@ -717,7 +712,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 	// actor collisions with bricks
 	if (actor->staticFlags.bComputeCollisionWithBricks) {
-		_engine->_collision->collisionY = 0;
+		_engine->_collision->collision.y = 0;
 
 		ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->previousActor.x, _engine->_movements->previousActor.y, _engine->_movements->previousActor.z);
 
@@ -739,9 +734,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		_engine->_collision->causeActorDamage = 0;
 
-		_engine->_collision->processCollisionX = _engine->_movements->processActor.x;
-		_engine->_collision->processCollisionY = _engine->_movements->processActor.y;
-		_engine->_collision->processCollisionZ = _engine->_movements->processActor.z;
+		_engine->_collision->processCollision = _engine->_movements->processActor;
 
 		if (IS_HERO(actorIdx) && !actor->staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
@@ -785,7 +778,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (brickShape == ShapeType::kSolid) {
 				if (actor->dynamicFlags.bIsFalling) {
 					_engine->_collision->stopFalling();
-					_engine->_movements->processActor.y = (_engine->_collision->collisionY * BRICK_HEIGHT) + BRICK_HEIGHT;
+					_engine->_movements->processActor.y = (_engine->_collision->collision.y * BRICK_HEIGHT) + BRICK_HEIGHT;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
@@ -844,7 +837,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 
 		// if under the map, than die
-		if (_engine->_collision->collisionY == -1) {
+		if (_engine->_collision->collision.y == -1) {
 			actor->life = 0;
 		}
 	} else {

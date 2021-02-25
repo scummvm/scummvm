@@ -36,6 +36,20 @@ struct Vec3 {
 	int32 x;
 	int32 y;
 	int32 z;
+
+	inline Vec3& operator+=(const Vec3 &other) {
+		x += other.x;
+		y += other.y;
+		z += other.z;
+		return *this;
+	}
+
+	inline Vec3& operator-=(const Vec3 &other) {
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+		return *this;
+	}
 };
 
 struct BoundingBox {
