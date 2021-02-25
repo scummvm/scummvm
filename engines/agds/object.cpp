@@ -188,7 +188,14 @@ bool Object::pointIn(Common::Point pos) {
 	if (!_inScene)
 		return false;
 
-	pos -= _pos;
+	if (_picture) {
+		auto rect = getRect();
+		if (rect.contains(pos)) {
+			return true;
+		}
+	}
+
+	// pos -= _pos;
 	pos -= _regionOffset;
 
 	if (_region && _region->pointIn(pos))

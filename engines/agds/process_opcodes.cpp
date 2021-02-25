@@ -898,7 +898,7 @@ void Process::setTileIndex() {
 }
 
 void Process::setThrowHandler(uint16 size) {
-	debug("setThrowHandler, [handler] %u instructions", size);
+	debug("setThrowHandler %u instructions", size);
 	_object->setThrowHandler(_ip);
 	_ip += size;
 }

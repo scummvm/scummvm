@@ -537,7 +537,7 @@ Common::Error AGDSEngine::run() {
 				if (userEnabled()) {
 					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
 					debug("%s %d, %d", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y);
-					if (!lclick && _currentInventoryObject) {
+					if (!lclick && _currentInventoryObject && !_currentInventoryObject->useOnHandler()) {
 						auto object = _currentInventoryObject;
 						_currentInventoryObject.reset();
 
@@ -564,12 +564,14 @@ Common::Error AGDSEngine::run() {
 									ip = object->useOnHandler();
 							} else {
 								ip = object->getClickHandler();
-								if (ip == 0) {
-									ip = object->useOnHandler();
-								}
 							}
-						} else
+						} else {
 							ip = object->getExamineHandler();
+						}
+						if (!ip && _currentInventoryObject) {
+							ip = lclick? _currentInventoryObject->useOnHandler(): _currentInventoryObject->throwHandler();
+							object = _currentInventoryObject;
+						}
 
 						if (ip) {
 							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
