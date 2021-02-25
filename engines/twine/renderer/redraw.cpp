@@ -326,9 +326,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	_engine->_interface->setClip(renderRect);
 
-	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->spriteShadowPtr);
-	}
+	_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->spriteShadowPtr);
 
 	const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
 	const int32 tmpY = drawCmd.y / BRICK_HEIGHT;

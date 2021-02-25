@@ -509,6 +509,10 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 
 // WARNING: Rewrite this function to have better performance
 bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
+	if (_engine->_interface->textWindow.left > _engine->_interface->textWindow.right || _engine->_interface->textWindow.top > _engine->_interface->textWindow.bottom) {
+		return false;
+	}
+
 	const int32 left = posX + *(ptr + 2);
 	if (left > _engine->_interface->textWindow.right) {
 		return false;
