@@ -1158,7 +1158,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
-	inventorySelectedColor = 68;
+	inventorySelectedColor = COLOR_RED;
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
@@ -1176,9 +1176,7 @@ void Menu::processInventoryMenu() {
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 	bool updateItemText = true;
 
-#if 0
-	ScopedCursor scopedCursor(_engine);
-#endif
+	//ScopedCursor scopedCursor(_engine);
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
 		FrameMarker frame;
@@ -1258,7 +1256,7 @@ void Menu::processInventoryMenu() {
 
 		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 			_engine->loopInventoryItem = inventorySelectedItem;
-			inventorySelectedColor = 91;
+			inventorySelectedColor = COLOR_91;
 			drawItem(inventorySelectedItem, dirtyRect);
 			if (!dirtyRect.isEmpty()) {
 				_engine->copyBlockPhys(dirtyRect);

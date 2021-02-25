@@ -143,7 +143,7 @@ private:
 	/** Behaviour menu anim data pointer */
 	AnimTimerDataStruct behaviourAnimData[4];
 
-	int32 inventorySelectedColor = 0;
+	int32 inventorySelectedColor = COLOR_BLACK;
 	int32 inventorySelectedItem = 0; // currentSelectedObjectInInventory
 
 	/**
