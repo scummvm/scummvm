@@ -3732,7 +3732,9 @@ msgstr "커맨드 입력시 일시 정지"
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
-msgstr "실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유사)."
+msgstr ""
+"실시간 입력 대신 커맨드 입력 창을 표시하고 게임을 일시 정지합니다 (SCI와 유"
+"사)."
 
 #: engines/agi/detection.cpp:122
 msgid "Add speed menu"
