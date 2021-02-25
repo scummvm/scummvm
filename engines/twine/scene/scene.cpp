@@ -173,9 +173,9 @@ bool Scene::loadSceneLBA2() {
 	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	_sceneHeroX = stream.readSint16LE();
-	_sceneHeroY = stream.readSint16LE();
-	_sceneHeroZ = stream.readSint16LE();
+	_sceneHeroPos.x = stream.readSint16LE();
+	_sceneHeroPos.y = stream.readSint16LE();
+	_sceneHeroPos.z = stream.readSint16LE();
 
 	sceneHero->moveScriptSize = stream.readUint16LE();
 	sceneHero->moveScript = currentScene + stream.pos();
@@ -305,9 +305,9 @@ bool Scene::loadSceneLBA1() {
 	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	_sceneHeroX = stream.readUint16LE();
-	_sceneHeroY = stream.readUint16LE();
-	_sceneHeroZ = stream.readUint16LE();
+	_sceneHeroPos.x = stream.readUint16LE();
+	_sceneHeroPos.y = stream.readUint16LE();
+	_sceneHeroPos.z = stream.readUint16LE();
 
 	sceneHero->moveScriptSize = stream.readUint16LE();
 	sceneHero->moveScript = currentScene + stream.pos();
@@ -499,15 +499,11 @@ void Scene::changeScene() {
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
-		newHeroPos.x = _zoneHeroX;
-		newHeroPos.y = _zoneHeroY;
-		newHeroPos.z = _zoneHeroZ;
+		newHeroPos = _zoneHeroPos;
 	}
 
 	if (heroPositionType == ScenePositionType::kScene || heroPositionType == ScenePositionType::kNoPosition) {
-		newHeroPos.x = _sceneHeroX;
-		newHeroPos.y = _sceneHeroY;
-		newHeroPos.z = _sceneHeroZ;
+		newHeroPos = _sceneHeroPos;
 	}
 
 	sceneHero->pos.x = newHeroPos.x;
@@ -665,9 +661,9 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					_zoneHeroX = actor->pos.x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
-					_zoneHeroY = actor->pos.y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
-					_zoneHeroZ = actor->pos.z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
+					_zoneHeroPos.x = actor->pos.x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
+					_zoneHeroPos.y = actor->pos.y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
+					_zoneHeroPos.z = actor->pos.z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;

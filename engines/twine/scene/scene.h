@@ -299,13 +299,9 @@ private:
 
 	int16 _sceneMusic = 0;
 
-	int16 _sceneHeroX = 0; // newTwinsenXByScene
-	int16 _sceneHeroY = 0; // newTwinsenYByScene
-	int16 _sceneHeroZ = 0; // newTwinsenZByScene
+	Vec3 _sceneHeroPos;
+	Vec3 _zoneHeroPos;
 
-	int16 _zoneHeroX = 0; // newTwinsenXByZone
-	int16 _zoneHeroY = 0; // newTwinsenYByZone
-	int16 _zoneHeroZ = 0; // newTwinsenZByZone
 	int32 _currentGameOverScene = 0;
 
 public:

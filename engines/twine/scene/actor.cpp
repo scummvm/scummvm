@@ -464,7 +464,7 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	}
 	if (actor->dynamicFlags.bIsDead) {
 		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y, actor->pos.z, ANGLE_90, ANGLE_0, bonusSprite, actor->bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y, actor->pos.z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos, actorIdx);
 	} else {
 		ActorStruct *sceneHero = _engine->_scene->sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.x, actor->pos.z, sceneHero->pos.x, sceneHero->pos.z);
