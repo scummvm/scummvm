@@ -1103,16 +1103,18 @@ void Menu::processBehaviourMenu() {
 	_engine->_text->initSceneTextBank();
 }
 
-void Menu::drawItem(int32 left2, int32 top2, int32 item, Common::Rect &dirtyRect) {
-	const int32 itemX = (item / 4) * 85 + left2 + 47;
-	const int32 itemY = (item & 3) * 75 + top2 + 42;
+void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) {
+	const int32 itemWidth = 74;
+	const int32 itemHeight = 64;
+	const int32 itemPadding = 11;
+	const int32 itemWidthHalf = itemWidth / 2;
+	const int32 itemHeightHalf = itemHeight / 2;
+	const int32 itemX = (item / 4) * (itemWidth + itemPadding) + left + itemWidthHalf + itemPadding - 1;
+	const int32 itemY = (item % 4) * (itemHeight + itemPadding) + top + itemHeightHalf + itemPadding - 1;
+	const Common::Rect rect(itemX - itemWidthHalf, itemY - itemHeightHalf, itemX + itemWidthHalf, itemY + itemHeightHalf);
+	const int32 color = inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK;
 
-	const int32 left = itemX - 37;
-	const int32 right = itemX + 37;
-	const int32 top = itemY - 32;
-	const int32 bottom = itemY + 32;
-	const Common::Rect rect(left, top, right, bottom);
-	_engine->_interface->drawFilledRect(rect, inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK);
+	_engine->_interface->drawFilledRect(rect, color);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
 		itemAngle[item] += ANGLE_2;
@@ -1121,8 +1123,8 @@ void Menu::drawItem(int32 left2, int32 top2, int32 item, Common::Rect &dirtyRect
 		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
-			Common::String inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
-			_engine->_text->drawText(left + 3, top + 32, inventoryNumGas.c_str());
+			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
+			_engine->_text->drawText(rect.left + 3, rect.bottom - 32, inventoryNumGas.c_str());
 		}
 	}
 
