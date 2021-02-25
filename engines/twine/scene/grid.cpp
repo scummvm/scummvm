@@ -857,9 +857,9 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	newCamera.x = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
-	newCamera.y = (actor->y + BRICK_HEIGHT) / BRICK_HEIGHT;
-	newCamera.z = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
+	newCamera.x = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	newCamera.y = (actor->pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	newCamera.z = (actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_redraw->reqBgRedraw = true;
 }
 
@@ -872,13 +872,13 @@ void Grid::centerScreenOnActor() {
 	}
 
 	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->currentlyFollowedActor);
-	_engine->_renderer->projectPositionOnScreen(actor->x - (newCamera.x * BRICK_SIZE),
-	                                   actor->y - (newCamera.y * BRICK_HEIGHT),
-	                                   actor->z - (newCamera.z * BRICK_SIZE));
+	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (newCamera.x * BRICK_SIZE),
+	                                   actor->pos.y - (newCamera.y * BRICK_HEIGHT),
+	                                   actor->pos.z - (newCamera.z * BRICK_SIZE));
 	if (_engine->_renderer->projPosX < 80 || _engine->_renderer->projPosX >= _engine->width() - 60 || _engine->_renderer->projPosY < 80 || _engine->_renderer->projPosY >= _engine->height() - 50) {
-		newCamera.x = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
-		newCamera.y = actor->y / BRICK_HEIGHT;
-		newCamera.z = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.z) / 2;
+		newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
+		newCamera.y = actor->pos.y / BRICK_HEIGHT;
+		newCamera.z = ((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.z) / 2;
 
 		if (newCamera.x >= GRID_SIZE_X) {
 			newCamera.x = GRID_SIZE_X - 1;

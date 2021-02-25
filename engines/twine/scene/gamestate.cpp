@@ -322,18 +322,18 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
 
 	uint8 *bodyPtr = _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity];
-	const int32 bodyX = _engine->_scene->sceneHero->x - itemCameraX;
-	const int32 bodyY = _engine->_scene->sceneHero->y - itemCameraY;
-	const int32 bodyZ = _engine->_scene->sceneHero->z - itemCameraZ;
+	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
+	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
+	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;
 	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyPtr);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
-	const int32 itemX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
-	int32 itemY = _engine->_scene->sceneHero->y / BRICK_HEIGHT;
+	const int32 itemX = (_engine->_scene->sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	int32 itemY = _engine->_scene->sceneHero->pos.y / BRICK_HEIGHT;
 	if (_engine->_scene->sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->sceneHero->z + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 itemZ = (_engine->_scene->sceneHero->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 	_engine->flip();

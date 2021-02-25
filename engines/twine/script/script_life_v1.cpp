@@ -157,11 +157,11 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		conditionValueSize = 2;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (!otherActor->dynamicFlags.bIsDead) {
-			if (ABS(ctx.actor->y - otherActor->y) >= 1500) {
+			if (ABS(ctx.actor->pos.y - otherActor->pos.y) >= 1500) {
 				engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
 				// Returns int32, so we check for integer overflow
-				int32 distance = engine->_movements->getDistance2D(ctx.actor->x, ctx.actor->z, otherActor->x, otherActor->z);
+				int32 distance = engine->_movements->getDistance2D(ctx.actor->pos.x, ctx.actor->pos.z, otherActor->pos.x, otherActor->pos.z);
 				if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 					engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 				} else {
@@ -218,8 +218,8 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		conditionValueSize = 2;
 
 		if (!targetActor->dynamicFlags.bIsDead) {
-			if (ABS(targetActor->y - ctx.actor->y) < 1500) {
-				newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, targetActor->x, targetActor->z);
+			if (ABS(targetActor->pos.y - ctx.actor->pos.y) < 1500) {
+				newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, targetActor->pos.x, targetActor->pos.z);
 				if (ABS(engine->_movements->targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 					engine->_movements->targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 				}
@@ -306,7 +306,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 		if (!targetActor->dynamicFlags.bIsDead) {
 			// Returns int32, so we check for integer overflow
-			int32 distance = engine->_movements->getDistance3D(ctx.actor->x, ctx.actor->y, ctx.actor->z, targetActor->x, targetActor->y, targetActor->z);
+			int32 distance = engine->_movements->getDistance3D(ctx.actor->pos, targetActor->pos);
 			if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
@@ -952,7 +952,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_270;
-	ctx.actor->x = ctx.actor->lastX - distance;
+	ctx.actor->pos.x = ctx.actor->lastX - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -967,7 +967,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_90;
-	ctx.actor->x = ctx.actor->lastX + distance;
+	ctx.actor->pos.x = ctx.actor->lastX + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -982,7 +982,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_180;
-	ctx.actor->z = ctx.actor->lastZ - distance;
+	ctx.actor->pos.z = ctx.actor->lastZ - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -997,7 +997,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_0;
-	ctx.actor->z = ctx.actor->lastZ + distance;
+	ctx.actor->pos.z = ctx.actor->lastZ + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -1125,9 +1125,9 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	ctx.actor->x = sp.x;
-	ctx.actor->y = sp.y;
-	ctx.actor->z = sp.z;
+	ctx.actor->pos.x = sp.x;
+	ctx.actor->pos.y = sp.y;
+	ctx.actor->pos.z = sp.z;
 
 	return 0;
 }
@@ -1527,7 +1527,7 @@ static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 
-	engine->_extra->addExtraExplode(otherActor->x, otherActor->y, otherActor->z); // RECHECK this
+	engine->_extra->addExtraExplode(otherActor->pos.x, otherActor->pos.y, otherActor->pos.z); // RECHECK this
 
 	return 0;
 }

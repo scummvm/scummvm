@@ -322,9 +322,9 @@ void Actor::initActor(int16 actorIdx) {
 		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
-			actor->lastX = actor->x;
-			actor->lastY = actor->y;
-			actor->lastZ = actor->z;
+			actor->lastX = actor->pos.x;
+			actor->lastY = actor->pos.y;
+			actor->lastZ = actor->pos.z;
 		}
 	} else {
 		actor->entity = -1;
@@ -353,9 +353,9 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->actorIdx = actorIdx;
 	actor->body = BodyType::btNormal;
 	actor->anim = AnimationTypes::kStanding;
-	actor->x = 0;
-	actor->y = -1;
-	actor->z = 0;
+	actor->pos.x = 0;
+	actor->pos.y = -1;
+	actor->pos.z = 0;
 
 	ZVBox &bbox = actor->boudingBox;
 	bbox.x.bottomLeft = 0;
@@ -429,7 +429,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 		}
 
-		_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);
+		_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
 
 		if (!actorIdxAttacked) {
 			_engine->_movements->heroMoved = true;
@@ -465,13 +465,13 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		return;
 	}
 	if (actor->dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, ANGLE_0, bonusSprite, actor->bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y, actor->z, actorIdx);
+		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y, actor->pos.z, ANGLE_90, ANGLE_0, bonusSprite, actor->bonusAmount);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y, actor->pos.z, actorIdx);
 	} else {
 		ActorStruct *sceneHero = _engine->_scene->sceneHero;
-		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sceneHero->x, sceneHero->z);
-		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.x, actor->pos.z, sceneHero->pos.x, sceneHero->pos.z);
+		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y + actor->boudingBox.y.topRight, actor->pos.z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y + actor->boudingBox.y.topRight, actor->pos.z, actorIdx);
 	}
 }
 

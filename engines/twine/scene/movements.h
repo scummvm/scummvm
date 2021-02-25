@@ -207,7 +207,7 @@ public:
 	 * @param x2 Actor 2 X coordinate
 	 * @param z2 Actor 2 Z coordinate
 	 */
-	int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2);
+	int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const;
 
 	/**
 	 * Get distance value in 3D
@@ -218,8 +218,8 @@ public:
 	 * @param y2 Actor 2 Y coordinate
 	 * @param z2 Actor 2 Z coordinate
 	 */
-	int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2);
-
+	int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) const;
+	int32 getDistance3D(const Vec3 &v1, const Vec3 &v2) const;
 	/**
 	 * Move actor around the scene
 	 * @param angleFrom Current actor angle

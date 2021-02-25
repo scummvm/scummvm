@@ -197,12 +197,12 @@ bool Scene::loadSceneLBA2() {
 		act->body = (BodyType)stream.readSint16LE();
 		act->anim = (AnimationTypes)stream.readByte();
 		act->sprite = stream.readUint16LE();
-		act->x = stream.readUint16LE();
-		act->collisionX = act->x;
-		act->y = stream.readUint16LE();
-		act->collisionY = act->y;
-		act->z = stream.readUint16LE();
-		act->collisionZ = act->z;
+		act->pos.x = stream.readUint16LE();
+		act->collisionX = act->pos.x;
+		act->pos.y = stream.readUint16LE();
+		act->collisionY = act->pos.y;
+		act->pos.z = stream.readUint16LE();
+		act->collisionZ = act->pos.z;
 		act->strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->angle = stream.readUint16LE();
@@ -330,12 +330,12 @@ bool Scene::loadSceneLBA1() {
 		act->body = (BodyType)stream.readByte();
 		act->anim = (AnimationTypes)stream.readByte();
 		act->sprite = stream.readUint16LE();
-		act->x = stream.readUint16LE();
-		act->collisionX = act->x;
-		act->y = stream.readUint16LE();
-		act->collisionY = act->y;
-		act->z = stream.readUint16LE();
-		act->collisionZ = act->z;
+		act->pos.x = stream.readUint16LE();
+		act->collisionX = act->pos.x;
+		act->pos.y = stream.readUint16LE();
+		act->collisionY = act->pos.y;
+		act->pos.z = stream.readUint16LE();
+		act->collisionZ = act->pos.z;
 		act->strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->angle = stream.readUint16LE();
@@ -510,9 +510,9 @@ void Scene::changeScene() {
 		newHeroZ = _sceneHeroZ;
 	}
 
-	sceneHero->x = newHeroX;
-	sceneHero->y = heroYBeforeFall = newHeroY;
-	sceneHero->z = newHeroZ;
+	sceneHero->pos.x = newHeroX;
+	sceneHero->pos.y = heroYBeforeFall = newHeroY;
+	sceneHero->pos.z = newHeroZ;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
@@ -631,7 +631,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 
 	const int16 amount = zone->infoData.Bonus.amount;
-	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->pos.x, sceneHero->pos.z);
 	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
@@ -643,9 +643,9 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 void Scene::processActorZones(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
-	int32 currentX = actor->x;
-	int32 currentY = actor->y;
-	int32 currentZ = actor->z;
+	int32 currentX = actor->pos.x;
+	int32 currentY = actor->pos.y;
+	int32 currentZ = actor->pos.z;
 
 	actor->zone = -1;
 	int32 tmpCellingGrid = 0;
@@ -665,9 +665,9 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					_zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
-					_zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
-					_zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
+					_zoneHeroX = actor->pos.x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
+					_zoneHeroY = actor->pos.y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
+					_zoneHeroZ = actor->pos.z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;
@@ -723,9 +723,9 @@ void Scene::processActorZones(int32 actorIdx) {
 					_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 					if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + ANGLE_90, _engine->_renderer->destZ) != ShapeType::kNone) {
+						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->pos.y + ANGLE_90, _engine->_renderer->destZ) != ShapeType::kNone) {
 							currentActorInZone = true;
-							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
+							if (actor->pos.y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
 								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder

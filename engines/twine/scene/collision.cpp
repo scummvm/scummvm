@@ -55,14 +55,14 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) {
 	const int32 z1Right = _engine->_movements->processActorZ + actor1->boudingBox.z.topRight;
 
 	// Actor 2
-	const int32 x2Left = actor2->x + actor2->boudingBox.x.bottomLeft;
-	const int32 x2Right = actor2->x + actor2->boudingBox.x.topRight;
+	const int32 x2Left = actor2->pos.x + actor2->boudingBox.x.bottomLeft;
+	const int32 x2Right = actor2->pos.x + actor2->boudingBox.x.topRight;
 
-	const int32 y2Left = actor2->y + actor2->boudingBox.y.bottomLeft;
-	const int32 y2Right = actor2->y + actor2->boudingBox.y.topRight;
+	const int32 y2Left = actor2->pos.y + actor2->boudingBox.y.bottomLeft;
+	const int32 y2Right = actor2->pos.y + actor2->boudingBox.y.topRight;
 
-	const int32 z2Left = actor2->z + actor2->boudingBox.z.bottomLeft;
-	const int32 z2Right = actor2->z + actor2->boudingBox.z.topRight;
+	const int32 z2Left = actor2->pos.z + actor2->boudingBox.z.bottomLeft;
+	const int32 z2Right = actor2->pos.z + actor2->boudingBox.z.topRight;
 
 	if (x1Left >= x2Right) {
 		return false; // not standing
@@ -222,14 +222,14 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 
 		// aviod current processed actor
 		if (a != actorIdx && actorTest->entity != -1 && !actor->staticFlags.bComputeLowCollision && actorTest->standOn != actorIdx) {
-			const int32 xLeftTest = actorTest->x + actorTest->boudingBox.x.bottomLeft;
-			const int32 xRightTest = actorTest->x + actorTest->boudingBox.x.topRight;
+			const int32 xLeftTest = actorTest->pos.x + actorTest->boudingBox.x.bottomLeft;
+			const int32 xRightTest = actorTest->pos.x + actorTest->boudingBox.x.topRight;
 
-			const int32 yLeftTest = actorTest->y + actorTest->boudingBox.y.bottomLeft;
-			const int32 yRightTest = actorTest->y + actorTest->boudingBox.y.topRight;
+			const int32 yLeftTest = actorTest->pos.y + actorTest->boudingBox.y.bottomLeft;
+			const int32 yRightTest = actorTest->pos.y + actorTest->boudingBox.y.topRight;
 
-			const int32 zLeftTest = actorTest->z + actorTest->boudingBox.z.bottomLeft;
-			const int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
+			const int32 zLeftTest = actorTest->pos.z + actorTest->boudingBox.z.bottomLeft;
+			const int32 zRightTest = actorTest->pos.z + actorTest->boudingBox.z.topRight;
 
 			if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
 				actor->collision = a; // mark as collision with actor a
@@ -243,7 +243,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 							_engine->_movements->processActorY = yRightTest - actor->boudingBox.y.bottomLeft + 1;
 							actor->standOn = a;
 						} else {
-							int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->x, actorTest->z);
+							int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->pos.x, actorTest->pos.z);
 
 							if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
 								actorTest->lastY = 0;
@@ -295,7 +295,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 						_engine->_actor->hitActor(actorIdx, a, 1, -1);
 					}
 
-					int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->x, actorTest->z);
+					int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->pos.x, actorTest->pos.z);
 
 					if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
 						actorTest->lastY = 0;
@@ -362,14 +362,14 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 
 			// aviod current processed actor
 			if (a != actorIdx && actorTest->entity != -1 && !actorTest->staticFlags.bIsHidden && actorTest->standOn != actorIdx) {
-				const int32 xLeftTest = actorTest->x + actorTest->boudingBox.x.bottomLeft;
-				const int32 xRightTest = actorTest->x + actorTest->boudingBox.x.topRight;
+				const int32 xLeftTest = actorTest->pos.x + actorTest->boudingBox.x.bottomLeft;
+				const int32 xRightTest = actorTest->pos.x + actorTest->boudingBox.x.topRight;
 
-				const int32 yLeftTest = actorTest->y + actorTest->boudingBox.y.bottomLeft;
-				const int32 yRightTest = actorTest->y + actorTest->boudingBox.y.topRight;
+				const int32 yLeftTest = actorTest->pos.y + actorTest->boudingBox.y.bottomLeft;
+				const int32 yRightTest = actorTest->pos.y + actorTest->boudingBox.y.topRight;
 
-				const int32 zLeftTest = actorTest->z + actorTest->boudingBox.z.bottomLeft;
-				const int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
+				const int32 zLeftTest = actorTest->pos.z + actorTest->boudingBox.z.bottomLeft;
+				const int32 zRightTest = actorTest->pos.z + actorTest->boudingBox.z.topRight;
 
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
 					_engine->_actor->hitActor(actorIdx, a, actor->strengthOfHit, actor->angle + ANGLE_90);
@@ -451,7 +451,7 @@ void Collision::stopFalling() { // ReceptionObj()
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
 		if (fall >= BRICK_HEIGHT * 8) {
-			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, ExtraSpecialType::kHitStars);
+			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->pos.x, _engine->_actor->processActorPtr->pos.y + 1000, _engine->_actor->processActorPtr->pos.z, ExtraSpecialType::kHitStars);
 			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall > 10) {
@@ -481,12 +481,12 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		if (a != actorIdx && actorTest->entity != -1) {
-			const int32 xLeftTest = actorTest->x + actorTest->boudingBox.x.bottomLeft;
-			const int32 xRightTest = actorTest->x + actorTest->boudingBox.x.topRight;
-			const int32 yLeftTest = actorTest->y + actorTest->boudingBox.y.bottomLeft;
-			const int32 yRightTest = actorTest->y + actorTest->boudingBox.y.topRight;
-			const int32 zLeftTest = actorTest->z + actorTest->boudingBox.z.bottomLeft;
-			const int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
+			const int32 xLeftTest = actorTest->pos.x + actorTest->boudingBox.x.bottomLeft;
+			const int32 xRightTest = actorTest->pos.x + actorTest->boudingBox.x.topRight;
+			const int32 yLeftTest = actorTest->pos.y + actorTest->boudingBox.y.bottomLeft;
+			const int32 yRightTest = actorTest->pos.y + actorTest->boudingBox.y.topRight;
+			const int32 zLeftTest = actorTest->pos.z + actorTest->boudingBox.z.bottomLeft;
+			const int32 zRightTest = actorTest->pos.z + actorTest->boudingBox.z.topRight;
 
 			if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
 				if (extra->strengthOfHit != 0) {

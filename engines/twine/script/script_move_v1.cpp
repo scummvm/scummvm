@@ -121,7 +121,7 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
+	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		ctx.actor->angle = newAngle;
@@ -197,9 +197,9 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 0;
 	}
 
-	ctx.actor->x = sp.x;
-	ctx.actor->y = sp.y;
-	ctx.actor->z = sp.z;
+	ctx.actor->pos.x = sp.x;
+	ctx.actor->pos.y = sp.y;
+	ctx.actor->pos.z = sp.z;
 
 	return 0;
 }
@@ -253,7 +253,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
+	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		ctx.actor->angle = newAngle;
@@ -305,7 +305,7 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->pos, ctx.actorIdx);
 	return 0;
 }
 
@@ -326,17 +326,17 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
+	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 	// TODO: this adds an angle to the animType value
-	ctx.actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->y, 0, sp.y, engine->_movements->targetActorDistance);
+	ctx.actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.y, 0, sp.y, engine->_movements->targetActorDistance);
 
 	if (engine->_movements->targetActorDistance > 100) {
 		ctx.undo(1);
 		return 1;
 	}
-	ctx.actor->x = sp.x;
-	ctx.actor->y = sp.y;
-	ctx.actor->z = sp.z;
+	ctx.actor->pos.x = sp.x;
+	ctx.actor->pos.y = sp.y;
+	ctx.actor->pos.z = sp.z;
 
 	return 0;
 }
@@ -539,7 +539,7 @@ static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->pos, ctx.actorIdx);
 	return 0;
 }
 
@@ -550,7 +550,7 @@ static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
-		engine->_sound->playSample(sampleIdx, -1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+		engine->_sound->playSample(sampleIdx, -1, ctx.actor->pos, ctx.actorIdx);
 	}
 	return 0;
 }
@@ -605,7 +605,7 @@ static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->pos, ctx.actorIdx);
 	ctx.numRepeatSample = 1;
 	return 0;
 }
@@ -621,7 +621,7 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 	engine->_scene->currentScriptValue = angle;
 	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
-		engine->_scene->currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, engine->_scene->sceneHero->x, engine->_scene->sceneHero->z);
+		engine->_scene->currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, engine->_scene->sceneHero->pos.x, engine->_scene->sceneHero->pos.z);
 		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->currentScriptValue);

@@ -550,7 +550,7 @@ void TwinEEngine::unfreezeTime() {
 void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 	const ActorStruct *actor = _scene->getActor(actorIdx);
 	const int32 channelIdx = _sound->getActorChannel(actorIdx);
-	_sound->setSamplePosition(channelIdx, actor->x, actor->y, actor->z);
+	_sound->setSamplePosition(channelIdx, actor->pos.x, actor->pos.y, actor->pos.z);
 }
 
 void TwinEEngine::processBookOfBu() {
@@ -633,9 +633,9 @@ void TwinEEngine::processInventoryAction() {
 	case kiPinguin: {
 		ActorStruct *pinguin = _scene->getActor(_scene->mecaPinguinIdx);
 
-		pinguin->x = _renderer->destX + _scene->sceneHero->x;
-		pinguin->y = _scene->sceneHero->y;
-		pinguin->z = _renderer->destZ + _scene->sceneHero->z;
+		pinguin->pos.x = _renderer->destX + _scene->sceneHero->pos.x;
+		pinguin->pos.y = _scene->sceneHero->pos.y;
+		pinguin->pos.z = _renderer->destZ + _scene->sceneHero->pos.z;
 		pinguin->angle = _scene->sceneHero->angle;
 
 		_movements->rotateActor(0, 800, pinguin->angle);
@@ -855,10 +855,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_animations->initAnim(AnimationTypes::kLandDeath, kAnimationType_4, AnimationTypes::kStanding, 0);
 				actor->controlMode = ControlMode::kNoMove;
 			} else {
-				_sound->playSample(Samples::Explode, 1, actor->x, actor->y, actor->z, a);
+				_sound->playSample(Samples::Explode, 1, actor->pos, a);
 
 				if (a == _scene->mecaPinguinIdx) {
-					_extra->addExtraExplode(actor->x, actor->y, actor->z);
+					_extra->addExtraExplode(actor->pos.x, actor->pos.y, actor->pos.z);
 				}
 			}
 
@@ -869,9 +869,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		_movements->processActorMovements(a);
 
-		actor->collisionX = actor->x;
-		actor->collisionY = actor->y;
-		actor->collisionZ = actor->z;
+		actor->collisionX = actor->pos.x;
+		actor->collisionY = actor->pos.y;
+		actor->collisionZ = actor->pos.z;
 
 		if (actor->positionInMoveScript != -1) {
 			_scriptMove->processMoveScript(a);
@@ -894,7 +894,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->staticFlags.bCanDrown) {
-			int32 brickSound = _grid->getBrickSoundType(actor->x, actor->y - 1, actor->z);
+			int32 brickSound = _grid->getBrickSoundType(actor->pos.x, actor->pos.y - 1, actor->pos.z);
 			actor->brickSound = brickSound;
 
 			if ((brickSound & 0xF0) == 0xF0) {
@@ -903,17 +903,17 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
 							if (!_actor->cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, kAnimationType_4, AnimationTypes::kStanding, 0);
-								_renderer->projectPositionOnScreen(actor->x - _grid->camera.x, actor->y - _grid->camera.y, actor->z - _grid->camera.z);
+								_renderer->projectPositionOnScreen(actor->pos.x - _grid->camera.x, actor->pos.y - _grid->camera.y, actor->pos.z - _grid->camera.z);
 								_actor->cropBottomScreen = _renderer->projPosY;
 							}
-							_renderer->projectPositionOnScreen(actor->x - _grid->camera.x, actor->y - _grid->camera.y, actor->z - _grid->camera.z);
+							_renderer->projectPositionOnScreen(actor->pos.x - _grid->camera.x, actor->pos.y - _grid->camera.y, actor->pos.z - _grid->camera.z);
 							actor->controlMode = ControlMode::kNoMove;
 							actor->life = -1;
 							_actor->cropBottomScreen = _renderer->projPosY;
 							actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 						}
 					} else {
-						_sound->playSample(Samples::Explode, 1, actor->x, actor->y, actor->z, a);
+						_sound->playSample(Samples::Explode, 1, actor->pos, a);
 						if (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints) {
 							if (!actor->bonusParameter.unk1) {
 								_actor->processActorExtraBonus(a);
@@ -929,9 +929,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (IS_HERO(a)) {
 				if (actor->dynamicFlags.bAnimEnded) {
 					if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
-						_scene->sceneHero->x = _scene->newHeroX;
-						_scene->sceneHero->y = _scene->newHeroY;
-						_scene->sceneHero->z = _scene->newHeroZ;
+						_scene->sceneHero->pos.x = _scene->newHeroX;
+						_scene->sceneHero->pos.y = _scene->newHeroY;
+						_scene->sceneHero->pos.z = _scene->newHeroZ;
 
 						_scene->needChangeScene = _scene->currentSceneIdx;
 						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;

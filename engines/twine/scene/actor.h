@@ -196,9 +196,7 @@ public:
 	bool isJumpAnimationActive() const;
 
 	int16 actorIdx = 0; // own actor index
-	int32 x = 0;
-	int32 y = 0;
-	int32 z = 0;
+	Vec3 pos;
 	int32 strengthOfHit = 0; // field_66
 	int32 hitBy = 0;
 	BonusParameter bonusParameter; // field_10
