@@ -27,17 +27,12 @@
 //=============================================================================
 
 #include "ags/engine/ac/route_finder_impl.h"
-
-//include <string.h>
-//include <math.h>
-
+#include "ags/engine/ac/route_finder_jps.h"
 #include "ags/shared/ac/common.h"   // quit()
 #include "ags/engine/ac/movelist.h"     // MoveList
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/debugging/out.h"
-
-#include "ags/engine/ac/route_finder_jps.inl"
 
 namespace AGS3 {
 
@@ -262,7 +257,6 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 	mls[mlist].lasty = -1;
 	return mlist;
 }
-
 
 } // namespace RouteFinder
 } // namespace Engine

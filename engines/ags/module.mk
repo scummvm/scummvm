@@ -208,6 +208,7 @@ MODULE_OBJS = \
     engine/ac/roomobject.o \
     engine/ac/roomstatus.o \
     engine/ac/route_finder.o \
+	engine/ac/route_finder_jps.o \
     engine/ac/screen.o \
     engine/ac/screenoverlay.o \
     engine/ac/slider.o \
