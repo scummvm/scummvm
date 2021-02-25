@@ -499,9 +499,9 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 	processAnimActions(actorIdx);
 
 	actor->lastRotationAngle = ANGLE_0;
-	actor->lastX = 0;
-	actor->lastY = 0;
-	actor->lastZ = 0;
+	actor->lastPos.x = 0;
+	actor->lastPos.y = 0;
+	actor->lastPos.z = 0;
 
 	return true;
 }
@@ -553,15 +553,15 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 				if (actor->dynamicFlags.bIsSpriteMoving) {
 					if (actor->doorStatus) { // open door
-						if (_engine->_movements->getDistance2D(_engine->_movements->processActorX, _engine->_movements->processActorZ, actor->lastX, actor->lastZ) >= actor->doorStatus) {
+						if (_engine->_movements->getDistance2D(_engine->_movements->processActorX, _engine->_movements->processActorZ, actor->lastPos.x, actor->lastPos.z) >= actor->doorStatus) {
 							if (actor->angle == ANGLE_0) {
-								_engine->_movements->processActorZ = actor->lastZ + actor->doorStatus;
+								_engine->_movements->processActorZ = actor->lastPos.z + actor->doorStatus;
 							} else if (actor->angle == ANGLE_90) {
-								_engine->_movements->processActorX = actor->lastX + actor->doorStatus;
+								_engine->_movements->processActorX = actor->lastPos.x + actor->doorStatus;
 							} else if (actor->angle == ANGLE_180) {
-								_engine->_movements->processActorZ = actor->lastZ - actor->doorStatus;
+								_engine->_movements->processActorZ = actor->lastPos.z - actor->doorStatus;
 							} else if (actor->angle == ANGLE_270) {
-								_engine->_movements->processActorX = actor->lastX - actor->doorStatus;
+								_engine->_movements->processActorX = actor->lastPos.x - actor->doorStatus;
 							}
 
 							actor->dynamicFlags.bIsSpriteMoving = 0;
@@ -571,27 +571,27 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						bool updatePos = false;
 
 						if (actor->angle == ANGLE_0) {
-							if (_engine->_movements->processActorZ <= actor->lastZ) {
+							if (_engine->_movements->processActorZ <= actor->lastPos.z) {
 								updatePos = true;
 							}
 						} else if (actor->angle == ANGLE_90) {
-							if (_engine->_movements->processActorX <= actor->lastX) {
+							if (_engine->_movements->processActorX <= actor->lastPos.x) {
 								updatePos = true;
 							}
 						} else if (actor->angle == ANGLE_180) {
-							if (_engine->_movements->processActorZ >= actor->lastZ) {
+							if (_engine->_movements->processActorZ >= actor->lastPos.z) {
 								updatePos = true;
 							}
 						} else if (actor->angle == ANGLE_270) {
-							if (_engine->_movements->processActorX >= actor->lastX) {
+							if (_engine->_movements->processActorX >= actor->lastPos.x) {
 								updatePos = true;
 							}
 						}
 
 						if (updatePos) {
-							_engine->_movements->processActorX = actor->lastX;
-							_engine->_movements->processActorY = actor->lastY;
-							_engine->_movements->processActorZ = actor->lastZ;
+							_engine->_movements->processActorX = actor->lastPos.x;
+							_engine->_movements->processActorY = actor->lastPos.y;
+							_engine->_movements->processActorZ = actor->lastPos.z;
 
 							actor->dynamicFlags.bIsSpriteMoving = 0;
 							actor->speed = 0;
@@ -601,18 +601,18 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			}
 
 			if (actor->staticFlags.bCanBePushed) {
-				_engine->_movements->processActorX += actor->lastX;
-				_engine->_movements->processActorY += actor->lastY;
-				_engine->_movements->processActorZ += actor->lastZ;
+				_engine->_movements->processActorX += actor->lastPos.x;
+				_engine->_movements->processActorY += actor->lastPos.y;
+				_engine->_movements->processActorZ += actor->lastPos.z;
 
 				if (actor->staticFlags.bUseMiniZv) {
 					_engine->_movements->processActorX = ((_engine->_movements->processActorX / 128) * 128);
 					_engine->_movements->processActorZ = ((_engine->_movements->processActorZ / 128) * 128);
 				}
 
-				actor->lastX = 0;
-				actor->lastY = 0;
-				actor->lastZ = 0;
+				actor->lastPos.x = 0;
+				actor->lastPos.y = 0;
+				actor->lastPos.z = 0;
 			}
 		}
 	} else { // 3D actor
@@ -639,13 +639,13 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			currentStepX = _engine->_renderer->destX;
 			currentStepZ = _engine->_renderer->destZ;
 
-			_engine->_movements->processActorX = actor->pos.x + currentStepX - actor->lastX;
-			_engine->_movements->processActorY = actor->pos.y + currentStepY - actor->lastY;
-			_engine->_movements->processActorZ = actor->pos.z + currentStepZ - actor->lastZ;
+			_engine->_movements->processActorX = actor->pos.x + currentStepX - actor->lastPos.x;
+			_engine->_movements->processActorY = actor->pos.y + currentStepY - actor->lastPos.y;
+			_engine->_movements->processActorZ = actor->pos.z + currentStepZ - actor->lastPos.z;
 
-			actor->lastX = currentStepX;
-			actor->lastY = currentStepY;
-			actor->lastZ = currentStepZ;
+			actor->lastPos.x = currentStepX;
+			actor->lastPos.y = currentStepY;
+			actor->lastPos.z = currentStepZ;
 
 			actor->dynamicFlags.bAnimEnded = 0;
 			actor->dynamicFlags.bAnimFrameReached = 0;
@@ -685,9 +685,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 				actor->lastRotationAngle = ANGLE_0;
 
-				actor->lastX = 0;
-				actor->lastY = 0;
-				actor->lastZ = 0;
+				actor->lastPos.x = 0;
+				actor->lastPos.y = 0;
+				actor->lastPos.z = 0;
 			}
 		}
 	}

@@ -236,9 +236,7 @@ public:
 	int32 zone = 0;
 
 	int32 lastRotationAngle = ANGLE_0;
-	int32 lastX = 0;
-	int32 lastZ = 0;
-	int32 lastY = 0;
+	Vec3 lastPos;
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;

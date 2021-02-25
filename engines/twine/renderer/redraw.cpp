@@ -230,7 +230,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 				drawList[drawListPos].type = DrawListType::DrawActorSprites;
 				drawList[drawListPos].actorIdx = modelActorPos;
 				if (actor->staticFlags.bUsesClipping) {
-					tmpVal = actor->lastX - _engine->_grid->camera.x + actor->lastZ - _engine->_grid->camera.z;
+					tmpVal = actor->lastPos.x - _engine->_grid->camera.x + actor->lastPos.z - _engine->_grid->camera.z;
 				}
 			} else {
 				drawList[drawListPos].type = 0;
@@ -431,9 +431,9 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		actor->dynamicFlags.bIsVisible = 1;
 
 		if (actor->staticFlags.bUsesClipping) {
-			const int32 tmpX = (actor->lastX + BRICK_HEIGHT) / BRICK_SIZE;
-			const int32 tmpY = actor->lastY / BRICK_HEIGHT;
-			const int32 tmpZ = (actor->lastZ + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpX = (actor->lastPos.x + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpY = actor->lastPos.y / BRICK_HEIGHT;
+			const int32 tmpZ = (actor->lastPos.z + BRICK_HEIGHT) / BRICK_SIZE;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
 			const int32 tmpX = (actor->pos.x + actor->boudingBox.x.topRight + BRICK_HEIGHT) / BRICK_SIZE;

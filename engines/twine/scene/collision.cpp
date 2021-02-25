@@ -246,24 +246,24 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 							int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->pos.x, actorTest->pos.z);
 
 							if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
-								actorTest->lastY = 0;
+								actorTest->lastPos.y = 0;
 
 								if (actorTest->staticFlags.bUseMiniZv) {
 									if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->angle > ANGLE_45 && actor->angle < ANGLE_135) {
-										actorTest->lastX = 192;
+										actorTest->lastPos.x = 192;
 									}
 									if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->angle > ANGLE_135 && actor->angle < ANGLE_225) {
-										actorTest->lastZ = -64;
+										actorTest->lastPos.z = -64;
 									}
 									if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->angle > ANGLE_225 && actor->angle < ANGLE_315) {
-										actorTest->lastX = -64;
+										actorTest->lastPos.x = -64;
 									}
 									if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->angle > ANGLE_315 || actor->angle < ANGLE_45)) {
-										actorTest->lastX = 192;
+										actorTest->lastPos.x = 192;
 									}
 								} else {
-									actorTest->lastX = _engine->_movements->processActorX - actor->collisionX;
-									actorTest->lastZ = _engine->_movements->processActorZ - actor->collisionZ;
+									actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionX;
+									actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionZ;
 								}
 							}
 
@@ -298,24 +298,24 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 					int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActorX, _engine->_movements->processActorZ, actorTest->pos.x, actorTest->pos.z);
 
 					if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
-						actorTest->lastY = 0;
+						actorTest->lastPos.y = 0;
 
 						if (actorTest->staticFlags.bUseMiniZv) {
 							if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->angle > ANGLE_45 && actor->angle < ANGLE_135) {
-								actorTest->lastX = 192;
+								actorTest->lastPos.x = 192;
 							}
 							if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->angle > ANGLE_135 && actor->angle < ANGLE_225) {
-								actorTest->lastZ = -64;
+								actorTest->lastPos.z = -64;
 							}
 							if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->angle > ANGLE_225 && actor->angle < ANGLE_315) {
-								actorTest->lastX = -64;
+								actorTest->lastPos.x = -64;
 							}
 							if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->angle > ANGLE_315 || actor->angle < ANGLE_45)) {
-								actorTest->lastX = 192;
+								actorTest->lastPos.x = 192;
 							}
 						} else {
-							actorTest->lastX = _engine->_movements->processActorX - actor->collisionX;
-							actorTest->lastZ = _engine->_movements->processActorZ - actor->collisionZ;
+							actorTest->lastPos.x = _engine->_movements->processActorX - actor->collisionX;
+							actorTest->lastPos.z = _engine->_movements->processActorZ - actor->collisionZ;
 						}
 					}
 

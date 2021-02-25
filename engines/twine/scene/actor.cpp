@@ -322,9 +322,7 @@ void Actor::initActor(int16 actorIdx) {
 		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
-			actor->lastX = actor->pos.x;
-			actor->lastY = actor->pos.y;
-			actor->lastZ = actor->pos.z;
+			actor->lastPos = actor->pos;
 		}
 	} else {
 		actor->entity = -1;
@@ -387,9 +385,9 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->armor = 1;
 	actor->hitBy = -1;
 	actor->lastRotationAngle = ANGLE_0;
-	actor->lastX = 0;
-	actor->lastY = 0;
-	actor->lastZ = 0;
+	actor->lastPos.x = 0;
+	actor->lastPos.y = 0;
+	actor->lastPos.z = 0;
 	actor->entity = -1;
 	actor->previousAnimIdx = -1;
 	actor->animType = kAnimationTypeLoop;

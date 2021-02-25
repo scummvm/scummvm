@@ -952,7 +952,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_270;
-	ctx.actor->pos.x = ctx.actor->lastX - distance;
+	ctx.actor->pos.x = ctx.actor->lastPos.x - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -967,7 +967,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_90;
-	ctx.actor->pos.x = ctx.actor->lastX + distance;
+	ctx.actor->pos.x = ctx.actor->lastPos.x + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -982,7 +982,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_180;
-	ctx.actor->pos.z = ctx.actor->lastZ - distance;
+	ctx.actor->pos.z = ctx.actor->lastPos.z - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
@@ -997,7 +997,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->angle = ANGLE_0;
-	ctx.actor->pos.z = ctx.actor->lastZ + distance;
+	ctx.actor->pos.z = ctx.actor->lastPos.z + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
 
