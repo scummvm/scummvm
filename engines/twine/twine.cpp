@@ -73,6 +73,9 @@
 #include "twine/script/script_move_v1.h"
 #include "twine/text.h"
 
+#define ORIGINAL_WIDTH 640
+#define ORIGINAL_HEIGHT 480
+
 namespace TwinE {
 
 ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {
@@ -223,8 +226,8 @@ Common::Error TwinEEngine::run() {
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	syncSoundSettings();
-	int32 w = 640;
-	int32 h = 480;
+	int32 w = ORIGINAL_WIDTH;
+	int32 h = ORIGINAL_HEIGHT;
 	if (ConfMan.hasKey("usehighres")) {
 		const bool highRes = ConfMan.getBool("usehighres");
 		if (highRes) {
@@ -356,7 +359,7 @@ void TwinEEngine::autoSave() {
 void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 
-	imageBuffer.create(640, 480, format); // original lba1 resolution for a lot of images.
+	imageBuffer.create(ORIGINAL_WIDTH, ORIGINAL_HEIGHT, format); // original lba1 resolution for a lot of images.
 
 	workVideoBuffer.create(w, h, format);
 	frontVideoBuffer.create(w, h, format);
