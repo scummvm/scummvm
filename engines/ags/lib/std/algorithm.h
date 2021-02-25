@@ -34,7 +34,7 @@ template<typename T> inline T min(T a, T b) { return MIN(a, b); }
 template<typename T> inline T max(T a, T b) { return MAX(a, b); }
 template<typename T> inline T clip(T v, T amin, T amax) { return CLIP(v, amin, amax); }
 template<typename T> inline T sqrt(T x) { return ::sqrt(x); }
-template<typename T> inline void swap(T a, T b) { SWAP(a, b); }
+template<typename T> inline void swap(T &a, T &b) { SWAP(a, b); }
 
 template<class In, class Value>
 In fill(In first, In last, const Value &val) {

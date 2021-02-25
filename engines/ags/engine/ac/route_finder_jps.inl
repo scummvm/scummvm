@@ -695,7 +695,7 @@ Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey
 
 	std::swap(opath, fpath);
 
-	// validate cpath
+	// Validate ncpath in debug builds
 	for (int i = 0; i < (int)ncpath.size() - 1; i++) {
 		int tx, ty;
 		UnpackSquare(ncpath[i], fx, fy);
