@@ -509,7 +509,7 @@ void TwinEEngine::exitSceneryView() {
 }
 
 void TwinEEngine::initAll() {
-	memset(_menu->itemAngle, 0, sizeof(_menu->itemAngle)); // reset inventory items angles
+	Common::fill(&_menu->itemAngle[0], &_menu->itemAngle[NUM_INVENTORY_ITEMS], 0);
 
 	_redraw->bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
 

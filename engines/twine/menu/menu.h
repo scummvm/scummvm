@@ -189,7 +189,7 @@ public:
 	Menu(TwinEEngine *engine);
 	~Menu();
 
-	int16 itemAngle[255]; // objectRotation
+	int16 itemAngle[NUM_INVENTORY_ITEMS]; // objectRotation
 
 	/** Behaviour menu move pointer */
 	ActorMoveStruct moveMenu;

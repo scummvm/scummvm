@@ -380,7 +380,7 @@ void GameState::processFoundItem(int32 item) {
 
 		_engine->_interface->setClip(boxRect);
 
-		_engine->_menu->itemAngle[item] += 8;
+		_engine->_menu->itemAngle[item] += ANGLE_2;
 
 		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPosX, _engine->_renderer->projPosY, _engine->_resources->inventoryTable[item], _engine->_menu->itemAngle[item], 10000);
 

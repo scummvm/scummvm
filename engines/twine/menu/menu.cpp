@@ -167,7 +167,7 @@ Menu::Menu(TwinEEngine *engine) {
 	advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
 	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
-	Common::fill(&itemAngle[0], &itemAngle[255], 0);
+	Common::fill(&itemAngle[0], &itemAngle[NUM_INVENTORY_ITEMS], 0);
 }
 
 Menu::~Menu() {
