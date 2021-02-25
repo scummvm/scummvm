@@ -430,7 +430,13 @@ public:
 
 	bool renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr);
 
+	/**
+	 * @param angle A value of @c -1 means that the model is automatically rotated
+	 */
 	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr);
+	/**
+	 * @param angle A value of @c -1 means that the model is automatically rotated
+	 */
 	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr);
 
 	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
