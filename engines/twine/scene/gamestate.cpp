@@ -500,16 +500,12 @@ void GameState::processGameoverAnimation() {
 		return;
 	}
 
-	const int32 left = 120;
-	const int32 top = 120;
-	const int32 right = 519;
-	const int32 bottom = 359;
-	const Common::Rect rect(left, top, right, bottom);
 	Renderer::prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setCameraPosition(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->lbaTime;
+	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
 
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
