@@ -97,7 +97,7 @@ bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
 bool TwinEConsole::doAddMagicPoints(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: specify the magic points\n");
-		return false;
+		return true;
 	}
 	const int16 magicPoints = atoi(argv[1]);
 	_engine->_gameState->magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
@@ -108,7 +108,7 @@ bool TwinEConsole::doAddMagicPoints(int argc, const char **argv) {
 bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: give actor id of scene or -1 to disable\n");
-		return false;
+		return true;
 	}
 	const int16 actorIdx = atoi(argv[1]);
 	debugPrintf("Only load actor %d in the next scene\n", actorIdx);
