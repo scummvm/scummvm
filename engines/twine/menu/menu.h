@@ -174,14 +174,6 @@ private:
 	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect);
 	void drawBehaviourMenu(int32 angle);
 	void drawItem(int32 item, Common::Rect &dirtyRect);
-	/**
-	 * Draw the entire button box
-	 * @param left start width to draw the button
-	 * @param top start height to draw the button
-	 * @param right end width to draw the button
-	 * @param bottom end height to draw the button
-	 */
-	void drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color);
 
 	MenuSettings giveUpMenuWithSaveState;
 	MenuSettings volumeMenuState;
@@ -224,8 +216,8 @@ public:
 	 * @param right end width to draw the button
 	 * @param bottom end height to draw the button
 	 */
-	void drawBox(int32 left, int32 top, int32 right, int32 bottom);
-	void drawBox(const Common::Rect &rect);
+	void drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
+	void drawBox(const Common::Rect &rect, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
 	/**
 	 * Where the main menu options are processed
 	 * @param menuSettings menu settings array with the information to build the menu options

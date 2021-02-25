@@ -236,15 +236,15 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 	_engine->frontVideoBuffer.blitFrom(_engine->imageBuffer, prect, rect);
 }
 
-void Menu::drawBox(const Common::Rect &rect) {
-	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, COLOR_79);           // top line
-	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, COLOR_79);         // left line
-	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, COLOR_73);   // right line
-	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, COLOR_73); // bottom line
+void Menu::drawBox(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
+	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);           // top line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);         // left line
+	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);   // right line
+	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, colorRightBottom); // bottom line
 }
 
-void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
-	drawBox(Common::Rect(left, top, right, bottom));
+void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
+	drawBox(Common::Rect(left, top, right, bottom), colorLeftTop, colorLeftTop);
 }
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
@@ -1095,13 +1095,6 @@ void Menu::processBehaviourMenu() {
 	_engine->_text->initSceneTextBank();
 }
 
-void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color) { // Rect
-	_engine->_interface->drawLine(left, top, right, top, color);                              // top line
-	_engine->_interface->drawLine(left, top, left, bottom, color);                            // left line
-	_engine->_interface->drawLine(right, ++top, right, bottom, color);                        // right line
-	_engine->_interface->drawLine(++left, bottom, right, bottom, color);                      // bottom line
-}
-
 void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	const int32 itemX = (item / 4) * 85 + 64;
 	const int32 itemY = (item & 3) * 75 + 52;
@@ -1134,10 +1127,11 @@ void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 }
 
 void Menu::drawInventoryItems() {
-	const Common::Rect rect(17, 10, 622, 320);
+	const int32 padding = 17;
+	const Common::Rect rect(padding, 10, _engine->width() - padding - 1, _engine->height() / 2);
 	_engine->_interface->drawTransparentBox(rect, 4);
 	drawBox(rect);
-	drawMagicItemsBox(110, 18, 188, 311, 75);
+	drawBox(110, 18, 188, 311, COLOR_75, COLOR_75);
 	_engine->copyBlockPhys(rect);
 
 	Common::Rect dirtyRect;
