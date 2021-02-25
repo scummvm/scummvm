@@ -155,8 +155,8 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 
 	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, r.top);
 
-	for (int32 y = r.top; y < r.bottom; ++y) {
-		for (int32 x = r.left; x < r.right; ++x) {
+	for (int32 y = r.top; y <= r.bottom; ++y) {
+		for (int32 x = r.left; x <= r.right; ++x) {
 			const int8 color = (pos[x] & 0x0F) - colorAdj;
 			const int8 color2 = pos[x] & 0xF0;
 			if (color < 0) {
@@ -170,7 +170,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
-	_engine->frontVideoBuffer.fillRect(rect, colorIndex);
+	_engine->frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
 }
 
 void Interface::setClip(const Common::Rect &rect) {
