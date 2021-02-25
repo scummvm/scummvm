@@ -244,9 +244,9 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 			// if use shadows
 			if (_engine->cfgfile.ShadowMode != 0 && !(actor->staticFlags.bDoesntCastShadow)) {
 				if (actor->standOn != -1) {
-					_engine->_actor->shadowX = actor->pos.x;
-					_engine->_actor->shadowY = actor->pos.y - 1;
-					_engine->_actor->shadowZ = actor->pos.z;
+					_engine->_actor->shadowCoord.x = actor->pos.x;
+					_engine->_actor->shadowCoord.y = actor->pos.y - 1;
+					_engine->_actor->shadowCoord.z = actor->pos.z;
 				} else {
 					_engine->_movements->getShadowPosition(actor->pos.x, actor->pos.y, actor->pos.z);
 				}
@@ -255,9 +255,9 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 				drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
 				drawList[drawListPos].type = DrawListType::DrawShadows;
 				drawList[drawListPos].actorIdx = 0;
-				drawList[drawListPos].x = _engine->_actor->shadowX;
-				drawList[drawListPos].y = _engine->_actor->shadowY;
-				drawList[drawListPos].z = _engine->_actor->shadowZ;
+				drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+				drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+				drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
 				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
@@ -299,9 +299,9 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 					drawList[drawListPos].posValue = extra->x - _engine->_grid->camera.x + extra->z - _engine->_grid->camera.z - 1;
 					drawList[drawListPos].actorIdx = 0;
 					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = _engine->_actor->shadowX;
-					drawList[drawListPos].y = _engine->_actor->shadowY;
-					drawList[drawListPos].z = _engine->_actor->shadowZ;
+					drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+					drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+					drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
 					drawList[drawListPos].offset = 0;
 					drawListPos++;
 				}

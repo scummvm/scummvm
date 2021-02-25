@@ -285,12 +285,8 @@ public:
 
 	ActorStruct *processActorPtr = nullptr; // processActorVar1
 
-	/** Actor shadow X coordinate */
-	int32 shadowX = 0;
-	/** Actor shadow Y coordinate */
-	int32 shadowY = 0;
-	/** Actor shadow Z coordinate */
-	int32 shadowZ = 0;
+	/** Actor shadow coordinate */
+	Vec3 shadowCoord;
 	/** Actor shadow collition type - brick shape */
 	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
 

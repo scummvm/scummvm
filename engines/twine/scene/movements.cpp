@@ -51,9 +51,9 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 	}
 	_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
 
-	_engine->_actor->shadowX = processActorX;
-	_engine->_actor->shadowY = processActorY;
-	_engine->_actor->shadowZ = processActorZ;
+	_engine->_actor->shadowCoord.x = processActorX;
+	_engine->_actor->shadowCoord.y = processActorY;
+	_engine->_actor->shadowCoord.z = processActorZ;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
