@@ -942,9 +942,7 @@ static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 item = ctx.stream.readByte();
 
-	engine->freezeTime();
 	engine->_gameState->processFoundItem(item);
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;

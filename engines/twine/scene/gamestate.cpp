@@ -306,6 +306,7 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 }
 
 void GameState::processFoundItem(int32 item) {
+	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + BRICK_HEIGHT) / BRICK_HEIGHT;
 	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + BRICK_HEIGHT) / BRICK_SIZE;
@@ -322,7 +323,11 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraY = _engine->_grid->newCameraY * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->newCameraZ * BRICK_SIZE;
 
-	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, ANGLE_0, ANGLE_45, ANGLE_0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
+	uint8 *bodyPtr = _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity];
+	const int32 bodyX = _engine->_scene->sceneHero->x - itemCameraX;
+	const int32 bodyY = _engine->_scene->sceneHero->y - itemCameraY;
+	const int32 bodyZ = _engine->_scene->sceneHero->z - itemCameraZ;
+	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyPtr);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
 	const int32 itemX = (_engine->_scene->sceneHero->x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -335,7 +340,7 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 	_engine->flip();
 
-	_engine->_renderer->projectPositionOnScreen(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ);
+	_engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
 	_engine->_renderer->projPosY -= 150;
 
 	const int32 boxTopLeftX = _engine->_renderer->projPosX - 65;
@@ -363,7 +368,7 @@ void GameState::processFoundItem(int32 item) {
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
-	_engine->_animations->stockAnimation(_engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData);
+	_engine->_animations->stockAnimation(bodyPtr, &_engine->_scene->sceneHero->animTimerData);
 
 	int32 currentAnimState = 0;
 
@@ -389,14 +394,14 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
-		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData)) {
+		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, bodyPtr, &_engine->_scene->sceneHero->animTimerData)) {
 			currentAnimState++; // keyframe
 			if (currentAnimState >= _engine->_animations->getNumKeyframes(currentAnim)) {
 				currentAnimState = _engine->_animations->getStartKeyframe(currentAnim);
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, ANGLE_0, ANGLE_45, ANGLE_0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
+		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyPtr);
 		_engine->_interface->setClip(_engine->_redraw->renderRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
