@@ -343,16 +343,18 @@ void Process::postDecrementGlobal() {
 	_engine->setGlobal(name, value - 1);
 }
 
-void Process::incrementGlobal(int inc) {
+void Process::incrementGlobalByTop() {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
+	auto inc = top();
 	debug("increment global %s %d by %d", name.c_str(), value, inc);
 	_engine->setGlobal(name, value + inc);
 }
 
-void Process::decrementGlobal(int dec) {
+void Process::decrementGlobalByTop() {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
+	auto dec = top();
 	debug("decrement global %s %d by %d", name.c_str(), value, dec);
 	_engine->setGlobal(name, value - dec);
 }

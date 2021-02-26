@@ -106,9 +106,6 @@ private:
 #define AGDS_PROCESS_METHOD_UU(opcode, method) \
 	void method (uint16, uint16) ;
 
-	void incrementGlobal(int inc);
-	void decrementGlobal(int inc);
-
 	AGDS_OPCODE_LIST(AGDS_PROCESS_METHOD,
 		AGDS_PROCESS_METHOD_C, AGDS_PROCESS_METHOD_B, AGDS_PROCESS_METHOD_W,
 		AGDS_PROCESS_METHOD_U, AGDS_PROCESS_METHOD_UD, AGDS_PROCESS_METHOD_UU)
