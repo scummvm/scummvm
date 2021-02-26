@@ -94,8 +94,8 @@ private:
 
     TextboxScrollbar _scrollbar;
 
-    Common::String _mainString;
-    Common::Array<Response> _responses;
+    Common::Array<Common::String> _textLines;
+    Common::Array<Common::Rect> _hotspots;
 
     Common::Rect _scrollbarSourceBounds;
     Common::Point _scrollbarDefaultDest;
@@ -103,17 +103,21 @@ private:
     uint16 _lineHeight;
     uint16 _borderWidth;
     uint16 _numLines;
+    uint16 _fontID;
 
     bool _needsTextRedraw;
     float _scrollbarPos;
 
-    static const Common::String beginToken;
-    static const Common::String endToken;
+    static const Common::String CCBeginToken;
+    static const Common::String CCEndToken;
     static const Common::String colorBeginToken;
     static const Common::String colorEndToken;
     static const Common::String hotspotToken;
     static const Common::String newLineToken;
+    static const Common::String tabToken;
+    static const Common::String telephoneEndToken;
 
+protected:
 };
 
 } // End of namespace UI
