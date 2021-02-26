@@ -71,7 +71,7 @@ typedef struct Setting {
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
-    public:
+public:
     Setting *_setting;
     SettingMap _map;
 
@@ -94,7 +94,7 @@ void call(char *, ArgArray);
 namespace Gen {
 
 class VM {
-    public:
+public:
         Datum *_stack;  /* the stack */
         Datum *_stackp; /* next free spot on stack */
 
