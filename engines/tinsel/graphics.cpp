@@ -44,6 +44,17 @@ extern uint8 g_transPalette[MAX_COLORS];
 
 //----------------- SUPPORT FUNCTIONS ---------------------
 
+// using ScummVM pixel format functions is too slow on some ports because of runtime overhead, let the compiler do the optimizations instead
+static inline void t3getRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
+	r = (color >> 11) & 0b011111;
+	g = (color >>  5) & 0b111111;
+	b = (color      ) & 0b011111;
+}
+
+static inline uint16 t3getColor(uint8 r, uint8 g, uint8 b) {
+	return ((r & 0b011111) << 11) | ((g & 0b111111) << 5) | (b & 0b011111);
+}
+
 /**
  * PSX Block list unwinder.
  * Chunk type 0x0003 (CHUNK_CHARPTR) in PSX version of DW 1 & 2 is compressed (original code
@@ -619,6 +630,76 @@ static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 }
 
 /**
+ * Tinsel 3 Rendering with transparency support, run-length is not supported
+ */
+static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
+	bool applyClipping = (pObj->flags & DMA_CLIP) != 0;
+
+	int leftClip = 0;
+	int rightClip = 0;
+
+	if (applyClipping)
+	{
+		pObj->height -= pObj->topClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+
+		leftClip = pObj->leftClip;
+		rightClip = pObj->rightClip;
+	}
+
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the position to start writing out from
+		uint8 *tempP = destP;
+		srcP += leftClip * 2;
+		for (int x = 0; x < pObj->width; ++x) {
+			uint32 color = READ_UINT16(srcP); //uint32 for checking overflow in blending
+			if (color != 0b1111100000011111) { // "zero" for Tinsel 3 - magenta in 565
+				uint8 srcR, srcG, srcB;
+				t3getRGB(color, srcR, srcG, srcB);
+
+				uint16 dstColor = READ_UINT16(tempP);
+				uint8 dstR, dstG, dstB;
+				t3getRGB(dstColor, dstR, dstG, dstB);
+
+				if ((pObj->colorFlags & 4) != 0) { // additive blending
+					// orginal algo:
+					// color &= 0b1111011111011111;
+					// color += dstColor & 0b1111011111011111;
+					// if (color > 0xFFFF) {
+					// 	color |= 0b1111000000000000;
+					// }
+					// if (color &  0b0000100000000000) {
+					// 	color |= 0b0000011111000000;
+					// }
+					// if (color &  0b0000000000100000) {
+					// 	color |= 0b0000000000011111;
+					// }
+					// color     &= 0b1111011111011111;
+					color = t3getColor(
+						MIN(srcR + dstR, 0b011111),
+						MIN(srcG + dstG, 0b111111),
+						MIN(srcB + dstB, 0b011111)
+					);
+				} else {
+					// original algo looks simple but does not check for overflow
+					// color += (dstColor & 0b1111011111011111) >> 1;
+					color = t3getColor(
+						MIN(srcR + (dstR / 2), 0b011111),
+						MIN(srcG + (dstG / 2), 0b111111),
+						MIN(srcB + (dstB / 2), 0b011111)
+					);
+				}
+				WRITE_UINT16(tempP, color);
+			}
+			tempP += 2;
+			srcP += 2;
+		}
+		srcP += rightClip * 2;
+		destP += SCREEN_WIDTH * 2;
+	}
+}
+
+/**
  * Translates the destination surface within the object's bounds using the transparency
  * lookup table from transpal.cpp (the contents of which have been moved into palette.cpp)
  */
@@ -666,6 +747,31 @@ static void WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClippi
 		destP += SCREEN_WIDTH;
 	}
 }
+
+/**
+ * Copies an uncompressed block of data straight to the screen, Tinsel 3 is using 16bpp, hence "* 2"
+ */
+static void t3WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
+	bool applyClipping = (pObj->flags & DMA_CLIP) != 0;
+	int objWidth = pObj->width;
+
+	if (applyClipping) {
+		srcP += ((pObj->topClip * pObj->width) + pObj->leftClip) * 2;
+
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+
+		if (pObj->width <= 0)
+			return;
+	}
+
+	for (int y = 0; y < pObj->height; ++y) {
+		Common::copy(srcP, srcP + (pObj->width * 2), destP);
+		srcP += objWidth * 2;
+		destP += SCREEN_WIDTH * 2;
+	}
+}
+
 
 /**
  * Renders a packed data stream with a variable sized palette
@@ -922,12 +1028,10 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x11:	// TinselV2, draw sprite without clipping, flipped horizontally
 		case 0x42:	// TinselV2, draw sprite with clipping
 		case 0x51:	// TinselV2, draw sprite with clipping, flipped horizontally
-		case 0x81:	// TinselV2, draw sprite with clipping
-		case 0xC1:	// TinselV2, draw sprite with clipping
 			assert(TinselV2 || (typeId == 0x01 || typeId == 0x41));
 
 			if (TinselV2)
-				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
+				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
 			else if (TinselV1PSX)
 				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			else if (TinselV1Mac)
@@ -939,7 +1043,9 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x08:	// draw background without clipping
 		case 0x48:	// draw background with clipping
-			if (TinselV2 || TinselV1Mac || TinselV0)
+			if (TinselV3)
+				t3WrtAll(pObj, srcPtr, destPtr);
+			else if (TinselV2 || TinselV1Mac || TinselV0)
 				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
 			else if (TinselV1PSX)
 				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x48, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
@@ -949,6 +1055,13 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x04:	// fill with constant color without clipping
 		case 0x44:	// fill with constant color with clipping
 			WrtConst(pObj, destPtr, typeId == 0x44);
+			break;
+		case 0x81:	// TinselV3, draw sprite with transparency
+		case 0xC1:	// TinselV3, draw sprite with transparency & clipping
+			if (TinselV3)
+				t3TransWNZ(pObj, srcPtr, destPtr);
+			else if (TinselV2)
+				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
 			break;
 		case 0x84:	// draw transparent surface without clipping
 		case 0xC4:	// draw transparent surface with clipping

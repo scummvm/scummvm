@@ -40,6 +40,8 @@ struct DRAWOBJECT {
 	int transOffset;	// transparent character offset
 	int flags;		// object flags - see above for list
 	PALQ *pPal;		// objects palette Q position
+	short isRLE;	// TinselV3, if image is using run-length encoding
+	short colorFlags;	// TinselV3, type of color blending
 	int constant;		// which color in palette for monochrome objects
 	int width;		// width of object
 	int height;		// height of object

@@ -467,12 +467,14 @@ void Cursor::InitCurObj() {
 	const MULTI_INIT *pmi;
 	IMAGE *pim;
 
-	if (TinselV2) {
+	if (TinselV2 || TinselV3) {
 		pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
 		pfr = (const FREEL *)&pFilm->reels[0];
 		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
-		PokeInPalette(pmi);
+		if (!TinselV3) {
+			PokeInPalette(pmi);
+		}
 	} else {
 		assert(_vm->_bg->BgPal()); // no background palette
 

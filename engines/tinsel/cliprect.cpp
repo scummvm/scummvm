@@ -293,13 +293,18 @@ void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip)
 		}
 
 		// copy objects properties to local object
-		currentObj.width    = pObj->width;
-		currentObj.height   = pObj->height;
-		currentObj.xPos     = (short)x;
-		currentObj.yPos     = (short)y;
-		currentObj.pPal     = pObj->pPal;
-		currentObj.constant = pObj->constant;
-		currentObj.hBits    = pObj->hBits;
+		currentObj.width          = pObj->width;
+		currentObj.height         = pObj->height;
+		currentObj.xPos           = (short)x;
+		currentObj.yPos           = (short)y;
+		if (!TinselV3) {
+			currentObj.pPal       = pObj->pPal;
+		} else {
+			currentObj.isRLE      = pObj->isRLE;
+			currentObj.colorFlags = pObj->colorFlags;
+		}
+		currentObj.constant       = pObj->constant;
+		currentObj.hBits          = pObj->hBits;
 
 		// draw the object
 		DrawObject(&currentObj);

@@ -38,7 +38,8 @@ enum {
 
 	// object flags
 	DMA_WNZ		= 0x0001,	///< write non-zero data
-	DMA_CNZ		= 0x0002,	///< write constant on non-zero data
+	DMA_CNZ		= 0x0002,	///< TinselV1 write constant on non-zero data
+	DMA_RLWA	= 0x0002,	///< TenselV2+ run-length write all
 	DMA_CONST	= 0x0004,	///< write constant on both zero & non-zero data
 	DMA_WA		= 0x0008,	///< write all data
 	DMA_FLIPH	= 0x0010,	///< flip object horizontally
@@ -49,7 +50,6 @@ enum {
 	DMA_CHANGED	= 0x0200,	///< object has changed in some way since the last frame
 	DMA_USERDEF	= 0x0400,	///< user defined flags start here
 	DMA_GHOST	= 0x0080,
-
 
 	/** flags that effect an objects appearance */
 	DMA_HARDFLAGS	= (DMA_WNZ | DMA_CNZ | DMA_CONST | DMA_WA | DMA_FLIPH | DMA_FLIPV | DMA_TRANS)
@@ -64,6 +64,19 @@ struct IMAGE {
 	short anioffY;		///< image y animation offset
 	SCNHANDLE hImgBits;	///< image bitmap handle
 	SCNHANDLE hImgPal;	///< image palette handle
+} PACKED_STRUCT;
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+/** structure for image in Tinsel 3 */
+#include "common/pack-start.h"	// START STRUCT PACKING
+struct IMAGE_T3 {
+	short imgWidth;		///< image width
+	unsigned short imgHeight;	///< image height
+	short anioffX;		///< image x animation offset
+	short anioffY;		///< image y animation offset
+	SCNHANDLE hImgBits;	///< image bitmap handle
+	short isRLE;		///< if image is using run-length encoding
+	short colorFlags;	///< type of blending
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
@@ -84,6 +97,8 @@ struct OBJECT {
 	Common::Rect rcPrev;		///< previous screen coordinates of object bounding rectangle
 	int flags;			///< object flags - see above for list
 	PALQ *pPal;			///< objects palette Q position
+	short isRLE;		///< TinselV3, if image is using run-length encoding
+	short colorFlags;	/// TinselV3, type of color blending
 	int constant;		///< which color in palette for monochrome objects
 	int width;			///< width of object
 	int height;			///< height of object
