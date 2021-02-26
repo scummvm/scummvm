@@ -43,24 +43,24 @@ void DebugScene::drawClip(const Common::Rect& rect) {
 void DebugScene::drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
 
-	pPoint3dProjected->x = _engine->_renderer->projPosX;
-	pPoint3dProjected->y = _engine->_renderer->projPosY;
-	pPoint3dProjected->z = _engine->_renderer->projPosZ;
+	pPoint3dProjected->x = _engine->_renderer->projPos.x;
+	pPoint3dProjected->y = _engine->_renderer->projPos.y;
+	pPoint3dProjected->z = _engine->_renderer->projPos.z;
 
-	if (_engine->_redraw->renderRect.left > _engine->_renderer->projPosX) {
-		_engine->_redraw->renderRect.left = _engine->_renderer->projPosX;
+	if (_engine->_redraw->renderRect.left > _engine->_renderer->projPos.x) {
+		_engine->_redraw->renderRect.left = _engine->_renderer->projPos.x;
 	}
 
-	if (_engine->_redraw->renderRect.right < _engine->_renderer->projPosX) {
-		_engine->_redraw->renderRect.right = _engine->_renderer->projPosX;
+	if (_engine->_redraw->renderRect.right < _engine->_renderer->projPos.x) {
+		_engine->_redraw->renderRect.right = _engine->_renderer->projPos.x;
 	}
 
-	if (_engine->_redraw->renderRect.top > _engine->_renderer->projPosY) {
-		_engine->_redraw->renderRect.top = _engine->_renderer->projPosY;
+	if (_engine->_redraw->renderRect.top > _engine->_renderer->projPos.y) {
+		_engine->_redraw->renderRect.top = _engine->_renderer->projPos.y;
 	}
 
-	if (_engine->_redraw->renderRect.bottom < _engine->_renderer->projPosY) {
-		_engine->_redraw->renderRect.bottom = _engine->_renderer->projPosY;
+	if (_engine->_redraw->renderRect.bottom < _engine->_renderer->projPos.y) {
+		_engine->_redraw->renderRect.bottom = _engine->_renderer->projPos.y;
 	}
 }
 

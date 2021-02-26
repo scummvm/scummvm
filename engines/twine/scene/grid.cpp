@@ -683,8 +683,8 @@ void Grid::redrawGrid() {
 
 	_engine->_renderer->projectPositionOnScreen(-camera.x, -camera.y, -camera.z);
 
-	_engine->_renderer->projPosScreen.x = _engine->_renderer->projPosX;
-	_engine->_renderer->projPosScreen.y = _engine->_renderer->projPosY;
+	_engine->_renderer->projPosScreen.x = _engine->_renderer->projPos.x;
+	_engine->_renderer->projPosScreen.y = _engine->_renderer->projPos.y;
 
 	memset(brickInfoBuffer, 0, _brickInfoBufferSize);
 
@@ -875,7 +875,7 @@ void Grid::centerScreenOnActor() {
 	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (newCamera.x * BRICK_SIZE),
 	                                   actor->pos.y - (newCamera.y * BRICK_HEIGHT),
 	                                   actor->pos.z - (newCamera.z * BRICK_SIZE));
-	if (_engine->_renderer->projPosX < 80 || _engine->_renderer->projPosX >= _engine->width() - 60 || _engine->_renderer->projPosY < 80 || _engine->_renderer->projPosY >= _engine->height() - 50) {
+	if (_engine->_renderer->projPos.x < 80 || _engine->_renderer->projPos.x >= _engine->width() - 60 || _engine->_renderer->projPos.y < 80 || _engine->_renderer->projPos.y >= _engine->height() - 50) {
 		newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
 		newCamera.y = actor->pos.y / BRICK_HEIGHT;
 		newCamera.z = ((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.z) / 2;

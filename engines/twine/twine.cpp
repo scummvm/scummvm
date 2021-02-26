@@ -905,12 +905,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							if (!_actor->cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, kAnimationType_4, AnimationTypes::kStanding, 0);
 								_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
-								_actor->cropBottomScreen = _renderer->projPosY;
+								_actor->cropBottomScreen = _renderer->projPos.y;
 							}
 							_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
 							actor->controlMode = ControlMode::kNoMove;
 							actor->life = -1;
-							_actor->cropBottomScreen = _renderer->projPosY;
+							_actor->cropBottomScreen = _renderer->projPos.y;
 							actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 						}
 					} else {

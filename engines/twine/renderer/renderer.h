@@ -395,10 +395,7 @@ public:
 	void init(int32 w, int32 h);
 
 	Vec3 projPosScreen;
-	int16 projPosX = 0;
-	int16 projPosY = 0;
-	int16 projPosZ = 0;
-
+	Vec3 projPos;
 	Vec3 baseRotPos;
 	Vec3 orthoProjPos;
 

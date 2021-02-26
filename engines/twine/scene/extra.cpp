@@ -472,8 +472,8 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 		const int32 oldComputedX = currentX;
 		const int32 oldComputedY = currentY;
 
-		_engine->_renderer->projPosX = currentX;
-		_engine->_renderer->projPosY = currentY;
+		_engine->_renderer->projPos.x = currentX;
+		_engine->_renderer->projPos.y = currentY;
 
 		_engine->_movements->rotateActor(var_x, var_z, angle);
 
@@ -496,17 +496,17 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 			_engine->_redraw->renderRect.bottom = currentY;
 		}
 
-		_engine->_renderer->projPosX = currentX;
-		_engine->_renderer->projPosY = currentY;
+		_engine->_renderer->projPos.x = currentX;
+		_engine->_renderer->projPos.y = currentY;
 
 		_engine->_interface->drawLine(oldComputedX, oldComputedY, currentX, currentY, color);
 
-		currentX = _engine->_renderer->projPosX;
-		currentY = _engine->_renderer->projPosY;
+		currentX = _engine->_renderer->projPos.x;
+		currentY = _engine->_renderer->projPos.y;
 	}
 
-	_engine->_renderer->projPosX = currentX;
-	_engine->_renderer->projPosY = currentY;
+	_engine->_renderer->projPos.x = currentX;
+	_engine->_renderer->projPos.y = currentY;
 	_engine->_interface->drawLine(currentX, currentY, computedX, computedY, color);
 }
 
@@ -691,7 +691,7 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -724,7 +724,7 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -871,7 +871,7 @@ void Extra::processExtras() {
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 					const int16 fontColor = COLOR_158;
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, fontColor, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, extra->info0, 10, 30, 0, OverlayPosType::koNormal, 2);

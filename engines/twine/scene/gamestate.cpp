@@ -339,12 +339,12 @@ void GameState::processFoundItem(int32 item) {
 	_engine->flip();
 
 	_engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
-	_engine->_renderer->projPosY -= 150;
+	_engine->_renderer->projPos.y -= 150;
 
-	const int32 boxTopLeftX = _engine->_renderer->projPosX - 65;
-	const int32 boxTopLeftY = _engine->_renderer->projPosY - 65;
-	const int32 boxBottomRightX = _engine->_renderer->projPosX + 65;
-	const int32 boxBottomRightY = _engine->_renderer->projPosY + 65;
+	const int32 boxTopLeftX = _engine->_renderer->projPos.x - 65;
+	const int32 boxTopLeftY = _engine->_renderer->projPos.y - 65;
+	const int32 boxBottomRightX = _engine->_renderer->projPos.x + 65;
+	const int32 boxBottomRightY = _engine->_renderer->projPos.y + 65;
 	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 	_engine->_sound->playSample(Samples::BigItemFound);
 
@@ -385,7 +385,7 @@ void GameState::processFoundItem(int32 item) {
 
 		_engine->_menu->itemAngle[item] += ANGLE_2;
 
-		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPosX, _engine->_renderer->projPosY, _engine->_resources->inventoryTable[item], _engine->_menu->itemAngle[item], 10000);
+		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPos.x, _engine->_renderer->projPos.y, _engine->_resources->inventoryTable[item], _engine->_menu->itemAngle[item], 10000);
 
 		_engine->_menu->drawBox(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);

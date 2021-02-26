@@ -58,9 +58,9 @@ void Renderer::init(int32 w, int32 h) {
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (isUsingOrthoProjection) {
-		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjPos.x;
-		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjPos.y;
-		projPosZ = cZ - cY - cX;
+		projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjPos.x;
+		projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjPos.y;
+		projPos.z = cZ - cY - cX;
 		return 1;
 	}
 
@@ -69,9 +69,9 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	cZ -= baseRotPos.z;
 
 	if (cZ < 0) {
-		projPosX = 0;
-		projPosY = 0;
-		projPosZ = 0;
+		projPos.x = 0;
+		projPos.y = 0;
+		projPos.z = 0;
 		return 0;
 	}
 
@@ -80,9 +80,9 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		posZ = 0x7FFF;
 	}
 
-	projPosX = (cX * cameraScaleY) / posZ + orthoProjPos.x;
-	projPosY = (-cY * cameraScaleZ) / posZ + orthoProjPos.y;
-	projPosZ = posZ;
+	projPos.x = (cX * cameraScaleY) / posZ + orthoProjPos.x;
+	projPos.y = (-cY * cameraScaleZ) / posZ + orthoProjPos.y;
+	projPos.z = posZ;
 	return -1;
 }
 
