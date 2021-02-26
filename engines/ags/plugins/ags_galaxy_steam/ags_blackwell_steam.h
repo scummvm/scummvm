@@ -32,7 +32,7 @@ namespace AGSGalaxySteam {
 class AGSBlackwellSteam : public AGSSteam {
 private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
-	static int AddAchievement(const ScriptMethodParams &params);
+	static NumberPtr AddAchievement(const ScriptMethodParams &params);
     
 public:
 	AGSBlackwellSteam();

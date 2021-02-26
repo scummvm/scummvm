@@ -30,7 +30,7 @@ AGSBlackwellSteam::AGSBlackwellSteam() : AGSSteam() {
 	DLL_METHOD(AGS_EngineStartup);
 }
 
-int AGSBlackwellSteam::AddAchievement(const ScriptMethodParams &params) {
+NumberPtr AGSBlackwellSteam::AddAchievement(const ScriptMethodParams &params) {
 	return 0;
 }
 

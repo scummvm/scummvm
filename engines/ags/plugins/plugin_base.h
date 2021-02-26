@@ -32,8 +32,8 @@ namespace AGS3 {
 namespace Plugins {
 
 #define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
-#define SCRIPT_METHOD(NAME) engine->RegisterScriptFunction(#NAME, (void *)&NAME)
-#define SCRIPT_METHOD_EXT(NAME, PROC) engine->RegisterScriptFunction(#NAME, (void *)&(PROC))
+#define SCRIPT_METHOD(NAME) registerFunction(engine, #NAME, &NAME)
+#define SCRIPT_METHOD_EXT(NAME, PROC) registerFunction(engine, #NAME, &(PROC))
 
 #define PARAMS1(T1, N1) \
 	T1 N1 = (T1)params[0]
@@ -94,6 +94,9 @@ namespace Plugins {
 using string = const char *;
 typedef uint32 HWND;
 
+typedef void (*PluginMethod)(const ScriptMethodParams &params);
+typedef NumberPtr(*PluginFunction)(const ScriptMethodParams &params);
+
 /**
  * Base class for the implementation of AGS plugins
  */
@@ -114,6 +117,13 @@ protected:
 	static NumberPtr AGS_EngineOnEvent(int, NumberPtr);
 	static int    AGS_EngineDebugHook(const char *, int, int);
 	static void   AGS_EngineInitGfx(const char *driverID, void *data);
+
+	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginMethod fn) {
+		engine->RegisterScriptFunction(name, (void *)fn);
+	}
+	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginFunction fn) {
+		engine->RegisterScriptFunction(name, (void *)fn);
+	}
 public:
 	PluginBase();
 

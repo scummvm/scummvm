@@ -56,46 +56,46 @@ void AGS2Client::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGS2Client::Initialize^2, Initialize);
 }
 
-bool AGS2Client::IsAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::IsAchievementAchieved(const ScriptMethodParams &params) {
 	return false;
 }
 
-bool AGS2Client::SetAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::SetAchievementAchieved(const ScriptMethodParams &params) {
 	return false;
 }
 
-bool AGS2Client::ResetAchievement(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::ResetAchievement(const ScriptMethodParams &params) {
 	return false;
 }
 
-int AGS2Client::GetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::GetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::GetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::GetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::GetAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::GetAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::SetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::SetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::SetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::SetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::UpdateAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::UpdateAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
 void AGS2Client::ResetStatsAndAchievements(const ScriptMethodParams &params) {
 }
 
-int AGS2Client::get_Initialized(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::get_Initialized(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -105,18 +105,18 @@ void AGS2Client::get_CurrentLeaderboardName(const ScriptMethodParams &params) {
 void AGS2Client::RequestLeaderboard(const ScriptMethodParams &params) {
 }
 
-int AGS2Client::UploadScore(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::UploadScore(const ScriptMethodParams &params) {
 	return 0;
 }
 
 void AGS2Client::geti_LeaderboardNames(const ScriptMethodParams &params) {
 }
 
-int AGS2Client::geti_LeaderboardScores(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::geti_LeaderboardScores(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGS2Client::get_LeaderboardCount(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::get_LeaderboardCount(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -129,7 +129,7 @@ void AGS2Client::GetCurrentGameLanguage(const ScriptMethodParams &params) {
 void AGS2Client::FindLeaderboard(const ScriptMethodParams &params) {
 }
 
-int AGS2Client::Initialize(const ScriptMethodParams &params) {
+NumberPtr AGS2Client::Initialize(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -315,12 +315,12 @@ void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	}
 }
 
-bool AGSSteam::IsAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::IsAchievementAchieved(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 	return AchMan.isAchieved(id);
 }
 
-bool AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
 	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
@@ -336,32 +336,32 @@ bool AGSSteam::SetAchievementAchieved(const ScriptMethodParams &params) {
 	return AchMan.setAchievement(id, msg);
 }
 
-bool AGSSteam::ResetAchievement(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::ResetAchievement(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 	return AchMan.clearAchievement(id);
 }
 
-int AGSSteam::GetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::GetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::GetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::GetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::GetAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::GetAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::SetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::SetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::SetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::SetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::UpdateAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::UpdateAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -370,7 +370,7 @@ void AGSSteam::ResetStatsAndAchievements(const ScriptMethodParams &params) {
 	AchMan.resetAllStats();
 }
 
-int AGSSteam::get_Initialized(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::get_Initialized(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -380,18 +380,18 @@ void AGSSteam::get_CurrentLeaderboardName(const ScriptMethodParams &params) {
 void AGSSteam::RequestLeaderboard(const ScriptMethodParams &params) {
 }
 
-int AGSSteam::UploadScore(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::UploadScore(const ScriptMethodParams &params) {
 	return 0;
 }
 
 void AGSSteam::geti_LeaderboardNames(const ScriptMethodParams &params) {
 }
 
-int AGSSteam::geti_LeaderboardScores(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::geti_LeaderboardScores(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSSteam::get_LeaderboardCount(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::get_LeaderboardCount(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -401,7 +401,7 @@ void AGSSteam::GetUserName(const ScriptMethodParams &params) {
 void AGSSteam::GetCurrentGameLanguage(const ScriptMethodParams &params) {
 }
 
-int AGSSteam::FindLeaderboard(const ScriptMethodParams &params) {
+NumberPtr AGSSteam::FindLeaderboard(const ScriptMethodParams &params) {
 	return 0;
 }
 
