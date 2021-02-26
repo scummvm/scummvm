@@ -1541,6 +1541,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("whokilledkennyrogers", "mags.exe", "ed778afb4f46c3f2a70d330532a83a2f", 1240103),
 	UNSUPPORTED_GAME_ENTRY("winfry", "fry.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 4164041),
 
+	// Post 2.5 games that aren't currently supported
+	// 2.55 game, but uses a plugin agsflashlight. Also, even with AGS interpreter
+	// hacked to specify plugin, errors on loading room107 saying that
+	// "room animations are no longer supported"
+	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
+
 	// AGDI games. They get their own grouping because they're just that awesome
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34922340),  // 2.0
@@ -2949,7 +2955,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("wrathofthesolonoids", "verb.exe", "0500aacb6c176d47ac0f8158f055db83", 3582078),
 	GAME_ENTRY("yoda", "Yoda.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 2461339),
 	GAME_ENTRY("yourlate", "Your late.exe", "02635a77ab660023f59519c91329f7f5", 2719997),
-	GAME_ENTRY_PLUGIN("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711, AGS_FLASHLIGHT),
 	GAME_ENTRY("zombiefish", "FZombie.exe", "3128b9f90e2f954ba704414ae854d10b", 4220305),
 	GAME_ENTRY("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	GAME_ENTRY("zugzwang", "Zugzwang.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 17209702),
