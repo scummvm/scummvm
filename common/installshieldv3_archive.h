@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef COMMON_INSTALLER_ARCHIVE_H
-#define COMMON_INSTALLER_ARCHIVE_H
+#ifndef COMMON_INSTALLSHIELDV3_ARCHIVE_H
+#define COMMON_INSTALLSHIELDV3_ARCHIVE_H
 
 #include "common/archive.h"
 #include "common/scummsys.h"
