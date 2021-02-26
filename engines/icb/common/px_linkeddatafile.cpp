@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/common/px_rcutypes.h"
-#include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"

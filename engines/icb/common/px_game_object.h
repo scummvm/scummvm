@@ -29,7 +29,6 @@
 #define ICB_GAME_OBJECT_H
 
 #include "engines/icb/common/px_rcutypes.h"
-#include "engines/icb/common/px_assert.h"
 
 namespace ICB {
 
@@ -127,7 +126,7 @@ inline uint c_un_game_object::GetNoScripts() const {
 }
 
 inline cstr c_un_game_object::GetScriptName(uint32 scriptNo) const {
-	_ASSERT((scriptNo >= 0) && (scriptNo < m_noScripts));
+	assert(scriptNo < m_noScripts);
 	return ((cstr)(((const cstr) this) + ((const int *)(((const char *)this) + m_script_name_table_offset))[scriptNo]));
 }
 
@@ -171,19 +170,19 @@ inline int32 c_un_game_object::GetVariable(cstr name) const {
 }
 
 inline void c_un_game_object::SetIntegerVariable(uint32 lvar, int32 val) {
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	(((int *)(((char *)this) + m_lvars_offset))[lvar]) = val;
 }
 
 inline int32 &c_un_game_object::GetIntegerVariable(uint32 lvar) {
 	// Get an lvar value
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	return (((int32 *)(((char *)this) + m_lvars_offset))[lvar]);
 }
 
 inline cstr c_un_game_object::GetStringVariable(uint32 lvar) const {
 	// Get an lvar value
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	return (((cstr) this) + ((const int *)(((const char *)this) + m_lvars_offset))[lvar]);
 }
 
@@ -279,12 +278,12 @@ inline uint c_compressed_game_object::GetNoScripts() const {
 }
 
 inline uint32 c_compressed_game_object::GetScriptNameFullHash(uint32 scriptNo) const {
-	_ASSERT((scriptNo >= 0) && (scriptNo < m_noScripts));
+	assert(scriptNo < m_noScripts);
 	return (((const int *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2]);
 }
 
 inline uint32 c_compressed_game_object::GetScriptNamePartHash(uint32 scriptNo) const {
-	_ASSERT((scriptNo >= 0) && (scriptNo < m_noScripts));
+	assert(scriptNo < m_noScripts);
 	return (((const int *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2 + 1]);
 }
 
@@ -328,19 +327,19 @@ inline int32 c_compressed_game_object::GetVariable(cstr name) const {
 }
 
 inline void c_compressed_game_object::SetIntegerVariable(uint32 lvar, int32 val) {
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	(((int *)(((char *)this) + m_lvars_offset))[lvar]) = val;
 }
 
 inline int32 &c_compressed_game_object::GetIntegerVariable(uint32 lvar) {
 	// Get an lvar value
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	return (((int32 *)(((char *)this) + m_lvars_offset))[lvar]);
 }
 
 inline cstr c_compressed_game_object::GetStringVariable(uint32 lvar) const {
 	// Get an lvar value
-	_ASSERT((lvar >= 0) && (lvar < m_noLvars));
+	assert(lvar < m_noLvars);
 	return (((cstr) this) + ((const int *)(((const char *)this) + m_lvars_offset))[lvar]);
 }
 

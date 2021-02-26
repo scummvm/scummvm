@@ -57,7 +57,7 @@ void _prim_route_builder::Add_barrier(_route_barrier *new_barrier) {
 	if (!ExtrapolateLine(&barrier_list[total_points - 2], &barrier_list[total_points - 1], &barrier_list[total_points - 2], &barrier_list[total_points - 1], extrap_size))
 		Fatal_error("extrapolate line failed on line %3.2f %3.2f  %3.2f %3.2f", new_barrier->x1(), new_barrier->z1(), new_barrier->x2(), new_barrier->z2());
 
-	_ASSERT(total_points < MAX_barriers);
+	assert(total_points < MAX_barriers);
 }
 
 void _prim_route_builder::Give_barrier_list(_route_description *route) {

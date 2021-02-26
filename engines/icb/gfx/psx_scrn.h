@@ -30,7 +30,6 @@
 
 #include "engines/icb/gfx/psx_pcgpu.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
-#include "engines/icb/common/px_assert.h"
 #include "engines/icb/gfx/psx_ot.h"
 
 #include "common/util.h"

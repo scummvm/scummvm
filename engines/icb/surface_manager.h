@@ -30,7 +30,6 @@
 
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/common/px_array.h"
-#include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_types.h"
 
 #include "graphics/surface.h"
@@ -187,19 +186,19 @@ private:
 };
 
 inline uint32 _surface_manager::Get_width(uint32 nSurfaceID) const {
-	_ASSERT(nSurfaceID < m_Surfaces.GetNoItems());
+	assert(nSurfaceID < m_Surfaces.GetNoItems());
 
 	return (m_Surfaces[nSurfaceID]->m_width);
 }
 
 inline uint32 _surface_manager::Get_height(uint32 nSurfaceID) const {
-	_ASSERT(nSurfaceID < m_Surfaces.GetNoItems());
+	assert(nSurfaceID < m_Surfaces.GetNoItems());
 
 	return (m_Surfaces[nSurfaceID]->m_height);
 }
 
 inline uint32 _surface_manager::Get_BytesPP(uint32 nSurfaceID) const {
-	_ASSERT(nSurfaceID < m_Surfaces.GetNoItems());
+	assert(nSurfaceID < m_Surfaces.GetNoItems());
 
 	return ((m_Surfaces[nSurfaceID]->m_dds->format.bytesPerPixel));
 }

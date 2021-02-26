@@ -575,7 +575,7 @@ void _game_session::Shut_down_id(uint32 id) {
 	// we have id of object
 
 	// must be legal id
-	_ASSERT(id < MS->Fetch_number_of_objects());
+	assert(id < MS->Fetch_number_of_objects());
 
 	logic_structs[id]->ob_status = OB_STATUS_HELD; // lock out
 

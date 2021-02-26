@@ -30,7 +30,6 @@
 
 // Include headers needed by this class.
 #include "engines/icb/common/px_string.h"
-#include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_clu_api.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/debug.h"

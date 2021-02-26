@@ -58,7 +58,7 @@ void Clip_text_print(_rgb *pen, uint32 x, uint32 y, uint8 *base, uint32 pitch, c
 		chr = (int)ascii[j++];
 		chr -= 32;
 
-		_ASSERT((chr >= 0));
+		assert(chr >= 0);
 		head = (_frameHeader *)FetchFrameHeader(charSet, (uint16)chr);
 		sprite_data = (uint8 *)(head + 1);
 
