@@ -8,6 +8,7 @@ MODULE_OBJS = \
   action/recordtypes.o \
   action/rotatinglockpuzzle.o \
   action/secondaryvideo.o \
+  action/sliderpuzzle.o \
   action/staticbitmapanim.o \
   action/telephone.o \
   ui/frame.o \

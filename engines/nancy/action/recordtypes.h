@@ -278,11 +278,6 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 };
 
-class SliderPuzzle : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class PasswordPuzzle : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
