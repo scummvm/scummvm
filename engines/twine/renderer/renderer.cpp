@@ -64,9 +64,9 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		return 1;
 	}
 
-	cX -= baseRotPosX;
-	cY -= baseRotPosY;
-	cZ -= baseRotPosZ;
+	cX -= baseRotPos.x;
+	cY -= baseRotPos.y;
+	cZ -= baseRotPos.z;
 
 	if (cZ < 0) {
 		projPosX = 0;
@@ -152,9 +152,9 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	}
 	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
 
-	baseRotPosX = destX;
-	baseRotPosY = destY;
-	baseRotPosZ = destZ;
+	baseRotPos.x = destX;
+	baseRotPos.y = destY;
+	baseRotPos.z = destZ;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
@@ -182,9 +182,9 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	setBaseRotation(rotPosX, rotPosY, rotPosZ);
 
-	baseRotPosZ += param6;
+	baseRotPos.z += param6;
 
-	getCameraAnglePositions(baseRotPosX, baseRotPosY, baseRotPosZ);
+	getCameraAnglePositions(baseRotPos.x, baseRotPos.y, baseRotPos.z);
 
 	baseTransPosX = destX;
 	baseTransPosY = destY;
@@ -1477,9 +1477,9 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderX = destX - baseRotPosX;
-		renderY = destY - baseRotPosY; // RECHECK
-		renderZ = destZ - baseRotPosZ;
+		renderX = destX - baseRotPos.x;
+		renderY = destY - baseRotPos.y; // RECHECK
+		renderZ = destZ - baseRotPos.z;
 	}
 
 	if (!Model::isAnimated(bodyPtr)) {

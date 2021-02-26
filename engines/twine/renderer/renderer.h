@@ -399,9 +399,7 @@ public:
 	int16 projPosY = 0;
 	int16 projPosZ = 0;
 
-	int32 baseRotPosX = 0; // setSomething3Var12
-	int32 baseRotPosY = 0; // setSomething3Var14
-	int32 baseRotPosZ = 0; // setSomething3Var16
+	Vec3 baseRotPos;
 
 	int32 orthoProjX = 0; // setSomethingVar1
 	int32 orthoProjY = 0; // setSomethingVar2
