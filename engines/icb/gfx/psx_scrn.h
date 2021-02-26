@@ -31,8 +31,9 @@
 #include "engines/icb/gfx/psx_pcgpu.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/common/px_assert.h"
-#include "engines/icb/common/px_maths.h"
 #include "engines/icb/gfx/psx_ot.h"
+
+#include "common/util.h"
 
 namespace ICB {
 
@@ -210,11 +211,11 @@ static inline void myAddDRLOADNoFlush(RECT16 *r, uint32 *pot, int length) {
 static inline int32 myMakeOTPosition(int32 z0) {
 	int32 z1 = (z0 >> otz_shift) - otz_offset;
 
-	minUsedZpos = PXmin(z0, minUsedZpos);
-	maxUsedZpos = PXmax(z0, maxUsedZpos);
+	minUsedZpos = MIN(z0, minUsedZpos);
+	maxUsedZpos = MAX(z0, maxUsedZpos);
 
-	z1 = PXmax(minZOTpos, z1);
-	z1 = PXmin(maxZOTpos, z1);
+	z1 = MAX(minZOTpos, z1);
+	z1 = MIN(maxZOTpos, z1);
 
 	return z1;
 }
