@@ -207,7 +207,7 @@ void NLPlaySound(int num) {
 		}
 
 		Audio::AudioStream *stream = NLSample[num].stream;
-		if (GSample[num]._flag & SOUNDFLAG_SLOOP)
+		if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
 			stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
 
 		g_system->getMixer()->playStream(NLSample[num].type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
@@ -259,7 +259,7 @@ void SoundFadIn(int num) {
 		return;
 
 	Audio::AudioStream *stream = NLSample[num].stream;
-	if (GSample[num]._flag & SOUNDFLAG_SLOOP)
+	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
 		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
 
 	g_system->getMixer()->playStream(NLSample[num].type, &smp[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
