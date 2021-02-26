@@ -400,10 +400,7 @@ public:
 	int16 projPosZ = 0;
 
 	Vec3 baseRotPos;
-
-	int32 orthoProjX = 0; // setSomethingVar1
-	int32 orthoProjY = 0; // setSomethingVar2
-	int32 orthoProjZ = 0; // setSomethingVar2
+	Vec3 orthoProjPos;
 
 	int32 destX = 0;
 	int32 destY = 0;

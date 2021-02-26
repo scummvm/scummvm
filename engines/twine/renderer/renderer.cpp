@@ -58,8 +58,8 @@ void Renderer::init(int32 w, int32 h) {
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (isUsingOrthoProjection) {
-		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjX;
-		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjY;
+		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjPos.x;
+		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjPos.y;
 		projPosZ = cZ - cY - cX;
 		return 1;
 	}
@@ -80,15 +80,15 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		posZ = 0x7FFF;
 	}
 
-	projPosX = (cX * cameraScaleY) / posZ + orthoProjX;
-	projPosY = (-cY * cameraScaleZ) / posZ + orthoProjY;
+	projPosX = (cX * cameraScaleY) / posZ + orthoProjPos.x;
+	projPosY = (-cY * cameraScaleZ) / posZ + orthoProjPos.y;
 	projPosZ = posZ;
 	return -1;
 }
 
 void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ) {
-	orthoProjX = x;
-	orthoProjY = y;
+	orthoProjPos.x = x;
+	orthoProjPos.y = y;
 
 	cameraDepthOffset = depthOffset;
 	cameraScaleY = scaleY;
@@ -104,9 +104,9 @@ void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
-	orthoProjX = x;
-	orthoProjY = y;
-	orthoProjZ = z;
+	orthoProjPos.x = x;
+	orthoProjPos.y = y;
+	orthoProjPos.z = z;
 
 	isUsingOrthoProjection = true;
 }
@@ -1296,8 +1296,8 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			const int32 coY = pointPtr->y + renderY;
 			const int32 coZ = -(pointPtr->z + renderZ);
 
-			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + orthoProjX;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + orthoProjY;
+			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + orthoProjPos.x;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + orthoProjPos.y;
 			pointPtrDest->z = coZ - coX - coY;
 
 			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
@@ -1331,7 +1331,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// X projection
 			{
-				coX = orthoProjX + ((coX * cameraScaleY) / coZ);
+				coX = orthoProjPos.x + ((coX * cameraScaleY) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1350,7 +1350,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// Y projection
 			{
-				coY = orthoProjY + ((-coY * cameraScaleZ) / coZ);
+				coY = orthoProjPos.y + ((-coY * cameraScaleZ) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
