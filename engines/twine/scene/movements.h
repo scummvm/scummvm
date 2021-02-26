@@ -184,6 +184,10 @@ public:
 	 */
 	int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2);
 
+	inline int32 getAngleAndSetTargetActorDistance(const Vec3& v1, const Vec3 &v2) {
+		return getAngleAndSetTargetActorDistance(v1.x, v1.z, v2.x, v2.z);
+	}
+
 	/**
 	 * Rotate actor with a given angle
 	 * @param x Actor current X coordinate
@@ -221,7 +225,7 @@ public:
 	 * @param speed Rotate speed
 	 * @param movePtr Pointer to process movements
 	 */
-	void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr);
+	void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const;
 
 	void processActorMovements(int32 actorIdx);
 };

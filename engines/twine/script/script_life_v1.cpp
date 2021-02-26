@@ -161,7 +161,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
 				// Returns int32, so we check for integer overflow
-				int32 distance = engine->_movements->getDistance2D(ctx.actor->pos.x, ctx.actor->pos.z, otherActor->pos.x, otherActor->pos.z);
+				int32 distance = engine->_movements->getDistance2D(ctx.actor->pos, otherActor->pos);
 				if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 					engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 				} else {
@@ -219,7 +219,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 		if (!targetActor->dynamicFlags.bIsDead) {
 			if (ABS(targetActor->pos.y - ctx.actor->pos.y) < 1500) {
-				newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, targetActor->pos.x, targetActor->pos.z);
+				newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos, targetActor->pos);
 				if (ABS(engine->_movements->targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 					engine->_movements->targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 				}

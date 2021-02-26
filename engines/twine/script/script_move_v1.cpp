@@ -621,7 +621,7 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 	engine->_scene->currentScriptValue = angle;
 	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
-		engine->_scene->currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, engine->_scene->sceneHero->pos.x, engine->_scene->sceneHero->pos.z);
+		engine->_scene->currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos, engine->_scene->sceneHero->pos);
 		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->currentScriptValue);

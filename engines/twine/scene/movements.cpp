@@ -160,7 +160,7 @@ int32 Movements::getDistance3D(const Vec3 &v1, const Vec3 &v2) const {
 	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)));
 }
 
-void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
+void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const { // ManualRealAngle
 	const int16 from = ClampAngle(angleFrom);
 	const int16 to = ClampAngle(angleTo);
 
@@ -392,7 +392,7 @@ void Movements::processManualAction(int actorIdx) {
 void Movements::processFollowAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const ActorStruct *followedActor = _engine->_scene->getActor(actor->followedActor);
-	int32 newAngle = getAngleAndSetTargetActorDistance(actor->pos.x, actor->pos.z, followedActor->pos.x, followedActor->pos.z);
+	int32 newAngle = getAngleAndSetTargetActorDistance(actor->pos, followedActor->pos);
 	if (actor->staticFlags.bIsSpriteActor) {
 		actor->angle = newAngle;
 	} else {

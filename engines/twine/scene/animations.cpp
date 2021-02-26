@@ -397,7 +397,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->animPosition) {
-				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.y, 0, _engine->_scene->sceneHero->pos.y, _engine->_movements->getDistance2D(actor->pos.x, actor->pos.z, _engine->_scene->sceneHero->pos.x, _engine->_scene->sceneHero->pos.z));
+				const int32 distance = _engine->_movements->getDistance2D(actor->pos, _engine->_scene->sceneHero->pos);
+				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.y, 0, _engine->_scene->sceneHero->pos.y, distance);
 
 				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
 

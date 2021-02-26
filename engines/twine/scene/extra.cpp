@@ -162,9 +162,7 @@ void Extra::resetExtras() {
 void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) { // InitFly
 	extra->type |= ExtraType::FLY;
 
-	extra->lastPos.x = extra->pos.x;
-	extra->lastPos.y = extra->pos.y;
-	extra->lastPos.z = extra->pos.z;
+	extra->lastPos = extra->pos;
 
 	_engine->_movements->rotateActor(x, 0, xAngle);
 
@@ -685,14 +683,14 @@ void Extra::processExtras() {
 			ExtraListStruct *extraKey = &extraList[extra->payload.extraIdx];
 			const int32 extraIdx = extra->payload.extraIdx;
 
-			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.x, extra->pos.z, extraKey->pos.x, extraKey->pos.z);
+			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, extraKey->pos);
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos.x - _engine->_grid->camera.x, extraKey->pos.y - _engine->_grid->camera.y, extraKey->pos.z - _engine->_grid->camera.z);
+					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -725,7 +723,7 @@ void Extra::processExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos.x - _engine->_grid->camera.x, extraKey->pos.y - _engine->_grid->camera.y, extraKey->pos.z - _engine->_grid->camera.z);
+					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 

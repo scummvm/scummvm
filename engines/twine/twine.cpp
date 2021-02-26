@@ -930,9 +930,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (IS_HERO(a)) {
 				if (actor->dynamicFlags.bAnimEnded) {
 					if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
-						_scene->sceneHero->pos.x = _scene->newHeroPos.x;
-						_scene->sceneHero->pos.y = _scene->newHeroPos.y;
-						_scene->sceneHero->pos.z = _scene->newHeroPos.z;
+						_scene->sceneHero->pos = _scene->newHeroPos;
 
 						_scene->needChangeScene = _scene->currentSceneIdx;
 						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;

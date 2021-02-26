@@ -243,7 +243,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 							_engine->_movements->processActor.y = yRightTest - actor->boudingBox.y.bottomLeft + 1;
 							actor->standOn = a;
 						} else {
-							int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActor.x, _engine->_movements->processActor.z, actorTest->pos.x, actorTest->pos.z);
+							int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActor, actorTest->pos);
 
 							if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
 								actorTest->lastPos.y = 0;
@@ -293,7 +293,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 						_engine->_actor->hitActor(actorIdx, a, 1, -1);
 					}
 
-					int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActor.x, _engine->_movements->processActor.z, actorTest->pos.x, actorTest->pos.z);
+					int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(_engine->_movements->processActor, actorTest->pos);
 
 					if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
 						actorTest->lastPos.y = 0;

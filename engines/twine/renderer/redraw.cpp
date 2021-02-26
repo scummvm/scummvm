@@ -285,7 +285,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 			continue;
 		}
 		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->spawnTime) & 8))) {
-			_engine->_renderer->projectPositionOnScreen(extra->pos.x - _engine->_grid->camera.x, extra->pos.y - _engine->_grid->camera.y, extra->pos.z - _engine->_grid->camera.z);
+			_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
 			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < _engine->width() + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < _engine->height() + 100) {
 				drawList[drawListPos].posValue = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;

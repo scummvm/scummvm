@@ -198,11 +198,9 @@ bool Scene::loadSceneLBA2() {
 		act->anim = (AnimationTypes)stream.readByte();
 		act->sprite = stream.readUint16LE();
 		act->pos.x = stream.readUint16LE();
-		act->collisionPos.x = act->pos.x;
 		act->pos.y = stream.readUint16LE();
-		act->collisionPos.y = act->pos.y;
 		act->pos.z = stream.readUint16LE();
-		act->collisionPos.z = act->pos.z;
+		act->collisionPos = act->pos;
 		act->strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->angle = stream.readUint16LE();
