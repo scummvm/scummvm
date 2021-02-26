@@ -288,16 +288,14 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
+	Vec3 &pos = _engine->_scene->sceneHero->pos;
 	if (argc < 4) {
-		debugPrintf("Current hero position: %i:%i:%i\n", _engine->_scene->sceneHero->pos.x, _engine->_scene->sceneHero->pos.y, _engine->_scene->sceneHero->pos.z);
+		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;
 	}
-	const int16 x = atoi(argv[1]);
-	const int16 y = atoi(argv[2]);
-	const int16 z = atoi(argv[3]);
-	_engine->_scene->sceneHero->pos.x = x;
-	_engine->_scene->sceneHero->pos.y = y;
-	_engine->_scene->sceneHero->pos.z = z;
+	pos.x = atoi(argv[1]);
+	pos.y = atoi(argv[2]);
+	pos.z = atoi(argv[3]);
 	return true;
 }
 
