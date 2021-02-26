@@ -35,7 +35,7 @@
 namespace AGDS {
 
 Object::Object(const Common::String &name, Common::SeekableReadStream *stream) : _name(name), _stringTableLoaded(false),
-                                                                                 _picture(), _region(),
+                                                                                 _picture(), _rotatedPicture(), _region(),
                                                                                  _animation(), _mouseCursor(),
                                                                                  _pos(), _z(10),
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
@@ -59,6 +59,10 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
 }
 
 Object::~Object() {
+	if (_rotatedPicture) {
+		_rotatedPicture->free();
+		delete _rotatedPicture;
+	}
 	if (_picture) {
 		_picture->free();
 		delete _picture;
@@ -115,6 +119,11 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	if (_picture) {
 		_picture->free();
 		delete _picture;
+	}
+	if (_rotatedPicture) {
+		_rotatedPicture->free();
+		delete _rotatedPicture;
+		_rotatedPicture = nullptr;
 	}
 	_picture = picture;
 
@@ -175,11 +184,12 @@ void Object::generateRegion() {
 }
 
 Common::Rect Object::getRect() const {
-	if (!_picture) {
+	auto picture = getPicture();
+	if (!picture) {
 		warning("getRect called on null picture");
 		return Common::Rect();
 	}
-	Common::Rect rect = _picture->getRect();
+	Common::Rect rect = picture->getRect();
 	rect.moveTo(_pos.x, _pos.y);
 	return rect;
 }
@@ -188,7 +198,8 @@ bool Object::pointIn(Common::Point pos) {
 	if (!_inScene)
 		return false;
 
-	if (_picture) {
+	auto picture = getPicture();
+	if (picture) {
 		auto rect = getRect();
 		if (rect.contains(pos)) {
 			return true;
@@ -213,12 +224,13 @@ bool Object::pointIn(Common::Point pos) {
 }
 
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
-	if (_picture) {
+	auto picture = getPicture();
+	if (picture) {
 		Common::Point dst = getPosition();
-		Common::Rect srcRect = _picture->getRect();
+		Common::Rect srcRect = picture->getRect();
 		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {
-			_picture->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
+			picture->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 		}
 	}
 
