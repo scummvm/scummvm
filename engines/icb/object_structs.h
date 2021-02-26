@@ -31,7 +31,6 @@
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_game_object.h"
 #include "engines/icb/common/px_route_barriers.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/animation_mega_set.h"

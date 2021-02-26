@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/p4.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_anims.h"
 #include "engines/icb/session.h"
 #include "engines/icb/animation_mega_set.h"

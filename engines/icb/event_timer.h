@@ -29,7 +29,6 @@
 #define ICB_EVENTTIMER_H_INCLUDED
 
 #include "engines/icb/string_vest.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/event_list.h"
 

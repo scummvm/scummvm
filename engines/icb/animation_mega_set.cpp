@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/global_switches.h"
 #include "engines/icb/session.h"
 #include "engines/icb/animation_mega_set.h"

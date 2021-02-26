@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/mission.h"
 #include "engines/icb/global_objects.h"

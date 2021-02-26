@@ -28,8 +28,6 @@
 #ifndef ICB_GAMEOVER_H_INCLUDED
 #define ICB_GAMEOVER_H_INCLUDED
 
-#include "engines/icb/common/px_rccommon.h"
-
 namespace ICB {
 
 // Defined in main_menu_pc.cpp (PC) and gameover_menu_psx.cpp (PSX)

@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_exception.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/p4.h"

@@ -28,8 +28,6 @@
 #ifndef ICB_CLUSTER_MANAGER_PC_H_INCLUDED
 #define ICB_CLUSTER_MANAGER_PC_H_INCLUDED
 
-#include "engines/icb/common/px_rccommon.h"
-
 namespace ICB {
 
 // Global cluster controller declaration

@@ -30,7 +30,6 @@
 
 #include "common/scummsys.h"
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"
 
 namespace ICB {

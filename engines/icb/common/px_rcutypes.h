@@ -28,8 +28,6 @@
 #ifndef ICB_RCUTYPES_H
 #define ICB_RCUTYPES_H
 
-#include "engines/icb/common/px_rccommon.h" // This should be included in every file before anything else
-
 #include "common/scummsys.h"
 
 namespace ICB {

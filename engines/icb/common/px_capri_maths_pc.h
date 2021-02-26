@@ -28,8 +28,6 @@
 #ifndef ICB_PX_CAPRI_MATHS_PC_H
 #define ICB_PX_CAPRI_MATHS_PC_H
 
-#include "engines/icb/common/px_rccommon.h"
-
 #include "common/util.h"
 
 namespace ICB {

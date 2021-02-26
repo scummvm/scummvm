@@ -31,7 +31,6 @@
 #include "engines/icb/p4.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_string.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"
 

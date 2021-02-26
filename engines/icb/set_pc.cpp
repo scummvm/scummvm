@@ -27,7 +27,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/set.h"
 #include "engines/icb/global_objects.h"

@@ -29,7 +29,6 @@
 #define ICB_GAMEVOLUME_H_INCLUDED
 
 #include "engines/icb/p4.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_3drealpoint.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_linkeddatafile.h"

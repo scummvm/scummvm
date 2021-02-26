@@ -25,8 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
-
 #include "engines/icb/p4_generic.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/p4.h"

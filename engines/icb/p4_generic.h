@@ -28,7 +28,6 @@
 #ifndef ICB_INCLUDED_P4_GENERIC_H
 #define ICB_INCLUDED_P4_GENERIC_H
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/p4_generic_pc.h"
 
