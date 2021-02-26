@@ -46,7 +46,8 @@
 namespace Griffon {
 
 void GriffonEngine::setChannelVolume(int channel, int volume) {
-	_mixer->setChannelVolume(_handles[channel], volume);
+	if (channel >= 0 && channel < kSoundHandles)
+		_mixer->setChannelVolume(_handles[channel], volume);
 }
 
 int GriffonEngine::getSoundHandle() {
@@ -56,24 +57,23 @@ int GriffonEngine::getSoundHandle() {
 		}
 	}
 
-	error("getSoundHandle(): Too many sound handles");
-
 	return -1;
 }
 
 int GriffonEngine::playSound(DataChunk *chunk, bool looped) {
-	int ch = getSoundHandle();
+	int ch = -1;
 
 #ifdef USE_VORBIS
-	Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(new Common::MemoryReadStream(chunk->data, chunk->size), DisposeAfterUse::YES);
+	if ((ch = getSoundHandle()) != -1) {
+		Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(new Common::MemoryReadStream(chunk->data, chunk->size), DisposeAfterUse::YES);
 
+		if (looped) {
+			Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], loopingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false, false);
 
-	if (looped) {
-		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], loopingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false, false);
-
-	} else {
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false, false);
+		} else {
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false, false);
+		}
 	}
 #endif // USE_VORBIS
 
@@ -81,24 +81,26 @@ int GriffonEngine::playSound(DataChunk *chunk, bool looped) {
 }
 
 void GriffonEngine::pauseSoundChannel(int channel) {
-	_mixer->pauseHandle(_handles[channel], true);
+	if (channel >= 0 && channel < kSoundHandles)
+		_mixer->pauseHandle(_handles[channel], true);
 }
 
 void GriffonEngine::haltSoundChannel(int channel) {
 	if (channel == -1) {
 		for (int i = 0; i < kSoundHandles; i++)
 			_mixer->stopHandle(_handles[i]);
-	} else {
+	} else if (channel >= 0 && channel < kSoundHandles) {
 		_mixer->stopHandle(_handles[channel]);
 	}
 }
 
 void GriffonEngine::resumeSoundChannel(int channel) {
-	_mixer->pauseHandle(_handles[channel], false);
+	if (channel >= 0 && channel < kSoundHandles)
+		_mixer->pauseHandle(_handles[channel], false);
 }
 
 bool GriffonEngine::isSoundChannelPlaying(int channel) {
-	return _mixer->isSoundHandleActive(_handles[channel]);
+	return (channel >= 0 && channel < kSoundHandles) ? _mixer->isSoundHandleActive(_handles[channel]) : false;
 }
 
 DataChunk *cacheSound(const char *name) {
