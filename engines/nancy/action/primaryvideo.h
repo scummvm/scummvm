@@ -82,6 +82,7 @@ public:
     Common::String text; // 0x3D
 
     SoundManager::SoundDescription sound; // 0x619
+    SoundManager::SoundDescription responseGenericSound; // 0x63B
 
     byte conditionalResponseCharacterID; // 0x65E
     byte goodbyeResponseCharacterID; // 0x65F

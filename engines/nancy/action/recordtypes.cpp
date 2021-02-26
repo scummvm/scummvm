@@ -33,6 +33,8 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/action/responses.cpp"
+
 #include "common/str.h"
 
 namespace Nancy {
@@ -385,16 +387,6 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x192); // TODO
 }
 
-uint16 Telephone::readData(Common::SeekableReadStream &stream) {
-    byte *rawData = new byte[0x2016];
-    stream.read(rawData, 0x48C);
-
-    int32 sizeNext = (int16)(rawData[0x48A]) * 235;
-    stream.read(rawData + 0x48C, sizeNext);
-    delete[] rawData;
-    return sizeNext + 0x48C;
-}
-
 uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x544); // TODO
 }
@@ -534,7 +526,115 @@ uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x23); // TODO
+    characterID = stream.readByte();
+    genericSound.read(stream, SoundManager::SoundDescription::kNormal);
+    return 0x23;
+}
+
+void HintSystem::execute(Nancy::NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            if (engine->scene->getHintsRemaining() > 0) {
+                selectHint(engine);
+            } else {
+                getHint(0, engine->scene->getDifficulty());
+            }
+
+            engine->scene->getTextbox().clear();
+            engine->scene->getTextbox().addTextLine(text);
+
+            engine->sound->loadSound(genericSound);
+            engine->sound->playSound(genericSound.channelID);
+            state = kRun;
+            break;
+        case kRun:
+            if (!engine->sound->isSoundPlaying(genericSound.channelID)) {
+                engine->sound->stopSound(genericSound.channelID);
+                state = kActionTrigger;
+            } else {
+                break;
+            }
+            // fall through
+        case kActionTrigger:
+            engine->scene->useHint(hintID, hintWeight);
+            engine->scene->getTextbox().clear();
+
+            if (sceneChange.sceneID != 9999) {
+                engine->scene->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
+            }
+
+            isDone = true;
+            break;
+    }
+}
+
+void HintSystem::selectHint(Nancy::NancyEngine *engine) {
+    for (auto &hint : nancy1Hints) {
+        if (hint.characterID != characterID) {
+            continue;
+        }
+
+        bool satisfied = true;
+
+        for (auto &flag : hint.flagConditions) {
+            if (flag.label == -1) {
+                break;
+            }
+            if (!engine->scene->getEventFlag(flag.label, flag.flag)) {
+                satisfied = false;
+                break;
+            }
+        }
+
+        for (auto &inv : hint.inventoryCondition) {
+            if (inv.label == -1) {
+                break;
+            }
+            if (engine->scene->hasItem(inv.label) != inv.flag) {
+                satisfied = false;
+                break;
+            }
+        }
+
+        if (satisfied) {
+            getHint(hint.hintID, engine->scene->getDifficulty());
+            break;
+        }
+    }
+}
+
+void HintSystem::getHint(uint hint, uint difficulty) {
+    uint fileOffset;
+    if (characterID < 3) {
+        fileOffset = nancy1HintOffsets[characterID];
+    }
+
+    fileOffset += 0x288 * hint;
+
+    Common::File file;
+    file.open("game.exe");
+    file.seek(fileOffset);
+
+    hintID = file.readSint16LE();
+    hintWeight = file.readSint16LE();
+
+    file.seek(difficulty * 10, SEEK_CUR);
+
+    char soundName[10];
+    file.read(soundName, 10);
+    genericSound.name = soundName;
+
+    file.seek(-(difficulty * 10) - 10, SEEK_CUR);
+    file.seek(30 + difficulty * 200, SEEK_CUR);
+
+    char textBuf[200];
+    file.read(textBuf, 200);
+    text = textBuf;
+
+    file.seek(-(difficulty * 200) - 200, SEEK_CUR);
+    file.seek(600, SEEK_CUR);
+
+    sceneChange.readData(file);
 }
 
 }
