@@ -53,15 +53,15 @@
 
 namespace Private {
 
-using namespace Gen;
+Gen::VM *Gen::g_vm = new Gen::VM();
 
-VM *Gen::g_vm = new VM();
-
-void VM::run() {
-    execute(g_vm->_prog);
+void Gen::VM::run() {
+    Gen::execute(Gen::g_vm->_prog);
 }
 
 namespace Settings {
+
+using namespace Gen;
 
 SettingMaps *g_setts = new SettingMaps();
 
@@ -70,11 +70,11 @@ void SettingMaps::init() {
     _setting = (Setting *)malloc(sizeof(Setting));
     memset((void *)_setting, 0, sizeof(Setting));
 
-    Gen::g_vm->_prog = (Inst *)&_setting->prog;
-    Gen::g_vm->_stack = (Datum *)&_setting->stack;
+    g_vm->_prog = (Inst *)&_setting->prog;
+    g_vm->_stack = (Datum *)&_setting->stack;
 
-    Gen::g_vm->_progp = Gen::g_vm->_prog;
-    Gen::g_vm->_stackp = Gen::g_vm->_stack;
+    g_vm->_progp = Gen::g_vm->_prog;
+    g_vm->_stackp = Gen::g_vm->_stack;
 }
 
 void SettingMaps::save(char *name) {
@@ -87,11 +87,11 @@ void SettingMaps::load(Common::String &name) {
 
     debugC(1, kPrivateDebugCode, "loading setting %s", name.c_str());
 
-    Gen::g_vm->_prog = (Inst *)&_setting->prog;
-    Gen::g_vm->_stack = (Datum *)&_setting->stack;
+    g_vm->_prog = (Inst *)&_setting->prog;
+    g_vm->_stack = (Datum *)&_setting->stack;
 
-    Gen::g_vm->_stackp = Gen::g_vm->_stack;
-    Gen::g_vm->_progp = Gen::g_vm->_prog;
+    g_vm->_stackp = g_vm->_stack;
+    g_vm->_progp = g_vm->_prog;
 }
 
 } // end of namespace Settings
