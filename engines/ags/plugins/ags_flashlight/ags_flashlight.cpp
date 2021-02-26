@@ -569,7 +569,8 @@ void AGSFlashlight::syncGame(Serializer &s) {
 // ************  AGS Interface  ***************
 // ********************************************
 
-void AGSFlashlight::SetFlashlightTint(int RedTint, int GreenTint, int BlueTint) {
+void AGSFlashlight::SetFlashlightTint(const ScriptMethodParams &params) {
+	PARAMS3(int, RedTint, int, GreenTint, int, BlueTint);
 	ClipToRange(RedTint, -31, 31);
 	ClipToRange(GreenTint, -31, 31);
 	ClipToRange(BlueTint, -31, 31);
@@ -582,27 +583,28 @@ void AGSFlashlight::SetFlashlightTint(int RedTint, int GreenTint, int BlueTint) 
 	g_BlueTint = BlueTint;
 }
 
-int AGSFlashlight::GetFlashlightTintRed() {
+NumberPtr AGSFlashlight::GetFlashlightTintRed(const ScriptMethodParams &params) {
 	return g_RedTint;
 }
 
-int AGSFlashlight::GetFlashlightTintGreen() {
+NumberPtr AGSFlashlight::GetFlashlightTintGreen(const ScriptMethodParams &params) {
 	return g_GreenTint;
 }
 
-int AGSFlashlight::GetFlashlightTintBlue() {
+NumberPtr AGSFlashlight::GetFlashlightTintBlue(const ScriptMethodParams &params) {
 	return g_BlueTint;
 }
 
-int AGSFlashlight::GetFlashlightMinLightLevel() {
+NumberPtr AGSFlashlight::GetFlashlightMinLightLevel(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSFlashlight::GetFlashlightMaxLightLevel() {
+NumberPtr AGSFlashlight::GetFlashlightMaxLightLevel(const ScriptMethodParams &params) {
 	return 100;
 }
 
-void AGSFlashlight::SetFlashlightDarkness(int LightLevel) {
+void AGSFlashlight::SetFlashlightDarkness(const ScriptMethodParams &params) {
+	PARAMS1(int, LightLevel);
 	ClipToRange(LightLevel, 0, 100);
 
 	if (LightLevel != g_DarknessLightLevel) {
@@ -614,11 +616,12 @@ void AGSFlashlight::SetFlashlightDarkness(int LightLevel) {
 	}
 }
 
-int AGSFlashlight::GetFlashlightDarkness() {
+NumberPtr AGSFlashlight::GetFlashlightDarkness(const ScriptMethodParams &params) {
 	return g_DarknessLightLevel;
 }
 
-void AGSFlashlight::SetFlashlightDarknessSize(int Size) {
+void AGSFlashlight::SetFlashlightDarknessSize(const ScriptMethodParams &params) {
+	PARAMS1(int, Size);
 	if (Size != g_DarknessSize) {
 		g_BitmapMustBeUpdated = true;
 		g_DarknessSize = Size;
@@ -626,12 +629,13 @@ void AGSFlashlight::SetFlashlightDarknessSize(int Size) {
 	}
 }
 
-int AGSFlashlight::GetFlashlightDarknessSize() {
+NumberPtr AGSFlashlight::GetFlashlightDarknessSize(const ScriptMethodParams &params) {
 	return g_DarknessSize;
 }
 
 
-void AGSFlashlight::SetFlashlightBrightness(int LightLevel) {
+void AGSFlashlight::SetFlashlightBrightness(const ScriptMethodParams &params) {
+	PARAMS1(int, LightLevel);
 	ClipToRange(LightLevel, 0, 100);
 
 	if (LightLevel != g_BrightnessLightLevel) {
@@ -643,43 +647,47 @@ void AGSFlashlight::SetFlashlightBrightness(int LightLevel) {
 	}
 }
 
-int AGSFlashlight::GetFlashlightBrightness() {
+NumberPtr AGSFlashlight::GetFlashlightBrightness(const ScriptMethodParams &params) {
 	return g_BrightnessLightLevel;
 }
 
-void AGSFlashlight::SetFlashlightBrightnessSize(int Size) {
+void AGSFlashlight::SetFlashlightBrightnessSize(const ScriptMethodParams &params) {
+	PARAMS1(int, Size);
 	if (Size != g_BrightnessSize) {
 		g_BitmapMustBeUpdated = true;
 		g_BrightnessSize = Size;
 	}
 }
 
-int AGSFlashlight::GetFlashlightBrightnessSize() {
+NumberPtr AGSFlashlight::GetFlashlightBrightnessSize(const ScriptMethodParams &params) {
 	return g_BrightnessSize;
 }
 
-void AGSFlashlight::SetFlashlightPosition(int X, int Y) {
+void AGSFlashlight::SetFlashlightPosition(const ScriptMethodParams &params) {
+	PARAMS2(int, X, int, Y);
 	g_FlashlightX = X;
 	g_FlashlightY = Y;
 }
 
-int AGSFlashlight::GetFlashlightPositionX() {
+NumberPtr AGSFlashlight::GetFlashlightPositionX(const ScriptMethodParams &params) {
 	return g_FlashlightX;
 }
 
-int AGSFlashlight::GetFlashlightPositionY() {
+NumberPtr AGSFlashlight::GetFlashlightPositionY(const ScriptMethodParams &params) {
 	return g_FlashlightY;
 }
 
-void AGSFlashlight::SetFlashlightFollowMouse(int OnOff) {
+void AGSFlashlight::SetFlashlightFollowMouse(const ScriptMethodParams &params) {
+	PARAMS1(int, OnOff);
 	g_FlashlightFollowMouse = (OnOff != 0);
 }
 
-int AGSFlashlight::GetFlashlightFollowMouse() {
+NumberPtr AGSFlashlight::GetFlashlightFollowMouse(const ScriptMethodParams &params) {
 	return g_FlashlightFollowMouse ? 1 : 0;
 }
 
-void AGSFlashlight::SetFlashlightFollowCharacter(int CharacterId, int dx, int dy, int horz, int vert) {
+void AGSFlashlight::SetFlashlightFollowCharacter(const ScriptMethodParams &params) {
+	PARAMS5(int, CharacterId, int, dx, int, dy, int, horz, int, vert);
 	g_FollowCharacterId = CharacterId;
 	g_FollowCharacterDx = dx;
 	g_FollowCharacterDy = dy;
@@ -689,31 +697,32 @@ void AGSFlashlight::SetFlashlightFollowCharacter(int CharacterId, int dx, int dy
 	g_FollowCharacter = _engine->GetCharacter(CharacterId);
 }
 
-int AGSFlashlight::GetFlashlightFollowCharacter() {
+NumberPtr AGSFlashlight::GetFlashlightFollowCharacter(const ScriptMethodParams &params) {
 	return g_FollowCharacterId;
 }
 
-int AGSFlashlight::GetFlashlightCharacterDX() {
+NumberPtr AGSFlashlight::GetFlashlightCharacterDX(const ScriptMethodParams &params) {
 	return g_FollowCharacterDx;
 }
 
-int AGSFlashlight::GetFlashlightCharacterDY() {
+NumberPtr AGSFlashlight::GetFlashlightCharacterDY(const ScriptMethodParams &params) {
 	return g_FollowCharacterDy;
 }
 
-int AGSFlashlight::GetFlashlightCharacterHorz() {
+NumberPtr AGSFlashlight::GetFlashlightCharacterHorz(const ScriptMethodParams &params) {
 	return g_FollowCharacterHorz;
 }
 
-int AGSFlashlight::GetFlashlightCharacterVert() {
+NumberPtr AGSFlashlight::GetFlashlightCharacterVert(const ScriptMethodParams &params) {
 	return g_FollowCharacterVert;
 }
 
-void AGSFlashlight::SetFlashlightMask(int SpriteSlot) {
+void AGSFlashlight::SetFlashlightMask(const ScriptMethodParams &params) {
+	//PARAMS1(int, SpriteSlot);
 	// Not implemented.
 }
 
-int AGSFlashlight::GetFlashlightMask() {
+NumberPtr AGSFlashlight::GetFlashlightMask(const ScriptMethodParams &params) {
 	return 0;
 }
 

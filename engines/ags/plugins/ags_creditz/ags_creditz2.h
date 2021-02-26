@@ -41,10 +41,10 @@ private:
 
 	static void RunCreditSequence(const ScriptMethodParams &params);
 	static void SetCredit(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
+	static NumberPtr GetCredit(const ScriptMethodParams &params);
 	static void CreditsSettings(const ScriptMethodParams &params);
 	static void SequenceSettings(const ScriptMethodParams &params);
-	static int IsSequenceFinished(const ScriptMethodParams &params);
+	static NumberPtr IsSequenceFinished(const ScriptMethodParams &params);
 	static void PauseScrolling(const ScriptMethodParams &params);
 	static void SetCreditImage(const ScriptMethodParams &params);
 	static void ResetSequence(const ScriptMethodParams &params);
@@ -53,10 +53,10 @@ private:
 	static void SetStaticCreditTitle(const ScriptMethodParams &params);
 	static void SetStaticPause(const ScriptMethodParams &params);
 	static void RunStaticCreditSequence(const ScriptMethodParams &params);
-	static int IsStaticSequenceFinished(const ScriptMethodParams &params);
+	static NumberPtr IsStaticSequenceFinished(const ScriptMethodParams &params);
 	static void ShowStaticCredit(const ScriptMethodParams &params);
 	static void SetStaticImage(const ScriptMethodParams &params);
-	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
+	static NumberPtr GetCurrentStaticCredit(const ScriptMethodParams &params);
 
 	static void makeMask(int sequence);
 	static void drawMask(int sequence, int getput);

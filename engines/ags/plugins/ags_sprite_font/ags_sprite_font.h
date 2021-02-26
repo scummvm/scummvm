@@ -42,11 +42,11 @@ private:
 	static void AGS_EngineShutdown();
 
 private:
-	static void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);
-	static void SetVariableSpriteFont(int fontNum, int sprite);
-	static void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
-	static void SetSpacing(int fontNum, int spacing);
-	static void SetLineHeightAdjust(int v1, int v2, int v3, int v4);
+	static void SetSpriteFont(const ScriptMethodParams &params);
+	static void SetVariableSpriteFont(const ScriptMethodParams &params);
+	static void SetGlyph(const ScriptMethodParams &params);
+	static void SetSpacing(const ScriptMethodParams &params);
+	static void SetLineHeightAdjust(const ScriptMethodParams &params);
 
 public:
 	AGSSpriteFont();

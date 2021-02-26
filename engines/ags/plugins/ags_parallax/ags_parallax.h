@@ -60,8 +60,8 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
 	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
 
-	static void pxDrawSprite(int id, int x, int y, int slot, int speed);
-	static void pxDeleteSprite(int id);
+	static void pxDrawSprite(const ScriptMethodParams &params);
+	static void pxDeleteSprite(const ScriptMethodParams &params);
 
 private:
 	static void syncGame(Serializer &s);

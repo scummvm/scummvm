@@ -109,10 +109,10 @@ void AGSCreditz2::SetCredit(const ScriptMethodParams &params) {
 		c._outline = true;
 }
 
-string AGSCreditz2::GetCredit(const ScriptMethodParams &params) {
+NumberPtr AGSCreditz2::GetCredit(const ScriptMethodParams &params) {
 	PARAMS2(int, sequence, int, ID);
 
-	return _state->_credits[sequence][ID]._text.c_str();
+	return const_cast<char *>(_state->_credits[sequence][ID]._text.c_str());
 }
 
 void AGSCreditz2::CreditsSettings(const ScriptMethodParams &params) {
@@ -132,7 +132,7 @@ void AGSCreditz2::SequenceSettings(const ScriptMethodParams &params) {
 	_state->_seqSettings[sequence].endwait = endwait;
 }
 
-int AGSCreditz2::IsSequenceFinished(const ScriptMethodParams &params) {
+NumberPtr AGSCreditz2::IsSequenceFinished(const ScriptMethodParams &params) {
 	PARAMS1(int, sequence);
 
 	if (_state->_seqSettings[sequence].finished) {
@@ -245,7 +245,7 @@ void AGSCreditz2::RunStaticCreditSequence(const ScriptMethodParams &params) {
 	}
 }
 
-int AGSCreditz2::IsStaticSequenceFinished(const ScriptMethodParams &params) {
+NumberPtr AGSCreditz2::IsStaticSequenceFinished(const ScriptMethodParams &params) {
 	PARAMS1(int, sequence);
 
 	int result = (_state->_stSeqSettings[sequence].finished) ? 1 : 0;
@@ -288,7 +288,7 @@ void AGSCreditz2::SetStaticImage(const ScriptMethodParams &params) {
 	_state->_stCredits[sequence][id].image_time = length;
 }
 
-int AGSCreditz2::GetCurrentStaticCredit(const ScriptMethodParams &params) {
+NumberPtr AGSCreditz2::GetCurrentStaticCredit(const ScriptMethodParams &params) {
 	int result = -1;
 	if (_state->_creditsRunning && _state->_staticCredits)
 		result = _state->_currentStatic;

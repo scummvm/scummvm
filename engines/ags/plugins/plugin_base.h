@@ -79,6 +79,16 @@ namespace Plugins {
 	T6 N6 = (T6)params[5]; \
 	T7 N7 = (T7)params[6]; \
 	T8 N8 = (T8)params[7]
+#define PARAMS9(T1, N1, T2, N2, T3, N3, T4, N4, T5, N5, T6, N6, T7, N7, T8, N8, T9, N9) \
+	T1 N1 = (T1)params[0]; \
+	T2 N2 = (T2)params[1]; \
+	T3 N3 = (T3)params[2]; \
+	T4 N4 = (T4)params[3]; \
+	T5 N5 = (T5)params[4]; \
+	T6 N6 = (T6)params[5]; \
+	T7 N7 = (T7)params[6]; \
+	T8 N8 = (T8)params[7]; \
+	T9 N9 = (T9)params[8]
 
 
 using string = const char *;

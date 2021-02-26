@@ -125,93 +125,115 @@ NumberPtr AGSSnowRain::AGS_EngineOnEvent(int event, NumberPtr data) {
 }
 
 
-void AGSSnowRain::srSetWindSpeed(int value) {
+void AGSSnowRain::srSetWindSpeed(const ScriptMethodParams &params) {
+	PARAMS1(int, value);
 	_snow->SetWindSpeed(value);
 	_rain->SetWindSpeed(value);
 }
 
-void AGSSnowRain::srSetBaseline(int top, int bottom) {
+void AGSSnowRain::srSetBaseline(const ScriptMethodParams &params) {
+	PARAMS2(int, top, int, bottom);
 	_snow->SetBaseline(top, bottom);
 	_rain->SetBaseline(top, bottom);
 }
 
-void AGSSnowRain::srSetSnowDriftRange(int min_value, int max_value) {
+void AGSSnowRain::srSetSnowDriftRange(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_snow->SetDriftRange(min_value, max_value);
 }
 
-void AGSSnowRain::srSetSnowDriftSpeed(int min_value, int max_value) {
+void AGSSnowRain::srSetSnowDriftSpeed(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_snow->SetDriftSpeed(min_value, max_value);
 }
 
-void AGSSnowRain::srChangeSnowAmount(int amount) {
+void AGSSnowRain::srChangeSnowAmount(const ScriptMethodParams &params) {
+	PARAMS1(int, amount);
 	_snow->ChangeAmount(amount);
 }
 
-void AGSSnowRain::srSetSnowView(int kind_id, int event, int view, int loop) {
+void AGSSnowRain::srSetSnowView(const ScriptMethodParams &params) {
+	PARAMS4(int, kind_id, int, event, int, view, int, loop);
 	_snow->SetView(kind_id, event, view, loop);
 }
 
-void AGSSnowRain::srSetSnowDefaultView(int view, int loop) {
+void AGSSnowRain::srSetSnowDefaultView(const ScriptMethodParams &params) {
+	PARAMS2(int, view, int, loop);
 	_snow->SetDefaultView(view, loop);
 }
 
-void AGSSnowRain::srSetSnowTransparency(int min_value, int max_value) {
+void AGSSnowRain::srSetSnowTransparency(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_snow->SetTransparency(min_value, max_value);
 }
 
-void AGSSnowRain::srSetSnowWindSpeed(int value) {
+void AGSSnowRain::srSetSnowWindSpeed(const ScriptMethodParams &params) {
+	PARAMS1(int, value);
 	_snow->SetWindSpeed(value);
 }
 
-void AGSSnowRain::srSetSnowBaseline(int top, int bottom) {
+void AGSSnowRain::srSetSnowBaseline(const ScriptMethodParams &params) {
+	PARAMS2(int, top, int, bottom);
 	_snow->SetBaseline(top, bottom);
 }
 
-void AGSSnowRain::srSetSnowAmount(int amount) {
+void AGSSnowRain::srSetSnowAmount(const ScriptMethodParams &params) {
+	PARAMS1(int, amount);
 	_snow->SetAmount(amount);
 }
 
-void AGSSnowRain::srSetSnowFallSpeed(int min_value, int max_value) {
+void AGSSnowRain::srSetSnowFallSpeed(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_snow->SetFallSpeed(min_value, max_value);
 }
 
-void AGSSnowRain::srSetRainDriftRange(int min_value, int max_value) {
+void AGSSnowRain::srSetRainDriftRange(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_rain->SetDriftRange(min_value, max_value);
 }
 
-void AGSSnowRain::srSetRainDriftSpeed(int min_value, int max_value) {
+void AGSSnowRain::srSetRainDriftSpeed(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_rain->SetDriftSpeed(min_value, max_value);
 }
 
-void AGSSnowRain::srChangeRainAmount(int amount) {
+void AGSSnowRain::srChangeRainAmount(const ScriptMethodParams &params) {
+	PARAMS1(int, amount);
 	_rain->ChangeAmount(amount);
 }
 
-void AGSSnowRain::srSetRainView(int kind_id, int event, int view, int loop) {
+void AGSSnowRain::srSetRainView(const ScriptMethodParams &params) {
+	PARAMS4(int, kind_id, int, event, int, view, int, loop);
 	_rain->SetView(kind_id, event, view, loop);
 }
 
-void AGSSnowRain::srSetRainDefaultView(int view, int loop) {
+void AGSSnowRain::srSetRainDefaultView(const ScriptMethodParams &params) {
+	PARAMS2(int, view, int, loop);
 	_rain->SetDefaultView(view, loop);
 }
 
-void AGSSnowRain::srSetRainTransparency(int min_value, int max_value) {
+void AGSSnowRain::srSetRainTransparency(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_rain->SetTransparency(min_value, max_value);
 }
 
-void AGSSnowRain::srSetRainWindSpeed(int value) {
+void AGSSnowRain::srSetRainWindSpeed(const ScriptMethodParams &params) {
+	PARAMS1(int, value);
 	_rain->SetWindSpeed(value);
 }
 
-void AGSSnowRain::srSetRainBaseline(int top, int bottom) {
+void AGSSnowRain::srSetRainBaseline(const ScriptMethodParams &params) {
+	PARAMS2(int, top, int, bottom);
 	_rain->SetBaseline(top, bottom);
 }
 
-void AGSSnowRain::srSetRainAmount(int amount) {
+void AGSSnowRain::srSetRainAmount(const ScriptMethodParams &params) {
+	PARAMS1(int, amount);
 	_rain->SetAmount(amount);
 }
 
-void AGSSnowRain::srSetRainFallSpeed(int min_value, int max_value) {
+void AGSSnowRain::srSetRainFallSpeed(const ScriptMethodParams &params) {
+	PARAMS2(int, min_value, int, max_value);
 	_rain->SetFallSpeed(min_value, max_value);
 }
 

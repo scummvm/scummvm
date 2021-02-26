@@ -150,7 +150,8 @@ public:
 
 #pragma endregion
 
-int AGSBlend::GetAlpha(int sprite, int x, int y) {
+NumberPtr AGSBlend::GetAlpha(const ScriptMethodParams &params) {
+	PARAMS3(int, sprite, int, x, int, y);
 	BITMAP *engineSprite = _engine->GetSpriteGraphic(sprite);
 
 	unsigned char **charbuffer = _engine->GetRawBitmapSurface(engineSprite);
@@ -163,7 +164,8 @@ int AGSBlend::GetAlpha(int sprite, int x, int y) {
 	return alpha;
 }
 
-int AGSBlend::PutAlpha(int sprite, int x, int y, int alpha) {
+NumberPtr AGSBlend::PutAlpha(const ScriptMethodParams &params) {
+	PARAMS4(int, sprite, int, x, int, y, int, alpha);
 	BITMAP *engineSprite = _engine->GetSpriteGraphic(sprite);
 
 	unsigned char **charbuffer = _engine->GetRawBitmapSurface(engineSprite);
@@ -184,7 +186,8 @@ int AGSBlend::xytolocale(int x, int y, int width) {
 	return (y * width + x);
 }
 
-int AGSBlend::HighPass(int sprite, int threshold) {
+NumberPtr AGSBlend::HighPass(const ScriptMethodParams &params) {
+	PARAMS2(int, sprite, int, threshold);
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	int32 srcWidth, srcHeight;
 
@@ -215,7 +218,8 @@ int AGSBlend::HighPass(int sprite, int threshold) {
 
 }
 
-int AGSBlend::Blur(int sprite, int radius) {
+NumberPtr AGSBlend::Blur(const ScriptMethodParams &params) {
+	PARAMS2(int, sprite, int, radius);
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 
 	int32 srcWidth, srcHeight;
@@ -356,7 +360,8 @@ int AGSBlend::Blur(int sprite, int radius) {
 	return 0;
 }
 
-int AGSBlend::DrawSprite(int destination, int sprite, int x, int y, int DrawMode, int trans) {
+NumberPtr AGSBlend::DrawSprite(const ScriptMethodParams &params) {
+	PARAMS6(int, destination, int, sprite, int, x, int, y, int, DrawMode, int, trans);
 	trans = 100 - trans;
 	int32 srcWidth, srcHeight, destWidth, destHeight;
 
@@ -577,7 +582,8 @@ int AGSBlend::DrawSprite(int destination, int sprite, int x, int y, int DrawMode
 
 }
 
-int AGSBlend::DrawAdd(int destination, int sprite, int x, int y, float scale) {
+NumberPtr AGSBlend::DrawAdd(const ScriptMethodParams &params) {
+	PARAMS5(int, destination, int, sprite, int, x, int, y, float, scale);
 	int32 srcWidth, srcHeight, destWidth, destHeight;
 
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
@@ -650,7 +656,8 @@ int AGSBlend::DrawAdd(int destination, int sprite, int x, int y, float scale) {
 	return 0;
 }
 
-int AGSBlend::DrawAlpha(int destination, int sprite, int x, int y, int trans) {
+NumberPtr AGSBlend::DrawAlpha(const ScriptMethodParams &params) {
+	PARAMS5(int, destination, int, sprite, int, x, int, y, int, trans);
 	trans = 100 - trans;
 
 	int32 srcWidth, srcHeight, destWidth, destHeight;

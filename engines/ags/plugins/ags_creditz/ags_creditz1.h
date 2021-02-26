@@ -36,25 +36,25 @@ private:
 
 	static void SetCredit(const ScriptMethodParams &params);
 	static void ScrollCredits(const ScriptMethodParams &params);
-	static string GetCredit(const ScriptMethodParams &params);
-	static int IsCreditScrollingFinished(const ScriptMethodParams &params);
+	static NumberPtr GetCredit(const ScriptMethodParams &params);
+	static NumberPtr IsCreditScrollingFinished(const ScriptMethodParams &params);
 	static void SetCreditImage(const ScriptMethodParams &params);
 	static void PauseScroll(const ScriptMethodParams &params);
 	static void ScrollReset(const ScriptMethodParams &params);
 	static void SetEmptyLineHeight(const ScriptMethodParams &params);
-	static int GetEmptyLineHeight(const ScriptMethodParams &params);
+	static NumberPtr GetEmptyLineHeight(const ScriptMethodParams &params);
 	static void SetStaticCredit(const ScriptMethodParams &params);
-	static string GetStaticCredit(const ScriptMethodParams &params);
+	static NumberPtr GetStaticCredit(const ScriptMethodParams &params);
 	static void StartEndStaticCredits(const ScriptMethodParams &params);
-	static int GetCurrentStaticCredit(const ScriptMethodParams &params);
+	static NumberPtr GetCurrentStaticCredit(const ScriptMethodParams &params);
 	static void SetDefaultStaticDelay(const ScriptMethodParams &params);
 	static void SetStaticPause(const ScriptMethodParams &params);
 	static void SetStaticCreditTitle(const ScriptMethodParams &params);
 	static void ShowStaticCredit(const ScriptMethodParams &params);
 	static void StaticReset(const ScriptMethodParams &params);
-	static string GetStaticCreditTitle(const ScriptMethodParams &params);
+	static NumberPtr GetStaticCreditTitle(const ScriptMethodParams &params);
 	static void SetStaticCreditImage(const ScriptMethodParams &params);
-	static int IsStaticCreditsFinished(const ScriptMethodParams &params);
+	static NumberPtr IsStaticCreditsFinished(const ScriptMethodParams &params);
 
 public:
 	AGSCreditz1();

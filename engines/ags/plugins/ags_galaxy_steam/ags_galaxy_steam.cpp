@@ -179,12 +179,12 @@ void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 	}
 }
 
-bool AGSGalaxy::IsAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::IsAchievementAchieved(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 	return AchMan.isAchieved(id);
 }
 
-bool AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
 	const MetaEngine &meta = ::AGS::g_vm->getMetaEngine();
@@ -200,32 +200,32 @@ bool AGSGalaxy::SetAchievementAchieved(const ScriptMethodParams &params) {
 	return AchMan.setAchievement(id, msg);
 }
 
-bool AGSGalaxy::ResetAchievement(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::ResetAchievement(const ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 	return AchMan.clearAchievement(id);
 }
 
-int AGSGalaxy::GetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::GetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::GetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::GetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::GetAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::GetAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::SetIntStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::SetIntStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::SetFloatStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::SetFloatStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::UpdateAverageRateStat(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::UpdateAverageRateStat(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -234,7 +234,7 @@ void AGSGalaxy::ResetStatsAndAchievements(const ScriptMethodParams &params) {
 	AchMan.resetAllStats();
 }
 
-int AGSGalaxy::get_Initialized(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::get_Initialized(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -244,18 +244,18 @@ void AGSGalaxy::get_CurrentLeaderboardName(const ScriptMethodParams &params) {
 void AGSGalaxy::RequestLeaderboard(const ScriptMethodParams &params) {
 }
 
-int AGSGalaxy::UploadScore(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::UploadScore(const ScriptMethodParams &params) {
 	return 0;
 }
 
 void AGSGalaxy::geti_LeaderboardNames(const ScriptMethodParams &params) {
 }
 
-int AGSGalaxy::geti_LeaderboardScores(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::geti_LeaderboardScores(const ScriptMethodParams &params) {
 	return 0;
 }
 
-int AGSGalaxy::get_LeaderboardCount(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::get_LeaderboardCount(const ScriptMethodParams &params) {
 	return 0;
 }
 
@@ -265,7 +265,7 @@ void AGSGalaxy::GetUserName(const ScriptMethodParams &params) {
 void AGSGalaxy::GetCurrentGameLanguage(const ScriptMethodParams &params) {
 }
 
-int AGSGalaxy::Initialize(const ScriptMethodParams &params) {
+NumberPtr AGSGalaxy::Initialize(const ScriptMethodParams &params) {
 	return 0;
 }
 

@@ -69,26 +69,26 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static bool IsAchievementAchieved(const ScriptMethodParams &params);
-	static bool SetAchievementAchieved(const ScriptMethodParams &params);
-	static bool ResetAchievement(const ScriptMethodParams &params);
-	static int GetIntStat(const ScriptMethodParams &params);
-	static int GetFloatStat(const ScriptMethodParams &params);
-	static int GetAverageRateStat(const ScriptMethodParams &params);
-	static int SetIntStat(const ScriptMethodParams &params);
-	static int SetFloatStat(const ScriptMethodParams &params);
-	static int UpdateAverageRateStat(const ScriptMethodParams &params);
+	static NumberPtr IsAchievementAchieved(const ScriptMethodParams &params);
+	static NumberPtr SetAchievementAchieved(const ScriptMethodParams &params);
+	static NumberPtr ResetAchievement(const ScriptMethodParams &params);
+	static NumberPtr GetIntStat(const ScriptMethodParams &params);
+	static NumberPtr GetFloatStat(const ScriptMethodParams &params);
+	static NumberPtr GetAverageRateStat(const ScriptMethodParams &params);
+	static NumberPtr SetIntStat(const ScriptMethodParams &params);
+	static NumberPtr SetFloatStat(const ScriptMethodParams &params);
+	static NumberPtr UpdateAverageRateStat(const ScriptMethodParams &params);
 	static void ResetStatsAndAchievements(const ScriptMethodParams &params);
-	static int get_Initialized(const ScriptMethodParams &params);
+	static NumberPtr get_Initialized(const ScriptMethodParams &params);
 	static void get_CurrentLeaderboardName(const ScriptMethodParams &params);
 	static void RequestLeaderboard(const ScriptMethodParams &params);
-	static int UploadScore(const ScriptMethodParams &params);
+	static NumberPtr UploadScore(const ScriptMethodParams &params);
 	static void geti_LeaderboardNames(const ScriptMethodParams &params);
-	static int geti_LeaderboardScores(const ScriptMethodParams &params);
-	static int get_LeaderboardCount(const ScriptMethodParams &params);
+	static NumberPtr geti_LeaderboardScores(const ScriptMethodParams &params);
+	static NumberPtr get_LeaderboardCount(const ScriptMethodParams &params);
 	static void GetUserName(const ScriptMethodParams &params);
 	static void GetCurrentGameLanguage(const ScriptMethodParams &params);
-	static int Initialize(const ScriptMethodParams &params);
+	static NumberPtr Initialize(const ScriptMethodParams &params);
 
 public:
 	AGSGalaxy();
