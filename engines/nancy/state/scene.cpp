@@ -153,6 +153,13 @@ void Scene::init() {
 
     _sceneState.nextScene.sceneID = _engine->firstSceneID;
 
+    Common::SeekableReadStream *hint = _engine->getBootChunkStream("HINT");
+    hint->seek(0);
+    for (uint i = 0; i < 3; ++i) {
+        _hintsRemaining.push_back(hint->readByte());
+    }
+    _lastHint = -1;
+
     _frame.init();
     _viewport.init();
     _textbox.init();
@@ -372,7 +379,7 @@ void Scene::setEventFlag(int16 label, NancyFlag flag) {
     }
 }
 
-bool Scene::getEventFlag(int16 label, NancyFlag flag) {
+bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
     if (label > -1) {
         return _flags.eventFlags[label] == flag;
     } else {
@@ -387,7 +394,7 @@ void Scene::setLogicCondition(int16 label, NancyFlag flag) {
     }
 }
 
-bool Scene::getLogicCondition(int16 label, NancyFlag flag) {
+bool Scene::getLogicCondition(int16 label, NancyFlag flag) const {
     if (label > -1) {
         return _flags.logicConditions[label].flag == flag;
     } else {
@@ -399,6 +406,12 @@ void Scene::clearLogicConditions() {
     for (auto &cond : _flags.logicConditions) {
         cond.flag = kFalse;
         cond.timestamp = 0;
+    }
+}
+
+void Scene::useHint(int hintID, int hintWeight) {
+    if (_lastHint == hintID) {
+        _hintsRemaining[_difficulty] += hintWeight;
     }
 }
 
