@@ -264,7 +264,8 @@ const char *set_allegro_error(const char *format, ...) {
 	va_list argptr;
 	va_start(argptr, format);
 	Common::String msg = Common::String::format(format, argptr);
-	strncpy(allegro_error, msg.c_str(), ALLEGRO_ERROR_SIZE);
+	strncpy(allegro_error, msg.c_str(), ALLEGRO_ERROR_SIZE - 1);
+	allegro_error[ALLEGRO_ERROR_SIZE - 1] = '\0';
 
 	va_end(argptr);
 	return allegro_error;

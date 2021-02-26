@@ -217,7 +217,8 @@ void allegro_bitmap_test_release() {
 // "!|" is a special code used to mean that the player has aborted (Alt+X)
 void quit(const char *quitmsg) {
 	if (!_G(abort_engine)) {
-		strncpy(_G(quit_message), quitmsg, 256);
+		strncpy(_G(quit_message), quitmsg, sizeof(_G(quit_message)) - 1);
+		_G(quit_message)[sizeof(_G(quit_message)) - 1] = '\0';
 		_G(abort_engine) = true;
 	}
 }
