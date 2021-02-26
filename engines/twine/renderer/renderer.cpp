@@ -98,9 +98,9 @@ void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scal
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
-	baseTransPosX = x;
-	baseTransPosY = y;
-	baseTransPosZ = z;
+	baseTransPos.x = x;
+	baseTransPos.y = y;
+	baseTransPos.z = z;
 }
 
 void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
@@ -150,7 +150,7 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	if (transpose) {
 		baseMatrixTranspose();
 	}
-	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
+	getBaseRotationPosition(baseTransPos.x, baseTransPos.y, baseTransPos.z);
 
 	baseRotPos.x = destPos.x;
 	baseRotPos.y = destPos.y;
@@ -176,9 +176,9 @@ void Renderer::translateGroup(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
-	baseTransPosX = transPosX;
-	baseTransPosY = transPosY;
-	baseTransPosZ = transPosZ;
+	baseTransPos.x = transPosX;
+	baseTransPos.y = transPosY;
+	baseTransPos.z = transPosZ;
 
 	setBaseRotation(rotPosX, rotPosY, rotPosZ);
 
@@ -186,9 +186,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	getCameraAnglePositions(baseRotPos.x, baseRotPos.y, baseRotPos.z);
 
-	baseTransPosX = destPos.x;
-	baseTransPosY = destPos.y;
-	baseTransPosZ = destPos.z;
+	baseTransPos = destPos;
 }
 
 void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) {
@@ -1292,9 +1290,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	if (isUsingOrthoProjection) { // use standard projection
 		do {
-			const int32 coX = pointPtr->x + renderX;
-			const int32 coY = pointPtr->y + renderY;
-			const int32 coZ = -(pointPtr->z + renderZ);
+			const int32 coX = pointPtr->x + renderPos.x;
+			const int32 coY = pointPtr->y + renderPos.y;
+			const int32 coZ = -(pointPtr->z + renderPos.z);
 
 			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + orthoProjPos.x;
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + orthoProjPos.y;
@@ -1319,9 +1317,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 		} while (--numOfPrimitives);
 	} else {
 		do {
-			int32 coX = pointPtr->x + renderX;
-			int32 coY = pointPtr->y + renderY;
-			int32 coZ = -(pointPtr->z + renderZ);
+			int32 coX = pointPtr->x + renderPos.x;
+			int32 coY = pointPtr->y + renderPos.y;
+			int32 coZ = -(pointPtr->z + renderPos.z);
 
 			coZ += cameraDepthOffset;
 
@@ -1471,15 +1469,15 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
 	if (isUsingOrthoProjection) {
-		renderX = x;
-		renderY = y;
-		renderZ = z;
+		renderPos.x = x;
+		renderPos.y = y;
+		renderPos.z = z;
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderX = destPos.x - baseRotPos.x;
-		renderY = destPos.y - baseRotPos.y; // RECHECK
-		renderZ = destPos.z - baseRotPos.z;
+		renderPos.x = destPos.x - baseRotPos.x;
+		renderPos.y = destPos.y - baseRotPos.y; // RECHECK
+		renderPos.z = destPos.z - baseRotPos.z;
 	}
 
 	if (!Model::isAnimated(bodyPtr)) {

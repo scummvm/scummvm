@@ -330,9 +330,7 @@ private:
 
 	// ---- variables ----
 
-	int32 baseTransPosX = 0; // setSomething2Var1
-	int32 baseTransPosY = 0; // setSomething2Var2
-	int32 baseTransPosZ = 0; // setSomething2Var3
+	Vec3 baseTransPos;
 
 	int32 cameraDepthOffset = 0; // cameraVar1
 	int32 cameraScaleY = 0; // cameraVar2
@@ -344,9 +342,7 @@ private:
 	int32 renderAngleY = 0; // _angleY
 	int32 renderAngleZ = 0; // _angleZ
 
-	int32 renderX = 0; // _X
-	int32 renderY = 0; // _Y
-	int32 renderZ = 0; // _Z
+	Vec3 renderPos;
 
 	// ---
 
