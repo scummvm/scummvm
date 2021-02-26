@@ -190,7 +190,17 @@ public:
 
 	int16 setKeys(int16 value);
 	int16 setGas(int16 value);
+	int16 setLeafs(int16 value);
 	int16 setKashes(int16 value);
+	int16 setMagicPoints(int16 val);
+	int16 setLeafBoxes(int16 val);
+
+	void addGas(int16 value);
+	void addKeys(int16 val);
+	void addKashes(int16 val);
+	void addMagicPoints(int16 val);
+	void addLeafs(int16 val);
+	void addLeafBoxes(int16 val);
 
 	/** Its using FunFrock Sabre */
 	bool usingSabre = false;

@@ -100,7 +100,7 @@ void GameState::initHeroVars() {
 	usingSabre = false;
 
 	_engine->_scene->sceneHero->body = BodyType::btNormal;
-	_engine->_scene->sceneHero->life = 50;
+	_engine->_scene->sceneHero->life = kActorMaxLife;
 	_engine->_scene->sceneHero->talkColor = COLOR_BRIGHT_BLUE;
 }
 
@@ -187,11 +187,11 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 
 	_engine->_actor->heroBehaviour = (HeroBehaviourType)file->readByte();
 	_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
-	_engine->_scene->sceneHero->life = file->readByte();
-	inventoryNumKashes = file->readSint16LE();
+	_engine->_scene->sceneHero->setLife(file->readByte());
+	setKashes(file->readSint16LE());
 	magicLevelIdx = file->readByte();
-	inventoryMagicPoints = file->readByte();
-	inventoryNumLeafsBox = file->readByte();
+	setMagicPoints(file->readByte());
+	setLeafBoxes(file->readByte());
 	_engine->_scene->newHeroPos.x = file->readSint16LE();
 	_engine->_scene->newHeroPos.y = file->readSint16LE();
 	_engine->_scene->newHeroPos.z = file->readSint16LE();
@@ -206,7 +206,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	}
 	file->read(holomapFlags, NUM_LOCATIONS);
 
-	inventoryNumGas = file->readByte();
+	setGas(file->readByte());
 
 	const byte numInventoryFlags = file->readByte(); // number of used inventory items, always 28
 	if (numInventoryFlags != NUM_INVENTORY_ITEMS) {
@@ -215,7 +215,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	}
 	file->read(inventoryFlags, NUM_INVENTORY_ITEMS);
 
-	inventoryNumLeafs = file->readByte();
+	setLeafs(file->readByte());
 	usingSabre = file->readByte();
 
 	if (saveFileVersion == 4) {
@@ -554,18 +554,72 @@ void GameState::giveUp() {
 }
 
 int16 GameState::setGas(int16 value) {
-	inventoryNumGas = MIN<int16>(100, value);
+	inventoryNumGas = CLIP<int16>(value, 0, 100);
 	return inventoryNumGas;
 }
 
+void GameState::addGas(int16 value) {
+	setGas(inventoryNumGas + value);
+}
+
 int16 GameState::setKashes(int16 value) {
-	inventoryNumKashes = MIN<int16>(999, value);
+	inventoryNumKashes = CLIP<int16>(value, 0, 999);
+	if (_engine->_gameState->inventoryNumKashes >= 500) {
+		_engine->unlockAchievement("LBA_ACH_011");
+	}
 	return inventoryNumKashes;
 }
 
 int16 GameState::setKeys(int16 value) {
-	inventoryNumKeys = value;
+	inventoryNumKeys = MAX<int16>(0, value);
 	return inventoryNumKeys;
+}
+
+void GameState::addKeys(int16 val) {
+	setKeys(inventoryNumKeys + val);
+}
+
+void GameState::addKashes(int16 val) {
+	setKashes(inventoryNumKashes + val);
+}
+
+int16 GameState::setMagicPoints(int16 val) {
+	inventoryMagicPoints = val;
+	if (inventoryMagicPoints > magicLevelIdx * 20) {
+		inventoryMagicPoints = magicLevelIdx * 20;
+	}
+	return inventoryMagicPoints;
+}
+
+void GameState::addMagicPoints(int16 val) {
+	setMagicPoints(inventoryMagicPoints + val);
+}
+
+int16 GameState::setLeafs(int16 val) {
+	inventoryNumLeafs = val;
+	if (inventoryNumLeafs > inventoryNumLeafsBox) {
+		inventoryNumLeafs = inventoryNumLeafsBox;
+	}
+	return inventoryNumLeafs;
+}
+
+void GameState::addLeafs(int16 val) {
+	setLeafs(inventoryNumLeafs + val);
+}
+
+int16 GameState::setLeafBoxes(int16 val) {
+	inventoryNumLeafsBox = val;
+	if (inventoryNumLeafsBox > 10) {
+		inventoryNumLeafsBox = 10;
+	}
+	if (inventoryNumLeafsBox == 5) {
+		_engine->unlockAchievement("LBA_ACH_003");
+	}
+	return inventoryNumLeafsBox;
+}
+
+void GameState::addLeafBoxes(int16 val) {
+	setLeafBoxes(inventoryNumLeafsBox + val);
 }
 
 } // namespace TwinE

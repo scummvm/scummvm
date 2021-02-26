@@ -243,7 +243,7 @@ bool TwinEConsole::doGiveKey(int argc, const char **argv) {
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
-	_engine->_gameState->setKeys(_engine->_gameState->inventoryNumKeys + amount);
+	_engine->_gameState->addKeys(amount);
 	return true;
 }
 
@@ -252,7 +252,7 @@ bool TwinEConsole::doGiveGas(int argc, const char **argv) {
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
-	_engine->_gameState->setGas(_engine->_gameState->inventoryNumGas + amount);
+	_engine->_gameState->addGas(amount);
 	return true;
 }
 
@@ -261,7 +261,7 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
-	_engine->_gameState->setKashes(_engine->_gameState->inventoryNumKashes + amount);
+	_engine->_gameState->addKashes(amount);
 	return true;
 }
 
@@ -401,25 +401,12 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
-	state->inventoryNumKeys += amount;
-	state->inventoryNumKashes += amount;
-	state->inventoryNumLeafsBox += amount;
-	state->inventoryNumLeafs += amount;
-	state->inventoryMagicPoints += amount;
-	state->setGas(state->inventoryNumGas + amount);
-	state->setKashes(state->inventoryNumKashes + amount);
-
-	if (state->inventoryNumLeafsBox > 10) {
-		state->inventoryNumLeafsBox = 10;
-	}
-
-	if (state->inventoryNumLeafs > state->inventoryNumLeafsBox) {
-		state->inventoryNumLeafs = state->inventoryNumLeafsBox;
-	}
-
-	if (state->inventoryMagicPoints > state->magicLevelIdx * 20) {
-		state->inventoryMagicPoints = state->magicLevelIdx * 20;
-	}
+	state->addKeys(amount);
+	state->addLeafBoxes(amount);
+	state->addKashes(amount);
+	state->addLeafs(amount);
+	state->addMagicPoints(amount);
+	state->addGas(amount);
 
 	return true;
 }
@@ -429,10 +416,7 @@ bool TwinEConsole::doSetLife(int argc, const char **argv) {
 		debugPrintf("Expected to get the life points as parameter\n");
 		return true;
 	}
-	_engine->_scene->sceneHero->life = atoi(argv[1]);
-	if (_engine->_scene->sceneHero->life > 50) {
-		_engine->_scene->sceneHero->life = 50;
-	}
+	_engine->_scene->sceneHero->setLife(atoi(argv[1]));
 	return true;
 }
 

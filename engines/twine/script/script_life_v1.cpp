@@ -828,12 +828,7 @@ static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x27
  */
 static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->inventoryNumKeys--;
-
-	if (engine->_gameState->inventoryNumKeys < 0) {
-		engine->_gameState->inventoryNumKeys = 0;
-	}
-
+	engine->_gameState->addKeys(-1);
 	engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 0, 0, 0, OverlayPosType::koFollowActor, 1);
 
 	return 0;
@@ -848,10 +843,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	bool hideRange = false;
 	int16 kashes = ctx.stream.readSint16LE();
 
-	engine->_gameState->inventoryNumKashes -= kashes;
-	if (engine->_gameState->inventoryNumKashes < 0) {
-		engine->_gameState->inventoryNumKashes = 0;
-	}
+	engine->_gameState->addKashes(-kashes);
 
 	engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KASHES, 10, 15, 0, OverlayPosType::koNormal, 3);
 
@@ -1237,12 +1229,7 @@ static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x42
  */
 static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
-	if (engine->_gameState->inventoryNumLeafsBox < 10) {
-		engine->_gameState->inventoryNumLeafsBox++;
-		if (engine->_gameState->inventoryNumLeafsBox == 5) {
-			engine->unlockAchievement("LBA_ACH_003");
-		}
-	}
+	engine->_gameState->addLeafBoxes(1);
 	return 0;
 }
 
@@ -1349,10 +1336,7 @@ static int32 lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4A
  */
 static int32 lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->inventoryNumGas += ctx.stream.readByte();
-	if (engine->_gameState->inventoryNumGas > 100) {
-		engine->_gameState->inventoryNumGas = 100;
-	}
+	engine->_gameState->addGas(ctx.stream.readByte());
 	return 0;
 }
 
@@ -1361,10 +1345,7 @@ static int32 lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4B
  */
 static int32 lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->inventoryNumGas -= ctx.stream.readByte();
-	if (engine->_gameState->inventoryNumGas < 0) {
-		engine->_gameState->inventoryNumGas = 0;
-	}
+	engine->_gameState->addGas(-(int16)ctx.stream.readByte());
 	return 0;
 }
 
@@ -1414,7 +1395,7 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4F
  */
 static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_scene->sceneHero->life = 50;
+	engine->_scene->sceneHero->life = kActorMaxLife;
 	engine->_gameState->inventoryMagicPoints = engine->_gameState->magicLevelIdx * 20;
 	return 0;
 }
@@ -1662,7 +1643,7 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->quitGame = 1;
 	engine->_gameState->inventoryNumLeafs = 0;
-	engine->_scene->sceneHero->life = 50;
+	engine->_scene->sceneHero->life = kActorMaxLife;
 	engine->_gameState->inventoryMagicPoints = 80;
 	engine->_scene->currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->heroBehaviour = engine->_actor->previousHeroBehaviour;

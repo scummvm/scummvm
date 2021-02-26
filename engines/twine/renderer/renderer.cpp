@@ -363,9 +363,7 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	applyRotation(&shadeMatrix, &baseMatrix);
 	translateGroup(0, 0, 59);
 
-	lightPos.x = destPos.x;
-	lightPos.y = destPos.y;
-	lightPos.z = destPos.z;
+	lightPos = destPos;
 }
 
 FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {

@@ -381,7 +381,7 @@ void Actor::resetActor(int16 actorIdx) {
 	memset(&actor->dynamicFlags, 0, sizeof(DynamicFlagsStruct));
 	memset(&actor->bonusParameter, 0, sizeof(BonusParameter));
 
-	actor->life = 50;
+	actor->life = kActorMaxLife;
 	actor->armor = 1;
 	actor->hitBy = -1;
 	actor->lastRotationAngle = ANGLE_0;

@@ -696,7 +696,7 @@ void Extra::processExtras() {
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
 
-				_engine->_gameState->inventoryNumKeys += extraKey->info1;
+				_engine->_gameState->addKeys(extraKey->info1);
 				extraKey->info0 = -1;
 
 				extra->info0 = -1;
@@ -729,7 +729,7 @@ void Extra::processExtras() {
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
 
-				_engine->_gameState->inventoryNumKeys += extraKey->info1;
+				_engine->_gameState->addKeys(extraKey->info1);
 				extraKey->info0 = -1;
 
 				extra->info0 = -1;
@@ -774,12 +774,12 @@ void Extra::processExtras() {
 		}
 		// process extra collision with scene ground
 		if (extra->type & ExtraType::UNK3) {
-			int32 process = 0;
+			bool process = false;
 
 			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos.x, extra->pos.y, extra->pos.z)) {
 				// if not touch the ground
 				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
-					process = 1;
+					process = true;
 				}
 			} else {
 				// if touch the ground
@@ -841,12 +841,12 @@ void Extra::processExtras() {
 		}
 		// extra stop moving while collision with bricks
 		if (extra->type & ExtraType::STOP_COL) {
-			int32 process = 0;
+			bool process = false;
 
 			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos.x, extra->pos.y, extra->pos.z)) {
 				// if not touch the ground
 				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
-					process = 1;
+					process = true;
 				}
 			} else {
 				// if touch the ground
@@ -877,30 +877,15 @@ void Extra::processExtras() {
 				_engine->_redraw->addOverlay(OverlayType::koSprite, extra->info0, 10, 30, 0, OverlayPosType::koNormal, 2);
 
 				if (extra->info0 == SPRITEHQR_KASHES) {
-					_engine->_gameState->inventoryNumKashes += extra->info1;
-					if (_engine->_gameState->inventoryNumKashes > 999) {
-						_engine->_gameState->inventoryNumKashes = 999;
-					}
-					if (_engine->_gameState->inventoryNumKashes >= 500) {
-						_engine->unlockAchievement("LBA_ACH_011");
-					}
+					_engine->_gameState->addKashes(extra->info1);
 				} else if (extra->info0 == SPRITEHQR_LIFEPOINTS) {
-					_engine->_scene->sceneHero->life += extra->info1;
-					if (_engine->_scene->sceneHero->life > 50) {
-						_engine->_scene->sceneHero->life = 50;
-					}
+					_engine->_scene->sceneHero->addLife(extra->info1);
 				} else if (extra->info0 == SPRITEHQR_MAGICPOINTS && _engine->_gameState->magicLevelIdx) {
-					_engine->_gameState->inventoryMagicPoints += extra->info1 * 2;
-					if (_engine->_gameState->inventoryMagicPoints > _engine->_gameState->magicLevelIdx * 20) {
-						_engine->_gameState->inventoryMagicPoints = _engine->_gameState->magicLevelIdx * 20;
-					}
+					_engine->_gameState->addMagicPoints(extra->info1 * 2);
 				} else if (extra->info0 == SPRITEHQR_KEY) {
-					_engine->_gameState->inventoryNumKeys += extra->info1;
+					_engine->_gameState->addKeys(extra->info1);
 				} else if (extra->info0 == SPRITEHQR_CLOVERLEAF) {
-					_engine->_gameState->inventoryNumLeafs += extra->info1;
-					if (_engine->_gameState->inventoryNumLeafs > _engine->_gameState->inventoryNumLeafsBox) {
-						_engine->_gameState->inventoryNumLeafs = _engine->_gameState->inventoryNumLeafsBox;
-					}
+					_engine->_gameState->addLeafs(extra->info1);
 				}
 
 				extra->info0 = -1;

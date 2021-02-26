@@ -157,6 +157,8 @@ struct BonusParameter {
 // but don't take the current state in account
 #define kAnimationType_4 4
 
+#define kActorMaxLife 50
+
 /**
  * Actors structure
  *
@@ -214,6 +216,10 @@ public:
 	int32 armor = 0; // field_14
 	int32 life = 0;
 
+	void addLife(int32 val);
+
+	void setLife(int32 val);
+
 	Vec3 collisionPos;
 
 	int32 positionInMoveScript = 0;
@@ -245,6 +251,17 @@ public:
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
 };
+
+inline void ActorStruct::addLife(int32 val) {
+	setLife(life + val);
+}
+
+inline void ActorStruct::setLife(int32 val) {
+	life = val;
+	if (life > kActorMaxLife) {
+		life = kActorMaxLife;
+	}
+}
 
 class TwinEEngine;
 

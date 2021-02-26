@@ -819,11 +819,6 @@ void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPaddin
 }
 
 void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
-	// prevent
-	if (_engine->_gameState->inventoryNumLeafs > _engine->_gameState->inventoryNumLeafsBox) {
-		_engine->_gameState->inventoryNumLeafs = _engine->_gameState->inventoryNumLeafsBox;
-	}
-
 	// Clover leaf boxes
 	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
 		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
