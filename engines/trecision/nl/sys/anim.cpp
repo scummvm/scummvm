@@ -135,7 +135,7 @@ void CallSmackNextFrame() {
 	if (SmkAnims[_curSmackBuffer] == NULL)
 		return;
 
-	if (SmkAnims[_curSmackBuffer]->endOfVideo()) {
+	if (SmkAnims[_curSmackBuffer]->getCurFrame() == SmkAnims[_curSmackBuffer]->getFrameCount() - 1) {
 		SmkAnims[_curSmackBuffer]->rewind();
 	}
 
