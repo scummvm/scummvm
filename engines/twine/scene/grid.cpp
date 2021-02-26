@@ -683,8 +683,8 @@ void Grid::redrawGrid() {
 
 	_engine->_renderer->projectPositionOnScreen(-camera.x, -camera.y, -camera.z);
 
-	_engine->_renderer->projPosXScreen = _engine->_renderer->projPosX;
-	_engine->_renderer->projPosYScreen = _engine->_renderer->projPosY;
+	_engine->_renderer->projPosScreen.x = _engine->_renderer->projPosX;
+	_engine->_renderer->projPosScreen.y = _engine->_renderer->projPosY;
 
 	memset(brickInfoBuffer, 0, _brickInfoBufferSize);
 

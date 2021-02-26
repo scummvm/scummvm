@@ -419,7 +419,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	renderRect.bottom = renderRect.top + spriteHeight;
 
 	if (actor->staticFlags.bUsesClipping) {
-		const Common::Rect rect(_engine->_renderer->projPosXScreen + actor->cropLeft, _engine->_renderer->projPosYScreen + actor->cropTop, _engine->_renderer->projPosXScreen + actor->cropRight, _engine->_renderer->projPosYScreen + actor->cropBottom);
+		const Common::Rect rect(_engine->_renderer->projPosScreen.x + actor->cropLeft, _engine->_renderer->projPosScreen.y + actor->cropTop, _engine->_renderer->projPosScreen.x + actor->cropRight, _engine->_renderer->projPosScreen.y + actor->cropBottom);
 		_engine->_interface->setClip(rect);
 	} else {
 		_engine->_interface->setClip(renderRect);
@@ -675,8 +675,8 @@ void Redraw::renderOverlays() {
 }
 
 void Redraw::redrawEngineActions(bool bgRedraw) {
-	int16 tmp_projPosX = _engine->_renderer->projPosXScreen;
-	int16 tmp_projPosY = _engine->_renderer->projPosYScreen;
+	int16 tmp_projPosX = _engine->_renderer->projPosScreen.x;
+	int16 tmp_projPosY = _engine->_renderer->projPosScreen.y;
 
 	_engine->_interface->resetClip();
 
@@ -687,7 +687,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		}
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
-		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
+		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {

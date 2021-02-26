@@ -394,9 +394,7 @@ public:
 
 	void init(int32 w, int32 h);
 
-	int16 projPosXScreen = 0; // fullRedrawVar1
-	int16 projPosYScreen = 0; // fullRedrawVar2
-	int16 projPosZScreen = 0; // fullRedrawVar3
+	Vec3 projPosScreen;
 	int16 projPosX = 0;
 	int16 projPosY = 0;
 	int16 projPosZ = 0;
