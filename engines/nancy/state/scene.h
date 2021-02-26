@@ -86,6 +86,7 @@ public:
         _engine (engine),
         _state (kInit),
         _frame(engine),
+        _lastHint(-1),
         _gameStateRequested(NancyEngine::kScene),
         _viewport(engine),
         _textbox(_frame),
@@ -103,24 +104,29 @@ public:
 
     void addItemToInventory(uint16 id);
     void removeItemFromInventory(uint16 id, bool pickUp = true);
-    int16 getHeldItem() { return _flags.heldItem; }
+    int16 getHeldItem() const { return _flags.heldItem; }
     void setHeldItem(int16 id) { _flags.heldItem = id; _engine->cursorManager->setCursorItemID(id); }
+    NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
     void setEventFlag(int16 label, NancyFlag flag = kTrue);
-    bool getEventFlag(int16 label, NancyFlag flag = kTrue);
+    bool getEventFlag(int16 label, NancyFlag flag = kTrue) const;
 
     void setLogicCondition(int16 label, NancyFlag flag = kTrue);
-    bool getLogicCondition(int16 label, NancyFlag flag = kTrue);
+    bool getLogicCondition(int16 label, NancyFlag flag = kTrue) const;
     void clearLogicConditions();
 
     void setDifficulty(uint difficulty) { _difficulty = difficulty; }
+    uint16 getDifficulty() const { return _difficulty; }
+
+    byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
+    void useHint(int hintID, int hintWeight);
 
     void requestStateChange(NancyEngine::GameState state) { _gameStateRequested = state; }
 
     void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
     void stopTimer() { _timers.timerIsActive = false; _timers.timerTime = 0; }
 
-    Time getMovementTimeDelta(bool fast) { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
+    Time getMovementTimeDelta(bool fast) const { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
 
     void registerGraphics();
 
@@ -220,6 +226,8 @@ protected:
     PlayFlags _flags;
     Timers _timers;
     uint16 _difficulty;
+    Common::Array<byte> _hintsRemaining;
+    int16 _lastHint;
     NancyEngine::GameState _gameStateRequested;
 
     Action::ActionManager _actionManager;
