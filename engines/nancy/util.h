@@ -28,10 +28,10 @@
 namespace Nancy {
 
 static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
-    inRect.left = stream.readUint32LE();
-    inRect.top = stream.readUint32LE();
-    inRect.right = stream.readUint32LE();
-    inRect.bottom = stream.readUint32LE();
+    inRect.left = stream.readSint32LE();
+    inRect.top = stream.readSint32LE();
+    inRect.right = stream.readSint32LE();
+    inRect.bottom = stream.readSint32LE();
 }
 
 } // End of namespace Nancy
