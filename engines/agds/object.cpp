@@ -195,6 +195,14 @@ bool Object::pointIn(Common::Point pos) {
 		}
 	}
 
+	if (_animation) {
+		Common::Rect rect(0, 0, _animation->width(), _animation->height());
+		rect.moveTo(_pos + _animationPos);
+		if (rect.contains(pos)) {
+			return true;
+		}
+	}
+
 	// pos -= _pos;
 	pos -= _regionOffset;
 
