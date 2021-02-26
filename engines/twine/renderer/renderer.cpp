@@ -152,27 +152,27 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	}
 	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
 
-	baseRotPos.x = destX;
-	baseRotPos.y = destY;
-	baseRotPos.z = destZ;
+	baseRotPos.x = destPos.x;
+	baseRotPos.y = destPos.y;
+	baseRotPos.z = destPos.z;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
-	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destPos.y = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destPos.z = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
-	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
-	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
+	destPos.y = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
+	destPos.z = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	destX = (shadeMatrix.row1[0] * x + shadeMatrix.row1[1] * y + shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destY = (shadeMatrix.row2[0] * x + shadeMatrix.row2[1] * y + shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
-	destZ = destY;
+	destPos.x = (shadeMatrix.row1[0] * x + shadeMatrix.row1[1] * y + shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destPos.y = (shadeMatrix.row2[0] * x + shadeMatrix.row2[1] * y + shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destPos.z = destPos.y;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -186,9 +186,9 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	getCameraAnglePositions(baseRotPos.x, baseRotPos.y, baseRotPos.z);
 
-	baseTransPosX = destX;
-	baseTransPosY = destY;
-	baseTransPosZ = destZ;
+	baseTransPosX = destPos.x;
+	baseTransPosY = destPos.y;
+	baseTransPosZ = destPos.z;
 }
 
 void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) {
@@ -265,9 +265,9 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 		const int32 tmpY = pointsPtr->y;
 		const int32 tmpZ = pointsPtr->z;
 
-		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destX;
-		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destY;
-		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destZ;
+		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 		pointsPtr++;
@@ -287,18 +287,18 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *point
 	if (elemPtr->baseElement == -1) {
 		currentMatrix = &baseMatrix;
 
-		destX = 0;
-		destY = 0;
-		destZ = 0;
+		destPos.x = 0;
+		destPos.y = 0;
+		destPos.z = 0;
 	} else {
 		const int32 pointIdx = elemPtr->basePoint / sizeof(pointTab);
 		const int32 matrixIndex = elemPtr->baseElement;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
 		currentMatrix = &matricesTable[matrixIndex];
 
-		destX = modelData->computedPoints[pointIdx].x;
-		destY = modelData->computedPoints[pointIdx].y;
-		destZ = modelData->computedPoints[pointIdx].z;
+		destPos.x = modelData->computedPoints[pointIdx].x;
+		destPos.y = modelData->computedPoints[pointIdx].y;
+		destPos.z = modelData->computedPoints[pointIdx].z;
 	}
 
 	applyRotation(targetMatrix, currentMatrix);
@@ -318,9 +318,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 		const int32 tmpY = pointsPtr->y + renderAngleY;
 		const int32 tmpZ = pointsPtr->z + renderAngleX;
 
-		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destX;
-		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destY;
-		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destZ;
+		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 		pointsPtr++;
@@ -333,16 +333,16 @@ void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *po
 	renderAngleZ = rotZ;
 
 	if (elemPtr->baseElement == -1) { // base point
-		destX = 0;
-		destY = 0;
-		destZ = 0;
+		destPos.x = 0;
+		destPos.y = 0;
+		destPos.z = 0;
 
 		*targetMatrix = baseMatrix;
 	} else { // dependent
 		const int pointsIdx = elemPtr->basePoint / 6;
-		destX = modelData->computedPoints[pointsIdx].x;
-		destY = modelData->computedPoints[pointsIdx].y;
-		destZ = modelData->computedPoints[pointsIdx].z;
+		destPos.x = modelData->computedPoints[pointsIdx].x;
+		destPos.y = modelData->computedPoints[pointsIdx].y;
+		destPos.z = modelData->computedPoints[pointsIdx].z;
 
 		const int32 matrixIndex = elemPtr->baseElement;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
@@ -365,9 +365,9 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	applyRotation(&shadeMatrix, &baseMatrix);
 	translateGroup(0, 0, 59);
 
-	lightPos.x = destX;
-	lightPos.y = destY;
-	lightPos.z = destZ;
+	lightPos.x = destPos.x;
+	lightPos.y = destPos.y;
+	lightPos.z = destPos.z;
 }
 
 FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1477,9 +1477,9 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderX = destX - baseRotPos.x;
-		renderY = destY - baseRotPos.y; // RECHECK
-		renderZ = destZ - baseRotPos.z;
+		renderX = destPos.x - baseRotPos.x;
+		renderY = destPos.y - baseRotPos.y; // RECHECK
+		renderZ = destPos.z - baseRotPos.z;
 	}
 
 	if (!Model::isAnimated(bodyPtr)) {

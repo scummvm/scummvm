@@ -636,9 +636,9 @@ void TwinEEngine::processInventoryAction() {
 	case kiPinguin: {
 		ActorStruct *pinguin = _scene->getActor(_scene->mecaPinguinIdx);
 
-		pinguin->pos.x = _renderer->destX + _scene->sceneHero->pos.x;
+		pinguin->pos.x = _renderer->destPos.x + _scene->sceneHero->pos.x;
 		pinguin->pos.y = _scene->sceneHero->pos.y;
-		pinguin->pos.z = _renderer->destZ + _scene->sceneHero->pos.z;
+		pinguin->pos.z = _renderer->destPos.z + _scene->sceneHero->pos.z;
 		pinguin->angle = _scene->sceneHero->angle;
 
 		_movements->rotateActor(0, 800, pinguin->angle);

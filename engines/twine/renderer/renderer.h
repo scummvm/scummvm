@@ -398,10 +398,7 @@ public:
 	Vec3 projPos;
 	Vec3 baseRotPos;
 	Vec3 orthoProjPos;
-
-	int32 destX = 0;
-	int32 destY = 0;
-	int32 destZ = 0;
+	Vec3 destPos;
 
 	const int16 *const shadeAngleTab3;
 

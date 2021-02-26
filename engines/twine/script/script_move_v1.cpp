@@ -117,9 +117,9 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destX = sp.x;
-	engine->_renderer->destY = sp.y;
-	engine->_renderer->destZ = sp.z;
+	engine->_renderer->destPos.x = sp.x;
+	engine->_renderer->destPos.y = sp.y;
+	engine->_renderer->destPos.z = sp.z;
 
 	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
@@ -189,9 +189,9 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destX = sp.x;
-	engine->_renderer->destY = sp.y;
-	engine->_renderer->destZ = sp.z;
+	engine->_renderer->destPos.x = sp.x;
+	engine->_renderer->destPos.y = sp.y;
+	engine->_renderer->destPos.z = sp.z;
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		ctx.actor->speed = 0;
@@ -249,9 +249,9 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destX = sp.x;
-	engine->_renderer->destY = sp.y;
-	engine->_renderer->destZ = sp.z;
+	engine->_renderer->destPos.x = sp.x;
+	engine->_renderer->destPos.y = sp.y;
+	engine->_renderer->destPos.z = sp.z;
 
 	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
@@ -322,9 +322,9 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = trackId;
 
 	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destX = sp.x;
-	engine->_renderer->destY = sp.y;
-	engine->_renderer->destZ = sp.z;
+	engine->_renderer->destPos.x = sp.x;
+	engine->_renderer->destPos.y = sp.y;
+	engine->_renderer->destPos.z = sp.z;
 
 	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 	// TODO: this adds an angle to the animType value

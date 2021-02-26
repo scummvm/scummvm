@@ -675,8 +675,8 @@ void Redraw::renderOverlays() {
 }
 
 void Redraw::redrawEngineActions(bool bgRedraw) {
-	int16 tmp_projPos.x = _engine->_renderer->projPosScreen.x;
-	int16 tmp_projPos.y = _engine->_renderer->projPosScreen.y;
+	int32 tmp_projPosX = _engine->_renderer->projPosScreen.x;
+	int32 tmp_projPosY = _engine->_renderer->projPosScreen.y;
 
 	_engine->_interface->resetClip();
 
@@ -687,7 +687,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		}
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
-		updateOverlayTypePosition(tmp_projPos.x, tmp_projPos.y, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
+		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {

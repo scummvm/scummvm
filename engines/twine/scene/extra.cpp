@@ -166,12 +166,12 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32
 
 	_engine->_movements->rotateActor(x, 0, xAngle);
 
-	extra->destPos.y = -_engine->_renderer->destZ;
+	extra->destPos.y = -_engine->_renderer->destPos.z;
 
-	_engine->_movements->rotateActor(0, _engine->_renderer->destX, yAngle);
+	_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, yAngle);
 
-	extra->destPos.x = _engine->_renderer->destX;
-	extra->destPos.z = _engine->_renderer->destZ;
+	extra->destPos.x = _engine->_renderer->destPos.x;
+	extra->destPos.z = _engine->_renderer->destPos.z;
 
 	extra->angle = extraAngle;
 	extra->spawnTime = _engine->lbaTime;
@@ -443,8 +443,8 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 
 	_engine->_movements->rotateActor(var_x, var_z, angle);
 
-	const int32 computedX = _engine->_renderer->destX + x;
-	const int32 computedY = _engine->_renderer->destZ + y;
+	const int32 computedX = _engine->_renderer->destPos.x + x;
+	const int32 computedY = _engine->_renderer->destPos.z + y;
 
 	if (computedX < _engine->_redraw->renderRect.left) {
 		_engine->_redraw->renderRect.left = computedX;
@@ -477,8 +477,8 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 
 		_engine->_movements->rotateActor(var_x, var_z, angle);
 
-		currentX = _engine->_renderer->destX + x;
-		currentY = _engine->_renderer->destZ + y;
+		currentX = _engine->_renderer->destPos.x + x;
+		currentY = _engine->_renderer->destPos.z + y;
 
 		if (currentX < _engine->_redraw->renderRect.left) {
 			_engine->_redraw->renderRect.left = currentX;
@@ -660,11 +660,11 @@ void Extra::processExtras() {
 			}
 
 			_engine->_movements->rotateActor(pos, 0, angle2);
-			extra->pos.y -= _engine->_renderer->destZ;
+			extra->pos.y -= _engine->_renderer->destPos.z;
 
-			_engine->_movements->rotateActor(0, _engine->_renderer->destX, tmpAngle);
-			extra->pos.x += _engine->_renderer->destX;
-			extra->pos.z += _engine->_renderer->destZ;
+			_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, tmpAngle);
+			extra->pos.x += _engine->_renderer->destPos.x;
+			extra->pos.z += _engine->_renderer->destPos.z;
 
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
@@ -711,11 +711,11 @@ void Extra::processExtras() {
 			}
 
 			_engine->_movements->rotateActor(pos, 0, angle2);
-			extra->pos.y -= _engine->_renderer->destZ;
+			extra->pos.y -= _engine->_renderer->destPos.z;
 
-			_engine->_movements->rotateActor(0, _engine->_renderer->destX, tmpAngle);
-			extra->pos.x += _engine->_renderer->destX;
-			extra->pos.z += _engine->_renderer->destZ;
+			_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, tmpAngle);
+			extra->pos.x += _engine->_renderer->destPos.x;
+			extra->pos.z += _engine->_renderer->destPos.z;
 
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 

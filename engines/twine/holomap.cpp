@@ -119,23 +119,23 @@ void Holomap::prepareHolomapSurface() {
 		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
 			const int32 rotX = stream.readByte();
 			_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
-			const int32 tmpDestY = _engine->_renderer->destZ;
-			_engine->_movements->rotateActor(_engine->_renderer->destX, 0, rotation);
-			_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destX, tmpDestY, _engine->_renderer->destZ);
-			_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destX;
-			_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destY;
-			_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destZ;
+			const int32 tmpDestY = _engine->_renderer->destPos.z;
+			_engine->_movements->rotateActor(_engine->_renderer->destPos.x, 0, rotation);
+			_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, tmpDestY, _engine->_renderer->destPos.z);
+			_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destPos.x;
+			_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destPos.y;
+			_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destPos.z;
 			++holomapSurfaceArrayIdx;
 			rotation += ANGLE_11_25;
 		}
 		const int32 rotX = stream.readByte();
 		_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
-		const int32 tmpDestY = _engine->_renderer->destZ;
-		_engine->_movements->rotateActor(_engine->_renderer->destX, 0, ANGLE_0);
-		_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destX, tmpDestY, _engine->_renderer->destZ);
-		_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destX;
-		_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destY;
-		_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destZ;
+		const int32 tmpDestY = _engine->_renderer->destPos.z;
+		_engine->_movements->rotateActor(_engine->_renderer->destPos.x, 0, ANGLE_0);
+		_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, tmpDestY, _engine->_renderer->destPos.z);
+		_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destPos.x;
+		_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destPos.y;
+		_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destPos.z;
 		++holomapSurfaceArrayIdx;
 	}
 }
@@ -177,11 +177,11 @@ void Holomap::prepareHolomapPolygons() {
 			HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
-				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destZ;
+				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
-			_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
+			_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z);
 			_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPos.x;
 			_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPos.y;
 			rotation += ANGLE_11_25;
@@ -189,7 +189,7 @@ void Holomap::prepareHolomapPolygons() {
 		}
 		HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-		_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
+		_engine->_renderer->projectPositionOnScreen(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z);
 		_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPos.x;
 		_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPos.y;
 		rotation += ANGLE_11_25;
@@ -287,9 +287,9 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 void Holomap::renderHolomapModel(const uint8 *bodyPtr, int32 x, int32 y, int32 zPos) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
 	_engine->_renderer->getBaseRotationPosition(0, 0, zPos + 1000);
-	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ);
+	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z);
 	_engine->_interface->resetClip();
-	_engine->_renderer->renderIsoModel(_engine->_renderer->destX, _engine->_renderer->destY, _engine->_renderer->destZ, x, y, 0, bodyPtr);
+	_engine->_renderer->renderIsoModel(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z, x, y, 0, bodyPtr);
 }
 
 Holomap::TrajectoryData Holomap::loadTrajectoryData(int32 trajectoryIdx) {
@@ -464,27 +464,27 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.x, loc.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.z + 1000);
-			int32 xpos1 = _engine->_renderer->destX;
-			int32 ypos1 = _engine->_renderer->destY;
-			int32 zpos1 = _engine->_renderer->destZ;
+			int32 xpos1 = _engine->_renderer->destPos.x;
+			int32 ypos1 = _engine->_renderer->destPos.y;
+			int32 zpos1 = _engine->_renderer->destPos.z;
 			_engine->_renderer->getBaseRotationPosition(0, 0, 1500);
-			int32 xpos2 = _engine->_renderer->destX;
-			int32 ypos2 = _engine->_renderer->destY;
-			int32 zpos2 = _engine->_renderer->destZ;
+			int32 xpos2 = _engine->_renderer->destPos.x;
+			int32 ypos2 = _engine->_renderer->destPos.y;
+			int32 zpos2 = _engine->_renderer->destPos.z;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
 			int32 zpos1_copy = zpos1;
 			_engine->_renderer->baseRotPos.x = 0;
 			_engine->_renderer->baseRotPos.y = 0;
 			_engine->_renderer->baseRotPos.z = 9500;
 			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
-			int32 zpos1_copy2 = _engine->_renderer->destZ;
+			int32 zpos1_copy2 = _engine->_renderer->destPos.z;
 			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (zpos1_copy2 <= _engine->_renderer->destZ) {
+				if (zpos1_copy2 <= _engine->_renderer->destPos.z) {
 					continue;
 				}
 			} else {
-				if (_engine->_renderer->destZ <= zpos1_copy2) {
+				if (_engine->_renderer->destPos.z <= zpos1_copy2) {
 					continue;
 				}
 			}

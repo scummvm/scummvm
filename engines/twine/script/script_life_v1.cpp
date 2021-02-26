@@ -1121,9 +1121,9 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 trackIdx = ctx.stream.readByte();
 
 	const ScenePoint &sp = engine->_scene->sceneTracks[trackIdx];
-	engine->_renderer->destX = sp.x;
-	engine->_renderer->destY = sp.y;
-	engine->_renderer->destZ = sp.z;
+	engine->_renderer->destPos.x = sp.x;
+	engine->_renderer->destPos.y = sp.y;
+	engine->_renderer->destPos.z = sp.z;
 
 	ctx.actor->pos.x = sp.x;
 	ctx.actor->pos.y = sp.y;

@@ -140,8 +140,8 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = AngleToRadians(angle);
-	_engine->_renderer->destX = (int32)(x * cos(radians) + z * sin(radians));
-	_engine->_renderer->destZ = (int32)(-x * sin(radians) + z * cos(radians));
+	_engine->_renderer->destPos.x = (int32)(x * cos(radians) + z * sin(radians));
+	_engine->_renderer->destPos.z = (int32)(-x * sin(radians) + z * cos(radians));
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const {
