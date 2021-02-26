@@ -465,10 +465,10 @@ public:
 	void UpdateGameCycle(int32 newVol, int32 newPan);
 
 	void GetRandom(CSfx *sfx); // update random value
-	void Register(const cstr sndName, const cstr sfxName, uint32 sfxHash, int8 volume);
+	void Register(const char *sndName, const char *sfxName, uint32 sfxHash, int8 volume);
 
-	void RegisterFromObject(const uint32 objID, const cstr sndName, const cstr sfxName, uint32 sfxHash, PXreal xo, PXreal yo, PXreal zo, int8 volume);
-	void RegisterFromAbsolute(const uint32 objID, const cstr sndName, const cstr sfxName, uint32 sfxHash, PXreal x, PXreal y, PXreal z, int8 volume);
+	void RegisterFromObject(const uint32 objID, const char *sndName, const char *sfxName, uint32 sfxHash, PXreal xo, PXreal yo, PXreal zo, int8 volume);
+	void RegisterFromAbsolute(const uint32 objID, const char *sndName, const char *sfxName, uint32 sfxHash, PXreal x, PXreal y, PXreal z, int8 volume);
 
 	void Remove();
 
@@ -777,7 +777,7 @@ void CRegisteredSound::GetRandom(CSfx *sfx) {
 }
 
 // register a new sound setting internal params
-void CRegisteredSound::Register(const cstr sndName, const cstr sfxName, uint32 sfxHash, int8 volume) {
+void CRegisteredSound::Register(const char *sndName, const char *sfxName, uint32 sfxHash, int8 volume) {
 	CSfx *sfx;
 
 	// simple params
@@ -831,7 +831,7 @@ void CRegisteredSound::Register(const cstr sndName, const cstr sfxName, uint32 s
 }
 
 // register a sound and take position from the position of the object registering the sound
-void CRegisteredSound::RegisterFromObject(const uint32 objID, const cstr sndName, const cstr sfxName, uint32 sfxHash, PXreal xo, PXreal yo, PXreal zo, int8 volume) {
+void CRegisteredSound::RegisterFromObject(const uint32 objID, const char *sndName, const char *sfxName, uint32 sfxHash, PXreal xo, PXreal yo, PXreal zo, int8 volume) {
 	Register(sndName, sfxName, sfxHash, volume);
 	m_xoffset = xo;
 	m_yoffset = yo;
@@ -853,7 +853,7 @@ void CRegisteredSound::RegisterFromObject(const uint32 objID, const cstr sndName
 }
 
 // register a sound as an absolute position
-void CRegisteredSound::RegisterFromAbsolute(const uint32 objID, const cstr sndName, const cstr sfxName, uint32 sfxHash, PXreal x, PXreal y, PXreal z, int8 volume) {
+void CRegisteredSound::RegisterFromAbsolute(const uint32 objID, const char *sndName, const char *sfxName, uint32 sfxHash, PXreal x, PXreal y, PXreal z, int8 volume) {
 
 	Register(sndName, sfxName, sfxHash, volume);
 
@@ -1072,7 +1072,7 @@ void TurnOffSound() { soundOn = FALSE8; }
 
 void TurnOnSound() { soundOn = TRUE8; }
 
-int32 GetFreeSound(const cstr sfxName) {
+int32 GetFreeSound(const char *sfxName) {
 	int32 i;
 
 	for (i = 0; i < MAX_REGISTERED_SOUNDS; i++)
@@ -1098,7 +1098,7 @@ int32 FindSound(uint32 obj, uint32 sndHash, int32 start = 0) {
 
 // fn_play_sfx_offset(sfxName,sndID,x,y,z,isNico)
 // this is the generic function
-void RegisterSoundOffset(uint32 obj, const cstr offsetName, const cstr sfxName, uint32 sfxHash, const cstr sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time,
+void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time,
                          int8 volume_offset) {
 	// check we have the hash before we register any sounds...!
 	if (menuSoundIDHash == NULL_HASH)
@@ -1145,7 +1145,7 @@ void RegisterSoundOffset(uint32 obj, const cstr offsetName, const cstr sfxName, 
 }
 
 // register a sound from an object
-void RegisterSound(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, int8 volume_offset) {
+void RegisterSound(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int8 volume_offset) {
 	const char *name;
 
 	if (obj == SPECIAL_SOUND)
@@ -1157,11 +1157,11 @@ void RegisterSound(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sn
 }
 
 // register a sound from an absolute position
-void RegisterSoundAbsolute(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, PXreal x, PXreal y, PXreal z, int8 volume_offset) {
+void RegisterSoundAbsolute(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal x, PXreal y, PXreal z, int8 volume_offset) {
 	RegisterSoundOffset(obj, NULL, sfxName, sfxHash, sndID, x, y, z, 0, 0, volume_offset);
 }
 
-void RegisterSoundTime(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, int32 time, int8 volume_offset) {
+void RegisterSoundTime(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int32 time, int8 volume_offset) {
 	const char *name;
 
 	if (obj == SPECIAL_SOUND)
@@ -1174,19 +1174,19 @@ void RegisterSoundTime(uint32 obj, const cstr sfxName, uint32 sfxHash, const cst
 
 // special sound
 // for menus
-void RegisterMenuSound(const cstr sfxName, uint32 sfxHash, int32 volume, int32 pan, int8 volume_offset) {
+void RegisterMenuSound(const char *sfxName, uint32 sfxHash, int32 volume, int32 pan, int8 volume_offset) {
 	// volume is z of position
 	RegisterSoundOffset(SPECIAL_SOUND, NULL, sfxName, sfxHash, menuSoundID, (PXreal)pan, (PXreal)0, (PXreal)volume, 0, 0, volume_offset);
 }
 
 // special sound
 // for in game (these are paused just like any other...
-void RegisterSoundSpecial(const cstr sfxName, uint32 sfxHash, const cstr sndID, int32 volume, int32 pan, int8 volume_offset) {
+void RegisterSoundSpecial(const char *sfxName, uint32 sfxHash, const char *sndID, int32 volume, int32 pan, int8 volume_offset) {
 	// volume is z of position
 	RegisterSoundOffset(SPECIAL_SOUND, NULL, sfxName, sfxHash, sndID, (PXreal)pan, (PXreal)0, (PXreal)volume, 0, 0, volume_offset);
 }
 
-void RemoveRegisteredSound(uint32 obj, const cstr sndID) {
+void RemoveRegisteredSound(uint32 obj, const char *sndID) {
 	int32 i;
 	uint32 sndIDHash;
 

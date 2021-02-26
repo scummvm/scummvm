@@ -100,12 +100,12 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 
 void SetupSndEngine() {}
 
-void LoadSessionSounds(const cstr cluster) { Tdebug("sounds.txt", "Setting up session sfx data cluster \"%s\"", cluster); }
+void LoadSessionSounds(const char *cluster) { Tdebug("sounds.txt", "Setting up session sfx data cluster \"%s\"", cluster); }
 
-void LoadMissionSounds(const cstr cluster) { Tdebug("sounds.txt", "Setting up mission sfx data cluster \"%s\"", cluster); }
+void LoadMissionSounds(const char *cluster) { Tdebug("sounds.txt", "Setting up mission sfx data cluster \"%s\"", cluster); }
 
 // in Hz
-int32 GetSamplePitch(const cstr sampleName, bool8 isInSession) {
+int32 GetSamplePitch(const char *sampleName, bool8 isInSession) {
 	if (g_theFxManager) {
 		Tdebug("sounds.txt", "Getting sample rate for %s (isInSession=%d) = %d", sampleName, isInSession,
 		       g_theFxManager->GetDefaultRate(pxVString("samples\\pc\\%s.wav", sampleName)));
@@ -129,7 +129,7 @@ int32 GetSamplePitch(const cstr sampleName, bool8 isInSession) {
 	return false;
 }
 
-void StartSample(int32 ch, const cstr sampleName, bool8 isInSession, int looping) {
+void StartSample(int32 ch, const char *sampleName, bool8 isInSession, int looping) {
 	int32 result;
 
 	if (g_theFxManager) {

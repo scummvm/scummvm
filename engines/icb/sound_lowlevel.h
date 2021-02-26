@@ -34,15 +34,15 @@ namespace ICB {
 
 void SetupSndEngine();
 
-int32 GetSamplePitch(const cstr sampleName, bool8 isInSession);
+int32 GetSamplePitch(const char *sampleName, bool8 isInSession);
 
-void StartSample(int32 ch, const cstr sampleName, bool8 isInSession, int looping);
+void StartSample(int32 ch, const char *sampleName, bool8 isInSession, int looping);
 void StopSample(int32 ch);
 void SetChannelVolumeAndPan(int32 ch, int32 volume, int32 pan);
 void SetChannelPitch(int32 ch, int32 pitch);
 
-void LoadSessionSounds(const cstr cluster);
-void LoadMissionSounds(const cstr cluster);
+void LoadSessionSounds(const char *cluster);
+void LoadMissionSounds(const char *cluster);
 
 // Prototype for useful cluster managing function
 bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &fileoffset, uint32 &filesize);

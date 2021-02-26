@@ -106,7 +106,7 @@ void Init_play_movie(const char *param0, bool8 param1);
 uint32 GetFileSz(const char *path);
 
 // Translation tweaks
-_linked_data_file *LoadTranslatedFile(cstr session, cstr mission);
+_linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
 
 // Death text functions and defines
 #define MAX_DEATH_TEXT 4

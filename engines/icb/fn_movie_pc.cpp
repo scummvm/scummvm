@@ -74,7 +74,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 	PauseSounds();
 	g_TimerOn = FALSE8;
 
-	const cstr moviename = (const cstr)param0;
+	const char *moviename = (const char *)param0;
 
 	// Filename checking to help catch Jake's PSX restrictions
 	if (strlen(moviename) > 8)

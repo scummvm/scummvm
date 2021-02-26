@@ -107,9 +107,9 @@ class px_standard_header {
 	int32 unused2;                          // For future expansion
 	char name[STANDARD_HEADER_NAME_LENGTH]; // 32 bytes worth of ascii name information
 
-	void SetData(int version, _file_type type, int owner, cstr name);
+	void SetData(int version, _file_type type, int owner, const char *name);
 	_file_type GetType() { return (type); }
-	cstr GetName() { return (name); }
+	const char *GetName() { return (name); }
 	uint GetVersion() { return (version); }
 };
 
