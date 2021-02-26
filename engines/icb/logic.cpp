@@ -32,7 +32,6 @@
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_scriptengine.h"
 #include "engines/icb/common/px_game_object.h"
-#include "engines/icb/common/px_maths.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/mission.h"
 #include "engines/icb/session.h"
