@@ -65,6 +65,7 @@ private:
 	KeyHandlersType					_keyHandlers;
 	UseHandlersType					_useHandlers;
 	Graphics::TransparentSurface *	_picture;
+	Graphics::TransparentSurface *	_rotatedPicture;
 	RegionPtr						_region;
 	Animation *						_animation;
 	Animation *						_mouseCursor;
@@ -136,7 +137,7 @@ public:
 	void setPicture(Graphics::TransparentSurface *);
 
 	Graphics::TransparentSurface *getPicture() const {
-		return _picture;
+		return _rotatedPicture? _rotatedPicture: _picture;
 	}
 
 	void generateRegion();
