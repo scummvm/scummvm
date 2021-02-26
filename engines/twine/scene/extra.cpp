@@ -180,7 +180,7 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32
 }
 
 int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
-	const int16 flag = 0x8000 + (int16)type;
+	const int16 flag = EXTRA_SPECIAL_MASK + (int16)type;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];

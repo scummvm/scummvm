@@ -293,7 +293,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 				drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
 
-				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & 0x8000)) {
+				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
 					_engine->_movements->getShadowPosition(extra->pos.x, extra->pos.y, extra->pos.z);
 
 					drawList[drawListPos].posValue = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z - 1;
@@ -463,7 +463,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 	_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
-	if (extra->info0 & 0x8000) {
+	if (extra->info0 & EXTRA_SPECIAL_MASK) {
 		_engine->_extra->drawExtraSpecial(actorIdx, _engine->_renderer->projPosX, _engine->_renderer->projPosY);
 	} else {
 		const SpriteData &spritePtr = _engine->_resources->spriteData[extra->info0];

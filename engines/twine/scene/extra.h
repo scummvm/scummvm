@@ -30,6 +30,8 @@ namespace TwinE {
 
 #define EXTRA_MAX_ENTRIES 50
 
+#define EXTRA_SPECIAL_MASK 0x8000
+
 enum ExtraType {
 	TIME_OUT = 1 << 0,     // 0x0001
 	FLY = 1 << 1,          // 0x0002
