@@ -90,8 +90,8 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     delete[] rawText;
 
     sound.read(stream, SoundManager::SoundDescription::kNormal);
-
-    stream.skip(0x23);
+    responseGenericSound.read(stream, SoundManager::SoundDescription::kNormal);
+    stream.skip(1);
     conditionalResponseCharacterID = stream.readByte();
     goodbyeResponseCharacterID = stream.readByte();
     numSceneChanges = stream.readByte();
@@ -200,6 +200,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             }
 
             if (!engine->sound->isSoundPlaying(sound.channelID)) {
+                _engine->sound->stopSound(sound.channelID);
                 if (responses.size() == 0) {
                     // NPC has finished talking with no responses available, auto-advance to next scene
                     state = kActionTrigger;
@@ -215,11 +216,10 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     if (pickedResponse != -1) {
                         // Player has picked response, play sound file and change state
                         sceneChange = responses[pickedResponse].sceneChange;
-                        SoundManager::SoundDescription responseSound = sound;
-                        responseSound.name = responses[pickedResponse].soundName;
+                        responseGenericSound.name = responses[pickedResponse].soundName;
                         // TODO this is probably not correct
-                        engine->sound->loadSound(responseSound);
-                        engine->sound->playSound(responseSound.channelID);
+                        engine->sound->loadSound(responseGenericSound);
+                        engine->sound->playSound(responseGenericSound.channelID);
                         state = kActionTrigger;
                     }
                 }
@@ -256,7 +256,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 engine->scene->setEventFlag(responses[pickedResponse].flagDesc.label, responses[pickedResponse].flagDesc.flag);
             }
 
-            if (!engine->sound->isSoundPlaying(sound.channelID)) {
+            if (!engine->sound->isSoundPlaying(responseGenericSound.channelID)) {
+                _engine->sound->stopSound(responseGenericSound.channelID);
                 if (shouldPopScene) {
                     // Exit dialogue
                     engine->scene->popScene();

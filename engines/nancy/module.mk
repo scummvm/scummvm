@@ -9,6 +9,7 @@ MODULE_OBJS = \
   action/rotatinglockpuzzle.o \
   action/secondaryvideo.o \
   action/staticbitmapanim.o \
+  action/telephone.o \
   ui/frame.o \
   ui/inventorybox.o \
   ui/scrollbar.o \

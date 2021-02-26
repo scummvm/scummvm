@@ -28,6 +28,7 @@
 #include "engines/nancy/action/staticbitmapanim.h"
 #include "engines/nancy/action/orderingpuzzle.h"
 #include "engines/nancy/action/rotatinglockpuzzle.h"
+#include "engines/nancy/action/telephone.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -119,7 +120,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x69:
             return new LeverPuzzle();
         case 0x6A:
-            return new Telephone();
+            return new Telephone(_engine->scene->getViewport());
         case 0x6B:
             return new SliderPuzzle();
         case 0x6C:

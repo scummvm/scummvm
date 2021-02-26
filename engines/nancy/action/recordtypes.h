@@ -278,11 +278,6 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 };
 
-class Telephone : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class SliderPuzzle : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
@@ -359,6 +354,18 @@ public:
 class HintSystem : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(Nancy::NancyEngine *engine) override;
+
+    byte characterID; // 0x00
+    SoundManager::SoundDescription genericSound; // 0x01
+
+    Common::String text;
+    SceneChangeDesc sceneChange;
+    uint16 hintID;
+    int16 hintWeight;
+
+    void selectHint(Nancy::NancyEngine *engine);
+    void getHint(uint hint, uint difficulty);
 };
 
 } // End of namespace Action

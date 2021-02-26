@@ -46,9 +46,17 @@ struct GoodbyeDesc {
     uint16 sceneIDs[4];
 };
 
-static const uint nancy1ResponseBaseFileOffset = 0xB1FE0; // TODO there could be more than one version of the exe
+struct HintDesc {
+    byte characterID; // 0: Ned, 1: Bess, 2: George
+    byte hintID;
+    FlagDesc flagConditions[4];
+    FlagDesc inventoryCondition[2];
+};
 
-#define EMPTY_DESC {-1, kFalse }
+static const uint nancy1ResponseBaseFileOffset = 0xB1FE0; // TODO there could be more than one version of the exe
+static const uint nancy1HintOffsets[] = { 0xABB88, 0xAD760, 0xAF338 }; // Ned, Bess, George
+
+#define EMPTY_DESC { -1, kFalse }
 
 static const GoodbyeDesc nancy1Goodbyes[] = {
     // Daryl
@@ -626,6 +634,317 @@ static const ConditionalResponseDesc nancy1ConditionalResponses[] = {
         0x159,
         {
             { 0x28, kTrue },
+            EMPTY_DESC
+        }
+    }
+};
+
+static const HintDesc nancy1Hints[] {
+    // Ned
+    {
+        0,
+        1,
+        {
+            { 0, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        2,
+        {
+            { 0, kTrue },
+            { 1, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        3,
+        {
+            { 1, kFalse },
+            EMPTY_DESC
+        },
+        {
+            { 3, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        4,
+        {
+            { 0x55, kFalse },
+            EMPTY_DESC
+        },
+        {
+            { 3, kTrue },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        5,
+        {
+            { 0x55, kTrue },
+            { 0x56, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        6,
+        {
+            { 0x57, kFalse },
+            { 0x56, kTrue },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        0,
+        8,
+        {
+            { 0xA, kTrue },
+            { 0x3B, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 7, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    // Bess
+    {
+        1,
+        1,
+        {
+            { 0x57, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        2,
+        {
+            { 0x57, kTrue },
+            { 0x3C, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        3,
+        {
+            { 0x5A, kFalse },
+            { 0x3C, kTrue },
+            { 0x56, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        4,
+        {
+            { 0x5A, kTrue },
+            { 0x56, kFalse },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        6,
+        {
+            { 0x5A, kFalse },
+            { 0x3C, kTrue },
+            { 0x56, kTrue },
+            EMPTY_DESC
+        },
+        {
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        7,
+        {
+            { 0x59, kTrue },
+            { 0xA, kFalse },
+            EMPTY_DESC
+        },
+        {
+            { 0, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        1,
+        8,
+        {
+            { 0xA, kTrue },
+            { 0x3B, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 0, kTrue },
+            { 7, kFalse }
+        }
+    },
+
+    {
+        1,
+        9,
+        {
+            { 0x59, kFalse },
+            { 0xA, kTrue },
+            { 0x3B, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 7, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    // George
+    {
+        2,
+        0xA,
+        {
+            { 0x4A, kTrue },
+            EMPTY_DESC
+        },
+        EMPTY_DESC
+    },
+
+    {
+        2,
+        1,
+        {
+            { 0x5B, kFalse },
+            EMPTY_DESC
+        },
+        EMPTY_DESC
+    },
+
+    {
+        2,
+        2,
+        {
+            { 0x5B, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 9, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        2,
+        3,
+        {
+            { 0x5B, kTrue },
+            { 0x5C, kFalse },
+            { 0x5D, kFalse },
+            EMPTY_DESC
+        },
+        {
+            { 9, kTrue },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        2,
+        4,
+        {
+            { 0x5B, kTrue },
+            { 0x5C, kTrue },
+            { 0x5D, kFalse },
+            EMPTY_DESC
+        },
+        {
+            { 9, kFalse },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        2,
+        5,
+        {
+            { 0x5B, kTrue },
+            { 0x5C, kTrue },
+            { 0x5D, kTrue },
+            { 0x3B, kFalse }
+        },
+        {
+            { 9, kTrue },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        2,
+        6,
+        {
+            { 0xA, kFalse },
+            { 0x3B, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 9, kTrue },
+            EMPTY_DESC
+        }
+    },
+
+    {
+        2,
+        7,
+        {
+            { 0x3B, kTrue },
+            { 0xA, kTrue },
+            EMPTY_DESC
+        },
+        {
+            { 7, kFalse },
             EMPTY_DESC
         }
     }
