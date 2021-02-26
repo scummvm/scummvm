@@ -53,7 +53,7 @@ namespace ICB {
 
 // Translation tweaks
 
-_linked_data_file *LoadTranslatedFile(cstr session, cstr mission);
+_linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
 
 
 // prototypes
@@ -1192,9 +1192,9 @@ void _game_session::Set_init_voxel_floors() {
 	Prepare_megas_route_barriers(TRUE8); // update barriers
 }
 
-_linked_data_file *LoadTranslatedFile(cstr mission, cstr session) {
+_linked_data_file *LoadTranslatedFile(const char *mission, const char *session) {
 	// Get the actual session name
-	cstr sessionstart = session + strlen(mission) + 1;
+	const char *sessionstart = session + strlen(mission) + 1;
 	pxString actsession;
 	actsession.SetString(sessionstart, strlen(sessionstart) - 1);
 

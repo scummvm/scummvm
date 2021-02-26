@@ -86,7 +86,7 @@ const char *pxString::operator+=(const char *adder) {
 	return (s);
 }
 
-const pxString pxString::operator+(cstr adder) const {
+const pxString pxString::operator+(const char *adder) const {
 	// Produce a string addition without affecting this object
 
 	pxString temp(s);
@@ -94,7 +94,7 @@ const pxString pxString::operator+(cstr adder) const {
 	return (temp);
 }
 
-bool pxString::operator==(cstr string) const {
+bool pxString::operator==(const char *string) const {
 	// Do a character by character comparison
 	if (s == NULL)
 		return ((bool)(string == NULL));
@@ -103,7 +103,7 @@ bool pxString::operator==(cstr string) const {
 	return ((bool)(strcmp(s, const_cast<char *>(string)) == 0));
 }
 
-void pxString::SetString(cstr data, uint len) {
+void pxString::SetString(const char *data, uint len) {
 	// Get the first len characters from another string
 
 	// Lose any string we currently hold

@@ -136,37 +136,37 @@ int32 GetAssignedSounds();
 
 // these functions have both sfxHash and volume_offset which most calls will not use.... they will use the inlines below...
 
-void RegisterSoundOffset(uint32 obj, const cstr offsetName, const cstr sfxName, uint32 sfxHash, const cstr sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time,
+void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time,
                          int8 volume_offset);
-void RegisterSound(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, int8 volume_offset);
-void RegisterSoundAbsolute(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, PXreal x, PXreal y, PXreal z, int8 volume_offset);
-void RegisterSoundTime(uint32 obj, const cstr sfxName, uint32 sfxHash, const cstr sndID, int32 time, int8 volume_offset);
-void RegisterSoundSpecial(const cstr sfxName, uint32 sfxHash, const cstr sndID, int32 volume, int32 pan, int8 volume_offset);
+void RegisterSound(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int8 volume_offset);
+void RegisterSoundAbsolute(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal x, PXreal y, PXreal z, int8 volume_offset);
+void RegisterSoundTime(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int32 time, int8 volume_offset);
+void RegisterSoundSpecial(const char *sfxName, uint32 sfxHash, const char *sndID, int32 volume, int32 pan, int8 volume_offset);
 
 // A special function, this plays the sound centrally on the speakers and at the given volume 0-127
-void RegisterMenuSound(const cstr sfxName, uint32 sfxHash, int32 volume, int32 pan, int8 volume_offset);
+void RegisterMenuSound(const char *sfxName, uint32 sfxHash, int32 volume, int32 pan, int8 volume_offset);
 
 // copies of above with no hash.....!
 
-inline void RegisterSoundOffset(uint32 obj, const cstr offsetName, const cstr sfxName, const cstr sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time) {
+inline void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time) {
 	RegisterSoundOffset(obj, offsetName, sfxName, NULL_HASH, sndID, xo, yo, zo, isNico, time, (int8)127);
 }
 
-inline void RegisterSound(uint32 obj, const cstr sfxName, const cstr sndID) { RegisterSound(obj, sfxName, NULL_HASH, sndID, (int8)127); }
+inline void RegisterSound(uint32 obj, const char *sfxName, const char *sndID) { RegisterSound(obj, sfxName, NULL_HASH, sndID, (int8)127); }
 
-inline void RegisterSoundAbsolute(uint32 obj, const cstr sfxName, const cstr sndID, PXreal x, PXreal y, PXreal z) {
+inline void RegisterSoundAbsolute(uint32 obj, const char *sfxName, const char *sndID, PXreal x, PXreal y, PXreal z) {
 	RegisterSoundAbsolute(obj, sfxName, NULL_HASH, sndID, x, y, z, (int8)127);
 }
 
-inline void RegisterSoundTime(uint32 obj, const cstr sfxName, const cstr sndID, int32 time) { RegisterSoundTime(obj, sfxName, NULL_HASH, sndID, time, (int8)127); }
+inline void RegisterSoundTime(uint32 obj, const char *sfxName, const char *sndID, int32 time) { RegisterSoundTime(obj, sfxName, NULL_HASH, sndID, time, (int8)127); }
 
-inline void RegisterSoundSpecial(const cstr sfxName, const cstr sndID, int32 volume, int32 pan) { RegisterSoundSpecial(sfxName, NULL_HASH, sndID, volume, pan, (int8)127); }
+inline void RegisterSoundSpecial(const char *sfxName, const char *sndID, int32 volume, int32 pan) { RegisterSoundSpecial(sfxName, NULL_HASH, sndID, volume, pan, (int8)127); }
 
-inline void RegisterMenuSound(const cstr sfxName, int32 volume, int32 pan) { RegisterMenuSound(sfxName, NULL_HASH, volume, pan, (int8)127); }
+inline void RegisterMenuSound(const char *sfxName, int32 volume, int32 pan) { RegisterMenuSound(sfxName, NULL_HASH, volume, pan, (int8)127); }
 
 // end of no hash copies
 
-void RemoveRegisteredSound(uint32 obj, const cstr sndID);
+void RemoveRegisteredSound(uint32 obj, const char *sndID);
 
 void RemoveAllSoundsWithID(uint32 obj);
 

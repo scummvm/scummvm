@@ -45,9 +45,9 @@ public:
 	operator const char *() const {
 		return (s); // Return a pointer to the string
 	}
-	cstr operator=(const char *);     // Assign a value
+	const char *operator=(const char *);     // Assign a value
 	void operator=(const pxString &); // Assign a value
-	cstr operator+=(const char *);    // Add a string
+	const char *operator+=(const char *);    // Add a string
 	char &operator[](uint n) {
 		return (s[n]); // Get a character (no reason not to allow it to change)
 	}
@@ -65,18 +65,18 @@ public:
 	const char *c_str() { return s; }
 	const pxString &Format(const char *, ...); // Use variable arguments to set the string
 
-	const pxString operator+(cstr) const;
+	const pxString operator+(const char *) const;
 
 	inline pxString Substr(uint nStart, uint nLen) const;       // Return a part of this string
 	void Substr(pxString &rsStr, uint nStart, uint nLen) const; // A faster substring.
 
-	void SetString(cstr data, uint len); // Get the first len characters from another string
+	void SetString(const char *data, uint len); // Get the first len characters from another string
 
 	uint StrChr(char cToFind, uint nStartPos = 0) const; // Find position of a character in a string [PS 17/08/98]
 
 	// char * comparisons
-	bool operator==(cstr string) const; // Do a character by character comparison
-	bool operator!=(cstr string) const; // Do a character by character uncomparison
+	bool operator==(const char *string) const; // Do a character by character comparison
+	bool operator!=(const char *string) const; // Do a character by character uncomparison
 };
 
 inline pxString::pxString(const pxString &str) {
@@ -185,7 +185,7 @@ inline pxString pxString::Substr(uint nStart, uint nNum) const {
 	return rsRetVal;
 }
 
-inline bool pxString::operator!=(cstr string) const {
+inline bool pxString::operator!=(const char *string) const {
 	// Do a character by character uncomparison
 	// Simply return the opposit of the == function
 	return ((bool)!((*this) == string));

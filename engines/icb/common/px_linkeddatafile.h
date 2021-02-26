@@ -71,7 +71,7 @@ public:
 
 	void *Fetch_items_name_by_number(uint32 number); // return pointer to name of item number n
 
-	void *Try_fetch_item_by_name(cstr);   // reference a resource by name
+	void *Try_fetch_item_by_name(const char *);   // reference a resource by name
 	void *Try_fetch_item_by_hash(uint32); // reference a resource by hash
 
 	void *Try_fetch_item_by_script_name(const char *name);
@@ -133,7 +133,7 @@ inline void *_linked_data_file::Fetch_item_by_name(const char *name) {
 }
 
 // get DATA given NAME (uses get NUMBER given NAME and returns 0 if not found or uses get DATA given NUMBER to return DATA)
-inline void *_linked_data_file::Try_fetch_item_by_name(cstr name) {
+inline void *_linked_data_file::Try_fetch_item_by_name(const char *name) {
 	// as Fetch_item_with_name but will return 0 if entry could not be found as opposed to an assert
 	uint32 search = 0;
 

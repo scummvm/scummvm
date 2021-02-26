@@ -90,7 +90,7 @@ public:
 		m_max_distance = 0;
 	}
 
-	const char *GetSampleName() { return (cstr) this + m_sampleNameOffset; }
+	const char *GetSampleName() { return (const char *) this + m_sampleNameOffset; }
 };
 
 } // End of namespace ICB
