@@ -37,12 +37,14 @@
 namespace Nancy {
 namespace UI {
 
-const Common::String Textbox::beginToken = Common::String("<i>");
-const Common::String Textbox::endToken = Common::String("<o>");
+const Common::String Textbox::CCBeginToken = Common::String("<i>");
+const Common::String Textbox::CCEndToken = Common::String("<o>");
 const Common::String Textbox::colorBeginToken = Common::String("<c1>");
 const Common::String Textbox::colorEndToken = Common::String("<c0>");
 const Common::String Textbox::hotspotToken = Common::String("<h>");
 const Common::String Textbox::newLineToken = Common::String("<n>");
+const Common::String Textbox::tabToken = Common::String("<t>");
+const Common::String Textbox::telephoneEndToken = Common::String("<e>");
 
 void Textbox::init() {    
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("TBOX");
@@ -62,6 +64,9 @@ void Textbox::init() {
     _lineHeight = chunk->readUint16LE();
     // Not sure why but to get exact results we subtract 1
     _borderWidth = chunk->readUint16LE() - 1;
+
+    chunk->seek(0x1FE, SEEK_SET);
+    _fontID = chunk->readUint16LE();
 
     chunk = _engine->getBootChunkStream("BSUM");
     chunk->seek(0x164);
@@ -94,11 +99,12 @@ void Textbox::updateGraphics() {
 
     RenderObject::updateGraphics();
 }
+
 void Textbox::handleInput(NancyInput &input) {
     _scrollbar.handleInput(input);
 
-    for (uint i = 0; i < _responses.size(); ++i) {
-        Common::Rect hotspot = _responses[i].hotspot;
+    for (uint i = 0; i < _hotspots.size(); ++i) {
+        Common::Rect hotspot = _hotspots[i];
         hotspot.translate(0, -_drawSurface.getOffsetFromOwner().y);
         if (convertToScreen(hotspot).findIntersectingRect(_screenPosition).contains(input.mousePos)) {
             _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
@@ -115,94 +121,111 @@ void Textbox::handleInput(NancyInput &input) {
 }
 
 void Textbox::drawTextbox() {
-    Common::Array<Common::String> wrappedLines;
-    Common::String tokenlessString;
+    using namespace Common;
+
     _numLines = 0;
-    // Hardcode to 1 until I figure out the proper logic
-    Font *font = _engine->graphicsManager->getFont(1);
 
-    uint maxWidth = _fullSurface.w - _borderWidth;
+    Font *font = _engine->graphicsManager->getFont(_fontID);
+
+    uint maxWidth = _fullSurface.w - _borderWidth * 2;
     uint lineDist = _lineHeight + _lineHeight / 4;
+    
+    for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
+        Common::String currentLine = _textLines[lineID];
+        currentLine.trim();
 
-    Common::String line;
+        uint horizontalOffset = 0;
+        bool hasHotspot = false;
+        Rect hotspot;
 
-    _mainString.trim();
-
-    // Scan for and remove tokens from main string
-    if (_mainString.hasPrefix(beginToken) && _mainString.hasSuffix(endToken)) {
-        tokenlessString = _mainString.substr(beginToken.size(), _mainString.size() - beginToken.size() - endToken.size());
-        if (tokenlessString.hasSuffix(newLineToken)) {
-            tokenlessString = tokenlessString.substr(0, tokenlessString.size() - newLineToken.size());
+        // Trim the begin and end tokens from the line
+        if (currentLine.hasPrefix(CCBeginToken) && currentLine.hasSuffix(CCEndToken)) {
+            currentLine = currentLine.substr(CCBeginToken.size(), currentLine.size() - CCBeginToken.size() - CCEndToken.size());
         }
-    }
+        
+        // Replace every newline token with \n
+        uint32 newLinePos;
+        while (newLinePos = currentLine.find(newLineToken), newLinePos != String::npos) {
+            currentLine.replace(newLinePos, newLineToken.size(), "\n");
+        }
 
-    // Wrap text for main string
-    font->wordWrapText(tokenlessString, maxWidth, wrappedLines);
+        // Simply remove telephone end token
+        if (currentLine.hasSuffix(telephoneEndToken)) {
+            currentLine = currentLine.substr(0, currentLine.size() - telephoneEndToken.size());
+        }
 
-    // Draw main string
-    for (auto &str : wrappedLines) {
-        font->drawString(&_fullSurface, str, _borderWidth, _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
-        ++_numLines;
-    }
+        // Remove hotspot token and mark that we need to calculate the bounds
+        // Assumes a single text line has a single hotspot
+        uint32 hotspotPos = currentLine.find(hotspotToken);
+        if (hotspotPos != String::npos) {
+            currentLine.erase(hotspotPos, hotspotToken.size());
+            hasHotspot = true;
+        }
 
-    for (auto &res : _responses) {
-        // Scan for tokens
-        ++_numLines;
-        bool newLineAtEnd = false;
-        uint colorCharOffset = 0;
-        uint colorPixelOffset = 0;
-
-        res.text.trim();
-
-        tokenlessString.clear();
-        wrappedLines.clear();
-
-        if (res.text.hasPrefix(colorBeginToken)) {
-            // Create a substring with all (usually just one) of the colored characters
-            for (uint i = colorBeginToken.size(); res.text.substr(i, colorEndToken.size()) != colorEndToken; ++i) {
-                tokenlessString += res.text[i];
+        // Subdivide current line into sublines for proper handling of the tab and color tokens
+        // Assumes the tab token is on a new line
+        while (!currentLine.empty())
+        {
+            if (currentLine.hasPrefix(tabToken)) {
+                horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
+                currentLine = currentLine.substr(tabToken.size());
             }
 
-            // Draw the color string
-            font->drawString(&_fullSurface, tokenlessString, _borderWidth, _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);
-            colorCharOffset = tokenlessString.size() + colorBeginToken.size() + colorEndToken.size();
-            colorPixelOffset = font->getStringWidth(tokenlessString);
+            String currentSubLine;
+
+            uint32 nextTabPos = currentLine.find(tabToken);
+            if (nextTabPos != String::npos) {
+                currentSubLine = currentLine.substr(0, nextTabPos);
+                currentLine = currentLine.substr(nextTabPos);
+            } else {
+                currentSubLine = currentLine;
+                currentLine.clear();
+            }
+
+            // Assumes color token will be at the beginning of the line, and color string will not need wrapping
+            if (currentSubLine.hasPrefix(colorBeginToken)) {
+                // Found color string, look for end token
+                uint32 colorEndPos = currentSubLine.find(colorEndToken);
+
+                Common::String colorSubLine = currentSubLine.substr(colorBeginToken.size(), colorEndPos - colorBeginToken.size());
+                currentSubLine = currentSubLine.substr(colorBeginToken.size() + colorEndToken.size() + colorSubLine.size());
+
+                // Draw the color line
+                font->drawString(&_fullSurface, colorSubLine, _borderWidth + horizontalOffset, _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);
+                horizontalOffset += font->getStringWidth(colorSubLine);
+            }
+
+            Array<Common::String> wrappedLines;
+
+            // Do word wrapping on the rest of the text
+            font->wordWrapText(currentSubLine, maxWidth, wrappedLines, horizontalOffset);
+
+            if (hasHotspot) {
+                hotspot.left = _borderWidth;
+                hotspot.top = _firstLineOffset - font->getFontHeight() + (_numLines + 1) * lineDist;
+                hotspot.setHeight((wrappedLines.size() - 1) * lineDist + _lineHeight);
+                hotspot.setWidth(0);
+            }
+
+            // Draw the wrapped lines
+            for (uint i = 0; i < wrappedLines.size(); ++i) {
+                font->drawString(&_fullSurface, wrappedLines[i], _borderWidth + (i == 0 ? horizontalOffset : 0), _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
+                if (hasHotspot) {
+                    hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? horizontalOffset : 0)));
+                }
+                ++_numLines;
+            }
+
+            horizontalOffset = 0;
+        }
+        
+        // Add the hotspot to the list
+        if (hasHotspot) {
+            _hotspots.push_back(hotspot);
         }
 
-        tokenlessString = res.text.substr(colorCharOffset, res.text.size() - colorCharOffset);
-
-
-        // Remove the new line token and add a line break
-        if (tokenlessString.hasSuffix(newLineToken)) {
-            newLineAtEnd = true;
-            tokenlessString = tokenlessString.substr(0, tokenlessString.size() - newLineToken.size());
-        }
-
-        // Remove the hotspot token
-        if (tokenlessString.hasSuffix(hotspotToken)) {
-            tokenlessString = tokenlessString.substr(0, tokenlessString.size() - hotspotToken.size());
-        }
-
-        // Word wrap the response
-        font->wordWrapText(tokenlessString, maxWidth, wrappedLines, colorPixelOffset);
-
-        res.hotspot.left = _borderWidth;
-        res.hotspot.top = _firstLineOffset - font->getFontHeight() + (_numLines + 1) * lineDist;
-        res.hotspot.setHeight((wrappedLines.size() - 1) * lineDist + _lineHeight);
-        res.hotspot.setWidth(0);
-
-        // Draw the response
-        for (uint i = 0; i < wrappedLines.size(); ++i) {
-            font->drawString(&_fullSurface, wrappedLines[i], _borderWidth + (i == 0 ? colorPixelOffset : 0), _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
-            // Set the response's hotspot width
-            res.hotspot.setWidth(MAX<int16>(res.hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? colorPixelOffset : 0)));
-            ++_numLines;
-        }
-
-        // Add a line break if there was a new line token
-        if (!newLineAtEnd) {
-            --_numLines;
-        }
+        // Add a new line after every text line
+        ++_numLines;
     }
 
     setVisible(true);
@@ -211,8 +234,8 @@ void Textbox::drawTextbox() {
 
 void Textbox::clear() {
     _fullSurface.clear();
-    _mainString.clear();
-    _responses.clear();
+    _textLines.clear();
+    _hotspots.clear();
     _scrollbar.resetPosition();
     _numLines = 0;
     onScrollbarMove();
@@ -221,13 +244,8 @@ void Textbox::clear() {
 
 void Textbox::addTextLine(const Common::String &text) {
     // Scan for the hotspot token and assume the text is the main text if not found
-    if (text.contains(hotspotToken)) {
-        _responses.push_back(Response());
-        _responses.back().text = text;
-    } else {
-        _mainString = text;
-    }
-    
+    _textLines.push_back(text);
+ 
     _needsTextRedraw = true;
 }
 
@@ -264,7 +282,7 @@ void Textbox::onScrollbarMove() {
 
 uint16 Textbox::getInnerHeight() {
     uint lineDist = _lineHeight + _lineHeight / 4;
-    return _numLines * lineDist + 2 * _firstLineOffset;
+    return _numLines * lineDist + _firstLineOffset + lineDist / 2;
 }
 
 void Textbox::TextboxScrollbar::init() {
