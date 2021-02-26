@@ -96,14 +96,6 @@ void Process::jumpz(int16 delta) {
 		debug("jumpz ignored %d %+d", value, delta);
 }
 
-void Process::incrementGlobalByTop() {
-	incrementGlobal(top());
-}
-void Process::decrementGlobalByTop() {
-	decrementGlobal(top());
-}
-
-
 void Process::suspend() {
 	suspend(kExitCodeSuspend);
 }
