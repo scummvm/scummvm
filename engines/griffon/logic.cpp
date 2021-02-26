@@ -109,6 +109,9 @@ void GriffonEngine::updateY() {
 	_lasty = 0;
 
 	for (int i = 1; i <= _lastNpc; i++) {
+		if (!_npcInfo[i].onMap)
+			continue;
+
 		int yy = (int)(_npcInfo[i].y * 10);
 
 		do {
