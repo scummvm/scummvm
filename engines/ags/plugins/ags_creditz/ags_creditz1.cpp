@@ -111,9 +111,8 @@ void AGSCreditz1::ScrollCredits(const ScriptMethodParams &params) {
 NumberPtr AGSCreditz1::GetCredit(const ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 
-	return const_cast<char *>( (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
-		"image" : _state->_credits[0][ID]._text.c_str()
-	);
+	return (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
+		"image" : _state->_credits[0][ID]._text.c_str();
 }
 
 NumberPtr AGSCreditz1::IsCreditScrollingFinished(const ScriptMethodParams &params) {
@@ -146,7 +145,7 @@ void AGSCreditz1::SetStaticCredit(const ScriptMethodParams &params) {
 
 NumberPtr AGSCreditz1::GetStaticCredit(const ScriptMethodParams &params) {
 	//PARAMS1(int, ID);
-	return nullptr;
+	return NumberPtr();
 }
 
 void AGSCreditz1::StartEndStaticCredits(const ScriptMethodParams &params) {
@@ -178,7 +177,7 @@ void AGSCreditz1::StaticReset(const ScriptMethodParams &params) {
 
 NumberPtr AGSCreditz1::GetStaticCreditTitle(const ScriptMethodParams &params) {
 	//PARAMS1(int, ID);
-	return nullptr;
+	return NumberPtr();
 }
 
 void AGSCreditz1::SetStaticCreditImage(const ScriptMethodParams &params) {

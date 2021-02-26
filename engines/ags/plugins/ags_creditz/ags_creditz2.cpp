@@ -112,7 +112,7 @@ void AGSCreditz2::SetCredit(const ScriptMethodParams &params) {
 NumberPtr AGSCreditz2::GetCredit(const ScriptMethodParams &params) {
 	PARAMS2(int, sequence, int, ID);
 
-	return const_cast<char *>(_state->_credits[sequence][ID]._text.c_str());
+	return _state->_credits[sequence][ID]._text.c_str();
 }
 
 void AGSCreditz2::CreditsSettings(const ScriptMethodParams &params) {

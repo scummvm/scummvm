@@ -110,9 +110,12 @@ enum {
 union NumberPtr {
 	int32 _value;
 	void *_ptr;
+	const void *_constPtr;
 
+	NumberPtr() : _ptr(nullptr) {}
 	NumberPtr(int value) { _ptr = nullptr; _value = value; }
 	NumberPtr(void *ptr) : _ptr(ptr) {}
+	NumberPtr(const void *ptr) : _constPtr(ptr) {}
 	operator int() const { return _value; }
 };
 
