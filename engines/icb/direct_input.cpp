@@ -38,21 +38,6 @@
 
 namespace ICB {
 
-// Initialised to unset values
-// For mapping purposes
-uint8 up_joy = 0xFF;
-uint8 down_joy = 0xFF;
-uint8 left_joy = 0xFF;
-uint8 right_joy = 0xFF;
-uint8 sidestep_button = 0xFF;
-uint8 run_button = 0xFF;
-uint8 crouch_button = 0xFF;
-uint8 interact_button = 0xFF;
-uint8 arm_button = 0xFF;
-uint8 fire_button = 0xFF;
-uint8 inventory_button = 0xFF;
-uint8 remora_button = 0xFF;
-uint8 pause_button = 0xFF;
 bool8 keyboard_buf_scancodes[512]; // SDL_NUM_SCANCODES
 bool8 repeats_scancodes[512];      // SDL_NUM_SCANCODES
 
