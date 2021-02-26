@@ -28,7 +28,6 @@
 #ifndef ICB_PX_EXCEPTION_H
 #define ICB_PX_EXCEPTION_H
 
-#include "engines/icb/common/px_rccommon.h" // This should be included in every file before anything else
 #include "engines/icb/common/px_string.h"
 
 namespace ICB {

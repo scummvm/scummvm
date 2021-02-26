@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/session.h"
 #include "engines/icb/actor.h"

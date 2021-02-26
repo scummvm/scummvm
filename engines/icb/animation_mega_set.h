@@ -29,7 +29,6 @@
 #define ICB_ANIMATION_MEGA_SET
 
 #include "engines/icb/common/px_string.h"
-#include "engines/icb/common/px_rccommon.h"
 
 namespace ICB {
 

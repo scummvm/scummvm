@@ -29,7 +29,6 @@
 #define ICB_D_DEBUG
 
 #include "engines/icb/p4_generic.h"
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/debug_pc.h"

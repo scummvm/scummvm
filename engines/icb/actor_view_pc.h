@@ -28,8 +28,6 @@
 #ifndef ICB_ACTOR_VIEW_PC_H_INCLUDED
 #define ICB_ACTOR_VIEW_PC_H_INCLUDED
 
-#include "engines/icb/common/px_rccommon.h"
-
 namespace ICB {
 
 // Set this to true if the actor view (character profiles) should act as voxview

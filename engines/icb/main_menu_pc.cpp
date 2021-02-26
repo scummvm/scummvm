@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/res_man_pc.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/global_objects.h"

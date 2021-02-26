@@ -29,7 +29,6 @@
 #define ICB_PX_3DREALPOINT_H_INCLUDED
 
 // Include the header files needed by this class.
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_rcutypes.h"
 
 namespace ICB {

@@ -28,6 +28,7 @@
 #ifndef ICB_PXGLOBALVARIABLES
 #define ICB_PXGLOBALVARIABLES
 
+#include "common/noncopyable.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_clu_api.h"
 
@@ -46,7 +47,7 @@ public:
 	int32 value;
 };
 
-class CpxGlobalScriptVariables {
+class CpxGlobalScriptVariables : Common::NonCopyable {
 private:
 	CpxVariable m_vars[MAX_global_vars];
 
@@ -83,9 +84,6 @@ public:
 	uint GetNoItems() { return (m_no_vars); }
 
 	const CpxVariable &operator[](uint n) { return (m_vars[n]); } // Return reference to variable itself (const)
-
-private:
-	PreventClassCopy(CpxGlobalScriptVariables);
 };
 
 } // End of namespace ICB

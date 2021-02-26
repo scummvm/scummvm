@@ -27,7 +27,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/icb.h"
 #include "engines/icb/options_manager_pc.h"
 #include "engines/icb/movie_pc.h"

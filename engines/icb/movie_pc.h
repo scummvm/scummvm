@@ -28,7 +28,6 @@
 #ifndef ICB_MOVIE_PC_H__
 #define ICB_MOVIE_PC_H__
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/bink_stub.h"
 #include "engines/icb/global_objects_pc.h"
 #include "engines/icb/sound/direct_sound.h"

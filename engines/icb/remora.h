@@ -29,7 +29,6 @@
 #define ICB_REMORA_H_INCLUDED
 
 // Include headers needed by this class.
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_common.h"

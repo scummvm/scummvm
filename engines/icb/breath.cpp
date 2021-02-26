@@ -25,8 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
-
 #if !defined(_PSX_ON_PC)
 #include "engines/icb/debug.h"
 #include "engines/icb/mission.h"

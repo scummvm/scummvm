@@ -28,7 +28,6 @@
 #ifndef ICB_PX2DLINE_H_INCLUDED
 #define ICB_PX2DLINE_H_INCLUDED
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_2drealpoint.h"
 

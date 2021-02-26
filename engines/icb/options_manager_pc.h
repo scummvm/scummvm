@@ -28,7 +28,6 @@
 #ifndef ICB_OPTIONS_MANAGER_PC_H_INCLUDED
 #define ICB_OPTIONS_MANAGER_PC_H_INCLUDED
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/global_switches.h"

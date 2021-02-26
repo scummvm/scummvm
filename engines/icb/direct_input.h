@@ -28,8 +28,6 @@
 #ifndef ICB_DINPUTH
 #define ICB_DINPUTH
 
-#include "engines/icb/common/px_rccommon.h"
-
 #include "common/keyboard.h"
 
 namespace ICB {

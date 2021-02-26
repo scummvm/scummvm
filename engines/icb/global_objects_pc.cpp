@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/global_objects_pc.h"
 

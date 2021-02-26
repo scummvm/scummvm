@@ -28,7 +28,6 @@
 #ifndef ICB_GAME_ENGINE_SCRIPTENGINE_H
 #define ICB_GAME_ENGINE_SCRIPTENGINE_H
 
-#include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/common/px_game_object.h"
 #include "engines/icb/common/px_globalvariables.h"

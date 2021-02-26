@@ -29,7 +29,6 @@
 #define ICB_PC_CAPRI_MATHS_H
 
 #include "engines/icb/common/px_capri_maths_pc.h"
-#include "engines/icb/common/px_rccommon.h"
 
 namespace ICB {
 

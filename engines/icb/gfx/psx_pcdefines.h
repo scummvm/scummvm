@@ -29,7 +29,6 @@
 #define ICB_PSX_PCDEFINES_H
 
 #include "common/types.h"
-#include "engines/icb/common/px_rccommon.h"
 
 namespace ICB {
 
