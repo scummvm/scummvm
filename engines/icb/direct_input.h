@@ -32,45 +32,10 @@
 
 namespace ICB {
 
-// Global joystick variables
-extern int currentJoystick;  // Mode the joystick is in
-extern int attachedJoystick; // Mode the joystick is
-
-// Digital defaults (to emulate playstation pad)
-#define JOY_UP -127
-#define JOY_DOWN 127
-#define JOY_LEFT -127
-#define JOY_RIGHT 127
-
-// Used to request analogue values
-#define X_AXIS 0xFE
-#define Y_AXIS 0xFD
-
-// For mapping purposes
-extern uint8 up_joy;
-extern uint8 down_joy;
-extern uint8 left_joy;
-extern uint8 right_joy;
-
-// Equivalent values to call read joystick with
-extern uint8 sidestep_button;
-extern uint8 run_button;
-extern uint8 crouch_button;
-extern uint8 interact_button;
-extern uint8 arm_button;
-extern uint8 fire_button;
-extern uint8 inventory_button;
-extern uint8 remora_button;
-extern uint8 pause_button;
 extern bool8 keyboard_buf_ascii[256];
 extern bool8 repeats_ascii[256];
 extern bool8 keyboard_buf_scancodes[512]; // SDL_NUM_SCANCODES
 extern bool8 repeats_scancodes[512];      // SDL_NUM_SCANCODES
-
-// Generic joystick types (used to regulate control mode)
-#define NO_JOYSTICK 0
-#define ANALOGUE_JOYSTICK 1
-#define DIGITAL_JOYSTICK 2
 
 void Init_direct_input();
 void setKeyState(Common::KeyCode key, bool pressed);
@@ -83,16 +48,6 @@ uint32 Get_DI_key_press();
 void Clear_DI_key_buffer();
 void SetDefaultKeys();
 const char *GetKeyName(uint32 key);
-void SetDefaultJoystick();
-
-int32 Read_Joystick(uint8 part);
-int32 Read_Joystick_once(uint8 part);
-const char *GetJoystickName();
-const char *GetButtonName(uint8 part);
-const char *GetAxisName(uint8 part);
-uint8 GetJoystickButtonPress();
-uint8 GetJoystickAxisPress();
-void UnsetJoystickConfig();
 void UnsetKeys();
 
 } // End of namespace ICB
