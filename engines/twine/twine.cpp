@@ -644,7 +644,7 @@ void TwinEEngine::processInventoryAction() {
 		_movements->rotateActor(0, 800, pinguin->angle);
 
 		if (!_collision->checkCollisionWithActors(_scene->mecaPinguinIdx)) {
-			pinguin->life = kActorMaxLife;
+			pinguin->setLife(kActorMaxLife);
 			pinguin->body = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->mecaPinguinIdx);
 			pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
@@ -665,9 +665,9 @@ void TwinEEngine::processInventoryAction() {
 	case kiCloverLeaf:
 		if (_scene->sceneHero->life < kActorMaxLife) {
 			if (_gameState->inventoryNumLeafs > 0) {
-				_scene->sceneHero->life = kActorMaxLife;
-				_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
-				_gameState->inventoryNumLeafs--;
+				_scene->sceneHero->setLife(kActorMaxLife);
+				_gameState->setMagicPoints(_gameState->magicLevelIdx * 20);
+				_gameState->addLeafs(-1);
 				_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiCloverLeaf, 0, 0, 0, OverlayPosType::koNormal, 3);
 			}
 		}
@@ -909,7 +909,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							}
 							_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
 							actor->controlMode = ControlMode::kNoMove;
-							actor->life = -1;
+							actor->setLife(-1);
 							_actor->cropBottomScreen = _renderer->projPos.y;
 							actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 						}
@@ -919,7 +919,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							if (!actor->bonusParameter.unk1) {
 								_actor->processActorExtraBonus(a);
 							}
-							actor->life = 0;
+							actor->setLife(0);
 						}
 					}
 				}
@@ -939,18 +939,18 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						_scene->heroPositionType = ScenePositionType::kReborn;
 
-						_scene->sceneHero->life = kActorMaxLife;
+						_scene->sceneHero->setLife(kActorMaxLife);
 						_redraw->reqBgRedraw = true;
 						_screens->lockPalette = true;
-						_gameState->inventoryNumLeafs--;
+						_gameState->addLeafs(-1);
 						_actor->cropBottomScreen = 0;
 					} else { // game over
-						_gameState->inventoryNumLeafsBox = 2;
-						_gameState->inventoryNumLeafs = 1;
-						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
+						_gameState->setLeafBoxes(2);
+						_gameState->setLeafs(1);
+						_gameState->setMagicPoints(_gameState->magicLevelIdx * 20);
 						_actor->heroBehaviour = _actor->previousHeroBehaviour;
 						actor->angle = _actor->previousHeroAngle;
-						actor->life = kActorMaxLife;
+						actor->setLife(kActorMaxLife);
 
 						if (_scene->previousSceneIdx != _scene->currentSceneIdx) {
 							_scene->newHeroPos.x = -1;

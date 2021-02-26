@@ -220,7 +220,7 @@ bool Scene::loadSceneLBA2() {
 			/*act->cropBottom = act->spriteSizeHit;*/
 		}
 		act->armor = stream.readByte();
-		act->life = stream.readByte();
+		act->setLife(stream.readByte());
 
 		act->moveScriptSize = stream.readUint16LE();
 		act->moveScript = currentScene + stream.pos();
@@ -348,7 +348,7 @@ bool Scene::loadSceneLBA1() {
 		act->bonusAmount = stream.readByte();
 		act->talkColor = stream.readByte();
 		act->armor = stream.readByte();
-		act->life = stream.readByte();
+		act->setLife(stream.readByte());
 
 		act->moveScriptSize = stream.readUint16LE();
 		act->moveScript = currentScene + stream.pos();

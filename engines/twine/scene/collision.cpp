@@ -446,7 +446,7 @@ void Collision::stopFalling() { // ReceptionObj()
 
 		if (fall >= BRICK_HEIGHT * 8) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->pos.x, _engine->_actor->processActorPtr->pos.y + 1000, _engine->_actor->processActorPtr->pos.z, ExtraSpecialType::kHitStars);
-			_engine->_actor->processActorPtr->life--;
+			_engine->_actor->processActorPtr->addLife(-1);
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall > 10) {
 			_engine->_animations->initAnim(AnimationTypes::kLanding, kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);

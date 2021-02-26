@@ -100,7 +100,7 @@ void GameState::initHeroVars() {
 	usingSabre = false;
 
 	_engine->_scene->sceneHero->body = BodyType::btNormal;
-	_engine->_scene->sceneHero->life = kActorMaxLife;
+	_engine->_scene->sceneHero->setLife(kActorMaxLife);
 	_engine->_scene->sceneHero->talkColor = COLOR_BRIGHT_BLUE;
 }
 

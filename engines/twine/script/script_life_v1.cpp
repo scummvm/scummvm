@@ -804,7 +804,7 @@ static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	otherActor->dynamicFlags.bIsDead = 1;
 	otherActor->entity = -1;
 	otherActor->zone = -1;
-	otherActor->life = 0;
+	otherActor->setLife(0);
 
 	return 0;
 }
@@ -818,7 +818,7 @@ static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->dynamicFlags.bIsDead = 1;
 	ctx.actor->entity = -1;
 	ctx.actor->zone = -1;
-	ctx.actor->life = 0;
+	ctx.actor->setLife(0);
 
 	return 0;
 }
@@ -1154,7 +1154,7 @@ static int32 lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
 	static int32 lifeValue = ctx.stream.readByte();
 
-	engine->_scene->getActor(otherActorIdx)->life = lifeValue;
+	engine->_scene->getActor(otherActorIdx)->setLife(lifeValue);
 
 	return 0;
 }
@@ -1168,10 +1168,9 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	static int32 lifeValue = ctx.stream.readByte();
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
-	otherActor->life -= lifeValue;
-
+	otherActor->addLife(-lifeValue);
 	if (otherActor->life < 0) {
-		otherActor->life = 0;
+		otherActor->setLife(0);
 	}
 
 	return 0;
@@ -1395,7 +1394,7 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4F
  */
 static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_scene->sceneHero->life = kActorMaxLife;
+	engine->_scene->sceneHero->setLife(kActorMaxLife);
 	engine->_gameState->inventoryMagicPoints = engine->_gameState->magicLevelIdx * 20;
 	return 0;
 }
@@ -1631,8 +1630,8 @@ static int32 lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->sceneHero->dynamicFlags.bAnimEnded = 1;
-	engine->_scene->sceneHero->life = 0;
-	engine->_gameState->inventoryNumLeafs = 0;
+	engine->_scene->sceneHero->setLife(0);
+	engine->_gameState->setLeafs(0);
 	return 1; // break
 }
 
@@ -1642,9 +1641,9 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->quitGame = 1;
-	engine->_gameState->inventoryNumLeafs = 0;
-	engine->_scene->sceneHero->life = kActorMaxLife;
-	engine->_gameState->inventoryMagicPoints = 80;
+	engine->_gameState->setLeafs(0);
+	engine->_scene->sceneHero->setLife(kActorMaxLife);
+	engine->_gameState->setMagicPoints(80);
 	engine->_scene->currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->heroBehaviour = engine->_actor->previousHeroBehaviour;
 	engine->_scene->newHeroPos.x = -1;

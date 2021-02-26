@@ -831,7 +831,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		// if under the map, than die
 		if (_engine->_collision->collision.y == -1) {
-			actor->life = 0;
+			actor->setLife(0);
 		}
 	} else {
 		if (actor->staticFlags.bComputeCollisionWithObj) {
