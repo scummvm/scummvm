@@ -855,7 +855,7 @@ _route_barrier *_barrier_handler::Fetch_barrier(uint32 num) {
 	// return a pointer to numbered barrier
 	_route_barrier *bar;
 
-	_ASSERT(num < total_barriers);
+	assert(num < total_barriers);
 
 	if (num >= total_barriers)
 		Fatal_error("illegal barrier request %d", num);

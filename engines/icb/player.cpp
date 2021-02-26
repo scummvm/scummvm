@@ -2890,7 +2890,7 @@ void _player::Set_player_id(uint32 id) {
 	// declare object id of player to player system
 
 	// must be legal id
-	_ASSERT(id < MS->Fetch_number_of_objects());
+	assert(id < MS->Fetch_number_of_objects());
 
 	player_id = id;
 

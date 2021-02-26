@@ -44,7 +44,7 @@ _icon_list::_icon_list() {
 	m_nPad2 = 0;
 
 	// Note, a hash of 0 means unknown HASH value i.e. NULL_HASH = 0.
-	_ASSERT(NULL_HASH == 0);
+	assert(NULL_HASH == 0);
 	memset((uint8 *)m_pnIconListHash, 0, ICON_LIST_MAX_ICONS * sizeof(uint32));
 	memset((uint8 *)m_pnDuplicateCount, 0, ICON_LIST_MAX_ICONS * sizeof(uint8));
 	memset((uint8 *)m_ppcIconList, 0, ICON_LIST_MAX_ICONS * MAXLEN_ICON_NAME * sizeof(char));

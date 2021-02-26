@@ -1048,31 +1048,31 @@ inline uint32 _game_session::Fetch_number_of_objects() {
 }
 
 inline _logic *_game_session::Fetch_object_struct(uint32 id) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	return (logic_structs[id]);
 }
 
 inline void _game_session::Force_context_check(uint32 id) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	logic_structs[id]->context_request = TRUE8;
 }
 
 inline _object_status _game_session::Fetch_object_status(uint32 id) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	return (logic_structs[id]->ob_status);
 }
 
 inline void _game_session::Set_object_status(uint32 id, _object_status val) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	logic_structs[id]->ob_status = val;
 }
 
 inline const char *_game_session::Fetch_object_name(uint32 id) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	return ((const char *)(logic_structs[id]->GetName()));
 }
@@ -1120,7 +1120,7 @@ inline uint32 _game_session::External_fetch_no_megas_nudge_barriers(uint32 id) {
 inline uint32 _game_session::Fetch_megas_barrier_number(uint32 barrier) {
 	// can only be called within logic loop
 
-	_ASSERT(barrier < M->number_of_barriers + M->number_of_animating);
+	assert(barrier < M->number_of_barriers + M->number_of_animating);
 
 	return M->barrier_list[barrier];
 }
@@ -1128,21 +1128,21 @@ inline uint32 _game_session::Fetch_megas_barrier_number(uint32 barrier) {
 inline uint32 _game_session::Fetch_megas_nudge_barrier_number(uint32 barrier) {
 	// can only be called within logic loop
 
-	_ASSERT(barrier < M->number_of_nudge);
+	assert(barrier < M->number_of_nudge);
 
 	return M->nudge_list[barrier];
 }
 
 inline uint32 _game_session::External_fetch_megas_barrier(uint32 id, uint32 barrier) {
 	// can only be called within logic loop
-	_ASSERT(barrier < (logic_structs[id]->mega->number_of_barriers) + (logic_structs[id]->mega->number_of_animating));
+	assert(barrier < (logic_structs[id]->mega->number_of_barriers) + (logic_structs[id]->mega->number_of_animating));
 
 	return logic_structs[id]->mega->barrier_list[barrier];
 }
 
 inline uint32 _game_session::External_fetch_megas_nudge_barrier(uint32 id, uint32 barrier) {
 	// can only be called within logic loop
-	_ASSERT(barrier < logic_structs[id]->mega->number_of_nudge);
+	assert(barrier < logic_structs[id]->mega->number_of_nudge);
 
 	return logic_structs[id]->mega->nudge_list[barrier];
 }
@@ -1155,7 +1155,7 @@ inline void _game_session::Set_objects_conversation_uid(uint32 id, uint32 uid) {
 }
 
 inline uint32 _game_session::Return_objects_conversation_uid(uint32 id) {
-	_ASSERT(id < total_objects);
+	assert(id < total_objects);
 
 	return (logic_structs[id]->conversation_uid);
 }

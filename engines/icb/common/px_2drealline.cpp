@@ -26,7 +26,6 @@
  */
 
 #include "engines/icb/common/px_2drealline.h"
-#include "engines/icb/common/px_assert.h"
 
 #include "common/math.h"
 

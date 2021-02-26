@@ -25,7 +25,6 @@
  *
  */
 
-#include "engines/icb/common/px_assert.h"
 #include "engines/icb/common/px_exception.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_string.h"
@@ -249,8 +248,7 @@ const pxString &pxString::Format(const char *format, ...) {
 
 	// At this point the buffer in s is much larger than it needs to be
 	// In the interest of saving space, it will now be reduced
-	_ASSERT(slen >= 0);
-	_ASSERT(slen == strlen(s));
+	assert(slen == strlen(s));
 	char *tempBuffer = new char[slen + 1];
 
 	// If this allocation fails leave the string as it is
@@ -308,7 +306,7 @@ void pxFlexiCharBuffer::CheckSize(uint size) {
 	if (size >= m_bufLen) {
 		uint newLen = size + 1;
 		char *newb = new char[newLen];
-		_ASSERT(newb);
+		assert(newb);
 		memcpy((unsigned char *)newb, (unsigned char *)m_buffer, m_bufLen);
 		delete[] m_buffer;
 		m_buffer = newb;

@@ -1035,7 +1035,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_y_to_id(int32 &, int32 *para
 
 	Zdebug("fn_teleport_y_to_id to %d", params[0]);
 
-	_ASSERT((uint32)params[0] < total_objects);
+	assert((uint32)params[0] < total_objects);
 
 	if (logic_structs[params[0]]->image_type == PROP) {
 		logic_structs[cur_id]->mega->actor_xyz.y = floor_def->Gravitise_y(logic_structs[params[0]]->prop_xyz.y); // logic_structs[tar]->prop_xyz.y;
@@ -1875,7 +1875,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_id_to_list(int32 &, int32 
 	if (L->total_list == MAX_list)
 		Fatal_error("fn_object_id_to_list [%s] has exceeded list size of %d", object->GetName(), MAX_list);
 
-	_ASSERT((uint32)params[0] < total_objects);
+	assert((uint32)params[0] < total_objects);
 
 	L->list[L->total_list++] = params[0];
 

@@ -29,7 +29,6 @@
 #define ICB_PX_BITMAP_PC_H_INCLUDED
 
 #include "engines/icb/common/px_common.h"
-#include "engines/icb/common/px_assert.h"
 
 namespace ICB {
 
@@ -78,7 +77,7 @@ private:
 
 inline _pxPCSprite *_pxPCBitmap::Fetch_item_by_number(uint32 nNumber) {
 	// Make sure requested sprite is in the resource.
-	_ASSERT(nNumber < num_sprites);
+	assert(nNumber < num_sprites);
 
 	// Return the pointer.
 	return ((_pxPCSprite *)(((unsigned char *)this) + sprite_offsets[nNumber]));
