@@ -547,6 +547,11 @@ void Process::attachInventoryObjectToMouse(bool flag) {
 		warning("cannot find object %s", name.c_str());
 }
 
+void Process::returnCurrentInventoryObject() {
+	debug("returnCurrentInventoryObject");
+	_engine->returnCurrentInventoryObject();
+}
+
 void Process::attachInventoryObjectToMouse0() {
 	attachInventoryObjectToMouse(false);
 }
