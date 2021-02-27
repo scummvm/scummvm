@@ -91,13 +91,13 @@ uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     clickSound.read(stream, SoundManager::SoundDescription::kNormal);
     solveExitScene.readData(stream);
     stream.skip(2); // shouldStopRendering, useless
-    flagOnSolve.label = stream.readUint16LE();
+    flagOnSolve.label = stream.readSint16LE();
     flagOnSolve.flag = (NancyFlag)stream.readByte();
     solveSoundDelay = stream.readUint16LE();
     solveSound.read(stream, SoundManager::SoundDescription::kNormal);
     exitScene.readData(stream);
     stream.skip(2); // shouldStopRendering, useless
-    flagOnExit.label = stream.readUint16LE();
+    flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
 
