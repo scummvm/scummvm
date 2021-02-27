@@ -327,8 +327,8 @@ public:
     // TODO subclass into Play and Stop (?)
 
     SoundManager::SoundDescription sound;
-    // ...
-    // SceneChange elements at 0x1E
+    // SceneChange 0x1E
+    FlagDesc flagOnTrigger;
 };
 
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {

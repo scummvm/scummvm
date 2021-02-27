@@ -482,6 +482,9 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
 uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
     sound.read(stream, SoundManager::SoundDescription::kDIGI);
     SceneChange::readData(stream);
+    flagOnTrigger.label = stream.readSint16LE();
+    flagOnTrigger.flag = (NancyFlag)stream.readByte();
+    stream.skip(1);
     return 0x2B;
 }
 
@@ -501,6 +504,9 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
             if (sceneChange.sceneID != 9999) {
                 SceneChange::execute(engine);
             }
+            
+            engine->scene->setEventFlag(flagOnTrigger.label, flagOnTrigger.flag);
+            engine->sound->stopSound(sound.channelID);
             break;
     }
 }
