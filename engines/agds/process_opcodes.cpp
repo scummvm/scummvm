@@ -1210,6 +1210,14 @@ void Process::inventoryFindObjectByName() {
 	push(index);
 }
 
+void Process::inventoryHasObjectByName() {
+	Common::String name = popString();
+	debug("inventoryHasObjectByName %s", name.c_str());
+	bool hasObject = _engine->inventory().find(name) >= 0;
+	debug("\t->%d", hasObject);
+	push(hasObject);
+}
+
 void Process::inventoryHasObject() {
 	int index = pop();
 	debug("inventoryHasObject %d", index);
