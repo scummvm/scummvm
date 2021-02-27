@@ -1574,15 +1574,15 @@ static const int hmPolyOffset5 = 240; /* 0x00f0 */
 static const int hmPolyOffset6 = 300; /* 0x012c */
 
 void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &vertex3, const Vertex &vertex4, int32 &top, int32 &bottom) {
-	const int32 yBottom = (int32)(uint16)vertex1.y;
-	const int32 yTop = (int32)(uint16)vertex2.y;
+	const int32 yBottom = vertex1.y;
+	const int32 yTop = vertex2.y;
 	if (yBottom < yTop) {
 		top = MIN<int32>(yBottom, top);
 		bottom = MAX<int32>(yTop, bottom);
 		computeHolomapPolygon(yTop, (uint16)vertex2.x, yBottom, (uint16)vertex1.x, &_polyTab[hmPolyOffset1]);
 		computeHolomapPolygon(yTop, (uint16)vertex4.x, yBottom, (uint16)vertex3.x, &_polyTab[hmPolyOffset3]);
 		computeHolomapPolygon(yTop, (uint16)vertex4.y, yBottom, (uint16)vertex3.y, &_polyTab[hmPolyOffset4]);
-	} else if (yTop < yBottom) {
+	} else if (yBottom > yTop) {
 		top = MIN<int32>(yTop, top);
 		bottom = MAX<int32>(yBottom, bottom);
 		computeHolomapPolygon(yTop, (uint16)vertex2.x, yBottom, (uint16)vertex1.x, &_polyTab[hmPolyOffset2]);
