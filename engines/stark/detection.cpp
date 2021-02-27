@@ -275,7 +275,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// Russian 2CD by 1C
 	{
-		"tlj", "2 CD/Fargus",
+		"tlj", "2 CD/Snowball", 
 		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"740b97b94e97ed11f064f5fa125ebee1", 486),
 		Common::RU_RUS,
