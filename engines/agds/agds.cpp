@@ -538,11 +538,7 @@ Common::Error AGDSEngine::run() {
 					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
 					debug("%s %d, %d", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y);
 					if (!lclick && _currentInventoryObject && !_currentInventoryObject->useOnHandler()) {
-						auto object = _currentInventoryObject;
-						_currentInventoryObject.reset();
-
-						_inventory.add(object);
-						runObject(object);
+						returnCurrentInventoryObject();
 						break;
 					}
 
@@ -1169,5 +1165,14 @@ void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
 void AGDSEngine::resetCurrentInventoryObject() {
 	_currentInventoryObject.reset();
 }
+
+void AGDSEngine::returnCurrentInventoryObject() {
+	auto object = _currentInventoryObject;
+	_currentInventoryObject.reset();
+
+	_inventory.add(object);
+	runObject(object);
+}
+
 
 } // End of namespace AGDS

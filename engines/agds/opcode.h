@@ -184,7 +184,7 @@ enum Opcode {
 	kLoadPreviousScreen				= 164,
 	kMoveScreenObject				= 165,
 	kSetObjectRegionOffset			= 166,
-	kStub167						= 167,
+	kReturnCurrentInventoryObject	= 167,
 	kStub168						= 168,
 	kGetIntegerSystemVariable		= 169,
 	kSetDelay						= 170,
@@ -424,6 +424,7 @@ enum Opcode {
 	OP(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace) \
 	OP(kSetObjectTile, setObjectTile) \
 	OP(kInventoryHasObject, inventoryHasObject) \
+	OP(kReturnCurrentInventoryObject, returnCurrentInventoryObject) \
 	OP(kSetObjectText, setObjectText) \
 	OP(kSetObjectScale, setObjectScale) \
 	OP(kStub191, disableMouseAreas) \
