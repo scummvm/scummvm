@@ -90,7 +90,6 @@ extern GameSetup usetup;
 
 
 extern RoomStatus *croom;
-extern RoomStatus troom;    // used for non-saveable rooms, eg. intro
 extern int displayed_room;
 extern RoomObject *objs;
 extern ccInstance *roominst;
@@ -551,15 +550,15 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// setup objects
 	if (forchar != nullptr) {
 		// if not restoring a game, always reset this room
-		troom.beenhere = 0;
-		troom.FreeScriptData();
-		troom.FreeProperties();
-		memset(&troom.hotspot_enabled[0], 1, MAX_ROOM_HOTSPOTS);
-		memset(&troom.region_enabled[0], 1, MAX_ROOM_REGIONS);
+		_GP(troom).beenhere = 0;
+		_GP(troom).FreeScriptData();
+		_GP(troom).FreeProperties();
+		memset(&_GP(troom).hotspot_enabled[0], 1, MAX_ROOM_HOTSPOTS);
+		memset(&_GP(troom).region_enabled[0], 1, MAX_ROOM_REGIONS);
 	}
 	if ((newnum >= 0) & (newnum < MAX_ROOMS))
 		croom = getRoomStatus(newnum);
-	else croom = &troom;
+	else croom = &_GP(troom);
 
 	if (croom->beenhere > 0) {
 		// if we've been here before, save the Times Run information

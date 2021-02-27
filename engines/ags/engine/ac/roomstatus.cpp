@@ -35,12 +35,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 RoomStatus::RoomStatus() {
-	beenhere = 0;
-	numobj = 0;
 	memset(&flagstates, 0, sizeof(flagstates));
-	tsdatasize = 0;
-	tsdata = nullptr;
-
 	memset(&hotspot_enabled, 0, sizeof(hotspot_enabled));
 	memset(&region_enabled, 0, sizeof(region_enabled));
 	memset(&walkbehind_base, 0, sizeof(walkbehind_base));

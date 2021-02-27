@@ -57,7 +57,7 @@ using namespace AGS::Engine;
 
 
 extern RoomStruct thisroom;
-extern RoomStatus troom;    // used for non-saveable rooms, eg. intro
+    // used for non-saveable rooms, eg. intro
 extern int our_eip;
 extern GameSetup usetup;
 extern char pexbuf[STD_BUFFER_SIZE];

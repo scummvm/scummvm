@@ -78,7 +78,7 @@ extern AGS::Engine::IDriverDependantBitmap **guibgbmp;
 extern AGS::Engine::IGraphicsDriver *gfxDriver;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern Bitmap *raw_saved_screen;
-extern RoomStatus troom;
+
 extern RoomStatus *croom;
 
 
@@ -381,8 +381,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 	dialogScriptsInst = nullptr;
 
 	resetRoomStatuses();
-	troom.FreeScriptData();
-	troom.FreeProperties();
+	_GP(troom).FreeScriptData();
+	_GP(troom).FreeProperties();
 	free_do_once_tokens();
 
 	// unregister gui controls from API exports

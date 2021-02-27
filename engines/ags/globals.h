@@ -43,6 +43,7 @@ class Bitmap;
 struct IAGSEditorDebugger;
 struct GameSetupStruct;
 struct GameState;
+struct RoomStatus;
 class SpriteCache;
 
 class Globals {
@@ -80,6 +81,7 @@ public:
 	GameSetupStruct *_game = nullptr;
 	GameState *_play = nullptr;
 	SpriteCache *_spriteset = nullptr;
+	RoomStatus *_troom = nullptr; // used for non-saveable rooms, eg. intro
 
 	 /**@}*/
 

@@ -71,7 +71,7 @@ extern int numAnimButs;
 extern ViewStruct *views;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern RoomStruct thisroom;
-extern RoomStatus troom;
+
 extern Bitmap *raw_saved_screen;
 extern MoveList *mls;
 
@@ -930,7 +930,7 @@ HSaveError WriteThisRoom(PStream out) {
 	out->WriteBool(persist);
 	// write the current troom state, in case they save in temporary room
 	if (!persist)
-		troom.WriteToSavegame(out.get());
+		_GP(troom).WriteToSavegame(out.get());
 	return HSaveError::None();
 }
 
@@ -976,7 +976,7 @@ HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 
 	// read the current troom state, in case they saved in temporary room
 	if (!in->ReadBool())
-		troom.ReadFromSavegame(in.get());
+		_GP(troom).ReadFromSavegame(in.get());
 
 	return HSaveError::None();
 }

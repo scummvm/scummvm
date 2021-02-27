@@ -24,6 +24,7 @@
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/roomstatus.h"
 
 namespace AGS3 {
 
@@ -37,6 +38,7 @@ Globals::Globals() {
 	_play = new GameState();
 	_game = new GameSetupStruct();
 	_spriteset = new SpriteCache(_game->SpriteInfos);
+	_troom = new RoomStatus();
 }
 
 Globals::~Globals() {
@@ -44,6 +46,7 @@ Globals::~Globals() {
 	delete _game;
 	delete _play;
 	delete _spriteset;
+	delete _troom;
 }
 
 } // namespace AGS3
