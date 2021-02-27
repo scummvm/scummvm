@@ -4325,6 +4325,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
+	case 156:
+		mapping = NoirMapping{"SHOWACTOR", SHOWACTOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 167:
 		mapping = NoirMapping{"STARTPROCESS", STARTPROCESS, 1};
 		pp -= mapping.numArgs - 1;
@@ -5462,7 +5467,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case SHOWACTOR:
-		// DW2 only
+		// DW2 & Noir
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			*pResumeState = RES_NOT;
 			FinishWaiting(coroParam, pic);
