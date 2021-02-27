@@ -95,12 +95,12 @@ uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     clickSound.read(stream, SoundManager::SoundDescription::kNormal);
     solveExitScene.readData(stream);
     stream.skip(2);
-    flagOnSolve.label = stream.readUint16LE();
+    flagOnSolve.label = stream.readSint16LE();
     flagOnSolve.flag = (NancyFlag)stream.readByte();
     solveSound.read(stream, SoundManager::SoundDescription::kNormal);
     exitScene.readData(stream);
     stream.skip(2);
-    flagOnExit.label = stream.readUint16LE();
+    flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
 
