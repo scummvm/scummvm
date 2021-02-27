@@ -41,19 +41,27 @@ public:
     PlayIntStaticBitmapAnimation(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
     virtual ~PlayIntStaticBitmapAnimation() { _fullSurface.free(); }
 
-    virtual void init()override;
+    virtual void init() override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 
     Common::String imageName;
-    uint16 firstFrame;
-    uint16 lastFrame;
-    FlagDesc soundFlagDesc;
-    EventFlagsDesc triggerFlags;
-    Time frameTime;
 
-    Nancy::SoundManager::SoundDescription sound;
+    NancyFlag isTransparent; // 0xC
+    NancyFlag doNotChangeScene; // 0xE
+    NancyFlag isReverse; // 0x10
+    NancyFlag isLooping; // 0x12
+    uint16 firstFrame; // 0x14
+    uint16 loopFirstFrame; // 0x16
+    uint16 loopLastFrame; // 0x18
+    Time frameTime;
+    uint16 zOrder; // 0x1C
+    FlagDesc updateCondition; // 0x1E
+    // SceneChange
+    EventFlagsDesc triggerFlags; // 0x2A
+
+    Nancy::SoundManager::SoundDescription sound; // 0x52
 
     // Describes a single frame in this animation
     Common::Array<Common::Rect> srcRects;
@@ -66,8 +74,8 @@ public:
     Time nextFrameTime;
     
 protected:
-    virtual uint16 getZOrder() const override { return 7; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
+    virtual uint16 getZOrder() const override { return zOrder; }
+    virtual BlitType getBlitType() const override { return isTransparent == kTrue ? kTrans : kNoTrans; }
     virtual bool isViewportRelative() const override { return true; }
 
     void setFrame(uint frame);

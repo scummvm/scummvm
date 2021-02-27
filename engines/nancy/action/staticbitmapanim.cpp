@@ -50,20 +50,24 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     stream.read(name, 10);
     imageName = Common::String(name);
 
-    stream.skip(0xA);
+    stream.skip(0x2);
+    isTransparent = (NancyFlag)(stream.readUint16LE());
+    doNotChangeScene = (NancyFlag)(stream.readUint16LE());
+    isReverse = (NancyFlag)(stream.readUint16LE());
+    isLooping = (NancyFlag)(stream.readUint16LE());
     firstFrame = stream.readUint16LE();
-    stream.skip(2);
-    lastFrame = stream.readUint16LE();
+    loopFirstFrame = stream.readUint16LE();
+    loopLastFrame = stream.readUint16LE();
     frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
-    stream.skip(2);
-    soundFlagDesc.label = stream.readSint16LE();
-    soundFlagDesc.flag = (NancyFlag)stream.readUint16LE();
+    zOrder = stream.readUint16LE();
+    updateCondition.label = stream.readSint16LE();
+    updateCondition.flag = (NancyFlag)stream.readUint16LE();
     SceneChange::readData(stream);
     triggerFlags.readData(stream);
     sound.read(stream, SoundManager::SoundDescription::kNormal);
     uint numFrames = stream.readUint16LE();
 
-    for (uint i = firstFrame; i <= lastFrame; ++i) {
+    for (uint i = firstFrame; i <= loopLastFrame; ++i) {
         srcRects.push_back(Common::Rect());
         readRect(stream, srcRects[i]);
     }
@@ -76,11 +80,10 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
         readRect(stream, rects.dest);
     }
 
-    return 0x76 + numFrames * 0x22 + (lastFrame - firstFrame + 1) * 16;
+    return 0x76 + numFrames * 0x22 + (loopLastFrame - firstFrame + 1) * 16;
 }
 
 void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
-    // TODO handle sound, event flags
     uint32 currentFrameTime = engine->getTotalPlayTime();
     switch (state) {
         case kBegin:
@@ -91,32 +94,69 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             state = kRun;
             // fall through
         case kRun: {
-            // Check if we've moved the viewport
-            uint16 newFrame = engine->scene->getSceneInfo().frameID;
-            if (currentViewportFrame != newFrame) {
-                currentViewportFrame = newFrame;
-                for (uint i = 0; i < bitmaps.size(); ++i) {
-                    if (currentViewportFrame == bitmaps[i].frameID) {
-                        nextFrameTime = 0;
-                        _screenPosition = bitmaps[i].dest;
-                        break;
-                    }
-                }
-            }
-
             // Check the timer to see if we need to draw the next animation frame
             if (nextFrameTime <= currentFrameTime) {
-                nextFrameTime = currentFrameTime + frameTime;
-                currentFrame = ++currentFrame > lastFrame ? firstFrame : currentFrame;
-                setFrame(currentFrame);
-            }
+                // World's worst if statement
+                if (engine->scene->getEventFlag(updateCondition.label, updateCondition.flag) ||
+                    (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
+                        ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
+                            !engine->sound->isSoundPlaying(sound.channelID))   ) {
+                    
+                    state = kActionTrigger;
+
+                    // Not sure if hiding when triggered is a hack or the intended behavior, but it's here to fix
+                    // nancy1's safe lock light not turning off.
+                    setVisible(false);
+        
+                    if (!engine->sound->isSoundPlaying(sound.channelID)) {
+                        engine->sound->stopSound(sound.channelID);
+                    }
+                } else {
+                    // Check if we've moved the viewport
+                    uint16 newFrame = engine->scene->getSceneInfo().frameID;
+                    if (currentViewportFrame != newFrame) {
+                        currentViewportFrame = newFrame;
+                        for (uint i = 0; i < bitmaps.size(); ++i) {
+                            if (currentViewportFrame == bitmaps[i].frameID) {
+                                _screenPosition = bitmaps[i].dest;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    nextFrameTime = currentFrameTime + frameTime;
+                    setFrame(currentFrame);
+                    if (isReverse == kTrue) {
+                        --currentFrame;
+                        currentFrame = currentFrame < loopFirstFrame ? loopLastFrame : currentFrame;
+                        return;
+                    } else {
+                        ++currentFrame;
+                        currentFrame = currentFrame > loopLastFrame ? loopFirstFrame : currentFrame;
+                        return;
+                    }
+                }                
+            } else {
+                // Check if we've moved the viewport
+                uint16 newFrame = engine->scene->getSceneInfo().frameID;
+                if (currentViewportFrame != newFrame) {
+                    currentViewportFrame = newFrame;
+                    for (uint i = 0; i < bitmaps.size(); ++i) {
+                        if (currentViewportFrame == bitmaps[i].frameID) {
+                            _screenPosition = bitmaps[i].dest;
+                            break;
+                        }
+                    }
+                }
+            }      
             
             break;
         }
         case kActionTrigger:
             triggerFlags.execute(engine);
-            SceneChange::execute(engine);
-            _engine->sound->stopSound(sound.channelID);
+            if (doNotChangeScene == kFalse) {
+                SceneChange::execute(engine);
+            }
             break;
     }
 }
