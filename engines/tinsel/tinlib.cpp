@@ -4281,6 +4281,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 58:
+		mapping = NoirMapping{"ENDACTOR", ENDACTOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 61:
 		mapping = NoirMapping{"EVENT", EVENT, 0};
 		debug(7, "%s()", mapping.name);
@@ -4829,7 +4834,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case ENDACTOR:
-		// DW2 only
+		// DW2 & Noir
 		EndActor(pp[0]);
 		return -1;
 
