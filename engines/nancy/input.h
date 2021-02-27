@@ -26,11 +26,10 @@
 #include "engines/nancy/commontypes.h"
 
 #include "common/rect.h"
+#include "common/array.h"
+#include "common/events.h"
 
 namespace Common {
-template <class T>
-class Array;
-class Keymap;
 typedef class Array<Keymap*> KeymapArray;
 }
 
@@ -58,6 +57,7 @@ struct NancyInput {
 
     Common::Point mousePos;
     uint16 input;
+    Common::Array<Common::KeyState> otherKbdInput;
     
     void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton); }
 };
@@ -98,6 +98,7 @@ public:
 private:
     NancyEngine *_engine;
     uint16 _inputs;
+    Common::Array<Common::KeyState> _otherKbdInput;
 };
 
 } // End of namespace Nancy

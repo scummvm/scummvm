@@ -35,6 +35,7 @@ void InputManager::processEvents() {
     Common::Event event;
 
     _inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp);
+    _otherKbdInput.clear();
 
     while (_engine->getEventManager()->pollEvent(event)) {
         switch (event.type) {
@@ -45,6 +46,9 @@ void InputManager::processEvents() {
                 } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
                     // Quit
                     _engine->quitGame();
+                } else {
+                    // Push all other keyboard events into an array and let getInput() callers handle them
+                    _otherKbdInput.push_back(event.kbd);
                 }
                 break;
             case EVENT_CUSTOM_ENGINE_ACTION_START:
@@ -118,6 +122,7 @@ NancyInput InputManager::getInput() const {
     NancyInput ret;
     ret.mousePos = _engine->getEventManager()->getMousePos();
     ret.input = _inputs;
+    ret.otherKbdInput = _otherKbdInput;
     return ret;
 }
 

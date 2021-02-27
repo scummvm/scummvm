@@ -4,6 +4,7 @@ MODULE_OBJS = \
   action/actionmanager.o \
   action/arfactory_v1.o \
   action/orderingpuzzle.o \
+  action/passwordpuzzle.o \
   action/primaryvideo.o \
   action/recordtypes.o \
   action/rotatinglockpuzzle.o \

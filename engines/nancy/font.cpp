@@ -70,8 +70,6 @@ void Font::read(Common::SeekableReadStream &stream, NancyEngine *engine) {
     _semicolonOffset = stream.readUint16LE();
     _slashOffset = stream.readUint16LE();
 
-    
-
     for (uint i = 0; i < 78; ++i) {
         _symbolRects.push_back(Common::Rect());
         Common::Rect &cur = _symbolRects[i];

@@ -387,10 +387,6 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x192); // TODO
 }
 
-uint16 PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0xD7); // TODO
-}
-
 uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x2); // TODO
 }
