@@ -206,7 +206,7 @@ enum Opcode {
 	kInventoryHasObject				= 186,
 	kAppendInventoryObjectNameToSharedSpace	= 187,
 	kSetObjectText					= 188,
-	kStub189						= 189,
+	kInventoryFindObjectByName		= 189,
 	kSetObjectScale					= 190,
 	kStub191						= 191,
 	kStub192						= 192,
@@ -255,7 +255,7 @@ enum Opcode {
 	kStub235						= 235,
 	kUserEnabled					= 236,
 	kStub237						= 237,
-	kInventoryFindObjectByName		= 238,
+	kInventoryHasObjectByName		= 238,
 	kStub239						= 239,
 	kLoadDialog						= 240,
 	kStub241						= 241,
@@ -467,6 +467,7 @@ enum Opcode {
 	OP(kUserEnabled, userEnabled) \
 	OP(kSetCharacterNotifyVars, setCharacterNotifyVars) \
 	OP(kInventoryFindObjectByName, inventoryFindObjectByName) \
+	OP(kInventoryHasObjectByName, inventoryHasObjectByName) \
 	OP(kLoadDialog, loadDialog) \
 	OP(kHasGlobal, hasGlobal) \
 	OP(kAttachInventoryObjectToMouse0, attachInventoryObjectToMouse0) \
