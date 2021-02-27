@@ -135,7 +135,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 			uidfrom = language_file->ReadInt32();
 			read_string_decrypt(language_file, wasgamename, sizeof(wasgamename));
 			if ((uidfrom != _GP(game).uniqueid) || (strcmp(wasgamename, _GP(game).gamename) != 0)) {
-				parse_error.Format("The translation file is not compatible with this _GP(game). The translation is designed for '%s'.",
+				parse_error.Format("The translation file is not compatible with this game. The translation is designed for '%s'.",
 					wasgamename);
 				return false;
 			}

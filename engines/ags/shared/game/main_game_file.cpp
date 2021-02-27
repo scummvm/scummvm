@@ -78,7 +78,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err) {
 	case kMGFErr_InvalidPropertyValues:
 		return "Errors encountered when reading custom properties.";
 	case kMGFErr_NoGlobalScript:
-		return "No global script in _GP(game).";
+		return "No global script in game.";
 	case kMGFErr_CreateGlobalScriptFailed:
 		return "Failed to load global script.";
 	case kMGFErr_CreateDialogScriptFailed:

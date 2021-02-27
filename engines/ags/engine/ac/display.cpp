@@ -421,7 +421,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 		return 0;
 
 	if (_GP(play).text_speed + _GP(play).text_speed_modifier <= 0)
-		quit("!Text speed is zero; unable to display text. Check your _GP(game).text_speed settings.");
+		quit("!Text speed is zero; unable to display text. Check your game.text_speed settings.");
 
 	// Store how many game loops per character of text
 	// This is calculated using a hard-coded 15 for the text speed,

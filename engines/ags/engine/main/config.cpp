@@ -198,7 +198,7 @@ int convert_fp_to_scaling(uint32_t scaling) {
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup) {
 	scsz_setup.Size = Size();
 	if (windowed) {
-		// For the windowed we define mode by the scaled _GP(game).
+		// For the windowed we define mode by the scaled game.
 		scsz_setup.SizeDef = kScreenDef_ByGameScaling;
 		scsz_setup.MatchDeviceRatio = false;
 		frame_setup = usetup.Screen.WinGameFrame;

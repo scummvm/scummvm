@@ -224,7 +224,7 @@ int getloctype_index = 0, getloctype_throughgui = 0;
 
 void Game_StopAudio(int audioType) {
 	if (((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size())) && (audioType != SCR_NO_VALUE))
-		quitprintf("!_GP(game).StopAudio: invalid audio type %d", audioType);
+		quitprintf("!game.StopAudio: invalid audio type %d", audioType);
 	int aa;
 
 	for (aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
@@ -242,7 +242,7 @@ void Game_StopAudio(int audioType) {
 
 int Game_IsAudioPlaying(int audioType) {
 	if (((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size())) && (audioType != SCR_NO_VALUE))
-		quitprintf("!_GP(game).IsAudioPlaying: invalid audio type %d", audioType);
+		quitprintf("!game.IsAudioPlaying: invalid audio type %d", audioType);
 
 	if (_GP(play).fast_forward)
 		return 0;
@@ -260,20 +260,20 @@ int Game_IsAudioPlaying(int audioType) {
 
 void Game_SetAudioTypeSpeechVolumeDrop(int audioType, int volumeDrop) {
 	if ((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size()))
-		quitprintf("!_GP(game).SetAudioTypeVolume: invalid audio type: %d", audioType);
+		quitprintf("!game.SetAudioTypeVolume: invalid audio type: %d", audioType);
 
-	Debug::Printf("_GP(game).SetAudioTypeSpeechVolumeDrop: type: %d, drop: %d", audioType, volumeDrop);
+	Debug::Printf("game.SetAudioTypeSpeechVolumeDrop: type: %d, drop: %d", audioType, volumeDrop);
 	_GP(game).audioClipTypes[audioType].volume_reduction_while_speech_playing = volumeDrop;
 	update_volume_drop_if_voiceover();
 }
 
 void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 	if ((volume < 0) || (volume > 100))
-		quitprintf("!_GP(game).SetAudioTypeVolume: volume %d is not between 0..100", volume);
+		quitprintf("!game.SetAudioTypeVolume: volume %d is not between 0..100", volume);
 	if ((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size()))
-		quitprintf("!_GP(game).SetAudioTypeVolume: invalid audio type: %d", audioType);
+		quitprintf("!game.SetAudioTypeVolume: invalid audio type: %d", audioType);
 
-	Debug::Printf("_GP(game).SetAudioTypeVolume: type: %d, volume: %d, change: %d", audioType, volume, changeType);
+	Debug::Printf("game.SetAudioTypeVolume: type: %d, volume: %d, change: %d", audioType, volume, changeType);
 	if ((changeType == VOL_CHANGEEXISTING) ||
 	        (changeType == VOL_BOTH)) {
 		AudioChannelsLock lock;
@@ -628,22 +628,15 @@ void unload_game_file() {
 	_GP(game).Free();
 }
 
-
-
-
-
-
 const char *Game_GetGlobalStrings(int index) {
 	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
-		quit("!_GP(game).GlobalStrings: invalid index");
+		quit("!game.GlobalStrings: invalid index");
 
 	return CreateNewScriptString(_GP(play).globalstrings[index]);
 }
 
 
-
 char gamefilenamebuf[200];
-
 
 // ** GetGameParameter replacement functions
 
@@ -1033,7 +1026,7 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 			usehit = viewport.GetHeight();
 
 		if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
-			quit("!Invalid _GP(game).screenshot_width/height, must be from 16x16 to screen res");
+			quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
 
 		screenShot = CopyScreenIntoBitmap(usewid, usehit);
 
@@ -1054,7 +1047,7 @@ void save_game(int slotn, const char *descript) {
 	}
 
 	if (platform->GetDiskFreeSpaceMB() < 2) {
-		Display("ERROR: There is not enough disk space free to save the _GP(game). Clear some disk space and try again.");
+		Display("ERROR: There is not enough disk space free to save the game. Clear some disk space and try again.");
 		return;
 	}
 
@@ -1615,7 +1608,7 @@ bool try_restore_save(int slot) {
 	bool data_overwritten;
 	HSaveError err = load_game(slot, data_overwritten);
 	if (!err) {
-		String error = String::FromFormat("Unable to restore the saved _GP(game).\n%s",
+		String error = String::FromFormat("Unable to restore the saved game.\n%s",
 		                                  err->FullMessage().GetCStr());
 		// currently AGS cannot properly revert to stable state if some of the
 		// game data was released or overwritten by the data from save file,

@@ -226,7 +226,7 @@ const char *Room_GetMessages(int index) {
 
 // Makes sure that room background and walk-behind mask are matching room size
 // in game resolution coordinates; in other words makes graphics appropriate
-// for display in the _GP(game).
+// for display in the game.
 void convert_room_background_to_game_res() {
 	if (!_GP(game).AllowRelativeRes() || !thisroom.IsRelativeRes())
 		return;
@@ -481,7 +481,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	if ((thisroom.GameID != NO_GAME_ID_IN_ROOM_FILE) &&
 	        (thisroom.GameID != _GP(game).uniqueid)) {
-		quitprintf("!Unable to load '%s'. This room file is assigned to a different _GP(game).", room_filename.GetCStr());
+		quitprintf("!Unable to load '%s'. This room file is assigned to a different game.", room_filename.GetCStr());
 	}
 
 	convert_room_coordinates_to_data_res(&thisroom);

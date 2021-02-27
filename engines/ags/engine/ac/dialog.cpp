@@ -676,7 +676,7 @@ void DialogOptions::Redraw() {
 		if (areawid < data_to_game_coord(_GP(play).min_dialogoption_width)) {
 			areawid = data_to_game_coord(_GP(play).min_dialogoption_width);
 			if (_GP(play).min_dialogoption_width > _GP(play).max_dialogoption_width)
-				quit("!_GP(game).min_dialogoption_width is larger than _GP(game).max_dialogoption_width");
+				quit("!game.min_dialogoption_width is larger than game.max_dialogoption_width");
 		}
 
 		GET_OPTIONS_HEIGHT

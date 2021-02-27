@@ -122,7 +122,7 @@ String GetGameInitErrorText(GameInitErrorType err) {
 	case kGameInitErr_NoError:
 		return "No error.";
 	case kGameInitErr_NoFonts:
-		return "No fonts specified to be used in this _GP(game).";
+		return "No fonts specified to be used in this game.";
 	case kGameInitErr_TooManyAudioTypes:
 		return "Too many audio types for this engine to handle.";
 	case kGameInitErr_EntityInitFail:

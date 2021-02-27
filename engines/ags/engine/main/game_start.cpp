@@ -129,7 +129,7 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveOnStart
 			int oldalways = _GP(game).options[OPT_ALWAYSSPCH];
 			_GP(game).options[OPT_ALWAYSSPCH] = 0;
 			// PSP: This is normal. Don't show a warning.
-			//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this _GP(game). You may experience colour problems during the _GP(game). Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
+			//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this game. You may experience colour problems during the game. Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
 			_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
 		}
 

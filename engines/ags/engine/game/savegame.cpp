@@ -69,7 +69,7 @@ namespace AGS3 {
 using namespace Shared;
 using namespace Engine;
 
-// function is currently implemented in _GP(game).cpp
+// function is currently implemented in game.cpp
 HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
 
 
@@ -132,7 +132,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_IncompatibleEngine:
 		return "Save was written by incompatible engine, or file is corrupted.";
 	case kSvgErr_GameGuidMismatch:
-		return "Game GUID does not match, saved by a different _GP(game).";
+		return "Game GUID does not match, saved by a different game.";
 	case kSvgErr_ComponentListOpeningTagFormat:
 		return "Failed to parse opening tag of the components list.";
 	case kSvgErr_ComponentListClosingTagMissing:
@@ -154,7 +154,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_UnsupportedComponentVersion:
 		return "Component data version not supported.";
 	case kSvgErr_GameContentAssertion:
-		return "Saved content does not match current _GP(game).";
+		return "Saved content does not match current game.";
 	case kSvgErr_InconsistentData:
 		return "Inconsistent save data, or file is corrupted.";
 	case kSvgErr_InconsistentPlugin:
