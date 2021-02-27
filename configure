@@ -3262,6 +3262,8 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
 		arm-vfp-riscos)
+			# -O2 causes internal compiler error on VFP only with gcc 4.7
+			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
 			_sdlpath=$GCCSDK_INSTALL_ENV/vfp/bin
