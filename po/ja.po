@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-23 22:24+0000\n"
+"PO-Revision-Date: 2021-02-27 13:13+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4955,6 +4955,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"指定されたスロット%dにはセーブが存在します。上書きしますか?\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:662
 #, c-format
@@ -4965,6 +4967,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%dのオリジナルセーブデータが正常にインポートされました。\n"
+"もう一度手動でインポートしたい場合は、ScummVMのデバッグコンソールを開き\n"
+"'import_savefile'コマンドを実行してください。\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:280
 msgid ""
