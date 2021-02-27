@@ -29,6 +29,7 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
 #include "graphics/palette.h"
+#include "graphics/font.h"
 
 #include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindowborder.h"

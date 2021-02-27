@@ -27,6 +27,7 @@
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/str-array.h"
+#include "graphics/font.h"
 
 namespace Glk {
 namespace Comprehend {
