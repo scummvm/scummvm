@@ -1365,7 +1365,7 @@ protected:
 	void towns_waitForScroll(int waitForDirection, int threshold = 0);
 	void towns_updateGfx();
 
-	Common::Rect _cyclRects[16];
+	Common::Rect _cyclRects[10];
 	int _numCyclRects;
 	int _scrollRequest;
 	int _scrollDeltaAdjust;

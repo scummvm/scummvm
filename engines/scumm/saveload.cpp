@@ -1318,7 +1318,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (hasTownsData) {
 		s.syncBytes(_textPalette, 48);
-		// TODO: This seems wrong, there are 16 _cyclRects
 		s.syncArray(_cyclRects, 10, syncWithSerializer, VER(82));
 		if (s.getVersion() >= VER(82))
 			syncWithSerializer(s, _curStringRect);
