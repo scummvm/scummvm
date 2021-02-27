@@ -258,7 +258,7 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 
 	if (!_text.empty()) {
-		Common::Point pos = _region ? _region->center : _pos;
+		Common::Point pos = _region ? _region->center + _regionOffset : _pos;
 		int w = backbuffer.w - pos.x;
 		engine.getFont(engine.getSystemVariable("objtext_font")->getInteger())->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
 	}
