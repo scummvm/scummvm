@@ -59,15 +59,21 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
 }
 
 Object::~Object() {
-	if (_rotatedPicture) {
-		_rotatedPicture->free();
-		delete _rotatedPicture;
-	}
+	freeRotated();
 	if (_picture) {
 		_picture->free();
 		delete _picture;
 	}
 }
+
+void Object::freeRotated() {
+	if (_rotatedPicture) {
+		_rotatedPicture->free();
+		delete _rotatedPicture;
+	}
+	_rotatedPicture = nullptr;
+}
+
 
 void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
@@ -120,11 +126,7 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 		_picture->free();
 		delete _picture;
 	}
-	if (_rotatedPicture) {
-		_rotatedPicture->free();
-		delete _rotatedPicture;
-		_rotatedPicture = nullptr;
-	}
+	freeRotated();
 	_picture = picture;
 
 	if (!picture) {
@@ -155,6 +157,22 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 		}
 	}
 }
+
+void Object::rotate(int rot) {
+	if (rot == 0)
+		return;
+
+	if (!_picture) {
+		warning("no picture for rotation");
+		return;
+	}
+
+	Graphics::TransformStruct transform(100, 100, 90 * rot, _picture->w / 2, _picture->h / 2);
+	auto rotated = _picture->rotoscale(transform);
+	freeRotated();
+	_rotatedPicture = rotated;
+}
+
 
 void Object::inScene(bool value)
 {

@@ -85,6 +85,9 @@ private:
 	bool							_persistent;
 	bool							_allowCalls;
 
+private:
+	void freeRotated();
+
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
 	~Object();
@@ -139,6 +142,8 @@ public:
 	Graphics::TransparentSurface *getPicture() const {
 		return _rotatedPicture? _rotatedPicture: _picture;
 	}
+
+	void rotate(int rot);
 
 	void generateRegion();
 
