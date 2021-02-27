@@ -566,10 +566,10 @@ int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
 
 bool Character_IsInteractionAvailable(CharacterInfo *cchar, int mood) {
 
-	play.check_interaction_only = 1;
+	_GP(play).check_interaction_only = 1;
 	RunCharacterInteraction(cchar->index_id, mood);
-	int ciwas = play.check_interaction_only;
-	play.check_interaction_only = 0;
+	int ciwas = _GP(play).check_interaction_only;
+	_GP(play).check_interaction_only = 0;
 	return (ciwas == 2);
 }
 
@@ -792,7 +792,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 	if (displayed_room != playerchar->room)
 		NewRoom(playerchar->room);
 	else   // make sure it doesn't run the region interactions
-		play.player_on_region = GetRegionIDAtRoom(playerchar->x, playerchar->y);
+		_GP(play).player_on_region = GetRegionIDAtRoom(playerchar->x, playerchar->y);
 
 	if ((playerchar->activeinv >= 0) && (playerchar->inv[playerchar->activeinv] < 1))
 		playerchar->activeinv = -1;
@@ -916,7 +916,7 @@ void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
 void Character_StopMoving(CharacterInfo *charp) {
 
 	int chaa = charp->index_id;
-	if (chaa == play.skip_until_char_stops)
+	if (chaa == _GP(play).skip_until_char_stops)
 		EndSkippingUntilCharStops();
 
 	if (charextra[chaa].xwas != INVALID_X) {
@@ -1045,22 +1045,22 @@ void Character_RunInteraction(CharacterInfo *chaa, int mood) {
 
 int Character_GetProperty(CharacterInfo *chaa, const char *property) {
 
-	return get_int_property(_GP(game).charProps[chaa->index_id], play.charProps[chaa->index_id], property);
+	return get_int_property(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property);
 
 }
 void Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer) {
-	get_text_property(_GP(game).charProps[chaa->index_id], play.charProps[chaa->index_id], property, bufer);
+	get_text_property(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property, bufer);
 }
 const char *Character_GetTextProperty(CharacterInfo *chaa, const char *property) {
-	return get_text_property_dynamic_string(_GP(game).charProps[chaa->index_id], play.charProps[chaa->index_id], property);
+	return get_text_property_dynamic_string(_GP(game).charProps[chaa->index_id], _GP(play).charProps[chaa->index_id], property);
 }
 
 bool Character_SetProperty(CharacterInfo *chaa, const char *property, int value) {
-	return set_int_property(play.charProps[chaa->index_id], property, value);
+	return set_int_property(_GP(play).charProps[chaa->index_id], property, value);
 }
 
 bool Character_SetTextProperty(CharacterInfo *chaa, const char *property, const char *value) {
-	return set_text_property(play.charProps[chaa->index_id], property, value);
+	return set_text_property(_GP(play).charProps[chaa->index_id], property, value);
 }
 
 ScriptInvItem *Character_GetActiveInventory(CharacterInfo *chaa) {
@@ -2255,7 +2255,7 @@ void _DisplaySpeechCore(int chid, const char *displbuf) {
 		// no text, just update the current character who's speaking
 		// this allows the portrait side to be switched with an empty
 		// speech line
-		play.swap_portrait_lastchar = chid;
+		_GP(play).swap_portrait_lastchar = chid;
 		return;
 	}
 
@@ -2280,8 +2280,8 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
 	if ((_GP(game).options[OPT_SPEECHTYPE] == 0) || (_GP(game).chars[chid].thinkview <= 0)) {
 		// lucasarts-style, so we want a speech bubble actually above
 		// their head (or if they have no think anim in Sierra-style)
-		width = data_to_game_coord(play.speech_bubble_width);
-		xpp = play.RoomToScreenX(data_to_game_coord(_GP(game).chars[chid].x)) - width / 2;
+		width = data_to_game_coord(_GP(play).speech_bubble_width);
+		xpp = _GP(play).RoomToScreenX(data_to_game_coord(_GP(game).chars[chid].x)) - width / 2;
 		if (xpp < 0)
 			xpp = 0;
 		// -1 will automatically put it above the char's head
@@ -2308,7 +2308,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	said_speech_line = 1;
 
-	if (play.bgspeech_stay_on_display == 0) {
+	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
 		for (size_t i = 0; i < screenover.size();) {
 			if (screenover[i].timeout > 0)
@@ -2332,12 +2332,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		}
 	}
 
-	play.messagetime = GetTextDisplayTime(texx);
-	play.speech_in_post_state = false;
+	_GP(play).messagetime = GetTextDisplayTime(texx);
+	_GP(play).speech_in_post_state = false;
 
 	if (isPause) {
-		postpone_scheduled_music_update_by(std::chrono::milliseconds(play.messagetime * 1000 / frames_per_second));
-		GameLoopUntilValueIsNegative(&play.messagetime);
+		postpone_scheduled_music_update_by(std::chrono::milliseconds(_GP(play).messagetime * 1000 / frames_per_second));
+		GameLoopUntilValueIsNegative(&_GP(play).messagetime);
 		return;
 	}
 
@@ -2347,7 +2347,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (textcol == 0)
 		textcol = 16;
 
-	Rect ui_view = play.GetUIViewport();
+	Rect ui_view = _GP(play).GetUIViewport();
 	int allowShrink = 0;
 	int bwidth = widd;
 	if (bwidth < 0)
@@ -2459,27 +2459,27 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if ((useview >= 0) && (_GP(game).options[OPT_SPEECHTYPE] > 0)) {
 			// Sierra-style close-up portrait
 
-			if (play.swap_portrait_lastchar != aschar) {
+			if (_GP(play).swap_portrait_lastchar != aschar) {
 				// if the portraits are set to Alternate, OR they are
 				// set to Left but swap_portrait has been set to 1 (the old
 				// method for enabling it), then swap them round
 				if ((_GP(game).options[OPT_PORTRAITSIDE] == PORTRAIT_ALTERNATE) ||
 				        ((_GP(game).options[OPT_PORTRAITSIDE] == 0) &&
-				         (play.swap_portrait_side > 0))) {
+				         (_GP(play).swap_portrait_side > 0))) {
 
-					if (play.swap_portrait_side == 2)
-						play.swap_portrait_side = 1;
+					if (_GP(play).swap_portrait_side == 2)
+						_GP(play).swap_portrait_side = 1;
 					else
-						play.swap_portrait_side = 2;
+						_GP(play).swap_portrait_side = 2;
 				}
 
 				if (_GP(game).options[OPT_PORTRAITSIDE] == PORTRAIT_XPOSITION) {
 					// Portrait side based on character X-positions
-					if (play.swap_portrait_lastchar < 0) {
+					if (_GP(play).swap_portrait_lastchar < 0) {
 						// No previous character been spoken to
 						// therefore, assume it's the player
 						if (_GP(game).playercharacter != aschar && _GP(game).chars[_GP(game).playercharacter].room == speakingChar->room && _GP(game).chars[_GP(game).playercharacter].on == 1)
-							play.swap_portrait_lastchar = _GP(game).playercharacter;
+							_GP(play).swap_portrait_lastchar = _GP(game).playercharacter;
 						else
 							// The player's not here. Find another character in this room
 							// that it could be
@@ -2487,31 +2487,31 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 								if ((_GP(game).chars[ce].room == speakingChar->room) &&
 								        (_GP(game).chars[ce].on == 1) &&
 								        (ce != aschar)) {
-									play.swap_portrait_lastchar = ce;
+									_GP(play).swap_portrait_lastchar = ce;
 									break;
 								}
 							}
 					}
 
-					if (play.swap_portrait_lastchar >= 0) {
+					if (_GP(play).swap_portrait_lastchar >= 0) {
 						// if this character is right of the one before, put the
 						// portrait on the right
-						if (speakingChar->x > _GP(game).chars[play.swap_portrait_lastchar].x)
-							play.swap_portrait_side = -1;
+						if (speakingChar->x > _GP(game).chars[_GP(play).swap_portrait_lastchar].x)
+							_GP(play).swap_portrait_side = -1;
 						else
-							play.swap_portrait_side = 0;
+							_GP(play).swap_portrait_side = 0;
 					}
 				}
-				play.swap_portrait_lastlastchar = play.swap_portrait_lastchar;
-				play.swap_portrait_lastchar = aschar;
+				_GP(play).swap_portrait_lastlastchar = _GP(play).swap_portrait_lastchar;
+				_GP(play).swap_portrait_lastchar = aschar;
 			} else
 				// If the portrait side is based on the character's X position and the same character is
 				// speaking, compare against the previous *previous* character to see where the speech should be
-				if (_GP(game).options[OPT_PORTRAITSIDE] == PORTRAIT_XPOSITION && play.swap_portrait_lastlastchar >= 0) {
-					if (speakingChar->x > _GP(game).chars[play.swap_portrait_lastlastchar].x)
-						play.swap_portrait_side = -1;
+				if (_GP(game).options[OPT_PORTRAITSIDE] == PORTRAIT_XPOSITION && _GP(play).swap_portrait_lastlastchar >= 0) {
+					if (speakingChar->x > _GP(game).chars[_GP(play).swap_portrait_lastlastchar].x)
+						_GP(play).swap_portrait_side = -1;
 					else
-						play.swap_portrait_side = 0;
+						_GP(play).swap_portrait_side = 0;
 				}
 
 			// Determine whether to display the portrait on the left or right
@@ -2519,8 +2519,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 			}  // always on left with QFG-style speech
-			else if ((play.swap_portrait_side == 1) ||
-			         (play.swap_portrait_side == -1) ||
+			else if ((_GP(play).swap_portrait_side == 1) ||
+			         (_GP(play).swap_portrait_side == -1) ||
 			         (_GP(game).options[OPT_PORTRAITSIDE] == PORTRAIT_RIGHT))
 				portrait_on_right = 1;
 
@@ -2553,13 +2553,13 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				// QFG4-style whole screen picture
 				closeupface = BitmapHelper::CreateBitmap(ui_view.GetWidth(), ui_view.GetHeight(), _GP(spriteset)[viptr->loops[0].frames[0].pic]->GetColorDepth());
 				closeupface->Clear(0);
-				if (xx < 0 && play.speech_portrait_placement) {
+				if (xx < 0 && _GP(play).speech_portrait_placement) {
 					facetalk_qfg4_override_placement_x = true;
-					view_frame_x = play.speech_portrait_x;
+					view_frame_x = _GP(play).speech_portrait_x;
 				}
-				if (yy < 0 && play.speech_portrait_placement) {
+				if (yy < 0 && _GP(play).speech_portrait_placement) {
 					facetalk_qfg4_override_placement_y = true;
-					view_frame_y = play.speech_portrait_y;
+					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
 					view_frame_y = ui_view.GetHeight() / 2 - _GP(game).SpriteInfos[viptr->loops[0].frames[0].pic].Height / 2;
 				}
@@ -2569,8 +2569,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				tdyp = -1;  // center vertically
 			} else {
 				// KQ6-style close-up face picture
-				if (yy < 0 && play.speech_portrait_placement) {
-					ovr_yp = play.speech_portrait_y;
+				if (yy < 0 && _GP(play).speech_portrait_placement) {
+					ovr_yp = _GP(play).speech_portrait_y;
 				} else if (yy < 0)
 					ovr_yp = adjust_y_for_guis(ovr_yp);
 				else
@@ -2580,7 +2580,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				ovr_type = OVER_PICTURE;
 
 				if (yy < 0)
-					tdyp = ovr_yp + get_textwindow_top_border_height(play.speech_textwindow_gui);
+					tdyp = ovr_yp + get_textwindow_top_border_height(_GP(play).speech_textwindow_gui);
 			}
 			const ViewFrame *vf = &viptr->loops[0].frames[0];
 			const bool closeupface_has_alpha = (_GP(game).SpriteInfos[vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
@@ -2588,16 +2588,16 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 			int overlay_x = get_fixed_pixel_size(10);
 			if (xx < 0) {
-				tdxp = bigx + get_textwindow_border_width(play.speech_textwindow_gui) / 2;
-				if (play.speech_portrait_placement) {
-					overlay_x = play.speech_portrait_x;
+				tdxp = bigx + get_textwindow_border_width(_GP(play).speech_textwindow_gui) / 2;
+				if (_GP(play).speech_portrait_placement) {
+					overlay_x = _GP(play).speech_portrait_x;
 					tdxp += overlay_x + get_fixed_pixel_size(6);
 				} else {
 					tdxp += get_fixed_pixel_size(16);
 				}
 
 				int maxWidth = (ui_view.GetWidth() - tdxp) - get_fixed_pixel_size(5) -
-				               get_textwindow_border_width(play.speech_textwindow_gui) / 2;
+				               get_textwindow_border_width(_GP(play).speech_textwindow_gui) / 2;
 
 				if (bwidth > maxWidth)
 					bwidth = maxWidth;
@@ -2613,10 +2613,10 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (portrait_on_right) {
 				if ((xx < 0) || (widd < 0)) {
 					tdxp = get_fixed_pixel_size(9);
-					if (play.speech_portrait_placement) {
-						overlay_x = (ui_view.GetWidth() - bigx) - play.speech_portrait_x;
+					if (_GP(play).speech_portrait_placement) {
+						overlay_x = (ui_view.GetWidth() - bigx) - _GP(play).speech_portrait_x;
 						int maxWidth = overlay_x - tdxp - get_fixed_pixel_size(9) -
-						               get_textwindow_border_width(play.speech_textwindow_gui) / 2;
+						               get_textwindow_border_width(_GP(play).speech_textwindow_gui) / 2;
 						if (bwidth > maxWidth)
 							bwidth = maxWidth;
 					} else {
@@ -2626,7 +2626,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 					overlay_x = (xx + widd - bigx) - get_fixed_pixel_size(5);
 					tdxp = xx;
 				}
-				tdxp += get_textwindow_border_width(play.speech_textwindow_gui) / 2;
+				tdxp += get_textwindow_border_width(_GP(play).speech_textwindow_gui) / 2;
 				allowShrink = 2;
 			}
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3)
@@ -2681,7 +2681,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (widd < 0) {
 				bwidth = ui_view.GetWidth() / 2 + ui_view.GetWidth() / 6;
 				// If they are close to the screen edge, make the text narrower
-				int relx = play.RoomToScreenX(data_to_game_coord(speakingChar->x));
+				int relx = _GP(play).RoomToScreenX(data_to_game_coord(speakingChar->x));
 				if ((relx < ui_view.GetWidth() / 4) || (relx > ui_view.GetWidth() - (ui_view.GetWidth() / 4)))
 					bwidth -= ui_view.GetWidth() / 5;
 			}
@@ -2709,7 +2709,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	our_eip = 155;
 	_display_at(tdxp, tdyp, bwidth, texx, DISPLAYTEXT_SPEECH, textcol, isThought, allowShrink, overlayPositionFixed);
 	our_eip = 156;
-	if ((play.in_conversation > 0) && (_GP(game).options[OPT_SPEECHTYPE] == 3))
+	if ((_GP(play).in_conversation > 0) && (_GP(game).options[OPT_SPEECHTYPE] == 3))
 		closeupface = nullptr;
 	if (closeupface != nullptr)
 		remove_screen_overlay(ovr_type);
@@ -2736,7 +2736,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	}
 	char_speaking = -1;
 	char_thinking = -1;
-	if (play.IsBlockingVoiceSpeech())
+	if (_GP(play).IsBlockingVoiceSpeech())
 		stop_voice_speech();
 }
 
@@ -2825,8 +2825,8 @@ PViewport FindNearestViewport(int charid) {
 	Rect bbox = GetCharacterRoomBBox(charid, true);
 	float min_dist = -1.f;
 	PViewport nearest_view;
-	for (int i = 0; i < play.GetRoomViewportCount(); ++i) {
-		auto view = play.GetRoomViewport(i);
+	for (int i = 0; i < _GP(play).GetRoomViewportCount(); ++i) {
+		auto view = _GP(play).GetRoomViewport(i);
 		if (!view->IsVisible())
 			continue;
 		auto cam = view->GetCamera();
@@ -2841,7 +2841,7 @@ PViewport FindNearestViewport(int charid) {
 			nearest_view = view;
 		}
 	}
-	return nearest_view ? nearest_view : play.GetRoomViewport(0);
+	return nearest_view ? nearest_view : _GP(play).GetRoomViewport(0);
 }
 
 //=============================================================================

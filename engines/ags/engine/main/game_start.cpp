@@ -54,7 +54,6 @@ using namespace AGS::Engine;
 
 extern int our_eip, displayed_room;
 
-extern GameState play;
 extern std::vector<ccInstance *> moduleInst;
 extern int numScriptModules;
 extern CharacterInfo *playerchar;
@@ -134,7 +133,7 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveOnStart
 			_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
 		}
 
-		::AGS::g_vm->setRandomNumberSeed(play.randseed);
+		::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 		if (override_start_room)
 			playerchar->room = override_start_room;
 

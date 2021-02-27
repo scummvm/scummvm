@@ -223,8 +223,8 @@ int GUI_GetTransparency(ScriptGUI *tehgui) {
 
 void GUI_Centre(ScriptGUI *sgui) {
 	GUIMain *tehgui = &guis[sgui->id];
-	tehgui->X = play.GetUIViewport().GetWidth() / 2 - tehgui->Width / 2;
-	tehgui->Y = play.GetUIViewport().GetHeight() / 2 - tehgui->Height / 2;
+	tehgui->X = _GP(play).GetUIViewport().GetWidth() / 2 - tehgui->Width / 2;
+	tehgui->Y = _GP(play).GetUIViewport().GetHeight() / 2 - tehgui->Height / 2;
 }
 
 void GUI_SetBackgroundGraphic(ScriptGUI *tehgui, int slotn) {
@@ -410,13 +410,13 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 			macroname[idd] = 0;
 			tempo[0] = 0;
 			if (ags_stricmp(macroname, "score") == 0)
-				sprintf(tempo, "%d", play.score);
+				sprintf(tempo, "%d", _GP(play).score);
 			else if (ags_stricmp(macroname, "totalscore") == 0)
 				sprintf(tempo, "%d", MAXSCORE);
 			else if (ags_stricmp(macroname, "scoretext") == 0)
-				sprintf(tempo, "%d of %d", play.score, MAXSCORE);
+				sprintf(tempo, "%d of %d", _GP(play).score, MAXSCORE);
 			else if (ags_stricmp(macroname, "gamename") == 0)
-				strcpy(tempo, play.game_name);
+				strcpy(tempo, _GP(play).game_name);
 			else if (ags_stricmp(macroname, "overhotspot") == 0) {
 				// While game is in Wait mode, no overhotspot text
 				if (!IsInterfaceEnabled())
@@ -447,15 +447,15 @@ void update_gui_zorder() {
 		// find the right place in the draw order array
 		int insertAt = numdone;
 		for (b = 0; b < numdone; b++) {
-			if (guis[a].ZOrder < guis[play.gui_draw_order[b]].ZOrder) {
+			if (guis[a].ZOrder < guis[_GP(play).gui_draw_order[b]].ZOrder) {
 				insertAt = b;
 				break;
 			}
 		}
 		// insert the new item
 		for (b = numdone - 1; b >= insertAt; b--)
-			play.gui_draw_order[b + 1] = play.gui_draw_order[b];
-		play.gui_draw_order[insertAt] = a;
+			_GP(play).gui_draw_order[b + 1] = _GP(play).gui_draw_order[b];
+		_GP(play).gui_draw_order[insertAt] = a;
 		numdone++;
 	}
 
@@ -597,16 +597,16 @@ int gui_on_mouse_move() {
 		// Also work out the mouse-over GUI while we're at it
 		int ll;
 		for (ll = 0; ll < _GP(game).numgui; ll++) {
-			const int guin = play.gui_draw_order[ll];
+			const int guin = _GP(play).gui_draw_order[ll];
 			if (guis[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
 
 			if (guis[guin].PopupStyle != kGUIPopupMouseY) continue;
 			if (is_complete_overlay > 0) break; // interfaces disabled
-			//    if (play.disabled_user_interface>0) break;
+			//    if (_GP(play).disabled_user_interface>0) break;
 			if (ifacepopped == guin) continue;
 			if (!guis[guin].IsVisible()) continue;
 			// Don't allow it to be popped up while skipping cutscene
-			if (play.fast_forward) continue;
+			if (_GP(play).fast_forward) continue;
 
 			if (_G(mousey) < guis[guin].PopupAtMouseY) {
 				set_mouse_cursor(CURS_ARROW);
@@ -651,7 +651,7 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
 				evblocknum = iit;
-				play.used_inv_on = iit;
+				_GP(play).used_inv_on = iit;
 				if (_GP(game).options[OPT_HANDLEINVCLICKS]) {
 					// Let the script handle the click
 					// LEFTINV is 5, RIGHTINV is 6

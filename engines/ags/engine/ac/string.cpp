@@ -41,7 +41,7 @@
 
 namespace AGS3 {
 
-extern GameState play;
+
 extern int longestline;
 extern ScriptString myScriptStringImpl;
 
@@ -234,7 +234,7 @@ DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
 
 size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines) {
 	if (fonnt == -1)
-		fonnt = play.normal_font;
+		fonnt = _GP(play).normal_font;
 
 	//  char sofar[100];
 	if (todis[0] == '&') {

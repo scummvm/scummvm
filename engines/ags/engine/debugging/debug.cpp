@@ -553,7 +553,7 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 int scrlockWasDown = 0;
 
 void check_debug_keys() {
-	if (play.debug_mode) {
+	if (_GP(play).debug_mode) {
 		// do the run-time script debugging
 
 		if (!::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && scrlockWasDown)

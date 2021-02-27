@@ -33,7 +33,7 @@
 namespace AGS3 {
 
 extern int gui_disabled_style;
-extern GameState play;
+
 extern CharacterExtras *charextra;
 
 
@@ -53,15 +53,15 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 		return;
 
 	// backwards compatibility
-	play.inv_numinline = ColCount;
-	play.inv_numdisp = RowCount * ColCount;
-	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
+	_GP(play).inv_numinline = ColCount;
+	_GP(play).inv_numdisp = RowCount * ColCount;
+	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 	// if the user changes top_inv_item, switch into backwards
 	// compatibiltiy mode
-	if (play.inv_top)
-		play.inv_backwards_compatibility = 1;
-	if (play.inv_backwards_compatibility)
-		TopItem = play.inv_top;
+	if (_GP(play).inv_top)
+		_GP(play).inv_backwards_compatibility = 1;
+	if (_GP(play).inv_backwards_compatibility)
+		TopItem = _GP(play).inv_top;
 
 	// draw the items
 	const int leftmost_x = X;
@@ -85,7 +85,7 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 
 	if (!enabled &&
 		gui_disabled_style == GUIDIS_GREYOUT &&
-		play.inventory_greys_out == 1) {
+		_GP(play).inventory_greys_out == 1) {
 		// darken the inventory when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y, Width, Height));
 	}

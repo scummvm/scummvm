@@ -54,7 +54,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 
-extern GameState play;
+
 extern CharacterExtras *charextra;
 extern ScriptInvItem scrInv[MAX_INV];
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
@@ -227,7 +227,7 @@ void InventoryScreen::Prepare() {
 	toret = -1;
 	top_item = 0;
 	num_visible_items = 0;
-	MAX_ITEMAREA_HEIGHT = ((play.GetUIViewport().GetHeight() - BUTTONAREAHEIGHT) - get_fixed_pixel_size(20));
+	MAX_ITEMAREA_HEIGHT = ((_GP(play).GetUIViewport().GetHeight() - BUTTONAREAHEIGHT) - get_fixed_pixel_size(20));
 	in_inv_screen++;
 	inv_screen_newroom = -1;
 
@@ -290,8 +290,8 @@ int InventoryScreen::Redraw() {
 
 	windowwid = widest * ICONSPERLINE + get_fixed_pixel_size(4);
 	if (windowwid < get_fixed_pixel_size(105)) windowwid = get_fixed_pixel_size(105);
-	windowxp = play.GetUIViewport().GetWidth() / 2 - windowwid / 2;
-	windowyp = play.GetUIViewport().GetHeight() / 2 - windowhit / 2;
+	windowxp = _GP(play).GetUIViewport().GetWidth() / 2 - windowwid / 2;
+	windowyp = _GP(play).GetUIViewport().GetHeight() / 2 - windowhit / 2;
 	buttonyp = windowhit - BUTTONAREAHEIGHT;
 	bartop = get_fixed_pixel_size(2);
 	barxp = get_fixed_pixel_size(2);
@@ -305,7 +305,7 @@ int InventoryScreen::Redraw() {
 }
 
 void InventoryScreen::Draw(Bitmap *ds) {
-	color_t draw_color = ds->GetCompatibleColor(play.sierra_inv_color);
+	color_t draw_color = ds->GetCompatibleColor(_GP(play).sierra_inv_color);
 	ds->FillRect(Rect(0, 0, windowwid, windowhit), draw_color);
 	draw_color = ds->GetCompatibleColor(0);
 	ds->FillRect(Rect(barxp, bartop, windowwid - get_fixed_pixel_size(2), buttonyp - 1), draw_color);
@@ -325,7 +325,7 @@ void InventoryScreen::Draw(Bitmap *ds) {
 	// Draw Up and Down buttons if required
 	Bitmap *arrowblock = BitmapHelper::CreateTransparentBitmap(ARROWBUTTONWID, ARROWBUTTONWID);
 	draw_color = arrowblock->GetCompatibleColor(0);
-	if (play.sierra_inv_color == 0)
+	if (_GP(play).sierra_inv_color == 0)
 		draw_color = ds->GetCompatibleColor(14);
 
 	arrowblock->DrawLine(Line(ARROWBUTTONWID / 2, 2, ARROWBUTTONWID - 2, 9), draw_color);
@@ -357,7 +357,7 @@ void InventoryScreen::RedrawOverItem(Bitmap *ds, int isonitem) {
 
 bool InventoryScreen::Run() {
 	int kgn;
-	if (run_service_key_controls(kgn) && !play.IsIgnoringInput()) {
+	if (run_service_key_controls(kgn) && !_GP(play).IsIgnoringInput()) {
 		return false; // end inventory screen loop
 	}
 
@@ -375,7 +375,7 @@ bool InventoryScreen::Run() {
 		isonitem = -1;
 
 	int mclick, mwheelz;
-	if (!run_service_mb_controls(mclick, mwheelz) || play.IsIgnoringInput()) {
+	if (!run_service_mb_controls(mclick, mwheelz) || _GP(play).IsIgnoringInput()) {
 		mclick = NONE;
 	}
 
@@ -386,7 +386,7 @@ bool InventoryScreen::Run() {
 			int clickedon = isonitem;
 			if (clickedon < 0) return true; // continue inventory screen loop
 			evblocknum = dii[clickedon].num;
-			play.used_inv_on = dii[clickedon].num;
+			_GP(play).used_inv_on = dii[clickedon].num;
 
 			if (cmode == MODE_LOOK) {
 				//ags_domouse(DOMOUSE_DISABLE);
@@ -398,7 +398,7 @@ bool InventoryScreen::Run() {
 				return break_code == 0;
 			} else if (cmode == MODE_USE) {
 				// use objects on each other
-				play.usedinv = toret;
+				_GP(play).usedinv = toret;
 
 				// set the activeinv so the script can check it
 				int activeinvwas = playerchar->activeinv;
@@ -425,11 +425,11 @@ bool InventoryScreen::Run() {
 				return break_code == 0;
 			}
 			toret = dii[clickedon].num;
-			//        int plusng=play.using; play.using=toret;
+			//        int plusng=_GP(play).using; _GP(play).using=toret;
 			update_inv_cursor(toret);
 			set_mouse_cursor(MODE_USE);
 			cmode = MODE_USE;
-			//        play.using=plusng;
+			//        _GP(play).using=plusng;
 			//        break;
 			return true; // continue inventory screen loop
 		} else {

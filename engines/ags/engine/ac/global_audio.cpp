@@ -42,7 +42,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern GameSetup usetup;
-extern GameState play;
+
 
 extern RoomStruct thisroom;
 extern SpeechLipSyncLine *splipsync;
@@ -101,7 +101,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 }
 
 int IsChannelPlaying(int chan) {
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return 0;
 
 	if ((chan < 0) || (chan >= MAX_SOUND_CHANNELS))
@@ -114,7 +114,7 @@ int IsChannelPlaying(int chan) {
 }
 
 int IsSoundPlaying() {
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return 0;
 
 	// find if there's a sound playing
@@ -148,7 +148,7 @@ int PlaySoundEx(int val1, int channel) {
 		return -1;
 	}
 	// if skipping a cutscene, don't try and play the sound
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return -1;
 
 	// free the old sound
@@ -163,7 +163,7 @@ int PlaySoundEx(int val1, int channel) {
 	}
 
 	soundfx->_priority = 10;
-	soundfx->set_volume(play.sound_volume);
+	soundfx->set_volume(_GP(play).sound_volume);
 	set_clip_to_channel(channel, soundfx);
 	return channel;
 }
@@ -177,12 +177,12 @@ void StopAllSounds(int evenAmbient) {
 }
 
 void PlayMusicResetQueue(int newmus) {
-	play.music_queue_size = 0;
+	_GP(play).music_queue_size = 0;
 	newmusic(newmus);
 }
 
 void SeekMIDIPosition(int position) {
-	if (play.silent_midi == 0 && current_music_type != MUS_MIDI)
+	if (_GP(play).silent_midi == 0 && current_music_type != MUS_MIDI)
 		return;
 
 	AudioChannelsLock lock;
@@ -192,9 +192,9 @@ void SeekMIDIPosition(int position) {
 }
 
 int GetMIDIPosition() {
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return 99999;
-	if (play.silent_midi == 0 && current_music_type != MUS_MIDI)
+	if (_GP(play).silent_midi == 0 && current_music_type != MUS_MIDI)
 		return -1; // returns -1 on failure according to old manuals
 
 	AudioChannelsLock lock;
@@ -208,7 +208,7 @@ int GetMIDIPosition() {
 
 int IsMusicPlaying() {
 	// in case they have a "while (IsMusicPlaying())" loop
-	if ((play.fast_forward) && (play.skip_until_char_stops < 0))
+	if ((_GP(play).fast_forward) && (_GP(play).skip_until_char_stops < 0))
 		return 0;
 
 	// This only returns positive if there was a music started by old audio API
@@ -231,46 +231,46 @@ int PlayMusicQueued(int musnum) {
 
 	// Just get the queue size
 	if (musnum < 0)
-		return play.music_queue_size;
+		return _GP(play).music_queue_size;
 
-	if ((IsMusicPlaying() == 0) && (play.music_queue_size == 0)) {
+	if ((IsMusicPlaying() == 0) && (_GP(play).music_queue_size == 0)) {
 		newmusic(musnum);
 		return 0;
 	}
 
-	if (play.music_queue_size >= MAX_QUEUED_MUSIC) {
+	if (_GP(play).music_queue_size >= MAX_QUEUED_MUSIC) {
 		debug_script_log("Too many queued music, cannot add %d", musnum);
 		return 0;
 	}
 
-	if ((play.music_queue_size > 0) &&
-		(play.music_queue[play.music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
+	if ((_GP(play).music_queue_size > 0) &&
+		(_GP(play).music_queue[_GP(play).music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
 		debug_script_warn("PlayMusicQueued: cannot queue music after a repeating tune has been queued");
 		return 0;
 	}
 
-	if (play.music_repeat) {
+	if (_GP(play).music_repeat) {
 		debug_script_log("Queuing music %d to loop", musnum);
 		musnum += QUEUED_MUSIC_REPEAT;
 	} else {
 		debug_script_log("Queuing music %d", musnum);
 	}
 
-	play.music_queue[play.music_queue_size] = musnum;
-	play.music_queue_size++;
+	_GP(play).music_queue[_GP(play).music_queue_size] = musnum;
+	_GP(play).music_queue_size++;
 
-	if (play.music_queue_size == 1) {
+	if (_GP(play).music_queue_size == 1) {
 
 		clear_music_cache();
 
-		cachedQueuedMusic = load_music_from_disk(musnum, (play.music_repeat > 0));
+		cachedQueuedMusic = load_music_from_disk(musnum, (_GP(play).music_repeat > 0));
 	}
 
-	return play.music_queue_size;
+	return _GP(play).music_queue_size;
 }
 
 void scr_StopMusic() {
-	play.music_queue_size = 0;
+	_GP(play).music_queue_size = 0;
 	stopmusic();
 }
 
@@ -301,7 +301,7 @@ void SeekMP3PosMillis(int posn) {
 
 int GetMP3PosMillis() {
 	// in case they have "while (GetMP3PosMillis() < 5000) "
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return 999999;
 	if (current_music_type != MUS_MP3 && current_music_type != MUS_OGG)
 		return 0;  // returns 0 on failure according to old manuals
@@ -331,14 +331,14 @@ void SetMusicMasterVolume(int newvol) {
 		-LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
 	if ((newvol < min_volume) | (newvol > 100))
 		quitprintf("!SetMusicMasterVolume: invalid volume - must be from %d to %d", min_volume, 100);
-	play.music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
+	_GP(play).music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
 	update_music_volume();
 }
 
 void SetSoundVolume(int newvol) {
 	if ((newvol < 0) | (newvol > 255))
 		quit("!SetSoundVolume: invalid volume - must be from 0-255");
-	play.sound_volume = newvol;
+	_GP(play).sound_volume = newvol;
 	Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_AMBIENT_SOUND, (newvol * 100) / 255, VOL_BOTH);
 	Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_SOUND, (newvol * 100) / 255, VOL_BOTH);
 	update_ambient_sound_vol();
@@ -365,7 +365,7 @@ void SetChannelVolume(int chan, int newvol) {
 void SetDigitalMasterVolume(int newvol) {
 	if ((newvol < 0) | (newvol > 100))
 		quit("!SetDigitalMasterVolume: invalid volume - must be from 0-100");
-	play.digital_master_volume = newvol;
+	_GP(play).digital_master_volume = newvol;
 #if !AGS_PLATFORM_SCUMMVM
 	auto newvol_f = static_cast<float>(newvol) / 100.0;
 	audio_core_set_master_volume(newvol_f);
@@ -373,11 +373,11 @@ void SetDigitalMasterVolume(int newvol) {
 }
 
 int GetCurrentMusic() {
-	return play.cur_music_number;
+	return _GP(play).cur_music_number;
 }
 
 void SetMusicRepeat(int loopflag) {
-	play.music_repeat = loopflag;
+	_GP(play).music_repeat = loopflag;
 }
 
 void PlayMP3File(const char *filename) {
@@ -389,7 +389,7 @@ void PlayMP3File(const char *filename) {
 	AssetPath asset_name("", filename);
 
 	int useChan = prepare_for_new_music();
-	bool doLoop = (play.music_repeat > 0);
+	bool doLoop = (_GP(play).music_repeat > 0);
 
 	SOUNDCLIP *clip = nullptr;
 
@@ -399,10 +399,10 @@ void PlayMP3File(const char *filename) {
 			if (clip->play()) {
 				set_clip_to_channel(useChan, clip);
 				current_music_type = MUS_OGG;
-				play.cur_music_number = 1000;
+				_GP(play).cur_music_number = 1000;
 				// save the filename (if it's not what we were supplied with)
-				if (filename != &play.playmp3file_name[0])
-					strcpy(play.playmp3file_name, filename);
+				if (filename != &_GP(play).playmp3file_name[0])
+					strcpy(_GP(play).playmp3file_name, filename);
 			} else {
 				clip->destroy();
 				delete clip;
@@ -417,10 +417,10 @@ void PlayMP3File(const char *filename) {
 			if (clip->play()) {
 				set_clip_to_channel(useChan, clip);
 				current_music_type = MUS_MP3;
-				play.cur_music_number = 1000;
+				_GP(play).cur_music_number = 1000;
 				// save the filename (if it's not what we were supplied with)
-				if (filename != &play.playmp3file_name[0])
-					strcpy(play.playmp3file_name, filename);
+				if (filename != &_GP(play).playmp3file_name[0])
+					strcpy(_GP(play).playmp3file_name, filename);
 			} else {
 				clip->destroy();
 				delete clip;
@@ -443,12 +443,12 @@ void PlaySilentMIDI(int mnum) {
 	if (current_music_type == MUS_MIDI)
 		quit("!PlaySilentMIDI: proper midi music is in progress");
 
-	play.silent_midi = mnum;
-	play.silent_midi_channel = SCHAN_SPEECH;
-	stop_and_destroy_channel(play.silent_midi_channel);
+	_GP(play).silent_midi = mnum;
+	_GP(play).silent_midi_channel = SCHAN_SPEECH;
+	stop_and_destroy_channel(_GP(play).silent_midi_channel);
 	// No idea why it uses speech voice channel, but since it does (and until this is changed)
 	// we have to correctly reset speech voice in case there was a nonblocking speech
-	if (play.IsNonBlockingVoiceSpeech())
+	if (_GP(play).IsNonBlockingVoiceSpeech())
 		stop_voice_nonblocking();
 
 	SOUNDCLIP *clip = load_sound_clip_from_old_style_number(true, mnum, false);
@@ -456,7 +456,7 @@ void PlaySilentMIDI(int mnum) {
 		quitprintf("!PlaySilentMIDI: failed to load aMusic%d", mnum);
 	}
 	AudioChannelsLock lock;
-	lock.SetChannel(play.silent_midi_channel, clip);
+	lock.SetChannel(_GP(play).silent_midi_channel, clip);
 	if (!clip->play()) {
 		clip->destroy();
 		delete clip;
@@ -474,7 +474,7 @@ void SetSpeechVolume(int newvol) {
 	auto *ch = lock.GetChannel(SCHAN_SPEECH);
 	if (ch)
 		ch->set_volume(newvol);
-	play.speech_volume = newvol;
+	_GP(play).speech_volume = newvol;
 }
 
 // 0 = text only
@@ -485,24 +485,24 @@ void SetVoiceMode(int newmod) {
 		quit("!SetVoiceMode: invalid mode number (must be 0,1,2)");
 	// If speech is turned off, store the mode anyway in case the
 	// user adds the VOX file later
-	if (play.want_speech < 0)
-		play.want_speech = (-newmod) - 1;
+	if (_GP(play).want_speech < 0)
+		_GP(play).want_speech = (-newmod) - 1;
 	else
-		play.want_speech = newmod;
+		_GP(play).want_speech = newmod;
 }
 
 int GetVoiceMode() {
-	return play.want_speech >= 0 ? play.want_speech : -(play.want_speech + 1);
+	return _GP(play).want_speech >= 0 ? _GP(play).want_speech : -(_GP(play).want_speech + 1);
 }
 
 int IsVoxAvailable() {
-	if (play.want_speech < 0)
+	if (_GP(play).want_speech < 0)
 		return 0;
 	return 1;
 }
 
 int IsMusicVoxAvailable() {
-	return play.separate_music_lib;
+	return _GP(play).separate_music_lib;
 }
 
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
@@ -535,16 +535,16 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 
 	String asset_name = voice_name;
 	asset_name.Append(".wav");
-	SOUNDCLIP *speechmp3 = my_load_wave(get_voice_over_assetpath(asset_name), play.speech_volume, 0);
+	SOUNDCLIP *speechmp3 = my_load_wave(get_voice_over_assetpath(asset_name), _GP(play).speech_volume, 0);
 
 	if (speechmp3 == nullptr) {
 		asset_name.ReplaceMid(asset_name.GetLength() - 3, 3, "ogg");
-		speechmp3 = my_load_ogg(get_voice_over_assetpath(asset_name), play.speech_volume);
+		speechmp3 = my_load_ogg(get_voice_over_assetpath(asset_name), _GP(play).speech_volume);
 	}
 
 	if (speechmp3 == nullptr) {
 		asset_name.ReplaceMid(asset_name.GetLength() - 3, 3, "mp3");
-		speechmp3 = my_load_mp3(get_voice_over_assetpath(asset_name), play.speech_volume);
+		speechmp3 = my_load_mp3(get_voice_over_assetpath(asset_name), _GP(play).speech_volume);
 	}
 
 	if (speechmp3 != nullptr) {
@@ -573,16 +573,16 @@ static bool play_voice_clip_impl(const String &voice_name, bool as_speech, bool 
 	if (!as_speech)
 		return true;
 
-	play.speech_has_voice = true;
-	play.speech_voice_blocking = is_blocking;
+	_GP(play).speech_has_voice = true;
+	_GP(play).speech_voice_blocking = is_blocking;
 
 	cancel_scheduled_music_update();
-	play.music_vol_was = play.music_master_volume;
+	_GP(play).music_vol_was = _GP(play).music_master_volume;
 	// Negative value means set exactly; positive means drop that amount
-	if (play.speech_music_drop < 0)
-		play.music_master_volume = -play.speech_music_drop;
+	if (_GP(play).speech_music_drop < 0)
+		_GP(play).music_master_volume = -_GP(play).speech_music_drop;
 	else
-		play.music_master_volume -= play.speech_music_drop;
+		_GP(play).music_master_volume -= _GP(play).speech_music_drop;
 	apply_volume_drop_modifier(true);
 	update_music_volume();
 	update_ambient_sound_vol();
@@ -591,7 +591,7 @@ static bool play_voice_clip_impl(const String &voice_name, bool as_speech, bool 
 
 // Stop voice-over clip and schedule audio volume reset
 static void stop_voice_clip_impl() {
-	play.music_master_volume = play.music_vol_was;
+	_GP(play).music_master_volume = _GP(play).music_vol_was;
 	// update the music in a bit (fixes two speeches follow each other
 	// and music going up-then-down)
 	schedule_music_update_at(AGS_Clock::now() + std::chrono::milliseconds(500));
@@ -600,7 +600,7 @@ static void stop_voice_clip_impl() {
 
 bool play_voice_speech(int charid, int sndid) {
 	// don't play speech if we're skipping a cutscene
-	if (!play.ShouldPlayVoiceSpeech())
+	if (!_GP(play).ShouldPlayVoiceSpeech())
 		return false;
 
 	String voice_file = get_cue_filename(charid, sndid);
@@ -623,19 +623,19 @@ bool play_voice_speech(int charid, int sndid) {
 
 	// change Sierra w/bgrnd  to Sierra without background when voice
 	// is available (for Tierra)
-	if ((_GP(game).options[OPT_SPEECHTYPE] == 2) && (play.no_textbg_when_voice > 0)) {
+	if ((_GP(game).options[OPT_SPEECHTYPE] == 2) && (_GP(play).no_textbg_when_voice > 0)) {
 		_GP(game).options[OPT_SPEECHTYPE] = 1;
-		play.no_textbg_when_voice = 2;
+		_GP(play).no_textbg_when_voice = 2;
 	}
 	return true;
 }
 
 bool play_voice_nonblocking(int charid, int sndid, bool as_speech) {
 	// don't play voice if we're skipping a cutscene
-	if (!play.ShouldPlayVoiceSpeech())
+	if (!_GP(play).ShouldPlayVoiceSpeech())
 		return false;
 	// don't play voice if there's a blocking speech with voice-over already
-	if (play.IsBlockingVoiceSpeech())
+	if (_GP(play).IsBlockingVoiceSpeech())
 		return false;
 
 	String voice_file = get_cue_filename(charid, sndid);
@@ -643,7 +643,7 @@ bool play_voice_nonblocking(int charid, int sndid, bool as_speech) {
 }
 
 void stop_voice_speech() {
-	if (!play.speech_has_voice)
+	if (!_GP(play).speech_has_voice)
 		return;
 
 	stop_voice_clip_impl();
@@ -651,25 +651,25 @@ void stop_voice_speech() {
 	// Reset lipsync
 	curLipLine = -1;
 	// Set back to Sierra w/bgrnd
-	if (play.no_textbg_when_voice == 2) {
-		play.no_textbg_when_voice = 1;
+	if (_GP(play).no_textbg_when_voice == 2) {
+		_GP(play).no_textbg_when_voice = 1;
 		_GP(game).options[OPT_SPEECHTYPE] = 2;
 	}
-	play.speech_has_voice = false;
-	play.speech_voice_blocking = false;
+	_GP(play).speech_has_voice = false;
+	_GP(play).speech_voice_blocking = false;
 }
 
 void stop_voice_nonblocking() {
-	if (!play.speech_has_voice)
+	if (!_GP(play).speech_has_voice)
 		return;
 	stop_voice_clip_impl();
 	// Only reset speech flags if we are truly playing a non-blocking voice;
 	// otherwise we might be inside blocking speech function and should let
 	// it keep these flags to be able to finalize properly.
 	// This is an imperfection of current speech implementation.
-	if (!play.speech_voice_blocking) {
-		play.speech_has_voice = false;
-		play.speech_voice_blocking = false;
+	if (!_GP(play).speech_voice_blocking) {
+		_GP(play).speech_has_voice = false;
+		_GP(play).speech_voice_blocking = false;
 	}
 }
 

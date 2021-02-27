@@ -312,7 +312,7 @@ void engine_init_mouse() {
 }
 
 void engine_locate_speech_pak() {
-	play.want_speech = -2;
+	_GP(play).want_speech = -2;
 
 	if (!usetup.no_speech_pack) {
 		String speech_file = "speech.vox";
@@ -347,11 +347,11 @@ void engine_locate_speech_pak() {
 			}
 			AssetManager::SetDataFile(ResPaths.GamePak.Path); // switch back to the main data pack
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
-			play.want_speech = 1;
+			_GP(play).want_speech = 1;
 		} else if (Path::ComparePaths(ResPaths.DataDir, get_voice_install_dir()) != 0) {
 			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
 			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but voice installation directory is defined: enabling voice-over.");
-			play.want_speech = 1;
+			_GP(play).want_speech = 1;
 		}
 		ResPaths.SpeechPak.Name = speech_file;
 		ResPaths.SpeechPak.Path = speech_filepath;
@@ -359,14 +359,14 @@ void engine_locate_speech_pak() {
 }
 
 void engine_locate_audio_pak() {
-	play.separate_music_lib = 0;
+	_GP(play).separate_music_lib = 0;
 	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (AssetManager::SetDataFile(music_filepath) == kAssetNoError) {
 			AssetManager::SetDataFile(ResPaths.GamePak.Path);
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
-			play.separate_music_lib = 1;
+			_GP(play).separate_music_lib = 1;
 			ResPaths.AudioPak.Name = music_file;
 			ResPaths.AudioPak.Path = music_filepath;
 		} else {
@@ -405,8 +405,8 @@ void engine_init_audio() {
 	if (usetup.audio_backend == 0) {
 		// all audio is disabled
 		// and the voice mode should not go to Voice Only
-		play.want_speech = -2;
-		play.separate_music_lib = 0;
+		_GP(play).want_speech = -2;
+		_GP(play).separate_music_lib = 0;
 	}
 }
 
@@ -438,8 +438,8 @@ void engine_init_exit_handler() {
 }
 
 void engine_init_rand() {
-	play.randseed = g_system->getMillis();
-	::AGS::g_vm->setRandomNumberSeed(play.randseed);
+	_GP(play).randseed = g_system->getMillis();
+	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 }
 
 void engine_init_pathfinder() {
@@ -607,7 +607,7 @@ void show_preload() {
 		if (gfxDriver->UsesMemoryBackBuffer())
 			gfxDriver->GetMemoryBackBuffer()->Clear();
 
-		const Rect &view = play.GetMainViewport();
+		const Rect &view = _GP(play).GetMainViewport();
 		Bitmap *tsc = BitmapHelper::CreateBitmapCopy(splashsc, _GP(game).GetColorDepth());
 		if (!gfxDriver->HasAcceleratedTransform() && view.GetSize() != tsc->GetSize()) {
 			Bitmap *stretched = new Bitmap(view.GetWidth(), view.GetHeight(), tsc->GetColorDepth());
@@ -730,157 +730,157 @@ void engine_init_game_settings() {
 		if (_GP(game).invinfo[ee].flags & IFLG_STARTWITH) playerchar->inv[ee] = 1;
 		else playerchar->inv[ee] = 0;
 	}
-	play.score = 0;
-	play.sierra_inv_color = 7;
+	_GP(play).score = 0;
+	_GP(play).sierra_inv_color = 7;
 	// copy the value set by the editor
 	if (_GP(game).options[OPT_GLOBALTALKANIMSPD] >= 0) {
-		play.talkanim_speed = _GP(game).options[OPT_GLOBALTALKANIMSPD];
+		_GP(play).talkanim_speed = _GP(game).options[OPT_GLOBALTALKANIMSPD];
 		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 1;
 	} else {
-		play.talkanim_speed = -_GP(game).options[OPT_GLOBALTALKANIMSPD] - 1;
+		_GP(play).talkanim_speed = -_GP(game).options[OPT_GLOBALTALKANIMSPD] - 1;
 		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 0;
 	}
-	play.inv_item_wid = 40;
-	play.inv_item_hit = 22;
-	play.messagetime = -1;
-	play.disabled_user_interface = 0;
-	play.gscript_timer = -1;
-	play.debug_mode = _GP(game).options[OPT_DEBUGMODE];
-	play.inv_top = 0;
-	play.inv_numdisp = 0;
-	play.obsolete_inv_numorder = 0;
-	play.text_speed = 15;
-	play.text_min_display_time_ms = 1000;
-	play.ignore_user_input_after_text_timeout_ms = 500;
-	play.ClearIgnoreInput();
-	play.lipsync_speed = 15;
-	play.close_mouth_speech_time = 10;
-	play.disable_antialiasing = 0;
-	play.rtint_enabled = false;
-	play.rtint_level = 0;
-	play.rtint_light = 0;
-	play.text_speed_modifier = 0;
-	play.text_align = kHAlignLeft;
+	_GP(play).inv_item_wid = 40;
+	_GP(play).inv_item_hit = 22;
+	_GP(play).messagetime = -1;
+	_GP(play).disabled_user_interface = 0;
+	_GP(play).gscript_timer = -1;
+	_GP(play).debug_mode = _GP(game).options[OPT_DEBUGMODE];
+	_GP(play).inv_top = 0;
+	_GP(play).inv_numdisp = 0;
+	_GP(play).obsolete_inv_numorder = 0;
+	_GP(play).text_speed = 15;
+	_GP(play).text_min_display_time_ms = 1000;
+	_GP(play).ignore_user_input_after_text_timeout_ms = 500;
+	_GP(play).ClearIgnoreInput();
+	_GP(play).lipsync_speed = 15;
+	_GP(play).close_mouth_speech_time = 10;
+	_GP(play).disable_antialiasing = 0;
+	_GP(play).rtint_enabled = false;
+	_GP(play).rtint_level = 0;
+	_GP(play).rtint_light = 0;
+	_GP(play).text_speed_modifier = 0;
+	_GP(play).text_align = kHAlignLeft;
 	// Make the default alignment to the right with right-to-left text
 	if (_GP(game).options[OPT_RIGHTLEFTWRITE])
-		play.text_align = kHAlignRight;
+		_GP(play).text_align = kHAlignRight;
 
-	play.speech_bubble_width = get_fixed_pixel_size(100);
-	play.bg_frame = 0;
-	play.bg_frame_locked = 0;
-	play.bg_anim_delay = 0;
-	play.anim_background_speed = 0;
-	play.silent_midi = 0;
-	play.current_music_repeating = 0;
-	play.skip_until_char_stops = -1;
-	play.get_loc_name_last_time = -1;
-	play.get_loc_name_save_cursor = -1;
-	play.restore_cursor_mode_to = -1;
-	play.restore_cursor_image_to = -1;
-	play.ground_level_areas_disabled = 0;
-	play.next_screen_transition = -1;
-	play.temporarily_turned_off_character = -1;
-	play.inv_backwards_compatibility = 0;
-	play.gamma_adjustment = 100;
-	play.do_once_tokens.resize(0);
-	play.music_queue_size = 0;
-	play.shakesc_length = 0;
-	play.wait_counter = 0;
-	play.key_skip_wait = SKIP_NONE;
-	play.cur_music_number = -1;
-	play.music_repeat = 1;
-	play.music_master_volume = 100 + LegacyMusicMasterVolumeAdjustment;
-	play.digital_master_volume = 100;
-	play.screen_flipped = 0;
-	play.cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)_GP(game).options[OPT_NOSKIPTEXT]);
-	play.sound_volume = 255;
-	play.speech_volume = 255;
-	play.normal_font = 0;
-	play.speech_font = 1;
-	play.speech_text_shadow = 16;
-	play.screen_tint = -1;
-	play.bad_parsed_word[0] = 0;
-	play.swap_portrait_side = 0;
-	play.swap_portrait_lastchar = -1;
-	play.swap_portrait_lastlastchar = -1;
-	play.in_conversation = 0;
-	play.skip_display = 3;
-	play.no_multiloop_repeat = 0;
-	play.in_cutscene = 0;
-	play.fast_forward = 0;
-	play.totalscore = _GP(game).totalscore;
-	play.roomscript_finished = 0;
-	play.no_textbg_when_voice = 0;
-	play.max_dialogoption_width = get_fixed_pixel_size(180);
-	play.no_hicolor_fadein = 0;
-	play.bgspeech_game_speed = 0;
-	play.bgspeech_stay_on_display = 0;
-	play.unfactor_speech_from_textlength = 0;
-	play.mp3_loop_before_end = 70;
-	play.speech_music_drop = 60;
-	play.room_changes = 0;
-	play.check_interaction_only = 0;
-	play.replay_hotkey_unused = -1;  // StartRecording: not supported.
-	play.dialog_options_x = 0;
-	play.dialog_options_y = 0;
-	play.min_dialogoption_width = 0;
-	play.disable_dialog_parser = 0;
-	play.ambient_sounds_persist = 0;
-	play.screen_is_faded_out = 0;
-	play.player_on_region = 0;
-	play.top_bar_backcolor = 8;
-	play.top_bar_textcolor = 16;
-	play.top_bar_bordercolor = 8;
-	play.top_bar_borderwidth = 1;
-	play.top_bar_ypos = 25;
-	play.top_bar_font = -1;
-	play.screenshot_width = 160;
-	play.screenshot_height = 100;
-	play.speech_text_align = kHAlignCenter;
-	play.auto_use_walkto_points = 1;
-	play.inventory_greys_out = 0;
-	play.skip_speech_specific_key = 0;
-	play.abort_key = 324;  // Alt+X
-	play.fade_to_red = 0;
-	play.fade_to_green = 0;
-	play.fade_to_blue = 0;
-	play.show_single_dialog_option = 0;
-	play.keep_screen_during_instant_transition = 0;
-	play.read_dialog_option_colour = -1;
-	play.speech_portrait_placement = 0;
-	play.speech_portrait_x = 0;
-	play.speech_portrait_y = 0;
-	play.speech_display_post_time_ms = 0;
-	play.dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
-	play.speech_has_voice = false;
-	play.speech_voice_blocking = false;
-	play.speech_in_post_state = false;
-	play.narrator_speech = _GP(game).playercharacter;
-	play.crossfading_out_channel = 0;
-	play.speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
-	if (play.speech_textwindow_gui == 0)
-		play.speech_textwindow_gui = -1;
-	strcpy(play.game_name, _GP(game).gamename);
-	play.lastParserEntry[0] = 0;
-	play.follow_change_room_timer = 150;
+	_GP(play).speech_bubble_width = get_fixed_pixel_size(100);
+	_GP(play).bg_frame = 0;
+	_GP(play).bg_frame_locked = 0;
+	_GP(play).bg_anim_delay = 0;
+	_GP(play).anim_background_speed = 0;
+	_GP(play).silent_midi = 0;
+	_GP(play).current_music_repeating = 0;
+	_GP(play).skip_until_char_stops = -1;
+	_GP(play).get_loc_name_last_time = -1;
+	_GP(play).get_loc_name_save_cursor = -1;
+	_GP(play).restore_cursor_mode_to = -1;
+	_GP(play).restore_cursor_image_to = -1;
+	_GP(play).ground_level_areas_disabled = 0;
+	_GP(play).next_screen_transition = -1;
+	_GP(play).temporarily_turned_off_character = -1;
+	_GP(play).inv_backwards_compatibility = 0;
+	_GP(play).gamma_adjustment = 100;
+	_GP(play).do_once_tokens.resize(0);
+	_GP(play).music_queue_size = 0;
+	_GP(play).shakesc_length = 0;
+	_GP(play).wait_counter = 0;
+	_GP(play).key_skip_wait = SKIP_NONE;
+	_GP(play).cur_music_number = -1;
+	_GP(play).music_repeat = 1;
+	_GP(play).music_master_volume = 100 + LegacyMusicMasterVolumeAdjustment;
+	_GP(play).digital_master_volume = 100;
+	_GP(play).screen_flipped = 0;
+	_GP(play).cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)_GP(game).options[OPT_NOSKIPTEXT]);
+	_GP(play).sound_volume = 255;
+	_GP(play).speech_volume = 255;
+	_GP(play).normal_font = 0;
+	_GP(play).speech_font = 1;
+	_GP(play).speech_text_shadow = 16;
+	_GP(play).screen_tint = -1;
+	_GP(play).bad_parsed_word[0] = 0;
+	_GP(play).swap_portrait_side = 0;
+	_GP(play).swap_portrait_lastchar = -1;
+	_GP(play).swap_portrait_lastlastchar = -1;
+	_GP(play).in_conversation = 0;
+	_GP(play).skip_display = 3;
+	_GP(play).no_multiloop_repeat = 0;
+	_GP(play).in_cutscene = 0;
+	_GP(play).fast_forward = 0;
+	_GP(play).totalscore = _GP(game).totalscore;
+	_GP(play).roomscript_finished = 0;
+	_GP(play).no_textbg_when_voice = 0;
+	_GP(play).max_dialogoption_width = get_fixed_pixel_size(180);
+	_GP(play).no_hicolor_fadein = 0;
+	_GP(play).bgspeech_game_speed = 0;
+	_GP(play).bgspeech_stay_on_display = 0;
+	_GP(play).unfactor_speech_from_textlength = 0;
+	_GP(play).mp3_loop_before_end = 70;
+	_GP(play).speech_music_drop = 60;
+	_GP(play).room_changes = 0;
+	_GP(play).check_interaction_only = 0;
+	_GP(play).replay_hotkey_unused = -1;  // StartRecording: not supported.
+	_GP(play).dialog_options_x = 0;
+	_GP(play).dialog_options_y = 0;
+	_GP(play).min_dialogoption_width = 0;
+	_GP(play).disable_dialog_parser = 0;
+	_GP(play).ambient_sounds_persist = 0;
+	_GP(play).screen_is_faded_out = 0;
+	_GP(play).player_on_region = 0;
+	_GP(play).top_bar_backcolor = 8;
+	_GP(play).top_bar_textcolor = 16;
+	_GP(play).top_bar_bordercolor = 8;
+	_GP(play).top_bar_borderwidth = 1;
+	_GP(play).top_bar_ypos = 25;
+	_GP(play).top_bar_font = -1;
+	_GP(play).screenshot_width = 160;
+	_GP(play).screenshot_height = 100;
+	_GP(play).speech_text_align = kHAlignCenter;
+	_GP(play).auto_use_walkto_points = 1;
+	_GP(play).inventory_greys_out = 0;
+	_GP(play).skip_speech_specific_key = 0;
+	_GP(play).abort_key = 324;  // Alt+X
+	_GP(play).fade_to_red = 0;
+	_GP(play).fade_to_green = 0;
+	_GP(play).fade_to_blue = 0;
+	_GP(play).show_single_dialog_option = 0;
+	_GP(play).keep_screen_during_instant_transition = 0;
+	_GP(play).read_dialog_option_colour = -1;
+	_GP(play).speech_portrait_placement = 0;
+	_GP(play).speech_portrait_x = 0;
+	_GP(play).speech_portrait_y = 0;
+	_GP(play).speech_display_post_time_ms = 0;
+	_GP(play).dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
+	_GP(play).speech_has_voice = false;
+	_GP(play).speech_voice_blocking = false;
+	_GP(play).speech_in_post_state = false;
+	_GP(play).narrator_speech = _GP(game).playercharacter;
+	_GP(play).crossfading_out_channel = 0;
+	_GP(play).speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
+	if (_GP(play).speech_textwindow_gui == 0)
+		_GP(play).speech_textwindow_gui = -1;
+	strcpy(_GP(play).game_name, _GP(game).gamename);
+	_GP(play).lastParserEntry[0] = 0;
+	_GP(play).follow_change_room_timer = 150;
 	for (ee = 0; ee < MAX_ROOM_BGFRAMES; ee++)
-		play.raw_modified[ee] = 0;
-	play.game_speed_modifier = 0;
+		_GP(play).raw_modified[ee] = 0;
+	_GP(play).game_speed_modifier = 0;
 	if (debug_flags & DBG_DEBUGMODE)
-		play.debug_mode = 1;
+		_GP(play).debug_mode = 1;
 	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
-	play.shake_screen_yoff = 0;
+	_GP(play).shake_screen_yoff = 0;
 
-	memset(&play.walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
-	memset(&play.script_timers[0], 0, MAX_TIMERS * sizeof(int32_t));
-	memset(&play.default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int32_t));
+	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
+	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int32_t));
+	memset(&_GP(play).default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int32_t));
 
 	// reset graphical script vars (they're still used by some games)
 	for (ee = 0; ee < MAXGLOBALVARS; ee++)
-		play.globalvars[ee] = 0;
+		_GP(play).globalvars[ee] = 0;
 
 	for (ee = 0; ee < MAXGLOBALSTRINGS; ee++)
-		play.globalstrings[ee][0] = 0;
+		_GP(play).globalstrings[ee][0] = 0;
 
 	if (!usetup.translation.IsEmpty())
 		init_translation(usetup.translation, "", true);

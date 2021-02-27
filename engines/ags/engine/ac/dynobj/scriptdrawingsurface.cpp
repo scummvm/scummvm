@@ -38,7 +38,7 @@ using namespace AGS::Shared;
 extern RoomStruct thisroom;
 
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-extern GameState play;
+
 
 Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 	// TODO: consider creating weak_ptr here, and store one in the DrawingSurface!
@@ -119,7 +119,7 @@ ScriptDrawingSurface::ScriptDrawingSurface() {
 	dynamicSurfaceNumber = -1;
 	isLinkedBitmapOnly = false;
 	linkedBitmapOnly = nullptr;
-	currentColour = play.raw_color;
+	currentColour = _GP(play).raw_color;
 	currentColourScript = 0;
 	modified = 0;
 	hasAlphaChannel = 0;

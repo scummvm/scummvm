@@ -50,8 +50,22 @@ extern CharacterInfo *playerchar;
 extern ScriptSystem scsystem;
 
 GameState::GameState() {
-	_isAutoRoomViewport = true;
-	_mainViewportHasChanged = false;
+	Common::fill(&globalvars[0], &globalvars[MAXGLOBALVARS], 0);
+	Common::fill(&reserved[0], &reserved[GAME_STATE_RESERVED_INTS], 0);
+	Common::fill(&globalscriptvars[0], &globalscriptvars[MAXGSVALUES], 0);
+	Common::fill(&walkable_areas_on[0], &walkable_areas_on[MAX_WALK_AREAS + 1], 0);
+	Common::fill(&script_timers[0], &script_timers[MAX_TIMERS], 0);
+	Common::fill(&parsed_words[0], &parsed_words[MAX_PARSED_WORDS], 0);
+	Common::fill(&bad_parsed_word[0], &bad_parsed_word[100], 0);
+	Common::fill(&raw_modified[0], &raw_modified[MAX_ROOM_BGFRAMES], 0);
+	Common::fill(&filenumbers[0], &filenumbers[MAXSAVEGAMES], 0);
+	Common::fill(&music_queue[0], &music_queue[MAX_QUEUED_MUSIC], 0);
+	Common::fill(&takeover_from[0], &takeover_from[50], 0);
+	Common::fill(&playmp3file_name[0], &playmp3file_name[PLAYMP3FILE_MAX_FILENAME_LEN], 0);
+	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS - 1][MAX_MAXSTRLEN], 0);
+	Common::fill(&lastParserEntry[0], &lastParserEntry[MAX_MAXSTRLEN], 0);
+	Common::fill(&game_name[0], &game_name[100], 0);
+	Common::fill(&default_audio_type_volumes[0], &default_audio_type_volumes[MAX_AUDIO_TYPES], 0);
 }
 
 void GameState::Free() {
@@ -216,12 +230,12 @@ VpPoint GameState::ScreenToRoomDivDown(int scrx, int scry) {
 
 void GameState::CreatePrimaryViewportAndCamera() {
 	if (_roomViewports.size() == 0) {
-		play.CreateRoomViewport();
-		play.RegisterRoomViewport(0);
+		_GP(play).CreateRoomViewport();
+		_GP(play).RegisterRoomViewport(0);
 	}
 	if (_roomCameras.size() == 0) {
-		play.CreateRoomCamera();
-		play.RegisterRoomCamera(0);
+		_GP(play).CreateRoomCamera();
+		_GP(play).RegisterRoomCamera(0);
 	}
 	_roomViewports[0]->LinkCamera(_roomCameras[0]);
 	_roomCameras[0]->LinkToViewport(_roomViewports[0]);
@@ -368,8 +382,8 @@ bool GameState::IsNonBlockingVoiceSpeech() const {
 }
 
 bool GameState::ShouldPlayVoiceSpeech() const {
-	return !play.fast_forward &&
-		(play.want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
+	return !_GP(play).fast_forward &&
+		(_GP(play).want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
 }
 
 void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {

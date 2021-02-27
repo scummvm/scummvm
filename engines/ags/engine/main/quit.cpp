@@ -180,7 +180,7 @@ void quit_message_on_exit(const char *qmsg, String &alertis, QuitReason qreason)
 void quit_release_data() {
 	resetRoomStatuses();
 	thisroom.Free();
-	play.Free();
+	_GP(play).Free();
 
 	/*  _CrtMemState memstart;
 	_CrtMemCheckpoint(&memstart);

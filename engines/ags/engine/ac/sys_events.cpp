@@ -39,9 +39,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern GameState play;
-
 extern volatile unsigned long globalTimerCounter;
 extern int pluginSimulatedClick;
 extern int displayed_room;
@@ -185,7 +182,7 @@ int ags_getch() {
 	}
 
 	// Alt+X, abort (but only once game is loaded)
-	if ((gott == play.abort_key) && (displayed_room >= 0)) {
+	if ((gott == _GP(play).abort_key) && (displayed_room >= 0)) {
 		check_dynamic_sprites_at_exit = 0;
 		quit("!|");
 	}

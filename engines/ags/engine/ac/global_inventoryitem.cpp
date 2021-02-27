@@ -40,7 +40,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 
-extern GameState play;
+
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern const char *evblockbasename;
 extern int evblocknum;
@@ -118,7 +118,7 @@ void RunInventoryInteraction(int iit, int modd) {
 	else if (modd == MODE_HAND)
 		run_event_block_inv(iit, 1);
 	else if (modd == MODE_USE) {
-		play.usedinv = playerchar->activeinv;
+		_GP(play).usedinv = playerchar->activeinv;
 		run_event_block_inv(iit, 3);
 	} else if (modd == MODE_TALK)
 		run_event_block_inv(iit, 2);
@@ -130,12 +130,12 @@ int IsInventoryInteractionAvailable(int item, int mood) {
 	if ((item < 0) || (item >= MAX_INV))
 		quit("!IsInventoryInteractionAvailable: invalid inventory number");
 
-	play.check_interaction_only = 1;
+	_GP(play).check_interaction_only = 1;
 
 	RunInventoryInteraction(item, mood);
 
-	int ciwas = play.check_interaction_only;
-	play.check_interaction_only = 0;
+	int ciwas = _GP(play).check_interaction_only;
+	_GP(play).check_interaction_only = 0;
 
 	if (ciwas == 2)
 		return 1;
@@ -144,11 +144,11 @@ int IsInventoryInteractionAvailable(int item, int mood) {
 }
 
 int GetInvProperty(int item, const char *property) {
-	return get_int_property(_GP(game).invProps[item], play.invProps[item], property);
+	return get_int_property(_GP(game).invProps[item], _GP(play).invProps[item], property);
 }
 
 void GetInvPropertyText(int item, const char *property, char *bufer) {
-	get_text_property(_GP(game).invProps[item], play.invProps[item], property, bufer);
+	get_text_property(_GP(game).invProps[item], _GP(play).invProps[item], property, bufer);
 }
 
 } // namespace AGS3

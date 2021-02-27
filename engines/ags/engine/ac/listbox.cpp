@@ -45,7 +45,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameState play;
+
 
 
 // *** LIST BOX FUNCTIONS
@@ -146,7 +146,7 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 
 	// update the global savegameindex[] array for backward compatibilty
 	for (nn = 0; nn < numsaves; nn++) {
-		play.filenumbers[nn] = listbox->SavedGameIndex[nn];
+		_GP(play).filenumbers[nn] = listbox->SavedGameIndex[nn];
 	}
 
 	guis_need_update = 1;

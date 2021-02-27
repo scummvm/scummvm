@@ -39,7 +39,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
-extern GameState play;
 
 extern int displayed_room;
 extern RoomStatus *croom;
@@ -60,8 +59,8 @@ void redo_walkable_areas() {
 	for (hh = 0; hh < walkareabackup->GetHeight(); hh++) {
 		uint8_t *walls_scanline = thisroom.WalkAreaMask->GetScanLineForWriting(hh);
 		for (ww = 0; ww < walkareabackup->GetWidth(); ww++) {
-			//      if (play.walkable_areas_on[_getpixel(thisroom.WalkAreaMask,ww,hh)]==0)
-			if (play.walkable_areas_on[walls_scanline[ww]] == 0)
+			//      if (_GP(play).walkable_areas_on[_getpixel(thisroom.WalkAreaMask,ww,hh)]==0)
+			if (_GP(play).walkable_areas_on[walls_scanline[ww]] == 0)
 				walls_scanline[ww] = 0;
 		}
 	}

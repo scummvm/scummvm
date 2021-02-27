@@ -83,7 +83,7 @@ int GetHotspotPointY(int hotspot) {
 }
 
 int GetHotspotIDAtScreen(int scrx, int scry) {
-	VpPoint vpt = play.ScreenToRoomDivDown(scrx, scry);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(scrx, scry);
 	if (vpt.second < 0) return 0;
 	return get_hotspot_at(vpt.first.X, vpt.first.Y);
 }
@@ -109,12 +109,12 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 	else if (mood == MODE_USE) {
 		passon = 3;
 		cdata = playerchar->activeinv;
-		play.usedinv = cdata;
+		_GP(play).usedinv = cdata;
 	}
 
 	if ((_GP(game).options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK));
-	else if (play.auto_use_walkto_points == 0);
-	else if ((mood != MODE_WALK) && (play.check_interaction_only == 0))
+	else if (_GP(play).auto_use_walkto_points == 0);
+	else if ((mood != MODE_WALK) && (_GP(play).check_interaction_only == 0))
 		MoveCharacterToHotspot(_GP(game).playercharacter, hotspothere);
 
 	// can't use the setevent functions because this ProcessClick is only

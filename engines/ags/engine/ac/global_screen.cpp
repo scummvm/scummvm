@@ -42,7 +42,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetup usetup;
-extern GameState play;
+
 
 extern RoomStruct thisroom;
 extern IGraphicsDriver *gfxDriver;
@@ -52,13 +52,13 @@ extern unsigned int loopcounter;
 
 void FlipScreen(int amount) {
 	if ((amount < 0) | (amount > 3)) quit("!FlipScreen: invalid argument (0-3)");
-	play.screen_flipped = amount;
+	_GP(play).screen_flipped = amount;
 }
 
 void ShakeScreen(int severe) {
 	EndSkippingUntilCharStops();
 
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 
 	severe = data_to_game_coord(severe);
@@ -67,10 +67,10 @@ void ShakeScreen(int severe) {
 	// TODO: rely on game speed setting? and/or provide frequency and duration args
 	// TODO: unify blocking and non-blocking shake update
 
-	play.shakesc_length = 10;
-	play.shakesc_delay = 2;
-	play.shakesc_amount = severe;
-	play.mouse_cursor_hidden++;
+	_GP(play).shakesc_length = 10;
+	_GP(play).shakesc_delay = 2;
+	_GP(play).shakesc_amount = severe;
+	_GP(play).mouse_cursor_hidden++;
 
 	if (gfxDriver->RequiresFullRedrawEachFrame()) {
 		for (int hh = 0; hh < 40; hh++) {
@@ -88,7 +88,7 @@ void ShakeScreen(int severe) {
 		for (int hh = 0; hh < 40; hh++) {
 			platform->Delay(50);
 			const int yoff = hh % 2 == 0 ? 0 : severe;
-			play.shake_screen_yoff = yoff;
+			_GP(play).shake_screen_yoff = yoff;
 			render_to_screen();
 			update_polled_stuff_if_runtime();
 		}
@@ -96,10 +96,10 @@ void ShakeScreen(int severe) {
 		render_to_screen();
 	}
 
-	play.mouse_cursor_hidden--;
-	play.shakesc_length = 0;
-	play.shakesc_delay = 0;
-	play.shakesc_amount = 0;
+	_GP(play).mouse_cursor_hidden--;
+	_GP(play).shakesc_length = 0;
+	_GP(play).shakesc_delay = 0;
+	_GP(play).shakesc_amount = 0;
 }
 
 void ShakeScreenBackground(int delay, int amount, int length) {
@@ -108,14 +108,14 @@ void ShakeScreenBackground(int delay, int amount, int length) {
 
 	amount = data_to_game_coord(amount);
 
-	if (amount < play.shakesc_amount) {
+	if (amount < _GP(play).shakesc_amount) {
 		// from a bigger to smaller shake, clear up the borders
 		clear_letterbox_borders();
 	}
 
-	play.shakesc_amount = amount;
-	play.shakesc_delay = delay;
-	play.shakesc_length = length;
+	_GP(play).shakesc_amount = amount;
+	_GP(play).shakesc_delay = delay;
+	_GP(play).shakesc_length = length;
 }
 
 void TintScreen(int red, int grn, int blu) {
@@ -125,33 +125,33 @@ void TintScreen(int red, int grn, int blu) {
 	invalidate_screen();
 
 	if ((red == 0) && (grn == 0) && (blu == 0)) {
-		play.screen_tint = -1;
+		_GP(play).screen_tint = -1;
 		return;
 	}
 	red = (red * 25) / 10;
 	grn = (grn * 25) / 10;
 	blu = (blu * 25) / 10;
-	play.screen_tint = red + (grn << 8) + (blu << 16);
+	_GP(play).screen_tint = red + (grn << 8) + (blu << 16);
 }
 
 void my_fade_out(int spdd) {
 	EndSkippingUntilCharStops();
 
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 
-	if (play.screen_is_faded_out == 0)
-		gfxDriver->FadeOut(spdd, play.fade_to_red, play.fade_to_green, play.fade_to_blue);
+	if (_GP(play).screen_is_faded_out == 0)
+		gfxDriver->FadeOut(spdd, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 
 	if (_GP(game).color_depth > 1)
-		play.screen_is_faded_out = 1;
+		_GP(play).screen_is_faded_out = 1;
 }
 
 void SetScreenTransition(int newtrans) {
 	if ((newtrans < 0) || (newtrans > FADE_LAST))
 		quit("!SetScreenTransition: invalid transition type");
 
-	play.fade_effect = newtrans;
+	_GP(play).fade_effect = newtrans;
 
 	debug_script_log("Screen transition changed");
 }
@@ -160,7 +160,7 @@ void SetNextScreenTransition(int newtrans) {
 	if ((newtrans < 0) || (newtrans > FADE_LAST))
 		quit("!SetNextScreenTransition: invalid transition type");
 
-	play.next_screen_transition = newtrans;
+	_GP(play).next_screen_transition = newtrans;
 
 	debug_script_log("SetNextScreenTransition engaged");
 }
@@ -170,15 +170,15 @@ void SetFadeColor(int red, int green, int blue) {
 		(blue < 0) || (blue > 255))
 		quit("!SetFadeColor: Red, Green and Blue must be 0-255");
 
-	play.fade_to_red = red;
-	play.fade_to_green = green;
-	play.fade_to_blue = blue;
+	_GP(play).fade_to_red = red;
+	_GP(play).fade_to_green = green;
+	_GP(play).fade_to_blue = blue;
 }
 
 void FadeIn(int sppd) {
 	EndSkippingUntilCharStops();
 
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 
 	my_fade_in(palette, sppd);

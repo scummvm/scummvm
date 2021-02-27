@@ -52,7 +52,7 @@ using namespace AGS::Engine;
 extern RoomStruct thisroom;
 extern RoomStatus *croom;
 extern int displayed_room;
-extern GameState play;
+
 extern color palette[256];
 extern IGraphicsDriver *gfxDriver;
 extern AGSPlatformDriver *platform;
@@ -211,24 +211,24 @@ void process_event(EventHappened *evp) {
 	} else if (evp->type == EV_FADEIN) {
 		// if they change the transition type before the fadein, make
 		// sure the screen doesn't freeze up
-		play.screen_is_faded_out = 0;
+		_GP(play).screen_is_faded_out = 0;
 
 		// determine the transition style
-		int theTransition = play.fade_effect;
+		int theTransition = _GP(play).fade_effect;
 
-		if (play.next_screen_transition >= 0) {
+		if (_GP(play).next_screen_transition >= 0) {
 			// a one-off transition was selected, so use it
-			theTransition = play.next_screen_transition;
-			play.next_screen_transition = -1;
+			theTransition = _GP(play).next_screen_transition;
+			_GP(play).next_screen_transition = -1;
 		}
 
 		if (pl_run_plugin_hooks(AGSE_TRANSITIONIN, 0))
 			return;
 
-		if (play.fast_forward)
+		if (_GP(play).fast_forward)
 			return;
 
-		const bool ignore_transition = (play.screen_tint > 0);
+		const bool ignore_transition = (_GP(play).screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
 			(saved_viewport_bitmap == nullptr) && !ignore_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
@@ -240,7 +240,7 @@ void process_event(EventHappened *evp) {
 
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
 		//const Size &data_res = _GP(game).GetDataRes();
-		const Rect &viewport = play.GetMainViewport();
+		const Rect &viewport = _GP(play).GetMainViewport();
 
 		if ((theTransition == FADE_INSTANT) || ignore_transition)
 			set_palette_range(palette, 0, 255, 0);
@@ -281,7 +281,7 @@ void process_event(EventHappened *evp) {
 				}
 				gfxDriver->SetMemoryBackBuffer(saved_backbuf);
 			}
-			play.screen_is_faded_out = 0;
+			_GP(play).screen_is_faded_out = 0;
 		} else if (theTransition == FADE_CROSSFADE) {
 			if (_GP(game).color_depth == 1)
 				quit("!Cannot use crossfade screen transition in 256-colour games");
@@ -375,7 +375,7 @@ void processallevents(int numev, EventHappened *evlist) {
 	EventHappened copyOfList[MAXEVENTS];
 	memcpy(&copyOfList[0], &evlist[0], sizeof(EventHappened) * numev);
 
-	int room_was = play.room_changes;
+	int room_was = _GP(play).room_changes;
 
 	inside_processevent++;
 
@@ -383,7 +383,7 @@ void processallevents(int numev, EventHappened *evlist) {
 
 		process_event(&copyOfList[dd]);
 
-		if (room_was != play.room_changes)
+		if (room_was != _GP(play).room_changes)
 			break;  // changed room, so discard other events
 	}
 

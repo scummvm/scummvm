@@ -36,10 +36,10 @@ class Stream;
 using namespace AGS; // FIXME later
 
 struct QueuedAudioItem {
-	short audioClipIndex;
-	short priority;
-	bool  repeat;
-	SOUNDCLIP *cachedClip;
+	short audioClipIndex = 0;
+	short priority = 0;
+	bool  repeat = false;
+	SOUNDCLIP *cachedClip = nullptr;
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out) const;

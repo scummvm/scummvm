@@ -325,8 +325,8 @@ HSaveError OpenSavegame(const String &filename, SavegameDescription &desc, Saveg
 
 // Prepares engine for actual save restore (stops processes, cleans up memory)
 void DoBeforeRestore(PreservedParams &pp) {
-	pp.SpeechVOX = play.want_speech;
-	pp.MusicVOX = play.separate_music_lib;
+	pp.SpeechVOX = _GP(play).want_speech;
+	pp.MusicVOX = _GP(play).separate_music_lib;
 
 	unload_old_room();
 	delete raw_saved_screen;
@@ -369,8 +369,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 		moduleInst[i] = nullptr;
 	}
 
-	play.FreeProperties();
-	play.FreeViewportsAndCameras();
+	_GP(play).FreeProperties();
+	_GP(play).FreeViewportsAndCameras();
 
 	delete roominstFork;
 	delete roominst;
@@ -404,7 +404,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 void RestoreViewportsAndCameras(const RestoredData &r_data) {
 	for (size_t i = 0; i < r_data.Cameras.size(); ++i) {
 		const auto &cam_dat = r_data.Cameras[i];
-		auto cam = play.GetRoomCamera(i);
+		auto cam = _GP(play).GetRoomCamera(i);
 		cam->SetID(cam_dat.ID);
 		if ((cam_dat.Flags & kSvgCamPosLocked) != 0)
 			cam->Lock();
@@ -415,7 +415,7 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 	}
 	for (size_t i = 0; i < r_data.Viewports.size(); ++i) {
 		const auto &view_dat = r_data.Viewports[i];
-		auto view = play.GetRoomViewport(i);
+		auto view = _GP(play).GetRoomViewport(i);
 		view->SetID(view_dat.ID);
 		view->SetVisible((view_dat.Flags & kSvgViewportVisible) != 0);
 		view->SetRect(RectWH(view_dat.Left, view_dat.Top, view_dat.Width, view_dat.Height));
@@ -423,11 +423,11 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 		// Restore camera link
 		int cam_index = view_dat.CamID;
 		if (cam_index < 0) continue;
-		auto cam = play.GetRoomCamera(cam_index);
+		auto cam = _GP(play).GetRoomCamera(cam_index);
 		view->LinkCamera(cam);
 		cam->LinkToViewport(view);
 	}
-	play.InvalidateViewportZOrder();
+	_GP(play).InvalidateViewportZOrder();
 }
 
 // Final processing after successfully restoring from save
@@ -435,20 +435,20 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// Use a yellow dialog highlight for older game versions
 	// CHECKME: it is dubious that this should be right here
 	if (loaded_game_file_version < kGameVersion_331)
-		play.dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
+		_GP(play).dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
 
 	// Preserve whether the music vox is available
-	play.separate_music_lib = pp.MusicVOX;
+	_GP(play).separate_music_lib = pp.MusicVOX;
 	// If they had the vox when they saved it, but they don't now
-	if ((pp.SpeechVOX < 0) && (play.want_speech >= 0))
-		play.want_speech = (-play.want_speech) - 1;
+	if ((pp.SpeechVOX < 0) && (_GP(play).want_speech >= 0))
+		_GP(play).want_speech = (-_GP(play).want_speech) - 1;
 	// If they didn't have the vox before, but now they do
-	else if ((pp.SpeechVOX >= 0) && (play.want_speech < 0))
-		play.want_speech = (-play.want_speech) - 1;
+	else if ((pp.SpeechVOX >= 0) && (_GP(play).want_speech < 0))
+		_GP(play).want_speech = (-_GP(play).want_speech) - 1;
 
 	// recache queued clips
-	for (int i = 0; i < play.new_music_queue_size; ++i) {
-		play.new_music_queue[i].cachedClip = nullptr;
+	for (int i = 0; i < _GP(play).new_music_queue_size; ++i) {
+		_GP(play).new_music_queue[i].cachedClip = nullptr;
 	}
 
 	// restore these to the ones retrieved from the save game
@@ -481,13 +481,13 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	setup_player_character(_GP(game).playercharacter);
 
 	// Save some parameters to restore them after room load
-	int gstimer = play.gscript_timer;
-	int oldx1 = play.mboundx1, oldx2 = play.mboundx2;
-	int oldy1 = play.mboundy1, oldy2 = play.mboundy2;
+	int gstimer = _GP(play).gscript_timer;
+	int oldx1 = _GP(play).mboundx1, oldx2 = _GP(play).mboundx2;
+	int oldy1 = _GP(play).mboundy1, oldy2 = _GP(play).mboundy2;
 
 	// disable the queue momentarily
-	int queuedMusicSize = play.music_queue_size;
-	play.music_queue_size = 0;
+	int queuedMusicSize = _GP(play).music_queue_size;
+	_GP(play).music_queue_size = 0;
 
 	update_polled_stuff_if_runtime();
 
@@ -497,7 +497,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	update_polled_stuff_if_runtime();
 
-	play.gscript_timer = gstimer;
+	_GP(play).gscript_timer = gstimer;
 	// restore the correct room volume (they might have modified
 	// it with SetMusicVolume)
 	thisroom.Options.MusicVolume = r_data.RoomVolume;
@@ -511,7 +511,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// ensure that the current cursor is locked
 	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
-	::AGS::g_vm->set_window_title(play.game_name);
+	::AGS::g_vm->set_window_title(_GP(play).game_name);
 
 	update_polled_stuff_if_runtime();
 
@@ -541,17 +541,17 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 
 	// restore the queue now that the music is playing
-	play.music_queue_size = queuedMusicSize;
+	_GP(play).music_queue_size = queuedMusicSize;
 
-	if (play.digital_master_volume >= 0)
-		System_SetVolume(play.digital_master_volume);
+	if (_GP(play).digital_master_volume >= 0)
+		System_SetVolume(_GP(play).digital_master_volume);
 
 	// Run audio clips on channels
 	// these two crossfading parameters have to be temporarily reset
-	const int cf_in_chan = play.crossfading_in_channel;
-	const int cf_out_chan = play.crossfading_out_channel;
-	play.crossfading_in_channel = 0;
-	play.crossfading_out_channel = 0;
+	const int cf_in_chan = _GP(play).crossfading_in_channel;
+	const int cf_out_chan = _GP(play).crossfading_out_channel;
+	_GP(play).crossfading_in_channel = 0;
+	_GP(play).crossfading_out_channel = 0;
 
 	{
 		AudioChannelsLock lock;
@@ -579,9 +579,9 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 			}
 		}
 		if ((cf_in_chan > 0) && (lock.GetChannel(cf_in_chan) != nullptr))
-			play.crossfading_in_channel = cf_in_chan;
+			_GP(play).crossfading_in_channel = cf_in_chan;
 		if ((cf_out_chan > 0) && (lock.GetChannel(cf_out_chan) != nullptr))
-			play.crossfading_out_channel = cf_out_chan;
+			_GP(play).crossfading_out_channel = cf_out_chan;
 
 		// If there were synced audio tracks, the time taken to load in the
 		// different channels will have thrown them out of sync, so re-time it
@@ -613,7 +613,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	RestoreViewportsAndCameras(r_data);
 
-	play.ClearIgnoreInput(); // don't keep ignored input after save restore
+	_GP(play).ClearIgnoreInput(); // don't keep ignored input after save restore
 	update_polled_stuff_if_runtime();
 
 	pl_run_plugin_hooks(AGSE_POSTRESTOREGAME, 0);
@@ -626,8 +626,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		first_room_initialization();
 	}
 
-	if ((play.music_queue_size > 0) && (cachedQueuedMusic == nullptr)) {
-		cachedQueuedMusic = load_music_from_disk(play.music_queue[0], 0);
+	if ((_GP(play).music_queue_size > 0) && (cachedQueuedMusic == nullptr)) {
+		cachedQueuedMusic = load_music_from_disk(_GP(play).music_queue[0], 0);
 	}
 
 	// Test if the old-style audio had playing music and it was properly loaded
@@ -724,9 +724,9 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 }
 
 void DoBeforeSave() {
-	if (play.cur_music_number >= 0) {
+	if (_GP(play).cur_music_number >= 0) {
 		if (IsMusicPlaying() == 0)
-			play.cur_music_number = -1;
+			_GP(play).cur_music_number = -1;
 	}
 
 	if (displayed_room >= 0) {

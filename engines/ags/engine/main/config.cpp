@@ -51,10 +51,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
 extern GameSetup usetup;
-
-extern GameState play;
 
 // Filename of the default config file, the one found in the game installation
 const String DefaultConfigFileName = "acsetup.cfg";

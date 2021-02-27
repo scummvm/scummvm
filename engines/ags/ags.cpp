@@ -70,7 +70,6 @@ using namespace Engine;
 extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 
 extern GameSetup usetup;
-extern GameState play;
 extern int our_eip;
 extern AGSPlatformDriver *platform;
 extern int convert_16bit_bgr;
@@ -92,7 +91,7 @@ extern void quit_free();
 void main_pre_init() {
 	our_eip = -999;
 	Shared::AssetManager::SetSearchPriority(Shared::kAssetPriorityDir);
-	play.takeover_data = 0;
+	_GP(play).takeover_data = 0;
 }
 
 void main_create_platform_driver() {
@@ -171,9 +170,9 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if (scumm_stricmp(arg, "--takeover") == 0) {
 			if (argc < ee + 2)
 				break;
-			play.takeover_data = atoi(argv[ee + 1]);
-			strncpy(play.takeover_from, argv[ee + 2], 49);
-			play.takeover_from[49] = 0;
+			_GP(play).takeover_data = atoi(argv[ee + 1]);
+			strncpy(_GP(play).takeover_from, argv[ee + 2], 49);
+			_GP(play).takeover_from[49] = 0;
 			ee += 2;
 		} else if (scumm_strnicmp(arg, "--tell", 6) == 0) {
 			if (arg[6] == 0)
@@ -396,12 +395,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 
 bool AGSEngine::canLoadGameStateCurrently() {
 	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
-		!::AGS3::inside_script && !AGS3::play.fast_forward;
+		!::AGS3::inside_script && !_GP(play).fast_forward;
 }
 
 bool AGSEngine::canSaveGameStateCurrently() {
 	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
-		!::AGS3::inside_script && !AGS3::play.fast_forward;
+		!::AGS3::inside_script && !_GP(play).fast_forward;
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {

@@ -23,22 +23,23 @@
 #include "ags/engine/ac/global_viewport.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 void SetViewport(int offsx, int offsy) {
 	offsx = data_to_game_coord(offsx);
 	offsy = data_to_game_coord(offsy);
-	play.GetRoomCamera(0)->LockAt(offsx, offsy);
+	_GP(play).GetRoomCamera(0)->LockAt(offsx, offsy);
 }
 void ReleaseViewport() {
-	play.GetRoomCamera(0)->Release();
+	_GP(play).GetRoomCamera(0)->Release();
 }
 int GetViewportX() {
-	return game_to_data_coord(play.GetRoomCamera(0)->GetRect().Left);
+	return game_to_data_coord(_GP(play).GetRoomCamera(0)->GetRect().Left);
 }
 int GetViewportY() {
-	return game_to_data_coord(play.GetRoomCamera(0)->GetRect().Top);
+	return game_to_data_coord(_GP(play).GetRoomCamera(0)->GetRect().Top);
 }
 
 } // namespace AGS3

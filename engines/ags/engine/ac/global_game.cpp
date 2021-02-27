@@ -77,7 +77,7 @@ using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 
-extern GameState play;
+
 extern ExecutingScript *curscript;
 extern int displayed_room;
 extern int game_paused;
@@ -101,10 +101,10 @@ extern int _G(psp_gfx_renderer);
 
 void GiveScore(int amnt) {
 	guis_need_update = 1;
-	play.score += amnt;
+	_GP(play).score += amnt;
 
-	if ((amnt > 0) && (play.score_sound >= 0))
-		play_audio_clip_by_index(play.score_sound);
+	if ((amnt > 0) && (_GP(play).score_sound >= 0))
+		play_audio_clip_by_index(_GP(play).score_sound);
 
 	run_on_event(GE_GOT_SCORE, RuntimeScriptValue().SetInt32(amnt));
 }
@@ -207,33 +207,33 @@ void SetGlobalInt(int index, int valu) {
 	if ((index < 0) | (index >= MAXGSVALUES))
 		quit("!SetGlobalInt: invalid index");
 
-	if (play.globalscriptvars[index] != valu) {
+	if (_GP(play).globalscriptvars[index] != valu) {
 		debug_script_log("GlobalInt %d set to %d", index, valu);
 	}
 
-	play.globalscriptvars[index] = valu;
+	_GP(play).globalscriptvars[index] = valu;
 }
 
 
 int GetGlobalInt(int index) {
 	if ((index < 0) | (index >= MAXGSVALUES))
 		quit("!GetGlobalInt: invalid index");
-	return play.globalscriptvars[index];
+	return _GP(play).globalscriptvars[index];
 }
 
 void SetGlobalString(int index, const char *newval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
 		quit("!SetGlobalString: invalid index");
 	debug_script_log("GlobalString %d set to '%s'", index, newval);
-	strncpy(play.globalstrings[index], newval, MAX_MAXSTRLEN);
+	strncpy(_GP(play).globalstrings[index], newval, MAX_MAXSTRLEN);
 	// truncate it to 200 chars, to be sure
-	play.globalstrings[index][MAX_MAXSTRLEN - 1] = 0;
+	_GP(play).globalstrings[index][MAX_MAXSTRLEN - 1] = 0;
 }
 
 void GetGlobalString(int index, char *strval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
 		quit("!GetGlobalString: invalid index");
-	strcpy(strval, play.globalstrings[index]);
+	strcpy(strval, _GP(play).globalstrings[index]);
 }
 
 // TODO: refactor this method, and use same shared procedure at both normal stop/startup and in RunAGSGame
@@ -255,7 +255,7 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 		get_install_dir_path(gamefilenamebuf, newgame);
 		ResPaths.GamePak.Path = gamefilenamebuf;
 		ResPaths.GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
-		play.takeover_data = data;
+		_GP(play).takeover_data = data;
 		load_new_game_restore = -1;
 
 		if (inside_script) {
@@ -295,11 +295,11 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	if ((mode & RAGMODE_PRESERVEGLOBALINT) == 0) {
 		// reset GlobalInts
 		for (ee = 0; ee < MAXGSVALUES; ee++)
-			play.globalscriptvars[ee] = 0;
+			_GP(play).globalscriptvars[ee] = 0;
 	}
 
 	engine_init_game_settings();
-	play.screen_is_faded_out = 1;
+	_GP(play).screen_is_faded_out = 1;
 
 	if (load_new_game_restore >= 0) {
 		try_restore_save(load_new_game_restore);
@@ -386,7 +386,7 @@ void SetRestartPoint() {
 
 
 void SetGameSpeed(int newspd) {
-	newspd += play.game_speed_modifier;
+	newspd += _GP(play).game_speed_modifier;
 	if (newspd > 1000) newspd = 1000;
 	if (newspd < 10) newspd = 10;
 	set_game_speed(newspd);
@@ -394,7 +394,7 @@ void SetGameSpeed(int newspd) {
 }
 
 int GetGameSpeed() {
-	return ::lround(get_current_fps()) - play.game_speed_modifier;
+	return ::lround(get_current_fps()) - _GP(play).game_speed_modifier;
 }
 
 int SetGameOption(int opt, int setting) {
@@ -425,7 +425,7 @@ int SetGameOption(int opt, int setting) {
 		gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
-			play.swap_portrait_side = 0;
+			_GP(play).swap_portrait_side = 0;
 	}
 
 	return oldval;
@@ -452,17 +452,17 @@ void SkipUntilCharacterStops(int cc) {
 		quit("!SkipUntilCharacterStops: cannot be used within a cutscene");
 
 	initialize_skippable_cutscene();
-	play.fast_forward = 2;
-	play.skip_until_char_stops = cc;
+	_GP(play).fast_forward = 2;
+	_GP(play).skip_until_char_stops = cc;
 }
 
 void EndSkippingUntilCharStops() {
 	// not currently skipping, so ignore
-	if (play.skip_until_char_stops < 0)
+	if (_GP(play).skip_until_char_stops < 0)
 		return;
 
 	stop_fast_forwarding();
-	play.skip_until_char_stops = -1;
+	_GP(play).skip_until_char_stops = -1;
 }
 
 void StartCutscene(int skipwith) {
@@ -481,7 +481,7 @@ void StartCutscene(int skipwith) {
 	// make sure they can't be skipping and cutsceneing at the same time
 	EndSkippingUntilCharStops();
 
-	play.in_cutscene = skipwith;
+	_GP(play).in_cutscene = skipwith;
 	initialize_skippable_cutscene();
 }
 
@@ -494,8 +494,8 @@ int EndCutscene() {
 	if (!is_in_cutscene())
 		quit("!EndCutscene: not in a cutscene");
 
-	int retval = play.fast_forward;
-	play.in_cutscene = 0;
+	int retval = _GP(play).fast_forward;
+	_GP(play).in_cutscene = 0;
 	// Stop it fast-forwarding
 	stop_fast_forwarding();
 
@@ -524,11 +524,11 @@ void SaveCursorForLocationChange() {
 	char tempo[100];
 	GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 
-	if (play.get_loc_name_save_cursor != play.get_loc_name_last_time) {
-		play.get_loc_name_save_cursor = play.get_loc_name_last_time;
-		play.restore_cursor_mode_to = GetCursorMode();
-		play.restore_cursor_image_to = GetMouseCursor();
-		debug_script_log("Saving mouse: mode %d cursor %d", play.restore_cursor_mode_to, play.restore_cursor_image_to);
+	if (_GP(play).get_loc_name_save_cursor != _GP(play).get_loc_name_last_time) {
+		_GP(play).get_loc_name_save_cursor = _GP(play).get_loc_name_last_time;
+		_GP(play).restore_cursor_mode_to = GetCursorMode();
+		_GP(play).restore_cursor_image_to = GetMouseCursor();
+		debug_script_log("Saving mouse: mode %d cursor %d", _GP(play).restore_cursor_mode_to, _GP(play).restore_cursor_image_to);
 	}
 }
 
@@ -543,20 +543,20 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	if (GetGUIAt(xxx, yyy) >= 0) {
 		int mover = GetInvAt(xxx, yyy);
 		if (mover > 0) {
-			if (play.get_loc_name_last_time != 1000 + mover)
+			if (_GP(play).get_loc_name_last_time != 1000 + mover)
 				guis_need_update = 1;
-			play.get_loc_name_last_time = 1000 + mover;
+			_GP(play).get_loc_name_last_time = 1000 + mover;
 			strcpy(tempo, get_translation(_GP(game).invinfo[mover].name));
-		} else if ((play.get_loc_name_last_time > 1000) && (play.get_loc_name_last_time < 1000 + MAX_INV)) {
+		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
 			guis_need_update = 1;
-			play.get_loc_name_last_time = -1;
+			_GP(play).get_loc_name_last_time = -1;
 		}
 		return;
 	}
 
 	int loctype = GetLocationType(xxx, yyy); // GetLocationType takes screen coords
-	VpPoint vpt = play.ScreenToRoomDivDown(xxx, yyy);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xxx, yyy);
 	if (vpt.second < 0)
 		return;
 	xxx = vpt.first.X;
@@ -566,8 +566,8 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 
 	int onhs, aa;
 	if (loctype == 0) {
-		if (play.get_loc_name_last_time != 0) {
-			play.get_loc_name_last_time = 0;
+		if (_GP(play).get_loc_name_last_time != 0) {
+			_GP(play).get_loc_name_last_time = 0;
 			guis_need_update = 1;
 		}
 		return;
@@ -577,9 +577,9 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	if (loctype == LOCTYPE_CHAR) {
 		onhs = getloctype_index;
 		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
-		if (play.get_loc_name_last_time != 2000 + onhs)
+		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
 			guis_need_update = 1;
-		play.get_loc_name_last_time = 2000 + onhs;
+		_GP(play).get_loc_name_last_time = 2000 + onhs;
 		return;
 	}
 	// on object
@@ -592,17 +592,17 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			tempo[0] = ' ';
 			tempo[1] = 0;
 		}
-		if (play.get_loc_name_last_time != 3000 + aa)
+		if (_GP(play).get_loc_name_last_time != 3000 + aa)
 			guis_need_update = 1;
-		play.get_loc_name_last_time = 3000 + aa;
+		_GP(play).get_loc_name_last_time = 3000 + aa;
 		return;
 	}
 	onhs = getloctype_index;
 	if (onhs > 0)
 		strcpy(tempo, get_translation(thisroom.Hotspots[onhs].Name));
-	if (play.get_loc_name_last_time != onhs)
+	if (_GP(play).get_loc_name_last_time != onhs)
 		guis_need_update = 1;
-	play.get_loc_name_last_time = onhs;
+	_GP(play).get_loc_name_last_time = onhs;
 }
 
 int IsKeyPressed(int keycode) {
@@ -851,7 +851,7 @@ int SaveScreenShot(const char *namm) {
 	else
 		fileName.Format("%s%s", svg_dir.GetCStr(), namm);
 
-	Bitmap *buffer = CopyScreenIntoBitmap(play.GetMainViewport().GetWidth(), play.GetMainViewport().GetHeight());
+	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight());
 	if (!buffer->SaveToFile(fileName, palette)) {
 		delete buffer;
 		return 0;
@@ -891,7 +891,7 @@ extern int getloctype_throughgui, getloctype_index;
 void RoomProcessClick(int xx, int yy, int mood) {
 	getloctype_throughgui = 1;
 	int loctype = GetLocationType(xx, yy);
-	VpPoint vpt = play.ScreenToRoomDivDown(xx, yy);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xx, yy);
 	if (vpt.second < 0)
 		return;
 	xx = vpt.first.X;
@@ -901,7 +901,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 		int hsnum = get_hotspot_at(xx, yy);
 		if (hsnum < 1);
 		else if (thisroom.Hotspots[hsnum].WalkTo.X < 1);
-		else if (play.auto_use_walkto_points == 0);
+		else if (_GP(play).auto_use_walkto_points == 0);
 		else {
 			xx = thisroom.Hotspots[hsnum].WalkTo.X;
 			yy = thisroom.Hotspots[hsnum].WalkTo.Y;
@@ -910,7 +910,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 		walk_character(_GP(game).playercharacter, xx, yy, 0, true);
 		return;
 	}
-	play.usedmode = mood;
+	_GP(play).usedmode = mood;
 
 	if (loctype == 0) {
 		// click on nothing -> hotspot 0
@@ -929,7 +929,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 int IsInteractionAvailable(int xx, int yy, int mood) {
 	getloctype_throughgui = 1;
 	int loctype = GetLocationType(xx, yy);
-	VpPoint vpt = play.ScreenToRoomDivDown(xx, yy);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xx, yy);
 	if (vpt.second < 0)
 		return 0;
 	xx = vpt.first.X;
@@ -939,7 +939,7 @@ int IsInteractionAvailable(int xx, int yy, int mood) {
 	if ((mood == MODE_WALK) && (_GP(game).options[OPT_NOWALKMODE] == 0))
 		return 1;
 
-	play.check_interaction_only = 1;
+	_GP(play).check_interaction_only = 1;
 
 	if (loctype == 0) {
 		// click on nothing -> hotspot 0
@@ -954,8 +954,8 @@ int IsInteractionAvailable(int xx, int yy, int mood) {
 	} else if (loctype == LOCTYPE_HOTSPOT)
 		RunHotspotInteraction(getloctype_index, mood);
 
-	int ciwas = play.check_interaction_only;
-	play.check_interaction_only = 0;
+	int ciwas = _GP(play).check_interaction_only;
+	_GP(play).check_interaction_only = 0;
 
 	if (ciwas == 2)
 		return 1;
@@ -971,13 +971,13 @@ void GetMessageText(int msg, char *buffer) {
 void SetSpeechFont(int fontnum) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!SetSpeechFont: invalid font number.");
-	play.speech_font = fontnum;
+	_GP(play).speech_font = fontnum;
 }
 
 void SetNormalFont(int fontnum) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!SetNormalFont: invalid font number.");
-	play.normal_font = fontnum;
+	_GP(play).normal_font = fontnum;
 }
 
 void _sc_AbortGame(const char *text) {
@@ -1004,23 +1004,23 @@ void SetGraphicalVariable(const char *varName, int p_value) {
 }
 
 int WaitImpl(int skip_type, int nloops) {
-	play.wait_counter = nloops;
-	play.wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
-	play.wait_skipped_by_data = 0;
-	play.key_skip_wait = skip_type;
+	_GP(play).wait_counter = nloops;
+	_GP(play).wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
+	_GP(play).wait_skipped_by_data = 0;
+	_GP(play).key_skip_wait = skip_type;
 
-	GameLoopUntilValueIsZero(&play.wait_counter);
+	GameLoopUntilValueIsZero(&_GP(play).wait_counter);
 
 	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
 		// < 3.5.1 return 1 is skipped by user input, otherwise 0
-		return (play.wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
+		return (_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
 	}
 	// >= 3.5.1 return positive keycode, negative mouse button code, or 0 as time-out
-	switch (play.wait_skipped_by) {
+	switch (_GP(play).wait_skipped_by) {
 	case SKIP_KEYPRESS:
-		return play.wait_skipped_by_data;
+		return _GP(play).wait_skipped_by_data;
 	case SKIP_MOUSECLICK:
-		return -(play.wait_skipped_by_data + 1); // convert to 1-based code and negate
+		return -(_GP(play).wait_skipped_by_data + 1); // convert to 1-based code and negate
 	default:
 		return 0;
 	}
@@ -1043,7 +1043,7 @@ int WaitMouseKey(int nloops) {
 }
 
 void SkipWait() {
-	play.wait_counter = 0;
+	_GP(play).wait_counter = 0;
 }
 
 } // namespace AGS3

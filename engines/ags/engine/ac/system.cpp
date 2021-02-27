@@ -52,9 +52,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
 extern GameSetup usetup;
-extern GameState play;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern ScriptSystem scsystem;
 extern IGraphicsDriver *gfxDriver;
@@ -103,11 +101,11 @@ int System_GetScreenHeight() {
 }
 
 int System_GetViewportHeight() {
-	return game_to_data_coord(play.GetMainViewport().GetHeight());
+	return game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
 }
 
 int System_GetViewportWidth() {
-	return game_to_data_coord(play.GetMainViewport().GetWidth());
+	return game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
 }
 
 const char *System_GetVersion() {
@@ -157,16 +155,16 @@ int System_GetSupportsGammaControl() {
 }
 
 int System_GetGamma() {
-	return play.gamma_adjustment;
+	return _GP(play).gamma_adjustment;
 }
 
 void System_SetGamma(int newValue) {
 	if ((newValue < 0) || (newValue > 200))
 		quitprintf("!System.Gamma: value must be between 0-200 (not %d)", newValue);
 
-	if (play.gamma_adjustment != newValue) {
+	if (_GP(play).gamma_adjustment != newValue) {
 		debug_script_log("Gamma control set to %d", newValue);
-		play.gamma_adjustment = newValue;
+		_GP(play).gamma_adjustment = newValue;
 
 		if (gfxDriver->SupportsGammaControl())
 			gfxDriver->SetGamma(newValue);
@@ -185,14 +183,14 @@ ScriptAudioChannel *System_GetAudioChannels(int index) {
 }
 
 int System_GetVolume() {
-	return play.digital_master_volume;
+	return _GP(play).digital_master_volume;
 }
 
 void System_SetVolume(int newvol) {
 	if ((newvol < 0) || (newvol > 100))
 		quit("!System.Volume: invalid volume - must be from 0-100");
 
-	play.digital_master_volume = newvol;
+	_GP(play).digital_master_volume = newvol;
 #if !AGS_PLATFORM_SCUMMVM
 	auto newvol_f = static_cast<float>(newvol) / 100.0;
 	audio_core_set_master_volume(newvol_f);

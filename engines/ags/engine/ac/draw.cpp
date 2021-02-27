@@ -90,7 +90,7 @@ extern "C" void ios_render();
 
 extern GameSetup usetup;
 
-extern GameState play;
+
 extern int convert_16bit_bgr;
 extern ScriptSystem scsystem;
 extern AGSPlatformDriver *platform;
@@ -501,8 +501,8 @@ void dispose_room_drawdata() {
 
 void on_mainviewport_changed() {
 	if (!gfxDriver->RequiresFullRedrawEachFrame()) {
-		init_invalid_regions(-1, play.GetMainViewport().GetSize(), RectWH(play.GetMainViewport().GetSize()));
-		if (_GP(game).GetGameRes().ExceedsByAny(play.GetMainViewport().GetSize()))
+		init_invalid_regions(-1, _GP(play).GetMainViewport().GetSize(), RectWH(_GP(play).GetMainViewport().GetSize()));
+		if (_GP(game).GetGameRes().ExceedsByAny(_GP(play).GetMainViewport().GetSize()))
 			clear_letterbox_borders();
 	}
 }
@@ -543,7 +543,7 @@ void prepare_roomview_frame(Viewport *view) {
 void sync_roomview(Viewport *view) {
 	if (view->GetCamera() == nullptr)
 		return;
-	init_invalid_regions(view->GetID(), view->GetCamera()->GetRect().GetSize(), play.GetRoomViewportAbs(view->GetID()));
+	init_invalid_regions(view->GetID(), view->GetCamera()->GetRect().GetSize(), _GP(play).GetRoomViewportAbs(view->GetID()));
 	prepare_roomview_frame(view);
 }
 
@@ -551,10 +551,10 @@ void init_room_drawdata() {
 	if (gfxDriver->RequiresFullRedrawEachFrame())
 		return;
 	// Make sure all frame buffers are created for software drawing
-	int view_count = play.GetRoomViewportCount();
+	int view_count = _GP(play).GetRoomViewportCount();
 	CameraDrawData.resize(view_count);
-	for (int i = 0; i < play.GetRoomViewportCount(); ++i)
-		sync_roomview(play.GetRoomViewport(i).get());
+	for (int i = 0; i < _GP(play).GetRoomViewportCount(); ++i)
+		sync_roomview(_GP(play).GetRoomViewport(i).get());
 }
 
 void on_roomviewport_created(int index) {
@@ -594,7 +594,7 @@ void detect_roomviewport_overlaps(size_t z_index) {
 	if (gfxDriver->RequiresFullRedrawEachFrame())
 		return;
 	// Find out if we overlap or are overlapped by anything;
-	const auto &viewports = play.GetRoomViewportsZOrdered();
+	const auto &viewports = _GP(play).GetRoomViewportsZOrdered();
 	for (; z_index < viewports.size(); ++z_index) {
 		auto this_view = viewports[z_index];
 		const int this_id = this_view->GetID();
@@ -672,7 +672,7 @@ void render_black_borders() {
 		return;
 	{
 		gfxDriver->BeginSpriteBatch(RectWH(_GP(game).GetGameRes()), SpriteTransform());
-		const Rect &viewport = play.GetMainViewport();
+		const Rect &viewport = _GP(play).GetMainViewport();
 		if (viewport.Top > 0) {
 			// letterbox borders
 			blankImage->SetStretch(_GP(game).GetGameRes().Width, viewport.Top, false);
@@ -692,7 +692,7 @@ void render_black_borders() {
 void render_to_screen() {
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
-		gfxDriver->BeginSpriteBatch(play.GetMainViewport(), SpriteTransform(), Point(0, play.shake_screen_yoff), (GlobalFlipType)play.screen_flipped);
+		gfxDriver->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 		gfxDriver->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 	}
 	// Stage: engine overlay
@@ -705,10 +705,10 @@ void render_to_screen() {
 	while (!succeeded) {
 //		try {
 			// For software renderer, need to blacken upper part of the game frame when shaking screen moves image down
-			const Rect &viewport = play.GetMainViewport();
-			if (play.shake_screen_yoff > 0 && !gfxDriver->RequiresFullRedrawEachFrame())
-				gfxDriver->ClearRectangle(viewport.Left, viewport.Top, viewport.GetWidth() - 1, play.shake_screen_yoff, nullptr);
-			gfxDriver->Render(0, play.shake_screen_yoff, (GlobalFlipType)play.screen_flipped);
+			const Rect &viewport = _GP(play).GetMainViewport();
+			if (_GP(play).shake_screen_yoff > 0 && !gfxDriver->RequiresFullRedrawEachFrame())
+				gfxDriver->ClearRectangle(viewport.Left, viewport.Top, viewport.GetWidth() - 1, _GP(play).shake_screen_yoff, nullptr);
+			gfxDriver->Render(0, _GP(play).shake_screen_yoff, (GlobalFlipType)_GP(play).screen_flipped);
 
 #if AGS_PLATFORM_OS_ANDROID
 			if (_GP(game).color_depth == 1)
@@ -727,7 +727,7 @@ void render_to_screen() {
 
 // Blanks out borders around main viewport in case it became smaller (e.g. after loading another room)
 void clear_letterbox_borders() {
-	const Rect &viewport = play.GetMainViewport();
+	const Rect &viewport = _GP(play).GetMainViewport();
 	gfxDriver->ClearRectangle(0, 0, _GP(game).GetGameRes().Width - 1, viewport.Top - 1, nullptr);
 	gfxDriver->ClearRectangle(0, viewport.Bottom + 1, _GP(game).GetGameRes().Width - 1, _GP(game).GetGameRes().Height - 1, nullptr);
 }
@@ -913,10 +913,10 @@ void sort_out_char_sprite_walk_behind(int actspsIndex, int xx, int yy, int basel
 	        (actspswbcache[actspsIndex].xWas != xx) ||
 	        (actspswbcache[actspsIndex].yWas != yy) ||
 	        (actspswbcache[actspsIndex].baselineWas != basel)) {
-		actspswb[actspsIndex] = recycle_bitmap(actspswb[actspsIndex], thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth(), width, height, true);
+		actspswb[actspsIndex] = recycle_bitmap(actspswb[actspsIndex], thisroom.BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth(), width, height, true);
 		Bitmap *wbSprite = actspswb[actspsIndex];
 
-		actspswbcache[actspsIndex].isWalkBehindHere = sort_out_walk_behinds(wbSprite, xx, yy, basel, thisroom.BgFrames[play.bg_frame].Graphic.get(), actsps[actspsIndex], zoom);
+		actspswbcache[actspsIndex].isWalkBehindHere = sort_out_walk_behinds(wbSprite, xx, yy, basel, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), actsps[actspsIndex], zoom);
 		actspswbcache[actspsIndex].xWas = xx;
 		actspswbcache[actspsIndex].yWas = yy;
 		actspswbcache[actspsIndex].baselineWas = basel;
@@ -1094,7 +1094,7 @@ void get_local_tint(int xpp, int ypp, int nolight,
 
 		int onRegion = 0;
 
-		if ((play.ground_level_areas_disabled & GLED_EFFECTS) == 0) {
+		if ((_GP(play).ground_level_areas_disabled & GLED_EFFECTS) == 0) {
 			// check if the player is on a region, to find its
 			// light/tint level
 			onRegion = GetRegionIDAtRoom(xpp, ypp);
@@ -1131,18 +1131,18 @@ void get_local_tint(int xpp, int ypp, int nolight,
 			tint_light = light_level;
 		}
 
-		if (play.rtint_enabled) {
-			if (play.rtint_level > 0) {
+		if (_GP(play).rtint_enabled) {
+			if (_GP(play).rtint_level > 0) {
 				// override with room tint
-				tint_red = play.rtint_red;
-				tint_green = play.rtint_green;
-				tint_blue = play.rtint_blue;
-				tint_amount = play.rtint_level;
-				tint_light = play.rtint_light;
+				tint_red = _GP(play).rtint_red;
+				tint_green = _GP(play).rtint_green;
+				tint_blue = _GP(play).rtint_blue;
+				tint_amount = _GP(play).rtint_level;
+				tint_light = _GP(play).rtint_light;
 			} else {
 				// override with room light level
 				tint_amount = 0;
-				light_level = play.rtint_light;
+				light_level = _GP(play).rtint_light;
 			}
 		}
 	}
@@ -1835,13 +1835,13 @@ void prepare_room_sprites() {
 	// Note that software DDB is just a tiny wrapper around bitmap, so overhead is negligible.
 	if (roomBackgroundBmp == nullptr) {
 		update_polled_stuff_if_runtime();
-		roomBackgroundBmp = gfxDriver->CreateDDBFromBitmap(thisroom.BgFrames[play.bg_frame].Graphic.get(), false, true);
+		roomBackgroundBmp = gfxDriver->CreateDDBFromBitmap(thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
 	} else if (current_background_is_dirty) {
 		update_polled_stuff_if_runtime();
-		gfxDriver->UpdateDDBFromBitmap(roomBackgroundBmp, thisroom.BgFrames[play.bg_frame].Graphic.get(), false);
+		gfxDriver->UpdateDDBFromBitmap(roomBackgroundBmp, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), false);
 	}
 	if (gfxDriver->RequiresFullRedrawEachFrame()) {
-		if (current_background_is_dirty || walkBehindsCachedForBgNum != play.bg_frame) {
+		if (current_background_is_dirty || walkBehindsCachedForBgNum != _GP(play).bg_frame) {
 			if (walkBehindMethod == DrawAsSeparateSprite) {
 				update_walk_behind_images();
 			}
@@ -1905,7 +1905,7 @@ PBitmap draw_room_background(Viewport *view, const SpriteTransform &room_trans) 
 		// the following line takes up to 50% of the game CPU time at
 		// high resolutions and colour depths - if we can optimise it
 		// somehow, significant performance gains to be had
-		update_room_invreg_and_reset(view_index, roomcam_surface, thisroom.BgFrames[play.bg_frame].Graphic.get(), draw_to_camsurf);
+		update_room_invreg_and_reset(view_index, roomcam_surface, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), draw_to_camsurf);
 	}
 
 	return CameraDrawData[view_index].Frame;
@@ -2020,7 +2020,7 @@ void draw_gui_and_overlays() {
 		our_eip = 38;
 		// Draw the GUIs
 		for (int gg = 0; gg < _GP(game).numgui; gg++) {
-			aa = play.gui_draw_order[gg];
+			aa = _GP(play).gui_draw_order[gg];
 			if (!guis[aa].IsDisplayed()) continue;
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
@@ -2102,13 +2102,13 @@ static void construct_room_view() {
 	// reset the Baselines Changed flag now that we've drawn stuff
 	walk_behind_baselines_changed = 0;
 
-	for (const auto &viewport : play.GetRoomViewportsZOrdered()) {
+	for (const auto &viewport : _GP(play).GetRoomViewportsZOrdered()) {
 		if (!viewport->IsVisible())
 			continue;
 		auto camera = viewport->GetCamera();
 		if (!camera)
 			continue;
-		const Rect &view_rc = play.GetRoomViewportAbs(viewport->GetID());
+		const Rect &view_rc = _GP(play).GetRoomViewportAbs(viewport->GetID());
 		const Rect &cam_rc = camera->GetRect();
 		SpriteTransform room_trans(-cam_rc.Left, -cam_rc.Top,
 		                           (float)view_rc.GetWidth() / (float)cam_rc.GetWidth(),
@@ -2116,7 +2116,7 @@ static void construct_room_view() {
 		                           0.f);
 		if (gfxDriver->RequiresFullRedrawEachFrame()) {
 			// we draw everything as a sprite stack
-			gfxDriver->BeginSpriteBatch(view_rc, room_trans, Point(0, play.shake_screen_yoff), (GlobalFlipType)play.screen_flipped);
+			gfxDriver->BeginSpriteBatch(view_rc, room_trans, Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 		} else {
 			if (CameraDrawData[viewport->GetID()].Frame == nullptr && CameraDrawData[viewport->GetID()].IsOverlap) {
 				// room background is prepended to the sprite stack
@@ -2144,7 +2144,7 @@ static void construct_room_view() {
 
 // Schedule ui rendering
 static void construct_ui_view() {
-	gfxDriver->BeginSpriteBatch(play.GetUIViewportAbs(), SpriteTransform(), Point(0, play.shake_screen_yoff), (GlobalFlipType)play.screen_flipped);
+	gfxDriver->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 	draw_gui_and_overlays();
 	put_sprite_list_on_screen(false);
 	clear_draw_list();
@@ -2153,13 +2153,13 @@ static void construct_ui_view() {
 void construct_game_scene(bool full_redraw) {
 	gfxDriver->ClearDrawLists();
 
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 
 	our_eip = 3;
 
 	// React to changes to viewports and cameras (possibly from script) just before the render
-	play.UpdateViewports();
+	_GP(play).UpdateViewports();
 
 	gfxDriver->UseSmoothScaling(IS_ANTIALIAS_SPRITES);
 	gfxDriver->RenderSpritesAtScreenResolution(usetup.RenderAtScreenRes, usetup.Supersampling);
@@ -2167,16 +2167,16 @@ void construct_game_scene(bool full_redraw) {
 	pl_run_plugin_hooks(AGSE_PRERENDER, 0);
 
 	// Possible reasons to invalidate whole screen for the software renderer
-	if (full_redraw || play.screen_tint > 0 || play.shakesc_length > 0)
+	if (full_redraw || _GP(play).screen_tint > 0 || _GP(play).shakesc_length > 0)
 		invalidate_screen();
 
 	// TODO: move to game update! don't call update during rendering pass!
 	// IMPORTANT: keep the order same because sometimes script may depend on it
 	if (displayed_room >= 0)
-		play.UpdateRoomCameras();
+		_GP(play).UpdateRoomCameras();
 
 	// Stage: room viewports
-	if (play.screen_is_faded_out == 0 && is_complete_overlay == 0) {
+	if (_GP(play).screen_is_faded_out == 0 && is_complete_overlay == 0) {
 		if (displayed_room >= 0) {
 			construct_room_view();
 		} else if (!gfxDriver->RequiresFullRedrawEachFrame()) {
@@ -2189,13 +2189,13 @@ void construct_game_scene(bool full_redraw) {
 	our_eip = 4;
 
 	// Stage: UI overlay
-	if (play.screen_is_faded_out == 0) {
+	if (_GP(play).screen_is_faded_out == 0) {
 		construct_ui_view();
 	}
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {
-	gfxDriver->BeginSpriteBatch(play.GetMainViewport(), SpriteTransform(), Point(0, play.shake_screen_yoff), (GlobalFlipType)play.screen_flipped);
+	gfxDriver->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW))
 		gfxDriver->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 
@@ -2234,23 +2234,23 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	ags_domouse(DOMOUSE_NOCURSOR);
 
 	// Stage: mouse cursor
-	if (draw_mouse && !play.mouse_cursor_hidden && play.screen_is_faded_out == 0) {
+	if (draw_mouse && !_GP(play).mouse_cursor_hidden && _GP(play).screen_is_faded_out == 0) {
 		gfxDriver->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor);
 		invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor, false);
 	}
 
-	if (play.screen_is_faded_out == 0) {
+	if (_GP(play).screen_is_faded_out == 0) {
 		// Stage: screen fx
-		if (play.screen_tint >= 1)
-			gfxDriver->SetScreenTint(play.screen_tint & 0xff, (play.screen_tint >> 8) & 0xff, (play.screen_tint >> 16) & 0xff);
+		if (_GP(play).screen_tint >= 1)
+			gfxDriver->SetScreenTint(_GP(play).screen_tint & 0xff, (_GP(play).screen_tint >> 8) & 0xff, (_GP(play).screen_tint >> 16) & 0xff);
 		// Stage: legacy letterbox mode borders
 		render_black_borders();
 	}
 
-	if (play.screen_is_faded_out != 0 && gfxDriver->RequiresFullRedrawEachFrame()) {
-		const Rect &main_viewport = play.GetMainViewport();
+	if (_GP(play).screen_is_faded_out != 0 && gfxDriver->RequiresFullRedrawEachFrame()) {
+		const Rect &main_viewport = _GP(play).GetMainViewport();
 		gfxDriver->BeginSpriteBatch(main_viewport, SpriteTransform());
-		gfxDriver->SetScreenFade(play.fade_to_red, play.fade_to_green, play.fade_to_blue);
+		gfxDriver->SetScreenFade(_GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 	}
 }
 
@@ -2259,7 +2259,7 @@ void construct_engine_overlay() {
 	gfxDriver->BeginSpriteBatch(viewport, SpriteTransform());
 
 	// draw the debug console, if appropriate
-	if ((play.debug_mode > 0) && (display_console != 0)) {
+	if ((_GP(play).debug_mode > 0) && (display_console != 0)) {
 		const int font = FONT_NORMAL;
 		int ypp = 1;
 		int txtspacing = getfontspacing_outlined(font);
@@ -2293,17 +2293,17 @@ void construct_engine_overlay() {
 
 static void update_shakescreen() {
 	// TODO: unify blocking and non-blocking shake update
-	play.shake_screen_yoff = 0;
-	if (play.shakesc_length > 0) {
-		if ((loopcounter % play.shakesc_delay) < (play.shakesc_delay / 2))
-			play.shake_screen_yoff = play.shakesc_amount;
+	_GP(play).shake_screen_yoff = 0;
+	if (_GP(play).shakesc_length > 0) {
+		if ((loopcounter % _GP(play).shakesc_delay) < (_GP(play).shakesc_delay / 2))
+			_GP(play).shake_screen_yoff = _GP(play).shakesc_amount;
 	}
 }
 
 // Draw everything
 void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {
 	// Don't render if skipping cutscene
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 	// Don't render if we've just entered new room and are before fade-in
 	// TODO: find out why this is not skipped for 8-bit games
@@ -2323,7 +2323,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	construct_game_screen_overlay(true);
 	render_to_screen();
 
-	if (!play.screen_is_faded_out) {
+	if (!_GP(play).screen_is_faded_out) {
 		// always update the palette, regardless of whether the plugin
 		// vetos the screen update
 		if (bg_just_changed) {

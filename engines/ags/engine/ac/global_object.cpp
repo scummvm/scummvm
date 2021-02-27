@@ -71,7 +71,7 @@ int obj_lowest_yp;
 
 int GetObjectIDAtScreen(int scrx, int scry) {
 	// translate screen co-ordinates to room co-ordinates
-	VpPoint vpt = play.ScreenToRoomDivDown(scrx, scry);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(scrx, scry);
 	if (vpt.second < 0)
 		return -1;
 	return GetObjectIDAtRoom(vpt.first.X, vpt.first.Y);
@@ -267,8 +267,8 @@ void MergeObject(int obn) {
 	construct_object_gfx(obn, nullptr, &theHeight, true);
 
 	//Bitmap *oldabuf = graphics->bmp;
-	//abuf = thisroom.BgFrames.Graphic[play.bg_frame];
-	PBitmap bg_frame = thisroom.BgFrames[play.bg_frame].Graphic;
+	//abuf = thisroom.BgFrames.Graphic[_GP(play).bg_frame];
+	PBitmap bg_frame = thisroom.BgFrames[_GP(play).bg_frame].Graphic;
 	if (bg_frame->GetColorDepth() != actsps[obn]->GetColorDepth())
 		quit("!MergeObject: unable to merge object due to color depth differences");
 
@@ -415,7 +415,7 @@ void RunObjectInteraction(int aa, int mood) {
 	else if (mood == MODE_USE) {
 		passon = 3;
 		cdata = playerchar->activeinv;
-		play.usedinv = cdata;
+		_GP(play).usedinv = cdata;
 	}
 	evblockbasename = "object%d";
 	evblocknum = aa;

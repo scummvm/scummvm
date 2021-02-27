@@ -36,7 +36,7 @@ namespace AGS3 {
 using AGS::Shared::Stream;
 
 extern ViewStruct *views;
-extern GameState play;
+
 
 
 RoomObject::RoomObject() {
@@ -121,7 +121,7 @@ void RoomObject::update_cycle_view_forwards() {
 			cycling = 0;
 			frame--;
 		} else {
-			if (play.no_multiloop_repeat == 0) {
+			if (_GP(play).no_multiloop_repeat == 0) {
 				// multi-loop anims, go back to start of it
 				while ((loop > 0) &&
 					(views[view].loops[loop - 1].RunNextLoop()))

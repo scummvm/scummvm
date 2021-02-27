@@ -251,9 +251,9 @@ void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, const char 
 
 void IAGSEngine::GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth) {
 	if (width != nullptr)
-		width[0] = play.GetMainViewport().GetWidth();
+		width[0] = _GP(play).GetMainViewport().GetWidth();
 	if (height != nullptr)
-		height[0] = play.GetMainViewport().GetHeight();
+		height[0] = _GP(play).GetMainViewport().GetHeight();
 	if (coldepth != nullptr)
 		coldepth[0] = scsystem.coldepth;
 }
@@ -293,7 +293,7 @@ int IAGSEngine::GetNumBackgrounds() {
 	return thisroom.BgFrameCount;
 }
 int IAGSEngine::GetCurrentBackground() {
-	return play.bg_frame;
+	return _GP(play).bg_frame;
 }
 BITMAP *IAGSEngine::GetBackgroundScene(int32 index) {
 	return (BITMAP *)thisroom.BgFrames[index].Graphic->GetAllegroBitmap();
@@ -416,10 +416,10 @@ void IAGSEngine::PollSystem() {
 	domouse(DOMOUSE_NOCURSOR);
 	update_polled_stuff_if_runtime();
 	int mbut, mwheelz;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !play.IsIgnoringInput())
+	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
 		pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut);
 	int kp;
-	if (run_service_key_controls(kp) && !play.IsIgnoringInput()) {
+	if (run_service_key_controls(kp) && !_GP(play).IsIgnoringInput()) {
 		pl_run_plugin_hooks(AGSE_KEYPRESS, kp);
 	}
 
@@ -431,7 +431,7 @@ AGSCharacter *IAGSEngine::GetCharacter(int32 charnum) {
 	return (AGSCharacter *)&_GP(game).chars[charnum];
 }
 AGSGameOptions *IAGSEngine::GetGameOptions() {
-	return (AGSGameOptions *)&play;
+	return (AGSGameOptions *)&_GP(play);
 }
 AGSColor *IAGSEngine::GetPalette() {
 	return (AGSColor *)&palette[0];
@@ -446,7 +446,7 @@ int IAGSEngine::GetPlayerCharacter() {
 	return _GP(game).playercharacter;
 }
 void IAGSEngine::RoomToViewport(int32 *x, int32 *y) {
-	Point scrp = play.RoomToScreen(x ? data_to_game_coord(*x) : 0, y ? data_to_game_coord(*y) : 0);
+	Point scrp = _GP(play).RoomToScreen(x ? data_to_game_coord(*x) : 0, y ? data_to_game_coord(*y) : 0);
 	if (x)
 		*x = scrp.X;
 	if (y)
@@ -456,7 +456,7 @@ void IAGSEngine::ViewportToRoom(int32 *x, int32 *y) {
 	// NOTE: This is an old function that did not account for custom/multiple viewports
 	// and does not expect to fail, therefore we always use primary viewport here.
 	// (Not sure if it's good though)
-	VpPoint vpt = play.ScreenToRoom(x ? game_to_data_coord(*x) : 0, y ? game_to_data_coord(*y) : 0);
+	VpPoint vpt = _GP(play).ScreenToRoom(x ? game_to_data_coord(*x) : 0, y ? game_to_data_coord(*y) : 0);
 	if (x)
 		*x = vpt.first.X;
 	if (y)
@@ -567,7 +567,7 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 	stop_and_destroy_channel(channel);
 	// Not sure if it's right to let it play on *any* channel, but this is plugin so let it go...
 	// we must correctly stop background voice speech if it takes over speech chan
-	if (channel == SCHAN_SPEECH && play.IsNonBlockingVoiceSpeech())
+	if (channel == SCHAN_SPEECH && _GP(play).IsNonBlockingVoiceSpeech())
 		stop_voice_nonblocking();
 
 	SOUNDCLIP *newcha = nullptr;

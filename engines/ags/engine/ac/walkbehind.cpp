@@ -26,6 +26,7 @@
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -33,7 +34,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern RoomStruct thisroom;
-extern GameState play;
 extern IGraphicsDriver *gfxDriver;
 
 
@@ -49,7 +49,7 @@ int walk_behind_baselines_changed = 0;
 
 void update_walk_behind_images() {
 	int ee, rr;
-	int bpp = (thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth() + 7) / 8;
+	int bpp = (thisroom.BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth() + 7) / 8;
 	Bitmap *wbbmp;
 	for (ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
 		update_polled_stuff_if_runtime();
@@ -58,13 +58,13 @@ void update_walk_behind_images() {
 			wbbmp = BitmapHelper::CreateTransparentBitmap(
 				(walkBehindRight[ee] - walkBehindLeft[ee]) + 1,
 				(walkBehindBottom[ee] - walkBehindTop[ee]) + 1,
-				thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth());
+				thisroom.BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth());
 			int yy, startX = walkBehindLeft[ee], startY = walkBehindTop[ee];
 			for (rr = startX; rr <= walkBehindRight[ee]; rr++) {
 				for (yy = startY; yy <= walkBehindBottom[ee]; yy++) {
 					if (thisroom.WalkBehindMask->GetScanLine(yy)[rr] == ee) {
 						for (int ii = 0; ii < bpp; ii++)
-							wbbmp->GetScanLineForWriting(yy - startY)[(rr - startX) * bpp + ii] = thisroom.BgFrames[play.bg_frame].Graphic->GetScanLine(yy)[rr * bpp + ii];
+							wbbmp->GetScanLineForWriting(yy - startY)[(rr - startX) * bpp + ii] = thisroom.BgFrames[_GP(play).bg_frame].Graphic->GetScanLine(yy)[rr * bpp + ii];
 					}
 				}
 			}
@@ -79,7 +79,7 @@ void update_walk_behind_images() {
 		}
 	}
 
-	walkBehindsCachedForBgNum = play.bg_frame;
+	walkBehindsCachedForBgNum = _GP(play).bg_frame;
 }
 
 

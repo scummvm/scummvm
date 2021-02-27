@@ -310,7 +310,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromScreenShot(int width, int height) {
 	if (gotSlot <= 0)
 		return nullptr;
 
-	const Rect &viewport = play.GetMainViewport();
+	const Rect &viewport = _GP(play).GetMainViewport();
 	if (width <= 0)
 		width = viewport.GetWidth();
 	else
@@ -408,17 +408,17 @@ ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite_Old(int slot) {
 ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height) {
 
 	if (frame == SCR_NO_VALUE) {
-		frame = play.bg_frame;
+		frame = _GP(play).bg_frame;
 	} else if ((frame < 0) || ((size_t)frame >= thisroom.BgFrameCount))
 		quit("!DynamicSprite.CreateFromBackground: invalid frame specified");
 
 	if (x1 == SCR_NO_VALUE) {
 		x1 = 0;
 		y1 = 0;
-		width = play.room_width;
-		height = play.room_height;
+		width = _GP(play).room_width;
+		height = _GP(play).room_height;
 	} else if ((x1 < 0) || (y1 < 0) || (width < 1) || (height < 1) ||
-		(x1 + width > play.room_width) || (y1 + height > play.room_height))
+		(x1 + width > _GP(play).room_width) || (y1 + height > _GP(play).room_height))
 		quit("!DynamicSprite.CreateFromBackground: invalid co-ordinates specified");
 
 	data_to_game_coords(&x1, &y1);

@@ -87,34 +87,34 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 //=============================================================================
 
 
-extern GameState play;
+
 
 RuntimeScriptValue Sc_Speech_GetAnimationStopTimeMargin(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.close_mouth_speech_time);
+	API_VARGET_INT(_GP(play).close_mouth_speech_time);
 }
 
 RuntimeScriptValue Sc_Speech_SetAnimationStopTimeMargin(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.close_mouth_speech_time);
+	API_VARSET_PINT(_GP(play).close_mouth_speech_time);
 }
 
 RuntimeScriptValue Sc_Speech_GetCustomPortraitPlacement(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.speech_portrait_placement);
+	API_VARGET_INT(_GP(play).speech_portrait_placement);
 }
 
 RuntimeScriptValue Sc_Speech_SetCustomPortraitPlacement(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.speech_portrait_placement);
+	API_VARSET_PINT(_GP(play).speech_portrait_placement);
 }
 
 RuntimeScriptValue Sc_Speech_GetDisplayPostTimeMs(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.speech_display_post_time_ms);
+	API_VARGET_INT(_GP(play).speech_display_post_time_ms);
 }
 
 RuntimeScriptValue Sc_Speech_SetDisplayPostTimeMs(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.speech_display_post_time_ms);
+	API_VARSET_PINT(_GP(play).speech_display_post_time_ms);
 }
 
 RuntimeScriptValue Sc_Speech_GetGlobalSpeechAnimationDelay(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.talkanim_speed);
+	API_VARGET_INT(_GP(play).talkanim_speed);
 }
 
 RuntimeScriptValue Sc_Speech_SetGlobalSpeechAnimationDelay(const RuntimeScriptValue *params, int32_t param_count) {
@@ -122,23 +122,23 @@ RuntimeScriptValue Sc_Speech_SetGlobalSpeechAnimationDelay(const RuntimeScriptVa
 		debug_script_warn("Speech.GlobalSpeechAnimationDelay cannot be set when global speech animation speed is not enabled; set Speech.UseGlobalSpeechAnimationDelay first!");
 		return RuntimeScriptValue();
 	}
-	API_VARSET_PINT(play.talkanim_speed);
+	API_VARSET_PINT(_GP(play).talkanim_speed);
 }
 
 RuntimeScriptValue Sc_Speech_GetPortraitXOffset(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.speech_portrait_x);
+	API_VARGET_INT(_GP(play).speech_portrait_x);
 }
 
 RuntimeScriptValue Sc_Speech_SetPortraitXOffset(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.speech_portrait_x);
+	API_VARSET_PINT(_GP(play).speech_portrait_x);
 }
 
 RuntimeScriptValue Sc_Speech_GetPortraitY(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.speech_portrait_y);
+	API_VARGET_INT(_GP(play).speech_portrait_y);
 }
 
 RuntimeScriptValue Sc_Speech_SetPortraitY(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.speech_portrait_y);
+	API_VARSET_PINT(_GP(play).speech_portrait_y);
 }
 
 RuntimeScriptValue Sc_Speech_GetStyle(const RuntimeScriptValue *params, int32_t param_count) {
@@ -148,11 +148,11 @@ RuntimeScriptValue Sc_Speech_GetStyle(const RuntimeScriptValue *params, int32_t 
 extern RuntimeScriptValue Sc_SetSpeechStyle(const RuntimeScriptValue *params, int32_t param_count);
 
 RuntimeScriptValue Sc_Speech_GetSkipKey(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.skip_speech_specific_key);
+	API_VARGET_INT(_GP(play).skip_speech_specific_key);
 }
 
 RuntimeScriptValue Sc_Speech_SetSkipKey(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARSET_PINT(play.skip_speech_specific_key);
+	API_VARSET_PINT(_GP(play).skip_speech_specific_key);
 }
 
 RuntimeScriptValue Sc_Speech_GetSkipStyle(const RuntimeScriptValue *params, int32_t param_count) {
@@ -162,18 +162,18 @@ RuntimeScriptValue Sc_Speech_GetSkipStyle(const RuntimeScriptValue *params, int3
 extern RuntimeScriptValue Sc_SetSkipSpeech(const RuntimeScriptValue *params, int32_t param_count);
 
 RuntimeScriptValue Sc_Speech_GetTextAlignment(const RuntimeScriptValue *params, int32_t param_count) {
-	API_VARGET_INT(play.speech_text_align);
+	API_VARGET_INT(_GP(play).speech_text_align);
 }
 
 RuntimeScriptValue Sc_Speech_SetTextAlignment_Old(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_VARIABLE_VALUE(play.speech_text_align);
-	play.speech_text_align = ReadScriptAlignment(params[0].IValue);
+	ASSERT_VARIABLE_VALUE(_GP(play).speech_text_align);
+	_GP(play).speech_text_align = ReadScriptAlignment(params[0].IValue);
 	return RuntimeScriptValue();
 }
 
 RuntimeScriptValue Sc_Speech_SetTextAlignment(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_VARIABLE_VALUE(play.speech_text_align);
-	play.speech_text_align = (HorAlignment)params[0].IValue;
+	ASSERT_VARIABLE_VALUE(_GP(play).speech_text_align);
+	_GP(play).speech_text_align = (HorAlignment)params[0].IValue;
 	return RuntimeScriptValue();
 }
 

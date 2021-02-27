@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 
-extern GameState play;
+
 extern color palette[256];
 
 void CyclePalette(int strt, int eend) {
@@ -70,7 +70,7 @@ void UpdatePalette() {
 	if (_GP(game).color_depth > 1)
 		invalidate_screen();
 
-	if (!play.fast_forward)
+	if (!_GP(play).fast_forward)
 		setpal();
 }
 

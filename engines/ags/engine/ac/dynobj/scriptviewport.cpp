@@ -23,6 +23,7 @@
 #include "ags/engine/ac/dynobj/scriptviewport.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/shared/util/bbop.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -61,7 +62,7 @@ ScriptViewport *Viewport_Unserialize(int handle, const char *serializedData, int
 	// script references when Viewport gets removed.
 	const int id = BBOp::Int32FromLE(*((const int *)serializedData));
 	if (id >= 0) {
-		auto scview = play.RegisterRoomViewport(id, handle);
+		auto scview = _GP(play).RegisterRoomViewport(id, handle);
 		if (scview)
 			return scview;
 	}

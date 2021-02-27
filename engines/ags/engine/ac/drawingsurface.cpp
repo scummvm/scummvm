@@ -53,7 +53,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 
-extern GameState play;
+
 extern RoomStatus *croom;
 extern RoomObject *objs;
 extern CharacterCache *charcache;
@@ -66,11 +66,11 @@ extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 	if (sds->roomBackgroundNumber >= 0) {
 		if (sds->modified) {
-			if (sds->roomBackgroundNumber == play.bg_frame) {
+			if (sds->roomBackgroundNumber == _GP(play).bg_frame) {
 				invalidate_screen();
 				mark_current_background_dirty();
 			}
-			play.raw_modified[sds->roomBackgroundNumber] = 1;
+			_GP(play).raw_modified[sds->roomBackgroundNumber] = 1;
 		}
 
 		sds->roomBackgroundNumber = -1;
@@ -342,7 +342,7 @@ void DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int fo
 	Bitmap *ds = sds->StartDrawing();
 	// don't use wtextcolor because it will do a 16->32 conversion
 	color_t text_color = sds->currentColour;
-	if ((ds->GetColorDepth() <= 8) && (play.raw_color > 255)) {
+	if ((ds->GetColorDepth() <= 8) && (_GP(play).raw_color > 255)) {
 		text_color = ds->GetCompatibleColor(1);
 		debug_script_warn("RawPrint: Attempted to use hi-color on 256-col background");
 	}

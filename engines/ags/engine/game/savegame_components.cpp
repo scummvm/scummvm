@@ -216,7 +216,7 @@ HSaveError WriteGameState(PStream out) {
 	}
 
 	// Game state
-	play.WriteForSavegame(out.get());
+	_GP(play).WriteForSavegame(out.get());
 	// Other dynamic values
 	out->WriteInt32(frames_per_second);
 	out->WriteInt32(loopcounter);
@@ -229,15 +229,15 @@ HSaveError WriteGameState(PStream out) {
 
 	// Viewports and cameras
 	int viewcam_flags = 0;
-	if (play.IsAutoRoomViewport())
+	if (_GP(play).IsAutoRoomViewport())
 		viewcam_flags |= kSvgGameAutoRoomView;
 	out->WriteInt32(viewcam_flags);
-	out->WriteInt32(play.GetRoomCameraCount());
-	for (int i = 0; i < play.GetRoomCameraCount(); ++i)
-		WriteCameraState(*play.GetRoomCamera(i), out.get());
-	out->WriteInt32(play.GetRoomViewportCount());
-	for (int i = 0; i < play.GetRoomViewportCount(); ++i)
-		WriteViewportState(*play.GetRoomViewport(i), out.get());
+	out->WriteInt32(_GP(play).GetRoomCameraCount());
+	for (int i = 0; i < _GP(play).GetRoomCameraCount(); ++i)
+		WriteCameraState(*_GP(play).GetRoomCamera(i), out.get());
+	out->WriteInt32(_GP(play).GetRoomViewportCount());
+	for (int i = 0; i < _GP(play).GetRoomViewportCount(); ++i)
+		WriteViewportState(*_GP(play).GetRoomViewport(i), out.get());
 
 	return HSaveError::None();
 }
@@ -246,9 +246,9 @@ void ReadLegacyCameraState(Stream *in, RestoredData &r_data) {
 	// Precreate viewport and camera and save data in temp structs
 	int camx = in->ReadInt32();
 	int camy = in->ReadInt32();
-	play.CreateRoomCamera();
-	play.CreateRoomViewport();
-	const auto &main_view = play.GetMainViewport();
+	_GP(play).CreateRoomCamera();
+	_GP(play).CreateRoomViewport();
+	const auto &main_view = _GP(play).GetMainViewport();
 	RestoredData::CameraData cam_dat;
 	cam_dat.ID = 0;
 	cam_dat.Left = camx;
@@ -306,7 +306,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	}
 
 	// Game state
-	play.ReadFromSavegame(in.get(), svg_ver, r_data);
+	_GP(play).ReadFromSavegame(in.get(), svg_ver, r_data);
 
 	// Other dynamic values
 	r_data.FPS = in->ReadInt32();
@@ -324,7 +324,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 		r_data.Cameras[0].Flags = r_data.Camera0_Flags;
 	} else {
 		int viewcam_flags = in->ReadInt32();
-		play.SetAutoRoomViewport((viewcam_flags & kSvgGameAutoRoomView) != 0);
+		_GP(play).SetAutoRoomViewport((viewcam_flags & kSvgGameAutoRoomView) != 0);
 		// TODO: we create viewport and camera objects here because they are
 		// required for the managed pool deserialization, but read actual
 		// data into temp structs because we need to apply it after active
@@ -332,12 +332,12 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 		// See comments to RestoredData struct for further details.
 		int cam_count = in->ReadInt32();
 		for (int i = 0; i < cam_count; ++i) {
-			play.CreateRoomCamera();
+			_GP(play).CreateRoomCamera();
 			ReadCameraState(r_data, in.get());
 		}
 		int view_count = in->ReadInt32();
 		for (int i = 0; i < view_count; ++i) {
-			play.CreateRoomViewport();
+			_GP(play).CreateRoomViewport();
 			ReadViewportState(r_data, in.get());
 		}
 	}
@@ -354,7 +354,7 @@ HSaveError WriteAudio(PStream out) {
 	// Audio types
 	for (size_t i = 0; i < _GP(game).audioClipTypes.size(); ++i) {
 		_GP(game).audioClipTypes[i].WriteToSavegame(out.get());
-		out->WriteInt32(play.default_audio_type_volumes[i]);
+		out->WriteInt32(_GP(play).default_audio_type_volumes[i]);
 	}
 
 	// Audio clips and crossfade
@@ -404,7 +404,7 @@ HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 	// Audio types
 	for (size_t i = 0; i < _GP(game).audioClipTypes.size(); ++i) {
 		_GP(game).audioClipTypes[i].ReadFromSavegame(in.get());
-		play.default_audio_type_volumes[i] = in->ReadInt32();
+		_GP(play).default_audio_type_volumes[i] = in->ReadInt32();
 	}
 
 	// Audio clips and crossfade
@@ -489,7 +489,7 @@ HSaveError WriteCharacters(PStream out) {
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].WriteToFile(out.get());
 		charextra[i].WriteToFile(out.get());
-		Properties::WriteValues(play.charProps[i], out.get());
+		Properties::WriteValues(_GP(play).charProps[i], out.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out.get());
 		// character movement path cache
@@ -505,7 +505,7 @@ HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromFile(in.get());
 		charextra[i].ReadFromFile(in.get());
-		Properties::ReadValues(play.charProps[i], in.get());
+		Properties::ReadValues(_GP(play).charProps[i], in.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in.get());
 		// character movement path cache
@@ -648,7 +648,7 @@ HSaveError WriteInventory(PStream out) {
 	out->WriteInt32(_GP(game).numinvitems);
 	for (int i = 0; i < _GP(game).numinvitems; ++i) {
 		_GP(game).invinfo[i].WriteToSavegame(out.get());
-		Properties::WriteValues(play.invProps[i], out.get());
+		Properties::WriteValues(_GP(play).invProps[i], out.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrInv[i], out.get());
 	}
@@ -661,7 +661,7 @@ HSaveError ReadInventory(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 		return err;
 	for (int i = 0; i < _GP(game).numinvitems; ++i) {
 		_GP(game).invinfo[i].ReadFromSavegame(in.get());
-		Properties::ReadValues(play.invProps[i], in.get());
+		Properties::ReadValues(_GP(play).invProps[i], in.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrInv[i], in.get());
 	}
@@ -898,8 +898,8 @@ HSaveError WriteThisRoom(PStream out) {
 
 	// modified room backgrounds
 	for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
-		out->WriteBool(play.raw_modified[i] != 0);
-		if (play.raw_modified[i])
+		out->WriteBool(_GP(play).raw_modified[i] != 0);
+		if (_GP(play).raw_modified[i])
 			serialize_bitmap(thisroom.BgFrames[i].Graphic.get(), out.get());
 	}
 	out->WriteBool(raw_saved_screen != nullptr);
@@ -942,8 +942,8 @@ HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 
 	// modified room backgrounds
 	for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
-		play.raw_modified[i] = in->ReadBool();
-		if (play.raw_modified[i])
+		_GP(play).raw_modified[i] = in->ReadBool();
+		if (_GP(play).raw_modified[i])
 			r_data.RoomBkgScene[i].reset(read_serialized_bitmap(in.get()));
 		else
 			r_data.RoomBkgScene[i] = nullptr;

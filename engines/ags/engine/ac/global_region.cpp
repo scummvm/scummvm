@@ -30,6 +30,7 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/script/script.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -127,16 +128,16 @@ void DisableGroundLevelAreas(int alsoEffects) {
 	if ((alsoEffects < 0) || (alsoEffects > 1))
 		quit("!DisableGroundLevelAreas: invalid parameter: must be 0 or 1");
 
-	play.ground_level_areas_disabled = GLED_INTERACTION;
+	_GP(play).ground_level_areas_disabled = GLED_INTERACTION;
 
 	if (alsoEffects)
-		play.ground_level_areas_disabled |= GLED_EFFECTS;
+		_GP(play).ground_level_areas_disabled |= GLED_EFFECTS;
 
 	debug_script_log("Ground-level areas disabled");
 }
 
 void EnableGroundLevelAreas() {
-	play.ground_level_areas_disabled = 0;
+	_GP(play).ground_level_areas_disabled = 0;
 
 	debug_script_log("Ground-level areas re-enabled");
 }

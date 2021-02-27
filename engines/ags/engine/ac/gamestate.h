@@ -68,164 +68,164 @@ enum GameStateSvgVersion {
 
 // Adding to this might need to modify AGSDEFNS.SH and AGSPLUGIN.H
 struct GameState {
-	int  score;      // player's current score
-	int  usedmode;   // set by ProcessClick to last cursor mode used
-	int  disabled_user_interface;  // >0 while in cutscene/etc
-	int  gscript_timer;    // obsolete
-	int  debug_mode;       // whether we're in debug mode
+	int  score = 0;      // player's current score
+	int  usedmode = 0;   // set by ProcessClick to last cursor mode used
+	int  disabled_user_interface = 0;  // >0 while in cutscene/etc
+	int  gscript_timer = 0;    // obsolete
+	int  debug_mode = 0;       // whether we're in debug mode
 	int32_t globalvars[MAXGLOBALVARS];  // obsolete
-	int  messagetime;      // time left for auto-remove messages
-	int  usedinv;          // inventory item last used
-	int  inv_top, inv_numdisp, obsolete_inv_numorder, inv_numinline;
-	int  text_speed;       // how quickly text is removed
-	int  sierra_inv_color; // background used to paint defualt inv window
-	int  talkanim_speed;   // animation speed of talking anims
-	int  inv_item_wid, inv_item_hit; // set by SetInvDimensions
-	int  speech_text_shadow;         // colour of outline fonts (default black)
-	int  swap_portrait_side;         // sierra-style speech swap sides
-	int  speech_textwindow_gui;      // textwindow used for sierra-style speech
-	int  follow_change_room_timer;   // delay before moving following characters into new room
-	int  totalscore;           // maximum possible score
-	int  skip_display;         // how the user can skip normal Display windows
-	int  no_multiloop_repeat;  // for backwards compatibility
-	int  roomscript_finished;  // on_call finished in room
-	int  used_inv_on;          // inv item they clicked on
-	int  no_textbg_when_voice; // no textwindow bgrnd when voice speech is used
-	int  max_dialogoption_width; // max width of dialog options text window
-	int  no_hicolor_fadein;      // fade out but instant in for hi-color
-	int  bgspeech_game_speed;    // is background speech relative to game speed
-	int  bgspeech_stay_on_display; // whether to remove bg speech when DisplaySpeech is used
-	int  unfactor_speech_from_textlength; // remove "&10" when calculating time for text to stay
-	int  mp3_loop_before_end;    // (UNUSED!) loop this time before end of track (ms)
-	int  speech_music_drop;      // how much to drop music volume by when speech is played
-	int  in_cutscene;            // we are between a StartCutscene and EndCutscene
-	int  fast_forward;           // player has elected to skip cutscene
-	int  room_width;      // width of current room
-	int  room_height;     // height of current room
+	int  messagetime = 0;      // time left for auto-remove messages
+	int  usedinv = 0;          // inventory item last used
+	int  inv_top = 0, inv_numdisp = 0, obsolete_inv_numorder = 0, inv_numinline = 0;
+	int  text_speed = 0;       // how quickly text is removed
+	int  sierra_inv_color = 0; // background used to paint defualt inv window
+	int  talkanim_speed = 0;   // animation speed of talking anims
+	int  inv_item_wid = 0, inv_item_hit = 0; // set by SetInvDimensions
+	int  speech_text_shadow = 0;         // colour of outline fonts (default black)
+	int  swap_portrait_side = 0;         // sierra-style speech swap sides
+	int  speech_textwindow_gui = 0;      // textwindow used for sierra-style speech
+	int  follow_change_room_timer = 0;   // delay before moving following characters into new room
+	int  totalscore = 0;           // maximum possible score
+	int  skip_display = 0;         // how the user can skip normal Display windows
+	int  no_multiloop_repeat = 0;  // for backwards compatibility
+	int  roomscript_finished = 0;  // on_call finished in room
+	int  used_inv_on = 0;          // inv item they clicked on
+	int  no_textbg_when_voice = 0; // no textwindow bgrnd when voice speech is used
+	int  max_dialogoption_width = 0; // max width of dialog options text window
+	int  no_hicolor_fadein = 0;      // fade out but instant in for hi-color
+	int  bgspeech_game_speed = 0;    // is background speech relative to game speed
+	int  bgspeech_stay_on_display = 0; // whether to remove bg speech when DisplaySpeech is used
+	int  unfactor_speech_from_textlength = 0; // remove "&10" when calculating time for text to stay
+	int  mp3_loop_before_end = 0;    // (UNUSED!) loop this time before end of track (ms)
+	int  speech_music_drop = 0;      // how much to drop music volume by when speech is played
+	int  in_cutscene = 0;            // we are between a StartCutscene and EndCutscene
+	int  fast_forward = 0;           // player has elected to skip cutscene
+	int  room_width = 0;      // width of current room
+	int  room_height = 0;     // height of current room
 	// ** up to here is referenced in the plugin interface
-	int  game_speed_modifier;
-	int  score_sound;
-	int  takeover_data;  // value passed to RunAGSGame in previous game
-	int  replay_hotkey_unused;  // (UNUSED!) StartRecording: not supported
-	int  dialog_options_x;
-	int  dialog_options_y;
-	int  narrator_speech;
-	int  ambient_sounds_persist;
-	int  lipsync_speed;
-	int  close_mouth_speech_time; // stop speech animation at (messagetime - close_mouth_speech_time)
+	int  game_speed_modifier = 0;
+	int  score_sound = 0;
+	int  takeover_data = 0;  // value passed to RunAGSGame in previous game
+	int  replay_hotkey_unused = 0;  // (UNUSED!) StartRecording: not supported
+	int  dialog_options_x = 0;
+	int  dialog_options_y = 0;
+	int  narrator_speech = 0;
+	int  ambient_sounds_persist = 0;
+	int  lipsync_speed = 0;
+	int  close_mouth_speech_time = 0; // stop speech animation at (messagetime - close_mouth_speech_time)
 	// (this is designed to work in text-only mode)
-	int  disable_antialiasing;
-	int  text_speed_modifier;
-	HorAlignment text_align;
-	int  speech_bubble_width;
-	int  min_dialogoption_width;
-	int  disable_dialog_parser;
-	int  anim_background_speed;  // the setting for this room
-	int  top_bar_backcolor;
-	int  top_bar_textcolor;
-	int  top_bar_bordercolor;
-	int  top_bar_borderwidth;
-	int  top_bar_ypos;
-	int  screenshot_width;
-	int  screenshot_height;
-	int  top_bar_font;
-	HorAlignment speech_text_align;
-	int  auto_use_walkto_points;
-	int  inventory_greys_out;
-	int  skip_speech_specific_key;
-	int  abort_key;
-	int  fade_to_red;
-	int  fade_to_green;
-	int  fade_to_blue;
-	int  show_single_dialog_option;
-	int  keep_screen_during_instant_transition;
-	int  read_dialog_option_colour;
-	int  stop_dialog_at_end;
-	int  speech_portrait_placement; // speech portrait placement mode (automatic/custom)
-	int  speech_portrait_x; // a speech portrait x offset from corresponding screen side
-	int  speech_portrait_y; // a speech portrait y offset
-	int  speech_display_post_time_ms; // keep speech text/portrait on screen after text/voice has finished playing;
+	int  disable_antialiasing = 0;
+	int  text_speed_modifier = 0;
+	HorAlignment text_align = kHAlignNone;
+	int  speech_bubble_width = 0;
+	int  min_dialogoption_width = 0;
+	int  disable_dialog_parser = 0;
+	int  anim_background_speed = 0;  // the setting for this room
+	int  top_bar_backcolor = 0;
+	int  top_bar_textcolor = 0;
+	int  top_bar_bordercolor = 0;
+	int  top_bar_borderwidth = 0;
+	int  top_bar_ypos = 0;
+	int  screenshot_width = 0;
+	int  screenshot_height = 0;
+	int  top_bar_font = 0;
+	HorAlignment speech_text_align = kHAlignNone;
+	int  auto_use_walkto_points = 0;
+	int  inventory_greys_out = 0;
+	int  skip_speech_specific_key = 0;
+	int  abort_key = 0;
+	int  fade_to_red = 0;
+	int  fade_to_green = 0;
+	int  fade_to_blue = 0;
+	int  show_single_dialog_option = 0;
+	int  keep_screen_during_instant_transition = 0;
+	int  read_dialog_option_colour = 0;
+	int  stop_dialog_at_end = 0;
+	int  speech_portrait_placement = 0; // speech portrait placement mode (automatic/custom)
+	int  speech_portrait_x = 0; // a speech portrait x offset from corresponding screen side
+	int  speech_portrait_y = 0; // a speech portrait y offset
+	int  speech_display_post_time_ms = 0; // keep speech text/portrait on screen after text/voice has finished playing = 0;
 	// no speech animation is supposed to be played at this time
-	int  dialog_options_highlight_color; // The colour used for highlighted (hovered over) text in dialog options
+	int  dialog_options_highlight_color = 0; // The colour used for highlighted (hovered over) text in dialog options
 	int32_t reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
 	// ** up to here is referenced in the script "_GP(game)." object
-	long  randseed;    // random seed
-	int   player_on_region;    // player's current region
-	int   screen_is_faded_out; // the screen is currently black
-	int   check_interaction_only;
-	int   bg_frame, bg_anim_delay; // for animating backgrounds
-	int   music_vol_was;  // before the volume drop
-	short wait_counter;
-	char  wait_skipped_by; // tells how last wait was skipped [not serialized]
-	int   wait_skipped_by_data; // extended data telling how last wait was skipped [not serialized]
-	short mboundx1, mboundx2, mboundy1, mboundy2;
-	int   fade_effect;
-	int   bg_frame_locked;
+	long  randseed = 0;    // random seed
+	int   player_on_region = 0;    // player's current region
+	int   screen_is_faded_out = 0; // the screen is currently black
+	int   check_interaction_only = 0;
+	int   bg_frame = 0, bg_anim_delay = 0; // for animating backgrounds
+	int   music_vol_was = 0;  // before the volume drop
+	short wait_counter = 0;
+	char  wait_skipped_by = 0; // tells how last wait was skipped [not serialized]
+	int   wait_skipped_by_data = 0; // extended data telling how last wait was skipped [not serialized]
+	short mboundx1 = 0, mboundx2 = 0, mboundy1 = 0, mboundy2 = 0;
+	int   fade_effect = 0;
+	int   bg_frame_locked = 0;
 	int32_t globalscriptvars[MAXGSVALUES];
-	int   cur_music_number, music_repeat;
-	int   music_master_volume;
-	int   digital_master_volume;
+	int   cur_music_number = 0, music_repeat = 0;
+	int   music_master_volume = 0;
+	int   digital_master_volume = 0;
 	char  walkable_areas_on[MAX_WALK_AREAS + 1];
-	short screen_flipped;
-	int   entered_at_x, entered_at_y, entered_edge;
-	int   want_speech;
-	int   cant_skip_speech;
+	short screen_flipped = 0;
+	int   entered_at_x = 0, entered_at_y = 0, entered_edge = 0;
+	int   want_speech = 0;
+	int   cant_skip_speech = 0;
 	int32_t script_timers[MAX_TIMERS];
-	int   sound_volume, speech_volume;
-	int   normal_font, speech_font;
-	char  key_skip_wait;
-	int   swap_portrait_lastchar;
-	int   swap_portrait_lastlastchar;
-	int   separate_music_lib;
-	int   in_conversation;
-	int   screen_tint;
-	int   num_parsed_words;
+	int   sound_volume = 0, speech_volume = 0;
+	int   normal_font = 0, speech_font = 0;
+	char  key_skip_wait = 0;
+	int   swap_portrait_lastchar = 0;
+	int   swap_portrait_lastlastchar = 0;
+	int   separate_music_lib = 0;
+	int   in_conversation = 0;
+	int   screen_tint = 0;
+	int   num_parsed_words = 0;
 	short parsed_words[MAX_PARSED_WORDS];
 	char  bad_parsed_word[100];
-	int   raw_color;
+	int   raw_color = 0;
 	int32_t raw_modified[MAX_ROOM_BGFRAMES];
-	Shared::PBitmap raw_drawing_surface;
+	Shared::PBitmap raw_drawing_surface = nullptr;
 	short filenumbers[MAXSAVEGAMES];
-	int   room_changes;
-	int   mouse_cursor_hidden;
-	int   silent_midi;
-	int   silent_midi_channel;
-	int   current_music_repeating;  // remember what the loop flag was when this music started
-	unsigned long shakesc_delay;  // unsigned long to match loopcounter
-	int   shakesc_amount, shakesc_length;
-	int   rtint_red, rtint_green, rtint_blue, rtint_level, rtint_light;
-	bool  rtint_enabled;
-	int   end_cutscene_music;
-	int   skip_until_char_stops;
-	int   get_loc_name_last_time;
-	int   get_loc_name_save_cursor;
-	int   restore_cursor_mode_to;
-	int   restore_cursor_image_to;
-	short music_queue_size;
+	int   room_changes = 0;
+	int   mouse_cursor_hidden = 0;
+	int   silent_midi = 0;
+	int   silent_midi_channel = 0;
+	int   current_music_repeating = 0;  // remember what the loop flag was when this music started
+	unsigned long shakesc_delay = 0;  // unsigned long to match loopcounter
+	int   shakesc_amount = 0, shakesc_length = 0;
+	int   rtint_red = 0, rtint_green = 0, rtint_blue = 0, rtint_level = 0, rtint_light = 0;
+	bool  rtint_enabled = 0;
+	int   end_cutscene_music = 0;
+	int   skip_until_char_stops = 0;
+	int   get_loc_name_last_time = 0;
+	int   get_loc_name_save_cursor = 0;
+	int   restore_cursor_mode_to = 0;
+	int   restore_cursor_image_to = 0;
+	short music_queue_size = 0;
 	short music_queue[MAX_QUEUED_MUSIC];
-	short new_music_queue_size;
-	short crossfading_out_channel;
-	short crossfade_step;
-	short crossfade_out_volume_per_step;
-	short crossfade_initial_volume_out;
-	short crossfading_in_channel;
-	short crossfade_in_volume_per_step;
-	short crossfade_final_volume_in;
+	short new_music_queue_size = 0;
+	short crossfading_out_channel = 0;
+	short crossfade_step = 0;
+	short crossfade_out_volume_per_step = 0;
+	short crossfade_initial_volume_out = 0;
+	short crossfading_in_channel = 0;
+	short crossfade_in_volume_per_step = 0;
+	short crossfade_final_volume_in = 0;
 	QueuedAudioItem new_music_queue[MAX_QUEUED_MUSIC];
 	char  takeover_from[50];
 	char  playmp3file_name[PLAYMP3FILE_MAX_FILENAME_LEN];
 	char  globalstrings[MAXGLOBALSTRINGS][MAX_MAXSTRLEN];
 	char  lastParserEntry[MAX_MAXSTRLEN];
 	char  game_name[100];
-	int   ground_level_areas_disabled;
-	int   next_screen_transition;
-	int   gamma_adjustment;
-	short temporarily_turned_off_character;  // Hide Player Charactr ticked
-	short inv_backwards_compatibility;
-	int32_t *gui_draw_order;
+	int   ground_level_areas_disabled = 0;
+	int   next_screen_transition = 0;
+	int   gamma_adjustment = 0;
+	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
+	short inv_backwards_compatibility = 0;
+	int32_t *gui_draw_order = nullptr;
 	std::vector<AGS::Shared::String> do_once_tokens;
-	int   text_min_display_time_ms;
-	int   ignore_user_input_after_text_timeout_ms;
+	int   text_min_display_time_ms = 0;
+	int   ignore_user_input_after_text_timeout_ms = 0;
 	int32_t   default_audio_type_volumes[MAX_AUDIO_TYPES];
 
 	// Dynamic custom property values for characters and items
@@ -235,16 +235,16 @@ struct GameState {
 	// Dynamic speech state
 	//
 	// Tells whether there is a voice-over played during current speech
-	bool  speech_has_voice;
-	// Tells whether the voice was played in blocking mode;
+	bool  speech_has_voice = 0;
+	// Tells whether the voice was played in blocking mode = 0;
 	// atm blocking speech handles itself, and we only need to finalize
-	// non-blocking voice speech during game update; speech refactor would be
+	// non-blocking voice speech during game update = 0; speech refactor would be
 	// required to get rid of this rule.
-	bool  speech_voice_blocking;
+	bool  speech_voice_blocking = 0;
 	// Tells whether character speech stays on screen not animated for additional time
-	bool  speech_in_post_state;
+	bool  speech_in_post_state = 0;
 
-	int shake_screen_yoff; // y offset of the shaking screen
+	int shake_screen_yoff = 0; // y offset of the shaking screen
 
 
 	GameState();
@@ -366,7 +366,7 @@ private:
 	void UpdateRoomCamera(int index);
 
 	// Defines if the room viewport should be adjusted to the room size automatically.
-	bool _isAutoRoomViewport;
+	bool _isAutoRoomViewport = true;
 	// Main viewport defines the rectangle of the drawn and interactable area
 	// in the most basic case it will be equal to the game size.
 	Viewport _mainViewport;
@@ -386,11 +386,11 @@ private:
 	std::vector<std::pair<ScriptCamera *, int32_t>> _scCameraRefs;
 
 	// Tells that the main viewport's position has changed since last game update
-	bool  _mainViewportHasChanged;
+	bool  _mainViewportHasChanged = false;
 	// Tells that room viewports need z-order resort
-	bool  _roomViewportZOrderChanged;
+	bool  _roomViewportZOrderChanged = false;
 
-	AGS_Clock::time_point _ignoreUserInputUntilTime;
+	AGS_Clock::time_point _ignoreUserInputUntilTime = 0;
 };
 
 // Converts legacy alignment type used in script API
@@ -400,7 +400,7 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align);
 // Alignment constants in the Script API and still support old version.
 HorAlignment ReadScriptAlignment(int32_t align);
 
-extern GameState play;
+
 
 } // namespace AGS3
 

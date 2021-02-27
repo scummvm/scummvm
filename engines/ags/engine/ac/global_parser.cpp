@@ -24,15 +24,14 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/string.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern GameState play;
-
 int SaidUnknownWord(char *buffer) {
 	VALIDATE_STRING(buffer);
-	strcpy(buffer, play.bad_parsed_word);
-	if (play.bad_parsed_word[0] == 0)
+	strcpy(buffer, _GP(play).bad_parsed_word);
+	if (_GP(play).bad_parsed_word[0] == 0)
 		return 0;
 	return 1;
 }

@@ -85,7 +85,7 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define DEBUG_CONSOLE_NUMLINES 6
 #define TXT_SCOREBAR        29
-#define MAXSCORE play.totalscore
+#define MAXSCORE _GP(play).totalscore
 #define CHANIM_REPEAT    2
 #define CHANIM_BACKWARDS 4
 #define ANIM_BACKWARDS 10
@@ -93,9 +93,9 @@ const int LegacyRoomVolumeFactor = 30;
 #define ANIM_REPEAT    2
 #define ANIM_ONCERESET 3
 #define FONT_STATUSBAR  0
-#define FONT_NORMAL     play.normal_font
+#define FONT_NORMAL     _GP(play).normal_font
 //#define FONT_SPEECHBACK 1
-#define FONT_SPEECH     play.speech_font
+#define FONT_SPEECH     _GP(play).speech_font
 #define MODE_WALK 0
 #define MODE_LOOK 1
 #define MODE_HAND 2

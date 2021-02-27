@@ -55,7 +55,7 @@ using namespace AGS::Engine;
 
 
 extern GameSetup usetup;
-extern GameState play;
+
 extern RoomStruct thisroom;
 extern CharacterInfo *playerchar;
 
@@ -82,9 +82,9 @@ String GetRuntimeInfo() {
 		gfxDriver->GetDriverName(), filter->GetInfo().Name.GetCStr(),
 		render_frame.GetWidth(), render_frame.GetHeight(),
 		_GP(spriteset).GetCacheSize() / 1024, _GP(spriteset).GetMaxCacheSize() / 1024, _GP(spriteset).GetLockedSize() / 1024);
-	if (play.separate_music_lib)
+	if (_GP(play).separate_music_lib)
 		runtimeInfo.Append("[AUDIO.VOX enabled");
-	if (play.want_speech >= 1)
+	if (_GP(play).want_speech >= 1)
 		runtimeInfo.Append("[SPEECH.VOX enabled");
 	if (transtree != nullptr) {
 		runtimeInfo.Append("[Using translation ");
@@ -95,13 +95,13 @@ String GetRuntimeInfo() {
 }
 
 void script_debug(int cmdd, int dataa) {
-	if (play.debug_mode == 0) return;
+	if (_GP(play).debug_mode == 0) return;
 	int rr;
 	if (cmdd == 0) {
 		for (rr = 1; rr < _GP(game).numinvitems; rr++)
 			playerchar->inv[rr] = 1;
 		update_invorder();
-		//    Display("invorder decided there are %d items[display %d",play.inv_numorder,play.inv_numdisp);
+		//    Display("invorder decided there are %d items[display %d",_GP(play).inv_numorder,_GP(play).inv_numdisp);
 	} else if (cmdd == 1) {
 		String toDisplay = GetRuntimeInfo();
 		Display(toDisplay.GetCStr());
@@ -115,8 +115,8 @@ void script_debug(int cmdd, int dataa) {
 		const int camera_index = 0;
 		Bitmap *tempw = BitmapHelper::CreateBitmap(thisroom.WalkAreaMask->GetWidth(), thisroom.WalkAreaMask->GetHeight());
 		tempw->Blit(prepare_walkable_areas(-1), 0, 0, 0, 0, tempw->GetWidth(), tempw->GetHeight());
-		const Rect &viewport = play.GetRoomViewport(viewport_index)->GetRect();
-		const Rect &camera = play.GetRoomCamera(camera_index)->GetRect();
+		const Rect &viewport = _GP(play).GetRoomViewport(viewport_index)->GetRect();
+		const Rect &camera = _GP(play).GetRoomCamera(camera_index)->GetRect();
 		Bitmap *view_bmp = BitmapHelper::CreateBitmap(viewport.GetWidth(), viewport.GetHeight());
 		Rect mask_src = Rect(camera.Left / thisroom.MaskResolution, camera.Top / thisroom.MaskResolution, camera.Right / thisroom.MaskResolution, camera.Bottom / thisroom.MaskResolution);
 		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);
@@ -169,8 +169,8 @@ void script_debug(int cmdd, int dataa) {
 		// TODO: support multiple viewports?!
 		const int viewport_index = 0;
 		const int camera_index = 0;
-		const Rect &viewport = play.GetRoomViewport(viewport_index)->GetRect();
-		const Rect &camera = play.GetRoomCamera(camera_index)->GetRect();
+		const Rect &viewport = _GP(play).GetRoomViewport(viewport_index)->GetRect();
+		const Rect &camera = _GP(play).GetRoomCamera(camera_index)->GetRect();
 		Bitmap *view_bmp = BitmapHelper::CreateBitmap(viewport.GetWidth(), viewport.GetHeight());
 		Rect mask_src = Rect(camera.Left / thisroom.MaskResolution, camera.Top / thisroom.MaskResolution, camera.Right / thisroom.MaskResolution, camera.Bottom / thisroom.MaskResolution);
 		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);

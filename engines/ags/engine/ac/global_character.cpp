@@ -57,7 +57,7 @@ using namespace AGS::Shared;
 extern ViewStruct *views;
 extern RoomObject *objs;
 extern RoomStruct thisroom;
-extern GameState play;
+
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
 extern ScriptInvItem scrInv[MAX_INV];
 
@@ -377,7 +377,7 @@ int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
 		return 5;
 	}
 	if (_GP(game).options[OPT_GLOBALTALKANIMSPD] != 0)
-		return play.talkanim_speed;
+		return _GP(play).talkanim_speed;
 	else
 		return cha->speech_anim_speed;
 }
@@ -393,7 +393,7 @@ void RunCharacterInteraction(int cc, int mood) {
 	else if (mood == MODE_USE) {
 		passon = 3;
 		cdata = playerchar->activeinv;
-		play.usedinv = cdata;
+		_GP(play).usedinv = cdata;
 	} else if (mood == MODE_PICKUP) passon = 5;
 	else if (mood == MODE_CUSTOM1) passon = 6;
 	else if (mood == MODE_CUSTOM2) passon = 7;
@@ -432,7 +432,7 @@ int AreCharactersColliding(int cchar1, int cchar2) {
 int GetCharacterProperty(int cha, const char *property) {
 	if (!is_valid_character(cha))
 		quit("!GetCharacterProperty: invalid character");
-	return get_int_property(_GP(game).charProps[cha], play.charProps[cha], property);
+	return get_int_property(_GP(game).charProps[cha], _GP(play).charProps[cha], property);
 }
 
 void SetCharacterProperty(int who, int flag, int yesorno) {
@@ -443,11 +443,11 @@ void SetCharacterProperty(int who, int flag, int yesorno) {
 }
 
 void GetCharacterPropertyText(int item, const char *property, char *bufer) {
-	get_text_property(_GP(game).charProps[item], play.charProps[item], property, bufer);
+	get_text_property(_GP(game).charProps[item], _GP(play).charProps[item], property, bufer);
 }
 
 int GetCharIDAtScreen(int xx, int yy) {
-	VpPoint vpt = play.ScreenToRoomDivDown(xx, yy);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xx, yy);
 	if (vpt.second < 0)
 		return -1;
 	return is_pos_on_character(vpt.first.X, vpt.first.Y);
@@ -485,7 +485,7 @@ void update_invorder() {
 		}
 	}
 	// backwards compatibility
-	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
+	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 
 	guis_need_update = 1;
 }
@@ -496,7 +496,7 @@ void add_inventory(int inum) {
 
 	Character_AddInventory(playerchar, &scrInv[inum], SCR_NO_VALUE);
 
-	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
+	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
 
 void lose_inventory(int inum) {
@@ -505,7 +505,7 @@ void lose_inventory(int inum) {
 
 	Character_LoseInventory(playerchar, &scrInv[inum]);
 
-	play.obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
+	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
 
 void AddInventoryToCharacter(int charid, int inum) {
@@ -557,7 +557,7 @@ int DisplaySpeechBackground(int charid, const char *speel) {
 			i++;
 	}
 
-	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, play.GetUIViewport().GetWidth() / 2, FONT_SPEECH,
+	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, _GP(play).GetUIViewport().GetWidth() / 2, FONT_SPEECH,
 		-_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
 	int scid = find_overlay_of_type(ovrl);

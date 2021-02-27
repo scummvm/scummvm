@@ -37,7 +37,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared::Memory;
 
-extern GameState play;
+
 extern AGSPlatformDriver *platform;
 extern TreeMap *transtree;
 extern char transFileName[MAX_PATH];

@@ -88,7 +88,7 @@ using namespace AGS::Engine;
 
 extern GameSetup usetup;
 
-extern GameState play;
+
 extern RoomStatus *croom;
 extern RoomStatus troom;    // used for non-saveable rooms, eg. intro
 extern int displayed_room;
@@ -137,7 +137,7 @@ ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber) 
 		quit("!Room.GetDrawingSurfaceForBackground: no room is currently loaded");
 
 	if (backgroundNumber == SCR_NO_VALUE) {
-		backgroundNumber = play.bg_frame;
+		backgroundNumber = _GP(play).bg_frame;
 	}
 
 	if ((backgroundNumber < 0) || ((size_t)backgroundNumber >= thisroom.BgFrameCount))
@@ -271,7 +271,7 @@ void unload_old_room() {
 	for (ff = 0; ff < croom->numobj; ff++)
 		objs[ff].moving = 0;
 
-	if (!play.ambient_sounds_persist) {
+	if (!_GP(play).ambient_sounds_persist) {
 		for (ff = 1; ff < MAX_SOUND_CHANNELS; ff++)
 			StopAmbientSound(ff);
 	}
@@ -292,14 +292,14 @@ void unload_old_room() {
 		roominstFork = nullptr;
 		roominst = nullptr;
 	} else croom->tsdatasize = 0;
-	memset(&play.walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
-	play.bg_frame = 0;
-	play.bg_frame_locked = 0;
+	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
+	_GP(play).bg_frame = 0;
+	_GP(play).bg_frame_locked = 0;
 	remove_screen_overlay(-1);
 	delete raw_saved_screen;
 	raw_saved_screen = nullptr;
 	for (ff = 0; ff < MAX_ROOM_BGFRAMES; ff++)
-		play.raw_modified[ff] = 0;
+		_GP(play).raw_modified[ff] = 0;
 	for (size_t i = 0; i < thisroom.LocalVariables.size() && i < MAX_GLOBAL_VARIABLES; ++i)
 		croom->interactionVariableValues[i] = thisroom.LocalVariables[i].Value;
 
@@ -314,8 +314,8 @@ void unload_old_room() {
 		charextra[ff].xwas = INVALID_X;
 	}
 
-	play.swap_portrait_lastchar = -1;
-	play.swap_portrait_lastlastchar = -1;
+	_GP(play).swap_portrait_lastchar = -1;
+	_GP(play).swap_portrait_lastlastchar = -1;
 
 	for (ff = 0; ff < croom->numobj; ff++) {
 		// un-export the object's script object
@@ -361,9 +361,9 @@ void unload_old_room() {
 	}
 
 	// if Hide Player Character was ticked, restore it to visible
-	if (play.temporarily_turned_off_character >= 0) {
-		_GP(game).chars[play.temporarily_turned_off_character].on = 1;
-		play.temporarily_turned_off_character = -1;
+	if (_GP(play).temporarily_turned_off_character >= 0) {
+		_GP(game).chars[_GP(play).temporarily_turned_off_character].on = 1;
+		_GP(play).temporarily_turned_off_character = -1;
 	}
 
 }
@@ -416,17 +416,17 @@ void update_letterbox_mode() {
 	    _GP(game).GetGameRes().Height;
 	new_main_view.SetHeight(viewport_height);
 
-	play.SetMainViewport(CenterInRect(game_frame, new_main_view));
-	play.SetUIViewport(new_main_view);
+	_GP(play).SetMainViewport(CenterInRect(game_frame, new_main_view));
+	_GP(play).SetUIViewport(new_main_view);
 }
 
 // Automatically reset primary room viewport and camera to match the new room size
 static void adjust_viewport_to_room() {
 	const Size real_room_sz = Size(data_to_game_coord(thisroom.Width), data_to_game_coord(thisroom.Height));
-	const Rect main_view = play.GetMainViewport();
+	const Rect main_view = _GP(play).GetMainViewport();
 	Rect new_room_view = RectWH(Size::Clamp(real_room_sz, Size(1, 1), main_view.GetSize()));
 
-	auto view = play.GetRoomViewport(0);
+	auto view = _GP(play).GetRoomViewport(0);
 	view->SetRect(new_room_view);
 	auto cam = view->GetCamera();
 	if (cam) {
@@ -438,8 +438,8 @@ static void adjust_viewport_to_room() {
 
 // Run through all viewports and cameras to make sure they can work in new room's bounds
 static void update_all_viewcams_with_newroom() {
-	for (int i = 0; i < play.GetRoomCameraCount(); ++i) {
-		auto cam = play.GetRoomCamera(i);
+	for (int i = 0; i < _GP(play).GetRoomCameraCount(); ++i) {
+		auto cam = _GP(play).GetRoomCamera(i);
 		const Rect old_pos = cam->GetRect();
 		cam->SetSize(old_pos.GetSize());
 		cam->SetAt(old_pos.Left, old_pos.Top);
@@ -454,7 +454,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	String room_filename;
 	int cc;
 	done_es_error = 0;
-	play.room_changes ++;
+	_GP(play).room_changes ++;
 	// TODO: find out why do we need to temporarily lower color depth to 8-bit.
 	// Or do we? There's a serious usability problem in this: if any bitmap is
 	// created meanwhile it will have this color depth by default, which may
@@ -494,10 +494,10 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	delay(100);
 	}*/
 
-	play.room_width = thisroom.Width;
-	play.room_height = thisroom.Height;
-	play.anim_background_speed = thisroom.BgAnimSpeed;
-	play.bg_anim_delay = play.anim_background_speed;
+	_GP(play).room_width = thisroom.Width;
+	_GP(play).room_height = thisroom.Height;
+	_GP(play).anim_background_speed = thisroom.BgAnimSpeed;
+	_GP(play).bg_anim_delay = _GP(play).anim_background_speed;
 
 	// do the palette
 	for (cc = 0; cc < 256; cc++) {
@@ -735,7 +735,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		}
 	}
 	our_eip = 207;
-	play.entered_edge = -1;
+	_GP(play).entered_edge = -1;
 
 	if ((new_room_x != SCR_NO_VALUE) && (forchar != nullptr)) {
 		forchar->x = new_room_x;
@@ -749,7 +749,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	if ((new_room_pos > 0) & (forchar != nullptr)) {
 		if (new_room_pos >= 4000) {
-			play.entered_edge = 3;
+			_GP(play).entered_edge = 3;
 			forchar->y = thisroom.Edges.Top + get_fixed_pixel_size(1);
 			forchar->x = new_room_pos % 1000;
 			if (forchar->x == 0) forchar->x = thisroom.Width / 2;
@@ -759,7 +759,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 				forchar->x = thisroom.Edges.Right - 3;
 			forchar->loop = 0;
 		} else if (new_room_pos >= 3000) {
-			play.entered_edge = 2;
+			_GP(play).entered_edge = 2;
 			forchar->y = thisroom.Edges.Bottom - get_fixed_pixel_size(1);
 			forchar->x = new_room_pos % 1000;
 			if (forchar->x == 0) forchar->x = thisroom.Width / 2;
@@ -769,7 +769,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 				forchar->x = thisroom.Edges.Right - 3;
 			forchar->loop = 3;
 		} else if (new_room_pos >= 2000) {
-			play.entered_edge = 1;
+			_GP(play).entered_edge = 1;
 			forchar->x = thisroom.Edges.Right - get_fixed_pixel_size(1);
 			forchar->y = new_room_pos % 1000;
 			if (forchar->y == 0) forchar->y = thisroom.Height / 2;
@@ -779,7 +779,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 				forchar->y = thisroom.Edges.Bottom - 3;
 			forchar->loop = 1;
 		} else if (new_room_pos >= 1000) {
-			play.entered_edge = 0;
+			_GP(play).entered_edge = 0;
 			forchar->x = thisroom.Edges.Left + get_fixed_pixel_size(1);
 			forchar->y = new_room_pos % 1000;
 			if (forchar->y == 0) forchar->y = thisroom.Height / 2;
@@ -840,16 +840,16 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		new_room_pos = 0;
 	}
 	if (forchar != nullptr) {
-		play.entered_at_x = forchar->x;
-		play.entered_at_y = forchar->y;
+		_GP(play).entered_at_x = forchar->x;
+		_GP(play).entered_at_y = forchar->y;
 		if (forchar->x >= thisroom.Edges.Right)
-			play.entered_edge = 1;
+			_GP(play).entered_edge = 1;
 		else if (forchar->x <= thisroom.Edges.Left)
-			play.entered_edge = 0;
+			_GP(play).entered_edge = 0;
 		else if (forchar->y >= thisroom.Edges.Bottom)
-			play.entered_edge = 2;
+			_GP(play).entered_edge = 2;
 		else if (forchar->y <= thisroom.Edges.Top)
-			play.entered_edge = 3;
+			_GP(play).entered_edge = 3;
 	}
 	if (thisroom.Options.StartupMusic > 0)
 		PlayMusicResetQueue(thisroom.Options.StartupMusic);
@@ -865,7 +865,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			// remember which character we turned off, in case they
 			// use SetPlyaerChracter within this room (so we re-enable
 			// the correct character when leaving the room)
-			play.temporarily_turned_off_character = _GP(game).playercharacter;
+			_GP(play).temporarily_turned_off_character = _GP(game).playercharacter;
 		}
 		if (forchar->flags & CHF_FIXVIEW) ;
 		else if (thisroom.Options.PlayerView == 0) forchar->view = forchar->defview;
@@ -882,10 +882,10 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// If we are not restoring a save, update cameras to accomodate for this
 	// new room; otherwise this is done later when cameras are recreated.
 	if (forchar != nullptr) {
-		if (play.IsAutoRoomViewport())
+		if (_GP(play).IsAutoRoomViewport())
 			adjust_viewport_to_room();
 		update_all_viewcams_with_newroom();
-		play.UpdateRoomCameras(); // update auto tracking
+		_GP(play).UpdateRoomCameras(); // update auto tracking
 	}
 	init_room_drawdata();
 
@@ -896,8 +896,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			MergeObject(cc);
 	}
 	new_room_flags = 0;
-	play.gscript_timer = -1; // avoid screw-ups with changing screens
-	play.player_on_region = 0;
+	_GP(play).gscript_timer = -1; // avoid screw-ups with changing screens
+	_GP(play).player_on_region = 0;
 	// trash any input which they might have done while it was loading
 	ags_clear_input_buffer();
 	// no fade in, so set the palette immediately in case of 256-col sprites
@@ -996,9 +996,9 @@ void check_new_room() {
 		// make sure that any script calls don't re-call enters screen
 		int newroom_was = in_new_room;
 		in_new_room = 0;
-		play.disabled_user_interface ++;
+		_GP(play).disabled_user_interface ++;
 		process_event(&evh);
-		play.disabled_user_interface --;
+		_GP(play).disabled_user_interface --;
 		in_new_room = newroom_was;
 		//    setevent(EV_RUNEVBLOCK,EVB_ROOM,0,5);
 	}
@@ -1031,7 +1031,7 @@ void on_background_frame_change() {
 	invalidate_cached_walkbehinds();
 
 	// get the new frame's palette
-	memcpy(palette, thisroom.BgFrames[play.bg_frame].Palette, sizeof(color) * 256);
+	memcpy(palette, thisroom.BgFrames[_GP(play).bg_frame].Palette, sizeof(color) * 256);
 
 	// hi-colour, update the palette. It won't have an immediate effect
 	// but will be drawn properly when the screen fades in
@@ -1042,7 +1042,7 @@ void on_background_frame_change() {
 		return;
 
 	// Don't update the palette if it hasn't changed
-	if (thisroom.BgFrames[play.bg_frame].IsPaletteShared)
+	if (thisroom.BgFrames[_GP(play).bg_frame].IsPaletteShared)
 		return;
 
 	// 256-colours, tell it to update the palette (will actually be done as

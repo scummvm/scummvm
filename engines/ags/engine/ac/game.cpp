@@ -149,7 +149,7 @@ extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern IGraphicsDriver *gfxDriver;
 
 //=============================================================================
-GameState play;
+
 GameSetup usetup;
 RoomStatus troom;    // used for non-saveable rooms, eg. intro
 RoomObject *objs;
@@ -244,7 +244,7 @@ int Game_IsAudioPlaying(int audioType) {
 	if (((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size())) && (audioType != SCR_NO_VALUE))
 		quitprintf("!_GP(game).IsAudioPlaying: invalid audio type %d", audioType);
 
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return 0;
 
 	for (int aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
@@ -289,7 +289,7 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 
 	if ((changeType == VOL_SETFUTUREDEFAULT) ||
 	        (changeType == VOL_BOTH)) {
-		play.default_audio_type_volumes[audioType] = volume;
+		_GP(play).default_audio_type_volumes[audioType] = volume;
 
 		// update queued clip volumes
 		update_queued_clips_volume(audioType, volume);
@@ -314,7 +314,7 @@ int Game_GetDialogCount() {
 }
 
 void set_debug_mode(bool on) {
-	play.debug_mode = on ? 1 : 0;
+	_GP(play).debug_mode = on ? 1 : 0;
 	debug_set_console(on);
 }
 
@@ -329,16 +329,16 @@ extern int acdialog_font;
 
 int oldmouse;
 void setup_for_dialog() {
-	cbuttfont = play.normal_font;
-	acdialog_font = play.normal_font;
-	if (!play.mouse_cursor_hidden)
+	cbuttfont = _GP(play).normal_font;
+	acdialog_font = _GP(play).normal_font;
+	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_ENABLE);
 	oldmouse = cur_cursor;
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
 	set_mouse_cursor(oldmouse);
-	if (!play.mouse_cursor_hidden)
+	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);
 	invalidate_screen();
 }
@@ -518,7 +518,7 @@ void save_game_dialog() {
 }
 
 void free_do_once_tokens() {
-	play.do_once_tokens.resize(0);
+	_GP(play).do_once_tokens.resize(0);
 }
 
 
@@ -527,7 +527,7 @@ void free_do_once_tokens() {
 void unload_game_file() {
 	close_translation();
 
-	play.FreeViewportsAndCameras();
+	_GP(play).FreeViewportsAndCameras();
 
 	characterScriptObjNames.clear();
 	free(charextra);
@@ -620,7 +620,7 @@ void unload_game_file() {
 	free_all_fonts();
 
 	free_do_once_tokens();
-	free(play.gui_draw_order);
+	free(_GP(play).gui_draw_order);
 
 	resetRoomStatuses();
 
@@ -637,7 +637,7 @@ const char *Game_GetGlobalStrings(int index) {
 	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
 		quit("!_GP(game).GlobalStrings: invalid index");
 
-	return CreateNewScriptString(play.globalstrings[index]);
+	return CreateNewScriptString(_GP(play).globalstrings[index]);
 }
 
 
@@ -735,40 +735,40 @@ ScriptViewFrame *Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
 }
 
 int Game_DoOnceOnly(const char *token) {
-	for (int i = 0; i < (int)play.do_once_tokens.size(); i++) {
-		if (play.do_once_tokens[i] == token) {
+	for (int i = 0; i < (int)_GP(play).do_once_tokens.size(); i++) {
+		if (_GP(play).do_once_tokens[i] == token) {
 			return 0;
 		}
 	}
-	play.do_once_tokens.push_back(token);
+	_GP(play).do_once_tokens.push_back(token);
 	return 1;
 }
 
 int Game_GetTextReadingSpeed() {
-	return play.text_speed;
+	return _GP(play).text_speed;
 }
 
 void Game_SetTextReadingSpeed(int newTextSpeed) {
 	if (newTextSpeed < 1)
 		quitprintf("!_GP(game).TextReadingSpeed: %d is an invalid speed", newTextSpeed);
 
-	play.text_speed = newTextSpeed;
+	_GP(play).text_speed = newTextSpeed;
 }
 
 int Game_GetMinimumTextDisplayTimeMs() {
-	return play.text_min_display_time_ms;
+	return _GP(play).text_min_display_time_ms;
 }
 
 void Game_SetMinimumTextDisplayTimeMs(int newTextMinTime) {
-	play.text_min_display_time_ms = newTextMinTime;
+	_GP(play).text_min_display_time_ms = newTextMinTime;
 }
 
 int Game_GetIgnoreUserInputAfterTextTimeoutMs() {
-	return play.ignore_user_input_after_text_timeout_ms;
+	return _GP(play).ignore_user_input_after_text_timeout_ms;
 }
 
 void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs) {
-	play.ignore_user_input_after_text_timeout_ms = newValueMs;
+	_GP(play).ignore_user_input_after_text_timeout_ms = newValueMs;
 }
 
 const char *Game_GetFileName() {
@@ -776,24 +776,24 @@ const char *Game_GetFileName() {
 }
 
 const char *Game_GetName() {
-	return CreateNewScriptString(play.game_name);
+	return CreateNewScriptString(_GP(play).game_name);
 }
 
 void Game_SetName(const char *newName) {
-	strncpy(play.game_name, newName, 99);
-	play.game_name[99] = 0;
-	::AGS::g_vm->set_window_title(play.game_name);
+	strncpy(_GP(play).game_name, newName, 99);
+	_GP(play).game_name[99] = 0;
+	::AGS::g_vm->set_window_title(_GP(play).game_name);
 }
 
 int Game_GetSkippingCutscene() {
-	if (play.fast_forward) {
+	if (_GP(play).fast_forward) {
 		return 1;
 	}
 	return 0;
 }
 
 int Game_GetInSkippableCutscene() {
-	if (play.in_cutscene) {
+	if (_GP(play).in_cutscene) {
 		return 1;
 	}
 	return 0;
@@ -837,10 +837,10 @@ const char *Game_GetGlobalMessages(int index) {
 }
 
 int Game_GetSpeechFont() {
-	return play.speech_font;
+	return _GP(play).speech_font;
 }
 int Game_GetNormalFont() {
-	return play.normal_font;
+	return _GP(play).normal_font;
 }
 
 const char *Game_GetTranslationFilename() {
@@ -876,15 +876,15 @@ ScriptAudioClip *Game_GetAudioClip(int index) {
 }
 
 ScriptCamera *Game_GetCamera() {
-	return play.GetScriptCamera(0);
+	return _GP(play).GetScriptCamera(0);
 }
 
 int Game_GetCameraCount() {
-	return play.GetRoomCameraCount();
+	return _GP(play).GetRoomCameraCount();
 }
 
 ScriptCamera *Game_GetAnyCamera(int index) {
-	return play.GetScriptCamera(index);
+	return _GP(play).GetScriptCamera(index);
 }
 
 void Game_SimulateKeyPress(int key_) {
@@ -1024,15 +1024,15 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 		debug_flags |= DBG_NOIFACE;
 		construct_game_scene(true);
 
-		int usewid = data_to_game_coord(play.screenshot_width);
-		int usehit = data_to_game_coord(play.screenshot_height);
-		const Rect &viewport = play.GetMainViewport();
+		int usewid = data_to_game_coord(_GP(play).screenshot_width);
+		int usehit = data_to_game_coord(_GP(play).screenshot_height);
+		const Rect &viewport = _GP(play).GetMainViewport();
 		if (usewid > viewport.GetWidth())
 			usewid = viewport.GetWidth();
 		if (usehit > viewport.GetHeight())
 			usehit = viewport.GetHeight();
 
-		if ((play.screenshot_width < 16) || (play.screenshot_height < 16))
+		if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
 			quit("!Invalid _GP(game).screenshot_width/height, must be from 16x16 to screen res");
 
 		screenShot = CopyScreenIntoBitmap(usewid, usehit);
@@ -1172,31 +1172,31 @@ void restore_game_room_state(Stream *in) {
 
 void ReadGameState_Aligned(Stream *in, RestoredData &r_data) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	play.ReadFromSavegame(&align_s, kGSSvgVersion_OldFormat, r_data);
+	_GP(play).ReadFromSavegame(&align_s, kGSSvgVersion_OldFormat, r_data);
 }
 
 void restore_game_play_ex_data(Stream *in) {
 	char rbuffer[200];
-	for (size_t i = 0; i < play.do_once_tokens.size(); ++i) {
+	for (size_t i = 0; i < _GP(play).do_once_tokens.size(); ++i) {
 		StrUtil::ReadCStr(rbuffer, in, sizeof(rbuffer));
-		play.do_once_tokens[i] = rbuffer;
+		_GP(play).do_once_tokens[i] = rbuffer;
 	}
 
-	in->ReadArrayOfInt32(&play.gui_draw_order[0], _GP(game).numgui);
+	in->ReadArrayOfInt32(&_GP(play).gui_draw_order[0], _GP(game).numgui);
 }
 
 void restore_game_play(Stream *in, RestoredData &r_data) {
-	int screenfadedout_was = play.screen_is_faded_out;
-	int roomchanges_was = play.room_changes;
+	int screenfadedout_was = _GP(play).screen_is_faded_out;
+	int roomchanges_was = _GP(play).room_changes;
 	// make sure the pointer is preserved
-	int32_t *gui_draw_order_was = play.gui_draw_order;
+	int32_t *gui_draw_order_was = _GP(play).gui_draw_order;
 
 	ReadGameState_Aligned(in, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;
 
-	play.screen_is_faded_out = screenfadedout_was;
-	play.room_changes = roomchanges_was;
-	play.gui_draw_order = gui_draw_order_was;
+	_GP(play).screen_is_faded_out = screenfadedout_was;
+	_GP(play).room_changes = roomchanges_was;
+	_GP(play).gui_draw_order = gui_draw_order_was;
 
 	restore_game_play_ex_data(in);
 }
@@ -1335,7 +1335,7 @@ void restore_game_displayed_room_status(Stream *in, RestoredData &r_data) {
 
 		for (bb = 0; bb < MAX_ROOM_BGFRAMES; bb++) {
 			r_data.RoomBkgScene[bb] = nullptr;
-			if (play.raw_modified[bb]) {
+			if (_GP(play).raw_modified[bb]) {
 				r_data.RoomBkgScene[bb].reset(read_serialized_bitmap(in));
 			}
 		}
@@ -1470,7 +1470,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	_GP(game).ReadFromSaveGame_v321(in, gswas, compsc, chwas, olddict, mesbk);
 
 	// Modified custom properties are read separately to keep existing save format
-	play.ReadCustomProperties_v340(in);
+	_GP(play).ReadCustomProperties_v340(in);
 
 	ReadCharacterExtras_Aligned(in);
 	restore_game_palette(in);
@@ -1630,15 +1630,15 @@ bool try_restore_save(int slot) {
 }
 
 bool is_in_cutscene() {
-	return play.in_cutscene > 0;
+	return _GP(play).in_cutscene > 0;
 }
 
 CutsceneSkipStyle get_cutscene_skipstyle() {
-	return static_cast<CutsceneSkipStyle>(play.in_cutscene);
+	return static_cast<CutsceneSkipStyle>(_GP(play).in_cutscene);
 }
 
 void start_skipping_cutscene() {
-	play.fast_forward = 1;
+	_GP(play).fast_forward = 1;
 	// if a drop-down icon bar is up, remove it as it will pause the game
 	if (ifacepopped >= 0)
 		remove_popup_interface(ifacepopped);
@@ -1673,15 +1673,15 @@ bool check_skip_cutscene_mclick(int mbut) {
 // Helper functions used by StartCutscene/EndCutscene, but also
 // by SkipUntilCharacterStops
 void initialize_skippable_cutscene() {
-	play.end_cutscene_music = -1;
+	_GP(play).end_cutscene_music = -1;
 }
 
 void stop_fast_forwarding() {
 	// when the skipping of a cutscene comes to an end, update things
-	play.fast_forward = 0;
+	_GP(play).fast_forward = 0;
 	setpal();
-	if (play.end_cutscene_music >= 0)
-		newmusic(play.end_cutscene_music);
+	if (_GP(play).end_cutscene_music >= 0)
+		newmusic(_GP(play).end_cutscene_music);
 
 	{
 		AudioChannelsLock lock;
@@ -1710,7 +1710,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 
 	const int scrx = xxx;
 	const int scry = yyy;
-	VpPoint vpt = play.ScreenToRoomDivDown(xxx, yyy);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xxx, yyy);
 	if (vpt.second < 0)
 		return 0;
 	xxx = vpt.first.X;
@@ -2315,12 +2315,12 @@ void RegisterGameAPI() {
 }
 
 void RegisterStaticObjects() {
-	ccAddExternalStaticObject("game", &play, &GameStaticManager);
-	ccAddExternalStaticObject("gs_globals", &play.globalvars[0], &GlobalStaticManager);
+	ccAddExternalStaticObject("game", &_GP(play), &GameStaticManager);
+	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("mouse", &scmouse, &GlobalStaticManager);
 	ccAddExternalStaticObject("palette", &palette[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("system", &scsystem, &GlobalStaticManager);
-	ccAddExternalStaticObject("savegameindex", &play.filenumbers[0], &GlobalStaticManager);
+	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &GlobalStaticManager);
 }
 
 } // namespace AGS3

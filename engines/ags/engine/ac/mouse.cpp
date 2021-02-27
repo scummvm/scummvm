@@ -53,7 +53,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 
-extern GameState play;
+
 extern ScriptSystem scsystem;
 
 extern CharacterInfo *playerchar;
@@ -81,14 +81,14 @@ void Mouse_SetVisible(int isOn) {
 }
 
 int Mouse_GetVisible() {
-	if (play.mouse_cursor_hidden)
+	if (_GP(play).mouse_cursor_hidden)
 		return 0;
 	return 1;
 }
 
 void SetMouseBounds(int x1, int y1, int x2, int y2) {
-	int xmax = game_to_data_coord(play.GetMainViewport().GetWidth()) - 1;
-	int ymax = game_to_data_coord(play.GetMainViewport().GetHeight()) - 1;
+	int xmax = game_to_data_coord(_GP(play).GetMainViewport().GetWidth()) - 1;
+	int ymax = game_to_data_coord(_GP(play).GetMainViewport().GetHeight()) - 1;
 	if ((x1 == 0) && (y1 == 0) && (x2 == 0) && (y2 == 0)) {
 		x2 = xmax;
 		y2 = ymax;
@@ -106,10 +106,10 @@ void SetMouseBounds(int x1, int y1, int x2, int y2) {
 	data_to_game_coords(&x1, &y1);
 	data_to_game_round_up(&x2, &y2);
 
-	play.mboundx1 = x1;
-	play.mboundx2 = x2;
-	play.mboundy1 = y1;
-	play.mboundy2 = y2;
+	_GP(play).mboundx1 = x1;
+	_GP(play).mboundx2 = x2;
+	_GP(play).mboundy1 = y1;
+	_GP(play).mboundy2 = y2;
 	Mouse::SetMoveLimit(Rect(x1, y1, x2, y2));
 }
 
@@ -291,7 +291,7 @@ void RefreshMouse() {
 }
 
 void SetMousePosition(int newx, int newy) {
-	const Rect &viewport = play.GetMainViewport();
+	const Rect &viewport = _GP(play).GetMainViewport();
 
 	if (newx < 0)
 		newx = 0;

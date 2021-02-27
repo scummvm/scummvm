@@ -94,23 +94,23 @@ int InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem, int mood) {
 }
 
 int InventoryItem_GetProperty(ScriptInvItem *scii, const char *property) {
-	return get_int_property(_GP(game).invProps[scii->id], play.invProps[scii->id], property);
+	return get_int_property(_GP(game).invProps[scii->id], _GP(play).invProps[scii->id], property);
 }
 
 void InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer) {
-	get_text_property(_GP(game).invProps[scii->id], play.invProps[scii->id], property, bufer);
+	get_text_property(_GP(game).invProps[scii->id], _GP(play).invProps[scii->id], property, bufer);
 }
 
 const char *InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property) {
-	return get_text_property_dynamic_string(_GP(game).invProps[scii->id], play.invProps[scii->id], property);
+	return get_text_property_dynamic_string(_GP(game).invProps[scii->id], _GP(play).invProps[scii->id], property);
 }
 
 bool InventoryItem_SetProperty(ScriptInvItem *scii, const char *property, int value) {
-	return set_int_property(play.invProps[scii->id], property, value);
+	return set_int_property(_GP(play).invProps[scii->id], property, value);
 }
 
 bool InventoryItem_SetTextProperty(ScriptInvItem *scii, const char *property, const char *value) {
-	return set_text_property(play.invProps[scii->id], property, value);
+	return set_text_property(_GP(play).invProps[scii->id], property, value);
 }
 
 //=============================================================================

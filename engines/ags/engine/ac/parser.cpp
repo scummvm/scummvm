@@ -40,20 +40,20 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 
-extern GameState play;
+
 
 int Parser_FindWordID(const char *wordToFind) {
 	return find_word_in_dictionary(wordToFind);
 }
 
 const char *Parser_SaidUnknownWord() {
-	if (play.bad_parsed_word[0] == 0)
+	if (_GP(play).bad_parsed_word[0] == 0)
 		return nullptr;
-	return CreateNewScriptString(play.bad_parsed_word);
+	return CreateNewScriptString(_GP(play).bad_parsed_word);
 }
 
 void ParseText(const char *text) {
-	parse_sentence(text, &play.num_parsed_words, play.parsed_words, nullptr, 0);
+	parse_sentence(text, &_GP(play).num_parsed_words, _GP(play).parsed_words, nullptr, 0);
 }
 
 // Said: call with argument for example "get apple"; we then check
@@ -62,7 +62,7 @@ void ParseText(const char *text) {
 int Said(const char *checkwords) {
 	int numword = 0;
 	short words[MAX_PARSED_WORDS];
-	return parse_sentence(checkwords, &numword, &words[0], play.parsed_words, play.num_parsed_words);
+	return parse_sentence(checkwords, &numword, &words[0], _GP(play).parsed_words, _GP(play).num_parsed_words);
 }
 
 //=============================================================================
@@ -151,7 +151,7 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 
 	numwords[0] = 0;
 	if (compareto == nullptr)
-		play.bad_parsed_word[0] = 0;
+		_GP(play).bad_parsed_word[0] = 0;
 
 	String uniform_text = src_text;
 	uniform_text.MakeLower();
@@ -275,8 +275,8 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 					return 0;
 				// if it's an unknown word, store it for use in messages like
 				// "you can't use the word 'xxx' in this game"
-				if ((word < 0) && (play.bad_parsed_word[0] == 0))
-					strcpy(play.bad_parsed_word, thisword);
+				if ((word < 0) && (_GP(play).bad_parsed_word[0] == 0))
+					strcpy(_GP(play).bad_parsed_word, thisword);
 			}
 
 			if (do_word_now) {

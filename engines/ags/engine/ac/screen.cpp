@@ -42,7 +42,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameState play;
+
 extern IGraphicsDriver *gfxDriver;
 extern AGSPlatformDriver *platform;
 
@@ -50,14 +50,14 @@ void my_fade_in(PALETTE p, int speed) {
 	if (_GP(game).color_depth > 1) {
 		set_palette(p);
 
-		play.screen_is_faded_out = 0;
+		_GP(play).screen_is_faded_out = 0;
 
-		if (play.no_hicolor_fadein) {
+		if (_GP(play).no_hicolor_fadein) {
 			return;
 		}
 	}
 
-	gfxDriver->FadeIn(speed, p, play.fade_to_red, play.fade_to_green, play.fade_to_blue);
+	gfxDriver->FadeIn(speed, p, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 }
 
 Bitmap *saved_viewport_bitmap = nullptr;
@@ -67,23 +67,23 @@ void current_fade_out_effect() {
 		return;
 
 	// get the screen transition type
-	int theTransition = play.fade_effect;
+	int theTransition = _GP(play).fade_effect;
 	// was a temporary transition selected? if so, use it
-	if (play.next_screen_transition >= 0)
-		theTransition = play.next_screen_transition;
-	const bool ignore_transition = play.screen_tint > 0;
+	if (_GP(play).next_screen_transition >= 0)
+		theTransition = _GP(play).next_screen_transition;
+	const bool ignore_transition = _GP(play).screen_tint > 0;
 
 	if ((theTransition == FADE_INSTANT) || ignore_transition) {
-		if (!play.keep_screen_during_instant_transition)
+		if (!_GP(play).keep_screen_during_instant_transition)
 			set_palette_range(black_palette, 0, 255, 0);
 	} else if (theTransition == FADE_NORMAL) {
 		my_fade_out(5);
 	} else if (theTransition == FADE_BOXOUT) {
 		gfxDriver->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
-		play.screen_is_faded_out = 1;
+		_GP(play).screen_is_faded_out = 1;
 	} else {
 		get_palette(old_palette);
-		const Rect &viewport = play.GetMainViewport();
+		const Rect &viewport = _GP(play).GetMainViewport();
 		saved_viewport_bitmap = CopyScreenIntoBitmap(viewport.GetWidth(), viewport.GetHeight());
 	}
 }
@@ -93,7 +93,7 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 		quit("Crossfade: buffer is null attempting transition");
 
 	saved_viewport_bitmap = ReplaceBitmapWithSupportedFormat(saved_viewport_bitmap);
-	const Rect &viewport = play.GetMainViewport();
+	const Rect &viewport = _GP(play).GetMainViewport();
 	if (saved_viewport_bitmap->GetHeight() < viewport.GetHeight()) {
 		Bitmap *enlargedBuffer = BitmapHelper::CreateBitmap(saved_viewport_bitmap->GetWidth(), viewport.GetHeight(), saved_viewport_bitmap->GetColorDepth());
 		enlargedBuffer->Blit(saved_viewport_bitmap, 0, 0, 0, (viewport.GetHeight() - saved_viewport_bitmap->GetHeight()) / 2, saved_viewport_bitmap->GetWidth(), saved_viewport_bitmap->GetHeight());
@@ -124,29 +124,29 @@ int Screen_GetScreenHeight() {
 }
 
 bool Screen_GetAutoSizeViewport() {
-	return play.IsAutoRoomViewport();
+	return _GP(play).IsAutoRoomViewport();
 }
 
 void Screen_SetAutoSizeViewport(bool on) {
-	play.SetAutoRoomViewport(on);
+	_GP(play).SetAutoRoomViewport(on);
 }
 
 ScriptViewport *Screen_GetViewport() {
-	return play.GetScriptViewport(0);
+	return _GP(play).GetScriptViewport(0);
 }
 
 int Screen_GetViewportCount() {
-	return play.GetRoomViewportCount();
+	return _GP(play).GetRoomViewportCount();
 }
 
 ScriptViewport *Screen_GetAnyViewport(int index) {
-	return play.GetScriptViewport(index);
+	return _GP(play).GetScriptViewport(index);
 }
 
 ScriptUserObject *Screen_ScreenToRoomPoint(int scrx, int scry) {
 	data_to_game_coords(&scrx, &scry);
 
-	VpPoint vpt = play.ScreenToRoom(scrx, scry);
+	VpPoint vpt = _GP(play).ScreenToRoom(scrx, scry);
 	if (vpt.second < 0)
 		return nullptr;
 
@@ -156,7 +156,7 @@ ScriptUserObject *Screen_ScreenToRoomPoint(int scrx, int scry) {
 
 ScriptUserObject *Screen_RoomToScreenPoint(int roomx, int roomy) {
 	data_to_game_coords(&roomx, &roomy);
-	Point pt = play.RoomToScreen(roomx, roomy);
+	Point pt = _GP(play).RoomToScreen(roomx, roomy);
 	game_to_data_coords(pt.X, pt.Y);
 	return ScriptStructHelpers::CreatePoint(pt.X, pt.Y);
 }

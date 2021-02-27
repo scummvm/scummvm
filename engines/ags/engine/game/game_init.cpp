@@ -297,7 +297,7 @@ HError InitAndRegisterGameEntities() {
 	InitAndRegisterHotspots();
 	InitAndRegisterRegions();
 	InitAndRegisterRoomObjects();
-	play.CreatePrimaryViewportAndCamera();
+	_GP(play).CreatePrimaryViewportAndCamera();
 
 	RegisterStaticArrays();
 
@@ -387,7 +387,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	actspswb = (Bitmap **)calloc(actSpsCount, sizeof(Bitmap *));
 	actspswbbmp = (IDriverDependantBitmap **)calloc(actSpsCount, sizeof(IDriverDependantBitmap *));
 	actspswbcache = (CachedActSpsData *)calloc(actSpsCount, sizeof(CachedActSpsData));
-	play.charProps.resize(_GP(game).numcharacters);
+	_GP(play).charProps.resize(_GP(game).numcharacters);
 	old_dialog_scripts = ents.OldDialogScripts;
 	old_speech_lines = ents.OldSpeechLines;
 	HError err = InitAndRegisterGameEntities();
@@ -406,8 +406,8 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 		svg_suffix.Format(".%s", _GP(game).saveGameFileExtension);
 	set_save_game_suffix(svg_suffix);
 
-	play.score_sound = _GP(game).scoreClipID;
-	play.fade_effect = _GP(game).options[OPT_FADETYPE];
+	_GP(play).score_sound = _GP(game).scoreClipID;
+	_GP(play).fade_effect = _GP(game).options[OPT_FADETYPE];
 
 	//
 	// 5. Initialize runtime state of certain game objects
@@ -416,7 +416,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 		// labels are not clickable by default
 		guilabels[i].SetClickable(false);
 	}
-	play.gui_draw_order = (int32_t *)calloc(_GP(game).numgui * sizeof(int32_t), 1);
+	_GP(play).gui_draw_order = (int32_t *)calloc(_GP(game).numgui * sizeof(int32_t), 1);
 	update_gui_zorder();
 	calculate_reserved_channel_count();
 

@@ -231,7 +231,7 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 
 void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 	int tdxp, tdyp;
-	const Rect &ui_view = play.GetUIViewport();
+	const Rect &ui_view = _GP(play).GetUIViewport();
 
 	if (over.x == OVR_AUTOPLACE) {
 		// auto place on character
@@ -262,7 +262,7 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 		tdyp = over.y + over._offsetY;
 
 		if (!over.positionRelativeToScreen) {
-			Point tdxy = play.RoomToScreen(tdxp, tdyp);
+			Point tdxy = _GP(play).RoomToScreen(tdxp, tdyp);
 			tdxp = tdxy.X;
 			tdyp = tdxy.Y;
 		}

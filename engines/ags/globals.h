@@ -42,6 +42,7 @@ class Bitmap;
 
 struct IAGSEditorDebugger;
 struct GameSetupStruct;
+struct GameState;
 class SpriteCache;
 
 class Globals {
@@ -77,7 +78,8 @@ public:
 	 */
 
 	GameSetupStruct *_game = nullptr;
-	SpriteCache *_spriteset;
+	GameState *_play = nullptr;
+	SpriteCache *_spriteset = nullptr;
 
 	 /**@}*/
 

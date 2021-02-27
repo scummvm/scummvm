@@ -27,6 +27,7 @@
 #include "ags/engine/ac/walkablearea.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -69,7 +70,7 @@ void SetAreaScaling(int area, int min, int max) {
 void RemoveWalkableArea(int areanum) {
 	if ((areanum < 1) | (areanum > 15))
 		quit("!RemoveWalkableArea: invalid area number specified (1-15).");
-	play.walkable_areas_on[areanum] = 0;
+	_GP(play).walkable_areas_on[areanum] = 0;
 	redo_walkable_areas();
 	debug_script_log("Walkable area %d removed", areanum);
 }
@@ -77,13 +78,13 @@ void RemoveWalkableArea(int areanum) {
 void RestoreWalkableArea(int areanum) {
 	if ((areanum < 1) | (areanum > 15))
 		quit("!RestoreWalkableArea: invalid area number specified (1-15).");
-	play.walkable_areas_on[areanum] = 1;
+	_GP(play).walkable_areas_on[areanum] = 1;
 	redo_walkable_areas();
 	debug_script_log("Walkable area %d restored", areanum);
 }
 
 int GetWalkableAreaAtScreen(int x, int y) {
-	VpPoint vpt = play.ScreenToRoomDivDown(x, y);
+	VpPoint vpt = _GP(play).ScreenToRoomDivDown(x, y);
 	if (vpt.second < 0)
 		return 0;
 	return GetWalkableAreaAtRoom(vpt.first.X, vpt.first.Y);

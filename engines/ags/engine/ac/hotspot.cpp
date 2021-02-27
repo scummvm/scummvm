@@ -32,11 +32,11 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/script/runtimescriptvalue.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -88,10 +88,10 @@ const char *Hotspot_GetName_New(ScriptHotspot *hss) {
 
 bool Hotspot_IsInteractionAvailable(ScriptHotspot *hhot, int mood) {
 
-	play.check_interaction_only = 1;
+	_GP(play).check_interaction_only = 1;
 	RunHotspotInteraction(hhot->id, mood);
-	int ciwas = play.check_interaction_only;
-	play.check_interaction_only = 0;
+	int ciwas = _GP(play).check_interaction_only;
+	_GP(play).check_interaction_only = 0;
 	return (ciwas == 2);
 }
 

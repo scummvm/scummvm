@@ -297,10 +297,10 @@ const char *Object_GetName_New(ScriptObject *objj) {
 
 bool Object_IsInteractionAvailable(ScriptObject *oobj, int mood) {
 
-	play.check_interaction_only = 1;
+	_GP(play).check_interaction_only = 1;
 	RunObjectInteraction(oobj->id, mood);
-	int ciwas = play.check_interaction_only;
-	play.check_interaction_only = 0;
+	int ciwas = _GP(play).check_interaction_only;
+	_GP(play).check_interaction_only = 0;
 	return (ciwas == 2);
 }
 

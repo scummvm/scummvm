@@ -23,6 +23,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/spritecache.h"
+#include "ags/engine/ac/gamestate.h"
 
 namespace AGS3 {
 
@@ -33,6 +34,7 @@ Globals::Globals() {
 
 	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
 
+	_play = new GameState();
 	_game = new GameSetupStruct();
 	_spriteset = new SpriteCache(_game->SpriteInfos);
 }
@@ -40,6 +42,7 @@ Globals::Globals() {
 Globals::~Globals() {
 	g_globals = nullptr;
 	delete _game;
+	delete _play;
 	delete _spriteset;
 }
 

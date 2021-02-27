@@ -57,7 +57,6 @@ using namespace AGS::Engine;
 extern MoveList *mls;
 extern RoomStatus *croom;
 
-extern GameState play;
 extern RoomStruct thisroom;
 extern RoomObject *objs;
 extern ViewStruct *views;
@@ -192,9 +191,9 @@ int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 
 
 void update_script_timers() {
-	if (play.gscript_timer > 0) play.gscript_timer--;
+	if (_GP(play).gscript_timer > 0) _GP(play).gscript_timer--;
 	for (int aa = 0; aa < MAX_TIMERS; aa++) {
-		if (play.script_timers[aa] > 1) play.script_timers[aa]--;
+		if (_GP(play).script_timers[aa] > 1) _GP(play).script_timers[aa]--;
 	}
 }
 
@@ -258,37 +257,37 @@ void update_overlay_timers() {
 
 void update_speech_and_messages() {
 	bool is_voice_playing = false;
-	if (play.speech_has_voice) {
+	if (_GP(play).speech_has_voice) {
 		AudioChannelsLock lock;
 		auto *ch = lock.GetChannel(SCHAN_SPEECH);
 		is_voice_playing = ch && ch->is_playing();
 	}
 	// determine if speech text should be removed
-	if (play.messagetime >= 0) {
-		play.messagetime--;
+	if (_GP(play).messagetime >= 0) {
+		_GP(play).messagetime--;
 		// extend life of text if the voice hasn't finished yet
-		if (play.speech_has_voice && !play.speech_in_post_state) {
-			if ((is_voice_playing) && (play.fast_forward == 0)) {
-				if (play.messagetime <= 1)
-					play.messagetime = 1;
+		if (_GP(play).speech_has_voice && !_GP(play).speech_in_post_state) {
+			if ((is_voice_playing) && (_GP(play).fast_forward == 0)) {
+				if (_GP(play).messagetime <= 1)
+					_GP(play).messagetime = 1;
 			} else // if the voice has finished, remove the speech
-				play.messagetime = 0;
+				_GP(play).messagetime = 0;
 		}
 
-		if (play.messagetime < 1 && play.speech_display_post_time_ms > 0 &&
-			play.fast_forward == 0) {
-			if (!play.speech_in_post_state) {
-				play.messagetime = ::lround(play.speech_display_post_time_ms * get_current_fps() / 1000.0f);
+		if (_GP(play).messagetime < 1 && _GP(play).speech_display_post_time_ms > 0 &&
+			_GP(play).fast_forward == 0) {
+			if (!_GP(play).speech_in_post_state) {
+				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_current_fps() / 1000.0f);
 			}
-			play.speech_in_post_state = !play.speech_in_post_state;
+			_GP(play).speech_in_post_state = !_GP(play).speech_in_post_state;
 		}
 
-		if (play.messagetime < 1) {
-			if (play.fast_forward > 0) {
+		if (_GP(play).messagetime < 1) {
+			if (_GP(play).fast_forward > 0) {
 				remove_screen_overlay(OVER_TEXTMSG);
-			} else if (play.cant_skip_speech & SKIP_AUTOTIMER) {
+			} else if (_GP(play).cant_skip_speech & SKIP_AUTOTIMER) {
 				remove_screen_overlay(OVER_TEXTMSG);
-				play.SetIgnoreInput(play.ignore_user_input_after_text_timeout_ms);
+				_GP(play).SetIgnoreInput(_GP(play).ignore_user_input_after_text_timeout_ms);
 			}
 		}
 	}
@@ -297,12 +296,12 @@ void update_speech_and_messages() {
 // update sierra-style speech
 void update_sierra_speech() {
 	int voice_pos_ms = -1;
-	if (play.speech_has_voice) {
+	if (_GP(play).speech_has_voice) {
 		AudioChannelsLock lock;
 		auto *ch = lock.GetChannel(SCHAN_SPEECH);
 		voice_pos_ms = ch ? ch->get_pos_ms() : -1;
 	}
-	if ((face_talking >= 0) && (play.fast_forward == 0)) {
+	if ((face_talking >= 0) && (_GP(play).fast_forward == 0)) {
 		int updatedFrame = 0;
 
 		if ((facetalkchar->blinkview > 0) && (facetalkAllowBlink)) {
@@ -352,21 +351,21 @@ void update_sierra_speech() {
 			}
 		} else if (facetalkwait > 0) facetalkwait--;
 		// don't animate if the speech has finished
-		else if ((play.messagetime < 1) && (facetalkframe == 0) &&
-			// if play.close_mouth_speech_time = 0, this means animation should play till
+		else if ((_GP(play).messagetime < 1) && (facetalkframe == 0) &&
+			// if _GP(play).close_mouth_speech_time = 0, this means animation should play till
 			// the speech ends; but this should not work in voice mode, and also if the
 			// speech is in the "post" state
-			(play.speech_has_voice || play.speech_in_post_state || play.close_mouth_speech_time > 0))
+			(_GP(play).speech_has_voice || _GP(play).speech_in_post_state || _GP(play).close_mouth_speech_time > 0))
 			;
 		else {
 			// Close mouth at end of sentence: if speech has entered the "post" state,
 			// or if this is a text only mode and close_mouth_speech_time is set
-			if (play.speech_in_post_state ||
-				(!play.speech_has_voice &&
-				(play.messagetime < play.close_mouth_speech_time) &&
-					(play.close_mouth_speech_time > 0))) {
+			if (_GP(play).speech_in_post_state ||
+				(!_GP(play).speech_has_voice &&
+				(_GP(play).messagetime < _GP(play).close_mouth_speech_time) &&
+					(_GP(play).close_mouth_speech_time > 0))) {
 				facetalkframe = 0;
-				facetalkwait = play.messagetime;
+				facetalkwait = _GP(play).messagetime;
 			} else if ((_GP(game).options[OPT_LIPSYNCTEXT]) && (facetalkrepeat > 0)) {
 				// lip-sync speech (and not a thought)
 				facetalkwait = update_lip_sync(facetalkview, facetalkloop, &facetalkframe);
@@ -377,7 +376,7 @@ void update_sierra_speech() {
 				// normal non-lip-sync
 				facetalkframe++;
 				if ((facetalkframe >= views[facetalkview].loops[facetalkloop].numFrames) ||
-					(!play.speech_has_voice && (play.messagetime < 1) && (play.close_mouth_speech_time > 0))) {
+					(!_GP(play).speech_has_voice && (_GP(play).messagetime < 1) && (_GP(play).close_mouth_speech_time > 0))) {
 
 					if ((facetalkframe >= views[facetalkview].loops[facetalkloop].numFrames) &&
 						(views[facetalkview].loops[facetalkloop].RunNextLoop())) {
@@ -410,10 +409,10 @@ void update_sierra_speech() {
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (facetalk_qfg4_override_placement_x) {
-					view_frame_x = play.speech_portrait_x;
+					view_frame_x = _GP(play).speech_portrait_x;
 				}
 				if (facetalk_qfg4_override_placement_y) {
-					view_frame_y = play.speech_portrait_y;
+					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
 					view_frame_y = (screenover[face_talking].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
 				}

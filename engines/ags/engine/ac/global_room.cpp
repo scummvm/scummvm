@@ -44,7 +44,7 @@ namespace AGS3 {
 
 using namespace Shared;
 
-extern GameState play;
+
 
 extern RoomStatus *croom;
 extern CharacterInfo *playerchar;
@@ -65,20 +65,20 @@ void SetAmbientTint(int red, int green, int blue, int opacity, int luminance) {
 
 	debug_script_log("Set ambient tint RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
 
-	play.rtint_enabled = opacity > 0;
-	play.rtint_red = red;
-	play.rtint_green = green;
-	play.rtint_blue = blue;
-	play.rtint_level = opacity;
-	play.rtint_light = (luminance * 25) / 10;
+	_GP(play).rtint_enabled = opacity > 0;
+	_GP(play).rtint_red = red;
+	_GP(play).rtint_green = green;
+	_GP(play).rtint_blue = blue;
+	_GP(play).rtint_level = opacity;
+	_GP(play).rtint_light = (luminance * 25) / 10;
 }
 
 void SetAmbientLightLevel(int light_level) {
 	light_level = Math::Clamp(light_level, -100, 100);
 
-	play.rtint_enabled = light_level != 0;
-	play.rtint_level = 0;
-	play.rtint_light = light_level;
+	_GP(play).rtint_enabled = light_level != 0;
+	_GP(play).rtint_level = 0;
+	_GP(play).rtint_light = light_level;
 }
 
 extern ScriptPosition last_in_dialog_request_script_pos;
@@ -98,9 +98,9 @@ void NewRoom(int nrnum) {
 
 	can_run_delayed_command();
 
-	if (play.stop_dialog_at_end != DIALOG_NONE) {
-		if (play.stop_dialog_at_end == DIALOG_RUNNING)
-			play.stop_dialog_at_end = DIALOG_NEWROOM + nrnum;
+	if (_GP(play).stop_dialog_at_end != DIALOG_NONE) {
+		if (_GP(play).stop_dialog_at_end == DIALOG_RUNNING)
+			_GP(play).stop_dialog_at_end = DIALOG_NEWROOM + nrnum;
 		else {
 			quitprintf("!NewRoom: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
 				last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
@@ -182,7 +182,7 @@ void CallRoomScript(int value) {
 	if (!inside_script)
 		quit("!CallRoomScript: not inside a script???");
 
-	play.roomscript_finished = 0;
+	_GP(play).roomscript_finished = 0;
 	RuntimeScriptValue rval_null;
 	curscript->run_another("on_call", kScInstRoom, 1, RuntimeScriptValue().SetInt32(value), rval_null);
 }
@@ -205,23 +205,23 @@ void SetBackgroundFrame(int frnum) {
 	if ((frnum < -1) || (frnum != -1 && (size_t)frnum >= thisroom.BgFrameCount))
 		quit("!SetBackgrondFrame: invalid frame number specified");
 	if (frnum < 0) {
-		play.bg_frame_locked = 0;
+		_GP(play).bg_frame_locked = 0;
 		return;
 	}
 
-	play.bg_frame_locked = 1;
+	_GP(play).bg_frame_locked = 1;
 
-	if (frnum == play.bg_frame) {
+	if (frnum == _GP(play).bg_frame) {
 		// already on this frame, do nothing
 		return;
 	}
 
-	play.bg_frame = frnum;
+	_GP(play).bg_frame = frnum;
 	on_background_frame_change();
 }
 
 int GetBackgroundFrame() {
-	return play.bg_frame;
+	return _GP(play).bg_frame;
 }
 
 } // namespace AGS3

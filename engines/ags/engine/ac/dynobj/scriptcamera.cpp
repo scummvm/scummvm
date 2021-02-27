@@ -23,6 +23,7 @@
 #include "ags/engine/ac/dynobj/scriptcamera.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/shared/util/bbop.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -61,7 +62,7 @@ ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dat
 	// script references when Camera gets removed.
 	const int id = BBOp::Int32FromLE(*((const int *)serializedData));
 	if (id >= 0) {
-		auto scam = play.RegisterRoomCamera(id, handle);
+		auto scam = _GP(play).RegisterRoomCamera(id, handle);
 		if (scam)
 			return scam;
 	}

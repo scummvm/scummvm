@@ -125,8 +125,8 @@ void convert_objects_to_data_resolution(GameDataVersion filever) {
 void engine_setup_system_gamesize() {
 	scsystem.width = _GP(game).GetGameRes().Width;
 	scsystem.height = _GP(game).GetGameRes().Height;
-	scsystem.viewport_width = game_to_data_coord(play.GetMainViewport().GetWidth());
-	scsystem.viewport_height = game_to_data_coord(play.GetMainViewport().GetHeight());
+	scsystem.viewport_width = game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
+	scsystem.viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
 }
 
 void engine_init_resolution_settings(const Size game_size) {
@@ -140,8 +140,8 @@ void engine_init_resolution_settings(const Size game_size) {
 	convert_objects_to_data_resolution(loaded_game_file_version);
 
 	Rect viewport = RectWH(game_size);
-	play.SetMainViewport(viewport);
-	play.SetUIViewport(viewport);
+	_GP(play).SetMainViewport(viewport);
+	_GP(play).SetUIViewport(viewport);
 	engine_setup_system_gamesize();
 }
 
@@ -338,10 +338,10 @@ void on_coordinates_scaling_changed() {
 	// Reset mouse graphic area and bounds
 	Mouse::SetGraphicArea();
 	// If mouse bounds do not have valid values yet, then limit cursor to viewport
-	if (play.mboundx1 == 0 && play.mboundy1 == 0 && play.mboundx2 == 0 && play.mboundy2 == 0)
-		Mouse::SetMoveLimit(play.GetMainViewport());
+	if (_GP(play).mboundx1 == 0 && _GP(play).mboundy1 == 0 && _GP(play).mboundx2 == 0 && _GP(play).mboundy2 == 0)
+		Mouse::SetMoveLimit(_GP(play).GetMainViewport());
 	else
-		Mouse::SetMoveLimit(Rect(play.mboundx1, play.mboundy1, play.mboundx2, play.mboundy2));
+		Mouse::SetMoveLimit(Rect(_GP(play).mboundx1, _GP(play).mboundy1, _GP(play).mboundx2, _GP(play).mboundy2));
 }
 
 } // namespace AGS3

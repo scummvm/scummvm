@@ -89,7 +89,6 @@ extern int in_leaves_screen;
 extern int inside_script, in_graph_script;
 extern int no_blocking_functions;
 extern CharacterInfo *playerchar;
-extern GameState play;
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern int cur_mode;
 extern RoomObject *objs;
@@ -161,7 +160,7 @@ static void game_loop_do_late_update() {
 }
 
 static int game_loop_check_ground_level_interactions() {
-	if ((play.ground_level_areas_disabled & GLED_INTERACTION) == 0) {
+	if ((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0) {
 		// check if he's standing on a hotspot
 		int hotspotThere = get_hotspot_at(playerchar->x, playerchar->y);
 		// run Stands on Hotspot event
@@ -171,12 +170,12 @@ static int game_loop_check_ground_level_interactions() {
 		int onRegion = GetRegionIDAtRoom(playerchar->x, playerchar->y);
 		int inRoom = displayed_room;
 
-		if (onRegion != play.player_on_region) {
-			// we need to save this and set play.player_on_region
+		if (onRegion != _GP(play).player_on_region) {
+			// we need to save this and set _GP(play).player_on_region
 			// now, so it's correct going into RunRegionInteraction
-			int oldRegion = play.player_on_region;
+			int oldRegion = _GP(play).player_on_region;
 
-			play.player_on_region = onRegion;
+			_GP(play).player_on_region = onRegion;
 			// Walks Off last region
 			if (oldRegion > 0)
 				RunRegionInteraction(oldRegion, 2);
@@ -184,8 +183,8 @@ static int game_loop_check_ground_level_interactions() {
 			if (onRegion > 0)
 				RunRegionInteraction(onRegion, 1);
 		}
-		if (play.player_on_region > 0)   // player stands on region
-			RunRegionInteraction(play.player_on_region, 0);
+		if (_GP(play).player_on_region > 0)   // player stands on region
+			RunRegionInteraction(_GP(play).player_on_region, 0);
 
 		// one of the region interactions sent us to another room
 		if (inRoom != displayed_room) {
@@ -246,14 +245,14 @@ static void check_mouse_controls() {
 
 		check_skip_cutscene_mclick(mbut);
 
-		if (play.fast_forward || play.IsIgnoringInput()) {
+		if (_GP(play).fast_forward || _GP(play).IsIgnoringInput()) {
 			/* do nothing if skipping cutscene or input disabled */
-		} else if ((play.wait_counter != 0) && (play.key_skip_wait & SKIP_MOUSECLICK) != 0) {
-			play.wait_counter = 0;
-			play.wait_skipped_by = SKIP_MOUSECLICK;
-			play.wait_skipped_by_data = mbut;
+		} else if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
+			_GP(play).wait_counter = 0;
+			_GP(play).wait_skipped_by = SKIP_MOUSECLICK;
+			_GP(play).wait_skipped_by_data = mbut;
 		} else if (is_text_overlay > 0) {
-			if (play.cant_skip_speech & SKIP_MOUSECLICK)
+			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK)
 				remove_screen_overlay(OVER_TEXTMSG);
 		} else if (!IsInterfaceEnabled()); // blocking cutscene, ignore mouse
 		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut + 1)) {
@@ -372,10 +371,10 @@ static void check_keyboard_controls() {
 	}
 	// Then, check cutscene skip
 	check_skip_cutscene_keypress(kgn);
-	if (play.fast_forward) {
+	if (_GP(play).fast_forward) {
 		return;
 	}
-	if (play.IsIgnoringInput()) {
+	if (_GP(play).IsIgnoringInput()) {
 		return;
 	}
 	// Now check for in-game controls
@@ -386,18 +385,18 @@ static void check_keyboard_controls() {
 	}
 
 	// debug console
-	if ((kgn == '`') && (play.debug_mode > 0)) {
+	if ((kgn == '`') && (_GP(play).debug_mode > 0)) {
 		display_console = !display_console;
 		return;
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((is_text_overlay > 0) && (play.cant_skip_speech & SKIP_KEYPRESS)) {
+	if ((is_text_overlay > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
-			if ((play.skip_speech_specific_key > 0) &&
-				(kgn != play.skip_speech_specific_key)) {
+			if ((_GP(play).skip_speech_specific_key > 0) &&
+				(kgn != _GP(play).skip_speech_specific_key)) {
 			} else
 				remove_screen_overlay(OVER_TEXTMSG);
 		}
@@ -405,10 +404,10 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((play.wait_counter != 0) && (play.key_skip_wait & SKIP_KEYPRESS) != 0) {
-		play.wait_counter = 0;
-		play.wait_skipped_by = SKIP_KEYPRESS;
-		play.wait_skipped_by_data = kgn;
+	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
+		_GP(play).wait_counter = 0;
+		_GP(play).wait_skipped_by = SKIP_KEYPRESS;
+		_GP(play).wait_skipped_by_data = kgn;
 		debug_script_log("Keypress code %d ignored - in Wait", kgn);
 		return;
 	}
@@ -419,7 +418,7 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((kgn == eAGSKeyCodeCtrlD) && (play.debug_mode > 0)) {
+	if ((kgn == eAGSKeyCodeCtrlD) && (_GP(play).debug_mode > 0)) {
 		// ctrl+D - show info
 		char infobuf[900];
 		int ff;
@@ -428,7 +427,7 @@ static void check_keyboard_controls() {
 			displayed_room, (noWalkBehindsAtAll ? "(has no walk-behinds)" : ""), playerchar->x, playerchar->y,
 			playerchar->view + 1, playerchar->loop, playerchar->frame,
 			(IsGamePaused() == 0) ? "" : "[Game paused.",
-			(play.ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
+			(_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
 			(IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
 		for (ff = 0; ff < croom->numobj; ff++) {
 			if (ff >= 8) break; // buffer not big enough for more than 7
@@ -467,19 +466,19 @@ static void check_keyboard_controls() {
 	}
 
 	// if (kgn == key_ctrl_u) {
-	//     play.debug_mode++;
+	//     _GP(play).debug_mode++;
 	//     script_debug(5,0);
-	//     play.debug_mode--;
+	//     _GP(play).debug_mode--;
 	//     return;
 	// }
 
 	if (kgn == eAGSKeyCodeAltV && (::AGS::g_events->getModifierFlags() & KB_CTRL_FLAG)
-			&& (play.wait_counter < 1) && (is_text_overlay == 0) && (restrict_until == 0)) {
+			&& (_GP(play).wait_counter < 1) && (is_text_overlay == 0) && (restrict_until == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
-		play.debug_mode++;
+		_GP(play).debug_mode++;
 		script_debug(1, 0);
-		play.debug_mode--;
+		_GP(play).debug_mode--;
 
 		return;
 	}
@@ -559,7 +558,7 @@ static void check_room_edges(int numevents_was) {
 		int edgesActivated[4] = { 0, 0, 0, 0 };
 		// Only do it if nothing else has happened (eg. mouseclick)
 		if ((numevents == numevents_was) &&
-			((play.ground_level_areas_disabled & GLED_INTERACTION) == 0)) {
+			((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0)) {
 
 			if (playerchar->x <= thisroom.Edges.Left)
 				edgesActivated[0] = 1;
@@ -570,13 +569,13 @@ static void check_room_edges(int numevents_was) {
 			else if (playerchar->y <= thisroom.Edges.Top)
 				edgesActivated[3] = 1;
 
-			if ((play.entered_edge >= 0) && (play.entered_edge <= 3)) {
+			if ((_GP(play).entered_edge >= 0) && (_GP(play).entered_edge <= 3)) {
 				// once the player is no longer outside the edge, forget the stored edge
-				if (edgesActivated[play.entered_edge] == 0)
-					play.entered_edge = -10;
+				if (edgesActivated[_GP(play).entered_edge] == 0)
+					_GP(play).entered_edge = -10;
 				// if we are walking in from off-screen, don't activate edges
 				else
-					edgesActivated[play.entered_edge] = 0;
+					edgesActivated[_GP(play).entered_edge] = 0;
 			}
 
 			for (int ii = 0; ii < 4; ii++) {
@@ -620,7 +619,7 @@ static void game_loop_update_animated_buttons() {
 }
 
 static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {
-	if (!play.fast_forward) {
+	if (!_GP(play).fast_forward) {
 		int mwasatx = _G(mousex), mwasaty = _G(mousey);
 
 		// Only do this if we are not skipping a cutscene
@@ -632,7 +631,7 @@ static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBit
 		// TODO: if we support rotation then we also need to compare full transform!
 		if (displayed_room < 0)
 			return;
-		auto view = play.GetRoomViewportAt(_G(mousex), _G(mousey));
+		auto view = _GP(play).GetRoomViewportAt(_G(mousex), _G(mousey));
 		auto cam = view ? view->GetCamera() : nullptr;
 		if (cam) {
 			// NOTE: all cameras are in same room right now, so their positions are in same coordinate system;
@@ -675,13 +674,13 @@ static void game_loop_update_events() {
 }
 
 static void game_loop_update_background_animation() {
-	if (play.bg_anim_delay > 0) play.bg_anim_delay--;
-	else if (play.bg_frame_locked);
+	if (_GP(play).bg_anim_delay > 0) _GP(play).bg_anim_delay--;
+	else if (_GP(play).bg_frame_locked);
 	else {
-		play.bg_anim_delay = play.anim_background_speed;
-		play.bg_frame++;
-		if ((size_t)play.bg_frame >= thisroom.BgFrameCount)
-			play.bg_frame = 0;
+		_GP(play).bg_anim_delay = _GP(play).anim_background_speed;
+		_GP(play).bg_frame++;
+		if ((size_t)_GP(play).bg_frame >= thisroom.BgFrameCount)
+			_GP(play).bg_frame = 0;
 		if (thisroom.BgFrameCount >= 2) {
 			// get the new frame's palette
 			on_background_frame_change();
@@ -692,8 +691,8 @@ static void game_loop_update_background_animation() {
 static void game_loop_update_loop_counter() {
 	loopcounter++;
 
-	if (play.wait_counter > 0) play.wait_counter--;
-	if (play.shakesc_length > 0) play.shakesc_length--;
+	if (_GP(play).wait_counter > 0) _GP(play).wait_counter--;
+	if (_GP(play).shakesc_length > 0) _GP(play).shakesc_length--;
 
 	if (loopcounter % 5 == 0) {
 		update_ambient_sound_vol();
@@ -745,8 +744,8 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	game_loop_check_problems_at_start();
 
 	// if we're not fading in, don't count the fadeouts
-	if ((play.no_hicolor_fadein) && (_GP(game).options[OPT_FADETYPE] == FADE_NORMAL))
-		play.screen_is_faded_out = 0;
+	if ((_GP(play).no_hicolor_fadein) && (_GP(game).options[OPT_FADETYPE] == FADE_NORMAL))
+		_GP(play).screen_is_faded_out = 0;
 
 	our_eip = 1014;
 
@@ -795,7 +794,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	game_loop_update_loop_counter();
 
 	// Immediately start the next frame if we are skipping a cutscene
-	if (play.fast_forward)
+	if (_GP(play).fast_forward)
 		return;
 
 	our_eip = 72;
@@ -813,20 +812,20 @@ static void UpdateMouseOverLocation() {
 	char tempo[STD_BUFFER_SIZE];
 	GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 
-	if ((play.get_loc_name_save_cursor >= 0) &&
-		(play.get_loc_name_save_cursor != play.get_loc_name_last_time) &&
+	if ((_GP(play).get_loc_name_save_cursor >= 0) &&
+		(_GP(play).get_loc_name_save_cursor != _GP(play).get_loc_name_last_time) &&
 		(mouse_on_iface < 0) && (ifacepopped < 0)) {
 		// we have saved the cursor, but the mouse location has changed
 		// and it's time to restore it
-		play.get_loc_name_save_cursor = -1;
-		set_cursor_mode(play.restore_cursor_mode_to);
+		_GP(play).get_loc_name_save_cursor = -1;
+		set_cursor_mode(_GP(play).restore_cursor_mode_to);
 
-		if (cur_mode == play.restore_cursor_mode_to) {
+		if (cur_mode == _GP(play).restore_cursor_mode_to) {
 			// make sure it changed -- the new mode might have been disabled
 			// in which case don't change the image
-			set_mouse_cursor(play.restore_cursor_image_to);
+			set_mouse_cursor(_GP(play).restore_cursor_image_to);
 		}
-		debug_script_log("Restore mouse to mode %d cursor %d", play.restore_cursor_mode_to, play.restore_cursor_image_to);
+		debug_script_log("Restore mouse to mode %d cursor %d", _GP(play).restore_cursor_mode_to, _GP(play).restore_cursor_image_to);
 	}
 }
 
@@ -877,7 +876,7 @@ static int UpdateWaitMode() {
 
 	set_default_cursor();
 	guis_need_update = 1;
-	play.disabled_user_interface--;
+	_GP(play).disabled_user_interface--;
 	user_disabled_for = 0;
 
 	switch (was_disabled_for) {
@@ -915,7 +914,7 @@ static int GameTick() {
 }
 
 static void SetupLoopParameters(int untilwhat, const void *udata) {
-	play.disabled_user_interface++;
+	_GP(play).disabled_user_interface++;
 	guis_need_update = 1;
 	// Only change the mouse cursor if it hasn't been specifically changed first
 	// (or if it's speech, always change it)
