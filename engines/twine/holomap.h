@@ -45,6 +45,7 @@ private:
 	bool isTriangleVisible(const Vertex *vertices) const;
 
 	struct Location {
+		// angles
 		uint16 x = 0;
 		uint16 y = 0;
 		uint16 z = 0;
