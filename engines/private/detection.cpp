@@ -40,17 +40,36 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_NO_FLAGS,
         GUIO1(GUIO_NOMIDI)
     },
-    /*
+    {
+        "private-eye", // Demo from the US release
+        "Demo",
+        AD_ENTRY2s("pvteye.z", "af383c813157810e89d8d6d595895ff7", 263893,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+        Common::EN_USA,
+        Common::kPlatformWindows,
+        ADGF_DEMO,
+        GUIO1(GUIO_NOMIDI)
+    },
     {
         "private-eye",  // EU release
         0,
-        AD_ENTRY1s("PVTEYE.Z", "", 0),
+        AD_ENTRY2s("pvteye.z", "d9ce391395701615e8b5d04bc4bf7ec3", 284699,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
         Common::EN_GRB,
         Common::kPlatformWindows,
         ADGF_UNSUPPORTED,
         GUIO1(GUIO_NOMIDI)
     },
-    */
+    {
+        "private-eye", // Demo from the EU release
+        "Demo",
+        AD_ENTRY2s("pvteye.z", "01ca8641970189cb2ca3a96526026091", 284129,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+        Common::EN_GRB,
+        Common::kPlatformWindows,
+        ADGF_DEMO | ADGF_UNSUPPORTED,
+        GUIO1(GUIO_NOMIDI)
+    },
     {
         "private-eye", // Demo from archive.org
         "Demo",
@@ -62,13 +81,43 @@ static const ADGameDescription gameDescriptions[] = {
         GUIO1(GUIO_NOMIDI)
     },
     {
-        "private-eye", // Demo from the US release
+        "private-eye", // Another demo
         "Demo",
-        AD_ENTRY2s("pvteye.z", "af383c813157810e89d8d6d595895ff7", 263893,
+        AD_ENTRY2s("pvteye.z", "af383c813157810e89d8d6d595895ff7", 271214,
            "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
         Common::EN_USA,
         Common::kPlatformWindows,
         ADGF_DEMO,
+        GUIO1(GUIO_NOMIDI)
+    },
+    {
+        "private-eye", // EU release (ES)
+        "It uses different file format for the assest",
+        AD_ENTRY2s("pvteye.ex_", "f41770550ab717086b2d0c805fef4b8f", 498176,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+        Common::ES_ESP,
+        Common::kPlatformWindows,
+        ADGF_UNSUPPORTED,
+        GUIO1(GUIO_NOMIDI)
+    },
+    {
+        "private-eye", // Demo from the  EU release (ES)
+        "It uses different file format for the assest",
+        AD_ENTRY2s("pvtdemo.ex_", "048f751acd7a0f1a87b20d6dc5229210", 497152,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+        Common::ES_ESP,
+        Common::kPlatformWindows,
+        ADGF_DEMO | ADGF_UNSUPPORTED,
+        GUIO1(GUIO_NOMIDI)
+    },
+    {
+        "private-eye", // EU release (FR)
+        "It uses different file format for the assest",
+        AD_ENTRY2s("pvteye.ex_", "ae0dec43b2f54d45c8a1c93e97092141", 600576,
+           "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+        Common::FR_FRA,
+        Common::kPlatformWindows,
+        ADGF_UNSUPPORTED,
         GUIO1(GUIO_NOMIDI)
     },
     /*
