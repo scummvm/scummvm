@@ -882,6 +882,11 @@ void Process::setRotation() {
 	int rotate = pop();
 	auto objectName = popString();
 	debug("setRotation: object: %s %d", objectName.c_str(), rotate);
+	ObjectPtr object = _engine->getCurrentScreenObject(objectName);
+	if (object)
+		object->rotate(rotate);
+	else
+		warning("setRotation: object: %s not found in scene", objectName.c_str());
 }
 
 void Process::stub199() {
