@@ -83,10 +83,10 @@ typedef std::shared_ptr<Stream> PStream;
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {
 	// Standart main game file names for 3.* and 2.* games respectively
-	static const String DefaultFilename_v3;
-	static const String DefaultFilename_v2;
+	static const char *DefaultFilename_v3;
+	static const char *DefaultFilename_v2;
 	// Signature of the current game format
-	static const String Signature;
+	static const char *Signature;
 
 	// Name of the asset file
 	String              Filename;
