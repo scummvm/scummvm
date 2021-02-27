@@ -4285,6 +4285,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"EVENT", EVENT, 0};
 		debug(7, "%s()", mapping.name);
 		break;
+	case 77:
+		mapping = NoirMapping{"HIDEACTOR", HIDEACTOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 86:
 		mapping = NoirMapping{"OP86", ZZZZZZ, 2};
 		pp -= mapping.numArgs - 1;
@@ -4911,7 +4916,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case HIDEACTOR:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		if (!TinselV2)
 			HideActorFn(coroParam, pp[0]);
 		else if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
