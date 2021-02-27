@@ -30,6 +30,7 @@
 #include "engines/nancy/action/rotatinglockpuzzle.h"
 #include "engines/nancy/action/telephone.h"
 #include "engines/nancy/action/sliderpuzzle.h"
+#include "engines/nancy/action/passwordpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -125,7 +126,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x6B:
             return new SliderPuzzle(_engine->scene->getViewport());
         case 0x6C:
-            return new PasswordPuzzle();
+            return new PasswordPuzzle(_engine->scene->getViewport());
         case 0x6E:
             return new AddInventoryNoHS();
         case 0x6F:
