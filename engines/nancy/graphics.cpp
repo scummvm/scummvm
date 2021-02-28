@@ -109,6 +109,7 @@ void GraphicsManager::removeObject(RenderObject *object) {
     for (auto &r : _objects) {
         if (r == object) {
             _objects.erase(&r);
+            break;
         }
     }
 }

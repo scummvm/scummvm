@@ -242,10 +242,6 @@ void Scene::load() {
     _sceneState.currentScene = _sceneState.nextScene;
     _timers.sceneTime = 0;
 
-    if (_engine->getGameState() != _engine->getPreviousGameState()) {
-        registerGraphics();
-    }
-
     _state = kStartSound;
 }
 
