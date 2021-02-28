@@ -79,7 +79,7 @@ protected:
 
     HoverState hoverState = kNoHover;
     AVFDecoder _decoder;
-    uint _currentViewportFrame = 0;
+    int _currentViewportFrame = -1;
     bool _isPlaying = false;
     bool _isHovered = false;
 };
