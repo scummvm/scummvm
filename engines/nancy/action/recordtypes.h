@@ -293,6 +293,12 @@ public:
 class PlaySoundMultiHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(Nancy::NancyEngine *engine) override;
+
+    SoundDescription sound; // 0x0
+    SceneChangeDescription sceneChange; // 0x22
+    EventFlagDescription flag; // 0x2A
+    Common::Array<HotspotDescription> hotspots; // 0x31
 };
 
 class HintSystem : public ActionRecord {
