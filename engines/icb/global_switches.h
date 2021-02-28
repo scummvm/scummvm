@@ -70,7 +70,6 @@ public:
 	bool8 wireframeActors;
 
 	bool8 speechLineNumbers;
-	bool8 pc_full_intall;
 	bool8 joystickVibration;
 	bool8 socket_watch;
 

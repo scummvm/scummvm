@@ -346,13 +346,6 @@ void InitEngine(const char *lpCmdLine) {
 
 		// set base mode of stub to gameScript processor
 		stub.Set_current_stub_mode(__game_script);
-
-		// are all resources present?
-		Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead("full.icb");
-		if (stream) {
-			px.pc_full_intall = TRUE8;
-			delete stream;
-		}
 	} else
 		stub.Set_current_stub_mode(__mission_and_console);
 
