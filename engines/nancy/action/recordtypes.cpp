@@ -481,11 +481,49 @@ uint16 PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &strea
 }
 
 uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
-    stream.seek(0x2F, SEEK_CUR);
-    uint16 size = stream.readUint16LE() * 0x12 + 0x31;
-    stream.seek(-0x31, SEEK_CUR);
+    sound.read(stream, SoundDescription::kNormal);
+    sceneChange.readData(stream);
+    flag.label = stream.readSint16LE();
+    flag.flag = (NancyFlag)stream.readByte();
+    stream.skip(2);
+    uint16 numHotspots = stream.readUint16LE();
 
-    return readRaw(stream, size); // TODO
+    for (uint i = 0; i < numHotspots; ++i) {
+        hotspots.push_back(HotspotDescription());
+        hotspots.back().frameID = stream.readUint16LE();
+        readRect(stream, hotspots.back().coords);
+    }
+
+    return 0x31 + numHotspots * 0x12;
+}
+
+void PlaySoundMultiHS::execute(Nancy::NancyEngine *engine) {
+    switch (state) {
+        case kBegin:
+            state = kRun;
+            // fall through
+        case kRun: {
+            hasHotspot = false;
+            uint currentFrame = engine->scene->getSceneInfo().frameID;
+
+            for (uint i = 0; i < hotspots.size(); ++i) {
+                if (hotspots[i].frameID == currentFrame) {
+                    hotspot = hotspots[i].coords;
+                    hasHotspot = true;
+                    break;
+                }
+            }
+
+            break;
+        }
+        case kActionTrigger:
+            engine->sound->loadSound(sound);
+            engine->sound->playSound(sound.channelID);
+            engine->scene->changeScene(sceneChange);
+            engine->scene->setEventFlag(flag);
+            finishExecution();
+            break;
+    }
 }
 
 uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
