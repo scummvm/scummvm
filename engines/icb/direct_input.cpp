@@ -47,17 +47,6 @@ void Init_direct_input() {
 
 void setKeyState(Common::KeyCode key, bool pressed) { keyboard_buf_scancodes[key] = pressed; }
 
-void Poll_direct_input() {
-	//warning("TODO: Fix Poll_direct_input");
-#if 0
-	int keys = 0;
-	const Uint8 *key_state = SDL_GetKeyboardState(&keys);
-	for (uint32 i = 0; i < keys; i++) {
-		keyboard_buf_scancodes[i] = key_state[i] ? TRUE8 : FALSE8;
-	}
-#endif
-}
-
 uint32 Get_DI_key_press() {
 	for (uint32 i = 0; i < 512; i++) {
 		if (Read_DI_once_keys(i)) {

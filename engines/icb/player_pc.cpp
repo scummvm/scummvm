@@ -118,8 +118,6 @@ void _player::Update_input_state() {
 	cur_state.turn = __NO_TURN;
 	cur_state.bitflag = 0;
 
-	Poll_direct_input();
-
 	// Button controls are universal for all control modes
 
 	if (Read_DI_keys(fire_key)) // Attack

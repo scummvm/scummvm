@@ -90,9 +90,6 @@ void _stub::Set_current_stub_mode(__stub_modes new_mode) {
 void _stub::Process_stub() {
 	// call the mode!
 
-	// update current keys
-	Poll_direct_input();
-
 	// Check for pause key .... moved from player::UpdateInputStates so the pause
 	// menu is reachable regardless of the players state (ie in conversation)
 	if (mode[stub] == __mission_and_console) {

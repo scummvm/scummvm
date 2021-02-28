@@ -39,7 +39,6 @@ extern bool8 repeats_scancodes[512];      // SDL_NUM_SCANCODES
 
 void Init_direct_input();
 void setKeyState(Common::KeyCode key, bool pressed);
-void Poll_direct_input();
 bool8 Read_DI_keys(uint32 key);
 bool8 Read_DI_once_keys(uint32 key);
 

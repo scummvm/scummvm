@@ -137,9 +137,6 @@ void ReadConfigFromIniFile() {
 	// Control device
 	temp = config.readIntSetting("Controller Settings", "Device", 0);
 
-	// A call to this will validate the above setting
-	Poll_direct_input();
-
 	// Control method
 	temp = config.readIntSetting("Controller Settings", "Method", 0);
 
