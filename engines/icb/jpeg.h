@@ -38,12 +38,6 @@ static uint32 _bit_count;
 static uint32 *_buf_pointer;
 static uint32 *_end_buf;
 
-#ifdef _WIN32
-static __int64 safeMM0 = 0;
-#else
-static int64 safeMM0 = 0;
-#endif
-
 const int JpegMaxHuffmanTables = 4;
 const int MaxQuantizationTables = 4;
 const int JpegMaxComponentsPerFrame = 255;
