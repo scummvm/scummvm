@@ -393,16 +393,18 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 				modelY = _locations[data.trajLocationIdx].y;
 			}
 			renderHolomapModel(_engine->_resources->holomapPointModelPtr, modelX, modelY, 0);
-			trajAnimFrameIdx = trajAnimFrameIdx + 1;
+			++trajAnimFrameIdx;
 		}
 
 		if (fadeInPalette) {
 			fadeInPalette = false;
-			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
+			//_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
 		}
 	}
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
-	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+
+	_engine->_screens->clearScreen();
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
@@ -629,13 +631,14 @@ void Holomap::processHolomap() {
 		//_engine->flip();
 		if (fadeInPalette) {
 			fadeInPalette = false;
-			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
+			//_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
 		}
 	}
 
+	_engine->_screens->clearScreen();
 	_engine->_text->drawTextBoxBackground = true;
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
-	_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;
 
