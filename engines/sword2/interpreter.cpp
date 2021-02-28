@@ -481,7 +481,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			Read16ip(parameter);
 			value = stack.pop();
 
-			// WORKAROUND for bug #1214168: The not-at-all dreaded
+			// WORKAROUND for bug #2058: The not-at-all dreaded
 			// mop bug.
 			//
 			// At the London Docks, global variable 1003 keeps

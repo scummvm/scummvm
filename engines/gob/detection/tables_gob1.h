@@ -58,7 +58,7 @@
 
 // -- DOS VGA Floppy --
 
-{ // Supplied by Theruler76 in bug report #1201233
+{ // Supplied by Theruler76 in bug report #2024
 	{
 		"gob1",
 		"VGA",
@@ -72,7 +72,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by raziel_ in bug report #1891864
+{ // Supplied by raziel_ in bug report #3620
 	{
 		"gob1",
 		"VGA",
@@ -243,7 +243,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob1cd",
 		"v1.02",
@@ -257,7 +257,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob1cd",
 		"v1.02",
@@ -271,7 +271,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob1cd",
 		"v1.02",
@@ -285,7 +285,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob1cd",
 		"v1.02",
@@ -316,7 +316,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob1",
 		"",
@@ -330,7 +330,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob1",
 		"",
@@ -344,7 +344,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob1",
 		"",
@@ -358,7 +358,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob1",
 		"",
@@ -372,7 +372,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob1",
 		"",
@@ -668,7 +668,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2785958
+{ // Supplied by goodoldgeorg in bug report #4324
 	{
 		"gob1",
 		"Interactive Demo",

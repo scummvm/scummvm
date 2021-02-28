@@ -55,7 +55,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by raziel_ in bug report #1891867
+{ // Supplied by raziel_ in bug report #3621
 	{
 		"gob2",
 		"",
@@ -83,7 +83,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by blackwhiteeagle in bug report #1605235
+{ // Supplied by blackwhiteeagle in bug report #2934
 	{
 		"gob2",
 		"",
@@ -111,7 +111,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2602017
+{ // Supplied by goodoldgeorg in bug report #4163
 	{
 		"gob2",
 		"",
@@ -139,7 +139,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by arcepi in bug report #1659884
+{ // Supplied by arcepi in bug report #3060
 	{
 		"gob2",
 		"",
@@ -170,7 +170,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by pykman in bug report #3067489
+{ // Supplied by pykman in bug report #5365
 	{
 		"gob2cd",
 		"v2.01 Polish",
@@ -254,7 +254,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
 		"v1.02",
@@ -268,7 +268,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
 		"v1.02",
@@ -282,7 +282,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
 		"v1.02",
@@ -296,7 +296,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
 		"v1.02",
@@ -310,7 +310,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob2cd",
 		"v1.02",
@@ -466,7 +466,7 @@
 
 // -- Mac --
 
-{ // Supplied by fac76 in bug report #1673397
+{ // Supplied by fac76 in bug report #3108
 	{
 		"gob2",
 		"",
@@ -484,7 +484,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by koalet in bug report #2478585
+{ // Supplied by koalet in bug report #4064
 	{
 		"gob2",
 		"",
@@ -505,7 +505,7 @@
 
 // -- Amiga --
 
-{ // Supplied by fac76 in bug report #1883808
+{ // Supplied by fac76 in bug report #3608
 	{
 		"gob2",
 		"",
@@ -533,7 +533,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2602057
+{ // Supplied by goodoldgeorg in bug report #4164
 	{
 		"gob2",
 		"",
@@ -564,7 +564,7 @@
 
 // -- Atari ST --
 
-{ // Supplied by bgk in bug report #1706861
+{ // Supplied by bgk in bug report #3161
 	{
 		"gob2",
 		"",
@@ -623,7 +623,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by polluks in bug report #1895126
+{ // Supplied by polluks in bug report #3628
 	{
 		"gob2",
 		"Interactive Demo",

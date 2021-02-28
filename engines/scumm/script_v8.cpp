@@ -295,7 +295,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 			// Otherwise, use the value specified by the game script.
 			// Note: To determine whether there was a user override, we only
 			// look at the target specific settings, assuming that any global
-			// value is likely to be bogus. See also bug #2251765.
+			// value is likely to be bogus. See also bug #4008.
 			if (ConfMan.hasKey("talkspeed", _targetName)) {
 				value = getTalkSpeed();
 			} else {

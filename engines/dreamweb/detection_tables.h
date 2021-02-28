@@ -64,7 +64,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// UK-V (Early UK) CD Release - From bug #3526483
+	// UK-V (Early UK) CD Release - From bug #6035
 	// Note: r00 and r02 files are identical to international floppy release
 	//       so was misidentified as floppy, resulting in disabled CD speech.
 	//       Added executable to detection to avoid this.
@@ -114,7 +114,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	},
 
 	// French CD release
-	// From bug #3524362
+	// From bug #6030
 	{
 		{
 			"dreamweb",
@@ -185,7 +185,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	},
 
 	// Spanish CD release
-	// From bug #3524362
+	// From bug #6030
 	{
 		{
 			"dreamweb",

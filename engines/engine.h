@@ -209,7 +209,7 @@ private:
 	 * Save slot selected via the global main menu.
 	 *
 	 * This slot will be loaded after the main menu execution (not from inside
-	 * the menu loop, to avoid bugs like #2822778).
+	 * the menu loop, to avoid bugs like #4420).
 	 */
 	int _saveSlotToLoad;
 
@@ -408,7 +408,7 @@ public:
 	 * main menu execution.
 	 *
 	 * This is to avoid loading a savegame from
-	 * inside the menu loop which causes bugs like #2822778.
+	 * inside the menu loop which causes bugs like #4420.
 	 *
 	 * @param slot	The slot from which a save state should be loaded.
 	 */

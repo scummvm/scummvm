@@ -179,7 +179,7 @@ int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
 void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	Tinsel::setNeedLoad();
 	// Same issue here as with loadGameState(): we need the physical savegame
-	// slot. Refer to bug #3387551.
+	// slot. Refer to bug #5819.
 	int listSlot = -1;
 	const int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
 	for (int i = 0; i < numStates; ++i) {

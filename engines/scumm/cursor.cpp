@@ -425,7 +425,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		s.init(_charset->getCharWidth(chr), _charset->getFontHeight(),
 		       _charset->getCharWidth(chr), buf,
 		       Graphics::PixelFormat::createFormatCLUT8());
-		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
+		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1964
 		assert(s.w <= 16 && s.h <= 17);
 
 		_charset->drawChar(chr, s, 0, 0);

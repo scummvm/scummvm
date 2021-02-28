@@ -380,7 +380,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
-	{ // italian fan translation see fr#1727941 "KYRA: add Italian CD Version to kyra.dat"
+	{ // italian fan translation see bug #7567 "KYRA: add Italian CD Version to kyra.dat"
 		{
 			"kyra1",
 			"CD",
@@ -406,7 +406,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
-	{ // Kyra 1 Mac CD as mentioned in fr #2766454 "KYRA1: Add support for Macintosh CD" by nnooiissee
+	{ // Kyra 1 Mac CD as mentioned in bug #7695 "KYRA1: Add support for Macintosh CD" by nnooiissee
 		{
 			"kyra1",
 			"CD",
@@ -663,7 +663,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FLAGS
 	},
 
-	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	// Italian fan translation, see bug #7642 "KYRA: add support for Italian version of Kyrandia 2&3"
 	{ // CD version
 		{
 			"kyra2",
@@ -994,7 +994,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_INS_FLAGS
 	},
 
-	// Spanish fan translation, see fr#1994040 "KYRA3: Add support for Spanish fan translation"
+	// Spanish fan translation, see bug #7637 "KYRA3: Add support for Spanish fan translation"
 	{
 		{
 			"kyra3",
@@ -1035,7 +1035,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
-	// Italian fan translation, see fr#2003504 "KYRA: add support for Italian version of Kyrandia 2&3"
+	// Italian fan translation, see bug #7642 "KYRA: add support for Italian version of Kyrandia 2&3"
 	{
 		{
 			"kyra3",
@@ -1389,7 +1389,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_CMP_FLAGS
 	},
 
-	{ // French floppy version 1.20, bug #3552534 "KYRA: LOL Floppy FR version unknown"
+	{ // French floppy version 1.20, bug #6111 "KYRA: LOL Floppy FR version unknown"
 		{
 			"lol",
 			0,
@@ -1458,7 +1458,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
-	{ // French floppy version 1.20, bug #3608967 "Lands of Lore - french version 1.20 MD5"
+	{ // French floppy version 1.20, bug #6264 "Lands of Lore - french version 1.20 MD5"
 		{
 			"lol",
 			"Extracted",
@@ -1472,7 +1472,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
-	{ // French floppy version 1.23, bug #3552534 "KYRA: LOL Floppy FR version unknown"
+	{ // French floppy version 1.23, bug #6111 "KYRA: LOL Floppy FR version unknown"
 		{
 			"lol",
 			"Extracted",

@@ -335,7 +335,7 @@ DECLARE_COMMAND_OPCODE(clear) {
 
 DECLARE_COMMAND_OPCODE(speak) {
 	// WORKAROUND: this avoids crashing when the zone is not parsed, like in the case
-	// of script bug in ticket #2718449.
+	// of script bug in ticket #4251.
 	if (!ctxt._cmd->_zone) {
 		return;
 	}
@@ -532,7 +532,7 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 	ZonePtr z = ctxt._inst->_z;
 
 	// Prevent execution if zone is missing. The known case is "PART2/insegui.scr", which has
-	// "STOP insegui", which doesn't exist (see ticket #3021744 for the gory details)
+	// "STOP insegui", which doesn't exist (see ticket #9193 for the gory details)
 	if (!z) return;
 
 	if (ACTIONTYPE(z) == kZoneHear) {

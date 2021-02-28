@@ -161,7 +161,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			// On most (all?) keyboards it is safe to assume that
 			// both upper and lower letters are unpressed on keyup event
 			//
-			// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+			// Fixes bug #3173: "FT: CAPSLOCK + V enables cheating for all fights"
 			//
 			// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
 			_keyDownMap[toupper(event.kbd.ascii)] = false;
@@ -200,7 +200,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 
 	// The following two cases enable dialog choices to be scrolled
 	// through in the SegaCD version of MI. Values are taken from script-14.
-	// See bug report #1193185 for details.
+	// See bug report #2013 for details.
 	case Common::EVENT_WHEELDOWN:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
 			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
@@ -628,7 +628,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
 			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
-				// scrolling to conversation choices. See bug report #1193185 for details.
+				// scrolling to conversation choices. See bug report #2013 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
 			} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 				// Map arrow keys to number keys in the PCEngine version of Loom to support

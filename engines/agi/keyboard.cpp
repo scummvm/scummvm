@@ -502,7 +502,7 @@ bool AgiEngine::handleController(uint16 key) {
 				if (key == AGI_MOUSE_BUTTON_LEFT) {
 					if (getGameID() == GID_PQ1 && getVar(VM_VAR_CURRENT_ROOM) == 116) {
 						// WORKAROUND: Special handling for mouse clicks in the newspaper
-						// screen of PQ1. Fixes bug #3018770.
+						// screen of PQ1. Fixes bug #4908.
 						newDirection = 3;   // fake a right arrow key (next page)
 
 					} else {

@@ -70,7 +70,7 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 		}
 
 		// Don't show the invalid "?" object in ego's inventory in the fanmade
-		// game Beyond the Titanic 2 (bug #3116541).
+		// game Beyond the Titanic 2 (bug #5523).
 		if (_objects[i].name == "?" && _objects[i].location == EGO_OWNED)
 			_objects[i].location = 0;
 	}

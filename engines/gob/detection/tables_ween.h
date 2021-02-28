@@ -55,7 +55,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by cybot_tmin in bug report #1667743
+{ // Supplied by cybot_tmin in bug report #3084
 	{
 		"ween",
 		"",
@@ -97,7 +97,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by glorfindel in bugreport #1722142
+{ // Supplied by glorfindel in bugreport #3193
 	{
 		"ween",
 		"",
@@ -114,7 +114,7 @@
 
 // -- Amiga --
 
-{ // Supplied by vampir_raziel in bug report #1658373
+{ // Supplied by vampir_raziel in bug report #3055
 	{
 		"ween",
 		"",
@@ -129,7 +129,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by vampir_raziel in bug report #1658373
+{ // Supplied by vampir_raziel in bug report #3055
 	{
 		"ween",
 		"",
@@ -143,7 +143,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by vampir_raziel in bug report #1658373
+{ // Supplied by vampir_raziel in bug report #3055
 	{
 		"ween",
 		"",
@@ -157,7 +157,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by vampir_raziel in bug report #1658373
+{ // Supplied by vampir_raziel in bug report #3055
 	{
 		"ween",
 		"",
@@ -171,7 +171,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2563539
+{ // Supplied by goodoldgeorg in bug report #4139
 	{
 		"ween",
 		"",
@@ -189,7 +189,7 @@
 
 // -- Atari ST --
 
-{ // Supplied by pwigren in bug report #1764174
+{ // Supplied by pwigren in bug report #3355
 	{
 		"ween",
 		"",

@@ -404,7 +404,7 @@ void Parallaction_ns::changeLocation() {
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
-	// BUG #1837503: kEngineChangeLocation flag must be cleared *before* commands
+	// BUG #3459: kEngineChangeLocation flag must be cleared *before* commands
 	// and acommands are executed, so that it can be set again if needed.
 	g_engineFlags &= ~kEngineChangeLocation;
 
@@ -485,7 +485,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 		}
 
 		// The original engine used to reload 'common' only on loadgames. We are reloading here since 'common'
-		// contains character specific stuff. This causes crashes like bug #1816899, because parseLocation tries
+		// contains character specific stuff. This causes crashes like bug #3440, because parseLocation tries
 		// to reload scripts but the data archive selected is occasionally wrong. This has been solved by having
 		// parseLocation only load scripts when they aren't already loaded - which it should have done since the
 		// beginning nevertheless.

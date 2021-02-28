@@ -543,7 +543,7 @@ void ScummEngine_v5::o5_setClass() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
 
-		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is
+		// WORKAROUND bug #3099: Due to a script bug, the wrong opcode is
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
@@ -1177,7 +1177,7 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
 
-		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is
+		// WORKAROUND bug #3099: Due to a script bug, the wrong opcode is
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
@@ -2130,12 +2130,12 @@ void ScummEngine_v5::o5_startScript() {
 
 	getWordVararg(data);
 
-	// WORKAROUND bug #1290485: Script 171 loads a complete room resource,
+	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
 	// instead of the actual script, causing invalid opcode cases
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
 
-	// WORKAROUND bug #3306145 (also occurs in original): Some old versions of
+	// WORKAROUND bug #5709 (also occurs in original): Some old versions of
 	// Indy3 sometimes fail to allocate IQ points correctly. To quote:
 	// "In the Amiga version you get the 15 points for puzzle 30 if you give the
 	// book or KO the guy. The PC version correctly gives 10 points for puzzle
@@ -2187,7 +2187,7 @@ void ScummEngine_v5::o5_stopScript() {
 
 	if (_game.id == GID_INDY4 && script == 164 &&
 		_roomResource == 50 && vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG)) {
-		// WORKAROUND bug #1308033: Due to a script bug, a line of text is skipped
+		// WORKAROUND bug #2215: Due to a script bug, a line of text is skipped
 		// which Indy is supposed to speak when he finds Orichalcum in some old
 		// bones in the caves below Crete.
 		_scriptPointer = oldaddr;
@@ -2685,7 +2685,7 @@ void ScummEngine_v5::decodeParseString() {
 					printString(textSlot, (const byte *) "I am Chaos.");
 				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
 						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
-					// WORKAROUND for bug #1621210.
+					// WORKAROUND for bug #2961.
 					byte tmpBuf[25];
 					memcpy(tmpBuf, _scriptPointer, 25);
 					if (tmpBuf[22] == '8')
@@ -2695,7 +2695,7 @@ void ScummEngine_v5::decodeParseString() {
 					printString(textSlot, tmpBuf);
 				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
 							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
-					// WORKAROUND for bug #3003643 (MI1EGA German: Credit text incorrect)
+					// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
 					// The script contains buggy text.
 					const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
 					char tmpBuf[256];

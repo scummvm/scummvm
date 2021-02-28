@@ -125,7 +125,7 @@ void PalAnim::cycleStep(int vectortime) {
 	}
 
 	// Don't cycle the palette when the map is open
-	// Fixes bug #1900258 - "ITE: Glitch when looking at the map while at the docks"
+	// Fixes bug #3636 - "ITE: Glitch when looking at the map while at the docks"
 	if (_vm->_interface->getMode() != kPanelMap)
 		_vm->_gfx->setPalette(pal);
 

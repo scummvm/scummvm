@@ -281,7 +281,7 @@ void SearchManager::clear() {
 
 #ifndef __ANDROID__
 	// Add the current dir as a very last resort.
-	// See also bug #2137680.
+	// See also bug #3984.
 	// But don't do this for Android platform, since it may lead to crashes
 	addDirectory(".", ".", -2);
 #endif

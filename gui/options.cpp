@@ -655,7 +655,7 @@ void OptionsDialog::apply() {
 		// the GUI a chance to update it's internal state. Otherwise we might
 		// get a crash when the GUI tries to grab the overlay.
 		//
-		// This fixes bug #3303501 "Switching from HQ2x->HQ3x crashes ScummVM"
+		// This fixes bug #5703 "Switching from HQ2x->HQ3x crashes ScummVM"
 		//
 		// It is important that this is called *before* any of the current
 		// dialog's widgets are destroyed (for example before

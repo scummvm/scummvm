@@ -357,7 +357,7 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ //Supplied by goodoldgeorg in bug report #2820006
+{ //Supplied by goodoldgeorg in bug report #4390
 	{
 		"playtoons4",
 		"",

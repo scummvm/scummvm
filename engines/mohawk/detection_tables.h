@@ -741,7 +741,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"harryhh",
@@ -757,7 +757,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"harryhh",
@@ -773,7 +773,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"harryhh",
@@ -807,7 +807,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// part of "Super Living Books" compilation
-	// from rgemini, bug #3309343
+	// from rgemini, bug #5726
 	{
 		{
 			"harryhh",
@@ -853,7 +853,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug #3309306
+	// From afholman in bug #5723
 	{
 		{
 			"lbsampler",
@@ -1022,7 +1022,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// part of "Super Living Books" compilation
-	// from rgemini, bug #3309343
+	// from rgemini, bug #5726
 	{
 		{
 			"tortoise",
@@ -1038,7 +1038,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"tortoise",
@@ -1054,7 +1054,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"tortoise",
@@ -1070,7 +1070,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// Tortoise and the Hare Hebrew variant - From georgeqgreg on bug #3441928
+	// Tortoise and the Hare Hebrew variant - From georgeqgreg on bug #5904
 	{
 		{
 			"tortoise",
@@ -1086,7 +1086,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"tortoise",
@@ -1102,7 +1102,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"tortoise",
@@ -1118,7 +1118,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"tortoise",
@@ -1134,7 +1134,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"tortoise",
@@ -1196,7 +1196,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"tortoise",
@@ -1243,7 +1243,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// part of "Super Living Books" compilation
-	// from rgemini, bug #3309343
+	// from rgemini, bug #5726
 	{
 		{
 			"arthur",
@@ -1259,7 +1259,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"ARTHUR.EXE"
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"arthur",
@@ -1275,7 +1275,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Arthur's Teacher Trouble"
 	},
 
-	// From darthbo in bug#3301791
+	// From darthbo in bug#5699
 	{
 		{
 			"arthur",
@@ -1321,7 +1321,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"ARTHUR.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"arthur",
@@ -1402,7 +1402,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Just Grandma and Me 2.0 Macintosh
-	// From aluff in bug #3461368
+	// From aluff in bug #5926
 	{
 		{
 			"grandma",
@@ -1452,7 +1452,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Just Grandma and Me 1.1 Mac
-	// From eisnerguy1 in bug#3610725
+	// From eisnerguy1 in bug#6274
 	{
 		{
 			"grandma",
@@ -1468,7 +1468,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// from jjnryan in bug #3389857
+	// from jjnryan in bug #5827
 	{
 		{
 			"grandma",
@@ -1484,7 +1484,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"grandma",
@@ -1500,7 +1500,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"grandma",
@@ -1516,7 +1516,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"grandma",
@@ -1562,7 +1562,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"grandma",
@@ -1641,7 +1641,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"RUFF.EXE"
 	},
 
-	// From aluff in bug#3307785
+	// From aluff in bug#5715
 	{
 		{
 			"ruff",
@@ -1672,7 +1672,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"RUFF.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"ruff",
@@ -1703,7 +1703,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
-	// From aluff in bug#3309981
+	// From aluff in bug#5731
 	{
 		{
 			"newkid",
@@ -1720,7 +1720,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// part of "Super Living Books" compilation
-	// from rgemini, bug #3309343
+	// from rgemini, bug #5726
 	{
 		{
 			"newkid",
@@ -1736,7 +1736,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"NEWKID.EXE"
 	},
 
-	// From aluff in bug#3309981
+	// From aluff in bug#5731
 	{
 		{
 			"newkid",
@@ -1782,7 +1782,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"NEWKID.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"newkid",
@@ -1859,7 +1859,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From zerep in bug #3287894
+	// From zerep in bug #5647
 	{
 		{
 			"arthurbday",
@@ -1891,7 +1891,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"BIRTHDAY.EXE"
 	},
 
-	// From aluff in bug#3309936
+	// From aluff in bug#5729
 	{
 		{
 			"arthurbday",
@@ -1924,7 +1924,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"arthurbday",
@@ -1940,7 +1940,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"arthurbday",
@@ -1956,7 +1956,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// From Torsten in bug#3422652
+	// From Torsten in bug#5876
 	{
 		{
 			"arthurbday",
@@ -1973,7 +1973,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Arthur Birthday (English) Version 2.0 Windows(R) August 8, 1997
-	// From jacecen in bug #3413119
+	// From jacecen in bug #5847
 	{
 		{
 			"arthurbday",
@@ -1990,7 +1990,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Arthur Birthday (English) Version 2.0 Macintosh
-	// From aluff in bug #3461368
+	// From aluff in bug #5926
 	{
 		{
 			"arthurbday",
@@ -2021,7 +2021,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"BIRTHDAY.EXE"
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"arthurbday",
@@ -2082,7 +2082,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Little Monster at School"
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2098,7 +2098,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2114,7 +2114,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2130,7 +2130,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2162,7 +2162,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2178,7 +2178,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"lilmonster",
@@ -2194,7 +2194,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From Scarlatti in bug #3275626
+	// From Scarlatti in bug #5636
 	{
 		{
 			"lilmonster",
@@ -2429,7 +2429,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// The Berenstain Bears Get in a Fight (English and Spanish) Version 1.0 1995
-	// From jacecen in bug #3413119
+	// From jacecen in bug #5847
 	{
 		{
 			"bearfight",
@@ -2460,7 +2460,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Bears Get in a Fight"
 	},
 
-	// From bkennimer in bug #3284930
+	// From bkennimer in bug #5645
 	{
 		{
 			"beardark",
@@ -2476,7 +2476,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From bkennimer in bug #3284930
+	// From bkennimer in bug #5645
 	// 32-bit version of the previous entry
 	{
 		{
@@ -2493,7 +2493,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From bkennimer in bug #3284930
+	// From bkennimer in bug #5645
 	{
 		{
 			"beardark",
@@ -2509,7 +2509,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From aluff in bug #3461368
+	// From aluff in bug #5926
 	{
 		{
 			"beardark",
@@ -2589,7 +2589,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From aluff in bug#3306722
+	// From aluff in bug#5711
 	{
 		{
 			"stellaluna",
@@ -2605,7 +2605,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From aluff in bug#3306722
+	// From aluff in bug#5711
 	{
 		{
 			"stellaluna",
@@ -2638,7 +2638,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From aluff in bug#3309934
+	// From aluff in bug#5728
 	{
 		{
 			"sheila",
@@ -2654,7 +2654,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",
@@ -2670,7 +2670,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",
@@ -2686,7 +2686,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",
@@ -2702,7 +2702,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",
@@ -2718,7 +2718,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",
@@ -2734,7 +2734,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// From afholman in bug#3309308
+	// From afholman in bug#5724
 	{
 		{
 			"sheila",

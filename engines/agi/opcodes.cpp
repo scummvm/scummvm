@@ -428,7 +428,7 @@ void AgiEngine::setupOpCodes(uint16 version) {
 	// TODO: This could be either turned into a game feature, or a version
 	// specific check, instead of a game version check
 	// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
-	// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
+	// show.mouse and hide.mouse. Fixes bugs #6161 and #5885.
 	if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
 	        getPlatform() == Common::kPlatformApple2GS) {
 		_opCodes[176].parameters = "n";  // hide.mouse

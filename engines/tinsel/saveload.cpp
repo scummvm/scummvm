@@ -181,7 +181,7 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 	// NOTE: We can't use SAVEGAME_ID here when attempting to remove a saved game from the launcher,
 	// as there is no TinselEngine initialized then. This means that we can't check if this is a DW1
 	// or DW2 savegame in this case, but it doesn't really matter, as the saved game is about to be
-	// deleted anyway. Refer to bug #3387551.
+	// deleted anyway. Refer to bug #5819.
 	bool correctID = _vm ? (hdr.id == SAVEGAME_ID) : (hdr.id == DW1_SAVEGAME_ID || hdr.id == DW2_SAVEGAME_ID);
 
 	// Perform sanity check
@@ -208,7 +208,7 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 		hdr.numInterpreters = NUM_INTERPRET;
 		s.syncAsUint16LE(hdr.numInterpreters);
 	} else {
-		if(_vm) // See comment above about bug #3387551
+		if(_vm) // See comment above about bug #5819
 			hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
 		else
 			hdr.numInterpreters = 50; // This value doesn't matter since the saved game is being deleted.

@@ -555,7 +555,7 @@ void ScummEngine::checkExecVerbs() {
 		if (!(_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)) {
 			// This is disabled in the SegaCD version as the "vs->key" values setup
 			// by script-17 conflict with the values expected by the generic keyboard
-			// input script. See tracker item #1193185.
+			// input script. See tracker item #2013.
 			vs = &_verbs[1];
 			for (i = 1; i < _numVerbs; i++, vs++) {
 				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
@@ -617,7 +617,7 @@ void ScummEngine::checkExecVerbs() {
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 
 		// This could be kUnkVirtScreen.
-		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
+		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
 
@@ -699,7 +699,7 @@ void ScummEngine_v2::checkExecVerbs() {
 		const int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 
 		// This could be kUnkVirtScreen.
-		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
+		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
 

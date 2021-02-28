@@ -69,7 +69,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2105220
+{ // Supplied by goodoldgeorg in bug report #3960
 	{
 		"lit",
 		"",
@@ -167,7 +167,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -181,7 +181,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -195,7 +195,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -209,7 +209,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -223,7 +223,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -237,7 +237,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2093672
+{ // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
 		"",
@@ -405,7 +405,7 @@
 
 // -- Mac (Part I and II) --
 
-{ // Supplied by koalet in bug report #2479034
+{ // Supplied by koalet in bug report #4066
 	{
 		"lit",
 		"",

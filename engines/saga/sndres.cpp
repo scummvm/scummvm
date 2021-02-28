@@ -307,7 +307,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		// In ITE CD German, some voices are absent and contain just 5 zero bytes.
 		// Round down to an even number when the audio is 16-bit so makeRawStream
 		// will accept the data (needs to be an even size for 16-bit data).
-		// See bug #1256701
+		// See bug #2123
 
 		if ((soundResourceLength & 1) && (rawFlags & Audio::FLAG_16BITS))
 			soundResourceLength &= ~1;

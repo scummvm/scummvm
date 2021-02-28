@@ -55,7 +55,7 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
-{ // Supplied by misterhands in bug report #3539797
+{ // Supplied by misterhands in bug report #6079
 	{
 		"geisha",
 		"",
@@ -69,7 +69,7 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
-{ // Supplied by einstein95 in bug report #3544449
+{ // Supplied by einstein95 in bug report #6102
 	{
 		"geisha",
 		"",
@@ -83,7 +83,7 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
-{ // Supplied by einstein95 in bug report #3544449
+{ // Supplied by einstein95 in bug report #6102
 	{
 		"geisha",
 		"",
@@ -97,7 +97,7 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
-{ // Supplied by alestedx in bug report #3610207
+{ // Supplied by alestedx in bug report #6269
 	{
 		"geisha",
 		"",

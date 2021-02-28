@@ -165,7 +165,7 @@ static const TonyGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Tony Tough German "Gamestar" provided in bug #3566035
+		// Tony Tough German "Gamestar" provided in bug #6138
 		{
 			"tony",
 			0,
@@ -179,7 +179,7 @@ static const TonyGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Tony Tough Czech provided in bug #3565765
+		// Tony Tough Czech provided in bug #6137
 		{
 			"tony",
 			0,
@@ -207,7 +207,7 @@ static const TonyGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Tony Tough German "Shoe Box", reported in bug #3582420
+		// Tony Tough German "Shoe Box", reported in bug #6174
 		{
 			"tony",
 			0,

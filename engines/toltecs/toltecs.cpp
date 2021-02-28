@@ -483,7 +483,7 @@ void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
 	byte *scanData = _script->getSlotData(slotIndex) + slotOffset;
 
 	// If there's another talk text at the requested slot and it's still
-	// active, don't overwrite it. Fixes bug #3600166.
+	// active, don't overwrite it. Fixes bug #6224.
 	if (_screen->isTalkTextActive(slotIndex))
 		return;
 

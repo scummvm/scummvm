@@ -430,7 +430,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 		if (_monsters[i].flags & 0x40)
 			continue;
 
-		// WORKAROUND for bug #3611077 (Dran's dragon transformation sequence triggered prematurely):
+		// WORKAROUND for bug #6277 (Dran's dragon transformation sequence triggered prematurely):
 		// The boss level and the mindflayer level share the same monster data. If you hang around
 		// long enough in the mindflayer level all 30 monster slots will be used up. When this
 		// happens it will trigger the dragon transformation sequence when Dran is moved around by script.
@@ -459,7 +459,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 }
 
 bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
-	// WORKAROUND for bug #3611077 (see DarkMoonEngine::replaceMonster())
+	// WORKAROUND for bug #6277 (see DarkMoonEngine::replaceMonster())
 	// The mindflayers have monster type 0, just like Dran. Using a monster slot occupied by a mindflayer would trigger the dragon transformation
 	// sequence when all 30 monster slots are used up. We avoid this by checking for m->sub == 1.
 	if (_currentLevel == 16 && _currentSub == 1 && m->sub == 1 && (_monsterProps[m->type].capsFlags & 4)) {

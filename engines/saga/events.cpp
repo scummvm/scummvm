@@ -620,7 +620,7 @@ void Events::clearList(bool playQueuedMusic) {
 		if (!(eventi->front().code & kEvFNoDestory)) {
 			// Handle queued music change events before deleting them
 			// This can happen in IHNM by music events set by sfQueueMusic()
-			// Fixes bug #2057987 - "IHNM: Music stops in Ellen's chapter"
+			// Fixes bug #3880 - "IHNM: Music stops in Ellen's chapter"
 			if (playQueuedMusic && ((eventi->front().code & EVENT_MASK) == kMusicEvent)) {
 				_vm->_music->stop();
 				if (eventi->front().op == kEventPlay)

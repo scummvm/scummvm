@@ -477,7 +477,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool* o
 			// the demo speech files have the uncompressed size
 			// embedded in the compressed stream *sigh*
 			//
-			// But not always, apparently. See bug #2182450. Is
+			// But not always, apparently. See bug #4002. Is
 			// there any way to figure out the size other than
 			// decoding the sound in that case?
 

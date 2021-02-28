@@ -1901,7 +1901,7 @@ void Interface::drawStatusBar() {
 	int stringWidth;
 	int color;
 	// The default colors in the Spanish version of IHNM are shifted by one
-	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)". This
+	// Fixes bug #3498 - "IHNM: Wrong Subtitles Color (Spanish)". This
 	// also applies to the German and French versions (bug #7064 - "IHNM:
 	// text mistake in german version").
 	int offset = (_vm->getFeatures() & GF_IHNM_COLOR_FIX) ? 1 : 0;

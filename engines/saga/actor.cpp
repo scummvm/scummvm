@@ -1061,7 +1061,7 @@ void Actor::drawActors() {
 	}
 
 	// WORKAROUND
-	// Bug #2928923: 'ITE: Graphic Glitches during racoon death "Cut Scene"'
+	// Bug #4746: 'ITE: Graphic Glitches during racoon death "Cut Scene"'
 	if (_vm->_anim->hasCutaway()  || _vm->_scene->currentSceneNumber() == 287 || _vm->_scene->currentSceneNumber() == 286) {
 		drawSpeech();
 		return;

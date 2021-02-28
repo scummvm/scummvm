@@ -41,7 +41,7 @@
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
-{ // Supplied by Collector9 in bug report #3228040
+{ // Supplied by Collector9 in bug report #5611
 	{
 		"urban",
 		"",
@@ -97,7 +97,7 @@
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
-{ // Supplied by alex86r in bug report #3297602
+{ // Supplied by alex86r in bug report #5690
 	{
 		"urban",
 		"",
@@ -111,7 +111,7 @@
 	kFeatures640x480 | kFeaturesTrueColor,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2770340
+{ // Supplied by goodoldgeorg in bug report #4308
 	{
 		"urban",
 		"",

@@ -949,7 +949,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 			player->setDetune(a[2]);
 			return 0;
 		case 6:
-			// WORKAROUND for bug #1324106. When playing the
+			// WORKAROUND for bug #2242. When playing the
 			// "flourishes" as Rapp's body appears from his ashes,
 			// MI2 sets up triggers to pause the music, in case the
 			// animation plays too slowly, and then the music is

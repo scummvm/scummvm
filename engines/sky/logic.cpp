@@ -200,7 +200,7 @@ void Logic::autoRoute() {
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
 	if ((_compact->downFlag == 2) && _skyCompact->cptIsId(_compact, CPT_JOEY) &&
 	   (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
-		   // workaround for script bug #1064113. Details unclear...
+		   // workaround for script bug #1823. Details unclear...
 		   _compact->downFlag = 0;
 	}
 	if (_compact->downFlag != 1) { // route ok
@@ -1176,7 +1176,7 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
 	_compact = tmpComp;
 
 	if (scrNum == MENU_SELECT || (scrNum >= LINC_MENU_SELECT && scrNum <= DOC_MENU_SELECT)) {
-		// HACK: See patch #1689516 for details. The short story:
+		// HACK: See bug #8627 for details. The short story:
 		// The user has clicked on an inventory item.  We update the
 		// mouse cursor instead of waiting for the script to update it.
 		// In the original game the cursor is just updated when the mouse
@@ -1216,7 +1216,7 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 
 		debug(3, "Doing Script: %d:%d:%x", moduleNo, scriptNo & 0xFFF, offset ? (offset - moduleStart[scriptNo & 0xFFF]) : 0);
 
-		// WORKAROUND for bug #3149412: "Invalid Mode when giving shades to travel agent"
+		// WORKAROUND for bug #5567: "Invalid Mode when giving shades to travel agent"
 		// Using the dark glasses on Trevor (travel agent) multiple times in succession would
 		// wreck the trevor compact's mode, as the script in question doesn't account for using
 		// this item at this point in the game (you will only have it here if you play the game
@@ -1683,7 +1683,7 @@ bool Logic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
-	/* WORKAROUND for #2687172: When Mrs. Piermont is talking
+	/* WORKAROUND for #4230: When Mrs. Piermont is talking
 	   on the phone in her apartment, ignore her fnSpeakMe calls
 	   on other screens, as the lack of speech files for these lines
 	   will cause Foster's speech to be aborted if the timing is bad.

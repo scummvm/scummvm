@@ -484,7 +484,7 @@ void ToucheEngine::op_updateRoom() {
 	int16 area = _script.readNextWord();
 	updateRoomAreas(area, 0);
 
-	// Workaround for bug #1618700. Beggar sign (area 25) should be displayed even
+	// Workaround for bug #2952. Beggar sign (area 25) should be displayed even
 	// if Henri isn't present in the room.
 	//
 	//  [00B3] (1D) ST[0] = FLAGS[2]
@@ -551,7 +551,7 @@ void ToucheEngine::op_initKeyCharScript() {
 	setKeyCharTextColor(keyChar, color);
 	initKeyCharScript(keyChar, f1, f2, f3);
 
-	// Workaround for bug #1622114. KeyChar 3 script must be running in order to complete the
+	// Workaround for bug #2962. KeyChar 3 script must be running in order to complete the
 	// rope+torch puzzle.
 	//
 	// FLAG[500] : 1 if Cardinal cutscene has already been played
@@ -782,7 +782,7 @@ void ToucheEngine::op_addItemToInventoryAndRedraw() {
 		keyChar = _currentKeyCharNum;
 	}
 
-	// Workaround for bug #1623356. The original script allows you to either use the
+	// Workaround for bug #2966. The original script allows you to either use the
 	// "waxy knife" (object 72) or the dagger (object 7) on the rope. But in both
 	// situations, only the dagger is put back in the inventory.
 	//
@@ -842,7 +842,7 @@ void ToucheEngine::op_fadePalette() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_fadePalette()");
 	int16 fadeOut = _script.readNextWord();
 	int colorsCount = 240;
-	// Workaround for bug #1751149. Script triggers a palette fading, but some
+	// Workaround for bug #3305. Script triggers a palette fading, but some
 	// of the room graphics use palette colors >= 240.
 	if (_currentEpisodeNum == 104 && _currentRoomNum == 68) {
 		colorsCount = 256;

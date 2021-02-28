@@ -113,7 +113,7 @@ void Render::drawScene() {
 			}
 
 			// WORKAROUND
-			// Bug #2886130: "ITE: Graphic Glitches during Cat Tribe Celebration"
+			// Bug #4684: "ITE: Graphic Glitches during Cat Tribe Celebration"
 			if (_vm->_scene->currentSceneNumber() == 274) {
 				_vm->_interface->drawStatusBar();
 			}

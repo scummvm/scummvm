@@ -105,7 +105,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOASPECT)
 	},
 	// Hungarian "psylog" version.
-	// Submitted by goodoldgeorg in bug report #3428644.
+	// Submitted by goodoldgeorg in bug report #5888.
 	{
 		"sword25",
 		"psylog version",

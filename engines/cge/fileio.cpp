@@ -218,7 +218,7 @@ EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name) : _vm(vm) {
 		// SPR files have some inconsistencies. Some have extra 0x1A at the end, some others
 		// do not have a carriage return at the end of the last line
 		// Therefore, we remove this ending 0x1A and add extra new lines.
-		// This fixes bug #3537527
+		// This fixes bug #6060
 		dataBuffer = (byte *)malloc(kp->_size + 2);
 		_vm->_resman->read(dataBuffer, kp->_size);
 		if (dataBuffer[kp->_size - 1] == 0x1A)

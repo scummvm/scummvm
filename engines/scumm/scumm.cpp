@@ -2002,7 +2002,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformDOS && (_sound->_musicType == MDT_ADLIB) && (_game.id == GID_LOOM || _game.id == GID_INDY3)) {
 		// For Indy3 DOS and Loom DOS we use an implementation of the original
 		// AD player when AdLib is selected. This fixes sound effects in those
-		// games (see for example bug #2027877 "INDY3: Non-Looping Sound
+		// games (see for example bug #3830 "INDY3: Non-Looping Sound
 		// Effects"). The player itself is also used in Monkey Island DOS
 		// EGA/VGA. However, we support multi MIDI for that game and we cannot
 		// support this with the Player_AD code at the moment. The reason here
@@ -2439,9 +2439,9 @@ void ScummEngine::scummLoop_updateScummVars() {
 		// WORKAROUND:
 		// Since there are 2 2-stripes wide borders in MM NES screen,
 		// we have to compensate for it here. This fixes paning effects.
-		// Fixes bug #1328120: "MANIACNES: Screen width incorrect, camera halts sometimes"
+		// Fixes bug #2266: "MANIACNES: Screen width incorrect, camera halts sometimes"
 		// But do not do it when only scrolling right to left, since otherwise Ed will not show
-		// up on the doorbell (Bug #3039004)
+		// up on the doorbell (Bug #5126)
 		if (VAR(VAR_CAMERA_POS_X) < (camera._cur.x >> V12_X_SHIFT) + 2)
 			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
 		else
@@ -2467,7 +2467,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 	} else if (_game.version >= 1) {
 		// We use shifts below instead of dividing by V12_X_MULTIPLIER resp.
 		// V12_Y_MULTIPLIER to handle negative coordinates correctly.
-		// This fixes e.g. bugs #1328131 and #1537595.
+		// This fixes e.g. bugs #2268 and #2777.
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x >> V12_X_SHIFT;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y >> V12_Y_SHIFT;
 

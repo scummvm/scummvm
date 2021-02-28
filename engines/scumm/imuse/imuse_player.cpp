@@ -390,7 +390,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 		} else {
 			// SysEx manufacturer 0x97 has been spotted in the
 			// Monkey Island 2 AdLib music, so don't make this a
-			// fatal error. See bug #1481383.
+			// fatal error. See bug #2595.
 			// The Macintosh version of Monkey Island 2 simply
 			// ignores these SysEx events too.
 			if (a == 0)

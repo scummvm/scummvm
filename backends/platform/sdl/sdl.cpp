@@ -563,7 +563,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 	// Restore default C locale to prevent issues with
 	// portability of sscanf(), atof(), etc.
-	// See bug #3615148
+	// See bug #6434
 	setlocale(LC_ALL, "C");
 
 	// Detect the language from the locale
@@ -730,7 +730,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		// Very hacky way to set up the old graphics manager state, in case we
 		// switch from SDL->OpenGL or OpenGL->SDL.
 		//
-		// This is a probably temporary workaround to fix bugs like #3368143
+		// This is a probably temporary workaround to fix bugs like #5799
 		// "SDL/OpenGL: Crash when switching renderer backend".
 		//
 		// It's also used to restore state from 3D to 2D GFX manager

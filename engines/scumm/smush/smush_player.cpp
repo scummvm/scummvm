@@ -275,7 +275,7 @@ void SmushPlayer::init(int32 speed) {
 	_dst = vs->getPixels(0, 0);
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
-	// We do this to fix bug #1037052. A proper solution would change all the
+	// We do this to fix bug #1792. A proper solution would change all the
 	// drawing code to use the pitch value specified by the virtual screen.
 	// However, since a lot of the SMUSH code currently assumes the screen
 	// width and pitch to be equal, this will require lots of changes. So
@@ -535,7 +535,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	//
 	// Query ConfMan here. However it may be slower, but
 	// player may want to switch the subtitles on or off during the
-	// playback. This fixes bug #1550974
+	// playback. This fixes bug #2812
 	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
@@ -579,7 +579,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		}
 	}
 
-	// HACK. This is to prevent bug #1310846. In updated Win95 dig
+	// HACK. This is to prevent bug #2220. In updated Win95 dig
 	// there is such line:
 	//
 	// ^f01^c001LEAD TESTER
@@ -1249,7 +1249,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			skipped = 0;
 		if (_updateNeeded) {
 			if (!skipFrame) {
-				// Workaround for bug #1386333: "FT DEMO: assertion triggered
+				// Workaround for bug #2415: "FT DEMO: assertion triggered
 				// when playing movie". Some frames there are 384 x 224
 				int w = MIN(_width, _vm->_screenWidth);
 				int h = MIN(_height, _vm->_screenHeight);

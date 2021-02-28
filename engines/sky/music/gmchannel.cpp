@@ -62,7 +62,7 @@ void GmChannel::updateVolume(uint16 pVolume) {
 void GmChannel::stopNote() {
 	// All Notes Off
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
-	// Reset the Pitch Wheel. See bug #1016556.
+	// Reset the Pitch Wheel. See bug #1742.
 	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0x400000);
 }
 

@@ -149,7 +149,7 @@ DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist
 	// video data files will be ignored. Note that this fix will skip the game
 	// data files if the user has placed them inside a "clusters" subdirectory,
 	// or if he/she points ScummVM directly to the "clusters" directory of the
-	// game CD. Fixes bug #3049346.
+	// game CD. Fixes bug #5274.
 	if (!fslist.empty()) {
 		Common::String directory = fslist[0].getParent().getName();
 		if (directory.hasPrefixIgnoreCase("clusters") && directory.size() <= 9)

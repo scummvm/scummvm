@@ -427,7 +427,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->trackId = track->trackId + MAX_DIGITAL_TRACKS;
 
 	// Clone the sound.
-	// leaving bug number for now #1635361
+	// leaving bug number for now #3005
 	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
 	if (!soundDesc) {
 		// it fail load open old song after switch to different CDs

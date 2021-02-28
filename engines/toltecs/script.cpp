@@ -484,7 +484,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		break;
 	default:
 		// Most likely a script bug. Throw a warning and ignore it.
-		// The original ignores invalid opcodes as well - bug #3604025.
+		// The original ignores invalid opcodes as well - bug #6244.
 		warning("Invalid opcode %d", opcode);
 	}
 

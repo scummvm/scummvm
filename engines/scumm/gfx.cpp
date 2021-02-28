@@ -306,7 +306,7 @@ void GdiV1::roomChanged(byte *roomptr) {
 	decodeV1Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _V1.maskMap, roomptr[4] * roomptr[5]);
 
 	// Read the mask data. The 16bit length value seems to always be 8 too big.
-	// See bug #1837375 for details on this.
+	// See bug #3458 for details on this.
 	const byte *maskPtr = roomptr + READ_LE_UINT16(roomptr + 18);
 	decodeV1Gfx(maskPtr + 2, _V1.maskChar, READ_LE_UINT16(maskPtr) - 8);
 	_objectMode = true;
@@ -1318,7 +1318,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	width = x2 - x;
 	height = y2 - y;
 
-	// This will happen in the Sam & Max intro - see bug #1039162 - where
+	// This will happen in the Sam & Max intro - see bug #1797 - where
 	// it would trigger an assertion in blit().
 
 	if (width <= 0 || height <= 0)
@@ -3752,7 +3752,7 @@ void GdiHE16bit::writeRoomColor(byte *dst, byte color) const {
 #endif
 
 void Gdi::writeRoomColor(byte *dst, byte color) const {
-	// As described in bug #1294513 "FOA/Amiga: Palette problem (Regression)"
+	// As described in bug #2204 "FOA/Amiga: Palette problem (Regression)"
 	// the original AMIGA version of Indy4: The Fate of Atlantis allowed
 	// overflowing of the palette index. To have the same result in our code,
 	// we need to do an logical AND 0xFF here to keep the result in [0, 255].

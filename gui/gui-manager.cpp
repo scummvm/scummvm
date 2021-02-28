@@ -421,7 +421,7 @@ void GuiManager::runLoop() {
 
 	// WORKAROUND: When quitting we might not properly close the dialogs on
 	// the dialog stack, thus we do this here to avoid any problems.
-	// This is most noticable in bug #3481395 "LAUNCHER: Can't quit from unsupported game dialog".
+	// This is most noticable in bug #5954 "LAUNCHER: Can't quit from unsupported game dialog".
 	// It seems that Dialog::runModal never removes the dialog from the dialog
 	// stack, thus if the dialog does not call Dialog::close to close itself
 	// it will never be removed. Since we can have multiple run loops being

@@ -265,7 +265,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by DjDiabolik in bug report #1971294
+{ // Supplied by DjDiabolik in bug report #3737
 	{
 		"woodruff",
 		"",
@@ -279,7 +279,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by DjDiabolik in bug report #1971294
+{ // Supplied by DjDiabolik in bug report #3737
 	{
 		"woodruff",
 		"",
@@ -293,7 +293,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by DjDiabolik in bug report #1971294
+{ // Supplied by DjDiabolik in bug report #3737
 	{
 		"woodruff",
 		"",
@@ -307,7 +307,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by DjDiabolik in bug report #1971294
+{ // Supplied by DjDiabolik in bug report #3737
 	{
 		"woodruff",
 		"",
@@ -321,7 +321,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by DjDiabolik in bug report #1971294
+{ // Supplied by DjDiabolik in bug report #3737
 	{
 		"woodruff",
 		"",
@@ -335,7 +335,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2098838
+{ // Supplied by goodoldgeorg in bug report #3950
 	{
 		"woodruff",
 		"",

@@ -1316,7 +1316,7 @@ void TuckerEngine::updateData3() {
 				a->_drawFlag = false;
 			}
 			if (_location == kLocationStoreRoom && i == 0) {
-				// workaround bug #2872385: update fish animation sequence for correct
+				// workaround bug #4642: update fish animation sequence for correct
 				// position in aquarium.
 				if (a->_animInitCounter == 505 && a->_animCurrentCounter == 513) {
 					a->_animCurrentCounter = 525;

@@ -73,7 +73,7 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 				// to determine, only used in one single song
 				// in EGA Loom. It seems to be meant for adding
 				// values greater than 255 to info.delta. See
-				// bug #1498785.
+				// bug #2650.
 				info.delta += 256;
 			}
 			continue;

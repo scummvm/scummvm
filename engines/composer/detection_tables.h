@@ -23,7 +23,7 @@
 namespace Composer {
 
 static const ComposerGameDescription gameDescriptions[] = {
-	// Magic Tales: Baba Yaga and the Magic Geese - from bug #3485018
+	// Magic Tales: Baba Yaga and the Magic Geese - from bug #5964
 	{
 		{
 			"babayaga",
@@ -40,7 +40,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #3466402, #7025
+	// Magic Tales: Baba Yaga and the Magic Geese Mac - from bug #5934, #7025
 	{
 		{
 			"babayaga",
@@ -75,7 +75,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Imo and the King - from bug #3485018
+	// Magic Tales: Imo and the King - from bug #5964
 	{
 		{
 			"imoking",
@@ -194,7 +194,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: Imo and the King Mac - from bug #3466402
+	// Magic Tales: Imo and the King Mac - from bug #5934
 	{
 		{
 			"imoking",
@@ -229,7 +229,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: The Little Samurai - from bug #3485018
+	// Magic Tales: The Little Samurai - from bug #5964
 	{
 		{
 			"littlesamurai",
@@ -246,7 +246,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
-	// Magic Tales: The Little Samurai Mac - from bug #3466402
+	// Magic Tales: The Little Samurai Mac - from bug #5934
 	{
 		{
 			"littlesamurai",
@@ -365,7 +365,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
-	// Liam Finds a Story Mac - from bug #3463201
+	// Liam Finds a Story Mac - from bug #5931
 	{
 		{
 			"liam",
@@ -581,7 +581,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
-	// The Princess and the Crab Mac - From Bug #3461984
+	// The Princess and the Crab Mac - From Bug #5928
 	{
 		{
 			"princess",
@@ -616,7 +616,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
-	// Sleeping Cub Mac - From Bug #3461369
+	// Sleeping Cub Mac - From Bug #5927
 	{
 		{
 			"sleepingcub",

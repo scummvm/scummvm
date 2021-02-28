@@ -216,7 +216,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 3], 0, 3);
 
-	// Make 256th color black. See bug #1256368
+	// Make 256th color black. See bug #2120
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 3], 0, 3);
 
@@ -320,7 +320,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 3], 0, 3);
 
-	// Make 256th color black. See bug #1256368
+	// Make 256th color black. See bug #2120
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 3], 0, 3);
 
@@ -386,7 +386,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	if (_vm->getGameId() == GID_IHNM)
 		memset(&_currentPal[0 * 3], 0, 3);
 
-	// Make 256th color black. See bug #1256368
+	// Make 256th color black. See bug #2120
 	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 3], 0, 3);
 

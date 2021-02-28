@@ -58,7 +58,7 @@
 
 // -- DOS VGA Floppy (3 disks) --
 
-{ // Supplied by alex86r in bug report #3297633
+{ // Supplied by alex86r in bug report #5691
 	{
 		"fascination",
 		"VGA 3 disks edition",
@@ -100,7 +100,7 @@
 	kFeaturesAdLib,
 	"intro.stk", 0, 0
 },
-{ // Supplied by windlepoons in bug report #2809247
+{ // Supplied by windlepoons in bug report #4371
 	{
 		"fascination",
 		"VGA 3 disks edition",

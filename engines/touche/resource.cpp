@@ -539,7 +539,7 @@ void ToucheEngine::res_loadBackdrop() {
 			break;
 		}
 	}
-	// Workaround for bug #1751149 (original bitmap has a white pixel in its transparent area).
+	// Workaround for bug #3305 (original bitmap has a white pixel in its transparent area).
 	if (_currentRoomNum == 8 && _currentBitmapWidth == 860) {
 		_backdropBuffer[120 * _currentBitmapWidth + 734] = 0;
 	}

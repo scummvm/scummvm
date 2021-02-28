@@ -945,7 +945,7 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 	}
 
 #ifdef ENABLE_IHNM
-	// WORKAROUND for script bug #3358007 in IHNM. When the zeppelin is landing
+	// WORKAROUND for script bug #5788 in IHNM. When the zeppelin is landing
 	// and the player attempts to exit from the right door in room 13, the game
 	// scripts change to scene 5, but do not clear the cutaway that appears
 	// before Gorrister's speech starts, resulting in a deadlock. We do this
@@ -1397,7 +1397,7 @@ void Script::doVerb() {
 	// Edna" action altogether, because if the player wants to kill Edna, he can do that by talking to her and
 	// choosing "[Cut out Edna's heart]", which works correctly. To disable this action, if the knife is used on Edna, we
 	// change the action here to "use knife with the knife", which yields a better reply ("I'd just dull my knife").
-	// Fixes bug #1826871 - "IHNM: Edna's got two hearts but loves to be on the hook"
+	// Fixes bug #3449 - "IHNM: Edna's got two hearts but loves to be on the hook"
 	if (_vm->getGameId() == GID_IHNM && _pendingObject[0] == 16385 && _pendingObject[1] == 8197 && _pendingVerb == 4)
 		_pendingObject[1] = 16385;
 
@@ -1573,7 +1573,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		if (hitZone->getFlags() & kHitZoneProject) {
 			if (!hitZone->getSpecialPoint(specialPoint)) {
 				// Original behaved this way and this prevents from crash
-				// at ruins. See bug #1257459
+				// at ruins. See bug #2134
 				specialPoint.x = specialPoint.y = 0;
 			}
 

@@ -198,7 +198,7 @@ void Sound::playSound(int soundID) {
 			// The original game had hard-coded lengths for all
 			// tracks, but this one track is the only one (as far
 			// as we know) where this actually matters. See bug
-			// #3024173 - LOOM-PCE: Music stops prematurely.
+			// #4914 - LOOM-PCE: Music stops prematurely.
 
 			int track = tracks[soundID - 13];
 			if (track == 6) {

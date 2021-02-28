@@ -683,7 +683,7 @@ int loadAni(const char *resourceName, int16 idx, int16 frameIndex) {
 	// TODO: Merge this special case hack into getAnimTransparentColor somehow.
 	// HACK: Versions of TITRE.ANI with height 37 use color 0xF for transparency.
 	//       Versions of TITRE.ANI with height 57 use color 0x0 for transparency.
-	//       Fixes bug #2057619: FW: Glitches in title display of demo (regression).
+	//       Fixes bug #3875: FW: Glitches in title display of demo (regression).
 	if (hacksEnabled && scumm_stricmp(resourceName, "TITRE.ANI") == 0 && animHeader.frameHeight == 37) {
 		transparentColor = 0xF;
 	}

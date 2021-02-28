@@ -193,7 +193,7 @@ bool Music::PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		if (midiStream.read(_midiBuffer.pDat, dwSeqLen) != dwSeqLen)
 			error(FILE_IS_CORRUPT, MIDI_FILE);
 
-		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
+		// WORKAROUND for bug #4393 "DW1: No intro music at first start on Wii",
 		// which actually affects all ports, since it's specific to the GRA version.
 		//
 		// The GRA version does not seem to set the channel volume at all for the first

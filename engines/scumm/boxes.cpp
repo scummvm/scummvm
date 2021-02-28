@@ -516,7 +516,7 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// Since this method is called by many other methods that take params
 	// from e.g. script opcodes, but do not validate the boxnum, we
 	// make a check here to filter out invalid boxes.
-	// See also bug #1599113.
+	// See also bug #2914.
 	if (boxnum < 0 || boxnum == Actor::kInvalidBox)
 		return false;
 
@@ -1254,7 +1254,7 @@ void Actor_v3::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::P
 	// next box (box2) = final box?
 	if (box2 == finalBox) {
 		// In Indy3, the masks (= z-level) have to match, too -- needed for the
-		// 'maze' in the zeppelin (see bug #1032964).
+		// 'maze' in the zeppelin (see bug #1778).
 		if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
 			if (compareSlope(_pos, _walkdata.dest, gateA[0]) !=
