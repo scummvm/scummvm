@@ -34,6 +34,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/trecision.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -98,7 +99,7 @@ int read3D(const char *c) {
 
 	initSortPan();
 
-	init3DRoom(CurRoomMaxX, Video2, ZBuffer);
+	init3DRoom(CurRoomMaxX, g_vm->_video2, ZBuffer);
 	setClipping(0, TOP, CurRoomMaxX, AREA + TOP);
 
 	return (10L);
@@ -1221,12 +1222,11 @@ float dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
 					PutPixel
 --------------------------------------------------*/
 void putPix(int x, int y, uint16 c) {
-	extern uint16 *Video2;
 	extern uint16 *ImagePointer;
 	extern uint16 *SmackImagePointer;
 
 	if ((x >  0) && (x < CurRoomMaxX) && (y > 60) && (y < 420)) {
-		Video2[x + CurRoomMaxX * y] = c;
+		g_vm->_video2[x + CurRoomMaxX * y] = c;
 		ImagePointer[x + CurRoomMaxX * (y - 60)] = c;
 		SmackImagePointer[x + CurRoomMaxX * (y - 60)] = c;
 	}
@@ -1478,7 +1478,7 @@ void viewPanel(SPan *p) {
 	}
 
 	if (p->_flags & (1 << 28))
-		col = PalTo16bit(233, 238, 21);
+		col = g_vm->_graphicsMgr->palTo16bit(233, 238, 21);
 
 	pointProject(p->_x1, 0.0, p->_z1);
 	projVerts[0][0] = _x2d;

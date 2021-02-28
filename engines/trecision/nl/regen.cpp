@@ -31,6 +31,7 @@
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -139,7 +140,7 @@ void PaintScreen(uint8 flag) {
 			DrawObj(DObj);
 		} else {
 			for (a = (DObj.l[1] + TOP); a < (DObj.l[3] + TOP); a++)
-				wordset(Video2 + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]));
+				wordset(g_vm->_video2 + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]));
 		}
 		oldString.sign = NULL;
 
@@ -254,14 +255,13 @@ void PaintScreen(uint8 flag) {
 		VMouseCopy();
 		for (a = 0; a < BlockCount; a++) {
 //			if ( fillviola )
-//				wordset( Video2+(PaintBlock[a]&0xFFFFF), 0x0e0e, ((PaintBlock[a]&0xFFF00000)>>20)&0xFFF );
+//				wordset( _video2+(PaintBlock[a]&0xFFFFF), 0x0e0e, ((PaintBlock[a]&0xFFF00000)>>20)&0xFFF );
 
-			VCopy((PaintBlock[a] & 0xFFFFF), Video2 + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
+			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_video2 + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
 		}
 		VMouseRestore();
-		UnlockVideo();
+		g_vm->_graphicsMgr->unlock();
 
-//		ShowScreen(0,0,640,480);
 	}
 
 	framenum ++;

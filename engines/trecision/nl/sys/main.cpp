@@ -35,6 +35,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -43,13 +44,10 @@ int16 wmx = 0, wmy = 0;
 bool wmleft = false, wmright = false;
 int16 omx = 0, omy = 0;
 
-bool videoLocked = false;
-Graphics::PixelFormat _screenFormat;
-bool _linearMode, _gamePaused = false;
+bool _gamePaused = false;
 
 extern int16 mx, my;
 extern bool mleft, mright;
-extern uint16		*_video, VideoPitch;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
@@ -68,19 +66,8 @@ void AnimFileFinish();
 void SpeechFileFinish();
 void VMouseON();
 void VMouseOFF();
-void clearScreen();
-void UnlockVideo();
 char waitKey();
-void ShowScreen(int px, int py, int dx, int dy);
 void wordset(void *dest, uint16 value, uint32 len);
-
-void GetColorMask(const Graphics::PixelFormat &format) {
-	extern unsigned short _bitMask[3];
-
-	_bitMask[0] = format.rMax() << format.rShift;
-	_bitMask[1] = format.gMax() << format.gShift;
-	_bitMask[2] = format.bMax() << format.bShift;
-}
 
 void EventLoop() {
 	Common::Event event;
@@ -143,12 +130,6 @@ void EventLoop() {
 }
 
 void NlInit() {
-	clearScreen();
-
-	_screenFormat = g_system->getScreenFormat();
-	GetColorMask(_screenFormat);
-
-	_linearMode = true;
 	initMain();
 
 	while (!g_engine->shouldQuit()) {
@@ -165,31 +146,6 @@ void CheckSystem() {
 	{
 		RefreshAllAnimations();
 		EventLoop();
-	}
-}
-
-/*-----------------16/01/97 16.21-------------------
-					lockVideo
---------------------------------------------------*/
-void lockVideo() {
-	if (!videoLocked) {
-		Graphics::Surface *surface = g_system->lockScreen();
-		_video = (uint16 *)surface->getPixels();
-		VideoPitch = surface->pitch;
-
-		videoLocked = true;
-	}
-}
-
-/*-----------------16/01/97 16.21-------------------
-					UnlockVideo
---------------------------------------------------*/
-void UnlockVideo() {
-	if (videoLocked) {
-		g_system->unlockScreen();
-		videoLocked = false;
-		VideoPitch = 0;
-		_video = nullptr;
 	}
 }
 
@@ -246,20 +202,6 @@ void FreeKey() {
 }
 
 /*-----------------10/12/95 15.52-------------------
-					clearScreen
---------------------------------------------------*/
-void clearScreen() {
-	lockVideo();
-	if (_video == nullptr)
-		return ;
-	if ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))
-		longset(_video, 0x00000000, 320 * 480);
-	else
-		longset(_video, 0x00000000, (VideoPitch / 4) * 480);
-	UnlockVideo();
-}
-
-/*-----------------10/12/95 15.52-------------------
 					ReadTime
 --------------------------------------------------*/
 uint32 ReadTime() {
@@ -280,7 +222,6 @@ void NlDelay(uint32 val) {
  * 					NlDissolve
  * --------------------------------------------------*/
 void NlDissolve(int val) {
-	extern uint16 *Video2;
 	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
 	int sv = ReadTime(), cv;
 
@@ -299,9 +240,9 @@ void NlDissolve(int val) {
 		float y = b;
 
 		if ((CenterY - (int)y) > TOP)
-			wordset(Video2 + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP)*MAXX);
+			wordset(g_vm->_video2 + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP)*MAXX);
 		if ((AREA + TOP) > (CenterY + (int)y))
-			wordset(Video2 + (CenterY + (int)y)*MAXX, 0, (AREA + TOP - (CenterY + (int)y))*MAXX);
+			wordset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
 		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
@@ -314,13 +255,13 @@ void NlDissolve(int val) {
 			x += 1.0f;
 
 			if ((CenterX + (int)x) < MAXX)
-				wordset(Video2 + CenterX + (int)x + (CenterY + (int)y)*MAXX, 0, MAXX - (CenterX + (int)x));
+				wordset(g_vm->_video2 + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, MAXX - (CenterX + (int)x));
 			if ((CenterX + (int)x) < MAXX)
-				wordset(Video2 + CenterX + (int)x + (CenterY - (int)y)*MAXX, 0, MAXX - (CenterX + (int)x));
+				wordset(g_vm->_video2 + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, MAXX - (CenterX + (int)x));
 			if ((CenterX - (int)x) > 0)
-				wordset(Video2 + (CenterY + (int)y)*MAXX, 0, (CenterX - (int)x));
+				wordset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x));
 			if ((CenterX - (int)x) > 0)
-				wordset(Video2 + (CenterY - (int)y)*MAXX, 0, (CenterX - (int)x));
+				wordset(g_vm->_video2 + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x));
 		}
 
 		float d2 = b * b * (x + 0.5f) * (x + 0.5f) + a * a * (y - 1.0f) * (y - 1.0f) - a * a * b * b;
@@ -333,20 +274,20 @@ void NlDissolve(int val) {
 			y -= 1.0f;
 
 			if ((CenterX + (int)x) < MAXX)
-				wordset(Video2 + CenterX + (int)x + (CenterY + (int)y)*MAXX, 0, MAXX - (CenterX + (int)x));
+				wordset(g_vm->_video2 + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, MAXX - (CenterX + (int)x));
 			if ((CenterX + (int)x) < MAXX)
-				wordset(Video2 + CenterX + (int)x + (CenterY - (int)y)*MAXX, 0, MAXX - (CenterX + (int)x));
+				wordset(g_vm->_video2 + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, MAXX - (CenterX + (int)x));
 			if ((CenterX - (int)x) > 0)
-				wordset(Video2 + (CenterY + (int)y)*MAXX, 0, (CenterX - (int)x));
+				wordset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x));
 			if ((CenterX - (int)x) > 0)
-				wordset(Video2 + (CenterY - (int)y)*MAXX, 0, (CenterX - (int)x));
+				wordset(g_vm->_video2 + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x));
 		}
 
 
-		ShowScreen(0, 0, MAXX, MAXY);
+		g_vm->_graphicsMgr->showScreen(0, 0, MAXX, MAXY);
 	}
 
-	clearScreen();
+	g_vm->_graphicsMgr->clearScreen();
 }
 
 /*-----------------10/12/95 15.25-------------------

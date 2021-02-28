@@ -77,8 +77,8 @@ struct SDObj {
 	uint16 *buf;
 	uint8 *mask;
 	uint8 flag;         /* 0 - with mask
-                            1 - copy to Video
-                            2 - copy to Video2 */
+                            1 - copy to _screenPtr
+                            2 - copy to _video2 */
 
 };
 
@@ -98,9 +98,6 @@ struct SFileHandle {
 
 // FUNCTIONS
 
-// VIDEO
-extern uint16 *_video, VideoPitch;
-extern uint16 *Video2;
 // GAME POINTER
 extern uint16 *ImagePointer;
 extern uint16 *SmackImagePointer;

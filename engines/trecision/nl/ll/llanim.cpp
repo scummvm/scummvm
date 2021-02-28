@@ -32,6 +32,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
+#include "trecision/graphics.h"
 
 // locals
 #define SMACKNULL	0
@@ -56,99 +57,6 @@ uint16 _playingAnims[MAXSMACK];
 uint16 _curAnimFrame[MAXSMACK];
 
 uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
-uint16 _newData[260];
-uint32 _newData2[260];
-
-/*-----------------29/04/96 16.38-------------------
-					BCopy
---------------------------------------------------*/
-void BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
-	extern bool _linearMode;
-
-	lockVideo();
-	if ((_video == nullptr) || (Len == 0))
-		return ;
-
-	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
-		byte2word(_video + Sco, Src, _newData, Len);
-		return ;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 EndSco = Sco + Len;
-
-	int32 y2 = EndSco / SCREENLEN;
-
-	uint32 SrcSco = 0;
-
-	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	byte2word(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData, CopyNow);
-	SrcSco += CopyNow;
-	Len -= CopyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		CopyNow = SCREENLEN;
-		byte2word(_video + i * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
-		SrcSco += CopyNow;
-		Len -= CopyNow;
-	}
-
-	if (Len > 0) {
-		CopyNow = Len;
-		byte2word(_video + y2 * (VideoPitch / 2), Src + SrcSco, _newData, CopyNow);
-		// Useless assignations, removed
-		// SrcSco += CopyNow;
-		// Len -= CopyNow;
-	}
-}
-/*-----------------29/04/96 16.38-------------------
-					DCopy
---------------------------------------------------*/
-void DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
-	extern bool _linearMode;
-
-	lockVideo();
-	if ((_video == nullptr) || (Len == 0))
-		return ;
-
-	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
-		byte2long(_video + Sco, Src, _newData2, Len / 2);
-		return ;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 EndSco = Sco + Len;
-
-	int32 y2 = EndSco / SCREENLEN;
-
-	uint32 SrcSco = 0;
-
-	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	byte2long(_video + y1 * (VideoPitch / 2) + x1, Src + SrcSco, _newData2, CopyNow / 2);
-	SrcSco += CopyNow;
-	Len -= CopyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		CopyNow = SCREENLEN;
-		byte2long(_video + i * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
-		SrcSco += CopyNow;
-		Len -= CopyNow;
-	}
-
-	if (Len > 0) {
-		CopyNow = Len;
-		byte2long(_video + y2 * (VideoPitch / 2), Src + SrcSco, _newData2, CopyNow / 2);
-		// Useless assignment, removed
-		// SrcSco += CopyNow;
-		// Len -= CopyNow;
-	}
-}
 
 /*-----------------17/11/96 14.46-------------------
 					StartSmackAnim
@@ -308,12 +216,12 @@ void StartFullMotion(const char *name) {
 	FullStart = 0;
 	FullEnd = 0;
 	TextStatus = TEXT_OFF;
-	wordset(Video2, 0, TOP * MAXX);
-	ShowScreen(0, 0, MAXX, TOP);
-	wordset(Video2 + (TOP + AREA)*MAXX, 0, TOP * MAXX);
-	wordset(Video2, 0, MAXX * MAXY);
-	ShowScreen(0, AREA + TOP, MAXX, TOP);
-	UnlockVideo();
+	wordset(g_vm->_video2, 0, TOP * MAXX);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	wordset(g_vm->_video2 + (TOP + AREA) * MAXX, 0, TOP * MAXX);
+	wordset(g_vm->_video2, 0, MAXX * MAXY);
+	g_vm->_graphicsMgr->showScreen(0, AREA + TOP, MAXX, TOP);
+	g_vm->_graphicsMgr->unlock();
 
 	g_vm->_gameQueue.initQueue();
 	g_vm->_animQueue.initQueue();
@@ -422,10 +330,10 @@ void RedrawRoom() {
 	memset(OldObjStatus, 0, MAXOBJINROOM);
 	memset(VideoObjStatus, 0, MAXOBJINROOM);
 
-	wordset(Video2, 0, CurRoomMaxX * MAXY);
+	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
-	MCopy(Video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
@@ -440,7 +348,7 @@ void RedrawRoom() {
 	TextStatus = TEXT_OFF;
 	FlagPaintCharacter = true;
 	PaintScreen(1);
-	ShowScreen(0, 0, 640, 480);
+	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
 }
 
 } // End of namespace Trecision

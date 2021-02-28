@@ -35,6 +35,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -48,9 +49,6 @@ int VertexNum, FaceNum, MatNum, LightNum;
 #define SOUND_ON		1
 
 int MaxMemory = 0;
-// VIDEO
-uint16 *_video, VideoPitch;
-uint16 *Video2;
 // GAME POINTER
 uint16 *ImagePointer;
 uint16 *SmackImagePointer;
@@ -147,7 +145,7 @@ void openSys() {
 	MemoryArea = (uint8 *)malloc(CurBufferSize);
 
 	memset(MemoryArea, 0, CurBufferSize);
-	Video2 = (uint16 *)MemoryArea;
+	g_vm->_video2 = (uint16 *)MemoryArea;
 
 	TotalMemory = CurBufferSize;
 
@@ -167,7 +165,7 @@ void OpenVideo() {
 	sprintf(UStr, "NlAnim.cd%c", CurCDSet+'0');
 	AnimFileInit(UStr);
 
-	Video2 = (uint16 *)MemoryArea + 2000000L;
+	g_vm->_video2 = (uint16 *)MemoryArea + 2000000L;
 
 	Font = (uint8 *)MemoryArea + GameBytePointer;
 	ff = FastFileOpen("NlFont.fnt");
@@ -183,7 +181,7 @@ void OpenVideo() {
 	ff = FastFileOpen("frecc.bm");
 	GameBytePointer += FastFileRead(ff, (void *)Arrows, FastFileLen(ff));
 	FastFileClose(ff);
-	UpdatePixelFormat(Arrows, 64000);
+	g_vm->_graphicsMgr->updatePixelFormat(Arrows, 64000);
 
 	Icone = (uint16 *)(MemoryArea + GameBytePointer);
 	wordset(Icone, 0, ICONDX * ICONDY);
@@ -191,7 +189,7 @@ void OpenVideo() {
 	ff = FastFileOpen("icone.bm");
 	GameBytePointer += FastFileRead(ff, (void *)(Icone + ICONDX * ICONDY), FastFileLen(ff));
 	FastFileClose(ff);
-	UpdatePixelFormat(Icone + ICONDX * ICONDY, 500000);
+	g_vm->_graphicsMgr->updatePixelFormat(Icone + ICONDX * ICONDY, 500000);
 	GameBytePointer += (ICONDX * ICONDY * 2 * INVICONNUM);
 
 	//
@@ -275,13 +273,13 @@ void OpenVideo() {
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA * 2;
 
-	Video2 = (uint16 *)(MemoryArea + GameBytePointer);
+	g_vm->_video2 = (uint16 *)(MemoryArea + GameBytePointer);
 
 	if (!FlagMouseEnabled)
 		Mouse(2); // Turn off
 
-	wordset(Video2, 0, 1280L * 480L);
-	ShowScreen(0, 0, 640, 480);
+	wordset(g_vm->_video2, 0, 1280L * 480L);
+	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
 
 	memset(OldObjStatus, 0, MAXOBJINROOM);
 	memset(VideoObjStatus, 0, MAXOBJINROOM);
@@ -296,7 +294,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	extern uint16 _textureMat[256][91];
 	extern int16  _textureCoord[MAXFACE][3][2];
 
-	UpdatePixelFormat((uint16 *)_textureMat, 256 * 91);
+	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
 	ff = FastFileOpen(filename);
 	if (ff == NULL)
@@ -322,7 +320,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 
 	ff = FastFileOpen("mat.tex");
 	FastFileRead(ff, _textureMat, 2 * 91 * 256);
-	UpdatePixelFormat((uint16 *)_textureMat, 91 * 256);
+	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
 	FastFileRead(ff, _textureCoord, 2 * MAXFACE * 3 * 2);
 	FastFileRead(ff, _actor._face, sizeof(SFace)*FaceNum);
 	FastFileClose(ff);
@@ -495,30 +493,30 @@ void ReadLoc() {
 
 	SoundFadOut();
 
-	memset(Video2, 0, TotalMemory - GameBytePointer);
+	memset(g_vm->_video2, 0, TotalMemory - GameBytePointer);
 
-	GameWordPointer = (CurRoomMaxX * MAXY);           // space for Video2
+	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _video2
 
 	sprintf(UStr, "%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
-	ImagePointer = (uint16 *)Video2 + GameWordPointer - 4;
+	ImagePointer = (uint16 *)g_vm->_video2 + GameWordPointer - 4;
 
-	GameWordPointer += (DecCR(UStr, (uint8 *)ImagePointer, (uint8 *)Video2) + 1) / 2;
+	GameWordPointer += (DecCR(UStr, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
 	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
 	ImagePointer += 4;
-	UpdatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
+	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
 	if ((g_vm->_room[g_vm->_curRoom]._sounds[0] != 0))
 		ReadSounds();
 
 	sprintf(UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
-	_actionPointer[0] = (uint8 *)(Video2 + GameWordPointer);
+	_actionPointer[0] = (uint8 *)(g_vm->_video2 + GameWordPointer);
 	GameWordPointer += read3D(UStr) / 2;
 
 	sprintf(UStr, "act\\%s.act", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	wordset(Video2, 0, CurRoomMaxX * MAXY);
-	MCopy(Video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
+	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	g_vm->_curSortTableNum = 0;
 	memset(OldObjStatus, 0, MAXOBJINROOM);
@@ -553,11 +551,8 @@ void TendIn() {
 	WaitSoundFadEnd();
 	PaintScreen(1);
 
-	ShowScreen(0, 0, MAXX, MAXY);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, MAXY);
 	RoomReady = 1;
-//	for(int a=0; a<MAXY; a++ )
-//		VCopy(a*VirtualPageLen+VideoScrollPageDx,Video2+a*CurRoomMaxX+CurScrollPageDx,VirtualPageLen);
-//	UnlockVideo();
 }
 
 /*-----------------17/02/95 10.20-------------------
@@ -589,7 +584,7 @@ void ReadObj() {
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
@@ -603,7 +598,7 @@ void ReadObj() {
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
-			UpdatePixelFormat(ObjPointers[a], *p);
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
@@ -643,7 +638,7 @@ void ReadExtraObj2C() {
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
@@ -657,7 +652,7 @@ void ReadExtraObj2C() {
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
-			UpdatePixelFormat(ObjPointers[a], *p);
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
@@ -697,7 +692,7 @@ void ReadExtraObj41D() {
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
 			ObjPointers[a] = (uint16 *)(o + b);
-			UpdatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
@@ -711,7 +706,7 @@ void ReadExtraObj41D() {
 
 			uint32 *p = (uint32 *)(o + b);
 			ObjPointers[a] = (uint16 *)p + 2;
-			UpdatePixelFormat(ObjPointers[a], *p);
+			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
@@ -737,7 +732,7 @@ void ReadSounds() {
 		if (b == 0)
 			break;
 
-		SoundPointer[a] = (uint8 *)(Video2 + GameWordPointer);
+		SoundPointer[a] = (uint8 *)(g_vm->_video2 + GameWordPointer);
 
 		sprintf(UStr, "%s", GSample[b]._name);
 		if (!scumm_stricmp(UStr, "RUOTE2C.WAV")) break;
@@ -834,16 +829,16 @@ void DrawObj(SDObj d) {
 
 						if ((Now != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
 							if ((Sco >= d.l[0]) && ((Sco + Now) < d.l[2]))
-								MCopy(Video2 + (b * CurRoomMaxX) + Sco + d.x, buf, Now);
+								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + Sco + d.x, buf, Now);
 
 							else if ((Sco < d.l[0]) && ((Sco + Now) < d.l[2]) && ((Sco + Now) >= d.l[0]))
-								MCopy(Video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (Now + Sco - d.l[0]));
+								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (Now + Sco - d.l[0]));
 
 							else if ((Sco >= d.l[0]) && ((Sco + Now) >= d.l[2]) && (Sco < d.l[2]))
-								MCopy(Video2 + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco));
+								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco));
 
 							else if ((Sco < d.l[0]) && ((Sco + Now) >= d.l[2]))
-								MCopy(Video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]));
+								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]));
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -858,18 +853,18 @@ void DrawObj(SDObj d) {
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				MCopy(Video2 + (d.y + b)*CurRoomMaxX + (d.x + d.l[0]),
+				MCopy(g_vm->_video2 + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]));
 			}
 		}
 
 		if (d.flag & COPYTOVIDEO) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				VCopy((d.y + b)*VirtualPageLen + (d.x + d.l[0]),
+				g_vm->_graphicsMgr->vCopy((d.y + b) * VirtualPageLen + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], d.l[2] - d.l[0]);
 			}
 
-			UnlockVideo();
+			g_vm->_graphicsMgr->unlock();
 		}
 	}
 }
@@ -882,16 +877,16 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 		StartLine = ICONDY;
 
 	for (uint16 b = 0; b < ICONDY; b++)
-		wordset(Video2 + (FIRSTLINE + b)*CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN);
+		wordset(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		if ((g_vm->_inventory[a + StartIcon] >= LASTICON) /*|| ( _inventory[a+StartIcon] == iEMPTYSLOT )*/) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+				MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
 				      Icone + (g_vm->_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
 		} else if (g_vm->_inventory[a + StartIcon] != g_vm->_lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+				MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
 				      Icone + g_vm->_inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
 		}
 	}
@@ -900,7 +895,7 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 	if (StartIcon != 0) {							// COPIA LA SINISTRA
 		LeftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + CurScrollPageDx,
+			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
 				  Arrows + LeftArrow + (b + StartLine)*ICONMARGSX, ICONMARGSX);
 		}
 	}
@@ -908,7 +903,7 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // COPIA LA DESTRA
 		RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(Video2 + (FIRSTLINE + b)*CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
+			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
 				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine)*ICONMARGSX, ICONMARGSX);
 		}
 	}
@@ -919,38 +914,12 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 
 	VMouseCopy();
 	for (uint16 a = 0; a < ICONDY; a++) {
-		VCopy((FIRSTLINE + a) * VirtualPageLen + VideoScrollPageDx,
-		      Video2 + (FIRSTLINE + a) * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
+		g_vm->_graphicsMgr->vCopy((FIRSTLINE + a) * VirtualPageLen + VideoScrollPageDx,
+		     g_vm->_video2 + (FIRSTLINE + a) * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
 	}
 	VMouseRestore();
 	//VMouseON();
-	UnlockVideo();
-}
-
-/*-----------------16/05/95 22.08-------------------
-     RGBColor - Torna un rgb a 8 bit da un _color hi
---------------------------------------------------*/
-void  RGBColor(uint16 a, uint8 *r, uint8 *g, uint8 *b) {
-
-	*r = (uint8)(((uint16)((uint16)a >> 10L) & 0x1F) << 3);
-	*g = (uint8)(((uint16)((uint16)a >> 5L) & 0x1F) << 3);
-	*b = (uint8)(((uint16)((uint16)a) & 0x1F) << 3);
-}
-
-/*-----------------16/05/95 22.08-------------------
-     ColorRGB - Torna il _color hi a un rgb a 8 bit
---------------------------------------------------*/
-uint16 RGB2Color(uint8 r, uint8 g, uint8 b) {
-	r >>= 3;
-	g >>= 3;
-	b >>= 3;
-
-	int16 a = (int16)(((uint16)(b & 0x1F) & 0x1F) +
-					  ((uint16)((uint16)(g & 0x1F) << 5L) & 0x3E0) +
-					  ((uint16)((uint16)(r & 0x1F) << 10L) & 0x7C00)
-					 );
-
-	return a;
+	g_vm->_graphicsMgr->unlock();
 }
 
 /* -----------------20/11/97 16.59-------------------

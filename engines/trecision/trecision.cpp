@@ -34,6 +34,7 @@
 #include "common/fs.h"
 
 #include "trecision/nl/sysdef.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -52,7 +53,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	g_vm = this;
 
-	_gamePath[0] = '\0';
 	_curRoom = 0;
 	_oldRoom = 0;
 	_curInventory = 0;
@@ -101,20 +101,31 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_regenInvStartLine = INVENTORY_HIDE;
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
+
+	for (int i = 0; i < 260; ++i) {
+		_newData[i] = 0;
+		_newData2[i] = 0;
+	}
+
+	_video2 = nullptr;
+	_graphicsMgr = nullptr;
 }
 
 TrecisionEngine::~TrecisionEngine() {
 }
 
 Common::Error TrecisionEngine::run() {
-	const Graphics::PixelFormat kVideoFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
-	initGraphics(MAXX, MAXY, &kVideoFormat);
-	
-	strcpy(g_vm->_gamePath, ConfMan.get("path").c_str());
-
+	_graphicsMgr = new GraphicsManager(this);
+		
 	NlInit();
 
 	return Common::kNoError;
+}
+
+void TrecisionEngine::getColorMask(const Graphics::PixelFormat &format) {
+	_bitMask[0] = format.rMax() << format.rShift;
+	_bitMask[1] = format.gMax() << format.gShift;
+	_bitMask[2] = format.bMax() << format.bShift;
 }
 
 } // End of namespace Trecision
