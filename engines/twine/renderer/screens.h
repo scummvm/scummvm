@@ -35,6 +35,16 @@ class Screens {
 private:
 	TwinEEngine *_engine;
 
+	/**
+	 * Adjust palette intensity
+	 * @param r red component of color
+	 * @param g green component of color
+	 * @param b blue component of color
+	 * @param palette palette to adjust
+	 * @param intensity intensity value to adjust
+	 */
+	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
+
 public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
@@ -113,16 +123,6 @@ public:
 	 * @return new color component
 	 */
 	int32 crossDot(int32 modifier, int32 color, int32 param, int32 intensity);
-
-	/**
-	 * Adjust palette intensity
-	 * @param r red component of color
-	 * @param g green component of color
-	 * @param b blue component of color
-	 * @param palette palette to adjust
-	 * @param intensity intensity value to adjust
-	 */
-	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
 
 	/**
 	 * Adjust between two palettes
