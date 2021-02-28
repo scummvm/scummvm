@@ -4341,6 +4341,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
+	case 159:
+		mapping = NoirMapping{"SHOWMENU", SHOWMENU, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 167:
 		mapping = NoirMapping{"STARTPROCESS", STARTPROCESS, 1};
 		pp -= mapping.numArgs - 1;
@@ -5505,7 +5509,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case SHOWMENU:
-		// DW2 only
+		// DW2 / Noir
 		ShowMenu();
 		return 0;
 
