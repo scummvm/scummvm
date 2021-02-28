@@ -383,10 +383,6 @@ uint16 WinGame::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x192); // TODO
-}
-
 uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
     return readRaw(stream, 0x2); // TODO
 }

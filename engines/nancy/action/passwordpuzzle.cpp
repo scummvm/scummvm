@@ -164,6 +164,8 @@ void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
                     engine->scene->setEventFlag(flagOnSolve.label, flagOnSolve.flag);
                     break;
             }
+
+            isDone = true;
     }
 }
 
