@@ -67,11 +67,12 @@ void PlaySecondaryVideo::updateGraphics() {
     }
 
     if (_isPlaying) {
+        if (!_decoder.isPlaying()) {
+            _decoder.start();
+        }
+        
         switch (hoverState) {
             case kNoHover:
-                if (!_decoder.isPlaying()) {
-                    _decoder.start();
-                }
                 if (_isHovered) {
                     _decoder.seekToFrame(onHoverFirstFrame);
                     
