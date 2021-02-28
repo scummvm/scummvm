@@ -38,6 +38,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "trecision/trecision.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -89,12 +90,9 @@ extern uint8  _curSmackBuffer;
 extern uint16 _playingAnims[MAXSMACK];
 extern uint16 _curAnimFrame[MAXSMACK];
 extern uint16 _numPlayingAnims;
-extern uint16 _newData[260];
-extern uint32 _newData2[260];
 
 NightlongSmackerDecoder *SmkAnims[MAXSMACK];
 extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
-extern Graphics::PixelFormat _screenFormat;
 
 // from regen.c
 extern int16 _limits[20][4];
@@ -180,13 +178,6 @@ void CallSmackSoundOnOff(int pos, int on) {
 	SmkAnims[pos]->setMute(on == 0);
 }
 
-/* -----------------12/06/97 17.09-------------------
-					PalTo16bit
- --------------------------------------------------*/
-uint16 PalTo16bit(uint8 r, uint8 g, uint8 b) {
-	return (uint16)_screenFormat.RGBToColor(r, g, b);
-}
-
 /* -----------------09/09/97 18.02-------------------
 				RefreshAllAnimations
  --------------------------------------------------*/
@@ -236,7 +227,7 @@ void RegenSmackAnim(int num) {
 
 	if (SmkAnims[pos]->hasDirtyPalette()) {
 		for (int32 a = 0; a < 256; a++)
-			_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
+			_smackPal[pos][a] = g_vm->_graphicsMgr->palTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 1],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 2]);
 	}
@@ -258,14 +249,14 @@ void RegenSmackAnim(int num) {
 		if ((_curAnimFrame[pos] > 0) && (inters == 0)) {
 			if (pos == 0) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
-					byte2wordn(Video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
+					byte2wordn(g_vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					           SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 					           _smackPal[pos], lastRect->width());
 
 					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
 
 					wordcopy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
-					         Video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
+					         g_vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					         lastRect->width());
 				}
 			} else if (_curAnimFrame[pos] > 1) {
@@ -310,7 +301,7 @@ void RegenSmackAnim(int num) {
 		}
 
 		for (int32 a = 0; a < (_animMaxY - _animMinY); a++) {
-			byte2wordm(Video2 + _animMinX + (_animMinY + a + TOP) * MAXX,
+			byte2wordm(g_vm->_video2 + _animMinX + (_animMinY + a + TOP) * MAXX,
 			           SmackBuffer[pos] + _animMinX + (_animMinY + a) * SmkAnims[pos]->getWidth(),
 			           _smackPal[pos], _animMaxX - _animMinX);
 
@@ -374,14 +365,14 @@ void RegenSmackIcon(int StartIcon, int num) {
 
 	if (SmkAnims[pos]->hasDirtyPalette()) {
 		for (a = 0; a < 256; a++)
-			_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
+			_smackPal[pos][a] = g_vm->_graphicsMgr->palTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 1],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 2]);
 	}
 
 	while (const Common::Rect *lastRect = SmkAnims[pos]->getNextDirtyRect()) {
 		for (a = 0; a < ICONDY - lastRect->top; a++) {
-			byte2word(Video2 + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
+			byte2word(g_vm->_video2 + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
 			          SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 			          _smackPal[pos], lastRect->width());
 
@@ -423,12 +414,12 @@ void PlayFullMotion(int start, int end) {
 			if (((_dialog[_curDialog]._newPal[a] > start) || !(_dialog[_curDialog]._newPal[a])) && (a)) {
 				SmkAnims[pos]->seekToFrame(_dialog[_curDialog]._newPal[a - 1]);
 				for (a = 0; a < 256; a++) {
-					_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
+					_smackPal[pos][a] = g_vm->_graphicsMgr->palTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
 						                           SmkAnims[pos]->getPalette()[a * 3 + 1],
 						                           SmkAnims[pos]->getPalette()[a * 3 + 2]);
 
-					_newData[a] = _smackPal[pos][a];
-					_newData2[a] = (uint32)((uint32)_smackPal[pos][a] + (((uint32)_smackPal[pos][a]) << 16));
+					g_vm->_newData[a] = _smackPal[pos][a];
+					g_vm->_newData2[a] = (uint32)((uint32)_smackPal[pos][a] + (((uint32)_smackPal[pos][a]) << 16));
 				}
 				break;
 			} else if ((_dialog[_curDialog]._newPal[a] == 0) || (_dialog[_curDialog]._newPal[a] == start))
@@ -484,18 +475,18 @@ void PaintSmackBuffer(int px, int py, int dx, int dy) {
 	for (int a = 0; a < dy; a++) {
 		if (SmkAnims[pos]->getHeight() > MAXY / 2) {
 			if (SmkAnims[pos]->getWidth() > MAXX / 2)
-				byte2word(Video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px, _newData, dx);
+				byte2word(g_vm->_video2 + (a + py + TOP) * MAXX + px,
+				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
 			else
-				byte2long(Video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px / 2, _newData2, dx / 2);
+				byte2long(g_vm->_video2 + (a + py + TOP) * MAXX + px,
+				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
 		} else {
 			if (SmkAnims[pos]->getWidth() > MAXX / 2)
-				byte2word(Video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px, _newData, dx);
+				byte2word(g_vm->_video2 + (a + py + TOP) * MAXX + px,
+				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
 			else
-				byte2long(Video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px / 2, _newData2, dx / 2);
+				byte2long(g_vm->_video2 + (a + py + TOP) * MAXX + px,
+				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
 		}
 	}
 }
@@ -514,12 +505,12 @@ void RegenFullMotion() {
 
 		if (SmkAnims[pos]->hasDirtyPalette()) {
 			for (int32 a = 0; a < 256; a++) {
-				_smackPal[pos][a] = PalTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
+				_smackPal[pos][a] = g_vm->_graphicsMgr->palTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
 					                           SmkAnims[pos]->getPalette()[a * 3 + 1],
 					                           SmkAnims[pos]->getPalette()[a * 3 + 2]);
 
-				_newData[a] = _smackPal[pos][a];
-				_newData2[a] = (uint32)((uint32)_smackPal[pos][a] + (((uint32)_smackPal[pos][a]) << 16));
+				g_vm->_newData[a] = _smackPal[pos][a];
+				g_vm->_newData2[a] = (uint32)((uint32)_smackPal[pos][a] + (((uint32)_smackPal[pos][a]) << 16));
 			}
 		}
 
@@ -541,7 +532,7 @@ void RegenFullMotion() {
 		if (osdt.sign != nullptr) {
 			if ((osdt.y < sdt.y) || (osdt.y + osdt.dy > sdt.y + sdt.dy) || (sdt.sign == nullptr)) {
 				PaintSmackBuffer(0, osdt.y - TOP, MAXX, osdt.dy);
-				ShowScreen(0, osdt.y, MAXX,  osdt.dy);
+				g_vm->_graphicsMgr->showScreen(0, osdt.y, MAXX, osdt.dy);
 			}
 			osdt.sign = nullptr;
 		}
@@ -552,7 +543,6 @@ void RegenFullMotion() {
 			if (ConfMan.getBool("subtitles"))
 				sdt.DText();
 			// e la fa vedere
-			//ShowScreen( 0, sdt._y, MAXX,  sdt._dy );
 			osdt.sign = nullptr;
 		}
 
@@ -572,27 +562,27 @@ void RegenFullMotion() {
 					if (SmkAnims[pos]->getHeight() > MAXY / 2) {
 						// in larghezza
 						if (SmkAnims[pos]->getWidth() > MAXX / 2) {
-							BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
+							g_vm->_graphicsMgr->BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						} else {
-							DCopy(lastRect->left * 2 + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
+							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						}
 					} else {
 						if (SmkAnims[pos]->getWidth() > MAXX / 2) {
-							BCopy(lastRect->left + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
+							g_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
-							BCopy(lastRect->left + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
+							g_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						} else {
-							DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
+							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
-							DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
+							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
 							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						}
@@ -601,8 +591,8 @@ void RegenFullMotion() {
 			}
 		}
 		if (sdt.sign != nullptr)
-			ShowScreen(0, sdt.y, MAXX,  sdt.dy);
-		UnlockVideo();
+			g_vm->_graphicsMgr->showScreen(0, sdt.y, MAXX, sdt.dy);
+		g_vm->_graphicsMgr->unlock();
 
 		if (_curAnimFrame[pos] == FullEnd) {
 			PaintSmackBuffer(0, 0, MAXX, AREA);

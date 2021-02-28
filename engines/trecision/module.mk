@@ -3,6 +3,7 @@ MODULE := engines/trecision
 MODULE_OBJS = \
 	trecision.o \
 	metaengine.o \
+	graphics.o \
 	nl/classes.o \
 	nl/dialog.o \
 	nl/do.o \

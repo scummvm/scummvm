@@ -29,6 +29,7 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
+#include "trecision/graphics.h"
 
 namespace Trecision {
 
@@ -55,7 +56,7 @@ void MostraScelte(uint16 i) {
 	int x = 10;
 	CurPos = -1;
 	LastPos = -1;
-	wordset(Video2, 0, MAXX * TOP);
+	wordset(g_vm->_video2, 0, MAXX * TOP);
 
 	for (int c = 0; c < MAXDISPSCELTE; c++)
 		DispScelte[c] = 0;
@@ -69,7 +70,7 @@ void MostraScelte(uint16 i) {
 		}
 	}
 
-	ShowScreen(0, 0, MAXX, TOP);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	FlagDialogMenuActive = true;
 	FlagMouseEnabled = true;
@@ -93,7 +94,7 @@ void UpdateScelte(int16 dmx, int16 dmy) {
 					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[_choice[DispScelte[c]]._sentenceIndex]);
 			}
 		}
-		ShowScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
+		g_vm->_graphicsMgr->showScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
 	}
 	LastPos = CurPos;
 }
@@ -128,8 +129,8 @@ void PlayDialog(uint16 i) {
 	PaintString();
 	PaintScreen(1);
 
-	wordset(Video2, 0, MAXX * TOP);
-	ShowScreen(0, 0, MAXX, TOP);
+	wordset(g_vm->_video2, 0, MAXX * TOP);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 //	sprintf( UStr, "%sFMV\\%s", GamePath, _dialog[i]._startAnim );
 //	sprintf( UStr, "FMV\\%s", _dialog[i]._startAnim );
@@ -162,8 +163,8 @@ void PlayDialog(uint16 i) {
 void afterChoice(int numframe) {
 	Dialog *d = &_dialog[_curDialog];
 
-	wordset(Video2, 0, MAXX * TOP);
-	ShowScreen(0, 0, MAXX, TOP);
+	wordset(g_vm->_video2, 0, MAXX * TOP);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	switch (_curDialog) {
 	case dBARBONE171:
@@ -628,8 +629,8 @@ void DialogHandler(int numframe) {
 void PlayScelta(uint16 i) {
 	DialogChoice *ss = &_choice[i];
 
-	wordset(Video2, 0, MAXX * TOP);
-	ShowScreen(0, 0, MAXX, TOP);
+	wordset(g_vm->_video2, 0, MAXX * TOP);
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	_curChoice = i;
 	_curSubTitle = ss->_firstSubTitle;

@@ -36,10 +36,6 @@
 
 namespace Trecision {
 
-// locals
-extern bool _linearMode;
-extern Graphics::PixelFormat _screenFormat;
-
 /*-----------------07/11/95 15.18-------------------
 					ResetZB
 --------------------------------------------------*/
@@ -54,45 +50,6 @@ void ResetZB(int x1, int y1, int x2, int y2) {
 	wordset(ZBuffer, 0x7FFF, size);
 }
 
-/*-----------------10/12/95 15.49-------------------
-	VCopy - Execute fast copy to video 
---------------------------------------------------*/
-void VCopy(uint32 Sco, uint16 *Src, uint32 Len) {
-	lockVideo();
-	if ((_video == nullptr) || (Len == 0))
-		return ;
-
-	if (_linearMode && ((VideoPitch == 0) || (VideoPitch == SCREENLEN * 2))) {
-		MCopy(_video + Sco, Src, Len);
-		return ;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 endSco = Sco + Len;
-	int32 y2 = endSco / SCREENLEN;
-
-	uint32 srcSco = 0;
-	uint32 copyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	MCopy(_video + y1 * (VideoPitch / 2) + x1, Src + srcSco, copyNow);
-	srcSco += copyNow;
-	Len -= copyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		copyNow = SCREENLEN;
-		MCopy(_video + i * (VideoPitch / 2), Src + srcSco, copyNow);
-		srcSco += copyNow;
-		Len -= copyNow;
-	}
-
-	if (Len > 0) {
-		copyNow = Len;
-		MCopy(_video + y2 * (VideoPitch / 2), Src + srcSco, copyNow);
-	}
-}
-
 /*-----------------10/12/95 15.51-------------------
 		MCopy - Esegue copia veloce in memoria
 --------------------------------------------------*/
@@ -103,41 +60,6 @@ void MCopy(uint16 *Dest, uint16 *Src, uint32 Len) {
 	}
 
 	longcopy(Dest, Src, (Len >> 1));
-}
-
-/*-----------------10/12/95 15.52-------------------
-					ShowScreen
---------------------------------------------------*/
-void ShowScreen(int px, int py, int dx, int dy) {
-	for (int a = 0; a < dy; a++) {
-		VCopy(px + (py + a)*VirtualPageLen + VideoScrollPageDx,
-			  Video2 + px + (py + a)*CurRoomMaxX + CurScrollPageDx,
-			  dx);
-	}
-
-	UnlockVideo();
-}
-
-/* -----------------12/06/97 18.25-------------------
-				UpdatePixelFormat
- --------------------------------------------------*/
-void UpdatePixelFormat(uint16 *p, uint32 len) {
-	uint8 r, g, b;
-
-	for (int a = 0; a < len; a++) {
-		uint16 t = p[a];
-		RGBColor(t, &r, &g, &b);
-		p[a] = _screenFormat.RGBToColor(r, g, b);
-	}
-}
-
-/* -----------------12/06/97 18.25-------------------
-				UnUpdatePixelFormat
- --------------------------------------------------*/
-uint16 UnUpdatePixelFormat(uint16 t) {
-	uint8 r, g, b;
-	_screenFormat.colorToRGB(t, r, g, b);
-	return (RGB2Color(r, g, b));
 }
 
 /*-----------------10/12/95 15.53-------------------

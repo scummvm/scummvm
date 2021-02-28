@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -210,9 +211,6 @@ uint16 _rTextX[480];
 uint16 _lTextY[480];
 uint16 _rTextY[480];
 
-// Screen pixel format - default 555
-unsigned short _bitMask[3] = { 0x7C00, 0x3E0, 0x1F };
-
 /*------------------------------------------------
 Return the angle in rad based on sinus and cosinus
 --------------------------------------------------*/
@@ -238,9 +236,9 @@ float sinCosAngle(float sinus, float cosinus) {
 				(dark) 0..8 (light)
 --------------------------------------------------*/
 uint16 shadow(uint32 val, uint8 num) {
-	return ((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
-			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
-			(((val & _bitMask[0]) * num >> 7) & _bitMask[0]));
+	return ((((val & g_vm->_bitMask[2]) * num >> 7) & g_vm->_bitMask[2]) |
+	        (((val & g_vm->_bitMask[1]) * num >> 7) & g_vm->_bitMask[1]) |
+	        (((val & g_vm->_bitMask[0]) * num >> 7) & g_vm->_bitMask[0]));
 }
 
 /*------------------------------------------------
@@ -257,9 +255,9 @@ uint16 aliasing(uint32 val1, uint32 val2, uint8 num) {
 	// 7:  87% val1  12% val2
 	// 8: 100% val1   0% val2
 
-	return (((((val1 & _bitMask[2]) * num + (val2 & _bitMask[2]) * (8 - num)) >> 3) & _bitMask[2]) |
-			((((val1 & _bitMask[1]) * num + (val2 & _bitMask[1]) * (8 - num)) >> 3) & _bitMask[1]) |
-			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
+	return (((((val1 & g_vm->_bitMask[2]) * num + (val2 & g_vm->_bitMask[2]) * (8 - num)) >> 3) & g_vm->_bitMask[2]) |
+	        ((((val1 & g_vm->_bitMask[1]) * num + (val2 & g_vm->_bitMask[1]) * (8 - num)) >> 3) & g_vm->_bitMask[1]) |
+	        ((((val1 & g_vm->_bitMask[0]) * num + (val2 & g_vm->_bitMask[0]) * (8 - num)) >> 3) & g_vm->_bitMask[0]));
 }
 
 /*------------------------------------------------

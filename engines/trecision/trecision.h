@@ -24,12 +24,16 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
+
+#include "graphics/pixelformat.h"
+
 #include "trecision/nl/message.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
+class GraphicsManager;
 
 class TrecisionEngine : public Engine {
 public:
@@ -38,7 +42,6 @@ public:
 
 	Common::Error run() override;
 
-	char _gamePath[250];
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	uint16 _curInventory;
@@ -86,13 +89,21 @@ public:
 
 	// Snake management
 	Message _snake52;
-
 	Message *_curMessage;
 
 	MessageQueue _gameQueue;
 	MessageQueue _animQueue;
 	MessageQueue _characterQueue;
-	
+
+	uint16 _newData[260];
+	uint32 _newData2[260];
+	uint16 *_video2;
+
+	uint16 _bitMask[3];
+
+	GraphicsManager *_graphicsMgr;
+
+	void getColorMask(const Graphics::PixelFormat &format);
 };
 
 extern TrecisionEngine *g_vm;
