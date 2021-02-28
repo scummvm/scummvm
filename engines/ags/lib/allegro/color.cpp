@@ -49,10 +49,11 @@ int _rgb_a_shift_32 = 0;
 
 RGB_MAP *rgb_map;
 COLOR_MAP *color_map;
-int trans_blend_alpha = -1;
+int trans_blend_alpha = 0;
 int trans_blend_red = 0;
 int trans_blend_green = 0;
 int trans_blend_blue = 0;
+BlenderMode _blender_mode = kRgbToRgbBlender;
 
 void color::readFromFile(AGS::Shared::Stream *file) {
 	r = file->ReadByte();
@@ -225,15 +226,20 @@ void unselect_palette(void) {
 		_current_palette[c] = _prev_current_palette[c];
 }
 
-void set_alpha_blender(void) {
-	trans_blend_alpha = -1;
-}
-
-void set_trans_blender(int r, int g, int b, int a) {
+void set_blender_mode(BlenderMode m, int r, int g, int b, int a) {
+	_blender_mode = m;
 	trans_blend_alpha = a;
 	trans_blend_red = r;
 	trans_blend_green = g;
 	trans_blend_blue = b;
+}
+
+void set_alpha_blender(void) {
+	set_blender_mode(kSourceAlphaBlender, 0, 0, 0, 0);
+}
+
+void set_trans_blender(int r, int g, int b, int a) {
+	set_blender_mode(kRgbToRgbBlender, r, g, b, a);
 }
 
 /* makecol_depth:

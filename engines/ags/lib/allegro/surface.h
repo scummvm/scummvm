@@ -102,6 +102,163 @@ public:
 		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
 		bool skipTrans, int srcAlpha, int tintRed = -1, int tintGreen = -1,
 		int tintBlue = -1);
+
+private:
+	// True color blender functions
+	// In Allegro all the blender functions are of the form
+	// unsigned int blender_func(unsigned long x, unsigned long y, unsigned long n)
+	// when x is the sprite color, y the destination color, and n an alpha value
+
+	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const;
+
+
+	inline void rgbBlend(uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original logic has uint32 src and dst colors as RGB888
+		// if (alpha)
+		//     ++alpha;
+		// uint32 res = ((src & 0xFF00FF) - (dst & 0xFF00FF)) * alpha / 256 + dst;
+		// dst &= 0x00FF00;
+		// src &= 0x00FF00;
+		// uint32 g = (src - dst) * alpha / 256 + dst;
+		// return (res & 0xFF00FF) | (g & 0x00FF00)
+		double sAlpha = (double)(alpha & 0xff) / 255.0;
+		rDest = static_cast<uint8>(rSrc * sAlpha + rDest * (1. - sAlpha));
+		gDest = static_cast<uint8>(gSrc * sAlpha + gDest * (1. - sAlpha));
+		bDest = static_cast<uint8>(bSrc * sAlpha + bDest * (1. - sAlpha));
+	}
+
+	inline void argbBlend(uint32 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest) const {
+		// Original logic has uint32 src and dst colors as ARGB8888
+		// ++src_alpha;
+		// uint32 dst_alpha = geta32(dst);
+		// if (dst_alpha)
+		//     ++dst_alpha;
+		// uint32 dst_g = (dst & 0x00FF00) * dst_alpha / 256;
+		// dst = (dst & 0xFF00FF) * dst_alpha / 256;
+		// dst_g = (((src & 0x00FF00) - (dst_g & 0x00FF00)) * src_alpha / 256 + dst_g) & 0x00FF00;
+		// dst = (((src & 0xFF00FF) - (dst & 0xFF00FF)) * src_alpha / 256 + dst) & 0xFF00FF;
+		// dst_alpha = 256 - (256 - src_alpha) * (256 - dst_alpha) / 256;
+		// src_alpha = /* 256 * 256 == */ 0x10000 / dst_alpha;
+		// dst_g = (dst_g * src_alpha / 256) & 0x00FF00;
+		// dst = (dst * src_alpha / 256) & 0xFF00FF;
+		// return dst | dst_g | (--dst_alpha << 24);
+		double sAlpha = (double)(aSrc & 0xff) / 255.0;
+		double dAlpha = (double)aDest / 255.0;
+		dAlpha *= (1.0 - sAlpha);
+		rDest = static_cast<uint8>((rSrc * sAlpha + rDest * dAlpha) / (sAlpha + dAlpha));
+		gDest = static_cast<uint8>((gSrc * sAlpha + gDest * dAlpha) / (sAlpha + dAlpha));
+		bDest = static_cast<uint8>((bSrc * sAlpha + bDest * dAlpha) / (sAlpha + dAlpha));
+		aDest = static_cast<uint8>(255. * (sAlpha + dAlpha));
+	}
+
+	// kRgbToRgbBlender
+	inline void blendRgbToRgb(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Default mode for set_trans_blender
+		rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, alpha);
+		// Original doesn't set alpha (so it is 0), but the function is not meant to be used
+		// on bitmap with transparency. Should we set alpha to 0xff?
+		aDest = 0;
+	}
+
+	// kAlphaPreservedBlenderMode
+	inline void blendPreserveAlpha(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender function: _myblender_alpha_trans24
+		// Like blendRgbToRgb, but result as the same alpha as destColor
+		rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, alpha);
+		// Preserve value in aDest
+	}
+
+	// kArgbToArgbBlender
+	inline void blendArgbToArgb(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender functions: _argb2argb_blender
+		if (alpha == 0)
+			alpha = aSrc;
+		else
+			alpha = aSrc * ((alpha & 0xff) + 1) / 256;
+		if (alpha != 0)
+			argbBlend(alpha, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest);
+	}
+
+	// kRgbToArgbBlender
+	inline void blendRgbToArgb(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender function: _rgb2argb_blenders
+		if (alpha == 0 || alpha == 0xff) {
+			aDest = 0xff;
+			rDest = rSrc;
+			gDest = gSrc;
+			bDest = bSrc;
+		} else
+			argbBlend(alpha, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest);
+	}
+
+	// kArgbToRgbBlender
+	inline void blendArgbToRgb(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender function: _argb2rgb_blender
+		if (alpha == 0)
+			alpha = aSrc;
+		else
+			alpha = aSrc * ((alpha & 0xff) + 1) / 256;
+		rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, alpha);
+		// Original doesn't set alpha (so it is 0), but the function is not meant to be used
+		// on bitmap with transparency. Should we set alpha to 0xff?
+		aDest = 0;
+	}
+
+	// kOpaqueBlenderMode
+	inline void blendOpaque(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender function: _opaque_alpha_blender
+		aDest = 0xff;
+		rDest = rSrc;
+		gDest = gSrc;
+		bDest = bSrc;
+	}
+
+	// kSourceAlphaBlender
+	inline void blendSourceAlpha(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Used after set_alpha_blender
+		// Uses alpha from source. Result is fully opaque
+		// TODO: Understand why the line below is needed. It is not there in the original code.
+		// But without it we have some display issue for example with some text at the start
+		// of Blackwell Deception. We may incorrectly set the alpha on bitmaps in some cases
+		// causing them to be fully transparent when they should not.
+		if (aSrc == 0)
+			aSrc = 0xff;
+		rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, aSrc);
+		// Original doesn't set alpha (so it is 0), but the function is not meant to be used
+		// on bitmap with transparency. Should we set alpha to 0xff?
+		aDest = 0;
+	}
+
+	// kAdditiveBlenderMode
+	inline void blendAdditiveAlpha(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+		// Original blender function: _additive_alpha_copysrc_blender
+		rDest = rSrc;
+		gDest = gSrc;
+		bDest = bSrc;
+		uint32 a = (uint32)aSrc + (uint32)aDest;
+		if (a > 0xff)
+			aDest = 0xff;
+		else
+			aDest = static_cast<uint8>(a);
+	}
+
+	// kTintBlenderMode and kTintLightBlenderMode
+	void blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const ;
+
+
+	inline uint32 getColor(const byte *data, byte bpp, uint32* palette) const {
+		switch (bpp) {
+		case 1:
+			assert(palette);
+			return palette[*data];
+		case 2:
+			return *(const uint16 *)data;
+		case 4:
+			return *(const uint32 *)data;
+		default:
+			error("Unknown format");
+		}
+	}
 };
 
 /**

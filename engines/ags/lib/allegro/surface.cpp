@@ -122,12 +122,16 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 	uint32 pal[PALETTE_COUNT];
 
-	if (src.format.bytesPerPixel == 1) {
+	Graphics::PixelFormat srcFormat = src.format;
+	if (srcFormat.bytesPerPixel == 1) {
 		for (int i = 0; i < PALETTE_COUNT; ++i)
 			pal[i] = format.RGBToColor(
 				VGA_COLOR_TRANS(_current_palette[i].r),
 				VGA_COLOR_TRANS(_current_palette[i].g),
 				VGA_COLOR_TRANS(_current_palette[i].b));
+		srcFormat = format;
+		// TODO: check if the line below is correct. If it is correct, we can simplify the skipTrans
+		// below as we can use IS_TRANSPARENT() can be used for the 1 bytePerPixel case as well
 		pal[0] = format.RGBToColor(0xff, 0, 0xff);
 	}
 
@@ -150,78 +154,119 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			const byte *srcVal = srcP + xDir * (scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel);
 			byte *destVal = (byte *)&destP[xCtr * format.bytesPerPixel];
 
-			switch (src.format.bytesPerPixel) {
-			case 1:
-				if (format.bytesPerPixel == 1) {
-					*destVal = *srcVal;
-					continue;
-				}
-				format.colorToARGB(pal[*srcVal], aSrc, rSrc, gSrc, bSrc);
-				break;
-			case 2:
-				src.format.colorToARGB(*(const uint16 *)srcVal, aSrc, rSrc, gSrc, bSrc);
-				break;
-			case 4:
-				src.format.colorToARGB(*(const uint32 *)srcVal, aSrc, rSrc, gSrc, bSrc);
-				break;
-			default:
-				error("Unknown format");
+			if (src.format.bytesPerPixel == 1 && format.bytesPerPixel == 1) {
+				// TODO: Need to skip transparent color if skip_trans is true?
+				//if (!skipTrans || *srcVal != 0)
+				*destVal = *srcVal;
+				continue;
 			}
-
-			if (srcAlpha != -1)
-				aSrc = srcAlpha;
-			if (aSrc == 0)
-				aSrc = 0xff;
-
-			if (aSrc != 0xff) {
-				if (useTint) {
-					aDest = 0xff;
-					rDest = static_cast<uint8>(tintRed);
-					gDest = static_cast<uint8>(tintGreen);
-					bDest = static_cast<uint8>(tintBlue);
-				} else {
-					// Get the pixel at the destination, to check if it's transparent.
-					// Transparent pixels can be considered to be 0 alpha
-					format.colorToARGB(format.bytesPerPixel == 2 ?
-						*(uint16 *)destVal : *(uint32 *)destVal, aDest, rDest, gDest, bDest);
-					if (IS_TRANSPARENT(rDest, gDest, bDest))
-						aDest = 0;
-				}
-			} else {
-				// Source is opaque, so just treat destination as transparent
-				aDest = 0;
-			}
-
-			if (aDest != 0 && aSrc != 0xff) {
-				// Alpha blender
-				double sAlpha = (double)aSrc / 255.0;
-				double dAlpha = (double)aDest / 255.0;
-				dAlpha *= (1.0 - sAlpha);
-				rDest = static_cast<uint8>((rSrc * sAlpha + rDest * dAlpha) / (sAlpha + dAlpha));
-				gDest = static_cast<uint8>((gSrc * sAlpha + gDest * dAlpha) / (sAlpha + dAlpha));
-				bDest = static_cast<uint8>((bSrc * sAlpha + bDest * dAlpha) / (sAlpha + dAlpha));
-				aDest = static_cast<uint8>(255. * (sAlpha + dAlpha));
-			} else {
-				rDest = rSrc;
-				gDest = gSrc;
-				bDest = bSrc;
-				aDest = aSrc;
-			}
+			srcFormat.colorToARGB(getColor(srcVal, src.format.bytesPerPixel, pal), aSrc, rSrc, gSrc, bSrc);
 
 			// FIXME: I had at least one case in Black Cauldron Remake when a screen
 			// clear was all the pink transparent color because blit was called,
 			// and in Allegro, blit doesn't skip transparent pixels. So for now,
 			// I hacked in an extra check to still skip them if blitting to screen
-			if (!IS_TRANSPARENT(rSrc, gSrc, bSrc) || (!skipTrans && !isScreenDest)) {
-				uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
-
-				if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = pixel;
-				else
-					*(uint16 *)destVal = pixel;
+			if (skipTrans || isScreenDest) {
+				if (src.format.bytesPerPixel == 1) {
+					if (!isScreenDest && *srcVal == 0)
+						continue;
+				} else if (IS_TRANSPARENT(rSrc, gSrc, bSrc))
+					continue;
 			}
+
+			if (srcAlpha == -1) {
+				// This means we don't use blending.
+				aDest = aSrc;
+				rDest = rSrc;
+				gDest = gSrc;
+				bDest = bSrc;
+			} else {
+				if (useTint) {
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+					aDest = aSrc;
+					rSrc = tintRed;
+					gSrc = tintGreen;
+					bSrc = tintBlue;
+					aSrc = srcAlpha;
+				} else {
+					// TODO: move this to blendPixel to only do it when needed?
+					format.colorToARGB(getColor(destVal, format.bytesPerPixel, nullptr), aDest, rDest, gDest, bDest);
+				}
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+			}
+
+			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			if (format.bytesPerPixel == 4)
+				*(uint32 *)destVal = pixel;
+			else
+				*(uint16 *)destVal = pixel;
 		}
 	}
+}
+
+void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+	if (IS_TRANSPARENT(rDest, gDest, bDest)) {
+		aDest = aSrc;
+		rDest = rSrc;
+		gDest = gSrc;
+		bDest = bSrc;
+		return;
+	}
+	switch(_blender_mode) {
+	case kSourceAlphaBlender:
+		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kArgbToArgbBlender:
+		blendArgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kArgbToRgbBlender:
+		blendArgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kRgbToArgbBlender:
+		blendRgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kRgbToRgbBlender:
+		blendRgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kAlphaPreservedBlenderMode:
+		blendPreserveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kOpaqueBlenderMode:
+		blendOpaque(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kAdditiveBlenderMode:
+		blendAdditiveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kTintBlenderMode:
+		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, false);
+		break;
+	case kTintLightBlenderMode:
+		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, true);
+		break;
+	}
+}
+
+void BITMAP::blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const {
+	// Used from draw_lit_sprite after set_blender_mode(kTintBlenderMode or kTintLightBlenderMode)
+	// Original blender function: _myblender_color32 and _myblender_color32_light
+	float xh, xs, xv;
+	float yh, ys, yv;
+	int r, g, b;
+	rgb_to_hsv(rSrc, gSrc, bSrc, &xh, &xs, &xv);
+	rgb_to_hsv(rDest, gDest, bDest, &yh, &ys, &yv);
+	if (light) {
+		// adjust luminance
+		yv -= (1.0 - ((float)alpha / 250.0));
+		if (yv < 0.0)
+			yv = 0.0;
+	}
+	hsv_to_rgb(xh, xs, yv, &r, &g, &b);
+	rDest = static_cast<uint8>(r & 0xff);
+	gDest = static_cast<uint8>(g & 0xff);
+	bDest = static_cast<uint8>(b & 0xff);
+	// Preserve value in aDest
 }
 
 /*-------------------------------------------------------------------*/

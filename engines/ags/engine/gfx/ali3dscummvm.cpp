@@ -467,7 +467,7 @@ void ALScummVMGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Shar
 				set_alpha_blender();
 			else
 				// here _transparency is used as alpha (between 1 and 254)
-				set_blender_mode(nullptr, nullptr, _trans_alpha_blender32, 0, 0, 0, bitmap->_transparency);
+				set_blender_mode(kArgbToRgbBlender, 0, 0, 0, bitmap->_transparency);
 
 			surface->TransBlendBlt(bitmap->_bmp, drawAtX, drawAtY);
 		} else {

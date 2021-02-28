@@ -82,6 +82,21 @@ extern int trans_blend_red;
 extern int trans_blend_green;
 extern int trans_blend_blue;
 
+enum BlenderMode {
+	kSourceAlphaBlender,
+	kArgbToArgbBlender,
+	kArgbToRgbBlender,
+	kRgbToArgbBlender,
+	kRgbToRgbBlender,
+	kAlphaPreservedBlenderMode,
+	kOpaqueBlenderMode,
+	kAdditiveBlenderMode,
+	kTintBlenderMode,
+	kTintLightBlenderMode
+};
+
+extern BlenderMode _blender_mode;
+
 AL_VAR(PALETTE, _current_palette);
 
 extern int _rgb_r_shift_15;
@@ -120,9 +135,7 @@ AL_FUNC(void, create_trans_table, (COLOR_MAP *table, AL_CONST PALETTE pal, int r
 
 typedef AL_METHOD(unsigned long, BLENDER_FUNC, (unsigned long x, unsigned long y, unsigned long n));
 
-AL_FUNC(void, set_blender_mode, (BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a));
-AL_FUNC(void, set_blender_mode_ex, (BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, BLENDER_FUNC b32, BLENDER_FUNC b15x, BLENDER_FUNC b16x, BLENDER_FUNC b24x, int r, int g, int b, int a));
-
+AL_FUNC(void, set_blender_mode, (BlenderMode, int r, int g, int b, int a));
 AL_FUNC(void, set_alpha_blender, (void));
 AL_FUNC(void, set_trans_blender, (int r, int g, int b, int a));
 

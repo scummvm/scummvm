@@ -1540,9 +1540,9 @@ void tint_image(Bitmap *ds, Bitmap *srcimg, int red, int grn, int blu, int light
 	// when light is being adjusted and when it is not.
 	// If luminance >= 250, then normal brightness, otherwise darken
 	if (luminance >= 250)
-		set_blender_mode(_myblender_color15, _myblender_color16, _myblender_color32, red, grn, blu, 0);
+		set_blender_mode(kTintBlenderMode, red, grn, blu, 0);
 	else
-		set_blender_mode(_myblender_color15_light, _myblender_color16_light, _myblender_color32_light, red, grn, blu, 0);
+		set_blender_mode(kTintLightBlenderMode, red, grn, blu, 0);
 
 	if (light_level >= 100) {
 		// fully colourised

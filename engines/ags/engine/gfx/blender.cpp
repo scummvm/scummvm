@@ -157,7 +157,7 @@ unsigned long _myblender_alpha_trans24(unsigned long x, unsigned long y, unsigne
 void set_my_trans_blender(int r, int g, int b, int a) {
 	// use standard allegro 15 and 16 bit blenders, but customize
 	// the 32-bit one to preserve the alpha channel
-	set_blender_mode(_blender_trans15, _blender_trans16, _myblender_alpha_trans24, r, g, b, a);
+	set_blender_mode(kAlphaPreservedBlenderMode, r, g, b, a);
 }
 
 // plain copy source to destination
@@ -258,11 +258,11 @@ unsigned long skiptranspixels_blender_alpha16(unsigned long x, unsigned long y, 
 }
 
 void set_additive_alpha_blender() {
-	set_blender_mode(nullptr, nullptr, _additive_alpha_copysrc_blender, 0, 0, 0, 0);
+	set_blender_mode(kAdditiveBlenderMode, 0, 0, 0, 0);
 }
 
 void set_argb2argb_blender(int alpha) {
-	set_blender_mode(nullptr, nullptr, _argb2argb_blender, 0, 0, 0, alpha);
+	set_blender_mode(kArgbToArgbBlender, 0, 0, 0, alpha);
 }
 
 // sets the alpha channel to opaque. used when drawing a non-alpha sprite onto an alpha-sprite
@@ -271,13 +271,11 @@ unsigned long _opaque_alpha_blender(unsigned long x, unsigned long y, unsigned l
 }
 
 void set_opaque_alpha_blender() {
-	set_blender_mode(nullptr, nullptr, _opaque_alpha_blender, 0, 0, 0, 0);
+	set_blender_mode(kOpaqueBlenderMode, 0, 0, 0, 0);
 }
 
 void set_argb2any_blender() {
-	set_blender_mode_ex(_blender_black, _blender_black, _blender_black, _argb2argb_blender,
-		_blender_alpha15, skiptranspixels_blender_alpha16, _blender_alpha24,
-		0, 0, 0, 0xff); // TODO: do we need to support proper 15- and 24-bit here?
+	set_blender_mode(kArgbToArgbBlender, 0, 0, 0, 0xff);
 }
 
 } // namespace AGS3
