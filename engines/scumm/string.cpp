@@ -681,7 +681,11 @@ void ScummEngine::CHARSET_1() {
 		return;
 	}
 
-	if (a && !_string[0].no_talk_anim) {
+	// The second check is from LOOM DOS EGA disasm. It prevents weird speech animations
+	// with empty strings (bug #990). The same code is present in actorTalk(). The FM-Towns
+	// versions don't have such code, but I do not get the weird speech animations either.
+	// So apparently it is not needed there.
+	if (a && !_string[0].no_talk_anim && !(_game.id == GID_LOOM && _game.platform != Common::kPlatformFMTowns && !_charsetBuffer[_charsetBufPos])) {
 		a->runActorTalkScript(a->_talkStartFrame);
 		_useTalkAnims = true;
 	}

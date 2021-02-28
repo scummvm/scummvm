@@ -2818,11 +2818,15 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
+	// I have commented out this workaround, since it did cause another
+	// bug (#11480). It is not okay to skip the stopTalk() calls here.
+	// Instead, I have added two checks from LOOM DOS EGA disasm (one
+	// below and one in CHARSET_1()).
 	// WORKAROUND for bugs #770039 and #770049
-	if (_game.id == GID_LOOM) {
+	/*if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;
-	}
+	}*/
 
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText) {
@@ -2848,7 +2852,11 @@ void ScummEngine::actorTalk(const byte *msg) {
 			setTalkingActor(a->_number);
 			if (_game.heversion != 0)
 				((ActorHE *)a)->_heTalking = true;
-			if (!_string[0].no_talk_anim) {
+			// The second check is from LOOM DOS EGA disasm. It prevents weird speech animations
+			// with empty strings (bug #990). The same code is present in CHARSET_1(). The FM-Towns
+			// versions don't have such code, but I do not get the weird speech animations either.
+			// So apparently it is not needed there.
+			if (!_string[0].no_talk_anim && !(_game.id == GID_LOOM && _game.platform != Common::kPlatformFMTowns && !*_charsetBuffer)) {
 				a->runActorTalkScript(a->_talkStartFrame);
 				_useTalkAnims = true;
 			}
