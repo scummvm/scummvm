@@ -124,6 +124,10 @@ void NancyConsole::postEnter() {
 		_imageFile.clear();
 		_imageCifTree.clear();
 	}
+
+	// After calling the console, action end events get sent to it and the input manager
+	// can still think a keyboard button is being held when it is not; clearing all inputs fixes that
+	_vm->input->forceCleanInput();
 }
 
 bool NancyConsole::Cmd_cifHexDump(int argc, const char **argv) {
