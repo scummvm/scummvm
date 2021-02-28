@@ -72,6 +72,8 @@ void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
 	}
 	channelID = stream.readUint16LE();
 
+	// 0xE is soundPlayFormat, but I have no idea what that does yet
+
 	// The difference between these is a couple members found at the same position
 	// whose purpose I don't understand, so for now just skip them
 	switch (type) {

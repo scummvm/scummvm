@@ -243,7 +243,7 @@ void Telephone::execute(NancyEngine *engine) {
 
             }
 
-            isDone = true;
+            finishExecution();
             _engine->scene->getTextbox().clear();
     }
 }

@@ -267,7 +267,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     // Continue to next dialogue scene
                     engine->scene->changeScene(sceneChange);
                 }
-                isDone = true;
+                
+                finishExecution();
             }
 
             break;

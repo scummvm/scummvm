@@ -161,7 +161,7 @@ void RotatingLockPuzzle::execute(Nancy::NancyEngine *engine) {
                 _engine->scene->changeScene(solveExitScene);
             }
 
-            isDone = true;
+            finishExecution();
     }
 }
 

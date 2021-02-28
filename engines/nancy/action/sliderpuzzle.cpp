@@ -176,7 +176,7 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
             }
 
             engine->sound->stopSound(clickSound.channelID);
-            isDone = true;
+            finishExecution();
     }
 }
 

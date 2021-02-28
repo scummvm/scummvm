@@ -102,6 +102,16 @@ void GraphicsManager::onPause(bool pause) {
 }
 
 void GraphicsManager::addObject(RenderObject *object) {
+    for (auto &r : _objects) {
+        if (r == object) {
+            return;
+        }
+
+        if (r->getZOrder() > object->getZOrder()) {
+            break;
+        }
+    }
+    
     _objects.insert(object);
 }
 

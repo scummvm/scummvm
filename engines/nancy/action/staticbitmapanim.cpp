@@ -157,7 +157,7 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             triggerFlags.execute(engine);
             if (doNotChangeScene == kFalse) {
                 engine->scene->changeScene(sceneChange);
-                isDone = true;
+                finishExecution();
             }
             break;
     }

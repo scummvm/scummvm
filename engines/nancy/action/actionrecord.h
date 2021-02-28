@@ -81,9 +81,10 @@ class ActionRecord {
     friend class ActionManager;
 public:
     enum ExecutionState { kBegin, kRun, kActionTrigger };
+    enum ExecutionType { kOneShot = 1, kRepeating = 2 };
     ActionRecord() :
         type(0),
-        execType(0),
+        execType(kOneShot),
         isActive(0),
         isDone(false),
         hasHotspot(false),
@@ -104,11 +105,33 @@ protected:
         stream.skip(bytes);
         return bytes;
     }
+    
+    void finishExecution() {
+        switch (execType) {
+            case kOneShot:
+                isDone = true;
+                state = kBegin;
+                break;
+            case kRepeating:
+                isDone = false;
+                isActive = false;
+                state = kBegin;
+
+                for (uint i = 0; i < dependencies.size(); ++i) {
+                    dependencies[i].satisfied = false;
+                }
+
+                break;
+            default:
+                state = kBegin;
+                break;
+        }
+    }
 
 public:
     Common::String description;                     // 0x00
     byte type;                                      // 0x30
-    byte execType;                                  // 0x31
+    ExecutionType execType;                         // 0x31
     // 0x32 data
     Common::Array<DependencyRecord> dependencies;   // 0x36
     // 0x3A numDependencies
