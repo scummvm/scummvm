@@ -81,6 +81,7 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	} else {
 		_engine->setPalette(pal);
 	}
+	_engine->flip();
 }
 
 bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
@@ -101,6 +102,7 @@ void Screens::fadeIn(uint32 *pal) {
 	}
 
 	_engine->setPalette(pal);
+	_engine->flip();
 }
 
 void Screens::fadeOut(uint32 *pal) {
@@ -147,6 +149,7 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	}
 
 	_engine->setPalette(pal);
+	_engine->flip();
 }
 
 void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
@@ -183,6 +186,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 		}
 
 		_engine->setPalette(pal);
+		_engine->flip();
 		intensity++;
 	} while (intensity <= 100);
 }
@@ -208,6 +212,7 @@ void Screens::fadeToPal(const uint32 *pal) {
 	}
 
 	_engine->setPalette(pal);
+	_engine->flip();
 
 	palResetted = false;
 }
@@ -219,6 +224,7 @@ void Screens::blackToWhite() {
 		memset(pal, i, sizeof(pal));
 
 		_engine->setPalette(pal);
+		_engine->flip();
 	}
 }
 
@@ -227,6 +233,7 @@ void Screens::setBackPal() {
 	memset(paletteRGBA, 0, sizeof(paletteRGBA));
 
 	_engine->setPalette(paletteRGBA);
+	_engine->flip();
 
 	palResetted = true;
 }

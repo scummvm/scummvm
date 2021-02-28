@@ -572,8 +572,8 @@ void TwinEEngine::processBookOfBu() {
 	_text->initSceneTextBank();
 	_screens->fadeToBlack(_screens->paletteRGBACustom);
 	_screens->clearScreen();
-	flip();
 	setPalette(_screens->paletteRGBA);
+	flip();
 	_screens->lockPalette = true;
 }
 
@@ -1048,13 +1048,11 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 		out += 3;
 		in += 4;
 	}
-	g_system->getPaletteManager()->setPalette(pal, 0, NUMOFCOLORS);
-	flip();
+	setPalette(0, NUMOFCOLORS, pal);
 }
 
-void TwinEEngine::setPalette(uint8 startColor, uint8 numColors, const byte *palette) {
+void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palette) {
 	g_system->getPaletteManager()->setPalette(palette, startColor, numColors);
-	flip();
 }
 
 void TwinEEngine::flip() {

@@ -693,6 +693,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
 			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
 			_engine->setPalette(_engine->_screens->paletteRGBA);
+			_engine->flip();
 		}
 	} else {
 		blitBackgroundAreas();

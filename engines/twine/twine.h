@@ -326,7 +326,7 @@ public:
 	 * @param numColors the number of palette entries to be updated
 	 * @param palette palette to set in RGB
 	 */
-	void setPalette(uint8 startColor, uint8 numColors, const byte *palette);
+	void setPalette(uint startColor, uint numColors, const byte *palette);
 
 	/** Blit surface in the screen */
 	void flip();

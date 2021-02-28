@@ -494,6 +494,7 @@ void GameState::processGameoverAnimation() {
 
 	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->flip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	uint8 *gameOverPtr = nullptr;
 	if (HQR::getAllocEntry(&gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL) == 0) {

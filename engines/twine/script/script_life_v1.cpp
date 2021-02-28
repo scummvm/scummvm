@@ -1561,6 +1561,7 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	if (!engine->_screens->lockPalette) {
 		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 		engine->setPalette(engine->_screens->paletteRGBA);
+		engine->flip();
 	}
 	engine->_screens->useAlternatePalette = true;
 	return 0;
@@ -1574,6 +1575,7 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->useAlternatePalette = false;
 	if (!engine->_screens->lockPalette) {
 		engine->setPalette(engine->_screens->mainPaletteRGBA);
+		engine->flip();
 	}
 	return 0;
 }
@@ -1598,6 +1600,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->paletteRGBA);
+	engine->flip();
 	return 0;
 }
 

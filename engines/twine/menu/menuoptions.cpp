@@ -86,13 +86,13 @@ void MenuOptions::newGame() {
 
 	_engine->_text->textClipSmall();
 	_engine->_screens->clearScreen();
-	_engine->flip();
 
 	_engine->_text->drawTextBoxBackground = true;
 	_engine->_text->renderTextTriangle = false;
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->flip();
 }
 
 void MenuOptions::showCredits() {
@@ -120,8 +120,8 @@ void MenuOptions::showEndSequence() {
 	_engine->_flaMovies->playFlaMovie(FLA_THEEND);
 
 	_engine->_screens->clearScreen();
-	_engine->flip();
 	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->flip();
 }
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
