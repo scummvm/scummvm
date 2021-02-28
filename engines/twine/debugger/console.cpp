@@ -328,8 +328,8 @@ bool TwinEConsole::doDumpFile(int argc, const char **argv) {
 		debugPrintf("Expected to get a a hqr file and an index\n");
 		return true;
 	}
-	const char *hqr = argv[0];
-	const int index = atoi(argv[1]);
+	const char *hqr = argv[1];
+	const int index = atoi(argv[2]);
 	const Common::String &targetFileName = Common::String::format("dumps/%03i-%s.dump", index, hqr);
 	HQR::dumpEntry(hqr, index, targetFileName.c_str());
 	return true;

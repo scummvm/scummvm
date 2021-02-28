@@ -266,7 +266,7 @@ int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
 
 bool dumpEntry(const char *filename, int32 index, const char *targetFileName) {
 	Common::DumpFile out;
-	if (!out.open(targetFileName)) {
+	if (!out.open(targetFileName, true)) {
 		warning("Failed to save to %s", targetFileName);
 		return false;
 	}
