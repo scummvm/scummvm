@@ -126,29 +126,6 @@ uint16 StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-    // TODO
-    uint16 bytesRead = stream.pos();
-    byte *seek = bitmapData;
-    
-    uint16 currentSize = 0x72;
-    stream.read(seek, currentSize);
-
-    seek += currentSize;
-    currentSize = (uint16)(bitmapData[0x18]) - (uint16)(bitmapData[0x16]);
-    ++currentSize;
-    currentSize *= 16;
-    stream.read(seek, currentSize);
-
-    seek += 0x252;
-    currentSize = (uint16)(bitmapData[0x70]);
-    currentSize *= 34;
-    stream.read(seek, currentSize);
-
-    bytesRead= stream.pos() - bytesRead;
-    return bytesRead;
-}
-
 uint16 MapCall::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
     return 1;

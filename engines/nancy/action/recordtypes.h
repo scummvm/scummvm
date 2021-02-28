@@ -85,13 +85,6 @@ public:
     byte type = 0;
 };
 
-class PlayStaticBitmapAnimation : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte bitmapData[0xA88];
-};
-
 class MapCall : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;

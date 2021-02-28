@@ -34,7 +34,7 @@
 namespace Nancy {
 namespace Action {
 
-void PlayIntStaticBitmapAnimation::init() {
+void PlayStaticBitmapAnimation::init() {
     Graphics::Surface surf;
     _engine->_res->loadImage("ciftree", imageName, surf);
 
@@ -46,7 +46,7 @@ void PlayIntStaticBitmapAnimation::init() {
     RenderObject::init();
 }
 
-uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
+uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     char name[10];
     stream.read(name, 10);
     imageName = Common::String(name);
@@ -61,30 +61,37 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     loopLastFrame = stream.readUint16LE();
     frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
     zOrder = stream.readUint16LE();
-    updateCondition.label = stream.readSint16LE();
-    updateCondition.flag = (NancyFlag)stream.readUint16LE();
+    if (isInterruptible) {
+        interruptCondition.label = stream.readSint16LE();
+        interruptCondition.flag = (NancyFlag)stream.readUint16LE();
+    } else {
+        interruptCondition.label = -1;
+        interruptCondition.flag = kFalse;
+    }
     sceneChange.readData(stream);
     triggerFlags.readData(stream);
     sound.read(stream, SoundDescription::kNormal);
-    uint numFrames = stream.readUint16LE();
+    uint numViewportFrames = stream.readUint16LE();
 
     for (uint i = firstFrame; i <= loopLastFrame; ++i) {
         srcRects.push_back(Common::Rect());
         readRect(stream, srcRects[i]);
     }
 
-    for (uint i = 0; i < numFrames; ++i) {
+    for (uint i = 0; i < numViewportFrames; ++i) {
         bitmaps.push_back(BitmapDescription());
-        BitmapDescription &rects = bitmaps[i];
+        BitmapDescription &rects = bitmaps.back();
         rects.frameID = stream.readUint16LE();
         readRect(stream, rects.src);
         readRect(stream, rects.dest);
     }
 
-    return 0x76 + numFrames * 0x22 + (loopLastFrame - firstFrame + 1) * 16;
+    uint baseSize = isInterruptible ? 0x76 : 0x72;
+
+    return baseSize + numViewportFrames * 0x22 + (loopLastFrame - firstFrame + 1) * 16;
 }
 
-void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
+void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
     uint32 currentFrameTime = engine->getTotalPlayTime();
     switch (state) {
         case kBegin:
@@ -98,7 +105,7 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
             // Check the timer to see if we need to draw the next animation frame
             if (nextFrameTime <= currentFrameTime) {
                 // World's worst if statement
-                if (engine->scene->getEventFlag(updateCondition.label, updateCondition.flag) ||
+                if (engine->scene->getEventFlag(interruptCondition) ||
                     (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
                         ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
                             !engine->sound->isSoundPlaying(sound.channelID))   ) {
@@ -163,7 +170,7 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
     }
 }
 
-void PlayIntStaticBitmapAnimation::setFrame(uint frame) {
+void PlayStaticBitmapAnimation::setFrame(uint frame) {
     currentFrame = frame;
     _drawSurface.create(_fullSurface, srcRects[frame]);
     _needsRedraw = true;

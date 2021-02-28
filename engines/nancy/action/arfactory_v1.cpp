@@ -69,9 +69,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x2B:
             return new PlaySecondaryMovie(_engine->scene->getViewport());
         case 0x2C:
-            return new PlayStaticBitmapAnimation();
+            return new PlayStaticBitmapAnimation(false, _engine->scene->getViewport()); // PlayStaticBitmapAnimation
         case 0x2D:
-            return new PlayIntStaticBitmapAnimation(_engine->scene->getViewport());
+            return new PlayStaticBitmapAnimation(true, _engine->scene->getViewport()); // PlayIntStaticBitmapAnimation
         case 0x32:
             return new MapCall();
         case 0x33:

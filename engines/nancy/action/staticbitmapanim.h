@@ -35,11 +35,13 @@ namespace Nancy {
 namespace Action {
 
 // ActionRecord subclass describing a short "flipbook" animation from a single bitmap
-// Can also play sound, but this has not yet been implemented
-class PlayIntStaticBitmapAnimation : public ActionRecord, public RenderObject {
+// Also supports sound and getting interrupted by an event flag.
+// This class covers both the PlayStaticBitmapAnimation and PlayIntStaticBitmapAnimation
+// action record types, whose functionality is nearly identical
+class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
-    PlayIntStaticBitmapAnimation(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-    virtual ~PlayIntStaticBitmapAnimation() { _fullSurface.free(); }
+    PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom), isInterruptible(interruptible) {}
+    virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
     virtual void init() override;
 
@@ -57,7 +59,7 @@ public:
     uint16 loopLastFrame; // 0x18
     Time frameTime;
     uint16 zOrder; // 0x1C
-    EventFlagDescription updateCondition; // 0x1E
+    EventFlagDescription interruptCondition; // 0x1E
     SceneChangeDescription sceneChange;
     MultiEventFlagDescription triggerFlags; // 0x2A
 
@@ -72,6 +74,7 @@ public:
     int16 currentFrame = -1;
     int16 currentViewportFrame = -1;
     Time nextFrameTime;
+    bool isInterruptible;
     
 protected:
     virtual uint16 getZOrder() const override { return zOrder; }
