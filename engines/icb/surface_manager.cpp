@@ -336,7 +336,7 @@ void _surface_manager::Unlock_surface(uint32 s_id) {
 }
 
 void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
-	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->h, m_Surfaces[s_id]->m_dds->w), rgb_value);
+	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->w, m_Surfaces[s_id]->m_dds->h), rgb_value);
 }
 
 static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPitch, int dstPitch, int width, int height,
