@@ -112,7 +112,7 @@ bool8 FxManager::Poll() {
 			float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
 			g_icb->_mixer->playStream(Audio::Mixer::kSFXSoundType, &m_effects[id]._handle,
 			                          makeLoopingAudioStream(m_effects[id]._stream, (m_effects[id].looped != 0) ? 0 : 1),
-			                          -1, m_effects[id].pan * volumeConversion, m_effects[id].pan, DisposeAfterUse::NO);
+			                          -1, m_effects[id].volume * volumeConversion, m_effects[id].pan, DisposeAfterUse::NO);
 			m_effects[id].flags = Effect::PLAYING;
 			}
 			break;
