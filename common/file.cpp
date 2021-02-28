@@ -51,7 +51,7 @@ bool File::open(const String &filename, Archive &archive) {
 	if ((stream = archive.createReadStreamForMember(filename))) {
 		debug(8, "Opening hashed: %s", filename.c_str());
 	} else if ((stream = archive.createReadStreamForMember(filename + "."))) {
-		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+		// WORKAROUND: Bug #2548: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(8, "Opening hashed: %s.", filename.c_str());
 	}
@@ -91,7 +91,7 @@ bool File::exists(const String &filename) {
 	if (SearchMan.hasFile(filename)) {
 		return true;
 	} else if (SearchMan.hasFile(filename + ".")) {
-		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+		// WORKAROUND: Bug #2548: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		return true;
 	}

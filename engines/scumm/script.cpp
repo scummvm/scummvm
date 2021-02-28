@@ -152,7 +152,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	const byte *objptr, *verbptr;
 	int verboffs;
 
-	// WORKAROUND for bug #1555938: Disallow pulling the rope if it's
+	// WORKAROUND for bug #2826: Disallow pulling the rope if it's
 	// already in the player's inventory.
 	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY) {
 		return 0;
@@ -428,7 +428,7 @@ void ScummEngine::getScriptBaseAddress() {
 		error("Bad type while getting base address");
 	}
 
-	// The following fixes bug #1202487. Confirmed against disasm.
+	// The following fixes bug #2028. Confirmed against disasm.
 	if (_game.version <= 2 && _scriptOrgPointer == NULL) {
 		ss->status = ssDead;
 		_currentScript = 0xFF;
@@ -640,7 +640,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			// Otherwise, use the value specified by the game script.
 			// Note: To determine whether there was a user override, we only
 			// look at the target specific settings, assuming that any global
-			// value is likely to be bogus. See also bug #2251765.
+			// value is likely to be bogus. See also bug #4008.
 			if (ConfMan.hasKey("talkspeed", _targetName)) {
 				value = getTalkSpeed();
 			} else {
@@ -1113,7 +1113,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 
 
 		if (_game.id == GID_FT && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
-			// WORKAROUND for bug #1407789. The buggy script clearly
+			// WORKAROUND for bug #2466. The buggy script clearly
 			// assumes that one of the two objects is an actor. If that's
 			// not the case, fall back on the default sentence script.
 

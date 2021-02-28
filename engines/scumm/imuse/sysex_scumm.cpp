@@ -54,14 +54,14 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		// Here is what we know about them so far:
 		//   BYTE 0: Channel #
 		//   BYTE 1: BIT 01(0x01): Part on?(1 = yes)
-		//            BIT 02(0x02): Reverb? (1 = yes) [bug #1088045]
+		//            BIT 02(0x02): Reverb? (1 = yes) [bug #1849]
 		//   BYTE 2: Priority adjustment
 		//   BYTE 3: Volume [guessing]
-		//   BYTE 4: Pan [bug #1088045]
+		//   BYTE 4: Pan [bug #1849]
 		//   BYTE 5: BIT 8(0x80): Percussion?(1 = yes) [guessed?]
 		//   BYTE 5: Transpose, if set to 0x80(=-1) it means no transpose
 		//   BYTE 6: Detune
-		//   BYTE 7: Pitchbend factor [bug #1088045]
+		//   BYTE 7: Pitchbend factor [bug #1849]
 		//   BYTE 8: Program
 
 		part = player->getPart(p[0] & 0x0F);

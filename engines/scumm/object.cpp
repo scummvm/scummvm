@@ -106,7 +106,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	int arg = (_game.version >= 6) ? obj : 0;
 
-	// WORKAROUND for bug #1917981: Game crash when finishing Indy3 demo.
+	// WORKAROUND for bug #3657: Game crash when finishing Indy3 demo.
 	// Script 94 tries to empty the inventory but does so in a bogus way.
 	// This causes it to try to remove object 0 from the inventory.
 	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
@@ -126,7 +126,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	if (owner == 0) {
 		clearOwnerOf(obj);
 
-		// FIXME: See bug #1535358 and many others. Essentially, the following
+		// FIXME: See bug #2771 and many others. Essentially, the following
 		// code, while matching disasm of various versions of the SCUMM engine,
 		// is total bullocks, and leads to odd crashes due to out-of-bounds
 		// array (read) access. Three "famous" crashes were caused by this:
@@ -456,7 +456,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		// Adjust x, y when no actor direction is set, but only perform this
 		// adjustment for V0 games (e.g. MM C64), otherwise certain scenes in
 		// newer games are affected as well (e.g. the interior of the Shuttle
-		// Bus scene in Zak V2, where no actor is present). Refer to bug #3526089.
+		// Bus scene in Zak V2, where no actor is present). Refer to bug #6034.
 		if (!od.actordir && _game.version == 0) {
 			x = od.x_pos + od.width / 2;
 			y = od.y_pos + od.height / 2;

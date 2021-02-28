@@ -822,7 +822,7 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
 		// cases. For instance, Zak tries to reload the intro music
-		// while it's playing. See bug #1253171.
+		// while it's playing. See bug #2115.
 
 		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume))
 			return _types[type][idx]._address;

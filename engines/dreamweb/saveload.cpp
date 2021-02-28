@@ -160,7 +160,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			// Wait till both mouse buttons are up. We should wait till the user
 			// releases the mouse button, otherwise the follow-up mouseup event
 			// will trigger a load of the save slot under the mouse cursor. Fixes
-			// bug #3582582.
+			// bug #6175.
 			while (_oldMouseState > 0) {
 				readMouse();
 				g_system->delayMillis(10);
@@ -253,7 +253,7 @@ void DreamWebEngine::saveGame() {
 		// Wait till both mouse buttons are up. We should wait till the user
 		// releases the mouse button, otherwise the follow-up mouseup event
 		// will trigger a save into the save slot under the mouse cursor. Fixes
-		// bug #3582582.
+		// bug #6175.
 		while (_oldMouseState > 0) {
 			readMouse();
 			g_system->delayMillis(10);
@@ -665,7 +665,7 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 
 
 	// Do a sanity check on exFrames data to detect exFrames corruption
-	// caused by a (now fixed) bug in emergencyPurge. See bug #3591088.
+	// caused by a (now fixed) bug in emergencyPurge. See bug #6196.
 	// Gather the location of frame data of all used ex object frames.
 	Common::List<FrameExtent> flist;
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
@@ -900,7 +900,7 @@ void DreamWebEngine::showOpBox() {
 	// This call displays half of the ops dialog in the CD version. It's not
 	// in the floppy version, and if it's called, a stray red dot is shown in
 	// the game dialogs. It is included in the early UK CD release, which had
-	// similar data files as the floppy release (bug #3528160).
+	// similar data files as the floppy release (bug #6039).
 	if (isCD() && getLanguage() != Common::EN_GRB)
 		showFrame(_saveGraphics, kOpsx, kOpsy + 55, 4, 0);
 }

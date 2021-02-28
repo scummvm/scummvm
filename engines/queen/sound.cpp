@@ -309,7 +309,7 @@ void PCSound::playSound(const char *base, bool isSpeech) {
 
 void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 	// In order to simplify the code, we don't parse the .sb header but hard-code the
-	// values. Refer to tracker item #1876741 for details on the format/fields.
+	// values. Refer to tracker item #3590 for details on the format/fields.
 	int headerSize;
 	f->seek(2, SEEK_CUR);
 	uint16 version = f->readUint16LE();

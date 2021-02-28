@@ -414,7 +414,7 @@ void AGOSEngine_Elvira2::oe2_ifDoorOpen() {
 	uint16 d = getVarOrByte();
 
 	if (getGameType() == GType_WW) {
-		// WORKAROUND bug #2686883: A NULL item can occur when
+		// WORKAROUND bug #4229: A NULL item can occur when
 		// walking through Jack the Ripper scene
 		if (i == NULL) {
 			setScriptCondition(false);
@@ -646,7 +646,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	int16 n = getNextWord();
 
 	if (getGameType() == GType_ELVIRA2 && item == NULL) {
-		// WORKAROUND bug #1745996: A NULL item can occur when
+		// WORKAROUND bug #3281: A NULL item can occur when
 		// interacting with items in the dinning room
 		setScriptCondition(false);
 		return;

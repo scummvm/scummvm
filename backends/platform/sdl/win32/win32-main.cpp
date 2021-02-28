@@ -27,7 +27,7 @@
 
 #ifdef WIN32
 
-// Fix for bug #2895217 "MSVC compilation broken with r47595":
+// Fix for bug #4700 "MSVC compilation broken with r47595":
 // We need to keep this on top of the "common/scummsys.h"(base/main.h) include,
 // otherwise we will get errors about the windows headers redefining
 // "ARRAYSIZE" for example.

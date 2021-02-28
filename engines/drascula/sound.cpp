@@ -229,7 +229,7 @@ void DrasculaEngine::playFile(const char *fname) {
 			// WORKAROUND: File 3.als with English speech files has a big silence at
 			// its beginning and end. We seek past the silence at the beginning,
 			// and ignore the silence at the end
-			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
+			// Fixes bug #3969 - "DRASCULA: Voice delayed"
 			startOffset = 73959;
 			soundSize = soundSize - startOffset - 26306;
 		}

@@ -78,7 +78,7 @@ void cmdAssignN(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// is then incorrectly assigned to 0. Thus, when the game
 	// is restarted, "Points 0 of 0" is shown. We set the
 	// variable to the correct value here
-	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
+	// Fixes bug #3696 - "AGI: Fan(Get Outta SQ) - Score
 	// is lost on restart"
 	if (vm->getGameID() == GID_GETOUTTASQ && varNr == 7)
 		vm->setVar(varNr, 8);
@@ -2145,7 +2145,7 @@ void cmdClearLines(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	// Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423
 	// Agent06 incorrectly calls clear.lines(1,150,0), see ScummVM bugs
-	// #1935838 and #1935842
+	// #3679 and #3680
 	if (textRowUpper > textRowLower) {
 		warning("cmdClearLines: RowUpper higher than RowLower");
 		textRowLower = textRowUpper;

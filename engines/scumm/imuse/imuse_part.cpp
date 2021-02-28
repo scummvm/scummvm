@@ -424,7 +424,7 @@ void Part::sendPanPosition(uint8 value) {
 	if (!_mc)
 		return;
 
-	// As described in bug report #1088045 "MI2: Minor problems in native MT-32 mode"
+	// As described in bug report #1849 "MI2: Minor problems in native MT-32 mode"
 	// the original iMuse MT-32 driver did revert the panning. So we do the same
 	// here in our code to have correctly panned sound output.
 	if (_player->_se->isNativeMT32())
@@ -437,7 +437,7 @@ void Part::sendEffectLevel(uint8 value) {
 	if (!_mc)
 		return;
 
-	// As described in bug report #1088045 "MI2: Minor problems in native MT-32 mode"
+	// As described in bug report #1849 "MI2: Minor problems in native MT-32 mode"
 	// for the MT-32 one has to use a sysEx event to change the effect level (rather
 	// the reverb setting).
 	if (_player->_se->isNativeMT32()) {

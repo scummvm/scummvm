@@ -216,7 +216,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Drascula French version (updated - bug #3612236)
+		// Drascula French version (updated - bug #6303)
 		{
 			"drascula",
 			0,
@@ -255,7 +255,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Drascula Italian version (updated - bug #3612236)
+		// Drascula Italian version (updated - bug #6303)
 		{
 			"drascula",
 			0,

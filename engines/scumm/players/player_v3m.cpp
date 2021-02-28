@@ -150,7 +150,7 @@ bool Player_V3M::loadMusic(const byte *ptr) {
 	if (ptr[4] != 's' || ptr[5] != 'o') {
 		// Like the original we ignore all sound resources which do not have
 		// a 'so' tag in them.
-		// See bug #3602239 ("Mac Loom crashes using opening spell on
+		// See bug #6238 ("Mac Loom crashes using opening spell on
 		// gravestone") for a case where this is required. Loom Mac tries to
 		// play resource 11 here. This resource is no Mac sound resource
 		// though, it is a PC Speaker resource. A test with the original

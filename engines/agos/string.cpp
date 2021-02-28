@@ -136,7 +136,7 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 		Common::strlcpy((char *)dst, (const char *)stringPtr, 180);
 	}
 
-	// WORKAROUND bug #1538873: The French version of Simon 1 and the
+	// WORKAROUND bug #2780: The French version of Simon 1 and the
 	// Polish version of Simon 2 used excess spaces, at the end of many
 	// messages, so we strip off those excess spaces.
 	if ((getGameType() == GType_SIMON1 && _language == Common::FR_FRA) ||

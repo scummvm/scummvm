@@ -88,7 +88,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 	{
-		// Hopkins FBI Win95 RU, provided by greencis in bug #3613068
+		// Hopkins FBI Win95 RU, provided by greencis in bug #6324
 		{
 			"hopkins",
 			0,

@@ -118,7 +118,7 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 		// When we run out of handles we need to destroy the stream object,
 		// this is to avoid memory leaks in some scenes where too many sfx
 		// are started.
-		// See bug #3427240 "LOL-CD: Memory leak in caves level 3".
+		// See bug #5886 "LOL-CD: Memory leak in caves level 3".
 		delete stream;
 		return false;
 	}

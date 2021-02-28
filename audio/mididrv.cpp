@@ -568,7 +568,7 @@ void MidiDriver_BASE::stopAllNotes(bool stopSustainedNotes) {
 	for (int i = 0; i < 16; ++i) {
 		send(0xB0 | i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
 		if (stopSustainedNotes)
-			send(0xB0 | i, MIDI_CONTROLLER_SUSTAIN, 0); // Also send a sustain off event (bug #3116608)
+			send(0xB0 | i, MIDI_CONTROLLER_SUSTAIN, 0); // Also send a sustain off event (bug #5524)
 	}
 }
 

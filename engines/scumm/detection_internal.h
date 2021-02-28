@@ -398,7 +398,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 	DescMap fileMD5Map;
 	DetectorResult dr;
 
-	// Dive one level down since mac indy3/loom have their files split into directories. See Bug #1438631.
+	// Dive one level down since mac indy3/loom have their files split into directories. See Bug #2507.
 	// Dive two levels down for Mac Steam games.
 	composeFileHashMap(fileMD5Map, fslist, 3, directoryGlobs);
 

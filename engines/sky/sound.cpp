@@ -1101,7 +1101,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 	// Note: All those tables are big endian. Don't ask me why. *sigh*
 
-	// Use the sample rate from game data, see bug #1507757.
+	// Use the sample rate from game data, see bug #2688.
 	uint16 sampleRate = READ_BE_UINT16(_sampleRates + (sound << 2));
 	if (sampleRate > 11025)
 		sampleRate = 11025;

@@ -662,7 +662,7 @@ void MidiPlayer::loadSMF(Common::SeekableReadStream *in, int song, bool sfx) {
 			// this should be the right way to calculate it.
 			timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
 
-			// According to bug #1004919 calling setLoop() from
+			// According to bug #1706 calling setLoop() from
 			// within a lock causes a lockup, though I have no
 			// idea when this actually happens.
 			_loopTrack = (p->data[6] != 0);

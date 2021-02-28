@@ -316,7 +316,7 @@ int AgiEngine::playGame() {
 	// We need to do this accurately and reset the AGI priorityscreen to 4
 	// otherwise at least the fan game Nick's Quest will go into an endless
 	// loop, because the game draws views before it draws the first background picture.
-	// For further study see bug #3451122
+	// For further study see bug #5916
 	_gfx->clear(0, 4);
 
 	_game.horizon = 36;

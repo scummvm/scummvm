@@ -1313,7 +1313,7 @@ int16 GfxMgr::priorityToY(int16 priority) {
 	//  Dwarf is screen object 13 (view 152), gets fixed priority of 8, which would normally
 	//  result in a Y of 101. Ego is priority (non-fixed) 8, which would mean that dwarf is
 	//  drawn first, followed by ego, which would then draw ego over the dwarf.
-	//  For more information see bug #1712585 (dwarf sprite priority)
+	//  For more information see bug #3182 (dwarf sprite priority)
 	//
 	// This glitch is definitely present in 2.425, 2.936 and 3.002.086.
 	//

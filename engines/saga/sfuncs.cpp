@@ -164,8 +164,8 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 		// Normally, when objects are picked up, they should always have the same
 		// _spriteListResourceId as their _index value. Some don't in IHNM, so
 		// we fix their sprite here
-		// Fixes bugs #2057200 - "IHNM: Invisible inventory objects",
-		// #1861126 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
+		// Fixes bugs #3873 - "IHNM: Invisible inventory objects",
+		// #3540 - "IHNM: Crash when Gorrister cuts sheet in the mooring ring"
 		// and some incorrect objects in the IHNM demo
 		if (_vm->getGameId() == GID_IHNM)
 			obj->_spriteListResourceId = obj->_index;
@@ -266,7 +266,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	// If the player uses an object and then immediately reuses that object
 	// (without it being shown in the verb area), the object returned is wrong (0),
 	// so we make it equal to the second object here.
-	// Fixes bug #1861863 - "ITE: Crash when using Eeah with Eeah"
+	// Fixes bug #3545 - "ITE: Crash when using Eeah with Eeah"
 	if (theObject == 0 && objectId == 0 && withObject > 0)
 		theObject = objectId = withObject;
 

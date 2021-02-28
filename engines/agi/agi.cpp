@@ -118,7 +118,7 @@ int AgiEngine::agiInit() {
 	// some scripts expect that the game strings remain unaffected after a
 	// restart. An example is script 98 in SQ2, which is not invoked on restart
 	// to ask Ego's name again. The name is supposed to be maintained in string 1.
-	// Fixes bug #3292784.
+	// Fixes bug #5673.
 	if (!_restartGame) {
 		for (i = 0; i < MAX_STRINGS; i++)
 			_game.strings[i][0] = 0;

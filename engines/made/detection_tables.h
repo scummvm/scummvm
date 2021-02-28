@@ -35,7 +35,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		// directly, which is the "official" way.
 
 		// Return to Zork - English CD version 1.0 9/15/93 (installed)
-		// Patch #1953654 submitted by spookypeanut
+		// Ticket #8858 submitted by spookypeanut
 		{
 			"rtz",
 			"V1.0, 9/15/93, installed, CD",
@@ -53,7 +53,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - English CD version 1.0 9/15/93
-		// Patch #1953654 submitted by spookypeanut
+		// Ticket #8858 submitted by spookypeanut
 		{
 			"rtz",
 			"V1.0, 9/15/93, CD",
@@ -197,7 +197,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - Italian CD version 1.2 3/31/95 (installed)
-		// Patch #2685032 submitted by goodoldgeorg
+		// Patch #4225 submitted by goodoldgeorg
 		{
 			"rtz",
 			"V1.2, 3/31/95, installed, CD",
@@ -215,7 +215,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - Italian CD version 1.2 3/31/95
-		// Patch #2685032 submitted by goodoldgeorg
+		// Patch #4225 submitted by goodoldgeorg
 		{
 			"rtz",
 			"V1.2, 3/31/95, CD",
@@ -233,7 +233,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - French CD version 1.2 5/13/95 (installed)
-		// Patch #2685032 submitted by goodoldgeorg
+		// Patch #4225 submitted by goodoldgeorg
 		{
 			"rtz",
 			"V1.2, 5/13/95, installed, CD",
@@ -251,7 +251,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - French CD version 1.2 5/13/95
-		// Patch #2685032 submitted by goodoldgeorg
+		// Patch #4225 submitted by goodoldgeorg
 		{
 			"rtz",
 			"V1.2, 3/31/95, CD",
@@ -450,7 +450,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Leather Goddesses of Phobos 2 (German)
-		// Supplied by windlepoons (bug tracker #2675695)
+		// Supplied by windlepoons (bug tracker #4218)
 		{
 			"lgop2",
 			"",
@@ -468,7 +468,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Leather Goddesses of Phobos 2 (French)
-		// Supplied by goodoldgeorg (bug tracker #2675759)
+		// Supplied by goodoldgeorg (bug tracker #4219)
 		{
 			"lgop2",
 			"",
@@ -486,7 +486,7 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Leather Goddesses of Phobos 2 (Spanish)
-		// Supplied by goodoldgeorg (bug tracker #2675759)
+		// Supplied by goodoldgeorg (bug tracker #4219)
 		{
 			"lgop2",
 			"",

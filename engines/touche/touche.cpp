@@ -2039,7 +2039,7 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 		if (_programAreaTable[i].id == num) {
 			Area area = _programAreaTable[i].area;
 			if (i == 14 && _currentRoomNum == 8 && area.r.left == 715) {
-				// Workaround for bug #1751170. area[14].r.left (update rect) should
+				// Workaround for bug #3306. area[14].r.left (update rect) should
 				// be equal to area[7].r.left (redraw rect) but it's one off, which
 				// leads to a glitch when that room area needs to be redrawn.
 				area.r.left = 714;

@@ -100,7 +100,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	_debugPointsCount = 0;
 #endif
 
-	// WORKAROUND for bug #3360396. Path finding in IHNM is a bit buggy
+	// WORKAROUND for bug #5793. Path finding in IHNM is a bit buggy
 	// compared to the original, which occasionally leads to the player
 	// leaving the room instead of interacting with an object. So far, no
 	// one has figured out how to fix this properly. As a temporary [*]

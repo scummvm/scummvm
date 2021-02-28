@@ -194,7 +194,7 @@ void IMuseDigital::refreshScripts() {
 			fadeOutMusic(60);
 			return;
 		}
-		// small delay, it seems help for fix bug #1757010
+		// small delay, it seems help for fix bug #3325
 		if (_stopingSequence++ > 120) {
 			debug(5, "refreshScripts() Force restore music state");
 			parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);

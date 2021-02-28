@@ -64,7 +64,7 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 	_glyphs = new Glyph[numGlyphs];
 
 	// Ensure we're ready to read the first glyph. (Most versions don't
-	// need it, but the russian one does. This fixes bug #3095031.)
+	// need it, but the russian one does. This fixes bug #5481.)
 	stream.seek(glyphOffsets[0]);
 
 	// Read the glyphs

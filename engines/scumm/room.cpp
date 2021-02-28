@@ -442,7 +442,7 @@ void ScummEngine::setupRoomSubBlocks() {
 	}
 
 
-	// WORKAROUND bug #1074444: The dreaded DOTT "Can't get teeth" bug
+	// WORKAROUND bug #1831: The dreaded DOTT "Can't get teeth" bug
 	// makes it impossible to go on playing w/o cheating in some way.
 	// It's not quite clear what causes it, but the effect is that object
 	// 182, the teeth, are still in class 32 (kObjectClassUntouchable),

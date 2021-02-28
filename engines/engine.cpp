@@ -622,7 +622,7 @@ void Engine::openMainMenuDialog() {
 	// Load savegame after main menu execution
 	// (not from inside the menu loop to avoid
 	// mouse cursor glitches and similar bugs,
-	// e.g. #2822778).
+	// e.g. #4420).
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {

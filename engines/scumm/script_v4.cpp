@@ -68,7 +68,7 @@ void ScummEngine_v4::o4_ifState() {
 	int a = getVarOrDirectWord(PARAM_1);
 	int b = getVarOrDirectByte(PARAM_2);
 
-	// WORKAROUND bug #3306145 (also occurs in original): Some old versions of
+	// WORKAROUND bug #5709 (also occurs in original): Some old versions of
 	// Indy3 sometimes fail to allocate IQ points correctly. To quote:
 	// "About the points error leaving Castle Brunwald: It seems to "reversed"!
 	// When you get caught, free yourself and escape, you get 25 IQ points even
@@ -151,7 +151,7 @@ enum StringIds {
 	// The string IDs used by Indy3 to store the episode resp. series IQ points.
 	// Note that we save the episode IQ points but load the series IQ points,
 	// which matches the original Indy3 save/load code. See also the notes
-	// on Feature Request #1666521.
+	// on bug #7547.
 	STRINGID_IQ_EPISODE = 7,
 	STRINGID_IQ_SERIES = 9,
 	// The string IDs of the first savegame name, used as an offset to determine

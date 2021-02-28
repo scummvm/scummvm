@@ -731,7 +731,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
-	// WORKAROUND for bug #1498221 "KYRA1: Glitches when meeting Zanthia".
+	// WORKAROUND for bug #2645 "KYRA1: Glitches when meeting Zanthia".
 	// The original did not do a forced screen update after displaying a WSA
 	// frame while we have to do it, which makes Brandon disappear for a short
 	// moment. That is not supposed to happen. So we're not updating the
@@ -1070,7 +1070,7 @@ int KyraEngine_LoK::o1_setLogicPage(EMCState *script) {
 int KyraEngine_LoK::o1_fatPrint(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fatPrint(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 
-	// Workaround for bug #1582672 ("KYRA1: Text crippled and drawn wrong")
+	// Workaround for bug #2878 ("KYRA1: Text crippled and drawn wrong")
 	// I'm not sure how the original handles this, since it seems to call
 	// printText also, maybe it fails somewhere inside...
 	// TODO: fix the reason for this workaround
@@ -1118,7 +1118,7 @@ int KyraEngine_LoK::o1_bkgdScrollSceneAndMasksRight(EMCState *script) {
 	_screen->copyBackgroundBlock2(stackPos(0));
 	// update the whole screen
 	_screen->copyRegion(7, 7, 7, 7, 305, 129, 3, 0);
-	// Don't do a screen update here, see bug #1910180 "KYRA1: Screen 'flash'"
+	// Don't do a screen update here, see bug #3650 "KYRA1: Screen 'flash'"
 	// it would cause to draw the screen with a wrong palette and thus look
 	// strange for the user. Since this opcode should be just called on scene
 	// initialization anyway, there should be no problem with not updating the

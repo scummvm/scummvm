@@ -133,7 +133,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		// It's possible that the scale indexes will overflow and wrap
 		// around to zero, so it's important that we use the same
 		// method of accessing it both when calculating the size of the
-		// scaled costume, and when drawing it. See bug #1519667.
+		// scaled costume, and when drawing it. See bug #2729.
 
 		if (_mirror) {
 			/* Adjust X position */

@@ -92,7 +92,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 		pos += 2;
 	}
 
-	// WORKAROUND for bug #3596547 (EOB1: Door Buttons Don't Work)
+	// WORKAROUND for bug #6211 (EOB1: Door Buttons Don't Work)
 	if (_flags.gameID == GI_EOB1 && level == 7 && _levelBlockProperties[0x035C].assignedObjects == 0x0E89)
 		_levelBlockProperties[0x035C].assignedObjects = 0x0E8D;
 

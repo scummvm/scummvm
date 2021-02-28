@@ -41,7 +41,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by cesardark in bug #1681649
+{ // Supplied by cesardark in bug #3123
 	{
 		"bargon",
 		"",
@@ -55,7 +55,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug #1692667
+{ // Supplied by paul66 in bug #3143
 	{
 		"bargon",
 		"",
@@ -69,7 +69,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by kizkoool in bugreport #2089734
+{ // Supplied by kizkoool in bugreport #3926
 	{
 		"bargon",
 		"",
@@ -83,7 +83,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-{ // Supplied by glorfindel in bugreport #1722142
+{ // Supplied by glorfindel in bugreport #3193
 	{
 		"bargon",
 		"Fanmade",
@@ -114,7 +114,7 @@
 
 // -- Amiga --
 
-{ // Supplied by pwigren in bugreport #1764174
+{ // Supplied by pwigren in bugreport #3355
 	{
 		"bargon",
 		"",

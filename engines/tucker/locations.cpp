@@ -2481,7 +2481,7 @@ void TuckerEngine::updateSprite_locationNum58(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum58() {
-	// workaround original game glitch #2872348: do not change position on location change
+	// workaround original game glitch #4638: do not change position on location change
 	if (_nextLocation == kLocationNone && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
 		_panelLockedFlag = false;

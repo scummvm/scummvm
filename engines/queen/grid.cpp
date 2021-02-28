@@ -138,7 +138,7 @@ void Grid::setupNewRoom(uint16 room, uint16 firstRoomObjNum) {
 		if (_vm->logic()->objectData(i)->name != 0) {
 			if (room == 41 && i == 303) {
 
-				// WORKAROUND bug #1599009: In the room 41, the bounding box of the
+				// WORKAROUND bug #2913: In the room 41, the bounding box of the
 				// stairs (object 303) doesn't match with the room picture. With the
 				// original box dimensions, Joe could walk "above" the stairs, giving
 				// the impression of floating in the air.

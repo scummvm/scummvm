@@ -830,7 +830,7 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 
-	// WORKAROUND: Gob1 goblin stuck on reload bugs present in original - bugs #3018918 and 3065914
+	// WORKAROUND: Gob1 goblin stuck on reload bugs present in original - bugs #4909 and 3065914
 	if ((_vm->getGameType() == kGameTypeGob1) && (_vm->_game->_script->pos() == 2933) &&
 			_vm->isCurrentTot("inter.tot") && VAR(285) != 0) {
 		warning("Workaround for Gob1 Goblin Stuck On Reload Bug applied...");
@@ -1208,7 +1208,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 
 	handleBusyWait();
 
-	// WORKAROUND for bug #1726130: Ween busy-waits in the intro for a counter
+	// WORKAROUND for bug #3205: Ween busy-waits in the intro for a counter
 	// to become 5000. We deliberately slow down busy-waiting, so we shorten
 	// the counting, too.
 	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
@@ -1373,7 +1373,7 @@ void Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 	checking if it is zero. If it was not set, we do not return. This
 	fixes a crash in the EGA version if the life bar is depleted, because
 	interFunc is called multiple times with cmd == 39.
-	Bug #1324814
+	Bug #2246
 */
 
 	if ((cmd < 40) && objDescSet && !gobParams.objDesc)

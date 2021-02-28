@@ -892,16 +892,16 @@ int KyraEngine_HoF::o2_updateSceneAnim(EMCState *script) {
 	//
 	// We know currently of some different animations where this happens.
 	// - Where Marco is dangling from the flesh-eating plant (see bug
-	//   #1923638 "HoF: Marco missing animation frames").
+	//   #3667 "HoF: Marco missing animation frames").
 	// - After giving the ticket to the captain. He would move very fast
 	//   (barely noticeable) onto the ship without this delay.
 	// - The scene after giving the sandwitch to the guards in the city.
-	//   (see bug #1926838 "HoF: Animation plays too fast")
+	//   (see bug #3671 "HoF: Animation plays too fast")
 	//   This scene script calls o2_delay though, but since this updates
 	//   the scene animation scripts again there is no delay for the
 	//   animation.
 	// - When the sheriff enters the jail, either to lock you up or to throw
-	//   away the key. (see bug #1926838 "HoF: Animation plays too fast").
+	//   away the key. (see bug #3671 "HoF: Animation plays too fast").
 
 	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) ||
 			(stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||

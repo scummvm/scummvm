@@ -483,7 +483,7 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 			// Some special processing for the fast-forward case
 			if (info.command() == 0x9 && dontSendNoteOn) {
 				// Don't send note on; doing so creates a "warble" with
-				// some instruments on the MT-32. Refer to patch #3117577
+				// some instruments on the MT-32. Refer to bug #9262
 			} else if (info.event == 0xFF && info.ext.type == 0x2F) {
 				// End of track
 				// This means that we failed to find the right tick.

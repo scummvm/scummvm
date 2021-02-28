@@ -817,7 +817,7 @@ void KyraEngine_LoK::initStaticResource() {
 	const int32 *cdaTable = (const int32 *)_staticres->loadRawData(k1TownsCDATable, cdaTableSize);
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
-	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
+	// support for those for now. (Based on ticket #9008 "Support for Mac Kyrandia 1 CD" by satz).
 	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
 		SoundResourceInfo_PC resInfoIntro(soundFilesIntro, soundFilesIntroSize);
 		SoundResourceInfo_PC resInfoIngame(soundFiles, soundFilesSize);

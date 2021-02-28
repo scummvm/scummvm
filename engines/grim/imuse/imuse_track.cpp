@@ -386,7 +386,7 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->trackId = track->trackId + MAX_IMUSE_TRACKS;
 
 	// Clone the sound.
-	// leaving bug number for now #1635361
+	// leaving bug number for now #3005
 	ImuseSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
 	assert(soundDesc);
 	track->soundDesc = soundDesc;

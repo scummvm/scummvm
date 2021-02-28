@@ -260,7 +260,7 @@ void FWRenderer::incrustSprite(const BGIncrust &incrust) {
 	height = g_cine->_animDataTable[obj.frame]._height;
 
 	// There was an assert(mask) here before but it made savegame loading
-	// in Future Wars sometimes fail the assertion (e.g. see bug #2055912).
+	// in Future Wars sometimes fail the assertion (e.g. see bug #3868).
 	// Not drawing sprites that have no mask seems to work, but not sure
 	// if this is really a correct way to fix this.
 	if (mask) {

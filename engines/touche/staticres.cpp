@@ -889,7 +889,7 @@ const uint8 Graphics::_freGerFontData[] = {
 	0xC0, 0x00, 0x00,
 };
 
-// spanish charset differs from original executable, see tracker item #2040311.
+// spanish charset differs from original executable, see tracker item #3851.
 // We remap missing accented upper case letters from CP850 to their unaccented
 // ASCII variants. Specifically, 0xB5 -> A, 0xD6 -> I, 0xE0 -> O, 0xE9 -> U,
 // 0xEF -> '

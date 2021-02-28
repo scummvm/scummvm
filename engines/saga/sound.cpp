@@ -71,7 +71,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop, int resId) {
 	// WORKAROUND
 	// Prevent playing same looped sound for several times
-	// Fixes bug #2886141: "ITE: Cumulative Snoring sounds in Prince's Bedroom"
+	// Fixes bug #4686: "ITE: Cumulative Snoring sounds in Prince's Bedroom"
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		if (_handles[i].type == kEffectHandle && _handles[i].resId == resId) {
 			debug(1, "Skipped playing SFX #%d", resId);

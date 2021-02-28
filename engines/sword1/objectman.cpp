@@ -162,7 +162,7 @@ char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 	}
 	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {
-		// Workaround bug for missing sentence in some languages in Syria (see bug #1977094).
+		// Workaround bug for missing sentence in some languages in Syria (see bug #3753).
 		// We use the hardcoded text in this case.
 		if (textId == 2950145)
 			return const_cast<char *>(_translationId2950145[lang]);
@@ -226,12 +226,12 @@ void ObjectMan::saveLiveList(uint16 *dest) {
 
 // String displayed when a subtitle sentence is missing in the cluster file.
 // It happens with at least one sentence in Syria in some languages (see bug
-// #1977094).
+// #3753).
 // Note: an empty string or a null pointer causes a crash.
 
 char ObjectMan::_missingSubTitleStr[] = " ";
 
-// Missing translation for textId 2950145 (see bug #1977094).
+// Missing translation for textId 2950145 (see bug #3753).
 // Currently text is missing for Portuguese languages. (It's possible that it
 // is not needed. The English version of the game does not include Portuguese
 // so I cannot check.)

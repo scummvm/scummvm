@@ -236,7 +236,7 @@ void Command::executeCurrentAction() {
 
 		comId = matchingCmds[i - 1];
 
-		// WORKAROUND bug #1497280: This command is triggered in room 56 (the
+		// WORKAROUND bug #2636: This command is triggered in room 56 (the
 		// room with two waterfalls in the maze part of the game) if the user
 		// tries to walk through the left waterfall (object 423).
 		//
@@ -363,7 +363,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 		for (i = 1; i <= _numCmdObject; i++) {
 			_cmdObject[i].readFromBE(ptr);
 
-			// WORKAROUND bug #1858081: Fix an off by one error in the object
+			// WORKAROUND bug #3536: Fix an off by one error in the object
 			// command 175. Object 309 should be copied to 308 (disabled).
 			//
 			// _objectData[307].name = -195

@@ -55,7 +55,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by raziel_ in bug report #1891869
+{ // Supplied by raziel_ in bug report #3622
 	{
 		"gob3",
 		"",
@@ -83,7 +83,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by paul66 in bug report #1652352
+{ // Supplied by paul66 in bug report #3045
 	{
 		"gob3",
 		"",
@@ -153,7 +153,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by SiRoCs in bug report #2098621
+{ // Supplied by SiRoCs in bug report #3949
 	{
 		"gob3",
 		"",
@@ -295,7 +295,7 @@
 
 // -- Mac --
 
-{ // Supplied by fac76 in bug report #1742716
+{ // Supplied by fac76 in bug report #3272
 	{
 		"gob3",
 		"",
@@ -361,7 +361,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by pykman in bug report #3067489
+{ // Supplied by pykman in bug report #5365
 	{
 		"gob3cd",
 		"v1.02 Polish",
@@ -375,7 +375,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+{ // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
 		"gob3cd",
 		"v1.02",
@@ -389,7 +389,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+{ // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
 		"gob3cd",
 		"v1.02",
@@ -403,7 +403,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+{ // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
 		"gob3cd",
 		"v1.02",
@@ -417,7 +417,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+{ // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
 		"gob3cd",
 		"v1.02",
@@ -431,7 +431,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
+{ // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
 		"gob3cd",
 		"v1.02",
@@ -445,7 +445,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob3cd",
 		"v1.02",
@@ -459,7 +459,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob3cd",
 		"v1.02",
@@ -473,7 +473,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob3cd",
 		"v1.02",
@@ -487,7 +487,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // Supplied by goodoldgeorg in bug report #2810082
+{ // Supplied by goodoldgeorg in bug report #4375
 	{
 		"gob3cd",
 		"v1.02",

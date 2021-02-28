@@ -1113,7 +1113,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND bug #1252606
+	// WORKAROUND bug #2110
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}
@@ -1149,7 +1149,7 @@ void ScummEngine_v2::o2_startScript() {
 			return;
 	}
 
-	// WORKAROUND bug #1447058: In Maniac Mansion, when the door bell
+	// WORKAROUND bug #2524: In Maniac Mansion, when the door bell
 	// rings, then this normally causes Ted Edison to leave his room.
 	// This is controlled by script 87. On the other hand, when the
 	// player enters Ted's room while Ted is in it, then Ted captures

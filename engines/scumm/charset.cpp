@@ -836,9 +836,9 @@ void CharsetRendererPCE::setColor(byte color) {
 #endif
 
 void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
-	// WORKAROUND for bug #1509509: Indy3 Mac does not show black
+	// WORKAROUND for bug #2703: Indy3 Mac does not show black
 	// characters (such as in the grail diary) if ignoreCharsetMask
-	// is true. See also patch #1851568.
+	// is true. See also bug #8759.
 	if (_vm->_game.id == GID_INDY3 && _vm->_game.platform == Common::kPlatformMacintosh && _color == 0)
 		ignoreCharsetMask = false;
 

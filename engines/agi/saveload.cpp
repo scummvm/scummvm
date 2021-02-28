@@ -123,7 +123,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
 	const char *tmp = getGameMD5();
-	// As reported in bug report #2849084 "AGI: Crash when saving fallback-matched game"
+	// As reported in bug report #4582 "AGI: Crash when saving fallback-matched game"
 	// getGameMD5 will return NULL for fallback matched games. Since there is also no
 	// filename available we can not compute any MD5 here either. Thus we will just set
 	// the MD5 sum in the savegame to all zero, when getGameMD5 returns NULL.
@@ -789,7 +789,7 @@ int AgiEngine::doSave(int slot, const Common::String &desc) {
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
 
 	// Make sure all graphics was blitted to screen. This fixes bug
-	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
+	// #4790: "AGI: Ego partly erased in Load/Save thumbnails"
 	_gfx->updateScreen();
 //	_gfx->doUpdate();
 

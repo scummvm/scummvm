@@ -1085,7 +1085,7 @@ int FWScript::o1_divVar() {
 int FWScript::o1_compareVar() {
 	// WORKAROUND: A workaround for a script bug in script file CODE2.PRC
 	// in at least some of the Amiga and Atari ST versions of Future Wars.
-	// Fixes bug #2016647 (FW: crash with italian amiga version). A local
+	// Fixes bug #3806 (FW: crash with italian amiga version). A local
 	// variable 251 is compared against value 0 although it's quite apparent
 	// from the context in the script that instead global variable 251 should
 	// be compared against value 0. So looks like someone made a typo when
@@ -1523,7 +1523,7 @@ int FWScript::o1_palRotate() {
 int FWScript::o1_break() {
 	debugC(5, kCineDebugScript, "Line: %d: break", _line);
 
-	// WORKAROUND for bug #2669415 ("FW: half walking speed in a screen").
+	// WORKAROUND for bug #4213 ("FW: half walking speed in a screen").
 	// The problem was that in Amiga/Atari ST versions of Future Wars the
 	// walking speed has halved in a forest scene where a monk's robe hangs
 	// on a tree branch (Up and to the left from the medieval castle's front).
@@ -1659,7 +1659,7 @@ int FWScript::o1_compareGlobalVar() {
 
 		debugC(5, kCineDebugScript, "Line: %d: compare globalVars[%d] and %d", _line, varIdx, value);
 
-		// WORKAROUND for bug #2054882. Without this, the monks will always
+		// WORKAROUND for bug #3866. Without this, the monks will always
 		// kill you as an impostor, even if you enter the monastery in disguise.
 		//
 		// TODO: Check whether this might be worked around in some other way
@@ -2034,7 +2034,7 @@ int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
 }
 
 byte getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
-	// WORKAROUND for bug #2848940 ("ScummVM crashes with Future wars"):
+	// WORKAROUND for bug #4581 ("ScummVM crashes with Future wars"):
 	// Vertical positions outside the 320x200 screen (e.g. in range 200-232)
 	// are accessed after teleporting Lo'Ann to the future using the pendant
 	// and walking down the slope and out of the screen (This causes a crash

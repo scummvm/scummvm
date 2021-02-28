@@ -205,7 +205,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	// We need to reset the "_noDrawShapesFlag" flag of Animator_LoK
 	// over here. Else in certain cases restoring an savegame might
 	// result in no shapes being drawn at all. See bug report
-	// #2868581 "KYRA1: Invisible Brandon" for an example of this.
+	// #4625 "KYRA1: Invisible Brandon" for an example of this.
 	_animator->_noDrawShapesFlag = 0;
 
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);

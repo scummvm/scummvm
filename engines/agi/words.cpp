@@ -100,7 +100,7 @@ int Words::loadDictionary(const char *fname) {
 			// WORKAROUND:
 			// The SQ0 fan game stores words starting with numbers (like '7up')
 			// in its dictionary under the 'a' entry. We skip these.
-			// See bug #3615061
+			// See bug #6415
 			if (str[0] == 'a' + i) {
 				// And store it in our internal dictionary
 				WordEntry *newWord = new WordEntry;
@@ -114,7 +114,7 @@ int Words::loadDictionary(const char *fname) {
 			// Are there more words with an already known prefix?
 			// WORKAROUND: We only break after already seeing words with the
 			// right prefix, for the SQ0 words starting with digits filed under
-			// 'a'. See above comment and bug #3615061.
+			// 'a'. See above comment and bug #6415.
 			if (k == 0 && str[0] >= 'a' + i)
 				break;
 		}

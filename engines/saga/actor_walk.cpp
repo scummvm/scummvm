@@ -232,7 +232,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			_protagonist->_location.y = sceneEntry->location.y * ACTOR_LMULT;
 			_protagonist->_location.z = sceneEntry->location.z * ACTOR_LMULT;
 		}
-		// Workaround for bug #1328045:
+		// Workaround for bug #2264:
 		// "When entering any of the houses at the start of the
 		// game if you click on anything inside the building you
 		// start walking through the door, turn around and leave."
@@ -1166,7 +1166,7 @@ void Actor::moveDragon(ActorData *actor) {
 		dir0 = actor->_actionDirection;
 		dir1 = actor->_tileDirections[actor->_walkStepIndex++];
 		dir2 = actor->_tileDirections[actor->_walkStepIndex];
-		// Fix for Bug #3324850 ("ITE (SAGA): crash in dog sewers")
+		// Fix for Bug #5767 ("ITE (SAGA): crash in dog sewers")
 		// If there were more than two steps left, get the third (next) step.
 		// Otherwise, store the second step again so the anim looks right.
 		// (If you stop the move instead, Rif isn't automatically knocked into
