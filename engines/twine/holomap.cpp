@@ -480,11 +480,11 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			int32 zpos1_copy2 = _engine->_renderer->destPos.z;
 			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (zpos1_copy2 <= _engine->_renderer->destPos.z) {
+				if (zpos1_copy2 > _engine->_renderer->destPos.z) {
 					continue;
 				}
 			} else {
-				if (_engine->_renderer->destPos.z <= zpos1_copy2) {
+				if (_engine->_renderer->destPos.z > zpos1_copy2) {
 					continue;
 				}
 			}
