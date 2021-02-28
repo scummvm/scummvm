@@ -24,11 +24,72 @@
 #define NANCY_COMMONYPES_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/str.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Nancy {
 
+class NancyEngine;
+
 enum NancyFlag { kFalse = 1, kTrue = 2 };
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
+
+// Describes a scene transition
+struct SceneChangeDescription {
+    uint16 sceneID = 0;
+    uint16 frameID = 0;
+    uint16 verticalOffset = 0;
+    bool doNotStartSound = false;
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
+// Describes a single event flag change or comparison
+struct EventFlagDescription {
+    int16 label;
+    NancyFlag flag;
+};
+
+// Describes a hotspot
+struct HotspotDescription {
+    uint16 frameID = 0;
+    Common::Rect coords;
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
+// Describes a single bitmap draw
+struct BitmapDescription {
+    uint16 frameID = 0;
+    Common::Rect src;
+    Common::Rect dest;
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
+// Describes 10 event flag changes to be executed when an action is triggered
+struct MultiEventFlagDescription {
+    EventFlagDescription descs[10];
+
+    void readData(Common::SeekableReadStream &stream);
+    void execute(Nancy::NancyEngine *engine);
+};
+
+// Descrbes a single sound. Combines four different structs found in the data in one
+struct SoundDescription {
+    enum Type { kNormal, kMenu, kDIGI, kScene };
+
+    Common::String name;
+    uint16 channelID;
+    uint16 numLoops;
+    uint16 volume;
+
+    void read(Common::SeekableReadStream &stream, Type type);
+};
 
 } // End of namespace Nancy
 

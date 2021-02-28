@@ -23,10 +23,11 @@
 #ifndef NANCY_ACTION_PRIMARYVIDEO_H
 #define NANCY_ACTION_PRIMARYVIDEO_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/video.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -38,7 +39,7 @@ class NancyEngine;
 namespace Action {
 
 // ActionRecord subclass that handles all NPC dialog and nancy1's intro video
-class PlayPrimaryVideoChan0 : public SceneChange, public RenderObject {
+class PlayPrimaryVideoChan0 : public ActionRecord, public RenderObject {
 
 struct ConditionFlags {
     byte unknown[5];
@@ -48,8 +49,8 @@ struct ResponseStruct {
     Common::Array<ConditionFlags> conditionFlags; // 0x02
     Common::String text; // 0x06
     Common::String soundName; // 0x196
-    SceneChangeDesc sceneChange; // 0x1A0
-    FlagDesc flagDesc; // 0x1A8
+    SceneChangeDescription sceneChange; // 0x1A0
+    EventFlagDescription flagDesc; // 0x1A8
 };
 
 struct FlagsStruct {
@@ -57,8 +58,7 @@ struct FlagsStruct {
     Common::Array<ConditionFlags> conditionFlags;
 
     ConditionType type;
-    int16 label;
-    NancyFlag flag;
+    EventFlagDescription flagDesc;
 };
 
 public:
@@ -81,14 +81,14 @@ public:
     // _screenPosition 0x2D
     Common::String text; // 0x3D
 
-    SoundManager::SoundDescription sound; // 0x619
-    SoundManager::SoundDescription responseGenericSound; // 0x63B
+    SoundDescription sound; // 0x619
+    SoundDescription responseGenericSound; // 0x63B
 
     byte conditionalResponseCharacterID; // 0x65E
     byte goodbyeResponseCharacterID; // 0x65F
     byte numSceneChanges; // 0x660, not sure
     bool shouldPopScene; // 0x661
-    // SceneChange data is at 0x662
+    SceneChangeDescription sceneChange; // 0x662
 
     Common::Array<ResponseStruct> responses;
     Common::Array<FlagsStruct> flagsStructs;

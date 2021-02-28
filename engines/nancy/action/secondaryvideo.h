@@ -23,10 +23,11 @@
 #ifndef NANCY_ACTION_SECONDARYVIDEO_H
 #define NANCY_ACTION_SECONDARYVIDEO_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/video.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -45,7 +46,7 @@ struct SecondaryVideoDesc {
 
 // ActionRecord that shows NPC animations outside of dialogue. Supports
 // different animations depending on whether the NPC is hovered by the mouse
-class PlaySecondaryVideo : public SceneChange, public RenderObject {
+class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
     enum HoverState { kNoHover, kHover, kEndHover };
 
@@ -68,7 +69,7 @@ public:
     uint16 onHoverLastFrame = 0; // 0x24
     uint16 onHoverEndFirstFrame = 0; // 0x26
     uint16 onHoverEndLastFrame = 0; // 0x28
-    // SceneChange data is at 0x2A
+    SceneChangeDescription sceneChange; // 0x2A
     // unknown byte
     Common::Array<SecondaryVideoDesc> videoDescs; // 0x35
 
@@ -84,11 +85,11 @@ protected:
     bool _isHovered = false;
 };
 
-class PlaySecondaryMovie : public SceneChange, public RenderObject {
+class PlaySecondaryMovie : public ActionRecord, public RenderObject {
 public:
     struct FlagAtFrame {
         int16 frameID;
-        FlagDesc flagDesc;
+        EventFlagDescription flagDesc;
     };
 
     PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
@@ -104,11 +105,11 @@ public:
     Common::String videoName; // 0x00
 
     FlagAtFrame frameFlags[15]; // 0x26
-    EventFlagsDesc triggerFlags; // 0x80
+    MultiEventFlagDescription triggerFlags; // 0x80
 
-    SoundManager::SoundDescription sound; // 0xA8
+    SoundDescription sound; // 0xA8
 
-    // SceneChange data at 0xCA
+    SceneChangeDescription sceneChange; // 0xCA
     Common::Array<SecondaryVideoDesc> videoDescs; // 0xD4
 
 protected:

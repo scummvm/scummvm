@@ -66,21 +66,21 @@ void Logo::init() {
 }
 
 void Logo::startSound() {
-	SoundManager::SoundDescription desc;
-	desc.read(*_engine->getBootChunkStream("MSND"), SoundManager::SoundDescription::kMenu);
+	SoundDescription desc;
+	desc.read(*_engine->getBootChunkStream("MSND"), SoundDescription::kMenu);
 	_engine->sound->loadSound(desc);
 	MSNDchannelID = desc.channelID;
-	desc.read(*_engine->getBootChunkStream("BUOK"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("BUOK"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("BUDE"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("BUDE"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("BULS"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("BULS"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("GLOB"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("GLOB"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("CURT"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("CURT"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("CANT"), SoundManager::SoundDescription::kNormal);
+	desc.read(*_engine->getBootChunkStream("CANT"), SoundDescription::kNormal);
 	_engine->sound->loadSound(desc);
 
 	_engine->sound->playSound(MSNDchannelID);

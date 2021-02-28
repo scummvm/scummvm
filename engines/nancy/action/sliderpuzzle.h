@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_SLIDERPUZZLE_H
 #define NANCY_ACTION_SLIDERPUZZLE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -55,12 +55,12 @@ public:
     Common::Array<Common::Array<Common::Rect>> srcRects; // 0x0E, size 0x240
     Common::Array<Common::Array<Common::Rect>> destRects; // 0x24E, size 0x240
     Common::Array<Common::Array<int16>> correctTileOrder; // 0x48E, size 0x48
-    SoundManager::SoundDescription clickSound; // 0x4D6
-    SceneChangeDesc solveExitScene; // 0x4F8
-    FlagDesc flagOnSolve; // 0x502
-    SoundManager::SoundDescription solveSound; // 0x505
-    SceneChangeDesc exitScene; // 0x527
-    FlagDesc flagOnExit; // 0x531
+    SoundDescription clickSound; // 0x4D6
+    SceneChangeDescription solveExitScene; // 0x4F8
+    EventFlagDescription flagOnSolve; // 0x502
+    SoundDescription solveSound; // 0x505
+    SceneChangeDescription exitScene; // 0x527
+    EventFlagDescription flagOnExit; // 0x531
     Common::Rect exitHotspot; // 0x534
 
     SolveState solveState = kNotSolved;

@@ -92,12 +92,12 @@ uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 
     stream.skip((6 - height) * 6 * 2);
 
-    clickSound.read(stream, SoundManager::SoundDescription::kNormal);
+    clickSound.read(stream, SoundDescription::kNormal);
     solveExitScene.readData(stream);
     stream.skip(2);
     flagOnSolve.label = stream.readSint16LE();
     flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSound.read(stream, SoundManager::SoundDescription::kNormal);
+    solveSound.read(stream, SoundDescription::kNormal);
     exitScene.readData(stream);
     stream.skip(2);
     flagOnExit.label = stream.readSint16LE();
@@ -165,18 +165,12 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
         case kActionTrigger:
             switch (solveState) {
                 case kNotSolved:
-                    if (exitScene.sceneID != 9999) {
-                        engine->scene->changeScene(exitScene.sceneID, exitScene.frameID, exitScene.verticalOffset, exitScene.doNotStartSound);
-                    }
-
-                    engine->scene->setEventFlag(flagOnExit.label, flagOnExit.flag);
+                    engine->scene->changeScene(exitScene);
+                    engine->scene->setEventFlag(flagOnExit);
                     break;
                 case kWaitForSound:
-                    if (exitScene.sceneID != 9999) {
-                        engine->scene->changeScene(solveExitScene.sceneID, solveExitScene.frameID, solveExitScene.verticalOffset, solveExitScene.doNotStartSound);
-                    }
-
-                    engine->scene->setEventFlag(flagOnSolve.label, flagOnSolve.flag);
+                    engine->scene->changeScene(solveExitScene);
+                    engine->scene->setEventFlag(flagOnSolve);
                     playerHasTriedPuzzle = false;
                     break;
             }

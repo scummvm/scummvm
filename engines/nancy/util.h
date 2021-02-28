@@ -27,7 +27,7 @@
 
 namespace Nancy {
 
-static void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
+inline void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
     inRect.left = stream.readSint32LE();
     inRect.top = stream.readSint32LE();
     inRect.right = stream.readSint32LE();

@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_STATICBITMAPANIM_H
 #define NANCY_ACTION_STATICBITMAPANIM_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -36,7 +36,7 @@ namespace Action {
 
 // ActionRecord subclass describing a short "flipbook" animation from a single bitmap
 // Can also play sound, but this has not yet been implemented
-class PlayIntStaticBitmapAnimation : public SceneChange, public RenderObject {
+class PlayIntStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
     PlayIntStaticBitmapAnimation(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
     virtual ~PlayIntStaticBitmapAnimation() { _fullSurface.free(); }
@@ -57,17 +57,17 @@ public:
     uint16 loopLastFrame; // 0x18
     Time frameTime;
     uint16 zOrder; // 0x1C
-    FlagDesc updateCondition; // 0x1E
-    // SceneChange
-    EventFlagsDesc triggerFlags; // 0x2A
+    EventFlagDescription updateCondition; // 0x1E
+    SceneChangeDescription sceneChange;
+    MultiEventFlagDescription triggerFlags; // 0x2A
 
-    Nancy::SoundManager::SoundDescription sound; // 0x52
+    Nancy::SoundDescription sound; // 0x52
 
     // Describes a single frame in this animation
     Common::Array<Common::Rect> srcRects;
     // Describes how the animation will be displayed on a single
     // frame of the viewport
-    Common::Array<BitmapDesc> bitmaps;
+    Common::Array<BitmapDescription> bitmaps;
 
     int16 currentFrame = -1;
     int16 currentViewportFrame = -1;

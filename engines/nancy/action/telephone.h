@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_TELEPHONE_H
 #define NANCY_ACTION_TELEPHONE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -43,9 +43,9 @@ public:
         Common::Array<byte> phoneNumber; // 0x0, 11 bytes
         Common::String soundName; // 0xB
         Common::String text; // 0x15, 0xC8 bytes
-        SceneChangeDesc sceneChange; // 0xDD
+        SceneChangeDescription sceneChange; // 0xDD
         // shouldStopRendering
-        FlagDesc flag; // 0xE7
+        EventFlagDescription flag; // 0xE7
     };
 
     enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
@@ -65,19 +65,19 @@ public:
     Common::String imageName; // 0x00
     Common::Array<Common::Rect> srcRects; // 0xA, 12
     Common::Array<Common::Rect> destRects; // 0xCA, 12
-    SoundManager::SoundDescription genericDialogueSound; // 0x18A
-    SoundManager::SoundDescription genericButtonSound; // 0x1AC
-    SoundManager::SoundDescription ringSound; // 0x1CE
-    SoundManager::SoundDescription dialToneSound; // 0x1F0
-    SoundManager::SoundDescription dialAgainSound; // 0x212
-    SoundManager::SoundDescription hangUpSound; // 0x234
+    SoundDescription genericDialogueSound; // 0x18A
+    SoundDescription genericButtonSound; // 0x1AC
+    SoundDescription ringSound; // 0x1CE
+    SoundDescription dialToneSound; // 0x1F0
+    SoundDescription dialAgainSound; // 0x212
+    SoundDescription hangUpSound; // 0x234
     Common::Array<Common::String> buttonSoundNames; // 0x256, 12 * 0xA
     Common::String addressBookString; // 0x2CE, 0xC8 long
     Common::String dialAgainString; // 0x396
-    SceneChangeDesc reloadScene; // 0x45E
-    FlagDesc flagOnReload; // 0x468 ??
-    SceneChangeDesc exitScene; // 0x46C
-    FlagDesc flagOnExit; // 0x476
+    SceneChangeDescription reloadScene; // 0x45E
+    EventFlagDescription flagOnReload; // 0x468 ??
+    SceneChangeDescription exitScene; // 0x46C
+    EventFlagDescription flagOnExit; // 0x476
     Common::Rect exitHotspot; // 0x47A
     // 0x48A numConvos
     Common::Array<PhoneCall> calls; // 0x48C

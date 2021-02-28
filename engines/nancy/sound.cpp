@@ -176,42 +176,6 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
-void SoundManager::SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
-	char buf[10];
-
-	stream.read(buf, 10);
-	name = buf;
-
-	if (type == SoundDescription::kScene) {
-		stream.skip(4);
-	}
-	channelID = stream.readUint16LE();
-
-	// The difference between these is a couple members found at the same position
-	// whose purpose I don't understand, so for now just skip them
-	switch (type) {
-		case kNormal:
-			stream.skip(8);
-			break;
-		case kMenu:
-			stream.skip(6);	
-			break;
-		case kScene:
-			// fall through
-		case kDIGI:
-			stream.skip(4);
-			break;
-	}
-
-	numLoops = stream.readUint16LE();
-	if (stream.readUint16LE() != 0) { // loop indefinitely
-		numLoops = 0;
-	}
-	stream.skip(2);
-	volume = stream.readUint16LE();
-	stream.skip(6);
-}
-
 SoundManager::SoundManager(NancyEngine *engine) :
 		_engine(engine) {
 	_mixer = _engine->_system->getMixer();

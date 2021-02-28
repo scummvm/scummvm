@@ -68,12 +68,12 @@ uint16 Telephone::readData(Common::SeekableReadStream &stream) {
         }
     }
 
-    genericDialogueSound.read(stream, SoundManager::SoundDescription::kNormal);
-    genericButtonSound.read(stream, SoundManager::SoundDescription::kNormal);
-    ringSound.read(stream, SoundManager::SoundDescription::kNormal);
-    dialToneSound.read(stream, SoundManager::SoundDescription::kNormal);
-    dialAgainSound.read(stream, SoundManager::SoundDescription::kNormal);
-    hangUpSound.read(stream, SoundManager::SoundDescription::kNormal);
+    genericDialogueSound.read(stream, SoundDescription::kNormal);
+    genericButtonSound.read(stream, SoundDescription::kNormal);
+    ringSound.read(stream, SoundDescription::kNormal);
+    dialToneSound.read(stream, SoundDescription::kNormal);
+    dialAgainSound.read(stream, SoundDescription::kNormal);
+    hangUpSound.read(stream, SoundDescription::kNormal);
 
     for (uint i = 0; i < 12; ++i) {
         stream.read(buf, 10);
@@ -219,33 +219,23 @@ void Telephone::execute(NancyEngine *engine) {
         case kActionTrigger:
             switch (callState) {
                 case kBadNumber:
-                    if (reloadScene.sceneID != 9999) {
-                        engine->scene->changeScene(reloadScene.sceneID, reloadScene.frameID, reloadScene.verticalOffset, reloadScene.doNotStartSound);
-                    }
-
+                    engine->scene->changeScene(reloadScene);
                     calledNumber.clear();
-                    _engine->scene->setEventFlag(flagOnReload.label, flagOnReload.flag);
+                    _engine->scene->setEventFlag(flagOnReload);
                     state = kRun;
                     callState = kWaiting;
 
                     break;
                 case kCall: {
                     PhoneCall &call = calls[selected];
-
-                    if (call.sceneChange.sceneID != 9999) {
-                        _engine->scene->changeScene(call.sceneChange.sceneID, call.sceneChange.frameID, call.sceneChange.verticalOffset, call.sceneChange.doNotStartSound);
-                    }
-
-                    _engine->scene->setEventFlag(call.flag.label, call.flag.flag);
+                    _engine->scene->changeScene(call.sceneChange);
+                    _engine->scene->setEventFlag(call.flag);
 
                     break;
                 }
                 case kHangUp:
-                    if (exitScene.sceneID != 9999) {
-                        _engine->scene->changeScene(exitScene.sceneID, exitScene.frameID, exitScene.verticalOffset, exitScene.doNotStartSound);
-                    }
-
-                    _engine->scene->setEventFlag(flagOnExit.label, flagOnExit.flag);
+                    _engine->scene->changeScene(exitScene);
+                    _engine->scene->setEventFlag(flagOnExit);
                     
                     break;
                 default:

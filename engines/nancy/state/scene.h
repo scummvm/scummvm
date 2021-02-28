@@ -71,7 +71,7 @@ public:
         //
         uint16 videoFormat;                     // 0x3E, value is 1 or 2
         Common::String audioFile;               
-        SoundManager::SoundDescription sound;   // 0x40
+        SoundDescription sound;   // 0x40
         //
         uint16 verticalScrollDelta;             // 0x72
         uint16 horizontalEdgeSize;              // 0x74
@@ -96,6 +96,7 @@ public:
     void process();
 
     void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
+    void changeScene(const SceneChangeDescription &sceneDescription);
     void pushScene();
     void popScene();
 
@@ -109,7 +110,9 @@ public:
     NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
     void setEventFlag(int16 label, NancyFlag flag = kTrue);
+    void setEventFlag(EventFlagDescription eventFlag);
     bool getEventFlag(int16 label, NancyFlag flag = kTrue) const;
+    bool getEventFlag(EventFlagDescription eventFlag) const;
 
     void setLogicCondition(int16 label, NancyFlag flag = kTrue);
     bool getLogicCondition(int16 label, NancyFlag flag = kTrue) const;
@@ -236,13 +239,6 @@ protected:
 
     bool isComingFromMenu = true;
     bool hasLoadedFromSavefile = false;
-
-    bool orderingPuzzleIsActive = false;
-    bool rotatingLockPuzzleIsActive = false;
-    bool leverPuzzleIsActive = false;
-    bool sliderPuzzleIsActive = false;
-    bool passwordPuzzleIsActive = false;
-    bool telephoneIsActive = false;
 };
 
 } // End of namespace State

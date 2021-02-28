@@ -92,14 +92,14 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     UI::Textbox::assembleTextLine(rawText, text, 1500);
     delete[] rawText;
 
-    sound.read(stream, SoundManager::SoundDescription::kNormal);
-    responseGenericSound.read(stream, SoundManager::SoundDescription::kNormal);
+    sound.read(stream, SoundDescription::kNormal);
+    responseGenericSound.read(stream, SoundDescription::kNormal);
     stream.skip(1);
     conditionalResponseCharacterID = stream.readByte();
     goodbyeResponseCharacterID = stream.readByte();
     numSceneChanges = stream.readByte();
     shouldPopScene = stream.readByte() == 1;
-    SceneChange::readData(stream);
+    sceneChange.readData(stream);
 
     stream.seek(bytesRead + 0x69C);
 
@@ -157,8 +157,8 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
             }
 
             flagsStruct.type = (FlagsStruct::ConditionType)stream.readByte();
-            flagsStruct.label = stream.readSint16LE();
-            flagsStruct.flag = (NancyFlag)stream.readByte();
+            flagsStruct.flagDesc.label = stream.readSint16LE();
+            flagsStruct.flagDesc.flag = (NancyFlag)stream.readByte();
         }
     }
 
@@ -202,7 +202,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             }
 
             if (!engine->sound->isSoundPlaying(sound.channelID)) {
-                _engine->sound->stopSound(sound.channelID);
+                engine->sound->stopSound(sound.channelID);
                 if (responses.size() == 0) {
                     // NPC has finished talking with no responses available, auto-advance to next scene
                     state = kActionTrigger;
@@ -238,13 +238,13 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 if (conditionsSatisfied) {
                     switch (flags.type) {
                         case FlagsStruct::kEventFlags:
-                            engine->scene->setEventFlag(flags.label, flags.flag);
+                            engine->scene->setEventFlag(flags.flagDesc);
                             break;
                         case FlagsStruct::kInventory:
-                            if (flags.flag == kTrue) {
-                                engine->scene->addItemToInventory(flags.label);
+                            if (flags.flagDesc.flag == kTrue) {
+                                engine->scene->addItemToInventory(flags.flagDesc.label);
                             } else {
-                                engine->scene->removeItemFromInventory(flags.label);
+                                engine->scene->removeItemFromInventory(flags.flagDesc.label);
                             }
                             break;
                         default:
@@ -255,18 +255,19 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             
             if (pickedResponse != -1) {
                 // Set response's event flag, if any
-                engine->scene->setEventFlag(responses[pickedResponse].flagDesc.label, responses[pickedResponse].flagDesc.flag);
+                engine->scene->setEventFlag(responses[pickedResponse].flagDesc);
             }
 
             if (!engine->sound->isSoundPlaying(responseGenericSound.channelID)) {
-                _engine->sound->stopSound(responseGenericSound.channelID);
+                engine->sound->stopSound(responseGenericSound.channelID);
                 if (shouldPopScene) {
                     // Exit dialogue
                     engine->scene->popScene();
                 } else {
                     // Continue to next dialogue scene
-                    SceneChange::execute(engine);
+                    engine->scene->changeScene(sceneChange);
                 }
+                isDone = true;
             }
 
             break;

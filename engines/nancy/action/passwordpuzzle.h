@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_PASSWORDPUZZLE_H
 #define NANCY_ACTION_PASSWORDPUZZLE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/time.h"
 
 #include "common/str.h"
@@ -58,14 +58,14 @@ public:
     // _screenPosition 0x24
     Common::String name; // 0x34, 20 bytes long
     Common::String password; // 0x48, 20 bytes long
-    SceneChangeDesc solveExitScene; // 0x5A
-    FlagDesc flagOnSolve; // 0x66
-    SoundManager::SoundDescription solveSound; // 0x69
-    SceneChangeDesc failExitScene; // 0x8B
-    FlagDesc flagOnFail; // 0x95
-    SoundManager::SoundDescription failSound; // 0x98
-    SceneChangeDesc exitScene; // 0xBA
-    FlagDesc flagOnExit; // 0xC4
+    SceneChangeDescription solveExitScene; // 0x5A
+    EventFlagDescription flagOnSolve; // 0x66
+    SoundDescription solveSound; // 0x69
+    SceneChangeDescription failExitScene; // 0x8B
+    EventFlagDescription flagOnFail; // 0x95
+    SoundDescription failSound; // 0x98
+    SceneChangeDescription exitScene; // 0xBA
+    EventFlagDescription flagOnExit; // 0xC4
     Common::Rect exitHotspot; // 0xC7
 
     Common::String playerNameInput;

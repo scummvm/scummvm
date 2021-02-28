@@ -23,6 +23,8 @@
 #ifndef NANCY_SOUND_H
 #define NANCY_SOUND_H
 
+#include "engines/nancy/commontypes.h"
+
 #include "common/types.h"
 #include "common/str.h"
 
@@ -42,18 +44,6 @@ class NancyEngine;
 
 class SoundManager {
 public:
-    // Combines four different structs in one
-    struct SoundDescription {
-        enum Type { kNormal, kMenu, kDIGI, kScene };
-
-        Common::String name;
-        uint16 channelID;
-        uint16 numLoops;
-        uint16 volume;
-
-        void read(Common::SeekableReadStream &stream, Type type);
-    };
-
     SoundManager(NancyEngine *engine);
     ~SoundManager();
 

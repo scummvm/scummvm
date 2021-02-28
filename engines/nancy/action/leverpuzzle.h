@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_LEVERPUZZLE_H
 #define NANCY_ACTION_LEVERPUZZLE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -52,14 +52,14 @@ public:
     Common::Array<Common::Array<Common::Rect>> srcRects; // 0xA, 0xC0 bytes
     Common::Array<Common::Rect> destRects; // 0xCA, 0x30 bytes
     Common::Array<byte> correctSequence; // 0xFA, 3 bytes
-    SoundManager::SoundDescription moveSound; // 0x100
-    SoundManager::SoundDescription noMoveSound; // 0x122
-    SceneChangeDesc solveExitScene; // 0x144
-    FlagDesc flagOnSolve; // 0x14E
+    SoundDescription moveSound; // 0x100
+    SoundDescription noMoveSound; // 0x122
+    SceneChangeDescription solveExitScene; // 0x144
+    EventFlagDescription flagOnSolve; // 0x14E
     uint16 solveSoundDelay; // 0x151
-    SoundManager::SoundDescription solveSound; // 0x153
-    SceneChangeDesc exitScene; // 0x175
-    FlagDesc flagOnExit; // 0x17F
+    SoundDescription solveSound; // 0x153
+    SceneChangeDescription exitScene; // 0x175
+    EventFlagDescription flagOnExit; // 0x17F
     Common::Rect exitHotspot; // 0x182
 
     Common::Array<byte> playerSequence;

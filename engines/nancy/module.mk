@@ -21,6 +21,7 @@ MODULE_OBJS = \
   state/logo.o \
   state/map.o \
   state/scene.o \
+  commontypes.o \
   console.o \
   cursor.o \
   decompress.o \

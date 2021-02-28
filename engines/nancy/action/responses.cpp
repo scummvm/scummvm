@@ -37,7 +37,7 @@ struct ConditionalResponseDesc {
     byte characterID; // 0: Daryl, 1: Connie, 2: Hal, 3: Hulk
     uint fileOffset;
     uint16 sceneID;
-    FlagDesc conditions[7];
+    EventFlagDescription conditions[7];
 };
 
 struct GoodbyeDesc {
@@ -49,8 +49,8 @@ struct GoodbyeDesc {
 struct HintDesc {
     byte characterID; // 0: Ned, 1: Bess, 2: George
     byte hintID;
-    FlagDesc flagConditions[4];
-    FlagDesc inventoryCondition[2];
+    EventFlagDescription flagConditions[4];
+    EventFlagDescription inventoryCondition[2];
 };
 
 static const uint nancy1ResponseBaseFileOffset = 0xB1FE0; // TODO there could be more than one version of the exe

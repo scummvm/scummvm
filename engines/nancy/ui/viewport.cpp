@@ -189,7 +189,10 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
     enableEdges(kUp | kDown | kLeft | kRight);
     
     setFrame(frameNr);
-    setVerticalScroll(verticalScroll); 
+    setVerticalScroll(verticalScroll);
+
+    _movementLastFrame = 0;
+    _nextMovementTime = 0;
 }
 
 void Viewport::setFrame(uint frameNr) {

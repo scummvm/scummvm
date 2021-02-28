@@ -26,6 +26,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/state/scene.h"
 
 namespace Nancy {
@@ -75,14 +76,14 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
         correctSequence.push_back(stream.readByte());
     }
 
-    moveSound.read(stream, SoundManager::SoundDescription::kNormal);
-    noMoveSound.read(stream, SoundManager::SoundDescription::kNormal);
+    moveSound.read(stream, SoundDescription::kNormal);
+    noMoveSound.read(stream, SoundDescription::kNormal);
     solveExitScene.readData(stream);
     stream.skip(2);
     flagOnSolve.label = stream.readSint16LE();
     flagOnSolve.flag = (NancyFlag)stream.readByte();
     solveSoundDelay = stream.readUint16LE();
-    solveSound.read(stream, SoundManager::SoundDescription::kNormal);
+    solveSound.read(stream, SoundDescription::kNormal);
     exitScene.readData(stream);
     stream.skip(2);
     flagOnExit.label = stream.readSint16LE();
@@ -115,7 +116,7 @@ void LeverPuzzle::execute(Nancy::NancyEngine *engine) {
                         }
                     }
                     
-                    engine->scene->setEventFlag(flagOnSolve.label, flagOnSolve.flag);
+                    engine->scene->setEventFlag(flagOnSolve);
                     solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
                     solveState = kPlaySound;
                     break;
@@ -143,14 +144,10 @@ void LeverPuzzle::execute(Nancy::NancyEngine *engine) {
             _engine->sound->stopSound(noMoveSound.channelID);
             
             if (solveState == kNotSolved) {
-                if (exitScene.sceneID != 9999) {
-                    _engine->scene->changeScene(exitScene.sceneID, exitScene.frameID, exitScene.verticalOffset, exitScene.doNotStartSound);
-                    _engine->scene->setEventFlag(flagOnExit.label, flagOnExit.flag);
-                }
+                _engine->scene->changeScene(exitScene);
+                _engine->scene->setEventFlag(flagOnExit);
             } else {
-                if (solveExitScene.sceneID != 9999) {
-                    _engine->scene->changeScene(solveExitScene.sceneID, solveExitScene.frameID, solveExitScene.verticalOffset, solveExitScene.doNotStartSound);
-                }
+                _engine->scene->changeScene(solveExitScene);
             }
 
             isDone = true;
