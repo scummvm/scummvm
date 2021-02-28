@@ -37,6 +37,7 @@ using Version = AGS::Shared::Version;
 namespace AGS {
 namespace Shared {
 class Bitmap;
+class RoomStruct;
 } // namespace Shared
 } // namespace AGS
 
@@ -78,10 +79,11 @@ public:
 	 * @{
 	 */
 
-	GameSetupStruct *_game = nullptr;
-	GameState *_play = nullptr;
-	SpriteCache *_spriteset = nullptr;
-	RoomStatus *_troom = nullptr; // used for non-saveable rooms, eg. intro
+	GameSetupStruct *_game;
+	GameState *_play;
+	SpriteCache *_spriteset;
+	AGS::Shared::RoomStruct *_thisroom;
+	RoomStatus *_troom; // used for non-saveable rooms, eg. intro
 
 	 /**@}*/
 

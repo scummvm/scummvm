@@ -57,7 +57,7 @@ using namespace AGS::Engine;
 extern MoveList *mls;
 extern RoomStatus *croom;
 
-extern RoomStruct thisroom;
+
 extern RoomObject *objs;
 extern ViewStruct *views;
 extern int our_eip;
@@ -213,10 +213,10 @@ void update_shadow_areas() {
 	if (onwalkarea < 0);
 	else if (playerchar->flags & CHF_FIXVIEW);
 	else {
-		onwalkarea = thisroom.WalkAreas[onwalkarea].Light;
+		onwalkarea = _GP(thisroom).WalkAreas[onwalkarea].Light;
 		if (onwalkarea > 0) playerchar->view = onwalkarea - 1;
-		else if (thisroom.Options.PlayerView == 0) playerchar->view = playerchar->defview;
-		else playerchar->view = thisroom.Options.PlayerView - 1;
+		else if (_GP(thisroom).Options.PlayerView == 0) playerchar->view = playerchar->defview;
+		else playerchar->view = _GP(thisroom).Options.PlayerView - 1;
 	}
 }
 

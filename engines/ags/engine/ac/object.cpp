@@ -59,7 +59,7 @@ extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
 extern RoomStatus *croom;
 extern RoomObject *objs;
 extern ViewStruct *views;
-extern RoomStruct thisroom;
+
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
 extern MoveList *mls;
 
@@ -292,7 +292,7 @@ const char *Object_GetName_New(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Name: invalid object number");
 
-	return CreateNewScriptString(get_translation(thisroom.Objects[objj->id].Name));
+	return CreateNewScriptString(get_translation(_GP(thisroom).Objects[objj->id].Name));
 }
 
 bool Object_IsInteractionAvailable(ScriptObject *oobj, int mood) {
@@ -460,7 +460,7 @@ void Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufe
 }
 
 const char *Object_GetTextProperty(ScriptObject *objj, const char *property) {
-	return get_text_property_dynamic_string(thisroom.Objects[objj->id].Properties, croom->objProps[objj->id], property);
+	return get_text_property_dynamic_string(_GP(thisroom).Objects[objj->id].Properties, croom->objProps[objj->id], property);
 }
 
 bool Object_SetProperty(ScriptObject *objj, const char *property, int value) {

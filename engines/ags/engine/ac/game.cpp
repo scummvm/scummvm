@@ -153,7 +153,6 @@ extern IGraphicsDriver *gfxDriver;
 GameSetup usetup;
 RoomObject *objs;
 RoomStatus *croom = nullptr;
-RoomStruct thisroom;
 
 volatile int switching_away_from_game = 0;
 volatile bool switched_away = false;
@@ -484,7 +483,7 @@ const char *Game_GetSaveSlotDescription(int slnum) {
 
 void restore_game_dialog() {
 	can_run_delayed_command();
-	if (thisroom.Options.SaveLoadDisabled) {
+	if (_GP(thisroom).Options.SaveLoadDisabled) {
 		DisplayMessage(983);
 		return;
 	}
@@ -501,7 +500,7 @@ void restore_game_dialog() {
 }
 
 void save_game_dialog() {
-	if (thisroom.Options.SaveLoadDisabled == 1) {
+	if (_GP(thisroom).Options.SaveLoadDisabled == 1) {
 		DisplayMessage(983);
 		return;
 	}
@@ -1707,7 +1706,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		return 0;
 	xxx = vpt.first.X;
 	yyy = vpt.first.Y;
-	if ((xxx >= thisroom.Width) | (xxx < 0) | (yyy < 0) | (yyy >= thisroom.Height))
+	if ((xxx >= _GP(thisroom).Width) | (xxx < 0) | (yyy < 0) | (yyy >= _GP(thisroom).Height))
 		return 0;
 
 	// check characters, objects and walkbehinds, work out which is
@@ -1718,7 +1717,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 
 	data_to_game_coords(&xxx, &yyy);
 
-	int wbat = thisroom.WalkBehindMask->GetPixel(xxx, yyy);
+	int wbat = _GP(thisroom).WalkBehindMask->GetPixel(xxx, yyy);
 
 	if (wbat <= 0) wbat = 0;
 	else wbat = croom->walkbehind_base[wbat];
@@ -1908,7 +1907,7 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 		buffer[0] = 0;
 		replace_tokens(get_translation(_GP(game).messages[msnum - 500]), buffer, maxlen);
 		return;
-	} else if (msnum < 0 || (size_t)msnum >= thisroom.MessageCount) {
+	} else if (msnum < 0 || (size_t)msnum >= _GP(thisroom).MessageCount) {
 		if (giveErr)
 			quit("!DisplayMessage: Invalid message number to display");
 		buffer[0] = 0;
@@ -1916,7 +1915,7 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 	}
 
 	buffer[0] = 0;
-	replace_tokens(get_translation(thisroom.Messages[msnum]), buffer, maxlen);
+	replace_tokens(get_translation(_GP(thisroom).Messages[msnum]), buffer, maxlen);
 }
 
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize) {

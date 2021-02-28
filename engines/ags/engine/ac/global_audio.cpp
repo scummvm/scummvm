@@ -44,7 +44,7 @@ using namespace AGS::Shared;
 extern GameSetup usetup;
 
 
-extern RoomStruct thisroom;
+
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
 
@@ -92,7 +92,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 	}
 	// calculate the maximum distance away the player can be, using X
 	// only (since X centred is still more-or-less total Y)
-	ambient[channel].maxdist = ((x > thisroom.Width / 2) ? x : (thisroom.Width - x)) - AMBIENCE_FULL_DIST;
+	ambient[channel].maxdist = ((x > _GP(thisroom).Width / 2) ? x : (_GP(thisroom).Width - x)) - AMBIENCE_FULL_DIST;
 	ambient[channel].num = sndnum;
 	ambient[channel].x = x;
 	ambient[channel].y = y;
@@ -322,7 +322,7 @@ int GetMP3PosMillis() {
 void SetMusicVolume(int newvol) {
 	if ((newvol < kRoomVolumeMin) || (newvol > kRoomVolumeMax))
 		quitprintf("!SetMusicVolume: invalid volume number. Must be from %d to %d.", kRoomVolumeMin, kRoomVolumeMax);
-	thisroom.Options.MusicVolume = (RoomVolumeMod)newvol;
+	_GP(thisroom).Options.MusicVolume = (RoomVolumeMod)newvol;
 	update_music_volume();
 }
 

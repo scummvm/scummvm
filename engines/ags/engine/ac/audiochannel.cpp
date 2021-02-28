@@ -29,6 +29,7 @@
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/shared/game/roomstruct.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/globals.h"
@@ -38,7 +39,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 
-extern RoomStruct thisroom;
+
 extern CCAudioClip ccDynamicAudioClip;
 
 int AudioChannel_GetID(ScriptAudioChannel *channel) {
@@ -188,7 +189,7 @@ void AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPo
 	auto *ch = lock.GetChannelIfPlaying(channel->id);
 
 	if (ch) {
-		int maxDist = ((xPos > thisroom.Width / 2) ? xPos : (thisroom.Width - xPos)) - AMBIENCE_FULL_DIST;
+		int maxDist = ((xPos > _GP(thisroom).Width / 2) ? xPos : (_GP(thisroom).Width - xPos)) - AMBIENCE_FULL_DIST;
 		ch->_xSource = (xPos > 0) ? xPos : -1;
 		ch->_ySource = yPos;
 		ch->_maximumPossibleDistanceAway = maxDist;

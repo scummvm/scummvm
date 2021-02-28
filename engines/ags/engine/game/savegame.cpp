@@ -500,7 +500,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	_GP(play).gscript_timer = gstimer;
 	// restore the correct room volume (they might have modified
 	// it with SetMusicVolume)
-	thisroom.Options.MusicVolume = r_data.RoomVolume;
+	_GP(thisroom).Options.MusicVolume = r_data.RoomVolume;
 
 	Mouse::SetMoveLimit(Rect(oldx1, oldy1, oldx2, oldy2));
 
@@ -518,21 +518,21 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	if (displayed_room >= 0) {
 		for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
 			if (r_data.RoomBkgScene[i]) {
-				thisroom.BgFrames[i].Graphic = r_data.RoomBkgScene[i];
+				_GP(thisroom).BgFrames[i].Graphic = r_data.RoomBkgScene[i];
 			}
 		}
 
 		in_new_room = 3; // don't run "enters screen" events
 		// now that room has loaded, copy saved light levels in
 		for (size_t i = 0; i < MAX_ROOM_REGIONS; ++i) {
-			thisroom.Regions[i].Light = r_data.RoomLightLevels[i];
-			thisroom.Regions[i].Tint = r_data.RoomTintLevels[i];
+			_GP(thisroom).Regions[i].Light = r_data.RoomLightLevels[i];
+			_GP(thisroom).Regions[i].Tint = r_data.RoomTintLevels[i];
 		}
 		generate_light_table();
 
 		for (size_t i = 0; i < MAX_WALK_AREAS + 1; ++i) {
-			thisroom.WalkAreas[i].ScalingFar = r_data.RoomZoomLevels1[i];
-			thisroom.WalkAreas[i].ScalingNear = r_data.RoomZoomLevels2[i];
+			_GP(thisroom).WalkAreas[i].ScalingFar = r_data.RoomZoomLevels1[i];
+			_GP(thisroom).WalkAreas[i].ScalingNear = r_data.RoomZoomLevels2[i];
 		}
 
 		on_background_frame_change();
@@ -735,8 +735,8 @@ void DoBeforeSave() {
 			save_room_data_segment();
 
 		// Update the saved interaction variable values
-		for (size_t i = 0; i < thisroom.LocalVariables.size() && i < (size_t)MAX_GLOBAL_VARIABLES; ++i)
-			croom->interactionVariableValues[i] = thisroom.LocalVariables[i].Value;
+		for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < (size_t)MAX_GLOBAL_VARIABLES; ++i)
+			croom->interactionVariableValues[i] = _GP(thisroom).LocalVariables[i].Value;
 	}
 }
 

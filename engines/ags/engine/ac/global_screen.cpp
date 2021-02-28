@@ -44,7 +44,7 @@ using namespace AGS::Engine;
 extern GameSetup usetup;
 
 
-extern RoomStruct thisroom;
+
 extern IGraphicsDriver *gfxDriver;
 extern AGSPlatformDriver *platform;
 extern color palette[256];

@@ -25,12 +25,11 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/game/viewport.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
-
-extern RoomStruct thisroom;
 
 void Camera::SetID(int id) {
 	_id = id;
@@ -45,7 +44,7 @@ const Rect &Camera::GetRect() const {
 void Camera::SetSize(const Size cam_size) {
 	// TODO: currently we don't support having camera larger than room background
 	// (or rather - looking outside of the room background); look into this later
-	const Size real_room_sz = Size(data_to_game_coord(thisroom.Width), data_to_game_coord(thisroom.Height));
+	const Size real_room_sz = Size(data_to_game_coord(_GP(thisroom).Width), data_to_game_coord(_GP(thisroom).Height));
 	Size real_size = Size::Clamp(cam_size, Size(1, 1), real_room_sz);
 
 	_position.SetWidth(real_size.Width);
@@ -62,8 +61,8 @@ void Camera::SetSize(const Size cam_size) {
 void Camera::SetAt(int x, int y) {
 	int cw = _position.GetWidth();
 	int ch = _position.GetHeight();
-	int room_width = data_to_game_coord(thisroom.Width);
-	int room_height = data_to_game_coord(thisroom.Height);
+	int room_width = data_to_game_coord(_GP(thisroom).Width);
+	int room_height = data_to_game_coord(_GP(thisroom).Height);
 	x = Math::Clamp(x, 0, room_width - cw);
 	y = Math::Clamp(y, 0, room_height - ch);
 	_position.MoveTo(Point(x, y));

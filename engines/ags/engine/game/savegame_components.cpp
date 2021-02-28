@@ -70,7 +70,7 @@ extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
 extern int numAnimButs;
 extern ViewStruct *views;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-extern RoomStruct thisroom;
+
 
 extern Bitmap *raw_saved_screen;
 extern MoveList *mls;
@@ -900,7 +900,7 @@ HSaveError WriteThisRoom(PStream out) {
 	for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
 		out->WriteBool(_GP(play).raw_modified[i] != 0);
 		if (_GP(play).raw_modified[i])
-			serialize_bitmap(thisroom.BgFrames[i].Graphic.get(), out.get());
+			serialize_bitmap(_GP(thisroom).BgFrames[i].Graphic.get(), out.get());
 	}
 	out->WriteBool(raw_saved_screen != nullptr);
 	if (raw_saved_screen)
@@ -908,22 +908,22 @@ HSaveError WriteThisRoom(PStream out) {
 
 	// room region state
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
-		out->WriteInt32(thisroom.Regions[i].Light);
-		out->WriteInt32(thisroom.Regions[i].Tint);
+		out->WriteInt32(_GP(thisroom).Regions[i].Light);
+		out->WriteInt32(_GP(thisroom).Regions[i].Tint);
 	}
 	for (int i = 0; i < MAX_WALK_AREAS + 1; ++i) {
-		out->WriteInt32(thisroom.WalkAreas[i].ScalingFar);
-		out->WriteInt32(thisroom.WalkAreas[i].ScalingNear);
+		out->WriteInt32(_GP(thisroom).WalkAreas[i].ScalingFar);
+		out->WriteInt32(_GP(thisroom).WalkAreas[i].ScalingNear);
 	}
 
 	// room object movement paths cache
-	out->WriteInt32(thisroom.ObjectCount + 1);
-	for (size_t i = 0; i < thisroom.ObjectCount + 1; ++i) {
+	out->WriteInt32(_GP(thisroom).ObjectCount + 1);
+	for (size_t i = 0; i < _GP(thisroom).ObjectCount + 1; ++i) {
 		mls[i].WriteToFile(out.get());
 	}
 
 	// room music volume
-	out->WriteInt32(thisroom.Options.MusicVolume);
+	out->WriteInt32(_GP(thisroom).Options.MusicVolume);
 
 	// persistent room's indicator
 	const bool persist = displayed_room < MAX_ROOMS;

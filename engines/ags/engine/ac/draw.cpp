@@ -94,7 +94,7 @@ extern GameSetup usetup;
 extern int convert_16bit_bgr;
 extern ScriptSystem scsystem;
 extern AGSPlatformDriver *platform;
-extern RoomStruct thisroom;
+
 extern char noWalkBehindsAtAll;
 extern unsigned int loopcounter;
 extern char *walkBehindExists;  // whether a WB area is in this column
@@ -527,8 +527,8 @@ void prepare_roomview_frame(Viewport *view) {
 		PBitmap &camera_buffer = draw_dat.Buffer;
 		if (!camera_buffer || camera_buffer->GetWidth() < cam_sz.Width || camera_buffer->GetHeight() < cam_sz.Height) {
 			// Allocate new buffer bitmap with an extra size in case they will want to zoom out
-			int room_width = data_to_game_coord(thisroom.Width);
-			int room_height = data_to_game_coord(thisroom.Height);
+			int room_width = data_to_game_coord(_GP(thisroom).Width);
+			int room_height = data_to_game_coord(_GP(thisroom).Height);
 			Size alloc_sz = Size::Clamp(cam_sz * 2, Size(1, 1), Size(room_width, room_height));
 			camera_buffer.reset(new Bitmap(alloc_sz.Width, alloc_sz.Height, gfxDriver->GetMemoryBackBuffer()->GetColorDepth()));
 		}
@@ -801,7 +801,7 @@ int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, Bitmap *copy
 	if (noWalkBehindsAtAll)
 		return 0;
 
-	if ((!thisroom.WalkBehindMask->IsMemoryBitmap()) ||
+	if ((!_GP(thisroom).WalkBehindMask->IsMemoryBitmap()) ||
 	        (!sprit->IsMemoryBitmap()))
 		quit("!sort_out_walk_behinds: wb bitmap not linear");
 
@@ -809,7 +809,7 @@ int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, Bitmap *copy
 	// precalculate this to try and shave some time off
 	int maskcol = sprit->GetMaskColor();
 	int spcoldep = sprit->GetColorDepth();
-	int screenhit = thisroom.WalkBehindMask->GetHeight();
+	int screenhit = _GP(thisroom).WalkBehindMask->GetHeight();
 	short *shptr, *shptr2;
 	int *loptr, *loptr2;
 	int pixelsChanged = 0;
@@ -821,7 +821,7 @@ int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, Bitmap *copy
 		quit("sprite colour depth does not match background colour depth");
 
 	for (; ee < sprit->GetWidth(); ee++) {
-		if (ee + xx >= thisroom.WalkBehindMask->GetWidth())
+		if (ee + xx >= _GP(thisroom).WalkBehindMask->GetWidth())
 			break;
 
 		if ((!walkBehindExists[ee + xx]) ||
@@ -849,10 +849,10 @@ int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, Bitmap *copy
 		for (; rr < toheight; rr++) {
 
 			// we're ok with _getpixel because we've checked the screen edges
-			//tmm = _getpixel(thisroom.WalkBehindMask,ee+xx,rr+yy);
+			//tmm = _getpixel(_GP(thisroom).WalkBehindMask,ee+xx,rr+yy);
 			// actually, _getpixel is well inefficient, do it ourselves
 			// since we know it's 8-bit bitmap
-			tmm = thisroom.WalkBehindMask->GetScanLine(rr + yy)[ee + xx];
+			tmm = _GP(thisroom).WalkBehindMask->GetScanLine(rr + yy)[ee + xx];
 			if (tmm < 1) continue;
 			if (croom->walkbehind_base[tmm] <= basel) continue;
 
@@ -913,10 +913,10 @@ void sort_out_char_sprite_walk_behind(int actspsIndex, int xx, int yy, int basel
 	        (actspswbcache[actspsIndex].xWas != xx) ||
 	        (actspswbcache[actspsIndex].yWas != yy) ||
 	        (actspswbcache[actspsIndex].baselineWas != basel)) {
-		actspswb[actspsIndex] = recycle_bitmap(actspswb[actspsIndex], thisroom.BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth(), width, height, true);
+		actspswb[actspsIndex] = recycle_bitmap(actspswb[actspsIndex], _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth(), width, height, true);
 		Bitmap *wbSprite = actspswb[actspsIndex];
 
-		actspswbcache[actspsIndex].isWalkBehindHere = sort_out_walk_behinds(wbSprite, xx, yy, basel, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), actsps[actspsIndex], zoom);
+		actspswbcache[actspsIndex].isWalkBehindHere = sort_out_walk_behinds(wbSprite, xx, yy, basel, _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), actsps[actspsIndex], zoom);
 		actspswbcache[actspsIndex].xWas = xx;
 		actspswbcache[actspsIndex].yWas = yy;
 		actspswbcache[actspsIndex].baselineWas = basel;
@@ -1111,11 +1111,11 @@ void get_local_tint(int xpp, int ypp, int nolight,
 		}
 
 		if ((onRegion > 0) && (onRegion < MAX_ROOM_REGIONS)) {
-			light_level = thisroom.Regions[onRegion].Light;
-			tint_level = thisroom.Regions[onRegion].Tint;
+			light_level = _GP(thisroom).Regions[onRegion].Light;
+			tint_level = _GP(thisroom).Regions[onRegion].Tint;
 		} else if (onRegion <= 0) {
-			light_level = thisroom.Regions[0].Light;
-			tint_level = thisroom.Regions[0].Tint;
+			light_level = _GP(thisroom).Regions[0].Light;
+			tint_level = _GP(thisroom).Regions[0].Tint;
 		}
 
 		int tint_sat = (tint_level >> 24) & 0xFF;
@@ -1329,7 +1329,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		zoom_level = objs[aa].zoom;
 	} else {
 		int onarea = get_walkable_area_at_location(objs[aa].x, objs[aa].y);
-		if ((onarea <= 0) && (thisroom.WalkAreas[0].ScalingFar == 0)) {
+		if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
 			// just off the edge of an area -- use the scaling we had
 			// while on the area
 			zoom_level = objs[aa].zoom;
@@ -1485,7 +1485,7 @@ void prepare_objects_for_drawing() {
 	for (int aa = 0; aa < croom->numobj; aa++) {
 		if (objs[aa].on != 1) continue;
 		// offscreen, don't draw
-		if ((objs[aa].x >= thisroom.Width) || (objs[aa].y < 1))
+		if ((objs[aa].x >= _GP(thisroom).Width) || (objs[aa].y < 1))
 			continue;
 
 		const int useindx = aa;
@@ -1503,7 +1503,7 @@ void prepare_objects_for_drawing() {
 		if (objs[aa].flags & OBJF_NOWALKBEHINDS) {
 			// ignore walk-behinds, do nothing
 			if (walkBehindMethod == DrawAsSeparateSprite) {
-				usebasel += thisroom.Height;
+				usebasel += _GP(thisroom).Height;
 			}
 		} else if (walkBehindMethod == DrawAsSeparateCharSprite) {
 			sort_out_char_sprite_walk_behind(useindx, atxp, atyp, usebasel, objs[aa].zoom, objs[aa].last_width, objs[aa].last_height);
@@ -1631,7 +1631,7 @@ void prepare_characters_for_drawing() {
 		// calculate the zoom level
 		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
 			zoom_level = charextra[aa].zoom;
-		else if ((onarea <= 0) && (thisroom.WalkAreas[0].ScalingFar == 0)) {
+		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
 			zoom_level = charextra[aa].zoom;
 			// NOTE: room objects don't have this fix
 			if (zoom_level == 0)
@@ -1785,7 +1785,7 @@ void prepare_characters_for_drawing() {
 		if (chin->flags & CHF_NOWALKBEHINDS) {
 			// ignore walk-behinds, do nothing
 			if (walkBehindMethod == DrawAsSeparateSprite) {
-				usebasel += thisroom.Height;
+				usebasel += _GP(thisroom).Height;
 			}
 		} else if (walkBehindMethod == DrawAsSeparateCharSprite) {
 			sort_out_char_sprite_walk_behind(useindx, bgX, bgY, usebasel, charextra[aa].zoom, newwidth, newheight);
@@ -1835,10 +1835,10 @@ void prepare_room_sprites() {
 	// Note that software DDB is just a tiny wrapper around bitmap, so overhead is negligible.
 	if (roomBackgroundBmp == nullptr) {
 		update_polled_stuff_if_runtime();
-		roomBackgroundBmp = gfxDriver->CreateDDBFromBitmap(thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
+		roomBackgroundBmp = gfxDriver->CreateDDBFromBitmap(_GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
 	} else if (current_background_is_dirty) {
 		update_polled_stuff_if_runtime();
-		gfxDriver->UpdateDDBFromBitmap(roomBackgroundBmp, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), false);
+		gfxDriver->UpdateDDBFromBitmap(roomBackgroundBmp, _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false);
 	}
 	if (gfxDriver->RequiresFullRedrawEachFrame()) {
 		if (current_background_is_dirty || walkBehindsCachedForBgNum != _GP(play).bg_frame) {
@@ -1905,7 +1905,7 @@ PBitmap draw_room_background(Viewport *view, const SpriteTransform &room_trans) 
 		// the following line takes up to 50% of the game CPU time at
 		// high resolutions and colour depths - if we can optimise it
 		// somehow, significant performance gains to be had
-		update_room_invreg_and_reset(view_index, roomcam_surface, thisroom.BgFrames[_GP(play).bg_frame].Graphic.get(), draw_to_camsurf);
+		update_room_invreg_and_reset(view_index, roomcam_surface, _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), draw_to_camsurf);
 	}
 
 	return CameraDrawData[view_index].Frame;

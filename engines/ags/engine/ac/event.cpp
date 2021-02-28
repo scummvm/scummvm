@@ -49,7 +49,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 
-extern RoomStruct thisroom;
+
 extern RoomStatus *croom;
 extern int displayed_room;
 
@@ -115,8 +115,8 @@ void run_on_event(int evtype, RuntimeScriptValue &wparam) {
 void run_room_event(int id) {
 	evblockbasename = "room";
 
-	if (thisroom.EventHandlers != nullptr) {
-		run_interaction_script(thisroom.EventHandlers.get(), id);
+	if (_GP(thisroom).EventHandlers != nullptr) {
+		run_interaction_script(_GP(thisroom).EventHandlers.get(), id);
 	} else {
 		run_interaction_event(&croom->intrRoom, id);
 	}
@@ -172,8 +172,8 @@ void process_event(EventHappened *evp) {
 
 		if (evp->data1 == EVB_HOTSPOT) {
 
-			if (thisroom.Hotspots[evp->data2].EventHandlers != nullptr)
-				scriptPtr = thisroom.Hotspots[evp->data2].EventHandlers;
+			if (_GP(thisroom).Hotspots[evp->data2].EventHandlers != nullptr)
+				scriptPtr = _GP(thisroom).Hotspots[evp->data2].EventHandlers;
 			else
 				evpt = &croom->intrHotspot[evp->data2];
 
@@ -182,8 +182,8 @@ void process_event(EventHappened *evp) {
 			//Debug::Printf("Running hotspot interaction for hotspot %d, event %d", evp->data2, evp->data3);
 		} else if (evp->data1 == EVB_ROOM) {
 
-			if (thisroom.EventHandlers != nullptr)
-				scriptPtr = thisroom.EventHandlers;
+			if (_GP(thisroom).EventHandlers != nullptr)
+				scriptPtr = _GP(thisroom).EventHandlers;
 			else
 				evpt = &croom->intrRoom;
 

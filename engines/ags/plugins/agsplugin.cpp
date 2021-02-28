@@ -88,7 +88,7 @@ using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
 extern int displayed_room;
-extern RoomStruct thisroom;
+
 
 extern RoomStatus *croom;
 
@@ -290,13 +290,13 @@ int IAGSEngine::GetCurrentRoom() {
 	return displayed_room;
 }
 int IAGSEngine::GetNumBackgrounds() {
-	return thisroom.BgFrameCount;
+	return _GP(thisroom).BgFrameCount;
 }
 int IAGSEngine::GetCurrentBackground() {
 	return _GP(play).bg_frame;
 }
 BITMAP *IAGSEngine::GetBackgroundScene(int32 index) {
-	return (BITMAP *)thisroom.BgFrames[index].Graphic->GetAllegroBitmap();
+	return (BITMAP *)_GP(thisroom).BgFrames[index].Graphic->GetAllegroBitmap();
 }
 void IAGSEngine::GetBitmapDimensions(BITMAP *bmp, int32 *width, int32 *height, int32 *coldepth) {
 	if (bmp == nullptr)
@@ -488,13 +488,13 @@ BITMAP *IAGSEngine::GetSpriteGraphic(int32 num) {
 }
 BITMAP *IAGSEngine::GetRoomMask(int32 index) {
 	if (index == MASK_WALKABLE)
-		return (BITMAP *)thisroom.WalkAreaMask->GetAllegroBitmap();
+		return (BITMAP *)_GP(thisroom).WalkAreaMask->GetAllegroBitmap();
 	else if (index == MASK_WALKBEHIND)
-		return (BITMAP *)thisroom.WalkBehindMask->GetAllegroBitmap();
+		return (BITMAP *)_GP(thisroom).WalkBehindMask->GetAllegroBitmap();
 	else if (index == MASK_HOTSPOT)
-		return (BITMAP *)thisroom.HotspotMask->GetAllegroBitmap();
+		return (BITMAP *)_GP(thisroom).HotspotMask->GetAllegroBitmap();
 	else if (index == MASK_REGIONS)
-		return (BITMAP *)thisroom.RegionMask->GetAllegroBitmap();
+		return (BITMAP *)_GP(thisroom).RegionMask->GetAllegroBitmap();
 	else
 		quit("!IAGSEngine::GetRoomMask: invalid mask requested");
 	return nullptr;

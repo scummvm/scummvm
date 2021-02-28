@@ -105,7 +105,7 @@ void set_clip_to_channel(int chanid, SOUNDCLIP *clip) {
 volatile bool _audio_doing_crossfade;
 
 extern GameSetup usetup;
-extern RoomStruct thisroom;
+
 extern CharacterInfo *playerchar;
 
 extern volatile int switching_away_from_game;
@@ -788,7 +788,7 @@ void play_next_queued() {
 
 int calculate_max_volume() {
 	// quieter so that sounds can be heard better
-	int newvol = _GP(play).music_master_volume + ((int)thisroom.Options.MusicVolume) * LegacyRoomVolumeFactor;
+	int newvol = _GP(play).music_master_volume + ((int)_GP(thisroom).Options.MusicVolume) * LegacyRoomVolumeFactor;
 	if (newvol > 255) newvol = 255;
 	if (newvol < 0) newvol = 0;
 

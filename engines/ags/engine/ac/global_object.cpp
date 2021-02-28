@@ -57,7 +57,7 @@ extern RoomObject *objs;
 extern ViewStruct *views;
 
 extern ObjectCache objcache[MAX_ROOM_OBJECTS];
-extern RoomStruct thisroom;
+
 extern CharacterInfo *playerchar;
 extern int displayed_room;
 
@@ -267,8 +267,8 @@ void MergeObject(int obn) {
 	construct_object_gfx(obn, nullptr, &theHeight, true);
 
 	//Bitmap *oldabuf = graphics->bmp;
-	//abuf = thisroom.BgFrames.Graphic[_GP(play).bg_frame];
-	PBitmap bg_frame = thisroom.BgFrames[_GP(play).bg_frame].Graphic;
+	//abuf = _GP(thisroom).BgFrames.Graphic[_GP(play).bg_frame];
+	PBitmap bg_frame = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
 	if (bg_frame->GetColorDepth() != actsps[obn]->GetColorDepth())
 		quit("!MergeObject: unable to merge object due to color depth differences");
 
@@ -372,7 +372,7 @@ void GetObjectName(int obj, char *buffer) {
 	if (!is_valid_object(obj))
 		quit("!GetObjectName: invalid object number");
 
-	strcpy(buffer, get_translation(thisroom.Objects[obj].Name));
+	strcpy(buffer, get_translation(_GP(thisroom).Objects[obj].Name));
 }
 
 void MoveObject(int objj, int xx, int yy, int spp) {
@@ -420,12 +420,12 @@ void RunObjectInteraction(int aa, int mood) {
 	evblockbasename = "object%d";
 	evblocknum = aa;
 
-	if (thisroom.Objects[aa].EventHandlers != nullptr) {
+	if (_GP(thisroom).Objects[aa].EventHandlers != nullptr) {
 		if (passon >= 0) {
-			if (run_interaction_script(thisroom.Objects[aa].EventHandlers.get(), passon, 4, (passon == 3)))
+			if (run_interaction_script(_GP(thisroom).Objects[aa].EventHandlers.get(), passon, 4, (passon == 3)))
 				return;
 		}
-		run_interaction_script(thisroom.Objects[aa].EventHandlers.get(), 4);  // any click on obj
+		run_interaction_script(_GP(thisroom).Objects[aa].EventHandlers.get(), 4);  // any click on obj
 	} else {
 		if (passon >= 0) {
 			if (run_interaction_event(&croom->intrObject[aa], passon, 4, (passon == 3)))
@@ -499,11 +499,11 @@ int AreThingsOverlapping(int thing1, int thing2) {
 int GetObjectProperty(int hss, const char *property) {
 	if (!is_valid_object(hss))
 		quit("!GetObjectProperty: invalid object");
-	return get_int_property(thisroom.Objects[hss].Properties, croom->objProps[hss], property);
+	return get_int_property(_GP(thisroom).Objects[hss].Properties, croom->objProps[hss], property);
 }
 
 void GetObjectPropertyText(int item, const char *property, char *bufer) {
-	get_text_property(thisroom.Objects[item].Properties, croom->objProps[item], property, bufer);
+	get_text_property(_GP(thisroom).Objects[item].Properties, croom->objProps[item], property, bufer);
 }
 
 Bitmap *GetObjectImage(int obj, int *isFlipped) {

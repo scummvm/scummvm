@@ -394,12 +394,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 }
 
 bool AGSEngine::canLoadGameStateCurrently() {
-	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
+	return !_GP(thisroom).Options.SaveLoadDisabled &&
 		!::AGS3::inside_script && !_GP(play).fast_forward;
 }
 
 bool AGSEngine::canSaveGameStateCurrently() {
-	return !::AGS3::thisroom.Options.SaveLoadDisabled &&
+	return !_GP(thisroom).Options.SaveLoadDisabled &&
 		!::AGS3::inside_script && !_GP(play).fast_forward;
 }
 

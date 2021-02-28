@@ -42,7 +42,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern RoomStruct thisroom;
+
 extern RoomStatus *croom;
 extern ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
 extern CCHotspot ccDynamicHotspot;
@@ -83,7 +83,7 @@ void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
 }
 
 const char *Hotspot_GetName_New(ScriptHotspot *hss) {
-	return CreateNewScriptString(get_translation(thisroom.Hotspots[hss->id].Name));
+	return CreateNewScriptString(get_translation(_GP(thisroom).Hotspots[hss->id].Name));
 }
 
 bool Hotspot_IsInteractionAvailable(ScriptHotspot *hhot, int mood) {
@@ -100,16 +100,16 @@ void Hotspot_RunInteraction(ScriptHotspot *hss, int mood) {
 }
 
 int Hotspot_GetProperty(ScriptHotspot *hss, const char *property) {
-	return get_int_property(thisroom.Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
+	return get_int_property(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
 }
 
 void Hotspot_GetPropertyText(ScriptHotspot *hss, const char *property, char *bufer) {
-	get_text_property(thisroom.Hotspots[hss->id].Properties, croom->hsProps[hss->id], property, bufer);
+	get_text_property(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property, bufer);
 
 }
 
 const char *Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property) {
-	return get_text_property_dynamic_string(thisroom.Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
+	return get_text_property_dynamic_string(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
 }
 
 bool Hotspot_SetProperty(ScriptHotspot *hss, const char *property, int value) {
@@ -121,7 +121,7 @@ bool Hotspot_SetTextProperty(ScriptHotspot *hss, const char *property, const cha
 }
 
 int get_hotspot_at(int xpp, int ypp) {
-	int onhs = thisroom.HotspotMask->GetPixel(room_to_mask_coord(xpp), room_to_mask_coord(ypp));
+	int onhs = _GP(thisroom).HotspotMask->GetPixel(room_to_mask_coord(xpp), room_to_mask_coord(ypp));
 	if (onhs <= 0 || onhs >= MAX_ROOM_HOTSPOTS) return 0;
 	if (croom->hotspot_enabled[onhs] == 0) return 0;
 	return onhs;

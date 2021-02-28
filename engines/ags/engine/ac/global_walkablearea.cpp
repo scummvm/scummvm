@@ -33,7 +33,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern RoomStruct thisroom;
+
 
 
 int GetScalingAt(int x, int y) {
@@ -59,11 +59,11 @@ void SetAreaScaling(int area, int min, int max) {
 	max -= 100;
 
 	if (min == max) {
-		thisroom.WalkAreas[area].ScalingFar = min;
-		thisroom.WalkAreas[area].ScalingNear = NOT_VECTOR_SCALED;
+		_GP(thisroom).WalkAreas[area].ScalingFar = min;
+		_GP(thisroom).WalkAreas[area].ScalingNear = NOT_VECTOR_SCALED;
 	} else {
-		thisroom.WalkAreas[area].ScalingFar = min;
-		thisroom.WalkAreas[area].ScalingNear = max;
+		_GP(thisroom).WalkAreas[area].ScalingFar = min;
+		_GP(thisroom).WalkAreas[area].ScalingNear = max;
 	}
 }
 

@@ -488,7 +488,7 @@ String GetScriptName(ccInstance *sci) {
 		return "Not in a script";
 	else if (sci->instanceof == gamescript)
 		return "Global script";
-	else if (sci->instanceof == thisroom.CompiledScript)
+	else if (sci->instanceof == _GP(thisroom).CompiledScript)
 		return String::FromFormat("Room %d script", displayed_room);
 	return "Unknown script";
 }
@@ -615,8 +615,8 @@ int get_nivalue(InteractionCommandList *nic, int idx, int parm) {
 
 InteractionVariable *get_interaction_variable(int varindx) {
 
-	if ((varindx >= LOCAL_VARIABLE_OFFSET) && ((size_t)varindx < LOCAL_VARIABLE_OFFSET + thisroom.LocalVariables.size()))
-		return &thisroom.LocalVariables[varindx - LOCAL_VARIABLE_OFFSET];
+	if ((varindx >= LOCAL_VARIABLE_OFFSET) && ((size_t)varindx < LOCAL_VARIABLE_OFFSET + _GP(thisroom).LocalVariables.size()))
+		return &_GP(thisroom).LocalVariables[varindx - LOCAL_VARIABLE_OFFSET];
 
 	if ((varindx < 0) || (varindx >= numGlobalVars))
 		quit("!invalid interaction variable specified");
@@ -630,9 +630,9 @@ InteractionVariable *FindGraphicalVariable(const char *varName) {
 		if (ags_stricmp(globalvars[ii].Name, varName) == 0)
 			return &globalvars[ii];
 	}
-	for (size_t i = 0; i < thisroom.LocalVariables.size(); ++i) {
-		if (ags_stricmp(thisroom.LocalVariables[i].Name, varName) == 0)
-			return &thisroom.LocalVariables[i];
+	for (size_t i = 0; i < _GP(thisroom).LocalVariables.size(); ++i) {
+		if (ags_stricmp(_GP(thisroom).LocalVariables[i].Name, varName) == 0)
+			return &_GP(thisroom).LocalVariables[i];
 	}
 	return nullptr;
 }

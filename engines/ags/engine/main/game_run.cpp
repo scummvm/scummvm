@@ -81,7 +81,7 @@ extern int is_text_overlay;
 extern int proper_exit, our_eip;
 extern int displayed_room, starting_room, in_new_room, new_room_was;
 
-extern RoomStruct thisroom;
+
 extern int game_paused;
 extern int getloctype_index;
 extern int in_enters_screen, done_es_error;
@@ -560,13 +560,13 @@ static void check_room_edges(int numevents_was) {
 		if ((numevents == numevents_was) &&
 			((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0)) {
 
-			if (playerchar->x <= thisroom.Edges.Left)
+			if (playerchar->x <= _GP(thisroom).Edges.Left)
 				edgesActivated[0] = 1;
-			else if (playerchar->x >= thisroom.Edges.Right)
+			else if (playerchar->x >= _GP(thisroom).Edges.Right)
 				edgesActivated[1] = 1;
-			if (playerchar->y >= thisroom.Edges.Bottom)
+			if (playerchar->y >= _GP(thisroom).Edges.Bottom)
 				edgesActivated[2] = 1;
-			else if (playerchar->y <= thisroom.Edges.Top)
+			else if (playerchar->y <= _GP(thisroom).Edges.Top)
 				edgesActivated[3] = 1;
 
 			if ((_GP(play).entered_edge >= 0) && (_GP(play).entered_edge <= 3)) {
@@ -679,9 +679,9 @@ static void game_loop_update_background_animation() {
 	else {
 		_GP(play).bg_anim_delay = _GP(play).anim_background_speed;
 		_GP(play).bg_frame++;
-		if ((size_t)_GP(play).bg_frame >= thisroom.BgFrameCount)
+		if ((size_t)_GP(play).bg_frame >= _GP(thisroom).BgFrameCount)
 			_GP(play).bg_frame = 0;
-		if (thisroom.BgFrameCount >= 2) {
+		if (_GP(thisroom).BgFrameCount >= 2) {
 			// get the new frame's palette
 			on_background_frame_change();
 		}

@@ -80,7 +80,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern int displayed_room, starting_room;
-extern RoomStruct thisroom;
+
 extern MoveList *mls;
 extern ViewStruct *views;
 extern RoomObject *objs;
@@ -226,13 +226,13 @@ void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos)
 
 	if (new_room_pos == 0) {
 		// auto place on other side of screen
-		if (chaa->x <= thisroom.Edges.Left + 10)
+		if (chaa->x <= _GP(thisroom).Edges.Left + 10)
 			new_room_pos = 2000;
-		else if (chaa->x >= thisroom.Edges.Right - 10)
+		else if (chaa->x >= _GP(thisroom).Edges.Right - 10)
 			new_room_pos = 1000;
-		else if (chaa->y <= thisroom.Edges.Top + 10)
+		else if (chaa->y <= _GP(thisroom).Edges.Top + 10)
 			new_room_pos = 3000;
-		else if (chaa->y >= thisroom.Edges.Bottom - 10)
+		else if (chaa->y >= _GP(thisroom).Edges.Bottom - 10)
 			new_room_pos = 4000;
 
 		if (new_room_pos < 3000)
@@ -1856,16 +1856,16 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int step) {
 	int ex, ey, nearest = 99999, thisis, nearx = 0, neary = 0;
 	int startx = 0, starty = 14;
-	int roomWidthLowRes = room_to_mask_coord(thisroom.Width);
-	int roomHeightLowRes = room_to_mask_coord(thisroom.Height);
+	int roomWidthLowRes = room_to_mask_coord(_GP(thisroom).Width);
+	int roomHeightLowRes = room_to_mask_coord(_GP(thisroom).Height);
 	int xwidth = roomWidthLowRes, yheight = roomHeightLowRes;
 
 	int xLowRes = room_to_mask_coord(xx[0]);
 	int yLowRes = room_to_mask_coord(yy[0]);
-	int rightEdge = room_to_mask_coord(thisroom.Edges.Right);
-	int leftEdge = room_to_mask_coord(thisroom.Edges.Left);
-	int topEdge = room_to_mask_coord(thisroom.Edges.Top);
-	int bottomEdge = room_to_mask_coord(thisroom.Edges.Bottom);
+	int rightEdge = room_to_mask_coord(_GP(thisroom).Edges.Right);
+	int leftEdge = room_to_mask_coord(_GP(thisroom).Edges.Left);
+	int topEdge = room_to_mask_coord(_GP(thisroom).Edges.Top);
+	int bottomEdge = room_to_mask_coord(_GP(thisroom).Edges.Bottom);
 
 	// tweak because people forget to move the edges sometimes
 	// if the player is already over the edge, ignore it
@@ -1888,7 +1888,7 @@ int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int s
 	for (ex = startx; ex < xwidth; ex += step) {
 		for (ey = starty; ey < yheight; ey += step) {
 			// non-walkalbe, so don't go here
-			if (thisroom.WalkAreaMask->GetPixel(ex, ey) == 0) continue;
+			if (_GP(thisroom).WalkAreaMask->GetPixel(ex, ey) == 0) continue;
 			// off a screen edge, don't move them there
 			if ((ex <= leftEdge) || (ex >= rightEdge) ||
 			        (ey <= topEdge) || (ey >= bottomEdge))
@@ -1913,7 +1913,7 @@ int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int s
 
 void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
 
-	int pixValue = thisroom.WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
+	int pixValue = _GP(thisroom).WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
 	// only fix this code if the game was built with 2.61 or above
 	if (pixValue == 0 || (loaded_game_file_version >= kGameVersion_261 && pixValue < 1)) {
 		// First, check every 2 pixels within immediate area

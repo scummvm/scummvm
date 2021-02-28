@@ -56,7 +56,7 @@ using namespace AGS::Engine;
 
 
 
-extern RoomStruct thisroom;
+
     // used for non-saveable rooms, eg. intro
 extern int our_eip;
 extern GameSetup usetup;
@@ -179,7 +179,7 @@ void quit_message_on_exit(const char *qmsg, String &alertis, QuitReason qreason)
 
 void quit_release_data() {
 	resetRoomStatuses();
-	thisroom.Free();
+	_GP(thisroom).Free();
 	_GP(play).Free();
 
 	/*  _CrtMemState memstart;

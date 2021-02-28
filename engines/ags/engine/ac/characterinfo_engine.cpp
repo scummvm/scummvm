@@ -46,7 +46,7 @@ extern ViewStruct *views;
 extern int displayed_room;
 
 extern int char_speaking;
-extern RoomStruct thisroom;
+
 extern unsigned int loopcounter;
 
 #define Random __Rand
@@ -403,17 +403,17 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 			if (room == displayed_room) {
 				// only move to the room-entered position if coming into
 				// the current room
-				if (_GP(play).entered_at_x > (thisroom.Width - 8)) {
-					x = thisroom.Width + 8;
+				if (_GP(play).entered_at_x > (_GP(thisroom).Width - 8)) {
+					x = _GP(thisroom).Width + 8;
 					y = _GP(play).entered_at_y;
 				} else if (_GP(play).entered_at_x < 8) {
 					x = -8;
 					y = _GP(play).entered_at_y;
-				} else if (_GP(play).entered_at_y > (thisroom.Height - 8)) {
-					y = thisroom.Height + 8;
+				} else if (_GP(play).entered_at_y > (_GP(thisroom).Height - 8)) {
+					y = _GP(thisroom).Height + 8;
 					x = _GP(play).entered_at_x;
-				} else if (_GP(play).entered_at_y < thisroom.Edges.Top + 8) {
-					y = thisroom.Edges.Top + 1;
+				} else if (_GP(play).entered_at_y < _GP(thisroom).Edges.Top + 8) {
+					y = _GP(thisroom).Edges.Top + 1;
 					x = _GP(play).entered_at_x;
 				} else {
 					// not at one of the edges

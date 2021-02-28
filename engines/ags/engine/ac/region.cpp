@@ -41,7 +41,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
-extern RoomStruct thisroom;
+
 extern RoomStatus *croom;
 
 extern COLOR_MAP maincoltable;
@@ -65,37 +65,37 @@ void Region_SetLightLevel(ScriptRegion *ssr, int brightness) {
 }
 
 int Region_GetLightLevel(ScriptRegion *ssr) {
-	return thisroom.GetRegionLightLevel(ssr->id);
+	return _GP(thisroom).GetRegionLightLevel(ssr->id);
 }
 
 int Region_GetTintEnabled(ScriptRegion *srr) {
-	if (thisroom.Regions[srr->id].Tint & 0xFF000000)
+	if (_GP(thisroom).Regions[srr->id].Tint & 0xFF000000)
 		return 1;
 	return 0;
 }
 
 int Region_GetTintRed(ScriptRegion *srr) {
 
-	return thisroom.Regions[srr->id].Tint & 0x000000ff;
+	return _GP(thisroom).Regions[srr->id].Tint & 0x000000ff;
 }
 
 int Region_GetTintGreen(ScriptRegion *srr) {
 
-	return (thisroom.Regions[srr->id].Tint >> 8) & 0x000000ff;
+	return (_GP(thisroom).Regions[srr->id].Tint >> 8) & 0x000000ff;
 }
 
 int Region_GetTintBlue(ScriptRegion *srr) {
 
-	return (thisroom.Regions[srr->id].Tint >> 16) & 0x000000ff;
+	return (_GP(thisroom).Regions[srr->id].Tint >> 16) & 0x000000ff;
 }
 
 int Region_GetTintSaturation(ScriptRegion *srr) {
 
-	return (thisroom.Regions[srr->id].Tint >> 24) & 0xFF;
+	return (_GP(thisroom).Regions[srr->id].Tint >> 24) & 0xFF;
 }
 
 int Region_GetTintLuminance(ScriptRegion *srr) {
-	return thisroom.GetRegionTintLuminance(srr->id);
+	return _GP(thisroom).GetRegionTintLuminance(srr->id);
 }
 
 void Region_Tint(ScriptRegion *srr, int red, int green, int blue, int amount, int luminance) {

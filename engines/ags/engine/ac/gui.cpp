@@ -66,7 +66,7 @@ using namespace AGS::Engine;
 
 
 extern GameSetup usetup;
-extern RoomStruct thisroom;
+
 extern int cur_mode, cur_cursor;
 extern ccInstance *gameinst;
 extern ScriptGUI *scrGui;

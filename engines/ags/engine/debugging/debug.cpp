@@ -58,7 +58,7 @@ using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
 extern int displayed_room;
-extern RoomStruct thisroom;
+
 extern char pexbuf[STD_BUFFER_SIZE];
 
 
@@ -293,7 +293,7 @@ void debug_script_print(const String &msg, MessageType mt) {
 		String scriptname;
 		if (curinst->instanceof == gamescript)
 			scriptname = "G ";
-		else if (curinst->instanceof == thisroom.CompiledScript)
+		else if (curinst->instanceof == _GP(thisroom).CompiledScript)
 			scriptname = "R ";
 		else if (curinst->instanceof == dialogScriptsScript)
 			scriptname = "D ";

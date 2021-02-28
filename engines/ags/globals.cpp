@@ -23,6 +23,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/spritecache.h"
+#include "ags/shared/game/roomstruct.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/roomstatus.h"
 
@@ -38,6 +39,7 @@ Globals::Globals() {
 	_play = new GameState();
 	_game = new GameSetupStruct();
 	_spriteset = new SpriteCache(_game->SpriteInfos);
+	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
 }
 
@@ -46,6 +48,7 @@ Globals::~Globals() {
 	delete _game;
 	delete _play;
 	delete _spriteset;
+	delete _thisroom;
 	delete _troom;
 }
 
