@@ -303,14 +303,15 @@ void Process::getRandomNumber() {
 void Process::setGlobal() {
 	Common::String name = popString();
 	int value = pop();
+	debug("setGlobal %s %d", name.c_str(), value);
 	_engine->setGlobal(name, value);
 }
 
 void Process::setPhaseVar() {
 	Common::String name = popString();
+	debug("setPhaseVar %s", name.c_str());
 	_engine->setGlobal(name, 0);
 	_phaseVar = name;
-	debug("setPhaseVar %s", name.c_str());
 }
 
 void Process::getGlobal(uint8 index) {
