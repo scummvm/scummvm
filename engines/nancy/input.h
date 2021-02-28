@@ -92,6 +92,7 @@ public:
     void processEvents();
 
     NancyInput getInput() const;
+    void forceCleanInput();
 
     static void initKeymaps(Common::KeymapArray &keymaps);
     

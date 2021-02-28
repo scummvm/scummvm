@@ -126,6 +126,11 @@ NancyInput InputManager::getInput() const {
     return ret;
 }
 
+void InputManager::forceCleanInput() {
+    _inputs = 0;
+    _otherKbdInput.clear();
+}
+
 void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
     using namespace Common;
 	using namespace Nancy;
