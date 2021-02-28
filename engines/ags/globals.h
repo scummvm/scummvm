@@ -96,6 +96,14 @@ public:
 	int _break_on_next_script_step = 0;
 	volatile int _game_paused_in_debugger = 0;
 
+	struct Breakpoint {
+		char scriptName[80] = { 0 };
+		int lineNumber = 0;
+	};
+
+	std::vector<Breakpoint> _breakpoints;
+	int _numBreakpoints = 0;
+
 	/**@}*/
 
 

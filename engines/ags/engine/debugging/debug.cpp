@@ -341,14 +341,6 @@ bool get_script_position(ScriptPosition &script_pos) {
 	return false;
 }
 
-struct Breakpoint {
-	char scriptName[80];
-	int lineNumber;
-};
-
-std::vector<Breakpoint> breakpoints;
-int numBreakpoints = 0;
-
 bool send_message_to_editor(const char *msg, const char *errorMsg) {
 	String callStack = get_cur_script(25);
 	if (callStack.IsEmpty())
@@ -443,19 +435,19 @@ int check_for_messages_from_editor() {
 			int lineNumber = atoi(msgPtr);
 
 			if (isDelete) {
-				for (i = 0; i < numBreakpoints; i++) {
-					if ((breakpoints[i].lineNumber == lineNumber) &&
-						(strcmp(breakpoints[i].scriptName, scriptNameBuf) == 0)) {
-						numBreakpoints--;
-						breakpoints.erase(breakpoints.begin() + i);
+				for (i = 0; i < _G(numBreakpoints); i++) {
+					if ((_G(breakpoints)[i].lineNumber == lineNumber) &&
+						(strcmp(_G(breakpoints)[i].scriptName, scriptNameBuf) == 0)) {
+						_G(numBreakpoints)--;
+						_G(breakpoints).erase(_G(breakpoints).begin() + i);
 						break;
 					}
 				}
 			} else {
-				breakpoints.push_back(Breakpoint());
-				strcpy(breakpoints[numBreakpoints].scriptName, scriptNameBuf);
-				breakpoints[numBreakpoints].lineNumber = lineNumber;
-				numBreakpoints++;
+				_G(breakpoints).push_back(Globals::Breakpoint());
+				strcpy(_G(breakpoints)[_G(numBreakpoints)].scriptName, scriptNameBuf);
+				_G(breakpoints)[_G(numBreakpoints)].lineNumber = lineNumber;
+				_G(numBreakpoints)++;
 			}
 		} else if (strncmp(msgPtr, "RESUME", 6) == 0) {
 			_G(game_paused_in_debugger) = 0;
@@ -541,9 +533,9 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 
 	const char *scriptName = ccinst->runningInst->instanceof->GetSectionName(ccinst->pc);
 
-	for (int i = 0; i < numBreakpoints; i++) {
-		if ((breakpoints[i].lineNumber == linenum) &&
-			(strcmp(breakpoints[i].scriptName, scriptName) == 0)) {
+	for (int i = 0; i < _G(numBreakpoints); i++) {
+		if ((_G(breakpoints)[i].lineNumber == linenum) &&
+			(strcmp(_G(breakpoints)[i].scriptName, scriptName) == 0)) {
 			break_into_debugger();
 			break;
 		}
