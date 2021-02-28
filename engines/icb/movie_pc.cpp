@@ -105,13 +105,13 @@ uint32 MovieManager::getMovieWidth() {
 	if (!busy())
 		return 0;
 	return _binkDecoder->getWidth();
-};
+}
 
 uint32 MovieManager::getMovieFrames() {
 	if (!busy())
 		return 0;
 	return _binkDecoder->getFrameCount();
-};
+}
 
 bool MovieManager::busy() {
 	return _binkDecoder != nullptr;
