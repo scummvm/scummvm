@@ -31,16 +31,28 @@
 
 #include "engines/icb/configfile.h"
 
-// TODO: Complete refactor
-
 #include "common/textconsole.h"
-#include "common/config-manager.h"
+#include "common/ini-file.h"
 
 namespace ICB {
 
 ConfigFile::ConfigFile() {}
 
-void ConfigFile::writeSetting(const Common::String &section, const Common::String &key, const Common::String &value) { _dataSet[section][key] = value; }
+void ConfigFile::readFile(const Common::String &filename) {
+	Common::INIFile file;
+	if (!file.loadFromFile(filename)) {
+		error("Opening file '%s' failed'", filename.c_str());
+		return;
+	}
+
+	Common::INIFile::SectionList sections = file.getSections();
+	for (Common::INIFile::SectionList::const_iterator i = sections.begin(); i != sections.end(); i++) {
+		Common::INIFile::SectionKeyList kList = i->getKeys();
+		for (Common::INIFile::SectionKeyList::const_iterator j = kList.begin(); j != kList.end(); j++) {
+			_dataSet[i->name][j->key] = j->value;
+		}
+	}
+}
 
 Common::String ConfigFile::readSetting(const Common::String &section, const Common::String &key, const Common::String &defaultValue) const {
 	Common::HashMap<Common::String, Common::HashMap<Common::String, Common::String> >::const_iterator sectionIt;
@@ -54,60 +66,8 @@ Common::String ConfigFile::readSetting(const Common::String &section, const Comm
 	return defaultValue;
 }
 
-void ConfigFile::readFile(const Common::String &filename) {
-	Common::String path = ConfMan.get("path") + "/" + filename;
-	std::string currentSection = "";
-	std::ifstream file(path.c_str());
-	if (!file.is_open() || file.fail()) {
-		assert(0);
-	}
-
-	std::string line;
-	while (getline(file, line)) {
-		size_t start = line.find_first_of("[");
-		size_t end = line.find_first_of("]");
-		// Section start
-		if (start == 0 && start != std::string::npos && end != std::string::npos) {
-			currentSection = line.substr(1, end - 1);
-			//std::cout << "Section: " << currentSection << std::endl;
-			continue;
-		}
-		size_t split = line.find_first_of("=");
-		if (split == std::string::npos) {
-			continue;
-		} else {
-			std::string key = line.substr(0, split);
-			std::string value = line.substr(split + 1);
-			//std::cout << "Key: " << key << " Value: " << value << std::endl;
-			writeSetting(currentSection.c_str(), key.c_str(), value.c_str());
-		}
-	}
-	file.close();
-}
-
 int ConfigFile::readIntSetting(const Common::String &section, const Common::String &key, int defaultValue) const {
-	char buff[32];
-	sprintf(buff, "%d", defaultValue);
-	return atoi(readSetting(section, key, buff).c_str());
-}
-
-void ConfigFile::writeFile(const Common::String &filename) const {
-	warning("TODO: Fix ConfMan-writing");
-	return;
-	std::ofstream file(filename.c_str());
-	if (!file.is_open() || file.fail()) {
-		assert(0);
-	}
-
-	Common::HashMap<Common::String, Common::HashMap<Common::String, Common::String> >::const_iterator sectionIt;
-	for (sectionIt = _dataSet.begin(); sectionIt != _dataSet.end(); ++sectionIt) {
-		file << "[" << sectionIt->_key.c_str() << "]\n";
-		Common::HashMap<Common::String, Common::String>::const_iterator keyIt;
-		for (keyIt = sectionIt->_value.begin(); keyIt != sectionIt->_value.end(); ++keyIt) {
-			file << keyIt->_key.c_str() << "=" << keyIt->_value.c_str() << "\n";
-		}
-	}
-	file.close();
+	return atoi(readSetting(section, key, Common::String().format("%d", defaultValue)).c_str());
 }
 
 } // End of namespace ICB

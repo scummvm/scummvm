@@ -38,12 +38,11 @@ class ConfigFile {
 
 public:
 	ConfigFile();
-	void writeSetting(const Common::String &section, const Common::String &key, const Common::String &value);
+	void writeSetting(const Common::String &section, const Common::String &key, const Common::String &value) {}
 	Common::String readSetting(const Common::String &section, const Common::String &key, const Common::String &defaultValue) const;
 	int readIntSetting(const Common::String &section, const Common::String &key, int defaultValue) const;
 
 	void readFile(const Common::String &filename);
-	void writeFile(const Common::String &filename) const;
 };
 
 } // End of namespace ICB

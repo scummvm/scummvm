@@ -274,9 +274,7 @@ void Save_config_file() {
 			config.writeSetting("Movie Library", temp, tempBuff);
 		}
 	}
-	pxString filename = configFile;
-	filename.ConvertPath();
-	config.writeFile(filename.c_str());
+	// TODO: implement handling config manager
 }
 
 void InitEngine(const char *lpCmdLine) {
