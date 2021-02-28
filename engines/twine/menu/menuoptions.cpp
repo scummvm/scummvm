@@ -126,7 +126,7 @@ void MenuOptions::showEndSequence() {
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
 	const int32 borderTop = 200;
-	const int32 borderLeft = _engine->width() / 2 - 270;
+	const int32 borderLeft = _engine->width() / 2 - 295;
 	const int32 halfButtonHeight = 25;
 	const int32 halfButtonWidth = 20;
 	const int32 buttonDistanceX = halfButtonWidth * 2 + 5;
