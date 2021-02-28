@@ -72,7 +72,6 @@ mcodeFunctionReturnCodes _game_session::fn_play_movie(int32 &, int32 *params) {
 void Init_play_movie(const char *param0, bool8 param1) {
 	// Stop all sounds occuring
 	PauseSounds();
-	g_TimerOn = FALSE8;
 
 	const char *moviename = (const char *)param0;
 

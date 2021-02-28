@@ -49,96 +49,42 @@ class MovieManager;
 
 extern MovieManager *g_theSequenceManager;
 
-class SequenceManager {
-private:
-	HBINK m_binkObject;
-
-	uint32 m_x;     // X offset in screen
-	uint32 m_y;     // Y offset in screen
-	uint32 m_flags; // Surface type
-	uint32 m_fadeCounter;
-	uint32 m_fadeRate;
-
-	bool8 m_loop;
-	bool8 m_haveFaded;
-	bool8 m_haveClearedScreen;
-	bool8 m_rater;
-	bool8 m_mission1intro;
-
-	uint32 m_endAtFrame;
-
-public:
-	SequenceManager();
-	~SequenceManager();
-
-	bool8 Register(const char *fileName, bool8 fade, bool8 loop, uint32 flags = 0);
-
-	uint32 GetMovieHeight();
-	uint32 GetMovieWidth();
-	uint32 GetMovieFrames();
-
-	bool8 Busy();
-
-	uint32 DrawFrame(uint32 surface_id = working_buffer_id);
-	int GetFrameNumber();
-
-	void SetRate();
-	void SetEndFrame(uint32 f) { m_endAtFrame = f; }
-
-	void SetVolume(int32 vol);
-
-	void Kill();
-
-private:
-	void FadeScreen(uint32 surface_id);
-};
-
 class MovieManager {
 	Video::BinkDecoder *_binkDecoder;
 	int _x;
 	int _y;
 
+	uint32 _fadeCounter;
+	uint32 _fadeRate;
+
+	bool8 _loop;
+	bool _haveFaded;
+	bool _haveClearedScreen;
+	bool _rater;
+
 public:
-	MovieManager() : _x(0), _y(0) {
-		_binkDecoder = new Video::BinkDecoder();
-		_binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
-	};
-	~MovieManager() { delete _binkDecoder; };
+	MovieManager();
+	~MovieManager();
 
 	bool registerMovie(const char *fileName, bool8 fade, bool8 loop);
-	uint32 getMovieHeight() {
-		if (!busy())
-			return 0;
-		return _binkDecoder->getHeight();
-	};
-	uint32 getMovieWidth() {
-		if (!busy())
-			return 0;
-		return _binkDecoder->getWidth();
-	};
-	uint32 getMovieFrames() {
-		if (!busy())
-			return 0;
-		return _binkDecoder->getFrameCount();
-	};
 
-	bool busy() { return _binkDecoder->isPlaying(); }
+	uint32 getMovieHeight();
+	uint32 getMovieWidth();
+	uint32 getMovieFrames();
+
+	bool busy();
 
 	uint32 drawFrame(uint32 surface_id = working_buffer_id);
-	int getFrameNumber() {
-		if (!busy())
-			return 0;
-		return _binkDecoder->getCurFrame();
-	};
+	int getFrameNumber();
 
-	void setRate() { warning("TODO: setRate"); }
-	void setEndFrame(uint32 f) { warning("TODO: setEndFrame"); }
-	void setVolume(int32 vol) { warning("TODO: setVolume"); }
+	void setRate();
 
-	void kill() { _binkDecoder->close(); }
+	void setVolume(int32 vol);
+
+	void kill();
 
 private:
-	void fadeScreen(uint32 surface_id) {}
+	void fadeScreen(uint32 surface_id);
 };
 
 } // End of namespace ICB
