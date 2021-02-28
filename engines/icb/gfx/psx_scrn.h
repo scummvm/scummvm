@@ -110,8 +110,8 @@ extern int update_minmaxzpos;
 // Global graphics options for z-clipping and camera scalings
 extern int minZOTpos;
 extern int maxZOTpos;
-extern int minUsedZpos;
-extern int maxUsedZpos;
+extern int32 minUsedZpos;
+extern int32 maxUsedZpos;
 extern int nearClip;
 extern int delayValue;
 extern int scale[3];

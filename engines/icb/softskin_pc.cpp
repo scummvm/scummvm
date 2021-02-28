@@ -71,15 +71,15 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 	int32 flag;
 	uint oldPrim = rap->nBones;
 
-	int xmin = *xminLocal;
-	int ymin = *yminLocal;
-	int zmin = *zminLocal;
+	int32 xmin = *xminLocal;
+	int32 ymin = *yminLocal;
+	int32 zmin = *zminLocal;
 
-	int xmax = *xmaxLocal;
-	int ymax = *ymaxLocal;
-	int zmax = *zmaxLocal;
+	int32 xmax = *xmaxLocal;
+	int32 ymax = *ymaxLocal;
+	int32 zmax = *zmaxLocal;
 
-	int lvx, lvy, lvz;
+	int32 lvx, lvy, lvz;
 
 	if (poseBone == -1) {
 		for (i = 0; i < nNone; i++) {

@@ -60,8 +60,8 @@ GsOT Wot[2];
 int minZOTpos = 5;
 int maxZOTpos = OT_SIZE - 5;
 int nearClip = 0;
-int minUsedZpos = 20000;
-int maxUsedZpos = 0;
+int32 minUsedZpos = 20000;
+int32 maxUsedZpos = 0;
 
 int otz_shift = 0; // 1cm accuracy
 int otz_offset = ((nearClip >> otz_shift) - minZOTpos);
