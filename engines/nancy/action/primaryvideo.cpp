@@ -37,10 +37,13 @@
 namespace Nancy {
 namespace Action {
 
-bool PlayPrimaryVideoChan0::isExitingScene = false;
+PlayPrimaryVideoChan0 *PlayPrimaryVideoChan0::activePrimaryVideo = nullptr;
 
 PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
     _decoder.close();
+	if (activePrimaryVideo == this) {
+		activePrimaryVideo = nullptr;
+	}
     _engine->scene->getTextbox().setVisible(false);
 }
 
@@ -159,14 +162,12 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
         }
     }
 
-    isExitingScene = false;
-
     bytesRead = stream.pos() - bytesRead;
     return bytesRead;
 }
 
 void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
-    if (isExitingScene) {
+	if (activePrimaryVideo != this && activePrimaryVideo != nullptr) {
         return;
     }
 
@@ -177,6 +178,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             engine->sound->loadSound(sound);
             engine->sound->playSound(sound.channelID);
             state = kRun;
+		    activePrimaryVideo = this;
             // fall through
         case kRun:
             if (!hasDrawnTextbox) {
@@ -265,7 +267,6 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     // Continue to next dialogue scene
                     SceneChange::execute(engine);
                 }
-                isExitingScene = true;
             }
 
             break;
@@ -309,7 +310,7 @@ void PlayPrimaryVideoChan0::addConditionalResponses(NancyEngine *engine) {
 }
 
 void PlayPrimaryVideoChan0::addGoodbye(NancyEngine *engine) {
-    for (auto res : nancy1Goodbyes) {
+    for (auto &res : nancy1Goodbyes) {
         if (res.characterID == goodbyeResponseCharacterID) {
             Common::File file;
             char snd[10];
