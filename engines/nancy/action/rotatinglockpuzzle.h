@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_ROTATINGLOCKPUZZLE_H
 #define NANCY_ACTION_ROTATINGLOCKPUZZLE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/time.h"
 
 #include "common/str.h"
@@ -55,13 +55,13 @@ public:
     Common::Array<Common::Rect> upHotspots; // 0x12C, 8
     Common::Array<Common::Rect> downHotspots; // 0x1AC, 8
     Common::Array<byte> correctSequence; // 0x22C
-    Nancy::SoundManager::SoundDescription clickSound; // 0x234, kNormal
-    SceneChangeDesc solveExitScene; // 0x256
-    FlagDesc flagOnSolve; // 0x260
+    Nancy::SoundDescription clickSound; // 0x234, kNormal
+    SceneChangeDescription solveExitScene; // 0x256
+    EventFlagDescription flagOnSolve; // 0x260
     uint16 solveSoundDelay; // 0x263
-    Nancy::SoundManager::SoundDescription solveSound; // 0x265
-    SceneChangeDesc exitScene; // 0x287
-    FlagDesc flagOnExit; // 0x291
+    Nancy::SoundDescription solveSound; // 0x265
+    SceneChangeDescription exitScene; // 0x287
+    EventFlagDescription flagOnExit; // 0x291
     Common::Rect exitHotspot; // 0x294
 
     SolveState solveState = kNotSolved;

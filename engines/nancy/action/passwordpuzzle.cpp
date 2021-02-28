@@ -26,6 +26,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/state/scene.h"
 
 #include "graphics/font.h"
@@ -56,12 +57,12 @@ uint16 PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
     stream.skip(2);
     flagOnSolve.label = stream.readSint16LE();
     flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSound.read(stream, SoundManager::SoundDescription::kNormal);
+    solveSound.read(stream, SoundDescription::kNormal);
     failExitScene.readData(stream);
     stream.skip(2);
     flagOnFail.label = stream.readSint16LE();
     flagOnFail.flag = (NancyFlag)stream.readByte();
-    failSound.read(stream, SoundManager::SoundDescription::kNormal);
+    failSound.read(stream, SoundDescription::kNormal);
     exitScene.readData(stream);
     stream.skip(2);
     flagOnExit.label = stream.readSint16LE();
@@ -143,25 +144,16 @@ void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
         case kActionTrigger:
             switch (solveState) {
                 case kNotSolved:
-                    if (exitScene.sceneID != 9999) {
-                        engine->scene->changeScene(exitScene.sceneID, exitScene.frameID, exitScene.verticalOffset, exitScene.doNotStartSound);
-                    }
-
-                    engine->scene->setEventFlag(flagOnExit.label, flagOnExit.flag);
+                    engine->scene->changeScene(exitScene);
+                    engine->scene->setEventFlag(flagOnExit);
                     break;
                 case kFailed:
-                    if (failExitScene.sceneID != 9999) {
-                        engine->scene->changeScene(failExitScene.sceneID, failExitScene.frameID, failExitScene.verticalOffset, failExitScene.doNotStartSound);
-                    }
-
-                    engine->scene->setEventFlag(flagOnFail.label, flagOnFail.flag);
+                    engine->scene->changeScene(failExitScene);
+                    engine->scene->setEventFlag(flagOnFail.label);
                     break;
                 case kSolved:
-                    if (solveExitScene.sceneID != 9999) {
-                        engine->scene->changeScene(solveExitScene.sceneID, solveExitScene.frameID, solveExitScene.verticalOffset, solveExitScene.doNotStartSound);
-                    }
-
-                    engine->scene->setEventFlag(flagOnSolve.label, flagOnSolve.flag);
+                    engine->scene->changeScene(solveExitScene);
+                    engine->scene->setEventFlag(flagOnSolve.label);
                     break;
             }
 

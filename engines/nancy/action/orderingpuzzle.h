@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_ORDERINGPUZZLE_H
 #define NANCY_ACTION_ORDERINGPUZZLE_H
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/str.h"
 #include "common/array.h"
@@ -54,13 +54,13 @@ public:
     Common::Array<Common::Rect> destRects; // 0xFC, 15
     uint16 sequenceLength; // 0x1EC;
     Common::Array<byte> correctSequence; // 0x1EE, 15 bytes
-    Nancy::SoundManager::SoundDescription clickSound; // 0x1FD, kNormal
-    SceneChangeDesc solveExitScene; // 0x21F
-    FlagDesc flagOnSolve; // 0x229
+    Nancy::SoundDescription clickSound; // 0x1FD, kNormal
+    SceneChangeDescription solveExitScene; // 0x21F
+    EventFlagDescription flagOnSolve; // 0x229
     uint16 solveSoundDelay; // 0x22C 
-    Nancy::SoundManager::SoundDescription solveSound; // 0x22E
-    SceneChangeDesc exitScene; // 0x250
-    FlagDesc flagOnExit; // 0x25A
+    Nancy::SoundDescription solveSound; // 0x22E
+    SceneChangeDescription exitScene; // 0x250
+    EventFlagDescription flagOnExit; // 0x25A
     Common::Rect exitHotspot; // 0x25D
 
     SolveState solveState = kNotSolved;

@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/nancy/action/recordtypes.h"
+#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/action/actionmanager.h"
 
 #include "engines/nancy/state/scene.h"
@@ -40,44 +40,13 @@
 namespace Nancy {
 namespace Action {
 
-void HotspotDesc::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, coords);
-}
-
-void BitmapDesc::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, src);
-    readRect(stream, dest);
-}
-
-void EventFlagsDesc::readData(Common::SeekableReadStream &stream) {
-    for (uint i = 0; i < 10; ++i) {
-        descs[i].label = stream.readSint16LE();
-        descs[i].flag = (NancyFlag)stream.readUint16LE();
-    }
-}
-
-void EventFlagsDesc::execute(NancyEngine *engine) {
-    for (uint i = 0; i < 10; ++i) {
-        engine->scene->setEventFlag(descs[i].label, descs[i].flag);
-    }
-}
-
-void SceneChangeDesc::readData(Common::SeekableReadStream &stream) {
-    sceneID = stream.readUint16LE();
-    frameID = stream.readUint16LE();
-    verticalOffset = stream.readUint16LE();
-    doNotStartSound = (bool)(stream.readUint16LE());
-}
-
 uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
     sceneChange.readData(stream);
     return 8;
 }
 
 void SceneChange::execute(NancyEngine *engine) {
-    engine->scene->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
+    engine->scene->changeScene(sceneChange);
     isDone = true;
 }
 
@@ -86,8 +55,8 @@ uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint i = 0; i < numHotspots; ++i) {
-        hotspots.push_back(HotspotDesc());
-        HotspotDesc &newDesc = hotspots[i];
+        hotspots.push_back(HotspotDescription());
+        HotspotDescription &newDesc = hotspots[i];
         newDesc.readData(stream);
     }
 
@@ -217,7 +186,7 @@ void MapCallHot1Fr::execute(NancyEngine *engine) {
 uint16 MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
     uint16 numDescs = stream.readUint16LE();
     for (uint i = 0; i < numDescs; ++i) {
-        hotspots.push_back(HotspotDesc());
+        hotspots.push_back(HotspotDescription());
         hotspots[i].readData(stream);
     }
 
@@ -330,8 +299,8 @@ uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
     uint16 returnSize = EventFlags::readData(stream);
     uint16 numHotspots = stream.readUint16LE();
     for (uint16 i = 0; i < numHotspots; ++i) {
-        hotspots.push_back(HotspotDesc());
-        HotspotDesc &newDesc = hotspots[i];
+        hotspots.push_back(HotspotDescription());
+        HotspotDescription &newDesc = hotspots[i];
         newDesc.readData(stream);
     }
     returnSize += numHotspots * 0x12 + 0x2;
@@ -400,7 +369,7 @@ uint16 DifficultyLevel::readData(Common::SeekableReadStream &stream) {
 
 void DifficultyLevel::execute(NancyEngine *engine) {
     engine->scene->setDifficulty(difficulty);
-    engine->scene->setEventFlag(flag.label, flag.flag);
+    engine->scene->setEventFlag(flag);
     isDone = true;
 }
 
@@ -425,7 +394,7 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
     uint16 numFrames = stream.readUint16LE();
 
     for (uint i = 0; i < numFrames; ++i) {
-        bitmaps.push_back(BitmapDesc());
+        bitmaps.push_back(BitmapDescription());
         bitmaps[i].readData(stream);
     }
 
@@ -476,8 +445,8 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
 }
 
 uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
-    sound.read(stream, SoundManager::SoundDescription::kDIGI);
-    SceneChange::readData(stream);
+    sound.read(stream, SoundDescription::kDIGI);
+    sceneChange.readData(stream);
     flagOnTrigger.label = stream.readSint16LE();
     flagOnTrigger.flag = (NancyFlag)stream.readByte();
     stream.skip(1);
@@ -498,11 +467,13 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
             break;
         case kActionTrigger:
             if (sceneChange.sceneID != 9999) {
-                SceneChange::execute(engine);
+                engine->scene->changeScene(sceneChange);
             }
             
-            engine->scene->setEventFlag(flagOnTrigger.label, flagOnTrigger.flag);
+            engine->scene->setEventFlag(flagOnTrigger);
             engine->sound->stopSound(sound.channelID);
+
+            isDone = true;
             break;
     }
 }
@@ -521,7 +492,7 @@ uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 
 uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
     characterID = stream.readByte();
-    genericSound.read(stream, SoundManager::SoundDescription::kNormal);
+    genericSound.read(stream, SoundDescription::kNormal);
     return 0x23;
 }
 
@@ -553,9 +524,7 @@ void HintSystem::execute(Nancy::NancyEngine *engine) {
             engine->scene->useHint(hintID, hintWeight);
             engine->scene->getTextbox().clear();
 
-            if (sceneChange.sceneID != 9999) {
-                engine->scene->changeScene(sceneChange.sceneID, sceneChange.frameID, sceneChange.verticalOffset, sceneChange.doNotStartSound);
-            }
+            engine->scene->changeScene(sceneChange);
 
             isDone = true;
             break;

@@ -32,6 +32,7 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/sound.h"
 
 #include "common/system.h"
 
@@ -147,7 +148,7 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     onHoverLastFrame = stream.readUint16LE();
     onHoverEndFirstFrame = stream.readUint16LE();
     onHoverEndLastFrame = stream.readUint16LE();
-    SceneChange::readData(stream);
+    sceneChange.readData(stream);
     stream.skip(1);
 
     uint16 numVideoDescs = stream.readUint16LE();
@@ -199,7 +200,8 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
         }
         case kActionTrigger:
             engine->scene->pushScene();
-            SceneChange::execute(engine);
+            engine->scene->changeScene(sceneChange);
+            isDone = true;
             break;
     }
 }
@@ -217,8 +219,8 @@ uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
     }
 
     triggerFlags.readData(stream);
-    sound.read(stream, SoundManager::SoundDescription::kNormal);
-    SceneChange::readData(stream);
+    sound.read(stream, SoundDescription::kNormal);
+    sceneChange.readData(stream);
 
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
@@ -262,7 +264,7 @@ void PlaySecondaryMovie::updateGraphics() {
         // Set flag if not drawing new frame
         for (auto f : frameFlags) {
             if (_decoder.getCurFrame() == f.frameID) {
-                _engine->scene->setEventFlag(f.flagDesc.label, f.flagDesc.flag);
+                _engine->scene->setEventFlag(f.flagDesc);
             }
         }
     }
@@ -310,7 +312,8 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         }
         case kActionTrigger:
             triggerFlags.execute(engine);
-            SceneChange::execute(engine);
+            engine->scene->changeScene(sceneChange);
+            isDone = true;
             break;
     }
 }

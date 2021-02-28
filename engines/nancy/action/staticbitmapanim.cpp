@@ -22,6 +22,7 @@
 
 #include "engines/nancy/action/staticbitmapanim.h"
 
+#include "engines/nancy/sound.h"
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/nancy.h"
@@ -62,9 +63,9 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     zOrder = stream.readUint16LE();
     updateCondition.label = stream.readSint16LE();
     updateCondition.flag = (NancyFlag)stream.readUint16LE();
-    SceneChange::readData(stream);
+    sceneChange.readData(stream);
     triggerFlags.readData(stream);
-    sound.read(stream, SoundManager::SoundDescription::kNormal);
+    sound.read(stream, SoundDescription::kNormal);
     uint numFrames = stream.readUint16LE();
 
     for (uint i = firstFrame; i <= loopLastFrame; ++i) {
@@ -73,8 +74,8 @@ uint16 PlayIntStaticBitmapAnimation::readData(Common::SeekableReadStream &stream
     }
 
     for (uint i = 0; i < numFrames; ++i) {
-        bitmaps.push_back(BitmapDesc());
-        BitmapDesc &rects = bitmaps[i];
+        bitmaps.push_back(BitmapDescription());
+        BitmapDescription &rects = bitmaps[i];
         rects.frameID = stream.readUint16LE();
         readRect(stream, rects.src);
         readRect(stream, rects.dest);
@@ -155,7 +156,8 @@ void PlayIntStaticBitmapAnimation::execute(NancyEngine *engine) {
         case kActionTrigger:
             triggerFlags.execute(engine);
             if (doNotChangeScene == kFalse) {
-                SceneChange::execute(engine);
+                engine->scene->changeScene(sceneChange);
+                isDone = true;
             }
             break;
     }

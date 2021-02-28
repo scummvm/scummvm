@@ -27,7 +27,7 @@
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/sound.h"
+#include "engines/nancy/commontypes.h"
 
 #include "common/stream.h"
 #include "common/array.h"
@@ -39,53 +39,12 @@ class NancyEngine;
 
 namespace Action {
 
-// Describes a hotspot
-struct HotspotDesc {
-    uint16 frameID = 0;
-    Common::Rect coords;
-
-    void readData(Common::SeekableReadStream &stream);
-};
-
-// Describes a single bitmap draw
-struct BitmapDesc {
-    uint16 frameID = 0;
-    Common::Rect src;
-    Common::Rect dest;
-
-    void readData(Common::SeekableReadStream &stream);
-};
-
-// Describes a single event flag change or comparison
-struct FlagDesc {
-    int16 label;
-    NancyFlag flag;
-};
-
-// Describes 10 event flag changes to be executed when an action is triggered
-struct EventFlagsDesc {
-    FlagDesc descs[10];
-
-    void readData(Common::SeekableReadStream &stream);
-    void execute(Nancy::NancyEngine *engine);
-};
-
-// Describes a scene transition
-struct SceneChangeDesc {
-    uint16 sceneID = 0;
-    uint16 frameID = 0;
-    uint16 verticalOffset = 0;
-    bool doNotStartSound = false;
-
-    void readData(Common::SeekableReadStream &stream);
-};
-
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    SceneChangeDesc sceneChange;
+    SceneChangeDescription sceneChange;
 };
 
 class HotMultiframeSceneChange : public SceneChange {
@@ -93,7 +52,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    Common::Array<HotspotDesc> hotspots;
+    Common::Array<HotspotDescription> hotspots;
 };
 
 class Hot1FrSceneChange : public SceneChange {
@@ -101,7 +60,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    HotspotDesc hotspotDesc;
+    HotspotDescription hotspotDesc;
 };
 
 class Hot1FrExitSceneChange : public Hot1FrSceneChange {
@@ -146,7 +105,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    HotspotDesc hotspotDesc;
+    HotspotDescription hotspotDesc;
 };
 
 class MapCallHotMultiframe : public MapCall {
@@ -154,7 +113,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    Common::Array<HotspotDesc> hotspots;
+    Common::Array<HotspotDescription> hotspots;
 };
 
 class MapLocationAccess : public ActionRecord {
@@ -234,7 +193,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    EventFlagsDesc flags;
+    MultiEventFlagDescription flags;
 };
 
 class EventFlagsMultiHS : public EventFlags {
@@ -242,7 +201,7 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
 
-    Common::Array<HotspotDesc> hotspots;
+    Common::Array<HotspotDescription> hotspots;
 };
 
 class LoseGame : public ActionRecord {
@@ -289,7 +248,7 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     uint16 difficulty = 0;
-    FlagDesc flag;
+    EventFlagDescription flag;
 };
 
 class ShowInventoryItem : public ActionRecord, public RenderObject {
@@ -304,7 +263,7 @@ public:
  
     uint16 objectID = 0;
     Common::String imageName;
-    Common::Array<BitmapDesc> bitmaps;
+    Common::Array<BitmapDescription> bitmaps;
 
     int16 drawnFrameID = -1;
     Graphics::ManagedSurface _fullSurface;
@@ -315,15 +274,15 @@ protected:
     virtual bool isViewportRelative() const override { return true; }
 };
 
-class PlayDigiSoundAndDie : public SceneChange {
+class PlayDigiSoundAndDie : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
     // TODO subclass into Play and Stop (?)
 
-    SoundManager::SoundDescription sound;
-    // SceneChange 0x1E
-    FlagDesc flagOnTrigger;
+    SoundDescription sound;
+    SceneChangeDescription sceneChange;
+    EventFlagDescription flagOnTrigger;
 };
 
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
@@ -342,10 +301,10 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     byte characterID; // 0x00
-    SoundManager::SoundDescription genericSound; // 0x01
+    SoundDescription genericSound; // 0x01
 
     Common::String text;
-    SceneChangeDesc sceneChange;
+    SceneChangeDescription sceneChange;
     uint16 hintID;
     int16 hintWeight;
 

@@ -68,11 +68,19 @@ void Scene::process() {
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {
+    if (id == 9999) {
+        return;
+    }
+
     _sceneState.nextScene.sceneID = id;
     _sceneState.nextScene.frameID = frame;
     _sceneState.nextScene.verticalOffset = verticalOffset;
     _sceneState._doNotStartSound = noSound;
     _state = kLoadNew;
+}
+
+void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
+    changeScene(sceneDescription.sceneID, sceneDescription.frameID, sceneDescription.verticalOffset, sceneDescription.doNotStartSound);
 }
 
 void Scene::pushScene() {
@@ -327,7 +335,7 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
     stream.seek(3, SEEK_CUR);
     _sceneState.summary.videoFormat = stream.readUint16LE();
 
-    _sceneState.summary.sound.read(stream, SoundManager::SoundDescription::kScene);
+    _sceneState.summary.sound.read(stream, SoundDescription::kScene);
 
     stream.seek(0x72);
     _sceneState.summary.verticalScrollDelta = stream.readUint16LE();
@@ -379,12 +387,20 @@ void Scene::setEventFlag(int16 label, NancyFlag flag) {
     }
 }
 
+void Scene::setEventFlag(EventFlagDescription eventFlag) {
+    setEventFlag(eventFlag.label, eventFlag.flag);
+}
+
 bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
     if (label > -1) {
         return _flags.eventFlags[label] == flag;
     } else {
         return false;
     }
+}
+
+bool Scene::getEventFlag(EventFlagDescription eventFlag) const {
+    return getEventFlag(eventFlag.label, eventFlag.flag);
 }
 
 void Scene::setLogicCondition(int16 label, NancyFlag flag) {

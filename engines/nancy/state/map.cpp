@@ -73,8 +73,8 @@ void Map::init() {
 
     // Load the audio
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
-    SoundManager::SoundDescription sound;
-    sound.read(*chunk, SoundManager::SoundDescription::kMenu);
+    SoundDescription sound;
+    sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->loadSound(sound);
     _engine->sound->playSound(sound.channelID);
 
@@ -142,9 +142,9 @@ void Map::run() {
 
 void Map::stopSound() {
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
-    SoundManager::SoundDescription sound;
+    SoundDescription sound;
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
-    sound.read(*chunk, SoundManager::SoundDescription::kMenu);
+    sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->stopSound(sound.channelID);
 }
 
