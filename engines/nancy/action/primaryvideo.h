@@ -98,8 +98,8 @@ public:
     bool hasDrawnTextbox = false;
     int16 pickedResponse = -1;
 
-    // Used to avoid showing first frame of unrelated primary video between scenes
-    static bool isExitingScene;
+    // Used to avoid clashes between multiple instances in the same scene
+	static PlayPrimaryVideoChan0 *activePrimaryVideo;
 
 protected:
     virtual uint16 getZOrder() const override { return 8; }
