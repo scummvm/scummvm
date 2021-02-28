@@ -57,14 +57,14 @@ OT_tag otlist[2][OT_SIZE];
 GsOT Wot[2];
 
 // The min & max places to put Z data into the OT list
-int minZOTpos = 5;
-int maxZOTpos = OT_SIZE - 5;
-int nearClip = 0;
+int32 minZOTpos = 5;
+int32 maxZOTpos = OT_SIZE - 5;
+int32 nearClip = 0;
 int32 minUsedZpos = 20000;
 int32 maxUsedZpos = 0;
 
-int otz_shift = 0; // 1cm accuracy
-int otz_offset = ((nearClip >> otz_shift) - minZOTpos);
+int32 otz_shift = 0; // 1cm accuracy
+int32 otz_offset = ((nearClip >> otz_shift) - minZOTpos);
 
 // The zones for otz_shift computation
 #define OTZ_ZONE1 32000  // 1cm

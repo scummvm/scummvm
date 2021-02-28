@@ -101,21 +101,18 @@ extern int packetsUsed;
 
 // How much to shift & then offset the z values from gte to
 // put them into the otlist
-extern int otz_shift;
-extern int otz_offset;
+extern int32 otz_shift;
+extern int32 otz_offset;
 
 // Enable/disable updating of the auto-sliding & scaling min,max z position
 extern int update_minmaxzpos;
 
 // Global graphics options for z-clipping and camera scalings
-extern int minZOTpos;
-extern int maxZOTpos;
+extern int32 minZOTpos;
+extern int32 maxZOTpos;
 extern int32 minUsedZpos;
 extern int32 maxUsedZpos;
-extern int nearClip;
-extern int delayValue;
-extern int scale[3];
-extern int zscale;
+extern int32 nearClip;
 
 #if (_PSX_ON_PC == 0) && (_PSX == 1)
 
