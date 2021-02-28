@@ -1045,25 +1045,6 @@ void OptionsManager::LoadTitleScreenMovie() {
 	// Clean background res_man
 	rs_bg->Res_purge_all();
 
-	// Caculate memory needed for movie
-	uint32 movieSize = GetFileSz(filename);
-	if (movieSize == 0)
-		Fatal_error("Couldn't get filesize of title movie");
-#if 0
-	// Get the memory
-	uint32 moviehashID = 0xBEEF ;
-	uint32 nullhash = NULL_HASH ;
-	uint8 *mem = rs_bg->Res_alloc(moviehashID, filename, nullhash, movieSize) ;
-
-	// Open the movie file and read it straight into memory
-	Common::SeekableReadStream *movieStream = openDiskFileForBinaryStreamRead(filename.c_str()) ;
-	if (movieStream == NULL)
-		Fatal_error(pxVString("Failed to open movie file: %s for reading", (const char *)filename)) ;
-	if (movieStream->read(mem, movieSize) != movieSize)
-		Fatal_error("LoadTitleScreenMovie() failed to read from file") ;
-	// Close the file
-	delete movieStream;
-#endif
 	if (!g_personalSequenceManager->registerMovie(filename, FALSE8, TRUE8)) {
 		Fatal_error(pxVString("Couldn't register the title screen movie: %s", (const char *)filename));
 	}
