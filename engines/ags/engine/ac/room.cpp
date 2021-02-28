@@ -74,7 +74,6 @@
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -92,16 +91,12 @@ extern GameSetup usetup;
 extern RoomStatus *croom;
 extern int displayed_room;
 extern RoomObject *objs;
-extern ccInstance *roominst;
 extern AGSPlatformDriver *platform;
 extern int numevents;
-
-
 extern CharacterExtras *charextra;
 extern int done_es_error;
 extern int our_eip;
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-
 
 extern int in_new_room, new_room_was;  // 1 in new room, 2 first time in new room, 3 loading saved game
 
@@ -243,10 +238,10 @@ void convert_room_background_to_game_res() {
 void save_room_data_segment() {
 	croom->FreeScriptData();
 
-	croom->tsdatasize = roominst->globaldatasize;
+	croom->tsdatasize = _G(roominst)->globaldatasize;
 	if (croom->tsdatasize > 0) {
 		croom->tsdata = (char *)malloc(croom->tsdatasize + 10);
-		memcpy(croom->tsdata, &roominst->globaldata[0], croom->tsdatasize);
+		memcpy(croom->tsdata, &_G(roominst)->globaldata[0], croom->tsdatasize);
 	}
 
 }
@@ -281,12 +276,12 @@ void unload_old_room() {
 	}
 
 	if (croom == nullptr) ;
-	else if (roominst != nullptr) {
+	else if (_G(roominst) != nullptr) {
 		save_room_data_segment();
-		delete roominstFork;
-		delete roominst;
-		roominstFork = nullptr;
-		roominst = nullptr;
+		delete _G(roominstFork);
+		delete _G(roominst);
+		_G(roominstFork) = nullptr;
+		_G(roominst) = nullptr;
 	} else croom->tsdatasize = 0;
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
 	_GP(play).bg_frame = 0;
@@ -315,10 +310,10 @@ void unload_old_room() {
 
 	for (ff = 0; ff < croom->numobj; ff++) {
 		// un-export the object's script object
-		if (objectScriptObjNames[ff].IsEmpty())
+		if (_G(objectScriptObjNames)[ff].IsEmpty())
 			continue;
 
-		ccRemoveExternalSymbol(objectScriptObjNames[ff]);
+		ccRemoveExternalSymbol(_G(objectScriptObjNames)[ff]);
 	}
 
 	for (ff = 0; ff < MAX_ROOM_HOTSPOTS; ff++) {
@@ -643,15 +638,15 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++) {
 		// 64 bit: Using the id instead
 		// _G(scrObj)[cc].obj = &croom->obj[cc];
-		objectScriptObjNames[cc].Free();
+		_G(objectScriptObjNames)[cc].Free();
 	}
 
 	for (cc = 0; cc < croom->numobj; cc++) {
 		// export the object's script object
 		if (_GP(thisroom).Objects[cc].ScriptName.IsEmpty())
 			continue;
-		objectScriptObjNames[cc] = _GP(thisroom).Objects[cc].ScriptName;
-		ccAddExternalDynamicObject(objectScriptObjNames[cc], &_G(scrObj)[cc], &_GP(ccDynamicObject));
+		_G(objectScriptObjNames)[cc] = _GP(thisroom).Objects[cc].ScriptName;
+		ccAddExternalDynamicObject(_G(objectScriptObjNames)[cc], &_G(scrObj)[cc], &_GP(ccDynamicObject));
 	}
 
 	for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
@@ -720,14 +715,14 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	update_polled_stuff_if_runtime();
 
-	roominst = nullptr;
+	_G(roominst) = nullptr;
 	if (debug_flags & DBG_NOSCRIPT) ;
 	else if (_GP(thisroom).CompiledScript != nullptr) {
 		compile_room_script();
 		if (croom->tsdatasize > 0) {
-			if (croom->tsdatasize != roominst->globaldatasize)
+			if (croom->tsdatasize != _G(roominst)->globaldatasize)
 				quit("room script data segment size has changed");
-			memcpy(&roominst->globaldata[0], croom->tsdata, croom->tsdatasize);
+			memcpy(&_G(roominst)->globaldata[0], croom->tsdata, croom->tsdatasize);
 		}
 	}
 	our_eip = 207;
@@ -1003,19 +998,19 @@ void check_new_room() {
 void compile_room_script() {
 	ccError = 0;
 
-	roominst = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
+	_G(roominst) = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
 
-	if ((ccError != 0) || (roominst == nullptr)) {
+	if ((ccError != 0) || (_G(roominst) == nullptr)) {
 		quitprintf("Unable to create local script: %s", ccErrorString.GetCStr());
 	}
 
-	roominstFork = roominst->Fork();
-	if (roominstFork == nullptr)
+	_G(roominstFork) = _G(roominst)->Fork();
+	if (_G(roominstFork) == nullptr)
 		quitprintf("Unable to create forked room instance: %s", ccErrorString.GetCStr());
 
-	repExecAlways.roomHasFunction = true;
-	lateRepExecAlways.roomHasFunction = true;
-	getDialogOptionsDimensionsFunc.roomHasFunction = true;
+	_GP(repExecAlways).roomHasFunction = true;
+	_GP(lateRepExecAlways).roomHasFunction = true;
+	_GP(getDialogOptionsDimensionsFunc).roomHasFunction = true;
 }
 
 int bg_just_changed = 0;

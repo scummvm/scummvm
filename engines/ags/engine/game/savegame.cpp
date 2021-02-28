@@ -356,29 +356,29 @@ void DoBeforeRestore(PreservedParams &pp) {
 	}
 
 	// preserve script data sizes and cleanup scripts
-	pp.GlScDataSize = gameinst->globaldatasize;
-	delete gameinstFork;
-	delete gameinst;
-	gameinstFork = nullptr;
-	gameinst = nullptr;
-	pp.ScMdDataSize.resize(numScriptModules);
-	for (int i = 0; i < numScriptModules; ++i) {
-		pp.ScMdDataSize[i] = moduleInst[i]->globaldatasize;
-		delete moduleInstFork[i];
-		delete moduleInst[i];
-		moduleInst[i] = nullptr;
+	pp.GlScDataSize = _G(gameinst)->globaldatasize;
+	delete _G(gameinstFork);
+	delete _G(gameinst);
+	_G(gameinstFork) = nullptr;
+	_G(gameinst) = nullptr;
+	pp.ScMdDataSize.resize(_G(numScriptModules));
+	for (int i = 0; i < _G(numScriptModules); ++i) {
+		pp.ScMdDataSize[i] = _GP(moduleInst)[i]->globaldatasize;
+		delete _GP(moduleInstFork)[i];
+		delete _GP(moduleInst)[i];
+		_GP(moduleInst)[i] = nullptr;
 	}
 
 	_GP(play).FreeProperties();
 	_GP(play).FreeViewportsAndCameras();
 
-	delete roominstFork;
-	delete roominst;
-	roominstFork = nullptr;
-	roominst = nullptr;
+	delete _G(roominstFork);
+	delete _G(roominst);
+	_G(roominstFork) = nullptr;
+	_G(roominst) = nullptr;
 
-	delete dialogScriptsInst;
-	dialogScriptsInst = nullptr;
+	delete _G(dialogScriptsInst);
+	_G(dialogScriptsInst) = nullptr;
 
 	resetRoomStatuses();
 	_GP(troom).FreeScriptData();
@@ -468,14 +468,14 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	// read the global data into the newly created script
 	if (r_data.GlobalScript.Data.get())
-		memcpy(gameinst->globaldata, r_data.GlobalScript.Data.get(),
-			Math::Min((size_t)gameinst->globaldatasize, r_data.GlobalScript.Len));
+		memcpy(_G(gameinst)->globaldata, r_data.GlobalScript.Data.get(),
+			Math::Min((size_t)_G(gameinst)->globaldatasize, r_data.GlobalScript.Len));
 
 	// restore the script module data
-	for (int i = 0; i < numScriptModules; ++i) {
+	for (int i = 0; i < _G(numScriptModules); ++i) {
 		if (r_data.ScriptModules[i].Data.get())
-			memcpy(moduleInst[i]->globaldata, r_data.ScriptModules[i].Data.get(),
-				Math::Min((size_t)moduleInst[i]->globaldatasize, r_data.ScriptModules[i].Len));
+			memcpy(_GP(moduleInst)[i]->globaldata, r_data.ScriptModules[i].Data.get(),
+				Math::Min((size_t)_GP(moduleInst)[i]->globaldatasize, r_data.ScriptModules[i].Len));
 	}
 
 	setup_player_character(_GP(game).playercharacter);
@@ -731,7 +731,7 @@ void DoBeforeSave() {
 
 	if (displayed_room >= 0) {
 		// update the current room script's data segment copy
-		if (roominst)
+		if (_G(roominst))
 			save_room_data_segment();
 
 		// Update the saved interaction variable values

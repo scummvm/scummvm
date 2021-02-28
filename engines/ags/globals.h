@@ -26,6 +26,7 @@
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/guimain.h"
+#include "ags/shared/script/cc_script.h"
 #include "ags/lib/std/set.h"
 
 namespace AGS3 {
@@ -50,20 +51,25 @@ struct CCDialog;
 struct CCGUI;
 struct CCGUIObject;
 struct CCHotspot;
+struct ccInstance;
 struct CCInventory;
 struct CCObject;
 struct CCRegion;
-struct IAGSEditorDebugger;
+struct ExecutingScript;
 struct GameSetupStruct;
 struct GameState;
+struct IAGSEditorDebugger;
+struct NonBlockingScriptFunction;
 struct RoomStatus;
-struct ScriptString;
-struct ScriptObject;
+struct RuntimeScriptValue;
+struct ScriptDialog;
 struct ScriptGUI;
 struct ScriptHotspot;
-struct ScriptRegion;
 struct ScriptInvItem;
-struct ScriptDialog;
+struct ScriptObject;
+struct ScriptRegion;
+struct ScriptString;
+struct ScriptSystem;
 struct ViewStruct;
 struct CharacterCache;
 struct ObjectCache;
@@ -105,7 +111,6 @@ public:
 	int _numBreakpoints = 0;
 
 	/**@}*/
-
 
 	/**
 	 * \defgroup debug globals
@@ -235,6 +240,51 @@ public:
 	char _quit_message[256] = { '\0' };
 
 	 /**@}*/
+
+	/**
+	 * \defgroup script globals
+	 * @{
+	 */
+
+	ExecutingScript *_scripts;
+	ExecutingScript *_curscript = nullptr;
+
+	PScript *_gamescript;
+	PScript *_dialogScriptsScript;
+	ccInstance *_gameinst = nullptr, *_roominst = nullptr;
+	ccInstance *_dialogScriptsInst = nullptr;
+	ccInstance *_gameinstFork = nullptr, *_roominstFork = nullptr;
+
+	int _num_scripts = 0;
+	int _post_script_cleanup_stack = 0;
+
+	int _inside_script = 0, _in_graph_script = 0;
+	int _no_blocking_functions = 0; // set to 1 while in rep_Exec_always
+
+	NonBlockingScriptFunction *_repExecAlways;
+	NonBlockingScriptFunction *_lateRepExecAlways;
+	NonBlockingScriptFunction *_getDialogOptionsDimensionsFunc;
+	NonBlockingScriptFunction *_renderDialogOptionsFunc;
+	NonBlockingScriptFunction *_getDialogOptionUnderCursorFunc;
+	NonBlockingScriptFunction *_runDialogOptionMouseClickHandlerFunc;
+	NonBlockingScriptFunction *_runDialogOptionKeyPressHandlerFunc;
+	NonBlockingScriptFunction *_runDialogOptionRepExecFunc;
+
+	ScriptSystem *_scsystem;
+
+	std::vector<PScript> *_scriptModules;
+	std::vector<ccInstance *> *_moduleInst;
+	std::vector<ccInstance *> *_moduleInstFork;
+	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
+	int _numScriptModules = 0;
+
+	// TODO: find out if these extra arrays are really necessary. This may be remains from the
+	// time when the symbol import table was holding raw pointers to char array.
+	std::vector<String> *_characterScriptObjNames;
+	String *_objectScriptObjNames;
+	std::vector<String> *_guiScriptObjNames;
+
+	/**@}*/
 
 public:
 	Globals();

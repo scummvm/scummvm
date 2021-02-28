@@ -70,12 +70,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-extern ccInstance *dialogScriptsInst;
 extern int in_new_room;
 extern CharacterInfo *playerchar;
-
 extern AGSPlatformDriver *platform;
 extern int cur_mode, cur_cursor;
 extern IGraphicsDriver *gfxDriver;
@@ -193,11 +189,11 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 	said_speech_line = 0;
 	int result = RUN_DIALOG_STAY;
 
-	if (dialogScriptsInst) {
+	if (_G(dialogScriptsInst)) {
 		char funcName[100];
 		sprintf(funcName, "_run_dialog%d", dialogID);
-		RunTextScriptIParam(dialogScriptsInst, funcName, RuntimeScriptValue().SetInt32(optionIndex));
-		result = dialogScriptsInst->returnValue;
+		RunTextScriptIParam(_G(dialogScriptsInst), funcName, RuntimeScriptValue().SetInt32(optionIndex));
+		result = _G(dialogScriptsInst)->returnValue;
 	} else {
 		// old dialog format
 		if (offse == -1)
@@ -402,8 +398,8 @@ bool get_custom_dialog_options_dimensions(int dlgnum) {
 	ccDialogOptionsRendering.Reset();
 	ccDialogOptionsRendering.dialogID = dlgnum;
 
-	getDialogOptionsDimensionsFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-	run_function_on_non_blocking_thread(&getDialogOptionsDimensionsFunc);
+	_GP(getDialogOptionsDimensionsFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+	run_function_on_non_blocking_thread(&_GP(getDialogOptionsDimensionsFunc));
 
 	if ((ccDialogOptionsRendering.width > 0) &&
 	        (ccDialogOptionsRendering.height > 0)) {
@@ -646,8 +642,8 @@ void DialogOptions::Redraw() {
 		dialogOptionsRenderingSurface->hasAlphaChannel = ccDialogOptionsRendering.hasAlphaChannel;
 		options_surface_has_alpha = dialogOptionsRenderingSurface->hasAlphaChannel != 0;
 
-		renderDialogOptionsFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-		run_function_on_non_blocking_thread(&renderDialogOptionsFunc);
+		_GP(renderDialogOptionsFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+		run_function_on_non_blocking_thread(&_GP(renderDialogOptionsFunc));
 
 		if (!ccDialogOptionsRendering.surfaceAccessed)
 			debug_script_warn("dialog_options_get_dimensions was implemented, but no dialog_options_render function drew anything to the surface");
@@ -830,8 +826,8 @@ bool DialogOptions::Run() {
 	}
 
 	if (new_custom_render) {
-		runDialogOptionRepExecFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-		run_function_on_non_blocking_thread(&runDialogOptionRepExecFunc);
+		_GP(runDialogOptionRepExecFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+		run_function_on_non_blocking_thread(&_GP(runDialogOptionRepExecFunc));
 	}
 
 	int gkey;
@@ -856,9 +852,9 @@ bool DialogOptions::Run() {
 				}
 			}
 		} else if (new_custom_render) {
-			runDialogOptionKeyPressHandlerFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-			runDialogOptionKeyPressHandlerFunc.params[1].SetInt32(GetKeyForKeyPressCb(gkey));
-			run_function_on_non_blocking_thread(&runDialogOptionKeyPressHandlerFunc);
+			_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(GetKeyForKeyPressCb(gkey));
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
 		}
 		// Allow selection of options by keyboard shortcuts
 		else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
@@ -877,10 +873,10 @@ bool DialogOptions::Run() {
 		if ((_G(mousex) >= dirtyx) && (_G(mousey) >= dirtyy) &&
 		        (_G(mousex) < dirtyx + tempScrn->GetWidth()) &&
 		        (_G(mousey) < dirtyy + tempScrn->GetHeight())) {
-			getDialogOptionUnderCursorFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-			run_function_on_non_blocking_thread(&getDialogOptionUnderCursorFunc);
+			_GP(getDialogOptionUnderCursorFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+			run_function_on_non_blocking_thread(&_GP(getDialogOptionUnderCursorFunc));
 
-			if (!getDialogOptionUnderCursorFunc.atLeastOneImplementationExists)
+			if (!_GP(getDialogOptionUnderCursorFunc).atLeastOneImplementationExists)
 				quit("!The script function dialog_options_get_active is not implemented. It must be present to use a custom dialogue system.");
 
 			mouseison = ccDialogOptionsRendering.activeOptionID;
@@ -918,11 +914,11 @@ bool DialogOptions::Run() {
 	        !_GP(play).IsIgnoringInput()) {
 		if (mouseison < 0 && !new_custom_render) {
 			if (usingCustomRendering) {
-				runDialogOptionMouseClickHandlerFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-				runDialogOptionMouseClickHandlerFunc.params[1].SetInt32(mouseButtonPressed + 1);
-				run_function_on_non_blocking_thread(&runDialogOptionMouseClickHandlerFunc);
+				_GP(runDialogOptionMouseClickHandlerFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+				_GP(runDialogOptionMouseClickHandlerFunc).params[1].SetInt32(mouseButtonPressed + 1);
+				run_function_on_non_blocking_thread(&_GP(runDialogOptionMouseClickHandlerFunc));
 
-				if (runDialogOptionMouseClickHandlerFunc.atLeastOneImplementationExists) {
+				if (_GP(runDialogOptionMouseClickHandlerFunc).atLeastOneImplementationExists) {
 					Redraw();
 					return true; // continue running loop
 				}
@@ -933,9 +929,9 @@ bool DialogOptions::Run() {
 			// they clicked the text box
 			parserActivated = 1;
 		} else if (new_custom_render) {
-			runDialogOptionMouseClickHandlerFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-			runDialogOptionMouseClickHandlerFunc.params[1].SetInt32(mouseButtonPressed + 1);
-			run_function_on_non_blocking_thread(&runDialogOptionMouseClickHandlerFunc);
+			_GP(runDialogOptionMouseClickHandlerFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+			_GP(runDialogOptionMouseClickHandlerFunc).params[1].SetInt32(mouseButtonPressed + 1);
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionMouseClickHandlerFunc));
 		} else if (usingCustomRendering) {
 			chose = mouseison;
 			return false; // end dialog options running loop
@@ -947,12 +943,12 @@ bool DialogOptions::Run() {
 
 	if (usingCustomRendering) {
 		if (mouseWheelTurn != 0) {
-			runDialogOptionMouseClickHandlerFunc.params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
-			runDialogOptionMouseClickHandlerFunc.params[1].SetInt32((mouseWheelTurn < 0) ? 9 : 8);
-			run_function_on_non_blocking_thread(&runDialogOptionMouseClickHandlerFunc);
+			_GP(runDialogOptionMouseClickHandlerFunc).params[0].SetDynamicObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+			_GP(runDialogOptionMouseClickHandlerFunc).params[1].SetInt32((mouseWheelTurn < 0) ? 9 : 8);
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionMouseClickHandlerFunc));
 
 			if (!new_custom_render) {
-				if (runDialogOptionMouseClickHandlerFunc.atLeastOneImplementationExists)
+				if (_GP(runDialogOptionMouseClickHandlerFunc).atLeastOneImplementationExists)
 					Redraw();
 				return true; // continue running loop
 			}

@@ -808,17 +808,17 @@ HSaveError ReadDynamicSurfaces(PStream in, int32_t cmp_ver, const PreservedParam
 
 HSaveError WriteScriptModules(PStream out) {
 	// write the data segment of the global script
-	int data_len = gameinst->globaldatasize;
+	int data_len = _G(gameinst)->globaldatasize;
 	out->WriteInt32(data_len);
 	if (data_len > 0)
-		out->Write(gameinst->globaldata, data_len);
+		out->Write(_G(gameinst)->globaldata, data_len);
 	// write the script modules data segments
-	out->WriteInt32(numScriptModules);
-	for (int i = 0; i < numScriptModules; ++i) {
-		data_len = moduleInst[i]->globaldatasize;
+	out->WriteInt32(_G(numScriptModules));
+	for (int i = 0; i < _G(numScriptModules); ++i) {
+		data_len = _GP(moduleInst)[i]->globaldatasize;
 		out->WriteInt32(data_len);
 		if (data_len > 0)
-			out->Write(moduleInst[i]->globaldata, data_len);
+			out->Write(_GP(moduleInst)[i]->globaldata, data_len);
 	}
 	return HSaveError::None();
 }
@@ -833,10 +833,10 @@ HSaveError ReadScriptModules(PStream in, int32_t cmp_ver, const PreservedParams 
 	r_data.GlobalScript.Data.reset(new char[data_len]);
 	in->Read(r_data.GlobalScript.Data.get(), data_len);
 
-	if (!AssertGameContent(err, in->ReadInt32(), numScriptModules, "Script Modules"))
+	if (!AssertGameContent(err, in->ReadInt32(), _G(numScriptModules), "Script Modules"))
 		return err;
-	r_data.ScriptModules.resize(numScriptModules);
-	for (int i = 0; i < numScriptModules; ++i) {
+	r_data.ScriptModules.resize(_G(numScriptModules));
+	for (int i = 0; i < _G(numScriptModules); ++i) {
 		data_len = in->ReadInt32();
 		if (!AssertGameObjectContent(err, data_len, pp.ScMdDataSize[i], "script module data", "module", i))
 			return err;

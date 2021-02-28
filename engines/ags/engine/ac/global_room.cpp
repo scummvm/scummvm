@@ -120,11 +120,11 @@ void NewRoom(int nrnum) {
 	} else if (in_inv_screen) {
 		inv_screen_newroom = nrnum;
 		return;
-	} else if ((inside_script == 0) & (in_graph_script == 0)) {
+	} else if ((_G(inside_script) == 0) & (_G(in_graph_script) == 0)) {
 		new_room(nrnum, playerchar);
 		return;
-	} else if (inside_script) {
-		curscript->queue_action(ePSANewRoom, nrnum, "NewRoom");
+	} else if (_G(inside_script)) {
+		_G(curscript)->queue_action(ePSANewRoom, nrnum, "NewRoom");
 		// we might be within a MoveCharacterBlocking -- the room
 		// change should abort it
 		if ((playerchar->walking > 0) && (playerchar->walking < TURNING_AROUND)) {
@@ -133,7 +133,7 @@ void NewRoom(int nrnum) {
 			_G(mls)[playerchar->walking].direct = 1;
 			StopMoving(_GP(game).playercharacter);
 		}
-	} else if (in_graph_script)
+	} else if (_G(in_graph_script))
 		gs_to_newroom = nrnum;
 }
 
@@ -179,12 +179,12 @@ int HasPlayerBeenInRoom(int roomnum) {
 void CallRoomScript(int value) {
 	can_run_delayed_command();
 
-	if (!inside_script)
+	if (!_G(inside_script))
 		quit("!CallRoomScript: not inside a script???");
 
 	_GP(play).roomscript_finished = 0;
 	RuntimeScriptValue rval_null;
-	curscript->run_another("on_call", kScInstRoom, 1, RuntimeScriptValue().SetInt32(value), rval_null);
+	_G(curscript)->run_another("on_call", kScInstRoom, 1, RuntimeScriptValue().SetInt32(value), rval_null);
 }
 
 int HasBeenToRoom(int roomnum) {

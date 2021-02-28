@@ -79,10 +79,6 @@ extern StaticArray StaticRegionArray;
 extern StaticArray StaticInventoryArray;
 extern StaticArray StaticDialogArray;
 
-extern std::vector<ccInstance *> moduleInst;
-extern std::vector<ccInstance *> moduleInstFork;
-extern std::vector<RuntimeScriptValue> moduleRepExecAddr;
-
 // Old dialog support (defined in ac/dialog)
 extern std::vector< std::shared_ptr<unsigned char> > old_dialog_scripts;
 extern std::vector<String> old_speech_lines;
@@ -138,7 +134,7 @@ void InitAndRegisterAudioObjects() {
 
 // Initializes characters and registers them in the script system
 void InitAndRegisterCharacters() {
-	characterScriptObjNames.resize(_GP(game).numcharacters);
+	_GP(characterScriptObjNames).resize(_GP(game).numcharacters);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].walking = 0;
 		_GP(game).chars[i].animating = 0;
@@ -156,8 +152,8 @@ void InitAndRegisterCharacters() {
 		ccRegisterManagedObject(&_GP(game).chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		characterScriptObjNames[i] = _GP(game).chars[i].scrname;
-		ccAddExternalDynamicObject(characterScriptObjNames[i], &_GP(game).chars[i], &_GP(ccDynamicCharacter));
+		_GP(characterScriptObjNames)[i] = _GP(game).chars[i].scrname;
+		ccAddExternalDynamicObject(_GP(characterScriptObjNames)[i], &_GP(game).chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -191,7 +187,7 @@ HError InitAndRegisterGUI() {
 		_G(scrGui)[i].id = -1;
 	}
 
-	guiScriptObjNames.resize(_GP(game).numgui);
+	_GP(guiScriptObjNames).resize(_GP(game).numgui);
 	for (int i = 0; i < _GP(game).numgui; ++i) {
 		// link controls to their parent guis
 		HError err = _GP(guis)[i].RebuildArray();
@@ -201,9 +197,9 @@ HError InitAndRegisterGUI() {
 		export_gui_controls(i);
 		// copy the script name to its own memory location
 		// because ccAddExtSymbol only keeps a reference
-		guiScriptObjNames[i] = _GP(guis)[i].Name;
+		_GP(guiScriptObjNames)[i] = _GP(guis)[i].Name;
 		_G(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(guiScriptObjNames[i], &_G(scrGui)[i], &_GP(ccDynamicGUI));
+		ccAddExternalDynamicObject(_GP(guiScriptObjNames)[i], &_G(scrGui)[i], &_GP(ccDynamicGUI));
 		ccRegisterManagedObject(&_G(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();
@@ -297,19 +293,19 @@ void LoadFonts(GameDataVersion data_ver) {
 }
 
 void AllocScriptModules() {
-	moduleInst.resize(numScriptModules, nullptr);
-	moduleInstFork.resize(numScriptModules, nullptr);
-	moduleRepExecAddr.resize(numScriptModules);
-	repExecAlways.moduleHasFunction.resize(numScriptModules, true);
-	lateRepExecAlways.moduleHasFunction.resize(numScriptModules, true);
-	getDialogOptionsDimensionsFunc.moduleHasFunction.resize(numScriptModules, true);
-	renderDialogOptionsFunc.moduleHasFunction.resize(numScriptModules, true);
-	getDialogOptionUnderCursorFunc.moduleHasFunction.resize(numScriptModules, true);
-	runDialogOptionMouseClickHandlerFunc.moduleHasFunction.resize(numScriptModules, true);
-	runDialogOptionKeyPressHandlerFunc.moduleHasFunction.resize(numScriptModules, true);
-	runDialogOptionRepExecFunc.moduleHasFunction.resize(numScriptModules, true);
-	for (int i = 0; i < numScriptModules; ++i) {
-		moduleRepExecAddr[i].Invalidate();
+	_GP(moduleInst).resize(_G(numScriptModules), nullptr);
+	_GP(moduleInstFork).resize(_G(numScriptModules), nullptr);
+	_GP(moduleRepExecAddr).resize(_G(numScriptModules));
+	_GP(repExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(lateRepExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	for (int i = 0; i < _G(numScriptModules); ++i) {
+		_GP(moduleRepExecAddr)[i].Invalidate();
 	}
 }
 
@@ -422,10 +418,10 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// NOTE: we must do this after plugins, because some plugins may export
 	// script symbols too.
 	//
-	gamescript = ents.GlobalScript;
-	dialogScriptsScript = ents.DialogScript;
-	numScriptModules = ents.ScriptModules.size();
-	scriptModules = ents.ScriptModules;
+	_GP(gamescript) = ents.GlobalScript;
+	_GP(dialogScriptsScript) = ents.DialogScript;
+	_G(numScriptModules) = ents.ScriptModules.size();
+	_GP(scriptModules) = ents.ScriptModules;
 	AllocScriptModules();
 	if (create_global_script())
 		return new GameInitError(kGameInitErr_ScriptLinkFailed, ccErrorString);

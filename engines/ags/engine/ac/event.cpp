@@ -83,8 +83,8 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	eventClaimed = EVENT_INPROGRESS;
 	int toret;
 
-	if (includeRoom && roominst) {
-		toret = RunScriptFunctionIfExists(roominst, tsname, numParams, params);
+	if (includeRoom && _G(roominst)) {
+		toret = RunScriptFunctionIfExists(_G(roominst), tsname, numParams, params);
 
 		if (eventClaimed == EVENT_CLAIMED) {
 			eventClaimed = eventClaimedOldValue;
@@ -93,8 +93,8 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	}
 
 	// run script modules
-	for (int kk = 0; kk < numScriptModules; kk++) {
-		toret = RunScriptFunctionIfExists(moduleInst[kk], tsname, numParams, params);
+	for (int kk = 0; kk < _G(numScriptModules); kk++) {
+		toret = RunScriptFunctionIfExists(_GP(moduleInst)[kk], tsname, numParams, params);
 
 		if (eventClaimed == EVENT_CLAIMED) {
 			eventClaimed = eventClaimedOldValue;

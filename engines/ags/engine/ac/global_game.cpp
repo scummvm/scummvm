@@ -77,20 +77,14 @@ using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 
-
-extern ExecutingScript *curscript;
 extern int displayed_room;
 extern int game_paused;
-
 extern char gamefilenamebuf[200];
 extern GameSetup usetup;
 extern unsigned int load_new_game;
 extern int load_new_game_restore;
-
-
 extern RoomStatus *croom;
 extern int gui_disabled_style;
-
 extern int getloctype_index;
 extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
@@ -111,8 +105,8 @@ void GiveScore(int amnt) {
 
 void restart_game() {
 	can_run_delayed_command();
-	if (inside_script) {
-		curscript->queue_action(ePSARestartGame, 0, "RestartGame");
+	if (_G(inside_script)) {
+		_G(curscript)->queue_action(ePSARestartGame, 0, "RestartGame");
 		return;
 	}
 	try_restore_save(RESTART_POINT_SAVE_GAME_NUMBER);
@@ -123,8 +117,8 @@ void RestoreGameSlot(int slnum) {
 		quit("!RestoreGameSlot: a game cannot be restored from within game_start");
 
 	can_run_delayed_command();
-	if (inside_script) {
-		curscript->queue_action(ePSARestoreGame, slnum, "RestoreGameSlot");
+	if (_G(inside_script)) {
+		_G(curscript)->queue_action(ePSARestoreGame, slnum, "RestoreGameSlot");
 		return;
 	}
 	try_restore_save(slnum);
@@ -258,8 +252,8 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 		_GP(play).takeover_data = data;
 		load_new_game_restore = -1;
 
-		if (inside_script) {
-			curscript->queue_action(ePSARunAGSGame, mode | RAGMODE_LOADNOW, "RunAGSGame");
+		if (_G(inside_script)) {
+			_G(curscript)->queue_action(ePSARunAGSGame, mode | RAGMODE_LOADNOW, "RunAGSGame");
 			ccInstance::GetCurrentInstance()->Abort();
 		} else
 			load_new_game = mode | RAGMODE_LOADNOW;
@@ -869,7 +863,7 @@ void SetMultitasking(int mode) {
 	}
 
 	// Don't allow background running if full screen
-	if ((mode == 1) && (!scsystem.windowed))
+	if ((mode == 1) && (!_GP(scsystem).windowed))
 		mode = 0;
 
 	if (mode == 0) {

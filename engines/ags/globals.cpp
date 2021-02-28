@@ -37,12 +37,16 @@
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
 #include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/engine/ac/dynobj/scriptinvitem.h"
 #include "ags/engine/ac/dynobj/scriptobject.h"
 #include "ags/engine/ac/dynobj/scriptregion.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/script/executingscript.h"
+#include "ags/engine/script/nonblockingscriptfunction.h"
+#include "ags/engine/script/script.h"
 
 namespace AGS3 {
 
@@ -79,13 +83,36 @@ Globals::Globals() {
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+
+	// script.cpp
+	_scripts = new ExecutingScript[MAX_SCRIPT_AT_ONCE];
+	_gamescript = new PScript();
+	_dialogScriptsScript = new PScript();
+	_repExecAlways = new NonBlockingScriptFunction(REP_EXEC_ALWAYS_NAME, 0);
+	_lateRepExecAlways = new NonBlockingScriptFunction(LATE_REP_EXEC_ALWAYS_NAME, 0);
+	_getDialogOptionsDimensionsFunc = new NonBlockingScriptFunction("dialog_options_get_dimensions", 1);
+	_renderDialogOptionsFunc = new NonBlockingScriptFunction("dialog_options_render", 1);
+	_getDialogOptionUnderCursorFunc = new NonBlockingScriptFunction("dialog_options_get_active", 1);
+	_runDialogOptionMouseClickHandlerFunc = new NonBlockingScriptFunction("dialog_options_mouse_click", 2);
+	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 2);
+	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
+	_scsystem = new ScriptSystem();
+	_scriptModules = new std::vector<PScript>();
+	_moduleInst = new std::vector<ccInstance *>();
+	_moduleInstFork = new std::vector<ccInstance *>();
+	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
+	_characterScriptObjNames = new std::vector<String>();
+	_objectScriptObjNames = new String[MAX_ROOM_OBJECTS];
+	_guiScriptObjNames = new std::vector<String>();
 }
 
 Globals::~Globals() {
 	g_globals = nullptr;
 
+	// debug.cpp
 	delete _DbgMgr;
 
+	// game.cpp
 	delete _ccDynamicGUIObject;
 	delete _ccDynamicCharacter;
 	delete _ccDynamicHotspot;
@@ -108,6 +135,27 @@ Globals::~Globals() {
 	delete[] _scrRegion;
 	delete[] _scrInv;
 	delete[] _objcache;
+
+	// script.cpp
+	delete[] _scripts;
+	delete _gamescript;
+	delete _dialogScriptsScript;
+	delete _repExecAlways;
+	delete _lateRepExecAlways;
+	delete _getDialogOptionsDimensionsFunc;
+	delete _renderDialogOptionsFunc;
+	delete _getDialogOptionUnderCursorFunc;
+	delete _runDialogOptionMouseClickHandlerFunc;
+	delete _runDialogOptionKeyPressHandlerFunc;
+	delete _runDialogOptionRepExecFunc;
+	delete _scsystem;
+	delete _scriptModules;
+	delete _moduleInst;
+	delete _moduleInstFork;
+	delete _moduleRepExecAddr;
+	delete _characterScriptObjNames;
+	delete[] _objectScriptObjNames;
+	delete _guiScriptObjNames;
 }
 
 } // namespace AGS3

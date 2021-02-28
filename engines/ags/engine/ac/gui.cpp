@@ -64,21 +64,11 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
 extern GameSetup usetup;
-
 extern int cur_mode, cur_cursor;
-extern ccInstance *gameinst;
-
-
-
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
 extern IGraphicsDriver *gfxDriver;
-
-
-
-
 
 int ifacepopped = -1; // currently displayed pop-up GUI (-1 if none)
 int mouse_on_iface = -1; // mouse cursor is over this interface
@@ -363,7 +353,7 @@ void process_interface_click(int ifce, int btn, int mbut) {
 		// otherwise, run interface_click
 		if ((theObj->GetEventCount() > 0) &&
 			(!theObj->EventHandlers[0].IsEmpty()) &&
-			(!gameinst->GetSymbolAddress(theObj->EventHandlers[0]).IsNull())) {
+			(!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0]).IsNull())) {
 			// control-specific event handler
 			if (strchr(theObj->GetEventArgs(0), ',') != nullptr)
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0], 2,

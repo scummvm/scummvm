@@ -92,7 +92,7 @@ extern GameSetup usetup;
 
 
 extern int convert_16bit_bgr;
-extern ScriptSystem scsystem;
+
 extern AGSPlatformDriver *platform;
 
 extern char noWalkBehindsAtAll;
@@ -697,7 +697,7 @@ void render_to_screen() {
 	construct_engine_overlay();
 
 	// only vsync in full screen mode, it makes things worse in a window
-	gfxDriver->EnableVsyncBeforeRender((scsystem.vsync > 0) && (!scsystem.windowed));
+	gfxDriver->EnableVsyncBeforeRender((_GP(scsystem).vsync > 0) && (!_GP(scsystem).windowed));
 
 	bool succeeded = false;
 	while (!succeeded) {

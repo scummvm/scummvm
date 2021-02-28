@@ -54,7 +54,7 @@ using namespace AGS::Engine;
 
 
 
-extern ScriptSystem scsystem;
+
 
 extern CharacterInfo *playerchar;
 extern IGraphicsDriver *gfxDriver;
@@ -328,7 +328,7 @@ int IsModeEnabled(int which) {
 void Mouse_EnableControl(bool on) {
 	usetup.mouse_ctrl_enabled = on; // remember setting in config
 
-	bool is_windowed = scsystem.windowed != 0;
+	bool is_windowed = _GP(scsystem).windowed != 0;
 	// Whether mouse movement should be controlled by the engine - this is
 	// determined based on related config option.
 	bool should_control_mouse = usetup.mouse_ctrl_when == kMouseCtrl_Always ||

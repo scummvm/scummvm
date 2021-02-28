@@ -54,7 +54,7 @@ using namespace AGS::Engine;
 
 extern GameSetup usetup;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
-extern ScriptSystem scsystem;
+
 extern IGraphicsDriver *gfxDriver;
 
 extern volatile bool switched_away;
@@ -64,11 +64,11 @@ bool System_HasInputFocus() {
 }
 
 int System_GetColorDepth() {
-	return scsystem.coldepth;
+	return _GP(scsystem).coldepth;
 }
 
 int System_GetOS() {
-	return scsystem.os;
+	return _GP(scsystem).os;
 }
 
 // [IKM] 2014-09-21
@@ -133,20 +133,20 @@ void System_SetNumLock(int newValue) {
 }
 
 int System_GetVsync() {
-	return scsystem.vsync;
+	return _GP(scsystem).vsync;
 }
 
 void System_SetVsync(int newValue) {
 	if (ags_stricmp(gfxDriver->GetDriverID(), "D3D9") != 0)
-		scsystem.vsync = newValue;
+		_GP(scsystem).vsync = newValue;
 }
 
 int System_GetWindowed() {
-	return scsystem.windowed;
+	return _GP(scsystem).windowed;
 }
 
 void System_SetWindowed(int windowed) {
-	if (windowed != scsystem.windowed)
+	if (windowed != _GP(scsystem).windowed)
 		engine_try_switch_windowed_gfxmode();
 }
 

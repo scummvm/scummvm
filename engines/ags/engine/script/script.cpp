@@ -60,46 +60,9 @@ extern RoomObject *objs;
 extern int our_eip;
 extern CharacterInfo *playerchar;
 
-ExecutingScript scripts[MAX_SCRIPT_AT_ONCE];
-ExecutingScript *curscript = nullptr;
-
-PScript gamescript;
-PScript dialogScriptsScript;
-ccInstance *gameinst = nullptr, *roominst = nullptr;
-ccInstance *dialogScriptsInst = nullptr;
-ccInstance *gameinstFork = nullptr, *roominstFork = nullptr;
-
-int num_scripts = 0;
-int post_script_cleanup_stack = 0;
-
-int inside_script = 0, in_graph_script = 0;
-int no_blocking_functions = 0; // set to 1 while in rep_Exec_always
-
-NonBlockingScriptFunction repExecAlways(REP_EXEC_ALWAYS_NAME, 0);
-NonBlockingScriptFunction lateRepExecAlways(LATE_REP_EXEC_ALWAYS_NAME, 0);
-NonBlockingScriptFunction getDialogOptionsDimensionsFunc("dialog_options_get_dimensions", 1);
-NonBlockingScriptFunction renderDialogOptionsFunc("dialog_options_render", 1);
-NonBlockingScriptFunction getDialogOptionUnderCursorFunc("dialog_options_get_active", 1);
-NonBlockingScriptFunction runDialogOptionMouseClickHandlerFunc("dialog_options_mouse_click", 2);
-NonBlockingScriptFunction runDialogOptionKeyPressHandlerFunc("dialog_options_key_press", 2);
-NonBlockingScriptFunction runDialogOptionRepExecFunc("dialog_options_repexec", 1);
-
-ScriptSystem scsystem;
-
-std::vector<PScript> scriptModules;
-std::vector<ccInstance *> moduleInst;
-std::vector<ccInstance *> moduleInstFork;
-std::vector<RuntimeScriptValue> moduleRepExecAddr;
-int numScriptModules = 0;
-
-std::vector<String> characterScriptObjNames;
-String              objectScriptObjNames[MAX_ROOM_OBJECTS];
-std::vector<String> guiScriptObjNames;
-
-
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
-	RunTextScriptIParam(gameinst, "dialog_request", RuntimeScriptValue().SetInt32(parmtr));
+	RunTextScriptIParam(_G(gameinst), "dialog_request", RuntimeScriptValue().SetInt32(parmtr));
 
 	if (_GP(play).stop_dialog_at_end == DIALOG_STOP) {
 		_GP(play).stop_dialog_at_end = DIALOG_NONE;
@@ -129,19 +92,19 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 
 	// run modules
 	// modules need a forkedinst for this to work
-	for (int kk = 0; kk < numScriptModules; kk++) {
-		funcToRun->moduleHasFunction[kk] = DoRunScriptFuncCantBlock(moduleInstFork[kk], funcToRun, funcToRun->moduleHasFunction[kk]);
+	for (int kk = 0; kk < _G(numScriptModules); kk++) {
+		funcToRun->moduleHasFunction[kk] = DoRunScriptFuncCantBlock(_GP(moduleInstFork)[kk], funcToRun, funcToRun->moduleHasFunction[kk]);
 
 		if (room_changes_was != _GP(play).room_changes)
 			return;
 	}
 
-	funcToRun->globalScriptHasFunction = DoRunScriptFuncCantBlock(gameinstFork, funcToRun, funcToRun->globalScriptHasFunction);
+	funcToRun->globalScriptHasFunction = DoRunScriptFuncCantBlock(_G(gameinstFork), funcToRun, funcToRun->globalScriptHasFunction);
 
 	if (room_changes_was != _GP(play).room_changes)
 		return;
 
-	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(roominstFork, funcToRun, funcToRun->roomHasFunction);
+	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(_G(roominstFork), funcToRun, funcToRun->roomHasFunction);
 }
 
 //-----------------------------------------------------------
@@ -237,28 +200,28 @@ int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int i
 
 int create_global_script() {
 	ccSetOption(SCOPT_AUTOIMPORT, 1);
-	for (int kk = 0; kk < numScriptModules; kk++) {
-		moduleInst[kk] = ccInstance::CreateFromScript(scriptModules[kk]);
-		if (moduleInst[kk] == nullptr)
+	for (int kk = 0; kk < _G(numScriptModules); kk++) {
+		_GP(moduleInst)[kk] = ccInstance::CreateFromScript(_GP(scriptModules)[kk]);
+		if (_GP(moduleInst)[kk] == nullptr)
 			return -3;
 		// create a forked instance for rep_exec_always
-		moduleInstFork[kk] = moduleInst[kk]->Fork();
-		if (moduleInstFork[kk] == nullptr)
+		_GP(moduleInstFork)[kk] = _GP(moduleInst)[kk]->Fork();
+		if (_GP(moduleInstFork)[kk] == nullptr)
 			return -3;
 
-		moduleRepExecAddr[kk] = moduleInst[kk]->GetSymbolAddress(REP_EXEC_NAME);
+		_GP(moduleRepExecAddr)[kk] = _GP(moduleInst)[kk]->GetSymbolAddress(REP_EXEC_NAME);
 	}
-	gameinst = ccInstance::CreateFromScript(gamescript);
-	if (gameinst == nullptr)
+	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
+	if (_G(gameinst) == nullptr)
 		return -3;
 	// create a forked instance for rep_exec_always
-	gameinstFork = gameinst->Fork();
-	if (gameinstFork == nullptr)
+	_G(gameinstFork) = _G(gameinst)->Fork();
+	if (_G(gameinstFork) == nullptr)
 		return -3;
 
-	if (dialogScriptsScript != nullptr) {
-		dialogScriptsInst = ccInstance::CreateFromScript(dialogScriptsScript);
-		if (dialogScriptsInst == nullptr)
+	if (_GP(dialogScriptsScript) != nullptr) {
+		_G(dialogScriptsInst) = ccInstance::CreateFromScript(_GP(dialogScriptsScript));
+		if (_G(dialogScriptsInst) == nullptr)
 			return -3;
 	}
 
@@ -269,30 +232,30 @@ int create_global_script() {
 void cancel_all_scripts() {
 	int aa;
 
-	for (aa = 0; aa < num_scripts; aa++) {
-		if (scripts[aa].forked)
-			scripts[aa].inst->AbortAndDestroy();
+	for (aa = 0; aa < _G(num_scripts); aa++) {
+		if (_G(scripts)[aa].forked)
+			_G(scripts)[aa].inst->AbortAndDestroy();
 		else
-			scripts[aa].inst->Abort();
-		scripts[aa].numanother = 0;
+			_G(scripts)[aa].inst->Abort();
+		_G(scripts)[aa].numanother = 0;
 	}
-	num_scripts = 0;
-	/*  if (gameinst!=NULL) ->Abort(gameinst);
-	if (roominst!=NULL) ->Abort(roominst);*/
+	_G(num_scripts) = 0;
+	/*  if (_G(gameinst)!=NULL) ->Abort(_G(gameinst));
+	if (_G(roominst)!=NULL) ->Abort(_G(roominst));*/
 }
 
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst) {
 	if (sc_inst == kScInstGame)
-		return gameinst;
+		return _G(gameinst);
 	else if (sc_inst == kScInstRoom)
-		return roominst;
+		return _G(roominst);
 	return nullptr;
 }
 
 void QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2) {
-	if (inside_script)
+	if (_G(inside_script))
 		// queue the script for the run after current script is finished
-		curscript->run_another(fn_name, sc_inst, param_count, p1, p2);
+		_G(curscript)->run_another(fn_name, sc_inst, param_count, p1, p2);
 	else
 		// if no script is currently running, run the requested script right away
 		RunScriptFunction(sc_inst, fn_name, param_count, p1, p2);
@@ -314,7 +277,7 @@ bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcTo
 	if (!hasTheFunc)
 		return (false);
 
-	no_blocking_functions++;
+	_G(no_blocking_functions)++;
 	int result = 0;
 
 	if (funcToRun->numParameters < 3) {
@@ -333,7 +296,7 @@ bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcTo
 	// this might be nested, so don't disrupt blocked scripts
 	ccErrorString = "";
 	ccError = 0;
-	no_blocking_functions--;
+	_G(no_blocking_functions)--;
 	return (hasTheFunc);
 }
 
@@ -350,25 +313,25 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		ccErrorString = "script is already in execution";
 		return -3;
 	}
-	scripts[num_scripts].init();
-	scripts[num_scripts].inst = sci;
+	_G(scripts)[_G(num_scripts)].init();
+	_G(scripts)[_G(num_scripts)].inst = sci;
 	// CHECKME: this conditional block will never run, because
 	// function would have quit earlier (deprecated functionality?)
 	if (sci->IsBeingRun()) {
-		scripts[num_scripts].inst = sci->Fork();
-		if (scripts[num_scripts].inst == nullptr)
+		_G(scripts)[_G(num_scripts)].inst = sci->Fork();
+		if (_G(scripts)[_G(num_scripts)].inst == nullptr)
 			quit("unable to fork instance for secondary script");
-		scripts[num_scripts].forked = 1;
+		_G(scripts)[_G(num_scripts)].forked = 1;
 	}
-	curscript = &scripts[num_scripts];
-	num_scripts++;
-	if (num_scripts >= MAX_SCRIPT_AT_ONCE)
+	_G(curscript) = &_G(scripts)[_G(num_scripts)];
+	_G(num_scripts)++;
+	if (_G(num_scripts) >= MAX_SCRIPT_AT_ONCE)
 		quit("too many nested text script instances created");
 	// in case script_run_another is the function name, take a backup
 	strncpy(scfunctionname, tsname[0], MAX_FUNCTION_NAME_LEN);
 	tsname[0] = &scfunctionname[0];
 	update_script_mouse_coords();
-	inside_script++;
+	_G(inside_script)++;
 	//  aborted_ip=0;
 	//  abort_executor=0;
 	return 0;
@@ -395,7 +358,7 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 	ccErrorString = "";
 
 	if (numParam < 3) {
-		toret = curscript->inst->CallScriptFunction(tsname, numParam, params);
+		toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 	} else
 		quit("Too many parameters to RunScriptFunctionIfExists");
 
@@ -404,14 +367,14 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 		quit_with_script_error(tsname);
 	}
 
-	post_script_cleanup_stack++;
+	_G(post_script_cleanup_stack)++;
 
-	if (post_script_cleanup_stack > 50)
+	if (_G(post_script_cleanup_stack) > 50)
 		quitprintf("!post_script_cleanup call stack exceeded: possible recursive function call? running %s", tsname);
 
 	post_script_cleanup();
 
-	post_script_cleanup_stack--;
+	_G(post_script_cleanup_stack)--;
 
 	// restore cached error state
 	ccError = cachedCcError;
@@ -426,14 +389,14 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 int RunTextScript(ccInstance *sci, const char *tsname) {
 	if (strcmp(tsname, REP_EXEC_NAME) == 0) {
 		// run module rep_execs
-		// FIXME: in theory the function may be already called for moduleInst[i],
+		// FIXME: in theory the function may be already called for _GP(moduleInst)[i],
 		// in which case this should not be executed; need to rearrange the code somehow
 		int room_changes_was = _GP(play).room_changes;
 		int restore_game_count_was = gameHasBeenRestored;
 
-		for (int kk = 0; kk < numScriptModules; kk++) {
-			if (!moduleRepExecAddr[kk].IsNull())
-				RunScriptFunctionIfExists(moduleInst[kk], tsname, 0, nullptr);
+		for (int kk = 0; kk < _G(numScriptModules); kk++) {
+			if (!_GP(moduleRepExecAddr)[kk].IsNull())
+				RunScriptFunctionIfExists(_GP(moduleInst)[kk], tsname, 0, nullptr);
 
 			if ((room_changes_was != _GP(play).room_changes) ||
 				(restore_game_count_was != gameHasBeenRestored))
@@ -442,7 +405,7 @@ int RunTextScript(ccInstance *sci, const char *tsname) {
 	}
 
 	int toret = RunScriptFunctionIfExists(sci, tsname, 0, nullptr);
-	if ((toret == -18) && (sci == roominst)) {
+	if ((toret == -18) && (sci == _G(roominst))) {
 		// functions in room script must exist
 		quitprintf("prepare_script: error %d (%s) trying to run '%s'   (Room %d)", toret, ccErrorString.GetCStr(), tsname, displayed_room);
 	}
@@ -486,7 +449,7 @@ String GetScriptName(ccInstance *sci) {
 	// TODO: check script modules too?
 	if (!sci)
 		return "Not in a script";
-	else if (sci->instanceof == gamescript)
+	else if (sci->instanceof == _GP(gamescript))
 		return "Global script";
 	else if (sci->instanceof == _GP(thisroom).CompiledScript)
 		return String::FromFormat("Room %d script", displayed_room);
@@ -510,16 +473,16 @@ char *make_ts_func_name(const char *base, int iii, int subd) {
 void post_script_cleanup() {
 	// should do any post-script stuff here, like go to new room
 	if (ccError) quit(ccErrorString);
-	ExecutingScript copyof = scripts[num_scripts - 1];
-	if (scripts[num_scripts - 1].forked)
-		delete scripts[num_scripts - 1].inst;
-	num_scripts--;
-	inside_script--;
+	ExecutingScript copyof = _G(scripts)[_G(num_scripts) - 1];
+	if (_G(scripts)[_G(num_scripts) - 1].forked)
+		delete _G(scripts)[_G(num_scripts) - 1].inst;
+	_G(num_scripts)--;
+	_G(inside_script)--;
 
-	if (num_scripts > 0)
-		curscript = &scripts[num_scripts - 1];
+	if (_G(num_scripts) > 0)
+		_G(curscript) = &_G(scripts)[_G(num_scripts) - 1];
 	else {
-		curscript = nullptr;
+		_G(curscript) = nullptr;
 	}
 	//  if (abort_executor) user_disabled_data2=aborted_ip;
 
@@ -532,13 +495,13 @@ void post_script_cleanup() {
 		switch (copyof.postScriptActions[ii]) {
 		case ePSANewRoom:
 			// only change rooms when all scripts are done
-			if (num_scripts == 0) {
+			if (_G(num_scripts) == 0) {
 				new_room(thisData, playerchar);
 				// don't allow any pending room scripts from the old room
 				// in run_another to be executed
 				return;
 			} else
-				curscript->queue_action(ePSANewRoom, thisData, "NewRoom");
+				_G(curscript)->queue_action(ePSANewRoom, thisData, "NewRoom");
 			break;
 		case ePSAInvScreen:
 			invscreen();
@@ -881,7 +844,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 // check and abort game if the script is currently
 // inside the rep_exec_always function
 void can_run_delayed_command() {
-	if (no_blocking_functions)
+	if (_G(no_blocking_functions))
 		quit("!This command cannot be used within non-blocking events such as " REP_EXEC_ALWAYS_NAME);
 }
 

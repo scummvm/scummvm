@@ -455,8 +455,8 @@ void restore_game_dialog() {
 		DisplayMessage(983);
 		return;
 	}
-	if (inside_script) {
-		curscript->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
+	if (_G(inside_script)) {
+		_G(curscript)->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
 		return;
 	}
 	setup_for_dialog();
@@ -472,8 +472,8 @@ void save_game_dialog() {
 		DisplayMessage(983);
 		return;
 	}
-	if (inside_script) {
-		curscript->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
+	if (_G(inside_script)) {
+		_G(curscript)->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
 		return;
 	}
 	setup_for_dialog();
@@ -495,7 +495,7 @@ void unload_game_file() {
 
 	_GP(play).FreeViewportsAndCameras();
 
-	characterScriptObjNames.clear();
+	_GP(characterScriptObjNames).clear();
 	free(charextra);
 	free(_G(mls));
 	free(actsps);
@@ -504,43 +504,43 @@ void unload_game_file() {
 	free(actspswbbmp);
 	free(actspswbcache);
 
-	if ((gameinst != nullptr) && (gameinst->pc != 0)) {
+	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
 		quit("Error: unload_game called while script still running");
 	} else {
-		delete gameinstFork;
-		delete gameinst;
-		gameinstFork = nullptr;
-		gameinst = nullptr;
+		delete _G(gameinstFork);
+		delete _G(gameinst);
+		_G(gameinstFork) = nullptr;
+		_G(gameinst) = nullptr;
 	}
 
-	gamescript.reset();
+	_GP(gamescript).reset();
 
-	if ((dialogScriptsInst != nullptr) && (dialogScriptsInst->pc != 0)) {
+	if ((_G(dialogScriptsInst) != nullptr) && (_G(dialogScriptsInst)->pc != 0)) {
 		quit("Error: unload_game called while dialog script still running");
-	} else if (dialogScriptsInst != nullptr) {
-		delete dialogScriptsInst;
-		dialogScriptsInst = nullptr;
+	} else if (_G(dialogScriptsInst) != nullptr) {
+		delete _G(dialogScriptsInst);
+		_G(dialogScriptsInst) = nullptr;
 	}
 
-	dialogScriptsScript.reset();
+	_GP(dialogScriptsScript).reset();
 
-	for (int i = 0; i < numScriptModules; ++i) {
-		delete moduleInstFork[i];
-		delete moduleInst[i];
-		scriptModules[i].reset();
+	for (int i = 0; i < _G(numScriptModules); ++i) {
+		delete _GP(moduleInstFork)[i];
+		delete _GP(moduleInst)[i];
+		_GP(scriptModules)[i].reset();
 	}
-	moduleInstFork.resize(0);
-	moduleInst.resize(0);
-	scriptModules.resize(0);
-	repExecAlways.moduleHasFunction.resize(0);
-	lateRepExecAlways.moduleHasFunction.resize(0);
-	getDialogOptionsDimensionsFunc.moduleHasFunction.resize(0);
-	renderDialogOptionsFunc.moduleHasFunction.resize(0);
-	getDialogOptionUnderCursorFunc.moduleHasFunction.resize(0);
-	runDialogOptionMouseClickHandlerFunc.moduleHasFunction.resize(0);
-	runDialogOptionKeyPressHandlerFunc.moduleHasFunction.resize(0);
-	runDialogOptionRepExecFunc.moduleHasFunction.resize(0);
-	numScriptModules = 0;
+	_GP(moduleInstFork).resize(0);
+	_GP(moduleInst).resize(0);
+	_GP(scriptModules).resize(0);
+	_GP(repExecAlways).moduleHasFunction.resize(0);
+	_GP(lateRepExecAlways).moduleHasFunction.resize(0);
+	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(0);
+	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(0);
+	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(0);
+	_G(numScriptModules) = 0;
 
 	free(_G(views));
 	_G(views) = nullptr;
@@ -574,7 +574,7 @@ void unload_game_file() {
 		guibg[i] = nullptr;
 	}
 
-	guiScriptObjNames.clear();
+	_GP(guiScriptObjNames).clear();
 	free(guibg);
 	_GP(guis).clear();
 	free(_G(scrGui));
@@ -1007,8 +1007,8 @@ void save_game(int slotn, const char *descript) {
 	// the state of blocked scripts
 	can_run_delayed_command();
 
-	if (inside_script) {
-		strcpy(curscript->postScriptSaveSlotDescription[curscript->queue_action(ePSASaveGame, slotn, "SaveGameSlot")], descript);
+	if (_G(inside_script)) {
+		strcpy(_G(curscript)->postScriptSaveSlotDescription[_G(curscript)->queue_action(ePSASaveGame, slotn, "SaveGameSlot")], descript);
 		return;
 	}
 
@@ -1083,11 +1083,11 @@ HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, RestoredD
 	r_data.GlobalScript.Data.reset(new char[gdatasize]);
 	in->Read(r_data.GlobalScript.Data.get(), gdatasize);
 
-	if (in->ReadInt32() != numScriptModules) {
+	if (in->ReadInt32() != _G(numScriptModules)) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of script modules.");
 	}
-	r_data.ScriptModules.resize(numScriptModules);
-	for (int i = 0; i < numScriptModules; ++i) {
+	r_data.ScriptModules.resize(_G(numScriptModules));
+	for (int i = 0; i < _G(numScriptModules); ++i) {
 		size_t module_size = in->ReadInt32();
 		if (pp.ScMdDataSize[i] != (int)module_size) {
 			return new SavegameError(kSvgErr_GameContentAssertion, String::FromFormat("Mismatching size of script module data, module %d.", i));
@@ -1787,7 +1787,7 @@ void display_switch_in() {
 	platform->DisplaySwitchIn();
 	ags_clear_input_buffer();
 	// If auto lock option is set, lock mouse to the game window
-	if (usetup.mouse_auto_lock && scsystem.windowed)
+	if (usetup.mouse_auto_lock && _GP(scsystem).windowed)
 		Mouse::TryLockToWindow();
 }
 
@@ -2278,7 +2278,7 @@ void RegisterStaticObjects() {
 	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("mouse", &scmouse, &GlobalStaticManager);
 	ccAddExternalStaticObject("palette", &palette[0], &GlobalStaticManager);
-	ccAddExternalStaticObject("system", &scsystem, &GlobalStaticManager);
+	ccAddExternalStaticObject("system", &_GP(scsystem), &GlobalStaticManager);
 	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &GlobalStaticManager);
 }
 

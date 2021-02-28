@@ -96,7 +96,7 @@ extern int eip_guinum;
 extern int eip_guiobj;
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
-extern ScriptSystem scsystem;
+
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
 extern color palette[256];
@@ -901,11 +901,11 @@ void engine_init_game_settings() {
 
 void engine_setup_scsystem_auxiliary() {
 	// ScriptSystem::aci_version is only 10 chars long
-	strncpy(scsystem.aci_version, _G(EngineVersion).LongString, 10);
+	strncpy(_GP(scsystem).aci_version, _G(EngineVersion).LongString, 10);
 	if (usetup.override_script_os >= 0) {
-		scsystem.os = usetup.override_script_os;
+		_GP(scsystem).os = usetup.override_script_os;
 	} else {
-		scsystem.os = platform->GetSystemOSID();
+		_GP(scsystem).os = platform->GetSystemOSID();
 	}
 }
 

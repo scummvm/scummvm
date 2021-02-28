@@ -53,9 +53,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int our_eip, displayed_room;
-
-extern std::vector<ccInstance *> moduleInst;
-extern int numScriptModules;
 extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 
@@ -91,10 +88,10 @@ void start_game() {
 	// skip ticks to account for initialisation or a restored _GP(game).
 	skipMissedTicks();
 
-	for (int kk = 0; kk < numScriptModules; kk++)
-		RunTextScript(moduleInst[kk], "game_start");
+	for (int kk = 0; kk < _G(numScriptModules); kk++)
+		RunTextScript(_GP(moduleInst)[kk], "game_start");
 
-	RunTextScript(gameinst, "game_start");
+	RunTextScript(_G(gameinst), "game_start");
 
 	our_eip = -43;
 
