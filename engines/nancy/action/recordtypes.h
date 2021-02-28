@@ -273,11 +273,6 @@ public:
     byte winData = 0;
 };
 
-class LeverPuzzle : public ActionRecord {
-public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-};
-
 class AddInventoryNoHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
