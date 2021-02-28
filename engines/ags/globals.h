@@ -38,6 +38,7 @@ using Version = AGS::Shared::Version;
 namespace AGS {
 namespace Shared {
 class Bitmap;
+class DebugManager;
 class RoomStruct;
 } // namespace Shared
 } // namespace AGS
@@ -95,6 +96,15 @@ public:
 	int _break_on_next_script_step = 0;
 	volatile int _game_paused_in_debugger = 0;
 
+	/**@}*/
+
+
+	/**
+	 * \defgroup debug globals
+	 * @{
+	 */
+
+	AGS::Shared::DebugManager *_DbgMgr;
 	/**@}*/
 
 	/**

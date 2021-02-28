@@ -162,9 +162,6 @@ private:
 	OutMap              _outputs;
 };
 
-// TODO: move this to the dynamically allocated engine object whenever it is implemented
-extern DebugManager DbgMgr;
-
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3

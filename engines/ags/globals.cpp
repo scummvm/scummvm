@@ -23,6 +23,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/spritecache.h"
+#include "ags/shared/debugging/debugmanager.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/roomstatus.h"
@@ -52,6 +53,9 @@ Globals::Globals() {
 
 	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
 
+	// debugmanager.cpp globals
+	_DbgMgr = new AGS::Shared::DebugManager();
+
 	// game.cpp globals
 	_ccDynamicGUIObject = new CCGUIObject();
 	_ccDynamicCharacter = new CCCharacter();
@@ -80,6 +84,8 @@ Globals::Globals() {
 Globals::~Globals() {
 	g_globals = nullptr;
 
+	delete _DbgMgr;
+
 	delete _ccDynamicGUIObject;
 	delete _ccDynamicCharacter;
 	delete _ccDynamicHotspot;
@@ -97,6 +103,11 @@ Globals::~Globals() {
 	delete _spriteset;
 	delete _thisroom;
 	delete _troom;
+	delete[] _scrObj;
+	delete[] _scrHotspot;
+	delete[] _scrRegion;
+	delete[] _scrInv;
+	delete[] _objcache;
 }
 
 } // namespace AGS3
