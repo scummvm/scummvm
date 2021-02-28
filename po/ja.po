@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-27 16:10+0000\n"
+"PO-Revision-Date: 2021-02-28 22:09+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5071,45 +5071,45 @@ msgstr "このゲームはサポートされていないエンジンを使用し
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "簡単なマウスのインターフェイス"
 
 #: engines/mads/detection.cpp:56
 msgid "Shows object names when hovering the mouse over them"
-msgstr ""
+msgstr "マウスホバーでオブジェクトの名称を表示する"
 
 #: engines/mads/detection.cpp:65 engines/mads/detection.cpp:66
 msgid "Animated inventory items"
-msgstr ""
+msgstr "アニメーション化された在庫アイテム"
 
 #: engines/mads/detection.cpp:75 engines/mads/detection.cpp:76
 msgid "Animated game interface"
-msgstr ""
+msgstr "アニメーション化されたインターフェイス"
 
 #: engines/mads/detection.cpp:85 engines/mads/detection.cpp:86
 msgid "Naughty game mode"
-msgstr ""
+msgstr "いたずらゲームモード"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:321
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "高速モードを有効化しました(~Z~)"
 
 #: engines/mohawk/dialogs.cpp:115
 msgid "~T~ransitions Enabled"
-msgstr ""
+msgstr "トランジションを有効化しました"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "the Myst flyをムービーで再生する"
 
 #: engines/mohawk/dialogs.cpp:119
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "オリジナル版のエンジンにおいて、the Myst flyはムービーではありませんでした。"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:127
 msgid "~D~rop Page"
-msgstr ""
+msgstr "本のページをドロップ(~D~)"
 
 #: engines/mohawk/dialogs.cpp:131
 #, fuzzy
@@ -5123,15 +5123,15 @@ msgstr "メインメニュー"
 
 #: engines/mohawk/dialogs.cpp:250
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "ゲームを再起動すると、新しい言語が適用されます。"
 
 #: engines/mohawk/dialogs.cpp:322
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "水のエフェクトを有効にする(~W~)"
 
 #: engines/mohawk/dialogs.cpp:324
 msgid "Transitions:"
-msgstr ""
+msgstr "トランジション："
 
 #: engines/mohawk/dialogs.cpp:329
 msgid "Fastest"
@@ -5167,11 +5167,11 @@ msgstr "含まれた機能："
 
 #: engines/mohawk/mohawk.cpp:52
 msgid "The game is paused. Press any key to continue."
-msgstr ""
+msgstr "ゲームはポーズされます。何かキーを押すと続行します。"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
-msgstr ""
+msgstr "メインメニューを開く"
 
 #: engines/mohawk/myst.cpp:576 engines/mohawk/riven.cpp:846
 #, fuzzy
@@ -5205,7 +5205,7 @@ msgstr "地図を表示"
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr ""
+msgstr "ロードしてもよろしいですか? 保存していない状況はすべて失われます。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -5217,7 +5217,7 @@ msgstr "ゲームをロード"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
+msgstr "新規にゲームを開始してもよろしいですか? 保存していない状況はすべて失われます。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5227,33 +5227,33 @@ msgstr "新しいゲーム"
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr ""
+msgstr "ゲームを終了してもよろしいですか? 保存していない状況はすべて失われます。"
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "体験版では図書館から出られません。"
 
 #: engines/mohawk/riven.cpp:159
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr ""
+msgstr "Rivenの実行ファイルが見つかりません。'riven.exe'または'rivendmo.exe'です。 "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr ""
+msgstr "インストーラーファイル'arcriven.z'を使用する事でも動作可能です。さらに、Macの実行ファイルも使用できます。"
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr ""
+msgstr "'extras.mhk'が見つかりません。インストーラーファイル'arcriven.z'を使用する事でも動作可能です。"
 
 #: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Rivenに必要な、以下のデータファイルが見つかりません：\n"
 
 #: engines/mohawk/riven.cpp:868
 #, fuzzy
