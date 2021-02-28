@@ -168,7 +168,7 @@ void Object::rotate(int rot) {
 	}
 
 	Graphics::TransformStruct transform(100, 100, 90 * rot, _picture->w / 2, _picture->h / 2);
-	auto rotated = _picture->rotoscale(transform);
+	auto rotated = getPicture()->rotoscale(transform);
 	freeRotated();
 	_rotatedPicture = rotated;
 }
@@ -191,7 +191,7 @@ void Object::moveTo(Common::Point pos) {
 }
 
 void Object::generateRegion() {
-	if (!_picture) {
+	if (!getPicture()) {
 		warning("generateRegion called on null picture");
 		return;
 	}
