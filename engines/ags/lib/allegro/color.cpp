@@ -84,16 +84,6 @@ void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 	}
 }
 
-void palette_to_rgb8(const PALETTE src, byte dest[PALETTE_SIZE]) {
-	byte *pDest = dest;
-	for (int i = 0; i < 256; ++i, pDest += 3) {
-		pDest[0] = VGA_COLOR_TRANS(src[i].r);
-		pDest[1] = VGA_COLOR_TRANS(src[i].g);
-		pDest[2] = VGA_COLOR_TRANS(src[i].b);
-	}
-}
-
-
 int makecol15(int r, int g, int b) {
 	return (((r >> 3) << _rgb_r_shift_15) |
 		((g >> 3) << _rgb_g_shift_15) |
@@ -217,30 +207,6 @@ void fade_interpolate(AL_CONST PALETTE source, AL_CONST PALETTE dest, PALETTE ou
 	warning("TODO: fade_interpolate");
 }
 
-void fade_from_range(AL_CONST PALETTE source, AL_CONST PALETTE dest, int speed, int from, int to) {
-	warning("TODO: fade_from_range");
-}
-
-void fade_in_range(AL_CONST PALETTE p, int speed, int from, int to) {
-	warning("TODO: fade_in_range");
-}
-
-void fade_out_range(int speed, int from, int to) {
-	warning("TODO: fade_out_range");
-}
-
-void fade_from(AL_CONST PALETTE source, AL_CONST PALETTE dest, int speed) {
-	warning("TODO: fade_from");
-}
-
-void fade_in(AL_CONST PALETTE p, int speed) {
-	warning("TODO: fade_in");
-}
-
-void fade_out(int speed) {
-	warning("TODO: fade_out");
-}
-
 void select_palette(AL_CONST PALETTE p) {
 	int c;
 
@@ -259,29 +225,8 @@ void unselect_palette(void) {
 		_current_palette[c] = _prev_current_palette[c];
 }
 
-void generate_332_palette(PALETTE pal) {
-	warning("TODO: generate_332_palette");
-}
-
-int generate_optimized_palette(BITMAP *image, PALETTE pal, AL_CONST signed char rsvdcols[256]) {
-	warning("TODO: generate_optimized_palette");
-	return 0;
-}
-
-void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a) {
-	// TODO: set_blender_mode
-}
-
-void set_blender_mode_ex(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, BLENDER_FUNC b32, BLENDER_FUNC b15x, BLENDER_FUNC b16x, BLENDER_FUNC b24x, int r, int g, int b, int a) {
-	// TODO: set_blender_mode_ex
-}
-
 void set_alpha_blender(void) {
 	trans_blend_alpha = -1;
-}
-
-void set_write_alpha_blender(void) {
-	// TODO: set_write_alpha_blender
 }
 
 void set_trans_blender(int r, int g, int b, int a) {
@@ -290,55 +235,6 @@ void set_trans_blender(int r, int g, int b, int a) {
 	trans_blend_green = g;
 	trans_blend_blue = b;
 }
-
-void set_add_blender(int r, int g, int b, int a) {
-	// TODO: set_add_blender
-}
-
-void set_burn_blender(int r, int g, int b, int a) {
-	// TODO: set_burn_blender
-}
-
-void set_color_blender(int r, int g, int b, int a) {
-	// TODO: set_color_blender
-}
-
-void set_difference_blender(int r, int g, int b, int a) {
-	// TODO: set_difference_blender
-}
-
-void set_dissolve_blender(int r, int g, int b, int a) {
-	// TODO: set_dissolve_blender
-}
-
-void set_dodge_blender(int r, int g, int b, int a) {
-	// TODO: set_dodge_blender
-}
-
-void set_hue_blender(int r, int g, int b, int a) {
-	// TODO: set_hue_blender
-}
-
-void set_invert_blender(int r, int g, int b, int a) {
-	// TODO: set_invert_blender
-}
-
-void set_luminance_blender(int r, int g, int b, int a) {
-	// TODO: set_luminance_blender
-}
-
-void set_multiply_blender(int r, int g, int b, int a) {
-	// TODO: set_multiply_blender
-}
-
-void set_saturation_blender(int r, int g, int b, int a) {
-	// TODO: set_saturation_blender
-}
-
-void set_screen_blender(int r, int g, int b, int a) {
-	// TODO: set_screen_blender
-}
-
 
 /* makecol_depth:
  *  Converts R, G, and B values (ranging 0-255) to whatever pixel format
@@ -393,28 +289,6 @@ int makeacol_depth(int color_depth, int r, int g, int b, int a) {
 
 	return 0;
 }
-
-
-
-/* makecol:
- *  Converts R, G, and B values (ranging 0-255) to whatever pixel format
- *  is required by the current video mode.
- */
-int makecol(int r, int g, int b) {
-	return makecol_depth(_color_depth, r, g, b);
-}
-
-
-
-/* makeacol:
- *  Converts R, G, B, and A values (ranging 0-255) to whatever pixel format
- *  is required by the current video mode.
- */
-int makeacol(int r, int g, int b, int a) {
-	return makeacol_depth(_color_depth, r, g, b, a);
-}
-
-
 
 /* getr_depth:
  *  Extracts the red component (ranging 0-255) from a pixel in the format
@@ -1089,78 +963,6 @@ void create_trans_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, in
 
 	if (callback)
 		(*callback)(255);
-}
-
-
-
-/* create_color_table:
- *  Creates a color mapping table, using a user-supplied callback to blend
- *  each pair of colors. Your blend routine will be passed a pointer to the
- *  palette and the two colors to be blended (x is the source color, y is
- *  the destination), and should return the desired output RGB for this
- *  combination. If the callback function is not NULL, it will be called
- *  256 times during the calculation, allowing you to display a progress
- *  indicator.
- */
-void create_color_table(COLOR_MAP *table, AL_CONST PALETTE pal, void (*blend)(AL_CONST PALETTE pal, int x, int y, RGB *rgb), void (*callback)(int pos)) {
-	int x, y;
-	RGB c;
-
-	for (x = 0; x < PAL_SIZE; x++) {
-		for (y = 0; y < PAL_SIZE; y++) {
-			blend(pal, x, y, &c);
-
-			if (rgb_map)
-				table->data[x][y] = rgb_map->data[c.r >> 1][c.g >> 1][c.b >> 1];
-			else
-				table->data[x][y] = bestfit_color(pal, c.r, c.g, c.b);
-		}
-
-		if (callback)
-			(*callback)(x);
-	}
-}
-
-
-
-/* create_blender_table:
- *  Fills the specified color mapping table with lookup data for doing a
- *  paletted equivalent of whatever truecolor blender mode is currently
- *  selected.
- */
-void create_blender_table(COLOR_MAP *table, AL_CONST PALETTE pal, void (*callback)(int pos)) {
-	int x, y, c;
-	int r, g, b;
-	int r1, g1, b1;
-	int r2, g2, b2;
-
-	assert(_blender_func24);
-
-	for (x = 0; x < PAL_SIZE; x++) {
-		for (y = 0; y < PAL_SIZE; y++) {
-			r1 = (pal[x].r << 2) | ((pal[x].r & 0x30) >> 4);
-			g1 = (pal[x].g << 2) | ((pal[x].g & 0x30) >> 4);
-			b1 = (pal[x].b << 2) | ((pal[x].b & 0x30) >> 4);
-
-			r2 = (pal[y].r << 2) | ((pal[y].r & 0x30) >> 4);
-			g2 = (pal[y].g << 2) | ((pal[y].g & 0x30) >> 4);
-			b2 = (pal[y].b << 2) | ((pal[y].b & 0x30) >> 4);
-
-			c = _blender_func24(makecol24(r1, g1, b1), makecol24(r2, g2, b2), _blender_alpha);
-
-			r = getr24(c);
-			g = getg24(c);
-			b = getb24(c);
-
-			if (rgb_map)
-				table->data[x][y] = rgb_map->data[r >> 3][g >> 3][b >> 3];
-			else
-				table->data[x][y] = bestfit_color(pal, r >> 2, g >> 2, b >> 2);
-		}
-
-		if (callback)
-			(*callback)(x);
-	}
 }
 
 } // namespace AGS3
