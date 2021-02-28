@@ -6,7 +6,6 @@ Programmcodes finden Sie auf Englisch unter:
 
  Neue Spiele:
    - Unterstützung für Grim Fandango hinzugefügt.
-   - Unterstützung für Escape from Monkey Island hinzugefügt.
    - Unterstützung für The Longest Journey hinzugefügt.
    - Unterstützung für Myst 3: Exile hinzugefügt.
    - Unterstützung für Hades' Challenge hinzugefügt.
