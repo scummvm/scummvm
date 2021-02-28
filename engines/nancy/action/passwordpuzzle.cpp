@@ -157,7 +157,7 @@ void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
                     break;
             }
 
-            isDone = true;
+            finishExecution();
     }
 }
 

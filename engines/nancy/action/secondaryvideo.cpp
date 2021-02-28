@@ -201,7 +201,7 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
         case kActionTrigger:
             engine->scene->pushScene();
             engine->scene->changeScene(sceneChange);
-            isDone = true;
+            finishExecution();
             break;
     }
 }
@@ -313,7 +313,7 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         case kActionTrigger:
             triggerFlags.execute(engine);
             engine->scene->changeScene(sceneChange);
-            isDone = true;
+            finishExecution();
             break;
     }
 }

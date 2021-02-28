@@ -155,10 +155,9 @@ uint16 MapCall::readData(Common::SeekableReadStream &stream) {
 }
 
 void MapCall::execute(NancyEngine *engine) {
-    execType = 2;
+    execType = kRepeating;
     engine->scene->requestStateChange(NancyEngine::kMap);
-    // call base, depends on execType
-    state = kBegin;
+    finishExecution();
 }
 
 uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
@@ -326,8 +325,7 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
         case kActionTrigger:
             hasHotspot = false;
             EventFlags::execute(engine);
-            break;
-        default:
+            finishExecution();
             break;
     }
 }
@@ -439,7 +437,7 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
             engine->scene->addItemToInventory(objectID);
             setVisible(false);
             hasHotspot = false;
-            isDone = true;
+            finishExecution();
             break;
     }
 }
@@ -473,7 +471,7 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
             engine->scene->setEventFlag(flagOnTrigger);
             engine->sound->stopSound(sound.channelID);
 
-            isDone = true;
+            finishExecution();
             break;
     }
 }

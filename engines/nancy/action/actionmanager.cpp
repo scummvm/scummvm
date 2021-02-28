@@ -108,7 +108,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     delete[] descBuf;
 
     newRecord->type = inputData.readByte(); // redundant
-    newRecord->execType = inputData.readByte();
+    newRecord->execType = (ActionRecord::ExecutionType)inputData.readByte();
 
     uint16 localChunkSize = newRecord->readData(inputData);
     localChunkSize += 0x32;
