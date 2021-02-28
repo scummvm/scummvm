@@ -202,18 +202,11 @@ void Holomap::prepareHolomapPolygons() {
 }
 
 bool Holomap::isTriangleVisible(const Vertex *vertices) const {
-	const int32 iVar3 = (int32)(vertices[0].y - vertices[2].y) * (int32)(vertices[1].x - vertices->x);
-	const int16 sVar5 = (int16)((uint32)iVar3 >> 0x10);
-	const int32 iVar4 = (int32)(vertices[0].x - vertices[2].x) * (int32)(vertices[1].y - vertices->y);
-	const int16 sVar6 = (int16)((uint32)iVar4 >> 0x10);
-	const uint16 uVar1 = (uint16)((uint16)iVar4 < (uint16)iVar3);
-	const int16 sVar2 = sVar6 - sVar5;
-	const bool bVal7 = sVar6 < sVar5;
-	const bool bVal8 = sVar2 < uVar1;
-	if ((bVal7 != bVal8) != ((int16)(sVar2 - uVar1) < 0)) {
-		return true;
-	}
-	return false;
+	const int32 iVar2 = ((int32)vertices[1].x - (int32)vertices[0].x) *
+						((int32)vertices[0].y - (int32)vertices[2].y);
+	const int32 iVar1 = ((int32)vertices[1].y - (int32)vertices[0].y) *
+						((int32)vertices[0].x - (int32)vertices[2].x);
+	return iVar2 - iVar1 != 0 && iVar1 <= iVar2;
 }
 
 void Holomap::renderHolomapSurfacePolygons() {
@@ -226,52 +219,38 @@ void Holomap::renderHolomapSurfacePolygons() {
 		Vertex vertexCoordinates[3];
 		vertexCoordinates[0].x = pos1.x;
 		vertexCoordinates[0].y = pos1.y;
-		vertexCoordinates[0].colorIndex = 0;
 		vertexCoordinates[1].x = pos2.x;
 		vertexCoordinates[1].y = pos2.y;
-		vertexCoordinates[1].colorIndex = 0;
 		vertexCoordinates[2].x = pos3.x;
 		vertexCoordinates[2].y = pos3.y;
-		vertexCoordinates[2].colorIndex = 0;
-		bool iVar1 = isTriangleVisible(vertexCoordinates);
-		if (iVar1) {
-			Vertex vertexCoordinates2[3];
-			vertexCoordinates2[0].x = pos1.unk1;
-			vertexCoordinates2[0].y = pos1.unk2;
-			vertexCoordinates2[0].colorIndex = 0;
-			vertexCoordinates2[1].x = pos2.unk1;
-			vertexCoordinates2[1].y = pos2.unk2;
-			vertexCoordinates2[1].colorIndex = 0;
-			vertexCoordinates2[2].x = pos3.unk1;
-			vertexCoordinates2[2].y = pos3.unk2;
-			vertexCoordinates2[2].colorIndex = 0;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
+		if (isTriangleVisible(vertexCoordinates)) {
+			Vertex vertexAngles[3];
+			vertexAngles[0].x = pos1.unk1;
+			vertexAngles[0].y = pos1.unk2;
+			vertexAngles[1].x = pos2.unk1;
+			vertexAngles[1].y = pos2.unk2;
+			vertexAngles[2].x = pos3.unk1;
+			vertexAngles[2].y = pos3.unk2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexAngles);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
 		const HolomapProjectedPos &pos6 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
 		vertexCoordinates[0].x = pos4.x;
 		vertexCoordinates[0].y = pos4.y;
-		vertexCoordinates[0].colorIndex = 0;
 		vertexCoordinates[1].x = pos5.x;
 		vertexCoordinates[1].y = pos5.y;
-		vertexCoordinates[1].colorIndex = 0;
 		vertexCoordinates[2].x = pos6.x;
 		vertexCoordinates[2].y = pos6.y;
-		vertexCoordinates[2].colorIndex = 0;
-		iVar1 = isTriangleVisible(vertexCoordinates);
-		if (iVar1) {
-			Vertex vertexCoordinates2[3];
-			vertexCoordinates2[0].x = pos4.unk1;
-			vertexCoordinates2[0].y = pos4.unk2;
-			vertexCoordinates2[0].colorIndex = 0;
-			vertexCoordinates2[1].x = pos5.unk1;
-			vertexCoordinates2[1].y = pos5.unk2;
-			vertexCoordinates2[1].colorIndex = 0;
-			vertexCoordinates2[2].x = pos6.unk1;
-			vertexCoordinates2[2].y = pos6.unk2;
-			vertexCoordinates2[2].colorIndex = 0;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
+		if (isTriangleVisible(vertexCoordinates)) {
+			Vertex vertexAngles[3];
+			vertexAngles[0].x = pos4.unk1;
+			vertexAngles[0].y = pos4.unk2;
+			vertexAngles[1].x = pos5.unk1;
+			vertexAngles[1].y = pos5.unk2;
+			vertexAngles[2].x = pos6.unk1;
+			vertexAngles[2].y = pos6.unk2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexAngles);
 		}
 	}
 }
@@ -626,7 +605,6 @@ void Holomap::processHolomap() {
 			redraw = false;
 			const Common::Rect rect(170, 0, 470, 330);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
-			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
@@ -636,6 +614,7 @@ void Holomap::processHolomap() {
 			_engine->_renderer->baseRotPos.z = 9500;
 			renderHolomapSurfacePolygons();
 			renderLocations(xRot, yRot, 0, true);
+			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (rotate) {
 				_engine->_menu->drawBox(300, 170, 340, 210);
 			}

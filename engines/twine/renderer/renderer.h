@@ -357,6 +357,14 @@ private:
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr;
 	int16 *_polyTab2 = nullptr;
+	int16* _holomap_polytab_1_1 = nullptr;
+	int16* _holomap_polytab_1_2 = nullptr;
+	int16* _holomap_polytab_1_3 = nullptr;
+	int16* _holomap_polytab_2_3 = nullptr;
+	int16* _holomap_polytab_2_2 = nullptr;
+	int16* _holomap_polytab_2_1 = nullptr;
+	int16* _holomap_polytab_1_2_ptr = nullptr;
+	int16* _holomap_polytab_1_3_ptr = nullptr;
 
 	bool isUsingOrthoProjection = false;
 
@@ -428,7 +436,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
 
-	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]);
+	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexAngles[3]);
 };
 
 } // namespace TwinE
