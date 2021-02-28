@@ -42,10 +42,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
 extern RoomStatus *croom;
-extern ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
-extern CCHotspot ccDynamicHotspot;
 
 void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 	if (newval)
@@ -71,11 +68,11 @@ int Hotspot_GetWalkToY(ScriptHotspot *hss) {
 }
 
 ScriptHotspot *GetHotspotAtScreen(int xx, int yy) {
-	return &scrHotspot[GetHotspotIDAtScreen(xx, yy)];
+	return &_G(scrHotspot)[GetHotspotIDAtScreen(xx, yy)];
 }
 
 ScriptHotspot *GetHotspotAtRoom(int x, int y) {
-	return &scrHotspot[get_hotspot_at(x, y)];
+	return &_G(scrHotspot)[get_hotspot_at(x, y)];
 }
 
 void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
@@ -133,15 +130,15 @@ int get_hotspot_at(int xpp, int ypp) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptHotspot, ccDynamicHotspot, GetHotspotAtRoom);
+	API_SCALL_OBJ_PINT2(ScriptHotspot, _GP(ccDynamicHotspot), GetHotspotAtRoom);
 }
 
 // ScriptHotspot *(int xx, int yy)
 RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptHotspot, ccDynamicHotspot, GetHotspotAtScreen);
+	API_SCALL_OBJ_PINT2(ScriptHotspot, _GP(ccDynamicHotspot), GetHotspotAtScreen);
 }
 
 RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
@@ -166,7 +163,7 @@ RuntimeScriptValue Sc_Hotspot_GetPropertyText(void *self, const RuntimeScriptVal
 
 // const char* (ScriptHotspot *hss, const char *property)
 RuntimeScriptValue Sc_Hotspot_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, myScriptStringImpl, Hotspot_GetTextProperty, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Hotspot_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -203,7 +200,7 @@ RuntimeScriptValue Sc_Hotspot_GetID(void *self, const RuntimeScriptValue *params
 
 // const char* (ScriptHotspot *hss)
 RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, myScriptStringImpl, Hotspot_GetName_New);
+	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
 }
 
 // int (ScriptHotspot *hss)

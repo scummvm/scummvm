@@ -218,7 +218,7 @@ void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 } // namespace Shared
 } // namespace AGS
 
-extern std::vector<Shared::GUIMain> guis;
+
 extern int all_buttons_disabled, gui_inv_pic;
 extern int gui_disabled_style;
 

@@ -56,14 +56,14 @@ using namespace AGS::Shared;
 
 
 extern CharacterExtras *charextra;
-extern ScriptInvItem scrInv[MAX_INV];
+
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 
 extern int evblocknum;
 extern CharacterInfo *playerchar;
 extern AGSPlatformDriver *platform;
-extern CCCharacter ccDynamicCharacter;
-extern CCInventory ccDynamicInv;
+
+
 
 int in_inv_screen = 0, inv_screen_newroom = -1;
 
@@ -149,7 +149,7 @@ void InvWindow_ScrollUp(GUIInvWindow *guii) {
 ScriptInvItem *InvWindow_GetItemAtIndex(GUIInvWindow *guii, int index) {
 	if ((index < 0) || (index >= charextra[guii->GetCharacterId()].invorder_count))
 		return nullptr;
-	return &scrInv[charextra[guii->GetCharacterId()].invorder[index]];
+	return &_G(scrInv)[charextra[guii->GetCharacterId()].invorder[index]];
 }
 
 //=============================================================================
@@ -541,7 +541,7 @@ RuntimeScriptValue Sc_InvWindow_ScrollUp(void *self, const RuntimeScriptValue *p
 
 // CharacterInfo* (GUIInvWindow *guii)
 RuntimeScriptValue Sc_InvWindow_GetCharacterToUse(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIInvWindow, CharacterInfo, ccDynamicCharacter, InvWindow_GetCharacterToUse);
+	API_OBJCALL_OBJ(GUIInvWindow, CharacterInfo, _GP(ccDynamicCharacter), InvWindow_GetCharacterToUse);
 }
 
 // void (GUIInvWindow *guii, CharacterInfo *chaa)
@@ -551,7 +551,7 @@ RuntimeScriptValue Sc_InvWindow_SetCharacterToUse(void *self, const RuntimeScrip
 
 // ScriptInvItem* (GUIInvWindow *guii, int index)
 RuntimeScriptValue Sc_InvWindow_GetItemAtIndex(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_PINT(GUIInvWindow, ScriptInvItem, ccDynamicInv, InvWindow_GetItemAtIndex);
+	API_OBJCALL_OBJ_PINT(GUIInvWindow, ScriptInvItem, _GP(ccDynamicInv), InvWindow_GetItemAtIndex);
 }
 
 // int (GUIInvWindow *guii)

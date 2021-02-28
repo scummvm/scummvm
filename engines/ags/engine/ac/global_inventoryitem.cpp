@@ -80,17 +80,17 @@ int GetInvAt(int xxx, int yyy) {
 	int ongui = GetGUIAt(xxx, yyy);
 	if (ongui >= 0) {
 		int mxwas = _G(mousex), mywas = _G(mousey);
-		_G(mousex) = data_to_game_coord(xxx) - guis[ongui].X;
-		_G(mousey) = data_to_game_coord(yyy) - guis[ongui].Y;
-		int onobj = guis[ongui].FindControlUnderMouse();
-		GUIObject *guio = guis[ongui].GetControl(onobj);
+		_G(mousex) = data_to_game_coord(xxx) - _GP(guis)[ongui].X;
+		_G(mousey) = data_to_game_coord(yyy) - _GP(guis)[ongui].Y;
+		int onobj = _GP(guis)[ongui].FindControlUnderMouse();
+		GUIObject *guio = _GP(guis)[ongui].GetControl(onobj);
 		if (guio) {
 			mouse_ifacebut_xoffs = _G(mousex) - (guio->X);
 			mouse_ifacebut_yoffs = _G(mousey) - (guio->Y);
 		}
 		_G(mousex) = mxwas;
 		_G(mousey) = mywas;
-		if (guio && (guis[ongui].GetControlType(onobj) == kGUIInvWindow))
+		if (guio && (_GP(guis)[ongui].GetControlType(onobj) == kGUIInvWindow))
 			return offset_over_inv((GUIInvWindow *)guio);
 	}
 	return -1;

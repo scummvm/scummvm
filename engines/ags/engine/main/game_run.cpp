@@ -226,7 +226,7 @@ static void check_mouse_controls() {
 	mongu = gui_on_mouse_move();
 
 	mouse_on_iface = mongu;
-	if ((ifacepopped >= 0) && (_G(mousey) >= guis[ifacepopped].Y + guis[ifacepopped].Height))
+	if ((ifacepopped >= 0) && (_G(mousey) >= _GP(guis)[ifacepopped].Y + _GP(guis)[ifacepopped].Height))
 		remove_popup_interface(ifacepopped);
 
 	// check mouse clicks on GUIs
@@ -498,7 +498,7 @@ static void check_keyboard_controls() {
 	if ((((kgn >= 32) && (kgn <= 255) && (kgn != '[')) || (kgn == eAGSKeyCodeReturn) || (kgn == eAGSKeyCodeBackspace))
 		&& !all_buttons_disabled) {
 		for (int guiIndex = 0; guiIndex < _GP(game).numgui; guiIndex++) {
-			auto &gui = guis[guiIndex];
+			auto &gui = _GP(guis)[guiIndex];
 
 			if (!gui.IsDisplayed()) continue;
 

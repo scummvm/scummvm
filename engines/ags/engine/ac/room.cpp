@@ -95,16 +95,16 @@ extern RoomObject *objs;
 extern ccInstance *roominst;
 extern AGSPlatformDriver *platform;
 extern int numevents;
-extern CharacterCache *charcache;
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
+
+
 extern CharacterExtras *charextra;
 extern int done_es_error;
 extern int our_eip;
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
+
 
 extern int in_new_room, new_room_was;  // 1 in new room, 2 first time in new room, 3 loading saved game
-extern ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
+
 extern int in_leaves_screen;
 extern CharacterInfo *playerchar;
 extern int starting_room;
@@ -123,9 +123,6 @@ extern int mouse_z_was;
 
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
-
-extern CCHotspot ccDynamicHotspot;
-extern CCObject ccDynamicObject;
 
 RGB_MAP rgb_table;  // for 256-col antialiasing
 int new_room_flags = 0;
@@ -304,10 +301,10 @@ void unload_old_room() {
 
 	// wipe the character cache when we change rooms
 	for (ff = 0; ff < _GP(game).numcharacters; ff++) {
-		if (charcache[ff].inUse) {
-			delete charcache[ff].image;
-			charcache[ff].image = nullptr;
-			charcache[ff].inUse = 0;
+		if (_G(charcache)[ff].inUse) {
+			delete _G(charcache)[ff].image;
+			_G(charcache)[ff].image = nullptr;
+			_G(charcache)[ff].inUse = 0;
 		}
 		// ensure that any half-moves (eg. with scaled movement) are stopped
 		charextra[ff].xwas = INVALID_X;
@@ -335,8 +332,8 @@ void unload_old_room() {
 
 	// clear the object cache
 	for (ff = 0; ff < MAX_ROOM_OBJECTS; ff++) {
-		delete objcache[ff].image;
-		objcache[ff].image = nullptr;
+		delete _G(objcache)[ff].image;
+		_G(objcache)[ff].image = nullptr;
 	}
 	// clear the actsps buffers to save memory, since the
 	// objects/characters involved probably aren't on the
@@ -645,7 +642,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++) {
 		// 64 bit: Using the id instead
-		// scrObj[cc].obj = &croom->obj[cc];
+		// _G(scrObj)[cc].obj = &croom->obj[cc];
 		objectScriptObjNames[cc].Free();
 	}
 
@@ -654,14 +651,14 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		if (_GP(thisroom).Objects[cc].ScriptName.IsEmpty())
 			continue;
 		objectScriptObjNames[cc] = _GP(thisroom).Objects[cc].ScriptName;
-		ccAddExternalDynamicObject(objectScriptObjNames[cc], &scrObj[cc], &ccDynamicObject);
+		ccAddExternalDynamicObject(objectScriptObjNames[cc], &_G(scrObj)[cc], &_GP(ccDynamicObject));
 	}
 
 	for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
 		if (_GP(thisroom).Hotspots[cc].ScriptName.IsEmpty())
 			continue;
 
-		ccAddExternalDynamicObject(_GP(thisroom).Hotspots[cc].ScriptName, &scrHotspot[cc], &ccDynamicHotspot);
+		ccAddExternalDynamicObject(_GP(thisroom).Hotspots[cc].ScriptName, &_G(scrHotspot)[cc], &_GP(ccDynamicHotspot));
 	}
 
 	our_eip = 206;
@@ -1103,7 +1100,7 @@ void convert_move_path_to_room_resolution(MoveList *ml) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // ScriptDrawingSurface* (int backgroundNumber)
 RuntimeScriptValue Sc_Room_GetDrawingSurfaceForBackground(const RuntimeScriptValue *params, int32_t param_count) {
@@ -1117,7 +1114,7 @@ RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t
 
 // const char* (const char *property)
 RuntimeScriptValue Sc_Room_GetTextProperty(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, myScriptStringImpl, Room_GetTextProperty, const char);
+	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Room_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Room_SetProperty(const RuntimeScriptValue *params, int32_t param_count) {
@@ -1151,7 +1148,7 @@ RuntimeScriptValue Sc_Room_GetLeftEdge(const RuntimeScriptValue *params, int32_t
 
 // const char* (int index)
 RuntimeScriptValue Sc_Room_GetMessages(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Room_GetMessages);
+	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Room_GetMessages);
 }
 
 // int ()

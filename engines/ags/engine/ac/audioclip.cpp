@@ -28,12 +28,11 @@
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
-extern CCAudioChannel ccDynamicAudio;
 
 int AudioClip_GetID(ScriptAudioClip *clip) {
 	return clip->id;
@@ -111,17 +110,17 @@ RuntimeScriptValue Sc_AudioClip_Stop(void *self, const RuntimeScriptValue *param
 
 // ScriptAudioChannel* | ScriptAudioClip *clip, int priority, int repeat
 RuntimeScriptValue Sc_AudioClip_Play(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_PINT2(ScriptAudioClip, ScriptAudioChannel, ccDynamicAudio, AudioClip_Play);
+	API_OBJCALL_OBJ_PINT2(ScriptAudioClip, ScriptAudioChannel, _GP(ccDynamicAudio), AudioClip_Play);
 }
 
 // ScriptAudioChannel* | ScriptAudioClip *clip, int position, int priority, int repeat
 RuntimeScriptValue Sc_AudioClip_PlayFrom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_PINT3(ScriptAudioClip, ScriptAudioChannel, ccDynamicAudio, AudioClip_PlayFrom);
+	API_OBJCALL_OBJ_PINT3(ScriptAudioClip, ScriptAudioChannel, _GP(ccDynamicAudio), AudioClip_PlayFrom);
 }
 
 // ScriptAudioChannel* | ScriptAudioClip *clip, int priority, int repeat
 RuntimeScriptValue Sc_AudioClip_PlayQueued(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_PINT2(ScriptAudioClip, ScriptAudioChannel, ccDynamicAudio, AudioClip_PlayQueued);
+	API_OBJCALL_OBJ_PINT2(ScriptAudioClip, ScriptAudioChannel, _GP(ccDynamicAudio), AudioClip_PlayQueued);
 }
 
 void RegisterAudioClipAPI() {

@@ -22,10 +22,9 @@
 
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/scriptgui.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern ScriptGUI *scrGui;
 
 // return the type name of the object
 const char *CCGUI::GetType() {
@@ -44,7 +43,7 @@ int CCGUI::Serialize(const char *address, char *buffer, int bufsize) {
 void CCGUI::Unserialize(int index, const char *serializedData, int dataSize) {
 	StartUnserialize(serializedData, dataSize);
 	int num = UnserializeInt();
-	ccRegisterUnserializedObject(index, &scrGui[num], this);
+	ccRegisterUnserializedObject(index, &_G(scrGui)[num], this);
 }
 
 } // namespace AGS3

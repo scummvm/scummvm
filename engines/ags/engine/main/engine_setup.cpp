@@ -75,7 +75,7 @@ void convert_gui_to_game_resolution(GameDataVersion filever) {
 	}
 
 	for (int i = 0; i < _GP(game).numgui; ++i) {
-		GUIMain *cgp = &guis[i];
+		GUIMain *cgp = &_GP(guis)[i];
 		cgp->X *= mul;
 		cgp->Y *= mul;
 		if (cgp->Width < 1)

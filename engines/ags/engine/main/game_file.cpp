@@ -62,7 +62,7 @@ using namespace AGS::Engine;
 extern int ifacepopped;
 
 
-extern ViewStruct *views;
+
 extern DialogTopic *dialog;
 
 extern AGSPlatformDriver *platform;
@@ -139,7 +139,7 @@ HError preload_game_data() {
 
 HError load_game_file() {
 	MainGameSource src;
-	LoadedGameEntities ents(_GP(game), dialog, views);
+	LoadedGameEntities ents(_GP(game), dialog, _G(views));
 	HGameFileError load_err = OpenMainGameFileFromDefaultAsset(src);
 	if (load_err) {
 		load_err = ReadGameData(ents, src.InputStream.get(), src.DataVersion);

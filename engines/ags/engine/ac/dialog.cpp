@@ -560,7 +560,7 @@ void DialogOptions::Show() {
 		dirtyheight = data_to_game_coord(ccDialogOptionsRendering.height);
 		dialog_abs_x = dirtyx;
 	} else if (_GP(game).options[OPT_DIALOGIFACE] > 0) {
-		GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
+		GUIMain *guib = &_GP(guis)[_GP(game).options[OPT_DIALOGIFACE]];
 		if (guib->IsTextWindow()) {
 			// text-window, so do the QFG4-style speech options
 			is_textwindow = 1;
@@ -664,7 +664,7 @@ void DialogOptions::Redraw() {
 		// text window behind the options
 		areawid = data_to_game_coord(_GP(play).max_dialogoption_width);
 		int biggest = 0;
-		padding = guis[_GP(game).options[OPT_DIALOGIFACE]].Padding;
+		padding = _GP(guis)[_GP(game).options[OPT_DIALOGIFACE]].Padding;
 		for (int i = 0; i < numdisp; ++i) {
 			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid - ((2 * padding + 2) + bullet_wid), usingfont);
 			if (longestline > biggest)
@@ -691,7 +691,7 @@ void DialogOptions::Redraw() {
 		// needs to draw the right text window, not the default
 		Bitmap *text_window_ds = nullptr;
 		draw_text_window(&text_window_ds, false, &txoffs, &tyoffs, &xspos, &yspos, &areawid, nullptr, needheight, _GP(game).options[OPT_DIALOGIFACE]);
-		options_surface_has_alpha = guis[_GP(game).options[OPT_DIALOGIFACE]].HasAlphaChannel();
+		options_surface_has_alpha = _GP(guis)[_GP(game).options[OPT_DIALOGIFACE]].HasAlphaChannel();
 		// since draw_text_window incrases the width, restore it
 		areawid = savedwid;
 
@@ -722,7 +722,7 @@ void DialogOptions::Redraw() {
 				color_t draw_color = ds->GetCompatibleColor(16);
 				ds->FillRect(Rect(0, dlgyp - 1, ui_view.GetWidth() - 1, ui_view.GetHeight() - 1), draw_color);
 			} else {
-				GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
+				GUIMain *guib = &_GP(guis)[_GP(game).options[OPT_DIALOGIFACE]];
 				if (!guib->IsTextWindow())
 					draw_gui_for_dialog_options(ds, guib, dlgxp, dlgyp);
 			}
@@ -734,7 +734,7 @@ void DialogOptions::Redraw() {
 		if (_GP(game).options[OPT_DIALOGIFACE] > 0) {
 			// the whole GUI area should be marked dirty in order
 			// to ensure it gets drawn
-			GUIMain *guib = &guis[_GP(game).options[OPT_DIALOGIFACE]];
+			GUIMain *guib = &_GP(guis)[_GP(game).options[OPT_DIALOGIFACE]];
 			dirtyheight = guib->Height;
 			dirtyy = dlgyp;
 			options_surface_has_alpha = guib->HasAlphaChannel();
@@ -1157,7 +1157,7 @@ void do_conversation(int dlgnum) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // int (ScriptDialog *sd)
 RuntimeScriptValue Sc_Dialog_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -1186,7 +1186,7 @@ RuntimeScriptValue Sc_Dialog_GetOptionState(void *self, const RuntimeScriptValue
 
 // const char* (ScriptDialog *sd, int option)
 RuntimeScriptValue Sc_Dialog_GetOptionText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_PINT(ScriptDialog, const char, myScriptStringImpl, Dialog_GetOptionText);
+	API_CONST_OBJCALL_OBJ_PINT(ScriptDialog, const char, _GP(myScriptStringImpl), Dialog_GetOptionText);
 }
 
 // int (ScriptDialog *sd, int option)

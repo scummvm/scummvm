@@ -41,10 +41,10 @@
 
 namespace AGS3 {
 
-extern ScriptInvItem scrInv[MAX_INV];
+
 extern int cur_cursor;
 extern CharacterInfo *playerchar;
-extern CCInventory ccDynamicInv;
+
 
 void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) {
 	set_inv_item_cursorpic(iitem->id, newSprite);
@@ -70,7 +70,7 @@ ScriptInvItem *GetInvAtLocation(int xx, int yy) {
 	int hsnum = GetInvAt(xx, yy);
 	if (hsnum <= 0)
 		return nullptr;
-	return &scrInv[hsnum];
+	return &_G(scrInv)[hsnum];
 }
 
 void InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
@@ -130,11 +130,11 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // ScriptInvItem *(int xx, int yy)
 RuntimeScriptValue Sc_GetInvAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptInvItem, ccDynamicInv, GetInvAtLocation);
+	API_SCALL_OBJ_PINT2(ScriptInvItem, _GP(ccDynamicInv), GetInvAtLocation);
 }
 
 // int (ScriptInvItem *iitem, int mood)
@@ -159,7 +159,7 @@ RuntimeScriptValue Sc_InventoryItem_GetPropertyText(void *self, const RuntimeScr
 
 // const char* (ScriptInvItem *scii, const char *property)
 RuntimeScriptValue Sc_InventoryItem_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, myScriptStringImpl, InventoryItem_GetTextProperty, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_InventoryItem_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -207,7 +207,7 @@ RuntimeScriptValue Sc_InventoryItem_GetID(void *self, const RuntimeScriptValue *
 
 // const char* (ScriptInvItem *invitem)
 RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptInvItem, const char, myScriptStringImpl, InventoryItem_GetName_New);
+	API_CONST_OBJCALL_OBJ(ScriptInvItem, const char, _GP(myScriptStringImpl), InventoryItem_GetName_New);
 }
 
 

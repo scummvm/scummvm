@@ -27,11 +27,12 @@
 
 namespace AGS3 {
 
+// TODO: Check whether these should be made int32
 // 64 bit: Struct size must be 8 byte for scripts to work
 struct ScriptObject {
-	int id;
+	int id = 0;
 	//RoomObject *obj;
-	int __padding;
+	int __padding = 0;
 };
 
 } // namespace AGS3

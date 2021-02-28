@@ -24,6 +24,7 @@
 #include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/dialogtopic.h"
 #include "ags/shared/ac/gamestructdefines.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -44,7 +45,7 @@ int CCDialog::Serialize(const char *address, char *buffer, int bufsize) {
 void CCDialog::Unserialize(int index, const char *serializedData, int dataSize) {
 	StartUnserialize(serializedData, dataSize);
 	int num = UnserializeInt();
-	ccRegisterUnserializedObject(index, &scrDialog[num], this);
+	ccRegisterUnserializedObject(index, &_G(scrDialog)[num], this);
 }
 
 } // namespace AGS3

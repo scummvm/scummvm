@@ -52,7 +52,7 @@ extern int displayed_room;
 extern int in_enters_screen;
 extern int in_leaves_screen;
 extern int in_inv_screen, inv_screen_newroom;
-extern MoveList *mls;
+
 extern int gs_to_newroom;
 
 
@@ -130,7 +130,7 @@ void NewRoom(int nrnum) {
 		if ((playerchar->walking > 0) && (playerchar->walking < TURNING_AROUND)) {
 			// nasty hack - make sure it doesn't move the character
 			// to a walkable area
-			mls[playerchar->walking].direct = 1;
+			_G(mls)[playerchar->walking].direct = 1;
 			StopMoving(_GP(game).playercharacter);
 		}
 	} else if (in_graph_script)

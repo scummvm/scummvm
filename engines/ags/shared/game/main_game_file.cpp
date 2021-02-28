@@ -219,7 +219,7 @@ void ReadViews(GameSetupStruct &game, ViewStruct *&views, Stream *in, GameDataVe
 	views = (ViewStruct *)calloc(sizeof(ViewStruct) * count, 1);
 	if (data_ver > kGameVersion_272) { // 3.x views
 		for (int i = 0; i < _GP(game).numviews; ++i) {
-			views[i].ReadFromFile(in);
+			_G(views)[i].ReadFromFile(in);
 		}
 	} else { // 2.x views
 		std::vector<ViewStruct272> oldv;
@@ -694,10 +694,10 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 
 	ReadDialogs(ents.Dialogs, ents.OldDialogScripts, ents.OldDialogSources, ents.OldSpeechLines,
 		in, data_ver, _GP(game).numdialog);
-	HError err2 = GUI::ReadGUI(guis, in);
+	HError err2 = GUI::ReadGUI(_GP(guis), in);
 	if (!err2)
 		return new MainGameFileError(kMGFErr_GameEntityFailed, err2);
-	_GP(game).numgui = guis.size();
+	_GP(game).numgui = _GP(guis).size();
 
 	if (data_ver >= kGameVersion_260) {
 		err = ReadPlugins(ents.PluginInfos, in);

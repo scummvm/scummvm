@@ -29,7 +29,6 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-
 #include "ags/engine/ac/cdaudio.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/dynamicsprite.h"
@@ -79,12 +78,10 @@
 #include "ags/engine/media/video/video.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/engine/media/audio/audio_system.h"
-
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern ScriptString myScriptStringImpl;
 
 // void (char*texx, ...)
 RuntimeScriptValue Sc_sc_AbortGame(const RuntimeScriptValue *params, int32_t param_count) {
@@ -691,7 +688,7 @@ RuntimeScriptValue Sc_sc_GetTime(const RuntimeScriptValue *params, int32_t param
 
 // char * (const char *text)
 RuntimeScriptValue Sc_get_translation(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, myScriptStringImpl, get_translation, const char);
+	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), get_translation, const char);
 }
 
 // int  (char* buffer)
@@ -872,7 +869,7 @@ RuntimeScriptValue Sc_ListBoxDirList(const RuntimeScriptValue *params, int32_t p
 
 // char* (int guin, int objn, int item, char*buffer)
 RuntimeScriptValue Sc_ListBoxGetItemText(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT3_POBJ(char, myScriptStringImpl, ListBoxGetItemText, char);
+	API_SCALL_OBJ_PINT3_POBJ(char, _GP(myScriptStringImpl), ListBoxGetItemText, char);
 }
 
 // int (int guin, int objn)

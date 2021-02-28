@@ -24,6 +24,7 @@
 #include "ags/engine/ac/dynobj/scriptgui.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guiobject.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -48,7 +49,7 @@ void CCGUIObject::Unserialize(int index, const char *serializedData, int dataSiz
 	StartUnserialize(serializedData, dataSize);
 	int guinum = UnserializeInt();
 	int objnum = UnserializeInt();
-	ccRegisterUnserializedObject(index, guis[guinum].GetControl(objnum), this);
+	ccRegisterUnserializedObject(index, _GP(guis)[guinum].GetControl(objnum), this);
 }
 
 } // namespace AGS3

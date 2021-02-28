@@ -96,7 +96,7 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // void (GUILabel *labl, char *buffer)
 RuntimeScriptValue Sc_Label_GetText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -129,7 +129,7 @@ RuntimeScriptValue Sc_Label_SetFont(void *self, const RuntimeScriptValue *params
 
 // const char* (GUILabel *labl)
 RuntimeScriptValue Sc_Label_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(GUILabel, const char, myScriptStringImpl, Label_GetText_New);
+	API_CONST_OBJCALL_OBJ(GUILabel, const char, _GP(myScriptStringImpl), Label_GetText_New);
 }
 
 // int (GUILabel *labl)

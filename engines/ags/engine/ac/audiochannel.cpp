@@ -40,7 +40,7 @@ using namespace AGS::Shared;
 
 
 
-extern CCAudioClip ccDynamicAudioClip;
+
 
 int AudioChannel_GetID(ScriptAudioChannel *channel) {
 	return channel->id;
@@ -229,7 +229,7 @@ RuntimeScriptValue Sc_AudioChannel_SetPanning(void *self, const RuntimeScriptVal
 
 // ScriptAudioClip* | ScriptAudioChannel *channel
 RuntimeScriptValue Sc_AudioChannel_GetPlayingClip(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(ScriptAudioChannel, ScriptAudioClip, ccDynamicAudioClip, AudioChannel_GetPlayingClip);
+	API_OBJCALL_OBJ(ScriptAudioChannel, ScriptAudioClip, _GP(ccDynamicAudioClip), AudioChannel_GetPlayingClip);
 }
 
 // int | ScriptAudioChannel *channel

@@ -49,7 +49,7 @@ using namespace AGS::Engine;
 
 extern int displayed_room;
 extern int face_talking;
-extern ViewStruct *views;
+
 extern CharacterExtras *charextra;
 extern IGraphicsDriver *gfxDriver;
 
@@ -238,7 +238,7 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 		int charid = over.y;
 
 		auto view = FindNearestViewport(charid);
-		const int charpic = views[_GP(game).chars[charid].view].loops[_GP(game).chars[charid].loop].frames[0].pic;
+		const int charpic = _G(views)[_GP(game).chars[charid].view].loops[_GP(game).chars[charid].loop].frames[0].pic;
 		const int height = (charextra[charid].height < 1) ? _GP(game).SpriteInfos[charpic].Height : charextra[charid].height;
 		Point screenpt = view->RoomToScreen(
 			data_to_game_coord(_GP(game).chars[charid].x),

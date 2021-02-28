@@ -25,6 +25,7 @@
 
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
+#include "ags/shared/gui/guimain.h"
 #include "ags/lib/std/set.h"
 
 namespace AGS3 {
@@ -41,10 +42,32 @@ class RoomStruct;
 } // namespace Shared
 } // namespace AGS
 
+struct CCAudioChannel;
+struct CCAudioClip;
+struct CCCharacter;
+struct CCDialog;
+struct CCGUI;
+struct CCGUIObject;
+struct CCHotspot;
+struct CCInventory;
+struct CCObject;
+struct CCRegion;
 struct IAGSEditorDebugger;
 struct GameSetupStruct;
 struct GameState;
 struct RoomStatus;
+struct ScriptString;
+struct ScriptObject;
+struct ScriptGUI;
+struct ScriptHotspot;
+struct ScriptRegion;
+struct ScriptInvItem;
+struct ScriptDialog;
+struct ViewStruct;
+struct CharacterCache;
+struct ObjectCache;
+struct MoveList;
+
 class SpriteCache;
 
 class Globals {
@@ -84,6 +107,35 @@ public:
 	SpriteCache *_spriteset;
 	AGS::Shared::RoomStruct *_thisroom;
 	RoomStatus *_troom; // used for non-saveable rooms, eg. intro
+
+	std::vector<AGS::Shared::GUIMain> *_guis;
+	CCGUIObject *_ccDynamicGUIObject;
+	CCCharacter *_ccDynamicCharacter;
+	CCHotspot *_ccDynamicHotspot;
+	CCRegion *_ccDynamicRegion;
+	CCInventory *_ccDynamicInv;
+	CCGUI *_ccDynamicGUI;
+	CCObject *_ccDynamicObject;
+	CCDialog *_ccDynamicDialog;
+	CCAudioClip *_ccDynamicAudioClip;
+	CCAudioChannel *_ccDynamicAudio;
+	ScriptString *_myScriptStringImpl;
+
+	// TODO: IMPORTANT!!
+	// we cannot simply replace these arrays with vectors, or other C++ containers,
+	// until we implement safe management of such containers in script exports
+	// system. Noteably we would need an alternate to StaticArray class to track
+	// access to their elements.
+	ScriptObject *_scrObj;
+	ScriptGUI *_scrGui = nullptr;
+	ScriptHotspot *_scrHotspot;
+	ScriptRegion *_scrRegion;
+	ScriptInvItem *_scrInv;
+	ScriptDialog *_scrDialog = nullptr;
+	ViewStruct *_views = nullptr;
+	CharacterCache *_charcache = nullptr;
+	ObjectCache *_objcache;
+	MoveList *_mls = nullptr;
 
 	 /**@}*/
 

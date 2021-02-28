@@ -92,19 +92,19 @@ extern int displayed_room;
 
 extern RoomStatus *croom;
 
-extern ViewStruct *views;
+
 extern int game_paused;
 extern GameSetup usetup;
 extern int inside_script;
 extern ccInstance *gameinst, *roominst;
-extern CharacterCache *charcache;
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
-extern MoveList *mls;
+
+
+
 extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
 extern RuntimeScriptValue GlobalReturnValue;
-extern ScriptString myScriptStringImpl;
+
 
 // **************** PLUGIN IMPLEMENTATION ****************
 
@@ -503,12 +503,12 @@ AGSViewFrame *IAGSEngine::GetViewFrame(int32 view, int32 loop, int32 frame) {
 	view--;
 	if ((view < 0) || (view >= _GP(game).numviews))
 		quit("!IAGSEngine::GetViewFrame: invalid view");
-	if ((loop < 0) || (loop >= views[view].numLoops))
+	if ((loop < 0) || (loop >= _G(views)[view].numLoops))
 		quit("!IAGSEngine::GetViewFrame: invalid loop");
-	if ((frame < 0) || (frame >= views[view].loops[loop].numFrames))
+	if ((frame < 0) || (frame >= _G(views)[view].loops[loop].numFrames))
 		return nullptr;
 
-	return (AGSViewFrame *)&views[view].loops[loop].frames[frame];
+	return (AGSViewFrame *)&_G(views)[view].loops[loop].frames[frame];
 }
 
 int IAGSEngine::GetRawPixelColor(int32 color) {
@@ -693,18 +693,18 @@ void IAGSEngine::NotifySpriteUpdated(int32 slot) {
 	int ff;
 	// wipe the character cache when we change rooms
 	for (ff = 0; ff < _GP(game).numcharacters; ff++) {
-		if ((charcache[ff].inUse) && (charcache[ff].sppic == slot)) {
-			delete charcache[ff].image;
-			charcache[ff].image = nullptr;
-			charcache[ff].inUse = 0;
+		if ((_G(charcache)[ff].inUse) && (_G(charcache)[ff].sppic == slot)) {
+			delete _G(charcache)[ff].image;
+			_G(charcache)[ff].image = nullptr;
+			_G(charcache)[ff].inUse = 0;
 		}
 	}
 
 	// clear the object cache
 	for (ff = 0; ff < MAX_ROOM_OBJECTS; ff++) {
-		if ((objcache[ff].image != nullptr) && (objcache[ff].sppic == slot)) {
-			delete objcache[ff].image;
-			objcache[ff].image = nullptr;
+		if ((_G(objcache)[ff].image != nullptr) && (_G(objcache)[ff].sppic == slot)) {
+			delete _G(objcache)[ff].image;
+			_G(objcache)[ff].image = nullptr;
 		}
 	}
 }
@@ -779,7 +779,7 @@ const char *IAGSEngine::CreateScriptString(const char *fromText) {
 	const char *string = CreateNewScriptString(fromText);
 	// Should be still standard dynamic object, because not managed by plugin
 	// TODO: handle loss of const better
-	GlobalReturnValue.SetDynamicObject(const_cast<char *>(string), &myScriptStringImpl);
+	GlobalReturnValue.SetDynamicObject(const_cast<char *>(string), &_GP(myScriptStringImpl));
 	return string;
 }
 
@@ -801,21 +801,21 @@ void IAGSEngine::SimulateMouseClick(int32 button) {
 }
 
 int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {
-	return mls[pathId % TURNING_AROUND].numstage;
+	return _G(mls)[pathId % TURNING_AROUND].numstage;
 }
 
 int IAGSEngine::GetMovementPathLastWaypoint(int32 pathId) {
-	return mls[pathId % TURNING_AROUND].onstage;
+	return _G(mls)[pathId % TURNING_AROUND].onstage;
 }
 
 void IAGSEngine::GetMovementPathWaypointLocation(int32 pathId, int32 waypoint, int32 *x, int32 *y) {
-	*x = (mls[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
-	*y = (mls[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
+	*x = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
+	*y = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
 }
 
 void IAGSEngine::GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int32 *xSpeed, int32 *ySpeed) {
-	*xSpeed = mls[pathId % TURNING_AROUND].xpermove[waypoint];
-	*ySpeed = mls[pathId % TURNING_AROUND].ypermove[waypoint];
+	*xSpeed = _G(mls)[pathId % TURNING_AROUND].xpermove[waypoint];
+	*ySpeed = _G(mls)[pathId % TURNING_AROUND].ypermove[waypoint];
 }
 
 int IAGSEngine::IsRunningUnderDebugger() {

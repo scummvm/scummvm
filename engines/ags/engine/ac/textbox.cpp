@@ -91,7 +91,7 @@ void TextBox_SetShowBorder(GUITextBox *guit, bool on) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // void (GUITextBox *texbox, char *buffer)
 RuntimeScriptValue Sc_TextBox_GetText(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -124,7 +124,7 @@ RuntimeScriptValue Sc_TextBox_SetShowBorder(void *self, const RuntimeScriptValue
 
 // const char* (GUITextBox *texbox)
 RuntimeScriptValue Sc_TextBox_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(GUITextBox, const char, myScriptStringImpl, TextBox_GetText_New);
+	API_CONST_OBJCALL_OBJ(GUITextBox, const char, _GP(myScriptStringImpl), TextBox_GetText_New);
 }
 
 // int (GUITextBox *guit)

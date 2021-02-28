@@ -28,22 +28,19 @@
 //=============================================================================
 
 #include "ags/engine/ac/route_finder_impl_legacy.h"
-
-//include <string.h>
-//include <math.h>
-
 #include "ags/shared/ac/common.h"   // quit()
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/ac/movelist.h"     // MoveList
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 extern void update_polled_stuff_if_runtime();
 
-extern MoveList *mls;
+
 
 using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
@@ -746,7 +743,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa) {
 
 int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
 	assert(onscreen != nullptr);
-	assert(mls != nullptr);
+	assert(_G(mls) != nullptr);
 	assert(pathbackx != nullptr);
 	assert(pathbacky != nullptr);
 
@@ -858,23 +855,23 @@ stage_again:
 		AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
 #endif
 		int mlist = movlst;
-		mls[mlist].numstage = numstages;
-		memcpy(&mls[mlist].pos[0], &reallyneed[0], sizeof(int32_t) * numstages);
+		_G(mls)[mlist].numstage = numstages;
+		memcpy(&_G(mls)[mlist].pos[0], &reallyneed[0], sizeof(int32_t) * numstages);
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif
 
 		for (aaa = 0; aaa < numstages - 1; aaa++) {
-			calculate_move_stage(&mls[mlist], aaa);
+			calculate_move_stage(&_G(mls)[mlist], aaa);
 		}
 
-		mls[mlist].fromx = orisrcx;
-		mls[mlist].fromy = orisrcy;
-		mls[mlist].onstage = 0;
-		mls[mlist].onpart = 0;
-		mls[mlist].doneflag = 0;
-		mls[mlist].lastx = -1;
-		mls[mlist].lasty = -1;
+		_G(mls)[mlist].fromx = orisrcx;
+		_G(mls)[mlist].fromy = orisrcy;
+		_G(mls)[mlist].onstage = 0;
+		_G(mls)[mlist].onpart = 0;
+		_G(mls)[mlist].doneflag = 0;
+		_G(mls)[mlist].lastx = -1;
+		_G(mls)[mlist].lasty = -1;
 #ifdef DEBUG_PATHFINDER
 		// getch();
 #endif

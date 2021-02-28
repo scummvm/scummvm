@@ -167,38 +167,6 @@ int new_room_loop = SCR_NO_VALUE;
 // initially size 1, this will be increased by the initFile function
 int proper_exit = 0, our_eip = 0;
 
-std::vector<GUIMain> guis;
-
-CCGUIObject ccDynamicGUIObject;
-CCCharacter ccDynamicCharacter;
-CCHotspot   ccDynamicHotspot;
-CCRegion    ccDynamicRegion;
-CCInventory ccDynamicInv;
-CCGUI       ccDynamicGUI;
-CCObject    ccDynamicObject;
-CCDialog    ccDynamicDialog;
-CCAudioClip ccDynamicAudioClip;
-CCAudioChannel ccDynamicAudio;
-ScriptString myScriptStringImpl;
-// TODO: IMPORTANT!!
-// we cannot simply replace these arrays with vectors, or other C++ containers,
-// until we implement safe management of such containers in script exports
-// system. Noteably we would need an alternate to StaticArray class to track
-// access to their elements.
-ScriptObject scrObj[MAX_ROOM_OBJECTS];
-ScriptGUI    *scrGui = nullptr;
-ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
-ScriptRegion scrRegion[MAX_ROOM_REGIONS];
-ScriptInvItem scrInv[MAX_INV];
-ScriptDialog *scrDialog;
-
-ViewStruct *views = nullptr;
-
-CharacterCache *charcache = nullptr;
-ObjectCache objcache[MAX_ROOM_OBJECTS];
-
-MoveList *mls = nullptr;
-
 //=============================================================================
 
 String saveGameDirectory = SAVE_FOLDER_PREFIX;
@@ -529,7 +497,7 @@ void unload_game_file() {
 
 	characterScriptObjNames.clear();
 	free(charextra);
-	free(mls);
+	free(_G(mls));
 	free(actsps);
 	free(actspsbmp);
 	free(actspswb);
@@ -574,11 +542,11 @@ void unload_game_file() {
 	runDialogOptionRepExecFunc.moduleHasFunction.resize(0);
 	numScriptModules = 0;
 
-	free(views);
-	views = nullptr;
+	free(_G(views));
+	_G(views) = nullptr;
 
-	free(charcache);
-	charcache = nullptr;
+	free(_G(charcache));
+	_G(charcache) = nullptr;
 
 	if (splipsync != nullptr) {
 		for (int i = 0; i < numLipLines; ++i) {
@@ -598,8 +566,8 @@ void unload_game_file() {
 	}
 	free(dialog);
 	dialog = nullptr;
-	delete[] scrDialog;
-	scrDialog = nullptr;
+	delete[] _G(scrDialog);
+	_G(scrDialog) = nullptr;
 
 	for (int i = 0; i < _GP(game).numgui; ++i) {
 		free(guibg[i]);
@@ -608,8 +576,8 @@ void unload_game_file() {
 
 	guiScriptObjNames.clear();
 	free(guibg);
-	guis.clear();
-	free(scrGui);
+	_GP(guis).clear();
+	free(_G(scrGui));
 
 	pl_stop_plugins();
 	ccRemoveAllSymbols();
@@ -691,33 +659,33 @@ int Game_GetLoopCountForView(int viewNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
 
-	return views[viewNumber - 1].numLoops;
+	return _G(views)[viewNumber - 1].numLoops;
 }
 
 int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
 
-	return (views[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
+	return (_G(views)[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
 }
 
 int Game_GetFrameCountForLoop(int viewNumber, int loopNumber) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
 
-	return views[viewNumber - 1].loops[loopNumber].numFrames;
+	return _G(views)[viewNumber - 1].loops[loopNumber].numFrames;
 }
 
 ScriptViewFrame *Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
 	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
 		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
+	if ((loopNumber < 0) || (loopNumber >= _G(views)[viewNumber - 1].numLoops))
 		quit("!GetGameParameter: invalid loop specified");
-	if ((frame < 0) || (frame >= views[viewNumber - 1].loops[loopNumber].numFrames))
+	if ((frame < 0) || (frame >= _G(views)[viewNumber - 1].loops[loopNumber].numFrames))
 		quit("!GetGameParameter: invalid frame specified");
 
 	ScriptViewFrame *sdt = new ScriptViewFrame(viewNumber - 1, loopNumber, frame);
@@ -1195,7 +1163,7 @@ void restore_game_play(Stream *in, RestoredData &r_data) {
 void ReadMoveList_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS + 1; ++i) {
-		mls[i].ReadFromFile_Legacy(&align_s);
+		_G(mls)[i].ReadFromFile_Legacy(&align_s);
 
 		align_s.Reset();
 	}
@@ -1240,10 +1208,10 @@ void ReadAnimatedButtons_Aligned(Stream *in) {
 }
 
 HSaveError restore_game_gui(Stream *in, int numGuisWas) {
-	HError err = GUI::ReadGUI(guis, in, true);
+	HError err = GUI::ReadGUI(_GP(guis), in, true);
 	if (!err)
 		return new SavegameError(kSvgErr_GameObjectInitFailed, err);
-	_GP(game).numgui = guis.size();
+	_GP(game).numgui = _GP(guis).size();
 
 	if (numGuisWas != _GP(game).numgui) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of GUI.");
@@ -1363,10 +1331,10 @@ HSaveError restore_game_views(Stream *in) {
 	}
 
 	for (int bb = 0; bb < _GP(game).numviews; bb++) {
-		for (int cc = 0; cc < views[bb].numLoops; cc++) {
-			for (int dd = 0; dd < views[bb].loops[cc].numFrames; dd++) {
-				views[bb].loops[cc].frames[dd].sound = in->ReadInt32();
-				views[bb].loops[cc].frames[dd].pic = in->ReadInt32();
+		for (int cc = 0; cc < _G(views)[bb].numLoops; cc++) {
+			for (int dd = 0; dd < _G(views)[bb].loops[cc].numFrames; dd++) {
+				_G(views)[bb].loops[cc].frames[dd].sound = in->ReadInt32();
+				_G(views)[bb].loops[cc].frames[dd].pic = in->ReadInt32();
 			}
 		}
 	}
@@ -1920,9 +1888,9 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize) {
 	if (strcmp(objectType, "AudioChannel") == 0) {
-		ccDynamicAudio.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicAudio).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "AudioClip") == 0) {
-		ccDynamicAudioClip.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicAudioClip).Unserialize(index, serializedData, dataSize);
 	} else {
 		return false;
 	}
@@ -1977,7 +1945,7 @@ RuntimeScriptValue Sc_Game_GetFrameCountForLoop(const RuntimeScriptValue *params
 
 // const char* (int x, int y)
 RuntimeScriptValue Sc_Game_GetLocationName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT2(const char, myScriptStringImpl, Game_GetLocationName);
+	API_CONST_SCALL_OBJ_PINT2(const char, _GP(myScriptStringImpl), Game_GetLocationName);
 }
 
 // int (int viewNumber)
@@ -1997,7 +1965,7 @@ RuntimeScriptValue Sc_Game_GetRunNextSettingForLoop(const RuntimeScriptValue *pa
 
 // const char* (int slnum)
 RuntimeScriptValue Sc_Game_GetSaveSlotDescription(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetSaveSlotDescription);
+	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetSaveSlotDescription);
 }
 
 // ScriptViewFrame* (int viewNumber, int loopNumber, int frame)
@@ -2007,7 +1975,7 @@ RuntimeScriptValue Sc_Game_GetViewFrame(const RuntimeScriptValue *params, int32_
 
 // const char* (const char *msg)
 RuntimeScriptValue Sc_Game_InputBox(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_POBJ(const char, myScriptStringImpl, Game_InputBox, const char);
+	API_CONST_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), Game_InputBox, const char);
 }
 
 // int (const char *newFolder)
@@ -2032,7 +2000,7 @@ RuntimeScriptValue Sc_Game_GetDialogCount(const RuntimeScriptValue *params, int3
 
 // const char *()
 RuntimeScriptValue Sc_Game_GetFileName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetFileName);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetFileName);
 }
 
 // int ()
@@ -2042,12 +2010,12 @@ RuntimeScriptValue Sc_Game_GetFontCount(const RuntimeScriptValue *params, int32_
 
 // const char* (int index)
 RuntimeScriptValue Sc_Game_GetGlobalMessages(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetGlobalMessages);
+	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalMessages);
 }
 
 // const char* (int index)
 RuntimeScriptValue Sc_Game_GetGlobalStrings(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ_PINT(const char, myScriptStringImpl, Game_GetGlobalStrings);
+	API_CONST_SCALL_OBJ_PINT(const char, _GP(myScriptStringImpl), Game_GetGlobalStrings);
 }
 
 // void  (int index, char *newval);
@@ -2097,7 +2065,7 @@ RuntimeScriptValue Sc_Game_GetMouseCursorCount(const RuntimeScriptValue *params,
 
 // const char *()
 RuntimeScriptValue Sc_Game_GetName(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetName);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetName);
 }
 
 // void (const char *newName)
@@ -2152,7 +2120,7 @@ RuntimeScriptValue Sc_Game_SetTextReadingSpeed(const RuntimeScriptValue *params,
 
 // const char* ()
 RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, Game_GetTranslationFilename);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetTranslationFilename);
 }
 
 // int ()
@@ -2170,7 +2138,7 @@ RuntimeScriptValue Sc_Game_GetAudioClipCount(const RuntimeScriptValue *params, i
 }
 
 RuntimeScriptValue Sc_Game_GetAudioClip(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT(ScriptAudioClip, ccDynamicAudioClip, Game_GetAudioClip);
+	API_SCALL_OBJ_PINT(ScriptAudioClip, _GP(ccDynamicAudioClip), Game_GetAudioClip);
 }
 
 RuntimeScriptValue Sc_Game_IsPluginLoaded(const RuntimeScriptValue *params, int32_t param_count) {
@@ -2178,7 +2146,7 @@ RuntimeScriptValue Sc_Game_IsPluginLoaded(const RuntimeScriptValue *params, int3
 }
 
 RuntimeScriptValue Sc_Game_PlayVoiceClip(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_POBJ_PINT_PBOOL(ScriptAudioChannel, ccDynamicAudio, PlayVoiceClip, CharacterInfo);
+	API_SCALL_OBJ_POBJ_PINT_PBOOL(ScriptAudioChannel, _GP(ccDynamicAudio), PlayVoiceClip, CharacterInfo);
 }
 
 RuntimeScriptValue Sc_Game_GetCamera(const RuntimeScriptValue *params, int32_t param_count) {

@@ -54,9 +54,9 @@ using namespace AGS::Shared;
 
 extern RoomStatus *croom;
 extern RoomObject *objs;
-extern ViewStruct *views;
 
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
+
+
 
 extern CharacterInfo *playerchar;
 extern int displayed_room;
@@ -89,7 +89,7 @@ int GetObjectIDAtRoom(int roomx, int roomy) {
 		int spWidth = game_to_data_coord(objs[aa].get_width());
 		int spHeight = game_to_data_coord(objs[aa].get_height());
 		if (objs[aa].view >= 0)
-			isflipped = views[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].flags & VFLG_FLIPSPRITE;
+			isflipped = _G(views)[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].flags & VFLG_FLIPSPRITE;
 
 		Bitmap *theImage = GetObjectImage(aa, &isflipped);
 
@@ -150,36 +150,36 @@ void SetObjectView(int obn, int vii) {
 
 	objs[obn].view = vii;
 	objs[obn].frame = 0;
-	if (objs[obn].loop >= views[vii].numLoops)
+	if (objs[obn].loop >= _G(views)[vii].numLoops)
 		objs[obn].loop = 0;
 	objs[obn].cycling = 0;
-	objs[obn].num = views[vii].loops[0].frames[0].pic;
+	objs[obn].num = _G(views)[vii].loops[0].frames[0].pic;
 }
 
 void SetObjectFrame(int obn, int viw, int lop, int fra) {
 	if (!is_valid_object(obn)) quit("!SetObjectFrame: invalid object number specified");
 	viw--;
 	if (viw < 0 || viw >= _GP(game).numviews) quitprintf("!SetObjectFrame: invalid view number used (%d, range is 0 - %d)", viw, _GP(game).numviews - 1);
-	if (lop < 0 || lop >= views[viw].numLoops) quitprintf("!SetObjectFrame: invalid loop number used (%d, range is 0 - %d)", lop, views[viw].numLoops - 1);
+	if (lop < 0 || lop >= _G(views)[viw].numLoops) quitprintf("!SetObjectFrame: invalid loop number used (%d, range is 0 - %d)", lop, _G(views)[viw].numLoops - 1);
 	// AGS < 3.5.1 let user to pass literally any positive invalid frame value by silently reassigning it to zero...
 	if (loaded_game_file_version < kGameVersion_351) {
-		if (fra >= views[viw].loops[lop].numFrames) {
-			debug_script_warn("SetObjectFrame: frame index out of range (%d, must be 0 - %d), set to 0", fra, views[viw].loops[lop].numFrames - 1);
+		if (fra >= _G(views)[viw].loops[lop].numFrames) {
+			debug_script_warn("SetObjectFrame: frame index out of range (%d, must be 0 - %d), set to 0", fra, _G(views)[viw].loops[lop].numFrames - 1);
 			fra = 0;
 		}
 	}
-	if (fra < 0 || fra >= views[viw].loops[lop].numFrames) quitprintf("!SetObjectFrame: invalid frame number used (%d, range is 0 - %d)", fra, views[viw].loops[lop].numFrames - 1);
+	if (fra < 0 || fra >= _G(views)[viw].loops[lop].numFrames) quitprintf("!SetObjectFrame: invalid frame number used (%d, range is 0 - %d)", fra, _G(views)[viw].loops[lop].numFrames - 1);
 	// AGS >= 3.2.0 do not let assign an empty loop
 	// NOTE: pre-3.2.0 games are converting views from ViewStruct272 struct, always has at least 1 frame
 	if (loaded_game_file_version >= kGameVersion_320) {
-		if (views[viw].loops[lop].numFrames == 0)
+		if (_G(views)[viw].loops[lop].numFrames == 0)
 			quit("!SetObjectFrame: specified loop has no frames");
 	}
 	objs[obn].view = viw;
 	objs[obn].loop = lop;
 	objs[obn].frame = fra;
 	objs[obn].cycling = 0;
-	objs[obn].num = views[viw].loops[lop].frames[fra].pic;
+	objs[obn].num = _G(views)[viw].loops[lop].frames[fra].pic;
 	CheckViewFrame(viw, objs[obn].loop, objs[obn].frame);
 }
 
@@ -197,7 +197,7 @@ void SetObjectBaseline(int obn, int basel) {
 	if (!is_valid_object(obn)) quit("!SetObjectBaseline: invalid object number specified");
 	// baseline has changed, invalidate the cache
 	if (objs[obn].baseline != basel) {
-		objcache[obn].ywas = -9999;
+		_G(objcache)[obn].ywas = -9999;
 		objs[obn].baseline = basel;
 	}
 }
@@ -220,15 +220,15 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 		quit("!AnimateObject: invalid object number specified");
 	if (objs[obn].view < 0)
 		quit("!AnimateObject: object has not been assigned a view");
-	if (loopn < 0 || loopn >= views[objs[obn].view].numLoops)
+	if (loopn < 0 || loopn >= _G(views)[objs[obn].view].numLoops)
 		quit("!AnimateObject: invalid loop number specified");
-	if (sframe < 0 || sframe >= views[objs[obn].view].loops[loopn].numFrames)
+	if (sframe < 0 || sframe >= _G(views)[objs[obn].view].loops[loopn].numFrames)
 		quit("!AnimateObject: invalid starting frame number specified");
 	if ((direction < 0) || (direction > 1))
 		quit("!AnimateObjectEx: invalid direction");
 	if ((rept < 0) || (rept > 2))
 		quit("!AnimateObjectEx: invalid repeat value");
-	if (views[objs[obn].view].loops[loopn].numFrames < 1)
+	if (_G(views)[objs[obn].view].loops[loopn].numFrames < 1)
 		quit("!AnimateObject: no frames in the specified view loop");
 
 	debug_script_log("Obj %d start anim view %d loop %d, speed %d, repeat %d, frame %d", obn, objs[obn].view + 1, loopn, spdd, rept, sframe);
@@ -239,13 +239,13 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 	if (direction) {
 		sframe--;
 		if (sframe < 0)
-			sframe = views[objs[obn].view].loops[loopn].numFrames - (-sframe);
+			sframe = _G(views)[objs[obn].view].loops[loopn].numFrames - (-sframe);
 	}
 	objs[obn].frame = sframe;
 
 	objs[obn].overall_speed = spdd;
-	objs[obn].wait = spdd + views[objs[obn].view].loops[loopn].frames[objs[obn].frame].speed;
-	objs[obn].num = views[objs[obn].view].loops[loopn].frames[objs[obn].frame].pic;
+	objs[obn].wait = spdd + _G(views)[objs[obn].view].loops[loopn].frames[objs[obn].frame].speed;
+	objs[obn].num = _G(views)[objs[obn].view].loops[loopn].frames[objs[obn].frame].pic;
 	CheckViewFrame(objs[obn].view, loopn, objs[obn].frame);
 
 	if (blocking)
@@ -399,7 +399,7 @@ void SetObjectIgnoreWalkbehinds(int cha, int clik) {
 	if (clik)
 		objs[cha].flags |= OBJF_NOWALKBEHINDS;
 	// clear the cache
-	objcache[cha].ywas = -9999;
+	_G(objcache)[cha].ywas = -9999;
 }
 
 void RunObjectInteraction(int aa, int mood) {

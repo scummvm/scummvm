@@ -26,8 +26,8 @@
 namespace AGS3 {
 
 struct ScriptInvItem {
-	int id;
-	int reserved;
+	int id = 0;
+	int reserved = 0;
 };
 
 } // namespace AGS3

@@ -40,17 +40,12 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
-
 extern RoomStatus *croom;
-
 extern COLOR_MAP maincoltable;
 extern color palette[256];
-extern CCRegion ccDynamicRegion;
-
 
 ScriptRegion *GetRegionAtRoom(int xx, int yy) {
-	return &scrRegion[GetRegionIDAtRoom(xx, yy)];
+	return &_G(scrRegion)[GetRegionIDAtRoom(xx, yy)];
 }
 
 ScriptRegion *GetRegionAtScreen(int x, int y) {
@@ -142,11 +137,11 @@ void generate_light_table() {
 
 // ScriptRegion *(int xx, int yy)
 RuntimeScriptValue Sc_GetRegionAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptRegion, ccDynamicRegion, GetRegionAtRoom);
+	API_SCALL_OBJ_PINT2(ScriptRegion, _GP(ccDynamicRegion), GetRegionAtRoom);
 }
 
 RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptRegion, ccDynamicRegion, GetRegionAtScreen);
+	API_SCALL_OBJ_PINT2(ScriptRegion, _GP(ccDynamicRegion), GetRegionAtScreen);
 }
 
 RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {

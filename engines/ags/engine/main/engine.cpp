@@ -89,8 +89,8 @@ extern GameSetup usetup;
 extern int proper_exit;
 extern char pexbuf[STD_BUFFER_SIZE];
 
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
-extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
+
+
 extern int displayed_room;
 extern int eip_guinum;
 extern int eip_guiobj;
@@ -104,7 +104,7 @@ extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
-extern ViewStruct *views;
+
 ResourcePaths ResPaths;
 
 t_engine_pre_init_callback engine_pre_init_callback = nullptr;
@@ -676,7 +676,7 @@ void engine_init_game_settings() {
 		precache_view(playerchar->view);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++)
-		objcache[ee].image = nullptr;
+		_G(objcache)[ee].image = nullptr;
 
 	/*  dummygui.guiId = -1;
 	dummyguicontrol.guin = -1;
@@ -687,9 +687,9 @@ void engine_init_game_settings() {
 	//init_language_text(_GP(game).langcodes[0]);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++) {
-		scrObj[ee].id = ee;
+		_G(scrObj)[ee].id = ee;
 		// 64 bit: Using the id instead
-		// scrObj[ee].obj = NULL;
+		// _G(scrObj)[ee].obj = NULL;
 	}
 
 	for (ee = 0; ee < _GP(game).numcharacters; ee++) {
@@ -709,7 +709,7 @@ void engine_init_game_settings() {
 			// set initial loop to 0
 			_GP(game).chars[ee].loop = 0;
 			// or to 1 if they don't have up/down frames
-			if (views[_GP(game).chars[ee].view].loops[0].numFrames < 1)
+			if (_G(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
 				_GP(game).chars[ee].loop = 1;
 		}
 		charextra[ee].process_idle_this_time = 0;

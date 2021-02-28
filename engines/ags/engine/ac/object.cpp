@@ -55,17 +55,11 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
 extern RoomStatus *croom;
 extern RoomObject *objs;
-extern ViewStruct *views;
-
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
-extern MoveList *mls;
 
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
-extern CCObject ccDynamicObject;
 
 
 int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
@@ -76,14 +70,14 @@ ScriptObject *GetObjectAtScreen(int xx, int yy) {
 	int hsnum = GetObjectIDAtScreen(xx, yy);
 	if (hsnum < 0)
 		return nullptr;
-	return &scrObj[hsnum];
+	return &_G(scrObj)[hsnum];
 }
 
 ScriptObject *GetObjectAtRoom(int x, int y) {
 	int hsnum = GetObjectIDAtRoom(x, y);
 	if (hsnum < 0)
 		return nullptr;
-	return &scrObj[hsnum];
+	return &_G(scrObj)[hsnum];
 }
 
 AGS_INLINE int is_valid_object(int obtest) {
@@ -107,8 +101,8 @@ void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
 		if (frame < 0) frame = obj.frame;
 		const int vidx = view - 1;
 		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
-		loop = Math::Clamp(loop, 0, (int)views[vidx].numLoops - 1);
-		frame = Math::Clamp(frame, 0, (int)views[vidx].loops[loop].numFrames - 1);
+		loop = Math::Clamp(loop, 0, (int)_G(views)[vidx].numLoops - 1);
+		frame = Math::Clamp(frame, 0, (int)_G(views)[vidx].loops[loop].numFrames - 1);
 	}
 	SetObjectFrame(objj->id, view, loop, frame);
 }
@@ -337,7 +331,7 @@ void Object_SetManualScaling(ScriptObject *objj, bool on) {
 	if (on) objs[objj->id].flags &= ~OBJF_USEROOMSCALING;
 	else objs[objj->id].flags |= OBJF_USEROOMSCALING;
 	// clear the cache
-	objcache[objj->id].ywas = -9999;
+	_G(objcache)[objj->id].ywas = -9999;
 }
 
 void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {
@@ -442,8 +436,8 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
 		objs[objj].moving = mslot;
-		mls[mslot].direct = ignwal;
-		convert_move_path_to_room_resolution(&mls[mslot]);
+		_G(mls)[mslot].direct = ignwal;
+		convert_move_path_to_room_resolution(&_G(mls)[mslot]);
 	}
 }
 
@@ -562,7 +556,7 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // void (ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction)
 RuntimeScriptValue Sc_Object_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -595,7 +589,7 @@ RuntimeScriptValue Sc_Object_GetPropertyText(void *self, const RuntimeScriptValu
 
 //const char* (ScriptObject *objj, const char *property)
 RuntimeScriptValue Sc_Object_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptObject, const char, myScriptStringImpl, Object_GetTextProperty, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Object_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -692,12 +686,12 @@ RuntimeScriptValue Sc_Object_Tint(void *self, const RuntimeScriptValue *params, 
 }
 
 RuntimeScriptValue Sc_GetObjectAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptObject, ccDynamicObject, GetObjectAtRoom);
+	API_SCALL_OBJ_PINT2(ScriptObject, _GP(ccDynamicObject), GetObjectAtRoom);
 }
 
 // ScriptObject *(int xx, int yy)
 RuntimeScriptValue Sc_GetObjectAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(ScriptObject, ccDynamicObject, GetObjectAtScreen);
+	API_SCALL_OBJ_PINT2(ScriptObject, _GP(ccDynamicObject), GetObjectAtScreen);
 }
 
 // int (ScriptObject *objj)
@@ -801,7 +795,7 @@ RuntimeScriptValue Sc_Object_GetMoving(void *self, const RuntimeScriptValue *par
 
 // const char* (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptObject, const char, myScriptStringImpl, Object_GetName_New);
+	API_CONST_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
 }
 
 RuntimeScriptValue Sc_Object_GetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {

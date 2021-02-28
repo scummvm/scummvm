@@ -37,34 +37,34 @@ void SetButtonText(int guin, int objn, const char *newtx) {
 	VALIDATE_STRING(newtx);
 	if ((guin < 0) | (guin >= _GP(game).numgui))
 		quit("!SetButtonText: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount()))
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount()))
 		quit("!SetButtonText: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUIButton)
+	if (_GP(guis)[guin].GetControlType(objn) != kGUIButton)
 		quit("!SetButtonText: specified control is not a button");
 
-	GUIButton *guil = (GUIButton *)guis[guin].GetControl(objn);
+	GUIButton *guil = (GUIButton *)_GP(guis)[guin].GetControl(objn);
 	Button_SetText(guil, newtx);
 }
 
 
 void AnimateButton(int guin, int objn, int view, int loop, int speed, int repeat) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!AnimateButton: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!AnimateButton: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUIButton)
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount())) quit("!AnimateButton: invalid object number");
+	if (_GP(guis)[guin].GetControlType(objn) != kGUIButton)
 		quit("!AnimateButton: specified control is not a button");
 
-	Button_Animate((GUIButton *)guis[guin].GetControl(objn), view, loop, speed, repeat);
+	Button_Animate((GUIButton *)_GP(guis)[guin].GetControl(objn), view, loop, speed, repeat);
 }
 
 
 int GetButtonPic(int guin, int objn, int ptype) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!GetButtonPic: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!GetButtonPic: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUIButton)
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount())) quit("!GetButtonPic: invalid object number");
+	if (_GP(guis)[guin].GetControlType(objn) != kGUIButton)
 		quit("!GetButtonPic: specified control is not a button");
 	if ((ptype < 0) | (ptype > 3)) quit("!GetButtonPic: invalid pic type");
 
-	GUIButton *guil = (GUIButton *)guis[guin].GetControl(objn);
+	GUIButton *guil = (GUIButton *)_GP(guis)[guin].GetControl(objn);
 
 	if (ptype == 0) {
 		// currently displayed pic
@@ -84,12 +84,12 @@ int GetButtonPic(int guin, int objn, int ptype) {
 
 void SetButtonPic(int guin, int objn, int ptype, int slotn) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!SetButtonPic: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetButtonPic: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUIButton)
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount())) quit("!SetButtonPic: invalid object number");
+	if (_GP(guis)[guin].GetControlType(objn) != kGUIButton)
 		quit("!SetButtonPic: specified control is not a button");
 	if ((ptype < 1) | (ptype > 3)) quit("!SetButtonPic: invalid pic type");
 
-	GUIButton *guil = (GUIButton *)guis[guin].GetControl(objn);
+	GUIButton *guil = (GUIButton *)_GP(guis)[guin].GetControl(objn);
 	if (ptype == 1) {
 		Button_SetNormalGraphic(guil, slotn);
 	} else if (ptype == 2) {

@@ -34,19 +34,19 @@ using namespace AGS::Shared;
 
 void SetSliderValue(int guin, int objn, int valn) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!SetSliderValue: invalid GUI number");
-	if (guis[guin].GetControlType(objn) != kGUISlider)
+	if (_GP(guis)[guin].GetControlType(objn) != kGUISlider)
 		quit("!SetSliderValue: specified control is not a slider");
 
-	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
+	GUISlider *guisl = (GUISlider *)_GP(guis)[guin].GetControl(objn);
 	Slider_SetValue(guisl, valn);
 }
 
 int GetSliderValue(int guin, int objn) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!GetSliderValue: invalid GUI number");
-	if (guis[guin].GetControlType(objn) != kGUISlider)
+	if (_GP(guis)[guin].GetControlType(objn) != kGUISlider)
 		quit("!GetSliderValue: specified control is not a slider");
 
-	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
+	GUISlider *guisl = (GUISlider *)_GP(guis)[guin].GetControl(objn);
 	return Slider_GetValue(guisl);
 }
 

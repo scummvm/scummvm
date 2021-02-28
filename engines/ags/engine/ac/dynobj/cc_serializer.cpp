@@ -33,17 +33,10 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/plugins/agsplugin.h"
 #include "ags/plugins/pluginobjectreader.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern CCGUIObject ccDynamicGUIObject;
-extern CCCharacter ccDynamicCharacter;
-extern CCHotspot   ccDynamicHotspot;
-extern CCRegion    ccDynamicRegion;
-extern CCInventory ccDynamicInv;
-extern CCGUI       ccDynamicGUI;
-extern CCObject    ccDynamicObject;
-extern CCDialog    ccDynamicDialog;
 extern ScriptDrawingSurface *dialogOptionsRenderingSurface;
 extern ScriptDialogOptionsRendering ccDialogOptionsRendering;
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
@@ -51,25 +44,23 @@ extern int numPluginReaders;
 
 // *** De-serialization of script objects
 
-
-
 void AGSDeSerializer::Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) {
 	if (strcmp(objectType, "GUIObject") == 0) {
-		ccDynamicGUIObject.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicGUIObject).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Character") == 0) {
-		ccDynamicCharacter.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicCharacter).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Hotspot") == 0) {
-		ccDynamicHotspot.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicHotspot).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Region") == 0) {
-		ccDynamicRegion.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicRegion).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Inventory") == 0) {
-		ccDynamicInv.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicInv).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Dialog") == 0) {
-		ccDynamicDialog.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicDialog).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "GUI") == 0) {
-		ccDynamicGUI.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicGUI).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "Object") == 0) {
-		ccDynamicObject.Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicObject).Unserialize(index, serializedData, dataSize);
 	} else if (strcmp(objectType, "String") == 0) {
 		ScriptString *scf = new ScriptString();
 		scf->Unserialize(index, serializedData, dataSize);

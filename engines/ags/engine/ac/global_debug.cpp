@@ -64,7 +64,7 @@ extern IGraphicsDriver *gfxDriver;
 
 extern TreeMap *transtree;
 extern int displayed_room, starting_room;
-extern MoveList *mls;
+
 extern char transFileName[MAX_PATH];
 
 String GetRuntimeInfo() {
@@ -107,7 +107,7 @@ void script_debug(int cmdd, int dataa) {
 		Display(toDisplay.GetCStr());
 		//    Display("shftR: %d  shftG: %d  shftB: %d", _rgb_r_shift_16, _rgb_g_shift_16, _rgb_b_shift_16);
 		//    Display("Remaining memory: %d kb",_go32_dpmi_remaining_virtual_memory()/1024);
-		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[views[playerchar->view].frames[playerchar->loop][playerchar->frame].pic]));
+		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_G(views)[playerchar->view].frames[playerchar->loop][playerchar->frame].pic]));
 	} else if (cmdd == 2) {
 		// show walkable areas from here
 		// TODO: support multiple viewports?!
@@ -157,7 +157,7 @@ void script_debug(int cmdd, int dataa) {
 		int mlsnum = _GP(game).chars[dataa].walking;
 		if (_GP(game).chars[dataa].walking >= TURNING_AROUND)
 			mlsnum %= TURNING_AROUND;
-		MoveList *cmls = &mls[mlsnum];
+		MoveList *cmls = &_G(mls)[mlsnum];
 		for (int i = 0; i < cmls->numstage - 1; i++) {
 			short srcx = short((cmls->pos[i] >> 16) & 0x00ffff);
 			short srcy = short(cmls->pos[i] & 0x00ffff);

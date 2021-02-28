@@ -81,10 +81,10 @@ using namespace AGS::Shared;
 
 extern int displayed_room, starting_room;
 
-extern MoveList *mls;
-extern ViewStruct *views;
+
+
 extern RoomObject *objs;
-extern ScriptInvItem scrInv[MAX_INV];
+
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
@@ -92,8 +92,8 @@ extern int is_text_overlay;
 extern int said_speech_line;
 extern int said_text;
 extern int our_eip;
-extern CCCharacter ccDynamicCharacter;
-extern CCInventory ccDynamicInv;
+
+
 
 //--------------------------------
 
@@ -180,7 +180,7 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 		return;
 	}
 
-	MoveList *cmls = &mls[chaa->walking % TURNING_AROUND];
+	MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
 	if (cmls->numstage >= MAXNEEDSTAGES) {
 		debug_script_warn("Character_AddWaypoint: move is too complex, cannot add any further paths");
 		return;
@@ -332,7 +332,7 @@ enum DirectionalLoop {
 DirectionalLoop GetDirectionalLoop(CharacterInfo *chinfo, int x_diff, int y_diff) {
 	DirectionalLoop next_loop = kDirLoop_Left; // NOTE: default loop was Left for some reason
 
-	const ViewStruct &chview  = views[chinfo->view];
+	const ViewStruct &chview  = _G(views)[chinfo->view];
 	const bool new_version    = loaded_game_file_version > kGameVersion_272;
 	const bool has_down_loop  = ((chview.numLoops > kDirLoop_Down)  && (chview.loops[kDirLoop_Down].numFrames > 0));
 	const bool has_up_loop    = ((chview.numLoops > kDirLoop_Up)    && (chview.loops[kDirLoop_Up].numFrames > 0));
@@ -618,17 +618,17 @@ void Character_LockViewAlignedEx(CharacterInfo *chap, int vii, int loop, int ali
 	if (chap->view < 0)
 		quit("!SetCharacterLoop: character has invalid old view number");
 
-	int sppic = views[chap->view].loops[chap->loop].frames[chap->frame].pic;
+	int sppic = _G(views)[chap->view].loops[chap->loop].frames[chap->frame].pic;
 	int leftSide = data_to_game_coord(chap->x) - _GP(game).SpriteInfos[sppic].Width / 2;
 
 	Character_LockViewEx(chap, vii, stopMoving);
 
-	if ((loop < 0) || (loop >= views[chap->view].numLoops))
+	if ((loop < 0) || (loop >= _G(views)[chap->view].numLoops))
 		quit("!SetCharacterViewEx: invalid loop specified");
 
 	chap->loop = loop;
 	chap->frame = 0;
-	int newpic = views[chap->view].loops[chap->loop].frames[chap->frame].pic;
+	int newpic = _G(views)[chap->view].loops[chap->loop].frames[chap->frame].pic;
 	int newLeft = data_to_game_coord(chap->x) - _GP(game).SpriteInfos[newpic].Width / 2;
 	int xdiff = 0;
 
@@ -654,9 +654,9 @@ void Character_LockViewFrameEx(CharacterInfo *chaa, int view, int loop, int fram
 	Character_LockViewEx(chaa, view, stopMoving);
 
 	view--;
-	if ((loop < 0) || (loop >= views[view].numLoops))
+	if ((loop < 0) || (loop >= _G(views)[view].numLoops))
 		quit("!SetCharacterFrame: invalid loop specified");
-	if ((frame < 0) || (frame >= views[view].loops[loop].numFrames))
+	if ((frame < 0) || (frame >= _G(views)[view].loops[loop].numFrames))
 		quit("!SetCharacterFrame: invalid frame specified");
 
 	chaa->loop = loop;
@@ -926,7 +926,7 @@ void Character_StopMoving(CharacterInfo *charp) {
 	}
 	if ((charp->walking > 0) && (charp->walking < TURNING_AROUND)) {
 		// if it's not a MoveCharDirect, make sure they end up on a walkable area
-		if ((mls[charp->walking].direct == 0) && (charp->room == displayed_room))
+		if ((_G(mls)[charp->walking].direct == 0) && (charp->room == displayed_room))
 			Character_PlaceOnWalkableArea(charp);
 
 		debug_script_log("%s: stop moving", charp->scrname);
@@ -980,7 +980,7 @@ void Character_UnlockViewEx(CharacterInfo *chaa, int stopMoving) {
 		Character_StopMoving(chaa);
 	}
 	if (chaa->view >= 0) {
-		int maxloop = views[chaa->view].numLoops;
+		int maxloop = _G(views)[chaa->view].numLoops;
 		if (((chaa->flags & CHF_NODIAGONAL) != 0) && (maxloop > 4))
 			maxloop = 4;
 		FindReasonableLoopForCharacter(chaa);
@@ -1068,7 +1068,7 @@ ScriptInvItem *Character_GetActiveInventory(CharacterInfo *chaa) {
 	if (chaa->activeinv <= 0)
 		return nullptr;
 
-	return &scrInv[chaa->activeinv];
+	return &_G(scrInv)[chaa->activeinv];
 }
 
 void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit) {
@@ -1335,12 +1335,12 @@ int Character_GetLoop(CharacterInfo *chaa) {
 }
 
 void Character_SetLoop(CharacterInfo *chaa, int newval) {
-	if ((newval < 0) || (newval >= views[chaa->view].numLoops))
+	if ((newval < 0) || (newval >= _G(views)[chaa->view].numLoops))
 		quit("!Character.Loop: invalid loop number for this view");
 
 	chaa->loop = newval;
 
-	if (chaa->frame >= views[chaa->view].loops[chaa->loop].numFrames)
+	if (chaa->frame >= _G(views)[chaa->view].loops[chaa->loop].numFrames)
 		chaa->frame = 0;
 }
 
@@ -1352,7 +1352,7 @@ int Character_GetMoving(CharacterInfo *chaa) {
 
 int Character_GetDestinationX(CharacterInfo *chaa) {
 	if (chaa->walking) {
-		MoveList *cmls = &mls[chaa->walking % TURNING_AROUND];
+		MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
 		return cmls->pos[cmls->numstage - 1] >> 16;
 	} else
 		return chaa->x;
@@ -1360,7 +1360,7 @@ int Character_GetDestinationX(CharacterInfo *chaa) {
 
 int Character_GetDestinationY(CharacterInfo *chaa) {
 	if (chaa->walking) {
-		MoveList *cmls = &mls[chaa->walking % TURNING_AROUND];
+		MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
 		return cmls->pos[cmls->numstage - 1] & 0xFFFF;
 	} else
 		return chaa->y;
@@ -1667,8 +1667,8 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
 		chin->walking = mslot;
-		mls[mslot].direct = ignwal;
-		convert_move_path_to_room_resolution(&mls[mslot]);
+		_G(mls)[mslot].direct = ignwal;
+		convert_move_path_to_room_resolution(&_G(mls)[mslot]);
 
 		// cancel any pending waits on current animations
 		// or if they were already moving, keep the current wait -
@@ -1678,8 +1678,8 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 			chin->walkwait = waitWas;
 			charextra[chac].animwait = animWaitWas;
 
-			if (mls[mslot].pos[0] != mls[mslot].pos[1]) {
-				fix_player_sprite(&mls[mslot], chin);
+			if (_G(mls)[mslot].pos[0] != _G(mls)[mslot].pos[1]) {
+				fix_player_sprite(&_G(mls)[mslot], chin);
 			}
 		} else
 			chin->flags |= CHF_MOVENOTWALK;
@@ -1698,11 +1698,11 @@ int find_looporder_index(int curloop) {
 
 // returns 0 to use diagonal, 1 to not
 int useDiagonal(CharacterInfo *char1) {
-	if ((views[char1->view].numLoops < 8) || ((char1->flags & CHF_NODIAGONAL) != 0))
+	if ((_G(views)[char1->view].numLoops < 8) || ((char1->flags & CHF_NODIAGONAL) != 0))
 		return 1;
 	// If they have just provided standing frames for loops 4-7, to
 	// provide smoother turning
-	if (views[char1->view].loops[4].numFrames < 2)
+	if (_G(views)[char1->view].loops[4].numFrames < 2)
 		return 2;
 	return 0;
 }
@@ -1711,9 +1711,9 @@ int useDiagonal(CharacterInfo *char1) {
 int hasUpDownLoops(CharacterInfo *char1) {
 	// if no loops in the Down animation
 	// or no loops in the Up animation
-	if ((views[char1->view].loops[0].numFrames < 1) ||
-	        (views[char1->view].numLoops < 4) ||
-	        (views[char1->view].loops[3].numFrames < 1)) {
+	if ((_G(views)[char1->view].loops[0].numFrames < 1) ||
+	        (_G(views)[char1->view].numLoops < 4) ||
+	        (_G(views)[char1->view].loops[3].numFrames < 1)) {
 		return 0;
 	}
 
@@ -1751,9 +1751,9 @@ void start_character_turning(CharacterInfo *chinf, int useloop, int no_diagonal)
 			break;
 		if ((turnlooporder[ii] >= 4) && (no_diagonal > 0))
 			continue;
-		if (views[chinf->view].loops[turnlooporder[ii]].numFrames < 1)
+		if (_G(views)[chinf->view].loops[turnlooporder[ii]].numFrames < 1)
 			continue;
-		if (turnlooporder[ii] < views[chinf->view].numLoops)
+		if (turnlooporder[ii] < _G(views)[chinf->view].numLoops)
 			chinf->walking += TURNING_AROUND;
 	}
 
@@ -1779,8 +1779,8 @@ void fix_player_sprite(MoveList *cmls, CharacterInfo *chinf) {
 		chinf->loop = useloop;
 		return;
 	}
-	if ((chinf->loop >= views[chinf->view].numLoops) ||
-	        (views[chinf->view].loops[chinf->loop].numFrames < 1) ||
+	if ((chinf->loop >= _G(views)[chinf->view].numLoops) ||
+	        (_G(views)[chinf->view].loops[chinf->loop].numFrames < 1) ||
 	        (hasUpDownLoops(chinf) == 0)) {
 		// Character is not currently on a valid loop, so don't try to rotate
 		// eg. left/right only view, but current loop 0
@@ -1823,7 +1823,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 
 	if (do_movelist_move(&chi->walking, &chi->x, &chi->y) == 2) {
 		if ((chi->flags & CHF_MOVENOTWALK) == 0)
-			fix_player_sprite(&mls[chi->walking], chi);
+			fix_player_sprite(&_G(mls)[chi->walking], chi);
 	}
 
 	ntf = has_hit_another_character(char_index);
@@ -1842,8 +1842,8 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 		}
 
 		if ((chi->walking < 1) || (chi->walking >= TURNING_AROUND)) ;
-		else if (mls[chi->walking].onpart > 0) {
-			mls[chi->walking].onpart --;
+		else if (_G(mls)[chi->walking].onpart > 0) {
+			_G(mls)[chi->walking].onpart --;
 			chi->x = xwas;
 			chi->y = ywas;
 		}
@@ -1927,15 +1927,15 @@ void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
 
 void FindReasonableLoopForCharacter(CharacterInfo *chap) {
 
-	if (chap->loop >= views[chap->view].numLoops)
+	if (chap->loop >= _G(views)[chap->view].numLoops)
 		chap->loop = kDirLoop_Default;
-	if (views[chap->view].numLoops < 1)
+	if (_G(views)[chap->view].numLoops < 1)
 		quitprintf("!View %d does not have any loops", chap->view + 1);
 
 	// if the current loop has no frames, find one that does
-	if (views[chap->view].loops[chap->loop].numFrames < 1) {
-		for (int i = 0; i < views[chap->view].numLoops; i++) {
-			if (views[chap->view].loops[i].numFrames > 0) {
+	if (_G(views)[chap->view].loops[chap->loop].numFrames < 1) {
+		for (int i = 0; i < _G(views)[chap->view].numLoops; i++) {
+			if (_G(views)[chap->view].loops[i].numFrames > 0) {
 				chap->loop = i;
 				break;
 			}
@@ -2047,7 +2047,7 @@ void setup_player_character(int charid) {
 	playerchar = &_GP(game).chars[charid];
 	_sc_PlayerCharPtr = ccGetObjectHandleFromAddress((char *)playerchar);
 	if (loaded_game_file_version < kGameVersion_270) {
-		ccAddExternalDynamicObject("player", playerchar, &ccDynamicCharacter);
+		ccAddExternalDynamicObject("player", playerchar, &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -2064,9 +2064,9 @@ void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int n
 		Character_UnlockView(chap);
 		chap->idleleft = chap->idletime;
 	}
-	if ((loopn < 0) || (loopn >= views[chap->view].numLoops))
+	if ((loopn < 0) || (loopn >= _G(views)[chap->view].numLoops))
 		quit("!AnimateCharacter: invalid loop number specified");
-	if ((sframe < 0) || (sframe >= views[chap->view].loops[loopn].numFrames))
+	if ((sframe < 0) || (sframe >= _G(views)[chap->view].loops[loopn].numFrames))
 		quit("!AnimateCharacter: invalid starting frame number specified");
 	Character_StopMoving(chap);
 	chap->animating = 1;
@@ -2079,11 +2079,11 @@ void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int n
 	if (direction) {
 		sframe--;
 		if (sframe < 0)
-			sframe = views[chap->view].loops[loopn].numFrames - (-sframe);
+			sframe = _G(views)[chap->view].loops[loopn].numFrames - (-sframe);
 	}
 	chap->frame = sframe;
 
-	chap->wait = sppd + views[chap->view].loops[loopn].frames[chap->frame].speed;
+	chap->wait = sppd + _G(views)[chap->view].loops[loopn].frames[chap->frame].speed;
 	CheckViewFrameForCharacter(chap);
 }
 
@@ -2118,7 +2118,7 @@ Bitmap *GetCharacterImage(int charid, int *isFlipped) {
 		}
 	}
 	CharacterInfo *chin = &_GP(game).chars[charid];
-	int sppic = views[chin->view].loops[chin->loop].frames[chin->frame].pic;
+	int sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 	return _GP(spriteset)[sppic];
 }
 
@@ -2148,12 +2148,12 @@ int is_pos_on_character(int xx, int yy) {
 		CharacterInfo *chin = &_GP(game).chars[cc];
 
 		if ((chin->view < 0) ||
-		        (chin->loop >= views[chin->view].numLoops) ||
-		        (chin->frame >= views[chin->view].loops[chin->loop].numFrames)) {
+		        (chin->loop >= _G(views)[chin->view].numLoops) ||
+		        (chin->frame >= _G(views)[chin->view].loops[chin->loop].numFrames)) {
 			continue;
 		}
 
-		sppic = views[chin->view].loops[chin->loop].frames[chin->frame].pic;
+		sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 		int usewid = charextra[cc].width;
 		int usehit = charextra[cc].height;
 		if (usewid == 0) usewid = _GP(game).SpriteInfos[sppic].Width;
@@ -2161,7 +2161,7 @@ int is_pos_on_character(int xx, int yy) {
 		int xxx = chin->x - game_to_data_coord(usewid) / 2;
 		int yyy = chin->get_effective_y() - game_to_data_coord(usehit);
 
-		int mirrored = views[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE;
+		int mirrored = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE;
 		Bitmap *theImage = GetCharacterImage(cc, &mirrored);
 
 		if (is_pos_in_sprite(xx, yy, xxx, yyy, theImage,
@@ -2424,12 +2424,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			charFrameWas = speakingChar->frame;
 
 		// if the current loop doesn't exist in talking view, use loop 0
-		if (speakingChar->loop >= views[speakingChar->view].numLoops)
+		if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops)
 			speakingChar->loop = 0;
 
 		if ((speakingChar->view < 0) ||
-		        (speakingChar->loop >= views[speakingChar->view].numLoops) ||
-		        (views[speakingChar->view].loops[speakingChar->loop].numFrames < 1)) {
+		        (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
+		        (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1)) {
 			quitprintf("Unable to display speech because the character %s has an invalid view frame (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
 		}
 
@@ -2444,7 +2444,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		tdxp = -tdxp;  // tell it to centre it ([ikm] not sure what's going on here... wrong comment?)
 
 		if (tdyp < 0) {
-			int sppic = views[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
+			int sppic = _G(views)[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
 			int height = (charextra[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : charextra[aschar].height;
 			tdyp = view->RoomToScreen(0, data_to_game_coord(_GP(game).chars[aschar].get_effective_y()) - height).first.Y
 			       - get_fixed_pixel_size(5);
@@ -2526,7 +2526,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 
 			int bigx = 0, bigy = 0, kk;
-			ViewStruct *viptr = &views[useview];
+			ViewStruct *viptr = &_G(views)[useview];
 			for (kk = 0; kk < viptr->loops[0].numFrames; kk++) {
 				int tw = _GP(game).SpriteInfos[viptr->loops[0].frames[kk].pic].Width;
 				if (tw > bigx) bigx = tw;
@@ -2661,7 +2661,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			speakingChar->frame = 0;
 			speakingChar->flags |= CHF_FIXVIEW;
 
-			if (speakingChar->loop >= views[speakingChar->view].numLoops) {
+			if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) {
 				// current character loop is outside the normal talking directions
 				speakingChar->loop = 0;
 			}
@@ -2669,14 +2669,14 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			facetalkBlinkLoop = speakingChar->loop;
 
 			if (speakingChar->on && // don't bother checking if character is not visible (also fixes 'Trilby's Notes' legacy game)
-			        ((speakingChar->loop >= views[speakingChar->view].numLoops) ||
-			         (views[speakingChar->view].loops[speakingChar->loop].numFrames < 1))) {
+			        ((speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
+			         (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1))) {
 				quitprintf("!Unable to display speech because the character %s has an invalid speech view (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
 			}
 
 			// set up the speed of the first frame
 			speakingChar->wait = GetCharacterSpeechAnimationDelay(speakingChar) +
-			                     views[speakingChar->view].loops[speakingChar->loop].frames[0].speed;
+			                     _G(views)[speakingChar->view].loops[speakingChar->loop].frames[0].speed;
 
 			if (widd < 0) {
 				bwidth = ui_view.GetWidth() / 2 + ui_view.GetWidth() / 6;
@@ -2801,11 +2801,11 @@ int update_lip_sync(int talkview, int talkloop, int *talkframeptr) {
 		talkframe = 0;
 	else {
 		talkframe = GetLipSyncFrame(nowsaying, &text_lips_offset);
-		if (talkframe >= views[talkview].loops[talkloop].numFrames)
+		if (talkframe >= _G(views)[talkview].loops[talkloop].numFrames)
 			talkframe = 0;
 	}
 
-	talkwait = loops_per_character + views[talkview].loops[talkloop].frames[talkframe].speed;
+	talkwait = loops_per_character + _G(views)[talkview].loops[talkloop].frames[talkframe].speed;
 
 	talkframeptr[0] = talkframe;
 	return talkwait;
@@ -2816,7 +2816,7 @@ Rect GetCharacterRoomBBox(int charid, bool use_frame_0) {
 	const CharacterExtras &chex = charextra[charid];
 	const CharacterInfo &chin = _GP(game).chars[charid];
 	int frame = use_frame_0 ? 0 : chin.frame;
-	int pic = views[chin.view].loops[chin.loop].frames[frame].pic;
+	int pic = _G(views)[chin.view].loops[chin.loop].frames[frame].pic;
 	scale_sprite_size(pic, chex.zoom, &width, &height);
 	return RectWH(chin.x - width / 2, chin.y - height, width, height);
 }
@@ -2850,7 +2850,7 @@ PViewport FindNearestViewport(int charid) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // void | CharacterInfo *chaa, ScriptInvItem *invi, int addIndex
 RuntimeScriptValue Sc_Character_AddInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -2927,7 +2927,7 @@ RuntimeScriptValue Sc_Character_GetPropertyText(void *self, const RuntimeScriptV
 
 // const char* (CharacterInfo *chaa, const char *property)
 RuntimeScriptValue Sc_Character_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetTextProperty, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(CharacterInfo, const char, _GP(myScriptStringImpl), Character_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Character_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -3138,17 +3138,17 @@ RuntimeScriptValue Sc_Character_WalkStraight(void *self, const RuntimeScriptValu
 }
 
 RuntimeScriptValue Sc_GetCharacterAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(CharacterInfo, ccDynamicCharacter, GetCharacterAtRoom);
+	API_SCALL_OBJ_PINT2(CharacterInfo, _GP(ccDynamicCharacter), GetCharacterAtRoom);
 }
 
 // CharacterInfo *(int xx, int yy)
 RuntimeScriptValue Sc_GetCharacterAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(CharacterInfo, ccDynamicCharacter, GetCharacterAtScreen);
+	API_SCALL_OBJ_PINT2(CharacterInfo, _GP(ccDynamicCharacter), GetCharacterAtScreen);
 }
 
 // ScriptInvItem* (CharacterInfo *chaa)
 RuntimeScriptValue Sc_Character_GetActiveInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(CharacterInfo, ScriptInvItem, ccDynamicInv, Character_GetActiveInventory);
+	API_OBJCALL_OBJ(CharacterInfo, ScriptInvItem, _GP(ccDynamicInv), Character_GetActiveInventory);
 }
 
 // void (CharacterInfo *chaa, ScriptInvItem* iit)
@@ -3361,7 +3361,7 @@ RuntimeScriptValue Sc_Character_GetDestinationY(void *self, const RuntimeScriptV
 
 // const char* (CharacterInfo *chaa)
 RuntimeScriptValue Sc_Character_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetName);
+	API_CONST_OBJCALL_OBJ(CharacterInfo, const char, _GP(myScriptStringImpl), Character_GetName);
 }
 
 // void (CharacterInfo *chaa, const char *newName)

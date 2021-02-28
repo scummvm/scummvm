@@ -35,34 +35,34 @@ using namespace AGS::Shared;
 void SetLabelColor(int guin, int objn, int colr) {
 	if ((guin < 0) | (guin >= _GP(game).numgui))
 		quit("!SetLabelColor: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount()))
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount()))
 		quit("!SetLabelColor: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUILabel)
+	if (_GP(guis)[guin].GetControlType(objn) != kGUILabel)
 		quit("!SetLabelColor: specified control is not a label");
 
-	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	GUILabel *guil = (GUILabel *)_GP(guis)[guin].GetControl(objn);
 	Label_SetColor(guil, colr);
 }
 
 void SetLabelText(int guin, int objn, const char *newtx) {
 	VALIDATE_STRING(newtx);
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!SetLabelText: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetLabelTexT: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUILabel)
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount())) quit("!SetLabelTexT: invalid object number");
+	if (_GP(guis)[guin].GetControlType(objn) != kGUILabel)
 		quit("!SetLabelText: specified control is not a label");
 
-	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	GUILabel *guil = (GUILabel *)_GP(guis)[guin].GetControl(objn);
 	Label_SetText(guil, newtx);
 }
 
 void SetLabelFont(int guin, int objn, int fontnum) {
 
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!SetLabelFont: invalid GUI number");
-	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetLabelFont: invalid object number");
-	if (guis[guin].GetControlType(objn) != kGUILabel)
+	if ((objn < 0) | (objn >= _GP(guis)[guin].GetControlCount())) quit("!SetLabelFont: invalid object number");
+	if (_GP(guis)[guin].GetControlType(objn) != kGUILabel)
 		quit("!SetLabelFont: specified control is not a label");
 
-	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	GUILabel *guil = (GUILabel *)_GP(guis)[guin].GetControl(objn);
 	Label_SetFont(guil, fontnum);
 }
 

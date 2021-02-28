@@ -35,7 +35,7 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-extern ViewStruct *views;
+
 
 
 
@@ -96,7 +96,7 @@ void RoomObject::UpdateCyclingView() {
 
 	}  // end if forwards
 
-	ViewFrame *vfptr = &views[view].loops[loop].frames[frame];
+	ViewFrame *vfptr = &_G(views)[view].loops[loop].frames[frame];
 	num = vfptr->pic;
 
 	if (cycling == 0)
@@ -109,10 +109,10 @@ void RoomObject::UpdateCyclingView() {
 
 void RoomObject::update_cycle_view_forwards() {
 	frame++;
-	if (frame >= views[view].loops[loop].numFrames) {
+	if (frame >= _G(views)[view].loops[loop].numFrames) {
 		// go to next loop thing
-		if (views[view].loops[loop].RunNextLoop()) {
-			if (loop + 1 >= views[view].numLoops)
+		if (_G(views)[view].loops[loop].RunNextLoop()) {
+			if (loop + 1 >= _G(views)[view].numLoops)
 				quit("!Last loop in a view requested to move to next loop");
 			loop++;
 			frame = 0;
@@ -124,7 +124,7 @@ void RoomObject::update_cycle_view_forwards() {
 			if (_GP(play).no_multiloop_repeat == 0) {
 				// multi-loop anims, go back to start of it
 				while ((loop > 0) &&
-					(views[view].loops[loop - 1].RunNextLoop()))
+					(_G(views)[view].loops[loop - 1].RunNextLoop()))
 					loop--;
 			}
 			if (cycling % ANIM_BACKWARDS == ANIM_ONCERESET)
@@ -139,16 +139,16 @@ void RoomObject::update_cycle_view_backwards() {
 	frame--;
 	if (frame < 0) {
 		if ((loop > 0) &&
-			(views[view].loops[loop - 1].RunNextLoop())) {
+			(_G(views)[view].loops[loop - 1].RunNextLoop())) {
 			// If it's a Go-to-next-loop on the previous one, then go back
 			loop--;
-			frame = views[view].loops[loop].numFrames - 1;
+			frame = _G(views)[view].loops[loop].numFrames - 1;
 		} else if (cycling % ANIM_BACKWARDS == ANIM_ONCE) {
 			// leave it on the first frame
 			cycling = 0;
 			frame = 0;
 		} else { // repeating animation
-			frame = views[view].loops[loop].numFrames - 1;
+			frame = _G(views)[view].loops[loop].numFrames - 1;
 		}
 	}
 }

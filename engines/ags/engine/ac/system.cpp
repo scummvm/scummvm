@@ -56,7 +56,7 @@ extern GameSetup usetup;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern ScriptSystem scsystem;
 extern IGraphicsDriver *gfxDriver;
-extern CCAudioChannel ccDynamicAudio;
+
 extern volatile bool switched_away;
 
 bool System_HasInputFocus() {
@@ -217,7 +217,7 @@ void System_SetRenderAtScreenResolution(int enable) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // int ()
 RuntimeScriptValue Sc_System_GetAudioChannelCount(const RuntimeScriptValue *params, int32_t param_count) {
@@ -226,7 +226,7 @@ RuntimeScriptValue Sc_System_GetAudioChannelCount(const RuntimeScriptValue *para
 
 // ScriptAudioChannel* (int index)
 RuntimeScriptValue Sc_System_GetAudioChannels(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT(ScriptAudioChannel, ccDynamicAudio, System_GetAudioChannels);
+	API_SCALL_OBJ_PINT(ScriptAudioChannel, _GP(ccDynamicAudio), System_GetAudioChannels);
 }
 
 // int ()
@@ -295,7 +295,7 @@ RuntimeScriptValue Sc_System_GetSupportsGammaControl(const RuntimeScriptValue *p
 
 // const char *()
 RuntimeScriptValue Sc_System_GetVersion(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, System_GetVersion);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetVersion);
 }
 
 // int ()
@@ -338,7 +338,7 @@ RuntimeScriptValue Sc_System_SetWindowed(const RuntimeScriptValue *params, int32
 
 // const char *()
 RuntimeScriptValue Sc_System_GetRuntimeInfo(const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_SCALL_OBJ(const char, myScriptStringImpl, System_GetRuntimeInfo);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), System_GetRuntimeInfo);
 }
 
 RuntimeScriptValue Sc_System_GetRenderAtScreenResolution(const RuntimeScriptValue *params, int32_t param_count) {

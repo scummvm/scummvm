@@ -33,10 +33,9 @@
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern MoveList *mls;
 
 using AGS::Shared::Bitmap;
 
@@ -239,22 +238,22 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 #endif
 
 	int mlist = movlst;
-	mls[mlist].numstage = num_navpoints;
-	memcpy(&mls[mlist].pos[0], &navpoints[0], sizeof(int32_t) * num_navpoints);
+	_G(mls)[mlist].numstage = num_navpoints;
+	memcpy(&_G(mls)[mlist].pos[0], &navpoints[0], sizeof(int32_t) * num_navpoints);
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", num_navpoints);
 #endif
 
 	for (i = 0; i < num_navpoints - 1; i++)
-		calculate_move_stage(&mls[mlist], i);
+		calculate_move_stage(&_G(mls)[mlist], i);
 
-	mls[mlist].fromx = srcx;
-	mls[mlist].fromy = srcy;
-	mls[mlist].onstage = 0;
-	mls[mlist].onpart = 0;
-	mls[mlist].doneflag = 0;
-	mls[mlist].lastx = -1;
-	mls[mlist].lasty = -1;
+	_G(mls)[mlist].fromx = srcx;
+	_G(mls)[mlist].fromy = srcy;
+	_G(mls)[mlist].onstage = 0;
+	_G(mls)[mlist].onpart = 0;
+	_G(mls)[mlist].doneflag = 0;
+	_G(mls)[mlist].lastx = -1;
+	_G(mls)[mlist].lasty = -1;
 	return mlist;
 }
 

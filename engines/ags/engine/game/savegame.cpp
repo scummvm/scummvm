@@ -603,7 +603,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	update_directional_sound_vol();
 
 	for (int i = 0; i < _GP(game).numgui; ++i) {
-		guibg[i] = BitmapHelper::CreateBitmap(guis[i].Width, guis[i].Height, _GP(game).GetColorDepth());
+		guibg[i] = BitmapHelper::CreateBitmap(_GP(guis)[i].Width, _GP(guis)[i].Height, _GP(game).GetColorDepth());
 		guibg[i] = ReplaceBitmapWithSupportedFormat(guibg[i]);
 	}
 

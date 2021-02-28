@@ -28,11 +28,11 @@
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/cc_dialog.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 extern DialogTopic *dialog;
-extern CCDialog ccDynamicDialog;
 
 // ** SCRIPT DIALOGOPTIONSRENDERING OBJECT
 
@@ -110,7 +110,7 @@ void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *
 }
 
 ScriptDialog *DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender) {
-	return &scrDialog[dlgOptRender->dialogID];
+	return &_G(scrDialog)[dlgOptRender->dialogID];
 }
 
 ScriptDrawingSurface *DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -123,7 +123,7 @@ int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOp
 }
 
 void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID) {
-	int optionCount = dialog[scrDialog[dlgOptRender->dialogID].id].numoptions;
+	int optionCount = dialog[_G(scrDialog)[dlgOptRender->dialogID].id].numoptions;
 	if ((activeOptionID < 0) || (activeOptionID > optionCount))
 		quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
 
@@ -163,7 +163,7 @@ RuntimeScriptValue Sc_DialogOptionsRendering_SetActiveOptionID(void *self, const
 
 // ScriptDialog* (ScriptDialogOptionsRendering *dlgOptRender)
 RuntimeScriptValue Sc_DialogOptionsRendering_GetDialogToRender(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(ScriptDialogOptionsRendering, ScriptDialog, ccDynamicDialog, DialogOptionsRendering_GetDialogToRender);
+	API_OBJCALL_OBJ(ScriptDialogOptionsRendering, ScriptDialog, _GP(ccDynamicDialog), DialogOptionsRendering_GetDialogToRender);
 }
 
 // int (ScriptDialogOptionsRendering *dlgOptRender)

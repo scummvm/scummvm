@@ -54,8 +54,8 @@ using namespace Engine;
 
 extern RoomObject *objs;
 extern RoomStatus *croom;
-extern CharacterCache *charcache;
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
+
+
 
 extern color palette[256];
 extern AGS::Engine::IGraphicsDriver *gfxDriver;
@@ -494,9 +494,9 @@ void free_dynamic_sprite(int gotSlot) {
 		for (tt = 0; tt < croom->numobj; tt++) {
 			if (objs[tt].num == gotSlot) {
 				objs[tt].num = 0;
-				objcache[tt].sppic = -1;
-			} else if (objcache[tt].sppic == gotSlot)
-				objcache[tt].sppic = -1;
+				_G(objcache)[tt].sppic = -1;
+			} else if (_G(objcache)[tt].sppic == gotSlot)
+				_G(objcache)[tt].sppic = -1;
 		}
 	}
 }

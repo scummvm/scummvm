@@ -56,8 +56,8 @@ using namespace AGS::Engine;
 
 extern RoomStatus *croom;
 extern RoomObject *objs;
-extern CharacterCache *charcache;
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
+
+
 
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 
@@ -88,16 +88,16 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 			if (croom != nullptr) {
 				for (tt = 0; tt < croom->numobj; tt++) {
 					if (objs[tt].num == sds->dynamicSpriteNumber)
-						objcache[tt].sppic = -31999;
+						_G(objcache)[tt].sppic = -31999;
 				}
 			}
 			for (tt = 0; tt < _GP(game).numcharacters; tt++) {
-				if (charcache[tt].sppic == sds->dynamicSpriteNumber)
-					charcache[tt].sppic = -31999;
+				if (_G(charcache)[tt].sppic == sds->dynamicSpriteNumber)
+					_G(charcache)[tt].sppic = -31999;
 			}
 			for (tt = 0; tt < _GP(game).numgui; tt++) {
-				if ((guis[tt].BgImage == sds->dynamicSpriteNumber) &&
-					(guis[tt].IsDisplayed())) {
+				if ((_GP(guis)[tt].BgImage == sds->dynamicSpriteNumber) &&
+					(_GP(guis)[tt].IsDisplayed())) {
 					guis_need_update = 1;
 					break;
 				}

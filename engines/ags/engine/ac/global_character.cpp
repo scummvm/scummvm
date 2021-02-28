@@ -53,13 +53,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 
-
-extern ViewStruct *views;
 extern RoomObject *objs;
-
-
-extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
-extern ScriptInvItem scrInv[MAX_INV];
 
 // defined in character unit
 extern CharacterExtras *charextra;
@@ -118,13 +112,13 @@ int GetCharacterWidth(int ww) {
 
 	if (charextra[ww].width < 1) {
 		if ((char1->view < 0) ||
-			(char1->loop >= views[char1->view].numLoops) ||
-			(char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
+			(char1->loop >= _G(views)[char1->view].numLoops) ||
+			(char1->frame >= _G(views)[char1->view].loops[char1->loop].numFrames)) {
 			debug_script_warn("GetCharacterWidth: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(4);
 		}
 
-		return _GP(game).SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Width;
+		return _GP(game).SpriteInfos[_G(views)[char1->view].loops[char1->loop].frames[char1->frame].pic].Width;
 	} else
 		return charextra[ww].width;
 }
@@ -134,13 +128,13 @@ int GetCharacterHeight(int charid) {
 
 	if (charextra[charid].height < 1) {
 		if ((char1->view < 0) ||
-			(char1->loop >= views[char1->view].numLoops) ||
-			(char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
+			(char1->loop >= _G(views)[char1->view].numLoops) ||
+			(char1->frame >= _G(views)[char1->view].loops[char1->loop].numFrames)) {
 			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(2);
 		}
 
-		return _GP(game).SpriteInfos[views[char1->view].loops[char1->loop].frames[char1->frame].pic].Height;
+		return _GP(game).SpriteInfos[_G(views)[char1->view].loops[char1->loop].frames[char1->frame].pic].Height;
 	} else
 		return charextra[charid].height;
 }
@@ -417,7 +411,7 @@ int AreCharObjColliding(int charid, int objid) {
 	if (!is_valid_object(objid))
 		quit("!AreCharObjColliding: invalid object number");
 
-	return Character_IsCollidingWithObject(&_GP(game).chars[charid], &scrObj[objid]);
+	return Character_IsCollidingWithObject(&_GP(game).chars[charid], &_G(scrObj)[objid]);
 }
 
 int AreCharactersColliding(int cchar1, int cchar2) {
@@ -457,7 +451,7 @@ void SetActiveInventory(int iit) {
 
 	ScriptInvItem *tosend = nullptr;
 	if ((iit > 0) && (iit < _GP(game).numinvitems))
-		tosend = &scrInv[iit];
+		tosend = &_G(scrInv)[iit];
 	else if (iit != -1)
 		quitprintf("!SetActiveInventory: invalid inventory number %d", iit);
 
@@ -494,7 +488,7 @@ void add_inventory(int inum) {
 	if ((inum < 0) || (inum >= MAX_INV))
 		quit("!AddInventory: invalid inventory number");
 
-	Character_AddInventory(playerchar, &scrInv[inum], SCR_NO_VALUE);
+	Character_AddInventory(playerchar, &_G(scrInv)[inum], SCR_NO_VALUE);
 
 	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
@@ -503,7 +497,7 @@ void lose_inventory(int inum) {
 	if ((inum < 0) || (inum >= MAX_INV))
 		quit("!LoseInventory: invalid inventory number");
 
-	Character_LoseInventory(playerchar, &scrInv[inum]);
+	Character_LoseInventory(playerchar, &_G(scrInv)[inum]);
 
 	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
 }
@@ -514,7 +508,7 @@ void AddInventoryToCharacter(int charid, int inum) {
 	if ((inum < 1) || (inum >= _GP(game).numinvitems))
 		quit("!AddInventory: invalid inv item specified");
 
-	Character_AddInventory(&_GP(game).chars[charid], &scrInv[inum], SCR_NO_VALUE);
+	Character_AddInventory(&_GP(game).chars[charid], &_G(scrInv)[inum], SCR_NO_VALUE);
 }
 
 void LoseInventoryFromCharacter(int charid, int inum) {
@@ -523,7 +517,7 @@ void LoseInventoryFromCharacter(int charid, int inum) {
 	if ((inum < 1) || (inum >= _GP(game).numinvitems))
 		quit("!AddInventory: invalid inv item specified");
 
-	Character_LoseInventory(&_GP(game).chars[charid], &scrInv[inum]);
+	Character_LoseInventory(&_GP(game).chars[charid], &_G(scrInv)[inum]);
 }
 
 void DisplayThought(int chid, const char *text) {

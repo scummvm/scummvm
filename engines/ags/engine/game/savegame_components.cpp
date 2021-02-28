@@ -63,18 +63,13 @@ namespace AGS3 {
 
 using namespace Shared;
 
-
 extern color palette[256];
 extern DialogTopic *dialog;
 extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
 extern int numAnimButs;
-extern ViewStruct *views;
+
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-
-
 extern Bitmap *raw_saved_screen;
-extern MoveList *mls;
-
 
 namespace AGS {
 namespace Engine {
@@ -493,7 +488,7 @@ HSaveError WriteCharacters(PStream out) {
 		if (loaded_game_file_version <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out.get());
 		// character movement path cache
-		mls[CHMLSOFFS + i].WriteToFile(out.get());
+		_G(mls)[CHMLSOFFS + i].WriteToFile(out.get());
 	}
 	return HSaveError::None();
 }
@@ -509,7 +504,7 @@ HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp
 		if (loaded_game_file_version <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in.get());
 		// character movement path cache
-		err = mls[CHMLSOFFS + i].ReadFromFile(in.get(), cmp_ver > 0 ? 1 : 0);
+		err = _G(mls)[CHMLSOFFS + i].ReadFromFile(in.get(), cmp_ver > 0 ? 1 : 0);
 		if (!err)
 			return err;
 	}
@@ -539,7 +534,7 @@ HSaveError WriteGUI(PStream out) {
 	WriteFormatTag(out, "GUIs");
 	out->WriteInt32(_GP(game).numgui);
 	for (int i = 0; i < _GP(game).numgui; ++i)
-		guis[i].WriteToSavegame(out.get());
+		_GP(guis)[i].WriteToSavegame(out.get());
 
 	WriteFormatTag(out, "GUIButtons");
 	out->WriteInt32(numguibuts);
@@ -588,7 +583,7 @@ HSaveError ReadGUI(PStream in, int32_t cmp_ver, const PreservedParams &pp, Resto
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numgui, "GUIs"))
 		return err;
 	for (int i = 0; i < _GP(game).numgui; ++i)
-		guis[i].ReadFromSavegame(in.get(), svg_ver);
+		_GP(guis)[i].ReadFromSavegame(in.get(), svg_ver);
 
 	if (!AssertFormatTagStrict(err, in, "GUIButtons"))
 		return err;
@@ -689,12 +684,12 @@ HSaveError ReadMouseCursors(PStream in, int32_t cmp_ver, const PreservedParams &
 HSaveError WriteViews(PStream out) {
 	out->WriteInt32(_GP(game).numviews);
 	for (int view = 0; view < _GP(game).numviews; ++view) {
-		out->WriteInt32(views[view].numLoops);
-		for (int loop = 0; loop < views[view].numLoops; ++loop) {
-			out->WriteInt32(views[view].loops[loop].numFrames);
-			for (int frame = 0; frame < views[view].loops[loop].numFrames; ++frame) {
-				out->WriteInt32(views[view].loops[loop].frames[frame].sound);
-				out->WriteInt32(views[view].loops[loop].frames[frame].pic);
+		out->WriteInt32(_G(views)[view].numLoops);
+		for (int loop = 0; loop < _G(views)[view].numLoops; ++loop) {
+			out->WriteInt32(_G(views)[view].loops[loop].numFrames);
+			for (int frame = 0; frame < _G(views)[view].loops[loop].numFrames; ++frame) {
+				out->WriteInt32(_G(views)[view].loops[loop].frames[frame].sound);
+				out->WriteInt32(_G(views)[view].loops[loop].frames[frame].pic);
 			}
 		}
 	}
@@ -706,16 +701,16 @@ HSaveError ReadViews(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numviews, "Views"))
 		return err;
 	for (int view = 0; view < _GP(game).numviews; ++view) {
-		if (!AssertGameObjectContent(err, in->ReadInt32(), views[view].numLoops,
+		if (!AssertGameObjectContent(err, in->ReadInt32(), _G(views)[view].numLoops,
 		                             "Loops", "View", view))
 			return err;
-		for (int loop = 0; loop < views[view].numLoops; ++loop) {
-			if (!AssertGameObjectContent2(err, in->ReadInt32(), views[view].loops[loop].numFrames,
+		for (int loop = 0; loop < _G(views)[view].numLoops; ++loop) {
+			if (!AssertGameObjectContent2(err, in->ReadInt32(), _G(views)[view].loops[loop].numFrames,
 			                              "Frame", "View", view, "Loop", loop))
 				return err;
-			for (int frame = 0; frame < views[view].loops[loop].numFrames; ++frame) {
-				views[view].loops[loop].frames[frame].sound = in->ReadInt32();
-				views[view].loops[loop].frames[frame].pic = in->ReadInt32();
+			for (int frame = 0; frame < _G(views)[view].loops[loop].numFrames; ++frame) {
+				_G(views)[view].loops[loop].frames[frame].sound = in->ReadInt32();
+				_G(views)[view].loops[loop].frames[frame].pic = in->ReadInt32();
 			}
 		}
 	}
@@ -919,7 +914,7 @@ HSaveError WriteThisRoom(PStream out) {
 	// room object movement paths cache
 	out->WriteInt32(_GP(thisroom).ObjectCount + 1);
 	for (size_t i = 0; i < _GP(thisroom).ObjectCount + 1; ++i) {
-		mls[i].WriteToFile(out.get());
+		_G(mls)[i].WriteToFile(out.get());
 	}
 
 	// room music volume
@@ -966,7 +961,7 @@ HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 	if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
 		return err;
 	for (int i = 0; i < objmls_count; ++i) {
-		err = mls[i].ReadFromFile(in.get(), cmp_ver > 0 ? 1 : 0);
+		err = _G(mls)[i].ReadFromFile(in.get(), cmp_ver > 0 ? 1 : 0);
 		if (!err)
 			return err;
 	}

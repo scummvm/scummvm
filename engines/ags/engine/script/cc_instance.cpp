@@ -56,7 +56,7 @@ extern ExecutingScript *curscript; // in script/script
 extern int maxWhileLoops;
 extern new_line_hook_type new_line_hook;
 
-extern ScriptString myScriptStringImpl;
+
 
 enum ScriptOpArgIsReg {
 	kScOpNoArgIsReg     = 0,
@@ -1177,7 +1177,7 @@ int ccInstance::Run(int32_t curpc) {
 			direct_ptr1 = (const char *)reg1.GetDirectPtr();
 			reg1.SetDynamicObject(
 			    stringClassImpl->CreateString(direct_ptr1).second,
-			    &myScriptStringImpl);
+			    &_GP(myScriptStringImpl));
 			break;
 		case SCMD_STRINGSEQUAL:
 			if ((reg1.IsNull()) || (reg2.IsNull())) {

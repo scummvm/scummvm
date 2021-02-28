@@ -41,8 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern ViewStruct *views;
-
 // *** BUTTON FUNCTIONS
 
 AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
@@ -56,7 +54,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 		quit("!AnimateButton: invalid view specified");
 	view--;
 
-	if ((loop < 0) || (loop >= views[view].numLoops))
+	if ((loop < 0) || (loop >= _G(views)[view].numLoops))
 		quit("!AnimateButton: invalid loop specified for view");
 
 	// if it's already animating, stop it
@@ -65,7 +63,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 	if (numAnimButs >= MAX_ANIMATING_BUTTONS)
 		quit("!AnimateButton: too many animating GUI buttons at once");
 
-	int buttonId = guis[guin].GetControlID(objn);
+	int buttonId = _GP(guis)[guin].GetControlID(objn);
 
 	guibuts[buttonId].PushedImage = 0;
 	guibuts[buttonId].MouseOverImage = 0;
@@ -206,7 +204,7 @@ int UpdateAnimatingButton(int bu) {
 		animbuts[bu].wait--;
 		return 0;
 	}
-	ViewStruct *tview = &views[animbuts[bu].view];
+	ViewStruct *tview = &_G(views)[animbuts[bu].view];
 
 	animbuts[bu].frame++;
 
@@ -305,7 +303,7 @@ void Button_SetTextAlignment(GUIButton *butt, int align) {
 //
 //=============================================================================
 
-extern ScriptString myScriptStringImpl;
+
 
 // void | GUIButton *butt, int view, int loop, int speed, int repeat
 RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -314,7 +312,7 @@ RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *param
 
 // const char* | GUIButton *butt
 RuntimeScriptValue Sc_Button_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(GUIButton, const char, myScriptStringImpl, Button_GetText_New);
+	API_CONST_OBJCALL_OBJ(GUIButton, const char, _GP(myScriptStringImpl), Button_GetText_New);
 }
 
 // void | GUIButton *butt, char *buffer

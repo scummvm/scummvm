@@ -43,9 +43,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern ScriptGUI *scrGui;
-extern CCGUI ccDynamicGUI;
-extern CCGUIObject ccDynamicGUIObject;
+
 
 GUIObject *GetGUIControlAtLocation(int xx, int yy) {
 	int guinum = GetGUIAt(xx, yy);
@@ -55,15 +53,15 @@ GUIObject *GetGUIControlAtLocation(int xx, int yy) {
 	data_to_game_coords(&xx, &yy);
 
 	int oldmousex = _G(mousex), oldmousey = _G(mousey);
-	_G(mousex) = xx - guis[guinum].X;
-	_G(mousey) = yy - guis[guinum].Y;
-	int toret = guis[guinum].FindControlUnderMouse(0, false);
+	_G(mousex) = xx - _GP(guis)[guinum].X;
+	_G(mousey) = yy - _GP(guis)[guinum].Y;
+	int toret = _GP(guis)[guinum].FindControlUnderMouse(0, false);
 	_G(mousex) = oldmousex;
 	_G(mousey) = oldmousey;
 	if (toret < 0)
 		return nullptr;
 
-	return guis[guinum].GetControl(toret);
+	return _GP(guis)[guinum].GetControl(toret);
 }
 
 int GUIControl_GetVisible(GUIObject *guio) {
@@ -74,7 +72,7 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
 	const bool on = visible != 0;
 	if (on != guio->IsVisible()) {
 		guio->SetVisible(on);
-		guis[guio->ParentId].OnControlPositionChanged();
+		_GP(guis)[guio->ParentId].OnControlPositionChanged();
 		guis_need_update = 1;
 	}
 }
@@ -91,7 +89,7 @@ void GUIControl_SetClickable(GUIObject *guio, int enabled) {
 	else
 		guio->SetClickable(false);
 
-	guis[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	guis_need_update = 1;
 }
 
@@ -103,7 +101,7 @@ void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
 	const bool on = enabled != 0;
 	if (on != guio->IsEnabled()) {
 		guio->SetEnabled(on);
-		guis[guio->ParentId].OnControlPositionChanged();
+		_GP(guis)[guio->ParentId].OnControlPositionChanged();
 		guis_need_update = 1;
 	}
 }
@@ -114,46 +112,46 @@ int GUIControl_GetID(GUIObject *guio) {
 }
 
 ScriptGUI *GUIControl_GetOwningGUI(GUIObject *guio) {
-	return &scrGui[guio->ParentId];
+	return &_G(scrGui)[guio->ParentId];
 }
 
 GUIButton *GUIControl_GetAsButton(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUIButton)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUIButton)
 		return nullptr;
 
 	return (GUIButton *)guio;
 }
 
 GUIInvWindow *GUIControl_GetAsInvWindow(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUIInvWindow)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUIInvWindow)
 		return nullptr;
 
 	return (GUIInvWindow *)guio;
 }
 
 GUILabel *GUIControl_GetAsLabel(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUILabel)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUILabel)
 		return nullptr;
 
 	return (GUILabel *)guio;
 }
 
 GUIListBox *GUIControl_GetAsListBox(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUIListBox)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUIListBox)
 		return nullptr;
 
 	return (GUIListBox *)guio;
 }
 
 GUISlider *GUIControl_GetAsSlider(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUISlider)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUISlider)
 		return nullptr;
 
 	return (GUISlider *)guio;
 }
 
 GUITextBox *GUIControl_GetAsTextBox(GUIObject *guio) {
-	if (guis[guio->ParentId].GetControlType(guio->Id) != kGUITextBox)
+	if (_GP(guis)[guio->ParentId].GetControlType(guio->Id) != kGUITextBox)
 		return nullptr;
 
 	return (GUITextBox *)guio;
@@ -165,7 +163,7 @@ int GUIControl_GetX(GUIObject *guio) {
 
 void GUIControl_SetX(GUIObject *guio, int xx) {
 	guio->X = data_to_game_coord(xx);
-	guis[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	guis_need_update = 1;
 }
 
@@ -175,7 +173,7 @@ int GUIControl_GetY(GUIObject *guio) {
 
 void GUIControl_SetY(GUIObject *guio, int yy) {
 	guio->Y = data_to_game_coord(yy);
-	guis[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	guis_need_update = 1;
 }
 
@@ -184,7 +182,7 @@ int GUIControl_GetZOrder(GUIObject *guio) {
 }
 
 void GUIControl_SetZOrder(GUIObject *guio, int zorder) {
-	if (guis[guio->ParentId].SetControlZOrder(guio->Id, zorder))
+	if (_GP(guis)[guio->ParentId].SetControlZOrder(guio->Id, zorder))
 		guis_need_update = 1;
 }
 
@@ -201,7 +199,7 @@ int GUIControl_GetWidth(GUIObject *guio) {
 void GUIControl_SetWidth(GUIObject *guio, int newwid) {
 	guio->Width = data_to_game_coord(newwid);
 	guio->OnResized();
-	guis[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	guis_need_update = 1;
 }
 
@@ -212,7 +210,7 @@ int GUIControl_GetHeight(GUIObject *guio) {
 void GUIControl_SetHeight(GUIObject *guio, int newhit) {
 	guio->Height = data_to_game_coord(newhit);
 	guio->OnResized();
-	guis[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	guis_need_update = 1;
 }
 
@@ -226,12 +224,12 @@ void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
 }
 
 void GUIControl_SendToBack(GUIObject *guio) {
-	if (guis[guio->ParentId].SendControlToBack(guio->Id))
+	if (_GP(guis)[guio->ParentId].SendControlToBack(guio->Id))
 		guis_need_update = 1;
 }
 
 void GUIControl_BringToFront(GUIObject *guio) {
-	if (guis[guio->ParentId].BringControlToFront(guio->Id))
+	if (_GP(guis)[guio->ParentId].BringControlToFront(guio->Id))
 		guis_need_update = 1;
 }
 
@@ -248,7 +246,7 @@ RuntimeScriptValue Sc_GUIControl_BringToFront(void *self, const RuntimeScriptVal
 
 // GUIObject *(int xx, int yy)
 RuntimeScriptValue Sc_GetGUIControlAtLocation(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ_PINT2(GUIObject, ccDynamicGUIObject, GetGUIControlAtLocation);
+	API_SCALL_OBJ_PINT2(GUIObject, _GP(ccDynamicGUIObject), GetGUIControlAtLocation);
 }
 
 // void (GUIObject *guio)
@@ -268,32 +266,32 @@ RuntimeScriptValue Sc_GUIControl_SetSize(void *self, const RuntimeScriptValue *p
 
 // GUIButton* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsButton(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUIButton, ccDynamicGUI, GUIControl_GetAsButton);
+	API_OBJCALL_OBJ(GUIObject, GUIButton, _GP(ccDynamicGUI), GUIControl_GetAsButton);
 }
 
 // GUIInvWindow* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsInvWindow(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUIInvWindow, ccDynamicGUI, GUIControl_GetAsInvWindow);
+	API_OBJCALL_OBJ(GUIObject, GUIInvWindow, _GP(ccDynamicGUI), GUIControl_GetAsInvWindow);
 }
 
 // GUILabel* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsLabel(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUILabel, ccDynamicGUI, GUIControl_GetAsLabel);
+	API_OBJCALL_OBJ(GUIObject, GUILabel, _GP(ccDynamicGUI), GUIControl_GetAsLabel);
 }
 
 // GUIListBox* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsListBox(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUIListBox, ccDynamicGUI, GUIControl_GetAsListBox);
+	API_OBJCALL_OBJ(GUIObject, GUIListBox, _GP(ccDynamicGUI), GUIControl_GetAsListBox);
 }
 
 // GUISlider* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsSlider(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUISlider, ccDynamicGUI, GUIControl_GetAsSlider);
+	API_OBJCALL_OBJ(GUIObject, GUISlider, _GP(ccDynamicGUI), GUIControl_GetAsSlider);
 }
 
 // GUITextBox* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetAsTextBox(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, GUITextBox, ccDynamicGUI, GUIControl_GetAsTextBox);
+	API_OBJCALL_OBJ(GUIObject, GUITextBox, _GP(ccDynamicGUI), GUIControl_GetAsTextBox);
 }
 
 // int (GUIObject *guio)
@@ -333,7 +331,7 @@ RuntimeScriptValue Sc_GUIControl_GetID(void *self, const RuntimeScriptValue *par
 
 // ScriptGUI* (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_GetOwningGUI(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIObject, ScriptGUI, ccDynamicGUI, GUIControl_GetOwningGUI);
+	API_OBJCALL_OBJ(GUIObject, ScriptGUI, _GP(ccDynamicGUI), GUIControl_GetOwningGUI);
 }
 
 // int (GUIObject *guio)

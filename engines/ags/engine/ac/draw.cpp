@@ -110,9 +110,7 @@ extern RoomStatus *croom;
 extern int our_eip;
 extern int in_new_room;
 extern RoomObject *objs;
-extern ViewStruct *views;
-extern CharacterCache *charcache;
-extern ObjectCache objcache[MAX_ROOM_OBJECTS];
+
 extern int displayed_room;
 extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
@@ -1375,25 +1373,25 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	// check whether the image should be flipped
 	int isMirrored = 0;
 	if ((objs[aa].view >= 0) &&
-	        (views[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].pic == objs[aa].num) &&
-	        ((views[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
+	        (_G(views)[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].pic == objs[aa].num) &&
+	        ((_G(views)[objs[aa].view].loops[objs[aa].loop].frames[objs[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
 		isMirrored = 1;
 	}
 
 	if ((hardwareAccelerated) &&
 	        (walkBehindMethod != DrawOverCharSprite) &&
-	        (objcache[aa].image != nullptr) &&
-	        (objcache[aa].sppic == objs[aa].num) &&
+	        (_G(objcache)[aa].image != nullptr) &&
+	        (_G(objcache)[aa].sppic == objs[aa].num) &&
 	        (actsps[useindx] != nullptr)) {
 		// HW acceleration
-		objcache[aa].tintamntwas = tint_level;
-		objcache[aa].tintredwas = tint_red;
-		objcache[aa].tintgrnwas = tint_green;
-		objcache[aa].tintbluwas = tint_blue;
-		objcache[aa].tintlightwas = tint_light;
-		objcache[aa].lightlevwas = light_level;
-		objcache[aa].zoomWas = zoom_level;
-		objcache[aa].mirroredWas = isMirrored;
+		_G(objcache)[aa].tintamntwas = tint_level;
+		_G(objcache)[aa].tintredwas = tint_red;
+		_G(objcache)[aa].tintgrnwas = tint_green;
+		_G(objcache)[aa].tintbluwas = tint_blue;
+		_G(objcache)[aa].tintlightwas = tint_light;
+		_G(objcache)[aa].lightlevwas = light_level;
+		_G(objcache)[aa].zoomWas = zoom_level;
+		_G(objcache)[aa].mirroredWas = isMirrored;
 
 		return 1;
 	}
@@ -1401,33 +1399,33 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	if ((!hardwareAccelerated) && (gfxDriver->HasAcceleratedTransform())) {
 		// They want to draw it in software mode with the D3D driver,
 		// so force a redraw
-		objcache[aa].sppic = -389538;
+		_G(objcache)[aa].sppic = -389538;
 	}
 
 	// If we have the image cached, use it
-	if ((objcache[aa].image != nullptr) &&
-	        (objcache[aa].sppic == objs[aa].num) &&
-	        (objcache[aa].tintamntwas == tint_level) &&
-	        (objcache[aa].tintlightwas == tint_light) &&
-	        (objcache[aa].tintredwas == tint_red) &&
-	        (objcache[aa].tintgrnwas == tint_green) &&
-	        (objcache[aa].tintbluwas == tint_blue) &&
-	        (objcache[aa].lightlevwas == light_level) &&
-	        (objcache[aa].zoomWas == zoom_level) &&
-	        (objcache[aa].mirroredWas == isMirrored)) {
+	if ((_G(objcache)[aa].image != nullptr) &&
+	        (_G(objcache)[aa].sppic == objs[aa].num) &&
+	        (_G(objcache)[aa].tintamntwas == tint_level) &&
+	        (_G(objcache)[aa].tintlightwas == tint_light) &&
+	        (_G(objcache)[aa].tintredwas == tint_red) &&
+	        (_G(objcache)[aa].tintgrnwas == tint_green) &&
+	        (_G(objcache)[aa].tintbluwas == tint_blue) &&
+	        (_G(objcache)[aa].lightlevwas == light_level) &&
+	        (_G(objcache)[aa].zoomWas == zoom_level) &&
+	        (_G(objcache)[aa].mirroredWas == isMirrored)) {
 		// the image is the same, we can use it cached!
 		if ((walkBehindMethod != DrawOverCharSprite) &&
 		        (actsps[useindx] != nullptr))
 			return 1;
 		// Check if the X & Y co-ords are the same, too -- if so, there
 		// is scope for further optimisations
-		if ((objcache[aa].xwas == objs[aa].x) &&
-		        (objcache[aa].ywas == objs[aa].y) &&
+		if ((_G(objcache)[aa].xwas == objs[aa].x) &&
+		        (_G(objcache)[aa].ywas == objs[aa].y) &&
 		        (actsps[useindx] != nullptr) &&
 		        (walk_behind_baselines_changed == 0))
 			return 1;
 		actsps[useindx] = recycle_bitmap(actsps[useindx], coldept, sprwidth, sprheight);
-		actsps[useindx]->Blit(objcache[aa].image, 0, 0, 0, 0, objcache[aa].image->GetWidth(), objcache[aa].image->GetHeight());
+		actsps[useindx]->Blit(_G(objcache)[aa].image, 0, 0, 0, 0, _G(objcache)[aa].image->GetWidth(), _G(objcache)[aa].image->GetHeight());
 		return 0;
 	}
 
@@ -1459,18 +1457,18 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	}
 
 	// Re-use the bitmap if it's the same size
-	objcache[aa].image = recycle_bitmap(objcache[aa].image, coldept, sprwidth, sprheight);
+	_G(objcache)[aa].image = recycle_bitmap(_G(objcache)[aa].image, coldept, sprwidth, sprheight);
 	// Create the cached image and store it
-	objcache[aa].image->Blit(actsps[useindx], 0, 0, 0, 0, sprwidth, sprheight);
-	objcache[aa].sppic = objs[aa].num;
-	objcache[aa].tintamntwas = tint_level;
-	objcache[aa].tintredwas = tint_red;
-	objcache[aa].tintgrnwas = tint_green;
-	objcache[aa].tintbluwas = tint_blue;
-	objcache[aa].tintlightwas = tint_light;
-	objcache[aa].lightlevwas = light_level;
-	objcache[aa].zoomWas = zoom_level;
-	objcache[aa].mirroredWas = isMirrored;
+	_G(objcache)[aa].image->Blit(actsps[useindx], 0, 0, 0, 0, sprwidth, sprheight);
+	_G(objcache)[aa].sppic = objs[aa].num;
+	_G(objcache)[aa].tintamntwas = tint_level;
+	_G(objcache)[aa].tintredwas = tint_red;
+	_G(objcache)[aa].tintgrnwas = tint_green;
+	_G(objcache)[aa].tintbluwas = tint_blue;
+	_G(objcache)[aa].tintlightwas = tint_light;
+	_G(objcache)[aa].lightlevwas = light_level;
+	_G(objcache)[aa].zoomWas = zoom_level;
+	_G(objcache)[aa].mirroredWas = isMirrored;
 	return 0;
 }
 
@@ -1493,8 +1491,8 @@ void prepare_objects_for_drawing() {
 		int actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
 
 		// update the cache for next time
-		objcache[aa].xwas = objs[aa].x;
-		objcache[aa].ywas = objs[aa].y;
+		_G(objcache)[aa].xwas = objs[aa].x;
+		_G(objcache)[aa].ywas = objs[aa].y;
 		int atxp = data_to_game_coord(objs[aa].x);
 		int atyp = data_to_game_coord(objs[aa].y) - tehHeight;
 
@@ -1520,19 +1518,19 @@ void prepare_objects_for_drawing() {
 		}
 
 		if (gfxDriver->HasAcceleratedTransform()) {
-			actspsbmp[useindx]->SetFlippedLeftRight(objcache[aa].mirroredWas != 0);
+			actspsbmp[useindx]->SetFlippedLeftRight(_G(objcache)[aa].mirroredWas != 0);
 			actspsbmp[useindx]->SetStretch(objs[aa].last_width, objs[aa].last_height);
-			actspsbmp[useindx]->SetTint(objcache[aa].tintredwas, objcache[aa].tintgrnwas, objcache[aa].tintbluwas, (objcache[aa].tintamntwas * 256) / 100);
+			actspsbmp[useindx]->SetTint(_G(objcache)[aa].tintredwas, _G(objcache)[aa].tintgrnwas, _G(objcache)[aa].tintbluwas, (_G(objcache)[aa].tintamntwas * 256) / 100);
 
-			if (objcache[aa].tintamntwas > 0) {
-				if (objcache[aa].tintlightwas == 0)  // luminance of 0 -- pass 1 to enable
+			if (_G(objcache)[aa].tintamntwas > 0) {
+				if (_G(objcache)[aa].tintlightwas == 0)  // luminance of 0 -- pass 1 to enable
 					actspsbmp[useindx]->SetLightLevel(1);
-				else if (objcache[aa].tintlightwas < 250)
-					actspsbmp[useindx]->SetLightLevel(objcache[aa].tintlightwas);
+				else if (_G(objcache)[aa].tintlightwas < 250)
+					actspsbmp[useindx]->SetLightLevel(_G(objcache)[aa].tintlightwas);
 				else
 					actspsbmp[useindx]->SetLightLevel(0);
-			} else if (objcache[aa].lightlevwas != 0)
-				actspsbmp[useindx]->SetLightLevel((objcache[aa].lightlevwas * 25) / 10 + 256);
+			} else if (_G(objcache)[aa].lightlevwas != 0)
+				actspsbmp[useindx]->SetLightLevel((_G(objcache)[aa].lightlevwas * 25) / 10 + 256);
 			else
 				actspsbmp[useindx]->SetLightLevel(0);
 		}
@@ -1611,16 +1609,16 @@ void prepare_characters_for_drawing() {
 			           chin->name, displayed_room);
 		}
 
-		if (chin->frame >= views[chin->view].loops[chin->loop].numFrames)
+		if (chin->frame >= _G(views)[chin->view].loops[chin->loop].numFrames)
 			chin->frame = 0;
 
-		if ((chin->loop >= views[chin->view].numLoops) ||
-		        (views[chin->view].loops[chin->loop].numFrames < 1)) {
+		if ((chin->loop >= _G(views)[chin->view].numLoops) ||
+		        (_G(views)[chin->view].loops[chin->loop].numFrames < 1)) {
 			quitprintf("!The character '%s' could not be displayed because there were no frames in loop %d of view %d.",
 			           chin->name, chin->loop, chin->view + 1);
 		}
 
-		sppic = views[chin->view].loops[chin->loop].frames[chin->frame].pic;
+		sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 		if (sppic < 0)
 			sppic = 0;  // in case it's screwed up somehow
 		our_eip = 331;
@@ -1667,7 +1665,7 @@ void prepare_characters_for_drawing() {
 
 		// adjust the sppic if mirrored, so it doesn't accidentally
 		// cache the mirrored frame as the real one
-		if (views[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
+		if (_G(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
 			isMirrored = 1;
 			specialpic = -sppic;
 		}
@@ -1676,28 +1674,28 @@ void prepare_characters_for_drawing() {
 
 		// if the character was the same sprite and scaling last time,
 		// just use the cached image
-		if ((charcache[aa].inUse) &&
-		        (charcache[aa].sppic == specialpic) &&
-		        (charcache[aa].scaling == zoom_level) &&
-		        (charcache[aa].tintredwas == tint_red) &&
-		        (charcache[aa].tintgrnwas == tint_green) &&
-		        (charcache[aa].tintbluwas == tint_blue) &&
-		        (charcache[aa].tintamntwas == tint_amount) &&
-		        (charcache[aa].tintlightwas == tint_light) &&
-		        (charcache[aa].lightlevwas == light_level)) {
+		if ((_G(charcache)[aa].inUse) &&
+		        (_G(charcache)[aa].sppic == specialpic) &&
+		        (_G(charcache)[aa].scaling == zoom_level) &&
+		        (_G(charcache)[aa].tintredwas == tint_red) &&
+		        (_G(charcache)[aa].tintgrnwas == tint_green) &&
+		        (_G(charcache)[aa].tintbluwas == tint_blue) &&
+		        (_G(charcache)[aa].tintamntwas == tint_amount) &&
+		        (_G(charcache)[aa].tintlightwas == tint_light) &&
+		        (_G(charcache)[aa].lightlevwas == light_level)) {
 			if (walkBehindMethod == DrawOverCharSprite) {
-				actsps[useindx] = recycle_bitmap(actsps[useindx], charcache[aa].image->GetColorDepth(), charcache[aa].image->GetWidth(), charcache[aa].image->GetHeight());
-				actsps[useindx]->Blit(charcache[aa].image, 0, 0, 0, 0, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
+				actsps[useindx] = recycle_bitmap(actsps[useindx], _G(charcache)[aa].image->GetColorDepth(), _G(charcache)[aa].image->GetWidth(), _G(charcache)[aa].image->GetHeight());
+				actsps[useindx]->Blit(_G(charcache)[aa].image, 0, 0, 0, 0, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
 			} else {
 				usingCachedImage = true;
 			}
-		} else if ((charcache[aa].inUse) &&
-		           (charcache[aa].sppic == specialpic) &&
+		} else if ((_G(charcache)[aa].inUse) &&
+		           (_G(charcache)[aa].sppic == specialpic) &&
 		           (gfxDriver->HasAcceleratedTransform())) {
 			usingCachedImage = true;
-		} else if (charcache[aa].inUse) {
-			//destroy_bitmap (charcache[aa].image);
-			charcache[aa].inUse = 0;
+		} else if (_G(charcache)[aa].inUse) {
+			//destroy_bitmap (_G(charcache)[aa].image);
+			_G(charcache)[aa].inUse = 0;
 		}
 
 		our_eip = 3332;
@@ -1725,17 +1723,17 @@ void prepare_characters_for_drawing() {
 		                 // adjust the Y positioning for the character's Z co-ord
 		                 - data_to_game_coord(chin->z);
 
-		charcache[aa].scaling = zoom_level;
-		charcache[aa].sppic = specialpic;
-		charcache[aa].tintredwas = tint_red;
-		charcache[aa].tintgrnwas = tint_green;
-		charcache[aa].tintbluwas = tint_blue;
-		charcache[aa].tintamntwas = tint_amount;
-		charcache[aa].tintlightwas = tint_light;
-		charcache[aa].lightlevwas = light_level;
+		_G(charcache)[aa].scaling = zoom_level;
+		_G(charcache)[aa].sppic = specialpic;
+		_G(charcache)[aa].tintredwas = tint_red;
+		_G(charcache)[aa].tintgrnwas = tint_green;
+		_G(charcache)[aa].tintbluwas = tint_blue;
+		_G(charcache)[aa].tintamntwas = tint_amount;
+		_G(charcache)[aa].tintlightwas = tint_light;
+		_G(charcache)[aa].lightlevwas = light_level;
 
 		// If cache needs to be re-drawn
-		if (!charcache[aa].inUse) {
+		if (!_G(charcache)[aa].inUse) {
 
 			// create the base sprite in actsps[useindx], which will
 			// be scaled and/or flipped, as appropriate
@@ -1768,10 +1766,10 @@ void prepare_characters_for_drawing() {
 			}
 
 			// update the character cache with the new image
-			charcache[aa].inUse = 1;
-			//charcache[aa].image = BitmapHelper::CreateBitmap_ (coldept, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
-			charcache[aa].image = recycle_bitmap(charcache[aa].image, coldept, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
-			charcache[aa].image->Blit(actsps[useindx], 0, 0, 0, 0, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
+			_G(charcache)[aa].inUse = 1;
+			//_G(charcache)[aa].image = BitmapHelper::CreateBitmap_ (coldept, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
+			_G(charcache)[aa].image = recycle_bitmap(_G(charcache)[aa].image, coldept, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
+			_G(charcache)[aa].image->Blit(actsps[useindx], 0, 0, 0, 0, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());
 
 		} // end if !cache.inUse
 
@@ -1987,25 +1985,25 @@ void draw_gui_and_overlays() {
 		if (guis_need_update) {
 			guis_need_update = 0;
 			for (aa = 0; aa < _GP(game).numgui; aa++) {
-				if (!guis[aa].IsDisplayed()) continue;
+				if (!_GP(guis)[aa].IsDisplayed()) continue;
 
 				if (guibg[aa] == nullptr)
-					recreate_guibg_image(&guis[aa]);
+					recreate_guibg_image(&_GP(guis)[aa]);
 
 				eip_guinum = aa;
 				our_eip = 370;
 				guibg[aa]->ClearTransparent();
 				our_eip = 372;
-				guis[aa].DrawAt(guibg[aa], 0, 0);
+				_GP(guis)[aa].DrawAt(guibg[aa], 0, 0);
 				our_eip = 373;
 
 				bool isAlpha = false;
-				if (guis[aa].HasAlphaChannel()) {
+				if (_GP(guis)[aa].HasAlphaChannel()) {
 					isAlpha = true;
 
-					if ((_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Legacy) && (guis[aa].BgImage > 0)) {
+					if ((_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Legacy) && (_GP(guis)[aa].BgImage > 0)) {
 						// old-style (pre-3.0.2) GUI alpha rendering
-						repair_alpha_channel(guibg[aa], _GP(spriteset)[guis[aa].BgImage]);
+						repair_alpha_channel(guibg[aa], _GP(spriteset)[_GP(guis)[aa].BgImage]);
 					}
 				}
 
@@ -2021,20 +2019,20 @@ void draw_gui_and_overlays() {
 		// Draw the GUIs
 		for (int gg = 0; gg < _GP(game).numgui; gg++) {
 			aa = _GP(play).gui_draw_order[gg];
-			if (!guis[aa].IsDisplayed()) continue;
+			if (!_GP(guis)[aa].IsDisplayed()) continue;
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
 			if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
 			        (all_buttons_disabled > 0) &&
-			        (guis[aa].PopupStyle != kGUIPopupNoAutoRemove))
+			        (_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
 				continue;
 
-			add_thing_to_draw(guibgbmp[aa], guis[aa].X, guis[aa].Y, guis[aa].Transparency, guis[aa].HasAlphaChannel());
+			add_thing_to_draw(guibgbmp[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].Transparency, _GP(guis)[aa].HasAlphaChannel());
 
 			// only poll if the interface is enabled (mouseovers should not
 			// work while in Wait state)
 			if (IsInterfaceEnabled())
-				guis[aa].Poll();
+				_GP(guis)[aa].Poll();
 		}
 	}
 
@@ -2215,16 +2213,16 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		else {
 			int viewnum = _GP(game).mcurs[cur_cursor].view;
 			int loopnum = 0;
-			if (loopnum >= views[viewnum].numLoops)
+			if (loopnum >= _G(views)[viewnum].numLoops)
 				quitprintf("An animating mouse cursor is using view %d which has no loops", viewnum + 1);
-			if (views[viewnum].loops[loopnum].numFrames < 1)
+			if (_G(views)[viewnum].loops[loopnum].numFrames < 1)
 				quitprintf("An animating mouse cursor is using view %d which has no frames in loop %d", viewnum + 1, loopnum);
 
 			mouse_frame++;
-			if (mouse_frame >= views[viewnum].loops[loopnum].numFrames)
+			if (mouse_frame >= _G(views)[viewnum].loops[loopnum].numFrames)
 				mouse_frame = 0;
-			set_new_cursor_graphic(views[viewnum].loops[loopnum].frames[mouse_frame].pic);
-			mouse_delay = views[viewnum].loops[loopnum].frames[mouse_frame].speed + 5;
+			set_new_cursor_graphic(_G(views)[viewnum].loops[loopnum].frames[mouse_frame].pic);
+			mouse_delay = _G(views)[viewnum].loops[loopnum].frames[mouse_frame].speed + 5;
 			CheckViewFrame(viewnum, loopnum, mouse_frame);
 		}
 		lastmx = _G(mousex);
