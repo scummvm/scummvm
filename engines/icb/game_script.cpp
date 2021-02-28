@@ -63,13 +63,13 @@ bool8 _game_script::Init_game_script() {
 	fn_hash = HashString(fname);
 	cluster_hash = HashString(cluster);
 
-	warning("Init_gs::'%s'::'%s'", fname, cluster);
+	Zdebug("Init_gs::'%s'::'%s'", fname, cluster);
 	if (private_session_resman->Test_file(fname, fn_hash, cluster, cluster_hash)) {
 		// program counter in gameScript
 
 		pc = 0;
 
-		warning("Gamescript found");
+		Zdebug("Gamescript found");
 		running_from_game_script = TRUE8;
 
 		return TRUE8;
@@ -159,7 +159,7 @@ void _game_script::Process_game_script() {
 		pc += 2;
 		Fetch_next_param(p1);
 		Fetch_next_line(); // ignored in normal gamescript
-		warning("Hit bookmark mission %s", p1);
+		Zdebug("Hit bookmark mission %s", p1);
 		break;
 
 	case 'X': // yes, its the amazing X mode   - t h e  m a i n  m e n u -

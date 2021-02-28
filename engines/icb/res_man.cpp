@@ -432,7 +432,7 @@ res_man::res_man(uint32 memory_tot, uint32 threadFlag) {
 	num_mem_offsets = 0;
 	hResManMutex = NULL;
 	hRunMutex = NULL;
-	warning("res_man constructor");
+
 	// Setup everything up correctly
 	Initialise(memory_tot, threadFlag);
 }
