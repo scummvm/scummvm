@@ -661,7 +661,7 @@ void ScummEngine::CHARSET_1() {
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_keepText && _game.platform == Common::kPlatformFMTowns)
+	if (_game.platform == Common::kPlatformFMTowns && (_keepText || _haveMsg == 0xFF))
 		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
 #endif
 
