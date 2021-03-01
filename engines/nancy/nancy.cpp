@@ -61,16 +61,9 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 {
 	_system = syst;
 
-	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugDisplay, "Display", "Display debug level");
-	DebugMan.addDebugChannel(kDebugMouse, "Mouse", "Mouse debug level");
-	DebugMan.addDebugChannel(kDebugParser, "Parser", "Parser debug level");
-	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
-	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
-	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
-	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
-	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
+	DebugMan.addDebugChannel(kDebugActionRecord, "ActionRecord", "Action Record debug level");
+	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
 
 	_console = new NancyConsole(this);
 	_rnd = new Common::RandomSource("Nancy");

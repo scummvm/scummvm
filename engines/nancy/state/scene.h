@@ -189,7 +189,7 @@ protected:
     };
 
     struct Timers {
-        enum TimeOfDay { kDay, kNight, kDuskDawn };
+        enum TimeOfDay { kDay = 0, kNight = 1, kDuskDawn = 2 };
 
         Time tickCount;
         Time pushedPlayTime;

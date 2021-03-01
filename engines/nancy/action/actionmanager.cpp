@@ -147,6 +147,80 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     }
 
     _records.push_back(newRecord);
+
+    debugC(1, kDebugActionRecord, "Loaded action record %i, type %s, typeID %i, description \"%s\", execType == %s",
+            _records.size() - 1,
+            newRecord->getRecordTypeName().c_str(),
+            newRecord->type,
+            newRecord->description.c_str(),
+            newRecord->execType == ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
+    for (uint i = 0; i < newRecord->dependencies.size(); ++i) {
+        debugCN(1, kDebugActionRecord, "\tDependency %i: type ", i);
+        switch (newRecord->dependencies[i].type) {
+            case kNone :debugCN(1, kDebugActionRecord, "kNone"); break;
+            case kInventory :
+                debugCN(1, kDebugActionRecord, "kInventory, item ID %i %s",
+                            newRecord->dependencies[i].label,
+                            newRecord->dependencies[i].condition == kTrue ? "is in possession" : "is not in possession");
+                break;
+            case kEventFlag :
+                debugCN(1, kDebugActionRecord, "kEventFlag, flag ID %i == %s",
+                            newRecord->dependencies[i].label,
+                            newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+                break;
+            case kLogicCondition :
+                debugCN(1, kDebugActionRecord, "kLogicCondition, logic condition ID %i == %s",
+                            newRecord->dependencies[i].label,
+                            newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+                break;
+            case kTotalTime :
+                debugCN(1, kDebugActionRecord, "kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+                            newRecord->dependencies[i].hours,
+                            newRecord->dependencies[i].minutes,
+                            newRecord->dependencies[i].seconds,
+                            newRecord->dependencies[i].milliseconds);
+                break;
+            case kSceneTime :
+                debugCN(1, kDebugActionRecord, "kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+                            newRecord->dependencies[i].hours,
+                            newRecord->dependencies[i].minutes,
+                            newRecord->dependencies[i].seconds,
+                            newRecord->dependencies[i].milliseconds);
+                break;
+            case kPlayerTime :
+                debugCN(1, kDebugActionRecord, "kPlayerTime, %i days, %i hours, %i minutes, %i seconds",
+                            newRecord->dependencies[i].hours,
+                            newRecord->dependencies[i].minutes,
+                            newRecord->dependencies[i].seconds,
+                            newRecord->dependencies[i].milliseconds);
+                break;
+            case kSceneCount :
+                debugCN(1, kDebugActionRecord, "kSceneCount, scene ID %i, hit count %s %i",
+                            newRecord->dependencies[i].hours,
+                            newRecord->dependencies[i].milliseconds == 1 ? ">" : newRecord->dependencies[i].milliseconds == 2 ? "<" : "==",
+                            newRecord->dependencies[i].seconds);
+                break;
+            case kResetOnNewDay : debugCN(1, kDebugActionRecord, "kResetOnNewDay"); break;
+            case kUseItem :
+                debugCN(1, kDebugActionRecord, "kUseItem, item ID %i %s",
+                            newRecord->dependencies[i].label,
+                            newRecord->dependencies[i].condition == kTrue ? "is held" : "is not held");
+                break;
+            case kTimeOfDay :
+                debugCN(1, kDebugActionRecord, "kTimeOfDay, %s",
+                            newRecord->dependencies[i].label == 0 ? "day" : newRecord->dependencies[i].label == 1 ? "night" : "dusk/dawn");
+                break;
+            case kTimerNotDone : debugCN(1, kDebugActionRecord, "kTimerNotDone"); break;
+            case kTimerDone : debugCN(1, kDebugActionRecord, "kTimerDone"); break;
+            case kDifficultyLevel :
+                debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", newRecord->dependencies[i].condition);
+                break;
+            default: debugCN(1, kDebugActionRecord, "unknown"); break;
+        }
+        debugC(1, kDebugActionRecord, ", orFlag == %s", newRecord->dependencies[i].orFlag == true ? "true" : "false");
+    }
+
+
     return true;
 }
 
