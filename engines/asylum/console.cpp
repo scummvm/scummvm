@@ -588,6 +588,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 	}
 
 	_vm->_delayedSceneIndex = index;
+	_vm->_puzzles->reset();
 
 	return false;
 }
