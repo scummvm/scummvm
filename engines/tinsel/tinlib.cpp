@@ -4199,6 +4199,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 	// this is convenient for debug.
 	NoirMapping mapping;
 	switch (libCode) {
+	case 3:
+		mapping = NoirMapping{"ACTORPRIORITY", ACTORPRIORITY, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 5:
 		mapping = NoirMapping{"ACTORRGB", ACTORRGB, 2};
 		pp -= mapping.numArgs - 1;
@@ -4474,7 +4479,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -3;
 
 	case ACTORPRIORITY:
-		// DW2 only
+		// DW2 / Noir
 		pp -= 1;			// 2 parameters
 		ActorPriority(pp[0], pp[1]);
 		return -2;
