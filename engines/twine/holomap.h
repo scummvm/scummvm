@@ -50,6 +50,7 @@ private:
 		uint16 y = 0;
 		uint16 z = 0;
 		uint16 textIndex = 0;
+		char name[30] = "";
 	};
 
 	enum HolomapVehicle {
@@ -146,6 +147,8 @@ public:
 
 	bool loadLocations();
 
+	const char *getLocationName(int index) const;
+
 	/**
 	 * Clear Holomap location position
 	 * @param locationIdx Scene where position must be cleared
@@ -160,6 +163,11 @@ public:
 	/** Main holomap process loop */
 	void processHolomap();
 };
+
+inline const char *Holomap::getLocationName(int index) const {
+	assert(index >= 0 && index <= ARRAYSIZE(_locations));
+	return _locations[index].name;
+}
 
 } // namespace TwinE
 
