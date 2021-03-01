@@ -4336,6 +4336,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 128:
+		mapping = NoirMapping{"RANDOM", RANDOM, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, %d, %d)", mapping.name, pp[0], pp[1], pp[2]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -5308,7 +5313,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case RANDOM:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp -= 2;			// 3 parameters
 		pp[0] = RandomFn(pp[0], pp[1], pp[2]);
 		return -2;		// One holds return value
