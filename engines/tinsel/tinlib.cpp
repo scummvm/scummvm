@@ -4336,6 +4336,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 113:
+		mapping = NoirMapping{"PLAYSAMPLE", PLAYSAMPLE, 4};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
+		break;
 	case 128:
 		mapping = NoirMapping{"RANDOM", RANDOM, 2};
 		pp -= mapping.numArgs - 1;
@@ -5222,8 +5227,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		error("playrtf only applies to cdi");
 
 	case PLAYSAMPLE:
-		// Common to both DW1 & DW2
-		if (TinselV2) {
+		// Common to DW1 / DW2 / Noir
+		if (TinselV2 || TinselV3) {
 			pp -= 3;			// 4 parameters
 			PlaySample(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape);
 			return -4;
