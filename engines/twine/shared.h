@@ -27,6 +27,50 @@
 
 #define NUM_GAME_FLAGS 255
 #define NUM_INVENTORY_ITEMS 28
+/**
+ * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
+ */
+#define GAMEFLAG_INVENTORY_DISABLED 70
+// Hit
+#define GAMEFLAG_VIDEO_BAFFE 200
+// Hit, band-aid
+#define GAMEFLAG_VIDEO_BAFFE2 201
+// Hit, black eye
+#define GAMEFLAG_VIDEO_BAFFE3 202
+// Ferry #1
+#define GAMEFLAG_VIDEO_BATEAU 203
+// Temple of Bu
+#define GAMEFLAG_VIDEO_TEMPLE 204
+// White Leaf Desert, flute
+#define GAMEFLAG_VIDEO_FLUTE2 205
+// Hamalayi Mountains, chuttle
+#define GAMEFLAG_VIDEO_NAVETTE 206
+// Hamalayi Mountains, storm
+#define GAMEFLAG_VIDEO_NEIGE2 207
+// Hamalayi Mountains, ski lift
+#define GAMEFLAG_VIDEO_SURF 208
+// Ferry #2
+#define GAMEFLAG_VIDEO_BATEAU2 209
+// Fortress, Zoe Clone
+#define GAMEFLAG_VIDEO_CAPTURE 210
+// Fortress, Rune stone (cut from the game)
+#define GAMEFLAG_VIDEO_VERSER 211
+// Fortress, Rune stone
+#define GAMEFLAG_VIDEO_VERSER2 212
+// Fortress, explosion
+#define GAMEFLAG_VIDEO_FORTRESS 213
+// Sendel give powers to Twinsen and Zoe.
+#define GAMEFLAG_VIDEO_SENDEL2 214
+// Hit, reject
+#define GAMEFLAG_VIDEO_BAFFE5 215
+// Twinsun explosion (on top of the well)
+#define GAMEFLAG_VIDEO_EXPLOD 216
+// Clear water lake
+#define GAMEFLAG_VIDEO_GLASS2 217
+// Twinsen in Well of Sendell
+#define GAMEFLAG_VIDEO_SENDEL 218
+// Twinsun explosion
+#define GAMEFLAG_VIDEO_EXPLOD2 219
 
 namespace TwinE {
 

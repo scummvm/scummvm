@@ -289,12 +289,12 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 	_gameStateFlags[index] = value;
 
 	// all 4 slap videos
-	if ((index == 200 || index == 201 || index == 202 || index == 215) &&
-		_gameStateFlags[200] != 0 && _gameStateFlags[201] != 0 && _gameStateFlags[202] != 0 && _gameStateFlags[215] != 0) {
+	if ((index == GAMEFLAG_VIDEO_BAFFE || index == GAMEFLAG_VIDEO_BAFFE2 || index == GAMEFLAG_VIDEO_BAFFE3 || index == GAMEFLAG_VIDEO_BAFFE5) &&
+		_gameStateFlags[GAMEFLAG_VIDEO_BAFFE] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE2] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE3] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE5] != 0) {
 		_engine->unlockAchievement("LBA_ACH_012");
 	}
 	// second video of ferry trip
-	if (index == 209) {
+	if (index == GAMEFLAG_VIDEO_BATEAU2) {
 		_engine->unlockAchievement("LBA_ACH_010");
 	}
 	if (index == (uint8)InventoryItems::kiUseSabre) {

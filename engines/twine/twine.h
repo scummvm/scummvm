@@ -31,7 +31,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "metaengine.h"
+#include "engines/metaengine.h"
 #include "twine/scene/actor.h"
 #include "twine/input.h"
 #include "twine/detection.h"
