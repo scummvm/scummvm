@@ -61,11 +61,18 @@ bool Holomap::loadLocations() {
 		return false;
 	}
 
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	for (int32 i = 0; i < _numLocations; i++) {
 		_locations[i].x = ClampAngle(stream.readSint16LE());
 		_locations[i].y = ClampAngle(stream.readSint16LE());
 		_locations[i].z = ClampAngle(stream.readSint16LE());
 		_locations[i].textIndex = stream.readUint16LE();
+
+		if (_engine->_text->getMenuText(_locations[i].textIndex, _locations[i].name, sizeof(_locations[i].name))) {
+			debug(2, "Scene %i: %s", i, _locations[i].name);
+			continue;
+		}
+		debug(2, "Could not get location text for index %i", i);
 	}
 	return true;
 }
