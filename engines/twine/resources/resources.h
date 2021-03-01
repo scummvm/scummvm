@@ -28,6 +28,7 @@
 #include "twine/parser/sprite.h"
 #include "twine/scene/gamestate.h"
 #include "twine/resources/hqr.h"
+#include "twine/scene/scene.h"
 
 namespace TwinE {
 

@@ -352,8 +352,8 @@ Common::Error TwinEEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 }
 
 void TwinEEngine::autoSave() {
-	// TODO: scene title, not player name
-	saveGameState(getAutosaveSlot(), _gameState->playerName, true);
+	debug("Autosave %s", _gameState->sceneName);
+	saveGameState(getAutosaveSlot(), _gameState->sceneName, true);
 }
 
 void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
