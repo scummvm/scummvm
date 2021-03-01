@@ -147,10 +147,10 @@ public:
 	void fadeOutIteration();
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override { return false; }
+	bool isStereo() const override;
 	bool endOfData() const override { return _end; }
 	bool endOfStream() const override { return false; }
-	int getRate() const override { return 22050; }
+	int getRate() const override;
 
 protected:
 	enum State {
@@ -162,14 +162,6 @@ protected:
 		S_END3,
 		S_NEXT,
 		S_STOP
-	};
-
-	struct MusicSegment {
-		uint32 numChannels;
-		uint32 bitsPerSec;
-		uint32 bitsPerSample;
-		uint32 sampleLength;
-		uint32 sampleOffset;
 	};
 
 	Audio::SoundHandle _handle;
@@ -204,6 +196,10 @@ protected:
 	void setVol(uint8 volume);
 
 	bool getNextChunk();
+
+	void loadMusicFromSegment(int segmentNum);
+	void loadADPCMMusicFromSegment(int segmentNum);
+	void loadMP3MusicFromSegment(int segmentNum);
 };
 
 } // End of namespace Tinsel

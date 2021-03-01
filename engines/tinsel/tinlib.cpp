@@ -1661,10 +1661,6 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
  * Play some music
  */
 static void PlayMusic(int tune) {
-	if (TinselV3) {
-		warning("TODO: Implement PLAYMUSIC(%d) for Noir", tune);
-		return;
-	}
 	_vm->_pcmMusic->startPlay(tune);
 }
 
