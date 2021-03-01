@@ -39,6 +39,72 @@ namespace Action {
 
 PlayPrimaryVideoChan0 *PlayPrimaryVideoChan0::activePrimaryVideo = nullptr;
 
+void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stream) {
+    type = (ConditionType)stream.readByte();
+    flag.label = stream.readSint16LE();
+    flag.flag = (NancyFlag)stream.readByte();
+    orFlag = stream.readByte();
+}
+
+bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied(NancyEngine *engine) const {
+    switch (type) {
+        case ConditionFlag::kEventFlags:
+            return engine->scene->getEventFlag(flag);
+        case ConditionFlag::kInventory:
+            return engine->scene->hasItem(flag.label) == flag.flag;
+        default:
+            return false;
+    }
+}
+
+void PlayPrimaryVideoChan0::ConditionFlag::set(NancyEngine *engine) const {
+    switch (type) {
+        case ConditionFlag::kEventFlags:
+            engine->scene->setEventFlag(flag);
+            break;
+        case ConditionFlag::kInventory:
+            if (flag.flag == kTrue) {
+                engine->scene->addItemToInventory(flag.label);
+            } else {
+                engine->scene->removeItemFromInventory(flag.label);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void PlayPrimaryVideoChan0::ConditionFlags::read(Common::SeekableReadStream &stream) {
+    uint16 numFlags = stream.readUint16LE();
+    
+    for (uint i = 0; i < numFlags; ++i) {
+        conditionFlags.push_back(ConditionFlag());
+        conditionFlags.back().read(stream);
+    }
+}
+
+bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied(NancyEngine *engine) const {
+    bool orFlag = false;
+
+    for (uint i = 0; i < conditionFlags.size(); ++i) {
+        const ConditionFlag &cur = conditionFlags[i];
+        
+        if (!cur.isSatisfied(engine)) {
+            if (orFlag) {
+                return false;
+            } else {
+                orFlag = true;
+            }
+        }
+    }
+
+    if (orFlag) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
     _decoder.close();
 	if (activePrimaryVideo == this) {
@@ -97,8 +163,8 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
     conditionalResponseCharacterID = stream.readByte();
     goodbyeResponseCharacterID = stream.readByte();
-    numSceneChanges = stream.readByte();
-    shouldPopScene = stream.readByte() == 1;
+    isDialogueExitScene = (NancyFlag)stream.readByte();
+    doNotPop = (NancyFlag)stream.readByte();
     sceneChange.readData(stream);
 
     stream.seek(bytesRead + 0x69C);
@@ -106,17 +172,9 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     uint16 numResponses = stream.readUint16LE();
     if (numResponses > 0) {
         for (uint i = 0; i < numResponses; ++i) {
-            uint16 numConditionFlags = stream.readUint16LE();
             responses.push_back(ResponseStruct());
             ResponseStruct &response = responses[i];
-
-            if (numConditionFlags > 0) {
-                for (uint16 j = 0; j < numConditionFlags; ++j) {
-                    response.conditionFlags.push_back(ConditionFlags());
-                    ConditionFlags &flags = response.conditionFlags[j];
-                    stream.read(flags.unknown, 5);
-                }
-            }
+            response.conditionFlags.read(stream);
             rawText = new char[400];
             stream.read(rawText, 400);
             UI::Textbox::assembleTextLine(rawText, response.text, 400);
@@ -141,24 +199,12 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     uint16 numFlagsStructs = stream.readUint16LE();
     if (numFlagsStructs > 0)  {
         for (uint16 i = 0; i < numFlagsStructs; ++i) {
-            uint16 numConditionFlags = stream.readUint16LE();
             flagsStructs.push_back(FlagsStruct());
-            FlagsStruct &flagsStruct = flagsStructs[flagsStructs.size()-1];
-
-            if (numConditionFlags > 0) {
-                // Not sure about this
-                if (numConditionFlags > 0) {
-                    for (uint16 j = 0; j < numConditionFlags; ++j) {
-                        flagsStruct.conditionFlags.push_back(ConditionFlags());
-                        ConditionFlags &flags = flagsStruct.conditionFlags[flagsStruct.conditionFlags.size()-1];
-                        stream.read(flags.unknown, 5);
-                    }
-                }
-            }
-
-            flagsStruct.type = (FlagsStruct::ConditionType)stream.readByte();
-            flagsStruct.flagDesc.label = stream.readSint16LE();
-            flagsStruct.flagDesc.flag = (NancyFlag)stream.readByte();
+            FlagsStruct &flagsStruct = flagsStructs.back();
+            flagsStruct.conditions.read(stream);
+            flagsStruct.flagToSet.type = (ConditionFlag::ConditionType)stream.readByte();
+            flagsStruct.flagToSet.flag.label = stream.readSint16LE();
+            flagsStruct.flagToSet.flag.flag = (NancyFlag)stream.readByte();
         }
     }
 
@@ -197,7 +243,9 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
 
                 for (uint i = 0; i < responses.size(); ++i) {
                     auto &res = responses[i];
-                    engine->scene->getTextbox().addTextLine(res.text);
+                    if (res.conditionFlags.isSatisfied(engine)) {
+                        engine->scene->getTextbox().addTextLine(res.text);
+                    }
                 }
             }
 
@@ -217,7 +265,6 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
 
                     if (pickedResponse != -1) {
                         // Player has picked response, play sound file and change state
-                        sceneChange = responses[pickedResponse].sceneChange;
                         responseGenericSound.name = responses[pickedResponse].soundName;
                         // TODO this is probably not correct
                         engine->sound->loadSound(responseGenericSound);
@@ -230,26 +277,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
         case kActionTrigger:
             // process flags structs
             for (auto flags : flagsStructs) {
-                bool conditionsSatisfied = true;
-                if (flags.conditionFlags.size()) {
-                    error("Condition flags not evaluated, please fix");
-                }
-
-                if (conditionsSatisfied) {
-                    switch (flags.type) {
-                        case FlagsStruct::kEventFlags:
-                            engine->scene->setEventFlag(flags.flagDesc);
-                            break;
-                        case FlagsStruct::kInventory:
-                            if (flags.flagDesc.flag == kTrue) {
-                                engine->scene->addItemToInventory(flags.flagDesc.label);
-                            } else {
-                                engine->scene->removeItemFromInventory(flags.flagDesc.label);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                if (flags.conditions.isSatisfied(engine)) {
+                    flags.flagToSet.set(engine);
                 }
             }
             
@@ -260,12 +289,18 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
 
             if (!engine->sound->isSoundPlaying(responseGenericSound.channelID)) {
                 engine->sound->stopSound(responseGenericSound.channelID);
-                if (shouldPopScene) {
-                    // Exit dialogue
-                    engine->scene->popScene();
+                
+                if (pickedResponse != -1) {
+                    engine->scene->changeScene(responses[pickedResponse].sceneChange);
                 } else {
-                    // Continue to next dialogue scene
-                    engine->scene->changeScene(sceneChange);
+                    // Evaluate scene branch structs here
+
+                    if (isDialogueExitScene == kFalse) {
+                        engine->scene->changeScene(sceneChange);
+                    } else if (doNotPop == kFalse) {
+                        // Exit dialogue
+                        engine->scene->popScene();
+                    }
                 }
                 
                 finishExecution();
