@@ -5104,7 +5104,8 @@ msgstr "the Myst flyをムービーで再生する"
 
 #: engines/mohawk/dialogs.cpp:119
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr "オリジナル版のエンジンにおいて、the Myst flyはムービーではありませんでした。"
+msgstr ""
+"オリジナル版のエンジンにおいて、the Myst flyはムービーではありませんでした。"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:127
@@ -5217,7 +5218,9 @@ msgstr "ゲームをロード"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr "新規にゲームを開始してもよろしいですか? 保存していない状況はすべて失われます。"
+msgstr ""
+"新規にゲームを開始してもよろしいですか? 保存していない状況はすべて失われま"
+"す。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5227,7 +5230,8 @@ msgstr "新しいゲーム"
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "ゲームを終了してもよろしいですか? 保存していない状況はすべて失われます。"
+msgstr ""
+"ゲームを終了してもよろしいですか? 保存していない状況はすべて失われます。"
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
@@ -5237,19 +5241,24 @@ msgstr "体験版では図書館から出られません。"
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr "Rivenの実行ファイルが見つかりません。'riven.exe'または'rivendmo.exe'です。 "
+msgstr ""
+"Rivenの実行ファイルが見つかりません。'riven.exe'または'rivendmo.exe'です。 "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr "インストーラーファイル'arcriven.z'を使用する事でも動作可能です。さらに、Macの実行ファイルも使用できます。"
+msgstr ""
+"インストーラーファイル'arcriven.z'を使用する事でも動作可能です。さらに、Macの"
+"実行ファイルも使用できます。"
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr "'extras.mhk'が見つかりません。インストーラーファイル'arcriven.z'を使用する事でも動作可能です。"
+msgstr ""
+"'extras.mhk'が見つかりません。インストーラーファイル'arcriven.z'を使用する事"
+"でも動作可能です。"
 
 #: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
