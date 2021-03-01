@@ -55,7 +55,7 @@ bool Holomap::loadLocations() {
 	}
 
 	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
-	_numLocations = locationsSize / sizeof(Location);
+	_numLocations = locationsSize / 8;
 	if (_numLocations > NUM_LOCATIONS) {
 		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, NUM_LOCATIONS);
 		return false;
