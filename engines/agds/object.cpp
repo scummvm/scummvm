@@ -126,8 +126,8 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 		_picture->free();
 		delete _picture;
 	}
-	freeRotated();
 	_picture = picture;
+	freeRotated();
 
 	if (!picture) {
 		_offset = Common::Point();
