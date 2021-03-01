@@ -2166,8 +2166,6 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 	if (!_polygons)
 		error("[Scene::findActionArea] Polygons not initialized properly!");
 
-	Common::Array<int32> areaIds;
-
 	switch (type) {
 	default:
 		return type - 2;
@@ -2178,6 +2176,9 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 
 		for (int32 i = _ws->actions.size() - 1; i >= 0; i--) {
 			ActionArea *area = _ws->actions[i];
+
+			if (!(area->flags & 1))
+				continue;
 
 			if (g_debugPolygons && highlight) {
 #ifdef DEBUG
@@ -2206,7 +2207,7 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 			}
 
 			if (!found && _polygons->get(area->polygonIndex).contains(pt))
-				areaIds.push_back(i);
+				return i;
 		}
 		break;
 
@@ -2237,21 +2238,12 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 			}
 
 			if (!found && _polygons->get(area->polygonIndex).contains(pt))
-				areaIds.push_back(i);
+				return i;
 		}
 		break;
 	}
 
-	if (areaIds.empty()) {
-		return -1;
-	} else {
-		int32 i;
-		for (i = 0; i < areaIds.size(); i++)
-			if (_ws->actions[i]->flags)
-				break;
-
-		return (i == areaIds.size()) ? areaIds[0] : areaIds[i];
-	}
+	return -1;
 }
 
 void Scene::changePlayer(ActorIndex index) {
