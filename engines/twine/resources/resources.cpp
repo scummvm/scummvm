@@ -24,8 +24,8 @@
 #include "common/tokenizer.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
-#include "twine/renderer/screens.h"
 #include "twine/renderer/renderer.h"
+#include "twine/renderer/screens.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
@@ -98,6 +98,17 @@ void Resources::preloadAnimations() {
 	}
 }
 
+static bool isLba1BlankSampleEntry(int32 index) {
+	// these indices contain blank hqr entries
+	const int32 blankIndices[] = {80, 81, 82, 83, 115, 118, 120, 124, 125, 139, 140, 154, 155};
+	for (int j = 0; j < ARRAYSIZE(blankIndices); ++j) {
+		if (index == blankIndices[j]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Resources::preloadSamples() {
 	const int32 numEntries = HQR::numEntries(Resources::HQR_SAMPLES_FILE);
 	const int32 maxSamples = _engine->isLBA1() ? 243 : NUM_SAMPLES;
@@ -106,15 +117,20 @@ void Resources::preloadSamples() {
 	}
 	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
+		if (_engine->isLBA1() && isLba1BlankSampleEntry(i)) {
+			samplesSizeTable[i] = 0;
+			samplesTable[i] = nullptr;
+			continue;
+		}
 		samplesSizeTable[i] = HQR::getAllocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 		if (samplesSizeTable[i] == 0) {
 			warning("Failed to load sample %i", i);
 			continue;
 		}
 		// Fix incorrect sample files first byte
-		if (*(samplesTable[i]) != 'C') {
-			debug(0, "Sample %i has incorrect magic id", i);
-			*(samplesTable[i]) = 'C';
+		if (*samplesTable[i] != 'C') {
+			debug("Sample %i has incorrect magic id", i);
+			*samplesTable[i] = 'C';
 		}
 	}
 }
@@ -207,7 +223,7 @@ void Resources::loadFlaInfo() {
 	if (size == 0) {
 		return;
 	}
-	const Common::String str((const char*)content, size);
+	const Common::String str((const char *)content, size);
 	free(content);
 
 	Common::StringTokenizer tok(str, "\r\n");
@@ -228,7 +244,7 @@ void Resources::loadFlaInfo() {
 	}
 }
 
-const Common::Array<int32>& Resources::getFlaMovieInfo(const Common::String &name) const {
+const Common::Array<int32> &Resources::getFlaMovieInfo(const Common::String &name) const {
 	return _flaMovieFrames.getVal(name);
 }
 
