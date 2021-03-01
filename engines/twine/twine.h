@@ -26,15 +26,16 @@
 #include "backends/keymapper/keymap.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
+#include "engines/metaengine.h"
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "engines/metaengine.h"
-#include "twine/scene/actor.h"
-#include "twine/input.h"
 #include "twine/detection.h"
+#include "twine/input.h"
+#include "twine/scene/actor.h"
 
 namespace TwinE {
 
@@ -154,14 +155,14 @@ enum class EngineState {
 };
 
 struct ScopedEngineFreeze {
-	TwinEEngine* _engine;
-	ScopedEngineFreeze(TwinEEngine* engine);
+	TwinEEngine *_engine;
+	ScopedEngineFreeze(TwinEEngine *engine);
 	~ScopedEngineFreeze();
 };
 
 struct ScopedCursor {
-	TwinEEngine* _engine;
-	ScopedCursor(TwinEEngine* engine);
+	TwinEEngine *_engine;
+	ScopedCursor(TwinEEngine *engine);
 	~ScopedCursor();
 };
 
@@ -226,6 +227,7 @@ public:
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
+	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
 	const char *getGameId() const;
 
 	bool unlockAchievement(const Common::String &id);

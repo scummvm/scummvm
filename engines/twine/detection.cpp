@@ -64,7 +64,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -73,7 +73,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -82,7 +82,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -91,7 +91,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -100,7 +100,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
