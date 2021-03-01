@@ -126,7 +126,7 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	}
 }
 
-/*-----------------29/04/96 16.38-------------------
+/*------------------------------------------------
 					BCopy
 --------------------------------------------------*/
 void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
@@ -164,12 +164,9 @@ void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	if (Len > 0) {
 		CopyNow = Len;
 		byte2word(_screenPtr + y2 * (_pitch / 2), Src + SrcSco, _vm->_newData, CopyNow);
-		// Useless assignations, removed
-		// SrcSco += CopyNow;
-		// Len -= CopyNow;
 	}
 }
-/*-----------------29/04/96 16.38-------------------
+/*------------------------------------------------
 					DCopy
 --------------------------------------------------*/
 void GraphicsManager::DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
@@ -207,9 +204,6 @@ void GraphicsManager::DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	if (Len > 0) {
 		CopyNow = Len;
 		byte2long(_screenPtr + y2 * (_pitch / 2), Src + SrcSco, _vm->_newData2, CopyNow / 2);
-		// Useless assignment, removed
-		// SrcSco += CopyNow;
-		// Len -= CopyNow;
 	}
 }
 

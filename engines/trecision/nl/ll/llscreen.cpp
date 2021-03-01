@@ -57,7 +57,7 @@ uint8 *MaskPointers[MAXOBJINROOM];
 uint8 *SoundPointer[MAXSOUNDSINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
-uint8 *SmackBuffer[MAXSMACK];
+uint8 *_smackBuffer[MAXSMACK];
 uint8 *SmackTempBuffer[MAXSMACK];
 // DATA POINTER
 uint16 *Icone;
@@ -241,7 +241,7 @@ void OpenVideo() {
 	GameBytePointer += MAXTEXTAREA;
 
 	// icone area
-	SmackBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	_smackBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
 	// zbuffer
 	ZBuffer = (int16 *)(MemoryArea + GameBytePointer);
@@ -254,8 +254,8 @@ void OpenVideo() {
 	ExtraObj2C = (uint16 *)SpeechBuf[0]; // for room 2C
 	GameBytePointer += SPEECHSIZE;
 	// omino e full motions area
-	SmackBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj41D = (uint16 *)SmackBuffer[1]; // for room 41D
+	_smackBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
+	ExtraObj41D = (uint16 *)_smackBuffer[1]; // for room 41D
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
 	SmackTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
@@ -267,7 +267,7 @@ void OpenVideo() {
 	SmackTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKICONBUFFER;
 	// background area
-	SmackBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	_smackBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA;
 	// SmackImagePointer
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);

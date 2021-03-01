@@ -39,49 +39,18 @@
 #include "common/config-manager.h"
 #include "trecision/trecision.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
-class NightlongSmackerDecoder : public Video::SmackerDecoder {
-public:
-	bool loadStream(Common::SeekableReadStream *stream) override {
-		if (Video::SmackerDecoder::loadStream(stream)) {
-			// Map audio tracks to sound types
-			for (uint32 i = 0; i < 8; i++) {
-				Track *t = getTrack(i);
-				if (t && t->getTrackType() == Track::kTrackTypeAudio) {
-					AudioTrack *audio = (AudioTrack *)t;
-					audio->setMute(false);
-					audio->setSoundType(i == 7 ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType);
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	void muteTrack(uint track, bool mute) {
-		Track *t = getTrack(track);
-		if (t && t->getTrackType() == Track::kTrackTypeAudio) {
-			((AudioTrack *)t)->setMute(mute);
-		}
-	}
-
-	void setMute(bool mute) {
-		for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); it++) {
-			if ((*it)->getTrackType() == Track::kTrackTypeAudio)
-				((AudioTrack *)*it)->setMute(mute);
-		}
-	}
-};
-
+class NightlongSmackerDecoder;
 SDText sdt, osdt;
 
 // locals
 #define MAXSMACK	3
 #define FULLMOTIONANIM 620
 
-extern uint8 *SmackBuffer[MAXSMACK];
+extern uint8 *_smackBuffer[MAXSMACK];
 
 extern uint16 _smackPal[MAXSMACK][256];
 extern uint8  _curSmackAction;
@@ -97,8 +66,11 @@ extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 // from regen.c
 extern int16 _limits[20][4];
 extern uint16 _limitsNum;
-extern int Hlim;
+extern int _actorLimit;
 extern const char *_sysSentence[];
+
+int _fullMotionStart;
+int _fullMotionEnd;
 
 /*-----------------18/01/97 21.05-------------------
 					CallSmackOpen
@@ -140,7 +112,7 @@ void CallSmackNextFrame() {
 	if (SmkAnims[_curSmackBuffer]->needsUpdate()) {
 		const Graphics::Surface *surface = SmkAnims[_curSmackBuffer]->decodeNextFrame();
 		if (surface != NULL)
-			SmackBuffer[_curSmackBuffer] = (uint8 *)surface->getPixels();
+			_smackBuffer[_curSmackBuffer] = (uint8 *)surface->getPixels();
 	}
 }
 
@@ -250,7 +222,7 @@ void RegenSmackAnim(int num) {
 			if (pos == 0) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
 					byte2wordn(g_vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-					           SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+					           _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 					           _smackPal[pos], lastRect->width());
 
 					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
@@ -270,7 +242,7 @@ void RegenSmackAnim(int num) {
 		}
 	}
 
-	// se e' un background
+	// If it's a background
 	if (pos == 0) {
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (!(AnimTab[num]._flag & (SMKANIM_OFF1 << a))  && (AnimTab[num]._lim[a][3] != 0)) {
@@ -281,12 +253,12 @@ void RegenSmackAnim(int num) {
 				_limitsNum ++;
 			}
 		}
-	}	// solo per l'omino
+	}	// Only for the character
 	else if (pos == 1) {
 		if (_curAnimFrame[pos] == 1) {
 			for (int32 b = 0; b < AREA; b++) {
 				for (int32 a = 0; a < MAXX; a++) {
-					if (SmackBuffer[pos][b * MAXX + a]) {
+					if (_smackBuffer[pos][b * MAXX + a]) {
 						_animMinX = MIN((uint16)a, _animMinX);
 						_animMinY = MIN((uint16)b, _animMinY);
 
@@ -302,7 +274,7 @@ void RegenSmackAnim(int num) {
 
 		for (int32 a = 0; a < (_animMaxY - _animMinY); a++) {
 			byte2wordm(g_vm->_video2 + _animMinX + (_animMinY + a + TOP) * MAXX,
-			           SmackBuffer[pos] + _animMinX + (_animMinY + a) * SmkAnims[pos]->getWidth(),
+			           _smackBuffer[pos] + _animMinX + (_animMinY + a) * SmkAnims[pos]->getWidth(),
 			           _smackPal[pos], _animMaxX - _animMinX);
 
 			AddLine(_animMinX, _animMaxX, _animMinY + a + TOP);
@@ -313,7 +285,7 @@ void RegenSmackAnim(int num) {
 		_limits[_limitsNum][2] = _animMaxX;
 		_limits[_limitsNum][3] = _animMaxY + TOP;
 
-		Hlim = _limitsNum;
+		_actorLimit = _limitsNum;
 		_limitsNum ++;
 	}
 
@@ -341,7 +313,7 @@ void RegenSmackAnim(int num) {
 }
 
 /*-----------------22/11/96 11.23-------------------
-			Aggiorna Icona Smacker
+			Refresh Smacker Icons
 --------------------------------------------------*/
 void RegenSmackIcon(int StartIcon, int num) {
 	int pos = MAXSMACK - 1;
@@ -364,16 +336,17 @@ void RegenSmackIcon(int StartIcon, int num) {
 		return;
 
 	if (SmkAnims[pos]->hasDirtyPalette()) {
-		for (a = 0; a < 256; a++)
+		for (a = 0; a < 256; a++) {
 			_smackPal[pos][a] = g_vm->_graphicsMgr->palTo16bit(SmkAnims[pos]->getPalette()[a * 3 + 0],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 1],
 				                           SmkAnims[pos]->getPalette()[a * 3 + 2]);
+		}
 	}
 
 	while (const Common::Rect *lastRect = SmkAnims[pos]->getNextDirtyRect()) {
 		for (a = 0; a < ICONDY - lastRect->top; a++) {
 			byte2word(g_vm->_video2 + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
-			          SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+			          _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 			          _smackPal[pos], lastRect->width());
 
 			AddLine(lastRect->left + stx, lastRect->right + stx,
@@ -383,9 +356,6 @@ void RegenSmackIcon(int StartIcon, int num) {
 
 	CallSmackNextFrame();
 }
-
-int FullStart;
-int FullEnd;
 
 /*-----------------07/02/97 16.53-------------------
 					PlayFullMotion
@@ -433,13 +403,6 @@ void PlayFullMotion(int start, int end) {
 				SmkAnims[pos]->seekToFrame(1);
 
 			CallSmackSoundOnOff(pos, 1);
-
-			/*while ( SmkAnims[pos]->getCurFrame() < start - 1 )
-			{
-				SmackDoFrame( SmkAnims[pos] );
-				SmackNextFrame( SmkAnims[pos] );
-				while (SmackWait( SmkAnims[pos] ));
-			}*/
 		} else
 			SmkAnims[pos]->seekToFrame(start);
 
@@ -447,8 +410,8 @@ void PlayFullMotion(int start, int end) {
 	} else if ((end - start) > 2)
 		CallSmackSoundOnOff(pos, 1);
 
-	FullStart = start;
-	FullEnd = end;
+	_fullMotionStart = start;
+	_fullMotionEnd = end;
 
 	sdt.clear();
 	osdt.clear();
@@ -470,29 +433,28 @@ void BattutaPrint(int x, int y, int c, const char *txt) {
 					PaintSmackBuffer
  --------------------------------------------------*/
 void PaintSmackBuffer(int px, int py, int dx, int dy) {
-
 	int pos = 1;
 	for (int a = 0; a < dy; a++) {
 		if (SmkAnims[pos]->getHeight() > MAXY / 2) {
 			if (SmkAnims[pos]->getWidth() > MAXX / 2)
 				byte2word(g_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
+				          _smackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
 			else
 				byte2long(g_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
+				          _smackBuffer[pos] + (a + py) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
 		} else {
 			if (SmkAnims[pos]->getWidth() > MAXX / 2)
 				byte2word(g_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
+				          _smackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px, g_vm->_newData, dx);
 			else
 				byte2long(g_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          SmackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
+				          _smackBuffer[pos] + ((a + py) / 2) * SmkAnims[pos]->getWidth() + px / 2, g_vm->_newData2, dx / 2);
 		}
 	}
 }
 
-/*-----------------22/11/96 11.23-------------------
-			Aggiorna FullMotion
+/*------------------------------------------------
+			Refresh FullMotion
 --------------------------------------------------*/
 void RegenFullMotion() {
 	int32 yfact;
@@ -500,7 +462,7 @@ void RegenFullMotion() {
 	int pos = 1;
 	_curSmackBuffer = pos;
 
-	if (((_curAnimFrame[pos] + 1) >= FullStart) && ((_curAnimFrame[pos] + 1) <= FullEnd)) {
+	if (((_curAnimFrame[pos] + 1) >= _fullMotionStart) && ((_curAnimFrame[pos] + 1) <= _fullMotionEnd)) {
 		_curAnimFrame[pos] ++;
 
 		if (SmkAnims[pos]->hasDirtyPalette()) {
@@ -553,37 +515,37 @@ void RegenFullMotion() {
 
 		while (const Common::Rect *lastRect = SmkAnims[pos]->getNextDirtyRect()) {
 			for (int32 a = 0; a < lastRect->height(); a++) {
-				// se non ho gia' copiato la scritta
+				// if it's already copied
 				if ((sdt.sign == nullptr) ||
 				        ((lastRect->top + a) * yfact < (sdt.y - TOP)) ||
 				        ((lastRect->top + a) * yfact >= (sdt.y + sdt.dy - TOP))) {
-					// sceglie se raddoppiare o no
-					// in altezza
+					// Decide to double or not...
+					// in height
 					if (SmkAnims[pos]->getHeight() > MAXY / 2) {
-						// in larghezza
+						// in width
 						if (SmkAnims[pos]->getWidth() > MAXX / 2) {
 							g_vm->_graphicsMgr->BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						} else {
 							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + (lastRect->top + a) * MAXX + ((MAXY - SmkAnims[pos]->getHeight()) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						}
 					} else {
 						if (SmkAnims[pos]->getWidth() > MAXX / 2) {
 							g_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 							g_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						} else {
 							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 							g_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - SmkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							      SmackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
+							      _smackBuffer[pos] + lastRect->left + (lastRect->top + a) * SmkAnims[pos]->getWidth(),
 							      lastRect->width());
 						}
 					}
@@ -594,7 +556,7 @@ void RegenFullMotion() {
 			g_vm->_graphicsMgr->showScreen(0, sdt.y, MAXX, sdt.dy);
 		g_vm->_graphicsMgr->unlock();
 
-		if (_curAnimFrame[pos] == FullEnd) {
+		if (_curAnimFrame[pos] == _fullMotionEnd) {
 			PaintSmackBuffer(0, 0, MAXX, AREA);
 			doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, _curAnimFrame[pos], 0, 0, 0);
 			CallSmackSoundOnOff(pos, 0);

@@ -545,7 +545,7 @@ void afterChoice(int numframe) {
 
 	// se parte altro dialogo
 	if (_choice[_curChoice]._nextDialog != 0) {
-		extern int FullStart, FullEnd;
+		extern int _fullMotionStart, _fullMotionEnd;
 
 		_curDialog = _choice[_curChoice]._nextDialog;
 		FlagDialogActive = true;
@@ -553,8 +553,8 @@ void afterChoice(int numframe) {
 
 		d = &_dialog[_curDialog];
 
-		FullStart = 0;
-		FullEnd = 0;
+		_fullMotionStart = 0;
+		_fullMotionEnd = 0;
 
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
