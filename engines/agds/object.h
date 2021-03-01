@@ -132,6 +132,7 @@ public:
 
 	void setMouseCursor(Animation *mouseCursor) {
 		_mouseCursor = mouseCursor;
+		freeRotated();
 	}
 	Animation *getMouseCursor() const {
 		return _mouseCursor;
