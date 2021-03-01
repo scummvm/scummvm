@@ -554,18 +554,23 @@ Common::Error AGDSEngine::run() {
 						uint ip;
 						if (lclick) {
 							if (_currentInventoryObject) {
-								debug("trying use handler for object %s", _currentInventoryObject->getName().c_str());
 								ip = object->getUseHandler(_currentInventoryObject->getName());
-								if (!ip)
-									ip = object->useOnHandler();
+								if (ip)
+									debug("found use handler for current inventory object %s", _currentInventoryObject->getName().c_str());
 							} else {
 								ip = object->getClickHandler();
+								if (ip)
+									debug("found click handler");
 							}
 						} else {
 							ip = object->getExamineHandler();
+							if (ip)
+								debug("found examine handler");
 						}
 						if (!ip && _currentInventoryObject) {
 							ip = lclick? _currentInventoryObject->useOnHandler(): _currentInventoryObject->throwHandler();
+							if (ip)
+								debug("found current inventory fallback action");
 							object = _currentInventoryObject;
 						}
 
