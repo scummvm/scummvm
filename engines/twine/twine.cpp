@@ -699,6 +699,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	}
 
 	if (_scene->needChangeScene > -1) {
+		if (isDemo() && isLBA1()) {
+			// the demo only has these two scenes
+			if (_scene->needChangeScene != LBA1SceneId::Citadel_Island_Prison && _scene->needChangeScene != LBA1SceneId::Citadel_Island_outside_the_citadel) {
+				return 1;
+			}
+		}
 		_scene->changeScene();
 	}
 
