@@ -60,6 +60,7 @@ struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
 struct NonBlockingScriptFunction;
+struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
 struct ScriptDialog;
@@ -70,6 +71,7 @@ struct ScriptObject;
 struct ScriptRegion;
 struct ScriptString;
 struct ScriptSystem;
+struct SpriteListEntry;
 struct ViewStruct;
 struct CharacterCache;
 struct ObjectCache;
@@ -119,6 +121,18 @@ public:
 
 	AGS::Shared::DebugManager *_DbgMgr;
 	/**@}*/
+
+	/**
+	 * \defgroup draw globals
+	 * @{
+	 */
+
+	std::vector<RoomCameraDrawData> *_CameraDrawData;
+	std::vector<SpriteListEntry> *_sprlist;
+	std::vector<SpriteListEntry> *_thingsToDrawList;
+
+	/**@}*/
+
 
 	/**
 	 * \defgroup game globals

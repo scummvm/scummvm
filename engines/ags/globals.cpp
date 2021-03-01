@@ -25,8 +25,10 @@
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/debugging/debugmanager.h"
 #include "ags/shared/game/roomstruct.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/spritelistentry.h"
 #include "ags/engine/ac/dynobj/cc_dialog.h"
 #include "ags/engine/ac/dynobj/cc_guiobject.h"
 #include "ags/engine/ac/dynobj/cc_character.h"
@@ -59,6 +61,11 @@ Globals::Globals() {
 
 	// debugmanager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
+
+	// draw.cpp globals
+	_CameraDrawData = new std::vector<RoomCameraDrawData>();
+	_sprlist = new std::vector<SpriteListEntry>();
+	_thingsToDrawList = new std::vector<SpriteListEntry>();
 
 	// game.cpp globals
 	_ccDynamicGUIObject = new CCGUIObject();

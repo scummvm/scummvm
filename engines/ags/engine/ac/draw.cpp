@@ -145,22 +145,6 @@ bool current_background_is_dirty = false;
 
 // Room background sprite
 IDriverDependantBitmap *roomBackgroundBmp = nullptr;
-// Buffer and info flags for viewport/camera pairs rendering in software mode
-struct RoomCameraDrawData {
-	// Intermediate bitmap for the software drawing method.
-	// We use this bitmap in case room camera has scaling enabled, we draw dirty room rects on it,
-	// and then pass to software renderer which draws sprite on top and then either blits or stretch-blits
-	// to the virtual screen.
-	// For more details see comment in ALSoftwareGraphicsDriver::RenderToBackBuffer().
-	PBitmap Buffer;      // this is the actual bitmap
-	PBitmap Frame;       // this is either same bitmap reference or sub-bitmap of virtual screen
-	bool    IsOffscreen; // whether room viewport was offscreen (cannot use sub-bitmap)
-	bool    IsOverlap;   // whether room viewport overlaps any others (marking dirty rects is complicated)
-};
-std::vector<RoomCameraDrawData> CameraDrawData;
-
-std::vector<SpriteListEntry> sprlist;
-std::vector<SpriteListEntry> thingsToDrawList;
 
 Bitmap **guibg = nullptr;
 IDriverDependantBitmap **guibgbmp = nullptr;
@@ -493,7 +477,7 @@ void dispose_draw_method() {
 }
 
 void dispose_room_drawdata() {
-	CameraDrawData.clear();
+	_GP(CameraDrawData).clear();
 	dispose_invalid_regions(true);
 }
 
@@ -510,7 +494,7 @@ void prepare_roomview_frame(Viewport *view) {
 	const int view_index = view->GetID();
 	const Size view_sz = view->GetRect().GetSize();
 	const Size cam_sz = view->GetCamera()->GetRect().GetSize();
-	RoomCameraDrawData &draw_dat = CameraDrawData[view_index];
+	RoomCameraDrawData &draw_dat = _GP(CameraDrawData)[view_index];
 	// We use intermediate bitmap to render camera/viewport pair in software mode under these conditions:
 	// * camera size and viewport size are different (this may be suboptimal to paint dirty rects stretched,
 	//   and also Allegro backend cannot stretch background of different colour depth).
@@ -550,7 +534,7 @@ void init_room_drawdata() {
 		return;
 	// Make sure all frame buffers are created for software drawing
 	int view_count = _GP(play).GetRoomViewportCount();
-	CameraDrawData.resize(view_count);
+	_GP(CameraDrawData).resize(view_count);
 	for (int i = 0; i < _GP(play).GetRoomViewportCount(); ++i)
 		sync_roomview(_GP(play).GetRoomViewport(i).get());
 }
@@ -558,15 +542,15 @@ void init_room_drawdata() {
 void on_roomviewport_created(int index) {
 	if (!gfxDriver || gfxDriver->RequiresFullRedrawEachFrame())
 		return;
-	if ((size_t)index < CameraDrawData.size())
+	if ((size_t)index < _GP(CameraDrawData).size())
 		return;
-	CameraDrawData.resize(index + 1);
+	_GP(CameraDrawData).resize(index + 1);
 }
 
 void on_roomviewport_deleted(int index) {
 	if (gfxDriver->RequiresFullRedrawEachFrame())
 		return;
-	CameraDrawData.erase(CameraDrawData.begin() + index);
+	_GP(CameraDrawData).erase(_GP(CameraDrawData).begin() + index);
 	delete_invalid_regions(index);
 }
 
@@ -576,8 +560,8 @@ void on_roomviewport_changed(Viewport *view) {
 	if (!view->IsVisible() || view->GetCamera() == nullptr)
 		return;
 	const bool off = !IsRectInsideRect(RectWH(gfxDriver->GetMemoryBackBuffer()->GetSize()), view->GetRect());
-	const bool off_changed = off != CameraDrawData[view->GetID()].IsOffscreen;
-	CameraDrawData[view->GetID()].IsOffscreen = off;
+	const bool off_changed = off != _GP(CameraDrawData)[view->GetID()].IsOffscreen;
+	_GP(CameraDrawData)[view->GetID()].IsOffscreen = off;
 	if (view->HasChangedSize())
 		sync_roomview(view);
 	else if (off_changed)
@@ -605,8 +589,8 @@ void detect_roomviewport_overlaps(size_t z_index) {
 				break;
 			}
 		}
-		if (CameraDrawData[this_id].IsOverlap != is_overlap) {
-			CameraDrawData[this_id].IsOverlap = is_overlap;
+		if (_GP(CameraDrawData)[this_id].IsOverlap != is_overlap) {
+			_GP(CameraDrawData)[this_id].IsOverlap = is_overlap;
 			prepare_roomview_frame(this_view.get());
 		}
 	}
@@ -931,7 +915,7 @@ void sort_out_char_sprite_walk_behind(int actspsIndex, int xx, int yy, int basel
 }
 
 void clear_draw_list() {
-	thingsToDrawList.clear();
+	_GP(thingsToDrawList).clear();
 }
 void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y, int trans, bool alphaChannel) {
 	SpriteListEntry sprite;
@@ -941,14 +925,14 @@ void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y, int trans, boo
 	sprite.y = y;
 	sprite.transparent = trans;
 	sprite.hasAlphaChannel = alphaChannel;
-	thingsToDrawList.push_back(sprite);
+	_GP(thingsToDrawList).push_back(sprite);
 }
 
 // the sprite list is an intermediate list used to order
 // objects and characters by their baselines before everything
 // is added to the Thing To Draw List
 void clear_sprite_list() {
-	sprlist.clear();
+	_GP(sprlist).clear();
 }
 void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind) {
 
@@ -975,7 +959,7 @@ void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int baselin
 	else
 		sprite.takesPriorityIfEqual = isWalkBehind;
 
-	sprlist.push_back(sprite);
+	_GP(sprlist).push_back(sprite);
 }
 
 void repair_alpha_channel(Bitmap *dest, Bitmap *bgpic) {
@@ -1043,13 +1027,13 @@ void draw_sprite_list() {
 		}
 	}
 
-	std::sort(sprlist.begin(), sprlist.end(), spritelistentry_less);
+	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
 
 	if (pl_any_want_hook(AGSE_PRESCREENDRAW))
 		add_thing_to_draw(nullptr, AGSE_PRESCREENDRAW, 0, TRANS_RUN_PLUGIN, false);
 
 	// copy the sorted sprites into the Things To Draw list
-	thingsToDrawList.insert(thingsToDrawList.end(), sprlist.begin(), sprlist.end());
+	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(), _GP(sprlist).begin(), _GP(sprlist).end());
 }
 
 // Avoid freeing and reallocating the memory if possible
@@ -1889,8 +1873,8 @@ PBitmap draw_room_background(Viewport *view, const SpriteTransform &room_trans) 
 	Bitmap *ds = gfxDriver->GetMemoryBackBuffer();
 	// If separate bitmap was prepared for this view/camera pair then use it, draw untransformed
 	// and blit transformed whole surface later.
-	const bool draw_to_camsurf = CameraDrawData[view_index].Frame != nullptr;
-	Bitmap *roomcam_surface = draw_to_camsurf ? CameraDrawData[view_index].Frame.get() : ds;
+	const bool draw_to_camsurf = _GP(CameraDrawData)[view_index].Frame != nullptr;
+	Bitmap *roomcam_surface = draw_to_camsurf ? _GP(CameraDrawData)[view_index].Frame.get() : ds;
 	{
 		// For software renderer: copy dirty rects onto the virtual screen.
 		// TODO: that would be SUPER NICE to reorganize the code and move this operation into SoftwareGraphicDriver somehow.
@@ -1906,7 +1890,7 @@ PBitmap draw_room_background(Viewport *view, const SpriteTransform &room_trans) 
 		update_room_invreg_and_reset(view_index, roomcam_surface, _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), draw_to_camsurf);
 	}
 
-	return CameraDrawData[view_index].Frame;
+	return _GP(CameraDrawData)[view_index].Frame;
 }
 
 
@@ -2054,8 +2038,8 @@ void put_sprite_list_on_screen(bool in_room) {
 
 	SpriteListEntry *thisThing;
 
-	for (size_t i = 0; i < thingsToDrawList.size(); ++i) {
-		thisThing = &thingsToDrawList[i];
+	for (size_t i = 0; i < _GP(thingsToDrawList).size(); ++i) {
+		thisThing = &_GP(thingsToDrawList)[i];
 
 		if (thisThing->bmp != nullptr) {
 			// mark the image's region as dirty
@@ -2116,7 +2100,7 @@ static void construct_room_view() {
 			// we draw everything as a sprite stack
 			gfxDriver->BeginSpriteBatch(view_rc, room_trans, Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 		} else {
-			if (CameraDrawData[viewport->GetID()].Frame == nullptr && CameraDrawData[viewport->GetID()].IsOverlap) {
+			if (_GP(CameraDrawData)[viewport->GetID()].Frame == nullptr && _GP(CameraDrawData)[viewport->GetID()].IsOverlap) {
 				// room background is prepended to the sprite stack
 				// TODO: here's why we have blit whole piece of background now:
 				// if we draw directly to the virtual screen overlapping another
