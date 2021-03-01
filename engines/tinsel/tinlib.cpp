@@ -153,7 +153,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -1661,6 +1661,11 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
  * Play some music
  */
 static void PlayMusic(int tune) {
+	_vm->_pcmMusic->startPlay(tune);
+}
+
+static void FadeMusic(int tune, int fadeParams) {
+	warning("TODO: Implement fading: %08x", fadeParams);
 	_vm->_pcmMusic->startPlay(tune);
 }
 
@@ -4286,6 +4291,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"EVENT", EVENT, 0};
 		debug(7, "%s()", mapping.name);
 		break;
+	case 64:
+		mapping = NoirMapping{"FADEMUSIC", FADEMUSIC, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%08X, %d)", mapping.name, pp[0], pp[1]);
+		break;
 	case 77:
 		mapping = NoirMapping{"HIDEACTOR", HIDEACTOR, 1};
 		pp -= mapping.numArgs - 1;
@@ -4875,6 +4885,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// DW1 only
 		FadeMidi(coroParam, pp[0]);
 		return -1;
+
+	case FADEMUSIC:
+		// Noir only
+		pp -= 1;
+		FadeMusic(pp[0], pp[1]);
+		return -2;
 
 	case FADEOUT:
 		// DW1 only
