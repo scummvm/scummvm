@@ -725,12 +725,6 @@ bool Text::getText(int32 index) {
 	return true;
 }
 
-void Text::copyText(const char *src, char *dst, int32 size) {
-	for (int32 i = 0; i < size; i++) {
-		*(dst++) = *(src++);
-	}
-}
-
 bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	if (index == currMenuTextIndex) {
 		if (currMenuTextBank == _engine->_scene->sceneTextBank) {
@@ -748,9 +742,9 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 		_currDialTextSize = 0xFF;
 	}
 
-	copyText(_currDialTextPtr, text, _currDialTextSize);
+	Common::strlcpy(text, _currDialTextPtr, MIN<int32>(textSize, _currDialTextSize + 1));
 	_currDialTextSize++;
-	copyText(text, currMenuTextBuffer, _currDialTextSize);
+	Common::strlcpy(currMenuTextBuffer, text, MIN<int32>(sizeof(currMenuTextBuffer), _currDialTextSize));
 
 	currMenuTextIndex = index;
 	currMenuTextBank = _engine->_scene->sceneTextBank;

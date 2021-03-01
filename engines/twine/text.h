@@ -168,13 +168,6 @@ private:
 	 * @param counter The amount of characters to handle - max 32
 	 */
 	void fadeInCharacters(int32 counter, int32 fontColor);
-	/**
-	 * Copy dialogue text
-	 * @param src source text buffer
-	 * @param dst destination text buffer
-	 * @param size text size
-	 */
-	void copyText(const char *src, char *dst, int32 size);
 
 	// RECHECK THIS LATER
 	int32 currentBankIdx = TextBankId::None; // textVar1
