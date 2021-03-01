@@ -121,9 +121,9 @@ void Holomap::prepareHolomapSurface() {
 	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
-	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
+	for (int angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
-		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+		for (int i = 0; i <= ANGLE_11_25; ++i, rotation += ANGLE_11_25) {
 			const int32 rotX = stream.readByte();
 			_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
 			const int32 tmpDestY = _engine->_renderer->destPos.z;
@@ -133,26 +133,16 @@ void Holomap::prepareHolomapSurface() {
 			_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destPos.y;
 			_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destPos.z;
 			++holomapSurfaceArrayIdx;
-			rotation += ANGLE_11_25;
 		}
-		const int32 rotX = stream.readByte();
-		_engine->_movements->rotateActor(rotX * 2 + 1000, 0, angle);
-		const int32 tmpDestY = _engine->_renderer->destPos.z;
-		_engine->_movements->rotateActor(_engine->_renderer->destPos.x, 0, ANGLE_0);
-		_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, tmpDestY, _engine->_renderer->destPos.z);
-		_holomapSurface[holomapSurfaceArrayIdx].x = _engine->_renderer->destPos.x;
-		_holomapSurface[holomapSurfaceArrayIdx].y = _engine->_renderer->destPos.y;
-		_holomapSurface[holomapSurfaceArrayIdx].z = _engine->_renderer->destPos.z;
-		++holomapSurfaceArrayIdx;
 	}
+	assert(stream.eos());
 }
 
 void Holomap::prepareHolomapProjectedPositions() {
-	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int projectedIndex = 0;
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
-		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+		for (int32 i = 0; i < ANGLE_11_25; ++i) {
 			_projectedSurfacePositions[projectedIndex].unk1 = _engine->_screens->crossDot(0, 0xffff, ANGLE_360 - 1, rotation);
 			if (angle == ANGLE_90) {
 				_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
@@ -173,7 +163,6 @@ void Holomap::prepareHolomapProjectedPositions() {
 }
 
 void Holomap::prepareHolomapPolygons() {
-	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
