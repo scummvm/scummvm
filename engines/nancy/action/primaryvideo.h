@@ -41,12 +41,27 @@ namespace Action {
 // ActionRecord subclass that handles all NPC dialog and nancy1's intro video
 class PlayPrimaryVideoChan0 : public ActionRecord, public RenderObject {
 
+struct ConditionFlag {
+enum ConditionType : byte { kNone = 0, kEventFlags = 1, kInventory = 2 };
+
+    ConditionType type;
+    EventFlagDescription flag;
+    bool orFlag;
+
+    void read(Common::SeekableReadStream &stream);
+    bool isSatisfied(NancyEngine *engine) const;
+    void set(NancyEngine *engine) const;
+};
+
 struct ConditionFlags {
-    byte unknown[5];
+    Common::Array<ConditionFlag> conditionFlags;
+
+    void read(Common::SeekableReadStream &stream);
+    bool isSatisfied(NancyEngine *engine) const;
 };
 
 struct ResponseStruct {
-    Common::Array<ConditionFlags> conditionFlags; // 0x02
+    ConditionFlags conditionFlags; // 0x01
     Common::String text; // 0x06
     Common::String soundName; // 0x196
     SceneChangeDescription sceneChange; // 0x1A0
@@ -54,11 +69,8 @@ struct ResponseStruct {
 };
 
 struct FlagsStruct {
-    enum ConditionType : byte { kNone = 0, kEventFlags = 1, kInventory = 2 };
-    Common::Array<ConditionFlags> conditionFlags;
-
-    ConditionType type;
-    EventFlagDescription flagDesc;
+    ConditionFlags conditions;
+    ConditionFlag flagToSet;
 };
 
 public:
@@ -86,12 +98,12 @@ public:
 
     byte conditionalResponseCharacterID; // 0x65E
     byte goodbyeResponseCharacterID; // 0x65F
-    byte numSceneChanges; // 0x660, not sure
-    bool shouldPopScene; // 0x661
+    NancyFlag isDialogueExitScene; // 0x660
+    NancyFlag doNotPop; // 0x661
     SceneChangeDescription sceneChange; // 0x662
 
-    Common::Array<ResponseStruct> responses;
-    Common::Array<FlagsStruct> flagsStructs;
+    Common::Array<ResponseStruct> responses; // 0x69E
+    Common::Array<FlagsStruct> flagsStructs; // 0x6AA
 
     AVFDecoder _decoder;
 
