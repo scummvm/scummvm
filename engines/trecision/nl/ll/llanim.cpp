@@ -195,7 +195,7 @@ void StopAllSmackAnims() {
 --------------------------------------------------*/
 void StartFullMotion(const char *name) {
 	int pos;
-	extern int FullStart, FullEnd;
+	extern int _fullMotionStart, _fullMotionEnd;
 
 	// spegne tutte le altre animazioni
 	for (pos = 0; pos < MAXSMACK; pos++) {
@@ -213,8 +213,8 @@ void StartFullMotion(const char *name) {
 	_curAnimFrame[pos] = 0;
 
 	FlagShowCharacter = false;
-	FullStart = 0;
-	FullEnd = 0;
+	_fullMotionStart = 0;
+	_fullMotionEnd = 0;
 	TextStatus = TEXT_OFF;
 	wordset(g_vm->_video2, 0, TOP * MAXX);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
@@ -238,12 +238,10 @@ void StartFullMotion(const char *name) {
 				StopFullMotion
 --------------------------------------------------*/
 void StopFullMotion() {
-	extern int FullStart, FullEnd;
-	int pos;
+	extern int _fullMotionStart, _fullMotionEnd;
 
 	_curSmackAction = SMACKCLOSE;
-
-	pos = 1;
+	int pos = 1;
 	_curSmackBuffer = pos;
 
 	if (_playingAnims[pos] == 0)
@@ -262,8 +260,8 @@ void StopFullMotion() {
 	FlagSomeOneSpeak = false;
 
 	g_vm->_lightIcon = 0xFF;
-	FullStart = 0;
-	FullEnd = 0;
+	_fullMotionStart = 0;
+	_fullMotionEnd = 0;
 	if (_curDialog == dFCRED) {
 		CloseSys(NULL);
 		return;
@@ -339,7 +337,7 @@ void RedrawRoom() {
 		StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
-		memset(SmackBuffer[0], 0, SCREENLEN * AREA);
+		memset(_smackBuffer[0], 0, SCREENLEN * AREA);
 		CallSmackGoto(0, 21);
 	}
 

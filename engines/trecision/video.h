@@ -20,46 +20,20 @@
  *
  */
 
-#ifndef TRECISION_GRAPHICS_H
-#define TRECISION_GRAPHICS_H
+#ifndef TRECISION_VIDEO_H
+#define TRECISION_VIDEO_H
 
-#include "graphics/pixelformat.h"
+#include "video/smk_decoder.h"
 
 namespace Trecision {
 class TrecisionEngine;
 
-class GraphicsManager {
-private:
-	TrecisionEngine *_vm;
-
-	Graphics::PixelFormat _screenFormat;
-
-public :
-	GraphicsManager(TrecisionEngine *vm);
-	~GraphicsManager();
-	
-	bool _linearMode;
-	bool _locked;
-	uint16 _pitch;
-
-	uint16 *_screenPtr;
-
-	void lock();
-	void unlock();
-	void clearScreen();
-	void showScreen(int px, int py, int dx, int dy);
-
-	void vCopy(uint32 Sco, uint16 *Src, uint32 Len);
-	void BCopy(uint32 Sco, uint8 *Src, uint32 Len);
-	void DCopy(uint32 Sco, uint8 *Src, uint32 Len);
-
-	uint16 palTo16bit(uint8 r, uint8 g, uint8 b);
-	void updatePixelFormat(uint16 *p, uint32 len);
-	uint16 restorePixelFormat(uint16 t);
-	void color2RGB(uint16 a, uint8 *r, uint8 *g, uint8 *b);
-	uint16 RGB2Color(uint8 r, uint8 g, uint8 b);
-
-}; // end of class
+class NightlongSmackerDecoder : public Video::SmackerDecoder {
+public:
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void muteTrack(uint track, bool mute);
+	void setMute(bool mute);
+};
 
 } // end of namespace
 #endif

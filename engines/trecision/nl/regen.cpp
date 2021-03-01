@@ -44,7 +44,7 @@ uint32 PaintBlock[MAXBLOCK];
 int16 BlockCount;
 
 int xr1, xr2, yr1, yr2;
-int Hlim, Tlim;
+int _actorLimit, Tlim;
 int VisualRef[50];
 
 SDObj DObj;
@@ -69,7 +69,7 @@ void PaintScreen(uint8 flag) {
 //	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
-	Hlim = 255;
+	_actorLimit = 255;
 	Tlim = 255;
 	for (a = 0; a < 20; a++)
 		VisualRef[a] = 255;
@@ -98,7 +98,7 @@ void PaintScreen(uint8 flag) {
 		_limits[_limitsNum][2] = DObj.l[2];
 		_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
-		Hlim = _limitsNum;
+		_actorLimit = _limitsNum;
 		_limitsNum ++;
 	} else if (_animMinX != MAXX) {
 		DObj.x    = 0;
@@ -118,7 +118,7 @@ void PaintScreen(uint8 flag) {
 		_limits[_limitsNum][2] = DObj.l[2];
 		_limits[_limitsNum][3] = DObj.l[3] + TOP;
 
-		Hlim = _limitsNum;
+		_actorLimit = _limitsNum;
 		_limitsNum ++;
 	}
 
@@ -467,17 +467,17 @@ void PaintObjAnm(uint16 CurBox) {
 		drawCharacter(CALCPOINTS);
 
 		// enlarge the rectangle of the character
-		if (_limits[Hlim][0] > _actor._lim[0])
-			_limits[Hlim][0] = _actor._lim[0];
+		if (_limits[_actorLimit][0] > _actor._lim[0])
+			_limits[_actorLimit][0] = _actor._lim[0];
 
-		if (_limits[Hlim][1] > _actor._lim[2])
-			_limits[Hlim][1] = _actor._lim[2];
+		if (_limits[_actorLimit][1] > _actor._lim[2])
+			_limits[_actorLimit][1] = _actor._lim[2];
 
-		if (_limits[Hlim][2] < _actor._lim[1])
-			_limits[Hlim][2] = _actor._lim[1];
+		if (_limits[_actorLimit][2] < _actor._lim[1])
+			_limits[_actorLimit][2] = _actor._lim[1];
 
-		if (_limits[Hlim][3] < _actor._lim[3])
-			_limits[Hlim][3] = _actor._lim[3];
+		if (_limits[_actorLimit][3] < _actor._lim[3])
+			_limits[_actorLimit][3] = _actor._lim[3];
 
 		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);

@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	trecision.o \
 	metaengine.o \
 	graphics.o \
+	video.o \
 	nl/classes.o \
 	nl/dialog.o \
 	nl/do.o \

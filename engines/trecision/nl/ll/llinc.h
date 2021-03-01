@@ -106,7 +106,7 @@ extern uint8 *MaskPointers[];
 extern uint8 *SoundPointer[];
 extern uint8 *_actionPointer[];
 extern uint16 _actionPosition[];
-extern uint8 *SmackBuffer[];
+extern uint8 *_smackBuffer[];
 extern uint8 *SmackTempBuffer[];
 // DATA POINTER
 extern uint16 *Icone;

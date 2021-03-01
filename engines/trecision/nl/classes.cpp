@@ -959,22 +959,22 @@ void doIdle() {
 			if (QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		} else { //if( _curDialog == dINTRO )
-			extern int FullEnd;
+			extern int _fullMotionEnd;
 			extern uint16 _curAnimFrame[];
 
-			if (FullEnd != _curAnimFrame[1])
-				FullEnd = _curAnimFrame[1] + 1;
+			if (_fullMotionEnd != _curAnimFrame[1])
+				_fullMotionEnd = _curAnimFrame[1] + 1;
 		}
 		break;
 
 	// Skip
 	case 0x1B:
 		if (FlagDialogActive) {
-			extern int FullEnd;
+			extern int _fullMotionEnd;
 			extern uint16 _curAnimFrame[];
 
-			if (FullEnd != _curAnimFrame[1])
-				FullEnd = _curAnimFrame[1] + 1;
+			if (_fullMotionEnd != _curAnimFrame[1])
+				_fullMotionEnd = _curAnimFrame[1] + 1;
 		} else if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && _playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
