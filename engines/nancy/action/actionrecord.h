@@ -128,6 +128,9 @@ protected:
         }
     }
 
+    // Used for debugging
+    virtual Common::String getRecordTypeName() const =0;
+
 public:
     Common::String description;                     // 0x00
     byte type;                                      // 0x30

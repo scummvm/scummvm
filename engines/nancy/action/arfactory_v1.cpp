@@ -63,9 +63,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
         case 0x28:
             return new PlayPrimaryVideoChan0(_engine->scene->getViewport());
         case 0x29:
-            return new PlaySecondaryVideo(_engine->scene->getViewport());
+            return new PlaySecondaryVideo('0', _engine->scene->getViewport());
         case 0x2A:
-            return new PlaySecondaryVideo(_engine->scene->getViewport());
+            return new PlaySecondaryVideo('1', _engine->scene->getViewport());
         case 0x2B:
             return new PlaySecondaryMovie(_engine->scene->getViewport());
         case 0x2C:

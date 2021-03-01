@@ -49,16 +49,9 @@ namespace Nancy {
 static const int kSavegameVersion = 1;
 
 enum NancyDebugChannels {
-	kDebugSchedule  = 1 <<  0,
-	kDebugEngine    = 1 <<  1,
-	kDebugDisplay   = 1 <<  2,
-	kDebugMouse     = 1 <<  3,
-	kDebugParser    = 1 <<  4,
-	kDebugFile      = 1 <<  5,
-	kDebugRoute     = 1 <<  6,
-	kDebugInventory = 1 <<  7,
-	kDebugObject    = 1 <<  8,
-	kDebugMusic     = 1 <<  9
+	kDebugEngine    	= 1 << 0,
+	kDebugActionRecord  = 1 << 1,
+	kDebugScene			= 1 << 2
 };
 
 struct NancyGameDescription;

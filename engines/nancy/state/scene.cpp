@@ -194,6 +194,13 @@ void Scene::load() {
 
     readSceneSummary(*sceneSummaryChunk);
 
+    debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, doNotStartSound == %s",
+                _sceneState.nextScene.sceneID,
+                _sceneState.summary.description.c_str(),
+                _sceneState.nextScene.frameID,
+                _sceneState.nextScene.verticalOffset,
+                _sceneState._doNotStartSound == true ? "true" : "false");
+
     // Search for Action Records, maximum for a scene is 30
     Common::SeekableReadStream *actionRecordChunk = nullptr;
 

@@ -45,6 +45,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     SceneChangeDescription sceneChange;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "SceneChange"; }
 };
 
 class HotMultiframeSceneChange : public SceneChange {
@@ -53,6 +56,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     Common::Array<HotspotDescription> hotspots;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "HotMultiframeSceneChange"; }
 };
 
 class Hot1FrSceneChange : public SceneChange {
@@ -61,20 +67,32 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     HotspotDescription hotspotDesc;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "Hot1FrSceneChange"; }
 };
 
 class Hot1FrExitSceneChange : public Hot1FrSceneChange {
     virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "Hot1FrExitSceneChange"; }
 };
 
 class HotMultiframeMultisceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
 };
 
 class StartFrameNextScene : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "StartFrameNextScene"; }
 };
 
 class StartStopPlayerScrolling : public ActionRecord {
@@ -83,6 +101,9 @@ public:
     // TODO add a Start and Stop subclass
 
     byte type = 0;
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "StartStopPlayerScrolling"; }
 };
 
 class MapCall : public ActionRecord {
@@ -91,6 +112,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
+
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapCall"; }
 };
 
 class MapCallHot1Fr : public MapCall {
@@ -99,6 +123,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     HotspotDescription hotspotDesc;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapCallHot1Fr"; }
 };
 
 class MapCallHotMultiframe : public MapCall {
@@ -107,21 +134,33 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     Common::Array<HotspotDescription> hotspots;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
 };
 
 class MapLocationAccess : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapLocationAccess"; }
 };
 
 class MapSound : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapSound"; }
 };
 
 class MapAviOverride : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapAviOverride"; }
 };
 
 class MapAviOverrideOff : public ActionRecord {
@@ -129,11 +168,17 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte overrideOffData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "MapAviOverrideOff"; }
 };
 
 class TextBoxWrite : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "TextBoxWrite"; }
 };
 
 class TextBoxClear : public ActionRecord {
@@ -141,11 +186,17 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte clearData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "TextBoxClear"; }
 };
 
 class BumpPlayerClock : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }
 };
 
 class SaveContinueGame : public ActionRecord {
@@ -153,6 +204,9 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte saveContinueData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "SaveContinueGame"; }
 };
 
 class TurnOffMainRendering : public ActionRecord {
@@ -160,6 +214,9 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte turnOffData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "TurnOffMainRendering"; }
 };
 
 class TurnOnMainRendering : public ActionRecord {
@@ -167,18 +224,27 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte turnOnData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "TurnOnMainRendering"; }
 };
 
 class ResetAndStartTimer : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "ResetAndStartTimer"; }
 };
 
 class StopTimer : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "StopTimer"; }
 };
 
 class EventFlags : public ActionRecord {
@@ -187,6 +253,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     MultiEventFlagDescription flags;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "EventFlags"; }
 };
 
 class EventFlagsMultiHS : public EventFlags {
@@ -195,6 +264,9 @@ public:
     virtual void execute(Nancy::NancyEngine *engine) override;
 
     Common::Array<HotspotDescription> hotspots;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "EventFlagsMultiHS"; }
 };
 
 class LoseGame : public ActionRecord {
@@ -202,6 +274,9 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte loseData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
 class PushScene : public ActionRecord {
@@ -209,6 +284,9 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte pushData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "PushScene"; }
 };
 
 class PopScene : public ActionRecord {
@@ -216,6 +294,9 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte popData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "PopScene"; }
 };
 
 class WinGame : public ActionRecord {
@@ -223,16 +304,25 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
 
     byte winData = 0;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "WinGame"; }
 };
 
 class AddInventoryNoHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
 };
 
 class RemoveInventoryNoHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "RemoveInventoryNoHS"; }
 };
 
 class DifficultyLevel : public ActionRecord {
@@ -242,6 +332,9 @@ public:
 
     uint16 difficulty = 0;
     EventFlagDescription flag;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
 };
 
 class ShowInventoryItem : public ActionRecord, public RenderObject {
@@ -262,6 +355,8 @@ public:
     Graphics::ManagedSurface _fullSurface;
     
 protected:
+    virtual Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
+
     virtual uint16 getZOrder() const override { return 9; }
     virtual BlitType getBlitType() const override { return kNoTrans; }
     virtual bool isViewportRelative() const override { return true; }
@@ -276,11 +371,17 @@ public:
     SoundDescription sound;
     SceneChangeDescription sceneChange;
     EventFlagDescription flagOnTrigger;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
 };
 
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "PlaySoundPanFrameAnchorAndDie"; }
 };
 
 class PlaySoundMultiHS : public ActionRecord {
@@ -292,6 +393,9 @@ public:
     SceneChangeDescription sceneChange; // 0x22
     EventFlagDescription flag; // 0x2A
     Common::Array<HotspotDescription> hotspots; // 0x31
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
 
 class HintSystem : public ActionRecord {
@@ -309,6 +413,9 @@ public:
 
     void selectHint(Nancy::NancyEngine *engine);
     void getHint(uint hint, uint difficulty);
+    
+protected:
+    virtual Common::String getRecordTypeName() const override { return "HintSystem"; }
 };
 
 } // End of namespace Action

@@ -50,7 +50,7 @@ class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
     enum HoverState { kNoHover, kHover, kEndHover };
 
-    PlaySecondaryVideo(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+    PlaySecondaryVideo(char chan, RenderObject &redrawFrom) : RenderObject(redrawFrom), channel(chan) {}
     virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
     virtual void init() override;
@@ -74,6 +74,8 @@ public:
     Common::Array<SecondaryVideoDesc> videoDescs; // 0x35
 
 protected:
+    virtual Common::String getRecordTypeName() const override { return Common::String("PlaySecondaryVideoChan" + channel); }
+
     virtual uint16 getZOrder() const override { return 8; }
     virtual BlitType getBlitType() const override { return kTrans; }
     virtual bool isViewportRelative() const override { return true; }
@@ -83,6 +85,8 @@ protected:
     int _currentViewportFrame = -1;
     bool _isPlaying = false;
     bool _isHovered = false;
+
+    char channel;
 };
 
 class PlaySecondaryMovie : public ActionRecord, public RenderObject {
@@ -113,6 +117,8 @@ public:
     Common::Array<SecondaryVideoDesc> videoDescs; // 0xD4
 
 protected:
+    virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
+
     virtual uint16 getZOrder() const override { return 8; }
     virtual BlitType getBlitType() const override { return kNoTrans; }
     virtual bool isViewportRelative() const override { return true; }
