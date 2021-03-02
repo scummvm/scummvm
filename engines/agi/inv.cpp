@@ -65,9 +65,20 @@ void InventoryMgr::getPlayerInventory() {
 			inventoryEntry.name = _vm->objectName(objectNr);
 			inventoryEntry.row = curRow;
 			inventoryEntry.column = curColumn;
-			if (inventoryEntry.column > 1) {
-				// right side, adjust column accordingly
-				inventoryEntry.column -= strlen(inventoryEntry.name);
+			if (!_vm->isLanguageRTL()) {
+				if (inventoryEntry.column > 1) {
+					// right side, adjust column accordingly
+					inventoryEntry.column -= Common::strnlen(inventoryEntry.name, FONT_COLUMN_CHARACTERS);
+				}
+			} else {
+				// mirror the sides
+				if (inventoryEntry.column == 1) {
+					// right side, adjust column accordingly
+					inventoryEntry.column = FONT_COLUMN_CHARACTERS - 1 - Common::strnlen(inventoryEntry.name, FONT_COLUMN_CHARACTERS);
+				} else {
+					// left side, adjust column accordingly
+					inventoryEntry.column = 1;
+				}
 			}
 			_array.push_back(inventoryEntry);
 
@@ -187,10 +198,16 @@ void InventoryMgr::keyPress(uint16 newKey) {
 		changeActiveItem(+2);
 		break;
 	case AGI_KEY_LEFT:
-		changeActiveItem(-1);
+		if (!_vm->isLanguageRTL())
+			changeActiveItem(-1);
+		else
+			changeActiveItem(+1);
 		break;
 	case AGI_KEY_RIGHT:
-		changeActiveItem(+1);
+		if (!_vm->isLanguageRTL())
+			changeActiveItem(+1);
+		else
+			changeActiveItem(-1);
 		break;
 
 	default:

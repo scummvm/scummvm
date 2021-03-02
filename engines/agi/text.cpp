@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/unicode-bidi.h"
 #include "agi/agi.h"
 #include "agi/sprite.h"     // for commit_both()
 #include "agi/graphics.h"
@@ -274,7 +275,27 @@ void TextMgr::displayTextInsideWindow(const char *textPtr, int16 windowRow, int1
 	charPos_Pop();
 }
 
+Common::String rightAlign(Common::String line, va_list args) {
+	uint width = va_arg(args, uint);
+
+	while (line.size() < width)
+		line = " " + line;
+	return line;
+}
+
 void TextMgr::displayText(const char *textPtr, bool disabledLook) {
+	Common::String textString;
+	if (_vm->isLanguageRTL()) {
+		textString = textPtr;
+		if (_vm->getLanguage() == Common::HE_ISR)
+			textString = Common::convertBiDiStringByLines(textString, Common::kWindows1255);
+
+		if (textString.contains('\n')) 
+			textString = textString.forEachLine(rightAlign, (uint)_messageState.textSize_Width);
+
+		textPtr = textString.c_str();
+	}
+
 	const char *curTextPtr = textPtr;
 	byte  curCharacter = 0;
 
@@ -563,11 +584,17 @@ void TextMgr::statusDraw() {
 		clearLine(_statusRow, 15);
 
 		charAttrib_Set(0, 15);
-		charPos_Set(_statusRow, 1);
 		statusTextPtr = stringPrintf(_systemUI->getStatusTextScore());
+		if (!_vm->isLanguageRTL())
+			charPos_Set(_statusRow, 1);
+		else
+			charPos_Set(_statusRow, FONT_COLUMN_CHARACTERS - Common::strnlen(statusTextPtr, FONT_COLUMN_CHARACTERS) - 1);
 		displayText(statusTextPtr);
 
-		charPos_Set(_statusRow, 30);
+		if (!_vm->isLanguageRTL())
+			charPos_Set(_statusRow, 30);
+		else
+			charPos_Set(_statusRow, 1);
 		if (_vm->getFlag(VM_FLAG_SOUND_ON)) {
 			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOn());
 		} else {
@@ -684,6 +711,7 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	// but as soon as invalid characters were used in graphics mode they weren't properly shown
 	switch (_vm->getLanguage()) {
 	case Common::RU_RUS:
+	case Common::HE_ISR:
 		if (newKey >= 0x20)
 			acceptableInput = true;
 		break;
@@ -721,6 +749,8 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 			_promptCursorPos--;
 			_prompt[_promptCursorPos] = 0;
 			displayCharacter(newKey);
+			if (_vm->isLanguageRTL())
+				promptRedraw();
 
 			promptRememberForAutoComplete();
 		}
@@ -750,6 +780,8 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 				_promptCursorPos++;
 				_prompt[_promptCursorPos] = 0;
 				displayCharacter(newKey);
+				if (_vm->isLanguageRTL())
+					promptRedraw();
 
 				promptRememberForAutoComplete();
 			}
@@ -810,9 +842,17 @@ void TextMgr::promptRedraw() {
 		textPtr = stringPrintf(textPtr);
 		textPtr = stringWordWrap(textPtr, 40);
 
-		displayText(textPtr);
-		displayText((char *)&_prompt);
-		inputEditOff();
+		if (!_vm->isLanguageRTL()) {
+			displayText(textPtr);
+			displayText((char *)&_prompt);
+			inputEditOff();
+		} else {
+			charPos_Set(_promptRow, FONT_COLUMN_CHARACTERS - 2 - Common::strnlen((const char *)_prompt, FONT_COLUMN_CHARACTERS));
+			inputEditOff();
+			displayText((char *)&_prompt);
+			displayText(textPtr);
+			charPos_Set(_promptRow, FONT_COLUMN_CHARACTERS - 1);
+		}
 	}
 }
 
@@ -889,9 +929,21 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 
 	// Caller can set the input string
 	_inputStringCursorPos = 0;
-	while (_inputStringCursorPos < inputStringLen) {
-		displayCharacter(_inputString[_inputStringCursorPos]);
-		_inputStringCursorPos++;
+	if (!_vm->isLanguageRTL()) {
+		while (_inputStringCursorPos < inputStringLen) {
+			displayCharacter(_inputString[_inputStringCursorPos]);
+			_inputStringCursorPos++;
+		}
+	} else {
+		while (_inputStringCursorPos < inputStringLen) 
+			_inputStringCursorPos++;
+		if (stringMaxLen == 30)
+			// called from askForSaveGameDescription
+			charPos_Set(_textPos.row, 34 - _inputStringCursorPos);
+		else
+			charPos_Set(_textPos.row, stringMaxLen + 2 - _inputStringCursorPos);
+		inputEditOff();
+		displayText((const char *)_inputString);
 	}
 
 	// should never happen unless there is a coding glitch
@@ -900,7 +952,8 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	_inputStringMaxLen = stringMaxLen;
 	_inputStringEntered = false;
 
-	inputEditOff();
+	if (!_vm->isLanguageRTL())
+		inputEditOff();
 
 	do {
 		_vm->processAGIEvents();
@@ -932,6 +985,13 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 			_inputStringCursorPos--;
 			_inputString[_inputStringCursorPos] = 0;
 			displayCharacter(newKey);
+			if (_vm->isLanguageRTL()) {
+				for (int i = 0; i < _inputStringCursorPos; i++)
+					displayCharacter(0x08);
+				displayCharacter(' ');
+				inputEditOff();
+				displayText((const char *)_inputString);
+			}
 
 			stringRememberForAutoComplete();
 		}
@@ -965,6 +1025,7 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 			// but as soon as invalid characters were used in graphics mode they weren't properly shown
 			switch (_vm->getLanguage()) {
 			case Common::RU_RUS:
+			case Common::HE_ISR:
 				if (newKey >= 0x20)
 					acceptableInput = true;
 				break;
@@ -981,7 +1042,14 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 					_inputString[_inputStringCursorPos] = newKey;
 					_inputStringCursorPos++;
 					_inputString[_inputStringCursorPos] = 0;
-					displayCharacter(newKey);
+					if (!_vm->isLanguageRTL()) {
+						displayCharacter(newKey);
+					} else {
+						for(int i = 0; i < _inputStringCursorPos ; i++)
+							displayCharacter(0x08);
+						inputEditOff();
+						displayText((const char *)_inputString);
+					}
 
 					stringRememberForAutoComplete();
 				}

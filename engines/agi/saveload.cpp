@@ -85,11 +85,20 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	out->writeUint32BE(AGIflag);
 
+	const char *descriptionStringC;
+	Common::U32String hebDesc;
+	if (_game._vm->getLanguage() != Common::HE_ISR) {
+		descriptionStringC = descriptionString.c_str();
+	} else {
+		hebDesc = descriptionString.substr(0, SAVEDGAME_DESCRIPTION_LEN / 2 - 3).decode(Common::kWindows1255);
+		descriptionStringC = hebDesc.encode(Common::kUtf8).c_str();
+	}
+
 	// Write description of saved game, limited to SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
 	char description[SAVEDGAME_DESCRIPTION_LEN + 1];
 
 	memset(description, 0, sizeof(description));
-	strncpy(description, descriptionString.c_str(), SAVEDGAME_DESCRIPTION_LEN);
+	Common::strlcpy(description, descriptionStringC, SAVEDGAME_DESCRIPTION_LEN);
 	assert(SAVEDGAME_DESCRIPTION_LEN + 1 == 31); // safety
 	out->write(description, 31);
 
@@ -926,6 +935,10 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 
 		saveDescription += saveGameDescription;
 		saveIsValid = true;
+
+		if (_game._vm->getLanguage() == Common::HE_ISR) {
+			saveDescription = saveDescription.decode(Common::kUtf8).encode(Common::kWindows1255);
+		}
 
 		delete in;
 		return true;
