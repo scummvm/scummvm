@@ -342,7 +342,7 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 	// TODO: use generic function from the engine instead of having copy&pasted code here
 	int linespacing = getfontspacing_outlined(font);
 
-	if (break_up_text_into_lines(text, Lines, wid, font) == 0)
+	if (break_up_text_into_lines(text, _GP(fontLines), wid, font) == 0)
 		return;
 
 	Bitmap *ds = gfxDriver->GetStageBackBuffer();
@@ -350,8 +350,8 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 		return;
 	color_t text_color = ds->GetCompatibleColor(color);
 	data_to_game_coords((int *)&xx, (int *)&yy); // stupid! quick tweak
-	for (size_t i = 0; i < Lines.Count(); i++)
-		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, Lines[i]);
+	for (size_t i = 0; i < _GP(fontLines).Count(); i++)
+		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, _GP(fontLines)[i]);
 }
 
 Bitmap glVirtualScreenWrap;

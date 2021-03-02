@@ -163,13 +163,13 @@ void RawPrintMessageWrapped(int xx, int yy, int wid, int font, int msgm) {
 	// it's probably too late but check anyway
 	if (strlen(displbuf) > 2899)
 		quit("!RawPrintMessageWrapped: message too long");
-	if (break_up_text_into_lines(displbuf, Lines, wid, font) == 0)
+	if (break_up_text_into_lines(displbuf, _GP(fontLines), wid, font) == 0)
 		return;
 
 	RAW_START();
 	color_t text_color = _GP(play).raw_color;
-	for (size_t i = 0; i < Lines.Count(); i++)
-		wouttext_outline(RAW_SURFACE(), xx, yy + linespacing * i, font, text_color, Lines[i]);
+	for (size_t i = 0; i < _GP(fontLines).Count(); i++)
+		wouttext_outline(RAW_SURFACE(), xx, yy + linespacing * i, font, text_color, _GP(fontLines)[i]);
 	invalidate_screen();
 	mark_current_background_dirty();
 	RAW_END();

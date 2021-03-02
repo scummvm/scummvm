@@ -71,10 +71,11 @@ Globals::Globals() {
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
 
-	// _GP(fonts).cpp globals
+	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
 	_ttfRenderer = new TTFFontRenderer();
 	_wfnRenderer = new WFNFontRenderer();
+	_fontLines = new SplitLines();
 
 	// game.cpp globals
 	_ccDynamicGUIObject = new CCGUIObject();
@@ -131,7 +132,7 @@ Globals::~Globals() {
 	// debug.cpp
 	delete _DbgMgr;
 
-	// _GP(fonts).cpp
+	// fonts.cpp
 	delete _fonts;
 	delete _ttfRenderer;
 	delete _wfnRenderer;

@@ -177,12 +177,6 @@ bool use_default_linespacing(size_t fontNumber) {
 // Project-dependent implementation
 extern int wgettextwidth_compensate(const char *tex, int font);
 
-namespace AGS {
-namespace Shared {
-SplitLines Lines;
-}
-}
-
 // Replaces AGS-specific linebreak tags with common '\n'
 void unescape_script_string(const char *cstr, std::vector<char> &out) {
 	out.clear();

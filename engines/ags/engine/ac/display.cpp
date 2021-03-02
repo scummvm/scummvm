@@ -98,10 +98,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	int paddingDoubledScaled = get_fixed_pixel_size(padding * 2); // Just in case screen size does is not neatly divisible by 320x200
 
 	ensure_text_valid_for_font(todis, usingfont);
-	break_up_text_into_lines(todis, Lines, wii - 2 * padding, usingfont);
+	break_up_text_into_lines(todis, _GP(fontLines), wii - 2 * padding, usingfont);
 	disp.lineheight = getfontheight_outlined(usingfont);
 	disp.linespacing = getfontspacing_outlined(usingfont);
-	disp.fulltxtheight = getheightoflines(usingfont, Lines.Count());
+	disp.fulltxtheight = getheightoflines(usingfont, _GP(fontLines).Count());
 
 	// AGS 2.x: If the screen is faded out, fade in again when displaying a message box.
 	if (!asspch && (loaded_game_file_version <= kGameVersion_272))
@@ -210,7 +210,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		} else if ((ShouldAntiAliasText()) && (_GP(game).GetColorDepth() >= 24))
 			alphaChannel = true;
 
-		for (size_t ee = 0; ee < Lines.Count(); ee++) {
+		for (size_t ee = 0; ee < _GP(fontLines).Count(); ee++) {
 			//int ttxp=wii/2 - wgettextwidth_compensate(lines[ee], usingfont)/2;
 			int ttyp = ttxtop + ee * disp.linespacing;
 			// asspch < 0 means that it's inside a text box so don't
@@ -222,10 +222,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 				else
 					text_color = text_window_ds->GetCompatibleColor(-asspch);
 
-				wouttext_aligned(text_window_ds, ttxleft, ttyp, oriwid, usingfont, text_color, Lines[ee], _GP(play).text_align);
+				wouttext_aligned(text_window_ds, ttxleft, ttyp, oriwid, usingfont, text_color, _GP(fontLines)[ee], _GP(play).text_align);
 			} else {
 				text_color = text_window_ds->GetCompatibleColor(asspch);
-				wouttext_aligned(text_window_ds, ttxleft, ttyp, wii, usingfont, text_color, Lines[ee], _GP(play).speech_text_align);
+				wouttext_aligned(text_window_ds, ttxleft, ttyp, wii, usingfont, text_color, _GP(fontLines)[ee], _GP(play).speech_text_align);
 			}
 		}
 	} else {
@@ -238,8 +238,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 
 		adjust_y_coordinate_for_text(&yoffs, usingfont);
 
-		for (size_t ee = 0; ee < Lines.Count(); ee++)
-			wouttext_aligned(text_window_ds, xoffs, yoffs + ee * disp.linespacing, oriwid, usingfont, text_color, Lines[ee], _GP(play).text_align);
+		for (size_t ee = 0; ee < _GP(fontLines).Count(); ee++)
+			wouttext_aligned(text_window_ds, xoffs, yoffs + ee * disp.linespacing, oriwid, usingfont, text_color, _GP(fontLines)[ee], _GP(play).text_align);
 	}
 
 	int ovrtype = OVER_TEXTMSG;

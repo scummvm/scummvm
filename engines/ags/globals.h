@@ -47,6 +47,7 @@ class RoomStruct;
 } // namespace Shared
 } // namespace AGS
 
+class SplitLines;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
@@ -148,6 +149,7 @@ public:
 	std::vector<AGS::Shared::Font> *_fonts;
 	TTFFontRenderer *_ttfRenderer;
 	WFNFontRenderer *_wfnRenderer;
+	SplitLines *_fontLines;
 
 	/**@}*/
 

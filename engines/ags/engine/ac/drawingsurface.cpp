@@ -359,22 +359,22 @@ void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy,
 	sds->PointToGameResolution(&xx, &yy);
 	sds->SizeToGameResolution(&wid);
 
-	if (break_up_text_into_lines(msg, Lines, wid, font) == 0)
+	if (break_up_text_into_lines(msg, _GP(fontLines), wid, font) == 0)
 		return;
 
 	Bitmap *ds = sds->StartDrawing();
 	color_t text_color = sds->currentColour;
 
-	for (size_t i = 0; i < Lines.Count(); i++) {
+	for (size_t i = 0; i < _GP(fontLines).Count(); i++) {
 		int drawAtX = xx;
 
 		if (alignment & kMAlignHCenter) {
-			drawAtX = xx + ((wid / 2) - wgettextwidth(Lines[i], font) / 2);
+			drawAtX = xx + ((wid / 2) - wgettextwidth(_GP(fontLines)[i], font) / 2);
 		} else if (alignment & kMAlignRight) {
-			drawAtX = (xx + wid) - wgettextwidth(Lines[i], font);
+			drawAtX = (xx + wid) - wgettextwidth(_GP(fontLines)[i], font);
 		}
 
-		wouttext_outline(ds, drawAtX, yy + linespacing * i, font, text_color, Lines[i]);
+		wouttext_outline(ds, drawAtX, yy + linespacing * i, font, text_color, _GP(fontLines)[i]);
 	}
 
 	sds->FinishedDrawing();

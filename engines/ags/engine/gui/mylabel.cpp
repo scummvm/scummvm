@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/string.h"
@@ -28,6 +27,7 @@
 #include "ags/shared/gui/guidefines.h"
 #include "ags/engine/gui/mylabel.h"
 #include "ags/engine/gui/guidialoginternaldefs.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -51,10 +51,10 @@ void MyLabel::draw(Bitmap *ds) {
 	char *teptr = &text[0];
 	color_t text_color = ds->GetCompatibleColor(0);
 
-	if (break_up_text_into_lines(teptr, Lines, wid, acdialog_font) == 0)
+	if (break_up_text_into_lines(teptr, _GP(fontLines), wid, acdialog_font) == 0)
 		return;
-	for (size_t ee = 0; ee < Lines.Count(); ee++) {
-		wouttext_outline(ds, x, cyp, acdialog_font, text_color, Lines[ee]);
+	for (size_t ee = 0; ee < _GP(fontLines).Count(); ee++) {
+		wouttext_outline(ds, x, cyp, acdialog_font, text_color, _GP(fontLines)[ee]);
 		cyp += TEXT_HT;
 	}
 }
