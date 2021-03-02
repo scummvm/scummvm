@@ -120,8 +120,12 @@ void InputManager::processEvents() {
 
 NancyInput InputManager::getInput() const {
     NancyInput ret;
-    ret.mousePos = _engine->getEventManager()->getMousePos();
     ret.input = _inputs;
+    if (_mouseEnabled) {
+        ret.mousePos = _engine->getEventManager()->getMousePos();
+    } else {
+        ret.eatMouseInput();
+    }
     ret.otherKbdInput = _otherKbdInput;
     return ret;
 }

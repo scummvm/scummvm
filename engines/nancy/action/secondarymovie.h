@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NANCY_ACTION_SECONDARYVIDEO_H
-#define NANCY_ACTION_SECONDARYVIDEO_H
+#ifndef NANCY_ACTION_SECONDARYMOVIE_H
+#define NANCY_ACTION_SECONDARYMOVIE_H
 
 #include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/renderobject.h"
@@ -35,52 +35,54 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord that shows NPC animations outside of dialogue. Supports
-// different animations depending on whether the NPC is hovered by the mouse
-class PlaySecondaryVideo : public ActionRecord, public RenderObject {
+class PlaySecondaryMovie : public ActionRecord, public RenderObject {
 public:
-    enum HoverState { kNoHover, kHover, kEndHover };
+    struct FlagAtFrame {
+        int16 frameID;
+        EventFlagDescription flagDesc;
+    };
 
-    PlaySecondaryVideo(char chan, RenderObject &redrawFrom) : RenderObject(redrawFrom), channel(chan) {}
-    virtual ~PlaySecondaryVideo() { _decoder.close(); }
+    PlaySecondaryMovie(RenderObject &redrawFrom) :
+        RenderObject(redrawFrom),
+        _curViewportFrame(-1),
+        isFinished(false) {}
+    virtual ~PlaySecondaryMovie();
 
     virtual void init() override;
     virtual void updateGraphics() override;
     virtual void onPause(bool pause) override;
-    virtual void handleInput(NancyInput &input) override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(NancyEngine *engine) override;
 
-    Common::String filename;
-    //...
-    uint16 loopFirstFrame = 0; // 0x1E
-    uint16 loopLastFrame = 0; // 0x20
-    uint16 onHoverFirstFrame = 0; // 0x22
-    uint16 onHoverLastFrame = 0; // 0x24
-    uint16 onHoverEndFirstFrame = 0; // 0x26
-    uint16 onHoverEndLastFrame = 0; // 0x28
-    SceneChangeDescription sceneChange; // 0x2A
-    // unknown byte
-    Common::Array<SecondaryVideoDescription> videoDescs; // 0x35
+    Common::String videoName; // 0x00
+
+    uint16 unknown; // 0x1C
+    NancyFlag hideMouse; // 0x1E
+    NancyFlag isReverse; // 0x20
+    uint16 firstFrame; // 0x22
+    uint16 lastFrame; // 0x24
+    FlagAtFrame frameFlags[15]; // 0x26
+    MultiEventFlagDescription triggerFlags; // 0x80
+
+    SoundDescription sound; // 0xA8
+
+    SceneChangeDescription sceneChange; // 0xCA
+    Common::Array<SecondaryVideoDescription> videoDescs; // 0xD4
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return Common::String("PlaySecondaryVideoChan" + channel); }
+    virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
 
     virtual uint16 getZOrder() const override { return 8; }
-    virtual BlitType getBlitType() const override { return kTrans; }
+    virtual BlitType getBlitType() const override { return kNoTrans; }
     virtual bool isViewportRelative() const override { return true; }
 
-    HoverState hoverState = kNoHover;
     AVFDecoder _decoder;
-    int _currentViewportFrame = -1;
-    bool _isPlaying = false;
-    bool _isHovered = false;
-
-    char channel;
+    int _curViewportFrame;
+    bool isFinished;
 };
-
+    
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_SECONDARYVIDEO_H
+#endif // NANCY_ACTION_SECONDARYMOVIE_H

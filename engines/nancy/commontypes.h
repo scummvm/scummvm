@@ -79,6 +79,15 @@ struct MultiEventFlagDescription {
     void execute(Nancy::NancyEngine *engine);
 };
 
+struct SecondaryVideoDescription {
+    int16 frameID;
+    Common::Rect srcRect;
+    Common::Rect destRect;
+    // 2 unknown/empty rects
+
+    void readData(Common::SeekableReadStream &stream);
+};
+
 // Descrbes a single sound. Combines four different structs found in the data in one
 struct SoundDescription {
     enum Type { kNormal, kMenu, kDIGI, kScene };

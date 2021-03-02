@@ -25,6 +25,7 @@
 #include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/action/primaryvideo.h"
 #include "engines/nancy/action/secondaryvideo.h"
+#include "engines/nancy/action/secondarymovie.h"
 #include "engines/nancy/action/staticbitmapanim.h"
 #include "engines/nancy/action/orderingpuzzle.h"
 #include "engines/nancy/action/rotatinglockpuzzle.h"
