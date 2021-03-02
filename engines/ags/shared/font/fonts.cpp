@@ -30,6 +30,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gui/guidefines.h" // MAXLINE
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -40,26 +41,13 @@ using namespace AGS::Shared;
 namespace AGS {
 namespace Shared {
 
-struct Font {
-	IAGSFontRenderer *Renderer;
-	IAGSFontRenderer2 *Renderer2;
-	FontInfo            Info;
-
-	Font();
-};
-
 Font::Font()
 	: Renderer(nullptr)
 	, Renderer2(nullptr) {
 }
 
-} // Common
-} // AGS
-
-static std::vector<Font> fonts;
-static TTFFontRenderer ttfRenderer;
-static WFNFontRenderer wfnRenderer;
-
+} // namespace Shared
+} // namespace AGS
 
 FontInfo::FontInfo()
 	: Flags(0)
@@ -84,106 +72,106 @@ void shutdown_font_renderer() {
 }
 
 void adjust_y_coordinate_for_text(int *ypos, size_t fontnum) {
-	if (fontnum >= fonts.size() || !fonts[fontnum].Renderer)
+	if (fontnum >= _GP(fonts).size() || !_GP(fonts)[fontnum].Renderer)
 		return;
-	fonts[fontnum].Renderer->AdjustYCoordinateForFont(ypos, fontnum);
+	_GP(fonts)[fontnum].Renderer->AdjustYCoordinateForFont(ypos, fontnum);
 }
 
 bool font_first_renderer_loaded() {
-	return fonts.size() > 0 && fonts[0].Renderer != nullptr;
+	return _GP(fonts).size() > 0 && _GP(fonts)[0].Renderer != nullptr;
 }
 
 bool is_font_loaded(size_t fontNumber) {
-	return fontNumber < fonts.size() && fonts[fontNumber].Renderer != nullptr;;
+	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;;
 }
 
 IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return nullptr;
-	IAGSFontRenderer *oldRender = fonts[fontNumber].Renderer;
-	fonts[fontNumber].Renderer = renderer;
-	fonts[fontNumber].Renderer2 = nullptr;
+	IAGSFontRenderer *oldRender = _GP(fonts)[fontNumber].Renderer;
+	_GP(fonts)[fontNumber].Renderer = renderer;
+	_GP(fonts)[fontNumber].Renderer2 = nullptr;
 	return oldRender;
 }
 
 bool is_bitmap_font(size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer2)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer2)
 		return false;
-	return fonts[fontNumber].Renderer2->IsBitmapFont();
+	return _GP(fonts)[fontNumber].Renderer2->IsBitmapFont();
 }
 
 bool font_supports_extended_characters(size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return false;
-	return fonts[fontNumber].Renderer->SupportsExtendedCharacters(fontNumber);
+	return _GP(fonts)[fontNumber].Renderer->SupportsExtendedCharacters(fontNumber);
 }
 
 void ensure_text_valid_for_font(char *text, size_t fontnum) {
-	if (fontnum >= fonts.size() || !fonts[fontnum].Renderer)
+	if (fontnum >= _GP(fonts).size() || !_GP(fonts)[fontnum].Renderer)
 		return;
-	fonts[fontnum].Renderer->EnsureTextValidForFont(text, fontnum);
+	_GP(fonts)[fontnum].Renderer->EnsureTextValidForFont(text, fontnum);
 }
 
 int get_font_scaling_mul(size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return fonts[fontNumber].Info.SizeMultiplier;
+	return _GP(fonts)[fontNumber].Info.SizeMultiplier;
 }
 
 int wgettextwidth(const char *texx, size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return fonts[fontNumber].Renderer->GetTextWidth(texx, fontNumber);
+	return _GP(fonts)[fontNumber].Renderer->GetTextWidth(texx, fontNumber);
 }
 
 int wgettextheight(const char *text, size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return fonts[fontNumber].Renderer->GetTextHeight(text, fontNumber);
+	return _GP(fonts)[fontNumber].Renderer->GetTextHeight(text, fontNumber);
 }
 
 int get_font_outline(size_t font_number) {
-	if (font_number >= fonts.size())
+	if (font_number >= _GP(fonts).size())
 		return FONT_OUTLINE_NONE;
-	return fonts[font_number].Info.Outline;
+	return _GP(fonts)[font_number].Info.Outline;
 }
 
 int get_font_outline_thickness(size_t font_number) {
-	if (font_number >= fonts.size())
+	if (font_number >= _GP(fonts).size())
 		return 0;
-	return fonts[font_number].Info.AutoOutlineThickness;
+	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
 void set_font_outline(size_t font_number, int outline_type) {
-	if (font_number >= fonts.size())
+	if (font_number >= _GP(fonts).size())
 		return;
-	fonts[font_number].Info.Outline = FONT_OUTLINE_AUTO;
+	_GP(fonts)[font_number].Info.Outline = FONT_OUTLINE_AUTO;
 }
 
 int getfontheight(size_t fontNumber) {
-	if (fontNumber >= fonts.size() || !fonts[fontNumber].Renderer)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
 	// There is no explicit method for getting maximal possible height of any
 	// random font renderer at the moment; the implementations of GetTextHeight
 	// are allowed to return varied results depending on the text parameter.
 	// We use special line of text to get more or less reliable font height.
 	const char *height_test_string = "ZHwypgfjqhkilIK";
-	return fonts[fontNumber].Renderer->GetTextHeight(height_test_string, fontNumber);
+	return _GP(fonts)[fontNumber].Renderer->GetTextHeight(height_test_string, fontNumber);
 }
 
 int getfontlinespacing(size_t fontNumber) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return 0;
-	int spacing = fonts[fontNumber].Info.LineSpacing;
+	int spacing = _GP(fonts)[fontNumber].Info.LineSpacing;
 	// If the spacing parameter is not provided, then return default
 	// spacing, that is font's height.
 	return spacing > 0 ? spacing : getfontheight(fontNumber);
 }
 
 bool use_default_linespacing(size_t fontNumber) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return false;
-	return fonts[fontNumber].Info.LineSpacing == 0;
+	return _GP(fonts)[fontNumber].Info.LineSpacing == 0;
 }
 
 // Project-dependent implementation
@@ -302,48 +290,48 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 }
 
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return;
-	yyy += fonts[fontNumber].Info.YOffset;
+	yyy += _GP(fonts)[fontNumber].Info.YOffset;
 	if (yyy > ds->GetClip().Bottom)
 		return;                   // each char is clipped but this speeds it up
 
-	if (fonts[fontNumber].Renderer != nullptr) {
-		fonts[fontNumber].Renderer->RenderText(texx, fontNumber, (BITMAP *)ds->GetAllegroBitmap(), xxx, yyy, text_color);
+	if (_GP(fonts)[fontNumber].Renderer != nullptr) {
+		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, (BITMAP *)ds->GetAllegroBitmap(), xxx, yyy, text_color);
 	}
 }
 
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo) {
-	if (fontNumber < fonts.size() && fonts[fontNumber].Renderer)
-		fonts[fontNumber].Info = finfo;
+	if (fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer)
+		_GP(fonts)[fontNumber].Info = finfo;
 }
 
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
-	if (fonts.size() <= fontNumber)
-		fonts.resize(fontNumber + 1);
+	if (_GP(fonts).size() <= fontNumber)
+		_GP(fonts).resize(fontNumber + 1);
 	else
 		wfreefont(fontNumber);
 	FontRenderParams params;
 	params.SizeMultiplier = font_info.SizeMultiplier;
 
-	if (ttfRenderer.LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
-		fonts[fontNumber].Renderer = &ttfRenderer;
-		fonts[fontNumber].Renderer2 = &ttfRenderer;
-	} else if (wfnRenderer.LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
-		fonts[fontNumber].Renderer = &wfnRenderer;
-		fonts[fontNumber].Renderer2 = &wfnRenderer;
+	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
+		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
+		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
+	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
+		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
+		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
 	}
 
-	if (fonts[fontNumber].Renderer) {
-		fonts[fontNumber].Info = font_info;
+	if (_GP(fonts)[fontNumber].Renderer) {
+		_GP(fonts)[fontNumber].Info = font_info;
 		return true;
 	}
 	return false;
 }
 
 void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return;
 
 	char tbuffer[2000];
@@ -356,21 +344,21 @@ void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t 
 }
 
 void wfreefont(size_t fontNumber) {
-	if (fontNumber >= fonts.size())
+	if (fontNumber >= _GP(fonts).size())
 		return;
 
-	if (fonts[fontNumber].Renderer != nullptr)
-		fonts[fontNumber].Renderer->FreeMemory(fontNumber);
+	if (_GP(fonts)[fontNumber].Renderer != nullptr)
+		_GP(fonts)[fontNumber].Renderer->FreeMemory(fontNumber);
 
-	fonts[fontNumber].Renderer = nullptr;
+	_GP(fonts)[fontNumber].Renderer = nullptr;
 }
 
 void free_all_fonts() {
-	for (size_t i = 0; i < fonts.size(); ++i) {
-		if (fonts[i].Renderer != nullptr)
-			fonts[i].Renderer->FreeMemory(i);
+	for (size_t i = 0; i < _GP(fonts).size(); ++i) {
+		if (_GP(fonts)[i].Renderer != nullptr)
+			_GP(fonts)[i].Renderer->FreeMemory(i);
 	}
-	fonts.clear();
+	_GP(fonts).clear();
 }
 
 } // namespace AGS3

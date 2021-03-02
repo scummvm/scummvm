@@ -24,6 +24,9 @@
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/debugging/debugmanager.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/font/ttffontrenderer.h"
+#include "ags/shared/font/wfnfontrenderer.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/gamestate.h"
@@ -67,6 +70,11 @@ Globals::Globals() {
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
+
+	// _GP(fonts).cpp globals
+	_fonts = new std::vector<AGS::Shared::Font>();
+	_ttfRenderer = new TTFFontRenderer();
+	_wfnRenderer = new WFNFontRenderer();
 
 	// game.cpp globals
 	_ccDynamicGUIObject = new CCGUIObject();
@@ -122,6 +130,11 @@ Globals::~Globals() {
 
 	// debug.cpp
 	delete _DbgMgr;
+
+	// _GP(fonts).cpp
+	delete _fonts;
+	delete _ttfRenderer;
+	delete _wfnRenderer;
 
 	// game.cpp
 	delete _ccDynamicGUIObject;

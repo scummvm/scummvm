@@ -38,11 +38,17 @@ using Version = AGS::Shared::Version;
 
 namespace AGS {
 namespace Shared {
+
 class Bitmap;
 class DebugManager;
+struct Font;
 class RoomStruct;
+
 } // namespace Shared
 } // namespace AGS
+
+class TTFFontRenderer;
+class WFNFontRenderer;
 
 struct CCAudioChannel;
 struct CCAudioClip;
@@ -55,11 +61,14 @@ struct ccInstance;
 struct CCInventory;
 struct CCObject;
 struct CCRegion;
+struct CharacterCache;
 struct ExecutingScript;
 struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
+struct MoveList;
 struct NonBlockingScriptFunction;
+struct ObjectCache;
 struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
@@ -74,9 +83,6 @@ struct ScriptString;
 struct ScriptSystem;
 struct SpriteListEntry;
 struct ViewStruct;
-struct CharacterCache;
-struct ObjectCache;
-struct MoveList;
 
 class SpriteCache;
 
@@ -134,6 +140,16 @@ public:
 
 	/**@}*/
 
+	/**
+	 * \defgroup fonts globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::Font> *_fonts;
+	TTFFontRenderer *_ttfRenderer;
+	WFNFontRenderer *_wfnRenderer;
+
+	/**@}*/
 
 	/**
 	 * \defgroup game globals
