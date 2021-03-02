@@ -69,7 +69,7 @@ bool Screen::add(ObjectPtr object) {
 	}
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
 		if (*i == object) {
-			if ((*i)->inScene()) {
+			if ((*i)->alive()) {
 				debug("double adding object %s", (*i)->getName().c_str());
 				return false;
 			} else {
@@ -78,7 +78,7 @@ bool Screen::add(ObjectPtr object) {
 		} else
 			++i;
 	}
-	object->inScene(true);
+	object->alive(true);
 	_children.insert(object);
 	return true;
 }
@@ -106,8 +106,8 @@ ObjectPtr Screen::find(const Common::String &name) {
 
 bool Screen::remove(const ObjectPtr &object) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		if (*i == object && object->inScene()) {
-			object->inScene(false);
+		if (*i == object && object->alive()) {
+			object->alive(false);
 			return true;
 		}
 	}
@@ -117,8 +117,8 @@ bool Screen::remove(const ObjectPtr &object) {
 bool Screen::remove(const Common::String &name) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		const ObjectPtr & object = *i;
-		if (object->getName() == name && object->inScene()) {
-			object->inScene(false);
+		if (object->getName() == name && object->alive()) {
+			object->alive(false);
 			return true;
 		}
 	}
@@ -181,7 +181,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 		switch (render_type) {
 			case 0:
 				//debug("object z: %d", (*child)->z());
-				if ((*child) != currentInventoryObject && (*child)->inScene())
+				if ((*child) != currentInventoryObject && (*child)->alive())
 					(*child)->paint(*_engine, backbuffer);
 				++child;
 				break;
@@ -205,7 +205,7 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 	Common::Array<ObjectPtr> objects;
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (object->pointIn(pos) && object->inScene()) {
+		if (object->pointIn(pos) && object->alive()) {
 			objects.push_back(object);
 		}
 	}
@@ -216,7 +216,7 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	KeyHandler keyHandler;
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (!object->inScene())
+		if (!object->alive())
 			continue;
 
 		uint ip = object->getKeyHandler(keyName);
@@ -239,7 +239,7 @@ void Screen::load(const PatchPtr &patch) {
 			remove(object.name);
 		else {
 			auto instance = find(object.name); //find by name finds removed objects too
-			if (!instance || !instance->inScene()) {
+			if (!instance || !instance->alive()) {
 				instance = _engine->loadObject(object.name);
 				instance->allowCalls(false);
 				_engine->runObject(instance);
@@ -253,9 +253,9 @@ void Screen::save(const PatchPtr &patch) {
 	patch->objects.clear();
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (!object->persistent() || !object->inScene())
+		if (!object->persistent() || !object->alive())
 			continue;
-		debug("saving patch object %s %d", object->getName().c_str(), object->inScene());
+		debug("saving patch object %s %d", object->getName().c_str(), object->alive());
 		patch->objects.push_back(Patch::Object(object->getName(), 1));
 	}
 }

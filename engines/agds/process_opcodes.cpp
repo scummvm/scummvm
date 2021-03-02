@@ -525,7 +525,7 @@ void Process::checkScreenPatch() {
 		push(-1);
 	} else {
 		ObjectPtr object = screen->find(objectName);
-		int value = object && object->inScene();
+		int value = object && object->alive();
 		debug("checkScreenPatch: current screen object present: %d", value);
 		push(value);
 	}

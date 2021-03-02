@@ -81,7 +81,7 @@ private:
 	uint							_useOnHandler;
 	int								_alpha;
 	int								_scale;
-	bool							_inScene;
+	bool							_alive;
 	bool							_persistent;
 	bool							_allowCalls;
 
@@ -274,10 +274,10 @@ public:
 		return _useOnHandler;
 	}
 
-	bool inScene() const
-	{ return _inScene; }
+	bool alive() const
+	{ return _alive; }
 
-	void inScene(bool value);
+	void alive(bool value);
 
 	bool pointIn(Common::Point pos);
 };
