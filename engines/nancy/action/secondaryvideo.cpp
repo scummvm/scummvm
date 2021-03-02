@@ -41,13 +41,6 @@
 namespace Nancy {
 namespace Action {
 
-void SecondaryVideoDesc::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, srcRect);
-    readRect(stream, destRect);
-    stream.skip(0x20);
-}
-
 void PlaySecondaryVideo::init() {
     if(_decoder.isVideoLoaded()) {
         _decoder.close();
@@ -153,7 +146,7 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDesc());
+        videoDescs.push_back(SecondaryVideoDescription());
         videoDescs[i].readData(stream);
     }
 
@@ -200,118 +193,6 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
         }
         case kActionTrigger:
             engine->scene->pushScene();
-            engine->scene->changeScene(sceneChange);
-            finishExecution();
-            break;
-    }
-}
-
-uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
-    char name[10];
-    stream.read(name, 10);
-    videoName = name;
-
-    stream.skip(0x1C);
-    for (uint i = 0; i < 15; ++i) {
-        frameFlags[i].frameID = stream.readSint16LE();
-        frameFlags[i].flagDesc.label = stream.readSint16LE();
-        frameFlags[i].flagDesc.flag = (NancyFlag)stream.readUint16LE();
-    }
-
-    triggerFlags.readData(stream);
-    sound.read(stream, SoundDescription::kNormal);
-    sceneChange.readData(stream);
-
-    uint16 numVideoDescs = stream.readUint16LE();
-    for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDesc());
-        videoDescs[i].readData(stream);
-    }
-
-    return 0xD4 + numVideoDescs * 0x42; // TODO
-}
-
-void PlaySecondaryMovie::init() {
-    if(_decoder.isVideoLoaded()) {
-        _decoder.close();
-    }
-    _decoder.loadFile(videoName + ".avf");
-    _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::pixelFormat);
-    _screenPosition = _drawSurface.getBounds();
-
-    RenderObject::init();
-}
-
-void PlaySecondaryMovie::updateGraphics() {
-    if (!_decoder.isVideoLoaded()) {
-        return;
-    }
-
-    if (!_decoder.isPlaying() && _isVisible) {
-        _decoder.start();
-    }
-
-    if (_decoder.needsUpdate()) {
-        uint descID = 0;
-        for (uint i = 0; i < videoDescs.size(); ++i) {
-            if (videoDescs[i].frameID == _curViewportFrame) {
-                descID = i;
-            }
-        }
-        _drawSurface.blitFrom(*_decoder.decodeNextFrame(), videoDescs[descID].srcRect, Common::Point());
-        _needsRedraw = true;
-    } else {
-        // Set flag if not drawing new frame
-        for (auto f : frameFlags) {
-            if (_decoder.getCurFrame() == f.frameID) {
-                _engine->scene->setEventFlag(f.flagDesc);
-            }
-        }
-    }
-
-    RenderObject::updateGraphics();
-}
-
-void PlaySecondaryMovie::onPause(bool pause) {
-    _decoder.pauseVideo(pause);
-}
-
-void PlaySecondaryMovie::execute(NancyEngine *engine) {
-    switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            engine->sound->loadSound(sound);
-            state = kRun;
-            // fall through
-        case kRun: {
-            engine->cursorManager->showCursor(false);
-            
-            int newFrame = _engine->scene->getSceneInfo().frameID;
-
-            if (newFrame != _curViewportFrame) {
-                _curViewportFrame = newFrame;
-                int activeFrame = -1;
-                for (uint i = 0; i < videoDescs.size(); ++i) {
-                    if (newFrame == videoDescs[i].frameID) {
-                        activeFrame = i;
-                        break;
-                    }
-                }
-
-                if (activeFrame != -1) {
-                    _screenPosition = videoDescs[activeFrame].destRect;
-                    engine->sound->playSound(sound.channelID);
-                    setVisible(true);
-                } else {
-                    setVisible(false);
-                }
-            }
-
-            break;
-        }
-        case kActionTrigger:
-            triggerFlags.execute(engine);
             engine->scene->changeScene(sceneChange);
             finishExecution();
             break;

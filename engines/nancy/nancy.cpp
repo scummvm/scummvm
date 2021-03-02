@@ -250,6 +250,9 @@ void NancyEngine::stopAndUnloadSpecificSounds() {
 		sound->stopSound(i);
 	}
 }
+void NancyEngine::setMouseEnabled(bool enabled) {
+	cursorManager->showCursor(enabled); input->setMouseInputEnabled(enabled);
+}
 
 void NancyEngine::pauseEngineIntern(bool pause) {
 	if (pause) {

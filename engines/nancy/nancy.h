@@ -126,6 +126,8 @@ public:
 	GameState getGameState() const { return _gameFlow.minGameState; }
 	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
 
+	void setMouseEnabled(bool enabled);
+
 	virtual void pauseEngineIntern(bool pause) override;
 
 	// Managers

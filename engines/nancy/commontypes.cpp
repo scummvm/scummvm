@@ -61,6 +61,13 @@ void MultiEventFlagDescription::execute(NancyEngine *engine) {
     }
 }
 
+void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
+    frameID = stream.readUint16LE();
+    readRect(stream, srcRect);
+    readRect(stream, destRect);
+    stream.skip(0x20);
+}
+
 void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
 	char buf[10];
 

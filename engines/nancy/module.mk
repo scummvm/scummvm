@@ -9,6 +9,7 @@ MODULE_OBJS = \
   action/primaryvideo.o \
   action/recordtypes.o \
   action/rotatinglockpuzzle.o \
+  action/secondarymovie.o \
   action/secondaryvideo.o \
   action/sliderpuzzle.o \
   action/staticbitmapanim.o \

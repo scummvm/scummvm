@@ -87,12 +87,14 @@ enum NancyAction {
 public:
     InputManager(NancyEngine *engine) :
         _engine(engine),
-        _inputs(0) {}
+        _inputs(0),
+        _mouseEnabled(true) {}
 
     void processEvents();
 
     NancyInput getInput() const;
     void forceCleanInput();
+    void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
 
     static void initKeymaps(Common::KeymapArray &keymaps);
     
@@ -100,6 +102,7 @@ private:
     NancyEngine *_engine;
     uint16 _inputs;
     Common::Array<Common::KeyState> _otherKbdInput;
+    bool _mouseEnabled;
 };
 
 } // End of namespace Nancy
