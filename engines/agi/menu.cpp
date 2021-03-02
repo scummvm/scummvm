@@ -41,7 +41,10 @@ GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text)
 	_delayedExecuteViaKeyboard = false;
 	_delayedExecuteViaMouse = false;
 
-	_setupMenuColumn = 1;
+	if (!_vm->isLanguageRTL())
+		_setupMenuColumn = 1;
+	else
+		_setupMenuColumn = FONT_COLUMN_CHARACTERS - 2;
 	_setupMenuItemColumn = 1;
 
 	_lastSelectedMenuNr = 0;
@@ -82,26 +85,33 @@ void GfxMenu::addMenu(const char *menuText) {
 
 	menuEntry->textLen = menuEntry->text.size();
 
-	// Cut menu name in case menu bar is full
-	// Happens in at least the fan game Get Outta Space Quest
-	// Original interpreter had graphical issues in this case
-	// TODO: this whole code needs to get reworked anyway to support different types of menu bars depending on platform
-	curColumnEnd += menuEntry->textLen;
-	while ((menuEntry->textLen) && (curColumnEnd > 40)) {
-		menuEntry->text.deleteLastChar();
-		menuEntry->textLen--;
-		curColumnEnd--;
+	if (!_vm->isLanguageRTL()) {
+		// Cut menu name in case menu bar is full
+		// Happens in at least the fan game Get Outta Space Quest
+		// Original interpreter had graphical issues in this case
+		// TODO: this whole code needs to get reworked anyway to support different types of menu bars depending on platform
+		curColumnEnd += menuEntry->textLen;
+		while ((menuEntry->textLen) && (curColumnEnd > 40)) {
+			menuEntry->text.deleteLastChar();
+			menuEntry->textLen--;
+			curColumnEnd--;
+		}
 	}
 
 	menuEntry->row = 0;
 	menuEntry->column = _setupMenuColumn;
+	if (_vm->isLanguageRTL())
+		menuEntry->column -= menuEntry->textLen;
 	menuEntry->itemCount = 0;
 	menuEntry->firstItemNr = _itemArray.size();
 	menuEntry->selectedItemNr = menuEntry->firstItemNr;
 	menuEntry->maxItemTextLen = 0;
 	_array.push_back(menuEntry);
 
-	_setupMenuColumn += menuEntry->textLen + 1;
+	if (!_vm->isLanguageRTL())
+		_setupMenuColumn += menuEntry->textLen + 1;
+	else
+		_setupMenuColumn -= menuEntry->textLen + 1;
 }
 
 void GfxMenu::addMenuItem(const char *menuItemText, uint16 controllerSlot) {
@@ -132,11 +142,17 @@ void GfxMenu::addMenuItem(const char *menuItemText, uint16 controllerSlot) {
 	}
 
 	if (curMenuEntry->itemCount == 0) {
-		// for first menu item of menu calculated column
-		if (menuItemEntry->textLen + curMenuEntry->column < (FONT_COLUMN_CHARACTERS - 1)) {
-			_setupMenuItemColumn = curMenuEntry->column;
+		if (!_vm->isLanguageRTL()) {
+			// for first menu item of menu calculated column
+			if (menuItemEntry->textLen + curMenuEntry->column < (FONT_COLUMN_CHARACTERS - 1)) {
+				_setupMenuItemColumn = curMenuEntry->column;
+			} else {
+				_setupMenuItemColumn = (FONT_COLUMN_CHARACTERS - 1) - menuItemEntry->textLen;
+			}
 		} else {
-			_setupMenuItemColumn = (FONT_COLUMN_CHARACTERS - 1) - menuItemEntry->textLen;
+			_setupMenuItemColumn = curMenuEntry->column + curMenuEntry->textLen - menuItemEntry->textLen;
+			if (_setupMenuItemColumn < 2)
+				_setupMenuItemColumn = 2;
 		}
 	}
 
@@ -520,10 +536,16 @@ void GfxMenu::keyPress(uint16 newKey) {
 		break;
 
 	case AGI_KEY_LEFT:
-		newMenuNr--;
+		if (!_vm->isLanguageRTL())
+			newMenuNr--;
+		else
+			newMenuNr++;
 		break;
 	case AGI_KEY_RIGHT:
-		newMenuNr++;
+		if (!_vm->isLanguageRTL())
+			newMenuNr++;
+		else
+			newMenuNr--;
 		break;
 	case AGI_KEY_HOME:
 		// select first menu

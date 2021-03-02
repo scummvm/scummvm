@@ -212,6 +212,8 @@ public:
 	char *stringWordWrap(const char *originalText, int16 maxWidth, int16 *calculatedWidthPtr = nullptr, int16 *calculatedHeightPtr = nullptr);
 };
 
+Common::String rightAlign(Common::String line, va_list args);
+
 } // End of namespace Agi
 
 #endif /* AGI_TEXT_H */

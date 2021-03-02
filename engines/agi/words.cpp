@@ -123,6 +123,32 @@ int Words::loadDictionary(const char *fname) {
 	return errOK;
 }
 
+int Words::loadExtendedDictionary(const char *sierraFname) {
+	Common::String fnameStr = Common::String(sierraFname) + ".extended";
+	const char *fname = fnameStr.c_str();
+
+	Common::File fp;
+
+	if (!fp.open(fname)) {
+		warning("loadWords: can't open %s", fname);
+		return errOK; // err_BadFileOpen
+	}
+	debug(0, "Loading dictionary: %s", fname);
+
+	// skip the header
+	fp.readString('\n');
+
+	while (!fp.eos() && !fp.err()) {
+		WordEntry *newWord = new WordEntry;
+		newWord->word = fp.readString();
+		newWord->id = atoi(fp.readString('\n').c_str());
+		if(!newWord->word.empty())
+			_dictionaryWords[(byte)newWord->word[0] - 'a'].push_back(newWord);
+	}
+
+	return errOK;
+}
+
 void Words::unloadDictionary() {
 	for (int16 firstCharNr = 0; firstCharNr < 26; firstCharNr++) {
 		Common::Array<WordEntry *> &dictionary = _dictionaryWords[firstCharNr];
@@ -226,7 +252,9 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint1
 
 	foundWordLen = 0;
 
-	if ((firstChar >= 'a') && (firstChar <= 'z')) {
+	const byte lastCharInAbc = _vm->getLanguage() == Common::HE_ISR ? 0xfa : 'z';
+
+	if ((firstChar >= 'a') && (firstChar <= lastCharInAbc)) {
 		// word has to start with a letter
 		if (((userInputPos + 1) < userInputLen) && (userInputLowcased[userInputPos + 1] == ' ')) {
 			// current word is 1 char only?

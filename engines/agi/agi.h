@@ -734,6 +734,7 @@ public:
 	uint16 getVersion() const;
 	uint16 getGameType() const;
 	Common::Language getLanguage() const;
+	bool isLanguageRTL() const;
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
 	void initFeatures();

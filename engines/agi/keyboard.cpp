@@ -141,6 +141,11 @@ void AgiEngine::processScummVMEvents() {
 				}
 			}
 
+			if (_game._vm->getLanguage() == Common::HE_ISR && key >= 0x05d0 && key <= 0x05ea) {
+				// convert to WIN-1255
+				key = key - 0x05d0 + 0xe0;
+			}
+
 			if ((key) && (key <= 0xFF)) {
 				// No special key, directly accept it
 				// Is ISO-8859-1, we need lower 128 characters only, which is plain ASCII, so no mapping required

@@ -42,7 +42,8 @@ private:
 	AgiEngine *_vm;
 
 	// Dictionary
-	Common::Array<WordEntry *> _dictionaryWords[26];
+	// 158 = 255 - 'a' ; that's allows us to support extended character set, and does no harm for regular English games
+	Common::Array<WordEntry *> _dictionaryWords[158];
 
 	WordEntry _egoWords[MAX_WORDS];
 	uint16  _egoWordCount;
@@ -54,6 +55,8 @@ public:
 
 	int  loadDictionary_v1(Common::File &f);
 	int  loadDictionary(const char *fname);
+	// used for fan made translations requiring extended char set
+	int  loadExtendedDictionary(const char *fname);
 	void unloadDictionary();
 
 	void clearEgoWords();
