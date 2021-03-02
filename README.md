@@ -31,7 +31,7 @@ page at: <https://www.scummvm.org/>
       - [3.10) Escape from Monkey Island notes](#310-escape-from-monkey-island-notes)
           - [3.10.1) Escape from Monkey Island (PS2) notes](#3101-escape-from-monkey-island-ps2-notes)
           - [3.10.2) Default keyboard settings](#3102-default-keyboard-settings)
-          - [3.10.3) Joystick/gamepad support](#3103-joystick-gamepad-support)
+          - [3.10.3) Joystick/gamepad support](#3103-joystickgamepad-support)
       - [3.11) Flight of the Amazon Queen
         notes](#311-flight-of-the-amazon-queen-notes)
       - [3.12) Gobliiins notes](#312-gobliiins-notes)
@@ -46,7 +46,7 @@ page at: <https://www.scummvm.org/>
       - [3.17) Might and Magic Xeen games
         notes](#317-might-and-magic-xeen-games-notes)
       - [3.18) Myst game notes](#318-myst-game-notes)
-      - [3.19) Myst3 game notes](#319-myts3-game-notes)
+      - [3.19) Myst3 game notes](#319-myst3-game-notes)
           - [3.19.1) Input controls](#3191-input-controls)
       - [3.20) Quest for Glory notes](#320-quest-for-glory-notes)
       - [3.21) Riven game notes](#321-riven-game-notes)
@@ -914,7 +914,7 @@ Italian    | https://scummvm.org/frs/extras/patches/MonkeyUpdate_ITA.exe
 
   * "EFMI Installer" if you have the Mac version of EMI.
 
-#### 3.10.1) Escape from Monkey Island (PS2)
+#### 3.10.1) Escape from Monkey Island (PS2) notes
 
 You will need to copy the data files from your Escape from Monkey Island
 DVD into one directory. Specifically, you'll need:
@@ -974,7 +974,7 @@ without the CD in the drive all the time. The speech is also in that
 track and its volume is therefore changed with the music volume control
 as well.
 
-#### 3.13) Grim Fandango ####
+### 3.13) Grim Fandango notes
 
 You will need to copy the data files from your Grim Fandango CDs into one
 directory. Specifically, you'll need:
@@ -1174,7 +1174,7 @@ F5: Menu
 Myst will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.19) Myst3 game notes ###
+### 3.19) Myst3 game notes
 
 You will need to copy the data files from your Myst III CDs or DVD into
 one directory. Specifically, you'll need:
