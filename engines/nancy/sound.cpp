@@ -188,6 +188,10 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::loadSound(const SoundDescription &description) {
+	if (description.name == "NO SOUND") {
+		return;
+	}
+
 	if (_mixer->isSoundHandleActive(_channels[description.channelID].handle)) {
 		_mixer->stopHandle(_channels[description.channelID].handle);
 	}
@@ -199,9 +203,6 @@ void SoundManager::loadSound(const SoundDescription &description) {
 	_channels[description.channelID].numLoops = description.numLoops;
 	_channels[description.channelID].volume = description.volume;
 
-	if (description.name == "NO SOUND") {
-		return;
-	}
 
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + ".his");
 	if (file) {
@@ -210,7 +211,7 @@ void SoundManager::loadSound(const SoundDescription &description) {
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID > 32 || _channels[channelID].stream == 0 || _channels->name == "NO SOUND")
+	if (channelID > 32 || _channels[channelID].stream == 0)
 		return;
 
 	_channels[channelID].stream->seek(0);
@@ -223,12 +224,39 @@ void SoundManager::playSound(uint16 channelID) {
 						0, DisposeAfterUse::NO);
 }
 
+void SoundManager::playSound(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		playSound(description.channelID);
+	}
+}
+
 void SoundManager::pauseSound(uint16 channelID, bool pause) {
 	if (channelID > 32)
 		return;
 
 	if (isSoundPlaying(channelID)) {
 		_engine->_system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
+	}
+}
+
+void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
+	if (description.name != "NO SOUND") {
+		pauseSound(description.channelID, pause);
+	}
+}
+
+bool SoundManager::isSoundPlaying(uint16 channelID) {
+	if (channelID > 32)
+		return false;
+	
+	return _mixer->isSoundHandleActive(_channels[channelID].handle);
+}
+
+bool SoundManager::isSoundPlaying(const SoundDescription &description) {
+	if (description.name == "NO SOUND") {
+		return false;
+	} else {
+		return isSoundPlaying(description.channelID);
 	}
 }
 
@@ -244,11 +272,10 @@ void SoundManager::stopSound(uint16 channelID) {
 	_channels[channelID].stream = nullptr;
 }
 
-bool SoundManager::isSoundPlaying(uint16 channelID) {
-	if (channelID > 32)
-		return false;
-	
-	return _mixer->isSoundHandleActive(_channels[channelID].handle);
+void SoundManager::stopSound(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		stopSound(description.channelID);
+	}
 }
 
 // Returns whether the exception was skipped

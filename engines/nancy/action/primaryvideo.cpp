@@ -222,7 +222,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             init();
             registerGraphics();
             engine->sound->loadSound(sound);
-            engine->sound->playSound(sound.channelID);
+            engine->sound->playSound(sound);
             state = kRun;
 		    activePrimaryVideo = this;
             // fall through
@@ -249,8 +249,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 }
             }
 
-            if (!engine->sound->isSoundPlaying(sound.channelID)) {
-                engine->sound->stopSound(sound.channelID);
+            if (!engine->sound->isSoundPlaying(sound)) {
+                engine->sound->stopSound(sound);
                 if (responses.size() == 0) {
                     // NPC has finished talking with no responses available, auto-advance to next scene
                     state = kActionTrigger;
@@ -268,7 +268,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                         responseGenericSound.name = responses[pickedResponse].soundName;
                         // TODO this is probably not correct
                         engine->sound->loadSound(responseGenericSound);
-                        engine->sound->playSound(responseGenericSound.channelID);
+                        engine->sound->playSound(responseGenericSound);
                         state = kActionTrigger;
                     }
                 }
@@ -287,8 +287,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                 engine->scene->setEventFlag(responses[pickedResponse].flagDesc);
             }
 
-            if (!engine->sound->isSoundPlaying(responseGenericSound.channelID)) {
-                engine->sound->stopSound(responseGenericSound.channelID);
+            if (!engine->sound->isSoundPlaying(responseGenericSound)) {
+                engine->sound->stopSound(responseGenericSound);
                 
                 if (pickedResponse != -1) {
                     engine->scene->changeScene(responses[pickedResponse].sceneChange);

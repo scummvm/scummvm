@@ -111,8 +111,8 @@ void PlaySecondaryMovie::updateGraphics() {
 
 	if ((_decoder.getCurFrame() == lastFrame && isReverse == kFalse) ||
 	    (_decoder.getCurFrame() == firstFrame && isReverse == kTrue)) {
-		if (!_engine->sound->isSoundPlaying(sound.channelID)) {
-			_engine->sound->stopSound(sound.channelID);
+		if (!_engine->sound->isSoundPlaying(sound)) {
+			_engine->sound->stopSound(sound);
 			_decoder.stop();
             isFinished = true;
 			state = kActionTrigger;
@@ -132,7 +132,7 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
             init();
             registerGraphics();
             engine->sound->loadSound(sound);
-            engine->sound->playSound(sound.channelID);
+            engine->sound->playSound(sound);
             if (hideMouse == kTrue) {
                 engine->setMouseEnabled(false);
             }

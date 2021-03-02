@@ -149,12 +149,12 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
                     }
 
                     engine->sound->loadSound(solveSound);
-                    engine->sound->playSound(solveSound.channelID);
+                    engine->sound->playSound(solveSound);
                     solveState = kWaitForSound;
                     break;
                 case kWaitForSound:
-                    if (!engine->sound->isSoundPlaying(solveSound.channelID)) {
-                        engine->sound->stopSound(solveSound.channelID);
+                    if (!engine->sound->isSoundPlaying(solveSound)) {
+                        engine->sound->stopSound(solveSound);
                         state = kActionTrigger;
                     }
 
@@ -175,7 +175,7 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
                     break;
             }
 
-            engine->sound->stopSound(clickSound.channelID);
+            engine->sound->stopSound(clickSound);
             finishExecution();
     }
 }
@@ -244,7 +244,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
         _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            _engine->sound->playSound(clickSound.channelID);
+            _engine->sound->playSound(clickSound);
             switch (direction) {
                 case kUp: {
                     uint curTileID = playerTileOrder[currentTileY][currentTileX];

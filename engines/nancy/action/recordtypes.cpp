@@ -432,11 +432,11 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
     switch (state) {
         case kBegin:
             engine->sound->loadSound(sound);
-            engine->sound->playSound(sound.channelID);
+            engine->sound->playSound(sound);
             state = kRun;
             break;
         case kRun:
-            if (!engine->sound->isSoundPlaying(sound.channelID)) {
+            if (!engine->sound->isSoundPlaying(sound)) {
                 state = kActionTrigger;
             }
             break;
@@ -446,7 +446,7 @@ void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
             }
             
             engine->scene->setEventFlag(flagOnTrigger);
-            engine->sound->stopSound(sound.channelID);
+            engine->sound->stopSound(sound);
 
             finishExecution();
             break;
@@ -495,7 +495,7 @@ void PlaySoundMultiHS::execute(Nancy::NancyEngine *engine) {
         }
         case kActionTrigger:
             engine->sound->loadSound(sound);
-            engine->sound->playSound(sound.channelID);
+            engine->sound->playSound(sound);
             engine->scene->changeScene(sceneChange);
             engine->scene->setEventFlag(flag);
             finishExecution();
@@ -522,12 +522,12 @@ void HintSystem::execute(Nancy::NancyEngine *engine) {
             engine->scene->getTextbox().addTextLine(text);
 
             engine->sound->loadSound(genericSound);
-            engine->sound->playSound(genericSound.channelID);
+            engine->sound->playSound(genericSound);
             state = kRun;
             break;
         case kRun:
-            if (!engine->sound->isSoundPlaying(genericSound.channelID)) {
-                engine->sound->stopSound(genericSound.channelID);
+            if (!engine->sound->isSoundPlaying(genericSound)) {
+                engine->sound->stopSound(genericSound);
                 state = kActionTrigger;
             } else {
                 break;

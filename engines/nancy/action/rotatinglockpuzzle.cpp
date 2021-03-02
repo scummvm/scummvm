@@ -139,11 +139,11 @@ void RotatingLockPuzzle::execute(Nancy::NancyEngine *engine) {
                         break;
                     }
 
-                    _engine->sound->playSound(solveSound.channelID);
+                    _engine->sound->playSound(solveSound);
                     solveState = kWaitForSound;
                     break;
                 case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound.channelID)) {
+                    if (!_engine->sound->isSoundPlaying(solveSound)) {
                         state = kActionTrigger;
                     }
 
@@ -151,8 +151,8 @@ void RotatingLockPuzzle::execute(Nancy::NancyEngine *engine) {
             }
             break;
         case kActionTrigger:
-            _engine->sound->stopSound(clickSound.channelID);
-            _engine->sound->stopSound(solveSound.channelID);
+            _engine->sound->stopSound(clickSound);
+            _engine->sound->stopSound(solveSound);
 
             if (solveState == kNotSolved) {
                 _engine->scene->changeScene(exitScene);
@@ -184,7 +184,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
             _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                _engine->sound->playSound(clickSound.channelID);
+                _engine->sound->playSound(clickSound);
                 
                 currentSequence[i] = ++currentSequence[i] > 9 ? 0 : currentSequence[i];
                 drawDial(i);
@@ -198,7 +198,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
             _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                _engine->sound->playSound(clickSound.channelID);
+                _engine->sound->playSound(clickSound);
 
                 int8 n = currentSequence[i];
                 n = --n < 0 ? 9 : n;

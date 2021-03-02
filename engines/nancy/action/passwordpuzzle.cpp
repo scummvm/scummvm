@@ -100,12 +100,12 @@ void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
                                 passwordFieldIsActive = true;
                             } else {
                                 engine->sound->loadSound(solveSound);
-                                engine->sound->playSound(solveSound.channelID);
+                                engine->sound->playSound(solveSound);
                                 solveState = kSolved;
                             }
                         } else {
                             engine->sound->loadSound(failSound);
-                            engine->sound->playSound(failSound.channelID);
+                            engine->sound->playSound(failSound);
                             solveState = kFailed;
                         }
                         
@@ -125,15 +125,15 @@ void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
                     break;
                 }
                 case kFailed:
-                    if (!engine->sound->isSoundPlaying(failSound.channelID)) {
-                        engine->sound->stopSound(failSound.channelID);
+                    if (!engine->sound->isSoundPlaying(failSound)) {
+                        engine->sound->stopSound(failSound);
                         state = kActionTrigger;
                     }
 
                     break;
                 case kSolved:
-                    if (!engine->sound->isSoundPlaying(solveSound.channelID)) {
-                        engine->sound->stopSound(solveSound.channelID);
+                    if (!engine->sound->isSoundPlaying(solveSound)) {
+                        engine->sound->stopSound(solveSound);
                         state = kActionTrigger;
                     }
 

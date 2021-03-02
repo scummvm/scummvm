@@ -57,7 +57,7 @@ void Scene::process() {
         if (!_sceneState._doNotStartSound) {
             _engine->stopAndUnloadSpecificSounds();
             _engine->sound->loadSound(_sceneState.summary.sound);
-            _engine->sound->playSound(_sceneState.summary.sound.channelID);
+            _engine->sound->playSound(_sceneState.summary.sound);
         }
         // fall through
     case kRun:

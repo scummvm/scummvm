@@ -98,7 +98,7 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
             init();
             registerGraphics();
             _engine->sound->loadSound(sound);
-            _engine->sound->playSound(sound.channelID);
+            _engine->sound->playSound(sound);
             state = kRun;
             // fall through
         case kRun: {
@@ -108,7 +108,7 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
                 if (engine->scene->getEventFlag(interruptCondition) ||
                     (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
                         ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
-                            !engine->sound->isSoundPlaying(sound.channelID))   ) {
+                            !engine->sound->isSoundPlaying(sound))   ) {
                     
                     state = kActionTrigger;
 
@@ -116,8 +116,8 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
                     // nancy1's safe lock light not turning off.
                     setVisible(false);
         
-                    if (!engine->sound->isSoundPlaying(sound.channelID)) {
-                        engine->sound->stopSound(sound.channelID);
+                    if (!engine->sound->isSoundPlaying(sound)) {
+                        engine->sound->stopSound(sound);
                     }
                 } else {
                     // Check if we've moved the viewport

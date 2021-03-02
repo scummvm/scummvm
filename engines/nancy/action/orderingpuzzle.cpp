@@ -136,11 +136,11 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
                         break;
                     }
 
-                    _engine->sound->playSound(solveSound.channelID);
+                    _engine->sound->playSound(solveSound);
                     solveState = kWaitForSound;
                     break;
                 case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound.channelID)) {
+                    if (!_engine->sound->isSoundPlaying(solveSound)) {
                         state = kActionTrigger;
                     }
 
@@ -148,8 +148,8 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
             }
             break;
         case kActionTrigger:
-            _engine->sound->stopSound(clickSound.channelID);
-            _engine->sound->stopSound(solveSound.channelID);
+            _engine->sound->stopSound(clickSound);
+            _engine->sound->stopSound(solveSound);
 
             if (solveState == kNotSolved) {
                 _engine->scene->changeScene(exitScene);
@@ -182,7 +182,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
             _engine->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                _engine->sound->playSound(clickSound.channelID);
+                _engine->sound->playSound(clickSound);
                 
                 for (uint j = 0; j < clickedSequence.size(); ++j) {
                     if (clickedSequence[j] == i && drawnElements[i] == true) {

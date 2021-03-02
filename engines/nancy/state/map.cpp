@@ -76,7 +76,7 @@ void Map::init() {
     SoundDescription sound;
     sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->loadSound(sound);
-    _engine->sound->playSound(sound.channelID);
+    _engine->sound->playSound(sound);
 
     for (uint i = 0; i < 4; ++i) {
         chunk->seek(0x162 + i * 16, SEEK_SET);
@@ -145,7 +145,7 @@ void Map::stopSound() {
     SoundDescription sound;
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     sound.read(*chunk, SoundDescription::kMenu);
-    _engine->sound->stopSound(sound.channelID);
+    _engine->sound->stopSound(sound);
 }
 
 void Map::registerGraphics() {
