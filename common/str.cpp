@@ -410,6 +410,27 @@ String String::substr(size_t pos, size_t len) const {
 		return String(_str + pos, MIN((size_t)_size - pos, len));
 }
 
+String String::forEachLine(String(*func)(const String, va_list args), ...) const {
+	String result = "";
+	size_t index = findFirstOf('\n', 0);
+	size_t prev_index = 0;
+	va_list args;
+	va_start(args, func);
+	while (index != -1) {
+		String textLine = substr(prev_index, index - prev_index);
+		textLine = (*func)(textLine, args);
+		result = result + textLine + '\n';
+		prev_index = index + 1;
+		index = findFirstOf('\n', index + 1);
+	}
+
+	String textLine = substr(prev_index);
+	textLine = (*func)(textLine, args);
+	result = result + textLine;
+	va_end(args);
+	return result;
+}
+
 #pragma mark -
 
 bool operator==(const char* y, const String &x) {
