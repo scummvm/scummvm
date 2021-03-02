@@ -284,9 +284,8 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 	_loadingScreen = true;
 	_nextScreenName.clear();
-	debug("loadScreen %s [return to previous: %d]", name.c_str(), _navigatedToPreviousScreen);
-	if (savePatch && _currentScreen && !_currentScreenName.empty())
-	{
+	debug("loadScreen %s [return to previous: %d, save patch: %d]", name.c_str(), _navigatedToPreviousScreen, savePatch);
+	if (savePatch && _currentScreen && !_currentScreenName.empty()) {
 		PatchPtr &patch = _patches[_currentScreenName];
 		if (!patch)
 			patch = PatchPtr(new Patch());
@@ -302,7 +301,10 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 		}
 		patch->defaultMouseCursor = _defaultMouseCursorName;
 	}
+	returnCurrentInventoryObject();
+	_inventory.enable(false);
 	_mouseMap.hideAll(this);
+
 	resetCurrentScreen();
 	for(uint i = 0; i < _processes.size(); ++i) {
 		_processes[i].reset();
@@ -1175,6 +1177,9 @@ void AGDSEngine::resetCurrentInventoryObject() {
 
 void AGDSEngine::returnCurrentInventoryObject() {
 	auto object = _currentInventoryObject;
+	if (!object)
+		return;
+
 	_currentInventoryObject.reset();
 
 	_inventory.add(object);
