@@ -221,9 +221,9 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 			debug("object %s is not present in the patch", object->getName().c_str());
 		} else if (_currentScreen->add(object)) {
 			runProcess(object);
-		} else if (!object->inScene()) {
+		} else if (!object->alive()) {
 			debug("marking object %s as in-scene...", object->getName().c_str());
-			object->inScene(true);
+			object->alive(true);
 			object->allowCalls(false);
 			runProcess(object);
 		} else

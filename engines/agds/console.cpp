@@ -83,7 +83,7 @@ bool Console::info(int argc, const char **argv) {
 		debugPrintf("screen %s:\n", screen->getName().c_str());
 		for(auto & object : screen->children()) {
 			auto pos = object->getPosition();
-			debugPrintf("object %s [inscene: %d] at %d,%d\n", object->getName().c_str(), object->inScene(), pos.x, pos.y);
+			debugPrintf("object %s [alive: %d] at %d,%d\n", object->getName().c_str(), object->alive(), pos.x, pos.y);
 		}
 		for(auto & animation : screen->animations()) {
 			auto pos = animation->position();

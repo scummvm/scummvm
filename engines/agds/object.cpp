@@ -40,7 +40,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _pos(), _z(10),
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
 																				 _throwHandler(0), _useOnHandler(0),
-                                                                                 _alpha(255), _inScene(false),
+                                                                                 _alpha(255), _alive(false),
 																				 _persistent(true), _allowCalls(true) {
 	uint16 id = stream->readUint16LE();
 	debug("id: 0x%02x %u", id, id);
@@ -174,10 +174,10 @@ void Object::rotate(int rot) {
 }
 
 
-void Object::inScene(bool value)
+void Object::alive(bool value)
 {
-	_inScene = value;
-	if (!_inScene)
+	_alive = value;
+	if (!_alive)
 		_region.reset();
 }
 
@@ -213,7 +213,7 @@ Common::Rect Object::getRect() const {
 }
 
 bool Object::pointIn(Common::Point pos) {
-	if (!_inScene)
+	if (!_alive)
 		return false;
 
 	auto picture = getPicture();
