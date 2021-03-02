@@ -242,6 +242,9 @@ public:
 	/** Return a substring of this string */
 	String substr(size_t pos = 0, size_t len = npos) const;
 
+	/** Calls func on each line of the string, and returns a joined string */
+	String forEachLine(String(*func)(const String, va_list args), ...) const;
+
 	/** Python-like method **/
 	U32String decode(CodePage page = kUtf8) const;
 
