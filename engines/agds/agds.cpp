@@ -253,9 +253,15 @@ ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
 	debug("runObject %s %s", name.c_str(), prototype.c_str());
 	ObjectPtr object = getCurrentScreenObject(name);
-	if (!object)
+	if (!object) {
 		object = loadObject(name, prototype);
-	runObject(object);
+		runObject(object);
+	} else if (!object->alive()) {
+		debug("recovering object...");
+		object->alive(true);
+		object->allowCalls(false);
+		runObject(object);
+	}
 	return object;
 }
 
