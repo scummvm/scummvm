@@ -123,7 +123,7 @@ public:
 	void reactivate(const Common::String &name, bool runNow = false);
 
 	void resetCurrentScreen();
-	void loadScreen(const Common::String & name);
+	void loadScreen(const Common::String & name, bool savePatch = true);
 
 	RegionPtr loadRegion(const Common::String &name);
 	Common::String loadText(const Common::String &name);
