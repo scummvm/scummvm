@@ -124,8 +124,6 @@ extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
 extern int numAnimButs;
 
-extern int is_complete_overlay, is_text_overlay;
-
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
 #endif
@@ -1257,16 +1255,16 @@ void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 
 void ReadOverlays_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (auto &over : screenover) {
+	for (auto &over : _GP(screenover)) {
 		over.ReadFromFile(&align_s, 0);
 		align_s.Reset();
 	}
 }
 
 void restore_game_overlays(Stream *in) {
-	screenover.resize(in->ReadInt32());
+	_GP(screenover).resize(in->ReadInt32());
 	ReadOverlays_Aligned(in);
-	for (auto &over : screenover) {
+	for (auto &over : _GP(screenover)) {
 		if (over.hasSerializedBitmap)
 			over.pic = read_serialized_bitmap(in);
 	}
@@ -1603,7 +1601,7 @@ void start_skipping_cutscene() {
 		remove_popup_interface(ifacepopped);
 
 	// if a text message is currently displayed, remove it
-	if (is_text_overlay > 0)
+	if (_G(is_text_overlay) > 0)
 		remove_screen_overlay(OVER_TEXTMSG);
 
 }

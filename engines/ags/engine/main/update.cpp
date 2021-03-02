@@ -70,7 +70,6 @@ extern int facetalkBlinkLoop;
 extern bool facetalk_qfg4_override_placement_x, facetalk_qfg4_override_placement_y;
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
-extern int is_text_overlay;
 extern IGraphicsDriver *gfxDriver;
 
 int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
@@ -243,10 +242,10 @@ void update_following_exactly_characters(int &numSheep, int *followingAsSheep) {
 
 void update_overlay_timers() {
 	// update overlay timers
-	for (size_t i = 0; i < screenover.size();) {
-		if (screenover[i].timeout > 0) {
-			screenover[i].timeout--;
-			if (screenover[i].timeout == 0) {
+	for (size_t i = 0; i < _GP(screenover).size();) {
+		if (_GP(screenover)[i].timeout > 0) {
+			_GP(screenover)[i].timeout--;
+			if (_GP(screenover)[i].timeout == 0) {
 				remove_screen_overlay_index(i);
 				continue;
 			}
@@ -394,8 +393,8 @@ void update_sierra_speech() {
 			updatedFrame |= 1;
 		}
 
-		// is_text_overlay might be 0 if it was only just destroyed this loop
-		if ((updatedFrame) && (is_text_overlay > 0)) {
+		// _G(is_text_overlay) might be 0 if it was only just destroyed this loop
+		if ((updatedFrame) && (_G(is_text_overlay) > 0)) {
 
 			if (updatedFrame & 1)
 				CheckViewFrame(facetalkview, facetalkloop, facetalkframe);
@@ -414,14 +413,14 @@ void update_sierra_speech() {
 				if (facetalk_qfg4_override_placement_y) {
 					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
-					view_frame_y = (screenover[face_talking].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
+					view_frame_y = (_GP(screenover)[face_talking].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
 				}
-				screenover[face_talking].pic->Clear(0);
+				_GP(screenover)[face_talking].pic->Clear(0);
 			} else {
-				screenover[face_talking].pic->ClearTransparent();
+				_GP(screenover)[face_talking].pic->ClearTransparent();
 			}
 
-			Bitmap *frame_pic = screenover[face_talking].pic;
+			Bitmap *frame_pic = _GP(screenover)[face_talking].pic;
 			const ViewFrame *face_vf = &_G(views)[facetalkview].loops[facetalkloop].frames[facetalkframe];
 			bool face_has_alpha = (_GP(game).SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 			DrawViewFrame(frame_pic, face_vf, view_frame_x, view_frame_y);
@@ -433,7 +432,7 @@ void update_sierra_speech() {
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}
 
-			gfxDriver->UpdateDDBFromBitmap(screenover[face_talking].bmp, screenover[face_talking].pic, face_has_alpha);
+			gfxDriver->UpdateDDBFromBitmap(_GP(screenover)[face_talking].bmp, _GP(screenover)[face_talking].pic, face_has_alpha);
 		}  // end if updatedFrame
 	}
 }

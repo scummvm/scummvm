@@ -77,7 +77,6 @@ extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
 extern int numAnimButs;
 extern int mouse_on_iface;   // mouse cursor is over this interface
 extern int ifacepopped;
-extern int is_text_overlay;
 extern int proper_exit, our_eip;
 extern int displayed_room, starting_room, in_new_room, new_room_was;
 
@@ -249,7 +248,7 @@ static void check_mouse_controls() {
 			_GP(play).wait_counter = 0;
 			_GP(play).wait_skipped_by = SKIP_MOUSECLICK;
 			_GP(play).wait_skipped_by_data = mbut;
-		} else if (is_text_overlay > 0) {
+		} else if (_G(is_text_overlay) > 0) {
 			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK)
 				remove_screen_overlay(OVER_TEXTMSG);
 		} else if (!IsInterfaceEnabled()); // blocking cutscene, ignore mouse
@@ -389,7 +388,7 @@ static void check_keyboard_controls() {
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((is_text_overlay > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
+	if ((_G(is_text_overlay) > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
@@ -471,7 +470,7 @@ static void check_keyboard_controls() {
 	// }
 
 	if (kgn == eAGSKeyCodeAltV && (::AGS::g_events->getModifierFlags() & KB_CTRL_FLAG)
-			&& (_GP(play).wait_counter < 1) && (is_text_overlay == 0) && (restrict_until == 0)) {
+			&& (_GP(play).wait_counter < 1) && (_G(is_text_overlay) == 0) && (restrict_until == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
 		_GP(play).debug_mode++;
@@ -846,7 +845,7 @@ static int ShouldStayInWaitMode() {
 		const int *wkptr = (const int *)user_disabled_data;
 		if (wkptr[0] < 0) retval = 0;
 	} else if (restrict_until == UNTIL_NOOVERLAY) {
-		if (is_text_overlay < 1) retval = 0;
+		if (_G(is_text_overlay) < 1) retval = 0;
 	} else if (restrict_until == UNTIL_INTIS0) {
 		const int *wkptr = (const int *)user_disabled_data;
 		if (wkptr[0] == 0) retval = 0;

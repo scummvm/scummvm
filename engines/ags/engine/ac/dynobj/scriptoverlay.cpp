@@ -25,6 +25,7 @@
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/screenoverlay.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -34,7 +35,7 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 	// with that handle later
 	int overlayIndex = find_overlay_of_type(overlayId);
 	if (overlayIndex >= 0) {
-		screenover[overlayIndex].associatedOverlayHandle = 0;
+		_GP(screenover)[overlayIndex].associatedOverlayHandle = 0;
 	}
 
 	// if this is being removed voluntarily (ie. pointer out of

@@ -63,6 +63,7 @@ struct NonBlockingScriptFunction;
 struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
+struct ScreenOverlay;
 struct ScriptDialog;
 struct ScriptGUI;
 struct ScriptHotspot;
@@ -240,6 +241,16 @@ public:
 	int _disable_mgetgraphpos = 0;
 	char _ignore_bounds = 0;
 	AGS::Shared::Bitmap *_mousecurs[MAXCURSORS];
+
+	/**@}*/
+
+	/**
+	 * \defgroup overlay globals
+	 * @{
+	 */
+
+	std::vector<ScreenOverlay> *_screenover;
+	int _is_complete_overlay = 0, _is_text_overlay = 0;
 
 	/**@}*/
 

@@ -80,23 +80,15 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern int displayed_room, starting_room;
-
-
-
 extern RoomObject *objs;
-
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
-extern int is_text_overlay;
 extern int said_speech_line;
 extern int said_text;
 extern int our_eip;
 
-
-
 //--------------------------------
-
 
 CharacterExtras *charextra;
 CharacterInfo *playerchar;
@@ -759,7 +751,7 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	scOver->borderWidth = 0;
 	scOver->isBackgroundSpeech = 1;
 	int handl = ccRegisterManagedObject(scOver, scOver);
-	screenover[ovri].associatedOverlayHandle = handl;
+	_GP(screenover)[ovri].associatedOverlayHandle = handl;
 
 	return scOver;
 }
@@ -2299,7 +2291,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if ((speakingChar->view < 0) || (speakingChar->view >= _GP(game).numviews))
 		quit("!DisplaySpeech: character has invalid view");
 
-	if (is_text_overlay > 0) {
+	if (_G(is_text_overlay) > 0) {
 		debug_script_warn("DisplaySpeech: speech was already displayed (nested DisplaySpeech, perhaps room script and global script conflict?)");
 		return;
 	}
@@ -2310,9 +2302,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
-		for (size_t i = 0; i < screenover.size();) {
-			if (screenover[i].timeout > 0)
-				remove_screen_overlay(screenover[i].type);
+		for (size_t i = 0; i < _GP(screenover).size();) {
+			if (_GP(screenover)[i].timeout > 0)
+				remove_screen_overlay(_GP(screenover)[i].type);
 			else
 				i++;
 		}

@@ -115,7 +115,6 @@ extern int displayed_room;
 extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
 extern int eip_guinum;
-extern int is_complete_overlay;
 extern int cur_mode, cur_cursor;
 extern int mouse_frame, mouse_delay;
 extern int lastmx, lastmy;
@@ -1942,7 +1941,7 @@ void draw_gui_and_overlays() {
 		add_thing_to_draw(nullptr, AGSE_PREGUIDRAW, 0, TRANS_RUN_PLUGIN, false);
 
 	// draw overlays, except text boxes and portraits
-	for (const auto &over : screenover) {
+	for (const auto &over : _GP(screenover)) {
 		// complete overlay draw in non-transparent mode
 		if (over.type == OVER_COMPLETE)
 			add_thing_to_draw(over.bmp, over.x, over.y, TRANS_OPAQUE, false);
@@ -2021,7 +2020,7 @@ void draw_gui_and_overlays() {
 	}
 
 	// draw speech and portraits (so that they appear over GUIs)
-	for (const auto &over : screenover) {
+	for (const auto &over : _GP(screenover)) {
 		if (over.type == OVER_TEXTMSG || over.type == OVER_PICTURE) {
 			int tdxp, tdyp;
 			get_overlay_position(over, &tdxp, &tdyp);
@@ -2158,7 +2157,7 @@ void construct_game_scene(bool full_redraw) {
 		_GP(play).UpdateRoomCameras();
 
 	// Stage: room viewports
-	if (_GP(play).screen_is_faded_out == 0 && is_complete_overlay == 0) {
+	if (_GP(play).screen_is_faded_out == 0 && _G(is_complete_overlay) == 0) {
 		if (displayed_room >= 0) {
 			construct_room_view();
 		} else if (!gfxDriver->RequiresFullRedrawEachFrame()) {

@@ -28,6 +28,7 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/screenoverlay.h"
 #include "ags/engine/ac/spritelistentry.h"
 #include "ags/engine/ac/dynobj/cc_dialog.h"
 #include "ags/engine/ac/dynobj/cc_guiobject.h"
@@ -91,6 +92,9 @@ Globals::Globals() {
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
 
+	// overlay.cpp globals
+	_screenover = new std::vector<ScreenOverlay>();
+
 	// script.cpp
 	_scripts = new ExecutingScript[MAX_SCRIPT_AT_ONCE];
 	_gamescript = new PScript();
@@ -142,6 +146,9 @@ Globals::~Globals() {
 	delete[] _scrRegion;
 	delete[] _scrInv;
 	delete[] _objcache;
+
+	// overlay.cpp
+	delete _screenover;
 
 	// script.cpp
 	delete[] _scripts;

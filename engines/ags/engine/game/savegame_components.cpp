@@ -757,8 +757,8 @@ HSaveError ReadDynamicSprites(PStream in, int32_t cmp_ver, const PreservedParams
 }
 
 HSaveError WriteOverlays(PStream out) {
-	out->WriteInt32(screenover.size());
-	for (const auto &over : screenover) {
+	out->WriteInt32(_GP(screenover).size());
+	for (const auto &over : _GP(screenover)) {
 		over.WriteToFile(out.get());
 		serialize_bitmap(over.pic, out.get());
 	}
@@ -773,7 +773,7 @@ HSaveError ReadOverlays(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 		over.ReadFromFile(in.get(), cmp_ver);
 		if (over.hasSerializedBitmap)
 			over.pic = read_serialized_bitmap(in.get());
-		screenover.push_back(over);
+		_GP(screenover).push_back(over);
 	}
 	return err;
 }

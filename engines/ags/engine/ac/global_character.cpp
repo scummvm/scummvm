@@ -544,8 +544,8 @@ void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch) {
 
 int DisplaySpeechBackground(int charid, const char *speel) {
 	// remove any previous background speech for this character
-	for (size_t i = 0; i < screenover.size();) {
-		if (screenover[i].bgSpeechForChar == charid)
+	for (size_t i = 0; i < _GP(screenover).size();) {
+		if (_GP(screenover)[i].bgSpeechForChar == charid)
 			remove_screen_overlay_index(i);
 		else
 			i++;
@@ -555,8 +555,8 @@ int DisplaySpeechBackground(int charid, const char *speel) {
 		-_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
 	int scid = find_overlay_of_type(ovrl);
-	screenover[scid].bgSpeechForChar = charid;
-	screenover[scid].timeout = GetTextDisplayTime(speel, 1);
+	_GP(screenover)[scid].bgSpeechForChar = charid;
+	_GP(screenover)[scid].timeout = GetTextDisplayTime(speel, 1);
 	return ovrl;
 }
 
