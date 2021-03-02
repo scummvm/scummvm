@@ -3543,7 +3543,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 		src.y += (int16)(sign.y * dist);
 
 		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionW, frameNumber)) {
-			if (abs(src.y - destination.y) >= getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
+			if (abs(src.y - destination.y) < getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
 
 				if (src.x >= destination.x) {
 					if (checkPath(actions, src, kDirectionW, src.x - destination.x)) {
@@ -3655,7 +3655,7 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 
 	for (int16 i = 1; i < loopcount; i++) {
 		if (!checkAllActions(basePoint, actions))
-			break;
+			return false;
 
 		if (!rect.contains(basePoint))
 			return false;
@@ -3685,7 +3685,7 @@ bool Actor::isInActionArea(const Common::Point &pt, ActionArea *area) {
 	if (!sceneRect.contains(pt))
 		return false;
 
-	if (area->flags & 1)
+	if (!(area->flags & 1))
 		return false;
 
 	// Check flags
