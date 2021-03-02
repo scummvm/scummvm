@@ -92,7 +92,7 @@ namespace std
 #define USE_RGB_COLOR
 #define USE_TINYGL
 
-#ifndef SYMBIAN_DYMANIC_PLUGIN
+#ifndef SYMBIAN_DYNAMIC_PLUGIN
 #define DETECTION_STATIC
 #endif //DETECTION_STATIC
 
