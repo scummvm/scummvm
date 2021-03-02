@@ -179,7 +179,6 @@ AL_FUNC(int, get_color_conversion, ());
 AL_FUNC(int, set_gfx_mode, (int card, int w, int h, int v_w, int v_h));
 
 AL_FUNC(void, set_clip_rect, (BITMAP *bitmap, int x1, int y1, int x2, int y2));
-AL_FUNC(void, add_clip_rect, (BITMAP *bitmap, int x1, int y1, int x2, int y2));
 AL_FUNC(void, get_clip_rect, (BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2));
 AL_FUNC(void, clear_bitmap, (BITMAP *bitmap));
 

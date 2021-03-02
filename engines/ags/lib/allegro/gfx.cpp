@@ -73,10 +73,6 @@ void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
 		*y2 = bitmap->cb;
 }
 
-void add_clip_rect(BITMAP *bitmap, int x1, int y1, int x2, int y2) {
-	warning("TODO: add_clip_rect");
-}
-
 void acquire_bitmap(BITMAP *bitmap) {
 	// No implementation needed
 }

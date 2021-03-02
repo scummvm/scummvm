@@ -95,15 +95,23 @@ const int SCALE_THRESHOLD = 0x100;
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
-		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
+		const Common::Rect &dstRect, bool horizFlip, bool vertFlip,
 		bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
 		int tintBlue) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
+	// Get source and dest surface. Note that for the destination we create
+	// a temporary sub-surface based on the allowed clipping area
 	const Graphics::ManagedSurface &src = **srcBitmap;
-	Graphics::ManagedSurface &dest = *_owner;
+	Graphics::ManagedSurface &allDest = *_owner;
+	Graphics::ManagedSurface dest(allDest, Common::Rect(cl, ct, cr, cb));
+
+	Common::Rect destRect = dstRect;
+	destRect.translate(-cl, -ct);
 	Graphics::Surface destArea = dest.getSubArea(destRect);
+
+	// Define scaling and other stuff used by the drawing loops
 	const int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 	const int xDir = horizFlip ? -1 : 1;
