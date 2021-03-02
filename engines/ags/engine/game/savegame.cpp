@@ -598,7 +598,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// TODO: investigate loop range
 	for (int i = 1; i < MAX_SOUND_CHANNELS; ++i) {
 		if (r_data.DoAmbient[i])
-			PlayAmbientSound(i, r_data.DoAmbient[i], ambient[i].vol, ambient[i].x, ambient[i].y);
+			PlayAmbientSound(i, r_data.DoAmbient[i], _GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 	}
 	update_directional_sound_vol();
 

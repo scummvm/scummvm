@@ -50,6 +50,8 @@
 #include "ags/engine/ac/dynobj/scriptobject.h"
 #include "ags/engine/ac/dynobj/scriptregion.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/media/audio/ambientsound.h"
+#include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/executingscript.h"
 #include "ags/engine/script/nonblockingscriptfunction.h"
 #include "ags/engine/script/script.h"
@@ -62,6 +64,11 @@ Globals::Globals() {
 	g_globals = this;
 
 	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
+
+	// audio.cpp
+	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
+	// TODO: double check that ambient sounds array actually needs +1
+	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
 
 	// debugmanager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
@@ -129,7 +136,11 @@ Globals::Globals() {
 Globals::~Globals() {
 	g_globals = nullptr;
 
-	// debug.cpp
+	// audio.cpp
+	delete _audioChannels;
+	delete _ambient;
+
+	// debugmanager.cpp
 	delete _DbgMgr;
 
 	// fonts.cpp

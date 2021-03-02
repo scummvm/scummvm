@@ -52,11 +52,11 @@ void StopAmbientSound(int channel) {
 	if ((channel < 0) || (channel >= MAX_SOUND_CHANNELS))
 		quit("!StopAmbientSound: invalid channel");
 
-	if (ambient[channel].channel == 0)
+	if (_GP(ambient)[channel].channel == 0)
 		return;
 
 	stop_and_destroy_channel(channel);
-	ambient[channel].channel = 0;
+	_GP(ambient)[channel].channel = 0;
 }
 
 void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
@@ -71,8 +71,8 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 		return;
 
 	// only play the sound if it's not already playing
-	if ((ambient[channel].channel < 1) || (!channel_is_playing(ambient[channel].channel)) ||
-		(ambient[channel].num != sndnum)) {
+	if ((_GP(ambient)[channel].channel < 1) || (!channel_is_playing(_GP(ambient)[channel].channel)) ||
+		(_GP(ambient)[channel].num != sndnum)) {
 
 		StopAmbientSound(channel);
 		// in case a normal non-ambient sound was playing, stop it too
@@ -86,17 +86,17 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 		}
 
 		debug_script_log("Playing ambient sound %d on channel %d", sndnum, channel);
-		ambient[channel].channel = channel;
+		_GP(ambient)[channel].channel = channel;
 		asound->_priority = 15;  // ambient sound higher priority than normal sfx
 		set_clip_to_channel(channel, asound);
 	}
 	// calculate the maximum distance away the player can be, using X
 	// only (since X centred is still more-or-less total Y)
-	ambient[channel].maxdist = ((x > _GP(thisroom).Width / 2) ? x : (_GP(thisroom).Width - x)) - AMBIENCE_FULL_DIST;
-	ambient[channel].num = sndnum;
-	ambient[channel].x = x;
-	ambient[channel].y = y;
-	ambient[channel].vol = vol;
+	_GP(ambient)[channel].maxdist = ((x > _GP(thisroom).Width / 2) ? x : (_GP(thisroom).Width - x)) - AMBIENCE_FULL_DIST;
+	_GP(ambient)[channel].num = sndnum;
+	_GP(ambient)[channel].x = x;
+	_GP(ambient)[channel].y = y;
+	_GP(ambient)[channel].vol = vol;
 	update_ambient_sound_vol();
 }
 
@@ -354,8 +354,8 @@ void SetChannelVolume(int chan, int newvol) {
 	auto *ch = lock.GetChannelIfPlaying(chan);
 
 	if (ch) {
-		if (chan == ambient[chan].channel) {
-			ambient[chan].vol = newvol;
+		if (chan == _GP(ambient)[chan].channel) {
+			_GP(ambient)[chan].vol = newvol;
 			update_ambient_sound_vol();
 		} else
 			ch->set_volume(newvol);

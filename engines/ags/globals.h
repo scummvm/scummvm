@@ -27,6 +27,7 @@
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_script.h"
+#include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 
 namespace AGS3 {
@@ -51,6 +52,7 @@ class SplitLines;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
+struct AmbientSound;
 struct CCAudioChannel;
 struct CCAudioClip;
 struct CCCharacter;
@@ -82,6 +84,7 @@ struct ScriptObject;
 struct ScriptRegion;
 struct ScriptString;
 struct ScriptSystem;
+struct SOUNDCLIP;
 struct SpriteListEntry;
 struct ViewStruct;
 
@@ -97,6 +100,16 @@ public:
 	// Major overall flags
 	bool _want_exit = false;
 	bool _abort_engine = false;
+
+	/**@}*/
+
+	/**
+	 * \defgroup audio globals
+	 * @{
+	 */
+
+	std::array<SOUNDCLIP *> *_audioChannels;
+	std::array<AmbientSound> *_ambient;
 
 	/**@}*/
 

@@ -53,33 +53,31 @@ using namespace AGS::Engine;
 //-----------------------
 //sound channel management; all access goes through here, which can't be done without a lock
 
-static std::array<SOUNDCLIP *> _channels(MAX_SOUND_CHANNELS + 1);
-
 AudioChannelsLock::AudioChannelsLock() : MutexLock(::AGS::g_vm->_sMutex) {
 }
 
 SOUNDCLIP *AudioChannelsLock::GetChannel(int index) {
-	return _channels[index];
+	return _GP(audioChannels)[index];
 }
 
 SOUNDCLIP *AudioChannelsLock::GetChannelIfPlaying(int index) {
-	auto *ch = _channels[index];
+	auto *ch = _GP(audioChannels)[index];
 	return (ch != nullptr && ch->is_playing()) ? ch : nullptr;
 }
 
 SOUNDCLIP *AudioChannelsLock::SetChannel(int index, SOUNDCLIP *ch) {
 	// TODO: store clips in smart pointers
-	if (_channels[index] == ch)
+	if (_GP(audioChannels)[index] == ch)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - same clip assigned", index);
-	else if (_channels[index] != nullptr && ch != nullptr)
+	else if (_GP(audioChannels)[index] != nullptr && ch != nullptr)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - clip overwritten", index);
-	_channels[index] = ch;
+	_GP(audioChannels)[index] = ch;
 	return ch;
 }
 
 SOUNDCLIP *AudioChannelsLock::MoveChannel(int to, int from) {
-	auto from_ch = _channels[from];
-	_channels[from] = nullptr;
+	auto from_ch = _GP(audioChannels)[from];
+	_GP(audioChannels)[from] = nullptr;
 	return SetChannel(to, from_ch);
 }
 
@@ -470,8 +468,8 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
 	// don't update 'crossFading' here as it is updated in all the cross-fading functions.
 
 	// destroyed an ambient sound channel
-	if (ambient[chid].channel > 0)
-		ambient[chid].channel = 0;
+	if (_GP(ambient)[chid].channel > 0)
+		_GP(ambient)[chid].channel = 0;
 
 	if ((chid == SCHAN_MUSIC) && (resetLegacyMusicSettings)) {
 		_GP(play).cur_music_number = -1;
@@ -524,9 +522,6 @@ SOUNDCLIP *load_sound_clip_from_old_style_number(bool isMusic, int indexNumber, 
 
 //=============================================================================
 
-// TODO: double check that ambient sounds array actually needs +1
-std::array<AmbientSound> ambient(MAX_SOUND_CHANNELS + 1);
-
 int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist) {
 	int distx = playerchar->x - sndX;
 	int disty = playerchar->y - sndY;
@@ -567,7 +562,7 @@ void update_ambient_sound_vol() {
 
 	for (int chan = 1; chan < MAX_SOUND_CHANNELS; chan++) {
 
-		AmbientSound *thisSound = &ambient[chan];
+		AmbientSound *thisSound = &_GP(ambient)[chan];
 
 		if (thisSound->channel == 0)
 			continue;

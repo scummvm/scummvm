@@ -1240,15 +1240,15 @@ void restore_game_thisroom(Stream *in, RestoredData &r_data) {
 
 void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i) {
-		ambient[i].ReadFromFile(in);
+		_GP(ambient)[i].ReadFromFile(in);
 	}
 
 	for (int bb = 1; bb < MAX_SOUND_CHANNELS; bb++) {
-		if (ambient[bb].channel == 0)
+		if (_GP(ambient)[bb].channel == 0)
 			r_data.DoAmbient[bb] = 0;
 		else {
-			r_data.DoAmbient[bb] = ambient[bb].num;
-			ambient[bb].channel = 0;
+			r_data.DoAmbient[bb] = _GP(ambient)[bb].num;
+			_GP(ambient)[bb].channel = 0;
 		}
 	}
 }

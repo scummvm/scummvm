@@ -383,7 +383,7 @@ HSaveError WriteAudio(PStream out) {
 
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)
-		ambient[i].WriteToFile(out.get());
+		_GP(ambient)[i].WriteToFile(out.get());
 
 	return HSaveError::None();
 }
@@ -436,14 +436,14 @@ HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)
-		ambient[i].ReadFromFile(in.get());
+		_GP(ambient)[i].ReadFromFile(in.get());
 
 	for (int i = 1; i < MAX_SOUND_CHANNELS; ++i) {
-		if (ambient[i].channel == 0) {
+		if (_GP(ambient)[i].channel == 0) {
 			r_data.DoAmbient[i] = 0;
 		} else {
-			r_data.DoAmbient[i] = ambient[i].num;
-			ambient[i].channel = 0;
+			r_data.DoAmbient[i] = _GP(ambient)[i].num;
+			_GP(ambient)[i].channel = 0;
 		}
 	}
 	return err;
