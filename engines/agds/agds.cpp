@@ -281,11 +281,11 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 	return patch;
 }
 
-void AGDSEngine::loadScreen(const Common::String &name) {
+void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 	_loadingScreen = true;
 	_nextScreenName.clear();
 	debug("loadScreen %s [return to previous: %d]", name.c_str(), _navigatedToPreviousScreen);
-	if (_currentScreen && !_currentScreenName.empty())
+	if (savePatch && _currentScreen && !_currentScreenName.empty())
 	{
 		PatchPtr &patch = _patches[_currentScreenName];
 		if (!patch)
@@ -1116,7 +1116,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	runObject(initVar->getString());
 
 	loadPatches(file, db);
-	loadScreen(screenName);
+	loadScreen(screenName, false);
 
 	{
 		// Inventory
