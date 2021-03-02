@@ -251,8 +251,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 					_engine->_movements->getShadowPosition(actor->pos.x, actor->pos.y, actor->pos.z);
 				}
 
-				tmpVal--;
-				drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
+				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the drawList
 				drawList[drawListPos].type = DrawListType::DrawShadows;
 				drawList[drawListPos].actorIdx = 0;
 				drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
@@ -343,9 +342,11 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
 	const int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
-	const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
-	_engine->_animations->setModelAnimation(actor->animPosition, animData, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+	if (actor->previousAnimIdx >= 0) {
+		const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
+		const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
+		_engine->_animations->setModelAnimation(actor->animPosition, animData, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+	}
 
 	const int32 x = actor->pos.x - _engine->_grid->camera.x;
 	const int32 y = actor->pos.y - _engine->_grid->camera.y;
