@@ -600,7 +600,7 @@ void Actor::update() {
 			if (_field_944 == 1 || _field_944 == 4)
 				area = 1;
 
-			if (area == -1  || _data.current >= (int32)(_data.count - 1)) {
+			if (area == -1 && _data.current >= (int32)(_data.count - 1)) {
 				update_409230();
 			} else {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
