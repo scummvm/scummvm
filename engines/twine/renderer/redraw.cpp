@@ -287,7 +287,8 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 			_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
 			if (_engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100) {
-				drawList[drawListPos].posValue = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;
+				const int16 tmpVal = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;
+				drawList[drawListPos].posValue = tmpVal;
 				drawList[drawListPos].actorIdx = i;
 				drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
@@ -295,7 +296,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
 					_engine->_movements->getShadowPosition(extra->pos.x, extra->pos.y, extra->pos.z);
 
-					drawList[drawListPos].posValue = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z - 1;
+					drawList[drawListPos].posValue = tmpVal - 1;
 					drawList[drawListPos].actorIdx = 0;
 					drawList[drawListPos].type = DrawListType::DrawShadows;
 					drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
