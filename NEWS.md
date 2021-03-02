@@ -1211,7 +1211,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented Roland MT-32 output driver.
 
  Drascula:
-   - Added Spanish subtitles in the Von Braun cutscene (#3069981: no subtitles
+   - Added Spanish subtitles in the Von Braun cutscene (#5372: no subtitles
      in scene with "von Braun").
 
  Gob:
@@ -1398,7 +1398,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      glitches remain so not official supported.
 
  Drascula:
-   - Added German and French subtitles in the Von Braun cutscene (#3069981:
+   - Added German and French subtitles in the Von Braun cutscene (#5372:
      no subtitles in scene with "von Braun").
    - Improved French translation of the game.
    - Added support for "Return To Launcher".
@@ -1593,7 +1593,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 2:
    - Fixed missing speech in some cutscenes.
    - Fixed a memory leak that would eventually cause the game to hang.
-     (#2976008 - BS2: Game lockup in British Museum)
+     (#4828 - BS2: Game lockup in British Museum)
 
  Drascula:
    - Fixed number of GFX glitches.
@@ -1658,7 +1658,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Drascula:
    - Fixed regression that caused some texts to always be in English, even when
-     using another language. (#2970211 - DRASCULA: missing german translation)
+     using another language. (#4819 - DRASCULA: missing german translation)
 
  KYRA:
    - Fixed a bug which caused the DOS versions to crash before the credits when
@@ -2328,7 +2328,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed last-minute crash when playing sound effects.
 
  WinCE Port:
-   - Should fix weird crashes with DOTT stamp and in FOA. (#1399830 #1392815)
+   - Should fix weird crashes with DOTT stamp and in FOA. (#2439 #2430)
    - Fixed Monkey Island blocking keyboard panel on Smartphones. (thks Knakos)
    - Fixed QVGA Smartphone detection (mean it this time :p).
    - Fixed Smartphone double right click issue.
