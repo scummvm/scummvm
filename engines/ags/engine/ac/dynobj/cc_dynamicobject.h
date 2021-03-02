@@ -92,7 +92,7 @@ struct ICCDynamicObject {
 
 protected:
 	ICCDynamicObject() {}
-	~ICCDynamicObject() {}
+	virtual ~ICCDynamicObject() {}
 };
 
 struct ICCObjectReader {

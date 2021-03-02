@@ -50,6 +50,7 @@ struct sc_File final : ICCDynamicObject {
 	void Close();
 
 	sc_File();
+	virtual ~sc_File() {}
 
 	// Legacy support for reading and writing object values by their relative offset
 	const char *GetFieldPtr(const char *address, intptr_t offset) override;

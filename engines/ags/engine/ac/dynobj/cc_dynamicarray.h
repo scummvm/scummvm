@@ -32,6 +32,8 @@ namespace AGS3 {
 #define ARRAY_MANAGED_TYPE_FLAG    0x80000000
 
 struct CCDynamicArray final : ICCDynamicObject {
+	virtual ~CCDynamicArray() {}
+
 	// return the type name of the object
 	const char *GetType() override;
 	int Dispose(const char *address, bool force) override;
