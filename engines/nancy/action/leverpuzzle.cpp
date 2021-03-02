@@ -126,12 +126,12 @@ void LeverPuzzle::execute(Nancy::NancyEngine *engine) {
                     }
 
                     engine->sound->loadSound(solveSound);
-                    _engine->sound->playSound(solveSound.channelID);
+                    _engine->sound->playSound(solveSound);
                     solveState = kWaitForSound;
                     break;
                 case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound.channelID)) {
-                        _engine->sound->stopSound(solveSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(solveSound)) {
+                        _engine->sound->stopSound(solveSound);
                         state = kActionTrigger;
                     }
 
@@ -140,8 +140,8 @@ void LeverPuzzle::execute(Nancy::NancyEngine *engine) {
 
             break;
         case kActionTrigger:
-            _engine->sound->stopSound(moveSound.channelID);
-            _engine->sound->stopSound(noMoveSound.channelID);
+            _engine->sound->stopSound(moveSound);
+            _engine->sound->stopSound(noMoveSound);
             
             if (solveState == kNotSolved) {
                 _engine->scene->changeScene(exitScene);
@@ -192,7 +192,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
                 }
 
                 if (isMoving) {
-                    _engine->sound->playSound(moveSound.channelID);
+                    _engine->sound->playSound(moveSound);
 
                     if (leverDirection[i]) {
                         // Moving down
@@ -214,7 +214,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 
                     drawLever(i);
                 } else {
-                    _engine->sound->playSound(noMoveSound.channelID);
+                    _engine->sound->playSound(noMoveSound);
                     return;
                 }
             }

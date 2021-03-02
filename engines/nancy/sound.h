@@ -51,11 +51,13 @@ public:
     void loadSound(const SoundDescription &description);
 
     void playSound(uint16 channelID);
+    void playSound(const SoundDescription &description);
     void pauseSound(uint16 channelID, bool pause);
+    void pauseSound(const SoundDescription &description, bool pause);
     bool isSoundPlaying(uint16 channelID);
-
-    // Stop playing a sound and unload it from the channel
+    bool isSoundPlaying(const SoundDescription &description);
     void stopSound(uint16 channelID);
+    void stopSound(const SoundDescription &description);
     void stopAllSounds();
 
     static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);

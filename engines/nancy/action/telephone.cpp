@@ -123,7 +123,7 @@ void Telephone::execute(NancyEngine *engine) {
             init();
             registerGraphics();
             _engine->sound->loadSound(dialToneSound);
-            _engine->sound->playSound(dialToneSound.channelID);
+            _engine->sound->playSound(dialToneSound);
             _engine->scene->getTextbox().clear();
             _engine->scene->getTextbox().addTextLine(addressBookString);
             state = kRun;
@@ -136,21 +136,21 @@ void Telephone::execute(NancyEngine *engine) {
                         _engine->scene->getTextbox().clear();
                         _engine->scene->getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
                         _engine->sound->loadSound(ringSound);
-                        _engine->sound->playSound(ringSound.channelID);
+                        _engine->sound->playSound(ringSound);
                         callState = kRinging;
                     }
                     break;
                 case kButtonPress:
-                    if (!_engine->sound->isSoundPlaying(genericButtonSound.channelID)) {
-                        _engine->sound->stopSound(genericButtonSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(genericButtonSound)) {
+                        _engine->sound->stopSound(genericButtonSound);
                         undrawButton(selected);
                         callState = kWaiting;
                     }
 
                     break;
                 case kRinging:
-                    if (!_engine->sound->isSoundPlaying(ringSound.channelID)) {
-                        _engine->sound->stopSound(ringSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(ringSound)) {
+                        _engine->sound->stopSound(ringSound);
 
                         uint numberLength = calledNumber[0] == 1 ? 11 : 7;
                         for (uint i = 0; i < calls.size(); ++i) {
@@ -172,7 +172,7 @@ void Telephone::execute(NancyEngine *engine) {
 
                             genericDialogueSound.name = calls[i].soundName;
                             _engine->sound->loadSound(genericDialogueSound);
-                            _engine->sound->playSound(genericDialogueSound.channelID);
+                            _engine->sound->playSound(genericDialogueSound);
                             selected = i;
                             callState = kCall;
 
@@ -183,31 +183,31 @@ void Telephone::execute(NancyEngine *engine) {
                         _engine->scene->getTextbox().addTextLine(dialAgainString);
 
                         _engine->sound->loadSound(dialAgainSound);
-                        _engine->sound->playSound(dialAgainSound.channelID);
+                        _engine->sound->playSound(dialAgainSound);
                         callState = kBadNumber;
                         return;
                     }
 
                     break;
                 case kBadNumber:
-                    if (!_engine->sound->isSoundPlaying(dialAgainSound.channelID)) {
-                        _engine->sound->stopSound(dialAgainSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(dialAgainSound)) {
+                        _engine->sound->stopSound(dialAgainSound);
 
                         state = kActionTrigger;
                     }
 
                     break;
                 case kCall:
-                    if (!_engine->sound->isSoundPlaying(genericDialogueSound.channelID)) {
-                        _engine->sound->stopSound(genericDialogueSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(genericDialogueSound)) {
+                        _engine->sound->stopSound(genericDialogueSound);
 
                         state = kActionTrigger;
                     }
 
                     break;
                 case kHangUp:
-                    if (!_engine->sound->isSoundPlaying(hangUpSound.channelID)) {
-                        _engine->sound->stopSound(hangUpSound.channelID);
+                    if (!_engine->sound->isSoundPlaying(hangUpSound)) {
+                        _engine->sound->stopSound(hangUpSound);
 
                         state = kActionTrigger;
                     }
@@ -268,7 +268,7 @@ void Telephone::handleInput(NancyInput &input) {
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             _engine->sound->loadSound(hangUpSound);
-            _engine->sound->playSound(hangUpSound.channelID);
+            _engine->sound->playSound(hangUpSound);
 
             callState = kHangUp;
         }
@@ -277,14 +277,14 @@ void Telephone::handleInput(NancyInput &input) {
 
     if (buttonNr != -1) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            if (_engine->sound->isSoundPlaying(dialToneSound.channelID)) {
-                _engine->sound->stopSound(dialToneSound.channelID);
+            if (_engine->sound->isSoundPlaying(dialToneSound)) {
+                _engine->sound->stopSound(dialToneSound);
             }
 
             calledNumber.push_back(buttonNr);
             genericButtonSound.name = buttonSoundNames[buttonNr];
             _engine->sound->loadSound(genericButtonSound);
-            _engine->sound->playSound(genericButtonSound.channelID);
+            _engine->sound->playSound(genericButtonSound);
 
             drawButton(buttonNr);
 
