@@ -269,11 +269,24 @@ void Process::cloneObject() {
 void Process::removeScreenObject() {
 	Common::String name = popString();
 	debug("removeScreenObject: %s", name.c_str());
-	Screen *screen = _engine->getCurrentScreen();
-	if (screen) {
-		if (!screen->remove(name))
-			warning("removeScreenObject: object %s not found", name.c_str());
+	auto screen = _engine->getCurrentScreen();
+	if (!screen) {
+		warning("no current screen");
+		return;
 	}
+
+	auto object = screen->find(name);
+	if (object) {
+		if (object->alive()) {
+			if (name == _object->getName()) {
+				debug("removeScreenObject: %s: removing object from its own body (sic)", name.c_str());
+				object->alive(false);
+			} else if (!screen || !screen->remove(name))
+				warning("removeScreenObject: object %s not found", name.c_str());
+		} else
+			warning("removeScreenObject: object %s already removed", name.c_str());
+	} else
+		warning("cannot find object %s", name.c_str());
 }
 
 void Process::loadFont() {
