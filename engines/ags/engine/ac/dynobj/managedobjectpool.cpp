@@ -382,6 +382,4 @@ ManagedObjectPool::ManagedObjectPool() : objectCreationCounter(0), nextHandle(1)
 	handleByAddress.reserve(RESERVED_SIZE);
 }
 
-ManagedObjectPool pool;
-
 } // namespace AGS3

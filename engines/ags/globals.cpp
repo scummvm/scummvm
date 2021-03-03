@@ -45,6 +45,7 @@
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/engine/ac/dynobj/scriptsystem.h"
 #include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/engine/ac/dynobj/scriptinvitem.h"
@@ -122,6 +123,9 @@ Globals::Globals() {
 	// guibutton.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();
 
+	// managedobjectpool.cpp globals
+	_pool = new ManagedObjectPool();
+
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
 
@@ -197,6 +201,9 @@ Globals::~Globals() {
 
 	// guibutton.cpp globals
 	delete _guibuts;
+
+	// managedobjectpool.cpp globals
+	delete _pool;
 
 	// overlay.cpp globals
 	delete _screenover;

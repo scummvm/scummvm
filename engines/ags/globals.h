@@ -70,6 +70,7 @@ struct ExecutingScript;
 struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
+struct ManagedObjectPool;
 struct MoveList;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
@@ -294,6 +295,15 @@ public:
 	Version _SavedgameLowestBackwardCompatVersion;
 	// Lowest engine version, which would accept current savedgames
 	Version _SavedgameLowestForwardCompatVersion;
+
+	/**@}*/
+
+	/**
+	 * \defgroup managedobjectpool globals
+	 * @{
+	 */
+
+	ManagedObjectPool *_pool;
 
 	/**@}*/
 
