@@ -4484,6 +4484,41 @@ static const SciScriptPatcherEntry islandBrainSignatures[] = {
 };
 
 // ===========================================================================
+// King's Quest 1
+
+// In the demo, the leprechaun dance runs awkwardly fast on modern computers.
+//  The demo script increases the speed from the default (5 or 6) to fastest (1)
+//  for this scene only. This appears to be an attempt to speed up the dance and
+//  also compensate for the original interpreter significantly slowing down.
+//  On a machine from the demo's era, the interpreter was unable to keep up with
+//  all of the animating dancers. As each dancer disappeared the lag decreased
+//  and the dance got noticeably faster. On modern computers the dancers cause
+//  no lag and the real game's scripts don't adjust the speed at all, so we just
+//  lower the temporary dance speed to one that matches the demo and the dance
+//  music duration.
+//
+// Applies to: PC Demo only
+// Responsible method: danceFever:changeState(0)
+// Fixes bug: #9825
+static const uint16 kq1SignatureDemoDanceSpeed[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0xa1, 0x03,                         // sag 03 [ gameSpeed = 1 (fastest) ]
+	SIG_END
+};
+
+static const uint16 kq1PatchDemoDanceSpeed[] = {
+	0x35, 0x04,                         // ldi 04
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry kq1Signatures[] = {
+	{  true,    77, "demo: dance speed",                           1, kq1SignatureDemoDanceSpeed,       kq1PatchDemoDanceSpeed },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // In KQ4 1.000.111, falling down the lower stairs in room 90 sends a message to
 //  a non-object, which also crashes the original. It appears that the fragment
 //  of code which instantiated the Sound object was accidentally deleted from
@@ -20823,6 +20858,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_ISLANDBRAIN:
 		signatureTable = islandBrainSignatures;
+		break;
+	case GID_KQ1:
+		signatureTable = kq1Signatures;
 		break;
 	case GID_KQ4:
 		signatureTable = kq4Signatures;
