@@ -529,8 +529,8 @@ bool Console::cmdShowScript(int32 argc, const char **argv) {
 	int32 index = atoi(argv[1]);
 
 	// Check parameters
-	if (index < 0 || index >= (int32)getScript()->_scripts.size()) {
-		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, getScript()->_scripts.size() - 1);
+	if (index < 0 || index >= (int32)getWorld()->numScripts) {
+		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, getWorld()->numScripts - 1);
 		return true;
 	}
 
