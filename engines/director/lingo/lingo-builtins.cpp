@@ -272,6 +272,9 @@ static struct BuiltinProto {
 	// XCOD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, true, 400, FBLTIN },
 
+	// Used in "Eastern Mind", normally a TheEntity
+	{ "colorQD", LB::b_colorQD, 0, 0, true, 300, FBLTIN },
+
 	{ 0, 0, 0, 0, false, 0, VOIDSYM }
 };
 
@@ -2542,6 +2545,10 @@ void LB::b_getVolumes(int nargs) {
 	d.u.farr->push_back(Datum("Buried in Time\252 1"));
 
 	g_lingo->push(d);
+}
+
+void LB::b_colorQD(int nargs) {
+	g_lingo->push(Datum(1));
 }
 
 } // End of namespace Director
