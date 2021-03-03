@@ -65,8 +65,8 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 
 	int buttonId = _GP(guis)[guin].GetControlID(objn);
 
-	guibuts[buttonId].PushedImage = 0;
-	guibuts[buttonId].MouseOverImage = 0;
+	_GP(guibuts)[buttonId].PushedImage = 0;
+	_GP(guibuts)[buttonId].MouseOverImage = 0;
 
 	animbuts[numAnimButs].ongui = guin;
 	animbuts[numAnimButs].onguibut = objn;
@@ -226,10 +226,10 @@ int UpdateAnimatingButton(int bu) {
 	CheckViewFrame(animbuts[bu].view, animbuts[bu].loop, animbuts[bu].frame);
 
 	// update the button's image
-	guibuts[animbuts[bu].buttonid].Image = tview->loops[animbuts[bu].loop].frames[animbuts[bu].frame].pic;
-	guibuts[animbuts[bu].buttonid].CurrentImage = guibuts[animbuts[bu].buttonid].Image;
-	guibuts[animbuts[bu].buttonid].PushedImage = 0;
-	guibuts[animbuts[bu].buttonid].MouseOverImage = 0;
+	_GP(guibuts)[animbuts[bu].buttonid].Image = tview->loops[animbuts[bu].loop].frames[animbuts[bu].frame].pic;
+	_GP(guibuts)[animbuts[bu].buttonid].CurrentImage = _GP(guibuts)[animbuts[bu].buttonid].Image;
+	_GP(guibuts)[animbuts[bu].buttonid].PushedImage = 0;
+	_GP(guibuts)[animbuts[bu].buttonid].MouseOverImage = 0;
 	guis_need_update = 1;
 
 	animbuts[bu].wait = animbuts[bu].speed + tview->loops[animbuts[bu].loop].frames[animbuts[bu].frame].speed;

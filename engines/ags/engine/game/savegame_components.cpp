@@ -537,9 +537,9 @@ HSaveError WriteGUI(PStream out) {
 		_GP(guis)[i].WriteToSavegame(out.get());
 
 	WriteFormatTag(out, "GUIButtons");
-	out->WriteInt32(numguibuts);
-	for (int i = 0; i < numguibuts; ++i)
-		guibuts[i].WriteToSavegame(out.get());
+	out->WriteInt32(_G(numguibuts));
+	for (int i = 0; i < _G(numguibuts); ++i)
+		_GP(guibuts)[i].WriteToSavegame(out.get());
 
 	WriteFormatTag(out, "GUILabels");
 	out->WriteInt32(numguilabels);
@@ -587,10 +587,10 @@ HSaveError ReadGUI(PStream in, int32_t cmp_ver, const PreservedParams &pp, Resto
 
 	if (!AssertFormatTagStrict(err, in, "GUIButtons"))
 		return err;
-	if (!AssertGameContent(err, in->ReadInt32(), numguibuts, "GUI Buttons"))
+	if (!AssertGameContent(err, in->ReadInt32(), _G(numguibuts), "GUI Buttons"))
 		return err;
-	for (int i = 0; i < numguibuts; ++i)
-		guibuts[i].ReadFromSavegame(in.get(), svg_ver);
+	for (int i = 0; i < _G(numguibuts); ++i)
+		_GP(guibuts)[i].ReadFromSavegame(in.get(), svg_ver);
 
 	if (!AssertFormatTagStrict(err, in, "GUILabels"))
 		return err;

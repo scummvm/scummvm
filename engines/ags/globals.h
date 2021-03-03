@@ -43,6 +43,7 @@ namespace Shared {
 class Bitmap;
 class DebugManager;
 struct Font;
+class GUIButton;
 class RoomStruct;
 
 } // namespace Shared
@@ -233,6 +234,16 @@ public:
 	StaticArray *_StaticRegionArray;
 	StaticArray *_StaticInventoryArray;
 	StaticArray *_StaticDialogArray;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guibutton globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::GUIButton> *_guibuts;
+	int _numguibuts = 0;
 
 	/**@}*/
 

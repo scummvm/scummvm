@@ -28,6 +28,7 @@
 #include "ags/shared/font/ttffontrenderer.h"
 #include "ags/shared/font/wfnfontrenderer.h"
 #include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gui/guibutton.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/objectcache.h"
@@ -118,6 +119,9 @@ Globals::Globals() {
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
 
+	// guibutton.cpp globals
+	_guibuts = new std::vector<AGS::Shared::GUIButton>();
+
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
 
@@ -146,19 +150,19 @@ Globals::Globals() {
 Globals::~Globals() {
 	g_globals = nullptr;
 
-	// audio.cpp
+	// audio.cpp globals
 	delete _audioChannels;
 	delete _ambient;
 
-	// debugmanager.cpp
+	// debugmanager.cpp globals
 	delete _DbgMgr;
 
-	// fonts.cpp
+	// fonts.cpp globals
 	delete _fonts;
 	delete _ttfRenderer;
 	delete _wfnRenderer;
 
-	// game.cpp
+	// game.cpp globals
 	delete _ccDynamicGUIObject;
 	delete _ccDynamicCharacter;
 	delete _ccDynamicHotspot;
@@ -191,10 +195,13 @@ Globals::~Globals() {
 	delete _StaticInventoryArray;
 	delete _StaticDialogArray;
 
-	// overlay.cpp
+	// guibutton.cpp globals
+	delete _guibuts;
+
+	// overlay.cpp globals
 	delete _screenover;
 
-	// script.cpp
+	// script.cpp globals
 	delete[] _scripts;
 	delete _gamescript;
 	delete _dialogScriptsScript;

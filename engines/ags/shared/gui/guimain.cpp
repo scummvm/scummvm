@@ -331,7 +331,7 @@ HError GUIMain::RebuildArray() {
 			return new Error(String::FromFormat("GUIMain (%d): invalid control ID %d in ref #%d", ID, thisnum, i));
 
 		if (thistype == kGUIButton)
-			_controls[i] = &guibuts[thisnum];
+			_controls[i] = &_GP(guibuts)[thisnum];
 		else if (thistype == kGUILabel)
 			_controls[i] = &guilabels[thisnum];
 		else if (thistype == kGUIInvWindow)
@@ -723,10 +723,10 @@ HError ReadGUI(std::vector<GUIMain> &theGuis, Stream *in, bool is_savegame) {
 	}
 
 	// buttons
-	numguibuts = in->ReadInt32();
-	guibuts.resize(numguibuts);
-	for (int i = 0; i < numguibuts; ++i) {
-		guibuts[i].ReadFromFile(in, GameGuiVersion);
+	_G(numguibuts) = in->ReadInt32();
+	_GP(guibuts).resize(_G(numguibuts));
+	for (int i = 0; i < _G(numguibuts); ++i) {
+		_GP(guibuts)[i].ReadFromFile(in, GameGuiVersion);
 	}
 	// labels
 	numguilabels = in->ReadInt32();
@@ -776,9 +776,9 @@ void WriteGUI(const std::vector<GUIMain> &theGuis, Stream *out) {
 	for (size_t i = 0; i < theGuis.size(); ++i) {
 		theGuis[i].WriteToFile(out);
 	}
-	out->WriteInt32(numguibuts);
-	for (int i = 0; i < numguibuts; ++i) {
-		guibuts[i].WriteToFile(out);
+	out->WriteInt32(_G(numguibuts));
+	for (int i = 0; i < _G(numguibuts); ++i) {
+		_GP(guibuts)[i].WriteToFile(out);
 	}
 	out->WriteInt32(numguilabels);
 	for (int i = 0; i < numguilabels; ++i) {

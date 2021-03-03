@@ -37,7 +37,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 struct AnimatingGUIButton {
-	// index into guibuts array, GUI, button
+	// index into _GP(guibuts) array, GUI, button
 	short buttonid, ongui, onguibut;
 	// current animation status
 	short view, loop, frame;

@@ -476,17 +476,17 @@ void free_dynamic_sprite(int gotSlot) {
 	_GP(game).SpriteInfos[gotSlot].Height = 0;
 
 	// ensure it isn't still on any GUI buttons
-	for (tt = 0; tt < numguibuts; tt++) {
-		if (guibuts[tt].IsDeleted())
+	for (tt = 0; tt < _G(numguibuts); tt++) {
+		if (_GP(guibuts)[tt].IsDeleted())
 			continue;
-		if (guibuts[tt].Image == gotSlot)
-			guibuts[tt].Image = 0;
-		if (guibuts[tt].CurrentImage == gotSlot)
-			guibuts[tt].CurrentImage = 0;
-		if (guibuts[tt].MouseOverImage == gotSlot)
-			guibuts[tt].MouseOverImage = 0;
-		if (guibuts[tt].PushedImage == gotSlot)
-			guibuts[tt].PushedImage = 0;
+		if (_GP(guibuts)[tt].Image == gotSlot)
+			_GP(guibuts)[tt].Image = 0;
+		if (_GP(guibuts)[tt].CurrentImage == gotSlot)
+			_GP(guibuts)[tt].CurrentImage = 0;
+		if (_GP(guibuts)[tt].MouseOverImage == gotSlot)
+			_GP(guibuts)[tt].MouseOverImage = 0;
+		if (_GP(guibuts)[tt].PushedImage == gotSlot)
+			_GP(guibuts)[tt].PushedImage = 0;
 	}
 
 	// force refresh of any object caches using the sprite

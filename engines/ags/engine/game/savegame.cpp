@@ -339,7 +339,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	// NOTE: sprite 0 is a special constant sprite that cannot be dynamic
 	for (int i = 1; i < _GP(spriteset).GetSpriteSlotCount(); ++i) {
 		if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
-			// do this early, so that it changing guibuts doesn't
+			// do this early, so that it changing _GP(guibuts) doesn't
 			// affect the restored data
 			free_dynamic_sprite(i);
 		}

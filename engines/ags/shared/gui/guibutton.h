@@ -130,9 +130,6 @@ private:
 } // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Shared::GUIButton> guibuts;
-extern int numguibuts;
-
 int UpdateAnimatingButton(int bu);
 void StopButtonAnimation(int idxn);
 
