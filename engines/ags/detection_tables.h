@@ -353,6 +353,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bigbadwolf3lilpiggies", "Big Bad Wolf & 3 Lil' Piggies" },
 	{ "bigglesonmars", "Biggles On Mars" },
 	{ "billyboysimportantwinelottery", "Billy Boy's Important Wine Lottery" },
+	{ "billymasterswasright", "Billy Masters Was Right" },
 	{ "birdy", "Birdy" },
 	{ "bj7thecardinalsins", "BJ7: The Cardinal Sins" },
 	{ "bjcase2", "BJ Case 2" },
@@ -437,6 +438,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "colourwise", "ColourWise" },
 	{ "colourwiseleveleditor", "ColourWise - Level Editor" },
 	{ "columbuslander", "Columbus Lander" },
+	{ "comedyquest", "Comedy Quest" },
 	{ "comradecitizenpart1", "Comrade Citizen (part 1)" },
 	{ "confessionsofacatburglar", "Confessions Of A Cat Burglar" },
 	{ "conspiracybelowzero", "Conspiracy: Below-Zero" },
@@ -816,8 +818,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "magssep2007", "MAGS Sep 2007" },
 	{ "manboy", "Man Boy" },
 	{ "maniacmansiondeluxe", "Maniac Mansion Deluxe" },
-	{ "maniacmansionmania", "Maniac Mansion Mania" },
-	{ "maniacmansionmania02", "Maniac Mansion Mania 02" },
+	{ "maniacmansionmania1", "Maniac Mansion Mania" },
+	{ "maniacmansionmania2", "Maniac Mansion Mania 02" },
 	{ "mardsrevengebytk", "Mard's Revenge by TK" },
 	{ "martyausdemall", "Marty aus dem All" },
 	{ "mash", "M*A*S*H*: The Point n' Click Adventure" },
@@ -1187,7 +1189,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sword", "Sword" },
 	{ "sydneyfindsemployment", "Sydney Finds Employment" },
 	{ "sydneytreadsthecatwalk", "Sydney Treads the Catwalk" },
-	{ "symplokelaleyendadegustavobuenocapitulo1", "Symploke. La Leyenda de Gustavo Bueno. Capitulo 1" },
+	{ "symploke1", "Symploke. La Leyenda de Gustavo Bueno. Capitulo 1" },
 	{ "talesofchickenry", "Tales of Chickenry" },
 	{ "tao", "Tao" },
 	{ "tarthenia", "Tarthenia" },
@@ -1332,6 +1334,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "unintelligentdesign", "Unintelligent Design" },
 	{ "unprofe", "Un Profe" },
 	{ "updatequest", "Update Quest" },
+	{ "urbanwitchstory", "Urban Witch Story" },
 	{ "utopiaoftyrant", "Utopia of Tyrant" },
 	{ "vacationquestthing", "Vacation Quest... Thing" },
 	{ "valhallaextinction", "Valhalla Extinction" },
@@ -1595,6 +1598,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("atotkdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), //Steam
+	GAME_ENTRY("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Steam Linux
 	GAME_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
 	GAME_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	GAME_ENTRY_PLUGIN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_BLACKWELL), // Steam
@@ -1697,6 +1701,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096), // GOG
 	GAME_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
 	GAME_ENTRY("qfi", "agsgame.dat", "9efb669ada4b685f9a5a91ce161424a7", 532694795), // Linux Groupees
+	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536391599),
+	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536513114), // Steam Linux
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
 	GAME_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
@@ -1705,6 +1711,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573), // Steam
 	GAME_ENTRY("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1
 	GAME_ENTRY("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952), // Steam
+	GAME_ENTRY("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
@@ -1964,6 +1971,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("bigbadwolf3lilpiggies", "big bad wolf.exe", "06a03fe35791b0578068ab1873455463", 5812024),
 	GAME_ENTRY("bigglesonmars", "biggles on mars.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 29048931),
 	GAME_ENTRY("billyboysimportantwinelottery", "billyboy.exe", "5881d6b88386317dc9d67524a14b11d4", 4872317),
+	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "6fe5526eb7dc5b8fe82fb447a4701af7", 44901409),
 	GAME_ENTRY("birdy", "birdy.exe", "06a03fe35791b0578068ab1873455463", 4250415),
 	GAME_ENTRY("bj7thecardinalsins", "bj7.exe", "18b284c22010850f79bc5c20054a70c4", 13714066),
 	GAME_ENTRY("bjcase2", "bj2.exe", "465f972675db2da6040518221af5b0ba", 6318491),
@@ -2048,6 +2056,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("colourwise", "colourwise.exe", "473f0e2fd72b747cef62d91090ab74c7", 24461117),
 	GAME_ENTRY("colourwiseleveleditor", "colourwise - Level Editor.exe", "3e09048ec0763a90ffa4eaeeb8f96df5", 3365519),
 	GAME_ENTRY("columbuslander", "columbus lander.exe", "779421cd8ad5268e2efdb26e04608db7", 48744943),
+	GAME_ENTRY("comedyquest", "Comedy Quest.exe", "7a0123d8f6575e9954a18125456515f4", 22381783), // Steam
 	GAME_ENTRY("comradecitizenpart1", "citizen.exe", "06a03fe35791b0578068ab1873455463", 2174301),
 	GAME_ENTRY("confessionsofacatburglar", "cat.exe", "0500aacb6c176d47ac0f8158f055db83", 1328541),
 	GAME_ENTRY("conspiracybelowzero", "conspiracy.exe", "338fa79960d40689063af31c671b8729", 395111008),
@@ -2421,8 +2430,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("magssep2007", "MAGS Sep 2007.exe", "f120690b506dd63cd7d1112ea6af2f77", 6007305),
 	GAME_ENTRY("manboy", "Man Boy.exe", "1275885401b7d2ece491e704535707d9", 3038532),
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10409172),
-	GAME_ENTRY("maniacmansionmania", "MMM.exe", "465f972675db2da6040518221af5b0ba", 5476481),
-	GAME_ENTRY("maniacmansionmania02", "MMM02.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5830457),
+	GAME_ENTRY("maniacmansionmania1", "MMM.exe", "465f972675db2da6040518221af5b0ba", 5476481),
+	GAME_ENTRY("maniacmansionmania1", "MMM.exe", "137a2bc940f033beab257b2fa88526ba", 10917227),
+	GAME_ENTRY("maniacmansionmania2", "MMM02.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5830457),
 	GAME_ENTRY("mardsrevengebytk", "MPLR.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1771793),
 	GAME_ENTRY("martyausdemall", "test3.exe", "0710e2ec71042617f565c01824f0cf3c", 4352013),
 	GAME_ENTRY("mash", "MASH.ags", "8fe67d5a066d4ab203db0cce102ed86c", 12536184),
@@ -2799,7 +2809,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sword", "Sword.exe", "0500aacb6c176d47ac0f8158f055db83", 1847692),
 	GAME_ENTRY("sydneyfindsemployment", "sydney.exe", "06a03fe35791b0578068ab1873455463", 17351738),
 	GAME_ENTRY("sydneytreadsthecatwalk", "sydney two.exe", "615e806856b7730afadf1fea9a756b70", 31480339),
-	GAME_ENTRY("symplokelaleyendadegustavobuenocapitulo1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616),
+	GAME_ENTRY("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616),
+	GAME_ENTRY("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019),
 	GAME_ENTRY("talesofchickenry", "Chickenry.exe", "aabdafae8b57dfc48fdf158a72326c23", 50338519),
 	GAME_ENTRY("tao", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047),
 	GAME_ENTRY("tarthenia", "Tarthenia.exe", "a524cbb1c51589903c4043b98917f1d9", 1047988125),
@@ -2956,6 +2967,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("unintelligentdesign", "UD.exe", "5ca1bc01c5a45388bd5c84ef36077361", 6019596),
 	GAME_ENTRY("unprofe", "Un Profe.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3465541),
 	GAME_ENTRY("updatequest", "U-Quest.exe", "06a03fe35791b0578068ab1873455463", 1776804),
+	GAME_ENTRY("urbanwitchstory", "Urban Witch Story.exe", "636950f50c877767bca7e2b1250632f7", 441430956),
 	GAME_ENTRY("utopiaoftyrant", "Utopia_of_a_Tyrant.exe", "f8a42e09e40a7ab1cd2a21f74a5e0980", 80966652),
 	GAME_ENTRY("vacationquestthing", "MGA.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 943647),
 	GAME_ENTRY("valhallaextinction", "MAGSjuly2016.exe", "95864ae16f51c512985007dca83c1370", 4464850),
