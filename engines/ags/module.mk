@@ -310,7 +310,8 @@ MODULE_OBJS = \
 	plugins/ags_sprite_font/sprite_font_renderer.o \
 	plugins/ags_sprite_font/variable_width_font.o \
 	plugins/ags_sprite_font/variable_width_sprite_font.o \
-	plugins/ags_tcp_ip/ags_tcp_ip.o
+	plugins/ags_tcp_ip/ags_tcp_ip.o \
+	plugins/ags_wadjet_util/ags_wadjet_util.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \

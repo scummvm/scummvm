@@ -33,6 +33,7 @@
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
+#include "ags/plugins/ags_wadjet_util/ags_wadjet_util.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -90,6 +91,9 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
 			fname.equalsIgnoreCase("agsteam-disjoint"))
 		return new AGSGalaxySteam::AGSSteam();
+
+	if (fname.equalsIgnoreCase("AGSWadgetUtil"))
+		return new AGSWadgetUtil::AGSWadgetUtil();
 
 	return nullptr;
 }
