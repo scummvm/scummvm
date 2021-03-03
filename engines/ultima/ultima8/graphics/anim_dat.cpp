@@ -88,55 +88,57 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 
 		switch (action) {
 		case Animation::stand:
-			return 0;
+			return Animation::standCru;
 		case Animation::step:
-			return 1; // Same as walk in crusader.
+			return Animation::walkCru; // Same as walk in crusader.
 		case Animation::walk:
-			return 1;
+			return Animation::walkCru;
 		case Animation::retreat:
-			return (smallwpn ? 2 : 45);
+			return (smallwpn ? Animation::retreatSmallWeapon : Animation::retreatLargeWeapon);
 		case Animation::run:
-			return (smallwpn ? 3 : 49);
-		case Animation::combatRun:
-			return (smallwpn ? 48 : 49);
+			return Animation::runCru;
+		case Animation::combatRunSmallWeapon:
+			return (smallwpn ? Animation::combatRunSmallWeapon : Animation::combatRunLargeWeapon);
 		case Animation::combatStand:
-			return (smallwpn ? 4 : 37);
-		// Note: 5, 6, 9, 10 == nothing (for avatar)?
+			return (smallwpn ? Animation::combatStandSmallWeapon : Animation::combatStandLargeWeapon);
 		case Animation::unreadyWeapon:
-			return (smallwpn ? 11: 16);
+				return (smallwpn ? Animation::unreadySmallWeapon :  Animation::unreadyLargeWeapon);
 		case Animation::readyWeapon:
-			return (smallwpn ? 7 : 12);
+			return (smallwpn ? Animation::readySmallWeapon : Animation::readyLargeWeapon);
 		case Animation::attack: {
 			if (smallwpn)
-				return 8;
-			return (altfire ? 54 : 13);
+				return Animation::fireSmallWeapon;
+			return (altfire ? Animation::brightFireLargeWpn : Animation::fireLargeWeapon);
 		}
 		// Note: 14, 17, 21, 22, 29 == nothing for avatar
 		case Animation::fallBackwards:
-			return 18;
+			return Animation::fallBackwardsCru;
 		case Animation::die:
-			return 18; // by default fall over backwards. TODO: randomly use 20 for some deaths - fall forwards.
+			return Animation::fallBackwardsCru; // by default fall over backwards. TODO: randomly use Animation::fallForwardsCru for some deaths.
 		case Animation::advance:
-			return (smallwpn ? 36 : 44);
-		case Animation::startKneeling:
-			return 40;
+			return (smallwpn ? Animation::advanceSmallWeapon : Animation::advanceLargeWeapon);
+		// Kneel start/end never used in code - mover process uses correct ones.
+		/*case Animation::startKneeling:
+			return Animation::kneelStartCru;
 		case Animation::stopKneeling:
-			return 41;
+			return Animation::kneelEndCru;*/
 		case Animation::kneel:
-			return (smallwpn ? 46 : 47);
+			return (smallwpn ? Animation::kneelingWithSmallWeapon : Animation::kneelingWithLargeWeapon);
 		case Animation::kneelAndFire: {
 			if (smallwpn)
-				return 42;
-			return (altfire ? 50 : 43);
+				return Animation::kneelAndFireSmallWeapon;
+			return (altfire ? Animation::brightKneelAndFireLargeWeapon : Animation::kneelAndFireLargeWeapon);
 		}
 		case Animation::lookLeft:
 			return 0;
 		case Animation::lookRight:
 			return 0;
 		case Animation::jump:
-			return 58; // 58 is a shorter jump?
-		case Animation::startRunWithLargeWeapon:
-			return (smallwpn ? 34 : 35);
+			return Animation::quickJumpCru;
+		case Animation::startRunLargeWeapon:
+			return (smallwpn ? Animation::startRunSmallWeapon : Animation::startRunLargeWeapon2);
+		case Animation::stopRunningAndDrawSmallWeapon:
+			return (smallwpn ? Animation::stopRunningAndDrawSmallWeapon : Animation::stopRunningAndDrawLargeWeapon);
 		default:
 			return action_int;
 		}

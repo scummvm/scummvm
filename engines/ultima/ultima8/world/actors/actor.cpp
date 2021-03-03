@@ -479,23 +479,24 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		if (animDirMode(anim) == dirmode_8dirs)
 			dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
 
-		if (anim == Animation::readyWeapon || anim == Animation::stopRunningAndDrawWeapon ||
+		if (anim == Animation::readyWeapon || anim == Animation::stopRunningAndDrawSmallWeapon ||
 				anim == Animation::combatStand || anim == Animation::attack || anim == Animation::kneel ||
 				anim == Animation::kneelAndFire)
 			setActorFlag(ACT_WEAPONREADY);
 		else
 			clearActorFlag(ACT_WEAPONREADY);
 
-		if (anim == Animation::startKneeling || anim == Animation::kneelAndFire ||
+		if (anim == Animation::kneelStartCru || anim == Animation::kneelAndFire ||
 				anim == Animation::kneelAndFireSmallWeapon ||
 				anim == Animation::kneelAndFireLargeWeapon ||
-				anim == Animation::kneel)
+				anim == Animation::kneelingAdvance ||
+				anim == Animation::kneelingRetreat)
 			setActorFlag(ACT_KNEELING);
 		else
 			clearActorFlag(ACT_KNEELING);
 	}
 
-#if 0
+#if 1
 	if (_objId == 1) {
 		int32 x, y, z;
 		getLocation(x, y, z);
@@ -942,7 +943,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 
 void Actor::tookHitCru() {
 	Animation::Sequence lastanim = getLastAnim();
-	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunWithLargeWeapon) {
+	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) {
 		//uint16 controllednpc = World::get_instance()->getControlledNPCNum();
 		bool canseecontrolled = true; //this->canSee(controllednpc);
 		if (canseecontrolled) {

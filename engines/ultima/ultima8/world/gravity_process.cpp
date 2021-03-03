@@ -349,7 +349,7 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 	Kernel *kernel = Kernel::get_instance();
 
 	if (height / 8 > 2 &&
-		(lastanim != Animation::anotherJump &&
+		(lastanim != Animation::quickJumpCru &&
 		 lastanim != Animation::slowCombatRollLeft &&
 		 lastanim != Animation::slowCombatRollRight &&
 		 lastanim != Animation::combatRollLeft &&
@@ -357,7 +357,7 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 		 lastanim != Animation::run &&
 		 lastanim != Animation::jumpForward &&
 		 lastanim != Animation::unknownAnim30 &&
-		 lastanim != Animation::runWithLargeWeapon)) {
+		 lastanim != Animation::brightKneelAndFireLargeWeapon)) {
 		// play land animation, overriding other animations
 		kernel->killProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, false); // CONSTANT!
 		ProcId lpid = actor->doAnim(Animation::jumpLanding, dir_current);

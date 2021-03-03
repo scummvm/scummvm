@@ -115,7 +115,7 @@ bool ActorAnimProcess::init() {
 	if (_itemNum == watchactor)
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
 		     << "] ActorAnimProcess " << getPid() << " created ("
-		     << _action << "," << _dir << ") _steps " << _steps << Std::endl;
+		     << _action << "," << _dir << ") steps " << _steps << Std::endl;
 #endif
 
 	return true;

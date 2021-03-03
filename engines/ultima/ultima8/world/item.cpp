@@ -1327,11 +1327,11 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 			else
 				anim = Animation::kneelAndFireLargeWeapon;
 		} else {
-			// TODO: fire2 seems to be different in Regret, check me.
+			// TODO: fireLarge seems to be different ID in Regret, check me.
 			if (ma || smallwpn)
-				anim = Animation::attack;
+				anim = Animation::fireSmallWeapon;
 			else
-				anim = Animation::fire2;
+				anim = Animation::fireLargeWeapon;
 		}
 
 		bool first_offsets = false;
