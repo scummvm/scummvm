@@ -42,6 +42,7 @@
 #include "ags/plugins/agsplugin.h"
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h"
 #include "ags/engine/ac/statobj/staticobject.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 
@@ -186,8 +187,7 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 			params.push_back(parm_value[i]);
 
 		// Call the method
-		typedef int (*ScriptMethod)(const ScriptMethodParams &params);
-		ScriptMethod fparam = (ScriptMethod)addr;
+		Plugins::PluginFunction fparam = (Plugins::PluginFunction)addr;
 		return fparam(params);
 	}
 }
