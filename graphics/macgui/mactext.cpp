@@ -236,7 +236,7 @@ void MacText::init() {
 	_cursorRow = getLineCount() - 1;
 	_cursorCol = getLineCharWidth(_cursorRow);
 
-	_cursorRect = new Common::Rect(0, 0, 1, 0);
+	_cursorRect = new Common::Rect(0, 0, 1, 1);
 
 	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface->clear(_wm->_colorBlack);
