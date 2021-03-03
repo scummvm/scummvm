@@ -30,6 +30,7 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/roomstatus.h"
 #include "ags/engine/ac/screenoverlay.h"
 #include "ags/engine/ac/spritelistentry.h"
@@ -44,12 +45,12 @@
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/scriptsystem.h"
-#include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/engine/ac/dynobj/scriptinvitem.h"
 #include "ags/engine/ac/dynobj/scriptobject.h"
 #include "ags/engine/ac/dynobj/scriptregion.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/statobj/staticarray.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/executingscript.h"
@@ -107,6 +108,15 @@ Globals::Globals() {
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+
+	// game_init.cpp globals
+	_StaticCharacterArray = new StaticArray();
+	_StaticObjectArray = new StaticArray();
+	_StaticGUIArray = new StaticArray();
+	_StaticHotspotArray = new StaticArray();
+	_StaticRegionArray = new StaticArray();
+	_StaticInventoryArray = new StaticArray();
+	_StaticDialogArray = new StaticArray();
 
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
@@ -171,6 +181,15 @@ Globals::~Globals() {
 	delete[] _scrRegion;
 	delete[] _scrInv;
 	delete[] _objcache;
+
+	// game_init.cpp globals
+	delete _StaticCharacterArray;
+	delete _StaticObjectArray;
+	delete _StaticGUIArray;
+	delete _StaticHotspotArray;
+	delete _StaticRegionArray;
+	delete _StaticInventoryArray;
+	delete _StaticDialogArray;
 
 	// overlay.cpp
 	delete _screenover;

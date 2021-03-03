@@ -86,6 +86,7 @@ struct ScriptString;
 struct ScriptSystem;
 struct SOUNDCLIP;
 struct SpriteListEntry;
+struct StaticArray;
 struct ViewStruct;
 
 class SpriteCache;
@@ -219,6 +220,21 @@ public:
 	MoveList *_mls = nullptr;
 
 	 /**@}*/
+
+	/**
+	 * \defgroup game_init globals
+	 * @{
+	 */
+
+	StaticArray *_StaticCharacterArray;
+	StaticArray *_StaticObjectArray;
+	StaticArray *_StaticGUIArray;
+	StaticArray *_StaticHotspotArray;
+	StaticArray *_StaticRegionArray;
+	StaticArray *_StaticInventoryArray;
+	StaticArray *_StaticDialogArray;
+
+	/**@}*/
 
 	/**
 	 * \defgroup main globals

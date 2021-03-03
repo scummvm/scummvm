@@ -63,30 +63,10 @@ extern IDriverDependantBitmap **actspsbmp;
 extern Bitmap **actspswb;
 extern IDriverDependantBitmap **actspswbbmp;
 extern CachedActSpsData *actspswbcache;
-
-
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern ScriptDialogOptionsRendering ccDialogOptionsRendering;
 extern ScriptDrawingSurface *dialogOptionsRenderingSurface;
-
 extern AGSStaticObject GlobalStaticManager;
-
-extern StaticArray StaticCharacterArray;
-extern StaticArray StaticObjectArray;
-extern StaticArray StaticGUIArray;
-extern StaticArray StaticHotspotArray;
-extern StaticArray StaticRegionArray;
-extern StaticArray StaticInventoryArray;
-extern StaticArray StaticDialogArray;
-
-StaticArray StaticCharacterArray;
-StaticArray StaticObjectArray;
-StaticArray StaticGUIArray;
-StaticArray StaticHotspotArray;
-StaticArray StaticRegionArray;
-StaticArray StaticInventoryArray;
-StaticArray StaticDialogArray;
-
 
 namespace AGS {
 namespace Engine {
@@ -240,21 +220,21 @@ void InitAndRegisterRegions() {
 
 // Registers static entity arrays in the script system
 void RegisterStaticArrays() {
-	StaticCharacterArray.Create(&_GP(ccDynamicCharacter), sizeof(CharacterInfo), sizeof(CharacterInfo));
-	StaticObjectArray.Create(&_GP(ccDynamicObject), sizeof(ScriptObject), sizeof(ScriptObject));
-	StaticGUIArray.Create(&_GP(ccDynamicGUI), sizeof(ScriptGUI), sizeof(ScriptGUI));
-	StaticHotspotArray.Create(&_GP(ccDynamicHotspot), sizeof(ScriptHotspot), sizeof(ScriptHotspot));
-	StaticRegionArray.Create(&_GP(ccDynamicRegion), sizeof(ScriptRegion), sizeof(ScriptRegion));
-	StaticInventoryArray.Create(&_GP(ccDynamicInv), sizeof(ScriptInvItem), sizeof(ScriptInvItem));
-	StaticDialogArray.Create(&_GP(ccDynamicDialog), sizeof(ScriptDialog), sizeof(ScriptDialog));
+	_GP(StaticCharacterArray).Create(&_GP(ccDynamicCharacter), sizeof(CharacterInfo), sizeof(CharacterInfo));
+	_GP(StaticObjectArray).Create(&_GP(ccDynamicObject), sizeof(ScriptObject), sizeof(ScriptObject));
+	_GP(StaticGUIArray).Create(&_GP(ccDynamicGUI), sizeof(ScriptGUI), sizeof(ScriptGUI));
+	_GP(StaticHotspotArray).Create(&_GP(ccDynamicHotspot), sizeof(ScriptHotspot), sizeof(ScriptHotspot));
+	_GP(StaticRegionArray).Create(&_GP(ccDynamicRegion), sizeof(ScriptRegion), sizeof(ScriptRegion));
+	_GP(StaticInventoryArray).Create(&_GP(ccDynamicInv), sizeof(ScriptInvItem), sizeof(ScriptInvItem));
+	_GP(StaticDialogArray).Create(&_GP(ccDynamicDialog), sizeof(ScriptDialog), sizeof(ScriptDialog));
 
-	ccAddExternalStaticArray("character", &_GP(game).chars[0], &StaticCharacterArray);
-	ccAddExternalStaticArray("object", &_G(scrObj)[0], &StaticObjectArray);
-	ccAddExternalStaticArray("gui", &_G(scrGui)[0], &StaticGUIArray);
-	ccAddExternalStaticArray("hotspot", &_G(scrHotspot)[0], &StaticHotspotArray);
-	ccAddExternalStaticArray("region", &_G(scrRegion)[0], &StaticRegionArray);
-	ccAddExternalStaticArray("inventory", &_G(scrInv)[0], &StaticInventoryArray);
-	ccAddExternalStaticArray("dialog", &_G(scrDialog)[0], &StaticDialogArray);
+	ccAddExternalStaticArray("character", &_GP(game).chars[0], &_GP(StaticCharacterArray));
+	ccAddExternalStaticArray("object", &_G(scrObj)[0], &_GP(StaticObjectArray));
+	ccAddExternalStaticArray("gui", &_G(scrGui)[0], &_GP(StaticGUIArray));
+	ccAddExternalStaticArray("hotspot", &_G(scrHotspot)[0], &_GP(StaticHotspotArray));
+	ccAddExternalStaticArray("region", &_G(scrRegion)[0], &_GP(StaticRegionArray));
+	ccAddExternalStaticArray("inventory", &_G(scrInv)[0], &_GP(StaticInventoryArray));
+	ccAddExternalStaticArray("dialog", &_G(scrDialog)[0], &_GP(StaticDialogArray));
 }
 
 // Initializes various game entities and registers them in the script system
