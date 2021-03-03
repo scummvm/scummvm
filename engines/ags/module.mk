@@ -286,7 +286,6 @@ MODULE_OBJS = \
 	engine/script/script_runtime.o \
 	engine/script/systemimports.o \
 	plugins/agsplugin.o \
-	plugins/global_plugin.o \
 	plugins/plugin_base.o \
 	plugins/pluginobjectreader.o \
 	plugins/ags_blend/ags_blend.o \

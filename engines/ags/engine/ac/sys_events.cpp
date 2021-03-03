@@ -40,7 +40,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern volatile unsigned long globalTimerCounter;
-extern int pluginSimulatedClick;
+int pluginSimulatedClick;
 extern int displayed_room;
 extern char check_dynamic_sprites_at_exit;
 

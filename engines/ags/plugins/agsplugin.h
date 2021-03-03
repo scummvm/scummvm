@@ -564,6 +564,8 @@ public:
 	AGSIFUNC(IAGSFontRenderer *) ReplaceFontRenderer(int fontNumber, IAGSFontRenderer *newRenderer);
 };
 
+extern void PluginSimulateMouseClick(int pluginButtonID);
+
 } // namespace AGS3
 
 #endif

@@ -35,7 +35,6 @@
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/engine/ac/global_audio.h"
-#include "ags/engine/ac/global_plugin.h"
 #include "ags/engine/ac/global_walkablearea.h"
 #include "ags/engine/ac/keycode.h"
 #include "ags/engine/ac/mouse.h"
@@ -95,12 +94,13 @@ extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
 extern RuntimeScriptValue GlobalReturnValue;
+extern int pluginSimulatedClick;
 
+void PluginSimulateMouseClick(int pluginButtonID) {
+	pluginSimulatedClick = pluginButtonID - 1;
+}
 
 // **************** PLUGIN IMPLEMENTATION ****************
-
-
-
 
 struct EnginePlugin {
 	char        filename[PLUGIN_FILENAME_MAX + 1];
@@ -958,14 +958,8 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 			apl->debugHook = (int(*)(const char *, int, int))apl->library.GetFunctionAddress("AGS_EngineDebugHook");
 			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {
-			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s'), trying built-in plugins...",
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
 				apl->filename, expect_filename.GetCStr());
-
-			// Plugin loading has failed at this point, try using built-in plugin function stubs
-			if (RegisterPluginStubs((const char *)apl->filename))
-				AGS::Shared::Debug::Printf(kDbgMsg_Info, "Placeholder functions for the plugin '%s' found.", apl->filename);
-			else
-				AGS::Shared::Debug::Printf(kDbgMsg_Info, "No placeholder functions for the plugin '%s' found. The game might fail to load!", apl->filename);
 			continue;
 		}
 
