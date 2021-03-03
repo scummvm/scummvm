@@ -229,10 +229,10 @@ void ReadViews(GameSetupStruct &game, ViewStruct *&views, Stream *in, GameDataVe
 }
 
 void ReadDialogs(DialogTopic *&dialog,
-	std::vector< std::shared_ptr<unsigned char> > &old_dialog_scripts,
-	std::vector<String> &old_dialog_src,
-	std::vector<String> &old_speech_lines,
-	Stream *in, GameDataVersion data_ver, int dlg_count) {
+		std::vector< std::shared_ptr<unsigned char> > &old_dialog_scripts,
+		std::vector<String> &old_dialog_src,
+		std::vector<String> &old_speech_lines,
+		Stream *in, GameDataVersion data_ver, int dlg_count) {
 	// TODO: I suspect +5 was a hacky way to "supress" memory access mistakes;
 	// double check and remove if proved unnecessary
 	dialog = (DialogTopic *)malloc(sizeof(DialogTopic) * dlg_count + 5);

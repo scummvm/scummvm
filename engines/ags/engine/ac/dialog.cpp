@@ -81,15 +81,8 @@ ScriptDialogOptionsRendering ccDialogOptionsRendering;
 ScriptDrawingSurface *dialogOptionsRenderingSurface;
 
 int said_speech_line; // used while in dialog to track whether screen needs updating
-
-// Old dialog support
-std::vector< std::shared_ptr<unsigned char> > old_dialog_scripts;
-std::vector<String> old_speech_lines;
-
 int said_text = 0;
 int longestline = 0;
-
-
 
 
 void Dialog_Start(ScriptDialog *sd) {
@@ -199,7 +192,7 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 		if (offse == -1)
 			return result;
 
-		unsigned char *script = old_dialog_scripts[dialogID].get() + offse;
+		unsigned char *script = _G(old_dialog_scripts)[dialogID].get() + offse;
 
 		unsigned short param1 = 0;
 		unsigned short param2 = 0;
@@ -214,9 +207,9 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 					param1 = _GP(game).playercharacter;
 
 				if (param1 == DCHAR_NARRATOR)
-					Display(get_translation(old_speech_lines[param2]));
+					Display(get_translation(_G(old_speech_lines)[param2]));
 				else
-					DisplaySpeech(get_translation(old_speech_lines[param2]), param1);
+					DisplaySpeech(get_translation(_G(old_speech_lines)[param2]), param1);
 
 				said_speech_line = 1;
 				break;

@@ -79,10 +79,6 @@ extern StaticArray StaticRegionArray;
 extern StaticArray StaticInventoryArray;
 extern StaticArray StaticDialogArray;
 
-// Old dialog support (defined in ac/dialog)
-extern std::vector< std::shared_ptr<unsigned char> > old_dialog_scripts;
-extern std::vector<String> old_speech_lines;
-
 StaticArray StaticCharacterArray;
 StaticArray StaticObjectArray;
 StaticArray StaticGUIArray;
@@ -366,8 +362,8 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	actspswbbmp = (IDriverDependantBitmap **)calloc(actSpsCount, sizeof(IDriverDependantBitmap *));
 	actspswbcache = (CachedActSpsData *)calloc(actSpsCount, sizeof(CachedActSpsData));
 	_GP(play).charProps.resize(_GP(game).numcharacters);
-	old_dialog_scripts = ents.OldDialogScripts;
-	old_speech_lines = ents.OldSpeechLines;
+	_G(old_dialog_scripts) = ents.OldDialogScripts;
+	_G(old_speech_lines) = ents.OldSpeechLines;
 	HError err = InitAndRegisterGameEntities();
 	if (!err)
 		return new GameInitError(kGameInitErr_EntityInitFail, err);

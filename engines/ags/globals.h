@@ -141,6 +141,18 @@ public:
 	 */
 
 	AGS::Shared::DebugManager *_DbgMgr;
+
+	/**@}*/
+
+	/**
+	 * \defgroup dialog globals
+	 * @{
+	 */
+
+	 // Old dialog support
+	std::vector< std::shared_ptr<unsigned char> > _old_dialog_scripts;
+	std::vector<String> _old_speech_lines;
+
 	/**@}*/
 
 	/**
