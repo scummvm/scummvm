@@ -3766,7 +3766,8 @@ case $_backend in
 		append_var LIBS "-lvitashaders -lSDL2 -lvita2d_fbo -lSceCommonDialog_stub"
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
-		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
+		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub"
+		append_var LIBS "-lSceAppMgr_stub -lSceAppUtil_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub -lSceMotion_stub"
 		_sdl=yes
 		_sdlversion=2.0.0
