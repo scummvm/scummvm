@@ -12,7 +12,6 @@ MODULE_OBJS = \
 	lib/aastr-0.1.1/aautil.o \
 	lib/alfont/alfont.o \
 	lib/allegro.o \
-	lib/allegro/colblend.o \
 	lib/allegro/color.o \
 	lib/allegro/config.o \
 	lib/allegro/draw.o \

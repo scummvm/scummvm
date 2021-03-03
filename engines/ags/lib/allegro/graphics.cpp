@@ -27,13 +27,6 @@ namespace AGS3 {
 
 int _color_depth;
 
-BLENDER_FUNC _blender_func15 = NULL;   /* truecolor pixel blender routines */
-BLENDER_FUNC _blender_func16 = NULL;
-BLENDER_FUNC _blender_func24 = NULL;
-BLENDER_FUNC _blender_func32 = NULL;
-
-int _blender_alpha;
-
 /* lookup table for scaling 5 bit colors up to 8 bits */
 int _rgb_scale_5[32] = {
    0,   8,   16,  24,  33,  41,  49,  57,

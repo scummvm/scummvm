@@ -51,9 +51,6 @@ Bitmap *ConvertBitmap(Bitmap *src, int dst_color_depth) {
 	return src;
 }
 
-
-typedef BLENDER_FUNC PfnBlenderCb;
-
 struct BlendModeSetter {
 	// Blender setter for destination with and without alpha channel;
 	// assign kRgbToRgbBlender if not supported

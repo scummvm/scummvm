@@ -30,14 +30,6 @@ namespace AGS3 {
 
 extern int _color_depth;
 
-/* truecolor blending functions */
-AL_VAR(BLENDER_FUNC, _blender_func15);
-AL_VAR(BLENDER_FUNC, _blender_func16);
-AL_VAR(BLENDER_FUNC, _blender_func24);
-AL_VAR(BLENDER_FUNC, _blender_func32);
-
-AL_VAR(int, _blender_alpha);
-
 } // namespace AGS3
 
 #endif

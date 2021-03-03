@@ -133,8 +133,6 @@ AL_FUNC(void, create_rgb_table, (RGB_MAP *table, AL_CONST PALETTE pal, AL_METHOD
 AL_FUNC(void, create_light_table, (COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, int b, AL_METHOD(void, callback, (int pos))));
 AL_FUNC(void, create_trans_table, (COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, int b, AL_METHOD(void, callback, (int pos))));
 
-typedef AL_METHOD(unsigned long, BLENDER_FUNC, (unsigned long x, unsigned long y, unsigned long n));
-
 AL_FUNC(void, set_blender_mode, (BlenderMode, int r, int g, int b, int a));
 AL_FUNC(void, set_alpha_blender, (void));
 AL_FUNC(void, set_trans_blender, (int r, int g, int b, int a));

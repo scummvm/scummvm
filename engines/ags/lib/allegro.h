@@ -27,7 +27,6 @@
 
 #include "ags/lib/allegro/alconfig.h"
 #include "ags/lib/allegro/base.h"
-#include "ags/lib/allegro/colblend.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/config.h"
 #include "ags/lib/allegro/draw.h"
