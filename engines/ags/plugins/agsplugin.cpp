@@ -56,7 +56,6 @@
 #include "ags/engine/main/engine.h"
 #include "ags/plugins/agsplugin.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/plugins/plugin_builtin.h"
 #include "ags/plugins/pluginobjectreader.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
@@ -135,8 +134,6 @@ struct EnginePlugin {
 EnginePlugin plugins[MAXPLUGINS];
 int numPlugins = 0;
 int pluginsWantingDebugHooks = 0;
-
-std::vector<InbuiltPluginDetails> _registered_builtin_plugins;
 
 void IAGSEngine::AbortGame(const char *reason) {
 	quit((const char *)reason);
@@ -889,11 +886,6 @@ void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 			plugins[i].initGfxHook(driverName, data);
 		}
 	}
-}
-
-int pl_register_builtin_plugin(InbuiltPluginDetails const &details) {
-	_registered_builtin_plugins.push_back(details);
-	return 0;
 }
 
 Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
