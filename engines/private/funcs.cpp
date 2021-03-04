@@ -79,7 +79,7 @@ void fDiaryLocList(ArgArray args) {
     x1 = args[2].u.val;
     y1 = args[3].u.val;
 
-    Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
+    Common::Rect rect(x1, y1, x2, y2);
     g_private->loadLocations(rect);
 
 }
@@ -89,14 +89,12 @@ void fDiaryGoLoc(ArgArray args) {
 }
 
 void fDiaryInvList(ArgArray args) {
-    Common::Rect *r1, *r2;
-
     debugC(1, kPrivateDebugScript, "DiaryInvList(%d, ..)", args[0].u.val);
 
-    r1 = args[1].u.rect;
-    r2 = args[2].u.rect;
+	const Common::Rect *r1 = args[1].u.rect;
+	const Common::Rect *r2 = args[2].u.rect;
 
-    g_private->loadInventory(args[0].u.val, r1, r2);
+    g_private->loadInventory(args[0].u.val, *r1, *r2);
 }
 
 void fgoto(ArgArray args) {

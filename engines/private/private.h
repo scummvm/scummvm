@@ -244,8 +244,8 @@ public:
     // Diary
     InvList inventory;
     Common::String _diaryLocPrefix;
-    void loadLocations(Common::Rect *);
-    void loadInventory(uint32, Common::Rect *, Common::Rect *);
+    void loadLocations(const Common::Rect &);
+    void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 
     // Save/Load games
     MaskInfo _saveGameMask;

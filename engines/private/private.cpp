@@ -1044,7 +1044,7 @@ void PrivateEngine::removeTimer() {
 
 // Diary
 
-void PrivateEngine::loadLocations(Common::Rect *rect) {
+void PrivateEngine::loadLocations(const Common::Rect &rect) {
     uint32 i = 0;
     int16 offset = 44;
     for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
@@ -1055,17 +1055,17 @@ void PrivateEngine::loadLocations(Common::Rect *rect) {
             Common::String s =
               Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
-            loadMask(s, rect->left + 120, rect->top + offset, true);
+            loadMask(s, rect.left + 120, rect.top + offset, true);
         }
     }
 }
 
-void PrivateEngine::loadInventory(uint32 x, Common::Rect *r1, Common::Rect *r2) {
+void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common::Rect &r2) {
     int16 offset = 0;
     for (NameList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
         offset = offset + 22;
         //debug("%hd %hd", rect->left, rect->top + offset);
-        loadMask(*it, r1->left, r1->top + offset, true);
+        loadMask(*it, r1.left, r1.top + offset, true);
     }
 }
 
