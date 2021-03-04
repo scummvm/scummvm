@@ -143,8 +143,10 @@ Common::Error PrivateEngine::run() {
 
     // Read assets file
     assert(file != NULL);
-    char *buf = (char *)malloc(file->size()+1);
-    file->read(buf, file->size()+1);
+    const int32 fileSize = file->size();
+    char *buf = (char *)malloc(fileSize + 1);
+    file->read(buf, fileSize);
+    buf[fileSize] = '\0';
 
     // Initialize stuff
     initFuncs();
