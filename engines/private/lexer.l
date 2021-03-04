@@ -28,6 +28,7 @@
 %option prefix="PRIVATE_"
 
 %{
+#define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "private/private.h"

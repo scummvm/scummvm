@@ -777,6 +777,7 @@ char *yytext;
  */
 #define YY_NO_INPUT 1
 #line 31 "engines/private/lexer.l"
+#define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "private/private.h"
