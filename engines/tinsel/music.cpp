@@ -1003,6 +1003,7 @@ struct MusicSegmentNoir {
 };
 
 void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
+#ifdef USE_MAD
 	MusicSegmentNoir *musicSegments = (MusicSegmentNoir *)_vm->_handle->LockMem(_hSegment);
 
 	Common::SeekableReadStream *sampleStream = readSampleData(_filename, musicSegments[segmentNum].sampleOffset, 
@@ -1010,6 +1011,10 @@ void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
 
 	delete _curChunk;
 	_curChunk = Audio::makeMP3Stream(sampleStream, DisposeAfterUse::YES);
+#else
+	delete _curChunk;
+	_curChunk = 0;
+#endif
 }
 
 void PCMMusicPlayer::loadMusicFromSegment(int segmentNum) {
