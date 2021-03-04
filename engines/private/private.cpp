@@ -73,8 +73,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _repeatedMovieExit = "";
 
     // Save and load
-    _saveGameMask = {};
-    _loadGameMask = {};
+    _saveGameMask.clear();
+    _loadGameMask.clear();
 
     // Interface
     _framePath = "inface/general/inface2.bmp";
@@ -90,9 +90,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     _noStopSounds = false;
 
     // Radios and phone
-    _policeRadioArea = {};
-    _AMRadioArea = {};
-    _phoneArea = {};
+    _policeRadioArea.clear();
+    _AMRadioArea.clear();
+    _phoneArea.clear();
     // TODO: use this as a default sound for radio
     _infaceRadioPath = "inface/radio/";
     _phonePrefix = "inface/telephon/";
@@ -101,8 +101,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
     // Dossiers
     _dossierPage = 0;
     _dossierSuspect = 0;
-    _dossierNextSuspectMask = {};
-    _dossierPrevSuspectMask = {};
+    _dossierNextSuspectMask.clear();
+    _dossierPrevSuspectMask.clear();
 
     // Diary
     _diaryLocPrefix = "inface/diary/loclist/";
@@ -300,37 +300,37 @@ void PrivateEngine::clearAreas() {
     if (_loadGameMask.surf) 
         _loadGameMask.surf->free();
     delete _loadGameMask.surf;
-    _loadGameMask = {};
+    _loadGameMask.clear();
 
     if (_saveGameMask.surf)
         _saveGameMask.surf->free();
     delete _saveGameMask.surf;
-    _saveGameMask = {};
+    _saveGameMask.clear();
 
     if (_policeRadioArea.surf)
         _policeRadioArea.surf->free();
     delete _policeRadioArea.surf; 
-    _policeRadioArea = {};
+    _policeRadioArea.clear();
 
     if (_AMRadioArea.surf)
         _AMRadioArea.surf->free();
     delete _AMRadioArea.surf;
-    _AMRadioArea = {};
+    _AMRadioArea.clear();
 
     if (_phoneArea.surf)
         _phoneArea.surf->free();
     delete _phoneArea.surf;
-    _phoneArea = {};
+    _phoneArea.clear();
 
     if (_dossierNextSuspectMask.surf)
         _dossierNextSuspectMask.surf->free();
     delete _dossierNextSuspectMask.surf;
-    _dossierNextSuspectMask = {};
+    _dossierNextSuspectMask.clear();
 
     if (_dossierPrevSuspectMask.surf)
         _dossierPrevSuspectMask.surf->free();
     delete _dossierPrevSuspectMask.surf;
-    _dossierPrevSuspectMask = {};
+    _dossierPrevSuspectMask.clear();
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -590,8 +590,9 @@ void PrivateEngine::loadDossier() {
         loadImage(m.page1, x, y);
     } else if (_dossierPage == 1) {
         loadImage(m.page2, x, y);
-    } else
+	} else {
         assert(0);
+	}
 }
 
 bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
@@ -709,7 +710,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     // Dossiers
     size = stream->readUint32LE();
-    DossierInfo m = {};
+    DossierInfo m;
     for (uint32 i = 0; i < size; ++i) {
         m.page1 = stream->readString();
         m.page2 = stream->readString();
@@ -733,7 +734,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
     size = stream->readUint32LE();
     _phone.clear();
-    PhoneInfo p = {};
+    PhoneInfo p;
     for (uint32 j = 0; j < size; ++j) {
         p.sound = stream->readString();
         p.flag  = maps.variables.getVal(stream->readString());

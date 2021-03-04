@@ -93,6 +93,15 @@ typedef struct MaskInfo {
     Symbol *flag1;
     Symbol *flag2;
     Common::String cursor;
+
+	void clear() {
+		surf = nullptr;
+		flag1 = nullptr;
+		flag2 = nullptr;
+		nextSetting.clear();
+		cursor.clear();
+		point = Common::Point();
+	}
 } MaskInfo;
 
 typedef struct PhoneInfo {

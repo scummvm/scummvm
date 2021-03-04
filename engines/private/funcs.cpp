@@ -123,7 +123,7 @@ void fQuit(ArgArray args) {
 void fLoadGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
-    MaskInfo m = {};
+    MaskInfo m;
     m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
     m.cursor = *args[2].u.sym->name;
     m.nextSetting = "";
@@ -139,7 +139,7 @@ void fLoadGame(ArgArray args) {
 void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
-    MaskInfo m = {};
+	MaskInfo m;
     m.surf = g_private->loadMask(args[0].u.str, 0, 0, true);
     m.cursor = *args[1].u.sym->name;
     m.nextSetting = "";
@@ -207,7 +207,7 @@ void fDossierAdd(ArgArray args) {
     assert (args.size() == 2);
     Common::String s1 = args[0].u.str;
     Common::String s2 = args[1].u.str; 
-    DossierInfo m = {};
+    DossierInfo m;
     m.page1 = s1;
 
     if (s2 != "\"\"") {
@@ -234,7 +234,7 @@ void fDossierChgSheet(ArgArray args) {
 void fDossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
-    MaskInfo m = {};
+	MaskInfo m;
 
     int x = args[1].u.val;
     int y = args[2].u.val;
@@ -251,7 +251,7 @@ void fDossierPrevSuspect(ArgArray args) {
 void fDossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
-    MaskInfo m = {};
+    MaskInfo m;
 
     int x = args[1].u.val;
     int y = args[2].u.val;
@@ -302,7 +302,7 @@ void fInventory(ArgArray args) {
     debugC(1, kPrivateDebugScript, "Inventory(...)");
     Common::String mask(b1.u.str);
     if (mask != "\"\"") {
-        MaskInfo m = {};
+        MaskInfo m;
         m.surf = g_private->loadMask(mask, 0, 0, true);
 
         if (e.type == NUM)
@@ -362,7 +362,7 @@ void fExit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
     debugC(1, kPrivateDebugScript, "Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
-    ExitInfo e = {};
+    ExitInfo e;
 
     if (args[0].type == NUM && args[0].u.val == 0)
         e.nextSetting = "";
@@ -533,7 +533,7 @@ void _fMask(ArgArray args, bool drawn) {
     debugC(1, kPrivateDebugScript, "Mask(%s, %s, %s, %d, %d)", f, e, c->c_str(), x, y);
     const Common::String s(f);
 
-    MaskInfo m = {};
+    MaskInfo m;
     m.surf = g_private->loadMask(s, x, y, drawn);
     m.nextSetting = e;
     m.cursor = *c;
@@ -567,7 +567,7 @@ static void fAddSound(Common::String sound, const char *t, Symbol *flag = NULL, 
             return;
 
         g_private->_playedPhoneClips.setVal(sound, true);
-        PhoneInfo p = {};
+        PhoneInfo p;
         p.sound = sound;
         p.flag = flag;
         p.val = val;
@@ -616,7 +616,7 @@ void fSoundArea(ArgArray args) {
 
     debugC(1, kPrivateDebugScript, "SoundArea(%s, %s, ..)", args[0].u.str, n.c_str());
     Common::String s = args[0].u.str;
-    MaskInfo m = {};
+    MaskInfo m;
     if (n == "kAMRadio") {
         m.surf = g_private->loadMask(s, 0, 0, true);
         m.cursor = *args[2].u.sym->name;
