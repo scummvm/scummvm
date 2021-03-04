@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	custom_logics.o \
 	debug.o \
 	debug_pc.o \
-	detection.o \
 	direct_input.o \
 	drawpoly_pc.o \
 	event_list.o \
