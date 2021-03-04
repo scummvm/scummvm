@@ -40,7 +40,6 @@ MODULE_OBJS := \
 	resources/lzss.o \
 	resources/resources.o \
 	\
-	detection.o \
 	flamovies.o \
 	holomap.o \
 	input.o \
