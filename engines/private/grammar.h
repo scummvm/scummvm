@@ -76,8 +76,8 @@ public:
     SettingMap _map;
 
     void init();
-    void save(char *);
-    void load(Common::String &);
+    void save(const char *);
+    void load(const Common::String &);
 };
 
 extern SettingMaps *g_setts;
@@ -107,9 +107,9 @@ public:
 extern VM *g_vm;
 
 Datum pop();
-int push(Datum);
+int push(const Datum &);
 
-Inst *code(Inst);
+Inst *code(const Inst &);
 int eval();
 int add();
 int negate();

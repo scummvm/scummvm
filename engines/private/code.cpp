@@ -77,11 +77,11 @@ void SettingMaps::init() {
     g_vm->_stackp = Gen::g_vm->_stack;
 }
 
-void SettingMaps::save(char *name) {
+void SettingMaps::save(const char *name) {
     _map.setVal(name, _setting);
 }
 
-void SettingMaps::load(Common::String &name) {
+void SettingMaps::load(const Common::String &name) {
     assert(_map.contains(name));
     _setting = _map.getVal(name);
 
@@ -105,7 +105,7 @@ Datum pop() {
 }
 
 /* push d onto stack */
-int push(Datum d) {
+int push(const Datum &d) {
     assert (!(g_vm->_stackp >= &g_vm->_stack[NSTACK]));
     *g_vm->_stackp++ = d;
     return 0;
@@ -144,14 +144,13 @@ int varpush() { /* push variable onto stack */
 }
 
 int funcpush() {
-    Datum s, n, arg;
-    s = pop();
-    n = pop();
+	Datum s = pop();
+	Datum n = pop();
     ArgArray args;
 
     debugC(1, kPrivateDebugCode, "executing %s with %d params", s.u.str, n.u.val);
     for (int i = 0; i < n.u.val; i++) {
-        arg = pop();
+		Datum arg = pop();
         args.insert(args.begin(), arg) ;
     }
 
@@ -161,8 +160,7 @@ int funcpush() {
 
 /* evaluate variable on stack */
 int eval() {
-    Datum d;
-    d = pop();
+    Datum d = pop();
     if (d.u.sym->type == NUM) {
         d.type = NUM;
         d.u.val = d.u.sym->u.val;
@@ -184,9 +182,8 @@ int eval() {
 
 /* add top two elems on stack */
 int add() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+    Datum d2 = pop();
+    Datum d1 = pop();
     if (d1.type == NAME) {
         d1.u.val = d1.u.sym->u.val;
         d1.type = NUM;
@@ -207,8 +204,7 @@ int add() {
 }
 
 int negate() {
-    Datum d;
-    d = pop();
+    Datum d = pop();
     int v;
     if (d.type == NAME) {
         //debug("negating %s", d.u.sym->name->c_str());
@@ -225,9 +221,8 @@ int negate() {
 }
 
 int gt() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+    Datum d2 = pop();
+    Datum d1 = pop();
     if (d1.type == NAME) {
         //char *name =  d1.u.sym->name->c_str();
         //debug("eval %s to %d",
@@ -248,9 +243,8 @@ int gt() {
 }
 
 int lt() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+	Datum d2 = pop();
+	Datum d1 = pop();
     if (d1.type == NAME) {
         //char *name =  d1.u.sym->name->c_str();
         //debug("eval %s to %d",
@@ -271,9 +265,8 @@ int lt() {
 }
 
 int ge() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+	Datum d2 = pop();
+	Datum d1 = pop();
     if (d1.type == NAME) {
         //char *name =  d1.u.sym->name->c_str();
         //debug("eval %s to %d",
@@ -294,9 +287,8 @@ int ge() {
 }
 
 int le() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+	Datum d2 = pop();
+	Datum d1 = pop();
     if (d1.type == NAME) {
         //char *name =  d1.u.sym->name->c_str();
         //debug("eval %s to %d",
@@ -317,9 +309,8 @@ int le() {
 }
 
 int eq() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+	Datum d2 = pop();
+	Datum d1 = pop();
     if (d1.type == NAME) {
         //char *name =  d1.u.sym->name->c_str();
         //debug("eval %s to %d",
@@ -340,9 +331,8 @@ int eq() {
 }
 
 int ne() {
-    Datum d1, d2;
-    d2 = pop();
-    d1 = pop();
+	Datum d2 = pop();
+	Datum d1 = pop();
     if (d1.type == NAME) {
         d1.u.val = d1.u.sym->u.val;
         d1.type = NUM;
@@ -359,7 +349,7 @@ int ne() {
 }
 
 /* install one instruction or operand */
-Inst *code(Inst f) {
+Inst *code(const Inst &f) {
     //debugC(1, kPrivateDebugCode, "pushing code at %x", progp);
     Inst *oprogp = g_vm->_progp;
     assert (!(g_vm->_progp >= &g_vm->_prog[NPROG]));
@@ -368,12 +358,11 @@ Inst *code(Inst f) {
 }
 
 int ifcode() {
-    Datum d;
     Inst *savepc = g_vm->_pc;  /* then part */
     debugC(1, kPrivateDebugCode, "ifcode: evaluating condition");
 
     execute(savepc+3);  /* condition */
-    d = pop();
+	Datum d = pop();
 
     debugC(1, kPrivateDebugCode, "ifcode: selecting branch");
 
@@ -395,8 +384,7 @@ int ifcode() {
 }
 
 int randbool() {
-    Datum d;
-    d = pop();
+    Datum d = pop();
 
     int v = g_private->getRandomBool(d.u.val);
 
