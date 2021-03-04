@@ -190,14 +190,14 @@ public:
     Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
     void syncGameStream(Common::Serializer &s);
 
-    Common::String convertPath(Common::String);
+    Common::String convertPath(const Common::String &);
     void playVideo(const Common::String &);
     void skipVideo();
 
     void loadImage(const Common::String &file, int x, int y);
     void drawScreenFrame();
 
-    void changeCursor(Common::String);
+    void changeCursor(const Common::String &);
     void initCursors();
 
     // Rendering

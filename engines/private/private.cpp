@@ -832,7 +832,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     return Common::kNoError;
 }
 
-Common::String PrivateEngine::convertPath(Common::String name) {
+Common::String PrivateEngine::convertPath(const Common::String &name) {
     Common::String path(name);
     Common::String s1("\\");
     Common::String s2("/");

@@ -346,7 +346,7 @@ void PrivateEngine::initCursors() {
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 }
 
-void PrivateEngine::changeCursor(Common::String cursor) {
+void PrivateEngine::changeCursor(const Common::String &cursor) {
     assert(_cursorData.contains(cursor));
     Common::Point p = *_cursorPoints.getVal(cursor);
     int x, y;
