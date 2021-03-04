@@ -44,25 +44,6 @@ Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0)
  * Called to initialize a background.
  */
 void Background::InitBackground() {
-	PLAYFIELD worldPlayfield = {
-	    NULL,                                            // display list
-	    0,                                               // init field x
-	    0,                                               // init field y
-	    0,                                               // x vel
-	    0,                                               // y vel
-	    Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
-	    false                                            // moved flag
-	};
-	PLAYFIELD statusPlayfield = {
-	    NULL,                                            // display list
-	    0,                                               // init field x
-	    0,                                               // init field y
-	    0,                                               // x vel
-	    0,                                               // y vel
-	    Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
-	    false                                            // moved flag
-	};
-
 	// set current background
 	_pCurBgnd = new BACKGND();
 	_pCurBgnd->rgbSkyColor = BLACK;
@@ -71,9 +52,24 @@ void Background::InitBackground() {
 	_pCurBgnd->refreshRate = 0;	// no background update process
 	_pCurBgnd->pXscrollTable = nullptr;
 	_pCurBgnd->pYscrollTable = nullptr;
-	_pCurBgnd->fieldArray.push_back(worldPlayfield);
-	_pCurBgnd->fieldArray.push_back(statusPlayfield);
 	_pCurBgnd->bAutoErase = false;
+
+	int numPlayFields = 2;
+	if (TinselV3) {
+		numPlayFields = 9;
+	}
+	for (int i = 0; i < numPlayFields; ++i) {
+		PLAYFIELD playfield = {
+		    NULL,                                            // display list
+		    0,                                               // init field x
+		    0,                                               // init field y
+		    0,                                               // x vel
+		    0,                                               // y vel
+		    Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
+		    false                                            // moved flag
+		};
+		_pCurBgnd->fieldArray.push_back(playfield);
+	}
 
 	// init background sky color
 	SetBgndColor(_pCurBgnd->rgbSkyColor);
@@ -285,6 +281,19 @@ void Background::DropBackground() {
 void Background::ChangePalette(SCNHANDLE hPal) {
 	SwapPalette(FindPalette(_hBgPal), hPal);
 	SetBackPal(hPal);
+}
+
+void Background::WaitForBG(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	while (_pBG[0] == nullptr) {
+		CORO_SLEEP(1);
+	}
+
+	CORO_END_CODE;
 }
 
 } // End of namespace Tinsel

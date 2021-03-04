@@ -284,7 +284,7 @@ public:
 
 
 /** Size of process-specific information. */
-#define CORO_PARAM_SIZE 32
+#define CORO_PARAM_SIZE 40
 
 /** Maximum number of processes. */
 #define CORO_NUM_PROCESS    100

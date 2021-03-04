@@ -145,6 +145,8 @@ public:
 
 	int getBgSpeed() { return _BGspeed; }
 
+	void WaitForBG(CORO_PARAM);
+
 private:
 	Font *_font;
 

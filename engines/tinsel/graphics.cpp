@@ -608,6 +608,114 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 	}
 }
 
+
+static void t3WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
+	bool applyClipping = (pObj->flags & DMA_CLIP) != 0;
+	bool horizFlipped = (pObj->flags & DMA_FLIPH) != 0;
+
+	if (pObj->isRLE)
+	{
+		int yClip = applyClipping ? pObj->topClip : 0;
+		if (applyClipping) {
+			pObj->height -= pObj->botClip;
+		}
+
+		for (int y = 0; y < pObj->height; ++y) {
+			uint8 *tempP = destP;
+			int leftClip = applyClipping ? pObj->leftClip : 0;
+			int rightClip = applyClipping ? pObj->rightClip : 0;
+
+			if (horizFlipped) {
+				SWAP(leftClip, rightClip);
+			}
+
+			int x = 0;
+			while (x < pObj->width) {
+				int numPixels = READ_LE_UINT16(srcP);
+				srcP += 2;
+
+				if (numPixels & 0x8000) {
+					numPixels &= 0x7FFF;
+
+					int clipAmount = MIN(numPixels, leftClip);
+					leftClip -= clipAmount;
+					x += clipAmount;
+
+					int runLength = numPixels - clipAmount;
+
+					uint16 color = READ_LE_UINT16(srcP);
+					srcP += 2;
+
+					if ((yClip == 0) && (runLength > 0)) {
+						runLength = MIN(runLength, pObj->width - rightClip - x);
+
+						for (int xp = 0; xp < runLength; ++xp) {
+							if (color != 0b1111100000011111) {
+								WRITE_UINT16(tempP, color);
+							}
+							tempP += (horizFlipped ? -2 : 2);
+						}
+					}
+
+					x += numPixels - clipAmount;
+				} else {
+					int clipAmount = MIN(numPixels, leftClip);
+					leftClip -= clipAmount;
+					srcP += clipAmount * 2;
+					int runLength = numPixels - clipAmount;
+					x += numPixels - runLength;
+
+					for (int xp = 0; xp < runLength; ++xp) {
+						if ((yClip == 0) && (x < (pObj->width - rightClip))) {
+							uint16 color = READ_LE_UINT16(srcP);
+
+							if (color != 0b1111100000011111) {
+								WRITE_UINT16(tempP, color);
+							}
+
+							tempP += (horizFlipped ? -2 : 2);
+						}
+						srcP += 2;
+						++x;
+					}
+				}
+			}
+			// assert(x == pObj->width);
+
+			if (yClip > 0) {
+				--yClip;
+			} else {
+				destP += SCREEN_WIDTH * 2;
+			}
+		}
+		return;
+	}
+
+	if (applyClipping) {
+		srcP += (pObj->topClip * pObj->width * 2);
+
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+	}
+
+	for (int y = 0; y < pObj->height; ++y) {
+		uint8 *tempP = destP;
+		srcP += pObj->leftClip * 2;
+		for (int x = 0; x < pObj->width; ++x) {
+			uint16 color = READ_LE_UINT16(srcP);
+			srcP += 2;
+
+			if (color != 0b1111100000011111) { // "zero" for Tinsel 3 - magenta in 565
+				WRITE_UINT16(tempP, color);
+			}
+
+			tempP += 2;
+		}
+		srcP += pObj->rightClip * 2;
+		destP += SCREEN_WIDTH * 2;
+	}
+}
+
 /**
  * Fill the destination area with a constant color
  */
@@ -635,29 +743,24 @@ static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
 static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 	bool applyClipping = (pObj->flags & DMA_CLIP) != 0;
 
-	int leftClip = 0;
-	int rightClip = 0;
+	if (applyClipping) {
+		srcP += (pObj->topClip * pObj->width * 2);
 
-	if (applyClipping)
-	{
-		pObj->height -= pObj->topClip;
+		pObj->height -= pObj->topClip + pObj->botClip;
 		pObj->width -= pObj->leftClip + pObj->rightClip;
-
-		leftClip = pObj->leftClip;
-		rightClip = pObj->rightClip;
 	}
 
 	for (int y = 0; y < pObj->height; ++y) {
 		// Get the position to start writing out from
 		uint8 *tempP = destP;
-		srcP += leftClip * 2;
+		srcP += pObj->leftClip * 2;
 		for (int x = 0; x < pObj->width; ++x) {
-			uint32 color = READ_UINT16(srcP); //uint32 for checking overflow in blending
+			uint32 color = READ_LE_UINT16(srcP); //uint32 for checking overflow in blending
 			if (color != 0b1111100000011111) { // "zero" for Tinsel 3 - magenta in 565
 				uint8 srcR, srcG, srcB;
 				t3getRGB(color, srcR, srcG, srcB);
 
-				uint16 dstColor = READ_UINT16(tempP);
+				uint16 dstColor = READ_LE_UINT16(tempP);
 				uint8 dstR, dstG, dstB;
 				t3getRGB(dstColor, dstR, dstG, dstB);
 
@@ -694,7 +797,7 @@ static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 			tempP += 2;
 			srcP += 2;
 		}
-		srcP += rightClip * 2;
+		srcP += pObj->rightClip * 2;
 		destP += SCREEN_WIDTH * 2;
 	}
 }
@@ -756,7 +859,7 @@ static void t3WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 	int objWidth = pObj->width;
 
 	if (applyClipping) {
-		srcP += ((pObj->topClip * pObj->width) + pObj->leftClip) * 2;
+		srcP += (pObj->topClip * pObj->width * 2) + (pObj->leftClip * 2);
 
 		pObj->height -= pObj->topClip + pObj->botClip;
 		pObj->width -= pObj->leftClip + pObj->rightClip;
@@ -1030,7 +1133,9 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x51:	// TinselV2, draw sprite with clipping, flipped horizontally
 			assert(TinselV2 || (typeId == 0x01 || typeId == 0x41));
 
-			if (TinselV2)
+			if (TinselV3)
+				t3WrtNonZero(pObj, srcPtr, destPtr);
+			else if (TinselV2)
 				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
 			else if (TinselV1PSX)
 				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);

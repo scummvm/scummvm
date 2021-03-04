@@ -39,13 +39,11 @@ struct SOUNDREELS {
 };
 typedef SOUNDREELS *PSOUNDREELS;
 
-void PlayFilm(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay, bool sfact, bool escOn,
-			int myescEvent, bool bTop);
+void PlayFilm(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield);
 
-void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop);
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop, OBJECT** playfield);
 
-void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
-			bool escOn, int myescEvent, bool bTop);
+void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield);
 
 void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y);
 void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y);

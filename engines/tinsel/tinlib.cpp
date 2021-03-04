@@ -1537,12 +1537,12 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 
 	if (compit == 1) {
 		// Play to completion before returning
-		CORO_INVOKE_ARGS(PlayFilmc, (CORO_SUBCTX, hFilm, x, y, actorid, splay, sfact, escOn, myEscape, bTop));
+		CORO_INVOKE_ARGS(PlayFilmc, (CORO_SUBCTX, hFilm, x, y, actorid, splay, sfact, escOn, myEscape, bTop, nullptr));
 	} else if (compit == 2) {
 		error("play(): compit == 2 - please advise John");
 	} else {
 		// Kick off the play and return.
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, actorid, splay, sfact, escOn, myEscape, bTop));
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, actorid, splay, sfact, escOn, myEscape, bTop, nullptr));
 	}
 	CORO_END_CODE;
 }
@@ -1550,8 +1550,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 /**
  * Play a film
  */
-static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int myEscape,
-		bool bTop, TINSEL_EVENT event, HPOLYGON hPoly, int taggedActor) {
+static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int myEscape, bool bTop, TINSEL_EVENT event, HPOLYGON hPoly, int taggedActor) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1563,6 +1562,10 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 	if (g_bEscapedCdPlay) {
 		g_bEscapedCdPlay = false;
 		return;
+	}
+
+	if (TinselV3) {
+		CORO_INVOKE_0(_vm->_bg->WaitForBG);
 	}
 
 	if (event == TALKING) {
@@ -1586,12 +1589,27 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 		_vm->_actor->SetActorTalkFilm(actor, hFilm);
 	}
 
+	OBJECT** playfield;
+	bool bComplete;
+
+	playfield = nullptr;
+	bComplete = compit;
+
+	if (TinselV3) {
+		bComplete = compit & 0x20;
+		if (bTop) {
+			playfield = _vm->_bg->GetPlayfieldList(FIELD_STATUS);
+		} else {
+			playfield = _vm->_bg->GetPlayfieldList(compit & 0x0F);
+		}
+	}
+
 	if (bComplete) {
 		// Play to completion before returning
-		CORO_INVOKE_ARGS(PlayFilmc, (CORO_SUBCTX, hFilm, x, y, 0, false, false, myEscape != 0, myEscape, bTop));
+		CORO_INVOKE_ARGS(PlayFilmc, (CORO_SUBCTX, hFilm, x, y, 0, false, false, myEscape != 0, myEscape, bTop, playfield));
 	} else {
 		// Kick off the play and return.
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, myEscape, bTop));
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, myEscape, bTop, playfield));
 	}
 
 	CORO_END_CODE;
@@ -2934,7 +2952,7 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 		assert(hFilm != 0); // Trying to play NULL film
 
 		// Kick off the play and return.
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, actor, false, 0, false, 0, false));
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, x, y, actor, false, 0, false, 0, false, nullptr));
 	}
 
 	CORO_END_CODE;
@@ -3163,7 +3181,7 @@ static void FinishTalkingReel(CORO_PARAM, PMOVER pMover, int actor) {
 		AlterMover(pMover, 0, AR_POPREEL);
 	} else {
 		_vm->_actor->SetActorTalking(actor, false);
-		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, _vm->_actor->GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false));
+		CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, _vm->_actor->GetActorPlayFilm(actor), -1, -1, 0, false, 0, false, 0, false, _vm->_bg->GetPlayfieldList(FIELD_WORLD)));
 	}
 
 	CORO_END_CODE;
@@ -3290,7 +3308,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		} else {
 			_vm->_actor->SetActorTalking(_ctx->actor, true);
 			_vm->_actor->SetActorTalkFilm(_ctx->actor, hFilm);
-			CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, -1, -1, 0, false, 0, escOn, myEscape, false));
+			CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, -1, -1, 0, false, 0, escOn, myEscape, false, _vm->_bg->GetPlayfieldList(FIELD_WORLD)));
 		}
 		_ctx->bTalkReel = true;
 		CORO_SLEEP(1);		// Allow the play to come in
@@ -5184,15 +5202,25 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case PLAY:
 		// Common to DW1 / DW2 / Noir
 		if (TinselV3) {
-			warning("TODO: Implement PLAY");
+			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0])) {
+				*pResumeState = RES_NOT;
+				if ((pp[0] & 0x10) != 0) {
+					return -4;
+				}
+				return -2;
+			} else if ((pp[0] & 0x10) != 0) {
+				Play(coroParam, pp[-1], pp[-3], pp[-2], pp[0], pic->myEscape, false, pic->event, pic->hPoly, pic->idActor);
+				return -4;
+			}
+			Play(coroParam, pp[-1], -1, -1, pp[0], pic->myEscape, false, pic->event, pic->hPoly, pic->idActor);
 			return -2;
+
 		} if (TinselV2) {
 			pp -= 3;			// 4 parameters
 			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
 			else {
-				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,
-						pic->event, pic->hPoly, pic->idActor);
+				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false, pic->event, pic->hPoly, pic->idActor);
 			}
 			return -4;
 

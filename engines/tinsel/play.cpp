@@ -56,6 +56,8 @@ struct PPINIT {
 
 	uint8	escOn;
 	int32	myescEvent;
+
+	OBJECT** playfield;	// TinselV3, the playfield to insert the film
 };
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -684,8 +686,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
  * @param hFilm			The 'film'
  * @param column		Column number, first column = 0
  */
-static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHANDLE hFilm,
-		int column, int myescEvent, bool bTop) {
+static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHANDLE hFilm, int column, int myescEvent, bool bTop, OBJECT** playfield) {
 	CORO_BEGIN_CONTEXT;
 		bool bReplaced;
 		bool bGotHidden;
@@ -767,8 +768,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	/*
 	 * Insert the object
 	 */
-	// Poke in the background palette
-	PokeInPalette(_ctx->pmi);
+	if (!TinselV3) {
+		// Poke in the background palette
+		PokeInPalette(_ctx->pmi);
+	}
 
 	// Set ghost bit if wanted
 	if (_vm->_actor->ActorIsGhost(_ctx->reelActor)) {
@@ -778,10 +781,14 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(_ctx->pmi);
-	if (!bTop)
-		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
-	else
-		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+	if (TinselV3) {
+		MultiInsertObject(playfield, _ctx->pPlayObj);
+	} else {
+		if (!bTop)
+			MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		else
+			MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+	}
 
 	/*
 	 * More action for moving actors
@@ -922,10 +929,15 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	_vm->_actor->NotPlayingReel(_ctx->reelActor, _ctx->filmNumber, column);
 
 	// Ditch the object
-	if (!bTop)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
-	else
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+	if (TinselV3) {
+		MultiDeleteObject(playfield, _ctx->pPlayObj);
+	} else {
+		if (!bTop) {
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		} else {
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		}
+	}
 
 	// Restore moving actor is nessesary
 	if (_ctx->pMover != NULL && _ctx->bPrinciple && !_ctx->bReplaced)
@@ -946,7 +958,7 @@ static void PlayProcess(CORO_PARAM, const void *param) {
 
 	if (TinselV2)
 		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed,
-			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop));
+			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop, ppi->playfield));
 	else
 		CORO_INVOKE_1(t1PlayReel, ppi);
 
@@ -975,8 +987,7 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
  * NOTE: The processes are started in reverse order so that the first
  *   column's process kicks in first.
  */
-void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn,
-			  int myescEvent, bool bTop) {
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield) {
 	assert(hFilm != 0); // Trying to play NULL film
 	const FILM *pFilm;
 
@@ -1004,6 +1015,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.sf = sfact;
 	ppi.escOn = escOn;
 	ppi.myescEvent = myescEvent;
+	ppi.playfield = playfield;
 
 	// Start display process for each reel in the film
 	for (int i = FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
@@ -1026,16 +1038,15 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	CORO_END_CODE;
 }
 
-void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop) {
-	PlayFilm(coroParam, hFilm, x, y, 0, false, false, false, myescEvent, bTop);
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop, OBJECT** playfield) {
+	PlayFilm(coroParam, hFilm, x, y, 0, false, false, false, myescEvent, bTop, playfield);
 }
 
 /**
  * Start up a play process for each slave column in a film.
  * Play the first column directly from the parent process.
  */
-void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
-			   bool escOn, int myescEvent, bool bTop) {
+void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield) {
 	CORO_BEGIN_CONTEXT;
 		PPINIT ppi;
 		int i;
@@ -1065,6 +1076,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 	_ctx->ppi.sf = sfact;
 	_ctx->ppi.escOn = escOn;
 	_ctx->ppi.myescEvent = myescEvent;
+	_ctx->ppi.playfield = playfield;
 
 	// Start display process for each secondary reel in the film in Tinsel 1,
 	// or all of them in Tinsel 2
