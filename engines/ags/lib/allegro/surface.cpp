@@ -130,9 +130,10 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 				VGA_COLOR_TRANS(_current_palette[i].g),
 				VGA_COLOR_TRANS(_current_palette[i].b));
 		srcFormat = format;
-		// TODO: check if the line below is correct. If it is correct, we can simplify the skipTrans
-		// below as we can use IS_TRANSPARENT() can be used for the 1 bytePerPixel case as well
-		pal[0] = format.RGBToColor(0xff, 0, 0xff);
+		// If we are skipping transparency, color 0 is skipped.
+		// Set it to transparent color to simplify the check below.
+		if (skipTrans)
+			pal[0] = format.RGBToColor(0xff, 0, 0xff);
 	}
 
 	for (int destY = destRect.top, yCtr = 0, scaleYCtr = 0; yCtr < destArea.h;
@@ -156,8 +157,8 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 			if (src.format.bytesPerPixel == 1 && format.bytesPerPixel == 1) {
 				// TODO: Need to skip transparent color if skip_trans is true?
-				//if (!skipTrans || *srcVal != 0)
-				*destVal = *srcVal;
+				if (!skipTrans || *srcVal != 0)
+					*destVal = *srcVal;
 				continue;
 			}
 			srcFormat.colorToARGB(getColor(srcVal, src.format.bytesPerPixel, pal), aSrc, rSrc, gSrc, bSrc);
@@ -166,13 +167,8 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			// clear was all the pink transparent color because blit was called,
 			// and in Allegro, blit doesn't skip transparent pixels. So for now,
 			// I hacked in an extra check to still skip them if blitting to screen
-			if (skipTrans || isScreenDest) {
-				if (src.format.bytesPerPixel == 1) {
-					if (!isScreenDest && *srcVal == 0)
-						continue;
-				} else if (IS_TRANSPARENT(rSrc, gSrc, bSrc))
-					continue;
-			}
+			if ((skipTrans || isScreenDest) && IS_TRANSPARENT(rSrc, gSrc, bSrc))
+				continue;
 
 			if (srcAlpha == -1) {
 				// This means we don't use blending.
