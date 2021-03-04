@@ -328,7 +328,7 @@ void Process::setPhaseVar() {
 }
 
 void Process::getGlobal(uint8 index) {
-	const Common::String &name = _object->getString(index).string;
+	auto name = getString(index);
 	int value = _engine->getGlobal(name);
 	debug("get global %u %s -> %d", index, name.c_str(), value);
 	push(value);
