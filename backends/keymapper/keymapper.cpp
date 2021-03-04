@@ -275,6 +275,7 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 
 Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
 	Event outgoingEvent = Event(action->event);
+	outgoingEvent.kbd.ascii = incomingEvent.kbd.ascii;
 
 	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
 
