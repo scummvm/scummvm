@@ -87,7 +87,7 @@ extern SettingMaps *g_setts;
 // Funtions
 
 typedef Common::Array<Datum> ArgArray;
-void call(const char *, ArgArray);
+void call(const char *, const ArgArray &);
 
 // Code Generation and Execution
 

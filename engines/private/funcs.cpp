@@ -755,7 +755,7 @@ FuncTable funcTable[] = {
     { 0, 0}
 };
 
-void call(const char *name, ArgArray args) {
+void call(const char *name, const ArgArray &args) {
     Common::String n(name);
     if (!g_private->_functions.contains(n)) {
         error("I don't know how to execute %s", name);
