@@ -98,7 +98,6 @@ MODULE_OBJS := \
 	color.o \
 	colormap.o \
 	debug.o \
-	detection.o \
 	font.o \
 	gfx_base.o \
 	gfx_tinygl.o \
