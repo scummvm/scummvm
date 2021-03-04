@@ -173,7 +173,10 @@ Common::Error PrivateEngine::run() {
 
     // Load the game frame once
     Common::File frameFile;
-    assert(frameFile.open(convertPath(_framePath)));
+    const Common::String &frameFilePathname = convertPath(_framePath);
+    if (!frameFile.open(frameFilePathname)) {
+        error("Failed to read %s", frameFilePathname.c_str());
+    }
     _image->loadStream(frameFile);
     _frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
 
