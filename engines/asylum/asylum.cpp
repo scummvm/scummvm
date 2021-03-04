@@ -193,7 +193,35 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	_scene = new Scene(this);
 	_handler = _scene;
 
-	// Original checks for the current cd (we have all data files on disc, so this is not needed)
+	// Set the current cd number (necessary for proper SharedSound resource pack initialization)
+	switch (sceneId) {
+	default:
+		_resource->setCdNumber(-1);
+		break;
+
+	case kResourcePackTowerCells:
+	case kResourcePackInnocentAbandoned:
+	case kResourcePackCourtyardAndChapel:
+		_resource->setCdNumber(1);
+		break;
+
+	case kResourcePackCircusOfFools:
+	case kResourcePackCave:
+	case kResourcePackMansion:
+	case kResourcePackLaboratory:
+	case kResourcePackHive:
+		_resource->setCdNumber(2);
+		break;
+
+	case kResourcePackMorgueAndCemetery:
+	case kResourcePackLostVillage:
+	case kResourcePackMaze:
+	case kResourcePackGauntlet:
+	case kResourcePackMorgansLastGame:
+		_resource->setCdNumber(3);
+		break;
+	}
+
 	switch (type) {
 	default:
 		error("[AsylumEngine::startGame] Invalid start game type!");
