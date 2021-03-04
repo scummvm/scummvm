@@ -89,7 +89,7 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
     if (t == NUM || t == NAME)
         sp->u.val = d;
     else if (t == STRING)
-        sp->u.str = s;
+        sp->u.str = strndup(s, strlen(s)); // FIXME: leaks a string here.
     else if (t == RECT)
         sp->u.rect = r;
     else
