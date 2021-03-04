@@ -62,6 +62,7 @@ bool Console::run(int argc, const char **argv) {
 		debugPrintf("no object %s\n", argv[1]);
 		return true;
 	}
+	_engine->getCurrentScreen()->remove(object);
 	_engine->runObject(object);
 	detach();
 	return false;
