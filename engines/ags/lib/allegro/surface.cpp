@@ -101,19 +101,22 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
+	// Figure out the dest area that will be updated
+	Common::Rect destRect = dstRect.findIntersectingRect(
+		Common::Rect(cl, ct, cr, cb));
+	if (destRect.isEmpty())
+		// Area is entirely outside the clipping area, so nothing to draw
+		return;
+
 	// Get source and dest surface. Note that for the destination we create
 	// a temporary sub-surface based on the allowed clipping area
 	const Graphics::ManagedSurface &src = **srcBitmap;
-	Graphics::ManagedSurface &allDest = *_owner;
-	Graphics::ManagedSurface dest(allDest, Common::Rect(cl, ct, cr, cb));
-
-	Common::Rect destRect = dstRect;
-	destRect.translate(-cl, -ct);
+	Graphics::ManagedSurface &dest = *_owner;
 	Graphics::Surface destArea = dest.getSubArea(destRect);
 
 	// Define scaling and other stuff used by the drawing loops
-	const int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
-	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+	const int scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
+	const int scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
 	const int xDir = horizFlip ? -1 : 1;
 	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
 
@@ -135,24 +138,27 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			pal[0] = format.RGBToColor(0xff, 0, 0xff);
 	}
 
-	for (int destY = destRect.top, yCtr = 0, scaleYCtr = 0; yCtr < destArea.h;
+	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
+	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
+
+	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
 			++destY, ++yCtr, scaleYCtr += scaleY) {
-		if (destY < 0 || destY >= h)
+		if (destY < 0 || destY >= destArea.h)
 			continue;
-		byte *destP = (byte *)destArea.getBasePtr(0, yCtr);
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
 		const byte *srcP = (const byte *)src.getBasePtr(
 			horizFlip ? srcRect.right - 1 : srcRect.left,
 			vertFlip ? srcRect.bottom - 1 - scaleYCtr / SCALE_THRESHOLD :
 			srcRect.top + scaleYCtr / SCALE_THRESHOLD);
 
 		// Loop through the pixels of the row
-		for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; xCtr < destArea.w;
+		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
 				++destX, ++xCtr, scaleXCtr += scaleX) {
-			if (destX < 0 || destX >= w)
+			if (destX < 0 || destX >= destArea.w)
 				continue;
 
 			const byte *srcVal = srcP + xDir * (scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel);
-			byte *destVal = (byte *)&destP[xCtr * format.bytesPerPixel];
+			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
 
 			if (src.format.bytesPerPixel == 1 && format.bytesPerPixel == 1) {
 				// TODO: Need to skip transparent color if skip_trans is true?
