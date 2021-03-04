@@ -381,11 +381,10 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
 
     int rs = 100000000;
     int cs = 0;
-    ExitInfo e;
-    Common::String cursor = "";
+    Common::String cursor;
 
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
-        e = *it;
+        const ExitInfo &e = *it;
         cs = e.rect.width()*e.rect.height();
 
         if (e.rect.contains(mousePos)) {
@@ -420,10 +419,9 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
 
 
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
-    MaskInfo m;
     bool inside = false;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
-        m = *it;
+        const MaskInfo &m = *it;
 
         if (inMask(m.surf, mousePos)) {
             if (!m.cursor.empty()) { // TODO: check this
@@ -466,9 +464,8 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     Common::String ns = "";
     int rs = 100000000;
     int cs = 0;
-    ExitInfo e;
     for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
-        e = *it;
+        const ExitInfo &e = *it;
         cs = e.rect.width()*e.rect.height();
         //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
         if (e.rect.contains(mousePos)) {
@@ -492,10 +489,9 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 }
 
 void PrivateEngine::selectMask(Common::Point mousePos) {
-    Common::String ns = "";
-    MaskInfo m;
+    Common::String ns;
     for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
-        m = *it;
+        const MaskInfo &m = *it;
         //debug("Testing mask %s", m.nextSetting->c_str());
         if (inMask(m.surf, mousePos)) {
             //debug("Inside!");
@@ -572,7 +568,7 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
         return;
 
     if (inMask(_phoneArea.surf, mousePos)) {
-        PhoneInfo i = _phone.back();
+        const PhoneInfo &i = _phone.back();
         setSymbol(i.flag, i.val);
         Common::String sound = _phonePrefix + i.sound + ".wav";
         playSound(sound, 1, true, false);
