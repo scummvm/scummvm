@@ -37,16 +37,16 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-	static NumberPtr IsOnPhone(const ScriptMethodParams &params);
-	static void FakeKeypress(const ScriptMethodParams &params);
-	static void IosSetAchievementValue(const ScriptMethodParams &params);
-	static NumberPtr IosGetAchievementValue(const ScriptMethodParams &params);
-	static void IosShowAchievements(const ScriptMethodParams & params);
-	static void IosResetAchievements(const ScriptMethodParams &params);
-	static NumberPtr MobileGetAchievement(const ScriptMethodParams &params);
-	static NumberPtr MobileSetAchievement(const ScriptMethodParams &params);
-	static void MobileShowAchievements(const ScriptMethodParams &params);
-	static void MobileResetAchievements(const ScriptMethodParams &params);
+	static void IsOnPhone(ScriptMethodParams &params);
+	static void FakeKeypress(ScriptMethodParams &params);
+	static void IosSetAchievementValue(ScriptMethodParams &params);
+	static void IosGetAchievementValue(ScriptMethodParams &params);
+	static void IosShowAchievements(ScriptMethodParams &params);
+	static void IosResetAchievements(ScriptMethodParams &params);
+	static void MobileGetAchievement(ScriptMethodParams &params);
+	static void MobileSetAchievement(ScriptMethodParams &params);
+	static void MobileShowAchievements(ScriptMethodParams &params);
+	static void MobileResetAchievements(ScriptMethodParams &params);
 
 public:
 	AGSWadgetUtil();

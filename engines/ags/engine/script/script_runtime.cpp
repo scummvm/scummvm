@@ -175,7 +175,7 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 	// The original AGS interpreter did a bunch of dodgy function pointers with
 	// varying numbers of parameters, which were all int64_t. To simply matters
 	// now that we only supported plugins implemented in code, and not DLLs,
-	// we use a simplified Common::Array containing the parameters
+	// we use a simplified Common::Array containing the parameters and result
 
 	if (numparm > 9) {
 		cc_error("too many arguments in call to function");
@@ -187,8 +187,16 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 			params.push_back(parm_value[i]);
 
 		// Call the method
-		Plugins::PluginFunction fparam = (Plugins::PluginFunction)addr;
-		return fparam(params);
+		Plugins::PluginMethod fparam = (Plugins::PluginMethod)addr;
+		fparam(params);
+
+		// TODO: Though some script methods return pointers, the call_function only
+		// supports a 32-bit result. In case they're actually used by any game, the
+		// guard below will throw a wobbly if they're more than 32-bits
+		if ((int64)params._result._ptr > 0xffffffff)
+			error("Uhandled 64-bit pointer result from plugin method call");
+
+		return params._result;
 	}
 }
 

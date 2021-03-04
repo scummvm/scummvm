@@ -37,22 +37,22 @@ private:
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-	static NumberPtr Count(const ScriptMethodParams &params);
-	static NumberPtr Name(const ScriptMethodParams &params);
-	static NumberPtr Rescan(const ScriptMethodParams &params);
-	static NumberPtr Open(const ScriptMethodParams &params);
-	static NumberPtr IsOpen(const ScriptMethodParams &params);
-	static void Click(const ScriptMethodParams &params);
-	static void Close(const ScriptMethodParams &params);
-	static NumberPtr Valid(const ScriptMethodParams &params);
-	static NumberPtr Unplugged(const ScriptMethodParams &params);
-	static NumberPtr GetName(const ScriptMethodParams &params);
-	static NumberPtr GetAxis(const ScriptMethodParams &params);
-	static NumberPtr IsButtonDown(const ScriptMethodParams &params);
-	static NumberPtr IsJoyBtnDown(const ScriptMethodParams &params);
-	static void Update(const ScriptMethodParams &params);
-	static void DisableEvents(const ScriptMethodParams &params);
-	static void EnableEvents(const ScriptMethodParams &params);
+	static void Count(ScriptMethodParams &params);
+	static void Name(ScriptMethodParams &params);
+	static void Rescan(ScriptMethodParams &params);
+	static void Open(ScriptMethodParams &params);
+	static void IsOpen(ScriptMethodParams &params);
+	static void Click(ScriptMethodParams &params);
+	static void Close(ScriptMethodParams &params);
+	static void Valid(ScriptMethodParams &params);
+	static void Unplugged(ScriptMethodParams &params);
+	static void GetName(ScriptMethodParams &params);
+	static void GetAxis(ScriptMethodParams &params);
+	static void IsButtonDown(ScriptMethodParams &params);
+	static void IsJoyBtnDown(ScriptMethodParams &params);
+	static void Update(ScriptMethodParams &params);
+	static void DisableEvents(ScriptMethodParams &params);
+	static void EnableEvents(ScriptMethodParams &params);
 
 public:
 	AGSJoy();

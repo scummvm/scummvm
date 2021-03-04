@@ -39,24 +39,24 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static void RunCreditSequence(const ScriptMethodParams &params);
-	static void SetCredit(const ScriptMethodParams &params);
-	static NumberPtr GetCredit(const ScriptMethodParams &params);
-	static void CreditsSettings(const ScriptMethodParams &params);
-	static void SequenceSettings(const ScriptMethodParams &params);
-	static NumberPtr IsSequenceFinished(const ScriptMethodParams &params);
-	static void PauseScrolling(const ScriptMethodParams &params);
-	static void SetCreditImage(const ScriptMethodParams &params);
-	static void ResetSequence(const ScriptMethodParams &params);
+	static void RunCreditSequence(ScriptMethodParams &params);
+	static void SetCredit(ScriptMethodParams &params);
+	static void GetCredit(ScriptMethodParams &params);
+	static void CreditsSettings(ScriptMethodParams &params);
+	static void SequenceSettings(ScriptMethodParams &params);
+	static void IsSequenceFinished(ScriptMethodParams &params);
+	static void PauseScrolling(ScriptMethodParams &params);
+	static void SetCreditImage(ScriptMethodParams &params);
+	static void ResetSequence(ScriptMethodParams &params);
 
-	static void SetStaticCredit(const ScriptMethodParams &params);
-	static void SetStaticCreditTitle(const ScriptMethodParams &params);
-	static void SetStaticPause(const ScriptMethodParams &params);
-	static void RunStaticCreditSequence(const ScriptMethodParams &params);
-	static NumberPtr IsStaticSequenceFinished(const ScriptMethodParams &params);
-	static void ShowStaticCredit(const ScriptMethodParams &params);
-	static void SetStaticImage(const ScriptMethodParams &params);
-	static NumberPtr GetCurrentStaticCredit(const ScriptMethodParams &params);
+	static void SetStaticCredit(ScriptMethodParams &params);
+	static void SetStaticCreditTitle(ScriptMethodParams &params);
+	static void SetStaticPause(ScriptMethodParams &params);
+	static void RunStaticCreditSequence(ScriptMethodParams &params);
+	static void IsStaticSequenceFinished(ScriptMethodParams &params);
+	static void ShowStaticCredit(ScriptMethodParams &params);
+	static void SetStaticImage(ScriptMethodParams &params);
+	static void GetCurrentStaticCredit(ScriptMethodParams &params);
 
 	static void makeMask(int sequence);
 	static void drawMask(int sequence, int getput);

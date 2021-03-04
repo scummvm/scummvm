@@ -44,23 +44,23 @@ private:
 	/**
 	 * Gets the alpha value at coords x,y
 	 */
-	static NumberPtr GetAlpha(const ScriptMethodParams &params);
+	static void GetAlpha(ScriptMethodParams &params);
 
 	/**
 	 * Sets the alpha value at coords x,y
 	 */
-	static NumberPtr PutAlpha(const ScriptMethodParams &params);
+	static void PutAlpha(ScriptMethodParams &params);
 
 	/**
 	 * Translates index from a 2D array to a 1D array
 	 */
 	static int xytolocale(int x, int y, int width);
 
-	static NumberPtr HighPass(const ScriptMethodParams &params);
-	static NumberPtr Blur(const ScriptMethodParams &params);
-	static NumberPtr DrawSprite(const ScriptMethodParams &params);
-	static NumberPtr DrawAdd(const ScriptMethodParams &params);
-	static NumberPtr DrawAlpha(const ScriptMethodParams &params);
+	static void HighPass(ScriptMethodParams &params);
+	static void Blur(ScriptMethodParams &params);
+	static void DrawSprite(ScriptMethodParams &params);
+	static void DrawAdd(ScriptMethodParams &params);
+	static void DrawAlpha(ScriptMethodParams &params);
 
 public:
 	AGSBlend();

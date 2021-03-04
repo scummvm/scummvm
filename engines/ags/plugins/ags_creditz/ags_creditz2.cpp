@@ -63,7 +63,7 @@ void AGSCreditz2::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(GetCurrentStaticCredit);
 }
 
-void AGSCreditz2::RunCreditSequence(const ScriptMethodParams &params) {
+void AGSCreditz2::RunCreditSequence(ScriptMethodParams &params) {
 	PARAMS1(int, sequence);
 
 	if (!_state->_creditsRunning) {
@@ -92,7 +92,7 @@ void AGSCreditz2::RunCreditSequence(const ScriptMethodParams &params) {
 	}
 }
 
-void AGSCreditz2::SetCredit(const ScriptMethodParams &params) {
+void AGSCreditz2::SetCredit(ScriptMethodParams &params) {
 	PARAMS7(int, sequence, int, line, string, credit, int, x_pos, int, font, int, color, int, gen_outline);
 
 	assert(sequence >= 0 && sequence <= 10);
@@ -109,20 +109,20 @@ void AGSCreditz2::SetCredit(const ScriptMethodParams &params) {
 		c._outline = true;
 }
 
-NumberPtr AGSCreditz2::GetCredit(const ScriptMethodParams &params) {
+void AGSCreditz2::GetCredit(ScriptMethodParams &params) {
 	PARAMS2(int, sequence, int, ID);
 
-	return _state->_credits[sequence][ID]._text.c_str();
+	params._result = _state->_credits[sequence][ID]._text.c_str();
 }
 
-void AGSCreditz2::CreditsSettings(const ScriptMethodParams &params) {
+void AGSCreditz2::CreditsSettings(ScriptMethodParams &params) {
 	PARAMS1(int, emptylineheight);
 
 	if (emptylineheight >= 0)
 		_state->_emptyLineHeight = emptylineheight;
 }
 
-void AGSCreditz2::SequenceSettings(const ScriptMethodParams &params) {
+void AGSCreditz2::SequenceSettings(ScriptMethodParams &params) {
 	PARAMS6(int, sequence, int, startpoint, int, endPoint, int, speed, int, automatic, int, endwait);
 
 	_state->_seqSettings[sequence].startpoint = startpoint;
@@ -132,24 +132,24 @@ void AGSCreditz2::SequenceSettings(const ScriptMethodParams &params) {
 	_state->_seqSettings[sequence].endwait = endwait;
 }
 
-NumberPtr AGSCreditz2::IsSequenceFinished(const ScriptMethodParams &params) {
+void AGSCreditz2::IsSequenceFinished(ScriptMethodParams &params) {
 	PARAMS1(int, sequence);
 
 	if (_state->_seqSettings[sequence].finished) {
 		_state->_seqSettings[sequence].finished = false;
-		return 1;
+		params._result = 1;
+	} else {
+		params._result = 0;
 	}
-
-	return 0;
 }
 
-void AGSCreditz2::PauseScrolling(const ScriptMethodParams &params) {
+void AGSCreditz2::PauseScrolling(ScriptMethodParams &params) {
 	if (_state->_creditsRunning) {
 		_state->_paused = !_state->_paused;
 	}
 }
 
-void AGSCreditz2::SetCreditImage(const ScriptMethodParams &params) {
+void AGSCreditz2::SetCreditImage(ScriptMethodParams &params) {
 	PARAMS5(int, sequence, int, line, int, xPos, int, slot, int, height);
 
 	assert(sequence >= 0 && sequence <= 10);
@@ -163,7 +163,7 @@ void AGSCreditz2::SetCreditImage(const ScriptMethodParams &params) {
 	_state->_credits[sequence][line]._colorHeight = height;
 }
 
-void AGSCreditz2::ResetSequence(const ScriptMethodParams &params) {
+void AGSCreditz2::ResetSequence(ScriptMethodParams &params) {
 	PARAMS1(int, seqtype);
 
 	for (int i = 0; i < 10; ++i) {
@@ -176,7 +176,7 @@ void AGSCreditz2::ResetSequence(const ScriptMethodParams &params) {
 	}
 }
 
-void AGSCreditz2::SetStaticCredit(const ScriptMethodParams &params) {
+void AGSCreditz2::SetStaticCredit(ScriptMethodParams &params) {
 	PARAMS8(int, sequence, int, id, string, credit, int, xPos, int, yPos,
 		int, font, int, color, int, genOutline);
 
@@ -194,7 +194,7 @@ void AGSCreditz2::SetStaticCredit(const ScriptMethodParams &params) {
 		_state->_stCredits[sequence][id].outline = true;
 }
 
-void AGSCreditz2::SetStaticCreditTitle(const ScriptMethodParams &params) {
+void AGSCreditz2::SetStaticCreditTitle(ScriptMethodParams &params) {
 	PARAMS8(int, sequence, int, id, string, title, int, xPos, int, yPos,
 		int, font, int, color, int, genOutline);
 
@@ -212,7 +212,7 @@ void AGSCreditz2::SetStaticCreditTitle(const ScriptMethodParams &params) {
 		_state->_stCredits[sequence][id].title_outline = true;
 }
 
-void AGSCreditz2::SetStaticPause(const ScriptMethodParams &params) {
+void AGSCreditz2::SetStaticPause(ScriptMethodParams &params) {
 	PARAMS3(int, sequence, int, id, int, length);
 
 	assert(sequence >= 0 && sequence <= 10);
@@ -222,7 +222,7 @@ void AGSCreditz2::SetStaticPause(const ScriptMethodParams &params) {
 	_state->_stCredits[sequence][id].pause = length;
 }
 
-void AGSCreditz2::RunStaticCreditSequence(const ScriptMethodParams &params) {
+void AGSCreditz2::RunStaticCreditSequence(ScriptMethodParams &params) {
 	PARAMS2(int, sequence, int, speed);
 
 	if (!_state->_creditsRunning) {
@@ -245,16 +245,16 @@ void AGSCreditz2::RunStaticCreditSequence(const ScriptMethodParams &params) {
 	}
 }
 
-NumberPtr AGSCreditz2::IsStaticSequenceFinished(const ScriptMethodParams &params) {
+void AGSCreditz2::IsStaticSequenceFinished(ScriptMethodParams &params) {
 	PARAMS1(int, sequence);
 
 	int result = (_state->_stSeqSettings[sequence].finished) ? 1 : 0;
 	_state->_stSeqSettings[sequence].finished = false;
 
-	return result;
+	params._result = result;
 }
 
-void AGSCreditz2::ShowStaticCredit(const ScriptMethodParams &params) {
+void AGSCreditz2::ShowStaticCredit(ScriptMethodParams &params) {
 	PARAMS6(int, sequence, int, id, int, time, int, style,
 		int, styleSettings1, int, styleSettings2);
 
@@ -274,7 +274,7 @@ void AGSCreditz2::ShowStaticCredit(const ScriptMethodParams &params) {
 	draw();
 }
 
-void AGSCreditz2::SetStaticImage(const ScriptMethodParams &params) {
+void AGSCreditz2::SetStaticImage(ScriptMethodParams &params) {
 	PARAMS6(int, sequence, int, id, int, slot, int, xPos, int, yPos, int, length);
 
 	assert(sequence >= 0 && sequence < 10);
@@ -288,12 +288,12 @@ void AGSCreditz2::SetStaticImage(const ScriptMethodParams &params) {
 	_state->_stCredits[sequence][id].image_time = length;
 }
 
-NumberPtr AGSCreditz2::GetCurrentStaticCredit(const ScriptMethodParams &params) {
+void AGSCreditz2::GetCurrentStaticCredit(ScriptMethodParams &params) {
 	int result = -1;
 	if (_state->_creditsRunning && _state->_staticCredits)
 		result = _state->_currentStatic;
 
-	return result;
+	params._result = result;
 }
 
 void AGSCreditz2::calculateSequenceHeight(int sequence) {

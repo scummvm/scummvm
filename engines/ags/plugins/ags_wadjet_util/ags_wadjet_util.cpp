@@ -54,38 +54,38 @@ void AGSWadgetUtil::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(MobileResetAchievements);
 }
 
-NumberPtr AGSWadgetUtil::IsOnPhone(const ScriptMethodParams &params) {
-	return false;
+void AGSWadgetUtil::IsOnPhone(ScriptMethodParams &params) {
+	params._result = false;
 }
 
-void AGSWadgetUtil::FakeKeypress(const ScriptMethodParams &params) {
+void AGSWadgetUtil::FakeKeypress(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::IosSetAchievementValue(const ScriptMethodParams &params) {
+void AGSWadgetUtil::IosSetAchievementValue(ScriptMethodParams &params) {
 }
 
-NumberPtr AGSWadgetUtil::IosGetAchievementValue(const ScriptMethodParams &params) {
-	return -1;
+void AGSWadgetUtil::IosGetAchievementValue(ScriptMethodParams &params) {
+	params._result = -1;
 }
 
-void AGSWadgetUtil::IosShowAchievements(const ScriptMethodParams &params) {
+void AGSWadgetUtil::IosShowAchievements(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::IosResetAchievements(const ScriptMethodParams &params) {
+void AGSWadgetUtil::IosResetAchievements(ScriptMethodParams &params) {
 }
 
-NumberPtr AGSWadgetUtil::MobileGetAchievement(const ScriptMethodParams &params) {
-	return NumberPtr();
+void AGSWadgetUtil::MobileGetAchievement(ScriptMethodParams &params) {
+	params._result = NumberPtr();
 }
 
-NumberPtr AGSWadgetUtil::MobileSetAchievement(const ScriptMethodParams &params) {
-	return 0;
+void AGSWadgetUtil::MobileSetAchievement(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-void AGSWadgetUtil::MobileShowAchievements(const ScriptMethodParams &params) {
+void AGSWadgetUtil::MobileShowAchievements(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::MobileResetAchievements(const ScriptMethodParams &params) {
+void AGSWadgetUtil::MobileResetAchievements(ScriptMethodParams &params) {
 }
 
 } // namespace AGSWadgetUtil

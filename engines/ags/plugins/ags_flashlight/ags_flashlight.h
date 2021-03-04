@@ -68,7 +68,7 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 	static void AGS_EngineShutdown();
-	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
+	static int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
 private:
 	/**
@@ -88,33 +88,33 @@ private:
 	static void Update();
 	static void syncGame(Serializer &s);
 
-	static void SetFlashlightTint(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightTintRed(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightTintGreen(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightTintBlue(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightMinLightLevel(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightMaxLightLevel(const ScriptMethodParams &params);
-	static void SetFlashlightDarkness(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightDarkness(const ScriptMethodParams &params);
-	static void SetFlashlightDarknessSize(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightDarknessSize(const ScriptMethodParams &params);
-	static void SetFlashlightBrightness(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightBrightness(const ScriptMethodParams &params);
-	static void SetFlashlightBrightnessSize(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightBrightnessSize(const ScriptMethodParams &params);
-	static void SetFlashlightPosition(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightPositionX(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightPositionY(const ScriptMethodParams &params);
-	static void SetFlashlightFollowMouse(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightFollowMouse(const ScriptMethodParams &params);
-	static void SetFlashlightFollowCharacter(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightFollowCharacter(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightCharacterDX(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightCharacterDY(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightCharacterHorz(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightCharacterVert(const ScriptMethodParams &params);
-	static void SetFlashlightMask(const ScriptMethodParams &params);
-	static NumberPtr GetFlashlightMask(const ScriptMethodParams &params);
+	static void SetFlashlightTint(ScriptMethodParams &params);
+	static void GetFlashlightTintRed(ScriptMethodParams &params);
+	static void GetFlashlightTintGreen(ScriptMethodParams &params);
+	static void GetFlashlightTintBlue(ScriptMethodParams &params);
+	static void GetFlashlightMinLightLevel(ScriptMethodParams &params);
+	static void GetFlashlightMaxLightLevel(ScriptMethodParams &params);
+	static void SetFlashlightDarkness(ScriptMethodParams &params);
+	static void GetFlashlightDarkness(ScriptMethodParams &params);
+	static void SetFlashlightDarknessSize(ScriptMethodParams &params);
+	static void GetFlashlightDarknessSize(ScriptMethodParams &params);
+	static void SetFlashlightBrightness(ScriptMethodParams &params);
+	static void GetFlashlightBrightness(ScriptMethodParams &params);
+	static void SetFlashlightBrightnessSize(ScriptMethodParams &params);
+	static void GetFlashlightBrightnessSize(ScriptMethodParams &params);
+	static void SetFlashlightPosition(ScriptMethodParams &params);
+	static void GetFlashlightPositionX(ScriptMethodParams &params);
+	static void GetFlashlightPositionY(ScriptMethodParams &params);
+	static void SetFlashlightFollowMouse(ScriptMethodParams &params);
+	static void GetFlashlightFollowMouse(ScriptMethodParams &params);
+	static void SetFlashlightFollowCharacter(ScriptMethodParams &params);
+	static void GetFlashlightFollowCharacter(ScriptMethodParams &params);
+	static void GetFlashlightCharacterDX(ScriptMethodParams &params);
+	static void GetFlashlightCharacterDY(ScriptMethodParams &params);
+	static void GetFlashlightCharacterHorz(ScriptMethodParams &params);
+	static void GetFlashlightCharacterVert(ScriptMethodParams &params);
+	static void SetFlashlightMask(ScriptMethodParams &params);
+	static void GetFlashlightMask(ScriptMethodParams &params);
 public:
 	AGSFlashlight();
 };

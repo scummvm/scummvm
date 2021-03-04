@@ -35,7 +35,7 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
 	static void AGS_EngineShutdown();
-	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
+	static int64 AGS_EngineOnEvent(int event, NumberPtr data);
 	static void syncGame(Serializer &s);
 public:
 	AGSPalRender();

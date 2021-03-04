@@ -113,33 +113,33 @@ void AGSSpriteFont::AGS_EngineShutdown() {
 	delete _vWidthRenderer;
 }
 
-void AGSSpriteFont::SetSpriteFont(const ScriptMethodParams &params) {
+void AGSSpriteFont::SetSpriteFont(ScriptMethodParams &params) {
 	PARAMS9(int, fontNum, int, sprite, int, rows, int, columns, int, charWidth, int, charHeight, int, charMin, int, charMax, bool, use32bit);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetSpriteFont");
 	_fontRenderer->SetSpriteFont(fontNum, sprite, rows, columns, charWidth, charHeight, charMin, charMax, use32bit);
 	_engine->ReplaceFontRenderer(fontNum, _fontRenderer);
 }
 
-void AGSSpriteFont::SetVariableSpriteFont(const ScriptMethodParams &params) {
+void AGSSpriteFont::SetVariableSpriteFont(ScriptMethodParams &params) {
 	PARAMS2(int, fontNum, int, sprite);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetVariableFont");
 	_vWidthRenderer->SetSprite(fontNum, sprite);
 	_engine->ReplaceFontRenderer(fontNum, _vWidthRenderer);
 }
 
-void AGSSpriteFont::SetGlyph(const ScriptMethodParams &params) {
+void AGSSpriteFont::SetGlyph(ScriptMethodParams &params) {
 	PARAMS6(int, fontNum, int, charNum, int, x, int, y, int, width, int, height);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetGlyph");
 	_vWidthRenderer->SetGlyph(fontNum, charNum, x, y, width, height);
 }
 
-void AGSSpriteFont::SetSpacing(const ScriptMethodParams &params) {
+void AGSSpriteFont::SetSpacing(ScriptMethodParams &params) {
 	PARAMS2(int, fontNum, int, spacing);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetSpacing");
 	_vWidthRenderer->SetSpacing(fontNum, spacing);
 }
 
-void AGSSpriteFont::SetLineHeightAdjust(const ScriptMethodParams &params) {
+void AGSSpriteFont::SetLineHeightAdjust(ScriptMethodParams &params) {
 	//PARAMS4(int, v1, int, v2, int, v3, int, v4);
 	// TODO
 }

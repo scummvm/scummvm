@@ -94,8 +94,7 @@ namespace Plugins {
 using string = const char *;
 typedef uint32 HWND;
 
-typedef void (*PluginMethod)(const ScriptMethodParams &params);
-typedef NumberPtr(*PluginFunction)(const ScriptMethodParams &params);
+typedef void (*PluginMethod)(ScriptMethodParams &params);
 
 /**
  * Base class for the implementation of AGS plugins
@@ -114,14 +113,11 @@ protected:
 	static void   AGS_EditorLoadGame(char *, int);
 	static void   AGS_EngineStartup(IAGSEngine *);
 	static void   AGS_EngineShutdown();
-	static NumberPtr AGS_EngineOnEvent(int, NumberPtr);
+	static int64 AGS_EngineOnEvent(int, NumberPtr);
 	static int    AGS_EngineDebugHook(const char *, int, int);
 	static void   AGS_EngineInitGfx(const char *driverID, void *data);
 
 	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginMethod fn) {
-		engine->RegisterScriptFunction(name, (void *)fn);
-	}
-	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginFunction fn) {
 		engine->RegisterScriptFunction(name, (void *)fn);
 	}
 public:

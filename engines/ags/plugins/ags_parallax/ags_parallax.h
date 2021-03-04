@@ -58,10 +58,10 @@ private:
 private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static NumberPtr AGS_EngineOnEvent(int event, NumberPtr data);
+	static int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
-	static void pxDrawSprite(const ScriptMethodParams &params);
-	static void pxDeleteSprite(const ScriptMethodParams &params);
+	static void pxDrawSprite(ScriptMethodParams &params);
+	static void pxDeleteSprite(ScriptMethodParams &params);
 
 private:
 	static void syncGame(Serializer &s);

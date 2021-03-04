@@ -152,7 +152,7 @@ void PluginBase::AGS_EngineStartup(IAGSEngine *) {
 void PluginBase::AGS_EngineShutdown() {
 }
 
-NumberPtr PluginBase::AGS_EngineOnEvent(int, NumberPtr) {
+int64 PluginBase::AGS_EngineOnEvent(int, NumberPtr) {
 	return 0;
 }
 

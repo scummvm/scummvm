@@ -60,63 +60,63 @@ void AGSJoy::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Joystick::EnableEvents, EnableEvents);
 }
 
-NumberPtr AGSJoy::Count(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Count(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::Name(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Name(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::Rescan(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Rescan(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::Open(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Open(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::IsOpen(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::IsOpen(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-void AGSJoy::Click(const ScriptMethodParams &params) {
+void AGSJoy::Click(ScriptMethodParams &params) {
 }
 
-void AGSJoy::Close(const ScriptMethodParams &params) {
+void AGSJoy::Close(ScriptMethodParams &params) {
 }
 
-NumberPtr AGSJoy::Valid(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Valid(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::Unplugged(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::Unplugged(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::GetName(const ScriptMethodParams &params) {
-	return NumberPtr();
+void AGSJoy::GetName(ScriptMethodParams &params) {
+	params._result = NumberPtr();
 }
 
-NumberPtr AGSJoy::GetAxis(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::GetAxis(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::IsButtonDown(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::IsButtonDown(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-NumberPtr AGSJoy::IsJoyBtnDown(const ScriptMethodParams &params) {
-	return 0;
+void AGSJoy::IsJoyBtnDown(ScriptMethodParams &params) {
+	params._result = 0;
 }
 
-void AGSJoy::Update(const ScriptMethodParams &params) {
+void AGSJoy::Update(ScriptMethodParams &params) {
 }
 
-void AGSJoy::DisableEvents(const ScriptMethodParams &params) {
+void AGSJoy::DisableEvents(ScriptMethodParams &params) {
 }
 
-void AGSJoy::EnableEvents(const ScriptMethodParams &params) {
+void AGSJoy::EnableEvents(ScriptMethodParams &params) {
 }
 
 } // namespace AGSJoy
