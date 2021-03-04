@@ -288,8 +288,8 @@ Common::Error PrivateEngine::run() {
 
 void PrivateEngine::initFuncs() {
     for (Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
-        Common::String *name = new Common::String(fnc->name);
-        _functions.setVal(*name, (void *)fnc->func);
+        Common::String name(fnc->name);
+        _functions.setVal(name, (void *)fnc->func);
     }
 }
 

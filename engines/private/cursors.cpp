@@ -334,14 +334,14 @@ CursorPointMap _cursorPoints;
 
 void PrivateEngine::initCursors() {
     for (Private::CursorDataTable *cur = Private::cursorDataTable; cur->name; cur++) {
-        Common::String *name = new Common::String(cur->name);
-        _cursorData.setVal(*name, cur->cursor);
+        Common::String name(cur->name);
+        _cursorData.setVal(name, cur->cursor);
     }
     
     for (Private::CursorPointTable *cur = Private::cursorPointTable; cur->name; cur++) {
-        Common::String *name = new Common::String(cur->name);
+        Common::String name(cur->name);
         Common::Point *point = new Common::Point(cur->coord[0], cur->coord[1]);
-        _cursorPoints.setVal(*name, point);
+        _cursorPoints.setVal(name, point);
     }
     CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 }
