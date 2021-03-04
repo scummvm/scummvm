@@ -38,7 +38,7 @@ typedef struct Symbol {     /* symbol table entry */
     short  type;            /* NAME, NUM, STRING or RECT  */
     union {
         int val;            /* NAME or NUM */
-        char *str;          /* STRING */
+        const char *str;    /* STRING */
         Common::Rect *rect; /* RECT */
     } u;
 } Symbol;
@@ -70,7 +70,7 @@ public:
     NameList variableList;
     NameList locationList;
 
-    Symbol *constant(int t, int d, char *s);
+    Symbol *constant(int t, int d, const char *s);
     Symbol *lookupName(char *n);
     void installAll(char *n);
     void defineSymbol(char *, Common::Rect *);

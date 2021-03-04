@@ -78,7 +78,7 @@ Symbol *lookup(Common::String s, SymbolMap symlist) {
 }
 
 /* install some symbol s in a symbol table */
-Symbol *install(Common::String *n, int t, int d, char *s, Common::Rect *r, SymbolMap *symlist) {
+static Symbol *install(Common::String *n, int t, int d, const char *s, Common::Rect *r, SymbolMap *symlist) {
     Common::String *name = new Common::String(*n);
 
     Symbol *sp;
@@ -122,7 +122,7 @@ Symbol *SymbolMaps::lookupName(char *n) {
 
     else {
         debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s->c_str());
-        return constant(STRING, 0, (char *)s->c_str());
+        return constant(STRING, 0, s->c_str());
     }
 }
 
@@ -139,7 +139,7 @@ void SymbolMaps::installAll(char *n) {
         //debug("name %s", s->c_str());
         if (strcmp(n, "settings") == 0) {
             assert(r == NULL);
-            install(s, STRING, 0, (char *)s->c_str(), r, &settings);
+            install(s, STRING, 0, s->c_str(), r, &settings);
         } else if (strcmp(n, "variables") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &variables);
@@ -159,7 +159,7 @@ void SymbolMaps::installAll(char *n) {
     }
 }
 
-Symbol *SymbolMaps::constant(int t, int d, char *s) {
+Symbol *SymbolMaps::constant(int t, int d, const char *s) {
     Symbol *sp;
     Common::String *n = new Common::String("<constant>");
 

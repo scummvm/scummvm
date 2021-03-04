@@ -42,7 +42,7 @@ typedef struct Datum {  /* interpreter stack type */
     short type;
     union {
         int  val;
-        char    *str;
+        const char    *str;
         Symbol  *sym;
         Common::Rect *rect;
     } u;
@@ -87,7 +87,7 @@ extern SettingMaps *g_setts;
 // Funtions
 
 typedef Common::Array<Datum> ArgArray;
-void call(char *, ArgArray);
+void call(const char *, ArgArray);
 
 // Code Generation and Execution
 

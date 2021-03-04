@@ -37,7 +37,7 @@ class ImageDecoder;
 }
 
 namespace Graphics {
-struct ManagedSurface;
+class ManagedSurface;
 }
 
 struct ADGameDescription;

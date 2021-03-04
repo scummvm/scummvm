@@ -507,7 +507,7 @@ void fBitmap(ArgArray args) {
     int x = 0;
     int y = 0;
 
-    char *f = args[0].u.str;
+    const char *f = args[0].u.str;
     if (args.size() == 3) {
         x = args[1].u.val;
         y = args[2].u.val;
@@ -523,8 +523,8 @@ void _fMask(ArgArray args, bool drawn) {
 
     int x = 0;
     int y = 0;
-    char *f = args[0].u.str;
-    char *e = args[1].u.str;
+    const char *f = args[0].u.str;
+    const char *e = args[1].u.str;
     Common::String *c = args[2].u.sym->name;
 
     if (args.size() == 5) {
@@ -553,7 +553,7 @@ void fMaskDrawn(ArgArray args) {
     _fMask(args, true);
 }
 
-void fAddSound(Common::String sound, char *t, Symbol *flag = NULL, int val = 0) {
+static void fAddSound(Common::String sound, const char *t, Symbol *flag = NULL, int val = 0) {
     if (sound == "\"\"")
         return;
 
@@ -755,7 +755,7 @@ FuncTable funcTable[] = {
     { 0, 0}
 };
 
-void call(char *name, ArgArray args) {
+void call(const char *name, ArgArray args) {
     Common::String n(name);
     if (!g_private->_functions.contains(n)) {
         error("I don't know how to execute %s", name);
