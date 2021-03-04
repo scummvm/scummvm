@@ -71,9 +71,9 @@ public:
     NameList locationList;
 
     Symbol *constant(int t, int d, const char *s);
-    Symbol *lookupName(char *n);
-    void installAll(char *n);
-    void defineSymbol(char *, Common::Rect *);
+    Symbol *lookupName(const char *n);
+    void installAll(const char *n);
+    void defineSymbol(const char *, Common::Rect *);
 };
 
 } // End of namespace Private

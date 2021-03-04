@@ -50,9 +50,9 @@
 
 namespace Private {
 
-void SymbolMaps::defineSymbol(char *n, Common::Rect *r) {
-    Common::String *s = new Common::String(n);
-    stringToDefine.push(*s);
+void SymbolMaps::defineSymbol(const char *n, Common::Rect *r) {
+    Common::String s(n);
+    stringToDefine.push(s);
     rectToDefine.push(r);
 }
 
@@ -72,14 +72,14 @@ void setSymbol(Symbol *s, int v) {
 }
 
 /* find s in symbol table symlist */
-Symbol *lookup(Common::String s, SymbolMap symlist) {
+Symbol *lookup(const Common::String &s, SymbolMap symlist) {
     Symbol *r = symlist.getVal(s);
     return r;
 }
 
 /* install some symbol s in a symbol table */
-static Symbol *install(Common::String *n, int t, int d, const char *s, Common::Rect *r, SymbolMap *symlist) {
-    Common::String *name = new Common::String(*n);
+static Symbol *install(const Common::String &n, int t, int d, const char *s, Common::Rect *r, SymbolMap *symlist) {
+    Common::String *name = new Common::String(n);
 
     Symbol *sp;
 
@@ -95,62 +95,59 @@ static Symbol *install(Common::String *n, int t, int d, const char *s, Common::R
     else
         assert(0);
 
-    symlist->setVal(*n, sp);
+    symlist->setVal(n, sp);
     assert(symlist->size() > 0);
     return sp;
 }
 
 /* lookup some name in some symbol table */
-Symbol *SymbolMaps::lookupName(char *n) {
+Symbol *SymbolMaps::lookupName(const char *n) {
     //debug("looking up %s", n);
-    Common::String *s = new Common::String(n);
+    Common::String s(n);
 
-    if (settings.contains(*s))
-        return lookup(*s, settings);
+    if (settings.contains(s))
+        return lookup(s, settings);
 
-    else if (variables.contains(*s))
-        return lookup(*s, variables);
+    else if (variables.contains(s))
+        return lookup(s, variables);
 
-    else if (cursors.contains(*s))
-        return lookup(*s, cursors);
+    else if (cursors.contains(s))
+        return lookup(s, cursors);
 
-    else if (locations.contains(*s))
-        return lookup(*s, locations);
+    else if (locations.contains(s))
+        return lookup(s, locations);
 
-    else if (rects.contains(*s))
-        return lookup(*s, rects);
+    else if (rects.contains(s))
+        return lookup(s, rects);
 
     else {
-        debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s->c_str());
-        return constant(STRING, 0, s->c_str());
+        debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s.c_str());
+        return constant(STRING, 0, s.c_str());
     }
 }
 
-void SymbolMaps::installAll(char *n) {
-    Common::String *s;
-    Common::Rect *r;
-
+void SymbolMaps::installAll(const char *n) {
     assert(stringToDefine.size() > 0);
 
     while (!stringToDefine.empty()) {
-        s = new Common::String(stringToDefine.pop());
-        r = rectToDefine.pop();
+        Common::String s = stringToDefine.pop();
+		Common::Rect *r = rectToDefine.pop();
 
-        //debug("name %s", s->c_str());
+        //debug("name %s", s.c_str());
         if (strcmp(n, "settings") == 0) {
             assert(r == NULL);
-            install(s, STRING, 0, s->c_str(), r, &settings);
+            install(s, STRING, 0, s.c_str(), r, &settings);
         } else if (strcmp(n, "variables") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &variables);
-            variableList.push_front(*s);
+            variableList.push_front(s);
         } else if (strcmp(n, "cursors") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &cursors);
         } else if (strcmp(n, "locations") == 0) {
             assert(r == NULL);
             install(s, NAME, 0, NULL, r, &locations);
-            locationList.push_front(*s);
+            locationList.push_front(s);
         } else if (strcmp(n, "rects") == 0) {
             assert(r != NULL);
             install(s, RECT, 0, NULL, r, &rects);
