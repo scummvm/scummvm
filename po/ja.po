@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-28 22:09+0000\n"
+"PO-Revision-Date: 2021-03-05 17:33+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2361,7 +2361,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL(シェーダーあり)"
 
 #: audio/adlib.cpp:2293
-#, fuzzy
 msgid "AdLib emulator"
 msgstr "AdLibエミュレーター："
 
@@ -2435,9 +2434,8 @@ msgid "Starting MIDI dump"
 msgstr "MIDIダンプを開始しています"
 
 #: audio/mods/paula.cpp:303
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "C64音声エミュレーター"
+msgstr "AMIGAオーディオエミュレーター"
 
 #: audio/null.h:44
 msgid "No music"
@@ -2683,9 +2681,8 @@ msgstr "フィルター無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
-#, fuzzy
 msgid "Stretch mode"
-msgstr "拡大モード："
+msgstr "ストレッチモード"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
 msgid "Normal (no scaling)"
@@ -2712,9 +2709,8 @@ msgstr "全面モードの切替"
 #: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Toggle mouse capture"
-msgstr "消音の切替"
+msgstr "マウスキャプチャーの切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:398
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
@@ -3062,9 +3058,8 @@ msgstr "ルートディレクトリー"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
-#, fuzzy
 msgid "Saved games"
-msgstr "ゲームをセーブ："
+msgstr "セーブされたゲーム"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
@@ -3084,9 +3079,8 @@ msgid "This is a local webserver index page."
 msgstr "これはローカルサーバーのインデックスページです。"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
-#, fuzzy
 msgid "Open Files manager"
-msgstr "ダウンロード管理のダイアログを開く"
+msgstr "ファイルマネージャーを開く"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
