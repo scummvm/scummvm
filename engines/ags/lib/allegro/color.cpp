@@ -33,19 +33,19 @@ namespace AGS3 {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
-int _rgb_r_shift_15 = 0;
-int _rgb_g_shift_15 = 0;
-int _rgb_b_shift_15 = 0;
-int _rgb_r_shift_16 = 0;
-int _rgb_g_shift_16 = 0;
-int _rgb_b_shift_16 = 0;
-int _rgb_r_shift_24 = 0;
-int _rgb_g_shift_24 = 0;
-int _rgb_b_shift_24 = 0;
-int _rgb_r_shift_32 = 0;
-int _rgb_g_shift_32 = 0;
-int _rgb_b_shift_32 = 0;
-int _rgb_a_shift_32 = 0;
+int _rgb_r_shift_15 = DEFAULT_RGB_R_SHIFT_15;     /* truecolor pixel format */
+int _rgb_g_shift_15 = DEFAULT_RGB_G_SHIFT_15;
+int _rgb_b_shift_15 = DEFAULT_RGB_B_SHIFT_15;
+int _rgb_r_shift_16 = DEFAULT_RGB_R_SHIFT_16;
+int _rgb_g_shift_16 = DEFAULT_RGB_G_SHIFT_16;
+int _rgb_b_shift_16 = DEFAULT_RGB_B_SHIFT_16;
+int _rgb_r_shift_24 = DEFAULT_RGB_R_SHIFT_24;
+int _rgb_g_shift_24 = DEFAULT_RGB_G_SHIFT_24;
+int _rgb_b_shift_24 = DEFAULT_RGB_B_SHIFT_24;
+int _rgb_r_shift_32 = DEFAULT_RGB_R_SHIFT_32;
+int _rgb_g_shift_32 = DEFAULT_RGB_G_SHIFT_32;
+int _rgb_b_shift_32 = DEFAULT_RGB_B_SHIFT_32;
+int _rgb_a_shift_32 = DEFAULT_RGB_A_SHIFT_32;
 
 RGB_MAP *rgb_map;
 COLOR_MAP *color_map;
@@ -153,35 +153,31 @@ int getb16(int c) {
 }
 
 int getr24(int c) {
-	error("TODO: getr24");
+	return ((c >> _rgb_r_shift_24) & 0xFF);
 }
 
 int getg24(int c) {
-	error("TODO: getg24");
+	return ((c >> _rgb_g_shift_24) & 0xFF);
 }
 
 int getb24(int c) {
-	error("TODO: getb24");
-}
-
-int geta24(int c) {
-	error("TODO: geta24");
+	return ((c >> _rgb_b_shift_24) & 0xFF);
 }
 
 int getr32(int c) {
-	error("TODO: getr32");
+	return ((c >> _rgb_r_shift_32) & 0xFF);
 }
 
 int getg32(int c) {
-	error("TODO: getg32");
+	return ((c >> _rgb_g_shift_32) & 0xFF);
 }
 
 int getb32(int c) {
-	error("TODO: getb32");
+	return ((c >> _rgb_b_shift_32) & 0xFF);
 }
 
 int geta32(int c) {
-	error("TODO: geta32");
+	return ((c >> _rgb_a_shift_32) & 0xFF);
 }
 
 int makecol(byte r, byte g, byte b) {

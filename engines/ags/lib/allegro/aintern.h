@@ -26,6 +26,21 @@
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/color.h"
 
+/* default truecolor pixel format */
+#define DEFAULT_RGB_R_SHIFT_15  0
+#define DEFAULT_RGB_G_SHIFT_15  5
+#define DEFAULT_RGB_B_SHIFT_15  10
+#define DEFAULT_RGB_R_SHIFT_16  0
+#define DEFAULT_RGB_G_SHIFT_16  5
+#define DEFAULT_RGB_B_SHIFT_16  11
+#define DEFAULT_RGB_R_SHIFT_24  0
+#define DEFAULT_RGB_G_SHIFT_24  8
+#define DEFAULT_RGB_B_SHIFT_24  16
+#define DEFAULT_RGB_R_SHIFT_32  0
+#define DEFAULT_RGB_G_SHIFT_32  8
+#define DEFAULT_RGB_B_SHIFT_32  16
+#define DEFAULT_RGB_A_SHIFT_32  24
+
 namespace AGS3 {
 
 extern int _color_depth;
