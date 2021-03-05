@@ -112,6 +112,9 @@ PrivateEngine::~PrivateEngine() {
     delete _frame;
     delete _rnd;
 
+    delete Gen::g_vm;
+    delete Settings::g_setts;
+
     // Remove all of our debug levels
     DebugMan.clearAllDebugChannels();
 }
