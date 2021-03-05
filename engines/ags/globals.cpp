@@ -30,6 +30,7 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guiinv.h"
+#include "ags/shared/gui/guilabel.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
@@ -133,6 +134,9 @@ Globals::Globals() {
 	// guiinv.cpp globals
 	_guiinv = new std::vector<AGS::Shared::GUIInvWindow>();
 
+	// guilabel.cpp globals
+	_guilabels = new std::vector<AGS::Shared::GUILabel>();
+
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
@@ -224,6 +228,9 @@ Globals::~Globals() {
 
 	// guiinv.cpp globals
 	delete _guiinv;
+
+	// guilabel.cpp globals
+	delete _guilabels;
 
 	// managedobjectpool.cpp globals
 	delete _pool;

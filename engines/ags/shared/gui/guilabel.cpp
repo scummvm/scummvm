@@ -30,9 +30,6 @@
 
 namespace AGS3 {
 
-std::vector<AGS::Shared::GUILabel> guilabels;
-int numguilabels = 0;
-
 #define GUILABEL_TEXTLENGTH_PRE272 200
 
 namespace AGS {

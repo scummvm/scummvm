@@ -45,6 +45,7 @@ class DebugManager;
 struct Font;
 class GUIButton;
 class GUIInvWindow;
+class GUILabel;
 class RoomStruct;
 
 } // namespace Shared
@@ -274,6 +275,16 @@ public:
 
 	std::vector<AGS::Shared::GUIInvWindow> *_guiinv;
 	int _numguiinv = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guilabel globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::GUILabel> *_guilabels;
+	int _numguilabels = 0;
 
 	/**@}*/
 

@@ -68,9 +68,6 @@ private:
 } // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Shared::GUILabel> guilabels;
-extern int numguilabels;
-
 } // namespace AGS3
 
 #endif
