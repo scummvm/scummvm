@@ -23,7 +23,6 @@
 #include "common/rect.h"
 #include "graphics/cursorman.h"
 
-#include "private/cursors.h"
 #include "private/private.h"
 
 namespace Private {
@@ -329,15 +328,12 @@ static struct CursorPointTable {
     { 0,            {0,   0} }
 };
 
-static CursorDataMap _cursorData;
-static CursorPointMap _cursorPoints;
-
 void PrivateEngine::initCursors() {
     for (Private::CursorDataTable *cur = Private::cursorDataTable; cur->name; cur++) {
         Common::String name(cur->name);
         _cursorData.setVal(name, cur->cursor);
     }
-    
+
     for (Private::CursorPointTable *cur = Private::cursorPointTable; cur->name; cur++) {
         Common::String name(cur->name);
         Common::Point point = Common::Point(cur->coord[0], cur->coord[1]);

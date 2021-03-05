@@ -36,7 +36,6 @@
 #include "engines/util.h"
 #include "image/bmp.h"
 
-#include "private/cursors.h"
 #include "private/private.h"
 #include "private/tokens.h"
 #include "private/grammar.h"
@@ -149,6 +148,9 @@ Common::Error PrivateEngine::run() {
     buf[fileSize] = '\0';
 
     // Initialize stuff
+    Gen::g_vm = new Gen::VM();
+    Settings::g_setts = new Settings::SettingMaps();
+
     initFuncs();
     initCursors();
     parse(buf);
@@ -302,7 +304,7 @@ void PrivateEngine::clearAreas() {
     _exits.clear();
     _masks.clear();
 
-    if (_loadGameMask.surf) 
+    if (_loadGameMask.surf)
         _loadGameMask.surf->free();
     delete _loadGameMask.surf;
     _loadGameMask.clear();
@@ -314,7 +316,7 @@ void PrivateEngine::clearAreas() {
 
     if (_policeRadioArea.surf)
         _policeRadioArea.surf->free();
-    delete _policeRadioArea.surf; 
+    delete _policeRadioArea.surf;
     _policeRadioArea.clear();
 
     if (_AMRadioArea.surf)

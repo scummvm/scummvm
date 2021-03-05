@@ -53,7 +53,7 @@
 
 namespace Private {
 
-Gen::VM *Gen::g_vm = new Gen::VM();
+Gen::VM *Gen::g_vm;
 
 void Gen::VM::run() {
     Gen::execute(Gen::g_vm->_prog);
@@ -63,10 +63,10 @@ namespace Settings {
 
 using namespace Gen;
 
-SettingMaps *g_setts = new SettingMaps();
+SettingMaps *g_setts;
 
 /* initialize setting for code generation */
-void SettingMaps::init() { 
+void SettingMaps::init() {
     _setting = (Setting *)malloc(sizeof(Setting));
     memset((void *)_setting, 0, sizeof(Setting));
 
