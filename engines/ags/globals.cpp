@@ -30,6 +30,7 @@
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/roomstatus.h"
@@ -80,6 +81,11 @@ Globals::Globals() {
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
+
+	// draw_software.cpp globals
+	_BlackRects = new DirtyRects();
+	_RoomCamRects = new std::vector<DirtyRects>();
+	_RoomCamPositions = new std::vector<std::pair<int, int> >();
 
 	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
@@ -160,6 +166,16 @@ Globals::~Globals() {
 
 	// debugmanager.cpp globals
 	delete _DbgMgr;
+
+	// draw.cpp globals
+	delete _CameraDrawData;
+	delete _sprlist;
+	delete _thingsToDrawList;
+
+	// draw_software.cpp globals
+	delete _BlackRects;
+	delete _RoomCamRects;
+	delete _RoomCamPositions;
 
 	// fonts.cpp globals
 	delete _fonts;

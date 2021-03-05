@@ -66,6 +66,7 @@ struct CCInventory;
 struct CCObject;
 struct CCRegion;
 struct CharacterCache;
+struct DirtyRects;
 struct ExecutingScript;
 struct GameSetupStruct;
 struct GameState;
@@ -166,6 +167,23 @@ public:
 	std::vector<RoomCameraDrawData> *_CameraDrawData;
 	std::vector<SpriteListEntry> *_sprlist;
 	std::vector<SpriteListEntry> *_thingsToDrawList;
+
+	/**@}*/
+
+	/**
+	 * \defgroup draw_software globals
+	 * @{
+	 */
+
+	// Dirty rects for the main viewport background (black screen);
+	// these are used when the room viewport does not cover whole screen,
+	// so that we know when to paint black after mouse cursor and gui.
+	DirtyRects *_BlackRects;
+	// Dirty rects object for the single room camera
+	std::vector<DirtyRects> *_RoomCamRects;
+	// Saved room camera offsets to know if we must invalidate whole surface.
+	// TODO: if we support rotation then we also need to compare full transform!
+	std::vector<std::pair<int, int> > *_RoomCamPositions;
 
 	/**@}*/
 

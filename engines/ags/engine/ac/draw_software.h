@@ -33,8 +33,59 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/util/geometry.h"
+#include "ags/engine/util/scaling.h"
 
 namespace AGS3 {
+
+using AGS::Engine::PlaneScaling;
+
+// TODO: choose these values depending on game resolution?
+#define MAXDIRTYREGIONS 25
+#define WHOLESCREENDIRTY (MAXDIRTYREGIONS + 5)
+#define MAX_SPANS_PER_ROW 4
+
+// Dirty rects store coordinate values in the coordinate system of a camera surface,
+// where coords always span from 0,0 to surface width,height.
+// Converting from room to dirty rects would require subtracting room camera offsets.
+struct IRSpan {
+	int x1, x2;
+	int mergeSpan(int tx1, int tx2);
+
+	IRSpan();
+};
+
+struct IRRow {
+	IRSpan span[MAX_SPANS_PER_ROW];
+	int numSpans;
+
+	IRRow();
+};
+
+struct DirtyRects {
+	// Size of the surface managed by this dirty rects object
+	Size SurfaceSize;
+	// Where the surface is rendered on screen
+	Rect Viewport;
+	// Room -> screen coordinate transformation
+	PlaneScaling Room2Screen;
+	// Screen -> dirty surface rect
+	// The dirty rects are saved in coordinates limited to (0,0)->(camera size) rather than room or screen coords
+	PlaneScaling Screen2DirtySurf;
+
+	std::vector<IRRow> DirtyRows;
+	Rect DirtyRegions[MAXDIRTYREGIONS];
+	size_t NumDirtyRegions;
+
+	DirtyRects();
+	bool IsInit() const;
+	// Initialize dirty rects for the given surface size
+	void Init(const Size &surf_size, const Rect &viewport);
+	void SetSurfaceOffsets(int x, int y);
+	// Delete dirty rects
+	void Destroy();
+	// Mark all surface as tidy
+	void Reset();
+};
 
 // Inits dirty rects array for the given room camera/viewport pair
 // View_index indicates the room viewport (>= 0) or the main viewport (-1)

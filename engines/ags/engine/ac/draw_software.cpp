@@ -51,60 +51,12 @@
 #include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/util/scaling.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
-
-// TODO: choose these values depending on game resolution?
-#define MAXDIRTYREGIONS 25
-#define WHOLESCREENDIRTY (MAXDIRTYREGIONS + 5)
-#define MAX_SPANS_PER_ROW 4
-
-// Dirty rects store coordinate values in the coordinate system of a camera surface,
-// where coords always span from 0,0 to surface width,height.
-// Converting from room to dirty rects would require subtracting room camera offsets.
-struct IRSpan {
-	int x1, x2;
-	int mergeSpan(int tx1, int tx2);
-
-	IRSpan();
-};
-
-struct IRRow {
-	IRSpan span[MAX_SPANS_PER_ROW];
-	int numSpans;
-
-	IRRow();
-};
-
-struct DirtyRects {
-	// Size of the surface managed by this dirty rects object
-	Size SurfaceSize;
-	// Where the surface is rendered on screen
-	Rect Viewport;
-	// Room -> screen coordinate transformation
-	PlaneScaling Room2Screen;
-	// Screen -> dirty surface rect
-	// The dirty rects are saved in coordinates limited to (0,0)->(camera size) rather than room or screen coords
-	PlaneScaling Screen2DirtySurf;
-
-	std::vector<IRRow> DirtyRows;
-	Rect DirtyRegions[MAXDIRTYREGIONS];
-	size_t NumDirtyRegions;
-
-	DirtyRects();
-	bool IsInit() const;
-	// Initialize dirty rects for the given surface size
-	void Init(const Size &surf_size, const Rect &viewport);
-	void SetSurfaceOffsets(int x, int y);
-	// Delete dirty rects
-	void Destroy();
-	// Mark all surface as tidy
-	void Reset();
-};
-
 
 IRSpan::IRSpan()
 	: x1(0), x2(0) {
@@ -166,52 +118,42 @@ void DirtyRects::Reset() {
 		DirtyRows[i].numSpans = 0;
 }
 
-// Dirty rects for the main viewport background (black screen);
-// these are used when the room viewport does not cover whole screen,
-// so that we know when to paint black after mouse cursor and gui.
-DirtyRects BlackRects;
-// Dirty rects object for the single room camera
-std::vector<DirtyRects> RoomCamRects;
-// Saved room camera offsets to know if we must invalidate whole surface.
-// TODO: if we support rotation then we also need to compare full transform!
-std::vector<std::pair<int, int>> RoomCamPositions;
-
 
 void dispose_invalid_regions(bool /* room_only */) {
-	RoomCamRects.clear();
-	RoomCamPositions.clear();
+	_GP(RoomCamRects).clear();
+	_GP(RoomCamPositions).clear();
 }
 
 void init_invalid_regions(int view_index, const Size &surf_size, const Rect &viewport) {
 	if (view_index < 0) {
-		BlackRects.Init(surf_size, viewport);
+		_GP(BlackRects).Init(surf_size, viewport);
 	} else {
-		if (RoomCamRects.size() <= (size_t)view_index) {
-			RoomCamRects.resize(view_index + 1);
-			RoomCamPositions.resize(view_index + 1);
+		if (_GP(RoomCamRects).size() <= (size_t)view_index) {
+			_GP(RoomCamRects).resize(view_index + 1);
+			_GP(RoomCamPositions).resize(view_index + 1);
 		}
-		RoomCamRects[view_index].Init(surf_size, viewport);
-		RoomCamPositions[view_index] = std::make_pair(-1000, -1000);
+		_GP(RoomCamRects)[view_index].Init(surf_size, viewport);
+		_GP(RoomCamPositions)[view_index] = std::make_pair(-1000, -1000);
 	}
 }
 
 void delete_invalid_regions(int view_index) {
 	if (view_index >= 0) {
-		RoomCamRects.erase(RoomCamRects.begin() + view_index);
-		RoomCamPositions.erase(RoomCamPositions.begin() + view_index);
+		_GP(RoomCamRects).erase(_GP(RoomCamRects).begin() + view_index);
+		_GP(RoomCamPositions).erase(_GP(RoomCamPositions).begin() + view_index);
 	}
 }
 
 void set_invalidrects_cameraoffs(int view_index, int x, int y) {
 	if (view_index < 0) {
-		BlackRects.SetSurfaceOffsets(x, y);
+		_GP(BlackRects).SetSurfaceOffsets(x, y);
 		return;
 	} else {
-		RoomCamRects[view_index].SetSurfaceOffsets(x, y);
+		_GP(RoomCamRects)[view_index].SetSurfaceOffsets(x, y);
 	}
 
-	int &posxwas = RoomCamPositions[view_index].first;
-	int &posywas = RoomCamPositions[view_index].second;
+	int &posxwas = _GP(RoomCamPositions)[view_index].first;
+	int &posywas = _GP(RoomCamPositions)[view_index].second;
 	if ((x != posxwas) || (y != posywas)) {
 		invalidate_all_camera_rects(view_index);
 		posxwas = x;
@@ -220,9 +162,9 @@ void set_invalidrects_cameraoffs(int view_index, int x, int y) {
 }
 
 void invalidate_all_rects() {
-	for (auto &rects : RoomCamRects) {
-		if (!IsRectInsideRect(rects.Viewport, BlackRects.Viewport))
-			BlackRects.NumDirtyRegions = WHOLESCREENDIRTY;
+	for (auto &rects : _GP(RoomCamRects)) {
+		if (!IsRectInsideRect(rects.Viewport, _GP(BlackRects).Viewport))
+			_GP(BlackRects).NumDirtyRegions = WHOLESCREENDIRTY;
 		rects.NumDirtyRegions = WHOLESCREENDIRTY;
 	}
 }
@@ -230,7 +172,7 @@ void invalidate_all_rects() {
 void invalidate_all_camera_rects(int view_index) {
 	if (view_index < 0)
 		return;
-	RoomCamRects[view_index].NumDirtyRegions = WHOLESCREENDIRTY;
+	_GP(RoomCamRects)[view_index].NumDirtyRegions = WHOLESCREENDIRTY;
 }
 
 void invalidate_rect_on_surf(int x1, int y1, int x2, int y2, DirtyRects &rects) {
@@ -322,7 +264,7 @@ void invalidate_rect_ds(DirtyRects &rects, int x1, int y1, int x2, int y2, bool 
 		Rect r(x1, y1, x2, y2);
 		// If overlay is NOT completely over the room, then invalidate black rect
 		if (!IsRectInsideRect(rects.Viewport, r))
-			invalidate_rect_on_surf(x1, y1, x2, y2, BlackRects);
+			invalidate_rect_on_surf(x1, y1, x2, y2, _GP(BlackRects));
 		// If overlay is NOT intersecting room viewport at all, then stop
 		if (!AreRectsIntersecting(rects.Viewport, r))
 			return;
@@ -343,7 +285,7 @@ void invalidate_rect_ds(DirtyRects &rects, int x1, int y1, int x2, int y2, bool 
 }
 
 void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room) {
-	for (auto &rects : RoomCamRects)
+	for (auto &rects : _GP(RoomCamRects))
 		invalidate_rect_ds(rects, x1, y1, x2, y2, in_room);
 }
 
@@ -433,18 +375,18 @@ void update_invalid_region(Bitmap *ds, color_t fill_color, const DirtyRects &rec
 }
 
 void update_black_invreg_and_reset(Bitmap *ds) {
-	if (!BlackRects.IsInit())
+	if (!_GP(BlackRects).IsInit())
 		return;
-	update_invalid_region(ds, (color_t)0, BlackRects);
-	BlackRects.Reset();
+	update_invalid_region(ds, (color_t)0, _GP(BlackRects));
+	_GP(BlackRects).Reset();
 }
 
 void update_room_invreg_and_reset(int view_index, Bitmap *ds, Bitmap *src, bool no_transform) {
-	if (view_index < 0 || RoomCamRects.empty())
+	if (view_index < 0 || _GP(RoomCamRects).empty())
 		return;
 
-	update_invalid_region(ds, src, RoomCamRects[view_index], no_transform);
-	RoomCamRects[view_index].Reset();
+	update_invalid_region(ds, src, _GP(RoomCamRects)[view_index], no_transform);
+	_GP(RoomCamRects)[view_index].Reset();
 }
 
 } // namespace AGS3
