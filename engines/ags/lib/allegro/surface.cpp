@@ -161,7 +161,6 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
 
 			if (src.format.bytesPerPixel == 1 && format.bytesPerPixel == 1) {
-				// TODO: Need to skip transparent color if skip_trans is true?
 				if (!skipTrans || *srcVal != 0)
 					*destVal = *srcVal;
 				continue;
