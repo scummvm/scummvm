@@ -292,7 +292,7 @@ Common::Error PrivateEngine::run() {
 }
 
 void PrivateEngine::initFuncs() {
-    for (Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
+    for (const Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
         Common::String name(fnc->name);
         _functions.setVal(name, (void *)fnc->func);
     }
@@ -388,7 +388,7 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
     int cs = 0;
     Common::String cursor;
 
-    for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
+    for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
         const ExitInfo &e = *it;
         cs = e.rect.width()*e.rect.height();
 
@@ -425,7 +425,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
 
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
     bool inside = false;
-    for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
+    for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
         const MaskInfo &m = *it;
 
         if (inMask(m.surf, mousePos)) {
@@ -469,7 +469,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
     Common::String ns = "";
     int rs = 100000000;
     int cs = 0;
-    for (ExitList::iterator it = _exits.begin(); it != _exits.end(); ++it) {
+    for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
         const ExitInfo &e = *it;
         cs = e.rect.width()*e.rect.height();
         //debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
@@ -495,7 +495,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 
 void PrivateEngine::selectMask(Common::Point mousePos) {
     Common::String ns;
-    for (MaskList::iterator it = _masks.begin(); it != _masks.end(); ++it) {
+    for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
         const MaskInfo &m = *it;
         //debug("Testing mask %s", m.nextSetting->c_str());
         if (inMask(m.surf, mousePos)) {
@@ -766,26 +766,26 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
         return Common::kNoError;
 
     // Variables
-    for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
-        Private::Symbol *sym = maps.variables.getVal(*it);
+    for (NameList::const_iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
+        const Private::Symbol *sym = maps.variables.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
 
     // Diary
-    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
-        Private::Symbol *sym = maps.locations.getVal(*it);
+    for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
+        const Private::Symbol *sym = maps.locations.getVal(*it);
         stream->writeUint32LE(sym->u.val);
     }
 
     stream->writeUint32LE(inventory.size());
-    for (NameList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
+    for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
         stream->writeString(*it);
         stream->writeByte(0);
     }
 
     // Dossiers
     stream->writeUint32LE(_dossiers.size());
-    for (DossierArray::iterator it = _dossiers.begin(); it != _dossiers.end(); ++it) {
+    for (DossierArray::const_iterator it = _dossiers.begin(); it != _dossiers.end(); ++it) {
         stream->writeString(it->page1.c_str());
         stream->writeByte(0);
 
@@ -796,18 +796,18 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 
     // Radios
     stream->writeUint32LE(_AMRadio.size());
-    for (SoundList::iterator it = _AMRadio.begin(); it != _AMRadio.end(); ++it) {
+    for (SoundList::const_iterator it = _AMRadio.begin(); it != _AMRadio.end(); ++it) {
         stream->writeString(*it);
         stream->writeByte(0);
     }
     stream->writeUint32LE(_policeRadio.size());
-    for (SoundList::iterator it = _policeRadio.begin(); it != _policeRadio.end(); ++it) {
+    for (SoundList::const_iterator it = _policeRadio.begin(); it != _policeRadio.end(); ++it) {
         stream->writeString(*it);
         stream->writeByte(0);
     }
 
     stream->writeUint32LE(_phone.size());
-    for (PhoneList::iterator it = _phone.begin(); it != _phone.end(); ++it) {
+    for (PhoneList::const_iterator it = _phone.begin(); it != _phone.end(); ++it) {
         stream->writeString(it->sound);
         stream->writeByte(0);
         stream->writeString(*it->flag->name);
@@ -820,13 +820,13 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
     stream->writeByte(0);
 
     stream->writeUint32LE(_playedMovies.size());
-    for (PlayedMediaTable::iterator it = _playedMovies.begin(); it != _playedMovies.end(); ++it) {
+    for (PlayedMediaTable::const_iterator it = _playedMovies.begin(); it != _playedMovies.end(); ++it) {
         stream->writeString(it->_key);
         stream->writeByte(0);
     }
 
     stream->writeUint32LE(_playedPhoneClips.size());
-    for (PlayedMediaTable::iterator it = _playedPhoneClips.begin(); it != _playedPhoneClips.end(); ++it) {
+    for (PlayedMediaTable::const_iterator it = _playedPhoneClips.begin(); it != _playedPhoneClips.end(); ++it) {
         stream->writeString(it->_key);
         stream->writeByte(0);
     }
@@ -1031,7 +1031,7 @@ Common::String PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j)
 }
 
 // Timers
-void timerCallback(void *refCon) {
+static void timerCallback(void *refCon) {
     g_private->removeTimer();
     g_private->_nextSetting = *(Common::String *)refCon;
 }
@@ -1049,8 +1049,8 @@ void PrivateEngine::removeTimer() {
 void PrivateEngine::loadLocations(const Common::Rect &rect) {
     uint32 i = 0;
     int16 offset = 44;
-    for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
-        Private::Symbol *sym = maps.locations.getVal(*it);
+    for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
+        const Private::Symbol *sym = maps.locations.getVal(*it);
         i++;
         if (sym->u.val) {
             offset = offset + 22;
@@ -1064,7 +1064,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 
 void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common::Rect &r2) {
     int16 offset = 0;
-    for (NameList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
+    for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
         offset = offset + 22;
         //debug("%hd %hd", rect->left, rect->top + offset);
         loadMask(*it, r1.left, r1.top + offset, true);
