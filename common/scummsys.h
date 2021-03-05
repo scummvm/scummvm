@@ -108,7 +108,7 @@
 		#define NOWH
 		#define NOSOUND
 		#define NODRAWTEXT
-		#define NOMINMAX
+		#define NOMINMAX 1
 
 	#endif
 
