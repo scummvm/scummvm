@@ -59,7 +59,7 @@ uint16 CCArchive::convertNameToId(const Common::String &resourceName) {
 
 void CCArchive::loadIndex() {
 	int count = _file.readUint16LE();
-	size_t size = count * 8;
+	long size = count * 8;
 
 	// Read in the data for the archive's index
 	byte *rawIndex = new byte[size];
