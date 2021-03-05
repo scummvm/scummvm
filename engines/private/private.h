@@ -46,9 +46,9 @@ namespace Private {
 
 // debug channels
 enum {
-    kPrivateDebugFunction = 1 << 0,
-    kPrivateDebugCode = 1 << 1,
-    kPrivateDebugScript = 1 << 2
+	kPrivateDebugFunction = 1 << 0,
+	kPrivateDebugCode = 1 << 1,
+	kPrivateDebugScript = 1 << 2
 };
 
 // sounds
@@ -81,18 +81,18 @@ static const char *kStartGame = "kStartGame";
 // structs
 
 typedef struct ExitInfo {
-    Common::String nextSetting;
-    Common::Rect   rect;
-    Common::String cursor;
+	Common::String nextSetting;
+	Common::Rect   rect;
+	Common::String cursor;
 } ExitInfo;
 
 typedef struct MaskInfo {
-    Graphics::ManagedSurface *surf;
-    Common::String nextSetting;
-    Common::Point point;
-    Symbol *flag1;
-    Symbol *flag2;
-    Common::String cursor;
+	Graphics::ManagedSurface *surf;
+	Common::String nextSetting;
+	Common::Point point;
+	Symbol *flag1;
+	Symbol *flag2;
+	Common::String cursor;
 
 	void clear() {
 		surf = nullptr;
@@ -105,21 +105,21 @@ typedef struct MaskInfo {
 } MaskInfo;
 
 typedef struct PhoneInfo {
-    Common::String sound;
-    Symbol *flag;
-    int val;
+	Common::String sound;
+	Symbol *flag;
+	int val;
 } PhoneInfo;
 
 typedef struct DossierInfo {
-    Common::String page1;
-    Common::String page2;
+	Common::String page1;
+	Common::String page2;
 } DossierInfo;
 
 // funcs
 
 typedef struct FuncTable {
-    void (*func)(Private::ArgArray);
-    const char *name;
+	void (*func)(Private::ArgArray);
+	const char *name;
 } FunctTable;
 
 typedef Common::HashMap<Common::String, void *> NameToPtr;
@@ -146,174 +146,174 @@ typedef Common::HashMap<Common::String, Common::Point> CursorPointMap;
 
 class PrivateEngine : public Engine {
 private:
-    Common::RandomSource *_rnd;
-    Graphics::PixelFormat _pixelFormat;
-    Image::ImageDecoder *_image;
-    int _screenW, _screenH;
+	Common::RandomSource *_rnd;
+	Graphics::PixelFormat _pixelFormat;
+	Image::ImageDecoder *_image;
+	int _screenW, _screenH;
 
 public:
-    PrivateEngine(OSystem *syst, const ADGameDescription *gd);
-    ~PrivateEngine();
+	PrivateEngine(OSystem *syst, const ADGameDescription *gd);
+	~PrivateEngine();
 
-    const ADGameDescription *_gameDescription;
-    bool isDemo() const;
+	const ADGameDescription *_gameDescription;
+	bool isDemo() const;
 
-    SymbolMaps maps;
+	SymbolMaps maps;
 
-    Audio::SoundHandle _fgSoundHandle;
-    Audio::SoundHandle _bgSoundHandle;
-    Video::SmackerDecoder *_videoDecoder;
-    Common::InstallShieldV3 _installerArchive;
+	Audio::SoundHandle _fgSoundHandle;
+	Audio::SoundHandle _bgSoundHandle;
+	Video::SmackerDecoder *_videoDecoder;
+	Common::InstallShieldV3 _installerArchive;
 
-    Common::Error run() override;
-    void restartGame();
-    void clearAreas();
-    void initializePath(const Common::FSNode &gamePath) override;
+	Common::Error run() override;
+	void restartGame();
+	void clearAreas();
+	void initializePath(const Common::FSNode &gamePath) override;
 
-    // Functions
+	// Functions
 
-    NameToPtr _functions;
-    void initFuncs();
+	NameToPtr _functions;
+	void initFuncs();
 
-    // User input
-    void selectPauseMovie(Common::Point);
-    void selectMask(Common::Point);
-    void selectExit(Common::Point);
-    void selectLoadGame(Common::Point);
-    void selectSaveGame(Common::Point);
+	// User input
+	void selectPauseMovie(Common::Point);
+	void selectMask(Common::Point);
+	void selectExit(Common::Point);
+	void selectLoadGame(Common::Point);
+	void selectSaveGame(Common::Point);
 
-    // Cursors
-    bool cursorPauseMovie(Common::Point);
-    bool cursorExit(Common::Point);
-    bool cursorMask(Common::Point);
+	// Cursors
+	bool cursorPauseMovie(Common::Point);
+	bool cursorExit(Common::Point);
+	bool cursorMask(Common::Point);
 
-    bool hasFeature(EngineFeature f) const override;
-    bool canLoadGameStateCurrently() override {
-        return true;
-    }
-    bool canSaveAutosaveCurrently() override  {
-        return false;
-    }
-    bool canSaveGameStateCurrently() override {
-        return true;
-    }
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override {
+		return true;
+	}
+	bool canSaveAutosaveCurrently() override  {
+		return false;
+	}
+	bool canSaveGameStateCurrently() override {
+		return true;
+	}
 
-    Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-    Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-    void syncGameStream(Common::Serializer &s);
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	void syncGameStream(Common::Serializer &s);
 
-    Common::String convertPath(const Common::String &);
-    void playVideo(const Common::String &);
-    void skipVideo();
+	Common::String convertPath(const Common::String &);
+	void playVideo(const Common::String &);
+	void skipVideo();
 
-    void loadImage(const Common::String &file, int x, int y);
-    void drawScreenFrame();
+	void loadImage(const Common::String &file, int x, int y);
+	void drawScreenFrame();
 
-    void changeCursor(const Common::String &);
-    void initCursors();
+	void changeCursor(const Common::String &);
+	void initCursors();
 
-    // Rendering
-    Graphics::ManagedSurface *_compositeSurface;
-    Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
-    void drawMask(Graphics::ManagedSurface *);
-    bool inMask(Graphics::ManagedSurface *, Common::Point);
-    uint32 _transparentColor;
-    Common::Rect screenRect;
-    Common::String _framePath;
-    Graphics::Surface *_frame;
-    Common::String _nextVS;
-    void drawScreen();
+	// Rendering
+	Graphics::ManagedSurface *_compositeSurface;
+	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
+	void drawMask(Graphics::ManagedSurface *);
+	bool inMask(Graphics::ManagedSurface *, Common::Point);
+	uint32 _transparentColor;
+	Common::Rect screenRect;
+	Common::String _framePath;
+	Graphics::Surface *_frame;
+	Common::String _nextVS;
+	void drawScreen();
 
-    // settings
-    Common::String _nextSetting;
-    Common::String _pausedSetting;
-    Common::String _currentSetting;
+	// settings
+	Common::String _nextSetting;
+	Common::String _pausedSetting;
+	Common::String _currentSetting;
 
-    Common::String _nextMovie;
-    Common::Point  _origin;
-    bool           _toTake;
+	Common::String _nextMovie;
+	Common::Point  _origin;
+	bool		   _toTake;
 
-    // Dossiers
-    DossierArray _dossiers;
-    unsigned int _dossierSuspect;
-    unsigned int _dossierPage;
-    MaskInfo _dossierNextSuspectMask;
-    MaskInfo _dossierPrevSuspectMask;
-    bool selectDossierNextSuspect(Common::Point);
-    bool selectDossierPrevSuspect(Common::Point);
-    void loadDossier();
+	// Dossiers
+	DossierArray _dossiers;
+	unsigned int _dossierSuspect;
+	unsigned int _dossierPage;
+	MaskInfo _dossierNextSuspectMask;
+	MaskInfo _dossierPrevSuspectMask;
+	bool selectDossierNextSuspect(Common::Point);
+	bool selectDossierPrevSuspect(Common::Point);
+	void loadDossier();
 
-    // Police Bust
-    void policeBust();
-    bool _policeBustEnabled;
-    void startPoliceBust();
-    void checkPoliceBust();
-    int _numberClicks;
-    int _maxNumberClicks;
-    int _sirenWarning;
-    Common::String _policeBustSetting;
+	// Police Bust
+	void policeBust();
+	bool _policeBustEnabled;
+	void startPoliceBust();
+	void checkPoliceBust();
+	int _numberClicks;
+	int _maxNumberClicks;
+	int _sirenWarning;
+	Common::String _policeBustSetting;
 
-    // Diary
-    InvList inventory;
-    Common::String _diaryLocPrefix;
-    void loadLocations(const Common::Rect &);
-    void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
+	// Diary
+	InvList inventory;
+	Common::String _diaryLocPrefix;
+	void loadLocations(const Common::Rect &);
+	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 
-    // Save/Load games
-    MaskInfo _saveGameMask;
-    MaskInfo _loadGameMask;
+	// Save/Load games
+	MaskInfo _saveGameMask;
+	MaskInfo _loadGameMask;
 
-    int _mode;
-    bool _modified;
+	int _mode;
+	bool _modified;
 
-    PlayedMediaTable _playedMovies;
-    PlayedMediaTable _playedPhoneClips;
-    Common::String _repeatedMovieExit;
+	PlayedMediaTable _playedMovies;
+	PlayedMediaTable _playedPhoneClips;
+	Common::String _repeatedMovieExit;
 
-    // Masks/Exits
-    ExitList _exits;
-    MaskList _masks;
+	// Masks/Exits
+	ExitList _exits;
+	MaskList _masks;
 
-    // Sounds
-    void playSound(const Common::String &, uint, bool, bool);
-    void stopSound(bool);
-    bool _noStopSounds;
+	// Sounds
+	void playSound(const Common::String &, uint, bool, bool);
+	void stopSound(bool);
+	bool _noStopSounds;
 
-    Common::String getPaperShuffleSound();
-    Common::String _globalAudioPath;
+	Common::String getPaperShuffleSound();
+	Common::String _globalAudioPath;
 
-    Common::String getTakeSound();
-    Common::String getTakeLeaveSound();
-    Common::String getLeaveSound();
-    Common::String _sirenSound;
+	Common::String getTakeSound();
+	Common::String getTakeLeaveSound();
+	Common::String getLeaveSound();
+	Common::String _sirenSound;
 
-    // Radios
-    Common::String _infaceRadioPath;
-    MaskInfo _AMRadioArea;
-    MaskInfo _policeRadioArea;
-    MaskInfo _phoneArea;
-    Common::String _phonePrefix;
-    Common::String _phoneCallSound;
-    SoundList _AMRadio;
-    SoundList _policeRadio;
-    PhoneList _phone;
+	// Radios
+	Common::String _infaceRadioPath;
+	MaskInfo _AMRadioArea;
+	MaskInfo _policeRadioArea;
+	MaskInfo _phoneArea;
+	Common::String _phonePrefix;
+	Common::String _phoneCallSound;
+	SoundList _AMRadio;
+	SoundList _policeRadio;
+	PhoneList _phone;
 
-    Common::String getRandomPhoneClip(const char *, int, int);
-    void selectAMRadioArea(Common::Point);
-    void selectPoliceRadioArea(Common::Point);
-    void selectPhoneArea(Common::Point);
-    void checkPhoneCall();
+	Common::String getRandomPhoneClip(const char *, int, int);
+	void selectAMRadioArea(Common::Point);
+	void selectPoliceRadioArea(Common::Point);
+	void selectPhoneArea(Common::Point);
+	void checkPhoneCall();
 
-    // Random values
-    bool getRandomBool(uint);
+	// Random values
+	bool getRandomBool(uint);
 
-    // Timers
-    bool installTimer(uint32, Common::String *);
-    void removeTimer();
+	// Timers
+	bool installTimer(uint32, Common::String *);
+	void removeTimer();
 
-    // Cursors
-    CursorDataMap _cursorData;
-    CursorPointMap _cursorPoints;
+	// Cursors
+	CursorDataMap _cursorData;
+	CursorPointMap _cursorPoints;
 };
 
 extern PrivateEngine *g_private;

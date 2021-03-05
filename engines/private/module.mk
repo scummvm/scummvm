@@ -1,17 +1,17 @@
 MODULE := engines/private
- 
+
 MODULE_OBJS := \
-    code.o \
-    cursors.o \
-    funcs.o \
-    grammar.o \
+	code.o \
+	cursors.o \
+	funcs.o \
+	grammar.o \
 	lexer.o \
 	metaengine.o \
-    private.o \
+	private.o \
 	symbol.o
- 
+
 MODULE_DIRS += \
-    engines/private
+	engines/private
 
 # HACK: Skip this when including the file for detection objects.
 ifeq "$(USE_RULES)" "1"
@@ -24,8 +24,8 @@ endif
 ifeq ($(ENABLE_PRIVATE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk
 
 # Detection objects

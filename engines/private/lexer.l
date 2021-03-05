@@ -42,41 +42,41 @@ using namespace Settings;
 %}
 
 %%
-\/\/.*                  /* ignoring the comment */
-\<=                     return LTE;
-\>=                     return GTE;
-!=                      return NEQ;
-==                      return EQ;
-debug                   return DEBUGTOK;
-define                  return DEFINETOK;
-setting                 return SETTINGTOK;
-if                      return IFTOK;
-else                    return ELSETOK;
-goto                    return GOTOTOK;
-RECT                    return RECT;
-FALSE                   return FALSETOK;
-TRUE                    return TRUETOK;
-NULL                    return NULLTOK;
-Random                  return RANDOMTOK;
+\/\/.*				    /* ignoring the comment */
+\<=					    return LTE;
+\>=					    return GTE;
+!=					    return NEQ;
+==					    return EQ;
+debug				    return DEBUGTOK;
+define				    return DEFINETOK;
+setting				    return SETTINGTOK;
+if					    return IFTOK;
+else				    return ELSETOK;
+goto					return GOTOTOK;
+RECT					return RECT;
+FALSE			        return FALSETOK;
+TRUE					return TRUETOK;
+NULL					return NULLTOK;
+Random			        return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
-[\-]?[0-9]+             PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
-\"[^\"\r\n]*\"          PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
-[\r|\n]+                /* ignore return */;
-[ \t]+                  /* ignore whitespace */;
-.                       return *yytext;
+[\-]?[0-9]+		        PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
+\"[^\"\r\n]*\"	        PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+[\r|\n]+				/* ignore return */;
+[ \t]+		            /* ignore whitespace */;
+.				        return *yytext;
 %%
 
 namespace Private {
 
 int parse(char *code) {
-    g_setts->init();
-    YY_BUFFER_STATE bp;
-    yy_delete_buffer(YY_CURRENT_BUFFER);
-    bp = yy_scan_string(code);
-    yy_switch_to_buffer(bp);
-    PRIVATE_parse();
-    yy_delete_buffer(bp);
-    return 0;
+	g_setts->init();
+	YY_BUFFER_STATE bp;
+	yy_delete_buffer(YY_CURRENT_BUFFER);
+	bp = yy_scan_string(code);
+	yy_switch_to_buffer(bp);
+	PRIVATE_parse();
+	yy_delete_buffer(bp);
+	return 0;
 }
 
 } // End of namespace Private

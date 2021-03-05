@@ -26,22 +26,22 @@
 
 class PrivateMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
-        return "private";
-    }
+	const char *getName() const override {
+		return "private";
+	}
 
-    Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-    *engine = new Private::PrivateEngine(syst, gd);
-    return Common::kNoError;
+	*engine = new Private::PrivateEngine(syst, gd);
+	return Common::kNoError;
 }
 
 namespace Private {
 
 bool PrivateEngine::isDemo() const {
-    return (bool)(_gameDescription->flags & ADGF_DEMO);
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
 } // End of namespace Private

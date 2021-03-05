@@ -39,22 +39,22 @@
 namespace Private {
 
 typedef struct Datum {  /* interpreter stack type */
-    short type;
-    union {
-        int  val;
-        const char    *str;
-        Symbol  *sym;
-        Common::Rect *rect;
-    } u;
+	short type;
+	union {
+		int  val;
+		const char	*str;
+		Symbol  *sym;
+		Common::Rect *rect;
+	} u;
 } Datum;
 
 typedef struct Arg {
-    int n;
-    int (** inst)();
+	int n;
+	int (** inst)();
 } Arg;
 
 typedef int (* Inst)();  /* machine instruction */
-#define STOP    (Inst) 0
+#define STOP	(Inst) 0
 
 typedef Common::HashMap<void *, Common::String *> PtrToName;
 
@@ -64,20 +64,20 @@ void initFuncs();
 namespace Settings {
 
 typedef struct Setting {
-    Datum stack[NSTACK]; /* the stack */
-    Inst  prog[NPROG];   /* the machine */
+	Datum stack[NSTACK]; /* the stack */
+	Inst  prog[NPROG];   /* the machine */
 } Setting;
 
 typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
 public:
-    Setting *_setting;
-    SettingMap _map;
+	Setting *_setting;
+	SettingMap _map;
 
-    void init();
-    void save(const char *);
-    void load(const Common::String &);
+	void init();
+	void save(const char *);
+	void load(const Common::String &);
 };
 
 extern SettingMaps *g_setts;
@@ -95,13 +95,13 @@ namespace Gen {
 
 class VM {
 public:
-        Datum *_stack;  /* the stack */
-        Datum *_stackp; /* next free spot on stack */
+	Datum *_stack;  /* the stack */
+	Datum *_stackp; /* next free spot on stack */
 
-        Inst  *_progp;  /* next free spot for code generation */
-        Inst  *_prog;   /* the machine */
-        Inst  *_pc;     /* program counter during execution */
-        void run();     /* run the virtual machine */
+	Inst  *_progp;  /* next free spot for code generation */
+	Inst  *_prog;   /* the machine */
+	Inst  *_pc;	 /* program counter during execution */
+	void run();	 /* run the virtual machine */
 };
 
 extern VM *g_vm;

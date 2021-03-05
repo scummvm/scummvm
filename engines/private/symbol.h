@@ -33,14 +33,14 @@
 
 namespace Private {
 
-typedef struct Symbol {     /* symbol table entry */
-    Common::String *name;
-    short  type;            /* NAME, NUM, STRING or RECT  */
-    union {
-        int val;            /* NAME or NUM */
-        const char *str;    /* STRING */
-        Common::Rect *rect; /* RECT */
-    } u;
+typedef struct Symbol {	 /* symbol table entry */
+	Common::String *name;
+	short  type;			/* NAME, NUM, STRING or RECT  */
+	union {
+		int val;			/* NAME or NUM */
+		const char *str;	/* STRING */
+		Common::Rect *rect; /* RECT */
+	} u;
 } Symbol;
 
 // Symbols
@@ -56,24 +56,24 @@ typedef Common::Queue<Common::Rect *> RectQueue;
 
 class SymbolMaps {
 private:
-    StringQueue stringToDefine;
-    RectQueue rectToDefine;
+	StringQueue stringToDefine;
+	RectQueue rectToDefine;
 
 public:
-    SymbolMap settings; 
-    SymbolMap variables;
-    SymbolMap cursors;
-    SymbolMap locations;
-    SymbolMap rects;
-    ConstantList constants;
-    
-    NameList variableList;
-    NameList locationList;
+	SymbolMap settings;
+	SymbolMap variables;
+	SymbolMap cursors;
+	SymbolMap locations;
+	SymbolMap rects;
+	ConstantList constants;
 
-    Symbol *constant(int t, int d, const char *s);
-    Symbol *lookupName(const char *n);
-    void installAll(const char *n);
-    void defineSymbol(const char *, Common::Rect *);
+	NameList variableList;
+	NameList locationList;
+
+	Symbol *constant(int t, int d, const char *s);
+	Symbol *lookupName(const char *n);
+	void installAll(const char *n);
+	void defineSymbol(const char *, Common::Rect *);
 };
 
 } // End of namespace Private
