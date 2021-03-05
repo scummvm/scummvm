@@ -77,10 +77,9 @@ bool PuzzleBoardKeyHidesTo::mouseLeftDown(const AsylumEvent &) {
 			_solvedText[_position++] = puzzleKeyHidesToData.charMap[index].character;
 			_solvedText[_position++] = ' ';
 
-			if (_position == 5 || _position == 18) {
-				_solvedText[++_position] = ' ';
-				_solvedText[++_position] = ' ';
-				++_position;
+			if (_position == 6 || _position == 18) {
+				_solvedText[_position++] = ' ';
+				_solvedText[_position++] = ' ';
 			}
 
 			updateScreen();
