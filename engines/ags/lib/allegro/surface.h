@@ -217,12 +217,6 @@ private:
 	inline void blendSourceAlpha(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
 		// Used after set_alpha_blender
 		// Uses alpha from source. Result is fully opaque
-		// TODO: Understand why the line below is needed. It is not there in the original code.
-		// But without it we have some display issue for example with some text at the start
-		// of Blackwell Deception. We may incorrectly set the alpha on bitmaps in some cases
-		// causing them to be fully transparent when they should not.
-		if (aSrc == 0)
-			aSrc = 0xff;
 		rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, aSrc);
 		// Original doesn't set alpha (so it is 0), but the function is not meant to be used
 		// on bitmap with transparency. Should we set alpha to 0xff?
