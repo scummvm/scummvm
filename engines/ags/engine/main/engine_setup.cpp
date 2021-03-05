@@ -115,10 +115,10 @@ void convert_objects_to_data_resolution(GameDataVersion filever) {
 		_GP(game).chars[i].y /= mul;
 	}
 
-	for (int i = 0; i < numguiinv; ++i) {
-		guiinv[i].ItemWidth /= mul;
-		guiinv[i].ItemHeight /= mul;
-		guiinv[i].OnResized();
+	for (int i = 0; i < _G(numguiinv); ++i) {
+		_GP(guiinv)[i].ItemWidth /= mul;
+		_GP(guiinv)[i].ItemHeight /= mul;
+		_GP(guiinv)[i].OnResized();
 	}
 }
 

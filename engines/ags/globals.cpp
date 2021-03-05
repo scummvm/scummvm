@@ -29,6 +29,7 @@
 #include "ags/shared/font/wfnfontrenderer.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guiinv.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
@@ -129,6 +130,9 @@ Globals::Globals() {
 	// guibutton.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();
 
+	// guiinv.cpp globals
+	_guiinv = new std::vector<AGS::Shared::GUIInvWindow>();
+
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
@@ -217,6 +221,9 @@ Globals::~Globals() {
 
 	// guibutton.cpp globals
 	delete _guibuts;
+
+	// guiinv.cpp globals
+	delete _guiinv;
 
 	// managedobjectpool.cpp globals
 	delete _pool;

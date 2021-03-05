@@ -44,6 +44,7 @@ class Bitmap;
 class DebugManager;
 struct Font;
 class GUIButton;
+class GUIInvWindow;
 class RoomStruct;
 
 } // namespace Shared
@@ -263,6 +264,16 @@ public:
 
 	std::vector<AGS::Shared::GUIButton> *_guibuts;
 	int _numguibuts = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guiinv globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::GUIInvWindow> *_guiinv;
+	int _numguiinv = 0;
 
 	/**@}*/
 

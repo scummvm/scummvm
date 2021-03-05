@@ -20,16 +20,12 @@
  *
  */
 
-//include <math.h>
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
-
-std::vector<AGS::Shared::GUIInvWindow> guiinv;
-int numguiinv = 0;
 
 namespace AGS {
 namespace Shared {
