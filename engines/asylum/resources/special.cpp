@@ -316,7 +316,7 @@ void Special::chapter4(Object *object, ActorIndex actorIndex) {
 }
 
 void Special::chapter5(Object *object, ActorIndex actorIndex) {
-	setPaletteGamma(MAKE_RESOURCE(kResourcePackShared, 19), getWorld()->currentPaletteId);
+	setPaletteGamma(MAKE_RESOURCE(kResourcePackShared, 59), getWorld()->currentPaletteId);
 
 	playChapterSound(object, actorIndex);
 
