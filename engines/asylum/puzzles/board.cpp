@@ -169,7 +169,7 @@ void PuzzleBoard::playSound() {
 		return;
 
 	if (!_soundResourceId || !getSound()->isPlaying(_soundResourceId)) {
-		_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, 961 + _data.soundResources[index].index);
+		_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, 2401 + _data.soundResources[index].index);
 		getSound()->playSound(_soundResourceId, false, Config.voiceVolume);
 		_data.soundResources[index].played = true;
 	}
