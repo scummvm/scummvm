@@ -30,7 +30,7 @@
 
 namespace Private {
 
-void fChgMode(ArgArray args) {
+static void fChgMode(ArgArray args) {
     // assert types
     assert (args.size() == 2 || args.size() == 3);
     if (args.size() == 2)
@@ -61,14 +61,14 @@ void fChgMode(ArgArray args) {
     }
 }
 
-void fVSPicture(ArgArray args) {
+static void fVSPicture(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "VSPicture(%s)", args[0].u.str);
     g_private->_nextVS = args[0].u.str;
 }
 
 
-void fDiaryLocList(ArgArray args) {
+static void fDiaryLocList(ArgArray args) {
     int x1, y1, x2, y2;
 
     debugC(1, kPrivateDebugScript, "DiaryLocList(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
@@ -84,11 +84,11 @@ void fDiaryLocList(ArgArray args) {
 
 }
 
-void fDiaryGoLoc(ArgArray args) {
+static void fDiaryGoLoc(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: DiaryGoLoc not implemented");
 }
 
-void fDiaryInvList(ArgArray args) {
+static void fDiaryInvList(ArgArray args) {
     debugC(1, kPrivateDebugScript, "DiaryInvList(%d, ..)", args[0].u.val);
 
 	const Common::Rect *r1 = args[1].u.rect;
@@ -97,14 +97,14 @@ void fDiaryInvList(ArgArray args) {
     g_private->loadInventory(args[0].u.val, *r1, *r2);
 }
 
-void fgoto(ArgArray args) {
+static void fgoto(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "goto(%s)", args[0].u.str);
     g_private->_nextSetting = args[0].u.str;
 }
 
 
-void fSyncSound(ArgArray args) {
+static void fSyncSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SyncSound(%s, %s)", args[0].u.str, args[1].u.str);
     g_private->_nextSetting = args[1].u.str;
@@ -115,12 +115,12 @@ void fSyncSound(ArgArray args) {
     }
 }
 
-void fQuit(ArgArray args) {
+static void fQuit(ArgArray args) {
     debugC(1, kPrivateDebugScript, "Quit()");
     g_private->quitGame();
 }
 
-void fLoadGame(ArgArray args) {
+static void fLoadGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "LoadGame(%s, %s)", args[0].u.str, args[2].u.sym->name->c_str());
     MaskInfo m;
@@ -136,7 +136,7 @@ void fLoadGame(ArgArray args) {
     g_private->_masks.push_front(m);
 }
 
-void fSaveGame(ArgArray args) {
+static void fSaveGame(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SaveGame(%s, %s)", args[0].u.str, args[1].u.sym->name->c_str());
 	MaskInfo m;
@@ -152,12 +152,12 @@ void fSaveGame(ArgArray args) {
     g_private->_masks.push_front(m);
 }
 
-void fRestartGame(ArgArray args) {
+static void fRestartGame(ArgArray args) {
     assert(args.size() == 0);
     g_private->restartGame();
 }
 
-void fPoliceBust(ArgArray args) {
+static void fPoliceBust(ArgArray args) {
     // assert types
     assert (args.size() == 1 || args.size() == 2);
     g_private->_policeBustEnabled = args[0].u.val;
@@ -180,7 +180,7 @@ void fPoliceBust(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: PoliceBust partially implemented");
 }
 
-void fBustMovie(ArgArray args) {
+static void fBustMovie(ArgArray args) {
     // assert types
     assert (args.size() == 1);
     debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.str);
@@ -202,7 +202,7 @@ void fBustMovie(ArgArray args) {
     g_private->_nextSetting = args[0].u.str;
 }
 
-void fDossierAdd(ArgArray args) {
+static void fDossierAdd(ArgArray args) {
 
     assert (args.size() == 2);
     Common::String s1 = args[0].u.str;
@@ -219,7 +219,7 @@ void fDossierAdd(ArgArray args) {
     g_private->_dossiers.push_back(m);
 }
 
-void fDossierBitmap(ArgArray args) {
+static void fDossierBitmap(ArgArray args) {
     assert (args.size() == 2);
     int x = args[0].u.val;
     int y = args[1].u.val;
@@ -227,11 +227,11 @@ void fDossierBitmap(ArgArray args) {
     g_private->loadDossier();
 }
 
-void fDossierChgSheet(ArgArray args) {
+static void fDossierChgSheet(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: DossierChgSheet is not implemented");
 }
 
-void fDossierPrevSuspect(ArgArray args) {
+static void fDossierPrevSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
 	MaskInfo m;
@@ -248,7 +248,7 @@ void fDossierPrevSuspect(ArgArray args) {
     g_private->_masks.push_front(m);
 }
 
-void fDossierNextSuspect(ArgArray args) {
+static void fDossierNextSuspect(ArgArray args) {
     assert (args.size() == 3);
     Common::String s(args[0].u.str);
     MaskInfo m;
@@ -265,19 +265,19 @@ void fDossierNextSuspect(ArgArray args) {
     g_private->_masks.push_front(m);
 }
 
-void fNoStopSounds(ArgArray args) {
+static void fNoStopSounds(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "NoStopSounds()");
     g_private->_noStopSounds = true;
 }
 
-void fLoseInventory(ArgArray args) {
+static void fLoseInventory(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "LoveInventory()");
     g_private->inventory.clear();
 }
 
-void fInventory(ArgArray args) {
+static void fInventory(ArgArray args) {
     // assert types
     Datum b1 = args[0];
     Datum v1 = args[1];
@@ -351,14 +351,14 @@ void fInventory(ArgArray args) {
     }
 }
 
-void fSetFlag(ArgArray args) {
+static void fSetFlag(ArgArray args) {
     assert(args.size() == 2);
     assert(args[0].type == NAME && args[1].type == NUM);
     debugC(1, kPrivateDebugScript, "SetFlag(%s, %d)", args[0].u.sym->name->c_str(), args[1].u.val);
     args[0].u.sym->u.val = args[1].u.val;
 }
 
-void fExit(ArgArray args) {
+static void fExit(ArgArray args) {
     // assert types
     assert(args[2].type == RECT || args[2].type == NAME);
     debugC(1, kPrivateDebugScript, "Exit(%d %d %d)", args[0].type, args[1].type, args[2].type); //, args[0].u.str, args[1].u.sym->name->c_str(), "RECT");
@@ -383,19 +383,19 @@ void fExit(ArgArray args) {
     g_private->_exits.push_front(e);
 }
 
-void fSetModifiedFlag(ArgArray args) {
+static void fSetModifiedFlag(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SetModifiedFlag(%d)", args[0].u.val);
     g_private->_modified = args[0].u.val != 0;
 }
 
-void fPaperShuffleSound(ArgArray args) {
+static void fPaperShuffleSound(ArgArray args) {
     assert(args.size() == 0);
     debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
     g_private->playSound(g_private->getPaperShuffleSound(), 1, false, false);
 }
 
-void fSoundEffect(ArgArray args) {
+static void fSoundEffect(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
     Common::String s(args[0].u.str);
@@ -406,7 +406,7 @@ void fSoundEffect(ArgArray args) {
     }
 }
 
-void fSound(ArgArray args) {
+static void fSound(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Sound(%s)", args[0].u.str);
     if (args.size() == 4) {
@@ -430,7 +430,7 @@ void fSound(ArgArray args) {
     }
 }
 
-void fLoopedSound(ArgArray args) {
+static void fLoopedSound(ArgArray args) {
     // assert types
     assert(args.size() == 1);
     debugC(1, kPrivateDebugScript, "LoopedSound(%s)", args[0].u.str);
@@ -443,19 +443,19 @@ void fLoopedSound(ArgArray args) {
     }
 }
 
-void fViewScreen(ArgArray args) {
+static void fViewScreen(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "WARNING: ViewScreen not implemented!");
 }
 
-void fTransition(ArgArray args) {
+static void fTransition(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Transition(%s, %s)", args[0].u.str, args[1].u.str);
     g_private->_nextMovie = args[0].u.str;
     g_private->_nextSetting = args[1].u.str;
 }
 
-void fResume(ArgArray args) {
+static void fResume(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Resume(%d)", args[0].u.val); // this value is always 1
     g_private->_nextSetting = g_private->_pausedSetting;
@@ -464,7 +464,7 @@ void fResume(ArgArray args) {
     g_private->_origin = Common::Point(kOriginOne[0], kOriginOne[1]);
 }
 
-void fMovie(ArgArray args) {
+static void fMovie(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "Movie(%s, %s)", args[0].u.str, args[1].u.str);
     Common::String movie = args[0].u.str;
@@ -483,7 +483,7 @@ void fMovie(ArgArray args) {
     }
 }
 
-void fCRect(ArgArray args) {
+static void fCRect(ArgArray args) {
     // assert types
     debugC(1, kPrivateDebugScript, "CRect(%d, %d, %d, %d)", args[0].u.val, args[1].u.val, args[2].u.val, args[3].u.val);
     int x1, y1, x2, y2;
@@ -499,7 +499,7 @@ void fCRect(ArgArray args) {
     Gen::push(*d);
 }
 
-void fBitmap(ArgArray args) {
+static void fBitmap(ArgArray args) {
     assert(args.size() == 1 || args.size() == 3);
 
     int x = 0;
@@ -516,7 +516,7 @@ void fBitmap(ArgArray args) {
     g_private->loadImage(s, x, y);
 }
 
-void _fMask(ArgArray args, bool drawn) {
+static void _fMask(ArgArray args, bool drawn) {
     assert(args.size() == 3 || args.size() == 5);
 
     int x = 0;
@@ -544,10 +544,10 @@ void _fMask(ArgArray args, bool drawn) {
 
 }
 
-void fMask(ArgArray args) {
+static void fMask(ArgArray args) {
     _fMask(args, false);
 }
-void fMaskDrawn(ArgArray args) {
+static void fMaskDrawn(ArgArray args) {
     _fMask(args, true);
 }
 
@@ -576,17 +576,17 @@ static void fAddSound(Common::String sound, const char *t, Symbol *flag = NULL, 
         error("error: invalid sound type %s", t);
 }
 
-void fAMRadioClip(ArgArray args) {
+static void fAMRadioClip(ArgArray args) {
     assert(args.size() <= 4);
     fAddSound(args[0].u.str, "AMRadioClip");
 }
 
-void fPoliceClip(ArgArray args) {
+static void fPoliceClip(ArgArray args) {
     assert(args.size() <= 4);
     fAddSound(args[0].u.str, "PoliceClip");
 }
 
-void fPhoneClip(ArgArray args) {
+static void fPhoneClip(ArgArray args) {
     if (args.size() == 2) {
         debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
         return;
@@ -603,7 +603,7 @@ void fPhoneClip(ArgArray args) {
     }
 }
 
-void fSoundArea(ArgArray args) {
+static void fSoundArea(ArgArray args) {
     // assert types
     //char *n;
     Common::String n;
@@ -653,17 +653,17 @@ void fSoundArea(ArgArray args) {
     }
 }
 
-void fSafeDigit(ArgArray args) {
+static void fSafeDigit(ArgArray args) {
     debugC(1, kPrivateDebugScript, "WARNING: SafeDigit is not implemented");
 }
 
-void fAskSave(ArgArray args) {
+static void fAskSave(ArgArray args) {
     // This is not needed, since scummvm will take care of this
     debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
     g_private->_nextSetting = args[0].u.str;
 }
 
-void fTimer(ArgArray args) {
+static void fTimer(ArgArray args) {
     assert (args.size() == 2 || args.size() == 3);
 
     if (args.size() == 3)
@@ -683,7 +683,7 @@ void fTimer(ArgArray args) {
     }
 }
 
-FuncTable funcTable[] = {
+const FuncTable funcTable[] = {
 
     // Control flow
     { fChgMode,         "ChgMode"},

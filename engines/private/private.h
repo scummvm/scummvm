@@ -123,7 +123,7 @@ typedef struct FuncTable {
 } FunctTable;
 
 typedef Common::HashMap<Common::String, void *> NameToPtr;
-extern FuncTable funcTable[];
+extern const FuncTable funcTable[];
 
 // lists
 

@@ -57,7 +57,8 @@ void SymbolMaps::defineSymbol(const char *n, Common::Rect *r) {
     rectToDefine.push(r);
 }
 
-void showSymbol(Symbol *s) {
+/*
+static void showSymbol(const Symbol *s) {
     if (s->type == NUM)
         debugC(1, kPrivateDebugCode, "%s %d",s->name->c_str(), s->u.val);
     else if (s->type == STRING)
@@ -67,13 +68,14 @@ void showSymbol(Symbol *s) {
     else
         debugC(1, kPrivateDebugCode, "%s %d", s->name->c_str(), s->type);
 }
+*/
 
 void setSymbol(Symbol *s, int v) {
     s->u.val = v;
 }
 
 /* find s in symbol table symlist */
-Symbol *lookup(const Common::String &s, SymbolMap symlist) {
+static Symbol *lookup(const Common::String &s, SymbolMap symlist) {
     Symbol *r = symlist.getVal(s);
     return r;
 }

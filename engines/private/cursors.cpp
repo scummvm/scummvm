@@ -28,7 +28,7 @@
 
 namespace Private {
 
-const byte MOUSECURSOR_SCI[] = {
+static const byte MOUSECURSOR_SCI[] = {
     1,1,0,0,0,0,0,0,0,0,0,
     1,2,1,0,0,0,0,0,0,0,0,
     1,2,2,1,0,0,0,0,0,0,0,
@@ -47,7 +47,7 @@ const byte MOUSECURSOR_SCI[] = {
     0,0,0,0,0,0,1,2,2,1,0
 };
 
-extern const byte MOUSECURSOR_kExit[] = {
+static const byte MOUSECURSOR_kExit[] = {
     0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,1,3,3,3,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -82,7 +82,7 @@ extern const byte MOUSECURSOR_kExit[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kZoomIn[] = {
+static const byte MOUSECURSOR_kZoomIn[] = {
     0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,1,1,1,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,1,1,2,2,2,2,1,1,1,1,1,2,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -117,7 +117,7 @@ const byte MOUSECURSOR_kZoomIn[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kTurnRight[] = {
+static const byte MOUSECURSOR_kTurnRight[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -152,7 +152,7 @@ const byte MOUSECURSOR_kTurnRight[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kTurnLeft[] = {
+static const byte MOUSECURSOR_kTurnLeft[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -187,7 +187,7 @@ const byte MOUSECURSOR_kTurnLeft[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kInventory[] = {
+static const byte MOUSECURSOR_kInventory[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,3,3,1,1,1,0,0,0,0,0,0,0,0,0,0,0,
@@ -222,7 +222,7 @@ const byte MOUSECURSOR_kInventory[] = {
     0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kZoomOut[] = {
+static const byte MOUSECURSOR_kZoomOut[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -257,7 +257,7 @@ const byte MOUSECURSOR_kZoomOut[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const byte MOUSECURSOR_kPhone[] = {
+static const byte MOUSECURSOR_kPhone[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -292,7 +292,7 @@ const byte MOUSECURSOR_kPhone[] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-extern const byte cursorPalette[] = {
+static const byte cursorPalette[] = {
     0, 0, 0,           // Black / Transparent
     0x01, 0x01, 0x01,  // Gray
     0xff, 0xff, 0xff,  // White
@@ -329,8 +329,8 @@ static struct CursorPointTable {
     { 0,            {0,   0} }
 };
 
-CursorDataMap _cursorData;
-CursorPointMap _cursorPoints;
+static CursorDataMap _cursorData;
+static CursorPointMap _cursorPoints;
 
 void PrivateEngine::initCursors() {
     for (Private::CursorDataTable *cur = Private::cursorDataTable; cur->name; cur++) {
