@@ -33,6 +33,14 @@
 #include "common/hashmap.h"
 #include "common/md5.h"
 
+/**
+ * When detection is compiled dynamically, detection tables end up in detection plugin and
+ * engine cannot link to them so duplicate them in the engine in this case
+ */
+#ifndef DETECTION_STATIC
+#include "ags/detection_tables.h"
+#endif
+
 namespace AGS3 {
 
 extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
