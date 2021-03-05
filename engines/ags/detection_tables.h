@@ -1569,6 +1569,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// hacked to specify plugin, errors on loading room107 saying that
 	// "room animations are no longer supported"
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
+	UNSUPPORTED_GAME_ENTRY("zak2", "TFG - ZAK2.exe", "7971a7c02d414dc8cb33b6ec36080b91", 155632013),
 
 	// AGDI games. They get their own grouping because they're just that awesome
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
