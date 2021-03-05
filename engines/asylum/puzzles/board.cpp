@@ -197,14 +197,8 @@ int32 PuzzleBoard::checkMouse() {
 		if (index < 0 || index >= ARRAYSIZE(_solvedText))
 			return -1;
 
-		if (_solvedText[index] != 0) {
-			if (_data.checkForSpace) {
-				if (_solvedText[index] != ' ')
-					return -3;
-			} else {
-				return -3;
-			}
-		}
+		if (_solvedText[index] != 0 && _solvedText[index] != ' ')
+			return -3;
 	}
 
 	return -1;
@@ -264,7 +258,7 @@ void PuzzleBoard::checkSlots() {
 		int32 index = (mousePos.x - 215) / 12;
 
 		if (_solvedText[index]) {
-			if (_data.checkForSpace && _solvedText[index] == ' ')
+			if (_solvedText[index] == ' ')
 				return;
 
 			if (_selectedSlot == -1) {
