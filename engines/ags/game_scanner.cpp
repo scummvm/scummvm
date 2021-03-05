@@ -33,10 +33,6 @@
 #include "common/hashmap.h"
 #include "common/md5.h"
 
-#ifdef DYNAMIC_MODULES
-#include "ags/detection_tables.h"
-#endif
-
 namespace AGS3 {
 
 extern bool define_gamedata_location(const AGS::Shared::String &exe_path);
@@ -149,7 +145,7 @@ void GameScanner::scanFile(const Common::String &filename) {
 
 		_games.push_back(e);
 	}
-} 
+}
 
 Common::String GameScanner::convertGameNameToId(const Common::String &name) {
 	Common::String result;
