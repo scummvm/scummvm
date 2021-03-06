@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	decoders/aiff.o \
 	decoders/asf.o \
 	decoders/flac.o \
+	decoders/g711.o \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
 	decoders/mp3.o \
