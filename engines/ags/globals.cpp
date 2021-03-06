@@ -110,6 +110,9 @@ Globals::Globals() {
 	_RoomCamRects = new std::vector<DirtyRects>();
 	_RoomCamPositions = new std::vector<std::pair<int, int> >();
 
+	// engine.cpp globals
+	_ResPaths = new ResourcePaths();
+
 	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
 	_ttfRenderer = new TTFFontRenderer();
@@ -230,6 +233,9 @@ Globals::~Globals() {
 	delete _BlackRects;
 	delete _RoomCamRects;
 	delete _RoomCamPositions;
+
+	// engine.cpp globals
+	delete _ResPaths;
 
 	// fonts.cpp globals
 	delete _fonts;

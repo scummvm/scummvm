@@ -102,10 +102,6 @@ extern CharacterInfo *playerchar;
 extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
 
-ResourcePaths ResPaths;
-
-t_engine_pre_init_callback engine_pre_init_callback = nullptr;
-
 #define ALLEGRO_KEYBOARD_HANDLER
 
 bool engine_init_allegro() {
@@ -318,7 +314,7 @@ void engine_locate_speech_pak() {
 			Debug::Printf("Initializing speech vox");
 			if (AssetManager::SetDataFile(speech_filepath) != Shared::kAssetNoError) {
 				platform->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
-				AssetManager::SetDataFile(ResPaths.GamePak.Path); // switch back to the main data pack
+				AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path); // switch back to the main data pack
 				return;
 			}
 			// TODO: why is this read right here??? move this to InitGameState!
@@ -342,16 +338,16 @@ void engine_locate_speech_pak() {
 				}
 				delete speechsync;
 			}
-			AssetManager::SetDataFile(ResPaths.GamePak.Path); // switch back to the main data pack
+			AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path); // switch back to the main data pack
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
 			_GP(play).want_speech = 1;
-		} else if (Path::ComparePaths(ResPaths.DataDir, get_voice_install_dir()) != 0) {
+		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, get_voice_install_dir()) != 0) {
 			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
 			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but voice installation directory is defined: enabling voice-over.");
 			_GP(play).want_speech = 1;
 		}
-		ResPaths.SpeechPak.Name = speech_file;
-		ResPaths.SpeechPak.Path = speech_filepath;
+		_GP(ResPaths).SpeechPak.Name = speech_file;
+		_GP(ResPaths).SpeechPak.Path = speech_filepath;
 	}
 }
 
@@ -361,11 +357,11 @@ void engine_locate_audio_pak() {
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (AssetManager::SetDataFile(music_filepath) == kAssetNoError) {
-			AssetManager::SetDataFile(ResPaths.GamePak.Path);
+			AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path);
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
 			_GP(play).separate_music_lib = 1;
-			ResPaths.AudioPak.Name = music_file;
-			ResPaths.AudioPak.Path = music_filepath;
+			_GP(ResPaths).AudioPak.Name = music_file;
+			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
 			platform->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
 			                       music_file.GetCStr());
@@ -497,15 +493,15 @@ void engine_init_directories() {
 	if (!_GP(usetup).shared_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "Shared data directory: %s", _GP(usetup).shared_data_dir.GetCStr());
 
-	ResPaths.DataDir = _GP(usetup).data_files_dir;
-	ResPaths.GamePak.Path = _GP(usetup).main_data_filepath;
-	ResPaths.GamePak.Name = Shared::Path::get_filename(_GP(usetup).main_data_filepath);
+	_GP(ResPaths).DataDir = _GP(usetup).data_files_dir;
+	_GP(ResPaths).GamePak.Path = _GP(usetup).main_data_filepath;
+	_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(_GP(usetup).main_data_filepath);
 
 	set_install_dir(_GP(usetup).install_dir, _GP(usetup).install_audio_dir, _GP(usetup).install_voice_dir);
 	if (!_GP(usetup).install_dir.IsEmpty()) {
 		// running in debugger: don't redirect to the game exe folder (_Debug)
 		// TODO: find out why we need to do this (and do we?)
-		ResPaths.DataDir = ".";
+		_GP(ResPaths).DataDir = ".";
 	}
 
 	// if end-user specified custom save path, use it
@@ -1144,8 +1140,8 @@ static int al_find_resource(char *dest, const char *resource, int dest_size) {
 // is mixed with game-related data adjustments. Divide it in parts, move game
 // data init into either InitGameState() or other game method as appropriate.
 int initialize_engine(const ConfigTree &startup_opts) {
-	if (engine_pre_init_callback) {
-		engine_pre_init_callback();
+	if (_G(engine_pre_init_callback)) {
+		_G(engine_pre_init_callback)();
 	}
 
 	//-----------------------------------------------------
@@ -1373,7 +1369,7 @@ const char *get_engine_version() {
 }
 
 void engine_set_pre_init_callback(t_engine_pre_init_callback callback) {
-	engine_pre_init_callback = callback;
+	_G(engine_pre_init_callback) = callback;
 }
 
 } // namespace AGS3

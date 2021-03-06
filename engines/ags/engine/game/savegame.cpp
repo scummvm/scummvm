@@ -676,7 +676,7 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	StrUtil::WriteString(_G(EngineVersion).LongString, out);
 	StrUtil::WriteString(_GP(game).guid, out);
 	StrUtil::WriteString(_GP(game).gamename, out);
-	StrUtil::WriteString(ResPaths.GamePak.Name, out);
+	StrUtil::WriteString(_GP(ResPaths).GamePak.Name, out);
 	out->WriteInt32(loaded_game_file_version);
 	out->WriteInt32(_GP(game).GetColorDepth());
 	// User description

@@ -383,7 +383,7 @@ bool GameState::IsNonBlockingVoiceSpeech() const {
 
 bool GameState::ShouldPlayVoiceSpeech() const {
 	return !_GP(play).fast_forward &&
-		(_GP(play).want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
+		(_GP(play).want_speech >= 1) && (!_GP(ResPaths).SpeechPak.Name.IsEmpty());
 }
 
 void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {

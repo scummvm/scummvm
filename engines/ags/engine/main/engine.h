@@ -57,7 +57,6 @@ struct ResourcePaths {
 	PackLocation AudioPak;   // audio package
 	PackLocation SpeechPak;  // voice-over package
 };
-extern ResourcePaths ResPaths;
 
 // Register a callback that will be called before engine is initialised.
 // Used for apps to register their own plugins and other configuration

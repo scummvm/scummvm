@@ -722,7 +722,7 @@ void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs) {
 }
 
 const char *Game_GetFileName() {
-	return CreateNewScriptString(ResPaths.GamePak.Name);
+	return CreateNewScriptString(_GP(ResPaths).GamePak.Name);
 }
 
 const char *Game_GetName() {
@@ -1532,7 +1532,7 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 		return new SavegameError(kSvgErr_DifferentColorDepth, String::FromFormat("Running: %d-bit, saved in: %d-bit.", _GP(game).GetColorDepth(), desc.ColorDepth));
 
 	// saved with different game file
-	if (Path::ComparePaths(desc.MainDataFilename, ResPaths.GamePak.Name)) {
+	if (Path::ComparePaths(desc.MainDataFilename, _GP(ResPaths).GamePak.Name)) {
 		// [IKM] 2012-11-26: this is a workaround, indeed.
 		// Try to find wanted game's executable; if it does not exist,
 		// continue loading savedgame in current game, and pray for the best

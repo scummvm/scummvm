@@ -27,6 +27,7 @@
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_script.h"
+#include "ags/engine/main/engine.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/fixed.h"
@@ -92,6 +93,7 @@ struct ManagedObjectPool;
 struct MoveList;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
+struct ResourcePaths;
 struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
@@ -211,6 +213,16 @@ public:
 	// Saved room camera offsets to know if we must invalidate whole surface.
 	// TODO: if we support rotation then we also need to compare full transform!
 	std::vector<std::pair<int, int> > *_RoomCamPositions;
+
+	/**@}*/
+
+	/**
+	 * \defgroup engine globals
+	 * @{
+	 */
+
+	ResourcePaths *_ResPaths;
+	t_engine_pre_init_callback _engine_pre_init_callback = nullptr;
 
 	/**@}*/
 

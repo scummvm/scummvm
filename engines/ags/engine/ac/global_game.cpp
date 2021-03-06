@@ -246,8 +246,8 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	if ((mode & RAGMODE_LOADNOW) == 0) {
 		// need to copy, since the script gets destroyed
 		get_install_dir_path(gamefilenamebuf, newgame);
-		ResPaths.GamePak.Path = gamefilenamebuf;
-		ResPaths.GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
+		_GP(ResPaths).GamePak.Path = gamefilenamebuf;
+		_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
 		_GP(play).takeover_data = data;
 		load_new_game_restore = -1;
 
@@ -271,8 +271,8 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	// Adjust config (NOTE: normally, RunAGSGame would need a redesign to allow separate config etc per each game)
 	_GP(usetup).translation = ""; // reset to default, prevent from trying translation file of game A in game B
 
-	if (Shared::AssetManager::SetDataFile(ResPaths.GamePak.Path) != Shared::kAssetNoError)
-		quitprintf("!RunAGSGame: unable to load new game file '%s'", ResPaths.GamePak.Path.GetCStr());
+	if (Shared::AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path) != Shared::kAssetNoError)
+		quitprintf("!RunAGSGame: unable to load new game file '%s'", _GP(ResPaths).GamePak.Path.GetCStr());
 
 	show_preload();
 
