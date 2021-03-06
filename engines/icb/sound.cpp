@@ -64,7 +64,6 @@ int32 GetSfxVolume() { return sfxVolume; }
 
 int32 GetMusicVolume() { return musicVolume; }
 
-// TODO: Modify all of this to use 0-255, also syncSoundSettings.
 void SetSpeechVolume(int32 v) {
 	if ((v < 0) || (v > 128))
 		Fatal_error("Speech volume must be 0-128 not %d", v);

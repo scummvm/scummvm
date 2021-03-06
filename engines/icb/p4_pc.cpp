@@ -65,19 +65,45 @@ uint32 SONICS_BUFFER_SIZE;
 // local prototypes
 void Mission_and_console();
 
-uint32 getConfigValueWithDefault(const Common::String &key, uint32 defaultValue) {
-	uint32 result = defaultValue;
-	if (ConfMan.hasKey(key)) {
-		result = ConfMan.getInt(key);
+uint32 getConfigValueWithDefault(const ConfigFile &config, const Common::String &section, const Common::String &key, uint32 defaultValue) {
+	if (scumm_stricmp("MusicVolume", key.c_str()) == 0) {
+		return ConfMan.getInt("music_volume") / 2;
+	} else if (scumm_stricmp("SpeechVolume", key.c_str()) == 0) {
+		return ConfMan.getInt("speech_volume") / 2;
+	} else if (scumm_stricmp("SfxVolume", key.c_str()) == 0) {
+		return ConfMan.getInt("sfx_volume") / 2;
+	} else if (scumm_stricmp("Game Completed", key.c_str()) == 0) {
+		if (ConfMan.hasKey("game_completed"))
+			return ConfMan.getBool("game_completed") ? 1 : 0;
+		else
+			return 0;
+	} else if (scumm_stricmp("Subtitles", key.c_str()) == 0) {
+		if (ConfMan.hasKey("subtitles"))
+			return (uint32)ConfMan.getBool("subtitles");
+	} else if (scumm_stricmp("Movie Library", section.c_str()) == 0) {
+		Common::String movie = Common::String("movie_") + key;
+		if (ConfMan.hasKey(movie))
+			return (uint32)ConfMan.getBool(movie);
+		else {
+			uint32 result = config.readIntSetting(section, key, defaultValue);
+			ConfMan.setBool(movie, result != 0);
+		}
+	} else if (scumm_stricmp("Controller Settings", section.c_str()) == 0 &&
+		   scumm_stricmp("Method", key.c_str()) == 0) {
+		if (ConfMan.hasKey("actor_relative"))
+			return ConfMan.getBool("actor_relative") ? 1 : 0;
+		else {
+			uint32 result = config.readIntSetting(section, key, defaultValue);
+			ConfMan.setBool("actor_relative", result != 0);
+		}
 	}
-	return result;
+
+	return config.readIntSetting(section, key, defaultValue);
 }
 
 void ReadConfigFromIniFile() {
 	char configFile[1024];
 	uint32 temp;
-	const uint32 k128 = 128;
-	const uint32 k0 = 0;
 
 	sprintf(configFile, CONFIG_INI_FILENAME);
 
@@ -87,59 +113,33 @@ void ReadConfigFromIniFile() {
 	config.readFile(filename.c_str());
 
 	// Music volume
-	temp = getConfigValueWithDefault("music_volume", 255); // TODO: Fix the internal volume settings to use 0-255 instead of 0-128
-	temp = MIN(MAX(k0, temp), k128);
-
-	SetMusicVolume(temp);
+	SetMusicVolume(getConfigValueWithDefault(config, "Option Settings", "MusicVolume", 127));
 
 	// Speech volume
-	temp = getConfigValueWithDefault("speech_volume", 255);
-	temp = MIN(MAX(k0, temp), k128);
-	SetSpeechVolume(temp);
+	SetSpeechVolume(getConfigValueWithDefault(config, "Option Settings", "SpeechVolume", 127));
 
 	// Sfx volume
-	temp = getConfigValueWithDefault("sfx_volume", 255);
-	temp = MIN(MAX(k0, temp), k128);
-	SetSfxVolume(temp);
+	SetSfxVolume(getConfigValueWithDefault(config, "Option Settings", "SfxVolume", 127));
 
 	// Has the game been completed previously
-	temp = config.readIntSetting("Extras", pxVString("%X", HashString("Game Completed")), 0);
-
+	temp = getConfigValueWithDefault(config, "Extras", "Game Completed", 0);
 	// HACK: Enable all extras for now
-	temp = 1;
 	warning("Enabling all extras for development purposes");
-
+	temp = 1;
 	if (temp == 0)
 		px.game_completed = FALSE8;
 	else
 		px.game_completed = TRUE8;
 
-	// Let command line switch take priority for this setting (for Daves translations work)
-	// ie only look at ini value if command line hasn't set it already
 	// Subtitle switch
-	temp = false;
-	if (ConfMan.hasKey("subtitles")) {
-		temp = ConfMan.getBool("subtitles");
-	}
+	temp = getConfigValueWithDefault(config, "Video Settings", "Subtitles", 0);
 	if (temp == 0)
 		px.on_screen_text = FALSE8;
 	else
 		px.on_screen_text = TRUE8;
 
-	// Semitransparency switch
-	temp = config.readIntSetting("Video Settings", "Semitransparency", 0);
-
-	if (temp == 0)
-		px.semitransparencies = FALSE8;
-	else
-		px.semitransparencies = TRUE8;
-
-	// Control device
-	temp = config.readIntSetting("Controller Settings", "Device", 0);
-
 	// Control method
-	temp = config.readIntSetting("Controller Settings", "Method", 0);
-
+	temp = getConfigValueWithDefault(config, "Controller Settings", "Method", 0);
 	if ((__Actor_control_mode)temp == SCREEN_RELATIVE)
 		g_icb_session->player.Set_control_mode(SCREEN_RELATIVE);
 	else
@@ -148,51 +148,9 @@ void ReadConfigFromIniFile() {
 	// Set the default keys first in case the ini file mappings are invalid somehow
 	SetDefaultKeys();
 
-	// Keyboard mappings
-	temp = config.readIntSetting("Keyboard Mappings", "Up", 0);
-	if (GetKeyName((uint8)temp))
-		up_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Down", 0);
-	if (GetKeyName((uint8)temp))
-		down_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Left", 0);
-	if (GetKeyName((uint8)temp))
-		left_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Right", 0);
-	if (GetKeyName((uint8)temp))
-		right_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Sidestep", 0);
-	if (GetKeyName((uint8)temp))
-		sidestep_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Run", 0);
-	if (GetKeyName((uint8)temp))
-		run_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Crouch", 0);
-	if (GetKeyName((uint8)temp))
-		crouch_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Interact", 0);
-	if (GetKeyName((uint8)temp))
-		interact_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Arm", 0);
-	if (GetKeyName((uint8)temp))
-		arm_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Attack", 0);
-	if (GetKeyName((uint8)temp))
-		fire_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Inventory", 0);
-	if (GetKeyName((uint8)temp))
-		inventory_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Remora", 0);
-	if (GetKeyName((uint8)temp))
-		remora_key = (uint8)temp;
-	temp = config.readIntSetting("Keyboard Mappings", "Pause", 0);
-	if (GetKeyName((uint8)temp))
-		pause_key = (uint8)temp;
-
 	// Read the movie library settings
 	for (uint32 i = 0; i < TOTAL_NUMBER_OF_MOVIES; i++) {
 		temp = config.readIntSetting("Movie Library", pxVString("%X", HashString(g_movieLibrary[i].filename)), 0);
-
 		if (temp == 0)
 			g_movieLibrary[i].visible = FALSE8;
 		else
@@ -201,80 +159,25 @@ void ReadConfigFromIniFile() {
 }
 
 void Save_config_file() {
-	// Whip some bytes off the stack
-	char configFile[1024];
-	char tempBuff[1024];
-
-	sprintf(configFile, CONFIG_INI_FILENAME);
-	// Should really delete the existing ini file before writing the current settings...
-	remove(configFile);
-
-	ConfigFile config;
-
-	// Update ini file settings when we shutdown correctly
-	sprintf(tempBuff, "%d", GetMusicVolume());
-	config.writeSetting("Option Settings", "MusicVolume", tempBuff);
-	sprintf(tempBuff, "%d", GetSpeechVolume());
-	config.writeSetting("Option Settings", "SpeechVolume", tempBuff);
-	sprintf(tempBuff, "%d", GetSfxVolume());
-	config.writeSetting("Option Settings", "SfxVolume", tempBuff);
-
-	sprintf(tempBuff, "%d", px.on_screen_text);
-	config.writeSetting("Video Settings", "Subtitles", tempBuff);
-	sprintf(tempBuff, "%d", px.semitransparencies);
-	config.writeSetting("Video Settings", "Semitransparency", tempBuff);
-	sprintf(tempBuff, "%d", px.actorShadows);
-
-	sprintf(tempBuff, "%d", g_icb_session->player.Get_control_mode());
-	config.writeSetting("Controller Settings", "Method", pxVString("%d", g_icb_session->player.Get_control_mode()));
-
-	sprintf(tempBuff, "%d", up_key);
-	config.writeSetting("Keyboard Mappings", "Up", tempBuff);
-	sprintf(tempBuff, "%d", down_key);
-	config.writeSetting("Keyboard Mappings", "Down", tempBuff);
-	sprintf(tempBuff, "%d", left_key);
-	config.writeSetting("Keyboard Mappings", "Left", tempBuff);
-	sprintf(tempBuff, "%d", right_key);
-	config.writeSetting("Keyboard Mappings", "Right", tempBuff);
-	sprintf(tempBuff, "%d", sidestep_key);
-	config.writeSetting("Keyboard Mappings", "Sidestep", tempBuff);
-	sprintf(tempBuff, "%d", run_key);
-	config.writeSetting("Keyboard Mappings", "Run", tempBuff);
-	sprintf(tempBuff, "%d", crouch_key);
-	config.writeSetting("Keyboard Mappings", "Crouch", tempBuff);
-	sprintf(tempBuff, "%d", interact_key);
-	config.writeSetting("Keyboard Mappings", "Interact", tempBuff);
-	sprintf(tempBuff, "%d", arm_key);
-	config.writeSetting("Keyboard Mappings", "Arm", tempBuff);
-	sprintf(tempBuff, "%d", fire_key);
-	config.writeSetting("Keyboard Mappings", "Attack", tempBuff);
-	sprintf(tempBuff, "%d", inventory_key);
-	config.writeSetting("Keyboard Mappings", "Inventory", tempBuff);
-	sprintf(tempBuff, "%d", remora_key);
-	config.writeSetting("Keyboard Mappings", "Remora", tempBuff);
-	sprintf(tempBuff, "%d", pause_key);
-	config.writeSetting("Keyboard Mappings", "Pause", tempBuff);
-
-	char temp[1024];
-
-	// Has the game been completed
-	if (px.game_completed) {
-		sprintf(temp, "%X", HashString("Game Completed"));
-
-		config.writeSetting("Extras", temp, "1");
-	}
+	ConfMan.setInt("music_volume", GetMusicVolume() * 2);
+	ConfMan.setInt("speech_volume", GetMusicVolume() * 2);
+	ConfMan.setInt("sfx_volume", GetMusicVolume() * 2);
+	ConfMan.setBool("subtitles", px.on_screen_text != 0);
+	ConfMan.setBool("game_completed", px.game_completed);
+	ConfMan.setBool("actor_relative", g_icb_session->player.Get_control_mode() == ACTOR_RELATIVE);
 
 	// Write the movie library settings
 	for (uint32 i = 0; i < TOTAL_NUMBER_OF_MOVIES; i++) {
 		// Only write a setting when it's been achieved
 		if (g_movieLibrary[i].visible) {
+			char temp[1024];
 			sprintf(temp, "%X", HashString(g_movieLibrary[i].filename));
-			sprintf(tempBuff, "%d", g_movieLibrary[i].visible);
-
-			config.writeSetting("Movie Library", temp, tempBuff);
+			Common::String movie = Common::String("movie_") + temp;
+			ConfMan.setBool(movie, true);
 		}
 	}
-	// TODO: implement handling config manager
+
+	ConfMan.flushToDisk();
 }
 
 void InitEngine(const char *lpCmdLine) {
