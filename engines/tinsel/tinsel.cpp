@@ -1030,7 +1030,7 @@ Common::Error TinselEngine::run() {
 
 		initGraphics(width, height, &noirFormat);
 
-		_screenSurface.create(width, height, noirFormat);
+		_screenSurface.create(width, 432, noirFormat);
 	} else if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE
 		initGraphics(640, 480);
