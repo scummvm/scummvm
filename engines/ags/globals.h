@@ -95,6 +95,7 @@ struct ScriptSystem;
 struct SOUNDCLIP;
 struct SpriteListEntry;
 struct StaticArray;
+struct SystemImports;
 struct ViewStruct;
 
 class SpriteCache;
@@ -461,6 +462,16 @@ public:
 	std::vector<String> *_characterScriptObjNames;
 	String *_objectScriptObjNames;
 	std::vector<String> *_guiScriptObjNames;
+
+	/**@}*/
+
+	/**
+	 * \defgroup script globals
+	 * @{
+	 */
+
+	SystemImports *_simp;
+	SystemImports *_simp_for_plugin;
 
 	/**@}*/
 

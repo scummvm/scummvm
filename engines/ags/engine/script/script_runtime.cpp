@@ -43,45 +43,46 @@
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h"
 #include "ags/engine/ac/statobj/staticobject.h"
 #include "ags/plugins/plugin_base.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 extern ccInstance *current_instance; // in script/cc_instance
 
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
-	return simp.add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) == 0;
 }
 
 bool ccAddExternalPluginFunction(const String &name, void *pfn) {
-	return simp.add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
 }
 
 bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager) {
-	return simp.add(name, RuntimeScriptValue().SetStaticObject(ptr, manager), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetStaticObject(ptr, manager), nullptr) == 0;
 }
 
 bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr) {
-	return simp.add(name, RuntimeScriptValue().SetStaticArray(ptr, array_mgr), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetStaticArray(ptr, array_mgr), nullptr) == 0;
 }
 
 bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject *manager) {
-	return simp.add(name, RuntimeScriptValue().SetDynamicObject(ptr, manager), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetDynamicObject(ptr, manager), nullptr) == 0;
 }
 
 bool ccAddExternalObjectFunction(const String &name, ScriptAPIObjectFunction *pfn) {
-	return simp.add(name, RuntimeScriptValue().SetObjectFunction(pfn), nullptr) == 0;
+	return _GP(simp).add(name, RuntimeScriptValue().SetObjectFunction(pfn), nullptr) == 0;
 }
 
 bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prval, ccInstance *inst) {
-	return simp.add(name, prval, inst) == 0;
+	return _GP(simp).add(name, prval, inst) == 0;
 }
 
 void ccRemoveExternalSymbol(const String &name) {
-	simp.remove(name);
+	_GP(simp).remove(name);
 }
 
 void ccRemoveAllSymbols() {
-	simp.clear();
+	_GP(simp).clear();
 }
 
 ccInstance *loadedInstances[MAX_LOADED_INSTANCES] = { nullptr,
@@ -95,7 +96,7 @@ void nullfree(void *data) {
 }
 
 void *ccGetSymbolAddress(const String &name) {
-	const ScriptImport *import = simp.getByName(name);
+	const ScriptImport *import = _GP(simp).getByName(name);
 	if (import) {
 		return import->Value.Ptr;
 	}
@@ -103,16 +104,16 @@ void *ccGetSymbolAddress(const String &name) {
 }
 
 bool ccAddExternalFunctionForPlugin(const String &name, void *pfn) {
-	return simp_for_plugin.add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
+	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
 }
 
 void *ccGetSymbolAddressForPlugin(const String &name) {
-	const ScriptImport *import = simp_for_plugin.getByName(name);
+	const ScriptImport *import = _GP(simp_for_plugin).getByName(name);
 	if (import) {
 		return import->Value.Ptr;
 	} else {
 		// Also search the internal symbol table for non-function symbols
-		import = simp.getByName(name);
+		import = _GP(simp).getByName(name);
 		if (import) {
 			return import->Value.Ptr;
 		}

@@ -486,7 +486,7 @@ int ccInstance::Run(int32_t curpc) {
 					codeOp.Args[i].SetStringLiteral(&codeInst->strings[0] + codeInst->code[pc_at]);
 					break;
 				case FIXUP_IMPORT: {
-					const ScriptImport *import = simp.getByIndex((int32_t)codeInst->code[pc_at]);
+					const ScriptImport *import = _GP(simp).getByIndex((int32_t)codeInst->code[pc_at]);
 					if (import) {
 						codeOp.Args[i] = import->Value;
 					} else {
@@ -1415,7 +1415,7 @@ void ccInstance::Free() {
 	if (instanceof != nullptr) {
 		instanceof->instances--;
 		if (instanceof->instances == 0) {
-			simp.RemoveScriptExports(this);
+			_GP(simp).RemoveScriptExports(this);
 		}
 	}
 
@@ -1471,7 +1471,7 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 			continue;
 		}
 
-		resolved_imports[i] = simp.get_index_of(scri->imports[i]);
+		resolved_imports[i] = _GP(simp).get_index_of(scri->imports[i]);
 		if (resolved_imports[i] < 0) {
 			cc_error("unresolved import '%s'", scri->imports[i]);
 			return false;
@@ -1594,7 +1594,7 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 			// must fixup the following instruction in certain case
 		{
 			int import_index = resolved_imports[code[fixup]];
-			const ScriptImport *import = simp.getByIndex(import_index);
+			const ScriptImport *import = _GP(simp).getByIndex(import_index);
 			if (!import) {
 				cc_error("cannot resolve import, key = %d", import_index);
 				return false;
@@ -1674,7 +1674,7 @@ bool ccInstance::FixupArgument(intptr_t code_value, char fixup_type, RuntimeScri
         break;
     case FIXUP_IMPORT:
         {
-            const ScriptImport *import = simp.getByIndex((int32_t)code_value);
+            const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
             if (import)
             {
                 argument = import->Value;

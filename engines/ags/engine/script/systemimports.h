@@ -63,11 +63,6 @@ public:
 	void clear();
 };
 
-extern SystemImports simp;
-// This is to register symbols exclusively for plugins, to allow them
-// perform old style unsafe function calls
-extern SystemImports simp_for_plugin;
-
 } // namespace AGS3
 
 #endif

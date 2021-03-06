@@ -20,16 +20,11 @@
  *
  */
 
-//include <stdlib.h>
-//include <string.h>
 #include "ags/engine/script/systemimports.h"
 
 namespace AGS3 {
 
 extern void quit(const char *);
-
-SystemImports simp;
-SystemImports simp_for_plugin;
 
 int SystemImports::add(const String &name, const RuntimeScriptValue &value, ccInstance *anotherscr) {
 	int ixof;

@@ -64,6 +64,7 @@
 #include "ags/engine/script/executingscript.h"
 #include "ags/engine/script/nonblockingscriptfunction.h"
 #include "ags/engine/script/script.h"
+#include "ags/engine/script/systemimports.h"
 
 namespace AGS3 {
 
@@ -155,7 +156,7 @@ Globals::Globals() {
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
 
-	// script.cpp
+	// script.cpp globals
 	_scripts = new ExecutingScript[MAX_SCRIPT_AT_ONCE];
 	_gamescript = new PScript();
 	_dialogScriptsScript = new PScript();
@@ -175,6 +176,10 @@ Globals::Globals() {
 	_characterScriptObjNames = new std::vector<String>();
 	_objectScriptObjNames = new String[MAX_ROOM_OBJECTS];
 	_guiScriptObjNames = new std::vector<String>();
+
+	// systemimports.cpp globals
+	_simp = new SystemImports();
+	_simp_for_plugin = new SystemImports();
 }
 
 Globals::~Globals() {
