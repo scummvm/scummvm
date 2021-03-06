@@ -407,7 +407,6 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 		m_Surfaces[from_id]->m_colorKeyEnable = false;
 	}
 
-	// TODO: Check that the sizes match.
 	if (pDestRect) {
 		if (pSrcRect) {
 			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, srcRect,
@@ -418,8 +417,15 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 		}
 	} else {
 		if (pSrcRect) {
-			copyRectToSurface(dstSurface, srcSurface, 0, 0, srcRect,
+			uint16 dstX = dstSurface->w - srcRect.right;
+			copyRectToSurface(dstSurface, srcSurface, dstX, 0, srcRect,
 			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
+			if (dstX != 0) {
+				dstSurface->fillRect(Common::Rect(0, 0, dstX - 1, dstSurface->h), 0);
+			} else {
+				dstSurface->fillRect(Common::Rect(dstX + (dstSurface->w - srcRect.left), 0,
+				                                  dstSurface->w, dstSurface->h), 0);
+			}
 		} else {
 			copyRectToSurface(dstSurface, srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
 			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);

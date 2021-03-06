@@ -44,6 +44,7 @@
 #include "common/events.h"
 #include "common/textconsole.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 namespace ICB {
 
@@ -6843,52 +6844,60 @@ void OptionsManager::DrawSlideShow() {
 		sprintf(art2DCluster, ICON_CLUSTER_PATH);
 
 		uint8 *slideptr = rs1->Res_open(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
+		uint32 slideLen = rs_bg->Fetch_size(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
 
 		// This slide is bink compressed
-		HBINK binkHandle = BinkOpen((const char *)slideptr, BINKFROMMEMORY | BINKNOSKIP);
+		Video::BinkDecoder *binkDecoder = new Video::BinkDecoder();
+		binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 
-		if (binkHandle == NULL)
-			Fatal_error("BinkOpen Failed with %s", BinkGetError());
+		Common::MemoryReadStream *stream = new Common::MemoryReadStream((byte *)slideptr, slideLen);
+		if (!stream) {
+			Fatal_error("Failed open bink file");
+		}
+		if (!binkDecoder->loadStream(stream)) {
+			Fatal_error("Failed open bink file");
+		}
 
 		// Verify image dimensions
-		if (binkHandle->Width > SCREEN_WIDTH || binkHandle->Height > SCREEN_DEPTH)
+		if (binkDecoder->getWidth() > SCREEN_WIDTH || binkDecoder->getHeight() > SCREEN_DEPTH)
 			Fatal_error("Slide image is too large to fit screen!");
 
 		// Let bink do it stuff
-		BinkDoFrame(binkHandle);
+		const Graphics::Surface *surfaceBink = binkDecoder->decodeNextFrame();
+		if (!surfaceBink)
+			Fatal_error("Filaed get slide image!");
 
 		// Lock the buffers now so bink has somewhere ot put it's data
-		void *surface = (void *)surface_manager->Lock_surface(m_mySlotSurface1ID);
-		uint32 pitch = surface_manager->Get_pitch(m_mySlotSurface1ID);
-
-		// Go Bink go ...
-		uint32 binkFlags = BINKNOSKIP;
-		if (surface_manager->Get_BytesPP(m_mySlotSurface1ID) == 3) {
-			binkFlags |= BINKSURFACE24;
-		} else if (surface_manager->Get_BytesPP(m_mySlotSurface1ID) == 4) {
-			binkFlags |= BINKSURFACE32;
-		}
+		uint8 *surface = (uint8 *)surface_manager->Lock_surface(m_mySlotSurface1ID);
+		uint16 pitch = surface_manager->Get_pitch(m_mySlotSurface1ID);
+		uint32 height = surface_manager->Get_height(m_mySlotSurface1ID);
 
 		// Screen coordinates
 		uint32 m_x = 0;
 		uint32 m_y = 0;
 
 		// Centre of the screen please
-		if (binkHandle->Width != SCREEN_WIDTH) {
-			m_x = (SCREEN_WIDTH / 2) - (binkHandle->Width / 2);
+		if (binkDecoder->getWidth() != SCREEN_WIDTH) {
+			m_x = (SCREEN_WIDTH / 2) - (binkDecoder->getWidth() / 2);
 		}
-		if (binkHandle->Height != SCREEN_DEPTH) {
-			m_y = (SCREEN_DEPTH / 2) - (binkHandle->Height / 2);
+		if (binkDecoder->getHeight() != SCREEN_DEPTH) {
+			m_y = (SCREEN_DEPTH / 2) - (binkDecoder->getHeight() / 2);
 		}
 
-		BinkCopyToBuffer(binkHandle, surface, pitch, SCREEN_DEPTH, m_x, m_y, binkFlags);
+		for (int i = 0; i < surfaceBink->h; i++) {
+			if (i + m_y >= height) {
+				break;
+			}
+			memcpy(surface + (m_x * 4) + (i + m_y) * pitch, surfaceBink->getBasePtr(0, i), MIN(surfaceBink->pitch, pitch));
+		}
 
 		// Get the first pixel colour
 		m_slideFillColour = *((int32 *)surface + m_x + (m_y * pitch));
 
 		surface_manager->Unlock_surface(m_mySlotSurface1ID);
 
-		BinkClose(binkHandle);
+		binkDecoder->close();
+		delete binkDecoder;
 
 		// Update the screen
 		surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, NULL, NULL, 0);

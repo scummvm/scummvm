@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	animation_mega_set.o \
 	async_generic.o \
 	barriers.o \
-	bink_stub.o \
 	bone.o \
 	breath.o \
 	camera.o \
