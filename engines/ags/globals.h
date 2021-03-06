@@ -47,6 +47,7 @@ class GUIButton;
 class GUIInvWindow;
 class GUILabel;
 class GUIListBox;
+class GUISlider;
 class RoomStruct;
 
 } // namespace Shared
@@ -296,6 +297,16 @@ public:
 
 	std::vector<AGS::Shared::GUIListBox> *_guilist;
 	int _numguilist = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guislider globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::GUISlider> *_guislider;
+	int _numguislider = 0;
 
 	/**@}*/
 

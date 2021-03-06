@@ -32,6 +32,7 @@
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guilabel.h"
 #include "ags/shared/gui/guilistbox.h"
+#include "ags/shared/gui/guislider.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
@@ -141,6 +142,9 @@ Globals::Globals() {
 	// guilistbox.cpp globals
 	_guilist = new std::vector<AGS::Shared::GUIListBox>();
 
+	// guislider.cpp globals
+	_guislider = new std::vector<AGS::Shared::GUISlider>();
+
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
@@ -238,6 +242,9 @@ Globals::~Globals() {
 
 	// guilistbox.cpp globals
 	delete _guilist;
+
+	// guislider.cpp globals
+	delete _guislider;
 
 	// managedobjectpool.cpp globals
 	delete _pool;
