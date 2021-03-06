@@ -22,7 +22,7 @@
 
 #include "trecision/graphics.h"
 
-#include <common/system.h>
+#include "common/system.h"
 
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
@@ -31,22 +31,41 @@
 #include "trecision/trecision.h"
 
 namespace Trecision {
+
+const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
+
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
-	const Graphics::PixelFormat kVideoFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
 	_linearMode = true;
 	_locked = false;
 	_pitch = 0;
 	_screenPtr = nullptr;
-	
-	initGraphics(MAXX, MAXY, &kVideoFormat);
-
-	clearScreen();
-
-	_screenFormat = g_system->getScreenFormat();
-	_vm->getColorMask(_screenFormat);
 }
 
 GraphicsManager::~GraphicsManager() {}
+
+bool GraphicsManager::initScreen() {
+	const Graphics::PixelFormat *bestFormat = &kImageFormat;
+
+	// Find a 16-bit format, currently we don't support other color depths
+	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = formats.begin(); i != formats.end(); ++i) {
+		if (i->bytesPerPixel == 2) {
+			bestFormat = &*i;
+			break;
+		}
+	}
+	initGraphics(MAXX, MAXY, bestFormat);
+
+	_screenFormat = g_system->getScreenFormat();
+	if (_screenFormat.bytesPerPixel != 2)
+		return false;
+	_bitMask[0] = _screenFormat.rMax() << _screenFormat.rShift;
+	_bitMask[1] = _screenFormat.gMax() << _screenFormat.gShift;
+	_bitMask[2] = _screenFormat.bMax() << _screenFormat.bShift;
+
+	clearScreen();
+	return true;
+}
 
 /*------------------------------------------------
 					lock
@@ -223,19 +242,21 @@ void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
 /* ------------------------------------------------
 					palTo16bit
  --------------------------------------------------*/
-uint16 GraphicsManager::palTo16bit(uint8 r, uint8 g, uint8 b) {
+uint16 GraphicsManager::palTo16bit(uint8 r, uint8 g, uint8 b) const {
 	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
 /* ------------------------------------------------
 				updatePixelFormat
  --------------------------------------------------*/
-void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) {
-	uint8 r, g, b;
+void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
+	if (_screenFormat == kImageFormat)
+		return;
 
-	for (int a = 0; a < len; a++) {
+	uint8 r, g, b;
+	for (uint32 a = 0; a < len; a++) {
 		uint16 t = p[a];
-		color2RGB(t, &r, &g, &b);
+		kImageFormat.colorToRGB(t, r, g, b);
 		p[a] = _screenFormat.RGBToColor(r, g, b);
 	}
 }
@@ -243,34 +264,13 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) {
 /* ------------------------------------------------
 				restorePixelFormat
  --------------------------------------------------*/
-uint16 GraphicsManager::restorePixelFormat(uint16 t) {
+uint16 GraphicsManager::restorePixelFormat(uint16 t) const {
+	if (_screenFormat == kImageFormat)
+		return t;
+
 	uint8 r, g, b;
 	_screenFormat.colorToRGB(t, r, g, b);
-	return (RGB2Color(r, g, b));
-}
-
-/*------------------------------------------------
-  color2RGB - Returns a 8bit RGB from a high color
---------------------------------------------------*/
-void GraphicsManager::color2RGB(uint16 a, uint8 *r, uint8 *g, uint8 *b) {
-	*r = (uint8)(((uint16)((uint16)a >> 10L) & 0x1F) << 3);
-	*g = (uint8)(((uint16)((uint16)a >> 5L) & 0x1F) << 3);
-	*b = (uint8)(((uint16)((uint16)a) & 0x1F) << 3);
-}
-
-/*------------------------------------------------
-  ColorRGB - Returns a high color from a 8bit RGB
---------------------------------------------------*/
-uint16 GraphicsManager::RGB2Color(uint8 r, uint8 g, uint8 b) {
-	r >>= 3;
-	g >>= 3;
-	b >>= 3;
-
-	uint16 a = (uint16)(((uint16)(b & 0x1F) & 0x1F) +
-	                  ((uint16)((uint16)(g & 0x1F) << 5L) & 0x3E0) +
-	                  ((uint16)((uint16)(r & 0x1F) << 10L) & 0x7C00));
-
-	return a;
+	return (uint16)kImageFormat.RGBToColor(r, g, b);
 }
 
 } // end of namespace

@@ -34,15 +34,20 @@ private:
 
 	Graphics::PixelFormat _screenFormat;
 
-public :
+	static const Graphics::PixelFormat kImageFormat;
+
+public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 	
 	bool _linearMode;
 	bool _locked;
 	uint16 _pitch;
+	uint16 _bitMask[3];
 
 	uint16 *_screenPtr;
+
+	bool initScreen();
 
 	void lock();
 	void unlock();
@@ -53,11 +58,9 @@ public :
 	void BCopy(uint32 Sco, uint8 *Src, uint32 Len);
 	void DCopy(uint32 Sco, uint8 *Src, uint32 Len);
 
-	uint16 palTo16bit(uint8 r, uint8 g, uint8 b);
-	void updatePixelFormat(uint16 *p, uint32 len);
-	uint16 restorePixelFormat(uint16 t);
-	void color2RGB(uint16 a, uint8 *r, uint8 *g, uint8 *b);
-	uint16 RGB2Color(uint8 r, uint8 g, uint8 b);
+	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
+	void updatePixelFormat(uint16 *p, uint32 len) const;
+	uint16 restorePixelFormat(uint16 t) const;
 
 }; // end of class
 
