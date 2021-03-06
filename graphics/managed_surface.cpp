@@ -246,6 +246,10 @@ void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &src
 
 void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, const uint32 *srcPalette) {
+
+	if (destRect.isEmpty())
+		return;
+
 	const int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	const int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 
