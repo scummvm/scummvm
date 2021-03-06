@@ -4324,6 +4324,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
+	case 83:
+		mapping = NoirMapping{"HIDETAG", HIDETAG, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 86:
 		mapping = NoirMapping{"OP86", ZZZZZZ, 2};
 		pp -= mapping.numArgs - 1;
@@ -5024,7 +5029,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case HIDEREFER:
-		// DW2 only
+		// DW2 / Noir
 		HideRefer(pp[0]);
 		return -1;
 
