@@ -36,7 +36,7 @@ try:
 	else:
 		scummvm_game_id = sys.argv[2]
 
-	print("{\n\t\"%s\",\n\tCommon::STEAM_ACHIEVEMENTS,\n\t\"%s\",\n\t{" % (scummvm_game_id, steam_game_id))
+	print("\t{\n\t\t\"%s\",\n\t\tCommon::STEAM_ACHIEVEMENTS,\n\t\t\"%s\",\n\t\t{" % (scummvm_game_id, steam_game_id))
 	for i in range(entries):
 		idx       = achievements_columns * i
 		ach_id    = achievements_rows[idx + 0].text.strip()
@@ -44,10 +44,10 @@ try:
 		ach_title = ach_text.split('\n')[0].replace('"','\\"')
 		ach_desc  = ach_text.split('\n')[1].replace('"','\\"')
 		if ach_desc == "Hidden.":
-			print("\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
+			print("\t\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
 		else:
-			print("\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
+			print("\t\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
 
-	print("\t\tACHIEVEMENTS_LISTEND\n\t}\n},")
+	print("\t\t\tACHIEVEMENTS_LISTEND\n\t\t}\n\t},")
 except requests.exceptions.RequestException as e:
 	print(e)
