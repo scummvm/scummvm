@@ -880,10 +880,6 @@ void _game_session::One_logic_cycle() {
 				if (!first_session_cycle)
 					Process_player_floor_status(); // sends events when object gains same floor as player
 
-				// async
-				if (!M->dead)
-					Service_generic_async(); // servive live megas
-
 				// process hold mode options
 				// has on-camera-only mode and is not on screen - then sleep again
 				if ((L->hold_mode == mega_player_floor_hold) && (!M->on_players_floor))

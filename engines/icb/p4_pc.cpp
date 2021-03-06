@@ -203,24 +203,24 @@ void InitEngine(const char *lpCmdLine) {
 	Memory_stats();
 
 	// Animations
-	rs1 = new res_man(ANIMATION_BUFFER_SIZE, false); // TODO: Should be true, but threads are broken atm.
+	rs1 = new res_man(ANIMATION_BUFFER_SIZE);
 	rs1->Set_auto_timeframe_advance();
 	rs_anims = rs1;
 
 	// Icons, Fonts and Remora
-	rs3 = new res_man(BITMAP_BUFFER_SIZE, false);
+	rs3 = new res_man(BITMAP_BUFFER_SIZE);
 	rs3->Set_auto_timeframe_advance();
 	rs_icons = rs3;
 	rs_remora = rs3;
 	rs_font = rs3;
 
 	// Stage
-	rs2 = new res_man(BACKGROUND_BUFFER_SIZE, false);
+	rs2 = new res_man(BACKGROUND_BUFFER_SIZE);
 	rs2->Set_auto_timeframe_advance();
 	rs_bg = rs2;
 
 	// Privates
-	private_session_resman = new res_man(PRIVATE_RESMAN_SIZE, false); // size, no ASYNC
+	private_session_resman = new res_man(PRIVATE_RESMAN_SIZE);
 
 	// Initalize the Revolution Render Device
 	InitRevRenderDevice();

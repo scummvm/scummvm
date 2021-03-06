@@ -36,14 +36,6 @@
 
 namespace ICB {
 
-typedef struct async_PacketType {
-	pxString fn;
-	uint8 *p;
-	int32 size;
-	int32 zipped;
-	int32 memListNo;
-} async_PacketType;
-
 bool checkFileExists(const char *fullpath);
 
 Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String &filename);

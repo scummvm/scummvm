@@ -309,13 +309,9 @@ void _icon_menu::PreloadIcon(const char *pcIconPath, const char *pcIconName) {
 	char pcFullIconName[MAXLEN_URL];
 	sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_EXT);
 
-#if defined(_PSX)
-	const char *pcFullIconName = pcIconName;
-#endif // #if defined(_PSX)
-
 	// Open the icon resource.
 	nFullIconNameHash = NULL_HASH;
-	rs_icons->Res_async_open(pcFullIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+	rs_icons->Res_open(pcFullIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 }
 
 const char *_icon_menu::GetLastSelection() {

@@ -897,7 +897,7 @@ mcodeFunctionReturnCodes _game_session::speak_preload_custom_anim(int32 &, int32
 	II->has_custom_path_built = FALSE8;
 
 	// start preloading
-	rs_anims->Res_async_open(II->get_anim_name(__NON_GENERIC), II->anim_name_hash[__NON_GENERIC], II->base_path, II->base_path_hash); //
+	rs_anims->Res_open(II->get_anim_name(__NON_GENERIC), II->anim_name_hash[__NON_GENERIC], II->base_path, II->base_path_hash); //
 
 	MM->custom = FALSE8;
 

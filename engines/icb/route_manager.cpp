@@ -306,10 +306,6 @@ mcodeFunctionReturnCodes _game_session::fn_tiny_route(int32 &result, int32 *para
 
 		Tdebug("route_async.txt", "%s tiny", object->GetName());
 
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy())
 			return IR_REPEAT;
@@ -365,10 +361,6 @@ mcodeFunctionReturnCodes _game_session::fn_room_route(int32 &result, int32 *para
 	//			IR_REPEAT
 
 	if (L->looping < 2) {
-		//		dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;
@@ -409,10 +401,6 @@ mcodeFunctionReturnCodes _game_session::fn_sharp_route(int32 &result, int32 *par
 	bool8 route_res;
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;
@@ -469,10 +457,6 @@ mcodeFunctionReturnCodes _game_session::fn_laser_route(int32 &result, int32 *par
 	//			IR_REPEAT
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;
@@ -516,10 +500,6 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 	}
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[1], (bool8)params[2]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;
@@ -575,10 +555,6 @@ mcodeFunctionReturnCodes _game_session::fn_interact_near_mega(int32 &result, int
 	len = (PXreal)((sub1 * sub1) + (sub2 * sub2));
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;
@@ -834,10 +810,6 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 	len = (int32)((sub1 * sub1) + (sub2 * sub2));
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)run, (bool8)initial_turn))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy())
 			return IR_REPEAT;
@@ -916,10 +888,6 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_marker(int32 &result, int32 
 	const char *marker_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	if (L->looping < 2) {
-		// dont continue until all route related anims have asynced into memory
-		if (!Route_async_ready((bool8)params[2], (bool8)params[3]))
-			return IR_REPEAT;
-
 		// check for free router
 		if (Is_router_busy()) {
 			return IR_REPEAT;

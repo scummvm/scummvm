@@ -621,11 +621,11 @@ mcodeFunctionReturnCodes _game_session::fn_reverse_generic_anim(int32 &, int32 *
 	if (L->looping == 100) {
 		// setup
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		L->cur_anim_type = M->next_anim_type; // anim now in memory
@@ -680,11 +680,11 @@ mcodeFunctionReturnCodes _game_session::fn_play_generic_anim(int32 &, int32 *par
 
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		// anim found and started ok
@@ -752,11 +752,11 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim(int32 &, int32
 	if (L->looping == 100) {
 		// setup
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		L->cur_anim_type = M->next_anim_type; // anim now in memory
@@ -818,11 +818,11 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim_with_pan(int32
 		// setup
 
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		L->cur_anim_type = M->next_anim_type; // anim now in memory
@@ -889,11 +889,11 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim_with_pan(int32 
 	// anim is in memory so do first frame then pass on to normal logic path
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place
@@ -938,11 +938,11 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_last_frame_generic_anim(int32 
 	}
 
 	// psx async loading check - is file in memory
-	if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+	if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 		return IR_REPEAT;
 
 	if ((Object_visible_to_camera(cur_id)) &&
-	    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+	    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 		return IR_REPEAT;
 
 	L->cur_anim_type = M->next_anim_type; // anim now in memory
@@ -974,11 +974,11 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_first_frame_generic_anim(int32
 	}
 
 	// psx async loading check - is file in memory
-	if (!rs_anims->Res_async_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
+	if (!rs_anims->Res_open(I->get_info_name(M->next_anim_type), I->info_name_hash[M->next_anim_type], I->base_path, I->base_path_hash))
 		return IR_REPEAT;
 
 	if ((Object_visible_to_camera(cur_id)) &&
-	    (!rs_anims->Res_async_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
+	    (!rs_anims->Res_open(I->get_anim_name(M->next_anim_type), I->anim_name_hash[M->next_anim_type], I->base_path, I->base_path_hash)))
 		return IR_REPEAT;
 
 	L->cur_anim_type = M->next_anim_type; // anim now in memory
@@ -1005,10 +1005,10 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_first_frame_custom_anim(int32 
 	}
 
 	// psx async loading check - is file in memory
-	if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+	if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 		return IR_REPEAT;
 
-	if ((Object_visible_to_camera(cur_id)) && (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+	if ((Object_visible_to_camera(cur_id)) && (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 		return IR_REPEAT;
 
 	I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place
@@ -1035,10 +1035,10 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_last_frame_custom_anim(int32 &
 	}
 
 	// psx async loading check - is file in memory
-	if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+	if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 		return IR_REPEAT;
 
-	if ((Object_visible_to_camera(cur_id)) && (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+	if ((Object_visible_to_camera(cur_id)) && (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 		return IR_REPEAT;
 
 	I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place
@@ -1110,11 +1110,11 @@ mcodeFunctionReturnCodes _game_session::fn_prime_custom_anim(int32 &, int32 *par
 	// anim is in memory so do first frame then pass on to normal logic path
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 	}
 
@@ -1143,11 +1143,11 @@ mcodeFunctionReturnCodes _game_session::fn_play_custom_anim(int32 &result, int32
 	// anim is in memory so do first frame then pass on to normal logic path
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place
@@ -1184,11 +1184,11 @@ mcodeFunctionReturnCodes _game_session::fn_reverse_custom_anim(int32 &, int32 *p
 	// anim is in memory so do first frame then pass on to normal logic path
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place
@@ -1236,11 +1236,11 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim(int32 &result, 
 	// anim is in memory so do first frame then pass on to normal logic path
 	if (L->looping == 100) {
 		// psx async loading check - is file in memory
-		if (!rs_anims->Res_async_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
+		if (!rs_anims->Res_open(I->get_info_name(__NON_GENERIC), I->info_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash))
 			return IR_REPEAT;
 
 		if ((Object_visible_to_camera(cur_id)) &&
-		    (!rs_anims->Res_async_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
+		    (!rs_anims->Res_open(I->get_anim_name(__NON_GENERIC), I->anim_name_hash[__NON_GENERIC], I->base_path, I->base_path_hash)))
 			return IR_REPEAT;
 
 		I->Promote_non_generic(); // swap out the _NON_GENERIC to safe place

@@ -290,7 +290,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 		}
 
 		// start psx asyncing the anim - may already be doing so if scripts are written properly!
-		if (rs_anims->Res_async_open(I->get_info_name(anim), I->info_name_hash[anim], I->base_path, I->base_path_hash) == 0)
+		if (rs_anims->Res_open(I->get_info_name(anim), I->info_name_hash[anim], I->base_path, I->base_path_hash) == 0)
 			return IR_REPEAT;
 
 		// we are now looping, having done the init
@@ -431,7 +431,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 			anim = Fetch_generic_anim_from_ascii(anim_name);
 
 		// in memory yet?
-		if (rs_anims->Res_async_open(I->get_info_name(anim), I->info_name_hash[anim], I->base_path, I->base_path_hash)) {
+		if (rs_anims->Res_open(I->get_info_name(anim), I->info_name_hash[anim], I->base_path, I->base_path_hash)) {
 			L->cur_anim_type = anim;
 			L->anim_pc = 0;
 			L->looping = 4; // go straight to play anim

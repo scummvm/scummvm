@@ -384,7 +384,6 @@ void _game_session::Camera_director() {
 
 				// force in the anims of megas not playing stand - techs and the like
 				MS->One_logic_cycle();
-				rs_anims->async_flush();
 			}
 		}
 	}

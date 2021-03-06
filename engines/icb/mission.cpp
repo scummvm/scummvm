@@ -361,9 +361,6 @@ uint32 _mission::Game_cycle() {
 
 	rs_anims->Garbage_removal();
 
-	// check async
-	rs1->async_checkArray();
-
 	// update the sound engine
 	UpdateHearableSounds();
 
@@ -1137,10 +1134,8 @@ __load_result Load_game(const char *filename) {
 
 	// run a logic cycle to get those anims caching!
 	MS->One_logic_cycle();
-	rs_anims->async_flush();
 	MS->Camera_director();
 	MS->One_logic_cycle();
-	rs_anims->async_flush();
 
 	return __LOAD_OK;
 }
