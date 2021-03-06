@@ -29,6 +29,7 @@
 #include "ags/shared/script/cc_script.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
+#include "ags/lib/allegro/fixed.h"
 
 namespace AGS3 {
 
@@ -54,6 +55,7 @@ class RoomStruct;
 } // namespace Shared
 } // namespace AGS
 
+class Navigation;
 class SplitLines;
 class TTFFontRenderer;
 class WFNFontRenderer;
@@ -417,6 +419,20 @@ public:
 	char _return_to_roomedit[30] = { '\0' };
 	char _return_to_room[150] = { '\0' };
 	char _quit_message[256] = { '\0' };
+
+	 /**@}*/
+
+	/**
+	 * \defgroup route_finder_impl globals
+	 * @{
+	 */
+
+	int32_t *_navpoints;
+	Navigation *_nav;
+	int _num_navpoints = 0;
+	fixed _move_speed_x = 0, _move_speed_y = 0;
+	AGS::Shared::Bitmap *_wallscreen = nullptr;
+	int _lastcx = 0, _lastcy = 0;
 
 	 /**@}*/
 

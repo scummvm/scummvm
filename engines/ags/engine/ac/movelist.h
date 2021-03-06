@@ -39,6 +39,7 @@ using namespace AGS; // FIXME later
 
 #define MAXNEEDSTAGES 256
 #define MAXNEEDSTAGES_LEGACY 40
+#define MAXNAVPOINTS MAXNEEDSTAGES
 
 struct MoveList {
 	int32_t pos[MAXNEEDSTAGES];

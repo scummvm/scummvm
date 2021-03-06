@@ -37,8 +37,10 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/movelist.h"
 #include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screenoverlay.h"
 #include "ags/engine/ac/spritelistentry.h"
 #include "ags/engine/ac/dynobj/cc_dialog.h"
@@ -156,6 +158,10 @@ Globals::Globals() {
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
 
+	// route_finder_impl.cpp globals
+	_navpoints = new int32_t[MAXNEEDSTAGES];
+	_nav = new Navigation();
+
 	// script.cpp globals
 	_scripts = new ExecutingScript[MAX_SCRIPT_AT_ONCE];
 	_gamescript = new PScript();
@@ -263,6 +269,10 @@ Globals::~Globals() {
 
 	// overlay.cpp globals
 	delete _screenover;
+
+	// route_finder_impl.cpp globals
+	delete _navpoints;
+	delete _nav;
 
 	// script.cpp globals
 	delete[] _scripts;
