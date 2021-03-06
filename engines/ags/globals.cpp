@@ -31,6 +31,7 @@
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guilabel.h"
+#include "ags/shared/gui/guilistbox.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/gamestate.h"
@@ -137,6 +138,9 @@ Globals::Globals() {
 	// guilabel.cpp globals
 	_guilabels = new std::vector<AGS::Shared::GUILabel>();
 
+	// guilistbox.cpp globals
+	_guilist = new std::vector<AGS::Shared::GUIListBox>();
+
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
@@ -231,6 +235,9 @@ Globals::~Globals() {
 
 	// guilabel.cpp globals
 	delete _guilabels;
+
+	// guilistbox.cpp globals
+	delete _guilist;
 
 	// managedobjectpool.cpp globals
 	delete _pool;

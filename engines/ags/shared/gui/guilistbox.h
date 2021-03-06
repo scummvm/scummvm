@@ -98,9 +98,6 @@ private:
 } // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Shared::GUIListBox> guilist;
-extern int numguilist;
-
 } // namespace AGS3
 
 #endif

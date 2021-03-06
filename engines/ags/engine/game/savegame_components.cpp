@@ -562,9 +562,9 @@ HSaveError WriteGUI(PStream out) {
 		guitext[i].WriteToSavegame(out.get());
 
 	WriteFormatTag(out, "GUIListBoxes");
-	out->WriteInt32(numguilist);
-	for (int i = 0; i < numguilist; ++i)
-		guilist[i].WriteToSavegame(out.get());
+	out->WriteInt32(_G(numguilist));
+	for (int i = 0; i < _G(numguilist); ++i)
+		_GP(guilist)[i].WriteToSavegame(out.get());
 
 	// Animated buttons
 	WriteFormatTag(out, "AnimatedButtons");
@@ -622,10 +622,10 @@ HSaveError ReadGUI(PStream in, int32_t cmp_ver, const PreservedParams &pp, Resto
 
 	if (!AssertFormatTagStrict(err, in, "GUIListBoxes"))
 		return err;
-	if (!AssertGameContent(err, in->ReadInt32(), numguilist, "GUI ListBoxes"))
+	if (!AssertGameContent(err, in->ReadInt32(), _G(numguilist), "GUI ListBoxes"))
 		return err;
-	for (int i = 0; i < numguilist; ++i)
-		guilist[i].ReadFromSavegame(in.get(), svg_ver);
+	for (int i = 0; i < _G(numguilist); ++i)
+		_GP(guilist)[i].ReadFromSavegame(in.get(), svg_ver);
 
 	// Animated buttons
 	if (!AssertFormatTagStrict(err, in, "AnimatedButtons"))

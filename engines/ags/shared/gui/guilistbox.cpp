@@ -28,9 +28,6 @@
 
 namespace AGS3 {
 
-std::vector<AGS::Shared::GUIListBox> guilist;
-int numguilist = 0;
-
 namespace AGS {
 namespace Shared {
 

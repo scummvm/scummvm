@@ -341,7 +341,7 @@ HError GUIMain::RebuildArray() {
 		else if (thistype == kGUITextBox)
 			_controls[i] = &guitext[thisnum];
 		else if (thistype == kGUIListBox)
-			_controls[i] = &guilist[thisnum];
+			_controls[i] = &_GP(guilist)[thisnum];
 		else
 			return new Error(String::FromFormat("GUIMain (%d): unknown control type %d in ref #%d", ID, thistype, i));
 
@@ -759,10 +759,10 @@ HError ReadGUI(std::vector<GUIMain> &theGuis, Stream *in, bool is_savegame) {
 	}
 	if (GameGuiVersion >= kGuiVersion_230) {
 		// list boxes
-		numguilist = in->ReadInt32();
-		guilist.resize(numguilist);
-		for (int i = 0; i < numguilist; ++i) {
-			guilist[i].ReadFromFile(in, GameGuiVersion);
+		_G(numguilist) = in->ReadInt32();
+		_GP(guilist).resize(_G(numguilist));
+		for (int i = 0; i < _G(numguilist); ++i) {
+			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
 	return ResortGUI(theGuis, GameGuiVersion < kGuiVersion_272e);
@@ -796,9 +796,9 @@ void WriteGUI(const std::vector<GUIMain> &theGuis, Stream *out) {
 	for (int i = 0; i < numguitext; ++i) {
 		guitext[i].WriteToFile(out);
 	}
-	out->WriteInt32(numguilist);
-	for (int i = 0; i < numguilist; ++i) {
-		guilist[i].WriteToFile(out);
+	out->WriteInt32(_G(numguilist));
+	for (int i = 0; i < _G(numguilist); ++i) {
+		_GP(guilist)[i].WriteToFile(out);
 	}
 }
 
