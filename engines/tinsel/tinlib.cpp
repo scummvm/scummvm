@@ -4369,6 +4369,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
+	case 121:
+		mapping = NoirMapping{"POSTTAG", POSTTAG, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 124:
 		mapping = NoirMapping{"PRINTTAG", PRINTTAG, 1};
 		pp -= mapping.numArgs - 1;
@@ -5321,7 +5326,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -2;
 
 	case POSTTAG:
-		// DW2 only
+		// DW2 / Noir
 		pp -= 1;			// 2 parameters
 		PostTag(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->hPoly, pic->myEscape);
 		return -2;
