@@ -390,7 +390,7 @@ public:
 	virtual void receiveHit(ObjId other, Direction dir, int damage, uint16 type);
 
 	//! fire the given weapon type in the given direction from location x, y, z.
-	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char findtarget);
+	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, bool findtarget);
 
 	//! get the distance (in map tiles) if we were to fire in this direction to "other"
 	//! and could hit, otherwise return 0.

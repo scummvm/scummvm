@@ -1166,7 +1166,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	return 0;
 }
 
-uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char findtarget) {
+uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, bool findtarget) {
 	int32 ix, iy, iz;
 	getLocation(ix, iy, iz);
 
@@ -1192,104 +1192,108 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	// CHECKME: the original doesn't exclude the source like this,
 	// but it seems obvious we have to or NPCs shoot themselves?
 	bool isvalid = currentmap->isValidPosition(ix, iy, iz, BULLET_SPLASH_SHAPE, _objId, nullptr, nullptr, &blocker);
+
 	if (!isvalid && blocker) {
 		Item *block = getItem(blocker->getObjId());
 		Point3 blockpt;
 		block->getLocation(blockpt);
 		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix, dirmode_8dirs);
 		block->receiveHit(getObjId(), damagedir, damage, firetype);
-		int splashdamage = firetypedat->getRandomDamage();
-		firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
-
-		firetypedat->makeBulletSplashShapeAndPlaySound(ix, iy, iz);
+		if (firetypedat->getRange() != 0) {
+			int splashdamage = firetypedat->getRandomDamage();
+			firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
+		}
+		if (firetypedat->getNearSprite())
+			firetypedat->makeBulletSplashShapeAndPlaySound(ix, iy, iz);
 		return 0;
-	} else {
-		int spriteframe = 0;
-		switch (firetype) {
-		case 3:
-		case 9:
-		case 10:
-			spriteframe = dir + 0x11;
-			break;
-		case 5:
-			spriteframe = dir + 1;
-			break;
-		case 6:
-			spriteframe = 0x46;
-			break;
-		case 0xe:
-			spriteframe = 0x47 + getRandom() % 5;
-			break;
-		case 0xf:
-			spriteframe = 0x4c;
-			break;
-		}
-
-		// HACK: this should be fixed to use inheritence so the behavior
-		// is clean for both Item and Actor.
-		DirectionMode dirmode = dirmode_8dirs;
-		const Actor *thisactor = dynamic_cast<Actor *>(this);
-		if (thisactor) {
-			// TODO: Get damage for active inventory item
-			dirmode = thisactor->animDirMode(thisactor->getLastAnim());
-		}
-
-		Item *target = nullptr;
-		if (findtarget) {
-			if (this != getControlledActor()) {
-				target = getControlledActor();
-			} else {
-				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
-			}
-		}
-
-		int32 tx = -1;
-		int32 ty = 0;
-		int32 tz = 0;
-		if (target) {
-			target->getCentre(tx, ty, tz);
-			tz = target->getTargetZRelativeToAttackerZ(getZ());
-		}
-
-		// TODO: check if we need the equivalent of FUN_1130_0299 here..
-		// maybe not? It seems to reset the target reticle etc which we
-		// handle differently.
-
-		int numshots = firetypedat->getNumShots();
-		uint16 spriteprocpid = 0;
-		for (int i = 0; i < numshots; i++) {
-			SuperSpriteProcess *ssp;
-			CrosshairProcess *chp = CrosshairProcess::get_instance();
-			assert(chp);
-			Item *crosshair = getItem(chp->getItemNum());
-			int32 ssx, ssy, ssz;
-			if (tx != -1) {
-				// Shoot toward the target
-				ssx = tx;
-				ssy = ty;
-				ssz = tz;
-			} else if (this == getControlledActor() && crosshair) {
-				// Shoot toward the crosshair
-				crosshair->getLocation(ssx, ssy, ssz);
-				ssz = iz;
-			} else {
-				// Just send the projectile off into the distance
-				// CHECKME: This is not how the game does it - it has different
-				// tables (at 1478:129b and 1478:12ac). Check the logic here.
-				ssx = ix + Direction_XFactor(dir) * 0x500;
-				ssy = iy + Direction_YFactor(dir) * 0x500;
-				ssz = iz;
-			}
-
-			uint16 targetid = (target ? target->getObjId() : 0);
-			ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
-										 ix, iy, iz, ssx, ssy, ssz, firetype,
-										 damage, _objId, targetid, findtarget);
-			Kernel::get_instance()->addProcess(ssp);
-			spriteprocpid = ssp->getPid();
-		}
-		return spriteprocpid;
 	}
+
+	int spriteframe = 0; // fire types 1, 2, 0xb, 0xd
+	switch (firetype) {
+	case 3:
+	case 9:
+	case 10:
+		spriteframe = dir + 0x11;
+		break;
+	case 5:
+		spriteframe = dir + 1;
+		break;
+	case 6:
+		spriteframe = 0x46;
+		break;
+	case 0xe:
+		spriteframe = 0x47 + getRandom() % 5;
+		break;
+	case 0xf:
+		spriteframe = 0x4c;
+		break;
+	default:
+		break;
+	}
+
+	// HACK: this should be fixed to use inheritence so the behavior
+	// is clean for both Item and Actor.
+	DirectionMode dirmode = dirmode_8dirs;
+	const Actor *thisactor = dynamic_cast<Actor *>(this);
+	if (thisactor) {
+		// TODO: Get damage for active inventory item if not a weapon?
+		dirmode = thisactor->animDirMode(thisactor->getLastAnim());
+	}
+
+	Item *target = nullptr;
+	if (findtarget) {
+		if (this != getControlledActor()) {
+			target = getControlledActor();
+		} else {
+			target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
+		}
+	}
+
+	int32 tx = -1;
+	int32 ty = 0;
+	int32 tz = 0;
+	if (target) {
+		target->getCentre(tx, ty, tz);
+		tz = target->getTargetZRelativeToAttackerZ(getZ());
+	}
+
+	// TODO: check if we need the equivalent of FUN_1130_0299 here..
+	// maybe not? It seems to reset the target reticle etc which we
+	// handle differently.
+
+	int numshots = firetypedat->getNumShots();
+	uint16 spriteprocpid = 0;
+	for (int i = 0; i < numshots; i++) {
+		SuperSpriteProcess *ssp;
+		CrosshairProcess *chp = CrosshairProcess::get_instance();
+		assert(chp);
+		Item *crosshair = getItem(chp->getItemNum());
+		int32 ssx, ssy, ssz;
+		if (tx != -1) {
+			// Shoot toward the target
+			ssx = tx;
+			ssy = ty;
+			ssz = tz;
+			findtarget = true;
+		} else if (this == getControlledActor() && crosshair) {
+			// Shoot toward the crosshair
+			crosshair->getLocation(ssx, ssy, ssz);
+			ssz = iz;
+		} else {
+			// Just send the projectile off into the distance
+			ssx = ix + Direction_XFactor(dir) * 0x500;
+			ssy = iy + Direction_YFactor(dir) * 0x500;
+			ssz = iz;
+		}
+
+		uint16 targetid = (target ? target->getObjId() : 0);
+		ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
+									 ix, iy, iz, ssx, ssy, ssz, firetype,
+									 damage, _objId, targetid, findtarget);
+		Kernel::get_instance()->addProcess(ssp);
+		spriteprocpid = ssp->getPid();
+	}
+	return spriteprocpid;
 }
 
 uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) {
@@ -3836,11 +3840,11 @@ uint32 Item::I_fireWeapon(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_SINT16(z);
 	ARG_UINT16(dir);
 	ARG_UINT16(firetype);
-	ARG_UINT16(unkflag);
+	ARG_UINT16(findtarget);
 
 	if (!item) return 0;
 
-	return item->fireWeapon(x * 2, y * 2, z, Direction_FromUsecodeDir(dir), firetype, unkflag);
+	return item->fireWeapon(x * 2, y * 2, z, Direction_FromUsecodeDir(dir), firetype, findtarget != 0);
 }
 
 uint32 Item::I_fireDistance(const uint8 *args, unsigned int /*argsize*/) {

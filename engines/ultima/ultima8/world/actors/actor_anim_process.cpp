@@ -494,7 +494,6 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 	if (!f->is_cruattack())
 		return;
 
-	// TODO: there is some special casing in the game for larger weapons here..
 	const Item *wpn = getItem(a->getActiveWeapon());
 	if (!wpn)
 		return;
@@ -502,8 +501,12 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 	if (!wpninfo || !wpninfo->_weaponInfo)
 		return;
 
+	if (a->getObjId() == 1 && wpninfo->_weaponInfo->_damageType == 6) {
+		warning("TODO: implement AutoFirerProcess for Crusader");
+	}
+
 	a->fireWeapon(f->cru_attackx(), f->cru_attacky(), f->cru_attackz(),
-				  a->getDir(), wpninfo->_weaponInfo->_damageType, 1);
+				  a->getDir(), wpninfo->_weaponInfo->_damageType, true);
 
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc)
