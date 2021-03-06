@@ -62,6 +62,7 @@ class InputManager;
 class SoundManager;
 class GraphicsManager;
 class CursorManager;
+class CheatDialog;
 
 namespace State {
 class Logo;
@@ -125,6 +126,7 @@ public:
 	void setGameState(GameState state, bool keepGraphics = false);
 	GameState getGameState() const { return _gameFlow.minGameState; }
 	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
+	void callCheatMenu(bool eventFlags) { setGameState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
 
 	void setMouseEnabled(bool enabled);
 
@@ -173,7 +175,6 @@ protected:
 		uint16 height;
 	};
 
-
 	struct GameFlow {
 		GameState minGameState;
 		GameState previousGameState;
@@ -187,13 +188,14 @@ protected:
 	ImageList _objects;
 	int32 _fontSize;
 
+	bool _cheatTypeIsEventFlag;
+
 	void preloadCals(const IFF &boot);
 	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
 	Common::String readFilename(Common::ReadStream *stream) const;
 
 	virtual uint getFilenameLen() const = 0;
 	virtual void readBootSummary(const IFF &boot) = 0;
-
 
 private:
 	static NancyEngine *s_Engine;

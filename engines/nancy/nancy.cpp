@@ -32,6 +32,7 @@
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/cheat.h"
 
 #include "common/system.h"
 #include "common/random.h"
@@ -126,7 +127,7 @@ Common::Error NancyEngine::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
-
+	
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
 		if (!stream)
 			error("Failed to open data1.cab");
@@ -134,7 +135,7 @@ Common::Error NancyEngine::run() {
 		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
 	if (cab)
 		SearchMan.add("data1.hdr", cab);
-
+	
 	_res = new ResourceManager(this);
 	_res->initialize();
 
@@ -165,6 +166,20 @@ Common::Error NancyEngine::run() {
 		case kMap:
 			map->process();
 			break;
+		case kCheat: {
+			if (_cheatTypeIsEventFlag) {
+				EventFlagDialog *dialog = new EventFlagDialog(this);
+				dialog->runModal();
+				delete dialog;
+			} else {
+				CheatDialog *dialog = new CheatDialog(this);
+				dialog->runModal();
+				delete dialog;
+			}
+			setGameState(getPreviousGameState());
+			input->forceCleanInput();
+			break;
+		}
 		case kIdle:
 		default:
 			break;

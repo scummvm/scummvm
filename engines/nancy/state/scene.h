@@ -64,6 +64,7 @@ class Scene {
     friend class Nancy::Action::ActionManager;
     friend class Nancy::NancyConsole;
     friend class Nancy::NancyEngine;
+    friend class Nancy::CheatDialog;
 public:
     struct SceneSummary { // SSUM
         Common::String description;             // 0x00
