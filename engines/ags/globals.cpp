@@ -70,6 +70,7 @@
 #include "ags/engine/debugging/messagebuffer.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/executingscript.h"
 #include "ags/engine/script/nonblockingscriptfunction.h"
 #include "ags/engine/script/script.h"
@@ -154,6 +155,9 @@ Globals::Globals() {
 	_StaticRegionArray = new StaticArray();
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
+
+	// global_dialog.cpp globals
+	_last_in_dialog_request_script_pos = new ScriptPosition();
 
 	// guibutton.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();
@@ -280,6 +284,9 @@ Globals::~Globals() {
 	delete _StaticRegionArray;
 	delete _StaticInventoryArray;
 	delete _StaticDialogArray;
+
+	// global_dialog.cpp globals
+	delete _last_in_dialog_request_script_pos;
 
 	// guibutton.cpp globals
 	delete _guibuts;

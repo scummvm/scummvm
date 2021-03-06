@@ -36,10 +36,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
 extern DialogTopic *dialog;
 
-ScriptPosition last_in_dialog_request_script_pos;
 void RunDialog(int tum) {
 	if ((tum < 0) | (tum >= _GP(game).numdialog))
 		quit("!RunDialog: invalid topic number specified");
@@ -51,11 +49,11 @@ void RunDialog(int tum) {
 			_GP(play).stop_dialog_at_end = DIALOG_NEWTOPIC + tum;
 		else
 			quitprintf("!RunDialog: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
-				last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
+				_GP(last_in_dialog_request_script_pos).Section.GetCStr(), _GP(last_in_dialog_request_script_pos).Line);
 		return;
 	}
 
-	get_script_position(last_in_dialog_request_script_pos);
+	get_script_position(_GP(last_in_dialog_request_script_pos));
 
 	if (_G(inside_script))
 		_G(curscript)->queue_action(ePSARunDialog, tum, "RunDialog");
@@ -70,7 +68,7 @@ void StopDialog() {
 		debug_script_log("StopDialog called but no dialog");
 		return;
 	}
-	get_script_position(last_in_dialog_request_script_pos);
+	get_script_position(_GP(last_in_dialog_request_script_pos));
 	_GP(play).stop_dialog_at_end = DIALOG_STOP;
 }
 

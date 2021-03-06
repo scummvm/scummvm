@@ -104,6 +104,7 @@ struct ScriptGUI;
 struct ScriptHotspot;
 struct ScriptInvItem;
 struct ScriptObject;
+struct ScriptPosition;
 struct ScriptRegion;
 struct ScriptString;
 struct ScriptSystem;
@@ -327,6 +328,15 @@ public:
 	StaticArray *_StaticRegionArray;
 	StaticArray *_StaticInventoryArray;
 	StaticArray *_StaticDialogArray;
+
+	/**@}*/
+
+	/**
+	 * \defgroup global_dialog globals
+	 * @{
+	 */
+
+	ScriptPosition *_last_in_dialog_request_script_pos;
 
 	/**@}*/
 
