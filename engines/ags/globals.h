@@ -228,6 +228,22 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup file globals
+	 * @{
+	 */
+
+	// TODO: the asset path configuration should certainly be revamped at some
+	// point, with uniform method of configuring auxiliary paths and packages.
+	// Installation directory, may contain absolute or relative path
+	String _installDirectory;
+	// Installation directory, containing audio files
+	String _installAudioDirectory;
+	// Installation directory, containing voice-over files
+	String _installVoiceDirectory;
+
+	/**@}*/
+
+	/**
 	 * \defgroup fonts globals
 	 * @{
 	 */

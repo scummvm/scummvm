@@ -58,16 +58,6 @@ using namespace AGS::Shared;
 extern AGSPlatformDriver *platform;
 extern int MAXSTRLEN;
 
-// TODO: the asset path configuration should certainly be revamped at some
-// point, with uniform method of configuring auxiliary paths and packages.
-
-// Installation directory, may contain absolute or relative path
-String installDirectory;
-// Installation directory, containing audio files
-String installAudioDirectory;
-// Installation directory, containing voice-over files
-String installVoiceDirectory;
-
 // object-based File routines
 
 int File_Exists(const char *fnmm) {
@@ -475,42 +465,42 @@ bool DoesAssetExistInLib(const AssetPath &assetname) {
 
 void set_install_dir(const String &path, const String &audio_path, const String &voice_path) {
 	if (path.IsEmpty())
-		installDirectory = ".";
+		_G(installDirectory) = ".";
 	else
-		installDirectory = Path::MakePathNoSlash(path);
+		_G(installDirectory) = Path::MakePathNoSlash(path);
 	if (audio_path.IsEmpty())
-		installAudioDirectory = ".";
+		_G(installAudioDirectory) = ".";
 	else
-		installAudioDirectory = Path::MakePathNoSlash(audio_path);
+		_G(installAudioDirectory) = Path::MakePathNoSlash(audio_path);
 	if (voice_path.IsEmpty())
-		installVoiceDirectory = ".";
+		_G(installVoiceDirectory) = ".";
 	else
-		installVoiceDirectory = Path::MakePathNoSlash(voice_path);
+		_G(installVoiceDirectory) = Path::MakePathNoSlash(voice_path);
 }
 
 String get_install_dir() {
-	return installDirectory;
+	return _G(installDirectory);
 }
 
 String get_audio_install_dir() {
-	return installAudioDirectory;
+	return _G(installAudioDirectory);
 }
 
 String get_voice_install_dir() {
-	return installVoiceDirectory;
+	return _G(installVoiceDirectory);
 }
 
 void get_install_dir_path(char *buffer, const char *fileName) {
-	sprintf(buffer, "%s/%s", installDirectory.GetCStr(), fileName);
+	sprintf(buffer, "%s/%s", _G(installDirectory).GetCStr(), fileName);
 }
 
 String find_assetlib(const String &filename) {
 	String libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir, filename));
 	if (AssetManager::IsDataFile(libname))
 		return libname;
-	if (Path::ComparePaths(_GP(ResPaths).DataDir, installDirectory) != 0) {
+	if (Path::ComparePaths(_GP(ResPaths).DataDir, _G(installDirectory)) != 0) {
 		// Hack for running in Debugger
-		libname = cbuf_to_string_and_free(ci_find_file(installDirectory, filename));
+		libname = cbuf_to_string_and_free(ci_find_file(_G(installDirectory), filename));
 		if (AssetManager::IsDataFile(libname))
 			return libname;
 	}
@@ -532,9 +522,9 @@ String get_known_assetlib(const String &filename) {
 
 Stream *find_open_asset(const String &filename) {
 	Stream *asset_s = Shared::AssetManager::OpenAsset(filename);
-	if (!asset_s && Path::ComparePaths(_GP(ResPaths).DataDir, installDirectory) != 0) {
+	if (!asset_s && Path::ComparePaths(_GP(ResPaths).DataDir, _G(installDirectory)) != 0) {
 		// Just in case they're running in Debug, try standalone file in compiled folder
-		asset_s = ci_fopen(String::FromFormat("%s/%s", installDirectory.GetCStr(), filename.GetCStr()));
+		asset_s = ci_fopen(String::FromFormat("%s/%s", _G(installDirectory).GetCStr(), filename.GetCStr()));
 	}
 	return asset_s;
 }
@@ -542,8 +532,8 @@ Stream *find_open_asset(const String &filename) {
 AssetPath get_audio_clip_assetpath(int bundling_type, const String &filename) {
 	// Special case is explicitly defined audio directory, which should be
 	// tried first regardless of bundling type.
-	if (Path::ComparePaths(_GP(ResPaths).DataDir, installAudioDirectory) != 0) {
-		String filepath = String::FromFormat("%s/%s", installAudioDirectory.GetCStr(), filename.GetCStr());
+	if (Path::ComparePaths(_GP(ResPaths).DataDir, _G(installAudioDirectory)) != 0) {
+		String filepath = String::FromFormat("%s/%s", _G(installAudioDirectory).GetCStr(), filename.GetCStr());
 		if (Path::IsFile(filepath))
 			return AssetPath("", filepath);
 	}
@@ -558,8 +548,8 @@ AssetPath get_audio_clip_assetpath(int bundling_type, const String &filename) {
 AssetPath get_voice_over_assetpath(const String &filename) {
 	// Special case is explicitly defined voice-over directory, which should be
 	// tried first.
-	if (Path::ComparePaths(_GP(ResPaths).DataDir, installVoiceDirectory) != 0) {
-		String filepath = String::FromFormat("%s/%s", installVoiceDirectory.GetCStr(), filename.GetCStr());
+	if (Path::ComparePaths(_GP(ResPaths).DataDir, _G(installVoiceDirectory)) != 0) {
+		String filepath = String::FromFormat("%s/%s", _G(installVoiceDirectory).GetCStr(), filename.GetCStr());
 		if (Path::IsFile(filepath))
 			return AssetPath("", filepath);
 	}
