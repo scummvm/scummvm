@@ -312,6 +312,9 @@ protected:
 class AddInventoryNoHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void execute(Nancy::NancyEngine *engine) override;
+    
+    uint itemID;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }

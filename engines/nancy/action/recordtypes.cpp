@@ -328,7 +328,16 @@ uint16 WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x2); // TODO
+    itemID = stream.readUint16LE();
+    return 2;
+}
+
+void AddInventoryNoHS::execute(Nancy::NancyEngine *engine) {
+    if (engine->scene->hasItem(itemID) == kFalse) {
+        engine->scene->addItemToInventory(itemID);
+    }
+
+    isDone = true;
 }
 
 uint16 RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
