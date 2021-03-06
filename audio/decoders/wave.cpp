@@ -31,6 +31,7 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/g711.h"
 
 namespace Audio {
 
@@ -78,8 +79,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// values for it:
 	// 1  -> uncompressed PCM
 	// 17 -> IMA ADPCM compressed WAVE
-	// See <http://www.saettler.com/RIFFNEW/RIFFNEW.htm> for a more complete
-	// list of common WAVE compression formats...
+	// See <http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html>
+	// for a more complete list of common WAVE compression formats...
 	uint16 type = stream.readUint16LE();	// == 1 for PCM data
 	uint16 numChannels = stream.readUint16LE();	// 1 for mono, 2 for stereo
 	uint32 samplesPerSec = stream.readUint32LE();	// in Hz
@@ -107,31 +108,32 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	debug("  bitsPerSample: %d", bitsPerSample);
 #endif
 
+	switch (type) {
+	case kWaveFormatPCM:
+	case kWaveFormatMSADPCM:
+	case kWaveFormatALawPCM:
+	case kWaveFormatMuLawPCM:
+	case kWaveFormatMSIMAADPCM:
 	#ifdef USE_MAD
+	case kWaveFormatMP3:
+	#endif
+		break;
+	default:
+		warning("getWavInfo: unsupported format (type %d)", type);
+		return false;
+	}
+
 	if (type == kWaveFormatMP3) {
 		bitsPerSample = 8;
-	} else {
-	#endif
-		if (type != kWaveFormatPCM && type != kWaveFormatMSADPCM && type != kWaveFormatMSIMAADPCM) {
-			#ifdef USE_MAD
-			warning("getWavInfo: only PCM, MS ADPCM, MP3, or IMA ADPCM data is supported (type %d)", type);
-			#else
-			warning("getWavInfo: only PCM, MS ADPCM, or IMA ADPCM data is supported (type %d)", type);
-			#endif
-
-			return false;
-		}
-
-		if (blockAlign != numChannels * bitsPerSample / 8 && type != kWaveFormatMSADPCM) {
+	} else if (type != kWaveFormatMSADPCM) {
+		if (blockAlign != numChannels * bitsPerSample / 8) {
 			debug(0, "getWavInfo: blockAlign is invalid");
 		}
 
-		if (avgBytesPerSec != samplesPerSec * blockAlign && type != kWaveFormatMSADPCM) {
+		if (avgBytesPerSec != samplesPerSec * blockAlign) {
 			debug(0, "getWavInfo: avgBytesPerSec is invalid");
 		}
-	#ifdef USE_MAD
 	}
-	#endif
 
 	// Prepare the return values.
 	rate = samplesPerSec;
@@ -216,6 +218,10 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 	case kWaveFormatMP3:
 		return makeMP3Stream(dataStream, DisposeAfterUse::YES);
 	#endif
+	case kWaveFormatALawPCM:
+		return makeALawStream(dataStream, DisposeAfterUse::YES, rate, channels);
+	case kWaveFormatMuLawPCM:
+		return makeMuLawStream(dataStream, DisposeAfterUse::YES, rate, channels);
 	case kWaveFormatPCM:
 		return makeRawStream(dataStream, rate, flags);
 	}

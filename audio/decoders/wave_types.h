@@ -30,6 +30,8 @@ enum WaveCompressionType {
 	kWaveFormatNone        = 0x0000,
 	kWaveFormatPCM         = 0x0001,
 	kWaveFormatMSADPCM     = 0x0002,
+	kWaveFormatALawPCM     = 0x0006,
+	kWaveFormatMuLawPCM    = 0x0007,
 	kWaveFormatMSIMAADPCM  = 0x0011,
 	kWaveFormatMP3         = 0x0055,
 	kWaveFormatDK3         = 0x0062, // rogue format number
