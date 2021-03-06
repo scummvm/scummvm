@@ -172,8 +172,6 @@ void Viewport::handleInput(NancyInput &input) {
             }
 
             _nextMovementTime = playTime + movementDelta;
-        } else if (direction != _movementLastFrame) {
-            _nextMovementTime = playTime + movementDelta;
         }
     }
 
