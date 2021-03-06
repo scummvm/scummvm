@@ -540,9 +540,16 @@ void BMVPlayer::ReadHeader() {
 }
 
 void BMVPlayer::InitBMV(byte *memoryBuffer) {
-	// Clear the two extra 'off-screen' rows
-	memset(memoryBuffer, 0, SCREEN_WIDE * bpp);
-	memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1) * bpp, 0, SCREEN_WIDE * bpp);
+	if (TinselV3) {
+		// Clear the whole buffer
+		memset(memoryBuffer, 0, SCREEN_WIDE * (SCREEN_HIGH + 2) * bpp);
+		// Reset the pallete as it might be partially updated
+		memset(moviePal, 0, sizeof(moviePal));
+	} else {
+		// Clear the two extra 'off-screen' rows
+		memset(memoryBuffer, 0, SCREEN_WIDE * bpp);
+		memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1) * bpp, 0, SCREEN_WIDE * bpp);
+	}
 
 	if (_audioStream) {
 		_vm->_mixer->stopHandle(_audioHandle);
@@ -1331,21 +1338,21 @@ void BMVPlayer::CopyMovieToScreen() {
 		return;
 	}
 
-	int yStart = 0;
-	if (!TinselV3) {
+	if (TinselV3) {
+		// Videos in Tinsel V3 are using 432 lines
+		memcpy(_vm->screen().getPixels(), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH * bpp);
+	} else {
 		// The movie surface is slightly less high than the output screen (429 rows versus 432).
 		// Because of this, there's some extra line clearing above and below the displayed area
-		yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
+		int yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
+		memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH * bpp);
+		memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH * bpp);
+		memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0, (SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH * bpp);
+
+		PalettesToVideoDAC(); // Keep palette up-to-date
 	}
-	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH * bpp);
-	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH * bpp);
-	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
-		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH * bpp);
 
 	BmvDrawText(true);
-	if (!TinselV3) {
-		PalettesToVideoDAC();			// Keep palette up-to-date
-	}
 	UpdateScreenRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	g_system->updateScreen();
 	BmvDrawText(false);
