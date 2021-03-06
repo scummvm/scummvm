@@ -408,13 +408,13 @@ void engine_init_audio() {
 }
 
 void engine_init_debug() {
-	if ((debug_flags & (~DBG_DEBUGMODE)) > 0) {
+	if ((_G(debug_flags) & (~DBG_DEBUGMODE)) > 0) {
 		platform->DisplayAlert("Engine debugging enabled.\n"
 		                       "\nNOTE: You have selected to enable one or more engine debugging options.\n"
 		                       "These options cause many parts of the game to behave abnormally, and you\n"
 		                       "may not see the game as you are used to it. The point is to test whether\n"
 		                       "the engine passes a point where it is crashing on you normally.\n"
-		                       "[Debug flags enabled: 0x%02X]", debug_flags);
+		                       "[Debug flags enabled: 0x%02X]", _G(debug_flags));
 	}
 }
 
@@ -863,7 +863,7 @@ void engine_init_game_settings() {
 	for (ee = 0; ee < MAX_ROOM_BGFRAMES; ee++)
 		_GP(play).raw_modified[ee] = 0;
 	_GP(play).game_speed_modifier = 0;
-	if (debug_flags & DBG_DEBUGMODE)
+	if (_G(debug_flags) & DBG_DEBUGMODE)
 		_GP(play).debug_mode = 1;
 	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	_GP(play).shake_screen_yoff = 0;

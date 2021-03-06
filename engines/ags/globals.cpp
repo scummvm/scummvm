@@ -63,12 +63,17 @@
 #include "ags/engine/ac/dynobj/scriptregion.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
 #include "ags/engine/ac/statobj/staticarray.h"
+#include "ags/engine/debugging/consoleoutputtarget.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/logfile.h"
+#include "ags/engine/debugging/messagebuffer.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/executingscript.h"
 #include "ags/engine/script/nonblockingscriptfunction.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/systemimports.h"
+#include "ags/lib/std/limits.h"
 
 namespace AGS3 {
 
@@ -83,6 +88,14 @@ Globals::Globals() {
 	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
 	// TODO: double check that ambient sounds array actually needs +1
 	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
+
+	// debug.cpp globals
+	_fps = std::numeric_limits<float>::quiet_undefined();
+	_display_fps = kFPS_Hide;
+	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
+	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();
+	_DebugLogFile = new std::unique_ptr<AGS::Engine::LogFile>();
+	_DebugConsole = new std::unique_ptr<AGS::Engine::ConsoleOutputTarget>();
 
 	// debugmanager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
@@ -198,6 +211,12 @@ Globals::~Globals() {
 	// audio.cpp globals
 	delete _audioChannels;
 	delete _ambient;
+
+	// debug.cpp globals
+	delete[] _debug_line;
+	delete _DebugMsgBuff;
+	delete _DebugLogFile;
+	delete _DebugConsole;
 
 	// debugmanager.cpp globals
 	delete _DbgMgr;

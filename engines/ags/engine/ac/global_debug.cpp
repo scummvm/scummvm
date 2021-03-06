@@ -138,8 +138,8 @@ void script_debug(int cmdd, int dataa) {
 		if (goToRoom >= 0)
 			NewRoom(goToRoom);
 	} else if (cmdd == 4) {
-		if (display_fps != kFPS_Forced)
-			display_fps = (FPSDisplayMode)dataa;
+		if (_G(display_fps) != kFPS_Forced)
+			_G(display_fps) = (FPSDisplayMode)dataa;
 	} else if (cmdd == 5) {
 		if (dataa == 0) dataa = _GP(game).playercharacter;
 		if (_GP(game).chars[dataa].walking < 1) {

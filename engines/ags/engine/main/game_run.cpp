@@ -383,7 +383,7 @@ static void check_keyboard_controls() {
 
 	// debug console
 	if ((kgn == '`') && (_GP(play).debug_mode > 0)) {
-		display_console = !display_console;
+		_G(display_console) = !_G(display_console);
 		return;
 	}
 
@@ -409,7 +409,7 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((kgn == eAGSKeyCodeCtrlE) && (display_fps == kFPS_Forced)) {
+	if ((kgn == eAGSKeyCodeCtrlE) && (_G(display_fps) == kFPS_Forced)) {
 		// if --fps paramter is used, Ctrl+E will max out frame rate
 		setTimerFps(isTimerFpsMaxed() ? frames_per_second : 1000);
 		return;
@@ -599,7 +599,7 @@ static void game_loop_check_controls(bool checkControls) {
 }
 
 static void game_loop_do_update() {
-	if (debug_flags & DBG_NOUPDATE);
+	if (_G(debug_flags) & DBG_NOUPDATE);
 	else if (game_paused == 0) update_stuff();
 }
 
@@ -703,7 +703,7 @@ static void game_loop_update_fps() {
 	auto frames = loopcounter - lastcounter;
 
 	if (duration >= std::chrono::milliseconds(1000) && frames > 0) {
-		fps = 1000.0f * frames / duration.count();
+		_G(fps) = 1000.0f * frames / duration.count();
 		t1 = t2;
 		lastcounter = loopcounter;
 	}
@@ -712,8 +712,8 @@ static void game_loop_update_fps() {
 float get_current_fps() {
 	// if we have maxed out framerate then return the frame rate we're seeing instead
 	// fps must be greater that 0 or some timings will take forever.
-	if (isTimerFpsMaxed() && fps > 0.0f) {
-		return fps;
+	if (isTimerFpsMaxed() && _G(fps) > 0.0f) {
+		return _G(fps);
 	}
 	return frames_per_second;
 }
@@ -722,7 +722,7 @@ void set_loop_counter(unsigned int new_counter) {
 	loopcounter = new_counter;
 	t1 = AGS_Clock::now();
 	lastcounter = loopcounter;
-	fps = std::numeric_limits<float>::quiet_undefined();
+	_G(fps) = std::numeric_limits<float>::quiet_undefined();
 }
 
 void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {

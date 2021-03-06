@@ -1828,11 +1828,11 @@ void prepare_room_sprites() {
 
 	clear_sprite_list();
 
-	if ((debug_flags & DBG_NOOBJECTS) == 0) {
+	if ((_G(debug_flags) & DBG_NOOBJECTS) == 0) {
 		prepare_objects_for_drawing();
 		prepare_characters_for_drawing();
 
-		if ((debug_flags & DBG_NODRAWSPRITES) == 0) {
+		if ((_G(debug_flags) & DBG_NODRAWSPRITES) == 0) {
 			our_eip = 34;
 			draw_sprite_list();
 		}
@@ -1910,8 +1910,8 @@ void draw_fps(const Rect &viewport) {
 
 	char fps_buffer[60];
 	// Don't display fps if we don't have enough information (because loop count was just reset)
-	if (!std::isUndefined(fps)) {
-		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", fps, base_buffer);
+	if (!std::isUndefined(_G(fps))) {
+		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", _G(fps), base_buffer);
 	} else {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: --.- / %s", base_buffer);
 	}
@@ -1950,7 +1950,7 @@ void draw_gui_and_overlays() {
 	// Draw GUIs - they should always be on top of overlays like
 	// speech background text
 	our_eip = 35;
-	if (((debug_flags & DBG_NOIFACE) == 0) && (displayed_room >= 0)) {
+	if (((_G(debug_flags) & DBG_NOIFACE) == 0) && (displayed_room >= 0)) {
 		int aa;
 
 		if (playerchar->activeinv >= MAX_INV) {
@@ -2235,7 +2235,7 @@ void construct_engine_overlay() {
 	gfxDriver->BeginSpriteBatch(viewport, SpriteTransform());
 
 	// draw the debug console, if appropriate
-	if ((_GP(play).debug_mode > 0) && (display_console != 0)) {
+	if ((_GP(play).debug_mode > 0) && (_G(display_console) != 0)) {
 		const int font = FONT_NORMAL;
 		int ypp = 1;
 		int txtspacing = getfontspacing_outlined(font);
@@ -2249,8 +2249,8 @@ void construct_engine_overlay() {
 		color_t draw_color = debugConsoleBuffer->GetCompatibleColor(15);
 		debugConsoleBuffer->FillRect(Rect(0, 0, viewport.GetWidth() - 1, barheight), draw_color);
 		color_t text_color = debugConsoleBuffer->GetCompatibleColor(16);
-		for (int jj = first_debug_line; jj != last_debug_line; jj = (jj + 1) % DEBUG_CONSOLE_NUMLINES) {
-			wouttextxy(debugConsoleBuffer, 1, ypp, font, text_color, debug_line[jj]);
+		for (int jj = _G(first_debug_line); jj != _G(last_debug_line); jj = (jj + 1) % DEBUG_CONSOLE_NUMLINES) {
+			wouttextxy(debugConsoleBuffer, 1, ypp, font, text_color, _G(debug_line)[jj]);
 			ypp += txtspacing;
 		}
 
@@ -2263,7 +2263,7 @@ void construct_engine_overlay() {
 		invalidate_sprite(0, 0, debugConsole, false);
 	}
 
-	if (display_fps != kFPS_Hide)
+	if (_G(display_fps) != kFPS_Hide)
 		draw_fps(viewport);
 }
 

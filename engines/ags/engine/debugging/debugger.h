@@ -56,10 +56,6 @@ enum FPSDisplayMode {
 	kFPS_Forced = 2   // forced shown by the engine arg
 };
 
-extern float fps;
-extern FPSDisplayMode display_fps;
-extern int debug_flags;
-
 } // namespace AGS3
 
 #endif

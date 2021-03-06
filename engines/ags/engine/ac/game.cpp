@@ -970,8 +970,8 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 	// that it supports it. But we want it all the time for ScummVM GMM
 	if (/*_GP(game).options[OPT_SAVESCREENSHOT] */true) {
 		// Render the view without any UI elements
-		int old_flags = debug_flags;
-		debug_flags |= DBG_NOIFACE;
+		int old_flags = _G(debug_flags);
+		_G(debug_flags) |= DBG_NOIFACE;
 		construct_game_scene(true);
 
 		int usewid = data_to_game_coord(_GP(play).screenshot_width);
@@ -988,7 +988,7 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 		screenShot = CopyScreenIntoBitmap(usewid, usehit);
 
 		// Restore original screen
-		debug_flags = old_flags;
+		_G(debug_flags) = old_flags;
 		construct_game_scene(true);
 	}
 }

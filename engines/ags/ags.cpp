@@ -135,7 +135,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			_G(justDisplayVersion) = true;
 			return 0;
 		} else if (scumm_stricmp(arg, "-updatereg") == 0)
-			debug_flags |= DBG_REGONLY;
+			_G(debug_flags) |= DBG_REGONLY;
 #if AGS_PLATFORM_DEBUG
 		else if ((scumm_stricmp(arg, "--startr") == 0) && (ee < argc - 1)) {
 			_G(override_start_room) = atoi(argv[ee + 1]);
@@ -196,17 +196,17 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 				INIwritestring(cfg, "graphics", "game_scale_win", argv[++ee]);
 			else
 				INIwritestring(cfg, "graphics", "game_scale_win", "max_round");
-		} else if (scumm_stricmp(arg, "--fps") == 0) display_fps = kFPS_Forced;
-		else if (scumm_stricmp(arg, "--test") == 0) debug_flags |= DBG_DEBUGMODE;
-		else if (scumm_stricmp(arg, "-noiface") == 0) debug_flags |= DBG_NOIFACE;
-		else if (scumm_stricmp(arg, "-nosprdisp") == 0) debug_flags |= DBG_NODRAWSPRITES;
-		else if (scumm_stricmp(arg, "-nospr") == 0) debug_flags |= DBG_NOOBJECTS;
-		else if (scumm_stricmp(arg, "-noupdate") == 0) debug_flags |= DBG_NOUPDATE;
-		else if (scumm_stricmp(arg, "-nosound") == 0) debug_flags |= DBG_NOSFX;
-		else if (scumm_stricmp(arg, "-nomusic") == 0) debug_flags |= DBG_NOMUSIC;
-		else if (scumm_stricmp(arg, "-noscript") == 0) debug_flags |= DBG_NOSCRIPT;
-		else if (scumm_stricmp(arg, "-novideo") == 0) debug_flags |= DBG_NOVIDEO;
-		else if (scumm_stricmp(arg, "-dbgscript") == 0) debug_flags |= DBG_DBGSCRIPT;
+		} else if (scumm_stricmp(arg, "--fps") == 0) _G(display_fps) = kFPS_Forced;
+		else if (scumm_stricmp(arg, "--test") == 0) _G(debug_flags) |= DBG_DEBUGMODE;
+		else if (scumm_stricmp(arg, "-noiface") == 0) _G(debug_flags) |= DBG_NOIFACE;
+		else if (scumm_stricmp(arg, "-nosprdisp") == 0) _G(debug_flags) |= DBG_NODRAWSPRITES;
+		else if (scumm_stricmp(arg, "-nospr") == 0) _G(debug_flags) |= DBG_NOOBJECTS;
+		else if (scumm_stricmp(arg, "-noupdate") == 0) _G(debug_flags) |= DBG_NOUPDATE;
+		else if (scumm_stricmp(arg, "-nosound") == 0) _G(debug_flags) |= DBG_NOSFX;
+		else if (scumm_stricmp(arg, "-nomusic") == 0) _G(debug_flags) |= DBG_NOMUSIC;
+		else if (scumm_stricmp(arg, "-noscript") == 0) _G(debug_flags) |= DBG_NOSCRIPT;
+		else if (scumm_stricmp(arg, "-novideo") == 0) _G(debug_flags) |= DBG_NOVIDEO;
+		else if (scumm_stricmp(arg, "-dbgscript") == 0) _G(debug_flags) |= DBG_DBGSCRIPT;
 		else if (scumm_stricmp(arg, "--log") == 0) INIwriteint(cfg, "misc", "log", 1);
 		else if (scumm_stricmp(arg, "--no-log") == 0) INIwriteint(cfg, "misc", "log", 0);
 		//
@@ -332,7 +332,7 @@ Common::Error AGSEngine::run() {
 #if AGS_PLATFORM_OS_WINDOWS
 	setup_malloc_handling();
 #endif
-	AGS3::debug_flags = 0;
+	_G(debug_flags) = 0;
 
 	AGS3::ConfigTree startup_opts;
 	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
@@ -357,7 +357,7 @@ Common::Error AGSEngine::run() {
 	AGS3::main_set_gamedir(ARGC, ARGV);
 
 	// Update shell associations and exit
-	if (AGS3::debug_flags & DBG_REGONLY)
+	if (_G(debug_flags) & DBG_REGONLY)
 		return Common::kNoError;
 
 	_G(loadSaveGameOnStartup) = ConfMan.getInt("save_slot");

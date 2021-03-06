@@ -42,7 +42,7 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 
 	if (_GP(play).fast_forward)
 		return;
-	if (debug_flags & DBG_NOVIDEO)
+	if (_G(debug_flags) & DBG_NOVIDEO)
 		return;
 
 	if ((flags < 10) && (_GP(usetup).audio_backend == 0)) {

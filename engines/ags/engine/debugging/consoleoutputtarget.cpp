@@ -20,9 +20,9 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/debugging/consoleoutputtarget.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -36,11 +36,11 @@ ConsoleOutputTarget::~ConsoleOutputTarget() {}
 void ConsoleOutputTarget::PrintMessage(const DebugMessage &msg) {
 	// limit number of characters for console
 	// TODO: is there a way to find out how many characters can fit in?
-	debug_line[last_debug_line] = msg.Text.Left(99);
+	_G(debug_line)[_G(last_debug_line)] = msg.Text.Left(99);
 
-	last_debug_line = (last_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
-	if (last_debug_line == first_debug_line)
-		first_debug_line = (first_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
+	_G(last_debug_line) = (_G(last_debug_line) + 1) % DEBUG_CONSOLE_NUMLINES;
+	if (_G(last_debug_line) == _G(first_debug_line))
+		_G(first_debug_line) = (_G(first_debug_line) + 1) % DEBUG_CONSOLE_NUMLINES;
 }
 
 } // namespace Engine

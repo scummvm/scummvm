@@ -48,7 +48,8 @@
 #include "ags/events.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
-//include <winalleg.h>
+#include <winalleg.h>
+#include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
 #endif
 
 namespace AGS3 {
@@ -58,14 +59,15 @@ using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
 extern int displayed_room;
-
 extern char pexbuf[STD_BUFFER_SIZE];
+
+const char *OutputMsgBufID = "buffer";
+const char *OutputFileID = "file";
+const char *OutputSystemID = "stdout";
+const char *OutputGameConsoleID = "console";
 
 
 #if AGS_PLATFORM_OS_WINDOWS
-
-#include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
-
 HWND editor_window_handle = 0;
 
 IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
@@ -80,40 +82,21 @@ IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
 
 #endif
 
-int debug_flags = 0;
-
-String debug_line[DEBUG_CONSOLE_NUMLINES];
-int first_debug_line = 0, last_debug_line = 0, display_console = 0;
-
-float fps = std::numeric_limits<float>::quiet_undefined();
-FPSDisplayMode display_fps = kFPS_Hide;
-
-std::unique_ptr<MessageBuffer> DebugMsgBuff;
-std::unique_ptr<LogFile> DebugLogFile;
-std::unique_ptr<ConsoleOutputTarget> DebugConsole;
-
-const String OutputMsgBufID = "buffer";
-const String OutputFileID = "file";
-const String OutputSystemID = "stdout";
-const String OutputGameConsoleID = "console";
-
-
-
 PDebugOutput create_log_output(const String &name, const String &path = "", LogFile::OpenMode open_mode = LogFile::kLogFile_Overwrite) {
 	// Else create new one, if we know this ID
 	if (name.CompareNoCase(OutputSystemID) == 0) {
 		return _GP(DbgMgr).RegisterOutput(OutputSystemID, AGSPlatformDriver::GetDriver(), kDbgMsg_None);
 	} else if (name.CompareNoCase(OutputFileID) == 0) {
-		DebugLogFile.reset(new LogFile());
+		_GP(DebugLogFile).reset(new LogFile());
 		String logfile_path = !path.IsEmpty() ? path : String::FromFormat("%s/ags.log", platform->GetAppOutputDirectory());
-		if (!DebugLogFile->OpenFile(logfile_path, open_mode))
+		if (!_GP(DebugLogFile)->OpenFile(logfile_path, open_mode))
 			return nullptr;
 		platform->WriteStdOut("Logging to %s", logfile_path.GetCStr());
-		auto dbgout = _GP(DbgMgr).RegisterOutput(OutputFileID, DebugLogFile.get(), kDbgMsg_None);
+		auto dbgout = _GP(DbgMgr).RegisterOutput(OutputFileID, _GP(DebugLogFile).get(), kDbgMsg_None);
 		return dbgout;
 	} else if (name.CompareNoCase(OutputGameConsoleID) == 0) {
-		DebugConsole.reset(new ConsoleOutputTarget());
-		return _GP(DbgMgr).RegisterOutput(OutputGameConsoleID, DebugConsole.get(), kDbgMsg_None);
+		_GP(DebugConsole).reset(new ConsoleOutputTarget());
+		return _GP(DbgMgr).RegisterOutput(OutputGameConsoleID, _GP(DebugConsole).get(), kDbgMsg_None);
 	}
 	return nullptr;
 }
@@ -206,8 +189,8 @@ void apply_log_config(const ConfigTree &cfg, const String &log_id,
 	}
 
 	// Delegate buffered messages to this new output
-	if (DebugMsgBuff && !was_created_earlier)
-		DebugMsgBuff->Send(log_id);
+	if (_GP(DebugMsgBuff) && !was_created_earlier)
+		_GP(DebugMsgBuff)->Send(log_id);
 }
 
 void init_debug(const ConfigTree &cfg, bool stderr_only) {
@@ -219,8 +202,8 @@ void init_debug(const ConfigTree &cfg, bool stderr_only) {
 		return;
 
 	// Message buffer to save all messages in case we read different log settings from config file
-	DebugMsgBuff.reset(new MessageBuffer());
-	_GP(DbgMgr).RegisterOutput(OutputMsgBufID, DebugMsgBuff.get(), kDbgMsg_All);
+	_GP(DebugMsgBuff).reset(new MessageBuffer());
+	_GP(DbgMgr).RegisterOutput(OutputMsgBufID, _GP(DebugMsgBuff).get(), kDbgMsg_All);
 }
 
 void apply_debug_config(const ConfigTree &cfg) {
@@ -258,7 +241,7 @@ void apply_debug_config(const ConfigTree &cfg) {
 
 	// If the game was compiled in Debug mode *and* there's no regular file log,
 	// then open "warnings.log" for printing script warnings.
-	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !DebugLogFile) {
+	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !_GP(DebugLogFile)) {
 		auto dbgout = create_log_output(OutputFileID, "warnings.log", LogFile::kLogFile_OverwriteAtFirstMessage);
 		if (dbgout) {
 			dbgout->SetGroupFilter(kDbgGroup_Game, kDbgMsg_Warn);
@@ -268,20 +251,20 @@ void apply_debug_config(const ConfigTree &cfg) {
 
 	// We don't need message buffer beyond this point
 	_GP(DbgMgr).UnregisterOutput(OutputMsgBufID);
-	DebugMsgBuff.reset();
+	_GP(DebugMsgBuff).reset();
 }
 
 void shutdown_debug() {
 	// Shutdown output subsystem
 	_GP(DbgMgr).UnregisterAll();
 
-	DebugMsgBuff.reset();
-	DebugLogFile.reset();
-	DebugConsole.reset();
+	_GP(DebugMsgBuff).reset();
+	_GP(DebugLogFile).reset();
+	_GP(DebugConsole).reset();
 }
 
 void debug_set_console(bool enable) {
-	if (DebugConsole)
+	if (_GP(DebugConsole))
 		_GP(DbgMgr).GetOutput(OutputGameConsoleID)->SetEnabled(enable);
 }
 

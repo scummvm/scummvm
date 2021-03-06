@@ -53,10 +53,19 @@ class GUITextBox;
 class RoomStruct;
 
 } // namespace Shared
+
+namespace Engine {
+
+class ConsoleOutputTarget;
+class LogFile;
+class MessageBuffer;
+
+} // namespace Engine
 } // namespace AGS
 
 class Navigation;
 class SplitLines;
+class SpriteCache;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
@@ -101,8 +110,6 @@ struct StaticArray;
 struct SystemImports;
 struct ViewStruct;
 
-class SpriteCache;
-
 class Globals {
 public:
 	/**
@@ -145,6 +152,17 @@ public:
 
 	std::vector<Breakpoint> _breakpoints;
 	int _numBreakpoints = 0;
+
+	int _debug_flags = 0;
+
+	String *_debug_line;
+	int _first_debug_line = 0, _last_debug_line = 0, _display_console = 0;
+
+	float _fps;
+	int _display_fps;
+	std::unique_ptr<AGS::Engine::MessageBuffer> *_DebugMsgBuff;
+	std::unique_ptr<AGS::Engine::LogFile> *_DebugLogFile;
+	std::unique_ptr<AGS::Engine::ConsoleOutputTarget> *_DebugConsole;
 
 	/**@}*/
 

@@ -713,7 +713,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	update_polled_stuff_if_runtime();
 
 	_G(roominst) = nullptr;
-	if (debug_flags & DBG_NOSCRIPT) ;
+	if (_G(debug_flags) & DBG_NOSCRIPT) ;
 	else if (_GP(thisroom).CompiledScript != nullptr) {
 		compile_room_script();
 		if (croom->tsdatasize > 0) {
