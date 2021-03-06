@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-03-06 11:31+0000\n"
+"PO-Revision-Date: 2021-03-06 12:25+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5588,7 +5588,7 @@ msgstr "ゲームに組み込まれた規制オプションを有効にする"
 
 #: engines/sci/detection.cpp:259
 msgid "Upscale videos"
-msgstr ""
+msgstr "映像をアップスケーリングする"
 
 #: engines/sci/detection.cpp:260
 msgid "Upscale videos to double their size"
