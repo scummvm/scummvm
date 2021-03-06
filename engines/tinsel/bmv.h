@@ -38,6 +38,13 @@ class QueuingAudioStream;
 
 namespace Tinsel {
 
+typedef enum
+{
+	BMV_OP_DELTA = 0,
+	BMV_OP_RAW   = 1,
+	BMV_OP_RUN   = 2,
+	BMV_OP_COUNT
+} BMV_OP;
 
 class BMVPlayer {
 
@@ -87,7 +94,7 @@ class BMVPlayer {
 	bool bFileEnd;
 
 	/// Palette
-	COLORREF moviePal[256];
+	COLORREF moviePal[256 * 8]; // TinselV1 & V2 need 256, TinselV3 needs 2048
 
 	int blobsInBuffer;
 
@@ -97,6 +104,21 @@ class BMVPlayer {
 	} texts[2];
 
 	COLORREF talkColor;
+
+	/// TinselV3 header fields
+	int slotSize;
+	int frames;
+	int prefetchSlots;
+	int numSlots;
+	int frameRate;
+	int audioMaxSize;
+	int audioBlobSize;
+	int width;
+	int height;
+
+	/// TinselV3
+	int frameTime;
+	int bpp;
 
 	int bigProblemCount;
 
@@ -134,8 +156,13 @@ public:
 	void AbortMovie();
 
 private:
+	void ReadHeader();
+
 	void InitBMV(byte *memoryBuffer);
 	void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr);
+	void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp);
+	void t3DoOperation(BMV_OP op, uint32 len, const byte **src, byte **dst, int32 deltaOffset);
+	void t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset);
 	void MoviePalette(int paletteOffset);
 	void InitializeMovieSound();
 	void StartMovieSound();

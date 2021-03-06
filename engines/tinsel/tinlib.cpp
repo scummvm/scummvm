@@ -1676,6 +1676,39 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 }
 
 /**
+ * Plays a movie
+ */
+static void t3PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
+	CORO_BEGIN_CONTEXT;
+		int i;
+		bool hadControl;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (myEscape && myEscape != GetEscEvents())
+		return;
+
+	_ctx->hadControl = GetControl();
+
+	while (_vm->_bmv->MoviePlaying()) {
+		CORO_SLEEP(1);
+	}
+
+	// Play the movie
+	CORO_INVOKE_2(_vm->_bmv->PlayBMV, hFileStem, myEscape);
+
+	if (_ctx->hadControl) {
+		ControlOn();
+	}
+
+	// Change scene
+
+	CORO_END_CODE;
+}
+
+
+/**
  * Play some music
  */
 static void PlayMusic(int tune) {
@@ -4461,7 +4494,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
 	case 225: // STUBBED
-		mapping = NoirMapping{"OP225", ZZZZZZ, 1};
+		mapping = NoirMapping{"PLAYMOVIE", PLAYMOVIE, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
@@ -5266,8 +5299,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -3;
 
 	case PLAYMOVIE:
-		// DW2 only
-		PlayMovie(coroParam, pp[0], pic->myEscape);
+		if (TinselV3) {
+			t3PlayMovie(coroParam, pp[0], pic->myEscape);
+		} else {
+			// DW2 only
+			PlayMovie(coroParam, pp[0], pic->myEscape);
+		}
 		return -1;
 
 	case PLAYMUSIC:

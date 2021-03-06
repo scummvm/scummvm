@@ -58,18 +58,8 @@ namespace Tinsel {
 #define PT_A	20	// Number of times PT_B may be reached
 #define PT_B	6
 
-
-#define SLOT_SIZE	(25*1024)
-//#define NUM_SLOTS	168
-#define NUM_SLOTS	122		// -> ~ 3MB
-
-
-#define PREFETCH	(NUM_SLOTS/2)	// For initial test
-
 #define ADVANCE_SOUND		18	// 1 1/2 seconds
 #define SUBSEQUENT_SOUND	6	// 1/2 second
-
-
 
 // PACKET TYPE IDs & FLAGS
 
@@ -122,14 +112,14 @@ static const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 
 //---------------- DECOMPRESSOR FUNCTIONS --------------------
 
 #define SCREEN_WIDE 640
-#define SCREEN_HIGH 429
+#define SCREEN_HIGH (TinselV3 ? 432 : 429)
 #define SAM_P_BLOB (32 * 2)
 
 #define ROR(x,v) x = ((x >> (v%32)) | (x << (32 - (v%32))))
 #define ROL(x,v) x = ((x << (v%32)) | (x >> (32 - (v%32))))
 #define NEXT_BYTE(v) v = (forwardDirection ? v + 1 : v - 1)
 
-static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short deltaFetchDisp) {
+void BMVPlayer::PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
 	uint8 NibbleHi = 0;
 	uint32 edx = length;
 	int32 ebx = deltaFetchDisp;
@@ -270,10 +260,291 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 	} while (dst != endDst);
 }
 
+
+static uint32 DecodeVLE(const byte **src, uint32* hasHi, uint32 *nibbleHi) {
+	uint32 length = 0;
+	byte bitshift = 0;
+
+	*hasHi = 0;
+	*nibbleHi = 0;
+
+	// number is stored as series of 2 bits in a nibble (4b), and the coding ends when any of two upper bits are set to 1
+	while (true) {
+		uint32 byte = **src;
+		++(*src);
+
+		length |= (byte & 0b1111) << bitshift;
+		bitshift += 2;
+
+		if (byte & 0b1100) // end
+		{
+			*nibbleHi = byte >> 4;
+			*hasHi = 1;
+			break;
+		}
+
+		byte >>= 4;
+
+		length |= (byte & 0b1111) << bitshift;
+		bitshift += 2;
+
+		if (byte & 0b1100) // end
+		{
+			break;
+		}
+	}
+	return length;
+}
+
+void BMVPlayer::t3DoOperation(BMV_OP op, uint32 len, const byte **src, byte **dst, int32 deltaOffset) {
+	// note that there must be no padding in DST stride.
+	// data in dst & moviePal has already in correct platform endianess
+	switch(op) {
+		case BMV_OP_DELTA: {
+			for (uint32 i = 0; i < len; ++i) {
+				*(uint16*)(*dst) = *(uint16*)((*dst) + deltaOffset);
+				*dst += 2;
+			}
+			break;
+		}
+		case BMV_OP_RAW: {
+			for (uint32 i = 0; i < len; ++i) {
+				byte byte = **src;
+				*src += 1;
+
+				byte += 1;                                 // everything is shifted by one for some reason
+				byte = ((byte & 0b11) << 6) | (byte >> 2); // bits are swizzled 12345678 -> 34567812; ROL(x, 2)
+
+				uint16 color = 0;
+				if (byte < 7) {
+					// first 256 entries are organized differently, see the bit swizzling above
+					color = moviePal[(byte + 1) * 256 + **src];
+					*src += 1;
+				} else if (byte == 7) {
+					// note that there is no palette conversion, a bug?, also this might not be aligned properly in memory on some architectures
+					color = READ_LE_UINT16(*src);
+					*src += 2;
+				} else {
+					color = moviePal[byte];
+				}
+
+				*(uint16*)(*dst) = color;
+				*dst += 2;
+			}
+			break;
+		}
+		case BMV_OP_RUN: {
+			uint16 val = *(uint16*)((*dst) - 2);
+			for (uint32 i = 0; i < len; ++i) {
+				*(uint16*)(*dst) = val;
+				*dst += 2;
+			}
+			break;
+		}
+	}
+}
+
+void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
+	if (len == 0) {
+		return;
+	}
+
+	/*
+	BMV v3 video packet contains:
+	- update of palette
+	- encoded video frame
+
+	Palette can be updated in parts, encoding contains offset and count if entries to copy from the stream to the palette.
+
+	Encoded frame can contain 3 operations:
+	- delta - copy previously written N pixels, either from previous line, previous frame, or an offset within previous frame
+	- raw - copy N values from source stream
+	- run - repeat last pixel value N times
+
+	Encoding is convoluted and relies on nibbles - lo nibble = 4 bottom bits of a byte, hi nibble = 4 upper bits of a byte.
+	Operations keep rotating, after delta operation there can follow RAW or RUN operation, after RAW only RUN or DELTA and after RUN only DELTA or RAW can follow.
+	Which operation will follow depends on lowest bit of a current nibble.
+
+	Length of each operation can be encoded either directly or via special variable length encoding. From a nibble two bottom bits are preprended to final value, then next nibble is processed, if a new nibble is needed next byte is read from the stream. Process ends if any of two upper bits are set, in that case two upper bits are prepended as well.
+
+	Which length is going to be used depends on an quite convoluted encoding and there are two ways how they are encoded (note that operations still keep switching).
+	In outer loop, if:
+	- hi nibble has any of 2 upper bits set then only byte is read in this iteration and if:
+		- lo nibble has any of 2 upper bits set then length is between 7-30
+		- lo nibble has none of 2 upper bits set then there are 2 operations encoded and each nibble represents value 1-6
+	- hi nibble has none of 2 upper bits set then multiple bytes can be read in this iterations and if:
+		- lo nibble has any of 2 upper bits set then length is 1-6
+		- lo nibble has none of 2 upper bits set then length is using variable length encoding.
+			- if there hi nibble left then there is another operation with length 1-6
+		- start of other encoding - inner loop
+	In inner loop, if:
+	- lo nibble has any of 2 upper bits set then length is between 7-30
+	- lo nibble has none of 2 upper bits set then length is using variable length encoding
+	- hi nibble has any of 2 upper bits set then length is between 1-6 and inner loop ends
+	- hi nibble has none of 2 upper bits set then the rest used to select next operation and partly encode next length of next operation
+
+	Frame image data is always written from left to right, from top to bottom.
+	*/
+
+	const byte* srcEnd = src + len;
+	byte* dst = ScreenBeg;
+
+	// update the palette
+	uint32 i = 8; // first 8 entries are not used and are special instructions, 0-6 select entries above 256, 7 direct value
+	while (true) {
+		uint32 count = 0;
+		uint32 skip = 0;
+
+		byte byte = *src;
+		++src;
+
+		if (byte < 0x90) {
+			uint16 word = READ_LE_UINT16(src); // this might not be aligned properly in memory on some architectures
+			src += 2;
+
+			count =                 word & 0b0000111111111111;         // 0 - 4095 (0xFFF)
+			skip  = (byte << 4) | ((word & 0b1111000000000000) >> 12); // 0 - 2207 (0x89F)
+		} else {
+			count = (byte & 0b111) + 1; // 1 - 8
+			skip  = (byte >> 3) - 0x11; // 1 - 14
+		}
+
+		for (uint32 j = 0; j < count; ++j) {
+			uint16 color = READ_LE_UINT16(src); // this might not be aligned properly in memory on some architectures
+			src += 2;
+
+			moviePal[i] = color;
+			++i;
+		}
+
+		i += skip;
+		if (skip == 0) {
+			break;
+		}
+	}
+
+	// decode the frame
+#define BMV_NEXT_OP(op, nibble) { op = (BMV_OP)((op + 1 + (nibble & 1)) % BMV_OP_COUNT); }
+	BMV_OP op = BMV_OP_RUN; // first operation can be DELTA or RAW
+
+	while (src < srcEnd) { // outer loop
+		byte byte = *src;
+		++src;
+
+		uint32 loNibble = byte & 0x0F;
+		uint32 hiNibble = byte >> 4;
+
+		uint32 length = 0;
+
+		if ((hiNibble & 0b1100) == 0) { // length might use more than one byte and there might be an inner loop
+			if ((loNibble & 0b1100) == 0) { // variable length encoding
+				uint32 hasHi = 0;
+
+				BMV_NEXT_OP(op, loNibble);
+				length  = (loNibble >> 1); // note that upper two bit are always 0
+				length += (hiNibble << 1); // note that upper two bit are always 0
+				length += DecodeVLE(&src, &hasHi, &hiNibble) << 3; // hiNibble is overriden
+				length -= 1;
+				t3DoOperation(op, length, &src, &dst, deltaOffset);
+
+				if (!hasHi) {
+					continue; // outer loop
+				} else if ((hiNibble & 0b1100) != 0) { // process remaining nibble
+					BMV_NEXT_OP(op, hiNibble);
+					length = (hiNibble >> 1) - 1;
+					t3DoOperation(op, length, &src, &dst, deltaOffset);
+					continue; // outer loop
+				}
+			} else { // length is encoded directly (1-6)
+				BMV_NEXT_OP(op, loNibble);
+				length = (loNibble >> 1) - 1;
+				t3DoOperation(op, length, &src, &dst, deltaOffset);
+			}
+
+			while (src < srcEnd) { // inner loop
+				// there is always hiNibble, either from previous operation or previous iteration
+				BMV_NEXT_OP(op, hiNibble);
+				length = (hiNibble >> 1); // note that upper two bit are always 0
+
+				byte = *src;
+				++src;
+
+				loNibble = byte & 0xF;
+				hiNibble = byte >> 4;
+
+				if ((loNibble & 0b1100) == 0) {
+					uint32 hasHi = 0;
+					length += (loNibble << 1); // process lo nibble
+					length += (hiNibble << 3); // process hi nibble
+					if ((hiNibble & 0b1100) == 0) { // continue if there is more
+						length += DecodeVLE(&src, &hasHi, &hiNibble) << 5; // hiNibble is overriden
+					}
+					length -= 1;
+					t3DoOperation(op, length, &src, &dst, deltaOffset);
+
+					if (!hasHi) {
+						break; // break inner loop and continue with outer loop
+					}
+				} else {
+					length += (loNibble << 1) - 1;
+					t3DoOperation(op, length, &src, &dst, deltaOffset);
+				}
+
+				if ((hiNibble & 0b1100) != 0) {
+					BMV_NEXT_OP(op, hiNibble);
+					length = (hiNibble >> 1) - 1;
+					t3DoOperation(op, length, &src, &dst, deltaOffset);
+					break; // finish inner loop
+				}
+			}
+		} else if ((loNibble & 0b1100) == 0) { // one operation with length 7-30
+			BMV_NEXT_OP(op, loNibble);
+			length  = (loNibble >> 1); // note that upper two bit are always 0
+			length += (hiNibble << 1) - 1;
+			t3DoOperation(op, length, &src, &dst, deltaOffset);
+		} else { // each nibble contain one operation and length is 1-6
+			BMV_NEXT_OP(op, loNibble);
+			length = (loNibble >> 1) - 1;
+			t3DoOperation(op, length, &src, &dst, deltaOffset);
+
+			BMV_NEXT_OP(op, hiNibble);
+			length = (hiNibble >> 1) - 1;
+			t3DoOperation(op, length, &src, &dst, deltaOffset);
+		}
+	}
+#undef BMV_NEXT_OP
+}
+
+void BMVPlayer::ReadHeader() {
+	stream.readUint32LE(); // magic
+	stream.readUint32LE(); // payload
+	slotSize = stream.readUint32LE();
+	frames = stream.readUint32LE();
+	prefetchSlots = stream.readUint16LE();
+	numSlots = stream.readUint16LE();
+	frameRate = stream.readUint16LE();
+	audioMaxSize = stream.readUint16LE();
+	audioBlobSize = stream.readUint16LE();
+	stream.readByte(); // audioId
+	stream.readByte(); // videoId
+	width = stream.readUint16LE();
+	height = stream.readUint16LE();
+	bpp = 2;
+
+	assert((frameRate & 0xff) == 0);
+	frameTime = frameRate >> 8;
+	assert((24 % frameTime) == 0);
+	frameTime = 24 / frameTime;
+
+	// skip 8 bytes
+	stream.readUint32LE();
+	stream.readUint32LE();
+}
+
 void BMVPlayer::InitBMV(byte *memoryBuffer) {
 	// Clear the two extra 'off-screen' rows
-	memset(memoryBuffer, 0, SCREEN_WIDE);
-	memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1), 0, SCREEN_WIDE);
+	memset(memoryBuffer, 0, SCREEN_WIDE * bpp);
+	memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1) * bpp, 0, SCREEN_WIDE * bpp);
 
 	if (_audioStream) {
 		_vm->_mixer->stopHandle(_audioHandle);
@@ -283,7 +554,7 @@ void BMVPlayer::InitBMV(byte *memoryBuffer) {
 	}
 
 	// Set the screen beginning to the second line (ie. past the off-screen line)
-	ScreenBeg = memoryBuffer + SCREEN_WIDTH;
+	ScreenBeg = memoryBuffer + SCREEN_WIDTH * bpp;
 	Au_Prev1 = Au_Prev2 = 0;
 }
 
@@ -597,11 +868,11 @@ int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 
 	switch (*data) {
 	case CD_SLOT_NOP:
-		nextSlot = thisPacket/SLOT_SIZE;
-		if (thisPacket%SLOT_SIZE)
+		nextSlot = thisPacket/slotSize;
+		if (thisPacket%slotSize)
 			nextSlot++;
 
-		return nextSlot * SLOT_SIZE;
+		return nextSlot * slotSize;
 
 	case CD_LE_FIN:
 		return -1;
@@ -610,17 +881,17 @@ int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 		// Following 3 bytes are the length
 		if (bReallyImportant) {
 			// wrapped round or at least 3 bytes
-			assert(((nextReadSlot * SLOT_SIZE) < thisPacket) ||
-				((thisPacket + 3) < (nextReadSlot * SLOT_SIZE)));
+			assert(((nextReadSlot * slotSize) < thisPacket) ||
+				((thisPacket + 3) < (nextReadSlot * slotSize)));
 
-			if ((nextReadSlot * SLOT_SIZE >= thisPacket) &&
-				((thisPacket + 3) >= nextReadSlot*SLOT_SIZE)) {
+			if ((nextReadSlot * slotSize >= thisPacket) &&
+				((thisPacket + 3) >= nextReadSlot*slotSize)) {
 				// MaintainBuffer calls this back, but with false
 				MaintainBuffer();
 			}
 		} else {
 			// not wrapped and not 3 bytes
-			if (nextReadSlot*SLOT_SIZE >= thisPacket && thisPacket+3 >= nextReadSlot*SLOT_SIZE)
+			if (nextReadSlot*slotSize >= thisPacket && thisPacket+3 >= nextReadSlot*slotSize)
 				return thisPacket + 3;
 		}
 		length = (int32)READ_32(bigBuffer + thisPacket + 1);
@@ -635,14 +906,14 @@ int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 void BMVPlayer::LoadSlots(int number) {
 	int nextOffset;
 
-	assert(number + nextReadSlot < NUM_SLOTS);
+	assert(number + nextReadSlot < numSlots);
 
-	if (stream.read(bigBuffer + nextReadSlot*SLOT_SIZE, number * SLOT_SIZE) !=
-			(uint32)(number * SLOT_SIZE)) {
+	if (stream.read(bigBuffer + nextReadSlot*slotSize, number * slotSize) !=
+			(uint32)(number * slotSize)) {
 		int possibleSlots;
 
 		// May be a short file
-		possibleSlots = stream.size() / SLOT_SIZE;
+		possibleSlots = stream.size() / slotSize;
 		if ((number + nextReadSlot) > possibleSlots) {
 			bFileEnd = true;
 			nextReadSlot = possibleSlots;
@@ -653,7 +924,7 @@ void BMVPlayer::LoadSlots(int number) {
 	nextReadSlot += number;
 
 	nextOffset = FollowingPacket(nextUseOffset, true);
-	while (nextOffset < nextReadSlot*SLOT_SIZE
+	while (nextOffset < nextReadSlot*slotSize
 			&& nextOffset != -1) {
 		numAdvancePackets++;
 		mostFutureOffset = nextOffset;
@@ -668,13 +939,25 @@ void BMVPlayer::InitializeBMV() {
 	if (!stream.open(szMovieFile))
 		error(CANNOT_FIND_FILE, szMovieFile);
 
+	if (TinselV3) {
+		ReadHeader();
+	} else {
+		bpp = 1;
+		frameTime = 2;
+		slotSize = (25*1024);
+		//numSlots = 168;
+		numSlots = 122;	// -> ~ 3MB
+		prefetchSlots = (numSlots/2); // For initial test
+	}
+
+
 	// Grab the data buffer
-	bigBuffer = (byte *)malloc(NUM_SLOTS * SLOT_SIZE);
+	bigBuffer = (byte *)malloc(numSlots * slotSize);
 	if (bigBuffer == NULL)
 		error(NO_MEM, "FMV data buffer");
 
 	// Screen buffer (2 lines more than screen
-	screenBuffer = (byte *)malloc(SCREEN_WIDTH * (SCREEN_HIGH + 2));
+	screenBuffer = (byte *)malloc(SCREEN_WIDTH * (SCREEN_HIGH + 2) * bpp);
 	if (screenBuffer == NULL)
 		error(NO_MEM, "FMV screen buffer");
 
@@ -701,10 +984,13 @@ void BMVPlayer::InitializeBMV() {
 	bIsText = false;
 
 	// Prefetch data
-	LoadSlots(PREFETCH);
+	LoadSlots(prefetchSlots);
 
-	while (numAdvancePackets < ADVANCE_SOUND)
-		LoadSlots(1);
+	if (!TinselV3) {
+		while (numAdvancePackets < ADVANCE_SOUND) {
+			LoadSlots(1);
+		}
+	}
 
 	// Initialize the sound channel
 	InitializeMovieSound();
@@ -762,13 +1048,13 @@ bool BMVPlayer::MaintainBuffer() {
 	if (nextOffset == -1) {
 		// No following packets
 		return false;
-	} else if (nextOffset > NUM_SLOTS * SLOT_SIZE) {
+	} else if (nextOffset > numSlots * slotSize) {
 		// The current unfinished packet will not fit
 		// Copy this slot to slot 0
 
 		// Not if we're still using it!!!
 		// Or, indeed, if the player is still lagging
-		if (nextUseOffset < SLOT_SIZE || nextUseOffset > mostFutureOffset) {
+		if (nextUseOffset < slotSize || nextUseOffset > mostFutureOffset) {
 			// Slot 0 is still in use, buffer is full!
 			return false;
 		}
@@ -777,26 +1063,26 @@ bool BMVPlayer::MaintainBuffer() {
 		wrapUseOffset = mostFutureOffset;
 
 		// mostFuture Offset is now in slot 0
-		mostFutureOffset %= SLOT_SIZE;
+		mostFutureOffset %= slotSize;
 
 		// Copy the data we already have for unfinished packet
 		memcpy(bigBuffer + mostFutureOffset,
 			bigBuffer + wrapUseOffset,
-			SLOT_SIZE - mostFutureOffset);
+			slotSize - mostFutureOffset);
 
 		// Next read is into slot 1
 		nextReadSlot = 1;
 	}
 
-	if (nextReadSlot == NUM_SLOTS) {
+	if (nextReadSlot == numSlots) {
 		// Want to go to slot zero, wait if still in use
-		if (nextUseOffset < SLOT_SIZE) {
+		if (nextUseOffset < slotSize) {
 			// Slot 0 is still in use, buffer is full!
 			return false;
 		}
 
 		// nextOffset must be the buffer size
-		assert(nextOffset == NUM_SLOTS*SLOT_SIZE);
+		assert(nextOffset == numSlots*slotSize);
 
 		// wrapUseOffset must not be set
 		assert(wrapUseOffset == -1);
@@ -807,12 +1093,12 @@ bool BMVPlayer::MaintainBuffer() {
 	}
 
 	// Don't overwrite unused data
-	if (nextUseOffset / SLOT_SIZE == nextReadSlot) {
+	if (nextUseOffset / slotSize == nextReadSlot) {
 		// Buffer is full!
 		return false;
 	}
 
-	if (stream.read(bigBuffer + nextReadSlot * SLOT_SIZE, SLOT_SIZE) != SLOT_SIZE) {
+	if (stream.read(bigBuffer + nextReadSlot * slotSize, slotSize) != slotSize) {
 		bFileEnd = true;
 	}
 
@@ -821,7 +1107,7 @@ bool BMVPlayer::MaintainBuffer() {
 
 	// Find new mostFutureOffset
 	nextOffset = FollowingPacket(mostFutureOffset, false);
-	while (nextOffset < nextReadSlot*SLOT_SIZE
+	while (nextOffset < nextReadSlot*slotSize
 			&& nextOffset != -1) {
 		numAdvancePackets++;
 		mostFutureOffset = nextOffset;
@@ -844,7 +1130,7 @@ bool BMVPlayer::DoBMVFrame() {
 	signed short	xscr;
 
 	if (nextUseOffset == wrapUseOffset) {
-		nextUseOffset %= SLOT_SIZE;
+		nextUseOffset %= slotSize;
 	}
 
 	while (nextUseOffset == mostFutureOffset) {
@@ -857,7 +1143,7 @@ bool BMVPlayer::DoBMVFrame() {
 			}
 
 			if (nextUseOffset == wrapUseOffset) {
-				nextUseOffset %= SLOT_SIZE;
+				nextUseOffset %= slotSize;
 			}
 		} else
 			break;
@@ -875,7 +1161,7 @@ bool BMVPlayer::DoBMVFrame() {
 	case CD_SLOT_NOP:
 		nextUseOffset = FollowingPacket(nextUseOffset, true);
 		if (nextUseOffset == wrapUseOffset) {
-			nextUseOffset %= SLOT_SIZE;
+			nextUseOffset %= slotSize;
 			wrapUseOffset = -1;
 		}
 		numAdvancePackets--;
@@ -893,7 +1179,16 @@ bool BMVPlayer::DoBMVFrame() {
 		graphOffset = nextUseOffset + 4;	// Skip command byte and length
 
 		if (*data & CD_AUDIO) {
-			if (bOldAudio) {
+			if (TinselV3) {
+				int audioSize = audioMaxSize;
+				if (*data & CD_EXTEND) {
+					audioSize -= audioBlobSize;
+				}
+
+				//MovieAudio(graphOffset, audioSize);
+				graphOffset += audioSize;
+				length -= audioSize;
+			} else if (bOldAudio) {
 				graphOffset += sz_AUDIO_pkt;	// Skip audio data
 				length -= sz_AUDIO_pkt;
 			} else {
@@ -917,7 +1212,9 @@ bool BMVPlayer::DoBMVFrame() {
 		}
 
 		if (*data & CD_CMAP) {
-			MoviePalette(graphOffset);
+			if (!TinselV3) { // TinselV3 has palette embeded in the video frame
+				MoviePalette(graphOffset);
+			}
 			graphOffset += sz_CMAP_pkt;	// Skip palette data
 			length -= sz_CMAP_pkt;
 		}
@@ -927,18 +1224,25 @@ bool BMVPlayer::DoBMVFrame() {
 			graphOffset += sz_XSCR_pkt;	// Skip scroll offset
 			length -= sz_XSCR_pkt;
 		} else if (*data & BIT0)
-			xscr = -640;
+			xscr = -640 * bpp;
 		else
 			xscr = 0;
 
-		PrepBMV(ScreenBeg, bigBuffer + graphOffset, length, xscr);
+		if (TinselV3) {
+			if (length > 0) {
+				t3PrepBMV(bigBuffer + graphOffset, length, xscr);
+				currentFrame++;
+			}
+		} else {
+			PrepBMV(bigBuffer + graphOffset, length, xscr);
+			currentFrame++;
+		}
 
-		currentFrame++;
 		numAdvancePackets--;
 
 		nextUseOffset = FollowingPacket(nextUseOffset, true);
 		if (nextUseOffset == wrapUseOffset) {
-			nextUseOffset %= SLOT_SIZE;
+			nextUseOffset %= slotSize;
 			wrapUseOffset = -1;
 		}
 		return true;
@@ -953,7 +1257,7 @@ bool BMVPlayer::DoSoundFrame() {
 	int	graphOffset;
 
 	if (nextSoundOffset == wrapUseOffset) {
-		nextSoundOffset %= SLOT_SIZE;
+		nextSoundOffset %= slotSize;
 	}
 
 	// Make sure the full slot is here
@@ -969,7 +1273,7 @@ bool BMVPlayer::DoSoundFrame() {
 			}
 
 			if (nextSoundOffset == wrapUseOffset) {
-				nextSoundOffset %= SLOT_SIZE;
+				nextSoundOffset %= slotSize;
 			}
 		} else
 			break;
@@ -987,7 +1291,7 @@ bool BMVPlayer::DoSoundFrame() {
 	case CD_SLOT_NOP:
 		nextSoundOffset = FollowingPacket(nextSoundOffset, true);
 		if (nextSoundOffset == wrapUseOffset) {
-			nextSoundOffset %= SLOT_SIZE;
+			nextSoundOffset %= slotSize;
 		}
 		return false;
 
@@ -1012,7 +1316,7 @@ bool BMVPlayer::DoSoundFrame() {
 
 		nextSoundOffset = FollowingPacket(nextSoundOffset, false);
 		if (nextSoundOffset == wrapUseOffset) {
-			nextSoundOffset %= SLOT_SIZE;
+			nextSoundOffset %= slotSize;
 		}
 		currentSoundFrame++;
 		return true;
@@ -1029,16 +1333,21 @@ void BMVPlayer::CopyMovieToScreen() {
 		return;
 	}
 
-	// The movie surface is slightly less high than the output screen (429 rows versus 432).
-	// Because of this, there's some extra line clearing above and below the displayed area
-	int yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
-	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH);
-	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH);
+	int yStart = 0;
+	if (!TinselV3) {
+		// The movie surface is slightly less high than the output screen (429 rows versus 432).
+		// Because of this, there's some extra line clearing above and below the displayed area
+		yStart = (SCREEN_HEIGHT - SCREEN_HIGH) / 2;
+	}
+	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH * bpp);
+	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH * bpp);
 	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
-		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);
+		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH * bpp);
 
 	BmvDrawText(true);
-	PalettesToVideoDAC();			// Keep palette up-to-date
+	if (!TinselV3) {
+		PalettesToVideoDAC();			// Keep palette up-to-date
+	}
 	UpdateScreenRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	g_system->updateScreen();
 	BmvDrawText(false);
@@ -1069,11 +1378,16 @@ void BMVPlayer::FettleBMV() {
 
 		InitializeBMV();
 
-		for (i = 0; i < ADVANCE_SOUND;) {
-			if (DoSoundFrame())
-				i++;
+		if (TinselV3) {
+			startTick = -1;
+		} else {
+			for (i = 0; i < ADVANCE_SOUND;) {
+				if (DoSoundFrame()) {
+					i++;
+				}
+			}
+			startTick = -ONE_SECOND / 4;	// 1/4 second
 		}
-		startTick = -ONE_SECOND / 4;	// 1/4 second
 		return;
 	}
 
@@ -1091,10 +1405,10 @@ void BMVPlayer::FettleBMV() {
 
 	FettleMovieText();
 
-	if (bigProblemCount < PT_A) {
+	if ((!TinselV3) && (bigProblemCount < PT_A)) {
 		refFrame = currentSoundFrame;
 
-		while (currentSoundFrame < ((tick+1-startTick)/2 + ADVANCE_SOUND) && bMovieOn) {
+		while (currentSoundFrame < ((tick+1-startTick)/frameTime + ADVANCE_SOUND) && bMovieOn) {
 			if (currentSoundFrame == refFrame+PT_B)
 				break;
 
@@ -1103,10 +1417,10 @@ void BMVPlayer::FettleBMV() {
 	}
 
 	// Time to process a frame (or maybe more)
-	if (bigProblemCount < PT_A) {
+	if ((!TinselV3) && (bigProblemCount < PT_A)) {
 		refFrame = currentFrame;
 
-		while ((currentFrame < (tick-startTick)/2) && bMovieOn) {
+		while ((currentFrame < (tick-startTick)/frameTime) && bMovieOn) {
 			DoBMVFrame();
 
 			if (currentFrame == refFrame+PT_B) {
@@ -1119,11 +1433,11 @@ void BMVPlayer::FettleBMV() {
 				break;
 			}
 		}
-		if (currentFrame == refFrame || currentFrame <= refFrame+3) {
+		if ((currentFrame == refFrame) || (currentFrame <= refFrame+3)) {
 			bigProblemCount = 0;
 		}
 	} else {
-		while (currentFrame < (tick-startTick)/2 && bMovieOn) {
+		while (currentFrame < (tick-startTick)/frameTime && bMovieOn) {
 			DoBMVFrame();
 		}
 	}
@@ -1145,7 +1459,7 @@ bool BMVPlayer::MoviePlaying() {
  * Returns the audio lag in ms
  */
 int32 BMVPlayer::MovieAudioLag() {
-	if (!bMovieOn || !_audioStream)
+	if (!bMovieOn || !_audioStream || TinselV3)
 		return 0;
 
 	// Calculate lag
