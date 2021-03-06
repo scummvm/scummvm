@@ -42,7 +42,7 @@ namespace Tinsel {
 /** different types of polygon */
 enum POLY_TYPE {
 	POLY_PATH, POLY_NPATH, POLY_BLOCK, POLY_REFER, POLY_EFFECT,
-	POLY_EXIT, POLY_TAG
+	POLY_EXIT, POLY_TAG, POLY_UNKNOWN
 };
 
 // Note 7/10/94, with adjacency reduction ANKHMAP max is 3, UNSEEN max is 4
@@ -184,6 +184,9 @@ public:
 	int32 reel;			// } PATH and NPATH
 	int32 zFactor;		// }
 
+	int32 playfield;	// TinselV3
+	int32 unknown;		// TinselV3
+
 protected:
 	int32 nodecount;		///<The number of nodes in this polygon
 	int32 pnodelistx, pnodelisty;	///<offset in chunk to this array if present
@@ -230,6 +233,8 @@ void Poly::nextPoly() {
 	const byte *pRecord = _pData;
 
 	int typeVal = nextLong(_pData);
+	if ((FROM_32(typeVal) == 6) && TinselV3)
+		typeVal = TO_32(7);
 	if ((FROM_32(typeVal) == 5) && TinselV2)
 		typeVal = TO_32(6);
 	type = (POLY_TYPE)typeVal;
@@ -245,8 +250,8 @@ void Poly::nextPoly() {
 		id = nextLong(_pData);
 		if (TinselV3) {
 			warning("TODO: Complete implementation of Polygon loading for Noir");
-			nextLong(_pData);
-			nextLong(_pData);
+			unknown = nextLong(_pData);
+			playfield = nextLong(_pData);
 		}
 		reftype = nextLong(_pData);
 	}
@@ -1757,6 +1762,15 @@ static void InitTag(const Poly &ptp, int pno, bool bRestart) {
 	CommonInits(TAG, pno, ptp, bRestart);
 }
 
+
+/**
+ * Initialize an unknown polygon.
+ */
+static void InitUnknown(const Poly &ptp, int pno, bool bRestart) {
+	CommonInits(UNKNOWN, pno, ptp, bRestart);
+}
+
+
 /**
  * Called at the restart of a scene, nobbles polygons which are dead.
  */
@@ -1786,6 +1800,10 @@ static void KillDeadPolygons() {
 
 			case TAG:
 				Polys[i]->polyType = EX_TAG;
+				break;
+
+			case UNKNOWN:
+				Polys[i]->polyType = EX_UNKNOWN;
 				break;
 
 			default:
@@ -1864,6 +1882,10 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 				InitTag(ptp, i, bRestart);
 				break;
 
+			case POLY_UNKNOWN:
+				InitUnknown(ptp, i, bRestart);
+				break;
+
 			default:
 				error("Unknown polygon type");
 			}
@@ -1887,7 +1909,13 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 			KillDeadPolygons();
 		} else {
 			for (int i = numPoly - 1; i >= 0; i--) {
-				if (Polys[i]->polyType == TAG) {
+				if (Polys[i]->polyType == TAG){
+					if (TinselV3) {
+						Poly ptp(_vm->_handle->LockMem(pHandle), Polys[i]->pIndex);
+						if (ptp.unknown != -1) {
+							continue;
+						}
+					}
 					PolygonEvent(Common::nullContext, i, STARTUP, 0, false, 0);
 				}
 			}

@@ -37,7 +37,9 @@ enum PTYPE {
 	BLOCK, EFFECT, PATH, REFER, TAG,
 	EX_BLOCK, EX_EFFECT, EX_PATH, EX_REFER, EX_TAG,
 	// Extra polygon types from Tinsel v1
-	EXIT, EX_EXIT
+	EXIT, EX_EXIT,
+	// Extra polygon types from Tinsel v3
+	UNKNOWN, EX_UNKNOWN
 };
 
 // subtype
