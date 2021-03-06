@@ -31,7 +31,7 @@ namespace AGS3 {
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
 		w(owner->w), h(owner->h), pitch(owner->pitch), format(owner->format),
-		clip(false), ct(0), cl(0), cr(owner->w), cb(owner->h) {
+		clip(false), ct(0), cl(0), cr(owner->w - 1), cb(owner->h - 1) {
 	line.resize(h);
 	for (uint y = 0; y < h; ++y)
 		line[y] = (byte *)_owner->getBasePtr(0, y);
@@ -101,9 +101,14 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
 		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
+	// Allegro disables draw when the clipping rect has negative width/height.
+	// Common::Rect instead asserts, which we don't want.
+	if (cr < cl || cb < ct)
+		return;
+
 	// Figure out the dest area that will be updated
 	Common::Rect destRect = dstRect.findIntersectingRect(
-		Common::Rect(cl, ct, cr, cb));
+		Common::Rect(cl, ct, cr + 1, cb + 1));
 	if (destRect.isEmpty())
 		// Area is entirely outside the clipping area, so nothing to draw
 		return;
