@@ -20,18 +20,16 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/engine/gui/mytextbox.h"
 #include "ags/engine/gui/guidialoginternaldefs.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Bitmap;
-
-extern GameSetup usetup;
 
 extern int windowbackgroundcolor;
 extern int cbuttfont;

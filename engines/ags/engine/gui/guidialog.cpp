@@ -40,8 +40,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
-extern GameSetup usetup;
-
 
 namespace {
 
@@ -111,7 +109,7 @@ int loadgamedialog() {
 	const int wnd_height = 120;
 	const int boxleft = myscrnwid / 2 - wnd_width / 2;
 	const int boxtop = myscrnhit / 2 - wnd_height / 2;
-	const int buttonhit = usetup.textheight + 5;
+	const int buttonhit = _GP(usetup).textheight + 5;
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
 	int ctrlok =
@@ -165,7 +163,7 @@ int savegamedialog() {
 	const int wnd_height = 120;
 	const int boxleft = myscrnwid / 2 - wnd_width / 2;
 	const int boxtop = myscrnhit / 2 - wnd_height / 2;
-	const int buttonhit = usetup.textheight + 5;
+	const int buttonhit = _GP(usetup).textheight + 5;
 	int labeltop = 5;
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);

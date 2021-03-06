@@ -85,9 +85,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetup usetup;
-
-
 extern RoomStatus *croom;
 extern int displayed_room;
 extern RoomObject *objs;

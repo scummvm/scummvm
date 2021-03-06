@@ -53,18 +53,11 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern GameSetup usetup;
-
-
 extern CharacterInfo *playerchar;
-
 extern int convert_16bit_bgr;
 extern IGraphicsDriver *gfxDriver;
-
 extern TreeMap *transtree;
 extern int displayed_room, starting_room;
-
 extern char transFileName[MAX_PATH];
 
 String GetRuntimeInfo() {

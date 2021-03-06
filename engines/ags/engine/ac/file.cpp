@@ -55,10 +55,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetup usetup;
-
 extern AGSPlatformDriver *platform;
-
 extern int MAXSTRLEN;
 
 // TODO: the asset path configuration should certainly be revamped at some

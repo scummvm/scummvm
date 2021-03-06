@@ -40,8 +40,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetup usetup;
-
 extern char transFileName[MAX_PATH];
 
 TreeMap *transtree = nullptr;

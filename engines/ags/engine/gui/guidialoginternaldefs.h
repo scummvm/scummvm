@@ -34,7 +34,7 @@ namespace AGS3 {
 #define WINAPI
 extern int ags_misbuttondown(int but);
 #define mbutrelease(X) (!ags_misbuttondown(X))
-#define TEXT_HT usetup.textheight
+#define TEXT_HT _GP(usetup).textheight
 
 } // namespace AGS3
 

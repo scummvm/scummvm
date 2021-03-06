@@ -89,7 +89,6 @@ extern int displayed_room;
 extern RoomStatus *croom;
 
 extern int game_paused;
-extern GameSetup usetup;
 extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
@@ -657,7 +656,7 @@ int IAGSEngine::IsSpriteAlphaBlended(int32 slot) {
 // disable AGS's sound engine
 void IAGSEngine::DisableSound() {
 	shutdown_sound();
-	usetup.audio_backend = 0;
+	_GP(usetup).audio_backend = 0;
 }
 int IAGSEngine::CanRunScriptFunctionNow() {
 	if (_G(inside_script))

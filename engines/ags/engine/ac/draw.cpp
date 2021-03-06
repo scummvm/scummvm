@@ -88,13 +88,8 @@ extern "C" void android_render();
 extern "C" void ios_render();
 #endif
 
-extern GameSetup usetup;
-
-
 extern int convert_16bit_bgr;
-
 extern AGSPlatformDriver *platform;
-
 extern char noWalkBehindsAtAll;
 extern unsigned int loopcounter;
 extern char *walkBehindExists;  // whether a WB area is in this column
@@ -2143,7 +2138,7 @@ void construct_game_scene(bool full_redraw) {
 	_GP(play).UpdateViewports();
 
 	gfxDriver->UseSmoothScaling(IS_ANTIALIAS_SPRITES);
-	gfxDriver->RenderSpritesAtScreenResolution(usetup.RenderAtScreenRes, usetup.Supersampling);
+	gfxDriver->RenderSpritesAtScreenResolution(_GP(usetup).RenderAtScreenRes, _GP(usetup).Supersampling);
 
 	pl_run_plugin_hooks(AGSE_PRERENDER, 0);
 

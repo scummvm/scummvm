@@ -50,8 +50,6 @@ using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
 extern IGraphicsDriver *gfxDriver;
-extern GameSetup usetup;
-
 
 //-----------------------------------------------------------------------------
 // DIALOG SYSTEM STUFF below

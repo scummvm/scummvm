@@ -83,11 +83,6 @@ struct GameSetup {
 	GameSetup();
 };
 
-// TODO: setup object is used for two purposes: temporarily storing config
-// options before engine is initialized, and storing certain runtime variables.
-// Perhaps it makes sense to separate those two group of vars at some point.
-extern GameSetup usetup;
-
 } // namespace AGS3
 
 #endif

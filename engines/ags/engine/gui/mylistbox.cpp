@@ -35,7 +35,6 @@ namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 
-extern GameSetup usetup;
 extern int windowbackgroundcolor;
 extern int cbuttfont;
 extern int smcode;

@@ -52,11 +52,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern GameSetup usetup;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
-
 extern IGraphicsDriver *gfxDriver;
-
 extern volatile bool switched_away;
 
 bool System_HasInputFocus() {
@@ -204,11 +201,11 @@ const char *System_GetRuntimeInfo() {
 }
 
 int System_GetRenderAtScreenResolution() {
-	return usetup.RenderAtScreenRes;
+	return _GP(usetup).RenderAtScreenRes;
 }
 
 void System_SetRenderAtScreenResolution(int enable) {
-	usetup.RenderAtScreenRes = enable != 0;
+	_GP(usetup).RenderAtScreenRes = enable != 0;
 }
 
 //=============================================================================

@@ -36,6 +36,7 @@
 #include "ags/shared/gui/guitextbox.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/movelist.h"
 #include "ags/engine/ac/objectcache.h"
@@ -119,6 +120,7 @@ Globals::Globals() {
 	_spriteset = new SpriteCache(_game->SpriteInfos);
 	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
+	_usetup = new GameSetup();
 	_scrObj = new ScriptObject[MAX_ROOM_OBJECTS];
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
@@ -231,6 +233,7 @@ Globals::~Globals() {
 	delete _spriteset;
 	delete _thisroom;
 	delete _troom;
+	delete _usetup;
 	delete[] _scrObj;
 	delete[] _scrHotspot;
 	delete[] _scrRegion;

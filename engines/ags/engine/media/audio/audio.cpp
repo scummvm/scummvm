@@ -102,8 +102,6 @@ void set_clip_to_channel(int chanid, SOUNDCLIP *clip) {
 
 volatile bool _audio_doing_crossfade;
 
-extern GameSetup usetup;
-
 extern CharacterInfo *playerchar;
 
 extern volatile int switching_away_from_game;
@@ -209,7 +207,7 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 }
 
 bool is_audiotype_allowed_to_play(AudioFileType type) {
-	return usetup.audio_backend != 0;
+	return _GP(usetup).audio_backend != 0;
 }
 
 SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {

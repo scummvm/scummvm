@@ -41,10 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern GameSetup usetup;
-
-
-
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
 

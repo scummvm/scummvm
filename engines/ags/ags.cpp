@@ -69,7 +69,6 @@ using namespace Engine;
 
 extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 
-extern GameSetup usetup;
 extern int our_eip;
 extern AGSPlatformDriver *platform;
 extern int convert_16bit_bgr;
@@ -147,7 +146,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			strncpy(_G(return_to_roomedit), argv[ee + 1], 30);
 			strncpy(_G(return_to_room), argv[ee + 2], 150);
 			ee += 2;
-		} else if (scumm_stricmp(arg, "-noexceptionhandler") == 0) usetup.disable_exception_handling = true;
+		} else if (scumm_stricmp(arg, "-noexceptionhandler") == 0) _GP(usetup).disable_exception_handling = true;
 		else if (scumm_stricmp(arg, "--setup") == 0) {
 			_G(justRunSetup) = true;
 		} else if (scumm_stricmp(arg, "-registergame") == 0) {
@@ -163,9 +162,9 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			_G(force_window) = 1;
 			ee++;
 		} else if (scumm_stricmp(arg, "--runfromide") == 0 && (argc > ee + 3)) {
-			usetup.install_dir = argv[ee + 1];
-			usetup.install_audio_dir = argv[ee + 2];
-			usetup.install_voice_dir = argv[ee + 3];
+			_GP(usetup).install_dir = argv[ee + 1];
+			_GP(usetup).install_audio_dir = argv[ee + 2];
+			_GP(usetup).install_voice_dir = argv[ee + 3];
 			ee += 3;
 		} else if (scumm_stricmp(arg, "--takeover") == 0) {
 			if (argc < ee + 2)
@@ -364,7 +363,7 @@ Common::Error AGSEngine::run() {
 	_G(loadSaveGameOnStartup) = ConfMan.getInt("save_slot");
 
 #ifdef USE_CUSTOM_EXCEPTION_HANDLER
-	if (usetup.disable_exception_handling)
+	if (_GP(usetup).disable_exception_handling)
 #endif
 	{
 		AGS3::initialize_engine(startup_opts);

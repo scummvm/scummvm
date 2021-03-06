@@ -326,13 +326,13 @@ int IsModeEnabled(int which) {
 }
 
 void Mouse_EnableControl(bool on) {
-	usetup.mouse_ctrl_enabled = on; // remember setting in config
+	_GP(usetup).mouse_ctrl_enabled = on; // remember setting in config
 
 	bool is_windowed = _GP(scsystem).windowed != 0;
 	// Whether mouse movement should be controlled by the engine - this is
 	// determined based on related config option.
-	bool should_control_mouse = usetup.mouse_ctrl_when == kMouseCtrl_Always ||
-		(usetup.mouse_ctrl_when == kMouseCtrl_Fullscreen && !is_windowed);
+	bool should_control_mouse = _GP(usetup).mouse_ctrl_when == kMouseCtrl_Always ||
+		(_GP(usetup).mouse_ctrl_when == kMouseCtrl_Fullscreen && !is_windowed);
 	// Whether mouse movement control is supported by the engine - this is
 	// determined on per platform basis. Some builds may not have such
 	// capability, e.g. because of how backend library implements mouse utils.

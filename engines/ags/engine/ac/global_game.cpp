@@ -80,7 +80,6 @@ using namespace AGS::Shared;
 extern int displayed_room;
 extern int game_paused;
 extern char gamefilenamebuf[200];
-extern GameSetup usetup;
 extern unsigned int load_new_game;
 extern int load_new_game_restore;
 extern RoomStatus *croom;
@@ -270,7 +269,7 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	unload_game_file();
 
 	// Adjust config (NOTE: normally, RunAGSGame would need a redesign to allow separate config etc per each game)
-	usetup.translation = ""; // reset to default, prevent from trying translation file of game A in game B
+	_GP(usetup).translation = ""; // reset to default, prevent from trying translation file of game A in game B
 
 	if (Shared::AssetManager::SetDataFile(ResPaths.GamePak.Path) != Shared::kAssetNoError)
 		quitprintf("!RunAGSGame: unable to load new game file '%s'", ResPaths.GamePak.Path.GetCStr());
@@ -858,8 +857,8 @@ void SetMultitasking(int mode) {
 	if ((mode < 0) | (mode > 1))
 		quit("!SetMultitasking: invalid mode parameter");
 
-	if (usetup.override_multitasking >= 0) {
-		mode = usetup.override_multitasking;
+	if (_GP(usetup).override_multitasking >= 0) {
+		mode = _GP(usetup).override_multitasking;
 	}
 
 	// Don't allow background running if full screen

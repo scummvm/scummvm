@@ -44,7 +44,7 @@ class IDriverDependantBitmap;
 
 using namespace AGS; // FIXME later
 
-#define IS_ANTIALIAS_SPRITES usetup.enable_antialiasing && (_GP(play).disable_antialiasing == 0)
+#define IS_ANTIALIAS_SPRITES _GP(usetup).enable_antialiasing && (_GP(play).disable_antialiasing == 0)
 
 // [IKM] WARNING: these definitions has to be made AFTER Allegro headers
 // were included, because they override few Allegro function names;

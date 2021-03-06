@@ -75,6 +75,7 @@ struct CCRegion;
 struct CharacterCache;
 struct DirtyRects;
 struct ExecutingScript;
+struct GameSetup;
 struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
@@ -246,6 +247,7 @@ public:
 	CharacterCache *_charcache = nullptr;
 	ObjectCache *_objcache;
 	MoveList *_mls = nullptr;
+	GameSetup *_usetup;
 
 	 /**@}*/
 

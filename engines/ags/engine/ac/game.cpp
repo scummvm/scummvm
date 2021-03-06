@@ -148,7 +148,6 @@ extern IGraphicsDriver *gfxDriver;
 
 //=============================================================================
 
-GameSetup usetup;
 RoomObject *objs;
 RoomStatus *croom = nullptr;
 
@@ -810,7 +809,7 @@ int Game_ChangeTranslation(const char *newFilename) {
 	if ((newFilename == nullptr) || (newFilename[0] == 0)) {
 		close_translation();
 		strcpy(transFileName, "");
-		usetup.translation = "";
+		_GP(usetup).translation = "";
 		return 1;
 	}
 
@@ -818,7 +817,7 @@ int Game_ChangeTranslation(const char *newFilename) {
 	oldTransFileName = transFileName;
 
 	if (init_translation(newFilename, oldTransFileName.LeftSection('.'), false)) {
-		usetup.translation = newFilename;
+		_GP(usetup).translation = newFilename;
 		return 1;
 	} else {
 		strcpy(transFileName, oldTransFileName);
@@ -1785,7 +1784,7 @@ void display_switch_in() {
 	platform->DisplaySwitchIn();
 	ags_clear_input_buffer();
 	// If auto lock option is set, lock mouse to the game window
-	if (usetup.mouse_auto_lock && _GP(scsystem).windowed)
+	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
 		Mouse::TryLockToWindow();
 }
 
