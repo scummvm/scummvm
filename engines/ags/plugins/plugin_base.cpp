@@ -99,6 +99,7 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSWadjetUtil"))
 		return new AGSWadjetUtil::AGSWadjetUtil();
 
+	debug("Plugin '%s' is not yet supported", fname.c_str());
 	return nullptr;
 }
 
