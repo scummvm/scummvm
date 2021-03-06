@@ -387,7 +387,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 		} else {
 			const IMAGE_T3 *pImgT3 = (const IMAGE_T3 *)pImg;
 
-			if ((pImgT3->colorFlags & 0b110U) == 0) {
+			if ((pImgT3->colorFlags & 0x0C) == 0) { // bits 0b1100 are used to select blending mode
 				pObj->flags = pObj->flags & ~DMA_GHOST;
 			} else {
 				assert((pObj->flags & DMA_WNZ) != 0);

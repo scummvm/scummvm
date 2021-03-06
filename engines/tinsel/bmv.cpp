@@ -273,11 +273,10 @@ static uint32 DecodeVLE(const byte **src, uint32* hasHi, uint32 *nibbleHi) {
 		uint32 byte = **src;
 		++(*src);
 
-		length |= (byte & 0b1111) << bitshift;
+		length |= (byte & 0x0F) << bitshift;
 		bitshift += 2;
 
-		if (byte & 0b1100) // end
-		{
+		if (byte & 0x0C) { // end if any of 0b1100 bits are set
 			*nibbleHi = byte >> 4;
 			*hasHi = 1;
 			break;
@@ -285,11 +284,10 @@ static uint32 DecodeVLE(const byte **src, uint32* hasHi, uint32 *nibbleHi) {
 
 		byte >>= 4;
 
-		length |= (byte & 0b1111) << bitshift;
+		length |= (byte & 0x0F) << bitshift;
 		bitshift += 2;
 
-		if (byte & 0b1100) // end
-		{
+		if (byte & 0x0C) { // end if any of 0b1100 bits are set
 			break;
 		}
 	}
@@ -313,7 +311,7 @@ void BMVPlayer::t3DoOperation(BMV_OP op, uint32 len, const byte **src, byte **ds
 				*src += 1;
 
 				byte += 1;                                 // everything is shifted by one for some reason
-				byte = ((byte & 0b11) << 6) | (byte >> 2); // bits are swizzled 12345678 -> 34567812; ROL(x, 2)
+				byte = ((byte & 0x03) << 6) | (byte >> 2); // bits are swizzled 12345678 -> 34567812; ROL(x, 2)
 
 				uint16 color = 0;
 				if (byte < 7) {
@@ -402,10 +400,10 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 			uint16 word = READ_LE_UINT16(src); // this might not be aligned properly in memory on some architectures
 			src += 2;
 
-			count =                 word & 0b0000111111111111;         // 0 - 4095 (0xFFF)
-			skip  = (byte << 4) | ((word & 0b1111000000000000) >> 12); // 0 - 2207 (0x89F)
+			count =                 word & 0x0FFF;         // 0 - 4095 (0xFFF)
+			skip  = (byte << 4) | ((word & 0xF000) >> 12); // 0 - 2207 (0x89F)
 		} else {
-			count = (byte & 0b111) + 1; // 1 - 8
+			count = (byte & 0x7) + 1;   // 1 - 8
 			skip  = (byte >> 3) - 0x11; // 1 - 14
 		}
 
@@ -436,8 +434,8 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 
 		uint32 length = 0;
 
-		if ((hiNibble & 0b1100) == 0) { // length might use more than one byte and there might be an inner loop
-			if ((loNibble & 0b1100) == 0) { // variable length encoding
+		if ((hiNibble & 0x0C) == 0) { // length might use more than one byte and there might be an inner loop
+			if ((loNibble & 0x0C) == 0) { // variable length encoding
 				uint32 hasHi = 0;
 
 				BMV_NEXT_OP(op, loNibble);
@@ -449,7 +447,7 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 
 				if (!hasHi) {
 					continue; // outer loop
-				} else if ((hiNibble & 0b1100) != 0) { // process remaining nibble
+				} else if ((hiNibble & 0x0C) != 0) { // process remaining nibble
 					BMV_NEXT_OP(op, hiNibble);
 					length = (hiNibble >> 1) - 1;
 					t3DoOperation(op, length, &src, &dst, deltaOffset);
@@ -469,14 +467,14 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 				byte = *src;
 				++src;
 
-				loNibble = byte & 0xF;
+				loNibble = byte & 0x0F;
 				hiNibble = byte >> 4;
 
-				if ((loNibble & 0b1100) == 0) {
+				if ((loNibble & 0x0C) == 0) {
 					uint32 hasHi = 0;
 					length += (loNibble << 1); // process lo nibble
 					length += (hiNibble << 3); // process hi nibble
-					if ((hiNibble & 0b1100) == 0) { // continue if there is more
+					if ((hiNibble & 0x0C) == 0) { // continue if there is more
 						length += DecodeVLE(&src, &hasHi, &hiNibble) << 5; // hiNibble is overriden
 					}
 					length -= 1;
@@ -490,14 +488,14 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 					t3DoOperation(op, length, &src, &dst, deltaOffset);
 				}
 
-				if ((hiNibble & 0b1100) != 0) {
+				if ((hiNibble & 0x0C) != 0) {
 					BMV_NEXT_OP(op, hiNibble);
 					length = (hiNibble >> 1) - 1;
 					t3DoOperation(op, length, &src, &dst, deltaOffset);
 					break; // finish inner loop
 				}
 			}
-		} else if ((loNibble & 0b1100) == 0) { // one operation with length 7-30
+		} else if ((loNibble & 0x0C) == 0) { // one operation with length 7-30
 			BMV_NEXT_OP(op, loNibble);
 			length  = (loNibble >> 1); // note that upper two bit are always 0
 			length += (hiNibble << 1) - 1;

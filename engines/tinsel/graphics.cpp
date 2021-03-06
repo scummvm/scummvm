@@ -46,13 +46,13 @@ extern uint8 g_transPalette[MAX_COLORS];
 
 // using ScummVM pixel format functions is too slow on some ports because of runtime overhead, let the compiler do the optimizations instead
 static inline void t3getRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
-	r = (color >> 11) & 0b011111;
-	g = (color >>  5) & 0b111111;
-	b = (color      ) & 0b011111;
+	r = (color >> 11) & 0x1F;
+	g = (color >>  5) & 0x3F;
+	b = (color      ) & 0x1F;
 }
 
 static inline uint16 t3getColor(uint8 r, uint8 g, uint8 b) {
-	return ((r & 0b011111) << 11) | ((g & 0b111111) << 5) | (b & 0b011111);
+	return ((r & 0x1F) << 11) | ((g & 0x3F) << 5) | (b & 0x1F);
 }
 
 /**
@@ -650,7 +650,7 @@ static void t3WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 						runLength = MIN(runLength, pObj->width - rightClip - x);
 
 						for (int xp = 0; xp < runLength; ++xp) {
-							if (color != 0b1111100000011111) {
+							if (color != 0xF81F) { // "zero" for Tinsel 3 - magenta in 565
 								WRITE_UINT16(tempP, color);
 							}
 							tempP += (horizFlipped ? -2 : 2);
@@ -669,7 +669,7 @@ static void t3WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 						if ((yClip == 0) && (x < (pObj->width - rightClip))) {
 							uint16 color = READ_LE_UINT16(srcP);
 
-							if (color != 0b1111100000011111) {
+							if (color != 0xF81F) { // "zero" for Tinsel 3 - magenta in 565
 								WRITE_UINT16(tempP, color);
 							}
 
@@ -705,7 +705,7 @@ static void t3WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 			uint16 color = READ_LE_UINT16(srcP);
 			srcP += 2;
 
-			if (color != 0b1111100000011111) { // "zero" for Tinsel 3 - magenta in 565
+			if (color != 0xF81F) { // "zero" for Tinsel 3 - magenta in 565
 				WRITE_UINT16(tempP, color);
 			}
 
@@ -756,7 +756,7 @@ static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 		srcP += pObj->leftClip * 2;
 		for (int x = 0; x < pObj->width; ++x) {
 			uint32 color = READ_LE_UINT16(srcP); //uint32 for checking overflow in blending
-			if (color != 0b1111100000011111) { // "zero" for Tinsel 3 - magenta in 565
+			if (color != 0xF81F) { // "zero" for Tinsel 3 - magenta in 565
 				uint8 srcR, srcG, srcB;
 				t3getRGB(color, srcR, srcG, srcB);
 
@@ -779,17 +779,17 @@ static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 					// }
 					// color     &= 0b1111011111011111;
 					color = t3getColor(
-						MIN(srcR + dstR, 0b011111),
-						MIN(srcG + dstG, 0b111111),
-						MIN(srcB + dstB, 0b011111)
+						MIN(srcR + dstR, 0x1F),
+						MIN(srcG + dstG, 0x3F),
+						MIN(srcB + dstB, 0x1F)
 					);
 				} else {
 					// original algo looks simple but does not check for overflow
 					// color += (dstColor & 0b1111011111011111) >> 1;
 					color = t3getColor(
-						MIN(srcR + (dstR / 2), 0b011111),
-						MIN(srcG + (dstG / 2), 0b111111),
-						MIN(srcB + (dstB / 2), 0b011111)
+						MIN(srcR + (dstR / 2), 0x1F),
+						MIN(srcG + (dstG / 2), 0x3F),
+						MIN(srcB + (dstB / 2), 0x1F)
 					);
 				}
 				WRITE_UINT16(tempP, color);
