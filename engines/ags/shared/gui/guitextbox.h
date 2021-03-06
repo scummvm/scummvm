@@ -64,10 +64,6 @@ private:
 
 } // namespace Shared
 } // namespace AGS
-
-extern std::vector<AGS::Shared::GUITextBox> guitext;
-extern int numguitext;
-
 } // namespace AGS3
 
 #endif

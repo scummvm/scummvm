@@ -48,6 +48,7 @@ class GUIInvWindow;
 class GUILabel;
 class GUIListBox;
 class GUISlider;
+class GUITextBox;
 class RoomStruct;
 
 } // namespace Shared
@@ -307,6 +308,16 @@ public:
 
 	std::vector<AGS::Shared::GUISlider> *_guislider;
 	int _numguislider = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guitextbox globals
+	 * @{
+	 */
+
+	std::vector<AGS::Shared::GUITextBox> *_guitext;
+	int _numguitext = 0;
 
 	/**@}*/
 
