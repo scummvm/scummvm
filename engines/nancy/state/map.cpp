@@ -55,8 +55,8 @@ void Map::init() {
     _viewport.init();
     _label.init();
 
-    if (_engine->scene->getEventFlag(40, kTrue) &&
-        _engine->scene->getEventFlag(95, kTrue)) {
+    if (_engine->scene->getEventFlag(40, kTrue) && // Has set up sting
+        _engine->scene->getEventFlag(95, kTrue)) { // Connie chickens
         _mapID = 1;
     } else {
         _mapID = 0;
@@ -78,13 +78,14 @@ void Map::init() {
     _engine->sound->loadSound(sound);
     _engine->sound->playSound(sound);
 
+    _locations.clear();
+
     for (uint i = 0; i < 4; ++i) {
         chunk->seek(0x162 + i * 16, SEEK_SET);
         _locations.push_back(Location());
-        Location &loc = _locations[i];
+        Location &loc = _locations.back();
         readRect(*chunk, loc.hotspot);
 
-        // HARDCODED, TODO
         if (_mapID == 1 && (i % 2) != 0) {
             loc.isActive = false;
         } else {
@@ -94,7 +95,7 @@ void Map::init() {
         for (uint j = 0; j < 2; ++j) {
             loc.scenes.push_back(Location::SceneChange());
             Location::SceneChange &sc = loc.scenes[j];
-            chunk->seek(0x1BE + 6 * i * (j + 1), SEEK_SET);
+            chunk->seek(0x1BE + 6 * i + j * 24, SEEK_SET);
             sc.sceneID = chunk->readUint16LE();
             sc.frameID = chunk->readUint16LE();
             sc.verticalOffset = chunk->readUint16LE();
