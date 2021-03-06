@@ -1255,7 +1255,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Drascula:
    - Spanische Untertitel zur Zwischensequenz mit Von Braun
-     hinzugefügt (3069981: Keine Untertitel in Szene mit „Von Braun“).
+     hinzugefügt (5372: Keine Untertitel in Szene mit „Von Braun“).
 
  Gob:
    - Absturz in Lost in Time beseitigt.
@@ -1458,7 +1458,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Drascula:
    - Deutsche und französische Untertitel zur Zwischensequenz mit Von Braun
-     hinzugefügt (3069981: Keine Untertitel in Szene mit „Von Braun“).
+     hinzugefügt (5372: Keine Untertitel in Szene mit „Von Braun“).
    - Französische Übersetzung des Spiels verbessert.
    - Unterstützung für Rückkehr zur Spieleliste hinzugefügt.
 
@@ -1741,7 +1741,7 @@ Programmcodes finden Sie auf Englisch unter:
  Drascula:
    - Rückschrittsfehler beseitigt, der dazu führte, dass einige Texte immer in
      Englisch waren, selbst wenn eine andere Sprache eingestellt war.
-     (2970211 - DRASCULA: Fehlende deutsche Übersetzung)
+     (4819 - DRASCULA: Fehlende deutsche Übersetzung)
 
  KYRA:
    - Fehler beseitigt, der DOS-Versionen vor dem Anzeigen der Mitwirkendenliste
