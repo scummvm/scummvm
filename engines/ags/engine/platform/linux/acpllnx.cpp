@@ -43,14 +43,6 @@ namespace AGS3 {
 
 using AGS::Shared::String;
 
-
-// Replace the default Allegro icon. The original defintion is in the
-// Allegro 4.4 source under "src/x/xwin.c".
-//include "ags/shared/icon.xpm"
-//void *allegro_icon = icon_xpm;
-String CommonDataDirectory;
-String UserDataDirectory;
-
 struct AGSLinux : AGSPlatformDriver {
 
 	int  CDPlayerCommand(int cmdd, int datt) override;
@@ -92,50 +84,12 @@ void AGSLinux::DisplayAlert(const char *text, ...) {
 		::AGS::g_vm->GUIError(msg);
 }
 
-size_t BuildXDGPath(char *destPath, size_t destSize) {
-#ifdef TODO
-	// Check to see if XDG_DATA_HOME is set in the enviroment
-	const char *home_dir = getenv("XDG_DATA_HOME");
-	size_t l = 0;
-	if (home_dir) {
-		l = snprintf(destPath, destSize, "%s", home_dir);
-	} else {
-		// No evironment variable, so we fall back to home dir in /etc/passwd
-		struct passwd *p = getpwuid(getuid());
-		l = snprintf(destPath, destSize, "%s/.local", p->pw_dir);
-		if (mkdir(destPath, 0755) != 0 && errnum != AL_EEXIST)
-			return 0;
-		l += snprintf(destPath + l, destSize - l, "/share");
-		if (mkdir(destPath, 0755) != 0 && errnum != AL_EEXIST)
-			return 0;
-	}
-	return l;
-#endif
-	return 0;
-}
-
-void DetermineDataDirectories() {
-#ifdef TODO
-	if (!UserDataDirectory.IsEmpty())
-		return;
-	char xdg_path[256];
-	if (BuildXDGPath(xdg_path, sizeof(xdg_path)) == 0)
-		sprintf(xdg_path, "%s", "/tmp");
-	UserDataDirectory.Format("%s/ags", xdg_path);
-	mkdir(UserDataDirectory.GetCStr(), 0755);
-	CommonDataDirectory.Format("%s/ags-common", xdg_path);
-	mkdir(CommonDataDirectory.GetCStr(), 0755);
-#endif
-}
-
 const char *AGSLinux::GetAllUsersDataDirectory() {
-	DetermineDataDirectories();
-	return CommonDataDirectory;
+	return "";
 }
 
 const char *AGSLinux::GetUserSavedgamesDirectory() {
-	DetermineDataDirectories();
-	return UserDataDirectory;
+	return "";
 }
 
 const char *AGSLinux::GetUserConfigDirectory() {
@@ -147,8 +101,7 @@ const char *AGSLinux::GetUserGlobalConfigDirectory() {
 }
 
 const char *AGSLinux::GetAppOutputDirectory() {
-	DetermineDataDirectories();
-	return UserDataDirectory;
+	return "";
 }
 
 unsigned long AGSLinux::GetDiskFreeSpaceMB() {
@@ -161,7 +114,7 @@ const char *AGSLinux::GetNoMouseErrorString() {
 }
 
 const char *AGSLinux::GetAllegroFailUserHint() {
-	return "Make sure you have latest version of Allegro 4 libraries installed, and X server is running.";
+	return nullptr;
 }
 
 eScriptSystemOSID AGSLinux::GetSystemOSID() {
