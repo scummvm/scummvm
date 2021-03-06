@@ -154,10 +154,11 @@ void AGSBlend::GetAlpha(ScriptMethodParams &params) {
 	PARAMS3(int, sprite, int, x, int, y);
 	BITMAP *engineSprite = _engine->GetSpriteGraphic(sprite);
 
-	unsigned char **charbuffer = _engine->GetRawBitmapSurface(engineSprite);
-	unsigned int **longbuffer = (unsigned int **)charbuffer;
+	uint8 *charbuffer = _engine->GetRawBitmapSurface(engineSprite);
+	uint32 *longbuffer = (uint32 *)charbuffer;
+	int pitch = _engine->GetBitmapPitch(engineSprite) / 4;
 
-	int alpha = geta32(longbuffer[y][x]);
+	int alpha = geta32(longbuffer[y * pitch + x]);
 
 	_engine->ReleaseBitmapSurface(engineSprite);
 
@@ -168,14 +169,15 @@ void AGSBlend::PutAlpha(ScriptMethodParams &params) {
 	PARAMS4(int, sprite, int, x, int, y, int, alpha);
 	BITMAP *engineSprite = _engine->GetSpriteGraphic(sprite);
 
-	unsigned char **charbuffer = _engine->GetRawBitmapSurface(engineSprite);
-	unsigned int **longbuffer = (unsigned int **)charbuffer;
+	uint8 *charbuffer = _engine->GetRawBitmapSurface(engineSprite);
+	uint32 *longbuffer = (uint32 *)charbuffer;
+	int pitch = _engine->GetBitmapPitch(engineSprite) / 4;
 
-
-	int r = getr32(longbuffer[y][x]);
-	int g = getg32(longbuffer[y][x]);
-	int b = getb32(longbuffer[y][x]);
-	longbuffer[y][x] = makeacol32(r, g, b, alpha);
+	int pixel = y * pitch + x;
+	int r = getr32(longbuffer[pixel]);
+	int g = getg32(longbuffer[pixel]);
+	int b = getb32(longbuffer[pixel]);
+	longbuffer[pixel] = makeacol32(r, g, b, alpha);
 
 	_engine->ReleaseBitmapSurface(engineSprite);
 
@@ -193,22 +195,24 @@ void AGSBlend::HighPass(ScriptMethodParams &params) {
 
 	_engine->GetBitmapDimensions(src, &srcWidth, &srcHeight, nullptr);
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer;
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint32 *srclongbuffer = (uint32 *)srccharbuffer;
+	int pitch = _engine->GetBitmapPitch(src) / 4;
 
-	for (int y = 0; y < srcHeight; y++) {
+	for (int y = 0, yi = 0; y < srcHeight; y++, yi += pitch) {
 
 		for (int x = 0; x < srcWidth; x++) {
 
-			int srcr = getb32(srclongbuffer[y][x]);
-			int srcg = getg32(srclongbuffer[y][x]);
-			int srcb = getr32(srclongbuffer[y][x]);
+			int srcr = getb32(srclongbuffer[yi + x]);
+			int srcg = getg32(srclongbuffer[yi + x]);
+			int srcb = getr32(srclongbuffer[yi + x]);
 			int tempmaxim = max(srcr, srcg);
 			int maxim = max(tempmaxim, srcb);
 			int tempmin = min(srcr, srcg);
 			int minim = min(srcb, tempmin);
 			int light = (maxim + minim) / 2 ;
-			if (light < threshold) srclongbuffer[y][x] = makeacol32(0, 0, 0, 0);
+			if (light < threshold)
+				srclongbuffer[yi + x] = makeacol32(0, 0, 0, 0);
 
 		}
 
@@ -225,8 +229,9 @@ void AGSBlend::Blur(ScriptMethodParams &params) {
 	int32 srcWidth, srcHeight;
 	_engine->GetBitmapDimensions(src, &srcWidth, &srcHeight, nullptr);
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer;
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint32 *srclongbuffer = (uint32 *)srccharbuffer;
+	int pitch = _engine->GetBitmapPitch(src) / 4;
 	int negrad = -1 * radius;
 
 	//use a 1Dimensional array since the array is on the free store, not the stack
@@ -236,14 +241,14 @@ void AGSBlend::Blur(ScriptMethodParams &params) {
 
 	int arraywidth = srcWidth + (radius * 2); //define the array width since its used many times in the algorithm
 
-	for (int y = 0; y < srcHeight; y++) { //copy the sprite to the Pixels class array
+	for (int y = 0, yi = 0; y < srcHeight; y++, yi += pitch) { //copy the sprite to the Pixels class array
 		for (int x = 0; x < srcWidth; x++) {
 			int locale = xytolocale(x + radius, y + radius, arraywidth);
 
-			Pixels[locale].Red = getr32(srclongbuffer[y][x]);
-			Pixels[locale].Green = getg32(srclongbuffer[y][x]);
-			Pixels[locale].Blue = getb32(srclongbuffer[y][x]);
-			Pixels[locale].Alpha = geta32(srclongbuffer[y][x]);
+			Pixels[locale].Red = getr32(srclongbuffer[yi + x]);
+			Pixels[locale].Green = getg32(srclongbuffer[yi + x]);
+			Pixels[locale].Blue = getb32(srclongbuffer[yi + x]);
+			Pixels[locale].Alpha = geta32(srclongbuffer[yi + x]);
 		}
 	}
 
@@ -342,11 +347,11 @@ void AGSBlend::Blur(ScriptMethodParams &params) {
 		}
 	}
 
-	for (int y = 0; y < srcHeight; y++) {
+	for (int y = 0, yi = 0; y < srcHeight; y++, yi += pitch) {
 
 		for (int x = 0; x < srcWidth; x++) {
 			int locale = xytolocale(x + radius, y + radius, arraywidth);
-			srclongbuffer[y][x] = Dest[locale].GetColorAsInt(); //write the destination array to the main buffer
+			srclongbuffer[yi + x] = Dest[locale].GetColorAsInt(); //write the destination array to the main buffer
 		}
 	}
 
@@ -377,16 +382,17 @@ void AGSBlend::DrawSprite(ScriptMethodParams &params) {
 		return;
 	}
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer;
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint32 *srclongbuffer = (uint32 *)srccharbuffer;
+	int srcPitch = _engine->GetBitmapPitch(src) / 4;
 
-	unsigned char **destcharbuffer = _engine->GetRawBitmapSurface(dest);
-	unsigned int **destlongbuffer = (unsigned int **)destcharbuffer;
+	uint8 *destcharbuffer = _engine->GetRawBitmapSurface(dest);
+	uint32 *destlongbuffer = (uint32 *)destcharbuffer;
+	int destPitch = _engine->GetBitmapPitch(dest) / 4;
 
 	if (srcWidth + x > destWidth) srcWidth = destWidth - x - 1;
 	if (srcHeight + y > destHeight) srcHeight = destHeight - y - 1;
 
-	int destx, desty;
 	int srcr, srcg, srcb, srca, destr, destg, destb, desta;
 	int finalr = 0, finalg = 0, finalb = 0, finala = 0;
 	unsigned int col;
@@ -398,23 +404,24 @@ void AGSBlend::DrawSprite(ScriptMethodParams &params) {
 
 	int ycount = 0;
 	int xcount = 0;
-	for (ycount = starty; ycount < srcHeight; ycount ++) {
+	int srcy = starty * srcPitch;
+	int desty = (starty + y) * destPitch;
+	for (ycount = starty; ycount < srcHeight; ycount ++, srcy += srcPitch, desty += destPitch) {
 		for (xcount = startx; xcount < srcWidth; xcount ++) {
-			destx = xcount + x;
-			desty = ycount + y;
+			int destx = xcount + x;
 
-			srca = (geta32(srclongbuffer[ycount][xcount]));
+			srca = (geta32(srclongbuffer[srcy + xcount]));
 
 			if (srca != 0) {
 				srca = srca * trans / 100;
-				srcr =  getr32(srclongbuffer[ycount][xcount]);
-				srcg =  getg32(srclongbuffer[ycount][xcount]);
-				srcb =  getb32(srclongbuffer[ycount][xcount]);
+				srcr =  getr32(srclongbuffer[srcy + xcount]);
+				srcg =  getg32(srclongbuffer[srcy + xcount]);
+				srcb =  getb32(srclongbuffer[srcy + xcount]);
 
-				destr =  getr32(destlongbuffer[desty][destx]);
-				destg =  getg32(destlongbuffer[desty][destx]);
-				destb =  getb32(destlongbuffer[desty][destx]);
-				desta =  geta32(destlongbuffer[desty][destx]);
+				destr =  getr32(destlongbuffer[desty + destx]);
+				destg =  getg32(destlongbuffer[desty + destx]);
+				destb =  getb32(destlongbuffer[desty + destx]);
+				desta =  geta32(destlongbuffer[desty + destx]);
 
 				switch (DrawMode) {
 				case 0:
@@ -570,7 +577,7 @@ void AGSBlend::DrawSprite(ScriptMethodParams &params) {
 				finalg = srca * finalg / finala + desta * destg * (255 - srca) / finala / 255;
 				finalb = srca * finalb / finala + desta * destb * (255 - srca) / finala / 255;
 				col = makeacol32(finalr, finalg, finalb, finala);
-				destlongbuffer[desty][destx] = col;
+				destlongbuffer[desty + destx] = col;
 
 			}
 
@@ -602,16 +609,17 @@ void AGSBlend::DrawAdd(ScriptMethodParams &params) {
 		return;
 	}
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer;
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint32 *srclongbuffer = (uint32 *)srccharbuffer;
+	int srcPitch = _engine->GetBitmapPitch(src) / 4;
 
-	unsigned char **destcharbuffer = _engine->GetRawBitmapSurface(dest);
-	unsigned int **destlongbuffer = (unsigned int **)destcharbuffer;
+	uint8 *destcharbuffer = _engine->GetRawBitmapSurface(dest);
+	uint32 *destlongbuffer = (uint32 *)destcharbuffer;
+	int destPitch = _engine->GetBitmapPitch(dest) / 4;
 
 	if (srcWidth + x > destWidth) srcWidth = destWidth - x - 1;
 	if (srcHeight + y > destHeight) srcHeight = destHeight - y - 1;
 
-	int destx, desty;
 	int srcr, srcg, srcb, srca, destr, destg, destb, desta, finalr, finalg, finalb, finala;
 	unsigned int col;
 	int ycount = 0;
@@ -623,18 +631,19 @@ void AGSBlend::DrawAdd(ScriptMethodParams &params) {
 	if (x < 0) startx = -1 * x;
 	if (y < 0) starty = -1 * y;
 
-	for (ycount = starty; ycount < srcHeight; ycount ++) {
+	int srcy = starty * srcPitch;
+	int desty = (starty + y) * destPitch;
+	for (ycount = starty; ycount < srcHeight; ycount ++, srcy += srcPitch, desty += destPitch) {
 		for (xcount = startx; xcount < srcWidth; xcount ++) {
-			destx = xcount + x;
-			desty = ycount + y;
+			int destx = xcount + x;
 
-			srca = (geta32(srclongbuffer[ycount][xcount]));
+			srca = (geta32(srclongbuffer[srcy + xcount]));
 
 			if (srca != 0) {
-				srcr =  getr32(srclongbuffer[ycount][xcount]) * srca / 255 * scale;
-				srcg =  getg32(srclongbuffer[ycount][xcount]) * srca / 255 * scale;
-				srcb =  getb32(srclongbuffer[ycount][xcount]) * srca / 255 * scale;
-				desta =  geta32(destlongbuffer[desty][destx]);
+				srcr =  getr32(srclongbuffer[srcy + xcount]) * srca / 255 * scale;
+				srcg =  getg32(srclongbuffer[srcy + xcount]) * srca / 255 * scale;
+				srcb =  getb32(srclongbuffer[srcy + xcount]) * srca / 255 * scale;
+				desta =  geta32(destlongbuffer[desty + destx]);
 
 				if (desta == 0) {
 					destr = 0;
@@ -642,9 +651,9 @@ void AGSBlend::DrawAdd(ScriptMethodParams &params) {
 					destb = 0;
 
 				} else {
-					destr =  getr32(destlongbuffer[desty][destx]);
-					destg =  getg32(destlongbuffer[desty][destx]);
-					destb =  getb32(destlongbuffer[desty][destx]);
+					destr =  getr32(destlongbuffer[desty + destx]);
+					destg =  getg32(destlongbuffer[desty + destx]);
+					destb =  getb32(destlongbuffer[desty + destx]);
 				}
 
 				finala = 255 - (255 - srca) * (255 - desta) / 255;
@@ -652,7 +661,7 @@ void AGSBlend::DrawAdd(ScriptMethodParams &params) {
 				finalg = CLIP(srcg + destg, 0, 255);
 				finalb = CLIP(srcb + destb, 0, 255);
 				col = makeacol32(finalr, finalg, finalb, finala);
-				destlongbuffer[desty][destx] = col;
+				destlongbuffer[desty + destx] = col;
 			}
 		}
 	}
@@ -682,16 +691,17 @@ void AGSBlend::DrawAlpha(ScriptMethodParams &params) {
 		return;
 	}
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer;
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint32 *srclongbuffer = (uint32 *)srccharbuffer;
+	int srcPitch = _engine->GetBitmapPitch(src) / 4;
 
-	unsigned char **destcharbuffer = _engine->GetRawBitmapSurface(dest);
-	unsigned int **destlongbuffer = (unsigned int **)destcharbuffer;
+	uint8 *destcharbuffer = _engine->GetRawBitmapSurface(dest);
+	uint32 *destlongbuffer = (uint32 *)destcharbuffer;
+	int destPitch = _engine->GetBitmapPitch(dest) / 4;
 
 	if (srcWidth + x > destWidth) srcWidth = destWidth - x - 1;
 	if (srcHeight + y > destHeight) srcHeight = destHeight - y - 1;
 
-	int destx, desty;
 	int srcr, srcg, srcb, srca, destr, destg, destb, desta, finalr, finalg, finalb, finala;
 
 	int ycount = 0;
@@ -703,29 +713,30 @@ void AGSBlend::DrawAlpha(ScriptMethodParams &params) {
 	if (x < 0) startx = -1 * x;
 	if (y < 0) starty = -1 * y;
 
-	for (ycount = starty; ycount < srcHeight; ycount ++) {
+	int srcy = starty * srcPitch;
+	int desty = (starty + y) * destPitch;
+	for (ycount = starty; ycount < srcHeight; ycount ++, srcy += srcPitch, desty += destPitch) {
 		for (xcount = startx; xcount < srcWidth; xcount ++) {
-			destx = xcount + x;
-			desty = ycount + y;
+			int destx = xcount + x;
 
-			srca = (geta32(srclongbuffer[ycount][xcount])) * trans / 100;
+			srca = (geta32(srclongbuffer[srcy + xcount])) * trans / 100;
 
 			if (srca != 0) {
-				srcr =  getr32(srclongbuffer[ycount][xcount]);
-				srcg =  getg32(srclongbuffer[ycount][xcount]);
-				srcb =  getb32(srclongbuffer[ycount][xcount]);
+				srcr =  getr32(srclongbuffer[srcy + xcount]);
+				srcg =  getg32(srclongbuffer[srcy + xcount]);
+				srcb =  getb32(srclongbuffer[srcy + xcount]);
 
-				destr =  getr32(destlongbuffer[desty][destx]);
-				destg =  getg32(destlongbuffer[desty][destx]);
-				destb =  getb32(destlongbuffer[desty][destx]);
-				desta =  geta32(destlongbuffer[desty][destx]);
+				destr =  getr32(destlongbuffer[desty + destx]);
+				destg =  getg32(destlongbuffer[desty + destx]);
+				destb =  getb32(destlongbuffer[desty + destx]);
+				desta =  geta32(destlongbuffer[desty + destx]);
 
 				finala = 255 - (255 - srca) * (255 - desta) / 255;
 				finalr = srca * srcr / finala + desta * destr * (255 - srca) / finala / 255;
 				finalg = srca * srcg / finala + desta * destg * (255 - srca) / finala / 255;
 				finalb = srca * srcb / finala + desta * destb * (255 - srca) / finala / 255;
 
-				destlongbuffer[desty][destx] = makeacol32(finalr, finalg, finalb, finala);
+				destlongbuffer[desty + destx] = makeacol32(finalr, finalg, finalb, finala);
 			}
 		}
 	}

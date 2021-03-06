@@ -253,36 +253,38 @@ void DrawLens(int ox, int oy) {
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	if (!virtsc) engine->AbortGame("DrawLens: Cannot get virtual screen.");
 	BITMAP *lenswrite = engine->CreateBlankBitmap(LensOption.lenswidth, LensOption.lenswidth, 8);
-	unsigned char **vScreen = engine->GetRawBitmapSurface(virtsc);
-	unsigned char **lensarray = engine->GetRawBitmapSurface(lenswrite);
+	uint8 *vScreen = engine->GetRawBitmapSurface(virtsc);
+	uint8 *lensarray = engine->GetRawBitmapSurface(lenswrite);
+	int virtscPitch = engine->GetBitmapPitch(virtsc);
+	int lenswritePitch = engine->GetBitmapPitch(lenswrite);
 	int radius = LensOption.lenswidth >> 1;
-	for (int y = 0; y < LensOption.lenswidth; y++) {
+	for (int y = 0, lensy = 0; y < LensOption.lenswidth; y++, lensy += lenswritePitch) {
 		int ypos = y * LensOption.lenswidth;
 		for (int x = 0; x < LensOption.lenswidth; x++) {
 			int lenspos = ypos + x;
 			int coffx = lens[lenspos].xoffset;
 			int coffy = lens[lenspos].yoffset;
 			if (oy + coffy > 0 && oy + coffy < sh && ox + coffx > 0 && ox + coffx < sw) {
-				lensarray[y][x] = vScreen[oy + coffy][ox + coffx];
-				//vScreen[oy+coffy][ox+coffx] = ABS(coffy);
+				lensarray[lensy + x] = vScreen[(oy + coffy) * virtscPitch + ox + coffx];
+				//vScreen[(oy + coffy) * virtscPitch + ox + coffx] = ABS(coffy);
 			}
 		}
 	}
 	/*
-	for (int y=0;y<LensOption.lenswidth;y++)
+	for (int y=0, lensy = 0;y<LensOption.lenswidth;y++, lensy += lenswritePitch)
 	{
 	    int ypos = y*LensOption.lenswidth;
 	    for (int x=0;x<LensOption.lenswidth;x++)
 	    {
 	        if (oy+y > 0 && oy+y < sh && ox+x > 0 && ox+x < sw)
 	        {
-	            vScreen[oy+y][ox+x] = lensarray[y][x];
+	            vScreen[(oy+y) * virtscPitch + ox+x] = lensarray[lensy + x];
 	        }
 	    }
 	}
 	*/
 	int radsq = radius * radius;
-	for (int cy = -radius; cy <= radius; cy++) { //Draw a circle around the point, for the mask.
+	for (int cy = -radius, lensy = 0; cy <= radius; cy++, lensy += lenswritePitch) { //Draw a circle around the point, for the mask.
 		int cysq = cy * cy;
 		for (int cx = -radius; cx <= radius; cx++) {
 			int cxsq = cx * cx;
@@ -290,7 +292,7 @@ void DrawLens(int ox, int oy) {
 			int dy = cy + oy;
 			if ((cxsq + cysq <= radsq) && dx < sw && dx >= 0 && dy < sh && dy >= 0 && cy + radius < LensOption.lenswidth - 1 && cx + radius < LensOption.lenswidth - 1) {
 				//if (cy+radius < 0 || cx+radius < 0) engine->AbortGame ("I did something wrong");
-				vScreen[dy][dx] = lensarray[cy + radius][cx + radius];
+				vScreen[dy * virtscPitch + dx] = lensarray[lensy + cx + radius];
 			}
 		}
 	}
@@ -443,7 +445,8 @@ void DrawPlasma(int slot, int palstart, int palend) {
 		basecol = palend;
 	}
 	engine->GetBitmapDimensions(plasmaspr, &w, &h, nullptr);
-	unsigned char **plasmarray = engine->GetRawBitmapSurface(plasmaspr);
+	uint8 *plasmarray = engine->GetRawBitmapSurface(plasmaspr);
+	int plasmapitch = engine->GetBitmapPitch(plasmaspr);
 	double frange = range / 2.0;
 	int complex = 0;
 	int color = 0;
@@ -453,7 +456,7 @@ void DrawPlasma(int slot, int palstart, int palend) {
 		i++;
 	}
 	for (int x = 0; x < w; x++) {
-		for (int y = 0; y < h; y++) {
+		for (int y = 0, plasmay = 0; y < h; y++, plasmay += plasmapitch) {
 			color = 0;
 			for (int p = 0; p < MAX_PLASMA_COMPLEXITY; p++) {
 				if (plasmatype[p] == 1) { //1 = Horizontal Bars (data=width)
@@ -471,7 +474,7 @@ void DrawPlasma(int slot, int palstart, int palend) {
 				}
 			}
 			if (color > 0 && complex > 0) color = color / complex;
-			plasmarray[y][x] = static_cast<unsigned char>(basecol + color);
+			plasmarray[plasmay + x] = static_cast<unsigned char>(basecol + color);
 		}
 	}
 	engine->ReleaseBitmapSurface(plasmaspr);
@@ -495,36 +498,41 @@ void DoFire(int spriteId, int masksprite, int palstart, int palend, int strength
 	}
 	int divider = 256 / range;
 	engine->GetBitmapDimensions(firespr, &w, &h, nullptr);
-	unsigned char **fire = engine->GetRawBitmapSurface(firespr);
-	unsigned char **color = engine->GetRawBitmapSurface(firecolorspr);
+	uint8 *fire = engine->GetRawBitmapSurface(firespr);
+	uint8 *color = engine->GetRawBitmapSurface(firecolorspr);
+	int firePitch = engine->GetBitmapPitch(firespr);
+	int colorPitch = engine->GetBitmapPitch(firecolorspr);
 	int sparky = 0;
 	//srand(time(NULL));
-	for (int y = 0; y < h - 1; y++) {
+	for (int y = 0, firey = 0; y < h - 1; y++, firey += firePitch) {
 		if ((int)::AGS::g_vm->getRandomNumber(9) > 7 - windspeed) { //Wind right
 			for (int x = w - 1; x > 1; x--) {
-				fire[y][x] = fire[y][x - 1];
+				fire[firey + x] = fire[firey + x - 1];
 			}
 		} else if ((int)::AGS::g_vm->getRandomNumber(9) > 7 + windspeed) { // wind left
 			for (int x = 0; x < w - 1; x++) {
-				fire[y][x] = fire[y][x + 1];
+				fire[firey + x] = fire[firey + x + 1];
 			}
 		}
 	}
 	for (int x = 0; x < w; x++) {
 		sparky = ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % (h - 2));
-		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff &&
+		int firexy = (h - sparky) * firePitch + x;
+		if (sparky < h && sparky > 0 && fire[firexy] > cutoff &&
 				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
-			fire[h - sparky][x] = 255;
+			fire[firexy] = 255;
 		sparky = ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % (h - 2));
-		if (sparky < h && sparky > 0 && fire[h - sparky][x] > cutoff &&
+		if (sparky < h && sparky > 0 && fire[firexy] > cutoff &&
 				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
-			fire[h - sparky][x] = 0;
+			fire[firexy] = 0;
 	}
 	if (seed == 0) {
+		int firey = (h - 1) * firePitch;
 		for (int x = 0; x < w; x++)
-			fire[h - 1][x] = 255;
+			fire[firey + x] = 255;
+		firey = (h - 2) * firePitch;
 		for (int x = 0; x < w; x++)
-			fire[h - 2][x] = ::AGS::g_vm->getRandomNumber(255);
+			fire[firey + x] = ::AGS::g_vm->getRandomNumber(255);
 	} else if (seed > 0) {
 		seedspr = engine->GetSpriteGraphic(seed);
 		BITMAP *virtsc = engine->GetVirtualScreen();
@@ -537,17 +545,17 @@ void DoFire(int spriteId, int masksprite, int palstart, int palend, int strength
 		engine->NotifySpriteUpdated(masksprite);
 	}
 
-	for (int y = 0; y < h - 1; y++) {
+	for (int y = 0, firey = 0, colory = 0; y < h - 1; y++, firey += firePitch, colory += colorPitch) {
 		for (int x = 0; x < w; x++) {
-			fire[y][x] =
-			    ((fire[(y + 1) % h][(x - 1 + w) % w]
-			      + fire[(y + 1) % h][(x) % w]
-			      + fire[(y + 1) % h][(x + 1) % w]
-			      + fire[(y + 2) % h][(x) % w])
+			fire[firey + x] =
+			    ((fire[((y + 1) % h) * firePitch + ((x - 1 + w) % w)]
+			      + fire[((y + 1) % h) * firePitch + ((x) % w)]
+			      + fire[((y + 1) % h) * firePitch + ((x + 1) % w)]
+			      + fire[((y + 2) % h) * firePitch + ((x) % w)])
 			     * 100) / (400 + (100 - strength));
-			if (fire[y][x] < cutoff) fire[y][x] = 0;
-			//if (fire[y][x] ==255) color [y][x] = palend;
-			else color [y][x] = static_cast<unsigned char>(basecol + (fire[y][x] / divider) * dir);
+			if (fire[firey + x] < cutoff) fire[firey + x] = 0;
+			//if (fire[firey + x] ==255) color [colory + x] = palend;
+			else color [colory + x] = static_cast<uint8>(basecol + (fire[firey + x] / divider) * dir);
 		}
 	}
 	engine->ReleaseBitmapSurface(firespr);
@@ -563,7 +571,7 @@ unsigned char MixColorAlpha (unsigned char fg,unsigned char bg,unsigned char alp
     //unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
     //BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
     //if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-    //unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
+    //uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
     AGSColor *palette = engine->GetPalette ();
     int i=0;
     int out_r = (palette[fg].r>>1) * alpha + (palette[bg].r>>1) * (255 - alpha);
@@ -592,7 +600,7 @@ unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char 
     //unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
     //BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
     //if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-    //unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
+    //uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
     AGSColor *palette = engine->GetPalette ();
     int i=0;
     int add_r,add_b,add_g = 0;
@@ -618,7 +626,7 @@ unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char 
 unsigned char GetColor565(unsigned char r, unsigned char g, unsigned char b) {
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
 	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-	//unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
+	//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
 	int i = ((r << 11) | (g << 5) | b);
 	unsigned char *clutp = clut;
 	unsigned char result = *(clutp + i);
@@ -653,10 +661,11 @@ unsigned char GetRemappedSlot(unsigned char slot) {
 int LoadCLUT(int slot) {
 	if (engine->GetSpriteWidth(slot) != 256 || engine->GetSpriteHeight(slot) != 256) return 1;
 	BITMAP *clutimage = engine->GetSpriteGraphic(slot);
-	unsigned char **clutarray = engine->GetRawBitmapSurface(clutimage);
-	for (int y = 0; y < 256; y++) {
+	uint8 *clutarray = engine->GetRawBitmapSurface(clutimage);
+	int pitch = engine->GetBitmapPitch(clutimage);
+	for (int y = 0, arrayy = 0, cluty = 0; y < 256; y++, arrayy += pitch, cluty += 256) {
 		for (int x = 0; x < 256; x++) {
-			clut[y * 256 + x] = clutarray[y][x];
+			clut[cluty + x] = clutarray[arrayy + x];
 		}
 	}
 	clutslot = slot;
@@ -845,8 +854,10 @@ void DrawStars(int slot, int maskslot) {
 	BITMAP *maskcanvas = engine->GetSpriteGraphic(maskslot);
 	if (!maskcanvas) engine->AbortGame("DrawStars: Can't load mask slot.");
 	engine->GetBitmapDimensions(canvas, &sw, &sh, nullptr);
-	unsigned char **screenarray = engine->GetRawBitmapSurface(canvas);
-	unsigned char **maskarray = engine->GetRawBitmapSurface(maskcanvas);
+	uint8 *screenarray = engine->GetRawBitmapSurface(canvas);
+	uint8 *maskarray = engine->GetRawBitmapSurface(maskcanvas);
+	int screenPitch = engine->GetBitmapPitch(canvas);
+	int maskPitch = engine->GetBitmapPitch(maskcanvas);
 	for (int i = 0; i < Starfield.maxstars; i++) {
 		//stars[i].z-= 0.5;
 		//if (stars[i].z < 1.0) stars[i].z = (double)MAX_DEPTH;
@@ -874,7 +885,8 @@ void DrawStars(int slot, int maskslot) {
 				/*
 				if (scale != 100)
 				{
-				unsigned char** orig = engine->GetRawBitmapSurface (origspr);
+				uint8 * orig = engine->GetRawBitmapSurface (origspr);
+				int origPitch = engine->GetBitmapPitch(origspr);
 				int32 h1,h2,w1,w2=0;
 				double fw2,fh2;
 				engine->GetBitmapDimensions (origspr,&w1,&h1,NULL);
@@ -885,7 +897,8 @@ void DrawStars(int slot, int maskslot) {
 				if (w2 < 1) w2 = 1;
 				if (h2 < 1) h2 = 1;
 				resizspr = engine->CreateBlankBitmap (w2,h2,8);
-				unsigned char** resized = engine->GetRawBitmapSurface (resizspr);
+				uint8 * resized = engine->GetRawBitmapSurface (resizspr);
+				int resizePitch = engine->GetBitmapPitch(resizspr);
 				int x_ratio = (int)((w1<<16)/w2) +1;
 				int y_ratio = (int)((h1<<16)/h2) +1;
 				int x2, y2 ;
@@ -895,7 +908,7 @@ void DrawStars(int slot, int maskslot) {
 				   {
 				       x2 = ((j*x_ratio)>>16) ;
 				       y2 = ((i*y_ratio)>>16) ;
-				       resized [i][j] = orig [y2][x2];
+				       resized [i * resizePitch + j] = orig [y2 * origPitch + x2];
 				 }
 				}
 				engine->ReleaseBitmapSurface (resizspr);
@@ -903,7 +916,8 @@ void DrawStars(int slot, int maskslot) {
 				//resizspr = origspr;
 				int32 w,h=0;
 				engine->GetBitmapDimensions (resizspr,&w,&h,NULL);
-				unsigned char **imagemap = engine->GetRawBitmapSurface (resizspr);
+				uint8 *imagemap = engine->GetRawBitmapSurface (resizspr);
+				int imagePitch = engine->GetBitmapPitch(resizspr);
 				int ox = px - (w>>1);
 				int oy = py - (h>>1);
 				for (int dy=0;dy<h;dy++)
@@ -914,17 +928,18 @@ void DrawStars(int slot, int maskslot) {
 				   int ey = oy+dy;
 				   if (ex < sw && ex >= 0 && ey < sh && ey >= 0)
 				   {
-				       if (maskcolor > maskarray [ey][ex] && imagemap[dy][dx] > 0)
+				       if (maskcolor > maskarray [ey * maskPitch + ex] && imagemap[dy * imagePitch + dx] > 0)
 				       {
-				           maskarray [ey][ex] = maskcolor;
-				           screenarray [ey][ex] = imagemap[dy][dx];
+				           maskarray [ey * maskPitch + ex] = maskcolor;
+				           screenarray [ey * screenPitch + ex] = imagemap[dy][dx];
 				       }
 				   }
 				}
 				}
 				*/
 
-				unsigned char **orig = engine->GetRawBitmapSurface(origspr);
+				uint8 *orig = engine->GetRawBitmapSurface(origspr);
+				int origPitch = engine->GetBitmapPitch(origspr);
 				int32 h1, h2, w1, w2 = 0;
 				double fw2, fh2;
 				engine->GetBitmapDimensions(origspr, &w1, &h1, nullptr);
@@ -947,21 +962,21 @@ void DrawStars(int slot, int maskslot) {
 						y2 = ((temprzy) >> 16);
 						int ex = ox + j;
 						if (ex < sw && ex >= 0 && ey < sh && ey >= 0) {
-							if (maskcolor > maskarray [ey][ex] && orig[y2][x2] > 0) {
-								maskarray [ey][ex] = maskcolor;
-								screenarray [ey][ex] = orig[y2][x2];
+							if (maskcolor > maskarray [ey * maskPitch + ex] && orig[y2 * origPitch + x2] > 0) {
+								maskarray [ey * maskPitch + ex] = maskcolor;
+								screenarray [ey * screenPitch + ex] = orig[y2 * origPitch + x2];
 							}
 						}
-						//resized [ii][j] = orig [y2][x2];
+						//resized [ii][j] = orig [y2 * origPitch + x2];
 					}
 				}
 				engine->ReleaseBitmapSurface(origspr);
 			} else if (stars[i].sprite == 0) {
 				if (stars[i].maxrad == 1) {
 					if (px < sw && px >= 0 && py < sh && py >= 0) {
-						if (maskcolor > maskarray[py][px]) {
-							maskarray[py][px] = maskcolor;
-							screenarray[py][px] = stars[i].color;
+						if (maskcolor > maskarray[py * maskPitch + px]) {
+							maskarray[py * maskPitch + px] = maskcolor;
+							screenarray[py * screenPitch + px] = stars[i].color;
 						}
 					}
 				} else {
@@ -978,9 +993,9 @@ void DrawStars(int slot, int maskslot) {
 							int dx = cx + px;
 							int dy = cy + py;
 							if ((cxsq + cysq <= radsq) && dx < sw && dx >= 0 && dy < sh && dy >= 0) {
-								if (maskcolor > maskarray [dy][dx]) {
-									maskarray [dy][dx] = maskcolor;
-									screenarray [dy][dx] = color;
+								if (maskcolor > maskarray [dy * maskPitch + dx]) {
+									maskarray [dy * maskPitch + dx] = maskcolor;
+									screenarray [dy * screenPitch + dx] = color;
 								}
 							}
 						}
@@ -996,7 +1011,7 @@ void DrawStars(int slot, int maskslot) {
 					       int dy = cy+py;
 					       if((cxsq+cysq <= radsq) && dx < sw && dx >= 0 && dy < sh && dy >= 0)
 					       {
-					           if (maskarray [dy][dx] == maskcolor)screenarray [dy][dx] = color;
+					           if (maskarray [dy * maskPitch + dx] == maskcolor)screenarray [dy * screenPitch + dx] = color;
 					       }
 					   }
 					}
@@ -1125,8 +1140,10 @@ int DrawReflections(int id, int charobj = 0) {
 	engine->GetBitmapDimensions(walkbehind, &bgw, &bgh, nullptr);
 	if (!bgmask) engine->AbortGame("DrawReflections: Can't load reflection mask.");
 	//unsigned char **charbuffer = engine->GetRawBitmapSurface (virtsc);
-	unsigned char **wbarray = engine->GetRawBitmapSurface(walkbehind);
-	unsigned char **maskarray = engine->GetRawBitmapSurface(bgmask);
+	uint8 *wbarray = engine->GetRawBitmapSurface(walkbehind);
+	uint8 *maskarray = engine->GetRawBitmapSurface(bgmask);
+	int wbPitch = engine->GetBitmapPitch(walkbehind);
+	int maskPitch = engine->GetBitmapPitch(bgmask);
 	//Initialize stuff
 	BITMAP *charsprite = nullptr;
 	BITMAP *charsprite2 = nullptr;
@@ -1164,7 +1181,8 @@ int DrawReflections(int id, int charobj = 0) {
 	int32 w, h;
 	engine->GetBitmapDimensions(charsprite, &w, &h, nullptr);
 	if (scale != 100) {
-		unsigned char **orig = engine->GetRawBitmapSurface(charsprite);
+		uint8 *orig = engine->GetRawBitmapSurface(charsprite);
+		int origPitch = engine->GetBitmapPitch(charsprite);
 		int h1, h2, w1, w2;
 		double fw2, fh2;
 		h1 = h;
@@ -1174,7 +1192,8 @@ int DrawReflections(int id, int charobj = 0) {
 		h2 = static_cast<int>(fh2);
 		w2 = static_cast<int>(fw2);
 		charsprite2 = engine->CreateBlankBitmap(w2, h2, 8);
-		unsigned char **resized = engine->GetRawBitmapSurface(charsprite2);
+		uint8 *resized = engine->GetRawBitmapSurface(charsprite2);
+		int resizedPitch = engine->GetBitmapPitch(charsprite2);
 		int x_ratio = (int)((w1 << 16) / w2) + 1;
 		int y_ratio = (int)((h1 << 16) / h2) + 1;
 		int x2, y2 ;
@@ -1182,7 +1201,7 @@ int DrawReflections(int id, int charobj = 0) {
 			for (int j = 0; j < w2; j++) {
 				x2 = ((j * x_ratio) >> 16) ;
 				y2 = ((i * y_ratio) >> 16) ;
-				resized [i][j] = orig [y2][x2];
+				resized [i * resizedPitch + j] = orig [y2 * origPitch + x2];
 			}
 		}
 		engine->ReleaseBitmapSurface(charsprite2);
@@ -1193,9 +1212,12 @@ int DrawReflections(int id, int charobj = 0) {
 		charsprite2 = charsprite;
 	}
 	int transamount = 0;
-	unsigned char **spritearray = engine->GetRawBitmapSurface(charsprite2);
-	unsigned char **charbuffer = engine->GetRawBitmapSurface(rcolormap);
-	unsigned char **alphaarray = engine->GetRawBitmapSurface(ralphamap);
+	uint8 *spritearray = engine->GetRawBitmapSurface(charsprite2);
+	uint8 *charbuffer = engine->GetRawBitmapSurface(rcolormap);
+	uint8 *alphaarray = engine->GetRawBitmapSurface(ralphamap);
+	int spritePitch = engine->GetBitmapPitch(charsprite2);
+	int charPitch = engine->GetBitmapPitch(rcolormap);
+	int alphaPitch = engine->GetBitmapPitch(ralphamap);
 	int i = h - 1, j = 0;
 	int32 ox = cox;
 	if (charobj == 0) ox = ox - (w / 2);
@@ -1234,19 +1256,19 @@ int DrawReflections(int id, int charobj = 0) {
 			int wbb = 0;
 			engine->ViewportToRoom(&rx, &ry);
 			if (ry > 0 && ry < bgh && rx > 0 && rx < bgw) {
-				if (wbarray [ry][rx] > 0) {
-					wbb = engine->GetWalkbehindBaseline(wbarray[ry][rx]);
+				if (wbarray [ry * wbPitch + rx] > 0) {
+					wbb = engine->GetWalkbehindBaseline(wbarray[ry * wbPitch + rx]);
 				}
-				if (maskarray[ry][rx] == 21) obst[j] = 1;
+				if (maskarray[ry * maskPitch + rx] == 21) obst[j] = 1;
 			}
 
 			//dither = (!dither);
 			transamount = 32 * translevel;
-			if (spritearray [i][j] != 0 && oy + yoffset < screenh && ox + xoffset < screenw && oy + yoffset >= 0 && ox + xoffset >= 0) { // If the sprite isn't transparent, and isn't drawn off the edge of the bg.
+			if (spritearray [i * spritePitch + j] != 0 && oy + yoffset < screenh && ox + xoffset < screenw && oy + yoffset >= 0 && ox + xoffset >= 0) { // If the sprite isn't transparent, and isn't drawn off the edge of the bg.
 				if (wbb < ry && obst[j] == 0 && (oy > reflectionmap[(ox + xoffset) + (screenw * (oy + yoffset))])) {
-					//charbuffer[oy+yoffset][ox+xoffset] = MixColorAlpha (spritearray [i][j],charbuffer[oy+yoffset][ox+xoffset],transamount);
-					charbuffer [oy + yoffset][ox + xoffset] = spritearray [i][j];
-					alphaarray [oy + yoffset][ox + xoffset] = transamount;
+					//charbuffer[(oy+yoffset) * charPitch + ox+xoffset] = MixColorAlpha (spritearray [i * spritePitch + j],charbuffer[(oy+yoffset) * charPitch + ox+xoffset],transamount);
+					charbuffer [(oy + yoffset) * charPitch + ox + xoffset] = spritearray [i * spritePitch + j];
+					alphaarray [(oy + yoffset) * alphaPitch + ox + xoffset] = transamount;
 					reflectionmap[(ox + xoffset) + (screenw * (oy + yoffset))] = oy;
 				}
 			}
@@ -1273,7 +1295,6 @@ int DrawReflections(int id, int charobj = 0) {
 
 int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blendmode = 0, int use_objpal = 0) {
 	BITMAP *maskspr = nullptr;
-	unsigned char **maskarray = nullptr;
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
 	if (!maskspr && mask > 0) {
 		char maskerr [100];
@@ -1293,23 +1314,32 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 	engine->GetBitmapDimensions(bgspr, &bgw, &bgh, &coldepth);
 	engine->GetBitmapDimensions(spritespr, &sprw, &sprh, &coldepth);
 
-	unsigned char **bgarray = engine->GetRawBitmapSurface(bgspr);
-	//unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
-	unsigned char **spritearray = engine->GetRawBitmapSurface(spritespr);
-	if (mask > 0) maskarray = engine->GetRawBitmapSurface(maskspr);
+	uint8 *bgarray = engine->GetRawBitmapSurface(bgspr);
+	//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
+	uint8 *spritearray = engine->GetRawBitmapSurface(spritespr);
+	int bgPitch = engine->GetBitmapPitch(bgspr);
+	//int clutPitch = engine->GetBitmapPitch(clutspr);
+	int spritePitch = engine->GetBitmapPitch(spritespr);
+
+	unsigned char *maskarray = nullptr;
+	int maskPitch = 0;
+	if (mask > 0) {
+		maskarray = engine->GetRawBitmapSurface(maskspr);
+		maskPitch = engine->GetBitmapPitch(maskspr);
+	}
 	int tloffset = 255 - translevel;
 	int x = 0;
 	int y = 0;
 	//int transamount = 256 * translevel; //old
 	while (y < sprh) {
 		while (x < sprw) {
-			if (spritearray [y][x] != 0 && y < bgh && x < bgw && y >= 0 && x >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the bg.
+			if (spritearray [y * spritePitch + x] != 0 && y < bgh && x < bgw && y >= 0 && x >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the bg.
 				if (mask > 0) {
-					translevel = MAX(maskarray [y][x] - tloffset, 0);
+					translevel = MAX(maskarray [y * maskPitch + x] - tloffset, 0);
 				}
-				//spritearray[y][x] = cycle_remap[clutarray [cycle_remap[bgarray[y][x]]+transamount][cycle_remap[spritearray [y][x]]]]; //old
-				if (blendmode == 0) spritearray[y][x] = Mix::MixColorAlpha(spritearray [y][x], bgarray[y][x], translevel, use_objpal);
-				else if (blendmode == 1) spritearray[y][x] = Mix::MixColorAdditive(spritearray [y][x], bgarray[y][x], translevel, use_objpal);
+				//spritearray[y * spritePitch + x] = cycle_remap[clutarray [(cycle_remap[bgarray[y * bgPitch + x]]+transamount) * clutPitch + (cycle_remap[spritearray [y * spritePitch + x]])]; //old
+				if (blendmode == 0) spritearray[y * spritePitch + x] = Mix::MixColorAlpha(spritearray [y * spritePitch + x], bgarray[y * bgPitch + x], translevel, use_objpal);
+				else if (blendmode == 1) spritearray[y * spritePitch + x] = Mix::MixColorAdditive(spritearray [y * spritePitch + x], bgarray[y * bgPitch + x], translevel, use_objpal);
 			}
 			x++;
 		}
@@ -1328,7 +1358,6 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mask = 0, int blendmode = 0) {
 	if (translevel == 0) return 0;
 	BITMAP *maskspr = nullptr;
-	unsigned char **maskarray = nullptr;
 	// Get a reference to the screen we'll draw onto
 	BITMAP *virtsc = engine->GetVirtualScreen();
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
@@ -1342,8 +1371,12 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 	int32 screenw, screenh;
 	engine->GetScreenDimensions(&screenw, &screenh, &coldepth);
 	engine->GetBitmapDimensions(spritespr, &sprw, &sprh, &coldepth);
-	unsigned char **charbuffer = engine->GetRawBitmapSurface(virtsc);
-	unsigned char **spritearray = engine->GetRawBitmapSurface(spritespr);
+	uint8 *charbuffer = engine->GetRawBitmapSurface(virtsc);
+	uint8 *spritearray = engine->GetRawBitmapSurface(spritespr);
+	int charPitch = engine->GetBitmapPitch(virtsc);
+	int spritePitch = engine->GetBitmapPitch(spritespr);
+	uint8 *maskarray = nullptr;
+	int maskPitch = 0;
 	if (mask > 0) {
 		if (!maskspr && mask > 0) {
 			char maskerr [100];
@@ -1351,6 +1384,7 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 			engine->AbortGame(maskerr);
 		}
 		maskarray = engine->GetRawBitmapSurface(maskspr);
+		maskPitch = engine->GetBitmapPitch(maskspr);
 	}
 	int tloffset = 255 - translevel;
 	int x = 0;
@@ -1358,16 +1392,16 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 	//int transamount = 256 * translevel; //old
 	while (y < sprh) {
 		while (x < sprw) {
-			if (spritearray [y][x] != 0 && y + oy < screenh && x + ox < screenw && y + oy >= 0 && x + ox >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the screen.
-				//charbuffer[y+oy][x+ox] = cycle_remap[clutarray [cycle_remap[charbuffer[y+oy][x+ox]]+transamount][cycle_remap[spritearray [y][x]]]]; //old
+			if (spritearray [y * spritePitch + x] != 0 && y + oy < screenh && x + ox < screenw && y + oy >= 0 && x + ox >= 0) { // If the spriteId isn't transparent, and isn't drawn off the edge of the screen.
+				//charbuffer[(y+oy) * charPitch + x+ox] = cycle_remap[clutarray ([cycle_remap[charbuffer[(y+oy) * charPitch + x+ox]]+transamount) * clutPitch + (cycle_remap[spritearray [y * spritePitch + x]])]; //old
 				if (mask > 0) {
-					translevel = MAX(maskarray [y][x] - tloffset, 0);
+					translevel = MAX(maskarray [y * maskPitch + x] - tloffset, 0);
 				}
 				if (blendmode == 0) {
 					if (translevel == 255) {
-						charbuffer[y + oy][x + ox] = spritearray [y][x];
-					} else charbuffer[y + oy][x + ox] = Mix::MixColorAlpha(spritearray [y][x], charbuffer[y + oy][x + ox], translevel);
-				} else if (blendmode == 1) charbuffer[y + oy][x + ox] = Mix::MixColorAdditive(spritearray [y][x], charbuffer[y + oy][x + ox], translevel);
+						charbuffer[(y + oy) * charPitch + x + ox] = spritearray [y * spritePitch + x];
+					} else charbuffer[(y + oy) * charPitch + x + ox] = Mix::MixColorAlpha(spritearray [y * spritePitch + x], charbuffer[(y + oy) * charPitch + x + ox], translevel);
+				} else if (blendmode == 1) charbuffer[(y + oy) * charPitch + x + ox] = Mix::MixColorAdditive(spritearray [y * spritePitch + x], charbuffer[(y + oy) * charPitch + x + ox], translevel);
 			}
 			x++;
 		}
@@ -1641,12 +1675,15 @@ int64 AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 				DrawReflections(i, 1);
 			}
 			BITMAP *virtsc = engine->GetVirtualScreen();
-			unsigned char **screenbuffer = engine->GetRawBitmapSurface(virtsc);
-			unsigned char **colorbuffer = engine->GetRawBitmapSurface(rcolormap);
-			unsigned char **alphabuffer = engine->GetRawBitmapSurface(ralphamap);
-			for (int y = 0; y < sh; y++)
+			uint8 *screenbuffer = engine->GetRawBitmapSurface(virtsc);
+			uint8 *colorbuffer = engine->GetRawBitmapSurface(rcolormap);
+			uint8 *alphabuffer = engine->GetRawBitmapSurface(ralphamap);
+			int screenPitch = engine->GetBitmapPitch(virtsc);
+			int colorPitch = engine->GetBitmapPitch(rcolormap);
+			int alphaPitch = engine->GetBitmapPitch(ralphamap);
+			for (int y = 0, screeny = 0, colory = 0, alphay = 0; y < sh; y++, screeny += screenPitch, colory += colorPitch, alphay += alphaPitch)
 				for (int x = 0; x < sw; x++)
-					screenbuffer[y][x] = Mix::MixColorAlpha(colorbuffer[y][x], screenbuffer[y][x], alphabuffer[y][x]);
+					screenbuffer[screeny+x] = Mix::MixColorAlpha(colorbuffer[colory+x], screenbuffer[screeny+x], alphabuffer[alphay+x]);
 			engine->ReleaseBitmapSurface(rcolormap);
 			engine->ReleaseBitmapSurface(ralphamap);
 			engine->ReleaseBitmapSurface(virtsc);

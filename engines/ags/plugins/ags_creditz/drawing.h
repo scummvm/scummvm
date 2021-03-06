@@ -31,14 +31,31 @@ namespace AGSCreditz {
 
 class Drawing {
 public:
-	static void drawPixel(unsigned char **Row, int32 x, int32 y,
-		uint col, int32 wid, int32 hei, int32 coldepth) {
-		// TODO
+	static void drawPixel(uint8 *bitmap, int32 x, int32 y,
+		uint col, int32 pitch, int32 coldepth) {
+		switch (coldepth) {
+		case 8:
+			bitmap[x + y * pitch] = col;
+			break;
+		case 16:
+			*((uint16*)(bitmap + y * pitch + x * 2)) = col;
+			break;
+		case 32:
+			*((uint32*)(bitmap + y * pitch + x * 4)) = col;
+			break;
+		}
 	}
 
-	static uint getPixelColor(unsigned char **Row, int32 x, int32 y,
-		int32 wid, int32 hei, int32 coldepth) {
-		// TODO
+	static uint getPixelColor(uint8 *bitmap, int32 x, int32 y,
+		int32 pitch, int32 coldepth) {
+		switch (coldepth) {
+		case 8:
+			return bitmap[x + y * pitch];
+		case 16:
+			return *((uint16*)(bitmap + y * pitch + x * 2));
+		case 32:
+			return *((uint32*)(bitmap + y * pitch + x * 4));
+		}
 		return 0;
 	}
 };

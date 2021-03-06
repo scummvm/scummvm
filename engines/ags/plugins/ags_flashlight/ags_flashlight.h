@@ -78,7 +78,7 @@ private:
 	 */
 	static inline unsigned long _blender_alpha16_bgr(unsigned long y);
 	static inline void calc_x_n(unsigned long x);
-	static inline void setPixel(int x, int y, int color, unsigned int *pixel);
+	static inline void setPixel(int x, int y, int color, uint32 *pixel);
 	static void plotCircle(int xm, int ym, int r, unsigned int color);
 	static void ClipToRange(int &variable, int min, int max);
 	static void AlphaBlendBitmap();

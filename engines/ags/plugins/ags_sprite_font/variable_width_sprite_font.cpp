@@ -126,18 +126,17 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 
 	int32 srcWidth, srcHeight, destWidth, destHeight, srcColDepth, destColDepth;
 
-	unsigned char **srccharbuffer = _engine->GetRawBitmapSurface(src);  //8bit
-	unsigned short **srcshortbuffer = (unsigned short **)srccharbuffer; //16bit;
-	unsigned int **srclongbuffer = (unsigned int **)srccharbuffer; //32bit
+	uint8 *srccharbuffer = _engine->GetRawBitmapSurface(src);
+	uint8 *destcharbuffer = _engine->GetRawBitmapSurface(dest);
 
-	unsigned char **destcharbuffer = _engine->GetRawBitmapSurface(dest);  //8bit
-	unsigned short **destshortbuffer = (unsigned short **)destcharbuffer; //16bit;
-	unsigned int **destlongbuffer = (unsigned int **)destcharbuffer; //32bit
-
-	int transColor = _engine->GetBitmapTransparentColor(src);
+	uint32 transColor = _engine->GetBitmapTransparentColor(src);
+	int srcPitch = _engine->GetBitmapPitch(src);
+	int destPitch = _engine->GetBitmapPitch(dest);
 
 	_engine->GetBitmapDimensions(src, &srcWidth, &srcHeight, &srcColDepth);
 	_engine->GetBitmapDimensions(dest, &destWidth, &destHeight, &destColDepth);
+
+	int bpp = destColDepth / 8;
 
 	if (srcy + height > srcHeight || srcx + width > srcWidth || srcx < 0 || srcy < 0) return;
 
@@ -150,45 +149,51 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 
 	int srca, srcr, srcg, srcb, desta, destr, destg, destb, finalr, finalg, finalb, finala, col;
 
-	for (int x = startx; x < width; x ++) {
+	int srcxx = (startx + srcx) * bpp;
+	int destxx = (startx + destx) * bpp;
+	for (int x = startx; x < width; ++x, srcxx += bpp, destxx += bpp) {
 
-		for (int y = starty; y <  height; y ++) {
-			int srcyy = y + srcy;
-			int srcxx = x + srcx;
-			int destyy = y + desty;
-			int destxx = x + destx;
+		int srcyy =  (starty + srcy) * srcPitch;
+		int destyy = (starty + desty) * destPitch;
+		for (int y = starty; y <  height; ++y, srcyy += srcPitch, destyy += destPitch) {
+			uint8 *srcCol = srccharbuffer + srcyy + srcxx;
+			uint8 * destCol = destcharbuffer + destyy + destxx;
 			if (destColDepth == 8) {
-				if (srccharbuffer[srcyy][srcxx] != transColor) destcharbuffer[destyy][destxx] = srccharbuffer[srcyy][srcxx];
+				if (*srcCol != transColor)
+					*destCol = *srcCol;
 			} else if (destColDepth == 16) {
-				if (srcshortbuffer[srcyy][srcxx] != transColor) destshortbuffer[destyy][destxx] = srcshortbuffer[srcyy][srcxx];
+				if (*((uint16*)srcCol) != transColor)
+					*((uint16*)destCol) = *((uint16*)srcCol);
 			} else if (destColDepth == 32) {
-				//if (srclongbuffer[srcyy][srcxx] != transColor) destlongbuffer[destyy][destxx] = srclongbuffer[srcyy][srcxx];
+				//if (*((uint32*)srcCol) != transColor)
+				//	*((uint32*)destCol) = *((uint32*)srcCol);
 
-				srca = (geta32(srclongbuffer[srcyy][srcxx]));
+				uint32 srcargb = *((uint32*)srcCol);
+				uint32& destargb = *((uint32*)destCol);
+
+				srca = (geta32(srcargb));
 
 				if (srca != 0) {
 
-					srcr =  getr32(srclongbuffer[srcyy][srcxx]);
-					srcg =  getg32(srclongbuffer[srcyy][srcxx]);
-					srcb =  getb32(srclongbuffer[srcyy][srcxx]);
+					srcr =  getr32(srcargb);
+					srcg =  getg32(srcargb);
+					srcb =  getb32(srcargb);
 
-					destr =  getr32(destlongbuffer[destyy][destxx]);
-					destg =  getg32(destlongbuffer[destyy][destxx]);
-					destb =  getb32(destlongbuffer[destyy][destxx]);
-					desta =  geta32(destlongbuffer[destyy][destxx]);
-
+					destr =  getr32(destargb);
+					destg =  getg32(destargb);
+					destb =  getb32(destargb);
+					desta =  geta32(destargb);
 
 					finalr = srcr;
 					finalg = srcg;
 					finalb = srcb;
-
 
 					finala = 255 - (255 - srca) * (255 - desta) / 255;
 					finalr = srca * finalr / finala + desta * destr * (255 - srca) / finala / 255;
 					finalg = srca * finalg / finala + desta * destg * (255 - srca) / finala / 255;
 					finalb = srca * finalb / finala + desta * destb * (255 - srca) / finala / 255;
 					col = makeacol32(finalr, finalg, finalb, finala);
-					destlongbuffer[destyy][destxx] = col;
+					destargb = col;
 				}
 
 			}

@@ -246,7 +246,7 @@ void IAGSEngine::GetScreenDimensions(int32 *width, int32 *height, int32 *coldept
 		coldepth[0] = _GP(scsystem).coldepth;
 }
 
-unsigned char **IAGSEngine::GetRawBitmapSurface(BITMAP *bmp) {
+uint8 *IAGSEngine::GetRawBitmapSurface(BITMAP *bmp) {
 	if (!is_linear_bitmap(bmp))
 		quit("!IAGSEngine::GetRawBitmapSurface: invalid bitmap for access to surface");
 	acquire_bitmap(bmp);
@@ -255,7 +255,11 @@ unsigned char **IAGSEngine::GetRawBitmapSurface(BITMAP *bmp) {
 	if (stage && bmp == stage->GetAllegroBitmap())
 		plugins[this->pluginId].invalidatedRegion = 0;
 
-	return (unsigned char **)bmp->getPixels();
+	return (uint8 *)bmp->getPixels();
+}
+
+int IAGSEngine::GetBitmapPitch(BITMAP *bmp) {
+	return bmp->pitch;
 }
 
 void IAGSEngine::ReleaseBitmapSurface(BITMAP *bmp) {

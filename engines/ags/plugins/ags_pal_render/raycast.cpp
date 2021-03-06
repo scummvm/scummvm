@@ -105,19 +105,21 @@ int Ray_GetNoClip() {
 
 void Ray_DrawTile(int spr, int tile) {
 	BITMAP *img = engine->GetSpriteGraphic(spr);
-	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
-	for (int y = 0; y < MAP_HEIGHT; ++y)
+	uint8 *sprarray = engine->GetRawBitmapSurface(img);
+	int pitch = engine->GetBitmapPitch(img);
+	for (int y = 0, yy = 0; y < MAP_HEIGHT; ++y, yy += pitch)
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			sprarray[y][x] = texture [tile][(texWidth * y) + x];
+			sprarray[yy + x] = texture [tile][(texWidth * y) + x];
 	engine->ReleaseBitmapSurface(img);
 }
 
 void Ray_DrawOntoTile(int spr, int tile) {
 	BITMAP *img = engine->GetSpriteGraphic(spr);
-	unsigned char **sprarray = engine->GetRawBitmapSurface(img);
-	for (int y = 0; y < MAP_HEIGHT; ++y)
+	uint8 *sprarray = engine->GetRawBitmapSurface(img);
+	int pitch = engine->GetBitmapPitch(img);
+	for (int y = 0, yy = 0; y < MAP_HEIGHT; ++y, yy += pitch)
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			texture [tile][(texWidth * y) + x] = sprarray [y][x];
+			texture [tile][(texWidth * y) + x] = sprarray [yy + x];
 	engine->ReleaseBitmapSurface(img);
 }
 
@@ -330,11 +332,12 @@ void LoadHeightMap(int heightmapSlot) {
 	if (tempw != MAP_WIDTH || temph != MAP_HEIGHT) engine->AbortGame("LoadHeightMap: Map sizes are mismatched!");
 	BITMAP *heightmapBm = engine->GetSpriteGraphic(heightmapSlot);
 	if (!heightmapBm) engine->AbortGame("LoadHeightMap: Cannot load sprite into memory.");
-	unsigned char **hmArray = engine->GetRawBitmapSurface(heightmapBm);
+	uint8 *hmArray = engine->GetRawBitmapSurface(heightmapBm);
+	int pitch = engine->GetBitmapPitch(heightmapBm);
 
 	for (int i = 0; i < tempw; i++) {
 		for (int j = 0; j < temph; j++) {
-			heightMap[i][j] = hmArray[i][j];
+			heightMap[i][j] = hmArray[i * pitch + j];
 		}
 	}
 	engine->ReleaseBitmapSurface(heightmapBm);
@@ -348,37 +351,45 @@ void LoadMap(int worldmapSlot, int lightmapSlot, int ceilingmapSlot, int floorma
 	BITMAP *lightmapBm = nullptr;
 	BITMAP *floormapBm = nullptr;
 	BITMAP *ceilingmapBm = nullptr;
-	unsigned char **wmArray = nullptr;
-	unsigned char **lmArray = nullptr;
-	unsigned char **fmArray = nullptr;
-	unsigned char **cmArray = nullptr;
+	uint8 *wmArray = nullptr;
+	uint8 *lmArray = nullptr;
+	uint8 *fmArray = nullptr;
+	uint8 *cmArray = nullptr;
+	int wmPitch = 0;
+	int lmPitch = 0;
+	int fmPitch = 0;
+	int cmPitch = 0;
 	worldmapBm = engine->GetSpriteGraphic(worldmapSlot);
 	if (!worldmapBm) engine->AbortGame("LoadMap: Couldn't load worldmap sprite into memory.");
 	wmArray = engine->GetRawBitmapSurface(worldmapBm);
+	wmPitch = engine->GetBitmapPitch(worldmapBm);
 	if (engine->GetSpriteWidth(lightmapSlot) != tempw || engine->GetSpriteHeight(lightmapSlot) != temph) engine->AbortGame("LoadMap: Lightmap has different dimensions to worldmap.");
 	else {
 		lightmapBm = engine->GetSpriteGraphic(lightmapSlot);
 		if (!lightmapBm) engine->AbortGame("LoadMap: Couldn't load lightmap sprite into memory.");
 		lmArray = engine->GetRawBitmapSurface(lightmapBm);
+		lmPitch = engine->GetBitmapPitch(lightmapBm);
 	}
 	if (engine->GetSpriteWidth(ceilingmapSlot) != tempw || engine->GetSpriteHeight(ceilingmapSlot) != temph) engine->AbortGame("LoadMap: Ceilingmap has different dimensions to worldmap.");
 	else {
 		ceilingmapBm = engine->GetSpriteGraphic(ceilingmapSlot);
 		if (!ceilingmapBm) engine->AbortGame("LoadMap: Couldn't load ceilingmap sprite into memory.");
 		cmArray = engine->GetRawBitmapSurface(ceilingmapBm);
+		cmPitch = engine->GetBitmapPitch(ceilingmapBm);
 	}
 	if (engine->GetSpriteWidth(floormapSlot) != tempw || engine->GetSpriteHeight(floormapSlot) != temph) engine->AbortGame("LoadMap: Floormap has different dimensions to worldmap.");
 	else {
 		floormapBm = engine->GetSpriteGraphic(floormapSlot);
 		if (!floormapBm) engine->AbortGame("LoadMap: Couldn't load floormap sprite into memory.");
 		fmArray = engine->GetRawBitmapSurface(floormapBm);
+		fmPitch = engine->GetBitmapPitch(floormapBm);
 	}
 	for (int i = 0; i < tempw; i++) {
 		for (int j = 0; j < temph; j++) {
-			worldMap[i][j] = wmArray[i][j];
-			lightMap[i][j] = lmArray[i][j];
-			floorMap[i][j] = fmArray[i][j];
-			ceilingMap[i][j] = cmArray[i][j];
+			worldMap[i][j] = wmArray[i * wmPitch + j];
+			lightMap[i][j] = lmArray[i * lmPitch + j];
+			floorMap[i][j] = fmArray[i * fmPitch + j];
+			ceilingMap[i][j] = cmArray[i * cmPitch + j];
 			heightMap[i][j] = 0;
 			seenMap[i][j] = 0;
 		}
@@ -523,7 +534,8 @@ void MakeTextures(int slot) {
 	int max = (sourceWidth / texWidth) * (sourceHeight / texHeight);
 	if (max > MAX_TEXTURES) engine->AbortGame("MakeTextures: Source file has too many tiles to load.");
 	BITMAP *texspr = engine->GetSpriteGraphic(slot);
-	unsigned char **texbuffer = engine->GetRawBitmapSurface(texspr);
+	uint8 *texbuffer = engine->GetRawBitmapSurface(texspr);
+	int texPitch = engine->GetBitmapPitch(texspr);
 	int numTilesX = sourceWidth / texWidth;
 	int numTilesY = sourceHeight / texHeight;
 	//int totaltiles = numTilesX * numTilesY;
@@ -531,7 +543,7 @@ void MakeTextures(int slot) {
 		for (int numY = 0; numY < numTilesY; ++numY) {
 			for (int x = 0; x < texWidth; ++x)
 				for (int y = 0; y < texHeight; ++y) {
-					texture[(numY * numTilesX) + numX][(texWidth * y) + x] = texbuffer [y + (texHeight * numY)][x + (texWidth * numX)];
+					texture[(numY * numTilesX) + numX][(texWidth * y) + x] = texbuffer [(y + (texHeight * numY)) * texPitch + x + (texWidth * numX)];
 				}
 		}
 	}
@@ -689,7 +701,8 @@ void Raycast_Render(int slot) {
 		engine->SetVirtualScreen(virtsc);
 	}
 	int transwallcount = 0;
-	unsigned char **buffer = engine->GetRawBitmapSurface(screen);
+	uint8 *buffer = engine->GetRawBitmapSurface(screen);
+	int bufferPitch = engine->GetBitmapPitch(screen);
 	for (int x = 0; x < w; x++) {
 		transslicedrawn [x] = false;
 		for (int y = 0; y < h; y++) {
@@ -892,7 +905,7 @@ void Raycast_Render(int slot) {
 							if (ambientpixels && ambientcolor) color = Mix::MixColorMultiply(ambientcolor, color, ambientcolorAmount, 1);
 							if (!wallData[worldMap[mapX][mapY]].ignorelighting[texside] && wall_light < 255) color = Mix::MixColorLightLevel(color, wall_light);
 							if (wallData[worldMap[mapX][mapY]].alpha[texside] == 255 && wallData[worldMap[mapX][mapY]].mask[texside] == 0) {
-								buffer[y][x] = color;
+								buffer[y * bufferPitch + x] = color;
 								if (ambientpixels) ambientweight++;
 								//SET THE ZBUFFER FOR THE SPRITE CASTING
 								ZBuffer[x][y] = perpWallDist; //perpendicular distance is used
@@ -925,7 +938,7 @@ void Raycast_Render(int slot) {
 						}
 						if ((int)mapX == selectedX && (int)mapY == selectedY) {
 							if (texX == 0 || texX == 63 || texY == 0 || texY == 63) {
-								buffer[y][x] = selectedColor;
+								buffer[y * bufferPitch + x] = selectedColor;
 								ZBuffer [x][y] = perpWallDist;
 							}
 						}
@@ -1052,7 +1065,7 @@ void Raycast_Render(int slot) {
 						for (int ny = raisedfloorstart; ny < y; ny++) {
 							if (ny < h && (ZBuffer[x][ny] > currentDist || ZBuffer[x][ny] == 0)) {
 								ZBuffer[x][ny] = currentDist; //perpendicular distance is used
-								buffer[ny][x] = floorcolor;
+								buffer[ny * bufferPitch + x] = floorcolor;
 								interactionmap [x * S_WIDTH + ny] = 0;
 								editorMap [x][ny] = ((short)mapX) << 16 | ((short)mapY);
 							}
@@ -1100,7 +1113,7 @@ void Raycast_Render(int slot) {
 						for (int ny = raisedfloorstart; ny < y; ny++) {
 							if (ZBuffer[x][ny] > currentDist || ZBuffer[x][ny] == 0) {
 								ZBuffer[x][ny] = currentDist; //perpendicular distance is used
-								buffer[ny][x] = floorcolor;
+								buffer[ny * bufferPitch + x] = floorcolor;
 								interactionmap [x * S_WIDTH + ny] = 0;
 								editorMap [x][ny] = ((short)cmapX) << 16 | ((short)cmapY);
 							}
@@ -1113,13 +1126,13 @@ void Raycast_Render(int slot) {
 				//SET THE ZBUFFER FOR THE SPRITE CASTING
 				if (floorcolor > 0 && (currentDist < ZBuffer[x][y] || ZBuffer[x][y] == 0)) {
 					ZBuffer[x][y] = currentDist; //perpendicular distance is used
-					buffer[y][x] = floorcolor;
+					buffer[y * bufferPitch + x] = floorcolor;
 					editorMap [x][y] = ((short)cmapX) << 16 | ((short)cmapY);
 				} else ZBuffer[x][y] = 9999999999999.0;
 				if (currentDist < ZBuffer[x][h - y] || ZBuffer[x][h - y] == 0) {
 					if (ceilingcolor > 0) {
 						ZBuffer[x][h - y] = currentDist; //perpendicular distance is used
-						buffer[h - y][x] = ceilingcolor;
+						buffer[(h - y) * bufferPitch + x] = ceilingcolor;
 					} else ZBuffer[x][h - y] = 999999999999.0;
 					editorMap [x][h - y] = ((short)cmapX) << 16 | ((short)cmapY);
 				}
@@ -1127,9 +1140,9 @@ void Raycast_Render(int slot) {
 				interactionmap [x * S_WIDTH + (h - y)] = 0;
 				if ((int)cmapX == selectedX && (int)cmapY == selectedY) {
 					if (floorTexX == 0 || floorTexX == 63 || floorTexY == 0 || floorTexY == 63) {
-						buffer[y][x] = selectedColor;
+						buffer[y * bufferPitch + x] = selectedColor;
 						ZBuffer [x][y] = perpWallDist;
-						buffer[h - y][x] = selectedColor;
+						buffer[(h - y) * bufferPitch + x] = selectedColor;
 						ZBuffer [x][h - y] = perpWallDist;
 					}
 				}
@@ -1144,8 +1157,8 @@ void Raycast_Render(int slot) {
 					int transwalloffset = transwalldrawn * h;
 					int color = transcolorbuffer[x][transwalloffset + y];
 					if (color != 0) {
-						if (transwallblendmode[transwalldrawn] == 0) buffer[y][x] = Mix::MixColorAlpha(color, buffer[y][x], transalphabuffer[x][transwalloffset + y]); //paint pixel if it isn't black, black is the invisible color
-						else if (transwallblendmode[transwalldrawn] == 1) buffer[y][x] = Mix::MixColorAdditive(color, buffer[y][x], transalphabuffer[x][transwalloffset + y]);
+						if (transwallblendmode[transwalldrawn] == 0) buffer[y * bufferPitch + x] = Mix::MixColorAlpha(color, buffer[y * bufferPitch + x], transalphabuffer[x][transwalloffset + y]); //paint pixel if it isn't black, black is the invisible color
+						else if (transwallblendmode[transwalldrawn] == 1) buffer[y * bufferPitch + x] = Mix::MixColorAdditive(color, buffer[y * bufferPitch + x], transalphabuffer[x][transwalloffset + y]);
 						//if (ZBuffer[x][y] > transzbuffer[transwalldrawn*h+y]) ZBuffer[x][y] = transzbuffer[transwalldrawn*h+y]; //put the sprite on the zbuffer so we can draw around it.
 					}
 				}
@@ -1218,7 +1231,8 @@ void Raycast_Render(int slot) {
 
 		//parameters for scaling and moving the sprites
 		BITMAP *spritetexbm = engine->GetSpriteGraphic(sprite[spriteOrder[i]].texture);
-		unsigned char **spritetex = engine->GetRawBitmapSurface(spritetexbm);
+		uint8 *spritetex = engine->GetRawBitmapSurface(spritetexbm);
+		int spritetexPitch = engine->GetBitmapPitch(spritetexbm);
 		int sprw = engine->GetSpriteWidth(sprite[spriteOrder[i]].texture);
 		int sprh = engine->GetSpriteHeight(sprite[spriteOrder[i]].texture);
 
@@ -1272,20 +1286,20 @@ void Raycast_Render(int slot) {
 						int texY = ((d * sprh) / spriteHeight) / 256;
 						if (texY >= sprh || texY < 0) continue;
 						//unsigned char color = texture[sprite[spriteOrder[i]].texture][texWidth * texY + texX]; //get current color from the texture
-						unsigned char color = spritetex[texY][texX]; //get current color from the texture
+						unsigned char color = spritetex[texY * spritetexPitch + texX]; //get current color from the texture
 						if (color != 0) {
 							if (sprite[spriteOrder[i]].alpha < 255) {
-								if (sprite[spriteOrder[i]].blendmode == 0) color = Mix::MixColorAlpha(color, buffer[y][stripe], sprite[spriteOrder[i]].alpha);
-								if (sprite[spriteOrder[i]].blendmode == 1) color = Mix::MixColorAdditive(color, buffer[y][stripe], sprite[spriteOrder[i]].alpha);
+								if (sprite[spriteOrder[i]].blendmode == 0) color = Mix::MixColorAlpha(color, buffer[y * bufferPitch + stripe], sprite[spriteOrder[i]].alpha);
+								if (sprite[spriteOrder[i]].blendmode == 1) color = Mix::MixColorAdditive(color, buffer[y * bufferPitch + stripe], sprite[spriteOrder[i]].alpha);
 							}
 							color = Mix::MixColorLightLevel(color, spr_light);
 							if (transzbuffer[stripe][transwalldraw * h + y] < spriteTransformY[i] && transzbuffer[stripe][transwalldraw * h + y] != 0 && transslicedrawn[stripe] && transcolorbuffer[stripe][transwalldraw * h + y] > 0 && transalphabuffer[stripe][transwalldraw * h + y] > 0) {
 								if (transwallblendmode[transwalldraw] == 0) color = Mix::MixColorAlpha(color, transcolorbuffer[stripe][transwalldraw * h + y], transalphabuffer[stripe][transwalldraw * h + y]);
 								else if (transwallblendmode[transwalldraw] == 1) color = Mix::MixColorAdditive(color, transcolorbuffer[stripe][transwalldraw * h + y], transalphabuffer[stripe][transwalldraw * h + y]);
-								buffer[y][stripe] = color;
+								buffer[y * bufferPitch + stripe] = color;
 								ZBuffer[stripe][y] = transzbuffer[stripe][transwalldraw * h + y];
 							} else {
-								buffer[y][stripe] = color; //paint pixel if it isn't black, black is the invisible color
+								buffer[y * bufferPitch + stripe] = color; //paint pixel if it isn't black, black is the invisible color
 								ZBuffer[stripe][y] = spriteTransformY[i]; //put the sprite on the zbuffer so we can draw around it.
 							}
 							interactionmap [stripe * S_WIDTH + y] = sprite[spriteOrder[i]].objectinteract << 8;

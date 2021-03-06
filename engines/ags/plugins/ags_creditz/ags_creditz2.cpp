@@ -443,12 +443,16 @@ void AGSCreditz2::draw() {
 void AGSCreditz2::makeMask(int sequence) {
 	int32 wid, hei, cold;
 	int32 x, y;
-	unsigned char **Bitmap, **Bitmap2, **Bitmap3;
+	uint8 *Bitmap, *Bitmap2, *Bitmap3;
 
 	_engine->GetBitmapDimensions(_state->_maskScreen, &wid, &hei, &cold);
 	Bitmap = _engine->GetRawBitmapSurface(_state->_maski);
 	Bitmap2 = _engine->GetRawBitmapSurface(_state->_maskScreen);
 	Bitmap3 = _engine->GetRawBitmapSurface(_state->_creditScreen);
+
+	uint32 Pitch = _engine->GetBitmapPitch(_state->_maski);
+	uint32 Pitch2 = _engine->GetBitmapPitch(_state->_maskScreen);
+	uint32 Pitch3 = _engine->GetBitmapPitch(_state->_creditScreen);
 
 	// Top Mask
 	{
@@ -456,7 +460,7 @@ void AGSCreditz2::makeMask(int sequence) {
 		while (y <= _state->_seqSettings[sequence].topmask) {
 			_engine->PollSystem();
 			while (x < wid) {
-				drawPixel(Bitmap, x, y, 15, wid, hei, cold);
+				drawPixel(Bitmap, x, y, 15, Pitch, cold);
 				x++;
 			}
 
@@ -471,7 +475,7 @@ void AGSCreditz2::makeMask(int sequence) {
 	while (y < _state->_seqSettings[sequence].bottommask) {
 		_engine->PollSystem();
 		while (x < wid) {
-			drawPixel(Bitmap, x, y, getPixelColor(Bitmap3, x, y, wid, hei, cold), wid, hei, cold);
+			drawPixel(Bitmap, x, y, getPixelColor(Bitmap3, x, y, Pitch3, cold), Pitch, cold);
 			x++;
 		}
 
@@ -486,7 +490,7 @@ void AGSCreditz2::makeMask(int sequence) {
 		while (y < hei) {
 			_engine->PollSystem();
 			while (x < wid) {
-				drawPixel(Bitmap, x, y, getPixelColor(Bitmap2, x, y, wid, hei, cold), wid, hei, cold);
+				drawPixel(Bitmap, x, y, getPixelColor(Bitmap2, x, y, Pitch2, cold), Pitch, cold);
 				x++;
 			}
 

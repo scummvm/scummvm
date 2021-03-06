@@ -220,7 +220,7 @@ inline unsigned long AGSFlashlight::_blender_alpha16_bgr(unsigned long y) {
 	return ((result & 0xFFFF) | (result >> 16));
 }
 
-inline void AGSFlashlight::setPixel(int x, int y, int color, unsigned int *pixel) {
+inline void AGSFlashlight::setPixel(int x, int y, int color, uint32 *pixel) {
 	if ((x >= g_DarknessDiameter) || (y >= g_DarknessDiameter) || (x < 0) || (y < 0))
 		return;
 
@@ -228,7 +228,7 @@ inline void AGSFlashlight::setPixel(int x, int y, int color, unsigned int *pixel
 }
 
 void AGSFlashlight::plotCircle(int xm, int ym, int r, unsigned int color) {
-	unsigned int *pixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
+	uint32 *pixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int x = -r;
 	int y = 0;
@@ -267,8 +267,8 @@ void AGSFlashlight::ClipToRange(int &variable, int min, int max) {
 }
 
 void AGSFlashlight::AlphaBlendBitmap() {
-	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
-	unsigned int *sourcepixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
+	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
+	uint32 *sourcepixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	unsigned short *currentdestpixel = destpixel;
 	unsigned int *currentsourcepixel = sourcepixel;
@@ -304,7 +304,7 @@ void AGSFlashlight::AlphaBlendBitmap() {
 void AGSFlashlight::DrawTint() {
 	int x, y;
 	BITMAP *screen = _engine->GetVirtualScreen();
-	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(screen);
+	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(screen);
 
 	int32 red, blue, green, alpha;
 
@@ -348,7 +348,7 @@ void AGSFlashlight::DrawDarkness() {
 	int x, y;
 	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
 	BITMAP *screen = _engine->GetVirtualScreen();
-	unsigned short *destpixel = *(unsigned short **)_engine->GetRawBitmapSurface(screen);
+	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(screen);
 	unsigned short *currentpixel;
 
 	calc_x_n(color);
@@ -427,7 +427,7 @@ void AGSFlashlight::CreateLightBitmap() {
 
 	// Fill with darkness color.
 	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
-	unsigned int *pixel = *(unsigned int **)_engine->GetRawBitmapSurface(g_LightBitmap);
+	uint32 *pixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int i;
 	for (i = 0; i < g_DarknessDiameter * g_DarknessDiameter; i++)

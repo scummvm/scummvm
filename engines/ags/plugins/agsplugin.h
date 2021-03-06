@@ -363,7 +363,9 @@ public:
 	// get screen dimensions
 	AGSIFUNC(void) GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth);
 	// get screen surface to draw on
-	AGSIFUNC(unsigned char **) GetRawBitmapSurface(BITMAP *);
+	AGSIFUNC(uint8 *) GetRawBitmapSurface(BITMAP *);
+	// get screen surface pitch
+	AGSIFUNC(int) GetBitmapPitch(BITMAP *);
 	// release the surface
 	AGSIFUNC(void) ReleaseBitmapSurface(BITMAP *);
 	// get the current mouse co-ordinates

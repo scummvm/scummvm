@@ -111,7 +111,7 @@ public:
 		//unsigned char rbg = cycle_remap[bg]; //Saves on typing elsewhere.
 		//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
 		//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-		//unsigned char **clutarray = engine->GetRawBitmapSurface (clutspr);
+		//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
 		AGSColor *palette = engine->GetPalette();
 		int i = 0;
 		int add_r, add_b, add_g = 0;
