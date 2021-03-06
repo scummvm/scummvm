@@ -4369,6 +4369,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
+	case 124:
+		mapping = NoirMapping{"PRINTTAG", PRINTTAG, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 128:
 		mapping = NoirMapping{"RANDOM", RANDOM, 2};
 		pp -= mapping.numArgs - 1;
@@ -5351,8 +5356,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -1;
 
 	case PRINTTAG:
-		// Common to both DW1 & DW2
-		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0, false);
+		// Common to DW1 / DW2 / Noir
+		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0,  TinselV3 ? true : false);
 		return -1;
 
 	case QUITGAME:
