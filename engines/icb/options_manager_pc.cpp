@@ -2339,7 +2339,7 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 				if (_down_ == TRUE8)
 					currentlySelected = LEAVE;
 				else
-					currentlySelected = SEMITRANS;
+					currentlySelected = SUBTITLES;
 			}
 		}
 
@@ -2594,17 +2594,6 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 				px.on_screen_text = FALSE8;
 			else
 				px.on_screen_text = TRUE8;
-
-			// Chosen noise please
-			PlayChosenFX();
-			Poll_Sound_Engine();
-			return;
-
-		case SEMITRANS:
-			if (px.semitransparencies)
-				px.semitransparencies = FALSE8;
-			else
-				px.semitransparencies = TRUE8;
 
 			// Chosen noise please
 			PlayChosenFX();
@@ -5452,16 +5441,6 @@ void OptionsManager::DrawVideoSettings() {
 	DisplayText(ad, pitch, msg, halfScreen, hite, NORMALFONT, FALSE8);
 	hite += 20;
 
-	// Semi-transparency
-	msg = GetTextFromReference(HashString("opt_semitransparency"));
-	temp = CalculateStringWidth(msg);
-	DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == SEMITRANS) ? SELECTEDFONT : NORMALFONT, FALSE8);
-	if (px.semitransparencies)
-		msg = GetTextFromReference(HashString("opt_on"));
-	else
-		msg = GetTextFromReference(HashString("opt_off"));
-	DisplayText(ad, pitch, msg, halfScreen, hite, NORMALFONT, FALSE8);
-
 	if (g_videoOptionsCheat == TRUE8) {
 		hite += 20;
 
@@ -6666,7 +6645,7 @@ void OptionsManager::PollInput() {
 			if (g_videoOptionsCheat == FALSE8) {
 				// Illegal selections without cheat
 				if (m_VIDEO_selected == SHADOWS)
-					m_VIDEO_selected = SEMITRANS;
+					m_VIDEO_selected = LEAVE;
 				if (m_VIDEO_selected == FRAMELIMITER)
 					m_VIDEO_selected = LEAVE;
 			}
