@@ -4375,7 +4375,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
 	case 128:
-		mapping = NoirMapping{"RANDOM", RANDOM, 2};
+		mapping = NoirMapping{"RANDOM", RANDOM, 3};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, %d, %d)", mapping.name, pp[0], pp[1], pp[2]);
 		break;
