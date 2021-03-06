@@ -302,12 +302,15 @@ MODULE_OBJS = \
 	plugins/ags_snow_rain/ags_snow_rain.o \
 	plugins/ags_snow_rain/weather.o \
 	plugins/ags_sprite_font/ags_sprite_font.o \
+	plugins/ags_sprite_font/ags_sprite_font_clifftop.o \
 	plugins/ags_sprite_font/character_entry.o \
 	plugins/ags_sprite_font/color.o \
 	plugins/ags_sprite_font/sprite_font.o \
 	plugins/ags_sprite_font/sprite_font_renderer.o \
+	plugins/ags_sprite_font/sprite_font_renderer_clifftop.o \
 	plugins/ags_sprite_font/variable_width_font.o \
 	plugins/ags_sprite_font/variable_width_sprite_font.o \
+	plugins/ags_sprite_font/variable_width_sprite_font_clifftop.o \
 	plugins/ags_tcp_ip/ags_tcp_ip.o \
 	plugins/ags_wadjet_util/ags_wadjet_util.o
 

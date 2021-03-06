@@ -48,8 +48,9 @@ public:
 	void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
 	void SetSprite(int fontNum, int spriteNum);
 	void SetSpacing(int fontNum, int spacing);
+	void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
 
-private:
+protected:
 	IAGSEngine *_engine;
 	std::vector<VariableWidthFont * > _fonts;
 	VariableWidthFont *getFontFor(int fontNum);

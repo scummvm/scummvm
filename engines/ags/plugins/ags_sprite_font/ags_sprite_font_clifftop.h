@@ -20,41 +20,23 @@
  *
  */
 
-#ifndef AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
-#define AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
+#ifndef AGS_PLUGINS_AGS_SPRITE_FONT_CLIFFTOP_H
+#define AGS_PLUGINS_AGS_SPRITE_FONT_CLIFFTOP_H
 
-#include "ags/plugins/plugin_base.h"
-#include "ags/plugins/ags_sprite_font/sprite_font_renderer.h"
-#include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
-
-namespace AGS3 {
-class IAGSEngine;
-}
+#include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class AGSSpriteFont : public PluginBase {
-protected:
-	static IAGSEngine *_engine;
-	static SpriteFontRenderer *_fontRenderer;
-	static VariableWidthSpriteFontRenderer *_vWidthRenderer;
-
-protected:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static void AGS_EngineShutdown();
-
+class AGSSpriteFontClifftopGames : public AGSSpriteFont {
 private:
-	static void SetSpriteFont(ScriptMethodParams &params);
-	static void SetVariableSpriteFont(ScriptMethodParams &params);
-	static void SetGlyph(ScriptMethodParams &params);
-	static void SetSpacing(ScriptMethodParams &params);
+	static void AGS_EngineStartup(IAGSEngine *engine);
+
 	static void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
-	AGSSpriteFont();
+	AGSSpriteFontClifftopGames();
 };
 
 } // namespace AGSSpriteFont
@@ -62,3 +44,4 @@ public:
 } // namespace AGS3
 
 #endif
+

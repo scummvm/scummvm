@@ -20,121 +20,53 @@
  *
  */
 
-#include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
+#include "ags/plugins/ags_sprite_font/variable_width_sprite_font_clifftop.h"
 #include "ags/plugins/ags_sprite_font/color.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *engine) {
-	_engine = engine;
+VariableWidthSpriteFontRendererClifftop::VariableWidthSpriteFontRendererClifftop(IAGSEngine *engine) : VariableWidthSpriteFontRenderer(engine) {
 }
 
-
-VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {
-	for(int i = 0; i < (int)_fonts.size(); i++)
-		delete _fonts[i];
-	_fonts.clear();
+VariableWidthSpriteFontRendererClifftop::~VariableWidthSpriteFontRendererClifftop(void) {
 }
 
-
-
-
-bool VariableWidthSpriteFontRenderer::SupportsExtendedCharacters(int fontNumber) {
-	return false;
-}
-
-int VariableWidthSpriteFontRenderer::GetTextWidth(const char *text, int fontNumber) {
-	int total = 0;
+int VariableWidthSpriteFontRendererClifftop::GetTextHeight(const char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < (int)strlen(text); i++) {
-		if (font->characters.count(text[i]) > 0) {
-			total += font->characters[text[i]].Width;
-			if (text[i] != ' ') total += font->Spacing;
-		}
-	}
-	return total;
-}
+	if(strcmp("<LINE_SPACING>", text) == 0)
+		return font->LineSpacingOverride;
 
-int VariableWidthSpriteFontRenderer::GetTextHeight(const char *text, int fontNumber) {
-	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < (int)strlen(text); i++) {
+	for(int i = 0; i < (int)strlen(text); i++) {
 		if (font->characters.count(text[i]) > 0) {
-			return font->characters[text[i]].Height;
+			int height = font->characters[text[i]].Height;
+
+			if(strcmp("ZHwypgfjqhkilIK", text) == 0 || strcmp("ZhypjIHQFb", text) == 0 || strcmp("YpyjIHgMNWQ", text) == 0 || strcmp("BigyjTEXT", text) == 0)
+				height += font->LineSpacingAdjust;
+			else
+				height += font->LineHeightAdjust;
+
+			return height;
 		}
 	}
 	return 0;
 }
 
-void VariableWidthSpriteFontRenderer::SetSpacing(int fontNum, int spacing) {
-	VariableWidthFont *font = getFontFor(fontNum);
-	font->Spacing = spacing;
-
-
-}
-
-void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride)
- {
-	VariableWidthFont *font = getFontFor(fontNum);
-	font->LineHeightAdjust = LineHeight;
-	font->LineSpacingAdjust = SpacingHeight;
-	font->LineSpacingOverride = SpacingOverride;
- }
-
-void VariableWidthSpriteFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
-	VariableWidthFont *font = getFontFor(fontNumber);
-	Common::String s(text);
-
-	for (int i = (int)s.size() - 1; i >= 0 ; i--) {
-		if (font->characters.count(s[i]) == 0) {
-			s.erase(i, 1);
-		}
-	}
-	text = strcpy(text, s.c_str());
-
-}
-
-void VariableWidthSpriteFontRenderer::SetGlyph(int fontNum, int charNum, int x, int y, int width, int height) {
-	VariableWidthFont *font = getFontFor(fontNum);
-	font->SetGlyph(charNum, x, y, width, height);
-}
-
-
-void VariableWidthSpriteFontRenderer::SetSprite(int fontNum, int spriteNum) {
-	VariableWidthFont *font = getFontFor(fontNum);
-	font->SpriteNumber = spriteNum;
-}
-
-VariableWidthFont *VariableWidthSpriteFontRenderer::getFontFor(int fontNum) {
-	VariableWidthFont *font;
-	for (int i = 0; i < (int)_fonts.size(); i ++) {
-		font = _fonts.at(i);
-		if (font->FontReplaced == fontNum) return font;
-	}
-	//not found
-	font = new VariableWidthFont;
-	font->FontReplaced = fontNum;
-	_fonts.push_back(font);
-	return font;
-}
-
-void VariableWidthSpriteFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
+void VariableWidthSpriteFontRendererClifftop::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	int totalWidth = 0;
 	for (int i = 0; i < (int)strlen(text); i++) {
 		char c = text[i];
 
 		BITMAP *src = _engine->GetSpriteGraphic(font->SpriteNumber);
-		Draw(src, destination, x + totalWidth, y, font->characters[c].X, font->characters[c].Y, font->characters[c].Width, font->characters[c].Height);
+		Draw(src, destination, x + totalWidth, y, font->characters[c].X, font->characters[c].Y, font->characters[c].Width, font->characters[c].Height, colour);
 		totalWidth += font->characters[c].Width;
 		if (text[i] != ' ') totalWidth += font->Spacing;
 	}
-
 }
 
-
-void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height) {
+void VariableWidthSpriteFontRendererClifftop::Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour) {
 
 	int32 srcWidth, srcHeight, destWidth, destHeight, srcColDepth, destColDepth;
 
@@ -159,7 +91,10 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 	int starty = MAX(0, (-1 * desty));
 
 
-	int srca, srcr, srcg, srcb, desta, destr, destg, destb, finalr, finalg, finalb, finala, col;
+	int srca, srcr, srcg, srcb, desta, destr, destg, destb, finalr, finalg, finalb, finala, col, col_r, col_g, col_b;
+	col_r = getr32(colour);
+	col_g = getg32(colour);
+	col_b = getb32(colour);
 
 	int srcxx = (startx + srcx) * bpp;
 	int destxx = (startx + destx) * bpp;
@@ -196,9 +131,9 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 					destb =  getb32(destargb);
 					desta =  geta32(destargb);
 
-					finalr = srcr;
-					finalg = srcg;
-					finalb = srcb;
+					finalr = (col_r * srcr) / 255;
+					finalg = (col_g * srcg) / 255;
+					finalb = (col_b * srcb) / 255;
 
 					finala = 255 - (255 - srca) * (255 - desta) / 255;
 					finalr = srca * finalr / finala + desta * destr * (255 - srca) / finala / 255;

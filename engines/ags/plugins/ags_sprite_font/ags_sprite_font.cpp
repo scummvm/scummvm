@@ -78,6 +78,8 @@ VariableWidthSpriteFontRenderer *AGSSpriteFont::_vWidthRenderer;
 
 AGSSpriteFont::AGSSpriteFont() : PluginBase() {
 	_engine = nullptr;
+	_fontRenderer = nullptr;
+	_vWidthRenderer = nullptr;
 
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
@@ -91,10 +93,14 @@ const char *AGSSpriteFont::AGS_GetPluginName() {
 void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 
-	_engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
-	_fontRenderer = new SpriteFontRenderer(engine);
-	_engine->PrintDebugConsole("AGSSpriteFont: Init vari width renderer");
-	_vWidthRenderer = new VariableWidthSpriteFontRenderer(engine);
+	if (_fontRenderer == nullptr) {
+		_engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
+		_fontRenderer = new SpriteFontRenderer(engine);
+	}
+	if (_vWidthRenderer == nullptr) {
+		_engine->PrintDebugConsole("AGSSpriteFont: Init vari width renderer");
+		_vWidthRenderer = new VariableWidthSpriteFontRenderer(engine);
+	}
 	// Make sure it's got the version with the features we need
 	if (_engine->version < MIN_ENGINE_VERSION)
 		_engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
