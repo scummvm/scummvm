@@ -92,8 +92,8 @@ void *pluginOpen(const char *filename) {
 			fname.equalsIgnoreCase("agsteam-disjoint"))
 		return new AGSGalaxySteam::AGSSteam();
 
-	if (fname.equalsIgnoreCase("AGSWadgetUtil"))
-		return new AGSWadgetUtil::AGSWadgetUtil();
+	if (fname.equalsIgnoreCase("AGSWadjetUtil"))
+		return new AGSWadjetUtil::AGSWadjetUtil();
 
 	return nullptr;
 }

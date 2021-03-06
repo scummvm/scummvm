@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef AGS_PLUGINS_AGS_WADGET_UTIL_AGS_WADGET_UTIL_H
-#define AGS_PLUGINS_AGS_WADGET_UTIL_AGS_WADGET_UTIL_H
+#ifndef AGS_PLUGINS_AGS_WADJET_UTIL_AGS_WADJET_UTIL_H
+#define AGS_PLUGINS_AGS_WADJET_UTIL_AGS_WADJET_UTIL_H
 
 #include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
-namespace AGSWadgetUtil {
+namespace AGSWadjetUtil {
 
-class AGSWadgetUtil : public PluginBase {
+class AGSWadjetUtil : public PluginBase {
 private:
 	static IAGSEngine *_engine;
 private:
@@ -49,10 +49,10 @@ private:
 	static void MobileResetAchievements(ScriptMethodParams &params);
 
 public:
-	AGSWadgetUtil();
+	AGSWadjetUtil();
 };
 
-} // namespace AGSWadgetUtil
+} // namespace AGSWadjetUtil
 } // namespace Plugins
 } // namespace AGS3
 

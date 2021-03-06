@@ -25,20 +25,20 @@
 
 namespace AGS3 {
 namespace Plugins {
-namespace AGSWadgetUtil {
+namespace AGSWadjetUtil {
 
-IAGSEngine *AGSWadgetUtil::_engine;
+IAGSEngine *AGSWadjetUtil::_engine;
 
-AGSWadgetUtil::AGSWadgetUtil() : PluginBase() {
+AGSWadjetUtil::AGSWadjetUtil() : PluginBase() {
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
 }
 
-const char *AGSWadgetUtil::AGS_GetPluginName() {
-	return "AGSWadgetUtil";
+const char *AGSWadjetUtil::AGS_GetPluginName() {
+	return "AGSWadjetUtil";
 }
 
-void AGSWadgetUtil::AGS_EngineStartup(IAGSEngine *engine) {
+void AGSWadjetUtil::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 
 	// Register functions
@@ -54,40 +54,40 @@ void AGSWadgetUtil::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(MobileResetAchievements);
 }
 
-void AGSWadgetUtil::IsOnPhone(ScriptMethodParams &params) {
+void AGSWadjetUtil::IsOnPhone(ScriptMethodParams &params) {
 	params._result = false;
 }
 
-void AGSWadgetUtil::FakeKeypress(ScriptMethodParams &params) {
+void AGSWadjetUtil::FakeKeypress(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::IosSetAchievementValue(ScriptMethodParams &params) {
+void AGSWadjetUtil::IosSetAchievementValue(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::IosGetAchievementValue(ScriptMethodParams &params) {
+void AGSWadjetUtil::IosGetAchievementValue(ScriptMethodParams &params) {
 	params._result = -1;
 }
 
-void AGSWadgetUtil::IosShowAchievements(ScriptMethodParams &params) {
+void AGSWadjetUtil::IosShowAchievements(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::IosResetAchievements(ScriptMethodParams &params) {
+void AGSWadjetUtil::IosResetAchievements(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::MobileGetAchievement(ScriptMethodParams &params) {
+void AGSWadjetUtil::MobileGetAchievement(ScriptMethodParams &params) {
 	params._result = NumberPtr();
 }
 
-void AGSWadgetUtil::MobileSetAchievement(ScriptMethodParams &params) {
+void AGSWadjetUtil::MobileSetAchievement(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void AGSWadgetUtil::MobileShowAchievements(ScriptMethodParams &params) {
+void AGSWadjetUtil::MobileShowAchievements(ScriptMethodParams &params) {
 }
 
-void AGSWadgetUtil::MobileResetAchievements(ScriptMethodParams &params) {
+void AGSWadjetUtil::MobileResetAchievements(ScriptMethodParams &params) {
 }
 
-} // namespace AGSWadgetUtil
+} // namespace AGSWadjetUtil
 } // namespace Plugins
 } // namespace AGS3
