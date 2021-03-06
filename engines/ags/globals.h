@@ -248,6 +248,9 @@ public:
 	ObjectCache *_objcache;
 	MoveList *_mls = nullptr;
 	GameSetup *_usetup;
+	AGS::Shared::String _saveGameDirectory;
+	AGS::Shared::String _saveGameParent;
+	AGS::Shared::String _saveGameSuffix;
 
 	 /**@}*/
 

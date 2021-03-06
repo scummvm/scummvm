@@ -166,12 +166,6 @@ int proper_exit = 0, our_eip = 0;
 
 //=============================================================================
 
-String saveGameDirectory = SAVE_FOLDER_PREFIX;
-// Custom save game parent directory
-String saveGameParent;
-
-String saveGameSuffix;
-
 int game_paused = 0;
 char pexbuf[STD_BUFFER_SIZE];
 
@@ -309,15 +303,15 @@ void restore_after_dialog() {
 
 
 String get_save_game_directory() {
-	return saveGameDirectory;
+	return _G(saveGameDirectory);
 }
 
 String get_save_game_suffix() {
-	return saveGameSuffix;
+	return _G(saveGameSuffix);
 }
 
 void set_save_game_suffix(const String &suffix) {
-	saveGameSuffix = suffix;
+	_G(saveGameSuffix) = suffix;
 }
 
 String get_save_game_path(int slotNum) {
@@ -327,9 +321,9 @@ String get_save_game_path(int slotNum) {
 #else
 	String filename;
 	filename.Format(sgnametemplate, slotNum);
-	String path = saveGameDirectory;
+	String path = _G(_G(saveGameDirectory));
 	path.Append(filename);
-	path.Append(saveGameSuffix);
+	path.Append(_G(saveGameSuffix));
 	return path;
 #endif
 }
@@ -345,7 +339,7 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 	String newSaveGameDir = FixSlashAfterToken(newFolder);
 
 	if (newSaveGameDir.CompareLeft(UserSavedgamesRootToken, strlen(UserSavedgamesRootToken)) == 0) {
-		if (saveGameParent.IsEmpty()) {
+		if (_G(saveGameParent).IsEmpty()) {
 			base_dir = PathOrCurDir(platform->GetUserSavedgamesDirectory());
 			newSaveGameDir.ReplaceMid(0, strlen(UserSavedgamesRootToken), base_dir);
 		} else {
@@ -354,18 +348,18 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 			newSaveGameDir.ClipSection('/', 0, 1);
 			if (!newSaveGameDir.IsEmpty())
 				newSaveGameDir.PrependChar('/');
-			newSaveGameDir.Prepend(saveGameParent);
-			base_dir = saveGameParent;
+			newSaveGameDir.Prepend(_G(saveGameParent));
+			base_dir = _G(saveGameParent);
 		}
 	} else {
 		// Convert the path relative to installation folder into path relative to the
 		// safe save path with default name
-		if (saveGameParent.IsEmpty()) {
+		if (_G(saveGameParent).IsEmpty()) {
 			base_dir = PathOrCurDir(platform->GetUserSavedgamesDirectory());
 			newSaveGameDir.Format("%s/%s/%s", base_dir.GetCStr(), _GP(game).saveGameFolderName, newFolder.GetCStr());
 		} else {
-			base_dir = saveGameParent;
-			newSaveGameDir.Format("%s/%s", saveGameParent.GetCStr(), newFolder.GetCStr());
+			base_dir = _G(saveGameParent);
+			newSaveGameDir.Format("%s/%s", _G(saveGameParent).GetCStr(), newFolder.GetCStr());
 		}
 		// For games made in the safe-path-aware versions of AGS, report a warning
 		if (_GP(game).options[OPT_SAFEFILEPATHS]) {
@@ -380,7 +374,7 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 
 bool SetCustomSaveParent(const String &path) {
 	if (SetSaveGameDirectoryPath(path, true)) {
-		saveGameParent = path;
+		_G(saveGameParent) = path;
 		return true;
 	}
 	return false;
@@ -413,7 +407,7 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 		return false;
 
 	// copy the Restart Game file, if applicable
-	String restartGamePath = String::FromFormat("%s""agssave.%d%s", saveGameDirectory.GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, saveGameSuffix.GetCStr());
+	String restartGamePath = String::FromFormat("%s""agssave.%d%s", _G(_G(saveGameDirectory)).GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, _G(saveGameSuffix).GetCStr());
 	Stream *restartGameFile = Shared::File::OpenFileRead(restartGamePath);
 	if (restartGameFile != nullptr) {
 		long fileSize = restartGameFile->GetLength();
@@ -421,14 +415,14 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 		restartGameFile->Read(mbuffer, fileSize);
 		delete restartGameFile;
 
-		restartGamePath.Format("%s""agssave.%d%s", newSaveGameDir.GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, saveGameSuffix.GetCStr());
+		restartGamePath.Format("%s""agssave.%d%s", newSaveGameDir.GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, _G(saveGameSuffix).GetCStr());
 		restartGameFile = Shared::File::CreateFile(restartGamePath);
 		restartGameFile->Write(mbuffer, fileSize);
 		delete restartGameFile;
 		free(mbuffer);
 	}
 
-	saveGameDirectory = newSaveGameDir;
+	_G(_G(saveGameDirectory)) = newSaveGameDir;
 	return true;
 #endif
 }
