@@ -43,7 +43,10 @@ try:
 		ach_text  = achievements_rows[idx + 1].text.strip()
 		ach_title = ach_text.split('\n')[0].replace('"','\\"')
 		ach_desc  = ach_text.split('\n')[1].replace('"','\\"')
-		print("\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
+		if ach_desc == "Hidden.":
+			print("\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
+		else:
+			print("\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
 
 	print("\t\tACHIEVEMENTS_LISTEND\n\t}\n},")
 except requests.exceptions.RequestException as e:
