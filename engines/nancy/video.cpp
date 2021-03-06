@@ -72,6 +72,10 @@ const Graphics::Surface *AVFDecoder::decodeFrame(uint frameNr) {
 	return ((AVFDecoder::AVFVideoTrack *)getTrack(0))->decodeFrame(frameNr);
 }
 
+void AVFDecoder::addFrameTime(const uint16 timeToAdd) {
+	((AVFDecoder::AVFVideoTrack *)getTrack(0))->_frameTime += timeToAdd;
+}
+
 AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 	assert(stream);
 	_fileStream = stream;
