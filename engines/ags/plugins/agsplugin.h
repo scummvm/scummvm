@@ -55,10 +55,8 @@ typedef void *LPDIRECTSOUND;
 typedef void *LPDIRECTINPUTDEVICE;
 #endif
 
-// If the user isn't using Allegro or WinGDI, define the BITMAP into something
-#if !defined(ALLEGRO_H) && !defined(_WINGDI_) && !defined(BITMAP_DEFINED)
-typedef char BITMAP;
-#endif
+// Forward declaration of BITMAP class
+class BITMAP;
 
 // If not using windows.h, define HWND
 #if !defined(_WINDOWS_)
