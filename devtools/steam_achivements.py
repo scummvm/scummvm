@@ -25,13 +25,13 @@ try:
 	session = HTMLSession()
 	response = session.get(statsurl)
 	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
-	game = response.html.xpath("//meta[@property='og:title']/@content")
+	game = response.html.xpath("//h1[@itemprop='name']/text()")
 	achievements_columns = 3 # id, text, img
 	entries = int(len(achievements_rows) / achievements_columns)
 	sys.stderr.write('found {0} achievements\n'.format(entries))
 
 	if len(sys.argv) < 3:
-		scummvm_game_id = game[0]
+		scummvm_game_id = game[0].lower().replace(' ', '').replace('-', '')
 		sys.stderr.write('missing scummvm game id - assuming {0}\n'.format(scummvm_game_id))
 	else:
 		scummvm_game_id = sys.argv[2]
