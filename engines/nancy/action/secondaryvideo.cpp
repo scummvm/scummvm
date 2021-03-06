@@ -47,7 +47,9 @@ void PlaySecondaryVideo::init() {
     }
 
     _decoder.loadFile(filename + ".avf");
-    // TODO add 12 ms to the frame time, not sure why this happens in the engine yet
+    // Every secondary video frame (in nancy1) plays exactly 12ms slower than what its metadata says.
+    // I'm still not sure how/why that happens so for now I'm using this hack to fix the timings
+    _decoder.addFrameTime(12);
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::pixelFormat);
 
     setVisible(false);

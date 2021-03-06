@@ -46,9 +46,11 @@ public:
 
 	virtual bool loadStream(Common::SeekableReadStream *stream) override;
 	const Graphics::Surface *decodeFrame(uint frameNr);
+	void addFrameTime(const uint16 timeToAdd);
 
 private:
 	class AVFVideoTrack : public FixedRateVideoTrack {
+	friend class AVFDecoder;
 	public:
 		AVFVideoTrack(Common::SeekableReadStream *stream);
 		virtual ~AVFVideoTrack();
@@ -67,7 +69,7 @@ private:
 		const Graphics::Surface *decodeFrame(uint frameNr);
 
 	protected:
-		Common::Rational getFrameRate() const { return Common::Rational(1000, _frameTime); }
+		virtual Common::Rational getFrameRate() const override { return Common::Rational(1000, _frameTime); }
 
 	private:
 		struct ChunkInfo {
