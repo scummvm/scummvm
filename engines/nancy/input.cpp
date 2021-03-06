@@ -76,8 +76,13 @@ void InputManager::processEvents() {
                     case kNancyActionMoveFast:
                         _inputs |= NancyInput::kMoveFastModifier;
                         break;
+                    case kNancyActionRequestCheatMenu:
+                        _engine->callCheatMenu(false);
+                        break;
+                    case kNancyActionRequestEventMenu:
+                        _engine->callCheatMenu(true);
+                        break;
                     default:
-                        // TODO handle debug key combos
                         break;
                 }
 
@@ -228,6 +233,16 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 	act->setCustomEngineActionEvent(kNancyActionRequestMap);
     act->addDefaultInputMapping("C+S+TAB+F8");
     act->addDefaultInputMapping("C+S+TAB+m");
+	debugKeymap->addAction(act);
+
+    act = new Action("CHEAT", U32String("Open general cheat menu"));
+	act->setCustomEngineActionEvent(kNancyActionRequestCheatMenu);
+    act->addDefaultInputMapping("C+S+TAB+c");
+	debugKeymap->addAction(act);
+
+    act = new Action("EVENT", U32String("Open event flags cheat menu"));
+	act->setCustomEngineActionEvent(kNancyActionRequestEventMenu);
+    act->addDefaultInputMapping("C+S+TAB+v");
 	debugKeymap->addAction(act);
 
 	keymaps.push_back(mainKeymap);
