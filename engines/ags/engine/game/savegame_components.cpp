@@ -984,7 +984,7 @@ HSaveError WriteManagedPool(PStream out) {
 HSaveError ReadManagedPool(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	if (ccUnserializeAllObjects(in.get(), &ccUnserializer)) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-		                         String::FromFormat("Managed pool deserialization failed: %s", ccErrorString.GetCStr()));
+		                         String::FromFormat("Managed pool deserialization failed: %s", _G(ccErrorString).GetCStr()));
 	}
 	return HSaveError::None();
 }

@@ -1470,7 +1470,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 
 	if (ccUnserializeAllObjects(in, &ccUnserializer)) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-		                         String::FromFormat("Managed pool deserialization failed: %s.", ccErrorString.GetCStr()));
+		                         String::FromFormat("Managed pool deserialization failed: %s.", _G(ccErrorString).GetCStr()));
 	}
 
 	// preserve legacy music type setting

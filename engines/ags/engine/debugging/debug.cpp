@@ -311,7 +311,7 @@ String get_cur_script(int numberOfLinesOfCallStack) {
 	if (sci)
 		callstack = sci->GetCallStack(numberOfLinesOfCallStack);
 	if (callstack.IsEmpty())
-		callstack = ccErrorCallStack;
+		callstack = _G(ccErrorCallStack);
 	return callstack;
 }
 

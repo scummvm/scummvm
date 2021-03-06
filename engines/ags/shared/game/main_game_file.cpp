@@ -183,7 +183,7 @@ HGameFileError ReadDialogScript(PScript &dialog_script, Stream *in, GameDataVers
 	if (data_ver > kGameVersion_310) { // 3.1.1+ dialog script
 		dialog_script.reset(ccScript::CreateFromStream(in));
 		if (dialog_script == nullptr)
-			return new MainGameFileError(kMGFErr_CreateDialogScriptFailed, ccErrorString);
+			return new MainGameFileError(kMGFErr_CreateDialogScriptFailed, _G(ccErrorString));
 	} else { // 2.x and < 3.1.1 dialog
 		dialog_script.reset();
 	}
@@ -197,7 +197,7 @@ HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, Game
 		for (int i = 0; i < count; ++i) {
 			sc_mods[i].reset(ccScript::CreateFromStream(in));
 			if (sc_mods[i] == nullptr)
-				return new MainGameFileError(kMGFErr_CreateScriptModuleFailed, ccErrorString);
+				return new MainGameFileError(kMGFErr_CreateScriptModuleFailed, _G(ccErrorString));
 		}
 	} else {
 		sc_mods.resize(0);
@@ -672,7 +672,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 		return new MainGameFileError(kMGFErr_NoGlobalScript);
 	ents.GlobalScript.reset(ccScript::CreateFromStream(in));
 	if (!ents.GlobalScript)
-		return new MainGameFileError(kMGFErr_CreateGlobalScriptFailed, ccErrorString);
+		return new MainGameFileError(kMGFErr_CreateGlobalScriptFailed, _G(ccErrorString));
 	err = ReadDialogScript(ents.DialogScript, in, data_ver);
 	if (!err)
 		return err;

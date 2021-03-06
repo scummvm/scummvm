@@ -993,17 +993,17 @@ void check_new_room() {
 }
 
 void compile_room_script() {
-	ccError = 0;
+	_G(ccError) = 0;
 
 	_G(roominst) = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
 
-	if ((ccError != 0) || (_G(roominst) == nullptr)) {
-		quitprintf("Unable to create local script: %s", ccErrorString.GetCStr());
+	if ((_G(ccError) != 0) || (_G(roominst) == nullptr)) {
+		quitprintf("Unable to create local script: %s", _G(ccErrorString).GetCStr());
 	}
 
 	_G(roominstFork) = _G(roominst)->Fork();
 	if (_G(roominstFork) == nullptr)
-		quitprintf("Unable to create forked room instance: %s", ccErrorString.GetCStr());
+		quitprintf("Unable to create forked room instance: %s", _G(ccErrorString).GetCStr());
 
 	_GP(repExecAlways).roomHasFunction = true;
 	_GP(lateRepExecAlways).roomHasFunction = true;

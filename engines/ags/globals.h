@@ -137,6 +137,20 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup cc_error globals
+	 * @{
+	 */
+
+	int _ccError = 0;
+	int _ccErrorLine = 0;
+	String _ccErrorString;
+	String _ccErrorCallStack;
+	bool _ccErrorIsUserError = false;
+	const char *_ccCurScriptName = "";
+
+	/**@}*/
+
+	/**
 	 * \defgroup debug globals
 	 * @{
 	 */

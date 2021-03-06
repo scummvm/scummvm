@@ -463,7 +463,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	if (create_global_script()) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-			String::FromFormat("Unable to recreate global script: %s", ccErrorString.GetCStr()));
+			String::FromFormat("Unable to recreate global script: %s", _G(ccErrorString).GetCStr()));
 	}
 
 	// read the global data into the newly created script

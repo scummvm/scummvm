@@ -156,7 +156,7 @@ void force_event(int evtyp, int ev1, int ev2, int ev3) {
 void process_event(EventHappened *evp) {
 	RuntimeScriptValue rval_null;
 	if (evp->type == EV_TEXTSCRIPT) {
-		ccError = 0;
+		_G(ccError) = 0;
 		if (evp->data2 > -1000) {
 			QueueScriptFunction(kScInstGame, tsnames[evp->data1], 1, RuntimeScriptValue().SetInt32(evp->data2));
 		} else {

@@ -34,6 +34,7 @@
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/compress.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -404,7 +405,7 @@ HRoomFileError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver)
 HRoomFileError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->CompiledScript.reset(ccScript::CreateFromStream(in));
 	if (room->CompiledScript == nullptr)
-		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, ccErrorString);
+		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, _G(ccErrorString));
 	return HRoomFileError::None();
 }
 
