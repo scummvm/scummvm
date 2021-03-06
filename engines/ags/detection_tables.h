@@ -1444,6 +1444,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 static const PluginVersion AGSTEAM_BLACKWELL[] = { { "agsteam", kBlackwell }, { nullptr, 0 } };
 static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
+static const PluginVersion AGSSPRITEFONT_CLIFFTOP[] = { { "agsspritefont", kClifftopGames }, { nullptr, 0 } };
+
 
 const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Pre-2.5 games that aren't supported by the current AGS engine
@@ -1750,8 +1752,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537), // Steam
 	GAME_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
-	GAME_ENTRY("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291), // Steam
-	GAME_ENTRY("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573), // GOG
+	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291, AGSSPRITEFONT_CLIFFTOP), // Steam
+	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 
 	// Post-2.5 games that are likely supported by the AGS engine
@@ -2350,9 +2352,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("justanotherpointnclickadventure", "Advent.exe", "6a98b4cc2f5a55421248be53f15a6a99", 9582620),
 	GAME_ENTRY("kanjigakusei", "KanjiGakusei.exe", "c1bce0ccfa858f0f5d2fe19997d89b05", 17604764),
 	GAME_ENTRY("kartquest", "Kart.exe", "465f972675db2da6040518221af5b0ba", 77317312),
-	GAME_ENTRY("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159), // Steam
-	GAME_ENTRY("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245), // GOG 1.04
-	GAME_ENTRY("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719), // GOG
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159, AGSSPRITEFONT_CLIFFTOP), // Steam
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245, AGSSPRITEFONT_CLIFFTOP), // GOG 1.04
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("keptoshi", "Keptosh.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2904848),
 	GAME_ENTRY("keys", "Keys.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 85582285),
 	GAME_ENTRY("killereye", "killereye.exe", "0710e2ec71042617f565c01824f0cf3c", 1009042),
