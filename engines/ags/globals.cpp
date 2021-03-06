@@ -27,6 +27,7 @@
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/font/ttffontrenderer.h"
 #include "ags/shared/font/wfnfontrenderer.h"
+#include "ags/shared/game/interactions.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guiinv.h"
@@ -172,6 +173,10 @@ Globals::Globals() {
 	// guitextbox.cpp globals
 	_guitext = new std::vector<AGS::Shared::GUITextBox>();
 
+	// interactions.cpp globals
+	_globalvars = new InteractionVariable[MAX_GLOBAL_VARIABLES];
+	_globalvars[0] = InteractionVariable("Global 1", 0, 0);
+
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
@@ -293,6 +298,9 @@ Globals::~Globals() {
 
 	// guitextbox.cpp globals
 	delete _guitext;
+
+	// interactions.cpp globals
+	delete[] _globalvars;
 
 	// managedobjectpool.cpp globals
 	delete _pool;

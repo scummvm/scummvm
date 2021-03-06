@@ -172,7 +172,7 @@ HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in, GameDataVersion
 }
 
 void GameSetupStruct::read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver) {
-	numGlobalVars = 0;
+	_G(numGlobalVars) = 0;
 
 	if (data_ver > kGameVersion_272) { // 3.x
 		charScripts.resize(numcharacters);
@@ -189,9 +189,9 @@ void GameSetupStruct::read_interaction_scripts(Shared::Stream *in, GameDataVersi
 		for (size_t i = 0; i < (size_t)numinvitems; ++i)
 			intrInv[i].reset(Interaction::CreateFromStream(in));
 
-		numGlobalVars = in->ReadInt32();
-		for (size_t i = 0; i < (size_t)numGlobalVars; ++i)
-			globalvars[i].Read(in);
+		_G(numGlobalVars) = in->ReadInt32();
+		for (size_t i = 0; i < (size_t)_G(numGlobalVars); ++i)
+			_G(globalvars)[i].Read(in);
 	}
 }
 

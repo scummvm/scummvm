@@ -1306,12 +1306,12 @@ void restore_game_displayed_room_status(Stream *in, RestoredData &r_data) {
 }
 
 HSaveError restore_game_globalvars(Stream *in) {
-	if (in->ReadInt32() != numGlobalVars) {
+	if (in->ReadInt32() != _G(numGlobalVars)) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Restore game error: mismatching number of Global Variables.");
 	}
 
-	for (int i = 0; i < numGlobalVars; ++i) {
-		globalvars[i].Read(in);
+	for (int i = 0; i < _G(numGlobalVars); ++i) {
+		_G(globalvars)[i].Read(in);
 	}
 	return HSaveError::None();
 }

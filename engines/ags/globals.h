@@ -51,6 +51,7 @@ class GUILabel;
 class GUIListBox;
 class GUISlider;
 class GUITextBox;
+struct InteractionVariable;
 class RoomStruct;
 
 } // namespace Shared
@@ -356,6 +357,16 @@ public:
 
 	std::vector<AGS::Shared::GUITextBox> *_guitext;
 	int _numguitext = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup interactions globals
+	 * @{
+	 */
+
+	AGS::Shared::InteractionVariable *_globalvars;
+	int _numGlobalVars = 1;
 
 	/**@}*/
 

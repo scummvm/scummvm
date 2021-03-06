@@ -206,11 +206,6 @@ typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 
 } // namespace Shared
 } // namespace AGS
-
-// Legacy global variables
-extern AGS::Shared::InteractionVariable globalvars[MAX_GLOBAL_VARIABLES];
-extern int numGlobalVars;
-
 } // namespace AGS3
 
 #endif

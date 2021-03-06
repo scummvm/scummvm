@@ -30,9 +30,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-InteractionVariable globalvars[MAX_GLOBAL_VARIABLES] = { InteractionVariable("Global 1", 0, 0) };
-int numGlobalVars = 1;
-
 namespace AGS {
 namespace Shared {
 
