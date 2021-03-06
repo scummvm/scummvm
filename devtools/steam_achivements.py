@@ -44,7 +44,7 @@ try:
 		ach_title = ach_text.split('\n')[0].replace('"','\\"')
 		ach_desc  = ach_text.split('\n')[1].replace('"','\\"')
 		if ach_desc == "Hidden.":
-			print("\t\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
+			print("\t\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\")," % (ach_id, ach_title))
 		else:
 			print("\t\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
 
