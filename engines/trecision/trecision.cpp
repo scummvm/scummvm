@@ -125,21 +125,19 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 }
 
 TrecisionEngine::~TrecisionEngine() {
+	delete _animMgr;
+	delete _graphicsMgr;
 }
 
 Common::Error TrecisionEngine::run() {
 	_graphicsMgr = new GraphicsManager(this);
+	if (!_graphicsMgr->initScreen())
+		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
 		
 	NlInit();
 
 	return Common::kNoError;
-}
-
-void TrecisionEngine::getColorMask(const Graphics::PixelFormat &format) {
-	_bitMask[0] = format.rMax() << format.rShift;
-	_bitMask[1] = format.gMax() << format.gShift;
-	_bitMask[2] = format.bMax() << format.bShift;
 }
 
 } // End of namespace Trecision

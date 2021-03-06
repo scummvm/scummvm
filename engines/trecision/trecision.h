@@ -105,15 +105,11 @@ public:
 	uint32 _newData2[260];
 	uint16 *_video2;
 
-	uint16 _bitMask[3];
-
 	uint32 NextRefresh;
 	char UStr[140];
 
 	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;
-
-	void getColorMask(const Graphics::PixelFormat &format);
 };
 
 extern TrecisionEngine *g_vm;
