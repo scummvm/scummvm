@@ -4257,6 +4257,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%08X)", mapping.name, pp[0]);
 		break;
+	case 26:
+		mapping = NoirMapping{"CALLTAG", CALLTAG, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
 	case 28:
 		mapping = NoirMapping{"CDCHANGESCENE", CDCHANGESCENE, 1};
 		pp -= mapping.numArgs - 1;
@@ -4671,7 +4676,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		error("CallScene isn't a real function");
 
 	case CALLTAG:
-		// DW2 only
+		// DW2 / Noir
 		pp -= 1;			// 2 parameters
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			bool result;
