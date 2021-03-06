@@ -472,7 +472,7 @@ void IAGSEngine::FreeBitmap(BITMAP *tofree) {
 		destroy_bitmap(tofree);
 }
 BITMAP *IAGSEngine::GetSpriteGraphic(int32 num) {
-	return (BITMAP *)_GP(spriteset)[num]->GetAllegroBitmap();
+	return _GP(spriteset)[num]->GetAllegroBitmap();
 }
 BITMAP *IAGSEngine::GetRoomMask(int32 index) {
 	if (index == MASK_WALKABLE)

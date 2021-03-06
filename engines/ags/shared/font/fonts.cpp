@@ -291,7 +291,7 @@ void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t
 		return;                   // each char is clipped but this speeds it up
 
 	if (_GP(fonts)[fontNumber].Renderer != nullptr) {
-		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, (BITMAP *)ds->GetAllegroBitmap(), xxx, yyy, text_color);
+		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, ds->GetAllegroBitmap(), xxx, yyy, text_color);
 	}
 }
 
