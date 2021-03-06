@@ -68,16 +68,6 @@ const int kOriginOne[2]  = {64, 48};
 
 extern Gen::VM *Gen::g_vm;
 
-// settings
-
-static const char *kPauseMovie = "kPauseMovie";
-static const char *kGoIntro = "kGoIntro";
-static const char *kPoliceBustFromMO = "kPoliceBustFromMO";
-static const char *kMainDesktop = "kMainDesktop";
-static const char *kPoliceIndex = "kPoliceIndex";
-static const char *kPOGoBustMovie = "kPOGoBustMovie";
-static const char *kStartGame = "kStartGame";
-
 // structs
 
 typedef struct ExitInfo {

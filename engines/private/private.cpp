@@ -194,8 +194,7 @@ Common::Error PrivateEngine::run() {
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else {
-		_nextSetting = kGoIntro;
-		//setNextSetting(new Common::String(kGoIntro));
+		_nextSetting = "kGoIntro";
 	}
 
 	while (!shouldQuit()) {
@@ -260,7 +259,7 @@ Common::Error PrivateEngine::run() {
 			continue;
 		}
 
-		if (!_nextVS.empty() && _currentSetting == kMainDesktop) {
+		if (!_nextVS.empty() && _currentSetting == "kMainDesktop") {
 			loadImage(_nextVS, 160, 120);
 			drawScreen();
 		}
@@ -345,7 +344,7 @@ void PrivateEngine::clearAreas() {
 
 void PrivateEngine::startPoliceBust() {
 	// This logic was extracted from the binary
-	int policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
+	int policeIndex = maps.variables.getVal("kPoliceIndex")->u.val;
 	int r = _rnd->getRandomNumber(0xc);
 	if (policeIndex > 0x14) {
 		policeIndex = 0x15;
@@ -372,12 +371,12 @@ void PrivateEngine::checkPoliceBust() {
 	}
 
 	if (_numberClicks == _maxNumberClicks+1) {
-		uint policeIndex = maps.variables.getVal(kPoliceIndex)->u.val;
+		uint policeIndex = maps.variables.getVal("kPoliceIndex")->u.val;
 		_policeBustSetting = _currentSetting;
 		if (policeIndex <= 13) {
-			_nextSetting = kPOGoBustMovie;
+			_nextSetting = "kPOGoBustMovie";
 		} else {
-			_nextSetting = kPoliceBustFromMO;
+			_nextSetting = "kPoliceBustFromMO";
 		}
 		clearAreas();
 		_policeBustEnabled = false;
@@ -460,7 +459,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 		if (!window.contains(mousePos)) {
 			if (!_pausedSetting.empty()) {
 				_pausedSetting = _currentSetting;
-				_nextSetting = kPauseMovie;
+				_nextSetting = "kPauseMovie";
 			}
 		}
 	}
@@ -694,7 +693,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	Common::Serializer s(stream, nullptr);
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
-	_nextSetting = kStartGame;
+	_nextSetting = "kStartGame";
 	int val;
 
 	for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
