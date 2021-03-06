@@ -32,7 +32,11 @@ VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *eng
 }
 
 
-VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {}
+VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {
+	for(int i = 0; i < (int)_fonts.size(); i++)
+		delete _fonts[i];
+	_fonts.clear();
+}
 
 
 
