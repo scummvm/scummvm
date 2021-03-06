@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-03-05 17:33+0000\n"
+"PO-Revision-Date: 2021-03-06 11:31+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5576,15 +5576,15 @@ msgstr ""
 #: engines/sci/detection.cpp:238
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr ""
+msgstr "通常の金カーソルの代わりに銀カーソルを使用する"
 
 #: engines/sci/detection.cpp:248
 msgid "Enable content censoring"
-msgstr ""
+msgstr "コンテンツの規制を有効にする"
 
 #: engines/sci/detection.cpp:249
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "ゲームに組み込まれた規制オプションを有効にする"
 
 #: engines/sci/detection.cpp:259
 msgid "Upscale videos"
