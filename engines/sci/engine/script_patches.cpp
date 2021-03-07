@@ -2149,9 +2149,47 @@ static const uint16 hoyle4PatchBridgeArithmetic[] = {
 	PATCH_END
 };
 
+// In Crazy Eights, playing an eight plays a transition sound effect that's
+//  abruptly interrupted at modern CPU speeds. The timing only worked in the
+//  original on slow CPUs where the interpreter couldn't complete the transition
+//  animation and deal the next card fast enough.
+//
+// We fix this by waiting on the transition sound instead of the animation.
+//
+// Applies to at least: English PC
+// Responsible method: transition:init
+// Fixes bug #10790
+static const uint16 hoyle4SignatureCrazyEightsSound[] = {
+	0x80, SIG_UINT16(0x0129),           // lag 0129
+	0x4a, 0x06,                         // send 06 [ song setLoop: 1 ]
+	0x39, SIG_SELECTOR8(play),          // pushi play
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x6f,         // pushi 6f
+	0x80, SIG_UINT16(0x0129),           // lag 0129
+	0x4a, 0x06,                         // send 06 [ song play: 111 ]
+	SIG_ADDTOOFFSET(+57),
+	0x7c,                               // pushSelf [ animation caller ]
+	SIG_END
+};
+
+static const uint16 hoyle4PatchCrazyEightsSound[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x00,                         // jmp 00
+	PATCH_ADDTOOFFSET(+2),
+	0x7a,                               // push2
+	PATCH_ADDTOOFFSET(+2),
+	0x7c,                               // pushSelf
+	0x4a, 0x0e,                         // send 0e [ song setLoop: 1 play: 111 self ]
+	0x33, 0x00,                         // jmp 00
+	PATCH_ADDTOOFFSET(+57),
+	0x76,                               // push0 [ no animation caller ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle4Signatures[] = {
-	{  true,   733, "bridge arithmetic against object ",           1, hoyle4SignatureBridgeArithmetic,  hoyle4PatchBridgeArithmetic },
+	{  true,   100, "crazy eights sound",                          1, hoyle4SignatureCrazyEightsSound,  hoyle4PatchCrazyEightsSound },
+	{  true,   733, "bridge arithmetic against object",            1, hoyle4SignatureBridgeArithmetic,  hoyle4PatchBridgeArithmetic },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2393,7 +2431,7 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,   733, "bridge arithmetic against object ",           1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
+	{  true,   733, "bridge arithmetic against object",            1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
