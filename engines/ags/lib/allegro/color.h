@@ -75,13 +75,6 @@ AL_VAR(PALETTE, black_palette);
 AL_VAR(PALETTE, desktop_palette);
 AL_VAR(PALETTE, default_palette);
 
-AL_VAR(RGB_MAP *, rgb_map);
-AL_VAR(COLOR_MAP *, color_map);
-extern int trans_blend_alpha;
-extern int trans_blend_red;
-extern int trans_blend_green;
-extern int trans_blend_blue;
-
 enum BlenderMode {
 	kSourceAlphaBlender,
 	kArgbToArgbBlender,
@@ -95,26 +88,8 @@ enum BlenderMode {
 	kTintLightBlenderMode
 };
 
-extern BlenderMode _blender_mode;
-
-AL_VAR(PALETTE, _current_palette);
-
-extern int _rgb_r_shift_15;
-extern int _rgb_g_shift_15;
-extern int _rgb_b_shift_15;
-extern int _rgb_r_shift_16;
-extern int _rgb_g_shift_16;
-extern int _rgb_b_shift_16;
-extern int _rgb_r_shift_24;
-extern int _rgb_g_shift_24;
-extern int _rgb_b_shift_24;
-extern int _rgb_r_shift_32;
-extern int _rgb_g_shift_32;
-extern int _rgb_b_shift_32;
-extern int _rgb_a_shift_32;
-
-AL_ARRAY(int, _rgb_scale_5);
-AL_ARRAY(int, _rgb_scale_6);
+AL_ARRAY(const int, _rgb_scale_5);
+AL_ARRAY(const int, _rgb_scale_6);
 
 AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));

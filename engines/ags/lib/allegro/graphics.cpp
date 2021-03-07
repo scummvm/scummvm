@@ -28,7 +28,7 @@ namespace AGS3 {
 int _color_depth;
 
 /* lookup table for scaling 5 bit colors up to 8 bits */
-int _rgb_scale_5[32] = {
+const int _rgb_scale_5[32] = {
    0,   8,   16,  24,  33,  41,  49,  57,
    66,  74,  82,  90,  99,  107, 115, 123,
    132, 140, 148, 156, 165, 173, 181, 189,
@@ -37,7 +37,7 @@ int _rgb_scale_5[32] = {
 
 
 /* lookup table for scaling 6 bit colors up to 8 bits */
-int _rgb_scale_6[64] = {
+const int _rgb_scale_6[64] = {
    0,   4,   8,   12,  16,  20,  24,  28,
    32,  36,  40,  44,  48,  52,  56,  60,
    65,  69,  73,  77,  81,  85,  89,  93,

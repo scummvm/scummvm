@@ -98,7 +98,7 @@ void script_debug(int cmdd, int dataa) {
 	} else if (cmdd == 1) {
 		String toDisplay = GetRuntimeInfo();
 		Display(toDisplay.GetCStr());
-		//    Display("shftR: %d  shftG: %d  shftB: %d", _rgb_r_shift_16, _rgb_g_shift_16, _rgb_b_shift_16);
+		//    Display("shftR: %d  shftG: %d  shftB: %d", _G(_rgb_r_shift_16), _G(_rgb_g_shift_16), _G(_rgb_b_shift_16));
 		//    Display("Remaining memory: %d kb",_go32_dpmi_remaining_virtual_memory()/1024);
 		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_G(views)[playerchar->view].frames[playerchar->loop][playerchar->frame].pic]));
 	} else if (cmdd == 2) {

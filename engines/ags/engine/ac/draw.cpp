@@ -183,9 +183,9 @@ Bitmap *convert_16_to_16bgr(Bitmap *tempbl) {
 				ds = _rgb_scale_6[(c >> 5) & 0x3F];
 				r = _rgb_scale_5[(c >> 11) & 0x1F];
 				// allegro assumes 5-6-5 for 16-bit
-				p16[x] = (((r >> _places_r) << _rgb_r_shift_16) |
-				          ((ds >> _places_g) << _rgb_g_shift_16) |
-				          ((b >> _places_b) << _rgb_b_shift_16));
+				p16[x] = (((r >> _places_r) << _G(_rgb_r_shift_16)) |
+				          ((ds >> _places_g) << _G(_rgb_g_shift_16)) |
+				          ((b >> _places_b) << _G(_rgb_b_shift_16)));
 
 			}
 		}

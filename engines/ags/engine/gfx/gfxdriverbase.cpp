@@ -27,6 +27,7 @@
 #include "ags/engine/gfx/gfxdriverbase.h"
 #include "ags/engine/gfx/gfx_util.h"
 #include "ags/engine/ac/draw.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

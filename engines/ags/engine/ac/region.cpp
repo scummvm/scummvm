@@ -123,9 +123,9 @@ void Region_RunInteraction(ScriptRegion *ssr, int mood) {
 //=============================================================================
 
 void generate_light_table() {
-	if (_GP(game).color_depth == 1 && color_map == nullptr) {
+	if (_GP(game).color_depth == 1 && _G(color_map) == nullptr) {
 		create_light_table(&maincoltable, palette, 0, 0, 0, nullptr);
-		color_map = &maincoltable;
+		_G(color_map) = &maincoltable;
 	}
 }
 

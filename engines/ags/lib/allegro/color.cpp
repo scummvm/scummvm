@@ -25,6 +25,7 @@
 #include "ags/lib/allegro/aintern.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -32,28 +33,6 @@
 namespace AGS3 {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
-int _rgb_r_shift_15 = DEFAULT_RGB_R_SHIFT_15;     /* truecolor pixel format */
-int _rgb_g_shift_15 = DEFAULT_RGB_G_SHIFT_15;
-int _rgb_b_shift_15 = DEFAULT_RGB_B_SHIFT_15;
-int _rgb_r_shift_16 = DEFAULT_RGB_R_SHIFT_16;
-int _rgb_g_shift_16 = DEFAULT_RGB_G_SHIFT_16;
-int _rgb_b_shift_16 = DEFAULT_RGB_B_SHIFT_16;
-int _rgb_r_shift_24 = DEFAULT_RGB_R_SHIFT_24;
-int _rgb_g_shift_24 = DEFAULT_RGB_G_SHIFT_24;
-int _rgb_b_shift_24 = DEFAULT_RGB_B_SHIFT_24;
-int _rgb_r_shift_32 = DEFAULT_RGB_R_SHIFT_32;
-int _rgb_g_shift_32 = DEFAULT_RGB_G_SHIFT_32;
-int _rgb_b_shift_32 = DEFAULT_RGB_B_SHIFT_32;
-int _rgb_a_shift_32 = DEFAULT_RGB_A_SHIFT_32;
-
-RGB_MAP *rgb_map;
-COLOR_MAP *color_map;
-int trans_blend_alpha = 0;
-int trans_blend_red = 0;
-int trans_blend_green = 0;
-int trans_blend_blue = 0;
-BlenderMode _blender_mode = kRgbToRgbBlender;
 
 void color::readFromFile(AGS::Shared::Stream *file) {
 	r = file->ReadByte();
@@ -86,34 +65,34 @@ void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 }
 
 int makecol15(int r, int g, int b) {
-	return (((r >> 3) << _rgb_r_shift_15) |
-		((g >> 3) << _rgb_g_shift_15) |
-		((b >> 3) << _rgb_b_shift_15));
+	return (((r >> 3) << _G(_rgb_r_shift_15)) |
+		((g >> 3) << _G(_rgb_g_shift_15)) |
+		((b >> 3) << _G(_rgb_b_shift_15)));
 }
 
 int makecol16(int r, int g, int b) {
-	return (((r >> 3) << _rgb_r_shift_16) |
-		((g >> 2) << _rgb_g_shift_16) |
-		((b >> 3) << _rgb_b_shift_16));
+	return (((r >> 3) << _G(_rgb_r_shift_16)) |
+		((g >> 2) << _G(_rgb_g_shift_16)) |
+		((b >> 3) << _G(_rgb_b_shift_16)));
 }
 
 int makecol24(int r, int g, int b) {
-	return ((r << _rgb_r_shift_24) |
-		(g << _rgb_g_shift_24) |
-		(b << _rgb_b_shift_24));
+	return ((r << _G(_rgb_r_shift_24)) |
+		(g << _G(_rgb_g_shift_24)) |
+		(b << _G(_rgb_b_shift_24)));
 }
 
 int makecol32(int r, int g, int b) {
-	return ((r << _rgb_r_shift_32) |
-		(g << _rgb_g_shift_32) |
-		(b << _rgb_b_shift_32));
+	return ((r << _G(_rgb_r_shift_32)) |
+		(g << _G(_rgb_g_shift_32)) |
+		(b << _G(_rgb_b_shift_32)));
 }
 
 int makeacol32(int r, int g, int b, int a) {
-	return ((r << _rgb_r_shift_32) |
-		(g << _rgb_g_shift_32) |
-		(b << _rgb_b_shift_32) |
-		(a << _rgb_a_shift_32));
+	return ((r << _G(_rgb_r_shift_32)) |
+		(g << _G(_rgb_g_shift_32)) |
+		(b << _G(_rgb_b_shift_32)) |
+		(a << _G(_rgb_a_shift_32)));
 }
 
 int getr8(int c) {
@@ -129,55 +108,55 @@ int getb8(int c) {
 }
 
 int getr15(int c) {
-   return _rgb_scale_5[(c >> _rgb_r_shift_15) & 0x1F];
+   return _rgb_scale_5[(c >> _G(_rgb_r_shift_15)) & 0x1F];
 }
 
 int getg15(int c) {
-	return _rgb_scale_5[(c >> _rgb_g_shift_15) & 0x1F];
+	return _rgb_scale_5[(c >> _G(_rgb_g_shift_15)) & 0x1F];
 }
 
 int getb15(int c) {
-   return _rgb_scale_5[(c >> _rgb_b_shift_15) & 0x1F];
+   return _rgb_scale_5[(c >> _G(_rgb_b_shift_15)) & 0x1F];
 }
 
 int getr16(int c) {
-   return _rgb_scale_5[(c >> _rgb_r_shift_16) & 0x1F];
+   return _rgb_scale_5[(c >> _G(_rgb_r_shift_16)) & 0x1F];
 }
 
 int getg16(int c) {
-   return _rgb_scale_6[(c >> _rgb_g_shift_16) & 0x3F];
+   return _rgb_scale_6[(c >> _G(_rgb_g_shift_16)) & 0x3F];
 }
 
 int getb16(int c) {
-   return _rgb_scale_5[(c >> _rgb_b_shift_16) & 0x1F];
+   return _rgb_scale_5[(c >> _G(_rgb_b_shift_16)) & 0x1F];
 }
 
 int getr24(int c) {
-	return ((c >> _rgb_r_shift_24) & 0xFF);
+	return ((c >> _G(_rgb_r_shift_24)) & 0xFF);
 }
 
 int getg24(int c) {
-	return ((c >> _rgb_g_shift_24) & 0xFF);
+	return ((c >> _G(_rgb_g_shift_24)) & 0xFF);
 }
 
 int getb24(int c) {
-	return ((c >> _rgb_b_shift_24) & 0xFF);
+	return ((c >> _G(_rgb_b_shift_24)) & 0xFF);
 }
 
 int getr32(int c) {
-	return ((c >> _rgb_r_shift_32) & 0xFF);
+	return ((c >> _G(_rgb_r_shift_32)) & 0xFF);
 }
 
 int getg32(int c) {
-	return ((c >> _rgb_g_shift_32) & 0xFF);
+	return ((c >> _G(_rgb_g_shift_32)) & 0xFF);
 }
 
 int getb32(int c) {
-	return ((c >> _rgb_b_shift_32) & 0xFF);
+	return ((c >> _G(_rgb_b_shift_32)) & 0xFF);
 }
 
 int geta32(int c) {
-	return ((c >> _rgb_a_shift_32) & 0xFF);
+	return ((c >> _G(_rgb_a_shift_32)) & 0xFF);
 }
 
 int makecol(byte r, byte g, byte b) {
@@ -223,11 +202,11 @@ void unselect_palette(void) {
 }
 
 void set_blender_mode(BlenderMode m, int r, int g, int b, int a) {
-	_blender_mode = m;
-	trans_blend_alpha = a;
-	trans_blend_red = r;
-	trans_blend_green = g;
-	trans_blend_blue = b;
+	_G(_blender_mode) = m;
+	_G(trans_blend_alpha) = a;
+	_G(trans_blend_red) = r;
+	_G(trans_blend_green) = g;
+	_G(trans_blend_blue) = b;
 }
 
 void set_alpha_blender(void) {
@@ -498,12 +477,12 @@ int bestfit_color(AL_CONST PALETTE pal, int r, int g, int b) {
 
 /* makecol8:
  *  Converts R, G, and B values (ranging 0-255) to an 8 bit paletted color.
- *  If the global rgb_map table is initialised, it uses that, otherwise
+ *  If the global _G(rgb_map) table is initialised, it uses that, otherwise
  *  it searches through the current palette to find the best match.
  */
 int makecol8(int r, int g, int b) {
-	if (rgb_map)
-		return rgb_map->data[r >> 3][g >> 3][b >> 3];
+	if (_G(rgb_map))
+		return _G(rgb_map)->data[r >> 3][g >> 3][b >> 3];
 	else
 		return bestfit_color(_current_palette, r >> 2, g >> 2, b >> 2);
 }
@@ -840,7 +819,7 @@ void create_light_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, in
 	assert(g >= 0 && g <= 63);
 	assert(b >= 0 && b <= 63);
 
-	if (rgb_map) {
+	if (_G(rgb_map)) {
 		for (x = 0; x < PAL_SIZE - 1; x++) {
 			t1 = x * 0x010101;
 			t2 = 0xFFFFFF - t1;
@@ -854,7 +833,7 @@ void create_light_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, in
 				g2 = (g1 + pal[y].g * t1) >> 25;
 				b2 = (b1 + pal[y].b * t1) >> 25;
 
-				table->data[x][y] = rgb_map->data[r2][g2][b2];
+				table->data[x][y] = _G(rgb_map)->data[r2][g2][b2];
 			}
 		}
 		if (callback)
@@ -919,7 +898,7 @@ void create_trans_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, in
 	if (b > 128)
 		b++;
 
-	if (rgb_map)
+	if (_G(rgb_map))
 		add = 255;
 	else
 		add = 127;
@@ -938,12 +917,12 @@ void create_trans_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, in
 		p = table->data[x];
 		q = tmp;
 
-		if (rgb_map) {
+		if (_G(rgb_map)) {
 			for (y = 0; y < PAL_SIZE; y++) {
 				tr = (i + *(q++)) >> 9;
 				tg = (j + *(q++)) >> 9;
 				tb = (k + *(q++)) >> 9;
-				p[y] = rgb_map->data[tr][tg][tb];
+				p[y] = _G(rgb_map)->data[tr][tg][tb];
 			}
 		} else {
 			for (y = 0; y < PAL_SIZE; y++) {

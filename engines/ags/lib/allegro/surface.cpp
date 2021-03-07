@@ -24,6 +24,7 @@
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
@@ -215,7 +216,7 @@ void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &a
 		bDest = bSrc;
 		return;
 	}
-	switch(_blender_mode) {
+	switch(_G(_blender_mode)) {
 	case kSourceAlphaBlender:
 		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
 		break;

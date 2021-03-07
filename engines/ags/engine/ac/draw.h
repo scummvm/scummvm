@@ -50,11 +50,11 @@ using namespace AGS; // FIXME later
 // were included, because they override few Allegro function names;
 // otherwise Allegro headers should not be included at all to the same
 // code unit which uses these defines.
-#define getr32(xx) ((xx >> _rgb_r_shift_32) & 0xFF)
-#define getg32(xx) ((xx >> _rgb_g_shift_32) & 0xFF)
-#define getb32(xx) ((xx >> _rgb_b_shift_32) & 0xFF)
-#define geta32(xx) ((xx >> _rgb_a_shift_32) & 0xFF)
-#define makeacol32(r,g,b,a) ((r << _rgb_r_shift_32) | (g << _rgb_g_shift_32) | (b << _rgb_b_shift_32) | (a << _rgb_a_shift_32))
+#define getr32(xx) ((xx >> _G(_rgb_r_shift_32)) & 0xFF)
+#define getg32(xx) ((xx >> _G(_rgb_g_shift_32)) & 0xFF)
+#define getb32(xx) ((xx >> _G(_rgb_b_shift_32)) & 0xFF)
+#define geta32(xx) ((xx >> _G(_rgb_a_shift_32)) & 0xFF)
+#define makeacol32(r,g,b,a) ((r << _G(_rgb_r_shift_32)) | (g << _G(_rgb_g_shift_32)) | (b << _G(_rgb_b_shift_32)) | (a << _G(_rgb_a_shift_32)))
 
 
 struct CachedActSpsData {

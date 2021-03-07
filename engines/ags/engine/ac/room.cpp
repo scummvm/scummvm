@@ -682,7 +682,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 				palette[ff].b = 63;
 		}
 		create_rgb_table(&rgb_table, palette, nullptr);
-		rgb_map = &rgb_table;
+		_G(rgb_map) = &rgb_table;
 	}
 	our_eip = 211;
 	if (forchar != nullptr) {
@@ -860,7 +860,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		else forchar->view = _GP(thisroom).Options.PlayerView - 1;
 		forchar->frame = 0; // make him standing
 	}
-	color_map = nullptr;
+	_G(color_map) = nullptr;
 
 	our_eip = 209;
 	update_polled_stuff_if_runtime();

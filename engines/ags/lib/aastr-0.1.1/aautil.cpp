@@ -36,6 +36,7 @@
  */
 
 #include "ags/lib/aastr-0.1.1/aautil.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -56,9 +57,9 @@ static struct {
  * Prepare offsets for direct access to 24bpp bitmap.
  */
 void _aa_prepare_for_24bpp() {
-  _aa.roffset24 = _rgb_r_shift_24 / 8;
-  _aa.goffset24 = _rgb_g_shift_24 / 8;
-  _aa.boffset24 = _rgb_b_shift_24 / 8;
+  _aa.roffset24 = _G(_rgb_r_shift_24) / 8;
+  _aa.goffset24 = _G(_rgb_g_shift_24) / 8;
+  _aa.boffset24 = _G(_rgb_b_shift_24) / 8;
 }
 
 /*

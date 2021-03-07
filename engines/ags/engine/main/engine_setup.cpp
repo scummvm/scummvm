@@ -179,21 +179,21 @@ void engine_pre_gfxsystem_screen_destroy() {
 // Setup color conversion parameters
 void engine_setup_color_conversions(int coldepth) {
 	// default shifts for how we store the sprite data1
-	_rgb_r_shift_32 = 16;
-	_rgb_g_shift_32 = 8;
-	_rgb_b_shift_32 = 0;
-	_rgb_r_shift_16 = 11;
-	_rgb_g_shift_16 = 5;
-	_rgb_b_shift_16 = 0;
-	_rgb_r_shift_15 = 10;
-	_rgb_g_shift_15 = 5;
-	_rgb_b_shift_15 = 0;
+	_G(_rgb_r_shift_32) = 16;
+	_G(_rgb_g_shift_32) = 8;
+	_G(_rgb_b_shift_32) = 0;
+	_G(_rgb_r_shift_16) = 11;
+	_G(_rgb_g_shift_16) = 5;
+	_G(_rgb_b_shift_16) = 0;
+	_G(_rgb_r_shift_15) = 10;
+	_G(_rgb_g_shift_15) = 5;
+	_G(_rgb_b_shift_15) = 0;
 
 	// Most cards do 5-6-5 RGB, which is the format the files are saved in
 	// Some do 5-6-5 BGR, or  6-5-5 RGB, in which case convert the gfx
-	if ((coldepth == 16) && ((_rgb_b_shift_16 != 0) || (_rgb_r_shift_16 != 11))) {
+	if ((coldepth == 16) && ((_G(_rgb_b_shift_16) != 0) || (_G(_rgb_r_shift_16) != 11))) {
 		convert_16bit_bgr = 1;
-		if (_rgb_r_shift_16 == 10) {
+		if (_G(_rgb_r_shift_16) == 10) {
 			// some very old graphics cards lie about being 16-bit when they
 			// are in fact 15-bit ... get around this
 			_places_r = 3;
@@ -205,43 +205,43 @@ void engine_setup_color_conversions(int coldepth) {
 		// the wrong way round - so fix that
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-		_rgb_b_shift_16 = 0;
-		_rgb_g_shift_16 = 5;
-		_rgb_r_shift_16 = 11;
+		_G(_rgb_b_shift_16) = 0;
+		_G(_rgb_g_shift_16) = 5;
+		_G(_rgb_r_shift_16) = 11;
 
-		_rgb_b_shift_15 = 0;
-		_rgb_g_shift_15 = 5;
-		_rgb_r_shift_15 = 10;
+		_G(_rgb_b_shift_15) = 0;
+		_G(_rgb_g_shift_15) = 5;
+		_G(_rgb_r_shift_15) = 10;
 
-		_rgb_r_shift_32 = 0;
-		_rgb_g_shift_32 = 8;
-		_rgb_b_shift_32 = 16;
+		_G(_rgb_r_shift_32) = 0;
+		_G(_rgb_g_shift_32) = 8;
+		_G(_rgb_b_shift_32) = 16;
 #else
-		_rgb_r_shift_16 = 11;
-		_rgb_g_shift_16 = 5;
-		_rgb_b_shift_16 = 0;
+		_G(_rgb_r_shift_16) = 11;
+		_G(_rgb_g_shift_16) = 5;
+		_G(_rgb_b_shift_16) = 0;
 #endif
 	} else if (coldepth == 16) {
 		// ensure that any 32-bit graphics displayed are converted
 		// properly to the current depth
-		_rgb_r_shift_32 = 16;
-		_rgb_g_shift_32 = 8;
-		_rgb_b_shift_32 = 0;
+		_G(_rgb_r_shift_32) = 16;
+		_G(_rgb_g_shift_32) = 8;
+		_G(_rgb_b_shift_32) = 0;
 	} else if (coldepth < 16) {
 		// ensure that any 32-bit graphics displayed are converted
 		// properly to the current depth
 #if AGS_PLATFORM_OS_WINDOWS
-		_rgb_r_shift_32 = 16;
-		_rgb_g_shift_32 = 8;
-		_rgb_b_shift_32 = 0;
+		_G(_rgb_r_shift_32) = 16;
+		_G(_rgb_g_shift_32) = 8;
+		_G(_rgb_b_shift_32) = 0;
 #else
-		_rgb_r_shift_32 = 0;
-		_rgb_g_shift_32 = 8;
-		_rgb_b_shift_32 = 16;
+		_G(_rgb_r_shift_32) = 0;
+		_G(_rgb_g_shift_32) = 8;
+		_G(_rgb_b_shift_32) = 16;
 
-		_rgb_b_shift_15 = 0;
-		_rgb_g_shift_15 = 5;
-		_rgb_r_shift_15 = 10;
+		_G(_rgb_b_shift_15) = 0;
+		_G(_rgb_g_shift_15) = 5;
+		_G(_rgb_r_shift_15) = 10;
 #endif
 	}
 

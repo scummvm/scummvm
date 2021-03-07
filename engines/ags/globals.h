@@ -31,6 +31,7 @@
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/fixed.h"
+#include "ags/lib/allegro/aintern.h"
 
 namespace AGS3 {
 
@@ -87,6 +88,7 @@ struct CCInventory;
 struct CCObject;
 struct CCRegion;
 struct CharacterCache;
+struct COLOR_MAP;
 struct DirtyRects;
 struct ExecutingScript;
 struct GameFrameSetup;
@@ -99,6 +101,7 @@ struct MoveList;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
 struct ResourcePaths;
+struct RGB_MAP;
 struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
@@ -121,13 +124,31 @@ struct ViewStruct;
 class Globals {
 public:
 	/**
-	 * \defgroup Overall flags
+	 * \defgroup Allegro globals
 	 * @{
 	 */
 
-	// Major overall flags
-	bool _want_exit = false;
-	bool _abort_engine = false;
+	int __rgb_r_shift_15 = DEFAULT_RGB_R_SHIFT_15;     /* truecolor pixel format */
+	int __rgb_g_shift_15 = DEFAULT_RGB_G_SHIFT_15;
+	int __rgb_b_shift_15 = DEFAULT_RGB_B_SHIFT_15;
+	int __rgb_r_shift_16 = DEFAULT_RGB_R_SHIFT_16;
+	int __rgb_g_shift_16 = DEFAULT_RGB_G_SHIFT_16;
+	int __rgb_b_shift_16 = DEFAULT_RGB_B_SHIFT_16;
+	int __rgb_r_shift_24 = DEFAULT_RGB_R_SHIFT_24;
+	int __rgb_g_shift_24 = DEFAULT_RGB_G_SHIFT_24;
+	int __rgb_b_shift_24 = DEFAULT_RGB_B_SHIFT_24;
+	int __rgb_r_shift_32 = DEFAULT_RGB_R_SHIFT_32;
+	int __rgb_g_shift_32 = DEFAULT_RGB_G_SHIFT_32;
+	int __rgb_b_shift_32 = DEFAULT_RGB_B_SHIFT_32;
+	int __rgb_a_shift_32 = DEFAULT_RGB_A_SHIFT_32;
+
+	RGB_MAP *_rgb_map;
+	COLOR_MAP *_color_map;
+	int _trans_blend_alpha = 0;
+	int _trans_blend_red = 0;
+	int _trans_blend_green = 0;
+	int _trans_blend_blue = 0;
+	BlenderMode __blender_mode = kRgbToRgbBlender;
 
 	/**@}*/
 
@@ -338,6 +359,10 @@ public:
 	AGS::Shared::String _saveGameDirectory;
 	AGS::Shared::String _saveGameParent;
 	AGS::Shared::String _saveGameSuffix;
+
+	// Major overall flags
+	bool _want_exit = false;
+	bool _abort_engine = false;
 
 	 /**@}*/
 

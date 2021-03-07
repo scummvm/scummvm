@@ -24,6 +24,7 @@
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
@@ -146,13 +147,13 @@ void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int 
 void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
 		Common::Rect(x, y, x + sprite->w, y + sprite->h),
-		false, false, true, trans_blend_alpha);
+		false, false, true, _G(trans_blend_alpha));
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
 		Common::Rect(x, y, x + sprite->w, y + sprite->h),
-		false, false, true, color, trans_blend_red, trans_blend_green, trans_blend_blue);
+		false, false, true, color, _G(trans_blend_red), _G(trans_blend_green), _G(trans_blend_blue));
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
