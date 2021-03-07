@@ -141,16 +141,9 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::baseMatrixTranspose() {
-	const Matrix tmpMatrix = baseMatrix;
-	baseMatrix.row1[0] = tmpMatrix.row1[0];
-	baseMatrix.row1[1] = tmpMatrix.row2[0];
-	baseMatrix.row1[2] = tmpMatrix.row3[0];
-	baseMatrix.row2[0] = tmpMatrix.row1[1];
-	baseMatrix.row2[1] = tmpMatrix.row2[1];
-	baseMatrix.row2[2] = tmpMatrix.row3[1];
-	baseMatrix.row3[0] = tmpMatrix.row1[2];
-	baseMatrix.row3[1] = tmpMatrix.row2[2];
-	baseMatrix.row3[2] = tmpMatrix.row3[2];
+	SWAP(baseMatrix.row1[1], baseMatrix.row2[0]);
+	SWAP(baseMatrix.row1[2], baseMatrix.row3[0]);
+	SWAP(baseMatrix.row2[2], baseMatrix.row3[1]);
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
