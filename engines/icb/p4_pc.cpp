@@ -255,6 +255,9 @@ void InitEngine(const char *lpCmdLine) {
 
 	zdebug = FALSE8; // no console so switch off debugging (zoff)
 
+	ConfMan.setBool("actor_relative", true);
+	ConfMan.setBool("subtitles", true);
+
 	// Load settings from our ini file (must be called AFTER everything has been setup)
 	ReadConfigFromIniFile();
 }
