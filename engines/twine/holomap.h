@@ -84,7 +84,7 @@ private:
 		int16 unk1 = 0;
 		int16 unk2 = 0;
 	};
-	HolomapProjectedPos _projectedSurfacePositions[2048];
+	HolomapProjectedPos _projectedSurfacePositions[561];
 	int _projectedSurfaceIndex = 0;
 
 	struct TrajectoryData {

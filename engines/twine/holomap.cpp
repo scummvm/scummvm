@@ -191,9 +191,9 @@ void Holomap::prepareHolomapPolygons() {
 		rotation += ANGLE_11_25;
 		++_projectedSurfaceIndex;
 	}
-	assert(holomapSortArrayIdx <= ARRAYSIZE(_holomapSort));
-	assert(holomapSurfaceArrayIdx <= ARRAYSIZE(_holomapSurface));
-	assert(_projectedSurfaceIndex <= ARRAYSIZE(_projectedSurfacePositions));
+	assert(holomapSortArrayIdx == ARRAYSIZE(_holomapSort));
+	assert(holomapSurfaceArrayIdx == ARRAYSIZE(_holomapSurface));
+	assert(_projectedSurfaceIndex == ARRAYSIZE(_projectedSurfacePositions));
 	qsort(_holomapSort, ARRAYSIZE(_holomapSort), sizeof(HolomapSort), sortHolomapSurfaceCoordsByDepth);
 }
 
