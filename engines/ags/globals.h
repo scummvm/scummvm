@@ -28,6 +28,7 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/engine/main/engine.h"
+#include "ags/engine/media/audio/audiodefines.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/color.h"
@@ -108,6 +109,7 @@ struct RoomCameraDrawData;
 struct RoomStatus;
 struct RuntimeScriptValue;
 struct ScreenOverlay;
+struct ScriptAudioChannel;
 struct ScriptDialog;
 struct ScriptGUI;
 struct ScriptHotspot;
@@ -175,6 +177,25 @@ public:
 
 	std::array<SOUNDCLIP *> *_audioChannels;
 	std::array<AmbientSound> *_ambient;
+
+	volatile bool _audio_doing_crossfade = false;
+	ScriptAudioChannel *_scrAudioChannel;
+	char _acaudio_buffer[256];
+	int _reserved_channel_count = 0;
+
+	// This is an indicator of a music played by an old audio system
+	// (to distinguish from the new system API)
+	int _current_music_type = 0;
+	// _G(crossFading) is >0 (channel number of new track), or -1 (old
+	// track fading out, no new track)
+	int _crossFading = 0, _crossFadeVolumePerStep = 0, _crossFadeStep = 0;
+	int _crossFadeVolumeAtStart = 0;
+	SOUNDCLIP *_cachedQueuedMusic = nullptr;
+
+	// Music update is scheduled when the voice speech stops;
+	// we do a small delay before reverting any volume adjustments
+	bool _music_update_scheduled = false;
+	uint32 _music_update_at = 0;
 
 	/**@}*/
 

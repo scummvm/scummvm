@@ -105,12 +105,6 @@ int         play_sound(int val1);
 
 //=============================================================================
 
-// This is an indicator of a music played by an old audio system
-// (to distinguish from the new system API); if it is not set, then old API
-// should "think" that no music is played regardless of channel state
-// TODO: refactor this and hide behind some good interface to prevent misuse!
-extern int current_music_type;
-
 void        clear_music_cache();
 void        play_next_queued();
 int         calculate_max_volume();
@@ -130,18 +124,9 @@ ScriptAudioClip *get_audio_clip_for_music(int mnum);
 SOUNDCLIP *load_music_from_disk(int mnum, bool doRepeat);
 void        newmusic(int mnum);
 
-extern volatile bool _audio_doing_crossfade;
-
 extern void cancel_scheduled_music_update();
 extern void schedule_music_update_at(AGS_Clock::time_point);
 extern void postpone_scheduled_music_update_by(std::chrono::milliseconds);
-
-// crossFading is >0 (channel number of new track), or -1 (old
-// track fading out, no new track)
-extern int crossFading, crossFadeVolumePerStep, crossFadeStep;
-extern int crossFadeVolumeAtStart;
-
-extern SOUNDCLIP *cachedQueuedMusic;
 
 } // namespace AGS3
 

@@ -58,6 +58,7 @@
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
+#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
 #include "ags/engine/ac/dynobj/scriptsystem.h"
 #include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/engine/ac/dynobj/scriptinvitem.h"
@@ -92,6 +93,7 @@ Globals::Globals() {
 	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
 	// TODO: double check that ambient sounds array actually needs +1
 	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
+	_scrAudioChannel = new ScriptAudioChannel[MAX_SOUND_CHANNELS + 1];
 
 	// cc_options.cpp globals
 	_ccCompOptions = SCOPT_LEFTTORIGHT;
@@ -234,6 +236,7 @@ Globals::~Globals() {
 	// audio.cpp globals
 	delete _audioChannels;
 	delete _ambient;
+	delete _scrAudioChannel;
 
 	// debug.cpp globals
 	delete[] _debug_line;

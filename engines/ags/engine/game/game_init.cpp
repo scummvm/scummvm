@@ -63,7 +63,6 @@ extern IDriverDependantBitmap **actspsbmp;
 extern Bitmap **actspswb;
 extern IDriverDependantBitmap **actspswbbmp;
 extern CachedActSpsData *actspswbcache;
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern ScriptDialogOptionsRendering ccDialogOptionsRendering;
 extern ScriptDrawingSurface *dialogOptionsRenderingSurface;
 extern AGSStaticObject GlobalStaticManager;
@@ -94,8 +93,8 @@ String GetGameInitErrorText(GameInitErrorType err) {
 // Initializes audio channels and clips and registers them in the script system
 void InitAndRegisterAudioObjects() {
 	for (int i = 0; i <= MAX_SOUND_CHANNELS; ++i) {
-		scrAudioChannel[i].id = i;
-		ccRegisterManagedObject(&scrAudioChannel[i], &_GP(ccDynamicAudio));
+		_G(scrAudioChannel)[i].id = i;
+		ccRegisterManagedObject(&_G(scrAudioChannel)[i], &_GP(ccDynamicAudio));
 	}
 
 	for (size_t i = 0; i < _GP(game).audioClips.size(); ++i) {

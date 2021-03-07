@@ -178,7 +178,7 @@ void PlayMusicResetQueue(int newmus) {
 }
 
 void SeekMIDIPosition(int position) {
-	if (_GP(play).silent_midi == 0 && current_music_type != MUS_MIDI)
+	if (_GP(play).silent_midi == 0 && _G(current_music_type) != MUS_MIDI)
 		return;
 
 	AudioChannelsLock lock;
@@ -190,7 +190,7 @@ void SeekMIDIPosition(int position) {
 int GetMIDIPosition() {
 	if (_GP(play).fast_forward)
 		return 99999;
-	if (_GP(play).silent_midi == 0 && current_music_type != MUS_MIDI)
+	if (_GP(play).silent_midi == 0 && _G(current_music_type) != MUS_MIDI)
 		return -1; // returns -1 on failure according to old manuals
 
 	AudioChannelsLock lock;
@@ -208,18 +208,18 @@ int IsMusicPlaying() {
 		return 0;
 
 	// This only returns positive if there was a music started by old audio API
-	if (current_music_type == 0)
+	if (_G(current_music_type) == 0)
 		return 0;
 
 	AudioChannelsLock lock;
 	auto *ch = lock.GetChannel(SCHAN_MUSIC);
 	if (ch == nullptr) {
 		// This was probably a hacky fix in case it was not reset by game update; TODO: find out if needed
-		current_music_type = 0;
+		_G(current_music_type) = 0;
 		return 0;
 	}
 
-	bool result = (ch->is_playing()) || (crossFading > 0 && (lock.GetChannelIfPlaying(crossFading) != nullptr));
+	bool result = (ch->is_playing()) || (_G(crossFading) > 0 && (lock.GetChannelIfPlaying(_G(crossFading)) != nullptr));
 	return result ? 1 : 0;
 }
 
@@ -259,7 +259,7 @@ int PlayMusicQueued(int musnum) {
 
 		clear_music_cache();
 
-		cachedQueuedMusic = load_music_from_disk(musnum, (_GP(play).music_repeat > 0));
+		_G(cachedQueuedMusic) = load_music_from_disk(musnum, (_GP(play).music_repeat > 0));
 	}
 
 	return _GP(play).music_queue_size;
@@ -271,7 +271,7 @@ void scr_StopMusic() {
 }
 
 void SeekMODPattern(int patnum) {
-	if (current_music_type != MUS_MOD)
+	if (_G(current_music_type) != MUS_MOD)
 		return;
 
 	AudioChannelsLock lock;
@@ -283,12 +283,12 @@ void SeekMODPattern(int patnum) {
 }
 
 void SeekMP3PosMillis(int posn) {
-	if (current_music_type != MUS_MP3 && current_music_type != MUS_OGG)
+	if (_G(current_music_type) != MUS_MP3 && _G(current_music_type) != MUS_OGG)
 		return;
 
 	AudioChannelsLock lock;
 	auto *mus_ch = lock.GetChannel(SCHAN_MUSIC);
-	auto *cf_ch = (crossFading > 0) ? lock.GetChannel(crossFading) : nullptr;
+	auto *cf_ch = (_G(crossFading) > 0) ? lock.GetChannel(_G(crossFading)) : nullptr;
 	if (cf_ch)
 		cf_ch->seek(posn);
 	else if (mus_ch)
@@ -299,7 +299,7 @@ int GetMP3PosMillis() {
 	// in case they have "while (GetMP3PosMillis() < 5000) "
 	if (_GP(play).fast_forward)
 		return 999999;
-	if (current_music_type != MUS_MP3 && current_music_type != MUS_OGG)
+	if (_G(current_music_type) != MUS_MP3 && _G(current_music_type) != MUS_OGG)
 		return 0;  // returns 0 on failure according to old manuals
 
 	AudioChannelsLock lock;
@@ -394,7 +394,7 @@ void PlayMP3File(const char *filename) {
 		if (clip) {
 			if (clip->play()) {
 				set_clip_to_channel(useChan, clip);
-				current_music_type = MUS_OGG;
+				_G(current_music_type) = MUS_OGG;
 				_GP(play).cur_music_number = 1000;
 				// save the filename (if it's not what we were supplied with)
 				if (filename != &_GP(play).playmp3file_name[0])
@@ -412,7 +412,7 @@ void PlayMP3File(const char *filename) {
 		if (clip) {
 			if (clip->play()) {
 				set_clip_to_channel(useChan, clip);
-				current_music_type = MUS_MP3;
+				_G(current_music_type) = MUS_MP3;
 				_GP(play).cur_music_number = 1000;
 				// save the filename (if it's not what we were supplied with)
 				if (filename != &_GP(play).playmp3file_name[0])
@@ -436,7 +436,7 @@ void PlayMP3File(const char *filename) {
 }
 
 void PlaySilentMIDI(int mnum) {
-	if (current_music_type == MUS_MIDI)
+	if (_G(current_music_type) == MUS_MIDI)
 		quit("!PlaySilentMIDI: proper midi music is in progress");
 
 	_GP(play).silent_midi = mnum;
@@ -501,12 +501,10 @@ int IsMusicVoxAvailable() {
 	return _GP(play).separate_music_lib;
 }
 
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
-
 ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) {
 	if (!play_voice_nonblocking(ch->index_id, sndid, as_speech))
 		return NULL;
-	return &scrAudioChannel[SCHAN_SPEECH];
+	return &_G(scrAudioChannel)[SCHAN_SPEECH];
 }
 
 // Construct an asset name for the voice-over clip for the given character and cue id

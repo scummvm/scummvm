@@ -52,7 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern IGraphicsDriver *gfxDriver;
 extern volatile bool switched_away;
 
@@ -176,7 +175,7 @@ ScriptAudioChannel *System_GetAudioChannels(int index) {
 	if ((index < 0) || (index >= MAX_SOUND_CHANNELS))
 		quit("!System.AudioChannels: invalid sound channel index");
 
-	return &scrAudioChannel[index];
+	return &_G(scrAudioChannel)[index];
 }
 
 int System_GetVolume() {

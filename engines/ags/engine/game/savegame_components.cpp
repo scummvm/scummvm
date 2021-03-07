@@ -374,12 +374,12 @@ HSaveError WriteAudio(PStream out) {
 		}
 	}
 
-	out->WriteInt32(crossFading);
-	out->WriteInt32(crossFadeVolumePerStep);
-	out->WriteInt32(crossFadeStep);
-	out->WriteInt32(crossFadeVolumeAtStart);
+	out->WriteInt32(_G(crossFading));
+	out->WriteInt32(_G(crossFadeVolumePerStep));
+	out->WriteInt32(_G(crossFadeStep));
+	out->WriteInt32(_G(crossFadeVolumeAtStart));
 	// CHECKME: why this needs to be saved?
-	out->WriteInt32(current_music_type);
+	out->WriteInt32(_G(current_music_type));
 
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)
@@ -427,12 +427,12 @@ HSaveError ReadAudio(PStream in, int32_t cmp_ver, const PreservedParams &pp, Res
 		}
 	}
 
-	crossFading = in->ReadInt32();
-	crossFadeVolumePerStep = in->ReadInt32();
-	crossFadeStep = in->ReadInt32();
-	crossFadeVolumeAtStart = in->ReadInt32();
+	_G(crossFading) = in->ReadInt32();
+	_G(crossFadeVolumePerStep) = in->ReadInt32();
+	_G(crossFadeStep) = in->ReadInt32();
+	_G(crossFadeVolumeAtStart) = in->ReadInt32();
 	// preserve legacy music type setting
-	current_music_type = in->ReadInt32();
+	_G(current_music_type) = in->ReadInt32();
 
 	// Ambient sound
 	for (int i = 0; i < MAX_SOUND_CHANNELS; ++i)

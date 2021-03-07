@@ -626,17 +626,17 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		first_room_initialization();
 	}
 
-	if ((_GP(play).music_queue_size > 0) && (cachedQueuedMusic == nullptr)) {
-		cachedQueuedMusic = load_music_from_disk(_GP(play).music_queue[0], 0);
+	if ((_GP(play).music_queue_size > 0) && (_G(cachedQueuedMusic) == nullptr)) {
+		_G(cachedQueuedMusic) = load_music_from_disk(_GP(play).music_queue[0], 0);
 	}
 
 	// Test if the old-style audio had playing music and it was properly loaded
-	if (current_music_type > 0) {
+	if (_G(current_music_type) > 0) {
 		AudioChannelsLock lock;
 
-		if ((crossFading > 0 && !lock.GetChannelIfPlaying(crossFading)) ||
-			(crossFading <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
-			current_music_type = 0; // playback failed, reset flag
+		if ((_G(crossFading) > 0 && !lock.GetChannelIfPlaying(_G(crossFading))) ||
+			(_G(crossFading) <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
+			_G(current_music_type) = 0; // playback failed, reset flag
 		}
 	}
 

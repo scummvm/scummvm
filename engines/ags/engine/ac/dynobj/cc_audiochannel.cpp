@@ -23,10 +23,9 @@
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/scriptaudiochannel.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 
 const char *CCAudioChannel::GetType() {
 	return "AudioChannel";
@@ -42,7 +41,7 @@ int CCAudioChannel::Serialize(const char *address, char *buffer, int bufsize) {
 void CCAudioChannel::Unserialize(int index, const char *serializedData, int dataSize) {
 	StartUnserialize(serializedData, dataSize);
 	int id = UnserializeInt();
-	ccRegisterUnserializedObject(index, &scrAudioChannel[id], this);
+	ccRegisterUnserializedObject(index, &_G(scrAudioChannel)[id], this);
 }
 
 } // namespace AGS3

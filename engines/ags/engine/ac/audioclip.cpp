@@ -32,8 +32,6 @@
 
 namespace AGS3 {
 
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
-
 int AudioClip_GetID(ScriptAudioClip *clip) {
 	return clip->id;
 }
@@ -54,7 +52,7 @@ void AudioClip_Stop(ScriptAudioClip *clip) {
 	for (int i = 0; i < MAX_SOUND_CHANNELS; i++) {
 		auto *ch = lock.GetChannelIfPlaying(i);
 		if ((ch != nullptr) && (ch->_sourceClip == clip)) {
-			AudioChannel_Stop(&scrAudioChannel[i]);
+			AudioChannel_Stop(&_G(scrAudioChannel)[i]);
 		}
 	}
 }

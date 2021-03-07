@@ -109,7 +109,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern int cur_mode, cur_cursor;
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
@@ -188,7 +187,7 @@ void Game_StopAudio(int audioType) {
 		if (audioType == SCR_NO_VALUE) {
 			stop_or_fade_out_channel(aa);
 		} else {
-			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&scrAudioChannel[aa]);
+			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 			if ((clip != nullptr) && (clip->type == audioType))
 				stop_or_fade_out_channel(aa);
 		}
@@ -205,7 +204,7 @@ int Game_IsAudioPlaying(int audioType) {
 		return 0;
 
 	for (int aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
-		ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&scrAudioChannel[aa]);
+		ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 		if (clip != nullptr) {
 			if ((clip->type == audioType) || (audioType == SCR_NO_VALUE)) {
 				return 1;
@@ -235,7 +234,7 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 	        (changeType == VOL_BOTH)) {
 		AudioChannelsLock lock;
 		for (int aa = 0; aa < MAX_SOUND_CHANNELS; aa++) {
-			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&scrAudioChannel[aa]);
+			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 			if ((clip != nullptr) && (clip->type == audioType)) {
 				auto *ch = lock.GetChannel(aa);
 				if (ch)
@@ -255,7 +254,7 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 }
 
 int Game_GetMODPattern() {
-	if (current_music_type != MUS_MOD)
+	if (_G(current_music_type) != MUS_MOD)
 		return -1;
 	AudioChannelsLock lock;
 	auto *music_ch = lock.GetChannelIfPlaying(SCHAN_MUSIC);
@@ -1360,10 +1359,10 @@ HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData &r_dat
 				chan_info.Speed = in->ReadInt32();
 		}
 	}
-	crossFading = in->ReadInt32();
-	crossFadeVolumePerStep = in->ReadInt32();
-	crossFadeStep = in->ReadInt32();
-	crossFadeVolumeAtStart = in->ReadInt32();
+	_G(crossFading) = in->ReadInt32();
+	_G(crossFadeVolumePerStep) = in->ReadInt32();
+	_G(crossFadeStep) = in->ReadInt32();
+	_G(crossFadeVolumeAtStart) = in->ReadInt32();
 	return HSaveError::None();
 }
 
@@ -1474,7 +1473,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	}
 
 	// preserve legacy music type setting
-	current_music_type = in->ReadInt32();
+	_G(current_music_type) = in->ReadInt32();
 
 	return HSaveError::None();
 }
