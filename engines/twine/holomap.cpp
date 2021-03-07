@@ -138,6 +138,7 @@ void Holomap::prepareHolomapSurface() {
 	assert(stream.eos());
 }
 
+// verified with disassembly
 void Holomap::prepareHolomapProjectedPositions() {
 	int projectedIndex = 0;
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
@@ -145,18 +146,18 @@ void Holomap::prepareHolomapProjectedPositions() {
 		for (int32 i = 0; i < ANGLE_11_25; ++i) {
 			_projectedSurfacePositions[projectedIndex].unk1 = _engine->_screens->crossDot(0, 0xffff, ANGLE_360 - 1, rotation);
 			if (angle == ANGLE_90) {
-				_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
+				_projectedSurfacePositions[projectedIndex].unk2 = -1;
 			} else {
-				_projectedSurfacePositions[projectedIndex].unk2 = (int16)(((angle + ANGLE_90) * ANGLE_90) / 2);
+				_projectedSurfacePositions[projectedIndex].unk2 = ((angle + ANGLE_90) * ANGLE_90) / 2;
 			}
 			rotation += ANGLE_11_25;
 			++projectedIndex;
 		}
-		_projectedSurfacePositions[projectedIndex].unk1 = 0xffff;
+		_projectedSurfacePositions[projectedIndex].unk1 = -1;
 		if (angle == ANGLE_90) {
-			_projectedSurfacePositions[projectedIndex].unk2 = 0xffff;
+			_projectedSurfacePositions[projectedIndex].unk2 = -1;
 		} else {
-			_projectedSurfacePositions[projectedIndex].unk2 = (int16)(((angle + ANGLE_90) * ANGLE_90) / 2);
+			_projectedSurfacePositions[projectedIndex].unk2 = ((angle + ANGLE_90) * ANGLE_90) / 2;
 		}
 		++projectedIndex;
 	}

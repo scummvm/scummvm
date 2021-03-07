@@ -81,8 +81,8 @@ private:
 	struct HolomapProjectedPos {
 		int16 x = 0;
 		int16 y = 0;
-		uint16 unk1 = 0;
-		uint16 unk2 = 0;
+		int16 unk1 = 0;
+		int16 unk2 = 0;
 	};
 	HolomapProjectedPos _projectedSurfacePositions[2048];
 	int _projectedSurfaceIndex = 0;
