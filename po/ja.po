@@ -5647,7 +5647,8 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
-"ポーカーロジックは外部のDLLにハードコーディングされており、未実装です。代わりに、対戦相手のアクションをランダムに選ぶダミーのロジックが存在します"
+"ポーカーロジックは外部のDLLにハードコーディングされており、未実装です。代わり"
+"に、対戦相手のアクションをランダムに選ぶダミーのロジックが存在します"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
