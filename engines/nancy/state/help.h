@@ -20,14 +20,14 @@
  *
  */
 
+#ifndef NANCY_STATE_HELP_H
+#define NANCY_STATE_HELP_H
+
 #include "engines/nancy/ui/fullscreenimage.h"
 
 #include "engines/nancy/commontypes.h"
 
 #include "common/rect.h"
-
-#ifndef NANCY_STATE_HELP_H
-#define NANCY_STATE_HELP_H
 
 namespace Nancy {
 
