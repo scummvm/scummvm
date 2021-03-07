@@ -2695,8 +2695,11 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 		case DEVICE:
 			break;
 
-		case METHOD: // Force actor relative if we're using the keyboard
-			g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
+		case METHOD:
+			if (g_icb_session->player.Get_control_mode() == ACTOR_RELATIVE)
+				g_icb_session->player.Set_control_mode(SCREEN_RELATIVE);
+			else
+				g_icb_session->player.Set_control_mode(ACTOR_RELATIVE);
 			break;
 
 		default:
