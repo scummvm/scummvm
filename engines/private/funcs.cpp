@@ -650,7 +650,8 @@ static void fSoundArea(ArgArray args) {
 		delete g_private->_phoneArea.surf;
 		g_private->_phoneArea = m;
 		g_private->_masks.push_front(m);
-	}
+	} else
+		error("Invalid type for SoundArea");
 }
 
 static void fSafeDigit(ArgArray args) {

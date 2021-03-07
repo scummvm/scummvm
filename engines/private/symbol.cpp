@@ -124,8 +124,8 @@ Symbol *SymbolMaps::lookupName(const char *n) {
 		return lookup(s, rects);
 
 	else {
-		debugC(1, kPrivateDebugCode, "WARNING: %s not defined", s.c_str());
-		return constant(STRING, 0, s.c_str());
+		debugC(1, kPrivateDebugCode, "WARNING: %s not defined", n);
+		return constant(STRING, 0, n);
 	}
 }
 
