@@ -75,7 +75,7 @@ void setSymbol(Symbol *s, int v) {
 }
 
 /* find s in symbol table symlist */
-static Symbol *lookup(const Common::String &s, SymbolMap symlist) {
+static Symbol *lookup(const Common::String &s, const SymbolMap &symlist) {
 	Symbol *r = symlist.getVal(s);
 	return r;
 }

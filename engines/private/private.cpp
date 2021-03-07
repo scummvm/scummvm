@@ -47,7 +47,9 @@ PrivateEngine *g_private = NULL;
 extern int parse(char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd) {
+	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
+	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr),
+	  _maxNumberClicks(0), _sirenWarning(0), _screenW(0), _screenH(0) {
 	_rnd = new Common::RandomSource("private");
 
 	// Debug channels
