@@ -20,7 +20,6 @@
  *
  */
 
-#include "ags/shared/debugging/assert.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/math.h"
 

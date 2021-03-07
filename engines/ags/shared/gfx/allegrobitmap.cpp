@@ -22,7 +22,6 @@
 
 #include "ags/shared/gfx/allegrobitmap.h"
 #include "ags/shared/gfx/image.h"
-#include "ags/shared/debugging/assert.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "common/savefile.h"
 #include "common/system.h"
