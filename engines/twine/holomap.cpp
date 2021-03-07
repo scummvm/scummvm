@@ -464,21 +464,17 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			DrawListStruct &drawList = _engine->_redraw->drawList[n];
 			drawList.posValue = zpos1_copy2;
 			drawList.actorIdx = locationIdx;
-			drawList.type = 0;
+			drawList.type = flags;
 			drawList.x = xpos1;
 			drawList.y = ypos1;
 			drawList.z = zpos1_copy;
-			drawList.offset = n;
-			drawList.field_C = flags;
-			drawList.field_E = 0;
-			drawList.field_10 = 0;
 			++n;
 		}
 	}
 	_engine->_redraw->sortDrawingList(_engine->_redraw->drawList, n);
 	for (int i = 0; i < n; ++i) {
 		const DrawListStruct &drawList = _engine->_redraw->drawList[i];
-		const uint16 flags = drawList.field_C;
+		const uint16 flags = drawList.type;
 		const uint8 *bodyPtr = nullptr;
 		if (flags == 1u) {
 			bodyPtr = _engine->_resources->holomapArrowPtr;
