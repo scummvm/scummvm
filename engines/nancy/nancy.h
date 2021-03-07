@@ -68,6 +68,7 @@ namespace State {
 class Logo;
 class Scene;
 class Map;
+class Help;
 }
 
 class NancyEngine : public Engine {
@@ -143,6 +144,7 @@ public:
 	State::Logo *logo;
 	State::Scene *scene;
 	State::Map *map;
+	State::Help *help;
 	
 	OSystem *_system;
 	Common::RandomSource *_rnd;

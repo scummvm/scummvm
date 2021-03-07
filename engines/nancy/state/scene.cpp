@@ -131,6 +131,9 @@ void Scene::registerGraphics() {
     _viewport.registerGraphics();
     _textbox.registerGraphics();
     _inventoryBox.registerGraphics();
+    _menuButton.registerGraphics();
+
+    _engine->graphicsManager->redrawAll();
 
     // Used to clear the map label
     _textbox.setVisible(false);
@@ -168,10 +171,12 @@ void Scene::init() {
     }
     _lastHint = -1;
 
-    _frame.init();
+    _frame.init("FRAME"); // TODO should be extracted from BSUM
     _viewport.init();
     _textbox.init();
     _inventoryBox.init();
+    _menuButton.init();
+    _helpButton.init();
     _engine->cursorManager->showCursor(true);
 
     _state = kLoad;
@@ -278,6 +283,8 @@ void Scene::run() {
             registerGraphics();
         }
         unpauseSceneSpecificSounds();
+        _menuButton.setVisible(false);
+        _menuButton.setVisible(false);
 
         return;
     }
@@ -314,6 +321,8 @@ void Scene::run() {
     // Update the UI elements and handle input
     NancyInput input = _engine->input->getInput();
     _viewport.handleInput(input);
+    _menuButton.handleInput(input);
+    _helpButton.handleInput(input);
     _textbox.handleInput(input);
     _inventoryBox.handleInput(input);
     _actionManager.handleInput(input);

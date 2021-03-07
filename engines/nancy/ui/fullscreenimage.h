@@ -20,22 +20,22 @@
  *
  */
 
-#ifndef NANCY_UI_FRAME_H
-#define NANCY_UI_FRAME_H
+#ifndef NANCY_UI_FULLSCREENIMAGE_H
+#define NANCY_UI_FULLSCREENIMAGE_H
 
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
 namespace UI {
 
-class Frame : public RenderObject {
+class FullScreenImage : public RenderObject {
 public:
-    Frame(NancyEngine *engine) : RenderObject(engine) {}
-    virtual ~Frame() =default;
+    FullScreenImage(NancyEngine *engine) : RenderObject(engine) {}
+    virtual ~FullScreenImage() =default;
 
-    virtual void init() override;
-
+    void init(Common::String imageName);
 protected:
+    virtual void init() override {}
     virtual uint16 getZOrder() const override { return 0; }
     virtual BlitType getBlitType() const override { return kNoTrans; }
 };
@@ -43,4 +43,4 @@ protected:
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_FRAME_H
+#endif // NANCY_UI_FULLSCREENIMAGE_H

@@ -14,12 +14,14 @@ MODULE_OBJS = \
   action/sliderpuzzle.o \
   action/staticbitmapanim.o \
   action/telephone.o \
-  ui/frame.o \
+  ui/fullscreenimage.o \
+  ui/button.o \
   ui/inventorybox.o \
   ui/scrollbar.o \
   ui/textbox.o \
   ui/viewport.o \
   state/logo.o \
+  state/help.o \
   state/map.o \
   state/scene.o \
   cheat.o \
