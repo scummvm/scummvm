@@ -30,6 +30,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/time.h"
+#include "engines/nancy/util.h"
 
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -164,12 +165,27 @@ void Scene::init() {
 
     _sceneState.nextScene.sceneID = _engine->firstSceneID;
 
-    Common::SeekableReadStream *hint = _engine->getBootChunkStream("HINT");
-    hint->seek(0);
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("HINT");
+    chunk->seek(0);
     for (uint i = 0; i < 3; ++i) {
-        _hintsRemaining.push_back(hint->readByte());
+        _hintsRemaining.push_back(chunk->readByte());
     }
     _lastHint = -1;
+
+    chunk = _engine->getBootChunkStream("MAP");
+    chunk->seek(0x8A);
+    readRect(*chunk, _mapHotspot);
+
+    // Hardcoded by original engine
+    _mapAccessSceneIDs.clear();
+    _mapAccessSceneIDs.push_back(9);
+    _mapAccessSceneIDs.push_back(10);
+    _mapAccessSceneIDs.push_back(11);
+    _mapAccessSceneIDs.push_back(0x4B0);
+    _mapAccessSceneIDs.push_back(0x378);
+    _mapAccessSceneIDs.push_back(0x29A);
+    _mapAccessSceneIDs.push_back(0x4E2);
+    _mapAccessSceneIDs.push_back(0x682);
 
     _frame.init("FRAME"); // TODO should be extracted from BSUM
     _viewport.init();
@@ -282,9 +298,10 @@ void Scene::run() {
         if (_engine->getPreviousGameState() != Nancy::NancyEngine::kPause) {
             registerGraphics();
         }
+
         unpauseSceneSpecificSounds();
         _menuButton.setVisible(false);
-        _menuButton.setVisible(false);
+        _helpButton.setVisible(false);
 
         return;
     }
@@ -317,7 +334,6 @@ void Scene::run() {
         _timers.timeOfDay = Timers::kDuskDawn;
     }
 
-
     // Update the UI elements and handle input
     NancyInput input = _engine->input->getInput();
     _viewport.handleInput(input);
@@ -326,6 +342,22 @@ void Scene::run() {
     _textbox.handleInput(input);
     _inventoryBox.handleInput(input);
     _actionManager.handleInput(input);
+
+    _sceneState.currentScene.frameID = _viewport.getCurFrame();
+    _sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
+
+    // Handle invisible map button
+    for (uint i = 0; i < _mapAccessSceneIDs.size(); ++i) {
+        if (_sceneState.currentScene.sceneID == _mapAccessSceneIDs[i]) {
+            if (_mapHotspot.contains(input.mousePos)) {
+                _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+
+                if (input.input & NancyInput::kLeftMouseButtonUp) {
+                    requestStateChange(NancyEngine::kMap);
+                }
+            }
+        }
+    }
 
     _actionManager.processActionRecords();
 }

@@ -205,7 +205,6 @@ void Viewport::setFrame(uint frameNr) {
     _fullFrame.blitFrom(*newFrame);
     _needsRedraw = true;
 
-    _engine->scene->getSceneInfo().frameID = frameNr;
     _currentFrame = frameNr;
 }
 
@@ -234,8 +233,6 @@ void Viewport::setVerticalScroll(uint scroll) {
     } else {
         enableEdges(kUp | kDown);
     }
-    
-    _engine->scene->getSceneInfo().verticalOffset = scroll;
 }
 
 void Viewport::scrollUp(uint delta) {

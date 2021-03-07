@@ -239,6 +239,9 @@ protected:
     int16 _lastHint;
     NancyEngine::GameState _gameStateRequested;
 
+    Common::Rect _mapHotspot;
+    Common::Array<uint16> _mapAccessSceneIDs;
+
     Action::ActionManager _actionManager;
 
     State _state;

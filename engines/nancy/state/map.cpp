@@ -42,9 +42,12 @@ void Map::process() {
     switch (_state) {
         case kInit:
             init();
-            break;
+            // fall through
         case kRun:
             run();
+            break;
+        case kStop:
+            stop();
             break;
     }
 }
@@ -54,6 +57,7 @@ void Map::init() {
 
     _viewport.init();
     _label.init();
+    _button.init();
 
     if (_engine->scene->getEventFlag(40, kTrue) && // Has set up sting
         _engine->scene->getEventFlag(95, kTrue)) { // Connie chickens
@@ -121,6 +125,13 @@ void Map::run() {
 
     _label.setLabel(-1);
 
+    _button.handleInput(input);
+
+    if (_mapButtonClicked) {
+        _state = kStop;
+        return;
+    }
+
     for (uint i = 0; i < 4; ++i) {
         auto &loc = _locations[i];
         if (loc.isActive && _viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
@@ -128,30 +139,39 @@ void Map::run() {
 
             _label.setLabel(i);
 
-            // TODO handle map button as well
-
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                stopSound();
-                _engine->setGameState(NancyEngine::kScene);
-                _engine->scene->changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
-                _state = kInit;
+                _pickedLocationID = i;
+                _state = kStop;
             }
             return;
         }
     }
 }
 
-void Map::stopSound() {
+void Map::stop() {
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
     SoundDescription sound;
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->stopSound(sound);
+    
+    _engine->setGameState(NancyEngine::kScene);
+
+    if (_pickedLocationID != -1) {
+        auto &loc = _locations[_pickedLocationID];
+        _engine->scene->changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
+        _pickedLocationID = -1;
+    }
+
+    _mapButtonClicked = false;
+
+    _state = kInit;
 }
 
 void Map::registerGraphics() {
     _viewport.registerGraphics();
     _label.registerGraphics();
+    _button.registerGraphics();
 }
 
 void Map::MapLabel::init() {
@@ -168,6 +188,23 @@ void Map::MapLabel::setLabel(int labelID) {
         _drawSurface.create(_engine->graphicsManager->object0, _parent->_locations[labelID].labelSrc);
         setVisible(true);
     }
+}
+
+void Map::MapButton::init() {
+    Common::SeekableReadStream *map = _engine->getBootChunkStream("MAP");
+
+    map->seek(0x7A, SEEK_SET);
+    Common::Rect src;
+    readRect(*map, src);
+    _drawSurface.create(_engine->graphicsManager->object0, src);
+    readRect(*map, _screenPosition);
+    setVisible(true);
+
+    RenderObject::init();
+}
+
+void Map::MapButton::onClick() {
+    _parent->_mapButtonClicked = true;
 }
 
 } // End of namespace State
