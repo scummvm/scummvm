@@ -49,7 +49,7 @@ extern int parse(char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr),
-	  _maxNumberClicks(0), _sirenWarning(0), _screenW(0), _screenH(0) {
+	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
 	// Debug channels
@@ -166,12 +166,12 @@ Common::Error PrivateEngine::run() {
 	assert(maps.constants.size() > 0);
 
 	// Initialize graphics
-	_screenW = 640;
-	_screenH = 480;
-	//_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_transparentColor = _pixelFormat.RGBToColor(0,255,0);
-	initGraphics(_screenW, _screenH, &_pixelFormat);
+	initGraphics(_screenW, _screenH, nullptr);
+	_pixelFormat = g_system->getScreenFormat();
+	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
+		return Common::kUnsupportedColorMode;
+
+	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	changeCursor("default");
 	_origin = Common::Point(0, 0);
@@ -437,7 +437,7 @@ bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePo
 	if (mousePos.x > surf->w || mousePos.y > surf->h)
 		return false;
 
-	return (*((uint32 *)surf->getBasePtr(mousePos.x, mousePos.y)) != _transparentColor);
+	return (surf->getPixel(mousePos.x, mousePos.y) != _transparentColor);
 }
 
 
@@ -1069,7 +1069,7 @@ void PrivateEngine::drawScreen() {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
-		surface->transBlitFrom(*cframe, center);
+		surface->blitFrom(*cframe, center);
 		cframe->free();
 		delete cframe;
 	}
