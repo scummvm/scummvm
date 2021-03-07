@@ -320,7 +320,7 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 
 	auto patch = getPatch(name);
 	auto screenObject = loadObject(name);
-	bool doPatch = patch && _navigatedToPreviousScreen;
+	bool doPatch = patch;
 
 	_currentScreenName = name;
 	_currentScreen = new Screen(this, screenObject);
