@@ -20,7 +20,7 @@ What you'll need
 
 - A Mac computer with Xcode installed. Xcode is a free App, available from the Mac App Store.
 - An Apple Developer account. You can sign up for a free account on the `Apple Developer Member Center <https://developer.apple.com/membercenter/>`_ with your Apple ID. 
-- The ScummVM `iOS Libraries <https://www.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip>`_ downloaded, and the zip file extracted. 
+- The ScummVM `iOS Libraries <https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip>`_ downloaded, and the zip file extracted.
 
 .. note::
 
