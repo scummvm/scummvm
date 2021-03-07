@@ -820,16 +820,10 @@ void Process::loadSaveSlotNamePicture() {
 	Common::String saveSlotName = _engine->getSaveStateName(saveSlot);
 	Common::SaveFileManager * saveMan = _engine->getSaveFileManager();
 	Common::InSaveFile * save = saveMan->openForLoading(saveSlotName);
-	if (!save) {
-		debug("no save in slot %d", saveSlot);
-		_object->setPicture(nullptr);
-		return;
-	}
 
 	debug("save state name: %s", saveSlotName.c_str());
 	int fontId = _engine->getSystemVariable("edit_font")->getInteger();
 
-	debug("font id = %d", fontId);
 	Font * font = _engine->getFont(fontId);
 	int h = font->getFontHeight();
 	static const int w = 400;
@@ -837,7 +831,7 @@ void Process::loadSaveSlotNamePicture() {
 	Graphics::Surface * label = _engine->createSurface(w, h);
 	uint32 color = _engine->pixelFormat().RGBToColor(255, 0, 255);
 	label->fillRect(label->getRect(), color);
-	font->drawString(label, saveSlotName, 0, 0, w, color);
+	font->drawString(label, save? saveSlotName: "", 0, 0, w, color);
 	Graphics::TransparentSurface *transparentLabel = _engine->convertToTransparent(label);
 	_object->setPicture(transparentLabel);
 	_object->generateRegion();
