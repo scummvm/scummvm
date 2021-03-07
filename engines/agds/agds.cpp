@@ -199,7 +199,7 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
-ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype) {
+ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowCalls) {
 	debug("loadObject %s %s", name.c_str(), prototype.c_str());
 	Common::String clone = prototype.empty() ? name : prototype;
 	Common::SeekableReadStream *stream = _data.getEntry(clone);
@@ -207,6 +207,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 		error("no database entry for %s\n", clone.c_str());
 
 	ObjectPtr object(new Object(name, stream));
+	object->allowCalls(allowCalls);
 	if (!prototype.empty()) {
 		object->persistent(false);
 	}
@@ -250,11 +251,11 @@ ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 }
 
 
-ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
+ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype, bool allowCalls) {
 	debug("runObject %s %s", name.c_str(), prototype.c_str());
 	ObjectPtr object = getCurrentScreenObject(name);
 	if (!object) {
-		object = loadObject(name, prototype);
+		object = loadObject(name, prototype, allowCalls);
 		runObject(object);
 	} else if (!object->alive()) {
 		debug("recovering object...");
