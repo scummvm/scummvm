@@ -20,7 +20,6 @@
  *
  */
 
-//include <ctype.h>
 #include "ags/shared/util/version.h"
 
 namespace AGS3 {

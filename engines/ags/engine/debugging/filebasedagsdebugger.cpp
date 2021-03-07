@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/debugging/filebasedagsdebugger.h"
 #include "ags/engine/ac/file.h"                    // filelength()
 #include "ags/shared/util/stream.h"

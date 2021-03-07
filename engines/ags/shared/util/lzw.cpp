@@ -26,7 +26,6 @@
 //
 //=============================================================================
 
-//include <stdlib.h>
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/stream.h"
 

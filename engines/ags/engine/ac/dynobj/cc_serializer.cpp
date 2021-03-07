@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/all_dynamicclasses.h"
 #include "ags/engine/ac/dynobj/all_scriptclasses.h"

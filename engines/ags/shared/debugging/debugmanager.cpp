@@ -20,7 +20,6 @@
  *
  */
 
-//include <stdarg.h>
 #include "ags/shared/debugging/debugmanager.h"
 #include "ags/shared/util/string_types.h"
 #include "ags/globals.h"

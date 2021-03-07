@@ -20,8 +20,6 @@
  *
  */
 
-//include <cctype>
-//include <string.h>
 #include "ags/shared/util/inifile.h"
 #include "ags/shared/util/textstreamreader.h"
 #include "ags/shared/util/textstreamwriter.h"

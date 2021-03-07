@@ -20,8 +20,6 @@
  *
  */
 
-//include <stdarg.h>
-//include <stdio.h> // sprintf
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/textstreamwriter.h"
 #include "ags/shared/util/stream.h"

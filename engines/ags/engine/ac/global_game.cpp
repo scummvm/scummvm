@@ -20,8 +20,6 @@
  *
  */
 
-//include <math.h>
-
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/audiocliptype.h"
 #include "ags/shared/util/path.h"

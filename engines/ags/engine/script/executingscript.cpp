@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/script/executingscript.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"

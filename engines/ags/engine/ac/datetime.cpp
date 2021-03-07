@@ -20,11 +20,9 @@
  *
  */
 
-//include <time.h>
 #include "ags/engine/ac/datetime.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/engine/script/runtimescriptvalue.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"

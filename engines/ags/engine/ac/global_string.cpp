@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/global_string.h"
 #include "ags/engine/ac/global_translation.h"

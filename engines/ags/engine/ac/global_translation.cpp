@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/gamestate.h"

@@ -20,7 +20,6 @@
  *
  */
 
-//include <time.h>
 #include "ags/engine/ac/global_datetime.h"
 #include "ags/engine/ac/datetime.h"
 #include "ags/shared/ac/common.h"

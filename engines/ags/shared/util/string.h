@@ -46,7 +46,6 @@
 #ifndef AGS_SHARED_UTIL_STRING_H
 #define AGS_SHARED_UTIL_STRING_H
 
-//include <stdarg.h>
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"

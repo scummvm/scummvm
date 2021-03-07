@@ -20,8 +20,6 @@
  *
  */
 
-//include <stdlib.h>
-//include <string.h>
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/script/script_common.h"

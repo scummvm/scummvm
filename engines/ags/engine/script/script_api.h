@@ -30,7 +30,6 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPTAPI_H
 #define AGS_ENGINE_SCRIPT_SCRIPTAPI_H
 
-//include <stdarg.h>
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/statobj/agsstaticobject.h"

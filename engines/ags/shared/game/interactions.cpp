@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/alignedstream.h"

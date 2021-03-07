@@ -22,8 +22,6 @@
 
 #include "ags/engine/ac/dynobj/scriptstring.h"
 #include "ags/engine/ac/string.h"
-//include <stdlib.h>
-//include <string.h>
 
 namespace AGS3 {
 

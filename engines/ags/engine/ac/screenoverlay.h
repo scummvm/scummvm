@@ -23,7 +23,6 @@
 #ifndef AGS_ENGINE_AC_SCREENOVERLAY_H
 #define AGS_ENGINE_AC_SCREENOVERLAY_H
 
-//include <stdint.h>
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {

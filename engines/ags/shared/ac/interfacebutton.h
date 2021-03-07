@@ -28,6 +28,7 @@ namespace AGS3 {
 #define MAXBUTTON       20
 #define IBFLG_ENABLED   1
 #define IBFLG_INVBOX    2
+
 struct InterfaceButton {
 	int x, y, pic, overpic, pushpic, leftclick;
 	int rightclick; // if inv, then leftclick = wid, rightclick = hit

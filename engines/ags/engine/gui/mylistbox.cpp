@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/gamesetup.h"

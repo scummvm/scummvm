@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/ac/statobj/staticarray.h"
 #include "ags/engine/ac/dynobj/cc_dynamicobject.h"
 

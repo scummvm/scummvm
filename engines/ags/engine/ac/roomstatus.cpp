@@ -20,8 +20,6 @@
  *
  */
 
-//include <string.h> // memset
-//include <stdlib.h> // free
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/ac/roomstatus.h"

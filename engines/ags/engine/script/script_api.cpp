@@ -20,8 +20,6 @@
  *
  */
 
-//include <stdio.h>
-//include <string.h>
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/engine/script/runtimescriptvalue.h"

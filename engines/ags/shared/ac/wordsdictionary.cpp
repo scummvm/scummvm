@@ -21,7 +21,6 @@
  */
 
 #include "ags/lib/std/algorithm.h"
-//include <string.h>
 #include "ags/shared/ac/wordsdictionary.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"

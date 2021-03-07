@@ -51,10 +51,6 @@
 
 #include "ags/shared/core/platform.h"
 
-//include <stdio.h>
-//include <sys/types.h>
-//include <sys/stat.h>
-//include <string.h>
 #if !AGS_PLATFORM_OS_WINDOWS
 //include <dirent.h>
 #endif

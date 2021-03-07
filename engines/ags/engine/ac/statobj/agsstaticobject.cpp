@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/engine/ac/statobj/agsstaticobject.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/gamestate.h"

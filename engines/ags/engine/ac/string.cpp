@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/ac/string.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"

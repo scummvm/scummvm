@@ -20,7 +20,6 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/shared/util/stream.h"
 

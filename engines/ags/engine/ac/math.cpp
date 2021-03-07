@@ -20,11 +20,9 @@
  *
  */
 
-//include <cmath>
 #include "ags/engine/ac/math.h"
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/math.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"

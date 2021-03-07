@@ -30,10 +30,6 @@
 #define AGS_SHARED_CORE_TYPES_H
 
 #include "common/scummsys.h"
-//include <stddef.h>
-//include <stdint.h>
-//include <stdlib.h> // for size_t
-//include <limits.h> // for _WORDSIZE
 
 namespace AGS3 {
 

@@ -62,6 +62,7 @@ using namespace AGS; // FIXME later
 #define DCMD_ENDSCRIPT      0xff
 #define DCHAR_NARRATOR  999
 #define DCHAR_PLAYER    998
+
 struct DialogTopic {
 	char          optionnames[MAXTOPICOPTIONS][150];
 	int32_t       optionflags[MAXTOPICOPTIONS];

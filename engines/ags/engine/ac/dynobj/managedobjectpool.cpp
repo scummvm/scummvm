@@ -21,7 +21,6 @@
  */
 
 #include "ags/lib/std/vector.h"
-//include <string.h>
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h" // globalDynamicArray, constants
 #include "ags/shared/debugging/out.h"

@@ -26,8 +26,6 @@
 #include "ags/engine/ac/statobj/staticobject.h"
 #include "ags/shared/util/memory.h"
 
-//include <string.h> // for memcpy()
-
 namespace AGS3 {
 
 using namespace AGS::Shared;

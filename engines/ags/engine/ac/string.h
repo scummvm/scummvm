@@ -23,7 +23,6 @@
 #ifndef AGS_ENGINE_AC_STRING_H
 #define AGS_ENGINE_AC_STRING_H
 
-//include <stdarg.h>
 #include "ags/engine/ac/dynobj/cc_dynamicobject.h"
 
 namespace AGS3 {

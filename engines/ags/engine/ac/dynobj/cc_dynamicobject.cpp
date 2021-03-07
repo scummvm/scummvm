@@ -36,8 +36,6 @@
 
 //#define DEBUG_MANAGED_OBJECTS
 
-//include <stdlib.h>
-//include <string.h>
 #include "ags/engine/ac/dynobj/cc_dynamicobject.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/shared/debugging/out.h"

@@ -20,8 +20,6 @@
  *
  */
 
-//include <errno.h>
-//include <string.h>
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/math.h"
 #include "ags/shared/util/string_utils.h"
