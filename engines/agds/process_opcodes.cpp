@@ -802,7 +802,7 @@ void Process::loadGame() {
 
 void Process::saveGame() {
 	int saveSlot = pop();
-	debug("saveGame stub %d", saveSlot);
+	debug("saveGame %d", saveSlot);
 	suspend(kExitCodeSaveGame, saveSlot);
 }
 
