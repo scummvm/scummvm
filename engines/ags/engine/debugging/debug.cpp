@@ -282,7 +282,7 @@ void debug_script_print(const String &msg, MessageType mt) {
 			scriptname = "D ";
 		else
 			scriptname = "? ";
-		script_ref.Format("[%s%d]", scriptname.GetCStr(), currentline);
+		script_ref.Format("[%s%d]", scriptname.GetCStr(), _G(currentline));
 	}
 
 	Debug::Printf(kDbgGroup_Game, mt, "(room:%d)%s %s", displayed_room, script_ref.GetCStr(), msg.GetCStr());

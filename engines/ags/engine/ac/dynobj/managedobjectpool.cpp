@@ -56,7 +56,7 @@ int ManagedObjectPool::Remove(ManagedObject &o, bool force) {
 	handleByAddress.erase(o.addr);
 	o = ManagedObject();
 
-	ManagedObjectLog("Line %d Disposed managed object handle=%d", currentline, handle);
+	ManagedObjectLog("Line %d Disposed managed object handle=%d", _G(currentline), handle);
 
 	return 1;
 }
@@ -71,7 +71,7 @@ int32_t ManagedObjectPool::AddRef(int32_t handle) {
 	}
 
 	o.refCount += 1;
-	ManagedObjectLog("Line %d AddRef: handle=%d new refcount=%d", currentline, o.handle, o.refCount);
+	ManagedObjectLog("Line %d AddRef: handle=%d new refcount=%d", _G(currentline), o.handle, o.refCount);
 	return o.refCount;
 }
 
@@ -105,7 +105,7 @@ int32_t ManagedObjectPool::SubRef(int32_t handle) {
 		CheckDispose(handle);
 	}
 	// object could be removed at this point, don't use any values.
-	ManagedObjectLog("Line %d SubRef: handle=%d new refcount=%d canBeDisposed=%d", currentline, handle, newRefCount, canBeDisposed);
+	ManagedObjectLog("Line %d SubRef: handle=%d new refcount=%d canBeDisposed=%d", _G(currentline), handle, newRefCount, canBeDisposed);
 	return newRefCount;
 }
 

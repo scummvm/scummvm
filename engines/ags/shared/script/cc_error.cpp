@@ -46,7 +46,7 @@ void cc_error(const char *descr, ...) {
 	String displbuf = String::FromFormatV(descr, ap);
 	va_end(ap);
 
-	if (currentline > 0) {
+	if (_G(currentline) > 0) {
 		// [IKM] Implementation is project-specific
 		std::pair<String, String> errinfo = cc_error_at_line(displbuf);
 		_G(ccErrorString) = errinfo.first;
@@ -57,7 +57,7 @@ void cc_error(const char *descr, ...) {
 	}
 
 	_G(ccError) = 1;
-	_G(ccErrorLine) = currentline;
+	_G(ccErrorLine) = _G(currentline);
 }
 
 } // namespace AGS3

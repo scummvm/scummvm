@@ -104,7 +104,7 @@ int32_t ccGetObjectHandleFromAddress(const char *address) {
 
 	int32_t handl = _GP(pool).AddressToHandle(address);
 
-	ManagedObjectLog("Line %d WritePtr: %08X to %d", currentline, address, handl);
+	ManagedObjectLog("Line %d WritePtr: %08X to %d", _G(currentline), address, handl);
 
 	if (handl == 0) {
 		cc_error("Pointer cast failure: the object being pointed to is not in the managed object pool");
@@ -119,7 +119,7 @@ const char *ccGetObjectAddressFromHandle(int32_t handle) {
 	}
 	const char *addr = _GP(pool).HandleToAddress(handle);
 
-	ManagedObjectLog("Line %d ReadPtr: %d to %08X", currentline, handle, addr);
+	ManagedObjectLog("Line %d ReadPtr: %d to %08X", _G(currentline), handle, addr);
 
 	if (addr == nullptr) {
 		cc_error("Error retrieving pointer: invalid handle %d", handle);

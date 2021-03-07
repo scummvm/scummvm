@@ -35,6 +35,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -47,12 +48,11 @@ class RoomStruct;
 using namespace AGS::Shared;
 
 extern void quit(const char *);
-extern int currentline; // in script/script_common
 
 std::pair<String, String> cc_error_at_line(const char *error_msg) {
 	ccInstance *sci = ccInstance::GetCurrentInstance();
 	if (!sci) {
-		return std::make_pair(String::FromFormat("Error (line %d): %s", currentline, error_msg), String());
+		return std::make_pair(String::FromFormat("Error (line %d): %s", _G(currentline), error_msg), String());
 	} else {
 		return std::make_pair(String::FromFormat("Error: %s\n", error_msg), ccInstance::GetCurrentInstance()->GetCallStack(5));
 	}

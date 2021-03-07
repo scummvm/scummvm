@@ -277,7 +277,7 @@ void ccInstance::AbortAndDestroy() {
 
 int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const RuntimeScriptValue *params) {
 	_G(ccError) = 0;
-	currentline = 0;
+	_G(currentline) = 0;
 
 	if (numargs > 0 && !params) {
 		cc_error("internal error in ccInstance::CallScriptFunction");
@@ -402,7 +402,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	} \
 	callStackSize--;\
 	line_number = callStackLineNumber[callStackSize];\
-	currentline = line_number
+	_G(currentline) = line_number
 
 #define MAXNEST 50  // number of recursive function calls allowed
 int ccInstance::Run(int32_t curpc) {
@@ -531,9 +531,9 @@ int ccInstance::Run(int32_t curpc) {
 		switch (codeOp.Instruction.Code) {
 		case SCMD_LINENUM:
 			line_number = arg1.IValue;
-			currentline = arg1.IValue;
+			_G(currentline) = arg1.IValue;
 			if (new_line_hook)
-				new_line_hook(this, currentline);
+				new_line_hook(this, _G(currentline));
 			break;
 		case SCMD_ADD:
 			// If the the register is SREG_SP, we are allocating new variable on the stack
@@ -1288,7 +1288,7 @@ bool ccInstance::IsBeingRun() const {
 
 bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 	int i;
-	currentline = -1;
+	_G(currentline) = -1;
 	if ((scri == nullptr) && (joined != nullptr))
 		scri = joined->instanceof;
 
