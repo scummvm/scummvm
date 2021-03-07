@@ -467,6 +467,15 @@ typedef uint32 uintptr;
 
 #endif
 
+//
+// std::nullptr_t when c++11 is enabled but this type is not available
+//
+#if defined(USE_CXX11) && defined(NO_CXX11_NULLPTR_T)
+namespace std {
+	typedef decltype(nullptr) nullptr_t;
+}
+#endif
+
 #include "common/forbidden.h"
 
 #endif

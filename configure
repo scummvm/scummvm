@@ -2350,6 +2350,23 @@ EOF
 		echo no
 		define_in_config_if_yes yes 'NO_CXX11_INITIALIZER_LIST'
 	fi
+
+	# Check if std::nullptr_t is available
+	echo_n "Checking if C++11 std::nullptr_t is available..."
+	cat > $TMPC << EOF
+#include <cstddef>
+int main(int argc, char *argv[]) {
+	std::nullptr_t i = nullptr;
+	return 0;
+}
+EOF
+	cc_check
+        if test "$TMPR" -eq 0; then
+                echo yes
+        else
+                echo no
+                define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
+        fi
 fi
 
 #
