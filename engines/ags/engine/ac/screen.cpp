@@ -75,7 +75,7 @@ void current_fade_out_effect() {
 
 	if ((theTransition == FADE_INSTANT) || ignore_transition) {
 		if (!_GP(play).keep_screen_during_instant_transition)
-			set_palette_range(black_palette, 0, 255, 0);
+			set_palette_range(_G(black_palette), 0, 255, 0);
 	} else if (theTransition == FADE_NORMAL) {
 		my_fade_out(5);
 	} else if (theTransition == FADE_BOXOUT) {

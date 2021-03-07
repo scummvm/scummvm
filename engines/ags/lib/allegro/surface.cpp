@@ -134,9 +134,9 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	if (srcFormat.bytesPerPixel == 1) {
 		for (int i = 0; i < PALETTE_COUNT; ++i)
 			pal[i] = format.RGBToColor(
-				VGA_COLOR_TRANS(_current_palette[i].r),
-				VGA_COLOR_TRANS(_current_palette[i].g),
-				VGA_COLOR_TRANS(_current_palette[i].b));
+				VGA_COLOR_TRANS(_G(current_palette)[i].r),
+				VGA_COLOR_TRANS(_G(current_palette)[i].g),
+				VGA_COLOR_TRANS(_G(current_palette)[i].b));
 		srcFormat = format;
 		// If we are skipping transparency, color 0 is skipped.
 		// Set it to transparent color to simplify the check below.

@@ -50,17 +50,17 @@ void color::writeToFile(AGS::Shared::Stream *file) const {
 
 
 void set_color(int idx, const RGB *p) {
-	_current_palette[idx] = *p;
+	_G(current_palette)[idx] = *p;
 }
 
 void set_palette(const PALETTE p) {
 	for (int idx = 0; idx < PAL_SIZE; ++idx)
-		_current_palette[idx] = p[idx];
+		_G(current_palette)[idx] = p[idx];
 }
 
 void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 	for (int i = from; i < to; ++i) {
-		_current_palette[i] = p[i];
+		_G(current_palette)[i] = p[i];
 	}
 }
 
@@ -96,15 +96,15 @@ int makeacol32(int r, int g, int b, int a) {
 }
 
 int getr8(int c) {
-	return (int)_current_palette[c].r;
+	return (int)_G(current_palette)[c].r;
 }
 
 int getg8(int c) {
-	return (int)_current_palette[c].g;
+	return (int)_G(current_palette)[c].g;
 }
 
 int getb8(int c) {
-	return (int)_current_palette[c].b;
+	return (int)_G(current_palette)[c].b;
 }
 
 int getr15(int c) {
@@ -187,8 +187,8 @@ void select_palette(AL_CONST PALETTE p) {
 	int c;
 
 	for (c = 0; c < PAL_SIZE; c++) {
-		_prev_current_palette[c] = _current_palette[c];
-		_current_palette[c] = p[c];
+		_G(prev_current_palette)[c] = _G(current_palette)[c];
+		_G(current_palette)[c] = p[c];
 	}
 
 	// TODO: See if the remainder of Allegro's select_palette method is needed for AGS
@@ -198,7 +198,7 @@ void unselect_palette(void) {
 	int c;
 
 	for (c = 0; c < PAL_SIZE; c++)
-		_current_palette[c] = _prev_current_palette[c];
+		_G(current_palette)[c] = _G(prev_current_palette)[c];
 }
 
 void set_blender_mode(BlenderMode m, int r, int g, int b, int a) {
@@ -484,7 +484,7 @@ int makecol8(int r, int g, int b) {
 	if (_G(rgb_map))
 		return _G(rgb_map)->data[r >> 3][g >> 3][b >> 3];
 	else
-		return bestfit_color(_current_palette, r >> 2, g >> 2, b >> 2);
+		return bestfit_color(_G(current_palette), r >> 2, g >> 2, b >> 2);
 }
 
 

@@ -30,6 +30,7 @@
 #include "ags/engine/main/engine.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
+#include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/fixed.h"
 #include "ags/lib/allegro/aintern.h"
 #include "common/events.h"
@@ -151,6 +152,11 @@ public:
 	int _trans_blend_green = 0;
 	int _trans_blend_blue = 0;
 	BlenderMode __blender_mode = kRgbToRgbBlender;
+
+	/* default palette structures */
+	PALETTE _black_palette;
+	PALETTE _current_palette;
+	PALETTE _prev_current_palette;
 
 	volatile int _mouse_x = 0;	// X position
 	volatile int _mouse_y = 0;	// Y position

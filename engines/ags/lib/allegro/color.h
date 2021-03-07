@@ -58,9 +58,6 @@ struct color {
 typedef color RGB;
 typedef RGB PALETTE[PAL_SIZE];
 
-AL_VAR(PALETTE, _current_palette);
-AL_VAR(PALETTE, _prev_current_palette);
-
 #include "common/pack-end.h"    // END STRUCT PACKING
 
 struct RGB_MAP {
@@ -70,10 +67,6 @@ struct RGB_MAP {
 struct COLOR_MAP {
 	byte data[PAL_SIZE][PAL_SIZE];
 };
-
-AL_VAR(PALETTE, black_palette);
-AL_VAR(PALETTE, desktop_palette);
-AL_VAR(PALETTE, default_palette);
 
 enum BlenderMode {
 	kSourceAlphaBlender,
