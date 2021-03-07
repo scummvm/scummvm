@@ -928,27 +928,19 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	surf->free();
 	delete surf;
 	_image->destroy();
-	//drawScreen();
 }
 
 void PrivateEngine::drawScreenFrame() {
 	g_system->copyRectToScreen(_frame->getPixels(), _frame->pitch, 0, 0, _screenW, _screenH);
-	//surf->copyRectToSurface(*_frame, 0, 0, Common::Rect(0, 0, _screenW, _screenH));
 }
 
 
 Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
-	Common::File file;
-	Common::String path = convertPath(name);
-	if (!file.open(path))
-		error("unable to load mask %s", path.c_str());
-
-	_image->loadStream(file);
 	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(screenRect, _transparentColor);
-	Graphics::Surface *csurf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+	Graphics::Surface *csurf = decodeImage(name);
 	surf->transBlitFrom(*csurf, Common::Point(x,y));
 	csurf->free();
 	delete csurf;
@@ -963,7 +955,6 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 
 void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
 	_compositeSurface->transBlitFrom(surf->rawSurface(), _origin, _transparentColor);
-	//drawScreen();
 }
 
 void PrivateEngine::drawScreen() {
@@ -971,14 +962,10 @@ void PrivateEngine::drawScreen() {
 
 	if (_videoDecoder) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
-		//frame->create(_videoDecoder->getWidth(), _videoDecoder->getHeight(), _pixelFormat);
-		//frame->copyFrom(*_videoDecoder->decodeNextFrame());
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
 		surface->transBlitFrom(*cframe, center);
-		//frame->free();
 		cframe->free();
-		//delete frame;
 		delete cframe;
 	}
 
