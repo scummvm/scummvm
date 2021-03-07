@@ -1151,7 +1151,7 @@ const char *TwinEEngine::getGameId() const {
 
 bool TwinEEngine::unlockAchievement(const Common::String &id) {
 	const MetaEngine &meta = getMetaEngine();
-	const Common::AchievementsInfo &achievementsInfo = meta.getAchievementsInfo(getGameId());
+	const Common::AchievementsInfo &achievementsInfo = meta.getAchievementsInfo(ConfMan.getActiveDomainName());
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {

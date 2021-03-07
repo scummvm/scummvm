@@ -169,7 +169,7 @@ void Holomap::prepareHolomapPolygons() {
 	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
-		for (int32 stepWidth = ANGLE_11_25; stepWidth != 0; --stepWidth) {
+		for (int32 stepWidth = 0; stepWidth < ANGLE_11_25; ++stepWidth) {
 			HolomapSurface* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
