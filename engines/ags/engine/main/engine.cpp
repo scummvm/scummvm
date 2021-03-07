@@ -1125,17 +1125,6 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 	platform->WriteStdOut("%s", full.GetCStr());
 }
 
-// Custom resource search callback for Allegro's system driver.
-// It helps us direct Allegro to our game data location, because it won't know.
-static int al_find_resource(char *dest, const char *resource, int dest_size) {
-	String path = Path::ConcatPaths(get_install_dir(), resource);
-	if (File::TestReadFile(path)) {
-		snprintf(dest, dest_size, "%s", path.GetCStr());
-		return 0;
-	}
-	return -1;
-}
-
 // TODO: this function is still a big mess, engine/system-related initialization
 // is mixed with game-related data adjustments. Divide it in parts, move game
 // data init into either InitGameState() or other game method as appropriate.
@@ -1191,9 +1180,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	engine_locate_audio_pak();
 
 	our_eip = -193;
-
-	// Assign custom find resource callback for limited Allegro operations
-	system_driver->find_resource = al_find_resource;
 
 	//-----------------------------------------------------
 	// Begin setting up systems

@@ -33,26 +33,6 @@ namespace AGS3 {
 #define MOUSEDRV_AUTODETECT  -1
 #define MOUSEDRV_NONE         0
 
-struct MOUSE_DRIVER {
-	int  id;
-	AL_CONST char *name;
-	AL_CONST char *desc;
-	AL_CONST char *ascii_name;
-	AL_METHOD(int, init, (void));
-	AL_METHOD(void, exit, (void));
-	AL_METHOD(void, poll, (void));
-	AL_METHOD(void, timer_poll, (void));
-	AL_METHOD(void, position, (int x, int y));
-	AL_METHOD(void, set_range, (int x1, int y_1, int x2, int y2));
-	AL_METHOD(void, set_speed, (int xspeed, int yspeed));
-	AL_METHOD(void, get_mickeys, (int *mickeyx, int *mickeyy));
-	AL_METHOD(int, analyse_data, (AL_CONST char *buffer, int size));
-	AL_METHOD(void, enable_hardware_cursor, (int mode));
-	AL_METHOD(int, select_system_cursor, (int cursor));
-};
-
-AL_ARRAY(_DRIVER_INFO, _mouse_driver_list);
-
 AL_FUNC(int, install_mouse, (void));
 AL_FUNC(void, remove_mouse, (void));
 

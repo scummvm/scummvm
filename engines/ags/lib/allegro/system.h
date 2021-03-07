@@ -92,13 +92,6 @@ struct SYSTEM_DRIVER {
 	AL_METHOD(void, destroy_mutex, (void *handle));
 	AL_METHOD(void, lock_mutex, (void *handle));
 	AL_METHOD(void, unlock_mutex, (void *handle));
-	AL_METHOD(_DRIVER_INFO *, gfx_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, digi_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, midi_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, keyboard_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, mouse_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, joystick_drivers, (void));
-	AL_METHOD(_DRIVER_INFO *, timer_drivers, (void));
 };
 
 /* creates and manages the screen bitmap */
@@ -138,10 +131,6 @@ struct GFX_DRIVER {
 	long vid_phys_base;           /* physical address of video memory */
 	int windowed;                 /* true if driver runs windowed */
 };
-
-extern SYSTEM_DRIVER system_none;
-extern SYSTEM_DRIVER *system_driver;
-extern _DRIVER_INFO _system_driver_list[];
 
 extern void set_color_depth(int depth);
 extern int get_color_depth();

@@ -44,15 +44,6 @@ namespace AGS3 {
 
 #define AL_ID MKTAG
 
-/**
- * info about a hardware driver
- */
-struct _DRIVER_INFO {
-	int id;                          /* integer ID */
-	void *driver;                    /* the driver structure */
-	int autodetect;                  /* set to allow autodetection */
-};
-
 #define AL_FUNC(type, name, args)               type name args
 
 #define SCUMMVM_ID MKTAG('S', 'C', 'V', 'M')
