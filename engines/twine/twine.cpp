@@ -1133,12 +1133,12 @@ void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
 	if (!font) {
 		return;
 	}
-	int width = 100;
+	int width = 180;
 	const Common::String text(string);
 	font->drawString(&frontVideoBuffer, text,
 	                 x, y, width,
 	                 frontVideoBuffer.format.RGBToColor(255, 255, 255),
-	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft);
+	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, false);
 }
 
 const char *TwinEEngine::getGameId() const {

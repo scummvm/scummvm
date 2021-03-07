@@ -47,10 +47,10 @@ void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 co
 	}
 }
 
-void Debug::debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color) {
+void Debug::debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int8 color) {
 	debugFillButton(rect.left + 1, rect.top + 1, rect.right - rect.left - 1, rect.bottom - rect.top - 1, color);
 	_engine->_menu->drawBox(rect);
-	_engine->drawText(textLeft, textRight, text, 0);
+	_engine->drawText(textLeft, textTop, text, 0);
 	_engine->copyBlockPhys(rect);
 }
 
@@ -407,7 +407,7 @@ void Debug::debugPlasmaWindow(const char *text, int32 color) {
 	}
 	const int32 textSize = _engine->_text->getTextSize(text);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), 10, text);
-	const Common::Rect rect(5, 5, 634, 50);
+	const Common::Rect rect(5, 5, _engine->width() - 5, 50);
 	_engine->_menu->drawBox(rect);
 	_engine->copyBlockPhys(rect);
 }
