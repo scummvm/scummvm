@@ -57,7 +57,7 @@ public:
 
 	uint32 Add(const Type &f); // Add an item.
 
-	Type &operator[](uint); // Give access to an entry
+	Type &operator[](uint32); // Give access to an entry
 	const Type &operator[](uint32 i) const;
 
 	void SetSize(uint32 n) { ResizeArray(n); }
@@ -69,7 +69,7 @@ private:
 
 	Type **m_contents; // A pointer to pointers to the objects
 
-	void ResizeArray(uint); // Change the size of the array
+	void ResizeArray(uint32); // Change the size of the array
 };
 
 MY_TEMPLATE
@@ -158,7 +158,7 @@ MY_TEMPLATE class rcAutoPtrArray {
 
 	Type **m_contents; // A pointer to pointers to the objects
 
-	void ResizeArray(uint); // Change the size of the array
+	void ResizeArray(uint32); // Change the size of the array
 public:
 	explicit rcAutoPtrArray() { // Construct an empty array
 		m_noContents = m_userPosition = 0;
@@ -173,11 +173,11 @@ public:
 		return (m_userPosition - 1);
 	}
 
-	Type *&operator[](uint);             // Give access to an entry
-	const Type *&operator[](uint) const; // Give access to an entry
+	Type *&operator[](uint32);             // Give access to an entry
+	const Type *&operator[](uint32) const; // Give access to an entry
 
 	void Reset();
-	void RemoveAndShuffle(uint); // Remove an object from the array
+	void RemoveAndShuffle(uint32); // Remove an object from the array
 	void SetSize(uint32 n) { ResizeArray(n); }
 
 	// Super dangerous, but faster, access to the array
@@ -257,7 +257,7 @@ template <class Type> class rcIntArray {
 	uint32 m_userPosition; // Where the next add position goes
 	Type *m_contents;
 
-	void ResizeArray(uint); // Change the size of the array
+	void ResizeArray(uint32); // Change the size of the array
 
 public:
 	explicit rcIntArray() { // Construct an empty array
@@ -284,8 +284,8 @@ public:
 
 	uint32 Add(Type f); // Add an integer. Only makes sense if the resize step is one
 
-	Type &operator[](uint);            // Give access to an entry
-	const Type operator[](uint) const; // Give access to an entry
+	Type &operator[](uint32);            // Give access to an entry
+	const Type operator[](uint32) const; // Give access to an entry
 
 	void Reset();
 	void SetSize(uint32 n) { ResizeArray(n); }
