@@ -42,7 +42,7 @@ using namespace AGS::Shared;
 // project-specific implementation
 extern bool ShouldAntiAliasText();
 
-ALFONT_FONT *tempttffnt;
+static ALFONT_FONT *tempttffnt;
 ALFONT_FONT *get_ttf_block(unsigned char *fontptr) {
 	memcpy(&tempttffnt, &fontptr[4], sizeof(tempttffnt));
 	return tempttffnt;

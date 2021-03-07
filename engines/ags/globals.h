@@ -156,6 +156,15 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup cc_options globals
+	 * @{
+	 */
+
+	int _ccCompOptions;
+
+	/**@}*/
+
+	/**
 	 * \defgroup debug globals
 	 * @{
 	 */

@@ -35,6 +35,7 @@
 #include "ags/shared/gui/guilistbox.h"
 #include "ags/shared/gui/guislider.h"
 #include "ags/shared/gui/guitextbox.h"
+#include "ags/shared/script/cc_options.h"
 #include "ags/shared/util/directory.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
@@ -91,6 +92,9 @@ Globals::Globals() {
 	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
 	// TODO: double check that ambient sounds array actually needs +1
 	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
+
+	// cc_options.cpp globals
+	_ccCompOptions = SCOPT_LEFTTORIGHT;
 
 	// debug.cpp globals
 	_fps = std::numeric_limits<float>::quiet_undefined();
