@@ -80,7 +80,7 @@ void Map::init() {
     SoundDescription sound;
     sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->loadSound(sound);
-    _engine->sound->playSound(sound);
+    _engine->sound->playSound(0x14);
 
     _locations.clear();
 
@@ -121,6 +121,10 @@ void Map::init() {
 }
 
 void Map::run() {
+    if (!_engine->sound->isSoundPlaying(0x14) && !_engine->sound->isSoundPlaying(0x13)) {
+        _engine->sound->playSound(0x13);
+    }
+
     NancyInput input = _engine->input->getInput();
 
     _label.setLabel(-1);
@@ -161,7 +165,11 @@ void Map::stop() {
         auto &loc = _locations[_pickedLocationID];
         _engine->scene->changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
         _pickedLocationID = -1;
+        
+        _engine->sound->playSound(0x18);
     }
+    // The two sounds play at the same time if a location was picked
+    _engine->sound->playSound(0x14);
 
     _mapButtonClicked = false;
 

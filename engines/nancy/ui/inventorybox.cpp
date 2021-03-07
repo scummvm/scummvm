@@ -114,11 +114,13 @@ void InventoryBox::handleInput(NancyInput &input) {
                 _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     _engine->scene->addItemToInventory(_engine->scene->getHeldItem());
+                    _engine->sound->playSound(0x16);
                 }                
             } else if (_itemHotspots[i].itemID != -1) {
                 _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     _engine->scene->removeItemFromInventory(_itemHotspots[i].itemID);
+                    _engine->sound->playSound(0x18);
                 }
             }
             break;
@@ -231,12 +233,26 @@ void InventoryBox::Shades::updateGraphics() {
         if (_curFrame < 7 && time > _nextFrameTime) {
             setAnimationFrame(++_curFrame);
             _nextFrameTime = time + _parent->_shadesFrameTime;
+
+            if (!_soundTriggered) {
+                _soundTriggered = true;
+                _engine->sound->playSound(0x12);
+            }
         }
     } else {
         if (_curFrame > 0 && time > _nextFrameTime) {
             setAnimationFrame(--_curFrame);
             _nextFrameTime = time + _parent->_shadesFrameTime;
+
+            if (!_soundTriggered) {
+                _soundTriggered = true;
+                _engine->sound->playSound(0x12);
+            }
         }
+    }
+
+    if (_curFrame == 0 || _curFrame == 7) {
+        _soundTriggered = false;
     }
 }
 
