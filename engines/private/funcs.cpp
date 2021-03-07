@@ -492,11 +492,11 @@ static void fCRect(ArgArray args) {
 	x2 = args[2].u.val;
 	y2 = args[3].u.val;
 
-	Datum *d = new Datum();
+	Datum d = Datum();
 	Common::Rect *rect = new Common::Rect(x1, y1, x2, y2);
-	d->type = RECT;
-	d->u.rect = rect;
-	Gen::push(*d);
+	d.type = RECT;
+	d.u.rect = rect;
+	Gen::push(d);
 }
 
 static void fBitmap(ArgArray args) {
@@ -678,6 +678,8 @@ static void fTimer(ArgArray args) {
 		assert(g_private->installTimer(delay, s));
 	} else if (delay == 0) {
 		g_private->_nextSetting = *s;
+		// No need to keep the pointer alive
+		delete s;
 	} else {
 		assert(0);
 	}
