@@ -1602,16 +1602,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sq2vga", "SQ2VGA_V2.ags", "b3026b025c640a5c6164274034a6bab9", 175145932), // Linux
 
 	// Commercial games
-	GAME_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
+	GAME_ENTRY_PLATFORM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178, "Steam"), // Steam
 	GAME_ENTRY("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
 	GAME_ENTRY("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY("alemmoanozira", "Postcards_from_Anozira.exe", "a33691e4a84e2645b4cbe1f681511798", 5567690), // Steam
-	GAME_ENTRY("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Steam
-	GAME_ENTRY("atotkdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719), // Steam
+	GAME_ENTRY_PLATFORM("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("atotkdeluxe", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719, "Steam"), // Steam
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
-	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), //Steam
-	GAME_ENTRY("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Steam Linux
+	GAME_ENTRY_PLATFORM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502, "Steam"), //Steam
+	GAME_ENTRY_PLATFORM("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222, "Steam"), // Steam Linux
 	GAME_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
 	GAME_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	GAME_ENTRY_PLUGIN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_BLACKWELL), // Steam
@@ -1650,88 +1650,88 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_PLATFORM("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281856724, AGSTEAM_BLACKWELL, "Steam"), // Steam
 	GAME_ENTRY_PLUGIN_PLATFORM("blackwell5", "epiphany.exe", "764f20abb335b94ab8ec6a4ef6db01ea", 283020359, AGSTEAM_BLACKWELL, "Steam"), // Steam
 	GAME_ENTRY("captaindisaster", "cd-dhamsb-1-0-1.exe", "e2d290f8f21c6a83a9e8c5f3a0425b5e", 150665897), // Steam
-	GAME_ENTRY("charnelhousetrilogy", "cht.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135), // Steam
-	GAME_ENTRY("charnelhousetrilogy", "cht.exe", "29c49db0805500ec14964eb897fc7b02", 341425110), // Steam
-	GAME_ENTRY("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692), // Steam
-	GAME_ENTRY("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "cb7ab3394128c52293417eae5dacf365", 552728591), // Steam
-	GAME_ENTRY("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713), // Steam
+	GAME_ENTRY_PLATFORM("charnelhousetrilogy", "cht.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("charnelhousetrilogy", "cht.exe", "29c49db0805500ec14964eb897fc7b02", 341425110, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "cb7ab3394128c52293417eae5dacf365", 552728591, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713, "Steam"), // Steam
 	GAME_ENTRY("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
-	GAME_ENTRY("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165), //Steam
-	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554), // Steam
+	GAME_ENTRY_PLATFORM("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165, "Steam"), //Steam
+	GAME_ENTRY_PLATFORM("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554, "Steam"), // Steam
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772), //GOG
-	GAME_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989), // Steam
-	GAME_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927), // Steam
-	GAME_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // 1.4, Steam
+	GAME_ENTRY_PLATFORM("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927, "Steam"), // Steam TODO: not sure if there are really achievements in this version
+	GAME_ENTRY_PLATFORM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949, "Steam"), // 1.4, Steam TODO: not sure if there are really achievements in this version
 	GAME_ENTRY_LANG("downfall2016", "downfall.exe", "10212624b951711c4b44f5cb9eecbf0a", 143360, Common::RU_RUS), // GOG
 	GAME_ENTRY("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750), // GOG
-	GAME_ENTRY("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590), // Steam
-	GAME_ENTRY("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026), // Steam
-	GAME_ENTRY("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058), // Steam
-	GAME_ENTRY("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
-	GAME_ENTRY("footballgame", "football game", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
+	GAME_ENTRY_PLATFORM("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("footballgame", "football game", "76703ac67835bdbfde5b378a147c8ba2", 164951859, "Steam"), // Steam
 	GAME_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859),
 	GAME_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
-	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
-	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "f49a61ea46feb86f89de3c136ad809ff", 73412249), // Steam
+	GAME_ENTRY_PLATFORM("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("geminirue", "gemini_rue_pc.exe", "f49a61ea46feb86f89de3c136ad809ff", 73412249, "Steam"), // Steam
 	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72860463), // Humble Bundle
 	GAME_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	GAME_ENTRY("geminirue", "ac2game.dat", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72836785), // MacOS, Humble Bundle
 	GAME_ENTRY("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353), // GOG Linux
 	GAME_ENTRY("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 225600520),
 	GAME_ENTRY("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 480856325), // Steam
-	GAME_ENTRY("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Steam
-	GAME_ENTRY("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774), // Steam
+	GAME_ENTRY_PLATFORM("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774, "Steam"), // Steam
 	GAME_ENTRY("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814364), // Humble Bundle
 	GAME_ENTRY("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814642),
 	GAME_ENTRY("goldenwake", "ac2game.dat", "bb3b4630c44a51e3a23892563121c2c8", 128018480), // Linux Humble Bundle
 	GAME_ENTRY("goldenwake", "ac2game.dat", "d27edc5b7eee382501dfcfea044dfc90", 128018546),
-	GAME_ENTRY("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335), // Steam
+	GAME_ENTRY_PLATFORM("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335, "Steam"), // Steam
 	GAME_ENTRY("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743), // GOG
-	GAME_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217), // Steam
-	GAME_ENTRY("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926), // Steam
+	GAME_ENTRY_PLATFORM("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926, "Steam"), // Steam
 	GAME_ENTRY("justignorethem", "justignorethem.exe", "7a3096ac0237cb6aa8e1718e28caf039", 98544330),
-	GAME_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam
-	GAME_ENTRY("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658), // Steam
+	GAME_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam (TODO: same achievements as justignorethem?)
+	GAME_ENTRY_PLATFORM("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658, "Steam"), // Steam
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	GAME_ENTRY("lamplightcity", "lamplight city.ags", "70a52d0ba7e5975df40aef460142f770", 979393622), // Linux, GOG
-	GAME_ENTRY("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239), // Steam
+	GAME_ENTRY_PLATFORM("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239, "Steam"), // Steam
 	GAME_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285), // Steam
 	GAME_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
 	GAME_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
-	GAME_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
-	GAME_ENTRY("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877), // Steam
-	GAME_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517), // Steam
+	GAME_ENTRY_PLATFORM("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517, "Steam"), // Steam
 	GAME_ENTRY("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
 	GAME_ENTRY("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009), // GOG
-	GAME_ENTRY("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467844896), // Steam
+	GAME_ENTRY_PLATFORM("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467844896, "Steam"), // Steam
 	GAME_ENTRY("oott", "agsgame.dat", "ca8414acc5dc5687891db2d8ac5a0e76", 465662744), // GOG Linux
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG
 	GAME_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // GOG
-	GAME_ENTRY("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182), // Steam
+	GAME_ENTRY_PLATFORM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182, "Steam"), // Steam
 	GAME_ENTRY("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830), // GOG Linux
 	GAME_ENTRY("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664), // Steam
 	GAME_ENTRY("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265), // GOG
 	GAME_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096), // GOG
-	GAME_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872), // Steam
+	GAME_ENTRY_PLATFORM("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538681872, "Steam"), // Steam
 	GAME_ENTRY("qfi", "agsgame.dat", "9efb669ada4b685f9a5a91ce161424a7", 532694795), // Linux Groupees
 	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536391599),
-	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536513114), // Steam Linux
+	GAME_ENTRY_PLATFORM("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536513114, "Steam"), // Steam Linux
 	GAME_ENTRY("qfi", "qfi.exe", "8a7bc4f9ef0e6b0a5b01d3e4d5d5ee7d", 534881961),
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
-	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
-	GAME_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
-	GAME_ENTRY("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256), // Steam
+	GAME_ENTRY_PLUGIN_PLATFORM("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915, AGSTEAM_BLACKWELL, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256, "Steam"), // Steam
 	GAME_ENTRY("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura
-	GAME_ENTRY("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573), // Steam
+	GAME_ENTRY_PLATFORM("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573, "Steam"), // Steam
 	GAME_ENTRY("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1
-	GAME_ENTRY("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952), // Steam
-	GAME_ENTRY("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375), // Steam
+	GAME_ENTRY_PLATFORM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375, "Steam"), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
 	GAME_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665),
-	GAME_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
-	GAME_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
+	GAME_ENTRY_PLATFORM("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, "Steam"), // Steam
 	GAME_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32339699), // Android
 	GAME_ENTRY("shivah", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
 	GAME_ENTRY("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
@@ -1740,23 +1740,23 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701),
 	GAME_ENTRY("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855), // Steam
-	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
+	GAME_ENTRY_PLATFORM("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356, "Steam"), // Steam
 	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),
 	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205), // Steam
 	GAME_ENTRY("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501), // Steam
 	GAME_ENTRY("thecastle", "maniac.exe", "3b96c2143d927f005715be73344e456c", 22362337), // Steam
 	GAME_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702), // GOG
-	GAME_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582), // Steam
-	GAME_ENTRY("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692), // Steam
-	GAME_ENTRY("theterribleoldman", "the terrible old man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
-	GAME_ENTRY("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030), // Steam
-	GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
+	GAME_ENTRY_PLATFORM("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("theterribleoldman", "the terrible old man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030, "Steam"), // Steam
+	GAME_ENTRY_PLATFORM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773, "Steam"), // Steam
 	GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 457842687),
 	GAME_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537), // Steam
 	GAME_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
-	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291, AGSSPRITEFONT_CLIFFTOP), // Steam
+	GAME_ENTRY_PLUGIN_PLATFORM("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291, AGSSPRITEFONT_CLIFFTOP, "Steam"), // Steam
 	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 
