@@ -172,7 +172,7 @@ public:
 	// currently executed line
 	int _currentline = 0;
 	// script file format signature
-	const char _scfilesig[5] = "SCOM";
+	const char *_scfilesig = "SCOM";
 
 	/**@}*/
 
