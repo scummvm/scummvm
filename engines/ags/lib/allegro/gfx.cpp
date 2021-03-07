@@ -26,6 +26,7 @@
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/screen.h"
 
 namespace AGS3 {
@@ -59,10 +60,10 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 void set_clip_rect(BITMAP *bitmap, int x1, int y1, int x2, int y2) {
 	// The rect passed to the function in inclusive-inclusive, but
 	// internally the clipping rect in BITMAP is inclusive-exclusive.
-	bitmap->cl = x1;
-	bitmap->ct = y1;
-	bitmap->cr = x2 + 1;
-	bitmap->cb = y2 + 1;
+	bitmap->cl = CLIP(x1, 0, (int)bitmap->w - 1);
+	bitmap->ct = CLIP(y1, 0, (int)bitmap->h - 1);
+	bitmap->cr = CLIP(x2 + 1, 0, (int)bitmap->w);
+	bitmap->cb = CLIP(y2 + 1, 0, (int)bitmap->h);
 }
 
 void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
