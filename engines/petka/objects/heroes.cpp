@@ -30,7 +30,6 @@
 #include "petka/sound.h"
 #include "petka/objects/heroes.h"
 #include "petka/interfaces/panel.h"
-#include "petka/walk.h"
 
 namespace Petka {
 
