@@ -1139,8 +1139,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 		}
 		delete[] _renderBuffer;
 		_renderBufferSize = requiredSize;
-		_renderBuffer = new int32[_renderBufferSize];
-		memset(_renderBuffer, 0, sizeof(int32) * _renderBufferSize);
+		_renderBuffer = new int32[_renderBufferSize]();
 	}
 
 	int outSamplesLeft = numSamples >> 1;
@@ -1320,8 +1319,7 @@ void TownsPC98_FmSynth::generateTables() {
 	}
 
 	delete[] _oprRateshift;
-	_oprRateshift = new uint8[130];
-	memset(_oprRateshift, 0, 130);
+	_oprRateshift = new uint8[130]();
 	dst = (uint8 *)_oprRateshift + 32;
 	for (int i = 11; i; i--) {
 		memset(dst, i, 4);
@@ -1334,8 +1332,7 @@ void TownsPC98_FmSynth::generateTables() {
 		_oprFrq[i] = (uint32)i << (11 - _rateScale);
 
 	delete[] _oprAttackDecay;
-	_oprAttackDecay = new uint8[152];
-	memset(_oprAttackDecay, 0, 152);
+	_oprAttackDecay = new uint8[152]();
 	for (int i = 0; i < 36; i++)
 		WRITE_BE_UINT32(_oprAttackDecay + (i << 2), _adtStat[i]);
 

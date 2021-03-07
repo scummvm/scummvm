@@ -91,8 +91,7 @@ FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, 
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_palette = new byte[3 * 256];
-	memset(_palette, 0, 3 * 256);
+	_palette = new byte[3 * 256]();
 	_dirtyPalette = false;
 
 	_curFrame = -1;

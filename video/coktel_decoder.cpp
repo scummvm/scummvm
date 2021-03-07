@@ -742,9 +742,7 @@ bool PreIMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_frameCount = _stream->readUint16LE();
 
 	_videoBufferSize = _width * _height;
-	_videoBuffer     = new byte[_videoBufferSize];
-
-	memset(_videoBuffer, 0, _videoBufferSize);
+	_videoBuffer     = new byte[_videoBufferSize]();
 
 	return true;
 }
@@ -1141,8 +1139,7 @@ bool IMDDecoder::assessVideoProperties() {
 	}
 
 	for (int i = 0; i < 2; i++) {
-		_videoBuffer[i] = new byte[_videoBufferSize];
-		memset(_videoBuffer[i], 0, _videoBufferSize);
+		_videoBuffer[i] = new byte[_videoBufferSize]();
 	}
 
 	return true;
@@ -1958,8 +1955,7 @@ bool VMDDecoder::assessVideoProperties() {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			_videoBuffer[i] = new byte[_videoBufferSize];
-			memset(_videoBuffer[i], 0, _videoBufferSize);
+			_videoBuffer[i] = new byte[_videoBufferSize]();
 
 			_8bppSurface[i].init(_width * _bytesPerPixel, _height, _width * _bytesPerPixel,
 			                     _videoBuffer[i], Graphics::PixelFormat::createFormatCLUT8());

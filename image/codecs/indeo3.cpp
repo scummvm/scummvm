@@ -155,8 +155,7 @@ void Indeo3Decoder::allocFrames() {
 	_iv_frame[0].the_buf_size = bufsize;
 	_iv_frame[1].the_buf_size = 0;
 
-	_iv_frame[0].the_buf = new byte[bufsize];
-	memset(_iv_frame[0].the_buf, 0, bufsize);
+	_iv_frame[0].the_buf = new byte[bufsize]();
 	_iv_frame[1].the_buf = 0;
 
 	uint32 offs = 0;

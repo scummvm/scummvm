@@ -190,8 +190,7 @@ bool SegaAudioInterfaceInternal::init() {
 	if (!TownsPC98_FmSynth::init())
 		return false;
 
-	_pcmBanks = new int8[0x10000];
-	memset(_pcmBanks, 0, 0x10000);
+	_pcmBanks = new int8[0x10000]();
 	_pcmChan = new SegaPCMChannel*[8];
 	_psgDev = new SegaPSG(7670454 / 72, 16);
 	_pcmDev = new PCMDevice_Base(33300, 16, 8);

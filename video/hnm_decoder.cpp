@@ -184,12 +184,9 @@ HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 f
 		error("Invalid frameSize: expected %d, got %d", width * height, frameSize);
 	}
 
-	_frameBufferF = new byte[frameSize];
-	memset(_frameBufferF, 0, frameSize);
-	_frameBufferC = new byte[frameSize];
-	memset(_frameBufferC, 0, frameSize);
-	_frameBufferP = new byte[frameSize];
-	memset(_frameBufferP, 0, frameSize);
+	_frameBufferF = new byte[frameSize]();
+	_frameBufferC = new byte[frameSize]();
+	_frameBufferP = new byte[frameSize]();
 
 	// We will use _frameBufferF/C/P as the surface pixels, just init there with nullptr to avoid unintended usage of surface
 	const Graphics::PixelFormat &f = Graphics::PixelFormat::createFormatCLUT8();

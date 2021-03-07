@@ -59,16 +59,11 @@ XanDecoder::XanDecoder(int width, int height, int bitsPerPixel) : Codec(),
 	if (width % 2)
 		error("XanDecoder: width must be even, not %d", width);
 	_surface.create(_width, _height, getPixelFormat());
-	_scratchbuf = new uint8[_width * _height + SCRATCH_SPARE];
-	_lumabuf = new uint8[_width * _height];
-	_ybuf = new uint8[_width * _height];
-	_ubuf = new uint8[_width * _height / 2];
-	_vbuf = new uint8[_width * _height / 2];
-	memset(_scratchbuf, 0, _width * _height + SCRATCH_SPARE);
-	memset(_lumabuf, 0, _width * _height);
-	memset(_ybuf, 0, _width * _height);
-	memset(_ubuf, 127, _width * _height / 2);
-	memset(_vbuf, 127, _width * _height / 2);
+	_scratchbuf = new uint8[_width * _height + SCRATCH_SPARE]();
+	_lumabuf = new uint8[_width * _height]();
+	_ybuf = new uint8[_width * _height]();
+	_ubuf = new uint8[_width * _height / 2]();
+	_vbuf = new uint8[_width * _height / 2]();
 }
 
 XanDecoder::~XanDecoder() {

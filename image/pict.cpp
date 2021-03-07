@@ -344,9 +344,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 
 	// Ensure we have enough space in the buffer to hold an entire line's worth of pixels
 	uint32 lineSize = MAX<int>(width * bytesPerPixel + (8 * 2 / packBitsData.pixMap.pixelSize), packBitsData.pixMap.rowBytes);
-	byte *buffer = new byte[lineSize * height];
-
-	memset(buffer, 0, lineSize * height);
+	byte *buffer = new byte[lineSize * height]();
 
 	// Read in amount of data per row
 	for (uint16 i = 0; i < packBitsData.pixMap.bounds.height(); i++) {

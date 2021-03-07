@@ -123,9 +123,8 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 	file.readByte(); // file name character change
 	uint32 unpackedLength = file.readUint32LE();
 
-	byte *window = new byte[0x1000];
+	byte *window = new byte[0x1000]();
 	int pos = 0x1000 - 16;
-	memset(window, 0x20, 0x1000); // Initialize to all spaces
 
 	byte *unpackedData = (byte *)malloc(unpackedLength);
 	assert(unpackedData);

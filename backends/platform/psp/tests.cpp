@@ -618,8 +618,7 @@ bool PspUnitTests::testFileSystem() {
 	}
 
 	// read the contents
-	char *readBuffer = new char[BufSize + 4];
-	memset(readBuffer, 0, (BufSize + 4));
+	char *readBuffer = new char[BufSize + 4]();
 	index = readBuffer;
 	while (rdStream->read(index, 100) == 100) {
 		index += 100;
@@ -682,8 +681,7 @@ bool PspUnitTests::testFileSystem() {
 		return false;
 	}
 
-	char *readPhrase = new char[phraseLen + 2];
-	memset(readPhrase, 0, phraseLen + 2);
+	char *readPhrase = new char[phraseLen + 2]();
 
 	if ((ret = rdStream->read(readPhrase, phraseLen) != phraseLen)) {
 		PSP_ERROR("read error on phrase. Got %d instead of %d\n", ret, phraseLen);

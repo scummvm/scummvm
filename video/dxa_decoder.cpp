@@ -107,15 +107,12 @@ DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
 
 	_frameSize = _width * _height;
 	_decompBufferSize = _frameSize;
-	_frameBuffer1 = new byte[_frameSize];
-	memset(_frameBuffer1, 0, _frameSize);
-	_frameBuffer2 = new byte[_frameSize];
-	memset(_frameBuffer2, 0, _frameSize);
+	_frameBuffer1 = new byte[_frameSize]();
+	_frameBuffer2 = new byte[_frameSize]();
 
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
-		_scaledBuffer = new byte[_frameSize];
-		memset(_scaledBuffer, 0, _frameSize);
+		_scaledBuffer = new byte[_frameSize]();
 	}
 
 #ifdef DXA_EXPERIMENT_MAXD
@@ -185,8 +182,7 @@ void DXADecoder::DXAVideoTrack::decodeZlib(byte *data, int size, int totalSize) 
 void DXADecoder::DXAVideoTrack::decode12(int size) {
 #ifdef USE_ZLIB
 	if (!_decompBuffer) {
-		_decompBuffer = new byte[_decompBufferSize];
-		memset(_decompBuffer, 0, _decompBufferSize);
+		_decompBuffer = new byte[_decompBufferSize]();
 	}
 
 	/* decompress the input data */
@@ -286,8 +282,7 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 
 	if (!_decompBuffer) {
-		_decompBuffer = new byte[_decompBufferSize];
-		memset(_decompBuffer, 0, _decompBufferSize);
+		_decompBuffer = new byte[_decompBufferSize]();
 	}
 
 	/* decompress the input data */
@@ -482,8 +477,7 @@ const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 
 		if (!_inBuffer || _inBufferSize < size) {
 			delete[] _inBuffer;
-			_inBuffer = new byte[size];
-			memset(_inBuffer, 0, size);
+			_inBuffer = new byte[size]();
 			_inBufferSize = size;
 		}
 
