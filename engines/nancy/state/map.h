@@ -24,6 +24,7 @@
 #define NANCY_STATE_MAP_H
 
 #include "engines/nancy/ui/viewport.h"
+#include "engines/nancy/ui/button.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -44,14 +45,18 @@ namespace State {
 
 class Map {
     friend class MapLabel;
+    friend class MapButton;
 public:
-    enum State { kInit, kRun };
+    enum State { kInit, kRun, kStop };
     Map(Nancy::NancyEngine *engine) :
         _engine(engine),
         _state(kInit),
         _mapID(0),
+        _mapButtonClicked(false),
+        _pickedLocationID(-1),
         _viewport(engine),
-        _label(engine->scene->getFrame(), this) {}
+        _label(engine->scene->getFrame(), this),
+        _button(engine->scene->getFrame(), this) {}
 
     void process();
 
@@ -87,9 +92,23 @@ private:
         Map *_parent;
     };
 
+    class MapButton : public UI::Button {
+    public:
+        MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
+        virtual ~MapButton() =default;
+
+        virtual void init() override;
+        virtual void onClick() override;
+
+    protected:
+        virtual uint16 getZOrder() const override { return 9; }
+
+        Map *_parent;
+    };
+
     void init();
     void run();
-    void stopSound();
+    void stop();
 
     void registerGraphics();
 
@@ -97,9 +116,12 @@ private:
 
     Nancy::UI::Viewport _viewport;
     MapLabel _label;
+    MapButton _button;
 
     State _state;
     uint16 _mapID;
+    bool _mapButtonClicked;
+    int16 _pickedLocationID;
     Common::Array<Location> _locations;
 };
 
