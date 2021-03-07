@@ -179,13 +179,7 @@ Common::Error PrivateEngine::run() {
 	_compositeSurface->setTransparentColor(_transparentColor);
 
 	// Load the game frame once
-	Common::File frameFile;
-	const Common::String &frameFilePathname = convertPath(_framePath);
-	if (!frameFile.open(frameFilePathname)) {
-		error("Failed to read %s", frameFilePathname.c_str());
-	}
-	_image->loadStream(frameFile);
-	_frame = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+	_frame = decodeImage(_framePath);
 
 	// Main event loop
 	Common::Event event;
@@ -916,15 +910,20 @@ void PrivateEngine::stopSound(bool all) {
 	}
 }
 
-void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
-	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
+Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
+	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	Common::File file;
 	Common::String path = convertPath(name);
 	if (!file.open(path))
 		error("unable to load image %s", path.c_str());
 
 	_image->loadStream(file);
-	Graphics::Surface *surf = _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+	return _image->getSurface()->convertTo(_pixelFormat, _image->getPalette());
+}
+
+void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
+	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
+	Graphics::Surface *surf = decodeImage(name);
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x,y), _transparentColor);
 	surf->free();
 	delete surf;

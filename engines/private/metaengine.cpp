@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "graphics/scaler.h"
 
 #include "private/private.h"
 
@@ -31,11 +32,20 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	*engine = new Private::PrivateEngine(syst, gd);
 	return Common::kNoError;
+}
+
+void PrivateMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Graphics::Surface *vs = Private::g_private->decodeImage(Private::g_private->_nextVS);
+	thumb = *vs->scale(kThumbnailWidth, kThumbnailHeight2);
+
+	vs->free();
+	delete vs;
 }
 
 namespace Private {

@@ -196,6 +196,7 @@ public:
 	void playVideo(const Common::String &);
 	void skipVideo();
 
+	Graphics::Surface *decodeImage(const Common::String &file);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame();
 
