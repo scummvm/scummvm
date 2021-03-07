@@ -470,8 +470,9 @@ void Scene::clearLogicConditions() {
 }
 
 void Scene::useHint(int hintID, int hintWeight) {
-    if (_lastHint == hintID) {
+    if (_lastHint != hintID) {
         _hintsRemaining[_difficulty] += hintWeight;
+        _lastHint = hintID;
     }
 }
 
