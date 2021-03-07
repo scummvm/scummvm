@@ -147,6 +147,7 @@ public:
 	void rotate(int rot);
 
 	void generateRegion();
+	void generateRegion(Common::Rect rect);
 
 	void regionOffset(Common::Point offset) {
 		_regionOffset = offset;
