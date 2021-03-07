@@ -40,7 +40,7 @@ inline int Direction_XFactor(Direction dir) {
 	//static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
 	// TODO: AnimPrimitiveProcess uses the below table.. what's the other table for?
 	// (same for y)
-	static const int _x_fact16[] = {  0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2, -1, -2, -1, -1 };
+	static const int _x_fact16[] = {  0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2, -1, -2, -1, -1, 0 };
 
 	if (GAME_IS_U8)
 		return _x_fact[(int)dir / 2];
@@ -51,7 +51,7 @@ inline int Direction_XFactor(Direction dir) {
 inline int Direction_YFactor(Direction dir) {
 	static const int _y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
 	//static const int _y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
-	static const int _y_fact16[] = { -1, -2, -1, -1, 0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2 };
+	static const int _y_fact16[] = { -1, -2, -1, -1, 0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2, 0 };
 
 	if (GAME_IS_U8)
 		return _y_fact[(int)dir / 2];

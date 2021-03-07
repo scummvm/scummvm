@@ -44,7 +44,7 @@ public:
 		SI_NOISY   = 0x0080,
 		SI_DRAW    = 0x0100,
 		SI_IGNORE  = 0x0200,
-		SI_ROOF    = 0x0400,
+		SI_ROOF    = 0x0400, // reflective in Crusader?
 		SI_TRANSL  = 0x0800,
 		SI_EDITOR  = 0x1000,
 		// Note: overlapping names for the rest of the bits depending on U8 or Cru.
