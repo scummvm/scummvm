@@ -59,10 +59,10 @@ vertex2D verts[8];
 vertex2D clipverts[8];
 
 int32 SimpleReject(vertex2D *vertices) {
-	int64 l0x = (verts[0].x - vertices[1].x);
-	int64 l0y = (verts[0].y - vertices[1].y);
-	int64 l1x = (verts[2].x - vertices[1].x);
-	int64 l1y = (verts[2].y - vertices[1].y);
+	int64 l0x = (vertices[0].x - vertices[1].x);
+	int64 l0y = (vertices[0].y - vertices[1].y);
+	int64 l1x = (vertices[2].x - vertices[1].x);
+	int64 l1y = (vertices[2].y - vertices[1].y);
 
 	int64 prod1 = (l0x * l1y) >> 32;
 	int64 prod2 = (l1x * l0y) >> 32;
