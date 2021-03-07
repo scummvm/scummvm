@@ -91,10 +91,10 @@ uint32 getConfigValueWithDefault(const ConfigFile &config, const Common::String 
 	} else if (scumm_stricmp("Controller Settings", section.c_str()) == 0 &&
 		   scumm_stricmp("Method", key.c_str()) == 0) {
 		if (ConfMan.hasKey("actor_relative"))
-			return ConfMan.getBool("actor_relative") ? 1 : 0;
+			return ConfMan.getBool("actor_relative") ? 0 : 1;
 		else {
 			uint32 result = config.readIntSetting(section, key, defaultValue);
-			ConfMan.setBool("actor_relative", result != 0);
+			ConfMan.setBool("actor_relative", result == 0);
 		}
 	}
 
@@ -132,14 +132,14 @@ void ReadConfigFromIniFile() {
 		px.game_completed = TRUE8;
 
 	// Subtitle switch
-	temp = getConfigValueWithDefault(config, "Video Settings", "Subtitles", 0);
+	temp = getConfigValueWithDefault(config, "Video Settings", "Subtitles", 1);
 	if (temp == 0)
 		px.on_screen_text = FALSE8;
 	else
 		px.on_screen_text = TRUE8;
 
 	// Control method
-	temp = getConfigValueWithDefault(config, "Controller Settings", "Method", 0);
+	temp = getConfigValueWithDefault(config, "Controller Settings", "Method", ACTOR_RELATIVE);
 	if ((__Actor_control_mode)temp == SCREEN_RELATIVE)
 		g_icb_session->player.Set_control_mode(SCREEN_RELATIVE);
 	else
