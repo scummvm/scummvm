@@ -62,7 +62,7 @@ private:
 	static int g_FollowCharacterVert;
 	static AGSCharacter *g_FollowCharacter;
 	static BITMAP *g_LightBitmap;
-	static unsigned long flashlight_x, flashlight_n;
+	static uint32 flashlight_x, flashlight_n;
 
 private:
 	static const char *AGS_GetPluginName();
@@ -76,10 +76,10 @@ private:
 	 *  Combines a 32 bit RGBA sprite with a 16 bit RGB destination, optimised
 	 *  for when one pixel is in an RGB layout and the other is BGR.
 	 */
-	static inline unsigned long _blender_alpha16_bgr(unsigned long y);
-	static inline void calc_x_n(unsigned long x);
-	static inline void setPixel(int x, int y, int color, uint32 *pixel);
-	static void plotCircle(int xm, int ym, int r, unsigned int color);
+	static inline uint32 _blender_alpha16_bgr(uint32 y);
+	static inline void calc_x_n(uint32 x);
+	static inline void setPixel(int x, int y, uint32 color, uint32 *pixel);
+	static void plotCircle(int xm, int ym, int r, uint32 color);
 	static void ClipToRange(int &variable, int min, int max);
 	static void AlphaBlendBitmap();
 	static void DrawTint();

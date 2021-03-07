@@ -29,9 +29,9 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSFlashlight {
 
-const unsigned int Magic = 0xBABE0000;
-const unsigned int Version = 2;
-const unsigned int SaveMagic = Magic + Version;
+const uint32 Magic = 0xBABE0000;
+const uint32 Version = 2;
+const uint32 SaveMagic = Magic + Version;
 const float PI = 3.14159265f;
 
 int32 AGSFlashlight::AGSFlashlight::screen_width = 320;
@@ -67,8 +67,8 @@ AGSCharacter *AGSFlashlight::g_FollowCharacter = nullptr;
 
 BITMAP *AGSFlashlight::g_LightBitmap = nullptr;
 
-unsigned long AGSFlashlight::flashlight_x;
-unsigned long AGSFlashlight::flashlight_n;
+uint32 AGSFlashlight::flashlight_x;
+uint32 AGSFlashlight::flashlight_n;
 
 
 IAGSEngine *AGSFlashlight::_engine;
@@ -197,7 +197,7 @@ int64 AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {
 	return 0;
 }
 
-void AGSFlashlight::calc_x_n(unsigned long x) {
+void AGSFlashlight::calc_x_n(uint32 x) {
 	flashlight_x = x;
 
 	flashlight_n = flashlight_x >> 24;
@@ -210,8 +210,8 @@ void AGSFlashlight::calc_x_n(unsigned long x) {
 	flashlight_x = (flashlight_x | (flashlight_x << 16)) & 0x7E0F81F;
 }
 
-inline unsigned long AGSFlashlight::_blender_alpha16_bgr(unsigned long y) {
-	unsigned long result;
+inline uint32 AGSFlashlight::_blender_alpha16_bgr(uint32 y) {
+	uint32 result;
 
 	y = ((y & 0xFFFF) | (y << 16)) & 0x7E0F81F;
 
@@ -220,14 +220,14 @@ inline unsigned long AGSFlashlight::_blender_alpha16_bgr(unsigned long y) {
 	return ((result & 0xFFFF) | (result >> 16));
 }
 
-inline void AGSFlashlight::setPixel(int x, int y, int color, uint32 *pixel) {
+inline void AGSFlashlight::setPixel(int x, int y, uint32 color, uint32 *pixel) {
 	if ((x >= g_DarknessDiameter) || (y >= g_DarknessDiameter) || (x < 0) || (y < 0))
 		return;
 
 	*(pixel + (y * g_DarknessDiameter) + x) = color;
 }
 
-void AGSFlashlight::plotCircle(int xm, int ym, int r, unsigned int color) {
+void AGSFlashlight::plotCircle(int xm, int ym, int r, uint32 color) {
 	uint32 *pixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int x = -r;
@@ -270,8 +270,8 @@ void AGSFlashlight::AlphaBlendBitmap() {
 	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
 	uint32 *sourcepixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
-	unsigned short *currentdestpixel = destpixel;
-	unsigned int *currentsourcepixel = sourcepixel;
+	uint16 *currentdestpixel = destpixel;
+	uint32 *currentsourcepixel = sourcepixel;
 
 	int x, y;
 
@@ -290,7 +290,7 @@ void AGSFlashlight::AlphaBlendBitmap() {
 
 		for (x = 0; x < endX - startX; x++) {
 			calc_x_n(*currentsourcepixel);
-			*currentdestpixel = (unsigned short)_blender_alpha16_bgr(*currentdestpixel);
+			*currentdestpixel = (uint16)_blender_alpha16_bgr(*currentdestpixel);
 
 			currentdestpixel++;
 			currentsourcepixel++;
@@ -346,17 +346,17 @@ void AGSFlashlight::DrawTint() {
 
 void AGSFlashlight::DrawDarkness() {
 	int x, y;
-	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
+	uint32 color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
 	BITMAP *screen = _engine->GetVirtualScreen();
 	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(screen);
-	unsigned short *currentpixel;
+	uint16 *currentpixel;
 
 	calc_x_n(color);
 
 	if (g_DarknessSize == 0) {
 		// Whole screen.
 		for (x = 0; x < screen_width * screen_height; x++) {
-			*destpixel = (unsigned short)_blender_alpha16_bgr(*destpixel);
+			*destpixel = (uint16)_blender_alpha16_bgr(*destpixel);
 			destpixel++;
 		}
 	} else {
@@ -365,7 +365,7 @@ void AGSFlashlight::DrawDarkness() {
 			currentpixel = destpixel;
 			for (y = 0; y < g_FlashlightDrawAtY; y++) {
 				for (x = 0; x < screen_width; x++) {
-					*currentpixel = (unsigned short)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
 					currentpixel++;
 				}
 			}
@@ -376,7 +376,7 @@ void AGSFlashlight::DrawDarkness() {
 			currentpixel = destpixel + (g_FlashlightDrawAtY + g_DarknessDiameter) * screen_width;
 			for (y = g_FlashlightDrawAtY + g_DarknessDiameter; y < screen_height; y++) {
 				for (x = 0; x < screen_width; x++) {
-					*currentpixel = (unsigned short)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
 					currentpixel++;
 				}
 			}
@@ -389,7 +389,7 @@ void AGSFlashlight::DrawDarkness() {
 			int endpoint = (g_FlashlightDrawAtY + g_DarknessDiameter >= screen_height) ? screen_height + 1 : g_FlashlightDrawAtY + g_DarknessDiameter + 1;
 			for (y = startpoint; y < endpoint; y++) {
 				for (x = 0; x < g_FlashlightDrawAtX; x++) {
-					*currentpixel = (unsigned short)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
 					currentpixel++;
 				}
 
@@ -404,7 +404,7 @@ void AGSFlashlight::DrawDarkness() {
 			int endpoint = (g_FlashlightDrawAtY + g_DarknessDiameter >= screen_height) ? screen_height + 1 : g_FlashlightDrawAtY + g_DarknessDiameter + 1;
 			for (y = startpoint; y < endpoint; y++) {
 				for (x = g_FlashlightDrawAtX + g_DarknessDiameter; x < screen_width; x++) {
-					*currentpixel = (unsigned short)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
 					currentpixel++;
 				}
 
@@ -426,18 +426,18 @@ void AGSFlashlight::CreateLightBitmap() {
 	g_LightBitmap = _engine->CreateBlankBitmap(g_DarknessDiameter, g_DarknessDiameter, 32);
 
 	// Fill with darkness color.
-	unsigned int color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
+	uint32 color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
 	uint32 *pixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
 	int i;
 	for (i = 0; i < g_DarknessDiameter * g_DarknessDiameter; i++)
-		*pixel++ = (unsigned int)color;
+		*pixel++ = (uint32)color;
 
 	// Draw light circle if wanted.
 	if (g_DarknessSize > 0) {
 		int current_value = 0;
 		color = (255 - (int)((float)g_BrightnessLightLevel * 2.55f));
-		unsigned int targetcolor = ((255 - (int)((float)g_DarknessLightLevel * 2.55f)));
+		uint32 targetcolor = ((255 - (int)((float)g_DarknessLightLevel * 2.55f)));
 
 		int increment = (targetcolor - color) / (g_DarknessSize - g_BrightnessSize);
 		float perfect_increment = (float)(targetcolor - color) / (float)(g_DarknessSize - g_BrightnessSize);
@@ -530,7 +530,7 @@ void AGSFlashlight::Update() {
 }
 
 void AGSFlashlight::syncGame(Serializer &s) {
-	unsigned int SaveVersion = SaveMagic;
+	uint32 SaveVersion = SaveMagic;
 	s.syncAsInt(SaveVersion);
 
 	if (s.isLoading() && SaveVersion != SaveMagic)
