@@ -60,6 +60,7 @@ void MenuButton::init() {
 
 void MenuButton::onClick() {
     _engine->scene->requestStateChange(NancyEngine::kMainMenu);
+    _engine->sound->playSound(0x18);
     setVisible(true);
 }
 
@@ -79,6 +80,7 @@ void HelpButton::init() {
 
 void HelpButton::onClick() {
     _engine->scene->requestStateChange(NancyEngine::kHelp);
+    _engine->sound->playSound(0x18);
     setVisible(true);
 }
 

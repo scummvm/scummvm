@@ -96,7 +96,8 @@ private:
     public:
         Shades(RenderObject &redrawFrom, InventoryBox *parent) :
             RenderObject(redrawFrom),
-            _parent(parent) {}
+            _parent(parent),
+            _soundTriggered(false) {}
         virtual ~Shades() =default;
 
         virtual void init() override;
@@ -114,7 +115,8 @@ private:
 
         uint _curFrame;
         Time _nextFrameTime;
-        bool _areOpen;      
+        bool _areOpen;
+        bool _soundTriggered;
     };
 
     struct ItemHotspot {
