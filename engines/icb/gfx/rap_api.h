@@ -93,10 +93,6 @@ typedef struct WeightedVertexLink {
 // Notice, how poor ANSI C/C++ is at its representation
 //
 
-const int32 RAP_NO_PLATFORM = 0;
-const int32 RAP_PC_PLATFORM = 1;
-const int32 RAP_PSX_PLATFORM = 2;
-
 typedef struct rap_API {
 	char id[4];
 	uint32 schema;

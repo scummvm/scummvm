@@ -31,68 +31,11 @@
 
 namespace ICB {
 
-// For reusing characters already loaded into VRAM
-// -32 because characters start from ' '
-uint16 cPos[N_FONT_CHARS];
-uint8 cPWidth[N_FONT_CHARS];
-uint8 cHeight[N_FONT_CHARS];
-uint8 cWidth[N_FONT_CHARS];
-uint16 fontClutLoaded = 0;
-uint16 fontFreePos = 0;
-uint8 fontNcolours = 0;
-
-// Global instances of common strings, as GCC seems to make
-// multiple copies wasting all of the rdata section !
-
-const char *global_null_path = "";
-
-// The different fonts we have available
-const char *fonts[MAX_FONTS] = {"font", "city", "futura", "futura_outline"};
-int32 selFont = 2;
-
-const char *global_sys_font = fonts[selFont];
-const char *global_set_path = "\\M\\%s.CAM;1";
-const char *global_session_cluster_path = "\\M\\%s.SEX;1";
-const char *global_session_test_path = "\\M\\%s\\%s.SEX;1";
-const char *global_snddata_test_path = "\\M\\%s.SND;1";
-const char *global_session_xa_path = "\\M\\%s.XA\\XA%04d.XA;1";
-const char *global_global_xa_path = "\\G\\XA\\XA%04d.XA;1";
-const char *global_chr_path = "\\C\\%s\\%s.OFT;1";
-const char *global_fir_cluster_path = "\\G\\FIR.CLU;1";
-const char *global_image_cluster_path = "\\G\\IMAGES.CLU;1";
-const char *global_cluster_path = "\\G\\HAVENOTA.CLU;1";
-const char *global_var_path = "globals";
-const char *gamescript_path = "gamescript";
-const char *global_votext_name = "remora.ctf";
-const char *global_icon_labels_filename = "iconlabels.ctf";
-
-const char *global_cover_page = "cover_page.bs";
-
-const char *global_speech_cluster = "\\G\\SPEECH.CLU;1";
-uint32 global_speech_cluster_hash = NULL_HASH;
-
-const char *global_music_cluster = "\\G\\MUSIC.CLU;1";
-uint32 global_music_cluster_hash = NULL_HASH;
-
-const char *session_speech_cluster_path = "\\M\\%s.SPK;1";
-
 // The texture manager for the actor textures
 TextureManager *tman;
 
-// This does nothing but makes PC & PSX code more compatible the surface manager
-
 // The 3 directional lights and the ambient light
 psxLight Lights[4];
-
-// Colour of ambient to add when targetting a mega and you are armed
-int32 mega_select_armed_r = 60;
-int32 mega_select_armed_g = 10;
-int32 mega_select_armed_b = 10;
-
-// Colour of ambient to add when targetting a mega and you are unarmed
-int32 mega_select_unarmed_r = 50;
-int32 mega_select_unarmed_g = 50;
-int32 mega_select_unarmed_b = 50;
 
 #if CD_BUILD == 0
 // Colour of the z-fragments outlines

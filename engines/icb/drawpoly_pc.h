@@ -29,7 +29,6 @@
 #define ICB_DRAWPOLY_PC_H
 
 #include "engines/icb/gfx/psx_tman.h"
-#include "engines/icb/gfx/psx_pchmd.h"
 
 namespace ICB {
 

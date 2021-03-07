@@ -34,7 +34,6 @@
 #define PSXPL_ID "PLF"
 
 #include "engines/icb/gfx/psx_zlayers.h"
-#include "engines/icb/gfx/psx_bg.h"
 #include "engines/icb/common/px_bitmap_psx.h"
 
 namespace ICB {

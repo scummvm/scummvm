@@ -54,7 +54,6 @@ int32 drawBuf = 0;
 OT_tag *otarray[2];
 OT_tag *drawot;
 OT_tag otlist[2][OT_SIZE];
-GsOT Wot[2];
 
 // The min & max places to put Z data into the OT list
 int32 minZOTpos = 5;

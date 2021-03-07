@@ -46,7 +46,6 @@
 #include "engines/icb/gfx/psx_tman.h"
 #include "engines/icb/gfx/rap_api.h"
 #include "engines/icb/gfx/rab_api.h"
-#include "engines/icb/gfx/psx_pchmd.h"
 #include "engines/icb/actor.h"
 #include "engines/icb/actor_pc.h"
 #include "engines/icb/drawpoly_pc.h"

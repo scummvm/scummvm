@@ -30,7 +30,6 @@
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/actor_pc.h"
 #include "engines/icb/gfx/psx_scrn.h"
-#include "engines/icb/gfx/psx_pchmd.h"
 #include "engines/icb/gfx/psx_poly.h"
 #include "engines/icb/global_objects_psx.h"
 #include "engines/icb/drawpoly_pc.h"
