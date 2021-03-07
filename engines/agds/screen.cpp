@@ -238,7 +238,7 @@ void Screen::load(const PatchPtr &patch) {
 		if (object.flag <= 0)
 			remove(object.name);
 		else
-			_engine->runObject(object.name);
+			_engine->runObject(object.name, Common::String(), false);
 	}
 	_applyingPatch = false;
 }
