@@ -71,6 +71,7 @@ private:
 	};
 	HolomapSurface _holomapSurface[561];
 
+	// original game size: 2244 (lba1)
 	struct HolomapSort {
 		int16 z = 0;
 		uint16 projectedPosIdx = 0;

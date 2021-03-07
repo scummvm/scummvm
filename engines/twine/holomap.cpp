@@ -162,6 +162,7 @@ void Holomap::prepareHolomapProjectedPositions() {
 	}
 }
 
+// verified with disassembly
 void Holomap::prepareHolomapPolygons() {
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
