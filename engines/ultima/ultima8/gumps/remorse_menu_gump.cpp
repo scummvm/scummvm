@@ -220,8 +220,7 @@ void RemorseMenuGump::selectEntry(int entry) {
 }
 
 bool RemorseMenuGump::OnTextInput(int unicode) {
-	if (Gump::OnTextInput(unicode)) return true;
-	return true;
+	return Gump::OnTextInput(unicode);
 }
 
 } // End of namespace Ultima8

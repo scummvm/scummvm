@@ -101,9 +101,9 @@ static const char *_getRandomMovie(const char **movies, int nmovies) {
 bool WeaselGump::_playedIntroMovie = false;
 
 WeaselGump::WeaselGump(uint16 level)
-	: ModalGump(0, 0, 640, 480), _credits(0),
-	  _level(level), _state(kWeaselStart), _curItem(0), _ammoMode(false),
-	  _curItemCost(1), _curItemShape(0), _ui(nullptr), _movie(nullptr) {
+	: ModalGump(0, 0, 640, 480), _credits(0), _level(level),
+	  _state(kWeaselStart), _curItem(0), _ammoMode(false), _curItemCost(1),
+	  _curItemShape(0), _ui(nullptr), _movie(nullptr), _weaselDat(nullptr) {
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
 	mouse->setMouseCursor(Mouse::MOUSE_HAND);
@@ -202,6 +202,10 @@ Gump *WeaselGump::playMovie(const Std::string &filename) {
 	const Std::string path = Std::string::format("flics/%s.avi", filename.c_str());
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(path);
+	if (!rs) {
+		warning("Couldn't load flic %s", filename.c_str());
+		return nullptr;
+	}
 	Gump *gump = new MovieGump(600, 450, rs, false);
 	gump->InitGump(this, true);
 	gump->setRelativePosition(CENTER);
@@ -500,6 +504,7 @@ void WeaselGump::updateItemDisplay() {
 	const ShapeInfo *shapeinfo = GameData::get_instance()->getMainShapes()->getShapeInfo(_curItemShape);
 	if (!shapeinfo || !shapeinfo->_weaponInfo) {
 		warning("Weasel: no info for shape %d", _curItemShape);
+		return;
 	}
 	const Shape *shape = GameData::get_instance()->getGumps()->getShape(shapeinfo->_weaponInfo->_displayGumpShape);
 

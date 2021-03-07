@@ -105,6 +105,9 @@ void ComputerGump::run() {
 void ComputerGump::nextText() {
 	TextWidget *textWidget = dynamic_cast<TextWidget *>(_textWidget);
 
+	if (!textWidget)
+		return;
+
 	if (!textWidget->setupNextText())
 		Close();
 }

@@ -35,7 +35,7 @@ public:
 		SongInfo();
 		~SongInfo();
 
-		char        _filename[16];
+		char        _filename[17];
 		int         _numMeasures;
 		int         _loopJump;
 		int         *_transitions[128];

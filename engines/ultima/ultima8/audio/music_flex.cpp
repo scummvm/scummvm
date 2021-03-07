@@ -47,7 +47,7 @@ MusicFlex::~MusicFlex() {
 }
 
 MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
-	memset(_filename, 0, 16);
+	memset(_filename, 0, 17);
 	memset(_transitions, 0, 128 * sizeof(int *));
 }
 

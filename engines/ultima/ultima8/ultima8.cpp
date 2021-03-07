@@ -1223,6 +1223,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		perr << message << Std::endl;
 #else
 		Error(message, "Error Loading savegame");
+		delete sg;
 		return Common::kReadingFailed;
 #endif
 	}
