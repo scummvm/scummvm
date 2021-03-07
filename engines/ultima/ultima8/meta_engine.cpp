@@ -100,10 +100,10 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ ACTION_INC_SORT_ORDER, "INC_SORT_ORDER", "Increment Map Sort Order", "GameMapGump::incrementSortOrder", nullptr, "RIGHTBRACKET", nullptr, 0 },
 	{ ACTION_QUICK_MOVE_ASCEND, "ASCEND", "Ascend", "QuickAvatarMoverProcess::startAscend", "QuickAvatarMoverProcess::stopAscend", "HOME", nullptr, 0 },
 	{ ACTION_QUICK_MOVE_DESCEND, "DESCEND", "Descend", "QuickAvatarMoverProcess::startDescend", "QuickAvatarMoverProcess::stopDescend", "END", nullptr, FLAG_MENU_ENABLED },
-	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", "Move Up", "QuickAvatarMoverProcess::startMoveUp", "QuickAvatarMoverProcess::stopMoveUp", "A+UP", nullptr, FLAG_MENU_ENABLED },
-	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", "Move Down", "QuickAvatarMoverProcess::startMoveDown", "QuickAvatarMoverProcess::stopMoveDown", "A+DOWN", nullptr, FLAG_MENU_ENABLED },
-	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", "Move Left", "QuickAvatarMoverProcess::startMoveLeft", "QuickAvatarMoverProcess::stopMoveLeft", "A+LEFT", nullptr, FLAG_MENU_ENABLED },
-	{ ACTION_QUICK_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", "QuickAvatarMoverProcess::startMoveRight", "QuickAvatarMoverProcess::stopMoveRight", "A+RIGHT", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_QUICK_MOVE_UP, "MOVE_UP", "Move Up", "QuickAvatarMoverProcess::startMoveUp", "QuickAvatarMoverProcess::stopMoveUp", "M+UP", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_QUICK_MOVE_DOWN, "MOVE_DOWN", "Move Down", "QuickAvatarMoverProcess::startMoveDown", "QuickAvatarMoverProcess::stopMoveDown", "M+DOWN", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_QUICK_MOVE_LEFT, "MOVE_LEFT", "Move Left", "QuickAvatarMoverProcess::startMoveLeft", "QuickAvatarMoverProcess::stopMoveLeft", "M+LEFT", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_QUICK_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", "QuickAvatarMoverProcess::startMoveRight", "QuickAvatarMoverProcess::stopMoveRight", "M+RIGHT", nullptr, FLAG_MENU_ENABLED },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0 }
 };
