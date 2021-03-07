@@ -24,6 +24,7 @@
 #define GRAPHICS_SURFACE_H
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 #include "common/list.h"
 
 namespace Common {
@@ -140,6 +141,47 @@ public:
 	 */
 	inline void *getBasePtr(int x, int y) {
 		return static_cast<byte *>(pixels) + y * pitch + x * format.bytesPerPixel;
+	}
+
+	/**
+	 * Return the pixel at the specified point.
+	 *
+	 * @param x  The x coordinate of the pixel.
+	 * @param y  The y coordinate of the pixel.
+	 *
+	 * @return The value of the pixel.
+	 */
+	inline uint32 getPixel(int x, int y) const {
+		assert(format.bytesPerPixel > 0 && format.bytesPerPixel <= 4);
+		if (format.bytesPerPixel == 1)
+			return *((const uint8 *)getBasePtr(x, y));
+		else if (format.bytesPerPixel == 2)
+			return *((const uint16 *)getBasePtr(x, y));
+		else if (format.bytesPerPixel == 3)
+			return READ_UINT24(getBasePtr(x, y));
+		else if (format.bytesPerPixel == 4)
+			return *((const uint32 *)getBasePtr(x, y));
+		else
+			return 0;
+	}
+
+	/**
+	 * Set the pixel at the specified point.
+	 *
+	 * @param x     The x coordinate of the pixel.
+	 * @param y     The y coordinate of the pixel.
+	 * @param pixel The value of the pixel.
+	 */
+	inline void setPixel(int x, int y, int pixel) {
+		assert(format.bytesPerPixel > 0 && format.bytesPerPixel <= 4);
+		if (format.bytesPerPixel == 1)
+			*((uint8 *)getBasePtr(x, y)) = pixel;
+		else if (format.bytesPerPixel == 2)
+			*((uint16 *)getBasePtr(x, y)) = pixel;
+		else if (format.bytesPerPixel == 3)
+			WRITE_UINT24(getBasePtr(x, y), pixel);
+		else if (format.bytesPerPixel == 4)
+			*((uint32 *)getBasePtr(x, y)) = pixel;
 	}
 
 	/**
