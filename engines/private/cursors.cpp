@@ -292,70 +292,45 @@ static const byte MOUSECURSOR_kPhone[] = {
 };
 
 static const byte cursorPalette[] = {
-	0, 0, 0,		   // Black / Transparent
+	0x00, 0x00, 0x00,  // Black / Transparent
 	0x01, 0x01, 0x01,  // Gray
 	0xff, 0xff, 0xff,  // White
 	0xff, 0x00, 0x00   // Red
 };
 
-static struct CursorDataTable {
+struct CursorTable {
 	const char *name;
-	const byte *cursor;
-} cursorDataTable[] = {
-	{ "kExit",		 MOUSECURSOR_kExit},
-	{ "kInventory",	MOUSECURSOR_kInventory},
-	{ "kTurnLeft",	 MOUSECURSOR_kTurnLeft},
-	{ "kTurnRight",	MOUSECURSOR_kTurnRight},
-	{ "kZoomIn",	   MOUSECURSOR_kZoomIn},
-	{ "kZoomOut",	  MOUSECURSOR_kZoomOut},
-	{ "kPhone",		MOUSECURSOR_kPhone},
-	{ "default",	   MOUSECURSOR_SCI},
-	{ 0, 0}
+	const void *buf;
+	int w;
+	int h;
+	int hotspotX;
+	int hotspotY;
 };
 
-static struct CursorPointTable {
-	const char *name;
-	const int coord[2];
-} cursorPointTable[] = {
-	{ "kExit",	  {9,   0} },
-	{ "kInventory", {15,  3} },
-	{ "kTurnLeft",  {29, 16} },
-	{ "kTurnRight", {1,  15} },
-	{ "kZoomIn",	{10,  8} },
-	{ "kZoomOut",   {13, 31} },
-	{ "kPhone",	 {17, 19} },
-	{ "default",	{0,   0} },
-	{ 0,			{0,   0} }
+static const CursorTable cursorTable[] = {
+	{ "kExit",      MOUSECURSOR_kExit,      32, 32, 9,  0  },
+	{ "kInventory", MOUSECURSOR_kInventory, 32, 32, 15, 3  },
+	{ "kTurnLeft",  MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
+	{ "kTurnRight", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
+	{ "kZoomIn",    MOUSECURSOR_kZoomIn,    32, 32, 10, 8  },
+	{ "kZoomOut",   MOUSECURSOR_kZoomOut,   32, 32, 13, 31 },
+	{ "kPhone",     MOUSECURSOR_kPhone,     32, 32, 17, 19 },
+	{ "default",    MOUSECURSOR_SCI,        11, 16, 0,  0  },
+	{ nullptr,      nullptr,                0,  0,  0,  0  }
 };
-
-void PrivateEngine::initCursors() {
-	for (Private::CursorDataTable *cur = Private::cursorDataTable; cur->name; cur++) {
-		Common::String name(cur->name);
-		_cursorData.setVal(name, cur->cursor);
-	}
-
-	for (Private::CursorPointTable *cur = Private::cursorPointTable; cur->name; cur++) {
-		Common::String name(cur->name);
-		Common::Point point = Common::Point(cur->coord[0], cur->coord[1]);
-		_cursorPoints.setVal(name, point);
-	}
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
-}
 
 void PrivateEngine::changeCursor(const Common::String &cursor) {
-	assert(_cursorData.contains(cursor));
-	Common::Point p = _cursorPoints.getVal(cursor);
-	int x, y;
-
-	if (cursor == "default") {
-		x = 11;
-		y = 16;
-	} else {
-		x = 32;
-		y = 32;
+	const CursorTable *entry = cursorTable;
+	while (entry->name) {
+		if (cursor == entry->name)
+			break;
+		entry++;
 	}
+	if (!entry->name)
+		return;
 
-	CursorMan.replaceCursor(_cursorData.getVal(cursor), x, y, p.x, p.y, 0, false);
+	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.showMouse(true);
 }
 

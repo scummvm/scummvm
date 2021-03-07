@@ -157,7 +157,6 @@ Common::Error PrivateEngine::run() {
 	Settings::g_setts = new Settings::SettingMaps();
 
 	initFuncs();
-	initCursors();
 	parse(buf);
 	free(buf);
 	delete file;
