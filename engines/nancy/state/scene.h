@@ -25,10 +25,11 @@
 
 #include "engines/nancy/action/actionmanager.h"
 
-#include "engines/nancy/ui/frame.h"
+#include "engines/nancy/ui/fullscreenimage.h"
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/inventorybox.h"
+#include "engines/nancy/ui/button.h"
 
 #include "engines/nancy/time.h"
 #include "engines/nancy/commontypes.h"
@@ -92,6 +93,8 @@ public:
         _viewport(engine),
         _textbox(_frame),
         _inventoryBox(_frame),
+        _menuButton(_frame),
+        _helpButton(_frame),
         _actionManager(engine) {}
 
     void process();
@@ -134,7 +137,7 @@ public:
 
     void registerGraphics();
 
-    UI::Frame &getFrame() { return _frame; }
+    UI::FullScreenImage &getFrame() { return _frame; }
     UI::Viewport &getViewport() { return _viewport; }
     UI::Textbox &getTextbox() { return _textbox; }
     UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
@@ -220,10 +223,12 @@ protected:
     Nancy::NancyEngine *_engine;
 
     // RenderObjects
-    UI::Frame _frame;
+    UI::FullScreenImage _frame;
     UI::Viewport _viewport;
     UI::Textbox _textbox;
     UI::InventoryBox _inventoryBox;
+    UI::MenuButton _menuButton;
+    UI::HelpButton _helpButton;
 
     // Data
     SceneState _sceneState;

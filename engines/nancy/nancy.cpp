@@ -22,6 +22,8 @@
 
 #include "engines/nancy/state/logo.h"
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/state/help.h"
+#include "engines/nancy/state/map.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -29,7 +31,6 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
-#include "engines/nancy/state/map.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/cheat.h"
@@ -73,6 +74,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	logo = new State::Logo(this);
 	scene = new State::Scene(this);
 	map = new State::Map(this);
+	help = new State::Help(this);
 	input = new InputManager(this);
 	sound = new SoundManager(this);
 	graphicsManager = new GraphicsManager(this);
@@ -147,42 +149,51 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		cursorManager->setCursorType(CursorManager::kNormalArrow);
 		input->processEvents();
+		
 		switch (_gameFlow.minGameState) {
-		case kBoot:
-			bootGameEngine();
-			graphicsManager->init();
-			cursorManager->init();
-			setGameState(kLogo);
-			break;
-		case kLogo:
-			logo->process();
-			break;
-		case kMainMenu:
-			// TODO
-			break;
-		case kScene:
-			scene->process();
-			break;
-		case kMap:
-			map->process();
-			break;
-		case kCheat: {
-			if (_cheatTypeIsEventFlag) {
-				EventFlagDialog *dialog = new EventFlagDialog(this);
-				dialog->runModal();
-				delete dialog;
-			} else {
-				CheatDialog *dialog = new CheatDialog(this);
-				dialog->runModal();
-				delete dialog;
+			case kBoot:
+				bootGameEngine();
+				graphicsManager->init();
+				cursorManager->init();
+				setGameState(kLogo);
+				break;
+			case kLogo:
+				logo->process();
+				break;
+			case kMainMenu: {
+				GameState prevState = getPreviousGameState();
+				// TODO until the game's own menus are implemented we simply open the GMM
+				openMainMenuDialog();
+				setGameState(prevState);
+				break;
 			}
-			setGameState(getPreviousGameState());
-			input->forceCleanInput();
-			break;
-		}
-		case kIdle:
-		default:
-			break;
+			case kHelp:
+				help->process();
+				break;
+			case kScene:
+				scene->process();
+				break;
+			case kMap:
+				map->process();
+				break;
+			case kCheat: {
+				if (_cheatTypeIsEventFlag) {
+					EventFlagDialog *dialog = new EventFlagDialog(this);
+					dialog->runModal();
+					delete dialog;
+				} else {
+					CheatDialog *dialog = new CheatDialog(this);
+					dialog->runModal();
+					delete dialog;
+				}
+				setGameState(getPreviousGameState());
+				input->forceCleanInput();
+				break;
+			}
+			case kIdle:
+				break;
+			default:
+				break;
 		}
 
 		graphicsManager->draw();

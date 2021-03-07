@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/nancy/ui/frame.h"
+#include "engines/nancy/ui/fullscreenimage.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -29,10 +29,9 @@
 namespace Nancy {
 namespace UI {
 
-void Frame::init() {
-    // TODO
+void FullScreenImage::init(Common::String imageName) {
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", "FRAME", surf);
+    _engine->_res->loadImage("ciftree", imageName, surf);
 
     Common::Rect srcBounds = Common::Rect(0,0, surf.w, surf.h);
     _screenPosition = srcBounds;
