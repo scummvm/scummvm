@@ -35,7 +35,7 @@ namespace ICB {
 
 // return 0 if on screen
 // return 1 if off screen
-int QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient) {
+int32 QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient) {
 	MATRIX lw, ls;
 
 	// Set the focal length in the GTE
