@@ -1306,12 +1306,13 @@ void Process::loadTextFromObject() {
 	_object->title(text);
 }
 
-void Process::call(uint16 addr) {
-	debug("call %04x", _ip + addr);
-	if (_object->allowCalls()) {
-		_engine->runProcess(_object, _ip + addr);
+void Process::initialise(uint16 addr) {
+	debug("initialise %04x", _ip);
+	if (_object->allowInitialise()) {
+		_engine->runProcess(_object, _ip);
 	} else
-		debug("call skipped (recovered object)");
+		debug("initialise skipped (recovered object)");
+	_ip += addr;
 }
 
 void Process::onKey(uint16 size) {

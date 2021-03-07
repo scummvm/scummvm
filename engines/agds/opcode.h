@@ -78,7 +78,7 @@ enum Opcode {
 	kAndGlobalByTop					= 56,
 	kOrGlobalByTop					= 57,
 	kXorGlobalByTop					= 58,
-	kCallImm16						= 59,
+	kObjectInitialise				= 59,
 	kObjectRegisterLookHandler		= 60,
 	kObjectRegisterUseHandler		= 61,
 	kObjectRegisterHandlerC1		= 62,
@@ -313,7 +313,7 @@ enum Opcode {
 	OP(kNot, bitNot) \
 	OP(kBoolNot, boolNot) \
 	OP(kNegate, negate) \
-	OP_U(kCallImm16, call) \
+	OP_U(kObjectInitialise, initialise) \
 	OP_U(kObjectRegisterLookHandler, onLook) \
 	OP_U(kObjectRegisterUseHandler, onUse) \
 	OP_U(kObjectRegisterHandlerC1, onObjectC1) \

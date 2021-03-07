@@ -115,8 +115,8 @@ public:
 	bool canLoadGameStateCurrently() { return true; }
 	bool canSaveGameStateCurrently() { return _userEnabled; }
 
-	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String(), bool allowCalls = true);
-	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowCalls = true);
+	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String(), bool allowInitialise = true);
+	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
 	void runObject(const ObjectPtr &object);
 	void runProcess(const ObjectPtr &object, uint ip = 0);
 	void stopProcess(const Common::String & name);

@@ -83,7 +83,7 @@ private:
 	int								_scale;
 	bool							_alive;
 	bool							_persistent;
-	bool							_allowCalls;
+	bool							_allowInitialise;
 
 private:
 	void freeRotated();
@@ -92,11 +92,11 @@ public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
 	~Object();
 
-	bool allowCalls() const {
-		return _allowCalls;
+	bool allowInitialise() const {
+		return _allowInitialise;
 	}
-	void allowCalls(bool allow) {
-		_allowCalls = allow;
+	void allowInitialise(bool allow) {
+		_allowInitialise = allow;
 	}
 
 	void persistent(bool persistent) {
