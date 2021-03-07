@@ -31,8 +31,8 @@ namespace Shared {
 
 namespace MFLUtil {
 
-const String HeadSig = "CLIB\x1a";
-const String TailSig = "CLIB\x1\x2\x3\x4SIGE";
+static const char *HEAD_SIG = "CLIB\x1a";
+static const char *TAIL_SIG = "CLIB\x1\x2\x3\x4SIGE";
 
 static const size_t SingleFilePswLen = 13;
 
@@ -106,6 +106,7 @@ MFLUtil::MFLError MFLUtil::ReadHeader(AssetLibInfo &lib, Stream *in) {
 }
 
 MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_version, soff_t *p_abs_offset) {
+	String HeadSig(HEAD_SIG), TailSig(TAIL_SIG);
 	soff_t abs_offset = 0; // library offset in this file
 	String sig;
 	// check multifile lib signature at the beginning of file
@@ -331,7 +332,8 @@ MFLUtil::MFLError MFLUtil::ReadV30(AssetLibInfo &lib, Stream *in, MFLVersion /* 
 }
 
 void MFLUtil::WriteHeader(const AssetLibInfo &lib, MFLVersion lib_version, int lib_index, Stream *out) {
-	out->Write(MFLUtil::HeadSig, MFLUtil::HeadSig.GetLength());
+	String HeadSig(HEAD_SIG);
+	out->Write(HeadSig, HeadSig.GetLength());
 	out->WriteByte(lib_version);
 	out->WriteByte(lib_index);   // file number
 
@@ -360,6 +362,8 @@ void MFLUtil::WriteV30(const AssetLibInfo &lib, MFLVersion lib_version, Stream *
 }
 
 void MFLUtil::WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out) {
+	String TailSig(TAIL_SIG);
+
 	if (lib_index < kMFLVersion_MultiV30)
 		out->WriteInt32((int32_t)lib_offset);
 	else
