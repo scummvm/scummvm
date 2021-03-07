@@ -63,7 +63,7 @@ public:
 
     uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
     uint16 getCurFrame() const { return _currentFrame; }
-    uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
+    uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y - 1; }
     uint16 getMaxScroll() const { return _fullFrame.h - _drawSurface.h - 1; }
 
     Common::Rect getBoundsByFormat(uint format) const; // used by video
