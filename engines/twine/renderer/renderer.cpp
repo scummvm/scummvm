@@ -218,6 +218,40 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 	baseTransPos = destPos;
 }
 
+Vec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
+	int32 rotX;
+	int32 rotY;
+	int32 rotZ;
+
+	rotX = angleX * 2 + 1000;
+	if (angleY == ANGLE_0) {
+		rotY = ANGLE_0;
+	} else {
+		rotY = -shadeAngleTable[ClampAngle(angleY)] * rotX / SCENE_SIZE_HALF;
+		rotX = shadeAngleTable[ClampAngle(angleY + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
+	}
+	if (angleZ == ANGLE_0) {
+		rotZ = ANGLE_0;
+	} else {
+		rotZ = -shadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
+		rotX = shadeAngleTable[ClampAngle(angleZ + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
+	}
+	const int32 row1X = baseMatrix.row1[0] * rotX;
+	const int32 row1Y = baseMatrix.row1[1] * rotY;
+	const int32 row1Z = baseMatrix.row1[2] * rotZ;
+	const int32 row2X = baseMatrix.row2[0] * rotX;
+	const int32 row2Y = baseMatrix.row2[1] * rotY;
+	const int32 row2Z = baseMatrix.row2[2] * rotZ;
+	const int32 row3X = baseMatrix.row3[0] * rotX;
+	const int32 row3Y = baseMatrix.row3[1] * rotY;
+	const int32 row3Z = baseMatrix.row3[2] * rotZ;
+	Vec3 vec;
+	vec.x = (row1X + row1Y + row1Z) / SCENE_SIZE_HALF;
+	vec.y = (row2X + row2Y + row2Z) / SCENE_SIZE_HALF;
+	vec.z = (row3X + row3Y + row3Z) / SCENE_SIZE_HALF;
+	return vec;
+}
+
 void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) {
 	Matrix matrix1;
 	Matrix matrix2;

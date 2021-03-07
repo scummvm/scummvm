@@ -403,6 +403,7 @@ public:
 	Vec3 baseRotPos;
 	Vec3 orthoProjPos;
 	Vec3 destPos;
+	Vec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	const int16 *const shadeAngleTab3;
 
