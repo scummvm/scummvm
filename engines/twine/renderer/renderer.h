@@ -405,8 +405,6 @@ public:
 	Vec3 destPos;
 	Vec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
-	const int16 *const shadeAngleTab3;
-
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 

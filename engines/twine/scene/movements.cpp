@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 #include "twine/input.h"
 #include "twine/renderer/renderer.h"
+#include "twine/renderer/shadeangletab.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/collision.h"
@@ -112,15 +113,15 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
 
-	int32 startAngle = ANGLE_0;
+	int32 startAngle = ANGLE_135;
 	//	stopAngle  = 0x100;
 
-	while (_engine->_renderer->shadeAngleTab3[startAngle] > destAngle) {
+	while (shadeAngleTable[startAngle] > destAngle) {
 		startAngle++;
 	}
 
-	if (_engine->_renderer->shadeAngleTab3[startAngle] != destAngle) {
-		if ((_engine->_renderer->shadeAngleTab3[startAngle - 1] + _engine->_renderer->shadeAngleTab3[startAngle]) / 2 <= destAngle) {
+	if (shadeAngleTable[startAngle] != destAngle) {
+		if ((shadeAngleTable[startAngle - 1] + shadeAngleTable[startAngle]) / 2 <= destAngle) {
 			startAngle--;
 		}
 	}

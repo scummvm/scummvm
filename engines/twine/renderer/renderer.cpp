@@ -42,7 +42,7 @@ namespace TwinE {
 #define RENDERTYPE_DRAWPOLYGON 1
 #define RENDERTYPE_DRAWSPHERE 2
 
-Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shadeAngleTable[384]) {
+Renderer::Renderer(TwinEEngine *engine) : _engine(engine) {
 }
 
 Renderer::~Renderer() {

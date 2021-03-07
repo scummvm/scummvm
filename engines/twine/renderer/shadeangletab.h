@@ -28,6 +28,9 @@
 
 namespace TwinE {
 
+/**
+ * @brief Caches sin cos table for all possible angles (0-1024 = 0-360 degree)
+ */
 const int16 shadeAngleTable[ANGLE_360] = {
     0, // tab1
     101,
