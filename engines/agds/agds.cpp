@@ -219,11 +219,6 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (_currentScreen) {
 		if (_currentScreen->add(object)) {
 			runProcess(object);
-		} else if (!object->alive()) {
-			debug("marking object %s as in-scene...", object->getName().c_str());
-			object->alive(true);
-			object->allowInitialise(false);
-			runProcess(object);
 		} else
 			debug("object %s is in scene, skip run", object->getName().c_str());
 	} else
@@ -253,13 +248,8 @@ ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String
 	ObjectPtr object = getCurrentScreenObject(name);
 	if (!object) {
 		object = loadObject(name, prototype, allowInitialise);
-		runObject(object);
-	} else if (!object->alive()) {
-		debug("recovering object...");
-		object->alive(true);
-		object->allowInitialise(false);
-		runObject(object);
 	}
+	runObject(object);
 	return object;
 }
 

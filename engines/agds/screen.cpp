@@ -69,16 +69,18 @@ bool Screen::add(ObjectPtr object) {
 	}
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
 		if (*i == object) {
-			if ((*i)->alive()) {
-				debug("double adding object %s", (*i)->getName().c_str());
+			if (object->alive()) {
+				debug("double adding object %s", object->getName().c_str());
 				return false;
 			} else {
-				i = _children.erase(i);
+				debug("recovering object %s", object->getName().c_str());
+				object->alive(true);
+				object->allowInitialise(false);
+				return true;
 			}
 		} else
 			++i;
 	}
-	object->alive(true);
 	_children.insert(object);
 	return true;
 }
