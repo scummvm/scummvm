@@ -33,18 +33,19 @@
 #include "common/error.h"
 #include "common/util.h"
 #include "common/events.h"
+#include "common/util.h"
 
 namespace Nancy {
 namespace UI {
 
-const Common::String Textbox::CCBeginToken = Common::String("<i>");
-const Common::String Textbox::CCEndToken = Common::String("<o>");
-const Common::String Textbox::colorBeginToken = Common::String("<c1>");
-const Common::String Textbox::colorEndToken = Common::String("<c0>");
-const Common::String Textbox::hotspotToken = Common::String("<h>");
-const Common::String Textbox::newLineToken = Common::String("<n>");
-const Common::String Textbox::tabToken = Common::String("<t>");
-const Common::String Textbox::telephoneEndToken = Common::String("<e>");
+const char Textbox::CCBeginToken[] = "<i>";
+const char Textbox::CCEndToken[] = "<o>";
+const char Textbox::colorBeginToken[] = "<c1>";
+const char Textbox::colorEndToken[] = "<c0>";
+const char Textbox::hotspotToken[] = "<h>";
+const char Textbox::newLineToken[] = "<n>";
+const char Textbox::tabToken[] = "<t>";
+const char Textbox::telephoneEndToken[] = "<e>";
 
 void Textbox::init() {    
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("TBOX");
@@ -140,25 +141,25 @@ void Textbox::drawTextbox() {
 
         // Trim the begin and end tokens from the line
         if (currentLine.hasPrefix(CCBeginToken) && currentLine.hasSuffix(CCEndToken)) {
-            currentLine = currentLine.substr(CCBeginToken.size(), currentLine.size() - CCBeginToken.size() - CCEndToken.size());
+            currentLine = currentLine.substr(ARRAYSIZE(CCBeginToken) - 1, currentLine.size() - ARRAYSIZE(CCBeginToken) - ARRAYSIZE(CCEndToken) + 2);
         }
         
         // Replace every newline token with \n
         uint32 newLinePos;
         while (newLinePos = currentLine.find(newLineToken), newLinePos != String::npos) {
-            currentLine.replace(newLinePos, newLineToken.size(), "\n");
+            currentLine.replace(newLinePos, ARRAYSIZE(newLineToken) - 1, "\n");
         }
 
         // Simply remove telephone end token
         if (currentLine.hasSuffix(telephoneEndToken)) {
-            currentLine = currentLine.substr(0, currentLine.size() - telephoneEndToken.size());
+            currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(telephoneEndToken) + 1);
         }
 
         // Remove hotspot token and mark that we need to calculate the bounds
         // Assumes a single text line has a single hotspot
         uint32 hotspotPos = currentLine.find(hotspotToken);
         if (hotspotPos != String::npos) {
-            currentLine.erase(hotspotPos, hotspotToken.size());
+            currentLine.erase(hotspotPos, ARRAYSIZE(hotspotToken) - 1);
             hasHotspot = true;
         }
 
@@ -168,7 +169,7 @@ void Textbox::drawTextbox() {
         {
             if (currentLine.hasPrefix(tabToken)) {
                 horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
-                currentLine = currentLine.substr(tabToken.size());
+                currentLine = currentLine.substr(ARRAYSIZE(tabToken) - 1);
             }
 
             String currentSubLine;
@@ -187,8 +188,8 @@ void Textbox::drawTextbox() {
                 // Found color string, look for end token
                 uint32 colorEndPos = currentSubLine.find(colorEndToken);
 
-                Common::String colorSubLine = currentSubLine.substr(colorBeginToken.size(), colorEndPos - colorBeginToken.size());
-                currentSubLine = currentSubLine.substr(colorBeginToken.size() + colorEndToken.size() + colorSubLine.size());
+                Common::String colorSubLine = currentSubLine.substr(ARRAYSIZE(colorBeginToken) - 1, colorEndPos - ARRAYSIZE(colorBeginToken) + 1);
+                currentSubLine = currentSubLine.substr(ARRAYSIZE(colorBeginToken) + ARRAYSIZE(colorEndToken) + colorSubLine.size() - 2);
 
                 // Draw the color line
                 font->drawString(&_fullSurface, colorSubLine, _borderWidth + horizontalOffset, _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);

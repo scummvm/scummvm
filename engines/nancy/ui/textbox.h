@@ -108,14 +108,14 @@ private:
     bool _needsTextRedraw;
     float _scrollbarPos;
 
-    static const Common::String CCBeginToken;
-    static const Common::String CCEndToken;
-    static const Common::String colorBeginToken;
-    static const Common::String colorEndToken;
-    static const Common::String hotspotToken;
-    static const Common::String newLineToken;
-    static const Common::String tabToken;
-    static const Common::String telephoneEndToken;
+    static const char CCBeginToken[];
+    static const char CCEndToken[];
+    static const char colorBeginToken[];
+    static const char colorEndToken[];
+    static const char hotspotToken[];
+    static const char newLineToken[];
+    static const char tabToken[];
+    static const char telephoneEndToken[];
 
 protected:
 };
