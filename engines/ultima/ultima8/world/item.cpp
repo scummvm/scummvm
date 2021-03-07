@@ -1201,7 +1201,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		block->receiveHit(getObjId(), damagedir, damage, firetype);
 		if (firetypedat->getRange() != 0) {
 			int splashdamage = firetypedat->getRandomDamage();
-			firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
+			firetypedat->applySplashDamageAround(blockpt, splashdamage, 1, block, this);
 		}
 		if (firetypedat->getNearSprite())
 			firetypedat->makeBulletSplashShapeAndPlaySound(ix, iy, iz);
@@ -2036,8 +2036,16 @@ void Item::hurl(int xs, int ys, int zs, int grav) {
 
 void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	Process *p;
+	int damage_divisor = 1;
 
 	if (GAME_IS_CRUSADER) {
+
+		damage_divisor = explosion_type + 1;
+		if (damage_divisor == 1)
+			damage_divisor = 3;
+		else if (damage_divisor == 3)
+			damage_divisor = 1;
+
 		setFlag(FLG_BROKEN);
 		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
 		int32 cx, cy, cz;
@@ -2113,8 +2121,8 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		// Note: same FireType number used in both Remorse and Regret
 		const FireType *firetypedat = GameData::get_instance()->getFireType(4);
 		if (firetypedat) {
-			int damage = firetypedat->getRandomDamage();
-			firetypedat->applySplashDamageAround(pt, damage, this, this);
+			int damage = firetypedat->getRandomDamage() / damage_divisor;
+			firetypedat->applySplashDamageAround(pt, damage, damage_divisor, this, this);
 		} else {
 			warning("couldn't explode properly - no firetype 4 data");
 		}
@@ -2186,16 +2194,15 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 		}
 	}
 
-	if (shapeInfo->is_fixed() || shapeInfo->_weight == 0) {
-		// can't move
+	// Fixed items or 0 weight etems can't move.
+	// Only damage types 3 and 4 move items in Crusader.
+	if (shapeInfo->is_fixed() || shapeInfo->_weight == 0 || (type != 3 && type != 4)) {
 		return;
 	}
 
 	int xhurl = 10 + getRandom() % 15;
 	int yhurl = 10 + getRandom() % 15;
-
-	// nothing special, so just hurl the item
-	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 16, 4); //!! constants
+	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 0, 2); //!! constants
 }
 
 

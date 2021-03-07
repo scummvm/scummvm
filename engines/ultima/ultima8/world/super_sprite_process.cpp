@@ -287,7 +287,7 @@ void SuperSpriteProcess::makeBulletSplash(const Point3 &pt) {
 	if (firetypedat->getRange()) {
 		Item *item = getItem(_item0x77);
 		Item *src = getItem(_source);
-		firetypedat->applySplashDamageAround(pt, _damage, item, src);
+		firetypedat->applySplashDamageAround(pt, _damage, 1, item, src);
 	}
 	firetypedat->makeBulletSplashShapeAndPlaySound(pt.x, pt.y, pt.z);
 }

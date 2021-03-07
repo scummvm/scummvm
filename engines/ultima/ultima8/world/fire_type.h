@@ -84,7 +84,8 @@ public:
 
 	uint16 getRandomDamage() const;
 
-	void applySplashDamageAround(const Point3 &pt, int damage, const Item *exclude, const Item *src) const;
+	void applySplashDamageAround(const Point3 &pt, int damage, int rangediv,
+								 const Item *exclude, const Item *src) const;
 
 	void makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) const;
 

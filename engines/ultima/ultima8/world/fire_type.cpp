@@ -164,7 +164,8 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 	}
 }
 
-void FireType::applySplashDamageAround(const Point3 &pt, int damage, const Item *exclude, const Item *src) const {
+void FireType::applySplashDamageAround(const Point3 &pt, int damage, int rangediv, const Item *exclude, const Item *src) const {
+	assert(rangediv > 0);
 	if (!getRange())
 		return;
 	static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
@@ -178,7 +179,7 @@ void FireType::applySplashDamageAround(const Point3 &pt, int damage, const Item 
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	currentmap->areaSearch(&uclist, script, sizeof(script), nullptr,
-						   getRange() * 32, true, pt.x, pt.y);
+						   getRange() * 32 / rangediv, true, pt.x, pt.y);
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *splashitem = getItem(uclist.getuint16(i));
 		if (!splashitem) {
