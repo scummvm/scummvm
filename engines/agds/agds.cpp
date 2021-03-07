@@ -199,7 +199,7 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
-ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowCalls) {
+ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
 	debug("loadObject %s %s", name.c_str(), prototype.c_str());
 	Common::String clone = prototype.empty() ? name : prototype;
 	Common::SeekableReadStream *stream = _data.getEntry(clone);
@@ -207,7 +207,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 		error("no database entry for %s\n", clone.c_str());
 
 	ObjectPtr object(new Object(name, stream));
-	object->allowCalls(allowCalls);
+	object->allowInitialise(allowInitialise);
 	if (!prototype.empty()) {
 		object->persistent(false);
 	}
@@ -217,15 +217,12 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 
 void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (_currentScreen) {
-		auto patch = getPatch(_currentScreenName);
-		if (_loadingScreen && patch && patch->getFlag(object->getName()) <= 0) {
-			debug("object %s is not present in the patch", object->getName().c_str());
-		} else if (_currentScreen->add(object)) {
+		if (_currentScreen->add(object)) {
 			runProcess(object);
 		} else if (!object->alive()) {
 			debug("marking object %s as in-scene...", object->getName().c_str());
 			object->alive(true);
-			object->allowCalls(false);
+			object->allowInitialise(false);
 			runProcess(object);
 		} else
 			debug("object %s is in scene, skip run", object->getName().c_str());
@@ -251,16 +248,16 @@ ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 }
 
 
-ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype, bool allowCalls) {
+ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
 	debug("runObject %s %s", name.c_str(), prototype.c_str());
 	ObjectPtr object = getCurrentScreenObject(name);
 	if (!object) {
-		object = loadObject(name, prototype, allowCalls);
+		object = loadObject(name, prototype, allowInitialise);
 		runObject(object);
 	} else if (!object->alive()) {
 		debug("recovering object...");
 		object->alive(true);
-		object->allowCalls(false);
+		object->allowInitialise(false);
 		runObject(object);
 	}
 	return object;
@@ -325,7 +322,7 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 	_currentScreenName = name;
 	_currentScreen = new Screen(this, screenObject);
 	if (doPatch)
-		screenObject->allowCalls(false);
+		screenObject->allowInitialise(false);
 
 	runProcess(screenObject);
 
