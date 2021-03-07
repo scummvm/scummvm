@@ -130,8 +130,6 @@ typedef Common::Array<DossierInfo> DossierArray;
 // hash tables
 
 typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
-typedef Common::HashMap<Common::String, const byte *> CursorDataMap;
-typedef Common::HashMap<Common::String, Common::Point> CursorPointMap;
 
 
 class PrivateEngine : public Engine {
@@ -201,7 +199,6 @@ public:
 	void drawScreenFrame();
 
 	void changeCursor(const Common::String &);
-	void initCursors();
 
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;
@@ -301,10 +298,6 @@ public:
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
-
-	// Cursors
-	CursorDataMap _cursorData;
-	CursorPointMap _cursorPoints;
 };
 
 extern PrivateEngine *g_private;
