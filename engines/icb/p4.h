@@ -144,7 +144,7 @@ class _stub {
 
 	__stub_modes mode[TOTAL_STUBS];
 	int32 stub; // stub level number
-	int cycle_speed;
+	int32 cycle_speed;
 private:
 	uint32 stub_timer_time;
 	bool8 timer; // on off

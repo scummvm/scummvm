@@ -4898,7 +4898,7 @@ void OptionsManager::InitialiseControlsScreen() {
 	// Need to calculate printing margin
 	m_margin = 0;
 	uint32 margin = 0;
-	// This ensures correct spacing for any translations (assuming this is the int32est heading thang)
+	// This ensures correct spacing for any translations (assuming this is the longest heading thang)
 	msg = GetTextFromReference(HashString("opt_controlmethod"));
 	margin = CalculateStringWidth(msg);
 	if (m_margin < margin)

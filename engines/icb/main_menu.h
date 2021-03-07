@@ -35,7 +35,7 @@ void Pause_menu();
 
 void Credits();
 void ScrollingText();
-void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int frameStart);
+void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int32 frameStart);
 void GameCompleted();
 
 } // End of namespace ICB

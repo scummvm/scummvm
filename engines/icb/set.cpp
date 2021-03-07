@@ -44,7 +44,7 @@ namespace ICB {
 int32 _game_session::GetSelectedMegaId(void) {
 	selected_mega_id = -1;
 	if ((px.mega_hilite) && (player.interact_selected)) {
-		int sel_id = player.cur_interact_id;
+		int32 sel_id = player.cur_interact_id;
 		if (logic_structs[sel_id]->image_type != PROP) {
 			selected_mega_id = player.cur_interact_id;
 		}
@@ -53,9 +53,9 @@ int32 _game_session::GetSelectedMegaId(void) {
 }
 
 void _game_session::GetSelectedMegaRGB(uint8 &r, uint8 &g, uint8 &b) {
-	int newr = (uint8)g_mega_select_r + r;
-	int newg = (uint8)g_mega_select_g + g;
-	int newb = (uint8)g_mega_select_b + b;
+	int32 newr = (uint8)g_mega_select_r + r;
+	int32 newg = (uint8)g_mega_select_g + g;
+	int32 newb = (uint8)g_mega_select_b + b;
 
 	if (newr > 150)
 		newr = 150;
@@ -83,7 +83,7 @@ void _game_session::GetSelectedMegaRGB(uint8 &r, uint8 &g, uint8 &b) {
 int32 _game_session::GetSelectedPropId(void) {
 	selected_prop_id = -1;
 	if ((px.prop_hilite) && (player.interact_selected)) {
-		int sel_id = player.cur_interact_id;
+		int32 sel_id = player.cur_interact_id;
 		if (logic_structs[sel_id]->image_type == PROP) {
 			selected_prop_id = player.cur_interact_id;
 		}

@@ -162,7 +162,7 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	// where chr='cord'
 	// set='casual_wear'
 
-	int k, len;
+	int32 k, len;
 
 	// check for no weapon being set
 	if (weapon == __NOT_SET)
@@ -227,11 +227,11 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	Zdebug("\n-------------------------------------------------------------------------------\n");
 }
 
-void _vox_image::MakeAnimEntry(int i) {
+void _vox_image::MakeAnimEntry(int32 i) {
 // make name
 
 	char name[ANIM_NAME_STR_LEN];
-	int len;
+	int32 len;
 
 	len = sprintf(name, "%s%s.rab", (const char *)image_path, (const char *)master_anim_name_table[i].name);
 
@@ -405,7 +405,7 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 void PreRegisterTexture(const char *, uint32, const char *, uint32, const char *, uint32);
 
 bool8 _vox_image::Set_texture(const char *tex_name) {
-	int len;
+	int32 len;
 
 	len = sprintf(texture_name, "%s.revtex", tex_name);
 
@@ -427,7 +427,7 @@ bool8 _vox_image::Set_texture(const char *tex_name) {
 
 bool8 _vox_image::Set_mesh(const char *m_name) {
 	char name[32];
-	int len;
+	int32 len;
 
 	strcpy(name, m_name);
 	strcat(name, ".rap");
@@ -447,7 +447,7 @@ bool8 _vox_image::Set_palette(const char *pal_name) {
 		return TRUE8;
 	}
 
-	int len;
+	int32 len;
 
 	len = sprintf(palette_name, "%s.revtex", pal_name);
 

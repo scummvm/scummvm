@@ -236,7 +236,7 @@ void _remora::CycleRemoraLogic(const _input &sKeyboardState) {
 
 	// If text is scrolling, process the scroll.
 	if (m_bScrolling) {
-		int scrollAmount = (256 * m_nCharacterHeight) / REMORA_SCROLL_CYCLES;
+		int32 scrollAmount = (256 * m_nCharacterHeight) / REMORA_SCROLL_CYCLES;
 
 		// See which way we're scrolling.
 		if (m_eTextScroll == SCROLL_UP) {

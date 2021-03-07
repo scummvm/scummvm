@@ -39,8 +39,8 @@ typedef struct {
 } RevRenderDevice;
 
 typedef struct {
-	int x, y;     // fixed-point 16:16
-	int u, v;     // fixed-point 16:16
+	int32 x, y;     // fixed-point 16:16
+	int32 u, v;     // fixed-point 16:16
 	uint32 colour; // B, G, R, alpha (low->high mem)
 } vertex2D;
 
@@ -54,34 +54,34 @@ typedef struct {
 class TextureHandle;
 
 TextureHandle *RegisterTexture(const RevTexture *revInput);
-int UnregisterTexture(TextureHandle *);
+int32 UnregisterTexture(TextureHandle *);
 
-int SetTextureState(TextureHandle *texture);
-int GetTextureState(TextureHandle *texture);
+int32 SetTextureState(TextureHandle *texture);
+int32 GetTextureState(TextureHandle *texture);
 
-int SetRenderDevice(RevRenderDevice *renderDev);
-int GetRenderDevice(RevRenderDevice *renderDev);
-
-// Colour is verts[0].colour
-int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
-
-int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 SetRenderDevice(RevRenderDevice *renderDev);
+int32 GetRenderDevice(RevRenderDevice *renderDev);
 
 // Colour is verts[0].colour
-int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
-int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
 // Colour is verts[0].colour
-int DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
-int DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
-static const int GFXLIB_TRANSPARENT_COLOUR = 0xDEADBEAF;
+// Colour is verts[0].colour
+int32 DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+
+int32 DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+
+static const int32 GFXLIB_TRANSPARENT_COLOUR = 0xDEADBEAF;
 
 // This value CANNOT be changed
 
-static const int GFXLIB_TRANSPARENT_INDEX = 0x00000000;
+static const int32 GFXLIB_TRANSPARENT_INDEX = 0x00000000;
 
 void ClearProcessorState(void);
 

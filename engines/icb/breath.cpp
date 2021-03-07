@@ -98,7 +98,7 @@ Breath::Breath() {
 void Breath::Init() {
 	breathEnd = (int16)(BREATH_WAIT);
 
-	int i;
+	int32 i;
 	for (i = 0; i < MAX_BREATH; i++) {
 		breathStarted[i] = 0;
 
@@ -116,8 +116,8 @@ void Breath::Init() {
 // update the breath every cycle
 void Breath::Update() {
 	if (on) {
-		int i;
-		int numberStarted;
+		int32 i;
+		int32 numberStarted;
 
 		numberStarted = 0;
 

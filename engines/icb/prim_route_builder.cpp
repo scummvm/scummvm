@@ -361,7 +361,7 @@ uint32 _prim_route_builder::ExtrapolateLine(_point *pSrc0, _point *pSrc1, _point
 	// pDst0, pDst1 ->   Destination points!
 
 	_fpoint p0, p1;
-	int swapped = 0;
+	int32 swapped = 0;
 
 	//  Make sure points are going from left to right!
 	if (pSrc0->x < pSrc1->x) {

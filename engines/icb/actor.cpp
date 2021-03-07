@@ -99,7 +99,7 @@ int32 QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient) {
 	SVECTOR *scrn = bboxScrn;
 	int32 z0;
 	int32 p, flag;
-	int i;
+	int32 i;
 
 	// Set the local-screen matrix in the GTE
 	gte_SetRotMatrix(&ls);

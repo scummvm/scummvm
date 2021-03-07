@@ -248,16 +248,16 @@ public:
 	uint32 ReadTable(JpegDecoder &);
 
 	// Function to decode the next value in the input stream.
-	int Decode(JpegDecoder &);
+	int32 Decode(JpegDecoder &);
 
 	// This function builds the structures needed for Huffman
 	// decoding after the table data has been read.
 	void MakeTable(uint8 huffbits[JpegMaxHuffmanCodeLength]);
 
 	// Maximum Huffman code value of length N
-	int maxcode[JpegMaxHuffmanCodeLength];
+	int32 maxcode[JpegMaxHuffmanCodeLength];
 	// Minimum Huffman code value of length N
-	int mincode[JpegMaxHuffmanCodeLength];
+	int32 mincode[JpegMaxHuffmanCodeLength];
 	// Index into "values" for minimum code of length N
 	uint8 valptr[JpegMaxHuffmanCodeLength];
 	// Huffman values
@@ -391,7 +391,7 @@ public:
 	uint32 h_sampling;
 
 	// Last encoded DC value.
-	int last_dc_value;
+	int32 last_dc_value;
 
 	// Entropy tables used by the component.
 	JpegHuffmanDecoder *ac_table;

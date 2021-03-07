@@ -96,7 +96,7 @@ public:
 	bool8 CycleIconMenu(const _input &sKeyboardState);
 
 	// Draw the special armed inventory
-	void DrawArmedMenu(const int nBullets, const int32 maxBullets, const int32 nClips, const int32 maxClips);
+	void DrawArmedMenu(const int32 nBullets, const int32 maxBullets, const int32 nClips, const int32 maxClips);
 
 	// And this draws it each cycle.
 	void DrawIconMenu();

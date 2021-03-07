@@ -143,10 +143,10 @@ typedef struct ShadeTriangle {
 	SVECTOR n12;  // normal to plane & line 12
 	SVECTOR n20;  // normal to plane & line 20
 	SVECTOR pn;   // plane normal
-	int d;        // plane distance
-	int n01dots0; // n01 . vertex 0
-	int n12dots1; // n12 . vertex 1
-	int n20dots2; // n20 . vertex 2
+	int32 d;        // plane distance
+	int32 n01dots0; // n01 . vertex 0
+	int32 n12dots1; // n12 . vertex 1
+	int32 n20dots2; // n20 . vertex 2
 } ShadeTriangle;
 
 // A quad
@@ -161,11 +161,11 @@ typedef struct ShadeQuad {
 	SVECTOR n23;  // normal to plane & line 23
 	SVECTOR n30;  // normal to plane & line 30
 	SVECTOR pn;   // plane normal
-	int d;        // plane distance
-	int n01dots0; // n01 . vertex 0
-	int n12dots1; // n12 . vertex 1
-	int n23dots2; // n23 . vertex 2
-	int n30dots3; // n30 . vertex 3
+	int32 d;        // plane distance
+	int32 n01dots0; // n01 . vertex 0
+	int32 n12dots1; // n12 . vertex 1
+	int32 n23dots2; // n23 . vertex 2
+	int32 n30dots3; // n30 . vertex 3
 } ShadeQuad;
 
 typedef struct PSXShade {
@@ -192,16 +192,16 @@ typedef struct rlp_API {
 	PSXrgb ambient;
 	// Byte offsets
 	uint32 lampOffsets[1]; // actually lampOffsets[nLamps]
-	inline PSXLamp *GetLamp(const int l);
+	inline PSXLamp *GetLamp(const int32 l);
 	inline uint32 *GetShadeOffsets(void);
-	inline PSXShade *GetShade(const int s);
+	inline PSXShade *GetShade(const int32 s);
 } rlp_API;
 
-inline PSXLamp *rlp_API::GetLamp(const int l) { return (PSXLamp *)(id + lampOffsets[l]); }
+inline PSXLamp *rlp_API::GetLamp(const int32 l) { return (PSXLamp *)(id + lampOffsets[l]); }
 
 inline uint32 *rlp_API::GetShadeOffsets(void) { return (uint32 *)(id + shadeOffsetsOffset); }
 
-inline PSXShade *rlp_API::GetShade(const int s) {
+inline PSXShade *rlp_API::GetShade(const int32 s) {
 	uint32 *shadeOffsets = GetShadeOffsets();
 	return (PSXShade *)(id + shadeOffsets[s]);
 }
