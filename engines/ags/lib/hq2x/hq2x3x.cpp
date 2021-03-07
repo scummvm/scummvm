@@ -27,12 +27,12 @@ namespace AGS3 {
 static int   LUT16to32[65536];
 static int   RGBtoYUV[65536];
 static int   YUV1, YUV2;
-const  int   Ymask = 0x00FF0000;
-const  int   Umask = 0x0000FF00;
-const  int   Vmask = 0x000000FF;
-const  int   trY   = 0x00300000;
-const  int   trU   = 0x00000700;
-const  int   trV   = 0x00000006;
+static const  int   Ymask = 0x00FF0000;
+static const  int   Umask = 0x0000FF00;
+static const  int   Vmask = 0x000000FF;
+static const  int   trY   = 0x00300000;
+static const  int   trU   = 0x00000700;
+static const  int   trV   = 0x00000006;
 
 inline void Interp1(unsigned char *pc, int c1, int c2) {
 	*((int *)pc) = (c1 * 3 + c2) >> 2;

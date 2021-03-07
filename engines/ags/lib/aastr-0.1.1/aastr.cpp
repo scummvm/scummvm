@@ -43,8 +43,7 @@ namespace AGS3 {
 /*
  * Engine of anti-aliased stretching.
  */
-static void
-_aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
+static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	int _sx, int _sy, int _sw, int _sh,
 	int _dx, int _dy, int _dw, int _dh, int _masked) {
 	int sx, sy, dx, dy, ydx, ysx;
@@ -206,8 +205,7 @@ _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 /*
  * Anti-aliased bitmap stretching with blit.
  */
-void
-aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
+void aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	int _sx, int _sy, int _sw, int _sh,
 	int _dx, int _dy, int _dw, int _dh) {
 	_aa_stretch_blit(_src, _dst, _sx, _sy, _sw, _sh, _dx, _dy, _dw, _dh, 0);
@@ -216,8 +214,7 @@ aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 /*
  * Anti-aliased bitmap stretching with blit (masked).
  */
-void
-aa_stretch_sprite(BITMAP *_dst, BITMAP *_src, int _dx, int _dy, int _dw, int _dh) {
+void aa_stretch_sprite(BITMAP *_dst, BITMAP *_src, int _dx, int _dy, int _dw, int _dh) {
 	_aa_stretch_blit(_src, _dst, 0, 0, _src->w, _src->h, _dx, _dy, _dw, _dh, 1);
 }
 

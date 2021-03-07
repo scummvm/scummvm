@@ -43,9 +43,8 @@ namespace AGS3 {
 /*
  * Engine of anti-aliased rotation.
  */
-static void
-_aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
-	fixed _scalex, fixed _scaley, int _masked) {
+static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
+		fixed _scalex, fixed _scaley, int _masked) {
 	int sw, sh, dw, dh;
 	fixed fx0, fy0, fux, fuy, fvx, fvy;
 	fixed fdw, fdh, fsinangle, fcosangle;
@@ -525,34 +524,30 @@ _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 /*
  * Anti-aliased bitmap rotation with scaling.
  */
-void
-aa_rotate_scaled_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
-	fixed _scalex, fixed _scaley) {
+void aa_rotate_scaled_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
+		fixed _scalex, fixed _scaley) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, _scalex, _scaley, 0);
 }
 
 /*
  * Anti-aliased bitmap rotation with scaling (masked).
  */
-void
-aa_rotate_scaled_sprite(BITMAP *_dst, BITMAP *_src, int _x, int _y, fixed _angle,
-	fixed _scalex, fixed _scaley) {
+void aa_rotate_scaled_sprite(BITMAP *_dst, BITMAP *_src, int _x, int _y, fixed _angle,
+		fixed _scalex, fixed _scaley) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, _scalex, _scaley, 1);
 }
 
 /*
  * Anti-aliased bitmap rotation.
  */
-void
-aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle) {
+void aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, itofix(1), itofix(1), 0);
 }
 
 /*
  * Anti-aliased bitmap rotation (masked).
  */
-void
-aa_rotate_sprite(BITMAP *_dst, BITMAP *_src, int _x, int _y, fixed _angle) {
+void aa_rotate_sprite(BITMAP *_dst, BITMAP *_src, int _x, int _y, fixed _angle) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, itofix(1), itofix(1), 1);
 }
 
