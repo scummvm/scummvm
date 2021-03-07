@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-03-06 12:25+0000\n"
+"PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5592,23 +5592,23 @@ msgstr "映像をアップスケーリングする"
 
 #: engines/sci/detection.cpp:260
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "映像を2倍にアップスケーリングする"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "RGBレンダリングを使用する"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "RGBレンダリングを使用して画面遷移を改善する"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "リソースごとに変更されたパレットを使用する"
 
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "リソースごとにカスタムパレットを使用してビジュアルを向上させる"
 
 #: engines/sci/detection.cpp:312
 msgid "MIDI mode:"
