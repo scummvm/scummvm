@@ -29,14 +29,13 @@ namespace AGDS {
 class AGDSMetaEngine : public AdvancedMetaEngine {
 public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSimpleSavesNames:
 			return true;
-		case kSupportsLoadingDuringStartup:
-			return false;
 		default:
-			return AdvancedMetaEngine::hasFeature(f);
+			return false;
 		}
 	}
 

@@ -995,7 +995,7 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	case kSupportsChangingOptionsDuringRuntime:
 		return true;
 	default:
-		return Engine::hasFeature(f);
+		return false;
 	}
 }
 
